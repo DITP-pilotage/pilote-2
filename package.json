@@ -1,0 +1,58 @@
+{
+  "name": "ditp-pilote",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint src/**/*.{ts,tsx} && npx tsc && npx stylelint src/**/*.scss"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2% in FR",
+      "last 5 years",
+      "not IE <= 11",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "dependencies": {
+    "next": "^13.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.8",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/parser": "^5.40.1",
+    "eslint": "^8.27.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-next": "^13.0.2",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^27.1.3",
+    "eslint-plugin-jest-formatting": "^3.1.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-react": "^7.31.10",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-simple-import-sort": "^8.0.0",
+    "eslint-plugin-sonarjs": "^0.16.0",
+    "eslint-plugin-testing-library": "^5.7.3",
+    "eslint-plugin-unicorn": "^44.0.2",
+    "sass": "^1.56.1",
+    "stylelint": "^14.14.0",
+    "stylelint-config-recess-order": "^3.0.0",
+    "stylelint-config-standard": "^29.0.0",
+    "stylelint-config-standard-scss": "^6.1.0",
+    "stylelint-order": "^5.0.0",
+    "typescript": "^4.8.4"
+  }
+}

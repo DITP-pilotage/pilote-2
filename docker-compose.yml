@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  app:
+    image: node:lts-alpine
+    depends_on:
+      - postgresql
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://admin:admin-secret@postgresql:5432/postgresql
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/app/
+    command: sh -c "cd /app && npm install && npm run dev"
+    tty: true
+  postgresql:
+    image: scalingo/postgresql
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db:/var/lib/postgresql
+    command: /postgresql
+    tty: true

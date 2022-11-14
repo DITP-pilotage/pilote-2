@@ -1,0 +1,13 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-standard-scss",
+    "stylelint-config-recess-order"
+  ],
+  "ignoreFiles": [
+    ".next/**/*"
+  ],
+  "plugins": [
+    "stylelint-order"
+  ]
+}
