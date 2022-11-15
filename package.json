@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint src/**/*.{ts,tsx} && npx tsc && npx stylelint src/**/*.scss",
-    "test": "react-scripts test"
+    "test": "react-scripts test",
+    "test:unit": "react-scripts test ./*.unit.test.tsx?",
+    "test:integration": "react-scripts test ./*.integration.test.tsx?"
   },
   "browserslist": {
     "production": [
