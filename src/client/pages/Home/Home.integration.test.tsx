@@ -13,5 +13,5 @@ test('loads and displays', () => {
   render(<Home user={user} />);
 
   // THEN
-  expect(screen.getByText('Ceci est le footer')).toBeDefined();
+  expect(screen.getByText('Ceci est le footer')).toBeInTheDocument();
 });
