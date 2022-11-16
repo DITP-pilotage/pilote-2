@@ -7,12 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint src/**/*.{ts,tsx} && npx tsc && npx stylelint src/**/*.scss",
-    "test": "jest",
-    "test:unit": "jest ./*.unit.test.tsx?",
-    "test:integration": "jest ./*.integration.test.tsx?",
-    "test:dev": "jest --watch",
-    "test:dev:unit": "jest --watch ./*.unit.test.tsx?",
-    "test:dev:integration": "jest --watch ./*.integration.test.tsx?"
+    "test": "jest src",
+    "test:unit": "jest src/.*.unit.test.*",
+    "test:integration": "jest src/.*.integration.test.*",
+    "test:dev": "jest --watch src",
+    "test:dev:unit": "jest --watch src/.*.unit.test.*",
+    "test:dev:integration": "jest --watch src/.*.integration.test.*"
   },
   "browserslist": {
     "production": [
