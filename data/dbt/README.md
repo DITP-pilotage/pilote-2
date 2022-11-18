@@ -20,7 +20,7 @@ Sur cette instance Postgres, créer la base de donnée `dbt_dev`.
 ### Récupérer l'image docker de DBT
 
 ```
-$ docker pull ghcr.io/dbt-labs/dbt-postgres:1.3.latest
+$ docker pull ghcr.io/dbt-labs/dbt-postgres:1.3.1
 ```
 
 ### Configurer le profil dbt
@@ -39,7 +39,7 @@ $ docker run -it --rm \
       --network=host \
       --mount type=bind,source=$(pwd)/ditp_ppg_dbt,target=/usr/app \
       --mount type=bind,source=$(pwd)/dbt_root,target=/root/.dbt/ \
-      ghcr.io/dbt-labs/dbt-postgres:1.3.latest \
+      ghcr.io/dbt-labs/dbt-postgres:1.3.1 \
       debug
 ```
 
