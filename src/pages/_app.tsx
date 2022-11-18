@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import '@gouvfr/dsfr/dist/core/core.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css';
-import Layout from 'client/components/_common/Layout/Layout';
+import Layout from 'client/components/_commons/Layout/Layout';
 
 import type { AppProps } from 'next/app';
 import Script from 'next/script';
