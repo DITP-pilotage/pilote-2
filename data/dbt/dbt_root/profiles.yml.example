@@ -21,5 +21,3 @@ ditp_ppg_dbt:
       pass: [prod_password]
       dbname: [dbname]
       schema: [prod_schema]
-
-  target: dev
