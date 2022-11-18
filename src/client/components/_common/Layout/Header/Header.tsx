@@ -1,6 +1,7 @@
 import '@gouvfr/dsfr/dist/component/header/header.min.css';
 import '@gouvfr/dsfr/dist/component/logo/logo.min.css';
 import Link from 'next/link';
+import Navigation from '../Navigation/Navigation';
 
 export default function Header() {
   return (
@@ -20,6 +21,19 @@ export default function Header() {
                     Française
                   </p>
                 </div>
+                <div className="fr-header__navbar">
+                  <button
+                    aria-controls="modale-menu-principal"
+                    aria-haspopup="menu"
+                    className="fr-btn--menu fr-btn"
+                    data-fr-opened="false"
+                    id="bouton-menu-principal"
+                    title="Menu"
+                    type="button"
+                  >
+                    Menu
+                  </button>
+                </div>
               </div>
               <div className="fr-header__service">
                 <Link href="/">
@@ -32,6 +46,7 @@ export default function Header() {
           </div>
         </div>
       </div>
+      <Navigation />
     </header>
   );
 }
