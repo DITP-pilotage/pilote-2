@@ -89,6 +89,7 @@ const colonnes = [
   columnHelper.accessor('id', {
     header: '#',
     cell: id => '#' + id.getValue(),
+    //enableGlobalFilter: false,
   }),
   columnHelper.accessor('nom', {
     header: 'Nom du chantier',
@@ -97,10 +98,12 @@ const colonnes = [
   columnHelper.accessor('meteo', {
     header: 'Météo',
     cell: meteo => recupererPictoMeteoAPartirDeLaValeur(meteo.getValue()),
+    enableGlobalFilter: false,
   }),
   columnHelper.accessor('avancement', {
     header: 'Avancement',
     cell: avancement => afficherBarreDeProgression(avancement.getValue()),
+    enableGlobalFilter: false,
   }),
 ];
 

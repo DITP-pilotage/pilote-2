@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import TableauProps from './Tableau.interface';
 import {
   flexRender,
-  getCoreRowModel, getSortedRowModel, Header, SortDirection, SortingState,
+  getCoreRowModel, getFilteredRowModel, getSortedRowModel, Header, SortDirection, SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 
@@ -37,22 +37,38 @@ function afficherIconeDeTriDeLaColonne(typeDeTri: false | SortDirection) {
 export default function Tableau<T extends object>({ colonnes, donnees, titre }: TableauProps<T>) {
 
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const table = useReactTable({
     data: donnees,
     columns: colonnes,
+    globalFilterFn: (row, colonneId, filterValue)=>{
+      return Boolean(row.getValue<T>(colonneId).toString().toLowerCase().includes(filterValue.toLowerCase()));
+    },
     state: {
+      globalFilter,
       sorting,
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
 
+  const handleGlobalFilter = useCallback((event: ChangeEvent<HTMLInputElement>) =>{
+    setGlobalFilter(event.target.value);
+  }, [setGlobalFilter]);
   const handleSortColumn = (header: Header<T, unknown>) => header.column.getToggleSortingHandler();
+  
 
   return (
     <div className="fr-table fr-table--bordered">
+      <input
+        onChange={handleGlobalFilter}
+        placeholder="Search all columns..."
+        type='text'
+        value={globalFilter ?? ''}
+      />
       <table>
         <caption>
           {titre}
