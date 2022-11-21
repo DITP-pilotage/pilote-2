@@ -1,56 +1,66 @@
 import TableauProps from './Tableau.interface';
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
 
-export default function Tableau({ colonnes, donnees, resume }: TableauProps) {
-  const renderHeader = () => (
-    <thead>
-      <tr key="headers">
-        {colonnes.map((colonne) => (
-          <th
-            // className={classNames({ sortable: colonne.sortable })}
-            key={colonne.nom}
-            // onClick={() => {
-            //   if (colonne.sortable) {
-            //     manageSort(colonne);
-            //   }
-            // }}
-            scope="col"
-          >
-            <div className="table-colonne-header">
-              {colonne.label}
-              {/* {colonne.sortable ? getSortIcon(colonne) : null} */}
-            </div>
-          </th>
-        ))}
-      </tr>
-    </thead>
-  );
-    
+export default function Tableau<T extends object>({ colonnes, donnees, titre }: TableauProps<T>) {
+  const table = useReactTable({
+    data: donnees,
+    columns: colonnes,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
     <div className="fr-table fr-table--bordered">
       <table>
-        {
-          resume ?
-            <caption>
-              {resume}
-            </caption>
-            : ''
-        }
-        {renderHeader()}
+        <caption>
+          {titre}
+        </caption>
+        <thead>
+          {table.getHeaderGroups().map(headerGroup => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map(header => (
+                <th key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
         <tbody>
-          {
-              donnees.map((ligne) => (
-                <tr key={ligne.id}>
-                  {
-                    colonnes.map((colonne) => (
-                      <td key={colonne.nom}>
-                        {colonne.render ? colonne.render(ligne) : ligne[colonne.nom]}
-                      </td>
-                    ))
-                  }
-                </tr>
-              ))
-          }
+          {table.getRowModel().rows.map(row => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map(cell => (
+                <td key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
         </tbody>
+        <tfoot>
+          {table.getFooterGroups().map(footerGroup => (
+            <tr key={footerGroup.id}>
+              {footerGroup.headers.map(header => (
+                <th key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                      header.column.columnDef.footer,
+                      header.getContext(),
+                    )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </tfoot>
       </table>
     </div>
   );

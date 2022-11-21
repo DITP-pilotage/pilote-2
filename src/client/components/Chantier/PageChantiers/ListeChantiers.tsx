@@ -62,7 +62,7 @@ function afficherBarreDeProgression(avancement: number) {
   );
 }
   
-const chantiers = [
+const chantiers: Chantier[] = [
   {
     nom: 'Déployer le programme FR',
     meteo: 2,
@@ -99,12 +99,20 @@ const colonnes = [
     render: ({ avancement }) => afficherBarreDeProgression(avancement),
   },
 ];
+
+type Chantier = {
+  id: number,
+  nom: string,
+  meteo: number,
+  avancement: number
+};
   
 export default function ListeChantiers() {
   return (
-    <Tableau 
+    <Tableau<Chantier>
       colonnes={colonnes}
       donnees={chantiers}
+      titre="Liste des chantiers"
     />
   );
 }

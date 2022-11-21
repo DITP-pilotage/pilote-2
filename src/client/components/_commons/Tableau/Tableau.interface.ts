@@ -1,12 +1,7 @@
-export default interface TableauProps {
-  colonnes: {
-    label: string,
-    nom: string,
-    render?: Function, 
-  }[],
-  donnees: {
-    id: number,
-    [key: string]: any
-  }[],
-  resume?: string
+import { ColumnDef } from '@tanstack/react-table';
+
+export default interface TableauProps<T extends object> {
+  colonnes: ColumnDef<T, any>[],
+  donnees: T[],
+  titre: string
 }
