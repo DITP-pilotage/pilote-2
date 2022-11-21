@@ -1,1 +1,11 @@
+##
+# dbt
+
+# Root config
 dbt/dbt_root/*.yml
+
+# Project artifacts
+dbt/ditp_ppg_dbt/target/
+dbt/ditp_ppg_dbt/dbt_packages/
+dbt/ditp_ppg_dbt/logs/
+dbt/ditp_ppg_dbt/dbt/logs

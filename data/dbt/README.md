@@ -71,3 +71,8 @@ $ docker run -it --rm \
 - profiles.yml ~ <https://docs.getdbt.com/reference/profiles.yml>
 - Connection profiles ~ <https://docs.getdbt.com/docs/get-started/connection-profiles>
 - Getting started with dbt Core ~ <https://docs.getdbt.com/docs/get-started/getting-started-dbt-core>
+
+Liens dbt :
+
+- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
+- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
