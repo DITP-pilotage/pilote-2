@@ -1,0 +1,23 @@
+ditp_ppg_dbt:
+  target: dev
+  outputs:
+
+    dev:
+      type: postgres
+      threads: 1
+      host: localhost
+      port: 5432
+      user: admin
+      pass: admin-secret
+      dbname: dbt_dev
+      schema: public
+
+    prod:
+      type: postgres
+      threads: [1 or more]
+      host: [host]
+      port: [port]
+      user: [prod_username]
+      pass: [prod_password]
+      dbname: [dbname]
+      schema: [prod_schema]
