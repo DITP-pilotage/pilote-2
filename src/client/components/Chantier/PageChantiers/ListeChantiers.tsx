@@ -5,7 +5,7 @@ import meteo1 from '/public/img/meteo-1-securise.svg';
 import meteo2 from '/public/img/meteo-2-atteignable.svg';
 import meteo3 from '/public/img/meteo-3-appui-necessaire.svg';
 import meteo4 from '/public/img/meteo-4-compromis.svg';
-
+import { createColumnHelper } from '@tanstack/react-table';
 
 function recupererPictoMeteoAPartirDeLaValeur(meteoValeur: number) {
   switch (meteoValeur) {
@@ -61,6 +61,8 @@ function afficherBarreDeProgression(avancement: number) {
     </>
   );
 }
+
+const columnHelper = createColumnHelper<Chantier>();
   
 const chantiers: Chantier[] = [
   {
@@ -84,20 +86,22 @@ const chantiers: Chantier[] = [
 ];
   
 const colonnes = [
-  { 
-    label: 'Chantiers',
-    nom: 'nom',
-  },
-  {
-    label: 'Metéo', 
-    nom: 'meteo',
-    render: ({ meteo }) => recupererPictoMeteoAPartirDeLaValeur(meteo),
-  },
-  {
-    label: 'Avancement',
-    nom: 'avancement',
-    render: ({ avancement }) => afficherBarreDeProgression(avancement),
-  },
+  columnHelper.accessor('id', {
+    header: '#',
+    cell: id => '#' + id.getValue(),
+  }),
+  columnHelper.accessor('nom', {
+    header: 'Nom du chantier',
+    cell: nomChantier => nomChantier.getValue(),
+  }),
+  columnHelper.accessor('meteo', {
+    header: 'Météo',
+    cell: meteo => recupererPictoMeteoAPartirDeLaValeur(meteo.getValue()),
+  }),
+  columnHelper.accessor('avancement', {
+    header: 'Avancement',
+    cell: avancement => afficherBarreDeProgression(avancement.getValue()),
+  }),
 ];
 
 type Chantier = {
