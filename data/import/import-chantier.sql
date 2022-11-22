@@ -1,6 +1,8 @@
-drop table if exists ditp_liste_chantiers_perseverants_avec_trigramme;
+create schema if not exists data_import;
 
-create table ditp_liste_chantiers_perseverants_avec_trigramme  (
+drop table if exists data_import.ditp_liste_chantiers_perseverants_avec_trigramme;
+
+create table data_import.ditp_liste_chantiers_perseverants_avec_trigramme  (
     liste_des_chantiers_de_perseverance text,
     axe text,
     ppg text,
@@ -10,6 +12,6 @@ create table ditp_liste_chantiers_perseverants_avec_trigramme  (
     precedent_ministere_responsable text
 );
 
-copy ditp_liste_chantiers_perseverants_avec_trigramme
+copy data_import.ditp_liste_chantiers_perseverants_avec_trigramme
 from 'DITP_Liste_chantiers_perseverants-avec-trigramme.csv'
 with csv delimiter ',' header;
