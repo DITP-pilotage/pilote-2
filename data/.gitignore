@@ -1,9 +1,11 @@
 ##
-# dbt
+# input-data
+input-data/*.csv
 
+##
+# dbt
 # Root config
 dbt/dbt_root/*.yml
-
 # Project artifacts
 dbt/ditp_ppg_dbt/target/
 dbt/ditp_ppg_dbt/dbt_packages/
