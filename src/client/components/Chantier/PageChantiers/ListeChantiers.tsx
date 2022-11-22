@@ -1,13 +1,14 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
-import Tableau from 'client/components/_commons/Tableau/Tableau';
+import Tableau from '../../_commons/Tableau/Tableau';
 import Image from 'next/image';
 import meteo1 from '/public/img/meteo-1-securise.svg';
 import meteo2 from '/public/img/meteo-2-atteignable.svg';
 import meteo3 from '/public/img/meteo-3-appui-necessaire.svg';
 import meteo4 from '/public/img/meteo-4-compromis.svg';
 import { createColumnHelper } from '@tanstack/react-table';
+import { Chantier } from '../Chantier.interface';
 
-function recupererPictoMeteoAPartirDeLaValeur(meteoValeur: number) {
+export function recupererPictoMeteoAPartirDeLaValeur(meteoValeur: number) {
   switch (meteoValeur) {
     case 1: {
       return (
@@ -44,7 +45,7 @@ function recupererPictoMeteoAPartirDeLaValeur(meteoValeur: number) {
   }
 }
         
-function afficherBarreDeProgression(avancement: number) {
+export function afficherBarreDeProgression(avancement: number) {
   const pourcentageAvancement = avancement * 100;
           
   return (
@@ -107,13 +108,6 @@ const colonnes = [
   }),
 ];
 
-type Chantier = {
-  id: number,
-  nom: string,
-  meteo: number,
-  avancement: number
-};
-  
 export default function ListeChantiers() {
   return (
     <Tableau<Chantier>
