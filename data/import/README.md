@@ -12,14 +12,14 @@ $ cp ../input-data/DITP_Liste_chantiers_perseverants-avec-trigramme.csv ../../db
 
 ### Création de la table et import du csv
 
-Note : cette table est crée dans le schémas `data_import`, pas le schémas par défaut `public`.
+Note : cette table est crée dans le schémas `raw_data`, pas le schémas par défaut `public`.
 
 ```
 $ psql "postgres://postgresql:secret@localhost:5432/postgresql" <import-chantier.sql
 ```
 
-Exemple pour explorer ce qu'il y a dans le schémas `data_import` :
+Exemple pour explorer ce qu'il y a dans le schémas `raw_data` :
 
 ```
-PGOPTIONS="--search_path=data_import" psql service=ppg -c '\dt'
+PGOPTIONS="--search_path=raw_data" psql service=ppg -c '\dt'
 ```
