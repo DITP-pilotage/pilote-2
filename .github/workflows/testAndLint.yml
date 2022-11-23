@@ -1,4 +1,4 @@
-name: testAndLint
+name: Tests and Linters
 
 on:
   push:
@@ -31,27 +31,42 @@ jobs:
     needs: install
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup Node and packages
-      uses: ./.github/actions/setupNodeAndPackages
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-    - name: Run test command
-      run: npm run test
+      - name: Run test command
+        run: npm run test
 
   lint:
-    name: Run linters
+    name: Run linters for code
     needs: install
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup Node and packages
-      uses: ./.github/actions/setupNodeAndPackages
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-    - name: Run lint command
-      run: npm run lint
+      - name: Run lint command
+        run: npm run lint
+
+  commitLint:
+    name: Run linter for commit messages
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run lint command
+        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --verbose

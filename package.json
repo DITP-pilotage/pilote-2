@@ -2,11 +2,12 @@
   "name": "ditp-pilote",
   "version": "0.1.0",
   "private": true,
-  "engines" : { 
-    "node" : "18"
+  "engines": {
+    "node": "18"
   },
   "scripts": {
     "dev": "next dev",
+    "commit": "commit",
     "build": "next build",
     "start": "next start",
     "lint": "eslint src/**/*.{ts,tsx} && npx tsc && npx stylelint src/**/*.scss",
@@ -32,12 +33,14 @@
     ]
   },
   "dependencies": {
+    "@gouvfr/dsfr": "^1.8.4",
     "next": "^13.0.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@gouvfr/dsfr": "^1.8.4"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.3.0",
+    "@commitlint/config-conventional": "^17.3.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
