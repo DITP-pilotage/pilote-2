@@ -1,4 +1,3 @@
-import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import Tableau from '../../_commons/Tableau/Tableau';
 import Image from 'next/image';
 import meteo1 from '/public/img/meteo-1-securise.svg';
@@ -91,6 +90,7 @@ export default function ListeChantiers() {
     <Tableau<Chantier>
       colonnes={colonnes}
       donnees={chantiers}
+      entités="chantiers"
       titre="Liste des chantiers"
     />
   );

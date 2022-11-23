@@ -61,6 +61,7 @@ class TableauTest {
       <Tableau
         colonnes={this.colonnes}
         donnees={this.donnees}
+        entités='chantiers'
         titre="Liste des donnees"
       />);
   }

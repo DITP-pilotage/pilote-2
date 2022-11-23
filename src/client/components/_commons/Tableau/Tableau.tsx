@@ -1,3 +1,4 @@
+import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import TableauProps from './Tableau.interface';
 import {
@@ -11,8 +12,10 @@ import {
 import TableauHeader from './TableauHeader';
 import TableauBody from './TableauBody';
 import TableauPagination from './TableauPagination';
+import BarreDeRecherche from '../BarreDeRecherche/BarreDeRecherche';
+import styles from './Tableau.module.scss';
 
-export default function Tableau<T extends object>({ colonnes, donnees, titre }: TableauProps<T>) {
+export default function Tableau<T extends object>({ colonnes, donnees, titre, entités }: TableauProps<T>) {
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -44,13 +47,16 @@ export default function Tableau<T extends object>({ colonnes, donnees, titre }: 
 
   return (
     <div className="fr-table fr-table--bordered">
-      <input
-        onChange={handleGlobalFilter}
-        placeholder="Rechercher"
-        type='text'
-        value={globalFilter ?? ''}
-      />
-      <table>
+      <div className={styles.container}>
+        <p>
+          {donnees.length + ' ' + entités}
+        </p>
+        <BarreDeRecherche
+          onChange={handleGlobalFilter}
+          valeur={globalFilter}
+        />
+      </div>
+      <table className={styles.tableau}>
         <caption>
           {titre}
         </caption>
