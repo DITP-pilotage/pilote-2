@@ -1,6 +1,11 @@
-Ce répertoire contient le projet dbt qui permet de transformer les données de
-Pilote existant vers le nouveau format nécessaire pour les Politiques
-Prioritaires du Gouvernement.
+Ce répertoire contient le projet dbt qui permet de transformer les données de Pilote existant vers le nouveau format nécessaire pour les Politiques Prioritaires du Gouvernement.
+
+## Hypothèses
+
+- Les données sources sont importées par l'étape précédente, dans le schéma `raw_data` ;
+- Le schémas destination est le schémas utilisé par la Webapp. À date, ce schéma est le schéma par défaut (`public`) ;
+- DBT lit dans `raw_data`, le schéma d'import des données ;
+- DBT écrit dans `public`, le schéma de destination.
 
 ## Comment démarrer
 
@@ -11,32 +16,7 @@ Avoir docker sur sa machine.
 Démarrer le service docker-compose postgres définit à la racine de ce
 repository.
 
-Sur cette instance Postgres, créer la base de donnée `dbt_dev`. Ci-dessous,
-trois méthodes équivalentes pour faire ça.
-
-Première méthode, si vous n'avez pas de client postgres sur votre machine, vous
-pouvez utiliser le client du container postgres en train de tourner (vous
-devrez taper le mot de passe admin définit dans le docker-compose à la racine
-du projet) :
-
-```
-$ docker exec -it ditp-pilote-draft_postgresql_1 psql -U admin -h localhost postgresql -c 'create database dbt_dev;'
-```
-
-Deuxième méthode, si vous avez déjà un client postgres sur votre machine, vous
-pouvez vous contenter de la commande psql :
-
-```
-$ psql -U admin -h localhost postgresql -c 'create database dbt_dev;'
-```
-
-Troisième méthode, si vous avez un client postgres et que vous avez configuré
-la base dbt dans votre fichier `~/.pg_service.conf`, pas besoin des infos de
-connexion :
-
-```
-$ psql --service=dbt -c 'create database dbt_dev;'
-```
+Importer les données, voir la doc du job d'import. Ce job créé le schémas `raw_data`.
 
 ### Récupérer l'image docker de DBT
 

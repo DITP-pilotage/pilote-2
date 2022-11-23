@@ -7,9 +7,9 @@ ditp_ppg_dbt:
       threads: 1
       host: localhost
       port: 5432
-      user: admin
-      pass: admin-secret
-      dbname: dbt_dev
+      user: postgresql
+      pass: secret
+      dbname: postgresql
       schema: public
 
     prod:
