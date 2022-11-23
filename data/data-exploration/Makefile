@@ -21,7 +21,6 @@ lint:
 .PHONY: conda_env  ## 🐍 Create a Python conda environment
 conda_env:
 	conda create --name ditp-exploration python=3.9 -y
-	conda activate ditp-exploration
 
 .PHONY: dependencies  ## ⏬ Install development dependencies
 dependencies:
