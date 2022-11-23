@@ -1,16 +1,16 @@
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import TableauProps from './Tableau.interface';
 import {
   getCoreRowModel, 
   getFilteredRowModel, 
+  getPaginationRowModel, 
   getSortedRowModel, 
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import TableauHeader from './TableauHeader';
-import TableauBody from './tableauBody';
-
-
+import TableauBody from './TableauBody';
+import TableauPagination from './TableauPagination';
 
 export default function Tableau<T extends object>({ colonnes, donnees, titre }: TableauProps<T>) {
 
@@ -31,12 +31,16 @@ export default function Tableau<T extends object>({ colonnes, donnees, titre }: 
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   const handleGlobalFilter = useCallback((event: ChangeEvent<HTMLInputElement>) =>{
     setGlobalFilter(event.target.value);
   }, [setGlobalFilter]);
-  
+
+  useEffect(() => {
+    tableau.setPageSize(20);
+  }, [tableau]);
 
   return (
     <div className="fr-table fr-table--bordered">
@@ -53,6 +57,7 @@ export default function Tableau<T extends object>({ colonnes, donnees, titre }: 
         <TableauHeader<T> tableau={tableau} />
         <TableauBody<T> tableau={tableau} />
       </table>
+      <TableauPagination tableau={tableau} />
     </div>
   );
 }

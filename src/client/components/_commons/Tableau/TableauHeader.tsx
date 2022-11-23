@@ -1,7 +1,6 @@
 import { Header, SortDirection, flexRender } from '@tanstack/react-table';
 import TableauHeaderProps from './TableauHeader.interface';
 
-
 function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   if (!typeDeTri)
     return 'none';

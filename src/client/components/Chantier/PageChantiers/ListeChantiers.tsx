@@ -7,6 +7,7 @@ import meteo3 from '/public/img/meteo-3-appui-necessaire.svg';
 import meteo4 from '/public/img/meteo-4-compromis.svg';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Chantier } from '../Chantier.interface';
+import { chantiers } from './donnéesChantiers';
 
 export function recupererPictoMeteoAPartirDeLaValeur(meteoValeur: number) {
   switch (meteoValeur) {
@@ -47,16 +48,15 @@ export function recupererPictoMeteoAPartirDeLaValeur(meteoValeur: number) {
         
 export function afficherBarreDeProgression(avancement: number) {
   const pourcentageAvancement = avancement * 100;
-          
   return (
     <>
-      {pourcentageAvancement}
+      {pourcentageAvancement.toFixed(0)}
       %
       <progress
         max='100'
         value={pourcentageAvancement}
       >
-        {pourcentageAvancement}
+        {pourcentageAvancement.toFixed(0)}
         %
       </progress>
     </>
@@ -65,32 +65,10 @@ export function afficherBarreDeProgression(avancement: number) {
 
 const columnHelper = createColumnHelper<Chantier>();
   
-const chantiers: Chantier[] = [
-  {
-    nom: 'Déployer le programme FR',
-    meteo: 2,
-    avancement: 0.6,
-    id: 1,
-  },
-  {
-    nom: 'Lutter contre la fraude fiscale',
-    meteo: 1,
-    avancement: 0.3,
-    id: 2,
-  },
-  {
-    nom: 'Elections du maire',
-    meteo: 4,
-    avancement: 0.9,
-    id: 3,
-  },
-];
-  
 const colonnes = [
   columnHelper.accessor('id', {
     header: '#',
     cell: id => '#' + id.getValue(),
-    //enableGlobalFilter: false,
   }),
   columnHelper.accessor('nom', {
     header: 'Nom du chantier',

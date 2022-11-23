@@ -2,7 +2,6 @@ import { flexRender } from '@tanstack/react-table';
 import TableauBodyProps from './TableauBody.interface';
 
 export default function TableauBody<T>({ tableau }: TableauBodyProps<T>) {
-
   return (
     <tbody>
       {tableau.getRowModel().rows.map(row => (
