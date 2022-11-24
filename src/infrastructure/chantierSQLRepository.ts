@@ -1,7 +1,5 @@
 import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
-
 type Id = string;
 
 export interface Chantier {
@@ -14,8 +12,14 @@ export interface ChantierRepository {
 }
 
 export class ChantierSQLRepository implements ChantierRepository {
+  private prisma: PrismaClient;
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
+
   getById(id: Id): Promise<Chantier> {
-    return prisma.chantier_prioritaire.findUnique({
+    return this.prisma.chantier_prioritaire.findUnique({
       where: { id },
     });
   }

@@ -1,8 +1,10 @@
+import { PrismaClient } from '@prisma/client';
 import { ChantierRepository, ChantierSQLRepository } from './chantierSQLRepository';
 
 test('fails', async () => {
   // GIVEN
-  const chantierRepository: ChantierRepository = new ChantierSQLRepository();
+  const prisma = new PrismaClient();
+  const chantierRepository: ChantierRepository = new ChantierSQLRepository(prisma);
   // WHEN
   const chantier = await chantierRepository.getById('THD');
   // THEN
