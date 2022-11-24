@@ -1,5 +1,7 @@
+import { Chantier } from './FakeChantiers.interface';
+
 /* eslint-disable sonarjs/no-duplicate-string */
-export const chantiers = [
+export const chantiers: Chantier[] = [
   {
     id: 1,
     nom: "Assurer la couverture numérique du territoire par la fibre d'ici 2025",
@@ -21,7 +23,7 @@ export const chantiers = [
     nomAncienneReformePrioritaire: 'Accompagnement au numérique pour tous, partout sur le territoire',
     trigramme: 'DAN',
     precedentMinistereResponsable: "Ministère de l'Economie des Finances et de la Relance",
-    meteo: 1,
+    meteo: null,
     avancement: 0.99,
   },
   {
@@ -34,7 +36,7 @@ export const chantiers = [
     trigramme: 'RUP',
     precedentMinistereResponsable: "Ministère de l'Agriculture et de l'Alimentation",
     meteo: 3,
-    avancement: 0.17,
+    avancement: null,
   },
   {
     id: 4,

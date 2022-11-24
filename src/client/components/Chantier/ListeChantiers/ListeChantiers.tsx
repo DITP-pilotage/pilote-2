@@ -5,11 +5,10 @@ import meteo2 from '/public/img/meteo-2-atteignable.svg';
 import meteo3 from '/public/img/meteo-3-appui-necessaire.svg';
 import meteo4 from '/public/img/meteo-4-compromis.svg';
 import { createColumnHelper } from '@tanstack/react-table';
-import { Chantier } from '../Chantier.interface';
-import { chantiers } from './donnéesChantiers';
+import ListeChantiersProps from './ListeChantiers.interface';
 
-export function recupererPictoMeteoAPartirDeLaValeur(meteoValeur: number) {
-  switch (meteoValeur) {
+export function mettreEnFormeLaMétéo(valeur: number | null) {
+  switch (valeur) {
     case 1: {
       return (
         <Image
@@ -42,6 +41,13 @@ export function recupererPictoMeteoAPartirDeLaValeur(meteoValeur: number) {
         />
       );
     }
+    default: {
+      return (
+        <span>
+          Non renseigné
+        </span>
+      );
+    }
   }
 }
         
@@ -62,8 +68,8 @@ export function afficherBarreDeProgression(avancement: number) {
   );
 }
 
-const columnHelper = createColumnHelper<Chantier>();
-  
+const columnHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
+
 const colonnes = [
   columnHelper.accessor('id', {
     header: '#',
@@ -75,19 +81,30 @@ const colonnes = [
   }),
   columnHelper.accessor('meteo', {
     header: 'Météo',
-    cell: meteo => recupererPictoMeteoAPartirDeLaValeur(meteo.getValue()),
+    cell: météo => {
+      mettreEnFormeLaMétéo(météo.getValue());
+    },
     enableGlobalFilter: false,
   }),
   columnHelper.accessor('avancement', {
     header: 'Avancement',
-    cell: avancement => afficherBarreDeProgression(avancement.getValue()),
+    cell: avancement => {
+      const avancementValeur = avancement.getValue();
+      return avancementValeur
+        ? afficherBarreDeProgression(avancementValeur)
+        : (
+          <span>
+            Non renseigné
+          </span>
+        );
+    },
     enableGlobalFilter: false,
   }),
 ];
 
-export default function ListeChantiers() {
+export default function ListeChantiers({ chantiers }: ListeChantiersProps) {
   return (
-    <Tableau<Chantier>
+    <Tableau<typeof chantiers[number]>
       colonnes={colonnes}
       donnees={chantiers}
       entités="chantiers"

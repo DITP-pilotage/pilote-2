@@ -7,6 +7,6 @@ export interface Chantier {
   nomAncienneReformePrioritaire: string;
   trigramme: string;
   precedentMinistereResponsable: string;
-  meteo: number;
-  avancement: number;
+  meteo: number | null;
+  avancement: number | null;
 }
