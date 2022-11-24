@@ -11,9 +11,9 @@ datasource db {
 }
 
 model chantier_prioritaire {
-  id        String @id
-  nom       String
-  axe       String
-  ppg       String
-  porteur   String
+  id      String @id
+  nom     String
+  axe     String?
+  ppg     String?
+  porteur String?
 }
