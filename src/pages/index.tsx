@@ -1,6 +1,5 @@
 import Home from 'client/pages/Home/Home';
 import HomeProps from 'client/pages/Home/Home.interface';
-import getHomePageProps from 'server/pages/home/home';
 
 export default function HomePage({ user }: HomeProps) {
   return (
@@ -9,5 +8,12 @@ export default function HomePage({ user }: HomeProps) {
 }
 
 export async function getServerSideProps() {
-  return getHomePageProps();
+  return {
+    props: {
+      user: {
+        firstname: 'Jean',
+        lastname: 'Dupont',
+      },
+    },
+  };
 }

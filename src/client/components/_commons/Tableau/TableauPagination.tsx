@@ -13,11 +13,12 @@ function afficherListeDesPages(
       <button
         aria-current={numéroDePageCourante === i ? 'page' : undefined}
         className="fr-pagination__link"
+        key={`page-${i}`}
         onClick={() => { onPageChange(i); }}
         role="link"
         type="button"
       >
-        { i }
+        {i}
       </button>,
     );
   }
@@ -45,11 +46,11 @@ export default function TableauPagination<T>({ tableau }: TableauPaginationrProp
             Page précédente
           </button>
         </li>
-        { afficherListeDesPages(
+        {afficherListeDesPages(
           tableau.getState().pagination.pageIndex + 1,
           tableau.getPageCount(),
           (numeroPage) => { tableau.setPageIndex(numeroPage - 1); },
-        ) }
+        )}
         <li>
           <button
             className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
