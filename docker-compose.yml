@@ -6,7 +6,7 @@ services:
       - postgresql
     restart: always
     environment:
-      DATABASE_URL: postgresql://admin:admin-secret@postgresql:5432/postgresql
+      DATABASE_URL: postgresql://postgresql:secret@postgresql:5432/postgresql
     ports:
       - "3000:3000"
     volumes:

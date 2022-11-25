@@ -1,11 +1,14 @@
 ##
+# input-data
+pilote_data_jobs/input_data/*.csv
+
+##
 # dbt
-
 # Root config
-dbt/dbt_root/*.yml
-
+pilote_data_jobs/transformations/dbt_root/*.yml
 # Project artifacts
-dbt/ditp_ppg_dbt/target/
-dbt/ditp_ppg_dbt/dbt_packages/
-dbt/ditp_ppg_dbt/logs/
-dbt/ditp_ppg_dbt/dbt/logs
+pilote_data_jobs/transformations/ditp_ppg_dbt/target/
+pilote_data_jobs/logs/
+pilote_data_jobs/transformations/ditp_ppg_dbt/dbt_packages/
+pilote_data_jobs/transformations/ditp_ppg_dbt/logs/
+pilote_data_jobs/transformations/ditp_ppg_dbt/dbt/logs
