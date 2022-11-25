@@ -11,13 +11,3 @@ ditp_ppg_dbt:
       pass: secret
       dbname: postgresql
       schema: public
-
-    prod:
-      type: postgres
-      threads: [1 or more]
-      host: [host]
-      port: [port]
-      user: [prod_username]
-      pass: [prod_password]
-      dbname: [dbname]
-      schema: [prod_schema]

@@ -23,20 +23,13 @@ Aller dans le répertoire `data/pilote_data_jobs`.
 
 Récupérer le fichier `DITP_Liste_chantiers_perseverants-avec-trigramme.csv` et le placer dans le répertoire `data/pilote_data_jobs/input-data`.
 
-Pour que le pg copy puisse accéder aux données, on est passé par le volume monté sur le container pg comme ceci :
-
-``` bash
-cp input_data/DITP_Liste_chantiers_perseverants-avec-trigramme.csv ../../db/13/main
-```
-
-TODO: ne plus avoir besoin de cette étape de copie, en passant par `COPY xxx FROM STDIN ...` par exemple.
-
 #### Création de la table et import du csv
 
 Note : cette table est créée dans le schémas `raw_data`, pas le schémas par défaut `public`.
 
 ``` bash
-psql "postgres://postgresql:secret@localhost:5432/postgresql" <import/import-chantier.sql
+psql "postgres://postgresql:secret@localhost:5432/postgresql" < import/reset.sql
+psql "postgres://postgresql:secret@localhost:5432/postgresql" -c "copy raw_data.ditp_liste_chantiers_perseverants_avec_trigramme from STDIN with csv delimiter ',' header;" < input_data/DITP_Liste_chantiers_perseverants-avec-trigramme.csv 
 ```
 
 Exemple pour explorer ce qu'il y a dans le schémas `raw_data` :
@@ -72,6 +65,8 @@ Créer le fichier `dbt_root/profiles.yml` sur le modèle du fichier `dbt_root/pr
 
 Avec les confs ci-dessus, on peut lancer des commandes dbt à partir de l'image docker depuis le répertoire de ce README.md :
 
+Pour tester la connexion à DBT lancer la commande "debug": 
+
 ``` bash
 docker run -it --rm \
       --network=host \
@@ -79,6 +74,17 @@ docker run -it --rm \
       --mount type=bind,source=$(pwd)/transformations/dbt_root,target=/root/.dbt/ \
       ghcr.io/dbt-labs/dbt-postgres:1.3.1 \
       debug
+```
+
+Pour executer la transformation finale lancer la commande "run":
+
+``` bash
+docker run -it --rm \
+      --network=host \
+      --mount type=bind,source=$(pwd)/transformations/ditp_ppg_dbt,target=/usr/app \
+      --mount type=bind,source=$(pwd)/transformations/dbt_root,target=/root/.dbt/ \
+      ghcr.io/dbt-labs/dbt-postgres:1.3.1 \
+      run
 ```
 
 ## Références
