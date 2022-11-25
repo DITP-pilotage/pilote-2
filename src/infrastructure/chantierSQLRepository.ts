@@ -1,13 +1,13 @@
-import { PrismaClient } from '@prisma/client'
+import { chantier_prioritaire, PrismaClient } from '@prisma/client';
 
 type Id = string;
 
 export interface Chantier {
   id: Id;
   nom: string;
-  axe: string;
-  ppg: string;
-  porteur: string;
+  axe: string | null;
+  ppg: string | null;
+  porteur: string | null;
 }
 
 export interface ChantierRepository {
@@ -28,9 +28,24 @@ export class ChantierSQLRepository implements ChantierRepository {
     });
   }
 
-  getById(id: Id): Promise<Chantier> {
-    return this.prisma.chantier_prioritaire.findUnique({
+  async getById(id: Id): Promise<Chantier> {
+    const chantierPrisma = await this.prisma.chantier_prioritaire.findUnique({
       where: { id },
     });
+
+    if (chantierPrisma === null)
+      throw new Error('TODO');
+
+    return this.mapToDomain(chantierPrisma);
+  }
+
+  private mapToDomain(chantierPrisma: chantier_prioritaire): Chantier {
+    return {
+      id: chantierPrisma.id,
+      nom: chantierPrisma.nom,
+      axe: chantierPrisma.axe,
+      ppg: chantierPrisma.ppg,
+      porteur: chantierPrisma.porteur,
+    };
   }
 }

@@ -18,7 +18,7 @@ beforeEach(async () => {
   }
 });
 
-describe('ChanterSQLRepository', function () {
+describe('ChanterSQLRepository', () => {
   test('Accède aux chantiers persévérants', async () => {
     // GIVEN
     const prisma = new PrismaClient();
