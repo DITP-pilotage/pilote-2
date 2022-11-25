@@ -4,11 +4,15 @@ type Id = string;
 
 export interface Chantier {
   id: Id;
+  nom: string;
+  axe: string;
+  ppg: string;
   porteur: string;
 }
 
 export interface ChantierRepository {
   getById(id: Id): Promise<Chantier>;
+  add(chantier: Chantier): Promise<any>;
 }
 
 export class ChantierSQLRepository implements ChantierRepository {
@@ -16,6 +20,12 @@ export class ChantierSQLRepository implements ChantierRepository {
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
+  }
+
+  async add(chantier: Chantier) {
+    await this.prisma.chantier_prioritaire.create({
+      data: chantier,
+    });
   }
 
   getById(id: Id): Promise<Chantier> {
