@@ -14,10 +14,10 @@
     "test": "jest src",
     "test:unit": "jest src/.*.unit.test.*",
     "test:integration:init": "dotenv -e .env.test prisma migrate reset",
-    "test:integration": "dotenv -e .env.test -- jest src/.*.integration.test.*",
+    "test:integration": "dotenv -e .env.test -- jest --config=jest.integration.config.js src/.*.integration.test.*",
     "test:dev": "jest --watch src",
     "test:dev:unit": "jest --watch src/.*.unit.test.*",
-    "test:dev:integration": "dotenv -e .env.test -- jest --watch src/.*.integration.test.*"
+    "test:dev:integration": "npm run test:integration -- --watch"
   },
   "browserslist": {
     "production": [
