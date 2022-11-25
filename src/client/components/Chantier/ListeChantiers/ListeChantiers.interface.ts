@@ -1,5 +1,5 @@
-import { ChantierDeLaPageChantiers } from '../PageChantiers/PageChantiers.interface';
+import { Chantier } from 'server/domain/chantier/chantier.interface';
 
 export default interface ListeChantiersProps {
-  chantiers: Pick<ChantierDeLaPageChantiers, 'id' | 'nom' | 'meteo' | 'avancement'>[]
+  chantiers: Chantier[]
 }

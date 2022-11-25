@@ -50,9 +50,18 @@ export function mettreEnFormeLaMétéo(valeur: number | null) {
     }
   }
 }
-        
-export function afficherBarreDeProgression(avancement: number) {
-  const pourcentageAvancement = avancement * 100;
+
+export function afficherBarreDeProgression(valeur: number | null) {
+  if (valeur === null) {
+    return (
+      <span>
+        Non renseigné
+      </span>
+    );
+  }
+
+  const pourcentageAvancement = valeur * 100;
+
   return (
     <>
       {pourcentageAvancement.toFixed(0)}
@@ -72,8 +81,8 @@ const columnHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]
 
 const colonnes = [
   columnHelper.accessor('id', {
-    header: '#',
-    cell: id => '#' + id.getValue(),
+    header: 'Identifiant',
+    cell: id => id.getValue(),
   }),
   columnHelper.accessor('nom', {
     header: 'Nom du chantier',
@@ -81,23 +90,12 @@ const colonnes = [
   }),
   columnHelper.accessor('meteo', {
     header: 'Météo',
-    cell: météo => {
-      mettreEnFormeLaMétéo(météo.getValue());
-    },
+    cell: météo => mettreEnFormeLaMétéo(null),
     enableGlobalFilter: false,
   }),
   columnHelper.accessor('avancement', {
     header: 'Avancement',
-    cell: avancement => {
-      const avancementValeur = avancement.getValue();
-      return avancementValeur
-        ? afficherBarreDeProgression(avancementValeur)
-        : (
-          <span>
-            Non renseigné
-          </span>
-        );
-    },
+    cell: avancement => afficherBarreDeProgression(null),
     enableGlobalFilter: false,
   }),
 ];

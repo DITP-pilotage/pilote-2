@@ -1,38 +1,19 @@
 import PageChantiers from 'client/components/Chantier/PageChantiers/PageChantiers';
-import useChantierStore from 'client/stores/useChantierStore/useChantierStore';
-import { chantiers as fakeChantiers } from '../client/components/Chantier/FakeChantiers/FakeChantiers';
+import { Chantier } from 'server/domain/chantier/chantier.interface';
+import getListeChantiers from 'server/usecases/getListeChantiers';
 
 interface NextPageChantiersProps {
-  chantiers: Chantiers
+  chantiers: Chantier[]
 }
 
-type Chantiers = Record<string, { meteo: number | null, avancement: number | null }>;
-
 function NextPageChantiers({ chantiers }: NextPageChantiersProps) {
-  const chantiersStore = useChantierStore(state => state.chantiers);
-
-  const chantiersConsolidés = chantiersStore.map(chantier => (
-    {
-      id: chantier.id,
-      nom: chantier.nom,
-      ...chantiers[chantier.id],
-    }
-  ));
-
   return (
-    <PageChantiers chantiers={chantiersConsolidés} />
+    <PageChantiers chantiers={chantiers} />
   );
 }
 
 export const getServerSideProps = async () => {
-  let chantiers: Chantiers = {};
-
-  fakeChantiers.forEach(chantier => {
-    chantiers[chantier.id] = {
-      meteo: chantier.meteo || null,
-      avancement: chantier.avancement || null,
-    };
-  });
+  const chantiers = await getListeChantiers();
 
   return {
     props: {

@@ -1,10 +1,5 @@
-export default interface PageChantiersProps {
-  chantiers: ChantierDeLaPageChantiers[]
-}
+import { Chantier } from 'server/domain/chantier/chantier.interface';
 
-export type ChantierDeLaPageChantiers = {
-  id: number,
-  nom: string,
-  meteo: number | null,
-  avancement: number | null,
-};
+export default interface PageChantiersProps {
+  chantiers: Chantier[]
+}
