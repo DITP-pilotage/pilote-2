@@ -1,15 +1,15 @@
 table.tableau {
-    margin-bottom: 2rem;
-    display: table;
+  display: table;
+  margin-bottom: 2rem;
 }
 
 .container {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
 }
 
 .container > div {
-    min-width: 25rem;
-    max-width: 100%;
+  min-width: 25rem;
+  max-width: 100%;
 }

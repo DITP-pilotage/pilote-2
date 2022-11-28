@@ -88,16 +88,6 @@ const colonnes = [
     header: 'Nom du chantier',
     cell: nomChantier => nomChantier.getValue(),
   }),
-  columnHelper.accessor('meteo', {
-    header: 'Météo',
-    cell: météo => mettreEnFormeLaMétéo(null),
-    enableGlobalFilter: false,
-  }),
-  columnHelper.accessor('avancement', {
-    header: 'Avancement',
-    cell: avancement => afficherBarreDeProgression(null),
-    enableGlobalFilter: false,
-  }),
 ];
 
 export default function ListeChantiers({ chantiers }: ListeChantiersProps) {

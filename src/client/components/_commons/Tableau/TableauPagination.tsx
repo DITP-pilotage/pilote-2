@@ -14,7 +14,8 @@ function afficherListeDesPages(
         aria-current={numéroDePageCourante === i ? 'page' : undefined}
         className="fr-pagination__link"
         key={`page-${i}`}
-        onClick={() => { onPageChange(i); }}
+        // eslint-disable-next-line react/jsx-no-bind
+        onClick={() => onPageChange(i)}
         role="link"
         type="button"
       >
@@ -46,11 +47,13 @@ export default function TableauPagination<T>({ tableau }: TableauPaginationrProp
             Page précédente
           </button>
         </li>
-        {afficherListeDesPages(
-          tableau.getState().pagination.pageIndex + 1,
-          tableau.getPageCount(),
-          (numeroPage) => { tableau.setPageIndex(numeroPage - 1); },
-        )}
+        {
+          afficherListeDesPages(
+            tableau.getState().pagination.pageIndex + 1,
+            tableau.getPageCount(),
+            (numeroPage) => { tableau.setPageIndex(numeroPage - 1); },
+          )
+        }
         <li>
           <button
             className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
