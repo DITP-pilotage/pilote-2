@@ -9,9 +9,9 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import TableauHeader from './TableauHeader';
-import TableauBody from './TableauBody';
-import TableauPagination from './TableauPagination';
+import TableauHeader from './TableauHeader/TableauHeader';
+import TableauBody from './TableauBody/TableauBody';
+import Pagination from '../Pagination/Pagination';
 import BarreDeRecherche from '../BarreDeRecherche/BarreDeRecherche';
 import styles from './Tableau.module.scss';
 
@@ -41,8 +41,10 @@ export default function Tableau<T extends object>({ colonnes, donnees, titre, en
     setGlobalFilter(event.target.value);
   }, [setGlobalFilter]);
 
+  const changementDePageCallback = useCallback((numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1), [tableau]);
+
   useEffect(() => {
-    tableau.setPageSize(20);
+    tableau.setPageSize(10);
   }, [tableau]);
 
   return (
@@ -63,7 +65,11 @@ export default function Tableau<T extends object>({ colonnes, donnees, titre, en
         <TableauHeader<T> tableau={tableau} />
         <TableauBody<T> tableau={tableau} />
       </table>
-      <TableauPagination tableau={tableau} />
+      <Pagination
+        changementDePageCallback={changementDePageCallback}
+        nombreDePages={tableau.getPageCount()}
+        numéroDePageInitiale={1}
+      />
     </div>
   );
 }
