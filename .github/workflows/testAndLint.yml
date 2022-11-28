@@ -39,7 +39,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Run test command
-        run: npm run test
+        run: npm run test:ci
 
   lint:
     name: Run linters for code
