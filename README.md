@@ -27,8 +27,77 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Lancer les tests automatisés
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Les tests automatisés sont séparés en tests du code client, et tests du code
+serveur.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Tests automatisés client
+
+Pour lancer les tests automatisés unitaires et d'intégration du client :
+
+```bash
+npm run test:client
+```
+
+Note : pour lancer les tests en mode watch, vous pouvez ajouter cette option à la tâche npm :
+
+```bash
+npm run test:client -- --watch
+```
+
+### Tests automatisés serveur
+
+#### Tests unitaires
+
+Pour lancer les tests unitaires du serveur :
+
+```bash
+npm run test:server:unit
+```
+
+#### Tests d'intégration
+
+Lancer les tests d'intégration du serveur nécessite une préparation initiale, car une partie de ces tests nécessitent une base de donnée de tests pour s'exécuter.
+
+La documentation ci-dessous part du principe que vous utilisez Docker pour
+avoir une base de donnée de test. Vous pouvez également utiliser votre propre
+base Postgres locale par exemple, demandez à l'équipe si vous avez besoin
+d'aide pour la configuration.
+
+Prérequis : avoir installé Docker et Docker Compose sur sa machine.
+
+Copier le fichier `.env.example` avec le nom `.env.test`, et entrez cette
+valeur pour la variable d'environnement `DATABASE_URL` :
+
+```env
+DATABASE_URL="postgresql://postgresql:secret@localhost:5432/postgresql_test"
+```
+
+Note : ce fichier .env.test ne sera pas versionné, et sera trouvé
+automatiquement par Jest pour lancer les tests.
+
+Démarrer votre service postgres avec Docker Compose :
+
+```bash
+docker-compose up -d postgresql
+```
+
+Initialisez votre base de tests  :
+
+```bash
+npx dotenv -e .env.test -- npm run test:database:init
+```
+
+Note : on utilise dotenv pour faire pointer vers la configuration de test.
+
+Votre base de donnée de test tourne et a la bonne structure, vous pouvez
+maintenant lancer les tests d'intégration du serveur :
+
+```bash
+npm run test:server:integration
+```
+
+Avertissement : si vous n'avez pas de fichier`.env.test` et que vous avez un
+fichier `.env`, Jest va le trouver et lancer les tests sur votre base locale de
+run ⚠️
