@@ -8,14 +8,11 @@ L'évolution de ces flux se fera au fur et à mesure de la création de l'applic
 
 ``` mermaid
 graph LR
-SFTP(Chargement initial) --> PG(Base PG Pilote 2)
+SFTP(Chargement initial) --> PG[(Base PG Pilote 2)]
 PM(PPG_metadata) --> PG
 RB(referentiel-builder) --> PG
 PG --> BE(Back-end) --> FE(Front-end)
 
-subgraph datawarehouse
-    PG
-end
 ```
 
 ## Zoom sur la partie ingestion de données 
@@ -26,10 +23,7 @@ A terme nous devons pouvoir charger les données du serveur SFTP.
 
 ``` mermaid
 graph LR
-SFTP(Chargement initial) --> |chantier_perseverant.csv| PG(Base PG Pilote 2)
-subgraph datawarehouse
-    PG
-end
+SFTP(Chargement initial) --> |chantier_perseverant.csv| PG[(Base PG Pilote 2)]
 ```
 
 Légende : 
@@ -42,10 +36,7 @@ Pour le moment aucun pipeline de données n'a été implémentée. On peut imagi
 
 ``` mermaid
 graph LR
-PM(PPG_metadata) --> PG(Base PG Pilote 2)
-subgraph datawarehouse
-    PG
-end
+PM(PPG_metadata) --> PG[(Base PG Pilote 2)]
 ```
 
 ### Referentiel-builder vers Datawarehouse
@@ -54,22 +45,35 @@ Pour le moment aucun pipeline de données n'a été implémentée. On peut imagi
 
 ``` mermaid
 graph LR
-RB(referentiel-builder) --> PG(Base PG Pilote 2)
-subgraph datawarehouse
-    PG
-end
+RB(referentiel-builder) --> PG[(Base PG Pilote 2)]
 ```
 
 
 ## Zoom sur la partie transformation de données
 
 Dans cette brique datawarehouse, deux schémas de données se distinguent : 
-- Les données brutes ou `raw_data`.
-- Les données transformées et agrégées ou `ready_to_use_data`.
+- Les données brutes ou `raw_data` qui sont situées dans le schéma `raw_data`. 
+- Les données transformées et agrégées ou `ready_to_use_data` qui sont situées dans le schéma `public`.
 
 Il faudrait également mener une réflexion sur la pertinence d'avoir un schéma de données pour les données nettoyées et 
 pré-processées.
 
-### Brique SFTP vers Datawarehouse
+``` mermaid
+graph LR
+subgraph Base PG Pilote 2
+    RD{{raw_data}} --> |chantier| J((J))
+    RD --> |perimetre_ministeriel| J
+    J --> |chantier_enrichi| PU{{public}}
+end
+
+subgraph Légende
+    SCH{{schéma}}
+    JOIN((Jointure))
+end
+```
+
+NB: Ce schéma n'est pas encore implémenté mais cela permet de poser des conventions de documentation des flux de données à l'intérieur de la base Pilote 2.
+
 
 ## Zoom sur la partie exposition de données
+
