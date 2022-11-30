@@ -1,6 +1,6 @@
 # Schéma des flux de données
 
-Ce document souhaite poser les bades des flux de données alimentant l'application [Pilote 2](). @Fabien ajouter lien vers l'app
+Ce document souhaite poser les bases des flux de données alimentant l'application [Pilote 2](). @Fabien ajouter lien vers l'app
 
 L'évolution de ces flux se fera au fur et à mesure de la création de l'application Pilote 2.
 
@@ -53,7 +53,7 @@ RB(referentiel-builder) --> PG[(Base PG Pilote 2)]
 
 Dans cette brique datawarehouse, deux schémas de données se distinguent : 
 - Les données brutes ou `raw_data` qui sont situées dans le schéma `raw_data`. 
-- Les données transformées et agrégées ou `ready_to_use_data` qui sont situées dans le schéma `public`.
+- Les données transformées et agrégées ou 'ready to use data' qui sont situées dans le schéma `public`.
 
 Il faudrait également mener une réflexion sur la pertinence d'avoir un schéma de données pour les données nettoyées et 
 pré-processées.
@@ -63,7 +63,7 @@ graph LR
 subgraph Base PG Pilote 2
     RD{{raw_data}} --> |chantier| J((J))
     RD --> |perimetre_ministeriel| J
-    J --> |chantier_enrichi| PU{{public}}
+    J --> |chantier| PU{{public}}
 end
 
 subgraph Légende
@@ -73,7 +73,3 @@ end
 ```
 
 NB: Ce schéma n'est pas encore implémenté mais cela permet de poser des conventions de documentation des flux de données à l'intérieur de la base Pilote 2.
-
-
-## Zoom sur la partie exposition de données
-
