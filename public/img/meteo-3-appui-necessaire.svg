@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="70px" height="70px" viewBox="0 0 70 70" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>CC207AF2-3FEF-4C3F-87FE-D3586F1CF8C7@3x</title>
+    <defs>
+        <filter x="-50.0%" y="-42.3%" width="200.0%" height="184.7%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="8" in="SourceAlpha" result="shadowOffsetOuter1"/>
+            <feGaussianBlur stdDeviation="8" in="shadowOffsetOuter1" result="shadowBlurOuter1"/>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.1 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"/>
+            <feMorphology radius="8" operator="erode" in="SourceAlpha" result="shadowSpreadOuter2"/>
+            <feOffset dx="0" dy="8" in="shadowSpreadOuter2" result="shadowOffsetOuter2"/>
+            <feGaussianBlur stdDeviation="8" in="shadowOffsetOuter2" result="shadowBlurOuter2"/>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.32 0" type="matrix" in="shadowBlurOuter2" result="shadowMatrixOuter2"/>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"/>
+                <feMergeNode in="shadowMatrixOuter2"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Home" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="DITP_Home-Nationale" transform="translate(-1120.000000, -423.000000)">
+            <rect x="0" y="0" width="1440" height="2034"/>
+            <g id="Icon/cloud" transform="translate(1075.000000, 312.000000)">
+                <g transform="translate(45.000000, 111.000000)" fill-rule="nonzero" id="011-cloudy">
+                    <g transform="translate(0.000000, 7.000000)">
+                        <path d="M56.6993872,17.0409314 C55.8166083,17.0409314 54.9355973,17.1287378 54.0704977,17.3037615 C53.4181372,14.0478516 51.3090147,11.2704573 48.3477572,9.76714043 C45.3870891,8.26382345 41.9001717,8.20076778 38.8864662,9.59565265 C36.1591629,2.08319306 27.8582132,-1.79561224 20.3457536,0.931691099 C12.833294,3.65899444 8.95448886,11.9605334 11.6817922,19.4724037 C5.10102371,19.6804283 -0.0972352802,25.1273741 0.00117860991,31.7104997 C0.100181767,38.2942148 5.45991039,43.5820481 12.0442148,43.5926555 L56.6993872,43.5926555 C64.0309301,43.5926555 69.9752493,37.6489258 69.9752493,30.3167935 C69.9752493,22.9846613 64.0309301,17.0409314 56.6993872,17.0409314 Z" id="Path" fill="#60A2D7"/>
+                        <path d="M56.6993872,29.1098969 C55.8166083,29.1098969 54.9355973,29.1977033 54.0704977,29.372727 C53.4181372,26.1168172 51.3090147,23.3394228 48.3477572,21.8361059 C45.3870891,20.332789 41.9001717,20.2697333 38.8864662,21.6646182 C36.1591629,14.1521586 27.8582132,10.2733533 20.3457536,13.0006566 C12.833294,15.72796 8.95448886,24.0294989 11.6817922,31.5413692 C5.10102371,31.7493939 -0.0972352802,37.1963396 0.00117860991,43.7794652 C0.100181767,50.3631803 5.45991039,55.6510136 12.0442148,55.6616211 L56.6993872,55.6616211 C64.0309301,55.6616211 69.9752493,49.7178913 69.9752493,42.385759 C69.9752493,35.0536268 64.0309301,29.1098969 56.6993872,29.1098969 Z" id="Path" fill="#A3D4F7"/>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

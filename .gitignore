@@ -35,3 +35,6 @@ yarn-error.log*
 *.tsbuildinfo
 
 /db/
+.env
+.env.test
+.idea/

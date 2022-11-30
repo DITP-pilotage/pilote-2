@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="70px" height="70px" viewBox="0 0 70 70" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>6AD36D8C-C76A-4B10-8272-3183C57CB58D@3x</title>
+    <defs>
+        <filter x="-50.0%" y="-42.3%" width="200.0%" height="184.7%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="8" in="SourceAlpha" result="shadowOffsetOuter1"/>
+            <feGaussianBlur stdDeviation="8" in="shadowOffsetOuter1" result="shadowBlurOuter1"/>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.1 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"/>
+            <feMorphology radius="8" operator="erode" in="SourceAlpha" result="shadowSpreadOuter2"/>
+            <feOffset dx="0" dy="8" in="shadowSpreadOuter2" result="shadowOffsetOuter2"/>
+            <feGaussianBlur stdDeviation="8" in="shadowOffsetOuter2" result="shadowBlurOuter2"/>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.32 0" type="matrix" in="shadowBlurOuter2" result="shadowMatrixOuter2"/>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"/>
+                <feMergeNode in="shadowMatrixOuter2"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Home" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="DITP_Home-Nationale" transform="translate(-1290.000000, -425.000000)">
+            <rect x="0" y="0" width="1440" height="2034"/>
+            <g id="035-storm" transform="translate(1245.000000, 312.000000)">
+                <g id="Icon/storm" transform="translate(45.000000, 113.000000)" fill-rule="nonzero">
+                    <g id="013-storm-2" transform="translate(0.000000, 7.000000)">
+                        <path d="M55.4924906,43.593245 L56.6993872,43.593245 C61.7591595,43.5938342 66.3793103,40.718026 68.6127762,36.1774314 C70.8462419,31.637426 70.3046706,26.2223026 67.2167127,22.2144397 C64.1281654,18.2059874 59.0300882,16.3019431 54.0704977,17.3043508 C53.4181372,14.0484409 51.3090147,11.2710467 48.3477572,9.7677297 C45.3870891,8.26441272 41.9001717,8.20135705 38.8864662,9.59624192 C36.1591629,2.08378233 27.8582132,-1.79502297 20.3457536,0.932280517 C12.833294,3.66017312 8.95448886,11.9611227 11.6817922,19.4735823 C5.10102371,19.6810176 -0.0972352802,25.1279634 0.00117860991,31.7110891 C0.100181767,38.2948041 5.45991039,43.5826374 12.0442148,43.593245" id="Path" fill="#A3D4F7"/>
+                        <polygon id="Path" fill="#FFA754" points="31.6330742 34.6622105 24.453587 34.6622105 20.8638434 45.4314412 28.9407665 45.4314412 26.4062112 57.9955438 37.0176896 41.8416977 29.8382024 41.8416977"/>
+                        <polygon id="Path" fill="#FFA754" points="51.8253819 41.6622105 46.7997409 41.6622105 44.2869204 49.200672 49.9407665 49.200672 48.1665778 57.9955438 55.5946127 46.6878515 50.5689716 46.6878515"/>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
