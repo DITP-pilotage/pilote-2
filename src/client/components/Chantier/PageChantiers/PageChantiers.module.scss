@@ -1,12 +1,14 @@
-.bloc div{
-    border: 1px solid black;
-    width: 100%;
-}
+@import '../../variables.scss';
 
-.conteneur{
+.conteneur {
     height: 29em;
 }
 
-.conteneur > div{
+.conteneur > div {
     height: calc(100% /3);
+}
+
+.bordure {
+    border: 1px solid $bleu;
+    border-radius: 5px;
 }
