@@ -1,4 +1,4 @@
-.barre-laterale {
+.barreLatérale {
   position: sticky;
   top: 0;
   width: 25rem;
@@ -8,7 +8,7 @@
 }
 
 @media screen and (max-width: 992px) {
-  .barre-laterale {
+  .barreLatérale {
     position: fixed;
     left: 0;
     z-index: 501;
@@ -17,7 +17,7 @@
     transform: translateX(-21.875rem);
   }
 
-  .barre-est-ouverte {
+  .barreEstOuverte {
     transition: 500ms;
     transform: translateX(0);
   }

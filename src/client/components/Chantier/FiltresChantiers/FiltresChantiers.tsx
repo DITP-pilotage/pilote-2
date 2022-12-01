@@ -1,17 +1,13 @@
 import FiltreGroupe from './FiltresGroupe/FiltresGroupe';
 import SélecteurMultiple from './SélecteurMultiple/SélecteurMultiple';
+import FiltresChantiersProps from './FiltresChantiers.interface';
 import styles from './FiltresChantiers.module.scss';
-
-interface FiltresChantiersProps {
-  estOuvert: boolean,
-  setEstOuvert: (state: boolean) => void,
-}
 
 export default function FiltresChantiers({ estOuvert, setEstOuvert }: FiltresChantiersProps) {
 
   return (
-    <div className={`${styles['barre-laterale']} ${estOuvert ? styles['barre-est-ouverte'] : ''}`}>
-      <div className="flex justify-between">
+    <div className={`${styles.barreLatérale} ${estOuvert ? styles.barreEstOuverte : ''}`}>
+      <div className="flex justifyBetween">
         <p className="uppercase bold fr-text--lg fr-mb-0 fr-pt-3w fr-px-3w">
           Filtrer les chantiers
         </p>

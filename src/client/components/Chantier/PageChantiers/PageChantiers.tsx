@@ -21,7 +21,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
       <div className={styles.contenuPrincipal}>
         <div className='fr-container fr-mt-4w'>
           <button
-            className="fr-sr-only-lg fr-btn fr-btn--secondary fr-m-2w"
+            className="fr-sr-only-lg fr-btn fr-btn--secondary fr-mb-2w"
             onClick={() => setEstOuverteBarreFiltres(true)}
             title="Ouvrir les filtres"
             type="button"
