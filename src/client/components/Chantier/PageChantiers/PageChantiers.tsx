@@ -13,15 +13,12 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
       <div className={styles.bloc}>
         <Title
           as='h1'
-          look="fr-hidden"
-        >
-          Page des chantiers
-        </Title>
-        <Title as='h2'> 
+          look='fr-h4'
+        > 
           62 chantiers dans les résultats
         </Title>
         <div className="fr-grid-row fr-grid-row--gutters">
-          <div className={styles.bordure + ' fr-col-12 fr-col-lg-6 fr-p-1w'}>
+          <div className=' fr-col-12 fr-col-lg-6'>
             <RépartitionGéographique />
           </div>
           <div className={styles.conteneur + ' fr-col-12 fr-col-lg-6'}>
