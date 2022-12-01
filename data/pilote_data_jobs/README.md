@@ -27,8 +27,9 @@ Récupérer le fichier `DITP_Liste_chantiers_perseverants-avec-trigramme.csv` et
 
 Note : cette table est créée dans le schémas `raw_data`, pas le schémas par défaut `public`.
 
+# TODO
 ``` bash
-psql "postgres://postgresql:secret@localhost:5432/postgresql" < import/reset.sql
+psql "postgres://postgresql:secret@localhost:5432/postgresql" < import/wxcvbn
 psql "postgres://postgresql:secret@localhost:5432/postgresql" -c "copy raw_data.ditp_liste_chantiers_perseverants_avec_trigramme from STDIN with csv delimiter ',' header;" < ../input_data/DITP_Liste_chantiers_perseverants-avec-trigramme.csv
 ```
 
@@ -65,7 +66,7 @@ Créer le fichier `dbt_root/profiles.yml` sur le modèle du fichier `dbt_root/pr
 
 Avec les confs ci-dessus, on peut lancer des commandes dbt à partir de l'image docker depuis le répertoire de ce README.md :
 
-Pour tester la connexion à DBT lancer la commande "debug": 
+Pour tester la connexion à DBT lancer la commande "debug":
 
 ``` bash
 docker run -it --rm \

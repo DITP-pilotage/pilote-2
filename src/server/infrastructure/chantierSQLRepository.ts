@@ -1,4 +1,4 @@
-import { chantier_prioritaire, PrismaClient } from '@prisma/client';
+import { chantier, PrismaClient } from '@prisma/client';
 import { Chantier } from 'server/domain/chantier/chantier.interface';
 import { ChantierRepository } from '../domain/chantier/chantierRepository.interface';
 
@@ -9,24 +9,22 @@ export class ChantierSQLRepository implements ChantierRepository {
     this.prisma = prisma;
   }
 
-  async add(chantier: Chantier) {
-    await this.prisma.chantier_prioritaire.create({
-      data: chantier,
+  async add(chantierToAdd: Chantier) {
+    await this.prisma.chantier.create({
+      data: chantierToAdd,
     });
   }
 
   async getListeChantiers() {
-    const chantiersPrisma = await this.prisma.chantier_prioritaire.findMany();
+    const chantiersPrisma = await this.prisma.chantier.findMany();
     return chantiersPrisma.map(chantierPrisma => this.mapToDomain(chantierPrisma));
   }
 
-  private mapToDomain(chantierPrisma: chantier_prioritaire): Chantier {
+  private mapToDomain(chantierPrisma: chantier): Chantier {
     return {
       id: chantierPrisma.id,
       nom: chantierPrisma.nom,
-      axe: chantierPrisma.axe,
-      ppg: chantierPrisma.ppg,
-      porteur: chantierPrisma.porteur,
+      id_perimetre: chantierPrisma.id_perimetre,
     };
   }
 }

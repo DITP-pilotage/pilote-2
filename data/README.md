@@ -23,6 +23,16 @@ data/input_data/
     └── views
 ```
 
+# Initialisation de la base de données
+
+Pré-requis : avoir configuré et initialisé votre base de données de Webapp comme précisé dans le README.md de la racine.
+
+Sur un poste de dev, depuis le répertoire data :
+
+```bash
+npx prisma migrate dev
+```
+
 # Schéma des flux de données
 
 Ce document souhaite poser les bases des flux de données alimentant l'application [Pilote 2](). @Fabien ajouter lien vers l'app
@@ -40,7 +50,7 @@ PG --> BE(Back-end) --> FE(Front-end)
 
 ```
 
-## Zoom sur la partie ingestion de données 
+## Zoom sur la partie ingestion de données
 ### Brique SFTP vers Datawarehouse
 
 Aujourd'hui, le chargement des données se fait manuellement une seule fois.
@@ -51,7 +61,7 @@ graph LR
 SFTP(Chargement initial) --> |chantier_perseverant.csv| PG[(Base PG Pilote 2)]
 ```
 
-Légende : 
+Légende :
 - Est appelé `Chargement initial` les données (ou .csv) issues du _SFTP_.
 - Est appelé `chantier_perseverant.csv` le fichier `DITP_Liste_chantiers_perseverants-avec-trigramme.csv`.
 
@@ -76,11 +86,11 @@ RB(referentiel-builder) --> PG[(Base PG Pilote 2)]
 
 ## Zoom sur la partie transformation de données
 
-Dans cette brique datawarehouse, deux schémas de données se distinguent : 
-- Les données brutes ou `raw_data` qui sont situées dans le schéma `raw_data`. 
+Dans cette brique datawarehouse, deux schémas de données se distinguent :
+- Les données brutes ou `raw_data` qui sont situées dans le schéma `raw_data`.
 - Les données transformées et agrégées ou 'ready to use data' qui sont situées dans le schéma `public`.
 
-Il faudrait également mener une réflexion sur la pertinence d'avoir un schéma de données pour les données nettoyées et 
+Il faudrait également mener une réflexion sur la pertinence d'avoir un schéma de données pour les données nettoyées et
 pré-processées.
 
 ``` mermaid

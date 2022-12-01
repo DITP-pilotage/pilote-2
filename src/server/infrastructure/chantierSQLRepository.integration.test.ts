@@ -8,8 +8,8 @@ describe('ChantierSQLRepository', () => {
     // GIVEN
     const prisma = new PrismaClient();
     const chantierRepository: ChantierRepository = new ChantierSQLRepository(prisma);
-    const chantierInitial: Chantier = { id: 'THD', nom: 'Chantier 1', axe: 'X', ppg: 'X', porteur: 'MEFSIN' };
-    const chantierInitial2: Chantier = { id: 'TUP', nom: 'Chantier 2', axe: 'Y', ppg: 'Y', porteur: 'BOUBOU' };
+    const chantierInitial: Chantier = { id: 'THD', nom: 'Chantier 1', id_perimetre: 'PER-001' };
+    const chantierInitial2: Chantier = { id: 'TUP', nom: 'Chantier 2', id_perimetre: 'PER-001' };
     await chantierRepository.add(chantierInitial);
     await chantierRepository.add(chantierInitial2);
 
