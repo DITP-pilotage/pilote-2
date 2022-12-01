@@ -41,6 +41,9 @@ export default function Header() {
                     PILOTE
                   </p>
                 </Link>
+                <p className="fr-header__service-tagline fr-hidden fr-unhidden-sm">
+                  Piloter les politiques publiques par leurs impacts
+                </p>
               </div>
             </div>
           </div>
