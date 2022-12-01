@@ -1,6 +1,7 @@
 ##
-# input-data
-pilote_data_jobs/input_data/*
+# PPG méta données
+input_data/*
+!input_data/.gitkeep
 
 ##
 # dbt

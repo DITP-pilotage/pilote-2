@@ -21,7 +21,7 @@ Aller dans le répertoire `data/pilote_data_jobs`.
 
 #### Préparation
 
-Récupérer le fichier `DITP_Liste_chantiers_perseverants-avec-trigramme.csv` et le placer dans le répertoire `data/pilote_data_jobs/input-data`.
+Récupérer le fichier `DITP_Liste_chantiers_perseverants-avec-trigramme.csv` et le placer dans le répertoire `data/input_data`.
 
 #### Création de la table et import du csv
 
@@ -29,7 +29,7 @@ Note : cette table est créée dans le schémas `raw_data`, pas le schémas par 
 
 ``` bash
 psql "postgres://postgresql:secret@localhost:5432/postgresql" < import/reset.sql
-psql "postgres://postgresql:secret@localhost:5432/postgresql" -c "copy raw_data.ditp_liste_chantiers_perseverants_avec_trigramme from STDIN with csv delimiter ',' header;" < input_data/DITP_Liste_chantiers_perseverants-avec-trigramme.csv 
+psql "postgres://postgresql:secret@localhost:5432/postgresql" -c "copy raw_data.ditp_liste_chantiers_perseverants_avec_trigramme from STDIN with csv delimiter ',' header;" < ../input_data/DITP_Liste_chantiers_perseverants-avec-trigramme.csv
 ```
 
 Exemple pour explorer ce qu'il y a dans le schémas `raw_data` :
