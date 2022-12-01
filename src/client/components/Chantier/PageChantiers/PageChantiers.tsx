@@ -13,7 +13,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
   const [estOuverteBarreFiltres, setEstOuverteBarreFiltres] = useState(false);
 
   return (
-    <div className={styles.contenuDePage}>
+    <div className="flex">
       <FiltresChantiers
         estOuvert={estOuverteBarreFiltres}
         setEstOuvert={setEstOuverteBarreFiltres}
@@ -21,9 +21,9 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
       <div className={styles.contenuPrincipal}>
         <div className='fr-container fr-mt-4w'>
           <button
-            aria-label="Ouvrir les filtres"
             className="fr-sr-only-lg fr-btn fr-btn--secondary fr-m-2w"
             onClick={() => setEstOuverteBarreFiltres(true)}
+            title="Ouvrir les filtres"
             type="button"
           >
             Filtres

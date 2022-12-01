@@ -10,7 +10,7 @@ interface FiltresChantiersProps {
 export default function FiltresChantiers({ estOuvert, setEstOuvert }: FiltresChantiersProps) {
 
   return (
-    <div className={`${styles.barreLatérale} ${estOuvert ? styles.barreEstOuverte : ''}`}>
+    <div className={`${styles['barre-laterale']} ${estOuvert ? styles['barre-est-ouverte'] : ''}`}>
       <div className="flex justify-between">
         <p className="uppercase bold fr-text--lg fr-mb-0 fr-pt-3w fr-px-3w">
           Filtrer les chantiers
