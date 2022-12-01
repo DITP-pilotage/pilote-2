@@ -1,0 +1,24 @@
+.barreLatérale {
+  position: sticky;
+  top: 0;
+  width: 25rem;
+  height: 100vh;
+  overflow-y: scroll;
+  background-color: var(--background-alt-raised-grey);
+}
+
+@media screen and (max-width: 992px) {
+  .barreLatérale {
+    position: fixed;
+    left: 0;
+    z-index: 501;
+    max-width: 21.875rem;
+    transition: 500ms;
+    transform: translateX(-21.875rem);
+  }
+
+  .barreEstOuverte {
+    transition: 500ms;
+    transform: translateX(0);
+  }
+}
