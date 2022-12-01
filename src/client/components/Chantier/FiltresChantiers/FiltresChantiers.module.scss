@@ -12,6 +12,13 @@
     position: fixed;
     left: 0;
     max-width: 21.875rem;
+    transform: translateX(-21.875rem);
+    transition: 500ms;
     z-index: 501;
+  }
+
+  .barreEstOuverte {
+    transform: translateX(0);
+    transition: 500ms;
   }
 }

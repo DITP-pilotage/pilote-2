@@ -20,6 +20,14 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
       />
       <div className={styles.contenuPrincipal}>
         <div className='fr-container fr-mt-4w'>
+          <button
+            aria-label="Ouvrir les filtres"
+            className="fr-sr-only-lg fr-btn fr-btn--secondary fr-m-2w"
+            onClick={() => setEstOuverteBarreFiltres(true)}
+            type="button"
+          >
+            Filtres
+          </button>
           <div className={styles.bloc}>
             <Title
               as='h1'
