@@ -32,6 +32,7 @@
     "unicorn/filename-case": "off",
     "unicorn/no-array-for-each": "off",
     "unicorn/no-null": "off",
+    "react/jsx-no-bind": "off",
     "react/jsx-no-literals": "off",
     "react/forbid-component-props": "off",
     "react/jsx-max-props-per-line": [
