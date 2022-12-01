@@ -4,7 +4,7 @@ export default function TauxAvancementMoyen() {
   return (
     <div className="fr-grid-row fr-p-1w">
       <Title
-        as='h3'
+        as='h2'
         look='fr-h6'
       >
         Taux d’avancement moyen de la sélection

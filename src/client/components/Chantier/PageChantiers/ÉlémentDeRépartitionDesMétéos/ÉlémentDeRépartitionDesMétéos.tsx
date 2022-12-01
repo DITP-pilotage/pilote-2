@@ -4,13 +4,13 @@ import styles from '../PageChantiers.module.scss';
 
 export default function ÉlémentDeRépartitionDesMétéos({ météo, nombreDeChantiers }: ÉlémentDeRépartitionDesMétéosProps) {
   return (
-    <div className={styles.bordure + ' fr-grid-row fr-mx-1w'}>
+    <div className={styles.bordure + ' fr-grid-row fr-mx-1w fr-grid-row--center fr-grid-row--middle fr-p-1w'}>
       <div className='fr-col-3'>
-        <span>
+        <span className={styles.nombreDeChantiers}>
           {nombreDeChantiers}
         </span>
       </div>
-      <div className='fr-col-9'>
+      <div className={styles.labelMétéo + ' fr-col-9'}>
         <span>
           {météo.label}
         </span>

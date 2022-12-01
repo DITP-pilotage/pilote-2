@@ -16,26 +16,26 @@ export default function RépartitionDesMétéos() {
   return (
     <>
       <Title
-        as='h3'
+        as='h2'
         look='fr-h6'
       >
         Répartition des météos de la sélection
       </Title>
-      <div className='fr-grid-row'>
+      <ul className='fr-grid-row'>
         {
           météos.map(météo => (
-            <div
-              className='fr-col-3'
+            <li
+              className='fr-col-6 fr-col-md-3'
               key={météo.label}
             >
               <ÉlémentDeRépartitionDesMétéos
                 météo={météo}
                 nombreDeChantiers={5}
               />
-            </div>
+            </li>
           ))
         }
-      </div>
+      </ul>
     </>
   );
 }
