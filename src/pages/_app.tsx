@@ -2,7 +2,7 @@
 import '@gouvfr/dsfr/dist/core/core.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css';
 import 'client/styles/app.scss';
-import Layout from 'client/components/_commons/Layout/Layout';
+import MiseEnPage from 'client/components/_commons/MiseEnPage/MiseEnPage';
 
 import type { AppProps } from 'next/app';
 import Script from 'next/script';
@@ -18,9 +18,9 @@ export default function MonApplication({ Component, pageProps }: AppProps) {
         noModule
         src="js/dsfr/dsfr.nomodule.min.js"
       />
-      <Layout>
+      <MiseEnPage>
         <Component {...pageProps} />
-      </Layout>
+      </MiseEnPage>
     </>
   );
 }

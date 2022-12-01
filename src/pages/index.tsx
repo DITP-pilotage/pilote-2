@@ -1,19 +1,23 @@
-import Home from 'client/pages/Home/Home';
-import HomeProps from 'client/pages/Home/Home.interface';
+import PageChantiers from 'client/components/Chantier/PageChantiers/PageChantiers';
+import { Chantier } from 'server/domain/chantier/chantier.interface';
+import getListeChantiers from 'server/usecases/getListeChantiers';
 
-export default function HomePage({ user }: HomeProps) {
+interface NextPageAccueilProps {
+  chantiers: Chantier[]
+}
+
+export default function NextPageAccueil({ chantiers }: NextPageAccueilProps) {
   return (
-    <Home user={user} />
+    <PageChantiers chantiers={chantiers} />
   );
 }
 
 export async function getServerSideProps() {
+  const chantiers = await getListeChantiers();
+
   return {
     props: {
-      user: {
-        firstname: 'Jean',
-        lastname: 'Dupont',
-      },
+      chantiers,
     },
   };
 }

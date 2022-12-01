@@ -1,12 +1,12 @@
-import Title from 'client/components/_commons/Title/Title';
+import Titre from 'client/components/_commons/Titre/Titre';
 
 export default function RépartitionTauxAvancement() {
   return (
-    <Title
-      as='h2'
-      look='fr-h6'
+    <Titre
+      apparence='fr-h6'
+      baliseHtml='h2'
     >
       Répartition des taux d’avancement de la sélection
-    </Title>
+    </Titre>
   );
 }
