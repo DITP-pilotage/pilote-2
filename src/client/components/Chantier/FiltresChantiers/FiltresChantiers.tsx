@@ -1,22 +1,18 @@
-import FiltreGroupe from './FiltresGroupe';
-import SélecteurMultiple from './SélecteurMultiple';
+import FiltreGroupe from './FiltresGroupe/FiltresGroupe';
+import SélecteurMultiple from './SélecteurMultiple/SélecteurMultiple';
 import styles from './FiltresChantiers.module.scss';
-import FiltreTitre from './FiltresTitre';
 
 export default function FiltresChantiers() {
   return (
-    <>
-      <FiltreTitre>
+    <div className={styles.barreLatérale}>
+      <p className="uppercase bold fr-text--lg fr-mb-0 fr-pt-3w fr-px-3w">
         Filtrer les chantiers
-      </FiltreTitre>
+      </p>
       <FiltreGroupe titre="Périmètres thématiques" >
-        <>
-          <SélecteurMultiple libellé='Périmètres ministériels' />
-          <SélecteurMultiple libellé='Axes' />
-          <SélecteurMultiple libellé='PPG' />
-        </>
+        <SélecteurMultiple libellé='Périmètres ministériels' />
+        <SélecteurMultiple libellé='Axes' />
+        <SélecteurMultiple libellé='PPG' />
       </FiltreGroupe>
-      <hr className={styles.séparateur} />
-    </>
+    </div>
   );
 }

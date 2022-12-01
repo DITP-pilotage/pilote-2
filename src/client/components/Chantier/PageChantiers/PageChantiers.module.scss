@@ -40,24 +40,6 @@
   display: flex;
 }
 
-.barreLaterale {
-  position: sticky;
-  top: 0;
-  width: 25rem;
-  height: 100vh;
-  overflow-y: scroll;
-  background-color: var(--background-alt-raised-grey);
-}
-
-@media screen and (max-width: 992px) {
-  .barreLaterale {
-    position: fixed;
-    left: 0;
-    z-index: 501;
-    max-width: 21.875rem;
-  }
-}
-
 .contenuPrincipal {
   flex: 1;
   height: 150vh; /* TODO à supprimer */

@@ -14,12 +14,10 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
 
   return (
     <div className={styles.contenuDePage}>
-      <div className={styles.barreLaterale}>
-        <FiltresChantiers
-          estOuvert={estOuverteBarreFiltres}
-          setEstOuvert={setEstOuverteBarreFiltres}
-        />
-      </div>
+      <FiltresChantiers
+        estOuvert={estOuverteBarreFiltres}
+        setEstOuvert={setEstOuverteBarreFiltres}
+      />
       <div className={styles.contenuPrincipal}>
         <div className='fr-container fr-mt-4w'>
           <div className={styles.bloc}>
