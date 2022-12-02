@@ -22,8 +22,9 @@ export default function FiltresChantiers({ estOuvert, setEstOuvert, périmètres
       </div>
       <FiltreGroupe titre="Périmètres thématiques" >
         <SélecteurMultiple
+          catégorieDeFiltre='périmètresMinistériels'
+          filtres={périmètresMinistériels}
           libellé='Périmètres ministériels'
-          périmètresMinistériels={périmètresMinistériels}
         />
       </FiltreGroupe>
     </div>
