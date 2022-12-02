@@ -9,13 +9,14 @@ import FiltresChantiers from '../FiltresChantiers/FiltresChantiers';
 import ListeChantiers from '../ListeChantiers/ListeChantiers';
 import { useState } from 'react';
 
-export default function PageChantiers({ chantiers }: PageChantiersProps) {
+export default function PageChantiers({ chantiers, périmètresMinistériels }: PageChantiersProps) {
   const [estOuverteBarreFiltres, setEstOuverteBarreFiltres] = useState(false);
 
   return (
     <div className="flex">
       <FiltresChantiers
         estOuvert={estOuverteBarreFiltres}
+        périmètresMinistériels={périmètresMinistériels}
         setEstOuvert={setEstOuverteBarreFiltres}
       />
       <div className={styles.contenuPrincipal}>

@@ -1,5 +1,5 @@
 import { chantier, PrismaClient } from '@prisma/client';
-import { Chantier } from 'server/domain/chantier/chantier.interface';
+import Chantier from 'server/domain/chantier/chantier.interface';
 import { ChantierRepository } from '../domain/chantier/chantierRepository.interface';
 
 export class ChantierSQLRepository implements ChantierRepository {

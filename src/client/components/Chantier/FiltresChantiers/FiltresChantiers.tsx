@@ -3,7 +3,7 @@ import SélecteurMultiple from './SélecteurMultiple/SélecteurMultiple';
 import FiltresChantiersProps from './FiltresChantiers.interface';
 import styles from './FiltresChantiers.module.scss';
 
-export default function FiltresChantiers({ estOuvert, setEstOuvert }: FiltresChantiersProps) {
+export default function FiltresChantiers({ estOuvert, setEstOuvert, périmètresMinistériels }: FiltresChantiersProps) {
 
   return (
     <div className={`${styles.barreLatérale} ${estOuvert ? styles.barreEstOuverte : ''}`}>
@@ -21,9 +21,10 @@ export default function FiltresChantiers({ estOuvert, setEstOuvert }: FiltresCha
         </button>
       </div>
       <FiltreGroupe titre="Périmètres thématiques" >
-        <SélecteurMultiple libellé='Périmètres ministériels' />
-        <SélecteurMultiple libellé='Axes' />
-        <SélecteurMultiple libellé='PPG' />
+        <SélecteurMultiple
+          libellé='Périmètres ministériels'
+          périmètresMinistériels={périmètresMinistériels}
+        />
       </FiltreGroupe>
     </div>
   );
