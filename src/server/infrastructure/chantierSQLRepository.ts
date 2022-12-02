@@ -24,7 +24,7 @@ export class ChantierSQLRepository implements ChantierRepository {
     return {
       id: chantierPrisma.id,
       nom: chantierPrisma.nom,
-      id_perimetre: chantierPrisma.id_perimetre,
+      id_périmètre: chantierPrisma.id_perimetre,
     };
   }
 }
