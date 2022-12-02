@@ -7,7 +7,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 const columnHelper = createColumnHelper<{}>();
 
 class TableauTest {
-  private donnees = [
+  private données = [
     {
       nom: 'Déployer le programme FR',
       id: 1,
@@ -26,7 +26,6 @@ class TableauTest {
     columnHelper.accessor('id', {
       header: '#',
       cell: id => '#' + id.getValue(),
-      //enableGlobalFilter: false,
     }),
     columnHelper.accessor('nom', {
       header: 'Nom du chantier',
@@ -35,7 +34,7 @@ class TableauTest {
   ];
 
   nombreDeDonnées() {
-    return this.donnees.length;
+    return this.données.length;
   }
 
   async filtrerParContenuTextuel(texte: string) {
@@ -60,9 +59,9 @@ class TableauTest {
     render(
       <Tableau
         colonnes={this.colonnes}
-        donnees={this.donnees}
-        entités='chantiers'
-        titre="Liste des donnees"
+        données={this.données}
+        entité='chantiers'
+        titre="Liste des données"
       />);
   }
 

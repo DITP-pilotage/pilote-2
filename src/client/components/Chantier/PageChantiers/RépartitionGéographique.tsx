@@ -1,15 +1,15 @@
-import Title from 'client/components/_commons/Title/Title';
+import Titre from 'client/components/_commons/Titre/Titre';
 import styles from './PageChantiers.module.scss';
 
 export default function RépartitionGéographique() {
   return (
     <div className={styles.bordure + ' fr-p-1w ' + styles.répartitionGéographique}>
-      <Title
-        as='h2'
-        look='fr-h6'
+      <Titre
+        apparence='fr-h6'
+        baliseHtml='h2'
       >
         Répartition géographique
-      </Title>
+      </Titre>
     </div>
   );
 }

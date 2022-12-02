@@ -1,9 +1,9 @@
 import Tableau from '../../_commons/Tableau/Tableau';
 import Image from 'next/image';
-import meteo1 from '/public/img/meteo-1-securise.svg';
-import meteo2 from '/public/img/meteo-2-atteignable.svg';
-import meteo3 from '/public/img/meteo-3-appui-necessaire.svg';
-import meteo4 from '/public/img/meteo-4-compromis.svg';
+import pictoSoleil from '/public/img/météo/soleil.svg';
+import pictoSoleilNuage from '/public/img/météo/soleil-nuage.svg';
+import pictoNuage from '/public/img/météo/nuage.svg';
+import pictoOrage from '/public/img/météo/orage.svg';
 import { createColumnHelper } from '@tanstack/react-table';
 import ListeChantiersProps from './ListeChantiers.interface';
 
@@ -12,32 +12,32 @@ export function mettreEnFormeLaMétéo(valeur: number | null) {
     case 1: {
       return (
         <Image
-          alt="Meteo 1"
-          src={meteo1}
+          alt="Sécurisé"
+          src={pictoSoleil}
         />
       );
     }
     case 2: {
       return (
         <Image
-          alt="Meteo 2"
-          src={meteo2}
+          alt="Atteignable"
+          src={pictoSoleilNuage}
         />
       );
     }
     case 3: {
       return (
         <Image
-          alt="Meteo 3"
-          src={meteo3}
+          alt="Appui nécessaire"
+          src={pictoNuage}
         />
       );
     }
     case 4: {
       return (
         <Image
-          alt="Meteo 4"
-          src={meteo4}
+          alt="Compromis"
+          src={pictoOrage}
         />
       );
     }
@@ -77,14 +77,14 @@ export function afficherBarreDeProgression(valeur: number | null) {
   );
 }
 
-const columnHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
+const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
 
 const colonnes = [
-  columnHelper.accessor('id', {
+  reactTableColonnesHelper.accessor('id', {
     header: 'Identifiant',
     cell: id => id.getValue(),
   }),
-  columnHelper.accessor('nom', {
+  reactTableColonnesHelper.accessor('nom', {
     header: 'Nom du chantier',
     cell: nomChantier => nomChantier.getValue(),
   }),
@@ -94,8 +94,8 @@ export default function ListeChantiers({ chantiers }: ListeChantiersProps) {
   return (
     <Tableau<typeof chantiers[number]>
       colonnes={colonnes}
-      donnees={chantiers}
-      entités="chantiers"
+      données={chantiers}
+      entité="chantiers"
       titre="Liste des chantiers"
     />
   );

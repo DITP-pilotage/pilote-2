@@ -3,12 +3,12 @@ table.tableau {
   margin-bottom: 2rem;
 }
 
-.container {
+.conteneur {
   display: flex;
   justify-content: space-between;
   margin-bottom: 2rem;
-}
 
-.container > div {
-  max-width: 100%;
+  div {
+    max-width: 100%;
+  }
 }
