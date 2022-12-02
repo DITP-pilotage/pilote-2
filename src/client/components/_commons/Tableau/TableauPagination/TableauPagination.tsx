@@ -6,6 +6,10 @@ import TableauPaginationÉlément from './TableauPaginationÉlément/TableauPagi
 export default function TableauPagination({ nombreDePages, changementDePageCallback, numéroDePageInitiale }: TableauPaginationProps) {
   const [numéroDePageCourante, setNuméroDePageCourante] = useState(numéroDePageInitiale);
 
+  if (nombreDePages === 0) {
+    return null;
+  }
+
   function changerPage(numéroDePage: number) {
     setNuméroDePageCourante(numéroDePage);
     changementDePageCallback(numéroDePage);

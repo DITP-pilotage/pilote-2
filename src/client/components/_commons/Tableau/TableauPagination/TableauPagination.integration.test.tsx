@@ -16,35 +16,35 @@ class TableauPaginationTest {
   }
 
   récupérerLesElementsDeListe() {
-    const elements = screen.getAllByRole('listitem');
+    const elements = screen.queryAllByRole('listitem');
     return elements.map((element) => element.textContent);
   }
 
   récupérerLaPageCourante() {
-    const pageSurlignée = screen.getByRole('button', { current: 'page' });
+    const pageSurlignée = screen.queryByRole('button', { current: 'page' });
     return pageSurlignée ? pageSurlignée.textContent : null;
   }
 
   récupérerBoutonPagePrécédente() {
-    return screen.getByRole('button', {
+    return screen.queryByRole('button', {
       name: PAGE_PRECEDENTE,
     });
   }
 
   récupérerBoutonPageSuivante() {
-    return screen.getByRole('button', {
+    return screen.queryByRole('button', {
       name: PAGE_SUIVANTE,
     });
   }
 
   récupérerBoutonPremièrePage() {
-    return screen.getByRole('button', {
+    return screen.queryByRole('button', {
       name: PREMIERE_PAGE,
     });
   }
 
   récupérerBoutonDernièrePage() {
-    return screen.getByRole('button', {
+    return screen.queryByRole('button', {
       name: DERNIERE_PAGE,
     });
   }
@@ -56,19 +56,27 @@ class TableauPaginationTest {
   }
 
   async allerALaPagePrécédente() {
-    await userEvent.click(this.récupérerBoutonPagePrécédente());
+    const boutonPagePrécédente = this.récupérerBoutonPagePrécédente();
+    if (boutonPagePrécédente)
+      await userEvent.click(boutonPagePrécédente);
   }
 
   async allerALaPageSuivante() {
-    await userEvent.click(this.récupérerBoutonPageSuivante());
+    const boutonPageSuivante = this.récupérerBoutonPageSuivante();
+    if (boutonPageSuivante)
+      await userEvent.click(boutonPageSuivante);
   }
 
   async allerALaPremièrePage() {
-    await userEvent.click(this.récupérerBoutonPremièrePage());
+    const boutonPremièrePage = this.récupérerBoutonPremièrePage();
+    if (boutonPremièrePage)
+      await userEvent.click(boutonPremièrePage);
   }
 
   async allerALaDernièrePage() {
-    await userEvent.click(this.récupérerBoutonDernièrePage());
+    const boutonDernièrePage = this.récupérerBoutonDernièrePage();
+    if (boutonDernièrePage)
+      await userEvent.click(boutonDernièrePage);
   }
   
   render(nombreDePages: number, numéroDePageInitiale = 1) {
@@ -77,7 +85,8 @@ class TableauPaginationTest {
         changementDePageCallback={this.changementDePageCallback}
         nombreDePages={nombreDePages}
         numéroDePageInitiale={numéroDePageInitiale}
-      />);
+      />,
+    );
   }
 }
 
@@ -136,7 +145,26 @@ describe('quand il y a plus de 5 pages', () => {
   });
 });
 
-describe('quand il y a moins de 6 pages', () => {
+describe('quand il y a 0 page', () => {
+  let pagination: TableauPaginationTest;
+  beforeEach(() => {
+    // GIVEN
+    pagination = new TableauPaginationTest();
+    // WHEN
+    pagination.render(0, 1);
+  });
+
+  test('n\'affiche pas les boutons de pagination', () => {
+    // THEN
+    expect(pagination.récupérerLesElementsDeListe()).toEqual([]);
+    expect(pagination.récupérerBoutonPagePrécédente()).not.toBeInTheDocument();
+    expect(pagination.récupérerBoutonPremièrePage()).not.toBeInTheDocument();
+    expect(pagination.récupérerBoutonDernièrePage()).not.toBeInTheDocument();
+    expect(pagination.récupérerBoutonPageSuivante()).not.toBeInTheDocument();
+  });
+});
+
+describe('quand il y a entre 1 et 5 pages', () => {
 
   const listeDePages = [1, 2, 3, 4, 5];
 

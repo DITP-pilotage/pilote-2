@@ -13,6 +13,7 @@ import TableauEnTête from './TableauEnTête/TableauEnTête';
 import TableauContenu from './TableauContenu/TableauContenu';
 import TableauPagination from './TableauPagination/TableauPagination';
 import TableauBarreDeRecherche from './TableauBarreDeRecherche/TableauBarreDeRecherche';
+import Titre from '../Titre/Titre';
 import styles from './Tableau.module.scss';
 
 export default function Tableau<T extends object>({ colonnes, données, titre, entité }: TableauProps<T>) {
@@ -48,22 +49,44 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
 
   return (
     <div className="fr-table fr-table--bordered">
+      <Titre
+        apparence="fr-h6"
+        baliseHtml="h2"
+      >
+        {titre}
+      </Titre>
       <div className={styles.conteneur}>
-        <p>
-          {données.length + ' ' + entité}
+        <p className="fr-mt-1w">
+          {`${tableau.getFilteredRowModel().rows.length} ${entité}`}
         </p>
         <TableauBarreDeRecherche
           changementDeLaRechercheGénéraleCallback={changementDeLaRechercheGénéraleCallback}
           valeur={valeurDeLaRechercheGénérale}
         />
       </div>
-      <table className={styles.tableau}>
-        <caption>
-          {titre}
-        </caption>
-        <TableauEnTête<T> tableau={tableau} />
-        <TableauContenu<T> tableau={tableau} />
-      </table>
+      {
+        tableau.getRowModel().rows.length === 0 ?
+          <>
+            <p>
+              Aucun 
+              {' '}
+              {entité}
+              {' '}
+              ne correspond à votre recherche !
+            </p>
+            <p>
+              Vous pouvez modifier vos filtres pour élargir votre recherche.
+            </p>
+          </>
+          :
+          <table className={styles.tableau}>
+            <caption className="fr-sr-only">
+              {titre}
+            </caption>
+            <TableauEnTête<T> tableau={tableau} />
+            <TableauContenu<T> tableau={tableau} />
+          </table>
+      }
       <TableauPagination
         changementDePageCallback={changementDePageCallback}
         nombreDePages={tableau.getPageCount()}
