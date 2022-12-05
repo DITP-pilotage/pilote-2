@@ -1,17 +1,26 @@
-import Titre from 'client/components/_commons/Titre/Titre';
+import Titre from '@/components/_commons/Titre/Titre';
 import PageChantiersProps from './PageChantiers.interface';
 import styles from './PageChantiers.module.scss';
 import RépartitionGéographique from './RépartitionGéographique';
 import TauxAvancementMoyen from './TauxAvancementMoyen';
 import RépartitionTauxAvancement from './RépartitionTauxAvancement';
 import RépartitionDesMétéos from './RépartitionDesMétéos';
-import FiltresChantiers from '../FiltresChantiers/FiltresChantiers';
-import ListeChantiers from '../ListeChantiers/ListeChantiers';
-import { useState } from 'react';
+import FiltresChantiers from '@/components/Chantier/FiltresChantiers/FiltresChantiers';
+import ListeChantiers from '@/components/Chantier/ListeChantiers/ListeChantiers';
+import { useMemo, useState } from 'react';
+import { filtresActifs as filtresActifsStore } from '@/client/stores/useFiltresStore/useFiltresStore';
 
 export default function PageChantiers({ chantiers, périmètresMinistériels }: PageChantiersProps) {
   const [estOuverteBarreFiltres, setEstOuverteBarreFiltres] = useState(false);
 
+  const filtresActifs = filtresActifsStore();
+
+  const chantiersFiltrés = useMemo(() => (
+    filtresActifs.périmètresMinistériels.length === 0
+      ? chantiers
+      : chantiers.filter(chantier => (filtresActifs.périmètresMinistériels.includes(chantier.id_périmètre)))
+  ), [chantiers, filtresActifs]);
+  
   return (
     <div className="flex">
       <FiltresChantiers
@@ -53,7 +62,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
           </div>
           <div className="fr-grid-row fr-mt-3w">
             <div className="fr-col">
-              <ListeChantiers chantiers={chantiers} />
+              <ListeChantiers chantiers={chantiersFiltrés} />
             </div>
           </div>
         </div>

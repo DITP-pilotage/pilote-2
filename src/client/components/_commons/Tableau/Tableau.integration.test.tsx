@@ -54,7 +54,7 @@ class TableauTest {
       name: new RegExp(labelDeLaColonne),
     }));
   }
-  
+
   render() {
     render(
       <Tableau
@@ -82,7 +82,6 @@ beforeEach(() => {
 });
 
 test('le tableau comporte le nombre de lignes adéquat', () => {
-  
   // THEN
   expect(tableau.récupérerLeNombreDeLignesDuTableau()).toBe(tableau.nombreDeDonnées());
 });

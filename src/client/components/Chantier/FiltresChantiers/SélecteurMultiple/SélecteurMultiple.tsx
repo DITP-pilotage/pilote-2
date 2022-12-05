@@ -1,8 +1,8 @@
 import SélecteurMultipleProps from './SélecteurMultiple.interface';
 import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
-import PérimètreMinistériel from 'server/domain/périmètreMinistériel/périmètreMinistériel.interface';
-import { actions as actionsFiltresStore } from 'client/stores/useFiltresStore/useFiltresStore';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
+import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import { useCallback } from 'react';
 
 export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtres }: SélecteurMultipleProps) {

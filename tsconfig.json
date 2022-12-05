@@ -19,6 +19,13 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": "./src",
+    "paths": {
+      "@/server/*": ["server/*"],
+      "@/client/*": ["client/*"],
+      "@/fixtures/*": ["fixtures/*"],
+      "@/components/*": ["client/components/*"],
+      "@/stores/*": ["client/stores/*"],
+    }
   },
   "include": [
     "next-env.d.ts",

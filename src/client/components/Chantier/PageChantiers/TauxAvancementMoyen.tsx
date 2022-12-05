@@ -1,4 +1,4 @@
-import Titre from 'client/components/_commons/Titre/Titre';
+import Titre from '@/components/_commons/Titre/Titre';
 
 export default function TauxAvancementMoyen() {
   return (

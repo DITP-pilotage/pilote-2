@@ -35,7 +35,7 @@ export async function getServerSideProps() {
 
   return {
     props: {
-      chantiers,
+      chantiers: chantiers.map((chantier, i) => ({ ...chantier, id_périmètre: périmètresMinistériels[i % 3].id })),
       périmètresMinistériels,
     },
   };

@@ -33,7 +33,7 @@
       {
         "devDependencies": [
           "**/fixtures/**",
-          "**/*{.,_}{unit,integration}.{test}.{ts,tsx}"
+          "**/*.test.{ts,tsx}"
         ],
         "optionalDependencies": false
       }
