@@ -1,7 +1,7 @@
 import create from 'zustand';
 import FiltresStore from './useFiltresStore.interface';
 
-const useFiltresStore = create<FiltresStore>(set => ({
+const useFiltresStore = create<FiltresStore>((set, get) => ({
   filtresActifs: {
     périmètresMinistériels: [],
   },
@@ -17,6 +17,7 @@ const useFiltresStore = create<FiltresStore>(set => ({
       [catégorieDeFiltre]: étatActuel.filtresActifs[catégorieDeFiltre].filter(idFiltreActif => idFiltreActif !== id),
     },
   })),
+  estActif: (id, catégorieDeFiltre) => get().filtresActifs[catégorieDeFiltre].includes(id),
 }));
 
 export default useFiltresStore;

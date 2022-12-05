@@ -8,7 +8,8 @@ import { useCallback } from 'react';
 export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtres }: SélecteurMultipleProps) {
   const activerUnFiltre = useFiltresStore(étatActuel => étatActuel.activerUnFiltre);
   const désactiverUnFiltre = useFiltresStore(étatActuel => étatActuel.désactiverUnFiltre);
-  
+  const estActif = useFiltresStore(étatActuel => étatActuel.estActif);
+
   const changementDeLÉtatDuFiltreCallback = useCallback((estSélectionné: boolean, id: PérimètreMinistériel['id']) => {
     return estSélectionné ? activerUnFiltre(id, catégorieDeFiltre) : désactiverUnFiltre(id, catégorieDeFiltre);
   }, [activerUnFiltre, désactiverUnFiltre, catégorieDeFiltre]);
@@ -27,6 +28,7 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
                 key={filtre.id}
               >
                 <input
+                  defaultChecked={estActif(filtre.id, catégorieDeFiltre)}
                   id={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
                   name={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
                   onChange={événement => changementDeLÉtatDuFiltreCallback(événement.target.checked, filtre.id)}
