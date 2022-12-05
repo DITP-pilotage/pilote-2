@@ -28,6 +28,16 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "**/fixtures/**",
+          "**/*{.,_}{unit,integration}.{test}.{ts,tsx}"
+        ],
+        "optionalDependencies": false
+      }
+    ],
     "unicorn/prevent-abbreviations": "off",
     "unicorn/filename-case": "off",
     "unicorn/no-array-for-each": "off",
