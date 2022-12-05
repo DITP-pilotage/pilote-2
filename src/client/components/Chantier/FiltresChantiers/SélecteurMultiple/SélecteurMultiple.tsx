@@ -2,13 +2,11 @@ import SélecteurMultipleProps from './SélecteurMultiple.interface';
 import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import PérimètreMinistériel from 'server/domain/périmètreMinistériel/périmètreMinistériel.interface';
-import useFiltresStore from 'client/stores/useFiltresStore/useFiltresStore';
+import { actions as actionsFiltresStore } from 'client/stores/useFiltresStore/useFiltresStore';
 import { useCallback } from 'react';
 
 export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtres }: SélecteurMultipleProps) {
-  const activerUnFiltre = useFiltresStore(étatActuel => étatActuel.activerUnFiltre);
-  const désactiverUnFiltre = useFiltresStore(étatActuel => étatActuel.désactiverUnFiltre);
-  const estActif = useFiltresStore(étatActuel => étatActuel.estActif);
+  const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
 
   const changementDeLÉtatDuFiltreCallback = useCallback((estSélectionné: boolean, id: PérimètreMinistériel['id']) => {
     return estSélectionné ? activerUnFiltre(id, catégorieDeFiltre) : désactiverUnFiltre(id, catégorieDeFiltre);
