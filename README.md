@@ -27,6 +27,48 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
+## Lancer l'application
+
+### Prérequis
+
+Avoir installé Docker et Docker Compose sur sa machine.
+
+Copier le fichier `.env.example` avec le nom `.env`, et entrez cette
+valeur pour la variable d'environnement `DATABASE_URL` :
+
+```env
+DATABASE_URL="postgresql://postgresql:secret@localhost:5432/postgresql"
+```
+
+Note : ce fichier .env ne sera pas versionné, et sera trouvé automatiquement
+par Jest pour lancer les tests.
+
+Démarrer votre service postgres avec Docker Compose :
+
+```bash
+docker-compose up -d postgresql
+```
+
+Initialiser votre base de tests  :
+
+```bash
+npm run database:init
+```
+
+### Build & Start
+
+Lancer un build puis un start :
+
+```
+npm run build
+```
+
+et
+
+```
+npm start
+```
+
 ## Lancer les tests automatisés
 
 Les tests automatisés sont séparés en tests du code client, et tests du code
@@ -86,7 +128,7 @@ docker-compose up -d postgresql
 Initialisez votre base de tests  :
 
 ```bash
-npx dotenv -e .env.test -- npm run test:database:init
+npx dotenv -e .env.test -- npm run database:init
 ```
 
 Note : on utilise dotenv pour faire pointer vers la configuration de test.

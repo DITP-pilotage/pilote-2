@@ -10,10 +10,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model chantier_prioritaire {
-  id      String @id
-  nom     String
-  axe     String?
-  ppg     String?
-  porteur String?
+model chantier {
+  id String @id
+  nom String
+  id_perimetre String
+}
+
+model perimetre {
+  id String @id
+  nom String
 }
