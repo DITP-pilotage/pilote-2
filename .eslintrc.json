@@ -28,6 +28,16 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "**/fixtures/**",
+          "**/*.test.{ts,tsx}"
+        ],
+        "optionalDependencies": false
+      }
+    ],
     "unicorn/prevent-abbreviations": "off",
     "unicorn/filename-case": "off",
     "unicorn/no-array-for-each": "off",
@@ -35,6 +45,7 @@
     "react/jsx-no-bind": "off",
     "react/jsx-no-literals": "off",
     "react/forbid-component-props": "off",
+    "eol-last": ["error", "always"],
     "react/jsx-max-props-per-line": [
       2,
       {

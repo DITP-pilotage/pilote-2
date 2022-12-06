@@ -1,4 +1,4 @@
-import Titre from 'client/components/_commons/Titre/Titre';
+import Titre from '@/components/_commons/Titre/Titre';
 import ÉlémentDeRépartitionDesMétéos from './ÉlémentDeRépartitionDesMétéos/ÉlémentDeRépartitionDesMétéos';
 import pictoSoleil from '/public/img/météo/soleil.svg';
 import pictoSoleilNuage from '/public/img/météo/soleil-nuage.svg';

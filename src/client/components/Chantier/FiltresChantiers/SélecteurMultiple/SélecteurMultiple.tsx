@@ -1,26 +1,48 @@
 import SélecteurMultipleProps from './SélecteurMultiple.interface';
-import '@gouvfr/dsfr/dist/component/select/select.min.css';
+import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
+import '@gouvfr/dsfr/dist/component/form/form.min.css';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
+import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
+import { useCallback } from 'react';
 
-export default function SélecteurMultiple({ libellé }: SélecteurMultipleProps) {
+export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtres }: SélecteurMultipleProps) {
+  const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
+
+  const changementDeLÉtatDuFiltreCallback = useCallback((estSélectionné: boolean, id: PérimètreMinistériel['id']) => {
+    return estSélectionné ? activerUnFiltre(id, catégorieDeFiltre) : désactiverUnFiltre(id, catégorieDeFiltre);
+  }, [activerUnFiltre, désactiverUnFiltre, catégorieDeFiltre]);
+
   return (
-    <div className="fr-select-group fr-pb-2w">
-      <label className="fr-label">
-        { libellé }
-      </label>
-      <select
-        className="fr-select"
-        style={{ backgroundColor: '#fff' }}
-      >
-        <option hidden>
-          0 sélectionné
-        </option>
-        <option>
-          1 sélectionné
-        </option>
-        <option>
-          2 sélectionnés
-        </option>
-      </select>
+    <div className="fr-form-group">
+      <fieldset className="fr-fieldset">
+        <legend className="fr-fieldset__legend fr-text--regular">
+          { libellé }
+        </legend>
+        <div className="fr-fieldset__content">
+          {
+            filtres.map(filtre => (
+              <div
+                className="fr-checkbox-group"
+                key={filtre.id}
+              >
+                <input
+                  defaultChecked={estActif(filtre.id, catégorieDeFiltre)}
+                  id={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
+                  name={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
+                  onChange={événement => changementDeLÉtatDuFiltreCallback(événement.target.checked, filtre.id)}
+                  type="checkbox"
+                />
+                <label
+                  className="fr-label"
+                  htmlFor={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
+                >
+                  {filtre.nom}
+                </label>
+              </div>
+            ))
+          }
+        </div>
+      </fieldset>
     </div>
   );
 }

@@ -11,7 +11,8 @@
     "postinstall": "prisma generate",
     "postdeploy": "prisma migrate deploy && cd data/ && prisma migrate deploy",
     "start": "next start",
-    "lint": "eslint src/**/*.{ts,tsx} && npx tsc && npx stylelint src/**/*.scss",
+    "lint": "eslint 'src/**/*.{ts,tsx}' && npx tsc && npx stylelint 'src/**/*.scss'",
+    "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix && && npx stylelint 'src/**/*.scss'",
     "test": "npm run test:client && npm run test:server",
     "test:ci": "bash scripts/test_ci.sh",
     "test:client": "jest src/client",
@@ -46,11 +47,13 @@
     "dotenv-cli": "^6.0.0",
     "next": "^13.0.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "zustand": "^4.1.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.3.0",
+    "@faker-js/faker": "^7.6.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",

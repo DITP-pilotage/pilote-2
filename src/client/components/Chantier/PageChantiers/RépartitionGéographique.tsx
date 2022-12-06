@@ -1,4 +1,4 @@
-import Titre from 'client/components/_commons/Titre/Titre';
+import Titre from '@/components/_commons/Titre/Titre';
 import styles from './PageChantiers.module.scss';
 
 export default function RépartitionGéographique() {
