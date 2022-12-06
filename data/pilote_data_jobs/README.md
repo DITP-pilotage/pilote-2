@@ -27,7 +27,7 @@ Récupérer le fichier `DITP_Liste_chantiers_perseverants-avec-trigramme.csv` et
 
 Note : cette table est créée dans le schémas `raw_data`, pas le schémas par défaut `public`.
 
-# TODO
+# TODO : la ligne de commande ci-dessous n'est plus utilisée. Il faut revoir ça lors de l'import des données
 ``` bash
 psql "postgres://postgresql:secret@localhost:5432/postgresql" < import/wxcvbn
 psql "postgres://postgresql:secret@localhost:5432/postgresql" -c "copy raw_data.ditp_liste_chantiers_perseverants_avec_trigramme from STDIN with csv delimiter ',' header;" < ../input_data/DITP_Liste_chantiers_perseverants-avec-trigramme.csv
