@@ -5,8 +5,8 @@ import { faker } from '@faker-js/faker';
 const PérimètresMinistérielsFixture: FixtureInterface<PérimètreMinistériel> = {
   générer(valeursFixes: Partial<PérimètreMinistériel> = {}) {
     return {
-      id: faker.random.alphaNumeric(5),
-      nom: faker.lorem.words(10),
+      id: `PER-${faker.random.alphaNumeric(5)}`,
+      nom: faker.lorem.words(4),
       ...valeursFixes,
     };
   },

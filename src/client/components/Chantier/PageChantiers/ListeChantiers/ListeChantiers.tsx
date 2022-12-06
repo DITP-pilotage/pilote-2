@@ -6,6 +6,7 @@ import pictoNuage from '/public/img/météo/nuage.svg';
 import pictoOrage from '/public/img/météo/orage.svg';
 import { createColumnHelper } from '@tanstack/react-table';
 import ListeChantiersProps from './ListeChantiers.interface';
+import { ChantierAvancementFront } from '@/client/interfaces/ChantierFront.interface';
 
 export function mettreEnFormeLaMétéo(valeur: number | null) {
   switch (valeur) {
@@ -51,7 +52,7 @@ export function mettreEnFormeLaMétéo(valeur: number | null) {
   }
 }
 
-export function afficherBarreDeProgression(valeur: number | null) {
+function afficherUneBarreDeProgression(valeur: number | null) {
   if (valeur === null) {
     return (
       <span>
@@ -77,6 +78,16 @@ export function afficherBarreDeProgression(valeur: number | null) {
   );
 }
 
+function afficherLesBarresDeProgression(avancement: ChantierAvancementFront) {
+  return (
+    <>
+      { afficherUneBarreDeProgression(avancement.global) }
+      <br />
+      { afficherUneBarreDeProgression(avancement.annuel) }
+    </>
+  );
+}
+
 const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
 
 const colonnes = [
@@ -87,6 +98,14 @@ const colonnes = [
   reactTableColonnesHelper.accessor('nom', {
     header: 'Nom du chantier',
     cell: nomChantier => nomChantier.getValue(),
+  }),
+  reactTableColonnesHelper.accessor('météo', {
+    header: 'Météo',
+    cell: météo => mettreEnFormeLaMétéo(météo.getValue()),
+  }),
+  reactTableColonnesHelper.accessor('avancement', {
+    header: 'Avancement',
+    cell: avancement => afficherLesBarresDeProgression(avancement.getValue()),
   }),
 ];
 

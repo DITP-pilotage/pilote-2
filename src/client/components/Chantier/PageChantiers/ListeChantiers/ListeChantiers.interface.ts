@@ -1,5 +1,5 @@
-import Chantier from 'server/domain/chantier/chantier.interface';
+import ChantierFront from '@/client/interfaces/ChantierFront.interface';
 
 export default interface ListeChantiersProps {
-  chantiers: Chantier[]
+  chantiers: ChantierFront[]
 }
