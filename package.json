@@ -9,7 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "postinstall": "prisma generate",
-    "postdeploy": "prisma migrate deploy",
+    "postdeploy": "prisma migrate deploy && cd data/ && prisma migrate deploy",
     "start": "next start",
     "lint": "eslint src/**/*.{ts,tsx} && npx tsc && npx stylelint src/**/*.scss",
     "test": "npm run test:client && npm run test:server",
@@ -20,7 +20,7 @@
     "test:server": "npm run test:server:unit && npm run test:server:integration",
     "test:server:unit": "jest --passWithNoTests src/server/.*.unit.test.*",
     "test:server:integration": "jest --config=jest.integration.config.js src/server/.*.integration.test.*",
-    "database:init": "prisma migrate reset"
+    "database:init": "prisma migrate reset && cd data/ && prisma migrate reset"
   },
   "browserslist": {
     "production": [
