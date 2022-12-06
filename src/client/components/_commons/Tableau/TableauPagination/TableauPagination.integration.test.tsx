@@ -147,6 +147,7 @@ describe('quand il y a plus de 5 pages', () => {
 
 describe('quand il y a 0 page', () => {
   let pagination: TableauPaginationTest;
+
   beforeEach(() => {
     // GIVEN
     pagination = new TableauPaginationTest();
@@ -164,7 +165,27 @@ describe('quand il y a 0 page', () => {
   });
 });
 
-describe('quand il y a entre 1 et 5 pages', () => {
+describe('quand il y a une page', () => {
+  let pagination: TableauPaginationTest;
+
+  beforeEach(() => {
+    // GIVEN
+    pagination = new TableauPaginationTest();
+    // WHEN
+    pagination.render(1, 1);
+  });
+
+  test('n\'affiche pas les boutons de pagination', () => {
+    // THEN
+    expect(pagination.récupérerLesElementsDeListe()).toEqual([]);
+    expect(pagination.récupérerBoutonPagePrécédente()).not.toBeInTheDocument();
+    expect(pagination.récupérerBoutonPremièrePage()).not.toBeInTheDocument();
+    expect(pagination.récupérerBoutonDernièrePage()).not.toBeInTheDocument();
+    expect(pagination.récupérerBoutonPageSuivante()).not.toBeInTheDocument();
+  });
+});
+
+describe('quand il y a entre 2 et 5 pages', () => {
 
   const listeDePages = [1, 2, 3, 4, 5];
 

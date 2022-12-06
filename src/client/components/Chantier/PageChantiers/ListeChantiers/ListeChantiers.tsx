@@ -1,4 +1,4 @@
-import Tableau from '../../_commons/Tableau/Tableau';
+import Tableau from '../../../_commons/Tableau/Tableau';
 import Image from 'next/image';
 import pictoSoleil from '/public/img/météo/soleil.svg';
 import pictoSoleilNuage from '/public/img/météo/soleil-nuage.svg';

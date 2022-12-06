@@ -1,14 +1,16 @@
 import Titre from '@/components/_commons/Titre/Titre';
 import PageChantiersProps from './PageChantiers.interface';
 import styles from './PageChantiers.module.scss';
-import RépartitionGéographique from './RépartitionGéographique';
-import TauxAvancementMoyen from './TauxAvancementMoyen';
-import RépartitionTauxAvancement from './RépartitionTauxAvancement';
+import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
+import TauxAvancementMoyen from './TauxAvancementMoyen/TauxAvancementMoyen';
+import RépartitionTauxAvancement from './RépartitionTauxAvancement/RépartitionTauxAvancement';
 import { useMemo, useState } from 'react';
 import { filtresActifs as filtresActifsStore } from '@/client/stores/useFiltresStore/useFiltresStore';
-import RépartitionMétéo from './RépartitionDesMétéos';
-import FiltresChantiers from '../FiltresChantiers/FiltresChantiers';
-import ListeChantiers from '../ListeChantiers/ListeChantiers';
+import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
+import FiltresChantiers from './FiltresChantiers/FiltresChantiers';
+import ListeChantiers from './ListeChantiers/ListeChantiers';
+import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
+import Séparateur from '@/components/_commons/Séparateur/Séparateur';
 
 export default function PageChantiers({ chantiers, périmètresMinistériels }: PageChantiersProps) {
   const [estOuverteBarreFiltres, setEstOuverteBarreFiltres] = useState(false);
@@ -28,42 +30,51 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
         périmètresMinistériels={périmètresMinistériels}
         setEstOuvert={setEstOuverteBarreFiltres}
       />
-      <div className={styles.contenuPrincipal}>
-        <div className='fr-container fr-mt-4w'>
-          <button
-            className="fr-sr-only-lg fr-btn fr-btn--secondary fr-mb-2w"
-            onClick={() => setEstOuverteBarreFiltres(true)}
-            title="Ouvrir les filtres"
-            type="button"
-          >
-            Filtres
-          </button>
-          <div className={styles.bloc}>
-            <Titre
-              apparence='fr-h4'
-              baliseHtml='h1'
-            > 
-              62 chantiers dans les résultats
-            </Titre>
-            <div className="fr-grid-row fr-grid-row--gutters">
-              <div className=' fr-col-12 fr-col-lg-6'>
+      <div className={`${styles.contenuPrincipal} fr-p-4w`}>
+        <button
+          className="fr-sr-only-xl fr-btn fr-btn--secondary fr-mb-2w"
+          onClick={() => setEstOuverteBarreFiltres(true)}
+          title="Ouvrir les filtres"
+          type="button"
+        >
+          Filtres
+        </button>
+        <div>
+          <Titre
+            apparence='fr-h4'
+            baliseHtml='h1'
+          > 
+            {chantiers.length}
+            {' '}
+            chantiers dans les résultats
+          </Titre>
+          <div className="fr-grid-row fr-grid-row--gutters">
+            <div className="fr-col-12 fr-col-lg-6">
+              <CarteSquelette>
                 <RépartitionGéographique />
-              </div>
-              <div className={styles.conteneur + ' fr-col-12 fr-col-lg-6'}>
+              </CarteSquelette>
+            </div>
+            <div className="fr-col-12 fr-col-lg-6">
+              <CarteSquelette>
                 <TauxAvancementMoyen />
-                <div className="fr-grid-row fr-p-1w">
-                  <RépartitionTauxAvancement />
-                </div>
-                <div className="fr-grid-row fr-p-1w">
-                  <RépartitionMétéo />
-                </div>
-              </div>
+                <Séparateur />
+                <RépartitionMétéo />
+              </CarteSquelette>
             </div>
           </div>
-          <div className="fr-grid-row fr-mt-3w">
+          <div className="fr-grid-row fr-my-3w">
             <div className="fr-col">
-              <ListeChantiers chantiers={chantiersFiltrés} />
+              <CarteSquelette>
+                <RépartitionTauxAvancement />
+              </CarteSquelette>
             </div>
+          </div>
+        </div>
+        <div className="fr-grid-row">
+          <div className="fr-col">
+            <CarteSquelette>
+              <ListeChantiers chantiers={chantiersFiltrés} />
+            </CarteSquelette>
           </div>
         </div>
       </div>
