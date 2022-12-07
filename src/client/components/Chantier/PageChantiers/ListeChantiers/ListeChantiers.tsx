@@ -88,6 +88,20 @@ function afficherLesBarresDeProgression(avancement: ChantierAvancementFront) {
   );
 }
 
+function comparerAvancementChantier(a: ChantierAvancementFront, b: ChantierAvancementFront) {
+  if (a.global === b.global)
+    return 0;
+  if (a.global === null)
+    return -1;
+  if (b.global === null)
+    return 1;
+  if (a.global < b.global)
+    return -1;
+  if (a.global > b.global)
+    return 1;
+  return 0;
+}
+
 const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
 
 const colonnes = [
@@ -107,12 +121,7 @@ const colonnes = [
     header: 'Avancement',
     cell: avancement => afficherLesBarresDeProgression(avancement.getValue()),
     sortingFn: (a, b, columnId) => {
-      if (a.getValue(columnId).global < b.getValue(columnId).global)
-        return 1;
-      else if (a.getValue(columnId).global > b.getValue(columnId).global)
-        return -1;
-      else
-        return 0;
+      return comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId));
     },
   }),
 ];
