@@ -105,21 +105,19 @@ function comparerAvancementChantier(a: ChantierAvancementFront, b: ChantierAvanc
 const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
 
 const colonnes = [
-  reactTableColonnesHelper.accessor('id', {
-    header: 'Identifiant',
-    cell: id => id.getValue(),
-  }),
   reactTableColonnesHelper.accessor('nom', {
-    header: 'Nom du chantier',
+    header: 'Chantiers',
     cell: nomChantier => nomChantier.getValue(),
   }),
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
     cell: météo => mettreEnFormeLaMétéo(météo.getValue()),
+    enableGlobalFilter: false,
   }),
   reactTableColonnesHelper.accessor('avancement', {
     header: 'Avancement',
     cell: avancement => afficherLesBarresDeProgression(avancement.getValue()),
+    enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => {
       return comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId));
     },
