@@ -106,6 +106,14 @@ const colonnes = [
   reactTableColonnesHelper.accessor('avancement', {
     header: 'Avancement',
     cell: avancement => afficherLesBarresDeProgression(avancement.getValue()),
+    sortingFn: (a, b, columnId) => {
+      if (a.getValue(columnId).global < b.getValue(columnId).global)
+        return 1;
+      else if (a.getValue(columnId).global > b.getValue(columnId).global)
+        return -1;
+      else
+        return 0;
+    },
   }),
 ];
 
