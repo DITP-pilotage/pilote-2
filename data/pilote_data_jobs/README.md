@@ -21,23 +21,25 @@ Aller dans le répertoire `data/pilote_data_jobs`.
 
 #### Préparation
 
-Récupérer le fichier `DITP_Liste_chantiers_perseverants-avec-trigramme.csv` et le placer dans le répertoire `data/input_data`.
+Récupérer le projet github PPG_metadata et le placer dans le répertoire `data/input_data`.
 
 #### Création de la table et import du csv
+Dans le dossier `data/`, exécuter les commandes suivantes.
 
-Note : cette table est créée dans le schémas `raw_data`, pas le schémas par défaut `public`.
+Si cela n'est pas déjà fait, créer les tables nécessaires au job d'import :
 
-# TODO : la ligne de commande ci-dessous n'est plus utilisée. Il faut revoir ça lors de l'import des données
-``` bash
-psql "postgres://postgresql:secret@localhost:5432/postgresql" < import/wxcvbn
-psql "postgres://postgresql:secret@localhost:5432/postgresql" -c "copy raw_data.ditp_liste_chantiers_perseverants_avec_trigramme from STDIN with csv delimiter ',' header;" < ../input_data/DITP_Liste_chantiers_perseverants-avec-trigramme.csv
+```bash
+npx prisma migrate dev
 ```
 
-Exemple pour explorer ce qu'il y a dans le schémas `raw_data` :
+Note : ces tables sont créées dans le schéma `raw_data`, pas le schéma par défaut `public`.
 
+Toujours dans le dossier `data`, lancer la commande suivante :
 ``` bash
-PGOPTIONS="--search_path=raw_data" psql service=ppg -c '\dt'
+bash fill_tables_raw_data.sh 
 ```
+
+NB: cette commande peut être utilisé directement avec la commande "database:fill" du package.json
 
 ### Job de transformations
 
