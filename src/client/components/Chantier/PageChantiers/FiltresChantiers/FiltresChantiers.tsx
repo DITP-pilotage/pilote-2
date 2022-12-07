@@ -4,23 +4,22 @@ import FiltresChantiersProps from './FiltresChantiers.interface';
 import styles from './FiltresChantiers.module.scss';
 
 export default function FiltresChantiers({ estOuvert, setEstOuvert, périmètresMinistériels }: FiltresChantiersProps) {
-
   return (
     <div className={`${styles.barreLatérale} ${estOuvert ? styles.barreEstOuverte : ''}`}>
-      <div className="flex justifyBetween">
-        <p className="uppercase bold fr-text--lg fr-mb-0 fr-pt-3w fr-px-3w">
-          Filtrer les chantiers
+      <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mt-2w">
+        <p className="fr-h4 fr-mb-0 fr-px-3w fr-col-8">
+          Filtres
         </p>
         <button
           aria-label="Fermer les filtres"
-          className="bold fr-sr-only-lg fr-text--xl fr-mb-0 fr-mt-2v fr-mx-1w fr-p-2v fr-px-2w"
+          className="bold fr-sr-only-xl fr-text--sm fr-mb-0 fr-p-1w fr-col-4"
           onClick={() => setEstOuvert(false)}
           type="button"
         >
-          &times;
+          Fermer &times;
         </button>
       </div>
-      <FiltreGroupe titre="Périmètres thématiques" >
+      <FiltreGroupe titre="Périmètres thématiques">
         <SélecteurMultiple
           catégorieDeFiltre='périmètresMinistériels'
           filtres={périmètresMinistériels}

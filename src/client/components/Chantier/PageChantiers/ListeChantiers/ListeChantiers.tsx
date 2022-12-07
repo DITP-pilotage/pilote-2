@@ -1,4 +1,4 @@
-import Tableau from '../../_commons/Tableau/Tableau';
+import Tableau from '../../../_commons/Tableau/Tableau';
 import Image from 'next/image';
 import pictoSoleil from '/public/img/météo/soleil.svg';
 import pictoSoleilNuage from '/public/img/météo/soleil-nuage.svg';
@@ -6,6 +6,7 @@ import pictoNuage from '/public/img/météo/nuage.svg';
 import pictoOrage from '/public/img/météo/orage.svg';
 import { createColumnHelper } from '@tanstack/react-table';
 import ListeChantiersProps from './ListeChantiers.interface';
+import { ChantierAvancementFront } from '@/client/interfaces/ChantierFront.interface';
 
 export function mettreEnFormeLaMétéo(valeur: number | null) {
   switch (valeur) {
@@ -51,7 +52,7 @@ export function mettreEnFormeLaMétéo(valeur: number | null) {
   }
 }
 
-export function afficherBarreDeProgression(valeur: number | null) {
+function afficherUneBarreDeProgression(valeur: number | null) {
   if (valeur === null) {
     return (
       <span>
@@ -77,16 +78,49 @@ export function afficherBarreDeProgression(valeur: number | null) {
   );
 }
 
+function afficherLesBarresDeProgression(avancement: ChantierAvancementFront) {
+  return (
+    <>
+      { afficherUneBarreDeProgression(avancement.global) }
+      <br />
+      { afficherUneBarreDeProgression(avancement.annuel) }
+    </>
+  );
+}
+
+function comparerAvancementChantier(a: ChantierAvancementFront, b: ChantierAvancementFront) {
+  if (a.global === b.global)
+    return 0;
+  if (a.global === null)
+    return -1;
+  if (b.global === null)
+    return 1;
+  if (a.global < b.global)
+    return -1;
+  if (a.global > b.global)
+    return 1;
+  return 0;
+}
+
 const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
 
 const colonnes = [
-  reactTableColonnesHelper.accessor('id', {
-    header: 'Identifiant',
-    cell: id => id.getValue(),
-  }),
   reactTableColonnesHelper.accessor('nom', {
-    header: 'Nom du chantier',
+    header: 'Chantiers',
     cell: nomChantier => nomChantier.getValue(),
+  }),
+  reactTableColonnesHelper.accessor('météo', {
+    header: 'Météo',
+    cell: météo => mettreEnFormeLaMétéo(météo.getValue()),
+    enableGlobalFilter: false,
+  }),
+  reactTableColonnesHelper.accessor('avancement', {
+    header: 'Avancement',
+    cell: avancement => afficherLesBarresDeProgression(avancement.getValue()),
+    enableGlobalFilter: false,
+    sortingFn: (a, b, columnId) => {
+      return comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId));
+    },
   }),
 ];
 

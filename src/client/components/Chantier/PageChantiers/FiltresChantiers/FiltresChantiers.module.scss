@@ -1,20 +1,22 @@
+@import "/src/client/styles/variables";
+
 .barreLatérale {
   position: sticky;
   top: 0;
-  width: 25rem;
+  width: 20rem;
   height: 100vh;
   overflow-y: scroll;
-  background-color: var(--background-alt-raised-grey);
+  background: white;
+  border-right: 1px solid var(--border-disabled-grey);
 }
 
-@media screen and (max-width: 992px) {
+@media screen and (max-width: $breakpoint-xl) {
   .barreLatérale {
     position: fixed;
     left: 0;
     z-index: 501;
-    max-width: 21.875rem;
     transition: 500ms;
-    transform: translateX(-21.875rem);
+    transform: translateX(-20rem);
   }
 
   .barreEstOuverte {
