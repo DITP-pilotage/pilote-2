@@ -20,7 +20,7 @@
     "test:server": "npm run test:server:unit && npm run test:server:integration",
     "test:server:unit": "jest --passWithNoTests src/server/.*.unit.test.*",
     "test:server:integration": "jest --config=jest.integration.config.js src/server/.*.integration.test.*",
-    "database:init": "prisma migrate reset && cd data/ && prisma migrate reset"
+    "database:init": "prisma migrate reset"
   },
   "browserslist": {
     "production": [
