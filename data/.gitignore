@@ -1,7 +1,7 @@
 ##
 # PPG méta données
-input_data/*
-!input_data/.gitkeep
+input_data/private_data/
+!input_data/private_data/.gitkeep
 
 ##
 # dbt

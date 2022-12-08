@@ -22,7 +22,8 @@
     "test:server:unit": "jest --passWithNoTests src/server/.*.unit.test.*",
     "test:server:integration": "jest --config=jest.integration.config.js src/server/.*.integration.test.*",
     "database:init": "prisma migrate reset",
-    "database:fill": "bash data/fill_tables_raw_data.sh"
+    "database:fill": "bash data/fill_tables_raw_data.sh",
+    "database:fill:local": "bash data/fill_tables_raw_data.sh private_data"
   },
   "browserslist": {
     "production": [
