@@ -6,7 +6,7 @@ import styles from './FiltresChantiers.module.scss';
 export default function FiltresChantiers({ estOuvert, setEstOuvert, périmètresMinistériels }: FiltresChantiersProps) {
   return (
     <div className={`${styles.barreLatérale} ${estOuvert ? styles.barreEstOuverte : ''}`}>
-      <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mt-2w">
+      <div className="fr-grid-row fr-grid-row--middle fr-mt-2w">
         <p className="fr-h4 fr-mb-0 fr-px-3w fr-col-8">
           Filtres
         </p>
