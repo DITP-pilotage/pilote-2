@@ -21,7 +21,7 @@ Aller dans le répertoire `data/pilote_data_jobs`.
 
 #### Préparation
 
-Récupérer le projet github PPG_metadata et le placer dans le répertoire `data/input_data`.
+Récupérer le projet github PPG_metadata et le placer dans le répertoire `data/input_data/private_data`.
 
 #### Création de la table et import du csv
 Dans le dossier `data/`, exécuter les commandes suivantes.
@@ -34,9 +34,9 @@ npx prisma migrate dev
 
 Note : ces tables sont créées dans le schéma `raw_data`, pas le schéma par défaut `public`.
 
-Toujours dans le dossier `data`, lancer la commande suivante :
+A la racine du projet, lancer la commande suivante :
 ``` bash
-bash fill_tables_raw_data.sh 
+npm run database:raw_data:fill:local
 ```
 
 NB: cette commande peut être utilisé directement avec la commande "database:fill" du package.json
@@ -54,17 +54,24 @@ Le répertoire `data/pilote_data_jobs/transformations` contient le projet dbt qu
 
 #### Comment démarrer
 
-*Récupérer l'image docker de DBT*
+A la racine du projet :
+``` bash
+npm run database:public:fill
+```
+
+Ou bien directement dans le dossier `data/pilote_data_jobs`, réaliser les 3 étapes suivantes :
+
+1. *Récupérer l'image docker de DBT*
 
 ``` bash
 docker pull ghcr.io/dbt-labs/dbt-postgres:1.3.1
 ```
 
-*Configurer le profil dbt*
+2. *Configurer le profil dbt*
 
 Créer le fichier `dbt_root/profiles.yml` sur le modèle du fichier `dbt_root/profiles.yml.example`, pour le faire pointer sur le service docker-compose définit à la racine. Le fichier d'exemple a normalement les bonnes valeurs configurées pour se connecter au serveur de dev local.
 
-*Lancer des commandes dbt*
+3. *Lancer des commandes dbt*
 
 Avec les confs ci-dessus, on peut lancer des commandes dbt à partir de l'image docker depuis le répertoire de ce README.md :
 
