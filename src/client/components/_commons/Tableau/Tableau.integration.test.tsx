@@ -49,10 +49,8 @@ class TableauTest {
     return this.récupérerLesLignesDuTableau()[numéroDeLigne - 1];
   }
 
-  async trierSurLaColonne(labelDeLaColonne: string) {
-    await userEvent.click(screen.getByRole('button', {
-      name: new RegExp(labelDeLaColonne),
-    }));
+  async trierSurLaColonne(labelDuBoutonDeTri: string) {  
+    await userEvent.click(screen.getByLabelText(labelDuBoutonDeTri));
   }
 
   render() {
@@ -62,7 +60,8 @@ class TableauTest {
         données={this.données}
         entité='chantiers'
         titre="Liste des données"
-      />);
+      />,
+    );
   }
 
   récupérerLesLignesDuTableau() {
@@ -92,14 +91,28 @@ test('le tableau comporte les données d\'entrée', () => {
   expect(screen.getByText('Déployer le programme FR')).toBeInTheDocument();
 });
 
-test('le tri par colonne réarrange l\'ordre des lignes', async () => {
-  // WHEN
-  await tableau.trierSurLaColonne('Nom du chantier');
-  
-  // THEN
-  expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('Déployer');
-  expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent('Election');
-  expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent('Lutter');
+describe("quand l'utilisateur clique sur le bouton de tri croissant d'une colonne", () => {
+  test('les éléments du tableau sont triés par ordre croissant', async () => {
+    // WHEN
+    await tableau.trierSurLaColonne('trier la colonne Nom du chantier par ordre croissant');
+    
+    // THEN
+    expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('Déployer');
+    expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent('Election');
+    expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent('Lutter');
+  });
+});
+
+describe("quand l'utilisateur clique sur le bouton de tri décroissant d'une colonne", () => {
+  test('les éléments du tableau sont triés par ordre décroissant', async () => {
+    // WHEN
+    await tableau.trierSurLaColonne('trier la colonne Nom du chantier par ordre décroissant');
+    
+    // THEN
+    expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('Lutter');
+    expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent('Election');
+    expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent('Déployer');
+  });
 });
 
 test('la recherche applique un filtre sur les lignes', async () => {

@@ -1,56 +1,27 @@
 import Image from 'next/image';
-import pictoSoleil from '/public/img/météo/soleil.svg';
-import pictoSoleilNuage from '/public/img/météo/soleil-nuage.svg';
-import pictoNuage from '/public/img/météo/nuage.svg';
-import pictoOrage from '/public/img/météo/orage.svg';
 import { createColumnHelper } from '@tanstack/react-table';
 import { ChantierAvancementFront } from '@/client/interfaces/ChantierFront.interface';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import météos from '@/client/utils/météos';
 import ListeChantiersProps from './ListeChantiers.interface';
+import styles from './ListeChantiers.module.scss';
 
-export function mettreEnFormeLaMétéo(valeur: number | null) {
-  switch (valeur) {
-    case 1: {
-      return (
-        <Image
-          alt="Sécurisé"
-          src={pictoSoleil}
-        />
-      );
-    }
-    case 2: {
-      return (
-        <Image
-          alt="Atteignable"
-          src={pictoSoleilNuage}
-        />
-      );
-    }
-    case 3: {
-      return (
-        <Image
-          alt="Appui nécessaire"
-          src={pictoNuage}
-        />
-      );
-    }
-    case 4: {
-      return (
-        <Image
-          alt="Compromis"
-          src={pictoOrage}
-        />
-      );
-    }
-    default: {
-      return (
-        <span>
-          Non renseigné
-        </span>
-      );
-    }
+function mettreEnFormeLaMétéo(valeur: 1 | 2 | 3 | 4 | null) {
+  if (valeur === null) {
+    return (
+      <span>
+        Non renseigné
+      </span>
+    );
   }
+  
+  return (
+    <Image
+      alt={météos[valeur].nom}
+      src={météos[valeur].picto}
+    />
+  );
 }
 
 function afficherLesBarresDeProgression(avancement: ChantierAvancementFront) {
@@ -80,9 +51,9 @@ function comparerAvancementChantier(a: ChantierAvancementFront, b: ChantierAvanc
   if (b.global === null)
     return 1;
   if (a.global < b.global)
-    return -1;
-  if (a.global > b.global)
     return 1;
+  if (a.global > b.global)
+    return -1;
   return 0;
 }
 
@@ -92,6 +63,7 @@ const colonnes = [
   reactTableColonnesHelper.accessor('nom', {
     header: 'Chantiers',
     cell: nomChantier => nomChantier.getValue(),
+    enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
@@ -110,11 +82,13 @@ const colonnes = [
 
 export default function ListeChantiers({ chantiers }: ListeChantiersProps) {
   return (
-    <Tableau<typeof chantiers[number]>
-      colonnes={colonnes}
-      données={chantiers}
-      entité="chantiers"
-      titre="Liste des chantiers"
-    />
+    <div className={styles.conteneur}>
+      <Tableau<typeof chantiers[number]>
+        colonnes={colonnes}
+        données={chantiers}
+        entité="chantiers"
+        titre="Liste des chantiers"
+      />
+    </div>
   );
 }

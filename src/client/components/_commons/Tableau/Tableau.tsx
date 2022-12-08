@@ -48,17 +48,14 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
   const changementDePageCallback = useCallback((numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1), [tableau]);
 
   return (
-    <div className="fr-table fr-table--bordered">
+    <div className="fr-table">
       <Titre
         apparence="fr-h6"
         baliseHtml="h2"
       >
-        {titre}
+        {`${titre} (${tableau.getFilteredRowModel().rows.length})`}
       </Titre>
-      <div className={styles.conteneur}>
-        <p className="fr-mt-1w">
-          {`${tableau.getFilteredRowModel().rows.length} ${entité}`}
-        </p>
+      <div className={`${styles.conteneur} fr-my-2w`}>
         <BarreDeRecherche
           changementDeLaRechercheCallback={changementDeLaRechercheCallback}
           valeur={valeurDeLaRecherche}
@@ -79,7 +76,7 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
             </p>
           </>
           :
-          <table className={styles.tableau}>
+          <table className={`${styles.tableau} fr-mb-4w`}>
             <caption className="fr-sr-only">
               {titre}
             </caption>

@@ -1,4 +1,4 @@
 export default interface ÉlémentDeRépartitionDesMétéosProps {
-  météo: { label: string, picto: string }
+  météo: { nom: string, picto: string }
   nombreDeChantiers: number
 }
