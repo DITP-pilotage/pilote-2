@@ -1,6 +1,7 @@
 import SélecteurMultipleProps from './SélecteurMultiple.interface';
 import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
+import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import { useCallback } from 'react';
@@ -14,10 +15,18 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
 
   return (
     <div className="fr-form-group">
-      <fieldset className="fr-fieldset">
-        <legend className="fr-fieldset__legend fr-text--regular">
-          { libellé }
-        </legend>
+      <button
+        aria-controls={`fr-sidemenu-item-${catégorieDeFiltre}`}
+        aria-expanded="false"
+        className="fr-sidemenu__btn"
+        type='button'
+      >
+        { libellé }
+      </button>
+      <div
+        className="fr-collapse fr-pt-1w"
+        id={`fr-sidemenu-item-${catégorieDeFiltre}`}
+      >
         <div className="fr-fieldset__content">
           {
             filtres.map(filtre => (
@@ -42,7 +51,7 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
             ))
           }
         </div>
-      </fieldset>
+      </div>
     </div>
   );
 }
