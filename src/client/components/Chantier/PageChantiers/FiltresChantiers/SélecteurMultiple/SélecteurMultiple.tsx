@@ -35,12 +35,12 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
             valeur=''
           />
         </div>
-        <div className="fr-fieldset__content fr-mt-2w">
+        <div className="fr-px-1w">
           {
             filtres.map(filtre => (
               <>
                 <div
-                  className="fr-checkbox-group"
+                  className="fr-checkbox-group fr-py-3v"
                   key={filtre.id}
                 >
                   <input
