@@ -1,7 +1,7 @@
-import styles from './Séparateur.module.scss';
+import SéparateurProps from '@/components/_commons/Séparateur/Séparateur.interface';
 
-export default function Séparateur() {
+export default function Séparateur({ classNamePersonnalisée = '' } : SéparateurProps) {
   return (
-    <hr className={`${styles.séparateur} fr-my-3w fr-pb-1v`} />
+    <hr className={`fr-hr ${classNamePersonnalisée}`} />
   );
 }

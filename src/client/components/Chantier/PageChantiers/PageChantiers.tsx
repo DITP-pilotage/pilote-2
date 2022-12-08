@@ -57,7 +57,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
             <div className="fr-col-12 fr-col-lg-6">
               <CarteSquelette>
                 <TauxAvancementMoyen />
-                <Séparateur />
+                <Séparateur classNamePersonnalisée='fr-my-3w fr-pb-1v' />
                 <RépartitionMétéo />
               </CarteSquelette>
             </div>

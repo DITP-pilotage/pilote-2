@@ -2,8 +2,8 @@ import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
 import { useCallback } from 'react';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import Séparateur from '@/components/_commons/Séparateur/Séparateur';
 import SélecteurMultipleProps from './SélecteurMultiple.interface';
@@ -14,8 +14,6 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
   const changementDeLÉtatDuFiltreCallback = useCallback((estSélectionné: boolean, id: PérimètreMinistériel['id']) => {
     return estSélectionné ? activerUnFiltre(id, catégorieDeFiltre) : désactiverUnFiltre(id, catégorieDeFiltre);
   }, [activerUnFiltre, désactiverUnFiltre, catégorieDeFiltre]);
-
-
 
   return (
     <div className="fr-form-group">
@@ -59,7 +57,7 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
                     {filtre.nom}
                   </label>
                 </div>
-                <Séparateur />
+                <Séparateur classNamePersonnalisée='flex fr-pb-1v fr-mx-1w' />
               </>
             ))
           }
