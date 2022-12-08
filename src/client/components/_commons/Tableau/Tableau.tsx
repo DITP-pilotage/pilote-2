@@ -1,6 +1,5 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import TableauProps from './Tableau.interface';
 import {
   getCoreRowModel, 
   getFilteredRowModel, 
@@ -9,11 +8,12 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import Titre from '@/components/_commons/Titre/Titre';
+import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
+import TableauProps from './Tableau.interface';
 import TableauEnTête from './TableauEnTête/TableauEnTête';
 import TableauContenu from './TableauContenu/TableauContenu';
 import TableauPagination from './TableauPagination/TableauPagination';
-import BarreDeRecherche from '../BarreDeRecherche/BarreDeRecherche';
-import Titre from '../Titre/Titre';
 import styles from './Tableau.module.scss';
 
 export default function Tableau<T extends object>({ colonnes, données, titre, entité }: TableauProps<T>) {

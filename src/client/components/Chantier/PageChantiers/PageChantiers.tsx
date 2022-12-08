@@ -1,16 +1,16 @@
+import { useMemo, useState } from 'react';
+import Séparateur from '@/components/_commons/Séparateur/Séparateur';
+import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
+import { filtresActifs as filtresActifsStore } from '@/client/stores/useFiltresStore/useFiltresStore';
 import Titre from '@/components/_commons/Titre/Titre';
 import PageChantiersProps from './PageChantiers.interface';
 import styles from './PageChantiers.module.scss';
 import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
 import TauxAvancementMoyen from './TauxAvancementMoyen/TauxAvancementMoyen';
 import RépartitionTauxAvancement from './RépartitionTauxAvancement/RépartitionTauxAvancement';
-import { useMemo, useState } from 'react';
-import { filtresActifs as filtresActifsStore } from '@/client/stores/useFiltresStore/useFiltresStore';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import FiltresChantiers from './FiltresChantiers/FiltresChantiers';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
-import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
-import Séparateur from '@/components/_commons/Séparateur/Séparateur';
 
 export default function PageChantiers({ chantiers, périmètresMinistériels }: PageChantiersProps) {
   const [estOuverteBarreFiltres, setEstOuverteBarreFiltres] = useState(false);

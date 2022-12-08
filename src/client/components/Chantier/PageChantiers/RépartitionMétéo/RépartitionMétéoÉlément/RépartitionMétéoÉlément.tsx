@@ -1,5 +1,5 @@
-import RépartitionMétéoÉlémentProps from './RépartitionMétéoÉlément.interface';
 import Image from 'next/image';
+import RépartitionMétéoÉlémentProps from './RépartitionMétéoÉlément.interface';
 import styles from './RépartitionMétéoÉlément.module.scss';
 
 export default function RépartitionMétéoÉlément({ météo, nombreDeChantiers }: RépartitionMétéoÉlémentProps) {

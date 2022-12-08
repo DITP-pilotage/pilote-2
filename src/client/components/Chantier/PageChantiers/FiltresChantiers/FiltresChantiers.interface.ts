@@ -1,4 +1,4 @@
-import PérimètreMinistériel from 'server/domain/périmètreMinistériel/périmètreMinistériel.interface';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
 
 export default interface FiltresChantiersProps {
   estOuvert: boolean,

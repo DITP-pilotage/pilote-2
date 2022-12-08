@@ -20,10 +20,10 @@
     "incremental": true,
     "baseUrl": "./src",
     "paths": {
-      "@/server/*": ["server/*"],
+      "@/components/*": ["client/components/*"],
       "@/client/*": ["client/*"],
       "@/fixtures/*": ["fixtures/*"],
-      "@/components/*": ["client/components/*"],
+      "@/server/*": ["server/*"],
       "@/stores/*": ["client/stores/*"],
     }
   },

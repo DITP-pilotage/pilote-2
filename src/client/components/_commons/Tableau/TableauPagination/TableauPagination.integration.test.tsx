@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import TableauPagination from './TableauPagination';
 import userEvent from '@testing-library/user-event';
+import TableauPagination from './TableauPagination';
 
 const PREMIERE_PAGE = 'Première page';
 const DERNIERE_PAGE = 'Dernière page';

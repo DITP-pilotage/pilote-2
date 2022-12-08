@@ -1,6 +1,6 @@
-import FixtureInterface from './Fixture.interface';
-import PérimètreMinistériel from '../server/domain/périmètreMinistériel/périmètreMinistériel.interface';
 import { faker } from '@faker-js/faker';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
+import FixtureInterface from './Fixture.interface';
 
 const PérimètresMinistérielsFixture: FixtureInterface<PérimètreMinistériel> = {
   générer(valeursFixes: Partial<PérimètreMinistériel> = {}) {
