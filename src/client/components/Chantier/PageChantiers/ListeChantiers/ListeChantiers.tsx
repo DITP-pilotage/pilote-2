@@ -58,13 +58,13 @@ function afficherLesBarresDeProgression(avancement: ChantierAvancementFront) {
     <>
       <BarreDeProgression
         fond="blanc"
-        taille="sm"
+        taille="petite"
         valeur={avancement.annuel}
         variante='secondaire'
       />
       <BarreDeProgression
         fond="blanc"
-        taille="sm"
+        taille="petite"
         valeur={avancement.global}
         variante='primaire'
       />

@@ -15,7 +15,7 @@ export default function TauxAvancementMoyen() {
           annuel
         </p>
         <BarreDeProgression
-          taille="lg"
+          taille="grande"
           valeur={0.55}
           variante="secondaire"
         />
@@ -23,7 +23,7 @@ export default function TauxAvancementMoyen() {
           global
         </p>
         <BarreDeProgression
-          taille="lg"
+          taille="grande"
           valeur={0.4}
           variante="primaire"
         />
