@@ -1,26 +1,8 @@
 import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
-import styles from './BarreDeProgression.module.scss';
-
-const stylesÀPartirDeLaVariante = {
-  primaire: styles.barrePrimaire,
-  secondaire: styles.barreSecondaire,
-};
-
-const stylesÀPartirDeLaTaille = {
-  sm: {
-    barre: styles.barreSm,
-    libellé: 'fr-text--xs',
-  },
-  lg: {
-    barre: styles.barreLg,
-    libellé: 'fr-h1',
-  },
-};
-
-const stylesÀPartirDuFond = {
-  gris: styles.barreFondGris,
-  blanc: styles.barreFondBlanc,
-};
+import styles from './BarreDeProgression.base.module.scss';
+import stylesÀPartirDeLaVariante from './BarreDeProgression.variantes.module.scss';
+import stylesÀPartirDeLaTaille from './BarreDeProgression.tailles.module.scss';
+import stylesÀPartirDuFond from './BarreDeProgression.fonds.module.scss';
 
 export default function BarreDeProgression({
   taille,
@@ -35,14 +17,17 @@ export default function BarreDeProgression({
       ${styles.barre}
       ${stylesÀPartirDuFond[fond]}
       ${stylesÀPartirDeLaVariante[variante]}
-      ${stylesÀPartirDeLaTaille[taille].barre}`}
+      ${stylesÀPartirDeLaTaille[taille]}`}
     >
       <progress
         value={valeur ?? undefined}
       >
         {pourcentageAffiché}
       </progress>
-      <p className={`fr-mb-0 bold ${stylesÀPartirDeLaTaille[taille].libellé}`}>
+      <p className={`
+        fr-mb-0 bold
+        ${taille === 'grande' ? 'fr-h1' : 'fr-text--xs'}`}
+      >
         {pourcentageAffiché}
       </p>
     </div>

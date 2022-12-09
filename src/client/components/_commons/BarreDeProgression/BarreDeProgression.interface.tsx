@@ -1,4 +1,4 @@
-export type BarreDeProgressionTaille = 'sm' | 'lg';
+export type BarreDeProgressionTaille = 'petite' | 'grande';
 export type BarreDeProgressionVariante = 'primaire' | 'secondaire';
 export type BarreDeProgressionFond = 'gris' | 'blanc';
 
