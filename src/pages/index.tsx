@@ -1,6 +1,6 @@
-import PageChantiers from 'client/components/Chantier/PageChantiers/PageChantiers';
-import PérimètreMinistériel from 'server/domain/périmètreMinistériel/périmètreMinistériel.interface';
+import PageChantiers from '@/client/components/Chantier/PageChantiers/PageChantiers';
 import ChantierFront from '@/client/interfaces/ChantierFront.interface';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
 import ChantiersFixture from '@/fixtures/ChantiersFixture';
 import PérimètresMinistérielsFixture from '@/fixtures/PérimètresMinistérielsFixture';
 
