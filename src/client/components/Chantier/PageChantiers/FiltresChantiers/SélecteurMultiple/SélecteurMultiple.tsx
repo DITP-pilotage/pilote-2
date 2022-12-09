@@ -1,7 +1,7 @@
 import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
-import { ChangeEvent, Fragment, useCallback, useState } from 'react';
+import { ChangeEvent, Fragment, useCallback, useMemo, useState } from 'react';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
@@ -12,7 +12,6 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
 
-
   const changementDeLÉtatDuFiltreCallback = useCallback((estSélectionné: boolean, id: PérimètreMinistériel['id']) => {
     return estSélectionné ? activerUnFiltre(id, catégorieDeFiltre) : désactiverUnFiltre(id, catégorieDeFiltre);
   }, [activerUnFiltre, désactiverUnFiltre, catégorieDeFiltre]);
@@ -21,7 +20,11 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
     setValeurDeLaRecherche(event.target.value);
   }, [setValeurDeLaRecherche]);
 
-  let aucunRésultatRecherche = true;
+  const filtresFiltrésAvecRecherche = useMemo(() =>{
+    return filtres.filter(filtre => filtre.nom.toLowerCase().includes(valeurDeLaRecherche.toLowerCase()));
+  }, [valeurDeLaRecherche, filtres]);
+
+  const nombreFiltresActifCatégorie = actionsFiltresStore().récupérerNombreFiltresActifsDUneCatégorie(catégorieDeFiltre);
 
   return (
     <div className="fr-form-group">
@@ -31,7 +34,7 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
         className="fr-sidemenu__btn"
         type='button'
       >
-        { libellé }
+        {nombreFiltresActifCatégorie > 0 ? `${libellé} (${nombreFiltresActifCatégorie})` : libellé}
       </button>
       <div
         className="fr-collapse fr-pt-1w fr-px-1w"
@@ -43,15 +46,12 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
         />
         <div className={`${styles.choixFiltres}`}>
           {
-            filtres.map((filtre) => {
-              if (filtre.nom.toLowerCase().includes(valeurDeLaRecherche.toLowerCase())) {
-                aucunRésultatRecherche = false;
+            filtresFiltrésAvecRecherche.length > 0
+              ?
+              filtresFiltrésAvecRecherche.map((filtre) => {
                 return (
                   <Fragment key={filtre.id}>
-                    <div
-                      className="fr-checkbox-group fr-py-3v"
-                      key={filtre.id}
-                    >
+                    <div className="fr-checkbox-group fr-py-3v" >
                       <input
                         defaultChecked={estActif(filtre.id, catégorieDeFiltre)}
                         id={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
@@ -69,10 +69,10 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
                     <hr className='fr-hr flex fr-pb-1v fr-mx-1w' />
                   </Fragment>
                 );
-              }
-            })
+              })
+              :
+              'Aucun filtre ne correspond à votre recherche...'
           }
-          { aucunRésultatRecherche ? 'Aucun filtre ne correspond à votre recherche' : null}
         </div>
       </div>
     </div>

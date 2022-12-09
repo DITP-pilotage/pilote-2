@@ -20,6 +20,7 @@ const useFiltresStore = create<FiltresStore>((set, get) => ({
       },
     })),
     estActif: (id, catégorieDeFiltre) => get().filtresActifs[catégorieDeFiltre].includes(id),
+    récupérerNombreFiltresActifsDUneCatégorie  : (catégorieDeFiltre) => get().filtresActifs[catégorieDeFiltre].length,
   },
 }));
 
