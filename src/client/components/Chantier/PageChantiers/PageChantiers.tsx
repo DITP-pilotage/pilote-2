@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import Séparateur from '@/components/_commons/Séparateur/Séparateur';
 import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
 import { filtresActifs as filtresActifsStore } from '@/client/stores/useFiltresStore/useFiltresStore';
 import Titre from '@/components/_commons/Titre/Titre';
@@ -57,7 +56,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
             <div className="fr-col-12 fr-col-lg-6">
               <CarteSquelette>
                 <TauxAvancementMoyen />
-                <Séparateur classNamePersonnalisée='fr-my-3w fr-pb-1v' />
+                <hr className='fr-hr fr-my-3w fr-pb-1v' />
                 <RépartitionMétéo />
               </CarteSquelette>
             </div>

@@ -1,12 +1,12 @@
 import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
-import { useCallback } from 'react';
+import { Fragment, useCallback } from 'react';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
-import Séparateur from '@/components/_commons/Séparateur/Séparateur';
 import SélecteurMultipleProps from './SélecteurMultiple.interface';
+import styles from './SélecteurMultiple.module.scss';
 
 export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtres }: SélecteurMultipleProps) {
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
@@ -26,19 +26,17 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
         { libellé }
       </button>
       <div
-        className="fr-collapse fr-pt-1w"
+        className="fr-collapse fr-pt-1w fr-px-1w"
         id={`fr-sidemenu-item-${catégorieDeFiltre}`}
       >
-        <div className='fr-px-1w'>
-          <BarreDeRecherche
-            changementDeLaRechercheCallback={()=> {}}
-            valeur=''
-          />
-        </div>
-        <div className="fr-px-1w">
+        <BarreDeRecherche
+          changementDeLaRechercheCallback={()=> {}}
+          valeur=''
+        />
+        <div className={`${styles.choixFiltres}`}>
           {
             filtres.map(filtre => (
-              <>
+              <Fragment key={filtre.id}>
                 <div
                   className="fr-checkbox-group fr-py-3v"
                   key={filtre.id}
@@ -57,8 +55,8 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
                     {filtre.nom}
                   </label>
                 </div>
-                <Séparateur classNamePersonnalisée='flex fr-pb-1v fr-mx-1w' />
-              </>
+                <hr className='fr-hr flex fr-pb-1v fr-mx-1w' />
+              </Fragment>
             ))
           }
         </div>
