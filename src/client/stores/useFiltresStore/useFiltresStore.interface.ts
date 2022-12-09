@@ -10,5 +10,6 @@ export default interface FiltresStore {
     activerUnFiltre: (id: PérimètreMinistériel['id'], catégorieDeFiltre: keyof FiltresActifs) => void
     désactiverUnFiltre: (id: PérimètreMinistériel['id'], catégorieDeFiltre: keyof FiltresActifs) => void
     estActif: (id: PérimètreMinistériel['id'], catégorieDeFiltre: keyof FiltresActifs) => boolean
+    récupérerNombreFiltresActifsDUneCatégorie: ( catégorieDeFiltre: keyof FiltresActifs) => number
   }
 }

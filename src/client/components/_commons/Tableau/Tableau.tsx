@@ -1,6 +1,5 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import TableauProps from './Tableau.interface';
 import {
   getCoreRowModel, 
   getFilteredRowModel, 
@@ -9,16 +8,17 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import Titre from '@/components/_commons/Titre/Titre';
+import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
+import TableauProps from './Tableau.interface';
 import TableauEnTête from './TableauEnTête/TableauEnTête';
 import TableauContenu from './TableauContenu/TableauContenu';
 import TableauPagination from './TableauPagination/TableauPagination';
-import TableauBarreDeRecherche from './TableauBarreDeRecherche/TableauBarreDeRecherche';
-import Titre from '../Titre/Titre';
 import styles from './Tableau.module.scss';
 
 export default function Tableau<T extends object>({ colonnes, données, titre, entité }: TableauProps<T>) {
   const [tri, setTri] = useState<SortingState>([]);
-  const [valeurDeLaRechercheGénérale, setValeurDeLaRechercheGénérale] = useState('');
+  const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
 
   const tableau = useReactTable({
     data: données,
@@ -27,7 +27,7 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
       return Boolean(ligne.getValue<T>(colonneId).toString().toLowerCase().includes(filtreValeur.toLowerCase()));
     },
     state: {
-      globalFilter: valeurDeLaRechercheGénérale,
+      globalFilter: valeurDeLaRecherche,
       sorting: tri,
     },
     onSortingChange: setTri,
@@ -41,9 +41,9 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
     tableau.setPageSize(10);
   }, [tableau]);
 
-  const changementDeLaRechercheGénéraleCallback = useCallback((event: ChangeEvent<HTMLInputElement>) =>{
-    setValeurDeLaRechercheGénérale(event.target.value);
-  }, [setValeurDeLaRechercheGénérale]);
+  const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) =>{
+    setValeurDeLaRecherche(event.target.value);
+  }, [setValeurDeLaRecherche]);
 
   const changementDePageCallback = useCallback((numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1), [tableau]);
 
@@ -59,9 +59,9 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
         <p className="fr-mt-1w">
           {`${tableau.getFilteredRowModel().rows.length} ${entité}`}
         </p>
-        <TableauBarreDeRecherche
-          changementDeLaRechercheGénéraleCallback={changementDeLaRechercheGénéraleCallback}
-          valeur={valeurDeLaRechercheGénérale}
+        <BarreDeRecherche
+          changementDeLaRechercheCallback={changementDeLaRechercheCallback}
+          valeur={valeurDeLaRecherche}
         />
       </div>
       {

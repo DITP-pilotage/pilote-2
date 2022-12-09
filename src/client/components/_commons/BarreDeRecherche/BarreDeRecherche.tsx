@@ -1,20 +1,19 @@
 import '@gouvfr/dsfr/dist/component/search/search.min.css';
 import '@gouvfr/dsfr/dist/component/input/input.min.css';
-import TableauBarreDeRechercheProps from './TableauBarreDeRecherche.interface';
+import BarreDeRechercheProps from './BarreDeRecherche.interface';
 
-export default function TableauBarreDeRecherche({ changementDeLaRechercheGénéraleCallback, valeur }: TableauBarreDeRechercheProps) {
+export default function BarreDeRecherche({ changementDeLaRechercheCallback, valeur = '' }: BarreDeRechercheProps) {
   return (
     <div
       className='fr-search-bar'
-      id="header-search"
       role="search"
     >
       <input
         className="fr-input"
-        onChange={changementDeLaRechercheGénéraleCallback}
+        onChange={changementDeLaRechercheCallback}
         placeholder="Rechercher"
         type='text'
-        value={valeur ?? ''}
+        value={valeur}
       />
       <button
         className="fr-btn"

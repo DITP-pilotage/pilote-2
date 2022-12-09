@@ -1,7 +1,6 @@
 import '@gouvfr/dsfr/dist/component/navigation/navigation.min.css';
 import '@gouvfr/dsfr/dist/component/button/button.min.css';
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
-
 import Link from 'next/link';
 
 const fermerLaModaleDuMenu = () => {

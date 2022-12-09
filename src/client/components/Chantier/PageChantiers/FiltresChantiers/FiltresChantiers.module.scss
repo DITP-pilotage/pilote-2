@@ -14,7 +14,7 @@
   .barreLatérale {
     position: fixed;
     left: 0;
-    z-index: 501;
+    z-index: 502;
     transition: 500ms;
     transform: translateX(-20rem);
   }
@@ -23,4 +23,15 @@
     transition: 500ms;
     transform: translateX(0);
   }
+}
+
+.arrierePlan {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 501;
+  width: 100vw;
+  height: 100vh;
+  cursor: pointer;
+  background-color: #0003;
 }

@@ -1,12 +1,12 @@
-import Tableau from '../../../_commons/Tableau/Tableau';
 import Image from 'next/image';
 import pictoSoleil from '/public/img/météo/soleil.svg';
 import pictoSoleilNuage from '/public/img/météo/soleil-nuage.svg';
 import pictoNuage from '/public/img/météo/nuage.svg';
 import pictoOrage from '/public/img/météo/orage.svg';
 import { createColumnHelper } from '@tanstack/react-table';
-import ListeChantiersProps from './ListeChantiers.interface';
 import { ChantierAvancementFront } from '@/client/interfaces/ChantierFront.interface';
+import Tableau from '@/components/_commons/Tableau/Tableau';
+import ListeChantiersProps from './ListeChantiers.interface';
 
 export function mettreEnFormeLaMétéo(valeur: number | null) {
   switch (valeur) {
