@@ -6,6 +6,7 @@ import pictoOrage from '/public/img/météo/orage.svg';
 import { createColumnHelper } from '@tanstack/react-table';
 import { ChantierAvancementFront } from '@/client/interfaces/ChantierFront.interface';
 import Tableau from '@/components/_commons/Tableau/Tableau';
+import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import ListeChantiersProps from './ListeChantiers.interface';
 
 export function mettreEnFormeLaMétéo(valeur: number | null) {
@@ -52,38 +53,21 @@ export function mettreEnFormeLaMétéo(valeur: number | null) {
   }
 }
 
-function afficherUneBarreDeProgression(valeur: number | null) {
-  if (valeur === null) {
-    return (
-      <span>
-        Non renseigné
-      </span>
-    );
-  }
-
-  const pourcentageAvancement = valeur * 100;
-
-  return (
-    <>
-      {pourcentageAvancement.toFixed(0)}
-      %
-      <progress
-        max='100'
-        value={pourcentageAvancement}
-      >
-        {pourcentageAvancement.toFixed(0)}
-        %
-      </progress>
-    </>
-  );
-}
-
 function afficherLesBarresDeProgression(avancement: ChantierAvancementFront) {
   return (
     <>
-      { afficherUneBarreDeProgression(avancement.global) }
-      <br />
-      { afficherUneBarreDeProgression(avancement.annuel) }
+      <BarreDeProgression
+        fond="blanc"
+        taille="sm"
+        valeur={avancement.annuel}
+        variante='secondaire'
+      />
+      <BarreDeProgression
+        fond="blanc"
+        taille="sm"
+        valeur={avancement.global}
+        variante='primaire'
+      />
     </>
   );
 }
