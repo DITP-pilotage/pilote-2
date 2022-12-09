@@ -43,9 +43,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
             apparence='fr-h4'
             baliseHtml='h1'
           > 
-            {chantiers.length}
-            {' '}
-            chantiers dans les résultats
+            {`${chantiersFiltrés.length} chantiers`}
           </Titre>
           <div className="fr-grid-row fr-grid-row--gutters">
             <div className="fr-col-12 fr-col-lg-6">
