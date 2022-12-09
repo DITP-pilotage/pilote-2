@@ -1,4 +1,5 @@
 import Titre from '@/components/_commons/Titre/Titre';
+import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 
 export default function TauxAvancementMoyen() {
   return (
@@ -9,9 +10,24 @@ export default function TauxAvancementMoyen() {
       >
         Taux d’avancement moyen de la sélection
       </Titre>
-      <p className='fr-grid-row fr-grid-row--center'>
-        A venir...
-      </p>
+      <div>
+        <p className="fr-mb-1v">
+          annuel
+        </p>
+        <BarreDeProgression
+          taille="lg"
+          valeur={0.55}
+          variante="secondaire"
+        />
+        <p className="fr-mb-1v fr-mt-3w">
+          global
+        </p>
+        <BarreDeProgression
+          taille="lg"
+          valeur={0.4}
+          variante="primaire"
+        />
+      </div>
     </>
   );
 }
