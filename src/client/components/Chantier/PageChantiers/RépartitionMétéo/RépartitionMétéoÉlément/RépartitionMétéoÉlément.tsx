@@ -14,7 +14,7 @@ export default function RépartitionMétéoÉlément({ météo, nombreDeChantier
         {nombreDeChantiers}
       </p>
       <p className={`${styles.label} fr-grid-row fr-mb-0 fr-text--sm`}>
-        {météo.label}
+        {météo.nom}
       </p>
     </>
   );
