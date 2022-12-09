@@ -11,10 +11,10 @@ const customJestConfig = {
   watchPathIgnorePatterns: ['<rootDir>/db'],
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
-    "@/server/(.*)": "<rootDir>/src/server/$1",
+    "@/components/(.*)": "<rootDir>/src/client/components/$1",
     "@/client/(.*)":"<rootDir>/src/client/$1",
     "@/fixtures/(.*)":"<rootDir>/src/fixtures/$1",
-    "@/components/(.*)": "<rootDir>/src/client/components/$1",
+    "@/server/(.*)": "<rootDir>/src/server/$1",
     "@/stores/(.*)": "<rootDir>/src/client/stores/$1",
   }
 }

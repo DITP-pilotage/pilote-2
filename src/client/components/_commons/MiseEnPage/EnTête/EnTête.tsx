@@ -1,7 +1,7 @@
 import '@gouvfr/dsfr/dist/component/header/header.min.css';
 import '@gouvfr/dsfr/dist/component/logo/logo.min.css';
 import Link from 'next/link';
-import Navigation from '../Navigation/Navigation';
+import Navigation from '@/components/_commons/MiseEnPage/Navigation/Navigation';
 
 export default function EnTête() {
   return (

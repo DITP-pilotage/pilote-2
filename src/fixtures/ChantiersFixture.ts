@@ -1,6 +1,6 @@
-import FixtureInterface from './Fixture.interface';
 import { faker } from '@faker-js/faker';
 import ChantierFront from '@/client/interfaces/ChantierFront.interface';
+import FixtureInterface from './Fixture.interface';
 
 const générerValeurMétéo = () => {
   return Math.random() > 0.8 ? null : Math.ceil(Math.random() * 4);

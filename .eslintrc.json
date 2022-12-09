@@ -38,6 +38,20 @@
         "optionalDependencies": false
       }
     ],
+    "import/order":
+    [
+      1,
+      { 
+        "groups": [
+          "external",
+          "builtin",
+          "internal",
+          "sibling",
+          "parent",
+          "index"
+        ]
+      }
+    ],
     "unicorn/prevent-abbreviations": "off",
     "unicorn/filename-case": "off",
     "unicorn/no-array-for-each": "off",
