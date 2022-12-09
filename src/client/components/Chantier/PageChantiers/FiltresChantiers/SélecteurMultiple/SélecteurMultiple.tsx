@@ -1,7 +1,7 @@
 import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
-import { Fragment, useCallback } from 'react';
+import { ChangeEvent, Fragment, useCallback, useState } from 'react';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
@@ -10,10 +10,18 @@ import styles from './SélecteurMultiple.module.scss';
 
 export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtres }: SélecteurMultipleProps) {
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
+  const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
+
 
   const changementDeLÉtatDuFiltreCallback = useCallback((estSélectionné: boolean, id: PérimètreMinistériel['id']) => {
     return estSélectionné ? activerUnFiltre(id, catégorieDeFiltre) : désactiverUnFiltre(id, catégorieDeFiltre);
   }, [activerUnFiltre, désactiverUnFiltre, catégorieDeFiltre]);
+
+  const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) =>{
+    setValeurDeLaRecherche(event.target.value);
+  }, [setValeurDeLaRecherche]);
+
+  let aucunRésultatRecherche = true;
 
   return (
     <div className="fr-form-group">
@@ -30,35 +38,41 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
         id={`fr-sidemenu-item-${catégorieDeFiltre}`}
       >
         <BarreDeRecherche
-          changementDeLaRechercheCallback={()=> {}}
-          valeur=''
+          changementDeLaRechercheCallback={changementDeLaRechercheCallback}
+          valeur={valeurDeLaRecherche}
         />
         <div className={`${styles.choixFiltres}`}>
           {
-            filtres.map(filtre => (
-              <Fragment key={filtre.id}>
-                <div
-                  className="fr-checkbox-group fr-py-3v"
-                  key={filtre.id}
-                >
-                  <input
-                    defaultChecked={estActif(filtre.id, catégorieDeFiltre)}
-                    id={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
-                    name={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
-                    onChange={événement => changementDeLÉtatDuFiltreCallback(événement.target.checked, filtre.id)}
-                    type="checkbox"
-                  />
-                  <label
-                    className="fr-label"
-                    htmlFor={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
-                  >
-                    {filtre.nom}
-                  </label>
-                </div>
-                <hr className='fr-hr flex fr-pb-1v fr-mx-1w' />
-              </Fragment>
-            ))
+            filtres.map((filtre) => {
+              if (filtre.nom.toLowerCase().includes(valeurDeLaRecherche.toLowerCase())) {
+                aucunRésultatRecherche = false;
+                return (
+                  <Fragment key={filtre.id}>
+                    <div
+                      className="fr-checkbox-group fr-py-3v"
+                      key={filtre.id}
+                    >
+                      <input
+                        defaultChecked={estActif(filtre.id, catégorieDeFiltre)}
+                        id={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
+                        name={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
+                        onChange={événement => changementDeLÉtatDuFiltreCallback(événement.target.checked, filtre.id)}
+                        type="checkbox"
+                      />
+                      <label
+                        className="fr-label"
+                        htmlFor={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
+                      >
+                        {filtre.nom}
+                      </label>
+                    </div>
+                    <hr className='fr-hr flex fr-pb-1v fr-mx-1w' />
+                  </Fragment>
+                );
+              }
+            })
           }
+          { aucunRésultatRecherche ? 'Aucun filtre ne correspond à votre recherche' : null}
         </div>
       </div>
     </div>
