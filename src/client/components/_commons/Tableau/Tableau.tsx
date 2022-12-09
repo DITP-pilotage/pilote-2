@@ -1,4 +1,5 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
+import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import {
   getCoreRowModel, 
@@ -48,7 +49,7 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
   const changementDePageCallback = useCallback((numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1), [tableau]);
 
   return (
-    <div className="fr-table">
+    <div className="fr-table fr-mb-0">
       <Titre
         apparence="fr-h6"
         baliseHtml="h2"
@@ -63,18 +64,16 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
       </div>
       {
         tableau.getRowModel().rows.length === 0 ?
-          <>
-            <p>
-              Aucun 
-              {' '}
-              {entité}
-              {' '}
-              ne correspond à votre recherche !
-            </p>
-            <p>
-              Vous pouvez modifier vos filtres pour élargir votre recherche.
-            </p>
-          </>
+          <div className="fr-notice fr-notice--info">
+            <div className="fr-container">
+              <div className="fr-notice__body">
+                <p className="fr-notice__title">
+                  {`Aucun ${entité} ne correspond à votre recherche !`}
+                </p>
+                Vous pouvez modifier vos filtres pour élargir votre recherche.
+              </div>
+            </div>
+          </div>
           :
           <table className={`${styles.tableau} fr-mb-4w`}>
             <caption className="fr-sr-only">
