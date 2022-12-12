@@ -24,6 +24,7 @@ Aller dans le répertoire `data/pilote_data_jobs`.
 Récupérer le projet github PPG_metadata et le placer dans le répertoire `data/input_data/private_data`.
 
 #### Création de la table et import du csv
+
 Dans le dossier `data/`, exécuter les commandes suivantes.
 
 Si cela n'est pas déjà fait, créer les tables nécessaires au job d'import :
@@ -36,10 +37,10 @@ Note : ces tables sont créées dans le schéma `raw_data`, pas le schéma par d
 
 A la racine du projet, lancer la commande suivante :
 ``` bash
-npm run database:raw_data:fill:local
+npm run database:import:private
 ```
 
-NB: cette commande peut être utilisé directement avec la commande "database:fill" du package.json
+NB: cette commande peut être utilisé directement avec la commande "database:import" du package.json
 
 ### Job de transformations
 
@@ -56,7 +57,7 @@ Le répertoire `data/pilote_data_jobs/transformations` contient le projet dbt qu
 
 A la racine du projet :
 ``` bash
-npm run database:public:fill
+npm run database:transformation
 ```
 
 Ou bien directement dans le dossier `data/pilote_data_jobs`, réaliser les 3 étapes suivantes :
