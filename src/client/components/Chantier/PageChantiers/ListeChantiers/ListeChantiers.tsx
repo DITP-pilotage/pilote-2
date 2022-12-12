@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { createColumnHelper } from '@tanstack/react-table';
+import Link from 'next/link';
 import ChantierAvancement from '@/server/domain/chantier/ChantierAvancement.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import météos from '@/client/utils/météos';
@@ -57,12 +59,20 @@ function comparerAvancementChantier(a: ChantierAvancement, b: ChantierAvancement
   return 0;
 }
 
+const lienVersChantier = (chantier: Partial<Chantier>) => {
+  return (
+    <Link href={`chantier/${chantier.id}`}>
+      {chantier.nom}
+    </Link>
+  );
+};
+
 const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
 
 const colonnes = [
-  reactTableColonnesHelper.accessor('nom', {
+  reactTableColonnesHelper.accessor((chantier) => ({ nom: chantier.nom, id: chantier.id }), {
     header: 'Chantiers',
-    cell: nomChantier => nomChantier.getValue(),
+    cell: chantier => lienVersChantier(chantier.getValue()),
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('météo', {
