@@ -22,9 +22,9 @@
     "test:server:unit": "jest --passWithNoTests src/server/.*.unit.test.*",
     "test:server:integration": "jest --config=jest.integration.config.js src/server/.*.integration.test.*",
     "database:init": "prisma migrate reset",
-    "database:raw_data:fill": "bash data/fill_tables_raw_data.sh",
-    "database:raw_data:fill:local": "bash data/fill_tables_raw_data.sh private_data",
-    "database:public:fill": "bash data/fill_tables_public.sh"
+    "database:import": "bash data/pilote_data_jobs/scripts/fill_tables_raw_data.sh",
+    "database:import:private": "bash data/pilote_data_jobs/scripts/fill_tables_raw_data.sh private_data",
+    "database:transformation": "bash data/pilote_data_jobs/scripts/fill_tables_public.sh"
   },
   "browserslist": {
     "production": [
