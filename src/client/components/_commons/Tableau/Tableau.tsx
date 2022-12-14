@@ -17,7 +17,7 @@ import TableauContenu from './TableauContenu/TableauContenu';
 import TableauPagination from './TableauPagination/TableauPagination';
 import styles from './Tableau.module.scss';
 
-export default function Tableau<T extends object>({ colonnes, données, titre, entité }: TableauProps<T>) {
+export default function Tableau<T extends object>({ colonnes, données, titre, entité, afficherLaRecherche = true, afficherLeTitre = true }: TableauProps<T>) {
   const [tri, setTri] = useState<SortingState>([]);
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
 
@@ -50,18 +50,22 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
 
   return (
     <div className="fr-table fr-mb-0">
-      <Titre
-        apparence="fr-h6"
-        baliseHtml="h2"
-      >
-        {`${titre} (${tableau.getFilteredRowModel().rows.length})`}
-      </Titre>
-      <div className={`${styles.conteneur} fr-my-2w`}>
-        <BarreDeRecherche
-          changementDeLaRechercheCallback={changementDeLaRechercheCallback}
-          valeur={valeurDeLaRecherche}
-        />
-      </div>
+      { afficherLeTitre ? 
+        <Titre
+          apparence="fr-h6"
+          baliseHtml="h2"
+        >
+          {`${titre} (${tableau.getFilteredRowModel().rows.length})`}
+        </Titre>
+        : null }
+      { afficherLaRecherche ? 
+        <div className={`${styles.conteneur} fr-my-2w`}>
+          <BarreDeRecherche
+            changementDeLaRechercheCallback={changementDeLaRechercheCallback}
+            valeur={valeurDeLaRecherche}
+          />
+        </div>
+        : null }
       {
         tableau.getRowModel().rows.length === 0 ?
           <div className="fr-notice fr-notice--info">
