@@ -12,7 +12,7 @@ export class ChantierRandomRepository implements ChantierRepository {
     this.périmètreIds = périmètreIds;
   }
 
-  async add(_chantier: Chantier) {
+  async add(_: Chantier) {
     throw new Error('Error: Not implemented');
   }
 
