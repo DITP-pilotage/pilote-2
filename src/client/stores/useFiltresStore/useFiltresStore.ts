@@ -33,6 +33,10 @@ const useFiltresStore = create<FiltresStore>((set, get) => ({
       get().actions.récupérerFiltresActifsDUneCatégorie(catégorieDeFiltre).length
     ),
 
+    récupérerNombreFiltresActifs: () => (
+      get().actions.récupérerFiltresActifsAvecLeursCatégories().length
+    ),
+
     récupérerCatégories: () => Object.keys(get().filtresActifs) as Catégorie[],
 
     récupérerFiltresActifsAvecLeursCatégories: () => {

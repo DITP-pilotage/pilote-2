@@ -22,6 +22,7 @@ export default interface FiltresStore {
     estActif: (id: FiltreId, catégorieDeFiltre: keyof FiltresActifs) => boolean
     récupérerFiltresActifsDUneCatégorie: (catégorieDeFiltre: keyof FiltresActifs) => FiltreId[]
     récupérerNombreFiltresActifsDUneCatégorie: (catégorieDeFiltre: keyof FiltresActifs) => number
+    récupérerNombreFiltresActifs: () => number
     récupérerCatégories: () => Catégorie[]
     récupérerFiltresActifsAvecLeursCatégories: () => FiltreCatégorieTuple[]
   }
