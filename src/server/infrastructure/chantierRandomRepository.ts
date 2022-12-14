@@ -3,8 +3,13 @@ import Chantier from '@/server/domain/chantier/chantier.interface';
 import { ChantierRepository } from '@/server/domain/chantier/chantierRepository.interface';
 
 export class ChantierRandomRepository implements ChantierRepository {
-  constructor(n: number) {
-    this.nombreDeChantiers = n;
+  private nombreDeChantiers: number;
+
+  private périmètreIds: { id: string }[];
+
+  constructor(nombreDeChantiers: number, périmètreIds: { id: string }[]) {
+    this.nombreDeChantiers = nombreDeChantiers;
+    this.périmètreIds = périmètreIds;
   }
 
   async add(_chantier: Chantier) {
@@ -12,6 +17,10 @@ export class ChantierRandomRepository implements ChantierRepository {
   }
 
   async getListeChantiers() {
-    return ChantiersFixture.générerPlusieurs(this.nombreDeChantiers);
+    const valeursFixes = [];
+    for (let i = 0; i < this.nombreDeChantiers; i = i + 1) {
+      valeursFixes.push({ id_périmètre : this.périmètreIds[i % 3].id });
+    }
+    return ChantiersFixture.générerPlusieurs(this.nombreDeChantiers, valeursFixes);
   }
 }
