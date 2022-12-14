@@ -1,8 +1,9 @@
 import PageChantiers from '@/client/components/Chantier/PageChantiers/PageChantiers';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
-import ChantiersFixture from '@/fixtures/ChantiersFixture';
 import PérimètresMinistérielsFixture from '@/fixtures/PérimètresMinistérielsFixture';
 import Chantier from '@/server/domain/chantier/chantier.interface';
+import { ChantierRepository } from '@/server/domain/chantier/chantierRepository.interface';
+import { ChantierRandomRepository } from '@/server/infrastructure/chantierRandomRepository';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
@@ -20,7 +21,8 @@ export default function NextPageAccueil({ chantiers, périmètresMinistériels }
 
 export async function getServerSideProps() {
   const périmètresMinistériels = PérimètresMinistérielsFixture.générerPlusieurs(4);
-  const chantiers = ChantiersFixture.générerPlusieurs(120);
+  const chantierRepository: ChantierRepository = new ChantierRandomRepository(120);
+  const chantiers = await chantierRepository.getListeChantiers();
 
   return {
     props: {
