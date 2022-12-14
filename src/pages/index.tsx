@@ -20,13 +20,14 @@ export default function NextPageAccueil({ chantiers, périmètresMinistériels }
 }
 
 export async function getServerSideProps() {
-  const périmètresMinistériels = PérimètresMinistérielsFixture.générerPlusieurs(4);
-  const chantierRepository: ChantierRepository = new ChantierRandomRepository(120);
+  const valeursFixes = [ { id: 'PER-001' }, { id: 'PER-002' }, { id: 'PER-003' }, { id: 'PER-004' } ];
+  const périmètresMinistériels = PérimètresMinistérielsFixture.générerPlusieurs(4, valeursFixes);
+  const chantierRepository: ChantierRepository = new ChantierRandomRepository(120, valeursFixes);
   const chantiers = await chantierRepository.getListeChantiers();
 
   return {
     props: {
-      chantiers: chantiers.map((chantier, i) => ({ ...chantier, id_périmètre: périmètresMinistériels[i % 3].id })),
+      chantiers,
       périmètresMinistériels,
     },
   };
