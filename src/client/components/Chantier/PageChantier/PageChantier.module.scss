@@ -1,0 +1,18 @@
+.conteneur {
+  background: var(--background-contrast-grey);
+
+  .contenuPrincipal {
+    width: 100%;
+  }
+
+  .header {
+    height: 290px;
+    background: var(--background-action-low-blue-france);
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: var(--text-title-blue-france);
+  }
+}
