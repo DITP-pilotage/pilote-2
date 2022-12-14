@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ChantierAvancementFront } from '@/client/interfaces/ChantierFront.interface';
+import { ChantierAvancement } from '@/server/domain/chantier/chantierAvancement.interface';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import météos from '@/client/utils/météos';
@@ -24,7 +24,7 @@ function mettreEnFormeLaMétéo(valeur: 1 | 2 | 3 | 4 | null) {
   );
 }
 
-function afficherLesBarresDeProgression(avancement: ChantierAvancementFront) {
+function afficherLesBarresDeProgression(avancement: ChantierAvancement) {
   return (
     <>
       <BarreDeProgression
@@ -43,7 +43,7 @@ function afficherLesBarresDeProgression(avancement: ChantierAvancementFront) {
   );
 }
 
-function comparerAvancementChantier(a: ChantierAvancementFront, b: ChantierAvancementFront) {
+function comparerAvancementChantier(a: ChantierAvancement, b: ChantierAvancement) {
   if (a.global === b.global)
     return 0;
   if (a.global === null)
