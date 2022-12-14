@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
-import { filtresActifs as filtresActifsStore } from '@/client/stores/useFiltresStore/useFiltresStore';
+import { filtresActifs as filtresActifsStore, actions as actionsFiltreStore } from '@/client/stores/useFiltresStore/useFiltresStore';
 import Titre from '@/components/_commons/Titre/Titre';
 import PageChantiersProps from './PageChantiers.interface';
 import styles from './PageChantiers.module.scss';
@@ -16,6 +16,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
   const [estOuverteBarreFiltres, setEstOuverteBarreFiltres] = useState(false);
 
   const filtresActifs = filtresActifsStore();
+  const { récupérerNombreFiltresActifs } = actionsFiltreStore();
 
   const chantiersFiltrés = useMemo(() => (
     filtresActifs.périmètresMinistériels.length === 0
@@ -40,7 +41,11 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
           Filtres
         </button>
         <div>
-          <FiltresActifs />
+          {
+            récupérerNombreFiltresActifs() > 0 && (
+              <FiltresActifs />
+            )
+          }
           <div className="fr-p-4w">
             <Titre
               apparence='fr-h4'
