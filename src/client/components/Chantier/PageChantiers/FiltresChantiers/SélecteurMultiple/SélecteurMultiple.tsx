@@ -53,7 +53,7 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
                   <Fragment key={filtre.id}>
                     <div className="fr-checkbox-group fr-py-3v" >
                       <input
-                        defaultChecked={estActif(filtre.id, catégorieDeFiltre)}
+                        checked={estActif(filtre.id, catégorieDeFiltre)}
                         id={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
                         name={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
                         onChange={événement => changementDeLÉtatDuFiltreCallback(événement.target.checked, filtre.id)}

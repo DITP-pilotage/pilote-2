@@ -1,15 +1,28 @@
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
 
-interface FiltresActifs {
-  périmètresMinistériels: Array<PérimètreMinistériel['id']>
+export type Catégorie = keyof FiltresActifs;
+
+export type FiltreId = PérimètreMinistériel['id'];
+
+export interface FiltreCatégorieTuple {
+  catégorie: Catégorie,
+  filtre: FiltreId,
+}
+
+export interface FiltresActifs {
+  périmètresMinistériels: FiltreId[]
 }
 
 export default interface FiltresStore {
   filtresActifs: FiltresActifs
   actions: {
-    activerUnFiltre: (id: PérimètreMinistériel['id'], catégorieDeFiltre: keyof FiltresActifs) => void
-    désactiverUnFiltre: (id: PérimètreMinistériel['id'], catégorieDeFiltre: keyof FiltresActifs) => void
-    estActif: (id: PérimètreMinistériel['id'], catégorieDeFiltre: keyof FiltresActifs) => boolean
-    récupérerNombreFiltresActifsDUneCatégorie: ( catégorieDeFiltre: keyof FiltresActifs) => number
+    activerUnFiltre: (id: FiltreId, catégorieDeFiltre: keyof FiltresActifs) => void
+    désactiverUnFiltre: (id: FiltreId, catégorieDeFiltre: keyof FiltresActifs) => void
+    désactiverTousLesFiltres: () => void
+    estActif: (id: FiltreId, catégorieDeFiltre: keyof FiltresActifs) => boolean
+    récupérerFiltresActifsDUneCatégorie: (catégorieDeFiltre: keyof FiltresActifs) => FiltreId[]
+    récupérerNombreFiltresActifsDUneCatégorie: (catégorieDeFiltre: keyof FiltresActifs) => number
+    récupérerCatégories: () => Catégorie[]
+    récupérerFiltresActifsAvecLeursCatégories: () => FiltreCatégorieTuple[]
   }
 }

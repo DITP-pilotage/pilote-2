@@ -1,0 +1,17 @@
+.filtresActifs {
+  position: sticky;
+  top: 0;
+  background: var(--background-alt-blue-france);
+  box-shadow: 0 6px 18px var(--shadow-color);
+  z-index: 1;
+
+  .conteneurTags {
+    max-height: 7.5rem;
+    overflow-y: scroll;
+  }
+
+  .bouttons {
+    border-radius: 0.375rem;
+    border: 1px solid #7b7b7b; /* TODO variable ? */
+  }
+}
