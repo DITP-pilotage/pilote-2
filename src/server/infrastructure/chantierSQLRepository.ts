@@ -25,6 +25,8 @@ export class ChantierSQLRepository implements ChantierRepository {
       id: chantierPrisma.id,
       nom: chantierPrisma.nom,
       id_périmètre: chantierPrisma.id_perimetre,
+      météo: null,
+      avancement: { annuel: null, global: null },
     };
   }
 
