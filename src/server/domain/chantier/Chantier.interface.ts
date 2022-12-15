@@ -1,4 +1,4 @@
-import { ChantierAvancement } from './chantierAvancement.interface';
+import ChantierAvancement from './ChantierAvancement.interface';
 
 export type Météo = 1 | 2 | 3 | 4 | null;
 

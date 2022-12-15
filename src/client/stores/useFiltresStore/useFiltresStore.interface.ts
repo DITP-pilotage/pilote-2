@@ -1,4 +1,4 @@
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 
 export type Catégorie = keyof FiltresActifs;
 

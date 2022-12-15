@@ -1,9 +1,10 @@
 import PageChantiers from '@/client/components/Chantier/PageChantiers/PageChantiers';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
-import PérimètresMinistérielsFixture from '@/fixtures/PérimètresMinistérielsFixture';
-import Chantier from '@/server/domain/chantier/chantier.interface';
-import { ChantierRepository } from '@/server/domain/chantier/chantierRepository.interface';
-import { ChantierRandomRepository } from '@/server/infrastructure/chantierRandomRepository';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import PérimètreMinistérielRandomRepository from '@/server/infrastructure/PérimètreMinistérielRandomRepository';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
+import ChantierRandomRepository from '@/server/infrastructure/ChantierRandomRepository';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
@@ -20,10 +21,11 @@ export default function NextPageAccueil({ chantiers, périmètresMinistériels }
 }
 
 export async function getServerSideProps() {
-  const valeursFixes = [ { id: 'PER-001' }, { id: 'PER-002' }, { id: 'PER-003' }, { id: 'PER-004' } ];
-  const périmètresMinistériels = PérimètresMinistérielsFixture.générerPlusieurs(4, valeursFixes);
-  const chantierRepository: ChantierRepository = new ChantierRandomRepository(120, valeursFixes);
-  const chantiers = await chantierRepository.getListeChantiers();
+  const idPérimètres = [ { id: 'PER-001' }, { id: 'PER-002' }, { id: 'PER-003' }, { id: 'PER-004' } ];
+  const périmètreRepository: PérimètreMinistérielRepository = new PérimètreMinistérielRandomRepository(idPérimètres);
+  const périmètresMinistériels = await périmètreRepository.getListe();
+  const chantierRepository: ChantierRepository = new ChantierRandomRepository(120, idPérimètres);
+  const chantiers = await chantierRepository.getListe();
 
   return {
     props: {

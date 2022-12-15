@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import Chantier from '@/server/domain/chantier/chantier.interface';
-import { ChantierRepository } from '@/server/domain/chantier/chantierRepository.interface';
-import { ChantierSQLRepository } from './chantierSQLRepository';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
   test('Accède à une liste de chantier', async () => {
@@ -26,7 +26,7 @@ describe('ChantierSQLRepository', () => {
     await chantierRepository.add(chantierInitial2);
 
     // WHEN
-    const chantiers = await chantierRepository.getListeChantiers();
+    const chantiers = await chantierRepository.getListe();
 
     // THEN
     expect(chantiers).toEqual([chantierInitial, chantierInitial2]);
