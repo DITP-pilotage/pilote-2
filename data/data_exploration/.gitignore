@@ -1,5 +1,7 @@
 # Data list for project
 data/
+db/
+notebooks/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

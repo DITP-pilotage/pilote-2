@@ -8,10 +8,15 @@ else
     FOLDER=$1
 fi
 
-export $(grep -v '^#' .env | xargs)
+# Uniquement sur du local
+if [ -z $DATABASE_URL ];
+then
+  export $(grep -v '^#' .env | xargs)
+fi
 
 psql $DATABASE_URL -c "truncate table raw_data.metadata_chantier"
 psql $DATABASE_URL -c "truncate table raw_data.metadata_perimetre"
 
-psql $DATABASE_URL -c "copy raw_data.metadata_chantier from STDIN with csv delimiter ',' header;" < data/input_data/$FOLDER/PPG_metadata/views/chantier/view_meta_chantier.csv
-psql $DATABASE_URL -c "copy raw_data.metadata_perimetre from STDIN with csv delimiter ',' header;" < data/input_data/$FOLDER/PPG_metadata/views/perimetre/view_meta_perimetre.csv
+# TODO : attention au chemin des fichiers qui casse la commande npm
+psql $DATABASE_URL -c "copy raw_data.metadata_chantier from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/chantier/view_meta_chantier.csv
+psql $DATABASE_URL -c "copy raw_data.metadata_perimetre from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/perimetre/view_meta_perimetre.csv
