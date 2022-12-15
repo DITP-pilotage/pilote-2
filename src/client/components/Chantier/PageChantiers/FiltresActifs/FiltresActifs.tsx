@@ -1,8 +1,13 @@
 import Tag from '@/client/components/_commons/Tag/Tag';
 import { actions as actionsFiltreStore } from '@/client/stores/useFiltresStore/useFiltresStore';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
 import styles from './FiltresActifs.module.scss';
 
-export default function FiltresActifs() {
+interface FiltresActifsProps {
+  périmètresMinistériels: PérimètreMinistériel[]
+}
+
+export default function FiltresActifs({ périmètresMinistériels }: FiltresActifsProps) {
   const {
     récupérerFiltresActifsAvecLeursCatégories,
     désactiverUnFiltre,
@@ -20,13 +25,16 @@ export default function FiltresActifs() {
       </p>
       <div className={styles.conteneurTags}>
         {
-            récupérerFiltresActifsAvecLeursCatégories().map(({ catégorie, filtre }) => (
+          récupérerFiltresActifsAvecLeursCatégories().map(({ catégorie, filtreId }) => {
+            const filtre = périmètresMinistériels.find((périmètreMinistériel => périmètreMinistériel.id === filtreId));
+            return !filtre ? null : (
               <Tag
-                fermetureCallback={() => désactiverUnFiltre(filtre, catégorie)}
-                key={`tag-${catégorie}-${filtre}`}
-                libellé={filtre}
+                fermetureCallback={() => désactiverUnFiltre(filtre.id, catégorie)}
+                key={`tag-${filtre.id}`}
+                libellé={`${catégorie} : ${filtre.nom}`}
               />
-            ))
+            );
+          })
         }
       </div>
       <div className="fr-mt-1w">

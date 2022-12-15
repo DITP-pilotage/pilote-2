@@ -43,7 +43,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
         <div>
           {
             récupérerNombreFiltresActifs() > 0 && (
-              <FiltresActifs />
+              <FiltresActifs périmètresMinistériels={périmètresMinistériels} />
             )
           }
           <div className="fr-p-4w">
