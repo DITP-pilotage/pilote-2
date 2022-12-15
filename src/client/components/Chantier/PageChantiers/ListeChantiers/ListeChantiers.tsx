@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { createColumnHelper } from '@tanstack/react-table';
-import { ChantierAvancement } from '@/server/domain/chantier/chantierAvancement.interface';
+import ChantierAvancement from '@/server/domain/chantier/ChantierAvancement.interface';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import météos from '@/client/utils/météos';

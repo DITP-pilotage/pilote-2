@@ -1,8 +1,8 @@
 import { chantier, PrismaClient } from '@prisma/client';
-import Chantier from '@/server/domain/chantier/chantier.interface';
-import { ChantierRepository } from '@/server/domain/chantier/chantierRepository.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 
-export class ChantierSQLRepository implements ChantierRepository {
+export default class ChantierSQLRepository implements ChantierRepository {
   private prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
@@ -15,7 +15,7 @@ export class ChantierSQLRepository implements ChantierRepository {
     });
   }
 
-  async getListeChantiers() {
+  async getListe() {
     const chantiersPrisma = await this.prisma.chantier.findMany();
     return chantiersPrisma.map(chantierPrisma => this.mapToDomain(chantierPrisma));
   }

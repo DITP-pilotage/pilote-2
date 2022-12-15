@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import Chantier from '@/server/domain/chantier/chantier.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import FixtureInterface from './Fixture.interface';
 
 const générerValeurMétéo = () => {

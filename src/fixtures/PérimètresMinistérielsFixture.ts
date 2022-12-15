@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/périmètreMinistériel.interface';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import FixtureInterface from './Fixture.interface';
 
 const PérimètresMinistérielsFixture: FixtureInterface<PérimètreMinistériel> = {
