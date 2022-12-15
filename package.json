@@ -50,7 +50,10 @@
     "nextjs-basic-auth-middleware": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "zustand": "^4.1.5"
+    "zustand": "^4.1.5",
+    "d3-selection": "^3.0.0",
+    "d3-zoom": "^3.0.0",
+    "@cutting/use-get-parent-size": "^1.25.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.3.0",
@@ -64,6 +67,8 @@
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
     "eslint": "^8.30.0",
+    "@types/d3-zoom": "^3.0.1",
+    "@types/d3-selection": "^3.0.3",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-next": "^13.0.7",
