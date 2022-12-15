@@ -1,0 +1,12 @@
+.conteneur {
+  min-height: 290px;
+  background: var(--background-action-low-blue-france);
+
+  .texte {
+    strong {
+      color: var(--text-label-grey);
+    }
+
+    color: var(--text-label-blue-france);
+  }
+}

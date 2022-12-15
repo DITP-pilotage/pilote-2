@@ -11,6 +11,9 @@ export default function Commentaires() {
         Commentaires du chantier (maille nationale)
       </Titre>
       <CarteSquelette>
+        <header className='fr-p-2w'>
+          France
+        </header>
         <p className='fr-grid-row fr-grid-row--center'>
           A venir...
         </p>

@@ -3,17 +3,14 @@ import Titre from '@/components/_commons/Titre/Titre';
 
 export default function SynthèseRésultats() {
   return (
-    <div
-      className='fr-pb-10w'
-      id="synthèse"
-    >
+    <div id="synthèse">
       <Titre baliseHtml='h2'>
         Synthèse des résultats
       </Titre>
-      <p>
-        Explications sur la pondération des indicateurs (à rédiger).
-      </p>
       <CarteSquelette>
+        <header className='fr-p-2w'>
+          National
+        </header>
         <p className='fr-grid-row fr-grid-row--center'>
           A venir...
         </p>
