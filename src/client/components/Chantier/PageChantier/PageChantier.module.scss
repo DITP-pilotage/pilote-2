@@ -5,14 +5,15 @@
     width: 100%;
   }
 
-  .header {
-    height: 290px;
-    background: var(--background-action-low-blue-france);
-  }
-
   h1,
   h2,
   h3 {
     color: var(--text-title-blue-france);
+  }
+
+  header {
+    height: 56px;
+    background: #e3e3fd;
+    border-radius: 8px 8px 0 0;
   }
 }

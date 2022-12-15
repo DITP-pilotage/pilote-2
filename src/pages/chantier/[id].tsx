@@ -1,9 +1,9 @@
-import ChantierFront from '@/client/interfaces/ChantierFront.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import PageChantier from '@/components/Chantier/PageChantier/PageChantier';
 import ChantiersFixture from '@/fixtures/ChantiersFixture';
 
 interface NextPageChantierProps {
-  chantier: ChantierFront
+  chantier: Chantier
 }
 
 export default function NextPageChantier({ chantier }: NextPageChantierProps) {
@@ -13,7 +13,7 @@ export default function NextPageChantier({ chantier }: NextPageChantierProps) {
 }
 
   
-export async function getServerSideProps({ params }: { params: { id: ChantierFront['id'] } }) {  
+export async function getServerSideProps({ params }: { params: { id: Chantier['id'] } }) {  
   const chantier = ChantiersFixture.générer({ id: params.id, nom: 'Offrir une scolarisation inclusive et adaptée à tous les enfants handicapés' });
 
   return {

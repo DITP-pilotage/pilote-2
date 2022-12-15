@@ -2,9 +2,9 @@ import { createColumnHelper } from '@tanstack/react-table';
 import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import Titre from '@/components/_commons/Titre/Titre';
-import ChantierFront from '@/client/interfaces/ChantierFront.interface';
 import { mettreEnFormeLaMétéo } from '@/client/utils/météos';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import AvancementChantierProps from './AvancementChantier.interface';
 
 
@@ -31,14 +31,14 @@ function afficherBarreDeProgressionGlobale(avancement: number | null) {
   );
 }
 
-const reactTableColonnesHelper = createColumnHelper<ChantierFront>();
+const reactTableColonnesHelper = createColumnHelper<Chantier>();
 
 const colonnes = [
-//   reactTableColonnesHelper.accessor('territoires', {
-//     header: 'Territoire(s)',
-//     cell: territoire => territoire.getValue(),
-//     enableSorting: false,
-//   }),
+  reactTableColonnesHelper.accessor('territoire', {
+    header: 'Territoire(s)',
+    cell: 'National',
+    enableSorting: false,
+  }),
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
     cell: météo => mettreEnFormeLaMétéo(météo.getValue()),
@@ -85,34 +85,6 @@ export default function AvancementChantier({ chantier }: AvancementChantierProps
           titre="Avancement"
         />
       </CarteSquelette>
-      <div className="fr-grid-row fr-grid-row--gutters fr-mt-3w">
-        <div className="fr-col-12 fr-col-lg-6">
-          <CarteSquelette>
-            <Titre
-              apparence='fr-text--lg'
-              baliseHtml='h5'
-            >
-              Répartition géographique du taux d’avancement du chantier
-            </Titre>
-            <p className='fr-grid-row fr-grid-row--center'>
-              A venir...
-            </p>
-          </CarteSquelette>
-        </div>
-        <div className="fr-col-12 fr-col-lg-6">
-          <CarteSquelette>
-            <Titre
-              apparence='fr-text--lg'
-              baliseHtml='h5'
-            >
-              Répartition géographique du niveau de confiance
-            </Titre>
-            <p className='fr-grid-row fr-grid-row--center'>
-              A venir...
-            </p>
-          </CarteSquelette>
-        </div>
-      </div>
     </div>
   );
 }

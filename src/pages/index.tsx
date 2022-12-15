@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import ChantierSQLRepository from '@/server/infrastructure/ChantierSQLRepository';
 import PérimètreMinistérielSQLRepository from '@/server/infrastructure/PérimètreMinistérielSQLRepository';
 import PageChantiers from '@/client/components/Chantier/PageChantiers/PageChantiers';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
@@ -8,6 +7,7 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import ChantierRandomRepository from '@/server/infrastructure/ChantierRandomRepository';
+import ChantierSQLRepository from '@/server/infrastructure/ChantierSQLRepository';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]

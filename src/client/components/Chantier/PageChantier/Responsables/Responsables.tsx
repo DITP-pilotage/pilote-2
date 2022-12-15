@@ -3,17 +3,50 @@ import Titre from '@/components/_commons/Titre/Titre';
 
 export default function Responsables() {
   return (
-    <div
-      className='fr-pb-10w'
-      id="responsables"
-    >
-      <Titre baliseHtml='h3'>
+    <div id="responsables">
+      <Titre baliseHtml='h2'>
         Responsables
       </Titre>
       <CarteSquelette>
-        <p className='fr-grid-row fr-grid-row--center'>
-          A venir...
-        </p>
+        <header className='fr-p-2w fr-mb-2w'>
+          National
+        </header>
+        <div className='fr-pl-2w fr-grid-row'>
+          <p className='fr-text--sm fr-text--bold fr-col'>
+            Ministère porteur
+          </p>
+          <p className='fr-text--sm fr-col'>
+            Non renseigné
+          </p>
+        </div>
+        <hr className='fr-hr' />
+        <div className='fr-pl-2w fr-grid-row'>
+          <p className='fr-text--sm fr-text--bold fr-col'>
+            Autres ministères co-porteurs
+          </p>
+          <p className='fr-text--sm fr-col'>
+            Non renseigné
+          </p>
+        </div>
+        <hr className='fr-hr' />
+        <div className='fr-pl-2w fr-grid-row'>
+          <p className='fr-text--sm fr-text--bold fr-col'>
+            Directeur d’Administration Centrale
+          </p>
+          <p className='fr-text--sm fr-col'>
+            Non renseigné
+          </p>
+        </div>
+        <hr className='fr-hr' />
+        <div className='fr-pl-2w fr-grid-row'>
+          <p className='fr-text--sm fr-text--bold fr-col'>
+            Nom du Directeur de Projet
+          </p>
+          <p className='fr-text--sm fr-col'>
+            Non renseigné
+          </p>
+        </div>
+        <hr className='fr-hr' />
       </CarteSquelette>
     </div>
   );
