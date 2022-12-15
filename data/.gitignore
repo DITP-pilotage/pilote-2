@@ -6,7 +6,7 @@ input_data/private_data
 ##
 # dbt
 # Root config
-pilote_data_jobs/transformations/dbt_root/*.yml
+pilote_data_jobs/transformations/dbt_root/.user.yml
 # Project artifacts
 pilote_data_jobs/transformations/ditp_ppg_dbt/target/
 pilote_data_jobs/logs/
