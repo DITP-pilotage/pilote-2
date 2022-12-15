@@ -7,13 +7,23 @@ import Responsables from './Responsables/Responsables';
 import SynthèseRésultats from './SynthèseRésultats/SynthèseRésultats';
 import PageChantierEnTête from './PageChantierEnTête/PageChantierEnTête';
 import Cartes from './Cartes/Cartes';
+import Sommaire from './Sommaire/Sommaire';
 
 const listeIndicateurs = [
-  { nom: 'Indicateurs de contexte', ancre: 'contexte' },
-  { nom: 'Indicateurs de déploiement', ancre: 'déploiement' },
-  { nom: 'Indicateurs d\'impact', ancre: 'impact' },
-  { nom: 'Indicateurs de qualité de service', ancre: 'perception' },
-  { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: 'suivi' },
+  { nom: 'Indicateurs de contexte', ancre: '#contexte' },
+  { nom: 'Indicateurs de déploiement', ancre: '#déploiement' },
+  { nom: 'Indicateurs d\'impact', ancre: '#impact' },
+  { nom: 'Indicateurs de qualité de service', ancre: '#perception' },
+  { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: '#suivi' },
+];
+
+const listeÉlémentsPage = [
+  { nom: 'Avancement', ancre: '#avancement' },
+  { nom: 'Synthèse des résultats', ancre: '#synthèse' },
+  { nom: 'Responsables', ancre: '#responsables' },
+  { nom: 'Cartes', ancre: '#cartes' },
+  { nom: 'Indicateurs', ancre: '#indicateurs', sousÉlément: listeIndicateurs },
+  { nom: 'Commentaires', ancre: '#commentaires' },
 ];
 
 
@@ -22,8 +32,8 @@ export default function PageChantier({ chantier }: PageChantierProps) {
     <div className={styles.conteneur}>
       <PageChantierEnTête chantier={chantier} />
       <div className='fr-grid-row fr-pt-4w'>
-        <div className='fr-col-2 fr-unhidden-lg fr-hidden'>
-          Sommaire
+        <div className='fr-col-2'>
+          <Sommaire éléments={listeÉlémentsPage} />
         </div>
         <div className='fr-col-lg-10 fr-col-12 fr-px-3w'>
           <AvancementChantier chantier={chantier} />

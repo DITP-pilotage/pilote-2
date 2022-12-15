@@ -1,0 +1,29 @@
+.conteneur {
+  width: 18rem;
+  color: var(--text-action-high-blue-france);
+
+  p {
+    font-weight: bold;
+  }
+
+  ul {
+    li {
+      list-style: none;
+
+      a:not(:hover, :active) {
+        --underline-idle-width: 0;
+      }
+    }
+
+    span {
+      transition: transform 1s linear;
+      transform: rotate(0deg);
+    }
+
+    span.ouvert {
+      background-color: red;
+      transition: transform 1s linear;
+      transform: rotate(180deg);
+    }
+  }
+}
