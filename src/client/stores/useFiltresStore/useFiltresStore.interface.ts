@@ -6,7 +6,7 @@ export type FiltreId = PérimètreMinistériel['id'];
 
 export interface FiltreCatégorieTuple {
   catégorie: Catégorie,
-  filtre: FiltreId,
+  filtreId: FiltreId,
 }
 
 export interface FiltresActifs {

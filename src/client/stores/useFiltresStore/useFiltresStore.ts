@@ -42,9 +42,9 @@ const useFiltresStore = create<FiltresStore>((set, get) => ({
     récupérerFiltresActifsAvecLeursCatégories: () => {
       let filtreEtCatégorie: FiltreCatégorieTuple[] = [];
       get().actions.récupérerCatégories().forEach(catégorie => (
-        get().actions.récupérerFiltresActifsDUneCatégorie(catégorie).forEach(filtre => {
+        get().actions.récupérerFiltresActifsDUneCatégorie(catégorie).forEach(filtreId => {
           filtreEtCatégorie.push({
-            catégorie, filtre,
+            catégorie, filtreId,
           });
         })
       ));
