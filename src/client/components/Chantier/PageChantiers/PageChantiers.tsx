@@ -74,12 +74,12 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
                 </CarteSquelette>
               </div>
             </div>
-          </div>
-          <div className="fr-grid-row">
-            <div className="fr-col">
-              <CarteSquelette>
-                <ListeChantiers chantiers={chantiersFiltrés} />
-              </CarteSquelette>
+            <div className="fr-grid-row">
+              <div className="fr-col">
+                <CarteSquelette>
+                  <ListeChantiers chantiers={chantiersFiltrés} />
+                </CarteSquelette>
+              </div>
             </div>
           </div>
         </div>
