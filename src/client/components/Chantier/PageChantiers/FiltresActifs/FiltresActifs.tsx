@@ -14,14 +14,15 @@ export default function FiltresActifs({ périmètresMinistériels }: FiltresActi
     désactiverTousLesFiltres,
     récupérerNombreFiltresActifs,
   } = actionsFiltreStore();
+  const nombreFiltresActifs = récupérerNombreFiltresActifs();
   return (
     <div className={`${styles.filtresActifs} fr-px-4w fr-py-2w`}>
       <p className="fr-text--xs fr-mb-1w">
         <span className="bold">
-          {récupérerNombreFiltresActifs()}
+          {nombreFiltresActifs}
         </span>
         {' '}
-        filtres actifs sur cette page
+        {nombreFiltresActifs > 1 ? 'filtres actifs sur cette page' : 'filtre actif sur cette page'}
       </p>
       <div className={styles.conteneurTags}>
         {
@@ -31,7 +32,7 @@ export default function FiltresActifs({ périmètresMinistériels }: FiltresActi
               <Tag
                 fermetureCallback={() => désactiverUnFiltre(filtre.id, catégorie)}
                 key={`tag-${filtre.id}`}
-                libellé={`${catégorie} : ${filtre.nom}`}
+                libellé={filtre.nom}
               />
             );
           })
@@ -39,7 +40,7 @@ export default function FiltresActifs({ périmètresMinistériels }: FiltresActi
       </div>
       <div className="fr-mt-1w">
         <button
-          className={`${styles.bouttons} fr-btn fr-btn--tertiary`}
+          className={`${styles.boutons} fr-btn fr-btn--tertiary`}
           onClick={désactiverTousLesFiltres}
           type="button"
         >
