@@ -1,0 +1,13 @@
+.bouton:hover {
+  background: none !important;
+}
+
+.fermé::before {
+  transition: transform 0.1s linear;
+  transform: rotate(0deg);
+}
+
+.ouvert::before {
+  transition: transform 0.1s linear;
+  transform: rotate(90deg);
+}

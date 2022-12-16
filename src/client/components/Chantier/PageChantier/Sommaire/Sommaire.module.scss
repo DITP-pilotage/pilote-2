@@ -1,29 +1,16 @@
 .conteneur {
-  width: 18rem;
-  color: var(--text-action-high-blue-france);
+  position: sticky;
+  top: 0;
+  max-width: 20rem;
+  height: 100vh;
+  overflow-y: scroll;
 
-  p {
-    font-weight: bold;
-  }
+  li {
+    color: var(--text-action-high-blue-france);
+    list-style: none;
 
-  ul {
-    li {
-      list-style: none;
-
-      a:not(:hover, :active) {
-        --underline-idle-width: 0;
-      }
-    }
-
-    span {
-      transition: transform 1s linear;
-      transform: rotate(0deg);
-    }
-
-    span.ouvert {
-      background-color: red;
-      transition: transform 1s linear;
-      transform: rotate(180deg);
+    a:not(:hover, :active) {
+      --underline-idle-width: 0;
     }
   }
 }
