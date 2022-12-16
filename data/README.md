@@ -112,7 +112,9 @@ bash pilote_data_jobs/scripts/fill_tables_raw_data.sh private_data
 
 ### Transformations
 
-Les transformations sont effectuées par dbt, qui est déjà installé par le setup inital.
+Les transformations sont effectuées par dbt, qui est déjà installé par le setup
+inital. Les transformations sont décrites dans le répertoire
+`data/pilote_data_jobs/transformations`
 
 Vérifiez que les valeurs de votre `data/.env` correspondent bien à la base que
 vous souhaitez modifier (voir les sections sur l'import pour un exemple en
@@ -123,6 +125,16 @@ Depuis le répertoire data :
 ```bash
 bash pilote_data_jobs/scripts/fill_tables_public.sh
 ```
+
+#### Hypothèses actuelles pour les transformations
+
+- Les données sources sont importées dans le schéma `raw_data` par l'étape précédente (job d'import) ;
+- Le schémas destination est le schémas utilisé par la Webapp. À date, ce schéma est le schéma par défaut (`public`) ;
+- DBT lit dans `raw_data`, le schéma d'import des données ;
+- DBT écrit dans `public`, le schéma de destination.
+
+### Evolutions du schémas `raw_data`
+
 
 
 # Schéma des flux de données
