@@ -1,17 +1,38 @@
-Ce répertoire contient les projets d'exploration de données, et les jobs d'ELT pilote.
+# Pilote Data jobs
+Ce répertoire les pipelines d'imports, de chargement et transformation des données de _Pilote V2_. 
+Il gère également les migrations de base pour les données brutes.
 
-# Meta Données PPG
+## Description
 
-Les projets et jobs s'appuient sur des méta données à récupérer par ailleurs.
+Ce projet est décomposé de 3 parties : 
+1. Migration des tables avec alembic : 
+   - Afin de versionner les changements de tables sur le schéma `raw_data` de la database du projet _Pilote V2_.
+2. Exploration des données issues de _Dfakto_ et du projet _PPG_metadata_ : 
+   - Projet python pour explorer les données du projet.
+3. Pipelines d'imports, de chargement et transformation des données
 
-Créez le répertoire `data/input_data`.
 
-Récupérez le zip des méta données PPG, dont le nom commence par `PPG_metadata` (demandez à l'équipe). Décompressez le répertoire `PPG_metadata` dans `data/input_data`.
+## Avant de démarrer
+
+### Pré-requis
+
+Il est nécessaire d'avoir python 3.9.15 sur votre machine.
+
+Il faut avoir configuré et initialisé votre base de données de Webapp comme précisé dans le README.md à la racine du projet.
+Pour la suite du projet, il faut s'assurer que la base de données soit démarrée.
+
+### Installation
+
+Les projets et pipelines s'appuient sur des métadonnées à récupérer par ailleurs.
+
+Récupérez le zip des métadonnées PPG, dont le nom commence par `PPG_metadata` (demandez à l'équipe). 
+Décompressez le répertoire `PPG_metadata` dans `data/input_data/private_data`.
+Ce projet est aussi récupérable de github.
 
 On se retrouve avec une arborescence qui ressemble à ça :
 
 ```
-data/input_data/
+data/input_data/private_data/
 └── PPG_metadata
     ├── CONTRIBUTING.md
     ├── PPG_metadata.Rproj
@@ -23,15 +44,32 @@ data/input_data/
     └── views
 ```
 
-# Initialisation de la base de données
+#### Initialisation de l'environnement python
 
-Pré-requis : avoir configuré et initialisé votre base de données de Webapp comme précisé dans le README.md de la racine.
-
-Sur un poste de dev, depuis le répertoire data :
+Afin d'installer les dépendances liées au projet, il faut exécuter la commande suivante : 
 
 ```bash
-npx prisma migrate dev
+pipenv install
 ```
+
+Afin de démarrer l'environnement :
+
+```bash
+pipenv shell
+```
+
+#### Initialisation de la base de données
+
+Afin d'effectuer les migrations sur votre base de données : 
+
+```bash
+alembic upgrade head
+```
+
+## Usage
+
+
+
 
 # Schéma des flux de données
 
