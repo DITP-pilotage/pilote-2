@@ -65,6 +65,7 @@ def run_migrations_offline():
         compare_type=True,
         include_schemas=True,
         include_name=include_name,
+        version_table_schema='raw_data',
     )
 
     with context.begin_transaction():
@@ -91,6 +92,7 @@ def run_migrations_online():
             compare_type=True,
             include_schemas=True,
             include_name=include_name,
+            version_table_schema='raw_data',
         )
 
         with context.begin_transaction():

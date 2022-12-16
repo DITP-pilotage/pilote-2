@@ -9,7 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "postinstall": "prisma generate",
-    "postdeploy": "prisma migrate deploy && cd data/ && prisma migrate deploy",
+    "postdeploy": "prisma migrate deploy",
     "start": "next start",
     "lint": "eslint 'src/**/*.{ts,tsx}' && npx tsc && npx stylelint 'src/**/*.scss'",
     "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix && npx stylelint 'src/**/*.scss'",
