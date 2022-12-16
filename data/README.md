@@ -21,6 +21,10 @@ Il est nécessaire d'avoir python 3.9.15 sur votre machine.
 Il faut avoir configuré et initialisé votre base de données de Webapp comme précisé dans le README.md à la racine du projet.
 Pour la suite du projet, il faut s'assurer que la base de données soit démarrée.
 
+Le client Postgres `psql` est également nécessaire pour les scripts d'import :
+
+- <https://www.postgresql.org/download/>
+
 ### Installation
 
 Les projets et pipelines s'appuient sur des métadonnées à récupérer par ailleurs.
@@ -60,15 +64,65 @@ pipenv shell
 
 #### Initialisation de la base de données
 
-Afin d'effectuer les migrations sur votre base de données : 
+Copier le fichier `/.env.example` vers `/data/.env` :
+
+```bash
+cp ../.env.example .env
+```
+
+Afin d'effectuer les migrations sur votre base de données :
 
 ```bash
 alembic upgrade head
 ```
 
+Note : alembic charge automatiquement le .env, et est capable de trouver le
+.env dans le répertoire racine du projet.
+
+Voir dans le fichier `migrations/env.py` pour connaître les variables d'env
+utilisées par alembic.
+
 ## Usage
 
+### Import des données
 
+#### Import des données open data en local
+
+Depuis le répertoire data :
+
+```bash
+bash pilote_data_jobs/scripts/fill_tables_raw_data.sh
+```
+
+#### Import des données privées vers la base live :
+
+Ouvrir un tunnel vers la base grâce au cli Scalingo :
+
+```bash
+scalingo -a pilote-ppg db-tunnel SCALINGO_POSTGRESQL_URL
+```
+
+Modifier les valeurs de votre .env pour les faire pointer vers votre tunnel
+
+Depuis le répertoire data :
+
+```bash
+bash pilote_data_jobs/scripts/fill_tables_raw_data.sh private_data
+```
+
+### Transformations
+
+Les transformations sont effectuées par dbt, qui est déjà installé par le setup inital.
+
+Vérifiez que les valeurs de votre `data/.env` correspondent bien à la base que
+vous souhaitez modifier (voir les sections sur l'import pour un exemple en
+local et un exemple en live).
+
+Depuis le répertoire data :
+
+```bash
+bash pilote_data_jobs/scripts/fill_tables_public.sh
+```
 
 
 # Schéma des flux de données
