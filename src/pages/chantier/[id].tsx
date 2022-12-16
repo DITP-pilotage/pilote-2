@@ -14,7 +14,7 @@ export default function NextPageChantier({ chantier }: NextPageChantierProps) {
 
   
 export async function getServerSideProps({ params }: { params: { id: Chantier['id'] } }) {  
-  const chantier = ChantiersFixture.générer({ id: params.id, nom: 'Offrir une scolarisation inclusive et adaptée à tous les enfants handicapés' });
+  const chantier = ChantiersFixture.générer({ id: params.id });
 
   return {
     props: {

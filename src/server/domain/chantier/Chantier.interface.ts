@@ -8,5 +8,4 @@ export default interface Chantier {
   id_périmètre: string;
   météo: Météo;
   avancement: ChantierAvancement;
-  territoire?: string
 }

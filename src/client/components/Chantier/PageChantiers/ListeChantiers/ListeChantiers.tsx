@@ -1,10 +1,9 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import Link from 'next/link';
 import ChantierAvancement from '@/server/domain/chantier/ChantierAvancement.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import { mettreEnFormeLaMétéo } from '@/client/utils/météos';
+import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import ListeChantiersProps from './ListeChantiers.interface';
 
 function afficherLesBarresDeProgression(avancement: ChantierAvancement) {
@@ -40,25 +39,21 @@ function comparerAvancementChantier(a: ChantierAvancement, b: ChantierAvancement
   return 0;
 }
 
-const lienVersChantier = (chantier: Partial<Chantier>) => {
-  return (
-    <Link href={`/chantier/${chantier.id}`}>
-      {chantier.nom}
-    </Link>
-  );
-};
-
 const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
 
 const colonnes = [
   reactTableColonnesHelper.accessor(chantier => chantier, {
     header: 'Chantiers',
-    cell: chantier => lienVersChantier(chantier.getValue()),
+    cell: chantier =>  (
+      <Link href={`/chantier/${chantier.getValue().id}`}>
+        {chantier.getValue().nom}
+      </Link>
+    ),
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
-    cell: météo => mettreEnFormeLaMétéo(météo.getValue()),
+    cell: météo => <PictoMétéo valeur={météo.getValue()} />,
     enableGlobalFilter: false,
   }),
   reactTableColonnesHelper.accessor('avancement', {

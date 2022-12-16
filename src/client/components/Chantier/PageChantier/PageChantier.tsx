@@ -8,23 +8,35 @@ import SynthèseRésultats from './SynthèseRésultats/SynthèseRésultats';
 import PageChantierEnTête from './PageChantierEnTête/PageChantierEnTête';
 import Cartes from './Cartes/Cartes';
 
+const listeIndicateurs = [
+  { nom: 'Indicateurs de contexte', ancre: 'contexte' },
+  { nom: 'Indicateurs de déploiement', ancre: 'déploiement' },
+  { nom: 'Indicateurs d\'impact', ancre: 'impact' },
+  { nom: 'Indicateurs de qualité de service', ancre: 'perception' },
+  { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: 'suivi' },
+];
+
+
 export default function PageChantier({ chantier }: PageChantierProps) {
   return (
     <div className={styles.conteneur}>
       <PageChantierEnTête chantier={chantier} />
-      <div className='flex'>
-        <div className={`${styles.contenuPrincipal} fr-pt-4w fr-px-3w`}>
+      <div className='fr-grid-row fr-pt-4w'>
+        <div className='fr-col-2 fr-unhidden-lg fr-hidden'>
+          Sommaire
+        </div>
+        <div className='fr-col-lg-10 fr-col-12 fr-px-3w'>
           <AvancementChantier chantier={chantier} />
-          <div className="fr-grid-row fr-grid-row--gutters fr-mt-3w fr-pb-10w">
-            <div className="fr-col-12 fr-col-lg-6">
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-5w">
+            <div className="fr-col-12 fr-col-xl-6">
               <SynthèseRésultats />
             </div>
-            <div className="fr-col-12 fr-col-lg-6">
+            <div className="fr-col-12 fr-col-xl-6">
               <Responsables />
             </div>
           </div>
           <Cartes />
-          <Indicateurs />
+          <Indicateurs indicateurs={listeIndicateurs} />
           <Commentaires />
         </div>
       </div>

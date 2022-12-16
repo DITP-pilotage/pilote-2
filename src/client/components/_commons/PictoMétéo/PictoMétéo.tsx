@@ -3,6 +3,7 @@ import pictoSoleilNuage from '/public/img/météo/soleil-nuage.svg';
 import pictoNuage from '/public/img/météo/nuage.svg';
 import pictoOrage from '/public/img/météo/orage.svg';
 import Image from 'next/image';
+import PictoMétéoProps from './PictoMétéo.interface';
 
 export const météos = {
   4:{ nom: 'Objectifs compromis', picto: pictoOrage },
@@ -11,7 +12,7 @@ export const météos = {
   1:{ nom: 'Objectifs sécurisés', picto: pictoSoleil },
 };
 
-export function mettreEnFormeLaMétéo(valeur: 1 | 2 | 3 | 4 | null) {
+export function PictoMétéo({ valeur }: PictoMétéoProps) {
   if (valeur === null) {
     return (
       <span>
@@ -27,4 +28,3 @@ export function mettreEnFormeLaMétéo(valeur: 1 | 2 | 3 | 4 | null) {
     />
   );
 }
-

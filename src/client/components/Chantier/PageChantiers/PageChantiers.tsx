@@ -46,12 +46,12 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
             {`${chantiersFiltrés.length} chantiers`}
           </Titre>
           <div className="fr-grid-row fr-grid-row--gutters">
-            <div className="fr-col-12 fr-col-lg-6">
+            <div className="fr-col-12 fr-col-xl-6">
               <CarteSquelette>
                 <RépartitionGéographique />
               </CarteSquelette>
             </div>
-            <div className="fr-col-12 fr-col-lg-6">
+            <div className="fr-col-12 fr-col-xl-6">
               <CarteSquelette>
                 <TauxAvancementMoyen />
                 <hr className='fr-hr fr-my-3w fr-pb-1v' />

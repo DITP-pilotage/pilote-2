@@ -1,21 +1,20 @@
 import Titre from '@/components/_commons/Titre/Titre';
+import FilAriane from '@/components/_commons/FilAriane/FilAriane';
 import PageChantierEnTêteProps from './PageChantierEnTête.interface';
 import styles from './PageChantierEnTête.module.scss';
-import FilAriane from '../../../_commons/FilAriane/FilAriane';
-import '@gouvfr/dsfr/dist/component/tag/tag.min.css';
 
 export default function PageChantierEnTête({ chantier }: PageChantierEnTêteProps) {
 
   return (
-    <header className={`${styles.conteneur} fr-px-15w fr-py-1w`}>
-      <FilAriane pageCourante={chantier.nom} />
+    <header className={`${styles.conteneur} fr-px-md-15w fr-p-1w fr-pb-8w`}>
+      <FilAriane libelléPageCourante={chantier.nom} />
       <div className='fr-grid-row'>
-        <div className='fr-col-12 fr-col-lg-6'>
+        <div className='fr-col-12 fr-col-xl-7 fr-pr-10w'>
           <Titre baliseHtml='h1'>
             {chantier.nom}
           </Titre>
         </div>
-        <div className='fr-col-12 fr-col-lg-6 fr-pl-10w'>
+        <div className='fr-col-12 fr-col-xl-5'>
           <p className={`${styles.texte} fr-mb-1w fr-text--xs`}>
             <strong>
               Axe :

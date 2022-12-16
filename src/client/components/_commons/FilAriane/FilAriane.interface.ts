@@ -1,4 +1,4 @@
 export default interface FilArianeProps {
-  pageCourante: string
+  libelléPageCourante: string
   chemin?: { nom: string, lien: string }[]
 }
