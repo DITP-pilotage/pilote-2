@@ -21,7 +21,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
   const chantiersFiltrés = useMemo(() => (
     filtresActifs.périmètresMinistériels.length === 0
       ? chantiers
-      : chantiers.filter(chantier => (filtresActifs.périmètresMinistériels.includes(chantier.id_périmètre)))
+      : chantiers.filter(chantier => (filtresActifs.périmètresMinistériels.some((filtre => filtre.id === chantier.id_périmètre))))
   ), [chantiers, filtresActifs]);
   
   return (
@@ -43,7 +43,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
         <div>
           {
             récupérerNombreFiltresActifs() > 0 && (
-              <FiltresActifs périmètresMinistériels={périmètresMinistériels} />
+              <FiltresActifs />
             )
           }
           <div className="fr-p-4w">
