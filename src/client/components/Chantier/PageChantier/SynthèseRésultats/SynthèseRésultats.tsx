@@ -8,9 +8,9 @@ export default function SynthèseRésultats() {
         Synthèse des résultats
       </Titre>
       <CarteSquelette>
-        <header className='fr-p-2w'>
+        <div className='fr-p-2w carteEnTête'>
           National
-        </header>
+        </div>
         <p className='fr-grid-row fr-grid-row--center'>
           A venir...
         </p>

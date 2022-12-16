@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import Link from 'next/link';
 import FilArianeProps from './FilAriane.interface';
 import '@gouvfr/dsfr/dist/component/breadcrumb/breadcrumb.min.css';
 
-export default function FilAriane({ chemin, pageCourante }: FilArianeProps) {
+export default function FilAriane({ chemin, libelléPageCourante }: FilArianeProps) {
   const [estOuvert, setEstOuvert] = useState(false);
+  const id = useId();
 
   return (
     <nav
@@ -13,7 +14,7 @@ export default function FilAriane({ chemin, pageCourante }: FilArianeProps) {
       role="navigation"
     >
       <button
-        aria-controls="breadcrumb-1"
+        aria-controls={`breadcrumb-${id}`}
         aria-expanded="false"
         className="fr-breadcrumb__button"
         onClick={() => setEstOuvert(!estOuvert)}
@@ -23,7 +24,7 @@ export default function FilAriane({ chemin, pageCourante }: FilArianeProps) {
       </button>
       <div
         className={estOuvert ? 'fr-collapse--expanded' : 'fr-collapse'}
-        id="breadcrumb-1"
+        id={`breadcrumb-${id}`}
       >
         <ol className="fr-breadcrumb__list">
           <li>
@@ -51,7 +52,7 @@ export default function FilAriane({ chemin, pageCourante }: FilArianeProps) {
               aria-current="page"
               className="fr-breadcrumb__link"
             >
-              {pageCourante}
+              {libelléPageCourante}
             </span>
           </li>
         </ol>

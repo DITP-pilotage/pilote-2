@@ -1,25 +1,29 @@
-table.tableau {
-  display: table;
+.conteneur {
+  overflow-x: auto;
 
-  thead {
-    background-color: var(--background-action-low-blue-france);
-    border: 1px solid var(--border-disabled-grey);
+  table.tableau {
+    display: table;
 
-    th:first-child {
-      border-radius: 8px 0 0;
-    }
+    thead {
+      background-color: var(--background-action-low-blue-france);
+      border: 1px solid var(--border-disabled-grey);
 
-    th:last-child {
-      border-radius: 0 8px 0 0;
+      th:first-child {
+        border-radius: 8px 0 0;
+      }
+
+      th:last-child {
+        border-radius: 0 8px 0 0;
+      }
     }
   }
-}
 
-.conteneur {
-  display: flex;
-  justify-content: space-between;
+  .barreDeRecherche {
+    display: flex;
+    justify-content: space-between;
 
-  div {
-    max-width: 100%;
+    div {
+      max-width: 100%;
+    }
   }
 }
