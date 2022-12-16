@@ -12,8 +12,8 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
 
-  const changementDeLÉtatDuFiltreCallback = useCallback((estSélectionné: boolean, id: PérimètreMinistériel['id']) => {
-    return estSélectionné ? activerUnFiltre(id, catégorieDeFiltre) : désactiverUnFiltre(id, catégorieDeFiltre);
+  const changementDeLÉtatDuFiltreCallback = useCallback((estSélectionné: boolean, filtre: PérimètreMinistériel) => {
+    return estSélectionné ? activerUnFiltre(filtre, catégorieDeFiltre) : désactiverUnFiltre(filtre.id, catégorieDeFiltre);
   }, [activerUnFiltre, désactiverUnFiltre, catégorieDeFiltre]);
 
   const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) =>{
@@ -56,7 +56,7 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
                         checked={estActif(filtre.id, catégorieDeFiltre)}
                         id={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
                         name={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
-                        onChange={événement => changementDeLÉtatDuFiltreCallback(événement.target.checked, filtre.id)}
+                        onChange={événement => changementDeLÉtatDuFiltreCallback(événement.target.checked, filtre)}
                         type="checkbox"
                       />
                       <label

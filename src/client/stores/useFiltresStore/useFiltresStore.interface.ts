@@ -2,25 +2,28 @@ import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/pé
 
 export type Catégorie = keyof FiltresActifs;
 
-export type FiltreId = PérimètreMinistériel['id'];
+export type Filtre = {
+  id: PérimètreMinistériel['id'],
+  nom: PérimètreMinistériel['nom']
+};
 
 export interface FiltreCatégorieTuple {
   catégorie: Catégorie,
-  filtreId: FiltreId,
+  filtre: Filtre,
 }
 
 export interface FiltresActifs {
-  périmètresMinistériels: FiltreId[]
+  périmètresMinistériels: Filtre[]
 }
 
 export default interface FiltresStore {
   filtresActifs: FiltresActifs
   actions: {
-    activerUnFiltre: (id: FiltreId, catégorieDeFiltre: keyof FiltresActifs) => void
-    désactiverUnFiltre: (id: FiltreId, catégorieDeFiltre: keyof FiltresActifs) => void
+    activerUnFiltre: (filtre: Filtre, catégorieDeFiltre: keyof FiltresActifs) => void
+    désactiverUnFiltre: (id: Filtre['id'], catégorieDeFiltre: keyof FiltresActifs) => void
     désactiverTousLesFiltres: () => void
-    estActif: (id: FiltreId, catégorieDeFiltre: keyof FiltresActifs) => boolean
-    récupérerFiltresActifsDUneCatégorie: (catégorieDeFiltre: keyof FiltresActifs) => FiltreId[]
+    estActif: (id: Filtre['id'], catégorieDeFiltre: keyof FiltresActifs) => boolean
+    récupérerFiltresActifsDUneCatégorie: (catégorieDeFiltre: keyof FiltresActifs) => Filtre[]
     récupérerNombreFiltresActifsDUneCatégorie: (catégorieDeFiltre: keyof FiltresActifs) => number
     récupérerNombreFiltresActifs: () => number
     récupérerCatégories: () => Catégorie[]

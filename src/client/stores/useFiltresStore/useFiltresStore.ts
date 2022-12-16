@@ -9,23 +9,23 @@ const filtresActifsInitiaux = {
 const useFiltresStore = create<FiltresStore>((set, get) => ({
   filtresActifs: filtresActifsInitiaux,
   actions: {
-    activerUnFiltre: (id, catégorieDeFiltre) => set(étatActuel => ({
+    activerUnFiltre: (filtre, catégorieDeFiltre) => set(étatActuel => ({
       filtresActifs: {
         ...étatActuel.filtresActifs,
-        [catégorieDeFiltre]: [...étatActuel.filtresActifs[catégorieDeFiltre], id],
+        [catégorieDeFiltre]: [...étatActuel.filtresActifs[catégorieDeFiltre], filtre],
       },
     })),
 
-    désactiverUnFiltre: (id, catégorieDeFiltre) => set(étatActuel => ({
+    désactiverUnFiltre: (filtreId, catégorieDeFiltre) => set(étatActuel => ({
       filtresActifs: {
         ...étatActuel.filtresActifs,
-        [catégorieDeFiltre]: étatActuel.filtresActifs[catégorieDeFiltre].filter(idFiltreActif => idFiltreActif !== id),
+        [catégorieDeFiltre]: étatActuel.filtresActifs[catégorieDeFiltre].filter(filtreActif => filtreActif.id !== filtreId),
       },
     })),
 
     désactiverTousLesFiltres: () => set(() => ({ filtresActifs: filtresActifsInitiaux })),
 
-    estActif: (id, catégorieDeFiltre) => get().filtresActifs[catégorieDeFiltre].includes(id),
+    estActif: (filtreId, catégorieDeFiltre) => get().filtresActifs[catégorieDeFiltre].some(filtre => filtre.id === filtreId),
 
     récupérerFiltresActifsDUneCatégorie: (catégorieDeFiltre) => get().filtresActifs[catégorieDeFiltre],
 
@@ -42,9 +42,9 @@ const useFiltresStore = create<FiltresStore>((set, get) => ({
     récupérerFiltresActifsAvecLeursCatégories: () => {
       let filtreEtCatégorie: FiltreCatégorieTuple[] = [];
       get().actions.récupérerCatégories().forEach(catégorie => (
-        get().actions.récupérerFiltresActifsDUneCatégorie(catégorie).forEach(filtreId => {
+        get().actions.récupérerFiltresActifsDUneCatégorie(catégorie).forEach(filtre => {
           filtreEtCatégorie.push({
-            catégorie, filtreId,
+            catégorie, filtre,
           });
         })
       ));
