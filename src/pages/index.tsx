@@ -1,3 +1,6 @@
+import { PrismaClient } from '@prisma/client';
+import ChantierSQLRepository from '@/server/infrastructure/ChantierSQLRepository';
+import PérimètreMinistérielSQLRepository from '@/server/infrastructure/PérimètreMinistérielSQLRepository';
 import PageChantiers from '@/client/components/Chantier/PageChantiers/PageChantiers';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import PérimètreMinistérielRandomRepository from '@/server/infrastructure/PérimètreMinistérielRandomRepository';
@@ -21,10 +24,21 @@ export default function NextPageAccueil({ chantiers, périmètresMinistériels }
 }
 
 export async function getServerSideProps() {
-  const idPérimètres = [ { id: 'PER-001' }, { id: 'PER-002' }, { id: 'PER-003' }, { id: 'PER-004' } ];
-  const périmètreRepository: PérimètreMinistérielRepository = new PérimètreMinistérielRandomRepository(idPérimètres);
+  let périmètreRepository: PérimètreMinistérielRepository;
+  let chantierRepository: ChantierRepository;
+
+  if (process.env.USE_DATABASE == 'true') {
+    const prisma = new PrismaClient();
+    périmètreRepository = new PérimètreMinistérielSQLRepository(prisma);
+    chantierRepository = new ChantierSQLRepository(prisma);
+
+  } else {
+    const idPérimètres = [ { id: 'PER-001' }, { id: 'PER-002' }, { id: 'PER-003' }, { id: 'PER-004' } ];
+    périmètreRepository = new PérimètreMinistérielRandomRepository(idPérimètres);
+    chantierRepository = new ChantierRandomRepository(120, idPérimètres);
+  }
+
   const périmètresMinistériels = await périmètreRepository.getListe();
-  const chantierRepository: ChantierRepository = new ChantierRandomRepository(120, idPérimètres);
   const chantiers = await chantierRepository.getListe();
 
   return {
