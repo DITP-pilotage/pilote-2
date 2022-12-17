@@ -8,7 +8,7 @@ metadata = Base.metadata
 
 class MetadataChantier(Base):
     __tablename__ = 'metadata_chantier'
-    __table_args__ = {"schema": "raw_data"}
+    __table_args__ = {'schema': 'raw_data'}
 
     chantier_id = Column(VARCHAR(7), primary_key=True)
     ch_code = Column(VARCHAR(255))
@@ -25,7 +25,7 @@ class MetadataChantier(Base):
 
 class MetadataPerimetre(Base):
     __tablename__ = 'metadata_perimetre'
-    __table_args__ = {"schema": "raw_data"}
+    __table_args__ = {'schema': 'raw_data'}
 
     perimetre_id = Column(VARCHAR(7), primary_key=True)
     per_nom = Column(VARCHAR(255))
@@ -46,3 +46,16 @@ class MetadataIndicateur(Base):
     indic_is_phare = Column(BOOLEAN)
     indic_is_baro = Column(BOOLEAN)
     indic_type = Column(VARCHAR(31), nullable=True)
+    # TODO: indic_type sera surement not nullable dans le futur
+
+
+class MetadataZone(Base):
+    __tablename__ = 'metadata_zone'
+    __table_args__ = {'schema': 'raw_data'}
+
+    zone_id = Column(VARCHAR(15), primary_key=True)
+    nom = Column(VARCHAR(255))
+    zone_code = Column(VARCHAR(7), nullable=False)
+    zone_type = Column(VARCHAR(15), nullable=False)
+    zone_parent = Column(VARCHAR(255))
+    # TODO: nom sera surement not nullable dans le futur
