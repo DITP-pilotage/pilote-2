@@ -166,34 +166,37 @@ L'évolution de ces flux se fera au fur et à mesure de la création et l'évolu
 
 ``` mermaid
 graph LR
-SFTP(Chargement initial) --> PG[(Base PG Pilote 2)]
-PM(PPG_metadata) --> PG
+PM(PPG_metadata) --> PG[(Base PG Pilote 2)]
+DFAK(Dump Dfakto) --> PG
 PG --> BE(Back-end) --> FE(Front-end)
 
 ```
 
 ## Zoom sur la partie ingestion de données
-### Brique SFTP vers Datawarehouse
+### Brique PPG_metdata vers Datawarehouse
 
-Aujourd'hui, le chargement des données se fait manuellement une seule fois.
-A terme nous devons pouvoir charger les données du serveur SFTP.
+Aujourd'hui, le chargement des données se fait manuellement une seule fois
+en provenance du répertoire `PPG_metadata`.
+A terme, nous devons pouvoir charger les données du serveur SFTP.
 
 ``` mermaid
 graph LR
-SFTP(Chargement initial) --> |chantier_perseverant.csv| PG[(Base PG Pilote 2)]
+PPG(PPG_metdata) --> |view_meta_chantier.csv| PG[(Base PG Pilote 2)]
+PPG --> |view_meta_perimetre.csv| PG
+PPG --> |view_meta_indicateur.csv| PG
 ```
 
 Légende :
-- Est appelé `Chargement initial` les données (ou .csv) issues du _SFTP_.
-- Est appelé `chantier_perseverant.csv` le fichier `DITP_Liste_chantiers_perseverants-avec-trigramme.csv`.
+- Est appelé `PPG_metdata` le répertoire éponyme qui se propose en interface 
+du _dump Dfakto_ avec des données plus facilement exploitables et déjà enrichies.
 
-### PPG Metadata vers Datawarehouse
+### Brique Dfakto vers Datawarehouse
 
 Pour le moment aucun pipeline de données n'a été implémentée. On peut imaginer des flux suivants :
 
 ``` mermaid
 graph LR
-PM(PPG_metadata) --> PG[(Base PG Pilote 2)]
+DFAK(Dump Dfakto) --> | | PG[(Base PG Pilote 2)]
 ```
 
 ## Zoom sur la partie transformation de données
@@ -208,16 +211,19 @@ pré-processées.
 ``` mermaid
 graph LR
 subgraph Base PG Pilote 2
-    RD{{raw_data}} --> |chantier| J((J))
-    RD --> |perimetre_ministeriel| J
-    J --> |chantier| PU{{public}}
-    RD --> |perimetre_ministeriel| PU
-end
-
-subgraph Légende
-    SCH{{schéma}}
-    JOIN((Jointure))
+   subgraph raw_data
+      MCHA[metadata_chantier]
+      MPER[metadata_perimetre]
+      MIND[metadata_indicateur]
+   end
+   subgraph public
+      MCHA --> CHA[chantier]
+      MPER --> PER[perimetre]
+      MIND --> IND[indicateur]
+   end
 end
 ```
+
+L'action de `select` correspond à la sélection de colum
 
 NB: Ce schéma n'est pas encore implémenté mais cela permet de poser des conventions de documentation des flux de données à l'intérieur de la base Pilote 2.
