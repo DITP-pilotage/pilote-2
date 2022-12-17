@@ -184,6 +184,7 @@ graph LR
 PPG(PPG_metdata) --> |view_meta_chantier.csv| PG[(Base PG Pilote 2)]
 PPG --> |view_meta_perimetre.csv| PG
 PPG --> |view_meta_indicateur.csv| PG
+PPG --> |view_meta_zone.csv| PG
 ```
 
 Légende :
@@ -215,11 +216,11 @@ subgraph Base PG Pilote 2
       MCHA[metadata_chantier]
       MPER[metadata_perimetre]
       MIND[metadata_indicateur]
+      MZON[metadata_zone]
    end
    subgraph public
       MCHA --> CHA[chantier]
       MPER --> PER[perimetre]
-      MIND --> IND[indicateur]
    end
 end
 ```
