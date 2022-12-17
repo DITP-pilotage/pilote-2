@@ -1,10 +1,16 @@
 #!/bin/bash
 
-docker pull ghcr.io/dbt-labs/dbt-postgres:1.3.1
+# Uniquement sur du local
+if [ -z $PG_HOST ] || [ -z $PG_PORT ] || [ -z $PG_USER ] || [ -z $PG_PASSWORD ] || [ -z $PG_DATABASE ];
+then
+  if [ -f .env ];
+  then
+    export $(grep -v '^#' .env | xargs)
+  else
+    echo "ERROR : .env does not exist. Cannot load variable DATABASE_URL. Exiting"
+    exit 1
+  fi
+fi
 
-docker run -it --rm \
-      --network=host \
-      --mount type=bind,source=$(pwd)/data/pilote_data_jobs/transformations/ditp_ppg_dbt,target=/usr/app \
-      --mount type=bind,source=$(pwd)/data/pilote_data_jobs/transformations/dbt_root,target=/root/.dbt/ \
-      ghcr.io/dbt-labs/dbt-postgres:1.3.1 \
-      run
+# TODO : attention au chemin des fichier qui casse la commande npm
+dbt run --project-dir pilote_data_jobs/transformations/ditp_ppg_dbt/ --profiles-dir pilote_data_jobs/transformations/dbt_root/

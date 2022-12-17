@@ -1,0 +1,12 @@
+ditp_ppg_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      threads: 1
+      host: "{{ env_var('PG_HOST') }}"
+      port: "{{ env_var('PG_PORT') | int }}"
+      user: "{{ env_var('PG_USER') }}"
+      pass: "{{ env_var('PG_PASSWORD') }}"
+      dbname: "{{ env_var('PG_DATABASE') }}"
+      schema: public
