@@ -7,16 +7,21 @@ Il gère également les migrations de base pour les données brutes.
 Ce projet est décomposé de 3 parties : 
 1. Migration des tables avec alembic : 
    - Afin de versionner les changements de tables sur le schéma `raw_data` de la database du projet _Pilote V2_.
+   - L'ensemble des migrations de base se trouve dans le dossier `migrations`
 2. Exploration des données issues de _Dfakto_ et du projet _PPG_metadata_ : 
    - Projet python pour explorer les données du projet.
+   - Ces données se situent dans le dossier `input_data`. 
+   On mettra les données privées dans le repertoire `private_data` et les données publiques dans `open_data`. 
 3. Pipelines d'imports, de chargement et transformation des données
+   - Les jobs d'imports et chargement des données seront exécutés via des commandes `psql` dans un script.
+   - Les transformations seront faites avec DBT dans un environnement python et également exécutées par script.
 
 
 ## Avant de démarrer
 
 ### Pré-requis
 
-Il est nécessaire d'avoir python 3.9.15 sur votre machine.
+Il est nécessaire d'avoir [python 3.9.15](https://www.python.org/downloads/release/python-3915/) sur votre machine.
 
 Il faut avoir configuré et initialisé votre base de données de Webapp comme précisé dans le README.md à la racine du projet.
 Pour la suite du projet, il faut s'assurer que la base de données soit démarrée.
@@ -27,13 +32,13 @@ Le client Postgres `psql` est également nécessaire pour les scripts d'import :
 
 ### Installation
 
-Les projets et pipelines s'appuient sur des métadonnées à récupérer par ailleurs.
+Les projets et pipelines s'appuient sur des métadonnées à récupérer en provenance de plusieurs sources.
 
 Récupérez le zip des métadonnées PPG, dont le nom commence par `PPG_metadata` (demandez à l'équipe). 
 Décompressez le répertoire `PPG_metadata` dans `data/input_data/private_data`.
 Ce projet est aussi récupérable de github.
 
-On se retrouve avec une arborescence qui ressemble à ça :
+On se retrouve avec une arborescence qui ressemble à cela :
 
 ```
 data/input_data/private_data/
@@ -76,8 +81,8 @@ Afin d'effectuer les migrations sur votre base de données :
 alembic upgrade head
 ```
 
-Note : alembic charge automatiquement le .env, et est capable de trouver le
-.env dans le répertoire racine du projet.
+Note : alembic charge automatiquement les variables contenues dans le fichier `.env`,
+et est capable de trouver le `.env` dans le répertoire racine du projet.
 
 Voir dans le fichier `migrations/env.py` pour connaître les variables d'env
 utilisées par alembic.
@@ -88,7 +93,7 @@ utilisées par alembic.
 
 #### Import des données open data en local
 
-Depuis le répertoire data :
+Toujours depuis le répertoire data :
 
 ```bash
 bash pilote_data_jobs/scripts/fill_tables_raw_data.sh
@@ -102,7 +107,7 @@ Ouvrir un tunnel vers la base grâce au cli Scalingo :
 scalingo -a pilote-ppg db-tunnel SCALINGO_POSTGRESQL_URL
 ```
 
-Modifier les valeurs de votre .env pour les faire pointer vers votre tunnel
+Modifier les valeurs de votre `.env` pour les faire pointer vers votre tunnel
 
 Depuis le répertoire data :
 
@@ -112,8 +117,8 @@ bash pilote_data_jobs/scripts/fill_tables_raw_data.sh private_data
 
 ### Transformations
 
-Les transformations sont effectuées par dbt, qui est déjà installé par le setup
-inital. Les transformations sont décrites dans le répertoire
+Les transformations sont effectuées par dbt, qui est déjà installé par le setup initial. 
+Les transformations sont décrites dans le répertoire
 `data/pilote_data_jobs/transformations`
 
 Vérifiez que les valeurs de votre `data/.env` correspondent bien à la base que
@@ -129,7 +134,7 @@ bash pilote_data_jobs/scripts/fill_tables_public.sh
 #### Hypothèses actuelles pour les transformations
 
 - Les données sources sont importées dans le schéma `raw_data` par l'étape précédente (job d'import) ;
-- Le schémas destination est le schémas utilisé par la Webapp. À date, ce schéma est le schéma par défaut (`public`) ;
+- Le schéma destination est le schéma utilisé par la Webapp. À date, ce schéma est le schéma par défaut (`public`) ;
 - DBT lit dans `raw_data`, le schéma d'import des données ;
 - DBT écrit dans `public`, le schéma de destination.
 
@@ -139,9 +144,9 @@ bash pilote_data_jobs/scripts/fill_tables_public.sh
 
 # Schéma des flux de données
 
-Ce document souhaite poser les bases des flux de données alimentant l'application [Pilote 2](). @Fabien ajouter lien vers l'app
+Ce document souhaite poser les bases des flux de données alimentant l'application Pilote 2.
 
-L'évolution de ces flux se fera au fur et à mesure de la création de l'application Pilote 2.
+L'évolution de ces flux se fera au fur et à mesure de la création et l'évolution de Pilote 2.
 
 ## Schéma macro des flux
 
@@ -149,7 +154,6 @@ L'évolution de ces flux se fera au fur et à mesure de la création de l'applic
 graph LR
 SFTP(Chargement initial) --> PG[(Base PG Pilote 2)]
 PM(PPG_metadata) --> PG
-RB(referentiel-builder) --> PG
 PG --> BE(Back-end) --> FE(Front-end)
 
 ```
@@ -178,16 +182,6 @@ graph LR
 PM(PPG_metadata) --> PG[(Base PG Pilote 2)]
 ```
 
-### Referentiel-builder vers Datawarehouse
-
-Pour le moment aucun pipeline de données n'a été implémentée. On peut imaginer des flux suivants :
-
-``` mermaid
-graph LR
-RB(referentiel-builder) --> PG[(Base PG Pilote 2)]
-```
-
-
 ## Zoom sur la partie transformation de données
 
 Dans cette brique datawarehouse, deux schémas de données se distinguent :
@@ -203,6 +197,7 @@ subgraph Base PG Pilote 2
     RD{{raw_data}} --> |chantier| J((J))
     RD --> |perimetre_ministeriel| J
     J --> |chantier| PU{{public}}
+    RD --> |perimetre_ministeriel| PU
 end
 
 subgraph Légende
