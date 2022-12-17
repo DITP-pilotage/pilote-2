@@ -23,8 +23,9 @@ fi
 psql $DATABASE_URL -c "truncate table raw_data.metadata_chantier"
 psql $DATABASE_URL -c "truncate table raw_data.metadata_perimetre"
 psql $DATABASE_URL -c "truncate table raw_data.metadata_indicateur"
+psql $DATABASE_URL -c "truncate table raw_data.metadata_zone"
 
-# TODO : attention au chemin des fichiers qui casse la commande npm
 psql $DATABASE_URL -c "copy raw_data.metadata_chantier from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/chantier/view_meta_chantier.csv
 psql $DATABASE_URL -c "copy raw_data.metadata_perimetre from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/perimetre/view_meta_perimetre.csv
 psql $DATABASE_URL -c "copy raw_data.metadata_indicateur from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/indicateur/view_meta_indicateur.csv
+psql $DATABASE_URL -c "copy raw_data.metadata_zone from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/zone/view_meta_zone.csv
