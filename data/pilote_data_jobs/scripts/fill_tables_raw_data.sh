@@ -11,7 +11,13 @@ fi
 # Uniquement sur du local
 if [ -z $DATABASE_URL ];
 then
-  export $(grep -v '^#' .env | xargs)
+  if [ -f .env ];
+  then
+    export $(grep -v '^#' .env | xargs)
+  else
+    echo "ERROR : .env does not exist. Cannot load variable DATABASE_URL. Exiting"
+    exit 1
+  fi
 fi
 
 psql $DATABASE_URL -c "truncate table raw_data.metadata_chantier"
