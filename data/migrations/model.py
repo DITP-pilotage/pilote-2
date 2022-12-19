@@ -110,3 +110,19 @@ class FactProgressChantier(Base):
     bounded_progress = Column(FLOAT, nullable=False)
     is_representative = Column(BOOLEAN, nullable=False)
     snapshot_date = Column(DateTime, nullable=False)
+
+
+class DimStructures(Base):
+    __tablename__ = 'dim_structures'
+    __table_args__ = {'schema': 'raw_data'}
+
+    structure_id = Column(VARCHAR(32), primary_key=True)
+    top_level_id = Column(VARCHAR(32), nullable=False)
+    structure_name = Column(VARCHAR(15), nullable=False)
+    structure_is_part_of_update_period = Column((BOOLEAN), nullable=False)
+    structure_scorecard_frequency = Column(VARCHAR(7))
+    structure_is_hidden = Column((BOOLEAN), nullable=False)
+    structure_has_correction = Column((BOOLEAN), nullable=False)
+    structure_level = Column(INTEGER, nullable=False)
+    snapshot_date = Column(DateTime, nullable=False)
+
