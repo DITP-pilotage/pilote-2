@@ -98,3 +98,15 @@ class DimTreeNodes(Base):
     tree_node_last_update_children_date = Column(DateTime)
     tree_node_currency = Column(VARCHAR(3))
     snapshot_date = Column(DateTime, nullable=False)
+
+
+class FactProgressChantier(Base):
+    __tablename__ = 'fact_progress_chantier'
+    __table_args__ = {'schema': 'raw_data'}
+
+    tree_node_id = Column(VARCHAR(32), primary_key=True)
+    period_id = Column(INTEGER, nullable=False)
+    progress = Column(FLOAT, nullable=False)
+    bounded_progress = Column(FLOAT, nullable=False)
+    is_representative = Column(BOOLEAN, nullable=False)
+    snapshot_date = Column(DateTime, nullable=False)
