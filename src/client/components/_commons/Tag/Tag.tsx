@@ -2,7 +2,7 @@ import '@gouvfr/dsfr/dist/component/tag/tag.min.css';
 import TagProps from '@/components/_commons/Tag/Tag.interface';
 import styles from './Tag.module.scss';
 
-export default function Tag({ libellé, fermetureCallback } : TagProps) {
+export default function Tag({ libellé, suppressionCallback } : TagProps) {
   return (
     <span
       className={`${styles.tag} fr-tag fr-mr-1w fr-mb-1w`}
@@ -11,7 +11,7 @@ export default function Tag({ libellé, fermetureCallback } : TagProps) {
       <button
         aria-label={`Retirer le tag ${libellé}`}
         className="fr-icon--sm fr-icon-close-line fr-ml-1v"
-        onClick={fermetureCallback}
+        onClick={suppressionCallback}
         type='button'
       />
     </span>
