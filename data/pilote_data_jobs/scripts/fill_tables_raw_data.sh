@@ -27,6 +27,8 @@ psql $DATABASE_URL -c "truncate table raw_data.metadata_zone"
 psql $DATABASE_URL -c "truncate table raw_data.fact_progress_indicateur"
 psql $DATABASE_URL -c "truncate table raw_data.dim_tree_nodes"
 psql $DATABASE_URL -c "truncate table raw_data.fact_progress_chantier"
+psql $DATABASE_URL -c "truncate table raw_data.dim_structures"
+
 
 # Import des données issues de PPG_metadata
 psql $DATABASE_URL -c "copy raw_data.metadata_chantier from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/chantier/view_meta_chantier.csv
@@ -38,3 +40,4 @@ psql $DATABASE_URL -c "copy raw_data.metadata_zone from STDIN with csv delimiter
 psql $DATABASE_URL -c "copy raw_data.fact_progress_indicateur from STDIN WITH (FORMAT csv, HEADER, DELIMITER ';', FORCE_NULL(valeur_initiale,valeur_actuelle,valeur_cible,progress,bounded_progress,date_valeur_initiale,date_valeur_actuelle,date_valeur_cible));" < input_data/$FOLDER/dump_dfakto_octo/rp/raw/fact_progress.csv
 psql $DATABASE_URL -c "copy raw_data.dim_tree_nodes from STDIN WITH (FORMAT csv, HEADER, DELIMITER ';', FORCE_NULL(tree_node_last_synchronization_date,tree_node_last_update_scorecard_date,tree_node_last_scorecard_update_by_anybody_date,tree_node_last_update_children_date));" < input_data/$FOLDER/dump_dfakto_octo/rp/raw/dim_tree_nodes.csv
 psql $DATABASE_URL -c "copy raw_data.fact_progress_chantier from STDIN WITH (FORMAT csv, HEADER, DELIMITER ';');" < input_data/$FOLDER/dump_dfakto_octo/rp/raw/fact_progress_reform.csv
+psql $DATABASE_URL -c "copy raw_data.dim_structures from STDIN WITH (FORMAT csv, HEADER, DELIMITER ';');" < input_data/$FOLDER/dump_dfakto_octo/rp/raw/dim_structures.csv
