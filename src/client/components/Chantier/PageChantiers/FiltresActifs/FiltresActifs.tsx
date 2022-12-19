@@ -9,7 +9,9 @@ export default function FiltresActifs() {
     désactiverTousLesFiltres,
     récupérerNombreFiltresActifs,
   } = actionsFiltreStore();
+
   const nombreFiltresActifs = récupérerNombreFiltresActifs();
+
   return (
     <div className={`${styles.filtresActifs} fr-px-4w fr-py-2w`}>
       <p className="fr-text--xs fr-mb-1w">
@@ -21,26 +23,24 @@ export default function FiltresActifs() {
       </p>
       <div className={styles.conteneurTags}>
         {
-          récupérerFiltresActifsAvecLeursCatégories().map(({ catégorie, filtre }) => {
-            return (
+          récupérerFiltresActifsAvecLeursCatégories().map(({ catégorie, filtre }) =>
+            (
               <Tag
-                fermetureCallback={() => désactiverUnFiltre(filtre.id, catégorie)}
                 key={`tag-${filtre.id}`}
                 libellé={filtre.nom}
+                suppressionCallback={() => désactiverUnFiltre(filtre.id, catégorie)}
               />
-            );
-          })
+            ),
+          )
         }
       </div>
-      <div className="fr-mt-1w">
-        <button
-          className={`${styles.boutons} fr-btn fr-btn--tertiary`}
-          onClick={désactiverTousLesFiltres}
-          type="button"
-        >
-          Réinitialiser les filtres
-        </button>
-      </div>
+      <button
+        className={`${styles.boutons} fr-btn fr-btn--tertiary fr-mt-1w`}
+        onClick={désactiverTousLesFiltres}
+        type="button"
+      >
+        Réinitialiser les filtres
+      </button>
     </div>
   );
 }
