@@ -1,13 +1,7 @@
-import { PrismaClient } from '@prisma/client';
-import PérimètreMinistérielSQLRepository from '@/server/infrastructure/PérimètreMinistérielSQLRepository';
 import PageChantiers from '@/client/components/Chantier/PageChantiers/PageChantiers';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import PérimètreMinistérielRandomRepository from '@/server/infrastructure/PérimètreMinistérielRandomRepository';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
-import ChantierRandomRepository from '@/server/infrastructure/ChantierRandomRepository';
-import ChantierSQLRepository from '@/server/infrastructure/ChantierSQLRepository';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
@@ -24,19 +18,8 @@ export default function NextPageAccueil({ chantiers, périmètresMinistériels }
 }
 
 export async function getServerSideProps() {
-  let périmètreRepository: PérimètreMinistérielRepository;
-  let chantierRepository: ChantierRepository;
-
-  if (process.env.USE_DATABASE == 'true') {
-    const prisma = new PrismaClient();
-    périmètreRepository = new PérimètreMinistérielSQLRepository(prisma);
-    chantierRepository = new ChantierSQLRepository(prisma);
-
-  } else {
-    const idPérimètres = [ { id: 'PER-001' }, { id: 'PER-002' }, { id: 'PER-003' }, { id: 'PER-004' } ];
-    périmètreRepository = new PérimètreMinistérielRandomRepository(idPérimètres);
-    chantierRepository = new ChantierRandomRepository(120, idPérimètres);
-  }
+  const périmètreRepository = dependencies.getPerimètreMinistérielRepository();
+  const chantierRepository = dependencies.getChantierRepository();
 
   const périmètresMinistériels = await périmètreRepository.getListe();
   const chantiers = await chantierRepository.getListe();
