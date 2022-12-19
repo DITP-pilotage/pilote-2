@@ -78,3 +78,23 @@ class FactProgressIndicateur(Base):
     date_valeur_actuelle = Column(DATE)
     date_valeur_cible = Column(DATE)
     snapshot_date = Column(DateTime, nullable=False)
+
+
+class DimTreeNodes(Base):
+    __tablename__ = 'dim_tree_nodes'
+    __table_args__ = {'schema': 'raw_data'}
+
+    tree_node_id = Column(VARCHAR(32), primary_key=True)
+    tree_node_parent_id = Column(VARCHAR(32))
+    structure_id = Column(VARCHAR(32), nullable=False)
+    maturity_id = Column(VARCHAR(32), nullable=False)
+    tree_node_name = Column(VARCHAR(255), nullable=False)
+    tree_node_code = Column(VARCHAR(15), nullable=False)
+    tree_node_status = Column(VARCHAR(15), nullable=False)
+    tree_node_last_synchronization_date = Column(DateTime)
+    tree_node_last_update_properties_date = Column(DateTime, nullable=False)
+    tree_node_last_update_scorecard_date = Column(DateTime)
+    tree_node_last_scorecard_update_by_anybody_date = Column(DateTime)
+    tree_node_last_update_children_date = Column(DateTime)
+    tree_node_currency = Column(VARCHAR(3))
+    snapshot_date = Column(DateTime, nullable=False)
