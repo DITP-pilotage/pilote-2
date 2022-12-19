@@ -138,9 +138,23 @@ bash pilote_data_jobs/scripts/fill_tables_public.sh
 - DBT lit dans `raw_data`, le schéma d'import des données ;
 - DBT écrit dans `public`, le schéma de destination.
 
-### Evolutions du schémas `raw_data`
+### Evolutions du schéma `raw_data`
 
+Dans le cas où on souhaiterait ajouter ou modifier une table du schéma `raw_data`, 
+il faut modifier le fichier `migrations/model.py` selon la structure attendue du fichier importé.
 
+Par exemple, on souhaite ajouter la colonne `is_barometre` dans la table `metadata_chantier`, 
+on peut ajouter la ligne suivante à la classe `MetadataChantier` : 
+``` python 
+is_barometre = Column(BOOLEAN)
+```
+
+Pour créer la migration de la base associée au changement réalisé, il suffit de : 
+``` bash
+alembic revision --autogenerate -m "Mon message de commit"
+```
+
+Pour toute information complémentaire, [consultez la doc](https://alembic.sqlalchemy.org/en/latest/tutorial.html).
 
 # Schéma des flux de données
 
