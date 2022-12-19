@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 dbt-postgres = "==1.3.1"
-alembic = "==1.7.6"
+alembic = "==1.9.0"
 python-dotenv = "==0.21.0"
 
 [dev-packages]
