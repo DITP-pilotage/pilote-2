@@ -11,16 +11,22 @@ describe('ChantierSQLRepository', () => {
     const chantierInitial1: Chantier = {
       id: 'THD',
       nom: 'Chantier 1',
+      nomPPG: null,
+      axe: null,
       id_périmètre: 'PER-001',
       météo: null,
       avancement: { annuel: null, global: null },
+      indicateurs: [],
     };
     const chantierInitial2: Chantier = {
       id: 'TUP',
       nom: 'Chantier 2',
+      axe: null,
+      nomPPG: null,
       id_périmètre: 'PER-001',
       météo: null,
       avancement: { annuel: null, global: null },
+      indicateurs: [],
     };
     await repository.add(chantierInitial1);
     await repository.add(chantierInitial2);
