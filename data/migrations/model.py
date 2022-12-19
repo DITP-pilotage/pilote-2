@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Index
+from sqlalchemy import Column, Index, DateTime
 from sqlalchemy.dialects.postgresql import VARCHAR, TIMESTAMP, DATE, BOOLEAN, FLOAT, TEXT, INTEGER, ARRAY, CHAR
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -59,3 +59,22 @@ class MetadataZone(Base):
     zone_type = Column(VARCHAR(15), nullable=False)
     zone_parent = Column(VARCHAR(255))
     # TODO: nom sera surement not nullable dans le futur
+
+
+class FactProgressIndicateur(Base):
+    __tablename__ = 'fact_progress_indicateur'
+    __table_args__ = {'schema': 'raw_data'}
+
+    tree_node_id = Column(VARCHAR(32), primary_key=True)
+    effect_id = Column(VARCHAR(255), primary_key=True)
+    period_id = Column(INTEGER, primary_key=True)
+    tag_applied = Column(VARCHAR(255), nullable=False)
+    valeur_initiale = Column(FLOAT)
+    valeur_actuelle = Column(FLOAT)
+    valeur_cible = Column(FLOAT)
+    progress = Column(FLOAT)
+    bounded_progress = Column(FLOAT)
+    date_valeur_initiale = Column(DATE)
+    date_valeur_actuelle = Column(DATE)
+    date_valeur_cible = Column(DATE)
+    snapshot_date = Column(DateTime, nullable=False)
