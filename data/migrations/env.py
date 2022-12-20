@@ -14,11 +14,11 @@ load_dotenv()
 
 config = context.config
 
-pg_user = os.getenv('PG_USER')
-pg_password = os.getenv('PG_PASSWORD')
-pg_host = os.getenv('PG_HOST')
-pg_db = os.getenv('PG_DATABASE')
-pg_port = os.getenv('PG_PORT')
+pg_user = os.getenv('PGUSER')
+pg_password = os.getenv('PGPASSWORD')
+pg_host = os.getenv('PGHOST')
+pg_db = os.getenv('PGDATABASE')
+pg_port = os.getenv('PGPORT')
 
 config.set_main_option('sqlalchemy.url', f'postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_db}')
 

@@ -4,9 +4,9 @@ ditp_ppg_dbt:
     dev:
       type: postgres
       threads: 1
-      host: "{{ env_var('PG_HOST') }}"
-      port: "{{ env_var('PG_PORT') | int }}"
-      user: "{{ env_var('PG_USER') }}"
-      pass: "{{ env_var('PG_PASSWORD') }}"
-      dbname: "{{ env_var('PG_DATABASE') }}"
+      host: "{{ env_var('PGHOST') }}"
+      port: "{{ env_var('PGPORT') | int }}"
+      user: "{{ env_var('PGUSER') }}"
+      pass: "{{ env_var('PGPASSWORD') }}"
+      dbname: "{{ env_var('PGDATABASE') }}"
       schema: public
