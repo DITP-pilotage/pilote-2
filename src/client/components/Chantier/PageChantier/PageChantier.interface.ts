@@ -1,5 +1,5 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 
 export default interface PageChantierProps {
-  chantier: Chantier
+  chantier: ChantierInfo
 }

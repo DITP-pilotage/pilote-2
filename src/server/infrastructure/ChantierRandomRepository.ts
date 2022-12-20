@@ -1,5 +1,5 @@
 import ChantiersFixture from '@/fixtures/ChantiersFixture';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 
 export default class ChantierRandomRepository implements ChantierRepository {
@@ -12,7 +12,7 @@ export default class ChantierRandomRepository implements ChantierRepository {
     this.idPérimètres = idPérimètres;
   }
 
-  async add(_: Chantier) {
+  async add(_: ChantierInfo) {
     throw new Error('Error: Not implemented');
   }
 

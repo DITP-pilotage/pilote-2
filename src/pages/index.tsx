@@ -1,10 +1,10 @@
 import PageChantiers from '@/client/components/Chantier/PageChantiers/PageChantiers';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 
 interface NextPageAccueilProps {
-  chantiers: Chantier[]
+  chantiers: ChantierInfo[]
   périmètresMinistériels: PérimètreMinistériel[]
 }
 

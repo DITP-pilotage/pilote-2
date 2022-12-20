@@ -1,5 +1,5 @@
 import { chantier, PrismaClient } from '@prisma/client';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 
 export default class ChantierSQLRepository implements ChantierRepository {
@@ -9,7 +9,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     this.prisma = prisma;
   }
 
-  async add(chantierToAdd: Chantier) {
+  async add(chantierToAdd: ChantierInfo) {
     await this.prisma.chantier.create({
       data: this.mapToPrisma(chantierToAdd),
     });
@@ -20,7 +20,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiersPrisma.map(chantierPrisma => this.mapToDomain(chantierPrisma));
   }
 
-  private mapToDomain(chantierPrisma: chantier): Chantier {
+  private mapToDomain(chantierPrisma: chantier): ChantierInfo {
     return {
       id: chantierPrisma.id,
       nom: chantierPrisma.nom,
@@ -30,7 +30,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     };
   }
 
-  private mapToPrisma(chantierDomaine: Chantier): chantier {
+  private mapToPrisma(chantierDomaine: ChantierInfo): chantier {
     return {
       id: chantierDomaine.id,
       nom: chantierDomaine.nom,

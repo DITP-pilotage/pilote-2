@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import Chantier, { Météo } from '@/server/domain/chantier/Chantier.interface';
+import ChantierInfo, { Météo } from '@/server/domain/chantier/ChantierInfo.interface';
 import { générerCaractèresSpéciaux } from '@/client/utils/strings';
 import { Avancement } from '@/server/domain/chantier/ChantierAvancement.interface';
 import FixtureInterface from './Fixture.interface';
@@ -24,8 +24,8 @@ const générerValeurAvancement = (): Avancement | null => {
     };
 };
 
-const ChantiersFixture: FixtureInterface<Chantier> = {
-  générer(valeursFixes: Partial<Chantier> = {}) {
+const ChantiersFixture: FixtureInterface<ChantierInfo> = {
+  générer(valeursFixes: Partial<ChantierInfo> = {}) {
     return {
       id: `CH-${faker.random.alphaNumeric(5)}`,
       nom: `${faker.lorem.words(10)} ${générerCaractèresSpéciaux(3)}`,
@@ -39,7 +39,7 @@ const ChantiersFixture: FixtureInterface<Chantier> = {
     };
   },
 
-  générerPlusieurs(quantité: number, valeursFixes: Partial<Chantier>[] = []) {
+  générerPlusieurs(quantité: number, valeursFixes: Partial<ChantierInfo>[] = []) {
     return Array.from({ length: quantité })
       .map((_, index) => this.générer(valeursFixes[index]));
   },

@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
@@ -8,14 +8,14 @@ describe('ChantierSQLRepository', () => {
     // GIVEN
     const prisma = new PrismaClient();
     const chantierRepository: ChantierRepository = new ChantierSQLRepository(prisma);
-    const chantierInitial: Chantier = {
+    const chantierInitial: ChantierInfo = {
       id: 'THD',
       nom: 'Chantier 1',
       id_périmètre: 'PER-001',
       météo: null,
       avancement: { annuel: null, global: null },
     };
-    const chantierInitial2: Chantier = {
+    const chantierInitial2: ChantierInfo = {
       id: 'TUP',
       nom: 'Chantier 2',
       id_périmètre: 'PER-001',

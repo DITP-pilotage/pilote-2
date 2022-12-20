@@ -1,9 +1,9 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 import PageChantier from '@/components/Chantier/PageChantier/PageChantier';
 import ChantiersFixture from '@/fixtures/ChantiersFixture';
 
 interface NextPageChantierProps {
-  chantier: Chantier
+  chantier: ChantierInfo
 }
 
 export default function NextPageChantier({ chantier }: NextPageChantierProps) {
@@ -13,7 +13,7 @@ export default function NextPageChantier({ chantier }: NextPageChantierProps) {
 }
 
   
-export async function getServerSideProps({ params }: { params: { id: Chantier['id'] } }) {  
+export async function getServerSideProps({ params }: { params: { id: ChantierInfo['id'] } }) {  
   const chantier = ChantiersFixture.générer({ id: params.id });
 
   return {
