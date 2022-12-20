@@ -7,4 +7,5 @@ export default interface BarreDeProgressionProps {
   variante: BarreDeProgressionVariante,
   fond?: BarreDeProgressionFond,
   valeur: number | null,
+  afficherLesCurseurs?: boolean,
 }
