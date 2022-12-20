@@ -10,12 +10,14 @@ function afficherLesBarresDeProgression(avancement: ChantierAvancement) {
   return (
     <>
       <BarreDeProgression
+        afficherLesCurseurs={false}
         fond="blanc"
         taille="petite"
         valeur={avancement.annuel}
         variante='secondaire'
       />
       <BarreDeProgression
+        afficherLesCurseurs={false}
         fond="blanc"
         taille="petite"
         valeur={avancement.global}
