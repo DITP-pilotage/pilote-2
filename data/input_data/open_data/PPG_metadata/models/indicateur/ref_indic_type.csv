@@ -1,0 +1,6 @@
+indic_type_id,indic_type_name,indic_type_descr,indic_type_rank
+IMPACT,Indicateur 1,Indicateur 1,PRINCIPAL
+DEPL,Indicateur 2,Indicateur 2,PRINCIPAL
+Q_SERV,Indicateur 3,Indicateur 3,COMPLEMENTAIRE
+REBOND,Indicateur 4,Indicateur 4,COMPLEMENTAIRE
+CONTEXTE,Indicateur 5,Indicateur 5,COMPLEMENTAIRE
