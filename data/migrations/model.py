@@ -61,6 +61,16 @@ class MetadataZone(Base):
     # TODO: nom sera surement not nullable dans le futur
 
 
+class IndicateurType(Base):
+    __tablename__ = 'indicateur_type'
+    __table_args__ = {'schema': 'raw_data'}
+
+    indic_type_id = Column(TEXT, primary_key=True)
+    indic_type_name = Column(TEXT, nullable=False)
+    indic_type_descr = Column(TEXT, nullable=False)
+    indic_type_rank = Column(TEXT, nullable=False)
+
+
 class FactProgressIndicateur(Base):
     __tablename__ = 'fact_progress_indicateur'
     __table_args__ = {'schema': 'raw_data'}
