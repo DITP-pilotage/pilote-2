@@ -25,7 +25,6 @@ const curseurs = {
   ),
 };
 
-
 export default function BarreDeProgressionCurseur({ valeur, typeDeCurseur, variante }: BarreDeProgressionCurseurProps) {
   return (
     <div
@@ -40,6 +39,7 @@ export default function BarreDeProgressionCurseur({ valeur, typeDeCurseur, varia
           ${stylesÀPartirDeLaVariante[variante]}
        `}
         viewBox="-12 -20 24 18"
+        xmlns="http://www.w3.org/2000/svg"
       >
         {
           curseurs[typeDeCurseur]

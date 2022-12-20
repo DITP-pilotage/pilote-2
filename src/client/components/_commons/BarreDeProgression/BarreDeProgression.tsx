@@ -18,7 +18,7 @@ export default function BarreDeProgression({
   const pourcentageAffiché = valeur ? `${(100 * valeur).toFixed(0)}%` : '- %';
   return (
     <div className={`
-      flex fr-grid-row--middle
+      flex fr-grid-row--middle fr-pb-1v
       ${styles.conteneur}
       ${stylesÀPartirDuFond[fond]}
       ${stylesÀPartirDeLaVariante[variante]}

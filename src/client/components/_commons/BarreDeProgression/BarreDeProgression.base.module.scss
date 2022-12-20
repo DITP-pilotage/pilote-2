@@ -7,6 +7,7 @@ $border-radius: 0.25rem;
     flex-grow: 1;
 
     progress {
+      display: block;
       width: 100%;
       border: 0;
       border-radius: $border-radius;
@@ -25,8 +26,7 @@ $border-radius: 0.25rem;
     }
 
     .conteneurCurseurs {
-      height: 0.75rem;
-      margin-top: -4px;
+      height: 0;
     }
   }
 
@@ -38,6 +38,7 @@ $border-radius: 0.25rem;
       padding-left: 0.5em;
       text-align: right;
       white-space: nowrap;
+      vertical-align: middle;
     }
   }
 }
