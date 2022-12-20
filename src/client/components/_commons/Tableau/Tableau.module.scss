@@ -1,12 +1,29 @@
-table.tableau {
-  display: table;
-}
-
 .conteneur {
-  display: flex;
-  justify-content: space-between;
+  overflow-x: auto;
 
-  div {
-    max-width: 100%;
+  table.tableau {
+    display: table;
+
+    thead {
+      background-color: var(--background-action-low-blue-france);
+      border: 1px solid var(--border-disabled-grey);
+
+      th:first-child {
+        border-radius: 8px 0 0;
+      }
+
+      th:last-child {
+        border-radius: 0 8px 0 0;
+      }
+    }
+  }
+
+  .barreDeRecherche {
+    display: flex;
+    justify-content: space-between;
+
+    div {
+      max-width: 100%;
+    }
   }
 }

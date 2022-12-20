@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { Météo } from '@/server/domain/chantier/Chantier.interface';
 import FixtureInterface from './Fixture.interface';
 
 const générerValeurMétéo = () => {
-  return Math.random() > 0.8 ? null : Math.ceil(Math.random() * 4) as 1 | 2 | 3 | 4 ;
+  return Math.random() > 0.8 ? null : Math.ceil(Math.random() * 4) as Météo ;
 };
 
 const générerValeurAvancement = () => {

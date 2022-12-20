@@ -41,6 +41,7 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@gouvfr/dsfr": "^1.8.4",
     "@prisma/client": "^4.6.1",
     "@tanstack/react-table": "^8.5.30",
@@ -49,8 +50,7 @@
     "nextjs-basic-auth-middleware": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "zustand": "^4.1.4",
-    "@faker-js/faker": "^7.6.0"
+    "zustand": "^4.1.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.3.0",

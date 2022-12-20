@@ -1,5 +1,5 @@
 import Titre from '@/components/_commons/Titre/Titre';
-import météos from '@/client/utils/météos';
+import { météos } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import RépartitionMétéoÉlément from './RépartitionMétéoÉlément/RépartitionMétéoÉlément';
 import styles from './RépartitionMétéo.module.scss';
 

@@ -1,28 +1,10 @@
-import Image from 'next/image';
 import { createColumnHelper } from '@tanstack/react-table';
+import Link from 'next/link';
 import ChantierAvancement from '@/server/domain/chantier/ChantierAvancement.interface';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import météos from '@/client/utils/météos';
+import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import ListeChantiersProps from './ListeChantiers.interface';
-import styles from './ListeChantiers.module.scss';
-
-function mettreEnFormeLaMétéo(valeur: 1 | 2 | 3 | 4 | null) {
-  if (valeur === null) {
-    return (
-      <span>
-        Non renseigné
-      </span>
-    );
-  }
-  
-  return (
-    <Image
-      alt={météos[valeur].nom}
-      src={météos[valeur].picto}
-    />
-  );
-}
 
 function afficherLesBarresDeProgression(avancement: ChantierAvancement) {
   return (
@@ -60,14 +42,18 @@ function comparerAvancementChantier(a: ChantierAvancement, b: ChantierAvancement
 const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
 
 const colonnes = [
-  reactTableColonnesHelper.accessor('nom', {
+  reactTableColonnesHelper.accessor(chantier => chantier, {
     header: 'Chantiers',
-    cell: nomChantier => nomChantier.getValue(),
+    cell: chantier =>  (
+      <Link href={`/chantier/${chantier.getValue().id}`}>
+        {chantier.getValue().nom}
+      </Link>
+    ),
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
-    cell: météo => mettreEnFormeLaMétéo(météo.getValue()),
+    cell: météo => <PictoMétéo valeur={météo.getValue()} />,
     enableGlobalFilter: false,
   }),
   reactTableColonnesHelper.accessor('avancement', {
@@ -82,13 +68,11 @@ const colonnes = [
 
 export default function ListeChantiers({ chantiers }: ListeChantiersProps) {
   return (
-    <div className={styles.conteneur}>
-      <Tableau<typeof chantiers[number]>
-        colonnes={colonnes}
-        données={chantiers}
-        entité="chantiers"
-        titre="Liste des chantiers"
-      />
-    </div>
+    <Tableau<typeof chantiers[number]>
+      colonnes={colonnes}
+      données={chantiers}
+      entité="chantiers"
+      titre="Liste des chantiers"
+    />
   );
 }
