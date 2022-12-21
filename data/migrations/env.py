@@ -8,7 +8,7 @@ from sqlalchemy import pool
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
-from migrations.model import Base
+from migrations.model import Base, SCHEMA_RAW_DATA
 
 load_dotenv()
 
@@ -39,7 +39,7 @@ target_metadata = Base.metadata
 
 def include_name(name, type_, parent_names):
     if type_ == "schema":
-        return name in ['raw_data']
+        return name in [SCHEMA_RAW_DATA]
     else:
         return True
 
@@ -65,7 +65,7 @@ def run_migrations_offline():
         compare_type=True,
         include_schemas=True,
         include_name=include_name,
-        version_table_schema='raw_data',
+        version_table_schema=SCHEMA_RAW_DATA,
     )
 
     with context.begin_transaction():
@@ -92,8 +92,9 @@ def run_migrations_online():
             compare_type=True,
             include_schemas=True,
             include_name=include_name,
-            version_table_schema='raw_data',
+            version_table_schema=SCHEMA_RAW_DATA,
         )
+        connection.execute(f'CREATE SCHEMA IF NOT EXISTS {SCHEMA_RAW_DATA}')
 
         with context.begin_transaction():
             context.run_migrations()
