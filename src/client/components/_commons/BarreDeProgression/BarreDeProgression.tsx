@@ -15,7 +15,7 @@ export default function BarreDeProgression({
   valeur,
   afficherLesCurseurs = true,
 }: BarreDeProgressionProps) {
-  const pourcentageAffiché = valeur ? `${(100 * valeur).toFixed(0)}%` : '- %';
+  const pourcentageAffiché = valeur ? `${(100 * valeur.moyenne).toFixed(0)}%` : '- %';
   return (
     <div className={`
       flex fr-grid-row--middle fr-pb-1v
@@ -26,7 +26,7 @@ export default function BarreDeProgression({
     >
       <div className={`${styles.barre}`}>
         <progress
-          value={valeur ?? undefined}
+          value={valeur ? valeur.moyenne : undefined}
         >
           {pourcentageAffiché}
         </progress>
@@ -35,17 +35,17 @@ export default function BarreDeProgression({
               <div className={styles.conteneurCurseurs}>
                 <BarreDeProgressionCurseur
                   typeDeCurseur={TypeDeCurseur.MINIMUM}
-                  valeur={valeur - 0.15}
+                  valeur={valeur.minimum}
                   variante={variante}
                 />
                 <BarreDeProgressionCurseur
                   typeDeCurseur={TypeDeCurseur.MÉDIANE}
-                  valeur={valeur}
+                  valeur={valeur.médiane}
                   variante={variante}
                 />
                 <BarreDeProgressionCurseur
                   typeDeCurseur={TypeDeCurseur.MAXIMUM}
-                  valeur={valeur + 0.1}
+                  valeur={valeur.maximum}
                   variante={variante}
                 />
               </div>
