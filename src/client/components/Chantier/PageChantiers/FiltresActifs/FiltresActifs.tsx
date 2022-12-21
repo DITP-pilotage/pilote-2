@@ -28,10 +28,8 @@ export default function FiltresActifs() {
         {
           récupérerFiltresActifsAvecLeursCatégories().map(({ catégorie, filtre }) =>
             (
-            //eslint-disable-next-line jsx-a11y/no-redundant-roles
               <li
                 key={`tag-${filtre.id}`}
-                role='listitem'
               >
                 <Tag
                   libellé={filtre.nom}
