@@ -20,3 +20,20 @@ model perimetre {
   id String @id
   nom String
 }
+
+model indicateur {
+  id String @id
+  nom String
+  chantier_id String
+  objectif_valeur_cible Float?
+  objectif_taux_avancement Float?
+  objectif_date_valeur_cible String?
+  type_id String?
+  type_nom String?
+  est_barometre Boolean?
+  est_phare Boolean?
+  valeur_initiale Float?
+  date_valeur_initiale DateTime? @db.Date
+  valeur_actuelle Float?
+  date_valeur_actuelle DateTime? @db.Date
+}

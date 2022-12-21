@@ -2,13 +2,15 @@ from sqlalchemy import Column, Index, DateTime
 from sqlalchemy.dialects.postgresql import VARCHAR, TIMESTAMP, DATE, BOOLEAN, FLOAT, TEXT, INTEGER, ARRAY, CHAR
 from sqlalchemy.ext.declarative import declarative_base
 
+SCHEMA_RAW_DATA = 'raw_data'
+
 Base = declarative_base()
 metadata = Base.metadata
 
 
 class MetadataChantier(Base):
     __tablename__ = 'metadata_chantier'
-    __table_args__ = {'schema': 'raw_data'}
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
 
     chantier_id = Column(VARCHAR(7), primary_key=True)
     ch_code = Column(VARCHAR(255))
@@ -25,7 +27,7 @@ class MetadataChantier(Base):
 
 class MetadataPerimetre(Base):
     __tablename__ = 'metadata_perimetre'
-    __table_args__ = {'schema': 'raw_data'}
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
 
     perimetre_id = Column(VARCHAR(7), primary_key=True)
     per_nom = Column(VARCHAR(255))
@@ -51,7 +53,7 @@ class MetadataIndicateur(Base):
 
 class MetadataZone(Base):
     __tablename__ = 'metadata_zone'
-    __table_args__ = {'schema': 'raw_data'}
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
 
     zone_id = Column(VARCHAR(15), primary_key=True)
     nom = Column(VARCHAR(255))
@@ -63,7 +65,7 @@ class MetadataZone(Base):
 
 class IndicateurType(Base):
     __tablename__ = 'indicateur_type'
-    __table_args__ = {'schema': 'raw_data'}
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
 
     indic_type_id = Column(TEXT, primary_key=True)
     indic_type_name = Column(TEXT, nullable=False)
@@ -73,7 +75,7 @@ class IndicateurType(Base):
 
 class FactProgressIndicateur(Base):
     __tablename__ = 'fact_progress_indicateur'
-    __table_args__ = {'schema': 'raw_data'}
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
 
     tree_node_id = Column(VARCHAR(32), primary_key=True)
     effect_id = Column(VARCHAR(255), primary_key=True)
@@ -92,7 +94,7 @@ class FactProgressIndicateur(Base):
 
 class DimTreeNodes(Base):
     __tablename__ = 'dim_tree_nodes'
-    __table_args__ = {'schema': 'raw_data'}
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
 
     tree_node_id = Column(VARCHAR(32), primary_key=True)
     tree_node_parent_id = Column(VARCHAR(32))
@@ -112,7 +114,7 @@ class DimTreeNodes(Base):
 
 class FactProgressChantier(Base):
     __tablename__ = 'fact_progress_chantier'
-    __table_args__ = {'schema': 'raw_data'}
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
 
     tree_node_id = Column(VARCHAR(32), primary_key=True)
     period_id = Column(INTEGER, nullable=False)
@@ -124,7 +126,7 @@ class FactProgressChantier(Base):
 
 class DimStructures(Base):
     __tablename__ = 'dim_structures'
-    __table_args__ = {'schema': 'raw_data'}
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
 
     structure_id = Column(VARCHAR(32), primary_key=True)
     top_level_id = Column(VARCHAR(32), nullable=False)
