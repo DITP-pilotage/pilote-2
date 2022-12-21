@@ -3,6 +3,7 @@
 .barreLatérale {
   position: sticky;
   top: 0;
+  z-index: 2;
   width: 20rem;
   height: 100vh;
   overflow-y: scroll;

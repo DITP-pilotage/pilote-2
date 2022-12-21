@@ -1,26 +1,59 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import create from 'zustand';
-import FiltresStore from './useFiltresStore.interface';
+import FiltresStore, { Catégorie, FiltreCatégorieTuple } from './useFiltresStore.interface';
+
+const filtresActifsInitiaux = {
+  périmètresMinistériels: [],
+};
 
 const useFiltresStore = create<FiltresStore>((set, get) => ({
-  filtresActifs: {
-    périmètresMinistériels: [],
-  },
+  filtresActifs: filtresActifsInitiaux,
   actions: {
-    activerUnFiltre: (id, catégorieDeFiltre) => set(étatActuel => ({
+    activerUnFiltre: (filtre, catégorieDeFiltre) => set(étatActuel => ({
       filtresActifs: {
         ...étatActuel.filtresActifs,
-        [catégorieDeFiltre]: [...étatActuel.filtresActifs[catégorieDeFiltre], id],
+        [catégorieDeFiltre]: [...étatActuel.filtresActifs[catégorieDeFiltre], filtre],
       },
     })),
-    désactiverUnFiltre: (id, catégorieDeFiltre) => set(étatActuel => ({
+
+    désactiverUnFiltre: (filtreId, catégorieDeFiltre) => set(étatActuel => ({
       filtresActifs: {
         ...étatActuel.filtresActifs,
-        [catégorieDeFiltre]: étatActuel.filtresActifs[catégorieDeFiltre].filter(idFiltreActif => idFiltreActif !== id),
+        [catégorieDeFiltre]: étatActuel.filtresActifs[catégorieDeFiltre].filter(filtreActif => filtreActif.id !== filtreId),
       },
     })),
-    estActif: (id, catégorieDeFiltre) => get().filtresActifs[catégorieDeFiltre].includes(id),
-    récupérerNombreFiltresActifsDUneCatégorie  : (catégorieDeFiltre) => get().filtresActifs[catégorieDeFiltre].length,
+
+    désactiverTousLesFiltres: () => set(() => ({ filtresActifs: filtresActifsInitiaux })),
+
+    estActif: (filtreId, catégorieDeFiltre) => get().filtresActifs[catégorieDeFiltre].some(filtre => filtre.id === filtreId),
+
+    récupérerFiltresActifsDUneCatégorie: (catégorieDeFiltre) => get().filtresActifs[catégorieDeFiltre],
+
+    récupérerNombreFiltresActifsDUneCatégorie: (catégorieDeFiltre) => (
+      get().actions.récupérerFiltresActifsDUneCatégorie(catégorieDeFiltre).length
+    ),
+
+    récupérerNombreFiltresActifs: () => (
+      get().actions.récupérerFiltresActifsAvecLeursCatégories().length
+    ),
+
+    récupérerCatégories: () => Object.keys(get().filtresActifs) as Catégorie[],
+
+    récupérerFiltresActifsAvecLeursCatégories: () => {
+
+      let filtreEtCatégorie: FiltreCatégorieTuple[] = [];
+
+      get().actions.récupérerCatégories().forEach(catégorie => (
+        get().actions.récupérerFiltresActifsDUneCatégorie(catégorie).forEach(filtre => {
+          filtreEtCatégorie.push({
+            catégorie,
+            filtre,
+          });
+        })
+      ));
+      return filtreEtCatégorie;
+    },
+
   },
 }));
 
