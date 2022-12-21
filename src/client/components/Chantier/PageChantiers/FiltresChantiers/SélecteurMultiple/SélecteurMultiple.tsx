@@ -5,7 +5,7 @@ import { ChangeEvent, Fragment, useCallback, useMemo, useState } from 'react';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
-import recherche from '@/client/utils/recherche';
+import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import SélecteurMultipleProps from './SélecteurMultiple.interface';
 import styles from './SélecteurMultiple.module.scss';
 
@@ -22,7 +22,7 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
   }, [setValeurDeLaRecherche]);
 
   const filtresFiltrésAvecRecherche = useMemo(() =>{
-    return filtres.filter(filtre => recherche(filtre.nom, valeurDeLaRecherche));
+    return filtres.filter(filtre => rechercheUnTexteContenuDansUnContenant(valeurDeLaRecherche, filtre.nom));
   }, [valeurDeLaRecherche, filtres]);
 
   const nombreFiltresActifCatégorie = actionsFiltresStore().récupérerNombreFiltresActifsDUneCatégorie(catégorieDeFiltre);
