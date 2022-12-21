@@ -197,8 +197,15 @@ Pour le moment aucun pipeline de données n'a été implémentée. On peut imagi
 
 ``` mermaid
 graph LR
-DFAK(Dump Dfakto) --> | | PG[(Base PG Pilote 2)]
+DFAK(Dump Dfakto) --> |fact_progress.csv| PG[(Base PG Pilote 2)]
+DFAK --> |dim_tree_nodes.csv| PG
+DFAK --> |fact_progress_reform.csv| PG
+DFAK --> |dim_structures.csv| PG
 ```
+
+_NB_ : 
+- Les données du csv `fact_progress_reform` sont importées dans la table `fact_progress_chantier`.
+- Les données du csv `fact_progress` sont importées dans la table `fact_progress_indicateur_`.
 
 ## Zoom sur la partie transformation de données
 
@@ -213,18 +220,29 @@ pré-processées.
 graph LR
 subgraph Base PG Pilote 2
    subgraph raw_data
-      MCHA[metadata_chantier]
-      MPER[metadata_perimetre]
-      MIND[metadata_indicateur]
-      MZON[metadata_zone]
+      M_CHA[metadata_chantier]
+      M_PER[metadata_perimetre]
+      M_IND[metadata_indicateur]
+      M_ZON[metadata_zone]
+      D_FPI[fact_progress_indicateur]
+      D_FPC[fact_progress_chantier]
+      D_DTN[dim_tree_nodes]
+      D_DS[dim_structures]
    end
    subgraph public
-      MCHA --> CHA[chantier]
-      MPER --> PER[perimetre]
+      M_CHA --> CHA[chantier]
+      M_PER --> PER[perimetre]
+      M_IND --> IND[indicateur]
+      D_FPI --> IND
+      D_DTN --> IND
+      D_DS --> IND
+      linkStyle 0 stroke:red;
+      linkStyle 1 stroke:red;
    end
 end
 ```
 
-L'action de `select` correspond à la sélection de colum
-
-NB: Ce schéma n'est pas encore implémenté mais cela permet de poser des conventions de documentation des flux de données à l'intérieur de la base Pilote 2.
+*NB* : 
+- L'action de `select` correspond à la sélection de colonnes.
+- En rouge, les flèches utilisant DBT pour les transformations.
+- En blanc, les flèches utilisant PSQL pour la/les transformations.
