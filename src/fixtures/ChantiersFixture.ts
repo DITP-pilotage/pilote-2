@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import Chantier, { Météo } from '@/server/domain/chantier/Chantier.interface';
+import { générerCaractèresSpéciaux } from '@/client/utils/strings';
 import FixtureInterface from './Fixture.interface';
 
 const générerValeurMétéo = () => {
@@ -8,13 +9,6 @@ const générerValeurMétéo = () => {
 
 const générerValeurAvancement = () => {
   return Math.random() > 0.9 ? null : Math.random();
-};
-
-const générerCaractèresSpéciaux = (nombre: number) => {
-  const caractères = ['/', ':', '@', '[', ']', '#', 'é'];
-  return Array.from({ length: nombre })
-    .map(() => caractères[Math.floor(Math.random() * caractères.length)])
-    .join('');
 };
 
 const ChantiersFixture: FixtureInterface<Chantier> = {
