@@ -9,7 +9,6 @@
   overflow-y: scroll;
   background: white;
   border-right: 1px solid var(--border-disabled-grey);
-  z-index: 2;
 }
 
 @media screen and (max-width: $breakpoint-xl) {
