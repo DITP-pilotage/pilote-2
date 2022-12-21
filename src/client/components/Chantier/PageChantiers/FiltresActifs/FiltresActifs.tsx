@@ -21,19 +21,28 @@ export default function FiltresActifs() {
         {' '}
         {nombreFiltresActifs > 1 ? 'filtres actifs sur cette page' : 'filtre actif sur cette page'}
       </p>
-      <div className={styles.conteneurTags}>
+      <ul
+        aria-label="liste des tags des filtres actifs"
+        className={styles.conteneurTags}
+      >
         {
           récupérerFiltresActifsAvecLeursCatégories().map(({ catégorie, filtre }) =>
             (
-              <Tag
+            //eslint-disable-next-line jsx-a11y/no-redundant-roles
+              <li
                 key={`tag-${filtre.id}`}
-                libellé={filtre.nom}
-                suppressionCallback={() => désactiverUnFiltre(filtre.id, catégorie)}
-              />
+                role='listitem'
+              >
+                <Tag
+                  libellé={filtre.nom}
+                  suppressionCallback={() => désactiverUnFiltre(filtre.id, catégorie)}
+                />
+              </li>
+
             ),
           )
         }
-      </div>
+      </ul>
       <button
         className={`${styles.boutons} fr-btn fr-btn--tertiary fr-mt-1w`}
         onClick={désactiverTousLesFiltres}

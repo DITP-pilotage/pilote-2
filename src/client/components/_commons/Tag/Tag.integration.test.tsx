@@ -13,7 +13,7 @@ test('le tag comporte le texte précisé', () =>{
   expect(screen.getByText('Texte du tag')).toBeInTheDocument();
 });
 
-test('le tag comporte un bouton cliquable', () =>{
+test('le tag comporte un bouton', () =>{
   render(
     <Tag
       libellé='Texte du tag'

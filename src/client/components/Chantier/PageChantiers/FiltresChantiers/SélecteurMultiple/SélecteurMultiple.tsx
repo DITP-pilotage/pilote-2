@@ -44,14 +44,21 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
           changementDeLaRechercheCallback={changementDeLaRechercheCallback}
           valeur={valeurDeLaRecherche}
         />
-        <div className={`${styles.choixFiltres}`}>
+        <div
+          aria-label={`Liste des filtres ${catégorieDeFiltre}`}
+          className={`${styles.choixFiltres}`}
+          role='list'
+        >
           {
             filtresFiltrésAvecRecherche.length > 0
               ?
               filtresFiltrésAvecRecherche.map((filtre) => {
                 return (
                   <Fragment key={filtre.id}>
-                    <div className="fr-checkbox-group fr-py-3v" >
+                    <div
+                      className="fr-checkbox-group fr-py-3v"
+                      role='listitem'
+                    >
                       <input
                         checked={estActif(filtre.id, catégorieDeFiltre)}
                         id={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
