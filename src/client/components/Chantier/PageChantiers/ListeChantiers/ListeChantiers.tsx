@@ -44,13 +44,16 @@ function comparerAvancementChantier(a: ChantierAvancement, b: ChantierAvancement
 const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
 
 const colonnes = [
-  reactTableColonnesHelper.accessor(chantier => chantier, {
+  reactTableColonnesHelper.accessor('nom', {
     header: 'Chantiers',
-    cell: chantier =>  (
-      <Link href={`/chantier/${chantier.getValue().id}`}>
-        {chantier.getValue().nom}
-      </Link>
-    ),
+    cell: nom => {
+      const id = nom.row.original.id;
+      return (
+        <Link href={`/chantier/${id}`}>
+          {nom.getValue()}
+        </Link>
+      );
+    },
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('météo', {

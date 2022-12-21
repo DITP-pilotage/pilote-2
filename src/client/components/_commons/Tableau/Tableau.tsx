@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-table';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
+import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import TableauProps from './Tableau.interface';
 import TableauEnTête from './TableauEnTête/TableauEnTête';
 import TableauContenu from './TableauContenu/TableauContenu';
@@ -24,8 +25,8 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
   const tableau = useReactTable({
     data: données,
     columns: colonnes,
-    globalFilterFn: (ligne, colonneId, filtreValeur)=>{
-      return Boolean(ligne.getValue<T>(colonneId).toString().toLowerCase().includes(filtreValeur.toLowerCase()));
+    globalFilterFn: (ligne, colonneId, filtreValeur) => {
+      return rechercheUnTexteContenuDansUnContenant(filtreValeur, ligne.getValue<T>(colonneId).toString());
     },
     state: {
       globalFilter: valeurDeLaRecherche,

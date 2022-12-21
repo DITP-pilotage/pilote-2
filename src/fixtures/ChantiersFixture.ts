@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import Chantier, { Météo } from '@/server/domain/chantier/Chantier.interface';
+import { générerCaractèresSpéciaux } from '@/client/utils/strings';
 import FixtureInterface from './Fixture.interface';
 
 const générerValeurMétéo = () => {
@@ -14,7 +15,7 @@ const ChantiersFixture: FixtureInterface<Chantier> = {
   générer(valeursFixes: Partial<Chantier> = {}) {
     return {
       id: `CH-${faker.random.alphaNumeric(5)}`,
-      nom: faker.lorem.words(10),
+      nom: `${faker.lorem.words(10)} ${générerCaractèresSpéciaux(3)}`,
       id_périmètre: `PER-${faker.random.alphaNumeric(5)}`,
       météo: générerValeurMétéo(),
       avancement: {
