@@ -2,7 +2,7 @@ import BarreDeProgressionCurseurProps, { TypeDeCurseur } from './BarreDeProgress
 import styles from './BarreDeProgressionCurseur.base.module.scss';
 import stylesÀPartirDeLaVariante from './BarreDeProgressionCurseur.variante.module.scss';
 
-const curseurs = {
+export const barreDeProgressionCurseurGéométries = {
   [TypeDeCurseur.MINIMUM]: (
     <polygon
       fill='transparent'
@@ -13,7 +13,7 @@ const curseurs = {
   [TypeDeCurseur.MÉDIANE]: (
     <polygon
       fill='transparent'
-      points="0,0 0,-24"
+      points="0,2 0,-20"
       strokeWidth='2'
     />
   ),
@@ -38,11 +38,11 @@ export default function BarreDeProgressionCurseur({ valeur, typeDeCurseur, varia
           ${styles.curseur}
           ${stylesÀPartirDeLaVariante[variante]}
        `}
-        viewBox="-12 -20 24 18"
+        viewBox="-12 -20 24 24"
         xmlns="http://www.w3.org/2000/svg"
       >
         {
-          curseurs[typeDeCurseur]
+          barreDeProgressionCurseurGéométries[typeDeCurseur]
         }
       </svg>
     </div>
