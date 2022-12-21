@@ -1,5 +1,20 @@
+$couleur-de-fond-blue: var(--blue-ecume-850-200);
 $couleur-de-fond-gris: var(--background-contrast-grey);
 $couleur-de-fond-blanc: #fff;
+
+.bleu {
+  progress {
+    background-color: $couleur-de-fond-blue;
+
+    &:not([value])::-moz-progress-bar {
+      background-color: $couleur-de-fond-blue;
+    }
+
+    &::-webkit-progress-bar {
+      background-color: $couleur-de-fond-blue;
+    }
+  }
+}
 
 .gris {
   progress {

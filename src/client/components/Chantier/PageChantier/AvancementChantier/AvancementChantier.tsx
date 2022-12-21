@@ -24,7 +24,7 @@ const colonnes = [
     header: 'Avancement annuel',
     cell: avancement => (
       <BarreDeProgression
-        fond="blanc"
+        fond="bleu"
         taille="petite"
         valeur={avancement.getValue()}
         variante='secondaire'
@@ -36,7 +36,7 @@ const colonnes = [
     header: 'Avancement global',
     cell: avancement => (
       <BarreDeProgression
-        fond="blanc"
+        fond="bleu"
         taille="petite"
         valeur={avancement.getValue()}
         variante='primaire'
