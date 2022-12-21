@@ -10,11 +10,18 @@ const générerValeurAvancement = () => {
   return Math.random() > 0.9 ? null : Math.random();
 };
 
+const générerCaractèresSpéciaux = (nombre: number) => {
+  const caractères = ['/', ':', '@', '[', ']', '#', 'é'];
+  return Array.from({ length: nombre })
+    .map(() => caractères[Math.floor(Math.random() * caractères.length)])
+    .join('');
+};
+
 const ChantiersFixture: FixtureInterface<Chantier> = {
   générer(valeursFixes: Partial<Chantier> = {}) {
     return {
       id: `CH-${faker.random.alphaNumeric(5)}`,
-      nom: faker.lorem.words(10),
+      nom: `${faker.lorem.words(10)} ${générerCaractèresSpéciaux(3)}`,
       id_périmètre: `PER-${faker.random.alphaNumeric(5)}`,
       météo: générerValeurMétéo(),
       avancement: {
