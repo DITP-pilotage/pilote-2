@@ -8,6 +8,11 @@
   .conteneurTags {
     max-height: 7.5rem;
     overflow-y: scroll;
+    list-style: none;
+
+    >li {
+      display: inline;
+    }
   }
 
   .boutons {
