@@ -1,6 +1,6 @@
-import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 
 export default interface ChantierRepository {
-  add(chantier: ChantierInfo): Promise<void>;
-  getListe(): Promise<ChantierInfo[]>;
+  add(chantier: Chantier): Promise<void>;
+  getListe(): Promise<Chantier[]>;
 }

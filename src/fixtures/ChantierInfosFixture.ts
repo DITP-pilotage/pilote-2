@@ -24,7 +24,7 @@ const générerValeurAvancement = (): Avancement | null => {
     };
 };
 
-const ChantiersFixture: FixtureInterface<ChantierInfo> = {
+const ChantierInfosFixture: FixtureInterface<ChantierInfo> = {
   générer(valeursFixes: Partial<ChantierInfo> = {}) {
     return {
       id: `CH-${faker.random.alphaNumeric(5)}`,
@@ -45,4 +45,4 @@ const ChantiersFixture: FixtureInterface<ChantierInfo> = {
   },
 };
 
-export default ChantiersFixture;
+export default ChantierInfosFixture;

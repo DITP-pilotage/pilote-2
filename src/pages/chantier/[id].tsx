@@ -1,6 +1,6 @@
 import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 import PageChantier from '@/components/Chantier/PageChantier/PageChantier';
-import ChantiersFixture from '@/fixtures/ChantiersFixture';
+import ChantierInfosFixture from '@/fixtures/ChantierInfosFixture';
 
 interface NextPageChantierProps {
   chantier: ChantierInfo
@@ -14,7 +14,7 @@ export default function NextPageChantier({ chantier }: NextPageChantierProps) {
 
   
 export async function getServerSideProps({ params }: { params: { id: ChantierInfo['id'] } }) {  
-  const chantier = ChantiersFixture.générer({ id: params.id });
+  const chantier = ChantierInfosFixture.générer({ id: params.id });
 
   return {
     props: {

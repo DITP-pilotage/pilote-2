@@ -1,21 +1,21 @@
 import { PrismaClient } from '@prisma/client';
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import ChantierSQLRepository from './ChantierSQLRepository';
+import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
+import ChantierInfoRepository from '@/server/domain/chantier/ChantierInfoRepository.interface';
+import ChantierInfoSQLRepository from './ChantierInfoSQLRepository';
 
-describe('ChantierSQLRepository', () => {
+describe('ChantierInfoSQLRepository', () => {
   test('Accède à une liste de chantier', async () => {
     // GIVEN
     const prisma = new PrismaClient();
-    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
-    const chantierInitial: Chantier = {
+    const repository: ChantierInfoRepository = new ChantierInfoSQLRepository(prisma);
+    const chantierInitial: ChantierInfo = {
       id: 'THD',
       nom: 'Chantier 1',
       id_périmètre: 'PER-001',
       météo: null,
       avancement: { annuel: null, global: null },
     };
-    const chantierInitial2: Chantier = {
+    const chantierInitial2: ChantierInfo = {
       id: 'TUP',
       nom: 'Chantier 2',
       id_périmètre: 'PER-001',
