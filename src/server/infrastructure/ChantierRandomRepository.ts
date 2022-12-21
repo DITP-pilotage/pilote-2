@@ -3,26 +3,22 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 
 export default class ChantierRandomRepository implements ChantierRepository {
-  private nombreDeChantiers: number;
+  private readonly _chantiers: { [index: string]: Chantier };
 
-  private idPérimètres: { id: string }[];
-
-  constructor(nombreDeChantiers: number, idPérimètres: { id: string }[]) {
-    this.nombreDeChantiers = nombreDeChantiers;
-    this.idPérimètres = idPérimètres;
+  constructor() {
+    this._chantiers = {};
   }
 
   async add(_: Chantier) {
     throw new Error('Error: Not implemented');
   }
 
-  async getListe() {
-    const valeursFixes: { id_périmètre: string }[] = [];
-    const nbPérimètres = this.idPérimètres.length;
-    for (let i = 0; i < this.nombreDeChantiers; i = i + 1) {
-      valeursFixes.push({ id_périmètre : this.idPérimètres[i % (nbPérimètres)].id });
+  async getById(id: string) {
+    let result = this._chantiers[id];
+    if (!result) {
+      result = ChantierInfosFixture.générer({ id });
+      this._chantiers[id] = result;
     }
-
-    return ChantierInfosFixture.générerPlusieurs(this.nombreDeChantiers, valeursFixes);
+    return result;
   }
 }

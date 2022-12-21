@@ -1,18 +1,14 @@
 import ChantierRandomRepository from '@/server/infrastructure/ChantierRandomRepository';
 
 describe('ChantierRandomRepository', () => {
-  it('génère n valeurs, avec ids des périmètres définis', async () => {
+  test('génère une valeur', async () => {
     // GIVEN
-    const idPérimètres = [{ id: 'PER-001' }, { id: 'PER-002' }];
-    const nombreDeChantiers = 3;
-    const repository = new ChantierRandomRepository(nombreDeChantiers, idPérimètres);
+    const repository = new ChantierRandomRepository();
 
     // WHEN
-    const chantiers = await repository.getListe();
+    const chantier = await repository.getById('abc1234');
 
     // THEN
-    expect(chantiers.length).toBe(3);
-    expect(chantiers.map((chantier) => {return chantier.id_périmètre;}))
-      .toEqual(expect.arrayContaining(['PER-001', 'PER-002']));
+    expect(chantier.id).toBe('abc1234');
   });
 });

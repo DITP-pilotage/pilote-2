@@ -3,7 +3,7 @@ import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 import ChantierInfoRepository from '@/server/domain/chantier/ChantierInfoRepository.interface';
 
 export default class ChantierInfoRandomRepository implements ChantierInfoRepository {
-  private nombreDeChantiers: number;
+  private readonly nombreDeChantiers: number;
 
   private idPérimètres: { id: string }[];
 

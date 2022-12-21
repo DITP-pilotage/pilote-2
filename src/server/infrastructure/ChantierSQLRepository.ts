@@ -2,6 +2,24 @@ import { chantier, PrismaClient } from '@prisma/client';
 import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 
+function mapToDomain(chantierPrisma: chantier): ChantierInfo {
+  return {
+    id: chantierPrisma.id,
+    nom: chantierPrisma.nom,
+    id_périmètre: chantierPrisma.id_perimetre,
+    météo: null,
+    avancement: { annuel: null, global: null },
+  };
+}
+
+function mapToPrisma(chantierDomaine: ChantierInfo): chantier {
+  return {
+    id: chantierDomaine.id,
+    nom: chantierDomaine.nom,
+    id_perimetre: chantierDomaine.id_périmètre,
+  };
+}
+
 export default class ChantierSQLRepository implements ChantierRepository {
   private prisma: PrismaClient;
 
@@ -11,30 +29,17 @@ export default class ChantierSQLRepository implements ChantierRepository {
 
   async add(chantierToAdd: ChantierInfo) {
     await this.prisma.chantier.create({
-      data: this.mapToPrisma(chantierToAdd),
+      data: mapToPrisma(chantierToAdd),
     });
   }
 
-  async getListe() {
-    const chantiersPrisma = await this.prisma.chantier.findMany();
-    return chantiersPrisma.map(chantierPrisma => this.mapToDomain(chantierPrisma));
-  }
-
-  private mapToDomain(chantierPrisma: chantier): ChantierInfo {
-    return {
-      id: chantierPrisma.id,
-      nom: chantierPrisma.nom,
-      id_périmètre: chantierPrisma.id_perimetre,
-      météo: null,
-      avancement: { annuel: null, global: null },
-    };
-  }
-
-  private mapToPrisma(chantierDomaine: ChantierInfo): chantier {
-    return {
-      id: chantierDomaine.id,
-      nom: chantierDomaine.nom,
-      id_perimetre: chantierDomaine.id_périmètre,
-    };
+  async getById(id: string) {
+    const chantierPrisma = await this.prisma.chantier.findUnique({
+      where: { id },
+    });
+    if (!chantierPrisma) {
+      throw new Error(`Erreur: Chantier '${id}' non trouvé.`);
+    }
+    return mapToDomain(chantierPrisma);
   }
 }

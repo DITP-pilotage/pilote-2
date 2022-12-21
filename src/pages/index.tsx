@@ -19,10 +19,10 @@ export default function NextPageAccueil({ chantiers, périmètresMinistériels }
 
 export async function getServerSideProps() {
   const périmètreRepository = dependencies.getPerimètreMinistérielRepository();
-  const chantierRepository = dependencies.getChantierRepository();
+  const chantierInfoRepository = dependencies.getChantierInfoRepository();
 
   const périmètresMinistériels = await périmètreRepository.getListe();
-  const chantiers = await chantierRepository.getListe();
+  const chantiers = await chantierInfoRepository.getListe();
 
   return {
     props: {

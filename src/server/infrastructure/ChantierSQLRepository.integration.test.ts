@@ -4,11 +4,11 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
-  test('Accède à une liste de chantier', async () => {
+  test('Accède à un chantier par son id', async () => {
     // GIVEN
     const prisma = new PrismaClient();
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
-    const chantierInitial: Chantier = {
+    const chantierInitial1: Chantier = {
       id: 'THD',
       nom: 'Chantier 1',
       id_périmètre: 'PER-001',
@@ -22,13 +22,15 @@ describe('ChantierSQLRepository', () => {
       météo: null,
       avancement: { annuel: null, global: null },
     };
-    await repository.add(chantierInitial);
+    await repository.add(chantierInitial1);
     await repository.add(chantierInitial2);
 
     // WHEN
-    const chantiers = await repository.getListe();
+    const result1 = await repository.getById('THD');
+    const result2 = await repository.getById('TUP');
 
     // THEN
-    expect(chantiers).toEqual([chantierInitial, chantierInitial2]);
+    expect(result1).toEqual(chantierInitial1);
+    expect(result2).toEqual(chantierInitial2);
   });
 });

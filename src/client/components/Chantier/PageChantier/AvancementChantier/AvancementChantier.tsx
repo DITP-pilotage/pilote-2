@@ -3,7 +3,7 @@ import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette'
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import {
   barreDeProgressionCurseurGéométries,
@@ -14,7 +14,7 @@ import {
 import AvancementChantierProps from './AvancementChantier.interface';
 import styles from './AvancementChantier.module.scss';
 
-const reactTableColonnesHelper = createColumnHelper<ChantierInfo & { territoire: string }>();
+const reactTableColonnesHelper = createColumnHelper<Chantier & { territoire: string }>();
 
 const colonnes = [
   reactTableColonnesHelper.accessor('territoire', {
@@ -94,7 +94,7 @@ export default function AvancementChantier({ chantier }: AvancementChantierProps
         >
           Avancement
         </Titre>
-        <Tableau<ChantierInfo & { territoire: string }>
+        <Tableau<Chantier & { territoire: string }>
           afficherLaRecherche={false}
           colonnes={colonnes}
           données={[{ ...chantier, territoire: 'National' }]}

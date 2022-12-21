@@ -1,35 +1,46 @@
 import { PrismaClient } from '@prisma/client';
 import ChantierSQLRepository from '@/server/infrastructure/ChantierSQLRepository';
+import ChantierInfoSQLRepository from '@/server/infrastructure/ChantierInfoSQLRepository';
 import PérimètreMinistérielSQLRepository from '@/server/infrastructure/PérimètreMinistérielSQLRepository';
 import PérimètreMinistérielRandomRepository from '@/server/infrastructure/PérimètreMinistérielRandomRepository';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import ChantierInfoRepository from '@/server/domain/chantier/ChantierInfoRepository.interface';
 import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import ChantierRandomRepository from '@/server/infrastructure/ChantierRandomRepository';
+import ChantierInfoRandomRepository from '@/server/infrastructure/ChantierInfoRandomRepository';
 
 class Dependencies {
-  private chantierRepository: ChantierRepository;
+  private readonly _chantierRepository: ChantierRepository;
 
-  private périmètreMinistérielRepository: PérimètreMinistérielRepository;
+  private readonly _chantierInfoRepository: ChantierInfoRepository;
+
+  private readonly _périmètreMinistérielRepository: PérimètreMinistérielRepository;
 
   constructor() {
     if (process.env.USE_DATABASE == 'true') {
       const prisma = new PrismaClient();
-      this.périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository(prisma);
-      this.chantierRepository = new ChantierSQLRepository(prisma);
+      this._périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository(prisma);
+      this._chantierRepository = new ChantierSQLRepository(prisma);
+      this._chantierInfoRepository = new ChantierInfoSQLRepository(prisma);
 
     } else {
       const idPérimètres = [ { id: 'PER-001' }, { id: 'PER-002' }, { id: 'PER-003' }, { id: 'PER-004' } ];
-      this.périmètreMinistérielRepository = new PérimètreMinistérielRandomRepository(idPérimètres);
-      this.chantierRepository = new ChantierRandomRepository(120, idPérimètres);
+      this._périmètreMinistérielRepository = new PérimètreMinistérielRandomRepository(idPérimètres);
+      this._chantierInfoRepository = new ChantierInfoRandomRepository(120, idPérimètres);
+      this._chantierRepository = new ChantierRandomRepository();
     }
   }
 
   getChantierRepository(): ChantierRepository {
-    return this.chantierRepository;
+    return this._chantierRepository;
+  }
+
+  getChantierInfoRepository(): ChantierInfoRepository {
+    return this._chantierInfoRepository;
   }
 
   getPerimètreMinistérielRepository(): PérimètreMinistérielRepository {
-    return this.périmètreMinistérielRepository;
+    return this._périmètreMinistérielRepository;
   }
 }
 
