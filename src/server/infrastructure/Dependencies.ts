@@ -1,13 +1,13 @@
 import { PrismaClient } from '@prisma/client';
-import ChantierSQLRepository from '@/server/infrastructure/ChantierSQLRepository';
-import ChantierInfoSQLRepository from '@/server/infrastructure/ChantierInfoSQLRepository';
-import PérimètreMinistérielSQLRepository from '@/server/infrastructure/PérimètreMinistérielSQLRepository';
-import PérimètreMinistérielRandomRepository from '@/server/infrastructure/PérimètreMinistérielRandomRepository';
+import ChantierSQLRepository from '@/server/infrastructure/chantier/ChantierSQLRepository';
+import ChantierInfoSQLRepository from '@/server/infrastructure/chantier/ChantierInfoSQLRepository';
+import PérimètreMinistérielSQLRepository from '@/server/infrastructure/périmètreMinistériel/PérimètreMinistérielSQLRepository';
+import PérimètreMinistérielRandomRepository from '@/server/infrastructure/périmètreMinistériel/PérimètreMinistérielRandomRepository';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import ChantierInfoRepository from '@/server/domain/chantier/ChantierInfoRepository.interface';
 import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
-import ChantierRandomRepository from '@/server/infrastructure/ChantierRandomRepository';
-import ChantierInfoRandomRepository from '@/server/infrastructure/ChantierInfoRandomRepository';
+import ChantierRandomRepository from '@/server/infrastructure/chantier/ChantierRandomRepository';
+import ChantierInfoRandomRepository from '@/server/infrastructure/chantier/ChantierInfoRandomRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;

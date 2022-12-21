@@ -1,4 +1,4 @@
-import ChantierRandomRepository from '@/server/infrastructure/ChantierRandomRepository';
+import ChantierRandomRepository from '@/server/infrastructure/chantier/ChantierRandomRepository';
 
 describe('ChantierRandomRepository', () => {
   test('génère une valeur', async () => {
