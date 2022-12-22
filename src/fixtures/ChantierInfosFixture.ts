@@ -1,7 +1,8 @@
 import { faker } from '@faker-js/faker';
-import ChantierInfo, { Météo } from '@/server/domain/chantier/ChantierInfo.interface';
+import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 import { générerCaractèresSpéciaux } from '@/client/utils/strings';
 import { Avancement } from '@/server/domain/chantier/ChantierAvancement.interface';
+import Météo from '@/server/domain/chantier/Météo.interface';
 import FixtureInterface from './Fixture.interface';
 
 const générerValeurMétéo = (): Météo => {
