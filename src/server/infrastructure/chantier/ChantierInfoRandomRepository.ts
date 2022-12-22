@@ -1,9 +1,9 @@
-import ChantiersFixture from '@/fixtures/ChantiersFixture';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import ChantierInfosFixture from '@/fixtures/ChantierInfosFixture';
+import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
+import ChantierInfoRepository from '@/server/domain/chantier/ChantierInfoRepository.interface';
 
-export default class ChantierRandomRepository implements ChantierRepository {
-  private nombreDeChantiers: number;
+export default class ChantierInfoRandomRepository implements ChantierInfoRepository {
+  private readonly nombreDeChantiers: number;
 
   private idPérimètres: { id: string }[];
 
@@ -12,7 +12,7 @@ export default class ChantierRandomRepository implements ChantierRepository {
     this.idPérimètres = idPérimètres;
   }
 
-  async add(_: Chantier) {
+  async add(_: ChantierInfo) {
     throw new Error('Error: Not implemented');
   }
 
@@ -22,6 +22,6 @@ export default class ChantierRandomRepository implements ChantierRepository {
     for (let i = 0; i < this.nombreDeChantiers; i = i + 1) {
       valeursFixes.push({ id_périmètre : this.idPérimètres[i % (nbPérimètres - 1)].id });
     }
-    return ChantiersFixture.générerPlusieurs(this.nombreDeChantiers, valeursFixes);
+    return ChantierInfosFixture.générerPlusieurs(this.nombreDeChantiers, valeursFixes);
   }
 }

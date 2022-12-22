@@ -1,7 +1,7 @@
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 
 export default interface PageChantiersProps {
-  chantiers: Chantier[]
+  chantiers: ChantierInfo[]
   périmètresMinistériels: PérimètreMinistériel[]
 }
