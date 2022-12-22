@@ -1,8 +1,8 @@
 import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
 import {
   TypeDeCurseur,
-} from '@/components/_commons/BarreDeProgression/BarreDeProgressionCurseur/BarreDeProgressionCurseur.interface';
-import BarreDeProgressionCurseur from './BarreDeProgressionCurseur/BarreDeProgressionCurseur';
+} from '@/components/_commons/BarreDeProgression/Curseur/BarreDeProgressionCurseur.interface';
+import BarreDeProgressionCurseur from './Curseur/BarreDeProgressionCurseur';
 import styles from './BarreDeProgression.base.module.scss';
 import stylesÀPartirDeLaVariante from './BarreDeProgression.variante.module.scss';
 import stylesÀPartirDeLaTaille from './BarreDeProgression.taille.module.scss';
