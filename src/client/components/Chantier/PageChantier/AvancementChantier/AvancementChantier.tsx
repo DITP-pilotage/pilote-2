@@ -5,14 +5,8 @@ import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
-import {
-  barreDeProgressionCurseurGéométries,
-} from '@/components/_commons/BarreDeProgression/BarreDeProgressionCurseur/BarreDeProgressionCurseur';
-import {
-  TypeDeCurseur,
-} from '@/components/_commons/BarreDeProgression/BarreDeProgressionCurseur/BarreDeProgressionCurseur.interface';
+import BarreDeProgressionLégende from '@/components/_commons/BarreDeProgression/Légende/BarreDeProgressionLégende';
 import AvancementChantierProps from './AvancementChantier.interface';
-import styles from './AvancementChantier.module.scss';
 
 const reactTableColonnesHelper = createColumnHelper<Chantier & { territoire: string }>();
 
@@ -29,11 +23,16 @@ const colonnes = [
   }),
   reactTableColonnesHelper.accessor('avancement.annuel', {
     header: 'Avancement annuel',
-    cell: avancement => (
+    cell: () => (
       <BarreDeProgression
         fond="bleu"
         taille="petite"
-        valeur={avancement.getValue()}
+        valeur={{
+          minimum: 0.2,
+          médiane: 0.32,
+          moyenne: 0.39,
+          maximum: 0.85,
+        }}
         variante='secondaire'
       />
     ),
@@ -41,38 +40,22 @@ const colonnes = [
   }),
   reactTableColonnesHelper.accessor('avancement.global', {
     header: 'Avancement global',
-    cell: avancement => (
+    cell: () => (
       <BarreDeProgression
         fond="bleu"
         taille="petite"
-        valeur={avancement.getValue()}
+        valeur={{
+          minimum: 0,
+          médiane: 0.82,
+          moyenne: 0.75,
+          maximum: 1,
+        }}
         variante='primaire'
       />
     ),
     enableSorting: false,
   }),
 ];
-
-function afficherLaLégendePourUnCurseurDeBarreDeProgression(
-  typeDeCurseur: TypeDeCurseur,
-  libellé: string,
-) {
-  return (
-    <li className={`${styles.curseurConteneur} fr-pr-2w`}>
-      <svg
-        className={styles.curseur}
-        viewBox="-12 -20 24 24"
-        width="0.75rem"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        { barreDeProgressionCurseurGéométries[typeDeCurseur] }
-      </svg>
-      <span className="fr-pl-1v fr-m-0 fr-text--xs">
-        { libellé }
-      </span>
-    </li>
-  );
-}
 
 
 export default function AvancementChantier({ chantier }: AvancementChantierProps) {
@@ -101,11 +84,7 @@ export default function AvancementChantier({ chantier }: AvancementChantierProps
           entité='chantier'
         />
         <hr className='fr-hr fr-pb-2w' />
-        <ul className={styles.légendeBarreDeProgressionCurseurs}>
-          { afficherLaLégendePourUnCurseurDeBarreDeProgression(TypeDeCurseur.MINIMUM, 'Minimum') }
-          { afficherLaLégendePourUnCurseurDeBarreDeProgression(TypeDeCurseur.MÉDIANE, 'Médiane') }
-          { afficherLaLégendePourUnCurseurDeBarreDeProgression(TypeDeCurseur.MAXIMUM, 'Maximum') }
-        </ul>
+        <BarreDeProgressionLégende />
       </CarteSquelette>
     </div>
   );
