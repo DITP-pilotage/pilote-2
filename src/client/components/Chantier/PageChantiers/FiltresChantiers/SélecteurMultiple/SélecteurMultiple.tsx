@@ -17,7 +17,7 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
     return estSélectionné ? activerUnFiltre(filtre, catégorieDeFiltre) : désactiverUnFiltre(filtre.id, catégorieDeFiltre);
   }, [activerUnFiltre, désactiverUnFiltre, catégorieDeFiltre]);
 
-  const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) =>{
+  const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setValeurDeLaRecherche(event.target.value);
   }, [setValeurDeLaRecherche]);
 

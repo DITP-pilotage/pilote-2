@@ -43,7 +43,7 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
     tableau.setPageSize(10);
   }, [tableau]);
 
-  const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) =>{
+  const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setValeurDeLaRecherche(event.target.value);
   }, [setValeurDeLaRecherche]);
 

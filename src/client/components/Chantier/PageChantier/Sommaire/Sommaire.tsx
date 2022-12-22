@@ -1,44 +1,66 @@
+/* Linter désactivé car il ne gère pas les accents sur le E majuscule */
+/* eslint-disable react/hook-use-state */
+import { useState } from 'react';
 import SommaireProps from './Sommaire.interface';
-import '@gouvfr/dsfr/dist/component/summary/summary.min.css';
+import styles from './Sommaire.module.scss';
+import SommaireBoutonDéplier from './SommaireBoutonDéplier/SommaireBoutonDéplier';
 
 export default function Sommaire({ éléments }: SommaireProps) {
+  const [élémentCourant, setÉlémentCourant] = useState<SommaireProps['éléments'][0]['ancre'] | null>(null);
+  const [élémentDéplié, setÉlémentDéplié] = useState<SommaireProps['éléments'][0]['ancre'] | null>(null);
+
+  const clicSurLeBoutonDéplierCallback = (ancre: SommaireProps['éléments'][0]['ancre']) => {
+    if (élémentDéplié === ancre)
+      setÉlémentDéplié(null);
+    else
+      setÉlémentDéplié(ancre);
+  };
+
   return (
-    <nav
-      aria-labelledby="fr-summary-title"
-      className="fr-summary"
-    >
-      <p className="fr-summary__title" >
-        Sommaire
-      </p>
-      <ol className="fr-summary__list">
-        {éléments.map(élément => (
-          <li key={élément.nom}>
-            <a
-              className="fr-summary__link"
-              href={élément.ancre}
-            >
-              {élément.nom}
-            </a>
-            {
-                élément.sousÉlément 
-                  ? 
-                    <ol className="fr-summary__list">
-                      {élément.sousÉlément.map(sousÉlément => (
-                        <li key={sousÉlément.nom}>
-                          <a
-                            className="fr-summary__link"
-                            href={sousÉlément.ancre}
-                          >
+    <div className={`${styles.conteneur} fr-hidden fr-unhidden-lg`}>
+      <nav className='fr-pt-3w fr-pl-7v fr-pr-8w'>
+        <p className="bold fr-text--lg fr-mb-1w">
+          Sommaire
+        </p>
+        <ul className="fr-text--sm fr-pl-3w">
+          {
+            éléments.map(élément => (
+              <li
+                aria-current={élémentCourant === élément.ancre}
+                className='fr-pb-1w'
+                key={élément.ancre}
+              >
+                { 
+                  !!élément.sousÉlément && <SommaireBoutonDéplier clicSurLeBoutonDéplierCallback={() => clicSurLeBoutonDéplierCallback(élément.ancre)} />
+                }
+                <a
+                  href={`#${élément.ancre}`}
+                  onClick={() => setÉlémentCourant(élément.ancre)}
+                >
+                  {élément.nom}
+                </a>
+                { 
+                  (élémentDéplié === élément.ancre && !!élément.sousÉlément) &&
+                  <ul className='fr-pl-3w'>
+                    {
+                      élément.sousÉlément.map(sousÉlément => (
+                        <li
+                          className='fr-pb-1w'
+                          key={sousÉlément.nom}
+                        >
+                          <a href={`#${sousÉlément.ancre}`}>
                             {sousÉlément.nom}
                           </a>
                         </li>
-                      )) }
-                    </ol>
-                  : null
-            }
-          </li>
-        ))}
-      </ol>
-    </nav>
+                      )) 
+                    }
+                  </ul>
+                }
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
   );
 }

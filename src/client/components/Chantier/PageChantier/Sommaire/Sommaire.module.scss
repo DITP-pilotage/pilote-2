@@ -1,0 +1,16 @@
+.conteneur {
+  position: sticky;
+  top: 0;
+  max-width: 20rem;
+  height: 100vh;
+  overflow-y: scroll;
+
+  li {
+    color: var(--text-action-high-blue-france);
+    list-style: none;
+
+    a:not(:hover, :active) {
+      --underline-idle-width: 0;
+    }
+  }
+}
