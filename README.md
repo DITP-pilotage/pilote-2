@@ -1,32 +1,3 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
 ## Lancer l'application
 
 ### Prérequis
@@ -143,3 +114,23 @@ npm run test:server:integration
 Avertissement : si vous n'avez pas de fichier`.env.test` et que vous avez un
 fichier `.env`, Jest va le trouver et lancer les tests sur votre base locale de
 run ⚠️
+
+
+### Commandes utiles
+| Commande                         | Fonction                                                                               |
+|----------------------------------|----------------------------------------------------------------------------------------|
+| npm run dev                      | Lance le site en mode développeur (avec hot reload)                                    |
+| npm run build                    | Prépare les fichiers (optimisations) afin de pouvoir les mettre en prod                  |
+| npm run start                    | Lance un serveur en local qui utilise les fichiers créés pour la production (cf build)  |
+| npm run lint                     | Lance le linter ESLint, Typescript et Stylelint                                        |
+| npm run lint:fix        | Lance le linter ESLint, Typescript et Stylelint et tente de corriger les erreurs automatiquement |
+| npm run test                     | Lance tous les tests (front et back)                                                   |
+| npm run test:ci                  | Utilisé par la CI. Lance tous les tests (front et back)                                |
+| npm run test:client              | Lance tous les tests côté front (dossier src/client)                                   |
+| npm run test:client:unit         | Lance les tests unitaires côté front (dossier src/client)                              |
+| npm run test:client:integration  | Lance les tests d'intégration côté front (dossier src/client)                          |
+| npm run test:server              | Lance tous les tests côté back (dossier src/server)                                    |
+| npm run test:server:unit         | Lance les tests unitaires côté back (dossier src/server)                               |
+| npm run test:server:integration  | Lance les tests d'intégration côté back (dossier src/server)                           |
+| npm run database:init            | Permet de réinitialiser la base de donnée via Prisma                                   |
+| npm run postdeploy          | Utilisé automatiquement lors du déploiement sur Scalingo afin de jouer les migrations Prisma |
