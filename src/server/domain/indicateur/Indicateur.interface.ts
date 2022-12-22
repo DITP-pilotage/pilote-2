@@ -11,5 +11,5 @@ export default interface Indicateur {
   valeurInitiale: Valeur;
   valeurActuelle: Valeur;
   valeurCible: Valeur;
-  taux: Taux;
+  tauxAvancementGlobal: Taux;
 }
