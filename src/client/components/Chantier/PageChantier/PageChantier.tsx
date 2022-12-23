@@ -47,7 +47,10 @@ export default function PageChantier({ chantier }: PageChantierProps) {
             </div>
           </div>
           <Cartes />
-          <Indicateurs listeRubriquesIndicateurs={listeRubriquesIndicateurs} />
+          <Indicateurs
+            indicateurs={chantier.indicateurs}
+            listeRubriquesIndicateurs={listeRubriquesIndicateurs}
+          />
           <Commentaires />
         </div>
       </div>

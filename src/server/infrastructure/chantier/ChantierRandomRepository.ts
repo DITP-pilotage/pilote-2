@@ -19,7 +19,7 @@ function générerIndicateurs(nombreIndicateurs: number) : Indicateur[] {
       valeurInitiale: i % 2 == 0 ? null : faker.datatype.number(),
       valeurActuelle: i % 4 == 0 ? null : faker.datatype.number(),
       valeurCible: i % 5 == 0 ? null : faker.datatype.number(),
-      tauxAvancementGlobal: i % 2 == 0 ? null : faker.datatype.number(),
+      tauxAvancementGlobal: i % 2 == 0 ? null : faker.datatype.float({ min:0, max:1 }),
     });
   }
   return indicateurs;

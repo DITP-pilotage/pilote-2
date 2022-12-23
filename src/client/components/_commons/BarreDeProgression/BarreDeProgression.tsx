@@ -15,7 +15,11 @@ export default function BarreDeProgression({
   valeur,
   afficherLesCurseurs = true,
 }: BarreDeProgressionProps) {
-  const pourcentageAffiché = valeur?.moyenne ? `${(100 * valeur.moyenne).toFixed(0)}%` : '- %';
+  let pourcentageAffiché:string = '- %';
+  if (valeur) {
+    pourcentageAffiché = typeof valeur === 'number' ? `${(100 * valeur).toFixed(0)} %` : `${(100 * valeur.moyenne).toFixed(0)}%`;
+  }
+
   return (
     <div className={`
       flex fr-grid-row--middle fr-pb-1v
@@ -25,27 +29,37 @@ export default function BarreDeProgression({
       ${stylesÀPartirDeLaTaille[taille]}`}
     >
       <div className={`${styles.barre}`}>
-        <progress
-          value={valeur?.moyenne || undefined}
-        >
-          {pourcentageAffiché}
-        </progress>
         {
-            !!(valeur !== null && afficherLesCurseurs) && (
+          typeof valeur === 'number'
+            ?
+              <progress
+                value={valeur}
+              >
+                {pourcentageAffiché}
+              </progress>
+            :
+              <progress
+                value={valeur ? valeur.moyenne : undefined}
+              >
+                {pourcentageAffiché}
+              </progress>
+        }
+        {
+            !!(valeur !== null && afficherLesCurseurs && typeof valeur === 'object') && (
               <div className={styles.conteneurCurseurs}>
                 <BarreDeProgressionCurseur
                   typeDeCurseur={TypeDeCurseur.MINIMUM}
-                  valeur={valeur.minimum || 0}
+                  valeur={valeur.minimum}
                   variante={variante}
                 />
                 <BarreDeProgressionCurseur
                   typeDeCurseur={TypeDeCurseur.MÉDIANE}
-                  valeur={valeur.médiane || 0}
+                  valeur={valeur.médiane}
                   variante={variante}
                 />
                 <BarreDeProgressionCurseur
                   typeDeCurseur={TypeDeCurseur.MAXIMUM}
-                  valeur={valeur.maximum  || 0}
+                  valeur={valeur.maximum}
                   variante={variante}
                 />
               </div>
