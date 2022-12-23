@@ -1,7 +1,7 @@
 import { Header, flexRender, SortDirection } from '@tanstack/react-table';
 import TableauEnTêteProps from './TableauEnTête.interface';
-import styles from './TableauEnTête.module.scss';
 import FlècheDeTri from './FlècheDeTri/FlècheDeTri';
+import TableauEnTêteStyled from './TableauEnTête.styled';
 
 function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   if (!typeDeTri)
@@ -22,10 +22,10 @@ export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
     const triCroissantActif = header.column.getIsSorted() === 'asc';
 
     return (
-      <>
+      <TableauEnTêteStyled>
         <button
           aria-label={`trier la colonne ${header.column.columnDef.header} par ordre décroissant`}
-          className={`${triDécroissantActif && styles.actif} ${styles.flècheDeTri} fr-m-1w`}
+          className={`${triDécroissantActif ? 'actif' : ''} flèche-de-tri fr-m-1w`}
           onClick={() => header.column.toggleSorting(true)}
           type='button'
         >
@@ -36,7 +36,7 @@ export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
         </button>
         <button
           aria-label={`trier la colonne ${header.column.columnDef.header} par ordre croissant`}
-          className={`${triCroissantActif && styles.actif} ${styles.flècheDeTri}`}
+          className={`${triCroissantActif ? 'actif' : ''} flèche-de-tri`}
           onClick={() => header.column.toggleSorting(false)}
           type='button'
         >
@@ -45,7 +45,7 @@ export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
             estActif={triCroissantActif} 
           />
         </button>
-      </>
+      </TableauEnTêteStyled>
     );
   }
 

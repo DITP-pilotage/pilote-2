@@ -1,12 +1,12 @@
 import Titre from '@/components/_commons/Titre/Titre';
 import FilAriane from '@/components/_commons/FilAriane/FilAriane';
 import PageChantierEnTêteProps from './PageChantierEnTête.interface';
-import styles from './PageChantierEnTête.module.scss';
+import PageChantierEnTêteStyled from './PageChantierEnTête.styled';
 
 export default function PageChantierEnTête({ chantier }: PageChantierEnTêteProps) {
 
   return (
-    <header className={`${styles.conteneur} fr-px-md-15w fr-p-1w fr-pb-8w`}>
+    <PageChantierEnTêteStyled className='fr-px-md-15w fr-p-1w fr-pb-8w'>
       <FilAriane libelléPageCourante={chantier.nom} />
       <div className='fr-grid-row'>
         <div className='fr-col-12 fr-col-xl-7 fr-pr-10w'>
@@ -15,14 +15,14 @@ export default function PageChantierEnTête({ chantier }: PageChantierEnTêtePro
           </Titre>
         </div>
         <div className='fr-col-12 fr-col-xl-5'>
-          <p className={`${styles.texte} fr-mb-1w fr-text--xs`}>
+          <p className='texte fr-mb-1w fr-text--xs'>
             <strong>
               Axe :
             </strong>
             {' '}
             Non renseigné
           </p>
-          <p className={`${styles.texte} fr-mb-1w fr-text--xs`}>
+          <p className='fr-mb-1w fr-text--xs'>
             <strong>
               Politique Prioritaire du Gouvernement :
             </strong>
@@ -31,6 +31,6 @@ export default function PageChantierEnTête({ chantier }: PageChantierEnTêtePro
           </p>
         </div>
       </div>
-    </header>
+    </PageChantierEnTêteStyled>
   );
 }

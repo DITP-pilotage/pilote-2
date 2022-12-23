@@ -3,7 +3,6 @@ import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette'
 import { filtresActifs as filtresActifsStore, actions as actionsFiltresStore } from '@/client/stores/useFiltresStore/useFiltresStore';
 import Titre from '@/components/_commons/Titre/Titre';
 import PageChantiersProps from './PageChantiers.interface';
-import styles from './PageChantiers.module.scss';
 import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
 import TauxAvancementMoyen from './TauxAvancementMoyen/TauxAvancementMoyen';
 import RépartitionTauxAvancement from './RépartitionTauxAvancement/RépartitionTauxAvancement';
@@ -11,6 +10,7 @@ import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import FiltresChantiers from './FiltresChantiers/FiltresChantiers';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
+import PageChantiersStyled from './PageChantiers.styled';
 
 export default function PageChantiers({ chantiers, périmètresMinistériels }: PageChantiersProps) {
   const [estOuverteBarreFiltres, setEstOuverteBarreFiltres] = useState(false);
@@ -25,13 +25,13 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
   ), [chantiers, filtresActifs]);
   
   return (
-    <div className="flex">
+    <PageChantiersStyled className="flex">
       <FiltresChantiers
         estOuvert={estOuverteBarreFiltres}
         périmètresMinistériels={périmètresMinistériels}
         setEstOuvert={setEstOuverteBarreFiltres}
       />
-      <div className={`${styles.contenuPrincipal}`}>
+      <div className='contenu-principal'>
         <button
           className="fr-sr-only-xl fr-btn fr-btn--secondary fr-mb-2w"
           onClick={() => setEstOuverteBarreFiltres(true)}
@@ -84,6 +84,6 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
           </div>
         </div>
       </div>
-    </div>
+    </PageChantiersStyled>
   );
 }

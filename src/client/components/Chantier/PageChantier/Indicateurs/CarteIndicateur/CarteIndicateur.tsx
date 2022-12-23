@@ -2,11 +2,10 @@ import { createColumnHelper } from '@tanstack/react-table';
 import IndicateurProps from '@/server/domain/indicateur/Indicateur.interface';
 import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
 import Titre from '@/components/_commons/Titre/Titre';
-import styles from '@/components/Chantier/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur.module.scss';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import CarteIndicateurProps from '@/components/Chantier/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur.interface';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-
+import CarteIndicateurStyled from './CarteIndicateur.styled';
 
 const reactTableColonnesHelper = createColumnHelper<IndicateurProps & { territoire: string }>();
 
@@ -40,7 +39,7 @@ const colonnes = [
 
 export default function CarteIndicateur( { indicateur } : CarteIndicateurProps) {
   return (
-    <div
+    <CarteIndicateurStyled
       className="fr-mb-2w"
       key={indicateur.id}
     >
@@ -60,10 +59,10 @@ export default function CarteIndicateur( { indicateur } : CarteIndicateurProps) 
           }
           { indicateur.nom }
         </Titre>
-        <p className={`${styles.infoSecondaire} fr-mb-1w`}>
+        <p className='information-secondaire fr-mb-1w'>
           Dernière mise à jour : 13/12/2022
         </p>
-        <p className={`${styles.infoSecondaire} fr-mb-1w`}>
+        <p className='information-secondaire fr-mb-1w'>
           Source : Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas tempor ultricies dictum. Suspendisse sit amet eros vel sem vulputate porta. Cras sed auctor justo, mollis consectetur urna.
         </p>
         <p className="fr-text--xs fr-mb-1v">
@@ -78,6 +77,6 @@ export default function CarteIndicateur( { indicateur } : CarteIndicateurProps) 
           entité='indicateur'
         />
       </CarteSquelette>
-    </div>
+    </CarteIndicateurStyled>
   );
 }

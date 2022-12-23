@@ -16,7 +16,7 @@ import TableauProps from './Tableau.interface';
 import TableauEnTête from './TableauEnTête/TableauEnTête';
 import TableauContenu from './TableauContenu/TableauContenu';
 import TableauPagination from './TableauPagination/TableauPagination';
-import styles from './Tableau.module.scss';
+import TableauStyled from './Tableau.styled';
 
 export default function Tableau<T extends object>({ colonnes, données, titre, entité, afficherLaRecherche = true }: TableauProps<T>) {
   const [tri, setTri] = useState<SortingState>([]);
@@ -50,7 +50,7 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
   const changementDePageCallback = useCallback((numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1), [tableau]);
 
   return (
-    <div className={`${styles.conteneur} fr-table fr-mb-0`}>
+    <TableauStyled className='fr-table fr-mb-0'>
       { titre ? 
         <Titre
           baliseHtml="h2"
@@ -60,7 +60,7 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
         </Titre>
         : null }
       { afficherLaRecherche ? 
-        <div className={`${styles.barreDeRecherche} fr-my-2w`}>
+        <div className='barre-de-recherche fr-my-2w'>
           <BarreDeRecherche
             changementDeLaRechercheCallback={changementDeLaRechercheCallback}
             valeur={valeurDeLaRecherche}
@@ -80,7 +80,7 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
             </div>
           </div>
           :
-          <table className={styles.tableau}>
+          <table className='tableau'>
             <caption className="fr-sr-only">
               {titre}
             </caption>
@@ -93,6 +93,6 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
         nombreDePages={tableau.getPageCount()}
         numéroDePageInitiale={1}
       />
-    </div>
+    </TableauStyled>
   );
 }

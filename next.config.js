@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  compiler: {
+    emotion: true,
+  },
   webpack: (config, options) => {
     config.watchOptions = {
       poll: 500,
