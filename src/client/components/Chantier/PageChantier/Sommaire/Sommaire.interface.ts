@@ -1,9 +1,9 @@
-export type ÉlémentPageType = {
+export type Rubrique = {
   nom: string,
   ancre: string,
-  sousÉléments?: ÉlémentPageType[]
+  sousRubriques?: Rubrique[]
 };
 
 export default interface SommaireProps {
-  éléments: ÉlémentPageType[]
+  rubriques: Rubrique[]
 }

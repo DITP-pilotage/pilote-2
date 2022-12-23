@@ -1,8 +1,8 @@
 import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
 import Titre from '@/components/_commons/Titre/Titre';
-import { IndicateursProps } from '@/components/Chantier/PageChantier/Indicateurs/Indicateurs.interface';
+import IndicateursProps from '@/components/Chantier/PageChantier/Indicateurs/Indicateurs.interface';
 
-export default function Indicateurs({ indicateurs }: IndicateursProps) {
+export default function Indicateurs({ listeRubriquesIndicateurs }: IndicateursProps) {
   return (
     <div
       className='fr-pb-5w'
@@ -14,17 +14,17 @@ export default function Indicateurs({ indicateurs }: IndicateursProps) {
       <p>
         Explications sur la pondération des indicateurs (à rédiger).
       </p>
-      { indicateurs.map(indicateur => (
+      { listeRubriquesIndicateurs.map(rubriqueIndicateurs => (
         <div
           className='fr-mb-4w'
-          id={indicateur.ancre}
-          key={indicateur.ancre}
+          id={rubriqueIndicateurs.ancre}
+          key={rubriqueIndicateurs.ancre}
         >
           <Titre
             apparence='fr-h4'
             baliseHtml='h3'
           >
-            {indicateur.nom}
+            {rubriqueIndicateurs.nom}
           </Titre>
           <CarteSquelette>
             <p className='fr-grid-row fr-grid-row--center'>
