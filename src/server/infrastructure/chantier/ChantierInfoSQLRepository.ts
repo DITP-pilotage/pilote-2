@@ -12,25 +12,11 @@ function mapToDomain(chantierPrisma: chantier): ChantierInfo {
   };
 }
 
-function mapToPrisma(chantierDomaine: ChantierInfo): chantier {
-  return {
-    id: chantierDomaine.id,
-    nom: chantierDomaine.nom,
-    id_perimetre: chantierDomaine.id_périmètre,
-  };
-}
-
 export default class ChantierInfoSQLRepository implements ChantierInfoRepository {
   private prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
-  }
-
-  async add(chantierToAdd: ChantierInfo) {
-    await this.prisma.chantier.create({
-      data: mapToPrisma(chantierToAdd),
-    });
   }
 
   async getListe() {
