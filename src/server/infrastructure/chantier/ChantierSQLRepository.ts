@@ -11,6 +11,10 @@ function mapToDomain(chantierPrisma: chantier): Chantier {
     axe: null,
     nomPPG: null,
     id_périmètre: chantierPrisma.id_perimetre,
+    perimètreIds: chantierPrisma.perimetre_ids,
+    zoneNom: chantierPrisma.zone_nom,
+    codeInsee: chantierPrisma.code_insee,
+    tauxAvancement: chantierPrisma.taux_avancement,
     météo: null,
     avancement: { annuel: null, global: null },
     indicateurs: [],
@@ -22,6 +26,10 @@ function mapToPrisma(chantierDomaine: Chantier): chantier {
     id: chantierDomaine.id,
     nom: chantierDomaine.nom,
     id_perimetre: chantierDomaine.id_périmètre,
+    perimetre_ids: chantierDomaine.perimètreIds,
+    zone_nom: chantierDomaine.zoneNom,
+    code_insee: chantierDomaine.codeInsee,
+    taux_avancement: chantierDomaine.tauxAvancement,
   };
 }
 

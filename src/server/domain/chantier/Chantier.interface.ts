@@ -9,6 +9,10 @@ export default interface Chantier {
   axe: Axe;
   nomPPG: string | null;
   id_périmètre: string;
+  perimètreIds: string[];
+  zoneNom: string;
+  codeInsee: string;
+  tauxAvancement: number | null;
   météo: Météo;
   avancement: ChantierAvancement;
   indicateurs: Indicateur[];

@@ -24,3 +24,50 @@ describe('ChantierInfoSQLRepository', () => {
     expect(ids).toEqual(['CH-001', 'CH-002']);
   });
 });
+
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import ChantierSQLRepository from '@/server/infrastructure/chantier/ChantierSQLRepository';
+describe('A JETER', () => {
+  test('Accède à une liste de chantier', async () => {
+    // GIVEN
+    const prisma = new PrismaClient();
+    const repository: ChantierInfoRepository = new ChantierInfoSQLRepository(prisma);
+    const chantierSQLRepository: ChantierSQLRepository = new ChantierSQLRepository(prisma);
+    const chantierInitial: Chantier = {
+      id: 'THD',
+      nom: 'Chantier 1',
+      axe: null,
+      nomPPG: null,
+      id_périmètre: 'PER-001',
+      perimètreIds: ['PER-001'],
+      zoneNom: 'National',
+      codeInsee: 'FR',
+      tauxAvancement: 88.5,
+      météo: null,
+      avancement: { annuel: null, global: null },
+      indicateurs: [],
+    };
+    const chantierInitial2: Chantier = {
+      id: 'TUP',
+      nom: 'Chantier 2',
+      axe: null,
+      nomPPG: null,
+      id_périmètre: 'PER-001',
+      perimètreIds: ['PER-001'],
+      zoneNom: 'National',
+      codeInsee: 'FR',
+      tauxAvancement: null,
+      météo: null,
+      avancement: { annuel: null, global: null },
+      indicateurs: [],
+    };
+    await chantierSQLRepository.add(chantierInitial);
+    await chantierSQLRepository.add(chantierInitial2);
+
+    // WHEN
+    const chantiersInfos = await repository.getListe();
+
+    // THEN
+    expect(chantiersInfos).toEqual([chantierInitial, chantierInitial2]);
+  });
+});
