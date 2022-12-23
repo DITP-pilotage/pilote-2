@@ -4,7 +4,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Connection
 
 
-
 class PostgreSQLConnector:
     def __init__(self):
         self.user = os.getenv('PGUSER')
