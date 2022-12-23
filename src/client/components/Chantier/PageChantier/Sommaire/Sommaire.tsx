@@ -1,5 +1,3 @@
-/* Linter désactivé car il ne gère pas les accents sur le E majuscule */
-/* eslint-disable react/hook-use-state */
 import { useState } from 'react';
 import SommaireProps from './Sommaire.interface';
 import styles from './Sommaire.module.scss';
@@ -31,7 +29,12 @@ export default function Sommaire({ rubriques }: SommaireProps) {
                 key={rubrique.ancre}
               >
                 { 
-                  !!rubrique.sousRubriques && <SommaireBoutonDéplier clicSurLeBoutonDéplierCallback={() => clicSurLeBoutonDéplierCallback(rubrique.ancre)} />
+                  !!rubrique.sousRubriques && (
+                    <SommaireBoutonDéplier
+                      clicSurLeBoutonDéplierCallback={() => clicSurLeBoutonDéplierCallback(rubrique.ancre)}
+                      estDéplié={rubrique.ancre === rubriqueDépliée}
+                    />
+                  )
                 }
                 <a
                   href={`#${rubrique.ancre}`}
