@@ -23,15 +23,20 @@ function générerIndicateurs(nombreIndicateurs: number) : Indicateur[] {
   return indicateurs;
 }
 
-export function generateChantier(id: string): Chantier {
+export function générerChantier(id: string): Chantier {
   const valeurs = Array.from({ length:8 }, () => faker.datatype.number({ min: 0, max: 100 }) / 100);
   valeurs.sort();
+  const perimetreId = 'PER-' + faker.random.numeric(3);
   return {
     id,
     nom: faker.lorem.words(3),
     axe: { id: 'AXE-' + faker.random.alphaNumeric(3), nom: faker.lorem.words(3) },
     nomPPG: faker.lorem.words(3),
-    id_périmètre: 'PER-' + faker.random.numeric(3),
+    id_périmètre: perimetreId,
+    perimètreIds: [perimetreId],
+    zoneNom: 'National',
+    codeInsee: 'FR',
+    tauxAvancement: 88.5,
     météo: valeursMeteo[faker.datatype.number({ min: 0, max: 4 })] as Météo,
     avancement: {
       annuel: { minimum: valeurs[0], médiane: valeurs[2], moyenne: valeurs[4], maximum: valeurs[6] },
@@ -48,7 +53,7 @@ export default class ChantierRandomRepository implements ChantierRepository {
   }
 
   async getById(id: string) {
-    return generateChantier(id);
+    return générerChantier(id);
   }
 
 }
