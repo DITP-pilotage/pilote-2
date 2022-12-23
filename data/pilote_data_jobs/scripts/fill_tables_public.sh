@@ -15,3 +15,4 @@ fi
 dbt run --project-dir pilote_data_jobs/transformations/ditp_ppg_dbt/ --profiles-dir pilote_data_jobs/transformations/dbt_root/
 
 psql -f pilote_data_jobs/transformations/indicateur/brute_vers_public.sql
+psql -f pilote_data_jobs/transformations/chantier/brute_vers_public.sql

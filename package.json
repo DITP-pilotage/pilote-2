@@ -37,9 +37,6 @@
       "last 1 safari version"
     ]
   },
-  "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
-  },
   "dependencies": {
     "@faker-js/faker": "^7.6.0",
     "@gouvfr/dsfr": "^1.8.5",
