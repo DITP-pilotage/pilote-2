@@ -2,7 +2,15 @@ import { chantier, PrismaClient } from '@prisma/client';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 
+///
+// Fonctions utilitaires
 
+function coerceNull<T>(value: T) {
+  if (value == undefined) {
+    return null;
+  }
+  return value;
+}
 
 function mapToDomain(chantierPrisma: chantier): Chantier {
   return {
@@ -14,9 +22,11 @@ function mapToDomain(chantierPrisma: chantier): Chantier {
     perimètreIds: chantierPrisma.perimetre_ids,
     zoneNom: chantierPrisma.zone_nom,
     codeInsee: chantierPrisma.code_insee,
-    tauxAvancement: chantierPrisma.taux_avancement,
     météo: null,
-    avancement: { annuel: null, global: null },
+    avancement: {
+      annuel: null,
+      global: { minimum: null, médiane: null, maximum: null, moyenne: chantierPrisma.taux_avancement },
+    },
     indicateurs: [],
   };
 }
@@ -29,9 +39,12 @@ function mapToPrisma(chantierDomaine: Chantier): chantier {
     perimetre_ids: chantierDomaine.perimètreIds,
     zone_nom: chantierDomaine.zoneNom,
     code_insee: chantierDomaine.codeInsee,
-    taux_avancement: chantierDomaine.tauxAvancement,
+    taux_avancement: coerceNull(chantierDomaine.avancement.global?.moyenne),
   };
 }
+
+///
+// Implémentation du Repository
 
 export default class ChantierSQLRepository implements ChantierRepository {
   private prisma: PrismaClient;
