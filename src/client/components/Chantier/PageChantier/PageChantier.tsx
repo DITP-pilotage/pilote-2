@@ -17,22 +17,13 @@ const listeIndicateurs = [
   { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: 'suivi' },
 ];
 
-const listeÉlémentsPage = [
-  { nom: 'Avancement', ancre: 'avancement' },
-  { nom: 'Synthèse des résultats', ancre: 'synthèse' },
-  { nom: 'Responsables', ancre: 'responsables' },
-  { nom: 'Cartes', ancre: 'cartes' },
-  { nom: 'Indicateurs', ancre: 'indicateurs', sousÉlément: listeIndicateurs },
-  { nom: 'Commentaires', ancre: 'commentaires' },
-];
-
 export default function PageChantier({ chantier }: PageChantierProps) {
   return (
     <div className={styles.conteneur}>
       <PageChantierEnTête chantier={chantier} />
       <div className='fr-grid-row'>
         <div className='fr-col-xl-2 fr-col-lg-3'>
-          <Sommaire éléments={listeÉlémentsPage} />
+          <Sommaire indicateurs={listeIndicateurs} />
         </div>
         <div className='fr-col-xl-10 fr-col-lg-9 fr-col-12 fr-px-3w fr-pt-5w'>
           <AvancementChantier chantier={chantier} />

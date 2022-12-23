@@ -1,14 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import SommaireBoutonDéplierProps from './SommaireBoutonDéplier.interface';
 import styles from './SommaireBoutonDéplier.module.scss';
 
-export default function SommaireBoutonDéplier({ clicSurLeBoutonDéplierCallback }: SommaireBoutonDéplierProps) {
-  const [estDéplié, setEstDéplié] = useState(false);
-
+export default function SommaireBoutonDéplier({ clicSurLeBoutonDéplierCallback, estDéplié }: SommaireBoutonDéplierProps) {
   const changementDeLÉtatDuBouton = useCallback(() => {
-    setEstDéplié(!estDéplié);
     clicSurLeBoutonDéplierCallback(); 
-  }, [clicSurLeBoutonDéplierCallback, estDéplié]);
+  }, [clicSurLeBoutonDéplierCallback]);
 
   return (
     <button
