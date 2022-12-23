@@ -1,11 +1,5 @@
-import ChantierAvancement from './ChantierAvancement.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 
-export type Météo = 1 | 2 | 3 | 4 | null;
+type ChantierInfo = Pick<Chantier, 'id' | 'nom' | 'id_périmètre' | 'météo' | 'avancement'>;
 
-export default interface ChantierInfo {
-  id: string;
-  nom: string;
-  id_périmètre: string;
-  météo: Météo;
-  avancement: ChantierAvancement;
-}
+export default ChantierInfo;

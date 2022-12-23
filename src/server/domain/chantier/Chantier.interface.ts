@@ -1,11 +1,15 @@
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import ChantierAvancement from './ChantierAvancement.interface';
-
-export type Météo = 1 | 2 | 3 | 4 | null;
+import Météo from './Météo.interface';
+export type Axe = { id: string, nom: string } | null;
 
 export default interface Chantier {
   id: string;
   nom: string;
+  axe: Axe;
+  nomPPG: string | null;
   id_périmètre: string;
   météo: Météo;
   avancement: ChantierAvancement;
+  indicateurs: Indicateur[];
 }

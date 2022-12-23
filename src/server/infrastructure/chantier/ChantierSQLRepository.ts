@@ -1,18 +1,23 @@
 import { chantier, PrismaClient } from '@prisma/client';
-import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 
-function mapToDomain(chantierPrisma: chantier): ChantierInfo {
+
+
+function mapToDomain(chantierPrisma: chantier): Chantier {
   return {
     id: chantierPrisma.id,
     nom: chantierPrisma.nom,
+    axe: null,
+    nomPPG: null,
     id_périmètre: chantierPrisma.id_perimetre,
     météo: null,
     avancement: { annuel: null, global: null },
+    indicateurs: [],
   };
 }
 
-function mapToPrisma(chantierDomaine: ChantierInfo): chantier {
+function mapToPrisma(chantierDomaine: Chantier): chantier {
   return {
     id: chantierDomaine.id,
     nom: chantierDomaine.nom,
@@ -27,7 +32,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     this.prisma = prisma;
   }
 
-  async add(chantierToAdd: ChantierInfo) {
+  async add(chantierToAdd: Chantier) {
     await this.prisma.chantier.create({
       data: mapToPrisma(chantierToAdd),
     });
