@@ -13,7 +13,7 @@ function générerIndicateurs(nombreIndicateurs: number) : Indicateur[] {
   for (let i = 0;i < nombreIndicateurs;i++) {
     indicateurs.push({
       id: 'IND-' + ('' + i).padStart(3, '0'),
-      nom: 'Indicateur ' + i,
+      nom: faker.lorem.words(5),
       type: valeursTypeIndicateur[faker.datatype.number({ min: 0, max: valeursTypeIndicateur.length - 1 })],
       estIndicateurDuBaromètre: i % 3 == 0,
       valeurInitiale: i % 2 == 0 ? null : faker.datatype.number(),
@@ -44,7 +44,7 @@ export function générerChantier(id: string, zone_nom: string): Chantier {
       annuel: { minimum: valeurs[0], médiane: valeurs[2], moyenne: valeurs[4], maximum: valeurs[6] },
       global: { minimum: valeurs[1], médiane: valeurs[3], moyenne: valeurs[5], maximum: valeurs[7] },
     },
-    indicateurs: générerIndicateurs(7),
+    indicateurs: générerIndicateurs(5),
   };
 }
 
