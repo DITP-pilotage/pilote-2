@@ -5,11 +5,20 @@ import SommaireProps from './Sommaire.interface';
 import styles from './Sommaire.module.scss';
 import SommaireBoutonDéplier from './SommaireBoutonDéplier/SommaireBoutonDéplier';
 
-export default function Sommaire({ éléments }: SommaireProps) {
-  const [élémentCourant, setÉlémentCourant] = useState<SommaireProps['éléments'][0]['ancre'] | null>(null);
-  const [élémentDéplié, setÉlémentDéplié] = useState<SommaireProps['éléments'][0]['ancre'] | null>(null);
+export default function Sommaire({ indicateurs }: SommaireProps) {
+  const [élémentCourant, setÉlémentCourant] = useState<SommaireProps['indicateurs'][0]['ancre'] | null>(null);
+  const [élémentDéplié, setÉlémentDéplié] = useState<SommaireProps['indicateurs'][0]['ancre'] | null>('indicateurs');
 
-  const clicSurLeBoutonDéplierCallback = (ancre: SommaireProps['éléments'][0]['ancre']) => {
+  const éléments = [
+    { nom: 'Avancement', ancre: 'avancement' },
+    { nom: 'Synthèse des résultats', ancre: 'synthèse' },
+    { nom: 'Responsables', ancre: 'responsables' },
+    { nom: 'Cartes', ancre: 'cartes' },
+    { nom: 'Indicateurs', ancre: 'indicateurs', sousÉlément: indicateurs },
+    { nom: 'Commentaires', ancre: 'commentaires' },
+  ];
+
+  const clicSurLeBoutonDéplierCallback = (ancre: SommaireProps['indicateurs'][0]['ancre']) => {
     if (élémentDéplié === ancre)
       setÉlémentDéplié(null);
     else
@@ -31,7 +40,11 @@ export default function Sommaire({ éléments }: SommaireProps) {
                 key={élément.ancre}
               >
                 { 
-                  !!élément.sousÉlément && <SommaireBoutonDéplier clicSurLeBoutonDéplierCallback={() => clicSurLeBoutonDéplierCallback(élément.ancre)} />
+                  !!élément.sousÉlément && 
+                  <SommaireBoutonDéplier
+                    clicSurLeBoutonDéplierCallback={() => clicSurLeBoutonDéplierCallback(élément.ancre)}
+                    estDéplié={élément.ancre === élémentDéplié}
+                  />
                 }
                 <a
                   href={`#${élément.ancre}`}
