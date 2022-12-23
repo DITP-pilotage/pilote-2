@@ -4,8 +4,8 @@ export default function RépartitionTauxAvancement() {
   return (
     <>
       <Titre
-        apparence='fr-h6'
         baliseHtml='h2'
+        className='fr-h6'
       >
         Répartition des taux d’avancement de la sélection
       </Titre>

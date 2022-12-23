@@ -14,8 +14,8 @@ export default function Cartes() {
         <div className="fr-col-12 fr-col-xl-6">
           <CarteSquelette>
             <Titre
-              apparence='fr-text--lg'
               baliseHtml='h4'
+              className='fr-text--lg'
             >
               Répartition géographique du taux d’avancement du chantier
             </Titre>
@@ -27,8 +27,8 @@ export default function Cartes() {
         <div className="fr-col-12 fr-col-xl-6">
           <CarteSquelette>
             <Titre
-              apparence='fr-text--lg'
               baliseHtml='h4'
+              className='fr-text--lg'
             >
               Répartition géographique du niveau de confiance
             </Titre>

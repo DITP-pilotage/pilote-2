@@ -53,8 +53,8 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
     <div className={`${styles.conteneur} fr-table fr-mb-0`}>
       { titre ? 
         <Titre
-          apparence="fr-h6"
           baliseHtml="h2"
+          className="fr-h6"
         >
           {`${titre} (${tableau.getFilteredRowModel().rows.length})`}
         </Titre>

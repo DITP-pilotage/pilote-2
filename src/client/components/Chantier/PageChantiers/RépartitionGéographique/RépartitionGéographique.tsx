@@ -4,8 +4,8 @@ export default function RépartitionGéographique() {
   return (
     <>
       <Titre
-        apparence='fr-h6'
         baliseHtml='h2'
+        className='fr-h6'
       >
         Répartition géographique
       </Titre>

@@ -1,3 +1,4 @@
+import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import { createColumnHelper } from '@tanstack/react-table';
 import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
 import Titre from '@/components/_commons/Titre/Titre';
@@ -5,6 +6,7 @@ import IndicateursProps from '@/components/Chantier/PageChantier/Indicateurs/Ind
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import styles from './Indicateurs.module.scss';
 
 const reactTableColonnesHelper = createColumnHelper<Indicateur & { territoire: string }>();
 
@@ -57,8 +59,8 @@ export default function Indicateurs({ listeRubriquesIndicateurs, indicateurs }: 
           key={rubriqueIndicateurs.ancre}
         >
           <Titre
-            apparence='fr-h4'
             baliseHtml='h3'
+            className='fr-h4'
           >
             {rubriqueIndicateurs.nom}
           </Titre>
@@ -72,11 +74,29 @@ export default function Indicateurs({ listeRubriquesIndicateurs, indicateurs }: 
                 >
                   <CarteSquelette>
                     <Titre
-                      apparence="fr-h5"
                       baliseHtml="h4"
+                      className="fr-h5 fr-mb-1w"
                     >
+                      {
+                        !!indicateur.estIndicateurDuBaromètre && (
+                          <span
+                            aria-hidden="true"
+                            className="fr-icon-dashboard-3-line fr-mr-1w"
+                            style={{ color: '#006e6e' }}
+                          />
+                        )
+                      }
                       { indicateur.nom }
                     </Titre>
+                    <p className={`${styles.infoSecondaire} fr-mb-1w`}>
+                      Dernière mise à jour : 13/12/2022
+                    </p>
+                    <p className={`${styles.infoSecondaire} fr-mb-1w`}>
+                      Source : Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas tempor ultricies dictum. Suspendisse sit amet eros vel sem vulputate porta. Cras sed auctor justo, mollis consectetur urna.
+                    </p>
+                    <p className="fr-text--xs fr-mb-1v">
+                      Ceci est la description de l’indicateur et des données associées. La pondération de l’indicateur dans le taux d’avancement global est également expliquée.
+                    </p>
                     <Tableau<Indicateur & { territoire: string }>
                       afficherLaRecherche={false}
                       colonnes={colonnes}
