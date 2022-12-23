@@ -230,14 +230,17 @@ subgraph Base PG Pilote 2
       D_DS[dim_structures]
    end
    subgraph public
-      M_CHA --> CHA[chantier]
       M_PER --> PER[perimetre]
-      M_IND --> IND[indicateur]
-      D_FPI --> IND
+      M_CHA --> CHA[chantier]
+      M_ZON --> CHA
+      D_FPC --> CHA
+      D_DTN --> CHA
+      D_DS  --> CHA
       D_DTN --> IND
-      D_DS --> IND
+      D_DS  --> IND
+      D_FPI --> IND
+      M_IND --> IND[indicateur]
       linkStyle 0 stroke:red;
-      linkStyle 1 stroke:red;
    end
 end
 ```

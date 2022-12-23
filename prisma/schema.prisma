@@ -14,6 +14,10 @@ model chantier {
   id String @id
   nom String
   id_perimetre String
+  perimetre_ids String[]
+  taux_avancement Float?
+  zone_nom String
+  code_insee String
 }
 
 model perimetre {
