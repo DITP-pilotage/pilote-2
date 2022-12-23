@@ -3,8 +3,10 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import Météo from '@/server/domain/chantier/Météo.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Type from '@/server/domain/indicateur/Type.interface';
 
-const valeursMeteo = [null, 1, 2, 3, 4];
+const valeursMeteo: Météo[] = [null, 1, 2, 3, 4];
+const valeursTypeIndicateur: Type[] = ['CONTEXTE', 'DÉPLOIEMENT', 'IMPACT', 'QUALITÉ_DE_SERVICE', 'SUIVI_EXTERNALITÉS_ET_EFFET_REBOND'];
 
 function générerIndicateurs(nombreIndicateurs: number) : Indicateur[] {
   const indicateurs: Indicateur[] = [];
@@ -12,7 +14,7 @@ function générerIndicateurs(nombreIndicateurs: number) : Indicateur[] {
     indicateurs.push({
       id: 'IND-' + ('' + i).padStart(3, '0'),
       nom: 'Indicateur ' + i,
-      type: 'Type indicateur ' + i,
+      type: valeursTypeIndicateur[faker.datatype.number({ min: 0, max: valeursTypeIndicateur.length - 1 })],
       estIndicateurDuBaromètre: i % 3 == 0,
       valeurInitiale: i % 2 == 0 ? null : faker.datatype.number(),
       valeurActuelle: i % 4 == 0 ? null : faker.datatype.number(),
