@@ -1,5 +1,4 @@
 import ChantierInfosFixture from '@/fixtures/ChantierInfosFixture';
-import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 import ChantierInfoRepository from '@/server/domain/chantier/ChantierInfoRepository.interface';
 
 export default class ChantierInfoRandomRepository implements ChantierInfoRepository {
@@ -10,10 +9,6 @@ export default class ChantierInfoRandomRepository implements ChantierInfoReposit
   constructor(nombreDeChantiers: number, idPérimètres: { id: string }[]) {
     this.nombreDeChantiers = nombreDeChantiers;
     this.idPérimètres = idPérimètres;
-  }
-
-  async add(_: ChantierInfo) {
-    throw new Error('Error: Not implemented');
   }
 
   async getListe() {
