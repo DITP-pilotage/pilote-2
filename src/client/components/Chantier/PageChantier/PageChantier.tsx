@@ -1,3 +1,5 @@
+import { ÉlémentPageType } from '@/components/Chantier/PageChantier/Sommaire/Sommaire.interface';
+import TypeIndicateur from '@/server/domain/indicateur/Type.interface';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs from './Indicateurs/Indicateurs';
 import Commentaires from './Commentaires/Commentaires';
@@ -9,12 +11,21 @@ import PageChantierEnTête from './PageChantierEnTête/PageChantierEnTête';
 import Cartes from './Cartes/Cartes';
 import Sommaire from './Sommaire/Sommaire';
 
-const listeIndicateurs = [
-  { nom: 'Indicateurs de contexte', ancre: 'contexte' },
-  { nom: 'Indicateurs de déploiement', ancre: 'déploiement' },
-  { nom: 'Indicateurs d\'impact', ancre: 'impact' },
-  { nom: 'Indicateurs de qualité de service', ancre: 'perception' },
-  { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: 'suivi' },
+const listeÉlémentsPageIndicateurs  = [
+  { nom: 'Indicateurs de contexte', ancre: 'contexte', typeIndicateur: 'CONTEXTE' as TypeIndicateur },
+  { nom: 'Indicateurs de déploiement', ancre: 'déploiement', typeIndicateur: 'DÉPLOIEMENT' as TypeIndicateur },
+  { nom: 'Indicateurs d\'impact', ancre: 'impact', typeIndicateur: 'IMPACT' as TypeIndicateur },
+  { nom: 'Indicateurs de qualité de service', ancre: 'perception', typeIndicateur: 'QUALITÉ_DE_SERVICE' as TypeIndicateur },
+  { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: 'suivi', typeIndicateur: 'SUIVI_EXTERNALITÉS_ET_EFFET_REBOND' as TypeIndicateur },
+];
+
+const listeÉlémentsPage: ÉlémentPageType[] = [
+  { nom: 'Avancement', ancre: 'avancement' },
+  { nom: 'Synthèse des résultats', ancre: 'synthèse' },
+  { nom: 'Responsables', ancre: 'responsables' },
+  { nom: 'Cartes', ancre: 'cartes' },
+  { nom: 'Indicateurs', ancre: 'indicateurs', sousÉléments: listeÉlémentsPageIndicateurs },
+  { nom: 'Commentaires', ancre: 'commentaires' },
 ];
 
 export default function PageChantier({ chantier }: PageChantierProps) {
@@ -23,7 +34,7 @@ export default function PageChantier({ chantier }: PageChantierProps) {
       <PageChantierEnTête chantier={chantier} />
       <div className='fr-grid-row'>
         <div className='fr-col-xl-2 fr-col-lg-3'>
-          <Sommaire indicateurs={listeIndicateurs} />
+          <Sommaire éléments={listeÉlémentsPage} />
         </div>
         <div className='fr-col-xl-10 fr-col-lg-9 fr-col-12 fr-px-3w fr-pt-5w'>
           <AvancementChantier chantier={chantier} />
@@ -36,7 +47,7 @@ export default function PageChantier({ chantier }: PageChantierProps) {
             </div>
           </div>
           <Cartes />
-          <Indicateurs indicateurs={listeIndicateurs} />
+          <Indicateurs indicateurs={listeÉlémentsPageIndicateurs} />
           <Commentaires />
         </div>
       </div>

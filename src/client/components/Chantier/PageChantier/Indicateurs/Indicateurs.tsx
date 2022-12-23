@@ -1,7 +1,8 @@
 import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
 import Titre from '@/components/_commons/Titre/Titre';
+import { IndicateursProps } from '@/components/Chantier/PageChantier/Indicateurs/Indicateurs.interface';
 
-export default function Indicateurs({ indicateurs }: { indicateurs: { nom: string, ancre: string }[] }) {
+export default function Indicateurs({ indicateurs }: IndicateursProps) {
   return (
     <div
       className='fr-pb-5w'
