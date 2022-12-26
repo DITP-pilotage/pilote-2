@@ -36,7 +36,6 @@ export function générerChantier(id: string): Chantier {
     perimètreIds: [perimetreId],
     zoneNom: 'National',
     codeInsee: 'FR',
-    tauxAvancement: 88.5,
     météo: valeursMeteo[faker.datatype.number({ min: 0, max: 4 })] as Météo,
     avancement: {
       annuel: { minimum: valeurs[0], médiane: valeurs[2], moyenne: valeurs[4], maximum: valeurs[6] },

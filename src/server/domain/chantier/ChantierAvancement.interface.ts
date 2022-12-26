@@ -1,8 +1,8 @@
 export interface Avancement {
-  minimum: number,
-  médiane: number,
-  moyenne: number,
-  maximum: number,
+  minimum: number | null,
+  médiane: number | null,
+  moyenne: number | null,
+  maximum: number | null,
 }
 
 export default interface ChantierAvancements {

@@ -17,9 +17,8 @@ describe('ChantierSQLRepository', () => {
       perimètreIds: ['PER-001'],
       zoneNom: 'National',
       codeInsee: 'FR',
-      tauxAvancement: 88.5,
       météo: null,
-      avancement: { annuel: null, global: null },
+      avancement: { annuel: null, global: { minimum: null, médiane: null, maximum: null, moyenne: 88.5 } },
       indicateurs: [],
     };
     const chantierInitial2: Chantier = {
@@ -31,9 +30,8 @@ describe('ChantierSQLRepository', () => {
       perimètreIds: ['PER-001'],
       zoneNom: 'National',
       codeInsee: 'FR',
-      tauxAvancement: null,
       météo: null,
-      avancement: { annuel: null, global: null },
+      avancement: { annuel: null, global: { minimum: null, médiane: null, maximum: null, moyenne: 88.5 } },
       indicateurs: [],
     };
     await repository.add(chantierInitial1);
