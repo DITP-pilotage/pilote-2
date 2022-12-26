@@ -138,3 +138,15 @@ class DimStructures(Base):
     structure_level = Column(INTEGER, nullable=False)
     snapshot_date = Column(DateTime, nullable=False)
 
+
+class MetadataPorteur(Base):
+    __tablename__ = 'metadata_porteur'
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
+
+    porteur_id = Column(VARCHAR(4), primary_key=True)
+    porteur_short = Column(VARCHAR(15), nullable=False)
+    porteur_name = Column(VARCHAR(255))
+    porteur_desc = Column(VARCHAR(255))
+    porteur_type_id = Column(VARCHAR(2))
+    porteur_type_short = Column(VARCHAR(5))
+    porteur_type_name = Column(VARCHAR(255))
