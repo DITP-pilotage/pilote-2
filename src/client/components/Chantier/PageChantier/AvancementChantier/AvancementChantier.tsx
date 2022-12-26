@@ -60,7 +60,7 @@ const colonnes = [
 
 export default function AvancementChantier({ chantier }: AvancementChantierProps) {
   return (
-    <div
+    <section
       className='fr-pb-5w'
       id="avancement"
     >
@@ -86,6 +86,6 @@ export default function AvancementChantier({ chantier }: AvancementChantierProps
         <hr className='fr-hr fr-pb-2w' />
         <BarreDeProgressionLégende />
       </CarteSquelette>
-    </div>
+    </section>
   );
 }

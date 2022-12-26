@@ -5,15 +5,15 @@ import styles from './Responsables.module.scss';
 const nonRenseigné = 'Non renseigné';
 
 const responsables = [
-  { libellé: 'Ministère porteur', nom: nonRenseigné },
-  { libellé: 'Autres ministères co-porteurs', nom: nonRenseigné },
-  { libellé: 'Directeur d’Administration Centrale', nom: nonRenseigné },
-  { libellé: 'Nom du Directeur de Projet', nom: nonRenseigné },
+  { libellé: 'Ministère porteur', nom: nonRenseigné, id: 1 },
+  { libellé: 'Autres ministères co-porteurs', nom: nonRenseigné, id: 2 },
+  { libellé: 'Directeur d’Administration Centrale', nom: nonRenseigné, id: 3 },
+  { libellé: 'Nom du Directeur de Projet', nom: nonRenseigné, id: 4 },
 ];
 
 export default function Responsables() {
   return (
-    <div
+    <section
       className={styles.conteneur}
       id="responsables"
     >
@@ -25,7 +25,7 @@ export default function Responsables() {
           National
         </div>
         {responsables.map(responsable => (
-          <>
+          <div key={responsable.id}>
             <div className='fr-pl-2w fr-grid-row'>
               <p className='fr-text--sm fr-text--bold fr-col fr-mr-4w'>
                 {responsable.libellé}
@@ -35,9 +35,9 @@ export default function Responsables() {
               </p>
             </div>
             <hr className='fr-hr' />
-          </>
+          </div>
         ))}
       </CarteSquelette>
-    </div>
+    </section>
   );
 }

@@ -1,11 +1,12 @@
 /* Linter désactivé car il ne gère pas les accents sur le E majuscule */
 /* eslint-disable react/hook-use-state */
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SommaireProps from './Sommaire.interface';
 import styles from './Sommaire.module.scss';
 import SommaireBoutonDéplier from './SommaireBoutonDéplier/SommaireBoutonDéplier';
 
 export default function Sommaire({ indicateurs }: SommaireProps) {
+
   const [élémentCourant, setÉlémentCourant] = useState<SommaireProps['indicateurs'][0]['ancre'] | null>(null);
   const [élémentDéplié, setÉlémentDéplié] = useState<SommaireProps['indicateurs'][0]['ancre'] | null>('indicateurs');
 
@@ -18,6 +19,23 @@ export default function Sommaire({ indicateurs }: SommaireProps) {
     { nom: 'Commentaires', ancre: 'commentaires' },
   ];
 
+  const observer = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    observer.current = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        console.log(entry);
+        if (entry?.isIntersecting) {
+          setÉlémentCourant(entry.target.id);
+        }
+      });
+    }, { rootMargin: '-20% 0% -35% 0px' });
+    
+    const elements = document.querySelectorAll('section');    
+    elements.forEach((elem) => observer.current?.observe(elem));
+    return () => observer.current?.disconnect();
+  }, []);
+  
   const clicSurLeBoutonDéplierCallback = (ancre: SommaireProps['indicateurs'][0]['ancre']) => {
     if (élémentDéplié === ancre)
       setÉlémentDéplié(null);

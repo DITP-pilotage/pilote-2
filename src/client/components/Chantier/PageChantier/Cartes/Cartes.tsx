@@ -3,7 +3,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 
 export default function Cartes() {
   return (
-    <div 
+    <section 
       className='fr-pb-5w'
       id="cartes"
     >
@@ -38,6 +38,6 @@ export default function Cartes() {
           </CarteSquelette>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

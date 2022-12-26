@@ -3,7 +3,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 
 export default function Indicateurs({ indicateurs }: { indicateurs: { nom: string, ancre: string }[] }) {
   return (
-    <div
+    <section
       className='fr-pb-5w'
       id="indicateurs"
     >
@@ -14,7 +14,7 @@ export default function Indicateurs({ indicateurs }: { indicateurs: { nom: strin
         Explications sur la pondération des indicateurs (à rédiger).
       </p>
       { indicateurs.map(indicateur => (
-        <div
+        <section
           className='fr-mb-4w'
           id={indicateur.ancre}
           key={indicateur.ancre}
@@ -30,8 +30,8 @@ export default function Indicateurs({ indicateurs }: { indicateurs: { nom: strin
               A venir...
             </p>
           </CarteSquelette>
-        </div>
+        </section>
       ))}
-    </div>
+    </section>
   );
 }

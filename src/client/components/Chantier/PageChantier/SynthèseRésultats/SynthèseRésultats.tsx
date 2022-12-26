@@ -3,7 +3,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 
 export default function SynthèseRésultats() {
   return (
-    <div id="synthèse">
+    <section id="synthèse">
       <Titre baliseHtml='h2'>
         Synthèse des résultats
       </Titre>
@@ -15,6 +15,6 @@ export default function SynthèseRésultats() {
           A venir...
         </p>
       </CarteSquelette>
-    </div>
+    </section>
   );
 }

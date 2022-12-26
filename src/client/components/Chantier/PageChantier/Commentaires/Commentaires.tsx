@@ -3,7 +3,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 
 export default function Commentaires() {
   return (
-    <div
+    <section
       className='fr-pb-5w'
       id="commentaires"
     >
@@ -18,6 +18,6 @@ export default function Commentaires() {
           A venir...
         </p>
       </CarteSquelette>
-    </div>
+    </section>
   );
 }

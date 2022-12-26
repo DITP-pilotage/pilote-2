@@ -12,4 +12,9 @@
       --underline-idle-width: 0;
     }
   }
+
+  [aria-current]:not([aria-current="false"]) {
+    font-weight: bold;
+    color: var(--text-default-grey);
+  }
 }
