@@ -28,15 +28,15 @@ function afficherLesBarresDeProgression(avancement: ChantierAvancement) {
 }
 
 function comparerAvancementChantier(a: ChantierAvancement, b: ChantierAvancement) {
-  if (a.global === null && b.global === null)
+  if ((a.global === null && b.global === null) || (a.global?.moyenne === null && b.global?.moyenne === null))
     return 0;
-  if (a.global === null)
+  if (a.global === null || a.global?.moyenne === null)
     return -1;
-  if (b.global === null)
+  if (b.global === null || b.global?.moyenne === null)
     return 1;
-  if (a.global.moyenne < b.global.moyenne)
+  if (a.global?.moyenne < b.global?.moyenne)
     return 1;
-  if (a.global.moyenne > b.global.moyenne)
+  if (a.global?.moyenne > b.global?.moyenne)
     return -1;
   return 0;
 }
