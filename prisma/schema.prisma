@@ -11,13 +11,16 @@ datasource db {
 }
 
 model chantier {
-  id String @id
+  id String
   nom String
   id_perimetre String
   perimetre_ids String[]
   taux_avancement Float?
   zone_nom String
   code_insee String
+  maille String
+
+  @@id([id, zone_nom])
 }
 
 model perimetre {

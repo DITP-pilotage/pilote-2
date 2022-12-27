@@ -22,6 +22,7 @@ function mapToDomain(chantierPrisma: chantier): Chantier {
     perimètreIds: chantierPrisma.perimetre_ids,
     zoneNom: chantierPrisma.zone_nom,
     codeInsee: chantierPrisma.code_insee,
+    maille: chantierPrisma.maille,
     météo: null,
     avancement: {
       annuel: null,
@@ -40,6 +41,7 @@ function mapToPrisma(chantierDomaine: Chantier): chantier {
     zone_nom: chantierDomaine.zoneNom,
     code_insee: chantierDomaine.codeInsee,
     taux_avancement: coerceNull(chantierDomaine.avancement.global?.moyenne),
+    maille: chantierDomaine.maille,
   };
 }
 
@@ -59,12 +61,12 @@ export default class ChantierSQLRepository implements ChantierRepository {
     });
   }
 
-  async getById(id: string) {
+  async getById(id: string, zone_nom: string) {
     const chantierPrisma = await this.prisma.chantier.findUnique({
-      where: { id },
+      where: { id_zone_nom: { id, zone_nom } },
     });
     if (!chantierPrisma) {
-      throw new Error(`Erreur: Chantier '${id}' non trouvé.`);
+      throw new Error(`Erreur: Chantier '${id} - ${zone_nom}' non trouvé.`);
     }
     return mapToDomain(chantierPrisma);
   }

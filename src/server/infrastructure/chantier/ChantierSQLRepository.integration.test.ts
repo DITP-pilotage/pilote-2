@@ -17,6 +17,7 @@ describe('ChantierSQLRepository', () => {
       perimètreIds: ['PER-001'],
       zoneNom: 'National',
       codeInsee: 'FR',
+      maille: 'NAT',
       météo: null,
       avancement: { annuel: null, global: { minimum: null, médiane: null, maximum: null, moyenne: 88.5 } },
       indicateurs: [],
@@ -30,6 +31,7 @@ describe('ChantierSQLRepository', () => {
       perimètreIds: ['PER-001'],
       zoneNom: 'National',
       codeInsee: 'FR',
+      maille: 'NAT',
       météo: null,
       avancement: { annuel: null, global: { minimum: null, médiane: null, maximum: null, moyenne: 88.5 } },
       indicateurs: [],
@@ -38,8 +40,8 @@ describe('ChantierSQLRepository', () => {
     await repository.add(chantierInitial2);
 
     // WHEN
-    const result1 = await repository.getById('THD');
-    const result2 = await repository.getById('TUP');
+    const result1 = await repository.getById('THD', 'National');
+    const result2 = await repository.getById('TUP', 'National');
 
     // THEN
     expect(result1).toEqual(chantierInitial1);
