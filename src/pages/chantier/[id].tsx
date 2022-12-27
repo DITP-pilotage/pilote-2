@@ -12,9 +12,9 @@ export default function NextPageChantier({ chantier }: NextPageChantierProps) {
   );
 }
 
-export async function getServerSideProps({ params }: { params: { id: Chantier['id'] } }) {
+export async function getServerSideProps({ params }: { params: { id: Chantier['id'], zoneNom: Chantier['zoneNom'] } }) {
   const chantierRepository = dependencies.getChantierRepository();
-  const chantier: Chantier = await chantierRepository.getById(params.id);
+  const chantier: Chantier = await chantierRepository.getById(params.id, params.zoneNom);
 
   return {
     props: {
