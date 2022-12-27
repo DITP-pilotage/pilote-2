@@ -5,9 +5,12 @@ export default function Indicateurs({ indicateurs }: { indicateurs: { nom: strin
   return (
     <section
       className='fr-pb-5w'
-      id="indicateurs"
+
     >
-      <Titre baliseHtml='h2'>
+      <Titre
+        baliseHtml='h2'
+        id="indicateurs"
+      >
         Indicateurs
       </Titre>
       <p>
@@ -16,17 +19,20 @@ export default function Indicateurs({ indicateurs }: { indicateurs: { nom: strin
       { indicateurs.map(indicateur => (
         <section
           className='fr-mb-4w'
-          id={indicateur.ancre}
           key={indicateur.ancre}
         >
           <Titre
             apparence='fr-h4'
-            baliseHtml='h3'
+            baliseHtml='h2'
+            id={indicateur.ancre}
           >
             {indicateur.nom}
           </Titre>
           <CarteSquelette>
-            <p className='fr-grid-row fr-grid-row--center'>
+            <p
+              className='fr-grid-row fr-grid-row--center'
+              style={{ height: '300px' }}
+            >
               A venir...
             </p>
           </CarteSquelette>

@@ -3,8 +3,11 @@ import Titre from '@/components/_commons/Titre/Titre';
 
 export default function SynthèseRésultats() {
   return (
-    <section id="synthèse">
-      <Titre baliseHtml='h2'>
+    <section>
+      <Titre
+        baliseHtml='h2'
+        id="synthèse"
+      >
         Synthèse des résultats
       </Titre>
       <CarteSquelette>

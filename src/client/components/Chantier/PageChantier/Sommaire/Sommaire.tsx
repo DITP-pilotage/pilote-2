@@ -24,18 +24,19 @@ export default function Sommaire({ indicateurs }: SommaireProps) {
   useEffect(() => {
     observer.current = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        console.log(entry);
         if (entry?.isIntersecting) {
           setÉlémentCourant(entry.target.id);
         }
       });
-    }, { rootMargin: '-20% 0% -35% 0px' });
+    }, { rootMargin: '-200px 0px -40% 0px' });
     
-    const elements = document.querySelectorAll('section');    
+    const elements = document.querySelectorAll('h2, h3');
+    setÉlémentCourant(elements[0].id);
     elements.forEach((elem) => observer.current?.observe(elem));
     return () => observer.current?.disconnect();
   }, []);
   
+  console.log(élémentCourant);
   const clicSurLeBoutonDéplierCallback = (ancre: SommaireProps['indicateurs'][0]['ancre']) => {
     if (élémentDéplié === ancre)
       setÉlémentDéplié(null);
@@ -76,10 +77,14 @@ export default function Sommaire({ indicateurs }: SommaireProps) {
                     {
                       élément.sousÉlément.map(sousÉlément => (
                         <li
+                          aria-current={élémentCourant === sousÉlément.ancre}
                           className='fr-pb-1w'
                           key={sousÉlément.nom}
                         >
-                          <a href={`#${sousÉlément.ancre}`}>
+                          <a
+                            href={`#${sousÉlément.ancre}`}
+                            onClick={() => setÉlémentCourant(sousÉlément.ancre)}
+                          >
                             {sousÉlément.nom}
                           </a>
                         </li>

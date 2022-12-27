@@ -62,9 +62,12 @@ export default function AvancementChantier({ chantier }: AvancementChantierProps
   return (
     <section
       className='fr-pb-5w'
-      id="avancement"
+
     >
-      <Titre baliseHtml='h2'>
+      <Titre
+        baliseHtml='h2'
+        id="avancement"
+      >
         Avancement du chantier
       </Titre>
       <p className='fr-my-4w'>

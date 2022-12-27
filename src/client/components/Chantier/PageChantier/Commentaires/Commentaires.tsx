@@ -5,9 +5,11 @@ export default function Commentaires() {
   return (
     <section
       className='fr-pb-5w'
-      id="commentaires"
     >
-      <Titre baliseHtml='h2'>
+      <Titre
+        baliseHtml='h2'
+        id="commentaires"
+      >
         Commentaires du chantier (maille nationale)
       </Titre>
       <CarteSquelette>

@@ -5,9 +5,11 @@ export default function Cartes() {
   return (
     <section 
       className='fr-pb-5w'
-      id="cartes"
     >
-      <Titre baliseHtml='h2'>
+      <Titre
+        baliseHtml='h2'
+        id="cartes"
+      >
         Cartes
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters fr-mt-3w">

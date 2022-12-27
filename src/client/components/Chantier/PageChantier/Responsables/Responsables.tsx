@@ -15,9 +15,11 @@ export default function Responsables() {
   return (
     <section
       className={styles.conteneur}
-      id="responsables"
     >
-      <Titre baliseHtml='h2'>
+      <Titre
+        baliseHtml='h2'
+        id="responsables"
+      >
         Responsables
       </Titre>
       <CarteSquelette>
