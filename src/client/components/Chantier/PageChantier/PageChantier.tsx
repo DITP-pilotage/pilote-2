@@ -9,21 +9,13 @@ import PageChantierEnTête from './PageChantierEnTête/PageChantierEnTête';
 import Cartes from './Cartes/Cartes';
 import Sommaire from './Sommaire/Sommaire';
 
-const listeIndicateurs = [
-  { nom: 'Indicateurs de contexte', ancre: 'contexte' },
-  { nom: 'Indicateurs de déploiement', ancre: 'déploiement' },
-  { nom: 'Indicateurs d\'impact', ancre: 'impact' },
-  { nom: 'Indicateurs de qualité de service', ancre: 'perception' },
-  { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: 'suivi' },
-];
-
 export default function PageChantier({ chantier }: PageChantierProps) {
   return (
     <div className={styles.conteneur}>
       <PageChantierEnTête chantier={chantier} />
       <div className='fr-grid-row'>
         <div className='fr-col-xl-2 fr-col-lg-3'>
-          <Sommaire indicateurs={listeIndicateurs} />
+          <Sommaire />
         </div>
         <div className='fr-col-xl-10 fr-col-lg-9 fr-col-12 fr-px-3w fr-pt-5w'>
           <AvancementChantier chantier={chantier} />
@@ -36,7 +28,7 @@ export default function PageChantier({ chantier }: PageChantierProps) {
             </div>
           </div>
           <Cartes />
-          <Indicateurs indicateurs={listeIndicateurs} />
+          <Indicateurs />
           <Commentaires />
         </div>
       </div>

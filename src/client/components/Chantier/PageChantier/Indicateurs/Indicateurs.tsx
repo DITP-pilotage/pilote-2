@@ -1,7 +1,15 @@
 import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
 import Titre from '@/components/_commons/Titre/Titre';
 
-export default function Indicateurs({ indicateurs }: { indicateurs: { nom: string, ancre: string }[] }) {
+const indicateurs = [
+  { nom: 'Indicateurs de contexte', ancre: 'contexte' },
+  { nom: 'Indicateurs de déploiement', ancre: 'déploiement' },
+  { nom: 'Indicateurs d\'impact', ancre: 'impact' },
+  { nom: 'Indicateurs de qualité de service', ancre: 'perception' },
+  { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: 'suivi' },
+];
+
+export default function Indicateurs() {
   return (
     <section
       className='fr-pb-5w'
@@ -23,7 +31,7 @@ export default function Indicateurs({ indicateurs }: { indicateurs: { nom: strin
         >
           <Titre
             apparence='fr-h4'
-            baliseHtml='h2'
+            baliseHtml='h3'
             id={indicateur.ancre}
           >
             {indicateur.nom}
@@ -31,7 +39,6 @@ export default function Indicateurs({ indicateurs }: { indicateurs: { nom: strin
           <CarteSquelette>
             <p
               className='fr-grid-row fr-grid-row--center'
-              style={{ height: '300px' }}
             >
               A venir...
             </p>
