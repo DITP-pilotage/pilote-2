@@ -18,7 +18,9 @@ INSERT INTO public.chantier
         d_chantier.bounded_progress as taux_avancement,
         m_zone.nom as zone_nom,
         string_to_array(m_chantier.ch_per, ' | ') as perimetre_ids,
-        m_zone.zone_type as maille
+        m_zone.zone_type as maille,
+        string_to_array(m_chantier."porteur_ids_noDAC", ' | ') as porteur_noDAC_ids,
+        string_to_array(m_chantier."porteur_ids_DAC", ' | ') as porteur_DAC_ids
     FROM raw_data.metadata_chantier m_chantier
         LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_region and d_chantier.structure_name='Réforme'
         JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = 'FRANCE')
@@ -30,7 +32,9 @@ UNION
         d_chantier.bounded_progress as taux_avancement,
         m_zone.nom as zone_nom,
         string_to_array(m_chantier.ch_per, ' | ') as perimetre_ids,
-        m_zone.zone_type as maille
+        m_zone.zone_type as maille,
+        string_to_array(m_chantier."porteur_ids_noDAC", ' | ') as porteur_noDAC_ids,
+        string_to_array(m_chantier."porteur_ids_DAC", ' | ') as porteur_DAC_ids
     FROM raw_data.metadata_chantier m_chantier
         LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_chantier and d_chantier.structure_name IN ('Région', 'Département')
         JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = d_chantier.code_region));

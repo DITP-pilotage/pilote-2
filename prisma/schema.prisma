@@ -19,6 +19,8 @@ model chantier {
   zone_nom String
   code_insee String
   maille String
+  porteur_nodac_ids String[]
+  porteur_dac_ids String[]
 
   @@id([id, zone_nom])
 }
@@ -43,4 +45,9 @@ model indicateur {
   date_valeur_initiale DateTime? @db.Date
   valeur_actuelle Float?
   date_valeur_actuelle DateTime? @db.Date
+}
+
+model porteur {
+    id String @id
+    nom String?
 }
