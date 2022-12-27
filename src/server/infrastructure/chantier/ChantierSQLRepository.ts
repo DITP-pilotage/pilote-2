@@ -29,6 +29,8 @@ function mapToDomain(chantierPrisma: chantier): Chantier {
       global: { minimum: null, médiane: null, maximum: null, moyenne: chantierPrisma.taux_avancement },
     },
     indicateurs: [],
+    porteurNoDACIds: chantierPrisma.porteur_nodac_ids,
+    porteurDACIds: chantierPrisma.porteur_dac_ids,
   };
 }
 
@@ -42,6 +44,8 @@ function mapToPrisma(chantierDomaine: Chantier): chantier {
     code_insee: chantierDomaine.codeInsee,
     taux_avancement: coerceNull(chantierDomaine.avancement.global?.moyenne),
     maille: chantierDomaine.maille,
+    porteur_nodac_ids: chantierDomaine.porteurNoDACIds,
+    porteur_dac_ids: chantierDomaine.porteurDACIds,
   };
 }
 

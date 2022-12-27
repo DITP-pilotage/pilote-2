@@ -43,6 +43,8 @@ export function générerChantier(id: string, zone_nom: string): Chantier {
       global: { minimum: valeurs[1], médiane: valeurs[3], moyenne: valeurs[5], maximum: valeurs[7] },
     },
     indicateurs: générerIndicateurs(7),
+    porteurNoDACIds: [faker.lorem.words(1)],
+    porteurDACIds: [faker.lorem.words(1)],
   };
 }
 

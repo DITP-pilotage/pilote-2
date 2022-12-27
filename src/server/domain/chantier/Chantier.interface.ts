@@ -16,4 +16,6 @@ export default interface Chantier {
   météo: Météo;
   avancement: ChantierAvancement;
   indicateurs: Indicateur[];
+  porteurNoDACIds: string[];
+  porteurDACIds: string[];
 }

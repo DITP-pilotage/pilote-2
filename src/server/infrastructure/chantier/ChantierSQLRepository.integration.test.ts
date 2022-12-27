@@ -21,6 +21,8 @@ describe('ChantierSQLRepository', () => {
       météo: null,
       avancement: { annuel: null, global: { minimum: null, médiane: null, maximum: null, moyenne: 88.5 } },
       indicateurs: [],
+      porteurNoDACIds: [],
+      porteurDACIds: [],
     };
     const chantierInitial2: Chantier = {
       id: 'TUP',
@@ -35,6 +37,8 @@ describe('ChantierSQLRepository', () => {
       météo: null,
       avancement: { annuel: null, global: { minimum: null, médiane: null, maximum: null, moyenne: 88.5 } },
       indicateurs: [],
+      porteurNoDACIds: [],
+      porteurDACIds: [],
     };
     await repository.add(chantierInitial1);
     await repository.add(chantierInitial2);
