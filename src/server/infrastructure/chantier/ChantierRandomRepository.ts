@@ -23,7 +23,7 @@ function générerIndicateurs(nombreIndicateurs: number) : Indicateur[] {
   return indicateurs;
 }
 
-export function générerChantier(id: string): Chantier {
+export function générerChantier(id: string, zone_nom: string): Chantier {
   const valeurs = Array.from({ length:8 }, () => faker.datatype.number({ min: 0, max: 100 }) / 100);
   valeurs.sort();
   const perimetreId = 'PER-' + faker.random.numeric(3);
@@ -34,8 +34,9 @@ export function générerChantier(id: string): Chantier {
     nomPPG: faker.lorem.words(3),
     id_périmètre: perimetreId,
     perimètreIds: [perimetreId],
-    zoneNom: 'National',
+    zoneNom: zone_nom,
     codeInsee: 'FR',
+    maille: 'NAT',
     météo: valeursMeteo[faker.datatype.number({ min: 0, max: 4 })] as Météo,
     avancement: {
       annuel: { minimum: valeurs[0], médiane: valeurs[2], moyenne: valeurs[4], maximum: valeurs[6] },
@@ -51,8 +52,8 @@ export default class ChantierRandomRepository implements ChantierRepository {
     throw new Error('Error: Not implemented');
   }
 
-  async getById(id: string) {
-    return générerChantier(id);
+  async getById(id: string, zone_nom: string) {
+    return générerChantier(id, zone_nom);
   }
 
 }

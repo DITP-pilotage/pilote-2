@@ -12,6 +12,7 @@ export default interface Chantier {
   perimètreIds: string[];
   zoneNom: string;
   codeInsee: string;
+  maille: string;
   météo: Météo;
   avancement: ChantierAvancement;
   indicateurs: Indicateur[];
