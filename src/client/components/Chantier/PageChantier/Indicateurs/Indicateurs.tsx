@@ -2,8 +2,15 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import Titre from '@/components/_commons/Titre/Titre';
 import IndicateursProps from '@/components/Chantier/PageChantier/Indicateurs/Indicateurs.interface';
 import CarteIndicateur from '@/components/Chantier/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur';
+import Type, { valeursType } from '@/server/domain/indicateur/Type.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
 
 export default function Indicateurs({ listeRubriquesIndicateurs, indicateurs }: IndicateursProps) {
+
+  let indicateursRubriques :Record<NonNullable<Type>, Indicateur[]> = Object.fromEntries(valeursType.map(( type) =>
+    [type, indicateurs.filter(indicateur => indicateur.type === type)],
+  ));
   return (
     <div
       className='fr-pb-5w'
@@ -29,14 +36,23 @@ export default function Indicateurs({ listeRubriquesIndicateurs, indicateurs }: 
             {rubriqueIndicateurs.nom}
           </Titre>
           {
-           indicateurs
-             .filter(indicateur => indicateur.type === rubriqueIndicateurs.typeIndicateur)
-             .map(indicateur => (
-               <CarteIndicateur
-                 indicateur={indicateur}
-                 key={indicateur.id}
-               />
-             ))
+            rubriqueIndicateurs.typeIndicateur !== null
+              &&
+              indicateursRubriques[rubriqueIndicateurs.typeIndicateur].length > 0
+              ?
+              indicateursRubriques[rubriqueIndicateurs.typeIndicateur]
+                .map(indicateur => (
+                  <CarteIndicateur
+                    indicateur={indicateur}
+                    key={indicateur.id}
+                  />
+                ))
+              :
+              <CarteSquelette>
+                <p>
+                  Aucun indicateur
+                </p>
+              </CarteSquelette>
           }
         </div>
       ))}
