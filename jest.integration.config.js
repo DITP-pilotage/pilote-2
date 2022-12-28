@@ -11,6 +11,13 @@ const customJestConfig = {
   testPathIgnorePatterns: ['<rootDir>/db'],
   watchPathIgnorePatterns: ['<rootDir>/db'],
   setupFilesAfterEnv: ['<rootDir>/src/server/infrastructure/test/integrationTestSetup.ts'],
+  moduleNameMapper: {
+    "@/components/(.*)": "<rootDir>/src/client/components/$1",
+    "@/client/(.*)":"<rootDir>/src/client/$1",
+    "@/fixtures/(.*)":"<rootDir>/src/fixtures/$1",
+    "@/server/(.*)": "<rootDir>/src/server/$1",
+    "@/stores/(.*)": "<rootDir>/src/client/stores/$1",
+  }
 }
 
 module.exports = createJestConfig(customJestConfig)
