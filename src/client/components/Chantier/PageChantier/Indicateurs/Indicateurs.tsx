@@ -6,7 +6,7 @@ import IndicateursProps, {
 import CarteIndicateur from '@/components/Chantier/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur';
 import Type, { valeursType } from '@/server/domain/indicateur/Type.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
+import Bloc from '@/components/_commons/Bloc/Bloc';
 
 export const listeRubriquesIndicateurs: ÉlémentPageIndicateursType[] = [
   { nom: 'Indicateurs de contexte', ancre: 'contexte', typeIndicateur: 'CONTEXTE' },
@@ -48,11 +48,11 @@ export default function Indicateurs({ indicateurs }: IndicateursProps) {
           {
             indicateursGroupésParType[rubrique.typeIndicateur].length === 0
               ? (
-                <CarteSquelette>
+                <Bloc>
                   <p>
                     Aucun indicateur
                   </p>
-                </CarteSquelette>
+                </Bloc>
               )
               : (
                 indicateursGroupésParType[rubrique.typeIndicateur].map(indicateur => (

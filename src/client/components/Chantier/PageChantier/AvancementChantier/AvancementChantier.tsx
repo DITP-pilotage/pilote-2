@@ -1,5 +1,5 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
+import Bloc from '@/components/_commons/Bloc/Bloc';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
@@ -70,7 +70,7 @@ export default function AvancementChantier({ chantier }: AvancementChantierProps
       <p className='fr-my-4w'>
         Mode de calcul :  le taux d’avancement du chantier est la moyenne pondérée des taux d’avancement des indicateurs de ce chantier.
       </p>
-      <CarteSquelette>
+      <Bloc>
         <Titre
           baliseHtml='h4'
           className='fr-text--lg'
@@ -85,7 +85,7 @@ export default function AvancementChantier({ chantier }: AvancementChantierProps
         />
         <hr className='fr-hr fr-pb-2w' />
         <BarreDeProgressionLégende />
-      </CarteSquelette>
+      </Bloc>
     </div>
   );
 }

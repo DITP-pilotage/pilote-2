@@ -1,4 +1,4 @@
-import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
+import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 
 export default function Cartes() {
@@ -12,7 +12,7 @@ export default function Cartes() {
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters fr-mt-3w">
         <div className="fr-col-12 fr-col-xl-6">
-          <CarteSquelette>
+          <Bloc>
             <Titre
               baliseHtml='h4'
               className='fr-text--lg'
@@ -22,10 +22,10 @@ export default function Cartes() {
             <p className='fr-grid-row fr-grid-row--center'>
               A venir...
             </p>
-          </CarteSquelette>
+          </Bloc>
         </div>
         <div className="fr-col-12 fr-col-xl-6">
-          <CarteSquelette>
+          <Bloc>
             <Titre
               baliseHtml='h4'
               className='fr-text--lg'
@@ -35,7 +35,7 @@ export default function Cartes() {
             <p className='fr-grid-row fr-grid-row--center'>
               A venir...
             </p>
-          </CarteSquelette>
+          </Bloc>
         </div>
       </div>
     </div>

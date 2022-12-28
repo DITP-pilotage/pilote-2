@@ -1,4 +1,4 @@
-import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
+import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 
 export default function SynthèseRésultats() {
@@ -7,14 +7,14 @@ export default function SynthèseRésultats() {
       <Titre baliseHtml='h2'>
         Synthèse des résultats
       </Titre>
-      <CarteSquelette>
+      <Bloc>
         <div className='fr-p-2w carteEnTête'>
           National
         </div>
         <p className='fr-grid-row fr-grid-row--center'>
           A venir...
         </p>
-      </CarteSquelette>
+      </Bloc>
     </div>
   );
 }

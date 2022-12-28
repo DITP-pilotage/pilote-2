@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
+import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import ResponsablesStyled from './Responsables.styled';
 
@@ -18,7 +18,7 @@ export default function Responsables() {
       <Titre baliseHtml='h2'>
         Responsables
       </Titre>
-      <CarteSquelette>
+      <Bloc>
         <div className='fr-p-2w fr-mb-2w carteEnTête'>
           National
         </div>
@@ -35,7 +35,7 @@ export default function Responsables() {
             <hr className='fr-hr' />
           </Fragment>
         ))}
-      </CarteSquelette>
+      </Bloc>
     </ResponsablesStyled>
   );
 }
