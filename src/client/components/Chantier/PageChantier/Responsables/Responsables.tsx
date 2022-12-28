@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
 import Titre from '@/components/_commons/Titre/Titre';
 import ResponsablesStyled from './Responsables.styled';
@@ -22,7 +23,7 @@ export default function Responsables() {
           National
         </div>
         {responsables.map(responsable => (
-          <>
+          <Fragment key={responsable.libellé}>
             <div className='fr-pl-2w fr-grid-row'>
               <p className='fr-text--sm fr-text--bold fr-col fr-mr-4w'>
                 {responsable.libellé}
@@ -32,7 +33,7 @@ export default function Responsables() {
               </p>
             </div>
             <hr className='fr-hr' />
-          </>
+          </Fragment>
         ))}
       </CarteSquelette>
     </ResponsablesStyled>
