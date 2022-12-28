@@ -10,12 +10,12 @@ export default function MonApplication({ Component, pageProps }: AppProps) {
   return (
     <>
       <Script
-        src="js/dsfr/dsfr.module.min.js"
+        src="/js/dsfr/dsfr.module.min.js"
         type='module'
       />
       <Script
         noModule
-        src="js/dsfr/dsfr.nomodule.min.js"
+        src="/js/dsfr/dsfr.nomodule.min.js"
       />
       <MiseEnPage>
         <Component {...pageProps} />
