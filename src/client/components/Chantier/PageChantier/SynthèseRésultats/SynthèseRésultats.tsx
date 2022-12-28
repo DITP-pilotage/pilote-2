@@ -1,5 +1,6 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
+import EnTête from '@/components/_commons/Bloc/EnTête/EnTête';
 
 export default function SynthèseRésultats() {
   return (
@@ -8,9 +9,7 @@ export default function SynthèseRésultats() {
         Synthèse des résultats
       </Titre>
       <Bloc>
-        <div className='fr-p-2w carteEnTête'>
-          National
-        </div>
+        <EnTête libellé='National' />
         <p className='fr-grid-row fr-grid-row--center'>
           A venir...
         </p>

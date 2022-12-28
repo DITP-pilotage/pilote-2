@@ -1,5 +1,6 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
+import EnTête from '@/components/_commons/Bloc/EnTête/EnTête';
 
 export default function Commentaires() {
   return (
@@ -11,9 +12,7 @@ export default function Commentaires() {
         Commentaires du chantier (maille nationale)
       </Titre>
       <Bloc>
-        <div className='fr-p-2w carteEnTête'>
-          France
-        </div>
+        <EnTête libellé='France' />
         <p className='fr-grid-row fr-grid-row--center'>
           A venir...
         </p>
