@@ -5,8 +5,8 @@ export default function TauxAvancementMoyen() {
   return (
     <>
       <Titre
-        apparence='fr-h6'
         baliseHtml='h2'
+        className='fr-h6'
       >
         Taux d’avancement moyen de la sélection
       </Titre>

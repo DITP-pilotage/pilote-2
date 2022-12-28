@@ -72,8 +72,8 @@ export default function AvancementChantier({ chantier }: AvancementChantierProps
       </p>
       <CarteSquelette>
         <Titre
-          apparence='fr-text--lg'
           baliseHtml='h4'
+          className='fr-text--lg'
         >
           Avancement
         </Titre>

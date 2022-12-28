@@ -7,8 +7,8 @@ export default function RépartitionMétéo() {
   return (
     <>
       <Titre
-        apparence='fr-h6'
         baliseHtml='h2'
+        className='fr-h6'
       >
         Répartition des météos de la sélection
       </Titre>

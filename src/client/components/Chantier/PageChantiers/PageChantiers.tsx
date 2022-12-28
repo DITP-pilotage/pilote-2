@@ -48,8 +48,8 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
           }
           <div className="fr-p-4w">
             <Titre
-              apparence='fr-h4'
               baliseHtml='h1'
+              className='fr-h4'
             >
               {`${chantiersFiltrés.length} chantiers`}
             </Titre>

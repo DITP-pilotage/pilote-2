@@ -1,6 +1,9 @@
+export type Rubrique = {
+  nom: string,
+  ancre: string,
+  sousRubriques?: Rubrique[]
+};
+
 export default interface SommaireProps {
-  indicateurs: {
-    nom: string,
-    ancre: string,
-  }[]
+  rubriques: Rubrique[]
 }

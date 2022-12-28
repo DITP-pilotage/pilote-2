@@ -1,28 +1,17 @@
-/* Linter désactivé car il ne gère pas les accents sur le E majuscule */
-/* eslint-disable react/hook-use-state */
 import { useState } from 'react';
 import SommaireProps from './Sommaire.interface';
 import styles from './Sommaire.module.scss';
 import SommaireBoutonDéplier from './SommaireBoutonDéplier/SommaireBoutonDéplier';
 
-export default function Sommaire({ indicateurs }: SommaireProps) {
-  const [élémentCourant, setÉlémentCourant] = useState<SommaireProps['indicateurs'][0]['ancre'] | null>(null);
-  const [élémentDéplié, setÉlémentDéplié] = useState<SommaireProps['indicateurs'][0]['ancre'] | null>('indicateurs');
+export default function Sommaire({ rubriques }: SommaireProps) {
+  const [rubriqueCourante, setRubriqueCourante] = useState<SommaireProps['rubriques'][0]['ancre'] | null>(null);
+  const [rubriqueDépliée, setRubriqueDépliée] = useState<SommaireProps['rubriques'][0]['ancre'] | null>(null);
 
-  const éléments = [
-    { nom: 'Avancement', ancre: 'avancement' },
-    { nom: 'Synthèse des résultats', ancre: 'synthèse' },
-    { nom: 'Responsables', ancre: 'responsables' },
-    { nom: 'Cartes', ancre: 'cartes' },
-    { nom: 'Indicateurs', ancre: 'indicateurs', sousÉlément: indicateurs },
-    { nom: 'Commentaires', ancre: 'commentaires' },
-  ];
-
-  const clicSurLeBoutonDéplierCallback = (ancre: SommaireProps['indicateurs'][0]['ancre']) => {
-    if (élémentDéplié === ancre)
-      setÉlémentDéplié(null);
+  const clicSurLeBoutonDéplierCallback = (ancre: SommaireProps['rubriques'][0]['ancre']) => {
+    if (rubriqueDépliée === ancre)
+      setRubriqueDépliée(null);
     else
-      setÉlémentDéplié(ancre);
+      setRubriqueDépliée(ancre);
   };
 
   return (
@@ -33,36 +22,37 @@ export default function Sommaire({ indicateurs }: SommaireProps) {
         </p>
         <ul className="fr-text--sm fr-pl-3w">
           {
-            éléments.map(élément => (
+            rubriques.map(rubrique => (
               <li
-                aria-current={élémentCourant === élément.ancre}
+                aria-current={rubriqueCourante === rubrique.ancre}
                 className='fr-pb-1w'
-                key={élément.ancre}
+                key={rubrique.ancre}
               >
                 { 
-                  !!élément.sousÉlément && 
-                  <SommaireBoutonDéplier
-                    clicSurLeBoutonDéplierCallback={() => clicSurLeBoutonDéplierCallback(élément.ancre)}
-                    estDéplié={élément.ancre === élémentDéplié}
-                  />
+                  !!rubrique.sousRubriques && (
+                    <SommaireBoutonDéplier
+                      clicSurLeBoutonDéplierCallback={() => clicSurLeBoutonDéplierCallback(rubrique.ancre)}
+                      estDéplié={rubrique.ancre === rubriqueDépliée}
+                    />
+                  )
                 }
                 <a
-                  href={`#${élément.ancre}`}
-                  onClick={() => setÉlémentCourant(élément.ancre)}
+                  href={`#${rubrique.ancre}`}
+                  onClick={() => setRubriqueCourante(rubrique.ancre)}
                 >
-                  {élément.nom}
+                  {rubrique.nom}
                 </a>
                 { 
-                  (élémentDéplié === élément.ancre && !!élément.sousÉlément) &&
+                  (rubriqueDépliée === rubrique.ancre && !!rubrique.sousRubriques) &&
                   <ul className='fr-pl-3w'>
                     {
-                      élément.sousÉlément.map(sousÉlément => (
+                      rubrique.sousRubriques.map(sousRubrique => (
                         <li
                           className='fr-pb-1w'
-                          key={sousÉlément.nom}
+                          key={sousRubrique.nom}
                         >
-                          <a href={`#${sousÉlément.ancre}`}>
-                            {sousÉlément.nom}
+                          <a href={`#${sousRubrique.ancre}`}>
+                            {sousRubrique.nom}
                           </a>
                         </li>
                       )) 
