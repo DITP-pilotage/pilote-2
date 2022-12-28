@@ -1,7 +1,6 @@
 import { Rubrique } from '@/components/Chantier/PageChantier/Sommaire/Sommaire.interface';
-import TypeIndicateur from '@/server/domain/indicateur/Type.interface';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
-import Indicateurs from './Indicateurs/Indicateurs';
+import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import Commentaires from './Commentaires/Commentaires';
 import PageChantierProps from './PageChantier.interface';
 import Responsables from './Responsables/Responsables';
@@ -10,14 +9,6 @@ import PageChantierEnTête from './PageChantierEnTête/PageChantierEnTête';
 import Cartes from './Cartes/Cartes';
 import Sommaire from './Sommaire/Sommaire';
 import PageChantierStyled from './PageChantier.styled';
-
-const listeRubriquesIndicateurs  = [
-  { nom: 'Indicateurs de contexte', ancre: 'contexte', typeIndicateur: 'CONTEXTE' as TypeIndicateur },
-  { nom: 'Indicateurs de déploiement', ancre: 'déploiement', typeIndicateur: 'DÉPLOIEMENT' as TypeIndicateur },
-  { nom: 'Indicateurs d\'impact', ancre: 'impact', typeIndicateur: 'IMPACT' as TypeIndicateur },
-  { nom: 'Indicateurs de qualité de service', ancre: 'perception', typeIndicateur: 'QUALITÉ_DE_SERVICE' as TypeIndicateur },
-  { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: 'suivi', typeIndicateur: 'SUIVI_EXTERNALITÉS_ET_EFFET_REBOND' as TypeIndicateur },
-];
 
 const listeRubriques: Rubrique[] = [
   { nom: 'Avancement', ancre: 'avancement' },
@@ -49,7 +40,6 @@ export default function PageChantier({ chantier }: PageChantierProps) {
           <Cartes />
           <Indicateurs
             indicateurs={chantier.indicateurs}
-            listeRubriquesIndicateurs={listeRubriquesIndicateurs}
           />
           <Commentaires />
         </div>
