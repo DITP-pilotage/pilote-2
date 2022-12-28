@@ -5,11 +5,10 @@ import Titre from '@/components/_commons/Titre/Titre';
 import styles from '@/components/Chantier/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur.module.scss';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import CarteIndicateurProps from '@/components/Chantier/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur.interface';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 
 
-const reactTableColonnesHelper = createColumnHelper<Indicateur & { territoire: string }>();
+const reactTableColonnesHelper = createColumnHelper<IndicateurProps & { territoire: string }>();
 
 const colonnes = [
   reactTableColonnesHelper.accessor('territoire', {

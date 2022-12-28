@@ -3,6 +3,7 @@ import Link from 'next/link';
 import ChantierAvancement from '@/server/domain/chantier/ChantierAvancement.interface';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
 import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import ListeChantiersProps from './ListeChantiers.interface';
 
@@ -13,14 +14,14 @@ function afficherLesBarresDeProgression(avancement: ChantierAvancement) {
         afficherLesCurseurs={false}
         fond="blanc"
         taille="petite"
-        valeur={avancement.annuel}
+        valeur={avancement.annuel as BarreDeProgressionProps['valeur']}
         variante='secondaire'
       />
       <BarreDeProgression
         afficherLesCurseurs={false}
         fond="blanc"
         taille="petite"
-        valeur={avancement.global}
+        valeur={avancement.global as BarreDeProgressionProps['valeur']}
         variante='primaire'
       />
     </>
