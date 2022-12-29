@@ -21,29 +21,12 @@ const colonnes = [
     cell: météo => <PictoMétéo valeur={météo.getValue()} />,
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('avancement.annuel', {
-    header: 'Avancement annuel',
-    cell: () => (
-      <BarreDeProgression
-        fond="bleu"
-        taille="petite"
-        valeur={{
-          minimum: 0.2,
-          médiane: 0.32,
-          moyenne: 0.39,
-          maximum: 0.85,
-        }}
-        variante='secondaire'
-      />
-    ),
-    enableSorting: false,
-  }),
   reactTableColonnesHelper.accessor('avancement.global', {
     header: 'Avancement global',
     cell: () => (
       <BarreDeProgression
         fond="bleu"
-        taille="petite"
+        taille="moyenne"
         valeur={{
           minimum: 0,
           médiane: 0.82,

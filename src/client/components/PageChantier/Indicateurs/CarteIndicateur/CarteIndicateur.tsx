@@ -30,11 +30,16 @@ const colonnes = [
   reactTableColonnesHelper.accessor('tauxAvancementGlobal', {
     header: 'Taux avancement global',
     cell: tauxAvancementGlobal => (
-      <BarreDeProgression
-        taille='petite'
-        valeur={tauxAvancementGlobal.getValue()}
-        variante='primaire'
-      />
+      <>
+        {tauxAvancementGlobal.getValue() ? `${(tauxAvancementGlobal.getValue()! * 100).toFixed(0)}%` : '- %'}
+        <BarreDeProgression
+          afficherTexte={false}
+          fond='bleu'
+          taille='moyenne'
+          valeur={tauxAvancementGlobal.getValue()}
+          variante='primaire'
+        />
+      </>
     ),
     enableSorting: false }),
 ];
@@ -73,7 +78,7 @@ export default function CarteIndicateur({ indicateur } : CarteIndicateurProps) {
         <Tableau<IndicateurProps & { territoire: string }>
           afficherLaRecherche={false}
           colonnes={colonnes}
-          données={[{ ...indicateur, territoire: 'Nationnal' }]}
+          données={[{ ...indicateur, territoire: 'National' }]}
           entité='indicateur'
         />
       </Bloc>

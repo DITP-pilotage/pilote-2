@@ -7,7 +7,7 @@ type BarreDeProgressionStyledProps = {
   taille: BarreDeProgressionTaille,
 };
 
-const borderRadius = '0.25rem';
+const borderRadius = '0.375rem';
 
 const couleurDeFond = {
   'bleu': 'var(--blue-ecume-850-200)',
@@ -18,6 +18,12 @@ const couleurDeFond = {
 const couleurDeBarre = {
   'primaire': 'var(--background-action-high-blue-france)',
   'secondaire': '#5f5ff1' /* TODO variable ? */,
+};
+
+export const dimensions = {
+  petite: { hauteur: '0.5rem', largeurTexte: '3.25rem', classNameDsfr: 'fr-text--xs' },
+  moyenne: { hauteur: '0.75rem', largeurTexte: '4rem', classNameDsfr: 'fr-h4' },
+  grande: { hauteur: '2rem', largeurTexte: '6.5rem', classNameDsfr: 'fr-h1' },
 };
 
 const grandientBarreSecondaire = `
@@ -43,7 +49,7 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
     progress {
       display: block;
       width: 100%;
-      height: ${props => props.taille === 'petite' ? '0.5rem' : '2rem'};
+      height: ${props => dimensions[props.taille].hauteur};
       background-color: ${props => couleurDeFond[props.fond]};
       border: 0;
       border-radius: ${borderRadius};
@@ -88,7 +94,7 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
     flex-shrink: 0;
 
     p {
-      width: ${props => props.taille === 'petite' ? '3.25rem' : '6.5rem'};
+      width: ${props => dimensions[props.taille].largeurTexte};
       padding-left: 0.5em;
       color: ${props => couleurDeBarre[props.variante]};
       text-align: right;

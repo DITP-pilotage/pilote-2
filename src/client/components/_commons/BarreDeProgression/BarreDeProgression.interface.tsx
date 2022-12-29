@@ -1,4 +1,4 @@
-export type BarreDeProgressionTaille = 'petite' | 'grande';
+export type BarreDeProgressionTaille = 'petite' | 'moyenne' | 'grande';
 export type BarreDeProgressionVariante = 'primaire' | 'secondaire';
 export type BarreDeProgressionFond = 'bleu' | 'gris' | 'blanc';
 
@@ -12,5 +12,6 @@ export default interface BarreDeProgressionProps {
     moyenne: number,
     maximum: number
   } | number | null,
-  afficherLesCurseurs?: boolean,
+  afficherCurseurs?: boolean,
+  afficherTexte?: boolean,
 }
