@@ -2,8 +2,8 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import Titre from '@/components/_commons/Titre/Titre';
 import IndicateursProps, {
   ÉlémentPageIndicateursType,
-} from '@/components/Chantier/PageChantier/Indicateurs/Indicateurs.interface';
-import CarteIndicateur from '@/components/Chantier/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur';
+} from '@/components/PageChantier/Indicateurs/Indicateurs.interface';
+import CarteIndicateur from '@/components/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur';
 import Type, { valeursType } from '@/server/domain/indicateur/Type.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import Bloc from '@/components/_commons/Bloc/Bloc';

@@ -1,4 +1,4 @@
-import { Rubrique } from '@/components/Chantier/PageChantier/Sommaire/Sommaire.interface';
+import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import Type from '@/server/domain/indicateur/Type.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 

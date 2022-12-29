@@ -1,4 +1,4 @@
-import { Rubrique } from '@/components/Chantier/PageChantier/Sommaire/Sommaire.interface';
+import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import Commentaires from './Commentaires/Commentaires';

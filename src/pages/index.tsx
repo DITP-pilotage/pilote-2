@@ -1,4 +1,4 @@
-import PageChantiers from '@/client/components/Chantier/PageChantiers/PageChantiers';
+import PageChantiers from '@/client/components/PageChantiers/PageChantiers';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';

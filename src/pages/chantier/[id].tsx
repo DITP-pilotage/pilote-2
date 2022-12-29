@@ -1,5 +1,5 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import PageChantier from '@/components/Chantier/PageChantier/PageChantier';
+import PageChantier from '@/components/PageChantier/PageChantier';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 
 interface NextPageChantierProps {
