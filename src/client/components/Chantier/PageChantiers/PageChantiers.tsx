@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
+import Bloc from '@/components/_commons/Bloc/Bloc';
 import { filtresActifs as filtresActifsStore, actions as actionsFiltresStore } from '@/client/stores/useFiltresStore/useFiltresStore';
 import Titre from '@/components/_commons/Titre/Titre';
 import PageChantiersProps from './PageChantiers.interface';
@@ -55,30 +55,30 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
             </Titre>
             <div className="fr-grid-row fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-lg-6">
-                <CarteSquelette>
+                <Bloc>
                   <RépartitionGéographique />
-                </CarteSquelette>
+                </Bloc>
               </div>
               <div className="fr-col-12 fr-col-lg-6">
-                <CarteSquelette>
+                <Bloc>
                   <TauxAvancementMoyen />
                   <hr className='fr-hr fr-my-3w fr-pb-1v' />
                   <RépartitionMétéo />
-                </CarteSquelette>
+                </Bloc>
               </div>
             </div>
             <div className="fr-grid-row fr-my-3w">
               <div className="fr-col">
-                <CarteSquelette>
+                <Bloc>
                   <RépartitionTauxAvancement />
-                </CarteSquelette>
+                </Bloc>
               </div>
             </div>
             <div className="fr-grid-row">
               <div className="fr-col">
-                <CarteSquelette>
+                <Bloc>
                   <ListeChantiers chantiers={chantiersFiltrés} />
-                </CarteSquelette>
+                </Bloc>
               </div>
             </div>
           </div>

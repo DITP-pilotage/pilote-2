@@ -1,6 +1,6 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import IndicateurProps from '@/server/domain/indicateur/Indicateur.interface';
-import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
+import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import CarteIndicateurProps from '@/components/Chantier/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur.interface';
@@ -43,7 +43,7 @@ export default function CarteIndicateur( { indicateur } : CarteIndicateurProps) 
       className="fr-mb-2w"
       key={indicateur.id}
     >
-      <CarteSquelette>
+      <Bloc>
         <Titre
           baliseHtml="h4"
           className="fr-h5 fr-mb-1w"
@@ -76,7 +76,7 @@ export default function CarteIndicateur( { indicateur } : CarteIndicateurProps) 
                     }
           entité='indicateur'
         />
-      </CarteSquelette>
+      </Bloc>
     </CarteIndicateurStyled>
   );
 }

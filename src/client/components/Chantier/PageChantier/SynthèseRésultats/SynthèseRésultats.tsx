@@ -1,5 +1,6 @@
-import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
+import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
+import EnTête from '@/components/_commons/Bloc/EnTête/EnTête';
 
 export default function SynthèseRésultats() {
   return (
@@ -7,14 +8,12 @@ export default function SynthèseRésultats() {
       <Titre baliseHtml='h2'>
         Synthèse des résultats
       </Titre>
-      <CarteSquelette>
-        <div className='fr-p-2w carteEnTête'>
-          National
-        </div>
+      <Bloc>
+        <EnTête libellé='National' />
         <p className='fr-grid-row fr-grid-row--center'>
           A venir...
         </p>
-      </CarteSquelette>
+      </Bloc>
     </div>
   );
 }

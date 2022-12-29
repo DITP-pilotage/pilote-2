@@ -1,5 +1,6 @@
-import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
+import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
+import EnTête from '@/components/_commons/Bloc/EnTête/EnTête';
 
 export default function Commentaires() {
   return (
@@ -10,14 +11,12 @@ export default function Commentaires() {
       <Titre baliseHtml='h2'>
         Commentaires du chantier (maille nationale)
       </Titre>
-      <CarteSquelette>
-        <div className='fr-p-2w carteEnTête'>
-          France
-        </div>
+      <Bloc>
+        <EnTête libellé='France' />
         <p className='fr-grid-row fr-grid-row--center'>
           A venir...
         </p>
-      </CarteSquelette>
+      </Bloc>
     </div>
   );
 }
