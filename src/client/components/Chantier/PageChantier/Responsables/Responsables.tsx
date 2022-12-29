@@ -1,8 +1,8 @@
 import { Fragment } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
-import ResponsablesStyled from './Responsables.styled';
 import EnTête from '@/components/_commons/Bloc/EnTête/EnTête';
+import ResponsablesStyled from './Responsables.styled';
 
 const nonRenseigné = 'Non renseigné';
 
