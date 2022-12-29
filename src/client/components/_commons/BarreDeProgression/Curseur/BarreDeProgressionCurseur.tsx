@@ -1,6 +1,5 @@
 import BarreDeProgressionCurseurProps, { TypeDeCurseur } from './BarreDeProgressionCurseur.interface';
-import styles from './BarreDeProgressionCurseur.base.module.scss';
-import stylesÀPartirDeLaVariante from './BarreDeProgressionCurseur.variante.module.scss';
+import BarreDeProgressionCurseurStyled from './BarreDeProgressionCurseur.styled';
 
 export const barreDeProgressionCurseurGéométries = {
   [TypeDeCurseur.MINIMUM]: (
@@ -27,17 +26,14 @@ export const barreDeProgressionCurseurGéométries = {
 
 export default function BarreDeProgressionCurseur({ valeur, typeDeCurseur, variante }: BarreDeProgressionCurseurProps) {
   return (
-    <div
+    <BarreDeProgressionCurseurStyled
       className="flex justifyEnd"
       style={{
         width: `${valeur * 100}%`,
       }}
+      variante={variante}
     >
       <svg
-        className={`
-          ${styles.curseur}
-          ${stylesÀPartirDeLaVariante[variante]}
-       `}
         viewBox="-12 -20 24 24"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -45,6 +41,6 @@ export default function BarreDeProgressionCurseur({ valeur, typeDeCurseur, varia
           barreDeProgressionCurseurGéométries[typeDeCurseur]
         }
       </svg>
-    </div>
+    </BarreDeProgressionCurseurStyled>
   );
 }

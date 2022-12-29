@@ -1,4 +1,5 @@
 {
+  "customSyntax": "postcss-styled-components",
   "extends": [
     "stylelint-config-standard",
     "stylelint-config-standard-scss",
@@ -11,6 +12,7 @@
     "stylelint-order"
   ],
   "rules": {
-    "selector-class-pattern": "^[a-zà-ú][a-zA-ZÀ-ú0-9]+$"
+    "selector-class-pattern": "^([a-zà-ú][a-zà-ú0-9]*)(-[a-zà-ú0-9]+)*$",
+    "value-keyword-case": null
   }
 }

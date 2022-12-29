@@ -1,6 +1,6 @@
 import Tag from '@/client/components/_commons/Tag/Tag';
 import { actions as actionsFiltreStore } from '@/client/stores/useFiltresStore/useFiltresStore';
-import styles from './FiltresActifs.module.scss';
+import FiltresActifsStyled from './FiltresActifs.styled';
 
 export default function FiltresActifs() {
   const {
@@ -13,7 +13,7 @@ export default function FiltresActifs() {
   const nombreFiltresActifs = récupérerNombreFiltresActifs();
 
   return (
-    <div className={`${styles.filtresActifs} fr-px-4w fr-py-2w`}>
+    <FiltresActifsStyled className='fr-px-4w fr-py-2w'>
       <p className="fr-text--xs fr-mb-1w">
         <span className="bold">
           {nombreFiltresActifs}
@@ -23,7 +23,7 @@ export default function FiltresActifs() {
       </p>
       <ul
         aria-label="liste des tags des filtres actifs"
-        className={styles.conteneurTags}
+        className='conteneur-tags'
       >
         {
           récupérerFiltresActifsAvecLeursCatégories().map(({ catégorie, filtre }) =>
@@ -42,12 +42,12 @@ export default function FiltresActifs() {
         }
       </ul>
       <button
-        className={`${styles.boutons} fr-btn fr-btn--tertiary fr-mt-1w`}
+        className='boutons fr-btn fr-btn--tertiary fr-mt-1w'
         onClick={désactiverTousLesFiltres}
         type="button"
       >
         Réinitialiser les filtres
       </button>
-    </div>
+    </FiltresActifsStyled>
   );
 }

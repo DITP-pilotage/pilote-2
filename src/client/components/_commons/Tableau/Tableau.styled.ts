@@ -1,4 +1,6 @@
-.conteneur {
+import styled from '@emotion/styled';
+
+const TableauStyled = styled.div`
   overflow-x: auto;
 
   table.tableau {
@@ -8,7 +10,7 @@
       background-color: var(--background-action-low-blue-france);
       border: 1px solid var(--border-disabled-grey);
 
-      th:first-child {
+      th:first-of-type {
         border-radius: 8px 0 0;
       }
 
@@ -18,7 +20,7 @@
     }
   }
 
-  .barreDeRecherche {
+  .barre-de-recherche {
     display: flex;
     justify-content: space-between;
 
@@ -26,4 +28,6 @@
       max-width: 100%;
     }
   }
-}
+`;
+
+export default TableauStyled;

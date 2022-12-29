@@ -7,7 +7,7 @@ import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/Pé
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import SélecteurMultipleProps from './SélecteurMultiple.interface';
-import styles from './SélecteurMultiple.module.scss';
+import SélecteurMultipleStyled from './SélecteurMultiple.styled';
 
 export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtres }: SélecteurMultipleProps) {
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
@@ -28,7 +28,7 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
   const nombreFiltresActifCatégorie = actionsFiltresStore().récupérerNombreFiltresActifsDUneCatégorie(catégorieDeFiltre);
 
   return (
-    <div className="fr-form-group">
+    <SélecteurMultipleStyled className="fr-form-group">
       <button
         aria-controls={`fr-sidemenu-item-${catégorieDeFiltre}`}
         aria-expanded="false"
@@ -47,7 +47,7 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
         />
         <div
           aria-label={`Liste des filtres ${catégorieDeFiltre}`}
-          className={`${styles.choixFiltres}`}
+          className='choix-filtres'
           role='list'
         >
           {
@@ -83,6 +83,6 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
           }
         </div>
       </div>
-    </div>
+    </SélecteurMultipleStyled>
   );
 }

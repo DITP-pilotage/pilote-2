@@ -1,12 +1,12 @@
 import FiltreGroupe from './FiltresGroupe/FiltresGroupe';
 import SélecteurMultiple from './SélecteurMultiple/SélecteurMultiple';
 import FiltresChantiersProps from './FiltresChantiers.interface';
-import styles from './FiltresChantiers.module.scss';
+import FiltresChantiersStyled from './FiltresChantiers.styled';
 
 export default function FiltresChantiers({ estOuvert, setEstOuvert, périmètresMinistériels }: FiltresChantiersProps) {
   return (
-    <>
-      <div className={`${styles.barreLatérale} ${estOuvert ? styles.barreEstOuverte : ''}`}>
+    <FiltresChantiersStyled estOuvert={estOuvert}>
+      <div className='barre-latérale'>
         <div className="fr-grid-row fr-grid-row--middle fr-mt-2w">
           <p className="fr-h4 fr-mb-0 fr-px-3w fr-col-8">
             Filtres
@@ -32,11 +32,11 @@ export default function FiltresChantiers({ estOuvert, setEstOuvert, périmètres
         estOuvert ? (
           <div
             aria-hidden
-            className={styles.arrierePlan}
+            className="arrière-plan"
             onClick={() => setEstOuvert(false)}
           />)
           : null
       }
-    </>
+    </FiltresChantiersStyled>
   );
 }

@@ -4,7 +4,7 @@ import {
 import {
   barreDeProgressionCurseurGéométries,
 } from '@/components/_commons/BarreDeProgression/Curseur/BarreDeProgressionCurseur';
-import styles from './BarreDeProgressionLégendeÉlément.module.scss';
+import BarreDeProgressionLégendeÉlémentStyled from './BarreDeProgressionLégendeÉlément.styled';
 
 interface BarreDeProgressionLégendeÉlémentProps {
   typeDeCurseur: TypeDeCurseur,
@@ -13,9 +13,8 @@ interface BarreDeProgressionLégendeÉlémentProps {
 
 export default function BarreDeProgressionLégendeÉlément({ typeDeCurseur, libellé }: BarreDeProgressionLégendeÉlémentProps) {
   return (
-    <>
+    <BarreDeProgressionLégendeÉlémentStyled>
       <svg
-        className={styles.curseur}
         viewBox="-12 -20 24 24"
         width="0.75rem"
         xmlns="http://www.w3.org/2000/svg"
@@ -25,6 +24,6 @@ export default function BarreDeProgressionLégendeÉlément({ typeDeCurseur, lib
       <span className="fr-pl-1v fr-m-0 fr-text--xs">
         {libellé}
       </span>
-    </>
+    </BarreDeProgressionLégendeÉlémentStyled>
   );
 }

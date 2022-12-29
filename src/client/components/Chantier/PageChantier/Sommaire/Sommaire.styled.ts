@@ -1,4 +1,6 @@
-.conteneur {
+import styled from '@emotion/styled';
+
+const SommaireStyled = styled.div`
   position: sticky;
   top: 0;
   max-width: 20rem;
@@ -12,4 +14,6 @@
       --underline-idle-width: 0;
     }
   }
-}
+`;
+
+export default SommaireStyled;

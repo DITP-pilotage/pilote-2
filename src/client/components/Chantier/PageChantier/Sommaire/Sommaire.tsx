@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import SommaireProps from './Sommaire.interface';
-import styles from './Sommaire.module.scss';
+import SommaireStyled from './Sommaire.styled';
 import SommaireBoutonDéplier from './SommaireBoutonDéplier/SommaireBoutonDéplier';
 
 export default function Sommaire({ rubriques }: SommaireProps) {
@@ -15,7 +15,7 @@ export default function Sommaire({ rubriques }: SommaireProps) {
   };
 
   return (
-    <div className={`${styles.conteneur} fr-hidden fr-unhidden-lg`}>
+    <SommaireStyled className='fr-hidden fr-unhidden-lg'>
       <nav className='fr-pt-3w fr-pl-7v fr-pr-8w'>
         <p className="bold fr-text--lg fr-mb-1w">
           Sommaire
@@ -64,6 +64,6 @@ export default function Sommaire({ rubriques }: SommaireProps) {
           }
         </ul>
       </nav>
-    </div>
+    </SommaireStyled>
   );
 }

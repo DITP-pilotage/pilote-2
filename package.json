@@ -11,8 +11,8 @@
     "postinstall": "prisma generate",
     "postdeploy": "prisma migrate deploy",
     "start": "next start",
-    "lint": "prisma generate && eslint 'src/**/*.{ts,tsx}' && npx tsc && npx stylelint 'src/**/*.scss'",
-    "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix && npx stylelint 'src/**/*.scss'",
+    "lint": "prisma generate && eslint 'src/**/*.{ts,tsx}' && npx tsc && npx stylelint 'src/**/*.styled.{ts,tsx}'",
+    "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix && npx stylelint 'src/**/*.styled.{ts,tsx}' --fix",
     "test": "npm run test:client && npm run test:server",
     "test:ci": "bash scripts/test_ci.sh",
     "test:client": "jest src/client",
@@ -38,6 +38,8 @@
     ]
   },
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
     "@faker-js/faker": "^7.6.0",
     "@gouvfr/dsfr": "^1.8.5",
     "@prisma/client": "^4.8.0",
@@ -50,6 +52,7 @@
     "zustand": "^4.1.5"
   },
   "devDependencies": {
+    "postcss-styled-components": "^0.2.0",
     "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.3.0",
     "@testing-library/jest-dom": "^5.16.5",

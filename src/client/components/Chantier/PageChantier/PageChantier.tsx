@@ -4,12 +4,12 @@ import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs from './Indicateurs/Indicateurs';
 import Commentaires from './Commentaires/Commentaires';
 import PageChantierProps from './PageChantier.interface';
-import styles from './PageChantier.module.scss';
 import Responsables from './Responsables/Responsables';
 import SynthèseRésultats from './SynthèseRésultats/SynthèseRésultats';
 import PageChantierEnTête from './PageChantierEnTête/PageChantierEnTête';
 import Cartes from './Cartes/Cartes';
 import Sommaire from './Sommaire/Sommaire';
+import PageChantierStyled from './PageChantier.styled';
 
 const listeRubriquesIndicateurs  = [
   { nom: 'Indicateurs de contexte', ancre: 'contexte', typeIndicateur: 'CONTEXTE' as TypeIndicateur },
@@ -30,7 +30,7 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier }: PageChantierProps) {
   return (
-    <div className={styles.conteneur}>
+    <PageChantierStyled>
       <PageChantierEnTête chantier={chantier} />
       <div className='fr-grid-row'>
         <div className='fr-col-xl-2 fr-col-lg-3'>
@@ -54,6 +54,6 @@ export default function PageChantier({ chantier }: PageChantierProps) {
           <Commentaires />
         </div>
       </div>
-    </div>
+    </PageChantierStyled>
   );
 }

@@ -3,10 +3,7 @@ import {
   TypeDeCurseur,
 } from '@/components/_commons/BarreDeProgression/Curseur/BarreDeProgressionCurseur.interface';
 import BarreDeProgressionCurseur from './Curseur/BarreDeProgressionCurseur';
-import styles from './BarreDeProgression.base.module.scss';
-import stylesÀPartirDeLaVariante from './BarreDeProgression.variante.module.scss';
-import stylesÀPartirDeLaTaille from './BarreDeProgression.taille.module.scss';
-import stylesÀPartirDuFond from './BarreDeProgression.fond.module.scss';
+import BarreDeProgressionStyled from './BarreDeProgression.styled';
 
 export default function BarreDeProgression({
   taille,
@@ -21,14 +18,13 @@ export default function BarreDeProgression({
   }
 
   return (
-    <div className={`
-      flex fr-grid-row--middle fr-pb-1v
-      ${styles.conteneur}
-      ${stylesÀPartirDuFond[fond]}
-      ${stylesÀPartirDeLaVariante[variante]}
-      ${stylesÀPartirDeLaTaille[taille]}`}
+    <BarreDeProgressionStyled
+      className='flex fr-grid-row--middle fr-pb-1v'
+      fond={fond}
+      taille={taille}
+      variante={variante}
     >
-      <div className={`${styles.barre}`}>
+      <div className='barre'>
         {
           typeof valeur === 'number'
             ?
@@ -46,7 +42,7 @@ export default function BarreDeProgression({
         }
         {
             !!(valeur !== null && afficherLesCurseurs && typeof valeur === 'object') && (
-              <div className={styles.conteneurCurseurs}>
+              <div className='conteneur-curseurs'>
                 <BarreDeProgressionCurseur
                   typeDeCurseur={TypeDeCurseur.MINIMUM}
                   valeur={valeur.minimum}
@@ -66,14 +62,11 @@ export default function BarreDeProgression({
             )
           }
       </div>
-      <div className={`${styles.pourcentage}`}>
-        <p className={`
-        fr-mb-0 bold
-        ${taille === 'grande' ? 'fr-h1' : 'fr-text--xs'}`}
-        >
+      <div className='pourcentage'>
+        <p className={`${taille === 'grande' ? 'fr-h1' : 'fr-text--xs'}  fr-mb-0 bold`}>
           {pourcentageAffiché}
         </p>
       </div>
-    </div>
+    </BarreDeProgressionStyled>
   );
 }

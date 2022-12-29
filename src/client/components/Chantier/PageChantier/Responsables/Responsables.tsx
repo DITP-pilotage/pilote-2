@@ -1,6 +1,6 @@
 import CarteSquelette from '@/components/_commons/CarteSquelette/CarteSquelette';
 import Titre from '@/components/_commons/Titre/Titre';
-import styles from './Responsables.module.scss';
+import ResponsablesStyled from './Responsables.styled';
 
 const nonRenseigné = 'Non renseigné';
 
@@ -13,10 +13,7 @@ const responsables = [
 
 export default function Responsables() {
   return (
-    <div
-      className={styles.conteneur}
-      id="responsables"
-    >
+    <ResponsablesStyled id="responsables">
       <Titre baliseHtml='h2'>
         Responsables
       </Titre>
@@ -38,6 +35,6 @@ export default function Responsables() {
           </>
         ))}
       </CarteSquelette>
-    </div>
+    </ResponsablesStyled>
   );
 }
