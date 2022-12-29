@@ -29,15 +29,17 @@ const colonnes = [
   }),
   reactTableColonnesHelper.accessor('tauxAvancementGlobal', {
     header: 'Taux avancement global',
-    cell: tauxAvancementGlobal => (<BarreDeProgression
-      taille='petite'
-      valeur={tauxAvancementGlobal.getValue()}
-      variante='primaire'
-                                   />),
+    cell: tauxAvancementGlobal => (
+      <BarreDeProgression
+        taille='petite'
+        valeur={tauxAvancementGlobal.getValue()}
+        variante='primaire'
+      />
+    ),
     enableSorting: false }),
 ];
 
-export default function CarteIndicateur( { indicateur } : CarteIndicateurProps) {
+export default function CarteIndicateur({ indicateur } : CarteIndicateurProps) {
   return (
     <CarteIndicateurStyled
       className="fr-mb-2w"
@@ -71,9 +73,7 @@ export default function CarteIndicateur( { indicateur } : CarteIndicateurProps) 
         <Tableau<IndicateurProps & { territoire: string }>
           afficherLaRecherche={false}
           colonnes={colonnes}
-          données={
-                        [{ ...indicateur, territoire: 'Nationnal' }]
-                    }
+          données={[{ ...indicateur, territoire: 'Nationnal' }]}
           entité='indicateur'
         />
       </Bloc>
