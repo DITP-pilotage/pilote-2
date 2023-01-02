@@ -13,11 +13,13 @@ describe('ChantierInfoSQLRepository', () => {
     const chantierRepository: ChantierRepository = new ChantierSQLRepository(prisma);
     const chantier1 = générerChantier('CH-001', 'National');
     const chantier2 = générerChantier('CH-002', 'National');
+    const chantier3 = générerChantier('CH-003', 'Normandie');
     await chantierRepository.add(chantier1);
     await chantierRepository.add(chantier2);
+    await chantierRepository.add(chantier3);
 
     // WHEN
-    const chantiers = await repository.getListe();
+    const chantiers = await repository.getListeMailleNationale();
 
     // THEN
     const ids = chantiers.map((c) => c.id);

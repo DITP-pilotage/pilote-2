@@ -19,8 +19,10 @@ export default class ChantierInfoSQLRepository implements ChantierInfoRepository
     this.prisma = prisma;
   }
 
-  async getListe() {
-    const chantiersPrisma = await this.prisma.chantier.findMany();
+  async getListeMailleNationale() {
+    const chantiersPrisma = await this.prisma.chantier.findMany({
+      where: { zone_nom: 'National' },
+    });
     return chantiersPrisma.map(chantierPrisma => mapToDomain(chantierPrisma));
   }
 }
