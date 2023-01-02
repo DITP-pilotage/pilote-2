@@ -3,19 +3,21 @@ import {
   TypeDeCurseur,
 } from '@/components/_commons/BarreDeProgression/Curseur/BarreDeProgressionCurseur.interface';
 import BarreDeProgressionCurseur from './Curseur/BarreDeProgressionCurseur';
-import BarreDeProgressionStyled from './BarreDeProgression.styled';
+import BarreDeProgressionStyled, { dimensions } from './BarreDeProgression.styled';
 
 export default function BarreDeProgression({
   taille,
   variante,
   fond = 'gris',
   valeur,
-  afficherLesCurseurs = true,
+  afficherCurseurs = true,
+  afficherTexte = true,
 }: BarreDeProgressionProps) {
-  let pourcentageAffiché:string = '- %';
-  if (valeur) {
-    pourcentageAffiché = typeof valeur === 'number' ? `${(100 * valeur).toFixed(0)} %` : `${(100 * valeur.moyenne).toFixed(0)}%`;
-  }
+  const pourcentageAffiché = valeur === null ? '- %' : (
+    typeof valeur === 'number'
+      ? `${(100 * valeur).toFixed(0)} %`
+      : `${(100 * valeur.moyenne).toFixed(0)}%`
+  );
 
   return (
     <BarreDeProgressionStyled
@@ -41,7 +43,7 @@ export default function BarreDeProgression({
               </progress>
         }
         {
-            !!(valeur !== null && afficherLesCurseurs && typeof valeur === 'object') && (
+            !!(valeur !== null && afficherCurseurs && typeof valeur === 'object') && (
               <div className='conteneur-curseurs'>
                 <BarreDeProgressionCurseur
                   typeDeCurseur={TypeDeCurseur.MINIMUM}
@@ -62,11 +64,15 @@ export default function BarreDeProgression({
             )
           }
       </div>
-      <div className='pourcentage'>
-        <p className={`${taille === 'grande' ? 'fr-h1' : 'fr-text--xs'}  fr-mb-0 bold`}>
-          {pourcentageAffiché}
-        </p>
-      </div>
+      {
+        !!afficherTexte && (
+          <div className='pourcentage'>
+            <p className={`${dimensions[taille].classNameDsfr}  fr-mb-0 bold`}>
+              {pourcentageAffiché}
+            </p>
+          </div>
+        )
+      }
     </BarreDeProgressionStyled>
   );
 }

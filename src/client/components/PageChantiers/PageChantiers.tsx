@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import { filtresActifs as filtresActifsStore, actions as actionsFiltresStore } from '@/client/stores/useFiltresStore/useFiltresStore';
+import { filtresActifs as filtresActifsStore, actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import Titre from '@/components/_commons/Titre/Titre';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';

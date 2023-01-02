@@ -15,14 +15,14 @@ export default function PageChantierEnTête({ chantier }: PageChantierEnTêtePro
           </Titre>
         </div>
         <div className='fr-col-12 fr-col-xl-5'>
-          <p className='texte fr-mb-1w fr-text--xs'>
+          <p className='données-chantier fr-mb-1w fr-text--xs'>
             <strong>
               Axe :
             </strong>
             {' '}
             Non renseigné
           </p>
-          <p className='fr-mb-1w fr-text--xs'>
+          <p className='données-chantier fr-mb-1w fr-text--xs'>
             <strong>
               Politique Prioritaire du Gouvernement :
             </strong>

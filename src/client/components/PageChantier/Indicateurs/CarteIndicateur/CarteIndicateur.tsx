@@ -3,7 +3,7 @@ import IndicateurProps from '@/server/domain/indicateur/Indicateur.interface';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
-import CarteIndicateurProps from '@/components/Chantier/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur.interface';
+import CarteIndicateurProps from '@/components/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur.interface';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import CarteIndicateurStyled from './CarteIndicateur.styled';
 
@@ -29,15 +29,22 @@ const colonnes = [
   }),
   reactTableColonnesHelper.accessor('tauxAvancementGlobal', {
     header: 'Taux avancement global',
-    cell: tauxAvancementGlobal => (<BarreDeProgression
-      taille='petite'
-      valeur={tauxAvancementGlobal.getValue()}
-      variante='primaire'
-                                   />),
+    cell: tauxAvancementGlobal => (
+      <>
+        {tauxAvancementGlobal.getValue() ? `${(tauxAvancementGlobal.getValue()! * 100).toFixed(0)}%` : '- %'}
+        <BarreDeProgression
+          afficherTexte={false}
+          fond='bleu'
+          taille='moyenne'
+          valeur={tauxAvancementGlobal.getValue()}
+          variante='primaire'
+        />
+      </>
+    ),
     enableSorting: false }),
 ];
 
-export default function CarteIndicateur( { indicateur } : CarteIndicateurProps) {
+export default function CarteIndicateur({ indicateur } : CarteIndicateurProps) {
   return (
     <CarteIndicateurStyled
       className="fr-mb-2w"
@@ -71,9 +78,7 @@ export default function CarteIndicateur( { indicateur } : CarteIndicateurProps) 
         <Tableau<IndicateurProps & { territoire: string }>
           afficherLaRecherche={false}
           colonnes={colonnes}
-          données={
-                        [{ ...indicateur, territoire: 'Nationnal' }]
-                    }
+          données={[{ ...indicateur, territoire: 'National' }]}
           entité='indicateur'
         />
       </Bloc>

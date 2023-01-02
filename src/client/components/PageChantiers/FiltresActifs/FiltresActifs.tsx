@@ -1,5 +1,5 @@
-import Tag from '@/client/components/_commons/Tag/Tag';
-import { actions as actionsFiltreStore } from '@/client/stores/useFiltresStore/useFiltresStore';
+import Tag from '@/components/_commons/Tag/Tag';
+import { actions as actionsFiltreStore } from '@/stores/useFiltresStore/useFiltresStore';
 import FiltresActifsStyled from './FiltresActifs.styled';
 
 export default function FiltresActifs() {

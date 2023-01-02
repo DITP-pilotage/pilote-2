@@ -4,13 +4,11 @@ import Titre from '@/components/_commons/Titre/Titre';
 import EnTête from '@/components/_commons/Bloc/EnTête/EnTête';
 import ResponsablesStyled from './Responsables.styled';
 
-const nonRenseigné = 'Non renseigné';
-
 const responsables = [
-  { libellé: 'Ministère porteur', nom: nonRenseigné },
-  { libellé: 'Autres ministères co-porteurs', nom: nonRenseigné },
-  { libellé: 'Directeur d’Administration Centrale', nom: nonRenseigné },
-  { libellé: 'Nom du Directeur de Projet', nom: nonRenseigné },
+  { libellé: 'Ministère porteur', nom: null },
+  { libellé: 'Autres ministères co-porteurs', nom: null },
+  { libellé: 'Directeur d’Administration Centrale', nom: null },
+  { libellé: 'Nom du Directeur de Projet', nom: null },
 ];
 
 export default function Responsables() {
@@ -29,7 +27,7 @@ export default function Responsables() {
                   {responsable.libellé}
                 </p>
                 <p className='fr-text--sm fr-col'>
-                  {responsable.nom}
+                  {responsable.nom || 'Non Renseigné'}
                 </p>
               </div>
               <hr className='fr-hr' />
