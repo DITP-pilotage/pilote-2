@@ -18,7 +18,6 @@ function mapToDomain(chantierPrisma: chantier): Chantier {
     nom: chantierPrisma.nom,
     axe: null,
     nomPPG: null,
-    id_périmètre: chantierPrisma.id_perimetre,
     périmètreIds: chantierPrisma.perimetre_ids,
     zoneNom: chantierPrisma.zone_nom,
     codeInsee: chantierPrisma.code_insee,
@@ -36,7 +35,7 @@ function mapToPrisma(chantierDomaine: Chantier): chantier {
   return {
     id: chantierDomaine.id,
     nom: chantierDomaine.nom,
-    id_perimetre: chantierDomaine.id_périmètre,
+    id_perimetre: 'deleteme',
     perimetre_ids: chantierDomaine.périmètreIds,
     zone_nom: chantierDomaine.zoneNom,
     code_insee: chantierDomaine.codeInsee,

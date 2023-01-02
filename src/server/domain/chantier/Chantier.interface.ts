@@ -8,7 +8,6 @@ export default interface Chantier {
   nom: string;
   axe: Axe;
   nomPPG: string | null;
-  id_périmètre: string;
   périmètreIds: string[];
   zoneNom: string;
   codeInsee: string;
