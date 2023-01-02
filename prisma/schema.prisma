@@ -20,7 +20,7 @@ model chantier {
   code_insee String
   maille String
 
-  @@id([id, zone_nom])
+  @@id([id, code_insee, maille])
 }
 
 model perimetre {
