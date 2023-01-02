@@ -11,7 +11,7 @@ export default class ChantierInfoRandomRepository implements ChantierInfoReposit
     this.idPérimètres = idPérimètres;
   }
 
-  async getListe() {
+  async getListeMailleNationale() {
     const valeursFixes = [];
     const nbPérimètres = this.idPérimètres.length;
     for (let i = 0; i < this.nombreDeChantiers; i = i + 1) {
