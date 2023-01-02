@@ -30,7 +30,7 @@ const ChantierInfosFixture: FixtureInterface<ChantierInfo> = {
     return {
       id: `CH-${faker.random.alphaNumeric(5)}`,
       nom: `${faker.lorem.words(10)} ${générerCaractèresSpéciaux(3)}`,
-      id_périmètre: `PER-${faker.random.alphaNumeric(5)}`,
+      périmètreIds: [`PER-${faker.random.alphaNumeric(5)}`],
       météo: générerValeurMétéo(),
       avancement: {
         annuel: générerValeurAvancement(),

@@ -18,12 +18,18 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
   const filtresActifs = filtresActifsStore();
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
 
-  const chantiersFiltrés = useMemo(() => (
-    filtresActifs.périmètresMinistériels.length === 0
-      ? chantiers
-      : chantiers.filter(chantier => (filtresActifs.périmètresMinistériels.some((filtre => filtre.id === chantier.id_périmètre))))
-  ), [chantiers, filtresActifs]);
-  
+  const chantiersFiltrés = useMemo(() => {
+    if (filtresActifs.périmètresMinistériels.length === 0) {
+      return chantiers;
+    }
+
+    return chantiers.filter(chantier => (
+      filtresActifs.périmètresMinistériels.some(filtre => (
+        chantier.périmètreIds.includes(filtre.id)
+      ))
+    ));
+  }, [chantiers, filtresActifs]);
+
   return (
     <PageChantiersStyled className="flex">
       <FiltresChantiers

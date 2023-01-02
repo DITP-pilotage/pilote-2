@@ -15,7 +15,7 @@ export default class ChantierInfoRandomRepository implements ChantierInfoReposit
     const valeursFixes = [];
     const nbPérimètres = this.idPérimètres.length;
     for (let i = 0; i < this.nombreDeChantiers; i = i + 1) {
-      valeursFixes.push({ id_périmètre : this.idPérimètres[i % (nbPérimètres - 1)].id });
+      valeursFixes.push({ périmètreIds : [this.idPérimètres[i % (nbPérimètres - 1)].id] });
     }
     return ChantierInfosFixture.générerPlusieurs(this.nombreDeChantiers, valeursFixes);
   }

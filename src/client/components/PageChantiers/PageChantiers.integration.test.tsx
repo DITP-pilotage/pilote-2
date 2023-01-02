@@ -12,9 +12,9 @@ class PageChantiersTest {
   périmètresMinistériels = PérimètresMinistérielsFixture.générerPlusieurs(2);
 
   chantiers = ChantierInfosFixture.générerPlusieurs(3, [
-    { id_périmètre: this.périmètresMinistériels[0].id },
-    { id_périmètre: this.périmètresMinistériels[0].id },
-    { id_périmètre: this.périmètresMinistériels[1].id },
+    { périmètreIds: [this.périmètresMinistériels[0].id] },
+    { périmètreIds: [this.périmètresMinistériels[0].id] },
+    { périmètreIds: [this.périmètresMinistériels[1].id] },
   ]);
 
   récupérerLesLignesDuTableau() {

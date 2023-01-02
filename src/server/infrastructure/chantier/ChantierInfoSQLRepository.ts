@@ -6,7 +6,7 @@ function mapToDomain(chantierPrisma: chantier): ChantierInfo {
   return {
     id: chantierPrisma.id,
     nom: chantierPrisma.nom,
-    id_périmètre: chantierPrisma.id_perimetre,
+    périmètreIds: chantierPrisma.perimetre_ids,
     météo: null,
     avancement: { annuel: null, global: null },
   };
