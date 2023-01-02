@@ -34,7 +34,7 @@ export function générerChantier(id: string, zone_nom: string): Chantier {
     axe: { id: 'AXE-' + faker.random.alphaNumeric(3), nom: faker.lorem.words(3) },
     nomPPG: faker.lorem.words(3),
     id_périmètre: perimetreId,
-    perimètreIds: [perimetreId],
+    périmètreIds: [perimetreId],
     zoneNom: zone_nom,
     codeInsee: 'FR',
     maille: 'NAT',
