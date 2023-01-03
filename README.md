@@ -99,7 +99,7 @@ docker-compose up -d postgresql
 Initialisez votre base de tests  :
 
 ```bash
-npx dotenv -e .env.test -- npm run database:init
+npm run test:database:init
 ```
 
 Note : on utilise dotenv pour faire pointer vers la configuration de test.
