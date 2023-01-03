@@ -1,13 +1,13 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import Link from 'next/link';
-import ChantierAvancement from '@/server/domain/chantier/ChantierAvancement.interface';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
 import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
+import { Avancement } from '@/server/domain/chantier/Chantier.interface';
 import ListeChantiersProps from './ListeChantiers.interface';
 
-function afficherLesBarresDeProgression(avancement: ChantierAvancement) {
+function afficherLesBarresDeProgression(avancement: Avancement) {
   return (
     <>
       <BarreDeProgression
@@ -28,16 +28,16 @@ function afficherLesBarresDeProgression(avancement: ChantierAvancement) {
   );
 }
 
-function comparerAvancementChantier(a: ChantierAvancement, b: ChantierAvancement) {
-  if ((a.global === null && b.global === null) || (a.global?.moyenne === null && b.global?.moyenne === null))
+function comparerAvancementChantier(a: number | null, b: number | null) {
+  if (a === null && b === null)
     return 0;
-  if (a.global === null || a.global?.moyenne === null)
+  if (a === null)
     return -1;
-  if (b.global === null || b.global?.moyenne === null)
+  if (b === null)
     return 1;
-  if (a.global?.moyenne < b.global?.moyenne)
+  if (a < b)
     return 1;
-  if (a.global?.moyenne > b.global?.moyenne)
+  if (a > b)
     return -1;
   return 0;
 }
@@ -67,7 +67,7 @@ const colonnes = [
     cell: avancement => afficherLesBarresDeProgression(avancement.getValue()),
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => {
-      return comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId));
+      return comparerAvancementChantier(a.getValue<Avancement>(columnId).global, b.getValue<Avancement>(columnId).global);
     },
   }),
 ];

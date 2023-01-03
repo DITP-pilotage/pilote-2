@@ -18,9 +18,9 @@ export default function TauxAvancementMoyen() {
           taille="grande"
           valeur={{
             minimum: 0,
-            moyenne: 0.45,
-            médiane: 0.55,
-            maximum: 0.555,
+            médiane: 55,
+            moyenne: 45,
+            maximum: 60,
           }}
           variante="secondaire"
         />
@@ -30,10 +30,10 @@ export default function TauxAvancementMoyen() {
         <BarreDeProgression
           taille="grande"
           valeur={{
-            minimum: 0.665,
-            médiane: 0.67,
-            moyenne: 0.58,
-            maximum: 1,
+            minimum: 20.5,
+            médiane: 55,
+            moyenne: 70,
+            maximum: 100,
           }}
           variante="primaire"
         />

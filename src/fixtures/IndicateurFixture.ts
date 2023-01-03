@@ -1,11 +1,12 @@
 import { faker } from '@faker-js/faker';
 import Indicateur, { typesAvancement } from '@/server/domain/indicateur/Indicateur.interface';
 import FixtureInterface from './Fixture.interface';
+import { générerUnIdentifiantUnique } from './utils';
 
 class IndicateurFixture implements FixtureInterface<Indicateur> {
   générer(valeursFixes: Partial<Indicateur> = {}) {
     return {
-      id: 'IND-' + faker.random.numeric(3),
+      id: générerUnIdentifiantUnique('IND'),
       nom: faker.lorem.words(5),
       type: faker.helpers.arrayElement(typesAvancement),
       estIndicateurDuBaromètre: faker.datatype.boolean(),

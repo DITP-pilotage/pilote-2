@@ -5,13 +5,6 @@ import ChantierRepository from '@/server/domain/chantier/ChantierRepository.inte
 ///
 // Fonctions utilitaires
 
-function coerceNull<T>(value: T) {
-  if (value == undefined) {
-    return null;
-  }
-  return value;
-}
-
 function mapToDomain(chantierPrisma: chantier): Chantier {
   return {
     id: chantierPrisma.id,
@@ -25,7 +18,7 @@ function mapToDomain(chantierPrisma: chantier): Chantier {
     météo: null,
     avancement: {
       annuel: null,
-      global: { minimum: null, médiane: null, maximum: null, moyenne: chantierPrisma.taux_avancement },
+      global: chantierPrisma.taux_avancement,
     },
     indicateurs: [],
   };
@@ -39,7 +32,7 @@ function mapToPrisma(chantierDomaine: Chantier): chantier {
     perimetre_ids: chantierDomaine.périmètreIds,
     zone_nom: chantierDomaine.zoneNom,
     code_insee: chantierDomaine.codeInsee,
-    taux_avancement: coerceNull(chantierDomaine.avancement.global?.moyenne),
+    taux_avancement: chantierDomaine.avancement.global,
     maille: chantierDomaine.maille,
   };
 }

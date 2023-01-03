@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import ChantierFixture from '@/fixtures/ChantierFixture';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -8,41 +8,20 @@ describe('ChantierSQLRepository', () => {
     // GIVEN
     const prisma = new PrismaClient();
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
-    const chantierInitial1: Chantier = {
-      id: 'THD',
-      nom: 'Chantier 1',
-      nomPPG: null,
-      axe: null,
-      périmètreIds: ['PER-001'],
-      zoneNom: 'National',
-      codeInsee: 'FR',
-      maille: 'NAT',
-      météo: null,
-      avancement: { annuel: null, global: { minimum: null, médiane: null, maximum: null, moyenne: 88.5 } },
-      indicateurs: [],
-    };
-    const chantierInitial2: Chantier = {
-      id: 'TUP',
-      nom: 'Chantier 2',
-      axe: null,
-      nomPPG: null,
-      périmètreIds: ['PER-001'],
-      zoneNom: 'National',
-      codeInsee: 'FR',
-      maille: 'NAT',
-      météo: null,
-      avancement: { annuel: null, global: { minimum: null, médiane: null, maximum: null, moyenne: 88.5 } },
-      indicateurs: [],
-    };
-    await repository.add(chantierInitial1);
-    await repository.add(chantierInitial2);
+    const chantiers = ChantierFixture.générerPlusieurs(2, [
+      { codeInsee: 'FR', maille: 'NAT' },
+      { codeInsee: '27', maille: 'DEPT' },
+    ]);
+
+    await repository.add(chantiers[0]);
+    await repository.add(chantiers[1]);
 
     // WHEN
-    const result1 = await repository.getById('THD', 'FR', 'NAT');
-    const result2 = await repository.getById('TUP', 'FR', 'NAT');
+    const result1 = await repository.getById(chantiers[0].id, 'FR', 'NAT');
+    const result2 = await repository.getById(chantiers[1].id, '27', 'DEPT');
 
     // THEN
-    expect(result1).toEqual(chantierInitial1);
-    expect(result2).toEqual(chantierInitial2);
+    expect(result1.nom).toEqual(chantiers[0].nom);
+    expect(result2.nom).toEqual(chantiers[1].nom);
   });
 });

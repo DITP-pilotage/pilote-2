@@ -29,7 +29,7 @@ export default function BarreDeProgressionCurseur({ valeur, typeDeCurseur, varia
     <BarreDeProgressionCurseurStyled
       className="flex justifyEnd"
       style={{
-        width: `${valeur * 100}%`,
+        width: `${valeur}%`,
       }}
       variante={variante}
     >

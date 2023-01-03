@@ -1,20 +1,19 @@
 import { faker } from '@faker-js/faker';
 import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
-import { générerCaractèresSpéciaux } from '@/client/utils/strings';
-import { Avancement } from '@/server/domain/chantier/ChantierAvancement.interface';
 import MétéoFixture from '@/fixtures/MétéoFixture';
 import FixtureInterface from '@/fixtures/Fixture.interface';
+import { générerCaractèresSpéciaux, générerUnIdentifiantUnique } from './utils';
 
 class ChantierInfoFixture implements FixtureInterface<ChantierInfo> {
   générer(valeursFixes: Partial<ChantierInfo> = {}) {
     return {
-      id: `CH-${faker.random.alphaNumeric(5)}`,
+      id: générerUnIdentifiantUnique('CH'),
       nom: `${faker.lorem.words(10)} ${générerCaractèresSpéciaux(3)}`,
-      périmètreIds: [`PER-${faker.random.alphaNumeric(5)}`],
+      périmètreIds: [générerUnIdentifiantUnique('PER')],
       météo: MétéoFixture.générer(),
       avancement: {
-        annuel: this.générerValeurAvancement(),
-        global: this.générerValeurAvancement(),
+        annuel: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
+        global: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
       },
       ...valeursFixes,
     };
@@ -22,23 +21,16 @@ class ChantierInfoFixture implements FixtureInterface<ChantierInfo> {
 
   générerPlusieurs(quantité: number, valeursFixes: Partial<ChantierInfo>[] = []) {
     return Array.from({ length: quantité })
-      .map((_, index) => this.générer(valeursFixes[index]));
-  }
+      .map((_, index) => {
+        if (index === quantité - 1) {
+          return this.générer({ 
+            avancement: { annuel: null, global: null }, 
+            ...valeursFixes[index], 
+          });
+        }
 
-  private générerValeurAvancement(): Avancement | null {
-    const estNonRenseignée = Math.random() > 0.9;
-    const valeursTriées = Array.from({ length: 4 })
-      .map(() => Math.random())
-      .sort();
-  
-    return estNonRenseignée
-      ? null
-      : {
-        minimum: valeursTriées[0],
-        médiane: valeursTriées[1],
-        moyenne: valeursTriées[2],
-        maximum: valeursTriées[3],
-      };
+        return this.générer(valeursFixes[index]);
+      });
   }
 }
 
