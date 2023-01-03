@@ -6,7 +6,7 @@ describe('ChantierRandomRepository', () => {
     const repository = new ChantierRandomRepository();
 
     // WHEN
-    const chantier = await repository.getById('abc1234', 'National');
+    const chantier = await repository.getById('abc1234', 'FR', 'NAT');
 
     // THEN
     expect(chantier.id).toBe('abc1234');

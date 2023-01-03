@@ -38,8 +38,8 @@ describe('ChantierSQLRepository', () => {
     await repository.add(chantierInitial2);
 
     // WHEN
-    const result1 = await repository.getById('THD', 'National');
-    const result2 = await repository.getById('TUP', 'National');
+    const result1 = await repository.getById('THD', 'FR', 'NAT');
+    const result2 = await repository.getById('TUP', 'FR', 'NAT');
 
     // THEN
     expect(result1).toEqual(chantierInitial1);
