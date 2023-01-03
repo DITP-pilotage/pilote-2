@@ -3,7 +3,7 @@ import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 import { générerCaractèresSpéciaux } from '@/client/utils/strings';
 import { Avancement } from '@/server/domain/chantier/ChantierAvancement.interface';
 import MétéoFixture from '@/fixtures/MétéoFixture';
-import FixtureInterface from './Fixture.interface';
+import FixtureInterface from '@/fixtures/Fixture.interface';
 
 class ChantierInfoFixture implements FixtureInterface<ChantierInfo> {
   générer(valeursFixes: Partial<ChantierInfo> = {}) {
