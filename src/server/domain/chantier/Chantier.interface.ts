@@ -1,6 +1,7 @@
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import ChantierAvancement from './ChantierAvancement.interface';
 import Météo from './Météo.interface';
+
 export type Axe = { id: string, nom: string } | null;
 
 export default interface Chantier {

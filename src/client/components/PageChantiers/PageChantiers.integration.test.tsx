@@ -2,7 +2,7 @@
 import { getAllByRole, getByLabelText, getByText, queryByText, render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import ChantierInfosFixture from '@/fixtures/ChantierInfosFixture';
+import ChantierInfosFixture from '@/fixtures/ChantierInfoFixture';
 import PérimètresMinistérielsFixture from '@/fixtures/PérimètresMinistérielsFixture';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import PageChantiers from './PageChantiers';

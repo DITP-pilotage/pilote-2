@@ -1,4 +1,4 @@
-import ChantierInfosFixture from '@/fixtures/ChantierInfosFixture';
+import ChantierInfosFixture from '@/fixtures/ChantierInfoFixture';
 import ChantierInfoRepository from '@/server/domain/chantier/ChantierInfoRepository.interface';
 
 export default class ChantierInfoRandomRepository implements ChantierInfoRepository {

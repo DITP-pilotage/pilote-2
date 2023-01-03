@@ -2,16 +2,16 @@ import { faker } from '@faker-js/faker';
 import ChantierInfo from '@/server/domain/chantier/ChantierInfo.interface';
 import { générerCaractèresSpéciaux } from '@/client/utils/strings';
 import { Avancement } from '@/server/domain/chantier/ChantierAvancement.interface';
-import Météo from '@/server/domain/chantier/Météo.interface';
+import MétéoFixture from '@/fixtures/MétéoFixture';
 import FixtureInterface from './Fixture.interface';
- 
-class ChantierInfosFixture implements FixtureInterface<ChantierInfo> {
+
+class ChantierInfoFixture implements FixtureInterface<ChantierInfo> {
   générer(valeursFixes: Partial<ChantierInfo> = {}) {
     return {
       id: `CH-${faker.random.alphaNumeric(5)}`,
       nom: `${faker.lorem.words(10)} ${générerCaractèresSpéciaux(3)}`,
       périmètreIds: [`PER-${faker.random.alphaNumeric(5)}`],
-      météo: this.générerValeurMétéo(),
+      météo: MétéoFixture.générer(),
       avancement: {
         annuel: this.générerValeurAvancement(),
         global: this.générerValeurAvancement(),
@@ -25,10 +25,6 @@ class ChantierInfosFixture implements FixtureInterface<ChantierInfo> {
       .map((_, index) => this.générer(valeursFixes[index]));
   }
 
-  private générerValeurMétéo(): Météo {
-    return Math.random() > 0.8 ? null : Math.ceil(Math.random() * 4) as Météo ;
-  }
-  
   private générerValeurAvancement(): Avancement | null {
     const estNonRenseignée = Math.random() > 0.9;
     const valeursTriées = Array.from({ length: 4 })
@@ -46,4 +42,4 @@ class ChantierInfosFixture implements FixtureInterface<ChantierInfo> {
   }
 }
 
-export default new ChantierInfosFixture();
+export default new ChantierInfoFixture();
