@@ -12,9 +12,9 @@ class PageChantiersTest {
   périmètresMinistériels = PérimètresMinistérielsFixture.générerPlusieurs(2);
 
   chantiers = ChantierInfosFixture.générerPlusieurs(3, [
-    { id_périmètre: this.périmètresMinistériels[0].id }, 
-    { id_périmètre: this.périmètresMinistériels[0].id },
-    { id_périmètre: this.périmètresMinistériels[1].id },
+    { périmètreIds: [this.périmètresMinistériels[0].id] },
+    { périmètreIds: [this.périmètresMinistériels[0].id] },
+    { périmètreIds: [this.périmètresMinistériels[1].id] },
   ]);
 
   récupérerLesLignesDuTableau() {
@@ -87,9 +87,9 @@ describe('quand on sélectionne un filtre', () => {
 
   test('les chantiers affichés dans le tableau sont correctement filtrés', async () => {
     const tableauLignes = pageChantiers.récupérerLesLignesDuTableau();
-    tableauLignes.forEach((ligne, index) => {
-      expect(ligne).toHaveTextContent(pageChantiers.chantiers[index].nom);
-    });
+    expect(tableauLignes.length).toEqual(2);
+    expect(tableauLignes[0]).toHaveTextContent(pageChantiers.chantiers[0].nom);
+    expect(tableauLignes[1]).toHaveTextContent(pageChantiers.chantiers[1].nom);
   });
 });
 
