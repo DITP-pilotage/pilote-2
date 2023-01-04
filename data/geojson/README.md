@@ -19,4 +19,4 @@ TODO
 
 ## 03 -> 04
 
-Depuis le répertoire `data/geojson/`, exécuter la commande `node ./scripts/convertir_geojson_en_svg.js`, pour effectuer la conversion.
+Depuis le répertoire `data/geojson/`, exécuter la commande `node ./scripts/extraire_données_géographiques.js`.
