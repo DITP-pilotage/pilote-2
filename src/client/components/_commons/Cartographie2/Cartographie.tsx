@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import CartographieÉlément from '@/components/_commons/Cartographie/CartographieÉlément/CartographieÉlément';
-import regions from '@/components/_commons/Cartographie/regions';
 
 type DépartementsType = {
   d: string,
@@ -15,10 +13,24 @@ type RégionsType = {
   nom: string,
 }[];
 
+type MétadonnéesType = {
+  largeur: number,
+  hauteur: number,
+};
+
+type ViewboxType = {
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+};
+
 export default function Cartographie() {
 
   const [départements, setDépartements] = useState<DépartementsType>();
   const [régions, setRégions] = useState<RégionsType>();
+  const [métadonnées, setMétadonnées] = useState<MétadonnéesType>();
+  const [viewbox, setViewbox] = useState<ViewboxType>();
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/comma-dangle
@@ -34,17 +46,34 @@ export default function Cartographie() {
 
     télécharger('/geo/départements.json', setDépartements);
     télécharger('/geo/régions.json', setRégions);
+    télécharger('/geo/métadonnées.json', setMétadonnées);
   }, []);
 
-  return départements ? (
+  useEffect(() => {
+    if (!métadonnées)
+      return;
+    setViewbox({
+      x: 0,
+      y: 0,
+      width: métadonnées.largeur,
+      height: métadonnées.hauteur,
+    });
+  }, [métadonnées]);
+
+
+  return (départements && régions && métadonnées && viewbox) ? (
     <div>
       <svg
         fill="#313178"
-        height="100%"
         stroke="#FFFFFF"
         strokeWidth="0.3"
         version="1.2"
-        viewBox="0 0 110 100"
+        viewBox={`
+          ${viewbox.x}
+          ${viewbox.y}
+          ${Math.max(viewbox.width, viewbox.height) /* Préserve le ratio hauteur/largeur */}
+          ${Math.max(viewbox.width, viewbox.height)}
+        `}
         width="100%"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -53,6 +82,9 @@ export default function Cartographie() {
             <path
               d={département.d}
               key={département.département}
+              onClick={(event) => {
+                setViewbox(event.currentTarget.getBBox());
+              }}
             />
           ))
         }
