@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import CartographieProps, {
-  Département, Région,
-} from '@/components/_commons/Cartographie/Cartographie.interface';
+import CartographieProps, { Département, Région } from '@/components/_commons/Cartographie/Cartographie.interface';
 import CartographieAffichage from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage';
 
 export default function Cartographie({ territoire }: CartographieProps) {

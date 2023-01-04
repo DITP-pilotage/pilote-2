@@ -9,4 +9,5 @@ export type ViewboxType = {
 
 export default interface CartographieSVGProps {
   svgPaths: Territoire[],
+  setTerritoireSurvolé:  (state: Partial<Territoire> | null) => void
 }
