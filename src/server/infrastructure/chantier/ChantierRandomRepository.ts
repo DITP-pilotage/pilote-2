@@ -8,7 +8,7 @@ export default class ChantierRandomRepository implements ChantierRepository {
     throw new Error('Error: Not implemented');
   }
 
-  async getById(id: string, zoneNom: string) {
-    return ChantierFixture.générer({ id, zoneNom });
+  async getById(id: string, codeInsee: string, maille: string) {
+    return ChantierFixture.générer({ id, codeInsee, maille });
   }
 }
