@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import CartographieSVG from '@/components/_commons/Cartographie2/CartographieSVG';
 import CartographieProps, {
   DépartementsType,
   RégionsType,
 } from '@/components/_commons/Cartographie2/Cartographie.interface';
+import CartographieAffichage from '@/components/_commons/Cartographie2/CartographieAffichage';
 
 export default function Cartographie({ territoire }: CartographieProps) {
 
@@ -29,7 +29,7 @@ export default function Cartographie({ territoire }: CartographieProps) {
 
   return (
     départements && régions) ? (
-      <CartographieSVG
+      <CartographieAffichage
         svgPaths={
           territoire.maille === 'région'
             ? départements.filter(département => département.région === territoire.codeInsee)

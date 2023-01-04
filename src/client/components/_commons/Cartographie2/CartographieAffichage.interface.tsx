@@ -3,13 +3,6 @@ import {
   RégionsType,
 } from '@/components/_commons/Cartographie2/Cartographie.interface';
 
-export type ViewboxType = {
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-};
-
-export default interface CartographieSVGProps {
+export default interface CartographieAffichageProps {
   svgPaths: DépartementsType | RégionsType,
 }
