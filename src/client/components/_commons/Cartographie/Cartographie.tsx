@@ -32,7 +32,7 @@ export default function Cartographie({ territoire }: CartographieProps) {
       <CartographieAffichage
         svgPaths={
           territoire.maille === 'région'
-            ? départements.filter(département => département.région === territoire.codeInsee)
+            ? départements.filter(département => département.codeInseeRégion === territoire.codeInsee)
             : départements
         }
       />

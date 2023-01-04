@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import CartographieSVGProps, { ViewboxType } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieSVG/CartographieSVG.interface';
+import { DépartementsType, RégionsType } from '../../Cartographie.interface';
 
-export default function CartographieSVG({ svgPaths }: CartographieSVGProps) {
+function CartographieSVG({ svgPaths }: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const [régionSurvolée, setRégionSurvolée] = useState<Partial<DépartementsType[number]> | Partial<RégionsType>>();
   const [viewbox, setViewbox] = useState<ViewboxType>({
     x: 0,
     y: 0,
@@ -37,6 +39,10 @@ export default function CartographieSVG({ svgPaths }: CartographieSVGProps) {
             <path
               d={path.d}
               key={path.nom}
+              onMouseEnter={() => {
+                console.log(régionSurvolée);
+                setRégionSurvolée({ codeInsee: path.codeInsee, nom: path.nom });
+              }}
             />
           ))
         }
@@ -44,3 +50,6 @@ export default function CartographieSVG({ svgPaths }: CartographieSVGProps) {
     </div>
   );
 }
+
+export default memo(CartographieSVG, (prevProps, nextProps) => prevProps.svgPaths === nextProps.svgPaths);
+

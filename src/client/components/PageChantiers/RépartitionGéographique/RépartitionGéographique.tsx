@@ -12,7 +12,7 @@ export default function RépartitionGéographique() {
       </Titre>
       <Cartographie
         territoire={{
-          maille: 'région',
+          maille: 'france',
           codeInsee: '84',
         }}
       />
