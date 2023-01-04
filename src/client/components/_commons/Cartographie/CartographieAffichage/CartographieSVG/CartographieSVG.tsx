@@ -1,5 +1,6 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import CartographieSVGProps, { ViewboxType } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieSVG/CartographieSVG.interface';
+import CartographieSVGStyled from './CartographieSVG.styled';
 
 function CartographieSVG({ svgPaths, setTerritoireSurvolé }: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -16,11 +17,9 @@ function CartographieSVG({ svgPaths, setTerritoireSurvolé }: CartographieSVGPro
   }, [svgRef]);
 
   return (
-    <div>
+    <CartographieSVGStyled>
       <svg
-        fill="#313178"
         ref={svgRef}
-        stroke="#FFFFFF"
         strokeWidth="0.3"
         version="1.2"
         viewBox={`
@@ -29,7 +28,6 @@ function CartographieSVG({ svgPaths, setTerritoireSurvolé }: CartographieSVGPro
           ${viewbox.width}
           ${viewbox.height}
         `}
-        width="100%"
         xmlns="http://www.w3.org/2000/svg"
       >
         {
@@ -37,19 +35,20 @@ function CartographieSVG({ svgPaths, setTerritoireSurvolé }: CartographieSVGPro
             <path
               d={path.d}
               key={path.nom}
-              onMouseEnter={() => {
+              onMouseEnter={(event) => {
                 setTerritoireSurvolé({ codeInsee: path.codeInsee, nom: path.nom });
+                event.currentTarget.setAttribute('opacity', '0.72');
               }}
-              onMouseLeave={() => {
+              onMouseLeave={(event) => {
                 setTerritoireSurvolé(null);
+                event.currentTarget.setAttribute('opacity', '1');
               }}
             />
           ))
         }
       </svg>
-    </div>
+    </CartographieSVGStyled>
   );
 }
 
 export default memo(CartographieSVG, (prevProps, nextProps) => prevProps.svgPaths === nextProps.svgPaths);
-

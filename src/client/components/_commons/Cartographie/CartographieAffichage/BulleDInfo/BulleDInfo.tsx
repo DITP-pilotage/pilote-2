@@ -14,7 +14,7 @@ export default function BulleDInfo({ x, y, territoireSurvolé }: BulleDInfoProps
         {`${territoireSurvolé?.codeInsee} - ${territoireSurvolé?.nom}`}
       </div>
       <div className='fr-py-1w fr-px-2w fr-text--bold'>
-        99%
+        Non renseigné
       </div>
     </BulleDInfoStyled>
   );
