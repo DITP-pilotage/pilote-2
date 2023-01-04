@@ -1,24 +1,28 @@
 const { readFileSync, writeFileSync } = require('fs');
 
-// Init converter
+// Crée le convertisseur geojson vers svg
 const geojson2svg = require('geojson2svg');
 
-const WIDTH = 110; // svg output coords
-const HEIGHT = 100; // svg output coords
-const METADATA_LIST = ['dep', 'reg', 'libgeo']
+const LARGEUR = 110; // svg output coords
+const HAUTEUR = 100; // svg output coords
+const LISTE_MÉTADONNÉES = ['dep', 'reg', 'libgeo']
 
-const converter = geojson2svg({
-  attributes: METADATA_LIST.map(metadataPropName => ({
+const convertisseur = geojson2svg({
+  // Configure la propagation des métadonnées des geojson vers les svg
+  attributes: LISTE_MÉTADONNÉES.map(metadataPropName => ({
     property: `properties.${metadataPropName}`,
     type: 'dynamic',
     key: `data-${metadataPropName}`
   })),
-  viewportSize: { width: WIDTH, height: HEIGHT },
-  //mapExtent: {left: -5.2, bottom: 41.3, right: 9.6, top: 51.12}, // bounding box of France (GPS coords)
-  mapExtent: { left: -405000, bottom: 5910000, right: 765000, top: 6980000 }, // bounding box of France (meters)
+
+  viewportSize: { width: LARGEUR, height: HAUTEUR },
+
+  // boîte englobante des territoires présents dans les geojson
+  //mapExtent: {left: -5.2, bottom: 41.3, right: 9.6, top: 51.12}, // boîte englobante (GPS coords) de la France
+  mapExtent: { left: -405000, bottom: 5910000, right: 765000, top: 6980000 }, // boîte englobante (en mètres ?) de la France
 });
 
-// Init projection helpers
+// Initialise les utilitaires pour calculer la nouvelle projection géographique
 const proj4 = require('proj4')
 const reproject = require('reproject')
 proj4.defs([
@@ -36,35 +40,35 @@ proj4.defs([
   ]
 ]);
 
-// Get input file
-const geojsonInputFilePath = process.argv[2];
-const geojsonInputFileStem = geojsonInputFilePath.replace(/\.[^/.]+$/, "");
+// Récupère les fichiers geojson d'entrée
+const geojsonCheminDAccès = process.argv[2];
+const geojsonNomDeFichierSansExtension = geojsonCheminDAccès.replace(/\.[^/.]+$/, "");
 
-const geojson4326 = JSON.parse(
-  readFileSync(`${__dirname}/../02_repositionné/${geojsonInputFilePath}`, 'utf8')
+const geojsonDonnées = JSON.parse(
+  readFileSync(`${__dirname}/../02_repositionné/${geojsonCheminDAccès}`, 'utf8')
 )
 
-// Change map projection
+// Change la projection géographique vers celle souhaitée
 const geojsonGallPeters = reproject.reproject(
-  geojson4326, 'EPSG:4326', 'Gall-Peters', proj4.defs
+  geojsonDonnées, 'EPSG:4326', 'Gall-Peters', proj4.defs
 );
 
-// Retrieve svg path tags
-const svgPaths = converter
+// Applique la conversion vers le svg
+const svgPaths = convertisseur
   .convert(geojsonGallPeters, {})
   .join('\n');
 
-// Build svg file
+// Construit le fichier svg
 const svg = `
   <svg
-    viewBox="0 0 ${WIDTH} ${HEIGHT}"
+    viewBox="0 0 ${LARGEUR} ${HAUTEUR}"
     xmlns="http://www.w3.org/2000/svg"
     fill="#a84"
   >
-    <polygon points="0,0 0,${HEIGHT} ${WIDTH},${HEIGHT} ${WIDTH},0" fill="#adf"/>
+    <polygon points="0,0 0,${HAUTEUR} ${LARGEUR},${HAUTEUR} ${LARGEUR},0" fill="#adf"/>
     ${svgPaths}
   </svg>
 `;
 
-// Write Svg file
-writeFileSync(`${__dirname}/../03_converti_svg/${geojsonInputFileStem}.svg`, svg);
+// Ecrit le fichier svg
+writeFileSync(`${__dirname}/../03_converti_svg/${geojsonNomDeFichierSansExtension}.svg`, svg);
