@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import CartographieProps, {
-  DépartementsType,
-  RégionsType,
+  Département, Région,
 } from '@/components/_commons/Cartographie/Cartographie.interface';
 import CartographieAffichage from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage';
 
 export default function Cartographie({ territoire }: CartographieProps) {
 
-  const [départements, setDépartements] = useState<DépartementsType>();
-  const [régions, setRégions] = useState<RégionsType>();
+  const [départements, setDépartements] = useState<Département[]>();
+  const [régions, setRégions] = useState<Région[]>();
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/comma-dangle

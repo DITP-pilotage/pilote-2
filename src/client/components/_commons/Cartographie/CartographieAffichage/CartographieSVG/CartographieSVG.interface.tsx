@@ -1,7 +1,4 @@
-import {
-  DépartementsType,
-  RégionsType,
-} from '@/components/_commons/Cartographie/Cartographie.interface';
+import { Territoire } from '@/components/_commons/Cartographie/Cartographie.interface';
 
 export type ViewboxType = {
   x: number,
@@ -11,5 +8,5 @@ export type ViewboxType = {
 };
 
 export default interface CartographieSVGProps {
-  svgPaths: DépartementsType | RégionsType,
+  svgPaths: Territoire[],
 }
