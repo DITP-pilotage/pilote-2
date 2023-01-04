@@ -1,7 +1,7 @@
 /**
  * Convertit les fichiers geojson souhaités en svg
- * Les fichiers sources sont prélevés dans '02_repositionné'
- * Les fichiers créés sont écrits dans '03_converti_svg'
+ * Les fichiers sources sont prélevés dans '03_repositionné'
+ * Les fichiers créés sont écrits dans '04_converti_svg'
  */
 
 const { readFileSync, writeFileSync } = require('fs');
@@ -52,7 +52,7 @@ function convertirGeojson(geojsonNomDeFichier) {
   const geojsonNomDeFichierSansExtension = geojsonNomDeFichier.replace(/\.[^/.]+$/, "");
 
   const geojsonDonnées = JSON.parse(
-    readFileSync(`${__dirname}/../02_repositionné/${geojsonNomDeFichier}`, 'utf8')
+    readFileSync(`${__dirname}/../03_repositionné/${geojsonNomDeFichier}`, 'utf8')
   )
 
   // Change la projection géographique vers celle souhaitée
@@ -80,7 +80,7 @@ function convertirGeojson(geojsonNomDeFichier) {
   `;
 
   // Ecrit le fichier svg
-  writeFileSync(`${__dirname}/../03_converti_svg/${geojsonNomDeFichierSansExtension}.svg`, svg);
+  writeFileSync(`${__dirname}/../04_converti_svg/${geojsonNomDeFichierSansExtension}.svg`, svg);
 }
 
 FICHIERS_À_CONVERTIR.forEach(fichier => convertirGeojson(fichier));

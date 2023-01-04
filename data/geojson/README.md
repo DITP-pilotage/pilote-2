@@ -11,13 +11,12 @@ Rechercher `Départements de France avec Droms rapprochés` et `Régions de Fran
 
 TODO
 
+
 ## 02 -> 03
 
-Exécuter le script `./scripts/convert_to_svg`, avec renseignant un nom de fichier en argument, pour convertir les fichiers geojson en svg.
-
-Les fichiers d'entrée doivent obligatoirement être situés dans le répertoire `02_repositionné`.
+TODO
 
 
 ## 03 -> 04
 
-TODO
+Depuis le répertoire `data/geojson/`, exécuter la commande `node ./scripts/convertir_geojson_en_svg.js`, pour effectuer la conversion.
