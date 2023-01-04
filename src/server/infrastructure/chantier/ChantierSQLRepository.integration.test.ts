@@ -24,4 +24,40 @@ describe('ChantierSQLRepository', () => {
     expect(result1.nom).toEqual(chantiers[0].nom);
     expect(result2.nom).toEqual(chantiers[1].nom);
   });
+
+  test('un chantier sql contient une maille', async () => {
+    // GIVEN
+    const prisma = new PrismaClient();
+    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+    const valeursFixes = {
+      mailles: {
+        nationale: {
+          FR: {
+            codeInsee: 'FR',
+            avancement: { annuel: 14, global: 18 },
+          },
+        },
+      },
+    };
+
+    const chantier = ChantierFixture.générer(valeursFixes);
+    await repository.add(chantier);
+
+    // WHEN
+    const result = await repository.getById(chantier.id, 'FR', 'NAT');
+
+    // THEN
+    expect(result.mailles).toStrictEqual({
+      nationale: {
+        FR: {
+          codeInsee: 'FR',
+          avancement: {
+            annuel: null,
+            global: 18,
+          },
+        },
+      },
+    });
+  });
 });

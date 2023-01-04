@@ -3,12 +3,17 @@ import ChantierRepository from '@/server/domain/chantier/ChantierRepository.inte
 import ChantierFixture from '@/fixtures/ChantierFixture';
 
 export default class ChantierRandomRepository implements ChantierRepository {
+  private valeurFixes: Partial<Chantier> | undefined;
+
+  constructor(valeurFixes?: Partial<Chantier>) {
+    this.valeurFixes = valeurFixes;
+  }
 
   async add(_: Chantier) {
     throw new Error('Error: Not implemented');
   }
 
   async getById(id: string, codeInsee: string, maille: string) {
-    return ChantierFixture.générer({ id, codeInsee, maille });
+    return ChantierFixture.générer({ id, codeInsee, maille, ...this.valeurFixes });
   }
 }

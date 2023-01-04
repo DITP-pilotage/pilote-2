@@ -6,7 +6,7 @@ import FixtureInterface from '@/fixtures/Fixture.interface';
 import { générerUnIdentifiantUnique } from './utils';
 
 class ChantierFixture implements FixtureInterface<Chantier> {
-  générer(valeursFixes: Partial<Chantier> = {}) {
+  générer(valeursFixes: Partial<Chantier> = {}): Chantier {
     const valeurs = Array.from({ length: 8 }, () => faker.datatype.number({ min: 0, max: 100 }) / 100);
     valeurs.sort();
 
@@ -20,6 +20,17 @@ class ChantierFixture implements FixtureInterface<Chantier> {
       codeInsee: 'FR',
       maille: 'NAT',
       météo: MétéoFixture.générer(),
+      mailles: {
+        nationale: {
+          'FR': {
+            codeInsee: 'FR',
+            avancement: {
+              annuel: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
+              global: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
+            },
+          },
+        },
+      },
       avancement: {
         annuel: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
         global: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
@@ -29,7 +40,7 @@ class ChantierFixture implements FixtureInterface<Chantier> {
     };
   }
 
-  générerPlusieurs(quantité: number, valeursFixes: Partial<Chantier>[] = []) {
+  générerPlusieurs(quantité: number, valeursFixes: Partial<Chantier>[] = []): Chantier[] {
     return Array.from({ length: quantité })
       .map((_, index) => this.générer(valeursFixes[index]));
   }

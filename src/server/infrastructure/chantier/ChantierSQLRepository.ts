@@ -16,6 +16,14 @@ function mapToDomain(chantierPrisma: chantier): Chantier {
     codeInsee: chantierPrisma.code_insee,
     maille: chantierPrisma.maille,
     météo: null,
+    mailles: {
+      nationale: {
+        FR: {
+          codeInsee: chantierPrisma.code_insee,
+          avancement: { annuel: null, global: chantierPrisma.taux_avancement },
+        },
+      },
+    },
     avancement: {
       annuel: null,
       global: chantierPrisma.taux_avancement,
@@ -32,7 +40,7 @@ function mapToPrisma(chantierDomaine: Chantier): chantier {
     perimetre_ids: chantierDomaine.périmètreIds,
     zone_nom: chantierDomaine.zoneNom,
     code_insee: chantierDomaine.codeInsee,
-    taux_avancement: chantierDomaine.avancement.global,
+    taux_avancement: chantierDomaine.mailles.nationale.FR.avancement.global,
     maille: chantierDomaine.maille,
   };
 }

@@ -7,6 +7,11 @@ export type Avancement = {
   annuel: number | null
 };
 
+type Maille = Record<string, {
+  codeInsee: string,
+  avancement: Avancement,
+}>;
+
 export default interface Chantier {
   id: string;
   nom: string;
@@ -16,6 +21,11 @@ export default interface Chantier {
   zoneNom: string;
   codeInsee: string;
   maille: string;
+  mailles: {
+    nationale: Maille,
+    régionale?: Maille,
+    départementale?: Maille,
+  };
   météo: Météo;
   avancement: Avancement
   indicateurs: Indicateur[];
