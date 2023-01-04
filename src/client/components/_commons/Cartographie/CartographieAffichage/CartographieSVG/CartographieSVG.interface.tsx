@@ -1,6 +1,6 @@
 import { Territoire } from '@/components/_commons/Cartographie/Cartographie.interface';
 
-export type ViewboxType = {
+export type Viewbox = {
   x: number,
   y: number,
   width: number,

@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 const BulleDInfoStyled = styled.div`
   position: fixed;
+  z-index: 1;
   font-size: 0.75rem;
   text-align: center;
   vertical-align: middle;

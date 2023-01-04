@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 
 export function générerUnIdentifiantUnique(prefixe: string) {
-  return `${prefixe}-${faker.helpers.unique(faker.random.numeric, [3])}`;
+  return `${prefixe}-${faker.helpers.unique(faker.random.numeric, [5])}`;
 }
 
 export function générerCaractèresSpéciaux(nombre: number) {

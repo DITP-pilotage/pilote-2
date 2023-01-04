@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 const CartographieSVGStyled = styled.div`
+  position: relative;
   width: 100%;
 
   path {
