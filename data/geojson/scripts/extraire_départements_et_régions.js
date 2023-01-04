@@ -22,5 +22,5 @@ régionsMetadonnées = régions.features.map(région => région.properties)
 départementsMétadonnées = départements.features.map(département => département.properties)
 
 // Crée les fichiers JSON
-writeFileSync(`${__dirname}/../original_metadata/régions.json`, JSON.stringify(régionsMetadonnées));
-writeFileSync(`${__dirname}/../original_metadata/départements.json`, JSON.stringify(départementsMétadonnées));
+writeFileSync(`${__dirname}/../régions.json`, JSON.stringify(régionsMetadonnées));
+writeFileSync(`${__dirname}/../départements.json`, JSON.stringify(départementsMétadonnées));

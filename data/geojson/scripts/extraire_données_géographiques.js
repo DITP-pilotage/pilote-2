@@ -1,25 +1,34 @@
 /**
  * Convertit les fichiers geojson souhaités en svg
  * Les fichiers sources sont prélevés dans '03_repositionné'
- * Les fichiers créés sont écrits dans '04_converti_svg'
+ * Les fichiers créés sont écrits dans '04_données_extraites'
  */
 
 const { readFileSync, writeFileSync } = require('fs');
 
-const LARGEUR = 110; // svg output coords
-const HAUTEUR = 100; // svg output coords
-const LISTE_MÉTADONNÉES = ['dep', 'reg', 'libgeo'];
-const FICHIERS_À_CONVERTIR = ['a-reg2021.json', 'a-dep2021.json'];
+const HAUTEUR = 100; // hauteur du svg en sortie
+const LARGEUR = 110; // largeur du svg en sortie
+const FICHIERS_À_CONVERTIR = ['a-reg2021.json', 'a-dep2021.json']; // nom des fichiers d'entrée
+const LISTE_MÉTADONNÉES = [{ // propriétés des 'features' du geojson à propager dans le svg final
+  nomOriginal: 'dep',
+  nomCible: 'département',
+},{
+  nomOriginal: 'reg',
+  nomCible: 'région',
+},{
+  nomOriginal: 'libgeo',
+  nomCible: 'nom',
+}];
 
 // Crée le convertisseur geojson vers svg
 const geojson2svg = require('geojson2svg');
 
-const convertisseur = geojson2svg({
+const convertisseurGeojson2svg = geojson2svg({
   // Configure la propagation des métadonnées des geojson vers les svg
-  attributes: LISTE_MÉTADONNÉES.map(metadataPropName => ({
-    property: `properties.${metadataPropName}`,
+  attributes: LISTE_MÉTADONNÉES.map(métadonnée => ({
+    property: `properties.${métadonnée.nomOriginal}`,
     type: 'dynamic',
-    key: `data-${metadataPropName}`,
+    key: `data-${métadonnée.nomCible}`,
   })),
 
   viewportSize: { width: LARGEUR, height: HAUTEUR },
@@ -28,7 +37,8 @@ const convertisseur = geojson2svg({
   //mapExtent: {left: -5.2, bottom: 41.3, right: 9.6, top: 51.12}, // boîte englobante (GPS coords) de la France
   mapExtent: { left: -405000, bottom: 5910000, right: 765000, top: 6980000 }, // boîte englobante (en mètres ?) de la France
 
-  precision: 2,
+  // nombre de décimales pour les coordonnées dans le svg
+  precision: 1,
 });
 
 // Initialise les utilitaires pour calculer la nouvelle projection géographique
@@ -57,23 +67,33 @@ function convertirGeojson(geojsonNomDeFichier) {
     readFileSync(`${__dirname}/../03_repositionné/${geojsonNomDeFichier}`, 'utf8')
   )
 
-  // Change la projection géographique vers celle souhaitée
+  // Change la projection cartographique vers celle souhaitée
   const geojsonDonnéesReprojetées = reproject.reproject(
-    geojsonDonnées, 'EPSG:4326', 'Gall-Peters', proj4.defs
+    geojsonDonnées,  // coordonnées géographiques d'origine
+    'EPSG:4326',     // projection cartographique d'origine
+    'Gall-Peters',   // projection cartographique cible
+    proj4.defs,      // définition des projections cartographiques
   );
 
   // Applique la conversion vers les paths svg
-  const svgPaths = convertisseur
-    .convert(geojsonDonnéesReprojetées, {});
+  const svgPaths = convertisseurGeojson2svg
+    .convert(geojsonDonnéesReprojetées, {}); // array de string html: `<path ... />`
 
   // Construit le fichier json de sortie
-  const json = svgPaths.map(baliseSvgPath => {
-    const svgDonnées = [...baliseSvgPath.matchAll(/\s(?:data-)?([\w'-]+)=\"([^\"]*)\"/g)]
-    return Object.fromEntries(svgDonnées.map(attributMatch => (attributMatch.slice(1, 3))))
-  })
+  const fichierJson = JSON.stringify(
+    svgPaths.map(svgPathString => {
+      // Récupérer les attributs HTML à partir de la chaîne de caractères `<path d="..." data-machin="..." >`
+      const attributs = [...svgPathString.matchAll(/\s(?:data-)?([A-zÀ-ú0-9]+)=\"([^\"]*)\"/g)]
+      return Object.fromEntries(
+        attributs.map(attributRegexpMatch => (
+          attributRegexpMatch.slice(1, 3) // seuls les deux groupes de capture Regexp nous intéressent (le nom de l'attribut et sa valeur)
+        ))
+      );
+    })
+  );
 
   // Construit le fichier svg
-  const svg = `
+  const fichierSvg = `
     <svg
       viewBox="0 0 ${LARGEUR} ${HAUTEUR}"
       xmlns="http://www.w3.org/2000/svg"
@@ -87,8 +107,8 @@ function convertirGeojson(geojsonNomDeFichier) {
   `;
 
   // Ecrit le fichier json et le svg
-  writeFileSync(`${__dirname}/../04_données_extraites/${geojsonNomDeFichierSansExtension}.json`, JSON.stringify(json));
-  writeFileSync(`${__dirname}/../04_données_extraites/${geojsonNomDeFichierSansExtension}.svg`, svg);
+  writeFileSync(`${__dirname}/../04_données_extraites/${geojsonNomDeFichierSansExtension}.json`, fichierJson);
+  writeFileSync(`${__dirname}/../04_données_extraites/${geojsonNomDeFichierSansExtension}.svg`, fichierSvg);
 }
 
 FICHIERS_À_CONVERTIR.forEach(fichier => convertirGeojson(fichier));
