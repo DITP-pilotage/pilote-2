@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import CartographieSVG from '@/components/_commons/Cartographie2/CartographieSVG';
-import CartographieAffichageProps from '@/components/_commons/Cartographie2/CartographieAffichage.interface';
-import BulleDInfo from '@/components/_commons/Cartographie2/BulleDInfo';
+import CartographieSVG from '@/components/_commons/Cartographie/CartographieAffichage/CartographieSVG/CartographieSVG';
+import CartographieAffichageProps from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
+import BulleDInfo from '@/components/_commons/Cartographie/CartographieAffichage/BulleDInfo/BulleDInfo';
 
 export default function CartographieAffichage({ svgPaths }: CartographieAffichageProps) {
   const [sourisPosition, setSourisPosition] = useState({ x: 0, y: 0 });

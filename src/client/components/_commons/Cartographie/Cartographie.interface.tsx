@@ -11,15 +11,9 @@ export type RégionsType = {
   nom: string,
 }[];
 
-export enum Maille {
-  FRANCE = 'france',
-  RÉGION = 'région',
-  DÉPARTEMENT = 'département',
-}
-
 export default interface CartographieProps {
   territoire: {
-    maille: Maille,
+    maille: 'france' | 'région' | 'département',
     codeInsee: string,
   }
 }
