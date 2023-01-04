@@ -46,11 +46,14 @@
     "@prisma/client": "^4.8.0",
     "@tanstack/react-table": "^8.7.4",
     "dotenv-cli": "^6.0.0",
-    "next": "^13.1.1",
+    "geojson2svg": "^1.3.3",
+    "next": "^13.0.7",
     "nextjs-basic-auth-middleware": "^2.0.0",
+    "proj4": "^2.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "zustand": "^4.2.0"
+    "reproject": "^1.2.7",
+    "zustand": "^4.1.5"
   },
   "devDependencies": {
     "postcss-styled-components": "^0.2.1",
