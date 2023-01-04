@@ -7,6 +7,9 @@ import PérimètreMinistérielFixture from '@/fixtures/PérimètreMinistérielFi
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import PageChantiers from './PageChantiers';
 
+// eslint-disable-next-line unicorn/consistent-function-scoping
+jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function Cartographie() { return 'Carto'; });
+
 class PageChantiersTest {
   périmètresMinistériels = PérimètreMinistérielFixture.générerPlusieurs(2);
 

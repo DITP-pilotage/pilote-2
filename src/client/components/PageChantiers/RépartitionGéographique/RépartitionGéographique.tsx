@@ -1,4 +1,5 @@
 import Titre from '@/components/_commons/Titre/Titre';
+import Cartographie from '@/components/_commons/Cartographie/Cartographie';
 
 export default function RépartitionGéographique() {
   return (
@@ -9,9 +10,12 @@ export default function RépartitionGéographique() {
       >
         Répartition géographique
       </Titre>
-      <p className='fr-grid-row fr-grid-row--center'>
-        A venir...
-      </p>
+      <Cartographie
+        territoire={{
+          maille: 'france',
+          codeInsee: '84',
+        }}
+      />
     </>
   );
 }
