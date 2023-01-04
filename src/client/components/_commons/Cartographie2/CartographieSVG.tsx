@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CartographieSVGProps, { ViewboxType } from '@/components/_commons/Cartographie2/CartographieSVG.interface';
 
 export default function CartographieSVG({ svgPaths, métadonnées }: CartographieSVGProps) {
+  const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<ViewboxType>({
     x: 0,
     y: 0,
@@ -9,10 +10,16 @@ export default function CartographieSVG({ svgPaths, métadonnées }: Cartographi
     height: métadonnées.hauteur,
   });
 
+  useEffect(() => {
+    if (svgRef && svgRef.current)
+      setViewbox(svgRef.current.getBBox());
+  }, [svgRef]);
+
   return (
     <div>
       <svg
         fill="#313178"
+        ref={svgRef}
         stroke="#FFFFFF"
         strokeWidth="0.3"
         version="1.2"
@@ -26,16 +33,13 @@ export default function CartographieSVG({ svgPaths, métadonnées }: Cartographi
         xmlns="http://www.w3.org/2000/svg"
       >
         {
-            svgPaths.map(path => (
-              <path
-                d={path.d}
-                key={path.nom}
-                onClick={(event) => {
-                  setViewbox(event.currentTarget.getBBox());
-                }}
-              />
-            ))
-          }
+          svgPaths.map(path => (
+            <path
+              d={path.d}
+              key={path.nom}
+            />
+          ))
+        }
       </svg>
     </div>
   );

@@ -15,3 +15,16 @@ export type MétadonnéesType = {
   largeur: number,
   hauteur: number,
 };
+
+export enum Maille {
+  FRANCE = 'france',
+  RÉGION = 'région',
+  DÉPARTEMENT = 'département',
+}
+
+export default interface CartographieProps {
+  territoire: {
+    maille: Maille,
+    codeInsee: string,
+  }
+}
