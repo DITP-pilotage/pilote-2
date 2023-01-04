@@ -15,8 +15,8 @@ export default function BarreDeProgression({
 }: BarreDeProgressionProps) {
   const pourcentageAffiché = valeur === null ? '- %' : (
     typeof valeur === 'number'
-      ? `${(100 * valeur).toFixed(0)} %`
-      : `${(100 * valeur.moyenne).toFixed(0)}%`
+      ? `${valeur.toFixed(0)} %`
+      : `${valeur.moyenne.toFixed(0)} %`
   );
 
   return (
@@ -31,12 +31,14 @@ export default function BarreDeProgression({
           typeof valeur === 'number'
             ?
               <progress
+                max="100"
                 value={valeur}
               >
                 {pourcentageAffiché}
               </progress>
             :
               <progress
+                max="100"
                 value={valeur ? valeur.moyenne : undefined}
               >
                 {pourcentageAffiché}

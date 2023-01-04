@@ -4,10 +4,3 @@ export function normaliserChaîneDeCaractères(chaîneDeCaractères: string) {
     .toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036F]/g, ''); // Enlève les diacritiques
 }
-
-export function générerCaractèresSpéciaux(nombre: number) {
-  const caractères = ['/', ':', '@', '[', ']', '#', 'é'];
-  return Array.from({ length: nombre })
-    .map(() => caractères[Math.floor(Math.random() * caractères.length)])
-    .join('');
-}

@@ -29,9 +29,9 @@ const colonnes = [
         taille="moyenne"
         valeur={{
           minimum: 0,
-          médiane: 0.82,
-          moyenne: 0.75,
-          maximum: 1,
+          médiane: 82,
+          moyenne: 75,
+          maximum: 100,
         }}
         variante='primaire'
       />

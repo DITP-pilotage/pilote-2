@@ -1,7 +1,11 @@
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import ChantierAvancement from './ChantierAvancement.interface';
 import Météo from './Météo.interface';
+
 export type Axe = { id: string, nom: string } | null;
+export type Avancement = {
+  global: number | null
+  annuel: number | null
+};
 
 export default interface Chantier {
   id: string;
@@ -13,6 +17,6 @@ export default interface Chantier {
   codeInsee: string;
   maille: string;
   météo: Météo;
-  avancement: ChantierAvancement;
+  avancement: Avancement
   indicateurs: Indicateur[];
 }

@@ -2,14 +2,13 @@
 import { getAllByRole, getByLabelText, getByText, queryByText, render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import ChantierInfosFixture from '@/fixtures/ChantierInfosFixture';
-import PérimètresMinistérielsFixture from '@/fixtures/PérimètresMinistérielsFixture';
+import ChantierInfosFixture from '@/fixtures/ChantierInfoFixture';
+import PérimètreMinistérielFixture from '@/fixtures/PérimètreMinistérielFixture';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import PageChantiers from './PageChantiers';
 
 class PageChantiersTest {
-
-  périmètresMinistériels = PérimètresMinistérielsFixture.générerPlusieurs(2);
+  périmètresMinistériels = PérimètreMinistérielFixture.générerPlusieurs(2);
 
   chantiers = ChantierInfosFixture.générerPlusieurs(3, [
     { périmètreIds: [this.périmètresMinistériels[0].id] },

@@ -1,20 +1,21 @@
 import { faker } from '@faker-js/faker';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import FixtureInterface from './Fixture.interface';
+import { générerUnIdentifiantUnique } from './utils';
 
-const PérimètresMinistérielsFixture: FixtureInterface<PérimètreMinistériel> = {
+class PérimètreMinistérielFixture implements FixtureInterface<PérimètreMinistériel> {
   générer(valeursFixes: Partial<PérimètreMinistériel> = {}) {
     return {
-      id: `PER-${faker.random.alphaNumeric(5)}`,
+      id: générerUnIdentifiantUnique('PER'),
       nom: faker.lorem.words(4),
       ...valeursFixes,
     };
-  },
+  }
 
   générerPlusieurs(quantité: number, valeursFixes: Partial<PérimètreMinistériel>[] = []) {
     return Array.from({ length: quantité })
       .map((_, index) => this.générer(valeursFixes[index]));
-  },
-};
+  }
+}
 
-export default PérimètresMinistérielsFixture;
+export default new PérimètreMinistérielFixture();

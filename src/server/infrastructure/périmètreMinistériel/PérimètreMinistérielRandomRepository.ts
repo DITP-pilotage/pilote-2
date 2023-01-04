@@ -1,4 +1,4 @@
-import PérimètresMinistérielsFixtures from '@/fixtures/PérimètresMinistérielsFixture';
+import PérimètreMinistérielFixture from '@/fixtures/PérimètreMinistérielFixture';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 
@@ -14,6 +14,6 @@ export default class PérimètreMinistérielRandomRepository implements Périmè
   }
 
   async getListe(): Promise<PérimètreMinistériel[]> {
-    return PérimètresMinistérielsFixtures.générerPlusieurs(this.ids.length, this.ids);
+    return PérimètreMinistérielFixture.générerPlusieurs(this.ids.length, this.ids);
   }
 }
