@@ -7,7 +7,7 @@ describe('ChantierRandomRepository', () => {
     const repository: ChantierRepository = new ChantierRandomRepository();
 
     // WHEN
-    const chantier = await repository.getById('abc1234', 'FR', 'NAT');
+    const chantier = await repository.getById('abc1234');
 
     // THEN
     expect(chantier.id).toBe('abc1234');
@@ -29,7 +29,7 @@ describe('ChantierRandomRepository', () => {
     const repository: ChantierRepository = new ChantierRandomRepository(valeursFixes);
 
     // WHEN
-    const chantier = await repository.getById('abc1234', 'FR', 'NAT');
+    const chantier = await repository.getById('abc1234');
 
     // THEN
     expect(chantier.mailles).toStrictEqual({

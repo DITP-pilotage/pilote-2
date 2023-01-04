@@ -61,12 +61,12 @@ export default class ChantierSQLRepository implements ChantierRepository {
     });
   }
 
-  async getById(id: string, code_insee: string, maille: string) {
+  async getById(id: string) {
     const chantierPrisma = await this.prisma.chantier.findUnique({
-      where: { id_code_insee_maille: { id, code_insee, maille } },
+      where: { id_code_insee_maille: { id, code_insee: 'FR', maille: 'NAT' } },
     });
     if (!chantierPrisma) {
-      throw new Error(`Erreur: Chantier '${id} - ${code_insee} - ${maille}' non trouvé.`);
+      throw new Error(`Erreur: Chantier '${id} - FR - NAT' non trouvé.`);
     }
     return mapToDomain(chantierPrisma);
   }

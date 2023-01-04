@@ -4,7 +4,7 @@ import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
 import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
-import { Avancement } from '@/server/domain/chantier/Chantier.interface';
+import { Avancement, Maille } from '@/server/domain/chantier/Chantier.interface';
 import ListeChantiersProps from './ListeChantiers.interface';
 
 function afficherLesBarresDeProgression(avancement: Avancement) {
@@ -62,12 +62,12 @@ const colonnes = [
     cell: météo => <PictoMétéo valeur={météo.getValue()} />,
     enableGlobalFilter: false,
   }),
-  reactTableColonnesHelper.accessor('avancement', {
+  reactTableColonnesHelper.accessor('mailles.nationale', {
     header: 'Avancement',
-    cell: avancement => afficherLesBarresDeProgression(avancement.getValue()),
+    cell: avancement => afficherLesBarresDeProgression(avancement.getValue().FR.avancement),
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => {
-      return comparerAvancementChantier(a.getValue<Avancement>(columnId).global, b.getValue<Avancement>(columnId).global);
+      return comparerAvancementChantier(a.getValue<Maille>(columnId).FR.avancement.global, b.getValue<Maille>(columnId).FR.avancement.global);
     },
   }),
 ];

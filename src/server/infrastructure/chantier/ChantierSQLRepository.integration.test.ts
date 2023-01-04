@@ -8,17 +8,14 @@ describe('ChantierSQLRepository', () => {
     // GIVEN
     const prisma = new PrismaClient();
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
-    const chantiers = ChantierFixture.générerPlusieurs(2, [
-      { codeInsee: 'FR', maille: 'NAT' },
-      { codeInsee: '27', maille: 'DEPT' },
-    ]);
+    const chantiers = ChantierFixture.générerPlusieurs(2);
 
     await repository.add(chantiers[0]);
     await repository.add(chantiers[1]);
 
     // WHEN
-    const result1 = await repository.getById(chantiers[0].id, 'FR', 'NAT');
-    const result2 = await repository.getById(chantiers[1].id, '27', 'DEPT');
+    const result1 = await repository.getById(chantiers[0].id);
+    const result2 = await repository.getById(chantiers[1].id);
 
     // THEN
     expect(result1.nom).toEqual(chantiers[0].nom);
@@ -45,7 +42,7 @@ describe('ChantierSQLRepository', () => {
     await repository.add(chantier);
 
     // WHEN
-    const result = await repository.getById(chantier.id, 'FR', 'NAT');
+    const result = await repository.getById(chantier.id);
 
     // THEN
     expect(result.mailles).toStrictEqual({

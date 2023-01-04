@@ -7,7 +7,7 @@ export type Avancement = {
   annuel: number | null
 };
 
-type Maille = Record<string, {
+export type Maille = Record<string, {
   codeInsee: string,
   avancement: Avancement,
 }>;

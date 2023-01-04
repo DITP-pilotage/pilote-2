@@ -8,7 +8,14 @@ function mapToDomain(chantierPrisma: chantier): ChantierInfo {
     nom: chantierPrisma.nom,
     périmètreIds: chantierPrisma.perimetre_ids,
     météo: null,
-    avancement: { annuel: null, global: null },
+    mailles: {
+      nationale: {
+        FR: {
+          codeInsee: chantierPrisma.code_insee,
+          avancement: { annuel: null, global: chantierPrisma.taux_avancement },
+        },
+      },
+    },
   };
 }
 
