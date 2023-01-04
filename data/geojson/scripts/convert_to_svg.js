@@ -5,8 +5,14 @@ const geojson2svg = require('geojson2svg');
 
 const WIDTH = 110; // svg output coords
 const HEIGHT = 100; // svg output coords
+const METADATA_LIST = ['dep', 'reg', 'libgeo']
 
 const converter = geojson2svg({
+  attributes: METADATA_LIST.map(metadataPropName => ({
+    property: `properties.${metadataPropName}`,
+    type: 'dynamic',
+    key: `data-${metadataPropName}`
+  })),
   viewportSize: { width: WIDTH, height: HEIGHT },
   //mapExtent: {left: -5.2, bottom: 41.3, right: 9.6, top: 51.12}, // bounding box of France (GPS coords)
   mapExtent: { left: -405000, bottom: 5910000, right: 765000, top: 6980000 }, // bounding box of France (meters)
