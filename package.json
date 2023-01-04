@@ -46,11 +46,11 @@
     "@prisma/client": "^4.8.0",
     "@tanstack/react-table": "^8.7.4",
     "dotenv-cli": "^6.0.0",
-    "next": "^13.0.7",
+    "next": "^13.1.1",
     "nextjs-basic-auth-middleware": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "zustand": "^4.1.5",
+    "zustand": "^4.2.0",
     "d3-selection": "^3.0.0",
     "d3-zoom": "^3.0.0",
     "@cutting/use-get-parent-size": "^1.25.0"
