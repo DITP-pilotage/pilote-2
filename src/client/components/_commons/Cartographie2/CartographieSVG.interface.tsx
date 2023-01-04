@@ -13,5 +13,4 @@ export type ViewboxType = {
 
 export default interface CartographieSVGProps {
   svgPaths: DépartementsType | RégionsType,
-  métadonnées: MétadonnéesType,
 }

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import CartographieSVG from '@/components/_commons/Cartographie2/CartographieSVG';
 import CartographieProps, {
   DépartementsType,
-  MétadonnéesType,
   RégionsType,
 } from '@/components/_commons/Cartographie2/Cartographie.interface';
 
@@ -10,7 +9,6 @@ export default function Cartographie({ territoire }: CartographieProps) {
 
   const [départements, setDépartements] = useState<DépartementsType>();
   const [régions, setRégions] = useState<RégionsType>();
-  const [métadonnées, setMétadonnées] = useState<MétadonnéesType>();
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/comma-dangle
@@ -26,14 +24,12 @@ export default function Cartographie({ territoire }: CartographieProps) {
 
     télécharger('/geo/départements.json', setDépartements);
     télécharger('/geo/régions.json', setRégions);
-    télécharger('/geo/métadonnées.json', setMétadonnées);
   }, []);
 
 
   return (
-    départements && régions && métadonnées) ? (
+    départements && régions) ? (
       <CartographieSVG
-        métadonnées={métadonnées}
         svgPaths={
           territoire.maille === 'région'
             ? départements.filter(département => département.région === territoire.codeInsee)

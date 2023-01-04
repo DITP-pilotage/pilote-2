@@ -11,11 +11,6 @@ export type RégionsType = {
   nom: string,
 }[];
 
-export type MétadonnéesType = {
-  largeur: number,
-  hauteur: number,
-};
-
 export enum Maille {
   FRANCE = 'france',
   RÉGION = 'région',

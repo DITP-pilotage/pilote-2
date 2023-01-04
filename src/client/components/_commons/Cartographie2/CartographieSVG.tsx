@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import CartographieSVGProps, { ViewboxType } from '@/components/_commons/Cartographie2/CartographieSVG.interface';
 
-export default function CartographieSVG({ svgPaths, métadonnées }: CartographieSVGProps) {
+export default function CartographieSVG({ svgPaths }: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<ViewboxType>({
     x: 0,
     y: 0,
-    width: métadonnées.largeur,
-    height: métadonnées.hauteur,
+    width: 0,
+    height: 0,
   });
 
   useEffect(() => {
