@@ -15,6 +15,8 @@ function mapToDomain(chantierPrisma: chantier): ChantierInfo {
           avancement: { annuel: null, global: chantierPrisma.taux_avancement },
         },
       },
+      régionale: {},
+      départementale: {},
     },
   };
 }

@@ -27,6 +27,8 @@ class ChantierFixture implements FixtureInterface<Chantier> {
             },
           },
         },
+        régionale: {},
+        départementale: {},
       },
       avancement: {
         annuel: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),

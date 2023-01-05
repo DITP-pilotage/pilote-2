@@ -21,6 +21,8 @@ class ChantierInfoFixture implements FixtureInterface<ChantierInfo> {
             },
           },
         },
+        régionale: {},
+        départementale: {},
       },
       ...valeursFixes,
     };
@@ -38,6 +40,8 @@ class ChantierInfoFixture implements FixtureInterface<ChantierInfo> {
                   avancement: { annuel: null, global: null },
                 },
               },
+              régionale: {},
+              départementale: {},
             }, 
             ...valeursFixes[index], 
           });

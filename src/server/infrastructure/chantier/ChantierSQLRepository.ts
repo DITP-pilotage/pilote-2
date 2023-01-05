@@ -1,60 +1,88 @@
 import { chantier, PrismaClient } from '@prisma/client';
-import Chantier, { Maille } from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { ajouteValeurDeMaille, NomDeMaille } from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 
 ///
 // Fonctions utilitaires
 
-function mapToDomain(chantierPrisma: chantier): Chantier {
-  return {
-    id: chantierPrisma.id,
-    nom: chantierPrisma.nom,
-    axe: null,
-    nomPPG: null,
-    périmètreIds: chantierPrisma.perimetre_ids,
-    météo: null,
-    mailles: {
-      nationale: {
-        FR: {
-          codeInsee: chantierPrisma.code_insee,
-          avancement: { annuel: null, global: chantierPrisma.taux_avancement },
-        },
-      },
-    },
-    avancement: {
-      annuel: null,
-      global: chantierPrisma.taux_avancement,
-    },
-    indicateurs: [],
-  };
-}
-
-const MAILLES_CODES = {
+const CODES_MAILLES = {
   nationale: 'NAT',
   départementale: 'DEPT',
   régionale: 'REG',
 };
 
+const NOMS_MAILLES = {
+  NAT: 'nationale',
+  DEPT: 'départementale',
+  REG: 'régionale',
+};
+
+class ErreurChantierNonTrouvé extends Error {
+  constructor(idChantier: string) {
+    super(`Erreur: chantier '${idChantier}' non trouvé.`);
+  }
+}
+
+class ErreurChantierSansMailleNationale extends Error {
+  constructor(idChantier: string) {
+    super(`Erreur: le chantier '${idChantier}' n'a pas de maille nationale.`);
+  }
+}
+
+function mapToDomain(rowNationale: chantier, rowsNonNationales: chantier[]): Chantier {
+  const result: Chantier = {
+    id: rowNationale.id,
+    nom: rowNationale.nom,
+    axe: null,
+    nomPPG: null,
+    périmètreIds: rowNationale.perimetre_ids,
+    météo: null,
+    mailles: {
+      nationale: {
+        FR: {
+          codeInsee: rowNationale.code_insee,
+          avancement: { annuel: null, global: rowNationale.taux_avancement },
+        },
+      },
+      départementale: {},
+      régionale: {},
+    },
+    avancement: {
+      annuel: null,
+      global: rowNationale.taux_avancement,
+    },
+    indicateurs: [],
+  };
+
+  for (const row of rowsNonNationales) {
+    // @ts-ignore TODO: lancer une erreur
+    const nomDeMaille = NOMS_MAILLES[row.maille];
+    const valeurDeMaille = {
+      codeInsee: row.code_insee,
+      avancement: { annuel: null, global: row.taux_avancement },
+    };
+    ajouteValeurDeMaille(result, nomDeMaille, valeurDeMaille);
+  }
+  return result;
+}
+
 function mapToPrismaRows(chantierDomaine: Chantier): chantier[] {
   const result: chantier[] = [];
-  for (const nomDeMaille in chantierDomaine.mailles) {
-    // @ts-ignore
-    const maille: Maille = chantierDomaine.mailles[nomDeMaille];
-    // @ts-ignore
-    const codeMaille = MAILLES_CODES[nomDeMaille];
-    for (const codeInsee in maille) {
+  Object.entries(chantierDomaine.mailles).forEach(([nomDeMaille, maille]) => {
+    const codeMaille = CODES_MAILLES[nomDeMaille as NomDeMaille];
+    Object.values(maille).forEach(valeurDeMaille => {
       result.push({
         id: chantierDomaine.id,
         nom: chantierDomaine.nom,
         id_perimetre: 'deleteme',
         perimetre_ids: chantierDomaine.périmètreIds,
         zone_nom: 'TBD',
-        code_insee: codeInsee,
-        taux_avancement: chantierDomaine.mailles.nationale.FR.avancement.global,
+        code_insee: valeurDeMaille.codeInsee,
+        taux_avancement: valeurDeMaille.avancement.global,
         maille: codeMaille,
       });
-    }
-  }
+    });
+  });
   return result;
 }
 
@@ -78,12 +106,17 @@ export default class ChantierSQLRepository implements ChantierRepository {
   }
 
   async getById(id: string) {
-    const chantierPrisma = await this.prisma.chantier.findUnique({
-      where: { id_code_insee_maille: { id, code_insee: 'FR', maille: 'NAT' } },
+    const rows: chantier[] = await this.prisma.chantier.findMany({
+      where: { id },
     });
-    if (!chantierPrisma) {
-      throw new Error(`Erreur: Chantier '${id} - FR - NAT' non trouvé.`);
+    if (!rows || rows.length === 0) {
+      throw new ErreurChantierNonTrouvé(id);
     }
-    return mapToDomain(chantierPrisma);
+    const rowNationale = rows.find(row => row.maille === 'NAT');
+    if (!rowNationale) {
+      throw new ErreurChantierSansMailleNationale(rows[0].id);
+    }
+    const rowsNonNationales = rows.filter(r => r.maille !== 'NAT');
+    return mapToDomain(rowNationale, rowsNonNationales);
   }
 }

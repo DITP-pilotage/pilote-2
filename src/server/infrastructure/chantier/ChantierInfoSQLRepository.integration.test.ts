@@ -13,12 +13,13 @@ describe('ChantierInfoSQLRepository', () => {
     const chantierRepository: ChantierRepository = new ChantierSQLRepository(prisma);
     const chantier1 = ChantierFixture.générer({
       id: 'CH-001',
-      mailles: { nationale: { FR: { codeInsee: 'FR', avancement: { annuel: 50, global: 50 } } } },
+      mailles: { nationale: { FR: { codeInsee: 'FR', avancement: { annuel: 50, global: 50 } } }, régionale: {}, départementale: {} },
     });
     const chantier2 = ChantierFixture.générer({
       id: 'CH-002',
       mailles: {
         nationale: { FR: { codeInsee: 'FR', avancement: { annuel: 50, global: 50 } } },
+        régionale: {},
         départementale: { '13': { codeInsee: '13', avancement: { annuel: 50, global: 50 } } },
       },
     });

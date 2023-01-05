@@ -24,6 +24,8 @@ describe('ChantierRandomRepository', () => {
             avancement: { annuel: 14, global: 18 },
           },
         },
+        régionale: {},
+        départementale: {},
       },
     };
     const repository: ChantierRepository = new ChantierRandomRepository(valeursFixes);
@@ -42,6 +44,8 @@ describe('ChantierRandomRepository', () => {
           },
         },
       },
+      régionale: {},
+      départementale: {},
     });
   });
 });

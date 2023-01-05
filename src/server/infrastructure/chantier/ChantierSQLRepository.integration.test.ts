@@ -22,7 +22,7 @@ describe('ChantierSQLRepository', () => {
     expect(result2.nom).toEqual(chantiers[1].nom);
   });
 
-  test('un chantier sql contient une maille', async () => {
+  test('un chantier contenant une maille nationale', async () => {
     // GIVEN
     const prisma = new PrismaClient();
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
@@ -33,6 +33,53 @@ describe('ChantierSQLRepository', () => {
           FR: {
             codeInsee: 'FR',
             avancement: { annuel: 14, global: 18 },
+          },
+        },
+        régionale: {},
+        départementale: {},
+      },
+    };
+
+    const chantier = ChantierFixture.générer(valeursFixes);
+    await repository.add(chantier);
+
+    // WHEN
+    const result = await repository.getById(chantier.id);
+
+    // THEN
+    expect(result.mailles).toStrictEqual({
+      nationale: {
+        FR: {
+          codeInsee: 'FR',
+          avancement: {
+            annuel: null,
+            global: 18,
+          },
+        },
+      },
+      régionale: {},
+      départementale: {},
+    });
+  });
+
+  test('un chantier contenant une maille nationale et départementale', async () => {
+    // GIVEN
+    const prisma = new PrismaClient();
+    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+    const valeursFixes = {
+      mailles: {
+        nationale: {
+          FR: {
+            codeInsee: 'FR',
+            avancement: { annuel: 14, global: 18 },
+          },
+        },
+        régionale: {},
+        départementale: {
+          '13': {
+            codeInsee: '13',
+            avancement: { annuel: 39, global: 45 },
           },
         },
       },
@@ -55,6 +102,13 @@ describe('ChantierSQLRepository', () => {
           },
         },
       },
+      départementale: {
+        '13': {
+          codeInsee: '13',
+          avancement: { annuel: null, global: 45 },
+        },
+      },
+      régionale: {},
     });
   });
 });
