@@ -1,5 +1,5 @@
-import { Territoire } from '@/components/_commons/Cartographie/Cartographie.interface';
+import { TracéTerritoire } from '@/components/_commons/Cartographie/Cartographie.interface';
 
 export default interface CartographieAffichageProps {
-  svgPaths: Territoire[]
+  tracésTerritoires: TracéTerritoire[]
 }

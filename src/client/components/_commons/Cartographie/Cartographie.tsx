@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import CartographieProps, { Département, Région } from '@/components/_commons/Cartographie/Cartographie.interface';
+import CartographieProps, { TracéDépartement, TracéRégion } from '@/components/_commons/Cartographie/Cartographie.interface';
 import CartographieAffichage from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage';
 
-export default function Cartographie({ territoire }: CartographieProps) {
+export default function Cartographie({ zone }: CartographieProps) {
 
-  const [départements, setDépartements] = useState<Département[]>();
-  const [régions, setRégions] = useState<Région[]>();
+  const [départements, setDépartements] = useState<TracéDépartement[]>();
+  const [régions, setRégions] = useState<TracéRégion[]>();
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/comma-dangle
@@ -23,13 +23,12 @@ export default function Cartographie({ territoire }: CartographieProps) {
     télécharger('/geo/régions.json', setRégions);
   }, []);
 
-
   return (
     départements && régions) ? (
       <CartographieAffichage
-        svgPaths={
-          territoire.maille === 'région'
-            ? départements.filter(département => département.codeInseeRégion === territoire.codeInsee)
+        tracésTerritoires={
+          zone.divisionAdministrative === 'région'
+            ? départements.filter(département => département.codeInseeRégion === zone.codeInsee)
             : départements
         }
       />

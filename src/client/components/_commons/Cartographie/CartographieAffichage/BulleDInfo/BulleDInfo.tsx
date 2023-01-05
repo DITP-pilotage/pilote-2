@@ -1,8 +1,7 @@
 import BulleDInfoStyled from '@/components/_commons/Cartographie/CartographieAffichage/BulleDInfo/BulleDInfo.styled';
 import BulleDInfoProps from '@/components/_commons/Cartographie/CartographieAffichage/BulleDInfo/BulleDInfo.interface';
 
-export default function BulleDInfo({ x, y, territoireSurvolé }: BulleDInfoProps) {
-
+export default function BulleDInfo({ x, y, titre, contenu }: BulleDInfoProps) {
   return (
     <BulleDInfoStyled
       style={{
@@ -11,10 +10,10 @@ export default function BulleDInfo({ x, y, territoireSurvolé }: BulleDInfoProps
       }}
     >
       <div className='fr-py-1w fr-px-2w'>
-        {`${territoireSurvolé?.codeInsee} - ${territoireSurvolé?.nom}`}
+        { titre }
       </div>
       <div className='fr-py-1w fr-px-2w fr-text--bold'>
-        Non renseigné
+        { contenu }
       </div>
     </BulleDInfoStyled>
   );

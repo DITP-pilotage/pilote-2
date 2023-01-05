@@ -2,19 +2,24 @@
  * Convertit les fichiers geojson souhaités en svg
  * Les fichiers sources sont prélevés dans '03_repositionné'
  * Les fichiers créés sont écrits dans '04_données_extraites'
+ *   et dans le CHEMIN_D_ACCÈS_RÉPERTOIRE_DESTINATION défini ci-dessous
  */
 
 const { readFileSync, writeFileSync } = require('fs');
 
 const HAUTEUR = 100; // hauteur du svg en sortie
 const LARGEUR = 110; // largeur du svg en sortie
-const FICHIERS_À_CONVERTIR = ['a-reg2021.json', 'a-dep2021.json']; // nom des fichiers d'entrée
+const FICHIERS_À_CONVERTIR = {
+  départements: 'a-dep2021.json',
+  régions: 'a-reg2021.json',
+};
+const CHEMIN_D_ACCÈS_RÉPERTOIRE_DESTINATION = `${__dirname}/../../../public/geo`;
 const LISTE_MÉTADONNÉES = [{ // propriétés des 'features' du geojson à propager dans le svg final
   nomOriginal: 'dep',
-  nomCible: 'département',
+  nomCible: 'codeInsee',
 },{
   nomOriginal: 'reg',
-  nomCible: 'région',
+  nomCible: 'codeInseeRégion',
 },{
   nomOriginal: 'libgeo',
   nomCible: 'nom',
@@ -59,7 +64,7 @@ proj4.defs([
   ]
 ]);
 
-function convertirGeojson(geojsonNomDeFichier) {
+function convertirGeojson(geojsonNomDeFichier, nomDuFichierDestinationSansExtension) {
   // Récupère les fichiers geojson d'entrée
   const geojsonNomDeFichierSansExtension = geojsonNomDeFichier.replace(/\.[^/.]+$/, "");
 
@@ -85,9 +90,15 @@ function convertirGeojson(geojsonNomDeFichier) {
       // Récupérer les attributs HTML à partir de la chaîne de caractères `<path d="..." data-machin="..." >`
       const attributs = [...svgPathString.matchAll(/\s(?:data-)?([A-zÀ-ú0-9]+)=\"([^\"]*)\"/g)]
       return Object.fromEntries(
-        attributs.map(attributRegexpMatch => (
-          attributRegexpMatch.slice(1, 3) // seuls les deux groupes de capture Regexp nous intéressent (le nom de l'attribut et sa valeur)
-        ))
+        attributs
+          .map(attributRegexpMatch => (
+            attributRegexpMatch.slice(1, 3) // seuls les deux groupes de capture Regexp nous intéressent (le nom de l'attribut et sa valeur)
+          ))
+          .map(([nomAttribut, valeurAttribut]) => (
+            nomAttribut === 'd'
+              ? ['tracéSVG', valeurAttribut]
+              : [nomAttribut, valeurAttribut]
+          ))
       );
     })
   );
@@ -109,6 +120,10 @@ function convertirGeojson(geojsonNomDeFichier) {
   // Ecrit le fichier json et le svg
   writeFileSync(`${__dirname}/../04_données_extraites/${geojsonNomDeFichierSansExtension}.json`, fichierJson);
   writeFileSync(`${__dirname}/../04_données_extraites/${geojsonNomDeFichierSansExtension}.svg`, fichierSvg);
+
+  // Ecrit le fichier dans le code source côté client
+  writeFileSync(`${CHEMIN_D_ACCÈS_RÉPERTOIRE_DESTINATION}/${nomDuFichierDestinationSansExtension}.json`, fichierJson);
 }
 
-FICHIERS_À_CONVERTIR.forEach(fichier => convertirGeojson(fichier));
+convertirGeojson(FICHIERS_À_CONVERTIR.départements, 'départements');
+convertirGeojson(FICHIERS_À_CONVERTIR.régions, 'régions');

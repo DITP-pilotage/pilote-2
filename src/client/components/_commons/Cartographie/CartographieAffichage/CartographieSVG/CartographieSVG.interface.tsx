@@ -1,4 +1,4 @@
-import { Territoire } from '@/components/_commons/Cartographie/Cartographie.interface';
+import { Territoire, TracéTerritoire } from '@/components/_commons/Cartographie/Cartographie.interface';
 
 export type Viewbox = {
   x: number,
@@ -8,6 +8,6 @@ export type Viewbox = {
 };
 
 export default interface CartographieSVGProps {
-  svgPaths: Territoire[],
-  setTerritoireSurvolé:  (state: Partial<Territoire> | null) => void
+  tracésTerritoires: TracéTerritoire[],
+  setTerritoireSurvolé:  (state: Territoire | null) => void
 }

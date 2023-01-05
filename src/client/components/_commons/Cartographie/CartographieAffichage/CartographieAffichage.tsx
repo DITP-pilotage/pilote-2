@@ -4,9 +4,9 @@ import CartographieAffichageProps from '@/components/_commons/Cartographie/Carto
 import BulleDInfo from '@/components/_commons/Cartographie/CartographieAffichage/BulleDInfo/BulleDInfo';
 import { Territoire } from '@/components/_commons/Cartographie/Cartographie.interface';
 
-export default function CartographieAffichage({ svgPaths }: CartographieAffichageProps) {
+export default function CartographieAffichage({ tracésTerritoires }: CartographieAffichageProps) {
   const [sourisPosition, setSourisPosition] = useState({ x: 0, y: 0 });
-  const [territoireSurvolé, setTerritoireSurvolé] = useState<Partial<Territoire> | null>(null);
+  const [territoireSurvolé, setTerritoireSurvolé] = useState<Territoire | null>(null);
 
   return (
     <div
@@ -19,14 +19,15 @@ export default function CartographieAffichage({ svgPaths }: CartographieAffichag
     >
       {territoireSurvolé ?
         <BulleDInfo
-          territoireSurvolé={territoireSurvolé}
+          contenu="Non renseigné"
+          titre={`${territoireSurvolé.codeInsee} - ${territoireSurvolé.nom}`}
           x={sourisPosition.x}
           y={sourisPosition.y}
         />
         : null}
       <CartographieSVG
         setTerritoireSurvolé={setTerritoireSurvolé}
-        svgPaths={svgPaths}
+        tracésTerritoires={tracésTerritoires}
       />
     </div>
   );

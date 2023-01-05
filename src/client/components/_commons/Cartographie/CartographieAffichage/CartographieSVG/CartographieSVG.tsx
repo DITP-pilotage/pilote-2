@@ -4,7 +4,7 @@ import CartographieZoomEtDéplacement
   from '@/components/_commons/Cartographie/CartographieZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
 
-function CartographieSVG({ svgPaths, setTerritoireSurvolé }: CartographieSVGProps) {
+function CartographieSVG({ tracésTerritoires, setTerritoireSurvolé }: CartographieSVGProps) {
   const conteneurRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
@@ -37,19 +37,20 @@ function CartographieSVG({ svgPaths, setTerritoireSurvolé }: CartographieSVGPro
         `}
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g className="canvas">
+        <g
+          className="canvas"
+          onMouseLeave={() => {
+            setTerritoireSurvolé(null);
+          }}
+        >
           {
-            svgPaths.map(path => (
+            tracésTerritoires.map(tracéTerritoire => (
               <path
-                d={path.d}
-                key={path.nom}
-                onMouseEnter={(event) => {
-                  setTerritoireSurvolé({ codeInsee: path.codeInsee, nom: path.nom });
-                  event.currentTarget.setAttribute('opacity', '0.72');
-                }}
-                onMouseLeave={(event) => {
-                  setTerritoireSurvolé(null);
-                  event.currentTarget.setAttribute('opacity', '1');
+                className="territoire"
+                d={tracéTerritoire.tracéSVG}
+                key={tracéTerritoire.nom}
+                onMouseEnter={() => {
+                  setTerritoireSurvolé({ codeInsee: tracéTerritoire.codeInsee, nom: tracéTerritoire.nom });
                 }}
               />
             ))
@@ -60,4 +61,7 @@ function CartographieSVG({ svgPaths, setTerritoireSurvolé }: CartographieSVGPro
   );
 }
 
-export default memo(CartographieSVG, (prevProps, nextProps) => prevProps.svgPaths === nextProps.svgPaths);
+export default memo(CartographieSVG, (prevProps, nextProps) => (
+  prevProps.tracésTerritoires === nextProps.tracésTerritoires &&
+  prevProps.setTerritoireSurvolé === nextProps.setTerritoireSurvolé
+));
