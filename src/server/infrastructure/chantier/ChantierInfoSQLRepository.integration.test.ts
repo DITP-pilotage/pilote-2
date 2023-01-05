@@ -11,18 +11,25 @@ describe('ChantierInfoSQLRepository', () => {
     const prisma = new PrismaClient();
     const repository: ChantierInfoRepository = new ChantierInfoSQLRepository(prisma);
     const chantierRepository: ChantierRepository = new ChantierSQLRepository(prisma);
-    const chantier1 = ChantierFixture.générer({ id: 'CH-001', zoneNom: 'National' });
-    const chantier2 = ChantierFixture.générer({ id: 'CH-002', zoneNom: 'National' });
-    const chantier3 = ChantierFixture.générer({ id: 'CH-003', zoneNom: 'Normandie' });
+    const chantier1 = ChantierFixture.générer({
+      id: 'CH-001',
+      mailles: { nationale: { FR: { codeInsee: 'FR', avancement: { annuel: 50, global: 50 } } } },
+    });
+    const chantier2 = ChantierFixture.générer({
+      id: 'CH-002',
+      mailles: {
+        nationale: { FR: { codeInsee: 'FR', avancement: { annuel: 50, global: 50 } } },
+        départementale: { '13': { codeInsee: '13', avancement: { annuel: 50, global: 50 } } },
+      },
+    });
     await chantierRepository.add(chantier1);
     await chantierRepository.add(chantier2);
-    await chantierRepository.add(chantier3);
 
     // WHEN
-    const chantiers = await repository.getListeMailleNationale();
+    const chantiers = await repository.getListe();
 
     // THEN
-    const ids = chantiers.map((c) => c.id);
+    const ids = chantiers.map(c => c.id);
     expect(ids).toEqual(['CH-001', 'CH-002']);
   });
 });

@@ -18,9 +18,6 @@ export default interface Chantier {
   axe: Axe;
   nomPPG: string | null;
   périmètreIds: string[];
-  zoneNom: string;
-  codeInsee: string;
-  maille: string;
   mailles: {
     nationale: Maille,
     régionale?: Maille,

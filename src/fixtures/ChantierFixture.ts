@@ -16,9 +16,6 @@ class ChantierFixture implements FixtureInterface<Chantier> {
       axe: { id: générerUnIdentifiantUnique('AXE'), nom: faker.lorem.words(3) },
       nomPPG: faker.lorem.words(3),
       périmètreIds: [générerUnIdentifiantUnique('PER')],
-      zoneNom: 'National',
-      codeInsee: 'FR',
-      maille: 'NAT',
       météo: MétéoFixture.générer(),
       mailles: {
         nationale: {

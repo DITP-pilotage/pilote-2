@@ -1,5 +1,5 @@
 import { chantier, PrismaClient } from '@prisma/client';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { Maille } from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 
 ///
@@ -12,9 +12,6 @@ function mapToDomain(chantierPrisma: chantier): Chantier {
     axe: null,
     nomPPG: null,
     périmètreIds: chantierPrisma.perimetre_ids,
-    zoneNom: chantierPrisma.zone_nom,
-    codeInsee: chantierPrisma.code_insee,
-    maille: chantierPrisma.maille,
     météo: null,
     mailles: {
       nationale: {
@@ -32,17 +29,33 @@ function mapToDomain(chantierPrisma: chantier): Chantier {
   };
 }
 
-function mapToPrisma(chantierDomaine: Chantier): chantier {
-  return {
-    id: chantierDomaine.id,
-    nom: chantierDomaine.nom,
-    id_perimetre: 'deleteme',
-    perimetre_ids: chantierDomaine.périmètreIds,
-    zone_nom: chantierDomaine.zoneNom,
-    code_insee: chantierDomaine.codeInsee,
-    taux_avancement: chantierDomaine.mailles.nationale.FR.avancement.global,
-    maille: chantierDomaine.maille,
-  };
+const MAILLES_CODES = {
+  nationale: 'NAT',
+  départementale: 'DEPT',
+  régionale: 'REG',
+};
+
+function mapToPrismaRows(chantierDomaine: Chantier): chantier[] {
+  const result: chantier[] = [];
+  for (const nomDeMaille in chantierDomaine.mailles) {
+    // @ts-ignore
+    const maille: Maille = chantierDomaine.mailles[nomDeMaille];
+    // @ts-ignore
+    const codeMaille = MAILLES_CODES[nomDeMaille];
+    for (const codeInsee in maille) {
+      result.push({
+        id: chantierDomaine.id,
+        nom: chantierDomaine.nom,
+        id_perimetre: 'deleteme',
+        perimetre_ids: chantierDomaine.périmètreIds,
+        zone_nom: 'TBD',
+        code_insee: codeInsee,
+        taux_avancement: chantierDomaine.mailles.nationale.FR.avancement.global,
+        maille: codeMaille,
+      });
+    }
+  }
+  return result;
 }
 
 ///
@@ -56,9 +69,12 @@ export default class ChantierSQLRepository implements ChantierRepository {
   }
 
   async add(chantierToAdd: Chantier) {
-    await this.prisma.chantier.create({
-      data: mapToPrisma(chantierToAdd),
-    });
+    const rows: chantier[] = mapToPrismaRows(chantierToAdd);
+    for (const row of rows) {
+      await this.prisma.chantier.create({
+        data: row,
+      });
+    }
   }
 
   async getById(id: string) {
