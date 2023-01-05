@@ -10,7 +10,8 @@ export default function CartographieAffichage({ tracésTerritoires }: Cartograph
 
   return (
     <div
-      onMouseMove={(event) => {
+      onPointerMove={(event) => {
+        console.log('move!');
         setSourisPosition({
           x: event.clientX,
           y: event.clientY,
