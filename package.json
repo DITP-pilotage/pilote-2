@@ -52,8 +52,7 @@
     "react-dom": "^18.2.0",
     "zustand": "^4.2.0",
     "d3-selection": "^3.0.0",
-    "d3-zoom": "^3.0.0",
-    "@cutting/use-get-parent-size": "^1.25.0"
+    "d3-zoom": "^3.0.0"
   },
   "devDependencies": {
     "postcss-styled-components": "^0.2.1",
