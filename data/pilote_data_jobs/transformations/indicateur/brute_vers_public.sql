@@ -18,56 +18,55 @@ WITH dfakto_indicateur AS (
         JOIN raw_data.dim_structures ON dim_tree_nodes.structure_id = dim_structures.structure_id
     )
 INSERT INTO public.indicateur
-    (
-        (SELECT DISTINCT ON (effect_id, structure_name)
-            indic_id AS id,
-            indic_nom AS nom,
-            indic_parent_ch AS chantier_id,
-            objectif_valeur_cible,
-            objectif_taux_avancement,
-            objectif_date_valeur_cible,
-            indic_type AS type_id,
-            indic_type_name AS type_nom,
-            indic_is_baro AS est_barometre,
-            indic_is_phare AS est_phare,
-            date_valeur_actuelle,
-            date_valeur_initiale,
-            valeur_actuelle,
-            valeur_initiale,
-            m_zone.zone_code AS code_insee,
-            m_zone.zone_type AS maille,
-            m_zone.nom AS zone_nom
-        FROM raw_data.metadata_indicateur m_indicateur
-            JOIN dfakto_indicateur d_indicateur ON m_indicateur.indic_nom = d_indicateur.effect_id AND d_indicateur.structure_name = 'Réforme'
-            LEFT JOIN raw_data.indicateur_type ON indicateur_type.indic_type_id = m_indicateur.indic_type
-            LEFT JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = 'FRANCE'
-        ORDER BY effect_id, structure_name, period_id DESC)
+    ((SELECT DISTINCT ON (effect_id)
+         indic_id AS id,
+         indic_nom AS nom,
+         indic_parent_ch AS chantier_id,
+         objectif_valeur_cible,
+         objectif_taux_avancement,
+         objectif_date_valeur_cible,
+         indic_type AS type_id,
+         indic_type_name AS type_nom,
+         indic_is_baro AS est_barometre,
+         indic_is_phare AS est_phare,
+         date_valeur_actuelle,
+         date_valeur_initiale,
+         valeur_actuelle,
+         valeur_initiale,
+         m_zone.zone_code AS code_insee,
+         m_zone.zone_type AS maille,
+         m_zone.nom AS zone_nom
+    FROM raw_data.metadata_indicateur m_indicateur
+         JOIN dfakto_indicateur d_indicateur ON m_indicateur.indic_nom = d_indicateur.effect_id AND d_indicateur.structure_name = 'Réforme'
+         LEFT JOIN raw_data.indicateur_type ON indicateur_type.indic_type_id = m_indicateur.indic_type
+         JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = 'FRANCE'
+    ORDER BY effect_id, period_id DESC)
     UNION
-        (SELECT DISTINCT ON (effect_id, structure_name, zone_code)
-            indic_id AS id,
-            indic_nom AS nom,
-            indic_parent_ch AS chantier_id,
-            objectif_valeur_cible,
-            objectif_taux_avancement,
-            objectif_date_valeur_cible,
-            indic_type AS type_id,
-            indic_type_name AS type_nom,
-            indic_is_baro AS est_barometre,
-            indic_is_phare AS est_phare,
-            date_valeur_actuelle,
-            date_valeur_initiale,
-            valeur_actuelle,
-            valeur_initiale,
-            m_zone.zone_code AS code_insee,
-            CASE
-                WHEN d_indicateur.structure_name = 'Département'
-                    THEN 'DEPT'
-                WHEN d_indicateur.structure_name = 'Région'
-                    THEN 'REG'
-            END maille,
-            m_zone.nom AS zone_nom
-        FROM raw_data.metadata_indicateur m_indicateur
-            JOIN dfakto_indicateur d_indicateur ON m_indicateur.indic_nom = d_indicateur.effect_id AND d_indicateur.structure_name IN ('Département', 'Région')
-            LEFT JOIN raw_data.indicateur_type ON indicateur_type.indic_type_id = m_indicateur.indic_type
-            LEFT JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = d_indicateur.code_region
-        ORDER BY effect_id, structure_name, zone_code, period_id DESC));
+    (SELECT DISTINCT ON (effect_id, structure_name, m_zone.zone_code)
+        indic_id AS id,
+        indic_nom AS nom,
+        indic_parent_ch AS chantier_id,
+        objectif_valeur_cible,
+        objectif_taux_avancement,
+        objectif_date_valeur_cible,
+        indic_type AS type_id,
+        indic_type_name AS type_nom,
+        indic_is_baro AS est_barometre,
+        indic_is_phare AS est_phare,
+        date_valeur_actuelle,
+        date_valeur_initiale,
+        valeur_actuelle,
+        valeur_initiale,
+        m_zone.zone_code AS code_insee,
+        CASE
+            WHEN d_indicateur.structure_name = 'Département'
+                THEN 'DEPT'
+            WHEN d_indicateur.structure_name = 'Région'
+                THEN 'REG'
+        END maille,
+        m_zone.nom AS zone_nom
+    FROM raw_data.metadata_indicateur m_indicateur
+        JOIN dfakto_indicateur d_indicateur ON m_indicateur.indic_nom = d_indicateur.effect_id AND d_indicateur.structure_name IN ('Département', 'Région')
+        LEFT JOIN raw_data.indicateur_type ON indicateur_type.indic_type_id = m_indicateur.indic_type
+        JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = d_indicateur.code_region
+    ORDER BY effect_id, structure_name, m_zone.zone_code , period_id DESC));
