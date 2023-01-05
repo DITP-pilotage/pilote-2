@@ -13,38 +13,28 @@ const FICHIERS_À_CONVERTIR = {
   départements: 'a-dep2021.json',
   régions: 'a-reg2021.json',
 };
-const CHEMIN_D_ACCÈS_RÉPERTOIRE_DESTINATION = `${__dirname}/../../../public/geo`;
-const LISTE_MÉTADONNÉES = [{ // propriétés des 'features' du geojson à propager dans le svg final
-  nomOriginal: 'dep',
-  nomCible: 'codeInsee',
-},{
-  nomOriginal: 'reg',
-  nomCible: 'codeInseeRégion',
-},{
-  nomOriginal: 'libgeo',
-  nomCible: 'nom',
-}];
+const CHEMIN_D_ACCÈS_RÉPERTOIRE_DESTINATION = `${__dirname}/../../../src/client/components/_commons/Cartographie`;
+const LISTE_MÉTADONNÉES = {
+  départements: [{ // propriétés des 'features' du geojson à propager dans le svg final
+    nomOriginal: 'dep',
+    nomCible: 'codeInsee',
+  },{
+    nomOriginal: 'reg',
+    nomCible: 'codeInseeRégion',
+  },{
+    nomOriginal: 'libgeo',
+    nomCible: 'nom',
+  }],
+  régions: [{
+    nomOriginal: 'reg',
+    nomCible: 'codeInsee',
+  },{
+    nomOriginal: 'libgeo',
+    nomCible: 'nom',
+  }],
+};
 
-// Crée le convertisseur geojson vers svg
 const geojson2svg = require('geojson2svg');
-
-const convertisseurGeojson2svg = geojson2svg({
-  // Configure la propagation des métadonnées des geojson vers les svg
-  attributes: LISTE_MÉTADONNÉES.map(métadonnée => ({
-    property: `properties.${métadonnée.nomOriginal}`,
-    type: 'dynamic',
-    key: `data-${métadonnée.nomCible}`,
-  })),
-
-  viewportSize: { width: LARGEUR, height: HAUTEUR },
-
-  // boîte englobante des territoires présents dans les geojson
-  //mapExtent: {left: -5.2, bottom: 41.3, right: 9.6, top: 51.12}, // boîte englobante (GPS coords) de la France
-  mapExtent: { left: -405000, bottom: 5910000, right: 765000, top: 6980000 }, // boîte englobante (en mètres ?) de la France
-
-  // nombre de décimales pour les coordonnées dans le svg
-  precision: 1,
-});
 
 // Initialise les utilitaires pour calculer la nouvelle projection géographique
 const proj4 = require('proj4');
@@ -64,8 +54,9 @@ proj4.defs([
   ]
 ]);
 
-function convertirGeojson(geojsonNomDeFichier, nomDuFichierDestinationSansExtension) {
+function convertirGeojson(divisionsAdministratives) {
   // Récupère les fichiers geojson d'entrée
+  const geojsonNomDeFichier = FICHIERS_À_CONVERTIR[divisionsAdministratives];
   const geojsonNomDeFichierSansExtension = geojsonNomDeFichier.replace(/\.[^/.]+$/, "");
 
   const geojsonDonnées = JSON.parse(
@@ -79,6 +70,25 @@ function convertirGeojson(geojsonNomDeFichier, nomDuFichierDestinationSansExtens
     'Gall-Peters',   // projection cartographique cible
     proj4.defs,      // définition des projections cartographiques
   );
+
+  // Crée le convertisseur geojson vers svg
+  const convertisseurGeojson2svg = geojson2svg({
+    // Configure la propagation des métadonnées des geojson vers les svg
+    attributes: LISTE_MÉTADONNÉES[divisionsAdministratives].map(métadonnée => ({
+      property: `properties.${métadonnée.nomOriginal}`,
+      type: 'dynamic',
+      key: `data-${métadonnée.nomCible}`,
+    })),
+
+    viewportSize: { width: LARGEUR, height: HAUTEUR },
+
+    // boîte englobante des territoires présents dans les geojson
+    //mapExtent: {left: -5.2, bottom: 41.3, right: 9.6, top: 51.12}, // boîte englobante (GPS coords) de la France
+    mapExtent: { left: -405000, bottom: 5910000, right: 765000, top: 6980000 }, // boîte englobante (en mètres ?) de la France
+
+    // nombre de décimales pour les coordonnées dans le svg
+    precision: 1,
+  });
 
   // Applique la conversion vers les paths svg
   const svgPaths = convertisseurGeojson2svg
@@ -122,8 +132,8 @@ function convertirGeojson(geojsonNomDeFichier, nomDuFichierDestinationSansExtens
   writeFileSync(`${__dirname}/../04_données_extraites/${geojsonNomDeFichierSansExtension}.svg`, fichierSvg);
 
   // Ecrit le fichier dans le code source côté client
-  writeFileSync(`${CHEMIN_D_ACCÈS_RÉPERTOIRE_DESTINATION}/${nomDuFichierDestinationSansExtension}.json`, fichierJson);
+  writeFileSync(`${CHEMIN_D_ACCÈS_RÉPERTOIRE_DESTINATION}/${divisionsAdministratives}.json`, fichierJson);
 }
 
-convertirGeojson(FICHIERS_À_CONVERTIR.départements, 'départements');
-convertirGeojson(FICHIERS_À_CONVERTIR.régions, 'régions');
+convertirGeojson('départements');
+convertirGeojson('régions');
