@@ -28,7 +28,7 @@ describe('ChantierRandomRepository', () => {
         départementale: {},
       },
     };
-    const repository: ChantierRepository = new ChantierRandomRepository(valeursFixes);
+    const repository: ChantierRepository = new ChantierRandomRepository([valeursFixes]);
 
     // WHEN
     const chantier = await repository.getById('abc1234');

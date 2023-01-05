@@ -3,7 +3,7 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import MétéoFixture from '@/fixtures/MétéoFixture';
 import IndicateurFixture from '@/fixtures/IndicateurFixture';
 import FixtureInterface from '@/fixtures/Fixture.interface';
-import { générerUnIdentifiantUnique } from './utils';
+import { générerCaractèresSpéciaux, générerUnIdentifiantUnique } from './utils';
 
 class ChantierFixture implements FixtureInterface<Chantier> {
   générer(valeursFixes: Partial<Chantier> = {}): Chantier {
@@ -12,7 +12,7 @@ class ChantierFixture implements FixtureInterface<Chantier> {
 
     return {
       id: générerUnIdentifiantUnique('CH'),
-      nom: faker.lorem.words(3),
+      nom: `${faker.lorem.words(10)} ${générerCaractèresSpéciaux(3)}`,
       axe: { id: générerUnIdentifiantUnique('AXE'), nom: faker.lorem.words(3) },
       nomPPG: faker.lorem.words(3),
       périmètreIds: [générerUnIdentifiantUnique('PER')],

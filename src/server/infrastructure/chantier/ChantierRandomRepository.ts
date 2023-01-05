@@ -3,10 +3,10 @@ import ChantierRepository from '@/server/domain/chantier/ChantierRepository.inte
 import ChantierFixture from '@/fixtures/ChantierFixture';
 
 export default class ChantierRandomRepository implements ChantierRepository {
-  private valeurFixes: Partial<Chantier> | undefined;
+  private readonly valeursFixes: Partial<Chantier>[] | undefined;
 
-  constructor(valeurFixes?: Partial<Chantier>) {
-    this.valeurFixes = valeurFixes;
+  constructor(valeursFixes?: Partial<Chantier>[]) {
+    this.valeursFixes = valeursFixes;
   }
 
   async add(_: Chantier) {
@@ -14,6 +14,13 @@ export default class ChantierRandomRepository implements ChantierRepository {
   }
 
   async getById(id: string) {
-    return ChantierFixture.générer({ id, ...this.valeurFixes });
+    return ChantierFixture.générer({ id, ...this.valeursFixes?.[0] });
+  }
+
+  async getListe() {
+    if (!this.valeursFixes) {
+      return [];
+    }
+    return ChantierFixture.générerPlusieurs(this.valeursFixes.length, this.valeursFixes);
   }
 }

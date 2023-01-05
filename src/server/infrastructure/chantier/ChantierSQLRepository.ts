@@ -119,4 +119,9 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const rowsNonNationales = rows.filter(r => r.maille !== 'NAT');
     return mapToDomain(rowNationale, rowsNonNationales);
   }
+
+  async getListe() {
+    const allChantiersPrisma = await this.prisma.chantier.findMany();
+    return allChantiersPrisma.filter(c => c.maille === 'NAT').map(chantierPrisma => mapToDomain(chantierPrisma, []));
+  }
 }
