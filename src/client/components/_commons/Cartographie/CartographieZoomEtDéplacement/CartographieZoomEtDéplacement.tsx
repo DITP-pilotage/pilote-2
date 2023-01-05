@@ -8,7 +8,7 @@ const ZOOM_MAXIMUM = 10;
 const MULTIPLICATEUR_AU_ZOOM = 1.5;
 
 export default function CartographieZoomEtDéplacement({ svgRef, viewbox }: CartographieZoomEtDéplacementProps) {
-  const svg = useMemo(() => svgRef.current, [svgRef.current]);
+  const svg = svgRef.current;
   const canvas = useMemo(() => d3Select(svg).selectChild('.canvas'), [svg]);
 
   const auZoomCallback = useCallback((évènement: any) => (

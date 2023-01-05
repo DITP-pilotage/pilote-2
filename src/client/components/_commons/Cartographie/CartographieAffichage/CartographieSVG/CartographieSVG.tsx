@@ -5,7 +5,6 @@ import CartographieZoomEtDéplacement
 import CartographieSVGStyled from './CartographieSVG.styled';
 
 function CartographieSVG({ tracésTerritoires, setTerritoireSurvolé }: CartographieSVGProps) {
-  const conteneurRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
@@ -20,7 +19,7 @@ function CartographieSVG({ tracésTerritoires, setTerritoireSurvolé }: Cartogra
   }, [svgRef]);
 
   return (
-    <CartographieSVGStyled ref={conteneurRef}>
+    <CartographieSVGStyled>
       <CartographieZoomEtDéplacement
         svgRef={svgRef}
         viewbox={viewbox}
