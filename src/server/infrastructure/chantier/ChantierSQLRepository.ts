@@ -56,10 +56,6 @@ function mapToDomain(chantiers: chantier[]): Chantier {
       départementale: {},
       régionale: {},
     },
-    avancement: {
-      annuel: null,
-      global: chantierNationale.taux_avancement,
-    },
     indicateurs: [],
   };
 

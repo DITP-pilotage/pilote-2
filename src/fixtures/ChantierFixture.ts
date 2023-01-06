@@ -35,10 +35,6 @@ class ChantierFixture implements FixtureInterface<Chantier> {
         régionale: this.générérFakeTerritoires(this.code_insee_régions),
         départementale: this.générérFakeTerritoires(this.code_insee_départements),
       },
-      avancement: {
-        annuel: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
-        global: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
-      },
       indicateurs: IndicateurFixture.générerPlusieurs(5),
       ...valeursFixes,
     };

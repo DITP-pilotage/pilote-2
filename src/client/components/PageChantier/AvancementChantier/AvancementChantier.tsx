@@ -8,10 +8,10 @@ import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import BarreDeProgressionLégende from '@/components/_commons/BarreDeProgression/Légende/BarreDeProgressionLégende';
 import AvancementChantierProps from './AvancementChantier.interface';
 
-const reactTableColonnesHelper = createColumnHelper<Chantier & { territoire: string }>();
+const reactTableColonnesHelper = createColumnHelper<Chantier>();
 
 const colonnes = [
-  reactTableColonnesHelper.accessor('territoire', {
+  reactTableColonnesHelper.accessor('mailles', {
     header: 'Territoire(s)',
     cell: 'National',
     enableSorting: false,
@@ -21,18 +21,16 @@ const colonnes = [
     cell: météo => <PictoMétéo valeur={météo.getValue()} />,
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('avancement.global', {
+  reactTableColonnesHelper.accessor('mailles.nationale.FR.avancement.global', {
     header: 'Avancement global',
-    cell: () => (
+    cell: (tauxDAvancement) => (
       <BarreDeProgression
         fond="bleu"
+        maximum={100}
+        minimum={0}
+        médiane={82}
         taille="moyenne"
-        valeur={{
-          minimum: 0,
-          médiane: 82,
-          moyenne: 75,
-          maximum: 100,
-        }}
+        valeur={tauxDAvancement.getValue()}
         variante='primaire'
       />
     ),
@@ -60,10 +58,10 @@ export default function AvancementChantier({ chantier }: AvancementChantierProps
         >
           Avancement
         </Titre>
-        <Tableau<Chantier & { territoire: string }>
+        <Tableau<Chantier>
           afficherLaRecherche={false}
           colonnes={colonnes}
-          données={[{ ...chantier, territoire: 'National' }]}
+          données={[chantier]}
           entité='chantier'
         />
         <hr className='fr-hr fr-pb-2w' />

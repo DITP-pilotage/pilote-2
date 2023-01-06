@@ -25,6 +25,5 @@ export default interface Chantier {
   périmètreIds: string[];
   mailles: Record<Maille, Territoires>;
   météo: Météo;
-  avancement: Avancement;
   indicateurs: Indicateur[];
 }

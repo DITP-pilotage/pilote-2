@@ -6,12 +6,9 @@ export default interface BarreDeProgressionProps {
   taille: BarreDeProgressionTaille,
   variante: BarreDeProgressionVariante,
   fond?: BarreDeProgressionFond,
-  valeur: {
-    minimum: number,
-    médiane: number,
-    moyenne: number,
-    maximum: number
-  } | number | null,
-  afficherCurseurs?: boolean,
+  valeur: number | null,
+  minimum?: number,
+  médiane?: number,
+  maximum?: number,
   afficherTexte?: boolean,
 }

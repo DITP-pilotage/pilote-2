@@ -1,7 +1,5 @@
 import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
-import {
-  TypeDeCurseur,
-} from '@/components/_commons/BarreDeProgression/Curseur/BarreDeProgressionCurseur.interface';
+import { TypeDeCurseur } from '@/components/_commons/BarreDeProgression/Curseur/BarreDeProgressionCurseur.interface';
 import BarreDeProgressionCurseur from './Curseur/BarreDeProgressionCurseur';
 import BarreDeProgressionStyled, { dimensions } from './BarreDeProgression.styled';
 
@@ -10,61 +8,50 @@ export default function BarreDeProgression({
   variante,
   fond = 'gris',
   valeur,
-  afficherCurseurs = true,
+  minimum,
+  médiane,
+  maximum,
   afficherTexte = true,
 }: BarreDeProgressionProps) {
-  const pourcentageAffiché = valeur === null ? '- %' : (
-    typeof valeur === 'number'
-      ? `${valeur.toFixed(0)} %`
-      : `${valeur.moyenne.toFixed(0)} %`
-  );
+  const pourcentageAffiché = valeur === null ? '- %' : `${valeur.toFixed(0)} %`;
 
   return (
     <BarreDeProgressionStyled
-      className='flex fr-grid-row--middle fr-pb-1v'
+      className="flex fr-grid-row--middle fr-pb-1v"
       fond={fond}
       taille={taille}
       variante={variante}
     >
-      <div className='barre'>
+      <div className="barre">
+        <progress
+          max="100"
+          value={valeur ?? undefined}
+        >
+          {pourcentageAffiché}
+        </progress>
         {
-          typeof valeur === 'number'
-            ?
-              <progress
-                max="100"
-                value={valeur}
-              >
-                {pourcentageAffiché}
-              </progress>
-            :
-              <progress
-                max="100"
-                value={valeur ? valeur.moyenne : undefined}
-              >
-                {pourcentageAffiché}
-              </progress>
+          !!(minimum || médiane || maximum) &&
+            <div className="conteneur-curseurs">
+              {typeof minimum === 'number' &&
+              <BarreDeProgressionCurseur
+                typeDeCurseur={TypeDeCurseur.MINIMUM}
+                valeur={minimum}
+                variante={variante}
+              />}
+              {typeof médiane === 'number' &&
+              <BarreDeProgressionCurseur
+                typeDeCurseur={TypeDeCurseur.MÉDIANE}
+                valeur={médiane}
+                variante={variante}
+              />}
+              {typeof maximum === 'number' &&
+              <BarreDeProgressionCurseur
+                typeDeCurseur={TypeDeCurseur.MAXIMUM}
+                valeur={maximum}
+                variante={variante}
+              />}
+            </div>
         }
-        {
-            !!(valeur !== null && afficherCurseurs && typeof valeur === 'object') && (
-              <div className='conteneur-curseurs'>
-                <BarreDeProgressionCurseur
-                  typeDeCurseur={TypeDeCurseur.MINIMUM}
-                  valeur={valeur.minimum}
-                  variante={variante}
-                />
-                <BarreDeProgressionCurseur
-                  typeDeCurseur={TypeDeCurseur.MÉDIANE}
-                  valeur={valeur.médiane}
-                  variante={variante}
-                />
-                <BarreDeProgressionCurseur
-                  typeDeCurseur={TypeDeCurseur.MAXIMUM}
-                  valeur={valeur.maximum}
-                  variante={variante}
-                />
-              </div>
-            )
-          }
       </div>
       {
         !!afficherTexte && (
