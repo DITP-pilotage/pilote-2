@@ -2,7 +2,7 @@
 import { getAllByRole, getByLabelText, getByText, queryByText, render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import ChantierInfosFixture from '@/fixtures/ChantierInfoFixture';
+import ChantierFixture from '@/fixtures/ChantierFixture';
 import PérimètreMinistérielFixture from '@/fixtures/PérimètreMinistérielFixture';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import PageChantiers from './PageChantiers';
@@ -13,7 +13,7 @@ jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function 
 class PageChantiersTest {
   périmètresMinistériels = PérimètreMinistérielFixture.générerPlusieurs(2);
 
-  chantiers = ChantierInfosFixture.générerPlusieurs(3, [
+  chantiers = ChantierFixture.générerPlusieurs(3, [
     { périmètreIds: [this.périmètresMinistériels[0].id] },
     { périmètreIds: [this.périmètresMinistériels[0].id] },
     { périmètreIds: [this.périmètresMinistériels[1].id] },

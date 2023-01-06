@@ -14,7 +14,7 @@ export default function NextPageChantier({ chantier }: NextPageChantierProps) {
 
 export async function getServerSideProps({ params }: { params: { id: Chantier['id'] } }) {
   const chantierRepository = dependencies.getChantierRepository();
-  const chantier: Chantier = await chantierRepository.getById(params.id, 'FR', 'NAT');
+  const chantier: Chantier = await chantierRepository.getById(params.id);
 
   return {
     props: {
