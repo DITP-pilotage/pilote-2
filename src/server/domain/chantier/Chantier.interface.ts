@@ -10,7 +10,7 @@ export type Avancement = {
 
 export type NomDeMaille = 'nationale' | 'régionale' | 'départementale';
 
-export type Maille = Record<string, {
+export type DonnéesTerritoire = Record<string, {
   codeInsee: string,
   avancement: Avancement,
 }>;
@@ -21,7 +21,7 @@ export default interface Chantier {
   axe: Axe;
   nomPPG: string | null;
   périmètreIds: string[];
-  mailles: Record<NomDeMaille, Maille>;
+  mailles: Record<NomDeMaille, DonnéesTerritoire>;
   météo: Météo;
   avancement: Avancement;
   indicateurs: Indicateur[];
