@@ -8,12 +8,14 @@
 
 */
 -- AlterTable
-ALTER TABLE "chantier" DROP COLUMN "zone_nom",
-ADD COLUMN     "directeur_projet" TEXT NOT NULL,
+ALTER TABLE "chantier"
+RENAME COLUMN "zone_nom" TO "territoire_nom";
+
+ALTER TABLE "chantier"
+ADD COLUMN     "directeur_projet" TEXT NOT NULL DEFAULT 'non connu',
 ADD COLUMN     "directeurs_administration_centrale" TEXT[],
-ADD COLUMN     "ministeres" TEXT[],
-ADD COLUMN     "territoire_nom" TEXT NOT NULL;
+ADD COLUMN     "ministeres" TEXT[];
 
 -- AlterTable
-ALTER TABLE "indicateur" DROP COLUMN "zone_nom",
-ADD COLUMN     "territoire_nom" TEXT;
+ALTER TABLE "indicateur"
+RENAME COLUMN "zone_nom" TO "territoire_nom";

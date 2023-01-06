@@ -16,7 +16,7 @@ model chantier {
   id_perimetre String
   perimetre_ids String[]
   taux_avancement Float?
-  territoire_nom String
+  territoire_nom String?
   code_insee String
   maille String
   directeurs_administration_centrale String[]
