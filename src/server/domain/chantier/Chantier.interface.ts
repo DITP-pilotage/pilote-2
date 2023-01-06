@@ -8,7 +8,7 @@ export type Avancement = {
   annuel: number | null
 };
 
-export type NomDeMaille = 'nationale' | 'régionale' | 'départementale';
+export type Maille = 'nationale' | 'régionale' | 'départementale';
 
 export type DonnéesTerritoire = Record<string, {
   codeInsee: string,
@@ -21,16 +21,8 @@ export default interface Chantier {
   axe: Axe;
   nomPPG: string | null;
   périmètreIds: string[];
-  mailles: Record<NomDeMaille, DonnéesTerritoire>;
+  mailles: Record<Maille, DonnéesTerritoire>;
   météo: Météo;
   avancement: Avancement;
   indicateurs: Indicateur[];
-}
-
-export function ajouteValeurDeMaille(chantier: Chantier, nomDeMaille: NomDeMaille, valeur: { avancement: Avancement; codeInsee: string }) {
-  if (!chantier.mailles[nomDeMaille]) {
-    chantier.mailles[nomDeMaille] = {};
-  }
-  const maille = chantier.mailles[nomDeMaille];
-  maille[valeur.codeInsee] = valeur;
 }

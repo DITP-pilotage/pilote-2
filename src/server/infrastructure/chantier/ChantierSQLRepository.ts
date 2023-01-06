@@ -1,17 +1,18 @@
 import { chantier, PrismaClient } from '@prisma/client';
-import Chantier, { ajouteValeurDeMaille, NomDeMaille } from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { Maille } from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import { groupBy } from '@/client/utils/arrays';
 
 ///
 // Fonctions utilitaires
 
-const CODES_MAILLES = {
+const CODES_MAILLES: Record<Maille, string> = {
   nationale: 'NAT',
   départementale: 'DEPT',
   régionale: 'REG',
 };
 
-const NOMS_MAILLES = {
+const NOMS_MAILLES: Record<string, Maille> = {
   NAT: 'nationale',
   DEPT: 'départementale',
   REG: 'régionale',
@@ -29,19 +30,27 @@ class ErreurChantierSansMailleNationale extends Error {
   }
 }
 
-function mapToDomain(rowNationale: chantier, rowsNonNationales: chantier[]): Chantier {
+function mapToDomain(chantiers: chantier[]): Chantier {
+  const chantierNationale = chantiers.find(c => c.maille === 'NAT');
+
+  if (!chantierNationale) {
+    throw new ErreurChantierSansMailleNationale(chantiers[0].id);
+  }
+
+  const chantiersNonNationales = chantiers.filter(c => c.maille !== 'NAT');
+    
   const result: Chantier = {
-    id: rowNationale.id,
-    nom: rowNationale.nom,
+    id: chantierNationale.id,
+    nom: chantierNationale.nom,
     axe: null,
     nomPPG: null,
-    périmètreIds: rowNationale.perimetre_ids,
+    périmètreIds: chantierNationale.perimetre_ids,
     météo: null,
     mailles: {
       nationale: {
         FR: {
-          codeInsee: rowNationale.code_insee,
-          avancement: { annuel: null, global: rowNationale.taux_avancement },
+          codeInsee: chantierNationale.code_insee,
+          avancement: { annuel: null, global: chantierNationale.taux_avancement },
         },
       },
       départementale: {},
@@ -49,40 +58,47 @@ function mapToDomain(rowNationale: chantier, rowsNonNationales: chantier[]): Cha
     },
     avancement: {
       annuel: null,
-      global: rowNationale.taux_avancement,
+      global: chantierNationale.taux_avancement,
     },
     indicateurs: [],
   };
 
-  for (const row of rowsNonNationales) {
-    // @ts-ignore TODO: lancer une erreur
-    const nomDeMaille = NOMS_MAILLES[row.maille];
-    const valeurDeMaille = {
-      codeInsee: row.code_insee,
-      avancement: { annuel: null, global: row.taux_avancement },
+  for (const chantierNonNational of chantiersNonNationales) {
+    const maille = NOMS_MAILLES[chantierNonNational.maille];
+
+    // TODO : lancer une erreur si maille non existante
+    result.mailles[maille] = {
+      ...result.mailles[maille], 
+      [chantierNonNational.code_insee]: {
+        codeInsee: chantierNonNational.code_insee,
+        avancement: { annuel: null, global: chantierNonNational.taux_avancement },
+      },
     };
-    ajouteValeurDeMaille(result, nomDeMaille, valeurDeMaille);
   }
+
   return result;
 }
 
 function mapToPrismaRows(chantierDomaine: Chantier): chantier[] {
   const result: chantier[] = [];
-  Object.entries(chantierDomaine.mailles).forEach(([nomDeMaille, maille]) => {
-    const codeMaille = CODES_MAILLES[nomDeMaille as NomDeMaille];
-    Object.values(maille).forEach(valeurDeMaille => {
+
+  Object.entries(chantierDomaine.mailles).forEach(([nomDeMaille, territoire]) => {
+    const codeMaille = CODES_MAILLES[nomDeMaille as Maille];
+
+    Object.values(territoire).forEach(donnéesTerritoire => {
       result.push({
         id: chantierDomaine.id,
         nom: chantierDomaine.nom,
         id_perimetre: 'deleteme',
         perimetre_ids: chantierDomaine.périmètreIds,
         zone_nom: 'TBD',
-        code_insee: valeurDeMaille.codeInsee,
-        taux_avancement: valeurDeMaille.avancement.global,
+        code_insee: donnéesTerritoire.codeInsee,
+        taux_avancement: donnéesTerritoire.avancement.global,
         maille: codeMaille,
       });
     });
   });
+
   return result;
 }
 
@@ -106,22 +122,21 @@ export default class ChantierSQLRepository implements ChantierRepository {
   }
 
   async getById(id: string) {
-    const rows: chantier[] = await this.prisma.chantier.findMany({
+    const chantiers: chantier[] = await this.prisma.chantier.findMany({
       where: { id },
     });
-    if (!rows || rows.length === 0) {
+
+    if (!chantiers || chantiers.length === 0) {
       throw new ErreurChantierNonTrouvé(id);
     }
-    const rowNationale = rows.find(row => row.maille === 'NAT');
-    if (!rowNationale) {
-      throw new ErreurChantierSansMailleNationale(rows[0].id);
-    }
-    const rowsNonNationales = rows.filter(r => r.maille !== 'NAT');
-    return mapToDomain(rowNationale, rowsNonNationales);
+
+    return mapToDomain(chantiers);
   }
 
   async getListe() {
-    const allChantiersPrisma = await this.prisma.chantier.findMany();
-    return allChantiersPrisma.filter(c => c.maille === 'NAT').map(chantierPrisma => mapToDomain(chantierPrisma, []));
+    const chantiers = await this.prisma.chantier.findMany();
+    const chantiersGroupésParId = groupBy<chantier>(chantiers, c => c.id);
+
+    return Object.entries(chantiersGroupésParId).map(([_, c]) => mapToDomain(c));
   }
 }

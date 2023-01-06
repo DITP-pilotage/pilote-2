@@ -116,12 +116,8 @@ describe('ChantierSQLRepository', () => {
     // GIVEN
     const prisma = new PrismaClient();
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
-    const chantier1 = ChantierFixture.générer({
-      id: 'CH-001',
-      mailles: { nationale: { FR: { codeInsee: 'FR', avancement: { annuel: 50, global: 50 } } }, régionale: {}, départementale: {} },
-    });
+    const chantier1 = ChantierFixture.générer();
     const chantier2 = ChantierFixture.générer({
-      id: 'CH-002',
       mailles: {
         nationale: { FR: { codeInsee: 'FR', avancement: { annuel: 50, global: 50 } } },
         régionale: {},
@@ -135,7 +131,8 @@ describe('ChantierSQLRepository', () => {
     const chantiers = await repository.getListe();
 
     // THEN
-    const ids = chantiers.map(c => c.id);
-    expect(ids).toEqual(['CH-001', 'CH-002']);
+    const ids = chantiers.map(chantier => chantier.id);
+    expect(ids).toStrictEqual([chantier1.id, chantier2.id]);
+    expect(chantiers[1].mailles.départementale['13'].avancement.global).toBe(50);
   });
 });
