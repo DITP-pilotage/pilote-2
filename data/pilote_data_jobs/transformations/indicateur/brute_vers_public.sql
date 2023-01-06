@@ -35,7 +35,7 @@ INSERT INTO public.indicateur
          valeur_initiale,
          m_zone.zone_code AS code_insee,
          m_zone.zone_type AS maille,
-         m_zone.nom AS zone_nom
+         m_zone.nom AS territoire_nom
     FROM raw_data.metadata_indicateur m_indicateur
          JOIN dfakto_indicateur d_indicateur ON m_indicateur.indic_nom = d_indicateur.effect_id AND d_indicateur.structure_name = 'Réforme'
          LEFT JOIN raw_data.indicateur_type ON indicateur_type.indic_type_id = m_indicateur.indic_type
@@ -64,7 +64,7 @@ INSERT INTO public.indicateur
             WHEN d_indicateur.structure_name = 'Région'
                 THEN 'REG'
         END maille,
-        m_zone.nom AS zone_nom
+        m_zone.nom AS territoire_nom
     FROM raw_data.metadata_indicateur m_indicateur
         JOIN dfakto_indicateur d_indicateur ON m_indicateur.indic_nom = d_indicateur.effect_id AND d_indicateur.structure_name IN ('Département', 'Région')
         LEFT JOIN raw_data.indicateur_type ON indicateur_type.indic_type_id = m_indicateur.indic_type

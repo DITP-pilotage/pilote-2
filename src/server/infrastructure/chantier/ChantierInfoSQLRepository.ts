@@ -21,7 +21,7 @@ export default class ChantierInfoSQLRepository implements ChantierInfoRepository
 
   async getListeMailleNationale() {
     const chantiersPrisma = await this.prisma.chantier.findMany({
-      where: { zone_nom: 'National' },
+      where: { territoire_nom: 'National' },
     });
     return chantiersPrisma.map(chantierPrisma => mapToDomain(chantierPrisma));
   }

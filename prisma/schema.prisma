@@ -16,7 +16,7 @@ model chantier {
   id_perimetre String
   perimetre_ids String[]
   taux_avancement Float?
-  zone_nom String
+  territoire_nom String
   code_insee String
   maille String
 
@@ -43,7 +43,7 @@ model indicateur {
   date_valeur_initiale DateTime? @db.Date
   valeur_actuelle Float?
   date_valeur_actuelle DateTime? @db.Date
-  zone_nom String?
+  territoire_nom String?
   code_insee String
   maille String
 
