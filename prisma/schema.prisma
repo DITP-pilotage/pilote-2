@@ -19,6 +19,9 @@ model chantier {
   territoire_nom String
   code_insee String
   maille String
+  directeurs_administration_centrale String[]
+  directeur_projet String
+  ministeres String[]
 
   @@id([id, code_insee, maille])
 }

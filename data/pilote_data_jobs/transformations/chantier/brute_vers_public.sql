@@ -16,7 +16,7 @@ INSERT INTO public.chantier
         m_chantier.ch_per as id_perimetre,
         m_zone.zone_code as code_insee,
         d_chantier.bounded_progress as taux_avancement,
-        m_zone.nom as zone_nom,
+        m_zone.nom as territoire_nom,
         string_to_array(m_chantier.ch_per, ' | ') as perimetre_ids,
         m_zone.zone_type as maille
     FROM raw_data.metadata_chantier m_chantier
@@ -28,7 +28,7 @@ UNION
         m_chantier.ch_per as id_perimetre,
         m_zone.zone_code as code_insee,
         d_chantier.bounded_progress as taux_avancement,
-        m_zone.nom as zone_nom,
+        m_zone.nom as territoire_nom,
         string_to_array(m_chantier.ch_per, ' | ') as perimetre_ids,
         m_zone.zone_type as maille
     FROM raw_data.metadata_chantier m_chantier
