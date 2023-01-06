@@ -4,7 +4,7 @@ import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
 import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
-import { Avancement, DonnéesTerritoire } from '@/server/domain/chantier/Chantier.interface';
+import { Avancement, Territoires } from '@/server/domain/chantier/Chantier.interface';
 import ListeChantiersProps from './ListeChantiers.interface';
 
 function afficherLesBarresDeProgression(avancement: Avancement) {
@@ -67,7 +67,7 @@ const colonnes = [
     cell: avancement => afficherLesBarresDeProgression(avancement.getValue().FR.avancement),
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => {
-      return comparerAvancementChantier(a.getValue<DonnéesTerritoire>(columnId).FR.avancement.global, b.getValue<DonnéesTerritoire>(columnId).FR.avancement.global);
+      return comparerAvancementChantier(a.getValue<Territoires>(columnId).FR.avancement.global, b.getValue<Territoires>(columnId).FR.avancement.global);
     },
   }),
 ];
