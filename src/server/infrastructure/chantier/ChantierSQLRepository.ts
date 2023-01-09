@@ -88,7 +88,6 @@ function mapToPrismaRows(chantierDomaine: Chantier): chantier[] {
       result.push({
         id: chantierDomaine.id,
         nom: chantierDomaine.nom,
-        id_perimetre: 'deleteme',
         perimetre_ids: chantierDomaine.périmètreIds,
         territoire_nom: 'TBD',
         code_insee: donnéesTerritoire.codeInsee,

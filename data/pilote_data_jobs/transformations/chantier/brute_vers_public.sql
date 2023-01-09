@@ -13,7 +13,6 @@ WITH dfakto_chantier AS (
 INSERT INTO public.chantier
     (SELECT m_chantier.chantier_id AS id,
         m_chantier.ch_nom AS nom,
-        m_chantier.ch_per AS id_perimetre,
         m_zone.zone_code AS code_insee,
         d_chantier.bounded_progress AS taux_avancement,
         m_zone.nom AS zone_nom,
@@ -33,7 +32,6 @@ INSERT INTO public.chantier
 UNION
     (SELECT m_chantier.chantier_id AS id,
         m_chantier.ch_nom AS nom,
-        m_chantier.ch_per AS id_perimetre,
         m_zone.zone_code AS code_insee,
         d_chantier.bounded_progress AS taux_avancement,
         m_zone.nom AS zone_nom,

@@ -13,7 +13,6 @@ datasource db {
 model chantier {
   id String
   nom String
-  id_perimetre String
   perimetre_ids String[]
   taux_avancement Float?
   territoire_nom String?
