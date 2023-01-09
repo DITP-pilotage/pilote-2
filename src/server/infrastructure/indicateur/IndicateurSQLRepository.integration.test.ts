@@ -1,6 +1,11 @@
 import { indicateur, PrismaClient } from '@prisma/client';
 import IndicateurSQLRepository from './IndicateurSQLRepository';
 
+//   faciliter la lecture / écriture des tests (éventuellement une méthode de création des indicateurs ? fixture ?)
+//   d'autres choses à vérifier avec un test auto ?
+//   supprimer le champs Chantier.indicateurs
+//   où est-ce qu'on s'arrête ? implémentation des mailles non encore utilisées ou pas ? (nat, dept, reg ?)
+
 describe('IndicateurSQLRepository', () => {
   test('Récupérer une liste d\'indicateur via un ID de chantier', async () => {
     // GIVEN
