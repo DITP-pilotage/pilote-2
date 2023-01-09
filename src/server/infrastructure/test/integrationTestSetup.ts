@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
-beforeEach(async () => {
+afterAll(async () => {
   const prisma = new PrismaClient();
   const tablenames = await prisma.$queryRaw<Array<{ tablename: string }>> `SELECT tablename FROM pg_tables WHERE schemaname='public'`;
 

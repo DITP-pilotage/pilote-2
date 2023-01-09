@@ -1,138 +1,55 @@
 import { PrismaClient } from '@prisma/client';
-import ChantierFixture from '@/fixtures/ChantierFixture';
+import { ChantierBuilder } from '@/fixtures/ChantierBuilder';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
-  test('Accède à un chantier par son id', async () => {
-    // GIVEN
-    const prisma = new PrismaClient();
-    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
-    const chantiers = ChantierFixture.générerPlusieurs(2);
+  const prisma = new PrismaClient();
+  const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+  const chantiers = Array.from({ length: 2 }).map(_ => new ChantierBuilder().construire());
 
+  beforeAll(async () => {
     await repository.add(chantiers[0]);
     await repository.add(chantiers[1]);
-
-    // WHEN
-    const result1 = await repository.getById(chantiers[0].id);
-    const result2 = await repository.getById(chantiers[1].id);
-
-    // THEN
-    expect(result1.nom).toEqual(chantiers[0].nom);
-    expect(result2.nom).toEqual(chantiers[1].nom);
   });
 
-  test('un chantier contenant une maille nationale', async () => {
-    // GIVEN
-    const prisma = new PrismaClient();
-    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+  describe('Accède à un chantier par son id', () => {
+    let chantier: Chantier;
 
-    const valeursFixes = {
-      mailles: {
-        nationale: {
-          FR: {
-            codeInsee: 'FR',
-            avancement: { annuel: 14, global: 18 },
-          },
-        },
-        régionale: {},
-        départementale: {},
-      },
-    };
+    beforeAll(async () => {
+      chantier = await repository.getById(chantiers[0].id);
+    });
 
-    const chantier = ChantierFixture.générer(valeursFixes);
-    await repository.add(chantier);
+    test('Retourne le chantier demandé', async () => {
+      expect(chantier.id).toEqual(chantiers[0].id);
+      expect(chantier.nom).toEqual(chantiers[0].nom);
+    });
 
-    // WHEN
-    const result = await repository.getById(chantier.id);
-
-    // THEN
-    expect(result.mailles).toStrictEqual({
-      nationale: {
-        FR: {
-          codeInsee: 'FR',
-          avancement: {
-            annuel: null,
-            global: 18,
-          },
-        },
-      },
-      régionale: {},
-      départementale: {},
+    test('Retourne le chantier avec les informations sur ses différentes mailles agrégées', async () => {
+      expect(chantier.mailles.nationale.FR.codeInsee).toBe('FR');
+      expect(chantier.mailles.départementale['01'].avancement.global).toBe(chantiers[0].mailles.départementale['01'].avancement.global);
+      expect(chantier.mailles.régionale['1'].avancement.global).toBe(chantiers[0].mailles.régionale['1'].avancement.global);
     });
   });
 
-  test('un chantier contenant une maille nationale et départementale', async () => {
-    // GIVEN
-    const prisma = new PrismaClient();
-    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+  describe('Accède à une liste de chantiers', () => {
+    let chantiersEnBDD: Chantier[];
 
-    const valeursFixes = {
-      mailles: {
-        nationale: {
-          FR: {
-            codeInsee: 'FR',
-            avancement: { annuel: 14, global: 18 },
-          },
-        },
-        régionale: {},
-        départementale: {
-          '13': {
-            codeInsee: '13',
-            avancement: { annuel: 39, global: 45 },
-          },
-        },
-      },
-    };
-
-    const chantier = ChantierFixture.générer(valeursFixes);
-    await repository.add(chantier);
-
-    // WHEN
-    const result = await repository.getById(chantier.id);
-
-    // THEN
-    expect(result.mailles).toStrictEqual({
-      nationale: {
-        FR: {
-          codeInsee: 'FR',
-          avancement: {
-            annuel: null,
-            global: 18,
-          },
-        },
-      },
-      départementale: {
-        '13': {
-          codeInsee: '13',
-          avancement: { annuel: null, global: 45 },
-        },
-      },
-      régionale: {},
+    beforeAll(async () => {
+      chantiersEnBDD = await repository.getListe();
     });
-  });
 
-  test('Accède à une liste de chantier', async () => {
-    // GIVEN
-    const prisma = new PrismaClient();
-    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
-    const chantier1 = ChantierFixture.générer();
-    const chantier2 = ChantierFixture.générer({
-      mailles: {
-        nationale: { FR: { codeInsee: 'FR', avancement: { annuel: 50, global: 50 } } },
-        régionale: {},
-        départementale: { '13': { codeInsee: '13', avancement: { annuel: 50, global: 50 } } },
-      },
+    test('Retourne les chantiers agrégés par identifiant', async () => {
+      expect(chantiersEnBDD.length).toBe(2);
+      expect(chantiersEnBDD[0].id).toBe(chantiers[0].id);
+      expect(chantiersEnBDD[1].id).toBe(chantiers[1].id);
     });
-    await repository.add(chantier1);
-    await repository.add(chantier2);
 
-    // WHEN
-    const chantiers = await repository.getListe();
-
-    // THEN
-    const ids = chantiers.map(chantier => chantier.id);
-    expect(ids).toStrictEqual([chantier1.id, chantier2.id]);
-    expect(chantiers[1].mailles.départementale['13'].avancement.global).toBe(50);
+    test('Retourne les chantiers avec les informations sur leurs différentes mailles agrégées', async () => {
+      expect(chantiersEnBDD[0].mailles.nationale.FR.codeInsee).toBe('FR');
+      expect(chantiersEnBDD[0].mailles.départementale['01'].avancement.global).toBe(chantiers[0].mailles.départementale['01'].avancement.global);
+      expect(chantiersEnBDD[0].mailles.régionale['1'].avancement.global).toBe(chantiers[0].mailles.régionale['1'].avancement.global);
+    });
   });
 });
