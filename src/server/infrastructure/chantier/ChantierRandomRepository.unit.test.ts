@@ -11,7 +11,6 @@ describe('ChantierRandomRepository', () => {
 
     // THEN
     expect(chantier.id).toBe('abc1234');
-    expect(chantier.indicateurs).toHaveLength(5);
   });
 
   test('un chantier random contient une maille', async () => {

@@ -59,7 +59,6 @@ function mapToDomain(chantiers: chantier[]): Chantier {
     directeurProjet: chantierNationale.directeur_projet,
     directeurAdministrationCentrale: chantierNationale.directeurs_administration_centrale,
     ministères: chantierNationale.ministeres,
-    indicateurs: [],
   };
 
   for (const chantierNonNational of chantiersNonNationales) {
