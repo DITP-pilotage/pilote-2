@@ -23,6 +23,7 @@ class MetadataChantier(Base):
     porteur_shorts_DAC = Column(VARCHAR(255))
     porteur_ids_DAC = Column(VARCHAR(255))
     ch_per = Column(VARCHAR(255), nullable=False)
+    ch_dp = Column(VARCHAR(255))
 
 
 class MetadataPerimetre(Base):
