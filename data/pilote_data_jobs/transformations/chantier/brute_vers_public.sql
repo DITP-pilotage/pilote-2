@@ -19,7 +19,11 @@ INSERT INTO public.chantier
         string_to_array(m_chantier.ch_per, ' | ') AS perimetre_ids,
         m_zone.zone_type AS maille,
         m_chantier.ch_dp AS directeur_projet,
-        string_to_array(m_chantier."porteur_ids_DAC", ' | ') AS directeurs_administration_centrale,
+        array(SELECT m_porteur.porteur_directeur
+     		FROM   unnest(string_to_array(m_chantier."porteur_ids_DAC", ' | ')) WITH ORDINALITY a(id, i)
+     		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
+     		ORDER  BY a.i
+     	) AS directeurs_administration_centrale,
         array(SELECT m_porteur.porteur_name
      		FROM   unnest(string_to_array(m_chantier."porteur_ids_noDAC", ' | ')) WITH ORDINALITY a(id, i)
      		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
@@ -38,7 +42,11 @@ UNION
         string_to_array(m_chantier.ch_per, ' | ') AS perimetre_ids,
         m_zone.zone_type AS maille,
         m_chantier.ch_dp AS directeur_projet,
-        string_to_array(m_chantier."porteur_ids_DAC", ' | ') AS directeurs_administration_centrale,
+        array(SELECT m_porteur.porteur_directeur
+     		FROM   unnest(string_to_array(m_chantier."porteur_ids_DAC", ' | ')) WITH ORDINALITY a(id, i)
+     		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
+     		ORDER  BY a.i
+     	) AS directeurs_administration_centrale,
         array(SELECT m_porteur.porteur_name
      		FROM   unnest(string_to_array(m_chantier."porteur_ids_noDAC", ' | ')) WITH ORDINALITY a(id, i)
      		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id

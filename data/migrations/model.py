@@ -132,10 +132,10 @@ class DimStructures(Base):
     structure_id = Column(VARCHAR(32), primary_key=True)
     top_level_id = Column(VARCHAR(32), nullable=False)
     structure_name = Column(VARCHAR(15), nullable=False)
-    structure_is_part_of_update_period = Column((BOOLEAN), nullable=False)
+    structure_is_part_of_update_period = Column(BOOLEAN, nullable=False)
     structure_scorecard_frequency = Column(VARCHAR(7))
-    structure_is_hidden = Column((BOOLEAN), nullable=False)
-    structure_has_correction = Column((BOOLEAN), nullable=False)
+    structure_is_hidden = Column(BOOLEAN, nullable=False)
+    structure_has_correction = Column(BOOLEAN, nullable=False)
     structure_level = Column(INTEGER, nullable=False)
     snapshot_date = Column(DateTime, nullable=False)
 
@@ -151,3 +151,4 @@ class MetadataPorteur(Base):
     porteur_type_id = Column(VARCHAR(2))
     porteur_type_short = Column(VARCHAR(5))
     porteur_type_name = Column(VARCHAR(255))
+    porteur_directeur = Column(VARCHAR(255))
