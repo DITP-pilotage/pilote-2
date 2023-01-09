@@ -2,10 +2,20 @@ import { indicateur, PrismaClient } from '@prisma/client';
 import IndicateurSQLRepository from './IndicateurSQLRepository';
 
 //   faciliter la lecture / écriture des tests (éventuellement une méthode de création des indicateurs ? fixture ?)
-//   d'autres choses à vérifier avec un test auto ?
-//   où est-ce qu'on s'arrête ? implémentation des mailles non encore utilisées ou pas ? (nat, dept, reg ?)
 
 describe('IndicateurSQLRepository', () => {
+  test("Récupère une liste vide quand il n'y a pas d'indicateurs", async () => {
+    // GIVEN
+    const prisma = new PrismaClient();
+    const repository = new IndicateurSQLRepository(prisma);
+
+    // WHEN
+    const result = await repository.getByChantierId('CH-001');
+
+    // THEN
+    expect(result).toStrictEqual([]);
+  });
+
   test('Récupérer une liste d\'indicateur via un ID de chantier', async () => {
     // GIVEN
     const prisma = new PrismaClient();
@@ -79,9 +89,8 @@ describe('IndicateurSQLRepository', () => {
     const result = await repository.getByChantierId(chantierId);
 
     // THEN
-    expect(result.length).toEqual(3);
+    expect(result.length).toEqual(2);
     expect(result[0].id).toEqual('IND-001');
     expect(result[1].id).toEqual('IND-002');
-    expect(result[2].id).toEqual('IND-003');
   });
 });

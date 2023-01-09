@@ -24,7 +24,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
 
   async getByChantierId(chantierId: string): Promise<Indicateur[]> {
     const indicateurs: indicateur[] = await this.prisma.indicateur.findMany({
-      where: { chantier_id: chantierId },
+      where: { chantier_id: chantierId, maille: 'NAT' },
     });
 
     return this.mapToDomain(indicateurs);
