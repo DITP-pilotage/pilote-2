@@ -30,6 +30,10 @@ psql $DATABASE_URL -c "truncate table raw_data.dim_tree_nodes"
 psql $DATABASE_URL -c "truncate table raw_data.fact_progress_chantier"
 psql $DATABASE_URL -c "truncate table raw_data.dim_structures"
 psql $DATABASE_URL -c "truncate table raw_data.metadata_porteur"
+psql $DATABASE_URL -c "truncate table raw_data.metadata_axe"
+psql $DATABASE_URL -c "truncate table raw_data.metadata_ppg"
+
+
 
 echo "Sleep for 15s"
 sleep 15
@@ -45,6 +49,8 @@ psql $DATABASE_URL -c "copy raw_data.metadata_indicateur from STDIN with csv del
 psql $DATABASE_URL -c "copy raw_data.metadata_zone from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/zone/view_meta_zone.csv
 psql $DATABASE_URL -c "copy raw_data.indicateur_type from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/models/indicateur/ref_indic_type.csv
 psql $DATABASE_URL -c "copy raw_data.metadata_porteur from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/porteur/view_meta_porteur.csv
+psql $DATABASE_URL -c "copy raw_data.metadata_axe from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/axe/view_meta_axe.csv
+psql $DATABASE_URL -c "copy raw_data.metadata_ppg from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/ppg/view_meta_ppg.csv
 
 echo "Sleep for 30s"
 sleep 30
