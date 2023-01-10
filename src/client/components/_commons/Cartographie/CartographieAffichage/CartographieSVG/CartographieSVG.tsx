@@ -4,7 +4,7 @@ import CartographieZoomEtDéplacement
   from '@/components/_commons/Cartographie/CartographieZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
 
-function CartographieSVG({ tracésTerritoires, setTerritoireSurvolé }: CartographieSVGProps) {
+function CartographieSVG({ tracésRégions, setTerritoireSurvolé }: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
@@ -26,7 +26,6 @@ function CartographieSVG({ tracésTerritoires, setTerritoireSurvolé }: Cartogra
       />
       <svg
         ref={svgRef}
-        strokeWidth="0.3"
         version="1.2"
         viewBox={`
           ${viewbox.x}
@@ -43,15 +42,35 @@ function CartographieSVG({ tracésTerritoires, setTerritoireSurvolé }: Cartogra
           }}
         >
           {
-            tracésTerritoires.map(tracéTerritoire => (
-              <path
-                className="territoire"
-                d={tracéTerritoire.tracéSVG}
-                key={tracéTerritoire.nom}
-                onMouseEnter={() => {
-                  setTerritoireSurvolé({ codeInsee: tracéTerritoire.codeInsee, nom: tracéTerritoire.nom });
-                }}
-              />
+            tracésRégions.map((tracéRégion) => (
+              <g key={tracéRégion.nom}>
+                {tracéRégion.départementsÀTracer.map(département => (
+                  <path
+                    className="territoire-rempli"
+                    d={département.tracéSVG}
+                    key={département.nom}
+                    onMouseEnter={() => {
+                      setTerritoireSurvolé({ codeInsee: département.codeInsee, nom: département.nom });
+                    }}
+                  />
+                ))}
+                {
+                  tracéRégion.départementsÀTracer.length === 0
+                    ?
+                      <path
+                        className='territoire-rempli'
+                        d={tracéRégion.tracéSVG}
+                        onMouseEnter={() => {
+                          setTerritoireSurvolé({ codeInsee: tracéRégion.codeInsee, nom: tracéRégion.nom });
+                        }}
+                      />
+                    :
+                      <path
+                        className='frontière'
+                        d={tracéRégion.tracéSVG}
+                      />
+                  }
+              </g>
             ))
           }
         </g>
@@ -61,6 +80,6 @@ function CartographieSVG({ tracésTerritoires, setTerritoireSurvolé }: Cartogra
 }
 
 export default memo(CartographieSVG, (prevProps, nextProps) => (
-  prevProps.tracésTerritoires === nextProps.tracésTerritoires &&
+  prevProps.tracésRégions === nextProps.tracésRégions &&
   prevProps.setTerritoireSurvolé === nextProps.setTerritoireSurvolé
 ));
