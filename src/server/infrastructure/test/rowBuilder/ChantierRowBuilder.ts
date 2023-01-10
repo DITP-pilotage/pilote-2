@@ -3,14 +3,23 @@ import { chantier } from '@prisma/client';
 export default class ChantierRowBuilder {
   private _id: string = 'CH-001';
 
-  private _codeInsee: string = '78';
+  private _nom: string = 'Chantier ' + this._id;
 
   private _maille: string = 'NAT';
 
+  private _codeInsee: string = 'FR';
+
   private _directeurProjet: string = 'Directeur ' + this._id;
+
+  private _tauxAvancement: number = 42;
 
   withId(id: string) {
     this._id = id;
+    return this;
+  }
+
+  withNom(nom: string) {
+    this._nom = nom;
     return this;
   }
 
@@ -25,19 +34,30 @@ export default class ChantierRowBuilder {
     return this;
   }
 
+  withCodeInsee(codeInsee: string) {
+    this._codeInsee = codeInsee;
+    return this;
+  }
+
+  withTauxAvancement(tauxAvancement: number) {
+    this._tauxAvancement = tauxAvancement;
+    return this;
+  }
+
   build(): chantier {
     return {
       id: this._id,
-      nom: 'Nom ' + this._id,
+      nom: this._nom,
       maille: this._maille,
       code_insee: this._codeInsee,
       directeur_projet: this._directeurProjet,
 
       perimetre_ids: [],
-      taux_avancement: null,
+      taux_avancement: this._tauxAvancement,
       territoire_nom: null,
       directeurs_administration_centrale: [],
       ministeres: [],
+      directions_administration_centrale: [],
     };
   }
 }
