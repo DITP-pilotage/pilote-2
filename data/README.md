@@ -187,6 +187,8 @@ PPG --> |view_meta_indicateur.csv| PG
 PPG --> |view_meta_zone.csv| PG
 PPG --> |view_meta_porteur.csv| PG
 PPG --> |ref_indic_type.csv| PG
+PPG --> |view_meta_axe.csv| PG
+PPG --> |view_meta_ppg.csv| PG
 ```
 
 Légende :

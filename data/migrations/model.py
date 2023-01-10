@@ -152,3 +152,26 @@ class MetadataPorteur(Base):
     porteur_type_short = Column(VARCHAR(5))
     porteur_type_name = Column(VARCHAR(255))
     porteur_directeur = Column(VARCHAR(255))
+    porteur_name_short = Column(VARCHAR(255))
+
+
+class MetadataAxe(Base):
+    __tablename__ = 'metadata_axe'
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
+
+    axe_id = Column(TEXT, primary_key=True)
+    axe_short = Column(TEXT)
+    axe_name = Column(TEXT)
+    axe_desc = Column(TEXT)
+
+class MetadataPPG(Base):
+    __tablename__ = 'metadata_ppg'
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
+
+    ppg_id = Column(TEXT, primary_key=True)
+    ppg_axe = Column(TEXT, nullable=False)
+    ppg_code = Column(TEXT)
+    ppg_desc = Column(TEXT)
+    ppg_nom = Column(TEXT, nullable=False)
+    porteur_shorts = Column(TEXT)
+    porteur_ids = Column(TEXT)
