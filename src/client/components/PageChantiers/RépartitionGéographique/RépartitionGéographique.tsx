@@ -11,6 +11,7 @@ export default function RépartitionGéographique() {
         Répartition géographique
       </Titre>
       <Cartographie
+        maille='régionale'
         zone={{
           codeInsee: 'FR',
           divisionAdministrative: 'france',

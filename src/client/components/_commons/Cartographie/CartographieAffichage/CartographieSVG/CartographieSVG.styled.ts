@@ -4,7 +4,7 @@ const CartographieSVGStyled = styled.div`
   position: relative;
   width: 100%;
 
-  .territoire {
+  .département {
     cursor: pointer;
     fill: #d0d0d0;
     stroke: #fff;
@@ -12,6 +12,12 @@ const CartographieSVGStyled = styled.div`
     &:hover {
       opacity: 0.72;
     }
+  }
+
+  .région {
+    fill: none;        
+    stroke: #FFFF;
+    stroke-width: 0.8
   }
 `;
 

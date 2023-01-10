@@ -43,15 +43,23 @@ function CartographieSVG({ tracésTerritoires, setTerritoireSurvolé }: Cartogra
           }}
         >
           {
-            tracésTerritoires.map(tracéTerritoire => (
-              <path
-                className="territoire"
-                d={tracéTerritoire.tracéSVG}
-                key={tracéTerritoire.nom}
-                onMouseEnter={() => {
-                  setTerritoireSurvolé({ codeInsee: tracéTerritoire.codeInsee, nom: tracéTerritoire.nom });
-                }}
-              />
+            tracésTerritoires.map((tracéTerritoire) => (
+              <g key={tracéTerritoire.nom}>
+                {tracéTerritoire.départements.map(département => (
+                  <path
+                    className="département"
+                    d={département.tracéSVG}
+                    key={département.nom}
+                    onMouseEnter={() => {
+                      setTerritoireSurvolé({ codeInsee: département.codeInsee, nom: département.nom });
+                    }}
+                  />
+                ))}
+                <path
+                  className='région'
+                  d={tracéTerritoire.tracéSVG}
+                />
+              </g>
             ))
           }
         </g>
