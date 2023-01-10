@@ -13,7 +13,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return indicateurs.map(row => ({
       id: row.id,
       nom: row.nom,
-      type: row.type_nom as TypeIndicateur,
+      type: row.type_id as TypeIndicateur,
       estIndicateurDuBaromètre: row.est_barometre,
       valeurInitiale: row.valeur_initiale,
       valeurActuelle: row.valeur_actuelle,
