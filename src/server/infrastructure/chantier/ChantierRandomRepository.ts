@@ -9,10 +9,6 @@ export default class ChantierRandomRepository implements ChantierRepository {
     this.valeursFixes = valeursFixes;
   }
 
-  async add(_: Chantier) {
-    throw new Error('Error: Not implemented');
-  }
-
   async getById(id: string) {
     return ChantierFixture.générer({ id, ...this.valeursFixes?.[0] });
   }
