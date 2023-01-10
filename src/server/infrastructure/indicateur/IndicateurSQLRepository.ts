@@ -1,6 +1,6 @@
 import { indicateur, PrismaClient } from '@prisma/client';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
-import Indicateur, { TypesAvancement } from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
   private prisma: PrismaClient;
@@ -13,7 +13,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return indicateurs.map(row => ({
       id: row.id,
       nom: row.nom,
-      type: row.type_nom as TypesAvancement || 'CONTEXTE', // TODO: que fait-on des nulls, qui sont la majorité ?
+      type: row.type_nom as TypeIndicateur,
       estIndicateurDuBaromètre: row.est_barometre,
       valeurInitiale: row.valeur_initiale,
       valeurActuelle: row.valeur_actuelle,

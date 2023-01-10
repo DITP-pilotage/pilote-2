@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import Indicateur, { typesAvancement } from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur, { typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import FixtureInterface from './Fixture.interface';
 import { générerUnIdentifiantUnique } from './utils';
 
@@ -8,7 +8,7 @@ class IndicateurFixture implements FixtureInterface<Indicateur> {
     return {
       id: générerUnIdentifiantUnique('IND'),
       nom: faker.lorem.words(5),
-      type: faker.helpers.arrayElement(typesAvancement),
+      type: faker.helpers.arrayElement(typesIndicateur),
       estIndicateurDuBaromètre: faker.datatype.boolean(),
       valeurInitiale: faker.helpers.arrayElement([null, faker.datatype.number({ max: 99 })]),
       valeurActuelle: faker.helpers.arrayElement([null, faker.datatype.number({ min: 99, max: 199 })]),
