@@ -30,6 +30,12 @@ class ErreurChantierSansMailleNationale extends Error {
   }
 }
 
+class ErreurMailleChantierInconnue extends Error {
+  constructor(idChantier: string, maille: string) {
+    super(`Erreur: la maille '${maille}' du chantier '${idChantier}' est inconnue.`);
+  }
+}
+
 function mapToDomain(chantiers: chantier[]): Chantier {
   const chantierNationale = chantiers.find(c => c.maille === 'NAT');
 
@@ -61,11 +67,14 @@ function mapToDomain(chantiers: chantier[]): Chantier {
   };
 
   for (const chantierNonNational of chantiersNonNationales) {
-    const maille = NOMS_MAILLES[chantierNonNational.maille];
+    const nomDeMaille = NOMS_MAILLES[chantierNonNational.maille];
+    if (!nomDeMaille) {
+      throw new ErreurMailleChantierInconnue(chantierNationale.id, chantierNonNational.maille);
+    }
 
     // TODO : lancer une erreur si maille non existante
-    result.mailles[maille] = {
-      ...result.mailles[maille], 
+    result.mailles[nomDeMaille] = {
+      ...result.mailles[nomDeMaille],
       [chantierNonNational.code_insee]: {
         codeInsee: chantierNonNational.code_insee,
         avancement: { annuel: null, global: chantierNonNational.taux_avancement },

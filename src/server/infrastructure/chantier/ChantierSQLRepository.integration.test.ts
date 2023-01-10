@@ -1,12 +1,12 @@
-import { PrismaClient } from '@prisma/client';
 import ChantierFixture from '@/fixtures/ChantierFixture';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import ChantierRowBuilder from '@/server/infrastructure/test/rowBuilder/ChantierRowBuilder';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
   test('Accède à un chantier par son id', async () => {
     // GIVEN
-    const prisma = new PrismaClient();
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
     const chantiers = ChantierFixture.générerPlusieurs(2);
 
@@ -24,7 +24,6 @@ describe('ChantierSQLRepository', () => {
 
   test('un chantier contenant une maille nationale', async () => {
     // GIVEN
-    const prisma = new PrismaClient();
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
 
     const valeursFixes = {
@@ -64,7 +63,6 @@ describe('ChantierSQLRepository', () => {
 
   test('un chantier contenant une maille nationale et départementale', async () => {
     // GIVEN
-    const prisma = new PrismaClient();
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
 
     const valeursFixes = {
@@ -114,7 +112,6 @@ describe('ChantierSQLRepository', () => {
 
   test('Accède à une liste de chantier', async () => {
     // GIVEN
-    const prisma = new PrismaClient();
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
     const chantier1 = ChantierFixture.générer();
     const chantier2 = ChantierFixture.générer({
@@ -134,5 +131,33 @@ describe('ChantierSQLRepository', () => {
     const ids = chantiers.map(chantier => chantier.id);
     expect(ids).toStrictEqual([chantier1.id, chantier2.id]);
     expect(chantiers[1].mailles.départementale['13'].avancement.global).toBe(50);
+  });
+
+  describe("Gestion d'erreur", () => {
+    test('Erreur en cas de maille inconnue', async () => {
+      // GIVEN
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+      const chantierId = 'CH-001';
+      await prisma.chantier.createMany({
+        data: [
+          new ChantierRowBuilder()
+            .withId(chantierId)
+            .withMailleNationale()
+            .build(),
+          new ChantierRowBuilder()
+            .withId(chantierId)
+            .withMaille('INCONNUE')
+            .build(),
+        ],
+      });
+
+      // WHEN
+      const request = async () => {
+        await repository.getById(chantierId);
+      };
+
+      // THEN
+      await expect(request).rejects.toThrow(/INCONNUE/);
+    });
   });
 });
