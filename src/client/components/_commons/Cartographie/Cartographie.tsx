@@ -1,27 +1,35 @@
-import CartographieProps from '@/components/_commons/Cartographie/Cartographie.interface';
+import CartographieProps, { TracéRégionJSON } from '@/components/_commons/Cartographie/Cartographie.interface';
 import CartographieAffichage from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage';
-import tracésDépartements from './départements.json';
-import tracésRégions from './régions.json';
+import { TracéRégion } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
+import départementsJSON from './départements.json';
+import régionsJSON from './régions.json';
 
-
-export default function Cartographie({ périmètreTerritorial, maille }: CartographieProps) {
-
-  const tracés = (
-    périmètreTerritorial.divisionAdministrative === 'région'
-      ? tracésRégions.filter(tracéRégion => tracéRégion.codeInsee === périmètreTerritorial.codeInsee)
-      : tracésRégions
-  ).map(tracéRégion => (
+function définirLesDépartementsÀTracer(régions: TracéRégionJSON, afficherDépartements: boolean): TracéRégion[] {
+  return régions.map(région => (
     {
-      ...tracéRégion,
-      départements: maille === 'départementale'
-        ? tracésDépartements.filter(tracéDépartement => tracéDépartement.codeInseeRégion === tracéRégion.codeInsee)
+      ...région,
+      départementsÀTracer: afficherDépartements
+        ? départementsJSON.filter(tracéDépartement => tracéDépartement.codeInseeRégion === région.codeInsee)
         : [],
-    }
-  ));
+    }),
+  );
+}
+
+function sélectionnerRégion(régions: TracéRégionJSON, codeInsee: string) {
+  return régions.filter(région => région.codeInsee === codeInsee);
+}
+
+export default function Cartographie({ territoireAffiché, niveauDeMailleAffiché }: CartographieProps) {
+  const tracésRégionsSansDépartement =
+    territoireAffiché.divisionAdministrative === 'région'
+      ? sélectionnerRégion(régionsJSON, territoireAffiché.codeInsee)
+      : régionsJSON;
+
+  const tracésRégions = définirLesDépartementsÀTracer(tracésRégionsSansDépartement, niveauDeMailleAffiché === 'départementale');
 
   return (
     <CartographieAffichage
-      tracésRégions={tracés}
+      tracésRégions={tracésRégions}
     />
   );
 }

@@ -1,4 +1,7 @@
-import { Territoire, TracéRégion } from '@/components/_commons/Cartographie/Cartographie.interface';
+import {
+  Territoire,
+  TracéRégion,
+} from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
 
 export type Viewbox = {
   x: number,

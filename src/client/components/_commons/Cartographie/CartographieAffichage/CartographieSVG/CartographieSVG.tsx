@@ -44,7 +44,7 @@ function CartographieSVG({ tracésRégions, setTerritoireSurvolé }: Cartographi
           {
             tracésRégions.map((tracéRégion) => (
               <g key={tracéRégion.nom}>
-                {tracéRégion.départements.map(département => (
+                {tracéRégion.départementsÀTracer.map(département => (
                   <path
                     className="territoire-rempli"
                     d={département.tracéSVG}
@@ -55,7 +55,7 @@ function CartographieSVG({ tracésRégions, setTerritoireSurvolé }: Cartographi
                   />
                 ))}
                 {
-                  tracéRégion.départements.length === 0
+                  tracéRégion.départementsÀTracer.length === 0
                     ?
                       <path
                         className='territoire-rempli'

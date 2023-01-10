@@ -1,18 +1,10 @@
-export type Territoire = {
+export type TracéRégionJSON = {
+  tracéSVG: string,
   codeInsee: string,
-  nom: string,
-  // manque l'info : département ou région
-};
+  nom: string
+}[];
 
-export type TracéRégion = Territoire & {
-  départements: (Territoire & {
-    tracéSVG: string;
-    codeInseeRégion: string;
-  })[];
-  tracéSVG: string;
-};
-
-export type PérimètreTerritorial = {
+export type TerritoireAffiché = {
   codeInsee: Exclude<string, 'FR'>,
   divisionAdministrative: 'région',
 } | {
@@ -21,6 +13,6 @@ export type PérimètreTerritorial = {
 };
 
 export default interface CartographieProps {
-  périmètreTerritorial: PérimètreTerritorial,
-  maille: 'régionale' | 'départementale',
+  territoireAffiché: TerritoireAffiché,
+  niveauDeMailleAffiché: 'régionale' | 'départementale',
 }

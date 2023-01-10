@@ -11,8 +11,8 @@ export default function RépartitionGéographique() {
         Répartition géographique
       </Titre>
       <Cartographie
-        maille='départementale'
-        périmètreTerritorial={{
+        niveauDeMailleAffiché='départementale'
+        territoireAffiché={{
           codeInsee: 'FR',
           divisionAdministrative: 'france',
         }}
