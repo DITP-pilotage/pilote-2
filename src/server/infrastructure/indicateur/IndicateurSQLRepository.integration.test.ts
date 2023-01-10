@@ -1,11 +1,11 @@
-import { indicateur, PrismaClient } from '@prisma/client';
-import IndicateurRowBuilder from '@/server/infrastructure/test/indicateur/IndicateurRowBuilder';
+import { indicateur } from '@prisma/client';
+import IndicateurRowBuilder from '@/server/infrastructure/test/rowBuilder/IndicateurRowBuilder';
+import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import IndicateurSQLRepository from './IndicateurSQLRepository';
 
 describe('IndicateurSQLRepository', () => {
   test("Récupère une liste vide quand il n'y a pas d'indicateurs", async () => {
     // GIVEN
-    const prisma = new PrismaClient();
     const repository = new IndicateurSQLRepository(prisma);
 
     // WHEN
@@ -17,7 +17,6 @@ describe('IndicateurSQLRepository', () => {
 
   test('Récupérer une liste d\'indicateur via un ID de chantier', async () => {
     // GIVEN
-    const prisma = new PrismaClient();
     const repository = new IndicateurSQLRepository(prisma);
 
     const chantierId = 'CH-001';
