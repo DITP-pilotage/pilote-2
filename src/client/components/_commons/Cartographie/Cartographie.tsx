@@ -27,7 +27,7 @@ function sélectionnerRégion(régions: CartographieTracéRégionJSON, codeInsee
   return régions.filter(région => région.codeInsee === codeInsee);
 }
 
-export default function Cartographie({ données, fonctionDAffichage, niveauDeMailleAffiché, territoireAffiché }: CartographieProps) {
+export default function Cartographie({ données, niveauDeMailleAffiché, territoireAffiché }: CartographieProps) {
   const régionsSeules =
     territoireAffiché.divisionAdministrative === 'région'
       ? sélectionnerRégion(régionsJSON, territoireAffiché.codeInsee)
@@ -37,7 +37,6 @@ export default function Cartographie({ données, fonctionDAffichage, niveauDeMai
 
   return (
     <CartographieAffichage
-      fonctionDAffichage={fonctionDAffichage}
       territoires={régionsEtDépartements}
     />
   );
