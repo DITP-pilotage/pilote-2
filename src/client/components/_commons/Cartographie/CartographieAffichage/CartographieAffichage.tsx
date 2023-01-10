@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import CartographieSVG from '@/components/_commons/Cartographie/CartographieAffichage/CartographieSVG/CartographieSVG';
 import CartographieAffichageProps, {
-  Territoire,
+  CartographieBulleTerritoire,
 } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
 import BulleDInfo from '@/components/_commons/Cartographie/CartographieAffichage/BulleDInfo/BulleDInfo';
 
-export default function CartographieAffichage({ tracésRégions, fonctionDAffichage }: CartographieAffichageProps) {
+export default function CartographieAffichage({ territoires, fonctionDAffichage }: CartographieAffichageProps) {
   const [sourisPosition, setSourisPosition] = useState({ x: 0, y: 0 });
-  const [territoireSurvolé, setTerritoireSurvolé] = useState<Territoire | null>(null);
+  const [territoireSurvolé, setTerritoireSurvolé] = useState<CartographieBulleTerritoire | null>(null);
 
   return (
     <div
@@ -28,7 +28,7 @@ export default function CartographieAffichage({ tracésRégions, fonctionDAffich
         : null}
       <CartographieSVG
         setTerritoireSurvolé={setTerritoireSurvolé}
-        tracésRégions={tracésRégions}
+        territoires={territoires}
       />
     </div>
   );

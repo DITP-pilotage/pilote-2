@@ -1,9 +1,13 @@
 import Titre from '@/components/_commons/Titre/Titre';
 import Cartographie from '@/components/_commons/Cartographie/Cartographie';
 import Chantier, { Maille, Territoire } from '@/server/domain/chantier/Chantier.interface';
+import {
+  CartographieValeur,
+  CartographieTerritoireCodeInsee,
+} from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
 import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
 
-function calculerLaMoyenne(valeurs: Array<number | null>) {
+function calculerLaMoyenne(valeurs: CartographieValeur[]) {
   const valeursFiltrées = valeurs.filter((valeur): valeur is number => valeur !== null);
   const somme = valeursFiltrées.reduce(
     (accumulateur, valeur) => accumulateur + valeur,
@@ -16,9 +20,9 @@ function calculerLaMoyenne(valeurs: Array<number | null>) {
 function récupérerLaDonnéeDIntérêtDesChantiers(
   chantiers: Chantier[],
   maille: Exclude<Maille, 'nationale'>,
-  fonctionDExtraction: (territoire: Territoire) => number | null,
+  fonctionDExtraction: (territoire: Territoire) => CartographieValeur,
 ) {
-  let donnéesTerritoire: Record<string, (number | null)[]> = {};
+  let donnéesTerritoire: Record<CartographieTerritoireCodeInsee, CartographieValeur[]> = {};
 
   chantiers.forEach(chantier => {
     Object.entries(chantier.mailles[maille]).forEach(([codeInsee, territoire]) => {
@@ -31,8 +35,8 @@ function récupérerLaDonnéeDIntérêtDesChantiers(
   return donnéesTerritoire;
 }
 
-function calculerLesMoyennesPourTousLesChantiers(donnéesTerritoires: Record<string, (number | null)[]> ) {
-  let moyennes: Record<string, number | null> = {};
+function calculerLesMoyennesPourTousLesChantiers(donnéesTerritoires: Record<CartographieTerritoireCodeInsee, CartographieValeur[]> ) {
+  let moyennes: Record<CartographieTerritoireCodeInsee, CartographieValeur> = {};
 
   Object.entries(donnéesTerritoires).forEach(([codeInsee, valeurs]) => {
     moyennes[codeInsee] = calculerLaMoyenne(valeurs);

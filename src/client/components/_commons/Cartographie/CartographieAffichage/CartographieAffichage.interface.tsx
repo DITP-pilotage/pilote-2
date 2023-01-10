@@ -1,20 +1,22 @@
-import { FonctionDAffichage } from '@/components/_commons/Cartographie/Cartographie.interface';
-export type Territoire = { // TODO /!\ même nom côté back
-  codeInsee: string,
-  nom: string,
-  valeur: number | null,
-  // manque l'info : département ou région
-};
+import { CartographieFonctionDAffichage } from '@/components/_commons/Cartographie/Cartographie.interface';
 
-export type TracéRégion = Territoire & {
-  départementsÀTracer: (Territoire & {
-    tracéSVG: string;
-    codeInseeRégion: string;
+export type CartographieBulleTerritoire = Pick<CartographieTerritoire, 'codeInsee' | 'nom' | 'valeur'>;
+
+export type CartographieTerritoireCodeInsee = string;
+
+export type CartographieValeur = number | null;
+
+export type CartographieTerritoire = {
+  codeInsee: CartographieTerritoireCodeInsee,
+  nom: string,
+  sousTerritoires: (CartographieTerritoire & {
+    codeInseeParent: CartographieTerritoireCodeInsee;
   })[];
   tracéSVG: string;
+  valeur: CartographieValeur,
 };
 
 export default interface CartographieAffichageProps {
-  tracésRégions: TracéRégion[]
-  fonctionDAffichage: FonctionDAffichage
+  fonctionDAffichage: CartographieFonctionDAffichage
+  territoires: CartographieTerritoire[]
 }

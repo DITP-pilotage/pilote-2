@@ -1,6 +1,6 @@
 import {
-  Territoire,
-  TracéRégion,
+  CartographieBulleTerritoire,
+  CartographieTerritoire,
 } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
 
 export type Viewbox = {
@@ -11,6 +11,6 @@ export type Viewbox = {
 };
 
 export default interface CartographieSVGProps {
-  tracésRégions: TracéRégion[],
-  setTerritoireSurvolé:  (state: Territoire | null) => void
+  territoires: CartographieTerritoire[],
+  setTerritoireSurvolé:  (state: CartographieBulleTerritoire | null) => void
 }
