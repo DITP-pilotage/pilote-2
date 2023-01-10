@@ -50,7 +50,7 @@ function CartographieSVG({ tracésRégions, setTerritoireSurvolé }: Cartographi
                     d={département.tracéSVG}
                     key={département.nom}
                     onMouseEnter={() => {
-                      setTerritoireSurvolé({ codeInsee: département.codeInsee, nom: département.nom });
+                      setTerritoireSurvolé({ codeInsee: département.codeInsee, nom: département.nom, valeur: département.valeur });
                     }}
                   />
                 ))}
@@ -61,7 +61,7 @@ function CartographieSVG({ tracésRégions, setTerritoireSurvolé }: Cartographi
                         className='territoire-rempli'
                         d={tracéRégion.tracéSVG}
                         onMouseEnter={() => {
-                          setTerritoireSurvolé({ codeInsee: tracéRégion.codeInsee, nom: tracéRégion.nom });
+                          setTerritoireSurvolé({ codeInsee: tracéRégion.codeInsee, nom: tracéRégion.nom, valeur: tracéRégion.valeur });
                         }}
                       />
                     :

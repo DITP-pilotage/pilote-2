@@ -62,7 +62,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
             <div className="fr-grid-row fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
-                  <RépartitionGéographique />
+                  <RépartitionGéographique chantiers={chantiersFiltrés} />
                 </Bloc>
               </div>
               <div className="fr-col-12 fr-col-lg-6">

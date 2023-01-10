@@ -5,7 +5,7 @@ import CartographieAffichageProps, {
 } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
 import BulleDInfo from '@/components/_commons/Cartographie/CartographieAffichage/BulleDInfo/BulleDInfo';
 
-export default function CartographieAffichage({ tracésRégions }: CartographieAffichageProps) {
+export default function CartographieAffichage({ tracésRégions, fonctionDAffichage }: CartographieAffichageProps) {
   const [sourisPosition, setSourisPosition] = useState({ x: 0, y: 0 });
   const [territoireSurvolé, setTerritoireSurvolé] = useState<Territoire | null>(null);
 
@@ -20,7 +20,7 @@ export default function CartographieAffichage({ tracésRégions }: CartographieA
     >
       {territoireSurvolé ?
         <BulleDInfo
-          contenu="Non renseigné"
+          contenu={fonctionDAffichage(territoireSurvolé.valeur)}
           titre={`${territoireSurvolé.codeInsee} - ${territoireSurvolé.nom}`}
           x={sourisPosition.x}
           y={sourisPosition.y}
