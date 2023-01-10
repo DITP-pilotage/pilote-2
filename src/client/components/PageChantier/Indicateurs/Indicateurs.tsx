@@ -2,19 +2,19 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import Titre from '@/components/_commons/Titre/Titre';
 import IndicateursProps, { ÉlémentPageIndicateursType } from '@/components/PageChantier/Indicateurs/Indicateurs.interface';
 import CarteIndicateur from '@/components/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur';
-import Indicateur, { TypesAvancement, typesAvancement } from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur, { TypeIndicateur, typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 
 export const listeRubriquesIndicateurs: ÉlémentPageIndicateursType[] = [
-  { nom: 'Indicateurs de contexte', ancre: 'contexte', typeIndicateur: 'CONTEXTE' },
-  { nom: 'Indicateurs de déploiement', ancre: 'déploiement', typeIndicateur: 'DÉPLOIEMENT' },
   { nom: 'Indicateurs d\'impact', ancre: 'impact', typeIndicateur: 'IMPACT' },
-  { nom: 'Indicateurs de qualité de service', ancre: 'perception', typeIndicateur: 'QUALITÉ_DE_SERVICE' },
-  { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: 'suivi', typeIndicateur: 'SUIVI_EXTERNALITÉS_ET_EFFET_REBOND' },
+  { nom: 'Indicateurs de déploiement', ancre: 'déploiement', typeIndicateur: 'DEPL' },
+  { nom: 'Indicateurs de qualité de service', ancre: 'perception', typeIndicateur: 'Q_SERV' },
+  { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: 'suivi', typeIndicateur: 'REBOND' },
+  { nom: 'Indicateurs de contexte', ancre: 'contexte', typeIndicateur: 'CONTEXTE' },
 ];
 
 export default function Indicateurs({ indicateurs }: IndicateursProps) {
-  const indicateursGroupésParType: Record<NonNullable<TypesAvancement>, Indicateur[]> = Object.fromEntries(typesAvancement.map(type =>
+  const indicateursGroupésParType: Record<NonNullable<TypeIndicateur>, Indicateur[]> = Object.fromEntries(typesIndicateur.map(type =>
     [type, indicateurs.filter(indicateur => indicateur.type === type)],
   ));
 
@@ -46,7 +46,7 @@ export default function Indicateurs({ indicateurs }: IndicateursProps) {
               indicateursGroupésParType[rubrique.typeIndicateur].length === 0
                 ? (
                   <Bloc>
-                    <p>
+                    <p className="fr-m-0">
                       Aucun indicateur
                     </p>
                   </Bloc>
