@@ -1,5 +1,5 @@
-import { TracéTerritoire } from '@/components/_commons/Cartographie/Cartographie.interface';
+import { TracéRégion } from '@/components/_commons/Cartographie/Cartographie.interface';
 
 export default interface CartographieAffichageProps {
-  tracésTerritoires: TracéTerritoire[]
+  tracésRégions: TracéRégion[]
 }

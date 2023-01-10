@@ -4,11 +4,11 @@ import tracésDépartements from './départements.json';
 import tracésRégions from './régions.json';
 
 
-export default function Cartographie({ zone, maille }: CartographieProps) {
+export default function Cartographie({ périmètreTerritorial, maille }: CartographieProps) {
 
-  const tracésTerritoires = (
-    zone.divisionAdministrative === 'région'
-      ? tracésRégions.filter(tracéRégion => tracéRégion.codeInsee === zone.codeInsee)
+  const tracés = (
+    périmètreTerritorial.divisionAdministrative === 'région'
+      ? tracésRégions.filter(tracéRégion => tracéRégion.codeInsee === périmètreTerritorial.codeInsee)
       : tracésRégions
   ).map(tracéRégion => (
     {
@@ -21,7 +21,7 @@ export default function Cartographie({ zone, maille }: CartographieProps) {
 
   return (
     <CartographieAffichage
-      tracésTerritoires={tracésTerritoires}
+      tracésRégions={tracés}
     />
   );
 }

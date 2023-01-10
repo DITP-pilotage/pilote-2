@@ -4,27 +4,23 @@ export type Territoire = {
   // manque l'info : département ou région
 };
 
-export type TracéRégion = {
-  départements: {
+export type TracéRégion = Territoire & {
+  départements: (Territoire & {
     tracéSVG: string;
-    codeInsee: string;
     codeInseeRégion: string;
-    nom: string;
-  }[];
+  })[];
   tracéSVG: string;
-  codeInsee: string;
-  nom: string;
 };
 
-export type IdentifiantTerritoire = {
+export type PérimètreTerritorial = {
   codeInsee: Exclude<string, 'FR'>,
-  divisionAdministrative: 'région' | 'département',
+  divisionAdministrative: 'région',
 } | {
   codeInsee: 'FR',
   divisionAdministrative: 'france'
 };
 
 export default interface CartographieProps {
-  zone: IdentifiantTerritoire,
+  périmètreTerritorial: PérimètreTerritorial,
   maille: 'régionale' | 'départementale',
 }

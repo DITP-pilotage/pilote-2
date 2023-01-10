@@ -8,6 +8,6 @@ export type Viewbox = {
 };
 
 export default interface CartographieSVGProps {
-  tracésTerritoires: TracéRégion[],
+  tracésRégions: TracéRégion[],
   setTerritoireSurvolé:  (state: Territoire | null) => void
 }
