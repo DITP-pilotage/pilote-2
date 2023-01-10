@@ -4,7 +4,7 @@ import CartographieZoomEtDéplacement
   from '@/components/_commons/Cartographie/CartographieZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
 
-function CartographieSVG({ tracésRégions, setTerritoireSurvolé }: CartographieSVGProps) {
+function CartographieSVG({ territoires, setTerritoireSurvolé }: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
@@ -42,32 +42,32 @@ function CartographieSVG({ tracésRégions, setTerritoireSurvolé }: Cartographi
           }}
         >
           {
-            tracésRégions.map((tracéRégion) => (
-              <g key={tracéRégion.nom}>
-                {tracéRégion.départementsÀTracer.map(département => (
+            territoires.map((territoire) => (
+              <g key={territoire.nom}>
+                {territoire.sousTerritoires.map(sousTerritoire => (
                   <path
                     className="territoire-rempli"
-                    d={département.tracéSVG}
-                    key={département.nom}
+                    d={sousTerritoire.tracéSVG}
+                    key={sousTerritoire.nom}
                     onMouseEnter={() => {
-                      setTerritoireSurvolé({ codeInsee: département.codeInsee, nom: département.nom, valeur: département.valeur });
+                      setTerritoireSurvolé({ codeInsee: sousTerritoire.codeInsee, nom: sousTerritoire.nom, valeur: sousTerritoire.valeur });
                     }}
                   />
                 ))}
                 {
-                  tracéRégion.départementsÀTracer.length === 0
+                  territoire.sousTerritoires.length === 0
                     ?
                       <path
                         className='territoire-rempli'
-                        d={tracéRégion.tracéSVG}
+                        d={territoire.tracéSVG}
                         onMouseEnter={() => {
-                          setTerritoireSurvolé({ codeInsee: tracéRégion.codeInsee, nom: tracéRégion.nom, valeur: tracéRégion.valeur });
+                          setTerritoireSurvolé({ codeInsee: territoire.codeInsee, nom: territoire.nom, valeur: territoire.valeur });
                         }}
                       />
                     :
                       <path
-                        className='frontière'
-                        d={tracéRégion.tracéSVG}
+                        className='territoire-frontière'
+                        d={territoire.tracéSVG}
                       />
                   }
               </g>
@@ -80,6 +80,6 @@ function CartographieSVG({ tracésRégions, setTerritoireSurvolé }: Cartographi
 }
 
 export default memo(CartographieSVG, (prevProps, nextProps) => (
-  prevProps.tracésRégions === nextProps.tracésRégions &&
+  prevProps.territoires === nextProps.territoires &&
   prevProps.setTerritoireSurvolé === nextProps.setTerritoireSurvolé
 ));
