@@ -8,7 +8,7 @@ export default interface Indicateur {
   id: string;
   nom: string;
   type: TypesAvancement;
-  estIndicateurDuBaromètre: boolean;
+  estIndicateurDuBaromètre: boolean | null;
   valeurInitiale: Valeur;
   valeurActuelle: Valeur;
   valeurCible: Valeur;

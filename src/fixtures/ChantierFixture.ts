@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
 import Chantier, { Territoires } from '@/server/domain/chantier/Chantier.interface';
 import MétéoFixture from '@/fixtures/MétéoFixture';
-import IndicateurFixture from '@/fixtures/IndicateurFixture';
 import FixtureInterface from '@/fixtures/Fixture.interface';
 import { générerCaractèresSpéciaux, générerUnIdentifiantUnique } from './utils';
 
@@ -38,7 +37,6 @@ class ChantierFixture implements FixtureInterface<Chantier> {
       directeurProjet: 'DirProj',
       directeurAdministrationCentrale: ['DAC1', 'DAC2'],
       ministères: ['Min1', 'Min2'],
-      indicateurs: IndicateurFixture.générerPlusieurs(5),
       ...valeursFixes,
     };
   }
