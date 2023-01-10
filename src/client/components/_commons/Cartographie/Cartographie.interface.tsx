@@ -19,11 +19,8 @@ export type CartographieTerritoireAffiché = {
 
 export type CartographieDonnées = Record<Exclude<Maille, 'nationale'>, Record<CartographieTerritoireCodeInsee, CartographieValeur>>;
 
-export type CartographieFonctionDAffichage = (valeur: CartographieValeur) => string;
-
 export default interface CartographieProps {
   données: CartographieDonnées,
-  fonctionDAffichage: CartographieFonctionDAffichage,
   territoireAffiché: CartographieTerritoireAffiché,
   niveauDeMailleAffiché: 'régionale' | 'départementale',
 }

@@ -7,7 +7,7 @@ import {
 } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
 import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
 
-function calculerLaMoyenne(valeurs: CartographieValeur[]) {
+function calculerLaMoyenne(valeurs: CartographieValeur['brute'][]) {
   const valeursFiltrées = valeurs.filter((valeur): valeur is number => valeur !== null);
   const somme = valeursFiltrées.reduce(
     (accumulateur, valeur) => accumulateur + valeur,
@@ -20,9 +20,9 @@ function calculerLaMoyenne(valeurs: CartographieValeur[]) {
 function récupérerLaDonnéeDIntérêtDesChantiers(
   chantiers: Chantier[],
   maille: Exclude<Maille, 'nationale'>,
-  fonctionDExtraction: (territoire: Territoire) => CartographieValeur,
+  fonctionDExtraction: (territoire: Territoire) => CartographieValeur['brute'],
 ) {
-  let donnéesTerritoire: Record<CartographieTerritoireCodeInsee, CartographieValeur[]> = {};
+  let donnéesTerritoire: Record<CartographieTerritoireCodeInsee, CartographieValeur['brute'][]> = {};
 
   chantiers.forEach(chantier => {
     Object.entries(chantier.mailles[maille]).forEach(([codeInsee, territoire]) => {
@@ -35,11 +35,15 @@ function récupérerLaDonnéeDIntérêtDesChantiers(
   return donnéesTerritoire;
 }
 
-function calculerLesMoyennesPourTousLesChantiers(donnéesTerritoires: Record<CartographieTerritoireCodeInsee, CartographieValeur[]> ) {
+function calculerLesMoyennesPourTousLesChantiers(donnéesTerritoires: Record<CartographieTerritoireCodeInsee, CartographieValeur['brute'][]> ) {
   let moyennes: Record<CartographieTerritoireCodeInsee, CartographieValeur> = {};
 
-  Object.entries(donnéesTerritoires).forEach(([codeInsee, valeurs]) => {
-    moyennes[codeInsee] = calculerLaMoyenne(valeurs);
+  Object.entries(donnéesTerritoires).forEach(([codeInsee, valeursBrutes]) => {
+    if (!moyennes[codeInsee]) {
+      moyennes[codeInsee] = { brute: null, affichée: 'Non renseigné' };
+    }
+    moyennes[codeInsee].brute = calculerLaMoyenne(valeursBrutes);
+    moyennes[codeInsee].affichée = moyennes[codeInsee].brute ? `${moyennes[codeInsee].brute!.toFixed(0)}%` : 'Non renseigné';
   });
 
   return moyennes;
@@ -71,7 +75,6 @@ export default function RépartitionGéographique({ chantiers }: RépartitionGé
       </Titre>
       <Cartographie
         données={donnéesCartographie}
-        fonctionDAffichage={(valeur) => valeur ? `${valeur.toFixed(0)}%` : 'Non renseigné'}
         niveauDeMailleAffiché='départementale'
         territoireAffiché={{
           codeInsee: 'FR',
