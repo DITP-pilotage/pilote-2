@@ -24,7 +24,7 @@ INSERT INTO public.chantier
      		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
      		ORDER  BY a.i
      	) AS directeurs_administration_centrale,
-        array(SELECT m_porteur.porteur_name
+        array(SELECT m_porteur.porteur_name_short
      		FROM   unnest(string_to_array(m_chantier."porteur_ids_noDAC", ' | ')) WITH ORDINALITY a(id, i)
      		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
      		ORDER  BY a.i
@@ -47,7 +47,7 @@ UNION
      		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
      		ORDER  BY a.i
      	) AS directeurs_administration_centrale,
-        array(SELECT m_porteur.porteur_name
+        array(SELECT m_porteur.porteur_name_short
      		FROM   unnest(string_to_array(m_chantier."porteur_ids_noDAC", ' | ')) WITH ORDINALITY a(id, i)
      		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
      		ORDER  BY a.i
