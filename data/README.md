@@ -185,11 +185,16 @@ PPG(PPG_metdata) --> |view_meta_chantier.csv| PG[(Base PG Pilote 2)]
 PPG --> |view_meta_perimetre.csv| PG
 PPG --> |view_meta_indicateur.csv| PG
 PPG --> |view_meta_zone.csv| PG
+PPG --> |view_meta_porteur.csv| PG
+PPG --> |ref_indic_type.csv| PG
 ```
 
 Légende :
 - Est appelé `PPG_metdata` le répertoire éponyme qui se propose en interface 
 du _dump Dfakto_ avec des données plus facilement exploitables et déjà enrichies.
+
+_NB_ :
+- Les données du csv `ref_indic_type` sont importées dans la table `indicateur_type`.
 
 ### Brique Dfakto vers Datawarehouse
 
@@ -228,17 +233,22 @@ subgraph Base PG Pilote 2
       D_FPC[fact_progress_chantier]
       D_DTN[dim_tree_nodes]
       D_DS[dim_structures]
+      M_TYPE[indicateur_type]
+      M_PORT[metadata_porteur]
    end
    subgraph public
       M_PER --> PER[perimetre]
       M_CHA --> CHA[chantier]
-      M_ZON --> CHA
       D_FPC --> CHA
+      M_PORT --> CHA
+      M_ZON --> CHA
       D_DTN --> CHA
       D_DS  --> CHA
+      M_ZON --> IND
       D_DTN --> IND
       D_DS  --> IND
       D_FPI --> IND
+      M_TYPE --> IND
       M_IND --> IND[indicateur]
       linkStyle 0 stroke:red;
    end
