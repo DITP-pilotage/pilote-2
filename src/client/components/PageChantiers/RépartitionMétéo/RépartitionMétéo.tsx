@@ -21,7 +21,7 @@ export default function RépartitionMétéo() {
              >
                <RépartitionMétéoÉlément
                  météo={météo}
-                 nombreDeChantiers={5}
+                 nombreDeChantiers="-"
                />
              </li>
            ))

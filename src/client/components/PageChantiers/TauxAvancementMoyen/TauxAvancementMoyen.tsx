@@ -15,22 +15,16 @@ export default function TauxAvancementMoyen() {
           annuel
         </p>
         <BarreDeProgression
-          maximum={60}
-          minimum={0}
-          médiane={55}
           taille="grande"
-          valeur={45}
+          valeur={null}
           variante="secondaire"
         />
         <p className="fr-mb-1v fr-mt-3w">
           global
         </p>
         <BarreDeProgression
-          maximum={100}
-          minimum={20.5}
-          médiane={55}
           taille="grande"
-          valeur={70}
+          valeur={null}
           variante="primaire"
         />
       </div>

@@ -67,10 +67,10 @@ export default function CarteIndicateur({ indicateur } : CarteIndicateurProps) {
           { indicateur.nom }
         </Titre>
         <p className='information-secondaire fr-mb-1w'>
-          Dernière mise à jour : 13/12/2022
+          Dernière mise à jour : Non renseigné
         </p>
         <p className='information-secondaire fr-mb-1w'>
-          Source : Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas tempor ultricies dictum. Suspendisse sit amet eros vel sem vulputate porta. Cras sed auctor justo, mollis consectetur urna.
+          Source : Non renseigné
         </p>
         <p className="fr-text--xs fr-mb-1v">
           Ceci est la description de l’indicateur et des données associées. La pondération de l’indicateur dans le taux d’avancement global est également expliquée.
