@@ -17,7 +17,7 @@ class ChantierFixture implements FixtureInterface<Chantier> {
   ];
 
   private readonly code_insee_régions = [
-    '1', '2', '3', '4', '6', '11', '24', '27', '28', '32', '44', '52', '53', '75',
+    '01', '02', '03', '04', '06', '11', '24', '27', '28', '32', '44', '52', '53', '75',
     '76', '84', '93', '94',
   ];
 

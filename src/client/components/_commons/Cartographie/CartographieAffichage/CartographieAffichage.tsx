@@ -4,6 +4,7 @@ import CartographieAffichageProps, {
   CartographieBulleTerritoire,
 } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
 import BulleDInfo from '@/components/_commons/Cartographie/CartographieAffichage/BulleDInfo/BulleDInfo';
+import { nuancierPourcentage } from '@/components/_commons/Cartographie/nuancier/nuancier';
 
 export default function CartographieAffichage({ territoires }: CartographieAffichageProps) {
   const [sourisPosition, setSourisPosition] = useState({ x: 0, y: 0 });
@@ -27,6 +28,7 @@ export default function CartographieAffichage({ territoires }: CartographieAffic
         />
         : null}
       <CartographieSVG
+        nuancier={nuancierPourcentage}
         setTerritoireSurvolé={setTerritoireSurvolé}
         territoires={territoires}
       />
