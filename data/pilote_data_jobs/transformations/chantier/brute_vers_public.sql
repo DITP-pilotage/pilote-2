@@ -28,7 +28,12 @@ INSERT INTO public.chantier
      		FROM   unnest(string_to_array(m_chantier."porteur_ids_noDAC", ' | ')) WITH ORDINALITY a(id, i)
      		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
      		ORDER  BY a.i
-     	)  AS ministeres
+     	)  AS ministeres,
+        array(SELECT m_porteur.porteur_name_short
+     		FROM   unnest(string_to_array(m_chantier."porteur_ids_DAC", ' | ')) WITH ORDINALITY a(id, i)
+     		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
+     		ORDER  BY a.i
+     	)  AS directions_administration_centrale
     FROM raw_data.metadata_chantier m_chantier
         LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_region AND d_chantier.structure_name='Réforme'
         JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = 'FRANCE'
@@ -51,7 +56,12 @@ UNION
      		FROM   unnest(string_to_array(m_chantier."porteur_ids_noDAC", ' | ')) WITH ORDINALITY a(id, i)
      		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
      		ORDER  BY a.i
-     	)  AS ministeres
+     	)  AS ministeres,
+        array(SELECT m_porteur.porteur_name_short
+     		FROM   unnest(string_to_array(m_chantier."porteur_ids_DAC", ' | ')) WITH ORDINALITY a(id, i)
+     		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
+     		ORDER  BY a.i
+     	)  AS directions_administration_centrale
     FROM raw_data.metadata_chantier m_chantier
         LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_chantier AND d_chantier.structure_name IN ('Région', 'Département')
         JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = d_chantier.code_region

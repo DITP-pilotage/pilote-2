@@ -95,6 +95,7 @@ function mapToPrismaRows(chantierDomaine: Chantier): chantier[] {
         directeur_projet: chantierDomaine.directeurProjet,
         directeurs_administration_centrale: chantierDomaine.directeurAdministrationCentrale,
         ministeres: chantierDomaine.ministères,
+        directions_administration_centrale: ['TBD'],
       });
     });
   });
