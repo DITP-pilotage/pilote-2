@@ -10,9 +10,5 @@ beforeEach(async () => {
     .map((name) => `"public"."${name}"`)
     .join(', ');
 
-  try {
-    await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
-  } catch (error) {
-    console.log({ error });
-  }
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
 });
