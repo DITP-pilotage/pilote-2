@@ -9,8 +9,6 @@ export default class ChantierRowBuilder {
 
   private _codeInsee: string = 'FR';
 
-  private _directeurProjet: string = 'Directeur ' + this._id;
-
   private _tauxAvancement: number = 42;
 
   withId(id: string) {
@@ -50,8 +48,7 @@ export default class ChantierRowBuilder {
       nom: this._nom,
       maille: this._maille,
       code_insee: this._codeInsee,
-      directeur_projet: this._directeurProjet,
-
+      directeurs_projet: ['Directeur ' + this._id],
       perimetre_ids: [],
       taux_avancement: this._tauxAvancement,
       territoire_nom: null,
