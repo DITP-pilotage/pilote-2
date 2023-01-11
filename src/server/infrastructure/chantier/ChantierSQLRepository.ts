@@ -56,7 +56,6 @@ function mapToDomain(chantiers: chantier[]): Chantier {
       départementale: {},
       régionale: {},
     },
-    directeurProjet: chantierNationale.directeur_projet,
     directeurAdministrationCentrale: chantierNationale.directeurs_administration_centrale,
     ministères: chantierNationale.ministeres,
   };
@@ -92,10 +91,10 @@ function mapToPrismaRows(chantierDomaine: Chantier): chantier[] {
         code_insee: donnéesTerritoire.codeInsee,
         taux_avancement: donnéesTerritoire.avancement.global,
         maille: codeMaille,
-        directeur_projet: chantierDomaine.directeurProjet,
         directeurs_administration_centrale: chantierDomaine.directeurAdministrationCentrale,
         ministeres: chantierDomaine.ministères,
         directions_administration_centrale: ['TBD'],
+        directeurs_projet: ['TBD'],
       });
     });
   });
