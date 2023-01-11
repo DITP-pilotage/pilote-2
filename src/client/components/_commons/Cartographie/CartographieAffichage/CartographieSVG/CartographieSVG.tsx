@@ -9,9 +9,12 @@ import { CartographieValeur } from '@/components/_commons/Cartographie/Cartograp
 import CartographieSVGStyled from './CartographieSVG.styled';
 
 function déterminerCouleurTerritoire(cartographieValeur: CartographieValeur, nuancier: CartographieNuancier) {
+  if (!cartographieValeur) {
+    return '#dedede';
+  }
   const valeurBrute = cartographieValeur.brute;
   if (valeurBrute) {
-    return nuancier.find(({ seuil }) => seuil >= valeurBrute)?.couleur || '#ffffff';
+    return nuancier.find(({ seuil }) => seuil >= valeurBrute)?.couleur || '#dedede';
   }
 }
 
