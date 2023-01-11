@@ -23,7 +23,6 @@ export default interface Chantier {
   nomPPG: string | null;
   périmètreIds: string[];
   mailles: Record<Maille, Territoires>;
-  directeurProjet: string,
   directeurAdministrationCentrale: string[],
   ministères: string[],
   météo: Météo;

@@ -18,7 +18,6 @@ INSERT INTO public.chantier
         m_zone.nom AS zone_nom,
         string_to_array(m_chantier.ch_per, ' | ') AS perimetre_ids,
         m_zone.zone_type AS maille,
-        m_chantier.ch_dp AS directeur_projet,
         array(SELECT m_porteur.porteur_directeur
      		FROM   unnest(string_to_array(m_chantier."porteur_ids_DAC", ' | ')) WITH ORDINALITY a(id, i)
      		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
@@ -33,7 +32,8 @@ INSERT INTO public.chantier
      		FROM   unnest(string_to_array(m_chantier."porteur_ids_DAC", ' | ')) WITH ORDINALITY a(id, i)
      		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
      		ORDER  BY a.i
-     	)  AS directions_administration_centrale
+     	)  AS directions_administration_centrale,
+        string_to_array(m_chantier.ch_dp, ' | ') AS directeurs_projet
     FROM raw_data.metadata_chantier m_chantier
         LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_region AND d_chantier.structure_name='Réforme'
         JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = 'FRANCE'
@@ -46,7 +46,6 @@ UNION
         m_zone.nom AS zone_nom,
         string_to_array(m_chantier.ch_per, ' | ') AS perimetre_ids,
         m_zone.zone_type AS maille,
-        m_chantier.ch_dp AS directeur_projet,
         array(SELECT m_porteur.porteur_directeur
      		FROM   unnest(string_to_array(m_chantier."porteur_ids_DAC", ' | ')) WITH ORDINALITY a(id, i)
      		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
@@ -61,7 +60,8 @@ UNION
      		FROM   unnest(string_to_array(m_chantier."porteur_ids_DAC", ' | ')) WITH ORDINALITY a(id, i)
      		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
      		ORDER  BY a.i
-     	)  AS directions_administration_centrale
+     	)  AS directions_administration_centrale,
+        string_to_array(m_chantier.ch_dp, ' | ') AS directeurs_projet
     FROM raw_data.metadata_chantier m_chantier
         LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_chantier AND d_chantier.structure_name IN ('Région', 'Département')
         JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = d_chantier.code_region
