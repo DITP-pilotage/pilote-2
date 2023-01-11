@@ -21,7 +21,7 @@ export default function CartographieAffichage({ territoires }: CartographieAffic
     >
       {territoireSurvolé ?
         <BulleDInfo
-          contenu={territoireSurvolé.valeur.affichée}
+          contenu={territoireSurvolé.valeur ? territoireSurvolé.valeur.affichée : 'Non renseigné'}
           titre={`${territoireSurvolé.codeInsee} - ${territoireSurvolé.nom}`}
           x={sourisPosition.x}
           y={sourisPosition.y}
