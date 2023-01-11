@@ -1,7 +1,70 @@
 import Titre from '@/components/_commons/Titre/Titre';
 import Cartographie from '@/components/_commons/Cartographie/Cartographie';
+import Chantier, { Maille, Territoire } from '@/server/domain/chantier/Chantier.interface';
+import {
+  CartographieValeur,
+  CartographieTerritoireCodeInsee,
+} from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
+import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
 
-export default function RépartitionGéographique() {
+function calculerLaMoyenne(valeurs: CartographieValeur['brute'][]) {
+  const valeursFiltrées = valeurs.filter((valeur): valeur is number => valeur !== null);
+  const somme = valeursFiltrées.reduce(
+    (accumulateur, valeur) => accumulateur + valeur,
+    0,
+  );
+
+  return valeursFiltrées.length === 0 ? null : somme / valeursFiltrées.length;
+}
+
+function récupérerLaDonnéeDIntérêtDesChantiers(
+  chantiers: Chantier[],
+  maille: Exclude<Maille, 'nationale'>,
+  fonctionDExtraction: (territoire: Territoire) => CartographieValeur['brute'],
+) {
+  let donnéesTerritoire: Record<CartographieTerritoireCodeInsee, CartographieValeur['brute'][]> = {};
+
+  chantiers.forEach(chantier => {
+    Object.entries(chantier.mailles[maille]).forEach(([codeInsee, territoire]) => {
+      if (!donnéesTerritoire[codeInsee])
+        donnéesTerritoire[codeInsee] = [];
+      donnéesTerritoire[codeInsee] = [...donnéesTerritoire[codeInsee], fonctionDExtraction(territoire)];
+    });
+  });
+
+  return donnéesTerritoire;
+}
+
+function calculerLesMoyennesPourTousLesChantiers(donnéesTerritoires: Record<CartographieTerritoireCodeInsee, CartographieValeur['brute'][]> ) {
+  let moyennes: Record<CartographieTerritoireCodeInsee, CartographieValeur> = {};
+
+  Object.entries(donnéesTerritoires).forEach(([codeInsee, valeursBrutes]) => {
+    if (!moyennes[codeInsee]) {
+      moyennes[codeInsee] = { brute: null, affichée: 'Non renseigné' };
+    }
+    moyennes[codeInsee].brute = calculerLaMoyenne(valeursBrutes);
+    moyennes[codeInsee].affichée = moyennes[codeInsee].brute ? `${moyennes[codeInsee].brute!.toFixed(0)}%` : 'Non renseigné';
+  });
+
+  return moyennes;
+}
+
+export default function RépartitionGéographique({ chantiers }: RépartitionGéographiqueProps) {
+  const donnéesCartographie = {
+    'régionale': calculerLesMoyennesPourTousLesChantiers(
+      récupérerLaDonnéeDIntérêtDesChantiers(
+        chantiers,
+        'régionale',
+        territoire => territoire.avancement.global,
+      )),
+    'départementale':  calculerLesMoyennesPourTousLesChantiers(
+      récupérerLaDonnéeDIntérêtDesChantiers(
+        chantiers,
+        'départementale',
+        territoire => territoire.avancement.global,
+      )),
+  };
+
   return (
     <>
       <Titre
@@ -11,6 +74,7 @@ export default function RépartitionGéographique() {
         Répartition géographique
       </Titre>
       <Cartographie
+        données={donnéesCartographie}
         niveauDeMailleAffiché='départementale'
         territoireAffiché={{
           codeInsee: 'FR',

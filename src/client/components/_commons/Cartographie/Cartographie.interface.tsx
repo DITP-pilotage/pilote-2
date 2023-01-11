@@ -1,18 +1,26 @@
-export type TracéRégionJSON = {
+import { Maille } from '@/server/domain/chantier/Chantier.interface';
+import {
+  CartographieTerritoireCodeInsee, CartographieValeur,
+} from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
+
+export type CartographieTracéRégionJSON = {
   tracéSVG: string,
-  codeInsee: string,
+  codeInsee: CartographieTerritoireCodeInsee,
   nom: string
 }[];
 
-export type TerritoireAffiché = {
-  codeInsee: Exclude<string, 'FR'>,
+export type CartographieTerritoireAffiché = {
+  codeInsee: Exclude<CartographieTerritoireCodeInsee, 'FR'>,
   divisionAdministrative: 'région',
 } | {
   codeInsee: 'FR',
   divisionAdministrative: 'france'
 };
 
+export type CartographieDonnées = Record<Exclude<Maille, 'nationale'>, Record<CartographieTerritoireCodeInsee, CartographieValeur>>;
+
 export default interface CartographieProps {
-  territoireAffiché: TerritoireAffiché,
+  données: CartographieDonnées,
+  territoireAffiché: CartographieTerritoireAffiché,
   niveauDeMailleAffiché: 'régionale' | 'départementale',
 }
