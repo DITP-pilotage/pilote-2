@@ -6,12 +6,6 @@ import { groupBy } from '@/client/utils/arrays';
 ///
 // Fonctions utilitaires
 
-const CODES_MAILLES: Record<Maille, string> = {
-  nationale: 'NAT',
-  départementale: 'DEPT',
-  régionale: 'REG',
-};
-
 const NOMS_MAILLES: Record<string, Maille> = {
   NAT: 'nationale',
   DEPT: 'départementale',
@@ -27,6 +21,12 @@ class ErreurChantierNonTrouvé extends Error {
 class ErreurChantierSansMailleNationale extends Error {
   constructor(idChantier: string) {
     super(`Erreur: le chantier '${idChantier}' n'a pas de maille nationale.`);
+  }
+}
+
+class ErreurMailleChantierInconnue extends Error {
+  constructor(idChantier: string, maille: string) {
+    super(`Erreur: la maille '${maille}' du chantier '${idChantier}' est inconnue.`);
   }
 }
 
@@ -61,43 +61,18 @@ function mapToDomain(chantiers: chantier[]): Chantier {
   };
 
   for (const chantierNonNational of chantiersNonNationales) {
-    const maille = NOMS_MAILLES[chantierNonNational.maille];
-
-    // TODO : lancer une erreur si maille non existante
-    result.mailles[maille] = {
-      ...result.mailles[maille], 
+    const nomDeMaille = NOMS_MAILLES[chantierNonNational.maille];
+    if (!nomDeMaille) {
+      throw new ErreurMailleChantierInconnue(chantierNationale.id, chantierNonNational.maille);
+    }
+    result.mailles[nomDeMaille] = {
+      ...result.mailles[nomDeMaille],
       [chantierNonNational.code_insee]: {
         codeInsee: chantierNonNational.code_insee,
         avancement: { annuel: null, global: chantierNonNational.taux_avancement },
       },
     };
   }
-
-  return result;
-}
-
-function mapToPrismaRows(chantierDomaine: Chantier): chantier[] {
-  const result: chantier[] = [];
-
-  Object.entries(chantierDomaine.mailles).forEach(([nomDeMaille, territoire]) => {
-    const codeMaille = CODES_MAILLES[nomDeMaille as Maille];
-
-    Object.values(territoire).forEach(donnéesTerritoire => {
-      result.push({
-        id: chantierDomaine.id,
-        nom: chantierDomaine.nom,
-        perimetre_ids: chantierDomaine.périmètreIds,
-        territoire_nom: 'TBD',
-        code_insee: donnéesTerritoire.codeInsee,
-        taux_avancement: donnéesTerritoire.avancement.global,
-        maille: codeMaille,
-        directeurs_administration_centrale: chantierDomaine.directeurAdministrationCentrale,
-        ministeres: chantierDomaine.ministères,
-        directions_administration_centrale: ['TBD'],
-        directeurs_projet: ['TBD'],
-      });
-    });
-  });
 
   return result;
 }
@@ -110,15 +85,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
-  }
-
-  async add(chantierToAdd: Chantier) {
-    const rows: chantier[] = mapToPrismaRows(chantierToAdd);
-    for (const row of rows) {
-      await this.prisma.chantier.create({
-        data: row,
-      });
-    }
   }
 
   async getById(id: string) {
