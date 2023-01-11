@@ -10,7 +10,13 @@ export type Viewbox = {
   height: number,
 };
 
+export type CartographieNuancier = {
+  seuil: number,
+  couleur: string
+}[];
+
 export default interface CartographieSVGProps {
+  nuancier: CartographieNuancier,
   territoires: CartographieTerritoire[],
   setTerritoireSurvolé:  (state: CartographieBulleTerritoire | null) => void
 }

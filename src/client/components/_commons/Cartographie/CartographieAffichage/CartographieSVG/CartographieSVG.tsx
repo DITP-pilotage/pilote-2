@@ -1,10 +1,22 @@
 import { memo, useEffect, useRef, useState } from 'react';
-import CartographieSVGProps, { Viewbox } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieSVG/CartographieSVG.interface';
+import CartographieSVGProps, {
+  CartographieNuancier,
+  Viewbox,
+} from '@/components/_commons/Cartographie/CartographieAffichage/CartographieSVG/CartographieSVG.interface';
 import CartographieZoomEtDéplacement
   from '@/components/_commons/Cartographie/CartographieZoomEtDéplacement/CartographieZoomEtDéplacement';
+import { CartographieValeur } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
 import CartographieSVGStyled from './CartographieSVG.styled';
 
-function CartographieSVG({ territoires, setTerritoireSurvolé }: CartographieSVGProps) {
+function déterminerCouleurTerritoire(cartographieValeur: CartographieValeur, nuancier: CartographieNuancier) {
+  const valeurBrute = cartographieValeur.brute;
+  if (valeurBrute) {
+    return nuancier.find(({ seuil }) => seuil >= valeurBrute)?.couleur || '#ffffff';
+  }
+}
+
+
+function CartographieSVG({ nuancier, territoires, setTerritoireSurvolé }: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
@@ -45,9 +57,11 @@ function CartographieSVG({ territoires, setTerritoireSurvolé }: CartographieSVG
             territoires.map((territoire) => (
               <g key={territoire.nom}>
                 {territoire.sousTerritoires.map(sousTerritoire => (
+
                   <path
                     className="territoire-rempli"
                     d={sousTerritoire.tracéSVG}
+                    fill={déterminerCouleurTerritoire(sousTerritoire.valeur, nuancier)}
                     key={sousTerritoire.nom}
                     onMouseEnter={() => {
                       setTerritoireSurvolé({ codeInsee: sousTerritoire.codeInsee, nom: sousTerritoire.nom, valeur: sousTerritoire.valeur });
@@ -60,6 +74,7 @@ function CartographieSVG({ territoires, setTerritoireSurvolé }: CartographieSVG
                       <path
                         className='territoire-rempli'
                         d={territoire.tracéSVG}
+                        fill={déterminerCouleurTerritoire(territoire.valeur, nuancier)}
                         onMouseEnter={() => {
                           setTerritoireSurvolé({ codeInsee: territoire.codeInsee, nom: territoire.nom, valeur: territoire.valeur });
                         }}

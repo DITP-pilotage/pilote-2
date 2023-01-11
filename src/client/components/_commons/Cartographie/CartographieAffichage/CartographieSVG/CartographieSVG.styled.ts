@@ -12,7 +12,6 @@ const CartographieSVGStyled = styled.div`
 
   .territoire-rempli {
     cursor: pointer;
-    fill: #d0d0d0;
     stroke-width: 0.2;
 
     &:hover {
