@@ -9,24 +9,11 @@ function mapToDomain(périmètrePrisma: perimetre): PérimètreMinistériel {
   };
 }
 
-function mapToPrisma(périmètreDomaine: PérimètreMinistériel): perimetre {
-  return {
-    id: périmètreDomaine.id,
-    nom: périmètreDomaine.nom,
-  };
-}
-
 export default class PérimètreMinistérielSQLRepository implements PérimètreMinistérielRepository {
   private prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
-  }
-
-  async add(chantierToAdd: PérimètreMinistériel) {
-    await this.prisma.perimetre.create({
-      data: mapToPrisma(chantierToAdd),
-    });
   }
 
   async getListe() {

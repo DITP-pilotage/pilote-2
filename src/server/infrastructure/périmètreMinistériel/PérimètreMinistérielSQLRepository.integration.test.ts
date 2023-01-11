@@ -8,16 +8,9 @@ describe('PérimètreMinistérielSQLRepository', () => {
     // GIVEN
     const prisma = new PrismaClient();
     const repository: PérimètreMinistérielRepository = new PérimètreMinistérielSQLRepository(prisma);
-    const périmètre1: PérimètreMinistériel = {
-      id: 'PER-001',
-      nom: 'Périmètre 1',
-    };
-    const périmètre2: PérimètreMinistériel = {
-      id: 'PER-002',
-      nom: 'Périmètre 2',
-    };
-    await repository.add(périmètre1);
-    await repository.add(périmètre2);
+    const périmètre1: PérimètreMinistériel = { id: 'PER-001', nom: 'Périmètre 1' };
+    const périmètre2: PérimètreMinistériel = { id: 'PER-002', nom: 'Périmètre 2' };
+    await prisma.perimetre.createMany({ data: [périmètre1, périmètre2] });
 
     // WHEN
     const périmètres = await repository.getListe();
