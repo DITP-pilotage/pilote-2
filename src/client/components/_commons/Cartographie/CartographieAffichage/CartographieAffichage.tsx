@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import CartographieSVG from '@/components/_commons/Cartographie/CartographieAffichage/CartographieSVG/CartographieSVG';
 import CartographieAffichageProps, {
-  Territoire,
+  CartographieBulleTerritoire,
 } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
 import BulleDInfo from '@/components/_commons/Cartographie/CartographieAffichage/BulleDInfo/BulleDInfo';
 
-export default function CartographieAffichage({ tracésRégions }: CartographieAffichageProps) {
+export default function CartographieAffichage({ territoires }: CartographieAffichageProps) {
   const [sourisPosition, setSourisPosition] = useState({ x: 0, y: 0 });
-  const [territoireSurvolé, setTerritoireSurvolé] = useState<Territoire | null>(null);
+  const [territoireSurvolé, setTerritoireSurvolé] = useState<CartographieBulleTerritoire | null>(null);
 
   return (
     <div
@@ -20,7 +20,7 @@ export default function CartographieAffichage({ tracésRégions }: CartographieA
     >
       {territoireSurvolé ?
         <BulleDInfo
-          contenu="Non renseigné"
+          contenu={territoireSurvolé.valeur.affichée}
           titre={`${territoireSurvolé.codeInsee} - ${territoireSurvolé.nom}`}
           x={sourisPosition.x}
           y={sourisPosition.y}
@@ -28,7 +28,7 @@ export default function CartographieAffichage({ tracésRégions }: CartographieA
         : null}
       <CartographieSVG
         setTerritoireSurvolé={setTerritoireSurvolé}
-        tracésRégions={tracésRégions}
+        territoires={territoires}
       />
     </div>
   );

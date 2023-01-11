@@ -1,17 +1,22 @@
-export type Territoire = { // TODO /!\ même nom côté back
-  codeInsee: string,
-  nom: string,
-  // manque l'info : département ou région
+export type CartographieBulleTerritoire = Pick<CartographieTerritoire, 'codeInsee' | 'nom' | 'valeur'>;
+
+export type CartographieTerritoireCodeInsee = string;
+
+export type CartographieValeur = {
+  brute: number | null,
+  affichée: string,
 };
 
-export type TracéRégion = Territoire & {
-  départementsÀTracer: (Territoire & {
-    tracéSVG: string;
-    codeInseeRégion: string;
+export type CartographieTerritoire = {
+  codeInsee: CartographieTerritoireCodeInsee,
+  nom: string,
+  sousTerritoires: (CartographieTerritoire & {
+    codeInseeParent: CartographieTerritoireCodeInsee;
   })[];
   tracéSVG: string;
+  valeur: CartographieValeur,
 };
 
 export default interface CartographieAffichageProps {
-  tracésRégions: TracéRégion[]
+  territoires: CartographieTerritoire[]
 }

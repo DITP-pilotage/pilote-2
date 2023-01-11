@@ -5,7 +5,7 @@ const CartographieSVGStyled = styled.div`
   width: 100%;
   stroke: var(--grey-1000-50);
 
-  .frontière {
+  .territoire-frontière {
     fill: none;
     stroke-width: 0.6;
   }
