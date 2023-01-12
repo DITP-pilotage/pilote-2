@@ -11,6 +11,8 @@ export default class ChantierRowBuilder {
 
   private _tauxAvancement: number = 42;
 
+  private _météo: string = 'SOLEIL';
+
   withId(id: string) {
     this._id = id;
     return this;
@@ -42,6 +44,11 @@ export default class ChantierRowBuilder {
     return this;
   }
 
+  withMétéo(météo: string) {
+    this._météo = météo;
+    return this;
+  }
+
   build(): chantier {
     return {
       id: this._id,
@@ -55,7 +62,7 @@ export default class ChantierRowBuilder {
       directeurs_administration_centrale: [],
       ministeres: [],
       directions_administration_centrale: [],
-      meteo: 'NON_NECESSAIRE',
+      meteo: this._météo,
     };
   }
 }

@@ -1,5 +1,6 @@
 import ChantierRandomRepository from '@/server/infrastructure/chantier/ChantierRandomRepository';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import { météoFromString } from '@/server/domain/chantier/Météo.interface';
 
 describe('ChantierRandomRepository', () => {
   test('génère une valeur', async () => {
@@ -21,6 +22,7 @@ describe('ChantierRandomRepository', () => {
           FR: {
             codeInsee: 'FR',
             avancement: { annuel: 14, global: 18 },
+            météo: météoFromString('SOLEIL'),
           },
         },
         régionale: {},
@@ -41,6 +43,7 @@ describe('ChantierRandomRepository', () => {
             annuel: 14,
             global: 18,
           },
+          météo: météoFromString('SOLEIL'),
         },
       },
       régionale: {},

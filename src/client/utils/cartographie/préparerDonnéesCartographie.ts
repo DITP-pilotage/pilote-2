@@ -2,7 +2,7 @@ import { Territoire } from '@/server/domain/chantier/Chantier.interface';
 import { Agrégation } from '@/client/utils/types';
 import {
   agrégerDonnéesTerritoires, DonnéesTerritoires, réduireDonnéesTerritoires,
-  TerritoireSansCodeInsee,
+  TerritoireSansCodeInseeNiMétéo,
 } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 import {
   CartographieValeur,
@@ -11,7 +11,7 @@ import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartogr
 
 export default function préparerDonnéesCartographie(
   listeDonnéesTerritoires: DonnéesTerritoires<Territoire>[],
-  fonctionDeRéduction: (territoiresAgrégés: Agrégation<TerritoireSansCodeInsee>) => CartographieValeur,
+  fonctionDeRéduction: (territoiresAgrégés: Agrégation<TerritoireSansCodeInseeNiMétéo>) => CartographieValeur,
 ): CartographieDonnées {
   const donnéesTerritoiresAgrégés = agrégerDonnéesTerritoires(listeDonnéesTerritoires);
 

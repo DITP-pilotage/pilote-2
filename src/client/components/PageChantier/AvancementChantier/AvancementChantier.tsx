@@ -16,7 +16,7 @@ const colonnes = [
     cell: 'National',
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('météo', {
+  reactTableColonnesHelper.accessor('mailles.nationale.FR.météo', {
     header: 'Météo',
     cell: météo => <PictoMétéo valeur={météo.getValue()} />,
     enableSorting: false,

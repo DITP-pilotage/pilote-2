@@ -2,7 +2,12 @@ import { météoFromString } from '@/server/domain/chantier/Météo.interface';
 
 describe('météoFromString', () => {
   it('Renvoie null pour une météo non renseignée', () => {
-    const result = météoFromString('NON_RENSEIGNE');
+    const result = météoFromString('NON_RENSEIGNEE');
+    expect(result).toBeNull();
+  });
+
+  it('Renvoie null pour une valeur manquante', () => {
+    const result = météoFromString(null);
     expect(result).toBeNull();
   });
 

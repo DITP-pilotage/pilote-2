@@ -14,6 +14,7 @@ export type Maille = typeof mailles[number];
 export type Territoire = {
   codeInsee: string,
   avancement: Avancement,
+  météo: Météo,
 };
 
 export type Territoires = Record<string, Territoire>;
@@ -27,5 +28,4 @@ export default interface Chantier {
   mailles: Record<Maille, Territoires>;
   directeurAdministrationCentrale: string[],
   ministères: string[],
-  météo: Météo;
 }
