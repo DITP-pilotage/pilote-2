@@ -221,4 +221,12 @@ class ViewDataProperties(Base):
     contexte_local_date_de_mise_a_jour = Column(DateTime)
     feuille_de_route_date_de_mise_a_jour = Column(DateTime)
     referent_local_groupe_date_de_mise_a_jour = Column(DateTime)
-    
+
+
+class ChantierMeteo(Base):
+    __tablename__ = 'chantier_meteo'
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
+
+    ch_meteo_id = Column(TEXT, primary_key=True)
+    ch_meteo_name = Column(TEXT)
+    ch_meteo_descr = Column(TEXT)

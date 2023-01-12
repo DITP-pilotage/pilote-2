@@ -22,7 +22,7 @@ model chantier {
   directeurs_projet String[]
   ministeres String[]
   directions_administration_centrale String[]
-  meteo String @default("NON_RENSEIGNEE")
+  meteo String? @default("NON_RENSEIGNEE")
 
   @@id([id, code_insee, maille])
 }

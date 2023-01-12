@@ -25,6 +25,7 @@ psql $DATABASE_URL -c "truncate table raw_data.metadata_perimetre"
 psql $DATABASE_URL -c "truncate table raw_data.metadata_indicateur"
 psql $DATABASE_URL -c "truncate table raw_data.metadata_zone"
 psql $DATABASE_URL -c "truncate table raw_data.indicateur_type"
+psql $DATABASE_URL -c "truncate table raw_data.chantier_meteo"
 psql $DATABASE_URL -c "truncate table raw_data.fact_progress_indicateur"
 psql $DATABASE_URL -c "truncate table raw_data.dim_tree_nodes"
 psql $DATABASE_URL -c "truncate table raw_data.fact_progress_chantier"
@@ -52,6 +53,7 @@ psql $DATABASE_URL -c "copy raw_data.indicateur_type from STDIN with csv delimit
 psql $DATABASE_URL -c "copy raw_data.metadata_porteur from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/porteur/view_meta_porteur.csv
 psql $DATABASE_URL -c "copy raw_data.metadata_axe from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/axe/view_meta_axe.csv
 psql $DATABASE_URL -c "copy raw_data.metadata_ppg from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/ppg/view_meta_ppg.csv
+psql $DATABASE_URL -c "copy raw_data.chantier_meteo from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/models/chantier/ref_chantier_meteo.csv
 
 echo "Sleep for 30s"
 sleep 30
