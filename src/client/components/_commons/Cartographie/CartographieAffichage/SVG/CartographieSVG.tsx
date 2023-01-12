@@ -1,11 +1,7 @@
 import { memo, useEffect, useRef, useState } from 'react';
-import CartographieSVGProps, {
-  CartographieNuancier,
-  Viewbox,
-} from '@/components/_commons/Cartographie/CartographieAffichage/CartographieSVG/CartographieSVG.interface';
-import CartographieZoomEtDéplacement
-  from '@/components/_commons/Cartographie/CartographieZoomEtDéplacement/CartographieZoomEtDéplacement';
 import { CartographieValeur } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
+import CartographieSVGProps, { CartographieNuancier, Viewbox } from './CartographieSVG.interface';
+import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
 
 function déterminerCouleurTerritoire(cartographieValeur: CartographieValeur, nuancier: CartographieNuancier) {

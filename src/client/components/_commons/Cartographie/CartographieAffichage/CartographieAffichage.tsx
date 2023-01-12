@@ -1,12 +1,9 @@
 import { useState } from 'react';
-import CartographieSVG from '@/components/_commons/Cartographie/CartographieAffichage/CartographieSVG/CartographieSVG';
-import CartographieAffichageProps, {
-  CartographieBulleTerritoire,
-} from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
-import BulleDInfo from '@/components/_commons/Cartographie/CartographieAffichage/BulleDInfo/BulleDInfo';
 import { nuancierPourcentage } from '@/components/_commons/Cartographie/nuancier/nuancier';
-import CartographieLégende
-  from '@/components/_commons/Cartographie/CartographieAffichage/CartographieLégende/CartographieLégende';
+import CartographieAffichageProps, { CartographieBulleTerritoire } from './CartographieAffichage.interface';
+import BulleDInfo from './BulleDInfo/BulleDInfo';
+import CartographieSVG from './SVG/CartographieSVG';
+import CartographieLégende from './Légende/CartographieLégende';
 
 export default function CartographieAffichage({ territoires }: CartographieAffichageProps) {
   const [sourisPosition, setSourisPosition] = useState({ x: 0, y: 0 });

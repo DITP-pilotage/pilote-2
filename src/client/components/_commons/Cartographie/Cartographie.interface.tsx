@@ -1,7 +1,5 @@
 import { Maille } from '@/server/domain/chantier/Chantier.interface';
-import {
-  CartographieTerritoireCodeInsee, CartographieValeur,
-} from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
+import { CartographieTerritoireCodeInsee, CartographieValeur } from './CartographieAffichage/CartographieAffichage.interface';
 
 export type CartographieTracéRégionJSON = {
   tracéSVG: string,

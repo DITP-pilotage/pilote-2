@@ -2,7 +2,7 @@ import { useCallback, useMemo, useEffect } from 'react';
 import { select as d3Select } from 'd3-selection';
 import { zoom as d3Zoom } from 'd3-zoom';
 import CartographieZoomEtDéplacementProps from './CartographieZoomEtDéplacement.interface';
-import CartographieZoomEtDéplacementStyled from './CartographieZoomEtDéplacementStyled';
+import CartographieZoomEtDéplacementStyled from './CartographieZoomEtDéplacement.styled';
 
 const ZOOM_MAXIMUM = 10;
 const MULTIPLICATEUR_AU_ZOOM = 1.5;

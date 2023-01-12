@@ -1,6 +1,6 @@
 import CartographieLégendeProps from './CartographieLégende.interface';
 import CartographieLégendeStyled from './CartographieLégende.styled';
-import CartographieLégendeÉlément from './CartographieLégendeÉlément/CartographieLégendeÉlément';
+import CartographieLégendeÉlément from './Élément/CartographieLégendeÉlément';
 
 export default function CartographieLégende({ nuancier }: CartographieLégendeProps) {
   return (
