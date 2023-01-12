@@ -32,6 +32,7 @@ psql $DATABASE_URL -c "truncate table raw_data.dim_structures"
 psql $DATABASE_URL -c "truncate table raw_data.metadata_porteur"
 psql $DATABASE_URL -c "truncate table raw_data.metadata_axe"
 psql $DATABASE_URL -c "truncate table raw_data.metadata_ppg"
+psql $DATABASE_URL -c "truncate table raw_data.view_data_properties"
 
 
 
@@ -60,3 +61,4 @@ psql $DATABASE_URL -c "copy raw_data.fact_progress_indicateur from STDIN WITH (F
 psql $DATABASE_URL -c "copy raw_data.dim_tree_nodes from STDIN WITH (FORMAT csv, HEADER, DELIMITER ';', FORCE_NULL(tree_node_last_synchronization_date,tree_node_last_update_scorecard_date,tree_node_last_scorecard_update_by_anybody_date,tree_node_last_update_children_date));" < input_data/$FOLDER/dump_dfakto_octo/rp/raw/dim_tree_nodes.csv
 psql $DATABASE_URL -c "copy raw_data.fact_progress_chantier from STDIN WITH (FORMAT csv, HEADER, DELIMITER ';');" < input_data/$FOLDER/dump_dfakto_octo/rp/raw/fact_progress_reform.csv
 psql $DATABASE_URL -c "copy raw_data.dim_structures from STDIN WITH (FORMAT csv, HEADER, DELIMITER ';');" < input_data/$FOLDER/dump_dfakto_octo/rp/raw/dim_structures.csv
+psql $DATABASE_URL -c "copy raw_data.view_data_properties from STDIN WITH (FORMAT csv, HEADER, DELIMITER ';', FORCE_NULL(meteo_date_de_mise_a_jour,chef_de_projet_national_date_de_mise_a_jour,objectifs_de_la_reforme_date_de_mise_a_jour,synthese_des_resultats_date_de_mise_a_jour,difficultes_rencontrees_et_risques_anticipes_date_de_mise,solutions_proposees_et_prochaines_etapes_date_de_mise_a_jo,un_exemple_concret_de_reussite_liee_a_la_reforme_date_de,dernieres_realisations_et_suivi_des_decisions_date_de_mise,methodologie_de_renseignement_de_la_meteo_date_de_mise_a,equipe_projet_donnee_qualitative_utilisateurs_date_de_mise,equipe_projet_donnee_qualitative_groupe_date_de_mise_a_jo,equipe_projet_donnee_quantitative_utilisateurs_date_de_mis,dac_date_de_mise_a_jour,acces_en_consultation_utilisateurs_date_de_mise_a_jour,contexte_local_date_de_mise_a_jour,feuille_de_route_date_de_mise_a_jour,referent_local_groupe_date_de_mise_a_jour));" < input_data/$FOLDER/dump_dfakto_octo/rp/views/data/rp_view_data_properties.csv
