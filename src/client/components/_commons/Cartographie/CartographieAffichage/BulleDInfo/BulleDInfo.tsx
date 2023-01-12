@@ -1,5 +1,5 @@
-import BulleDInfoStyled from '@/components/_commons/Cartographie/CartographieAffichage/BulleDInfo/BulleDInfo.styled';
-import BulleDInfoProps from '@/components/_commons/Cartographie/CartographieAffichage/BulleDInfo/BulleDInfo.interface';
+import BulleDInfoStyled from './BulleDInfo.styled';
+import BulleDInfoProps from './BulleDInfo.interface';
 
 export default function BulleDInfo({ x, y, titre, contenu }: BulleDInfoProps) {
   return (

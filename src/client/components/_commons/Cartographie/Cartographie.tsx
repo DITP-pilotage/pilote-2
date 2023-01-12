@@ -1,6 +1,6 @@
-import CartographieProps, { CartographieDonnées, CartographieTracéRégionJSON } from '@/components/_commons/Cartographie/Cartographie.interface';
-import CartographieAffichage from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage';
-import { CartographieTerritoire } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
+import CartographieProps, { CartographieDonnées, CartographieTracéRégionJSON } from './Cartographie.interface';
+import CartographieAffichage from './CartographieAffichage/CartographieAffichage';
+import { CartographieTerritoire } from './CartographieAffichage/CartographieAffichage.interface';
 import départementsJSON from './départements.json';
 import régionsJSON from './régions.json';
 

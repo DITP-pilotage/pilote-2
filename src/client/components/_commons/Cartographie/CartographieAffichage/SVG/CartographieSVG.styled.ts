@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 
 const CartographieSVGStyled = styled.div`
   position: relative;
-  width: 100%;
+  max-width: 30rem;
+  margin: 0 auto;
   stroke: var(--grey-1000-50);
 
   .territoire-frontière {

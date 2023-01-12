@@ -12,6 +12,7 @@ export type Viewbox = {
 
 export type CartographieNuancier = {
   seuil: number,
+  libellé: string,
   couleur: string
 }[];
 
