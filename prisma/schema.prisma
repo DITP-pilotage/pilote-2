@@ -23,6 +23,7 @@ model chantier {
   ministeres String[]
   directions_administration_centrale String[]
   meteo String? @default("NON_RENSEIGNEE")
+  synthese_des_resultats String?
 
   @@id([id, code_insee, maille])
 }
