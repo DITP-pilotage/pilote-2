@@ -55,6 +55,7 @@ export default class ChantierRowBuilder {
       directeurs_administration_centrale: [],
       ministeres: [],
       directions_administration_centrale: [],
+      meteo: 'NON_NECESSAIRE',
     };
   }
 }
