@@ -37,13 +37,13 @@ INSERT INTO public.chantier
      		ORDER  BY a.i
      	)  AS directions_administration_centrale,
         string_to_array(m_chantier.ch_dp, ' | ') AS directeurs_projet,
-     	chantier_meteo.ch_meteo_id as meteo,
+     	case WHEN chantier_meteo.ch_meteo_id NOTNULL THEN chantier_meteo.ch_meteo_id ELSE 'NON_RENSEIGNEE' END as meteo,
      	d_chantier.synthese_des_resultats as synthese_des_resultats
 FROM raw_data.metadata_chantier m_chantier
         LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_region AND d_chantier.structure_name='Réforme'
         JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = 'FRANCE'
         LEFT JOIN raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = any (string_to_array(m_chantier."porteur_ids_DAC", ' | '))
-        left join raw_data.chantier_meteo on chantier_meteo.ch_meteo_name = d_chantier.meteo)
+        LEFT JOIN raw_data.chantier_meteo ON chantier_meteo.ch_meteo_name = d_chantier.meteo)
 UNION
     (SELECT m_chantier.chantier_id AS id,
         m_chantier.ch_nom AS nom,
