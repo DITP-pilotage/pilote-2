@@ -5,6 +5,8 @@ import CartographieAffichageProps, {
 } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
 import BulleDInfo from '@/components/_commons/Cartographie/CartographieAffichage/BulleDInfo/BulleDInfo';
 import { nuancierPourcentage } from '@/components/_commons/Cartographie/nuancier/nuancier';
+import CartographieLégende
+  from '@/components/_commons/Cartographie/CartographieAffichage/CartographieLégende/CartographieLégende';
 
 export default function CartographieAffichage({ territoires }: CartographieAffichageProps) {
   const [sourisPosition, setSourisPosition] = useState({ x: 0, y: 0 });
@@ -32,6 +34,7 @@ export default function CartographieAffichage({ territoires }: CartographieAffic
         setTerritoireSurvolé={setTerritoireSurvolé}
         territoires={territoires}
       />
+      <CartographieLégende nuancier={nuancierPourcentage} />
     </div>
   );
 }
