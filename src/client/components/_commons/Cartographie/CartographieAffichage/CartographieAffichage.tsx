@@ -3,6 +3,12 @@ import CartographieAffichageProps, { CartographieBulleTerritoire } from './Carto
 import BulleDInfo from './BulleDInfo/BulleDInfo';
 import CartographieSVG from './SVG/CartographieSVG';
 
+function formaterBulleTitre(territoireSurvolé: CartographieBulleTerritoire) {
+  return territoireSurvolé.divisionAdministrative === 'département'
+    ? `${territoireSurvolé.codeInsee} – ${territoireSurvolé.nom}`
+    : territoireSurvolé.nom;
+}
+
 export default function CartographieAffichage({ children, options, territoires }: CartographieAffichageProps) {
   const [sourisPosition, setSourisPosition] = useState({ x: 0, y: 0 });
   const [territoireSurvolé, setTerritoireSurvolé] = useState<CartographieBulleTerritoire | null>(null);
@@ -19,7 +25,7 @@ export default function CartographieAffichage({ children, options, territoires }
       {territoireSurvolé ?
         <BulleDInfo
           contenu={options.formaterValeur(territoireSurvolé.valeur)}
-          titre={`${territoireSurvolé.codeInsee} - ${territoireSurvolé.nom}`}
+          titre={formaterBulleTitre(territoireSurvolé)}
           x={sourisPosition.x}
           y={sourisPosition.y}
         />

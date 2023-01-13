@@ -29,6 +29,7 @@ function créerTerritoires(
 ) {
   return régionsÀTracer.map(région => ({
     codeInsee: région.codeInsee,
+    divisionAdministrative: 'région' as const,
     nom: région.nom,
     tracéSVG: région.tracéSVG,
     valeur: données.régionale[région.codeInsee],
@@ -36,6 +37,7 @@ function créerTerritoires(
       ? récupérerDépartementsDUneRégion(région.codeInsee)
         .map(département => ({
           codeInsee: département.codeInsee,
+          divisionAdministrative: 'département' as const,
           nom: département.nom,
           tracéSVG: département.tracéSVG,
           valeur: données.départementale[département.codeInsee],

@@ -51,7 +51,12 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                     fill={options.couleurDeRemplissage(sousTerritoire.valeur)}
                     key={sousTerritoire.nom}
                     onMouseEnter={() => {
-                      setTerritoireSurvolé({ codeInsee: sousTerritoire.codeInsee, nom: sousTerritoire.nom, valeur: sousTerritoire.valeur });
+                      setTerritoireSurvolé({
+                        codeInsee: sousTerritoire.codeInsee,
+                        nom: sousTerritoire.nom,
+                        valeur: sousTerritoire.valeur,
+                        divisionAdministrative: sousTerritoire.divisionAdministrative,
+                      });
                     }}
                   />
                 ))}
@@ -63,7 +68,12 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                         d={territoire.tracéSVG}
                         fill={options.couleurDeRemplissage(territoire.valeur)}
                         onMouseEnter={() => {
-                          setTerritoireSurvolé({ codeInsee: territoire.codeInsee, nom: territoire.nom, valeur: territoire.valeur });
+                          setTerritoireSurvolé({
+                            codeInsee: territoire.codeInsee,
+                            nom: territoire.nom,
+                            valeur: territoire.valeur,
+                            divisionAdministrative: territoire.divisionAdministrative,
+                          });
                         }}
                       />
                     :
