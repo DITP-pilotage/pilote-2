@@ -4,7 +4,7 @@ export type CartographieTerritoireCodeInsee = string;
 
 export type CartographieValeur = {
   brute: number | null,
-  affichée: string,
+  affichée: string | null,
 };
 
 export type CartographieTerritoire = {

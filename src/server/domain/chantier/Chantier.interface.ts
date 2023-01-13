@@ -7,7 +7,9 @@ export type Avancement = {
   annuel: number | null
 };
 
-export type Maille = 'nationale' | 'régionale' | 'départementale';
+export const mailles = ['nationale', 'régionale', 'départementale'] as const;
+
+export type Maille = typeof mailles[number];
 
 export type Territoire = {
   codeInsee: string,
