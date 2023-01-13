@@ -3,7 +3,22 @@ import Titre from '@/components/_commons/Titre/Titre';
 import Cartographie from '@/components/_commons/Cartographie/Cartographie';
 import { calculerMoyenne } from '@/client/utils/statistiques';
 import préparerDonnéesCartographie from '@/client/utils/cartographie/préparerDonnéesCartographie';
+import {
+  CartographieValeur,
+} from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
+import nuancierPourcentage from '@/client/constants/nuanciers/nuancierPourcentage';
+import CartographieLégende from '@/components/_commons/Cartographie/CartographieAffichage/Légende/CartographieLégende';
 import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
+
+function couleurDeRemplissage(valeur: CartographieValeur) {
+  return valeur
+    ? nuancierPourcentage.find(({ seuil }) => seuil >= valeur)?.couleur || '#dedede'
+    : '#dedede';
+}
+
+function formaterValeur(valeur: CartographieValeur) {
+  return valeur ? `${valeur.toFixed(0)}%` : 'Non renseigné';
+}
 
 export default function RépartitionGéographique({ chantiers }: RépartitionGéographiqueProps) {
   const donnéesCartographie = useMemo(() => (
@@ -11,11 +26,7 @@ export default function RépartitionGéographique({ chantiers }: RépartitionGé
       chantiers.map(chantier => chantier.mailles),
       (territoiresAgrégés) => {
         const valeurs = territoiresAgrégés.avancement.map(avancement => avancement.global);
-        const valeurBrute = calculerMoyenne(valeurs);
-        return {
-          brute: valeurBrute,
-          affichée: valeurBrute ? `${valeurBrute.toFixed(0)}%` : 'Non renseigné',
-        };
+        return calculerMoyenne(valeurs);
       },
     )
   ), [chantiers]);
@@ -31,27 +42,17 @@ export default function RépartitionGéographique({ chantiers }: RépartitionGé
       <Cartographie
         données={donnéesCartographie}
         niveauDeMailleAffiché='départementale'
+        options={{
+          couleurDeRemplissage,
+          formaterValeur,
+        }}
         territoireAffiché={{
           codeInsee: 'FR',
           divisionAdministrative: 'france',
         }}
-      />
-      <Cartographie
-        données={donnéesCartographie}
-        niveauDeMailleAffiché='régionale'
-        territoireAffiché={{
-          codeInsee: 'FR',
-          divisionAdministrative: 'france',
-        }}
-      />
-      <Cartographie
-        données={donnéesCartographie}
-        niveauDeMailleAffiché='départementale'
-        territoireAffiché={{
-          codeInsee: '84',
-          divisionAdministrative: 'région',
-        }}
-      />
+      >
+        <CartographieLégende nuancier={nuancierPourcentage} />
+      </Cartographie>
     </>
   );
 }

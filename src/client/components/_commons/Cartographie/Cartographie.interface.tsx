@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Maille } from '@/server/domain/chantier/Chantier.interface';
 import { CartographieTerritoireCodeInsee, CartographieValeur } from './CartographieAffichage/CartographieAffichage.interface';
 
@@ -15,17 +16,20 @@ export type CartographieDépartementJSON = {
 };
 
 export type CartographieTerritoireAffiché = {
-  codeInsee: Exclude<CartographieTerritoireCodeInsee, 'FR'>,
-  divisionAdministrative: 'région',
-} | {
-  codeInsee: 'FR',
-  divisionAdministrative: 'france'
+  codeInsee: CartographieTerritoireCodeInsee,
+  divisionAdministrative: 'région' | 'france',
 };
 
 export type CartographieDonnées = Record<Exclude<Maille, 'nationale'>, Record<CartographieTerritoireCodeInsee, CartographieValeur>>;
 
+export type CartographieOptions = {
+  couleurDeRemplissage: (valeur: CartographieValeur) => string,
+  formaterValeur: (valeur: CartographieValeur) => string,
+};
 export default interface CartographieProps {
+  children: ReactNode,
   données: CartographieDonnées,
+  options: CartographieOptions,
   territoireAffiché: CartographieTerritoireAffiché,
   niveauDeMailleAffiché: 'régionale' | 'départementale',
 }

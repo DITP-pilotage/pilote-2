@@ -18,9 +18,6 @@ export default function préparerDonnéesCartographie(
   return réduireDonnéesTerritoires<CartographieValeur>(
     donnéesTerritoiresAgrégés,
     fonctionDeRéduction,
-    {
-      brute: null,
-      affichée: null,
-    },
+    null,
   );
 }

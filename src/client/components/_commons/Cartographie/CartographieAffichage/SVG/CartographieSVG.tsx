@@ -1,19 +1,9 @@
 import { memo, useEffect, useRef, useState } from 'react';
-import { CartographieValeur } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
-import CartographieSVGProps, { CartographieNuancier, Viewbox } from './CartographieSVG.interface';
+import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
 
-function déterminerCouleurTerritoire(cartographieValeur: CartographieValeur, nuancier: CartographieNuancier) {
-  if (!cartographieValeur || !cartographieValeur.brute) {
-    return '#dedede';
-  }
-  const valeurBrute = cartographieValeur.brute;
-  return nuancier.find(({ seuil }) => seuil >= valeurBrute)?.couleur || '#dedede';
-}
-
-
-function CartographieSVG({ nuancier, territoires, setTerritoireSurvolé }: CartographieSVGProps) {
+function CartographieSVG({ options, territoires, setTerritoireSurvolé }: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
@@ -58,7 +48,7 @@ function CartographieSVG({ nuancier, territoires, setTerritoireSurvolé }: Carto
                   <path
                     className="territoire-rempli"
                     d={sousTerritoire.tracéSVG}
-                    fill={déterminerCouleurTerritoire(sousTerritoire.valeur, nuancier)}
+                    fill={options.couleurDeRemplissage(sousTerritoire.valeur)}
                     key={sousTerritoire.nom}
                     onMouseEnter={() => {
                       setTerritoireSurvolé({ codeInsee: sousTerritoire.codeInsee, nom: sousTerritoire.nom, valeur: sousTerritoire.valeur });
@@ -71,7 +61,7 @@ function CartographieSVG({ nuancier, territoires, setTerritoireSurvolé }: Carto
                       <path
                         className='territoire-rempli'
                         d={territoire.tracéSVG}
-                        fill={déterminerCouleurTerritoire(territoire.valeur, nuancier)}
+                        fill={options.couleurDeRemplissage(territoire.valeur)}
                         onMouseEnter={() => {
                           setTerritoireSurvolé({ codeInsee: territoire.codeInsee, nom: territoire.nom, valeur: territoire.valeur });
                         }}

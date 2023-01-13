@@ -2,6 +2,7 @@ import {
   CartographieBulleTerritoire,
   CartographieTerritoire,
 } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
+import { CartographieOptions } from '@/components/_commons/Cartographie/Cartographie.interface';
 
 export type Viewbox = {
   x: number,
@@ -10,14 +11,8 @@ export type Viewbox = {
   height: number,
 };
 
-export type CartographieNuancier = {
-  seuil: number,
-  libellé: string,
-  couleur: string
-}[];
-
 export default interface CartographieSVGProps {
-  nuancier: CartographieNuancier,
+  options: CartographieOptions,
   territoires: CartographieTerritoire[],
-  setTerritoireSurvolé:  (state: CartographieBulleTerritoire | null) => void
+  setTerritoireSurvolé:  (state: CartographieBulleTerritoire | null) => void,
 }

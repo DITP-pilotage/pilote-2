@@ -47,13 +47,16 @@ function créerTerritoires(
   );
 }
 
-export default function Cartographie({ données, niveauDeMailleAffiché, territoireAffiché }: CartographieProps) {
+export default function Cartographie({ children, données, niveauDeMailleAffiché, options, territoireAffiché }: CartographieProps) {
   const régionsFiltrées =  déterminerRégionsÀTracer(territoireAffiché);
   const territoires = créerTerritoires(régionsFiltrées, données, niveauDeMailleAffiché === 'départementale');
 
   return (
     <CartographieAffichage
+      options={options}
       territoires={territoires}
-    />
+    >
+      { children }
+    </CartographieAffichage>
   );
 }

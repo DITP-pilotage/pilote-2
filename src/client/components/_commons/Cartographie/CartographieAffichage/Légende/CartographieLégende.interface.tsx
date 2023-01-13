@@ -1,5 +1,5 @@
-import { CartographieNuancier } from '@/components/_commons/Cartographie/CartographieAffichage/SVG/CartographieSVG.interface';
+import Nuancier from '@/client/constants/nuanciers/nuancier';
 
 export default interface CartographieLégendeProps {
-  nuancier: CartographieNuancier,
+  nuancier: Nuancier,
 }
