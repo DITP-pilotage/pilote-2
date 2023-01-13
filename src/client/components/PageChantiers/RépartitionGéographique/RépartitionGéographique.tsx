@@ -30,7 +30,7 @@ const codes = {
   ],
 };
 
-function calculerLaMoyenne(valeurs: (number | null)[]) {
+function calculerMoyenne(valeurs: (number | null)[]) {
   const valeursFiltrées = valeurs.filter((valeur): valeur is number => valeur !== null);
   const somme = valeursFiltrées.reduce(
     (accumulateur, valeur) => accumulateur + valeur,
@@ -42,7 +42,7 @@ function calculerLaMoyenne(valeurs: (number | null)[]) {
 
 export type DonnéesTerritoires<T> = Record<Maille, Record<CartographieTerritoireCodeInsee, T>>;
 
-function créerDonnéesTerritoires<T>(donnéesInitiales: T) {
+function initialiserDonnéesTerritoires<T>(donnéesInitiales: T) {
   return Object.fromEntries(
     mailles.map(maille => ([
       maille,
@@ -56,38 +56,11 @@ function créerDonnéesTerritoires<T>(donnéesInitiales: T) {
   ) as DonnéesTerritoires<T>;
 }
 
-function créerDonnéesChantiersAgrégésVide() {
-  return Object.fromEntries(
-    mailles.map(maille => ([
-      maille,
-      Object.fromEntries(
-        codes[maille].map(codeInsee => ([
-          codeInsee,
-          {
-            codeInsee: [],
-            avancement: [],
-          },
-        ])),
-      ) as Record<CartographieTerritoireCodeInsee, Agrégation<Territoire>>,
-    ])),
-  ) as DonnéesTerritoires<Agrégation<Territoire>>;
-}
-
-function créerCartographieDonnéesVide() {
-  return Object.fromEntries(
-    mailles.map(maille => ([
-      maille,
-      Object.fromEntries(
-        codes[maille].map(codeInsee => ([
-          codeInsee,
-          {
-            brute: null,
-            affichée: null,
-          },
-        ])),
-      ) as Record<CartographieTerritoireCodeInsee, CartographieValeur>,
-    ])),
-  ) as CartographieDonnées;
+function initialiserDonnéesChantiersAgrégésVide() {
+  return initialiserDonnéesTerritoires<Agrégation<Territoire>>({
+    codeInsee: [],
+    avancement: [],
+  });
 }
 
 function agrégerUnChantierÀUnAgrégatDeChantier(
@@ -99,8 +72,14 @@ function agrégerUnChantierÀUnAgrégatDeChantier(
   for (const maille of mailles) {
     for (const codeInsee of codes[maille]) {
       donnéesChantiersAgrégés[maille][codeInsee] = {
-        codeInsee: [...donnéesChantiersAgrégés[maille][codeInsee].codeInsee, chantier[maille][codeInsee].codeInsee],
-        avancement: [...donnéesChantiersAgrégés[maille][codeInsee].avancement, chantier[maille][codeInsee].avancement],
+        codeInsee: [
+          ...donnéesChantiersAgrégés[maille][codeInsee].codeInsee,
+          chantier[maille][codeInsee].codeInsee,
+        ],
+        avancement: [
+          ...donnéesChantiersAgrégés[maille][codeInsee].avancement,
+          chantier[maille][codeInsee].avancement,
+        ],
       };
     }
   }
@@ -109,18 +88,19 @@ function agrégerUnChantierÀUnAgrégatDeChantier(
 }
 
 function agrégerChantiers(chantiers: Chantier[]) {
-  const agrégat = créerDonnéesChantiersAgrégésVide();
+  const agrégat = initialiserDonnéesChantiersAgrégésVide();
   for (const chantier of chantiers) {
     agrégerUnChantierÀUnAgrégatDeChantier(agrégat, chantier.mailles);
   }
   return agrégat;
 }
 
-function réduireChantiersAgrégés(
+function réduireChantiersAgrégés<T>(
   chantiersAgrégés: DonnéesTerritoires<Agrégation<Territoire>>,
-  fonctionDeRéduction: (territoiresAgrégés: Agrégation<Territoire>) => CartographieValeur,
-): CartographieDonnées {
-  const donnéesRéduites = créerCartographieDonnéesVide();
+  fonctionDeRéduction: (territoiresAgrégés: Agrégation<Territoire>) => T,
+  donnéesInitiales: T,
+): DonnéesTerritoires<T> {
+  const donnéesRéduites = initialiserDonnéesTerritoires<T>(donnéesInitiales);
 
   for (const maille of mailles) {
     if (maille === 'nationale')
@@ -133,16 +113,29 @@ function réduireChantiersAgrégés(
   return donnéesRéduites;
 }
 
+function réduireChantiersAgrégésPourCartographie(
+  chantiersAgrégés: DonnéesTerritoires<Agrégation<Territoire>>,
+  fonctionDeRéduction: (territoiresAgrégés: Agrégation<Territoire>) => CartographieValeur,
+): CartographieDonnées {
+  return réduireChantiersAgrégés(chantiersAgrégés, fonctionDeRéduction, {
+    brute: null,
+    affichée: null,
+  });
+}
+
 export default function RépartitionGéographique({ chantiers }: RépartitionGéographiqueProps) {
 
   const chantiersAgrégés = agrégerChantiers(chantiers);
-  const donnéesCartographie = réduireChantiersAgrégés(chantiersAgrégés, (territoiresAgrégés) => {
-    const valeurBrute = calculerLaMoyenne(territoiresAgrégés.avancement.map(avancement => avancement.global));
-    return {
-      brute: valeurBrute,
-      affichée: valeurBrute ? `${valeurBrute.toFixed(0)}%` : 'Non renseigné',
-    };
-  });
+  const donnéesCartographie = réduireChantiersAgrégésPourCartographie(
+    chantiersAgrégés,
+    (territoiresAgrégés) => {
+      const valeurBrute = calculerMoyenne(territoiresAgrégés.avancement.map(avancement => avancement.global));
+      return {
+        brute: valeurBrute,
+        affichée: valeurBrute ? `${valeurBrute.toFixed(0)}%` : 'Non renseigné',
+      };
+    },
+  );
 
   return (
     <>
