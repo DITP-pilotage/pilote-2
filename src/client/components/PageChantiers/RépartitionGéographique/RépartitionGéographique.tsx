@@ -1,6 +1,6 @@
 import Titre from '@/components/_commons/Titre/Titre';
 import Cartographie from '@/components/_commons/Cartographie/Cartographie';
-import Chantier, { Maille, mailles, Territoire } from '@/server/domain/chantier/Chantier.interface';
+import { Maille, mailles, Territoire } from '@/server/domain/chantier/Chantier.interface';
 import {
   CartographieValeur,
   CartographieTerritoireCodeInsee,
@@ -41,6 +41,7 @@ function calculerMoyenne(valeurs: (number | null)[]) {
 }
 
 export type DonnéesTerritoires<T> = Record<Maille, Record<CartographieTerritoireCodeInsee, T>>;
+type TerritoireSansCodeInsee = Omit<Territoire, 'codeInsee'>;
 
 function initialiserDonnéesTerritoires<T>(donnéesInitiales: T) {
   return Object.fromEntries(
@@ -50,86 +51,84 @@ function initialiserDonnéesTerritoires<T>(donnéesInitiales: T) {
         codes[maille].map(codeInsee => ([
           codeInsee,
           donnéesInitiales,
-        ])),
+        ] as [CartographieTerritoireCodeInsee, T])),
       ) as Record<CartographieTerritoireCodeInsee, T>,
     ])),
   ) as DonnéesTerritoires<T>;
 }
 
-function initialiserDonnéesChantiersAgrégésVide() {
-  return initialiserDonnéesTerritoires<Agrégation<Territoire>>({
-    codeInsee: [],
+function initialiserDonnéesTerritoiresAgrégésVide() {
+  return initialiserDonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>({
     avancement: [],
   });
 }
 
-function agrégerUnChantierÀUnAgrégatDeChantier(
-  chantiersAgrégés: DonnéesTerritoires<Agrégation<Territoire>>,
-  chantier: DonnéesTerritoires<Territoire>,
-): DonnéesTerritoires<Agrégation<Territoire>> {
-  const donnéesChantiersAgrégés = { ...chantiersAgrégés };
+function agrégerDonnéesTerritoiresÀUnAgrégat(
+  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
+  donnéesTerritoires: DonnéesTerritoires<TerritoireSansCodeInsee>,
+): DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>> {
+  const agrégat = { ...donnéesTerritoiresAgrégées };
 
   for (const maille of mailles) {
     for (const codeInsee of codes[maille]) {
-      donnéesChantiersAgrégés[maille][codeInsee] = {
-        codeInsee: [
-          ...donnéesChantiersAgrégés[maille][codeInsee].codeInsee,
-          chantier[maille][codeInsee].codeInsee,
-        ],
+      agrégat[maille][codeInsee] = {
         avancement: [
-          ...donnéesChantiersAgrégés[maille][codeInsee].avancement,
-          chantier[maille][codeInsee].avancement,
+          ...agrégat[maille][codeInsee].avancement,
+          donnéesTerritoires[maille][codeInsee].avancement,
         ],
       };
     }
   }
 
-  return donnéesChantiersAgrégés;
+  return agrégat;
 }
 
-function agrégerChantiers(chantiers: Chantier[]) {
-  const agrégat = initialiserDonnéesChantiersAgrégésVide();
-  for (const chantier of chantiers) {
-    agrégerUnChantierÀUnAgrégatDeChantier(agrégat, chantier.mailles);
+function agrégerDonnéesTerritoires(listeDonnéesTerritoires: DonnéesTerritoires<Territoire>[]) {
+  const agrégat = initialiserDonnéesTerritoiresAgrégésVide();
+  for (const donnéesTerritoires of listeDonnéesTerritoires) {
+    agrégerDonnéesTerritoiresÀUnAgrégat(agrégat, donnéesTerritoires);
   }
   return agrégat;
 }
 
-function réduireChantiersAgrégés<T>(
-  chantiersAgrégés: DonnéesTerritoires<Agrégation<Territoire>>,
-  fonctionDeRéduction: (territoiresAgrégés: Agrégation<Territoire>) => T,
+function réduireDonnéesTerritoires<T>(
+  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
+  fonctionDeRéduction: (territoiresAgrégés: Agrégation<TerritoireSansCodeInsee>) => T,
   donnéesInitiales: T,
 ): DonnéesTerritoires<T> {
   const donnéesRéduites = initialiserDonnéesTerritoires<T>(donnéesInitiales);
 
   for (const maille of mailles) {
-    if (maille === 'nationale')
-      continue;
     for (const codeInsee of codes[maille]) {
-      donnéesRéduites[maille][codeInsee] = fonctionDeRéduction(chantiersAgrégés[maille][codeInsee]);
+      donnéesRéduites[maille][codeInsee] = fonctionDeRéduction(donnéesTerritoiresAgrégées[maille][codeInsee]);
     }
   }
 
   return donnéesRéduites;
 }
 
-function réduireChantiersAgrégésPourCartographie(
-  chantiersAgrégés: DonnéesTerritoires<Agrégation<Territoire>>,
-  fonctionDeRéduction: (territoiresAgrégés: Agrégation<Territoire>) => CartographieValeur,
+function réduireDonnéesTerritoiresPourCartographie(
+  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
+  fonctionDeRéduction: (territoiresAgrégés: Agrégation<TerritoireSansCodeInsee>) => CartographieValeur,
 ): CartographieDonnées {
-  return réduireChantiersAgrégés(chantiersAgrégés, fonctionDeRéduction, {
-    brute: null,
-    affichée: null,
-  });
+  return réduireDonnéesTerritoires<CartographieValeur>(
+    donnéesTerritoiresAgrégées,
+    fonctionDeRéduction,
+    {
+      brute: null,
+      affichée: null,
+    },
+  );
 }
 
 export default function RépartitionGéographique({ chantiers }: RépartitionGéographiqueProps) {
-
-  const chantiersAgrégés = agrégerChantiers(chantiers);
-  const donnéesCartographie = réduireChantiersAgrégésPourCartographie(
-    chantiersAgrégés,
+  const donnéesTerritoires = chantiers.map(chantier => chantier.mailles);
+  const donnéesTerritoiresAgrégés = agrégerDonnéesTerritoires(donnéesTerritoires);
+  const donnéesCartographie = réduireDonnéesTerritoiresPourCartographie(
+    donnéesTerritoiresAgrégés,
     (territoiresAgrégés) => {
-      const valeurBrute = calculerMoyenne(territoiresAgrégés.avancement.map(avancement => avancement.global));
+      const valeurs = territoiresAgrégés.avancement.map(avancement => avancement.global);
+      const valeurBrute = calculerMoyenne(valeurs);
       return {
         brute: valeurBrute,
         affichée: valeurBrute ? `${valeurBrute.toFixed(0)}%` : 'Non renseigné',
