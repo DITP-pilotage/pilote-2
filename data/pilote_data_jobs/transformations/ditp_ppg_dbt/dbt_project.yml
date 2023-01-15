@@ -34,3 +34,6 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   ditp_ppg_dbt:
     +materialized: table
+    staging:
+      #+schema: staging # pour faire un schema type public_staging https://docs.getdbt.com/docs/build/custom-schemas
+      +materialized: view
