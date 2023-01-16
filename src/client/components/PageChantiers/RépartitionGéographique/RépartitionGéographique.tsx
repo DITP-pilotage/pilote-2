@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import { calculerMoyenne } from '@/client/utils/statistiques';
-import préparerDonnéesCartographie from '@/client/utils/cartographie/préparerDonnéesCartographie';
+import { préparerDonnéesCartographieÀPartirDUneListe } from '@/client/utils/cartographie/préparerDonnéesCartographie';
 import CartographieTauxAvancement from '@/components/_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
 import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
 
 export default function RépartitionGéographique({ chantiers }: RépartitionGéographiqueProps) {
   const donnéesCartographie = useMemo(() => (
-    préparerDonnéesCartographie(
+    préparerDonnéesCartographieÀPartirDUneListe(
       chantiers.map(chantier => chantier.mailles),
       (territoiresAgrégés) => {
         const valeurs = territoiresAgrégés.avancement.map(avancement => avancement.global);
