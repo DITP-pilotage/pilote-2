@@ -1,21 +1,15 @@
 import { useMemo } from 'react';
-import préparerDonnéesCartographie from '@/client/utils/cartographie/préparerDonnéesCartographie';
-import { calculerMoyenne } from '@/client/utils/statistiques';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieTauxAvancement from '@/components/_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
+import { préparerDonnéesCartographieÀPartirDUnÉlément } from '@/client/utils/cartographie/préparerDonnéesCartographie';
 import CartesProps from './Cartes.interface';
 
-export default function Cartes({ chantier }: CartesProps) {  
+export default function Cartes({ chantier }: CartesProps) {
   const donnéesCartographie = useMemo(() => (
-    préparerDonnéesCartographie(
-      [chantier.mailles],
-      (territoiresAgrégés) => {
-        const valeurs = territoiresAgrégés.avancement.map(avancement => avancement.global);
-        return calculerMoyenne(valeurs);
-      },
-    )
-  ), [chantier]);
+    préparerDonnéesCartographieÀPartirDUnÉlément(chantier.mailles, territoire => territoire.avancement.global)
+  )
+  , [chantier]);
   
   return (
     <div 
@@ -34,9 +28,7 @@ export default function Cartes({ chantier }: CartesProps) {
             >
               Répartition géographique du taux d’avancement du chantier
             </Titre>
-            <p className='fr-grid-row fr-grid-row--center'>
-              <CartographieTauxAvancement données={donnéesCartographie} />
-            </p>
+            <CartographieTauxAvancement données={donnéesCartographie} />
           </Bloc>
         </div>
         <div className="fr-col-12 fr-col-xl-6">
