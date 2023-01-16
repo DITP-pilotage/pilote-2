@@ -37,7 +37,7 @@ INSERT INTO public.chantier
      		ORDER  BY a.i
      	) AS directions_administration_centrale,
         string_to_array(m_chantier.ch_dp, ' | ') AS directeurs_projet,
-     	CASE WHEN chantier_meteo.ch_meteo_id NOTNULL THEN chantier_meteo.ch_meteo_id ELSE 'NON_RENSEIGNEE' END as meteo,
+     	COALESCE(chantier_meteo.ch_meteo_id, 'NON_RENSEIGNEE') as meteo,
      	d_chantier.synthese_des_resultats as synthese_des_resultats
 FROM raw_data.metadata_chantier m_chantier
         LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_region AND d_chantier.structure_name='Réforme'
