@@ -5,10 +5,12 @@ WITH dfakto_chantier AS (
         fact_progress_chantier.bounded_progress,
         split_part(dim_tree_nodes.tree_node_code, '-', 1) AS code_chantier,
         split_part(dim_tree_nodes.tree_node_code, '-', 2) AS code_region,
-        raw_data.dim_structures.structure_name
+        dim_structures.structure_name,
+        view_data_properties.meteo
     FROM raw_data.fact_progress_chantier
         JOIN raw_data.dim_tree_nodes ON fact_progress_chantier.tree_node_id = dim_tree_nodes.tree_node_id
         JOIN raw_data.dim_structures ON dim_tree_nodes.structure_id = dim_structures.structure_id
+        left join raw_data.view_data_properties on view_data_properties.reforme_code = dim_tree_nodes.tree_node_code
     )
 INSERT INTO public.chantier
     (SELECT m_chantier.chantier_id AS id,
@@ -34,11 +36,12 @@ INSERT INTO public.chantier
      		ORDER  BY a.i
      	)  AS directions_administration_centrale,
         string_to_array(m_chantier.ch_dp, ' | ') AS directeurs_projet,
-     	'SOLEIL' as meteo
+     	chantier_meteo.ch_meteo_id as meteo
 FROM raw_data.metadata_chantier m_chantier
         LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_region AND d_chantier.structure_name='Réforme'
         JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = 'FRANCE'
-        LEFT JOIN raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = any (string_to_array(m_chantier."porteur_ids_DAC", ' | ')))
+        LEFT JOIN raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = any (string_to_array(m_chantier."porteur_ids_DAC", ' | '))
+        left join raw_data.chantier_meteo on chantier_meteo.ch_meteo_name = d_chantier.meteo)
 UNION
     (SELECT m_chantier.chantier_id AS id,
         m_chantier.ch_nom AS nom,

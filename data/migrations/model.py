@@ -164,6 +164,7 @@ class MetadataAxe(Base):
     axe_name = Column(TEXT)
     axe_desc = Column(TEXT)
 
+
 class MetadataPPG(Base):
     __tablename__ = 'metadata_ppg'
     __table_args__ = {'schema': SCHEMA_RAW_DATA}
@@ -175,3 +176,57 @@ class MetadataPPG(Base):
     ppg_nom = Column(TEXT, nullable=False)
     porteur_shorts = Column(TEXT)
     porteur_ids = Column(TEXT)
+
+
+class ViewDataProperties(Base):
+    __tablename__ = 'view_data_properties'
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
+
+    reforme_code = Column(TEXT, primary_key=True)
+    region_code = Column(TEXT, primary_key=True)
+    academie_code = Column(TEXT)
+    departement_code = Column(TEXT, primary_key=True)
+    objectifs_de_la_reforme = Column(TEXT)
+    synthese_des_resultats = Column(TEXT)
+    difficultes_rencontrees_et_risques_anticipes = Column(TEXT)
+    solutions_proposees_et_prochaines_etapes = Column(TEXT)
+    un_exemple_concret_de_reussite_liee_a_la_reforme = Column(TEXT)
+    dernieres_realisations_et_suivi_des_decisions = Column(TEXT)
+    meteo = Column(TEXT)
+    meteo_date_de_mise_a_jour = Column(DateTime)
+    methodologie_de_renseignement_de_la_meteo = Column(TEXT)
+    chef_de_projet_national = Column(TEXT)
+    chef_de_projet_national_date_de_mise_a_jour = Column(DateTime)
+    equipe_projet_donnee_qualitative_utilisateurs = Column(TEXT)
+    equipe_projet_donnee_qualitative_groupe = Column(TEXT)
+    equipe_projet_donnee_quantitative_utilisateurs = Column(TEXT)
+    dac = Column(TEXT)
+    acces_en_consultation_utilisateurs = Column(TEXT)
+    contexte_local = Column(TEXT)
+    feuille_de_route = Column(TEXT)
+    referent_local_groupe = Column(TEXT)
+    reforme_name = Column(TEXT)
+    objectifs_de_la_reforme_date_de_mise_a_jour = Column(DateTime)
+    synthese_des_resultats_date_de_mise_a_jour = Column(DateTime)
+    difficultes_rencontrees_et_risques_anticipes_date_de_mise = Column(DateTime)
+    solutions_proposees_et_prochaines_etapes_date_de_mise_a_jo = Column(DateTime)
+    un_exemple_concret_de_reussite_liee_a_la_reforme_date_de = Column(DateTime)
+    dernieres_realisations_et_suivi_des_decisions_date_de_mise = Column(DateTime)
+    methodologie_de_renseignement_de_la_meteo_date_de_mise_a = Column(DateTime)
+    equipe_projet_donnee_qualitative_utilisateurs_date_de_mise = Column(DateTime)
+    equipe_projet_donnee_qualitative_groupe_date_de_mise_a_jo = Column(DateTime)
+    equipe_projet_donnee_quantitative_utilisateurs_date_de_mis = Column(DateTime)
+    dac_date_de_mise_a_jour = Column(DateTime)
+    acces_en_consultation_utilisateurs_date_de_mise_a_jour = Column(DateTime)
+    contexte_local_date_de_mise_a_jour = Column(DateTime)
+    feuille_de_route_date_de_mise_a_jour = Column(DateTime)
+    referent_local_groupe_date_de_mise_a_jour = Column(DateTime)
+
+
+class ChantierMeteo(Base):
+    __tablename__ = 'chantier_meteo'
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
+
+    ch_meteo_id = Column(TEXT, primary_key=True)
+    ch_meteo_name = Column(TEXT)
+    ch_meteo_descr = Column(TEXT)
