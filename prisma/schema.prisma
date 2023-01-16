@@ -24,6 +24,8 @@ model chantier {
   directions_administration_centrale String[]
   meteo String? @default("NON_RENSEIGNEE")
   synthese_des_resultats String?
+  axe String @default("non renseignée")
+  ppg String @default("non renseignée")
 
   @@id([id, code_insee, maille])
 }
