@@ -115,6 +115,25 @@ describe('ChantierSQLRepository', () => {
     expect(chantiers[1].mailles.départementale['13'].avancement.global).toBe(50);
   });
 
+  test('Un code insee sur trois caractères fonctionne', async () => {
+    // GIVEN
+    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+    await prisma.chantier.createMany({
+      data: [
+        new ChantierRowBuilder()
+          .withId('CH-001').build(),
+        new ChantierRowBuilder()
+          .withId('CH-001').withMaille('REG').withCodeInsee('975').build(),
+      ],
+    });
+
+    // WHEN
+    const chantiers = await repository.getListe();
+
+    // THEN
+    expect(chantiers[0].mailles.régionale['975']).toBeDefined();
+  });
+
   describe("Gestion d'erreur", () => {
     test('Erreur en cas de maille inconnue', async () => {
       // GIVEN

@@ -53,10 +53,14 @@ function agrégerDonnéesTerritoiresÀUnAgrégat(
 
   for (const maille of mailles) {
     for (const codeInsee of codes[maille]) {
+      const avancementTerritoire = donnéesTerritoires[maille] && donnéesTerritoires[maille][codeInsee]
+        ? donnéesTerritoires[maille][codeInsee].avancement
+        : { annuel: null, global: null };
+
       agrégat[maille][codeInsee] = {
         avancement: [
           ...agrégat[maille][codeInsee].avancement,
-          donnéesTerritoires[maille][codeInsee].avancement,
+          avancementTerritoire,
         ],
       };
     }
