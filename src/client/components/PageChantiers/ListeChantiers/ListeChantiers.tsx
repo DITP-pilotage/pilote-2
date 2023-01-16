@@ -55,7 +55,7 @@ const colonnes = [
     },
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('météo', {
+  reactTableColonnesHelper.accessor('mailles.nationale.FR.météo', {
     header: 'Météo',
     cell: météo => <PictoMétéo valeur={météo.getValue()} />,
     enableGlobalFilter: false,

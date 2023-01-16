@@ -2,6 +2,7 @@ import { chantier, PrismaClient } from '@prisma/client';
 import Chantier, { Maille } from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { groupBy } from '@/client/utils/arrays';
+import { météoFromString } from '@/server/domain/chantier/Météo.interface';
 
 ///
 // Fonctions utilitaires
@@ -31,45 +32,46 @@ class ErreurMailleChantierInconnue extends Error {
 }
 
 function mapToDomain(chantiers: chantier[]): Chantier {
-  const chantierNationale = chantiers.find(c => c.maille === 'NAT');
+  const chantierNational = chantiers.find(c => c.maille === 'NAT');
 
-  if (!chantierNationale) {
+  if (!chantierNational) {
     throw new ErreurChantierSansMailleNationale(chantiers[0].id);
   }
 
   const chantiersNonNationales = chantiers.filter(c => c.maille !== 'NAT');
     
   const result: Chantier = {
-    id: chantierNationale.id,
-    nom: chantierNationale.nom,
+    id: chantierNational.id,
+    nom: chantierNational.nom,
     axe: null,
     nomPPG: null,
-    périmètreIds: chantierNationale.perimetre_ids,
-    météo: null,
+    périmètreIds: chantierNational.perimetre_ids,
     mailles: {
       nationale: {
         FR: {
-          codeInsee: chantierNationale.code_insee,
-          avancement: { annuel: null, global: chantierNationale.taux_avancement },
+          codeInsee: chantierNational.code_insee,
+          avancement: { annuel: null, global: chantierNational.taux_avancement },
+          météo: météoFromString(chantierNational.meteo),
         },
       },
       départementale: {},
       régionale: {},
     },
-    directeurAdministrationCentrale: chantierNationale.directeurs_administration_centrale,
-    ministères: chantierNationale.ministeres,
+    directeurAdministrationCentrale: chantierNational.directeurs_administration_centrale,
+    ministères: chantierNational.ministeres,
   };
 
   for (const chantierNonNational of chantiersNonNationales) {
     const nomDeMaille = NOMS_MAILLES[chantierNonNational.maille];
     if (!nomDeMaille) {
-      throw new ErreurMailleChantierInconnue(chantierNationale.id, chantierNonNational.maille);
+      throw new ErreurMailleChantierInconnue(chantierNational.id, chantierNonNational.maille);
     }
     result.mailles[nomDeMaille] = {
       ...result.mailles[nomDeMaille],
       [chantierNonNational.code_insee]: {
         codeInsee: chantierNonNational.code_insee,
         avancement: { annuel: null, global: chantierNonNational.taux_avancement },
+        météo: météoFromString(chantierNonNational.meteo),
       },
     };
   }

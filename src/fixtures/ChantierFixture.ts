@@ -28,7 +28,6 @@ class ChantierFixture implements FixtureInterface<Chantier> {
       axe: { id: générerUnIdentifiantUnique('AXE'), nom: faker.lorem.words(3) },
       nomPPG: faker.lorem.words(3),
       périmètreIds: [générerUnIdentifiantUnique('PER')],
-      météo: MétéoFixture.générer(),
       mailles: {
         nationale: this.générérFakeTerritoires(['FR']),
         régionale: this.générérFakeTerritoires(this.code_insee_régions),
@@ -49,6 +48,7 @@ class ChantierFixture implements FixtureInterface<Chantier> {
           annuel: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
           global: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
         },
+        météo: MétéoFixture.générer(),
       };
     });
     return result;
