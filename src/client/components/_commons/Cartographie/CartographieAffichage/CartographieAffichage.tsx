@@ -1,11 +1,15 @@
 import { useState } from 'react';
-import { nuancierPourcentage } from '@/components/_commons/Cartographie/nuancier/nuancier';
 import CartographieAffichageProps, { CartographieBulleTerritoire } from './CartographieAffichage.interface';
 import BulleDInfo from './BulleDInfo/BulleDInfo';
 import CartographieSVG from './SVG/CartographieSVG';
-import CartographieLégende from './Légende/CartographieLégende';
 
-export default function CartographieAffichage({ territoires }: CartographieAffichageProps) {
+function formaterBulleTitre(territoireSurvolé: CartographieBulleTerritoire) {
+  return territoireSurvolé.divisionAdministrative === 'département'
+    ? `${territoireSurvolé.codeInsee} – ${territoireSurvolé.nom}`
+    : territoireSurvolé.nom;
+}
+
+export default function CartographieAffichage({ children, options, territoires }: CartographieAffichageProps) {
   const [sourisPosition, setSourisPosition] = useState({ x: 0, y: 0 });
   const [territoireSurvolé, setTerritoireSurvolé] = useState<CartographieBulleTerritoire | null>(null);
 
@@ -20,18 +24,18 @@ export default function CartographieAffichage({ territoires }: CartographieAffic
     >
       {territoireSurvolé ?
         <BulleDInfo
-          contenu={territoireSurvolé.valeur ? territoireSurvolé.valeur.affichée : 'Non renseigné'}
-          titre={`${territoireSurvolé.codeInsee} - ${territoireSurvolé.nom}`}
+          contenu={options.formaterValeur(territoireSurvolé.valeur)}
+          titre={formaterBulleTitre(territoireSurvolé)}
           x={sourisPosition.x}
           y={sourisPosition.y}
         />
         : null}
       <CartographieSVG
-        nuancier={nuancierPourcentage}
+        options={options}
         setTerritoireSurvolé={setTerritoireSurvolé}
         territoires={territoires}
       />
-      <CartographieLégende nuancier={nuancierPourcentage} />
+      { children }
     </div>
   );
 }

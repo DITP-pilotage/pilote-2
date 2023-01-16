@@ -1,14 +1,15 @@
-export type CartographieBulleTerritoire = Pick<CartographieTerritoire, 'codeInsee' | 'nom' | 'valeur'>;
+import { ReactNode } from 'react';
+import { CartographieOptions } from '@/components/_commons/Cartographie/Cartographie.interface';
+
+export type CartographieBulleTerritoire = Pick<CartographieTerritoire, 'codeInsee' | 'nom' | 'valeur' | 'divisionAdministrative'>;
 
 export type CartographieTerritoireCodeInsee = string;
 
-export type CartographieValeur = {
-  brute: number | null,
-  affichée: string,
-};
+export type CartographieValeur = number | null;
 
 export type CartographieTerritoire = {
   codeInsee: CartographieTerritoireCodeInsee,
+  divisionAdministrative: 'france' | 'région' | 'département',
   nom: string,
   sousTerritoires: (CartographieTerritoire & {
     codeInseeParent: CartographieTerritoireCodeInsee;
@@ -18,5 +19,7 @@ export type CartographieTerritoire = {
 };
 
 export default interface CartographieAffichageProps {
-  territoires: CartographieTerritoire[]
+  children: ReactNode,
+  options: CartographieOptions,
+  territoires: CartographieTerritoire[],
 }

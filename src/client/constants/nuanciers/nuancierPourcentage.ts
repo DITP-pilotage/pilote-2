@@ -1,4 +1,6 @@
-export const nuancierPourcentage = [
+import Nuancier from '@/client/constants/nuanciers/nuancier';
+
+const nuancierPourcentage: Nuancier = [
   {
     seuil : 10,
     libellé: '0-10%',
@@ -41,3 +43,5 @@ export const nuancierPourcentage = [
     couleur : '#000091',
   },
 ];
+
+export default nuancierPourcentage;

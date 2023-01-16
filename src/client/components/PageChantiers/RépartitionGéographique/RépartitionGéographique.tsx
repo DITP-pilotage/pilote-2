@@ -1,69 +1,35 @@
+import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Cartographie from '@/components/_commons/Cartographie/Cartographie';
-import Chantier, { Maille, Territoire } from '@/server/domain/chantier/Chantier.interface';
+import { calculerMoyenne } from '@/client/utils/statistiques';
+import préparerDonnéesCartographie from '@/client/utils/cartographie/préparerDonnéesCartographie';
 import {
   CartographieValeur,
-  CartographieTerritoireCodeInsee,
 } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
+import nuancierPourcentage from '@/client/constants/nuanciers/nuancierPourcentage';
+import CartographieLégende from '@/components/_commons/Cartographie/CartographieAffichage/Légende/CartographieLégende';
 import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
 
-function calculerLaMoyenne(valeurs: CartographieValeur['brute'][]) {
-  const valeursFiltrées = valeurs.filter((valeur): valeur is number => valeur !== null);
-  const somme = valeursFiltrées.reduce(
-    (accumulateur, valeur) => accumulateur + valeur,
-    0,
-  );
-
-  return valeursFiltrées.length === 0 ? null : somme / valeursFiltrées.length;
+function couleurDeRemplissage(valeur: CartographieValeur) {
+  return valeur
+    ? nuancierPourcentage.find(({ seuil }) => seuil >= valeur)?.couleur || '#dedede'
+    : '#dedede';
 }
 
-function récupérerLaDonnéeDIntérêtDesChantiers(
-  chantiers: Chantier[],
-  maille: Exclude<Maille, 'nationale'>,
-  fonctionDExtraction: (territoire: Territoire) => CartographieValeur['brute'],
-) {
-  let donnéesTerritoire: Record<CartographieTerritoireCodeInsee, CartographieValeur['brute'][]> = {};
-
-  chantiers.forEach(chantier => {
-    Object.entries(chantier.mailles[maille]).forEach(([codeInsee, territoire]) => {
-      if (!donnéesTerritoire[codeInsee])
-        donnéesTerritoire[codeInsee] = [];
-      donnéesTerritoire[codeInsee] = [...donnéesTerritoire[codeInsee], fonctionDExtraction(territoire)];
-    });
-  });
-
-  return donnéesTerritoire;
-}
-
-function calculerLesMoyennesPourTousLesChantiers(donnéesTerritoires: Record<CartographieTerritoireCodeInsee, CartographieValeur['brute'][]> ) {
-  let moyennes: Record<CartographieTerritoireCodeInsee, CartographieValeur> = {};
-
-  Object.entries(donnéesTerritoires).forEach(([codeInsee, valeursBrutes]) => {
-    if (!moyennes[codeInsee]) {
-      moyennes[codeInsee] = { brute: null, affichée: 'Non renseigné' };
-    }
-    moyennes[codeInsee].brute = calculerLaMoyenne(valeursBrutes);
-    moyennes[codeInsee].affichée = moyennes[codeInsee].brute ? `${moyennes[codeInsee].brute!.toFixed(0)}%` : 'Non renseigné';
-  });
-
-  return moyennes;
+function formaterValeur(valeur: CartographieValeur) {
+  return valeur ? `${valeur.toFixed(0)}%` : 'Non renseigné';
 }
 
 export default function RépartitionGéographique({ chantiers }: RépartitionGéographiqueProps) {
-  const donnéesCartographie = {
-    'régionale': calculerLesMoyennesPourTousLesChantiers(
-      récupérerLaDonnéeDIntérêtDesChantiers(
-        chantiers,
-        'régionale',
-        territoire => territoire.avancement.global,
-      )),
-    'départementale':  calculerLesMoyennesPourTousLesChantiers(
-      récupérerLaDonnéeDIntérêtDesChantiers(
-        chantiers,
-        'départementale',
-        territoire => territoire.avancement.global,
-      )),
-  };
+  const donnéesCartographie = useMemo(() => (
+    préparerDonnéesCartographie(
+      chantiers.map(chantier => chantier.mailles),
+      (territoiresAgrégés) => {
+        const valeurs = territoiresAgrégés.avancement.map(avancement => avancement.global);
+        return calculerMoyenne(valeurs);
+      },
+    )
+  ), [chantiers]);
 
   return (
     <>
@@ -76,11 +42,17 @@ export default function RépartitionGéographique({ chantiers }: RépartitionGé
       <Cartographie
         données={donnéesCartographie}
         niveauDeMailleAffiché='départementale'
+        options={{
+          couleurDeRemplissage,
+          formaterValeur,
+        }}
         territoireAffiché={{
           codeInsee: 'FR',
           divisionAdministrative: 'france',
         }}
-      />
+      >
+        <CartographieLégende nuancier={nuancierPourcentage} />
+      </Cartographie>
     </>
   );
 }
