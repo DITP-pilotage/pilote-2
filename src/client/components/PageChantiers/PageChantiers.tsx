@@ -2,12 +2,12 @@ import { useMemo, useState } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import { filtresActifs as filtresActifsStore, actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import Titre from '@/components/_commons/Titre/Titre';
-import RépartitionMétéo from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéo';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
 import TauxAvancementMoyen from './TauxAvancementMoyen/TauxAvancementMoyen';
 import RépartitionTauxAvancement from './RépartitionTauxAvancement/RépartitionTauxAvancement';
-import FiltresChantiers from './FiltresChantiers/FiltresChantiers';
+import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
+import BarreLatérale from './BarreLatérale/BarreLatérale';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
@@ -32,7 +32,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
 
   return (
     <PageChantiersStyled className="flex">
-      <FiltresChantiers
+      <BarreLatérale
         estOuvert={estOuverteBarreFiltres}
         périmètresMinistériels={périmètresMinistériels}
         setEstOuvert={setEstOuverteBarreFiltres}

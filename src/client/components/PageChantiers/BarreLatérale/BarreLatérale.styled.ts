@@ -2,11 +2,11 @@ import styled from '@emotion/styled';
 
 const breakpointXL = '1248px';
 
-type FiltresChantiersStyledProps = {
+type BarreLatéraleStyledProps = {
   estOuvert: boolean
 };
 
-const FiltresChantiersStyled = styled.div<FiltresChantiersStyledProps>`
+const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
   .barre-latérale {
     position: sticky;
     top: 0;
@@ -40,4 +40,4 @@ const FiltresChantiersStyled = styled.div<FiltresChantiersStyledProps>`
   }
 `;
 
-export default FiltresChantiersStyled;
+export default BarreLatéraleStyled;
