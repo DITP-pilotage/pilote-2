@@ -37,7 +37,7 @@ export default function PageChantier({ chantier, indicateurs }: PageChantierProp
               <Responsables />
             </div>
           </div>
-          <Cartes />
+          <Cartes chantier={chantier} />
           <Indicateurs
             indicateurs={indicateurs}
           />
