@@ -1,7 +1,16 @@
+import { useMemo } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
+import CartographieTauxAvancement from '@/components/_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
+import { préparerDonnéesCartographieÀPartirDUnÉlément } from '@/client/utils/cartographie/préparerDonnéesCartographie';
+import CartesProps from './Cartes.interface';
 
-export default function Cartes() {
+export default function Cartes({ chantier }: CartesProps) {
+  const donnéesCartographie = useMemo(() => (
+    préparerDonnéesCartographieÀPartirDUnÉlément(chantier.mailles, territoire => territoire.avancement.global)
+  )
+  , [chantier]);
+  
   return (
     <div 
       className='fr-pb-5w'
@@ -19,9 +28,7 @@ export default function Cartes() {
             >
               Répartition géographique du taux d’avancement du chantier
             </Titre>
-            <p className='fr-grid-row fr-grid-row--center'>
-              A venir...
-            </p>
+            <CartographieTauxAvancement données={donnéesCartographie} />
           </Bloc>
         </div>
         <div className="fr-col-12 fr-col-xl-6">

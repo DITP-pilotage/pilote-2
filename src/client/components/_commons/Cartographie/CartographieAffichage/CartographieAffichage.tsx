@@ -15,6 +15,7 @@ export default function CartographieAffichage({ children, options, territoires }
 
   return (
     <div
+      className='fr-container fr-p-0'
       onPointerMove={(event) => {
         setSourisPosition({
           x: event.clientX,
