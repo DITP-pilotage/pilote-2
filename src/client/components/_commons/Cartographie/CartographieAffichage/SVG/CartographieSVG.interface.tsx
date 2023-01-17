@@ -14,5 +14,5 @@ export type Viewbox = {
 export default interface CartographieSVGProps {
   options: CartographieOptions,
   territoires: CartographieTerritoire[],
-  setTerritoireSurvolé:  (state: CartographieBulleTerritoire | null) => void,
+  setTerritoireSurvolé:  (state: CartographieBulleTerritoire | null) => void
 }

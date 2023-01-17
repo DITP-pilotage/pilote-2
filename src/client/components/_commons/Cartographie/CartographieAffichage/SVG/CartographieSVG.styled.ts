@@ -6,6 +6,12 @@ const CartographieSVGStyled = styled.div`
   margin: 0 auto;
   stroke: var(--grey-1000-50);
 
+  .territoire-sélectionné {
+    fill: none;
+    stroke: var(--yellow-moutarde-850-200);
+    stroke-width: 0.8;
+  }
+
   .territoire-frontière {
     fill: none;
     stroke-width: 0.6;

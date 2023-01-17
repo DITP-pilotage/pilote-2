@@ -18,7 +18,7 @@ export default function CartographieTauxAvancement({ données }: CartographieTau
   return (
     <Cartographie 
       données={données} 
-      niveauDeMailleAffiché="départementale"
+      niveauDeMailleAffiché="régionale"
       options={{
         couleurDeRemplissage,
         formaterValeur,
