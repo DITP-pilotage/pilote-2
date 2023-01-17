@@ -2,4 +2,5 @@ import { NiveauDeMaille } from '@/components/_commons/Cartographie/Cartographie.
 
 export default interface SélecteursGéographiquesProps {
   setNiveauDeMaille: (state: NiveauDeMaille) => void
+  niveauDeMaille: NiveauDeMaille
 }

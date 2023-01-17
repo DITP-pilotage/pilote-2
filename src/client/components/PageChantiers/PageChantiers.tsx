@@ -36,6 +36,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
     <PageChantiersStyled className="flex">
       <BarreLatérale
         estOuvert={estOuverteBarreFiltres}
+        niveauDeMaille={niveauDeMaille}
         périmètresMinistériels={périmètresMinistériels}
         setEstOuvert={setEstOuverteBarreFiltres}
         setNiveauDeMaille={setNiveauDeMaille}
@@ -51,9 +52,8 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
         </button>
         <div>
           {
-            récupérerNombreFiltresActifs() > 0 && (
+            récupérerNombreFiltresActifs() > 0 && 
               <FiltresActifs />
-            )
           }
           <div className="fr-p-4w">
             <Titre

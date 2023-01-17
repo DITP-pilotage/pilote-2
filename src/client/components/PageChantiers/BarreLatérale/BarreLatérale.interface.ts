@@ -6,4 +6,5 @@ export default interface BarreLatéraleProps {
   setEstOuvert: (state: boolean) => void,
   périmètresMinistériels: PérimètreMinistériel[],
   setNiveauDeMaille: (state: NiveauDeMaille) => void
+  niveauDeMaille: NiveauDeMaille
 }

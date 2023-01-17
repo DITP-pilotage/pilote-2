@@ -4,12 +4,15 @@ import BarreLatéraleProps from './BarreLatérale.interface';
 import BarreLatéraleStyled from './BarreLatérale.styled';
 import SélecteursGéographiques from './SélecteursGéographiques/SélecteursGéographiques';
 
-export default function BarreLatérale({ estOuvert, setEstOuvert, périmètresMinistériels, setNiveauDeMaille }: BarreLatéraleProps) {
+export default function BarreLatérale({ estOuvert, setEstOuvert, périmètresMinistériels, setNiveauDeMaille, niveauDeMaille }: BarreLatéraleProps) {
   return (
     <BarreLatéraleStyled estOuvert={estOuvert}>
       <div className='barre-latérale'>
         <div className="fr-grid-row fr-grid-row--middle">
-          <SélecteursGéographiques setNiveauDeMaille={setNiveauDeMaille} />
+          <SélecteursGéographiques
+            niveauDeMaille={niveauDeMaille}
+            setNiveauDeMaille={setNiveauDeMaille}
+          />
           <p className="fr-h4 fr-mb-0 fr-px-3w fr-mt-2w fr-col-8">
             Filtres
           </p>

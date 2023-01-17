@@ -28,7 +28,10 @@ export default function Cartes({ chantier }: CartesProps) {
             >
               Répartition géographique du taux d’avancement du chantier
             </Titre>
-            <CartographieTauxAvancement données={donnéesCartographie} />
+            <CartographieTauxAvancement
+              données={donnéesCartographie}
+              niveauDeMaille="départementale"
+            />
           </Bloc>
         </div>
         <div className="fr-col-12 fr-col-xl-6">

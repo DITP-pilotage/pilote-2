@@ -1,30 +1,26 @@
 import SélecteursGéographiquesStyled from './SélecteursGéographiques.styled';
 import SélecteursGéographiquesProps from './SélecteursGéographiques.interface';
 
-export default function SélecteursGéographiques({ setNiveauDeMaille }: SélecteursGéographiquesProps) {
+export default function SélecteursGéographiques({ setNiveauDeMaille, niveauDeMaille }: SélecteursGéographiquesProps) {
   return (
     <SélecteursGéographiquesStyled>
       <div className='fr-p-3w'>
-        <ul className='maille fr-btns-group fr-btns-group--inline'>
-          <li>
-            <button
-              className='fr-btn fr-m-1v'
-              onClick={() => setNiveauDeMaille('départementale')}
-              type='button'
-            >
-              Départements
-            </button>
-          </li>
-          <li>
-            <button
-              className='fr-btn fr-m-1v '
-              onClick={() => setNiveauDeMaille('régionale')}
-              type='button'
-            >
-              Régions
-            </button>
-          </li>
-        </ul>
+        <div className='maille fr-mx-n1w'>
+          <button
+            className={`${niveauDeMaille === 'départementale' && 'séléctionné fr-text--bold'} fr-m-1v`}
+            onClick={() => setNiveauDeMaille('départementale')}
+            type='button'
+          >
+            Départements
+          </button>
+          <button
+            className={`${niveauDeMaille === 'régionale' && 'séléctionné fr-text--bold'} fr-m-1v`}
+            onClick={() => setNiveauDeMaille('régionale')}
+            type='button'
+          >
+            Régions
+          </button>
+        </div>
       </div>
     </SélecteursGéographiquesStyled>
   );
