@@ -1,4 +1,4 @@
-import { Maille, mailles, Territoire } from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { Maille, mailles, Territoire } from '@/server/domain/chantier/Chantier.interface';
 import { Agrégation } from '@/client/utils/types';
 
 const codes = {
@@ -91,4 +91,63 @@ export function réduireDonnéesTerritoires<T>(
   }
 
   return donnéesRéduites;
+}
+
+///
+// Expé
+
+export function sélectionneLesChantiersDesPérimètres(chantiers: Chantier[], périmètreIds: string[]): Chantier[] {
+  if (périmètreIds.length === 0) {
+    return chantiers;
+  }
+  const result = [];
+  for (const chantier of chantiers) {
+    for (const pid of chantier.périmètreIds) {
+      if (périmètreIds.includes(pid)) {
+        result.push(chantier);
+        break;
+      }
+    }
+  }
+  return result;
+}
+
+export function extraitLesAvancementsGlobauxDépartementaux(chantiers: Chantier[]): Record<string, number[]> {
+  const result: Record<string, number[]> = {};
+
+  for (const chantier of chantiers) {
+    const données = chantier.mailles.départementale;
+    for (const codeInsee in données) {
+      result[codeInsee] ||= [];
+      const avancementsGlobaux = result[codeInsee];
+      const avancementGlobal = données[codeInsee]?.avancement?.global;
+      if (avancementGlobal != undefined) {
+        avancementsGlobaux.push(avancementGlobal);
+      }
+    }
+  }
+
+  return result;
+}
+
+function moyenne(valeurs: number[]) {
+  if (valeurs.length === 0) {
+    throw new Error("Erreur: une liste vide n'a pas de moyenne");
+  }
+  let somme = 0;
+  for (const valeur of valeurs) {
+    somme += valeur;
+  }
+  return somme / valeurs.length;
+}
+
+export function moyennesParCodeInsee(valeursParCodeInsee: Record<string, number[]>): Record<string, number | null> {
+  const result: Record<string, number | null> = {};
+  for (const codeInsee in valeursParCodeInsee) {
+    const valeurs = valeursParCodeInsee[codeInsee];
+    result[codeInsee] = (valeurs && valeurs.length > 0)
+      ? moyenne(valeurs)
+      : null;
+  }
+  return result;
 }
