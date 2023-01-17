@@ -1,15 +1,11 @@
 import SélecteursGéographiquesStyled from './SélecteursGéographiques.styled';
-import SélecteursGéographiquesProps from './SélecteursGéographiques.interface';
 import SélecteurDeNiveauDeMaille from './SélecteurDeNiveauDeMaille/SélecteurDeNiveauDeMaille';
 
-export default function SélecteursGéographiques({ setNiveauDeMaille, niveauDeMaille }: SélecteursGéographiquesProps) {
+export default function SélecteursGéographiques() {
   return (
     <SélecteursGéographiquesStyled>
       <div className='fr-p-3w'>
-        <SélecteurDeNiveauDeMaille
-          niveauDeMaille={niveauDeMaille}
-          setNiveauDeMaille={setNiveauDeMaille}
-        />
+        <SélecteurDeNiveauDeMaille />
       </div>
     </SélecteursGéographiquesStyled>
   );

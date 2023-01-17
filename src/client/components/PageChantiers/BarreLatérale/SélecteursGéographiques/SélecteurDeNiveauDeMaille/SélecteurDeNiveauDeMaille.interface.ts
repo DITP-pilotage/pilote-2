@@ -1,4 +1,4 @@
-import { NiveauDeMaille } from '@/components/_commons/Cartographie/Cartographie.interface';
+import { NiveauDeMaille } from '@/client/stores/useNiveauDeMailleStore/useNiveauDeMailleStore.interface';
 
 export default interface SélecteurDeNiveauDeMailleProps {
   setNiveauDeMaille: (state: NiveauDeMaille) => void

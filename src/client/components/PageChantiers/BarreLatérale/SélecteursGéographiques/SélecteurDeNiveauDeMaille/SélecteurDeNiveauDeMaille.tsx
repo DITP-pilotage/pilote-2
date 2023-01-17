@@ -1,6 +1,9 @@
-import SélecteurDeNiveauDeMailleProps from './SélecteurDeNiveauDeMaille.interface';
+import useNiveauDeMailleStore from '@/client/stores/useNiveauDeMailleStore/useNiveauDeMailleStore';
 
-export default function SélecteurDeNiveauDeMaille({ setNiveauDeMaille, niveauDeMaille }: SélecteurDeNiveauDeMailleProps) {
+export default function SélecteurDeNiveauDeMaille() {
+  const niveauDeMaille = useNiveauDeMailleStore((étatActuel) => étatActuel.niveauDeMaille);
+  const setNiveauDeMaille = useNiveauDeMailleStore((étatActuel) => étatActuel.setNiveauDeMaille);
+
   return (
     <div className='maille fr-mx-n1w'>
       <button

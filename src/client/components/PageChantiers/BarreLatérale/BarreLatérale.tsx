@@ -4,15 +4,12 @@ import BarreLatéraleProps from './BarreLatérale.interface';
 import BarreLatéraleStyled from './BarreLatérale.styled';
 import SélecteursGéographiques from './SélecteursGéographiques/SélecteursGéographiques';
 
-export default function BarreLatérale({ estOuvert, setEstOuvert, périmètresMinistériels, setNiveauDeMaille, niveauDeMaille }: BarreLatéraleProps) {
+export default function BarreLatérale({ estOuvert, setEstOuvert, périmètresMinistériels }: BarreLatéraleProps) {
   return (
     <BarreLatéraleStyled estOuvert={estOuvert}>
       <div className='barre-latérale'>
         <div className="fr-grid-row fr-grid-row--middle">
-          <SélecteursGéographiques
-            niveauDeMaille={niveauDeMaille}
-            setNiveauDeMaille={setNiveauDeMaille}
-          />
+          <SélecteursGéographiques />
           <p className="fr-h4 fr-mb-0 fr-px-3w fr-mt-2w fr-col-8">
             Filtres
           </p>
@@ -34,12 +31,12 @@ export default function BarreLatérale({ estOuvert, setEstOuvert, périmètresMi
         </FiltreGroupe>
       </div>
       {
-        estOuvert ? (
+        estOuvert ?
           <div
             aria-hidden
             className="arrière-plan"
             onClick={() => setEstOuvert(false)}
-          />)
+          />
           : null
       }
     </BarreLatéraleStyled>
