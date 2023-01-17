@@ -23,6 +23,16 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
       setViewbox(svgRef.current.getBBox());
   }, [svgRef]);
 
+  function auClicTerritoireCallback(territoire: CartographieTerritoire) {
+    if (options.territoireSélectionnable) {
+      if (territoireSélectionné && territoireSélectionné.codeInsee === territoire.codeInsee) {
+        setTerritoireSélectionné(null);
+      } else {
+        setTerritoireSélectionné(territoire);
+      }
+    }
+  }
+
   return (
     <CartographieSVGStyled>
       <CartographieZoomEtDéplacement
@@ -56,7 +66,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                       d={sousTerritoire.tracéSVG}
                       fill={options.couleurDeRemplissage(sousTerritoire.valeur)}
                       key={sousTerritoire.nom}
-                      onClick={() => options.territoireSélectionnable && setTerritoireSélectionné(sousTerritoire)}
+                      onClick={() => auClicTerritoireCallback(sousTerritoire)}
                       onMouseEnter={() => {
                         setTerritoireSurvolé({
                           codeInsee: sousTerritoire.codeInsee,
@@ -76,7 +86,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                         className='territoire-rempli'
                         d={territoire.tracéSVG}
                         fill={options.couleurDeRemplissage(territoire.valeur)}
-                        onClick={() => options.territoireSélectionnable && setTerritoireSélectionné(territoire)}
+                        onClick={() => auClicTerritoireCallback(territoire)}
                         onMouseEnter={() => {
                           setTerritoireSurvolé({
                             codeInsee: territoire.codeInsee,
