@@ -42,9 +42,9 @@ sleep 15
 # Import des données issues de PPG_metadata
 # psql $DATABASE_URL -c "copy raw_data.metadata_chantier from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/chantier/view_meta_chantier.csv
 # script TEMPORAIRE de remplacement pour recharger les données chantier
-psql $DATABASE_URL -c "create temporary table temporary_chantier (chantier_id text,ch_code text,ch_descr text,ch_nom text,ch_dp text,ch_ppg text,ch_perseverant text,porteur_shorts_nodac text,porteur_ids_nodac text,porteur_shorts_dac text,porteur_ids_dac text,ch_per text);
-                       copy temporary_chantier (chantier_id,ch_code,ch_descr,ch_nom,ch_dp,ch_ppg,ch_perseverant,porteur_shorts_nodac,porteur_ids_nodac,porteur_shorts_dac,porteur_ids_dac,ch_per) from STDIN with csv delimiter ',' header;
-                       insert into raw_data.metadata_chantier select chantier_id, ch_code, ch_descr, ch_nom, ch_ppg, ch_perseverant, porteur_shorts_nodac, porteur_ids_nodac, porteur_shorts_dac, porteur_ids_dac, ch_per, ch_dp from temporary_chantier;
+psql $DATABASE_URL -c "create temporary table temporary_chantier (chantier_id text,ch_code text,ch_descr text,ch_nom text,ch_dp text,ch_ppg text,ch_perseverant text,porteur_shorts_nodac text,porteur_ids_nodac text,porteur_shorts_dac text,porteur_ids_dac text,ch_per text,ch_dp_mail text);
+                       copy temporary_chantier (chantier_id,ch_code,ch_descr,ch_nom,ch_dp,ch_ppg,ch_perseverant,porteur_shorts_nodac,porteur_ids_nodac,porteur_shorts_dac,porteur_ids_dac,ch_per,ch_dp_mail) from STDIN with csv delimiter ',' header;
+                       insert into raw_data.metadata_chantier select chantier_id, ch_code, ch_descr, ch_nom, ch_ppg, ch_perseverant, porteur_shorts_nodac, porteur_ids_nodac, porteur_shorts_dac, porteur_ids_dac, ch_per, ch_dp, ch_dp_mail from temporary_chantier;
                        drop table temporary_chantier;" < input_data/$FOLDER/PPG_metadata/views/chantier/view_meta_chantier.csv
 psql $DATABASE_URL -c "copy raw_data.metadata_perimetre from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/perimetre/view_meta_perimetre.csv
 psql $DATABASE_URL -c "copy raw_data.metadata_indicateur from STDIN with csv delimiter ',' header;" < input_data/$FOLDER/PPG_metadata/views/indicateur/view_meta_indicateur.csv
