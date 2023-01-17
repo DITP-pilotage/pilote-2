@@ -24,7 +24,10 @@ export default function RépartitionGéographique({ chantiers }: RépartitionGé
       >
         Répartition géographique
       </Titre>
-      <CartographieTauxAvancement données={donnéesCartographie} />
+      <CartographieTauxAvancement
+        données={donnéesCartographie}
+        territoireSélectionnable
+      />
     </>
   );
 }

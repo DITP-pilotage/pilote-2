@@ -56,7 +56,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                       d={sousTerritoire.tracéSVG}
                       fill={options.couleurDeRemplissage(sousTerritoire.valeur)}
                       key={sousTerritoire.nom}
-                      onClick={() => setTerritoireSélectionné(sousTerritoire)}
+                      onClick={() => options.territoireSélectionnable && setTerritoireSélectionné(sousTerritoire)}
                       onMouseEnter={() => {
                         setTerritoireSurvolé({
                           codeInsee: sousTerritoire.codeInsee,
@@ -76,7 +76,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                         className='territoire-rempli'
                         d={territoire.tracéSVG}
                         fill={options.couleurDeRemplissage(territoire.valeur)}
-                        onClick={() => setTerritoireSélectionné(territoire)}
+                        onClick={() => options.territoireSélectionnable && setTerritoireSélectionné(territoire)}
                         onMouseEnter={() => {
                           setTerritoireSurvolé({
                             codeInsee: territoire.codeInsee,
@@ -95,7 +95,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
               </g>
             ))
           }
-          <CartographieTerritoireSélectionné territoire={territoireSélectionné} />
+          { !!territoireSélectionné && <CartographieTerritoireSélectionné territoire={territoireSélectionné} /> }
         </g>
       </svg>
     </CartographieSVGStyled>

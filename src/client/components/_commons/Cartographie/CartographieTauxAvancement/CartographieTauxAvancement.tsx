@@ -14,14 +14,15 @@ function formaterValeur(valeur: CartographieValeur) {
   return valeur ? `${valeur.toFixed(0)}%` : 'Non renseigné';
 }
 
-export default function CartographieTauxAvancement({ données }: CartographieTauxAvancementProps) {
+export default function CartographieTauxAvancement({ données, territoireSélectionnable = false }: CartographieTauxAvancementProps) {
   return (
     <Cartographie 
       données={données} 
-      niveauDeMailleAffiché="régionale"
+      niveauDeMailleAffiché="départementale"
       options={{
         couleurDeRemplissage,
         formaterValeur,
+        territoireSélectionnable,
       }}
       territoireAffiché={{
         codeInsee: 'FR',
