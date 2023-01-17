@@ -25,6 +25,7 @@ export type CartographieDonnées = Record<Exclude<Maille, 'nationale'>, Record<C
 export type CartographieOptions = {
   couleurDeRemplissage: (valeur: CartographieValeur) => string,
   formaterValeur: (valeur: CartographieValeur) => string,
+  territoireSélectionnable: boolean
 };
 export default interface CartographieProps {
   children: ReactNode,

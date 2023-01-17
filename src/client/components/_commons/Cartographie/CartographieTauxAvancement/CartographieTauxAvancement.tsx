@@ -14,7 +14,7 @@ function formaterValeur(valeur: CartographieValeur) {
   return valeur ? `${valeur.toFixed(0)}%` : 'Non renseigné';
 }
 
-export default function CartographieTauxAvancement({ données }: CartographieTauxAvancementProps) {
+export default function CartographieTauxAvancement({ données, territoireSélectionnable = false }: CartographieTauxAvancementProps) {
   return (
     <Cartographie 
       données={données} 
@@ -22,6 +22,7 @@ export default function CartographieTauxAvancement({ données }: CartographieTau
       options={{
         couleurDeRemplissage,
         formaterValeur,
+        territoireSélectionnable,
       }}
       territoireAffiché={{
         codeInsee: 'FR',

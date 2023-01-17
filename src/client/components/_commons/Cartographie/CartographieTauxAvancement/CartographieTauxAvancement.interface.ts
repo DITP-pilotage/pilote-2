@@ -1,5 +1,6 @@
 import { CartographieDonnées } from '../Cartographie.interface';
 
 export default interface CartographieTauxAvancementProps {
-  données: CartographieDonnées
+  données: CartographieDonnées,
+  territoireSélectionnable?: boolean
 }

@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import CartographieAffichageProps, { CartographieBulleTerritoire } from './CartographieAffichage.interface';
+import CartographieAffichageProps, {
+  CartographieBulleTerritoire,
+} from './CartographieAffichage.interface';
 import BulleDInfo from './BulleDInfo/BulleDInfo';
 import CartographieSVG from './SVG/CartographieSVG';
 
