@@ -11,9 +11,11 @@ import BarreLatérale from './BarreLatérale/BarreLatérale';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
+import { NiveauDeMaille } from '../_commons/Cartographie/Cartographie.interface';
 
 export default function PageChantiers({ chantiers, périmètresMinistériels }: PageChantiersProps) {
   const [estOuverteBarreFiltres, setEstOuverteBarreFiltres] = useState(false);
+  const [niveauDeMaille, setNiveauDeMaille] = useState<NiveauDeMaille>('départementale');
 
   const filtresActifs = filtresActifsStore();
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
@@ -36,6 +38,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
         estOuvert={estOuverteBarreFiltres}
         périmètresMinistériels={périmètresMinistériels}
         setEstOuvert={setEstOuverteBarreFiltres}
+        setNiveauDeMaille={setNiveauDeMaille}
       />
       <div className='contenu-principal'>
         <button
@@ -62,7 +65,10 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
             <div className="fr-grid-row fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
-                  <RépartitionGéographique chantiers={chantiersFiltrés} />
+                  <RépartitionGéographique
+                    chantiers={chantiersFiltrés}
+                    niveauDeMaille={niveauDeMaille}
+                  />
                 </Bloc>
               </div>
               <div className="fr-col-12 fr-col-lg-6">

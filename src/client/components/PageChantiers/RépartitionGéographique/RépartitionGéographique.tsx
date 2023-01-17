@@ -5,7 +5,7 @@ import { préparerDonnéesCartographieÀPartirDUneListe } from '@/client/utils/c
 import CartographieTauxAvancement from '@/components/_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
 import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
 
-export default function RépartitionGéographique({ chantiers }: RépartitionGéographiqueProps) {
+export default function RépartitionGéographique({ chantiers, niveauDeMaille }: RépartitionGéographiqueProps) {
   const donnéesCartographie = useMemo(() => (
     préparerDonnéesCartographieÀPartirDUneListe(
       chantiers.map(chantier => chantier.mailles),
@@ -26,6 +26,7 @@ export default function RépartitionGéographique({ chantiers }: RépartitionGé
       </Titre>
       <CartographieTauxAvancement
         données={donnéesCartographie}
+        niveauDeMaille={niveauDeMaille}
         territoireSélectionnable
       />
     </>

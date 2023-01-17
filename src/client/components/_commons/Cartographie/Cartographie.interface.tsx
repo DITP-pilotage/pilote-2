@@ -20,6 +20,8 @@ export type CartographieTerritoireAffiché = {
   divisionAdministrative: 'région' | 'france',
 };
 
+export type NiveauDeMaille = 'régionale' | 'départementale';
+
 export type CartographieDonnées = Record<Exclude<Maille, 'nationale'>, Record<CartographieTerritoireCodeInsee, CartographieValeur>>;
 
 export type CartographieOptions = {
@@ -32,5 +34,5 @@ export default interface CartographieProps {
   données: CartographieDonnées,
   options: CartographieOptions,
   territoireAffiché: CartographieTerritoireAffiché,
-  niveauDeMailleAffiché: 'régionale' | 'départementale',
+  niveauDeMailleAffiché: NiveauDeMaille,
 }
