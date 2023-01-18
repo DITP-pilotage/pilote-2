@@ -31,7 +31,7 @@ const colonnes = [
     header: 'Taux avancement global',
     cell: tauxAvancementGlobal => (
       <>
-        {tauxAvancementGlobal.getValue() ? `${tauxAvancementGlobal.getValue()!.toFixed(0)}%` : '- %'}
+        {tauxAvancementGlobal.getValue() === null ? '- %' : `${tauxAvancementGlobal.getValue()!.toFixed(0)}%`}
         <BarreDeProgression
           afficherTexte={false}
           fond='bleu'
