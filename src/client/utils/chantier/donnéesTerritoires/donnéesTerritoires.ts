@@ -40,14 +40,14 @@ function initialiserDonnéesTerritoires<T>(donnéesInitiales: T) {
   ) as DonnéesTerritoires<T>;
 }
 
-function initialiserDonnéesTerritoiresAgrégésVide() {
+export function initialiserDonnéesTerritoiresAgrégésVide() {
   return initialiserDonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>({
     avancement: [],
     météo: [],
   });
 }
 
-function agrégerDonnéesTerritoiresÀUnAgrégat(
+export function agrégerDonnéesTerritoiresÀUnAgrégat(
   donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
   donnéesTerritoires: DonnéesTerritoires<TerritoireSansCodeInsee>,
 ): DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>> {
