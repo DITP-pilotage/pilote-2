@@ -26,6 +26,7 @@ model chantier {
   synthese_des_resultats String?
   axe String @default("non renseignée")
   ppg String @default("non renseignée")
+  directeurs_projet_mails String []
 
   @@id([id, code_insee, maille])
 }

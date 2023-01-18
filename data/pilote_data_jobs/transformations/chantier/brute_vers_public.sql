@@ -40,7 +40,8 @@ INSERT INTO public.chantier
             COALESCE(chantier_meteo.ch_meteo_id, 'NON_RENSEIGNEE') AS meteo,
             d_chantier.synthese_des_resultats AS synthese_des_resultats,
             m_axe.axe_name AS axe,
-            m_ppg.ppg_nom AS ppg
+            m_ppg.ppg_nom AS ppg,
+            string_to_array(m_chantier.ch_dp_mail, ' | ') AS directeurs_projet_mails
      FROM raw_data.metadata_chantier m_chantier
               LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_region AND d_chantier.structure_name='Réforme'
               JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = 'FRANCE'
@@ -75,7 +76,8 @@ UNION
         'NON_NECESSAIRE' AS meteo,
         '' AS synthese_des_resultats,
         m_axe.axe_name AS axe,
-        m_ppg.ppg_nom AS ppg
+        m_ppg.ppg_nom AS ppg,
+        string_to_array(m_chantier.ch_dp_mail, ' | ') AS directeurs_projet_mails
  FROM raw_data.metadata_chantier m_chantier
           LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_chantier AND d_chantier.structure_name IN ('Région', 'Département')
           JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = d_chantier.code_region
