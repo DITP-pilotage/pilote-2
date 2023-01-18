@@ -5,6 +5,7 @@ import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDe
 import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
 import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import { Avancement, Territoires } from '@/server/domain/chantier/Chantier.interface';
+import Météo, { météos } from '@/server/domain/chantier/Météo.interface';
 import ListeChantiersProps from './ListeChantiers.interface';
 
 function afficherLesBarresDeProgression(avancement: Avancement) {
@@ -40,6 +41,16 @@ function comparerAvancementChantier(a: number | null, b: number | null) {
   return 0;
 }
 
+function comparerMétéo(a: Météo, b: Météo) {
+  const indexA = météos.indexOf(a);
+  const indexB = météos.indexOf(b);
+  if (indexA < indexB)
+    return 1;
+  if (indexA > indexB)
+    return -1;
+  return 0;
+}
+
 const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
 
 const colonnes = [
@@ -59,6 +70,9 @@ const colonnes = [
     header: 'Météo',
     cell: météo => <PictoMétéo valeur={météo.getValue()} />,
     enableGlobalFilter: false,
+    sortingFn: (a, b, columnId) => {
+      return comparerMétéo(a.getValue(columnId), b.getValue(columnId));
+    },
   }),
   reactTableColonnesHelper.accessor('mailles.nationale', {
     header: 'Avancement',
