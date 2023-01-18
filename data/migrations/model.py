@@ -35,6 +35,8 @@ class MetadataPerimetre(Base):
     per_nom = Column(VARCHAR(255))
     per_short = Column(VARCHAR(255))
     per_picto = Column(VARCHAR(255))
+    per_porteur_id = Column(VARCHAR(4))
+    per_porteur_name_short = Column(VARCHAR(255))
 
 
 class MetadataIndicateur(Base):
