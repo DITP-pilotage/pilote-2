@@ -20,7 +20,7 @@ export function préparerDonnéesCartographieÀPartirDUneListe(
 export function préparerDonnéesCartographieÀPartirDUnÉlément(
   donnéesTerritoires: DonnéesTerritoires<Territoire>,
   fonctionDExtraction: (territoire: Territoire) => CartographieValeur,
-) : CartographieDonnées {
+): CartographieDonnées {
   const donnéesCartographie: CartographieDonnées = { départementale : {}, régionale: {} };
   let maille: Maille;
 
