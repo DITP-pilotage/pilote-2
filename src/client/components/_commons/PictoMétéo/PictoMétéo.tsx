@@ -1,19 +1,26 @@
 import pictoSoleil from '/public/img/météo/soleil.svg';
-import pictoSoleilNuage from '/public/img/météo/soleil-nuage.svg';
+import pictoCouvert from '/public/img/météo/couvert.svg';
 import pictoNuage from '/public/img/météo/nuage.svg';
 import pictoOrage from '/public/img/météo/orage.svg';
 import Image from 'next/image';
 import PictoMétéoProps from './PictoMétéo.interface';
 
-export const météos = {
-  4:{ nom: 'Objectifs compromis', picto: pictoOrage },
-  3:{ nom: 'Appuis nécessaires', picto: pictoNuage },
-  2:{ nom: 'Objectifs atteignables', picto: pictoSoleilNuage },
-  1:{ nom: 'Objectifs sécurisés', picto: pictoSoleil },
+export const pictosMétéos = {
+  'ORAGE': { nom: 'Objectifs compromis', picto: pictoOrage },
+  'NUAGE': { nom: 'Appuis nécessaires', picto: pictoNuage },
+  'COUVERT': { nom: 'Objectifs atteignables', picto: pictoCouvert },
+  'SOLEIL': { nom: 'Objectifs sécurisés', picto: pictoSoleil },
 };
 
 export function PictoMétéo({ valeur }: PictoMétéoProps) {
-  if (valeur === null) {
+  if (valeur === 'NON_NECESSAIRE') {
+    return (
+      <span>
+        Non nécessaire
+      </span>
+    );
+  }
+  if (valeur === 'NON_RENSEIGNEE') {
     return (
       <span>
         Non renseigné
@@ -23,8 +30,8 @@ export function PictoMétéo({ valeur }: PictoMétéoProps) {
     
   return (
     <Image
-      alt={météos[valeur].nom}
-      src={météos[valeur].picto}
+      alt={pictosMétéos[valeur].nom}
+      src={pictosMétéos[valeur].picto}
     />
   );
 }
