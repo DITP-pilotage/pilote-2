@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Maille } from '@/server/domain/chantier/Chantier.interface';
+import { NiveauDeMaille } from '@/client/stores/useNiveauDeMailleStore/useNiveauDeMailleStore.interface';
 import { CartographieTerritoireCodeInsee, CartographieValeur } from './CartographieAffichage/CartographieAffichage.interface';
 
 export type CartographieRégionJSON = {
@@ -20,7 +20,7 @@ export type CartographieTerritoireAffiché = {
   divisionAdministrative: 'région' | 'france',
 };
 
-export type CartographieDonnées = Record<Exclude<Maille, 'nationale'>, Record<CartographieTerritoireCodeInsee, CartographieValeur>>;
+export type CartographieDonnées = Record<NiveauDeMaille, Record<CartographieTerritoireCodeInsee, CartographieValeur>>;
 
 export type CartographieOptions = {
   couleurDeRemplissage: (valeur: CartographieValeur) => string,
@@ -32,5 +32,5 @@ export default interface CartographieProps {
   données: CartographieDonnées,
   options: CartographieOptions,
   territoireAffiché: CartographieTerritoireAffiché,
-  niveauDeMailleAffiché: 'régionale' | 'départementale',
+  niveauDeMailleAffiché: NiveauDeMaille,
 }
