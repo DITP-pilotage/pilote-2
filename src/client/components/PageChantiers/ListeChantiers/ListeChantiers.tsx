@@ -5,7 +5,8 @@ import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDe
 import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
 import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import { Avancement, Territoires } from '@/server/domain/chantier/Chantier.interface';
-import Météo, { météos } from '@/server/domain/chantier/Météo.interface';
+import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/avancement';
+import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import ListeChantiersProps from './ListeChantiers.interface';
 
 function afficherLesBarresDeProgression(avancement: Avancement) {
@@ -25,30 +26,6 @@ function afficherLesBarresDeProgression(avancement: Avancement) {
       />
     </>
   );
-}
-
-function comparerAvancementChantier(a: number | null, b: number | null) {
-  if (a === null && b === null)
-    return 0;
-  if (a === null)
-    return -1;
-  if (b === null)
-    return 1;
-  if (a < b)
-    return 1;
-  if (a > b)
-    return -1;
-  return 0;
-}
-
-function comparerMétéo(a: Météo, b: Météo) {
-  const indexA = météos.indexOf(a);
-  const indexB = météos.indexOf(b);
-  if (indexA < indexB)
-    return 1;
-  if (indexA > indexB)
-    return -1;
-  return 0;
 }
 
 const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
