@@ -1,9 +1,17 @@
+import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
-import { météos } from '@/components/_commons/PictoMétéo/PictoMétéo';
+import { pictosMétéos } from '@/components/_commons/PictoMétéo/PictoMétéo';
+import RépartitonMétéoProps from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéoProps.interface';
+import compterLesMétéosÀPartirDeChantiers from '@/client/utils/chantier/météo/compterLesMétéosÀPartirDeChantiers';
 import RépartitionMétéoÉlément from './RépartitionMétéoÉlément/RépartitionMétéoÉlément';
 import RépartitionMétéoStyled from './RépartitionMétéo.styled';
 
-export default function RépartitionMétéo() {
+const météosÀAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
+
+export default function RépartitionMétéo({ chantiers }: RépartitonMétéoProps) {
+
+  const compteursMétéos = useMemo(() => compterLesMétéosÀPartirDeChantiers(chantiers), [chantiers]);
+
   return (
     <RépartitionMétéoStyled>
       <Titre
@@ -14,17 +22,17 @@ export default function RépartitionMétéo() {
       </Titre>
       <ul className='fr-grid-row fr-grid-row--gutters'>
         {
-           Object.values(météos).reverse().map(météo => (
-             <li
-               className='fr-col-3'
-               key={météo.nom}
-             >
-               <RépartitionMétéoÉlément
-                 météo={météo}
-                 nombreDeChantiers="-"
-               />
-             </li>
-           ))
+          météosÀAfficher.map(météo => (
+            <li
+              className='fr-col-3'
+              key={pictosMétéos[météo].nom}
+            >
+              <RépartitionMétéoÉlément
+                météo={pictosMétéos[météo]}
+                nombreDeChantiers={`${compteursMétéos.nationale.FR[météo]}`}
+              />
+            </li>
+          ))
         }
       </ul>
     </RépartitionMétéoStyled>

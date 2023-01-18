@@ -2,11 +2,11 @@ import { useMemo, useState } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import { filtresActifs as filtresActifsStore, actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import Titre from '@/components/_commons/Titre/Titre';
+import RépartitionMétéo from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéo';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
 import TauxAvancementMoyen from './TauxAvancementMoyen/TauxAvancementMoyen';
 import RépartitionTauxAvancement from './RépartitionTauxAvancement/RépartitionTauxAvancement';
-import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import FiltresChantiers from './FiltresChantiers/FiltresChantiers';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
@@ -69,7 +69,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
                 <Bloc>
                   <TauxAvancementMoyen />
                   <hr className='fr-hr fr-my-3w fr-pb-1v' />
-                  <RépartitionMétéo />
+                  <RépartitionMétéo chantiers={chantiersFiltrés} />
                 </Bloc>
               </div>
             </div>
