@@ -7,6 +7,6 @@ const useNiveauDeMailleStore = create<NiveauDeMailleStore>((set) => ({
   setNiveauDeMaille: (nouveauNiveauDeMaille) => set(() => ({ niveauDeMaille: nouveauNiveauDeMaille })),
 }));
 
-export default useNiveauDeMailleStore;
-
+export const niveauDeMaille = () => useNiveauDeMailleStore((étatActuel) => étatActuel.niveauDeMaille);
+export const setNiveauDeMaille = () => useNiveauDeMailleStore((étatActuel) => étatActuel.setNiveauDeMaille);
 

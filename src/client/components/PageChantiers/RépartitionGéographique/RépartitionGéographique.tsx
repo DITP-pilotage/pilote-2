@@ -3,12 +3,11 @@ import Titre from '@/components/_commons/Titre/Titre';
 import { calculerMoyenne } from '@/client/utils/statistiques';
 import { préparerDonnéesCartographieÀPartirDUneListe } from '@/client/utils/cartographie/préparerDonnéesCartographie';
 import CartographieTauxAvancement from '@/components/_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
-import useNiveauDeMailleStore from '@/client/stores/useNiveauDeMailleStore/useNiveauDeMailleStore';
+import { niveauDeMaille as nineauDeMailleStore } from '@/client/stores/useNiveauDeMailleStore/useNiveauDeMailleStore';
 import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
 
 export default function RépartitionGéographique({ chantiers }: RépartitionGéographiqueProps) {
-  const niveauDeMaille = useNiveauDeMailleStore((étatActuel) => étatActuel.niveauDeMaille);
-  
+  const niveauDeMaille = nineauDeMailleStore();
   const donnéesCartographie = useMemo(() => (
     préparerDonnéesCartographieÀPartirDUneListe(
       chantiers.map(chantier => chantier.mailles),
