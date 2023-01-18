@@ -16,10 +16,13 @@
     "test": "npm run test:client && npm run test:server",
     "test:ci": "bash scripts/test_ci.sh",
     "test:client": "jest src/client",
+    "test:client:coverage": "jest --collectCoverage --collectCoverageFrom=src/client/**/*.{ts,tsx} src/client",
     "test:client:unit": "jest --passWithNoTests src/client/.*.unit.test.*",
     "test:client:integration": "jest src/client/.*.integration.test.*",
     "test:server": "npm run test:server:unit && npm run test:server:integration",
     "test:server:unit": "jest --passWithNoTests src/server/.*.unit.test.*",
+    "test:server:domain:coverage": "jest --collectCoverage --collectCoverageFrom=src/server/domain/**/*.ts src/server/domain/.*.test.*",
+    "test:server:infrastructure:coverage": "jest --collectCoverage --config=jest.integration.config.js --collectCoverageFrom=src/server/infrastructure/**/*.ts src/server/infrastructure/.*.test.*",
     "test:server:integration": "jest --config=jest.integration.config.js src/server/.*.integration.test.*",
     "test:database:init": "dotenv -e .env.test -- npm run database:init -- --force",
     "database:init": "prisma migrate reset"
