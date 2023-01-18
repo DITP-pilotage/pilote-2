@@ -1,5 +1,6 @@
 import { Maille, mailles, Territoire } from '@/server/domain/chantier/Chantier.interface';
 import { Agrégation } from '@/client/utils/types';
+import essayer from '@/client/utils/essayer';
 
 const codes = {
   nationale: [
@@ -54,22 +55,14 @@ function agrégerDonnéesTerritoiresÀUnAgrégat(
 
   for (const maille of mailles) {
     for (const codeInsee of codes[maille]) {
-      const avancementTerritoire = donnéesTerritoires[maille] && donnéesTerritoires[maille][codeInsee]
-        ? donnéesTerritoires[maille][codeInsee].avancement
-        : { annuel: null, global: null };
-
-      const météoTerritoire = donnéesTerritoires[maille] && donnéesTerritoires[maille][codeInsee]
-        ? donnéesTerritoires[maille][codeInsee].météo
-        : 'NON_RENSEIGNEE'; // TODO null ?
-
       agrégat[maille][codeInsee] = {
         avancement: [
           ...agrégat[maille][codeInsee].avancement,
-          avancementTerritoire,
+          essayer(() => donnéesTerritoires[maille][codeInsee].avancement, { annuel: null, global: null }),
         ],
         météo: [
           ...agrégat[maille][codeInsee].météo,
-          météoTerritoire,
+          essayer(() => donnéesTerritoires[maille][codeInsee].météo, 'NON_RENSEIGNEE'),
         ],
       };
     }
