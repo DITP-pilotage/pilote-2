@@ -24,13 +24,12 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
   }, [svgRef]);
 
   function auClicTerritoireCallback(territoire: CartographieTerritoire) {
-    if (options.territoireSélectionnable) {
-      if (territoireSélectionné && territoireSélectionné.codeInsee === territoire.codeInsee) {
-        setTerritoireSélectionné(null);
-      } else {
-        setTerritoireSélectionné(territoire);
-      }
-    }
+    if (!options.territoireSélectionnable) { return; }
+    setTerritoireSélectionné(
+      territoireSélectionné && territoireSélectionné.codeInsee === territoire.codeInsee
+        ? null
+        : territoire,
+    );
   }
 
   return (
