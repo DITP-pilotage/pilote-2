@@ -23,7 +23,7 @@ const codes = {
 
 type CodeInsee = string;
 export type DonnéesTerritoires<T> = Record<Maille, Record<CodeInsee, T>>;
-export type TerritoireSansCodeInseeNiMétéo = Omit<Territoire, 'codeInsee' | 'météo'>;
+export type TerritoireSansCodeInsee = Omit<Territoire, 'codeInsee'>;
 
 function initialiserDonnéesTerritoires<T>(donnéesInitiales: T) {
   return Object.fromEntries(
@@ -40,15 +40,16 @@ function initialiserDonnéesTerritoires<T>(donnéesInitiales: T) {
 }
 
 function initialiserDonnéesTerritoiresAgrégésVide() {
-  return initialiserDonnéesTerritoires<Agrégation<TerritoireSansCodeInseeNiMétéo>>({
+  return initialiserDonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>({
     avancement: [],
+    météo: [],
   });
 }
 
 function agrégerDonnéesTerritoiresÀUnAgrégat(
-  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInseeNiMétéo>>,
-  donnéesTerritoires: DonnéesTerritoires<TerritoireSansCodeInseeNiMétéo>,
-): DonnéesTerritoires<Agrégation<TerritoireSansCodeInseeNiMétéo>> {
+  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
+  donnéesTerritoires: DonnéesTerritoires<TerritoireSansCodeInsee>,
+): DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>> {
   const agrégat = { ...donnéesTerritoiresAgrégées };
 
   for (const maille of mailles) {
@@ -57,10 +58,18 @@ function agrégerDonnéesTerritoiresÀUnAgrégat(
         ? donnéesTerritoires[maille][codeInsee].avancement
         : { annuel: null, global: null };
 
+      const météoTerritoire = donnéesTerritoires[maille] && donnéesTerritoires[maille][codeInsee]
+        ? donnéesTerritoires[maille][codeInsee].météo
+        : 'NON_RENSEIGNEE'; // TODO null ?
+
       agrégat[maille][codeInsee] = {
         avancement: [
           ...agrégat[maille][codeInsee].avancement,
           avancementTerritoire,
+        ],
+        météo: [
+          ...agrégat[maille][codeInsee].météo,
+          météoTerritoire,
         ],
       };
     }
@@ -78,8 +87,8 @@ export function agrégerDonnéesTerritoires(listeDonnéesTerritoires: DonnéesTe
 }
 
 export function réduireDonnéesTerritoires<T>(
-  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInseeNiMétéo>>,
-  fonctionDeRéduction: (territoiresAgrégés: Agrégation<TerritoireSansCodeInseeNiMétéo>) => T,
+  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
+  fonctionDeRéduction: (territoiresAgrégés: Agrégation<TerritoireSansCodeInsee>) => T,
   donnéesInitiales: T,
 ): DonnéesTerritoires<T> {
   const donnéesRéduites = initialiserDonnéesTerritoires<T>(donnéesInitiales);
