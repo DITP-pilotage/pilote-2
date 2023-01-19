@@ -18,7 +18,7 @@ export type CartographieTerritoire = {
 };
 
 export default interface CartographieAffichageProps {
-  children: ReactNode,
+  children?: ReactNode,
   options: CartographieOptions,
   territoires: CartographieTerritoire[],
 }

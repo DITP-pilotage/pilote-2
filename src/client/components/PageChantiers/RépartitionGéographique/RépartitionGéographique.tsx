@@ -29,7 +29,7 @@ export default function RépartitionGéographique({ chantiers }: RépartitionGé
       <CartographieTauxAvancement
         données={donnéesCartographie}
         niveauDeMaille={niveauDeMaille}
-        territoireSélectionnable
+        options={{ territoireSélectionnable: true }}
       />
     </>
   );
