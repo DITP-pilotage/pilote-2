@@ -17,7 +17,7 @@ export type CartographieDépartementJSON = {
 
 export type CartographieTerritoireAffiché = {
   codeInsee: CartographieTerritoireCodeInsee,
-  divisionAdministrative: 'région' | 'france',
+  maille: 'nationale' | 'régionale',
 };
 
 export type CartographieDonnées = Record<NiveauDeMaille, Record<CartographieTerritoireCodeInsee, CartographieValeur>>;
