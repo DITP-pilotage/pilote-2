@@ -1,4 +1,6 @@
+import { ReactNode } from 'react';
+
 export default interface CartographieLégendeÉlémentProps {
   couleur: string,
-  libellé: string,
+  children: ReactNode,
 }

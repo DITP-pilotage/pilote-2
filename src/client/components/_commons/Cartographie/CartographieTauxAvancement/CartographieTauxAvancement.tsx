@@ -26,7 +26,14 @@ export default function CartographieTauxAvancement({ données, niveauDeMaille, o
         ...options,
       }}
     >
-      <CartographieLégende nuancier={nuancierPourcentage} />
+      <CartographieLégende élémentsDeLégende={
+        nuancierPourcentage.map(({ couleur, libellé }) => ({
+          // eslint-disable-next-line react/jsx-one-expression-per-line
+          composant: <span>{ libellé }</span>,
+          couleur,
+        }))
+      }
+      />
     </Cartographie>
   );
 }
