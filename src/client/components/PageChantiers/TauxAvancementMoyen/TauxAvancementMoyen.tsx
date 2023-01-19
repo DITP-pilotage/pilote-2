@@ -1,7 +1,15 @@
+import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import { calculerMoyenne } from '@/client/utils/statistiques';
+import TauxAvancementMoyenProps from './TauxAvancementMoyen.interface';
 
-export default function TauxAvancementMoyen() {
+export default function TauxAvancementMoyen({ chantiers }: TauxAvancementMoyenProps) {
+  const moyenneAvancementNational = useMemo(() => ({
+    annuel: calculerMoyenne(chantiers.map(chantier => (chantier.mailles.nationale.FR.avancement.annuel))),
+    global: calculerMoyenne(chantiers.map(chantier => (chantier.mailles.nationale.FR.avancement.global))),
+  }), [chantiers]);
+
   return (
     <>
       <Titre
@@ -16,7 +24,7 @@ export default function TauxAvancementMoyen() {
         </p>
         <BarreDeProgression
           taille="grande"
-          valeur={null}
+          valeur={moyenneAvancementNational.annuel}
           variante="secondaire"
         />
         <p className="fr-mb-1v fr-mt-3w">
@@ -24,7 +32,7 @@ export default function TauxAvancementMoyen() {
         </p>
         <BarreDeProgression
           taille="grande"
-          valeur={null}
+          valeur={moyenneAvancementNational.global}
           variante="primaire"
         />
       </div>
