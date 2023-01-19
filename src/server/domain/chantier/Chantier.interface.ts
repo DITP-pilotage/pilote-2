@@ -19,6 +19,9 @@ export type Territoire = {
 
 export type Territoires = Record<string, Territoire>;
 
+export type DirecteurAdministrationCentrale = { nom: string, direction: string };
+export type Contact = { nom: string, email: string };
+
 export default interface Chantier {
   id: string;
   nom: string;
@@ -26,6 +29,10 @@ export default interface Chantier {
   nomPPG: string | null;
   périmètreIds: string[];
   mailles: Record<Maille, Territoires>;
-  directeurAdministrationCentrale: string[],
-  ministères: string[],
+  responsables: {
+    porteur: string,
+    coporteurs: string[],
+    directeursAdminCentrale: DirecteurAdministrationCentrale[],
+    directeursProjet: Contact[]
+  }
 }

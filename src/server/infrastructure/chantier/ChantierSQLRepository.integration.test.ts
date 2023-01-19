@@ -11,7 +11,13 @@ describe('ChantierSQLRepository', () => {
     await prisma.chantier.createMany({
       data: [
         new ChantierRowBuilder()
-          .withId('CH-001').withNom('Chantier 1').withMétéo('COUVERT').build(),
+          .withId('CH-001').withNom('Chantier 1').withPérimètresIds(['PER-001', 'PER-002']).withMétéo('COUVERT')
+          .withDirecteursAdministrationCentrale(['Alain Térieur', 'Alex Térieur'])
+          .withDirectionsAdministrationCentrale(['Intérieur', 'Extérieur'])
+          .withDirecteursProjet(['Dir proj 1', 'Dir proj 2'])
+          .withDirecteursProjetMail(['dirproj1@example.com', 'dirproj2@example.com'])
+          .withMinistères(['Agriculture et Alimentation', 'Intérieur', 'Extérieur'])
+          .build(),
         new ChantierRowBuilder()
           .withId('CH-002').withNom('Chantier 2').build(),
       ],
@@ -23,8 +29,15 @@ describe('ChantierSQLRepository', () => {
 
     // THEN
     expect(result1.nom).toEqual('Chantier 1');
+    expect(result1.périmètreIds).toStrictEqual(['PER-001', 'PER-002']);
     expect(result1.mailles.nationale.FR.météo).toEqual(météoFromString('COUVERT'));
+    expect(result1.responsables.directeursAdminCentrale).toStrictEqual([{ nom: 'Alain Térieur', direction: 'Intérieur' }, { nom: 'Alex Térieur', direction: 'Extérieur' }]);
+    expect(result1.responsables.directeursProjet).toStrictEqual([{ nom: 'Dir proj 1', email: 'dirproj1@example.com' }, { nom: 'Dir proj 2', email: 'dirproj2@example.com' }]);
+    expect(result1.responsables.porteur).toEqual('Agriculture et Alimentation');
+    expect(result1.responsables.coporteurs).toEqual(['Intérieur', 'Extérieur']);
+
     expect(result2.nom).toEqual('Chantier 2');
+    expect(result2.responsables.coporteurs).toEqual([]);
   });
 
   test('un chantier contenant une maille nationale', async () => {
