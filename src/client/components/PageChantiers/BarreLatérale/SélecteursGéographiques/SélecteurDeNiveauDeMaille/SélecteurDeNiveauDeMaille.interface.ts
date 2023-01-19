@@ -1,6 +1,6 @@
-import { NiveauDeMaille } from '@/client/stores/useNiveauDeMailleStore/useNiveauDeMailleStore.interface';
+import { NiveauDeMaille } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore.interface';
 
 export default interface SélecteurDeNiveauDeMailleProps {
   setNiveauDeMaille: (state: NiveauDeMaille) => void
-  niveauDeMaille: NiveauDeMaille
+  niveauDeMaille: Omit<NiveauDeMaille, 'nationale'>
 }

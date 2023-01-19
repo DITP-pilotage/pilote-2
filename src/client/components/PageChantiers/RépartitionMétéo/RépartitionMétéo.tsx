@@ -3,7 +3,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import { pictosMétéos } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import RépartitonMétéoProps from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéoProps.interface';
 import compterLesMétéosÀPartirDeChantiers from '@/client/utils/chantier/météo/compterLesMétéosÀPartirDeChantiers';
-import { périmètreGéographique as périmètreGéographiqueStore } from '@/stores/useNiveauDeMailleStore/useNiveauDeMailleStore';
+import { périmètreGéographique as périmètreGéographiqueStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import RépartitionMétéoÉlément from './RépartitionMétéoÉlément/RépartitionMétéoÉlément';
 import RépartitionMétéoStyled from './RépartitionMétéo.styled';
 

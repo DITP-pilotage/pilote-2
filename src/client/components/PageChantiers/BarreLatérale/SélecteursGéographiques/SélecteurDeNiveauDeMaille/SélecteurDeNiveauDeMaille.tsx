@@ -1,9 +1,7 @@
-import { niveauDeMaille as niveauDeMailleStore, setNiveauDeMaille as setNiveauDeMailleStore } from '@/client/stores/useNiveauDeMailleStore/useNiveauDeMailleStore';
+import SélecteurDeNiveauDeMailleProps
+  from '@/components/PageChantiers/BarreLatérale/SélecteursGéographiques/SélecteurDeNiveauDeMaille/SélecteurDeNiveauDeMaille.interface';
 
-export default function SélecteurDeNiveauDeMaille() {
-  const niveauDeMaille = niveauDeMailleStore();
-  const setNiveauDeMaille = setNiveauDeMailleStore();
-
+export default function SélecteurDeNiveauDeMaille({ niveauDeMaille, setNiveauDeMaille }: SélecteurDeNiveauDeMailleProps) {
   return (
     <div className='maille fr-p-1v'>
       <button

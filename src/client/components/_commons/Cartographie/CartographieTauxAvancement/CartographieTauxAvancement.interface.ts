@@ -1,4 +1,4 @@
-import { NiveauDeMaille } from '@/client/stores/useNiveauDeMailleStore/useNiveauDeMailleStore.interface';
+import { NiveauDeMaille } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore.interface';
 import { CartographieDonnées, CartographieOptions } from '../Cartographie.interface';
 
 export default interface CartographieTauxAvancementProps {

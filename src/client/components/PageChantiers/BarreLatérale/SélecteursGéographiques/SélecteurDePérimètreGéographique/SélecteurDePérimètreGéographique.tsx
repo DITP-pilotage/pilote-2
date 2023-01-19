@@ -1,33 +1,33 @@
+import { useEffect } from 'react';
 import {
   périmètreGéographique as périmètreGéographiqueStore,
   setPérimètreGéographique as setPérimètreGéographiqueStore,
-} from '@/stores/useNiveauDeMailleStore/useNiveauDeMailleStore';
-import {
-  PérimètreGéographique,
+} from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
+import SélecteurDePérimètreGéographiqueProps, {
 } from '@/components/PageChantiers/BarreLatérale/SélecteursGéographiques/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
+import départements from '@/client/constants/départements';
+import régions from '@/client/constants/régions';
 
-const périmètresGéographiques: Record<string, PérimètreGéographique> = {
-  FR: {
-    codeInsee: 'FR',
-    nom: 'France',
-    maille: 'nationale',
-  },
-  '01': {
-    codeInsee: '01',
-    nom: 'Ain',
-    // eslint-disable-next-line sonarjs/no-duplicate-string
-    maille: 'départementale',
-  },
-  '02': {
-    codeInsee: '02',
-    nom: 'Aisne',
-    maille: 'départementale',
-  },
+// TODO supprimer et faire passer en serverSideProps
+const périmètresGéographiques = {
+  régionale: [
+    ...régions,
+  ],
+  départementale: [
+    ...départements,
+  ],
 };
 
-export default function SélecteurDePérimètreGéographique() {
+export default function SélecteurDePérimètreGéographique({ niveauDeMaille }: SélecteurDePérimètreGéographiqueProps) {
   const périmètreGéographique = périmètreGéographiqueStore();
   const setPérimètreGéographique = setPérimètreGéographiqueStore();
+
+  useEffect(() => {
+    setPérimètreGéographique({
+      codeInsee: 'FR',
+      maille: 'nationale',
+    });
+  }, [niveauDeMaille]);
 
   return (
     <div className="fr-select-group fr-mt-5v">
@@ -45,7 +45,7 @@ export default function SélecteurDePérimètreGéographique() {
           const codeInsee = événement.currentTarget.value;
           setPérimètreGéographique({
             codeInsee: codeInsee,
-            maille: périmètresGéographiques[codeInsee].maille,
+            maille: codeInsee === 'FR' ? 'nationale' : niveauDeMaille,
           });
         }}
         value={périmètreGéographique.codeInsee}
@@ -57,13 +57,20 @@ export default function SélecteurDePérimètreGéographique() {
         >
           Selectionnez un territoire
         </option>
+        <option value="FR">
+          France
+        </option>
         {
-          Object.values(périmètresGéographiques).map(pg => (
+          périmètresGéographiques[niveauDeMaille].map(pg => (
             <option
-              key={`${pg.maille}-${pg.codeInsee}`}
+              key={pg.codeInsee}
               value={pg.codeInsee}
             >
-              { `${pg.codeInsee} – ${pg.nom}` }
+              {
+                niveauDeMaille === 'départementale'
+                  ? `${pg.codeInsee} – ${pg.nom}`
+                  : pg.nom
+              }
             </option>
           ))
         }
