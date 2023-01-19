@@ -19,7 +19,7 @@ export default function CartographieTauxAvancement({ données, niveauDeMaille, o
   return (
     <Cartographie 
       données={données} 
-      niveauDeMailleAffiché={niveauDeMaille}
+      niveauDeMaille={niveauDeMaille}
       options={{
         couleurDeRemplissage,
         formaterValeur,

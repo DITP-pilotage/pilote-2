@@ -32,5 +32,5 @@ export default interface CartographieProps {
   children?: ReactNode,
   données: CartographieDonnées,
   options?: Partial<CartographieOptions>,
-  niveauDeMailleAffiché: NiveauDeMaille,
+  niveauDeMaille: NiveauDeMaille,
 }
