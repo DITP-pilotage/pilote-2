@@ -4,7 +4,10 @@ import {
 } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
 import CartographieTerritoireSélectionné
   from '@/components/_commons/Cartographie/CartographieAffichage/SVG/CartographieTerritoireSélectionné';
-import { périmètreGéographique as périmètreGéographiqueStore, setPérimètreGéographique as setPérimètreGéographiqueStore,
+import {
+  périmètreGéographique as périmètreGéographiqueStore,
+  réinitialisePérimètreGéographique as réinitialisePérimètreGéographiqueStore,
+  setPérimètreGéographique as setPérimètreGéographiqueStore,
 } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
@@ -12,16 +15,15 @@ import CartographieSVGStyled from './CartographieSVG.styled';
 
 function CartographieSVG({ options, territoires, setTerritoireSurvolé }: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const [territoireSélectionné, setTerritoireSélectionné] = useState<CartographieTerritoire | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
     y: 0,
     width: 0,
     height: 0,
   });
-
   const périmètreGéographique = périmètreGéographiqueStore();
   const setPérimètreGéographique = setPérimètreGéographiqueStore();
+  const réinitialisePérimètreGéographique = réinitialisePérimètreGéographiqueStore();
 
   useEffect(() => {
     if (svgRef && svgRef.current)
@@ -30,11 +32,14 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
 
   function auClicTerritoireCallback(territoire: CartographieTerritoire) {
     if (!options.territoireSélectionnable) { return; }
-    setTerritoireSélectionné(
-      territoireSélectionné && territoireSélectionné.codeInsee === territoire.codeInsee
-        ? null
-        : territoire,
-    );
+    if (périmètreGéographique && périmètreGéographique.codeInsee === territoire.codeInsee) {
+      réinitialisePérimètreGéographique();
+    } else {
+      setPérimètreGéographique({
+        codeInsee: territoire.codeInsee,
+        maille: territoire.maille,
+      });
+    }
   }
 
   return (
@@ -109,7 +114,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
               </g>
             ))
           }
-          { !!territoireSélectionné && <CartographieTerritoireSélectionné territoire={territoireSélectionné} /> }
+          { !!périmètreGéographique && <CartographieTerritoireSélectionné /> }
         </g>
       </svg>
     </CartographieSVGStyled>

@@ -9,4 +9,5 @@ export default interface NiveauDeMailleStore {
   setNiveauDeMaille: (niveauDeMaille: NiveauDeMaille) => void
   périmètreGéographique: PérimètreGéographiqueIdentifiant
   setPérimètreGéographique: (périmètreGéographiqueIdentifiant: PérimètreGéographiqueIdentifiant) => void
+  réinitialisePérimètreGéographique: () => void
 }
