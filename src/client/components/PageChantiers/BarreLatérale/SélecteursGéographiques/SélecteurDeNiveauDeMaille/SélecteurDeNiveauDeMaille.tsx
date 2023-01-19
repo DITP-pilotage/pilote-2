@@ -5,16 +5,16 @@ export default function SélecteurDeNiveauDeMaille() {
   const setNiveauDeMaille = setNiveauDeMailleStore();
 
   return (
-    <div className='maille fr-mx-n1w'>
+    <div className='maille fr-p-1v'>
       <button
-        className={`${niveauDeMaille === 'départementale' && 'séléctionné fr-text--bold'} fr-m-1v`}
+        className={`${niveauDeMaille === 'départementale' && 'séléctionné fr-text--bold'}`}
         onClick={() => setNiveauDeMaille('départementale')}
         type='button'
       >
         Départements
       </button>
       <button
-        className={`${niveauDeMaille === 'régionale' && 'séléctionné fr-text--bold'} fr-m-1v`}
+        className={`${niveauDeMaille === 'régionale' && 'séléctionné fr-text--bold'}`}
         onClick={() => setNiveauDeMaille('régionale')}
         type='button'
       >

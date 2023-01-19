@@ -1,3 +1,4 @@
+import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import FiltreGroupe from './FiltresGroupe/FiltresGroupe';
 import SélecteurMultiple from './SélecteurMultiple/SélecteurMultiple';
 import BarreLatéraleProps from './BarreLatérale.interface';
