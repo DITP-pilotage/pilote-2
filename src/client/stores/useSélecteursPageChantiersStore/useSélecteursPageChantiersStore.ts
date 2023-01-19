@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import create from 'zustand';
-import NiveauDeMailleStore from './useSélecteursPageChantiersStore.interface';
+import SélecteursPageChantiersStore from './useSélecteursPageChantiersStore.interface';
 
 const périmètreGéographiqueInitial = {
   codeInsee: 'FR',
   maille: 'nationale' as const,
 };
 
-const useSélecteursPageChantiersStore = create<NiveauDeMailleStore>((set) => ({
+const useSélecteursPageChantiersStore = create<SélecteursPageChantiersStore>((set) => ({
   niveauDeMaille: 'départementale',
   périmètreGéographique: périmètreGéographiqueInitial,
   setNiveauDeMaille: (nouveauNiveauDeMaille) => set(() => ({ niveauDeMaille: nouveauNiveauDeMaille })),
