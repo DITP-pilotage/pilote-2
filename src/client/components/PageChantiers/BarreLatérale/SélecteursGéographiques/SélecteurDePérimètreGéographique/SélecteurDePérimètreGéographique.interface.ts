@@ -1,8 +1,10 @@
+import { NiveauDeMaille } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore.interface';
+
 export type PérimètreGéographiqueIdentifiant = {
   codeInsee: string,
   maille: 'nationale' | 'départementale' | 'régionale',
 };
 
-export type PérimètreGéographique = PérimètreGéographiqueIdentifiant & {
-  nom: string,
-};
+export default interface SélecteurDePérimètreGéographiqueProps {
+  niveauDeMaille: NiveauDeMaille,
+}
