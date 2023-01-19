@@ -4,6 +4,8 @@ import {
 } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
 import CartographieTerritoireSélectionné
   from '@/components/_commons/Cartographie/CartographieAffichage/SVG/CartographieTerritoireSélectionné';
+import { périmètreGéographique as périmètreGéographiqueStore, setPérimètreGéographique as setPérimètreGéographiqueStore,
+} from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
@@ -17,6 +19,9 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
     width: 0,
     height: 0,
   });
+
+  const périmètreGéographique = périmètreGéographiqueStore();
+  const setPérimètreGéographique = setPérimètreGéographiqueStore();
 
   useEffect(() => {
     if (svgRef && svgRef.current)
@@ -71,7 +76,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                           codeInsee: sousTerritoire.codeInsee,
                           nom: sousTerritoire.nom,
                           valeur: sousTerritoire.valeur,
-                          divisionAdministrative: sousTerritoire.divisionAdministrative,
+                          maille: sousTerritoire.maille,
                         });
                       }}
                     />
@@ -91,7 +96,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                             codeInsee: territoire.codeInsee,
                             nom: territoire.nom,
                             valeur: territoire.valeur,
-                            divisionAdministrative: territoire.divisionAdministrative,
+                            maille: territoire.maille,
                           });
                         }}
                       />

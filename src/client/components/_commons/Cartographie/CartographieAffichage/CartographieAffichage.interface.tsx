@@ -1,14 +1,15 @@
 import { ReactNode } from 'react';
 import { CartographieOptions } from '@/components/_commons/Cartographie/Cartographie.interface';
+import { Maille } from '@/server/domain/chantier/Chantier.interface';
 
-export type CartographieBulleTerritoire = Pick<CartographieTerritoire, 'codeInsee' | 'nom' | 'valeur' | 'divisionAdministrative'>;
+export type CartographieBulleTerritoire = Pick<CartographieTerritoire, 'codeInsee' | 'nom' | 'valeur' | 'maille'>;
 export type CartographieTerritoireCodeInsee = string;
 
 export type CartographieValeur = number | null;
 
 export type CartographieTerritoire = {
   codeInsee: CartographieTerritoireCodeInsee,
-  divisionAdministrative: 'france' | 'région' | 'département',
+  maille: Maille,
   nom: string,
   sousTerritoires: (CartographieTerritoire & {
     codeInseeParent: CartographieTerritoireCodeInsee;

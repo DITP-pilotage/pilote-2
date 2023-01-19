@@ -12,7 +12,7 @@ const départementsJSON: CartographieDépartementJSON[] = untypedDépartementsJS
 const régionsJSON: CartographieRégionJSON[] = untypedRégionsJSON;
 
 function déterminerRégionsÀTracer(territoireAffiché: CartographieTerritoireAffiché) {
-  return territoireAffiché.divisionAdministrative === 'région'
+  return territoireAffiché.maille === 'régionale'
     ? régionsJSON.filter(régionJSON => régionJSON.codeInsee === territoireAffiché.codeInsee)
     : régionsJSON;
 }
@@ -29,7 +29,7 @@ function créerTerritoires(
 ) {
   return régionsÀTracer.map(région => ({
     codeInsee: région.codeInsee,
-    divisionAdministrative: 'région' as const,
+    maille: 'régionale' as const,
     nom: région.nom,
     tracéSVG: région.tracéSVG,
     valeur: données.régionale[région.codeInsee],
@@ -37,7 +37,7 @@ function créerTerritoires(
       ? récupérerDépartementsDUneRégion(région.codeInsee)
         .map(département => ({
           codeInsee: département.codeInsee,
-          divisionAdministrative: 'département' as const,
+          maille: 'départementale' as const,
           nom: département.nom,
           tracéSVG: département.tracéSVG,
           valeur: données.départementale[département.codeInsee],
@@ -52,7 +52,7 @@ function créerTerritoires(
 const optionsParDéfaut: CartographieOptions = {
   territoireAffiché: {
     codeInsee: 'FR',
-    divisionAdministrative: 'france',
+    maille: 'nationale',
   },
   couleurDeRemplissage: () => '#dedede',
   formaterValeur: (valeur) => valeur ? String(valeur) : '-',
