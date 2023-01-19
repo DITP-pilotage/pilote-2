@@ -4,7 +4,7 @@ import {
 
 export type NiveauDeMaille = 'régionale' | 'départementale';
 
-export default interface NiveauDeMailleStore {
+export default interface SélecteursPageChantiersStore {
   niveauDeMaille: NiveauDeMaille
   setNiveauDeMaille: (niveauDeMaille: NiveauDeMaille) => void
   périmètreGéographique: PérimètreGéographiqueIdentifiant

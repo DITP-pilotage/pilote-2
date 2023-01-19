@@ -1,10 +1,6 @@
+import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import { useEffect } from 'react';
-import {
-  périmètreGéographique as périmètreGéographiqueStore,
-  setPérimètreGéographique as setPérimètreGéographiqueStore,
-} from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
-import SélecteurDePérimètreGéographiqueProps, {
-} from '@/components/PageChantiers/BarreLatérale/SélecteursGéographiques/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
+import SélecteurDePérimètreGéographiqueProps from '@/components/PageChantiers/BarreLatérale/SélecteursGéographiques/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
 import départements from '@/client/constants/départements';
 import régions from '@/client/constants/régions';
 
@@ -18,9 +14,11 @@ const périmètresGéographiques = {
   ],
 };
 
-export default function SélecteurDePérimètreGéographique({ niveauDeMaille }: SélecteurDePérimètreGéographiqueProps) {
-  const périmètreGéographique = périmètreGéographiqueStore();
-  const setPérimètreGéographique = setPérimètreGéographiqueStore();
+export default function SélecteurDePérimètreGéographique({
+  niveauDeMaille,
+  périmètreGéographique,
+  setPérimètreGéographique,
+}: SélecteurDePérimètreGéographiqueProps) {
 
   useEffect(() => {
     setPérimètreGéographique({
