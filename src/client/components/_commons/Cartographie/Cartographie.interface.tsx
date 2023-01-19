@@ -23,14 +23,14 @@ export type CartographieTerritoireAffiché = {
 export type CartographieDonnées = Record<NiveauDeMaille, Record<CartographieTerritoireCodeInsee, CartographieValeur>>;
 
 export type CartographieOptions = {
+  territoireAffiché: CartographieTerritoireAffiché,
   couleurDeRemplissage: (valeur: CartographieValeur) => string,
   formaterValeur: (valeur: CartographieValeur) => string,
-  territoireSélectionnable: boolean
+  territoireSélectionnable: boolean,
 };
 export default interface CartographieProps {
-  children: ReactNode,
+  children?: ReactNode,
   données: CartographieDonnées,
-  options: CartographieOptions,
-  territoireAffiché: CartographieTerritoireAffiché,
-  niveauDeMailleAffiché: NiveauDeMaille,
+  options?: Partial<CartographieOptions>,
+  niveauDeMaille: NiveauDeMaille,
 }

@@ -2,16 +2,17 @@ import CartographieLégendeProps from './CartographieLégende.interface';
 import CartographieLégendeStyled from './CartographieLégende.styled';
 import CartographieLégendeÉlément from './Élément/CartographieLégendeÉlément';
 
-export default function CartographieLégende({ nuancier }: CartographieLégendeProps) {
+export default function CartographieLégende({ élémentsDeLégende }: CartographieLégendeProps) {
   return (
     <CartographieLégendeStyled className="fr-mt-1w">
       {
-        nuancier.map(({ seuil, libellé, couleur }) => (
+        élémentsDeLégende.map(({ couleur, composant }) => (
           <CartographieLégendeÉlément
             couleur={couleur}
-            key={`carto-légende-${seuil}`}
-            libellé={libellé}
-          />
+            key={`carto-légende-${couleur}`}
+          >
+            { composant }
+          </CartographieLégendeÉlément>
         ))
       }
     </CartographieLégendeStyled>

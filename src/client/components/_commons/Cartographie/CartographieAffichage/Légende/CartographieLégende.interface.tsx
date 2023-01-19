@@ -1,5 +1,10 @@
-import Nuancier from '@/client/constants/nuanciers/nuancier';
+import { ReactNode } from 'react';
+
+type CartographieÉlémentDeLégende = {
+  couleur: string,
+  composant: ReactNode,
+};
 
 export default interface CartographieLégendeProps {
-  nuancier: Nuancier,
+  élémentsDeLégende: CartographieÉlémentDeLégende[],
 }

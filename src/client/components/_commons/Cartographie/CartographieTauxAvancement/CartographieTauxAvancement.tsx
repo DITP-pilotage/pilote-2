@@ -14,22 +14,26 @@ function formaterValeur(valeur: CartographieValeur) {
   return valeur ? `${valeur.toFixed(0)}%` : 'Non renseigné';
 }
 
-export default function CartographieTauxAvancement({ données, niveauDeMaille, territoireSélectionnable = false }: CartographieTauxAvancementProps) {
+
+export default function CartographieTauxAvancement({ données, niveauDeMaille, options }: CartographieTauxAvancementProps) {
   return (
     <Cartographie 
       données={données} 
-      niveauDeMailleAffiché={niveauDeMaille}
+      niveauDeMaille={niveauDeMaille}
       options={{
         couleurDeRemplissage,
         formaterValeur,
-        territoireSélectionnable,
-      }}
-      territoireAffiché={{
-        codeInsee: 'FR',
-        divisionAdministrative: 'france',
+        ...options,
       }}
     >
-      <CartographieLégende nuancier={nuancierPourcentage} />
+      <CartographieLégende élémentsDeLégende={
+        nuancierPourcentage.map(({ couleur, libellé }) => ({
+          // eslint-disable-next-line react/jsx-one-expression-per-line
+          composant: <span>{ libellé }</span>,
+          couleur,
+        }))
+      }
+      />
     </Cartographie>
   );
 }

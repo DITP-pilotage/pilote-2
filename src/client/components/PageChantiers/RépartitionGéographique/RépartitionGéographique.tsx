@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import { calculerMoyenne } from '@/client/utils/statistiques';
 import { préparerDonnéesCartographieÀPartirDUneListe } from '@/client/utils/cartographie/préparerDonnéesCartographie';
-import CartographieTauxAvancement from '@/components/_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
 import { niveauDeMaille as nineauDeMailleStore } from '@/client/stores/useNiveauDeMailleStore/useNiveauDeMailleStore';
+import CartographieTauxAvancement
+  from '@/components/_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
 import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
 
 export default function RépartitionGéographique({ chantiers }: RépartitionGéographiqueProps) {
@@ -29,7 +30,7 @@ export default function RépartitionGéographique({ chantiers }: RépartitionGé
       <CartographieTauxAvancement
         données={donnéesCartographie}
         niveauDeMaille={niveauDeMaille}
-        territoireSélectionnable
+        options={{ territoireSélectionnable: true }}
       />
     </>
   );

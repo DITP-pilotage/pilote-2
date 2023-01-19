@@ -1,7 +1,7 @@
 import CartographieProps, {
   CartographieDonnées, CartographieDépartementJSON,
   CartographieTerritoireAffiché,
-  CartographieRégionJSON,
+  CartographieRégionJSON, CartographieOptions,
 } from './Cartographie.interface';
 import CartographieAffichage from './CartographieAffichage/CartographieAffichage';
 import { CartographieTerritoireCodeInsee } from './CartographieAffichage/CartographieAffichage.interface';
@@ -49,13 +49,25 @@ function créerTerritoires(
   );
 }
 
-export default function Cartographie({ children, données, niveauDeMailleAffiché, options, territoireAffiché }: CartographieProps) {
-  const régionsFiltrées =  déterminerRégionsÀTracer(territoireAffiché);
-  const territoires = créerTerritoires(régionsFiltrées, données, niveauDeMailleAffiché === 'départementale');
+const optionsParDéfaut: CartographieOptions = {
+  territoireAffiché: {
+    codeInsee: 'FR',
+    divisionAdministrative: 'france',
+  },
+  couleurDeRemplissage: () => '#dedede',
+  formaterValeur: (valeur) => valeur ? String(valeur) : '-',
+  territoireSélectionnable: false,
+};
+
+export default function Cartographie({ children, données, niveauDeMaille, options }: CartographieProps) {
+  const optionsEffectives = { ...optionsParDéfaut, ...options };
+
+  const régionsFiltrées =  déterminerRégionsÀTracer(optionsEffectives.territoireAffiché);
+  const territoires = créerTerritoires(régionsFiltrées, données, niveauDeMaille === 'départementale');
 
   return (
     <CartographieAffichage
-      options={options}
+      options={optionsEffectives}
       territoires={territoires}
     >
       { children }
