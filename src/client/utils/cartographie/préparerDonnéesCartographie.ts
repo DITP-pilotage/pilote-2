@@ -8,7 +8,7 @@ export function préparerDonnéesCartographieÀPartirDUneListe(
   listeDonnéesTerritoires: DonnéesTerritoires<Territoire>[],
   fonctionDeRéduction: (territoiresAgrégés: Agrégation<TerritoireSansCodeInsee>) => CartographieValeur,
 ): CartographieDonnées {
-  const donnéesTerritoiresAgrégés = agrégerDonnéesTerritoires(listeDonnéesTerritoires);
+  const donnéesTerritoiresAgrégés = agrégerDonnéesTerritoires(listeDonnéesTerritoires);  
 
   return réduireDonnéesTerritoires<CartographieValeur>(
     donnéesTerritoiresAgrégés,
@@ -20,7 +20,7 @@ export function préparerDonnéesCartographieÀPartirDUneListe(
 export function préparerDonnéesCartographieÀPartirDUnÉlément(
   donnéesTerritoires: DonnéesTerritoires<Territoire>,
   fonctionDExtraction: (territoire: Territoire) => CartographieValeur,
-) : CartographieDonnées {
+): CartographieDonnées {
   const donnéesCartographie: CartographieDonnées = { départementale : {}, régionale: {} };
   let maille: Maille;
 
