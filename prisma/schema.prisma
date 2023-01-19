@@ -60,3 +60,14 @@ model indicateur {
 
   @@id([id, code_insee, maille])
 }
+
+model synthese_des_resultats {
+    chantier_id String
+    maille String
+    code_insee String
+    meteo String?
+    commentaire String?
+    date DateTime @db.Timestamp
+
+    @@id([chantier_id, maille, code_insee, date])
+}
