@@ -46,7 +46,7 @@ INSERT INTO public.chantier
               LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_region AND d_chantier.structure_name='Réforme'
               JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = 'FRANCE'
               LEFT JOIN raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = ANY (string_to_array(m_chantier."porteur_ids_DAC", ' | '))
-              LEFT JOIN raw_data.chantier_meteo ON chantier_meteo.ch_meteo_name = d_chantier.meteo
+              LEFT JOIN raw_data.chantier_meteo ON chantier_meteo.ch_meteo_name_dfakto = d_chantier.meteo
               LEFT JOIN raw_data.metadata_ppg m_ppg ON m_ppg.ppg_id = m_chantier.ch_ppg
               LEFT JOIN raw_data.metadata_axe m_axe ON m_axe.axe_id = m_ppg.ppg_axe)
 UNION
