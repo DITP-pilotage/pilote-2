@@ -147,6 +147,23 @@ describe('ChantierSQLRepository', () => {
   });
 
   describe("Gestion d'erreur", () => {
+    test('Erreur en cas de chantier non trouvé', async () => {
+      // GIVEN
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+      const chantierId = 'CH-001';
+      await prisma.chantier.create({
+        data: new ChantierRowBuilder().withId(chantierId).withMailleNationale().build(),
+      });
+
+      // WHEN
+      const request = async () => {
+        await repository.getById('CH-002');
+      };
+
+      // THEN
+      await expect(request).rejects.toThrow(/chantier 'CH-002' non trouvé/);
+    });
+
     test('Erreur en cas de maille inconnue', async () => {
       // GIVEN
       const repository: ChantierRepository = new ChantierSQLRepository(prisma);
@@ -167,6 +184,23 @@ describe('ChantierSQLRepository', () => {
 
       // THEN
       await expect(request).rejects.toThrow(/INCONNUE/);
+    });
+
+    test('Erreur en cas d\'absence de maille nationale', async () => {
+    // GIVEN
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+      const chantierId = 'CH-001';
+      await prisma.chantier.create({
+        data: new ChantierRowBuilder().withId(chantierId).withMaille('DEPT').build(),
+      });
+
+      // WHEN
+      const request = async () => {
+        await repository.getById(chantierId);
+      };
+
+      // THEN
+      await expect(request).rejects.toThrow(/le chantier 'CH-001' n'a pas de maille nationale/);
     });
   });
 });
