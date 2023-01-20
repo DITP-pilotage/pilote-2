@@ -12,8 +12,16 @@ renamed as (
     select
         reforme_code,
         region_code,
-        academie_code,
         departement_code,
+        academie_code,
+        case
+            when split_part(reforme_code, '-', 1) = 'OVQ' then 'FRANCE'
+            else split_part(coalesce(NULLIF(region_code,''), NULLIF(academie_code,''), departement_code), '-', 2)
+        end as code_region,
+        case
+            when split_part(reforme_code, '-', 1) = 'OVQ' then split_part(reforme_code, '-', 2)
+            else split_part(coalesce(NULLIF(region_code,''), NULLIF(academie_code,''), departement_code), '-', 1)
+        end as code_chantier,
         objectifs_de_la_reforme,
         synthese_des_resultats,
         difficultes_rencontrees_et_risques_anticipes,
