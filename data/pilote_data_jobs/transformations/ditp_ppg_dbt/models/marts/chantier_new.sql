@@ -47,13 +47,18 @@ dfakto_chantier as (
      		ORDER  BY a.i
      	) AS directions_administration_centrale,
         string_to_array(m_chantier.ch_dp, ' | ') AS directeurs_projet,
-     	CASE WHEN chantier_meteo.ch_meteo_id NOTNULL THEN chantier_meteo.ch_meteo_id ELSE 'NON_RENSEIGNEE' END as meteo,
-     	d_chantier.synthese_des_resultats as synthese_des_resultats
+        COALESCE(chantier_meteo.ch_meteo_id, 'NON_RENSEIGNEE') AS meteo,
+        d_chantier.synthese_des_resultats AS synthese_des_resultats,
+        m_axe.axe_name AS axe,
+        m_ppg.ppg_nom AS ppg,
+        string_to_array(m_chantier.ch_dp_mail, ' | ') AS directeurs_projet_mails
     FROM raw_data.metadata_chantier m_chantier
         LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_region AND d_chantier.structure_nom='Réforme'
         JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = 'FRANCE'
-        LEFT JOIN raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = any (string_to_array(m_chantier."porteur_ids_DAC", ' | '))
-        LEFT JOIN raw_data.chantier_meteo ON chantier_meteo.ch_meteo_name = d_chantier.meteo)
+        LEFT JOIN raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = ANY (string_to_array(m_chantier."porteur_ids_DAC", ' | '))
+        LEFT JOIN raw_data.chantier_meteo ON chantier_meteo.ch_meteo_name_dfakto = d_chantier.meteo
+        LEFT JOIN raw_data.metadata_ppg m_ppg ON m_ppg.ppg_id = m_chantier.ch_ppg
+        LEFT JOIN raw_data.metadata_axe m_axe ON m_axe.axe_id = m_ppg.ppg_axe)
 UNION
     (SELECT m_chantier.chantier_id AS id,
         m_chantier.ch_nom AS nom,
@@ -78,9 +83,14 @@ UNION
      		ORDER  BY a.i
      	) AS directions_administration_centrale,
         string_to_array(m_chantier.ch_dp, ' | ') AS directeurs_projet,
-     	'NON_NECESSAIRE' as meteo,
-     	'' as synthese_des_resultats
+        'NON_NECESSAIRE' AS meteo,
+        '' AS synthese_des_resultats,
+        m_axe.axe_name AS axe,
+        m_ppg.ppg_nom AS ppg,
+        string_to_array(m_chantier.ch_dp_mail, ' | ') AS directeurs_projet_mails
     FROM raw_data.metadata_chantier m_chantier
         LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_chantier AND d_chantier.structure_nom IN ('Région', 'Département')
         JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = d_chantier.code_region
-        LEFT JOIN raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = any (string_to_array(m_chantier."porteur_ids_DAC", ' | ')))
+        LEFT JOIN raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = any (string_to_array(m_chantier."porteur_ids_DAC", ' | '))
+        LEFT JOIN raw_data.metadata_ppg m_ppg ON m_ppg.ppg_id = m_chantier.ch_ppg
+        LEFT JOIN raw_data.metadata_axe m_axe ON m_axe.axe_id = m_ppg.ppg_axe)

@@ -13,7 +13,7 @@ renamed as (
         nom,
         zone_code as code_insee,
         zone_type as type,
-        zone_parent as zone_parent_id
+        string_to_array(zone_parent, ' | ') as zone_parent_id
 
     from source
 
