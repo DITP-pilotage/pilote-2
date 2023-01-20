@@ -28,13 +28,14 @@ WITH synthese AS
         meteo_date_de_mise_a_jour
     FROM raw_data.view_data_properties WHERE departement_code  <> ''
 )
-INSERT INTO public.synthese_des_resultats
+INSERT INTO public.synthese_des_resultats (chantier_id, maille, code_insee, meteo, date_meteo, commentaire, date_commentaire)
     (SELECT chantier_id,
         m_zone.zone_type AS maille,
         m_zone.zone_code AS code_insee,
         meteo,
+        meteo_date_de_mise_a_jour AS date_meteo,
         synthese_des_resultats AS commentaire,
-        greatest(synthese_des_resultats_date_de_mise_a_jour, meteo_date_de_mise_a_jour) AS date
+        synthese_des_resultats_date_de_mise_a_jour AS date_commentaire
     FROM raw_data.metadata_chantier m_chantier
         join synthese ON m_chantier.ch_perseverant = synthese.code_chantier
         JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = synthese.code_region

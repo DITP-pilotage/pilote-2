@@ -7,7 +7,6 @@ WITH dfakto_chantier AS (
            split_part(dim_tree_nodes.tree_node_code, '-', 2) AS code_region,
            dim_structures.structure_name,
            view_data_properties.meteo,
-           view_data_properties.synthese_des_resultats,
            view_data_properties.objectifs_de_la_reforme,
            view_data_properties.objectifs_de_la_reforme_date_de_mise_a_jour
     FROM raw_data.fact_progress_chantier
@@ -47,7 +46,6 @@ INSERT INTO public.chantier
                 ) AS directions_administration_centrale,
             string_to_array(m_chantier.ch_dp, ' | ') AS directeurs_projet,
             COALESCE(chantier_meteo.ch_meteo_id, 'NON_RENSEIGNEE') AS meteo,
-            d_chantier.synthese_des_resultats AS synthese_des_resultats,
             m_axe.axe_name AS axe,
             m_ppg.ppg_nom AS ppg,
             string_to_array(m_chantier.ch_dp_mail, ' | ') AS directeurs_projet_mails,
@@ -85,7 +83,6 @@ UNION
             ) AS directions_administration_centrale,
         string_to_array(m_chantier.ch_dp, ' | ') AS directeurs_projet,
         'NON_NECESSAIRE' AS meteo,
-        '' AS synthese_des_resultats,
         m_axe.axe_name AS axe,
         m_ppg.ppg_nom AS ppg,
         string_to_array(m_chantier.ch_dp_mail, ' | ') AS directeurs_projet_mails,
