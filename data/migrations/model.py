@@ -52,6 +52,8 @@ class MetadataIndicateur(Base):
     indic_is_phare = Column(BOOLEAN)
     indic_is_baro = Column(BOOLEAN)
     indic_type = Column(VARCHAR(31), nullable=True)
+    indic_source = Column(VARCHAR(255), nullable=True)
+    indic_source_url = Column(TEXT, nullable=True)
     # TODO: indic_type sera surement not nullable dans le futur
 
 
@@ -233,3 +235,4 @@ class ChantierMeteo(Base):
     ch_meteo_id = Column(TEXT, primary_key=True)
     ch_meteo_name = Column(TEXT)
     ch_meteo_descr = Column(TEXT)
+    ch_meteo_name_dfakto = Column(TEXT)
