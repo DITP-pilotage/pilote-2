@@ -17,7 +17,9 @@ renamed as (
         indic_is_perseverant as est_perseverant,
         indic_is_phare as est_phare,
         indic_is_baro as est_barometre,
-        indic_type as type
+        indic_type as type,
+        indic_source as source,
+        indic_source_url as source_url
 
     from source
 

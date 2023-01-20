@@ -14,6 +14,8 @@ pilote_data_jobs/transformations/ditp_ppg_dbt/dbt_packages/
 pilote_data_jobs/transformations/ditp_ppg_dbt/logs/
 pilote_data_jobs/transformations/ditp_ppg_dbt/dbt/logs
 
+pilote_data_jobs/transformations/ditp_ppg_dbt/seeds/ppg_metadata
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

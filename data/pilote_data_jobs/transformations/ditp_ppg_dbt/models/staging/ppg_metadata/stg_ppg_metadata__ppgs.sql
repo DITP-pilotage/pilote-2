@@ -14,8 +14,8 @@ renamed as (
         ppg_code as code,
         ppg_desc as description,
         ppg_nom as nom,
-        porteur_shorts as nom_court,
-        porteur_ids
+        string_to_array(porteur_shorts, ' | ') as porteur_noms_court,
+        string_to_array(porteur_ids, ' | ') as porteur_ids
 
     from source
 
