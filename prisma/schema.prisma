@@ -69,6 +69,4 @@ model synthese_des_resultats {
   date_meteo DateTime? @db.Timestamp
   commentaire String?
   date_commentaire DateTime? @db.Timestamp
-
-  @@index([chantier_id, maille, code_insee, date_meteo, date_commentaire])
 }
