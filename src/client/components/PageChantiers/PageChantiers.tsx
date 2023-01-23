@@ -66,7 +66,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
               </div>
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
-                  <TauxAvancementMoyen />
+                  <TauxAvancementMoyen chantiers={chantiersFiltrés} />
                   <hr className='fr-hr fr-my-3w fr-pb-1v' />
                   <RépartitionMétéo chantiers={chantiersFiltrés} />
                 </Bloc>
