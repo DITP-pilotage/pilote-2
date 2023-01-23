@@ -27,6 +27,8 @@ model chantier {
   axe String @default("non renseignée")
   ppg String @default("non renseignée")
   directeurs_projet_mails String []
+  objectifs String?
+  date_objectifs DateTime? @db.Date
 
   @@id([id, code_insee, maille])
 }
