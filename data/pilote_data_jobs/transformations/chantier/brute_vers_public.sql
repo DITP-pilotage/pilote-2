@@ -8,12 +8,19 @@ WITH dfakto_chantier AS (
            dim_structures.structure_name,
            view_data_properties.meteo,
            view_data_properties.synthese_des_resultats,
-           objectifs_de_la_reforme,
-           objectifs_de_la_reforme_date_de_mise_a_jour
+           view_data_properties.objectifs_de_la_reforme,
+           view_data_properties.objectifs_de_la_reforme_date_de_mise_a_jour
     FROM raw_data.fact_progress_chantier
              JOIN raw_data.dim_tree_nodes ON fact_progress_chantier.tree_node_id = dim_tree_nodes.tree_node_id
              JOIN raw_data.dim_structures ON dim_tree_nodes.structure_id = dim_structures.structure_id
              LEFT JOIN raw_data.view_data_properties on view_data_properties.reforme_code = dim_tree_nodes.tree_node_code
+),
+dfakto_chantier_objectifs AS (
+    SELECT code_region as code_chantier, -- car maille nationale inversée entre code chantier et region
+        objectifs_de_la_reforme,
+        objectifs_de_la_reforme_date_de_mise_a_jour
+    FROM dfakto_chantier
+    WHERE code_chantier = 'OVQ'
 )
 INSERT INTO public.chantier
     (SELECT m_chantier.chantier_id AS id,
@@ -82,12 +89,13 @@ UNION
         m_axe.axe_name AS axe,
         m_ppg.ppg_nom AS ppg,
         string_to_array(m_chantier.ch_dp_mail, ' | ') AS directeurs_projet_mails,
-        '' as objectifs,
-        null as date_objectifs
- FROM raw_data.metadata_chantier m_chantier
-          LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_chantier AND d_chantier.structure_name IN ('Région', 'Département')
-          JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = d_chantier.code_region
-          LEFT JOIN raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = ANY (string_to_array(m_chantier."porteur_ids_DAC", ' | '))
-          LEFT JOIN raw_data.metadata_ppg m_ppg ON m_ppg.ppg_id = m_chantier.ch_ppg
-          LEFT JOIN raw_data.metadata_axe m_axe ON m_axe.axe_id = m_ppg.ppg_axe);
+        dfakto_chantier_objectifs.objectifs_de_la_reforme as objectifs,
+        dfakto_chantier_objectifs.objectifs_de_la_reforme_date_de_mise_a_jour as date_objectifs
+    FROM raw_data.metadata_chantier m_chantier
+        LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_chantier AND d_chantier.structure_name IN ('Région', 'Département')
+        JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = d_chantier.code_region
+        LEFT JOIN raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = ANY (string_to_array(m_chantier."porteur_ids_DAC", ' | '))
+        LEFT JOIN raw_data.metadata_ppg m_ppg ON m_ppg.ppg_id = m_chantier.ch_ppg
+        LEFT JOIN raw_data.metadata_axe m_axe ON m_axe.axe_id = m_ppg.ppg_axe
+        LEFT JOIN dfakto_chantier_objectifs ON m_chantier.ch_perseverant = dfakto_chantier_objectifs.code_chantier);
 
