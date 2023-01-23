@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { NiveauDeMaille } from '@/client/stores/useNiveauDeMailleStore/useNiveauDeMailleStore.interface';
+import { NiveauDeMaille } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore.interface';
 import { CartographieTerritoireCodeInsee, CartographieValeur } from './CartographieAffichage/CartographieAffichage.interface';
 
 export type CartographieRégionJSON = {
@@ -17,7 +17,7 @@ export type CartographieDépartementJSON = {
 
 export type CartographieTerritoireAffiché = {
   codeInsee: CartographieTerritoireCodeInsee,
-  divisionAdministrative: 'région' | 'france',
+  maille: 'nationale' | 'régionale',
 };
 
 export type CartographieDonnées = Record<NiveauDeMaille, Record<CartographieTerritoireCodeInsee, CartographieValeur>>;

@@ -1,20 +1,18 @@
-import { niveauDeMaille as niveauDeMailleStore, setNiveauDeMaille as setNiveauDeMailleStore } from '@/client/stores/useNiveauDeMailleStore/useNiveauDeMailleStore';
+import SélecteurDeNiveauDeMailleProps
+  from '@/components/PageChantiers/BarreLatérale/SélecteursGéographiques/SélecteurDeNiveauDeMaille/SélecteurDeNiveauDeMaille.interface';
 
-export default function SélecteurDeNiveauDeMaille() {
-  const niveauDeMaille = niveauDeMailleStore();
-  const setNiveauDeMaille = setNiveauDeMailleStore();
-
+export default function SélecteurDeNiveauDeMaille({ niveauDeMaille, setNiveauDeMaille }: SélecteurDeNiveauDeMailleProps) {
   return (
-    <div className='maille fr-mx-n1w'>
+    <div className='maille fr-p-1v'>
       <button
-        className={`${niveauDeMaille === 'départementale' && 'séléctionné fr-text--bold'} fr-m-1v`}
+        className={`${niveauDeMaille === 'départementale' && 'séléctionné fr-text--bold'}`}
         onClick={() => setNiveauDeMaille('départementale')}
         type='button'
       >
         Départements
       </button>
       <button
-        className={`${niveauDeMaille === 'régionale' && 'séléctionné fr-text--bold'} fr-m-1v`}
+        className={`${niveauDeMaille === 'régionale' && 'séléctionné fr-text--bold'}`}
         onClick={() => setNiveauDeMaille('régionale')}
         type='button'
       >

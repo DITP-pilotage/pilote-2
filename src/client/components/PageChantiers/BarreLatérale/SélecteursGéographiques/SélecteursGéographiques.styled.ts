@@ -5,14 +5,13 @@ const SélecteursGéographiquesStyled = styled.div`
   background-color: var(--blue-france-850-200);
 
   .maille {
-    width: fit-content;
     background: var(--background-alt-blue-france);
-    border-radius: 4px;
+    border-radius: 0.25rem;
 
     button {
-      width: 8.4rem;
-      height: 3.1rem;
-      border-radius: 4px;
+      width: 50%;
+      height: 3rem;
+      border-radius: 0.25rem;
 
       &.séléctionné {
         color: var(--text-inverted-grey);

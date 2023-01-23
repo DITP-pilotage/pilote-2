@@ -3,6 +3,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import { pictosMétéos } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import RépartitonMétéoProps from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéoProps.interface';
 import compterLesMétéosÀPartirDeChantiers from '@/client/utils/chantier/météo/compterLesMétéosÀPartirDeChantiers';
+import { périmètreGéographique as périmètreGéographiqueStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import RépartitionMétéoÉlément from './RépartitionMétéoÉlément/RépartitionMétéoÉlément';
 import RépartitionMétéoStyled from './RépartitionMétéo.styled';
 
@@ -11,6 +12,7 @@ const météosÀAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
 export default function RépartitionMétéo({ chantiers }: RépartitonMétéoProps) {
 
   const compteursMétéos = useMemo(() => compterLesMétéosÀPartirDeChantiers(chantiers), [chantiers]);
+  const périmètreGéographique = périmètreGéographiqueStore();
 
   return (
     <RépartitionMétéoStyled>
@@ -29,7 +31,7 @@ export default function RépartitionMétéo({ chantiers }: RépartitonMétéoPro
             >
               <RépartitionMétéoÉlément
                 météo={pictosMétéos[météo]}
-                nombreDeChantiers={`${compteursMétéos.nationale.FR[météo]}`}
+                nombreDeChantiers={`${compteursMétéos[périmètreGéographique.maille][périmètreGéographique.codeInsee][météo]}`}
               />
             </li>
           ))

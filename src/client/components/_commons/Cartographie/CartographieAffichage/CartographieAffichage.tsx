@@ -6,7 +6,7 @@ import BulleDInfo from './BulleDInfo/BulleDInfo';
 import CartographieSVG from './SVG/CartographieSVG';
 
 function formaterBulleTitre(territoireSurvolé: CartographieBulleTerritoire) {
-  return territoireSurvolé.divisionAdministrative === 'département'
+  return territoireSurvolé.maille === 'départementale'
     ? `${territoireSurvolé.codeInsee} – ${territoireSurvolé.nom}`
     : territoireSurvolé.nom;
 }
