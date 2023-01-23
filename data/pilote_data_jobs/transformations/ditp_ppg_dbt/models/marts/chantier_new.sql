@@ -15,7 +15,7 @@ dfakto_chantier as (
         dim_tree_nodes.code_chantier,
         dim_tree_nodes.code_region,
         dim_structures.nom as structure_nom,
-        view_data_properties.meteo,
+        view_data_properties.meteo_nom,
         view_data_properties.objectifs_de_la_reforme,
         view_data_properties.objectifs_de_la_reforme_date_de_mise_a_jour
     FROM {{ ref('stg_dfakto__fact_progress_chantiers')}} fact_progress_chantier
@@ -35,77 +35,77 @@ dfakto_chantier_objectifs as (
 
 )
 
-
-(SELECT m_chantier.id AS id,
-        m_chantier.nom AS nom,
-        m_zone.zone_code AS code_insee,
-        d_chantier.avancement_borne AS taux_avancement,
-        m_zone.nom AS territoire_nom,
-        m_chantier.perimetre_ids,
-        m_zone.zone_type AS maille,
-        array(SELECT m_porteur.porteur_directeur
-     		FROM   unnest(m_chantier.directeurs_administration_centrale_ids) WITH ORDINALITY a(id, i)
-     		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
-     		ORDER  BY a.i
+(SELECT m_chantiers.id,
+        m_chantiers.nom,
+        m_zones.code_insee,
+        d_chantiers.avancement_borne AS taux_avancement,
+        m_zones.nom AS territoire_nom,
+        m_chantiers.perimetre_ids,
+        m_zones.maille,
+        array(SELECT m_porteurs.directeur
+     		FROM   unnest(m_chantiers.directeurs_administration_centrale_ids) WITH ORDINALITY directeur(id, i)
+     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = directeur.id
+     		ORDER  BY directeur.i
      	) AS directeurs_administration_centrale,
-        array(SELECT m_porteur.porteur_name_short
-     		FROM   unnest(m_chantier.ministeres_id) WITH ORDINALITY a(id, i)
-     		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
-     		ORDER  BY a.i
+        array(SELECT m_porteurs.nom_court
+     		FROM   unnest(m_chantiers.ministeres_ids) WITH ORDINALITY ministere(id, i)
+     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ministere.id
+     		ORDER  BY ministere.i
      	) AS ministeres,
-        array(SELECT m_porteur.porteur_name_short
-     		FROM   unnest(m_chantier.directeurs_administration_centrale_ids) WITH ORDINALITY a(id, i)
-     		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
-     		ORDER  BY a.i
+        array(SELECT m_porteurs.nom_court
+     		FROM   unnest(m_chantiers.directeurs_administration_centrale_ids) WITH ORDINALITY direction(id, i)
+     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = direction.id
+     		ORDER  BY direction.i
      	) AS directions_administration_centrale,
-        m_chantier.directeurs_projet_noms AS directeurs_projet,
-        COALESCE(chantier_meteo.ch_meteo_id, 'NON_RENSEIGNEE') AS meteo,
-        m_axe.axe_name AS axe,
-        m_ppg.ppg_nom AS ppg,
-        m_chantier.directeurs_projet_mails AS directeurs_projet_mails,
-        d_chantier.objectifs_de_la_reforme as objectifs,
-        d_chantier.objectifs_de_la_reforme_date_de_mise_a_jour as date_objectifs
-    FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantier
-        LEFT JOIN dfakto_chantier d_chantier ON m_chantier.id_chantier_perseverant = d_chantier.code_region AND d_chantier.structure_nom='Réforme'
-        JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = 'FRANCE'
-        LEFT JOIN raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = ANY (m_chantier.directeurs_administration_centrale_ids)
-        LEFT JOIN raw_data.chantier_meteo ON chantier_meteo.ch_meteo_name_dfakto = d_chantier.meteo
-        LEFT JOIN raw_data.metadata_ppg m_ppg ON m_ppg.ppg_id = m_chantier.ppg
-        LEFT JOIN raw_data.metadata_axe m_axe ON m_axe.axe_id = m_ppg.ppg_axe)
+        m_chantiers.directeurs_projet_noms AS directeurs_projet,
+        COALESCE(chantier_meteos.id, 'NON_RENSEIGNEE') AS meteo,
+        m_axes.nom AS axe,
+        m_ppgs.nom AS ppg,
+        m_chantiers.directeurs_projet_mails,
+        d_chantiers.objectifs_de_la_reforme as objectifs,
+        d_chantiers.objectifs_de_la_reforme_date_de_mise_a_jour as date_objectifs
+    FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantiers
+        LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom='Réforme'
+        LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_zones.id = COALESCE(d_chantiers.code_region, 'FRANCE') -- pas fan d'écrire ça ...
+        --LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_zones.id = d_chantiers.code_region => fait disparaitre les informations de la jointure zone pour les nvx chantiers
+        LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
+        LEFT JOIN {{ ref('stg_ppg_metadata__chantier_meteos') }} chantier_meteos ON chantier_meteos.nom_dfakto = d_chantiers.meteo_nom
+        LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id
+        LEFT JOIN {{ ref('stg_ppg_metadata__axes') }} m_axes ON m_axes.id = m_ppgs.axe_id)
 UNION
-    (SELECT m_chantier.chantier_id AS id,
-        m_chantier.ch_nom AS nom,
-        m_zone.zone_code AS code_insee,
-        d_chantier.avancement_borne AS taux_avancement,
-        m_zone.nom AS territoire_nom,
-        string_to_array(m_chantier.ch_per, ' | ') AS perimetre_ids,
-        m_zone.zone_type AS maille,
-        array(SELECT m_porteur.porteur_directeur
-     		FROM   unnest(string_to_array(m_chantier."porteur_ids_DAC", ' | ')) WITH ORDINALITY a(id, i)
-     		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
-     		ORDER  BY a.i
+    (SELECT m_chantiers.id,
+        m_chantiers.nom,
+        m_zones.code_insee,
+        d_chantiers.avancement_borne AS taux_avancement,
+        m_zones.nom AS territoire_nom,
+        m_chantiers.perimetre_ids,
+        m_zones.maille,
+        array(SELECT m_porteurs.directeur
+     		FROM   unnest(m_chantiers.directeurs_administration_centrale_ids) WITH ORDINALITY directeur(id, i)
+     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = directeur.id
+     		ORDER  BY directeur.i
      	) AS directeurs_administration_centrale,
-        array(SELECT m_porteur.porteur_name_short
-     		FROM   unnest(string_to_array(m_chantier."porteur_ids_noDAC", ' | ')) WITH ORDINALITY a(id, i)
-     		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
-     		ORDER  BY a.i
+        array(SELECT m_porteurs.nom_court
+     		FROM   unnest(m_chantiers.ministeres_ids) WITH ORDINALITY ministere(id, i)
+     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ministere.id
+     		ORDER  BY ministere.i
      	) AS ministeres,
-        array(SELECT m_porteur.porteur_name_short
-     		FROM   unnest(string_to_array(m_chantier."porteur_ids_DAC", ' | ')) WITH ORDINALITY a(id, i)
-     		JOIN   raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = id
-     		ORDER  BY a.i
+        array(SELECT m_porteurs.nom_court
+     		FROM   unnest(m_chantiers.directeurs_administration_centrale_ids) WITH ORDINALITY direction(id, i)
+     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = direction.id
+     		ORDER  BY direction.i
      	) AS directions_administration_centrale,
-        string_to_array(m_chantier.ch_dp, ' | ') AS directeurs_projet,
+        m_chantiers.directeurs_projet_noms AS directeurs_projet,
         'NON_NECESSAIRE' AS meteo,
-        m_axe.axe_name AS axe,
-        m_ppg.ppg_nom AS ppg,
-        string_to_array(m_chantier.ch_dp_mail, ' | ') AS directeurs_projet_mails,
+        m_axes.nom AS axe,
+        m_ppgs.nom AS ppg,
+        m_chantiers.directeurs_projet_mails,
         dfakto_chantier_objectifs.objectifs_de_la_reforme as objectifs,
         dfakto_chantier_objectifs.objectifs_de_la_reforme_date_de_mise_a_jour as date_objectifs
-    FROM raw_data.metadata_chantier m_chantier
-        LEFT JOIN dfakto_chantier d_chantier ON m_chantier.ch_perseverant = d_chantier.code_chantier AND d_chantier.structure_nom IN ('Région', 'Département')
-        JOIN raw_data.metadata_zone m_zone ON m_zone.zone_id = d_chantier.code_region
-        LEFT JOIN raw_data.metadata_porteur m_porteur ON m_porteur.porteur_id = any (string_to_array(m_chantier."porteur_ids_DAC", ' | '))
-        LEFT JOIN raw_data.metadata_ppg m_ppg ON m_ppg.ppg_id = m_chantier.ch_ppg
-        LEFT JOIN raw_data.metadata_axe m_axe ON m_axe.axe_id = m_ppg.ppg_axe
-        LEFT JOIN dfakto_chantier_objectifs ON m_chantier.ch_perseverant = dfakto_chantier_objectifs.code_chantier)
+    FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantiers
+        LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom IN ('Région', 'Département')
+        JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_zones.id = d_chantiers.code_region
+        LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
+        LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id
+        LEFT JOIN {{ ref('stg_ppg_metadata__axes') }} m_axes ON m_axes.id = m_ppgs.axe_id
+        LEFT JOIN dfakto_chantier_objectifs ON m_chantiers.id_chantier_perseverant = dfakto_chantier_objectifs.code_chantier)

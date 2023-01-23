@@ -12,7 +12,7 @@ renamed as (
         zone_id as id,
         nom,
         zone_code as code_insee,
-        zone_type as type,
+        zone_type as maille,
         string_to_array(zone_parent, ' | ') as zone_parent_id
 
     from source

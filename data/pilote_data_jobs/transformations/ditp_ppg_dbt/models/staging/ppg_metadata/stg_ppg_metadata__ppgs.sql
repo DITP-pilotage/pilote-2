@@ -10,7 +10,7 @@ renamed as (
 
     select
         ppg_id as id,
-        ppg_axe as axe,
+        ppg_axe as axe_id,
         ppg_code as code,
         ppg_desc as description,
         ppg_nom as nom,

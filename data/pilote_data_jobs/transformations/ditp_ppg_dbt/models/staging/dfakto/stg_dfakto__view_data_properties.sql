@@ -28,7 +28,7 @@ renamed as (
         solutions_proposees_et_prochaines_etapes,
         un_exemple_concret_de_reussite_liee_a_la_reforme,
         dernieres_realisations_et_suivi_des_decisions,
-        meteo,
+        meteo as meteo_nom,
         meteo_date_de_mise_a_jour,
         methodologie_de_renseignement_de_la_meteo,
         chef_de_projet_national,
