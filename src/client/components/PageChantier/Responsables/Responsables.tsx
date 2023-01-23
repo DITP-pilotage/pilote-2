@@ -1,17 +1,20 @@
-import { Fragment } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import EnTête from '@/components/_commons/Bloc/EnTête/EnTête';
 import ResponsablesStyled from './Responsables.styled';
+import ResponsablesProps from './Responsables.interface';
+import ResponsablesLigne from './ResponsablesLigne';
 
-const responsables = [
-  { libellé: 'Ministère porteur', nom: null },
-  { libellé: 'Autres ministères co-porteurs', nom: null },
-  { libellé: 'Directeur d’Administration Centrale', nom: null },
-  { libellé: 'Nom du Directeur de Projet', nom: null },
-];
+const mailTo = (label: string, mail: string) => (
+  <a href={`mailto:${mail}`}>
+    {label}
+  </a>
+);
 
-export default function Responsables() {
+export default function Responsables({ chantier }: ResponsablesProps) {
+
+  const responsables = chantier.responsables;
+   
   return (
     <ResponsablesStyled id="responsables">
       <Titre baliseHtml='h2'>
@@ -20,19 +23,25 @@ export default function Responsables() {
       <Bloc>
         <EnTête libellé='National' />
         <div className="fr-mt-3w">
-          {responsables.map(responsable => (
-            <Fragment key={responsable.libellé}>
-              <div className='fr-pl-2w fr-grid-row'>
-                <p className='fr-text--sm fr-text--bold fr-col fr-mr-4w'>
-                  {responsable.libellé}
-                </p>
-                <p className='fr-text--sm fr-col'>
-                  {responsable.nom || 'Non Renseigné'}
-                </p>
-              </div>
-              <hr className='fr-hr' />
-            </Fragment>
-          ))}
+          <ResponsablesLigne
+            contenu={[responsables.porteur]}
+            label="Ministère porteur"
+          />
+          <hr className='fr-hr' />
+          <ResponsablesLigne
+            contenu={responsables.coporteurs.map(coporteur => coporteur)}
+            label="Autres ministères co-porteurs"
+          />
+          <hr className='fr-hr' />
+          <ResponsablesLigne
+            contenu={responsables.directeursAdminCentrale.map(directeur => (`${directeur.nom} (${directeur.direction})`))}
+            label="Directeur(s) / directrice(s) d’Administration Centrale"
+          />
+          <hr className='fr-hr' />
+          <ResponsablesLigne
+            contenu={responsables.directeursProjet.map(directeur => (mailTo(directeur.nom, directeur.email)))}
+            label="Directeur(s) / directrice(s) du projet"
+          />
         </div>
       </Bloc>
     </ResponsablesStyled>
