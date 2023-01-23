@@ -40,6 +40,14 @@ function initialiserDonnéesTerritoires<T>(donnéesInitiales: T) {
   ) as DonnéesTerritoires<T>;
 }
 
+export function getAvancement(donnéesTerritoires: DonnéesTerritoires<TerritoireSansCodeInsee>, maille: Maille, codeInsee: string) {
+  return essayer(() => donnéesTerritoires[maille][codeInsee].avancement, { annuel: null, global: null });
+}
+
+export function getMétéo(donnéesTerritoires: DonnéesTerritoires<TerritoireSansCodeInsee>, maille: Maille, codeInsee: string) {
+  return essayer(() => donnéesTerritoires[maille][codeInsee].météo, 'NON_RENSEIGNEE');
+}
+
 export function initialiserDonnéesTerritoiresAgrégésVide() {
   return initialiserDonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>({
     avancement: [],
@@ -58,11 +66,11 @@ export function agrégerDonnéesTerritoiresÀUnAgrégat(
       agrégat[maille][codeInsee] = {
         avancement: [
           ...agrégat[maille][codeInsee].avancement,
-          essayer(() => donnéesTerritoires[maille][codeInsee].avancement, { annuel: null, global: null }),
+          getAvancement(donnéesTerritoires, maille, codeInsee),
         ],
         météo: [
           ...agrégat[maille][codeInsee].météo,
-          essayer(() => donnéesTerritoires[maille][codeInsee].météo, 'NON_RENSEIGNEE'),
+          getMétéo(donnéesTerritoires, maille, codeInsee),
         ],
       };
     }

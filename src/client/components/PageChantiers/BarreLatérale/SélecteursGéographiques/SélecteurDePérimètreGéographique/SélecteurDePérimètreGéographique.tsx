@@ -25,7 +25,7 @@ export default function SélecteurDePérimètreGéographique({
       codeInsee: 'FR',
       maille: 'nationale',
     });
-  }, [niveauDeMaille]);
+  }, [niveauDeMaille, setPérimètreGéographique]);
 
   return (
     <div className="fr-select-group fr-mt-5v">

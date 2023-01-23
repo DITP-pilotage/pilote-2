@@ -4,7 +4,7 @@ import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
 import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
-import { Avancement } from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { Avancement } from '@/server/domain/chantier/Chantier.interface';
 import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/avancement';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import {
@@ -13,6 +13,7 @@ import {
 import {
   périmètreGéographique as périmètreGéographiqueStore,
 } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
+import { getAvancement, getMétéo } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 import ListeChantiersProps from './ListeChantiers.interface';
 
 function afficherLesBarresDeProgression(avancement: Avancement) {
@@ -38,8 +39,8 @@ const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantie
 
 function colonnesChantiers(périmètreGéographique: PérimètreGéographiqueIdentifiant) {
   const { codeInsee, maille } = périmètreGéographique;
-  const cheminChantierMétéoDuTerritoire = `mailles.${maille}.${codeInsee}.météo` as const;
-  const cheminChantierAvancementDuTerritoire = `mailles.${maille}.${codeInsee}.avancement` as const;
+  const cheminChantierMétéoDuTerritoire = (chantier: Chantier) => getMétéo(chantier.mailles, maille, codeInsee);
+  const cheminChantierAvancementDuTerritoire = (chantier: Chantier) => getAvancement(chantier.mailles, maille, codeInsee);
   return [
     reactTableColonnesHelper.accessor('nom', {
       header: 'Chantiers',
@@ -56,6 +57,7 @@ function colonnesChantiers(périmètreGéographique: PérimètreGéographiqueIde
     reactTableColonnesHelper.accessor(cheminChantierMétéoDuTerritoire, {
       header: 'Météo',
       cell: météo => <PictoMétéo valeur={météo.getValue()} />,
+
       enableGlobalFilter: false,
       sortingFn: (a, b, columnId) => {
         return comparerMétéo(a.getValue(columnId), b.getValue(columnId));
@@ -74,7 +76,6 @@ function colonnesChantiers(périmètreGéographique: PérimètreGéographiqueIde
 
 export default function ListeChantiers({ chantiers }: ListeChantiersProps) {
   const périmètreGéographique = périmètreGéographiqueStore();
-
   return (
     <Tableau<typeof chantiers[number]>
       colonnes={colonnesChantiers(périmètreGéographique)}
