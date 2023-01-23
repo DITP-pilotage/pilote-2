@@ -63,7 +63,6 @@ export default class ChantierRowBuilder {
       ministeres: [],
       directions_administration_centrale: [],
       meteo: this._météo,
-      synthese_des_resultats: 'TBD',
       axe: 'TBD',
       ppg: 'TBD',
       directeurs_projet_mails: [],
