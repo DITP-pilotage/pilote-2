@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ChantierRowBuilder from '@/server/infrastructure/test/rowBuilder/ChantierRowBuilder';
@@ -16,7 +17,6 @@ describe('ChantierSQLRepository', () => {
           .withDirectionsAdministrationCentrale(['Intérieur', 'Extérieur'])
           .withDirecteursProjet(['Dir proj 1', 'Dir proj 2'])
           .withDirecteursProjetMail(['dirproj1@example.com', 'dirproj2@example.com'])
-          .withMinistères(['Agriculture et Alimentation', 'Intérieur', 'Extérieur'])
           .build(),
         new ChantierRowBuilder()
           .withId('CH-002').withNom('Chantier 2').build(),
@@ -33,11 +33,8 @@ describe('ChantierSQLRepository', () => {
     expect(result1.mailles.nationale.FR.météo).toEqual(météoFromString('COUVERT'));
     expect(result1.responsables.directeursAdminCentrale).toStrictEqual([{ nom: 'Alain Térieur', direction: 'Intérieur' }, { nom: 'Alex Térieur', direction: 'Extérieur' }]);
     expect(result1.responsables.directeursProjet).toStrictEqual([{ nom: 'Dir proj 1', email: 'dirproj1@example.com' }, { nom: 'Dir proj 2', email: 'dirproj2@example.com' }]);
-    expect(result1.responsables.porteur).toEqual('Agriculture et Alimentation');
-    expect(result1.responsables.coporteurs).toEqual(['Intérieur', 'Extérieur']);
 
     expect(result2.nom).toEqual('Chantier 2');
-    expect(result2.responsables.coporteurs).toEqual([]);
   });
 
   test('un chantier contenant une maille nationale', async () => {
@@ -102,6 +99,40 @@ describe('ChantierSQLRepository', () => {
       },
       régionale: {},
     });
+  });
+
+  test('Contient des porteurs et des coporteurs', async () => {
+    // GIVEN
+    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+    await prisma.chantier.createMany({
+      data: [
+        new ChantierRowBuilder()
+          .withId('CH-001').withNom('Chantier 1')
+          .withMinistères(['Agriculture et Alimentation', 'Intérieur', 'Extérieur'])
+          .build(),
+        new ChantierRowBuilder()
+          .withId('CH-002').withNom('Chantier 2').build(),
+        new ChantierRowBuilder()
+          .withId('CH-003').withNom('Chantier 3')
+          .withMinistères(['Agriculture et Alimentation'])
+          .build(),
+      ],
+    });
+
+    // WHEN
+    const result1 = await repository.getById('CH-001');
+    const result2 = await repository.getById('CH-002');
+    const result3 = await repository.getById('CH-003');
+
+    // THEN
+    expect(result1.responsables.porteur).toEqual('Agriculture et Alimentation');
+    expect(result1.responsables.coporteurs).toEqual(['Intérieur', 'Extérieur']);
+
+    expect(result2.responsables.porteur).toBeUndefined();
+    expect(result2.responsables.coporteurs).toEqual([]);
+
+    expect(result3.responsables.porteur).toEqual('Agriculture et Alimentation');
+    expect(result3.responsables.coporteurs).toEqual([]);
   });
 
   test('Accède à une liste de chantier', async () => {

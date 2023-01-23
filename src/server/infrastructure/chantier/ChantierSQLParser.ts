@@ -20,49 +20,49 @@ const NOMS_MAILLES: Record<string, Maille> = {
   REG: 'régionale',
 };
 
-export function parseChantier(chantiers: chantier[]): Chantier {
-  const chantierNational = chantiers.find(c => c.maille === 'NAT');
+export function parseChantier(chantierRows: chantier[]): Chantier {
+  const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
 
-  if (!chantierNational) {
-    throw new ErreurChantierSansMailleNationale(chantiers[0].id);
+  if (!chantierMailleNationale) {
+    throw new ErreurChantierSansMailleNationale(chantierRows[0].id);
   }
 
   const result: Chantier = {
-    id: chantierNational.id,
-    nom: chantierNational.nom,
+    id: chantierMailleNationale.id,
+    nom: chantierMailleNationale.nom,
     axe: null,
     nomPPG: null,
-    périmètreIds: chantierNational.perimetre_ids,
+    périmètreIds: chantierMailleNationale.perimetre_ids,
     mailles: {
       nationale: {
         FR: {
-          codeInsee: chantierNational.code_insee,
-          avancement: { annuel: null, global: chantierNational.taux_avancement },
-          météo: météoFromString(chantierNational.meteo),
+          codeInsee: chantierMailleNationale.code_insee,
+          avancement: { annuel: null, global: chantierMailleNationale.taux_avancement },
+          météo: météoFromString(chantierMailleNationale.meteo),
         },
       },
       départementale: {},
       régionale: {},
     },
     responsables: {
-      porteur: chantierNational.ministeres[0],
-      coporteurs: chantierNational.ministeres.slice(1),
+      porteur: chantierMailleNationale.ministeres[0],
+      coporteurs: chantierMailleNationale.ministeres.slice(1),
       directeursAdminCentrale: [],
       directeursProjet: [],
     },
   };
 
-  if (chantierNational.directeurs_administration_centrale) {
-    const directeurs = chantierNational.directeurs_administration_centrale;
-    const directions = chantierNational.directions_administration_centrale;
+  if (chantierMailleNationale.directeurs_administration_centrale) {
+    const directeurs = chantierMailleNationale.directeurs_administration_centrale;
+    const directions = chantierMailleNationale.directions_administration_centrale;
     for (const [i, directeur] of directeurs.entries()) {
       result.responsables.directeursAdminCentrale.push({ nom: directeur, direction: directions[i] });
     }
   }
 
-  if (chantierNational.directeurs_projet && chantierNational.directeurs_projet.length > 0) {
-    const directeurs = chantierNational.directeurs_projet;
-    const emails = chantierNational.directeurs_projet_mails;
+  if (chantierMailleNationale.directeurs_projet && chantierMailleNationale.directeurs_projet.length > 0) {
+    const directeurs = chantierMailleNationale.directeurs_projet;
+    const emails = chantierMailleNationale.directeurs_projet_mails;
     for (const [i, directeur] of directeurs.entries()) {
       result.responsables.directeursProjet.push({ nom: directeur, email: emails[i] });
     }
@@ -70,19 +70,19 @@ export function parseChantier(chantiers: chantier[]): Chantier {
 
   ///
   // Lignes à une maille non nationale
-  const chantiersNonNationales = chantiers.filter(c => c.maille !== 'NAT');
+  const chantiersMaillesNonNationales = chantierRows.filter(c => c.maille !== 'NAT');
 
-  for (const chantierNonNational of chantiersNonNationales) {
-    const nomDeMaille = NOMS_MAILLES[chantierNonNational.maille];
+  for (const chantierRow of chantiersMaillesNonNationales) {
+    const nomDeMaille = NOMS_MAILLES[chantierRow.maille];
     if (!nomDeMaille) {
-      throw new ErreurMailleChantierInconnue(chantierNational.id, chantierNonNational.maille);
+      throw new ErreurMailleChantierInconnue(chantierMailleNationale.id, chantierRow.maille);
     }
     result.mailles[nomDeMaille] = {
       ...result.mailles[nomDeMaille],
-      [chantierNonNational.code_insee]: {
-        codeInsee: chantierNonNational.code_insee,
-        avancement: { annuel: null, global: chantierNonNational.taux_avancement },
-        météo: météoFromString(chantierNonNational.meteo),
+      [chantierRow.code_insee]: {
+        codeInsee: chantierRow.code_insee,
+        avancement: { annuel: null, global: chantierRow.taux_avancement },
+        météo: météoFromString(chantierRow.meteo),
       },
     };
   }
