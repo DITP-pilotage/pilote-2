@@ -67,6 +67,8 @@ export default class ChantierRowBuilder {
       axe: 'TBD',
       ppg: 'TBD',
       directeurs_projet_mails: [],
+      objectifs: 'TBD',
+      date_objectifs: null,
     };
   }
 }
