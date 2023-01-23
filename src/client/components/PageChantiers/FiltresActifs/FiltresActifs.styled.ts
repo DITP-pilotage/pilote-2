@@ -9,7 +9,7 @@ const FiltresActifsStyled = styled.div`
 
   .conteneur-tags {
     max-height: 7.5rem;
-    overflow-y: scroll;
+    overflow-y: auto;
     list-style: none;
 
     >li {
