@@ -10,4 +10,4 @@
 SELECT
     perimetre_id as id,
     per_nom as nom
-FROM {{ env_var('PGSCHEMA_RAW_DATA') }}.metadata_perimetre
+FROM raw_data.metadata_perimetre
