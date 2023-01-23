@@ -1,4 +1,9 @@
-import { agrégerDonnéesTerritoires, agrégerDonnéesTerritoiresÀUnAgrégat, initialiserDonnéesTerritoiresAgrégésVide } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
+import {
+  agrégerDonnéesTerritoires,
+  agrégerDonnéesTerritoiresÀUnAgrégat,
+  initialiserDonnéesTerritoiresAgrégésVide, récupérerAvancement,
+  récupérerMétéo,
+} from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 
 describe('Données territoires', () => {
   const listeDonnéesTerritoires = [
@@ -81,6 +86,38 @@ describe('Données territoires', () => {
       //THEN
       const attendu = { avancement: [{ annuel: 27, global: 40 }, { annuel: 24, global: 32 }], météo: ['NUAGE', 'NON_RENSEIGNEE'] };
       expect(résultat.départementale['01']).toStrictEqual(attendu);
+    });
+  });
+
+  describe("Récupérer météo d'un territoire", () => {
+    it("Documente l'attendu si aucune météo n'est disponible pour un territoire", () => {
+      //WHEN
+      const résultat = récupérerMétéo(listeDonnéesTerritoires[0], 'départementale', '51');
+      //THEN
+      expect(résultat).toStrictEqual('NON_RENSEIGNEE');
+    });
+
+    it("Documente l'attendu si une météo n'est disponible pour un territoire", () => {
+      //WHEN
+      const résultat = récupérerMétéo(listeDonnéesTerritoires[0], 'départementale', '01');
+      //THEN
+      expect(résultat).toStrictEqual('NUAGE');
+    });
+  });
+
+  describe("Récupérer l'avancement d'un territoire", () => {
+    it("Documente l'attendu si aucun avancement n'est disponible pour un territoire", () => {
+      //WHEN
+      const résultat = récupérerAvancement(listeDonnéesTerritoires[0], 'régionale', '01');
+      //THEN
+      expect(résultat).toStrictEqual({ 'annuel': null, 'global': null });
+    });
+
+    it("Documente l'attendu si un avancement est disponible pour un territoire", () => {
+      //WHEN
+      const résultat = récupérerAvancement(listeDonnéesTerritoires[0], 'nationale', 'FR');
+      //THEN
+      expect(résultat).toStrictEqual({ 'annuel': 99, 'global': 67 });
     });
   });
 });

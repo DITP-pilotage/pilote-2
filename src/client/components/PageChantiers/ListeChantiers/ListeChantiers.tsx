@@ -13,7 +13,7 @@ import {
 import {
   périmètreGéographique as périmètreGéographiqueStore,
 } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
-import { getAvancement, getMétéo } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
+import { récupérerAvancement, récupérerMétéo } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 import ListeChantiersProps from './ListeChantiers.interface';
 
 function afficherLesBarresDeProgression(avancement: Avancement) {
@@ -39,8 +39,8 @@ const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantie
 
 function colonnesChantiers(périmètreGéographique: PérimètreGéographiqueIdentifiant) {
   const { codeInsee, maille } = périmètreGéographique;
-  const cheminChantierMétéoDuTerritoire = (chantier: Chantier) => getMétéo(chantier.mailles, maille, codeInsee);
-  const cheminChantierAvancementDuTerritoire = (chantier: Chantier) => getAvancement(chantier.mailles, maille, codeInsee);
+  const cheminChantierMétéoDuTerritoire = (chantier: Chantier) => récupérerMétéo(chantier.mailles, maille, codeInsee);
+  const cheminChantierAvancementDuTerritoire = (chantier: Chantier) => récupérerAvancement(chantier.mailles, maille, codeInsee);
   return [
     reactTableColonnesHelper.accessor('nom', {
       header: 'Chantiers',
