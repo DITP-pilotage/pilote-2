@@ -13,7 +13,7 @@ const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
     z-index: 2;
     width: 20rem;
     height: 100vh;
-    overflow-y: scroll;
+    overflow-y: auto;
     background: white;
     border-right: 1px solid var(--border-disabled-grey);
   }

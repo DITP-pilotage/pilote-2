@@ -4,7 +4,6 @@ const SommaireStyled = styled.div`
   position: sticky;
   top: 0;
   max-width: 20rem;
-  overflow-y: scroll;
 
   li {
     color: var(--text-action-high-blue-france);
