@@ -236,3 +236,14 @@ class ChantierMeteo(Base):
     ch_meteo_name = Column(TEXT)
     ch_meteo_descr = Column(TEXT)
     ch_meteo_name_dfakto = Column(TEXT)
+
+
+class FactFinancialsEnr(Base):
+    __tablename__ = 'fact_financials_enr'
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
+
+    tree_node_id = Column(TEXT, primary_key=True)
+    period_id = Column(TEXT, primary_key=True)
+    state_id = Column(TEXT, primary_key=True)
+    effect_id = Column(TEXT, primary_key=True)
+    financials_decumulated_amount = Column(TEXT)
