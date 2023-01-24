@@ -23,7 +23,6 @@ model chantier {
   ministeres String[]
   directions_administration_centrale String[]
   meteo String? @default("NON_RENSEIGNEE")
-  synthese_des_resultats String?
   axe String @default("non renseignée")
   ppg String @default("non renseignée")
   directeurs_projet_mails String []
@@ -59,4 +58,15 @@ model indicateur {
   maille String
 
   @@id([id, code_insee, maille])
+}
+
+model synthese_des_resultats {
+  id Int @id @default(autoincrement())
+  chantier_id String
+  maille String
+  code_insee String
+  meteo String?
+  date_meteo DateTime? @db.Timestamp
+  commentaire String?
+  date_commentaire DateTime? @db.Timestamp
 }
