@@ -238,6 +238,8 @@ class ChantierMeteo(Base):
     ch_meteo_name_dfakto = Column(TEXT)
 
 
+
+
 class FactFinancialsEnr(Base):
     __tablename__ = 'fact_financials_enr'
     __table_args__ = {'schema': SCHEMA_RAW_DATA}
@@ -247,3 +249,32 @@ class FactFinancialsEnr(Base):
     state_id = Column(TEXT, primary_key=True)
     effect_id = Column(TEXT, primary_key=True)
     financials_decumulated_amount = Column(TEXT)
+
+
+class DimPeriods(Base):
+    __tablename__ = 'dim_periods'
+    __table_args__ = {'schema': SCHEMA_RAW_DATA}
+
+    period_id = Column(TEXT, primary_key=True)
+    period_date = Column(DateTime, nullable=False)
+    period_year = Column(INTEGER, nullable=False)
+    period_month = Column(TEXT, nullable=False)
+    period_month_tri = Column(TEXT, nullable=False)
+    period_month_year = Column(TEXT, nullable=False)
+    period_month_year_tri = Column(TEXT, nullable=False)
+    period_quarter = Column(TEXT, nullable=False)
+    period_quarter_year = Column(TEXT, nullable=False)
+    period_year_in_time = Column(TEXT)
+    period_month_in_time = Column(TEXT)
+    period_quarter_in_time = Column(TEXT)
+    period_current_year_flag = Column(TEXT)
+    period_current_month_flag = Column(TEXT)
+    period_current_quarter_flag = Column(TEXT)
+    period_last_year_flag = Column(TEXT)
+    period_last_month_flag = Column(TEXT)
+    period_last_quarter_flag = Column(TEXT)
+    period_next_year_flag = Column(TEXT)
+    period_next_month_flag = Column(TEXT)
+    period_next_quarter_flag = Column(TEXT)
+    period_total_flag = Column(TEXT, nullable=False)
+    snapshot_date = Column(DateTime, nullable=False)
