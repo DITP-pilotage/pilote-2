@@ -64,7 +64,7 @@ export function parseChantier(chantierRows: chantier[]): Chantier {
     const directeurs = chantierMailleNationale.directeurs_projet;
     const emails = chantierMailleNationale.directeurs_projet_mails;
     for (const [i, directeur] of directeurs.entries()) {
-      result.responsables.directeursProjet.push({ nom: directeur, email: emails[i] });
+      result.responsables.directeursProjet.push({ nom: directeur, email: (emails[i] || null) });
     }
   }
 

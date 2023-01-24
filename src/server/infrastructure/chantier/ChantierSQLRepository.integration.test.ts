@@ -177,6 +177,24 @@ describe('ChantierSQLRepository', () => {
     expect(chantiers[0].mailles.régionale['975']).toBeDefined();
   });
 
+  test('Un directeur de projet peut ne pas avoir d\'adresse email', async () => {
+    // GIVEN
+    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+    const chantierId = 'CH-001';
+
+    await prisma.chantier.create({
+      data: new ChantierRowBuilder()
+        .withId(chantierId).withDirecteursProjet(['Jean Bon']).withDirecteursProjetMail([]).build(),
+    });
+
+    // WHEN
+    const result = await repository.getById(chantierId);
+
+    // THEN
+    expect(result.responsables.directeursProjet[0]).toStrictEqual({ nom: 'Jean Bon', email: null });
+  });
+
   describe("Gestion d'erreur", () => {
     test('Erreur en cas de chantier non trouvé', async () => {
       // GIVEN

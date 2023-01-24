@@ -3,16 +3,17 @@ import Titre from '@/components/_commons/Titre/Titre';
 import EnTête from '@/components/_commons/Bloc/EnTête/EnTête';
 import ResponsablesStyled from './Responsables.styled';
 import ResponsablesProps from './Responsables.interface';
-import ResponsablesLigne from './ResponsablesLigne';
+import ResponsablesLigne from './ResponsablesLigne/ResponsablesLigne';
 
-const mailTo = (label: string, mail: string) => (
-  <a href={`mailto:${mail}`}>
-    {label}
-  </a>
+const mailTo = (label: string, mail: string | null) => (
+  mail ?
+    <a href={`mailto:${mail}`}>
+      {label}
+    </a>
+    : label
 );
 
 export default function Responsables({ chantier }: ResponsablesProps) {
-
   const responsables = chantier.responsables;
    
   return (

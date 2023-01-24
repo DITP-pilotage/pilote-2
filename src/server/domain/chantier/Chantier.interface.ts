@@ -20,7 +20,7 @@ export type Territoire = {
 export type Territoires = Record<string, Territoire>;
 
 export type DirecteurAdministrationCentrale = { nom: string, direction: string };
-export type Contact = { nom: string, email: string };
+export type Contact = { nom: string, email: string | null };
 
 export default interface Chantier {
   id: string;
