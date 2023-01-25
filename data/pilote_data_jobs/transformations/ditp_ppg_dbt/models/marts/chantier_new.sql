@@ -21,7 +21,7 @@ dfakto_chantier as (
     FROM {{ ref('stg_dfakto__fact_progress_chantiers')}} fact_progress_chantier
         JOIN {{ ref('stg_dfakto__dim_tree_nodes')}} dim_tree_nodes ON fact_progress_chantier.tree_node_id = dim_tree_nodes.id
         JOIN {{ ref('stg_dfakto__dim_structures')}} dim_structures ON dim_tree_nodes.structure_id = dim_structures.id
-        LEFT JOIN {{ ref('stg_dfakto__view_data_properties')}} view_data_properties on view_data_properties.reforme_code = dim_tree_nodes.code
+        LEFT JOIN {{ ref('stg_dfakto__view_data_properties')}} view_data_properties ON view_data_properties.reforme_code = dim_tree_nodes.code
 
 ),
 
@@ -66,8 +66,7 @@ dfakto_chantier_objectifs as (
         d_chantiers.objectifs_de_la_reforme_date_de_mise_a_jour as date_objectifs
     FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantiers
         LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom='Réforme'
-        LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_zones.id = COALESCE(d_chantiers.code_region, 'FRANCE') -- pas fan d'écrire ça ...
-        --LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_zones.id = d_chantiers.code_region => fait disparaitre les informations de la jointure zone pour les nvx chantiers
+        LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_zones.id = 'FRANCE' -- ou = COALESCE(d_chantiers.code_region, 'FRANCE') -- mais pas fan d'écrire ça ...
         LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
         LEFT JOIN {{ ref('stg_ppg_metadata__chantier_meteos') }} chantier_meteos ON chantier_meteos.nom_dfakto = d_chantiers.meteo_nom
         LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id

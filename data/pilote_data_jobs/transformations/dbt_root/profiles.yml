@@ -1,9 +1,9 @@
 ditp_ppg_dbt:
-  target: dev
+  target: prod
   outputs:
-    dev:
+    prod:
       type: postgres
-      threads: 1
+      threads: 4
       host: "{{ env_var('PGHOST') }}"
       port: "{{ env_var('PGPORT') | int }}"
       user: "{{ env_var('PGUSER') }}"
