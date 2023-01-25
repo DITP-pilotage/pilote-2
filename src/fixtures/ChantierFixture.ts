@@ -33,8 +33,12 @@ class ChantierFixture implements FixtureInterface<Chantier> {
         régionale: this.générérFakeTerritoires(this.code_insee_régions),
         départementale: this.générérFakeTerritoires(this.code_insee_départements),
       },
-      directeurAdministrationCentrale: ['DAC1', 'DAC2'],
-      ministères: ['Min1', 'Min2'],
+      responsables: {
+        porteur: 'Min1',
+        coporteurs: ['Min2'],
+        directeursAdminCentrale: [{ nom: 'DAC1', direction: 'DAC1' }, { nom: 'DAC2', direction: 'DAC2' }],
+        directeursProjet: [],
+      },
       ...valeursFixes,
     };
   }

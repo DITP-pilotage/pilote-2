@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ChantierRowBuilder from '@/server/infrastructure/test/rowBuilder/ChantierRowBuilder';
@@ -11,7 +12,12 @@ describe('ChantierSQLRepository', () => {
     await prisma.chantier.createMany({
       data: [
         new ChantierRowBuilder()
-          .withId('CH-001').withNom('Chantier 1').withMétéo('COUVERT').build(),
+          .withId('CH-001').withNom('Chantier 1').withPérimètresIds(['PER-001', 'PER-002']).withMétéo('COUVERT')
+          .withDirecteursAdministrationCentrale(['Alain Térieur', 'Alex Térieur'])
+          .withDirectionsAdministrationCentrale(['Intérieur', 'Extérieur'])
+          .withDirecteursProjet(['Dir proj 1', 'Dir proj 2'])
+          .withDirecteursProjetMail(['dirproj1@example.com', 'dirproj2@example.com'])
+          .build(),
         new ChantierRowBuilder()
           .withId('CH-002').withNom('Chantier 2').build(),
       ],
@@ -23,7 +29,11 @@ describe('ChantierSQLRepository', () => {
 
     // THEN
     expect(result1.nom).toEqual('Chantier 1');
+    expect(result1.périmètreIds).toStrictEqual(['PER-001', 'PER-002']);
     expect(result1.mailles.nationale.FR.météo).toEqual(météoFromString('COUVERT'));
+    expect(result1.responsables.directeursAdminCentrale).toStrictEqual([{ nom: 'Alain Térieur', direction: 'Intérieur' }, { nom: 'Alex Térieur', direction: 'Extérieur' }]);
+    expect(result1.responsables.directeursProjet).toStrictEqual([{ nom: 'Dir proj 1', email: 'dirproj1@example.com' }, { nom: 'Dir proj 2', email: 'dirproj2@example.com' }]);
+
     expect(result2.nom).toEqual('Chantier 2');
   });
 
@@ -91,6 +101,40 @@ describe('ChantierSQLRepository', () => {
     });
   });
 
+  test('Contient des porteurs et des coporteurs', async () => {
+    // GIVEN
+    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+    await prisma.chantier.createMany({
+      data: [
+        new ChantierRowBuilder()
+          .withId('CH-001').withNom('Chantier 1')
+          .withMinistères(['Agriculture et Alimentation', 'Intérieur', 'Extérieur'])
+          .build(),
+        new ChantierRowBuilder()
+          .withId('CH-002').withNom('Chantier 2').build(),
+        new ChantierRowBuilder()
+          .withId('CH-003').withNom('Chantier 3')
+          .withMinistères(['Agriculture et Alimentation'])
+          .build(),
+      ],
+    });
+
+    // WHEN
+    const result1 = await repository.getById('CH-001');
+    const result2 = await repository.getById('CH-002');
+    const result3 = await repository.getById('CH-003');
+
+    // THEN
+    expect(result1.responsables.porteur).toEqual('Agriculture et Alimentation');
+    expect(result1.responsables.coporteurs).toEqual(['Intérieur', 'Extérieur']);
+
+    expect(result2.responsables.porteur).toBeUndefined();
+    expect(result2.responsables.coporteurs).toEqual([]);
+
+    expect(result3.responsables.porteur).toEqual('Agriculture et Alimentation');
+    expect(result3.responsables.coporteurs).toEqual([]);
+  });
+
   test('Accède à une liste de chantier', async () => {
     // GIVEN
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
@@ -133,7 +177,42 @@ describe('ChantierSQLRepository', () => {
     expect(chantiers[0].mailles.régionale['975']).toBeDefined();
   });
 
+  test('Un directeur de projet peut ne pas avoir d\'adresse email', async () => {
+    // GIVEN
+    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+    const chantierId = 'CH-001';
+
+    await prisma.chantier.create({
+      data: new ChantierRowBuilder()
+        .withId(chantierId).withDirecteursProjet(['Jean Bon']).withDirecteursProjetMail([]).build(),
+    });
+
+    // WHEN
+    const result = await repository.getById(chantierId);
+
+    // THEN
+    expect(result.responsables.directeursProjet[0]).toStrictEqual({ nom: 'Jean Bon', email: null });
+  });
+
   describe("Gestion d'erreur", () => {
+    test('Erreur en cas de chantier non trouvé', async () => {
+      // GIVEN
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+      const chantierId = 'CH-001';
+      await prisma.chantier.create({
+        data: new ChantierRowBuilder().withId(chantierId).withMailleNationale().build(),
+      });
+
+      // WHEN
+      const request = async () => {
+        await repository.getById('CH-002');
+      };
+
+      // THEN
+      await expect(request).rejects.toThrow(/chantier 'CH-002' non trouvé/);
+    });
+
     test('Erreur en cas de maille inconnue', async () => {
       // GIVEN
       const repository: ChantierRepository = new ChantierSQLRepository(prisma);
@@ -154,6 +233,23 @@ describe('ChantierSQLRepository', () => {
 
       // THEN
       await expect(request).rejects.toThrow(/INCONNUE/);
+    });
+
+    test('Erreur en cas d\'absence de maille nationale', async () => {
+    // GIVEN
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+      const chantierId = 'CH-001';
+      await prisma.chantier.create({
+        data: new ChantierRowBuilder().withId(chantierId).withMaille('DEPT').build(),
+      });
+
+      // WHEN
+      const request = async () => {
+        await repository.getById(chantierId);
+      };
+
+      // THEN
+      await expect(request).rejects.toThrow(/le chantier 'CH-001' n'a pas de maille nationale/);
     });
   });
 });

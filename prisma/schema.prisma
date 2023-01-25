@@ -25,7 +25,7 @@ model chantier {
   meteo String? @default("NON_RENSEIGNEE")
   axe String @default("non renseignée")
   ppg String @default("non renseignée")
-  directeurs_projet_mails String []
+  directeurs_projet_mails String[]
   objectifs String?
   date_objectifs DateTime? @db.Date
 

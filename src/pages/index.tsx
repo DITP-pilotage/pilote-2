@@ -23,7 +23,7 @@ export async function getServerSideProps() {
 
   const périmètresMinistériels = await périmètreRepository.getListe();
   const chantiers = await chantierRepository.getListe();
-
+  
   return {
     props: {
       chantiers,

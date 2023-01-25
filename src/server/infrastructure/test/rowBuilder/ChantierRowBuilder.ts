@@ -5,6 +5,8 @@ export default class ChantierRowBuilder {
 
   private _nom: string = 'Chantier ' + this._id;
 
+  private _perimetre_ids: string[] = [];
+
   private _maille: string = 'NAT';
 
   private _codeInsee: string = 'FR';
@@ -13,6 +15,16 @@ export default class ChantierRowBuilder {
 
   private _météo: string = 'SOLEIL';
 
+  private _directeurs_administration_centrale: string[] = [];
+
+  private _directions_administration_centrale: string[] = [];
+
+  private _directeurs_projet: string[] = [];
+
+  private _directeurs_projet_mails: string[] = [];
+
+  private _ministeres: string[] = [];
+
   withId(id: string) {
     this._id = id;
     return this;
@@ -20,6 +32,11 @@ export default class ChantierRowBuilder {
 
   withNom(nom: string) {
     this._nom = nom;
+    return this;
+  }
+
+  withPérimètresIds(périmètresIds: string[]) {
+    this._perimetre_ids = périmètresIds;
     return this;
   }
 
@@ -49,23 +66,48 @@ export default class ChantierRowBuilder {
     return this;
   }
 
+  withDirecteursAdministrationCentrale(it: string[]) {
+    this._directeurs_administration_centrale = it;
+    return this;
+  }
+
+  withDirectionsAdministrationCentrale(it: string[]) {
+    this._directions_administration_centrale = it;
+    return this;
+  }
+
+  withDirecteursProjet(it: string[]) {
+    this._directeurs_projet = it;
+    return this;
+  }
+
+  withDirecteursProjetMail(it: string[]) {
+    this._directeurs_projet_mails = it;
+    return this;
+  }
+
+  withMinistères(ministères: string[]) {
+    this._ministeres = ministères;
+    return this;
+  }
+
   build(): chantier {
     return {
       id: this._id,
       nom: this._nom,
+      perimetre_ids: this._perimetre_ids,
       maille: this._maille,
       code_insee: this._codeInsee,
-      directeurs_projet: ['Directeur ' + this._id],
-      perimetre_ids: [],
       taux_avancement: this._tauxAvancement,
-      territoire_nom: null,
-      directeurs_administration_centrale: [],
-      ministeres: [],
-      directions_administration_centrale: [],
       meteo: this._météo,
+      directeurs_administration_centrale: this._directeurs_administration_centrale,
+      directions_administration_centrale: this._directions_administration_centrale,
+      directeurs_projet: this._directeurs_projet,
+      directeurs_projet_mails: this._directeurs_projet_mails,
+      ministeres: this._ministeres,
+      territoire_nom: null,
       axe: 'TBD',
       ppg: 'TBD',
-      directeurs_projet_mails: [],
       objectifs: 'TBD',
       date_objectifs: null,
     };
