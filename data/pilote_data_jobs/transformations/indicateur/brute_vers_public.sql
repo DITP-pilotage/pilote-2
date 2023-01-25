@@ -1,6 +1,23 @@
 TRUNCATE TABLE public.indicateur;
 
-WITH dfakto_indicateur AS (
+WITH
+    fact_financials_enr_ordered as
+        (
+            select *
+            from raw_data.fact_financials_enr
+            where state_id = 'Valeur Actuelle'
+              and length(period_id) = 8
+            order by tree_node_id, effect_id, period_id
+        ),
+    historique_indicateur as (
+        SELECT tree_node_id,
+               effect_id,
+               ARRAY_AGG(financials_decumulated_amount) AS evolution_valeur_actuelle,
+               ARRAY_AGG(period_id)                     AS evolution_date_valeur_actuelle
+        FROM fact_financials_enr_ordered
+        GROUP BY tree_node_id, effect_id
+    ),
+    dfakto_indicateur AS (
     SELECT fact_progress_indicateur.tree_node_id,
         fact_progress_indicateur.bounded_progress AS objectif_taux_avancement,
         fact_progress_indicateur.valeur_cible AS objectif_valeur_cible,
@@ -12,10 +29,14 @@ WITH dfakto_indicateur AS (
         split_part(dim_tree_nodes.tree_node_code, '-', 2) AS code_region,
         raw_data.dim_structures.structure_name,
         raw_data.fact_progress_indicateur.effect_id,
-        raw_data.fact_progress_indicateur.period_id
+        raw_data.fact_progress_indicateur.period_id,
+        historique_indicateur.evolution_valeur_actuelle,
+        historique_indicateur.evolution_date_valeur_actuelle
     FROM raw_data.fact_progress_indicateur
         JOIN raw_data.dim_tree_nodes ON fact_progress_indicateur.tree_node_id = dim_tree_nodes.tree_node_id
         JOIN raw_data.dim_structures ON dim_tree_nodes.structure_id = dim_structures.structure_id
+        LEFT JOIN historique_indicateur ON historique_indicateur.tree_node_id = dim_tree_nodes.tree_node_id AND
+                                      historique_indicateur.effect_id = fact_progress_indicateur.effect_id
     )
 INSERT INTO public.indicateur
     ((SELECT DISTINCT ON (effect_id)
