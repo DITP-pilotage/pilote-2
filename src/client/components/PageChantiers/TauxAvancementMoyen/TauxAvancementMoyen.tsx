@@ -2,14 +2,14 @@ import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { périmètreGéographique as périmètreGéographiqueStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
-import compterLesAvancementsÀPartirDeChantiers from '@/client/utils/chantier/avancement/calculerLesAvancementsÀPartirDeChantiers';
+import calculerLesAvancementsÀPartirDeChantiers from '@/client/utils/chantier/avancement/calculerLesAvancementsÀPartirDeChantiers';
 import TauxAvancementMoyenProps from './TauxAvancementMoyen.interface';
 
 
 export default function TauxAvancementMoyen({ chantiers }: TauxAvancementMoyenProps) {
   const périmètreGéographique = périmètreGéographiqueStore();
-  const valeursAvancements = useMemo(() => compterLesAvancementsÀPartirDeChantiers(chantiers), [chantiers]);
-  const avancementsDuTerritoire = valeursAvancements[périmètreGéographique.maille][périmètreGéographique.codeInsee];
+  const valeursAvancements = useMemo(() => calculerLesAvancementsÀPartirDeChantiers(chantiers), [chantiers]);
+  const avancementsDuTerritoire = useMemo(() => valeursAvancements[périmètreGéographique.maille][périmètreGéographique.codeInsee], [valeursAvancements, périmètreGéographique]);
   
   return (
     <>
@@ -24,22 +24,22 @@ export default function TauxAvancementMoyen({ chantiers }: TauxAvancementMoyenPr
           annuel
         </p>
         <BarreDeProgression
-          maximum={avancementsDuTerritoire.maximumAnnuel}
-          minimum={avancementsDuTerritoire.minimumAnnuel}
-          médiane={avancementsDuTerritoire.médianeAnnuel}
+          maximum={avancementsDuTerritoire.annuel.maximum}
+          minimum={avancementsDuTerritoire.annuel.minimum}
+          médiane={avancementsDuTerritoire.annuel.médiane}
           taille="grande"
-          valeur={avancementsDuTerritoire.annuel}
+          valeur={avancementsDuTerritoire.annuel.moyenne}
           variante="secondaire"
         />
         <p className="fr-mb-1v fr-mt-3w">
           global
         </p>
         <BarreDeProgression
-          maximum={avancementsDuTerritoire.maximumGlobal}
-          minimum={avancementsDuTerritoire.minimumGlobal}
-          médiane={avancementsDuTerritoire.médianeGlobal}
+          maximum={avancementsDuTerritoire.global.maximum}
+          minimum={avancementsDuTerritoire.global.minimum}
+          médiane={avancementsDuTerritoire.global.médiane}
           taille="grande"
-          valeur={avancementsDuTerritoire.global}
+          valeur={avancementsDuTerritoire.global.moyenne}
           variante="primaire"
         />
       </div>

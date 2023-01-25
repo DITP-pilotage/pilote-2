@@ -5,12 +5,6 @@ export type Axe = { id: string, nom: string } | null;
 export type Avancement = {
   global: number | null
   annuel: number | null
-  médianeGlobal?: number | null, 
-  minimumGlobal?: number | null, 
-  maximumGlobal?: number | null, 
-  médianeAnnuel?: number | null,
-  minimumAnnuel?: number | null, 
-  maximumAnnuel?: number | null,
 };
 
 export const mailles = ['nationale', 'régionale', 'départementale'] as const;
