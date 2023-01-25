@@ -14,6 +14,7 @@ import {
   périmètreGéographique as périmètreGéographiqueStore,
 } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import { récupérerAvancement, récupérerMétéo } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
+import ListeChantiersStyled from '@/components/PageChantiers/ListeChantiers/ListeChantiers.styled';
 import ListeChantiersProps from './ListeChantiers.interface';
 
 function afficherLesBarresDeProgression(avancement: Avancement) {
@@ -77,11 +78,13 @@ function colonnesChantiers(périmètreGéographique: PérimètreGéographiqueIde
 export default function ListeChantiers({ chantiers }: ListeChantiersProps) {
   const périmètreGéographique = périmètreGéographiqueStore();
   return (
-    <Tableau<typeof chantiers[number]>
-      colonnes={colonnesChantiers(périmètreGéographique)}
-      données={chantiers}
-      entité="chantiers"
-      titre="Liste des chantiers"
-    />
+    <ListeChantiersStyled>
+      <Tableau<typeof chantiers[number]>
+        colonnes={colonnesChantiers(périmètreGéographique)}
+        données={chantiers}
+        entité="chantiers"
+        titre="Liste des chantiers"
+      />
+    </ListeChantiersStyled>
   );
 }
