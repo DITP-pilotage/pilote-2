@@ -6,7 +6,6 @@ export type AvancementsBarreDeProgression = {
   annuel: AvancementBarreDeProgression, 
   global: AvancementBarreDeProgression, 
 };
-
 export default interface TauxAvancementMoyenProps {
   chantiers: Chantier[]
 }

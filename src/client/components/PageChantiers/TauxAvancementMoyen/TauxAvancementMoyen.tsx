@@ -1,34 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import { calculerMoyenne, calculerMédiane, valeurMaximum, valeurMinimum } from '@/client/utils/statistiques';
-import TauxAvancementMoyenProps, { AvancementsBarreDeProgression } from './TauxAvancementMoyen.interface';
+import { périmètreGéographique as périmètreGéographiqueStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
+import calculerLesAvancementsÀPartirDeChantiers from '@/client/utils/chantier/avancement/calculerLesAvancementsÀPartirDeChantiers';
+import TauxAvancementMoyenProps from './TauxAvancementMoyen.interface';
+
 
 export default function TauxAvancementMoyen({ chantiers }: TauxAvancementMoyenProps) {
-  const [valeursAvancementNational, setValeursAvancementNational] = useState<AvancementsBarreDeProgression>({ 
-    annuel: { moyenne: null, médiane: null, minimum: null, maximum: null }, 
-    global: { moyenne: null, médiane: null, minimum: null, maximum: null }, 
-  });
-
-  useEffect(() => {
-    const listeAvancementsNationauxAnnuel = chantiers.map(chantier => (chantier.mailles.nationale.FR.avancement.annuel));
-    const listeAvancementsNationauxGlobaux = chantiers.map(chantier => (chantier.mailles.nationale.FR.avancement.global));
-
-    setValeursAvancementNational({ 
-      annuel: { 
-        moyenne: calculerMoyenne(listeAvancementsNationauxAnnuel), 
-        médiane: calculerMédiane(listeAvancementsNationauxAnnuel), 
-        minimum: valeurMinimum(listeAvancementsNationauxAnnuel), 
-        maximum: valeurMaximum(listeAvancementsNationauxAnnuel), 
-      }, 
-      global: { 
-        moyenne: calculerMoyenne(listeAvancementsNationauxGlobaux), 
-        médiane: calculerMédiane(listeAvancementsNationauxAnnuel), 
-        minimum: valeurMinimum(listeAvancementsNationauxGlobaux), 
-        maximum: valeurMaximum(listeAvancementsNationauxGlobaux), 
-      },
-    });
-  }, [chantiers]);
+  const périmètreGéographique = périmètreGéographiqueStore();
+  const valeursAvancements = useMemo(() => calculerLesAvancementsÀPartirDeChantiers(chantiers), [chantiers]);
+  const avancementsDuTerritoire = useMemo(() => valeursAvancements[périmètreGéographique.maille][périmètreGéographique.codeInsee], [valeursAvancements, périmètreGéographique]);
   
   return (
     <>
@@ -43,22 +24,22 @@ export default function TauxAvancementMoyen({ chantiers }: TauxAvancementMoyenPr
           annuel
         </p>
         <BarreDeProgression
-          maximum={valeursAvancementNational.annuel.maximum}
-          minimum={valeursAvancementNational.annuel.minimum}
-          médiane={valeursAvancementNational.annuel.médiane}
+          maximum={avancementsDuTerritoire.annuel.maximum}
+          minimum={avancementsDuTerritoire.annuel.minimum}
+          médiane={avancementsDuTerritoire.annuel.médiane}
           taille="grande"
-          valeur={valeursAvancementNational.annuel.moyenne}
+          valeur={avancementsDuTerritoire.annuel.moyenne}
           variante="secondaire"
         />
         <p className="fr-mb-1v fr-mt-3w">
           global
         </p>
         <BarreDeProgression
-          maximum={valeursAvancementNational.global.maximum}
-          minimum={valeursAvancementNational.global.minimum}
-          médiane={valeursAvancementNational.global.médiane}
+          maximum={avancementsDuTerritoire.global.maximum}
+          minimum={avancementsDuTerritoire.global.minimum}
+          médiane={avancementsDuTerritoire.global.médiane}
           taille="grande"
-          valeur={valeursAvancementNational.global.moyenne}
+          valeur={avancementsDuTerritoire.global.moyenne}
           variante="primaire"
         />
       </div>

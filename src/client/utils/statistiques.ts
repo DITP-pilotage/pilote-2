@@ -13,22 +13,25 @@ export function calculerMoyenne(valeurs: (number | null)[]) {
 
 export function calculerMédiane(valeurs: (number | null)[]) {
   const valeursFiltrées = filtrerValeurs(valeurs);
+  
   valeursFiltrées.sort((a, b) => a - b);
   const longueur = valeursFiltrées.length;
 
   if (longueur === 0) return null;
-  return longueur % 2 === 0 
-    ? (valeursFiltrées[longueur / 2 - 1] + valeursFiltrées[longueur / 2]) / 2 
-    : valeursFiltrées[(longueur - 1) / 2];
+  else if (longueur % 2 === 0)
+    return (valeursFiltrées[longueur / 2 - 1] + valeursFiltrées[longueur / 2]) / 2; 
+  else
+    return valeursFiltrées[(longueur - 1) / 2];
 }
 
 export function valeurMinimum(valeurs: (number | null)[]) {
   const valeursFiltrées = filtrerValeurs(valeurs);
+  if (valeursFiltrées.length === 0) return null;
   return Math.min(...valeursFiltrées);
 }
 
-
 export function valeurMaximum(valeurs: (number | null)[]) {
   const valeursFiltrées = filtrerValeurs(valeurs);
+  if (valeursFiltrées.length === 0) return null;
   return Math.max(...valeursFiltrées);
 }
