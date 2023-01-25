@@ -58,7 +58,7 @@ describe('Données territoires', () => {
     it('Ajoute les données territoires d\'un chantier à la liste des données territoires agrégées', () => {
       //GIVEN
       const donnéesTerritoiresAgrégées = initialiserDonnéesTerritoiresAgrégésVide();
-      const donnéesTerritoires = listeDonnéesTerritoires[0];      
+      const donnéesTerritoires = listeDonnéesTerritoires[0];
       //WHEN
       const résultat = agrégerDonnéesTerritoiresÀUnAgrégat(donnéesTerritoiresAgrégées, donnéesTerritoires);
       //THEN
@@ -90,32 +90,36 @@ describe('Données territoires', () => {
   });
 
   describe("Récupérer météo d'un territoire", () => {
-    it("Documente l'attendu si aucune météo n'est disponible pour un territoire", () => {
+    it("Si aucune météo n'est disponible pour un département, on récupère une météo NON_RENSEIGNEE", () => {
       //WHEN
-      const résultat = récupérerMétéo(listeDonnéesTerritoires[0], 'départementale', '51');
+      const donnéesSansLeDépartement51 = listeDonnéesTerritoires[0];
+      const résultat = récupérerMétéo(donnéesSansLeDépartement51, 'départementale', '51');
       //THEN
       expect(résultat).toStrictEqual('NON_RENSEIGNEE');
     });
 
-    it("Documente l'attendu si une météo n'est disponible pour un territoire", () => {
+    it("Documente l'attendu si une météo est disponible pour un territoire", () => {
       //WHEN
-      const résultat = récupérerMétéo(listeDonnéesTerritoires[0], 'départementale', '01');
+      const donnéesTerritoire = listeDonnéesTerritoires[0];
+      const résultat = récupérerMétéo(donnéesTerritoire, 'départementale', '01');
       //THEN
       expect(résultat).toStrictEqual('NUAGE');
     });
   });
 
   describe("Récupérer l'avancement d'un territoire", () => {
-    it("Documente l'attendu si aucun avancement n'est disponible pour un territoire", () => {
+    it("Si aucun avancement n'est disponible pour une région, on récupère des valeurs d'avancements nuls", () => {
       //WHEN
-      const résultat = récupérerAvancement(listeDonnéesTerritoires[0], 'régionale', '01');
+      const donnéesSansLaRégion01 = listeDonnéesTerritoires[0];
+      const résultat = récupérerAvancement(donnéesSansLaRégion01, 'régionale', '01');
       //THEN
       expect(résultat).toStrictEqual({ 'annuel': null, 'global': null });
     });
 
     it("Documente l'attendu si un avancement est disponible pour un territoire", () => {
       //WHEN
-      const résultat = récupérerAvancement(listeDonnéesTerritoires[0], 'nationale', 'FR');
+      const donnéesTerritoires = listeDonnéesTerritoires[0];
+      const résultat = récupérerAvancement(donnéesTerritoires, 'nationale', 'FR');
       //THEN
       expect(résultat).toStrictEqual({ 'annuel': 99, 'global': 67 });
     });
