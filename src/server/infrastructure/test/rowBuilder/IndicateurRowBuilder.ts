@@ -56,6 +56,8 @@ export default class IndicateurRowBuilder {
       valeur_actuelle: null,
       date_valeur_actuelle: null,
       territoire_nom: null,
+      evolution_valeur_actuelle: [],
+      evolution_date_valeur_actuelle: [],
     };
   }
 }
