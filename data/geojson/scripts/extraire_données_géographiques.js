@@ -43,14 +43,6 @@ proj4.defs([
   [
     'EPSG:4326',
     '+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees'
-  ],
-  [
-    'Sphere-Robinson',
-    '+proj=robin +lon_0=0 +x_0=0 +y_0=0 +a=6371000 +b=6371000 +units=m +no_defs'
-  ],
-  [
-    'Gall-Peters',
-    '+proj=cea +lon_0=0 +lat_ts=45 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs'
   ]
 ]);
 
@@ -67,7 +59,7 @@ function convertirGeojson(divisionsAdministratives) {
   const geojsonDonnéesReprojetées = reproject.reproject(
     geojsonDonnées,  // coordonnées géographiques d'origine
     'EPSG:4326',     // projection cartographique d'origine
-    'Gall-Peters',   // projection cartographique cible
+    'EPSG:3857',     // projection cartographique cible
     proj4.defs,      // définition des projections cartographiques
   );
 
