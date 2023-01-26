@@ -8,6 +8,7 @@
 }}
 
 SELECT
-    perimetre_id as id,
-    per_nom as nom
-FROM raw_data.metadata_perimetre
+    id,
+    nom,
+    ministere_nom as ministere
+FROM {{ ref('stg_ppg_metadata__perimetres') }}
