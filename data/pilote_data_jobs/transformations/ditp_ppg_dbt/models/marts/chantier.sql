@@ -1,11 +1,3 @@
-{{
-    config(
-        indexes=[
-          {'columns': ['id', 'maille', 'code_insee']},
-        ]
-    )
-}}
-
 with
 
 dfakto_chantier as (
