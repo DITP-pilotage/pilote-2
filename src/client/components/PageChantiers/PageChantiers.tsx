@@ -5,7 +5,6 @@ import Titre from '@/components/_commons/Titre/Titre';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
 import TauxAvancementMoyen from './TauxAvancementMoyen/TauxAvancementMoyen';
-import RépartitionTauxAvancement from './RépartitionTauxAvancement/RépartitionTauxAvancement';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import BarreLatérale from './BarreLatérale/BarreLatérale';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
@@ -72,14 +71,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
                 </Bloc>
               </div>
             </div>
-            <div className="fr-grid-row fr-my-3w">
-              <div className="fr-col">
-                <Bloc>
-                  <RépartitionTauxAvancement />
-                </Bloc>
-              </div>
-            </div>
-            <div className="fr-grid-row">
+            <div className="fr-grid-row fr-mt-3w">
               <div className="fr-col">
                 <Bloc>
                   <ListeChantiers chantiers={chantiersFiltrés} />
