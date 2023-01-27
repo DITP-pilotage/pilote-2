@@ -1,11 +1,16 @@
 import { AvancementsBarreDeProgression } from '@/components/PageChantiers/TauxAvancementMoyen/TauxAvancementMoyen.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { Agrégation } from '@/client/utils/types';
 import { calculerMoyenne, calculerMédiane, valeurMinimum, valeurMaximum } from '../../statistiques';
-import { réduireDonnéesTerritoires, agrégerDonnéesTerritoires } from '../donnéesTerritoires/donnéesTerritoires';
+import {
+  réduireDonnéesTerritoires,
+  DonnéesTerritoires, TerritoireSansCodeInsee,
+} from '../donnéesTerritoires/donnéesTerritoires';
 
-export default function calculerLesAvancementsÀPartirDeChantiers(chantiers: Chantier[]) {
+export default function calculerLesAvancementsÀPartirDeChantiers(
+  donnéesTerritoiresAgrégés: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
+) {
   return réduireDonnéesTerritoires<AvancementsBarreDeProgression>(
-    agrégerDonnéesTerritoires(chantiers.map(chantier => chantier.mailles)),
+    donnéesTerritoiresAgrégés,
     (territoiresAgrégés) => {
       const avancementsAnnuels = territoiresAgrégés.avancement.map(avancement => avancement.annuel);
       const avancementsGlobaux = territoiresAgrégés.avancement.map(avancement => avancement.global);

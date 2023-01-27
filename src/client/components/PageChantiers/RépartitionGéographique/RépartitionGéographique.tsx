@@ -6,17 +6,17 @@ import CartographieTauxAvancement from '@/components/_commons/Cartographie/Carto
 import { niveauDeMaille as niveauDeMailleStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
 
-export default function RépartitionGéographique({ chantiers }: RépartitionGéographiqueProps) {
+export default function RépartitionGéographique({ donnéesTerritoiresAgrégées }: RépartitionGéographiqueProps) {
   const niveauDeMaille = niveauDeMailleStore();
   const donnéesCartographie = useMemo(() => (
     préparerDonnéesCartographieÀPartirDUneListe(
-      chantiers.map(chantier => chantier.mailles),
+      donnéesTerritoiresAgrégées,
       (territoiresAgrégés) => {
         const valeurs = territoiresAgrégés.avancement.map(avancement => avancement.global);
         return calculerMoyenne(valeurs);
       },
     )
-  ), [chantiers]);
+  ), [donnéesTerritoiresAgrégées]);
 
   return (
     <>

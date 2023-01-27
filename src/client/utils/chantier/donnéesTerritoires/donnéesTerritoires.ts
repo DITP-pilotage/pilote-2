@@ -1,6 +1,5 @@
 import { Maille, mailles, Territoire } from '@/server/domain/chantier/Chantier.interface';
 import { Agrégation } from '@/client/utils/types';
-import essayer from '@/client/utils/essayer';
 
 const codes = {
   nationale: [
@@ -41,11 +40,15 @@ function initialiserDonnéesTerritoires<T>(donnéesInitiales: T) {
 }
 
 export function récupérerAvancement(donnéesTerritoires: DonnéesTerritoires<TerritoireSansCodeInsee>, maille: Maille, codeInsee: string) {
-  return essayer(() => donnéesTerritoires[maille][codeInsee].avancement, { annuel: null, global: null });
+  return donnéesTerritoires && donnéesTerritoires[maille] && donnéesTerritoires[maille][codeInsee] && donnéesTerritoires[maille][codeInsee].avancement
+    ? donnéesTerritoires[maille][codeInsee].avancement
+    : { annuel: null, global: null };
 }
 
 export function récupérerMétéo(donnéesTerritoires: DonnéesTerritoires<TerritoireSansCodeInsee>, maille: Maille, codeInsee: string) {
-  return essayer(() => donnéesTerritoires[maille][codeInsee].météo, 'NON_RENSEIGNEE');
+  return donnéesTerritoires && donnéesTerritoires[maille] && donnéesTerritoires[maille][codeInsee] && donnéesTerritoires[maille][codeInsee].météo
+    ? donnéesTerritoires[maille][codeInsee].météo
+    : 'NON_RENSEIGNEE';
 }
 
 export function initialiserDonnéesTerritoiresAgrégésVide() {

@@ -1,10 +1,14 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Météo from '@/server/domain/chantier/Météo.interface';
+import {
+  DonnéesTerritoires,
+  TerritoireSansCodeInsee,
+} from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
+import { Agrégation } from '@/client/utils/types';
 
 export type CompteurMétéos = {
   [k in Météo]: number;
 };
 
 export default interface RépartitonMétéoProps {
-  chantiers: Chantier[];
+  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>;
 }
