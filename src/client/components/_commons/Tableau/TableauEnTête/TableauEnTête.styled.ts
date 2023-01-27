@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const TableauEnTêteStyled = styled.div`
+const TableauEnTêteStyled = styled.span`
   .actif {
     background: var(--background-active-blue-france);
   }
