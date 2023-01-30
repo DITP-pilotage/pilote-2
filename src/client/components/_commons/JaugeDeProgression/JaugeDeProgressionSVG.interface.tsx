@@ -1,4 +1,4 @@
 export default interface JaugeDeProgressionSVGProps {
-  pourcentage: number;
+  pourcentage: number | null;
   taille: 'grande' | 'petite';
 }

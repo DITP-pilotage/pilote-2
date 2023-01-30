@@ -4,6 +4,6 @@ export type JaugeDeProgressionTaille = 'grande' | 'petite';
 export interface JaugeDeProgressionProps {
   couleur: JaugeDeProgressionCouleur,
   libellé: string,
-  pourcentage: number,
+  pourcentage: number | null,
   taille: JaugeDeProgressionTaille,
 }

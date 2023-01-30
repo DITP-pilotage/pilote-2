@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
-import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { périmètreGéographique as périmètreGéographiqueStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import calculerLesAvancementsÀPartirDeChantiers from '@/client/utils/chantier/avancement/calculerLesAvancementsÀPartirDeChantiers';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
@@ -25,7 +24,7 @@ export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: T
           <JaugeDeProgression
             couleur='bleu'
             libellé="Taux d'avancement global"
-            pourcentage={37}
+            pourcentage={avancementsDuTerritoire.global.moyenne}
             taille='grande'
           />
         </div>
@@ -35,7 +34,7 @@ export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: T
               <JaugeDeProgression
                 couleur='orange'
                 libellé="Minimum"
-                pourcentage={37}
+                pourcentage={avancementsDuTerritoire.global.minimum}
                 taille='petite'
               />
             </div>
@@ -43,7 +42,7 @@ export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: T
               <JaugeDeProgression
                 couleur='violet'
                 libellé="Médiane"
-                pourcentage={37}
+                pourcentage={avancementsDuTerritoire.global.médiane}
                 taille='petite'
               />
             </div>
@@ -51,7 +50,7 @@ export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: T
               <JaugeDeProgression
                 couleur='vert'
                 libellé="Maximum"
-                pourcentage={37}
+                pourcentage={avancementsDuTerritoire.global.maximum}
                 taille='petite'
               />
             </div>

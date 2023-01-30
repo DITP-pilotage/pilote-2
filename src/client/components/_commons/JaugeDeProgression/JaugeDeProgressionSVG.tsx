@@ -48,32 +48,39 @@ function tracerValeurJauge(pourcentage: number, taille: JaugeDeProgressionTaille
 
 function JaugeDeProgressionSVG({ pourcentage, taille }: JaugeDeProgressionSVGProps) {
   const id = useId();
-  return (<svg
-    viewBox={`0 0 ${TAILLE_VIEWBOX} ${TAILLE_VIEWBOX}`}
-    xmlns="http://www.w3.org/2000/svg"
-          >
-    <g
-      clipPath={`url(#masque-${id})`}
+  return (
+    <svg
+      viewBox={`0 0 ${TAILLE_VIEWBOX} ${TAILLE_VIEWBOX}`}
+      xmlns="http://www.w3.org/2000/svg"
     >
-      <rect
-        className="jauge-barre-fond"
-        height={TAILLE_VIEWBOX}
-        width={TAILLE_VIEWBOX}
-      />
-      <path
-        className="jauge-barre-valeur"
-        d={tracerValeurJauge(pourcentage, taille)}
-        transform={`rotate(${TRACÉS[taille].angleDépart} ${CENTRE_VIEWBOX.x} ${CENTRE_VIEWBOX.y})`}
-      />
-    </g>
-    <defs>
-      <clipPath id={`masque-${id}`}>
-        <path
-          d={TRACÉS[taille].tracéSVG}
+      <g
+        clipPath={`url(#masque-${id})`}
+      >
+        <rect
+          className="jauge-barre-fond"
+          height={TAILLE_VIEWBOX}
+          width={TAILLE_VIEWBOX}
         />
-      </clipPath>
-    </defs>
-  </svg>);
+        {
+        pourcentage
+          ?
+            <path
+              className="jauge-barre-valeur"
+              d={tracerValeurJauge(pourcentage!, taille)}
+              transform={`rotate(${TRACÉS[taille].angleDépart} ${CENTRE_VIEWBOX.x} ${CENTRE_VIEWBOX.y})`}
+            />
+          : null
+      }
+      </g>
+      <defs>
+        <clipPath id={`masque-${id}`}>
+          <path
+            d={TRACÉS[taille].tracéSVG}
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  );
 }
 
 export default JaugeDeProgressionSVG;
