@@ -4,12 +4,12 @@ import os
 
 def model(dbt, session):
     dump_dfakto_rp_views_data = os.getenv('DUMP_DFAKTO_RP_VIEWS_DATA')
-    my_sql_model_df = pd.read_csv(
+    view_data_properties = pd.read_csv(
         f'{dump_dfakto_rp_views_data}/rp_view_data_properties.csv',
         sep=';'
     )
 
-    my_sql_model_df = my_sql_model_df.rename(columns={
+    view_data_properties = view_data_properties.rename(columns={
         "Réforme Code": 'reforme_code',
         "Région Code": 'region_code',
         "Académie Code": 'departement_code',
@@ -51,44 +51,26 @@ def model(dbt, session):
         "Référent local - GROUPE - date de mise à jour": 'referent_local_groupe_date_de_mise_a_jour',
     })
 
+    columns_type = {
+        'meteo_date_de_mise_a_jour': 'datetime64',
+        'chef_de_projet_national_date_de_mise_a_jour': 'datetime64',
+        'objectifs_de_la_reforme_date_de_mise_a_jour': 'datetime64',
+        'synthese_des_resultats_date_de_mise_a_jour': 'datetime64',
+        'difficultes_rencontrees_et_risques_anticipes_date_de_mise': 'datetime64',
+        'solutions_proposees_et_prochaines_etapes_date_de_mise_a_jo': 'datetime64',
+        'un_exemple_concret_de_reussite_liee_a_la_reforme_date_de': 'datetime64',
+        'dernieres_realisations_et_suivi_des_decisions_date_de_mise': 'datetime64',
+        'methodologie_de_renseignement_de_la_meteo_date_de_mise_a': 'datetime64',
+        'equipe_projet_donnee_qualitative_utilisateurs_date_de_mise': 'datetime64',
+        'equipe_projet_donnee_qualitative_groupe_date_de_mise_a_jo': 'datetime64',
+        'equipe_projet_donnee_quantitative_utilisateurs_date_de_mis': 'datetime64',
+        'dac_date_de_mise_a_jour': 'datetime64',
+        'acces_en_consultation_utilisateurs_date_de_mise_a_jour': 'datetime64',
+        'contexte_local_date_de_mise_a_jour': 'datetime64',
+        'feuille_de_route_date_de_mise_a_jour': 'datetime64',
+        'referent_local_groupe_date_de_mise_a_jour': 'datetime64',
+    }
 
+    view_data_properties = view_data_properties.astype(columns_type)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    return my_sql_model_df
+    return view_data_properties
