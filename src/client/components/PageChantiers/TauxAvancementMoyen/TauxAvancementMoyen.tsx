@@ -3,6 +3,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { périmètreGéographique as périmètreGéographiqueStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import calculerLesAvancementsÀPartirDeChantiers from '@/client/utils/chantier/avancement/calculerLesAvancementsÀPartirDeChantiers';
+import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import TauxAvancementMoyenProps from './TauxAvancementMoyen.interface';
 
 
@@ -19,6 +20,26 @@ export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: T
       >
         Taux d’avancement moyen de la sélection
       </Titre>
+      <JaugeDeProgression
+        couleur='bleu'
+        pourcentage={37}
+        taille='grande'
+      />
+      <JaugeDeProgression
+        couleur='orange'
+        pourcentage={37}
+        taille='petite'
+      />
+      <JaugeDeProgression
+        couleur='violet'
+        pourcentage={37}
+        taille='petite'
+      />
+      <JaugeDeProgression
+        couleur='vert'
+        pourcentage={37}
+        taille='petite'
+      />
       <div>
         <p className="fr-mb-1v">
           annuel
