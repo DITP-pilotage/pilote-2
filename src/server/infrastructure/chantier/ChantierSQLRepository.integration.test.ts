@@ -231,6 +231,64 @@ describe('ChantierSQLRepository', () => {
       // THEN
       expect(result).toStrictEqual({ '01': 10, '13': 20 });
     });
+
+    test('renvoie les moyennes pour un chantier associé à plusieurs périmètres', async () => {
+      // GIVEN
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+      await prisma.chantier.createMany({
+        data: [
+          new ChantierRowBuilder().withId('CH-001').withPérimètresIds(['PER-001', 'PER-002']).withMaille('DEPT').withCodeInsee('01')
+            .withTauxAvancement(12).build(),
+        ],
+      });
+
+      // WHEN
+      const result = await repository.getAvancementMoyenParDépartement(['PER-001']);
+
+      // THEN
+      expect(result).toStrictEqual({ '01': 12 });
+    });
+
+    test('renvoie les moyennes pour plusieurs périmètres', async () => {
+      // GIVEN
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+      await prisma.chantier.createMany({
+        data: [
+          new ChantierRowBuilder().withId('CH-001').withPérimètresIds(['PER-001']).withMaille('DEPT').withCodeInsee('01')
+            .withTauxAvancement(10).build(),
+          new ChantierRowBuilder().withId('CH-002').withPérimètresIds(['PER-002']).withMaille('DEPT').withCodeInsee('01')
+            .withTauxAvancement(20).build(),
+        ],
+      });
+
+      // WHEN
+      const result = await repository.getAvancementMoyenParDépartement(['PER-001', 'PER-002']);
+
+      // THEN
+      expect(result).toStrictEqual({ '01': 15 });
+    });
+
+    test('renvoie les moyennes pour plusieurs périmètres avec des données partielles', async () => {
+      // GIVEN
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+      await prisma.chantier.createMany({
+        data: [
+          new ChantierRowBuilder().withId('CH-001').withPérimètresIds(['PER-001']).withMaille('DEPT').withCodeInsee('01')
+            .withTauxAvancement(10).build(),
+          new ChantierRowBuilder().withId('CH-002').withPérimètresIds(['PER-002']).withMaille('DEPT').withCodeInsee('02')
+            .withTauxAvancement(20).build(),
+        ],
+      });
+
+      // WHEN
+      const result = await repository.getAvancementMoyenParDépartement(['PER-001', 'PER-002']);
+
+      // THEN
+      expect(result).toStrictEqual({ '01': 10, '02': 20 });
+    });
   });
 
   describe("Gestion d'erreur", () => {

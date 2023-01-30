@@ -39,13 +39,12 @@ export default class ChantierSQLRepository implements ChantierRepository {
   }
 
   // Donner un nom de type au record (donnéesTerritoriales ?)
-  // Implémenter l'équivalent dans random repository
-  // Faire fonctionner avec plusieur périmètres
+  // Implémenter l'équivalent (simplifié au max) dans random repository
   async getAvancementMoyenParDépartement(périmètreIds: string[]): Promise<Record<string, number | null>> {
     const chantierRows: chantier[] = await this.prisma.$queryRaw`
         select code_insee, avg(taux_avancement) as taux_avancement
         from chantier
-        where maille = 'DEPT' and ${périmètreIds[0]} = any(perimetre_ids)
+        where maille = 'DEPT' and ${périmètreIds} && perimetre_ids
         group by code_insee
     ;`;
     const result: Record<string, number | null> = {};
