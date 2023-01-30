@@ -5,7 +5,7 @@ import CartographieLégendeÉlément from './Élément/CartographieLégendeÉlé
 
 export default function CartographieLégende({ élémentsDeLégende }: CartographieLégendeProps) {
   return (
-    <CartographieLégendeStyled className="fr-mt-1w">
+    <CartographieLégendeStyled className="fr-mt-1w fr-mb-3w">
       {
         élémentsDeLégende.map(({ couleur, libellé, picto }) => (
           <CartographieLégendeÉlément

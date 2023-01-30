@@ -5,7 +5,7 @@ type CartographieLégendeÉlémentStyledProps = {
 };
 
 const CartographieLégendeÉlémentStyled = styled.li<CartographieLégendeÉlémentStyledProps>`
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   line-height: 1rem;
   color: var(--text-mention-grey);
 

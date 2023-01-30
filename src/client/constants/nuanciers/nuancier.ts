@@ -1,4 +1,4 @@
-import { Météo } from '@/server/domain/chantier/Météo.interface';
+import Météo from '@/server/domain/chantier/Météo.interface';
 
 export type NuancierPourcentage = {
   seuil: number,
