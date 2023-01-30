@@ -5,13 +5,13 @@ import { CartographieValeur } from '../CartographieAffichage/CartographieAfficha
 import CartographieLégende from '../CartographieAffichage/Légende/CartographieLégende';
 
 function couleurDeRemplissage(valeur: CartographieValeur) {
-  return valeur
+  return valeur && typeof valeur === 'number'
     ? nuancierPourcentage.find(({ seuil }) => seuil >= valeur)?.couleur || '#dedede'
     : '#dedede';
 }
   
 function formaterValeur(valeur: CartographieValeur) {
-  return valeur ? `${valeur.toFixed(0)}%` : 'Non renseigné';
+  return valeur && typeof valeur === 'number' ? `${valeur.toFixed(0)}%` : 'Non renseigné';
 }
 
 
@@ -28,8 +28,7 @@ export default function CartographieTauxAvancement({ données, niveauDeMaille, o
     >
       <CartographieLégende élémentsDeLégende={
         nuancierPourcentage.map(({ couleur, libellé }) => ({
-          // eslint-disable-next-line react/jsx-one-expression-per-line
-          composant: <span>{ libellé }</span>,
+          libellé,
           couleur,
         }))
       }

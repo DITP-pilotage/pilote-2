@@ -12,6 +12,10 @@ const CartographieLégendeStyled = styled.ul`
     display: flex;
     align-items: center;
     padding: 0;
+
+    > img {
+      height: 1.4rem
+    }
   }
 `;
 

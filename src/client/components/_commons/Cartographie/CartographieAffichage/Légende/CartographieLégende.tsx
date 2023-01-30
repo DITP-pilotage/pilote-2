@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import CartographieLégendeProps from './CartographieLégende.interface';
 import CartographieLégendeStyled from './CartographieLégende.styled';
 import CartographieLégendeÉlément from './Élément/CartographieLégendeÉlément';
@@ -6,12 +7,20 @@ export default function CartographieLégende({ élémentsDeLégende }: Cartograp
   return (
     <CartographieLégendeStyled className="fr-mt-1w">
       {
-        élémentsDeLégende.map(({ couleur, composant }) => (
+        élémentsDeLégende.map(({ couleur, libellé, picto }) => (
           <CartographieLégendeÉlément
             couleur={couleur}
             key={`carto-légende-${couleur}`}
           >
-            { composant }
+            <span>
+              {libellé}
+            </span>
+            { picto ?
+              <Image
+                alt={libellé}
+                src={picto}
+              /> 
+              : null }
           </CartographieLégendeÉlément>
         ))
       }

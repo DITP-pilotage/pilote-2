@@ -3,14 +3,18 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieTauxAvancement from '@/components/_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
 import { préparerDonnéesCartographieÀPartirDUnÉlément } from '@/client/utils/cartographie/préparerDonnéesCartographie';
+import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
 import CartesProps from './Cartes.interface';
 
 export default function Cartes({ chantier }: CartesProps) {
-  const donnéesCartographie = useMemo(() => (
+  const donnéesCartographieAvancement = useMemo(() => (
     préparerDonnéesCartographieÀPartirDUnÉlément(chantier.mailles, territoire => territoire.avancement.global)
-  )
-  , [chantier]);
+  ), [chantier]);
   
+  const donnéesCartographieMétéo = useMemo(() => (
+    préparerDonnéesCartographieÀPartirDUnÉlément(chantier.mailles, territoire => territoire.météo)
+  ), [chantier]);
+
   return (
     <div 
       className='fr-pb-5w'
@@ -29,7 +33,7 @@ export default function Cartes({ chantier }: CartesProps) {
               Répartition géographique du taux d’avancement du chantier
             </Titre>
             <CartographieTauxAvancement
-              données={donnéesCartographie}
+              données={donnéesCartographieAvancement}
               niveauDeMaille="départementale"
             />
           </Bloc>
@@ -42,9 +46,10 @@ export default function Cartes({ chantier }: CartesProps) {
             >
               Répartition géographique du niveau de confiance
             </Titre>
-            <p className='fr-grid-row fr-grid-row--center'>
-              A venir...
-            </p>
+            <CartographieMétéo
+              données={donnéesCartographieMétéo}
+              niveauDeMaille="départementale"
+            />
           </Bloc>
         </div>
       </div>

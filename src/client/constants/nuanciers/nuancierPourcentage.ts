@@ -1,6 +1,6 @@
-import Nuancier from '@/client/constants/nuanciers/nuancier';
+import { NuancierPourcentage } from './nuancier';
 
-const nuancierPourcentage: Nuancier = [
+const nuancierPourcentage: NuancierPourcentage = [
   {
     seuil : 10,
     libellé: '0-10%',
