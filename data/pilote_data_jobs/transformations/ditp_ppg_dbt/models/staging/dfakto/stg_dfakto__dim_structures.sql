@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('dfakto', 'dim_structures') }}
+    select * from {{ ref('dim_structures') }}
 
 ),
 

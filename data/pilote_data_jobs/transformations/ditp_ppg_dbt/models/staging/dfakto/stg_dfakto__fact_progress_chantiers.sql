@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('dfakto', 'fact_progress_chantier') }}
+    select * from {{ ref('fact_progress_chantiers') }}
 
 ),
 

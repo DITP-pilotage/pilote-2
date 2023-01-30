@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('dfakto', 'dim_tree_nodes') }}
+    select * from {{ ref('dim_tree_nodes') }}
 
 ),
 
@@ -16,12 +16,12 @@ renamed as (
         tree_node_name as nom,
         tree_node_code as code,
         case
-            when split_part(tree_node_code, '-', 1) = 'OVQ' then 'FRANCE'
-            else split_part(tree_node_code, '-', 2)
+            when str_split(tree_node_code, '-')[1] = 'OVQ' then 'FRANCE'
+            else str_split(tree_node_code, '-')[2]
         end as code_region,
         case
-            when split_part(tree_node_code, '-', 1) = 'OVQ' then split_part(tree_node_code, '-', 2)
-            else split_part(tree_node_code, '-', 1)
+            when str_split(tree_node_code, '-')[1] = 'OVQ' then str_split(tree_node_code, '-')[2]
+            else str_split(tree_node_code, '-')[1]
         end as code_chantier,
         tree_node_status as status,
         tree_node_last_synchronization_date as last_synchronization_date,

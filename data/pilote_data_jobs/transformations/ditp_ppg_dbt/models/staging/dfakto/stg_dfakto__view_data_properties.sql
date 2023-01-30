@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('dfakto', 'view_data_properties') }}
+    select * from {{ ref('view_data_properties') }}
 
 ),
 
@@ -15,12 +15,12 @@ renamed as (
         departement_code,
         academie_code,
         case
-            when split_part(reforme_code, '-', 1) = 'OVQ' then 'FRANCE'
-            else split_part(coalesce(NULLIF(region_code,''), NULLIF(academie_code,''), departement_code), '-', 2)
+            when str_split(reforme_code, '-')[1] = 'OVQ' then 'FRANCE'
+            else str_split(coalesce(NULLIF(region_code,''), NULLIF(academie_code,''), departement_code), '-')[2]
         end as code_region,
         case
-            when split_part(reforme_code, '-', 1) = 'OVQ' then split_part(reforme_code, '-', 2)
-            else split_part(coalesce(NULLIF(region_code,''), NULLIF(academie_code,''), departement_code), '-', 1)
+            when str_split(reforme_code, '-')[1] = 'OVQ' then str_split(reforme_code, '-')[2]
+            else str_split(coalesce(NULLIF(region_code,''), NULLIF(academie_code,''), departement_code), '-')[1]
         end as code_chantier,
         objectifs_de_la_reforme,
         synthese_des_resultats,

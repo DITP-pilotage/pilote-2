@@ -34,6 +34,8 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   ditp_ppg_dbt:
     +materialized: table
+    raw:
+      +schema: "raw_data"
     staging:
       +schema: "raw_data"
       +materialized: view
