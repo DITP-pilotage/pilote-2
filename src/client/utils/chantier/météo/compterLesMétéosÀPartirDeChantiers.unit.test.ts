@@ -3,6 +3,7 @@ import compterLesMétéosÀPartirDeChantiers from '@/client/utils/chantier/mét�
 import ChantierFixture from '@/fixtures/ChantierFixture';
 import Météo from '@/server/domain/chantier/Météo.interface';
 import { Maille, Territoire } from '@/server/domain/chantier/Chantier.interface';
+import { agrégerDonnéesTerritoires } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 
 function générerChantierAvecMaille(maille: Maille, valeurMaille: Record<string, Territoire>) {
   return ChantierFixture.générer({
@@ -34,9 +35,10 @@ describe('compterLesMétéosÀPartirDeChantiers', () => {
       générerChantierAvecMaille('nationale', { 'FR': générerTerritoireAvecMétéo('FR', 'COUVERT') }),
       générerChantierAvecMaille('nationale', { 'FR': générerTerritoireAvecMétéo('FR', 'COUVERT') }),
     ];
+    const donnéesTerritoiresAgrégées = agrégerDonnéesTerritoires(chantiers.map(chantier => chantier.mailles));
 
     // WHEN
-    const résultat = compterLesMétéosÀPartirDeChantiers(chantiers);
+    const résultat = compterLesMétéosÀPartirDeChantiers(donnéesTerritoiresAgrégées);
 
     // THEN
     const attendu = {
@@ -66,9 +68,10 @@ describe('compterLesMétéosÀPartirDeChantiers', () => {
         '21': générerTerritoireAvecMétéo('21', 'COUVERT'),
       }),
     ];
+    const donnéesTerritoiresAgrégées = agrégerDonnéesTerritoires(chantiers.map(chantier => chantier.mailles));
 
     // WHEN
-    const résultat = compterLesMétéosÀPartirDeChantiers(chantiers);
+    const résultat = compterLesMétéosÀPartirDeChantiers(donnéesTerritoiresAgrégées);
 
     // THEN
     const attenduDept2B = {
@@ -102,9 +105,10 @@ describe('compterLesMétéosÀPartirDeChantiers', () => {
         '2B': générerTerritoireAvecMétéo('2B', 'SOLEIL'),
       }),
     ];
+    const donnéesTerritoiresAgrégées = agrégerDonnéesTerritoires(chantiers.map(chantier => chantier.mailles));
 
     // WHEN
-    const résultat = compterLesMétéosÀPartirDeChantiers(chantiers);
+    const résultat = compterLesMétéosÀPartirDeChantiers(donnéesTerritoiresAgrégées);
 
     // THEN
     expect(résultat.départementale['21'].NON_RENSEIGNEE).toEqual(1);

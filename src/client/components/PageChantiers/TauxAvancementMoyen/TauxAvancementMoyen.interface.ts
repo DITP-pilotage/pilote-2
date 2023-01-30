@@ -1,4 +1,8 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import {
+  DonnéesTerritoires,
+  TerritoireSansCodeInsee,
+} from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
+import { Agrégation } from '@/client/utils/types';
 
 type AvancementBarreDeProgression = { moyenne: null | number, médiane: null | number, minimum: null | number, maximum: null | number };
 
@@ -7,5 +11,5 @@ export type AvancementsBarreDeProgression = {
   global: AvancementBarreDeProgression, 
 };
 export default interface TauxAvancementMoyenProps {
-  chantiers: Chantier[]
+  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>
 }

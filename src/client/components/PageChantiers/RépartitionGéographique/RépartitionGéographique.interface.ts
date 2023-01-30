@@ -1,5 +1,9 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import {
+  DonnéesTerritoires,
+  TerritoireSansCodeInsee,
+} from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
+import { Agrégation } from '@/client/utils/types';
 
 export default interface RépartitionGéographiqueProps {
-  chantiers: Chantier[]
+  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>
 }

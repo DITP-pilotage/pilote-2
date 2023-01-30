@@ -6,9 +6,9 @@ import calculerLesAvancementsÀPartirDeChantiers from '@/client/utils/chantier/a
 import TauxAvancementMoyenProps from './TauxAvancementMoyen.interface';
 
 
-export default function TauxAvancementMoyen({ chantiers }: TauxAvancementMoyenProps) {
+export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: TauxAvancementMoyenProps) {
   const périmètreGéographique = périmètreGéographiqueStore();
-  const valeursAvancements = useMemo(() => calculerLesAvancementsÀPartirDeChantiers(chantiers), [chantiers]);
+  const valeursAvancements = useMemo(() => calculerLesAvancementsÀPartirDeChantiers(donnéesTerritoiresAgrégées), [donnéesTerritoiresAgrégées]);
   const avancementsDuTerritoire = useMemo(() => valeursAvancements[périmètreGéographique.maille][périmètreGéographique.codeInsee], [valeursAvancements, périmètreGéographique]);
   
   return (

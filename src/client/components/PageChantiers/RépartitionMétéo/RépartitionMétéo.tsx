@@ -9,9 +9,9 @@ import RépartitionMétéoStyled from './RépartitionMétéo.styled';
 
 const météosÀAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
 
-export default function RépartitionMétéo({ chantiers }: RépartitonMétéoProps) {
+export default function RépartitionMétéo({ donnéesTerritoiresAgrégées }: RépartitonMétéoProps) {
 
-  const compteursMétéos = useMemo(() => compterLesMétéosÀPartirDeChantiers(chantiers), [chantiers]);
+  const compteursMétéos = useMemo(() => compterLesMétéosÀPartirDeChantiers(donnéesTerritoiresAgrégées), [donnéesTerritoiresAgrégées]);
   const périmètreGéographique = périmètreGéographiqueStore();
 
   return (

@@ -2,6 +2,9 @@ import { useMemo, useState } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import { filtresActifs as filtresActifsStore, actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import Titre from '@/components/_commons/Titre/Titre';
+import {
+  agrégerDonnéesTerritoires,
+} from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
 import TauxAvancementMoyen from './TauxAvancementMoyen/TauxAvancementMoyen';
@@ -28,6 +31,8 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
       ))
     ));
   }, [chantiers, filtresActifs]);
+
+  const donnéesTerritoiresAgrégées = useMemo(() => agrégerDonnéesTerritoires(chantiersFiltrés.map(chantier => chantier.mailles)), [chantiersFiltrés]);
 
   return (
     <PageChantiersStyled className="flex">
@@ -60,21 +65,21 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
             <div className="fr-grid-row fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
-                  <RépartitionGéographique chantiers={chantiersFiltrés} />
+                  <RépartitionGéographique donnéesTerritoiresAgrégées={donnéesTerritoiresAgrégées} />
                 </Bloc>
               </div>
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
-                  <TauxAvancementMoyen chantiers={chantiersFiltrés} />
+                  <TauxAvancementMoyen donnéesTerritoiresAgrégées={donnéesTerritoiresAgrégées} />
                   <hr className='fr-hr fr-my-3w fr-pb-1v' />
-                  <RépartitionMétéo chantiers={chantiersFiltrés} />
+                  <RépartitionMétéo donnéesTerritoiresAgrégées={donnéesTerritoiresAgrégées} />
                 </Bloc>
               </div>
             </div>
             <div className="fr-grid-row fr-mt-3w">
               <div className="fr-col">
                 <Bloc>
-                  <ListeChantiers chantiers={chantiersFiltrés} />
+                  <ListeChantiers chantiers={chantiersFiltrés}  />
                 </Bloc>
               </div>
             </div>

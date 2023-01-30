@@ -1,13 +1,14 @@
 import {
-  agrégerDonnéesTerritoires,
-  réduireDonnéesTerritoires,
+  DonnéesTerritoires, réduireDonnéesTerritoires, TerritoireSansCodeInsee,
 } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 import { CompteurMétéos } from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéoProps.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { Agrégation } from '@/client/utils/types';
 
-export default function compterLesMétéosÀPartirDeChantiers(chantiers: Chantier[]) {
+export default function compterLesMétéosÀPartirDeChantiers(
+  donnéesTerritoiresAgrégés: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
+) {
   return réduireDonnéesTerritoires<CompteurMétéos>(
-    agrégerDonnéesTerritoires(chantiers.map(chantier => chantier.mailles)),
+    donnéesTerritoiresAgrégés,
     (territoiresAgrégés) => {
       const météos = territoiresAgrégés.météo;
       return {
