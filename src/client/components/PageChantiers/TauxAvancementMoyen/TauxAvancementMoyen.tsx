@@ -5,7 +5,6 @@ import calculerLesAvancementsÀPartirDeChantiers from '@/client/utils/chantier/a
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import TauxAvancementMoyenProps from './TauxAvancementMoyen.interface';
 
-
 export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: TauxAvancementMoyenProps) {
   const périmètreGéographique = périmètreGéographiqueStore();
   const valeursAvancements = useMemo(() => calculerLesAvancementsÀPartirDeChantiers(donnéesTerritoiresAgrégées), [donnéesTerritoiresAgrégées]);
