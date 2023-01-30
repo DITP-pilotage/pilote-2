@@ -13,61 +13,51 @@ export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: T
   const avancementsDuTerritoire = useMemo(() => valeursAvancements[périmètreGéographique.maille][périmètreGéographique.codeInsee], [valeursAvancements, périmètreGéographique]);
   
   return (
-    <>
-      <Titre
-        baliseHtml='h2'
-        className='fr-h6'
-      >
-        Taux d’avancement moyen de la sélection
-      </Titre>
-      <JaugeDeProgression
-        couleur='bleu'
-        libellé="Taux d'avancement global"
-        pourcentage={37}
-        taille='grande'
-      />
-      <JaugeDeProgression
-        couleur='orange'
-        libellé="Minimum"
-        pourcentage={37}
-        taille='petite'
-      />
-      <JaugeDeProgression
-        couleur='violet'
-        libellé="Médiane"
-        pourcentage={37}
-        taille='petite'
-      />
-      <JaugeDeProgression
-        couleur='vert'
-        libellé="Maximum"
-        pourcentage={37}
-        taille='petite'
-      />
-      <div>
-        <p className="fr-mb-1v">
-          annuel
-        </p>
-        <BarreDeProgression
-          maximum={avancementsDuTerritoire.annuel.maximum}
-          minimum={avancementsDuTerritoire.annuel.minimum}
-          médiane={avancementsDuTerritoire.annuel.médiane}
-          taille="grande"
-          valeur={avancementsDuTerritoire.annuel.moyenne}
-          variante="secondaire"
-        />
-        <p className="fr-mb-1v fr-mt-3w">
-          global
-        </p>
-        <BarreDeProgression
-          maximum={avancementsDuTerritoire.global.maximum}
-          minimum={avancementsDuTerritoire.global.minimum}
-          médiane={avancementsDuTerritoire.global.médiane}
-          taille="grande"
-          valeur={avancementsDuTerritoire.global.moyenne}
-          variante="primaire"
-        />
+    <div className='fr-container--fluid'>
+      <div className="fr-grid-row">
+        <Titre
+          baliseHtml='h2'
+          className='fr-h6'
+        >
+          Taux d’avancement moyen de la sélection
+        </Titre>
+        <div className="fr-col-12 fr-col-lg-5">
+          <JaugeDeProgression
+            couleur='bleu'
+            libellé="Taux d'avancement global"
+            pourcentage={37}
+            taille='grande'
+          />
+        </div>
+        <div className="fr-col-12 fr-col-lg-7">
+          <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+            <div className="fr-col-3">
+              <JaugeDeProgression
+                couleur='orange'
+                libellé="Minimum"
+                pourcentage={37}
+                taille='petite'
+              />
+            </div>
+            <div className="fr-col-3">
+              <JaugeDeProgression
+                couleur='violet'
+                libellé="Médiane"
+                pourcentage={37}
+                taille='petite'
+              />
+            </div>
+            <div className="fr-col-3">
+              <JaugeDeProgression
+                couleur='vert'
+                libellé="Maximum"
+                pourcentage={37}
+                taille='petite'
+              />
+            </div>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
