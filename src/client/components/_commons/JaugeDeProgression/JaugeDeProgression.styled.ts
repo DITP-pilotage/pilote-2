@@ -22,13 +22,28 @@ const largeurs = {
 };
 
 const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`
+  position: relative;
   width: ${(props) => largeurs[props.taille]};
 
-  .jauge-fond {
+  .jauge-valeur-centré,
+  .jauge-valeur-dessous {
+    color: ${(props) => couleurs[props.couleur]};
+  }
+
+  .jauge-valeur-centré {
+    position: absolute;
+    top: calc(50% - 1rem);
+    width: 100%;
+    margin: 0;
+    line-height: 2rem !important;
+    text-align: center;
+  }
+
+  .jauge-barre-fond {
     fill: #d9d9d9;
   }
 
-  .jauge-valeur {
+  .jauge-barre-valeur {
     fill: ${(props) => couleurs[props.couleur]};
   }
 `;
