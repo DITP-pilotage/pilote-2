@@ -8,16 +8,16 @@ const nuancierMétéo: NuancierMétéo = [
     couleur : '#B34000',
     picto: pictosMétéos.ORAGE.picto,
   }, {
-    valeur: 'NUAGE',
-    libellé: pictosMétéos.NUAGE.nom,
-    couleur: '#EFCB3A',
-    picto: pictosMétéos.NUAGE.picto,
-  }, {
     valeur : 'COUVERT',
     libellé: pictosMétéos.COUVERT.nom,
     couleur : '#95E257',
     picto: pictosMétéos.COUVERT.picto,
   }, {
+    valeur: 'NUAGE',
+    libellé: pictosMétéos.NUAGE.nom,
+    couleur: '#EFCB3A',
+    picto: pictosMétéos.NUAGE.picto,
+  },  {
     valeur: 'SOLEIL',
     libellé: pictosMétéos.SOLEIL.nom,
     couleur: '#27A658',

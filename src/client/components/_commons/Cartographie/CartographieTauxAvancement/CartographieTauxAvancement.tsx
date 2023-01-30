@@ -14,7 +14,6 @@ function formaterValeur(valeur: CartographieValeur) {
   return valeur && typeof valeur === 'number' ? `${valeur.toFixed(0)}%` : 'Non renseigné';
 }
 
-
 export default function CartographieTauxAvancement({ données, niveauDeMaille, options }: CartographieTauxAvancementProps) {
   return (
     <Cartographie 
