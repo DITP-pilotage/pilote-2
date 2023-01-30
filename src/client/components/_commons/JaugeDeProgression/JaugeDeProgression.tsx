@@ -4,12 +4,18 @@ import {
 import JaugeDeProgressionSVG from '@/components/_commons/JaugeDeProgression/JaugeDeProgressionSVG';
 import JaugeDeProgressionStyled from './JaugeDeProgression.styled';
 
-const classesLibellé = {
-  petite: 'jauge-valeur-dessous fr-h4',
-  grande: 'jauge-valeur-centré fr-display--xs',
+const classesÀPartirDeTaille = {
+  petite: {
+    valeur: 'jauge-valeur-dessous fr-h4',
+    libellé: 'fr-text--xs',
+  },
+  grande: {
+    valeur: 'jauge-valeur-centré fr-display--xs',
+    libellé: 'jauge-libellé-centré fr-text--xs',
+  },
 };
 
-export default function JaugeDeProgression({ pourcentage, couleur, taille }: JaugeDeProgressionProps ) {
+export default function JaugeDeProgression({  couleur, libellé, pourcentage, taille  }: JaugeDeProgressionProps ) {
   return (
     <JaugeDeProgressionStyled
       couleur={couleur}
@@ -19,8 +25,11 @@ export default function JaugeDeProgression({ pourcentage, couleur, taille }: Jau
         pourcentage={pourcentage}
         taille={taille}
       />
-      <p className={classesLibellé[taille]}>
+      <p className={classesÀPartirDeTaille[taille].valeur}>
         { `${pourcentage.toFixed(0)}%` }
+      </p>
+      <p className={classesÀPartirDeTaille[taille].libellé}>
+        {libellé}
       </p>
     </JaugeDeProgressionStyled>
   );

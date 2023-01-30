@@ -22,21 +22,25 @@ export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: T
       </Titre>
       <JaugeDeProgression
         couleur='bleu'
+        libellé="Taux d'avancement global"
         pourcentage={37}
         taille='grande'
       />
       <JaugeDeProgression
         couleur='orange'
+        libellé="Minimum"
         pourcentage={37}
         taille='petite'
       />
       <JaugeDeProgression
         couleur='violet'
+        libellé="Médiane"
         pourcentage={37}
         taille='petite'
       />
       <JaugeDeProgression
         couleur='vert'
+        libellé="Maximum"
         pourcentage={37}
         taille='petite'
       />

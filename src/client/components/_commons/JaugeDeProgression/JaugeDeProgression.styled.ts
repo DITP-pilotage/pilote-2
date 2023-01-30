@@ -27,6 +27,7 @@ const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`
 
   .jauge-valeur-centré,
   .jauge-valeur-dessous {
+    margin-bottom: 0;
     color: ${(props) => couleurs[props.couleur]};
   }
 
@@ -35,7 +36,11 @@ const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`
     top: calc(50% - 1rem);
     width: 100%;
     margin: 0;
-    line-height: 2rem !important;
+    line-height: 0.5rem !important;
+    text-align: center;
+  }
+
+  .jauge-libellé-centré {
     text-align: center;
   }
 
