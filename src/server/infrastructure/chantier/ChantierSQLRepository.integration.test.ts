@@ -207,6 +207,31 @@ describe('ChantierSQLRepository', () => {
     expect(result.responsables.directeursProjet[0]).toStrictEqual({ nom: 'Jean Bon', email: null });
   });
 
+  describe('getAvancementsMoyensParDépartements', () => {
+    test("renvoie la moyenne d'un seul département", async () => {
+      // GIVEN
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+      const chantierId = 'CH-001';
+
+      await prisma.chantier.create({
+        data: new ChantierRowBuilder()
+          .withId(chantierId)
+          .withPérimètresIds(['PER-001'])
+          .withMaille('DEPT')
+          .withCodeInsee('13')
+          .withTauxAvancement(23)
+          .build(),
+      });
+
+      // WHEN
+      const result = await repository.getAvancementMoyenParDépartement(['PER-001']);
+
+      // THEN
+      expect(result).toStrictEqual({ '13': 23 });
+    });
+  });
+
   describe("Gestion d'erreur", () => {
     test('Erreur en cas de chantier non trouvé', async () => {
       // GIVEN

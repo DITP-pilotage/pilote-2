@@ -19,4 +19,8 @@ export default class ChantierRandomRepository implements ChantierRepository {
     }
     return ChantierFixture.générerPlusieurs(this.valeursFixes.length, this.valeursFixes);
   }
+
+  async getAvancementMoyenParDépartement(_périmètreIds: string[]): Promise<Record<string, number | null>> {
+    return { '13': 1 };
+  }
 }
