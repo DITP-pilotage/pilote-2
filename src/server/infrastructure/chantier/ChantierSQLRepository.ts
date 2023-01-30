@@ -38,17 +38,20 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return Object.entries(chantiersGroupésParId).map(([_, c]) => parseChantier(c));
   }
 
-  // Corriger le pluriel à géométrie variable
   // Donner un nom de type au record (donnéesTerritoriales ?)
   // Implémenter l'équivalent dans random repository
   // Faire fonctionner avec plusieur périmètres
-  // vérifier que Prisma nous protège de l'injection sql
   async getAvancementMoyenParDépartement(périmètreIds: string[]): Promise<Record<string, number | null>> {
     const chantierRows: chantier[] = await this.prisma.$queryRaw`
-        select code_insee, taux_avancement
+        select code_insee, avg(taux_avancement) as taux_avancement
         from chantier
-        where maille = 'DEPT' and ${périmètreIds[0]} = any(perimetre_ids);
-    `;
-    return { [chantierRows[0].code_insee]: chantierRows[0].taux_avancement };
+        where maille = 'DEPT' and ${périmètreIds[0]} = any(perimetre_ids)
+        group by code_insee
+    ;`;
+    const result: Record<string, number | null> = {};
+    for (const row of chantierRows) {
+      result[row.code_insee] = row.taux_avancement;
+    }
+    return result;
   }
 }

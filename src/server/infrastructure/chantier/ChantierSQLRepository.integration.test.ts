@@ -207,28 +207,29 @@ describe('ChantierSQLRepository', () => {
     expect(result.responsables.directeursProjet[0]).toStrictEqual({ nom: 'Jean Bon', email: null });
   });
 
-  describe('getAvancementsMoyensParDépartements', () => {
-    test("renvoie la moyenne d'un seul département", async () => {
+  describe('getAvancementMoyenParDépartement', () => {
+    test('renvoie les moyennes pour deux chantiers et deux départements', async () => {
       // GIVEN
       const repository: ChantierRepository = new ChantierSQLRepository(prisma);
 
-      const chantierId = 'CH-001';
-
-      await prisma.chantier.create({
-        data: new ChantierRowBuilder()
-          .withId(chantierId)
-          .withPérimètresIds(['PER-001'])
-          .withMaille('DEPT')
-          .withCodeInsee('13')
-          .withTauxAvancement(23)
-          .build(),
+      await prisma.chantier.createMany({
+        data: [
+          new ChantierRowBuilder().withId('CH-001').withPérimètresIds(['PER-001']).withMaille('DEPT').withCodeInsee('01')
+            .withTauxAvancement(0).build(),
+          new ChantierRowBuilder().withId('CH-002').withPérimètresIds(['PER-001']).withMaille('DEPT').withCodeInsee('01')
+            .withTauxAvancement(20).build(),
+          new ChantierRowBuilder().withId('CH-001').withPérimètresIds(['PER-001']).withMaille('DEPT').withCodeInsee('13')
+            .withTauxAvancement(10).build(),
+          new ChantierRowBuilder().withId('CH-002').withPérimètresIds(['PER-001']).withMaille('DEPT').withCodeInsee('13')
+            .withTauxAvancement(30).build(),
+        ],
       });
 
       // WHEN
       const result = await repository.getAvancementMoyenParDépartement(['PER-001']);
 
       // THEN
-      expect(result).toStrictEqual({ '13': 23 });
+      expect(result).toStrictEqual({ '01': 10, '13': 20 });
     });
   });
 
