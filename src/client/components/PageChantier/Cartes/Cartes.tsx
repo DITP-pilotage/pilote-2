@@ -21,7 +21,7 @@ export default function Cartes({ chantier }: CartesProps) {
       id="cartes"
     >
       <Titre baliseHtml='h2'>
-        Cartes
+        Répartition géographique
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters fr-mt-3w">
         <div className="fr-col-12 fr-col-xl-6">
@@ -30,7 +30,7 @@ export default function Cartes({ chantier }: CartesProps) {
               baliseHtml='h4'
               className='fr-text--lg'
             >
-              Répartition géographique du taux d’avancement du chantier
+              Taux d&apos;avancement
             </Titre>
             <CartographieTauxAvancement
               données={donnéesCartographieAvancement}
@@ -44,7 +44,7 @@ export default function Cartes({ chantier }: CartesProps) {
               baliseHtml='h4'
               className='fr-text--lg'
             >
-              Répartition géographique du niveau de confiance
+              Niveau de confiance
             </Titre>
             <CartographieMétéo
               données={donnéesCartographieMétéo}
