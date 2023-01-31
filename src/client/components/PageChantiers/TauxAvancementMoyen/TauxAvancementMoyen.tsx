@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
-import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { périmètreGéographique as périmètreGéographiqueStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import calculerLesAvancementsÀPartirDeChantiers from '@/client/utils/chantier/avancement/calculerLesAvancementsÀPartirDeChantiers';
+import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import TauxAvancementMoyenProps from './TauxAvancementMoyen.interface';
-
 
 export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: TauxAvancementMoyenProps) {
   const périmètreGéographique = périmètreGéographiqueStore();
@@ -12,37 +11,51 @@ export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: T
   const avancementsDuTerritoire = useMemo(() => valeursAvancements[périmètreGéographique.maille][périmètreGéographique.codeInsee], [valeursAvancements, périmètreGéographique]);
   
   return (
-    <>
-      <Titre
-        baliseHtml='h2'
-        className='fr-h6'
-      >
-        Taux d’avancement moyen de la sélection
-      </Titre>
-      <div>
-        <p className="fr-mb-1v">
-          annuel
-        </p>
-        <BarreDeProgression
-          maximum={avancementsDuTerritoire.annuel.maximum}
-          minimum={avancementsDuTerritoire.annuel.minimum}
-          médiane={avancementsDuTerritoire.annuel.médiane}
-          taille="grande"
-          valeur={avancementsDuTerritoire.annuel.moyenne}
-          variante="secondaire"
-        />
-        <p className="fr-mb-1v fr-mt-3w">
-          global
-        </p>
-        <BarreDeProgression
-          maximum={avancementsDuTerritoire.global.maximum}
-          minimum={avancementsDuTerritoire.global.minimum}
-          médiane={avancementsDuTerritoire.global.médiane}
-          taille="grande"
-          valeur={avancementsDuTerritoire.global.moyenne}
-          variante="primaire"
-        />
+    <div className='fr-container--fluid'>
+      <div className="fr-grid-row">
+        <Titre
+          baliseHtml='h2'
+          className='fr-h6'
+        >
+          Taux d’avancement moyen de la sélection
+        </Titre>
+        <div className="fr-col-12 fr-col-lg-6">
+          <JaugeDeProgression
+            couleur='bleu'
+            libellé="Taux d'avancement global"
+            pourcentage={avancementsDuTerritoire.global.moyenne}
+            taille='grande'
+          />
+        </div>
+        <div className="fr-col-12 fr-col-lg-6">
+          <div className="fr-grid-row fr-grid-row--center">
+            <div className="fr-col-4">
+              <JaugeDeProgression
+                couleur='orange'
+                libellé="Minimum"
+                pourcentage={avancementsDuTerritoire.global.minimum}
+                taille='petite'
+              />
+            </div>
+            <div className="fr-col-4">
+              <JaugeDeProgression
+                couleur='violet'
+                libellé="Médiane"
+                pourcentage={avancementsDuTerritoire.global.médiane}
+                taille='petite'
+              />
+            </div>
+            <div className="fr-col-4">
+              <JaugeDeProgression
+                couleur='vert'
+                libellé="Maximum"
+                pourcentage={avancementsDuTerritoire.global.maximum}
+                taille='petite'
+              />
+            </div>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
