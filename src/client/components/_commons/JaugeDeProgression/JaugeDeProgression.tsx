@@ -11,9 +11,9 @@ const classesÀPartirDeTaille = {
     libellé: 'fr-text--xs',
   },
   grande: {
-    valeur: 'jauge-valeur-centré fr-display--xs',
-    valeur_non_renseignée: 'jauge-valeur-centré fr-text--xs',
-    libellé: 'jauge-libellé-centré fr-text--xs',
+    valeur: 'jauge-valeur-au-centre fr-display--xs',
+    valeur_non_renseignée: 'jauge-valeur-au-centre fr-text--xs',
+    libellé: 'jauge-libellé-au-centre fr-text--xs',
   },
 };
 
@@ -28,14 +28,14 @@ export default function JaugeDeProgression({  couleur, libellé, pourcentage, ta
         taille={taille}
       />
       {
-        pourcentage
+        pourcentage === null
           ?
-            <p className={classesÀPartirDeTaille[taille].valeur}>
-              { `${pourcentage?.toFixed(0)}%` }
-            </p>
-          :
             <p className={classesÀPartirDeTaille[taille].valeur_non_renseignée}>
               Non renseigné
+            </p>
+          :
+            <p className={classesÀPartirDeTaille[taille].valeur}>
+              { `${pourcentage?.toFixed(0)}%` }
             </p>
       }
       <p className={classesÀPartirDeTaille[taille].libellé}>

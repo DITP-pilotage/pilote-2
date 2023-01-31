@@ -25,13 +25,13 @@ const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`
   position: relative;
   width: ${(props) => largeurs[props.taille]};
 
-  .jauge-valeur-centré,
+  .jauge-valeur-au-centre,
   .jauge-valeur-dessous {
     margin-bottom: 0;
     color: ${(props) => couleurs[props.couleur]};
   }
 
-  .jauge-valeur-centré {
+  .jauge-valeur-au-centre {
     position: absolute;
     top: calc(50% - 1rem);
     width: 100%;
