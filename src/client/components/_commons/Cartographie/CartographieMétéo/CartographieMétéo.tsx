@@ -1,5 +1,6 @@
 import { pictosMétéos } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import nuancierMétéo from '@/client/constants/nuanciers/nuancierMétéo';
+import { couleurParDéfaut } from '@/client/constants/nuanciers/nuancier';
 import CartographieMétéoProps from './CartographieMétéo.interface';
 import CartographieMétéoStyled from './CartographieMétéo.styled';
 import Cartographie from '../Cartographie';
@@ -9,17 +10,16 @@ import CartographieLégende from '../CartographieAffichage/Légende/Cartographie
 
 function couleurDeRemplissage(valeurMétéo: CartographieValeur) {
   return valeurMétéo && typeof valeurMétéo === 'string' 
-    ? nuancierMétéo.find(({ valeur }) => valeur === valeurMétéo)?.couleur || '#BABABA'
-    : '#BABABA';
-
+    ? nuancierMétéo.find(({ valeur }) => valeur === valeurMétéo)?.couleur || couleurParDéfaut
+    : couleurParDéfaut;
 }
   
-function formaterValeur(valeur: CartographieValeur) {
-  if (valeur === 'NON_RENSEIGNEE') return 'Non renseignée';
-  if (valeur === 'NON_NECESSAIRE') return 'Non nécessaire';
+function formaterValeur(valeurMétéo: CartographieValeur) {
+  if (valeurMétéo === 'NON_RENSEIGNEE') return 'Non renseignée';
+  if (valeurMétéo === 'NON_NECESSAIRE') return 'Non nécessaire';
 
-  return valeur && typeof valeur === 'string' 
-    ? pictosMétéos[valeur as keyof typeof pictosMétéos].nom
+  return valeurMétéo && typeof valeurMétéo === 'string' 
+    ? pictosMétéos[valeurMétéo as keyof typeof pictosMétéos].nom
     : 'Non renseignée';
 }
 

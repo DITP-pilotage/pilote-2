@@ -1,5 +1,5 @@
 import { pictosMétéos } from '@/components/_commons/PictoMétéo/PictoMétéo';
-import { NuancierMétéo } from './nuancier';
+import { couleurParDéfaut, NuancierMétéo } from './nuancier';
 
 const nuancierMétéo: NuancierMétéo = [
   {
@@ -26,7 +26,7 @@ const nuancierMétéo: NuancierMétéo = [
   {
     valeur: 'NON_RENSEIGNEE' || 'NON_NECESSAIRE',
     libellé: 'Territoire pour lequel la météo n’est pas renseignée',
-    couleur: '#BABABA',
+    couleur: couleurParDéfaut,
   },
 ];
 
