@@ -5,7 +5,7 @@ import { Maille } from '@/server/domain/chantier/Chantier.interface';
 export type CartographieBulleTerritoire = Pick<CartographieTerritoire, 'codeInsee' | 'nom' | 'valeur' | 'maille'>;
 export type CartographieTerritoireCodeInsee = string;
 
-export type CartographieValeur = number | null;
+export type CartographieValeur = number | string | null;
 
 export type CartographieTerritoire = {
   codeInsee: CartographieTerritoireCodeInsee,

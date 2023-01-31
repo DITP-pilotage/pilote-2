@@ -1,8 +1,7 @@
-import { ReactNode } from 'react';
-
 type CartographieÉlémentDeLégende = {
   couleur: string,
-  composant: ReactNode,
+  libellé: string,
+  picto?: string
 };
 
 export default interface CartographieLégendeProps {

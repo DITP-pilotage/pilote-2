@@ -3,21 +3,25 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieTauxAvancement from '@/components/_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
 import { préparerDonnéesCartographieÀPartirDUnÉlément } from '@/client/utils/cartographie/préparerDonnéesCartographie';
+import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
 import CartesProps from './Cartes.interface';
 
 export default function Cartes({ chantier }: CartesProps) {
-  const donnéesCartographie = useMemo(() => (
+  const donnéesCartographieAvancement = useMemo(() => (
     préparerDonnéesCartographieÀPartirDUnÉlément(chantier.mailles, territoire => territoire.avancement.global)
-  )
-  , [chantier]);
+  ), [chantier]);
   
+  const donnéesCartographieMétéo = useMemo(() => (
+    préparerDonnéesCartographieÀPartirDUnÉlément(chantier.mailles, territoire => territoire.météo)
+  ), [chantier]);
+
   return (
     <div 
       className='fr-pb-5w'
       id="cartes"
     >
       <Titre baliseHtml='h2'>
-        Cartes
+        Répartition géographique
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters fr-mt-3w">
         <div className="fr-col-12 fr-col-xl-6">
@@ -26,10 +30,10 @@ export default function Cartes({ chantier }: CartesProps) {
               baliseHtml='h4'
               className='fr-text--lg'
             >
-              Répartition géographique du taux d’avancement du chantier
+              Taux d&apos;avancement
             </Titre>
             <CartographieTauxAvancement
-              données={donnéesCartographie}
+              données={donnéesCartographieAvancement}
               niveauDeMaille="départementale"
             />
           </Bloc>
@@ -40,11 +44,12 @@ export default function Cartes({ chantier }: CartesProps) {
               baliseHtml='h4'
               className='fr-text--lg'
             >
-              Répartition géographique du niveau de confiance
+              Niveau de confiance
             </Titre>
-            <p className='fr-grid-row fr-grid-row--center'>
-              A venir...
-            </p>
+            <CartographieMétéo
+              données={donnéesCartographieMétéo}
+              niveauDeMaille="départementale"
+            />
           </Bloc>
         </div>
       </div>
