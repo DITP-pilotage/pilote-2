@@ -1,5 +1,5 @@
 ditp_ppg_dbt:
-  target: local
+  target: prod
   outputs:
     prod:
       type: postgres

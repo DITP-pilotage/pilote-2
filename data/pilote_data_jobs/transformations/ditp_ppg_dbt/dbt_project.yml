@@ -35,10 +35,10 @@ models:
   ditp_ppg_dbt:
     +materialized: table
     raw:
-      +schema: "raw_data"
+      +schema: "{{env_var('SCHEMA_RAW_DATA')}}"
     staging:
-      +schema: "raw_data"
+      +schema: "{{env_var('SCHEMA_RAW_DATA')}}"
       +materialized: view
     marts:
       +materialized: table
-      +schema: "public"
+      +schema: "{{env_var('SCHEMA_RAW_DATA')}}"
