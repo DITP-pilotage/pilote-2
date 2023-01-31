@@ -19,7 +19,7 @@ export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: T
         >
           Taux d’avancement moyen de la sélection
         </Titre>
-        <div className="fr-col-12 fr-col-lg-5">
+        <div className="fr-col-12 fr-col-lg-6">
           <JaugeDeProgression
             couleur='bleu'
             libellé="Taux d'avancement global"
@@ -27,9 +27,9 @@ export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: T
             taille='grande'
           />
         </div>
-        <div className="fr-col-12 fr-col-lg-7">
-          <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-            <div className="fr-col-3">
+        <div className="fr-col-12 fr-col-lg-6">
+          <div className="fr-grid-row fr-grid-row--center">
+            <div className="fr-col-4">
               <JaugeDeProgression
                 couleur='orange'
                 libellé="Minimum"
@@ -37,7 +37,7 @@ export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: T
                 taille='petite'
               />
             </div>
-            <div className="fr-col-3">
+            <div className="fr-col-4">
               <JaugeDeProgression
                 couleur='violet'
                 libellé="Médiane"
@@ -45,7 +45,7 @@ export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: T
                 taille='petite'
               />
             </div>
-            <div className="fr-col-3">
+            <div className="fr-col-4">
               <JaugeDeProgression
                 couleur='vert'
                 libellé="Maximum"
