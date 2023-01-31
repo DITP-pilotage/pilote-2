@@ -10,19 +10,11 @@ def model(dbt, session):
     )
 
     columns_type = {
-        'tree_node_id': 'str',
-        'tree_node_parent_id': 'str',
-        'structure_id': 'str',
-        'maturity_id': 'str',
-        'tree_node_name': 'str',
-        'tree_node_code': 'str',
-        'tree_node_status': 'str',
         'tree_node_last_synchronization_date': 'datetime64[ns]',
         'tree_node_last_update_properties_date': 'datetime64',
         'tree_node_last_update_scorecard_date': 'datetime64',
         'tree_node_last_scorecard_update_by_anybody_date': 'datetime64',
         'tree_node_last_update_children_date': 'datetime64',
-        'tree_node_currency': 'str',
         'snapshot_date': 'datetime64',
     }
 

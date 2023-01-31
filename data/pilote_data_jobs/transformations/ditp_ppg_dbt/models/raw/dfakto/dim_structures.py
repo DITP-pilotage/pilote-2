@@ -9,11 +9,7 @@ def model(dbt, session):
         sep=';'
     )
     columns_type = {
-        'structure_id': 'str',
-        'top_level_id': 'str',
-        'structure_name': 'str',
         'structure_is_part_of_update_period': 'bool',
-        'structure_scorecard_frequency': 'str',
         'structure_is_hidden': 'bool',
         'structure_has_correction': 'bool',
         'structure_level': 'int16',

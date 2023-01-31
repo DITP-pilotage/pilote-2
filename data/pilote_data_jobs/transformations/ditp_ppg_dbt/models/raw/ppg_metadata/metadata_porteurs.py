@@ -8,14 +8,6 @@ def model(dbt, session):
 
     columns_type = {
         'porteur_id': 'str',
-        'porteur_short': 'str',
-        'porteur_name': 'str',
-        'porteur_desc': 'str',
-        'porteur_type_id': 'int16',
-        'porteur_type_short': 'str',
-        'porteur_type_name': 'str',
-        'porteur_directeur': 'str',
-        'porteur_name_short': 'str',
     }
 
     porteurs = porteurs.astype(columns_type)

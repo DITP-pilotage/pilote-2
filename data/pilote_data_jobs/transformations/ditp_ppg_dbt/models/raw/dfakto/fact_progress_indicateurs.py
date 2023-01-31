@@ -10,10 +10,7 @@ def model(dbt, session):
     )
 
     columns_type = {
-        'tree_node_id': 'str',
-        'effect_id': 'str',
         'period_id': 'int16',
-        'tag_applied': 'str',
         'valeur_initiale': 'float64',
         'valeur_actuelle': 'float64',
         'valeur_cible': 'float64',

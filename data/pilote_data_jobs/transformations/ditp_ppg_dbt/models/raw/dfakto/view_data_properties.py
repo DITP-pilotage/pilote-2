@@ -52,7 +52,7 @@ def model(dbt, session):
     })
 
     columns_type = {
-        'academie_code': 'str',
+        'academie_code': 'object',
         'meteo_date_de_mise_a_jour': 'datetime64',
         'chef_de_projet_national_date_de_mise_a_jour': 'datetime64',
         'objectifs_de_la_reforme_date_de_mise_a_jour': 'datetime64',

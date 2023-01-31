@@ -10,7 +10,6 @@ def model(dbt, session):
     )
 
     columns_type = {
-        'tree_node_id': 'str',
         'period_id': 'int16',
         'progress': 'float64',
         'bounded_progress': 'float64',

@@ -7,15 +7,9 @@ def model(dbt, session):
     perimetres = pd.read_csv(f'{ppg_metadata_views}/perimetre/view_meta_perimetre.csv')
 
     columns_type = {
-        'perimetre_id': 'str',
-        'per_nom': 'str',
-        'per_short': 'str',
-        'per_picto': 'str',
-        'per_porteur_id': 'str',
-        'per_porteur_name_short': 'str',
+        'per_porteur_id': 'object',
     }
 
     perimetres = perimetres.astype(columns_type)
 
     return perimetres
-
