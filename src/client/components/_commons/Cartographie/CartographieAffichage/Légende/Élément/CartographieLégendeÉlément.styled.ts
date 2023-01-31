@@ -21,6 +21,16 @@ const CartographieLégendeÉlémentStyled = styled.li<CartographieLégendeÉlém
     background-color: ${props => props.couleur};
     border: 1px solid #000;
   }
+
+  .hachures {
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 2px,
+      var(--grey-425-625) 2px,
+      var(--grey-425-625) 3.6px
+      );
+    }
 `;
 
 export default CartographieLégendeÉlémentStyled;

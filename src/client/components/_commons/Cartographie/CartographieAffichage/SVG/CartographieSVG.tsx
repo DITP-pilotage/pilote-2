@@ -31,10 +31,9 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
   }, [svgRef]);
 
   function auClicTerritoireCallback(territoire: CartographieTerritoire) {
-    if (!options.territoireSélectionnable) { return; }
-    if (périmètreGéographique && périmètreGéographique.codeInsee === territoire.codeInsee) {
-      réinitialisePérimètreGéographique();
-    } else {
+    if (!options.territoireSélectionnable) return;
+    if (périmètreGéographique && périmètreGéographique.codeInsee === territoire.codeInsee) réinitialisePérimètreGéographique();
+    else {
       setPérimètreGéographique({
         codeInsee: territoire.codeInsee,
         maille: territoire.maille,
@@ -65,55 +64,48 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
             setTerritoireSurvolé(null);
           }}
         >
-          {
-            territoires.map((territoire) => (
-              <g key={territoire.nom}>
-                {territoire.sousTerritoires.map(sousTerritoire => {
-                  return (
-                    <path
-                      className='territoire-rempli'
-                      d={sousTerritoire.tracéSVG}
-                      fill={options.couleurDeRemplissage(sousTerritoire.valeur)}
-                      key={sousTerritoire.nom}
-                      onClick={() => auClicTerritoireCallback(sousTerritoire)}
-                      onMouseEnter={() => {
-                        setTerritoireSurvolé({
-                          codeInsee: sousTerritoire.codeInsee,
-                          nom: sousTerritoire.nom,
-                          valeur: sousTerritoire.valeur,
-                          maille: sousTerritoire.maille,
-                        });
-                      }}
-                    />
-                  );
-                },
-                )}
-                {
-                  territoire.sousTerritoires.length === 0
-                    ?
-                      <path
-                        className='territoire-rempli'
-                        d={territoire.tracéSVG}
-                        fill={options.couleurDeRemplissage(territoire.valeur)}
-                        onClick={() => auClicTerritoireCallback(territoire)}
-                        onMouseEnter={() => {
-                          setTerritoireSurvolé({
-                            codeInsee: territoire.codeInsee,
-                            nom: territoire.nom,
-                            valeur: territoire.valeur,
-                            maille: territoire.maille,
-                          });
-                        }}
-                      />
-                    :
-                      <path
-                        className='territoire-frontière'
-                        d={territoire.tracéSVG}
-                      />
-                  }
-              </g>
-            ))
-          }
+          {territoires.map((territoire) => (
+            <g key={territoire.nom}>
+              {territoire.sousTerritoires.map(sousTerritoire => (
+                <path
+                  className='territoire-rempli'
+                  d={sousTerritoire.tracéSVG}
+                  fill={options.couleurDeRemplissage(sousTerritoire.valeur)}
+                  key={sousTerritoire.nom}
+                  onClick={() => auClicTerritoireCallback(sousTerritoire)}
+                  onMouseEnter={() => {
+                    setTerritoireSurvolé({
+                      codeInsee: sousTerritoire.codeInsee,
+                      nom: sousTerritoire.nom,
+                      valeur: sousTerritoire.valeur,
+                      maille: sousTerritoire.maille,
+                    });
+                  }}
+                />
+              ))}
+              {territoire.sousTerritoires.length === 0 
+                ?
+                  <path
+                    className='territoire-rempli'
+                    d={territoire.tracéSVG}
+                    fill={options.couleurDeRemplissage(territoire.valeur)}
+                    onClick={() => auClicTerritoireCallback(territoire)}
+                    onMouseEnter={() => {
+                      setTerritoireSurvolé({
+                        codeInsee: territoire.codeInsee,
+                        nom: territoire.nom,
+                        valeur: territoire.valeur,
+                        maille: territoire.maille,
+                      });
+                    }}
+                  /> 
+                :
+                  <path
+                    className='territoire-frontière'
+                    d={territoire.tracéSVG}
+                  />}
+            </g>
+          ))}
           { !!périmètreGéographique && <CartographieTerritoireSélectionné /> }
         </g>
       </svg>

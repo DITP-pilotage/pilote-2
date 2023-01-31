@@ -27,9 +27,10 @@ export default function CartographieTauxAvancement({ données, niveauDeMaille, o
       }}
     >
       <CartographieLégende élémentsDeLégende={
-        nuancierPourcentage.map(({ couleur, libellé }) => ({
+        nuancierPourcentage.map(({ couleur, libellé, hachures }) => ({
           libellé,
           couleur,
+          hachures,
         }))
       }
       />
