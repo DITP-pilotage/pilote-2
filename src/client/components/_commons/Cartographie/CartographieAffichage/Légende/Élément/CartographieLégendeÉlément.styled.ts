@@ -5,9 +5,15 @@ type CartographieLégendeÉlémentStyledProps = {
 };
 
 const CartographieLégendeÉlémentStyled = styled.li<CartographieLégendeÉlémentStyledProps>`
+  display: flex;
+  align-items: center;
   font-size: 0.75rem;
   line-height: 1rem;
   color: var(--text-mention-grey);
+
+  > img {
+    height: 1.2rem;
+  }
 
   .couleur {
     width: 0.5rem;

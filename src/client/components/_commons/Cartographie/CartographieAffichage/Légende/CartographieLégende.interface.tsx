@@ -1,7 +1,7 @@
 type CartographieÉlémentDeLégende = {
   couleur: string,
   libellé: string,
-  picto?: any
+  picto?: string
 };
 
 export default interface CartographieLégendeProps {
