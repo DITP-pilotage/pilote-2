@@ -14,6 +14,18 @@ const pages = [
     nom: 'Accueil',
     lien: '/',
   },
+  {
+    nom: 'Suivi de l’activité',
+    lien: '/activite',
+  },
+  {
+    nom: 'Nouveautés',
+    lien: '/nouveautes',
+  },
+  {
+    nom: 'Centre d\'aide',
+    lien: '/aide',
+  },
 ];
 
 export default function Navigation() {
