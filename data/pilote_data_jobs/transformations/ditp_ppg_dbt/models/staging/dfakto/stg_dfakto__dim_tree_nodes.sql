@@ -16,12 +16,12 @@ renamed as (
         tree_node_name as nom,
         tree_node_code as code,
         case
-            when str_split(tree_node_code, '-')[1] = 'OVQ' then 'FRANCE'
-            else str_split(tree_node_code, '-')[2]
-        end as code_region,
+            when {{ dbt.split_part('tree_node_code', "'-'", 1) }} = 'OVQ' then 'FRANCE'
+            else {{ dbt.split_part('tree_node_code', "'-'", 2) }}
+        end as zone_code,
         case
-            when str_split(tree_node_code, '-')[1] = 'OVQ' then str_split(tree_node_code, '-')[2]
-            else str_split(tree_node_code, '-')[1]
+            when {{ dbt.split_part('tree_node_code', "'-'", 1) }} = 'OVQ' then {{ dbt.split_part('tree_node_code', "'-'", 2) }}
+            else {{ dbt.split_part('tree_node_code', "'-'", 1) }}
         end as code_chantier,
         tree_node_status as status,
         tree_node_last_synchronization_date as last_synchronization_date,

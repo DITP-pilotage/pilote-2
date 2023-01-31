@@ -7,7 +7,7 @@ def model(dbt, session):
     porteurs = pd.read_csv(f'{ppg_metadata_views}/porteur/view_meta_porteur.csv')
 
     columns_type = {
-        'porteur_id': 'int16',
+        'porteur_id': 'str',
         'porteur_short': 'str',
         'porteur_name': 'str',
         'porteur_desc': 'str',

@@ -18,9 +18,9 @@ renamed as (
         valeur_cible,
         progress as avancement,
         bounded_progress as avancement_borne,
-        date_valeur_initiale,
-        date_valeur_actuelle,
-        date_valeur_cible,
+        date_valeur_initiale::DATE,
+        date_valeur_actuelle::DATE,
+        date_valeur_cible::DATE,
         snapshot_date
     from source
 

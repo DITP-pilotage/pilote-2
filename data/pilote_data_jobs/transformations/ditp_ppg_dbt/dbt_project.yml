@@ -33,12 +33,12 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 models:
   ditp_ppg_dbt:
-    +materialized: table
     raw:
-      +schema: "{{env_var('SCHEMA_RAW_DATA')}}"
+      +schema: raw_data
+      +materialized: table
     staging:
-      +schema: "{{env_var('SCHEMA_RAW_DATA')}}"
+      +schema: raw_data
       +materialized: view
     marts:
+      +schema: public
       +materialized: table
-      +schema: "{{env_var('SCHEMA_RAW_DATA')}}"

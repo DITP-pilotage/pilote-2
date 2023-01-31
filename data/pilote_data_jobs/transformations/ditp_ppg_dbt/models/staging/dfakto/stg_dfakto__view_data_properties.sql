@@ -15,12 +15,18 @@ renamed as (
         departement_code,
         academie_code,
         case
-            when str_split(reforme_code, '-')[1] = 'OVQ' then 'FRANCE'
-            else str_split(coalesce(NULLIF(region_code,''), NULLIF(academie_code,''), departement_code), '-')[2]
-        end as code_region,
+            when {{ dbt.split_part('reforme_code', "'-'", 1) }} = 'OVQ' then 'FRANCE'
+            when region_code <> '' then {{ dbt.split_part('region_code', "'-'", 2) }}
+            when academie_code <> '' then {{ dbt.split_part('academie_code', "'-'", 2) }}
+            when departement_code <> '' then {{ dbt.split_part('departement_code', "'-'", 2) }}
+            else NULL
+        end as zone_code,
         case
-            when str_split(reforme_code, '-')[1] = 'OVQ' then str_split(reforme_code, '-')[2]
-            else str_split(coalesce(NULLIF(region_code,''), NULLIF(academie_code,''), departement_code), '-')[1]
+            when {{ dbt.split_part('reforme_code', "'-'", 1) }} = 'OVQ' then {{ dbt.split_part('reforme_code', "'-'", 1) }}
+            when region_code <> '' then {{ dbt.split_part('region_code', "'-'", 1) }}
+            when academie_code <> '' then {{ dbt.split_part('academie_code', "'-'", 1) }}
+            when departement_code <> '' then {{ dbt.split_part('departement_code', "'-'", 1) }}
+            else NULL
         end as code_chantier,
         objectifs_de_la_reforme,
         synthese_des_resultats,

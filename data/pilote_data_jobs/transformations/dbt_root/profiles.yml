@@ -1,5 +1,5 @@
 ditp_ppg_dbt:
-  target: prod
+  target: prod_with_fal
   outputs:
     prod:
       type: postgres
@@ -13,3 +13,6 @@ ditp_ppg_dbt:
     local:
       type: duckdb
       path: 'ditp_pilote.duckdb'
+    prod_with_fal:
+      type: fal
+      db_profile: prod

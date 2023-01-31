@@ -12,8 +12,8 @@ def model(dbt, session):
     view_data_properties = view_data_properties.rename(columns={
         "Réforme Code": 'reforme_code',
         "Région Code": 'region_code',
-        "Académie Code": 'departement_code',
-        "Département Code": 'academie_code',
+        "Académie Code": 'academie_code',
+        "Département Code": 'departement_code',
         "Objectifs de la réforme": 'objectifs_de_la_reforme',
         "Synthèse des résultats": 'synthese_des_resultats',
         "Difficultés rencontrées et risques anticipés": 'difficultes_rencontrees_et_risques_anticipes',
@@ -52,6 +52,7 @@ def model(dbt, session):
     })
 
     columns_type = {
+        'academie_code': 'str',
         'meteo_date_de_mise_a_jour': 'datetime64',
         'chef_de_projet_national_date_de_mise_a_jour': 'datetime64',
         'objectifs_de_la_reforme_date_de_mise_a_jour': 'datetime64',
