@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('ppg_metadata', 'chantier_meteo') }}
+    select * from {{ ref('metadata_chantier_meteos') }}
 
 ),
 

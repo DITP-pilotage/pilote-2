@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('ppg_metadata', 'metadata_zone') }}
+    select * from {{ ref('metadata_zones') }}
 
 ),
 

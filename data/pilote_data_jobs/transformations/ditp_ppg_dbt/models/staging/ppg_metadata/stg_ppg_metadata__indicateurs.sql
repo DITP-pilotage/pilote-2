@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('ppg_metadata', 'metadata_indicateur') }}
+    select * from {{ ref('metadata_indicateurs') }}
 
 ),
 
