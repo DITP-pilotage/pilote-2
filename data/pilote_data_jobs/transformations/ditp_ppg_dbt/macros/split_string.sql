@@ -1,1 +1,0 @@
-{% tree_node_code.split('-')[0] %}

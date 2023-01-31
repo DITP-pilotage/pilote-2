@@ -17,6 +17,7 @@ renamed as (
         tree_node_code as code,
         case
             when str_split(tree_node_code, '-')[1] = 'OVQ' then 'FRANCE'
+            -- faire avec {{ dbt.split_part(tree_node_code, "'-'", 1) }}
             else str_split(tree_node_code, '-')[2]
         end as code_region,
         case
