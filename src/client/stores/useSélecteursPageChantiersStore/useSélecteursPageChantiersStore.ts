@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import create from 'zustand';
+import { create } from 'zustand';
 import SélecteursPageChantiersStore from './useSélecteursPageChantiersStore.interface';
 
 const périmètreGéographiqueInitial = {
