@@ -23,14 +23,15 @@ const CartographieLégendeÉlémentStyled = styled.li<CartographieLégendeÉlém
   }
 
   .hachures {
-    background: repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 2px,
-      var(--grey-425-625) 2px,
-      var(--grey-425-625) 3.6px
+    background:
+      repeating-linear-gradient(
+        -45deg,
+        var(--grey-425-625),
+        var(--grey-425-625) 2px,
+        transparent 2px,
+        transparent 3.6px
       );
-    }
+  }
 `;
 
 export default CartographieLégendeÉlémentStyled;

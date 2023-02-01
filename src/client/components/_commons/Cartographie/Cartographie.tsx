@@ -57,6 +57,7 @@ const optionsParDéfaut: CartographieOptions = {
   },
   couleurDeRemplissage: () => couleurParDéfaut,
   formaterValeur: (valeur) => valeur ? String(valeur) : '-',
+  territoireHachuré: () => false,
   territoireSélectionnable: false,
 };
 

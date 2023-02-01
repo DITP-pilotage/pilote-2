@@ -6,7 +6,7 @@ export type NuancierPourcentage = {
   seuil: number | null,
   libellé: string,
   couleur: string,
-  hachures?: string
+  hachures?: boolean
 }[];
 
 export type NuancierMétéo = {

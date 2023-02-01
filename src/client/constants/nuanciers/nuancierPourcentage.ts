@@ -2,10 +2,10 @@ import { couleurParDéfaut, NuancierPourcentage } from './nuancier';
 
 const nuancierPourcentage: NuancierPourcentage = [
   {
-    seuil: 1,
+    seuil: 0,
     libellé: '0%',
     couleur: '#ffff',
-    hachures: '#666666',
+    hachures: true,
   },
   {
     seuil: 10,
@@ -44,7 +44,7 @@ const nuancierPourcentage: NuancierPourcentage = [
     libellé: '80-90%',
     couleur: '#0F0F98',
   }, {
-    seuil: 99,
+    seuil: 99.99,
     libellé: '90-100%',
     couleur : '#00006C',
   },

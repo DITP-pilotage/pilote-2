@@ -58,6 +58,21 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
         `}
         xmlns="http://www.w3.org/2000/svg"
       >
+        <defs>
+          <pattern
+            height="2"
+            id="hachures"
+            patternTransform="rotate(45)"
+            patternUnits="userSpaceOnUse"
+            width="2.3"
+          >
+            <line
+              stroke="#666666"
+              stroke-width="3"
+              y2="3"
+            />
+          </pattern>
+        </defs>
         <g
           className="canvas"
           onMouseLeave={() => {
@@ -70,7 +85,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                 <path
                   className='territoire-rempli'
                   d={sousTerritoire.tracéSVG}
-                  fill={options.couleurDeRemplissage(sousTerritoire.valeur)}
+                  fill={options.territoireHachuré(sousTerritoire.valeur) ? 'url(#hachures)' : options.couleurDeRemplissage(sousTerritoire.valeur)}
                   key={sousTerritoire.nom}
                   onClick={() => auClicTerritoireCallback(sousTerritoire)}
                   onMouseEnter={() => {
@@ -88,7 +103,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                   <path
                     className='territoire-rempli'
                     d={territoire.tracéSVG}
-                    fill={options.couleurDeRemplissage(territoire.valeur)}
+                    fill={options.territoireHachuré(territoire.valeur) ? 'url(#hachures)' : options.couleurDeRemplissage(territoire.valeur)}
                     onClick={() => auClicTerritoireCallback(territoire)}
                     onMouseEnter={() => {
                       setTerritoireSurvolé({

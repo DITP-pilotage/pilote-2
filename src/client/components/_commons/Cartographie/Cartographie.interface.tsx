@@ -26,6 +26,7 @@ export type CartographieOptions = {
   territoireAffiché: CartographieTerritoireAffiché,
   couleurDeRemplissage: (valeur: CartographieValeur) => string,
   formaterValeur: (valeur: CartographieValeur) => string,
+  territoireHachuré: (valeur: CartographieValeur) => boolean,
   territoireSélectionnable: boolean,
 };
 export default interface CartographieProps {

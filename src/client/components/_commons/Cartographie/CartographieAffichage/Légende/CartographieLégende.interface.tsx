@@ -2,7 +2,7 @@ type CartographieÉlémentDeLégende = {
   couleur: string,
   libellé: string,
   picto?: string,
-  hachures?: string
+  hachures?: boolean
 };
 
 export default interface CartographieLégendeProps {

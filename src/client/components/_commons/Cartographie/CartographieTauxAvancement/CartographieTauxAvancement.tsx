@@ -6,13 +6,19 @@ import { CartographieValeur } from '../CartographieAffichage/CartographieAfficha
 import CartographieLégende from '../CartographieAffichage/Légende/CartographieLégende';
 
 function couleurDeRemplissage(valeurAvancement: CartographieValeur) {
-  return valeurAvancement && typeof valeurAvancement === 'number'
-    ? nuancierPourcentage.find(({ seuil }) => seuil && seuil >= valeurAvancement)?.couleur || couleurParDéfaut
+  return valeurAvancement !== null && typeof valeurAvancement === 'number'
+    ? nuancierPourcentage.find(({ seuil }) => seuil !== null && seuil >= valeurAvancement)?.couleur || couleurParDéfaut
     : couleurParDéfaut;
+}
+
+function territoireHachuré(valeurAvancement: CartographieValeur) {
+  return valeurAvancement !== null && typeof valeurAvancement === 'number'
+    ? nuancierPourcentage.find(({ seuil }) => seuil !== null && seuil >= valeurAvancement)?.hachures || false
+    : false;
 }
   
 function formaterValeur(valeurAvancement: CartographieValeur) {
-  return valeurAvancement && typeof valeurAvancement === 'number' ? `${valeurAvancement.toFixed(0)}%` : 'Non renseigné';
+  return valeurAvancement !== null && typeof valeurAvancement === 'number' ? `${valeurAvancement.toFixed(0)}%` : 'Non renseigné';
 }
 
 export default function CartographieTauxAvancement({ données, niveauDeMaille, options }: CartographieTauxAvancementProps) {
@@ -23,6 +29,7 @@ export default function CartographieTauxAvancement({ données, niveauDeMaille, o
       options={{
         couleurDeRemplissage,
         formaterValeur,
+        territoireHachuré,
         ...options,
       }}
     >
