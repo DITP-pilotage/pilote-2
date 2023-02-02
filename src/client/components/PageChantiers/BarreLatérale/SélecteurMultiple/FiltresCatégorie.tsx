@@ -30,6 +30,7 @@ const FILTRES = [
 
 export default function FiltresCatégorie({ libellé, catégorieDeFiltre, filtres }: SélecteurMultipleProps) {
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
+  const filtresActifs = filtresActifsStore();
 
   const changementDeLÉtatDuFiltreCallback = useCallback((estSélectionné: boolean, filtre: PérimètreMinistériel) => {
     return estSélectionné ? activerUnFiltre(filtre, catégorieDeFiltre) : désactiverUnFiltre(filtre.id, catégorieDeFiltre);
@@ -58,16 +59,24 @@ export default function FiltresCatégorie({ libellé, catégorieDeFiltre, filtre
           className='choix-filtres'
         >
           {
-            FILTRES.map((filtre) => {
+            FILTRES.map((groupeDeFiltre) => {
               return (
-                <Fragment key={filtre.id}>
-                  <li>
-                    <div className="fr-label fr-p-1w libellé">
-                      {filtre.nom}
-                    </div>
+                <Fragment key={groupeDeFiltre.id}>
+                  <li className="fr-checkbox-group">
+                    <input
+                      checked={
+                        filtresActifs.périmètresMinistériels
+                          .some(périmètreMinistérielActif => groupeDeFiltre.périmètresMinistériels
+                            .some(pm => pm.id === périmètreMinistérielActif.id))
+                      }
+                      type="checkbox"
+                    />
+                    <label className="fr-label fr-p-1w libellé">
+                      {groupeDeFiltre.nom}
+                    </label>
                     <ul className="fitres-liste">
                       {
-                        filtre.périmètresMinistériels.map(périmètreMinistériel => (
+                        groupeDeFiltre.périmètresMinistériels.map(périmètreMinistériel => (
                           <li
                             className="fr-checkbox-group"
                             key={périmètreMinistériel.id}
