@@ -1,33 +1,82 @@
 import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
-import { Fragment, useCallback } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { actions as actionsFiltresStore, filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import FiltresMinistèresProps from './FiltresMinistères.interface';
+import FiltresMinistèresProps, {
+  Ministère,
+} from './FiltresMinistères.interface';
 import FiltresMinistèresStyled from './FiltresMinistères.styled';
 
 export default function FiltresMinistères({ libellé, catégorieDeFiltre, ministères }: FiltresMinistèresProps) {
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
-  const filtresActifs = filtresActifsStore();
+  const fitresActifs = filtresActifsStore();
 
-  const changementDeLÉtatDuFiltreCallback = useCallback((estSélectionné: boolean, filtre: PérimètreMinistériel) => {
-    return estSélectionné ? activerUnFiltre(filtre, catégorieDeFiltre) : désactiverUnFiltre(filtre.id, catégorieDeFiltre);
-  }, [activerUnFiltre, désactiverUnFiltre, catégorieDeFiltre]);
+  const [ministèresDéroulés, setMinistèresDéroulés] = useState<Ministère[]>([]);
 
-  const nombreFiltresActifCatégorie = actionsFiltresStore().récupérerNombreFiltresActifsDUneCatégorie(catégorieDeFiltre);
+  const déterminerMinistèresDéroulés = useCallback(() => {
+    return ministères.filter(ministère => ministère.périmètresMinistériels.some(périmètre => estActif(périmètre.id, catégorieDeFiltre)));
+  }, [catégorieDeFiltre, estActif, ministères]);
+
+  useEffect(() => {
+    setMinistèresDéroulés(déterminerMinistèresDéroulés());
+  }, [fitresActifs, déterminerMinistèresDéroulés]);
+
+  const enroulerMinistère = useCallback((ministère: Ministère) => {
+    setMinistèresDéroulés((étatPrécédent) => (
+      étatPrécédent.filter(ministèreDéroulé => ministèreDéroulé.id !== ministère.id)
+    ));
+    ministère.périmètresMinistériels.forEach(périmètre => désactiverUnFiltre(périmètre.id, catégorieDeFiltre));
+  }, [catégorieDeFiltre, désactiverUnFiltre]);
+
+  const déroulerMinistère = useCallback((ministère: Ministère) => {
+    setMinistèresDéroulés((étatPrécédent) => ([
+      ...étatPrécédent,
+      ministère,
+    ]));
+    ministère.périmètresMinistériels.forEach(périmètre => activerUnFiltre(périmètre, catégorieDeFiltre));
+  }, [activerUnFiltre, catégorieDeFiltre]);
+
+  const auClicSurUnMinistèreCallback = useCallback(
+    (ministère: Ministère) => {
+      if (ministèresDéroulés.some(ministèreDéroulé => ministèreDéroulé.id === ministère.id)) {
+        enroulerMinistère(ministère);
+      } else {
+        déroulerMinistère(ministère);
+      }
+    },
+    [déroulerMinistère, enroulerMinistère, ministèresDéroulés],
+  );
+
+  const auClicSurUnPérimètreCallback = useCallback(
+    (estSélectionné: boolean, périmètre: PérimètreMinistériel) => {
+      if (estSélectionné) {
+        activerUnFiltre(périmètre, catégorieDeFiltre);
+      } else {
+        désactiverUnFiltre(périmètre.id, catégorieDeFiltre);
+      }
+    },
+    [activerUnFiltre, catégorieDeFiltre, désactiverUnFiltre],
+  );
+
+  const estDéroulé = useCallback((ministère: Ministère) => {
+    return ministèresDéroulés.some(ministèreActif => ministèreActif.id === ministère.id);
+  }, [ministèresDéroulés]);
+
+  const estSélectionné = useCallback((ministère: Ministère) => {
+    return ministère.périmètresMinistériels.some(périmètre => estActif(périmètre.id, catégorieDeFiltre));
+  }, [catégorieDeFiltre, estActif]);
 
   return (
     <FiltresMinistèresStyled className="fr-form-group">
       <button
         aria-controls={`fr-sidemenu-item-${catégorieDeFiltre}`}
-        aria-expanded="false"
+        aria-expanded="true"
         className="fr-sidemenu__btn"
         type='button'
       >
-        {libellé}
-        { ' ' }
-        { nombreFiltresActifCatégorie > 0 && `(${nombreFiltresActifCatégorie})` }
+        { libellé }
       </button>
       <div
         className="fr-collapse"
@@ -35,43 +84,43 @@ export default function FiltresMinistères({ libellé, catégorieDeFiltre, minis
       >
         <ul
           aria-label={`Liste des filtres ${catégorieDeFiltre}`}
-          className='choix-filtres'
+          className='ministères-liste'
         >
           {
             ministères.map((ministère) => {
               return (
                 <Fragment key={ministère.id}>
                   <li className="fr-checkbox-group">
-                    <div
-                      aria-expanded="false"
-                      className={`fr-p-1w libellé ${
-                        filtresActifs.périmètresMinistériels
-                          .some(périmètreMinistérielActif => ministère.périmètresMinistériels
-                            .some(périmètreMinistériel => périmètreMinistériel.id === périmètreMinistérielActif.id))
-                        && 'ministère-sélectionné'
-                      }`}
+                    <button
+                      className={`
+                        fr-p-1w tuile
+                        ${estDéroulé(ministère) ? 'ministère-déroulé' : ''}
+                        ${estSélectionné(ministère) ? 'ministère-sélectionné' : ''}
+                      `}
+                      onClick={() => auClicSurUnMinistèreCallback(ministère)}
+                      type="button"
                     >
                       {ministère.nom}
-                    </div>
-                    <ul className="fitres-liste">
+                    </button>
+                    <ul className="périmètres-liste">
                       {
-                        ministère.périmètresMinistériels.map(périmètreMinistériel => (
+                        ministère.périmètresMinistériels.map(périmètre => (
                           <li
                             className="fr-checkbox-group"
-                            key={périmètreMinistériel.id}
+                            key={périmètre.id}
                           >
                             <input
-                              checked={estActif(périmètreMinistériel.id, catégorieDeFiltre)}
-                              id={`case-à-cocher-${catégorieDeFiltre}-${périmètreMinistériel.id}`}
-                              name={`case-à-cocher-${catégorieDeFiltre}-${périmètreMinistériel.id}`}
-                              onChange={événement => changementDeLÉtatDuFiltreCallback(événement.target.checked, périmètreMinistériel)}
+                              checked={estActif(périmètre.id, catégorieDeFiltre)}
+                              id={`case-à-cocher-${catégorieDeFiltre}-${périmètre.id}`}
+                              name={`case-à-cocher-${catégorieDeFiltre}-${périmètre.id}`}
+                              onChange={événement => auClicSurUnPérimètreCallback(événement.target.checked, périmètre)}
                               type="checkbox"
                             />
                             <label
-                              className="fr-label fr-p-1w libellé"
-                              htmlFor={`case-à-cocher-${catégorieDeFiltre}-${périmètreMinistériel.id}`}
+                              className="fr-label fr-p-1w tuile"
+                              htmlFor={`case-à-cocher-${catégorieDeFiltre}-${périmètre.id}`}
                             >
-                              {périmètreMinistériel.nom}
+                              {périmètre.nom}
                             </label>
                           </li>
                         ))
