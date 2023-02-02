@@ -28,7 +28,7 @@ const FILTRES = [
 ];
 
 
-export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtres }: SélecteurMultipleProps) {
+export default function FiltresCatégorie({ libellé, catégorieDeFiltre, filtres }: SélecteurMultipleProps) {
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
 
   const changementDeLÉtatDuFiltreCallback = useCallback((estSélectionné: boolean, filtre: PérimètreMinistériel) => {
@@ -50,7 +50,7 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
         { nombreFiltresActifCatégorie > 0 && `(${nombreFiltresActifCatégorie})` }
       </button>
       <div
-        className="fr-collapse fr-pt-1w fr-px-1w"
+        className="fr-collapse"
         id={`fr-sidemenu-item-${catégorieDeFiltre}`}
       >
         <ul
@@ -61,15 +61,15 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
             FILTRES.map((filtre) => {
               return (
                 <Fragment key={filtre.id}>
-                  <li className="fr-py-1w" >
-                    <span className="fr-label fr-ml-0 fr-p-1w libellé">
+                  <li>
+                    <div className="fr-label fr-p-1w libellé">
                       {filtre.nom}
-                    </span>
-                    <ul className="">
+                    </div>
+                    <ul className="fitres-liste">
                       {
                         filtre.périmètresMinistériels.map(périmètreMinistériel => (
                           <li
-                            className="fr-checkbox-group fr-py-1w"
+                            className="fr-checkbox-group"
                             key={périmètreMinistériel.id}
                           >
                             <input
@@ -80,7 +80,7 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
                               type="checkbox"
                             />
                             <label
-                              className="fr-label fr-ml-0 fr-p-1w libellé"
+                              className="fr-label fr-p-1w libellé"
                               htmlFor={`case-à-cocher-${catégorieDeFiltre}-${périmètreMinistériel.id}`}
                             >
                               {périmètreMinistériel.nom}

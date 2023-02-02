@@ -1,5 +1,5 @@
-import FiltreGroupe from './FiltresGroupe/FiltresGroupe';
-import SélecteurMultiple from './SélecteurMultiple/SélecteurMultiple';
+import FiltresGroupeDeCatégories from './FiltresGroupe/FiltresGroupe';
+import FiltresCatégorie from './SélecteurMultiple/FiltresCatégorie';
 import BarreLatéraleProps from './BarreLatérale.interface';
 import BarreLatéraleStyled from './BarreLatérale.styled';
 import SélecteursGéographiques from './SélecteursGéographiques/SélecteursGéographiques';
@@ -10,7 +10,7 @@ export default function BarreLatérale({ estOuvert, setEstOuvert, périmètresMi
       <div className='barre-latérale'>
         <div className="fr-grid-row fr-grid-row--middle">
           <SélecteursGéographiques />
-          <p className="fr-h4 fr-mb-0 fr-px-3w fr-mt-2w fr-col-8">
+          <p className="fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8">
             Filtres
           </p>
           <button
@@ -22,13 +22,13 @@ export default function BarreLatérale({ estOuvert, setEstOuvert, périmètresMi
             Fermer &times;
           </button>
         </div>
-        <FiltreGroupe titre="Périmètres thématiques">
-          <SélecteurMultiple
+        <FiltresGroupeDeCatégories libellé="Catégorie de filtres">
+          <FiltresCatégorie
             catégorieDeFiltre='périmètresMinistériels'
             filtres={périmètresMinistériels}
-            libellé='Périmètres ministériels'
+            libellé='Ministères'
           />
-        </FiltreGroupe>
+        </FiltresGroupeDeCatégories>
       </div>
       {
         estOuvert ?

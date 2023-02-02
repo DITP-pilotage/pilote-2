@@ -3,19 +3,23 @@ import styled from '@emotion/styled';
 const SélecteurMultipleStyled = styled.div`
   ul {
     padding: 0;
+    margin: 0 0 1rem;
     list-style-type: none;
   }
 
-  ul > li {
-    padding-left: 1rem;
+  ul.fitres-liste > li {
+    padding: 0;
+    margin: 0.5rem 0 0.5rem 2rem;
   }
 
   .choix-filtres {
     max-height: 350px;
+    margin-left: 0.5rem;
     overflow-y: auto;
   }
 
   .fr-label.libellé {
+    margin-left: 0;
     border-radius: 0.25rem;
   }
 
