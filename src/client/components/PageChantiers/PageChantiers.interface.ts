@@ -1,7 +1,7 @@
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { Ministère } from '@/components/PageChantiers/BarreLatérale/FiltresMinistères/FiltresMinistères.interface';
 
 export default interface PageChantiersProps {
   chantiers: Chantier[]
-  périmètresMinistériels: PérimètreMinistériel[]
+  ministères: Ministère[]
 }

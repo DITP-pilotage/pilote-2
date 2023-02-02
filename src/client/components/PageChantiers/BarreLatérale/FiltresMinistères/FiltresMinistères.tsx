@@ -53,7 +53,7 @@ export default function FiltresMinistères({ libellé, catégorieDeFiltre, minis
         id={`fr-sidemenu-item-${catégorieDeFiltre}`}
       >
         <ul
-          aria-label={`Liste des filtres ${catégorieDeFiltre}`}
+          aria-label={`Liste des filtres ${libellé}`}
           className='ministères-liste'
         >
           {

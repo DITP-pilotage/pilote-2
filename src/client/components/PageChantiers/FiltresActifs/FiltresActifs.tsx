@@ -13,7 +13,10 @@ export default function FiltresActifs() {
   const nombreFiltresActifs = récupérerNombreFiltresActifs();
 
   return (
-    <FiltresActifsStyled className='fr-px-4w fr-py-2w'>
+    <FiltresActifsStyled
+      className='fr-px-4w fr-py-2w'
+      id="filtres-actifs"
+    >
       <p className="fr-text--xs fr-mb-1w">
         <span className="bold">
           {nombreFiltresActifs}
