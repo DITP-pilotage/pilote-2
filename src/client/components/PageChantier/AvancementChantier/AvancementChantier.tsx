@@ -4,11 +4,16 @@ import Tableau from '@/components/_commons/Tableau/Tableau';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
+import { getLibelléMétéo, PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import BarreDeProgressionLégende from '@/components/_commons/BarreDeProgression/Légende/BarreDeProgressionLégende';
+import Météo from '@/server/domain/chantier/Météo.interface';
 import AvancementChantierProps from './AvancementChantier.interface';
 
 const reactTableColonnesHelper = createColumnHelper<Chantier>();
+
+function afficherMétéo(météo: Météo) {
+  return météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE' ? <PictoMétéo valeur={météo} /> : getLibelléMétéo(météo);
+}
 
 const colonnes = [
   reactTableColonnesHelper.accessor('mailles', {
@@ -18,7 +23,7 @@ const colonnes = [
   }),
   reactTableColonnesHelper.accessor('mailles.nationale.FR.météo', {
     header: 'Météo',
-    cell: météo => <PictoMétéo valeur={météo.getValue()} />,
+    cell: météo => afficherMétéo(météo.getValue()),
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('mailles.nationale.FR.avancement.global', {

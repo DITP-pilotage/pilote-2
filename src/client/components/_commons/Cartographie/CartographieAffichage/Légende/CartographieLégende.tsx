@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import CartographieLégendeProps from './CartographieLégende.interface';
 import CartographieLégendeStyled from './CartographieLégende.styled';
 import CartographieLégendeÉlément from './Élément/CartographieLégendeÉlément';
@@ -16,13 +15,7 @@ export default function CartographieLégende({ élémentsDeLégende }: Cartograp
             <span>
               {libellé}
             </span>
-            { picto ?
-              <Image
-                alt={libellé}
-                src={picto}
-              /> 
-              
-              : null }
+            {picto ?? null}
           </CartographieLégendeÉlément>
         ))
       }

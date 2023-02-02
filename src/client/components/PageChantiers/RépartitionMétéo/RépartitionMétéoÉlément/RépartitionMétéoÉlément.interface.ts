@@ -1,4 +1,6 @@
+import Météo from '@/server/domain/chantier/Météo.interface';
+
 export default interface ÉlémentDeRépartitionDesMétéosProps {
-  météo: { nom: string, picto: string }
+  météo: Météo
   nombreDeChantiers: string
 }
