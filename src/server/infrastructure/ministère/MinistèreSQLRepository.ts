@@ -1,7 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import { Ministère } from '@/components/PageChantiers/BarreLatérale/FiltresMinistères/FiltresMinistères.interface';
+
+type IdEtNomParMinistere = { ministere: string, ids: string[], noms: string[] };
 
 export default class MinistèreSQLRepository implements MinistèreRepository {
   private prisma: PrismaClient;
@@ -10,20 +13,22 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
     this.prisma = prisma;
   }
 
-  getListe(): Promise<Ministère[]> {
-    return Promise.resolve([
-      {
-        nom: 'Ministère 1',
-        périmètresMinistériels: [{ id: 'PER-001', nom: 'Périmètre 1.1' }, { id: 'PER-002', nom: 'Périmètre 1.2' }],
-      },
-      {
-        nom: 'Ministère 2',
-        périmètresMinistériels: [{ id: 'PER-003', nom: 'Périmètre 2.3' }],
-      },
-      {
-        nom: 'Ministère 3',
-        périmètresMinistériels: [{ id: 'PER-004', nom: 'Périmètre 3.4' }],
-      },
-    ]);
+  async getListe(): Promise<Ministère[]> {
+    const périmètreIdEtNomParMinistère: IdEtNomParMinistere[] = await this.prisma.$queryRaw`
+     select ministere, array_agg(id order by nom) as ids, array_agg(nom order by nom) as noms from perimetre group by ministere order by ministere;
+    `;
+    return this.parseMinistères(périmètreIdEtNomParMinistère);
+  }
+
+  private parseMinistères(périmètreIdEtNomParMinistère: IdEtNomParMinistere[]): Ministère[] {
+    const result = [];
+    for (const idEtNomParMinistère of périmètreIdEtNomParMinistère) {
+      const périmètres: PérimètreMinistériel[] = [];
+      for (let i = 0; i < idEtNomParMinistère.ids.length; ++i) {
+        périmètres.push({ id: idEtNomParMinistère.ids[i], nom: idEtNomParMinistère.noms[i] });
+      }
+      result.push({ nom: idEtNomParMinistère.ministere, périmètresMinistériels: périmètres });
+    }
+    return result;
   }
 }
