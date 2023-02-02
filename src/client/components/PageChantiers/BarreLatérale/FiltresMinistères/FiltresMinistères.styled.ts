@@ -40,7 +40,7 @@ const FiltresMinistèresStyled = styled.div`
     display: none;
   }
 
-  .ministère-sélectionné,
+  .ministère-déroulé,
   .fr-checkbox-group input[type="checkbox"]:checked + .fr-label.tuile {
     font-weight: bold;
     color: var(--background-default-grey);

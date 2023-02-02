@@ -1,8 +1,8 @@
 import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
-import { Fragment, useCallback, useEffect, useState } from 'react';
-import { actions as actionsFiltresStore, filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
+import { Fragment, useCallback } from 'react';
+import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import FiltresMinistèresProps, {
   Ministère,
@@ -11,42 +11,20 @@ import FiltresMinistèresStyled from './FiltresMinistères.styled';
 
 export default function FiltresMinistères({ libellé, catégorieDeFiltre, ministères }: FiltresMinistèresProps) {
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
-  const fitresActifs = filtresActifsStore();
 
-  const [ministèresDéroulés, setMinistèresDéroulés] = useState<Ministère[]>([]);
-
-  const déterminerMinistèresDéroulés = useCallback(() => {
-    return ministères.filter(ministère => ministère.périmètresMinistériels.some(périmètre => estActif(périmètre.id, catégorieDeFiltre)));
-  }, [catégorieDeFiltre, estActif, ministères]);
-
-  useEffect(() => {
-    setMinistèresDéroulés(déterminerMinistèresDéroulés());
-  }, [fitresActifs, déterminerMinistèresDéroulés]);
-
-  const enroulerMinistère = useCallback((ministère: Ministère) => {
-    setMinistèresDéroulés((étatPrécédent) => (
-      étatPrécédent.filter(ministèreDéroulé => ministèreDéroulé.id !== ministère.id)
-    ));
-    ministère.périmètresMinistériels.forEach(périmètre => désactiverUnFiltre(périmètre.id, catégorieDeFiltre));
-  }, [catégorieDeFiltre, désactiverUnFiltre]);
-
-  const déroulerMinistère = useCallback((ministère: Ministère) => {
-    setMinistèresDéroulés((étatPrécédent) => ([
-      ...étatPrécédent,
-      ministère,
-    ]));
-    ministère.périmètresMinistériels.forEach(périmètre => activerUnFiltre(périmètre, catégorieDeFiltre));
-  }, [activerUnFiltre, catégorieDeFiltre]);
+  const estDéroulé = useCallback((ministère: Ministère) => {
+    return ministère.périmètresMinistériels.some(périmètre => estActif(périmètre.id, catégorieDeFiltre));
+  }, [catégorieDeFiltre, estActif]);
 
   const auClicSurUnMinistèreCallback = useCallback(
     (ministère: Ministère) => {
-      if (ministèresDéroulés.some(ministèreDéroulé => ministèreDéroulé.id === ministère.id)) {
-        enroulerMinistère(ministère);
+      if (estDéroulé(ministère)) {
+        ministère.périmètresMinistériels.forEach(périmètre => désactiverUnFiltre(périmètre.id, catégorieDeFiltre));
       } else {
-        déroulerMinistère(ministère);
+        ministère.périmètresMinistériels.forEach(périmètre => activerUnFiltre(périmètre, catégorieDeFiltre));
       }
     },
-    [déroulerMinistère, enroulerMinistère, ministèresDéroulés],
+    [activerUnFiltre, catégorieDeFiltre, désactiverUnFiltre, estDéroulé],
   );
 
   const auClicSurUnPérimètreCallback = useCallback(
@@ -59,14 +37,6 @@ export default function FiltresMinistères({ libellé, catégorieDeFiltre, minis
     },
     [activerUnFiltre, catégorieDeFiltre, désactiverUnFiltre],
   );
-
-  const estDéroulé = useCallback((ministère: Ministère) => {
-    return ministèresDéroulés.some(ministèreActif => ministèreActif.id === ministère.id);
-  }, [ministèresDéroulés]);
-
-  const estSélectionné = useCallback((ministère: Ministère) => {
-    return ministère.périmètresMinistériels.some(périmètre => estActif(périmètre.id, catégorieDeFiltre));
-  }, [catégorieDeFiltre, estActif]);
 
   return (
     <FiltresMinistèresStyled className="fr-form-group">
@@ -95,7 +65,6 @@ export default function FiltresMinistères({ libellé, catégorieDeFiltre, minis
                       className={`
                         fr-p-1w tuile
                         ${estDéroulé(ministère) ? 'ministère-déroulé' : ''}
-                        ${estSélectionné(ministère) ? 'ministère-sélectionné' : ''}
                       `}
                       onClick={() => auClicSurUnMinistèreCallback(ministère)}
                       type="button"
