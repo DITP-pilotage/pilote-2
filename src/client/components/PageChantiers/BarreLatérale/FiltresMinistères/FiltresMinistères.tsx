@@ -3,7 +3,7 @@ import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
 import { useCallback } from 'react';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import PérimètreMinistériel from '@/server/domain/ministère/PérimètreMinistériel.interface';
 import FiltresMinistèresProps, {
   Ministère,
 } from './FiltresMinistères.interface';

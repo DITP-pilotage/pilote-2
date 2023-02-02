@@ -3,7 +3,7 @@ import { getAllByRole, getByText, queryByText, render, screen, within } from '@t
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import ChantierFixture from '@/fixtures/ChantierFixture';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import PérimètreMinistériel from '@/server/domain/ministère/PérimètreMinistériel.interface';
 import PageChantiers from './PageChantiers';
 
 // eslint-disable-next-line unicorn/consistent-function-scoping
