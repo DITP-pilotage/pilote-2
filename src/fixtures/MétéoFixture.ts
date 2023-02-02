@@ -6,5 +6,5 @@ class MétéoFixture {
     return faker.helpers.arrayElement(météos);
   }
 }
-
-export default new MétéoFixture();
+const météoFixture = new MétéoFixture();
+export default météoFixture;

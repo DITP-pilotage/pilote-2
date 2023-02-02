@@ -18,4 +18,5 @@ class PérimètreMinistérielFixture implements FixtureInterface<PérimètreMini
   }
 }
 
-export default new PérimètreMinistérielFixture();
+const périmètreMinistérielFixture = new PérimètreMinistérielFixture();
+export default périmètreMinistérielFixture;

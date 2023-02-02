@@ -24,4 +24,5 @@ class IndicateurFixture implements FixtureInterface<Indicateur> {
   }
 }
 
-export default new IndicateurFixture();
+const indicateurFixture = new IndicateurFixture();
+export default indicateurFixture;

@@ -63,5 +63,5 @@ class ChantierFixture implements FixtureInterface<Chantier> {
       .map((_, index) => this.générer(valeursFixes[index]));
   }
 }
-
-export default new ChantierFixture();
+const chantierFixture = new ChantierFixture();
+export default chantierFixture;

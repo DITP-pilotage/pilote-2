@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import create from 'zustand';
+import { create } from 'zustand';
 import FiltresStore, { Catégorie, FiltreCatégorieTuple } from './useFiltresStore.interface';
 
 const filtresActifsInitiaux = {
