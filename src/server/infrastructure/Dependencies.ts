@@ -3,14 +3,19 @@ import ChantierSQLRepository from '@/server/infrastructure/chantier/ChantierSQLR
 import PérimètreMinistérielSQLRepository from '@/server/infrastructure/périmètreMinistériel/PérimètreMinistérielSQLRepository';
 import PérimètreMinistérielRandomRepository from '@/server/infrastructure/périmètreMinistériel/PérimètreMinistérielRandomRepository';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import ChantierRandomRepository from '@/server/infrastructure/chantier/ChantierRandomRepository';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import IndicateurSQLRepository from '@/server/infrastructure/indicateur/IndicateurSQLRepository';
 import IndicateurRandomRepository from '@/server/infrastructure/indicateur/IndicateurRandomRepository';
+import MinistèreSQLRepository from '@/server/infrastructure/ministère/MinistèreSQLRepository';
+import MinistèreInMemoryRepository from '@/server/infrastructure/ministère/MinistèreInMemoryRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
+
+  private readonly _ministèreRepository: MinistèreRepository;
 
   private readonly _périmètreMinistérielRepository: PérimètreMinistérielRepository;
 
@@ -19,10 +24,10 @@ class Dependencies {
   constructor() {
     if (process.env.USE_DATABASE == 'true') {
       const prisma = new PrismaClient();
-      this._périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository(prisma);
       this._chantierRepository = new ChantierSQLRepository(prisma);
+      this._ministèreRepository = new MinistèreSQLRepository(prisma);
+      this._périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository(prisma);
       this._indicateurRepository = new IndicateurSQLRepository(prisma);
-
     } else {
       const nombreDeChantiers = 120;
       const idPérimètres = [ { id: 'PER-001' }, { id: 'PER-002' }, { id: 'PER-003' }, { id: 'PER-004' } ];
@@ -32,8 +37,9 @@ class Dependencies {
         valeursFixes.push({ périmètreIds : [idPérimètres[i % (nbPérimètres - 1)].id] });
       }
 
-      this._périmètreMinistérielRepository = new PérimètreMinistérielRandomRepository(idPérimètres);
       this._chantierRepository = new ChantierRandomRepository(valeursFixes);
+      this._ministèreRepository = new MinistèreInMemoryRepository();
+      this._périmètreMinistérielRepository = new PérimètreMinistérielRandomRepository(idPérimètres);
       this._indicateurRepository = new IndicateurRandomRepository();
     }
   }
@@ -45,6 +51,11 @@ class Dependencies {
   getPerimètreMinistérielRepository(): PérimètreMinistérielRepository {
     return this._périmètreMinistérielRepository;
   }
+
+  getMinistèreRepository(): MinistèreRepository {
+    return this._ministèreRepository;
+  }
+
 
   getIndicateurRepository(): IndicateurRepository {
     return this._indicateurRepository;
