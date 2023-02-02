@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import Météo from '@/server/domain/chantier/Météo.interface';
 
 export const couleurParDéfaut = '#bababa';
@@ -13,5 +14,5 @@ export type NuancierMétéo = {
   valeur: Météo,
   libellé: string,
   couleur: string,
-  picto?: any,
+  picto?: ReactNode,
 }[];

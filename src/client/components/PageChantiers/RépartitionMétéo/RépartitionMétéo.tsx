@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
-import { pictosMétéos } from '@/components/_commons/PictoMétéo/PictoMétéo';
+import { récupérerLibelléMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import RépartitonMétéoProps from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéoProps.interface';
 import compterLesMétéosÀPartirDeChantiers from '@/client/utils/chantier/météo/compterLesMétéosÀPartirDeChantiers';
 import { périmètreGéographique as périmètreGéographiqueStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
@@ -27,10 +27,10 @@ export default function RépartitionMétéo({ donnéesTerritoiresAgrégées }: R
           météosÀAfficher.map(météo => (
             <li
               className='fr-col-3'
-              key={pictosMétéos[météo].nom}
+              key={récupérerLibelléMétéo(météo)}
             >
               <RépartitionMétéoÉlément
-                météo={pictosMétéos[météo]}
+                météo={météo}
                 nombreDeChantiers={`${compteursMétéos[périmètreGéographique.maille][périmètreGéographique.codeInsee][météo]}`}
               />
             </li>
