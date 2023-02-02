@@ -1,5 +1,5 @@
 import { indicateur } from '@prisma/client';
-import IndicateurRowBuilder from '@/server/infrastructure/test/rowBuilder/IndicateurRowBuilder';
+import IndicateurRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/IndicateurRowBuilder';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import IndicateurSQLRepository from './IndicateurSQLRepository';
 
