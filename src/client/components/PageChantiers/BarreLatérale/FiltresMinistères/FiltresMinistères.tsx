@@ -28,14 +28,14 @@ export default function FiltresMinistères({ libellé, catégorieDeFiltre, minis
   );
 
   const auClicSurUnPérimètreCallback = useCallback(
-    (estSélectionné: boolean, périmètre: PérimètreMinistériel) => {
-      if (estSélectionné) {
-        activerUnFiltre(périmètre, catégorieDeFiltre);
-      } else {
+    (périmètre: PérimètreMinistériel) => {
+      if (estActif(périmètre.id, catégorieDeFiltre)) {
         désactiverUnFiltre(périmètre.id, catégorieDeFiltre);
+      } else {
+        activerUnFiltre(périmètre, catégorieDeFiltre);
       }
     },
-    [activerUnFiltre, catégorieDeFiltre, désactiverUnFiltre],
+    [activerUnFiltre, catégorieDeFiltre, désactiverUnFiltre, estActif],
   );
 
   return (
@@ -59,12 +59,12 @@ export default function FiltresMinistères({ libellé, catégorieDeFiltre, minis
           {
             ministères.map((ministère) => {
               return (
-                <Fragment key={ministère.id}>
+                <Fragment key={ministère.nom}>
                   <li className="fr-checkbox-group">
                     <button
                       className={`
-                        fr-p-1w tuile
-                        ${estDéroulé(ministère) ? 'ministère-déroulé' : ''}
+                        fr-p-1w fr-text--md tuile
+                        ${estDéroulé(ministère) ? 'ministère-déroulé surligné' : ''}
                       `}
                       onClick={() => auClicSurUnMinistèreCallback(ministère)}
                       type="button"
@@ -78,19 +78,16 @@ export default function FiltresMinistères({ libellé, catégorieDeFiltre, minis
                             className="fr-checkbox-group"
                             key={périmètre.id}
                           >
-                            <input
-                              checked={estActif(périmètre.id, catégorieDeFiltre)}
-                              id={`case-à-cocher-${catégorieDeFiltre}-${périmètre.id}`}
-                              name={`case-à-cocher-${catégorieDeFiltre}-${périmètre.id}`}
-                              onChange={événement => auClicSurUnPérimètreCallback(événement.target.checked, périmètre)}
-                              type="checkbox"
-                            />
-                            <label
-                              className="fr-label fr-p-1w tuile"
-                              htmlFor={`case-à-cocher-${catégorieDeFiltre}-${périmètre.id}`}
+                            <button
+                              className={`
+                                fr-p-1w fr-text--md tuile
+                                ${estActif(périmètre.id, catégorieDeFiltre) ? 'surligné' : ''}
+                              `}
+                              onClick={() => auClicSurUnPérimètreCallback(périmètre)}
+                              type="button"
                             >
                               {périmètre.nom}
-                            </label>
+                            </button>
                           </li>
                         ))
                       }

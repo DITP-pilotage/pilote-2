@@ -2,6 +2,8 @@ import styled from '@emotion/styled';
 
 const FiltresMinistèresStyled = styled.div`
   button {
+    width: 100%;
+    margin: 0;
     text-align: left;
   }
 
@@ -40,11 +42,14 @@ const FiltresMinistèresStyled = styled.div`
     display: none;
   }
 
-  .ministère-déroulé,
-  .fr-checkbox-group input[type="checkbox"]:checked + .fr-label.tuile {
+  .surligné {
     font-weight: bold;
     color: var(--background-default-grey);
-    background-color: var(--background-active-blue-france) !important;
+    background-color: var(--background-active-blue-france);
+  }
+
+  .surligné:hover {
+    background-color: var(--background-active-blue-france-hover);
   }
 `;
 

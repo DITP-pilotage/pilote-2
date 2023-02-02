@@ -6,7 +6,6 @@ import SélecteursGéographiques from './SélecteursGéographiques/SélecteursG�
 
 const ministères = [
   {
-    id: 'MIN-001',
     nom: 'Agriculture et Alimentation',
     périmètresMinistériels: [
       { id: 'PER-001', nom: 'Agriculture' },
@@ -14,7 +13,6 @@ const ministères = [
     ],
   },
   {
-    id: 'MIN-002',
     nom: 'Cohésion des territoires et relations avec les collectivités territoriales',
     périmètresMinistériels: [
       { id: 'PER-003', nom: 'Cohésion des territoires, ville' },
