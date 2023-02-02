@@ -2,7 +2,7 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import EnTête from '@/components/_commons/Bloc/EnTête/EnTête';
 import { SynthèseRésultatsProps } from '@/components/PageChantier/SynthèseRésultats/SynthèseRésultatsProps';
-import { getLibelléMétéo, PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
+import { récupérerLibelléMétéo, PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import SynthèseRésultatsStyled from '@/components/PageChantier/SynthèseRésultats/SynthèseRésultats.styled';
 
 export default function SynthèseRésultats({ chantier }: SynthèseRésultatsProps) {
@@ -22,7 +22,7 @@ export default function SynthèseRésultats({ chantier }: SynthèseRésultatsPro
                 valeur={météo}
               />
               <p className='libellé-météo fr-text--sm'>
-                {getLibelléMétéo(météo)}
+                {récupérerLibelléMétéo(météo)}
               </p>
             </div>
             <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">

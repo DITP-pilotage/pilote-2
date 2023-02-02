@@ -26,7 +26,7 @@ const nuancierMétéo: NuancierMétéo = [
     picto: <PictoMétéo valeur="SOLEIL" />,
   },
   {
-    valeur: 'NON_RENSEIGNEE' || 'NON_NECESSAIRE',
+    valeur: 'NON_RENSEIGNEE',
     libellé: 'Territoire pour lequel la météo n’est pas renseignée',
     couleur: couleurParDéfaut,
   },

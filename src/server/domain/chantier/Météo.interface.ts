@@ -7,7 +7,7 @@ export const libellésMétéos = {
   'COUVERT': 'Objectifs atteignables',
   'SOLEIL': 'Objectifs sécurisés',
   'NON_NECESSAIRE': 'Non nécessaire',
-  'NON_RENSEIGNEE': 'Non renseigné',
+  'NON_RENSEIGNEE': 'Non renseignée',
 };
 
 export function météoFromString(label: string | null): Météo {

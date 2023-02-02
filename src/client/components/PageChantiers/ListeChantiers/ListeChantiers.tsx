@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
-import { getLibelléMétéo, PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
+import { récupérerLibelléMétéo, PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import Chantier, { Avancement } from '@/server/domain/chantier/Chantier.interface';
 import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/avancement';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
@@ -20,7 +20,7 @@ import ListeChantiersProps from './ListeChantiers.interface';
 
 
 function afficherMétéo(météo: Météo) {
-  return météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE' ? <PictoMétéo valeur={météo} /> : getLibelléMétéo(météo);
+  return météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE' ? <PictoMétéo valeur={météo} /> : récupérerLibelléMétéo(météo);
 }
 
 function afficherLesBarresDeProgression(avancement: Avancement) {

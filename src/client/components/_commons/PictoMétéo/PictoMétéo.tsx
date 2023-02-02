@@ -15,14 +15,14 @@ export const pictosMétéos = {
   'NON_NECESSAIRE': null,
 };
 
-export function getLibelléMétéo(météo: Météo) {
+export function récupérerLibelléMétéo(météo: Météo) {
   return libellésMétéos[météo];
 }
 
 export function PictoMétéo({ valeur }: PictoMétéoProps) {
   return pictosMétéos[valeur] !== null ? (
     <Image
-      alt={getLibelléMétéo(valeur)}
+      alt={récupérerLibelléMétéo(valeur)}
       src={pictosMétéos[valeur]}
     />
   ) : null;
