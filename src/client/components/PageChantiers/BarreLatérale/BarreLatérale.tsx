@@ -1,4 +1,4 @@
-import FiltresGroupeDeCatégories from './FiltresGroupe/FiltresGroupe';
+import FiltresGroupeDeCatégoriesDeFiltres from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
 import BarreLatéraleProps from './BarreLatérale.interface';
 import BarreLatéraleStyled from './BarreLatérale.styled';
@@ -22,13 +22,13 @@ export default function BarreLatérale({ estOuvert, setEstOuvert, ministères }:
             Fermer &times;
           </button>
         </div>
-        <FiltresGroupeDeCatégories libellé="Catégorie de filtres">
+        <FiltresGroupeDeCatégoriesDeFiltres>
           <FiltresMinistères
             catégorieDeFiltre='périmètresMinistériels'
             libellé='Ministères'
             ministères={ministères}
           />
-        </FiltresGroupeDeCatégories>
+        </FiltresGroupeDeCatégoriesDeFiltres>
       </div>
       {
         estOuvert ?

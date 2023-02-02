@@ -1,7 +1,7 @@
 import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
-import { Fragment, useCallback } from 'react';
+import { useCallback } from 'react';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import FiltresMinistèresProps, {
@@ -43,7 +43,7 @@ export default function FiltresMinistères({ libellé, catégorieDeFiltre, minis
       <button
         aria-controls={`fr-sidemenu-item-${catégorieDeFiltre}`}
         aria-expanded="true"
-        className="fr-sidemenu__btn"
+        className="fr-sidemenu__btn fr-m-0"
         type='button'
       >
         { libellé }
@@ -54,46 +54,47 @@ export default function FiltresMinistères({ libellé, catégorieDeFiltre, minis
       >
         <ul
           aria-label={`Liste des filtres ${libellé}`}
-          className='ministères-liste'
+          className='fr-p-0 fr-m-0 ministères-liste'
         >
           {
             ministères.map((ministère) => {
               return (
-                <Fragment key={ministère.nom}>
-                  <li className="fr-checkbox-group">
-                    <button
-                      className={`
-                        fr-p-1w fr-text--md tuile
-                        ${estDéroulé(ministère) ? 'ministère-déroulé surligné' : ''}
+                <li
+                  className="fr-checkbox-group"
+                  key={ministère.nom}
+                >
+                  <button
+                    className={`
+                        fr-m-0 fr-p-1w fr-text--md tuile
+                        ${estDéroulé(ministère) ? 'ministère-déroulé actif' : ''}
                       `}
-                      onClick={() => auClicSurUnMinistèreCallback(ministère)}
-                      type="button"
-                    >
-                      {ministère.nom}
-                    </button>
-                    <ul className="périmètres-liste">
-                      {
-                        ministère.périmètresMinistériels.map(périmètre => (
-                          <li
-                            className="fr-checkbox-group"
-                            key={périmètre.id}
+                    onClick={() => auClicSurUnMinistèreCallback(ministère)}
+                    type="button"
+                  >
+                    {ministère.nom}
+                  </button>
+                  <ul className="fr-p-0 fr-m-0 fr-mb-1w périmètres-liste">
+                    {
+                      ministère.périmètresMinistériels.map(périmètre => (
+                        <li
+                          className="fr-p-0 fr-my-1w fr-mr-0 fr-ml-4w"
+                          key={périmètre.id}
+                        >
+                          <button
+                            className={`
+                              fr-m-0 fr-p-1w fr-text--md tuile
+                              ${estActif(périmètre.id, catégorieDeFiltre) ? 'actif' : ''}
+                            `}
+                            onClick={() => auClicSurUnPérimètreCallback(périmètre)}
+                            type="button"
                           >
-                            <button
-                              className={`
-                                fr-p-1w fr-text--md tuile
-                                ${estActif(périmètre.id, catégorieDeFiltre) ? 'surligné' : ''}
-                              `}
-                              onClick={() => auClicSurUnPérimètreCallback(périmètre)}
-                              type="button"
-                            >
-                              {périmètre.nom}
-                            </button>
-                          </li>
-                        ))
-                      }
-                    </ul>
-                  </li>
-                </Fragment>
+                            {périmètre.nom}
+                          </button>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </li>
               );
             })
           }

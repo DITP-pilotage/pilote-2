@@ -126,14 +126,14 @@ describe('quand on sélectionne un filtre', () => {
 });
 
 describe('quand je retire un filtre via le tag',  () => {
-  test('la checkbox correspondant au filtre n\'est plus surlignée', async () =>{
+  test('la tuile correspondante au filtre n\'est plus activée', async () =>{
     const filtrePérimètreMinistériel = pageChantiers.ministères[0].périmètresMinistériels[0];
     await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel.nom);
     await pageChantiers.supprimerTag(filtrePérimètreMinistériel.nom);
 
     const choixFiltres = screen.getByRole('list', { name : 'Liste des filtres Ministères' });
     const boutonFiltrePérimètre = getByText(choixFiltres, filtrePérimètreMinistériel.nom);
-    expect(boutonFiltrePérimètre).not.toHaveClass('surligné');
+    expect(boutonFiltrePérimètre).not.toHaveClass('actif');
   });
 });
 

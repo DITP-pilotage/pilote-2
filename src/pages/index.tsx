@@ -31,25 +31,25 @@ export async function getServerSideProps() {
     périmètresMinistériels: [
       { id: 'PER-019', nom: 'Premier Ministre (DIJOP, SGPI, CNR, SGPE)' },
       { id: 'PER-017', nom: 'Mer' },
-      { id: 'PER-010', nom: 'Egalité Femmes-Hommes' },
+      { id: 'PER-010', nom: 'Égalité Femmes-Hommes' },
       { id: 'PER-011', nom: 'Enfance' },
-      { id: 'PER-007', nom: 'Economie Sociale et Solidaire, Vie Associative' },
+      { id: 'PER-007', nom: 'Économie Sociale et Solidaire, Vie Associative' },
       { id: 'PER-020', nom: 'Renouveau Démocratique' },
     ],
   }, {
-    nom: 'Économie, des Finances et de la Souveraineté industrielle et numérique',
+    nom: 'Économie, Finances et Souveraineté industrielle et numérique',
     périmètresMinistériels: [
-      { id: 'PER-008', nom: 'Economie, Industrie, Numérique' },
+      { id: 'PER-008', nom: 'Économie, Industrie, Numérique' },
       { id: 'PER-005', nom: 'Comptes publics' },
     ],
   }, {
-    nom: 'Intérieur et des Outre-mer',
+    nom: 'Intérieur et Outre-mer',
     périmètresMinistériels: [
       { id: 'PER-014', nom: 'Intérieur' },
       { id: 'PER-018', nom: 'Outre-Mer' },
     ],
   }, {
-    nom: 'Europe et des Affaires étrangères',
+    nom: 'Europe et Affaires étrangères',
     périmètresMinistériels: [
       { id: 'PER-013', nom: 'Europe et Affaires étrangères' },
     ],
@@ -64,29 +64,29 @@ export async function getServerSideProps() {
       { id: 'PER-002', nom: 'Armées' },
     ],
   }, {
-    nom: "Travail, du Plein emploi et de l'Insertion",
+    nom: 'Travail, Plein emploi et Insertion',
     périmètresMinistériels: [
       { id: 'PER-028', nom: 'Travail, Emploi et Insertion' },
     ],
   }, {
-    nom: 'Éducation nationale et de la Jeunesse',
+    nom: 'Éducation nationale et Jeunesse',
     périmètresMinistériels: [
       { id: 'PER-009', nom: 'Education nationale' },
     ],
   }, {
-    nom: 'Enseignement supérieur et de la Recherche',
+    nom: 'Enseignement supérieur et Recherche',
     périmètresMinistériels: [
       { id: 'PER-012', nom: 'Enseignement supérieur, Recherche' },
     ],
   }, {
-    nom: 'Agriculture et de la Souveraineté alimentaire',
+    nom: 'Agriculture et Souveraineté alimentaire',
     périmètresMinistériels: [
       { id: 'PER-001', nom: 'Agriculture' },
     ],
   }, {
-    nom: 'Transition écologique et de la Cohésion des territoires',
+    nom: 'Transition écologique et Cohésion des territoires',
     périmètresMinistériels: [
-      { id: 'PER-025', nom: 'Transition Ecologique' },
+      { id: 'PER-025', nom: 'Transition Écologique' },
       { id: 'PER-004', nom: 'Cohésion des territoires, ville' },
       { id: 'PER-016', nom: 'Logement' },
       { id: 'PER-027', nom: 'Transports' },
@@ -94,7 +94,7 @@ export async function getServerSideProps() {
   }, {
     nom: 'Transition énergétique',
     périmètresMinistériels: [
-      { id: 'PER-026', nom: 'Transition Energétique' },
+      { id: 'PER-026', nom: 'Transition Énergétique' },
     ],
   }, {
     nom: 'Culture',
@@ -102,23 +102,23 @@ export async function getServerSideProps() {
       { id: 'PER-006', nom: 'Culture' },
     ],
   }, {
-    nom: 'Santé et de la Prévention',
+    nom: 'Santé et Prévention',
     périmètresMinistériels: [
       { id: 'PER-021', nom: 'Santé' },
     ],
   }, {
-    nom: "Solidarités, de l'Autonomie et des Personnes handicapées",
+    nom: 'Solidarités, Autonomie et Personnes handicapées',
     périmètresMinistériels: [
       { id: 'PER-022', nom: 'Solidarité' },
       { id: 'PER-003', nom: 'Autonomie, Handicap' },
     ],
   }, {
-    nom: 'Transformation et de la Fonction publiques',
+    nom: 'Transformation et Fonction publiques',
     périmètresMinistériels: [
       { id: 'PER-024', nom: 'Transformation et Fonction Publiques' },
     ],
   }, {
-    nom: 'Sports et des Jeux olympiques et paralympiques',
+    nom: 'Sports et Jeux olympiques et paralympiques',
     périmètresMinistériels: [
       { id: 'PER-023', nom: 'Sports et JOP 2024' },
     ],
