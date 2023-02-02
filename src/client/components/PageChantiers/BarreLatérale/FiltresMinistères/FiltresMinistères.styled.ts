@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const SélecteurMultipleStyled = styled.div`
+const FiltresMinistèresStyled = styled.div`
   ul {
     padding: 0;
     margin: 0 0 1rem;
@@ -18,6 +18,7 @@ const SélecteurMultipleStyled = styled.div`
     overflow-y: auto;
   }
 
+  .libellé,
   .fr-label.libellé {
     margin-left: 0;
     border-radius: 0.25rem;
@@ -27,6 +28,7 @@ const SélecteurMultipleStyled = styled.div`
     display: none;
   }
 
+  .ministère-sélectionné,
   .fr-checkbox-group input[type="checkbox"]:checked + .fr-label.libellé {
     font-weight: bold;
     color: var(--background-default-grey);
@@ -34,4 +36,4 @@ const SélecteurMultipleStyled = styled.div`
   }
 `;
 
-export default SélecteurMultipleStyled;
+export default FiltresMinistèresStyled;

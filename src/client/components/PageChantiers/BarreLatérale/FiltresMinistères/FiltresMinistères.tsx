@@ -4,31 +4,10 @@ import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
 import { Fragment, useCallback } from 'react';
 import { actions as actionsFiltresStore, filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import SélecteurMultipleProps from './SélecteurMultiple.interface';
-import SélecteurMultipleStyled from './SélecteurMultiple.styled';
+import FiltresMinistèresProps from './FiltresMinistères.interface';
+import FiltresMinistèresStyled from './FiltresMinistères.styled';
 
-const FILTRES = [
-  {
-    id: 'MIN-001',
-    nom: 'Agriculture et Alimentation',
-    périmètresMinistériels: [
-      { id: 'PER-001', nom: 'Agriculture' },
-      { id: 'PER-002', nom: 'Alimentation' },
-    ],
-  },
-  {
-    id: 'MIN-002',
-    nom: 'Cohésion des territoires et relations avec les collectivités territoriales',
-    périmètresMinistériels: [
-      { id: 'PER-003', nom: 'Cohésion des territoires, ville' },
-      { id: 'PER-004', nom: 'Aménagement du territoire' },
-      { id: 'PER-005', nom: 'Logement' },
-    ],
-  },
-];
-
-
-export default function FiltresCatégorie({ libellé, catégorieDeFiltre, filtres }: SélecteurMultipleProps) {
+export default function FiltresMinistères({ libellé, catégorieDeFiltre, ministères }: FiltresMinistèresProps) {
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
   const filtresActifs = filtresActifsStore();
 
@@ -39,7 +18,7 @@ export default function FiltresCatégorie({ libellé, catégorieDeFiltre, filtre
   const nombreFiltresActifCatégorie = actionsFiltresStore().récupérerNombreFiltresActifsDUneCatégorie(catégorieDeFiltre);
 
   return (
-    <SélecteurMultipleStyled className="fr-form-group">
+    <FiltresMinistèresStyled className="fr-form-group">
       <button
         aria-controls={`fr-sidemenu-item-${catégorieDeFiltre}`}
         aria-expanded="false"
@@ -59,24 +38,24 @@ export default function FiltresCatégorie({ libellé, catégorieDeFiltre, filtre
           className='choix-filtres'
         >
           {
-            FILTRES.map((groupeDeFiltre) => {
+            ministères.map((ministère) => {
               return (
-                <Fragment key={groupeDeFiltre.id}>
+                <Fragment key={ministère.id}>
                   <li className="fr-checkbox-group">
-                    <input
-                      checked={
+                    <div
+                      aria-expanded="false"
+                      className={`fr-p-1w libellé ${
                         filtresActifs.périmètresMinistériels
-                          .some(périmètreMinistérielActif => groupeDeFiltre.périmètresMinistériels
-                            .some(pm => pm.id === périmètreMinistérielActif.id))
-                      }
-                      type="checkbox"
-                    />
-                    <label className="fr-label fr-p-1w libellé">
-                      {groupeDeFiltre.nom}
-                    </label>
+                          .some(périmètreMinistérielActif => ministère.périmètresMinistériels
+                            .some(périmètreMinistériel => périmètreMinistériel.id === périmètreMinistérielActif.id))
+                        && 'ministère-sélectionné'
+                      }`}
+                    >
+                      {ministère.nom}
+                    </div>
                     <ul className="fitres-liste">
                       {
-                        groupeDeFiltre.périmètresMinistériels.map(périmètreMinistériel => (
+                        ministère.périmètresMinistériels.map(périmètreMinistériel => (
                           <li
                             className="fr-checkbox-group"
                             key={périmètreMinistériel.id}
@@ -105,6 +84,6 @@ export default function FiltresCatégorie({ libellé, catégorieDeFiltre, filtre
           }
         </ul>
       </div>
-    </SélecteurMultipleStyled>
+    </FiltresMinistèresStyled>
   );
 }

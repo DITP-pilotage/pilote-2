@@ -1,8 +1,28 @@
 import FiltresGroupeDeCatégories from './FiltresGroupe/FiltresGroupe';
-import FiltresCatégorie from './SélecteurMultiple/FiltresCatégorie';
+import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
 import BarreLatéraleProps from './BarreLatérale.interface';
 import BarreLatéraleStyled from './BarreLatérale.styled';
 import SélecteursGéographiques from './SélecteursGéographiques/SélecteursGéographiques';
+
+const ministères = [
+  {
+    id: 'MIN-001',
+    nom: 'Agriculture et Alimentation',
+    périmètresMinistériels: [
+      { id: 'PER-001', nom: 'Agriculture' },
+      { id: 'PER-002', nom: 'Alimentation' },
+    ],
+  },
+  {
+    id: 'MIN-002',
+    nom: 'Cohésion des territoires et relations avec les collectivités territoriales',
+    périmètresMinistériels: [
+      { id: 'PER-003', nom: 'Cohésion des territoires, ville' },
+      { id: 'PER-004', nom: 'Aménagement du territoire' },
+      { id: 'PER-005', nom: 'Logement' },
+    ],
+  },
+];
 
 export default function BarreLatérale({ estOuvert, setEstOuvert, périmètresMinistériels }: BarreLatéraleProps) {
   return (
@@ -23,10 +43,10 @@ export default function BarreLatérale({ estOuvert, setEstOuvert, périmètresMi
           </button>
         </div>
         <FiltresGroupeDeCatégories libellé="Catégorie de filtres">
-          <FiltresCatégorie
+          <FiltresMinistères
             catégorieDeFiltre='périmètresMinistériels'
-            filtres={périmètresMinistériels}
             libellé='Ministères'
+            ministères={ministères}
           />
         </FiltresGroupeDeCatégories>
       </div>
