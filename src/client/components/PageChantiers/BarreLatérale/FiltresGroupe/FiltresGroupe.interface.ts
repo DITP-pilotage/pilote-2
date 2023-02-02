@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
 export default interface FiltresGroupeProps {
-  titre: string,
+  libellé?: string,
   children: ReactNode,
 }

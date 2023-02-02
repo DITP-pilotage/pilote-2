@@ -1,11 +1,15 @@
 import FiltreGroupeProps from './FiltresGroupe.interface';
 
-export default function FiltreGroupe({ titre, children }: FiltreGroupeProps) {
+export default function FiltresGroupeDeCatégories({ libellé, children }: FiltreGroupeProps) {
   return (
-    <div className="fr-p-3w">
-      <p className="fr-h6 fr-mb-0 fr-pb-2w">
-        { titre }
-      </p>
+    <div className="fr-px-3w">
+      {
+        !!libellé && (
+          <p className="fr-text--lg fr-mb-0 fr-mt-2w fr-mb-1w bold">
+            { libellé }
+          </p>
+        )
+      }
       { children }
     </div>
   );

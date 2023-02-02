@@ -4,7 +4,7 @@ export type Catégorie = keyof FiltresActifs;
 
 export type Filtre = {
   id: PérimètreMinistériel['id'],
-  nom: PérimètreMinistériel['nom']
+  nom: PérimètreMinistériel['nom'],
 };
 
 export interface FiltreCatégorieTuple {

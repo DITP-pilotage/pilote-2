@@ -14,7 +14,7 @@ import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
 
-export default function PageChantiers({ chantiers, périmètresMinistériels }: PageChantiersProps) {
+export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {
   const [estOuverteBarreFiltres, setEstOuverteBarreFiltres] = useState(false);
 
   const filtresActifs = filtresActifsStore();
@@ -38,7 +38,7 @@ export default function PageChantiers({ chantiers, périmètresMinistériels }: 
     <PageChantiersStyled className="flex">
       <BarreLatérale
         estOuvert={estOuverteBarreFiltres}
-        périmètresMinistériels={périmètresMinistériels}
+        ministères={ministères}
         setEstOuvert={setEstOuverteBarreFiltres}
       />
       <div className='contenu-principal'>

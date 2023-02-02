@@ -1,9 +1,8 @@
 /*eslint-disable sonarjs/no-duplicate-string*/
-import { getAllByRole, getByLabelText, getByText, queryByText, render, screen, within } from '@testing-library/react';
+import { getAllByRole, getByText, queryByText, render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import ChantierFixture from '@/fixtures/ChantierFixture';
-import PérimètreMinistérielFixture from '@/fixtures/PérimètreMinistérielFixture';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import PageChantiers from './PageChantiers';
 
@@ -11,12 +10,29 @@ import PageChantiers from './PageChantiers';
 jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function Cartographie() { return 'Carto'; });
 
 class PageChantiersTest {
-  périmètresMinistériels = PérimètreMinistérielFixture.générerPlusieurs(2);
+  // TODO temporaire en attendant la fixture
+  ministères = [
+    {
+      nom: 'Agriculture et Alimentation',
+      périmètresMinistériels: [
+        { id: 'PER-001', nom: 'Agriculture' },
+        { id: 'PER-002', nom: 'Alimentation' },
+      ],
+    },
+    {
+      nom: 'Cohésion des territoires et relations avec les collectivités territoriales',
+      périmètresMinistériels: [
+        { id: 'PER-003', nom: 'Cohésion des territoires, ville' },
+        { id: 'PER-004', nom: 'Aménagement du territoire' },
+        { id: 'PER-005', nom: 'Logement' },
+      ],
+    },
+  ];
 
   chantiers = ChantierFixture.générerPlusieurs(3, [
-    { périmètreIds: [this.périmètresMinistériels[0].id] },
-    { périmètreIds: [this.périmètresMinistériels[0].id] },
-    { périmètreIds: [this.périmètresMinistériels[1].id] },
+    { périmètreIds: [this.ministères[0].périmètresMinistériels[0].id] },
+    { périmètreIds: [this.ministères[0].périmètresMinistériels[0].id] },
+    { périmètreIds: [this.ministères[0].périmètresMinistériels[1].id] },
   ]);
 
   récupérerLesLignesDuTableau() {
@@ -24,26 +40,37 @@ class PageChantiersTest {
     return getAllByRole(conteneur!, 'row');
   }
 
-  async affecterEtatDuFiltrePérimètreMinistériel(nomDuPérimètreMinistériel: string, état: boolean) {
-    const caseÀCocherDuFiltre = screen.getByLabelText(nomDuPérimètreMinistériel, { selector: 'input' }) as HTMLInputElement;
-    const étatCaseÀCocherDuFiltre = caseÀCocherDuFiltre.checked;
-    if (état !== étatCaseÀCocherDuFiltre) {
-      await userEvent.click(caseÀCocherDuFiltre);
-    }
+  async basculerEtatDuFiltrePérimètreMinistériel(nomDuPérimètreMinistériel: string) {
+    const filtresMinistères = screen.getByRole('list', { name : 'Liste des filtres Ministères' });
+    const boutonFiltrePérimètre = within(filtresMinistères).getByText(nomDuPérimètreMinistériel);
+    await userEvent.click(boutonFiltrePérimètre);
   }
 
   async supprimerTag(nomDuPérimètreMinistériel: string) {
-    const liste = screen.getByRole('list', {  name : 'liste des tags des filtres actifs' });
-    const tag = getByText(liste, nomDuPérimètreMinistériel);
+    if (!this.estAffichéFiltresActifs())
+      return;
+    const liste = screen.getByRole('list', { name : 'liste des tags des filtres actifs' });
+    const tag = within(liste).getByText(nomDuPérimètreMinistériel);
     const button = within(tag).getByRole('button');
     await userEvent.click(button);
+  }
+
+  async réinitialiserLesFiltres() {
+    if (!this.estAffichéFiltresActifs())
+      return;
+    const button = screen.getByText('Réinitialiser les filtres');
+    await userEvent.click(button);
+  }
+
+  estAffichéFiltresActifs() {
+    return !!screen.queryByRole('list', { name : 'liste des tags des filtres actifs' });
   }
 
   render() {
     render(
       <PageChantiers
         chantiers={this.chantiers}
-        périmètresMinistériels={this.périmètresMinistériels}
+        ministères={this.ministères}
       />,     
     );
   }
@@ -78,16 +105,19 @@ describe('quand on sélectionne un filtre', () => {
   let filtrePérimètreMinistériel: PérimètreMinistériel;
 
   beforeEach(async () => {
-    filtrePérimètreMinistériel = pageChantiers.périmètresMinistériels[0];
-    await pageChantiers.affecterEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel.nom, true);
+    filtrePérimètreMinistériel = pageChantiers.ministères[0].périmètresMinistériels[0];
   });
 
-  test('le tag correspondant au filtre est affiché', async () =>{
+  test('le tag correspondant au filtre est affiché', async () => {
+    await pageChantiers.réinitialiserLesFiltres();
+    await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel.nom);
     const listeFiltresActifs = screen.getByRole('list', {  name : 'liste des tags des filtres actifs' });
     expect(getByText(listeFiltresActifs, filtrePérimètreMinistériel.nom)).toBeInTheDocument();
   });
 
   test('les chantiers affichés dans le tableau sont correctement filtrés', async () => {
+    await pageChantiers.réinitialiserLesFiltres();
+    await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel.nom);
     const tableauLignes = pageChantiers.récupérerLesLignesDuTableau();
     expect(tableauLignes.length).toEqual(2);
     expect(tableauLignes[0]).toHaveTextContent(pageChantiers.chantiers[0].nom);
@@ -96,29 +126,39 @@ describe('quand on sélectionne un filtre', () => {
 });
 
 describe('quand je retire un filtre via le tag',  () => {
-  test('la checkbox correspondant au filtre n\'est plus cochée', async () =>{
-    const filtrePérimètreMinistériel = pageChantiers.périmètresMinistériels[0];
-    await pageChantiers.affecterEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel.nom, true);
+  test('la tuile correspondante au filtre n\'est plus activée', async () =>{
+    const filtrePérimètreMinistériel = pageChantiers.ministères[0].périmètresMinistériels[0];
+    await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel.nom);
     await pageChantiers.supprimerTag(filtrePérimètreMinistériel.nom);
 
-    const choixFiltres = screen.getByRole('list', { name : 'Liste des filtres périmètresMinistériels' });
-    const caseÀCocherDuFiltre = getByLabelText(choixFiltres, filtrePérimètreMinistériel.nom);
-    expect(caseÀCocherDuFiltre).not.toBeChecked();
+    const choixFiltres = screen.getByRole('list', { name : 'Liste des filtres Ministères' });
+    const boutonFiltrePérimètre = getByText(choixFiltres, filtrePérimètreMinistériel.nom);
+    expect(boutonFiltrePérimètre).not.toHaveClass('actif');
   });
 });
 
 describe('quand je retire un des filtres via les cases à cocher', () => {
   test('le tag correspondant à ce filtre est supprimé', async () => {
-    const filtrePérimètreMinistériel1 = pageChantiers.périmètresMinistériels[0];
-    const filtrePérimètreMinistériel2 = pageChantiers.périmètresMinistériels[1];
-    await pageChantiers.affecterEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel1.nom, true);
-    await pageChantiers.affecterEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel2.nom, true);
-    await pageChantiers.affecterEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel2.nom, false);
+    const filtrePérimètreMinistériel1 = pageChantiers.ministères[0].périmètresMinistériels[0];
+    const filtrePérimètreMinistériel2 = pageChantiers.ministères[0].périmètresMinistériels[1];
+    await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel1.nom);
+    await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel2.nom);
+    await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel2.nom);
 
     const listeFiltresActifs = screen.getByRole('list', {  name : 'liste des tags des filtres actifs' });
     expect(queryByText(listeFiltresActifs, filtrePérimètreMinistériel2.nom)).toBeNull();
   });
 });
 
+describe('quand je clic sur le bouton de réinitisalisation de filtre', () => {
+  test('les filtres se désactivent', async () => {
+    const filtrePérimètreMinistériel1 = pageChantiers.ministères[0].périmètresMinistériels[0];
+    const filtrePérimètreMinistériel2 = pageChantiers.ministères[0].périmètresMinistériels[1];
+    await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel1.nom);
+    await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel2.nom);
 
+    await pageChantiers.réinitialiserLesFiltres();
 
+    expect(pageChantiers.estAffichéFiltresActifs()).toBe(false);
+  });
+});
