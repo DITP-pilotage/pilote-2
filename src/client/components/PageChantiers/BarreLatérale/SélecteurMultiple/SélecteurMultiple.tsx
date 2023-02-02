@@ -2,10 +2,31 @@ import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
 import { Fragment, useCallback } from 'react';
-import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
+import { actions as actionsFiltresStore, filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import SélecteurMultipleProps from './SélecteurMultiple.interface';
 import SélecteurMultipleStyled from './SélecteurMultiple.styled';
+
+const FILTRES = [
+  {
+    id: 'MIN-001',
+    nom: 'Agriculture et Alimentation',
+    périmètresMinistériels: [
+      { id: 'PER-001', nom: 'Agriculture' },
+      { id: 'PER-002', nom: 'Alimentation' },
+    ],
+  },
+  {
+    id: 'MIN-002',
+    nom: 'Cohésion des territoires et relations avec les collectivités territoriales',
+    périmètresMinistériels: [
+      { id: 'PER-003', nom: 'Cohésion des territoires, ville' },
+      { id: 'PER-004', nom: 'Aménagement du territoire' },
+      { id: 'PER-005', nom: 'Logement' },
+    ],
+  },
+];
+
 
 export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtres }: SélecteurMultipleProps) {
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
@@ -32,39 +53,48 @@ export default function SélecteurMultiple({ libellé, catégorieDeFiltre, filtr
         className="fr-collapse fr-pt-1w fr-px-1w"
         id={`fr-sidemenu-item-${catégorieDeFiltre}`}
       >
-        <div
+        <ul
           aria-label={`Liste des filtres ${catégorieDeFiltre}`}
           className='choix-filtres'
-          role='list'
         >
           {
-            filtres.map((filtre) => {
+            FILTRES.map((filtre) => {
               return (
                 <Fragment key={filtre.id}>
-                  <div
-                    className="fr-checkbox-group fr-py-3v"
-                    role='listitem'
-                  >
-                    <input
-                      checked={estActif(filtre.id, catégorieDeFiltre)}
-                      id={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
-                      name={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
-                      onChange={événement => changementDeLÉtatDuFiltreCallback(événement.target.checked, filtre)}
-                      type="checkbox"
-                    />
-                    <label
-                      className="fr-label"
-                      htmlFor={`case-à-cocher-${catégorieDeFiltre}-${filtre.id}`}
-                    >
+                  <li className="fr-py-1w" >
+                    <span className="fr-label fr-ml-0 fr-p-1w libellé">
                       {filtre.nom}
-                    </label>
-                  </div>
-                  <hr className='fr-hr flex fr-pb-1v fr-mx-1w' />
+                    </span>
+                    <ul className="">
+                      {
+                        filtre.périmètresMinistériels.map(périmètreMinistériel => (
+                          <li
+                            className="fr-checkbox-group fr-py-1w"
+                            key={périmètreMinistériel.id}
+                          >
+                            <input
+                              checked={estActif(périmètreMinistériel.id, catégorieDeFiltre)}
+                              id={`case-à-cocher-${catégorieDeFiltre}-${périmètreMinistériel.id}`}
+                              name={`case-à-cocher-${catégorieDeFiltre}-${périmètreMinistériel.id}`}
+                              onChange={événement => changementDeLÉtatDuFiltreCallback(événement.target.checked, périmètreMinistériel)}
+                              type="checkbox"
+                            />
+                            <label
+                              className="fr-label fr-ml-0 fr-p-1w libellé"
+                              htmlFor={`case-à-cocher-${catégorieDeFiltre}-${périmètreMinistériel.id}`}
+                            >
+                              {périmètreMinistériel.nom}
+                            </label>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  </li>
                 </Fragment>
               );
             })
           }
-        </div>
+        </ul>
       </div>
     </SélecteurMultipleStyled>
   );
