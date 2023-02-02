@@ -14,7 +14,6 @@ const FiltresMinistèresStyled = styled.div`
   }
 
   ul.ministères-liste {
-    max-height: 350px;
     margin-left: 0.5rem;
     overflow-y: auto;
   }
@@ -25,11 +24,15 @@ const FiltresMinistèresStyled = styled.div`
   }
 
   ul.périmètres-liste {
-    display: none;
+    max-height: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0, 1.05, 0, 1);
   }
 
   .ministère-déroulé + ul.périmètres-liste {
-    display: block;
+    max-height: 100vh;
+    transition: max-height 2s;
   }
 
   .tuile,

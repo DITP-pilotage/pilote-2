@@ -27,9 +27,9 @@ export async function getServerSideProps() {
   const chantiers = await chantierRepository.getListe();
 
   const ministères = [{
-    nom: 'Premièr(e) ministre',
+    nom: 'Premier(ère) ministre',
     périmètresMinistériels: [
-      { id: 'PER-019', nom: 'Premier Ministre (DIJOP,SGPI,CNR,SGPE)' },
+      { id: 'PER-019', nom: 'Premier Ministre (DIJOP, SGPI, CNR, SGPE)' },
       { id: 'PER-017', nom: 'Mer' },
       { id: 'PER-010', nom: 'Egalité Femmes-Hommes' },
       { id: 'PER-011', nom: 'Enfance' },
