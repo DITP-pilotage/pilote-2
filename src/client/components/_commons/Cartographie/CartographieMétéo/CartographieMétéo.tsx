@@ -23,7 +23,6 @@ function formaterValeur(valeurMétéo: CartographieValeur) {
     : 'Non renseignée';
 }
 
-
 export default function CartographieMétéo({ données, niveauDeMaille, options }: CartographieMétéoProps) {
   return (
     <CartographieMétéoStyled>

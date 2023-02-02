@@ -2,45 +2,56 @@ import { couleurParDéfaut, NuancierPourcentage } from './nuancier';
 
 const nuancierPourcentage: NuancierPourcentage = [
   {
+    seuil: 0,
+    libellé: '0%',
+    couleur: '#ffff',
+    hachures: true,
+  },
+  {
     seuil: 10,
     libellé: '0-10%',
-    couleur: '#E6E6F4',
+    couleur: '#8C8CCD',
   }, {
     seuil: 20,
     libellé: '10-20%',
-    couleur: '#D7D7EE',
+    couleur: '#7D7DC7',
   }, {
     seuil: 30,
     libellé: '20-30%',
-    couleur: '#CBCBE8',
+    couleur: '#6E6EC0',
   }, {
     seuil: 40,
     libellé: '30-40%',
-    couleur: '#BBBBE2',
+    couleur: '#5E5EBA',
   }, {
     seuil: 50,
     libellé: '40-50%',
-    couleur: '#AEAEDC',
+    couleur: '#4F4FB3',
   }, {
     seuil: 60,
     libellé: '50-60%',
-    couleur: '#9A9AD4',
+    couleur: '#3D3DAB',
   }, {
     seuil: 70,
     libellé: '60-70%',
-    couleur: '#8686CB',
+    couleur: '#2E2EA5',
   }, {
     seuil: 80,
     libellé: '70-80%',
-    couleur: '#6666BD',
+    couleur: '#1F1F9E',
   }, {
     seuil: 90,
     libellé: '80-90%',
-    couleur: '#4040AD',
+    couleur: '#0F0F98',
   }, {
-    seuil: 100,
+    seuil: 99.99,
     libellé: '90-100%',
-    couleur : '#000091',
+    couleur : '#00006C',
+  },
+  {
+    seuil: 100,
+    libellé: '100%',
+    couleur : '#2F2F2F',
   },
   {
     seuil: null,

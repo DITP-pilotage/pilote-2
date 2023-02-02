@@ -7,9 +7,10 @@ export default function CartographieLégende({ élémentsDeLégende }: Cartograp
   return (
     <CartographieLégendeStyled className="fr-mt-1w fr-mb-3w fr-pl-1w">
       {
-        élémentsDeLégende.map(({ couleur, libellé, picto }) => (
+        élémentsDeLégende.map(({ couleur, libellé, picto, hachures }) => (
           <CartographieLégendeÉlément
             couleur={couleur}
+            hachures={hachures}
             key={`carto-légende-${couleur}`}
           >
             <span>
@@ -20,6 +21,7 @@ export default function CartographieLégende({ élémentsDeLégende }: Cartograp
                 alt={libellé}
                 src={picto}
               /> 
+              
               : null }
           </CartographieLégendeÉlément>
         ))
