@@ -31,7 +31,7 @@ export default function PageChantier({ chantier, indicateurs }: PageChantierProp
           <AvancementChantier chantier={chantier} />
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-5w">
             <div className="fr-col-12 fr-col-xl-6">
-              <SynthèseRésultats />
+              <SynthèseRésultats chantier={chantier} />
             </div>
             <div className="fr-col-12 fr-col-xl-6">
               <Responsables chantier={chantier} />
