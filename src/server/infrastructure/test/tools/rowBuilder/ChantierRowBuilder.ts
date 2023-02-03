@@ -23,7 +23,7 @@ export default class ChantierRowBuilder {
 
   private _directeurs_projet_mails: string[] = [];
 
-  private _ministeres: string[] = [];
+  private _ministeres: string[] = ['Ministère 1'];
 
   withId(id: string): ChantierRowBuilder {
     this._id = id;
