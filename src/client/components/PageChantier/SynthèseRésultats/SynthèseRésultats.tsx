@@ -5,7 +5,7 @@ import { SynthèseRésultatsProps } from '@/components/PageChantier/SynthèseRé
 import { récupérerLibelléMétéo, PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import SynthèseRésultatsStyled from '@/components/PageChantier/SynthèseRésultats/SynthèseRésultats.styled';
 
-export default function SynthèseRésultats({ chantier }: SynthèseRésultatsProps) {
+export default function SynthèseRésultats({ chantier, synthèseDesRésultats }: SynthèseRésultatsProps) {
   const météo = chantier.mailles.nationale.FR.météo;
 
   return (
@@ -27,11 +27,10 @@ export default function SynthèseRésultats({ chantier }: SynthèseRésultatsPro
             </div>
             <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
               <div className="info-mise-a-jour-commentaire fr-text--sm fr-mb-1w">
-                Mis à jour le XX/XX/XXXX
+                {`Mis à jour le ${synthèseDesRésultats.commentaireSynthèse.date}`}
               </div>
               <p className="commentaire">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam aliquid, architecto deleniti dolores eaque eligendi incidunt inventore iure labore nam nihil, non odio quo quod reiciendis totam voluptatem voluptates voluptatum.
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias asperiores consectetur cum, ea enim impedit iste magni necessitatibus obcaecati placeat possimus praesentium, quia tempore ullam voluptatem. At nam sit vero.
+                {synthèseDesRésultats.commentaireSynthèse.contenu}
               </p>
             </div>
           </SynthèseRésultatsStyled>        
