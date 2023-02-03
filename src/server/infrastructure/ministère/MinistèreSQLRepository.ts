@@ -15,7 +15,12 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
 
   async getListe(): Promise<Ministère[]> {
     const queryResults: MinistèreQueryResult[] = await this.prisma.$queryRaw`
-     select ministere, array_agg(id order by nom) as ids, array_agg(nom order by nom) as noms from perimetre group by ministere order by ministere;
+        select ministere,
+               array_agg(id order by nom) as ids,
+               array_agg(nom order by nom) as noms
+        from perimetre
+        group by ministere
+        order by ministere;
     `;
     return queryResults.map(queryResult => this.parseMinistère(queryResult));
   }
