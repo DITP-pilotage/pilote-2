@@ -8,9 +8,15 @@ import IndicateurSQLRepository from '@/server/infrastructure/indicateur/Indicate
 import IndicateurRandomRepository from '@/server/infrastructure/indicateur/IndicateurRandomRepository';
 import MinistèreSQLRepository from '@/server/infrastructure/ministère/MinistèreSQLRepository';
 import MinistèreInMemoryRepository from '@/server/infrastructure/ministère/MinistèreInMemoryRepository';
+import SynthèseDesRésultatsRepository from '@/server/domain/chantier/SynthèseDesRésultatsRepository.interface';
+import SynthèseDesRésultatsRandomRepository
+  from '@/server/infrastructure/chantier/SynthèseDesRésultatsRandomRepository';
+import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/chantier/SynthèseDesRésultatsSQLRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
+
+  private readonly _synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository;
 
   private readonly _ministèreRepository: MinistèreRepository;
 
@@ -22,6 +28,7 @@ class Dependencies {
       this._chantierRepository = new ChantierSQLRepository(prisma);
       this._ministèreRepository = new MinistèreSQLRepository(prisma);
       this._indicateurRepository = new IndicateurSQLRepository(prisma);
+      this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
     } else {
       const nombreDeChantiers = 120;
       const idPérimètres = [ { id: 'PER-001' }, { id: 'PER-002' }, { id: 'PER-003' }, { id: 'PER-004' } ];
@@ -32,6 +39,7 @@ class Dependencies {
       }
 
       this._chantierRepository = new ChantierRandomRepository(valeursFixes);
+      this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsRandomRepository();
       this._ministèreRepository = new MinistèreInMemoryRepository();
       this._indicateurRepository = new IndicateurRandomRepository();
     }
@@ -41,10 +49,13 @@ class Dependencies {
     return this._chantierRepository;
   }
 
+  getSynthèseDesRésultatsRepository(): SynthèseDesRésultatsRepository {
+    return this._synthèseDesRésultatsRepository;
+  }
+
   getMinistèreRepository(): MinistèreRepository {
     return this._ministèreRepository;
   }
-
 
   getIndicateurRepository(): IndicateurRepository {
     return this._indicateurRepository;

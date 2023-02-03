@@ -1,6 +1,5 @@
 export interface Commentaire {
   contenu: string,
-  auteur: string,
   date: string,
 }
 

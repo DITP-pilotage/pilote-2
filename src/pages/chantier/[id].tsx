@@ -27,15 +27,8 @@ export async function getServerSideProps({ params }: { params: { id: Chantier['i
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs: Indicateur[] = await indicateurRepository.getByChantierId(params.id);
 
-  // const synthèseDesRésultatsRepository = dependencies.getsynthèseDesRésultatsRepository();
-  // const synthèseDesRésultats: synthèseDesRésultats = await synthèseDesRésultatsRepository.getByChantierId(params.id);
-  const synthèseDesRésultats: SynthèseDesRésultats = {
-    commentaireSynthèse: {
-      contenu: 'Le suivi de l’indicateur relatif à la protection animale...',
-      auteur: 'Prénom Nom',
-      date: '2022-09-05 00:00:00.000',
-    },
-  };
+  const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();
+  const synthèseDesRésultats: SynthèseDesRésultats | null = await synthèseDesRésultatsRepository.findNewestByChantierId(params.id);
 
   return {
     props: {

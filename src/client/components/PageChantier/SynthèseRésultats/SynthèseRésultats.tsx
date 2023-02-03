@@ -26,12 +26,21 @@ export default function SynthèseRésultats({ chantier, synthèseDesRésultats }
               </p>
             </div>
             <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
-              <div className="info-mise-a-jour-commentaire fr-text--sm fr-mb-1w">
-                {`Mis à jour le ${synthèseDesRésultats.commentaireSynthèse.date}`}
-              </div>
-              <p className="commentaire">
-                {synthèseDesRésultats.commentaireSynthèse.contenu}
-              </p>
+              {
+                synthèseDesRésultats
+                  ?
+                    <>
+                      <div className="info-mise-a-jour-commentaire fr-text--sm fr-mb-1w">
+                        {`Mis à jour le ${synthèseDesRésultats.commentaireSynthèse.date}`}
+                      </div>
+                      <p className="commentaire">
+                        {synthèseDesRésultats.commentaireSynthèse.contenu.trim() === ''
+                          ? 'Le commentaire est vide.'
+                          : synthèseDesRésultats.commentaireSynthèse.contenu}
+                      </p>
+                    </>
+                  : null
+              }
             </div>
           </SynthèseRésultatsStyled>        
         </div>
