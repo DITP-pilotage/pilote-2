@@ -4,9 +4,8 @@ import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
 import { useCallback } from 'react';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PérimètreMinistériel from '@/server/domain/ministère/PérimètreMinistériel.interface';
-import FiltresMinistèresProps, {
-  Ministère,
-} from './FiltresMinistères.interface';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
+import FiltresMinistèresProps from './FiltresMinistères.interface';
 import FiltresMinistèresStyled from './FiltresMinistères.styled';
 
 export default function FiltresMinistères({ libellé, catégorieDeFiltre, ministères }: FiltresMinistèresProps) {

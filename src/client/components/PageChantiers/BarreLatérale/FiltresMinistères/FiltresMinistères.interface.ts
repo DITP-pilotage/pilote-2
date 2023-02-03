@@ -1,8 +1,5 @@
 import FiltresStore from '@/stores/useFiltresStore/useFiltresStore.interface';
-import PérimètreMinistériel from '@/server/domain/ministère/PérimètreMinistériel.interface';
-
-// TODO placé ici en attendant de le déplacer dans /src/server/domain
-export type Ministère = { nom: string, périmètresMinistériels: PérimètreMinistériel[] };
+import Ministère from '@/server/domain/ministère/Ministère.interface';
 
 export default interface FiltresMinistèresProps {
   libellé: string
