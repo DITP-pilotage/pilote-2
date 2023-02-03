@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: ppg_metadata
+    schema: raw_data
+    tables:
+      - name: chantier_meteo
+      - name: indicateur_type
+      - name: metadata_axe
+      - name: metadata_indicateur
+      - name: metadata_perimetre
+      - name: metadata_chantier
+      - name: metadata_porteur
+      - name: metadata_ppg
+      - name: metadata_zone

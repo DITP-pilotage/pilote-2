@@ -189,6 +189,7 @@ PPG --> |view_meta_porteur.csv| PG
 PPG --> |ref_indic_type.csv| PG
 PPG --> |view_meta_axe.csv| PG
 PPG --> |view_meta_ppg.csv| PG
+PPG --> |rp_view_data_properties.csv| PG
 ```
 
 Légende :
@@ -208,6 +209,8 @@ DFAK(Dump Dfakto) --> |fact_progress.csv| PG[(Base PG Pilote 2)]
 DFAK --> |dim_tree_nodes.csv| PG
 DFAK --> |fact_progress_reform.csv| PG
 DFAK --> |dim_structures.csv| PG
+DFAK --> |dim_periods.csv| PG
+DFAK --> |fact_financials_enr.csv| PG
 ```
 
 _NB_ : 
@@ -237,22 +240,28 @@ subgraph Base PG Pilote 2
       D_DS[dim_structures]
       M_TYPE[indicateur_type]
       M_PORT[metadata_porteur]
+      D_FPE[fact_progress_enr]
+      D_VDP[view_data_properties]
    end
    subgraph public
       M_PER --> PER[perimetre]
-      M_CHA --> CHA[chantier]
       D_FPC --> CHA
       M_PORT --> CHA
+      M_CHA --> CHA[chantier]
       M_ZON --> CHA
       D_DTN --> CHA
       D_DS  --> CHA
+      M_CHA --> SDR
+      M_ZON --> SDR
+      D_VDP --> SDR[synthese_des_resultats]
       M_ZON --> IND
       D_DTN --> IND
       D_DS  --> IND
       D_FPI --> IND
       M_TYPE --> IND
       M_IND --> IND[indicateur]
-      linkStyle 0 stroke:red;
+      D_FPE --> IND
+      linkStyle 0,1,2,3,4,5,6 stroke:red;
    end
 end
 ```

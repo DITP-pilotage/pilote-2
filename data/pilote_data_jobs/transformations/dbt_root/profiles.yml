@@ -1,12 +1,18 @@
 ditp_ppg_dbt:
-  target: dev
+  target: prod_with_fal
   outputs:
-    dev:
+    prod:
       type: postgres
-      threads: 1
+      threads: 4
       host: "{{ env_var('PGHOST') }}"
       port: "{{ env_var('PGPORT') | int }}"
       user: "{{ env_var('PGUSER') }}"
       pass: "{{ env_var('PGPASSWORD') }}"
       dbname: "{{ env_var('PGDATABASE') }}"
       schema: public
+    local:
+      type: duckdb
+      path: 'ditp_pilote.duckdb'
+    prod_with_fal:
+      type: fal
+      db_profile: prod
