@@ -30,7 +30,7 @@ export class Stopwatch {
 
   constructor(private readonly logger: Logger, private readonly clock: Clock) {}
 
-  start(label: string) {
+  start(label: string): void {
     this.startTimes.set(label, this.clock.now());
     if (!this.times.has(label)) {
       this.times.set(label, 0);
@@ -38,7 +38,7 @@ export class Stopwatch {
     }
   }
 
-  time(label: string) {
+  time(label: string): void {
     if (!this.times.has(label)) {
       throw new Error(`Error: attempt to time ${label} (not started).`);
     }
@@ -47,12 +47,12 @@ export class Stopwatch {
     this.times.set(label, sum + measure);
   }
 
-  log(label: string) {
+  log(label: string): void {
     const measure = this.times.has(label) ? this.times.get(label) : null;
     this.logger.log(`⌚ Time for label "${label}": ${measure} ⌚`);
   }
 
-  logAll() {
+  logAll(): void {
     for (const label of this.labels) {
       this.log(label);
     }
@@ -69,16 +69,16 @@ function getInstance(): Stopwatch {
 }
 
 const moduleInterface = {
-  start(label: string) {
+  start(label: string): void {
     getInstance().start(label);
   },
-  time(label: string) {
+  time(label: string): void {
     getInstance().time(label);
   },
-  log(label: string) {
+  log(label: string): void {
     getInstance().log(label);
   },
-  logAll() {
+  logAll(): void {
     getInstance().logAll();
   },
 };

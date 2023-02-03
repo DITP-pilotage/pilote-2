@@ -2,8 +2,8 @@ import MinistèreRepository from '@/server/domain/ministère/MinistèreRepositor
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 
 export default class MinistèreInMemoryRepository implements MinistèreRepository {
-  getListe(): Promise<Ministère[]> {
-    return Promise.resolve([
+  async getListe(): Promise<Ministère[]> {
+    return [
       {
         nom: 'Ministère 1',
         périmètresMinistériels: [{ id: 'PER-001', nom: 'Périmètre 1.1' }, { id: 'PER-002', nom: 'Périmètre 1.2' }],
@@ -16,6 +16,6 @@ export default class MinistèreInMemoryRepository implements MinistèreRepositor
         nom: 'Ministère 3',
         périmètresMinistériels: [{ id: 'PER-004', nom: 'Périmètre 3.4' }],
       },
-    ]);
+    ];
   }
 }

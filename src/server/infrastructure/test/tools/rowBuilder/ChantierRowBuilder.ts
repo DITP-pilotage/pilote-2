@@ -25,68 +25,68 @@ export default class ChantierRowBuilder {
 
   private _ministeres: string[] = [];
 
-  withId(id: string) {
+  withId(id: string): ChantierRowBuilder {
     this._id = id;
     return this;
   }
 
-  withNom(nom: string) {
+  withNom(nom: string): ChantierRowBuilder {
     this._nom = nom;
     return this;
   }
 
-  withPérimètresIds(périmètresIds: string[]) {
+  withPérimètresIds(périmètresIds: string[]): ChantierRowBuilder {
     this._perimetre_ids = périmètresIds;
     return this;
   }
 
-  withMailleNationale() {
+  withMailleNationale(): ChantierRowBuilder {
     this._maille = 'NAT';
     this._codeInsee = 'FR';
     return this;
   }
 
-  withMaille(maille: string) {
+  withMaille(maille: string): ChantierRowBuilder {
     this._maille = maille;
     return this;
   }
 
-  withCodeInsee(codeInsee: string) {
+  withCodeInsee(codeInsee: string): ChantierRowBuilder {
     this._codeInsee = codeInsee;
     return this;
   }
 
-  withTauxAvancement(tauxAvancement: number) {
+  withTauxAvancement(tauxAvancement: number): ChantierRowBuilder {
     this._tauxAvancement = tauxAvancement;
     return this;
   }
 
-  withMétéo(météo: string) {
+  withMétéo(météo: string): ChantierRowBuilder {
     this._météo = météo;
     return this;
   }
 
-  withDirecteursAdministrationCentrale(it: string[]) {
+  withDirecteursAdministrationCentrale(it: string[]): ChantierRowBuilder {
     this._directeurs_administration_centrale = it;
     return this;
   }
 
-  withDirectionsAdministrationCentrale(it: string[]) {
+  withDirectionsAdministrationCentrale(it: string[]): ChantierRowBuilder {
     this._directions_administration_centrale = it;
     return this;
   }
 
-  withDirecteursProjet(it: string[]) {
+  withDirecteursProjet(it: string[]): ChantierRowBuilder {
     this._directeurs_projet = it;
     return this;
   }
 
-  withDirecteursProjetMail(it: string[]) {
+  withDirecteursProjetMail(it: string[]): ChantierRowBuilder {
     this._directeurs_projet_mails = it;
     return this;
   }
 
-  withMinistères(ministères: string[]) {
+  withMinistères(ministères: string[]): ChantierRowBuilder {
     this._ministeres = ministères;
     return this;
   }

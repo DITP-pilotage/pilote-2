@@ -11,27 +11,27 @@ export default class IndicateurRowBuilder {
 
   private _maille: string = 'NAT';
 
-  withId(id: string) {
+  withId(id: string): IndicateurRowBuilder {
     this._id = id;
     return this;
   }
 
-  withNom(nom: string) {
+  withNom(nom: string): IndicateurRowBuilder {
     this._nom = nom;
     return this;
   }
 
-  withChantierId(chantierId: string) {
+  withChantierId(chantierId: string): IndicateurRowBuilder {
     this._chantierId = chantierId;
     return this;
   }
 
-  withMaille(maille: string) {
+  withMaille(maille: string): IndicateurRowBuilder {
     this._maille = maille;
     return this;
   }
 
-  withCodeInsee(codeInsee: string) {
+  withCodeInsee(codeInsee: string): IndicateurRowBuilder {
     this._codeInsee = codeInsee;
     return this;
   }

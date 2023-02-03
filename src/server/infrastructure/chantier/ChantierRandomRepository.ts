@@ -9,11 +9,11 @@ export default class ChantierRandomRepository implements ChantierRepository {
     this.valeursFixes = valeursFixes;
   }
 
-  async getById(id: string) {
+  async getById(id: string): Promise<Chantier> {
     return ChantierFixture.générer({ id, ...this.valeursFixes?.[0] });
   }
 
-  async getListe() {
+  async getListe(): Promise<Chantier[]> {
     if (!this.valeursFixes) {
       return [];
     }
