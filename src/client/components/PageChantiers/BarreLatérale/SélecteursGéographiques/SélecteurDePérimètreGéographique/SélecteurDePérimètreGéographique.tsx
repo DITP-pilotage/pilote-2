@@ -37,7 +37,6 @@ export default function SélecteurDePérimètreGéographique({
       </label>
       <select
         className="fr-select"
-        id="perimetre-géographique"
         name="select"
         onChange={(événement) => {
           const codeInsee = événement.currentTarget.value;
