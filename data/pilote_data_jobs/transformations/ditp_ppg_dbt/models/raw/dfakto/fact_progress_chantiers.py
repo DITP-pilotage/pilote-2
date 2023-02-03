@@ -13,7 +13,6 @@ def model(dbt, session):
         'period_id': 'int16',
         'progress': 'float64',
         'bounded_progress': 'float64',
-        'is_representative': 'bool',
         'snapshot_date': 'datetime64',
     }
 
