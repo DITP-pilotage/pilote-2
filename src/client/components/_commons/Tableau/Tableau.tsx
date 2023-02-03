@@ -40,7 +40,7 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
   });
 
   useEffect(() => {
-    tableau.setPageSize(10);
+    tableau.setPageSize(50);
   }, [tableau]);
 
   const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) => {
@@ -68,25 +68,26 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
         </div>
         : null }
       {
-        tableau.getRowModel().rows.length === 0 ?
-          <div className="fr-notice fr-notice--info">
-            <div className="fr-container">
-              <div className="fr-notice__body">
-                <p className="fr-notice__title">
-                  {`Aucun ${entité} ne correspond à votre recherche !`}
-                </p>
-                Vous pouvez modifier vos filtres pour élargir votre recherche.
+        tableau.getRowModel().rows.length === 0
+          ?
+            <div className="fr-notice fr-notice--info">
+              <div className="fr-container">
+                <div className="fr-notice__body">
+                  <p className="fr-notice__title">
+                    {`Aucun ${entité} ne correspond à votre recherche !`}
+                  </p>
+                  Vous pouvez modifier vos filtres pour élargir votre recherche.
+                </div>
               </div>
             </div>
-          </div>
           :
-          <table className='tableau'>
-            <caption className="fr-sr-only">
-              {titre}
-            </caption>
-            <TableauEnTête<T> tableau={tableau} />
-            <TableauContenu<T> tableau={tableau} />
-          </table>
+            <table className='tableau'>
+              <caption className="fr-sr-only">
+                {titre}
+              </caption>
+              <TableauEnTête<T> tableau={tableau} />
+              <TableauContenu<T> tableau={tableau} />
+            </table>
       }
       <TableauPagination
         changementDePageCallback={changementDePageCallback}

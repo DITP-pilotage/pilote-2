@@ -5,6 +5,10 @@ const TableauStyled = styled.div`
 
   table.tableau {
     display: table;
+
+    tr:hover {
+      box-shadow: var(--overlap-shadow);
+    }
   }
 
   .barre-de-recherche {
@@ -13,6 +17,12 @@ const TableauStyled = styled.div`
 
     div {
       max-width: 100%;
+    }
+  }
+
+  nav {
+    button {
+      border-radius: 4px;
     }
   }
 `;
