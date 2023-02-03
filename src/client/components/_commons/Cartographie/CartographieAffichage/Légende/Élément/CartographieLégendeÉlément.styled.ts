@@ -9,7 +9,6 @@ const CartographieLégendeÉlémentStyled = styled.li<CartographieLégendeÉlém
   align-items: center;
   font-size: 0.75rem;
   line-height: 1rem;
-  color: var(--text-mention-grey);
 
   > img {
     height: 1.2rem;

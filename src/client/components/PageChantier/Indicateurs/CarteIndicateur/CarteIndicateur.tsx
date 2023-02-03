@@ -66,10 +66,10 @@ export default function CarteIndicateur({ indicateur } : CarteIndicateurProps) {
           }
           { indicateur.nom }
         </Titre>
-        <p className='information-secondaire fr-mb-1w'>
+        <p className='fr-mb-1w information-secondaire texte-gris'>
           Dernière mise à jour : Non renseigné
         </p>
-        <p className='information-secondaire fr-mb-1w'>
+        <p className='fr-mb-1w information-secondaire texte-gris'>
           Source : Non renseigné
         </p>
         <p className="fr-text--xs fr-mb-1v">
