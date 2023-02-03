@@ -65,6 +65,24 @@ describe('ChantierSQLRepository', () => {
     });
   });
 
+  test('un chantier sans ministères est exclu du résultat', async () => {
+    // GIVEN
+    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+    const chantierId = 'CH-001';
+
+    await prisma.chantier.create({
+      data: new ChantierRowBuilder()
+        .withId(chantierId).withMailleNationale().withTauxAvancement(18).withMinistères([]).build(),
+    });
+
+    // WHEN
+    const result = await repository.getListe();
+
+    // THEN
+    expect(result).toStrictEqual([]);
+  });
+
   test('un chantier contenant une maille nationale et départementale', async () => {
     // GIVEN
     const chantierId = 'CH-001';
@@ -111,9 +129,7 @@ describe('ChantierSQLRepository', () => {
           .withMinistères(['Agriculture et Alimentation', 'Intérieur', 'Extérieur'])
           .build(),
         new ChantierRowBuilder()
-          .withId('CH-002').withNom('Chantier 2').build(),
-        new ChantierRowBuilder()
-          .withId('CH-003').withNom('Chantier 3')
+          .withId('CH-002').withNom('Chantier 2')
           .withMinistères(['Agriculture et Alimentation'])
           .build(),
       ],
@@ -122,17 +138,13 @@ describe('ChantierSQLRepository', () => {
     // WHEN
     const result1 = await repository.getById('CH-001');
     const result2 = await repository.getById('CH-002');
-    const result3 = await repository.getById('CH-003');
 
     // THEN
     expect(result1.responsables.porteur).toEqual('Agriculture et Alimentation');
     expect(result1.responsables.coporteurs).toEqual(['Intérieur', 'Extérieur']);
 
-    expect(result2.responsables.porteur).toBeUndefined();
+    expect(result2.responsables.porteur).toEqual('Agriculture et Alimentation');
     expect(result2.responsables.coporteurs).toEqual([]);
-
-    expect(result3.responsables.porteur).toEqual('Agriculture et Alimentation');
-    expect(result3.responsables.coporteurs).toEqual([]);
   });
 
   test('Accède à une liste de chantier', async () => {
