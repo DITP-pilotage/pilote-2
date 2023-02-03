@@ -26,7 +26,7 @@ export default function RépartitionMétéo({ donnéesTerritoiresAgrégées }: R
         {
           météosÀAfficher.map(météo => (
             <li
-              className='fr-col-3'
+              className='fr-col-12 fr-col-sm-6 fr-col-lg-3'
               key={récupérerLibelléMétéo(météo)}
             >
               <RépartitionMétéoÉlément

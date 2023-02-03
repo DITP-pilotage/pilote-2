@@ -47,83 +47,85 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
         svgRef={svgRef}
         viewbox={viewbox}
       />
-      <svg
-        ref={svgRef}
-        version="1.2"
-        viewBox={`
-          ${viewbox.x}
-          ${viewbox.y}
-          ${viewbox.width}
-          ${viewbox.height}
+      <div className='carte'>
+        <svg
+          ref={svgRef}
+          version="1.2"
+          viewBox={`
+        ${viewbox.x}
+        ${viewbox.y}
+        ${viewbox.width}
+        ${viewbox.height}
         `}
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <pattern
-            height="2"
-            id="hachures"
-            patternTransform="rotate(45)"
-            patternUnits="userSpaceOnUse"
-            width="2.3"
-          >
-            <line
-              stroke="#666666"
-              stroke-width="3"
-              y2="3"
-            />
-          </pattern>
-        </defs>
-        <g
-          className="canvas"
-          onMouseLeave={() => {
-            setTerritoireSurvolé(null);
-          }}
+          xmlns="http://www.w3.org/2000/svg"
         >
-          {territoires.map((territoire) => (
-            <g key={territoire.nom}>
-              {territoire.sousTerritoires.map(sousTerritoire => (
-                <path
-                  className='territoire-rempli'
-                  d={sousTerritoire.tracéSVG}
-                  fill={options.territoireHachuré(sousTerritoire.valeur) ? 'url(#hachures)' : options.couleurDeRemplissage(sousTerritoire.valeur)}
-                  key={sousTerritoire.nom}
-                  onClick={() => auClicTerritoireCallback(sousTerritoire)}
-                  onMouseEnter={() => {
-                    setTerritoireSurvolé({
-                      codeInsee: sousTerritoire.codeInsee,
-                      nom: sousTerritoire.nom,
-                      valeur: sousTerritoire.valeur,
-                      maille: sousTerritoire.maille,
-                    });
-                  }}
-                />
-              ))}
-              {territoire.sousTerritoires.length === 0 
-                ?
+          <defs>
+            <pattern
+              height="2"
+              id="hachures"
+              patternTransform="rotate(45)"
+              patternUnits="userSpaceOnUse"
+              width="2.3"
+            >
+              <line
+                stroke="#666666"
+                strokeWidth="3"
+                y2="3"
+              />
+            </pattern>
+          </defs>
+          <g
+            className="canvas"
+            onMouseLeave={() => {
+              setTerritoireSurvolé(null);
+            }}
+          >
+            {territoires.map((territoire) => (
+              <g key={territoire.nom}>
+                {territoire.sousTerritoires.map(sousTerritoire => (
                   <path
                     className='territoire-rempli'
-                    d={territoire.tracéSVG}
-                    fill={options.territoireHachuré(territoire.valeur) ? 'url(#hachures)' : options.couleurDeRemplissage(territoire.valeur)}
-                    onClick={() => auClicTerritoireCallback(territoire)}
+                    d={sousTerritoire.tracéSVG}
+                    fill={options.territoireHachuré(sousTerritoire.valeur) ? 'url(#hachures)' : options.couleurDeRemplissage(sousTerritoire.valeur)}
+                    key={sousTerritoire.nom}
+                    onClick={() => auClicTerritoireCallback(sousTerritoire)}
                     onMouseEnter={() => {
                       setTerritoireSurvolé({
-                        codeInsee: territoire.codeInsee,
-                        nom: territoire.nom,
-                        valeur: territoire.valeur,
-                        maille: territoire.maille,
+                        codeInsee: sousTerritoire.codeInsee,
+                        nom: sousTerritoire.nom,
+                        valeur: sousTerritoire.valeur,
+                        maille: sousTerritoire.maille,
                       });
                     }}
-                  /> 
-                :
-                  <path
-                    className='territoire-frontière'
-                    d={territoire.tracéSVG}
-                  />}
-            </g>
-          ))}
-          { !!périmètreGéographique && <CartographieTerritoireSélectionné /> }
-        </g>
-      </svg>
+                  />
+                ))}
+                {territoire.sousTerritoires.length === 0 
+                  ?
+                    <path
+                      className='territoire-rempli'
+                      d={territoire.tracéSVG}
+                      fill={options.territoireHachuré(territoire.valeur) ? 'url(#hachures)' : options.couleurDeRemplissage(territoire.valeur)}
+                      onClick={() => auClicTerritoireCallback(territoire)}
+                      onMouseEnter={() => {
+                        setTerritoireSurvolé({
+                          codeInsee: territoire.codeInsee,
+                          nom: territoire.nom,
+                          valeur: territoire.valeur,
+                          maille: territoire.maille,
+                        });
+                      }}
+                    /> 
+                  :
+                    <path
+                      className='territoire-frontière'
+                      d={territoire.tracéSVG}
+                    />}
+              </g>
+            ))}
+            { !!périmètreGéographique && <CartographieTerritoireSélectionné /> }
+          </g>
+        </svg>
+      </div>
     </CartographieSVGStyled>
   );
 }

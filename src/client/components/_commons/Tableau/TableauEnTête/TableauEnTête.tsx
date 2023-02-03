@@ -15,14 +15,13 @@ function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   return tupleTriAttributAriaSort[typeDeTri];
 }
 
+
 export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {    
-  
   function afficherIconesDeTriDeLaColonne(header:  Header<T, unknown>) {
     const triDécroissantActif = header.column.getIsSorted() === 'desc';
     const triCroissantActif = header.column.getIsSorted() === 'asc';
-
     return (
-      <TableauEnTêteStyled>
+      <>
         <button
           aria-label={`trier la colonne ${header.column.columnDef.header} par ordre décroissant`}
           className={`${triDécroissantActif ? 'actif' : ''} flèche-de-tri fr-m-1w`}
@@ -42,15 +41,15 @@ export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
         >
           <FlècheDeTri
             direction='asc'
-            estActif={triCroissantActif} 
+            estActif={triCroissantActif}
           />
         </button>
-      </TableauEnTêteStyled>
+      </>
     );
   }
-
+  
   return (
-    <thead>
+    <TableauEnTêteStyled>
       {
         tableau.getHeaderGroups().map(headerGroup => (
           <tr key={headerGroup.id}>
@@ -66,6 +65,6 @@ export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
           </tr>
         ))
       }
-    </thead>
+    </TableauEnTêteStyled>
   );
 }
