@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import ChantierRowBuilder from '@/server/infrastructure/test/rowBuilder/ChantierRowBuilder';
+import ChantierRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/ChantierRowBuilder';
 import { météoFromString } from '@/server/domain/chantier/Météo.interface';
 import ChantierSQLRepository from './ChantierSQLRepository';
 

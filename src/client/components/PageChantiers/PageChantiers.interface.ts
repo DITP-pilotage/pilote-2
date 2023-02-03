@@ -1,5 +1,5 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { Ministère } from '@/components/PageChantiers/BarreLatérale/FiltresMinistères/FiltresMinistères.interface';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
 
 export default interface PageChantiersProps {
   chantiers: Chantier[]

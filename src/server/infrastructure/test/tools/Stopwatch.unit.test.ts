@@ -1,13 +1,13 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-import { Stopwatch } from './Stopwatch';
+import { Clock, Logger, Stopwatch } from './Stopwatch';
 
-function fakeLogger(logs: string[]) {
+function fakeLogger(logs: string[]): Logger {
   return ({
     log: (s: string) => {logs.push(s);},
   });
 }
 
-function fakeClock(delta: number) {
+function fakeClock(delta: number): Clock {
   let n = 0;
   return ({
     now: () => {
