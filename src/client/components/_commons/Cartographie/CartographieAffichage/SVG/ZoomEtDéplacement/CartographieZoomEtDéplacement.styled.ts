@@ -2,18 +2,18 @@ import styled from '@emotion/styled';
 
 const CartographieZoomEtDéplacementStyled = styled.div`
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  width: 2rem;
+  right: 0;
+  min-width: 2rem;
 
   button {
     display: block;
-    width: 2rem;
+    width: 100%;
+    min-height: 1.8rem;
     padding: 0;
     color: var(--blue-france-sun-113-625);
-    text-align: center;
     background: #fff;
     border: solid 2px #cecece;
+    box-shadow: 0 1px 1px rgb(0 0 0 / 16%), 0 1px 0 -2px rgb(0 0 0 / 16%), 0 1px 4px rgb(0 0 0 / 23%);
   }
 
   button:hover {

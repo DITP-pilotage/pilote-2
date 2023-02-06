@@ -19,6 +19,10 @@ const SélecteursGéographiquesStyled = styled.div`
       }
     }
   }
+
+  select {
+    background-color: var(--background-alt-blue-france);
+  }
 `;
 
 export default SélecteursGéographiquesStyled;

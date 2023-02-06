@@ -2,7 +2,6 @@ import { createColumnHelper } from '@tanstack/react-table';
 import Link from 'next/link';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
 import { récupérerLibelléMétéo, PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import Chantier, { Avancement } from '@/server/domain/chantier/Chantier.interface';
 import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/avancement';
@@ -20,25 +19,30 @@ import ListeChantiersProps from './ListeChantiers.interface';
 
 
 function afficherMétéo(météo: Météo) {
-  return météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE' ? <PictoMétéo valeur={météo} /> : récupérerLibelléMétéo(météo);
+  return météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE'
+    ? <PictoMétéo valeur={météo} />
+    : (
+      <span className="texte-gris fr-text--xs">
+        { récupérerLibelléMétéo(météo) }
+      </span>
+    );
 }
 
 function afficherLesBarresDeProgression(avancement: Avancement) {
   return (
-    <>
-      <BarreDeProgression
-        fond="blanc"
-        taille="petite"
-        valeur={avancement.annuel as BarreDeProgressionProps['valeur']}
-        variante='secondaire'
-      />
-      <BarreDeProgression
-        fond="blanc"
-        taille="petite"
-        valeur={avancement.global as BarreDeProgressionProps['valeur']}
-        variante='primaire'
-      />
-    </>
+    avancement.global === null
+      ? (
+        <span className="texte-gris fr-text--xs">
+          Non renseigné
+        </span>
+      ) : (
+        <BarreDeProgression
+          fond="gris"
+          taille="petite"
+          valeur={avancement.global}
+          variante='primaire'
+        />
+      )
   );
 }
 

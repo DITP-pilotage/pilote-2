@@ -2,6 +2,7 @@ import '@gouvfr/dsfr/dist/component/navigation/navigation.min.css';
 import '@gouvfr/dsfr/dist/component/button/button.min.css';
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === 'function') {
@@ -29,6 +30,8 @@ const pages = [
 ];
 
 export default function Navigation() {
+  const urlActuelle = useRouter().pathname;
+
   return (
     <div
       aria-labelledby="bouton-menu-principal"
@@ -59,6 +62,7 @@ export default function Navigation() {
                   key={page.lien}
                 >
                   <Link
+                    aria-current={page.lien === urlActuelle ? 'true' : undefined}
                     className="fr-nav__link"
                     href={page.lien}
                     onClick={fermerLaModaleDuMenu}

@@ -31,14 +31,13 @@ export default function SélecteurDePérimètreGéographique({
     <div className="fr-select-group fr-mt-5v">
       <label
         className="fr-label"
-        htmlFor="select"
+        htmlFor="périmètre-géographique"
       >
         Périmètre géographique
       </label>
       <select
         className="fr-select"
-        id="perimetre-géographique"
-        name="select"
+        name="périmètre-géographique"
         onChange={(événement) => {
           const codeInsee = événement.currentTarget.value;
           setPérimètreGéographique({
