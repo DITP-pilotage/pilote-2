@@ -11,10 +11,10 @@ import Sommaire from './Sommaire/Sommaire';
 import PageChantierStyled from './PageChantier.styled';
 
 const listeRubriques: Rubrique[] = [
-  { nom: 'Avancement', ancre: 'avancement' },
+  { nom: 'Avancement du chantier', ancre: 'avancement' },
   { nom: 'Synthèse des résultats', ancre: 'synthèse' },
   { nom: 'Responsables', ancre: 'responsables' },
-  { nom: 'Cartes', ancre: 'cartes' },
+  { nom: 'Répartition géographique', ancre: 'cartes' },
   { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateurs },
   { nom: 'Commentaires', ancre: 'commentaires' },
 ];

@@ -5,23 +5,13 @@ const TableauEnTêteStyled = styled.thead`
     border: 1px solid var(--border-disabled-grey);
 
     th {
-      &:nth-of-type(2) {
-        width: 10rem;
-        min-width: 10rem;
+      &:first-of-type {
+        border-radius: 8px 0 0;
       }
 
-      &:nth-of-type(3) {
-        width: 15rem;
-        min-width: 15rem;
+      &:last-child {
+        border-radius: 0 8px 0 0;
       }
-    }
-
-    th:first-of-type {
-      border-radius: 8px 0 0;
-    }
-
-    th:last-child {
-      border-radius: 0 8px 0 0;
     }
 
     .actif {

@@ -1,18 +1,9 @@
 import { useState } from 'react';
 import SommaireProps from './Sommaire.interface';
 import SommaireStyled from './Sommaire.styled';
-import SommaireBoutonDéplier from './SommaireBoutonDéplier/SommaireBoutonDéplier';
 
 export default function Sommaire({ rubriques }: SommaireProps) {
   const [rubriqueCourante, setRubriqueCourante] = useState<SommaireProps['rubriques'][0]['ancre'] | null>(null);
-  const [rubriqueDépliée, setRubriqueDépliée] = useState<SommaireProps['rubriques'][0]['ancre'] | null>(null);
-
-  const clicSurLeBoutonDéplierCallback = (ancre: SommaireProps['rubriques'][0]['ancre']) => {
-    if (rubriqueDépliée === ancre)
-      setRubriqueDépliée(null);
-    else
-      setRubriqueDépliée(ancre);
-  };
 
   return (
     <SommaireStyled className='fr-hidden fr-unhidden-lg'>
@@ -28,14 +19,6 @@ export default function Sommaire({ rubriques }: SommaireProps) {
                 className='fr-pb-1w'
                 key={rubrique.ancre}
               >
-                { 
-                  !!rubrique.sousRubriques && (
-                    <SommaireBoutonDéplier
-                      clicSurLeBoutonDéplierCallback={() => clicSurLeBoutonDéplierCallback(rubrique.ancre)}
-                      estDéplié={rubrique.ancre === rubriqueDépliée}
-                    />
-                  )
-                }
                 <a
                   href={`#${rubrique.ancre}`}
                   onClick={() => setRubriqueCourante(rubrique.ancre)}
@@ -43,7 +26,7 @@ export default function Sommaire({ rubriques }: SommaireProps) {
                   {rubrique.nom}
                 </a>
                 { 
-                  (rubriqueDépliée === rubrique.ancre && !!rubrique.sousRubriques) &&
+                  !!rubrique.sousRubriques &&
                   <ul className='fr-pl-3w'>
                     {
                       rubrique.sousRubriques.map(sousRubrique => (
