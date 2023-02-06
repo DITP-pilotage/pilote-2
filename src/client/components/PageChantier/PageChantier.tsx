@@ -19,7 +19,7 @@ const listeRubriques: Rubrique[] = [
   { nom: 'Commentaires', ancre: 'commentaires' },
 ];
 
-export default function PageChantier({ chantier, indicateurs }: PageChantierProps) {
+export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
   return (
     <PageChantierStyled>
       <PageChantierEnTête chantier={chantier} />
@@ -31,7 +31,10 @@ export default function PageChantier({ chantier, indicateurs }: PageChantierProp
           <AvancementChantier chantier={chantier} />
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-5w">
             <div className="fr-col-12 fr-col-xl-6">
-              <SynthèseRésultats chantier={chantier} />
+              <SynthèseRésultats
+                chantier={chantier}
+                synthèseDesRésultats={synthèseDesRésultats}
+              />
             </div>
             <div className="fr-col-12 fr-col-xl-6">
               <Responsables chantier={chantier} />
