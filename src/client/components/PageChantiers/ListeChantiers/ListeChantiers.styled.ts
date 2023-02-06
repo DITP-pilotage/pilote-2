@@ -25,7 +25,6 @@ const ListeChantiersStyled = styled.div`
         background: none;
 
         &:hover {
-          font-weight: 700;
           color: var(--text-action-high-blue-france);
         }
       }
