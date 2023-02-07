@@ -6,13 +6,6 @@ import { récupérerLibelléMétéo, PictoMétéo } from '@/components/_commons/
 import { Avancement } from '@/server/domain/chantier/Chantier.interface';
 import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/avancement';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
-import {
-  PérimètreGéographiqueIdentifiant,
-} from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
-import {
-  périmètreGéographique as périmètreGéographiqueStore,
-} from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
-import { récupérerAvancement, récupérerMétéo } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 import ListeChantiersStyled from '@/components/PageChantiers/ListeChantiers/ListeChantiers.styled';
 import Météo from '@/server/domain/chantier/Météo.interface';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
@@ -66,38 +59,19 @@ const colonnesChantiers = () => ([
   reactTableColonnesHelper.accessor('estBaromètre', {
     header: 'Typologie',
     enableSorting: false,
-    cell: estBarometre => estBarometre.getValue() === true
-      ?
-        <PictoBaromètre taille={taillePicto} />
-      : null,
-  }),
-  reactTableColonnesHelper.accessor('nom', {
-    header: 'Chantiers',
-    cell: nom => {
-      const id = nom.row.original.id;
-      return (
-        <Link href={`/chantier/${id}`}>
-          {nom.getValue()}
-        </Link>
-      );
-    },
-    enableSorting: false,
+    cell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={taillePicto} /> : null,
   }),
   reactTableColonnesHelper.accessor('météoTerritoire', {
     header: 'Météo',
     cell: météo => afficherMétéo(météo.getValue()),
     enableGlobalFilter: false,
-    sortingFn: (a, b, columnId) => {
-      return comparerMétéo(a.getValue(columnId), b.getValue(columnId));
-    },
+    sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
   }),
   reactTableColonnesHelper.accessor('avancementGlobalTerritoire', {
     header: 'Avancement',
     cell: avancement => afficherLaBarreDeProgression(avancement.getValue()),
     enableGlobalFilter: false,
-    sortingFn: (a, b, columnId) => {
-      return comparerAvancementChantier(a.getValue<Avancement>(columnId).global, b.getValue<Avancement>(columnId).global);
-    },
+    sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
   }),
 ]);
 

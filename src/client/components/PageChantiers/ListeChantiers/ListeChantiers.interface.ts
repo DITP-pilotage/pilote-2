@@ -6,6 +6,7 @@ export type ChantierTerritorialisé = {
   nom: string;
   avancementGlobalTerritoire: Avancement['global'];
   météoTerritoire: Météo;
+  estBaromètre: boolean
 };
 export default interface ListeChantiersProps {
   chantiersTerritorialisés: ChantierTerritorialisé[]
