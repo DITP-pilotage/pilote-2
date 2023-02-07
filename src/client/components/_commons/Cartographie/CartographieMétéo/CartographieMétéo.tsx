@@ -1,6 +1,7 @@
 import { pictosMétéos } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import nuancierMétéo from '@/client/constants/nuanciers/nuancierMétéo';
-import { couleurParDéfaut } from '@/client/constants/nuanciers/nuancier';
+import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
+import { libellésMétéos } from '@/server/domain/chantier/Météo.interface';
 import CartographieMétéoProps from './CartographieMétéo.interface';
 import CartographieMétéoStyled from './CartographieMétéo.styled';
 import Cartographie from '../Cartographie';
@@ -8,18 +9,18 @@ import { CartographieValeur } from '../CartographieAffichage/CartographieAfficha
 import CartographieLégende from '../CartographieAffichage/Légende/CartographieLégende';
 
 
-function couleurDeRemplissage(valeurMétéo: CartographieValeur) {
+function déterminerRemplissage(valeurMétéo: CartographieValeur) {
   return valeurMétéo && typeof valeurMétéo === 'string' 
-    ? nuancierMétéo.find(({ valeur }) => valeur === valeurMétéo)?.couleur || couleurParDéfaut
-    : couleurParDéfaut;
+    ? nuancierMétéo.find(({ valeur }) => valeur === valeurMétéo)?.remplissage || remplissageParDéfaut
+    : remplissageParDéfaut;
 }
-  
+
 function formaterValeur(valeurMétéo: CartographieValeur) {
   if (valeurMétéo === 'NON_RENSEIGNEE') return 'Non renseignée';
   if (valeurMétéo === 'NON_NECESSAIRE') return 'Non nécessaire';
 
   return valeurMétéo && typeof valeurMétéo === 'string' 
-    ? pictosMétéos[valeurMétéo as keyof typeof pictosMétéos].nom
+    ? libellésMétéos[valeurMétéo as keyof typeof pictosMétéos]
     : 'Non renseignée';
 }
 
@@ -30,16 +31,16 @@ export default function CartographieMétéo({ données, niveauDeMaille, options 
         données={données} 
         niveauDeMaille={niveauDeMaille}
         options={{
-          couleurDeRemplissage,
+          déterminerRemplissage,
           formaterValeur,
           ...options,
         }}
       >
         <CartographieLégende élémentsDeLégende={
-        nuancierMétéo.map(({ couleur, libellé, picto }) => ({
+        nuancierMétéo.map(({ remplissage, libellé, picto }) => ({
           libellé,
           picto,
-          couleur,
+          remplissage,
         }))
       }
         />

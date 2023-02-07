@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
+import { NuancierRemplissage } from '@/client/constants/nuanciers/nuancier';
 
 export default interface CartographieLégendeÉlémentProps {
-  couleur: string,
+  remplissage: NuancierRemplissage,
   children: ReactNode,
-  hachures?: boolean
 }

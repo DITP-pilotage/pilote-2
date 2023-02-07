@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
+import { NuancierRemplissage } from '@/client/constants/nuanciers/nuancier';
 
 type CartographieÉlémentDeLégende = {
-  couleur: string,
   libellé: string,
   picto?: ReactNode,
-  hachures?: boolean,
+  remplissage: NuancierRemplissage,
 };
 
 export default interface CartographieLégendeProps {

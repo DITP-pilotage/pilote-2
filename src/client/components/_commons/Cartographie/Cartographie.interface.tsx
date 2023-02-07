@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { NiveauDeMaille } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore.interface';
+import { NuancierRemplissage } from '@/client/constants/nuanciers/nuancier';
 import { CartographieTerritoireCodeInsee, CartographieValeur } from './CartographieAffichage/CartographieAffichage.interface';
 
 export type CartographieRégionJSON = {
@@ -24,9 +25,8 @@ export type CartographieDonnées = Record<NiveauDeMaille, Record<CartographieTer
 
 export type CartographieOptions = {
   territoireAffiché: CartographieTerritoireAffiché,
-  couleurDeRemplissage: (valeur: CartographieValeur) => string,
+  déterminerRemplissage: (valeur: CartographieValeur) => NuancierRemplissage,
   formaterValeur: (valeur: CartographieValeur) => string,
-  territoireHachuré: (valeur: CartographieValeur) => boolean,
   territoireSélectionnable: boolean,
 };
 export default interface CartographieProps {

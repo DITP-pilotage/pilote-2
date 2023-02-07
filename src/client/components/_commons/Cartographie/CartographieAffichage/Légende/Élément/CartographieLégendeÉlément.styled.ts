@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 type CartographieLégendeÉlémentStyledProps = {
-  couleur: string,
+  couleurDeRemplissage?: string,
 };
 
 const CartographieLégendeÉlémentStyled = styled.li<CartographieLégendeÉlémentStyledProps>`
@@ -14,11 +14,14 @@ const CartographieLégendeÉlémentStyled = styled.li<CartographieLégendeÉlém
     height: 1.2rem;
   }
 
-  .couleur {
+  .remplissage {
     width: 0.5rem;
     height: 0.5rem;
-    background-color: ${props => props.couleur};
     border: 1px solid #000;
+  }
+
+  .couleur {
+    background-color: ${props => props.couleurDeRemplissage || 'transparent'};
   }
 
   .hachures {

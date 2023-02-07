@@ -1,4 +1,4 @@
-import { couleurParDéfaut } from '@/client/constants/nuanciers/nuancier';
+import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
 import CartographieProps, {
   CartographieDonnées, CartographieDépartementJSON,
   CartographieTerritoireAffiché,
@@ -55,9 +55,8 @@ const optionsParDéfaut: CartographieOptions = {
     codeInsee: 'FR',
     maille: 'nationale',
   },
-  couleurDeRemplissage: () => couleurParDéfaut,
+  déterminerRemplissage: () => remplissageParDéfaut,
   formaterValeur: (valeur) => valeur ? String(valeur) : '-',
-  territoireHachuré: () => false,
   territoireSélectionnable: false,
 };
 
