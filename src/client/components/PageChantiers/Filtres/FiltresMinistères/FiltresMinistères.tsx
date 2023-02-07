@@ -1,5 +1,3 @@
-import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
-import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
 import { useCallback } from 'react';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
