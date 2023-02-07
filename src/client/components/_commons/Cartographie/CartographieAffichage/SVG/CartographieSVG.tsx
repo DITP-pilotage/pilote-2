@@ -9,9 +9,17 @@ import {
   réinitialisePérimètreGéographique as réinitialisePérimètreGéographiqueStore,
   setPérimètreGéographique as setPérimètreGéographiqueStore,
 } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
+import { NuancierRemplissage } from '@/client/constants/nuanciers/nuancier';
+import hachuresGrisBlanc from '@/client/constants/nuanciers/hachure/hachuresGrisBlanc';
 import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
+
+export function déterminerValeurAttributFill(remplissage: NuancierRemplissage) {
+  return remplissage.type === 'HACHURES'
+    ? `url(#${remplissage.hachure.id})`
+    : remplissage.couleur;
+}
 
 function CartographieSVG({ options, territoires, setTerritoireSurvolé }: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -47,32 +55,20 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
         svgRef={svgRef}
         viewbox={viewbox}
       />
-      <div className='carte'>
+      <div className="carte">
         <svg
           ref={svgRef}
           version="1.2"
           viewBox={`
-        ${viewbox.x}
-        ${viewbox.y}
-        ${viewbox.width}
-        ${viewbox.height}
+          ${viewbox.x}
+          ${viewbox.y}
+          ${viewbox.width}
+          ${viewbox.height}
         `}
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            <pattern
-              height="2"
-              id="hachures"
-              patternTransform="rotate(45)"
-              patternUnits="userSpaceOnUse"
-              width="2.3"
-            >
-              <line
-                stroke="#666666"
-                strokeWidth="3"
-                y2="3"
-              />
-            </pattern>
+            { hachuresGrisBlanc.patternSVG }
           </defs>
           <g
             className="canvas"
@@ -86,7 +82,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                   <path
                     className='territoire-rempli'
                     d={sousTerritoire.tracéSVG}
-                    fill={options.territoireHachuré(sousTerritoire.valeur) ? 'url(#hachures)' : options.couleurDeRemplissage(sousTerritoire.valeur)}
+                    fill={déterminerValeurAttributFill(options.déterminerRemplissage(sousTerritoire.valeur))}
                     key={sousTerritoire.nom}
                     onClick={() => auClicTerritoireCallback(sousTerritoire)}
                     onMouseEnter={() => {
@@ -99,12 +95,12 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                     }}
                   />
                 ))}
-                {territoire.sousTerritoires.length === 0 
+                {territoire.sousTerritoires.length === 0
                   ?
                     <path
                       className='territoire-rempli'
                       d={territoire.tracéSVG}
-                      fill={options.territoireHachuré(territoire.valeur) ? 'url(#hachures)' : options.couleurDeRemplissage(territoire.valeur)}
+                      fill={déterminerValeurAttributFill(options.déterminerRemplissage(territoire.valeur))}
                       onClick={() => auClicTerritoireCallback(territoire)}
                       onMouseEnter={() => {
                         setTerritoireSurvolé({
@@ -114,7 +110,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                           maille: territoire.maille,
                         });
                       }}
-                    /> 
+                    />
                   :
                     <path
                       className='territoire-frontière'
