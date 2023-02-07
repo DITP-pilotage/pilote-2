@@ -1,18 +1,19 @@
 import { ReactNode } from 'react';
 import Météo from '@/server/domain/chantier/Météo.interface';
-
-export const remplissageParDéfaut = {
-  type: 'COULEUR',
-  valeur: '#bababa',
-} as const;
+import Hachure from '@/client/constants/nuanciers/hachure/hachure';
 
 export type NuancierRemplissage = {
   type: 'COULEUR',
-  valeur: string,
+  couleur: string,
 } | {
   type: 'HACHURES',
-  valeur: 'hachures-gris-blanc',
+  hachure: Hachure,
 };
+
+export const remplissageParDéfaut: NuancierRemplissage = {
+  type: 'COULEUR',
+  couleur: '#bababa',
+} as const;
 
 export type NuancierPourcentage = {
   seuil: number | null,

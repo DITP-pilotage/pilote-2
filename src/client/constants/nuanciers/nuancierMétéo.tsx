@@ -8,7 +8,7 @@ const nuancierMétéo: NuancierMétéo = [
     libellé: libellésMétéos.ORAGE,
     remplissage: {
       type: 'COULEUR',
-      valeur: '#B34000',
+      couleur: '#B34000',
     },
     picto: <PictoMétéo valeur="ORAGE" />,
   }, {
@@ -16,7 +16,7 @@ const nuancierMétéo: NuancierMétéo = [
     libellé: libellésMétéos.COUVERT,
     remplissage: {
       type: 'COULEUR',
-      valeur: '#95E257',
+      couleur: '#95E257',
     },
     picto: <PictoMétéo valeur="COUVERT" />,
   }, {
@@ -24,7 +24,7 @@ const nuancierMétéo: NuancierMétéo = [
     libellé: libellésMétéos.NUAGE,
     remplissage: {
       type: 'COULEUR',
-      valeur: '#EFCB3A',
+      couleur: '#EFCB3A',
     },
     picto: <PictoMétéo valeur="NUAGE" />,
   }, {
@@ -32,7 +32,7 @@ const nuancierMétéo: NuancierMétéo = [
     libellé: libellésMétéos.SOLEIL,
     remplissage: {
       type: 'COULEUR',
-      valeur: '#27A658',
+      couleur: '#27A658',
     },
     picto: <PictoMétéo valeur="SOLEIL" />,
   }, {

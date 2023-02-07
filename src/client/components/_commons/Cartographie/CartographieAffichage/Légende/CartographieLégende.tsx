@@ -8,7 +8,7 @@ export default function CartographieLégende({ élémentsDeLégende }: Cartograp
       {
         élémentsDeLégende.map(({ remplissage, libellé, picto }) => (
           <CartographieLégendeÉlément
-            key={`carto-légende-${remplissage.valeur}`}
+            key={`carto-légende-${libellé}`}
             remplissage={remplissage}
           >
             <span>

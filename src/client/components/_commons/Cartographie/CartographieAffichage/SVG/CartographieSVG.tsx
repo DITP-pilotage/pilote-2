@@ -10,14 +10,15 @@ import {
   setPérimètreGéographique as setPérimètreGéographiqueStore,
 } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import { NuancierRemplissage } from '@/client/constants/nuanciers/nuancier';
+import hachuresGrisBlanc from '@/client/constants/nuanciers/hachure/hachuresGrisBlanc';
 import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
 
-function déterminerValeurFill(remplissage: NuancierRemplissage) {
+export function déterminerValeurFill(remplissage: NuancierRemplissage) {
   return remplissage.type === 'HACHURES'
-    ? `url(#${remplissage.valeur})`
-    : remplissage.valeur;
+    ? `url(#${remplissage.hachure.id})`
+    : remplissage.couleur;
 }
 
 function CartographieSVG({ options, territoires, setTerritoireSurvolé }: CartographieSVGProps) {
@@ -67,19 +68,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            <pattern
-              height="2"
-              id="hachures-gris-blanc"
-              patternTransform="rotate(45)"
-              patternUnits="userSpaceOnUse"
-              width="2.3"
-            >
-              <line
-                stroke="#666666"
-                stroke-width="3"
-                y2="3"
-              />
-            </pattern>
+            { hachuresGrisBlanc.patternSVG }
           </defs>
           <g
             className="canvas"
