@@ -6,8 +6,8 @@ const ListeChantiersStyled = styled.div`
 
   th {
     &:nth-of-type(3) {
-      width: 10rem;
-      min-width: 10rem;
+      width: 11rem;
+      min-width: 11rem;
     }
 
     &:nth-of-type(4) {

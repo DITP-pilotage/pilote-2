@@ -17,7 +17,6 @@ import ListeChantiersStyled from '@/components/PageChantiers/ListeChantiers/List
 import Météo from '@/server/domain/chantier/Météo.interface';
 import ListeChantiersProps from './ListeChantiers.interface';
 
-
 function afficherMétéo(météo: Météo) {
   return météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE'
     ? <PictoMétéo valeur={météo} />
