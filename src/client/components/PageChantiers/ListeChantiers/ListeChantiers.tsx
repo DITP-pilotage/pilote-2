@@ -65,15 +65,17 @@ function colonnesChantiers(périmètreGéographique: PérimètreGéographiqueIde
       },
       enableSorting: false,
     }),
-    reactTableColonnesHelper.display({
+    reactTableColonnesHelper.accessor('estBaromètre', {
       header: 'Typologie',
-      cell: () => (
-        <span
-          aria-hidden="true"
-          className="fr-icon-dashboard-3-line fr-mr-1w"
-          style={{ color: '#006e6e' }}
-        />
-      ),
+      enableSorting: false,
+      cell: estBarometre => estBarometre.getValue() === true
+        ?
+          <span
+            aria-hidden="true"
+            className="fr-icon-dashboard-3-line fr-mr-1w"
+            style={{ color: '#006e6e' }}
+          />
+        : null,
     }),
     reactTableColonnesHelper.accessor(cheminChantierMétéoDuTerritoire, {
       header: 'Météo',
