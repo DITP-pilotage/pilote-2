@@ -207,6 +207,24 @@ describe('ChantierSQLRepository', () => {
     expect(result.responsables.directeursProjet[0]).toStrictEqual({ nom: 'Jean Bon', email: null });
   });
 
+  test('Un chantier est du baromètre', async () => {
+    // GIVEN
+    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+    const chantierId = 'CH-001';
+
+    await prisma.chantier.create({
+      data: new ChantierRowBuilder()
+        .withId(chantierId).withEstBaromètre(true).build(),
+    });
+
+    // WHEN
+    const result = await repository.getById(chantierId);
+
+    // THEN
+    expect(result.estBaromètre).toBe(true);
+  });
+
   describe("Gestion d'erreur", () => {
     test('Erreur en cas de chantier non trouvé', async () => {
       // GIVEN

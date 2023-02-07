@@ -39,6 +39,7 @@ class ChantierFixture implements FixtureInterface<Chantier> {
         directeursAdminCentrale: [{ nom: 'DAC1', direction: 'DAC1' }, { nom: 'DAC2', direction: 'DAC2' }],
         directeursProjet: [],
       },
+      estBaromètre: faker.datatype.boolean(),
       ...valeursFixes,
     };
   }
