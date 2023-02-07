@@ -15,17 +15,15 @@ export default function FiltresSélecteurs() {
   const setPérimètreGéographique = setPérimètreGéographiqueStore();
   return (
     <FiltresSélecteursStyled>
-      <div className='fr-p-3w'>
-        <SélecteurDeNiveauDeMaille
-          niveauDeMaille={niveauDeMaille}
-          setNiveauDeMaille={setNiveauDeMaille}
-        />
-        <SélecteurDePérimètreGéographique
-          niveauDeMaille={niveauDeMaille}
-          périmètreGéographique={périmètreGéographique}
-          setPérimètreGéographique={setPérimètreGéographique}
-        />
-      </div>
+      <SélecteurDeNiveauDeMaille
+        niveauDeMaille={niveauDeMaille}
+        setNiveauDeMaille={setNiveauDeMaille}
+      />
+      <SélecteurDePérimètreGéographique
+        niveauDeMaille={niveauDeMaille}
+        périmètreGéographique={périmètreGéographique}
+        setPérimètreGéographique={setPérimètreGéographique}
+      />
     </FiltresSélecteursStyled>
   );
 }

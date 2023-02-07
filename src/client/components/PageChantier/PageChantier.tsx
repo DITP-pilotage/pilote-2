@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
+import FiltresSélecteurs from '@/components/PageChantiers/Filtres/FiltresSélecteurs/FiltresSélecteurs';
+import SélecteurDePérimètreGéographique
+  from '@/components/PageChantiers/Filtres/FiltresSélecteurs/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique';
+import {
+  PérimètreGéographiqueIdentifiant,
+} from '@/components/PageChantiers/Filtres/FiltresSélecteurs/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
+import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import Commentaires from './Commentaires/Commentaires';
@@ -23,12 +30,24 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
+  const [périmètreGéographique, setPérimètreGéographique] = useState<PérimètreGéographiqueIdentifiant>({
+    codeInsee: 'FR',
+    maille: 'nationale',
+  });
+
   return (
     <PageChantierStyled className="flex">
       <BarreLatérale
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
       >
+        <BarreLatéraleEncart>
+          <SélecteurDePérimètreGéographique
+            niveauDeMaille="départementale"
+            périmètreGéographique={périmètreGéographique}
+            setPérimètreGéographique={setPérimètreGéographique}
+          />
+        </BarreLatéraleEncart>
         <Sommaire rubriques={listeRubriques} />
       </BarreLatérale>
       <div className='contenu-principal'>

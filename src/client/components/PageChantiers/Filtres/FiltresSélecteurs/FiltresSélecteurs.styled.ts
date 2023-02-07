@@ -1,9 +1,6 @@
 import styled from '@emotion/styled';
 
 const FiltresSélecteursStyled = styled.div`
-  width: 100%;
-  background-color: var(--blue-france-850-200);
-
   .maille {
     background: var(--background-alt-blue-france);
     border-radius: 0.25rem;
