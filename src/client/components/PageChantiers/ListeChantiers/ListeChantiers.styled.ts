@@ -5,12 +5,12 @@ const ListeChantiersStyled = styled.div`
   color: var(--text-action-high-grey);
 
   th {
-    &:nth-of-type(2) {
+    &:nth-of-type(3) {
       width: 10rem;
       min-width: 10rem;
     }
 
-    &:nth-of-type(3) {
+    &:nth-of-type(4) {
       width: 15rem;
       min-width: 15rem;
     }
