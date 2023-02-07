@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { récupérerLibelléMétéo, PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
-import Chantier, { Avancement } from '@/server/domain/chantier/Chantier.interface';
+import { Avancement } from '@/server/domain/chantier/Chantier.interface';
 import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/avancement';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import {
@@ -28,9 +28,9 @@ function afficherMétéo(météo: Météo) {
     );
 }
 
-function afficherLesBarresDeProgression(avancement: Avancement) {
+function afficherLaBarreDeProgression(avancement: Avancement['global']) {
   return (
-    avancement.global === null
+    avancement === null
       ? (
         <span className="texte-gris fr-text--xs">
           Non renseigné
@@ -39,67 +39,74 @@ function afficherLesBarresDeProgression(avancement: Avancement) {
         <BarreDeProgression
           fond="gris"
           taille="petite"
-          valeur={avancement.global}
+          valeur={avancement}
           variante='primaire'
         />
       )
   );
 }
 
-const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiers'][number]>();
+const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiersTerritorialisés'][number]>();
 
-function colonnesChantiers(périmètreGéographique: PérimètreGéographiqueIdentifiant) {
-  const { codeInsee, maille } = périmètreGéographique;
-  const cheminChantierMétéoDuTerritoire = (chantier: Chantier) => récupérerMétéo(chantier.mailles, maille, codeInsee);
-  const cheminChantierAvancementDuTerritoire = (chantier: Chantier) => récupérerAvancement(chantier.mailles, maille, codeInsee);
-  const taillePicto = { mesure: 1.25, unité: 'rem' } as const;
-  return [
-    reactTableColonnesHelper.accessor('nom', {
-      header: 'Chantiers',
-      cell: nom => {
-        const id = nom.row.original.id;
-        return (
-          <Link href={`/chantier/${id}`}>
-            {nom.getValue()}
-          </Link>
-        );
-      },
-      enableSorting: false,
-    }),
-    reactTableColonnesHelper.accessor('estBaromètre', {
-      header: 'Typologie',
-      enableSorting: false,
-      cell: estBarometre => estBarometre.getValue() === true
-        ?
-          <PictoBaromètre taille={taillePicto} />
-        : null,
-    }),
-    reactTableColonnesHelper.accessor(cheminChantierMétéoDuTerritoire, {
-      header: 'Météo',
-      cell: météo => afficherMétéo(météo.getValue()),
-      enableGlobalFilter: false,
-      sortingFn: (a, b, columnId) => {
-        return comparerMétéo(a.getValue(columnId), b.getValue(columnId));
-      },
-    }),
-    reactTableColonnesHelper.accessor(cheminChantierAvancementDuTerritoire, {
-      header: 'Avancement',
-      cell: avancement => afficherLesBarresDeProgression(avancement.getValue()),
-      enableGlobalFilter: false,
-      sortingFn: (a, b, columnId) => {
-        return comparerAvancementChantier(a.getValue<Avancement>(columnId).global, b.getValue<Avancement>(columnId).global);
-      },
-    }),
-  ];
-}
+const taillePicto = { mesure: 1.25, unité: 'rem' } as const;
 
-export default function ListeChantiers({ chantiers }: ListeChantiersProps) {
-  const périmètreGéographique = périmètreGéographiqueStore();
+const colonnesChantiers = () => ([
+  reactTableColonnesHelper.accessor('nom', {
+    header: 'Chantiers',
+    cell: nom => {
+      const id = nom.row.original.id;
+      return (
+        <Link href={`/chantier/${id}`}>
+          {nom.getValue()}
+        </Link>
+      );
+    },
+    enableSorting: false,
+  }),
+  reactTableColonnesHelper.accessor('estBaromètre', {
+    header: 'Typologie',
+    enableSorting: false,
+    cell: estBarometre => estBarometre.getValue() === true
+      ?
+        <PictoBaromètre taille={taillePicto} />
+      : null,
+  }),
+  reactTableColonnesHelper.accessor('nom', {
+    header: 'Chantiers',
+    cell: nom => {
+      const id = nom.row.original.id;
+      return (
+        <Link href={`/chantier/${id}`}>
+          {nom.getValue()}
+        </Link>
+      );
+    },
+    enableSorting: false,
+  }),
+  reactTableColonnesHelper.accessor('météoTerritoire', {
+    header: 'Météo',
+    cell: météo => afficherMétéo(météo.getValue()),
+    enableGlobalFilter: false,
+    sortingFn: (a, b, columnId) => {
+      return comparerMétéo(a.getValue(columnId), b.getValue(columnId));
+    },
+  }),
+  reactTableColonnesHelper.accessor('avancementGlobalTerritoire', {
+    header: 'Avancement',
+    cell: avancement => afficherLaBarreDeProgression(avancement.getValue()),
+    enableGlobalFilter: false,
+    sortingFn: (a, b, columnId) => {
+      return comparerAvancementChantier(a.getValue<Avancement>(columnId).global, b.getValue<Avancement>(columnId).global);
+    },
+  }),
+]);
+
+export default function ListeChantiers({ chantiersTerritorialisés }: ListeChantiersProps) {
   return (
     <ListeChantiersStyled>
-      <Tableau<typeof chantiers[number]>
-        colonnes={colonnesChantiers(périmètreGéographique)}
-        données={chantiers}
+      <Tableau<typeof chantiersTerritorialisés[number]>
+        colonnes={colonnesChantiers()}
+        données={chantiersTerritorialisés}
         entité="chantiers"
         titre="Liste des chantiers"
       />

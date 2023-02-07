@@ -1,5 +1,12 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { Avancement } from '@/server/domain/chantier/Chantier.interface';
+import Météo from '@/server/domain/chantier/Météo.interface';
 
+export type ChantierTerritorialisé = {
+  id: string;
+  nom: string;
+  avancementGlobalTerritoire: Avancement['global'];
+  météoTerritoire: Météo;
+};
 export default interface ListeChantiersProps {
-  chantiers: Chantier[]
+  chantiersTerritorialisés: ChantierTerritorialisé[]
 }
