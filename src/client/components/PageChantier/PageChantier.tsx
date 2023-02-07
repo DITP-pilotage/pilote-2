@@ -1,3 +1,4 @@
+import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';

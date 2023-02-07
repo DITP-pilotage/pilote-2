@@ -65,6 +65,16 @@ function colonnesChantiers(périmètreGéographique: PérimètreGéographiqueIde
       },
       enableSorting: false,
     }),
+    reactTableColonnesHelper.display({
+      header: 'Typologie',
+      cell: () => (
+        <span
+          aria-hidden="true"
+          className="fr-icon-dashboard-3-line fr-mr-1w"
+          style={{ color: '#006e6e' }}
+        />
+      ),
+    }),
     reactTableColonnesHelper.accessor(cheminChantierMétéoDuTerritoire, {
       header: 'Météo',
       cell: météo => afficherMétéo(météo.getValue()),
