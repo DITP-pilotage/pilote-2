@@ -35,4 +35,5 @@ export default interface Chantier {
     directeursAdminCentrale: DirecteurAdministrationCentrale[],
     directeursProjet: Contact[]
   }
+  estBaromètre: boolean;
 }

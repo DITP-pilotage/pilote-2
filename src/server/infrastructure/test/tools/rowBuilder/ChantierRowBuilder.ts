@@ -25,6 +25,8 @@ export default class ChantierRowBuilder {
 
   private _ministeres: string[] = ['Ministère 1'];
 
+  private _estBaromètre: boolean = false;
+
   withId(id: string): ChantierRowBuilder {
     this._id = id;
     return this;
@@ -91,6 +93,11 @@ export default class ChantierRowBuilder {
     return this;
   }
 
+  withEstBaromètre(estBaromètre: boolean): ChantierRowBuilder {
+    this._estBaromètre = estBaromètre;
+    return this;
+  }
+
   build(): chantier {
     return {
       id: this._id,
@@ -110,7 +117,7 @@ export default class ChantierRowBuilder {
       ppg: 'TBD',
       objectifs: 'TBD',
       date_objectifs: null,
-      est_barometre: null,
+      est_barometre: this._estBaromètre,
     };
   }
 }

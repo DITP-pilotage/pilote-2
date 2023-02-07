@@ -50,6 +50,7 @@ export function parseChantier(chantierRows: chantier[]): Chantier {
       directeursAdminCentrale: [],
       directeursProjet: [],
     },
+    estBaromètre: Boolean(chantierMailleNationale.est_barometre),
   };
 
   if (chantierMailleNationale.directeurs_administration_centrale) {
