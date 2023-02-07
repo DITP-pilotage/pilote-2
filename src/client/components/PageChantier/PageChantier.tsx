@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
+import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import Commentaires from './Commentaires/Commentaires';
@@ -20,14 +22,18 @@ const listeRubriques: Rubrique[] = [
 ];
 
 export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
+  const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   return (
-    <PageChantierStyled>
-      <PageChantierEnTête chantier={chantier} />
-      <div className='fr-grid-row'>
-        <div className='fr-col-xl-2 fr-col-lg-3'>
-          <Sommaire rubriques={listeRubriques} />
-        </div>
-        <div className='fr-col-xl-10 fr-col-lg-9 fr-col-12 fr-px-3w fr-pt-5w'>
+    <PageChantierStyled className="flex">
+      <BarreLatérale
+        estOuvert={estOuverteBarreLatérale}
+        setEstOuvert={setEstOuverteBarreLatérale}
+      >
+        <Sommaire rubriques={listeRubriques} />
+      </BarreLatérale>
+      <div className='contenu-principal'>
+        <PageChantierEnTête chantier={chantier} />
+        <div className='fr-p-4w'>
           <AvancementChantier chantier={chantier} />
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-5w">
             <div className="fr-col-12 fr-col-xl-6">

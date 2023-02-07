@@ -7,7 +7,7 @@ export default function Sommaire({ rubriques }: SommaireProps) {
 
   return (
     <SommaireStyled className='fr-hidden fr-unhidden-lg'>
-      <nav className='fr-pt-3w fr-pl-7v fr-pr-8w'>
+      <nav className='fr-pt-3w fr-pl-7v fr-pr-4w'>
         <p className="bold fr-text--lg fr-mb-1w">
           Sommaire
         </p>
