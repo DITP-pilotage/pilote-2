@@ -15,7 +15,7 @@ import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
 
-export function déterminerValeurFill(remplissage: NuancierRemplissage) {
+export function déterminerValeurAttributFill(remplissage: NuancierRemplissage) {
   return remplissage.type === 'HACHURES'
     ? `url(#${remplissage.hachure.id})`
     : remplissage.couleur;
@@ -82,7 +82,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                   <path
                     className='territoire-rempli'
                     d={sousTerritoire.tracéSVG}
-                    fill={déterminerValeurFill(options.déterminerRemplissage(sousTerritoire.valeur))}
+                    fill={déterminerValeurAttributFill(options.déterminerRemplissage(sousTerritoire.valeur))}
                     key={sousTerritoire.nom}
                     onClick={() => auClicTerritoireCallback(sousTerritoire)}
                     onMouseEnter={() => {
@@ -100,7 +100,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                     <path
                       className='territoire-rempli'
                       d={territoire.tracéSVG}
-                      fill={déterminerValeurFill(options.déterminerRemplissage(territoire.valeur))}
+                      fill={déterminerValeurAttributFill(options.déterminerRemplissage(territoire.valeur))}
                       onClick={() => auClicTerritoireCallback(territoire)}
                       onMouseEnter={() => {
                         setTerritoireSurvolé({

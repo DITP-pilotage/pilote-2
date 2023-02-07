@@ -1,4 +1,4 @@
-import { déterminerValeurFill } from '@/components/_commons/Cartographie/CartographieAffichage/SVG/CartographieSVG';
+import { déterminerValeurAttributFill } from '@/components/_commons/Cartographie/CartographieAffichage/SVG/CartographieSVG';
 import CartographieLégendeÉlémentStyled from './CartographieLégendeÉlément.styled';
 import CartographieLégendeÉlémentProps from './CartographieLégendeÉlément.interface';
 
@@ -19,7 +19,7 @@ export default function CartographieLégendeÉlément({ children, remplissage }:
           { remplissage.type === 'HACHURES' && remplissage.hachure.patternSVG }
         </defs>
         <rect
-          fill={déterminerValeurFill(remplissage)}
+          fill={déterminerValeurAttributFill(remplissage)}
           height={miseÀLÉchelle}
           width={miseÀLÉchelle}
           x={0}
