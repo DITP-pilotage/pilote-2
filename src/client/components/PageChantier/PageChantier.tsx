@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
-import FiltresSélecteurs from '@/components/PageChantiers/Filtres/FiltresSélecteurs/FiltresSélecteurs';
 import SélecteurDePérimètreGéographique
   from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique';
 import {

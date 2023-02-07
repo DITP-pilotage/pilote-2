@@ -8,7 +8,7 @@ import SélecteurDeNiveauDeMaille from '@/components/_commons/SélecteurDeNiveau
 import SélecteurDePérimètreGéographique
   from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique';
 
-export default function FiltresSélecteurs() {
+export default function Sélecteurs() {
   const niveauDeMaille = niveauDeMailleStore();
   const setNiveauDeMaille = setNiveauDeMailleStore();
   const périmètreGéographique = périmètreGéographiqueStore();

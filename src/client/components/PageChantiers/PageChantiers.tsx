@@ -6,6 +6,8 @@ import {
   agrégerDonnéesTerritoires,
 } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
+import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
+import Sélecteurs from '@/components/PageChantiers/Sélecteurs/Sélecteurs';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
 import TauxAvancementMoyen from './TauxAvancementMoyen/TauxAvancementMoyen';
@@ -41,6 +43,9 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
       >
+        <BarreLatéraleEncart>
+          <Sélecteurs />
+        </BarreLatéraleEncart>
         <Filtres ministères={ministères} />
       </BarreLatérale>
       <div className='contenu-principal'>
