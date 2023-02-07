@@ -8,7 +8,7 @@ import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/a
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import {
   PérimètreGéographiqueIdentifiant,
-} from '@/components/PageChantiers/Filtres/FiltresSélecteurs/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
+} from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
 import {
   périmètreGéographique as périmètreGéographiqueStore,
 } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';

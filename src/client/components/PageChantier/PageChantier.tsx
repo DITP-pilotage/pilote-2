@@ -3,10 +3,10 @@ import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface'
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import FiltresSélecteurs from '@/components/PageChantiers/Filtres/FiltresSélecteurs/FiltresSélecteurs';
 import SélecteurDePérimètreGéographique
-  from '@/components/PageChantiers/Filtres/FiltresSélecteurs/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique';
+  from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique';
 import {
   PérimètreGéographiqueIdentifiant,
-} from '@/components/PageChantiers/Filtres/FiltresSélecteurs/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
+} from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';

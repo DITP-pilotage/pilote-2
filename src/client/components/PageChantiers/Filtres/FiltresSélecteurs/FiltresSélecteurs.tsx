@@ -4,9 +4,9 @@ import {
   setNiveauDeMaille as setNiveauDeMailleStore,
   setPérimètreGéographique as setPérimètreGéographiqueStore,
 } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
-import SélecteurDeNiveauDeMaille from './SélecteurDeNiveauDeMaille/SélecteurDeNiveauDeMaille';
-import SélecteurDePérimètreGéographique from './SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique';
-import FiltresSélecteursStyled from './FiltresSélecteurs.styled';
+import SélecteurDeNiveauDeMaille from '@/components/_commons/SélecteurDeNiveauDeMaille/SélecteurDeNiveauDeMaille';
+import SélecteurDePérimètreGéographique
+  from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique';
 
 export default function FiltresSélecteurs() {
   const niveauDeMaille = niveauDeMailleStore();
@@ -14,7 +14,7 @@ export default function FiltresSélecteurs() {
   const périmètreGéographique = périmètreGéographiqueStore();
   const setPérimètreGéographique = setPérimètreGéographiqueStore();
   return (
-    <FiltresSélecteursStyled>
+    <>
       <SélecteurDeNiveauDeMaille
         niveauDeMaille={niveauDeMaille}
         setNiveauDeMaille={setNiveauDeMaille}
@@ -24,6 +24,6 @@ export default function FiltresSélecteurs() {
         périmètreGéographique={périmètreGéographique}
         setPérimètreGéographique={setPérimètreGéographique}
       />
-    </FiltresSélecteursStyled>
+    </>
   );
 }

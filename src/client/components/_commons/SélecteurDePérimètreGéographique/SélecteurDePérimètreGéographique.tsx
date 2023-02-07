@@ -1,6 +1,6 @@
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import { useEffect } from 'react';
-import SélecteurDePérimètreGéographiqueProps from '@/components/PageChantiers/Filtres/FiltresSélecteurs/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
+import SélecteurDePérimètreGéographiqueProps from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
 import départements from '@/client/constants/départements';
 import régions from '@/client/constants/régions';
 
