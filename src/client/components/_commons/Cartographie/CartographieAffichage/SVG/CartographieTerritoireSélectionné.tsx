@@ -6,7 +6,7 @@ import {
 } from '@/components/_commons/Cartographie/Cartographie.interface';
 import {
   PérimètreGéographiqueIdentifiant,
-} from '@/components/PageChantiers/BarreLatérale/SélecteursGéographiques/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
+} from '@/components/PageChantiers/Filtres/FiltresSélecteurs/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
 import { périmètreGéographique } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 
 const départementsJSON: CartographieDépartementJSON[] = untypedDépartementsJSON;

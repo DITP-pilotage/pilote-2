@@ -1,7 +1,7 @@
-import Ministère from '@/server/domain/ministère/Ministère.interface';
+import { ReactNode } from 'react';
 
 export default interface BarreLatéraleProps {
   estOuvert: boolean,
   setEstOuvert: (state: boolean) => void,
-  ministères: Ministère[],
+  children: ReactNode,
 }

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const SélecteursGéographiquesStyled = styled.div`
+const FiltresSélecteursStyled = styled.div`
   width: 100%;
   background-color: var(--blue-france-850-200);
 
@@ -25,4 +25,4 @@ const SélecteursGéographiquesStyled = styled.div`
   }
 `;
 
-export default SélecteursGéographiquesStyled;
+export default FiltresSélecteursStyled;

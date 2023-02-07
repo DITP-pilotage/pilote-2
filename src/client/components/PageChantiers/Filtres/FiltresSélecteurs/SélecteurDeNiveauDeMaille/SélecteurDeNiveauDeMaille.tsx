@@ -1,5 +1,4 @@
-import SélecteurDeNiveauDeMailleProps
-  from '@/components/PageChantiers/BarreLatérale/SélecteursGéographiques/SélecteurDeNiveauDeMaille/SélecteurDeNiveauDeMaille.interface';
+import SélecteurDeNiveauDeMailleProps from './SélecteurDeNiveauDeMaille.interface';
 
 export default function SélecteurDeNiveauDeMaille({ niveauDeMaille, setNiveauDeMaille }: SélecteurDeNiveauDeMailleProps) {
   return (
