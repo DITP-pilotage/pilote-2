@@ -28,6 +28,7 @@ model chantier {
   directeurs_projet_mails String[]
   objectifs String?
   date_objectifs DateTime? @db.Date
+  est_barometre Boolean?
 
   @@id([id, code_insee, maille])
 }

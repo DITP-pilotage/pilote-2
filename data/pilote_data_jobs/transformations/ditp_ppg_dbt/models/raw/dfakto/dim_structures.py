@@ -9,9 +9,6 @@ def model(dbt, session):
         sep=';'
     )
     columns_type = {
-        'structure_is_part_of_update_period': 'bool',
-        'structure_is_hidden': 'bool',
-        'structure_has_correction': 'bool',
         'structure_level': 'int16',
         'snapshot_date': 'datetime64',
     }

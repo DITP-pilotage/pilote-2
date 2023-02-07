@@ -8,9 +8,6 @@ def model(dbt, session):
 
     columns_type = {
         'indic_parent_indic': 'object',
-        'indic_is_perseverant': 'bool',
-        'indic_is_phare': 'bool',
-        'indic_is_baro': 'bool',
     }
 
     indicateurs = indicateurs.astype(columns_type)

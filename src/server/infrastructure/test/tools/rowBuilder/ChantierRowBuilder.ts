@@ -110,6 +110,7 @@ export default class ChantierRowBuilder {
       ppg: 'TBD',
       objectifs: 'TBD',
       date_objectifs: null,
+      est_barometre: null,
     };
   }
 }
