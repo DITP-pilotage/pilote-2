@@ -1,4 +1,3 @@
-import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import Titre from '@/components/_commons/Titre/Titre';
 import IndicateursProps, { ÉlémentPageIndicateursType } from '@/components/PageChantier/Indicateurs/Indicateurs.interface';
 import CarteIndicateur from '@/components/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur';

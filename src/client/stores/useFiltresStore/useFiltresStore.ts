@@ -4,6 +4,7 @@ import FiltresStore, { Catégorie, FiltreCatégorieTuple } from './useFiltresSto
 
 const filtresActifsInitiaux = {
   périmètresMinistériels: [],
+  autresFiltres: [],
 };
 
 const useFiltresStore = create<FiltresStore>((set, get) => ({

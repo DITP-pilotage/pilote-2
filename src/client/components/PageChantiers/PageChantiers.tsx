@@ -1,4 +1,5 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import { useMemo, useState } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import { filtresActifs as filtresActifsStore, actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
@@ -9,6 +10,7 @@ import {
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Sélecteurs from '@/components/PageChantiers/Sélecteurs/Sélecteurs';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
 import TauxAvancementMoyen from './TauxAvancementMoyen/TauxAvancementMoyen';
@@ -18,22 +20,27 @@ import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
 import Filtres from './Filtres/Filtres';
 
-export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {
+
+export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {  
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   const filtresActifs = filtresActifsStore();
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
 
   const chantiersFiltrés = useMemo(() => {
-    if (filtresActifs.périmètresMinistériels.length === 0) {
-      return chantiers;
-    }
+    let résultat: Chantier[] = chantiers;
 
-    return chantiers.filter(chantier => (
-      filtresActifs.périmètresMinistériels.some(filtre => (
-        chantier.périmètreIds.includes(filtre.id)
-      ))
-    ));
+    if (filtresActifs.périmètresMinistériels.length > 0) {
+      résultat = chantiers.filter(chantier => (
+        filtresActifs.périmètresMinistériels.some(filtre => (chantier.périmètreIds.includes(filtre.id)))
+      ));
+    }
+    if (filtresActifs.autresFiltres.length > 0) { 
+      résultat = chantiers.filter(chantier => (
+        filtresActifs.autresFiltres.some(filtre => (chantier[filtre.attribut as keyof Chantier]))
+      ));
+    }
+    return résultat;
   }, [chantiers, filtresActifs]);
 
   const donnéesTerritoiresAgrégées = useMemo(() => agrégerDonnéesTerritoires(chantiersFiltrés.map(chantier => chantier.mailles)), [chantiersFiltrés]);

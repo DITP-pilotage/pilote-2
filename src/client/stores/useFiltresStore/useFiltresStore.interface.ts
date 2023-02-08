@@ -2,10 +2,9 @@ import PérimètreMinistériel from '@/server/domain/ministère/PérimètreMinis
 
 export type Catégorie = keyof FiltresActifs;
 
-export type Filtre = {
-  id: PérimètreMinistériel['id'],
-  nom: PérimètreMinistériel['nom'],
-};
+type AutresFiltres = { id: string, attribut: string, nom: string };
+
+export type Filtre = PérimètreMinistériel | AutresFiltres;
 
 export interface FiltreCatégorieTuple {
   catégorie: Catégorie,
@@ -13,7 +12,8 @@ export interface FiltreCatégorieTuple {
 }
 
 export interface FiltresActifs {
-  périmètresMinistériels: Filtre[]
+  périmètresMinistériels: PérimètreMinistériel[],
+  autresFiltres: AutresFiltres[],
 }
 
 export default interface FiltresStore {

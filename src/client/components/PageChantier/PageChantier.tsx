@@ -1,4 +1,5 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import { useState } from 'react';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
