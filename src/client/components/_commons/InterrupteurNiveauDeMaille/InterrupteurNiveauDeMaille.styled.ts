@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const SélecteurDeNiveauDeMailleStyled = styled.div`
+const InterrupteurNiveauDeMailleStyled = styled.div`
   background: var(--background-alt-blue-france);
   border-radius: 0.25rem;
 
@@ -16,4 +16,4 @@ const SélecteurDeNiveauDeMailleStyled = styled.div`
   }
 `;
 
-export default SélecteurDeNiveauDeMailleStyled;
+export default InterrupteurNiveauDeMailleStyled;

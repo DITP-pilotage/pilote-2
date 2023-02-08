@@ -4,7 +4,7 @@ import {
   setNiveauDeMaille as setNiveauDeMailleStore,
   setPérimètreGéographique as setPérimètreGéographiqueStore,
 } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
-import SélecteurDeNiveauDeMaille from '@/components/_commons/SélecteurDeNiveauDeMaille/SélecteurDeNiveauDeMaille';
+import InterrupteurNiveauDeMaille from '@/components/_commons/InterrupteurNiveauDeMaille/InterrupteurNiveauDeMaille';
 import SélecteurDePérimètreGéographique
   from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique';
 
@@ -15,7 +15,7 @@ export default function Sélecteurs() {
   const setPérimètreGéographique = setPérimètreGéographiqueStore();
   return (
     <>
-      <SélecteurDeNiveauDeMaille
+      <InterrupteurNiveauDeMaille
         niveauDeMaille={niveauDeMaille}
         setNiveauDeMaille={setNiveauDeMaille}
       />
