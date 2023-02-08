@@ -6,7 +6,9 @@ const SynthèseRésultatsStyled = styled.div`
   }
 
   .info-mise-a-jour-commentaire {
-    color: var(--blue-france-main-525);
+    color: #6a6af4;
+    
+    
   }
 
   .libellé-météo {
