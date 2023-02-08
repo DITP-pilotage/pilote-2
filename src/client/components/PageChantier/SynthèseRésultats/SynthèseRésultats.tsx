@@ -25,7 +25,7 @@ export default function SynthèseRésultats({ chantier, synthèseDesRésultats }
                 {récupérerLibelléMétéo(météo)}
               </p>
             </div>
-            <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
+            <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w fr-m-15w">
               {
                 synthèseDesRésultats
                   ?
