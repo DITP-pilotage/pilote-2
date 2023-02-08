@@ -1,6 +1,6 @@
 import {
   PérimètreGéographiqueIdentifiant,
-} from '@/components/PageChantiers/BarreLatérale/SélecteursGéographiques/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
+} from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
 
 export type NiveauDeMaille = 'régionale' | 'départementale';
 

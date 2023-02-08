@@ -1,6 +1,6 @@
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import { useEffect } from 'react';
-import SélecteurDePérimètreGéographiqueProps from '@/components/PageChantiers/BarreLatérale/SélecteursGéographiques/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
+import SélecteurDePérimètreGéographiqueProps from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
 import départements from '@/client/constants/départements';
 import régions from '@/client/constants/régions';
 
@@ -18,6 +18,7 @@ export default function SélecteurDePérimètreGéographique({
   niveauDeMaille,
   périmètreGéographique,
   setPérimètreGéographique,
+  libellé = 'Périmètre géographique',
 }: SélecteurDePérimètreGéographiqueProps) {
 
   useEffect(() => {
@@ -28,12 +29,12 @@ export default function SélecteurDePérimètreGéographique({
   }, [niveauDeMaille, setPérimètreGéographique]);
 
   return (
-    <div className="fr-select-group fr-mt-5v">
+    <div className="fr-select-group">
       <label
         className="fr-label"
         htmlFor="périmètre-géographique"
       >
-        Périmètre géographique
+        { libellé }
       </label>
       <select
         className="fr-select"

@@ -1,3 +1,4 @@
+import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import { useMemo, useState } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import { filtresActifs as filtresActifsStore, actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
@@ -5,17 +6,20 @@ import Titre from '@/components/_commons/Titre/Titre';
 import {
   agrégerDonnéesTerritoires,
 } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
+import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
+import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
+import Sélecteurs from '@/components/PageChantiers/Sélecteurs/Sélecteurs';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
 import TauxAvancementMoyen from './TauxAvancementMoyen/TauxAvancementMoyen';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
-import BarreLatérale from './BarreLatérale/BarreLatérale';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
+import Filtres from './Filtres/Filtres';
 
 export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {
-  const [estOuverteBarreFiltres, setEstOuverteBarreFiltres] = useState(false);
+  const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   const filtresActifs = filtresActifsStore();
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
@@ -37,14 +41,18 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
   return (
     <PageChantiersStyled className="flex">
       <BarreLatérale
-        estOuvert={estOuverteBarreFiltres}
-        ministères={ministères}
-        setEstOuvert={setEstOuverteBarreFiltres}
-      />
+        estOuvert={estOuverteBarreLatérale}
+        setEstOuvert={setEstOuverteBarreLatérale}
+      >
+        <BarreLatéraleEncart>
+          <Sélecteurs />
+        </BarreLatéraleEncart>
+        <Filtres ministères={ministères} />
+      </BarreLatérale>
       <div className='contenu-principal'>
         <button
           className="fr-sr-only-xl fr-btn fr-btn--secondary fr-mb-2w"
-          onClick={() => setEstOuverteBarreFiltres(true)}
+          onClick={() => setEstOuverteBarreLatérale(true)}
           title="Ouvrir les filtres"
           type="button"
         >

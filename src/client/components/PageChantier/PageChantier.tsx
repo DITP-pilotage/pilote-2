@@ -1,4 +1,15 @@
+import '@gouvfr/dsfr/dist/component/form/form.min.css';
+import { useState } from 'react';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
+import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
+import SélecteurDePérimètreGéographique
+  from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique';
+import {
+  PérimètreGéographiqueIdentifiant,
+} from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
+import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
+import SélecteurDeMaille from '@/components/_commons/SélecteurDeMaille/SélecteurDeMaille';
+import { Maille } from '@/server/domain/chantier/Chantier.interface';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import Commentaires from './Commentaires/Commentaires';
@@ -20,14 +31,36 @@ const listeRubriques: Rubrique[] = [
 ];
 
 export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
+  const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
+  const [périmètreGéographique, setPérimètreGéographique] = useState<PérimètreGéographiqueIdentifiant>({
+    codeInsee: 'FR',
+    maille: 'nationale',
+  });
+  const [maille, setMaille] = useState<Maille>('nationale');
+
   return (
-    <PageChantierStyled>
-      <PageChantierEnTête chantier={chantier} />
-      <div className='fr-grid-row'>
-        <div className='fr-col-xl-2 fr-col-lg-3'>
-          <Sommaire rubriques={listeRubriques} />
-        </div>
-        <div className='fr-col-xl-10 fr-col-lg-9 fr-col-12 fr-px-3w fr-pt-5w'>
+    <PageChantierStyled className="flex">
+      <BarreLatérale
+        estOuvert={estOuverteBarreLatérale}
+        setEstOuvert={setEstOuverteBarreLatérale}
+      >
+        <BarreLatéraleEncart>
+          <SélecteurDeMaille
+            maille={maille}
+            setMaille={setMaille}
+          />
+          <SélecteurDePérimètreGéographique
+            libellé="Territoire"
+            niveauDeMaille="départementale"
+            périmètreGéographique={périmètreGéographique}
+            setPérimètreGéographique={setPérimètreGéographique}
+          />
+        </BarreLatéraleEncart>
+        <Sommaire rubriques={listeRubriques} />
+      </BarreLatérale>
+      <div className='contenu-principal'>
+        <PageChantierEnTête chantier={chantier} />
+        <div className='fr-p-4w'>
           <AvancementChantier chantier={chantier} />
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-5w">
             <div className="fr-col-12 fr-col-xl-6">
