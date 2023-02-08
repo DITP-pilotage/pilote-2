@@ -75,9 +75,7 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
             </div>
           </div>
           <Cartes chantier={chantier} />
-          <Indicateurs
-            indicateurs={indicateurs}
-          />
+          <Indicateurs indicateurs={indicateurs} />
           <Commentaires />
         </div>
       </div>
