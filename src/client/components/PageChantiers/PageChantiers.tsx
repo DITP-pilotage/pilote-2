@@ -3,14 +3,14 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import { useMemo, useState } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import { filtresActifs as filtresActifsStore, actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
+import { périmètreGéographique as périmètreGéographiqueStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import Titre from '@/components/_commons/Titre/Titre';
-import {
-  agrégerDonnéesTerritoires,
-} from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Sélecteurs from '@/components/PageChantiers/Sélecteurs/Sélecteurs';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { agrégerDonnéesTerritoires } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
+import territorialiserChantiers from '@/client/utils/chantier/chantiersTerritorialisés/chantiersTerritorialisés';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
 import TauxAvancementMoyen from './TauxAvancementMoyen/TauxAvancementMoyen';
@@ -25,6 +25,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   const filtresActifs = filtresActifsStore();
+  const périmètreGéographique = périmètreGéographiqueStore();
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
 
   const chantiersFiltrés = useMemo(() => {
@@ -43,6 +44,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
     return résultat;
   }, [chantiers, filtresActifs]);
 
+  const chantiersTerritorialisés = useMemo(() => territorialiserChantiers(chantiersFiltrés, périmètreGéographique), [chantiersFiltrés, périmètreGéographique]);
   const donnéesTerritoiresAgrégées = useMemo(() => agrégerDonnéesTerritoires(chantiersFiltrés.map(chantier => chantier.mailles)), [chantiersFiltrés]);
 
   return (
@@ -94,7 +96,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
             <div className="fr-grid-row fr-mt-3w">
               <div className="fr-col">
                 <Bloc>
-                  <ListeChantiers chantiers={chantiersFiltrés}  />
+                  <ListeChantiers chantiersTerritorialisés={chantiersTerritorialisés}  />
                 </Bloc>
               </div>
             </div>
