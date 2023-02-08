@@ -11,6 +11,8 @@ export default class IndicateurRowBuilder {
 
   private _maille: string = 'NAT';
 
+  private _evolutionValeurActuelle: number[] = [1, 2];
+
   withId(id: string): IndicateurRowBuilder {
     this._id = id;
     return this;
@@ -36,6 +38,11 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  withEvolutionValeurActuelle(evolutionValeurActuelle: number[]): IndicateurRowBuilder {
+    this._evolutionValeurActuelle = evolutionValeurActuelle;
+    return this;
+  }
+
   build(): indicateur {
     return {
       id: this._id,
@@ -56,7 +63,7 @@ export default class IndicateurRowBuilder {
       valeur_actuelle: null,
       date_valeur_actuelle: null,
       territoire_nom: null,
-      evolution_valeur_actuelle: [],
+      evolution_valeur_actuelle: this._evolutionValeurActuelle,
       evolution_date_valeur_actuelle: [],
     };
   }

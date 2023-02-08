@@ -19,6 +19,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       valeurActuelle: row.valeur_actuelle,
       valeurCible: row.objectif_valeur_cible,
       tauxAvancementGlobal: row.objectif_taux_avancement,
+      evolutionValeurActuelle: row.evolution_valeur_actuelle,
     }));
   }
 
