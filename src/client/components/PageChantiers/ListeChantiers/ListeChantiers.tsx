@@ -15,6 +15,7 @@ import {
 import { récupérerAvancement, récupérerMétéo } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 import ListeChantiersStyled from '@/components/PageChantiers/ListeChantiers/ListeChantiers.styled';
 import Météo from '@/server/domain/chantier/Météo.interface';
+import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import ListeChantiersProps from './ListeChantiers.interface';
 
 function afficherMétéo(météo: Météo) {
@@ -51,6 +52,7 @@ function colonnesChantiers(périmètreGéographique: PérimètreGéographiqueIde
   const { codeInsee, maille } = périmètreGéographique;
   const cheminChantierMétéoDuTerritoire = (chantier: Chantier) => récupérerMétéo(chantier.mailles, maille, codeInsee);
   const cheminChantierAvancementDuTerritoire = (chantier: Chantier) => récupérerAvancement(chantier.mailles, maille, codeInsee);
+  const taillePicto = { mesure: 1.25, unité: 'rem' } as const;
   return [
     reactTableColonnesHelper.accessor('nom', {
       header: 'Chantiers',
@@ -69,11 +71,7 @@ function colonnesChantiers(périmètreGéographique: PérimètreGéographiqueIde
       enableSorting: false,
       cell: estBarometre => estBarometre.getValue() === true
         ?
-          <span
-            aria-hidden="true"
-            className="fr-icon-dashboard-3-line fr-mr-1w"
-            style={{ color: '#006e6e' }}
-          />
+          <PictoBaromètre taille={taillePicto} />
         : null,
     }),
     reactTableColonnesHelper.accessor(cheminChantierMétéoDuTerritoire, {
