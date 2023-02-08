@@ -18,6 +18,7 @@ export default function SélecteurDePérimètreGéographique({
   niveauDeMaille,
   périmètreGéographique,
   setPérimètreGéographique,
+  libellé = 'Périmètre géographique',
 }: SélecteurDePérimètreGéographiqueProps) {
 
   useEffect(() => {
@@ -28,12 +29,12 @@ export default function SélecteurDePérimètreGéographique({
   }, [niveauDeMaille, setPérimètreGéographique]);
 
   return (
-    <div className="fr-select-group fr-mt-5v">
+    <div className="fr-select-group">
       <label
         className="fr-label"
         htmlFor="périmètre-géographique"
       >
-        Périmètre géographique
+        { libellé }
       </label>
       <select
         className="fr-select"

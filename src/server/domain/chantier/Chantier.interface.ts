@@ -11,6 +11,12 @@ export const mailles = ['nationale', 'régionale', 'départementale'] as const;
 
 export type Maille = typeof mailles[number];
 
+export const libellésMailles: Record<Maille, string> = {
+  'nationale': 'Nationale',
+  'régionale': 'Régionale',
+  'départementale': 'Départementale',
+};
+
 export type Territoire = {
   codeInsee: string,
   avancement: Avancement,

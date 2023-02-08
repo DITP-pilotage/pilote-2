@@ -8,6 +8,8 @@ import {
   PérimètreGéographiqueIdentifiant,
 } from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
+import SélecteurDeMaille from '@/components/_commons/SélecteurDeMaille/SélecteurDeMaille';
+import { Maille } from '@/server/domain/chantier/Chantier.interface';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import Commentaires from './Commentaires/Commentaires';
@@ -34,6 +36,7 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
     codeInsee: 'FR',
     maille: 'nationale',
   });
+  const [maille, setMaille] = useState<Maille>('nationale');
 
   return (
     <PageChantierStyled className="flex">
@@ -42,7 +45,12 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
+          <SélecteurDeMaille
+            maille={maille}
+            setMaille={setMaille}
+          />
           <SélecteurDePérimètreGéographique
+            libellé="Territoire"
             niveauDeMaille="départementale"
             périmètreGéographique={périmètreGéographique}
             setPérimètreGéographique={setPérimètreGéographique}

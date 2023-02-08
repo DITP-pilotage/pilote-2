@@ -1,7 +1,7 @@
 export const météos = ['NON_RENSEIGNEE', 'ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL', 'NON_NECESSAIRE'] as const;
 type Météo = typeof météos[number];
 
-export const libellésMétéos = {
+export const libellésMétéos: Record<Météo, string> = {
   'ORAGE': 'Objectifs compromis',
   'NUAGE': 'Appuis nécessaires',
   'COUVERT': 'Objectifs atteignables',

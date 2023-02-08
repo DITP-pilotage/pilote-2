@@ -5,14 +5,14 @@ export default function InterrupteurNiveauDeMaille({ niveauDeMaille, setNiveauDe
   return (
     <InterrupteurNiveauDeMailleStyled className='fr-p-1v'>
       <button
-        className={`${niveauDeMaille === 'départementale' && 'séléctionné fr-text--bold'}`}
+        className={`${niveauDeMaille === 'départementale' && 'sélectionné fr-text--bold'}`}
         onClick={() => setNiveauDeMaille('départementale')}
         type='button'
       >
         Départements
       </button>
       <button
-        className={`${niveauDeMaille === 'régionale' && 'séléctionné fr-text--bold'}`}
+        className={`${niveauDeMaille === 'régionale' && 'sélectionné fr-text--bold'}`}
         onClick={() => setNiveauDeMaille('régionale')}
         type='button'
       >
