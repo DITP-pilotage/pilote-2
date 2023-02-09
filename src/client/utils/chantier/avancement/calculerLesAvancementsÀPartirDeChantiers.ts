@@ -7,10 +7,10 @@ import {
 } from '../donnéesTerritoires/donnéesTerritoires';
 
 export default function calculerLesAvancementsÀPartirDeChantiers(
-  donnéesTerritoiresAgrégés: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
+  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
 ) {
   return réduireDonnéesTerritoires<AvancementsBarreDeProgression>(
-    donnéesTerritoiresAgrégés,
+    donnéesTerritoiresAgrégées,
     (territoiresAgrégés) => {
       const avancementsAnnuels = territoiresAgrégés.avancement.map(avancement => avancement.annuel);
       const avancementsGlobaux = territoiresAgrégés.avancement.map(avancement => avancement.global);

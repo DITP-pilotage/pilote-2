@@ -1,23 +1,23 @@
-import { Maille, Territoire } from '@/server/domain/chantier/Chantier.interface';
+import { Maille } from '@/server/domain/chantier/Chantier.interface';
 import { Agrégation } from '@/client/utils/types';
 import { DonnéesTerritoires, réduireDonnéesTerritoires, TerritoireSansCodeInsee } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 import { CartographieValeur } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
 
 export function préparerDonnéesCartographieÀPartirDUneListe(
-  donnéesTerritoiresAgrégés: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
+  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
   fonctionDeRéduction: (territoiresAgrégés: Agrégation<TerritoireSansCodeInsee>) => CartographieValeur,
 ): CartographieDonnées {
   return réduireDonnéesTerritoires<CartographieValeur>(
-    donnéesTerritoiresAgrégés,
+    donnéesTerritoiresAgrégées,
     fonctionDeRéduction,
     null,
   );
 }
 
 export function préparerDonnéesCartographieÀPartirDUnÉlément(
-  donnéesTerritoires: DonnéesTerritoires<Territoire>,
-  fonctionDExtraction: (territoire: Territoire) => CartographieValeur,
+  donnéesTerritoires: DonnéesTerritoires<TerritoireSansCodeInsee>,
+  fonctionDExtraction: (territoire: TerritoireSansCodeInsee) => CartographieValeur,
 ): CartographieDonnées {
   const donnéesCartographie: CartographieDonnées = { départementale : {}, régionale: {} };
   let maille: Maille;
