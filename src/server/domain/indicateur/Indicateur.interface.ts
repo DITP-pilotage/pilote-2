@@ -14,4 +14,5 @@ export default interface Indicateur {
   valeurCible: Valeur;
   tauxAvancementGlobal: Taux;
   evolutionValeurActuelle: number[];
+  evolutionDateValeurActuelle: string[];
 }

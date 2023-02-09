@@ -15,17 +15,22 @@ describe('IndicateurSQLRepository', () => {
     expect(result).toStrictEqual([]);
   });
 
-  test('Récupérer une liste d\'indicateur via un ID de chantier', async () => {
+  test('Récupérer une liste d\'indicateur via un ID de chantier contenant un tableau de valeurs actuelles', async () => {
     // GIVEN
     const repository = new IndicateurSQLRepository(prisma);
 
     const chantierId = 'CH-001';
+    const date1 = '2021-06-30';
+    const date2 = '2022-06-30';
+    const date3 = '2023-06-30';
     
     const indicateurs: indicateur[] = [
       new IndicateurRowBuilder()
         .withId('IND-001')
         .withNom('Indicateur 1')
         .withChantierId(chantierId)
+        .withEvolutionValeurActuelle([1, 2])
+        .withEvolutionDateValeurActuelle([date1, date2])
         .build(),
 
       new IndicateurRowBuilder()
@@ -34,12 +39,16 @@ describe('IndicateurSQLRepository', () => {
         .withChantierId(chantierId)
         .withCodeInsee('78')
         .withMaille('REG')
+        .withEvolutionValeurActuelle([0.4, 43, 18])
+        .withEvolutionDateValeurActuelle([date1, date2, date3])
         .build(),
 
       new IndicateurRowBuilder()
         .withId('IND-002')
         .withNom('Indicateur 2')
         .withChantierId(chantierId)
+        .withEvolutionValeurActuelle([0.4, 0, 0.654])
+        .withEvolutionDateValeurActuelle([date1, date2, date3])
         .build(),
     ];
 
@@ -52,55 +61,11 @@ describe('IndicateurSQLRepository', () => {
     expect(result.length).toEqual(2);
     expect(result[0].id).toEqual('IND-001');
     expect(result[1].id).toEqual('IND-002');
-  });
-
-  test('Récupérer une liste d\'indicateur contenant un tableau de valeurs actuelles', async () => {
-    // GIVEN
-    const repository = new IndicateurSQLRepository(prisma);
-
-    const chantierId = 'CH-001';
-
-    const indicateurs: indicateur[] = [
-      new IndicateurRowBuilder()
-        .withId('IND-001')
-        .withNom('Ind 1')
-        .withChantierId(chantierId)
-        .withEvolutionValeurActuelle([1, 2])
-        .build(),
-
-      new IndicateurRowBuilder()
-        .withId('IND-001')
-        .withNom('Ind 1')
-        .withChantierId(chantierId)
-        .withCodeInsee('78')
-        .withMaille('REG')
-        .withEvolutionValeurActuelle([0.4, 43, 18])
-        .build(),
-
-      new IndicateurRowBuilder()
-        .withId('IND-002')
-        .withNom('Indicateur 2')
-        .withChantierId(chantierId)
-        .withEvolutionValeurActuelle([222, 333, 444, 555])
-        .build(),
-
-      new IndicateurRowBuilder()
-        .withId('IND-003')
-        .withNom('Indicateur 3')
-        .withChantierId(chantierId)
-        .withEvolutionValeurActuelle([0.4, 0, 0.654, 22])
-        .build(),
-    ];
-
-    await prisma.indicateur.createMany({ data: indicateurs });
-
-    // WHEN
-    const result = await repository.getByChantierId(chantierId);
-
-    // THEN
-    expect(result.length).toEqual(3);
     expect(result[0].evolutionValeurActuelle).toEqual([1, 2]);
-    expect(result[1].evolutionValeurActuelle).toEqual([222, 333, 444, 555]);
-    expect(result[2].evolutionValeurActuelle).toEqual([0.4, 0, 0.654, 22]);
+    expect(result[1].evolutionValeurActuelle).toEqual([0.4, 0, 0.654]);
+    expect(result[0].evolutionDateValeurActuelle).toEqual([date1, date2]);
+    expect(result[1].evolutionDateValeurActuelle).toEqual([date1, date2, date3]);
+    expect(result[0].evolutionValeurActuelle.length).toEqual(result[0].evolutionDateValeurActuelle.length);
+    expect(result[1].evolutionValeurActuelle.length).toEqual(result[1].evolutionDateValeurActuelle.length);
   });
 });
