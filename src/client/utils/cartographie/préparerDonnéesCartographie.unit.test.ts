@@ -8,7 +8,6 @@ import {
   TerritoireSansCodeInsee,
 } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 import { Agrégation } from '@/client/utils/types';
-import { Territoire } from '@/server/domain/chantier/Chantier.interface';
 
 describe('Préparer données cartographie', () => {
 
@@ -50,7 +49,7 @@ describe('Préparer données cartographie', () => {
 
 
   describe("Préparer données cartographie à partir d'un élément", () => {
-    let donnéesTerritoires: DonnéesTerritoires<Territoire>;
+    let donnéesTerritoires: DonnéesTerritoires<TerritoireSansCodeInsee>;
 
     beforeEach(() => {
       donnéesTerritoires = {
@@ -63,17 +62,14 @@ describe('Préparer données cartographie', () => {
     it("documente l'attendu avec l'exemple de la météo d'un chantier", () => {
       // GIVEN
       donnéesTerritoires.départementale['01'] = {
-        codeInsee: '01',
         avancement: { global : null, annuel: null },
         météo: 'SOLEIL',
       };
       donnéesTerritoires.départementale['02'] = {
-        codeInsee: '02',
         avancement: { global : null, annuel: null },
         météo: 'COUVERT',
       };
       donnéesTerritoires.régionale['84'] = {
-        codeInsee: '84',
         avancement: { global : null, annuel: null },
         météo: 'ORAGE',
       };
