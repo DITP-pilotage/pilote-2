@@ -5,10 +5,10 @@ import { CompteurMétéos } from '@/components/PageChantiers/RépartitionMétéo
 import { Agrégation } from '@/client/utils/types';
 
 export default function compterLesMétéosÀPartirDeChantiers(
-  donnéesTerritoiresAgrégés: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
+  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
 ) {
   return réduireDonnéesTerritoires<CompteurMétéos>(
-    donnéesTerritoiresAgrégés,
+    donnéesTerritoiresAgrégées,
     (territoiresAgrégés) => {
       const météos = territoiresAgrégés.météo;
       return {

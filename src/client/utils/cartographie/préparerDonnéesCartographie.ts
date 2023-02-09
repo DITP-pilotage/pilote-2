@@ -5,11 +5,11 @@ import { CartographieValeur } from '@/components/_commons/Cartographie/Cartograp
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
 
 export function préparerDonnéesCartographieÀPartirDUneListe(
-  donnéesTerritoiresAgrégés: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
+  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
   fonctionDeRéduction: (territoiresAgrégés: Agrégation<TerritoireSansCodeInsee>) => CartographieValeur,
 ): CartographieDonnées {
   return réduireDonnéesTerritoires<CartographieValeur>(
-    donnéesTerritoiresAgrégés,
+    donnéesTerritoiresAgrégées,
     fonctionDeRéduction,
     null,
   );
