@@ -42,7 +42,43 @@ describe('Données territoires', () => {
       },
     },
   ];
-  
+
+  describe("Récupérer l'avancement d'un territoire", () => {
+    it("Si aucun avancement n'est disponible pour une région, on récupère des valeurs d'avancements nuls", () => {
+      //WHEN
+      const donnéesSansLaRégion01 = listeDonnéesTerritoires[0];
+      const résultat = récupérerAvancement(donnéesSansLaRégion01, 'régionale', '01');
+      //THEN
+      expect(résultat).toStrictEqual({ 'annuel': null, 'global': null });
+    });
+
+    it("Documente l'attendu si un avancement est disponible pour un territoire", () => {
+      //WHEN
+      const donnéesTerritoires = listeDonnéesTerritoires[0];
+      const résultat = récupérerAvancement(donnéesTerritoires, 'nationale', 'FR');
+      //THEN
+      expect(résultat).toStrictEqual({ 'annuel': 99, 'global': 67 });
+    });
+  });
+
+  describe("Récupérer météo d'un territoire", () => {
+    it("Si aucune météo n'est disponible pour un département, on récupère une météo NON_RENSEIGNEE", () => {
+      //WHEN
+      const donnéesSansLeDépartement51 = listeDonnéesTerritoires[0];
+      const résultat = récupérerMétéo(donnéesSansLeDépartement51, 'départementale', '51');
+      //THEN
+      expect(résultat).toStrictEqual('NON_RENSEIGNEE');
+    });
+
+    it("Documente l'attendu si une météo est disponible pour un territoire", () => {
+      //WHEN
+      const donnéesTerritoire = listeDonnéesTerritoires[0];
+      const résultat = récupérerMétéo(donnéesTerritoire, 'départementale', '01');
+      //THEN
+      expect(résultat).toStrictEqual('NUAGE');
+    });
+  });
+
   describe('Initialiser données territoires agrégés vide', () => {
     it('Initialise un objet contenant chaque territoire avec son code Insee et un avancement et une météo vides', () => {
       //WHEN
@@ -68,61 +104,47 @@ describe('Données territoires', () => {
   });
   
   describe('Agréger données territoires', () => {
-    it("Documente l'attendu pour un seul chantier en entrée", () => {
-      //GIVEN
-      const listeDonnéesTerritoiresAvecUnChantier = [listeDonnéesTerritoires[0]];
-      //WHEN
-      const résultat = agrégerDonnéesTerritoires(listeDonnéesTerritoiresAvecUnChantier);
-      //THEN
-      const attenduDépartementAvecDonnées = { avancement: [{ annuel: 27, global: 40 }], météo: ['NUAGE'] };
-      const attenduDépartementSansDonnées = { avancement: [{ annuel: null, global: null }], météo: ['NON_RENSEIGNEE'] };
-      expect(résultat.départementale['01']).toStrictEqual(attenduDépartementAvecDonnées);
-      expect(résultat.départementale['02']).toStrictEqual(attenduDépartementSansDonnées);
-    });
-    
-    it("Documente l'attendu pour deux chantiers en entrée", () => {
-      //WHEN
-      const résultat = agrégerDonnéesTerritoires(listeDonnéesTerritoires);
-      //THEN
-      const attendu = { avancement: [{ annuel: 27, global: 40 }, { annuel: 24, global: 32 }], météo: ['NUAGE', 'NON_RENSEIGNEE'] };
-      expect(résultat.départementale['01']).toStrictEqual(attendu);
-    });
-  });
+    describe('liste de 1 chantier', () => {
+      it("Documente l'attendu pour un cas nominal", () => {
+        //GIVEN
+        const listeDonnéesTerritoiresAvecUnChantier = [listeDonnéesTerritoires[0]];
+        //WHEN
+        const résultat = agrégerDonnéesTerritoires(listeDonnéesTerritoiresAvecUnChantier);
+        //THEN
+        const attenduFR = { avancement: [{ global: 67, annuel: 99 }], météo: ['ORAGE'] };
+        const attendu01 = { avancement: [{ annuel: 27, global: 40 }], météo: ['NUAGE'] };
+        expect(résultat.nationale.FR).toStrictEqual(attenduFR);
+        expect(résultat.départementale['01']).toStrictEqual(attendu01);
+      });
 
-  describe("Récupérer météo d'un territoire", () => {
-    it("Si aucune météo n'est disponible pour un département, on récupère une météo NON_RENSEIGNEE", () => {
-      //WHEN
-      const donnéesSansLeDépartement51 = listeDonnéesTerritoires[0];
-      const résultat = récupérerMétéo(donnéesSansLeDépartement51, 'départementale', '51');
-      //THEN
-      expect(résultat).toStrictEqual('NON_RENSEIGNEE');
+      it("Documente l'attendu pour des données manquantes pour un territoire", () => {
+        //GIVEN
+        const listeDonnéesTerritoiresAvecUnChantier = [listeDonnéesTerritoires[0]];
+        //WHEN
+        const résultat = agrégerDonnéesTerritoires(listeDonnéesTerritoiresAvecUnChantier);
+        //THEN
+        const attenduDépartementSansDonnées = { avancement: [{ annuel: null, global: null }], météo: ['NON_RENSEIGNEE'] };
+        expect(résultat.départementale['02']).toStrictEqual(attenduDépartementSansDonnées);
+      });
     });
 
-    it("Documente l'attendu si une météo est disponible pour un territoire", () => {
-      //WHEN
-      const donnéesTerritoire = listeDonnéesTerritoires[0];
-      const résultat = récupérerMétéo(donnéesTerritoire, 'départementale', '01');
-      //THEN
-      expect(résultat).toStrictEqual('NUAGE');
-    });
-  });
-
-  describe("Récupérer l'avancement d'un territoire", () => {
-    it("Si aucun avancement n'est disponible pour une région, on récupère des valeurs d'avancements nuls", () => {
-      //WHEN
-      const donnéesSansLaRégion01 = listeDonnéesTerritoires[0];
-      const résultat = récupérerAvancement(donnéesSansLaRégion01, 'régionale', '01');
-      //THEN
-      expect(résultat).toStrictEqual({ 'annuel': null, 'global': null });
-    });
-
-    it("Documente l'attendu si un avancement est disponible pour un territoire", () => {
-      //WHEN
-      const donnéesTerritoires = listeDonnéesTerritoires[0];
-      const résultat = récupérerAvancement(donnéesTerritoires, 'nationale', 'FR');
-      //THEN
-      expect(résultat).toStrictEqual({ 'annuel': 99, 'global': 67 });
+    describe('liste de 2 chantiers', () => {
+      it("Documente l'attendu pour un cas nominal", () => {
+        //WHEN
+        const résultat = agrégerDonnéesTerritoires(listeDonnéesTerritoires);
+        //THEN
+        const attendu = {
+          avancement: [
+            { annuel: 27, global: 40 },
+            { annuel: 24, global: 32 },
+          ],
+          météo: [
+            'NUAGE',
+            'NON_RENSEIGNEE',
+          ],
+        };
+        expect(résultat.départementale['01']).toStrictEqual(attendu);
+      });
     });
   });
 });
-  
