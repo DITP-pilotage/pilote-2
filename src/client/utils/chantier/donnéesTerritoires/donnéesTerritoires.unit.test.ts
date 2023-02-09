@@ -1,9 +1,10 @@
 import {
   agrégerDonnéesTerritoires,
-  agrégerDonnéesTerritoiresÀUnAgrégat,
+  agrégerDonnéesTerritoiresÀUnAgrégat, DonnéesTerritoires,
   initialiserDonnéesTerritoiresAgrégésVide, récupérerAvancement,
-  récupérerMétéo,
+  récupérerMétéo, réduireDonnéesTerritoires, TerritoireSansCodeInsee,
 } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
+import { Agrégation } from '@/client/utils/types';
 
 describe('Données territoires', () => {
   const listeDonnéesTerritoires = [
@@ -144,6 +145,68 @@ describe('Données territoires', () => {
           ],
         };
         expect(résultat.départementale['01']).toStrictEqual(attendu);
+      });
+    });
+  });
+
+  describe('Réduire données territoires', () => {
+    describe('liste de 2 chantier', () => {
+      let listeDonnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>;
+
+      beforeEach(() => {
+        listeDonnéesTerritoiresAgrégées = initialiserDonnéesTerritoiresAgrégésVide();
+      });
+
+      it("Documente l'attendu avec l'exemple d'une fonction de réduction par comptage d'occurrence", () => {
+        // GIVEN
+        listeDonnéesTerritoiresAgrégées.régionale['84'] = {
+          météo: ['NON_RENSEIGNEE', 'NON_RENSEIGNEE', 'SOLEIL', 'COUVERT'],
+          avancement: [
+            { global : null, annuel: null },
+            { global : null, annuel: null },
+            { global : null, annuel: null },
+            { global : null, annuel: null },
+          ],
+        };
+
+        // WHEN
+        const résultat = réduireDonnéesTerritoires(
+          listeDonnéesTerritoiresAgrégées,
+          (territoiresAgrégés) => {
+            const météos = territoiresAgrégés.météo;
+            return {
+              'NON_RENSEIGNEE': météos.filter(météo => météo === 'NON_RENSEIGNEE').length,
+              'ORAGE': météos.filter(météo => météo === 'ORAGE').length,
+              'COUVERT': météos.filter(météo => météo === 'COUVERT').length,
+              'NUAGE': météos.filter(météo => météo === 'NUAGE').length,
+              'SOLEIL': météos.filter(météo => météo === 'SOLEIL').length,
+              'NON_NECESSAIRE': météos.filter(météo => météo === 'NON_NECESSAIRE').length,
+            };
+          },
+          {
+            'NON_RENSEIGNEE': 0,
+            'ORAGE': 0,
+            'COUVERT': 0,
+            'NUAGE': 0,
+            'SOLEIL': 0,
+            'NON_NECESSAIRE': 0,
+          },
+        );
+
+        // THEN
+        const attendu = {
+          régionale: {
+            '84': {
+              'NON_RENSEIGNEE': 2,
+              'ORAGE': 0,
+              'COUVERT': 1,
+              'NUAGE': 0,
+              'SOLEIL': 1,
+              'NON_NECESSAIRE': 0,
+            },
+          },
+        };
+        expect(résultat.régionale['84']).toEqual(attendu.régionale['84']);
       });
     });
   });
