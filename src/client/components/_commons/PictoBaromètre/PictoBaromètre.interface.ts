@@ -5,4 +5,5 @@ export type Taille = {
 
 export default interface PictoBaromètreProps {
   taille: Taille,
+  className?: string,
 }

@@ -1,13 +1,14 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import IndicateurProps from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import CarteIndicateurProps from '@/components/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur.interface';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import CarteIndicateurStyled from './CarteIndicateur.styled';
 
-const reactTableColonnesHelper = createColumnHelper<IndicateurProps & { territoire: string }>();
+const reactTableColonnesHelper = createColumnHelper<Indicateur & { territoire: string }>();
 
 const colonnes = [
   reactTableColonnesHelper.accessor('territoire', {
@@ -17,14 +18,17 @@ const colonnes = [
   }),
   reactTableColonnesHelper.accessor('valeurInitiale', {
     header: 'Valeur initiale',
+    cell: valeurInitiale => valeurInitiale.getValue()?.toLocaleString(),
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('valeurActuelle', {
     header: 'Valeur actuelle',
+    cell: valeurActuelle => valeurActuelle.getValue()?.toLocaleString(),
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('valeurCible', {
     header: 'Valeur cible',
+    cell: valeurCible => valeurCible.getValue()?.toLocaleString(),
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('tauxAvancementGlobal', {
@@ -41,7 +45,8 @@ const colonnes = [
         />
       </>
     ),
-    enableSorting: false }),
+    enableSorting: false, 
+  }),
 ];
 
 export default function CarteIndicateur({ indicateur } : CarteIndicateurProps) {
@@ -55,15 +60,11 @@ export default function CarteIndicateur({ indicateur } : CarteIndicateurProps) {
           baliseHtml="h4"
           className="fr-h5 fr-mb-1w"
         >
-          {
-              !!indicateur.estIndicateurDuBaromètre && (
-              <span
-                aria-hidden="true"
-                className="fr-icon-dashboard-3-line fr-mr-1w"
-                style={{ color: '#006e6e' }}
-              />
-              )
-          }
+          { !!indicateur.estIndicateurDuBaromètre && 
+          <PictoBaromètre
+            className='fr-mr-1w' 
+            taille={{ mesure: 1.25, unité: 'rem' }} 
+          /> }
           { indicateur.nom }
         </Titre>
         <p className='fr-mb-1w information-secondaire texte-gris'>
@@ -75,7 +76,7 @@ export default function CarteIndicateur({ indicateur } : CarteIndicateurProps) {
         <p className="fr-text--xs fr-mb-1v">
           Ceci est la description de l’indicateur et des données associées. La pondération de l’indicateur dans le taux d’avancement global est également expliquée.
         </p>
-        <Tableau<IndicateurProps & { territoire: string }>
+        <Tableau<Indicateur & { territoire: string }>
           afficherLaRecherche={false}
           colonnes={colonnes}
           données={[{ ...indicateur, territoire: 'National' }]}

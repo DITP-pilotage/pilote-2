@@ -6,6 +6,8 @@ interface PictoBaromètreStyledProps {
 }
 
 const PictoBaromètreStyled = styled.span<PictoBaromètreStyledProps>`
+  color: #006e6e;
+
   &::before {
     width: ${props => props.taille.mesure + props.taille.unité};
     height: ${props => props.taille.mesure + props.taille.unité};
