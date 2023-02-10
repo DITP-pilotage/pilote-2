@@ -34,11 +34,11 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   ditp_ppg_dbt:
     raw:
-      +schema: raw_data_test
+      +schema: raw_data
       +materialized: table
     staging:
-      +schema: raw_data_test
+      +schema: raw_data
       +materialized: view
     marts:
-      +schema: raw_data_test
+      +schema: public
       +materialized: table

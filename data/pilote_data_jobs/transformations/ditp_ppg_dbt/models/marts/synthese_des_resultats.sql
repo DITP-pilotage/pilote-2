@@ -11,7 +11,14 @@ synthese AS (
     FROM {{ ref('stg_dfakto__view_data_properties')}} WHERE reforme_code <> '' OR region_code  <> '' OR departement_code  <> ''
 )
 
-SELECT m_chantier.id,
+SELECT {{ dbt_utils.surrogate_key(
+             ['m_chantier.id',
+             'maille',
+             'code_insee',
+             'synthese.meteo_date_de_mise_a_jour',
+             'synthese.synthese_des_resultats_date_de_mise_a_jour']
+         ) }} as id,
+    m_chantier.id as chantier_id,
     m_zone.maille,
     m_zone.code_insee,
     synthese.meteo,
