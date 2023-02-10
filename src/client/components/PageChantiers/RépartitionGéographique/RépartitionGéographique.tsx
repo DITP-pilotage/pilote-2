@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import { calculerMoyenne } from '@/client/utils/statistiques';
-import { préparerDonnéesCartographieÀPartirDUneListe } from '@/client/utils/cartographie/préparerDonnéesCartographie';
 import CartographieTauxAvancement from '@/components/_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
 import { mailleInterne as mailleInterneStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
+import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
 
 export default function RépartitionGéographique({ donnéesTerritoiresAgrégées }: RépartitionGéographiqueProps) {
+  const { préparerDonnéesCartographieÀPartirDUneListe } = useCartographie();
   const mailleInterne = mailleInterneStore();
   const donnéesCartographie = useMemo(() => (
     préparerDonnéesCartographieÀPartirDUneListe(
@@ -16,7 +17,7 @@ export default function RépartitionGéographique({ donnéesTerritoiresAgrégée
         return calculerMoyenne(valeurs);
       },
     )
-  ), [donnéesTerritoiresAgrégées]);
+  ), [donnéesTerritoiresAgrégées, préparerDonnéesCartographieÀPartirDUneListe]);
 
   return (
     <>

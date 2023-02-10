@@ -1,6 +1,20 @@
 import { ReactNode } from 'react';
-import { CartographieOptions } from '@/components/_commons/Cartographie/Cartographie.interface';
 import { Maille } from '@/server/domain/chantier/Chantier.interface';
+import { NuancierRemplissage } from '@/client/constants/nuanciers/nuancier';
+import { NiveauDeMaille } from '@/client/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore.interface';
+
+export type CartographieRégionJSON = {
+  tracéSVG: string,
+  codeInsee: CartographieTerritoireCodeInsee,
+  nom: string
+};
+
+export type CartographieDépartementJSON = {
+  tracéSVG: string,
+  codeInsee: CartographieTerritoireCodeInsee,
+  codeInseeRégion: CartographieTerritoireCodeInsee,
+  nom: string
+};
 
 export type CartographieBulleTerritoire = Pick<CartographieTerritoire, 'codeInsee' | 'nom' | 'valeur' | 'maille'>;
 export type CartographieTerritoireCodeInsee = string;
@@ -18,8 +32,23 @@ export type CartographieTerritoire = {
   valeur: CartographieValeur,
 };
 
+export type CartographieTerritoireAffiché = {
+  codeInsee: CartographieTerritoireCodeInsee,
+  maille: 'nationale' | 'régionale',
+};
+
+export type CartographieOptions = {
+  territoireAffiché: CartographieTerritoireAffiché,
+  déterminerRemplissage: (valeur: CartographieValeur) => NuancierRemplissage,
+  formaterValeur: (valeur: CartographieValeur) => string,
+  territoireSélectionnable: boolean,
+};
+
+export type CartographieDonnées = Record<NiveauDeMaille, Record<CartographieTerritoireCodeInsee, CartographieValeur>>;
+
 export default interface CartographieAffichageProps {
   children?: ReactNode,
-  options: CartographieOptions,
-  territoires: CartographieTerritoire[],
+  options?: Partial<CartographieOptions>,
+  données: CartographieDonnées,
+  niveauDeMaille: NiveauDeMaille,
 }

@@ -7,7 +7,7 @@ import PérimètreMinistériel from '@/server/domain/ministère/PérimètreMinis
 import PageChantiers from './PageChantiers';
 
 // eslint-disable-next-line unicorn/consistent-function-scoping
-jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function Cartographie() { return 'Carto'; });
+jest.mock('@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.tsx', () => function Cartographie() { return 'Carto'; });
 
 class PageChantiersTest {
   // TODO temporaire en attendant la fixture
