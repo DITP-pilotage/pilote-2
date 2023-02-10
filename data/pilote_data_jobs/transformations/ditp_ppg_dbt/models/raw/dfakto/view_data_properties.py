@@ -6,7 +6,8 @@ def model(dbt, session):
     dump_dfakto_rp_views_data = os.getenv('DUMP_DFAKTO_RP_VIEWS_DATA')
     view_data_properties = pd.read_csv(
         f'{dump_dfakto_rp_views_data}/rp_view_data_properties.csv',
-        sep=';'
+        sep=';',
+        keep_default_na=False
     )
 
     view_data_properties = view_data_properties.rename(columns={
