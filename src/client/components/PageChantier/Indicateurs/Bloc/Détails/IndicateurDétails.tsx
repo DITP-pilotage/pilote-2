@@ -1,5 +1,5 @@
 import IndicateurÉvolution
-  from '@/components/PageChantier/Indicateurs/CarteIndicateur/IndicateurÉvolution/IndicateurÉvolution';
+  from '@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution';
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 
 export default function IndicateurDétails({ indicateur }: IndicateurDétailsProps) {

@@ -1,6 +1,6 @@
 import Titre from '@/components/_commons/Titre/Titre';
 import IndicateursProps, { ÉlémentPageIndicateursType } from '@/components/PageChantier/Indicateurs/Indicateurs.interface';
-import CarteIndicateur from '@/components/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur';
+import IndicateurBloc from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc';
 import Indicateur, { TypeIndicateur, typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 
@@ -52,7 +52,7 @@ export default function Indicateurs({ indicateurs }: IndicateursProps) {
                 )
                 : (
                   indicateursGroupésParType[rubrique.typeIndicateur].map(indicateur => (
-                    <CarteIndicateur
+                    <IndicateurBloc
                       indicateur={indicateur}
                       key={indicateur.id}
                     />

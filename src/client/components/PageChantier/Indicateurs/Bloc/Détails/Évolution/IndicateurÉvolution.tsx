@@ -1,15 +1,15 @@
 import 'dsfr-chart/MultiLineChart/multiline-chart.css';
 import Script from 'next/script';
-import IndicateurÉvolutionProps from '@/components/PageChantier/Indicateurs/CarteIndicateur/IndicateurÉvolution/IndicateurÉvolution.interface';
+import IndicateurÉvolutionProps from '@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.interface';
 import Titre from '@/components/_commons/Titre/Titre';
 
-export default function IndicateurVolution({ indicateur }: IndicateurÉvolutionProps) {
+export default function IndicateurÉvolution({ indicateur }: IndicateurÉvolutionProps) {
   return (
     <>
       <Script
         src="/js/dsfr-chart/MultiLineChart/multiline-chart.umd.min.js"
       />
-      <div className="fr-mb-8w">
+      <div>
         <Titre
           baliseHtml='h5'
           className='fr-text--lg fr-mb-0'

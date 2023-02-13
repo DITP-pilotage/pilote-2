@@ -3,13 +3,13 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
-import CarteIndicateurProps from '@/components/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur.interface';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import { formaterDate } from '@/client/utils/date/date';
 import IndicateurDétails
-  from '@/components/PageChantier/Indicateurs/CarteIndicateur/IndicateurDétails/IndicateurDétails';
-import CarteIndicateurStyled from './CarteIndicateur.styled';
+  from '@/components/PageChantier/Indicateurs/Bloc/Détails/IndicateurDétails';
+import IndicateurBlocStyled from './IndicateurBloc.styled';
+import IndicateurBlocProps from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc.interface';
 
 function afficherValeurEtDate(valeur: number | null, date?: string | null) {
   const dateFormatée = formaterDate(date, 'mm/yyyy');
@@ -70,9 +70,9 @@ const colonnes = [
   }),
 ];
 
-export default function CarteIndicateur({ indicateur } : CarteIndicateurProps) {
+export default function IndicateurBloc({ indicateur } : IndicateurBlocProps) {
   return (
-    <CarteIndicateurStyled
+    <IndicateurBlocStyled
       className="fr-mb-2w"
       key={indicateur.id}
     >
@@ -105,6 +105,6 @@ export default function CarteIndicateur({ indicateur } : CarteIndicateurProps) {
         />
         <IndicateurDétails indicateur={indicateur} />
       </Bloc>
-    </CarteIndicateurStyled>
+    </IndicateurBlocStyled>
   );
 }
