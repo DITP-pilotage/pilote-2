@@ -1,9 +1,5 @@
 import { memo, useEffect, useRef, useState } from 'react';
-import {
-  CartographieTerritoire,
-} from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
-import CartographieTerritoireSélectionné
-  from '@/components/_commons/Cartographie/CartographieAffichage/SVG/CartographieTerritoireSélectionné';
+import CartographieTerritoireSélectionné from '@/components/_commons/Cartographie/CartographieAffichage/SVG/CartographieTerritoireSélectionné';
 import {
   périmètreGéographique as périmètreGéographiqueStore,
   réinitialisePérimètreGéographique as réinitialisePérimètreGéographiqueStore,
@@ -14,6 +10,7 @@ import hachuresGrisBlanc from '@/client/constants/nuanciers/hachure/hachuresGris
 import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
+import { CartographieTerritoire } from '../../useCartographie';
 
 export function déterminerValeurAttributFill(remplissage: NuancierRemplissage) {
   return remplissage.type === 'HACHURES'

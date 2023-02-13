@@ -1,11 +1,8 @@
 import untypedDépartementsJSON from '@/client/components/_commons/Cartographie/départements.json';
 import untypedRégionsJSON from '@/client/components/_commons/Cartographie/régions.json';
-import {
-  CartographieDépartementJSON,
-  CartographieRégionJSON,
-} from '@/components/_commons/Cartographie/Cartographie.interface';
 import { périmètreGéographique } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import { TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
+import { CartographieDépartementJSON, CartographieRégionJSON } from '../../useCartographie';
 
 const départementsJSON: CartographieDépartementJSON[] = untypedDépartementsJSON;
 const régionsJSON: CartographieRégionJSON[] = untypedRégionsJSON;

@@ -1,5 +1,5 @@
 import { MailleInterne } from '@/server/domain/chantier/Chantier.interface';
-import { CartographieDonnées, CartographieOptions } from '../Cartographie.interface';
+import { CartographieDonnées, CartographieOptions } from '../useCartographie';
 
 export default interface CartographieTauxAvancementProps {
   données: CartographieDonnées,

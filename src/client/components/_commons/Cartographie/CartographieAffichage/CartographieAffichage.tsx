@@ -1,19 +1,17 @@
 import { useState } from 'react';
-import CartographieAffichageProps, {
-  CartographieBulleTerritoire,
-} from './CartographieAffichage.interface';
+import CartographieAffichageProps from './CartographieAffichage.interface';
 import BulleDInfo from './BulleDInfo/BulleDInfo';
 import CartographieSVG from './SVG/CartographieSVG';
+import useCartographie, { CartographieBulleTerritoire } from '../useCartographie';
 
-function formaterBulleTitre(territoireSurvolé: CartographieBulleTerritoire) {
-  return territoireSurvolé.maille === 'départementale'
-    ? `${territoireSurvolé.codeInsee} – ${territoireSurvolé.nom}`
-    : territoireSurvolé.nom;
-}
-
-export default function CartographieAffichage({ children, options, territoires }: CartographieAffichageProps) {
+export default function CartographieAffichage({ children, options, données, niveauDeMaille }: CartographieAffichageProps) {
+  const { optionsParDéfaut, déterminerRégionsÀTracer, créerTerritoires, formaterBulleTitre } = useCartographie();
   const [sourisPosition, setSourisPosition] = useState({ x: 0, y: 0 });
   const [territoireSurvolé, setTerritoireSurvolé] = useState<CartographieBulleTerritoire | null>(null);
+
+  const optionsEffectives = { ...optionsParDéfaut, ...options };
+  const régionsFiltrées =  déterminerRégionsÀTracer(optionsEffectives.territoireAffiché);
+  const territoires = créerTerritoires(régionsFiltrées, données, niveauDeMaille === 'départementale');
 
   return (
     <div
@@ -27,14 +25,14 @@ export default function CartographieAffichage({ children, options, territoires }
     >
       {territoireSurvolé ?
         <BulleDInfo
-          contenu={options.formaterValeur(territoireSurvolé.valeur)}
+          contenu={optionsEffectives.formaterValeur(territoireSurvolé.valeur)}
           titre={formaterBulleTitre(territoireSurvolé)}
           x={sourisPosition.x}
           y={sourisPosition.y}
         />
         : null}
       <CartographieSVG
-        options={options}
+        options={optionsEffectives}
         setTerritoireSurvolé={setTerritoireSurvolé}
         territoires={territoires}
       />

@@ -1,23 +1,22 @@
-import {
-  préparerDonnéesCartographieÀPartirDUneListe,
-  préparerDonnéesCartographieÀPartirDUnÉlément,
-} from '@/client/utils/cartographie/préparerDonnéesCartographie';
 import { calculerMoyenne } from '@/client/utils/statistiques';
 import {
   DonnéesTerritoires, initialiserDonnéesTerritoiresAgrégésVide,
   TerritoireSansCodeInsee,
 } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 import { Agrégation } from '@/client/utils/types';
+import useCartographie from './useCartographie';
+  
 
 describe('Préparer données cartographie', () => {
-
+  const { préparerDonnéesCartographieÀPartirDUneListe, préparerDonnéesCartographieÀPartirDUnÉlément } = useCartographie();
+  
   describe("Préparer données cartographie à partir d'une liste", () => {
     let donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>;
-
+  
     beforeEach(() => {
       donnéesTerritoiresAgrégées = initialiserDonnéesTerritoiresAgrégésVide();
     });
-
+  
     it("documente l'attendu avec l'exemple d'une fonction de réduction par calcul de moyenne", () => {
       // GIVEN
       donnéesTerritoiresAgrégées.régionale['84'] = {
@@ -27,7 +26,7 @@ describe('Préparer données cartographie', () => {
         ],
         météo: ['NON_RENSEIGNEE', 'NON_RENSEIGNEE'],
       };
-
+  
       // WHEN
       const donnéesCartographie = préparerDonnéesCartographieÀPartirDUneListe(
         donnéesTerritoiresAgrégées,
@@ -36,7 +35,7 @@ describe('Préparer données cartographie', () => {
           return calculerMoyenne(valeurs);
         },
       );
-
+  
       // THEN
       const donnéesCartographieAttendues = {
         régionale: {
@@ -46,11 +45,11 @@ describe('Préparer données cartographie', () => {
       expect(donnéesCartographie.régionale['84']).toEqual(donnéesCartographieAttendues.régionale['84']);
     });
   });
-
-
+  
+  
   describe("Préparer données cartographie à partir d'un élément", () => {
     let donnéesTerritoires: DonnéesTerritoires<TerritoireSansCodeInsee>;
-
+  
     beforeEach(() => {
       donnéesTerritoires = {
         nationale: {},
@@ -58,7 +57,7 @@ describe('Préparer données cartographie', () => {
         départementale: {},
       };
     });
-
+  
     it("documente l'attendu avec l'exemple de la météo d'un chantier", () => {
       // GIVEN
       donnéesTerritoires.départementale['01'] = {
@@ -73,13 +72,13 @@ describe('Préparer données cartographie', () => {
         avancement: { global : null, annuel: null },
         météo: 'ORAGE',
       };
-
+  
       // WHEN
       const donnéesCartographie = préparerDonnéesCartographieÀPartirDUnÉlément(
         donnéesTerritoires,
         (territoire) =>  territoire.météo,
       );
-
+  
       // THEN
       const donnéesCartographieAttendues = {
         départementale: {
@@ -96,3 +95,4 @@ describe('Préparer données cartographie', () => {
     });
   });
 });
+  
