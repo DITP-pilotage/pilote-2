@@ -51,7 +51,6 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
             setMaille={setMaille}
           />
           <SélecteurDePérimètreGéographique
-            libellé="Territoire"
             niveauDeMaille="départementale"
             périmètreGéographique={périmètreGéographique}
             setPérimètreGéographique={setPérimètreGéographique}

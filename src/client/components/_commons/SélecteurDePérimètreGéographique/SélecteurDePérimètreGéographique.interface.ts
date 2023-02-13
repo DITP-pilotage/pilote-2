@@ -10,5 +10,4 @@ export default interface SélecteurDePérimètreGéographiqueProps {
   niveauDeMaille: NiveauDeMaille,
   périmètreGéographique: PérimètreGéographiqueIdentifiant,
   setPérimètreGéographique: (périmètreGéographique: PérimètreGéographiqueIdentifiant) => void,
-  libellé?: string,
 }
