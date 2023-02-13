@@ -11,7 +11,7 @@ WITH
     historique_valeur_actuelle_transpose_par_indicateur_et_maille as (
         SELECT tree_node_id,
             effect_id,
-            ARRAY_AGG(financials_decumulated_amount::real) AS evolution_valeur_actuelle,
+            ARRAY_AGG(financials_decumulated_amount::numeric) AS evolution_valeur_actuelle,
             ARRAY_AGG(dim_periods.period_date)             AS evolution_date_valeur_actuelle
         FROM historique_valeur_actuelle_indicateur
         JOIN raw_data.dim_periods ON historique_valeur_actuelle_indicateur.period_id = raw_data.dim_periods.period_id
@@ -27,9 +27,9 @@ WITH
         fact_progress_indicateur.valeur_actuelle,
         fact_progress_indicateur.valeur_initiale,
         split_part(dim_tree_nodes.tree_node_code, '-', 2) AS code_region,
-        raw_data.dim_structures.structure_name,
-        raw_data.fact_progress_indicateur.effect_id,
-        raw_data.fact_progress_indicateur.period_id,
+        dim_structures.structure_name,
+        fact_progress_indicateur.effect_id,
+        fact_progress_indicateur.period_id,
         hist_va.evolution_valeur_actuelle,
         hist_va.evolution_date_valeur_actuelle
     FROM raw_data.fact_progress_indicateur
