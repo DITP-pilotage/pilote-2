@@ -1,8 +1,7 @@
-import { NiveauDeMaille } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore.interface';
-import { TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
+import { MailleInterne, TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
 
 export default interface SélecteurDePérimètreGéographiqueProps {
-  niveauDeMaille: NiveauDeMaille,
+  mailleInterne: MailleInterne,
   périmètreGéographique: TerritoireIdentifiant,
   setPérimètreGéographique: (périmètreGéographique: TerritoireIdentifiant) => void,
 }

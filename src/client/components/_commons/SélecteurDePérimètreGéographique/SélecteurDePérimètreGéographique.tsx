@@ -16,7 +16,7 @@ const périmètresGéographiques = {
 };
 
 export default function SélecteurDePérimètreGéographique({
-  niveauDeMaille,
+  mailleInterne,
   périmètreGéographique,
   setPérimètreGéographique,
 }: SélecteurDePérimètreGéographiqueProps) {
@@ -26,16 +26,16 @@ export default function SélecteurDePérimètreGéographique({
       codeInsee: 'FR',
       maille: 'nationale',
     });
-  }, [niveauDeMaille, setPérimètreGéographique]);
+  }, [mailleInterne, setPérimètreGéographique]);
 
   const options = [
     {
       libellé: 'France',
       valeur: 'FR',
     },
-    ...périmètresGéographiques[niveauDeMaille]
+    ...périmètresGéographiques[mailleInterne]
       .map(territoire => ({
-        libellé: niveauDeMaille === 'départementale'
+        libellé: mailleInterne === 'départementale'
           ? `${territoire.codeInsee} – ${territoire.nom}`
           : territoire.nom,
         valeur: territoire.codeInsee,
@@ -50,7 +50,7 @@ export default function SélecteurDePérimètreGéographique({
       setValeur={(codeInsee) => {
         setPérimètreGéographique({
           codeInsee,
-          maille: codeInsee === 'FR' ? 'nationale' : niveauDeMaille,
+          maille: codeInsee === 'FR' ? 'nationale' : mailleInterne,
         });
       }}
       valeur={périmètreGéographique.codeInsee}

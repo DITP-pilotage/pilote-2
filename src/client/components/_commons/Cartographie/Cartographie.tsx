@@ -60,11 +60,11 @@ const optionsParDéfaut: CartographieOptions = {
   territoireSélectionnable: false,
 };
 
-export default function Cartographie({ children, données, niveauDeMaille, options }: CartographieProps) {
+export default function Cartographie({ children, données, mailleInterne, options }: CartographieProps) {
   const optionsEffectives = { ...optionsParDéfaut, ...options };
 
   const régionsFiltrées =  déterminerRégionsÀTracer(optionsEffectives.territoireAffiché);
-  const territoires = créerTerritoires(régionsFiltrées, données, niveauDeMaille === 'départementale');
+  const territoires = créerTerritoires(régionsFiltrées, données, mailleInterne === 'départementale');
 
   return (
     <CartographieAffichage

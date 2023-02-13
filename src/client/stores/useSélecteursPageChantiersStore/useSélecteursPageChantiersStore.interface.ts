@@ -1,10 +1,8 @@
-import { TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
-
-export type NiveauDeMaille = 'régionale' | 'départementale';
+import { MailleInterne, TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
 
 export default interface SélecteursPageChantiersStore {
-  niveauDeMaille: NiveauDeMaille
-  setNiveauDeMaille: (niveauDeMaille: NiveauDeMaille) => void
+  mailleInterne: MailleInterne
+  setMailleInterne: (mailleInterne: MailleInterne) => void
   périmètreGéographique: TerritoireIdentifiant
   setPérimètreGéographique: (périmètreGéographiqueIdentifiant: TerritoireIdentifiant) => void
   réinitialisePérimètreGéographique: () => void
