@@ -1,13 +1,8 @@
 import { NiveauDeMaille } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore.interface';
-import { Maille } from '@/server/domain/chantier/Chantier.interface';
-
-export type PérimètreGéographiqueIdentifiant = {
-  codeInsee: string,
-  maille: Maille,
-};
+import { TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
 
 export default interface SélecteurDePérimètreGéographiqueProps {
   niveauDeMaille: NiveauDeMaille,
-  périmètreGéographique: PérimètreGéographiqueIdentifiant,
-  setPérimètreGéographique: (périmètreGéographique: PérimètreGéographiqueIdentifiant) => void,
+  périmètreGéographique: TerritoireIdentifiant,
+  setPérimètreGéographique: (périmètreGéographique: TerritoireIdentifiant) => void,
 }

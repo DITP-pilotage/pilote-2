@@ -1,13 +1,11 @@
-import {
-  PérimètreGéographiqueIdentifiant,
-} from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
+import { TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
 
 export type NiveauDeMaille = 'régionale' | 'départementale';
 
 export default interface SélecteursPageChantiersStore {
   niveauDeMaille: NiveauDeMaille
   setNiveauDeMaille: (niveauDeMaille: NiveauDeMaille) => void
-  périmètreGéographique: PérimètreGéographiqueIdentifiant
-  setPérimètreGéographique: (périmètreGéographiqueIdentifiant: PérimètreGéographiqueIdentifiant) => void
+  périmètreGéographique: TerritoireIdentifiant
+  setPérimètreGéographique: (périmètreGéographiqueIdentifiant: TerritoireIdentifiant) => void
   réinitialisePérimètreGéographique: () => void
 }

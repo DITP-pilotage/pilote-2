@@ -1,10 +1,7 @@
-import {
-  PérimètreGéographiqueIdentifiant,
-} from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
-import { Maille } from '@/server/domain/chantier/Chantier.interface';
+import { Maille, TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
 
 export default interface SélecteurDeTerritoireProps {
-  territoire: PérimètreGéographiqueIdentifiant | null,
-  setTerritoire: (territoire: PérimètreGéographiqueIdentifiant | null) => void,
+  territoire: TerritoireIdentifiant | null,
+  setTerritoire: (territoire: TerritoireIdentifiant | null) => void,
   maille: Maille,
 }

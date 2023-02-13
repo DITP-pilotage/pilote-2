@@ -17,6 +17,13 @@ export const libellésMailles: Record<Maille, string> = {
   'départementale': 'Départementale',
 };
 
+// le code INSEE seul ne suffit pas à distinguer un territoire d'un autre
+// il faut le combiner avec la notion de maille (département, région)
+export type TerritoireIdentifiant = {
+  codeInsee: string,
+  maille: Maille,
+};
+
 export type Territoire = {
   codeInsee: string,
   avancement: Avancement,

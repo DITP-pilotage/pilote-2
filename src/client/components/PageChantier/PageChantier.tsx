@@ -3,12 +3,9 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import { useState } from 'react';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
-import {
-  PérimètreGéographiqueIdentifiant,
-} from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import SélecteurDeMaille from '@/components/_commons/SélecteurDeMaille/SélecteurDeMaille';
-import { Maille } from '@/server/domain/chantier/Chantier.interface';
+import { Maille, TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
 import SélecteurDeTerritoire from '@/components/_commons/SélecteurDeTerritoire/SélecteurDeTerritoire';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
@@ -32,7 +29,7 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const [territoire, setTerritoire] = useState<PérimètreGéographiqueIdentifiant | null>(null);
+  const [territoire, setTerritoire] = useState<TerritoireIdentifiant | null>(null);
   const [maille, setMaille] = useState<Maille>('nationale');
 
   return (

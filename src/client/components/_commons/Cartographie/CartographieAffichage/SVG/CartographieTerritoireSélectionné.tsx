@@ -4,15 +4,13 @@ import {
   CartographieDépartementJSON,
   CartographieRégionJSON,
 } from '@/components/_commons/Cartographie/Cartographie.interface';
-import {
-  PérimètreGéographiqueIdentifiant,
-} from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
 import { périmètreGéographique } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
+import { TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
 
 const départementsJSON: CartographieDépartementJSON[] = untypedDépartementsJSON;
 const régionsJSON: CartographieRégionJSON[] = untypedRégionsJSON;
 
-function déterminerTerritoireSélectionnéÀTracer(périmètreSélectionné: PérimètreGéographiqueIdentifiant) {
+function déterminerTerritoireSélectionnéÀTracer(périmètreSélectionné: TerritoireIdentifiant) {
   if (périmètreSélectionné.maille == 'départementale') {
     return départementsJSON.find(département => département.codeInsee == périmètreSélectionné.codeInsee);
   } else if (périmètreSélectionné.maille == 'régionale') {
