@@ -1,25 +1,24 @@
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
-import { useEffect } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import SélecteurDePérimètreGéographiqueProps from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
-import départements from '@/client/constants/départements';
-import régions from '@/client/constants/régions';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-
-// TODO supprimer et faire passer en serverSideProps
-const périmètresGéographiques = {
-  régionale: [
-    ...régions,
-  ],
-  départementale: [
-    ...départements,
-  ],
-};
+import AppContext from '@/client/contexts/AppContext/AppContext';
 
 export default function SélecteurDePérimètreGéographique({
   mailleInterne,
   périmètreGéographique,
   setPérimètreGéographique,
 }: SélecteurDePérimètreGéographiqueProps) {
+  const { départements, régions } = useContext(AppContext);
+
+  const périmètresGéographiques = useMemo(() => ({
+    régionale: [
+      ...régions,
+    ],
+    départementale: [
+      ...départements,
+    ],
+  }), [départements, régions]);
 
   useEffect(() => {
     setPérimètreGéographique({

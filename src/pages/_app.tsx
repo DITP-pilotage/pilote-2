@@ -5,6 +5,7 @@ import '@/client/styles/app.scss';
 import type { AppProps } from 'next/app';
 import Script from 'next/script';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
+import AppContext, { defaultValue as defaultAppContextValue } from '@/client/contexts/AppContext/AppContext';
 
 export default function MonApplication({ Component, pageProps }: AppProps) {
   return (
@@ -17,9 +18,11 @@ export default function MonApplication({ Component, pageProps }: AppProps) {
         noModule
         src="/js/dsfr/dsfr.nomodule.min.js"
       />
-      <MiseEnPage>
-        <Component {...pageProps} />
-      </MiseEnPage>
+      <AppContext.Provider value={defaultAppContextValue}>
+        <MiseEnPage>
+          <Component {...pageProps} />
+        </MiseEnPage>
+      </AppContext.Provider>
     </>
   );
 }

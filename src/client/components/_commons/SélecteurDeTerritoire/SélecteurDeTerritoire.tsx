@@ -1,30 +1,29 @@
-import { useEffect, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import régions from '@/client/constants/régions';
-import départements from '@/client/constants/départements';
 import SélecteurDeTerritoireProps from '@/components/_commons/SélecteurDeTerritoire/SélecteurDeTerritoire.interface';
-
-// TODO supprimer et faire passer en serverSideProps
-const territoires = {
-  nationale: [
-    {
-      codeInsee: 'FR',
-      nom: 'France',
-    },
-  ],
-  régionale: [
-    ...régions,
-  ],
-  départementale: [
-    ...départements,
-  ],
-};
+import AppContext from '@/client/contexts/AppContext/AppContext';
 
 export default function SélecteurDeTerritoire({
   territoire,
   setTerritoire,
   maille,
 }: SélecteurDeTerritoireProps) {
+  const { départements, régions } = useContext(AppContext);
+
+  const territoires = useMemo(() => ({
+    nationale: [
+      {
+        codeInsee: 'FR',
+        nom: 'France',
+      },
+    ],
+    régionale: [
+      ...régions,
+    ],
+    départementale: [
+      ...départements,
+    ],
+  }), [départements, régions]);
 
   useEffect(() => {
     if (maille === 'nationale') {
