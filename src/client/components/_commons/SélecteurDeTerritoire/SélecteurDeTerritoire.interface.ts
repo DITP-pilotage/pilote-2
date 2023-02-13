@@ -2,6 +2,6 @@ import { Maille, TerritoireIdentifiant } from '@/server/domain/chantier/Chantier
 
 export default interface SélecteurDeTerritoireProps {
   territoire: TerritoireIdentifiant | null,
-  setTerritoire: (territoire: TerritoireIdentifiant | null) => void,
+  setTerritoire: (territoire: TerritoireIdentifiant) => void,
   maille: Maille,
 }

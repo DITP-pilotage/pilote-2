@@ -10,7 +10,7 @@ import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLat�
 import Sélecteurs from '@/components/PageChantiers/Sélecteurs/Sélecteurs';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { agrégerDonnéesTerritoires } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
-import territorialiserChantiers from '@/client/utils/chantier/chantiersTerritorialisés/chantiersTerritorialisés';
+import { territorialiserChantiers } from '@/client/utils/chantier/chantiersTerritorialisés/chantiersTerritorialisés';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
 import TauxAvancementMoyen from './TauxAvancementMoyen/TauxAvancementMoyen';

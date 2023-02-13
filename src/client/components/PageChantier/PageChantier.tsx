@@ -7,6 +7,7 @@ import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLat�
 import SélecteurDeMaille from '@/components/_commons/SélecteurDeMaille/SélecteurDeMaille';
 import { Maille, TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
 import SélecteurDeTerritoire from '@/components/_commons/SélecteurDeTerritoire/SélecteurDeTerritoire';
+import { territorialiserChantier } from '@/client/utils/chantier/chantiersTerritorialisés/chantiersTerritorialisés';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import Commentaires from './Commentaires/Commentaires';
@@ -29,8 +30,10 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const [territoire, setTerritoire] = useState<TerritoireIdentifiant | null>(null);
+  const [territoire, setTerritoire] = useState<TerritoireIdentifiant>({ codeInsee: 'FR', maille: 'nationale' });
   const [maille, setMaille] = useState<Maille>('nationale');
+
+  const chantierTerritorialisé = territorialiserChantier(chantier, territoire);
 
   return (
     <PageChantierStyled className="flex">
@@ -62,7 +65,7 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
         </button>
         <PageChantierEnTête chantier={chantier} />
         <div className='fr-p-4w'>
-          <AvancementChantier chantier={chantier} />
+          <AvancementChantier chantier={chantierTerritorialisé} />
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-5w">
             <div className="fr-col-12 fr-col-xl-6">
               <SynthèseRésultats

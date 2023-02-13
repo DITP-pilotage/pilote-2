@@ -1,5 +1,5 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { ChantierTerritorialisé } from '@/server/domain/chantier/Chantier.interface';
 
 export default interface AvancementChantierProps {
-  chantier: Chantier
+  chantier: ChantierTerritorialisé
 }

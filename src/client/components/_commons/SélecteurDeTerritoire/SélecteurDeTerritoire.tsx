@@ -5,7 +5,7 @@ import départements from '@/client/constants/départements';
 import SélecteurDeTerritoireProps from '@/components/_commons/SélecteurDeTerritoire/SélecteurDeTerritoire.interface';
 
 // TODO supprimer et faire passer en serverSideProps
-const territoires = {
+export const territoires = {
   nationale: [
     {
       codeInsee: 'FR',
@@ -20,21 +20,9 @@ const territoires = {
   ],
 };
 
-export default function SélecteurDeTerritoire({
-  territoire,
-  setTerritoire,
-  maille,
-}: SélecteurDeTerritoireProps) {
-
+export default function SélecteurDeTerritoire({ territoire, setTerritoire, maille }: SélecteurDeTerritoireProps) {
   useEffect(() => {
-    if (maille === 'nationale') {
-      setTerritoire({
-        codeInsee: 'FR',
-        maille: 'nationale',
-      });
-    } else {
-      setTerritoire(null);
-    }
+    setTerritoire({ codeInsee: territoires[maille][0].codeInsee, maille: maille });
   }, [setTerritoire, maille]);
 
   const options = useMemo(() => (
@@ -46,14 +34,11 @@ export default function SélecteurDeTerritoire({
     }))
   ), [maille]);
 
-  const valeurSélecteur = useMemo(
-    () => {
-      if (!territoire || maille !== territoire.maille)
-        return null;
-      return territoire.codeInsee;
-    },
-    [territoire, maille],
-  );
+  const valeurSélecteur = useMemo(() => {
+    if (!territoire || maille !== territoire.maille)
+      return null;
+    return territoire.codeInsee;
+  }, [territoire, maille]);
 
   return (
     <Sélecteur

@@ -3,30 +3,44 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { récupérerLibelléMétéo, PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import BarreDeProgressionLégende from '@/components/_commons/BarreDeProgression/Légende/BarreDeProgressionLégende';
 import Météo from '@/server/domain/chantier/Météo.interface';
+import { ChantierTerritorialisé } from '@/server/domain/chantier/Chantier.interface';
 import AvancementChantierProps from './AvancementChantier.interface';
 
-const reactTableColonnesHelper = createColumnHelper<Chantier>();
+const reactTableColonnesHelper = createColumnHelper<ChantierTerritorialisé>();
 
 function afficherMétéo(météo: Météo) {
   return météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE' ? <PictoMétéo valeur={météo} /> : récupérerLibelléMétéo(météo);
 }
 
+function afficherTerritoire(territoire: ChantierTerritorialisé['territoire']) {
+  return (
+    territoire.maille === 'départementale' ? (
+      <span>
+        {`${territoire.codeInsee} - ${territoire.nom}`}
+      </span>
+    ) : (
+      <span>
+        {territoire.nom}
+      </span>
+    )
+  );
+}
+
 const colonnes = [
-  reactTableColonnesHelper.accessor('mailles', {
+  reactTableColonnesHelper.accessor('territoire', {
     header: 'Territoire(s)',
-    cell: 'National',
+    cell: territoire => (afficherTerritoire(territoire.getValue())),
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('mailles.nationale.FR.météo', {
+  reactTableColonnesHelper.accessor('météoTerritoire', {
     header: 'Météo',
     cell: météo => afficherMétéo(météo.getValue()),
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('mailles.nationale.FR.avancement.global', {
+  reactTableColonnesHelper.accessor('avancementGlobalTerritoire', {
     header: 'Avancement global',
     cell: (tauxDAvancement) => (
       <BarreDeProgression
@@ -42,7 +56,6 @@ const colonnes = [
     enableSorting: false,
   }),
 ];
-
 
 export default function AvancementChantier({ chantier }: AvancementChantierProps) {
   return (
@@ -63,7 +76,7 @@ export default function AvancementChantier({ chantier }: AvancementChantierProps
         >
           Avancement
         </Titre>
-        <Tableau<Chantier>
+        <Tableau<ChantierTerritorialisé>
           afficherLaRecherche={false}
           colonnes={colonnes}
           données={[chantier]}
