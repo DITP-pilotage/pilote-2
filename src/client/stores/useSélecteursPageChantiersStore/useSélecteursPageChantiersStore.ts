@@ -8,15 +8,15 @@ const périmètreGéographiqueInitial = {
 };
 
 const useSélecteursPageChantiersStore = create<SélecteursPageChantiersStore>((set) => ({
-  niveauDeMaille: 'départementale',
+  mailleInterne: 'départementale',
   périmètreGéographique: périmètreGéographiqueInitial,
-  setNiveauDeMaille: (nouveauNiveauDeMaille) => set(() => ({ niveauDeMaille: nouveauNiveauDeMaille })),
+  setMailleInterne: (nouveauMailleInterne) => set(() => ({ mailleInterne: nouveauMailleInterne })),
   setPérimètreGéographique: (nouveauPérimètreGéographique) => set(() => ({ périmètreGéographique: nouveauPérimètreGéographique })),
   réinitialisePérimètreGéographique: () => set(() => ({ périmètreGéographique: périmètreGéographiqueInitial })),
 }));
 
-export const niveauDeMaille = () => useSélecteursPageChantiersStore(étatActuel => étatActuel.niveauDeMaille);
-export const setNiveauDeMaille = () => useSélecteursPageChantiersStore(étatActuel => étatActuel.setNiveauDeMaille);
+export const mailleInterne = () => useSélecteursPageChantiersStore(étatActuel => étatActuel.mailleInterne);
+export const setMailleInterne = () => useSélecteursPageChantiersStore(étatActuel => étatActuel.setMailleInterne);
 
 export const périmètreGéographique = () => useSélecteursPageChantiersStore(étatActuel => étatActuel.périmètreGéographique);
 export const setPérimètreGéographique = () => useSélecteursPageChantiersStore(étatActuel => étatActuel.setPérimètreGéographique);

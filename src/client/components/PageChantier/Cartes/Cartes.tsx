@@ -34,7 +34,7 @@ export default function Cartes({ chantier }: CartesProps) {
             </Titre>
             <CartographieTauxAvancement
               données={donnéesCartographieAvancement}
-              niveauDeMaille="départementale"
+              mailleInterne="départementale"
             />
           </Bloc>
         </div>
@@ -48,7 +48,7 @@ export default function Cartes({ chantier }: CartesProps) {
             </Titre>
             <CartographieMétéo
               données={donnéesCartographieMétéo}
-              niveauDeMaille="départementale"
+              mailleInterne="départementale"
             />
           </Bloc>
         </div>

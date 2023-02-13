@@ -24,12 +24,12 @@ function formaterValeur(valeurMétéo: CartographieValeur) {
     : 'Non renseignée';
 }
 
-export default function CartographieMétéo({ données, niveauDeMaille, options }: CartographieMétéoProps) {
+export default function CartographieMétéo({ données, mailleInterne, options }: CartographieMétéoProps) {
   return (
     <CartographieMétéoStyled>
       <Cartographie 
         données={données} 
-        niveauDeMaille={niveauDeMaille}
+        mailleInterne={mailleInterne}
         options={{
           déterminerRemplissage,
           formaterValeur,

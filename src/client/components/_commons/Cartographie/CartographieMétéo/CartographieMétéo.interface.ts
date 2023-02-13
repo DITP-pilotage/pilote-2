@@ -1,8 +1,8 @@
-import { NiveauDeMaille } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore.interface';
+import { MailleInterne } from '@/server/domain/chantier/Chantier.interface';
 import { CartographieDonnées, CartographieOptions } from '../Cartographie.interface';
 
 export default interface CartographieMétéoProps {
   données: CartographieDonnées,
-  niveauDeMaille: NiveauDeMaille,
+  mailleInterne: MailleInterne,
   options?: Partial<CartographieOptions>,
 }

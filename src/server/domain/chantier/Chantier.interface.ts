@@ -7,14 +7,22 @@ export type Avancement = {
   annuel: number | null
 };
 
-export const mailles = ['nationale', 'régionale', 'départementale'] as const;
-
+export const maillesInternes = ['régionale', 'départementale'] as const;
+export const mailles = ['nationale', ...maillesInternes] as const;
 export type Maille = typeof mailles[number];
+export type MailleInterne = typeof maillesInternes[number];
 
 export const libellésMailles: Record<Maille, string> = {
   'nationale': 'Nationale',
   'régionale': 'Régionale',
   'départementale': 'Départementale',
+};
+
+// le code INSEE seul ne suffit pas à distinguer un territoire d'un autre
+// il faut le combiner avec la notion de maille (département, région)
+export type TerritoireIdentifiant = {
+  codeInsee: string,
+  maille: Maille,
 };
 
 export type Territoire = {

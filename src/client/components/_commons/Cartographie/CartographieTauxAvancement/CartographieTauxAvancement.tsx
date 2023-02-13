@@ -15,11 +15,11 @@ function formaterValeur(valeurAvancement: CartographieValeur) {
   return valeurAvancement !== null && typeof valeurAvancement === 'number' ? `${valeurAvancement.toFixed(0)}%` : 'Non renseigné';
 }
 
-export default function CartographieTauxAvancement({ données, niveauDeMaille, options }: CartographieTauxAvancementProps) {
+export default function CartographieTauxAvancement({ données, mailleInterne, options }: CartographieTauxAvancementProps) {
   return (
     <Cartographie 
       données={données} 
-      niveauDeMaille={niveauDeMaille}
+      mailleInterne={mailleInterne}
       options={{
         déterminerRemplissage,
         formaterValeur,

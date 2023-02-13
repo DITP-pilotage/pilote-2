@@ -1,8 +1,7 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { PérimètreGéographiqueIdentifiant } from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
+import Chantier, { TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
 import { récupérerAvancement, récupérerMétéo } from '../donnéesTerritoires/donnéesTerritoires';
 
-export default function territorialiserChantiers(chantiers: Chantier[], périmètreGéographique: PérimètreGéographiqueIdentifiant) {
+export default function territorialiserChantiers(chantiers: Chantier[], périmètreGéographique: TerritoireIdentifiant) {
   return (
     chantiers.map(chantier => ({
       id: chantier.id,
