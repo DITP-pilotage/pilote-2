@@ -60,6 +60,14 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
         <Sommaire rubriques={listeRubriques} />
       </BarreLatérale>
       <div className='contenu-principal'>
+        <button
+          className="fr-sr-only-xl fr-btn fr-btn--secondary fr-mb-2w"
+          onClick={() => setEstOuverteBarreLatérale(true)}
+          title="Ouvrir le menu latéral"
+          type="button"
+        >
+          Menu latéral
+        </button>
         <PageChantierEnTête chantier={chantier} />
         <div className='fr-p-4w'>
           <AvancementChantier chantier={chantier} />
