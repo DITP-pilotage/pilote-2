@@ -3,14 +3,13 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import { useState } from 'react';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
-import SélecteurDePérimètreGéographique
-  from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique';
 import {
   PérimètreGéographiqueIdentifiant,
 } from '@/components/_commons/SélecteurDePérimètreGéographique/SélecteurDePérimètreGéographique.interface';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import SélecteurDeMaille from '@/components/_commons/SélecteurDeMaille/SélecteurDeMaille';
 import { Maille } from '@/server/domain/chantier/Chantier.interface';
+import SélecteurDeTerritoire from '@/components/_commons/SélecteurDeTerritoire/SélecteurDeTerritoire';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import Commentaires from './Commentaires/Commentaires';
@@ -33,10 +32,7 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const [périmètreGéographique, setPérimètreGéographique] = useState<PérimètreGéographiqueIdentifiant>({
-    codeInsee: 'FR',
-    maille: 'nationale',
-  });
+  const [territoire, setTerritoire] = useState<PérimètreGéographiqueIdentifiant | null>(null);
   const [maille, setMaille] = useState<Maille>('nationale');
 
   return (
@@ -50,10 +46,10 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
             maille={maille}
             setMaille={setMaille}
           />
-          <SélecteurDePérimètreGéographique
-            niveauDeMaille="départementale"
-            périmètreGéographique={périmètreGéographique}
-            setPérimètreGéographique={setPérimètreGéographique}
+          <SélecteurDeTerritoire
+            maille={maille}
+            setTerritoire={setTerritoire}
+            territoire={territoire}
           />
         </BarreLatéraleEncart>
         <Sommaire rubriques={listeRubriques} />

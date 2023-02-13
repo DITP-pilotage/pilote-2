@@ -5,7 +5,7 @@ type SélecteurOption = {
 
 export default interface SélecteurProps {
   htmlName: string,
-  valeur: string,
+  valeur?: string | null,
   setValeur: (valeur: string) => void,
   options: SélecteurOption[],
   libellé?: string,

@@ -28,7 +28,7 @@ export default function Sélecteur({
         onChange={(événement) => {
           setValeur(événement.currentTarget.value);
         }}
-        value={valeur}
+        value={valeur || ''}
       >
         <option
           disabled
