@@ -48,12 +48,9 @@ export default function SélecteurDeTerritoire({
 
   const valeurSélecteur = useMemo(
     () => {
-      if (!territoire)
-        return '';
-      if (maille === territoire.maille) {
-        return territoire.codeInsee;
-      }
-      return '';
+      if (!territoire || maille !== territoire.maille)
+        return null;
+      return territoire.codeInsee;
     },
     [territoire, maille],
   );
