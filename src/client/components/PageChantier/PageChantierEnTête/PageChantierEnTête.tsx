@@ -1,32 +1,35 @@
+import '@gouvfr/dsfr/dist/dsfr.min.css';
+import Link from 'next/link';
 import Titre from '@/components/_commons/Titre/Titre';
-import FilAriane from '@/components/_commons/FilAriane/FilAriane';
 import PageChantierEnTêteProps from './PageChantierEnTête.interface';
 import PageChantierEnTêteStyled from './PageChantierEnTête.styled';
 
 export default function PageChantierEnTête({ chantier }: PageChantierEnTêteProps) {
 
   return (
-    <PageChantierEnTêteStyled className='fr-px-md-15w fr-p-1w fr-pb-8w'>
-      <FilAriane libelléPageCourante={chantier.nom} />
-      <div className='fr-grid-row'>
-        <div className='fr-col-12 fr-col-xl-7 fr-pr-10w'>
-          <Titre baliseHtml='h1'>
-            {chantier.nom}
-          </Titre>
-        </div>
-        <div className='fr-col-12 fr-col-xl-5'>
-          <p className='données-chantier fr-mb-1w fr-text--xs'>
-            <strong>
-              Axe :
-            </strong>
-            {' '}
+    <PageChantierEnTêteStyled className='fr-p-4w'>
+      <Link
+        aria-label="Retour à l'accueil"
+        className="fr-link fr-fi-arrow-left-line fr-link--icon-left"
+        href='/'
+      >
+        Retour
+      </Link>
+      <div className='fr-mt-2w'>
+        <Titre baliseHtml='h1'>
+          {chantier.nom}
+        </Titre>
+        <div className='fr-text--xs fr-mb-0'>
+          <p className='fr-mb-0 fr-text--xs chantier-données-propriété'>
+            Axe
+          </p>
+          <p className='fr-mb-1w fr-text--xs chantier-données-valeur'>
             Non renseigné
           </p>
-          <p className='données-chantier fr-mb-1w fr-text--xs'>
-            <strong>
-              Politique Prioritaire du Gouvernement :
-            </strong>
-            {' '}
+          <p className='fr-mb-0 fr-text--xs chantier-données-propriété'>
+            Politique Prioritaire du Gouvernement
+          </p>
+          <p className='fr-mb-0 fr-text--xs chantier-données-valeur'>
             Non renseigné
           </p>
         </div>

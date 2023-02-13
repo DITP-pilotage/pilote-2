@@ -3,11 +3,12 @@ import styled from '@emotion/styled';
 const PageChantierEnTêteStyled = styled.header`
   background: var(--background-action-low-blue-france);
 
-  .données-chantier {
-    strong {
-      color: var(--text-label-grey);
-    }
+  .chantier-données-propriété {
+    font-weight: bold;
+    color: var(--text-label-grey);
+  }
 
+  .chantier-données-valeur {
     color: var(--text-label-blue-france);
   }
 `;
