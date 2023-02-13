@@ -7,6 +7,8 @@ import CarteIndicateurProps from '@/components/PageChantier/Indicateurs/CarteInd
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import { formaterDate } from '@/client/utils/date/date';
+import IndicateurÉvolution
+  from '@/components/PageChantier/Indicateurs/CarteIndicateur/IndicateurÉvolution/IndicateurÉvolution';
 import CarteIndicateurStyled from './CarteIndicateur.styled';
 
 function afficherValeurEtDate(valeur: number | null, date?: string | null) {
@@ -101,6 +103,7 @@ export default function CarteIndicateur({ indicateur } : CarteIndicateurProps) {
           données={[{ ...indicateur, territoire: 'National' }]}
           entité='indicateur'
         />
+        <IndicateurÉvolution indicateur={indicateur} />
       </Bloc>
     </CarteIndicateurStyled>
   );
