@@ -3,7 +3,7 @@ import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
 import nuancierMétéo from '@/client/constants/nuanciers/nuancierMétéo';
 import { libellésMétéos } from '@/server/domain/chantier/Météo.interface';
 import { pictosMétéos } from '../../PictoMétéo/PictoMétéo';
-import { CartographieValeur } from '../CartographieAffichage/CartographieAffichage.interface';
+import { CartographieValeur } from '../useCartographie';
 
 export default function useCartographieMétéo() {
   function déterminerRemplissage(valeurMétéo: CartographieValeur) {

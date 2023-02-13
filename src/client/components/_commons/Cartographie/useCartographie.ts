@@ -1,12 +1,52 @@
 /* eslint-disable unicorn/consistent-function-scoping */
-import { Maille } from '@/server/domain/chantier/Chantier.interface';
+import { Maille, MailleInterne } from '@/server/domain/chantier/Chantier.interface';
 import { Agrégation } from '@/client/utils/types';
 import { DonnéesTerritoires, réduireDonnéesTerritoires, TerritoireSansCodeInsee } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
-import { CartographieDonnées, CartographieOptions, CartographieTerritoireAffiché, CartographieTerritoireCodeInsee, CartographieValeur, CartographieDépartementJSON, CartographieRégionJSON, CartographieBulleTerritoire } from '@/components/_commons/Cartographie/CartographieAffichage/CartographieAffichage.interface';
-import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
+import { NuancierRemplissage, remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
 import untypedDépartementsJSON from './départements.json';
 import untypedRégionsJSON from './régions.json';
 
+export type CartographieRégionJSON = {
+  tracéSVG: string,
+  codeInsee: CartographieTerritoireCodeInsee,
+  nom: string
+};
+
+export type CartographieDépartementJSON = {
+  tracéSVG: string,
+  codeInsee: CartographieTerritoireCodeInsee,
+  codeInseeRégion: CartographieTerritoireCodeInsee,
+  nom: string
+};
+
+export type CartographieBulleTerritoire = Pick<CartographieTerritoire, 'codeInsee' | 'nom' | 'valeur' | 'maille'>;
+export type CartographieTerritoireCodeInsee = string;
+export type CartographieValeur = number | string | null;
+
+export type CartographieTerritoire = {
+  codeInsee: CartographieTerritoireCodeInsee,
+  maille: Maille,
+  nom: string,
+  sousTerritoires: (CartographieTerritoire & {
+    codeInseeParent: CartographieTerritoireCodeInsee;
+  })[];
+  tracéSVG: string;
+  valeur: CartographieValeur,
+};
+
+export type CartographieTerritoireAffiché = {
+  codeInsee: CartographieTerritoireCodeInsee,
+  maille: 'nationale' | 'régionale',
+};
+
+export type CartographieOptions = {
+  territoireAffiché: CartographieTerritoireAffiché,
+  déterminerRemplissage: (valeur: CartographieValeur) => NuancierRemplissage,
+  formaterValeur: (valeur: CartographieValeur) => string,
+  territoireSélectionnable: boolean,
+};
+
+export type CartographieDonnées = Record<MailleInterne, Record<CartographieTerritoireCodeInsee, CartographieValeur>>;
 
 export default function useCartographie() {
   function préparerDonnéesCartographieÀPartirDUneListe(
@@ -28,9 +68,7 @@ export default function useCartographie() {
     let maille: Maille;
 
     for (maille in donnéesTerritoires) {
-      if (maille === 'nationale') {
-        continue;
-      }
+      if (maille === 'nationale') continue;
       for (const codeInsee in donnéesTerritoires[maille]) {
         donnéesCartographie[maille][codeInsee] = fonctionDExtraction(donnéesTerritoires[maille][codeInsee]);
       }
@@ -48,8 +86,7 @@ export default function useCartographie() {
   }
 
   function récupérerDépartementsDUneRégion(codeInseeRégion: CartographieTerritoireCodeInsee) {
-    return départementsJSON
-      .filter(département => département.codeInseeRégion === codeInseeRégion);
+    return départementsJSON.filter(département => département.codeInseeRégion === codeInseeRégion);
   }
 
   function créerTerritoires(

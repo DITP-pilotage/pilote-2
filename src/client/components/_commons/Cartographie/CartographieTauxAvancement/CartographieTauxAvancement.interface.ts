@@ -1,5 +1,5 @@
-import { MailleInterne } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore.interface';
-import { CartographieDonnées, CartographieOptions } from '../CartographieAffichage/CartographieAffichage.interface';
+import { MailleInterne } from '@/server/domain/chantier/Chantier.interface';
+import { CartographieDonnées, CartographieOptions } from '../useCartographie';
 
 export default interface CartographieTauxAvancementProps {
   données: CartographieDonnées,
