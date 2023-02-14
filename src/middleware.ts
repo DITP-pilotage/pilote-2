@@ -1,7 +1,12 @@
-import { createNextAuthMiddleware } from 'nextjs-basic-auth-middleware';
+// https://github.com/nextauthjs/next-auth/discussions/3079
 
-export const middleware = createNextAuthMiddleware();
+import { withAuth } from "next-auth/middleware";
+export default withAuth({
+  pages: {
+    signIn: "/signIn",
+  },
+});
 
 export const config = {
-  matcher: ['/(.*)'], 
-};
+  matcher: ['/(.*)'],
+}
