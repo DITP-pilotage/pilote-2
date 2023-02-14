@@ -20,7 +20,6 @@ import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
 import Filtres from './Filtres/Filtres';
 
-
 export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {  
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
@@ -29,19 +28,12 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
 
   const chantiersFiltrés = useMemo(() => {
-    let résultat: Chantier[] = chantiers;
-
-    if (filtresActifs.périmètresMinistériels.length > 0) {
-      résultat = chantiers.filter(chantier => (
-        filtresActifs.périmètresMinistériels.some(filtre => (chantier.périmètreIds.includes(filtre.id)))
-      ));
-    }
-    if (filtresActifs.autresFiltres.length > 0) { 
-      résultat = chantiers.filter(chantier => (
-        filtresActifs.autresFiltres.some(filtre => (chantier[filtre.attribut as keyof Chantier]))
-      ));
-    }
-    return résultat;
+    return filtresActifs.périmètresMinistériels.length > 0 || filtresActifs.autresFiltres.length > 0 
+      ? chantiers.filter(chantier => (
+        filtresActifs.périmètresMinistériels.some(filtre => chantier.périmètreIds.includes(filtre.id)) || 
+        filtresActifs.autresFiltres.some(filtre => chantier[filtre.attribut as keyof Chantier])
+      ))
+      : chantiers;
   }, [chantiers, filtresActifs]);
 
   const chantiersTerritorialisés = useMemo(() => territorialiserChantiers(chantiersFiltrés, périmètreGéographique), [chantiersFiltrés, périmètreGéographique]);
