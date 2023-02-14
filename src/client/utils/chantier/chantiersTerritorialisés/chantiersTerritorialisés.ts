@@ -13,5 +13,5 @@ export function territorialiserChantier(chantier: Chantier, périmètreGéograph
 }
 
 export function territorialiserChantiers(chantiers: Chantier[], périmètreGéographique: TerritoireIdentifiant) {
-  return chantiers.map(chantier => (territorialiserChantier(chantier, périmètreGéographique)));
+  return chantiers.map(chantier => territorialiserChantier(chantier, périmètreGéographique));
 }

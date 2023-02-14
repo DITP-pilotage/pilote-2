@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import régions from '@/client/constants/régions';
 import départements from '@/client/constants/départements';
@@ -21,18 +21,24 @@ export const territoires = {
 };
 
 export default function SélecteurDeTerritoire({ territoire, setTerritoire, maille }: SélecteurDeTerritoireProps) {
+  const laMailleEstDépartementale = useCallback(() => (maille === 'départementale'), [maille]);
+
   useEffect(() => {
-    setTerritoire({ codeInsee: territoires[maille][0].codeInsee, maille: maille });
-  }, [setTerritoire, maille]);
+    setTerritoire({ 
+      codeInsee: territoires[maille][0].codeInsee, 
+      maille: maille, 
+      codeInseeRégion: laMailleEstDépartementale() ? départements.find(département => département.codeInsee === territoires[maille][0].codeInsee)?.codeInseeRégion : undefined, 
+    });
+  }, [setTerritoire, maille, laMailleEstDépartementale]);
 
   const options = useMemo(() => (
     territoires[maille].map(territoireÉlément => ({
-      libellé: maille === 'départementale'
+      libellé: laMailleEstDépartementale()
         ? `${territoireÉlément.codeInsee} – ${territoireÉlément.nom}`
         : territoireÉlément.nom,
       valeur: territoireÉlément.codeInsee,
     }))
-  ), [maille]);
+  ), [laMailleEstDépartementale, maille]);
 
   const valeurSélecteur = useMemo(() => {
     if (!territoire || maille !== territoire.maille)
@@ -45,10 +51,11 @@ export default function SélecteurDeTerritoire({ territoire, setTerritoire, mail
       htmlName="territoire"
       libellé='Territoire'
       options={options}
-      setValeur={(valeur) => {
+      setValeur={valeur => {
         setTerritoire({
           codeInsee: valeur,
           maille,
+          codeInseeRégion: laMailleEstDépartementale() ? départements.find(département => département.codeInsee === valeur)?.codeInseeRégion : undefined,
         });
       }}
       texteFantôme='Sélectionner un territoire'

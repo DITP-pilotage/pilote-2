@@ -1,6 +1,5 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
-import EnTête from '@/components/_commons/Bloc/EnTête/EnTête';
 import ResponsablesStyled from './Responsables.styled';
 import ResponsablesProps from './Responsables.interface';
 import ResponsablesLigne from './ResponsablesLigne/ResponsablesLigne';
@@ -18,11 +17,13 @@ export default function Responsables({ chantier }: ResponsablesProps) {
    
   return (
     <ResponsablesStyled id="responsables">
-      <Titre baliseHtml='h2'>
+      <Titre
+        baliseHtml='h2'
+        className='fr-h4 fr-mb-2w'
+      >
         Responsables
       </Titre>
-      <Bloc>
-        <EnTête libellé='National' />
+      <Bloc titre="National">
         <div className="fr-mt-3w">
           <ResponsablesLigne
             contenu={[responsables.porteur]}

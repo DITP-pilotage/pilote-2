@@ -1,6 +1,4 @@
 import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
-import { TypeDeCurseur } from '@/components/_commons/BarreDeProgression/Curseur/BarreDeProgressionCurseur.interface';
-import BarreDeProgressionCurseur from './Curseur/BarreDeProgressionCurseur';
 import BarreDeProgressionStyled, { dimensions } from './BarreDeProgression.styled';
 
 export default function BarreDeProgression({
@@ -8,9 +6,6 @@ export default function BarreDeProgression({
   variante,
   fond = 'gris',
   valeur,
-  minimum,
-  médiane,
-  maximum,
   afficherTexte = true,
 }: BarreDeProgressionProps) {
   const pourcentageAffiché = valeur === null ? '- %' : `${valeur.toFixed(0)} %`;
@@ -29,29 +24,6 @@ export default function BarreDeProgression({
         >
           {pourcentageAffiché}
         </progress>
-        {
-          !!(minimum || médiane || maximum) &&
-            <div className="conteneur-curseurs">
-              {typeof minimum === 'number' &&
-              <BarreDeProgressionCurseur
-                typeDeCurseur={TypeDeCurseur.MINIMUM}
-                valeur={minimum}
-                variante={variante}
-              />}
-              {typeof médiane === 'number' &&
-              <BarreDeProgressionCurseur
-                typeDeCurseur={TypeDeCurseur.MÉDIANE}
-                valeur={médiane}
-                variante={variante}
-              />}
-              {typeof maximum === 'number' &&
-              <BarreDeProgressionCurseur
-                typeDeCurseur={TypeDeCurseur.MAXIMUM}
-                valeur={maximum}
-                variante={variante}
-              />}
-            </div>
-        }
       </div>
       {
         !!afficherTexte && (

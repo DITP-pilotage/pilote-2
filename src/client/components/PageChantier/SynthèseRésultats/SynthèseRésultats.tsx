@@ -1,6 +1,5 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
-import EnTête from '@/components/_commons/Bloc/EnTête/EnTête';
 import { SynthèseRésultatsProps } from '@/components/PageChantier/SynthèseRésultats/SynthèseRésultats.interface';
 import { récupérerLibelléMétéo, PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import SynthèseRésultatsStyled from '@/components/PageChantier/SynthèseRésultats/SynthèseRésultats.styled';
@@ -10,11 +9,13 @@ export default function SynthèseRésultats({ chantier, synthèseDesRésultats }
 
   return (
     <div id="synthèse">
-      <Titre baliseHtml='h2'>
+      <Titre
+        baliseHtml='h2'
+        className='fr-h4 fr-mb-2w'
+      >
         Synthèse des résultats
       </Titre>
-      <Bloc>
-        <EnTête libellé='National' />
+      <Bloc titre="National">
         <div className="fr-container--fluid">
           <SynthèseRésultatsStyled className='fr-grid-row fr-pt-2w'>
             <div className=" fr-col-12 fr-col-lg-2 conteneur-météo">

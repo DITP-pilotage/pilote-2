@@ -53,7 +53,7 @@ export function récupérerMétéo(donnéesTerritoires: DonnéesTerritoires<Terr
 }
 
 export const récupérerNomTerritoire = (périmètreGéographique: TerritoireIdentifiant) => (
-  territoires[périmètreGéographique.maille].find(territoire => territoire.codeInsee === périmètreGéographique.codeInsee)?.nom
+  territoires[périmètreGéographique.maille].find(territoire => territoire.codeInsee === périmètreGéographique.codeInsee)?.nom ?? 'NC'
 );
 
 export function initialiserDonnéesTerritoiresAgrégésVide() {

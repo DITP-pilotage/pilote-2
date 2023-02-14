@@ -21,6 +21,7 @@ export const libellésMailles: Record<Maille, string> = {
 export type TerritoireIdentifiant = {
   codeInsee: string,
   maille: Maille,
+  codeInseeRégion?: string
 };
 
 export type Territoire = {

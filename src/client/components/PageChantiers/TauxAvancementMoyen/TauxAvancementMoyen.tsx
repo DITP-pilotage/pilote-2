@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import { périmètreGéographique as périmètreGéographiqueStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import calculerLesAvancementsÀPartirDeChantiers from '@/client/utils/chantier/avancement/calculerLesAvancementsÀPartirDeChantiers';
-import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
+import Avancements from '@/components/_commons/Avancements/Avancements';
 import TauxAvancementMoyenProps from './TauxAvancementMoyen.interface';
 
 export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: TauxAvancementMoyenProps) {
@@ -19,42 +19,12 @@ export default function TauxAvancementMoyen({ donnéesTerritoiresAgrégées }: T
         >
           Taux d’avancement moyen de la sélection
         </Titre>
-        <div className="fr-col-12 fr-col-lg-6">
-          <JaugeDeProgression
-            couleur='bleu'
-            libellé="Taux d'avancement global"
-            pourcentage={avancementsDuTerritoire.global.moyenne}
-            taille='grande'
-          />
-        </div>
-        <div className="fr-col-12 fr-col-lg-6">
-          <div className="fr-grid-row fr-grid-row--center">
-            <div className="fr-col-4">
-              <JaugeDeProgression
-                couleur='orange'
-                libellé="Minimum"
-                pourcentage={avancementsDuTerritoire.global.minimum}
-                taille='petite'
-              />
-            </div>
-            <div className="fr-col-4">
-              <JaugeDeProgression
-                couleur='violet'
-                libellé="Médiane"
-                pourcentage={avancementsDuTerritoire.global.médiane}
-                taille='petite'
-              />
-            </div>
-            <div className="fr-col-4">
-              <JaugeDeProgression
-                couleur='vert'
-                libellé="Maximum"
-                pourcentage={avancementsDuTerritoire.global.maximum}
-                taille='petite'
-              />
-            </div>
-          </div>
-        </div>
+        <Avancements
+          maximum={avancementsDuTerritoire.global.maximum}
+          minimum={avancementsDuTerritoire.global.minimum}
+          moyenne={avancementsDuTerritoire.global.moyenne}
+          médiane={avancementsDuTerritoire.global.médiane}
+        />
       </div>
     </div>
   );

@@ -8,12 +8,12 @@ const classesÀPartirDeTaille = {
   petite: {
     valeur: 'jauge-valeur-dessous fr-h4',
     valeur_non_renseignée: 'jauge-valeur-dessous fr-text--xs',
-    libellé: 'fr-text--xs',
+    libellé: 'fr-text--xs fr-mb-0',
   },
   grande: {
     valeur: 'jauge-valeur-au-centre fr-display--xs',
     valeur_non_renseignée: 'jauge-valeur-au-centre fr-text--xs',
-    libellé: 'jauge-libellé-au-centre fr-text--xs',
+    libellé: 'jauge-libellé-au-centre fr-text--xs fr-mb-0',
   },
 };
 

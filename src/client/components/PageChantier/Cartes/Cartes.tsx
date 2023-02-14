@@ -19,13 +19,15 @@ export default function Cartes({ chantier }: CartesProps) {
 
   return (
     <div 
-      className='fr-pb-5w'
       id="cartes"
     >
-      <Titre baliseHtml='h2'>
+      <Titre
+        baliseHtml='h2'
+        className='fr-h4 fr-mb-2w'
+      >
         Répartition géographique
       </Titre>
-      <div className="fr-grid-row fr-grid-row--gutters fr-mt-3w">
+      <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-xl-6">
           <Bloc>
             <Titre

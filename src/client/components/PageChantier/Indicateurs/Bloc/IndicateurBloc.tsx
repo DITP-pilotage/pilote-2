@@ -79,7 +79,7 @@ export default function IndicateurBloc({ indicateur } : IndicateurBlocProps) {
       <Bloc>
         <Titre
           baliseHtml="h4"
-          className="fr-h5 fr-mb-1w"
+          className="fr-text--xl fr-mb-1w"
         >
           { !!indicateur.estIndicateurDuBaromètre && 
           <PictoBaromètre

@@ -7,7 +7,6 @@ import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLat�
 import SélecteurDeMaille from '@/components/_commons/SélecteurDeMaille/SélecteurDeMaille';
 import { Maille, TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
 import SélecteurDeTerritoire from '@/components/_commons/SélecteurDeTerritoire/SélecteurDeTerritoire';
-import { territorialiserChantier } from '@/client/utils/chantier/chantiersTerritorialisés/chantiersTerritorialisés';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import Commentaires from './Commentaires/Commentaires';
@@ -21,8 +20,8 @@ import PageChantierStyled from './PageChantier.styled';
 
 const listeRubriques: Rubrique[] = [
   { nom: 'Avancement du chantier', ancre: 'avancement' },
-  { nom: 'Synthèse des résultats', ancre: 'synthèse' },
   { nom: 'Responsables', ancre: 'responsables' },
+  { nom: 'Synthèse des résultats', ancre: 'synthèse' },
   { nom: 'Répartition géographique', ancre: 'cartes' },
   { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateurs },
   { nom: 'Commentaires', ancre: 'commentaires' },
@@ -30,10 +29,8 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const [territoire, setTerritoire] = useState<TerritoireIdentifiant>({ codeInsee: 'FR', maille: 'nationale' });
-  const [maille, setMaille] = useState<Maille>('nationale');
-
-  const chantierTerritorialisé = territorialiserChantier(chantier, territoire);
+  const [territoireSélectionné, setTerritoireSélectionné] = useState<TerritoireIdentifiant>({ codeInsee: 'FR', maille: 'nationale' });
+  const [mailleSélectionnée, setMailleSélectionnée] = useState<Maille>('nationale');
 
   return (
     <PageChantierStyled className="flex">
@@ -43,13 +40,13 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
       >
         <BarreLatéraleEncart>
           <SélecteurDeMaille
-            maille={maille}
-            setMaille={setMaille}
+            maille={mailleSélectionnée}
+            setMaille={setMailleSélectionnée}
           />
           <SélecteurDeTerritoire
-            maille={maille}
-            setTerritoire={setTerritoire}
-            territoire={territoire}
+            maille={mailleSélectionnée}
+            setTerritoire={setTerritoireSélectionné}
+            territoire={territoireSélectionné}
           />
         </BarreLatéraleEncart>
         <Sommaire rubriques={listeRubriques} />
@@ -65,21 +62,40 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
         </button>
         <PageChantierEnTête chantier={chantier} />
         <div className='fr-p-4w'>
-          <AvancementChantier chantier={chantierTerritorialisé} />
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-5w">
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12 fr-col-xl-6">
-              <SynthèseRésultats
+              <AvancementChantier
                 chantier={chantier}
-                synthèseDesRésultats={synthèseDesRésultats}
+                territoireSélectionné={territoireSélectionné}
               />
             </div>
             <div className="fr-col-12 fr-col-xl-6">
               <Responsables chantier={chantier} />
             </div>
           </div>
-          <Cartes chantier={chantier} />
-          <Indicateurs indicateurs={indicateurs} />
-          <Commentaires />
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className="fr-col-12">
+              <SynthèseRésultats
+                chantier={chantier}
+                synthèseDesRésultats={synthèseDesRésultats}
+              />
+            </div>
+          </div>
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className="fr-col-12">
+              <Cartes chantier={chantier} />
+            </div>
+          </div>
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className="fr-col-12">
+              <Indicateurs indicateurs={indicateurs} />
+            </div>
+          </div>
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className="fr-col-12">
+              <Commentaires />
+            </div>
+          </div>
         </div>
       </div>
     </PageChantierStyled>
