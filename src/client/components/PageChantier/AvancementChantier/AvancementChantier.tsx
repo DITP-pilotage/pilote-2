@@ -2,10 +2,13 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
-import { récupérerNomTerritoire } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
+import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import AvancementChantierProps from './AvancementChantier.interface';
 
-export default function AvancementChantier({ chantier, territoireSélectionné }: AvancementChantierProps) {
+export default function AvancementChantier({ chantier }: AvancementChantierProps) {
+  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
   return (
     <div
       id="avancement"
@@ -16,26 +19,28 @@ export default function AvancementChantier({ chantier, territoireSélectionné }
       >
         Avancement du chantier
       </Titre>
-      {territoireSélectionné.maille !== 'nationale' && (
-      <Bloc titre={récupérerNomTerritoire(territoireSélectionné)}>
-        <JaugeDeProgression
-          couleur="bleu"
-          libellé={récupérerNomTerritoire({ codeInsee: territoireSélectionné.codeInsee, maille: territoireSélectionné.maille })}
-          pourcentage={chantier.mailles[territoireSélectionné.maille][territoireSélectionné.codeInsee].avancement.global}
-          taille="grande"
-        />
-      </Bloc>
-      )}
-      {(territoireSélectionné.maille === 'départementale' && territoireSélectionné.codeInseeRégion !== undefined) && (
-        <Bloc titre={récupérerNomTerritoire({ codeInsee: territoireSélectionné.codeInseeRégion, maille: 'régionale' })}>
+      {
+        territoireSélectionné.codeInsee !== 'FR' && 
+        <Bloc titre={territoireSélectionné.nom}>
           <JaugeDeProgression
             couleur="bleu"
-            libellé={récupérerNomTerritoire({ codeInsee: territoireSélectionné.codeInseeRégion, maille: 'régionale' })}
-            pourcentage={chantier.mailles.régionale[territoireSélectionné.codeInseeRégion].avancement.global}
+            libellé={territoireSélectionné.nom}
+            pourcentage={chantier.mailles[mailleSélectionnée][territoireSélectionné.codeInsee].avancement.global}
             taille="grande"
           />
         </Bloc>
-      )}
+      }
+      {
+        territoireSélectionné.territoireParent !== undefined && 
+        <Bloc titre={territoireSélectionné.territoireParent.nom}>
+          <JaugeDeProgression
+            couleur="bleu"
+            libellé={territoireSélectionné.territoireParent.nom}
+            pourcentage={chantier.mailles.régionale[territoireSélectionné.territoireParent.codeInsee].avancement.global}
+            taille="grande"
+          />
+        </Bloc>
+      }
       <Bloc titre='National'>
         <div className='fr-py-4w'>
           <Avancements

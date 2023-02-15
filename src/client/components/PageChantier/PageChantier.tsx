@@ -4,9 +4,7 @@ import { useState } from 'react';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
-import SélecteurDeMaille from '@/components/_commons/SélecteurDeMaille/SélecteurDeMaille';
-import { Maille, TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
-import SélecteurDeTerritoire from '@/components/_commons/SélecteurDeTerritoire/SélecteurDeTerritoire';
+import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import Commentaires from './Commentaires/Commentaires';
@@ -29,8 +27,6 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const [territoireSélectionné, setTerritoireSélectionné] = useState<TerritoireIdentifiant>({ codeInsee: 'FR', maille: 'nationale' });
-  const [mailleSélectionnée, setMailleSélectionnée] = useState<Maille>('nationale');
 
   return (
     <PageChantierStyled className="flex">
@@ -39,15 +35,7 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteurDeMaille
-            maille={mailleSélectionnée}
-            setMaille={setMailleSélectionnée}
-          />
-          <SélecteurDeTerritoire
-            maille={mailleSélectionnée}
-            setTerritoire={setTerritoireSélectionné}
-            territoire={territoireSélectionné}
-          />
+          <SélecteursMaillesEtTerritoires />
         </BarreLatéraleEncart>
         <Sommaire rubriques={listeRubriques} />
       </BarreLatérale>
@@ -64,10 +52,7 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
         <div className='fr-p-4w'>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12 fr-col-xl-6">
-              <AvancementChantier
-                chantier={chantier}
-                territoireSélectionné={territoireSélectionné}
-              />
+              <AvancementChantier chantier={chantier} />
             </div>
             <div className="fr-col-12 fr-col-xl-6">
               <Responsables chantier={chantier} />

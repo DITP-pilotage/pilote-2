@@ -13,6 +13,7 @@ export default function Sélecteurs() {
   const setMailleInterne = setMailleInterneStore();
   const périmètreGéographique = périmètreGéographiqueStore();
   const setPérimètreGéographique = setPérimètreGéographiqueStore();
+  
   return (
     <>
       <InterrupteurMailleInterne
