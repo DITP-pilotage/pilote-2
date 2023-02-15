@@ -37,22 +37,22 @@ const colonnes = [
     cell: 'National',
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('valeurInitiale', {
+  reactTableColonnesHelper.accessor('mailles.nationale.FR.valeurInitiale', {
     header: 'Valeur initiale',
-    cell: valeurInitiale => afficherValeurEtDate(valeurInitiale.getValue(), valeurInitiale.row.original.dateValeurInitiale),
+    cell: valeurInitiale => afficherValeurEtDate(valeurInitiale.getValue(), valeurInitiale.row.original.mailles.nationale.FR.dateValeurInitiale),
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('valeurActuelle', {
+  reactTableColonnesHelper.accessor('mailles.nationale.FR.valeurActuelle', {
     header: 'Valeur actuelle',
-    cell: valeurActuelle => afficherValeurEtDate(valeurActuelle.getValue(), valeurActuelle.row.original.dateValeurActuelle),
+    cell: valeurActuelle => afficherValeurEtDate(valeurActuelle.getValue(), valeurActuelle.row.original.mailles.nationale.FR.dateValeurActuelle),
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('valeurCible', {
+  reactTableColonnesHelper.accessor('mailles.nationale.FR.valeurCible', {
     header: 'Valeur cible',
     cell: valeurCible => afficherValeurEtDate(valeurCible.getValue()),
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('tauxAvancementGlobal', {
+  reactTableColonnesHelper.accessor('mailles.nationale.FR.tauxAvancementGlobal', {
     header: 'Taux avancement global',
     cell: tauxAvancementGlobal => (
       <>

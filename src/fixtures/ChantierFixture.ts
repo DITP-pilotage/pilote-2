@@ -44,9 +44,9 @@ class ChantierFixture implements FixtureInterface<Chantier> {
     };
   }
 
-  private générérFakeTerritoires(code_insee_départements: string[]): Territoires {
+  private générérFakeTerritoires(code_insee_territoire: string[]): Territoires {
     const result: Territoires = {};
-    code_insee_départements.forEach((code_insee) => {
+    code_insee_territoire.forEach((code_insee) => {
       result[code_insee] = {
         codeInsee: code_insee,
         avancement: {

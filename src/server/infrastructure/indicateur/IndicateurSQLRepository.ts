@@ -20,14 +20,23 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         nom: row.nom,
         type: row.type_id as TypeIndicateur,
         estIndicateurDuBaromètre: row.est_barometre,
-        valeurInitiale: row.valeur_initiale,
-        valeurActuelle: row.valeur_actuelle,
-        valeurCible: row.objectif_valeur_cible,
-        tauxAvancementGlobal: row.objectif_taux_avancement,
-        evolutionValeurActuelle: row.evolution_valeur_actuelle,
-        evolutionDateValeurActuelle: row.evolution_date_valeur_actuelle.map(d => toDateStringWithoutTime(d)),
-        dateValeurInitiale: row.date_valeur_initiale !== null ? toDateStringWithoutTime(row.date_valeur_initiale) : null,
-        dateValeurActuelle: row.date_valeur_actuelle !== null ? toDateStringWithoutTime(row.date_valeur_actuelle) : null,
+        mailles: {
+          nationale: {
+            FR: {
+              codeInsee: 'FR',
+              valeurInitiale: row.valeur_initiale,
+              valeurActuelle: row.valeur_actuelle,
+              valeurCible: row.objectif_valeur_cible,
+              dateValeurInitiale: row.date_valeur_initiale !== null ? toDateStringWithoutTime(row.date_valeur_initiale) : null,
+              dateValeurActuelle: row.date_valeur_actuelle !== null ? toDateStringWithoutTime(row.date_valeur_actuelle) : null,
+              tauxAvancementGlobal: row.objectif_taux_avancement,
+              evolutionValeurActuelle: row.evolution_valeur_actuelle,
+              evolutionDateValeurActuelle: row.evolution_date_valeur_actuelle.map(d => toDateStringWithoutTime(d)),
+            },
+          },
+          régionale: {},
+          départementale: {},
+        },
       });
     });
   }
