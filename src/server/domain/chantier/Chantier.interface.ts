@@ -1,7 +1,5 @@
 import Météo from './Météo.interface';
 
-export type Axe = { id: string, nom: string } | null;
-
 export type Avancement = {
   global: number | null
   annuel: number | null
@@ -39,8 +37,8 @@ export type Contact = { nom: string, email: string | null };
 export default interface Chantier {
   id: string;
   nom: string;
-  axe: Axe;
-  nomPPG: string | null;
+  axe: string | null;
+  ppg: string | null;
   périmètreIds: string[];
   mailles: Record<Maille, Territoires>;
   responsables: {

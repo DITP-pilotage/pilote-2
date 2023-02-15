@@ -8,7 +8,7 @@ describe('Territorialiser Chantiers', () => {
         id: '01',
         nom: 'Chantier 01',
         axe: null,
-        nomPPG: null,
+        ppg: null,
         périmètreIds: ['périmètre 01'],
         mailles: {
           nationale: {   
@@ -45,7 +45,7 @@ describe('Territorialiser Chantiers', () => {
         id: '02',
         nom: 'Chantier 02',
         axe: null,
-        nomPPG: null,
+        ppg: null,
         périmètreIds: ['périmètre 01'],
         mailles: {
           nationale: {   
