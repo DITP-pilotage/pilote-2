@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const CarteIndicateurStyled = styled.div`
+const IndicateurBlocStyled = styled.div`
   .information-secondaire {
     font-size: 0.625rem;
     line-height: 1rem;
@@ -23,4 +23,4 @@ const CarteIndicateurStyled = styled.div`
   }
 `;
 
-export default CarteIndicateurStyled;
+export default IndicateurBlocStyled;
