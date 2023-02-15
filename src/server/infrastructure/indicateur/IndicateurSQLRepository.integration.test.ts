@@ -23,7 +23,11 @@ describe('IndicateurSQLRepository', () => {
     const date1 = '2021-06-30';
     const date2 = '2022-06-30';
     const date3 = '2023-06-30';
-    
+    const dateA = '2018-07-24';
+    const dateB = '2022-12-17';
+    const dateC = '2019-09-02';
+    const dateD = '2023-01-14';
+
     const indicateurs: indicateur[] = [
       new IndicateurRowBuilder()
         .withId('IND-001')
@@ -31,6 +35,8 @@ describe('IndicateurSQLRepository', () => {
         .withChantierId(chantierId)
         .withEvolutionValeurActuelle([1, 2])
         .withEvolutionDateValeurActuelle([date1, date2])
+        .withDateValeurInitiale(dateA)
+        .withDateValeurActuelle(dateB)
         .build(),
 
       new IndicateurRowBuilder()
@@ -41,6 +47,8 @@ describe('IndicateurSQLRepository', () => {
         .withMaille('REG')
         .withEvolutionValeurActuelle([0.4, 43, 18])
         .withEvolutionDateValeurActuelle([date1, date2, date3])
+        .withDateValeurInitiale('2017-01-01')
+        .withDateValeurActuelle('2018-01-01')
         .build(),
 
       new IndicateurRowBuilder()
@@ -49,6 +57,8 @@ describe('IndicateurSQLRepository', () => {
         .withChantierId(chantierId)
         .withEvolutionValeurActuelle([0.4, 0, 0.654])
         .withEvolutionDateValeurActuelle([date1, date2, date3])
+        .withDateValeurInitiale(dateC)
+        .withDateValeurActuelle(dateD)
         .build(),
     ];
 
@@ -67,5 +77,9 @@ describe('IndicateurSQLRepository', () => {
     expect(result[1].evolutionDateValeurActuelle).toEqual([date1, date2, date3]);
     expect(result[0].evolutionValeurActuelle.length).toEqual(result[0].evolutionDateValeurActuelle.length);
     expect(result[1].evolutionValeurActuelle.length).toEqual(result[1].evolutionDateValeurActuelle.length);
+    expect(result[0].dateValeurInitiale).toEqual(dateA);
+    expect(result[1].dateValeurInitiale).toEqual(dateC);
+    expect(result[0].dateValeurActuelle).toEqual(dateB);
+    expect(result[1].dateValeurActuelle).toEqual(dateD);
   });
 });
