@@ -17,7 +17,7 @@ export async function getServerSideProps(context) {
     const params = new URLSearchParams({
       response_type: 'code',
       client_id: config.keycloakClientId,
-      redirect_uri: 'http://localhost:3000/api/auth/callback/keycloak',
+      redirect_uri: config.redirectUri,
       scope: 'openid profile email',
     });
 
@@ -25,7 +25,6 @@ export async function getServerSideProps(context) {
     return {
       redirect: {
         destination: config.authUrl + '?' + params,
-        //destination: "/api/auth/signin/keycloak",
         permanent: false,
       },
     };

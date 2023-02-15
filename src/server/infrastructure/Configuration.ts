@@ -13,6 +13,8 @@ export class Configuration {
 
   public readonly tokenUrl: string;
 
+  public readonly redirectUri: string;
+
   constructor(env: NodeJS.ProcessEnv) {
     this.isUsingDatabase = env.USE_DATABASE == 'true';
 
@@ -21,8 +23,9 @@ export class Configuration {
     this.keycloakIssuer = env.KEYCLOAK_ISSUER || 'N/A';
 
     this.tokenUrl = this.keycloakIssuer + '/protocol/openid-connect/token';
-    this.authUrl = this.keycloakIssuer + '/protocol/openid-connect/auth';
+    this.authUrl = this.keycloakIssuer + '/protocol/openid-connect/auth'; // '/api/auth/signin/keycloak';
     this.logoutUrl = this.keycloakIssuer + '/protocol/openid-connect/logout';
+    this.redirectUri = 'http://localhost:3000/api/auth/callback/keycloak';
   }
 }
 
