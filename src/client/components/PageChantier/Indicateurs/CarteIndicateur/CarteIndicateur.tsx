@@ -27,7 +27,11 @@ function afficherValeurEtDate(valeur: number | null, date?: string) {
   );
 }
 
-const reactTableColonnesHelper = createColumnHelper<Indicateur & { territoire: string }>();
+const reactTableColonnesHelper = createColumnHelper<Indicateur & {
+  dateValeurInitiale?: string; //TODO en attendant les données du back -> à mettre dans le type Indicateur côté back + enlever le '?'
+  dateValeurActuelle?: string; //TODO en attendant les données du back -> à mettre dans le type Indicateur côté back + enlever le '?'
+  territoire: string //TODO idem qu'au dessus ?
+}>();
 
 const colonnes = [
   reactTableColonnesHelper.accessor('territoire', {
@@ -37,12 +41,12 @@ const colonnes = [
   }),
   reactTableColonnesHelper.accessor('valeurInitiale', {
     header: 'Valeur initiale',
-    cell: valeurInitiale => afficherValeurEtDate(valeurInitiale.getValue(), valeurInitiale.row.dateValeurInitiale), //TODO
+    cell: valeurInitiale => afficherValeurEtDate(valeurInitiale.getValue(), valeurInitiale.row.original.dateValeurInitiale),
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('valeurActuelle', {
     header: 'Valeur actuelle',
-    cell: valeurActuelle => afficherValeurEtDate(valeurActuelle.getValue(), valeurActuelle.row.dateValeurActuelle), //TODO
+    cell: valeurActuelle => afficherValeurEtDate(valeurActuelle.getValue(), valeurActuelle.row.original.dateValeurActuelle),
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('valeurCible', {
