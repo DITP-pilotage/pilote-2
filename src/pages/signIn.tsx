@@ -24,7 +24,7 @@ export async function getServerSideProps(context) {
 
     return {
       redirect: {
-        destination: config.keycloakIssuer + '/protocol/openid-connect/auth?' + params,
+        destination: config.authUrl + '?' + params,
         //destination: "/api/auth/signin/keycloak",
         permanent: false,
       },

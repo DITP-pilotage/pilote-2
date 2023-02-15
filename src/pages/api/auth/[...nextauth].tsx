@@ -23,9 +23,7 @@ async function doFinalSignoutHandshake(token: JWT) {
         id_token_hint: idToken as string,
       });
 
-      // @ts-ignore
-      const url = keycloak.options.issuer + '/protocol/openid-connect/logout';
-      const response = await fetch(url, {
+      const response = await fetch(config.logoutUrl, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
@@ -59,21 +57,17 @@ async function doFinalSignoutHandshake(token: JWT) {
 async function refreshAccessToken(token: JWT) {
   const { provider, idToken } = token;
 
-
-
   if (provider == keycloak.id) {
     try {
       const fields = {
-        client_id: keycloak.options.clientId,
-        client_secret: keycloak.options.clientSecret,
+        client_id: config.keycloakClientId,
+        client_secret: config.keycloakClientSecret,
         grant_type: 'refresh_token',
         refresh_token: token.refresh_token,
       };
       const send_data = new URLSearchParams(fields);
 
-      const url =
-        keycloak.options.issuer + '/protocol/openid-connect/token';
-      const response = await fetch(url, {
+      const response = await fetch(config.tokenUrl, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
