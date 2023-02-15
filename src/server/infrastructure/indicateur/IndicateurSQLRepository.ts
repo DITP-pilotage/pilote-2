@@ -15,7 +15,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
 
   mapToDomain(indicateurs: indicateur[]): Indicateur[] {
     return indicateurs.map(row => {
-      const evolutionDateValeurActuelle = row.evolution_date_valeur_actuelle.map(d => toDateStringWithoutTime(d));
       return ({
         id: row.id,
         nom: row.nom,
@@ -26,7 +25,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         valeurCible: row.objectif_valeur_cible,
         tauxAvancementGlobal: row.objectif_taux_avancement,
         evolutionValeurActuelle: row.evolution_valeur_actuelle,
-        evolutionDateValeurActuelle,
+        evolutionDateValeurActuelle: row.evolution_date_valeur_actuelle.map(d => toDateStringWithoutTime(d)),
+        dateValeurInitiale: row.date_valeur_initiale !== null ? toDateStringWithoutTime(row.date_valeur_initiale) : null,
+        dateValeurActuelle: row.date_valeur_actuelle !== null ? toDateStringWithoutTime(row.date_valeur_actuelle) : null,
       });
     });
   }

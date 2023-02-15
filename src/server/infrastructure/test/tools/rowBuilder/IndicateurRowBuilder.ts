@@ -15,6 +15,10 @@ export default class IndicateurRowBuilder {
 
   private _evolutionDateValeurActuelle: string[] = ['2021-06-30', '2022-06-30'];
 
+  private _dateValeurInitiale: string | null = '2020-01-01';
+
+  private _dateValeurActuelle: string | null = '2023-02-01';
+
   withId(id: string): IndicateurRowBuilder {
     this._id = id;
     return this;
@@ -50,6 +54,16 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  withDateValeurInitiale(dateValeurInitiale: string | null): IndicateurRowBuilder {
+    this._dateValeurInitiale = dateValeurInitiale;
+    return this;
+  }
+
+  withDateValeurActuelle(dateValeurActuelle: string | null): IndicateurRowBuilder {
+    this._dateValeurActuelle = dateValeurActuelle;
+    return this;
+  }
+
   build(): indicateur {
     return {
       id: this._id,
@@ -66,9 +80,9 @@ export default class IndicateurRowBuilder {
       est_barometre: null,
       est_phare: null,
       valeur_initiale: null,
-      date_valeur_initiale: null,
+      date_valeur_initiale: this._dateValeurInitiale !== null ? new Date(this._dateValeurInitiale) : null,
       valeur_actuelle: null,
-      date_valeur_actuelle: null,
+      date_valeur_actuelle: this._dateValeurActuelle !== null ? new Date(this._dateValeurActuelle) : null,
       territoire_nom: null,
       evolution_valeur_actuelle: this._evolutionValeurActuelle,
       evolution_date_valeur_actuelle: this._evolutionDateValeurActuelle.map(s => new Date(s)),

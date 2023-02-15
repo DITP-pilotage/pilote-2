@@ -16,8 +16,10 @@ class IndicateurFixture implements FixtureInterface<Indicateur> {
       tauxAvancementGlobal: faker.helpers.arrayElement([null, faker.datatype.number({ min: 0, max: 100, precision: 0.01 })]),
       evolutionValeurActuelle: [1, 2, 3, 4],
       evolutionDateValeurActuelle: ['2021-06-30', '2022-06-30', '2023-06-30', '2024-06-30'],
+      dateValeurInitiale: '2020-01-01',
+      dateValeurActuelle: '2023-02-01',
       ...valeursFixes,
-    }; 
+    };
   }
 
   générerPlusieurs(quantité: number, valeursFixes: Partial<Indicateur>[] = []) {
