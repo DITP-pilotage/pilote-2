@@ -2,7 +2,7 @@ import '@gouvfr/dsfr/dist/component/header/header.min.css';
 import '@gouvfr/dsfr/dist/component/logo/logo.min.css';
 import Link from 'next/link';
 import Navigation from '@/components/_commons/MiseEnPage/Navigation/Navigation';
-import LoginBtn from '@/components/login_btn'
+import CompteUtilisateur from '@/components/_commons/MiseEnPage/EnTête/CompteUtilisateur';
 
 export default function EnTête() {
   return (
@@ -50,8 +50,8 @@ export default function EnTête() {
                 </p>
               </div>
             </div>
+            <CompteUtilisateur />
           </div>
-                <LoginBtn />
         </div>
       </div>
       <Navigation />
