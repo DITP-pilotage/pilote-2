@@ -12,6 +12,7 @@ import SynthèseDesRésultatsRepository from '@/server/domain/chantier/Synthèse
 import SynthèseDesRésultatsRandomRepository
   from '@/server/infrastructure/chantier/SynthèseDesRésultatsRandomRepository';
 import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/chantier/SynthèseDesRésultatsSQLRepository';
+import { config } from '@/server/infrastructure/Configuration';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
@@ -23,7 +24,7 @@ class Dependencies {
   private readonly _indicateurRepository: IndicateurRepository;
 
   constructor() {
-    if (process.env.USE_DATABASE == 'true') {
+    if (config.isUsingDatabase) {
       const prisma = new PrismaClient();
       this._chantierRepository = new ChantierSQLRepository(prisma);
       this._ministèreRepository = new MinistèreSQLRepository(prisma);
