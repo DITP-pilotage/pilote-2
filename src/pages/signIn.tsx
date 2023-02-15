@@ -1,4 +1,5 @@
 import { getServerSession } from 'next-auth/next';
+import { config } from '@/server/infrastructure/Configuration';
 import { authOptions } from './api/auth/[...nextauth]';
 
 export default function Signin() {
@@ -15,7 +16,7 @@ export async function getServerSideProps(context) {
   if (!session) {
     const params = new URLSearchParams({
       response_type: 'code',
-      client_id: process.env.KEYCLOAK_CLIENT_ID,
+      client_id: config.keycloakClientId,
       redirect_uri: 'http://localhost:3000/api/auth/callback/keycloak',
       scope: 'openid profile email',
     });
@@ -23,7 +24,7 @@ export async function getServerSideProps(context) {
 
     return {
       redirect: {
-        destination: process.env.KEYCLOAK_ISSUER + '/protocol/openid-connect/auth?' + params,
+        destination: config.keycloakIssuer + '/protocol/openid-connect/auth?' + params,
         //destination: "/api/auth/signin/keycloak",
         permanent: false,
       },

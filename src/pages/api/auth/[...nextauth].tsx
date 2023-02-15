@@ -1,12 +1,12 @@
 import NextAuth from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak';
 import type { JWT } from 'next-auth/jwt';
+import { config } from '@/server/infrastructure/Configuration';
 
-// TODO: on a besoin d'une couche config qui collecte les variables d'env qui traite le cas undefined en amont
 export const keycloak = KeycloakProvider({
-  clientId: process.env.KEYCLOAK_CLIENT_ID,
-  clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
-  issuer: process.env.KEYCLOAK_ISSUER,
+  clientId: config.keycloakClientId,
+  clientSecret: config.keycloakClientSecret,
+  issuer: config.keycloakIssuer,
 });
 
 /**
