@@ -4,7 +4,7 @@ import KeycloakProvider from "next-auth/providers/keycloak"
 import type { JWT } from 'next-auth/jwt';
 
 // 
-const keycloak = KeycloakProvider({
+export const keycloak = KeycloakProvider({
   clientId: process.env.KEYCLOAK_ID,
   clientSecret: process.env.KEYCLOAK_SECRET,
   issuer: process.env.KEYCLOAK_ISSUER,
