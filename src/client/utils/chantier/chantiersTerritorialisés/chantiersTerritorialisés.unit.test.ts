@@ -1,9 +1,10 @@
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import territorialiserChantiers from './chantiersTerritorialisés';
 
 describe('Territorialiser Chantiers', () => {
   it('À partir d\'une liste de chantiers, retourne une liste avec pour chaque chantier son id, son nom et sa météo et avancement global en fonction du territoire donné', () => {
     //GIVEN
-    const chantiers = [
+    const chantiers: Chantier[] = [
       {
         id: '01',
         nom: 'Chantier 01',
