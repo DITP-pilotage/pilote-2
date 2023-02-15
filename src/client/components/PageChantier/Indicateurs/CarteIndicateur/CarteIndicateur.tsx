@@ -6,7 +6,26 @@ import Tableau from '@/components/_commons/Tableau/Tableau';
 import CarteIndicateurProps from '@/components/PageChantier/Indicateurs/CarteIndicateur/CarteIndicateur.interface';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
+import { formaterDate } from '@/client/utils/date/date';
 import CarteIndicateurStyled from './CarteIndicateur.styled';
+
+function afficherValeurEtDate(valeur: number | null, date?: string) {
+  const dateFormatée = formaterDate(date, 'mm/yyyy');
+  return (
+    <>
+      <p className='indicateur-valeur'>
+        {valeur?.toLocaleString()}
+      </p>
+      {
+        !!dateFormatée && (
+          <p className='indicateur-date-valeur texte-gris'>
+            { `(${dateFormatée})` }
+          </p>
+        )
+      }
+    </>
+  );
+}
 
 const reactTableColonnesHelper = createColumnHelper<Indicateur & { territoire: string }>();
 
@@ -18,17 +37,17 @@ const colonnes = [
   }),
   reactTableColonnesHelper.accessor('valeurInitiale', {
     header: 'Valeur initiale',
-    cell: valeurInitiale => valeurInitiale.getValue()?.toLocaleString(),
+    cell: valeurInitiale => afficherValeurEtDate(valeurInitiale.getValue(), valeurInitiale.row.dateValeurInitiale), //TODO
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('valeurActuelle', {
     header: 'Valeur actuelle',
-    cell: valeurActuelle => valeurActuelle.getValue()?.toLocaleString(),
+    cell: valeurActuelle => afficherValeurEtDate(valeurActuelle.getValue(), valeurActuelle.row.dateValeurActuelle), //TODO
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('valeurCible', {
     header: 'Valeur cible',
-    cell: valeurCible => valeurCible.getValue()?.toLocaleString(),
+    cell: valeurCible => afficherValeurEtDate(valeurCible.getValue()),
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('tauxAvancementGlobal', {
