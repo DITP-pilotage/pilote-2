@@ -9,7 +9,7 @@ import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromèt
 import { formaterDate } from '@/client/utils/date/date';
 import CarteIndicateurStyled from './CarteIndicateur.styled';
 
-function afficherValeurEtDate(valeur: number | null, date?: string) {
+function afficherValeurEtDate(valeur: number | null, date?: string | null) {
   const dateFormatée = formaterDate(date, 'mm/yyyy');
   return (
     <>
@@ -27,11 +27,7 @@ function afficherValeurEtDate(valeur: number | null, date?: string) {
   );
 }
 
-const reactTableColonnesHelper = createColumnHelper<Indicateur & {
-  dateValeurInitiale?: string; //TODO en attendant les données du back -> à mettre dans le type Indicateur côté back + enlever le '?'
-  dateValeurActuelle?: string; //TODO en attendant les données du back -> à mettre dans le type Indicateur côté back + enlever le '?'
-  territoire: string //TODO idem qu'au dessus ?
-}>();
+const reactTableColonnesHelper = createColumnHelper<Indicateur & { territoire: string }>();
 
 const colonnes = [
   reactTableColonnesHelper.accessor('territoire', {
