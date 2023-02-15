@@ -8,32 +8,23 @@ export const keycloak = KeycloakProvider({
   clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
   issuer: process.env.KEYCLOAK_ISSUER,
 });
- 
-// this performs the final handshake for the keycloak
-// provider, the way it's written could also potentially
-// perform the action for other providers as well
-
 
 /**
- * Takes a token, and returns a new token with updated
- * `accessToken` and `accessTokenExpires`. If an error occurs,
- * returns the old token and an error property
+ * this performs the final handshake for the keycloak
+ * provider, the way it's written could also potentially
+ * perform the action for other providers as well
  */
-/**
- * @param  {JWT} token
- */
-
 async function doFinalSignoutHandshake(token: JWT) {
-  const { provider, id_token } = token;
+  const { provider, idToken } = token;
   if (provider == keycloak.id) {
     try {
       // Add the id_token_hint to the query string
       const params = new URLSearchParams({
-        id_token_hint: id_token,
+        id_token_hint: idToken as string,
       });
 
-      const url =
-        keycloak.options.issuer + '/protocol/openid-connect/logout';
+      // @ts-ignore
+      const url = keycloak.options.issuer + '/protocol/openid-connect/logout';
       const response = await fetch(url, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -66,7 +57,7 @@ async function doFinalSignoutHandshake(token: JWT) {
  * @param  {JWT} token
  */
 async function refreshAccessToken(token: JWT) {
-  const { provider, id_token } = token;
+  const { provider, idToken } = token;
 
 
 
@@ -142,7 +133,7 @@ export const authOptions = {
         token.expires_at = current_date.setSeconds(current_date.getSeconds() + 20);  // account.expires_at;
         token.provider = account.provider;
         token.refresh_token = account.refresh_token;
-        token.id_token = account.id_token;
+        token.idToken = account.id_token;
       }
 
       if (current_date < token.expires_at) {
@@ -165,4 +156,5 @@ export const authOptions = {
     signOut: ({ session, token }) => { doFinalSignoutHandshake(token); },
   },
 };
+
 export default NextAuth(authOptions);

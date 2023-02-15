@@ -1,27 +1,13 @@
 import { getServerSession } from 'next-auth/next';
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { authOptions, keycloak } from './api/auth/[...nextauth]';
-
-
+import { authOptions } from './api/auth/[...nextauth]';
 
 export default function Signin() {
-  const router = useRouter();
-  const { status } = useSession();
-
-  /*useEffect(() => {
-    if (status === "unauthenticated") {
-      void signIn("keycloak");
-    } else if (status === "authenticated") {
-      void router.push("/");
-    }
-  }, [status, router]);
-*/
-  return (<div>
-    PLOP
-  </div>);
+  return (
+    <div>
+      PLOP
+    </div>
+  );
 }
-
 
 export async function getServerSideProps(context) {
   const session = await getServerSession(context.req, context.res, authOptions);
