@@ -10,14 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model chantier_permission {
-  user_id String
-  chantier_id String
-  scope String[]
-
-  @@id([user_id, chantier_id])
-}
-
 model chantier {
   id String
   nom String
