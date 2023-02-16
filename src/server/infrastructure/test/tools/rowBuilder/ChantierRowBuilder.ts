@@ -5,6 +5,10 @@ export default class ChantierRowBuilder {
 
   private _nom: string = 'Chantier ' + this._id;
 
+  private _axe: string = 'Axe du chantier';
+
+  private _ppg: string = 'Ppg du chantier';
+
   private _perimetre_ids: string[] = [];
 
   private _maille: string = 'NAT';
@@ -34,6 +38,16 @@ export default class ChantierRowBuilder {
 
   withNom(nom: string): ChantierRowBuilder {
     this._nom = nom;
+    return this;
+  }
+
+  withAxe(axe: string): ChantierRowBuilder {
+    this._axe = axe;
+    return this;
+  }
+
+  withPpg(ppg: string): ChantierRowBuilder {
+    this._ppg = ppg;
     return this;
   }
 
@@ -102,6 +116,8 @@ export default class ChantierRowBuilder {
     return {
       id: this._id,
       nom: this._nom,
+      axe: this._axe,
+      ppg: this._ppg,
       perimetre_ids: this._perimetre_ids,
       maille: this._maille,
       code_insee: this._codeInsee,
@@ -113,8 +129,6 @@ export default class ChantierRowBuilder {
       directeurs_projet_mails: this._directeurs_projet_mails,
       ministeres: this._ministeres,
       territoire_nom: null,
-      axe: 'TBD',
-      ppg: 'TBD',
       objectifs: 'TBD',
       date_objectifs: null,
       est_barometre: this._estBaromètre,

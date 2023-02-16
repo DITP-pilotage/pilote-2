@@ -30,8 +30,8 @@ export function parseChantier(chantierRows: chantier[]): Chantier {
   const result: Chantier = {
     id: chantierMailleNationale.id,
     nom: chantierMailleNationale.nom,
-    axe: null,
-    nomPPG: null,
+    axe: chantierMailleNationale.axe,
+    ppg: chantierMailleNationale.ppg,
     périmètreIds: chantierMailleNationale.perimetre_ids,
     mailles: {
       nationale: {

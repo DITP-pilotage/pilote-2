@@ -12,7 +12,10 @@ describe('ChantierSQLRepository', () => {
     await prisma.chantier.createMany({
       data: [
         new ChantierRowBuilder()
-          .withId('CH-001').withNom('Chantier 1').withPérimètresIds(['PER-001', 'PER-002']).withMétéo('COUVERT')
+          .withId('CH-001').withNom('Chantier 1')
+          .withAxe('Axe 1')
+          .withPpg('Ppg 1')
+          .withPérimètresIds(['PER-001', 'PER-002']).withMétéo('COUVERT')
           .withDirecteursAdministrationCentrale(['Alain Térieur', 'Alex Térieur'])
           .withDirectionsAdministrationCentrale(['Intérieur', 'Extérieur'])
           .withDirecteursProjet(['Dir proj 1', 'Dir proj 2'])
@@ -29,6 +32,8 @@ describe('ChantierSQLRepository', () => {
 
     // THEN
     expect(result1.nom).toEqual('Chantier 1');
+    expect(result1.axe).toStrictEqual('Axe 1');
+    expect(result1.ppg).toStrictEqual('Ppg 1');
     expect(result1.périmètreIds).toStrictEqual(['PER-001', 'PER-002']);
     expect(result1.mailles.nationale.FR.météo).toEqual(météoFromString('COUVERT'));
     expect(result1.responsables.directeursAdminCentrale).toStrictEqual([{ nom: 'Alain Térieur', direction: 'Intérieur' }, { nom: 'Alex Térieur', direction: 'Extérieur' }]);
