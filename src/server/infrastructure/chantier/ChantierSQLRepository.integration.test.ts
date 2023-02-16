@@ -12,9 +12,7 @@ describe('ChantierSQLRepository', () => {
     await prisma.chantier.createMany({
       data: [
         new ChantierRowBuilder()
-          .withId('CH-001').withNom('Chantier 1')
-          .withAxe('Axe 1')
-          .withPpg('Ppg 1')
+          .withId('CH-001').withNom('Chantier 1').withAxe('Axe 1').withPpg('Ppg 1')
           .withPérimètresIds(['PER-001', 'PER-002']).withMétéo('COUVERT')
           .withDirecteursAdministrationCentrale(['Alain Térieur', 'Alex Térieur'])
           .withDirectionsAdministrationCentrale(['Intérieur', 'Extérieur'])
