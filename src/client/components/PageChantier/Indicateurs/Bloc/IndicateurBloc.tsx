@@ -8,8 +8,8 @@ import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromèt
 import { formaterDate } from '@/client/utils/date/date';
 import IndicateurDétails
   from '@/components/PageChantier/Indicateurs/Bloc/Détails/IndicateurDétails';
-import IndicateurBlocStyled from './IndicateurBloc.styled';
 import IndicateurBlocProps from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc.interface';
+import IndicateurBlocStyled from './IndicateurBloc.styled';
 
 function afficherValeurEtDate(valeur: number | null, date?: string | null) {
   const dateFormatée = formaterDate(date, 'mm/yyyy');
