@@ -2,8 +2,8 @@
 import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
 import nuancierMétéo from '@/client/constants/nuanciers/nuancierMétéo';
 import { libellésMétéos } from '@/server/domain/chantier/Météo.interface';
-import { pictosMétéos } from '../../PictoMétéo/PictoMétéo';
-import { CartographieValeur } from '../useCartographie';
+import { CartographieValeur } from '@/components/_commons/Cartographie/useCartographie.interface';
+import { pictosMétéos } from '@/components/_commons/PictoMétéo/PictoMétéo';
 
 export default function useCartographieMétéo() {
   function déterminerRemplissage(valeurMétéo: CartographieValeur) {

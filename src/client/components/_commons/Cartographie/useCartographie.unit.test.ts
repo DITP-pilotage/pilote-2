@@ -1,4 +1,4 @@
-import { calculerMoyenne } from '@/client/utils/statistiques';
+import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import {
   DonnéesTerritoires, initialiserDonnéesTerritoiresAgrégésVide,
   TerritoireSansCodeInsee,
@@ -6,7 +6,6 @@ import {
 import { Agrégation } from '@/client/utils/types';
 import useCartographie from './useCartographie';
   
-
 describe('Préparer données cartographie', () => {
   const { préparerDonnéesCartographieÀPartirDUneListe, préparerDonnéesCartographieÀPartirDUnÉlément } = useCartographie();
   

@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import useCartographie from '@/components/_commons/Cartographie/useCartographie';
+import { CartographieBulleTerritoire } from '@/components/_commons/Cartographie/useCartographie.interface';
 import CartographieAffichageProps from './CartographieAffichage.interface';
 import BulleDInfo from './BulleDInfo/BulleDInfo';
 import CartographieSVG from './SVG/CartographieSVG';
-import useCartographie, { CartographieBulleTerritoire } from '../useCartographie';
 
 export default function CartographieAffichage({ children, options, données, niveauDeMaille }: CartographieAffichageProps) {
   const { optionsParDéfaut, déterminerRégionsÀTracer, créerTerritoires, formaterBulleTitre } = useCartographie();

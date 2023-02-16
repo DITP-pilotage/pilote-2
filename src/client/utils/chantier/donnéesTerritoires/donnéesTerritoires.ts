@@ -1,6 +1,5 @@
-import { Maille, mailles, Territoire, TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
+import { Maille, mailles, Territoire } from '@/server/domain/chantier/Chantier.interface';
 import { Agrégation } from '@/client/utils/types';
-import { territoires } from '@/components/_commons/SélecteurDeTerritoire/SélecteurDeTerritoire';
 
 const codes = {
   nationale: [
@@ -52,9 +51,6 @@ export function récupérerMétéo(donnéesTerritoires: DonnéesTerritoires<Terr
     : 'NON_RENSEIGNEE';
 }
 
-export const récupérerNomTerritoire = (périmètreGéographique: TerritoireIdentifiant) => (
-  territoires[périmètreGéographique.maille].find(territoire => territoire.codeInsee === périmètreGéographique.codeInsee)?.nom ?? 'NC'
-);
 
 export function initialiserDonnéesTerritoiresAgrégésVide() {
   return initialiserDonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>({

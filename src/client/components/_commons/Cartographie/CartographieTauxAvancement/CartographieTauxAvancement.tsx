@@ -4,12 +4,12 @@ import useCartographieAvancement from './useCartographieAvancement';
 import CartographieLégende from '../CartographieAffichage/Légende/CartographieLégende';
 import CartographieAffichage from '../CartographieAffichage/CartographieAffichage';
 
-export default function CartographieTauxAvancement({ données, mailleInterne, options }: CartographieTauxAvancementProps) {
+export default function CartographieTauxAvancement({ données, niveauDeMaille, options }: CartographieTauxAvancementProps) {
   const { déterminerRemplissage, formaterValeur } = useCartographieAvancement();
   return (
     <CartographieAffichage
       données={données}
-      niveauDeMaille={mailleInterne}
+      niveauDeMaille={niveauDeMaille}
       options={{
         déterminerRemplissage,
         formaterValeur,

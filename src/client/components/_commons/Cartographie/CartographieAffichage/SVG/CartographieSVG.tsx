@@ -1,16 +1,12 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import CartographieTerritoireSélectionné from '@/components/_commons/Cartographie/CartographieAffichage/SVG/CartographieTerritoireSélectionné';
-import {
-  périmètreGéographique as périmètreGéographiqueStore,
-  réinitialisePérimètreGéographique as réinitialisePérimètreGéographiqueStore,
-  setPérimètreGéographique as setPérimètreGéographiqueStore,
-} from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import { NuancierRemplissage } from '@/client/constants/nuanciers/nuancier';
 import hachuresGrisBlanc from '@/client/constants/nuanciers/hachure/hachuresGrisBlanc';
+import { actionsTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { CartographieTerritoire } from '@/components/_commons/Cartographie/useCartographie.interface';
 import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
-import { CartographieTerritoire } from '../../useCartographie';
 
 export function déterminerValeurAttributFill(remplissage: NuancierRemplissage) {
   return remplissage.type === 'HACHURES'
@@ -26,9 +22,9 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
     width: 0,
     height: 0,
   });
-  const périmètreGéographique = périmètreGéographiqueStore();
-  const setPérimètreGéographique = setPérimètreGéographiqueStore();
-  const réinitialisePérimètreGéographique = réinitialisePérimètreGéographiqueStore();
+  
+  const { modifierTerritoireSélectionné } = actionsTerritoiresStore();
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   useEffect(() => {
     if (svgRef && svgRef.current)
@@ -37,13 +33,11 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
 
   function auClicTerritoireCallback(territoire: CartographieTerritoire) {
     if (!options.territoireSélectionnable) return;
-    if (périmètreGéographique && périmètreGéographique.codeInsee === territoire.codeInsee) réinitialisePérimètreGéographique();
-    else {
-      setPérimètreGéographique({
-        codeInsee: territoire.codeInsee,
-        maille: territoire.maille,
-      });
-    }
+
+    if (territoireSélectionné.codeInsee === territoire.codeInsee)
+      modifierTerritoireSélectionné('FR');
+    else 
+      modifierTerritoireSélectionné(territoire.codeInsee);
   }
 
   return (
@@ -73,25 +67,27 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
               setTerritoireSurvolé(null);
             }}
           >
-            {territoires.map((territoire) => (
+            {territoires.map(territoire => (
               <g key={territoire.nom}>
-                {territoire.sousTerritoires.map(sousTerritoire => (
-                  <path
-                    className='territoire-rempli'
-                    d={sousTerritoire.tracéSVG}
-                    fill={déterminerValeurAttributFill(options.déterminerRemplissage(sousTerritoire.valeur))}
-                    key={sousTerritoire.nom}
-                    onClick={() => auClicTerritoireCallback(sousTerritoire)}
-                    onMouseEnter={() => {
-                      setTerritoireSurvolé({
-                        codeInsee: sousTerritoire.codeInsee,
-                        nom: sousTerritoire.nom,
-                        valeur: sousTerritoire.valeur,
-                        maille: sousTerritoire.maille,
-                      });
-                    }}
-                  />
-                ))}
+                {
+                  territoire.sousTerritoires.map(sousTerritoire => (
+                    <path
+                      className='territoire-rempli'
+                      d={sousTerritoire.tracéSVG}
+                      fill={déterminerValeurAttributFill(options.déterminerRemplissage(sousTerritoire.valeur))}
+                      key={sousTerritoire.nom}
+                      onClick={() => auClicTerritoireCallback(sousTerritoire)}
+                      onMouseEnter={() => {
+                        setTerritoireSurvolé({
+                          codeInsee: sousTerritoire.codeInsee,
+                          nom: sousTerritoire.nom,
+                          valeur: sousTerritoire.valeur,
+                          maille: sousTerritoire.maille,
+                        });
+                      }}
+                    />
+                  ))
+                }
                 {territoire.sousTerritoires.length === 0
                   ?
                     <path
@@ -115,7 +111,7 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                     />}
               </g>
             ))}
-            { !!périmètreGéographique && <CartographieTerritoireSélectionné /> }
+            <CartographieTerritoireSélectionné />
           </g>
         </svg>
       </div>

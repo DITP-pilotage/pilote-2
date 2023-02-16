@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/consistent-function-scoping */
 import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
 import nuancierPourcentage from '@/client/constants/nuanciers/nuancierPourcentage';
-import { CartographieValeur } from '../useCartographie';
+import { CartographieValeur } from '@/components/_commons/Cartographie/useCartographie.interface';
 
 export default function useCartographieAvancement() {
   function déterminerRemplissage(valeurAvancement: CartographieValeur) {

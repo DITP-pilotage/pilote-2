@@ -9,7 +9,8 @@ import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import ListeChantiersStyled from '@/components/PageChantiers/ListeChantiers/ListeChantiers.styled';
 import Météo from '@/server/domain/chantier/Météo.interface';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
-import ListeChantiersProps from './ListeChantiers.interface';
+import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import ListeChantiersProps, { DonnéesTableauChantiers } from './ListeChantiers.interface';
 
 function afficherMétéo(météo: Météo) {
   return météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE'
@@ -39,7 +40,7 @@ function afficherLaBarreDeProgression(avancement: Avancement['global']) {
   );
 }
 
-const reactTableColonnesHelper = createColumnHelper<ListeChantiersProps['chantiersTerritorialisés'][number]>();
+const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
 
 const taillePicto = { mesure: 1.25, unité: 'rem' } as const;
 
@@ -61,13 +62,13 @@ const colonnesChantiers = () => ([
     enableSorting: false,
     cell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={taillePicto} /> : null,
   }),
-  reactTableColonnesHelper.accessor('météoTerritoire', {
+  reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
     cell: météo => afficherMétéo(météo.getValue()),
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
   }),
-  reactTableColonnesHelper.accessor('avancementGlobalTerritoire', {
+  reactTableColonnesHelper.accessor('avancement', {
     header: 'Avancement',
     cell: avancement => afficherLaBarreDeProgression(avancement.getValue()),
     enableGlobalFilter: false,
@@ -75,13 +76,24 @@ const colonnesChantiers = () => ([
   }),
 ]);
 
-export default function ListeChantiers({ chantiersTerritorialisés }: ListeChantiersProps) {
+export default function ListeChantiers({ chantiers }: ListeChantiersProps) {
+  const maille = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
+  const donnéesDuTableau = chantiers.map(chantier => ({
+    id: chantier.id,
+    nom: chantier.nom,
+    avancement: chantier.mailles[maille][territoireSélectionné.codeInsee].avancement.global,
+    météo: chantier.mailles[maille][territoireSélectionné.codeInsee].météo,
+    estBaromètre: chantier.estBaromètre,
+  }));
+
   return (
     <ListeChantiersStyled>
-      <Tableau<typeof chantiersTerritorialisés[number]>
+      <Tableau<DonnéesTableauChantiers>
         colonnes={colonnesChantiers()}
-        données={chantiersTerritorialisés}
-        entité="chantiers"
+        données={donnéesDuTableau}
+        entité="chantier"
         titre="Liste des chantiers"
       />
     </ListeChantiersStyled>

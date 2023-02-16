@@ -1,14 +1,14 @@
 import AvancementsProps from './Avancements.interface';
 import JaugeDeProgression from '../JaugeDeProgression/JaugeDeProgression';
 
-export default function Avancements({ moyenne, minimum, médiane, maximum }: AvancementsProps) {
+export default function Avancements({ avancements }: AvancementsProps) {
   return (
     <div className='fr-container fr-grid-row fr-grid-row--gutters'>
       <div className="fr-col-12 fr-col-lg-6">
         <JaugeDeProgression
           couleur='bleu'
           libellé="Taux d'avancement global"
-          pourcentage={moyenne}
+          pourcentage={avancements.moyenne}
           taille='grande'
         />
       </div>
@@ -18,7 +18,7 @@ export default function Avancements({ moyenne, minimum, médiane, maximum }: Ava
             <JaugeDeProgression
               couleur='orange'
               libellé="Minimum"
-              pourcentage={minimum}
+              pourcentage={avancements.minimum}
               taille='petite'
             />
           </div>
@@ -26,7 +26,7 @@ export default function Avancements({ moyenne, minimum, médiane, maximum }: Ava
             <JaugeDeProgression
               couleur='violet'
               libellé="Médiane"
-              pourcentage={médiane}
+              pourcentage={avancements.médiane}
               taille='petite'
             />
           </div>
@@ -34,7 +34,7 @@ export default function Avancements({ moyenne, minimum, médiane, maximum }: Ava
             <JaugeDeProgression
               couleur='vert'
               libellé="Maximum"
-              pourcentage={maximum}
+              pourcentage={avancements.maximum}
               taille='petite'
             />
           </div>

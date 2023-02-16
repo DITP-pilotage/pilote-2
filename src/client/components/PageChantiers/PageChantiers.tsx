@@ -3,17 +3,22 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import { useMemo, useState } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import { filtresActifs as filtresActifsStore, actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
-import { périmètreGéographique as périmètreGéographiqueStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
-import Sélecteurs from '@/components/PageChantiers/Sélecteurs/Sélecteurs';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { agrégerDonnéesTerritoires } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
-import { territorialiserChantiers } from '@/client/utils/chantier/chantiersTerritorialisés/chantiersTerritorialisés';
+import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
+import Avancements from '@/components/_commons/Avancements/Avancements';
+import {
+  mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
+  mailleSélectionnéeTerritoiresStore,
+  territoireSélectionnéTerritoiresStore,
+} from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import calculerRépartitionDesAvancements from '@/client/utils/chantier/avancement/calculerRépartitionDesAvancements';
+import calculerRépartitionDesMétéos from '@/client/utils/chantier/météo/calculerRépartitionDesMétéos';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
-import TauxAvancementMoyen from './TauxAvancementMoyen/TauxAvancementMoyen';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
@@ -24,8 +29,10 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   const filtresActifs = filtresActifsStore();
-  const périmètreGéographique = périmètreGéographiqueStore();
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
+  const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
+  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   const chantiersFiltrés = useMemo(() => {
     return filtresActifs.périmètresMinistériels.length > 0 || filtresActifs.autresFiltres.length > 0 
@@ -36,9 +43,19 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
       : chantiers;
   }, [chantiers, filtresActifs]);
 
-  const chantiersTerritorialisés = useMemo(() => territorialiserChantiers(chantiersFiltrés, périmètreGéographique), [chantiersFiltrés, périmètreGéographique]);
-  const donnéesTerritoiresAgrégées = useMemo(() => agrégerDonnéesTerritoires(chantiersFiltrés.map(chantier => chantier.mailles)), [chantiersFiltrés]);
 
+  const donnéesTerritoiresAgrégées = useMemo(() => {
+    return agrégerDonnéesTerritoires(chantiersFiltrés.map(chantier => chantier.mailles));
+  }, [chantiersFiltrés]);
+
+  const avancements = useMemo(() => {
+    return calculerRépartitionDesAvancements(donnéesTerritoiresAgrégées, mailleAssociéeAuTerritoireSélectionné, mailleSélectionnée, territoireSélectionné.codeInsee);
+  }, [mailleAssociéeAuTerritoireSélectionné, mailleSélectionnée, territoireSélectionné, donnéesTerritoiresAgrégées]);
+
+  const météos = useMemo(() => {
+    return calculerRépartitionDesMétéos(donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné][territoireSélectionné.codeInsee].météo); 
+  }, [mailleAssociéeAuTerritoireSélectionné, territoireSélectionné, donnéesTerritoiresAgrégées]);
+  
   return (
     <PageChantiersStyled className="flex">
       <BarreLatérale
@@ -46,7 +63,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <Sélecteurs />
+          <SélecteursMaillesEtTerritoires />
         </BarreLatéraleEncart>
         <Filtres ministères={ministères} />
       </BarreLatérale>
@@ -79,16 +96,26 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
               </div>
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
-                  <TauxAvancementMoyen donnéesTerritoiresAgrégées={donnéesTerritoiresAgrégées} />
+                  <div className='fr-container--fluid'>
+                    <div className="fr-grid-row">
+                      <Titre
+                        baliseHtml='h2'
+                        className='fr-h6'
+                      >
+                        Taux d’avancement moyen de la sélection
+                      </Titre>
+                      <Avancements avancements={avancements} />
+                    </div>
+                  </div>
                   <hr className='fr-hr fr-my-3w fr-pb-1v' />
-                  <RépartitionMétéo donnéesTerritoiresAgrégées={donnéesTerritoiresAgrégées} />
+                  <RépartitionMétéo météos={météos} />
                 </Bloc>
               </div>
             </div>
             <div className="fr-grid-row fr-mt-3w">
               <div className="fr-col">
                 <Bloc>
-                  <ListeChantiers chantiersTerritorialisés={chantiersTerritorialisés}  />
+                  <ListeChantiers chantiers={chantiersFiltrés}  />
                 </Bloc>
               </div>
             </div>

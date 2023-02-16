@@ -43,11 +43,14 @@ export default function AvancementChantier({ chantier }: AvancementChantierProps
       }
       <Bloc titre='National'>
         <div className='fr-py-4w'>
-          <Avancements
-            maximum={null}
-            minimum={null}
-            moyenne={chantier.mailles.nationale.FR.avancement.global}
-            médiane={null}
+          <Avancements avancements={
+              { 
+                maximum: null, 
+                minimum: null, 
+                moyenne: chantier.mailles.nationale.FR.avancement.global,
+                médiane: null, 
+              }
+            }
           />
         </div>
       </Bloc>

@@ -1,54 +1,15 @@
 /* eslint-disable unicorn/consistent-function-scoping */
-import { Maille, MailleInterne } from '@/server/domain/chantier/Chantier.interface';
+import { départementsTerritoiresStore, régionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { Maille } from '@/server/domain/chantier/Chantier.interface';
 import { Agrégation } from '@/client/utils/types';
 import { DonnéesTerritoires, réduireDonnéesTerritoires, TerritoireSansCodeInsee } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
-import { NuancierRemplissage, remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
-import untypedDépartementsJSON from './départements.json';
-import untypedRégionsJSON from './régions.json';
-
-export type CartographieRégionJSON = {
-  tracéSVG: string,
-  codeInsee: CartographieTerritoireCodeInsee,
-  nom: string
-};
-
-export type CartographieDépartementJSON = {
-  tracéSVG: string,
-  codeInsee: CartographieTerritoireCodeInsee,
-  codeInseeRégion: CartographieTerritoireCodeInsee,
-  nom: string
-};
-
-export type CartographieBulleTerritoire = Pick<CartographieTerritoire, 'codeInsee' | 'nom' | 'valeur' | 'maille'>;
-export type CartographieTerritoireCodeInsee = string;
-export type CartographieValeur = number | string | null;
-
-export type CartographieTerritoire = {
-  codeInsee: CartographieTerritoireCodeInsee,
-  maille: Maille,
-  nom: string,
-  sousTerritoires: (CartographieTerritoire & {
-    codeInseeParent: CartographieTerritoireCodeInsee;
-  })[];
-  tracéSVG: string;
-  valeur: CartographieValeur,
-};
-
-export type CartographieTerritoireAffiché = {
-  codeInsee: CartographieTerritoireCodeInsee,
-  maille: 'nationale' | 'régionale',
-};
-
-export type CartographieOptions = {
-  territoireAffiché: CartographieTerritoireAffiché,
-  déterminerRemplissage: (valeur: CartographieValeur) => NuancierRemplissage,
-  formaterValeur: (valeur: CartographieValeur) => string,
-  territoireSélectionnable: boolean,
-};
-
-export type CartographieDonnées = Record<MailleInterne, Record<CartographieTerritoireCodeInsee, CartographieValeur>>;
+import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
+import { CartographieValeur, CartographieDonnées, CartographieTerritoireAffiché, CartographieTerritoireCodeInsee, CartographieBulleTerritoire, CartographieOptions, CartographieTerritoire } from './useCartographie.interface';
 
 export default function useCartographie() {
+  const régions = régionsTerritoiresStore();
+  const départements = départementsTerritoiresStore();
+
   function préparerDonnéesCartographieÀPartirDUneListe(
     donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>,
     fonctionDeRéduction: (territoiresAgrégés: Agrégation<TerritoireSansCodeInsee>) => CartographieValeur,
@@ -59,14 +20,14 @@ export default function useCartographie() {
       null,
     );
   }
-
+  
   function préparerDonnéesCartographieÀPartirDUnÉlément(
     donnéesTerritoires: DonnéesTerritoires<TerritoireSansCodeInsee>,
     fonctionDExtraction: (territoire: TerritoireSansCodeInsee) => CartographieValeur,
   ): CartographieDonnées {
     const donnéesCartographie: CartographieDonnées = { départementale : {}, régionale: {} };
     let maille: Maille;
-
+  
     for (maille in donnéesTerritoires) {
       if (maille === 'nationale') continue;
       for (const codeInsee in donnéesTerritoires[maille]) {
@@ -75,25 +36,28 @@ export default function useCartographie() {
     }
     return donnéesCartographie;
   }
-
-  const départementsJSON: CartographieDépartementJSON[] = untypedDépartementsJSON;
-  const régionsJSON: CartographieRégionJSON[] = untypedRégionsJSON;
-
+  
+  function formaterBulleTitre(territoireSurvolé: CartographieBulleTerritoire) {
+    return territoireSurvolé.maille === 'départementale'
+      ? `${territoireSurvolé.codeInsee} – ${territoireSurvolé.nom}`
+      : territoireSurvolé.nom;
+  }
+  
   function déterminerRégionsÀTracer(territoireAffiché: CartographieTerritoireAffiché) {
     return territoireAffiché.maille === 'régionale'
-      ? régionsJSON.filter(régionJSON => régionJSON.codeInsee === territoireAffiché.codeInsee)
-      : régionsJSON;
+      ? régions.filter(région => région.codeInsee === territoireAffiché.codeInsee)
+      : régions;
   }
 
   function récupérerDépartementsDUneRégion(codeInseeRégion: CartographieTerritoireCodeInsee) {
-    return départementsJSON.filter(département => département.codeInseeRégion === codeInseeRégion);
+    return départements.filter(département => département.codeInseeParent === codeInseeRégion);
   }
 
   function créerTerritoires(
-    régionsÀTracer: CartographieRégionJSON[],
+    régionsÀTracer: typeof régions,
     données: CartographieDonnées,
     afficherDépartements: boolean,
-  ) {
+  ): CartographieTerritoire[] {
     return régionsÀTracer.map(région => ({
       codeInsee: région.codeInsee,
       maille: 'régionale' as const,
@@ -108,7 +72,7 @@ export default function useCartographie() {
             nom: département.nom,
             tracéSVG: département.tracéSVG,
             valeur: données.départementale[département.codeInsee],
-            codeInseeParent: département.codeInseeRégion,
+            codeInseeParent: département.codeInseeParent!,
             sousTerritoires: [],
           }))
         : [],
@@ -116,11 +80,7 @@ export default function useCartographie() {
     );
   }
   
-  function formaterBulleTitre(territoireSurvolé: CartographieBulleTerritoire) {
-    return territoireSurvolé.maille === 'départementale'
-      ? `${territoireSurvolé.codeInsee} – ${territoireSurvolé.nom}`
-      : territoireSurvolé.nom;
-  }
+ 
     
   const optionsParDéfaut: CartographieOptions = {
     territoireAffiché: {

@@ -1,14 +1,16 @@
 import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
-import { calculerMoyenne } from '@/client/utils/statistiques';
+import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import CartographieTauxAvancement from '@/components/_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
-import { mailleInterne as mailleInterneStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
+import { mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
 
 export default function RépartitionGéographique({ donnéesTerritoiresAgrégées }: RépartitionGéographiqueProps) {
   const { préparerDonnéesCartographieÀPartirDUneListe } = useCartographie();
-  const mailleInterne = mailleInterneStore();
+
+  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+
   const donnéesCartographie = useMemo(() => (
     préparerDonnéesCartographieÀPartirDUneListe(
       donnéesTerritoiresAgrégées,
@@ -29,7 +31,7 @@ export default function RépartitionGéographique({ donnéesTerritoiresAgrégée
       </Titre>
       <CartographieTauxAvancement
         données={donnéesCartographie}
-        mailleInterne={mailleInterne}
+        niveauDeMaille={mailleSélectionnée}
         options={{ territoireSélectionnable: true }}
       />
     </>

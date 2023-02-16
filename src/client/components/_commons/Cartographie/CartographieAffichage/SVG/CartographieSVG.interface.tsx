@@ -1,4 +1,4 @@
-import { CartographieBulleTerritoire, CartographieTerritoire, CartographieOptions } from '../../useCartographie';
+import { CartographieBulleTerritoire, CartographieTerritoire, CartographieOptions } from '@/components/_commons/Cartographie/useCartographie.interface';
 
 export type Viewbox = {
   x: number,
