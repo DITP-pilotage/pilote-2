@@ -1,5 +1,5 @@
 import { getServerSession } from 'next-auth/next';
-import { config } from '@/server/infrastructure/Configuration';
+import config from '@/server/infrastructure/Configuration';
 import { authOptions } from './api/auth/[...nextauth]';
 
 export default function Signin() {
@@ -10,8 +10,9 @@ export default function Signin() {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: any) {
   const session = await getServerSession(context.req, context.res, authOptions);
+  // eslint-disable-next-line no-console
   console.log('PLOP', session, authOptions);
   if (!session) {
     const params = new URLSearchParams({

@@ -15,12 +15,29 @@ export class Configuration {
 
   public readonly redirectUri: string;
 
-  constructor(env: NodeJS.ProcessEnv) {
-    this.isUsingDatabase = env.USE_DATABASE == 'true';
+  public readonly basicAuthUsername: string | undefined;
 
-    this.keycloakClientId = env.KEYCLOAK_CLIENT_ID || 'N/A';
-    this.keycloakClientSecret = env.KEYCLOAK_CLIENT_SECRET || 'N/A';
-    this.keycloakIssuer = env.KEYCLOAK_ISSUER || 'N/A';
+  public readonly basicAuthPassword: string | undefined;
+
+  public readonly isUsingBasicAuth: boolean;
+
+  constructor() {
+    this.isUsingDatabase = process.env.USE_DATABASE == 'true';
+
+    const basicAuth = process.env.BASIC_AUTH_CREDENTIALS;
+    if (basicAuth) {
+      // TODO: pas basic auth mais credentials
+      this.isUsingBasicAuth = true;
+      const parts = basicAuth.split(':');
+      this.basicAuthUsername = parts[0];
+      this.basicAuthPassword = parts[1];
+    } else {
+      this.isUsingBasicAuth = false;
+    }
+
+    this.keycloakClientId = process.env.KEYCLOAK_CLIENT_ID || 'N/A';
+    this.keycloakClientSecret = process.env.KEYCLOAK_CLIENT_SECRET || 'N/A';
+    this.keycloakIssuer = process.env.KEYCLOAK_ISSUER || 'N/A';
 
     this.tokenUrl = this.keycloakIssuer + '/protocol/openid-connect/token';
     this.authUrl = this.keycloakIssuer + '/protocol/openid-connect/auth'; // '/api/auth/signin/keycloak';
@@ -29,4 +46,6 @@ export class Configuration {
   }
 }
 
-export const config = new Configuration(process.env);
+
+const config = new Configuration();
+export default config;

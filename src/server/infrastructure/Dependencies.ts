@@ -12,7 +12,7 @@ import SynthèseDesRésultatsRepository from '@/server/domain/chantier/Synthèse
 import SynthèseDesRésultatsRandomRepository
   from '@/server/infrastructure/chantier/SynthèseDesRésultatsRandomRepository';
 import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/chantier/SynthèseDesRésultatsSQLRepository';
-import { config } from '@/server/infrastructure/Configuration';
+import config from '@/server/infrastructure/Configuration';
 import logger from '@/server/infrastructure/logger';
 import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
 import AxeRandomRepository from '@/server/infrastructure/axe/AxeRandomRepository';

@@ -1,18 +1,27 @@
 import { useSession, signIn, signOut } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 export default function Component() {
   const { data: session } = useSession();
+  const mySession = session as Session & { tokenExp: Date }; // TODO définir le type au même endroit qu'on ajoute tokenExp
 
   if (session) {
     return (
       <div>
-        Signed in as
-        {' '}
-        {session.user?.email}
-        , 
-        {' '}
-        {session.tokenExp}
-        {' '}
+        <span>
+          <span>
+            Signed in as&nbsp;
+          </span>
+          <span>
+            {session.user?.email}
+          </span>
+          <span>
+            ,&nbsp;
+          </span>
+          <span>
+            {mySession?.tokenExp.toString()}
+          </span>
+        </span>
         <br />
         <button
           onClick={() => signOut()}
