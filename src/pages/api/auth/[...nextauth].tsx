@@ -3,6 +3,7 @@ import KeycloakProvider from 'next-auth/providers/keycloak';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import type { JWT } from 'next-auth/jwt';
 import config from '@/server/infrastructure/Configuration';
+import logger from '@/server/infrastructure/logger';
 
 export const keycloak = KeycloakProvider({
   clientId: config.keycloakClientId,
@@ -39,9 +40,9 @@ async function doFinalSignoutHandshake(token: JWT) {
       }
       
       // The response body should contain a confirmation that the user has been logged out
-      console.log('Completed post-logout handshake', status);
+      logger.info('Completed post-logout handshake', status);
     } catch (error: any) {
-      console.error('Unable to perform post-logout handshake', error);
+      logger.error('Unable to perform post-logout handshake', error);
     }
   }
 }
@@ -89,13 +90,13 @@ async function refreshAccessToken(token: JWT) {
         refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
       };
       
-      console.log('*****************');
-      console.log(refreshedTokens);
-      console.log('*****************');
-      console.log(res);
+      logger.debug('*****************');
+      logger.debug(refreshedTokens);
+      logger.debug('*****************');
+      logger.debug(res);
       return res;
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       return null;
     }
   } else {
@@ -146,14 +147,14 @@ export const authOptions = {
       // account is defined when recieved token from server (ie Keycloak)
       // Initial log in
       if (account && user) {
-        console.log('------> JWT fnt');
-        console.log('> Token=', token);
-        console.log('> user=', user);
-        console.log('> account=', account);
-        console.log('> profile=', profile);
-        console.log('> isNewUser=', isNewUser);
-        console.log('date=', currentDate);
-        console.log(' JWT fnt <--------------<<<');
+        logger.debug('------> JWT fnt');
+        logger.debug('> Token=', token);
+        logger.debug('> user=', user);
+        logger.debug('> account=', account);
+        logger.debug('> profile=', profile);
+        logger.debug('> isNewUser=', isNewUser);
+        logger.debug('date=', currentDate);
+        logger.debug(' JWT fnt <--------------<<<');
 
         token.accessToken = account.access_token;
         token.expires_at = currentDate.setSeconds(currentDate.getSeconds() + 20);  // account.expires_at;
@@ -165,7 +166,7 @@ export const authOptions = {
       if (token.provider == 'credentials' || currentDate < token.expires_at) {
         return token;
       } else {
-        console.error('Token HAS EXPIRED');
+        logger.error('Token HAS EXPIRED');
         return refreshAccessToken(token);
       }
 
