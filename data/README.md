@@ -38,11 +38,14 @@ Récupérez le zip des métadonnées PPG, dont le nom commence par `PPG_metadata
 Décompressez le répertoire `PPG_metadata` dans `data/input_data/private_data`.
 Ce projet est aussi récupérable de github.
 
+Il faut également récupérer le dump dfakto qui se trouve sur le drive à l'adresse https://drive.google.com/drive/folders/1NI_VQIqJ3JPovOWC7b73j_cJt3O9qXA-.
+Dans le même dossier drive, il vous faudra le fichier fact_financials_enr_short.csv. A placer dans le `input_data/private_data/dump_dfakto_octo/rp/raw/fact_financials_enr_short.csv`.
+
 On se retrouve avec une arborescence qui ressemble à cela :
 
 ```
 data/input_data/private_data/
-└── PPG_metadata
+├── PPG_metadata
     ├── CONTRIBUTING.md
     ├── PPG_metadata.Rproj
     ├── README.md
@@ -51,6 +54,13 @@ data/input_data/private_data/
     ├── ingestion
     ├── models
     └── views
+└── dump_dfakto_octo
+    ├── ps
+    └── rp
+        ├── raw
+        └── views
+            ├── data
+            └── meta
 ```
 
 #### Initialisation de l'environnement python
@@ -65,6 +75,11 @@ Afin de démarrer l'environnement :
 
 ```bash
 pipenv shell
+```
+
+#### Récupération des dépendances DBT 
+``` bash 
+dbt deps --project-dir pilote_data_jobs/transformations/ditp_ppg_dbt/ --profiles-dir pilote_data_jobs/transformations/dbt_root/ 
 ```
 
 #### Initialisation de la base de données
