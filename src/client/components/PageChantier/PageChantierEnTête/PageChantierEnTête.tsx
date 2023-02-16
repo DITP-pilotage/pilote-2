@@ -24,13 +24,13 @@ export default function PageChantierEnTête({ chantier }: PageChantierEnTêtePro
             Axe
           </p>
           <p className='fr-mb-1w fr-text--xs chantier-données-valeur'>
-            Non renseigné
+            { chantier.axe }
           </p>
           <p className='fr-mb-0 fr-text--xs chantier-données-propriété'>
             Politique Prioritaire du Gouvernement
           </p>
           <p className='fr-mb-0 fr-text--xs chantier-données-valeur'>
-            Non renseigné
+            { chantier.ppg }
           </p>
         </div>
       </div>
