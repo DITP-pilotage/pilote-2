@@ -204,7 +204,6 @@ PPG --> |view_meta_porteur.csv| PG
 PPG --> |ref_indic_type.csv| PG
 PPG --> |view_meta_axe.csv| PG
 PPG --> |view_meta_ppg.csv| PG
-PPG --> |rp_view_data_properties.csv| PG
 ```
 
 Légende :
@@ -226,6 +225,7 @@ DFAK --> |fact_progress_reform.csv| PG
 DFAK --> |dim_structures.csv| PG
 DFAK --> |dim_periods.csv| PG
 DFAK --> |fact_financials_enr.csv| PG
+DFAK --> |view_data_properties.csv| PG
 ```
 
 _NB_ : 
@@ -269,6 +269,9 @@ subgraph Base PG Pilote 2
       M_CHA --> SDR
       M_ZON --> SDR
       D_VDP --> SDR[synthese_des_resultats]
+      M_CHA --> COM
+      M_ZON --> COM
+      D_VDP --> COM[commentaire]
       M_ZON --> IND
       D_DTN --> IND
       D_DS  --> IND
@@ -276,12 +279,9 @@ subgraph Base PG Pilote 2
       M_TYPE --> IND
       M_IND --> IND[indicateur]
       D_FPE --> IND
-      linkStyle 0,1,2,3,4,5,6 stroke:red;
    end
 end
 ```
 
 *NB* : 
 - L'action de `select` correspond à la sélection de colonnes.
-- En rouge, les flèches utilisant DBT pour les transformations.
-- En blanc, les flèches utilisant PSQL pour la/les transformations.
