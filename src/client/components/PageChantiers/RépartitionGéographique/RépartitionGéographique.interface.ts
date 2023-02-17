@@ -1,9 +1,5 @@
-import {
-  DonnéesTerritoires,
-  TerritoireSansCodeInsee,
-} from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
-import { Agrégation } from '@/client/utils/types';
+import { AgrégatParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur.interface';
 
 export default interface RépartitionGéographiqueProps {
-  donnéesTerritoiresAgrégées: DonnéesTerritoires<Agrégation<TerritoireSansCodeInsee>>
+  donnéesTerritoiresAgrégées: AgrégatParTerritoire
 }

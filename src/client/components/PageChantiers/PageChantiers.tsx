@@ -7,7 +7,6 @@ import Titre from '@/components/_commons/Titre/Titre';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { agrégerDonnéesTerritoires } from '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires';
 import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import {
@@ -15,10 +14,9 @@ import {
   mailleSélectionnéeTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import calculerRépartitionDesAvancements from '@/client/utils/chantier/avancement/calculerRépartitionDesAvancements';
-import calculerRépartitionDesMétéos from '@/client/utils/chantier/météo/calculerRépartitionDesMétéos';
+import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import PageChantiersProps from './PageChantiers.interface';
-import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
+// import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
@@ -43,18 +41,18 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
       : chantiers;
   }, [chantiers, filtresActifs]);
 
-
   const donnéesTerritoiresAgrégées = useMemo(() => {
-    return agrégerDonnéesTerritoires(chantiersFiltrés.map(chantier => chantier.mailles));
+    return new AgrégateurChantiersParTerritoire(chantiersFiltrés).agréger();
   }, [chantiersFiltrés]);
 
-  const avancements = useMemo(() => {
-    return calculerRépartitionDesAvancements(donnéesTerritoiresAgrégées, mailleAssociéeAuTerritoireSélectionné, mailleSélectionnée, territoireSélectionné.codeInsee);
-  }, [mailleAssociéeAuTerritoireSélectionné, mailleSélectionnée, territoireSélectionné, donnéesTerritoiresAgrégées]);
+  const avancements = {
+    moyenne: donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.avancements.moyenne,
+    médiane: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.médiane,
+    minimum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.minimum,
+    maximum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.maximum,
+  };
 
-  const météos = useMemo(() => {
-    return calculerRépartitionDesMétéos(donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné][territoireSélectionné.codeInsee].météo); 
-  }, [mailleAssociéeAuTerritoireSélectionné, territoireSélectionné, donnéesTerritoiresAgrégées]);
+  const météos = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.météos;
   
   return (
     <PageChantiersStyled className="flex">
@@ -91,7 +89,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
             <div className="fr-grid-row fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
-                  <RépartitionGéographique donnéesTerritoiresAgrégées={donnéesTerritoiresAgrégées} />
+                  {/* <RépartitionGéographique donnéesTerritoiresAgrégées={donnéesTerritoiresAgrégées} /> */}
                 </Bloc>
               </div>
               <div className="fr-col-12 fr-col-lg-6">

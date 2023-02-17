@@ -17,6 +17,8 @@ export default function NextPageAccueil({ chantiers, ministères }: NextPageAccu
   );
 }
 
+
+
 export async function getServerSideProps() {
   const chantierRepository = dependencies.getChantierRepository();
   const chantiers = await chantierRepository.getListe();
