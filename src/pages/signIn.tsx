@@ -18,10 +18,9 @@ export async function getServerSideProps(context: any) {
     const params = new URLSearchParams({
       response_type: 'code',
       client_id: config.keycloakClientId,
-      redirect_uri: config.redirectUri,
+      redirect_uri: 'http://' + context.req.headers.host + config.redirectUri,
       scope: 'openid profile email',
     });
-
 
     return {
       redirect: {
