@@ -1,5 +1,6 @@
 import { Avancement, Maille } from '@/server/domain/chantier/Chantier.interface';
 import Météo from '@/server/domain/chantier/Météo.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 type RépartitionAvancements = {
   moyenne: number | null,
@@ -16,7 +17,7 @@ export type AgrégatParTerritoire = {
       avancements: RépartitionAvancements
     },
     territoires: {
-      [key: string]: {
+      [clé in CodeInsee]: {
         répartition: {
           avancements: RépartitionAvancements,
           météos: RépartitionMétéos
