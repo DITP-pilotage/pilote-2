@@ -3,19 +3,16 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import { actions as actionsFiltresStore, filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
 import {
-  actionsTerritoiresStore,
   mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
   mailleSélectionnéeTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import nuancierPourcentage from '@/client/constants/nuanciers/nuancierPourcentage';
 import { objectEntries } from '@/client/utils/objects/objects';
 
 export default function usePageChantiers(chantiers: Chantier[]) {
   const filtresActifs = filtresActifsStore();
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
 
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -42,26 +39,12 @@ export default function usePageChantiers(chantiers: Chantier[]) {
 
   const météos = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.météos;
 
-  const déterminerRemplissage = (valeur: number | null) => {
-    if (valeur === null) return '#bababa';
-
-    return nuancierPourcentage.find(({ seuil }) => seuil !== null && seuil >= valeur)!.remplissage.couleur;
-  };
-
-  let donnéesCartographie: any = {};
-
-  useMemo(() => {
-
-    objectEntries(donnéesTerritoiresAgrégées[mailleSélectionnée].territoires).forEach(([codeInsee, territoire]) => {
-      const détailTerritoire = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
-
-      donnéesCartographie[codeInsee] = {
-        valeurAffichée: territoire.répartition.avancements.moyenne?.toFixed(0) + '%',
-        remplissage: déterminerRemplissage(territoire.répartition.avancements.moyenne),
-        libellé: mailleSélectionnée === 'départementale' ? `${détailTerritoire?.codeInsee} - ${détailTerritoire?.nom}` : détailTerritoire?.nom,
-      };
-    });
-  }, [donnéesTerritoiresAgrégées, mailleSélectionnée, récupérerDétailsSurUnTerritoire, donnéesCartographie]);
+  const donnéesCartographie = useMemo(() => {
+    return objectEntries(donnéesTerritoiresAgrégées[mailleSélectionnée].territoires).map(([codeInsee, territoire]) => ({
+      valeur: territoire.répartition.avancements.moyenne,
+      codeInsee: codeInsee,
+    }));
+  }, [donnéesTerritoiresAgrégées, mailleSélectionnée]);
 
   return {
     nombreFiltresActifs: récupérerNombreFiltresActifs(),

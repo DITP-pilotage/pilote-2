@@ -1,14 +1,9 @@
-import { MailleInterne } from '@/server/domain/chantier/Chantier.interface';
-import { NuancierRemplissage } from '@/client/constants/nuanciers/nuancier';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
-export type CartographieTerritoireSurvolé = {
+export type CartographieInfoBulle = {
   libellé: string
   valeurAffichée: string
 };
-
-export type CartographieTerritoireCodeInsee = string;
-export type CartographieValeur = string;
 
 export type CartographieTerritoire = {
   codeInsee: CodeInsee
@@ -19,7 +14,7 @@ export type CartographieTerritoire = {
 };
 
 export type CartographieTerritoireAffiché = {
-  codeInsee: CartographieTerritoireCodeInsee,
+  codeInsee: CodeInsee,
   maille: 'nationale' | 'régionale',
 };
 
@@ -30,9 +25,5 @@ export type CartographieTerritoires = {
 
 export type CartographieOptions = {
   territoireAffiché: CartographieTerritoireAffiché,
-  déterminerRemplissage: (valeur: CartographieValeur) => NuancierRemplissage,
-  formaterValeur: (valeur: CartographieValeur) => string,
   territoireSélectionnable: boolean,
 };
-
-export type CartographieDonnées = Record<MailleInterne, Record<CartographieTerritoireCodeInsee, CartographieValeur>>;

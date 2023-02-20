@@ -1,13 +1,13 @@
 import { memo, useEffect, useRef, useState } from 'react';
-import CartographieTerritoireSélectionné from '@/components/_commons/Cartographie/CartographieAffichage/SVG/CartographieTerritoireSélectionné';
 import hachuresGrisBlanc from '@/client/constants/nuanciers/hachure/hachuresGrisBlanc';
 import { actionsTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
+import CartographieTerritoireSélectionné from './CartographieTerritoireSélectionné';
 
-function CartographieSVG({ options, territoires, setTerritoireSurvolé }: CartographieSVGProps) {
+function CartographieSVG({ options, territoires, frontières, setInfoBulle }: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
@@ -57,11 +57,11 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
           <g
             className="canvas"
             onMouseLeave={() => {
-              setTerritoireSurvolé(null);
+              setInfoBulle(null);
             }}
           >
             {
-              territoires.territoires.map(territoire => (
+              territoires.map(territoire => (
                 <path
                   className='territoire-rempli'
                   d={territoire.tracéSVG}
@@ -69,16 +69,16 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
                   key={`territoire-${territoire.codeInsee}`}
                   onClick={() => auClicTerritoireCallback(territoire.codeInsee)}
                   onMouseEnter={() => {
-                    setTerritoireSurvolé({
+                    setInfoBulle({
                       libellé: territoire.libellé,
                       valeurAffichée: territoire.valeurAffichée,
                     });
                   }}
                 />),
               )
-}
+            }
             {
-              territoires.frontières.map(frontière => (
+              frontières.map(frontière => (
                 <path
                   className='territoire-frontière'
                   d={frontière.tracéSVG}
@@ -96,5 +96,6 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
 
 export default memo(CartographieSVG, (prevProps, nextProps) => (
   prevProps.territoires === nextProps.territoires &&
-  prevProps.setTerritoireSurvolé === nextProps.setTerritoireSurvolé
+  prevProps.frontières === nextProps.frontières &&
+  prevProps.setInfoBulle === nextProps.setInfoBulle
 ));

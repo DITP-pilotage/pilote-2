@@ -8,13 +8,13 @@ import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLat�
 import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import usePageChantiers from '@/components/PageChantiers/usePageChantiers';
+import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
 import Filtres from './Filtres/Filtres';
-import CartographieTauxAvancement from '../_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
 
 export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {  
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
@@ -62,7 +62,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                   >
                     Répartition géographique
                   </Titre>
-                  <CartographieTauxAvancement
+                  <CartographieAvancement
                     données={donnéesCartographie}
                     options={{ territoireSélectionnable: true }}
                   />

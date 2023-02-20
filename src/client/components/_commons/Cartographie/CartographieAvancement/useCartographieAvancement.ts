@@ -1,19 +1,17 @@
 import { useMemo } from 'react';
-import nuancierMétéo from '@/client/constants/nuanciers/nuancierMétéo';
+import nuancierPourcentage from '@/client/constants/nuanciers/nuancierPourcentage';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
-import { libellésMétéos } from '@/server/domain/chantier/Météo.interface';
-import { CartographieDonnéesMétéo } from './CartographieMétéo.interface';
+import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 
-export default function useCartographieMétéo(données: CartographieDonnéesMétéo) {
+export default function useCartographieAvancement(données: CartographieDonnéesAvancement) {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
-  const légende = nuancierMétéo.map(({ remplissage, libellé, picto }) => ({ 
-    libellé, 
+  const légende = nuancierPourcentage.map(({ remplissage, libellé }) => ({
+    libellé,
     remplissage,
-    picto,
   }));
 
   const donnéesCartographie = useMemo(() => {
@@ -23,8 +21,8 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
       const détailTerritoire = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
   
       donnéesFormatées[codeInsee] = {
-        valeurAffichée: libellésMétéos[valeur],
-        remplissage: nuancierMétéo.find(({ valeur: valeurMétéo }) => valeurMétéo === valeur)?.remplissage.couleur ?? remplissageParDéfaut.couleur,
+        valeurAffichée: valeur?.toFixed(0) + '%',
+        remplissage: valeur === null ? remplissageParDéfaut.couleur : nuancierPourcentage.find(({ seuil }) => seuil !== null && seuil >= valeur)?.remplissage.couleur ?? remplissageParDéfaut.couleur,
         libellé: mailleSélectionnée === 'départementale' ? `${détailTerritoire?.codeInsee} - ${détailTerritoire?.nom}` : détailTerritoire?.nom ?? 'N/C',
       };
     });

@@ -1,11 +1,8 @@
 /* eslint-disable unicorn/consistent-function-scoping */
 import { régionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
-import {
-  CartographieDonnées,
-} from '@/components/_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement.interface';
 import { Territoire } from '@/client/stores/useTerritoiresStore/useTerritoiresStore.interface';
 import { CartographieTerritoireAffiché, CartographieOptions, CartographieTerritoires } from './useCartographie.interface';
+import { CartographieDonnées } from './Cartographie.interface';
 
 export default function useCartographie() {
   const régions = régionsTerritoiresStore();
@@ -41,8 +38,6 @@ export default function useCartographie() {
       codeInsee: 'FR',
       maille: 'nationale',
     },
-    déterminerRemplissage: () => remplissageParDéfaut,
-    formaterValeur: (valeur) => valeur ? String(valeur) : '-',
     territoireSélectionnable: false,
   };
   

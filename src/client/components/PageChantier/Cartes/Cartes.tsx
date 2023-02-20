@@ -1,22 +1,7 @@
-import { useMemo } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
-import CartographieTauxAvancement from '@/components/_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
-import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
-import useCartographie from '@/components/_commons/Cartographie/useCartographie';
-import CartesProps from './Cartes.interface';
 
-export default function Cartes({ chantier }: CartesProps) {
-  const { préparerDonnéesCartographieÀPartirDUnÉlément } = useCartographie();
-
-  const donnéesCartographieAvancement = useMemo(() => (
-    préparerDonnéesCartographieÀPartirDUnÉlément(chantier.mailles, territoire => territoire.avancement.global)
-  ), [chantier.mailles, préparerDonnéesCartographieÀPartirDUnÉlément]);
-  
-  const donnéesCartographieMétéo = useMemo(() => (
-    préparerDonnéesCartographieÀPartirDUnÉlément(chantier.mailles, territoire => territoire.météo)
-  ), [chantier.mailles, préparerDonnéesCartographieÀPartirDUnÉlément]);
-
+export default function Cartes() {
   return (
     <div 
       id="cartes"
@@ -36,10 +21,7 @@ export default function Cartes({ chantier }: CartesProps) {
             >
               Taux d&apos;avancement
             </Titre>
-            <CartographieTauxAvancement
-              données={donnéesCartographieAvancement}
-              niveauDeMaille="départementale"
-            />
+           
           </Bloc>
         </div>
         <div className="fr-col-12 fr-col-xl-6">
@@ -50,10 +32,7 @@ export default function Cartes({ chantier }: CartesProps) {
             >
               Niveau de confiance
             </Titre>
-            <CartographieMétéo
-              données={donnéesCartographieMétéo}
-              mailleInterne="départementale"
-            />
+           
           </Bloc>
         </div>
       </div>
