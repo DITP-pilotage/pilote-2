@@ -1,18 +1,11 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import CartographieTerritoireSélectionné from '@/components/_commons/Cartographie/CartographieAffichage/SVG/CartographieTerritoireSélectionné';
-import { NuancierRemplissage } from '@/client/constants/nuanciers/nuancier';
 import hachuresGrisBlanc from '@/client/constants/nuanciers/hachure/hachuresGrisBlanc';
 import { actionsTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import { CartographieTerritoire } from '@/components/_commons/Cartographie/useCartographie.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
-
-export function déterminerValeurAttributFill(remplissage: NuancierRemplissage) {
-  return remplissage.type === 'HACHURES'
-    ? `url(#${remplissage.hachure.id})`
-    : remplissage.couleur;
-}
 
 function CartographieSVG({ options, territoires, setTerritoireSurvolé }: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -31,13 +24,13 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
       setViewbox(svgRef.current.getBBox());
   }, [svgRef]);
 
-  function auClicTerritoireCallback(territoire: CartographieTerritoire) {
+  function auClicTerritoireCallback(territoireCodeInsee: CodeInsee) {
     if (!options.territoireSélectionnable) return;
 
-    if (territoireSélectionné.codeInsee === territoire.codeInsee)
+    if (territoireSélectionné.codeInsee === territoireCodeInsee)
       modifierTerritoireSélectionné('FR');
     else 
-      modifierTerritoireSélectionné(territoire.codeInsee);
+      modifierTerritoireSélectionné(territoireCodeInsee);
   }
 
   return (
@@ -67,50 +60,32 @@ function CartographieSVG({ options, territoires, setTerritoireSurvolé }: Cartog
               setTerritoireSurvolé(null);
             }}
           >
-            {territoires.map(territoire => (
-              <g key={territoire.nom}>
-                {
-                  territoire.sousTerritoires.map(sousTerritoire => (
-                    <path
-                      className='territoire-rempli'
-                      d={sousTerritoire.tracéSVG}
-                      fill={déterminerValeurAttributFill(options.déterminerRemplissage(sousTerritoire.valeur))}
-                      key={sousTerritoire.nom}
-                      onClick={() => auClicTerritoireCallback(sousTerritoire)}
-                      onMouseEnter={() => {
-                        setTerritoireSurvolé({
-                          codeInsee: sousTerritoire.codeInsee,
-                          nom: sousTerritoire.nom,
-                          valeur: sousTerritoire.valeur,
-                          maille: sousTerritoire.maille,
-                        });
-                      }}
-                    />
-                  ))
-                }
-                {territoire.sousTerritoires.length === 0
-                  ?
-                    <path
-                      className='territoire-rempli'
-                      d={territoire.tracéSVG}
-                      fill={déterminerValeurAttributFill(options.déterminerRemplissage(territoire.valeur))}
-                      onClick={() => auClicTerritoireCallback(territoire)}
-                      onMouseEnter={() => {
-                        setTerritoireSurvolé({
-                          codeInsee: territoire.codeInsee,
-                          nom: territoire.nom,
-                          valeur: territoire.valeur,
-                          maille: territoire.maille,
-                        });
-                      }}
-                    />
-                  :
-                    <path
-                      className='territoire-frontière'
-                      d={territoire.tracéSVG}
-                    />}
-              </g>
-            ))}
+            {
+              territoires.territoires.map(territoire => (
+                <path
+                  className='territoire-rempli'
+                  d={territoire.tracéSVG}
+                  fill={territoire.remplissage}
+                  key={`territoire-${territoire.codeInsee}`}
+                  onClick={() => auClicTerritoireCallback(territoire.codeInsee)}
+                  onMouseEnter={() => {
+                    setTerritoireSurvolé({
+                      libellé: territoire.libellé,
+                      valeurAffichée: territoire.valeurAffichée,
+                    });
+                  }}
+                />),
+              )
+}
+            {
+              territoires.frontières.map(frontière => (
+                <path
+                  className='territoire-frontière'
+                  d={frontière.tracéSVG}
+                  key={`frontière-${frontière.codeInsee}`}
+                />
+              ))
+            }
             <CartographieTerritoireSélectionné />
           </g>
         </svg>

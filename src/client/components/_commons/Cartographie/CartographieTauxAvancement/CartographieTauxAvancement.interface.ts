@@ -1,8 +1,9 @@
-import { MailleInterne } from '@/server/domain/chantier/Chantier.interface';
-import { CartographieDonnées, CartographieOptions } from '@/components/_commons/Cartographie/useCartographie.interface';
+import { CartographieOptions } from '@/components/_commons/Cartographie/useCartographie.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
+type CartographieDonnéesTerritoire = { valeurAffichée: string, remplissage: string, libellé: string };
+export type CartographieDonnées = Record<CodeInsee, CartographieDonnéesTerritoire>;
 export default interface CartographieTauxAvancementProps {
   données: CartographieDonnées,
-  niveauDeMaille: MailleInterne,
   options?: Partial<CartographieOptions>,
 }

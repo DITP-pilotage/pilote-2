@@ -10,24 +10,29 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import {
+  actionsTerritoiresStore,
   mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
   mailleSélectionnéeTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
+import { objectEntries } from '@/client/utils/objects/objects';
+import nuancierPourcentage from '@/client/constants/nuanciers/nuancierPourcentage';
 import PageChantiersProps from './PageChantiers.interface';
-// import RépartitionGéographique from './RépartitionGéographique/RépartitionGéographique';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
 import Filtres from './Filtres/Filtres';
+import CartographieTauxAvancement from '../_commons/Cartographie/CartographieTauxAvancement/CartographieTauxAvancement';
 
 export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {  
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   const filtresActifs = filtresActifsStore();
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
+
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -53,7 +58,27 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
   };
 
   const météos = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.météos;
-  
+
+  let data: any = {};
+
+  const déterminerRemplissage = (valeur: number | null) => {
+    if (valeur === null) return '#bababa';
+
+    return nuancierPourcentage.find(({ seuil }) => seuil !== null && seuil >= valeur)!.remplissage.couleur;
+  };
+
+  useMemo(() => {
+    objectEntries(donnéesTerritoiresAgrégées[mailleSélectionnée].territoires).forEach(([codeInsee, territoire]) => {
+      const détailTerritoire = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
+    
+      data[codeInsee] = {
+        valeurAffichée: territoire.répartition.avancements.moyenne?.toFixed(0) + '%',
+        remplissage: déterminerRemplissage(territoire.répartition.avancements.moyenne),
+        libellé: mailleSélectionnée === 'départementale' ? `${détailTerritoire?.codeInsee} - ${détailTerritoire?.nom}` : détailTerritoire?.nom,
+      };
+    });
+  }, [donnéesTerritoiresAgrégées, mailleSélectionnée, récupérerDétailsSurUnTerritoire, data]);
+
   return (
     <PageChantiersStyled className="flex">
       <BarreLatérale
@@ -89,7 +114,16 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
             <div className="fr-grid-row fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
-                  {/* <RépartitionGéographique donnéesTerritoiresAgrégées={donnéesTerritoiresAgrégées} /> */}
+                  <Titre
+                    baliseHtml='h2'
+                    className='fr-h6'
+                  >
+                    Répartition géographique
+                  </Titre>
+                  <CartographieTauxAvancement
+                    données={data}
+                    options={{ territoireSélectionnable: true }}
+                  />
                 </Bloc>
               </div>
               <div className="fr-col-12 fr-col-lg-6">

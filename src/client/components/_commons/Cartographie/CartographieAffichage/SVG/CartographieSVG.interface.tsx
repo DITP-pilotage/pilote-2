@@ -1,4 +1,8 @@
-import { CartographieBulleTerritoire, CartographieTerritoire, CartographieOptions } from '@/components/_commons/Cartographie/useCartographie.interface';
+import {
+  CartographieTerritoireSurvolé,
+  CartographieOptions,
+  CartographieTerritoires,
+} from '@/components/_commons/Cartographie/useCartographie.interface';
 
 export type Viewbox = {
   x: number,
@@ -9,6 +13,6 @@ export type Viewbox = {
 
 export default interface CartographieSVGProps {
   options: CartographieOptions,
-  territoires: CartographieTerritoire[],
-  setTerritoireSurvolé:  (state: CartographieBulleTerritoire | null) => void
+  territoires: CartographieTerritoires,
+  setTerritoireSurvolé:  (state: CartographieTerritoireSurvolé | null) => void
 }

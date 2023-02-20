@@ -7,6 +7,7 @@ export type NuancierRemplissage = {
   couleur: string,
 } | {
   type: 'HACHURES',
+  couleur: string,
   hachure: Hachure,
 };
 

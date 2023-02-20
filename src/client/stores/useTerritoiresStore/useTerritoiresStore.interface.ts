@@ -1,6 +1,6 @@
 import { Maille, MailleInterne } from '@/server/domain/chantier/Chantier.interface';
 
-type Territoire = {
+export type Territoire = {
   tracéSVG: string
   nom: string
   codeInsee: string
