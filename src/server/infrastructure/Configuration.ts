@@ -1,6 +1,8 @@
 export class Configuration {
   public readonly isUsingDatabase: Boolean;
 
+  public readonly logLevel: string;
+
   public readonly keycloakClientSecret: string;
 
   public readonly keycloakClientId: string;
@@ -23,6 +25,7 @@ export class Configuration {
 
   constructor() {
     this.isUsingDatabase = process.env.USE_DATABASE == 'true';
+    this.logLevel = process.env.LOG_LEVEL || 'info';
 
     const basicAuth = process.env.BASIC_AUTH_CREDENTIALS;
     if (basicAuth) {
