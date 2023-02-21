@@ -60,7 +60,7 @@ export default function Indicateurs({ indicateurs }: IndicateursProps) {
             }
           </div>
         ))
-}
+      }
     </div>
   );
 }

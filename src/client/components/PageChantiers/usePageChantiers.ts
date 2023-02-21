@@ -21,7 +21,7 @@ export default function usePageChantiers(chantiers: Chantier[]) {
     return filtresActifs.périmètresMinistériels.length > 0 || filtresActifs.autresFiltres.length > 0
       ? chantiers.filter(chantier => (
         filtresActifs.périmètresMinistériels.some(filtre => chantier.périmètreIds.includes(filtre.id)) ||
-                filtresActifs.autresFiltres.some(filtre => chantier[filtre.attribut as keyof Chantier])
+        filtresActifs.autresFiltres.some(filtre => chantier[filtre.attribut as keyof Chantier])
       ))
       : chantiers;
   }, [chantiers, filtresActifs]);

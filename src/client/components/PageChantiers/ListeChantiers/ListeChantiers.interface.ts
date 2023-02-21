@@ -9,6 +9,6 @@ export type DonnéesTableauChantiers = {
   id: string;
   nom: string;
   avancement: number | null;
-  météo: Météo
+  météo: Météo;
   estBaromètre: boolean;
 };
