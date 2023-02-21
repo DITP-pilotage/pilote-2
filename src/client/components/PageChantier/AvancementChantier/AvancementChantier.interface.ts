@@ -1,5 +1,9 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import AvancementsProps from '@/components/_commons/Avancements/Avancements.interface';
 
 export default interface AvancementChantierProps {
-  chantier: Chantier
+  avancements: {
+    nationale: AvancementsProps['avancements']
+    départementale: { moyenne: number | null | undefined }
+    régionale: { moyenne: number | null | undefined }
+  } 
 }

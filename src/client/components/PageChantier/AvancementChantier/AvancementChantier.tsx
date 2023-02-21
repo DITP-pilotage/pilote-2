@@ -2,11 +2,10 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
-import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import AvancementChantierProps from './AvancementChantier.interface';
 
-export default function AvancementChantier({ chantier }: AvancementChantierProps) {
-  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+export default function AvancementChantier({ avancements }: AvancementChantierProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   return (
@@ -20,38 +19,30 @@ export default function AvancementChantier({ chantier }: AvancementChantierProps
         Avancement du chantier
       </Titre>
       {
-        territoireSélectionné.codeInsee !== 'FR' && 
+        avancements.départementale.moyenne !== undefined &&
         <Bloc titre={territoireSélectionné.nom}>
           <JaugeDeProgression
             couleur="bleu"
             libellé={territoireSélectionné.nom}
-            pourcentage={chantier.mailles[mailleSélectionnée][territoireSélectionné.codeInsee].avancement.global}
+            pourcentage={avancements.départementale.moyenne}
             taille="grande"
           />
         </Bloc>
       }
       {
-        territoireSélectionné.territoireParent !== undefined && 
-        <Bloc titre={territoireSélectionné.territoireParent.nom}>
+        avancements.régionale.moyenne !== undefined && 
+        <Bloc titre={territoireSélectionné.territoireParent ? territoireSélectionné.territoireParent.nom : territoireSélectionné.nom}>
           <JaugeDeProgression
             couleur="bleu"
-            libellé={territoireSélectionné.territoireParent.nom}
-            pourcentage={chantier.mailles.régionale[territoireSélectionné.territoireParent.codeInsee].avancement.global}
+            libellé={territoireSélectionné.territoireParent ? territoireSélectionné.territoireParent.nom : territoireSélectionné.nom}
+            pourcentage={avancements.régionale.moyenne}
             taille="grande"
           />
         </Bloc>
       }
       <Bloc titre='National'>
         <div className='fr-py-4w'>
-          <Avancements avancements={
-              { 
-                maximum: null, 
-                minimum: null, 
-                moyenne: chantier.mailles.nationale.FR.avancement.global,
-                médiane: null, 
-              }
-            }
-          />
+          <Avancements avancements={avancements.nationale} />
         </div>
       </Bloc>
     </div>

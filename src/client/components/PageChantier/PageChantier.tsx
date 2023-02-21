@@ -15,6 +15,7 @@ import PageChantierEnTête from './PageChantierEnTête/PageChantierEnTête';
 import Cartes from './Cartes/Cartes';
 import Sommaire from './Sommaire/Sommaire';
 import PageChantierStyled from './PageChantier.styled';
+import usePageChantier from './usePageChantier';
 
 const listeRubriques: Rubrique[] = [
   { nom: 'Avancement du chantier', ancre: 'avancement' },
@@ -27,6 +28,7 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
+  const { avancements } = usePageChantier(chantier);
 
   return (
     <PageChantierStyled className="flex">
@@ -52,7 +54,7 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
         <div className='fr-p-4w'>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12 fr-col-xl-6">
-              <AvancementChantier chantier={chantier} />
+              <AvancementChantier avancements={avancements} />
             </div>
             <div className="fr-col-12 fr-col-xl-6">
               <Responsables chantier={chantier} />
