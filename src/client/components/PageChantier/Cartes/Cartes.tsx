@@ -1,7 +1,24 @@
+import { mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { objectEntries } from '@/client/utils/objects/objects';
 import Bloc from '@/components/_commons/Bloc/Bloc';
+import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
+import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
 import Titre from '@/components/_commons/Titre/Titre';
+import CartesProps from './Cartes.interface';
 
-export default function Cartes() {
+export default function Cartes({ chantier }: CartesProps) {
+  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+
+  const donnéesCartographieAvancement = objectEntries(chantier.mailles[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
+    valeur: territoire.avancement.global,
+    codeInsee: codeInsee,
+  }));
+
+  const donnéesCartographieMétéo = objectEntries(chantier.mailles[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
+    valeur: territoire.météo,
+    codeInsee: codeInsee,
+  }));
+
   return (
     <div 
       id="cartes"
@@ -21,7 +38,10 @@ export default function Cartes() {
             >
               Taux d&apos;avancement
             </Titre>
-           
+            <CartographieAvancement
+              données={donnéesCartographieAvancement}
+              options={{ territoireSélectionnable: true }}
+            />
           </Bloc>
         </div>
         <div className="fr-col-12 fr-col-xl-6">
@@ -32,7 +52,10 @@ export default function Cartes() {
             >
               Niveau de confiance
             </Titre>
-           
+            <CartographieMétéo
+              données={donnéesCartographieMétéo}
+              options={{ territoireSélectionnable: true }}
+            />
           </Bloc>
         </div>
       </div>
