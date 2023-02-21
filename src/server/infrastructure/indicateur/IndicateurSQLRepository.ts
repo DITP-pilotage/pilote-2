@@ -1,6 +1,7 @@
 import { indicateur, PrismaClient } from '@prisma/client';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
+import { Maille } from '@/server/domain/chantier/Chantier.interface';
 
 function toDateStringWithoutTime(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -48,4 +49,24 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
 
     return this.mapToDomain(indicateurs);
   }
+
+  async getEvolutionIndicateur(_chantierId: string, _indicateurId: string, _maille: string, _codes_insee: string[]): Promise<EvolutionIndicateur[]> {
+    return [
+      {
+        code_insee: '01',
+        maille: 'départementale',
+        valeurCible: null,
+        évolutionDateValeurActuelle: [],
+        évolutionValeurActuelle: [],
+      },
+    ];
+  }
 }
+
+type EvolutionIndicateur = {
+  valeurCible: number | null,
+  maille: Maille,
+  code_insee: string,
+  évolutionValeurActuelle: number[],
+  évolutionDateValeurActuelle: string[],
+};
