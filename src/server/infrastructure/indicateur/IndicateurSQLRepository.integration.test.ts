@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import { indicateur } from '@prisma/client';
 import IndicateurRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/IndicateurRowBuilder';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
@@ -95,14 +96,37 @@ describe('IndicateurSQLRepository', () => {
       const result = await repository.getEvolutionIndicateur('CH-001', 'IND-001', 'départementale', ['01']);
 
       // THEN
+      expect(result).toStrictEqual([]);
+    });
+
+    test("Récupère l'évolution d'un indicateur départemental", async () => {
+      // GIVEN
+      const repository = new IndicateurSQLRepository(prisma);
+      await prisma.indicateur.create({
+        data: {
+          id: 'IND-001',
+          nom: 'indic',
+          chantier_id: 'CH-001',
+          objectif_valeur_cible: 1789,
+          code_insee: '01',
+          maille: 'DEPT',
+          evolution_valeur_actuelle: [1, 2, 3],
+          evolution_date_valeur_actuelle: [new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')],
+        },
+      });
+
+      // WHEN
+      const result = await repository.getEvolutionIndicateur('CH-001', 'IND-001', 'départementale', ['01']);
+
+      // THEN
       expect(result).toStrictEqual(
         [
           {
-            valeurCible: null,
+            valeurCible: 1789,
             maille: 'départementale',
             code_insee: '01',
-            évolutionValeurActuelle: [],
-            évolutionDateValeurActuelle: [],
+            évolutionValeurActuelle: [1, 2, 3],
+            évolutionDateValeurActuelle: ['2021-01-01', '2021-02-01', '2021-03-01'],
           },
         ],
       );

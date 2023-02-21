@@ -2,6 +2,7 @@ import { indicateur, PrismaClient } from '@prisma/client';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { Maille } from '@/server/domain/chantier/Chantier.interface';
+import { NOMS_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 
 function toDateStringWithoutTime(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -55,20 +56,26 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       where: {
         chantier_id: chantierId,
         id: indicateurId,
-        maille: maille,
+        maille: 'DEPT',
         code_insee: { in: codes_insee },
       },
     });
 
-    return [
-      {
-        code_insee: '01',
-        maille: 'départementale',
-        valeurCible: null,
-        évolutionDateValeurActuelle: [],
-        évolutionValeurActuelle: [],
-      },
-    ];
+
+    const result = [];
+
+    for (const item of indicateurs) {
+      result.push({
+        code_insee: item.code_insee,
+        maille: NOMS_MAILLES[item.maille],
+        valeurCible: item.objectif_valeur_cible,
+        évolutionValeurActuelle: item.evolution_valeur_actuelle,
+        // eslint-disable-next-line unicorn/no-array-callback-reference
+        évolutionDateValeurActuelle: item.evolution_date_valeur_actuelle.map(toDateStringWithoutTime),
+      });
+    }
+
+    return result;
   }
 }
 
