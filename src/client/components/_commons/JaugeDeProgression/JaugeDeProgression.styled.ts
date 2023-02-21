@@ -40,7 +40,7 @@ const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`
     text-align: center;
   }
 
-  .jauge-libellé-centré {
+  .jauge-libellé-au-centre {
     text-align: center;
   }
 

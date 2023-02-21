@@ -16,6 +16,7 @@ import Cartes from './Cartes/Cartes';
 import Sommaire from './Sommaire/Sommaire';
 import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
+import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 
 const listeRubriques: Rubrique[] = [
   { nom: 'Avancement du chantier', ancre: 'avancement' },
@@ -29,6 +30,7 @@ const listeRubriques: Rubrique[] = [
 export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { avancements } = usePageChantier(chantier);
+  const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore()
 
   return (
     <PageChantierStyled className="flex">
@@ -53,10 +55,10 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
         <PageChantierEnTête chantier={chantier} />
         <div className='fr-p-4w'>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <div className="fr-col-12 fr-col-xl-6">
+            <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-6' : 'fr-col-xl-12'} fr-col-12`}>
               <AvancementChantier avancements={avancements} />
             </div>
-            <div className="fr-col-12 fr-col-xl-6">
+            <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-6' : 'fr-col-xl-12'} fr-col-12`}>
               <Responsables chantier={chantier} />
             </div>
           </div>
