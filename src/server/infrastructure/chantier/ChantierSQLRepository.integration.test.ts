@@ -3,6 +3,7 @@ import ChantierRepository from '@/server/domain/chantier/ChantierRepository.inte
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ChantierRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/ChantierRowBuilder';
 import { météoFromString } from '@/server/domain/chantier/Météo.interface';
+import { objectEntries } from '@/client/utils/objects/objects';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -95,8 +96,8 @@ describe('ChantierSQLRepository', () => {
       météo: météoFromString('NON_RENSEIGNEE'),
     });
 
-    expect(Object.entries(result.mailles.départementale)).toHaveLength(101);
-    expect(Object.entries(result.mailles.régionale)).toHaveLength(18);
+    expect(objectEntries(result.mailles.départementale)).toHaveLength(101);
+    expect(objectEntries(result.mailles.régionale)).toHaveLength(18);
   });
 
   test('Contient des porteurs et des coporteurs', async () => {

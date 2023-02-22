@@ -16,15 +16,15 @@ class IndicateurFixture implements FixtureInterface<Indicateur> {
       type: faker.helpers.arrayElement(typesIndicateur),
       estIndicateurDuBaromètre: faker.datatype.boolean(),
       mailles: {
-        nationale: this.générérFakeIndicateurTerritorialisé(['FR']),
-        régionale: this.générérFakeIndicateurTerritorialisé(codeInseeRégions),
-        départementale: this.générérFakeIndicateurTerritorialisé(codeInseeDépartements),
+        nationale: this.générerFakeIndicateurTerritorialisé(['FR']),
+        régionale: this.générerFakeIndicateurTerritorialisé(codeInseeRégions),
+        départementale: this.générerFakeIndicateurTerritorialisé(codeInseeDépartements),
       },
       ...valeursFixes,
     };
   }
 
-  private générérFakeIndicateurTerritorialisé(code_insee_territoire: string[]): IndicateurDonnéesTerritoires {
+  private générerFakeIndicateurTerritorialisé(code_insee_territoire: string[]): IndicateurDonnéesTerritoires {
     const result: IndicateurDonnéesTerritoires = {};
     code_insee_territoire.forEach((code_insee) => {
       result[code_insee] = {

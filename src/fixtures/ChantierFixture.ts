@@ -14,9 +14,9 @@ class ChantierFixture implements FixtureInterface<Chantier> {
       ppg: faker.lorem.words(3),
       périmètreIds: [générerUnIdentifiantUnique('PER')],
       mailles: {
-        nationale: this.générérFakeTerritoires(['FR']),
-        régionale: this.générérFakeTerritoires(codeInseeRégions),
-        départementale: this.générérFakeTerritoires(codeInseeDépartements),
+        nationale: this.générerFakeTerritoires(['FR']),
+        régionale: this.générerFakeTerritoires(codeInseeRégions),
+        départementale: this.générerFakeTerritoires(codeInseeDépartements),
       },
       responsables: {
         porteur: 'Min1',
@@ -29,7 +29,7 @@ class ChantierFixture implements FixtureInterface<Chantier> {
     };
   }
 
-  private générérFakeTerritoires(code_insee_territoire: string[]): Territoires {
+  private générerFakeTerritoires(code_insee_territoire: string[]): Territoires {
     const result: Territoires = {};
     code_insee_territoire.forEach((code_insee) => {
       result[code_insee] = {
