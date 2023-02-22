@@ -19,7 +19,7 @@ function parseQueryParams(request: NextApiRequest): { chantierId: string, indica
   return { chantierId, indicateurId, maille, codesInsee };
 }
 
-export default async function handle(request: NextApiRequest, response: NextApiResponse) {
+export default async function handle(request: NextApiRequest, response: NextApiResponse, indicateurRepository = dependencies.getIndicateurRepository()) {
   let params;
   try {
     params = parseQueryParams(request);
@@ -30,7 +30,6 @@ export default async function handle(request: NextApiRequest, response: NextApiR
     }
     throw error;
   }
-  const indicateurRepository = dependencies.getIndicateurRepository();
   const evolutionIndicateur = await indicateurRepository.getEvolutionIndicateur(params.chantierId, params.indicateurId, params.maille, params.codesInsee);
   response.status(200).json(evolutionIndicateur);
 }
