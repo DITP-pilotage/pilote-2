@@ -4,9 +4,8 @@ import { useState } from 'react';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
-import SélecteurDeMaille from '@/components/_commons/SélecteurDeMaille/SélecteurDeMaille';
-import { Maille, TerritoireIdentifiant } from '@/server/domain/chantier/Chantier.interface';
-import SélecteurDeTerritoire from '@/components/_commons/SélecteurDeTerritoire/SélecteurDeTerritoire';
+import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
+import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import Commentaires from './Commentaires/Commentaires';
@@ -17,11 +16,12 @@ import PageChantierEnTête from './PageChantierEnTête/PageChantierEnTête';
 import Cartes from './Cartes/Cartes';
 import Sommaire from './Sommaire/Sommaire';
 import PageChantierStyled from './PageChantier.styled';
+import usePageChantier from './usePageChantier';
 
 const listeRubriques: Rubrique[] = [
   { nom: 'Avancement du chantier', ancre: 'avancement' },
-  { nom: 'Synthèse des résultats', ancre: 'synthèse' },
   { nom: 'Responsables', ancre: 'responsables' },
+  { nom: 'Synthèse des résultats', ancre: 'synthèse' },
   { nom: 'Répartition géographique', ancre: 'cartes' },
   { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateurs },
   { nom: 'Commentaires', ancre: 'commentaires' },
@@ -29,8 +29,8 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const [territoire, setTerritoire] = useState<TerritoireIdentifiant | null>(null);
-  const [maille, setMaille] = useState<Maille>('nationale');
+  const { avancements } = usePageChantier(chantier);
+  const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
 
   return (
     <PageChantierStyled className="flex">
@@ -39,15 +39,7 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteurDeMaille
-            maille={maille}
-            setMaille={setMaille}
-          />
-          <SélecteurDeTerritoire
-            maille={maille}
-            setTerritoire={setTerritoire}
-            territoire={territoire}
-          />
+          <SélecteursMaillesEtTerritoires />
         </BarreLatéraleEncart>
         <Sommaire rubriques={listeRubriques} />
       </BarreLatérale>
@@ -62,21 +54,37 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
         </button>
         <PageChantierEnTête chantier={chantier} />
         <div className='fr-p-4w'>
-          <AvancementChantier chantier={chantier} />
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-5w">
-            <div className="fr-col-12 fr-col-xl-6">
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-6' : 'fr-col-xl-12'} fr-col-12`}>
+              <AvancementChantier avancements={avancements} />
+            </div>
+            <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-6' : 'fr-col-xl-12'} fr-col-12`}>
+              <Responsables chantier={chantier} />
+            </div>
+          </div>
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className="fr-col-12">
               <SynthèseRésultats
                 chantier={chantier}
                 synthèseDesRésultats={synthèseDesRésultats}
               />
             </div>
-            <div className="fr-col-12 fr-col-xl-6">
-              <Responsables chantier={chantier} />
+          </div>
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className="fr-col-12">
+              <Cartes chantier={chantier} />
             </div>
           </div>
-          <Cartes chantier={chantier} />
-          <Indicateurs indicateurs={indicateurs} />
-          <Commentaires />
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className="fr-col-12">
+              <Indicateurs indicateurs={indicateurs} />
+            </div>
+          </div>
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className="fr-col-12">
+              <Commentaires />
+            </div>
+          </div>
         </div>
       </div>
     </PageChantierStyled>

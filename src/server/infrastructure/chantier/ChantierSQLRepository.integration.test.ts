@@ -40,34 +40,6 @@ describe('ChantierSQLRepository', () => {
     expect(result2.nom).toEqual('Chantier 2');
   });
 
-  test('un chantier contenant une maille nationale', async () => {
-    // GIVEN
-    const repository: ChantierRepository = new ChantierSQLRepository(prisma);
-
-    const chantierId = 'CH-001';
-
-    await prisma.chantier.create({
-      data: new ChantierRowBuilder()
-        .withId(chantierId).withMailleNationale().withTauxAvancement(18).build(),
-    });
-
-    // WHEN
-    const result = await repository.getById(chantierId);
-
-    // THEN
-    expect(result.mailles).toStrictEqual({
-      nationale: {
-        FR: {
-          codeInsee: 'FR',
-          avancement: { annuel: null, global: 18 },
-          météo: météoFromString('SOLEIL'),
-        },
-      },
-      régionale: {},
-      départementale: {},
-    });
-  });
-
   test('un chantier sans ministères est exclu du résultat', async () => {
     // GIVEN
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
@@ -103,23 +75,28 @@ describe('ChantierSQLRepository', () => {
     const result = await repository.getById(chantierId);
 
     // THEN
-    expect(result.mailles).toStrictEqual({
-      nationale: {
-        FR: {
-          codeInsee: 'FR',
-          avancement: { annuel: null, global: 18 },
-          météo: météoFromString('SOLEIL'),
-        },
+    expect(result.mailles.nationale).toStrictEqual({
+      FR: {
+        codeInsee: 'FR',
+        avancement: { annuel: null, global: 18 },
+        météo: météoFromString('SOLEIL'),
       },
-      départementale: {
-        '13': {
-          codeInsee: '13',
-          avancement: { annuel: null, global: 45 },
-          météo: météoFromString('SOLEIL'),
-        },
-      },
-      régionale: {},
     });
+
+    expect(result.mailles.départementale[13]).toStrictEqual({
+      codeInsee: '13',
+      avancement: { annuel: null, global: 45 },
+      météo: météoFromString('SOLEIL'),
+    });
+
+    expect(result.mailles.départementale[12]).toStrictEqual({
+      codeInsee: '12',
+      avancement: { annuel: null, global: null },
+      météo: météoFromString('NON_RENSEIGNEE'),
+    });
+
+    expect(Object.entries(result.mailles.départementale)).toHaveLength(101);
+    expect(Object.entries(result.mailles.régionale)).toHaveLength(18);
   });
 
   test('Contient des porteurs et des coporteurs', async () => {
@@ -181,7 +158,7 @@ describe('ChantierSQLRepository', () => {
         new ChantierRowBuilder()
           .withId('CH-001').build(),
         new ChantierRowBuilder()
-          .withId('CH-001').withMaille('REG').withCodeInsee('975').build(),
+          .withId('CH-001').withMaille('DEPT').withCodeInsee('974').build(),
       ],
     });
 
@@ -189,7 +166,7 @@ describe('ChantierSQLRepository', () => {
     const chantiers = await repository.getListe();
 
     // THEN
-    expect(chantiers[0].mailles.régionale['975']).toBeDefined();
+    expect(chantiers[0].mailles.départementale['974']).toBeDefined();
   });
 
   test('Un directeur de projet peut ne pas avoir d\'adresse email', async () => {
@@ -244,28 +221,6 @@ describe('ChantierSQLRepository', () => {
 
       // THEN
       await expect(request).rejects.toThrow(/chantier 'CH-002' non trouvé/);
-    });
-
-    test('Erreur en cas de maille inconnue', async () => {
-      // GIVEN
-      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
-      const chantierId = 'CH-001';
-      await prisma.chantier.createMany({
-        data: [
-          new ChantierRowBuilder()
-            .withId(chantierId).withMailleNationale().build(),
-          new ChantierRowBuilder()
-            .withId(chantierId).withMaille('INCONNUE').build(),
-        ],
-      });
-
-      // WHEN
-      const request = async () => {
-        await repository.getById(chantierId);
-      };
-
-      // THEN
-      await expect(request).rejects.toThrow(/INCONNUE/);
     });
 
     test('Erreur en cas d\'absence de maille nationale', async () => {

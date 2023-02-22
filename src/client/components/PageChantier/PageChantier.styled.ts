@@ -9,8 +9,7 @@ const PageChantierStyled = styled.div`
   }
 
   h1,
-  h2,
-  h3 {
+  h2 {
     color: var(--text-title-blue-france);
   }
 

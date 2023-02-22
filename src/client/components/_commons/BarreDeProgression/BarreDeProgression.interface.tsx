@@ -7,8 +7,5 @@ export default interface BarreDeProgressionProps {
   variante: BarreDeProgressionVariante,
   fond?: BarreDeProgressionFond,
   valeur: number | null,
-  minimum?: number | null,
-  médiane?: number | null,
-  maximum?: number | null,
   afficherTexte?: boolean,
 }

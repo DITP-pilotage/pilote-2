@@ -1,25 +1,39 @@
-/* eslint-disable unicorn/consistent-function-scoping */
-import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
+import { useMemo } from 'react';
 import nuancierMétéo from '@/client/constants/nuanciers/nuancierMétéo';
+import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
+import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
 import { libellésMétéos } from '@/server/domain/chantier/Météo.interface';
-import { pictosMétéos } from '../../PictoMétéo/PictoMétéo';
-import { CartographieValeur } from '../useCartographie';
+import { CartographieDonnéesMétéo } from './CartographieMétéo.interface';
 
-export default function useCartographieMétéo() {
-  function déterminerRemplissage(valeurMétéo: CartographieValeur) {
-    return valeurMétéo && typeof valeurMétéo === 'string' 
-      ? nuancierMétéo.find(({ valeur }) => valeur === valeurMétéo)?.remplissage || remplissageParDéfaut
-      : remplissageParDéfaut;
-  }
-  
-  function formaterValeur(valeurMétéo: CartographieValeur) {
-    if (valeurMétéo === 'NON_RENSEIGNEE') return 'Non renseignée';
-    if (valeurMétéo === 'NON_NECESSAIRE') return 'Non nécessaire';
-  
-    return valeurMétéo && typeof valeurMétéo === 'string' 
-      ? libellésMétéos[valeurMétéo as keyof typeof pictosMétéos]
-      : 'Non renseignée';
-  }
+export default function useCartographieMétéo(données: CartographieDonnéesMétéo) {
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
-  return { déterminerRemplissage, formaterValeur };
+  const légende = nuancierMétéo.map(({ remplissage, libellé, picto }) => ({ 
+    libellé, 
+    remplissage,
+    picto,
+  }));
+
+  const donnéesCartographie = useMemo(() => {
+    let donnéesFormatées: CartographieDonnées = {};
+
+    données.forEach(({ valeur, codeInsee }) => {
+      const détailTerritoire = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
+  
+      donnéesFormatées[codeInsee] = {
+        valeurAffichée: libellésMétéos[valeur],
+        remplissage: nuancierMétéo.find(({ valeur: valeurMétéo }) => valeurMétéo === valeur)?.remplissage.couleur ?? remplissageParDéfaut.couleur,
+        libellé: mailleSélectionnée === 'départementale' ? `${détailTerritoire?.codeInsee} - ${détailTerritoire?.nom}` : détailTerritoire?.nom ?? 'N/C',
+      };
+    });
+
+    return donnéesFormatées;
+  }, [données, mailleSélectionnée, récupérerDétailsSurUnTerritoire]);
+
+  return {
+    légende,
+    donnéesCartographie,
+  };
 }

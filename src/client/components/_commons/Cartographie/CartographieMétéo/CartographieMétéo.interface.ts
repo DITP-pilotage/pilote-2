@@ -1,8 +1,10 @@
-import { MailleInterne } from '@/server/domain/chantier/Chantier.interface';
-import { CartographieDonnées, CartographieOptions } from '../useCartographie';
+import { CartographieOptions } from '@/components/_commons/Cartographie/useCartographie.interface';
+import Météo from '@/server/domain/chantier/Météo.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+
+export type CartographieDonnéesMétéo = { valeur: Météo, codeInsee: CodeInsee }[];
 
 export default interface CartographieMétéoProps {
-  données: CartographieDonnées,
-  mailleInterne: MailleInterne,
+  données: CartographieDonnéesMétéo,
   options?: Partial<CartographieOptions>,
 }

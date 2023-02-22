@@ -19,15 +19,14 @@ export default function Indicateurs({ indicateurs }: IndicateursProps) {
 
   return (
     <div
-      className='fr-pb-5w'
       id="indicateurs"
     >
-      <Titre baliseHtml='h2'>
+      <Titre
+        baliseHtml='h2'
+        className='fr-h4 fr-mb-2w'
+      >
         Indicateurs
       </Titre>
-      <p>
-        Explications sur la pondération des indicateurs (à rédiger).
-      </p>
       { 
         listeRubriquesIndicateurs.map(rubrique => (
           <div
@@ -37,7 +36,7 @@ export default function Indicateurs({ indicateurs }: IndicateursProps) {
           >
             <Titre
               baliseHtml='h3'
-              className='fr-h4'
+              className='fr-text--lg fr-mb-1w'
             >
               {rubrique.nom}
             </Titre>
@@ -61,7 +60,7 @@ export default function Indicateurs({ indicateurs }: IndicateursProps) {
             }
           </div>
         ))
-}
+      }
     </div>
   );
 }

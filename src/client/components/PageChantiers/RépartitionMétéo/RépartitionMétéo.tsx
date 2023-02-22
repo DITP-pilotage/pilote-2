@@ -1,19 +1,12 @@
-import { useMemo } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import { récupérerLibelléMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
-import RépartitonMétéoProps from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéoProps.interface';
-import compterLesMétéosÀPartirDeChantiers from '@/client/utils/chantier/météo/compterLesMétéosÀPartirDeChantiers';
-import { périmètreGéographique as périmètreGéographiqueStore } from '@/stores/useSélecteursPageChantiersStore/useSélecteursPageChantiersStore';
+import RépartitionMétéoProps from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéoProps.interface';
 import RépartitionMétéoÉlément from './RépartitionMétéoÉlément/RépartitionMétéoÉlément';
 import RépartitionMétéoStyled from './RépartitionMétéo.styled';
 
 const météosÀAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
 
-export default function RépartitionMétéo({ donnéesTerritoiresAgrégées }: RépartitonMétéoProps) {
-
-  const compteursMétéos = useMemo(() => compterLesMétéosÀPartirDeChantiers(donnéesTerritoiresAgrégées), [donnéesTerritoiresAgrégées]);
-  const périmètreGéographique = périmètreGéographiqueStore();
-
+export default function RépartitionMétéo({ météos }: RépartitionMétéoProps) {
   return (
     <RépartitionMétéoStyled>
       <Titre
@@ -26,12 +19,12 @@ export default function RépartitionMétéo({ donnéesTerritoiresAgrégées }: R
         {
           météosÀAfficher.map(météo => (
             <li
-              className='fr-col-12 fr-col-sm-6 fr-col-lg-3'
+              className='fr-col-12 fr-col-sm-6 fr-col-xl-3'
               key={récupérerLibelléMétéo(météo)}
             >
               <RépartitionMétéoÉlément
                 météo={météo}
-                nombreDeChantiers={`${compteursMétéos[périmètreGéographique.maille][périmètreGéographique.codeInsee][météo]}`}
+                nombreDeChantiers={`${météos[météo]}`}
               />
             </li>
           ))

@@ -7,6 +7,7 @@ const nuancierPourcentage: NuancierPourcentage = [
     libellé: '0%',
     remplissage: {
       type: 'HACHURES',
+      couleur: 'url(#hachures-gris-blanc)',
       hachure: hachuresGrisBlanc,
     },
   },

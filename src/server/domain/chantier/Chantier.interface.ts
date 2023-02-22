@@ -21,6 +21,7 @@ export const libellésMailles: Record<Maille, string> = {
 export type TerritoireIdentifiant = {
   codeInsee: string,
   maille: Maille,
+  codeInseeRégion?: string
 };
 
 export type Territoire = {
@@ -34,6 +35,14 @@ export type Territoires = Record<string, Territoire>;
 export type DirecteurAdministrationCentrale = { nom: string, direction: string };
 export type Contact = { nom: string, email: string | null };
 
+export type ChantierTerritorialisé = {
+  id: string;
+  nom: string;
+  avancementGlobalTerritoire: Avancement['global'];
+  météoTerritoire: Météo;
+  estBaromètre: boolean
+  territoire: TerritoireIdentifiant & { nom: string | undefined }
+};
 export default interface Chantier {
   id: string;
   nom: string;
@@ -49,3 +58,4 @@ export default interface Chantier {
   }
   estBaromètre: boolean;
 }
+
