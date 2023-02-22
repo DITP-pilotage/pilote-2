@@ -1,28 +1,22 @@
 import PageChantiers from '@/client/components/PageChantiers/PageChantiers';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { Axe, Ppg } from '@/server/domain/chantier/Chantier.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-
-// TODO mettre dans Chantier dans 'server/domain/chantier/Chantier.interface.ts'
-// ce qui demande d'abord de modifier les repositories de chantier
-// ce qui demande de déterminer les id des axes côté data
-export type Axe = {
-  id: string,
-  nom: string,
-};
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
   ministères: Ministère[]
   axes: Axe[],
+  ppg: Ppg[]
 }
 
-export default function NextPageAccueil({ chantiers, ministères, axes }: NextPageAccueilProps) {
+export default function NextPageAccueil({ chantiers, ministères, axes, ppg }: NextPageAccueilProps) {
   return (
     <PageChantiers
       axes={axes}
       chantiers={chantiers}
       ministères={ministères}
+      ppg={ppg}
     />
   );
 }
@@ -37,11 +31,13 @@ export async function getServerSideProps() {
   const ministères = await ministèreRepository.getListe();
 
   const axes = new Set();
-  chantiers.forEach(chantier => chantier.axe !== null && axes.add(chantier.axe));
-
   const ppg = new Set();
-  chantiers.forEach(chantier => chantier.ppg !== null && ppg.add(chantier.ppg));
-
+  chantiers.forEach(chantier => {
+    if (chantier.axe !== null)
+      axes.add(chantier.axe);
+    if (chantier.ppg !== null)
+      ppg.add(chantier.ppg);
+  });
   return {
     props: {
       chantiers,

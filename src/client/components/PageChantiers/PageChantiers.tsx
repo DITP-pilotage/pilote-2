@@ -16,7 +16,7 @@ import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
 
-export default function PageChantiers({ chantiers, ministères, axes }: PageChantiersProps) {  
+export default function PageChantiers({ chantiers, ministères, axes, ppg }: PageChantiersProps) {  
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   const { nombreFiltresActifs, chantiersFiltrés, avancements, météos, donnéesCartographie } = usePageChantiers(chantiers);
@@ -33,6 +33,7 @@ export default function PageChantiers({ chantiers, ministères, axes }: PageChan
         <Filtres
           axes={axes}
           ministères={ministères}
+          ppg={ppg}
         />
       </BarreLatérale>
       <div className='contenu-principal'>

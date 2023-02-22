@@ -1,22 +1,22 @@
 import PérimètreMinistériel from '@/server/domain/ministère/PérimètreMinistériel.interface';
-import { Axe } from '../../../pages';
-
-type AutresFiltres = { id: string, attribut: string, nom: string };
-
-export interface FiltresActifs {
-  périmètresMinistériels: PérimètreMinistériel[],
-  axes: Axe[],
-  autresFiltres: AutresFiltres[],
-}
+import { Axe, Ppg } from '@/server/domain/chantier/Chantier.interface';
 
 export type FiltreCatégorie = keyof FiltresActifs;
 
-type FiltresDUneCatégorie = FiltresActifs[FiltreCatégorie];
-export type Filtre = FiltresDUneCatégorie[number];
+type AutresFiltres = { id: string, attribut: string, nom: string };
+
+export type Filtre = PérimètreMinistériel | AutresFiltres | Ppg | Axe;
 
 export interface FiltreCatégorieTuple {
   catégorie: FiltreCatégorie,
   filtre: Filtre,
+}
+
+export interface FiltresActifs {
+  périmètresMinistériels: PérimètreMinistériel[],
+  axes: Axe[],
+  ppg: Ppg[],
+  autresFiltres: AutresFiltres[],
 }
 
 export default interface FiltresStore {

@@ -30,6 +30,11 @@ export default function usePageChantiers(chantiers: Chantier[]) {
         filtresActifs.axes.some(filtre => (chantier.axe === filtre.nom))
       ));
     }
+    if (filtresActifs.ppg.length > 0) {
+      résultat = chantiers.filter(chantier => (
+        filtresActifs.ppg.some(filtre => (chantier.ppg === filtre.nom))
+      ));
+    }
     if (filtresActifs.autresFiltres.length > 0) {
       résultat = chantiers.filter(chantier => (
         filtresActifs.autresFiltres.some(filtre => (chantier[filtre.attribut as keyof Chantier]))

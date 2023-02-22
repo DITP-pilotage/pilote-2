@@ -5,6 +5,7 @@ import FiltresStore, { FiltreCatégorie, FiltreCatégorieTuple, FiltresActifs } 
 const filtresActifsInitiaux: FiltresActifs = {
   périmètresMinistériels: [],
   axes: [],
+  ppg: [],
   autresFiltres: [],
 };
 

@@ -11,7 +11,7 @@ class ChantierFixture implements FixtureInterface<Chantier> {
       id: générerUnIdentifiantUnique('CH'),
       nom: `${faker.lorem.words(10)} ${générerCaractèresSpéciaux(3)}`,
       axe: faker.lorem.words(3),
-      ppg: faker.lorem.words(3),
+      ppg: faker.lorem.words(10),
       périmètreIds: [générerUnIdentifiantUnique('PER')],
       mailles: {
         nationale: this.générerFakeTerritoires(['FR']),

@@ -43,11 +43,21 @@ export type ChantierTerritorialisé = {
   estBaromètre: boolean
   territoire: TerritoireIdentifiant & { nom: string | undefined }
 };
+
+export type Axe = {
+  id: string,
+  nom: string,
+};
+export type Ppg = {
+  id: string,
+  nom: string
+};
+
 export default interface Chantier {
   id: string;
   nom: string;
-  axe: string | null;
-  ppg: string | null;
+  axe: Axe['nom'];
+  ppg: Ppg['nom'];
   périmètreIds: string[];
   mailles: Record<Maille, Territoires>;
   responsables: {
