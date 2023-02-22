@@ -3,6 +3,7 @@ import ChantierRepository from '@/server/domain/chantier/ChantierRepository.inte
 import { groupBy } from '@/client/utils/arrays';
 import { parseChantier } from '@/server/infrastructure/chantier/ChantierSQLParser';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { objectEntries } from '@/client/utils/objects/objects';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -37,6 +38,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
     });
     const chantiersGroupésParId = groupBy<chantier>(chantiers, c => c.id);
 
-    return Object.entries(chantiersGroupésParId).map(([_, c]) => parseChantier(c));
+    return objectEntries(chantiersGroupésParId).map(([_, c]) => parseChantier(c));
   }
 }

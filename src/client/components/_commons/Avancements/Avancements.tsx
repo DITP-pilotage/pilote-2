@@ -1,5 +1,5 @@
+import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import AvancementsProps from './Avancements.interface';
-import JaugeDeProgression from '../JaugeDeProgression/JaugeDeProgression';
 
 export default function Avancements({ avancements }: AvancementsProps) {
   return (
