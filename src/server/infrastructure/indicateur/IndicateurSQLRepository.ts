@@ -1,8 +1,8 @@
 import { indicateur, PrismaClient } from '@prisma/client';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
-import { Maille } from '@/server/domain/chantier/Chantier.interface';
 import { NOMS_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
+import { EvolutionIndicateur } from '@/server/domain/indicateur/EvolutionIndicateur';
 
 function toDateStringWithoutTime(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -51,13 +51,13 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return this.mapToDomain(indicateurs);
   }
 
-  async getEvolutionIndicateur(chantierId: string, indicateurId: string, maille: string, codes_insee: string[]): Promise<EvolutionIndicateur[]> {
+  async getEvolutionIndicateur(chantierId: string, indicateurId: string, maille: string, codesInsee: string[]): Promise<EvolutionIndicateur[]> {
     const indicateurs: indicateur[] = await this.prisma.indicateur.findMany({
       where: {
         chantier_id: chantierId,
         id: indicateurId,
         maille: 'DEPT',
-        code_insee: { in: codes_insee },
+        code_insee: { in: codesInsee },
       },
     });
 
@@ -78,11 +78,3 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return result;
   }
 }
-
-type EvolutionIndicateur = {
-  valeurCible: number | null,
-  maille: Maille,
-  code_insee: string,
-  évolutionValeurActuelle: number[],
-  évolutionDateValeurActuelle: string[],
-};
