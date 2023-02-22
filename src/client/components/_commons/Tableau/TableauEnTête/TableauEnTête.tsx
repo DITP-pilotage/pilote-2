@@ -23,25 +23,25 @@ export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
     return (
       <>
         <button
-          aria-label={`trier la colonne ${header.column.columnDef.header} par ordre décroissant`}
-          className={`${triDécroissantActif ? 'actif' : ''} flèche-de-tri fr-m-1w`}
-          onClick={() => header.column.toggleSorting(true)}
-          type='button'
-        >
-          <FlècheDeTri
-            direction='desc'
-            estActif={triDécroissantActif}
-          />
-        </button>
-        <button
           aria-label={`trier la colonne ${header.column.columnDef.header} par ordre croissant`}
-          className={`${triCroissantActif ? 'actif' : ''} flèche-de-tri`}
+          className={`${triCroissantActif ? 'actif' : ''} flèche-de-tri fr-m-1w`}
           onClick={() => header.column.toggleSorting(false)}
           type='button'
         >
           <FlècheDeTri
             direction='asc'
             estActif={triCroissantActif}
+          />
+        </button>
+        <button
+          aria-label={`trier la colonne ${header.column.columnDef.header} par ordre décroissant`}
+          className={`${triDécroissantActif ? 'actif' : ''} flèche-de-tri`}
+          onClick={() => header.column.toggleSorting(true)}
+          type='button'
+        >
+          <FlècheDeTri
+            direction='desc'
+            estActif={triDécroissantActif}
           />
         </button>
       </>

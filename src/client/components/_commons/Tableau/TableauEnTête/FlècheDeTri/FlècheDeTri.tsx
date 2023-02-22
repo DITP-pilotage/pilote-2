@@ -11,7 +11,7 @@ export default function FlècheDeTri({ estActif, direction }: FlècheDeTriProps)
     >
       <path
         clipRule="evenodd"
-        d={direction === 'desc' ? 'M6 0L12 6H0L6 0Z' : 'M6 6L0 0H12L6 6Z'}
+        d={direction === 'asc' ? 'M6 0L12 6H0L6 0Z' : 'M6 6L0 0H12L6 6Z'}
         fill={estActif ? 'white' : '#000091'}
         fillRule="evenodd"
       />
