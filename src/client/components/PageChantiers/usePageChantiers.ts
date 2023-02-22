@@ -18,12 +18,29 @@ export default function usePageChantiers(chantiers: Chantier[]) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   const chantiersFiltrés = useMemo(() => {
-    return filtresActifs.périmètresMinistériels.length > 0 || filtresActifs.autresFiltres.length > 0
-      ? chantiers.filter(chantier => (
-        filtresActifs.périmètresMinistériels.some(filtre => chantier.périmètreIds.includes(filtre.id)) ||
-        filtresActifs.autresFiltres.some(filtre => chantier[filtre.attribut as keyof Chantier])
-      ))
-      : chantiers;
+    let résultat: Chantier[] = chantiers;
+
+    if (filtresActifs.périmètresMinistériels.length > 0) {
+      résultat = résultat.filter(chantier => (
+        filtresActifs.périmètresMinistériels.some(filtre => (chantier.périmètreIds.includes(filtre.id)))
+      ));
+    }
+    if (filtresActifs.axes.length > 0) {
+      résultat = résultat.filter(chantier => (
+        filtresActifs.axes.some(filtre => (chantier.axe === filtre.nom))
+      ));
+    }
+    if (filtresActifs.ppg.length > 0) {
+      résultat = résultat.filter(chantier => (
+        filtresActifs.ppg.some(filtre => (chantier.ppg === filtre.nom))
+      ));
+    }
+    if (filtresActifs.autresFiltres.length > 0) {
+      résultat = résultat.filter(chantier => (
+        filtresActifs.autresFiltres.some(filtre => (chantier[filtre.attribut as keyof Chantier]))
+      ));
+    }
+    return résultat;
   }, [chantiers, filtresActifs]);
 
   const donnéesTerritoiresAgrégées = useMemo(() => {

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const FiltresMinistèresStyled = styled.div`
+const FiltresSélectionMultipleStyled = styled.div`
   button {
     width: 100%;
     text-align: left;
@@ -8,21 +8,6 @@ const FiltresMinistèresStyled = styled.div`
 
   ul {
     list-style-type: none;
-  }
-
-  ul.ministères-liste {
-    overflow-y: auto;
-  }
-
-  ul.périmètres-liste {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.5s cubic-bezier(0, 1.05, 0, 1);
-  }
-
-  .ministère-déroulé + ul.périmètres-liste {
-    max-height: 100vh;
-    transition: max-height 2s;
   }
 
   .tuile {
@@ -40,4 +25,4 @@ const FiltresMinistèresStyled = styled.div`
   }
 `;
 
-export default FiltresMinistèresStyled;
+export default FiltresSélectionMultipleStyled;

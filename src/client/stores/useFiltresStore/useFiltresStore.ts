@@ -1,9 +1,11 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { create } from 'zustand';
-import FiltresStore, { Catégorie, FiltreCatégorieTuple } from './useFiltresStore.interface';
+import FiltresStore, { FiltreCatégorie, FiltreCatégorieTuple, FiltresActifs } from './useFiltresStore.interface';
 
-const filtresActifsInitiaux = {
+const filtresActifsInitiaux: FiltresActifs = {
   périmètresMinistériels: [],
+  axes: [],
+  ppg: [],
   autresFiltres: [],
 };
 
@@ -16,6 +18,14 @@ const useFiltresStore = create<FiltresStore>((set, get) => ({
         [catégorieDeFiltre]: [...étatActuel.filtresActifs[catégorieDeFiltre], filtre],
       },
     })),
+
+    changerÉtatDuFiltre: (filtre, catégorieDeFiltre) => {
+      if (get().actions.estActif(filtre.id, catégorieDeFiltre)) {
+        get().actions.désactiverUnFiltre(filtre.id, catégorieDeFiltre);
+      } else {
+        get().actions.activerUnFiltre(filtre, catégorieDeFiltre);
+      }
+    },
 
     désactiverUnFiltre: (filtreId, catégorieDeFiltre) => set(étatActuel => ({
       filtresActifs: {
@@ -38,7 +48,7 @@ const useFiltresStore = create<FiltresStore>((set, get) => ({
       get().actions.récupérerFiltresActifsAvecLeursCatégories().length
     ),
 
-    récupérerCatégories: () => Object.keys(get().filtresActifs) as Catégorie[],
+    récupérerCatégories: () => Object.keys(get().filtresActifs) as FiltreCatégorie[],
 
     récupérerFiltresActifsAvecLeursCatégories: () => {
 

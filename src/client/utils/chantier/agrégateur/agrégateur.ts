@@ -2,6 +2,9 @@ import Chantier, { Maille } from '@/server/domain/chantier/Chantier.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { valeurMinimum, valeurMaximum, calculerMoyenne, calculerMédiane } from '@/client/utils/statistiques/statistiques';
 import Météo from '@/server/domain/chantier/Météo.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import départements from '@/client/constants/départements.json';
+import régions from '@/client/constants/régions.json';
 import { AgrégatParTerritoire } from './agrégateur.interface';
 
 export class AgrégateurChantiersParTerritoire {
@@ -21,14 +24,6 @@ export class AgrégateurChantiersParTerritoire {
     this.chantiers.forEach(chantier => {
       objectEntries(chantier.mailles).forEach(([maille, codesInsee]) => {
         objectEntries(codesInsee).forEach(([codeInsee, donnéesTerritoire]) => {
-          if (this.agrégat[maille] === undefined) {
-            this.agrégat[maille] = this._créerDonnéesInitialesPourUneMaille();
-          }
-
-          if (this.agrégat[maille].territoires[codeInsee] === undefined) {
-            this.agrégat[maille].territoires[codeInsee] = this._créerDonnéesInitialesPourUnTerritoire();
-          }
-
           this.agrégat[maille].territoires[codeInsee].donnéesBrutes.avancements = [...this.agrégat[maille].territoires[codeInsee].donnéesBrutes.avancements, donnéesTerritoire.avancement];
           this.agrégat[maille].territoires[codeInsee].donnéesBrutes.météos = [...this.agrégat[maille].territoires[codeInsee].donnéesBrutes.météos, donnéesTerritoire.météo];
         });
@@ -97,7 +92,7 @@ export class AgrégateurChantiersParTerritoire {
     };
   }
 
-  private _créerDonnéesInitialesPourUneMaille() {
+  private _créerDonnéesInitialesPourUneMaille(listeDeCodeInsee: CodeInsee[]) {
     return {
       répartition: {
         avancements: {
@@ -107,15 +102,22 @@ export class AgrégateurChantiersParTerritoire {
           maximum: null,
         },
       },
-      territoires: {},
+      territoires: Object.fromEntries(
+        listeDeCodeInsee.map(codeInsee => (
+          [
+            codeInsee,
+            this._créerDonnéesInitialesPourUnTerritoire(),
+          ]
+        )),
+      ),
     };
   }
 
   private _créerAgrégatInitial(): AgrégatParTerritoire {
     return {
-      nationale: this._créerDonnéesInitialesPourUneMaille(),
-      départementale: this._créerDonnéesInitialesPourUneMaille(),
-      régionale: this._créerDonnéesInitialesPourUneMaille(),
+      nationale: this._créerDonnéesInitialesPourUneMaille(['FR']),
+      départementale: this._créerDonnéesInitialesPourUneMaille(départements.map(département => département.codeInsee)),
+      régionale: this._créerDonnéesInitialesPourUneMaille(régions.map(région => région.codeInsee)),
     };
   }
 }

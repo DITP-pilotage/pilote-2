@@ -4,12 +4,17 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import ChantierFixture from '@/fixtures/ChantierFixture';
 import PérimètreMinistériel from '@/server/domain/ministère/PérimètreMinistériel.interface';
+import AxeFixture from '@/fixtures/AxeFixture';
 import PageChantiers from './PageChantiers';
 
 // eslint-disable-next-line unicorn/consistent-function-scoping
 jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function Cartographie() { return 'Carto'; });
 
 class PageChantiersTest {
+  axes = AxeFixture.générerPlusieurs(6);
+
+  ppg = AxeFixture.générerPlusieurs(40);
+
   // TODO temporaire en attendant la fixture
   ministères = [
     {
@@ -30,9 +35,9 @@ class PageChantiersTest {
   ];
 
   chantiers = ChantierFixture.générerPlusieurs(3, [
-    { périmètreIds: [this.ministères[0].périmètresMinistériels[0].id] },
-    { périmètreIds: [this.ministères[0].périmètresMinistériels[0].id] },
-    { périmètreIds: [this.ministères[0].périmètresMinistériels[1].id] },
+    { périmètreIds: [this.ministères[0].périmètresMinistériels[0].id], axe: this.axes[0].nom, ppg: this.ppg[0].nom },
+    { périmètreIds: [this.ministères[0].périmètresMinistériels[0].id], axe: this.axes[1].nom, ppg: this.ppg[1].nom },
+    { périmètreIds: [this.ministères[0].périmètresMinistériels[1].id], axe: this.axes[2].nom, ppg: this.ppg[0].nom },
   ]);
 
   récupérerLesLignesDuTableau() {
@@ -69,8 +74,10 @@ class PageChantiersTest {
   render() {
     render(
       <PageChantiers
+        axes={this.axes}
         chantiers={this.chantiers}
         ministères={this.ministères}
+        ppg={this.ppg}
       />,     
     );
   }

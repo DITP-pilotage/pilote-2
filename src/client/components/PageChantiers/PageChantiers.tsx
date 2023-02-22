@@ -9,14 +9,14 @@ import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMa
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import usePageChantiers from '@/components/PageChantiers/usePageChantiers';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
+import Filtres from '@/components/PageChantiers/Filtres/Filtres';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
-import Filtres from './Filtres/Filtres';
 
-export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {  
+export default function PageChantiers({ chantiers, ministères, axes, ppg }: PageChantiersProps) {  
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   const { nombreFiltresActifs, chantiersFiltrés, avancements, météos, donnéesCartographie } = usePageChantiers(chantiers);
@@ -30,7 +30,11 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
         <BarreLatéraleEncart>
           <SélecteursMaillesEtTerritoires />
         </BarreLatéraleEncart>
-        <Filtres ministères={ministères} />
+        <Filtres
+          axes={axes}
+          ministères={ministères}
+          ppg={ppg}
+        />
       </BarreLatérale>
       <div className='contenu-principal'>
         <button

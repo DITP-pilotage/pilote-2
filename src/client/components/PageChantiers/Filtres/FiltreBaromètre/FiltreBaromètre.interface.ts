@@ -1,5 +1,5 @@
-import FiltresStore from '@/client/stores/useFiltresStore/useFiltresStore.interface';
+import { FiltreCatégorie } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
 
 export default interface FiltreBaromètreProps {
-  catégorieDeFiltre: keyof FiltresStore['filtresActifs']
+  catégorieDeFiltre: FiltreCatégorie
 }
