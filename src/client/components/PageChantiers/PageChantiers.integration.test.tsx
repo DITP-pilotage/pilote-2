@@ -11,6 +11,22 @@ jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function 
 
 class PageChantiersTest {
   // TODO temporaire en attendant la fixture
+  axes = [
+    {
+      id: 'AXE-001',
+      nom: 'Sed ut perspiciatis unde omnis',
+    },
+    {
+      id: 'AXE-002',
+      nom: 'Dolorem ipsum quia dolor sit amet',
+    },
+    {
+      id: 'AXE-003',
+      nom: 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit',
+    },
+  ];
+
+  // TODO temporaire en attendant la fixture
   ministères = [
     {
       nom: 'Agriculture et Alimentation',
@@ -69,6 +85,7 @@ class PageChantiersTest {
   render() {
     render(
       <PageChantiers
+        axes={this.axes}
         chantiers={this.chantiers}
         ministères={this.ministères}
       />,     
