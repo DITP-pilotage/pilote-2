@@ -1,29 +1,25 @@
 import { useCallback } from 'react';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import { Filtre } from '@/stores/useFiltresStore/useFiltresStore.interface';
-import FiltresTuilesActivablesProps from './FiltresTuilesActivables.interface';
-import FiltresTuilesActivablesStyled from './FiltresTuilesActivables.styled';
+import FiltresSélectionMultipleProps from './FiltresSélectionMultiple.interface';
+import FiltresSélectionMultipleStyled from './FiltresSélectionMultiple.styled';
 
-export default function FiltresTuilesActivables({
+export default function FiltresSélectionMultiple({
   catégorieDeFiltre,
   libellé,
   filtres,
-}: FiltresTuilesActivablesProps) {
-  const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
+}: FiltresSélectionMultipleProps) {
+  const { changerÉtatDuFiltre, estActif } = actionsFiltresStore();
 
   const auClicSurUnFiltreCallback = useCallback(
     (filtre: Filtre) => {
-      if (estActif(filtre.id, catégorieDeFiltre)) {
-        désactiverUnFiltre(filtre.id, catégorieDeFiltre);
-      } else {
-        activerUnFiltre(filtre, catégorieDeFiltre);
-      }
+      changerÉtatDuFiltre(filtre, catégorieDeFiltre);
     },
-    [activerUnFiltre, catégorieDeFiltre, désactiverUnFiltre, estActif],
+    [ catégorieDeFiltre, changerÉtatDuFiltre],
   );
 
   return (
-    <FiltresTuilesActivablesStyled>
+    <FiltresSélectionMultipleStyled>
       <button
         aria-controls={`fr-sidemenu-item-${catégorieDeFiltre}`}
         aria-expanded="false"
@@ -56,6 +52,6 @@ export default function FiltresTuilesActivables({
           ))}
         </ul>
       </div>
-    </FiltresTuilesActivablesStyled>
+    </FiltresSélectionMultipleStyled>
   );
 }

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const FiltresTuilesActivablesStyled = styled.div`
+const FiltresSélectionMultipleStyled = styled.div`
   button {
     width: 100%;
     text-align: left;
@@ -25,4 +25,4 @@ const FiltresTuilesActivablesStyled = styled.div`
   }
 `;
 
-export default FiltresTuilesActivablesStyled;
+export default FiltresSélectionMultipleStyled;

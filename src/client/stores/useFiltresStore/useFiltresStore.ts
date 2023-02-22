@@ -19,6 +19,14 @@ const useFiltresStore = create<FiltresStore>((set, get) => ({
       },
     })),
 
+    changerÉtatDuFiltre: (filtre, catégorieDeFiltre) => {
+      if (get().actions.estActif(filtre.id, catégorieDeFiltre)) {
+        get().actions.désactiverUnFiltre(filtre.id, catégorieDeFiltre);
+      } else {
+        get().actions.activerUnFiltre(filtre, catégorieDeFiltre);
+      }
+    },
+
     désactiverUnFiltre: (filtreId, catégorieDeFiltre) => set(étatActuel => ({
       filtresActifs: {
         ...étatActuel.filtresActifs,

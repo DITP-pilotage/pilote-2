@@ -23,6 +23,7 @@ export default interface FiltresStore {
   filtresActifs: FiltresActifs
   actions: {
     activerUnFiltre: (filtre: Filtre, catégorieDeFiltre: FiltreCatégorie) => void
+    changerÉtatDuFiltre: (filtre: Filtre, catégorieDeFiltre: FiltreCatégorie) => void
     désactiverUnFiltre: (id: Filtre['id'], catégorieDeFiltre: FiltreCatégorie) => void
     désactiverTousLesFiltres: () => void
     estActif: (id: Filtre['id'], catégorieDeFiltre: FiltreCatégorie) => boolean

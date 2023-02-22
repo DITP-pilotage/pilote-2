@@ -1,4 +1,4 @@
-import FiltresTuilesActivables from '@/components/PageChantiers/Filtres/FiltresTuilesActivables/FiltresTuilesActivables';
+import FiltresSélectionMultiple from '@/components/PageChantiers/Filtres/FiltresSélectionMultiple/FiltresSélectionMultiple';
 import FiltresGroupeDeCatégoriesDeFiltres from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
 import FiltresProps from './Filtres.interface';
@@ -16,12 +16,12 @@ export default function Filtres({ ministères, axes, ppg }: FiltresProps) {
           libellé='Ministères'
           ministères={ministères}
         />
-        <FiltresTuilesActivables
+        <FiltresSélectionMultiple
           catégorieDeFiltre='axes'
           filtres={axes}
           libellé="Axes"
         />
-        <FiltresTuilesActivables
+        <FiltresSélectionMultiple
           catégorieDeFiltre='ppg'
           filtres={ppg}
           libellé="PPG"
