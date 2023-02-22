@@ -21,7 +21,7 @@ export default function useCartographieAvancement(données: CartographieDonnées
       const détailTerritoire = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
   
       donnéesFormatées[codeInsee] = {
-        valeurAffichée: valeur?.toFixed(0) + '%',
+        valeurAffichée: valeur === null ? 'Non renseigné' : valeur.toFixed(0) + '%',
         remplissage: valeur === null ? remplissageParDéfaut.couleur : nuancierPourcentage.find(({ seuil }) => seuil !== null && seuil >= Math.round(valeur))?.remplissage.couleur ?? remplissageParDéfaut.couleur,
         libellé: mailleSélectionnée === 'départementale' ? `${détailTerritoire?.codeInsee} - ${détailTerritoire?.nom}` : détailTerritoire?.nom ?? 'N/C',
       };
