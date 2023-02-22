@@ -21,22 +21,22 @@ export default function usePageChantiers(chantiers: Chantier[]) {
     let résultat: Chantier[] = chantiers;
 
     if (filtresActifs.périmètresMinistériels.length > 0) {
-      résultat = chantiers.filter(chantier => (
+      résultat = résultat.filter(chantier => (
         filtresActifs.périmètresMinistériels.some(filtre => (chantier.périmètreIds.includes(filtre.id)))
       ));
     }
     if (filtresActifs.axes.length > 0) {
-      résultat = chantiers.filter(chantier => (
+      résultat = résultat.filter(chantier => (
         filtresActifs.axes.some(filtre => (chantier.axe === filtre.nom))
       ));
     }
     if (filtresActifs.ppg.length > 0) {
-      résultat = chantiers.filter(chantier => (
+      résultat = résultat.filter(chantier => (
         filtresActifs.ppg.some(filtre => (chantier.ppg === filtre.nom))
       ));
     }
     if (filtresActifs.autresFiltres.length > 0) {
-      résultat = chantiers.filter(chantier => (
+      résultat = résultat.filter(chantier => (
         filtresActifs.autresFiltres.some(filtre => (chantier[filtre.attribut as keyof Chantier]))
       ));
     }
@@ -48,13 +48,20 @@ export default function usePageChantiers(chantiers: Chantier[]) {
   }, [chantiersFiltrés]);
 
   const avancements = {
-    moyenne: donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.avancements.moyenne,
+    moyenne: donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee]?.répartition.avancements.moyenne ?? null, //TODO gestion 0 chantiersFiltrés
     médiane: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.médiane,
     minimum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.minimum,
     maximum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.maximum,
   };
 
-  const météos = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.météos;
+  const météos = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee]?.répartition.météos
+  //TODO gestion 0 chantiersFiltrés
+  ?? {
+    'ORAGE': 0,
+    'NUAGE': 0,
+    'COUVERT': 0,
+    'SOLEIL': 0,
+  };
 
   const donnéesCartographie = useMemo(() => {
     return objectEntries(donnéesTerritoiresAgrégées[mailleSélectionnée].territoires).map(([codeInsee, territoire]) => ({
