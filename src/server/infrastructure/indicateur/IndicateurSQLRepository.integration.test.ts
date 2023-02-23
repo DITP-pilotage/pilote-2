@@ -124,7 +124,7 @@ describe('IndicateurSQLRepository', () => {
           {
             valeurCible: 1789,
             maille: 'départementale',
-            code_insee: '01',
+            codeInsee: '01',
             évolutionValeurActuelle: [1, 2, 3],
             évolutionDateValeurActuelle: ['2021-01-01', '2021-02-01', '2021-03-01'],
           },

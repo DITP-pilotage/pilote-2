@@ -47,7 +47,7 @@ class Dependencies {
       this._indicateurRepository = new IndicateurSQLRepository(prisma);
       this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
     } else {
-      logger.info('Not using database.');
+      logger.debug('Not using database.');
       const nombreDeChantiers = 500;
       const idPérimètres = [ { id: 'PER-001' }, { id: 'PER-002' }, { id: 'PER-003' }, { id: 'PER-004' } ];
       const axes =  AxeFixture.générerPlusieurs(5);
@@ -74,7 +74,7 @@ class Dependencies {
   getChantierRepository(): ChantierRepository {
     return this._chantierRepository;
   }
-  
+
   getAxeRepository(): AxeRepository {
     return this._axeRepository;
   }

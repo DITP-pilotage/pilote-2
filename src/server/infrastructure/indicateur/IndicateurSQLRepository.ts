@@ -66,7 +66,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
 
     for (const item of indicateurs) {
       result.push({
-        code_insee: item.code_insee,
+        codeInsee: item.code_insee,
         maille: NOMS_MAILLES[item.maille],
         valeurCible: item.objectif_valeur_cible,
         évolutionValeurActuelle: item.evolution_valeur_actuelle,

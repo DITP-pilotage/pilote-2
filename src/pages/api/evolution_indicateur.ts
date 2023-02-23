@@ -12,7 +12,7 @@ function parseQueryParams(request: NextApiRequest): { chantierId: string, indica
 
   if (!chantierId || !indicateurId || !maille || !Array.isArray(codesInsee)) {
     const errorMessage = 'Le parsing de la query a échoué.';
-    logger.error(errorMessage + ', query: %o', request.query);
+    logger.info(errorMessage + ', query: %o', request.query);
     throw new ParsingError(errorMessage);
   }
 
@@ -31,5 +31,7 @@ export default async function handle(request: NextApiRequest, response: NextApiR
     throw error;
   }
   const evolutionIndicateur = await indicateurRepository.getEvolutionIndicateur(params.chantierId, params.indicateurId, params.maille, params.codesInsee);
-  response.status(200).json(evolutionIndicateur);
+  response
+    .status(200)
+    .json(evolutionIndicateur);
 }
