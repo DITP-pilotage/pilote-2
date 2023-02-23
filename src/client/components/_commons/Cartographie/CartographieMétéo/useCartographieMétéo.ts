@@ -3,7 +3,7 @@ import nuancierMétéo from '@/client/constants/nuanciers/nuancierMétéo';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
-import { libellésMétéos } from '@/server/domain/chantier/Météo.interface';
+import météos from '@/client/constants/météos';
 import { CartographieDonnéesMétéo } from './CartographieMétéo.interface';
 
 export default function useCartographieMétéo(données: CartographieDonnéesMétéo) {
@@ -23,7 +23,7 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
       const détailTerritoire = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
   
       donnéesFormatées[codeInsee] = {
-        valeurAffichée: libellésMétéos[valeur],
+        valeurAffichée: météos[valeur],
         remplissage: nuancierMétéo.find(({ valeur: valeurMétéo }) => valeurMétéo === valeur)?.remplissage.couleur ?? remplissageParDéfaut.couleur,
         libellé: mailleSélectionnée === 'départementale' ? `${détailTerritoire?.codeInsee} - ${détailTerritoire?.nom}` : détailTerritoire?.nom ?? 'N/C',
       };

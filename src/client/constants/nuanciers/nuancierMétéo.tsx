@@ -1,11 +1,11 @@
 import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
-import { libellésMétéos } from '@/server/domain/chantier/Météo.interface';
+import météos from '@/client/constants/météos';
 import { remplissageParDéfaut, NuancierMétéo } from './nuancier';
 
 const nuancierMétéo: NuancierMétéo = [
   {
     valeur: 'ORAGE',
-    libellé: libellésMétéos.ORAGE,
+    libellé: météos.ORAGE,
     remplissage: {
       type: 'COULEUR',
       couleur: '#B34000',
@@ -13,7 +13,7 @@ const nuancierMétéo: NuancierMétéo = [
     picto: <PictoMétéo valeur="ORAGE" />,
   }, {
     valeur : 'COUVERT',
-    libellé: libellésMétéos.COUVERT,
+    libellé: météos.COUVERT,
     remplissage: {
       type: 'COULEUR',
       couleur: '#95E257',
@@ -21,7 +21,7 @@ const nuancierMétéo: NuancierMétéo = [
     picto: <PictoMétéo valeur="COUVERT" />,
   }, {
     valeur: 'NUAGE',
-    libellé: libellésMétéos.NUAGE,
+    libellé: météos.NUAGE,
     remplissage: {
       type: 'COULEUR',
       couleur: '#EFCB3A',
@@ -29,7 +29,7 @@ const nuancierMétéo: NuancierMétéo = [
     picto: <PictoMétéo valeur="NUAGE" />,
   }, {
     valeur: 'SOLEIL',
-    libellé: libellésMétéos.SOLEIL,
+    libellé: météos.SOLEIL,
     remplissage: {
       type: 'COULEUR',
       couleur: '#27A658',

@@ -5,3 +5,7 @@ export default interface BarreLatéraleProps {
   setEstOuvert: (state: boolean) => void,
   children?: ReactNode,
 }
+
+export type BarreLatéraleStyledProps = {
+  estOuvert: boolean
+};

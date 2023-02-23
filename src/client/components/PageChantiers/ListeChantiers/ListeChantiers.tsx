@@ -2,14 +2,15 @@ import { createColumnHelper } from '@tanstack/react-table';
 import Link from 'next/link';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import { récupérerLibelléMétéo, PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
-import { Avancement } from '@/server/domain/chantier/Chantier.interface';
+import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/avancement';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import ListeChantiersStyled from '@/components/PageChantiers/ListeChantiers/ListeChantiers.styled';
-import Météo from '@/server/domain/chantier/Météo.interface';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import Avancement from '@/server/domain/avancement/Avancement.interface';
+import { Météo } from '@/server/domain/météo/Météo.interface';
+import météos from '@/client/constants/météos';
 import ListeChantiersProps, { DonnéesTableauChantiers } from './ListeChantiers.interface';
 
 function afficherMétéo(météo: Météo) {
@@ -17,7 +18,7 @@ function afficherMétéo(météo: Météo) {
     ? <PictoMétéo valeur={météo} />
     : (
       <span className="texte-gris fr-text--xs">
-        { récupérerLibelléMétéo(météo) }
+        { météos[météo] }
       </span>
     );
 }

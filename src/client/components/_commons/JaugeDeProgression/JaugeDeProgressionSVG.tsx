@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import JaugeDeProgressionSVGProps from '@/components/_commons/JaugeDeProgression/JaugeDeProgressionSVG.interface';
-import { JaugeDeProgressionTaille } from '@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
+import { JaugeDeProgressionTaille } from './JaugeDeProgression.interface';
 
 const TRACÉS = {
   petite: {

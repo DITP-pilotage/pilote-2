@@ -1,4 +1,4 @@
-export type JaugeDeProgressionCouleur = 'bleu' | 'violet' | 'orange' | 'vert';
+type JaugeDeProgressionCouleur = 'bleu' | 'violet' | 'orange' | 'vert';
 export type JaugeDeProgressionTaille = 'grande' | 'petite';
 
 export interface JaugeDeProgressionProps {
@@ -6,4 +6,9 @@ export interface JaugeDeProgressionProps {
   libellé: string,
   pourcentage: number | null,
   taille: JaugeDeProgressionTaille,
+}
+
+export interface JaugeDeProgressionStyledProps {
+  taille: JaugeDeProgressionTaille,
+  couleur: JaugeDeProgressionCouleur,
 }

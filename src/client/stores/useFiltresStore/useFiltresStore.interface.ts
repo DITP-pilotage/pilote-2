@@ -1,5 +1,6 @@
+import Axe from '@/server/domain/axe/Axe.interface';
 import PérimètreMinistériel from '@/server/domain/ministère/PérimètreMinistériel.interface';
-import { Axe, Ppg } from '@/server/domain/chantier/Chantier.interface';
+import Ppg from '@/server/domain/ppg/Ppg.interface';
 
 export type FiltreCatégorie = keyof FiltresActifs;
 

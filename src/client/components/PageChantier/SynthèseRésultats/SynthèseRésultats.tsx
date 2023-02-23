@@ -1,8 +1,9 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import { SynthèseRésultatsProps } from '@/components/PageChantier/SynthèseRésultats/SynthèseRésultats.interface';
-import { récupérerLibelléMétéo, PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import SynthèseRésultatsStyled from '@/components/PageChantier/SynthèseRésultats/SynthèseRésultats.styled';
+import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
+import météos from '@/client/constants/météos';
 
 export default function SynthèseRésultats({ chantier, synthèseDesRésultats }: SynthèseRésultatsProps) {
   const météo = chantier.mailles.nationale.FR.météo;
@@ -21,7 +22,7 @@ export default function SynthèseRésultats({ chantier, synthèseDesRésultats }
             <div className=" fr-col-12 fr-col-lg-2 conteneur-météo">
               <PictoMétéo valeur={météo} />
               <p className='libellé-météo fr-text--sm'>
-                {récupérerLibelléMétéo(météo)}
+                {météos[météo]}
               </p>
             </div>
             <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">

@@ -9,3 +9,9 @@ export default interface BarreDeProgressionProps {
   valeur: number | null,
   afficherTexte?: boolean,
 }
+
+export type BarreDeProgressionStyledProps = {
+  variante: BarreDeProgressionVariante
+  fond: BarreDeProgressionFond,
+  taille: BarreDeProgressionTaille,
+};

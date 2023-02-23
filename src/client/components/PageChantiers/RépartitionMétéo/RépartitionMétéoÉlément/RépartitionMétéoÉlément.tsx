@@ -1,4 +1,5 @@
-import { récupérerLibelléMétéo, PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
+import météos from '@/client/constants/météos';
+import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import RépartitionMétéoÉlémentProps from './RépartitionMétéoÉlément.interface';
 import RépartitionMétéoÉlémentStyled from './RépartitionMétéoÉlément.styled';
 
@@ -14,7 +15,7 @@ export default function RépartitionMétéoÉlément({ météo, nombreDeChantier
         {nombreDeChantiers}
       </p>
       <p className='label fr-grid-row fr-mb-0 fr-text--sm'>
-        {récupérerLibelléMétéo(météo)}
+        {météos[météo]}
       </p>
     </RépartitionMétéoÉlémentStyled>
   );

@@ -1,10 +1,11 @@
-import Chantier, { Maille } from '@/server/domain/chantier/Chantier.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { valeurMinimum, valeurMaximum, calculerMoyenne, calculerMédiane } from '@/client/utils/statistiques/statistiques';
-import Météo from '@/server/domain/chantier/Météo.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import départements from '@/client/constants/départements.json';
 import régions from '@/client/constants/régions.json';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 import { AgrégatParTerritoire } from './agrégateur.interface';
 
 export class AgrégateurChantiersParTerritoire {
@@ -47,7 +48,7 @@ export class AgrégateurChantiersParTerritoire {
     });
   }
 
-  private _calculerLaRépartitionDesMétéosParTerritoire(maille: Maille, codeInsee: string | number, météos: Météo[]) {
+  private _calculerLaRépartitionDesMétéosParTerritoire(maille: Maille, codeInsee: CodeInsee, météos: Météo[]) {
     météos.forEach(météo => {
       this.agrégat[maille].territoires[codeInsee].répartition.météos[météo] += 1;
     });

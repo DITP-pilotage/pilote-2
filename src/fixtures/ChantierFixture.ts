@@ -1,8 +1,9 @@
 import { faker } from '@faker-js/faker';
-import Chantier, { Territoires } from '@/server/domain/chantier/Chantier.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import MétéoFixture from '@/fixtures/MétéoFixture';
 import FixtureInterface from '@/fixtures/Fixture.interface';
 import { codeInseeDépartements, codeInseeRégions } from '@/fixtures/codesInsee';
+import { Territoires } from '@/server/domain/territoire/Territoire.interface';
 import { générerCaractèresSpéciaux, générerUnIdentifiantUnique } from './utils';
 
 class ChantierFixture implements FixtureInterface<Chantier> {

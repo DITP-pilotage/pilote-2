@@ -2,8 +2,13 @@ import { CartographieOptions } from '@/components/_commons/Cartographie/useCarto
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { CartographieÉlémentDeLégende } from './Légende/CartographieLégende.interface';
 
-type CartographieDonnéesTerritoire = { valeurAffichée: string, remplissage: string, libellé: string };
-export type CartographieDonnées = Record<CodeInsee, CartographieDonnéesTerritoire>;
+export type CartographieDonnées = {
+  [key in CodeInsee]: {
+    valeurAffichée: string, 
+    remplissage: string, 
+    libellé: string
+  }
+};
 
 export default interface CartographieProps {
   légende: CartographieÉlémentDeLégende[],
