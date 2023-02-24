@@ -45,7 +45,7 @@ export class Configuration {
     this.tokenUrl = this.keycloakIssuer + '/protocol/openid-connect/token';
     this.authUrl = this.keycloakIssuer + '/protocol/openid-connect/auth'; // '/api/auth/signin/keycloak';
     this.logoutUrl = this.keycloakIssuer + '/protocol/openid-connect/logout';
-    this.redirectUri = '/api/auth/callback/keycloak';
+    this.redirectUri = process.env.NEXTAUTH_URL + '/api/auth/callback/keycloak';
   }
 }
 
