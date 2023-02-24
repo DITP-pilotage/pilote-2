@@ -3,6 +3,8 @@ import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepositor
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { NOMS_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 import { EvolutionIndicateur } from '@/server/domain/indicateur/EvolutionIndicateur';
+import { FichesIndicateur } from '@/server/domain/indicateur/DetailsIndicateur';
+
 
 function toDateStringWithoutTime(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -73,6 +75,37 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         // eslint-disable-next-line unicorn/no-array-callback-reference
         évolutionDateValeurActuelle: item.evolution_date_valeur_actuelle.map(toDateStringWithoutTime),
       });
+    }
+
+    return result;
+  }
+
+  async getDetailsIndicateur(chantierId: string, maille: string, codesInsee: string[]): Promise<FichesIndicateur> {
+    const indicateurs: indicateur[] = await this.prisma.indicateur.findMany({
+      where: {
+        chantier_id: chantierId,
+        maille: 'DEPT',
+        code_insee: { in: codesInsee },
+      },
+    });
+
+
+    const result: FichesIndicateur = {};
+
+    for (const item of indicateurs) {
+      result[item.id] = {};
+      result[item.id]['01'] = {
+        codeInsee: item.code_insee,
+        valeurInitiale: item.valeur_initiale,
+        valeurs: item.evolution_valeur_actuelle,
+        // eslint-disable-next-line unicorn/no-array-callback-reference
+        dateValeurs: item.evolution_date_valeur_actuelle.map(toDateStringWithoutTime),
+        valeurCible: item.objectif_valeur_cible,
+        avancement: {
+          global: item.objectif_taux_avancement,
+          annuel: null,
+        },
+      };
     }
 
     return result;

@@ -132,4 +132,58 @@ describe('IndicateurSQLRepository', () => {
       );
     });
   });
+
+  describe('Détails indicateur', () => {
+    test("Récupère une liste vide quand il n'y a pas d'indicateurs", async () => {
+      // GIVEN
+      const repository = new IndicateurSQLRepository(prisma);
+
+      // WHEN
+      const result = await repository.getDetailsIndicateur('CH-001',  'départementale', ['01']);
+
+      // THEN
+      expect(result).toStrictEqual({});
+    });
+
+    test("Récupère les détails d'un indicateur départemental", async () => {
+      // GIVEN
+      const repository = new IndicateurSQLRepository(prisma);
+      await prisma.indicateur.create({
+        data: {
+          id: 'IND-001',
+          nom: 'indic',
+          chantier_id: 'CH-001',
+          valeur_initiale: 1000,
+          objectif_valeur_cible: 1789,
+          code_insee: '01',
+          maille: 'DEPT',
+          evolution_valeur_actuelle: [1, 2, 3],
+          evolution_date_valeur_actuelle: [new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')],
+          objectif_taux_avancement: 20,
+        },
+      });
+
+      // WHEN
+      const result = await repository.getDetailsIndicateur('CH-001', 'départementale', ['01']);
+
+      // THEN
+      expect(result).toStrictEqual(
+        {
+          'IND-001': {
+            '01' : {
+              codeInsee: '01',
+              valeurInitiale: 1000,
+              valeurs: [1, 2, 3],
+              dateValeurs: ['2021-01-01', '2021-02-01', '2021-03-01'],
+              valeurCible: 1789,
+              avancement: {
+                global: 20,
+                annuel: null,
+              },
+            },
+          },
+        },
+      );
+    });
+  });
 });
