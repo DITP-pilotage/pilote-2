@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/consistent-function-scoping */
 import { régionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { Territoire } from '@/client/stores/useTerritoiresStore/useTerritoiresStore.interface';
+import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
 import { CartographieTerritoireAffiché, CartographieOptions, CartographieTerritoires } from './useCartographie.interface';
 import { CartographieDonnées } from './Cartographie.interface';
 
@@ -14,8 +14,8 @@ export default function useCartographie() {
   }
 
   function créerTerritoires(
-    territoiresÀTracer: Territoire[],
-    frontièresÀTracer: Territoire[],
+    territoiresÀTracer: TerritoireGéographique[],
+    frontièresÀTracer: TerritoireGéographique[],
     données: CartographieDonnées,
   ): CartographieTerritoires {
     return {

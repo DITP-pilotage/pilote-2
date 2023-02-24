@@ -1,12 +1,14 @@
-import { Maille } from '@/server/domain/chantier/Chantier.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export const typesIndicateur = ['IMPACT', 'DEPL', 'Q_SERV', 'REBOND', 'CONTEXTE', null] as const;
 
 export type TypeIndicateur = typeof typesIndicateur[number];
 export type Valeur = number | null;
 export type Taux = number | null;
+
 export type IndicateurTerritorialisé = {
-  codeInsee: string,
+  codeInsee: CodeInsee,
   valeurInitiale: Valeur;
   valeurActuelle: Valeur;
   valeurCible: Valeur;
@@ -17,7 +19,7 @@ export type IndicateurTerritorialisé = {
   evolutionDateValeurActuelle: string[];
 };
 
-export type IndicateurDonnéesTerritoires = Record<string, IndicateurTerritorialisé>; // TODO doublon avec DonnéesTerritoires '@/client/utils/chantier/donnéesTerritoires/donnéesTerritoires'
+export type IndicateurDonnéesTerritoires = Record<string, IndicateurTerritorialisé>;
 
 export default interface Indicateur {
   id: string;

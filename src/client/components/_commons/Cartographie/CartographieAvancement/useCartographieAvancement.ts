@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import nuancierPourcentage from '@/client/constants/nuanciers/nuancierPourcentage';
-import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';

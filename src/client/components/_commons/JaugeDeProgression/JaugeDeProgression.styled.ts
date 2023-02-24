@@ -1,13 +1,5 @@
 import styled from '@emotion/styled';
-import {
-  JaugeDeProgressionCouleur,
-  JaugeDeProgressionTaille,
-} from '@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface';
-
-interface JaugeDeProgressionStyledProps {
-  taille: JaugeDeProgressionTaille,
-  couleur: JaugeDeProgressionCouleur,
-}
+import { JaugeDeProgressionStyledProps } from './JaugeDeProgression.interface';
 
 const couleurs = {
   bleu: 'var(--background-active-blue-france)',

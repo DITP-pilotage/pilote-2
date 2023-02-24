@@ -1,4 +1,4 @@
-import Météo, { météos } from '@/server/domain/chantier/Météo.interface';
+import { Météo, météos } from '@/server/domain/météo/Météo.interface';
 
 export function comparerMétéo(a: Météo, b: Météo) {
   const indexA = météos.indexOf(a);

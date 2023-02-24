@@ -1,5 +1,6 @@
+import Axe from '@/server/domain/axe/Axe.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import { Axe, Ppg } from '@/server/domain/chantier/Chantier.interface';
+import Ppg from '@/server/domain/ppg/Ppg.interface';
 
 export default interface BarreLatéraleProps {
   ministères: Ministère[],

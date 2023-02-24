@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
-import Météo from '@/server/domain/chantier/Météo.interface';
 import Hachure from '@/client/constants/nuanciers/hachure/hachure';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export type NuancierRemplissage = {
   type: 'COULEUR',

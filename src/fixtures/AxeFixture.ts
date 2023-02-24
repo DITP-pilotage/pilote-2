@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import FixtureInterface from '@/fixtures/Fixture.interface';
-import { Axe } from '@/server/domain/chantier/Chantier.interface';
 import { générerCaractèresSpéciaux, générerUnIdentifiantUnique } from '@/fixtures/utils';
+import Axe from '@/server/domain/axe/Axe.interface';
 
 class AxeFixture implements FixtureInterface<Axe> {
   générer(valeursFixes?: Partial<Axe>): Axe {

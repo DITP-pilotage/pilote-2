@@ -1,4 +1,4 @@
-import { MailleInterne } from '@/server/domain/chantier/Chantier.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore  } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import SélecteurMailleStyled from './SélecteurMaille.styled';
 

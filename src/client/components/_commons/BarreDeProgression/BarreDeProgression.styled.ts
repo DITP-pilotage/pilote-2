@@ -1,11 +1,5 @@
 import styled from '@emotion/styled';
-import { BarreDeProgressionVariante, BarreDeProgressionFond, BarreDeProgressionTaille } from './BarreDeProgression.interface';
-
-type BarreDeProgressionStyledProps = {
-  variante: BarreDeProgressionVariante
-  fond: BarreDeProgressionFond,
-  taille: BarreDeProgressionTaille,
-};
+import { BarreDeProgressionStyledProps } from './BarreDeProgression.interface';
 
 const borderRadius = '0.375rem';
 

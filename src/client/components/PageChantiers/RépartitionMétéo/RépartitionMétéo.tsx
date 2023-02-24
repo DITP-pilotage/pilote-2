@@ -1,10 +1,11 @@
 import Titre from '@/components/_commons/Titre/Titre';
-import { récupérerLibelléMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import RépartitionMétéoProps from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéoProps.interface';
+import météosConstantes from '@/client/constants/météos';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 import RépartitionMétéoÉlément from './RépartitionMétéoÉlément/RépartitionMétéoÉlément';
 import RépartitionMétéoStyled from './RépartitionMétéo.styled';
 
-const météosÀAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
+const météosÀAfficher: Partial<Météo>[] = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'];
 
 export default function RépartitionMétéo({ météos }: RépartitionMétéoProps) {
   return (
@@ -20,7 +21,7 @@ export default function RépartitionMétéo({ météos }: RépartitionMétéoPro
           météosÀAfficher.map(météo => (
             <li
               className='fr-col-12 fr-col-sm-6 fr-col-xl-3'
-              key={récupérerLibelléMétéo(météo)}
+              key={météosConstantes[météo]}
             >
               <RépartitionMétéoÉlément
                 météo={météo}

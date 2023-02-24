@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import FixtureInterface from '@/fixtures/Fixture.interface';
-import { Ppg } from '@/server/domain/chantier/Chantier.interface';
 import { générerCaractèresSpéciaux, générerUnIdentifiantUnique } from '@/fixtures/utils';
+import Ppg from '@/server/domain/ppg/Ppg.interface';
 
 class PpgFixture implements FixtureInterface<Ppg> {
   générer(valeursFixes?: Partial<Ppg>): Ppg {

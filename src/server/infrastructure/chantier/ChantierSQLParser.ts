@@ -1,9 +1,10 @@
 import { chantier } from '@prisma/client';
-import Chantier, { Territoires } from '@/server/domain/chantier/Chantier.interface';
-import { météoFromString } from '@/server/domain/chantier/Météo.interface';
 import départements from '@/client/constants/départements.json';
 import régions from '@/client/constants/régions.json';
-import { Territoire } from '@/client/stores/useTerritoiresStore/useTerritoiresStore.interface';
+import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
+import { Territoires } from '@/server/domain/territoire/Territoire.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
 class ErreurChantierSansMailleNationale extends Error {
   constructor(idChantier: string) {
@@ -11,7 +12,7 @@ class ErreurChantierSansMailleNationale extends Error {
   }
 }
 
-function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: chantier[]) {
+function créerDonnéesTerritoires(territoires: TerritoireGéographique[], chantierRows: chantier[]) {
   let donnéesTerritoires: Territoires = {};
 
   territoires.forEach(territoire => {
@@ -20,7 +21,7 @@ function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: chan
     donnéesTerritoires[territoire.codeInsee] = {
       codeInsee: territoire.codeInsee,
       avancement: { annuel: null, global: chantierRow?.taux_avancement ?? null },
-      météo: météoFromString(chantierRow?.meteo ?? null),
+      météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
     };
   });
 
@@ -47,7 +48,7 @@ export function parseChantier(chantierRows: chantier[]): Chantier {
         FR: {
           codeInsee: chantierMailleNationale.code_insee,
           avancement: { annuel: null, global: chantierMailleNationale.taux_avancement },
-          météo: météoFromString(chantierMailleNationale.meteo),
+          météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
         },
       },
       départementale: créerDonnéesTerritoires(départements, chantierMailleDépartementale),

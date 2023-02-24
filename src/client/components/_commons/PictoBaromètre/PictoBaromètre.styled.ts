@@ -1,9 +1,7 @@
 import styled from '@emotion/styled';
-import { Taille } from '@/components/_commons/PictoBaromètre/PictoBaromètre.interface';
+import { PictoBaromètreStyledProps } from '@/components/_commons/PictoBaromètre/PictoBaromètre.interface';
 
-interface PictoBaromètreStyledProps {
-  taille: Taille,
-}
+
 
 const PictoBaromètreStyled = styled.span<PictoBaromètreStyledProps>`
   color: #006e6e;

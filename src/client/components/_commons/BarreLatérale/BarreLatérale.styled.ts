@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
+import { BarreLatéraleStyledProps } from './BarreLatérale.interface';
 
 const breakpointXL = '1248px';
 
-type BarreLatéraleStyledProps = {
-  estOuvert: boolean
-};
+
 
 const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
   .barre-latérale {

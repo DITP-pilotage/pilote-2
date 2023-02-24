@@ -1,23 +1,24 @@
-import { Maille, MailleInterne } from '@/server/domain/chantier/Chantier.interface';
+import { MailleInterne, Maille } from '@/server/domain/maille/Maille.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
-export type Territoire = {
+export type TerritoireGéographique = {
   tracéSVG: string
   nom: string
-  codeInsee: string
-  codeInseeParent?: string
+  codeInsee: CodeInsee
+  codeInseeParent?: CodeInsee
 };
 
 export default interface TerritoiresStore {
-  départements: Territoire[] 
-  régions: Territoire[] 
+  départements: TerritoireGéographique[] 
+  régions: TerritoireGéographique[] 
   mailleSélectionnée: MailleInterne,
   mailleAssociéeAuTerritoireSélectionné: Maille,
-  territoireSélectionné: Territoire & {
-    territoireParent?: Territoire
+  territoireSélectionné: TerritoireGéographique & {
+    territoireParent?: TerritoireGéographique
   },  
   actions: {
     modifierMailleSélectionnée: (maille: MailleInterne) => void,
-    modifierTerritoireSélectionné: (codeInsee: string) => void,
-    récupérerDétailsSurUnTerritoire: (codeInsee: string, maille: MailleInterne) => Territoire | undefined
+    modifierTerritoireSélectionné: (codeInsee: CodeInsee) => void,
+    récupérerDétailsSurUnTerritoire: (codeInsee: CodeInsee, maille: MailleInterne) => TerritoireGéographique | undefined
   },
 }

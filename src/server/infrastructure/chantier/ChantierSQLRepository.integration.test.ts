@@ -2,7 +2,6 @@
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ChantierRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/ChantierRowBuilder';
-import { météoFromString } from '@/server/domain/chantier/Météo.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
@@ -34,7 +33,7 @@ describe('ChantierSQLRepository', () => {
     expect(result1.axe).toStrictEqual('Axe 1');
     expect(result1.ppg).toStrictEqual('Ppg 1');
     expect(result1.périmètreIds).toStrictEqual(['PER-001', 'PER-002']);
-    expect(result1.mailles.nationale.FR.météo).toEqual(météoFromString('COUVERT'));
+    expect(result1.mailles.nationale.FR.météo).toEqual('COUVERT');
     expect(result1.responsables.directeursAdminCentrale).toStrictEqual([{ nom: 'Alain Térieur', direction: 'Intérieur' }, { nom: 'Alex Térieur', direction: 'Extérieur' }]);
     expect(result1.responsables.directeursProjet).toStrictEqual([{ nom: 'Dir proj 1', email: 'dirproj1@example.com' }, { nom: 'Dir proj 2', email: 'dirproj2@example.com' }]);
 
@@ -80,20 +79,20 @@ describe('ChantierSQLRepository', () => {
       FR: {
         codeInsee: 'FR',
         avancement: { annuel: null, global: 18 },
-        météo: météoFromString('SOLEIL'),
+        météo: 'SOLEIL',
       },
     });
 
     expect(result.mailles.départementale[13]).toStrictEqual({
       codeInsee: '13',
       avancement: { annuel: null, global: 45 },
-      météo: météoFromString('SOLEIL'),
+      météo: 'SOLEIL',
     });
 
     expect(result.mailles.départementale[12]).toStrictEqual({
       codeInsee: '12',
       avancement: { annuel: null, global: null },
-      météo: météoFromString('NON_RENSEIGNEE'),
+      météo: 'NON_RENSEIGNEE',
     });
 
     expect(objectEntries(result.mailles.départementale)).toHaveLength(101);
