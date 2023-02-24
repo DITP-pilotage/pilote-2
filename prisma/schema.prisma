@@ -76,7 +76,7 @@ model synthese_des_resultats {
 
 model axe {
   id String @id
-  nom String?
+  nom String
 }
 
 model ppg {

@@ -10,11 +10,7 @@ export default class AxeSQLRepository implements AxeRepository {
   }
 
   async getListe(): Promise<Axe[]> {
-    return this.prisma.axe.findMany({
-      where: {
-        NOT: { nom: null },
-      },
-    });
+    return this.prisma.axe.findMany();
   }
 }
 
