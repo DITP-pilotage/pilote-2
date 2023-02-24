@@ -1,7 +1,29 @@
-import IndicateurÉvolutionProps from '@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.interface';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
 import Titre from '@/components/_commons/Titre/Titre';
+import IndicateurÉvolutionProps from '@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.interface';
+import useIndicateurÉvolution from './useIndicateurÉvolution';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+);
 
 export default function IndicateurÉvolution({ indicateur }: IndicateurÉvolutionProps) {
+  const { options, données } = useIndicateurÉvolution(indicateur);
+
   return (
     <div>
       <Titre
@@ -13,6 +35,10 @@ export default function IndicateurÉvolution({ indicateur }: IndicateurÉvolutio
       <p className="fr-text--xs texte-gris">
         Mis à jour le : Non renseigné | Source : Non renseigné
       </p>
+      <Line
+        data={données}
+        options={options}
+      />
     </div>
   );
 }
