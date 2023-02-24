@@ -1,5 +1,4 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import { IndicateurMétriques } from '@/server/domain/indicateur/Indicateur.interface';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
@@ -11,6 +10,8 @@ import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoires
 import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
 import IndicateurDétails from '@/components/PageChantier/Indicateurs/Bloc/Détails/IndicateurDétails';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
+import { IndicateurDonnéesParTerritoire } from '../Indicateurs.interface';
+import useIndicateurs from '../useIndicateurs';
 
 function afficherValeurEtDate(valeur: number | null, date?: string | null) {
   const dateFormatée = formaterDate(date, 'mm/yyyy');
@@ -30,30 +31,30 @@ function afficherValeurEtDate(valeur: number | null, date?: string | null) {
   );
 }
 
-const reactTableColonnesHelper = createColumnHelper<IndicateurMétriques & { nomDuTerritoire: TerritoireGéographique['nom'] }>();
+const reactTableColonnesHelper = createColumnHelper<IndicateurDonnéesParTerritoire>();
 
 const colonnes = [
-  reactTableColonnesHelper.accessor( 'nomDuTerritoire', {
+  reactTableColonnesHelper.accessor( 'territoire', {
     header: 'Territoire(s)',
     cell: nomDuTerritoire => nomDuTerritoire.getValue(),
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('valeurInitiale', {
+  reactTableColonnesHelper.accessor('données.valeurInitiale', {
     header: 'Valeur initiale',
-    cell: valeurInitiale => afficherValeurEtDate(valeurInitiale.getValue(), valeurInitiale.row.original.dateValeurInitiale),
+    cell: valeurInitiale => afficherValeurEtDate(valeurInitiale.getValue(), valeurInitiale.row.original.données.dateValeurInitiale),
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('valeurActuelle', {
+  reactTableColonnesHelper.accessor('données.valeurActuelle', {
     header: 'Valeur actuelle',
-    cell: valeurActuelle => afficherValeurEtDate(valeurActuelle.getValue(), valeurActuelle.row.original.dateValeurActuelle),
+    cell: valeurActuelle => afficherValeurEtDate(valeurActuelle.getValue(), valeurActuelle.row.original.données.dateValeurActuelle),
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('valeurCible', {
+  reactTableColonnesHelper.accessor('données.valeurCible', {
     header: 'Valeur cible',
     cell: valeurCible => afficherValeurEtDate(valeurCible.getValue()),
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('avancement.global', {
+  reactTableColonnesHelper.accessor('données.tauxAvancementGlobal', {
     header: 'Taux avancement global',
     cell: avancementGlobal => (
       <>
@@ -71,9 +72,9 @@ const colonnes = [
   }),
 ];
 
-export default function IndicateurBloc({ indicateur, indicateurMétriques } : IndicateurBlocProps) {
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-
+export default function IndicateurBloc({ indicateur } : IndicateurBlocProps) {
+  const { indicateurDonnéesParTerritoires } = useIndicateurs(indicateur);  
+  
   return (
     <IndicateurBlocStyled
       className="fr-mb-2w"
@@ -100,10 +101,10 @@ export default function IndicateurBloc({ indicateur, indicateurMétriques } : In
         <p className="fr-text--xs fr-mb-1v">
           Ceci est la description de l’indicateur et des données associées. La pondération de l’indicateur dans le taux d’avancement global est également expliquée.
         </p>
-        <Tableau<IndicateurMétriques & { nomDuTerritoire: TerritoireGéographique['nom'] }>
+        <Tableau<IndicateurDonnéesParTerritoire>
           afficherLaRecherche={false}
           colonnes={colonnes}
-          données={[{ ...indicateurMétriques, nomDuTerritoire: territoireSélectionné.nom }]}
+          données={indicateurDonnéesParTerritoires}
           entité='indicateur'
         />
         <IndicateurDétails indicateur={indicateur} />
