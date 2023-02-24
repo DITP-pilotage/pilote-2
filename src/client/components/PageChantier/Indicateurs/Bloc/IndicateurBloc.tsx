@@ -1,5 +1,5 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { IndicateurMétriques } from '@/server/domain/indicateur/Indicateur.interface';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
@@ -9,6 +9,8 @@ import { formaterDate } from '@/client/utils/date/date';
 import IndicateurDétails
   from '@/components/PageChantier/Indicateurs/Bloc/Détails/IndicateurDétails';
 import IndicateurBlocProps from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc.interface';
+import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 
 function afficherValeurEtDate(valeur: number | null, date?: string | null) {
@@ -29,39 +31,39 @@ function afficherValeurEtDate(valeur: number | null, date?: string | null) {
   );
 }
 
-const reactTableColonnesHelper = createColumnHelper<Indicateur & { territoire: string }>();
+const reactTableColonnesHelper = createColumnHelper<IndicateurMétriques & { territoire: TerritoireGéographique }>();
 
 const colonnes = [
-  reactTableColonnesHelper.accessor('territoire', {
+  reactTableColonnesHelper.accessor( 'territoire', {
     header: 'Territoire(s)',
-    cell: 'National',
+    cell: territoire => territoire.getValue().nom,
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('mailles.nationale.FR.valeurInitiale', {
+  reactTableColonnesHelper.accessor('valeurInitiale', {
     header: 'Valeur initiale',
-    cell: valeurInitiale => afficherValeurEtDate(valeurInitiale.getValue(), valeurInitiale.row.original.mailles.nationale.FR.dateValeurInitiale),
+    cell: valeurInitiale => afficherValeurEtDate(valeurInitiale.getValue(), valeurInitiale.row.original.dateValeurInitiale),
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('mailles.nationale.FR.valeurActuelle', {
+  reactTableColonnesHelper.accessor('valeurActuelle', {
     header: 'Valeur actuelle',
-    cell: valeurActuelle => afficherValeurEtDate(valeurActuelle.getValue(), valeurActuelle.row.original.mailles.nationale.FR.dateValeurActuelle),
+    cell: valeurActuelle => afficherValeurEtDate(valeurActuelle.getValue(), valeurActuelle.row.original.dateValeurActuelle),
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('mailles.nationale.FR.valeurCible', {
+  reactTableColonnesHelper.accessor('valeurCible', {
     header: 'Valeur cible',
     cell: valeurCible => afficherValeurEtDate(valeurCible.getValue()),
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('mailles.nationale.FR.tauxAvancementGlobal', {
+  reactTableColonnesHelper.accessor('avancement.global', {
     header: 'Taux avancement global',
-    cell: tauxAvancementGlobal => (
+    cell: avancementGlobal => (
       <>
-        {tauxAvancementGlobal.getValue() === null ? '- %' : `${tauxAvancementGlobal.getValue()!.toFixed(0)}%`}
+        {avancementGlobal.getValue() === null ? '- %' : `${avancementGlobal.getValue()!.toFixed(0)}%`}
         <BarreDeProgression
           afficherTexte={false}
           fond='bleu'
           taille='moyenne'
-          valeur={tauxAvancementGlobal.getValue()}
+          valeur={avancementGlobal.getValue()}
           variante='primaire'
         />
       </>
@@ -70,7 +72,10 @@ const colonnes = [
   }),
 ];
 
-export default function IndicateurBloc({ indicateur } : IndicateurBlocProps) {
+export default function IndicateurBloc({ indicateur, indicateurMétriques } : IndicateurBlocProps) {
+
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
   return (
     <IndicateurBlocStyled
       className="fr-mb-2w"
@@ -97,10 +102,10 @@ export default function IndicateurBloc({ indicateur } : IndicateurBlocProps) {
         <p className="fr-text--xs fr-mb-1v">
           Ceci est la description de l’indicateur et des données associées. La pondération de l’indicateur dans le taux d’avancement global est également expliquée.
         </p>
-        <Tableau<Indicateur & { territoire: string }>
+        <Tableau<IndicateurMétriques & { territoire: TerritoireGéographique }>
           afficherLaRecherche={false}
           colonnes={colonnes}
-          données={[{ ...indicateur, territoire: 'National' }]}
+          données={[{ ...indicateurMétriques, territoire: territoireSélectionné }]}
           entité='indicateur'
         />
         <IndicateurDétails indicateur={indicateur} />

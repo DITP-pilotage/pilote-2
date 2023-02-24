@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, mailleAssociéeAuTerritoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Indicateur, { IndicateursMétriques } from '@/server/domain/indicateur/Indicateur.interface';
 
-export default function usePageChantier(chantier: Chantier) {
+export default function usePageChantier(chantier: Chantier, indicateurs: Indicateur[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
@@ -25,6 +26,26 @@ export default function usePageChantier(chantier: Chantier) {
       return donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireSélectionné.codeInsee].répartition.avancements.moyenne;
   };
 
+  const indicateursMétriques = useMemo(() =>{
+    //CALL API
+    let results: IndicateursMétriques = {};
+    indicateurs.forEach(indicateur => {
+      const random = Math.round(Math.random() * 100);
+      results[indicateur.id] = {
+        valeurInitiale: 0,
+        dateValeurInitiale: '10/10/2021',
+        valeurActuelle: random,
+        dateValeurActuelle: '10/10/2022',
+        valeurCible: 100,
+        avancement: {
+          global: random,
+          annuel: null,
+        },
+      };
+    });
+    return results;
+  }, [indicateurs, mailleSélectionnée, territoireSélectionné]);
+
   const avancements = {
     nationale: {
       moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.moyenne,
@@ -40,5 +61,5 @@ export default function usePageChantier(chantier: Chantier) {
     },
   };
 
-  return { avancements };
+  return { avancements, indicateursMétriques };
 }
