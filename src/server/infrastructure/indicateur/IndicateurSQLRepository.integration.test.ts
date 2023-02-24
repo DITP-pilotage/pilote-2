@@ -87,52 +87,6 @@ describe('IndicateurSQLRepository', () => {
     });
   });
 
-  describe('Évolutions indicateur', () => {
-    test("Récupère une liste vide quand il n'y a pas d'indicateurs", async () => {
-      // GIVEN
-      const repository = new IndicateurSQLRepository(prisma);
-
-      // WHEN
-      const result = await repository.getEvolutionIndicateur('CH-001', 'IND-001', 'départementale', ['01']);
-
-      // THEN
-      expect(result).toStrictEqual([]);
-    });
-
-    test("Récupère l'évolution d'un indicateur départemental", async () => {
-      // GIVEN
-      const repository = new IndicateurSQLRepository(prisma);
-      await prisma.indicateur.create({
-        data: {
-          id: 'IND-001',
-          nom: 'indic',
-          chantier_id: 'CH-001',
-          objectif_valeur_cible: 1789,
-          code_insee: '01',
-          maille: 'DEPT',
-          evolution_valeur_actuelle: [1, 2, 3],
-          evolution_date_valeur_actuelle: [new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')],
-        },
-      });
-
-      // WHEN
-      const result = await repository.getEvolutionIndicateur('CH-001', 'IND-001', 'départementale', ['01']);
-
-      // THEN
-      expect(result).toStrictEqual(
-        [
-          {
-            valeurCible: 1789,
-            maille: 'départementale',
-            codeInsee: '01',
-            évolutionValeurActuelle: [1, 2, 3],
-            évolutionDateValeurActuelle: ['2021-01-01', '2021-02-01', '2021-03-01'],
-          },
-        ],
-      );
-    });
-  });
-
   describe('Détails indicateur', () => {
     test("Récupère une liste vide quand il n'y a pas d'indicateurs", async () => {
       // GIVEN
@@ -217,6 +171,7 @@ describe('IndicateurSQLRepository', () => {
         },
       );
     });
+    //TODO : supprimer les données de tests
 
     test('Ne récupère pas les indicateurs d\'autres mailles et d\'autres chantiers', async () => {
       // GIVEN
@@ -291,6 +246,7 @@ describe('IndicateurSQLRepository', () => {
           },
         },
       );
+      //TODO : supprimer les données de tests
     });
   });
 });

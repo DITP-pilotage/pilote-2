@@ -4,5 +4,5 @@ import { FichesIndicateur } from '@/server/domain/indicateur/DetailsIndicateur';
 
 export default interface IndicateurRepository {
   getByChantierId(chantierId: string): Promise<Indicateur[]>;
-  getEvolutionIndicateur(chantierId: string, indicateurId: string, maille: string, codes_insee: string[]): Promise<EvolutionIndicateur[]>;
+  getDetailsIndicateur(chantierId: string, maille: string, codesInsee: string[]): Promise<FichesIndicateur>;
 }
