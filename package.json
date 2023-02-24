@@ -51,7 +51,6 @@
     "d3-selection": "^3.0.0",
     "d3-zoom": "^3.0.0",
     "dotenv-cli": "^7.0.0",
-    "dsfr-chart": "^0.1.1",
     "next": "^13.1.6",
     "nextjs-basic-auth-middleware": "^2.0.0",
     "pino": "^8.10.0",
