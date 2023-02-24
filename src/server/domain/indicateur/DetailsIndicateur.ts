@@ -10,6 +10,7 @@ type CodeInsee = string;
 type DetailsIndicateur = {
   codeInsee: string,
   valeurInitiale: number | null,
+  dateValeurInitiale: string | null,
   valeurs: number[],
   dateValeurs: string[],
   valeurCible: number | null,

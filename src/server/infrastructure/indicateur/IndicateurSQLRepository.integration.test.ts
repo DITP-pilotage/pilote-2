@@ -145,7 +145,7 @@ describe('IndicateurSQLRepository', () => {
       expect(result).toStrictEqual({});
     });
 
-    test("Récupère les détails d'un indicateur départemental", async () => {
+    test('Récupère les détails de deux indicateurs départemental du même chantier', async () => {
       // GIVEN
       const repository = new IndicateurSQLRepository(prisma);
       await prisma.indicateur.create({
@@ -154,6 +154,7 @@ describe('IndicateurSQLRepository', () => {
           nom: 'indic',
           chantier_id: 'CH-001',
           valeur_initiale: 1000,
+          date_valeur_initiale: new Date('2021-01-01'),
           objectif_valeur_cible: 1789,
           code_insee: '01',
           maille: 'DEPT',
@@ -163,8 +164,24 @@ describe('IndicateurSQLRepository', () => {
         },
       });
 
+      await prisma.indicateur.create({
+        data: {
+          id: 'IND-002',
+          nom: 'indic2',
+          chantier_id: 'CH-001',
+          valeur_initiale: 1001,
+          date_valeur_initiale: new Date('2021-01-01'),
+          objectif_valeur_cible: 1790,
+          code_insee: '02',
+          maille: 'DEPT',
+          evolution_valeur_actuelle: [1, 4, 6],
+          evolution_date_valeur_actuelle: [new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')],
+          objectif_taux_avancement: 40,
+        },
+      });
+
       // WHEN
-      const result = await repository.getDetailsIndicateur('CH-001', 'départementale', ['01']);
+      const result = await repository.getDetailsIndicateur('CH-001', 'départementale', ['01', '02']);
 
       // THEN
       expect(result).toStrictEqual(
@@ -173,11 +190,101 @@ describe('IndicateurSQLRepository', () => {
             '01' : {
               codeInsee: '01',
               valeurInitiale: 1000,
+              dateValeurInitiale: '2021-01-01',
               valeurs: [1, 2, 3],
               dateValeurs: ['2021-01-01', '2021-02-01', '2021-03-01'],
               valeurCible: 1789,
               avancement: {
                 global: 20,
+                annuel: null,
+              },
+            },
+          },
+          'IND-002': {
+            '02': {
+              codeInsee: '02',
+              valeurInitiale: 1001,
+              dateValeurInitiale: '2021-01-01',
+              valeurs: [1, 4, 6],
+              dateValeurs: ['2021-01-01', '2021-02-01', '2021-03-01'],
+              valeurCible: 1790,
+              avancement: {
+                global: 40,
+                annuel: null,
+              },
+            },
+          },
+        },
+      );
+    });
+
+    test('Ne récupère pas les indicateurs d\'autres mailles et d\'autres chantiers', async () => {
+      // GIVEN
+      const repository = new IndicateurSQLRepository(prisma);
+      await prisma.indicateur.create({
+        data: {
+          id: 'IND-001',
+          nom: 'indic',
+          chantier_id: 'CH-001',
+          valeur_initiale: 1000,
+          date_valeur_initiale: new Date('2021-01-01'),
+          objectif_valeur_cible: 1789,
+          code_insee: '01',
+          maille: 'DEPT',
+          evolution_valeur_actuelle: [1, 2, 3],
+          evolution_date_valeur_actuelle: [new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')],
+          objectif_taux_avancement: 20,
+        },
+      });
+
+      await prisma.indicateur.create({
+        data: {
+          id: 'IND-002',
+          nom: 'indic2',
+          chantier_id: 'CH-002',
+          valeur_initiale: 1001,
+          date_valeur_initiale: new Date('2021-01-01'),
+          objectif_valeur_cible: 1790,
+          code_insee: '02',
+          maille: 'DEPT',
+          evolution_valeur_actuelle: [1, 4, 6],
+          evolution_date_valeur_actuelle: [new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')],
+          objectif_taux_avancement: 40,
+        },
+      });
+
+      await prisma.indicateur.create({
+        data: {
+          id: 'IND-002',
+          nom: 'indic2',
+          chantier_id: 'CH-002',
+          valeur_initiale: 1001,
+          date_valeur_initiale: new Date('2021-01-01'),
+          objectif_valeur_cible: 1790,
+          code_insee: '02',
+          maille: 'REG',
+          evolution_valeur_actuelle: [1, 4, 6],
+          evolution_date_valeur_actuelle: [new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')],
+          objectif_taux_avancement: 40,
+        },
+      });
+
+      // WHEN
+      const result = await repository.getDetailsIndicateur('CH-002', 'régionale', ['01', '02']);
+
+      // THEN
+      expect(result).toStrictEqual(
+        {
+          'IND-002': {
+            '02': {
+              codeInsee: '02',
+              valeurInitiale: 1001,
+              dateValeurInitiale: '2021-01-01',
+              valeurs: [1, 4, 6],
+              dateValeurs: ['2021-01-01', '2021-02-01', '2021-03-01'],
+              valeurCible: 1790,
+              avancement: {
+                global: 40,
                 annuel: null,
               },
             },

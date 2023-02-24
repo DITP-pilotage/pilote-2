@@ -5,3 +5,9 @@ export const NOMS_MAILLES: Record<string, Maille> = {
   DEPT: 'départementale',
   REG: 'régionale',
 };
+
+export const CODES_MAILLES: Record<Maille, string> = {
+  nationale: 'NAT',
+  départementale: 'DEPT',
+  régionale: 'REG',
+};
