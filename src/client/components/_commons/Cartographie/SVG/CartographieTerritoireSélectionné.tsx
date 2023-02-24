@@ -1,4 +1,4 @@
-import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
 export default function CartographieTerritoireSélectionné() {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();

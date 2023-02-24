@@ -1,7 +1,7 @@
 import { chantier } from '@prisma/client';
 import départements from '@/client/constants/départements.json';
 import régions from '@/client/constants/régions.json';
-import { TerritoireGéographique } from '@/client/stores/useTerritoiresStore/useTerritoiresStore.interface';
+import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
 import { Territoires } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';

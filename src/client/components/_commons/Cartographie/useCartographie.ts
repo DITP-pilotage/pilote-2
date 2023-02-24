@@ -1,6 +1,6 @@
 /* eslint-disable unicorn/consistent-function-scoping */
 import { régionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { TerritoireGéographique } from '@/client/stores/useTerritoiresStore/useTerritoiresStore.interface';
+import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
 import { CartographieTerritoireAffiché, CartographieOptions, CartographieTerritoires } from './useCartographie.interface';
 import { CartographieDonnées } from './Cartographie.interface';
 

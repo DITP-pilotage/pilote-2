@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import hachuresGrisBlanc from '@/client/constants/nuanciers/hachure/hachuresGrisBlanc';
-import { actionsTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';

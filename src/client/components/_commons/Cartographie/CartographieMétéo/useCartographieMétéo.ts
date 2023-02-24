@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import nuancierMétéo from '@/client/constants/nuanciers/nuancierMétéo';
-import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
 import météos from '@/client/constants/météos';
