@@ -31,12 +31,12 @@ function afficherValeurEtDate(valeur: number | null, date?: string | null) {
   );
 }
 
-const reactTableColonnesHelper = createColumnHelper<IndicateurMétriques & { territoire: TerritoireGéographique }>();
+const reactTableColonnesHelper = createColumnHelper<IndicateurMétriques & { nomDuTerritoire: TerritoireGéographique['nom'] }>();
 
 const colonnes = [
-  reactTableColonnesHelper.accessor( 'territoire', {
+  reactTableColonnesHelper.accessor( 'nomDuTerritoire', {
     header: 'Territoire(s)',
-    cell: territoire => territoire.getValue().nom,
+    cell: nomDuTerritoire => nomDuTerritoire.getValue(),
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('valeurInitiale', {
@@ -73,7 +73,6 @@ const colonnes = [
 ];
 
 export default function IndicateurBloc({ indicateur, indicateurMétriques } : IndicateurBlocProps) {
-
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   return (
@@ -102,10 +101,10 @@ export default function IndicateurBloc({ indicateur, indicateurMétriques } : In
         <p className="fr-text--xs fr-mb-1v">
           Ceci est la description de l’indicateur et des données associées. La pondération de l’indicateur dans le taux d’avancement global est également expliquée.
         </p>
-        <Tableau<IndicateurMétriques & { territoire: TerritoireGéographique }>
+        <Tableau<IndicateurMétriques & { nomDuTerritoire: TerritoireGéographique['nom'] }>
           afficherLaRecherche={false}
           colonnes={colonnes}
-          données={[{ ...indicateurMétriques, territoire: territoireSélectionné }]}
+          données={[{ ...indicateurMétriques, nomDuTerritoire: territoireSélectionné.nom }]}
           entité='indicateur'
         />
         <IndicateurDétails indicateur={indicateur} />
