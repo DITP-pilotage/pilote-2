@@ -1,4 +1,4 @@
-import { Maille } from '@/server/domain/chantier/Chantier.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 export const NOMS_MAILLES: Record<string, Maille> = {
   NAT: 'nationale',

@@ -171,7 +171,6 @@ describe('IndicateurSQLRepository', () => {
         },
       );
     });
-    //TODO : supprimer les données de tests
 
     test('Ne récupère pas les indicateurs d\'autres mailles et d\'autres chantiers', async () => {
       // GIVEN
@@ -246,7 +245,6 @@ describe('IndicateurSQLRepository', () => {
           },
         },
       );
-      //TODO : supprimer les données de tests
     });
   });
 });

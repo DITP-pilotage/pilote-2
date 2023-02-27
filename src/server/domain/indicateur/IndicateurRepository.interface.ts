@@ -1,5 +1,4 @@
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { EvolutionIndicateur } from '@/server/domain/indicateur/EvolutionIndicateur';
 import { FichesIndicateur } from '@/server/domain/indicateur/DetailsIndicateur';
 
 export default interface IndicateurRepository {

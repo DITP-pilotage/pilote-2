@@ -3,7 +3,7 @@ import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepositor
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 import { FichesIndicateur } from '@/server/domain/indicateur/DetailsIndicateur';
-import { Maille } from '@/server/domain/chantier/Chantier.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 
 function dateOrNullToDateStringWithoutTime(d: Date | null): string | null {

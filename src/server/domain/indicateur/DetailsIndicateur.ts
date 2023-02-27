@@ -1,4 +1,4 @@
-import { Avancement } from '@/server/domain/chantier/Chantier.interface';
+import Avancement from '@/server/domain/avancement/Avancement.interface';
 
 
 export type FichesIndicateur = Record<IdIndicateur, Record<CodeInsee, DetailsIndicateur>>;
