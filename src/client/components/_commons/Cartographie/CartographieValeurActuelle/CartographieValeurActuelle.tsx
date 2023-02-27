@@ -1,8 +1,8 @@
 import Cartographie from '@/components/_commons/Cartographie/Cartographie';
 import CartographieValeurActuelleProps
   from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle.interface';
-import CartographieLégendeDégradéDeSurface
-  from '@/components/_commons/Cartographie/Légende/DégradéDeSurface/CartographieLégendeDégradéDeSurface';
+import CartographieLégendeDégradé
+  from '@/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé';
 import useCartographieValeurActuelle from './useCartographieValeurActuelle';
 
 export default function CartographieValeurActuelle({ données, options }: CartographieValeurActuelleProps) {
@@ -13,7 +13,7 @@ export default function CartographieValeurActuelle({ données, options }: Cartog
       données={donnéesCartographie}
       options={options}
     >
-      <CartographieLégendeDégradéDeSurface contenu={légende} />
+      <CartographieLégendeDégradé contenu={légende} />
     </Cartographie>
   );
 }

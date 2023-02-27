@@ -1,10 +1,9 @@
-import CartographieLégendeDégradéDeSurfaceProps
-  from '@/components/_commons/Cartographie/Légende/DégradéDeSurface/CartographieLégendeDégradéDeSurfaceProps.interface';
-import CartographieLégendeDégradéDeSurfaceStyled from './CartographieLégendeDégradéDeSurface.styled';
+import CartographieLégendeDégradéStyled from './CartographieLégendeDégradé.styled';
+import CartographieLégendeDégradéProps from './CartographieLégendeDégradé.interface';
 
-export default function CartographieLégendeDégradéDeSurface({ contenu }: CartographieLégendeDégradéDeSurfaceProps) {
+export default function CartographieLégendeDégradé({ contenu }: CartographieLégendeDégradéProps) {
   return (
-    <CartographieLégendeDégradéDeSurfaceStyled
+    <CartographieLégendeDégradéStyled
       className='fr-mt-1w'
       couleurMax={contenu.couleurMax}
       couleurMin={contenu.couleurMin}
@@ -21,6 +20,6 @@ export default function CartographieLégendeDégradéDeSurface({ contenu }: Cart
           { contenu.valeurMax }
         </p>
       </div>
-    </CartographieLégendeDégradéDeSurfaceStyled>
+    </CartographieLégendeDégradéStyled>
   );
 }

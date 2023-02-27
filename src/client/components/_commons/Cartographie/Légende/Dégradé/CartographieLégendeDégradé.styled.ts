@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
-type CartographieLégendeDégradéDeSurfaceStyledProps = {
+type CartographieLégendeDégradéStyledProps = {
   couleurMax: string,
   couleurMin: string,
 };
 
-const CartographieLégendeDégradéDeSurfaceStyled = styled.div<CartographieLégendeDégradéDeSurfaceStyledProps>`
+const CartographieLégendeDégradéStyled = styled.div<CartographieLégendeDégradéStyledProps>`
   max-width: 28rem;
   margin: auto;
   
@@ -15,4 +15,4 @@ const CartographieLégendeDégradéDeSurfaceStyled = styled.div<CartographieLég
   }
 `;
 
-export default CartographieLégendeDégradéDeSurfaceStyled;
+export default CartographieLégendeDégradéStyled;
