@@ -30,15 +30,14 @@ export default function usePageChantier(chantier: Chantier, indicateurs: Indicat
     //CALL API
     let results: IndicateursMétriques = {};
     indicateurs.forEach(indicateur => {
-      const random = Math.round(Math.random() * 100);
       results[indicateur.id] = {
         valeurInitiale: 0,
         dateValeurInitiale: '10/10/2021',
-        valeurActuelle: random,
+        valeurActuelle: 50,
         dateValeurActuelle: '10/10/2022',
         valeurCible: 100,
         avancement: {
-          global: random,
+          global: 50,
           annuel: null,
         },
       };
