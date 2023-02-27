@@ -1,10 +1,6 @@
-type CouleurRVB = {
-  r: number,
-  v: number,
-  b: number,
-};
+import { CouleurHexa, CouleurRVB } from '@/client/utils/couleur/couleur.interface';
 
-function déterminerValeursNumériques(couleur: `#${string}`): CouleurRVB {
+function déterminerValeursNumériques(couleur: CouleurHexa): CouleurRVB {
   const couleurValeursHexa = couleur.replace('#', '');
   return {
     r: Number.parseInt(couleurValeursHexa.slice(0, 2), 16),
@@ -53,7 +49,7 @@ function convertitEnHexadécimal(valeur: number): string {
   return hexadécimalSansDécimale.padStart(2, '0');
 }
 
-export const interpolerCouleurs = (couleurDépart: `#${string}`, couleurArrivée: `#${string}`, pourcentage: number): `#${string}` => {
+export const interpolerCouleurs = (couleurDépart: CouleurHexa, couleurArrivée: CouleurHexa, pourcentage: number): CouleurHexa => {
   const couleurRVBDépart = déterminerValeursNumériques(couleurDépart);
   const couleurRVBArrivée = déterminerValeursNumériques(couleurArrivée);
   const couleurRVB = interpolerCouleursRVB(couleurRVBDépart, couleurRVBArrivée, pourcentage);

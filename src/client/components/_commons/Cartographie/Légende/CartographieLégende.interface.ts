@@ -1,1 +1,3 @@
-export type Remplissage = `#${string}` | `url(#${string})`;
+import { CouleurHexa } from '@/client/utils/couleur/couleur.interface';
+
+export type Remplissage = CouleurHexa | `url(#${string})`;
