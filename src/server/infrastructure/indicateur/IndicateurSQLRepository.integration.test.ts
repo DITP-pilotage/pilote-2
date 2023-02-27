@@ -131,12 +131,26 @@ describe('IndicateurSQLRepository', () => {
           .withObjectifValeurCible(1790)
           .withObjectifTauxAvancement(40)
           .build(),
+
+        new IndicateurRowBuilder()
+          .withId('IND-002')
+          .withNom('indic2')
+          .withChantierId('CH-001')
+          .withMaille('DEPT')
+          .withCodeInsee('03')
+          .withEvolutionValeurActuelle( [1, 4, 6])
+          .withEvolutionDateValeurActuelle(['2021-01-01', '2021-02-01', '2021-03-01'])
+          .withValeurInitiale(1001)
+          .withDateValeurInitiale('2021-01-01')
+          .withObjectifValeurCible(1790)
+          .withObjectifTauxAvancement(40)
+          .build(),
       ];
 
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
-      const result = await repository.getDetailsIndicateur('CH-001', 'départementale', ['01', '02']);
+      const result = await repository.getDetailsIndicateur('CH-001', 'départementale', ['01', '02', '03']);
 
       // THEN
       expect(result).toStrictEqual(
@@ -158,6 +172,18 @@ describe('IndicateurSQLRepository', () => {
           'IND-002': {
             '02': {
               codeInsee: '02',
+              valeurInitiale: 1001,
+              dateValeurInitiale: '2021-01-01',
+              valeurs: [1, 4, 6],
+              dateValeurs: ['2021-01-01', '2021-02-01', '2021-03-01'],
+              valeurCible: 1790,
+              avancement: {
+                global: 40,
+                annuel: null,
+              },
+            },
+            '03': {
+              codeInsee: '03',
               valeurInitiale: 1001,
               dateValeurInitiale: '2021-01-01',
               valeurs: [1, 4, 6],
