@@ -25,7 +25,7 @@ describe('interpolerCouleur', () => {
   it('pourcentage à 150 : renvoie la couleur d\'arrivée', () => {
     const couleurDépart = '#000000';
     const couleurArrivée = '#888888';
-    const résultat = interpolerCouleurs(couleurDépart, couleurArrivée, 125);
+    const résultat = interpolerCouleurs(couleurDépart, couleurArrivée, 150);
     expect(résultat).toEqual(couleurArrivée);
   });
 

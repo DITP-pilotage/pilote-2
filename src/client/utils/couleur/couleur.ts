@@ -1,56 +1,66 @@
-export const interpolerCouleurs = (couleurDépart: string, couleurArrivée: string, pourcentage: number): `#${string}` => {
-  // retire le '#' s'il est présent
-  couleurDépart = couleurDépart.replace(/^\s*#|\s*$/g, '');
-  couleurArrivée = couleurArrivée.replace(/^\s*#|\s*$/g, '');
+type CouleurRVB = {
+  r: number,
+  v: number,
+  b: number,
+};
 
-  // gère le cas du code hexadécimal abbrégé en 3 caractères
-  if (couleurDépart.length === 3) {
-    couleurDépart = couleurDépart.replace(/(.)/g, '$1$1');
-  }
+function déterminerValeursNumériques(couleur: `#${string}`): CouleurRVB {
+  const couleurValeursHexa = couleur.replace('#', '');
+  return {
+    r: Number.parseInt(couleurValeursHexa.slice(0, 2), 16),
+    v: Number.parseInt(couleurValeursHexa.slice(2, 4), 16),
+    b: Number.parseInt(couleurValeursHexa.slice(4, 6), 16),
+  };
+}
 
-  if (couleurArrivée.length === 3) {
-    couleurArrivée = couleurArrivée.replace(/(.)/g, '$1$1');
-  }
+function soustraireCouleurs(couleurA: CouleurRVB, couleurB: CouleurRVB): CouleurRVB {
+  return {
+    r: couleurB.r - couleurA.r,
+    v: couleurB.v - couleurA.v,
+    b: couleurB.b - couleurA.b,
+  };
+}
 
-  // interprète le code hexadécimal en valeur numérique
-  const rougeDépart = Number.parseInt(couleurDépart.slice(0, 2), 16);
-  const vertDépart = Number.parseInt(couleurDépart.slice(2, 4), 16);
-  const bleuDépart = Number.parseInt(couleurDépart.slice(4, 6), 16);
+function restreintLaCouleurDansUnIntervalle(couleur: CouleurRVB, borne1: CouleurRVB, borne2: CouleurRVB): CouleurRVB {
+  const rougeMin = Math.min(borne1.r, borne2.r);
+  const vertMin = Math.min(borne1.v, borne2.v);
+  const bleuMin = Math.min(borne1.b, borne2.b);
 
-  const rougeArrivée = Number.parseInt(couleurArrivée.slice(0, 2), 16);
-  const vertArrivée = Number.parseInt(couleurArrivée.slice(2, 4), 16);
-  const bleuArrivée = Number.parseInt(couleurArrivée.slice(4, 6), 16);
+  const rougeMax = Math.max(borne1.r, borne2.r);
+  const vertMax = Math.max(borne1.v, borne2.v);
+  const bleuMax = Math.max(borne1.b, borne2.b);
 
-  // réalise l'interpolation linéaire entre les deux couleurs
-  let rouge = rougeArrivée - rougeDépart;
-  let vert = vertArrivée - vertDépart;
-  let bleu = bleuArrivée - bleuDépart;
+  return {
+    r: Math.min(rougeMax, Math.max(rougeMin, couleur.r)),
+    v: Math.min(vertMax, Math.max(vertMin, couleur.v)),
+    b: Math.min(bleuMax, Math.max(bleuMin, couleur.b)),
+  };
+}
 
-  rouge = ((rouge * pourcentage / 100) + rougeDépart);
-  vert = ((vert * pourcentage / 100) + vertDépart);
-  bleu = ((bleu * pourcentage / 100) + bleuDépart);
+function interpolerCouleursRVB(couleurRVBDépart: CouleurRVB, couleurRVBArrivée: CouleurRVB, pourcentage: number): CouleurRVB {
+  const différences = soustraireCouleurs(couleurRVBDépart, couleurRVBArrivée);
+  const couleurRVBInterpolée = {
+    r: ((différences.r * pourcentage / 100) + couleurRVBDépart.r),
+    v: ((différences.v * pourcentage / 100) + couleurRVBDépart.v),
+    b: ((différences.b * pourcentage / 100) + couleurRVBDépart.b),
+  };
+  return restreintLaCouleurDansUnIntervalle(couleurRVBInterpolée, couleurRVBDépart, couleurRVBArrivée);
+}
 
-  // empêche les valeurs de sortir de l'intervalle défini entre la couleur de départ et d'arrivée
-  const rougeMin = Math.min(rougeDépart, rougeArrivée);
-  const vertMin = Math.min(vertDépart, vertArrivée);
-  const bleuMin = Math.min(bleuDépart, bleuArrivée);
+function convertitEnHexadécimal(valeur: number): string {
+  const hexadécimal = valeur.toString(16);
+  const hexadécimalSansDécimale = hexadécimal.split('.')[0];
+  return hexadécimalSansDécimale.padStart(2, '0');
+}
 
-  const rougeMax = Math.max(rougeDépart, rougeArrivée);
-  const vertMax = Math.max(vertDépart, vertArrivée);
-  const bleuMax = Math.max(bleuDépart, bleuArrivée);
+export const interpolerCouleurs = (couleurDépart: `#${string}`, couleurArrivée: `#${string}`, pourcentage: number): `#${string}` => {
+  const couleurRVBDépart = déterminerValeursNumériques(couleurDépart);
+  const couleurRVBArrivée = déterminerValeursNumériques(couleurArrivée);
+  const couleurRVB = interpolerCouleursRVB(couleurRVBDépart, couleurRVBArrivée, pourcentage);
 
-  rouge = Math.min(rougeMax, Math.max(rougeMin, rouge));
-  vert = Math.min(vertMax, Math.max(vertMin, vert));
-  bleu = Math.min(bleuMax, Math.max(bleuMin, bleu));
-
-  let hexaRouge = rouge.toString(16).split('.')[0];
-  let hexaVert = vert.toString(16).split('.')[0];
-  let hexaBleu = bleu.toString(16).split('.')[0];
-
-  // force la couleur à avoir deux digits
-  if (hexaRouge.length === 1) hexaRouge = '0' + hexaRouge;
-  if (hexaVert.length === 1) hexaVert = '0' + hexaVert;
-  if (hexaBleu.length === 1) hexaBleu = '0' + hexaBleu;
+  let hexaRouge = convertitEnHexadécimal(couleurRVB.r);
+  let hexaVert = convertitEnHexadécimal(couleurRVB.v);
+  let hexaBleu = convertitEnHexadécimal(couleurRVB.b);
 
   return `#${hexaRouge}${hexaVert}${hexaBleu}`;
 };
