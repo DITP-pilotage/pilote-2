@@ -1,11 +1,11 @@
-import CartographieLégendeÉlémentStyled from './CartographieLégendeÉlément.styled';
-import CartographieLégendeÉlémentProps from './CartographieLégendeÉlément.interface';
+import CartographieLégendeFiguréDeSurfaceÉlémentStyled from './CartographieLégendeFiguréDeSurfaceÉlément.styled';
+import CartographieLégendeFiguréDeSurfaceÉlémentProps from './CartographieLégendeFiguréDeSurfaceÉlément.interface';
 
 const miseÀLÉchelle = 2.75; // sert pour faire correspondre la taille des hachures sur la carte et dans la légende
 
-export default function CartographieLégendeÉlément({ children, remplissage }: CartographieLégendeÉlémentProps) {
+export default function CartographieLégendeFiguréDeSurfaceÉlément({ children, remplissage }: CartographieLégendeFiguréDeSurfaceÉlémentProps) {
   return (
-    <CartographieLégendeÉlémentStyled
+    <CartographieLégendeFiguréDeSurfaceÉlémentStyled
       className='fr-pr-3v fr-pb-1v texte-gris'
     >
       <svg
@@ -26,6 +26,6 @@ export default function CartographieLégendeÉlément({ children, remplissage }:
         />
       </svg>
       { children }
-    </CartographieLégendeÉlémentStyled>
+    </CartographieLégendeFiguréDeSurfaceÉlémentStyled>
   );
 }

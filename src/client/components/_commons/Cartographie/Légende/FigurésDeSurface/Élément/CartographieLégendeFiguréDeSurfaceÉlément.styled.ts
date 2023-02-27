@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const CartographieLégendeÉlémentStyled = styled.li`
+const CartographieLégendeFigurésDeSurfaceÉlémentStyled = styled.li`
   display: flex;
   align-items: center;
   font-size: 0.75rem;
@@ -17,4 +17,4 @@ const CartographieLégendeÉlémentStyled = styled.li`
   }
 `;
 
-export default CartographieLégendeÉlémentStyled;
+export default CartographieLégendeFigurésDeSurfaceÉlémentStyled;

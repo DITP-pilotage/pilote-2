@@ -4,7 +4,7 @@ import { CartographieInfoBulle } from '@/components/_commons/Cartographie/useCar
 import { départementsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import CartographieProps from './Cartographie.interface';
 import BulleDInfo from './BulleDInfo/BulleDInfo';
-import CartographieLégende from './Légende/CartographieLégende';
+import CartographieLégendeFigurésDeSurface from './Légende/FigurésDeSurface/CartographieLégendeFigurésDeSurface';
 import CartographieSVG from './SVG/CartographieSVG';
 
 export default function Cartographie({ légende, options, données }: CartographieProps) {
@@ -49,7 +49,7 @@ export default function Cartographie({ légende, options, données }: Cartograph
         setInfoBulle={setInfoBulle}
         territoires={territoiresEtFrontières.territoires}
       />
-      <CartographieLégende légende={légende} />
+      <CartographieLégendeFigurésDeSurface légende={légende} />
     </div>
   );
 }
