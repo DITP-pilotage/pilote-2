@@ -1,5 +1,5 @@
 import { ChartOptions, ChartDataset, ChartData } from 'chart.js';
-import IndicateurÉvolutionProps from '@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.interface';
+import IndicateurÉvolutionProps from './IndicateurÉvolution.interface';
 
 export default function useIndicateurÉvolution(indicateur: IndicateurÉvolutionProps['indicateur']) {
   const options: ChartOptions<'line'> = {
