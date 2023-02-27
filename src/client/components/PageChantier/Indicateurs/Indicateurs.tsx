@@ -12,7 +12,7 @@ export const listeRubriquesIndicateurs: ÉlémentPageIndicateursType[] = [
   { nom: 'Indicateurs de contexte', ancre: 'contexte', typeIndicateur: 'CONTEXTE' },
 ];
 
-export default function Indicateurs({ indicateurs, indicateursMétriques }: IndicateursProps) {
+export default function Indicateurs({ indicateurs, détailsIndicateurs }: IndicateursProps) {
   const indicateursGroupésParType: Record<NonNullable<TypeIndicateur>, Indicateur[]> = Object.fromEntries(typesIndicateur.map(type =>
     [type, indicateurs.filter(indicateur => indicateur.type === type)],
   ));
@@ -41,7 +41,7 @@ export default function Indicateurs({ indicateurs, indicateursMétriques }: Indi
               {rubrique.nom}
             </Titre>
             {
-              indicateursGroupésParType[rubrique.typeIndicateur].length === 0
+              (indicateursGroupésParType[rubrique.typeIndicateur].length === 0
                 ? (
                   <Bloc>
                     <p className="fr-m-0">
@@ -52,12 +52,12 @@ export default function Indicateurs({ indicateurs, indicateursMétriques }: Indi
                 : (
                   indicateursGroupésParType[rubrique.typeIndicateur].map(indicateur => (
                     <IndicateurBloc
+                      détailsIndicateur={détailsIndicateurs[indicateur.id]}
                       indicateur={indicateur}
-                      indicateurMétriques={indicateursMétriques[indicateur.id]}
                       key={indicateur.id}
                     />
                   ))
-                )
+                ))
             }
           </div>
         ))

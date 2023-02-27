@@ -1,15 +1,14 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { territoiresComparésTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import { IndicateurMétriques } from '@/server/domain/indicateur/Indicateur.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { DetailsIndicateur } from '@/server/domain/indicateur/DetailsIndicateur.interface';
 import { IndicateurDonnéesParTerritoire } from './Indicateurs.interface';
 import ValeurEtDate from './Bloc/ValeurEtDate/ValeurEtDate';
 
-export default function useIndicateurs(indicateurMétriques: Record<CodeInsee, IndicateurMétriques>) {
+export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, DetailsIndicateur>) {
   const territoiresComparés = territoiresComparésTerritoiresStore();
-
-  const indicateurDonnéesParTerritoires: IndicateurDonnéesParTerritoire[] = territoiresComparés.map(territoire => ({ territoire: territoire.nom, données: indicateurMétriques[territoire.codeInsee] }));
+  const indicateurDonnéesParTerritoires: IndicateurDonnéesParTerritoire[] = territoiresComparés.map(territoire => ({ territoire: territoire.nom, données: détailsIndicateur[territoire.codeInsee] }));
   
   const reactTableColonnesHelper = createColumnHelper<IndicateurDonnéesParTerritoire>();
   const colonnes = [
@@ -28,12 +27,12 @@ export default function useIndicateurs(indicateurMétriques: Record<CodeInsee, I
       ),
       enableSorting: false,
     }),
-    reactTableColonnesHelper.accessor('données.valeurActuelle', {
+    reactTableColonnesHelper.accessor('données.valeurs', {
       header: 'Valeur actuelle',
-      cell: valeurActuelle => (
+      cell: valeurs => (
         <ValeurEtDate
-          date={valeurActuelle.row.original.données.dateValeurInitiale}
-          valeur={valeurActuelle.getValue()}
+          date={valeurs.row.original.données.dateValeurs[valeurs.getValue().length - 1]}
+          valeur={valeurs.row.original.données.valeurs[valeurs.getValue().length - 1]}
         />
       ),
       enableSorting: false,
