@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
-import nuancierDégradé from '@/client/constants/nuanciers/nuancierDégradé';
 import {
   CartographieDonnéesValeurActuelle,
 } from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle.interface';
 import { valeurMaximum, valeurMinimum } from '@/client/utils/statistiques/statistiques';
+import NuancierDégradé from '@/client/constants/nuanciers/NuancierDégradé';
 
 export default function useCartographieValeurActuelle({ libelléUnité, données }: CartographieDonnéesValeurActuelle) {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
@@ -13,6 +13,8 @@ export default function useCartographieValeurActuelle({ libelléUnité, données
 
   const valeurMin = valeurMinimum(données.map(donnée => donnée.valeur)) ?? 0;
   const valeurMax = valeurMaximum(données.map(donnée => donnée.valeur)) ?? 0;
+
+  const nuancierDégradé = new NuancierDégradé(valeurMin, valeurMax);
 
   const légende = {
     libelléUnité,
@@ -29,7 +31,7 @@ export default function useCartographieValeurActuelle({ libelléUnité, données
       const détailTerritoire = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
       donnéesFormatées[codeInsee] = {
         valeurAffichée: valeur === null ? 'Non renseigné' : String(valeur),
-        remplissage: nuancierDégradé.récupérerRemplissage(valeurMin, valeurMax, valeur).couleur,
+        remplissage: nuancierDégradé.déterminerRemplissage(valeur).couleur,
         libellé: mailleSélectionnée === 'départementale' ? `${détailTerritoire?.codeInsee} - ${détailTerritoire?.nom}` : détailTerritoire?.nom ?? 'N/C',
       };
     });

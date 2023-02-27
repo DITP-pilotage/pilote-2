@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/consistent-function-scoping */
 import { régionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
-import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
+import { remplissageParDéfaut } from '@/client/constants/nuanciers/Nuancier';
 import { CartographieTerritoireAffiché, CartographieOptions, CartographieTerritoires } from './useCartographie.interface';
 import { CartographieDonnées } from './Cartographie.interface';
 

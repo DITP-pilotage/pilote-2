@@ -1,16 +1,17 @@
 import { useMemo } from 'react';
-import nuancierMétéo from '@/client/constants/nuanciers/nuancierMétéo';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
 import météos from '@/client/constants/météos';
+import NuancierMétéo from '@/client/constants/nuanciers/NuancierMétéo';
 import { CartographieDonnéesMétéo } from './CartographieMétéo.interface';
 
 export default function useCartographieMétéo(données: CartographieDonnéesMétéo) {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
-  const légende = nuancierMétéo.map(({ remplissage, libellé, picto }) => ({
+  const nuancierMétéo = new NuancierMétéo();
+
+  const légende = nuancierMétéo.nuances.map(({ remplissage, libellé, picto }) => ({
     libellé,
     remplissage,
     picto,
@@ -24,7 +25,7 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
   
       donnéesFormatées[codeInsee] = {
         valeurAffichée: météos[valeur],
-        remplissage: nuancierMétéo.find(({ valeur: valeurMétéo }) => valeurMétéo === valeur)?.remplissage.couleur ?? remplissageParDéfaut.couleur,
+        remplissage: nuancierMétéo.déterminerRemplissage(valeur).couleur,
         libellé: mailleSélectionnée === 'départementale' ? `${détailTerritoire?.codeInsee} - ${détailTerritoire?.nom}` : détailTerritoire?.nom ?? 'N/C',
       };
     });

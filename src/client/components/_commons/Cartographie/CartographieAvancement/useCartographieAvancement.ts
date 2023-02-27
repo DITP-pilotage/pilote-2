@@ -1,15 +1,16 @@
 import { useMemo } from 'react';
-import nuancierPourcentage from '@/client/constants/nuanciers/nuancierPourcentage';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
+import NuancierPourcentage from '@/client/constants/nuanciers/NuancierPourcentage';
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 
 export default function useCartographieAvancement(données: CartographieDonnéesAvancement) {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
-  const légende = nuancierPourcentage.map(({ remplissage, libellé }) => ({
+  const nuancierPourcentage = new NuancierPourcentage();
+
+  const légende = nuancierPourcentage.nuances.map(({ remplissage, libellé }) => ({
     libellé,
     remplissage,
   }));
@@ -22,7 +23,7 @@ export default function useCartographieAvancement(données: CartographieDonnées
   
       donnéesFormatées[codeInsee] = {
         valeurAffichée: valeur === null ? 'Non renseigné' : valeur.toFixed(0) + '%',
-        remplissage: valeur === null ? remplissageParDéfaut.couleur : nuancierPourcentage.find(({ seuil }) => seuil !== null && seuil >= Math.round(valeur))?.remplissage.couleur ?? remplissageParDéfaut.couleur,
+        remplissage: nuancierPourcentage.déterminerRemplissage(valeur).couleur,
         libellé: mailleSélectionnée === 'départementale' ? `${détailTerritoire?.codeInsee} - ${détailTerritoire?.nom}` : détailTerritoire?.nom ?? 'N/C',
       };
     });
