@@ -3,6 +3,7 @@ import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agré
 import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, mailleAssociéeAuTerritoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Indicateur, { IndicateursMétriques } from '@/server/domain/indicateur/Indicateur.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export default function usePageChantier(chantier: Chantier, indicateurs: Indicateur[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -28,22 +29,46 @@ export default function usePageChantier(chantier: Chantier, indicateurs: Indicat
 
   const indicateursMétriques = useMemo(() =>{
     //CALL API
-    let results: IndicateursMétriques = {};
+    let results: Record<CodeInsee, IndicateursMétriques> = {};
     indicateurs.forEach(indicateur => {
       results[indicateur.id] = {
-        valeurInitiale: 0,
-        dateValeurInitiale: '10/10/2021',
-        valeurActuelle: 50,
-        dateValeurActuelle: '10/10/2022',
-        valeurCible: 100,
-        avancement: {
-          global: 50,
-          annuel: null,
+        'FR': {
+          valeurInitiale: 0,
+          dateValeurInitiale: '10/10/2021',
+          valeurActuelle: 56,
+          dateValeurActuelle: '16/10/2022',
+          valeurCible: 100,
+          avancement: {
+            global: 56,
+            annuel: null,
+          },
+        },
+        '02': {
+          valeurInitiale: 123,
+          dateValeurInitiale: '10/01/2022',
+          valeurActuelle: 500,
+          dateValeurActuelle: '10/10/2022',
+          valeurCible: 1000,
+          avancement: {
+            global: 43,
+            annuel: null,
+          },
+        },
+        '03': {
+          valeurInitiale: 800,
+          dateValeurInitiale: '09/06/2021',
+          valeurActuelle: 980,
+          dateValeurActuelle: '10/10/2022',
+          valeurCible: 1000,
+          avancement: {
+            global: 78,
+            annuel: null,
+          },
         },
       };
     });
     return results;
-  }, [indicateurs, mailleSélectionnée, territoireSélectionné]);
+  }, [indicateurs]);
 
   const avancements = {
     nationale: {
