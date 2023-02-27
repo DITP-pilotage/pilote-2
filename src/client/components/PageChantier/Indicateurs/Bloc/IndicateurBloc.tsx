@@ -8,8 +8,8 @@ import IndicateurBlocStyled from './IndicateurBloc.styled';
 import { IndicateurDonnéesParTerritoire } from '../Indicateurs.interface';
 import useIndicateurs from '../useIndicateurs';
 
-export default function IndicateurBloc({ indicateur, indicateurMétriques } : IndicateurBlocProps) {
-  const { indicateurDonnéesParTerritoires, colonnes } = useIndicateurs(indicateurMétriques);  
+export default function IndicateurBloc({ indicateur, détailsIndicateur } : IndicateurBlocProps) {
+  const { indicateurDonnéesParTerritoires, colonnes } = useIndicateurs(détailsIndicateur);  
   
   return (
     <IndicateurBlocStyled
