@@ -15,10 +15,14 @@ export default interface TerritoiresStore {
   mailleAssociéeAuTerritoireSélectionné: Maille,
   territoireSélectionné: TerritoireGéographique & {
     territoireParent?: TerritoireGéographique
-  },  
+  },
+  territoiresComparés: TerritoireGéographique[]
   actions: {
     modifierMailleSélectionnée: (maille: MailleInterne) => void,
     modifierTerritoireSélectionné: (codeInsee: CodeInsee) => void,
     récupérerDétailsSurUnTerritoire: (codeInsee: CodeInsee, maille: MailleInterne) => TerritoireGéographique | undefined
+    séléctionnerTerritoireÀComparer: (territoire: TerritoireGéographique) => void
+    désélectionnerUnTerritoireÀComparer: (territoire: TerritoireGéographique) => void
+    modifierTerritoiresComparés: (codeInsee: CodeInsee) => void
   },
 }
