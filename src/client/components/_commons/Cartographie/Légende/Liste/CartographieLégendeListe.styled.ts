@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 
-const CartographieLégendeStyled = styled.ul`
+const CartographieLégendeListeStyled = styled.ul`
   display: flex;
   flex-wrap: wrap;
   max-width: 28rem;
+  margin: auto;
   list-style-type: none;
 `;
 
-export default CartographieLégendeStyled;
+export default CartographieLégendeListeStyled;

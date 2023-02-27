@@ -6,11 +6,10 @@ import Tableau from '@/components/_commons/Tableau/Tableau';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import { formaterDate } from '@/client/utils/date/date';
-import IndicateurDétails
-  from '@/components/PageChantier/Indicateurs/Bloc/Détails/IndicateurDétails';
 import IndicateurBlocProps from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc.interface';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
+import IndicateurDétails from '@/components/PageChantier/Indicateurs/Bloc/Détails/IndicateurDétails';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 
 function afficherValeurEtDate(valeur: number | null, date?: string | null) {

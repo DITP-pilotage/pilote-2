@@ -1,12 +1,3 @@
-import { ReactNode } from 'react';
-import { NuancierRemplissage } from '@/client/constants/nuanciers/nuancier';
+import { CouleurHexa } from '@/client/utils/couleur/couleur.interface';
 
-export type CartographieÉlémentDeLégende = {
-  libellé: string,
-  picto?: ReactNode,
-  remplissage: NuancierRemplissage,
-};
-
-export default interface CartographieLégendeProps {
-  légende: CartographieÉlémentDeLégende[],
-}
+export type Remplissage = CouleurHexa | `url(#${string})`;

@@ -22,9 +22,9 @@ export default function useCartographie() {
       territoires: territoiresÀTracer.map(territoire => ({
         codeInsee: territoire.codeInsee,
         tracéSVG: territoire.tracéSVG,
-        remplissage: données[territoire.codeInsee].remplissage,
-        libellé: données[territoire.codeInsee].libellé,
-        valeurAffichée: données[territoire.codeInsee].valeurAffichée,
+        remplissage: données[territoire.codeInsee]?.remplissage ?? '#bababa', // TODO où gérer ce undefined ?
+        libellé: données[territoire.codeInsee]?.libellé ?? '-', // TODO où gérer ce undefined ?
+        valeurAffichée: données[territoire.codeInsee]?.valeurAffichée ?? 'Non renseignée', // TODO où gérer ce undefined ?
       })),
       frontières: frontièresÀTracer.map(frontière => ({
         codeInsee: frontière.codeInsee,
@@ -40,7 +40,7 @@ export default function useCartographie() {
     },
     territoireSélectionnable: false,
   };
-  
+
 
   return {
     déterminerRégionsÀTracer,
