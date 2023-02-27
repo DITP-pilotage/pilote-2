@@ -73,3 +73,13 @@ model synthese_des_resultats {
   commentaire String?
   date_commentaire DateTime? @db.Timestamp
 }
+
+model axe {
+  id String @id
+  nom String
+}
+
+model ppg {
+  id String @id
+  nom String
+}
