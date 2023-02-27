@@ -1,8 +1,8 @@
 import Cartographie from '@/components/_commons/Cartographie/Cartographie';
-import CartographieLégendeFigurésDeSurface
-  from '@/components/_commons/Cartographie/Légende/FigurésDeSurface/CartographieLégendeFigurésDeSurface';
 import CartographieMétéoProps from './CartographieMétéo.interface';
 import useCartographieMétéo from './useCartographieMétéo';
+import CartographieLégendeListe
+  from '@/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe';
 
 export default function CartographieMétéo({ données, options }: CartographieMétéoProps) {
   const { donnéesCartographie, légende } = useCartographieMétéo(données);
@@ -12,7 +12,7 @@ export default function CartographieMétéo({ données, options }: CartographieM
       données={donnéesCartographie}
       options={options}
     >
-      <CartographieLégendeFigurésDeSurface contenu={légende} />
+      <CartographieLégendeListe contenu={légende} />
     </Cartographie>
   );
 }

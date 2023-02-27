@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const CartographieLégendeFigurésDeSurfaceStyled = styled.ul`
+const CartographieLégendeListeStyled = styled.ul`
   display: flex;
   flex-wrap: wrap;
   max-width: 28rem;
@@ -8,4 +8,4 @@ const CartographieLégendeFigurésDeSurfaceStyled = styled.ul`
   list-style-type: none;
 `;
 
-export default CartographieLégendeFigurésDeSurfaceStyled;
+export default CartographieLégendeListeStyled;

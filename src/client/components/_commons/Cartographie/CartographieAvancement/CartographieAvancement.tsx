@@ -1,8 +1,8 @@
 import Cartographie from '@/components/_commons/Cartographie/Cartographie';
-import CartographieLégendeFigurésDeSurface
-  from '@/components/_commons/Cartographie/Légende/FigurésDeSurface/CartographieLégendeFigurésDeSurface';
 import CartographieAvancementProps from './CartographieAvancement.interface';
 import useCartographieAvancement from './useCartographieAvancement';
+import CartographieLégendeListe
+  from '@/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe';
 
 export default function CartographieAvancement({ données, options }: CartographieAvancementProps) {
   const { donnéesCartographie, légende } = useCartographieAvancement(données);
@@ -12,7 +12,7 @@ export default function CartographieAvancement({ données, options }: Cartograph
       données={donnéesCartographie}
       options={options}
     >
-      <CartographieLégendeFigurésDeSurface contenu={légende} />
+      <CartographieLégendeListe contenu={légende} />
     </Cartographie>
   );
 }
