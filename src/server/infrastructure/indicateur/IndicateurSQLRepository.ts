@@ -69,11 +69,12 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       },
     });
 
-
     const fichesIndicateur: FichesIndicateur = {};
 
     for (const indic of indicateurs) {
-      fichesIndicateur[indic.id] = {};
+      if (!fichesIndicateur[indic.id]) {
+        fichesIndicateur[indic.id] = {};
+      }
       fichesIndicateur[indic.id][indic.code_insee] = {
         codeInsee: indic.code_insee,
         valeurInitiale: indic.valeur_initiale,

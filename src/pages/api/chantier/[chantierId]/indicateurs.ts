@@ -6,7 +6,10 @@ class ParsingError extends Error {}
 function parseQueryParams(request: NextApiRequest): { chantierId: string, maille: string, codesInsee: string[] } {
   const chantierId = request.query.chantierId as string;
   const maille = request.query.maille as string;
-  const codesInsee = request.query.codesInsee as string[];
+  let codesInsee = request.query.codesInsee as string[];
+  if (typeof codesInsee === 'string') {
+    codesInsee = [codesInsee];
+  }
 
   if (!chantierId || !maille || !Array.isArray(codesInsee)) {
     const errorMessage = 'Le parsing de la query a échoué.';
