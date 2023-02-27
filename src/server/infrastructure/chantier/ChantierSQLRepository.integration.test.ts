@@ -267,16 +267,18 @@ describe('ChantierSQLRepository', () => {
       );
     });
 
-    test('renvoie une synthèse des resultat si le chantier en a une en base', async () => {
+    test('renvoie une synthèse des resultats si le chantier en a une en base', async () => {
       // Given
       const chantierId = 'CH-001';
       const maille = 'REG';
       const codeInsee = '01';
       const repository: ChantierRepository = new ChantierSQLRepository(prisma);
 
-
       const syntheseDesResultats: synthese_des_resultats[] = [
         new SyntheseDesResultatsRowBuilder()
+          .withChantierId(chantierId)
+          .withMaille(maille)
+          .withCodeInsee(codeInsee)
           .withCommentaire('Lorem ipsum')
           .withDateCommentaire('2023-01-01')
           .build(),
@@ -291,8 +293,67 @@ describe('ChantierSQLRepository', () => {
       expect(result).toStrictEqual(
         {
           synthèseDesRésultats: {
-            commentaire: '',
-            date: '',
+            commentaire: 'Lorem ipsum',
+            date: '2023-01-01',
+            auteur: '',
+          },
+        },
+      );
+    });
+    test('renvoie la synthèse des resultats la plus récente et dont le commentaire est non nul', async () => {
+      // Given
+      const chantierId = 'CH-001';
+      const maille = 'REG';
+      const codeInsee = '01';
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+      const syntheseDesResultatsRowBuilder = new SyntheseDesResultatsRowBuilder();
+
+      const syntheseDesResultats: synthese_des_resultats[] = [
+        syntheseDesResultatsRowBuilder
+          .withChantierId(chantierId)
+          .withMaille(maille)
+          .withCodeInsee(codeInsee)
+          .withCommentaire('Premier commentaire')
+          .withDateCommentaire(null)
+          .build(),
+
+        syntheseDesResultatsRowBuilder
+          .withChantierId(chantierId)
+          .withMaille(maille)
+          .withCodeInsee(codeInsee)
+          .withCommentaire(null)
+          .withDateCommentaire('2023-01-01')
+          .build(),
+
+        syntheseDesResultatsRowBuilder
+          .withChantierId(chantierId)
+          .withMaille(maille)
+          .withCodeInsee(codeInsee)
+          .withCommentaire('Troisième commentaire')
+          .withDateCommentaire('2023-01-01')
+          .build(),
+
+        syntheseDesResultatsRowBuilder
+          .withChantierId(chantierId)
+          .withMaille(maille)
+          .withCodeInsee(codeInsee)
+          .withCommentaire('Quatrième commentaire')
+          .withDateCommentaire('2023-12-31')
+          .build(),
+      ];
+
+      await prisma.synthese_des_resultats.createMany({ data: syntheseDesResultats });
+
+      // When
+      const result = await repository.getMetriques(chantierId, maille, codeInsee);
+
+      // Then
+      expect(result).toStrictEqual(
+        {
+          synthèseDesRésultats: {
+            commentaire: 'Quatrième commentaire',
+            date: '2023-12-31',
             auteur: '',
           },
         },

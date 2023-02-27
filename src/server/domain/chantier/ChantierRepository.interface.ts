@@ -10,8 +10,8 @@ export type MetriquesChantier = {
   synthèseDesRésultats: SyntheseDesResultats
 };
 
-type SyntheseDesResultats = {
-  commentaire: string
-  date: string
-  auteur: string
+export type SyntheseDesResultats = {
+  commentaire: string | null
+  date: string | null
+  auteur: string | null
 };
