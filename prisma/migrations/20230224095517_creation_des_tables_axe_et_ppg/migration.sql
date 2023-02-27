@@ -4,7 +4,7 @@ ALTER TABLE "indicateur" ALTER COLUMN "evolution_date_valeur_actuelle" SET DATA 
 -- CreateTable
 CREATE TABLE "axe" (
     "id" TEXT NOT NULL,
-    "nom" TEXT,
+    "nom" TEXT NOT NULL,
 
     CONSTRAINT "axe_pkey" PRIMARY KEY ("id")
 );
