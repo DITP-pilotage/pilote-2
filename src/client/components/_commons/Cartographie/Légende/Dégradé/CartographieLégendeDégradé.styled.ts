@@ -1,9 +1,5 @@
 import styled from '@emotion/styled';
-
-type CartographieLégendeDégradéStyledProps = {
-  couleurMax: string,
-  couleurMin: string,
-};
+import { CartographieLégendeDégradéStyledProps } from './CartographieLégendeDégradé.interface';
 
 const CartographieLégendeDégradéStyled = styled.div<CartographieLégendeDégradéStyledProps>`
   max-width: 28rem;

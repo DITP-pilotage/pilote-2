@@ -6,6 +6,11 @@ export type CartographieLégendeDégradéContenu = {
   couleurMax: string,
 };
 
+export type CartographieLégendeDégradéStyledProps = {
+  couleurMax: string,
+  couleurMin: string,
+};
+
 export default interface CartographieLégendeDégradéProps {
   contenu: CartographieLégendeDégradéContenu,
 }
