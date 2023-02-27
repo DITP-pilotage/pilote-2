@@ -102,37 +102,38 @@ describe('IndicateurSQLRepository', () => {
     test('Récupère les détails de deux indicateurs départemental du même chantier', async () => {
       // GIVEN
       const repository = new IndicateurSQLRepository(prisma);
-      await prisma.indicateur.create({
-        data: {
-          id: 'IND-001',
-          nom: 'indic',
-          chantier_id: 'CH-001',
-          valeur_initiale: 1000,
-          date_valeur_initiale: new Date('2021-01-01'),
-          objectif_valeur_cible: 1789,
-          code_insee: '01',
-          maille: 'DEPT',
-          evolution_valeur_actuelle: [1, 2, 3],
-          evolution_date_valeur_actuelle: [new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')],
-          objectif_taux_avancement: 20,
-        },
-      });
 
-      await prisma.indicateur.create({
-        data: {
-          id: 'IND-002',
-          nom: 'indic2',
-          chantier_id: 'CH-001',
-          valeur_initiale: 1001,
-          date_valeur_initiale: new Date('2021-01-01'),
-          objectif_valeur_cible: 1790,
-          code_insee: '02',
-          maille: 'DEPT',
-          evolution_valeur_actuelle: [1, 4, 6],
-          evolution_date_valeur_actuelle: [new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')],
-          objectif_taux_avancement: 40,
-        },
-      });
+      const indicateurs: indicateur[] = [
+        new IndicateurRowBuilder()
+          .withId('IND-001')
+          .withNom('indic')
+          .withChantierId('CH-001')
+          .withMaille('DEPT')
+          .withCodeInsee('01')
+          .withEvolutionValeurActuelle( [1, 2, 3])
+          .withEvolutionDateValeurActuelle(['2021-01-01', '2021-02-01', '2021-03-01'])
+          .withValeurInitiale(1000)
+          .withDateValeurInitiale('2021-01-01')
+          .withObjectifValeurCible(1789)
+          .withObjectifTauxAvancement(20)
+          .build(),
+
+        new IndicateurRowBuilder()
+          .withId('IND-002')
+          .withNom('indic2')
+          .withChantierId('CH-001')
+          .withMaille('DEPT')
+          .withCodeInsee('02')
+          .withEvolutionValeurActuelle( [1, 4, 6])
+          .withEvolutionDateValeurActuelle(['2021-01-01', '2021-02-01', '2021-03-01'])
+          .withValeurInitiale(1001)
+          .withDateValeurInitiale('2021-01-01')
+          .withObjectifValeurCible(1790)
+          .withObjectifTauxAvancement(40)
+          .build(),
+      ];
+
+      await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
       const result = await repository.getDetailsIndicateur('CH-001', 'départementale', ['01', '02']);
@@ -175,53 +176,53 @@ describe('IndicateurSQLRepository', () => {
     test('Ne récupère pas les indicateurs d\'autres mailles et d\'autres chantiers', async () => {
       // GIVEN
       const repository = new IndicateurSQLRepository(prisma);
-      await prisma.indicateur.create({
-        data: {
-          id: 'IND-001',
-          nom: 'indic',
-          chantier_id: 'CH-001',
-          valeur_initiale: 1000,
-          date_valeur_initiale: new Date('2021-01-01'),
-          objectif_valeur_cible: 1789,
-          code_insee: '01',
-          maille: 'DEPT',
-          evolution_valeur_actuelle: [1, 2, 3],
-          evolution_date_valeur_actuelle: [new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')],
-          objectif_taux_avancement: 20,
-        },
-      });
 
-      await prisma.indicateur.create({
-        data: {
-          id: 'IND-002',
-          nom: 'indic2',
-          chantier_id: 'CH-002',
-          valeur_initiale: 1001,
-          date_valeur_initiale: new Date('2021-01-01'),
-          objectif_valeur_cible: 1790,
-          code_insee: '02',
-          maille: 'DEPT',
-          evolution_valeur_actuelle: [1, 4, 6],
-          evolution_date_valeur_actuelle: [new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')],
-          objectif_taux_avancement: 40,
-        },
-      });
 
-      await prisma.indicateur.create({
-        data: {
-          id: 'IND-002',
-          nom: 'indic2',
-          chantier_id: 'CH-002',
-          valeur_initiale: 1001,
-          date_valeur_initiale: new Date('2021-01-01'),
-          objectif_valeur_cible: 1790,
-          code_insee: '02',
-          maille: 'REG',
-          evolution_valeur_actuelle: [1, 4, 6],
-          evolution_date_valeur_actuelle: [new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')],
-          objectif_taux_avancement: 40,
-        },
-      });
+      const indicateurs: indicateur[] = [
+        new IndicateurRowBuilder()
+          .withId('IND-001')
+          .withNom('indic')
+          .withChantierId('CH-001')
+          .withMaille('DEPT')
+          .withCodeInsee('01')
+          .withEvolutionValeurActuelle( [1, 2, 3])
+          .withEvolutionDateValeurActuelle(['2021-01-01', '2021-02-01', '2021-03-01'])
+          .withValeurInitiale(1000)
+          .withDateValeurInitiale('2021-01-01')
+          .withObjectifValeurCible(1789)
+          .withObjectifTauxAvancement(20)
+          .build(),
+
+        new IndicateurRowBuilder()
+          .withId('IND-002')
+          .withNom('indic2')
+          .withChantierId('CH-002')
+          .withMaille('DEPT')
+          .withCodeInsee('02')
+          .withEvolutionValeurActuelle( [1, 4, 6])
+          .withEvolutionDateValeurActuelle(['2021-01-01', '2021-02-01', '2021-03-01'])
+          .withValeurInitiale(1001)
+          .withDateValeurInitiale('2021-01-01')
+          .withObjectifValeurCible(1790)
+          .withObjectifTauxAvancement(40)
+          .build(),
+
+        new IndicateurRowBuilder()
+          .withId('IND-002')
+          .withNom('indic2')
+          .withChantierId('CH-002')
+          .withMaille('REG')
+          .withCodeInsee('02')
+          .withEvolutionValeurActuelle( [1, 4, 6])
+          .withEvolutionDateValeurActuelle(['2021-01-01', '2021-02-01', '2021-03-01'])
+          .withValeurInitiale(1001)
+          .withDateValeurInitiale('2021-01-01')
+          .withObjectifValeurCible(1790)
+          .withObjectifTauxAvancement(30)
+          .build(),
+      ];
+
+      await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
       const result = await repository.getDetailsIndicateur('CH-002', 'régionale', ['01', '02']);
@@ -238,7 +239,7 @@ describe('IndicateurSQLRepository', () => {
               dateValeurs: ['2021-01-01', '2021-02-01', '2021-03-01'],
               valeurCible: 1790,
               avancement: {
-                global: 40,
+                global: 30,
                 annuel: null,
               },
             },

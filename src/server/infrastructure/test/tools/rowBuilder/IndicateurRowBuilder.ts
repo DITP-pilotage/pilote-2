@@ -19,6 +19,12 @@ export default class IndicateurRowBuilder {
 
   private _dateValeurActuelle: string | null = '2023-02-01';
 
+  private _valeurInitiale: number | null = 0;
+
+  private _objectifValeurCible: number | null = 0;
+
+  private _objectifTauxAvancement: number | null = 0;
+
   withId(id: string): IndicateurRowBuilder {
     this._id = id;
     return this;
@@ -59,8 +65,23 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  withValeurInitiale(valeurInitiale: number | null): IndicateurRowBuilder {
+    this._valeurInitiale = valeurInitiale;
+    return this;
+  }
+
   withDateValeurActuelle(dateValeurActuelle: string | null): IndicateurRowBuilder {
     this._dateValeurActuelle = dateValeurActuelle;
+    return this;
+  }
+
+  withObjectifValeurCible(objectifValeurCible: number | null): IndicateurRowBuilder {
+    this._objectifValeurCible = objectifValeurCible;
+    return this;
+  }
+
+  withObjectifTauxAvancement(objectifTauxAvancement: number | null): IndicateurRowBuilder {
+    this._objectifTauxAvancement = objectifTauxAvancement;
     return this;
   }
 
@@ -72,14 +93,14 @@ export default class IndicateurRowBuilder {
       maille: this._maille,
       code_insee: this._codeInsee,
 
-      objectif_valeur_cible: null,
-      objectif_taux_avancement: null,
+      objectif_valeur_cible: this._objectifValeurCible,
+      objectif_taux_avancement: this._objectifTauxAvancement,
       objectif_date_valeur_cible: null,
       type_id: null,
       type_nom: null,
       est_barometre: null,
       est_phare: null,
-      valeur_initiale: null,
+      valeur_initiale: this._valeurInitiale,
       date_valeur_initiale: this._dateValeurInitiale !== null ? new Date(this._dateValeurInitiale) : null,
       valeur_actuelle: null,
       date_valeur_actuelle: this._dateValeurActuelle !== null ? new Date(this._dateValeurActuelle) : null,

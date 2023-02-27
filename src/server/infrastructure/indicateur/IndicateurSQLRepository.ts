@@ -2,19 +2,19 @@ import { indicateur, PrismaClient } from '@prisma/client';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
-import { FichesIndicateur } from '@/server/domain/indicateur/DetailsIndicateur';
+import { FichesIndicateur } from '@/server/domain/indicateur/DetailsIndicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 
 
-function dateOrNullToDateStringWithoutTime(d: Date | null): string | null {
-  if (d == null) {
-    return null;
-  }
-  return d.toISOString().slice(0, 10);
+function dateToDateStringWithoutTime(date: Date): string {
+  return date.toISOString().slice(0, 10);
 }
 
-function dateToDateStringWithoutTime(d: Date): string {
-  return d.toISOString().slice(0, 10);
+function dateOrNullToDateStringWithoutTime(date: Date | null): string | null {
+  if (date == null) {
+    return null;
+  }
+  return dateToDateStringWithoutTime(date);
 }
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
@@ -42,7 +42,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
               dateValeurActuelle: row.date_valeur_actuelle !== null ? dateToDateStringWithoutTime(row.date_valeur_actuelle) : null,
               tauxAvancementGlobal: row.objectif_taux_avancement,
               evolutionValeurActuelle: row.evolution_valeur_actuelle,
-              evolutionDateValeurActuelle: row.evolution_date_valeur_actuelle.map(d => dateToDateStringWithoutTime(d)),
+              evolutionDateValeurActuelle: row.evolution_date_valeur_actuelle.map(date => dateToDateStringWithoutTime(date)),
             },
           },
           régionale: {},
@@ -70,25 +70,24 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     });
 
 
-    const result: FichesIndicateur = {};
+    const fichesIndicateur: FichesIndicateur = {};
 
-    for (const item of indicateurs) {
-      result[item.id] = {};
-      result[item.id][item.code_insee] = {
-        codeInsee: item.code_insee,
-        valeurInitiale: item.valeur_initiale,
-        dateValeurInitiale: dateOrNullToDateStringWithoutTime(item.date_valeur_initiale),
-        valeurs: item.evolution_valeur_actuelle,
-        // eslint-disable-next-line unicorn/no-array-callback-reference
-        dateValeurs: item.evolution_date_valeur_actuelle.map(dateToDateStringWithoutTime),
-        valeurCible: item.objectif_valeur_cible,
+    for (const indic of indicateurs) {
+      fichesIndicateur[indic.id] = {};
+      fichesIndicateur[indic.id][indic.code_insee] = {
+        codeInsee: indic.code_insee,
+        valeurInitiale: indic.valeur_initiale,
+        dateValeurInitiale: dateOrNullToDateStringWithoutTime(indic.date_valeur_initiale),
+        valeurs: indic.evolution_valeur_actuelle,
+        dateValeurs: indic.evolution_date_valeur_actuelle.map((date) => dateToDateStringWithoutTime(date)),
+        valeurCible: indic.objectif_valeur_cible,
         avancement: {
-          global: item.objectif_taux_avancement,
+          global: indic.objectif_taux_avancement,
           annuel: null,
         },
       };
     }
 
-    return result;
+    return fichesIndicateur;
   }
 }

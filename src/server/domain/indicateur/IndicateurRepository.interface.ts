@@ -1,5 +1,5 @@
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { FichesIndicateur } from '@/server/domain/indicateur/DetailsIndicateur';
+import { FichesIndicateur } from '@/server/domain/indicateur/DetailsIndicateur.interface';
 
 export default interface IndicateurRepository {
   getByChantierId(chantierId: string): Promise<Indicateur[]>;
