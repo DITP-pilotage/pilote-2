@@ -5,42 +5,66 @@ import {
   CartographieDonnéesValeurActuelle,
 } from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle.interface';
 import { valeurMaximum, valeurMinimum } from '@/client/utils/statistiques/statistiques';
-import NuancierDégradé from '@/client/constants/nuanciers/NuancierDégradé';
+import { interpolerCouleurs } from '@/client/utils/couleur/couleur';
+import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
+
+const COULEUR_DÉPART = '#8bcdb1';
+const COULEUR_ARRIVÉE = '#083a25';
+const REMPLISSAGE_PAR_DÉFAUT = '#bababa';
+
+function déterminerValeurAffichée(valeur: number | null) {
+  return valeur === null ? 'Non renseigné' : String(valeur);
+}
+
+function déterminerRemplissage(valeur: number | null, valeurMin: number | null, valeurMax: number | null) {
+  if (valeur === null || valeurMin === null || valeurMax === null)
+    return REMPLISSAGE_PAR_DÉFAUT;
+
+  const pourcentageInterpolation = 100 * (valeur - valeurMin) / (valeurMax - valeurMin);
+  return interpolerCouleurs(COULEUR_DÉPART, COULEUR_ARRIVÉE, pourcentageInterpolation);
+}
+
+function déterminerLibellé(territoireGéographique: TerritoireGéographique | undefined, estDépartement: boolean) {
+  if (!territoireGéographique)
+    return '-';
+
+  return estDépartement
+    ? `${territoireGéographique.codeInsee} - ${territoireGéographique.nom}`
+    : territoireGéographique.nom;
+}
 
 export default function useCartographieValeurActuelle({ libelléUnité, données }: CartographieDonnéesValeurActuelle) {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
-  const valeurMin = valeurMinimum(données.map(donnée => donnée.valeur)) ?? 0;
-  const valeurMax = valeurMaximum(données.map(donnée => donnée.valeur)) ?? 0;
+  const valeurMin = useMemo(() => valeurMinimum(données.map(donnée => donnée.valeur)), [données]);
+  const valeurMax = useMemo(() => valeurMaximum(données.map(donnée => donnée.valeur)), [données]);
 
-  const nuancierDégradé = useMemo(() => (
-    new NuancierDégradé(valeurMin, valeurMax)
-  ), [valeurMax, valeurMin]);
+  const légende = useMemo(() => ({
+    libelléUnité,
+    valeurMin: valeurMin ? String(valeurMin) : '-',
+    valeurMax: valeurMax ? String(valeurMax) : '-',
+    couleurMin: COULEUR_DÉPART,
+    couleurMax: COULEUR_ARRIVÉE,
+  }), [libelléUnité, valeurMax, valeurMin]);
 
   const donnéesCartographie = useMemo(() => {
     let donnéesFormatées: CartographieDonnées = {};
 
     données.forEach(({ valeur, codeInsee }) => {
-      const détailTerritoire = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
+      const territoireGéographique = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
       donnéesFormatées[codeInsee] = {
-        valeurAffichée: valeur === null ? 'Non renseigné' : String(valeur),
-        remplissage: nuancierDégradé.déterminerRemplissage(valeur),
-        libellé: mailleSélectionnée === 'départementale' ? `${détailTerritoire?.codeInsee} - ${détailTerritoire?.nom}` : détailTerritoire?.nom ?? 'N/C',
+        valeurAffichée: déterminerValeurAffichée(valeur),
+        remplissage: déterminerRemplissage(valeur, valeurMin, valeurMax),
+        libellé: déterminerLibellé(territoireGéographique, mailleSélectionnée === 'départementale'),
       };
     });
 
     return donnéesFormatées;
-  }, [données, mailleSélectionnée, nuancierDégradé, récupérerDétailsSurUnTerritoire]);
+  }, [données, mailleSélectionnée, récupérerDétailsSurUnTerritoire, valeurMax, valeurMin]);
 
   return {
-    légende: {
-      libelléUnité,
-      valeurMin: String(valeurMin),
-      valeurMax: String(valeurMax),
-      couleurMin: nuancierDégradé.couleurDépart,
-      couleurMax: nuancierDégradé.couleurArrivé,
-    },
+    légende,
     donnéesCartographie,
   };
 }

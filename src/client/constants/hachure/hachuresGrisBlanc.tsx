@@ -1,4 +1,4 @@
-import Hachure from '@/client/constants/nuanciers/hachure/hachure';
+import Hachure from '@/client/constants/hachure/hachure.interface';
 
 const hachuresGrisBlanc: Hachure = {
   id: 'hachures-gris-blanc',
