@@ -13,7 +13,7 @@ export default function Signin() {
 
 export async function getServerSideProps(context: any) {
   const session = await getServerSession(context.req, context.res, authOptions);
-  logger.debug('PLOP', session, authOptions);
+  logger.debug({ authOptions }, 'PLOP & authOptions');
   if (!session) {
     const params = new URLSearchParams({
       response_type: 'code',
@@ -21,14 +21,15 @@ export async function getServerSideProps(context: any) {
       redirect_uri: config.redirectUri,
       scope: 'openid profile email',
     });
-
-    return {
-      redirect: {
-        destination: config.authUrl + '?' + params,
-        permanent: false,
-      },
+    const redirect = {
+      destination: config.authUrl + '?' + params,
+      permanent: false,
     };
+    logger.debug({ config, params, redirect }, 'config, params & redirect');
+
+    return { redirect };
   }
+  logger.debug({ session }, 'session');
 
   return {
     props: { session },
