@@ -1,33 +1,44 @@
-import 'dsfr-chart/MultiLineChart/multiline-chart.css';
-import Script from 'next/script';
-import IndicateurÉvolutionProps from '@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.interface';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
 import Titre from '@/components/_commons/Titre/Titre';
+import IndicateurÉvolutionProps from '@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.interface';
+import useIndicateurÉvolution from './useIndicateurÉvolution';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+);
 
 export default function IndicateurÉvolution({ indicateur }: IndicateurÉvolutionProps) {
+  const { options, données } = useIndicateurÉvolution(indicateur);
+
   return (
-    <>
-      <Script
-        src="/js/dsfr-chart/MultiLineChart/multiline-chart.umd.min.js"
+    <div>
+      <Titre
+        baliseHtml='h5'
+        className='fr-text--lg fr-mb-0'
+      >
+        Évolution de l&apos;indicateur
+      </Titre>
+      <p className="fr-text--xs texte-gris">
+        Mis à jour le : Non renseigné | Source : Non renseigné
+      </p>
+      <Line
+        data={données}
+        options={options}
       />
-      <div>
-        <Titre
-          baliseHtml='h5'
-          className='fr-text--lg fr-mb-0'
-        >
-          Évolution de l&apos;indicateur
-        </Titre>
-        <p className="fr-text--xs texte-gris">
-          Mis à jour le : Non renseigné | Source : Non renseigné
-        </p>
-        <multiline-chart
-          hline={JSON.stringify([indicateur.mailles.nationale.FR.valeurCible])}
-          hlinecolor={JSON.stringify(['#FC5D00'])}
-          hlinename={JSON.stringify(['Cible'])}
-          name={JSON.stringify(['National'])}
-          x={JSON.stringify([indicateur.mailles.nationale.FR.evolutionDateValeurActuelle])} //TODO utiliser formaterDate après merge de #173
-          y={JSON.stringify([indicateur.mailles.nationale.FR.evolutionValeurActuelle])}
-        />
-      </div>
-    </>
+    </div>
   );
 }
