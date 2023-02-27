@@ -203,7 +203,6 @@ describe('IndicateurSQLRepository', () => {
       // GIVEN
       const repository = new IndicateurSQLRepository(prisma);
 
-
       const indicateurs: indicateur[] = [
         new IndicateurRowBuilder()
           .withId('IND-001')

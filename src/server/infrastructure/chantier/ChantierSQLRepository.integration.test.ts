@@ -4,6 +4,9 @@ import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ChantierRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/ChantierRowBuilder';
 import { objectEntries } from '@/client/utils/objects/objects';
 import ChantierSQLRepository from './ChantierSQLRepository';
+import { synthese_des_resultats } from '@prisma/client';
+import SyntheseDesResultatsRowBuilder
+  from '@/server/infrastructure/test/tools/rowBuilder/SyntheseDesResultatsRowBuilder';
 
 describe('ChantierSQLRepository', () => {
   test('Accède à un chantier par son id, vérification de quelques champs', async () => {
@@ -238,6 +241,62 @@ describe('ChantierSQLRepository', () => {
 
       // THEN
       await expect(request).rejects.toThrow(/le chantier 'CH-001' n'a pas de maille nationale/);
+    });
+  });
+
+  describe('getMetriques', function () {
+    test('renvoie une liste vide quand aucune information en base pour le chantier', async () => {
+      // Given
+      const chantierId = 'CH-001';
+      const maille = 'REG';
+      const codeInsee = '01';
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+      // When
+      const result = await repository.getMetriques(chantierId, maille, codeInsee);
+
+      // Then
+      expect(result).toStrictEqual(
+        {
+          synthèseDesRésultats: {
+            commentaire: '',
+            date: '',
+            auteur: '',
+          },
+        },
+      );
+    });
+
+    test('renvoie une synthèse des resultat si le chantier en a une en base', async () => {
+      // Given
+      const chantierId = 'CH-001';
+      const maille = 'REG';
+      const codeInsee = '01';
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+
+      const syntheseDesResultats: synthese_des_resultats[] = [
+        new SyntheseDesResultatsRowBuilder()
+          .withCommentaire('Lorem ipsum')
+          .withDateCommentaire('2023-01-01')
+          .build(),
+      ];
+
+      await prisma.synthese_des_resultats.createMany({ data: syntheseDesResultats });
+
+      // When
+      const result = await repository.getMetriques(chantierId, maille, codeInsee);
+
+      // Then
+      expect(result).toStrictEqual(
+        {
+          synthèseDesRésultats: {
+            commentaire: '',
+            date: '',
+            auteur: '',
+          },
+        },
+      );
     });
   });
 });

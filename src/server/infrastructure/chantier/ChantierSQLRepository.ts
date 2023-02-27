@@ -1,5 +1,5 @@
 import { chantier, PrismaClient } from '@prisma/client';
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import ChantierRepository, { MetriquesChantier } from '@/server/domain/chantier/ChantierRepository.interface';
 import { groupBy } from '@/client/utils/arrays';
 import { parseChantier } from '@/server/infrastructure/chantier/ChantierSQLParser';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -39,5 +39,16 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const chantiersGroupésParId = groupBy<chantier>(chantiers, c => c.id);
 
     return objectEntries(chantiersGroupésParId).map(([_, c]) => parseChantier(c));
+  }
+
+  getMetriques(): Promise<MetriquesChantier> {
+    const metriquesChantier: MetriquesChantier = {
+      synthèseDesRésultats: {
+        commentaire: '',
+        date: '',
+        auteur: '',
+      },
+    };
+    return Promise.resolve(metriquesChantier);
   }
 }

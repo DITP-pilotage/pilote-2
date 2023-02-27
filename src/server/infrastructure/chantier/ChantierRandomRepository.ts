@@ -1,5 +1,5 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import ChantierRepository, {MetriquesChantier} from '@/server/domain/chantier/ChantierRepository.interface';
 import ChantierFixture from '@/fixtures/ChantierFixture';
 
 export default class ChantierRandomRepository implements ChantierRepository {
@@ -18,5 +18,9 @@ export default class ChantierRandomRepository implements ChantierRepository {
       return [];
     }
     return ChantierFixture.générerPlusieurs(this.valeursFixes.length, this.valeursFixes);
+  }
+
+  async getMetriques(_chantierId: string, _maille: string, _codeInsee: string): Promise<MetriquesChantier> {
+    throw new Error('Not Implemented');
   }
 }
