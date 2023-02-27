@@ -2,20 +2,17 @@ import { useMemo } from 'react';
 import nuancierPourcentage from '@/client/constants/nuanciers/nuancierPourcentage';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
-import { CartographieDonnées, CartographieLégende } from '@/components/_commons/Cartographie/Cartographie.interface';
+import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 
 export default function useCartographieAvancement(données: CartographieDonnéesAvancement) {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
-  const légende: CartographieLégende = {
-    type: 'FIGURÉS_DE_SURFACE',
-    contenu: nuancierPourcentage.map(({ remplissage, libellé }) => ({
-      libellé,
-      remplissage,
-    })),
-  };
+  const légende = nuancierPourcentage.map(({ remplissage, libellé }) => ({
+    libellé,
+    remplissage,
+  }));
 
   const donnéesCartographie = useMemo(() => {
     let donnéesFormatées: CartographieDonnées = {};

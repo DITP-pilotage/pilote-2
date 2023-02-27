@@ -1,4 +1,6 @@
 import Cartographie from '@/components/_commons/Cartographie/Cartographie';
+import CartographieLégendeFigurésDeSurface
+  from '@/components/_commons/Cartographie/Légende/FigurésDeSurface/CartographieLégendeFigurésDeSurface';
 import CartographieAvancementProps from './CartographieAvancement.interface';
 import useCartographieAvancement from './useCartographieAvancement';
 
@@ -8,8 +10,9 @@ export default function CartographieAvancement({ données, options }: Cartograph
   return (
     <Cartographie
       données={donnéesCartographie}
-      légende={légende}
       options={options}
-    />
+    >
+      <CartographieLégendeFigurésDeSurface contenu={légende} />
+    </Cartographie>
   );
 }

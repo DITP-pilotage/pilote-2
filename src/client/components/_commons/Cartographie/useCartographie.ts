@@ -41,7 +41,7 @@ export default function useCartographie() {
     },
     territoireSélectionnable: false,
   };
-  
+
 
   return {
     déterminerRégionsÀTracer,
