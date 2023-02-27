@@ -9,7 +9,7 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
-  const nuancierMétéo = new NuancierMétéo();
+  const nuancierMétéo = useMemo(() => new NuancierMétéo(), []);
 
   const légende = nuancierMétéo.nuances.map(({ remplissage, libellé, picto }) => ({
     libellé,
@@ -25,13 +25,13 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
   
       donnéesFormatées[codeInsee] = {
         valeurAffichée: météos[valeur],
-        remplissage: nuancierMétéo.déterminerRemplissage(valeur).couleur,
+        remplissage: nuancierMétéo.déterminerRemplissage(valeur),
         libellé: mailleSélectionnée === 'départementale' ? `${détailTerritoire?.codeInsee} - ${détailTerritoire?.nom}` : détailTerritoire?.nom ?? 'N/C',
       };
     });
 
     return donnéesFormatées;
-  }, [données, mailleSélectionnée, récupérerDétailsSurUnTerritoire]);
+  }, [données, mailleSélectionnée, nuancierMétéo, récupérerDétailsSurUnTerritoire]);
 
   return {
     légende,

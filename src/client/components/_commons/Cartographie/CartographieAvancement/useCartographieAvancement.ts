@@ -8,7 +8,7 @@ export default function useCartographieAvancement(données: CartographieDonnées
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
-  const nuancierPourcentage = new NuancierPourcentage();
+  const nuancierPourcentage = useMemo(() => new NuancierPourcentage(), []);
 
   const légende = nuancierPourcentage.nuances.map(({ remplissage, libellé }) => ({
     libellé,
@@ -23,13 +23,13 @@ export default function useCartographieAvancement(données: CartographieDonnées
   
       donnéesFormatées[codeInsee] = {
         valeurAffichée: valeur === null ? 'Non renseigné' : valeur.toFixed(0) + '%',
-        remplissage: nuancierPourcentage.déterminerRemplissage(valeur).couleur,
+        remplissage: nuancierPourcentage.déterminerRemplissage(valeur),
         libellé: mailleSélectionnée === 'départementale' ? `${détailTerritoire?.codeInsee} - ${détailTerritoire?.nom}` : détailTerritoire?.nom ?? 'N/C',
       };
     });
 
     return donnéesFormatées;
-  }, [données, mailleSélectionnée, récupérerDétailsSurUnTerritoire]);
+  }, [données, mailleSélectionnée, nuancierPourcentage, récupérerDétailsSurUnTerritoire]);
 
   return {
     légende,

@@ -1,4 +1,4 @@
-export const interpolerCouleurs = (couleurDépart: string, couleurArrivée: string, pourcentage: number) => {
+export const interpolerCouleurs = (couleurDépart: string, couleurArrivée: string, pourcentage: number): `#${string}` => {
   // retire le '#' s'il est présent
   couleurDépart = couleurDépart.replace(/^\s*#|\s*$/g, '');
   couleurArrivée = couleurArrivée.replace(/^\s*#|\s*$/g, '');
@@ -52,5 +52,5 @@ export const interpolerCouleurs = (couleurDépart: string, couleurArrivée: stri
   if (hexaVert.length === 1) hexaVert = '0' + hexaVert;
   if (hexaBleu.length === 1) hexaBleu = '0' + hexaBleu;
 
-  return '#' + hexaRouge + hexaVert + hexaBleu;
+  return `#${hexaRouge}${hexaVert}${hexaBleu}`;
 };

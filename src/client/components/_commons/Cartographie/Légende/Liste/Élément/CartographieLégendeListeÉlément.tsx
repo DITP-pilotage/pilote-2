@@ -1,3 +1,5 @@
+import hachuresGrisBlanc from '@/client/constants/nuanciers/hachure/hachuresGrisBlanc';
+import { estHachure } from '@/client/constants/nuanciers/Nuancier';
 import CartographieLégendeListeÉlémentStyled from './CartographieLégendeListeÉlément.styled';
 import CartographieLégendeListeÉlémentProps from './CartographieLégendeListeÉlément.interface';
 
@@ -15,10 +17,10 @@ export default function CartographieLégendeListeÉlément({ children, remplissa
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          { remplissage.type === 'HACHURES' && remplissage.hachure.patternSVG }
+          { estHachure(remplissage) && hachuresGrisBlanc.patternSVG }
         </defs>
         <rect
-          fill={remplissage.couleur}
+          fill={remplissage}
           height={miseÀLÉchelle}
           width={miseÀLÉchelle}
           x={0}

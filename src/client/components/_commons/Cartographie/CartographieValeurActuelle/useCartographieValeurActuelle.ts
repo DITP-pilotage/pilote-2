@@ -14,15 +14,9 @@ export default function useCartographieValeurActuelle({ libelléUnité, données
   const valeurMin = valeurMinimum(données.map(donnée => donnée.valeur)) ?? 0;
   const valeurMax = valeurMaximum(données.map(donnée => donnée.valeur)) ?? 0;
 
-  const nuancierDégradé = new NuancierDégradé(valeurMin, valeurMax);
-
-  const légende = {
-    libelléUnité,
-    valeurMin: String(valeurMin),
-    valeurMax: String(valeurMax),
-    couleurMin: nuancierDégradé.couleurDépart,
-    couleurMax: nuancierDégradé.couleurArrivé,
-  };
+  const nuancierDégradé = useMemo(() => (
+    new NuancierDégradé(valeurMin, valeurMax)
+  ), [valeurMax, valeurMin]);
 
   const donnéesCartographie = useMemo(() => {
     let donnéesFormatées: CartographieDonnées = {};
@@ -31,16 +25,22 @@ export default function useCartographieValeurActuelle({ libelléUnité, données
       const détailTerritoire = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
       donnéesFormatées[codeInsee] = {
         valeurAffichée: valeur === null ? 'Non renseigné' : String(valeur),
-        remplissage: nuancierDégradé.déterminerRemplissage(valeur).couleur,
+        remplissage: nuancierDégradé.déterminerRemplissage(valeur),
         libellé: mailleSélectionnée === 'départementale' ? `${détailTerritoire?.codeInsee} - ${détailTerritoire?.nom}` : détailTerritoire?.nom ?? 'N/C',
       };
     });
 
     return donnéesFormatées;
-  }, [données, mailleSélectionnée, récupérerDétailsSurUnTerritoire]);
+  }, [données, mailleSélectionnée, nuancierDégradé, récupérerDétailsSurUnTerritoire]);
 
   return {
-    légende,
+    légende: {
+      libelléUnité,
+      valeurMin: String(valeurMin),
+      valeurMax: String(valeurMax),
+      couleurMin: nuancierDégradé.couleurDépart,
+      couleurMax: nuancierDégradé.couleurArrivé,
+    },
     donnéesCartographie,
   };
 }

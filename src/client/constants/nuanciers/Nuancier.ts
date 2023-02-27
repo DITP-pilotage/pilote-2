@@ -1,18 +1,10 @@
-import Hachure from '@/client/constants/nuanciers/hachure/hachure';
+export type NuancierRemplissage = `#${string}` | `url(#${string})`;
 
-export type NuancierRemplissage = {
-  type: 'COULEUR',
-  couleur: string,
-} | {
-  type: 'HACHURES',
-  couleur: string,
-  hachure: Hachure,
-};
+export const remplissageParDéfaut: NuancierRemplissage = '#bababa';
 
-export const remplissageParDéfaut: NuancierRemplissage = {
-  type: 'COULEUR',
-  couleur: '#bababa',
-} as const;
+export function estHachure(remplissage: NuancierRemplissage): boolean {
+  return /url\(#.*\)/.test(remplissage);
+}
 
 export default interface Nuancier {
   déterminerRemplissage(valeur: number | string | null): NuancierRemplissage;

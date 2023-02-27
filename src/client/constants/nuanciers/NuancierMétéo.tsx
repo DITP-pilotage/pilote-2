@@ -17,34 +17,22 @@ class NuancierMétéo implements Nuancier {
     {
       valeur: 'ORAGE',
       libellé: météos.ORAGE,
-      remplissage: {
-        type: 'COULEUR',
-        couleur: '#B34000',
-      },
+      remplissage: '#B34000',
       picto: <PictoMétéo valeur="ORAGE" />,
     }, {
       valeur : 'COUVERT',
       libellé: météos.COUVERT,
-      remplissage: {
-        type: 'COULEUR',
-        couleur: '#95E257',
-      },
+      remplissage: '#95E257',
       picto: <PictoMétéo valeur="COUVERT" />,
     }, {
       valeur: 'NUAGE',
       libellé: météos.NUAGE,
-      remplissage: {
-        type: 'COULEUR',
-        couleur: '#EFCB3A',
-      },
+      remplissage: '#EFCB3A',
       picto: <PictoMétéo valeur="NUAGE" />,
     }, {
       valeur: 'SOLEIL',
       libellé: météos.SOLEIL,
-      remplissage: {
-        type: 'COULEUR',
-        couleur: '#27A658',
-      },
+      remplissage: '#27A658',
       picto: <PictoMétéo valeur="SOLEIL" />,
     }, {
       valeur: 'NON_RENSEIGNEE',

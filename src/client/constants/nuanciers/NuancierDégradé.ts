@@ -21,12 +21,8 @@ class NuancierDégradé implements Nuancier {
       return remplissageParDéfaut;
 
     const pourcentageInterpolation = 100 * (valeur - this.valeurMin) / (this.valeurMax - this.valeurMin);
-    return {
-      type: 'COULEUR',
-      couleur: interpolerCouleurs(this.couleurDépart, this.couleurArrivé, pourcentageInterpolation),
-    };
+    return interpolerCouleurs(this.couleurDépart, this.couleurArrivé, pourcentageInterpolation);
   }
-
 }
 
 export default NuancierDégradé;
