@@ -1,6 +1,7 @@
 /* eslint-disable unicorn/consistent-function-scoping */
 import { régionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
+import { remplissageParDéfaut } from '@/client/constants/nuanciers/nuancier';
 import { CartographieTerritoireAffiché, CartographieOptions, CartographieTerritoires } from './useCartographie.interface';
 import { CartographieDonnées } from './Cartographie.interface';
 
@@ -22,9 +23,9 @@ export default function useCartographie() {
       territoires: territoiresÀTracer.map(territoire => ({
         codeInsee: territoire.codeInsee,
         tracéSVG: territoire.tracéSVG,
-        remplissage: données[territoire.codeInsee].remplissage,
-        libellé: données[territoire.codeInsee].libellé,
-        valeurAffichée: données[territoire.codeInsee].valeurAffichée,
+        remplissage: données[territoire.codeInsee]?.remplissage ?? remplissageParDéfaut, // TODO où gérer ce undefined ?
+        libellé: données[territoire.codeInsee]?.libellé ?? '-', // TODO où gérer ce undefined ?
+        valeurAffichée: données[territoire.codeInsee]?.valeurAffichée ?? 'Non renseignée', // TODO où gérer ce undefined ?
       })),
       frontières: frontièresÀTracer.map(frontière => ({
         codeInsee: frontière.codeInsee,

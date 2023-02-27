@@ -1,5 +1,5 @@
-import IndicateurÉvolution
-  from '@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution';
+import IndicateurÉvolution from '@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution';
+import IndicateurCartes from '@/components/PageChantier/Indicateurs/Bloc/Détails/IndicateurCartes/IndicateurCartes';
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 
 export default function IndicateurDétails({ indicateur }: IndicateurDétailsProps) {
@@ -19,6 +19,7 @@ export default function IndicateurDétails({ indicateur }: IndicateurDétailsPro
         className="fr-collapse fr-ml-3w"
         id={`détails-${indicateur.id}`}
       >
+        <IndicateurCartes indicateur={indicateur} />
         <IndicateurÉvolution indicateur={indicateur} />
       </div>
     </div>
