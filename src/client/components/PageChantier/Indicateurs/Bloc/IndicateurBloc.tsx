@@ -54,7 +54,7 @@ const colonnes = [
     cell: valeurCible => afficherValeurEtDate(valeurCible.getValue()),
     enableSorting: false,
   }),
-  reactTableColonnesHelper.accessor('données.tauxAvancementGlobal', {
+  reactTableColonnesHelper.accessor('données.avancement.global', {
     header: 'Taux avancement global',
     cell: avancementGlobal => (
       <>
@@ -72,8 +72,8 @@ const colonnes = [
   }),
 ];
 
-export default function IndicateurBloc({ indicateur } : IndicateurBlocProps) {
-  const { indicateurDonnéesParTerritoires } = useIndicateurs(indicateur);  
+export default function IndicateurBloc({ indicateur, indicateurMétriques } : IndicateurBlocProps) {
+  const { indicateurDonnéesParTerritoires } = useIndicateurs(indicateurMétriques);  
   
   return (
     <IndicateurBlocStyled
