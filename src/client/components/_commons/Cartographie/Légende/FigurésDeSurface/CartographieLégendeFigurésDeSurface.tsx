@@ -2,11 +2,11 @@ import CartographieLégendeFigurésDeSurfaceProps from './CartographieLégendeFi
 import CartographieLégendeFigurésDeSurfaceStyled from './CartographieLégendeFigurésDeSurface.styled';
 import CartographieLégendeFiguréDeSurfaceÉlément from './Élément/CartographieLégendeFiguréDeSurfaceÉlément';
 
-export default function CartographieLégendeFigurésDeSurface({ légende }: CartographieLégendeFigurésDeSurfaceProps) {
+export default function CartographieLégendeFigurésDeSurface({ contenu }: CartographieLégendeFigurésDeSurfaceProps) {
   return (
     <CartographieLégendeFigurésDeSurfaceStyled className="fr-mt-1w fr-mb-0 fr-pl-1w">
       {
-        légende.map(({ remplissage, libellé, picto }) => (
+        contenu.map(({ remplissage, libellé, picto }) => (
           <CartographieLégendeFiguréDeSurfaceÉlément
             key={`carto-légende-${libellé}`}
             remplissage={remplissage}

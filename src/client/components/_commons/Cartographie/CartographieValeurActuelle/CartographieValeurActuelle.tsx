@@ -9,7 +9,7 @@ export default function CartographieValeurActuelle({ données, options }: Cartog
   return (
     <Cartographie
       données={donnéesCartographie}
-      légende={[]}
+      légende={légende}
       options={options}
     />
   );

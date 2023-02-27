@@ -2,10 +2,12 @@ import { useState } from 'react';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import { CartographieInfoBulle } from '@/components/_commons/Cartographie/useCartographie.interface';
 import { départementsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import CartographieLégendeFigurésDeSurface
+  from '@/components/_commons/Cartographie/Légende/FigurésDeSurface/CartographieLégendeFigurésDeSurface';
 import CartographieProps from './Cartographie.interface';
 import BulleDInfo from './BulleDInfo/BulleDInfo';
-import CartographieLégendeFigurésDeSurface from './Légende/FigurésDeSurface/CartographieLégendeFigurésDeSurface';
 import CartographieSVG from './SVG/CartographieSVG';
+import CartographieLégendeDégradéDeSurface from './Légende/DégradéDeSurface/CartographieLégendeDégradéDeSurface';
 
 export default function Cartographie({ légende, options, données }: CartographieProps) {
   const niveauDeMaille = mailleSélectionnéeTerritoiresStore();
@@ -49,7 +51,14 @@ export default function Cartographie({ légende, options, données }: Cartograph
         setInfoBulle={setInfoBulle}
         territoires={territoiresEtFrontières.territoires}
       />
-      <CartographieLégendeFigurésDeSurface légende={légende} />
+      {
+        légende.type === 'FIGURÉS_DE_SURFACE'
+        && <CartographieLégendeFigurésDeSurface contenu={légende.contenu} />
+      }
+      {
+        légende.type === 'DÉGRADÉ_DE_SURFACE'
+        && <CartographieLégendeDégradéDeSurface contenu={légende.contenu} />
+      }
     </div>
   );
 }

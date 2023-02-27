@@ -8,5 +8,5 @@ export type CartographieÉlémentDeLégendeFigurésDeSurface = {
 };
 
 export default interface CartographieLégendeFigurésDeSurfaceProps {
-  légende: CartographieÉlémentDeLégendeFigurésDeSurface[],
+  contenu: CartographieÉlémentDeLégendeFigurésDeSurface[],
 }

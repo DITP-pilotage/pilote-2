@@ -18,7 +18,7 @@ export default function IndicateurCartes({ indicateur }: { indicateur: Indicateu
     ));
 
   const donnéesCartographieValeurActuelle = {
-    libelléUnité: "en nombre d'unités",
+    libelléUnité: '',
     données: objectEntries(indicateur.mailles[mailleSélectionnée])
       .map(([codeInsee, territoire]) => (
         {

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
+import { CartographieDonnées, CartographieLégende } from '@/components/_commons/Cartographie/Cartographie.interface';
 import nuancierDégradé from '@/client/constants/nuanciers/nuancierDégradé';
 import {
   CartographieDonnéesValeurActuelle,
@@ -14,12 +14,15 @@ export default function useCartographieValeurActuelle({ libelléUnité, données
   const valeurMin = valeurMinimum(données.map(donnée => donnée.valeur)) ?? 0;
   const valeurMax = valeurMaximum(données.map(donnée => donnée.valeur)) ?? 0;
 
-  const légende = {
-    libelléUnité,
-    valeurMin,
-    valeurMax,
-    couleurMin: nuancierDégradé.couleurDépart,
-    couleurMax: nuancierDégradé.couleurArrivé,
+  const légende: CartographieLégende = {
+    type: 'DÉGRADÉ_DE_SURFACE',
+    contenu: {
+      libelléUnité,
+      valeurMin: String(valeurMin),
+      valeurMax: String(valeurMax),
+      couleurMin: nuancierDégradé.couleurDépart,
+      couleurMax: nuancierDégradé.couleurArrivé,
+    },
   };
 
   const donnéesCartographie = useMemo(() => {
