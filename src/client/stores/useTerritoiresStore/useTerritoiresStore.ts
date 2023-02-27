@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import départements from '@/client/constants/départements.json';
 import régions from '@/client/constants/régions.json';
-import TerritoiresStore, { TerritoireGéographique } from './useTerritoiresStore.interface';
+import TerritoiresStore from './useTerritoiresStore.interface';
 
 const territoireFrance = {
   tracéSVG: '',
@@ -60,10 +60,16 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
     },
 
     séléctionnerTerritoireÀComparer: territoire => {
+      if (get().mailleSélectionnée === MAILLE_DÉPARTEMENTALE) {    
+        set({ territoiresComparés: [
+          ...get().territoiresComparés, 
+          { ...territoire, nom: `${territoire.codeInsee} – ${territoire.nom}` },
+        ] });
+      }
       set({ territoiresComparés: [...get().territoiresComparés, territoire] });
     },
 
-    désélectionnerUnTerritoireÀComparer: (territoire: TerritoireGéographique) => {
+    désélectionnerUnTerritoireÀComparer: territoire => {
       const indexTerritoireÀSupprimer = get().territoiresComparés.findIndex(t => t.codeInsee === territoire.codeInsee);
       get().territoiresComparés.splice(indexTerritoireÀSupprimer, 1);
     },
@@ -75,7 +81,8 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       if (territoire) {
         if (get().territoiresComparés.some(territoireSéléctionné => territoireSéléctionné.codeInsee === codeInsee)) {
           get().actions.désélectionnerUnTerritoireÀComparer(territoire);
-        } else get().actions.séléctionnerTerritoireÀComparer(territoire);
+        }
+        get().actions.séléctionnerTerritoireÀComparer(territoire);
       }
     },
   },

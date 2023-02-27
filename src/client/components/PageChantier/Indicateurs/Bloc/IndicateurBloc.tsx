@@ -1,79 +1,15 @@
-import { createColumnHelper } from '@tanstack/react-table';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
-import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
-import { formaterDate } from '@/client/utils/date/date';
-import IndicateurBlocProps from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc.interface';
-import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
 import IndicateurDétails from '@/components/PageChantier/Indicateurs/Bloc/Détails/IndicateurDétails';
+import IndicateurBlocProps from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc.interface';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import { IndicateurDonnéesParTerritoire } from '../Indicateurs.interface';
 import useIndicateurs from '../useIndicateurs';
 
-function afficherValeurEtDate(valeur: number | null, date?: string | null) {
-  const dateFormatée = formaterDate(date, 'mm/yyyy');
-  return (
-    <>
-      <p className='indicateur-valeur'>
-        {valeur?.toLocaleString()}
-      </p>
-      {
-        !!dateFormatée && (
-          <p className='indicateur-date-valeur texte-gris'>
-            { `(${dateFormatée})` }
-          </p>
-        )
-      }
-    </>
-  );
-}
-
-const reactTableColonnesHelper = createColumnHelper<IndicateurDonnéesParTerritoire>();
-
-const colonnes = [
-  reactTableColonnesHelper.accessor( 'territoire', {
-    header: 'Territoire(s)',
-    cell: nomDuTerritoire => nomDuTerritoire.getValue(),
-    enableSorting: false,
-  }),
-  reactTableColonnesHelper.accessor('données.valeurInitiale', {
-    header: 'Valeur initiale',
-    cell: valeurInitiale => afficherValeurEtDate(valeurInitiale.getValue(), valeurInitiale.row.original.données.dateValeurInitiale),
-    enableSorting: false,
-  }),
-  reactTableColonnesHelper.accessor('données.valeurActuelle', {
-    header: 'Valeur actuelle',
-    cell: valeurActuelle => afficherValeurEtDate(valeurActuelle.getValue(), valeurActuelle.row.original.données.dateValeurActuelle),
-    enableSorting: false,
-  }),
-  reactTableColonnesHelper.accessor('données.valeurCible', {
-    header: 'Valeur cible',
-    cell: valeurCible => afficherValeurEtDate(valeurCible.getValue()),
-    enableSorting: false,
-  }),
-  reactTableColonnesHelper.accessor('données.avancement.global', {
-    header: 'Taux avancement global',
-    cell: avancementGlobal => (
-      <>
-        {avancementGlobal.getValue() === null ? '- %' : `${avancementGlobal.getValue()!.toFixed(0)}%`}
-        <BarreDeProgression
-          afficherTexte={false}
-          fond='bleu'
-          taille='moyenne'
-          valeur={avancementGlobal.getValue()}
-          variante='primaire'
-        />
-      </>
-    ),
-    enableSorting: false, 
-  }),
-];
-
 export default function IndicateurBloc({ indicateur, indicateurMétriques } : IndicateurBlocProps) {
-  const { indicateurDonnéesParTerritoires } = useIndicateurs(indicateurMétriques);  
+  const { indicateurDonnéesParTerritoires, colonnes } = useIndicateurs(indicateurMétriques);  
   
   return (
     <IndicateurBlocStyled
