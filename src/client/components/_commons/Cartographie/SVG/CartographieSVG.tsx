@@ -1,13 +1,11 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import hachuresGrisBlanc from '@/client/constants/hachure/hachuresGrisBlanc';
-import { actionsTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';
 import CartographieTerritoireSélectionné from './CartographieTerritoireSélectionné';
 
-function CartographieSVG({ options, territoires, frontières, setInfoBulle }: CartographieSVGProps) {
+function CartographieSVG({ options, territoires, frontières, setInfoBulle, auClicTerritoireCallback }: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
@@ -15,23 +13,12 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle }: Ca
     width: 0,
     height: 0,
   });
-  
-  const { modifierTerritoireSélectionné } = actionsTerritoiresStore();
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   useEffect(() => {
     if (svgRef && svgRef.current)
       setViewbox(svgRef.current.getBBox());
   }, [svgRef]);
 
-  function auClicTerritoireCallback(territoireCodeInsee: CodeInsee) {
-    if (!options.territoireSélectionnable) return;
-
-    if (territoireSélectionné.codeInsee === territoireCodeInsee)
-      modifierTerritoireSélectionné('FR');
-    else 
-      modifierTerritoireSélectionné(territoireCodeInsee);
-  }
 
   return (
     <CartographieSVGStyled>
@@ -67,7 +54,7 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle }: Ca
                   d={territoire.tracéSVG}
                   fill={territoire.remplissage}
                   key={`territoire-${territoire.codeInsee}`}
-                  onClick={() => auClicTerritoireCallback(territoire.codeInsee)}
+                  onClick={() => auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
                   onMouseEnter={() => {
                     setInfoBulle({
                       libellé: territoire.libellé,

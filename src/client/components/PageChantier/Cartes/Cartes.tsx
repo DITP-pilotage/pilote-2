@@ -4,10 +4,12 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
 import Titre from '@/components/_commons/Titre/Titre';
+import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import CartesProps from './Cartes.interface';
 
 export default function Cartes({ chantier }: CartesProps) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+  const { auClicTerritoireCallback } = useCartographie();
 
   const donnéesCartographieAvancement = objectEntries(chantier.mailles[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
     valeur: territoire.avancement.global,
@@ -39,6 +41,7 @@ export default function Cartes({ chantier }: CartesProps) {
               Taux d&apos;avancement
             </Titre>
             <CartographieAvancement
+              auClicTerritoireCallback={auClicTerritoireCallback}
               données={donnéesCartographieAvancement}
               options={{ territoireSélectionnable: true }}
             />
@@ -53,6 +56,7 @@ export default function Cartes({ chantier }: CartesProps) {
               Niveau de confiance
             </Titre>
             <CartographieMétéo
+              auClicTerritoireCallback={auClicTerritoireCallback}
               données={donnéesCartographieMétéo}
               options={{ territoireSélectionnable: true }}
             />

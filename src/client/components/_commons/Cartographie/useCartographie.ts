@@ -1,11 +1,14 @@
 /* eslint-disable unicorn/consistent-function-scoping */
-import { régionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore, régionsTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { CartographieTerritoireAffiché, CartographieOptions, CartographieTerritoires } from './useCartographie.interface';
 import { CartographieDonnées } from './Cartographie.interface';
 
 export default function useCartographie() {
   const régions = régionsTerritoiresStore();
+  const { modifierTerritoireSélectionné, modifierTerritoiresComparés } = actionsTerritoiresStore();
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   
   function déterminerRégionsÀTracer(territoireAffiché: CartographieTerritoireAffiché) {
     return territoireAffiché.maille === 'régionale'
@@ -41,10 +44,28 @@ export default function useCartographie() {
     territoireSélectionnable: false,
   };
 
+  function auClicTerritoireCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
+    if (!territoireSélectionnable) return;
+
+    if (territoireSélectionné.codeInsee === territoireCodeInsee)
+      modifierTerritoireSélectionné('FR');
+    else 
+      modifierTerritoireSélectionné(territoireCodeInsee);
+  }
+
+
+  function auClicTerritoireMultiSéléctionCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
+    if (!territoireSélectionnable) return;
+    modifierTerritoiresComparés(territoireCodeInsee);
+  }
+
+
 
   return {
     déterminerRégionsÀTracer,
     créerTerritoires,
     optionsParDéfaut,
+    auClicTerritoireCallback,
+    auClicTerritoireMultiSéléctionCallback,
   };
 }

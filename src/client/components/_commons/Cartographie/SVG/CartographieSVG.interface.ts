@@ -3,6 +3,7 @@ import {
   CartographieTerritoires,
   CartographieInfoBulle,
 } from '@/components/_commons/Cartographie/useCartographie.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export type Viewbox = {
   x: number,
@@ -16,4 +17,5 @@ export default interface CartographieSVGProps {
   territoires: CartographieTerritoires['territoires'],
   frontières: CartographieTerritoires['frontières'],
   setInfoBulle:  (state: CartographieInfoBulle | null) => void
+  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void
 }
