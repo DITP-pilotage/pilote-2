@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { create } from 'zustand';
-import FiltresStore, { FiltreCatégorie, FiltreCatégorieTuple, FiltresActifs } from './useFiltresStore.interface';
+import { objectKeys } from '@/client/utils/objects/objects';
+import FiltresStore, { FiltreCatégorieTuple, FiltresActifs } from './useFiltresStore.interface';
 
 const filtresActifsInitiaux: FiltresActifs = {
   périmètresMinistériels: [],
@@ -48,7 +49,7 @@ const useFiltresStore = create<FiltresStore>((set, get) => ({
       get().actions.récupérerFiltresActifsAvecLeursCatégories().length
     ),
 
-    récupérerCatégories: () => Object.keys(get().filtresActifs) as FiltreCatégorie[],
+    récupérerCatégories: () => objectKeys(get().filtresActifs),
 
     récupérerFiltresActifsAvecLeursCatégories: () => {
 

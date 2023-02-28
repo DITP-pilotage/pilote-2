@@ -11,17 +11,17 @@ const CartographieSVGStyled = styled.div`
     .territoire-sélectionné {
       fill: none;
       stroke: var(--yellow-moutarde-850-200);
-      stroke-width: 0.8;
+      stroke-width: 0.5;
     }
 
     .territoire-frontière {
       fill: none;
-      stroke-width: 0.6;
+      stroke-width: 0.4;
     }
 
     .territoire-rempli {
       cursor: pointer;
-      stroke-width: 0.2;
+      stroke-width: 0.15;
 
       &:hover {
         opacity: 0.72;

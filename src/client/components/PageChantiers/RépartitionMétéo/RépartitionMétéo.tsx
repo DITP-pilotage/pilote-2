@@ -1,5 +1,5 @@
 import Titre from '@/components/_commons/Titre/Titre';
-import RépartitionMétéoProps from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéoProps.interface';
+import RépartitionMétéoProps from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéo.interface';
 import météosConstantes from '@/client/constants/météos';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import RépartitionMétéoÉlément from './RépartitionMétéoÉlément/RépartitionMétéoÉlément';

@@ -4,12 +4,12 @@ import { useState } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
-import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import usePageChantiers from '@/components/PageChantiers/usePageChantiers';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import Filtres from '@/components/PageChantiers/Filtres/Filtres';
+import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
@@ -50,7 +50,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
             nombreFiltresActifs > 0 &&
             <FiltresActifs />
           }
-          <div className="fr-p-4w">
+          <div className="fr-p-4w fr-container">
             <Titre
               baliseHtml='h1'
               className='fr-h4'
@@ -74,17 +74,13 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
               </div>
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
-                  <div className='fr-container--fluid'>
-                    <div className="fr-grid-row">
-                      <Titre
-                        baliseHtml='h2'
-                        className='fr-h6'
-                      >
-                        Taux d’avancement moyen de la sélection
-                      </Titre>
-                      <Avancements avancements={avancements} />
-                    </div>
-                  </div>
+                  <Titre
+                    baliseHtml='h2'
+                    className='fr-h6'
+                  >
+                    Taux d’avancement moyen de la sélection
+                  </Titre>
+                  <Avancements avancements={avancements} />
                   <hr className='fr-hr fr-my-3w fr-pb-1v' />
                   <RépartitionMétéo météos={météos} />
                 </Bloc>

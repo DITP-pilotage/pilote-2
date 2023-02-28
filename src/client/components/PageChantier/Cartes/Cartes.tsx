@@ -40,7 +40,7 @@ export default function Cartes({ chantier }: CartesProps) {
             </Titre>
             <CartographieAvancement
               données={donnéesCartographieAvancement}
-              options={{ territoireSélectionnable: true }}
+              options={{ territoireSélectionnable: false }}
             />
           </Bloc>
         </div>
@@ -54,7 +54,7 @@ export default function Cartes({ chantier }: CartesProps) {
             </Titre>
             <CartographieMétéo
               données={donnéesCartographieMétéo}
-              options={{ territoireSélectionnable: true }}
+              options={{ territoireSélectionnable: false }}
             />
           </Bloc>
         </div>

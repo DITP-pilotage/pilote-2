@@ -7,7 +7,9 @@ const CartographieLégendeListeÉlémentStyled = styled.li`
   line-height: 1rem;
 
   > img {
+    width: auto;
     height: 1.2rem;
+    margin-left: 0.5rem;
   }
 
   .remplissage {
