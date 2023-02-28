@@ -4,7 +4,31 @@ export type DetailsCommentaire = {
   auteur: string | null
 };
 
-export type TypeCommentaire = string;
+export const typeCommentaire = ['freinsÀLever', 'actionsÀVenir', 'actionsÀValoriser', 'autresRésultatsObtenus'] as const;
+export type TypeCommentaire = typeof typeCommentaire[number];
+
 
 export type Commentaires = Record<TypeCommentaire, DetailsCommentaire | null>;
 
+export const commentairesNull = {
+  freinsÀLever: {
+    contenu: null,
+    date: null,
+    auteur: null,
+  },
+  actionsÀVenir: {
+    contenu: null,
+    date: null,
+    auteur: null,
+  },
+  actionsÀValoriser: {
+    contenu: null,
+    date: null,
+    auteur: null,
+  },
+  autresRésultatsObtenus: {
+    contenu: null,
+    date: null,
+    auteur: null,
+  },
+};

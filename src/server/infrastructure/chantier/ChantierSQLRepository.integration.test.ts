@@ -6,6 +6,7 @@ import ChantierRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/Ch
 import { objectEntries } from '@/client/utils/objects/objects';
 import SyntheseDesResultatsRowBuilder
   from '@/server/infrastructure/test/tools/rowBuilder/SyntheseDesResultatsRowBuilder';
+import { commentairesNull } from '@/server/domain/chantier/Commentaire.interface';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -275,6 +276,7 @@ describe('ChantierSQLRepository', () => {
             auteur: '',
           },
           météo: 'NON_RENSEIGNEE',
+          commentaires : commentairesNull,
         },
       );
     });
@@ -320,6 +322,7 @@ describe('ChantierSQLRepository', () => {
             auteur: '',
           },
           météo: 'ORAGE',
+          commentaires: commentairesNull,
         },
       );
     });
@@ -390,6 +393,7 @@ describe('ChantierSQLRepository', () => {
             auteur: '',
           },
           météo: 'NON_RENSEIGNEE',
+          commentaires: commentairesNull,
         },
       );
     });

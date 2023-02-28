@@ -1,5 +1,6 @@
 import { createMocks } from 'node-mocks-http';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import { commentairesNull } from '@/server/domain/chantier/Commentaire.interface';
 import handle from '../../../../pages/api/chantier/[chantierId]';
 
 describe('/api/chantier/:chantierId:', () => {
@@ -17,6 +18,7 @@ describe('/api/chantier/:chantierId:', () => {
         auteur: 'Jean Arnaud',
       },
       météo: 'NON_RENSEIGNEE',
+      commentaires: commentairesNull,
     });
 
     // When
@@ -31,6 +33,7 @@ describe('/api/chantier/:chantierId:', () => {
         auteur: 'Jean Arnaud',
       },
       météo: 'NON_RENSEIGNEE',
+      commentaires: commentairesNull,
     });
   });
 
@@ -48,6 +51,7 @@ describe('/api/chantier/:chantierId:', () => {
         auteur: '',
       },
       météo: 'NON_RENSEIGNEE',
+      commentaires: commentairesNull,
     });
 
     // When

@@ -1,6 +1,7 @@
 import CommentaireRepository from '@/server/domain/chantier/CommentaireRepository.interface';
 import CommentaireSQLRepository from '@/server/infrastructure/chantier/CommentaireSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { commentairesNull } from '@/server/domain/chantier/Commentaire.interface';
 
 describe('CommentaireSQLRepository', () => {
   describe( 'getByChantierIdAndTerritoire', () => {
@@ -9,10 +10,10 @@ describe('CommentaireSQLRepository', () => {
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
 
       // WHEN
-      const commentaires = commentaireRepository.getByChantierIdAndTerritoire('CH-001', 'DEPT', '01');
+      const commentaires = await commentaireRepository.getByChantierIdAndTerritoire('CH-001', 'DEPT', '01');
 
       // THEN
-      await expect(commentaires).toBe({});
+      await expect(commentaires).toBe(commentairesNull);
     });
   });
 

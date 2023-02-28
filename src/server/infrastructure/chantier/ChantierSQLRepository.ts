@@ -10,6 +10,8 @@ import { objectEntries } from '@/client/utils/objects/objects';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import CommentaireSQLRepository from '@/server/infrastructure/chantier/CommentaireSQLRepository';
+import { commentairesNull } from '@/server/domain/chantier/Commentaire.interface';
 
 function dateToDateStringWithoutTime(date: Date): string {
   return date.toISOString().slice(0, 10);
@@ -52,6 +54,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
   }
 
   async getMetriques(chantierId: string, maille: Maille, codeInsee: string): Promise<MetriquesChantier> {
+    // TODO: décaler la requête et l'englober dans le SynthèseDesRésultatsSQLRepository (ainsi que le test qui va avec)
+    //  cela permettra d'isoler "l'intelligence" de cette récupération de données
     const synthèseDesRésultats: synthese_des_resultats | null = await this.prisma.synthese_des_resultats.findFirst({
       where: {
         chantier_id: chantierId,
@@ -88,6 +92,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
         auteur: '',
       },
       météo: null,
+      commentaires: commentairesNull,
     };
     
     if (synthèseDesRésultats) {
@@ -107,6 +112,9 @@ export default class ChantierSQLRepository implements ChantierRepository {
 
     métriques['météo'] = chantierRow.meteo as Météo ?? 'NON_RENSEIGNEE';
 
+    const commentaireRepository = new CommentaireSQLRepository(this.prisma);
+
+    métriques.commentaires = await commentaireRepository.getByChantierIdAndTerritoire(chantierId, maille, codeInsee);
 
     return métriques;
   }
