@@ -14,6 +14,7 @@ export default function useIndicateurÉvolution(indicateur: IndicateurÉvolution
         border: {
           dash: [2, 4],
         },
+        beginAtZero: true,
       },
     },
     plugins: {
