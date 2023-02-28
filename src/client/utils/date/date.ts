@@ -1,7 +1,7 @@
-type FormatDeDate = 'mm/yyyy';
+type FormatDeDate = 'mm/aaaa';
 
 const toLocaleDateStringOptions: Record<FormatDeDate, Intl.DateTimeFormatOptions> = {
-  'mm/yyyy': { year: 'numeric', month: 'numeric' },
+  'mm/aaaa': { year: 'numeric', month: 'numeric' },
 };
 
 export function formaterDate(sqlDate: string | null | undefined, format: FormatDeDate) {

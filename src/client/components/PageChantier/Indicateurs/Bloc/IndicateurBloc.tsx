@@ -13,7 +13,7 @@ import IndicateurDétails from '@/components/PageChantier/Indicateurs/Bloc/Déta
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 
 function afficherValeurEtDate(valeur: number | null, date?: string | null) {
-  const dateFormatée = formaterDate(date, 'mm/yyyy');
+  const dateFormatée = formaterDate(date, 'mm/aaaa');
   return (
     <>
       <p className='indicateur-valeur'>
