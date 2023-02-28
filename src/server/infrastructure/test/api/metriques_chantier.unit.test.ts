@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
-import handle from '../../../../pages/api/chantier/[chantierId]';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import handle from '../../../../pages/api/chantier/[chantierId]';
 
 describe('/api/chantier/:chantierId:', () => {
   it('renvoyer la synthèse des résultats d\'un chantier', async () => {
@@ -16,6 +16,7 @@ describe('/api/chantier/:chantierId:', () => {
         date: '2023-01-01',
         auteur: 'Jean Arnaud',
       },
+      météo: 'NON_RENSEIGNEE',
     });
 
     // When
@@ -29,6 +30,7 @@ describe('/api/chantier/:chantierId:', () => {
         date: '2023-01-01',
         auteur: 'Jean Arnaud',
       },
+      météo: 'NON_RENSEIGNEE',
     });
   });
 
@@ -45,6 +47,7 @@ describe('/api/chantier/:chantierId:', () => {
         date: '',
         auteur: '',
       },
+      météo: 'NON_RENSEIGNEE',
     });
 
     // When

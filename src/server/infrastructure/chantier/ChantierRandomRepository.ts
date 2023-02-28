@@ -1,5 +1,5 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import ChantierRepository, {MetriquesChantier} from '@/server/domain/chantier/ChantierRepository.interface';
+import ChantierRepository, { MetriquesChantier } from '@/server/domain/chantier/ChantierRepository.interface';
 import ChantierFixture from '@/fixtures/ChantierFixture';
 
 export default class ChantierRandomRepository implements ChantierRepository {

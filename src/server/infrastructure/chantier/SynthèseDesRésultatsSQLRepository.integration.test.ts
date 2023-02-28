@@ -14,6 +14,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
 
     await prisma.synthese_des_resultats.create({
       data: {
+        id: '0',
         chantier_id: 'CH-001',
         commentaire: résultatAttendu.commentaireSynthèse.contenu,
         date_commentaire: createdDate,
@@ -39,6 +40,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
 
     await prisma.synthese_des_resultats.create({
       data: {
+        id: '0',
         chantier_id: 'CH-001',
         date_commentaire: '2022-08-05T00:00:00.000Z',
         maille: 'NAT',
@@ -48,6 +50,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
 
     await prisma.synthese_des_resultats.create({
       data: {
+        id: '1',
         chantier_id: 'CH-001',
         date_commentaire: createdDate,
         commentaire: résultatAttendu.commentaireSynthèse.contenu,

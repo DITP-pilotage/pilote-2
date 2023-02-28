@@ -17,7 +17,7 @@ export default class ChantierRowBuilder {
 
   private _tauxAvancement: number = 42;
 
-  private _météo: string = 'SOLEIL';
+  private _météo: string | null = 'SOLEIL';
 
   private _directeurs_administration_centrale: string[] = [];
 
@@ -77,7 +77,7 @@ export default class ChantierRowBuilder {
     return this;
   }
 
-  withMétéo(météo: string): ChantierRowBuilder {
+  withMétéo(météo: string | null): ChantierRowBuilder {
     this._météo = météo;
     return this;
   }

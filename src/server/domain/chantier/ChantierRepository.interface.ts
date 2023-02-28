@@ -1,4 +1,5 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export default interface ChantierRepository {
   getById(id: string): Promise<Chantier>;
@@ -8,6 +9,7 @@ export default interface ChantierRepository {
 
 export type MetriquesChantier = {
   synthèseDesRésultats: SyntheseDesResultats
+  météo: Météo | null
 };
 
 export type SyntheseDesResultats = {

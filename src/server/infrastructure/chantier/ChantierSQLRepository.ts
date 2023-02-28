@@ -1,4 +1,5 @@
 import { chantier, PrismaClient, synthese_des_resultats } from '@prisma/client';
+import { AssertionError } from 'node:assert';
 import ChantierRepository, {
   MetriquesChantier,
 } from '@/server/domain/chantier/ChantierRepository.interface';
@@ -8,7 +9,7 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
-import { AssertionError } from 'node:assert';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
 function dateToDateStringWithoutTime(date: Date): string {
   return date.toISOString().slice(0, 10);
@@ -68,6 +69,27 @@ export default class ChantierSQLRepository implements ChantierRepository {
       orderBy: { date_commentaire : 'desc' },
     });
 
+    const chantierRow: chantier | null = await this.prisma.chantier.findFirst({
+      where: {
+        id: chantierId,
+        maille: CODES_MAILLES[maille],
+        code_insee: codeInsee,
+      },
+    });
+
+    if (!chantierRow) {
+      throw new ErreurChantierNonTrouvé(chantierId);
+    }
+    
+    let métriques: MetriquesChantier = {
+      synthèseDesRésultats: {
+        commentaire: '', // TODO: voir si on met chaine vide ou null
+        date: '',
+        auteur: '',
+      },
+      météo: null,
+    };
+    
     if (synthèseDesRésultats) {
 
       if (synthèseDesRésultats.commentaire === null || synthèseDesRésultats.date_commentaire === null) {
@@ -76,21 +98,16 @@ export default class ChantierSQLRepository implements ChantierRepository {
         });
       }
 
-      return {
-        synthèseDesRésultats: {
-          commentaire: synthèseDesRésultats.commentaire,
-          date: dateToDateStringWithoutTime(synthèseDesRésultats.date_commentaire),
-          auteur: '',
-        },
+      métriques['synthèseDesRésultats'] = {
+        commentaire: synthèseDesRésultats.commentaire,
+        date: dateToDateStringWithoutTime(synthèseDesRésultats.date_commentaire),
+        auteur: '',
       };
     }
 
-    return {
-      synthèseDesRésultats: {
-        commentaire: '', // TODO: voir si on met chaine vide ou null
-        date: '',
-        auteur: '',
-      },
-    };
+    métriques['météo'] = chantierRow.meteo as Météo ?? 'NON_RENSEIGNEE';
+
+
+    return métriques;
   }
 }
