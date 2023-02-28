@@ -73,7 +73,7 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
                 />
               ))
             }
-            {options.territoireSélectionnable ? <CartographieTerritoireSélectionné /> : null}
+            {options.territoireSélectionnable ? <CartographieTerritoireSélectionné multiséléction={options.multiséléction} /> : null}
           </g>
         </svg>
       </div>

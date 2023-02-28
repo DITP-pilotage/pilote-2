@@ -18,19 +18,19 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
   mailleSélectionnée: MAILLE_DÉPARTEMENTALE,
   territoireSélectionné: territoireFrance,
   mailleAssociéeAuTerritoireSélectionné: 'nationale',
-  territoiresComparés: [territoireFrance],
+  territoiresComparés: [],
 
   actions: {
     modifierMailleSélectionnée: maille => set({ 
       mailleSélectionnée: maille, 
       territoireSélectionné: territoireFrance, 
       mailleAssociéeAuTerritoireSélectionné: 'nationale', 
-      territoiresComparés: [territoireFrance],
+      territoiresComparés: [],
     }),
 
     modifierTerritoireSélectionné: codeInsee => {
       if (codeInsee === 'FR') {
-        set({ territoireSélectionné: territoireFrance, mailleAssociéeAuTerritoireSélectionné: 'nationale', territoiresComparés: [territoireFrance] }); 
+        set({ territoireSélectionné: territoireFrance, mailleAssociéeAuTerritoireSélectionné: 'nationale' }); 
         return;
       } 
 
@@ -65,8 +65,8 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
           ...get().territoiresComparés, 
           { ...territoire, nom: `${territoire.codeInsee} – ${territoire.nom}` },
         ] });
-      }
-      set({ territoiresComparés: [...get().territoiresComparés, territoire] });
+      } else 
+        set({ territoiresComparés: [...get().territoiresComparés, territoire] });
     },
 
     désélectionnerUnTerritoireÀComparer: territoire => {

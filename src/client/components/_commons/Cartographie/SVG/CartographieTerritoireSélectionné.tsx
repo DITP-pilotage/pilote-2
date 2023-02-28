@@ -1,14 +1,25 @@
-import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { territoiresComparésTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 
-export default function CartographieTerritoireSélectionné() {
+export default function CartographieTerritoireSélectionné({ multiséléction }: { multiséléction: boolean }) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-
-  if (territoireSélectionné.codeInsee === 'FR') return null;
+  const territoiresComparés = territoiresComparésTerritoiresStore();
 
   return (
-    <path
-      className='territoire-sélectionné'
-      d={territoireSélectionné.tracéSVG}
-    />
+    <g>
+      { multiséléction === true &&
+        territoiresComparés.map(territoire => (
+          <path
+            className='territoire-sélectionné'
+            d={territoire.tracéSVG}
+            key={territoire.codeInsee}
+          />
+        ))}
+      <path
+        className='territoire-sélectionné'
+        d={territoireSélectionné.tracéSVG}
+        key={territoireSélectionné.codeInsee}
+      />
+    </g>
+
   );
 }
