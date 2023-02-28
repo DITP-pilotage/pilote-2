@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import ResponsablesLigneProps from './ResponsablesLigne.interface';
 
 export default function ResponsablesLigne({ label, contenu }: ResponsablesLigneProps) {
@@ -10,7 +11,15 @@ export default function ResponsablesLigne({ label, contenu }: ResponsablesLigneP
         { 
           contenu.length > 0 
             ? contenu.map((élément, i) => {
-              return i === contenu.length - 1 ? élément : élément + ', ';
+              return (
+                <Fragment key={`responsable-${élément}`}>
+                  {
+                    i === contenu.length - 1
+                      ? élément
+                      : élément + ', '
+                  }
+                </Fragment>
+              );
             })
             : 'Non Renseigné' 
           }
