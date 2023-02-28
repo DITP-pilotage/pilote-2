@@ -59,7 +59,7 @@ export default function IndicateurDétails({ indicateur }: IndicateurDétailsPro
             <CartographieAvancement
               auClicTerritoireCallback={auClicTerritoireMultiSéléctionCallback}
               données={donnéesCartographieAvancement}
-              options={{ territoireSélectionnable: true }}
+              options={{ territoireSélectionnable: true, multiséléction: true }}
             />
           </div>
           <div className="fr-col-12 fr-col-xl-6">
@@ -72,7 +72,7 @@ export default function IndicateurDétails({ indicateur }: IndicateurDétailsPro
             <CartographieValeurActuelle
               auClicTerritoireCallback={auClicTerritoireMultiSéléctionCallback}
               données={donnéesCartographieValeurActuelle}
-              options={{ territoireSélectionnable: true }}
+              options={{ territoireSélectionnable: true, multiséléction: true }}
             />
           </div>
         </div>

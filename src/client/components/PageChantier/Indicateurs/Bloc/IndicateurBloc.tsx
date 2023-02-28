@@ -5,11 +5,11 @@ import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromèt
 import IndicateurDétails from '@/components/PageChantier/Indicateurs/Bloc/Détails/IndicateurDétails';
 import IndicateurBlocProps from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc.interface';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
-import { IndicateurDonnéesParTerritoire } from '../Indicateurs.interface';
+import { IndicateurDétailsParTerritoire } from '../Indicateurs.interface';
 import useIndicateurs from '../useIndicateurs';
 
 export default function IndicateurBloc({ indicateur, détailsIndicateur } : IndicateurBlocProps) {
-  const { indicateurDonnéesParTerritoires, colonnes } = useIndicateurs(détailsIndicateur);  
+  const { indicateurDétailsParTerritoires, colonnes } = useIndicateurs(détailsIndicateur);  
   
   return (
     <IndicateurBlocStyled
@@ -37,12 +37,15 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur } : Indi
         <p className="fr-text--xs fr-mb-1v">
           Ceci est la description de l’indicateur et des données associées. La pondération de l’indicateur dans le taux d’avancement global est également expliquée.
         </p>
-        <Tableau<IndicateurDonnéesParTerritoire>
-          afficherLaRecherche={false}
-          colonnes={colonnes}
-          données={indicateurDonnéesParTerritoires}
-          entité='indicateur'
-        />
+        {
+          indicateurDétailsParTerritoires !== null &&
+            <Tableau<IndicateurDétailsParTerritoire>
+              afficherLaRecherche={false}
+              colonnes={colonnes}
+              données={indicateurDétailsParTerritoires}
+              entité='indicateur'
+            />
+        }
         <IndicateurDétails indicateur={indicateur} />
       </Bloc>
     </IndicateurBlocStyled>

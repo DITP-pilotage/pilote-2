@@ -11,17 +11,28 @@ export default function usePageChantier(chantier: Chantier) {
   const territoiresComparés = territoiresComparésTerritoiresStore();
   
   const [détailsIndicateurs, setDétailsIndicateurs] = useState<FichesIndicateurs>();
-  const codesInsee = territoiresComparés.map(territoire => `codesInsee=${territoire.codeInsee}`).join('&');
-  
+
   useEffect(() => {
-    fetch(`http://localhost:3000/api/chantier/${chantier.id}/indicateurs?${codesInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
+    fetch(`http://localhost:3000/api/chantier/${chantier.id}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
       .then(reponse => {
         return reponse.json();
       })
       .then(jsondata => {
         setDétailsIndicateurs(jsondata);
       });
-  }, [chantier.id, codesInsee, mailleAssociéeAuTerritoireSélectionné]);
+  }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
+  
+  useEffect(() => {
+    const codesInsee = territoiresComparés.map(territoire => `codesInsee=${territoire.codeInsee}`).join('&');
+    fetch(`http://localhost:3000/api/chantier/${chantier.id}/indicateurs?${codesInsee}&maille=${mailleSélectionnée}`)
+      .then(reponse => {
+        return reponse.json();
+      })
+      .then(jsondata => {
+        setDétailsIndicateurs(jsondata);
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [territoiresComparés]);
 
   const donnéesTerritoiresAgrégées = useMemo(() => {
     return new AgrégateurChantiersParTerritoire([chantier]).agréger();

@@ -1,42 +1,58 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import { territoiresComparésTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { useEffect, useState } from 'react';
+import { territoiresComparésTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { DetailsIndicateur } from '@/server/domain/indicateur/DetailsIndicateur.interface';
-import { IndicateurDonnéesParTerritoire } from './Indicateurs.interface';
+import { IndicateurDétailsParTerritoire } from './Indicateurs.interface';
 import ValeurEtDate from './Bloc/ValeurEtDate/ValeurEtDate';
 
 export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, DetailsIndicateur>) {
   const territoiresComparés = territoiresComparésTerritoiresStore();
-  const indicateurDonnéesParTerritoires: IndicateurDonnéesParTerritoire[] = territoiresComparés.map(territoire => ({ territoire: territoire.nom, données: détailsIndicateur[territoire.codeInsee] }));
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[] | null>(null);
+
+  useEffect(() => {
+    if (détailsIndicateur !== undefined) {
+      if (territoiresComparés.length > 0) {
+        setIndicateurDétailsParTerritoires(
+          territoiresComparés.map(territoire => ({ territoire: territoire.nom, données: détailsIndicateur[territoire.codeInsee] })),
+        );
+      } else {
+        setIndicateurDétailsParTerritoires([{ territoire: territoireSélectionné.nom, données: détailsIndicateur[territoireSélectionné.codeInsee] }]);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [détailsIndicateur]);
   
-  const reactTableColonnesHelper = createColumnHelper<IndicateurDonnéesParTerritoire>();
+  
+  const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
   const colonnes = [
     reactTableColonnesHelper.accessor( 'territoire', {
       header: 'Territoire(s)',
       cell: nomDuTerritoire => nomDuTerritoire.getValue(),
       enableSorting: false,
     }),
-    reactTableColonnesHelper.accessor('données.valeurInitiale', {
-      header: 'Valeur initiale',
-      cell: valeurInitiale => (
-        <ValeurEtDate
-          date={valeurInitiale.row.original.données.dateValeurInitiale}
-          valeur={valeurInitiale.getValue()}
-        />
-      ),
-      enableSorting: false,
-    }),
-    reactTableColonnesHelper.accessor('données.valeurs', {
-      header: 'Valeur actuelle',
-      cell: valeurs => (
-        <ValeurEtDate
-          date={valeurs.row.original.données.dateValeurs[valeurs.getValue().length - 1]}
-          valeur={valeurs.row.original.données.valeurs[valeurs.getValue().length - 1]}
-        />
-      ),
-      enableSorting: false,
-    }),
+    // reactTableColonnesHelper.accessor('données.valeurInitiale', {
+    //   header: 'Valeur initiale',
+    //   cell: valeurInitiale => (
+    //     <ValeurEtDate
+    //       date={valeurInitiale.row.original.données.dateValeurInitiale}
+    //       valeur={valeurInitiale.getValue()}
+    //     />
+    //   ),
+    //   enableSorting: false,
+    // }),
+    // reactTableColonnesHelper.accessor('données.valeurs', {
+    //   header: 'Valeur actuelle',
+    //   cell: valeurs => (
+    //     <ValeurEtDate
+    //       date={valeurs.row.original.données.dateValeurs[valeurs.getValue().length - 1]}
+    //       valeur={valeurs.row.original.données.valeurs[valeurs.getValue().length - 1]}
+    //     />
+    //   ),
+    //   enableSorting: false,
+    // }),
     reactTableColonnesHelper.accessor('données.valeurCible', {
       header: 'Valeur cible',
       cell: valeurCible => ( <ValeurEtDate valeur={valeurCible.getValue()} /> ),
@@ -61,7 +77,7 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Det
   ];
 
   return { 
-    indicateurDonnéesParTerritoires, 
+    indicateurDétailsParTerritoires, 
     colonnes, 
   };
 }

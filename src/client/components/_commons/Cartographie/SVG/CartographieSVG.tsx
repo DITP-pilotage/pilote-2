@@ -73,7 +73,7 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
                 />
               ))
             }
-            <CartographieTerritoireSélectionné />
+            <CartographieTerritoireSélectionné multiséléction={options.multiséléction} />
           </g>
         </svg>
       </div>

@@ -42,6 +42,7 @@ export default function useCartographie() {
       maille: 'nationale',
     },
     territoireSélectionnable: false,
+    multiséléction: false,
   };
 
   function auClicTerritoireCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
@@ -56,6 +57,8 @@ export default function useCartographie() {
 
   function auClicTerritoireMultiSéléctionCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
     if (!territoireSélectionnable) return;
+    if (territoireSélectionné.codeInsee === territoireCodeInsee)
+      modifierTerritoireSélectionné('FR');
     modifierTerritoiresComparés(territoireCodeInsee);
   }
 
