@@ -1,4 +1,4 @@
 export default interface ResponsablesLigneProps {
-  label: string
+  libellé: string
   contenu: any[]
 }

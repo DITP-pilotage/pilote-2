@@ -27,22 +27,22 @@ export default function Responsables({ chantier }: ResponsablesProps) {
         <div className="fr-mt-3w">
           <ResponsablesLigne
             contenu={[responsables.porteur]}
-            label="Ministère porteur"
+            libellé="Ministère porteur"
           />
           <hr className='fr-hr' />
           <ResponsablesLigne
             contenu={responsables.coporteurs.map(coporteur => coporteur)}
-            label="Autres ministères co-porteurs"
+            libellé="Autres ministères co-porteurs"
           />
           <hr className='fr-hr' />
           <ResponsablesLigne
             contenu={responsables.directeursAdminCentrale.map(directeur => (`${directeur.nom} (${directeur.direction})`))}
-            label="Directeur(s) / directrice(s) d’Administration Centrale"
+            libellé="Directeur(s) / directrice(s) d’Administration Centrale"
           />
           <hr className='fr-hr' />
           <ResponsablesLigne
             contenu={responsables.directeursProjet.map(directeur => (mailTo(directeur.nom, directeur.email)))}
-            label="Directeur(s) / directrice(s) du projet"
+            libellé="Directeur(s) / directrice(s) du projet"
           />
         </div>
       </Bloc>
