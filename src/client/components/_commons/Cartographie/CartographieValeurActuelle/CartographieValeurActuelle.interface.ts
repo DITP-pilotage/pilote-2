@@ -9,4 +9,5 @@ export type CartographieDonnéesValeurActuelle = {
 export default interface CartographieValeurActuelleProps {
   données: CartographieDonnéesValeurActuelle,
   options?: Partial<CartographieOptions>,
+  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void
 }

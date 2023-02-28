@@ -5,10 +5,13 @@ import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import CartographieValeurActuelle
   from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle';
+import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 
 export default function IndicateurDétails({ indicateur }: IndicateurDétailsProps) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+  const { auClicTerritoireMultiSéléctionCallback } = useCartographie();
+
 
   const donnéesCartographieAvancement = objectEntries(indicateur.mailles[mailleSélectionnée])
     .map(([codeInsee, territoire]) => (
@@ -54,6 +57,7 @@ export default function IndicateurDétails({ indicateur }: IndicateurDétailsPro
               Répartition géographique de l&apos;avancement
             </Titre>
             <CartographieAvancement
+              auClicTerritoireCallback={auClicTerritoireMultiSéléctionCallback}
               données={donnéesCartographieAvancement}
               options={{ territoireSélectionnable: true }}
             />
@@ -66,6 +70,7 @@ export default function IndicateurDétails({ indicateur }: IndicateurDétailsPro
               Répartition géographique de la valeur actuelle de l&apos;indicateur
             </Titre>
             <CartographieValeurActuelle
+              auClicTerritoireCallback={auClicTerritoireMultiSéléctionCallback}
               données={donnéesCartographieValeurActuelle}
               options={{ territoireSélectionnable: true }}
             />
