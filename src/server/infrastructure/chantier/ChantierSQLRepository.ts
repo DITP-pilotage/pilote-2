@@ -83,7 +83,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     
     let métriques: MetriquesChantier = {
       synthèseDesRésultats: {
-        commentaire: '', // TODO: voir si on met chaine vide ou null
+        contenu: '', // TODO: voir si on met chaine vide ou null
         date: '',
         auteur: '',
       },
@@ -99,7 +99,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       }
 
       métriques['synthèseDesRésultats'] = {
-        commentaire: synthèseDesRésultats.commentaire,
+        contenu: synthèseDesRésultats.commentaire,
         date: dateToDateStringWithoutTime(synthèseDesRésultats.date_commentaire),
         auteur: '',
       };

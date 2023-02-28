@@ -12,7 +12,7 @@ describe('/api/chantier/:chantierId:', () => {
     const stubChantierRepository = <ChantierRepository>{};
     stubChantierRepository.getMetriques = () => Promise.resolve({
       synthèseDesRésultats: {
-        commentaire: 'Lorem ipsum',
+        contenu: 'Lorem ipsum',
         date: '2023-01-01',
         auteur: 'Jean Arnaud',
       },
@@ -26,7 +26,7 @@ describe('/api/chantier/:chantierId:', () => {
     expect(res._getStatusCode()).toBe(200);
     expect(res._getJSONData()).toStrictEqual({
       synthèseDesRésultats: {
-        commentaire: 'Lorem ipsum',
+        contenu: 'Lorem ipsum',
         date: '2023-01-01',
         auteur: 'Jean Arnaud',
       },
@@ -43,7 +43,7 @@ describe('/api/chantier/:chantierId:', () => {
     const stubChantierRepository = <ChantierRepository>{};
     stubChantierRepository.getMetriques = () => Promise.resolve({
       synthèseDesRésultats: {
-        commentaire: '',
+        contenu: '',
         date: '',
         auteur: '',
       },

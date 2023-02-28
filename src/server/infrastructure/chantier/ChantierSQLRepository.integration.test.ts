@@ -270,7 +270,7 @@ describe('ChantierSQLRepository', () => {
       expect(result).toStrictEqual(
         {
           synthèseDesRésultats: {
-            commentaire: '',
+            contenu: '',
             date: '',
             auteur: '',
           },
@@ -315,7 +315,7 @@ describe('ChantierSQLRepository', () => {
       expect(result).toStrictEqual(
         {
           synthèseDesRésultats: {
-            commentaire: 'Lorem ipsum',
+            contenu: 'Lorem ipsum',
             date: '2023-01-01',
             auteur: '',
           },
@@ -385,7 +385,7 @@ describe('ChantierSQLRepository', () => {
       expect(result).toStrictEqual(
         {
           synthèseDesRésultats: {
-            commentaire: 'Quatrième commentaire',
+            contenu: 'Quatrième commentaire',
             date: '2023-12-31',
             auteur: '',
           },
