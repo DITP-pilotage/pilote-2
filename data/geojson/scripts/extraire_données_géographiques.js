@@ -7,20 +7,20 @@
 
 const { readFileSync, writeFileSync } = require('fs');
 
-const HAUTEUR = 100; // hauteur du svg en sortie
-const LARGEUR = 110; // largeur du svg en sortie
+const HAUTEUR = 97; // hauteur du svg en sortie
+const LARGEUR = 100; // largeur du svg en sortie
 const FICHIERS_À_CONVERTIR = {
   départements: 'a-dep2021.json',
   régions: 'a-reg2021.json',
 };
-const CHEMIN_D_ACCÈS_RÉPERTOIRE_DESTINATION = `${__dirname}/../../../src/client/components/_commons/Cartographie`;
+const CHEMIN_D_ACCÈS_RÉPERTOIRE_DESTINATION = `${__dirname}/../../../src/client/constants`;
 const LISTE_MÉTADONNÉES = {
   départements: [{ // propriétés des 'features' du geojson à propager dans le svg final
     nomOriginal: 'dep',
     nomCible: 'codeInsee',
   },{
     nomOriginal: 'reg',
-    nomCible: 'codeInseeRégion',
+    nomCible: 'codeInseeParent',
   },{
     nomOriginal: 'libgeo',
     nomCible: 'nom',
@@ -45,6 +45,11 @@ proj4.defs([
     '+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees'
   ]
 ]);
+
+function écritLeFichier(cheminDAccès, données) {
+  writeFileSync(cheminDAccès, données);
+  console.log(`Écriture du fichier "${cheminDAccès}"`);
+}
 
 function convertirGeojson(divisionsAdministratives) {
   // Récupère les fichiers geojson d'entrée
@@ -76,7 +81,7 @@ function convertirGeojson(divisionsAdministratives) {
 
     // boîte englobante des territoires présents dans les geojson
     //mapExtent: {left: -5.2, bottom: 41.3, right: 9.6, top: 51.12}, // boîte englobante (GPS coords) de la France
-    mapExtent: { left: -405000, bottom: 5910000, right: 765000, top: 6980000 }, // boîte englobante (en mètres ?) de la France
+    mapExtent: { left: -550000, bottom: 5910000, right: 1075000, top: 6640000 }, // boîte englobante (en mètres ?) de la France
 
     // nombre de décimales pour les coordonnées dans le svg
     precision: 1,
@@ -120,11 +125,11 @@ function convertirGeojson(divisionsAdministratives) {
   `;
 
   // Ecrit le fichier json et le svg
-  writeFileSync(`${__dirname}/../04_données_extraites/${geojsonNomDeFichierSansExtension}.json`, fichierJson);
-  writeFileSync(`${__dirname}/../04_données_extraites/${geojsonNomDeFichierSansExtension}.svg`, fichierSvg);
+  écritLeFichier(`${__dirname}/../04_données_extraites/${geojsonNomDeFichierSansExtension}.json`, fichierJson);
+  écritLeFichier(`${__dirname}/../04_données_extraites/debug-${geojsonNomDeFichierSansExtension}.svg`, fichierSvg);
 
   // Ecrit le fichier dans le code source côté client
-  writeFileSync(`${CHEMIN_D_ACCÈS_RÉPERTOIRE_DESTINATION}/${divisionsAdministratives}.json`, fichierJson);
+  écritLeFichier(`${CHEMIN_D_ACCÈS_RÉPERTOIRE_DESTINATION}/${divisionsAdministratives}.json`, fichierJson);
 }
 
 convertirGeojson('départements');
