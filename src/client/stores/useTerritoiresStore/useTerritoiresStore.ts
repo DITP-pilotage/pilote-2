@@ -65,13 +65,14 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
           ...get().territoiresComparés, 
           { ...territoire, nom: `${territoire.codeInsee} – ${territoire.nom}` },
         ] });
-      } else 
-        set({ territoiresComparés: [...get().territoiresComparés, territoire] });
+        return;
+      }  
+      set({ territoiresComparés: [...get().territoiresComparés, territoire] });
     },
 
     désélectionnerUnTerritoireÀComparer: territoire => {
-      const indexTerritoireÀSupprimer = get().territoiresComparés.findIndex(t => t.codeInsee === territoire.codeInsee);
-      get().territoiresComparés.splice(indexTerritoireÀSupprimer, 1);
+      const nouveauxTerritoiresComparés = get().territoiresComparés.filter(t => t.codeInsee !== territoire.codeInsee);      
+      set({ territoiresComparés: nouveauxTerritoiresComparés });
     },
 
     modifierTerritoiresComparés: codeInsee => {
@@ -81,6 +82,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       if (territoire) {
         if (get().territoiresComparés.some(territoireSéléctionné => territoireSéléctionné.codeInsee === codeInsee)) {
           get().actions.désélectionnerUnTerritoireÀComparer(territoire);
+          return;
         }
         get().actions.séléctionnerTerritoireÀComparer(territoire);
       }
