@@ -1,7 +1,7 @@
 import { synthese_des_resultats } from '@prisma/client';
 
 export default class SyntheseDesResultatsRowBuilder {
-  private _id: number = 0;
+  private _id: string = '0';
 
   private _chantier_id: string = 'CH-001';
 

@@ -32,9 +32,8 @@ export default async function handle(request: NextApiRequest, response: NextApiR
     }
     throw error;
   }
-  // const _patate = await chantierRepository.getDetailsIndicateur(params.chantierId, params.maille, params.codeInsee);
-  const _patate = {};
+  const metriquesChantier = await chantierRepository.getMetriques(params.chantierId, params.maille, params.codeInsee);
   response
     .status(200)
-    .json(_patate);
+    .json(metriquesChantier);
 }

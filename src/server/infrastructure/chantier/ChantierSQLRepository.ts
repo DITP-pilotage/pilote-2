@@ -87,7 +87,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
 
     return {
       synthèseDesRésultats: {
-        commentaire: '',
+        commentaire: '', // TODO: voir si on met chaine vide ou null
         date: '',
         auteur: '',
       },
