@@ -50,7 +50,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
             nombreFiltresActifs > 0 &&
             <FiltresActifs />
           }
-          <div className="fr-p-4w">
+          <div className="fr-p-4w fr-container">
             <Titre
               baliseHtml='h1'
               className='fr-h4'
@@ -74,17 +74,13 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
               </div>
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
-                  <div className='fr-container--fluid'>
-                    <div className="fr-grid-row">
-                      <Titre
-                        baliseHtml='h2'
-                        className='fr-h6'
-                      >
-                        Taux d’avancement moyen de la sélection
-                      </Titre>
-                      <Avancements avancements={avancements} />
-                    </div>
-                  </div>
+                  <Titre
+                    baliseHtml='h2'
+                    className='fr-h6'
+                  >
+                    Taux d’avancement moyen de la sélection
+                  </Titre>
+                  <Avancements avancements={avancements} />
                   <hr className='fr-hr fr-my-3w fr-pb-1v' />
                   <RépartitionMétéo météos={météos} />
                 </Bloc>
