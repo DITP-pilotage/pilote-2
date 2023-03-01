@@ -1,10 +1,11 @@
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { Session } from 'next-auth';
+import { useEffect } from "react";
 
 export default function Component() {
   const { data: session } = useSession();
-  const mySession = session as Session & { tokenExp: Date }; // TODO définir le type au même endroit qu'on ajoute tokenExp
-
+  
+  const mySession = session as Session & { error: String }; // TODO définir le type au même endroit qu'on ajoute tokenExp
   if (session) {
     return (
       <div>
@@ -19,7 +20,7 @@ export default function Component() {
             ,&nbsp;
           </span>
           <span>
-            {mySession?.tokenExp.toString()}
+            {mySession?.error }
           </span>
         </span>
         <br />

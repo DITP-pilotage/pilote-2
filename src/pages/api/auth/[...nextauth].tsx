@@ -58,7 +58,7 @@ async function doFinalSignoutHandshake(token: JWT) {
  */
 async function refreshAccessToken(token: JWT) {
   const { provider, refreshToken } = token as JWT & { refreshToken: string };
-
+  
   if (provider == keycloak.id) {
     try {
       const fields = {
@@ -82,12 +82,13 @@ async function refreshAccessToken(token: JWT) {
       if (!response.ok) {
         throw refreshedTokens;
       }
-      let currentDate = new Date();
+
       let res = {
         // to review
         ...token,
-        expires_at: currentDate.setSeconds(currentDate.getSeconds() + refreshedTokens.expires_in - 15),
-        refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
+      accessToken: refreshedTokens.access_token,
+      accessTokenExpires: Date.now() + refreshedTokens.expires_at * 1000,
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
       };
       
       logger.debug('*****************');
@@ -96,11 +97,18 @@ async function refreshAccessToken(token: JWT) {
       logger.debug(res);
       return res;
     } catch (error) {
-      logger.error(error);
-      return null;
+      logger.error("Bad in refresh_token" + error);
+      return {
+        ...token,
+        error: "RefreshAccessTokenError",
+      }
     }
   } else {
-    throw new Error('Error on this line');
+    logger.info("Provider: Not Supported '" + provider + "'")
+    return {
+      ...token,
+      error: "RefreshAccessTokenError",
+    }
   }
 }
 
@@ -142,7 +150,7 @@ export const authOptions = {
     async jwt({ token, account, user, profile, isNewUser }: any) {
       // Persist the OAuth access_token to the token right after signin
 
-      let currentDate = new Date();
+      let currentDate = Date.now();
 
       // account is defined when recieved token from server (ie Keycloak)
       // Initial log in
@@ -156,26 +164,31 @@ export const authOptions = {
         logger.debug('date=', currentDate);
         logger.debug(' JWT fnt <--------------<<<');
 
-        token.accessToken = account.access_token;
-        token.expires_at = currentDate.setSeconds(currentDate.getSeconds() + 20);  // account.expires_at;
-        token.provider = account.provider;
-        token.refreshToken = account.refresh_token;
-        token.idToken = account.id_token;
+        return {
+          accessToken: account.access_token,
+          accessTokenExpires: Date.now() + (account.expires_at -10) * 1000,
+          //accessTokenExpires: Date.now() + 5 * 1000,
+          refreshToken: account.refresh_token,
+          provider: account.provider,
+          user,
+        }
       }
-
-      if (token.provider == 'credentials' || currentDate < token.expires_at) {
-        return token;
-      } else {
-        logger.error('Token HAS EXPIRED');
-        return refreshAccessToken(token);
+      //logger.warn('******')
+      //console.log('Token', token, user, account, profile)
+      
+      if (token.provider == 'credentials' || Date.now() < token.accessTokenExpires) {
+        return token
       }
-
-
+      logger.debug('Token HAS EXPIRED');
+      // Access token has expired, try to update it
+      return refreshAccessToken(token)
     },
     async session({ session, token }: any) {
       // Send properties to the client, like an access_token from a provider.
-      session.accessToken = token.accessToken;
-      session.tokenExp = token.expires_at;
+      session.user = token.user
+      session.accessToken = token.accessToken
+      session.error = token.error
+      
       return session;
     },
   },
