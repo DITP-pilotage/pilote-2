@@ -1,1 +1,0 @@
-postdeploy: npm run postdeploy

@@ -9,7 +9,6 @@
     "dev": "next dev",
     "build": "next build",
     "postinstall": "prisma generate",
-    "postdeploy": "prisma migrate deploy",
     "start": "next start",
     "lint": "prisma generate && eslint 'src/**/*.{ts,tsx}' && npx tsc && npx stylelint 'src/**/*.styled.{ts,tsx}'",
     "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix && npx stylelint 'src/**/*.styled.{ts,tsx}' --fix",

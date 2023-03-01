@@ -133,4 +133,3 @@ run ⚠️
 | npm run test:server:unit         | Lance les tests unitaires côté back (dossier src/server)                               |
 | npm run test:server:integration  | Lance les tests d'intégration côté back (dossier src/server)                           |
 | npm run database:init            | Permet de réinitialiser la base de donnée via Prisma                                   |
-| npm run postdeploy          | Utilisé automatiquement lors du déploiement sur Scalingo afin de jouer les migrations Prisma |
