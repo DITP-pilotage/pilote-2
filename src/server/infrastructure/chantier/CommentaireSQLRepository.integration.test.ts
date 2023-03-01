@@ -10,7 +10,7 @@ describe('CommentaireSQLRepository', () => {
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
 
       // WHEN
-      const commentaires = await commentaireRepository.getByChantierIdAndTerritoire('CH-001', 'DEPT', '01');
+      const commentaires = await commentaireRepository.getByChantierIdAndTerritoire('CH-001', 'départementale', '01');
 
       // THEN
       await expect(commentaires).toBe(commentairesNull);

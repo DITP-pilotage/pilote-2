@@ -245,7 +245,7 @@ describe('ChantierSQLRepository', () => {
     });
   });
 
-  describe('getMetriques', function () {
+  describe('getMétriques', function () {
     test('renvoie une liste vide quand aucune information en base pour le chantier', async () => {
       // Given
       const chantierId = 'CH-001';
@@ -265,15 +265,15 @@ describe('ChantierSQLRepository', () => {
       await prisma.chantier.createMany({ data: chantiers });
 
       // When
-      const result = await repository.getMetriques(chantierId, maille, codeInsee);
+      const result = await repository.getMétriques(chantierId, maille, codeInsee);
 
       // Then
       expect(result).toStrictEqual(
         {
           synthèseDesRésultats: {
-            contenu: '',
-            date: '',
-            auteur: '',
+            contenu: null,
+            date: null,
+            auteur: null,
           },
           météo: 'NON_RENSEIGNEE',
           commentaires : commentairesNull,
@@ -311,7 +311,7 @@ describe('ChantierSQLRepository', () => {
       await prisma.chantier.createMany({ data: chantiers });
 
       // When
-      const result = await repository.getMetriques(chantierId, maille, codeInsee);
+      const result = await repository.getMétriques(chantierId, maille, codeInsee);
 
       // Then
       expect(result).toStrictEqual(
@@ -322,77 +322,6 @@ describe('ChantierSQLRepository', () => {
             auteur: '',
           },
           météo: 'ORAGE',
-          commentaires: commentairesNull,
-        },
-      );
-    });
-    test('renvoie la synthèse des résultats la plus récente et dont le commentaire est non nul', async () => {
-      // Given
-      const chantierId = 'CH-001';
-      const maille = 'REG';
-      const codeInsee = '01';
-      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
-
-      const syntheseDesResultatsRowBuilder = new SyntheseDesResultatsRowBuilder();
-
-      const synthesesDesResultats: synthese_des_resultats[] = [
-        syntheseDesResultatsRowBuilder
-          .withChantierId(chantierId)
-          .withMaille(maille)
-          .withCodeInsee(codeInsee)
-          .withCommentaire('Premier commentaire')
-          .withDateCommentaire(null)
-          .build(),
-
-        syntheseDesResultatsRowBuilder
-          .withChantierId(chantierId)
-          .withMaille(maille)
-          .withCodeInsee(codeInsee)
-          .withCommentaire(null)
-          .withDateCommentaire('2023-01-01')
-          .build(),
-
-        syntheseDesResultatsRowBuilder
-          .withChantierId(chantierId)
-          .withMaille(maille)
-          .withCodeInsee(codeInsee)
-          .withCommentaire('Troisième commentaire')
-          .withDateCommentaire('2023-01-01')
-          .build(),
-
-        syntheseDesResultatsRowBuilder
-          .withChantierId(chantierId)
-          .withMaille(maille)
-          .withCodeInsee(codeInsee)
-          .withCommentaire('Quatrième commentaire')
-          .withDateCommentaire('2023-12-31')
-          .build(),
-      ];
-
-      const chantiers: chantier[] = [
-        new ChantierRowBuilder()
-          .withId(chantierId)
-          .withMaille(maille)
-          .withCodeInsee(codeInsee)
-          .withMétéo('NON_RENSEIGNEE')
-          .build(),
-      ];
-
-      await prisma.synthese_des_resultats.createMany({ data: synthesesDesResultats });
-      await prisma.chantier.createMany({ data: chantiers });
-
-      // When
-      const result = await repository.getMetriques(chantierId, maille, codeInsee);
-
-      // Then
-      expect(result).toStrictEqual(
-        {
-          synthèseDesRésultats: {
-            contenu: 'Quatrième commentaire',
-            date: '2023-12-31',
-            auteur: '',
-          },
-          météo: 'NON_RENSEIGNEE',
           commentaires: commentairesNull,
         },
       );

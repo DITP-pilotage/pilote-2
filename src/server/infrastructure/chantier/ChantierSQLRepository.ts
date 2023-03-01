@@ -1,5 +1,4 @@
-import { chantier, PrismaClient, synthese_des_resultats } from '@prisma/client';
-import { AssertionError } from 'node:assert';
+import { chantier, PrismaClient } from '@prisma/client';
 import ChantierRepository, {
   MetriquesChantier,
 } from '@/server/domain/chantier/ChantierRepository.interface';
@@ -11,11 +10,9 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import CommentaireSQLRepository from '@/server/infrastructure/chantier/CommentaireSQLRepository';
-import { commentairesNull } from '@/server/domain/chantier/Commentaire.interface';
-
-function dateToDateStringWithoutTime(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
+import SynthèseDesRésultatsRepository from '@/server/domain/chantier/SynthèseDesRésultatsRepository.interface';
+import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/chantier/SynthèseDesRésultatsSQLRepository';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -53,25 +50,9 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return objectEntries(chantiersGroupésParId).map(([_, c]) => parseChantier(c));
   }
 
-  async getMetriques(chantierId: string, maille: Maille, codeInsee: string): Promise<MetriquesChantier> {
-    // TODO: décaler la requête et l'englober dans le SynthèseDesRésultatsSQLRepository (ainsi que le test qui va avec)
-    //  cela permettra d'isoler "l'intelligence" de cette récupération de données
-    const synthèseDesRésultats: synthese_des_resultats | null = await this.prisma.synthese_des_resultats.findFirst({
-      where: {
-        chantier_id: chantierId,
-        maille: CODES_MAILLES[maille],
-        code_insee: codeInsee,
-        NOT : [
-          {
-            commentaire: null,
-          },
-          {
-            date_commentaire: null,
-          },
-        ],
-      },
-      orderBy: { date_commentaire : 'desc' },
-    });
+  async getMétriques(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<MetriquesChantier> {
+    const synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(this.prisma);
+    const commentaireRepository = new CommentaireSQLRepository(this.prisma);
 
     const chantierRow: chantier | null = await this.prisma.chantier.findFirst({
       where: {
@@ -86,35 +67,10 @@ export default class ChantierSQLRepository implements ChantierRepository {
     }
     
     let métriques: MetriquesChantier = {
-      synthèseDesRésultats: {
-        contenu: '', // TODO: voir si on met chaine vide ou null
-        date: '',
-        auteur: '',
-      },
-      météo: null,
-      commentaires: commentairesNull,
+      synthèseDesRésultats: await synthèseDesRésultatsRepository.findNewestByChantierIdAndTerritoire(chantierId, maille, codeInsee),
+      météo: chantierRow.meteo as Météo ?? 'NON_RENSEIGNEE',
+      commentaires: await commentaireRepository.getByChantierIdAndTerritoire(chantierId, maille, codeInsee),
     };
-    
-    if (synthèseDesRésultats) {
-
-      if (synthèseDesRésultats.commentaire === null || synthèseDesRésultats.date_commentaire === null) {
-        throw new AssertionError({
-          message: `La requête doit sélectionner un commentaire et une date non null. Synthèse id : ${synthèseDesRésultats.id}`,
-        });
-      }
-
-      métriques['synthèseDesRésultats'] = {
-        contenu: synthèseDesRésultats.commentaire,
-        date: dateToDateStringWithoutTime(synthèseDesRésultats.date_commentaire),
-        auteur: '',
-      };
-    }
-
-    métriques['météo'] = chantierRow.meteo as Météo ?? 'NON_RENSEIGNEE';
-
-    const commentaireRepository = new CommentaireSQLRepository(this.prisma);
-
-    métriques.commentaires = await commentaireRepository.getByChantierIdAndTerritoire(chantierId, maille, codeInsee);
 
     return métriques;
   }

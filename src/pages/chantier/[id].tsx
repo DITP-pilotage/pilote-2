@@ -28,6 +28,8 @@ export async function getServerSideProps({ params }: { params: { id: Chantier['i
   const indicateurs: Indicateur[] = await indicateurRepository.getByChantierId(params.id);
 
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();
+  // FIXME: attention, la méthode findNewestByChantierId de synthèseDesRésultatsRepository est dépréciée
+  //   préférez l'usage de findNewestByChantierIdAndTerritoire dans le même repository
   const synthèseDesRésultats: SynthèseDesRésultats | null = await synthèseDesRésultatsRepository.findNewestByChantierId(params.id);
 
   return {

@@ -11,7 +11,7 @@ describe('/api/chantier/:chantierId:', () => {
       query: { chantierId: 'CH-001', maille: 'DEPT', codeInsee: ['75'] },
     });
     const stubChantierRepository = <ChantierRepository>{};
-    stubChantierRepository.getMetriques = () => Promise.resolve({
+    stubChantierRepository.getMétriques = () => Promise.resolve({
       synthèseDesRésultats: {
         contenu: 'Lorem ipsum',
         date: '2023-01-01',
@@ -44,7 +44,7 @@ describe('/api/chantier/:chantierId:', () => {
       query: { chantierId: 'CH-001', maille: 'DEPT', toto: ['75'] },
     });
     const stubChantierRepository = <ChantierRepository>{};
-    stubChantierRepository.getMetriques = () => Promise.resolve({
+    stubChantierRepository.getMétriques = () => Promise.resolve({
       synthèseDesRésultats: {
         contenu: '',
         date: '',
