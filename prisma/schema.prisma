@@ -64,7 +64,7 @@ model indicateur {
 }
 
 model synthese_des_resultats {
-  id Int @id @default(autoincrement())
+  id String @id
   chantier_id String
   maille String
   code_insee String
