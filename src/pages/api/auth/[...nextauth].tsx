@@ -32,17 +32,17 @@ async function doFinalSignoutHandshake(token: JWT) {
         method: 'POST',
         body: params,
       });
-
+      console.log(config.logoutUrl);
       const refreshedTokens = await response.json();
 
       if (!response.ok) {
         throw refreshedTokens;
       }
-      
+
       // The response body should contain a confirmation that the user has been logged out
       logger.info('Completed post-logout handshake', status);
     } catch (error: any) {
-      logger.error('Unable to perform post-logout handshake', error);
+      logger.error('Unable to perform post-logout handshake ' +  error);
     }
   }
 }
@@ -169,6 +169,7 @@ export const authOptions = {
           accessTokenExpires: Date.now() + (account.expires_at -10) * 1000,
           //accessTokenExpires: Date.now() + 5 * 1000,
           refreshToken: account.refresh_token,
+          idToken: account.id_token,
           provider: account.provider,
           user,
         }
