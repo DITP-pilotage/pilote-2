@@ -37,15 +37,12 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur } : Indi
         <p className="fr-text--xs fr-mb-1v">
           Ceci est la description de l’indicateur et des données associées. La pondération de l’indicateur dans le taux d’avancement global est également expliquée.
         </p>
-        {
-          indicateurDétailsParTerritoires !== null &&
-            <Tableau<IndicateurDétailsParTerritoire>
-              afficherLaRecherche={false}
-              colonnes={colonnes}
-              données={indicateurDétailsParTerritoires}
-              entité='indicateur'
-            />
-        }
+        <Tableau<IndicateurDétailsParTerritoire>
+          afficherLaRecherche={false}
+          colonnes={colonnes}
+          données={indicateurDétailsParTerritoires}
+          entité='indicateur'
+        />
         <IndicateurDétails indicateur={indicateur} />
       </Bloc>
     </IndicateurBlocStyled>

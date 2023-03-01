@@ -8,7 +8,7 @@ export default function usePageChantier(chantier: Chantier) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-  const territoiresComparés = territoiresComparésTerritoiresStore();
+  const territoiresComparés = territoiresComparésTerritoiresStore();  
   
   const [détailsIndicateurs, setDétailsIndicateurs] = useState<FichesIndicateurs>();
 
@@ -24,6 +24,7 @@ export default function usePageChantier(chantier: Chantier) {
   
   useEffect(() => {
     const codesInsee = territoiresComparés.map(territoire => `codesInsee=${territoire.codeInsee}`).join('&');
+    if (codesInsee === '' || codesInsee === 'codesInsee=FR') return;
     fetch(`http://localhost:3000/api/chantier/${chantier.id}/indicateurs?${codesInsee}&maille=${mailleSélectionnée}`)
       .then(reponse => {
         return reponse.json();

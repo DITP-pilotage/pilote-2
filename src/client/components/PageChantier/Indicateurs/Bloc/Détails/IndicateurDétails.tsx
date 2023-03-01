@@ -14,22 +14,18 @@ export default function IndicateurDétails({ indicateur }: IndicateurDétailsPro
 
 
   const donnéesCartographieAvancement = objectEntries(indicateur.mailles[mailleSélectionnée])
-    .map(([codeInsee, territoire]) => (
-      {
-        valeur: territoire.tauxAvancementGlobal,
-        codeInsee: codeInsee,
-      }
-    ));
+    .map(([codeInsee, territoire]) => ({
+      valeur: territoire.tauxAvancementGlobal,
+      codeInsee: codeInsee,
+    }));
 
   const donnéesCartographieValeurActuelle = {
     libelléUnité: '',
     données: objectEntries(indicateur.mailles[mailleSélectionnée])
-      .map(([codeInsee, territoire]) => (
-        {
-          valeur: territoire.valeurActuelle,
-          codeInsee: codeInsee,
-        }
-      )),
+      .map(([codeInsee, territoire]) => ({
+        valeur: territoire.valeurActuelle,
+        codeInsee: codeInsee,
+      })),
   };
 
   return (

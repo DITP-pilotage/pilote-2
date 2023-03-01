@@ -43,7 +43,7 @@ export default function Cartes({ chantier }: CartesProps) {
             <CartographieAvancement
               auClicTerritoireCallback={auClicTerritoireCallback}
               données={donnéesCartographieAvancement}
-              options={{ territoireSélectionnable: false }}
+              options={{ territoireSélectionnable: true }}
             />
           </Bloc>
         </div>
@@ -58,7 +58,7 @@ export default function Cartes({ chantier }: CartesProps) {
             <CartographieMétéo
               auClicTerritoireCallback={auClicTerritoireCallback}
               données={donnéesCartographieMétéo}
-              options={{ territoireSélectionnable: false }}
+              options={{ territoireSélectionnable: true }}
             />
           </Bloc>
         </div>

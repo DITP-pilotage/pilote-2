@@ -57,8 +57,6 @@ export default function useCartographie() {
 
   function auClicTerritoireMultiSéléctionCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
     if (!territoireSélectionnable) return;
-    if (territoireSélectionné.codeInsee === territoireCodeInsee)
-      modifierTerritoireSélectionné('FR');
     modifierTerritoiresComparés(territoireCodeInsee);
   }
 

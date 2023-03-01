@@ -19,19 +19,7 @@ export type IndicateurTerritorialisé = {
   evolutionDateValeurActuelle: string[];
 };
 
-// export type IndicateurMétriques = {
-//   valeurInitiale: number | null,
-//   valeurActuelle: number | null,
-//   valeurCible: number | null,
-//   dateValeurInitiale: string | null;
-//   dateValeurActuelle: string | null;
-//   avancement: Avancement,
-// };
-
-// export type IndicateursMétriques = Record<string, IndicateurMétriques>;
-
 export type IndicateurDonnéesTerritoires = Record<string, IndicateurTerritorialisé>;
-
 export default interface Indicateur {
   id: string;
   nom: string;
