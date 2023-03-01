@@ -83,7 +83,7 @@ model ppg {
 }
 
 model commentaire {
-    id Int @id @default(autoincrement())
+    id String @id
     chantier_id String
     type String
     contenu String

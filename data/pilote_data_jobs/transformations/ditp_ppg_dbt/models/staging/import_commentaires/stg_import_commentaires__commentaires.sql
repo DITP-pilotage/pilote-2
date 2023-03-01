@@ -9,7 +9,7 @@ source as (
 renamed as (
 
     select
-        chantier_id as id,
+        chantier_id,
         type,
         contenu,
         TO_DATE(date,'DD/MM/YYYY') as date,
