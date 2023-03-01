@@ -26,8 +26,6 @@ model chantier {
   axe String @default("non renseignée")
   ppg String @default("non renseignée")
   directeurs_projet_mails String[]
-  objectifs String?
-  date_objectifs DateTime? @db.Date
   est_barometre Boolean?
 
   @@id([id, code_insee, maille])
@@ -82,4 +80,13 @@ model axe {
 model ppg {
   id String @id
   nom String
+}
+
+model commentaire {
+    id String @id
+    chantier_id String
+    type String
+    contenu String
+    date DateTime? @db.Timestamp
+    auteur String?
 }
