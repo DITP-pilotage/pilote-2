@@ -1,0 +1,11 @@
+header {
+  box-shadow: 0px 12px 32px -8px rgba(0, 0, 36, 0.12);
+}
+body {
+  background: #F5F5FE;
+}
+.card {
+  background: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  border-radius: 8px;
+}
