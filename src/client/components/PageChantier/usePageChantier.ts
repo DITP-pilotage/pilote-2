@@ -5,8 +5,6 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { FichesIndicateurs } from '@/server/domain/indicateur/DetailsIndicateur.interface';
 
 export default function usePageChantier(chantier: Chantier) {
-  const url = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_API_LOCAL_URL : process.env.NEXT_PUBLIC_API_PROD_URL;
-
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
@@ -15,27 +13,27 @@ export default function usePageChantier(chantier: Chantier) {
   const [détailsIndicateurs, setDétailsIndicateurs] = useState<FichesIndicateurs>();
 
   useEffect(() => {
-    fetch(`${url}chantier/${chantier.id}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
-      .then(reponse => {
-        return reponse.json();
+    fetch(`/api/chantier/${chantier.id}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
+      .then(réponse => {
+        return réponse.json();
       })
-      .then(jsondata => {
-        setDétailsIndicateurs(jsondata);
+      .then(données => {
+        setDétailsIndicateurs(données);
       });
-  }, [url, chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
+  }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
   
   useEffect(() => {
     const codesInsee = territoiresComparés.map(territoire => `codesInsee=${territoire.codeInsee}`).join('&');
     if (codesInsee === '' || codesInsee === 'codesInsee=FR') return;
-    fetch(`${url}chantier/${chantier.id}/indicateurs?${codesInsee}&maille=${mailleSélectionnée}`)
-      .then(reponse => {
-        return reponse.json();
+    fetch(`/api/chantier/${chantier.id}/indicateurs?${codesInsee}&maille=${mailleSélectionnée}`)
+      .then(réponse => {
+        return réponse.json();
       })
-      .then(jsondata => {
-        setDétailsIndicateurs(jsondata);
+      .then(données => {
+        setDétailsIndicateurs(données);
       });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url, territoiresComparés]);
+  }, [territoiresComparés]);
 
   const donnéesTerritoiresAgrégées = useMemo(() => {
     return new AgrégateurChantiersParTerritoire([chantier]).agréger();

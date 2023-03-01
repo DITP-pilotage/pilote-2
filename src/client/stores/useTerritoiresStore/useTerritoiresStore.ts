@@ -45,7 +45,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
               territoireParent: get().actions.récupérerDétailsSurUnTerritoire(territoire.codeInseeParent!, 'régionale'),
             },
             mailleAssociéeAuTerritoireSélectionné: MAILLE_DÉPARTEMENTALE,
-            territoiresComparés: [territoire],
+            territoiresComparés: [{ ...territoire, nom: `${territoire.codeInsee} – ${territoire.nom}` }],
           });
           return; 
         }
