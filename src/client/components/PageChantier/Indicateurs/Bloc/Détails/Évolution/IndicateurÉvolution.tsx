@@ -13,8 +13,8 @@ ChartJS.register(
   Legend,
 );
 
-export default function IndicateurÉvolution({ indicateur }: IndicateurÉvolutionProps) {
-  const { options, données } = useIndicateurÉvolution(indicateur);
+export default function IndicateurÉvolution({ indicateurDétailsParTerritoires }: IndicateurÉvolutionProps) {
+  const { options, donnéesParTerritoire } = useIndicateurÉvolution(indicateurDétailsParTerritoires);
 
   return (
     <div>
@@ -28,7 +28,7 @@ export default function IndicateurÉvolution({ indicateur }: IndicateurÉvolutio
         Mis à jour le : Non renseigné | Source : Non renseigné
       </p>
       <Line
-        data={données}
+        data={donnéesParTerritoire}
         options={options}
       />
     </div>

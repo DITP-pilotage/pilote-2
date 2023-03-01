@@ -43,9 +43,6 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Det
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [détailsIndicateur]);
-
-
-  
   
   const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
   const colonnes = [

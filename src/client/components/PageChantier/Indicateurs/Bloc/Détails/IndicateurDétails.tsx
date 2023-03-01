@@ -8,7 +8,7 @@ import CartographieValeurActuelle
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 
-export default function IndicateurDétails({ indicateur }: IndicateurDétailsProps) {
+export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires }: IndicateurDétailsProps) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const { auClicTerritoireMultiSéléctionCallback } = useCartographie();
 
@@ -72,7 +72,7 @@ export default function IndicateurDétails({ indicateur }: IndicateurDétailsPro
             />
           </div>
         </div>
-        <IndicateurÉvolution indicateur={indicateur} />
+        <IndicateurÉvolution indicateurDétailsParTerritoires={indicateurDétailsParTerritoires} />
       </div>
     </div>
   );
