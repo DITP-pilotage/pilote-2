@@ -1,11 +1,10 @@
-import { useSession, signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 import { useEffect } from 'react';
 
 import MiseEnPageProps from './MiseEnPage.interface';
 import EnTête from './EnTête/EnTête';
 import PiedDePage from './PiedDePage/PiedDePage';
-
 
 export default function MiseEnPage({ children }: MiseEnPageProps) {
   const { data: session } = useSession();

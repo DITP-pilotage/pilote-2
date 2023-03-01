@@ -32,7 +32,7 @@ async function doFinalSignoutHandshake(token: JWT) {
         method: 'POST',
         body: params,
       });
-      console.log(config.logoutUrl);
+      logger.debug(config.logoutUrl);
       const refreshedTokens = await response.json();
 
       if (!response.ok) {
@@ -97,18 +97,18 @@ async function refreshAccessToken(token: JWT) {
       logger.debug(res);
       return res;
     } catch (error) {
-      logger.error("Bad in refresh_token" + error);
+      logger.error('Bad in refresh_token' + error);
       return {
         ...token,
-        error: "RefreshAccessTokenError",
-      }
+        error: 'RefreshAccessTokenError',
+      };
     }
   } else {
-    logger.info("Provider: Not Supported '" + provider + "'")
+    logger.info("Provider: Not Supported '" + provider + "'");
     return {
       ...token,
-      error: "RefreshAccessTokenError",
-    }
+      error: 'RefreshAccessTokenError',
+    };
   }
 }
 
@@ -128,8 +128,9 @@ const credentialsProvider = CredentialsProvider({
     // returns either a object representing a user or value
     // false/null if the credentials are invalid.
     // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-    if (credentials?.username == config.basicAuthUsername && credentials?.password == config.basicAuthPassword) {
-      return { id: '1', name: credentials?.username, email: 'ditp@example.com' };
+    const username = credentials?.username;
+    if (username == config.basicAuthUsername && credentials?.password == config.basicAuthPassword) {
+      return { id: '1', name: username, email: `${username}@example.com` };
     }
 
     return null;
@@ -172,23 +173,23 @@ export const authOptions = {
           idToken: account.id_token,
           provider: account.provider,
           user,
-        }
+        };
       }
       //logger.warn('******')
       //console.log('Token', token, user, account, profile)
 
       if (token.provider == 'credentials' || Date.now() < token.accessTokenExpires) {
-        return token
+        return token;
       }
       logger.debug('Token HAS EXPIRED');
       // Access token has expired, try to update it
-      return refreshAccessToken(token)
+      return refreshAccessToken(token);
     },
     async session({ session, token }: any) {
       // Send properties to the client, like an access_token from a provider.
-      session.user = token.user
-      session.accessToken = token.accessToken
-      session.error = token.error
+      session.user = token.user;
+      session.accessToken = token.accessToken;
+      session.error = token.error;
 
       return session;
     },
