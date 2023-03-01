@@ -42,7 +42,7 @@ async function doFinalSignoutHandshake(token: JWT) {
       // The response body should contain a confirmation that the user has been logged out
       logger.info('Completed post-logout handshake', status);
     } catch (error: any) {
-      logger.error('Unable to perform post-logout handshake ' +  error);
+      logger.error('Unable to perform post-logout handshake ' + error);
     }
   }
 }
@@ -58,7 +58,7 @@ async function doFinalSignoutHandshake(token: JWT) {
  */
 async function refreshAccessToken(token: JWT) {
   const { provider, refreshToken } = token as JWT & { refreshToken: string };
-  
+
   if (provider == keycloak.id) {
     try {
       const fields = {
@@ -86,11 +86,11 @@ async function refreshAccessToken(token: JWT) {
       let res = {
         // to review
         ...token,
-      accessToken: refreshedTokens.access_token,
-      accessTokenExpires: Date.now() + refreshedTokens.expires_at * 1000,
-      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
+        accessToken: refreshedTokens.access_token,
+        accessTokenExpires: Date.now() + refreshedTokens.expires_at * 1000,
+        refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
       };
-      
+
       logger.debug('*****************');
       logger.debug(refreshedTokens);
       logger.debug('*****************');
@@ -121,7 +121,7 @@ const credentialsProvider = CredentialsProvider({
   // You can pass any HTML attribute to the <input> tag through the object.
   credentials: {
     username: { label: 'Username', type: 'text', placeholder: 'jsmith' },
-    password: {  label: 'Password', type: 'password' },
+    password: { label: 'Password', type: 'password' },
   },
 
   async authorize(credentials, _req) {
@@ -166,7 +166,7 @@ export const authOptions = {
 
         return {
           accessToken: account.access_token,
-          accessTokenExpires: Date.now() + (account.expires_at -10) * 1000,
+          accessTokenExpires: Date.now() + (account.expires_at - 10) * 1000,
           //accessTokenExpires: Date.now() + 5 * 1000,
           refreshToken: account.refresh_token,
           idToken: account.id_token,
@@ -176,7 +176,7 @@ export const authOptions = {
       }
       //logger.warn('******')
       //console.log('Token', token, user, account, profile)
-      
+
       if (token.provider == 'credentials' || Date.now() < token.accessTokenExpires) {
         return token
       }
@@ -189,7 +189,7 @@ export const authOptions = {
       session.user = token.user
       session.accessToken = token.accessToken
       session.error = token.error
-      
+
       return session;
     },
   },

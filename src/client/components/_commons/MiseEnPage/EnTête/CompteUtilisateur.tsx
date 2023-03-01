@@ -1,11 +1,10 @@
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { Session } from 'next-auth';
-import { useEffect } from "react";
 
 export default function Component() {
   const { data: session } = useSession();
-  
   const mySession = session as Session & { error: String }; // TODO définir le type au même endroit qu'on ajoute tokenExp
+  
   if (session) {
     return (
       <div>
