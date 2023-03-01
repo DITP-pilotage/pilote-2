@@ -1,9 +1,15 @@
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
-import Indicateur, { IndicateursMétriques, TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
+import { DetailsIndicateur, FichesIndicateurs } from '@/server/domain/indicateur/DetailsIndicateur.interface';
+import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 
 export type ÉlémentPageIndicateursType = Rubrique & { typeIndicateur: NonNullable<TypeIndicateur> };
 
+export type IndicateurDétailsParTerritoire = {
+  territoire: string
+  données: DetailsIndicateur
+};
+
 export default interface RubriquesIndicateursProps {
   indicateurs: Indicateur[];
-  indicateursMétriques: IndicateursMétriques
+  détailsIndicateurs: FichesIndicateurs
 }

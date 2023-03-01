@@ -5,28 +5,27 @@ import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import CartographieValeurActuelle
   from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle';
+import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 
 export default function IndicateurDétails({ indicateur }: IndicateurDétailsProps) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+  const { auClicTerritoireMultiSéléctionCallback } = useCartographie();
+
 
   const donnéesCartographieAvancement = objectEntries(indicateur.mailles[mailleSélectionnée])
-    .map(([codeInsee, territoire]) => (
-      {
-        valeur: territoire.tauxAvancementGlobal,
-        codeInsee: codeInsee,
-      }
-    ));
+    .map(([codeInsee, territoire]) => ({
+      valeur: territoire.tauxAvancementGlobal,
+      codeInsee: codeInsee,
+    }));
 
   const donnéesCartographieValeurActuelle = {
     libelléUnité: '',
     données: objectEntries(indicateur.mailles[mailleSélectionnée])
-      .map(([codeInsee, territoire]) => (
-        {
-          valeur: territoire.valeurActuelle,
-          codeInsee: codeInsee,
-        }
-      )),
+      .map(([codeInsee, territoire]) => ({
+        valeur: territoire.valeurActuelle,
+        codeInsee: codeInsee,
+      })),
   };
 
   return (
@@ -54,8 +53,9 @@ export default function IndicateurDétails({ indicateur }: IndicateurDétailsPro
               Répartition géographique de l&apos;avancement
             </Titre>
             <CartographieAvancement
+              auClicTerritoireCallback={auClicTerritoireMultiSéléctionCallback}
               données={donnéesCartographieAvancement}
-              options={{ territoireSélectionnable: true }}
+              options={{ territoireSélectionnable: true, multiséléction: true }}
             />
           </div>
           <div className="fr-col-12 fr-col-xl-6">
@@ -66,8 +66,9 @@ export default function IndicateurDétails({ indicateur }: IndicateurDétailsPro
               Répartition géographique de la valeur actuelle de l&apos;indicateur
             </Titre>
             <CartographieValeurActuelle
+              auClicTerritoireCallback={auClicTerritoireMultiSéléctionCallback}
               données={donnéesCartographieValeurActuelle}
-              options={{ territoireSélectionnable: true }}
+              options={{ territoireSélectionnable: true, multiséléction: true }}
             />
           </div>
         </div>

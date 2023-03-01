@@ -1,13 +1,13 @@
 import Avancement from '@/server/domain/avancement/Avancement.interface';
 
 
-export type FichesIndicateur = Record<IdIndicateur, Record<CodeInsee, DetailsIndicateurInterface>>;
+export type FichesIndicateurs = Record<IdIndicateur, Record<CodeInsee, DetailsIndicateur>>;
 
 type IdIndicateur = string;
 
 type CodeInsee = string;
 
-type DetailsIndicateurInterface = {
+export type DetailsIndicateur = {
   codeInsee: string,
   valeurInitiale: number | null,
   dateValeurInitiale: string | null,

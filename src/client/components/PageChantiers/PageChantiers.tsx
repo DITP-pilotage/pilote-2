@@ -15,11 +15,13 @@ import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
+import useCartographie from '../_commons/Cartographie/useCartographie';
 
 export default function PageChantiers({ chantiers, ministères, axes, ppg }: PageChantiersProps) {  
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   const { nombreFiltresActifs, chantiersFiltrés, avancements, météos, donnéesCartographie } = usePageChantiers(chantiers);
+  const { auClicTerritoireCallback } = useCartographie();
 
   return (
     <PageChantiersStyled className="flex">
@@ -67,6 +69,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                     Répartition géographique
                   </Titre>
                   <CartographieAvancement
+                    auClicTerritoireCallback={auClicTerritoireCallback}
                     données={donnéesCartographie}
                     options={{ territoireSélectionnable: true }}
                   />

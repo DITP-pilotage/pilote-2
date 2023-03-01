@@ -1,13 +1,41 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
-import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, mailleAssociéeAuTerritoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoiresComparésTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import Indicateur, { IndicateursMétriques } from '@/server/domain/indicateur/Indicateur.interface';
+import { FichesIndicateurs } from '@/server/domain/indicateur/DetailsIndicateur.interface';
 
-export default function usePageChantier(chantier: Chantier, indicateurs: Indicateur[]) {
+export default function usePageChantier(chantier: Chantier) {
+  const url = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_API_LOCAL_URL : process.env.NEXT_PUBLIC_API_PROD_URL;
+
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
+  const territoiresComparés = territoiresComparésTerritoiresStore();  
+  
+  const [détailsIndicateurs, setDétailsIndicateurs] = useState<FichesIndicateurs>();
+
+  useEffect(() => {
+    fetch(`${url}chantier/${chantier.id}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
+      .then(reponse => {
+        return reponse.json();
+      })
+      .then(jsondata => {
+        setDétailsIndicateurs(jsondata);
+      });
+  }, [url, chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
+  
+  useEffect(() => {
+    const codesInsee = territoiresComparés.map(territoire => `codesInsee=${territoire.codeInsee}`).join('&');
+    if (codesInsee === '' || codesInsee === 'codesInsee=FR') return;
+    fetch(`${url}chantier/${chantier.id}/indicateurs?${codesInsee}&maille=${mailleSélectionnée}`)
+      .then(reponse => {
+        return reponse.json();
+      })
+      .then(jsondata => {
+        setDétailsIndicateurs(jsondata);
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [url, territoiresComparés]);
 
   const donnéesTerritoiresAgrégées = useMemo(() => {
     return new AgrégateurChantiersParTerritoire([chantier]).agréger();
@@ -26,25 +54,6 @@ export default function usePageChantier(chantier: Chantier, indicateurs: Indicat
       return donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireSélectionné.codeInsee].répartition.avancements.moyenne;
   };
 
-  const indicateursMétriques = useMemo(() =>{
-    //CALL API
-    let results: IndicateursMétriques = {};
-    indicateurs.forEach(indicateur => {
-      results[indicateur.id] = {
-        valeurInitiale: 0,
-        dateValeurInitiale: '10/10/2021',
-        valeurActuelle: 50,
-        dateValeurActuelle: '10/10/2022',
-        valeurCible: 100,
-        avancement: {
-          global: 50,
-          annuel: null,
-        },
-      };
-    });
-    return results;
-  }, [indicateurs, mailleSélectionnée, territoireSélectionné]);
-
   const avancements = {
     nationale: {
       moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.moyenne,
@@ -60,5 +69,5 @@ export default function usePageChantier(chantier: Chantier, indicateurs: Indicat
     },
   };
 
-  return { avancements, indicateursMétriques };
+  return { avancements, détailsIndicateurs };
 }

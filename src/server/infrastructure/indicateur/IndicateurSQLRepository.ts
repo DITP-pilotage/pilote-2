@@ -2,7 +2,7 @@ import { indicateur, PrismaClient } from '@prisma/client';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
-import { FichesIndicateur } from '@/server/domain/indicateur/DetailsIndicateur.interface';
+import { FichesIndicateurs } from '@/server/domain/indicateur/DetailsIndicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 
 
@@ -60,7 +60,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return this.mapToDomain(indicateurs);
   }
 
-  async getDetailsIndicateur(chantierId: string, maille: Maille, codesInsee: string[]): Promise<FichesIndicateur> {
+  async getDetailsIndicateur(chantierId: string, maille: Maille, codesInsee: string[]): Promise<FichesIndicateurs> {
     const indicateurs: indicateur[] = await this.prisma.indicateur.findMany({
       where: {
         chantier_id: chantierId,
@@ -69,13 +69,13 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       },
     });
 
-    const fichesIndicateur: FichesIndicateur = {};
+    const fichesIndicateurs: FichesIndicateurs = {};
 
     for (const indic of indicateurs) {
-      if (!fichesIndicateur[indic.id]) {
-        fichesIndicateur[indic.id] = {};
+      if (!fichesIndicateurs[indic.id]) {
+        fichesIndicateurs[indic.id] = {};
       }
-      fichesIndicateur[indic.id][indic.code_insee] = {
+      fichesIndicateurs[indic.id][indic.code_insee] = {
         codeInsee: indic.code_insee,
         valeurInitiale: indic.valeur_initiale,
         dateValeurInitiale: dateOrNullToDateStringWithoutTime(indic.date_valeur_initiale),
@@ -89,6 +89,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       };
     }
 
-    return fichesIndicateur;
+    return fichesIndicateurs;
   }
 }

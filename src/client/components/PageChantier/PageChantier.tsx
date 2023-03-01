@@ -29,7 +29,7 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { avancements, indicateursMétriques } = usePageChantier(chantier, indicateurs);
+  const { avancements, détailsIndicateurs } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
 
   return (
@@ -77,10 +77,11 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
           </div>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
+              {détailsIndicateurs !== undefined &&
               <Indicateurs
+                détailsIndicateurs={détailsIndicateurs}
                 indicateurs={indicateurs}
-                indicateursMétriques={indicateursMétriques}
-              />
+              />}
             </div>
           </div>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">

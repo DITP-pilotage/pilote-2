@@ -1,14 +1,7 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import {
-  getCoreRowModel, 
-  getFilteredRowModel, 
-  getPaginationRowModel, 
-  getSortedRowModel, 
-  SortingState,
-  useReactTable,
-} from '@tanstack/react-table';
+import { getCoreRowModel, getFilteredRowModel,  getPaginationRowModel,  getSortedRowModel,  SortingState, useReactTable } from '@tanstack/react-table';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
@@ -67,20 +60,20 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
           />
         </div>
         : null }
-      {
-        tableau.getRowModel().rows.length === 0
-          ?
-            <div className="fr-notice fr-notice--info">
-              <div className="fr-container">
-                <div className="fr-notice__body">
-                  <p className="fr-notice__title">
-                    {`Aucun ${entité} ne correspond à votre recherche !`}
-                  </p>
-                  Vous pouvez modifier vos filtres pour élargir votre recherche.
-                </div>
+      {tableau.getRowModel().rows.length === 0
+        ?
+          <div className="fr-notice fr-notice--info">
+            <div className="fr-container">
+              <div className="fr-notice__body">
+                <p className="fr-notice__title">
+                  {`Aucun ${entité} ne correspond à votre recherche !`}
+                </p>
+                Vous pouvez modifier vos filtres pour élargir votre recherche.
               </div>
             </div>
-          :
+          </div>
+        :
+          <>
             <table className='tableau'>
               <caption className="fr-sr-only">
                 {titre}
@@ -88,12 +81,12 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
               <TableauEnTête<T> tableau={tableau} />
               <TableauContenu<T> tableau={tableau} />
             </table>
-      }
-      <TableauPagination
-        changementDePageCallback={changementDePageCallback}
-        nombreDePages={tableau.getPageCount()}
-        numéroDePageInitiale={1}
-      />
+            <TableauPagination
+              changementDePageCallback={changementDePageCallback}
+              nombreDePages={tableau.getPageCount()}
+              numéroDePageInitiale={1}
+            />
+          </>}
     </TableauStyled>
   );
 }

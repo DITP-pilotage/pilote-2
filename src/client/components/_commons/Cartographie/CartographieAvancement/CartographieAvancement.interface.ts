@@ -6,4 +6,5 @@ export type CartographieDonnéesAvancement = { valeur: number | null, codeInsee:
 export default interface CartographieAvancementProps {
   données: CartographieDonnéesAvancement,
   options?: Partial<CartographieOptions>,
+  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void
 }
