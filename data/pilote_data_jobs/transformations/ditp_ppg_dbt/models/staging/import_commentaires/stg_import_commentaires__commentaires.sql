@@ -12,7 +12,7 @@ renamed as (
         chantier_id as id,
         type,
         contenu,
-        date,
+        TO_DATE(date,'DD/MM/YYYY') as date,
         nom as auteur
 
     from source

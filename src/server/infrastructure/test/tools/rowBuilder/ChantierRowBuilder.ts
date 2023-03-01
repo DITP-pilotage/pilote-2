@@ -129,8 +129,6 @@ export default class ChantierRowBuilder {
       directeurs_projet_mails: this._directeurs_projet_mails,
       ministeres: this._ministeres,
       territoire_nom: null,
-      objectifs: 'TBD',
-      date_objectifs: null,
       est_barometre: this._estBaromètre,
     };
   }
