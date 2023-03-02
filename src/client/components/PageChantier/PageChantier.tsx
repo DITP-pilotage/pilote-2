@@ -31,7 +31,7 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { avancements, détailsIndicateurs } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-
+  
   return (
     <PageChantierStyled className="flex">
       <BarreLatérale

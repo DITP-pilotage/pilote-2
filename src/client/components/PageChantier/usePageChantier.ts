@@ -13,6 +13,7 @@ export default function usePageChantier(chantier: Chantier) {
   const [détailsIndicateurs, setDétailsIndicateurs] = useState<FichesIndicateurs>();
 
   useEffect(() => {
+    if (territoiresComparés.length > 0) return;    
     fetch(`/api/chantier/${chantier.id}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
       .then(réponse => {
         return réponse.json();
@@ -20,6 +21,7 @@ export default function usePageChantier(chantier: Chantier) {
       .then(données => {
         setDétailsIndicateurs(données);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
   
   useEffect(() => {

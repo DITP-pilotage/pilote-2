@@ -25,7 +25,14 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Det
   const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
 
   useEffect(() => {
-    if (détailsIndicateur !== undefined) {
+    if (territoiresComparés.length === 0) {
+      setIndicateurDétailsParTerritoires([indicateurDétailsVide]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [territoiresComparés]);
+
+  useEffect(() => {
+    if (détailsIndicateur) {
       if (territoiresComparés.length > 0) {
         setIndicateurDétailsParTerritoires(
           territoiresComparés.map(territoire => ({ territoire: territoire.nom, données: détailsIndicateur[territoire.codeInsee] })),
@@ -37,12 +44,7 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Det
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [détailsIndicateur]);
 
-  useEffect(() => {
-    if (territoiresComparés.length === 0) {
-      setIndicateurDétailsParTerritoires([indicateurDétailsVide]);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [territoiresComparés]);
+
   
   
   const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
