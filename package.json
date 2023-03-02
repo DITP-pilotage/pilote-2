@@ -6,7 +6,7 @@
     "node": "18"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev | pino-pretty",
     "build": "next build",
     "postinstall": "prisma generate",
     "start": "next start",

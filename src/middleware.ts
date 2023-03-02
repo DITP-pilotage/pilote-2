@@ -5,7 +5,7 @@ import configuration from '@/server/infrastructure/Configuration';
 
 const pages = { signIn: '/api/auth/signin' };
 
-if (!configuration.isUsingBasicAuth) {
+if (!configuration.isUsingDevCredentials) {
   pages.signIn = '/signIn';
 }
 

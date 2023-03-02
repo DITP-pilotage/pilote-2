@@ -129,7 +129,7 @@ const credentialsProvider = CredentialsProvider({
     // false/null if the credentials are invalid.
     // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
     const username = credentials?.username;
-    if (username == config.basicAuthUsername && credentials?.password == config.basicAuthPassword) {
+    if (username == config.devUsername && credentials?.password == config.devPassword) {
       return { id: '1', name: username, email: `${username}@example.com` };
     }
 
@@ -138,7 +138,7 @@ const credentialsProvider = CredentialsProvider({
 });
 
 const providers = [];
-if (config.isUsingBasicAuth) {
+if (config.isUsingDevCredentials) {
   providers.push(credentialsProvider);
 } else {
   providers.push(keycloak);
