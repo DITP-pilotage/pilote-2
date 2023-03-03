@@ -69,7 +69,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     let métriques: MetriquesChantier = {
       synthèseDesRésultats: await synthèseDesRésultatsRepository.findNewestByChantierIdAndTerritoire(chantierId, maille, codeInsee),
       météo: chantierRow.meteo as Météo ?? 'NON_RENSEIGNEE',
-      commentaires: await commentaireRepository.getByChantierIdAndTerritoire(chantierId, maille, codeInsee),
+      commentaires: await commentaireRepository.findNewestByChantierIdAndTerritoire(chantierId, maille, codeInsee),
     };
 
     return métriques;
