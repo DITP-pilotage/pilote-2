@@ -1,3 +1,4 @@
+import chroma from 'chroma-js';
 import { CouleurHexa, CouleurRVB } from '@/client/utils/couleur/couleur.interface';
 
 function déterminerValeursNumériques(couleur: CouleurHexa): CouleurRVB {
@@ -60,3 +61,7 @@ export const interpolerCouleurs = (couleurDépart: CouleurHexa, couleurArrivée:
 
   return `#${hexaRouge}${hexaVert}${hexaBleu}`;
 };
+
+export function générerCouleursAléatoiresEntreDeuxCouleurs(couleurClair: CouleurHexa, couleurFoncée: CouleurHexa, nombreDeCouleurs: number) {
+  return chroma.scale([couleurFoncée, couleurClair]).mode('lch').colors(nombreDeCouleurs);
+}

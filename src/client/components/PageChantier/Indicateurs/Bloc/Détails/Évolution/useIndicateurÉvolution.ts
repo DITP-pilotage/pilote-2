@@ -1,11 +1,13 @@
 import { ChartOptions, ChartDataset, ChartData } from 'chart.js';
 import { formaterDate } from '@/client/utils/date/date';
+import { générerCouleursAléatoiresEntreDeuxCouleurs } from '@/client/utils/couleur/couleur';
 import IndicateurÉvolutionProps from './IndicateurÉvolution.interface';
 
-export default function useIndicateurÉvolution(indicateurDétailsParTerritoires: IndicateurÉvolutionProps['indicateurDétailsParTerritoires']) {  
+export default function useIndicateurÉvolution(indicateurDétailsParTerritoires: IndicateurÉvolutionProps['indicateurDétailsParTerritoires']) {
   let donnéesParTerritoire: ChartData<'line'>;
   const estEnSélectionMultiple = () => indicateurDétailsParTerritoires.length > 1;
   const indicateurDétailsPourUnTerritoire = indicateurDétailsParTerritoires[0];
+  const couleurs = générerCouleursAléatoiresEntreDeuxCouleurs('#8bcdb1', '#083a25', indicateurDétailsParTerritoires.length);
 
   const options: ChartOptions<'line'> = {
     responsive: true,
@@ -23,13 +25,13 @@ export default function useIndicateurÉvolution(indicateurDétailsParTerritoires
   
   const libellés = indicateurDétailsPourUnTerritoire.données.dateValeurs.map(date => formaterDate(date, 'mm/aaaa'));
 
-  const évolutions: ChartDataset<'line'>[] = indicateurDétailsParTerritoires.map(détailsParTerritoire => ({
+  const évolutions: ChartDataset<'line'>[] = indicateurDétailsParTerritoires.map((détailsParTerritoire, index) => ({
     label: détailsParTerritoire.territoireNom,
     data: détailsParTerritoire.données.valeurs,
     pointStyle: 'rect',
     pointRadius: 5,
-    borderColor: '#0063CB',
-    backgroundColor: '#0063CB',
+    borderColor: couleurs[index],
+    backgroundColor: couleurs[index],
   }));
 
   if (estEnSélectionMultiple()) {
