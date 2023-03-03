@@ -9,7 +9,7 @@ export default class IndicateurRandomRepository implements IndicateurRepository 
     return IndicateurFixture.générerPlusieurs(5);
   }
 
-  getCartographieDataByMailleAndIndicateurId(_indicateurId: string, _maille: Maille): Promise<CartographieIndicateur> {
+  getCartographieDonnéesByMailleAndIndicateurId(_indicateurId: string, _maille: Maille): Promise<CartographieIndicateur> {
     throw new Error('Not Implemented');
   }
   

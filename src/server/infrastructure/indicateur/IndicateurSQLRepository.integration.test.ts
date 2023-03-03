@@ -89,13 +89,13 @@ describe('IndicateurSQLRepository', () => {
     });
   });
 
-  describe('getCartographieDataByMailleAndIndicateurId', () => {
+  describe('getCartographieDonnéesByMailleAndIndicateurId', () => {
     test('Récupère une cartographie vide si aucun indicateur présent en base', async () => {
       // GIVEN
       const repository = new IndicateurSQLRepository(prisma);
 
       // WHEN
-      const result = await repository.getCartographieDataByMailleAndIndicateurId('IND-001',  'départementale');
+      const result = await repository.getCartographieDonnéesByMailleAndIndicateurId('IND-001',  'départementale');
 
       // THEN
       expect(result).toStrictEqual({});
@@ -127,33 +127,27 @@ describe('IndicateurSQLRepository', () => {
         new IndicateurRowBuilder()
           .withId('IND-002')
           .withMaille(CODES_MAILLES[maille])
-          .withCodeInsee('01')
-          .withValeurActuelle(120)
-          .withObjectifTauxAvancement(80)
           .build(),
 
         new IndicateurRowBuilder()
           .withId(indicateurId)
           .withMaille('REG')
-          .withCodeInsee('01')
-          .withValeurActuelle(110)
-          .withObjectifTauxAvancement(90)
           .build(),
       ];
 
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
-      const result = await repository.getCartographieDataByMailleAndIndicateurId(indicateurId, maille);
+      const result = await repository.getCartographieDonnéesByMailleAndIndicateurId(indicateurId, maille);
 
       // THEN
       expect(result).toStrictEqual({
         '01': {
-          avancementAnnuel : null,
+          avancementAnnuel : 50,
           valeurActuelle: 155,
         },
         '02': {
-          avancementAnnuel : null,
+          avancementAnnuel : 70,
           valeurActuelle: 130,
         },
       });

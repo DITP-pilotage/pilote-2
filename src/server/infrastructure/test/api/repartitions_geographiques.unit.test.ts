@@ -1,8 +1,8 @@
 import { createMocks } from 'node-mocks-http';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
-import handle from '../../../../pages/api/indicateur/[indicateurId]/répartitions_géographiques';
+import handle from '../../../../pages/api/indicateur/[indicateurId]/repartitions_geographiques';
 
-describe('/api/indicateur/:indicateurId:/répartitions_géographiques', () => {
+describe('/api/indicateur/:indicateurId/repartitions_geographiques', () => {
   it('renvoyer la cartographie pour l\'ensemble des territoires', async () => {
     // Given
     const { req, res } = createMocks({
@@ -10,7 +10,7 @@ describe('/api/indicateur/:indicateurId:/répartitions_géographiques', () => {
       query: { indicateurId: 'IND-001', maille: 'DEPT' },
     });
     const stubIndicateurRepository = <IndicateurRepository>{};
-    stubIndicateurRepository.getCartographieDataByMailleAndIndicateurId = () => Promise.resolve({
+    stubIndicateurRepository.getCartographieDonnéesByMailleAndIndicateurId = () => Promise.resolve({
       '01': {
         avancementAnnuel : 50,
         valeurActuelle: 155,
@@ -45,7 +45,7 @@ describe('/api/indicateur/:indicateurId:/répartitions_géographiques', () => {
       query: { id: 'IND-001', maille: 'DEPT' },
     });
     const stubIndicateurRepository = <IndicateurRepository>{};
-    stubIndicateurRepository.getCartographieDataByMailleAndIndicateurId = () => Promise.resolve({});
+    stubIndicateurRepository.getCartographieDonnéesByMailleAndIndicateurId = () => Promise.resolve({});
 
     // When
     handle(req, res, stubIndicateurRepository);

@@ -4,6 +4,6 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 
 export default interface IndicateurRepository {
   getByChantierId(chantierId: string): Promise<Indicateur[]>;
-  getCartographieDataByMailleAndIndicateurId(indicateurId: string, maille: Maille): Promise<CartographieIndicateur>;
+  getCartographieDonnéesByMailleAndIndicateurId(indicateurId: string, maille: Maille): Promise<CartographieIndicateur>;
   getDetailsIndicateur(chantierId: string, maille: string, codesInsee: string[]): Promise<FichesIndicateurs>;
 }

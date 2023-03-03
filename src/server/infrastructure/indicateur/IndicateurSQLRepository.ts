@@ -60,7 +60,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return this.mapToDomain(indicateurs);
   }
 
-  async getCartographieDataByMailleAndIndicateurId(indicateurId: string, maille: Maille): Promise<CartographieIndicateur> {
+  async getCartographieDonnéesByMailleAndIndicateurId(indicateurId: string, maille: Maille): Promise<CartographieIndicateur> {
     const indicateurs: indicateur[] = await this.prisma.indicateur.findMany({
       where: {
         id: indicateurId,
@@ -68,11 +68,15 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       },
     });
 
-    return Object.fromEntries(indicateurs.map((indic) =>
-      [indic.code_insee, {
-        avancementAnnuel: null, // FIXME : on ne dispose que de l'avancement quinquénale.
-        valeurActuelle: indic.valeur_actuelle,
-      }]));
+    return Object.fromEntries(
+      indicateurs.map(
+        (indic) =>
+          [indic.code_insee, {
+            avancementAnnuel: indic.objectif_taux_avancement,
+            valeurActuelle: indic.valeur_actuelle,
+          }],
+      ),
+    );
   }
 
   async getDetailsIndicateur(chantierId: string, maille: Maille, codesInsee: string[]): Promise<FichesIndicateurs> {
