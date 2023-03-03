@@ -11,7 +11,7 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Det
   const territoiresComparés = territoiresComparésTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const indicateurDétailsVide = {
-    territoire: '', 
+    territoireNom: '', 
     données: {  
       codeInsee: '',
       valeurInitiale: null,
@@ -35,10 +35,12 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Det
     if (détailsIndicateur) {
       if (territoiresComparés.length > 0) {
         setIndicateurDétailsParTerritoires(
-          territoiresComparés.map(territoire => ({ territoire: territoire.nom, données: détailsIndicateur[territoire.codeInsee] })),
+          territoiresComparés
+            .map(territoire => ({ territoireNom: territoire.nom, données: détailsIndicateur[territoire.codeInsee] }))
+            .sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee)),
         );
       } else {
-        setIndicateurDétailsParTerritoires([{ territoire: territoireSélectionné.nom, données: détailsIndicateur[territoireSélectionné.codeInsee] }]);
+        setIndicateurDétailsParTerritoires([{ territoireNom: territoireSélectionné.nom, données: détailsIndicateur[territoireSélectionné.codeInsee] }]);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,7 +48,7 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Det
   
   const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
   const colonnes = [
-    reactTableColonnesHelper.accessor( 'territoire', {
+    reactTableColonnesHelper.accessor( 'territoireNom', {
       header: 'Territoire(s)',
       cell: nomDuTerritoire => nomDuTerritoire.getValue(),
       enableSorting: false,
