@@ -5,7 +5,7 @@ import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateu
 export type ÉlémentPageIndicateursType = Rubrique & { typeIndicateur: NonNullable<TypeIndicateur> };
 
 export type IndicateurDétailsParTerritoire = {
-  territoire: string
+  territoireNom: string
   données: DetailsIndicateur
 };
 
