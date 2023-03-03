@@ -1,6 +1,6 @@
 import { chantier, PrismaClient } from '@prisma/client';
 import ChantierRepository, {
-  MetriquesChantier,
+  InfosChantier,
 } from '@/server/domain/chantier/ChantierRepository.interface';
 import { groupBy } from '@/client/utils/arrays';
 import { parseChantier } from '@/server/infrastructure/chantier/ChantierSQLParser';
@@ -50,7 +50,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return objectEntries(chantiersGroupésParId).map(([_, c]) => parseChantier(c));
   }
 
-  async getMétriques(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<MetriquesChantier> {
+  async getInfosChantier(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<InfosChantier> {
     const synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(this.prisma);
     const commentaireRepository = new CommentaireSQLRepository(this.prisma);
 
@@ -66,12 +66,12 @@ export default class ChantierSQLRepository implements ChantierRepository {
       throw new ErreurChantierNonTrouvé(chantierId);
     }
     
-    let métriques: MetriquesChantier = {
+    let infosChantier: InfosChantier = {
       synthèseDesRésultats: await synthèseDesRésultatsRepository.findNewestByChantierIdAndTerritoire(chantierId, maille, codeInsee),
       météo: chantierRow.meteo as Météo ?? 'NON_RENSEIGNEE',
       commentaires: await commentaireRepository.findNewestByChantierIdAndTerritoire(chantierId, maille, codeInsee),
     };
 
-    return métriques;
+    return infosChantier;
   }
 }

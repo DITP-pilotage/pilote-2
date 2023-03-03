@@ -5,5 +5,5 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export default interface SynthèseDesRésultatsRepository {
   findNewestByChantierId(chantierId: string): Promise<SynthèseDesRésultats | null>
-  findNewestByChantierIdAndTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<DetailsCommentaire>
+  findNewestByChantierIdAndTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<DetailsCommentaire | null>
 }

@@ -27,6 +27,7 @@ describe('CommentaireSQLRepository', () => {
       const chantierId = 'CH-001';
       const maille: Maille = 'nationale';
       const codeInsee = 'FR';
+      const autresRésultatsObtenus = 'autresRésultatsObtenus';
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
 
       const commentaireRowBuilder = new CommentaireRowBuilder();
@@ -66,7 +67,7 @@ describe('CommentaireSQLRepository', () => {
           .withChantierId(chantierId)
           .withMaille(CODES_MAILLES[maille])
           .withCodeInsee(codeInsee)
-          .withType(CODES_TYPES_COMMENTAIRES['autresRésultatsObtenus'])
+          .withType(CODES_TYPES_COMMENTAIRES[autresRésultatsObtenus])
           .withContenu('Mon commentaire autres résultats')
           .withDate('2022-01-01')
           .withAuteur('Jean')
@@ -76,7 +77,7 @@ describe('CommentaireSQLRepository', () => {
           .withChantierId(chantierId)
           .withMaille(CODES_MAILLES[maille])
           .withCodeInsee(codeInsee)
-          .withType(CODES_TYPES_COMMENTAIRES['autresRésultatsObtenus'])
+          .withType(CODES_TYPES_COMMENTAIRES[autresRésultatsObtenus])
           .withContenu('Mon commentaire autres résultats en dernier')
           .withDate('2022-02-28')
           .withAuteur('Jean Christophe')
@@ -86,7 +87,7 @@ describe('CommentaireSQLRepository', () => {
           .withChantierId(chantierId)
           .withMaille(CODES_MAILLES[maille])
           .withCodeInsee(codeInsee)
-          .withType(CODES_TYPES_COMMENTAIRES['autresRésultatsObtenus'])
+          .withType(CODES_TYPES_COMMENTAIRES[autresRésultatsObtenus])
           .withContenu('Mon commentaire autres résultats ancien')
           .withDate('2022-01-02')
           .withAuteur('Jean')

@@ -29,8 +29,8 @@ export default async function handle(request: NextApiRequest, response: NextApiR
     }
     throw error;
   }
-  const metriquesChantier = await chantierRepository.getMétriques(params.chantierId, params.maille, params.codeInsee);
+  const infosChantier = await chantierRepository.getInfosChantier(params.chantierId, params.maille, params.codeInsee);
   response
     .status(200)
-    .json(metriquesChantier);
+    .json(infosChantier);
 }
