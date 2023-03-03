@@ -149,11 +149,11 @@ describe('IndicateurSQLRepository', () => {
       // THEN
       expect(result).toStrictEqual({
         '01': {
-          avancementAnnuel : 50,
+          avancementAnnuel : null,
           valeurActuelle: 155,
         },
         '02': {
-          avancementAnnuel : 70,
+          avancementAnnuel : null,
           valeurActuelle: 130,
         },
       });
