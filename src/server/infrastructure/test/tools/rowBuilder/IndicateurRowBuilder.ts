@@ -17,6 +17,8 @@ export default class IndicateurRowBuilder {
 
   private _dateValeurInitiale: string | null = '2020-01-01';
 
+  private _valeurActuelle: number | null = 0;
+
   private _dateValeurActuelle: string | null = '2023-02-01';
 
   private _valeurInitiale: number | null = 0;
@@ -70,6 +72,11 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  withValeurActuelle(valeurActuelle: number | null): IndicateurRowBuilder {
+    this._valeurActuelle = valeurActuelle;
+    return this;
+  }
+
   withDateValeurActuelle(dateValeurActuelle: string | null): IndicateurRowBuilder {
     this._dateValeurActuelle = dateValeurActuelle;
     return this;
@@ -102,7 +109,7 @@ export default class IndicateurRowBuilder {
       est_phare: null,
       valeur_initiale: this._valeurInitiale,
       date_valeur_initiale: this._dateValeurInitiale !== null ? new Date(this._dateValeurInitiale) : null,
-      valeur_actuelle: null,
+      valeur_actuelle: this._valeurActuelle,
       date_valeur_actuelle: this._dateValeurActuelle !== null ? new Date(this._dateValeurActuelle) : null,
       territoire_nom: null,
       evolution_valeur_actuelle: this._evolutionValeurActuelle,

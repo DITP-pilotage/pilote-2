@@ -1,6 +1,6 @@
 import { indicateur, PrismaClient } from '@prisma/client';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
-import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur, { CartographieIndicateur, TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 import { FichesIndicateurs } from '@/server/domain/indicateur/DetailsIndicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -58,6 +58,21 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     });
 
     return this.mapToDomain(indicateurs);
+  }
+
+  async getCartographieDataByMailleAndIndicateurId(indicateurId: string, maille: Maille): Promise<CartographieIndicateur> {
+    const indicateurs: indicateur[] = await this.prisma.indicateur.findMany({
+      where: {
+        id: indicateurId,
+        maille: CODES_MAILLES[maille],
+      },
+    });
+
+    return Object.fromEntries(indicateurs.map((indic) =>
+      [indic.code_insee, {
+        avancementAnnuel: null, // FIXME : on ne dispose que de l'avancement quinquénale.
+        valeurActuelle: indic.valeur_actuelle,
+      }]));
   }
 
   async getDetailsIndicateur(chantierId: string, maille: Maille, codesInsee: string[]): Promise<FichesIndicateurs> {
