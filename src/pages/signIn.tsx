@@ -13,7 +13,7 @@ export default function Signin() {
 
 export async function getServerSideProps(context: any) {
   const session = await getServerSession(context.req, context.res, authOptions);
-  logger.debug({ authOptions }, 'PLOP & authOptions');
+  logger.debug({ authOptions });
   if (!session) {
     const params = new URLSearchParams({
       response_type: 'code',
@@ -29,7 +29,7 @@ export async function getServerSideProps(context: any) {
 
     return { redirect };
   }
-  logger.debug({ session }, 'session');
+  logger.debug({ session });
 
   return {
     props: { session },

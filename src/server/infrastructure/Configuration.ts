@@ -23,6 +23,8 @@ export class Configuration {
 
   public readonly isUsingDevCredentials: boolean;
 
+  public readonly devSessionMaxAge: number = 30 * 24 * 60 * 60; // 30 days
+
   constructor() {
     this.isUsingDatabase = process.env.USE_DATABASE == 'true';
     this.logLevel = process.env.LOG_LEVEL || 'info';
@@ -35,6 +37,9 @@ export class Configuration {
       this.devPassword = parts[1];
     } else {
       this.isUsingDevCredentials = false;
+    }
+    if (process.env.DEV_SESSION_MAX_AGE_IN_SECONDS) {
+      this.devSessionMaxAge = Number.parseInt(process.env.DEV_SESSION_MAX_AGE_IN_SECONDS);
     }
 
     this.keycloakClientId = process.env.KEYCLOAK_CLIENT_ID || 'N/A';

@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { AuthOptions, SessionOptions, User } from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import type { JWT } from 'next-auth/jwt';
@@ -126,7 +126,7 @@ const credentialsProvider = CredentialsProvider({
     password: { label: 'Mot de Passe', type: 'password' },
   },
 
-  async authorize(credentials, _req) {
+  async authorize(credentials, _req): Promise<User | null> {
     const username = credentials?.username;
     const password = credentials?.password;
     if (username != config.devUsername || password != config.devPassword) {
@@ -137,15 +137,17 @@ const credentialsProvider = CredentialsProvider({
 });
 
 const providers = [];
+const sessionOptions: Partial<SessionOptions> = {};
 if (config.isUsingDevCredentials) {
   providers.push(credentialsProvider);
+  sessionOptions.maxAge = config.devSessionMaxAge;
 } else {
   providers.push(keycloak);
 }
 
-// noinspection JSUnusedGlobalSymbols
-export const authOptions = {
+export const authOptions: AuthOptions = {
   providers,
+  session: sessionOptions,
   callbacks: {
     async jwt({ token, account, user, profile, isNewUser }: any) {
       // Persist the OAuth access_token to the token right after signin
