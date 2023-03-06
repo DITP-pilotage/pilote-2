@@ -50,9 +50,9 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
         chantier_id: chantierId,
         maille: CODES_MAILLES[maille],
         code_insee: codeInsee,
-        type: { in: ['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus'] },
+        type: {in: ['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus']},
       },
-      orderBy: { date : 'desc' },
+      orderBy: {date: 'desc'},
     });
 
     return {
@@ -61,5 +61,17 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
       actionsÀValoriser: this.getFirstCommentaireForAGivenType(commentaires, 'actions_a_valoriser'),
       autresRésultatsObtenus: this.getFirstCommentaireForAGivenType(commentaires, 'autres_resultats_obtenus'),
     };
+  }
+
+  async getObjectifsByChantierId(chantierId: string): Promise<DetailsCommentaire | null> {
+    const commentaires: commentaire[] = await this.prisma.commentaire.findMany({
+      where: {
+        chantier_id: chantierId,
+        type: 'objectifs',
+      },
+      orderBy: { date: 'desc' },
+    });
+
+    return this.getFirstCommentaireForAGivenType(commentaires, 'objectifs');
   }
 }
