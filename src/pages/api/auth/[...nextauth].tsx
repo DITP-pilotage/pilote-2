@@ -20,11 +20,14 @@ async function doFinalSignoutHandshake(token: JWT) {
   const { provider, idToken } = token;
   if (provider == keycloak.id) {
     try {
+      logger.debug('1');
       // Add the id_token_hint to the query string
       const params = new URLSearchParams({
         id_token_hint: idToken as string,
       });
 
+      logger.debug('2');
+      logger.debug({ logoutUrl: config.logoutUrl, params });
       const response = await fetch(config.logoutUrl, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -32,18 +35,26 @@ async function doFinalSignoutHandshake(token: JWT) {
         method: 'POST',
         body: params,
       });
-      logger.debug(config.logoutUrl);
-      const refreshedTokens = await response.json();
+      logger.debug('3');
+      logger.debug({ response, ok: response?.ok, statusText: response?.statusText, body: response?.body }, 'Logout response');
 
-      if (!response.ok) {
+      logger.debug('4');
+      const refreshedTokens = await response.json();
+      if (response && !response.ok) {
+        logger.debug('5');
+        logger.debug({ response, refreshedTokens }, 'Failed to logout');
+        // noinspection ExceptionCaughtLocallyJS
         throw refreshedTokens;
       }
 
       // The response body should contain a confirmation that the user has been logged out
-      logger.info('Completed post-logout handshake', status);
+      logger.debug('6');
+      logger.info('Completed post-logout handshake');
     } catch (error: any) {
-      logger.error('Unable to perform post-logout handshake ' + error);
+      logger.debug('7');
+      logger.error(error, 'Unable to perform post-logout handshake');
     }
+    logger.debug('8');
   }
 }
 
@@ -80,6 +91,7 @@ async function refreshAccessToken(token: JWT) {
       const refreshedTokens = await response.json();
 
       if (!response.ok) {
+        // noinspection ExceptionCaughtLocallyJS
         throw refreshedTokens;
       }
 
@@ -97,7 +109,7 @@ async function refreshAccessToken(token: JWT) {
       logger.debug(res);
       return res;
     } catch (error) {
-      logger.error('Bad in refresh_token' + error);
+      logger.error(error, 'Bad in refresh_token');
       return {
         ...token,
         error: 'RefreshAccessTokenError',
@@ -151,19 +163,12 @@ export const authOptions = {
     async jwt({ token, account, user, profile, isNewUser }: any) {
       // Persist the OAuth access_token to the token right after signin
 
-      let currentDate = Date.now();
+      const currentDate = Date.now();
 
       // account is defined when recieved token from server (ie Keycloak)
       // Initial log in
       if (account && user) {
-        logger.debug('------> JWT fnt');
-        logger.debug('> Token=', token);
-        logger.debug('> user=', user);
-        logger.debug('> account=', account);
-        logger.debug('> profile=', profile);
-        logger.debug('> isNewUser=', isNewUser);
-        logger.debug('date=', currentDate);
-        logger.debug(' JWT fnt <--------------<<<');
+        logger.debug({ token, user, account, profile, isNewUser, currentDate }, '------> JWT fnt');
 
         return {
           accessToken: account.access_token,
@@ -176,13 +181,13 @@ export const authOptions = {
         };
       }
       //logger.warn('******')
-      //console.log('Token', token, user, account, profile)
+      //logger.debug({ token, user, account, profile }, 'Token')
 
       if (token.provider == 'credentials' || Date.now() < token.accessTokenExpires) {
         return token;
       }
-      logger.debug('Token HAS EXPIRED');
-      // Access token has expired, try to update it
+
+      logger.debug('Token has expired, refreshing.');
       return refreshAccessToken(token);
     },
     async session({ session, token }: any) {
