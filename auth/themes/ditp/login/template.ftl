@@ -2,8 +2,7 @@
   <#import "components/layout/container.ftl" as container>
     <#import "components/dsfr/header/header.ftl" as header>
       <#import "components/dsfr/footer/footer.ftl" as footer>
-        <#macro
-          registrationLayout>
+        <#macro registrationLayout bodyClass="" displayInfo=false displayMessage=true displayWide=false>
           <html>
 
           <head>
