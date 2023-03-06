@@ -16,7 +16,7 @@ describe('CommentaireSQLRepository', () => {
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
 
       // WHEN
-      const commentaires = await commentaireRepository.findNewestByChantierIdAndTerritoire('CH-001', 'départementale', '01');
+      const commentaires = await commentaireRepository.findNewestByChantierIdAndTerritoire('CH-001', 'nationale', 'FR');
 
       // THEN
       await expect(commentaires).toStrictEqual(commentairesNull);

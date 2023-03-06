@@ -7,6 +7,7 @@ import {
 } from '@/server/domain/chantier/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 
 export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaire> = {
   freins_a_lever: 'freinsÀLever',
@@ -48,12 +49,12 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   }
 
 
-  async findNewestByChantierIdAndTerritoire(chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<Commentaires> {
+  async findNewestByChantierIdAndTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Commentaires> {
     const commentaires: commentaire[] = await this.prisma.commentaire.findMany({
       where: {
         chantier_id: chantierId,
-        maille: 'NAT',
-        code_insee: 'FR',
+        maille: CODES_MAILLES[maille],
+        code_insee: codeInsee,
         type: { in: ['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus'] },
       },
       orderBy: { date : 'desc' },
