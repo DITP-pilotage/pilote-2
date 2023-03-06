@@ -50,9 +50,9 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
         chantier_id: chantierId,
         maille: CODES_MAILLES[maille],
         code_insee: codeInsee,
-        type: {in: ['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus']},
+        type: { in: ['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus'] },
       },
-      orderBy: {date: 'desc'},
+      orderBy: { date: 'desc' },
     });
 
     return {

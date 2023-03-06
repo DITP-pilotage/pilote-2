@@ -22,6 +22,9 @@ import PpgSQLRepository from '@/server/infrastructure/ppg/PpgSQLRepository';
 import PpgRandomRepository from '@/server/infrastructure/ppg/PpgRandomRepository';
 import AxeFixture from '@/fixtures/AxeFixture';
 import PpgFixture from '@/fixtures/PpgFixture';
+import CommentaireRepository from '@/server/domain/chantier/CommentaireRepository.interface';
+import CommentaireSQLRepository from '@/server/infrastructure/chantier/CommentaireSQLRepository';
+import CommentaireRandomRepository from '@/server/infrastructure/chantier/CommentaireRandomRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
@@ -35,6 +38,8 @@ class Dependencies {
   private readonly _ministèreRepository: MinistèreRepository;
 
   private readonly _indicateurRepository: IndicateurRepository;
+  
+  private readonly _commentaireRepository: CommentaireRepository;
 
   constructor() {
     if (config.isUsingDatabase) {
@@ -46,6 +51,7 @@ class Dependencies {
       this._ministèreRepository = new MinistèreSQLRepository(prisma);
       this._indicateurRepository = new IndicateurSQLRepository(prisma);
       this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
+      this._commentaireRepository = new CommentaireSQLRepository(prisma);
     } else {
       logger.debug('Not using database.');
       const nombreDeChantiers = 500;
@@ -66,6 +72,7 @@ class Dependencies {
       this._axeRepository = new AxeRandomRepository(axes);
       this._ppgRepository = new PpgRandomRepository(ppgs);
       this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsRandomRepository();
+      this._commentaireRepository = new CommentaireRandomRepository();
       this._ministèreRepository = new MinistèreInMemoryRepository();
       this._indicateurRepository = new IndicateurRandomRepository();
     }
@@ -93,6 +100,10 @@ class Dependencies {
 
   getIndicateurRepository(): IndicateurRepository {
     return this._indicateurRepository;
+  }
+
+  getCommentaireRepository() {
+    return this._commentaireRepository;
   }
 }
 

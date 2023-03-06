@@ -2,6 +2,7 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { Territoires } from '@/server/domain/territoire/Territoire.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
+import { DetailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
 
 export type DirecteurAdministrationCentrale = { nom: string, direction: string };
 export type Contact = { nom: string, email: string | null };
@@ -20,5 +21,6 @@ export default interface Chantier {
     directeursProjet: Contact[]
   }
   estBaromètre: boolean;
+  objectifs: DetailsCommentaire | null;
 }
 
