@@ -52,7 +52,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
             nombreFiltresActifs > 0 &&
             <FiltresActifs />
           }
-          <div className="fr-p-4w fr-container">
+          <div className="fr-py-2w fr-px-4w fr-container--fluid">
             <Titre
               baliseHtml='h1'
               className='fr-h4'

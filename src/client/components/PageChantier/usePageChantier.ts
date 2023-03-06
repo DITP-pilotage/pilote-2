@@ -21,7 +21,7 @@ export default function usePageChantier(chantier: Chantier) {
         return réponse.json();
       })
       .then(données => {
-        setCommentaires(données?.commentaires ?? null);
+        setCommentaires(données?.commentaires ?? null); // TODO améliorer la gestion d'erreur
       });
   }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
 
