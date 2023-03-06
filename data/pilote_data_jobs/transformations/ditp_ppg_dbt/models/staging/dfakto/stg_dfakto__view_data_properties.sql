@@ -22,7 +22,7 @@ renamed as (
             else NULL
         end as zone_code,
         case
-            when {{ dbt.split_part('reforme_code', "'-'", 1) }} = 'OVQ' then {{ dbt.split_part('reforme_code', "'-'", 1) }}
+            when {{ dbt.split_part('reforme_code', "'-'", 1) }} = 'OVQ' then {{ dbt.split_part('reforme_code', "'-'", 2) }}
             when region_code <> '' then {{ dbt.split_part('region_code', "'-'", 1) }}
             when academie_code <> '' then {{ dbt.split_part('academie_code', "'-'", 1) }}
             when departement_code <> '' then {{ dbt.split_part('departement_code', "'-'", 1) }}
