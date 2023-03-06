@@ -1,12 +1,5 @@
 <#import "template.ftl" as layout>
-<@layout.registrationLayout displayMessage=false; section>
-    <#if section = "header">
-        <#if messageHeader??>
-        ${messageHeader}
-        <#else>
-        ${message.summary}
-        </#if>
-    <#elseif section = "form">
+<@layout.registrationLayout>
     <div id="kc-info-message">
         <p class="instruction">${message.summary}<#if requiredActions??><#list requiredActions>: <b><#items as reqActionItem>${msg("requiredAction.${reqActionItem}")}<#sep>, </#items></b></#list><#else></#if></p>
         <#if skipLink??>
@@ -20,5 +13,4 @@
             </#if>
         </#if>
     </div>
-    </#if>
 </@layout.registrationLayout>
