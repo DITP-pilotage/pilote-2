@@ -54,7 +54,7 @@ export default function useCartographie() {
       modifierTerritoireSélectionné(territoireCodeInsee);
   }
 
-  function auClicTerritoireMultiSéléctionCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
+  function auClicTerritoireMultiSélectionCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
     if (!territoireSélectionnable) return;
     modifierTerritoiresComparés(territoireCodeInsee);
   }
@@ -64,6 +64,6 @@ export default function useCartographie() {
     créerTerritoires,
     optionsParDéfaut,
     auClicTerritoireCallback,
-    auClicTerritoireMultiSéléctionCallback,
+    auClicTerritoireMultiSélectionCallback,
   };
 }

@@ -9,7 +9,7 @@ import useIndicateurDétails from './useIndicateurDétails';
 
 export default function IndicateurDétails({ indicateurId, indicateurDétailsParTerritoires }: IndicateurDétailsProps) {
   const [futOuvert, setFutOuvert] = useState(false);
-  const { auClicTerritoireMultiSéléctionCallback } = useCartographie();
+  const { auClicTerritoireMultiSélectionCallback } = useCartographie();
   const { donnéesCartographieAvancement, donnéesCartographieValeurActuelle } = useIndicateurDétails(indicateurId, futOuvert);
 
   return (
@@ -38,7 +38,7 @@ export default function IndicateurDétails({ indicateurId, indicateurDétailsPar
               Répartition géographique de l&apos;avancement
             </Titre>
             <CartographieAvancement
-              auClicTerritoireCallback={auClicTerritoireMultiSéléctionCallback}
+              auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
               données={donnéesCartographieAvancement}
               options={{ territoireSélectionnable: true, multiséléction: true }}
             />
@@ -51,7 +51,7 @@ export default function IndicateurDétails({ indicateurId, indicateurDétailsPar
               Répartition géographique de la valeur actuelle de l&apos;indicateur
             </Titre>
             <CartographieValeurActuelle
-              auClicTerritoireCallback={auClicTerritoireMultiSéléctionCallback}
+              auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
               données={donnéesCartographieValeurActuelle}
               options={{ territoireSélectionnable: true, multiséléction: true }}
             />
