@@ -54,13 +54,10 @@ export default function useCartographie() {
       modifierTerritoireSélectionné(territoireCodeInsee);
   }
 
-
   function auClicTerritoireMultiSéléctionCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
     if (!territoireSélectionnable) return;
     modifierTerritoiresComparés(territoireCodeInsee);
   }
-
-
 
   return {
     déterminerRégionsÀTracer,

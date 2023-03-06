@@ -1,9 +1,7 @@
 import { useMemo } from 'react';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
-import {
-  CartographieDonnéesValeurActuelle,
-} from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle.interface';
+import { CartographieDonnéesValeurActuelle } from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle.interface';
 import { valeurMaximum, valeurMinimum } from '@/client/utils/statistiques/statistiques';
 import { interpolerCouleurs } from '@/client/utils/couleur/couleur';
 import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
@@ -13,7 +11,7 @@ const COULEUR_ARRIVÉE = '#083a25';
 const REMPLISSAGE_PAR_DÉFAUT = '#bababa';
 
 function déterminerValeurAffichée(valeur: number | null) {
-  return valeur === null ? 'Non renseigné' : String(valeur);
+  return valeur === null ? 'Non renseigné' : valeur.toLocaleString();
 }
 
 function déterminerRemplissage(valeur: number | null, valeurMin: number | null, valeurMax: number | null) {
@@ -33,7 +31,7 @@ function déterminerLibellé(territoireGéographique: TerritoireGéographique | 
     : territoireGéographique.nom;
 }
 
-export default function useCartographieValeurActuelle({ libelléUnité, données }: CartographieDonnéesValeurActuelle) {
+export default function useCartographieValeurActuelle(données: CartographieDonnéesValeurActuelle) {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
@@ -41,12 +39,12 @@ export default function useCartographieValeurActuelle({ libelléUnité, données
   const valeurMax = useMemo(() => valeurMaximum(données.map(donnée => donnée.valeur)), [données]);
 
   const légende = useMemo(() => ({
-    libelléUnité,
-    valeurMin: valeurMin ? String(valeurMin) : '-',
-    valeurMax: valeurMax ? String(valeurMax) : '-',
+    libellé: 'En nombre d’unités',
+    valeurMin: valeurMin ? valeurMin.toLocaleString() : '-',
+    valeurMax: valeurMax ? valeurMax.toLocaleString() : '-',
     couleurMin: COULEUR_DÉPART,
     couleurMax: COULEUR_ARRIVÉE,
-  }), [libelléUnité, valeurMax, valeurMin]);
+  }), [valeurMax, valeurMin]);
 
   const donnéesCartographie = useMemo(() => {
     let donnéesFormatées: CartographieDonnées = {};

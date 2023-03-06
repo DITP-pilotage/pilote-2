@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo, useState } from 'react';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoiresComparésTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
@@ -15,31 +16,19 @@ export default function usePageChantier(chantier: Chantier) {
   useEffect(() => {
     if (territoiresComparés.length > 0) return;    
     fetch(`/api/chantier/${chantier.id}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
-      .then(réponse => {
-        return réponse.json();
-      })
-      .then(données => {
-        setDétailsIndicateurs(données);
-      });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+      .then(réponse => réponse.json())
+      .then(données => setDétailsIndicateurs(données));
   }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee, mailleSélectionnée]);
   
   useEffect(() => {
     const codesInsee = territoiresComparés.map(territoire => `codesInsee=${territoire.codeInsee}`).join('&');
     if (codesInsee === '' || codesInsee === 'codesInsee=FR') return;
     fetch(`/api/chantier/${chantier.id}/indicateurs?${codesInsee}&maille=${mailleSélectionnée}`)
-      .then(réponse => {
-        return réponse.json();
-      })
-      .then(données => {
-        setDétailsIndicateurs(données);
-      });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+      .then(réponse => réponse.json())
+      .then(données => setDétailsIndicateurs(données));
   }, [territoiresComparés]);
 
-  const donnéesTerritoiresAgrégées = useMemo(() => {
-    return new AgrégateurChantiersParTerritoire([chantier]).agréger();
-  }, [chantier]);
+  const donnéesTerritoiresAgrégées = useMemo(() => new AgrégateurChantiersParTerritoire([chantier]).agréger(), [chantier]);
     
   const avancementRégional = () => {
     if (mailleAssociéeAuTerritoireSélectionné === 'régionale')

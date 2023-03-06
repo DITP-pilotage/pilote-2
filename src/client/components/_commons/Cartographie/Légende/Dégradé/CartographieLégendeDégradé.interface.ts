@@ -1,5 +1,5 @@
 export type CartographieLégendeDégradéContenu = {
-  libelléUnité: string,
+  libellé: string,
   valeurMin: string,
   valeurMax: string,
   couleurMin: string,
