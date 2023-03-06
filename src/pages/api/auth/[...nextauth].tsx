@@ -20,13 +20,9 @@ async function doFinalSignoutHandshake(token: JWT) {
   const { provider, idToken } = token;
   if (provider == keycloak.id) {
     try {
-      logger.debug('1');
       // Add the id_token_hint to the query string
-      const params = new URLSearchParams({
-        id_token_hint: idToken as string,
-      });
+      const params = new URLSearchParams({ id_token_hint: idToken as string });
 
-      logger.debug('2');
       logger.debug({ logoutUrl: config.logoutUrl, params });
       const response = await fetch(config.logoutUrl, {
         headers: {
@@ -35,26 +31,20 @@ async function doFinalSignoutHandshake(token: JWT) {
         method: 'POST',
         body: params,
       });
-      logger.debug('3');
       logger.debug({ response, ok: response?.ok, statusText: response?.statusText, body: response?.body }, 'Logout response');
 
-      logger.debug('4');
       const refreshedTokens = await response.json();
       if (response && !response.ok) {
-        logger.debug('5');
         logger.debug({ response, refreshedTokens }, 'Failed to logout');
         // noinspection ExceptionCaughtLocallyJS
         throw refreshedTokens;
       }
 
       // The response body should contain a confirmation that the user has been logged out
-      logger.debug('6');
       logger.info('Completed post-logout handshake');
     } catch (error: any) {
-      logger.debug('7');
       logger.error(error, 'Unable to perform post-logout handshake');
     }
-    logger.debug('8');
   }
 }
 
@@ -126,26 +116,23 @@ async function refreshAccessToken(token: JWT) {
 
 const credentialsProvider = CredentialsProvider({
   // The name to display on the sign in form (e.g. 'Sign in with...')
-  name: 'Credentials',
+  name: 'credentials',
   // The credentials is used to generate a suitable form on the sign in page.
   // You can specify whatever fields you are expecting to be submitted.
   // e.g. domain, username, password, 2FA token, etc.
   // You can pass any HTML attribute to the <input> tag through the object.
   credentials: {
-    username: { label: 'Username', type: 'text', placeholder: 'jsmith' },
-    password: { label: 'Password', type: 'password' },
+    username: { label: 'Utilisateur', type: 'text', placeholder: 'alicerichard' },
+    password: { label: 'Mot de Passe', type: 'password' },
   },
 
   async authorize(credentials, _req) {
-    // returns either a object representing a user or value
-    // false/null if the credentials are invalid.
-    // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
     const username = credentials?.username;
-    if (username == config.devUsername && credentials?.password == config.devPassword) {
-      return { id: '1', name: username, email: `${username}@example.com` };
+    const password = credentials?.password;
+    if (username != config.devUsername || password != config.devPassword) {
+      return null;
     }
-
-    return null;
+    return { id: '1', name: username, email: `${username}@example.com` };
   },
 });
 
@@ -156,8 +143,8 @@ if (config.isUsingDevCredentials) {
   providers.push(keycloak);
 }
 
+// noinspection JSUnusedGlobalSymbols
 export const authOptions = {
-  // Configure one or more authentication providers  
   providers,
   callbacks: {
     async jwt({ token, account, user, profile, isNewUser }: any) {
@@ -172,7 +159,7 @@ export const authOptions = {
 
         return {
           accessToken: account.access_token,
-          accessTokenExpires: Date.now() + (account.expires_at - 10) * 1000,
+          accessTokenExpires: currentDate + (account.expires_at - 10) * 1000,
           //accessTokenExpires: Date.now() + 5 * 1000,
           refreshToken: account.refresh_token,
           idToken: account.id_token,
@@ -183,13 +170,14 @@ export const authOptions = {
       //logger.warn('******')
       //logger.debug({ token, user, account, profile }, 'Token')
 
-      if (token.provider == 'credentials' || Date.now() < token.accessTokenExpires) {
+      if (token.provider == 'credentials' || currentDate < token.accessTokenExpires) {
         return token;
       }
 
       logger.debug('Token has expired, refreshing.');
       return refreshAccessToken(token);
     },
+
     async session({ session, token }: any) {
       // Send properties to the client, like an access_token from a provider.
       session.user = token.user;
@@ -200,7 +188,7 @@ export const authOptions = {
     },
   },
   events: {
-    signOut: ({ token }: any) => { doFinalSignoutHandshake(token); },
+    signOut: ({ token }: any) => { return doFinalSignoutHandshake(token); },
   },
 };
 
