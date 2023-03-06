@@ -31,9 +31,9 @@ describe('/api/detail_indicateur', () => {
         '02': {
           codeInsee: '02',
           valeurInitiale: 1001,
-          dateValeurInitiale: '2022-01-01',
+          dateValeurInitiale: '2022-01-01T00:00:00.000Z',
           valeurs: [1, 4, 6],
-          dateValeurs: ['2022-01-02', '2021-02-01', '2021-03-01'],
+          dateValeurs: ['2022-01-02T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
           valeurCible: 1790,
           avancement: {
             global: 40,
@@ -53,9 +53,9 @@ describe('/api/detail_indicateur', () => {
         '02': {
           codeInsee: '02',
           valeurInitiale: 1001,
-          dateValeurInitiale: '2022-01-01',
+          dateValeurInitiale: '2022-01-01T00:00:00.000Z',
           valeurs: [1, 4, 6],
-          dateValeurs: ['2022-01-02', '2021-02-01', '2021-03-01'],
+          dateValeurs: ['2022-01-02T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
           valeurCible: 1790,
           avancement: {
             global: 40,

@@ -78,14 +78,14 @@ describe('IndicateurSQLRepository', () => {
       expect(result[1].id).toEqual('IND-002');
       expect(result[0].mailles.nationale.FR.evolutionValeurActuelle).toEqual([1, 2]);
       expect(result[1].mailles.nationale.FR.evolutionValeurActuelle).toEqual([0.4, 0, 0.654]);
-      expect(result[0].mailles.nationale.FR.evolutionDateValeurActuelle).toEqual([date1, date2]);
-      expect(result[1].mailles.nationale.FR.evolutionDateValeurActuelle).toEqual([date1, date2, date3]);
+      expect(result[0].mailles.nationale.FR.evolutionDateValeurActuelle).toEqual([new Date(date1).toISOString(), new Date(date2).toISOString()]);
+      expect(result[1].mailles.nationale.FR.evolutionDateValeurActuelle).toEqual([new Date(date1).toISOString(), new Date(date2).toISOString(), new Date(date3).toISOString()]);
       expect(result[0].mailles.nationale.FR.evolutionValeurActuelle.length).toEqual(result[0].mailles.nationale.FR.evolutionDateValeurActuelle.length);
       expect(result[1].mailles.nationale.FR.evolutionValeurActuelle.length).toEqual(result[1].mailles.nationale.FR.evolutionDateValeurActuelle.length);
-      expect(result[0].mailles.nationale.FR.dateValeurInitiale).toEqual(dateA);
-      expect(result[1].mailles.nationale.FR.dateValeurInitiale).toEqual(dateC);
-      expect(result[0].mailles.nationale.FR.dateValeurActuelle).toEqual(dateB);
-      expect(result[1].mailles.nationale.FR.dateValeurActuelle).toEqual(dateD);
+      expect(result[0].mailles.nationale.FR.dateValeurInitiale).toEqual(new Date(dateA).toISOString());
+      expect(result[1].mailles.nationale.FR.dateValeurInitiale).toEqual(new Date(dateC).toISOString());
+      expect(result[0].mailles.nationale.FR.dateValeurActuelle).toEqual(new Date(dateB).toISOString());
+      expect(result[1].mailles.nationale.FR.dateValeurActuelle).toEqual(new Date(dateD).toISOString());
     });
   });
 
@@ -223,9 +223,9 @@ describe('IndicateurSQLRepository', () => {
             '01' : {
               codeInsee: '01',
               valeurInitiale: 1000,
-              dateValeurInitiale: '2021-01-01',
+              dateValeurInitiale: '2021-01-01T00:00:00.000Z',
               valeurs: [1, 2, 3],
-              dateValeurs: ['2021-01-01', '2021-02-01', '2021-03-01'],
+              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
               valeurCible: 1789,
               avancement: {
                 global: 20,
@@ -237,9 +237,9 @@ describe('IndicateurSQLRepository', () => {
             '02': {
               codeInsee: '02',
               valeurInitiale: 1001,
-              dateValeurInitiale: '2021-01-01',
+              dateValeurInitiale: '2021-01-01T00:00:00.000Z',
               valeurs: [1, 4, 6],
-              dateValeurs: ['2021-01-01', '2021-02-01', '2021-03-01'],
+              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
               valeurCible: 1790,
               avancement: {
                 global: 40,
@@ -249,9 +249,9 @@ describe('IndicateurSQLRepository', () => {
             '03': {
               codeInsee: '03',
               valeurInitiale: 1001,
-              dateValeurInitiale: '2021-01-01',
+              dateValeurInitiale: '2021-01-01T00:00:00.000Z',
               valeurs: [1, 4, 6],
-              dateValeurs: ['2021-01-01', '2021-02-01', '2021-03-01'],
+              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
               valeurCible: 1790,
               avancement: {
                 global: 40,
@@ -320,9 +320,9 @@ describe('IndicateurSQLRepository', () => {
             '02': {
               codeInsee: '02',
               valeurInitiale: 1001,
-              dateValeurInitiale: '2021-01-01',
+              dateValeurInitiale: '2021-01-01T00:00:00.000Z',
               valeurs: [1, 4, 6],
-              dateValeurs: ['2021-01-01', '2021-02-01', '2021-03-01'],
+              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
               valeurCible: 1790,
               avancement: {
                 global: 30,

@@ -134,7 +134,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       // Then
       expect(result).toStrictEqual({
         contenu: 'Quatrième commentaire',
-        date: '2023-12-31',
+        date: '2023-12-31T00:00:00.000Z',
         auteur: '',
       });
     });
