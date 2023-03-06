@@ -23,11 +23,6 @@ export const CODES_TYPES_COMMENTAIRES: Record<TypeCommentaire, string> = {
   autresRésultatsObtenus: 'autres_resultats_obtenus',
 };
 
-//TODO: factoriser la méthode car apparaît à 3 endroits dans le code
-function dateToDateStringWithoutTime(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
-
 export default class CommentaireSQLRepository implements CommentaireRepository {
   private prisma: PrismaClient;
 
@@ -43,7 +38,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     }
     return {
       contenu: commentaireByType[0].contenu,
-      date: dateToDateStringWithoutTime(commentaireByType[0].date),
+      date: commentaireByType[0].date.toISOString(),
       auteur: commentaireByType[0].auteur,
     };
   }

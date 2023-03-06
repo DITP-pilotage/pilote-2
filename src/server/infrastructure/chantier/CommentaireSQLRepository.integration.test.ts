@@ -104,18 +104,18 @@ describe('CommentaireSQLRepository', () => {
       expect(result).toStrictEqual({
         freinsÀLever: {
           contenu: 'Mon commentaire frein 2023',
-          date: '2023-12-31',
+          date: '2023-12-31T00:00:00.000Z',
           auteur: 'Jean Bon',
         },
         actionsÀVenir: {
           contenu: 'Mon commentaire action',
-          date: '2023-12-30',
+          date: '2023-12-30T00:00:00.000Z',
           auteur: 'Jean Nemar',
         },
         actionsÀValoriser: null,
         autresRésultatsObtenus: {
           contenu: 'Mon commentaire autres résultats en dernier',
-          date: '2022-02-28',
+          date: '2022-02-28T00:00:00.000Z',
           auteur: 'Jean Christophe',
         },
       });

@@ -7,9 +7,6 @@ import { DetailsCommentaire } from '@/server/domain/chantier/Commentaire.interfa
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
-function dateToDateStringWithoutTime(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
   private prisma: PrismaClient;
@@ -94,7 +91,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
 
       return {
         contenu: synthèseDesRésultats.commentaire,
-        date: dateToDateStringWithoutTime(synthèseDesRésultats.date_commentaire),
+        date: synthèseDesRésultats.date_commentaire.toISOString(),
         auteur: '',
       };
     }

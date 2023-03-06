@@ -6,17 +6,6 @@ import { FichesIndicateurs } from '@/server/domain/indicateur/DetailsIndicateur.
 import { Maille } from '@/server/domain/maille/Maille.interface';
 
 
-function dateToDateStringWithoutTime(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
-
-function dateOrNullToDateStringWithoutTime(date: Date | null): string | null {
-  if (date == null) {
-    return null;
-  }
-  return dateToDateStringWithoutTime(date);
-}
-
 export default class IndicateurSQLRepository implements IndicateurRepository {
   private prisma: PrismaClient;
 
@@ -38,11 +27,11 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
               valeurInitiale: row.valeur_initiale,
               valeurActuelle: row.valeur_actuelle,
               valeurCible: row.objectif_valeur_cible,
-              dateValeurInitiale: row.date_valeur_initiale !== null ? dateToDateStringWithoutTime(row.date_valeur_initiale) : null,
-              dateValeurActuelle: row.date_valeur_actuelle !== null ? dateToDateStringWithoutTime(row.date_valeur_actuelle) : null,
+              dateValeurInitiale: row.date_valeur_initiale !== null ? row.date_valeur_initiale.toISOString() : null,
+              dateValeurActuelle: row.date_valeur_actuelle !== null ? row.date_valeur_actuelle.toISOString() : null,
               tauxAvancementGlobal: row.objectif_taux_avancement,
               evolutionValeurActuelle: row.evolution_valeur_actuelle,
-              evolutionDateValeurActuelle: row.evolution_date_valeur_actuelle.map(date => dateToDateStringWithoutTime(date)),
+              evolutionDateValeurActuelle: row.evolution_date_valeur_actuelle.map(date => date.toISOString()),
             },
           },
           régionale: {},
@@ -97,9 +86,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       fichesIndicateurs[indic.id][indic.code_insee] = {
         codeInsee: indic.code_insee,
         valeurInitiale: indic.valeur_initiale,
-        dateValeurInitiale: dateOrNullToDateStringWithoutTime(indic.date_valeur_initiale),
+        dateValeurInitiale: indic.date_valeur_initiale !== null ? indic.date_valeur_initiale.toISOString() : null,
         valeurs: indic.evolution_valeur_actuelle,
-        dateValeurs: indic.evolution_date_valeur_actuelle.map((date) => dateToDateStringWithoutTime(date)),
+        dateValeurs: indic.evolution_date_valeur_actuelle.map((date) => date.toISOString()),
         valeurCible: indic.objectif_valeur_cible,
         avancement: {
           global: indic.objectif_taux_avancement,
