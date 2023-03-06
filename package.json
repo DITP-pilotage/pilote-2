@@ -52,15 +52,14 @@
     "d3-selection": "^3.0.0",
     "d3-zoom": "^3.0.0",
     "dotenv-cli": "^7.0.0",
+    "isomorphic-dompurify": "^1.0.0",
     "next": "^13.2.3",
     "nextjs-basic-auth-middleware": "^2.0.0",
     "pino": "^8.11.0",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
-    "zustand": "^4.3.5",
-    "chart.js": "^4.2.1",
-    "react-chartjs-2": "^5.2.0"
+    "zustand": "^4.3.5"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.4",

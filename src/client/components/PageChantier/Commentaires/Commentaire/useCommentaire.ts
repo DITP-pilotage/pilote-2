@@ -1,9 +1,12 @@
 /* eslint-disable unicorn/consistent-function-scoping */
+import DOMPurify from 'isomorphic-dompurify';
+
 export default function useCommentaire() {
 
-  function rendreLeHtml(contenu: string) {
+  function rendreLeHtml(contenuDuCommentaire: string) {
     // ne pas modifier sans une revue de code axée sur la sécurité
-    return contenu.replaceAll('\n', '<br/>');
+    const contenuDuCommentaireHtml = contenuDuCommentaire.replaceAll('\n', '<br/>');
+    return DOMPurify.sanitize(contenuDuCommentaireHtml);
   }
 
   return {
