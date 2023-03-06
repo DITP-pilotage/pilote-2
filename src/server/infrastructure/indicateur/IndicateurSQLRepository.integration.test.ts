@@ -2,6 +2,8 @@
 import { indicateur } from '@prisma/client';
 import IndicateurRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/IndicateurRowBuilder';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 import IndicateurSQLRepository from './IndicateurSQLRepository';
 
 describe('IndicateurSQLRepository', () => {
@@ -87,6 +89,71 @@ describe('IndicateurSQLRepository', () => {
     });
   });
 
+  describe('getCartographieDonnéesByMailleAndIndicateurId', () => {
+    test('Récupère une cartographie vide si aucun indicateur présent en base', async () => {
+      // GIVEN
+      const repository = new IndicateurSQLRepository(prisma);
+
+      // WHEN
+      const result = await repository.getCartographieDonnéesByMailleAndIndicateurId('IND-001',  'départementale');
+
+      // THEN
+      expect(result).toStrictEqual({});
+    });
+
+    test('Récupère les données de cartographie de deux indicateurs présent en base pour un id indicateur et une maille', async () => {
+      // GIVEN
+      const indicateurId = 'IND-001';
+      const maille: Maille = 'départementale';
+      const repository = new IndicateurSQLRepository(prisma);
+
+      const indicateurs: indicateur[] = [
+        new IndicateurRowBuilder()
+          .withId(indicateurId)
+          .withMaille(CODES_MAILLES[maille])
+          .withCodeInsee('01')
+          .withValeurActuelle(155)
+          .withObjectifTauxAvancement(50)
+          .build(),
+
+        new IndicateurRowBuilder()
+          .withId(indicateurId)
+          .withMaille(CODES_MAILLES[maille])
+          .withCodeInsee('02')
+          .withValeurActuelle(130)
+          .withObjectifTauxAvancement(70)
+          .build(),
+
+        new IndicateurRowBuilder()
+          .withId('IND-002')
+          .withMaille(CODES_MAILLES[maille])
+          .build(),
+
+        new IndicateurRowBuilder()
+          .withId(indicateurId)
+          .withMaille('REG')
+          .build(),
+      ];
+
+      await prisma.indicateur.createMany({ data: indicateurs });
+
+      // WHEN
+      const result = await repository.getCartographieDonnéesByMailleAndIndicateurId(indicateurId, maille);
+
+      // THEN
+      expect(result).toStrictEqual({
+        '01': {
+          avancementAnnuel : 50,
+          valeurActuelle: 155,
+        },
+        '02': {
+          avancementAnnuel : 70,
+          valeurActuelle: 130,
+        },
+      });
+    });
+  });
+
   describe('Détails indicateur', () => {
     test("Récupère une liste vide quand il n'y a pas d'indicateurs", async () => {
       // GIVEN
@@ -106,7 +173,6 @@ describe('IndicateurSQLRepository', () => {
       const indicateurs: indicateur[] = [
         new IndicateurRowBuilder()
           .withId('IND-001')
-          .withNom('indic')
           .withChantierId('CH-001')
           .withMaille('DEPT')
           .withCodeInsee('01')
@@ -120,7 +186,6 @@ describe('IndicateurSQLRepository', () => {
 
         new IndicateurRowBuilder()
           .withId('IND-002')
-          .withNom('indic2')
           .withChantierId('CH-001')
           .withMaille('DEPT')
           .withCodeInsee('02')
@@ -134,7 +199,6 @@ describe('IndicateurSQLRepository', () => {
 
         new IndicateurRowBuilder()
           .withId('IND-002')
-          .withNom('indic2')
           .withChantierId('CH-001')
           .withMaille('DEPT')
           .withCodeInsee('03')
@@ -206,7 +270,6 @@ describe('IndicateurSQLRepository', () => {
       const indicateurs: indicateur[] = [
         new IndicateurRowBuilder()
           .withId('IND-001')
-          .withNom('indic')
           .withChantierId('CH-001')
           .withMaille('DEPT')
           .withCodeInsee('01')
@@ -220,7 +283,6 @@ describe('IndicateurSQLRepository', () => {
 
         new IndicateurRowBuilder()
           .withId('IND-002')
-          .withNom('indic2')
           .withChantierId('CH-002')
           .withMaille('DEPT')
           .withCodeInsee('02')
@@ -234,7 +296,6 @@ describe('IndicateurSQLRepository', () => {
 
         new IndicateurRowBuilder()
           .withId('IND-002')
-          .withNom('indic2')
           .withChantierId('CH-002')
           .withMaille('REG')
           .withCodeInsee('02')

@@ -20,6 +20,14 @@ export type IndicateurTerritorialisé = {
 };
 
 export type IndicateurDonnéesTerritoires = Record<string, IndicateurTerritorialisé>;
+
+export type CartographieIndicateurTerritorialisée = {
+  avancementAnnuel: number | null,
+  valeurActuelle: number | null,
+};
+
+export type CartographieIndicateur = Record<CodeInsee, CartographieIndicateurTerritorialisée>;
+
 export default interface Indicateur {
   id: string;
   nom: string;

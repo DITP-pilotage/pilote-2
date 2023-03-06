@@ -2,9 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import logger from '@/server/infrastructure/logger';
 
-
-// GET /api/chantier/:idChantier:?codeInsee=:codeinsee:&maille=:nomdelamaille:
-
 class ParsingError extends Error {}
 
 function parseQueryParams(request: NextApiRequest): { chantierId: string, maille: string, codeInsee: string } {
