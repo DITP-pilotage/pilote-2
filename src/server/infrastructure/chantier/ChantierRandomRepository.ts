@@ -1,7 +1,10 @@
+
+import { faker } from '@faker-js/faker/locale/fr';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository, { InfosChantier } from '@/server/domain/chantier/ChantierRepository.interface';
 import ChantierFixture from '@/fixtures/ChantierFixture';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import CommentairesFixture from '@/fixtures/CommentairesFixture';
 
 export default class ChantierRandomRepository implements ChantierRepository {
   private readonly valeursFixes: Partial<Chantier>[] | undefined;
@@ -22,6 +25,15 @@ export default class ChantierRandomRepository implements ChantierRepository {
   }
 
   async getInfosChantier(_chantierId: string, _maille: string, _codeInsee: CodeInsee): Promise<InfosChantier> {
-    throw new Error('Not Implemented');
+    return {
+      // TODO fixture SynthèseDesRésultats
+      synthèseDesRésultats: {
+        contenu: faker.lorem.words(150),
+        date: faker.date.past().toLocaleDateString('fr-FR'),
+        auteur: faker.name.fullName(),
+      },
+      météo: 'SOLEIL',
+      commentaires: CommentairesFixture.générer(),
+    };
   }
 }

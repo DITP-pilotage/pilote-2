@@ -4,6 +4,7 @@ import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agré
 import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoiresComparésTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { FichesIndicateurs } from '@/server/domain/indicateur/DetailsIndicateur.interface';
+import { Commentaires } from '@/server/domain/chantier/Commentaire.interface';
 
 export default function usePageChantier(chantier: Chantier) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -11,7 +12,18 @@ export default function usePageChantier(chantier: Chantier) {
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoiresComparés = territoiresComparésTerritoiresStore();  
   
-  const [détailsIndicateurs, setDétailsIndicateurs] = useState<FichesIndicateurs>();
+  const [détailsIndicateurs, setDétailsIndicateurs] = useState<FichesIndicateurs | null>(null);
+  const [commentaires, setCommentaires] = useState<Commentaires | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/chantier/${chantier.id}?codeInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
+      .then(réponse => {
+        return réponse.json();
+      })
+      .then(données => {
+        setCommentaires(données?.commentaires ?? null); // TODO améliorer la gestion d'erreur
+      });
+  }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
 
   useEffect(() => {
     if (territoiresComparés.length > 0) return;    
@@ -33,8 +45,8 @@ export default function usePageChantier(chantier: Chantier) {
   const avancementRégional = () => {
     if (mailleAssociéeAuTerritoireSélectionné === 'régionale')
       return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements.moyenne;
-    
-    if (mailleAssociéeAuTerritoireSélectionné === 'départementale' && territoireSélectionné.codeInseeParent) 
+
+    if (mailleAssociéeAuTerritoireSélectionné === 'départementale' && territoireSélectionné.codeInseeParent)
       return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInseeParent].répartition.avancements.moyenne;
   };
 
@@ -58,5 +70,5 @@ export default function usePageChantier(chantier: Chantier) {
     },
   };
 
-  return { avancements, détailsIndicateurs };
+  return { avancements, détailsIndicateurs, commentaires };
 }
