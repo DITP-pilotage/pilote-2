@@ -75,18 +75,6 @@ Copier le fichier `/.env.example` vers `/data/.env` :
 cp ../.env.example .env
 ```
 
-Afin d'effectuer les migrations sur votre base de données :
-
-```bash
-alembic upgrade head
-```
-
-Note : alembic charge automatiquement les variables contenues dans le fichier `.env`,
-et est capable de trouver le `.env` dans le répertoire racine du projet.
-
-Voir dans le fichier `migrations/env.py` pour connaître les variables d'env
-utilisées par alembic.
-
 ## Usage
 
 ### Import des données
@@ -138,24 +126,6 @@ bash pilote_data_jobs/scripts/fill_tables_public.sh
 - DBT lit dans `raw_data`, le schéma d'import des données ;
 - DBT écrit dans `public`, le schéma de destination.
 
-### Evolutions du schéma `raw_data`
-
-Dans le cas où on souhaiterait ajouter ou modifier une table du schéma `raw_data`, 
-il faut modifier le fichier `migrations/model.py` selon la structure attendue du fichier importé.
-
-Par exemple, on souhaite ajouter la colonne `is_barometre` dans la table `metadata_chantier`, 
-on peut ajouter la ligne suivante à la classe `MetadataChantier` : 
-``` python 
-is_barometre = Column(BOOLEAN)
-```
-
-Pour créer la migration de la base associée au changement réalisé, il suffit de : 
-``` bash
-alembic revision --autogenerate -m "Mon message de commit"
-```
-
-Pour toute information complémentaire, [consultez la doc](https://alembic.sqlalchemy.org/en/latest/tutorial.html).
-
 # Schéma des flux de données
 
 Ce document souhaite poser les bases des flux de données alimentant l'application Pilote 2.
@@ -167,6 +137,7 @@ L'évolution de ces flux se fera au fur et à mesure de la création et l'évolu
 ``` mermaid
 graph LR
 PM(PPG_metadata) --> PG[(Base PG Pilote 2)]
+PT(ImportCommentaires) --> PG[(Base PG Pilote 2)]
 DFAK(Dump Dfakto) --> PG
 PG --> BE(Back-end) --> FE(Front-end)
 
@@ -187,9 +158,9 @@ PPG --> |view_meta_indicateur.csv| PG
 PPG --> |view_meta_zone.csv| PG
 PPG --> |view_meta_porteur.csv| PG
 PPG --> |ref_indic_type.csv| PG
+PPG --> |ref_chantier_meteo.csv| PG
 PPG --> |view_meta_axe.csv| PG
 PPG --> |view_meta_ppg.csv| PG
-PPG --> |rp_view_data_properties.csv| PG
 ```
 
 Légende :
@@ -206,16 +177,17 @@ Pour le moment aucun pipeline de données n'a été implémentée. On peut imagi
 ``` mermaid
 graph LR
 DFAK(Dump Dfakto) --> |fact_progress.csv| PG[(Base PG Pilote 2)]
-DFAK --> |dim_tree_nodes.csv| PG
 DFAK --> |fact_progress_reform.csv| PG
+DFAK --> |fact_financials_enr.csv| PG
+DFAK --> |dim_tree_nodes.csv| PG
 DFAK --> |dim_structures.csv| PG
 DFAK --> |dim_periods.csv| PG
-DFAK --> |fact_financials_enr.csv| PG
+DFAK --> |rp_view_data_properties.csv| PG
 ```
 
 _NB_ : 
 - Les données du csv `fact_progress_reform` sont importées dans la table `fact_progress_chantier`.
-- Les données du csv `fact_progress` sont importées dans la table `fact_progress_indicateur_`.
+- Les données du csv `fact_progress` sont importées dans la table `fact_progress_indicateur`.
 
 ## Zoom sur la partie transformation de données
 
@@ -261,7 +233,7 @@ subgraph Base PG Pilote 2
       M_TYPE --> IND
       M_IND --> IND[indicateur]
       D_FPE --> IND
-      linkStyle 0,1,2,3,4,5,6 stroke:red;
+      linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 stroke:red;
    end
 end
 ```
