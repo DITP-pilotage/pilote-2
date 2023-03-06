@@ -1,6 +1,6 @@
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { IndicateurDétailsParTerritoire } from '../../../Indicateurs.interface';
 
 export default interface IndicateurÉvolutionProps {
-  indicateur: Indicateur,
+  indicateurDétailsParTerritoires: IndicateurDétailsParTerritoire[]
 }
 

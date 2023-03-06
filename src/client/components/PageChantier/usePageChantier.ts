@@ -22,7 +22,7 @@ export default function usePageChantier(chantier: Chantier) {
         setDétailsIndicateurs(données);
       });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
+  }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee, mailleSélectionnée]);
   
   useEffect(() => {
     const codesInsee = territoiresComparés.map(territoire => `codesInsee=${territoire.codeInsee}`).join('&');

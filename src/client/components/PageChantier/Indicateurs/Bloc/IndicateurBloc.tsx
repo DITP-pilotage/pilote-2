@@ -9,8 +9,8 @@ import { IndicateurDétailsParTerritoire } from '../Indicateurs.interface';
 import useIndicateurs from '../useIndicateurs';
 
 export default function IndicateurBloc({ indicateur, détailsIndicateur } : IndicateurBlocProps) {
-  const { indicateurDétailsParTerritoires, colonnes } = useIndicateurs(détailsIndicateur);  
-  
+  const { indicateurDétailsParTerritoires, colonnes } = useIndicateurs(détailsIndicateur);
+
   return (
     <IndicateurBlocStyled
       className="fr-mb-2w"
@@ -43,7 +43,10 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur } : Indi
           données={indicateurDétailsParTerritoires}
           entité='indicateur'
         />
-        <IndicateurDétails indicateur={indicateur} />
+        <IndicateurDétails
+          indicateur={indicateur}
+          indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
+        />
       </Bloc>
     </IndicateurBlocStyled>
   );
