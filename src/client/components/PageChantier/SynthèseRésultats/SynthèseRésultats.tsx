@@ -27,7 +27,7 @@ export default function SynthèseRésultats({ chantier, synthèseDesRésultats }
             </div>
             <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
               {
-                synthèseDesRésultats
+                synthèseDesRésultats && synthèseDesRésultats.commentaireSynthèse
                   ?
                     <>
                       <div className="info-mise-a-jour-commentaire fr-text--xs fr-mb-1w">

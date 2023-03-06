@@ -6,9 +6,9 @@ import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale'
 import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
+import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
-import Commentaires from './Commentaires/Commentaires';
 import PageChantierProps from './PageChantier.interface';
 import Responsables from './Responsables/Responsables';
 import SynthèseRésultats from './SynthèseRésultats/SynthèseRésultats';
@@ -29,7 +29,7 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { avancements, détailsIndicateurs } = usePageChantier(chantier);
+  const { avancements, détailsIndicateurs, commentaires } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   
   return (
@@ -43,7 +43,7 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
         </BarreLatéraleEncart>
         <Sommaire rubriques={listeRubriques} />
       </BarreLatérale>
-      <div className='contenu-principal'>
+      <div className='contenu-principal fr-pb-5w'>
         <button
           className="fr-sr-only-xl fr-btn fr-btn--secondary fr-mb-2w"
           onClick={() => setEstOuverteBarreLatérale(true)}
@@ -75,20 +75,27 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
               <Cartes chantier={chantier} />
             </div>
           </div>
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <div className="fr-col-12">
-              {détailsIndicateurs !== undefined &&
-              <Indicateurs
-                détailsIndicateurs={détailsIndicateurs}
-                indicateurs={indicateurs}
-              />}
-            </div>
-          </div>
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <div className="fr-col-12">
-              <Commentaires />
-            </div>
-          </div>
+          {
+            détailsIndicateurs !== null && (
+              <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+                <div className="fr-col-12">
+                  <Indicateurs
+                    détailsIndicateurs={détailsIndicateurs}
+                    indicateurs={indicateurs}
+                  />
+                </div>
+              </div>
+            )
+          }
+          {
+            commentaires !== null && (
+              <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+                <div className="fr-col-12">
+                  <Commentaires commentaires={commentaires} />
+                </div>
+              </div>
+            )
+          }
         </div>
       </div>
     </PageChantierStyled>

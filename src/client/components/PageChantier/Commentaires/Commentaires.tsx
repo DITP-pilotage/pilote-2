@@ -1,22 +1,51 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
+import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import CommentairesProps from '@/components/PageChantier/Commentaires/Commentaires.interface';
+import typesCommentaire from '@/client/constants/typesCommentaire';
+import Commentaire from '@/components/PageChantier/Commentaires/Commentaire/Commentaire';
 
-export default function Commentaires() {
+export default function Commentaires({ commentaires }: CommentairesProps) {
+
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   return (
     <div
-      className='fr-pb-5w'
       id="commentaires"
     >
       <Titre
         baliseHtml='h2'
         className='fr-h4 fr-mb-2w'
       >
-        Commentaires du chantier (maille nationale)
+        Commentaires du chantier
       </Titre>
-      <Bloc titre='France'>
-        <p className='fr-grid-row fr-grid-row--center'>
-          A venir...
-        </p>
+      <Bloc titre={territoireSélectionné.nom}>
+        <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
+          <Commentaire
+            commentaire={commentaires['freinsÀLever']}
+            titre={typesCommentaire['freinsÀLever']}
+          />
+        </div>
+        <hr className='fr-hr fr-mx-n2w' />
+        <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
+          <Commentaire
+            commentaire={commentaires['actionsÀVenir']}
+            titre={typesCommentaire['actionsÀVenir']}
+          />
+        </div>
+        <hr className='fr-hr fr-mx-n2w' />
+        <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
+          <Commentaire
+            commentaire={commentaires['actionsÀValoriser']}
+            titre={typesCommentaire['actionsÀValoriser']}
+          />
+        </div>
+        <hr className='fr-hr fr-mx-n2w' />
+        <div className='fr-mx-2w fr-mt-1w fr-mb-2w'>
+          <Commentaire
+            commentaire={commentaires['autresRésultatsObtenus']}
+            titre={typesCommentaire['autresRésultatsObtenus']}
+          />
+        </div>
       </Bloc>
     </div>
   );
