@@ -3,9 +3,7 @@ import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
 import météos from '@/client/constants/météos';
 import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
-import {
-  CartographieÉlémentDeLégendeListe,
-} from '@/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe.interface';
+import { CartographieÉlémentDeLégendeListe } from '@/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import { CartographieDonnéesMétéo } from './CartographieMétéo.interface';

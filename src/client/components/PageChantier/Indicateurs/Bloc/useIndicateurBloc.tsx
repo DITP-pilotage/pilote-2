@@ -4,23 +4,27 @@ import { territoiresComparésTerritoiresStore, territoireSélectionnéTerritoire
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { DetailsIndicateur } from '@/server/domain/indicateur/DetailsIndicateur.interface';
-import { IndicateurDétailsParTerritoire } from './Indicateurs.interface';
-import ValeurEtDate from './Bloc/ValeurEtDate/ValeurEtDate';
+import ValeurEtDate from './ValeurEtDate/ValeurEtDate';
+import { IndicateurDétailsParTerritoire } from './IndicateurBloc.interface';
+
+const indicateurDétailsVide = {
+  territoireNom: '', 
+  données: {  
+    codeInsee: '',
+    valeurInitiale: null,
+    dateValeurInitiale: null,
+    valeurs: [],
+    dateValeurs: [],
+    valeurCible: null,
+    avancement: { annuel: null, global: null },
+  },
+};
+
+const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
 
 export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, DetailsIndicateur>) {
   const territoiresComparés = territoiresComparésTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const indicateurDétailsVide = {
-    territoireNom: '', 
-    données: {  
-      codeInsee: '',
-      valeurInitiale: null,
-      dateValeurInitiale: null,
-      valeurs: [],
-      dateValeurs: [],
-      valeurCible: null,
-      avancement: { annuel: null, global: null },
-    } };
 
   const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
 
@@ -46,7 +50,6 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Det
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [détailsIndicateur]);
   
-  const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
   const colonnes = [
     reactTableColonnesHelper.accessor( 'territoireNom', {
       header: 'Territoire(s)',

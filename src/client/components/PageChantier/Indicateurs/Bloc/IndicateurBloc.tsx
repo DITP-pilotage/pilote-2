@@ -3,10 +3,9 @@ import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import IndicateurDétails from '@/components/PageChantier/Indicateurs/Bloc/Détails/IndicateurDétails';
-import IndicateurBlocProps from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc.interface';
+import IndicateurBlocProps, { IndicateurDétailsParTerritoire } from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc.interface';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
-import { IndicateurDétailsParTerritoire } from '../Indicateurs.interface';
-import useIndicateurs from '../useIndicateurs';
+import useIndicateurs from './useIndicateurBloc';
 
 export default function IndicateurBloc({ indicateur, détailsIndicateur } : IndicateurBlocProps) {
   const { indicateurDétailsParTerritoires, colonnes } = useIndicateurs(détailsIndicateur);
@@ -44,8 +43,8 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur } : Indi
           entité='indicateur'
         />
         <IndicateurDétails
-          indicateur={indicateur}
           indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
+          indicateurId={indicateur.id}
         />
       </Bloc>
     </IndicateurBlocStyled>
