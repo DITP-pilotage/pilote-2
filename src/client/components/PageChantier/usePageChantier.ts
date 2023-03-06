@@ -4,7 +4,8 @@ import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agré
 import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoiresComparésTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { FichesIndicateurs } from '@/server/domain/indicateur/DetailsIndicateur.interface';
-import { Commentaires } from '@/server/domain/chantier/Commentaire.interface';
+import { Commentaires, DetailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export default function usePageChantier(chantier: Chantier) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -14,6 +15,8 @@ export default function usePageChantier(chantier: Chantier) {
   
   const [détailsIndicateurs, setDétailsIndicateurs] = useState<FichesIndicateurs | null>(null);
   const [commentaires, setCommentaires] = useState<Commentaires | null>(null);
+  const [synthèseDesRésultats, setSynthèseDesRésultats] = useState<DetailsCommentaire | null>(null);
+  const [météo, setMétéo] = useState<Météo>('NON_RENSEIGNEE');
 
   useEffect(() => {
     fetch(`/api/chantier/${chantier.id}?codeInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
@@ -21,7 +24,10 @@ export default function usePageChantier(chantier: Chantier) {
         return réponse.json();
       })
       .then(données => {
-        setCommentaires(données?.commentaires ?? null); // TODO améliorer la gestion d'erreur
+        // TODO améliorer la gestion d'erreur
+        setCommentaires(données?.commentaires ?? null);
+        setSynthèseDesRésultats(données?.synthèseDesRésultats ?? null);
+        setMétéo(données?.météo ?? 'NON_RENSEIGNEE');
       });
   }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
 
@@ -70,5 +76,5 @@ export default function usePageChantier(chantier: Chantier) {
     },
   };
 
-  return { avancements, détailsIndicateurs, commentaires };
+  return { avancements, détailsIndicateurs, commentaires, météo, synthèseDesRésultats };
 }
