@@ -62,7 +62,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     return null;
   }
   
-  async findNewestByChantierIdAndTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<DetailsCommentaire> {
+  async findNewestByChantierIdAndTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<DetailsCommentaire | null> {
     const synthèseDesRésultats: synthese_des_resultats | null = await this.prisma.synthese_des_resultats.findFirst({
       where: {
         chantier_id: chantierId,
@@ -80,7 +80,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
       orderBy: { date_commentaire : 'desc' },
     });
 
-    //TODO:
+    //TODO :
     // - voir la véracité des commentaire vides avec la DITP ? Comportement front ?
     // - formater la date côté front ?
 
@@ -98,10 +98,6 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
         auteur: '',
       };
     }
-    return {
-      contenu: null,
-      date: null,
-      auteur: null,
-    };
+    return null;
   }
 }

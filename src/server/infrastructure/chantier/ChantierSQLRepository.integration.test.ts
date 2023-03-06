@@ -245,7 +245,7 @@ describe('ChantierSQLRepository', () => {
     });
   });
 
-  describe('getMétriques', function () {
+  describe('getInfosChantier', function () {
     test('renvoie une liste vide quand aucune information en base pour le chantier', async () => {
       // Given
       const chantierId = 'CH-001';
@@ -265,16 +265,12 @@ describe('ChantierSQLRepository', () => {
       await prisma.chantier.createMany({ data: chantiers });
 
       // When
-      const result = await repository.getMétriques(chantierId, maille, codeInsee);
+      const result = await repository.getInfosChantier(chantierId, maille, codeInsee);
 
       // Then
       expect(result).toStrictEqual(
         {
-          synthèseDesRésultats: {
-            contenu: null,
-            date: null,
-            auteur: null,
-          },
+          synthèseDesRésultats: null,
           météo: 'NON_RENSEIGNEE',
           commentaires : commentairesNull,
         },
@@ -311,7 +307,7 @@ describe('ChantierSQLRepository', () => {
       await prisma.chantier.createMany({ data: chantiers });
 
       // When
-      const result = await repository.getMétriques(chantierId, maille, codeInsee);
+      const result = await repository.getInfosChantier(chantierId, maille, codeInsee);
 
       // Then
       expect(result).toStrictEqual(

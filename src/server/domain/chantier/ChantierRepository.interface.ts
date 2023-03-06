@@ -6,11 +6,11 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 export default interface ChantierRepository {
   getById(id: string): Promise<Chantier>;
   getListe(): Promise<Chantier[]>;
-  getMétriques(chantierId: string, maille: string, codeInsee: CodeInsee): Promise<MetriquesChantier>
+  getInfosChantier(chantierId: string, maille: string, codeInsee: CodeInsee): Promise<InfosChantier>
 }
 
-export type MetriquesChantier = {
-  synthèseDesRésultats: DetailsCommentaire
+export type InfosChantier = {
+  synthèseDesRésultats: DetailsCommentaire | null
   météo: Météo | null
   commentaires: Commentaires
 };

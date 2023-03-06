@@ -18,7 +18,7 @@ export default class SynthèseDesRésultatsRandomRepository implements Synthèse
     };
   }
   
-  findNewestByChantierIdAndTerritoire(_chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<DetailsCommentaire> {
+  findNewestByChantierIdAndTerritoire(_chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<DetailsCommentaire | null> {
     throw new Error('Not Implemented');
   }
 }

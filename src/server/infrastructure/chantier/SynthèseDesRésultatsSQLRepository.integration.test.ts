@@ -8,69 +8,81 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 
 describe('SynthèseDesRésultatsSQLRepository ', function () {
-  test('Premier test', async () => {
-    const createdDate = '2022-07-05T00:00:00.000Z';
+  describe('findNewestByChantierId', () => {
+    test('Récupère le contenu du commentaire et sa date si le chantier est présent en base', async () => {
+      const createdDate = '2022-07-05T00:00:00.000Z';
 
-    const résultatAttendu = {
-      commentaireSynthèse: {
-        contenu: 'Le suivi de l’indicateur relatif à la protection Animale...',
-        date: new Date(createdDate).toLocaleDateString('fr-FR'),
-      },
-    };
+      const résultatAttendu = {
+        commentaireSynthèse: {
+          contenu: 'Le suivi de l’indicateur relatif à la protection Animale...',
+          date: new Date(createdDate).toLocaleDateString('fr-FR'),
+        },
+      };
 
-    await prisma.synthese_des_resultats.create({
-      data: {
-        id: '0',
-        chantier_id: 'CH-001',
-        commentaire: résultatAttendu.commentaireSynthèse.contenu,
-        date_commentaire: createdDate,
-        maille: 'NAT',
-        code_insee: 'FR',
-      },
+      await prisma.synthese_des_resultats.create({
+        data: {
+          id: '0',
+          chantier_id: 'CH-001',
+          commentaire: résultatAttendu.commentaireSynthèse.contenu,
+          date_commentaire: createdDate,
+          maille: 'NAT',
+          code_insee: 'FR',
+        },
+      });
+
+      const repository = new SynthèseDesRésultatsSQLRepository(prisma);
+      const result = await repository.findNewestByChantierId('CH-001');
+      expect(result).toStrictEqual(résultatAttendu);
     });
+    test('Une ligne avec date de commentaire mais sans commentaire est sautée', async () => {
+      const createdDate = '2022-07-05T00:00:00.000Z';
 
-    const repository = new SynthèseDesRésultatsSQLRepository(prisma);
-    const result = await repository.findNewestByChantierId('CH-001');
-    expect(result).toStrictEqual(résultatAttendu);
-  });
+      const résultatAttendu = {
+        commentaireSynthèse: {
+          contenu: 'Le suivi de l’indicateur relatif à la protection Animale...',
+          date: new Date(createdDate).toLocaleDateString('fr-FR'),
+        },
+      };
 
-  test('Une ligne avec date de commentaire mais sans commentaire est sautée', async () => {
-    const createdDate = '2022-07-05T00:00:00.000Z';
+      await prisma.synthese_des_resultats.create({
+        data: {
+          id: '0',
+          chantier_id: 'CH-001',
+          date_commentaire: '2022-08-05T00:00:00.000Z',
+          maille: 'NAT',
+          code_insee: 'FR',
+        },
+      });
 
-    const résultatAttendu = {
-      commentaireSynthèse: {
-        contenu: 'Le suivi de l’indicateur relatif à la protection Animale...',
-        date: new Date(createdDate).toLocaleDateString('fr-FR'),
-      },
-    };
+      await prisma.synthese_des_resultats.create({
+        data: {
+          id: '1',
+          chantier_id: 'CH-001',
+          date_commentaire: createdDate,
+          commentaire: résultatAttendu.commentaireSynthèse.contenu,
+          maille: 'NAT',
+          code_insee: 'FR',
+        },
+      });
 
-    await prisma.synthese_des_resultats.create({
-      data: {
-        id: '0',
-        chantier_id: 'CH-001',
-        date_commentaire: '2022-08-05T00:00:00.000Z',
-        maille: 'NAT',
-        code_insee: 'FR',
-      },
+      const repository = new SynthèseDesRésultatsSQLRepository(prisma);
+      const result = await repository.findNewestByChantierId('CH-001');
+      expect(result).toStrictEqual(résultatAttendu);
     });
-
-    await prisma.synthese_des_resultats.create({
-      data: {
-        id: '1',
-        chantier_id: 'CH-001',
-        date_commentaire: createdDate,
-        commentaire: résultatAttendu.commentaireSynthèse.contenu,
-        maille: 'NAT',
-        code_insee: 'FR',
-      },
-    });
-
-    const repository = new SynthèseDesRésultatsSQLRepository(prisma);
-    const result = await repository.findNewestByChantierId('CH-001');
-    expect(result).toStrictEqual(résultatAttendu);
   });
 
   describe('findNewestByChantierIdAndTerritoire', () => {
+    test('Renvoie un détail commentaire null si aucune synthèses des résultats n\'est présente en base', async () => {
+      // Given
+      const repository = new SynthèseDesRésultatsSQLRepository(prisma);
+
+      // When
+      const result = await repository.findNewestByChantierIdAndTerritoire('CH-001', 'départementale', 'O1');
+
+      // Then
+      expect(result).toStrictEqual(null);
+    });
+
     test('renvoie la synthèse des résultats la plus récente et dont le commentaire est non nul', async () => {
       // Given
       const chantierId = 'CH-001';

@@ -13,7 +13,9 @@ renamed as (
         type,
         contenu,
         TO_DATE(date,'DD/MM/YYYY') as date,
-        nom as auteur
+        nom as auteur,
+        maille,
+        code_insee
 
     from source
 

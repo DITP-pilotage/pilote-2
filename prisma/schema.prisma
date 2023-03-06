@@ -87,6 +87,8 @@ model commentaire {
     chantier_id String
     type String
     contenu String
-    date DateTime? @db.Timestamp
-    auteur String?
+    date DateTime @db.Timestamp
+    auteur String
+    maille String
+    code_insee String
 }
