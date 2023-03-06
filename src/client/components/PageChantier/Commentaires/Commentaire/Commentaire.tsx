@@ -1,7 +1,10 @@
 import Titre from '@/components/_commons/Titre/Titre';
 import CommentaireProps from '@/components/PageChantier/Commentaires/Commentaire/Commentaire.interface';
+import useCommentaire from '@/components/PageChantier/Commentaires/Commentaire/useCommentaire';
 
 export default function Commentaire({ titre, commentaire }: CommentaireProps) {
+  const { rendreLeHtml } = useCommentaire();
+
   return (
     <>
       <Titre
@@ -16,9 +19,14 @@ export default function Commentaire({ titre, commentaire }: CommentaireProps) {
             <p className="fr-text--xs texte-gris fr-mb-1w">
               {`Mis à jour le ${commentaire.date} | par ${commentaire.auteur}`}
             </p>
-            <p className="fr-text--sm fr-mb-0">
-              {commentaire.contenu}
-            </p>
+            <p
+              className="fr-text--sm fr-mb-0"
+              // TODO trouver mieux que dangerouslySetInnerHTML
+              // eslint-disable-next-line react/no-danger
+              dangerouslySetInnerHTML={{
+                __html: rendreLeHtml(commentaire.contenu),
+              }}
+            />
           </>
         ) : (
           <p className="fr-text--sm fr-mb-0">
