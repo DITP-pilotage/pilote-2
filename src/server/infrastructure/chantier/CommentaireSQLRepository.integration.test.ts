@@ -121,4 +121,50 @@ describe('CommentaireSQLRepository', () => {
       });
     });
   });
+
+  describe('getObjectifsByChantierId', () => {
+    test('retourne l\'objectif avec un contenu, un auteur et une date le plus récent', async () => {
+      // GIVEN
+      const chantierId = 'CH-001';
+      const maille: Maille = 'nationale';
+      const codeInsee = 'FR';
+      const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
+
+      const commentaireRowBuilder = new CommentaireRowBuilder();
+
+      const commentaires: commentaire[] = [
+        commentaireRowBuilder
+          .withChantierId(chantierId)
+          .withMaille(CODES_MAILLES[maille])
+          .withCodeInsee(codeInsee)
+          .withType('objectifs')
+          .withContenu('Mon objectif 2022')
+          .withDate('2022-12-31')
+          .withAuteur('Jean Bon')
+          .build(),
+
+        commentaireRowBuilder
+          .withChantierId(chantierId)
+          .withMaille(CODES_MAILLES[maille])
+          .withCodeInsee(codeInsee)
+          .withType('objectifs')
+          .withContenu('Mon objectif 2023')
+          .withDate('2023-12-31')
+          .withAuteur('Jean Bon')
+          .build(),
+      ];
+
+      // WHEN
+      await prisma.commentaire.createMany({ data: commentaires });
+
+      const result = await commentaireRepository.getObjectifsByChantierId('CH-001');
+
+      // THEN
+      expect(result).toStrictEqual({
+        contenu: 'Mon objectif 2023',
+        date: '2023-12-31T00:00:00.000Z',
+        auteur: 'Jean Bon',
+      });
+    });
+  });
 });

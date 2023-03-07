@@ -1,7 +1,7 @@
 import SynthèseDesRésultatsRepository from '@/server/domain/chantier/SynthèseDesRésultatsRepository.interface';
 import SynthèseDesRésultats from '@/server/domain/chantier/SynthèseDesRésultats.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { DetailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export default class SynthèseDesRésultatsRandomRepository implements SynthèseDesRésultatsRepository {
@@ -18,7 +18,7 @@ export default class SynthèseDesRésultatsRandomRepository implements Synthèse
     };
   }
   
-  findNewestByChantierIdAndTerritoire(_chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<DetailsCommentaire | null> {
+  findNewestByChantierIdAndTerritoire(_chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<DétailsCommentaire | null> {
     throw new Error('Not Implemented');
   }
 }

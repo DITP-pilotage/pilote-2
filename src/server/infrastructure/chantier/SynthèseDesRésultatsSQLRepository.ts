@@ -3,7 +3,7 @@ import { AssertionError } from 'node:assert';
 import SynthèseDesRésultatsRepository from '@/server/domain/chantier/SynthèseDesRésultatsRepository.interface';
 import SynthèseDesRésultats from '@/server/domain/chantier/SynthèseDesRésultats.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
-import { DetailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
@@ -59,7 +59,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     return null;
   }
   
-  async findNewestByChantierIdAndTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<DetailsCommentaire | null> {
+  async findNewestByChantierIdAndTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<DétailsCommentaire | null> {
     const synthèseDesRésultats: synthese_des_resultats | null = await this.prisma.synthese_des_resultats.findFirst({
       where: {
         chantier_id: chantierId,

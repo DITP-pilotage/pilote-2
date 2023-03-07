@@ -1,6 +1,6 @@
-import { DetailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
 
 export default interface CommentaireProps {
   titre: string,
-  commentaire: DetailsCommentaire | null,
+  commentaire: DétailsCommentaire | null,
 }

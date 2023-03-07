@@ -2,7 +2,7 @@ import { commentaire, PrismaClient } from '@prisma/client';
 import CommentaireRepository from '@/server/domain/chantier/CommentaireRepository.interface';
 import {
   Commentaires,
-  DetailsCommentaire,
+  DétailsCommentaire,
   TypeCommentaire,
 } from '@/server/domain/chantier/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -31,7 +31,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   }
 
 
-  private getFirstCommentaireForAGivenType(commentaires: commentaire[], typeCommentaire: string): DetailsCommentaire | null {
+  private getFirstCommentaireForAGivenType(commentaires: commentaire[], typeCommentaire: string): DétailsCommentaire | null {
     const commentaireByType = commentaires.filter((comm) => comm.type == typeCommentaire);
     if (commentaireByType.length === 0) {
       return null;
@@ -52,7 +52,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
         code_insee: codeInsee,
         type: { in: ['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus'] },
       },
-      orderBy: { date : 'desc' },
+      orderBy: { date: 'desc' },
     });
 
     return {
@@ -60,6 +60,26 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
       actionsÀVenir: this.getFirstCommentaireForAGivenType(commentaires, 'actions_a_venir'),
       actionsÀValoriser: this.getFirstCommentaireForAGivenType(commentaires, 'actions_a_valoriser'),
       autresRésultatsObtenus: this.getFirstCommentaireForAGivenType(commentaires, 'autres_resultats_obtenus'),
+    };
+  }
+
+  async getObjectifsByChantierId(chantierId: string): Promise<DétailsCommentaire | null> {
+    const commentaireObjectifs: commentaire | null = await this.prisma.commentaire.findFirst({
+      where: {
+        chantier_id: chantierId,
+        type: 'objectifs',
+      },
+      orderBy: { date: 'desc' },
+    });
+
+    if (!commentaireObjectifs) {
+      return null;
+    }
+
+    return {
+      contenu: commentaireObjectifs.contenu,
+      auteur: commentaireObjectifs.auteur,
+      date: commentaireObjectifs.date.toISOString(),
     };
   }
 }
