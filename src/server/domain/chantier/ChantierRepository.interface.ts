@@ -8,7 +8,6 @@ export default interface ChantierRepository {
   getById(id: string): Promise<Chantier>;
   getListe(): Promise<Chantier[]>;
   récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null>
-  Deprecie__getInfosChantier(chantierId: string, maille: string, codeInsee: CodeInsee): Promise<InfosChantier>
 }
 
 export type InfosChantier = {

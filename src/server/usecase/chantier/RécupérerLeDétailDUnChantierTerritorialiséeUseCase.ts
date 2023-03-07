@@ -5,12 +5,13 @@ import SynthèseDesRésultatsRepository
 import ChantierRepository, { InfosChantier } from '@/server/domain/chantier/ChantierRepository.interface';
 import CommentaireRepository from '@/server/domain/chantier/CommentaireRepository.interface';
 import { DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export class RécupérerLeDétailDUnChantierTerritorialiséeUseCase {
   constructor(
-    private readonly chantierRepository: ChantierRepository,
-    private readonly synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository, 
-    private readonly commentaireRepository: CommentaireRepository,
+    private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
+    private readonly synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository(),
+    private readonly commentaireRepository: CommentaireRepository = dependencies.getCommentaireRepository(),
   ) {}
   
   private async _récupérerSynthèseDesRésultatsTerritorialisée(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<DétailsCommentaire | null> {

@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import logger from '@/server/infrastructure/logger';
 import {
   RécupérerLeDétailDUnChantierTerritorialiséeUseCase,
@@ -26,10 +25,7 @@ function parseQueryParams(request: NextApiRequest): { chantierId: string, maille
 export default async function handle(
   request: NextApiRequest,
   response: NextApiResponse,
-  // TODO: réflexion sur mettre ça dans dependencies ?
-  chantierUseCase = new RécupérerLeDétailDUnChantierTerritorialiséeUseCase(
-    dependencies.getChantierRepository(), dependencies.getSynthèseDesRésultatsRepository(), dependencies.getCommentaireRepository(),
-  ),
+  récupérerLeDétailDUnChantierTerritorialiséeUseCase = new RécupérerLeDétailDUnChantierTerritorialiséeUseCase(),
 ) {
   let params;
   try {
@@ -42,7 +38,7 @@ export default async function handle(
     throw error;
   }
 
-  const infosChantier = await chantierUseCase.run(params.chantierId, params.maille, params.codeInsee);
+  const infosChantier = await récupérerLeDétailDUnChantierTerritorialiséeUseCase.run(params.chantierId, params.maille, params.codeInsee);
 
   response
     .status(200)
