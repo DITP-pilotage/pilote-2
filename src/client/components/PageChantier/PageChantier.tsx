@@ -17,17 +17,19 @@ import Cartes from './Cartes/Cartes';
 import Sommaire from './Sommaire/Sommaire';
 import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
+import Objectifs from './Objectifs/Objectifs';
 
 const listeRubriques: Rubrique[] = [
   { nom: 'Avancement du chantier', ancre: 'avancement' },
   { nom: 'Responsables', ancre: 'responsables' },
   { nom: 'Synthèse des résultats', ancre: 'synthèse' },
   { nom: 'Répartition géographique', ancre: 'cartes' },
+  { nom: 'Objectifs', ancre: 'objectifs' },
   { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateurs },
   { nom: 'Commentaires', ancre: 'commentaires' },
 ];
 
-export default function PageChantier({ chantier, indicateurs }: PageChantierProps) {
+export default function PageChantier({ chantier, indicateurs, objectif }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { avancements, détailsIndicateurs, commentaires, météo, synthèseDesRésultats } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
@@ -73,6 +75,13 @@ export default function PageChantier({ chantier, indicateurs }: PageChantierProp
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
               <Cartes chantier={chantier} />
+            </div>
+          </div>
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className="fr-col-12">
+              <Objectifs
+                objectif={objectif}
+              />
             </div>
           </div>
           {
