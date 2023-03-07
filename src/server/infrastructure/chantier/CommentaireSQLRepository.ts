@@ -64,7 +64,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   }
 
   async getObjectifsByChantierId(chantierId: string): Promise<DétailsCommentaire | null> {
-    const commentaires: commentaire[] = await this.prisma.commentaire.findMany({
+    const commentaireObjectifs: commentaire | null = await this.prisma.commentaire.findFirst({
       where: {
         chantier_id: chantierId,
         type: 'objectifs',
@@ -72,6 +72,14 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
       orderBy: { date: 'desc' },
     });
 
-    return this.getFirstCommentaireForAGivenType(commentaires, 'objectifs');
+    if (!commentaireObjectifs) {
+      return null;
+    }
+
+    return {
+      contenu: commentaireObjectifs.contenu,
+      auteur: commentaireObjectifs.auteur,
+      date: commentaireObjectifs.date.toISOString(),
+    };
   }
 }
