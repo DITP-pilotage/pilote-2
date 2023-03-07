@@ -1,9 +1,9 @@
 import { synthese_des_resultats } from '@prisma/client';
-import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/chantier/SynthèseDesRésultatsSQLRepository';
+import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import SyntheseDesResultatsRowBuilder
   from '@/server/infrastructure/test/tools/rowBuilder/SyntheseDesResultatsRowBuilder';
-import SynthèseDesRésultatsRepository from '@/server/domain/chantier/SynthèseDesRésultatsRepository.interface';
+import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 
@@ -77,10 +77,10 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       const repository = new SynthèseDesRésultatsSQLRepository(prisma);
 
       // When
-      const result = await repository.findNewestByChantierIdAndTerritoire('CH-001', 'départementale', 'O1');
+      const result = await repository.récupérerLaPlusRécenteParChantierIdEtTerritoire('CH-001', 'départementale', 'O1');
 
       // Then
-      expect(result).toStrictEqual(null);
+      expect(result).toStrictEqual({ auteur: '', contenu: '', date: '' });
     });
 
     test('renvoie la synthèse des résultats la plus récente et dont le commentaire est non nul', async () => {
@@ -129,7 +129,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       await prisma.synthese_des_resultats.createMany({ data: synthesesDesResultats });
 
       // When
-      const result = await synthèseDesRésultatsRepository.findNewestByChantierIdAndTerritoire(chantierId, maille, codeInsee);
+      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécenteParChantierIdEtTerritoire(chantierId, maille, codeInsee);
 
       // Then
       expect(result).toStrictEqual({

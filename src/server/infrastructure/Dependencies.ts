@@ -8,10 +8,10 @@ import IndicateurSQLRepository from '@/server/infrastructure/indicateur/Indicate
 import IndicateurRandomRepository from '@/server/infrastructure/indicateur/IndicateurRandomRepository';
 import MinistèreSQLRepository from '@/server/infrastructure/ministère/MinistèreSQLRepository';
 import MinistèreInMemoryRepository from '@/server/infrastructure/ministère/MinistèreInMemoryRepository';
-import SynthèseDesRésultatsRepository from '@/server/domain/chantier/SynthèseDesRésultatsRepository.interface';
+import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import SynthèseDesRésultatsRandomRepository
-  from '@/server/infrastructure/chantier/SynthèseDesRésultatsRandomRepository';
-import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/chantier/SynthèseDesRésultatsSQLRepository';
+  from '@/server/infrastructure/synthèseDesRésultats/SynthèseDesRésultatsRandomRepository';
+import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import config from '@/server/infrastructure/Configuration';
 import logger from '@/server/infrastructure/logger';
 import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
@@ -38,7 +38,7 @@ class Dependencies {
   private readonly _ministèreRepository: MinistèreRepository;
 
   private readonly _indicateurRepository: IndicateurRepository;
-  
+
   private readonly _commentaireRepository: CommentaireRepository;
 
   constructor() {
@@ -94,16 +94,16 @@ class Dependencies {
     return this._synthèseDesRésultatsRepository;
   }
 
+  getCommentaireRepository(): CommentaireRepository {
+    return this._commentaireRepository;
+  }
+
   getMinistèreRepository(): MinistèreRepository {
     return this._ministèreRepository;
   }
 
   getIndicateurRepository(): IndicateurRepository {
     return this._indicateurRepository;
-  }
-
-  getCommentaireRepository() {
-    return this._commentaireRepository;
   }
 }
 

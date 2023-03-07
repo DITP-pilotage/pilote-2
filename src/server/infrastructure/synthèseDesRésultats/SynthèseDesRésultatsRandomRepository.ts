@@ -1,8 +1,8 @@
-import SynthèseDesRésultatsRepository from '@/server/domain/chantier/SynthèseDesRésultatsRepository.interface';
-import SynthèseDesRésultats from '@/server/domain/chantier/SynthèseDesRésultats.interface';
+import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
+import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
 
 export default class SynthèseDesRésultatsRandomRepository implements SynthèseDesRésultatsRepository {
 
@@ -17,8 +17,8 @@ export default class SynthèseDesRésultatsRandomRepository implements Synthèse
       },
     };
   }
-  
-  findNewestByChantierIdAndTerritoire(_chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<DétailsCommentaire | null> {
+
+  récupérerLaPlusRécenteParChantierIdEtTerritoire(_chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<DétailsCommentaire> {
     throw new Error('Not Implemented');
   }
 }

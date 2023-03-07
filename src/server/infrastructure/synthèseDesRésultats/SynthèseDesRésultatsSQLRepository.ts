@@ -1,11 +1,11 @@
 import { synthese_des_resultats, PrismaClient } from '@prisma/client';
 import { AssertionError } from 'node:assert';
-import SynthèseDesRésultatsRepository from '@/server/domain/chantier/SynthèseDesRésultatsRepository.interface';
-import SynthèseDesRésultats from '@/server/domain/chantier/SynthèseDesRésultats.interface';
+import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
+import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
-import { DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
 
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
@@ -13,6 +13,14 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
+  }
+
+  private _toDomain(synthèse: synthese_des_resultats | null): DétailsCommentaire {
+    return {
+      contenu: synthèse?.commentaire || '',
+      date: synthèse?.date_commentaire?.toISOString() || '',
+      auteur: '',
+    };
   }
 
   // FIXME: attention, la méthode findNewestByChantierId de synthèseDesRésultatsRepository est dépréciée
@@ -59,13 +67,13 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     return null;
   }
   
-  async findNewestByChantierIdAndTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<DétailsCommentaire | null> {
-    const synthèseDesRésultats: synthese_des_resultats | null = await this.prisma.synthese_des_resultats.findFirst({
+  async récupérerLaPlusRécenteParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<DétailsCommentaire> {
+    const synthèseDesRésultats = await this.prisma.synthese_des_resultats.findFirst({
       where: {
         chantier_id: chantierId,
         maille: CODES_MAILLES[maille],
         code_insee: codeInsee,
-        NOT : [
+        NOT: [
           {
             commentaire: null,
           },
@@ -77,24 +85,6 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
       orderBy: { date_commentaire : 'desc' },
     });
 
-    //TODO :
-    // - voir la véracité des commentaire vides avec la DITP ? Comportement front ?
-    // - formater la date côté front ?
-
-    if (synthèseDesRésultats) {
-
-      if (synthèseDesRésultats.commentaire === null || synthèseDesRésultats.date_commentaire === null) {
-        throw new AssertionError({
-          message: `La requête doit sélectionner un commentaire et une date non null. Synthèse id : ${synthèseDesRésultats.id}`,
-        });
-      }
-
-      return {
-        contenu: synthèseDesRésultats.commentaire,
-        date: synthèseDesRésultats.date_commentaire.toISOString(),
-        auteur: '',
-      };
-    }
-    return null;
+    return this._toDomain(synthèseDesRésultats);
   }
 }

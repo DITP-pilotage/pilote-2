@@ -4,7 +4,7 @@ import ChantierRepository from '@/server/domain/chantier/ChantierRepository.inte
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ChantierRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/ChantierRowBuilder';
 import { objectEntries } from '@/client/utils/objects/objects';
-import { commentairesNull } from '@/server/domain/chantier/Commentaire.interface';
+import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -243,36 +243,30 @@ describe('ChantierSQLRepository', () => {
     });
   });
 
-  describe('getInfosChantier', function () {
-    test('renvoie une liste vide quand aucune information en base pour le chantier', async () => {
+  describe('récupérerParIdEtTerritoire', function () {
+    test('renvoie la météo pour un chantier et territoire donné', async () => {
       // Given
       const chantierId = 'CH-001';
-      const maille = 'REG';
+      const maille = 'régionale';
       const codeInsee = '01';
       const repository: ChantierRepository = new ChantierSQLRepository(prisma);
 
       const chantiers: chantier[] = [
         new ChantierRowBuilder()
           .withId(chantierId)
-          .withMaille(maille)
+          .withMaille(CODES_MAILLES[maille])
           .withCodeInsee(codeInsee)
-          .withMétéo(null)
+          .withMétéo('ORAGE')
           .build(),
       ];
 
       await prisma.chantier.createMany({ data: chantiers });
 
       // When
-      const result = await repository.getInfosChantier(chantierId, maille, codeInsee);
+      const result = await repository.récupérerMétéoParChantierIdEtTerritoire(chantierId, maille, codeInsee);
 
       // Then
-      expect(result).toStrictEqual(
-        {
-          synthèseDesRésultats: null,
-          météo: 'NON_RENSEIGNEE',
-          commentaires : commentairesNull,
-        },
-      );
+      expect(result).toStrictEqual('ORAGE');
     });
   });
 });

@@ -1,10 +1,11 @@
-
 import { faker } from '@faker-js/faker/locale/fr';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository, { InfosChantier } from '@/server/domain/chantier/ChantierRepository.interface';
 import ChantierFixture from '@/fixtures/ChantierFixture';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import CommentairesFixture from '@/fixtures/CommentairesFixture';
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export default class ChantierRandomRepository implements ChantierRepository {
   private readonly valeursFixes: Partial<Chantier>[] | undefined;
@@ -24,7 +25,11 @@ export default class ChantierRandomRepository implements ChantierRepository {
     return ChantierFixture.générerPlusieurs(this.valeursFixes.length, this.valeursFixes);
   }
 
-  async getInfosChantier(_chantierId: string, _maille: string, _codeInsee: CodeInsee): Promise<InfosChantier> {
+  récupérerMétéoParChantierIdEtTerritoire(_chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<Météo | null> {
+    throw new Error('Not Implemented');
+  }
+
+  async Deprecie__getInfosChantier(_chantierId: string, _maille: string, _codeInsee: CodeInsee): Promise<InfosChantier> {
     return {
       // TODO fixture SynthèseDesRésultats
       synthèseDesRésultats: {
