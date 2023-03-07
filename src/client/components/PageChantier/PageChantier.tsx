@@ -27,9 +27,9 @@ const listeRubriques: Rubrique[] = [
   { nom: 'Commentaires', ancre: 'commentaires' },
 ];
 
-export default function PageChantier({ chantier, indicateurs, synthèseDesRésultats }: PageChantierProps) {
+export default function PageChantier({ chantier, indicateurs }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { avancements, détailsIndicateurs, commentaires } = usePageChantier(chantier);
+  const { avancements, détailsIndicateurs, commentaires, météo, synthèseDesRésultats } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   
   return (
@@ -65,7 +65,7 @@ export default function PageChantier({ chantier, indicateurs, synthèseDesRésul
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
               <SynthèseRésultats
-                chantier={chantier}
+                météo={météo}
                 synthèseDesRésultats={synthèseDesRésultats}
               />
             </div>

@@ -1,7 +1,7 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import SynthèseDesRésultats from '@/server/domain/chantier/SynthèseDesRésultats.interface';
+import { DetailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export interface SynthèseRésultatsProps {
-  chantier: Chantier
-  synthèseDesRésultats: SynthèseDesRésultats
+  météo: Météo
+  synthèseDesRésultats: DetailsCommentaire | null
 }
