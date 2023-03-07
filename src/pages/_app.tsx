@@ -4,9 +4,11 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css';
 import '@/client/styles/app.scss';
 import type { AppProps } from 'next/app';
 import Script from 'next/script';
+import { SessionProvider } from 'next-auth/react';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
 
-export default function MonApplication({ Component, pageProps }: AppProps) {
+
+export default function MonApplication({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <>
       <Script
@@ -17,9 +19,11 @@ export default function MonApplication({ Component, pageProps }: AppProps) {
         noModule
         src="/js/dsfr/dsfr.nomodule.min.js"
       />
-      <MiseEnPage>
-        <Component {...pageProps} />
-      </MiseEnPage>
+      <SessionProvider session={session} >
+        <MiseEnPage>
+          <Component {...pageProps} />
+        </MiseEnPage>
+      </SessionProvider>
     </>
   );
 }

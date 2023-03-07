@@ -1,3 +1,8 @@
 import pino from 'pino';
+import config from '@/server/infrastructure/Configuration';
 
-export default pino();
+const logger = pino({
+  level: config.logLevel,
+});
+
+export default logger;
