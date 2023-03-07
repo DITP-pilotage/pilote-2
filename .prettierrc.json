@@ -1,0 +1,6 @@
+{
+  "singleAttributePerLine": true,
+  "printWidth": 100,
+  "arrowParens": "avoid",
+  "trailingComma": "all"
+}

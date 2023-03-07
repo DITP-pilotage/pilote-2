@@ -1,0 +1,11 @@
+.github
+.idea
+.next
+.swc
+data
+db
+doc
+node_modules
+prisma
+public
+scripts

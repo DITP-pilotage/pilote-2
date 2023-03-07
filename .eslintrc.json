@@ -9,7 +9,8 @@
     "plugin:jsx-a11y/recommended",
     "plugin:react/jsx-runtime",
     "next",
-    "airbnb-typescript"
+    "airbnb-typescript",
+    "prettier"
   ],
   "plugins": [
     "unicorn",
@@ -17,7 +18,8 @@
     "simple-import-sort",
     "react-hooks",
     "import",
-    "jsx-a11y"
+    "jsx-a11y",
+    "prettier"
   ],
   "settings": {
     "react": {
@@ -31,29 +33,19 @@
     "import/no-extraneous-dependencies": [
       "error",
       {
-        "devDependencies": [
-          "**/fixtures/**",
-          "**/*.test.{ts,tsx}"
-        ],
+        "devDependencies": ["**/fixtures/**", "**/*.test.{ts,tsx}"],
         "optionalDependencies": false
       }
     ],
-    "import/order":
-    [
+    "import/order": [
       1,
-      { 
-        "groups": [
-          "external",
-          "builtin",
-          "internal",
-          "sibling",
-          "parent",
-          "index"
-        ]
+      {
+        "groups": ["external", "builtin", "internal", "sibling", "parent", "index"]
       }
     ],
     "no-console": "error",
     "no-unused-vars": "off",
+    "prettier/prettier": ["error"],
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "unicorn/prevent-abbreviations": "off",
     "unicorn/filename-case": "off",
@@ -70,14 +62,8 @@
         "maximum": 1
       }
     ],
-    "react/jsx-indent": [
-      2,
-      2
-    ],
-    "react/jsx-indent-props": [
-      2,
-      2
-    ],
+    "react/jsx-indent": [2, 2],
+    "react/jsx-indent-props": [2, 2],
     "react/jsx-max-depth": [
       2,
       {
