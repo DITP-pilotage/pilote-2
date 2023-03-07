@@ -1,10 +1,9 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
-import { ObjectifsProps } from '@/components/PageChantier/Objectifs/Objectifs.interface';
-import ObjectifsStyled from '@/components/PageChantier/Objectifs/Objectifs.styled';
 import { formaterDate } from '@/client/utils/date/date';
+import { ObjectifProps } from '@/components/PageChantier/Objectif/Objectif.interface';
 
-export default function Objectifs({ objectif }: ObjectifsProps) {
+export default function Objectif({ objectif }: ObjectifProps) {
   return (
     <div id="objectifs">
       <Titre
@@ -14,13 +13,13 @@ export default function Objectifs({ objectif }: ObjectifsProps) {
         Objectifs
       </Titre>
       <Bloc titre="National">
-        <ObjectifsStyled className='fr-grid-row'>
+        <div className='fr-grid-row'>
           <div className="fr-col-12">
             {
               objectif && objectif?.contenu?.trim() !== ''
                 ?
                   <>
-                    <div className="metadonnées fr-text--xs fr-mb-1w">
+                    <div className="texte-gris fr-text--xs fr-mb-1w">
                       {`Mis à jour le ${formaterDate(objectif.date, 'jj/mm/aaaa')}`}
                     </div>
                     <p className="fr-text--sm">
@@ -30,7 +29,7 @@ export default function Objectifs({ objectif }: ObjectifsProps) {
                 : 'Aucun objectif renseigné.'
             }
           </div>
-        </ObjectifsStyled>
+        </div>
       </Bloc>
     </div>
   );

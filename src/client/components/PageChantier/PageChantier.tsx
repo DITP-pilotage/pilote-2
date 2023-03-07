@@ -17,7 +17,7 @@ import Cartes from './Cartes/Cartes';
 import Sommaire from './Sommaire/Sommaire';
 import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
-import Objectifs from './Objectifs/Objectifs';
+import Objectif from './Objectif/Objectif';
 
 const listeRubriques: Rubrique[] = [
   { nom: 'Avancement du chantier', ancre: 'avancement' },
@@ -79,9 +79,7 @@ export default function PageChantier({ chantier, indicateurs, objectif }: PageCh
           </div>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
-              <Objectifs
-                objectif={objectif}
-              />
+              <Objectif objectif={objectif} />
             </div>
           </div>
           {
