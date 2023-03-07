@@ -5,10 +5,6 @@ const SynthèseRésultatsStyled = styled.div`
     text-align: center;
   }
 
-  .metadonnées {
-    color: var(--text-mention-grey);
-  }
-
   .libellé-météo {
     color: var(--text-label-blue-france);
   }

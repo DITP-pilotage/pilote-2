@@ -7,13 +7,15 @@ import { DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interf
 interface NextPageChantierProps {
   chantier: Chantier
   indicateurs: Indicateur[]
+  objectif: DétailsCommentaire | null
 }
 
-export default function NextPageChantier({ chantier, indicateurs }: NextPageChantierProps) {
+export default function NextPageChantier({ chantier, indicateurs, objectif }: NextPageChantierProps) {
   return (
     <PageChantier 
       chantier={chantier} 
       indicateurs={indicateurs}
+      objectif={objectif}
     />
   );
 }
@@ -26,13 +28,13 @@ export async function getServerSideProps({ params }: { params: { id: Chantier['i
   const indicateurs: Indicateur[] = await indicateurRepository.getByChantierId(params.id);
 
   const commentaireRepository = dependencies.getCommentaireRepository();
-  const objectifs: DétailsCommentaire | null = await commentaireRepository.getObjectifsByChantierId(params.id);
+  const objectif: DétailsCommentaire | null = await commentaireRepository.getObjectifsByChantierId(params.id);
 
   return {
     props: {
       chantier,
       indicateurs,
-      objectifs,
+      objectif,
     },
   };
 }
