@@ -1,6 +1,6 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import { Commentaires, DetailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { Commentaires, DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export default interface ChantierRepository {
@@ -10,7 +10,7 @@ export default interface ChantierRepository {
 }
 
 export type InfosChantier = {
-  synthèseDesRésultats: DetailsCommentaire | null
+  synthèseDesRésultats: DétailsCommentaire | null
   météo: Météo | null
   commentaires: Commentaires
 };

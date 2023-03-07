@@ -2,7 +2,7 @@ import { commentaire, PrismaClient } from '@prisma/client';
 import CommentaireRepository from '@/server/domain/chantier/CommentaireRepository.interface';
 import {
   Commentaires,
-  DetailsCommentaire,
+  DétailsCommentaire,
   TypeCommentaire,
 } from '@/server/domain/chantier/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -31,7 +31,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   }
 
 
-  private getFirstCommentaireForAGivenType(commentaires: commentaire[], typeCommentaire: string): DetailsCommentaire | null {
+  private getFirstCommentaireForAGivenType(commentaires: commentaire[], typeCommentaire: string): DétailsCommentaire | null {
     const commentaireByType = commentaires.filter((comm) => comm.type == typeCommentaire);
     if (commentaireByType.length === 0) {
       return null;
@@ -63,7 +63,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     };
   }
 
-  async getObjectifsByChantierId(chantierId: string): Promise<DetailsCommentaire | null> {
+  async getObjectifsByChantierId(chantierId: string): Promise<DétailsCommentaire | null> {
     const commentaires: commentaire[] = await this.prisma.commentaire.findMany({
       where: {
         chantier_id: chantierId,

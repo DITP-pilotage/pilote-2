@@ -1,10 +1,10 @@
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import { Commentaires, DetailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { Commentaires, DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
 import CommentaireRepository from '@/server/domain/chantier/CommentaireRepository.interface';
 
 export default class CommentaireRandomRepository implements CommentaireRepository {
-  getObjectifsByChantierId(_chantierId: string): Promise<DetailsCommentaire | null> {
+  getObjectifsByChantierId(_chantierId: string): Promise<DétailsCommentaire | null> {
     throw new Error('Not Implemented');
   }
 

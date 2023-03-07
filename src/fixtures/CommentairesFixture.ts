@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker';
 import FixtureInterface from '@/fixtures/Fixture.interface';
-import { Commentaires, DetailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { Commentaires, DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
 
 class CommentairesFixture implements FixtureInterface<Commentaires> {
 
-  private générerCommentaire(): DetailsCommentaire {
+  private générerCommentaire(): DétailsCommentaire {
     return {
       contenu: faker.lorem.words(50),
       date: faker.date.past().toLocaleDateString('fr-FR'),

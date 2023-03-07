@@ -26,11 +26,6 @@ class ChantierFixture implements FixtureInterface<Chantier> {
         directeursProjet: [],
       },
       estBaromètre: faker.datatype.boolean(),
-      objectifs: {
-        contenu: 'mon objectif',
-        date: '2023-12-31T00:00:00.000Z',
-        auteur: 'Jean Bon',
-      },
       ...valeursFixes,
     };
   }
