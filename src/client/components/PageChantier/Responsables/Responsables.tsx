@@ -24,22 +24,22 @@ export default function Responsables({ chantier }: ResponsablesProps) {
         Responsables
       </Titre>
       <Bloc titre="National">
-        <div className="fr-mt-3w">
+        <div>
           <ResponsablesLigne
             contenu={[responsables.porteur]}
             libellé="Ministère porteur"
           />
-          <hr className='fr-hr' />
+          <hr className='fr-hr fr-py-1w' />
           <ResponsablesLigne
             contenu={responsables.coporteurs.map(coporteur => coporteur)}
             libellé="Autres ministères co-porteurs"
           />
-          <hr className='fr-hr' />
+          <hr className='fr-hr fr-py-1w' />
           <ResponsablesLigne
             contenu={responsables.directeursAdminCentrale.map(directeur => (`${directeur.nom} (${directeur.direction})`))}
             libellé="Directeur(s) / directrice(s) d’Administration Centrale"
           />
-          <hr className='fr-hr' />
+          <hr className='fr-hr fr-py-1w' />
           <ResponsablesLigne
             contenu={responsables.directeursProjet.map(directeur => (mailTo(directeur.nom, directeur.email)))}
             libellé="Directeur(s) / directrice(s) du projet"

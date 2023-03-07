@@ -25,7 +25,7 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
             <Bloc titre={territoireSélectionné.nom}>
               <div className='fr-py-4w jauge'>
                 <JaugeDeProgression
-                  couleur="bleu"
+                  couleur="bleuClair"
                   libellé={territoireSélectionné.nom}
                   pourcentage={avancements.départementale.moyenne}
                   taille="grande"
@@ -40,7 +40,7 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
             <Bloc titre={territoireSélectionné.territoireParent ? territoireSélectionné.territoireParent.nom : territoireSélectionné.nom}>
               <div className='fr-py-4w jauge'>
                 <JaugeDeProgression
-                  couleur="bleu"
+                  couleur="bleuClair"
                   libellé={territoireSélectionné.territoireParent ? territoireSélectionné.territoireParent.nom : territoireSélectionné.nom}
                   pourcentage={avancements.régionale.moyenne}
                   taille="grande"

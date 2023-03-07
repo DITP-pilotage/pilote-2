@@ -13,14 +13,12 @@ export const listeRubriquesIndicateurs: ÉlémentPageIndicateursType[] = [
 ];
 
 export default function Indicateurs({ indicateurs, détailsIndicateurs }: IndicateursProps) {
-  const indicateursGroupésParType: Record<NonNullable<TypeIndicateur>, Indicateur[]> = Object.fromEntries(typesIndicateur.map(type =>
-    [type, indicateurs.filter(indicateur => indicateur.type === type)],
-  ));
+  const indicateursGroupésParType: Record<NonNullable<TypeIndicateur>, Indicateur[]> = Object.fromEntries(
+    typesIndicateur.map(type => [type, indicateurs.filter(indicateur => indicateur.type === type)]),
+  );
 
   return (
-    <div
-      id="indicateurs"
-    >
+    <div id="indicateurs">
       <Titre
         baliseHtml='h2'
         className='fr-h4 fr-mb-2w'
@@ -30,7 +28,7 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs }: Indica
       { 
         listeRubriquesIndicateurs.map(rubrique => (
           <div
-            className='fr-mb-4w'
+            className='fr-mb-3w'
             id={rubrique.ancre}
             key={rubrique.ancre}
           >

@@ -24,7 +24,7 @@ export default function TableauPagination({ nombreDePages, changementDePageCallb
   return (
     <nav
       aria-label="Pagination"
-      className="fr-pagination fr-grid-row fr-grid-row--center fr-mt-4w"
+      className="fr-pagination fr-grid-row fr-grid-row--center fr-mt-11v fr-mb-10w"
       role="navigation"
     >
       <ul className="fr-pagination__list">

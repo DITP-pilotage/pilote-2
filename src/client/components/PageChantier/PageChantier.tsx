@@ -60,12 +60,10 @@ export default function PageChantier({ chantier, indicateurs, objectif }: PageCh
             <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-6' : 'fr-col-xl-12'} fr-col-12`}>
               <AvancementChantier avancements={avancements} />
             </div>
-            <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-6' : 'fr-col-xl-12'} fr-col-12`}>
+            <div className='fr-col-xl-6 fr-col-12'>
               <Responsables chantier={chantier} />
             </div>
-          </div>
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <div className="fr-col-12">
+            <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
               <SynthèseRésultats
                 météo={météo}
                 synthèseDesRésultats={synthèseDesRésultats}

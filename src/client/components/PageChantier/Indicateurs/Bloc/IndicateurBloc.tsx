@@ -27,14 +27,8 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur } : Indi
           /> }
           { indicateur.nom }
         </Titre>
-        <p className='fr-mb-1w information-secondaire texte-gris'>
+        <p className='fr-mb-2w information-secondaire texte-gris'>
           Dernière mise à jour : Non renseigné
-        </p>
-        <p className='fr-mb-1w information-secondaire texte-gris'>
-          Source : Non renseigné
-        </p>
-        <p className="fr-text--xs fr-mb-1v">
-          Ceci est la description de l’indicateur et des données associées. La pondération de l’indicateur dans le taux d’avancement global est également expliquée.
         </p>
         <Tableau<IndicateurDétailsParTerritoire>
           afficherLaRecherche={false}
