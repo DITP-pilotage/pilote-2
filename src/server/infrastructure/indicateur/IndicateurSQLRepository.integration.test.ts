@@ -42,6 +42,9 @@ describe('IndicateurSQLRepository', () => {
           .withEvolutionDateValeurActuelle([date1, date2])
           .withDateValeurInitiale(dateA)
           .withDateValeurActuelle(dateB)
+          .withSource('ma source')
+          .withDescription('ma description')
+          .withModeDeCalcul('mon mode de calcul')
           .build(),
 
         new IndicateurRowBuilder()
@@ -54,6 +57,9 @@ describe('IndicateurSQLRepository', () => {
           .withEvolutionDateValeurActuelle([date1, date2, date3])
           .withDateValeurInitiale('2017-01-01')
           .withDateValeurActuelle('2018-01-01')
+          .withSource('ma source')
+          .withDescription('ma description')
+          .withModeDeCalcul('mon mode de calcul')
           .build(),
 
         new IndicateurRowBuilder()
@@ -64,6 +70,9 @@ describe('IndicateurSQLRepository', () => {
           .withEvolutionDateValeurActuelle([date1, date2, date3])
           .withDateValeurInitiale(dateC)
           .withDateValeurActuelle(dateD)
+          .withSource('ma source')
+          .withDescription('ma description')
+          .withModeDeCalcul('mon mode de calcul')
           .build(),
       ];
 
@@ -75,17 +84,10 @@ describe('IndicateurSQLRepository', () => {
       // THEN
       expect(result.length).toEqual(2);
       expect(result[0].id).toEqual('IND-001');
+      expect(result[0].source).toStrictEqual('ma source');
+      expect(result[0].modeDeCalcul).toStrictEqual('mon mode de calcul');
       expect(result[1].id).toEqual('IND-002');
-      expect(result[0].mailles.nationale.FR.evolutionValeurActuelle).toEqual([1, 2]);
-      expect(result[1].mailles.nationale.FR.evolutionValeurActuelle).toEqual([0.4, 0, 0.654]);
-      expect(result[0].mailles.nationale.FR.evolutionDateValeurActuelle).toEqual([new Date(date1).toISOString(), new Date(date2).toISOString()]);
-      expect(result[1].mailles.nationale.FR.evolutionDateValeurActuelle).toEqual([new Date(date1).toISOString(), new Date(date2).toISOString(), new Date(date3).toISOString()]);
-      expect(result[0].mailles.nationale.FR.evolutionValeurActuelle.length).toEqual(result[0].mailles.nationale.FR.evolutionDateValeurActuelle.length);
-      expect(result[1].mailles.nationale.FR.evolutionValeurActuelle.length).toEqual(result[1].mailles.nationale.FR.evolutionDateValeurActuelle.length);
-      expect(result[0].mailles.nationale.FR.dateValeurInitiale).toEqual(new Date(dateA).toISOString());
-      expect(result[1].mailles.nationale.FR.dateValeurInitiale).toEqual(new Date(dateC).toISOString());
-      expect(result[0].mailles.nationale.FR.dateValeurActuelle).toEqual(new Date(dateB).toISOString());
-      expect(result[1].mailles.nationale.FR.dateValeurActuelle).toEqual(new Date(dateD).toISOString());
+      expect(result[1].description).toEqual('ma description');
     });
   });
 

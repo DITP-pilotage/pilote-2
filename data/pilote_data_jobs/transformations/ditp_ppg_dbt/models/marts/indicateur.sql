@@ -72,7 +72,10 @@ dfakto_indicateur AS (
     END maille,
     m_zones.nom AS territoire_nom,
     d_indicateurs.evolution_valeur_actuelle,
-    d_indicateurs.evolution_date_valeur_actuelle
+    d_indicateurs.evolution_date_valeur_actuelle,
+    m_indicateurs.description,
+    m_indicateurs.source,
+    m_indicateurs.mode_de_calcul
 FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
     JOIN dfakto_indicateur d_indicateurs ON m_indicateurs.nom = d_indicateurs.effect_id AND d_indicateurs.nom_structure IN ('Département', 'Région', 'Réforme')
     LEFT JOIN {{ ref('stg_ppg_metadata__indicateur_types') }} indicateur_types ON indicateur_types.id = m_indicateurs.indicateur_type_id

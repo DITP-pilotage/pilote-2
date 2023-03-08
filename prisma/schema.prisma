@@ -57,6 +57,9 @@ model indicateur {
   maille String
   evolution_valeur_actuelle Float[]
   evolution_date_valeur_actuelle DateTime[] @db.Date
+  description String?
+  source String?
+  mode_de_calcul String?
 
   @@id([id, code_insee, maille])
 }

@@ -37,6 +37,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
           régionale: {},
           départementale: {},
         },
+        source: row.source,
+        description: row.description,
+        modeDeCalcul: row.mode_de_calcul,
       });
     });
   }
@@ -45,7 +48,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     const indicateurs: indicateur[] = await this.prisma.indicateur.findMany({
       where: { chantier_id: chantierId, maille: 'NAT' },
     });
-
     return this.mapToDomain(indicateurs);
   }
 

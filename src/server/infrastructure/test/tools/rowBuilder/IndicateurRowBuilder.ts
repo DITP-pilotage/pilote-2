@@ -27,6 +27,12 @@ export default class IndicateurRowBuilder {
 
   private _objectifTauxAvancement: number | null = 0;
 
+  private _source: string | null = 'ma source';
+
+  private _description: string | null = 'ma description';
+
+  private _modeDeCalcul: string | null = 'mon mode de calcul';
+
   withId(id: string): IndicateurRowBuilder {
     this._id = id;
     return this;
@@ -92,6 +98,22 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  withSource(source: string | null): IndicateurRowBuilder {
+    this._source = source;
+    return this;
+  }
+
+  withDescription(description: string | null): IndicateurRowBuilder {
+    this._description = description;
+    return this;
+  }
+
+  withModeDeCalcul(modeDeCalcul: string | null): IndicateurRowBuilder {
+    this._modeDeCalcul = modeDeCalcul;
+    return this;
+  }
+
+
   build(): indicateur {
     return {
       id: this._id,
@@ -114,6 +136,9 @@ export default class IndicateurRowBuilder {
       territoire_nom: null,
       evolution_valeur_actuelle: this._evolutionValeurActuelle,
       evolution_date_valeur_actuelle: this._evolutionDateValeurActuelle.map(s => new Date(s)),
+      source: this._source,
+      description: this._description,
+      mode_de_calcul: this._modeDeCalcul,
     };
   }
 }
