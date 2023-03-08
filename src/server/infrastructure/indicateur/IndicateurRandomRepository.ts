@@ -1,7 +1,7 @@
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { CartographieIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import IndicateurFixture from '@/fixtures/IndicateurFixture';
-import { FichesIndicateurs } from '@/server/domain/indicateur/DetailsIndicateur.interface';
+import { FichesIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 
 export default class IndicateurRandomRepository implements IndicateurRepository {
@@ -9,11 +9,11 @@ export default class IndicateurRandomRepository implements IndicateurRepository 
     return IndicateurFixture.générerPlusieurs(5);
   }
 
-  getCartographieDonnéesByMailleAndIndicateurId(_indicateurId: string, _maille: Maille): Promise<CartographieIndicateur> {
+  getCartographieDonnéesParMailleEtIndicateurId(_indicateurId: string, _maille: Maille): Promise<CartographieIndicateur> {
     throw new Error('Not Implemented');
   }
   
-  getDetailsIndicateur(_chantierId: string, _maille: string, _codesInsee: string[]): Promise<FichesIndicateurs> {
+  getFichesIndicateurs(_chantierId: string, _maille: string, _codesInsee: string[]): Promise<FichesIndicateurs> {
     throw new Error('Not Implemented');
   }
 }

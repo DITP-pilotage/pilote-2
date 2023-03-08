@@ -10,7 +10,7 @@ describe('/api/indicateur/:indicateurId/repartitions_geographiques', () => {
       query: { indicateurId: 'IND-001', maille: 'DEPT' },
     });
     const stubIndicateurRepository = <IndicateurRepository>{};
-    stubIndicateurRepository.getCartographieDonnéesByMailleAndIndicateurId = () => Promise.resolve({
+    stubIndicateurRepository.getCartographieDonnéesParMailleEtIndicateurId = () => Promise.resolve({
       '01': {
         avancementAnnuel : 50,
         valeurActuelle: 155,
@@ -45,7 +45,7 @@ describe('/api/indicateur/:indicateurId/repartitions_geographiques', () => {
       query: { id: 'IND-001', maille: 'DEPT' },
     });
     const stubIndicateurRepository = <IndicateurRepository>{};
-    stubIndicateurRepository.getCartographieDonnéesByMailleAndIndicateurId = () => Promise.resolve({});
+    stubIndicateurRepository.getCartographieDonnéesParMailleEtIndicateurId = () => Promise.resolve({});
 
     // When
     handle(req, res, stubIndicateurRepository);

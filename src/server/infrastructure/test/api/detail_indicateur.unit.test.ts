@@ -10,7 +10,7 @@ describe('/api/detail_indicateur', () => {
       query: { chantierId: 'CH-001', maille: 'départemental', codesInsee: ['75'] },
     });
     const stubIndicateurRepository = <IndicateurRepository>{};
-    stubIndicateurRepository.getDetailsIndicateur = () => Promise.resolve({});
+    stubIndicateurRepository.getFichesIndicateurs = () => Promise.resolve({});
 
     // When
     handle(req, res, stubIndicateurRepository);
@@ -26,7 +26,7 @@ describe('/api/detail_indicateur', () => {
       query: { chantierId: 'CH-001', maille: 'DEPT', codesInsee: ['75'] },
     });
     const stubIndicateurRepository = <IndicateurRepository>{};
-    stubIndicateurRepository.getDetailsIndicateur = () => Promise.resolve({
+    stubIndicateurRepository.getFichesIndicateurs = () => Promise.resolve({
       'IND-002': {
         '02': {
           codeInsee: '02',
@@ -73,7 +73,7 @@ describe('/api/detail_indicateur', () => {
       query: { chantierId: 'CH-001', maille: 'DEPT', codes_insee: ['75'] },
     });
     const stubIndicateurRepository = <IndicateurRepository>{};
-    stubIndicateurRepository.getDetailsIndicateur = () => Promise.resolve({});
+    stubIndicateurRepository.getFichesIndicateurs = () => Promise.resolve({});
 
     // When
     handle(req, res, stubIndicateurRepository);

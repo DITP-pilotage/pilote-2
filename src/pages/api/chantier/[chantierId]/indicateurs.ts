@@ -31,7 +31,7 @@ export default async function handle(request: NextApiRequest, response: NextApiR
     }
     throw error;
   }
-  const detailsIndicateur = await indicateurRepository.getDetailsIndicateur(params.chantierId, params.maille, params.codesInsee);
+  const detailsIndicateur = await indicateurRepository.getFichesIndicateurs(params.chantierId, params.maille, params.codesInsee);
   response
     .status(200)
     .json(detailsIndicateur);

@@ -31,7 +31,7 @@ export default async function handle(request: NextApiRequest, response: NextApiR
     }
     throw error;
   }
-  const cartographieIndicateurTerritorialisées = await indicateurRepository.getCartographieDonnéesByMailleAndIndicateurId(params.indicateurId, params.maille);
+  const cartographieIndicateurTerritorialisées = await indicateurRepository.getCartographieDonnéesParMailleEtIndicateurId(params.indicateurId, params.maille);
   response
     .status(200)
     .json(cartographieIndicateurTerritorialisées);
