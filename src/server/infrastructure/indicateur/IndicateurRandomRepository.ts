@@ -3,17 +3,22 @@ import Indicateur, { CartographieIndicateur } from '@/server/domain/indicateur/I
 import IndicateurFixture from '@/fixtures/IndicateurFixture';
 import { FichesIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-
 export default class IndicateurRandomRepository implements IndicateurRepository {
+  indicateurs: Indicateur[];
+
+  constructor() {
+    this.indicateurs = IndicateurFixture.générerPlusieurs(5);
+  }
+
   async getByChantierId(_chantierId: string): Promise<Indicateur[]> {
-    return IndicateurFixture.générerPlusieurs(5);
+    return this.indicateurs;
   }
 
   getCartographieDonnéesParMailleEtIndicateurId(_indicateurId: string, _maille: Maille): Promise<CartographieIndicateur> {
     throw new Error('Not Implemented');
   }
   
-  getFichesIndicateurs(_chantierId: string, _maille: string, _codesInsee: string[]): Promise<FichesIndicateurs> {
-    throw new Error('Not Implemented');
+  async getFichesIndicateurs(_chantierId: string, _maille: string, _codesInsee: string[]): Promise<FichesIndicateurs> {
+    return IndicateurFixture.générerFichesIndicateurs({ idsIndicateurs: this.indicateurs.map(indicateur => indicateur.id) });
   }
 }
