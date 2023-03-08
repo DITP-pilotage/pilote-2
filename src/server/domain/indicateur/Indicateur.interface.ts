@@ -20,4 +20,5 @@ export default interface Indicateur {
   estIndicateurDuBaromètre: boolean | null;
   description: string | null;
   source: string | null;
+  modeDeCalcul: string | null;
 }

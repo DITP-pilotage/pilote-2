@@ -15,6 +15,7 @@ class IndicateurFixture implements FixtureInterface<Indicateur> {
       estIndicateurDuBaromètre: faker.datatype.boolean(),
       source: 'ma source',
       description: 'ma description',
+      modeDeCalcul: 'mon mode de calcul',
       ...valeursFixes,
     };
   }

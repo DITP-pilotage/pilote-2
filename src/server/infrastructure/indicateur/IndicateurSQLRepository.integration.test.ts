@@ -44,6 +44,7 @@ describe('IndicateurSQLRepository', () => {
           .withDateValeurActuelle(dateB)
           .withSource('ma source')
           .withDescription('ma description')
+          .withModeDeCalcul('mon mode de calcul')
           .build(),
 
         new IndicateurRowBuilder()
@@ -58,6 +59,7 @@ describe('IndicateurSQLRepository', () => {
           .withDateValeurActuelle('2018-01-01')
           .withSource('ma source')
           .withDescription('ma description')
+          .withModeDeCalcul('mon mode de calcul')
           .build(),
 
         new IndicateurRowBuilder()
@@ -70,6 +72,7 @@ describe('IndicateurSQLRepository', () => {
           .withDateValeurActuelle(dateD)
           .withSource('ma source')
           .withDescription('ma description')
+          .withModeDeCalcul('mon mode de calcul')
           .build(),
       ];
 
@@ -82,6 +85,7 @@ describe('IndicateurSQLRepository', () => {
       expect(result.length).toEqual(2);
       expect(result[0].id).toEqual('IND-001');
       expect(result[0].source).toStrictEqual('ma source');
+      expect(result[0].modeDeCalcul).toStrictEqual('mon mode de calcul');
       expect(result[1].id).toEqual('IND-002');
       expect(result[1].description).toEqual('ma description');
     });
