@@ -37,8 +37,8 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur } : Indi
           entité='indicateur'
         />
         <IndicateurDétails
+          indicateur={indicateur}
           indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
-          indicateurId={indicateur.id}
         />
       </Bloc>
     </IndicateurBlocStyled>
