@@ -1,0 +1,33 @@
+import IndicateurSpécificationsProps from '@/components/PageChantier/Indicateurs/Bloc/Détails/Spécifications/IndicateurSpécifications.interface';
+import IndicateurSpécificationsStyled from './IndicateurSpécifications.styled';
+
+export default function IndicateurSpécifications({ indicateur } : IndicateurSpécificationsProps) {
+  const libelléValeurNull = 'Non renseignée';
+
+  return (
+    <IndicateurSpécificationsStyled className='fr-px-7w fr-py-2w'>
+      <span
+        aria-hidden="true"
+        className="fr-icon-information-fill fr-ml-n4w fr-mr-1w icone-information"
+      />
+      <p className='fr-text--md sous-titre'>
+        Description de l&apos;indicateur
+      </p>
+      <p className='fr-text--xs'>
+        {indicateur.description ?? libelléValeurNull}
+      </p>
+      <p className='fr-text--md sous-titre fr-mt-2w'>
+        Mode de calcul
+      </p>
+      <p className='fr-text--xs'>
+        {indicateur.modeDeCalcul ?? libelléValeurNull}
+      </p>
+      <p className='fr-text--md sous-titre fr-mt-2w'>
+        Source
+      </p>
+      <p className='fr-text--xs'>
+        {indicateur.source ?? libelléValeurNull}
+      </p>
+    </IndicateurSpécificationsStyled>
+  );
+}
