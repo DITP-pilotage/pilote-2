@@ -19,7 +19,8 @@ renamed as (
         indic_is_baro as est_barometre,
         indic_type as indicateur_type_id,
         indic_source as source,
-        indic_source_url as source_url
+        indic_source_url as source_url,
+        indic_mode_calcul as mode_de_calcul
 
     from source
 
