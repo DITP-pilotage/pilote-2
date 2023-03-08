@@ -13,6 +13,8 @@ class IndicateurFixture implements FixtureInterface<Indicateur> {
       nom: faker.lorem.words(5),
       type: faker.helpers.arrayElement(typesIndicateur),
       estIndicateurDuBaromètre: faker.datatype.boolean(),
+      source: 'ma source',
+      description: 'ma description',
       ...valeursFixes,
     };
   }

@@ -37,6 +37,8 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
           régionale: {},
           départementale: {},
         },
+        source: row.source,
+        description: row.description,
       });
     });
   }

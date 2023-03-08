@@ -18,4 +18,6 @@ export default interface Indicateur {
   nom: string;
   type: TypeIndicateur;
   estIndicateurDuBaromètre: boolean | null;
+  description: string | null;
+  source: string | null;
 }

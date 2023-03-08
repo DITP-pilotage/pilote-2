@@ -42,6 +42,8 @@ describe('IndicateurSQLRepository', () => {
           .withEvolutionDateValeurActuelle([date1, date2])
           .withDateValeurInitiale(dateA)
           .withDateValeurActuelle(dateB)
+          .withSource('ma source')
+          .withDescription('ma description')
           .build(),
 
         new IndicateurRowBuilder()
@@ -54,6 +56,8 @@ describe('IndicateurSQLRepository', () => {
           .withEvolutionDateValeurActuelle([date1, date2, date3])
           .withDateValeurInitiale('2017-01-01')
           .withDateValeurActuelle('2018-01-01')
+          .withSource('ma source')
+          .withDescription('ma description')
           .build(),
 
         new IndicateurRowBuilder()
@@ -64,6 +68,8 @@ describe('IndicateurSQLRepository', () => {
           .withEvolutionDateValeurActuelle([date1, date2, date3])
           .withDateValeurInitiale(dateC)
           .withDateValeurActuelle(dateD)
+          .withSource('ma source')
+          .withDescription('ma description')
           .build(),
       ];
 
@@ -75,7 +81,9 @@ describe('IndicateurSQLRepository', () => {
       // THEN
       expect(result.length).toEqual(2);
       expect(result[0].id).toEqual('IND-001');
+      expect(result[0].source).toStrictEqual('ma source');
       expect(result[1].id).toEqual('IND-002');
+      expect(result[1].description).toEqual('ma description');
     });
   });
 
