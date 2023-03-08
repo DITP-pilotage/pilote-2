@@ -1,9 +1,7 @@
-import Titre from '@/components/_commons/Titre/Titre';
+import Nouveautés from '@/components/Nouveautés/Nouveautés';
 
 export default function NextPageNouveautés() {
   return (
-    <Titre baliseHtml="h1">
-      Nouveautés
-    </Titre>
+    <Nouveautés />
   );
 }

@@ -1,9 +1,7 @@
-import Titre from '@/components/_commons/Titre/Titre';
+import SuiviDeLActivité from '@/components/SuiviDeLActivité/SuiviDeLActivité';
 
 export default function NextPageSuiviDeLActivité() {
   return (
-    <Titre baliseHtml="h1">
-      Suivi de l&rsquo;activité
-    </Titre>
+    <SuiviDeLActivité />
   );
 }
