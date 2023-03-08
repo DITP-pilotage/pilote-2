@@ -18,10 +18,10 @@ export default function SynthèseRésultats({ météo, synthèseDesRésultats }:
       <Bloc titre="National">
         <SynthèseRésultatsStyled className='fr-grid-row fr-pt-2w'>
           <div className=" fr-col-12 fr-col-lg-2 conteneur-météo">
-            <PictoMétéo valeur={météo} />
             <p className='libellé-météo fr-text--sm'>
               {météos[météo]}
             </p>
+            <PictoMétéo valeur={météo} />
           </div>
           <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
             {

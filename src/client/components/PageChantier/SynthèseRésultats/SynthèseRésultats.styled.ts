@@ -6,7 +6,15 @@ const SynthèseRésultatsStyled = styled.div`
   }
 
   .libellé-météo {
-    color: var(--text-label-blue-france);
+    font-weight: 700;
+    color: #18753C;
+    text-transform: uppercase;
+    background-color: rgb(22 155 98 / 20%);
+  }
+
+  img {
+    width: auto;
+    height: 6rem;
   }
 `;
 

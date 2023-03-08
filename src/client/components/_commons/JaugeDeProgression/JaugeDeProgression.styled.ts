@@ -3,6 +3,7 @@ import { JaugeDeProgressionStyledProps } from './JaugeDeProgression.interface';
 
 const couleurs = {
   bleu: 'var(--background-active-blue-france)',
+  bleuClair: 'var(--background-flat-info)', 
   violet: '#8585F6',
   orange: '#FC5D00',
   vert: '#27A658',

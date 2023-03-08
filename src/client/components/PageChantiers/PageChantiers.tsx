@@ -89,7 +89,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                 </Bloc>
               </div>
             </div>
-            <div className="fr-grid-row fr-mt-3w">
+            <div className="fr-grid-row fr-mt-7v">
               <div className="fr-col">
                 <Bloc>
                   <ListeChantiers chantiers={chantiersFiltrés}  />

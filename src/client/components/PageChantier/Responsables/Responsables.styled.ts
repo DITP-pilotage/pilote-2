@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
 const ResponsablesStyled = styled.div`
-  hr:last-child {
-    padding-bottom: 0.1rem;
+  .ligne:last-child {
+    padding-bottom: 0 !important;
   }
 `;
 
