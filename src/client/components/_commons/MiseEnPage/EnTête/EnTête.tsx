@@ -2,7 +2,7 @@ import '@gouvfr/dsfr/dist/component/header/header.min.css';
 import '@gouvfr/dsfr/dist/component/logo/logo.min.css';
 import Link from 'next/link';
 import Navigation from '@/components/_commons/MiseEnPage/Navigation/Navigation';
-import CompteUtilisateur from '@/components/_commons/MiseEnPage/EnTête/CompteUtilisateur';
+import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
 
 export default function EnTête() {
   return (
@@ -50,7 +50,15 @@ export default function EnTête() {
                 </p>
               </div>
             </div>
-            <CompteUtilisateur />
+            <div className="fr-header__tools">
+              <div className="fr-header__tools-links">
+                <ul>
+                  <li>
+                    <Utilisateur />
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>

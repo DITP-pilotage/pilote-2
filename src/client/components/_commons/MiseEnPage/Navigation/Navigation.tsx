@@ -3,6 +3,7 @@ import '@gouvfr/dsfr/dist/component/button/button.min.css';
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === 'function') {
@@ -47,7 +48,9 @@ export default function Navigation() {
         >
           Fermer
         </button>
-        <div className="fr-header__menu-links" />
+        <div className="fr-header__menu-links">
+          <Utilisateur />
+        </div>
         <nav
           aria-label="Menu principal"
           className="fr-nav"
