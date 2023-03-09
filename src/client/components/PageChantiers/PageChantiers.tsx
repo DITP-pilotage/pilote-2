@@ -91,6 +91,12 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                   </Titre>
                   <Avancements avancements={avancements} />
                   <hr className='fr-hr fr-my-3w fr-pb-1v' />
+                  <Titre
+                    baliseHtml='h2'
+                    className='fr-h6'
+                  >
+                    Répartition des météos de la sélection
+                  </Titre>
                   <RépartitionMétéo météos={météos} />
                 </Bloc>
               </div>

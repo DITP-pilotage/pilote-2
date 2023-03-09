@@ -35,7 +35,7 @@ export default function Cartes({ chantier }: CartesProps) {
         <div className="fr-col-12 fr-col-xl-6">
           <Bloc>
             <Titre
-              baliseHtml='h4'
+              baliseHtml='h3'
               className='fr-text--lg'
             >
               Taux d&apos;avancement
@@ -50,7 +50,7 @@ export default function Cartes({ chantier }: CartesProps) {
         <div className="fr-col-12 fr-col-xl-6">
           <Bloc>
             <Titre
-              baliseHtml='h4'
+              baliseHtml='h3'
               className='fr-text--lg'
             >
               Niveau de confiance

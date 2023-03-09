@@ -29,9 +29,9 @@ export default function SynthèseRésultats({ météo, synthèseDesRésultats }:
                 synthèseDesRésultats && synthèseDesRésultats?.contenu?.trim() !== ''
                   ?
                     <>
-                      <div className="texte-gris fr-text--xs fr-mb-1w">
+                      <p className="texte-gris fr-text--xs fr-mb-1w">
                         {`Mis à jour le ${formaterDate(synthèseDesRésultats.date, 'jj/mm/aaaa')}`}
-                      </div>
+                      </p>
                       <p
                         className="fr-text--sm"  
                         // eslint-disable-next-line react/no-danger

@@ -37,7 +37,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
             </div>
             <div className="fr-col-12 fr-col-xl-6">
               <Titre
-                baliseHtml='h4'
+                baliseHtml='h5'
                 className='fr-text--lg'
               >
                 Répartition géographique de l&apos;avancement
@@ -50,7 +50,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
             </div>
             <div className="fr-col-12 fr-col-xl-6">
               <Titre
-                baliseHtml='h4'
+                baliseHtml='h5'
                 className='fr-text--lg'
               >
                 Répartition géographique de la valeur actuelle de l&apos;indicateur
