@@ -27,6 +27,7 @@ model chantier {
   ppg String @default("non renseignée")
   directeurs_projet_mails String[]
   est_barometre Boolean?
+  est_territorialise Boolean?
 
   @@id([id, code_insee, maille])
 }

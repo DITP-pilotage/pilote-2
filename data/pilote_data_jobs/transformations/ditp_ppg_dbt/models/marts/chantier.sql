@@ -49,7 +49,8 @@ chantier_est_barometre as (
         m_axes.nom AS axe,
         m_ppgs.nom AS ppg,
         m_chantiers.directeurs_projet_mails,
-        chantier_est_barometre.est_barometre
+        chantier_est_barometre.est_barometre,
+        m_chantiers.est_territorialise
     FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantiers
         LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom='Réforme'
         LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_zones.id = 'FRANCE' -- ou = COALESCE(d_chantiers.zone_code, 'FRANCE') -- mais pas fan d'écrire ça ...
@@ -86,8 +87,9 @@ UNION
         m_axes.nom AS axe,
         m_ppgs.nom AS ppg,
         m_chantiers.directeurs_projet_mails,
-        chantier_est_barometre.est_barometre
-    FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantiers
+        chantier_est_barometre.est_barometre,
+        m_chantiers.est_territorialise
+FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantiers
         LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom IN ('Région', 'Département')
         JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_zones.id = d_chantiers.zone_code
         LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
