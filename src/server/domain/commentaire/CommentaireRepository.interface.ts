@@ -1,4 +1,4 @@
-import { Commentaires, DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { Commentaires, DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 

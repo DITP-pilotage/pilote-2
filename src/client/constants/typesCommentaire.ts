@@ -1,4 +1,4 @@
-import { TypeCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 
 const typesCommentaire: Record<TypeCommentaire, string> = {
   'freinsÀLever': 'Freins à lever',

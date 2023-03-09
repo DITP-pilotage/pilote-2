@@ -1,10 +1,10 @@
 import { commentaire, PrismaClient } from '@prisma/client';
-import CommentaireRepository from '@/server/domain/chantier/CommentaireRepository.interface';
+import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import {
   Commentaires,
   DétailsCommentaire,
   TypeCommentaire,
-} from '@/server/domain/chantier/Commentaire.interface';
+} from '@/server/domain/commentaire/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';

@@ -3,7 +3,7 @@ import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésul
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import { DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {

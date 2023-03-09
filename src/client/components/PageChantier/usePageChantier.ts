@@ -4,7 +4,7 @@ import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agré
 import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoiresComparésTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { FichesIndicateurs } from '@/server/domain/indicateur/DetailsIndicateur.interface';
-import { Commentaires, DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { Commentaires, DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export default function usePageChantier(chantier: Chantier) {

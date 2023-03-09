@@ -3,8 +3,8 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import SynthèseDesRésultatsRepository
   from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import ChantierRepository, { InfosChantier } from '@/server/domain/chantier/ChantierRepository.interface';
-import CommentaireRepository from '@/server/domain/chantier/CommentaireRepository.interface';
-import { DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
+import { DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export class RécupérerLeDétailDUnChantierTerritorialiséeUseCase {

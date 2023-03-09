@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import FixtureInterface from '@/fixtures/Fixture.interface';
-import { Commentaires, DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { Commentaires, DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 
 class CommentairesFixture implements FixtureInterface<Commentaires> {
 

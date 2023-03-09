@@ -1,4 +1,4 @@
-import { Commentaires } from '@/server/domain/chantier/Commentaire.interface';
+import { Commentaires } from '@/server/domain/commentaire/Commentaire.interface';
 
 export default interface CommentairesProps {
   commentaires: Commentaires

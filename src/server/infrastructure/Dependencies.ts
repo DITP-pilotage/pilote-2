@@ -22,9 +22,9 @@ import PpgSQLRepository from '@/server/infrastructure/ppg/PpgSQLRepository';
 import PpgRandomRepository from '@/server/infrastructure/ppg/PpgRandomRepository';
 import AxeFixture from '@/fixtures/AxeFixture';
 import PpgFixture from '@/fixtures/PpgFixture';
-import CommentaireRepository from '@/server/domain/chantier/CommentaireRepository.interface';
-import CommentaireSQLRepository from '@/server/infrastructure/chantier/CommentaireSQLRepository';
-import CommentaireRandomRepository from '@/server/infrastructure/chantier/CommentaireRandomRepository';
+import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
+import CommentaireSQLRepository from '@/server/infrastructure/commentaire/CommentaireSQLRepository';
+import CommentaireRandomRepository from '@/server/infrastructure/commentaire/CommentaireRandomRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
