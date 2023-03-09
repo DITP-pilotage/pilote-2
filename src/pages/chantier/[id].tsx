@@ -2,7 +2,7 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import PageChantier from '@/components/PageChantier/PageChantier';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { DétailsCommentaire } from '@/server/domain/chantier/Commentaire.interface';
+import { DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 
 interface NextPageChantierProps {
   chantier: Chantier

@@ -1,5 +1,5 @@
 import { createMocks } from 'node-mocks-http';
-import { commentairesNull } from '@/server/domain/chantier/Commentaire.interface';
+import { commentairesNull } from '@/server/domain/commentaire/Commentaire.interface';
 import {
   RécupérerLeDétailDUnChantierTerritorialiséeUseCase,
 } from '@/server/usecase/chantier/RécupérerLeDétailDUnChantierTerritorialiséeUseCase';

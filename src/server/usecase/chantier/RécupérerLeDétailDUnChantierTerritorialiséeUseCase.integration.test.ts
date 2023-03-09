@@ -4,15 +4,15 @@ import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ChantierRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/ChantierRowBuilder';
 import SyntheseDesResultatsRowBuilder
   from '@/server/infrastructure/test/tools/rowBuilder/SyntheseDesResultatsRowBuilder';
-import { commentairesNull } from '@/server/domain/chantier/Commentaire.interface';
+import { commentairesNull } from '@/server/domain/commentaire/Commentaire.interface';
 import ChantierSQLRepository from '@/server/infrastructure/chantier/ChantierSQLRepository';
 import SynthèseDesRésultatsRepository
   from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import {
   SynthèseDesRésultatsSQLRepository,
 } from '@/server/infrastructure/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
-import CommentaireRepository from '@/server/domain/chantier/CommentaireRepository.interface';
-import CommentaireSQLRepository from '@/server/infrastructure/chantier/CommentaireSQLRepository';
+import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
+import CommentaireSQLRepository from '@/server/infrastructure/commentaire/CommentaireSQLRepository';
 import {
   RécupérerLeDétailDUnChantierTerritorialiséeUseCase,
 } from '@/server/usecase/chantier/RécupérerLeDétailDUnChantierTerritorialiséeUseCase';
