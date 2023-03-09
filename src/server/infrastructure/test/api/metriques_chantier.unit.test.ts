@@ -1,6 +1,8 @@
 import { createMocks } from 'node-mocks-http';
-import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { commentairesNull } from '@/server/domain/chantier/Commentaire.interface';
+import {
+  RécupérerLeDétailDUnChantierTerritorialiséeUseCase,
+} from '@/server/usecase/chantier/RécupérerLeDétailDUnChantierTerritorialiséeUseCase';
 import handle from '../../../../pages/api/chantier/[chantierId]';
 
 describe('/api/chantier/:chantierId:', () => {
@@ -10,8 +12,8 @@ describe('/api/chantier/:chantierId:', () => {
       method: 'GET',
       query: { chantierId: 'CH-001', maille: 'DEPT', codeInsee: ['75'] },
     });
-    const stubChantierRepository = <ChantierRepository>{};
-    stubChantierRepository.getInfosChantier = () => Promise.resolve({
+    const stubRécupérerLeDétailDUnChantierTerritorialiséeUseCase = <RécupérerLeDétailDUnChantierTerritorialiséeUseCase>{};
+    stubRécupérerLeDétailDUnChantierTerritorialiséeUseCase.run = () => Promise.resolve({
       synthèseDesRésultats: {
         contenu: 'Lorem ipsum',
         date: '2023-01-01',
@@ -22,7 +24,7 @@ describe('/api/chantier/:chantierId:', () => {
     });
 
     // When
-    await handle(req, res, stubChantierRepository);
+    await handle(req, res, stubRécupérerLeDétailDUnChantierTerritorialiséeUseCase);
 
     // Then
     expect(res._getStatusCode()).toBe(200);
@@ -43,8 +45,8 @@ describe('/api/chantier/:chantierId:', () => {
       method: 'GET',
       query: { chantierId: 'CH-001', maille: 'DEPT', toto: ['75'] },
     });
-    const stubChantierRepository = <ChantierRepository>{};
-    stubChantierRepository.getInfosChantier = () => Promise.resolve({
+    const stubRécupérerLeDétailDUnChantierTerritorialiséeUseCase = <RécupérerLeDétailDUnChantierTerritorialiséeUseCase>{};
+    stubRécupérerLeDétailDUnChantierTerritorialiséeUseCase.run = () => Promise.resolve({
       synthèseDesRésultats: {
         contenu: '',
         date: '',
@@ -55,7 +57,7 @@ describe('/api/chantier/:chantierId:', () => {
     });
 
     // When
-    handle(req, res, stubChantierRepository);
+    handle(req, res, stubRécupérerLeDétailDUnChantierTerritorialiséeUseCase);
 
     // Then
     expect(res._getStatusCode()).toBe(400);

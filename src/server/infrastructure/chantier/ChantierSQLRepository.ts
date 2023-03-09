@@ -1,18 +1,13 @@
 import { chantier, PrismaClient } from '@prisma/client';
-import ChantierRepository, {
-  InfosChantier,
-} from '@/server/domain/chantier/ChantierRepository.interface';
+import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { groupBy } from '@/client/utils/arrays';
 import { parseChantier } from '@/server/infrastructure/chantier/ChantierSQLParser';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
-import { Météo } from '@/server/domain/météo/Météo.interface';
-import CommentaireSQLRepository from '@/server/infrastructure/chantier/CommentaireSQLRepository';
-import SynthèseDesRésultatsRepository from '@/server/domain/chantier/SynthèseDesRésultatsRepository.interface';
-import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/chantier/SynthèseDesRésultatsSQLRepository';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -50,10 +45,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return objectEntries(chantiersGroupésParId).map(([_, c]) => parseChantier(c));
   }
 
-  async getInfosChantier(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<InfosChantier> {
-    const synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(this.prisma);
-    const commentaireRepository = new CommentaireSQLRepository(this.prisma);
-
+  async récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null> {
     const chantierRow: chantier | null = await this.prisma.chantier.findFirst({
       where: {
         id: chantierId,
@@ -65,13 +57,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
     if (!chantierRow) {
       throw new ErreurChantierNonTrouvé(chantierId);
     }
-    
-    let infosChantier: InfosChantier = {
-      synthèseDesRésultats: await synthèseDesRésultatsRepository.findNewestByChantierIdAndTerritoire(chantierId, maille, codeInsee),
-      météo: chantierRow.meteo as Météo ?? 'NON_RENSEIGNEE',
-      commentaires: await commentaireRepository.findNewestByChantierIdAndTerritoire(chantierId, maille, codeInsee),
-    };
 
-    return infosChantier;
+    // TODO: avoir une réflexion sur avoir un mapper et retourné un objet du domainz Chantier
+    return chantierRow.meteo as Météo | null;
   }
 }

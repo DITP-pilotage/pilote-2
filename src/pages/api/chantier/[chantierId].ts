@@ -1,13 +1,17 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import logger from '@/server/infrastructure/logger';
+import {
+  RécupérerLeDétailDUnChantierTerritorialiséeUseCase,
+} from '@/server/usecase/chantier/RécupérerLeDétailDUnChantierTerritorialiséeUseCase';
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 class ParsingError extends Error {}
 
-function parseQueryParams(request: NextApiRequest): { chantierId: string, maille: string, codeInsee: string } {
+function parseQueryParams(request: NextApiRequest): { chantierId: string, maille: Maille, codeInsee: CodeInsee } {
   const chantierId = request.query.chantierId as string;
-  const maille = request.query.maille as string;
-  const codeInsee = request.query.codeInsee as string;
+  const maille = request.query.maille as Maille;
+  const codeInsee = request.query.codeInsee as CodeInsee;
 
   if (!chantierId || !maille || !codeInsee) {
     const errorMessage = 'Le parsing de la query a échoué.';
@@ -18,7 +22,11 @@ function parseQueryParams(request: NextApiRequest): { chantierId: string, maille
   return { chantierId, maille, codeInsee };
 }
 
-export default async function handle(request: NextApiRequest, response: NextApiResponse, chantierRepository = dependencies.getChantierRepository()) {
+export default async function handle(
+  request: NextApiRequest,
+  response: NextApiResponse,
+  récupérerLeDétailDUnChantierTerritorialiséeUseCase = new RécupérerLeDétailDUnChantierTerritorialiséeUseCase(),
+) {
   let params;
   try {
     params = parseQueryParams(request);
@@ -29,7 +37,9 @@ export default async function handle(request: NextApiRequest, response: NextApiR
     }
     throw error;
   }
-  const infosChantier = await chantierRepository.getInfosChantier(params.chantierId, params.maille, params.codeInsee);
+
+  const infosChantier = await récupérerLeDétailDUnChantierTerritorialiséeUseCase.run(params.chantierId, params.maille, params.codeInsee);
+
   response
     .status(200)
     .json(infosChantier);
