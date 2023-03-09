@@ -31,6 +31,8 @@ export default class ChantierRowBuilder {
 
   private _estBaromètre: boolean = false;
 
+  private _estTerritorialisé: boolean = false;
+
   withId(id: string): ChantierRowBuilder {
     this._id = id;
     return this;
@@ -112,6 +114,12 @@ export default class ChantierRowBuilder {
     return this;
   }
 
+
+  withEstTerritorialisé(estTerritorialisé: boolean): ChantierRowBuilder {
+    this._estTerritorialisé = estTerritorialisé;
+    return this;
+  }
+
   build(): chantier {
     return {
       id: this._id,
@@ -130,6 +138,7 @@ export default class ChantierRowBuilder {
       ministeres: this._ministeres,
       territoire_nom: null,
       est_barometre: this._estBaromètre,
+      est_territorialise: this._estTerritorialisé,
     };
   }
 }

@@ -26,6 +26,7 @@ class ChantierFixture implements FixtureInterface<Chantier> {
         directeursProjet: [],
       },
       estBaromètre: faker.datatype.boolean(),
+      estTerritorialisé: faker.datatype.boolean(),
       ...valeursFixes,
     };
   }

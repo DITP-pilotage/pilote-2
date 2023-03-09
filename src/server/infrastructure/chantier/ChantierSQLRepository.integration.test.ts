@@ -20,6 +20,7 @@ describe('ChantierSQLRepository', () => {
           .withDirectionsAdministrationCentrale(['Intérieur', 'Extérieur'])
           .withDirecteursProjet(['Dir proj 1', 'Dir proj 2'])
           .withDirecteursProjetMail(['dirproj1@example.com', 'dirproj2@example.com'])
+          .withEstTerritorialisé(true)
           .build(),
         new ChantierRowBuilder()
           .withId('CH-002').withNom('Chantier 2').build(),
@@ -38,6 +39,7 @@ describe('ChantierSQLRepository', () => {
     expect(result1.mailles.nationale.FR.météo).toEqual('COUVERT');
     expect(result1.responsables.directeursAdminCentrale).toStrictEqual([{ nom: 'Alain Térieur', direction: 'Intérieur' }, { nom: 'Alex Térieur', direction: 'Extérieur' }]);
     expect(result1.responsables.directeursProjet).toStrictEqual([{ nom: 'Dir proj 1', email: 'dirproj1@example.com' }, { nom: 'Dir proj 2', email: 'dirproj2@example.com' }]);
+    expect(result1.estTerritorialisé).toStrictEqual(true);
 
     expect(result2.nom).toEqual('Chantier 2');
   });

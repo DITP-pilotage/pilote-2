@@ -21,7 +21,8 @@ renamed as (
         string_to_array("porteur_ids_DAC", ' | ') as directeurs_administration_centrale_ids,
         string_to_array(ch_per, ' | ') as perimetre_ids,
         string_to_array(ch_dp, ' | ') as directeurs_projet_noms,
-        string_to_array(ch_dp_mail, ' | ') as directeurs_projet_mails
+        string_to_array(ch_dp_mail, ' | ') as directeurs_projet_mails,
+        ch_territo as est_territorialise
 
     from source
 
