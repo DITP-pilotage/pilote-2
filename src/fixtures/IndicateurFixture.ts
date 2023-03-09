@@ -1,8 +1,9 @@
 import { faker } from '@faker-js/faker';
-import Indicateur, { typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
-import { codeInseeRégions } from '@/fixtures/codesInsee';
+import Indicateur, { CartographieIndicateur, typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
+import { codeInseeDépartements, codeInseeRégions } from '@/fixtures/codesInsee';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { DétailsIndicateur, FichesIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import FixtureInterface from './Fixture.interface';
 import { générerUnIdentifiantUnique } from './utils';
 
@@ -31,12 +32,22 @@ class IndicateurFixture implements FixtureInterface<Indicateur> {
     return résultat;
   }
 
-  générerFichesIndicateurs(valeursFixes: { idsIndicateurs?: Indicateur['id'][], codesInsee?: CodeInsee[] }): FichesIndicateurs {
-    const idsIndicateurs = valeursFixes.idsIndicateurs || [générerUnIdentifiantUnique('IND'), générerUnIdentifiantUnique('IND')];
-    const codesInsee = valeursFixes.codesInsee || codeInseeRégions;
+  générerCartographieIndicateurDonnées(maille: MailleInterne): CartographieIndicateur {
+    const résultat: CartographieIndicateur = {};
+    const codesInsee = maille === 'départementale' ? codeInseeDépartements : codeInseeRégions;
+    codesInsee.forEach(codeInsee => {
+      résultat[codeInsee] = {
+        avancementAnnuel: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
+        valeurActuelle: faker.helpers.arrayElement([null, faker.datatype.number({ max: 99 })]),
+      };
+    });
+    return résultat;
+  }
+
+  générerFichesIndicateurs(idsIndicateurs?: Indicateur['id'][], codesInsee?: CodeInsee[]): FichesIndicateurs {
     const résultat: FichesIndicateurs = {};
-    idsIndicateurs.forEach(idIndicateur => {
-      résultat[idIndicateur] = this.générerFakeDétailsIndicateurParTerritoires(codesInsee);
+    (idsIndicateurs || [générerUnIdentifiantUnique('IND')]).forEach(idIndicateur => {
+      résultat[idIndicateur] = this.générerFakeDétailsIndicateurParTerritoires(codesInsee || codeInseeRégions);
     });
     return résultat;
   }
