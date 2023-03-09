@@ -20,4 +20,5 @@ export default interface Chantier {
     directeursProjet: Contact[]
   }
   estBaromètre: boolean;
+  estTerritorialisé: boolean;
 }
