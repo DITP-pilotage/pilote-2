@@ -1,0 +1,7 @@
+version: 2
+
+sources:
+  - name: import_metrics_indicateurs
+    schema: raw_data
+    tables:
+      - name: temp_metric_indicateur

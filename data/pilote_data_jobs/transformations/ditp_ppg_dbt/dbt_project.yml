@@ -39,6 +39,12 @@ models:
     staging:
       +schema: raw_data
       +materialized: view
+    datamarts:
+      +schema: marts
+      +materialized: incremental
+      fait_indicateurs:
+        +unique_key: id
+        +on_schema_change: 'append_new_columns'
     marts:
       +schema: public
       +materialized: table
