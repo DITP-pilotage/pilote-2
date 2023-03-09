@@ -6,7 +6,7 @@ import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils
 
 export default function Objectif({ objectif }: ObjectifProps) {
   return (
-    <div id="objectifs">
+    <section id="objectifs">
       <Titre
         baliseHtml='h2'
         className='fr-h4 fr-mb-2w'
@@ -36,6 +36,6 @@ export default function Objectif({ objectif }: ObjectifProps) {
           </div>
         </div>
       </Bloc>
-    </div>
+    </section>
   );
 }

@@ -32,17 +32,19 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
         <BarreLatéraleEncart>
           <SélecteursMaillesEtTerritoires />
         </BarreLatéraleEncart>
-        <Titre
-          baliseHtml="h1"
-          className="fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8"
-        >
-          Filtres
-        </Titre>
-        <Filtres
-          axes={axes}
-          ministères={ministères}
-          ppg={ppg}
-        />
+        <section>
+          <Titre
+            baliseHtml="h1"
+            className="fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8"
+          >
+            Filtres
+          </Titre>
+          <Filtres
+            axes={axes}
+            ministères={ministères}
+            ppg={ppg}
+          />
+        </section>
       </BarreLatérale>
       <main>
         <button
@@ -68,36 +70,42 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
             <div className="fr-grid-row fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
-                  <Titre
-                    baliseHtml='h2'
-                    className='fr-h6'
-                  >
-                    Répartition géographique
-                  </Titre>
-                  <CartographieAvancement
-                    auClicTerritoireCallback={auClicTerritoireCallback}
-                    données={donnéesCartographie}
-                    options={{ territoireSélectionnable: true }}
-                  />
+                  <section>
+                    <Titre
+                      baliseHtml='h2'
+                      className='fr-h6'
+                    >
+                      Répartition géographique
+                    </Titre>
+                    <CartographieAvancement
+                      auClicTerritoireCallback={auClicTerritoireCallback}
+                      données={donnéesCartographie}
+                      options={{ territoireSélectionnable: true }}
+                    />
+                  </section>
                 </Bloc>
               </div>
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
-                  <Titre
-                    baliseHtml='h2'
-                    className='fr-h6'
-                  >
-                    Taux d’avancement moyen de la sélection
-                  </Titre>
-                  <Avancements avancements={avancements} />
+                  <section>
+                    <Titre
+                      baliseHtml='h2'
+                      className='fr-h6'
+                    >
+                      Taux d’avancement moyen de la sélection
+                    </Titre>
+                    <Avancements avancements={avancements} />
+                  </section>
                   <hr className='fr-hr fr-my-3w fr-pb-1v' />
-                  <Titre
-                    baliseHtml='h2'
-                    className='fr-h6'
-                  >
-                    Répartition des météos de la sélection
-                  </Titre>
-                  <RépartitionMétéo météos={météos} />
+                  <section>
+                    <Titre
+                      baliseHtml='h2'
+                      className='fr-h6'
+                    >
+                      Répartition des météos de la sélection
+                    </Titre>
+                    <RépartitionMétéo météos={météos} />
+                  </section>
                 </Bloc>
               </div>
             </div>

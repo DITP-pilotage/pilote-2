@@ -9,7 +9,7 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
 
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   return (
-    <div
+    <section
       id="commentaires"
     >
       <Titre
@@ -47,6 +47,6 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
           />
         </div>
       </Bloc>
-    </div>
+    </section>
   );
 }

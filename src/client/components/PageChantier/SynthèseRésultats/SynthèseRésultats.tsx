@@ -9,7 +9,7 @@ import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils
 
 export default function SynthèseRésultats({ météo, synthèseDesRésultats }: SynthèseRésultatsProps) {
   return (
-    <div id="synthèse">
+    <section id="synthèse">
       <Titre
         baliseHtml='h2'
         className='fr-h4 fr-mb-2w'
@@ -45,6 +45,6 @@ export default function SynthèseRésultats({ météo, synthèseDesRésultats }:
           </div>
         </SynthèseRésultatsStyled>
       </Bloc>
-    </div>
+    </section>
   );
 }

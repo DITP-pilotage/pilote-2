@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const TableauStyled = styled.div`
+const TableauStyled = styled.section`
   overflow-x: auto;
 
   table.tableau {

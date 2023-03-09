@@ -5,7 +5,7 @@ import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils
 
 export default function Commentaire({ titre, commentaire }: CommentaireProps) {
   return (
-    <>
+    <section>
       <Titre
         baliseHtml='h3'
         className="fr-text--lead fr-mb-1w"
@@ -32,6 +32,6 @@ export default function Commentaire({ titre, commentaire }: CommentaireProps) {
           </p>
         )
       }
-    </>
+    </section>
   );
 }
