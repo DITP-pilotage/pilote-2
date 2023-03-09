@@ -1,9 +1,7 @@
-import Titre from '@/components/_commons/Titre/Titre';
+import CentreDAide from '@/components/CentreDAide/CentreDAide';
 
 export default function NextPageCentreDAide() {
   return (
-    <Titre baliseHtml="h1">
-      Centre d&rsquo;aide
-    </Titre>
+    <CentreDAide />
   );
 }
