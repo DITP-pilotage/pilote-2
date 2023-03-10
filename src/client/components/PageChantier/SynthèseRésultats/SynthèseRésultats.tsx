@@ -5,6 +5,7 @@ import SynthèseRésultatsStyled from '@/components/PageChantier/SynthèseRésul
 import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import météos from '@/client/constants/météos';
 import { formaterDate } from '@/client/utils/date/date';
+import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
 
 export default function SynthèseRésultats({ météo, synthèseDesRésultats }: SynthèseRésultatsProps) {
   return (
@@ -31,9 +32,13 @@ export default function SynthèseRésultats({ météo, synthèseDesRésultats }:
                       <div className="texte-gris fr-text--xs fr-mb-1w">
                         {`Mis à jour le ${formaterDate(synthèseDesRésultats.date, 'jj/mm/aaaa')}`}
                       </div>
-                      <p className="fr-text--sm">
-                        {synthèseDesRésultats.contenu}
-                      </p>
+                      <p
+                        className="fr-text--sm"  
+                        // eslint-disable-next-line react/no-danger
+                        dangerouslySetInnerHTML={{
+                          __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(synthèseDesRésultats.contenu),
+                        }}
+                      />
                     </>
                   : 'Aucune synthèse des résultats.'
               }

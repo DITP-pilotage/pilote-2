@@ -1,11 +1,9 @@
 import Titre from '@/components/_commons/Titre/Titre';
 import CommentaireProps from '@/components/PageChantier/Commentaires/Commentaire/Commentaire.interface';
-import useCommentaire from '@/components/PageChantier/Commentaires/Commentaire/useCommentaire';
 import { formaterDate } from '@/client/utils/date/date';
+import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
 
 export default function Commentaire({ titre, commentaire }: CommentaireProps) {
-  const { rendreLeHtml } = useCommentaire();
-
   return (
     <>
       <Titre
@@ -22,10 +20,9 @@ export default function Commentaire({ titre, commentaire }: CommentaireProps) {
             </p>
             <p
               className="fr-text--sm fr-mb-0"
-              // TODO trouver mieux que dangerouslySetInnerHTML
               // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{
-                __html: rendreLeHtml(commentaire.contenu),
+                __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(commentaire.contenu),
               }}
             />
           </>
