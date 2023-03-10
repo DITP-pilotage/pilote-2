@@ -1,14 +1,14 @@
 import '@gouvfr/dsfr/dist/component/badge/badge.min.css';
 import ovoidBackground from '@gouvfr/dsfr/dist/artwork/background/ovoid.svg';
 import technicalError from '@gouvfr/dsfr/dist/artwork/pictograms/system/technical-error.svg';
-import PageVideStyled from './PageVideStyled';
-import PageVideProps from './PageVide.interface';
+import PageErreurStyled from './PageErreurStyled';
+import PageErreurProps from './PageErreur.interface';
 import Titre from '../Titre/Titre';
 import Bloc from '../Bloc/Bloc';
 
-export default function PageVide({ titre }: PageVideProps) {
+export default function PageErreur({ titre, sousTitre, message }: PageErreurProps) {
   return (
-    <PageVideStyled>
+    <PageErreurStyled>
       <main>
         <div className="fr-px-15w fr-pb-12w fr-container--fluid">
           <div className='fr-grid-row fr-py-4w'>
@@ -18,9 +18,6 @@ export default function PageVide({ titre }: PageVideProps) {
             >
               {titre}
             </Titre>
-            <p className="fr-badge fr-ml-3w fr-my-auto">
-              À venir
-            </p>
           </div>
           <Bloc>
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
@@ -29,20 +26,11 @@ export default function PageVide({ titre }: PageVideProps) {
                   baliseHtml='h2'
                   className='fr-h4'
                 >
-                  Service bientot disponible
+                  {sousTitre}
                 </Titre>
                 <p>
-                  Merci de bien vouloir revenir ultérieurement, vous serez bientôt en mesure d’accéder au service.
-                  <br />
-                  <br />
-                  Si vous avez besoin d’une aide immédiate, merci de nous contacter.
+                  {message}
                 </p>
-                <a
-                  className='fr-btn fr-btn--secondary'
-                  href='mailto:support.ditp@modernisation.gouv.fr'
-                >
-                  Contactez-nous
-                </a>
               </div>
               <div className="fr-col-12 fr-col-md-3 fr-col-offset-md-1 fr-p-0">
                 <svg
@@ -81,6 +69,6 @@ export default function PageVide({ titre }: PageVideProps) {
           </Bloc>
         </div>
       </main>
-    </PageVideStyled>
+    </PageErreurStyled>
   );
 }
