@@ -5,9 +5,9 @@ export default function FiltresGroupeDeCatégories({ libellé, children }: Filtr
     <div className="fr-px-3w">
       {
         !!libellé && (
-          <p className="fr-text--lg fr-mb-0 fr-mt-2w fr-mb-1w bold">
+          <h2 className="fr-text--lg fr-mb-0 fr-mt-2w fr-mb-1w bold">
             { libellé }
-          </p>
+          </h2>
         )
       }
       { children }

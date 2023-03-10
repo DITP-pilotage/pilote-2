@@ -7,9 +7,6 @@ import FiltreBaromètre from './FiltreBaromètre/FiltreBaromètre';
 export default function Filtres({ ministères, axes, ppg }: FiltresProps) {
   return (
     <>
-      <p className="fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8">
-        Filtres
-      </p>
       <FiltresGroupeDeCatégoriesDeFiltres>
         <FiltresMinistères
           catégorieDeFiltre='périmètresMinistériels'

@@ -32,13 +32,19 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
         <BarreLatéraleEncart>
           <SélecteursMaillesEtTerritoires />
         </BarreLatéraleEncart>
+        <Titre
+          baliseHtml="h1"
+          className="fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8"
+        >
+          Filtres
+        </Titre>
         <Filtres
           axes={axes}
           ministères={ministères}
           ppg={ppg}
         />
       </BarreLatérale>
-      <div className='contenu-principal'>
+      <main>
         <button
           className="fr-sr-only-xl fr-btn fr-btn--secondary fr-mb-2w"
           onClick={() => setEstOuverteBarreLatérale(true)}
@@ -98,7 +104,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </PageChantiersStyled>
   );
 }
