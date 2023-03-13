@@ -3,7 +3,7 @@ import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepositor
 import Indicateur, { CartographieIndicateur, TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 import { FichesIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
@@ -51,11 +51,11 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return this.mapToDomain(indicateurs);
   }
 
-  async getCartographieDonnéesParMailleEtIndicateurId(indicateurId: string, maille: Maille): Promise<CartographieIndicateur> {
+  async getCartographieDonnéesParMailleEtIndicateurId(indicateurId: string, mailleInterne: MailleInterne): Promise<CartographieIndicateur> {
     const indicateurs: indicateur[] = await this.prisma.indicateur.findMany({
       where: {
         id: indicateurId,
-        maille: CODES_MAILLES[maille],
+        maille: CODES_MAILLES[mailleInterne],
       },
     });
 

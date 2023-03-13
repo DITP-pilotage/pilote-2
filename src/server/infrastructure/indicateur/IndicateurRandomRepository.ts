@@ -15,8 +15,8 @@ export default class IndicateurRandomRepository implements IndicateurRepository 
     return this.indicateurs;
   }
 
-  async getCartographieDonnéesParMailleEtIndicateurId(_indicateurId: string, _maille: MailleInterne): Promise<CartographieIndicateur> {
-    return IndicateurFixture.générerCartographieIndicateurDonnées(_maille);
+  async getCartographieDonnéesParMailleEtIndicateurId(_indicateurId: string, _mailleInterne: MailleInterne): Promise<CartographieIndicateur> {
+    return IndicateurFixture.générerCartographieIndicateurDonnées(_mailleInterne);
   }
   
   async getFichesIndicateurs(_chantierId: string, _maille: string, _codesInsee: string[]): Promise<FichesIndicateurs> {

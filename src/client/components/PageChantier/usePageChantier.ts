@@ -6,6 +6,7 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Commentaires, DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { FichesIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { InfosChantier } from '@/server/domain/chantier/ChantierRepository.interface';
 
 export default function usePageChantier(chantier: Chantier) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -21,7 +22,7 @@ export default function usePageChantier(chantier: Chantier) {
   useEffect(() => {
     fetch(`/api/chantier/${chantier.id}?codeInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
       .then(réponse => {
-        return réponse.json();
+        return réponse.json() as Promise<InfosChantier>;
       })
       .then(données => {
         // TODO améliorer la gestion d'erreur
@@ -34,7 +35,7 @@ export default function usePageChantier(chantier: Chantier) {
   useEffect(() => {
     if (territoiresComparés.length > 0) return;    
     fetch(`/api/chantier/${chantier.id}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
-      .then(réponse => réponse.json())
+      .then(réponse => réponse.json() as Promise<FichesIndicateurs>)
       .then(données => setDétailsIndicateurs(données));
   }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee, mailleSélectionnée]);
   
@@ -42,7 +43,7 @@ export default function usePageChantier(chantier: Chantier) {
     const codesInsee = territoiresComparés.map(territoire => `codesInsee=${territoire.codeInsee}`).join('&');
     if (codesInsee === '' || codesInsee === 'codesInsee=FR') return;
     fetch(`/api/chantier/${chantier.id}/indicateurs?${codesInsee}&maille=${mailleSélectionnée}`)
-      .then(réponse => réponse.json())
+      .then(réponse => réponse.json() as Promise<FichesIndicateurs>)
       .then(données => setDétailsIndicateurs(données));
   }, [territoiresComparés]);
 

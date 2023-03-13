@@ -4,7 +4,7 @@ const PageVideStyled = styled.div`
   background: var(--background-alt-blue-france);
     
   h1 {
-    color: var(--background-action-high-blue-france);
+    color: var(--text-title-blue-france);
   }
 
   .fr-badge {

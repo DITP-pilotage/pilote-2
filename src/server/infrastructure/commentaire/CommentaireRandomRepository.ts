@@ -12,7 +12,15 @@ export default class CommentaireRandomRepository implements CommentaireRepositor
     };
   }
 
-  findNewestByChantierIdAndTerritoire(_chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<Commentaires> {
-    throw new Error('Not Implemented');
+  async findNewestByChantierIdAndTerritoire(_chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<Commentaires> {
+    return (
+      { 
+        'freinsÀLever': {
+          contenu: 'contenu commentaire',
+          auteur: 'auteur commentaire',
+          date: '01/01/2023',
+        },
+      }
+    );
   }
 }

@@ -32,9 +32,9 @@ class IndicateurFixture implements FixtureInterface<Indicateur> {
     return résultat;
   }
 
-  générerCartographieIndicateurDonnées(maille: MailleInterne): CartographieIndicateur {
+  générerCartographieIndicateurDonnées(mailleInterne: MailleInterne): CartographieIndicateur {
     const résultat: CartographieIndicateur = {};
-    const codesInsee = maille === 'départementale' ? codeInseeDépartements : codeInseeRégions;
+    const codesInsee = mailleInterne === 'départementale' ? codeInseeDépartements : codeInseeRégions;
     codesInsee.forEach(codeInsee => {
       résultat[codeInsee] = {
         avancementAnnuel: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
