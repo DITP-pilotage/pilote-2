@@ -17,7 +17,7 @@ export default function IndicateurÉvolution({ indicateurDétailsParTerritoires 
   const { options, donnéesParTerritoire } = useIndicateurÉvolution(indicateurDétailsParTerritoires);
 
   return (
-    <div>
+    <section>
       <Titre
         baliseHtml='h5'
         className='fr-text--lg fr-mb-0'
@@ -31,6 +31,6 @@ export default function IndicateurÉvolution({ indicateurDétailsParTerritoires 
         data={donnéesParTerritoire}
         options={options}
       />
-    </div>
+    </section>
   );
 }

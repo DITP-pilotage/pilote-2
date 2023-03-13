@@ -22,12 +22,9 @@ export default function PageErreur({ titre, sousTitre, message }: PageErreurProp
           <Bloc>
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
               <div className="fr-p-0 fr-pr-4w fr-col-12 fr-col-md-6">
-                <Titre
-                  baliseHtml='h2'
-                  className='fr-h4'
-                >
+                <p className='fr-h4'>
                   {sousTitre}
-                </Titre>
+                </p>
                 <p>
                   {message}
                 </p>

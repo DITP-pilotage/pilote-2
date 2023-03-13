@@ -16,30 +16,32 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur } : Indi
       key={indicateur.id}
     >
       <Bloc>
-        <Titre
-          baliseHtml="h4"
-          className="fr-text--xl fr-mb-1w"
-        >
-          { !!indicateur.estIndicateurDuBaromètre && 
-          <PictoBaromètre
-            className='fr-mr-1w' 
-            taille={{ mesure: 1.25, unité: 'rem' }} 
-          /> }
-          { indicateur.nom }
-        </Titre>
-        <p className='fr-mb-2w information-secondaire texte-gris'>
-          Dernière mise à jour : Non renseigné
-        </p>
-        <Tableau<IndicateurDétailsParTerritoire>
-          afficherLaRecherche={false}
-          colonnes={colonnes}
-          données={indicateurDétailsParTerritoires}
-          entité='indicateur'
-        />
-        <IndicateurDétails
-          indicateur={indicateur}
-          indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
-        />
+        <section>
+          <Titre
+            baliseHtml="h4"
+            className="fr-text--xl fr-mb-1w"
+          >
+            { !!indicateur.estIndicateurDuBaromètre &&
+              <PictoBaromètre
+                className='fr-mr-1w'
+                taille={{ mesure: 1.25, unité: 'rem' }}
+              /> }
+            { indicateur.nom }
+          </Titre>
+          <p className='fr-mb-2w information-secondaire texte-gris'>
+            Dernière mise à jour : Non renseigné
+          </p>
+          <Tableau<IndicateurDétailsParTerritoire>
+            afficherLaRecherche={false}
+            colonnes={colonnes}
+            données={indicateurDétailsParTerritoires}
+            entité='indicateur'
+          />
+          <IndicateurDétails
+            indicateur={indicateur}
+            indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
+          />
+        </section>
       </Bloc>
     </IndicateurBlocStyled>
   );

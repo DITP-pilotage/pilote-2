@@ -1,4 +1,3 @@
-import Titre from '@/components/_commons/Titre/Titre';
 import RépartitionMétéoProps from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéo.interface';
 import météosConstantes from '@/client/constants/météos';
 import { Météo } from '@/server/domain/météo/Météo.interface';
@@ -10,12 +9,6 @@ const météosÀAfficher: Partial<Météo>[] = ['ORAGE', 'NUAGE', 'COUVERT', 'SO
 export default function RépartitionMétéo({ météos }: RépartitionMétéoProps) {
   return (
     <RépartitionMétéoStyled>
-      <Titre
-        baliseHtml='h2'
-        className='fr-h6'
-      >
-        Répartition des météos de la sélection
-      </Titre>
       <ul className='fr-grid-row fr-grid-row--gutters'>
         {
           météosÀAfficher.map(météo => (

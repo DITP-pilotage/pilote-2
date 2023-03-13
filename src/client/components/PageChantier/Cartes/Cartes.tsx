@@ -22,7 +22,7 @@ export default function Cartes({ chantier }: CartesProps) {
   }));
 
   return (
-    <div 
+    <section
       id="cartes"
     >
       <Titre
@@ -34,35 +34,39 @@ export default function Cartes({ chantier }: CartesProps) {
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-xl-6">
           <Bloc>
-            <Titre
-              baliseHtml='h4'
-              className='fr-text--lg'
-            >
-              Taux d&apos;avancement
-            </Titre>
-            <CartographieAvancement
-              auClicTerritoireCallback={auClicTerritoireCallback}
-              données={donnéesCartographieAvancement}
-              options={{ territoireSélectionnable: true }}
-            />
+            <section>
+              <Titre
+                baliseHtml='h3'
+                className='fr-text--lg'
+              >
+                Taux d&apos;avancement
+              </Titre>
+              <CartographieAvancement
+                auClicTerritoireCallback={auClicTerritoireCallback}
+                données={donnéesCartographieAvancement}
+                options={{ territoireSélectionnable: true }}
+              />
+            </section>
           </Bloc>
         </div>
         <div className="fr-col-12 fr-col-xl-6">
           <Bloc>
-            <Titre
-              baliseHtml='h4'
-              className='fr-text--lg'
-            >
-              Niveau de confiance
-            </Titre>
-            <CartographieMétéo
-              auClicTerritoireCallback={auClicTerritoireCallback}
-              données={donnéesCartographieMétéo}
-              options={{ territoireSélectionnable: true }}
-            />
+            <section>
+              <Titre
+                baliseHtml='h3'
+                className='fr-text--lg'
+              >
+                Niveau de confiance
+              </Titre>
+              <CartographieMétéo
+                auClicTerritoireCallback={auClicTerritoireCallback}
+                données={donnéesCartographieMétéo}
+                options={{ territoireSélectionnable: true }}
+              />
+            </section>
           </Bloc>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -35,9 +35,9 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
             <div className="fr-col-12">
               <IndicateurSpécifications indicateur={indicateur} />
             </div>
-            <div className="fr-col-12 fr-col-xl-6">
+            <section className="fr-col-12 fr-col-xl-6">
               <Titre
-                baliseHtml='h4'
+                baliseHtml='h5'
                 className='fr-text--lg'
               >
                 Répartition géographique de l&apos;avancement
@@ -47,10 +47,10 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
                 données={donnéesCartographieAvancement}
                 options={{ territoireSélectionnable: true, multiséléction: true }}
               />
-            </div>
-            <div className="fr-col-12 fr-col-xl-6">
+            </section>
+            <section className="fr-col-12 fr-col-xl-6">
               <Titre
-                baliseHtml='h4'
+                baliseHtml='h5'
                 className='fr-text--lg'
               >
                 Répartition géographique de la valeur actuelle de l&apos;indicateur
@@ -60,7 +60,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
                 données={donnéesCartographieValeurActuelle}
                 options={{ territoireSélectionnable: true, multiséléction: true }}
               />
-            </div>
+            </section>
           </div>
         </div>
         <hr className='fr-hr' />

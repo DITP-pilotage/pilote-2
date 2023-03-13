@@ -18,7 +18,7 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs }: Indica
   );
 
   return (
-    <div id="indicateurs">
+    <section id="indicateurs">
       <Titre
         baliseHtml='h2'
         className='fr-h4 fr-mb-2w'
@@ -27,7 +27,7 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs }: Indica
       </Titre>
       { 
         listeRubriquesIndicateurs.map(rubrique => (
-          <div
+          <section
             className='fr-mb-3w'
             id={rubrique.ancre}
             key={rubrique.ancre}
@@ -57,9 +57,9 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs }: Indica
                   ))
                 ))
             }
-          </div>
+          </section>
         ))
       }
-    </div>
+    </section>
   );
 }

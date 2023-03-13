@@ -25,12 +25,9 @@ export default function PageVide({ titre }: PageVideProps) {
           <Bloc>
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
               <div className="fr-p-0 fr-pr-4w fr-col-12 fr-col-md-6">
-                <Titre
-                  baliseHtml='h2'
-                  className='fr-h4'
-                >
-                  Service bientot disponible
-                </Titre>
+                <p className='fr-h4'>
+                  Service bientôt disponible
+                </p>
                 <p>
                   Merci de bien vouloir revenir ultérieurement, vous serez bientôt en mesure d’accéder au service.
                   <br />
