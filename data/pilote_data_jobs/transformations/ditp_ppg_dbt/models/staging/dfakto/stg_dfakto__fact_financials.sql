@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ ref('fact_financials_enr') }}
+    select * from {{ ref('fact_financials') }}
 
 ),
 
@@ -13,6 +13,7 @@ renamed as (
         period_id,
         state_id as type_valeur,
         effect_id,
+        financials_propilot_amount as valeur_cumulee,
         financials_decumulated_amount as valeur
 
     from source

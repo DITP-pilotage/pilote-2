@@ -3,7 +3,7 @@ WITH
 historique_valeur_actuelle_indicateur as (
 
     SELECT *
-    FROM {{ ref('stg_dfakto__fact_financials_enr') }}
+    FROM {{ ref('stg_dfakto__fact_financials') }}
     WHERE type_valeur = 'Valeur Actuelle'
       AND length(period_id::text) = 8
     ORDER BY tree_node_id, effect_id, period_id
