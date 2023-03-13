@@ -1,7 +1,7 @@
 import { indicateur, PrismaClient } from '@prisma/client';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { CartographieIndicateur, TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
-import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
+import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { FichesIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 

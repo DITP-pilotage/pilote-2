@@ -4,7 +4,7 @@ import ChantierRepository from '@/server/domain/chantier/ChantierRepository.inte
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ChantierRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/ChantierRowBuilder';
 import { objectEntries } from '@/client/utils/objects/objects';
-import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
+import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {

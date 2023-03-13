@@ -2,11 +2,11 @@ import { commentaire } from '@prisma/client';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import CommentaireSQLRepository, {
   CODES_TYPES_COMMENTAIRES,
-} from '@/server/infrastructure/commentaire/CommentaireSQLRepository';
+} from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { commentairesNull } from '@/server/domain/commentaire/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
+import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import CommentaireRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/CommentaireRowBuilder';
 
 describe('CommentaireSQLRepository', () => {

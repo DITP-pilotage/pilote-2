@@ -7,7 +7,7 @@ import {
 } from '@/server/domain/commentaire/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
+import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 
 export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaire> = {
   freins_a_lever: 'freinsÀLever',
