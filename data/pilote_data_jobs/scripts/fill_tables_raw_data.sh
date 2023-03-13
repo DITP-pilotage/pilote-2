@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Uniquement sur du local
-if [ -z $DATABASE_URL ] || [ -z $PGHOST ] || [ -z $PGPORT ] || [ -z $PGUSER ] || [ -z $PGPASSWORD ] || [ -z $PGDATABASE ] || [ -z $DUMP_DFAKTO_RP_RAW ] || [ -z $DUMP_DFAKTO_RP_VIEWS_DATA ] || [ -z $PPG_METADATA_VIEWS ] || [ -z $PPG_METADATA_MODELS ];
+if [ -z $DATABASE_URL ] || [ -z $PGHOST ] || [ -z $PGPORT ] || [ -z $PGUSER ] || [ -z $PGPASSWORD ] || [ -z $PGDATABASE ] || [ -z $DUMP_DFAKTO_RP_RAW ] || [ -z $DUMP_DFAKTO_RP_VIEWS_DATA ] || [ -z $DUMP_DFAKTO_2 ] || [ -z $PPG_METADATA_VIEWS ] || [ -z $PPG_METADATA_MODELS ];
 then
   if [ -f .env ];
   then

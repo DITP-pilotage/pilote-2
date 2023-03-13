@@ -3,10 +3,9 @@ import os
 
 
 def model(dbt, session):
-    #dump_dfakto_rp_raw = os.getenv()
-    dump_dfakto_rp_raw = '/Users/fabien.roussel/Documents/Missions/DITP/ditp-pilote-draft/data/input_data/private_data/dump_dfakto_octo_2'
+    dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_2')
     dim_tree_nodes = pd.read_csv(
-        f'{dump_dfakto_rp_raw}/dim_tree_nodes.csv',
+        f'{dump_dfakto_rp_raw}/dim_tree_nodes_202303091524.csv',
         sep=';'
     )
 
