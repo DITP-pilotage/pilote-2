@@ -12,6 +12,7 @@ renamed as (
         tree_node_id,
         progress_intermediaire as avancement_annuel,
         progress_globale as avancement,
+        progress_globale as avancement_borne,
         snapshot_date
     from source
 
