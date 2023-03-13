@@ -23,7 +23,7 @@ export default class ChantierRandomRepository implements ChantierRepository {
     return ChantierFixture.générerPlusieurs(this.valeursFixes.length, this.valeursFixes);
   }
 
-  récupérerMétéoParChantierIdEtTerritoire(_chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<Météo | null> {
-    throw new Error('Not Implemented');
+  async récupérerMétéoParChantierIdEtTerritoire(_chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<Météo | null> {
+    return 'SOLEIL';
   }
 }

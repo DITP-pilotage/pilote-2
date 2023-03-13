@@ -1,11 +1,56 @@
 import { faker } from '@faker-js/faker';
-import Indicateur, {
-  typesIndicateur,
-} from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur, { CartographieIndicateur, typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
+import { codeInseeDépartements, codeInseeRégions } from '@/fixtures/codesInsee';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { DétailsIndicateur, FichesIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import FixtureInterface from './Fixture.interface';
 import { générerUnIdentifiantUnique } from './utils';
 
 class IndicateurFixture implements FixtureInterface<Indicateur> {
+
+  private générerFakeDétailsIndicateur(codeInsee: CodeInsee): DétailsIndicateur {
+    return {
+      codeInsee: codeInsee,
+      valeurInitiale: faker.helpers.arrayElement([null, faker.datatype.number({ max: 99 })]),
+      dateValeurInitiale: '2020-01-01',
+      valeurs: [25, 65, 150, 199],
+      dateValeurs: ['2021-06-30', '2022-06-30', '2023-06-30', '2024-06-30'],
+      valeurCible: faker.helpers.arrayElement([null, faker.datatype.number({ min: 199, max: 250 })]),
+      avancement: {
+        annuel: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
+        global: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
+      },
+    };
+  }
+
+  private générerFakeDétailsIndicateurParTerritoires(codesInsee: CodeInsee[]) {
+    const résultat: Record<CodeInsee, DétailsIndicateur> = {};
+    codesInsee.forEach(codeInsee => {
+      résultat[codeInsee] = this.générerFakeDétailsIndicateur(codeInsee);
+    });
+    return résultat;
+  }
+
+  générerCartographieIndicateurDonnées(mailleInterne: MailleInterne): CartographieIndicateur {
+    const résultat: CartographieIndicateur = {};
+    const codesInsee = mailleInterne === 'départementale' ? codeInseeDépartements : codeInseeRégions;
+    codesInsee.forEach(codeInsee => {
+      résultat[codeInsee] = {
+        avancementAnnuel: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
+        valeurActuelle: faker.helpers.arrayElement([null, faker.datatype.number({ max: 99 })]),
+      };
+    });
+    return résultat;
+  }
+
+  générerFichesIndicateurs(idsIndicateurs?: Indicateur['id'][], codesInsee?: CodeInsee[]): FichesIndicateurs {
+    const résultat: FichesIndicateurs = {};
+    (idsIndicateurs || [générerUnIdentifiantUnique('IND')]).forEach(idIndicateur => {
+      résultat[idIndicateur] = this.générerFakeDétailsIndicateurParTerritoires(codesInsee || codeInseeRégions);
+    });
+    return résultat;
+  }
 
   générer(valeursFixes: Partial<Indicateur> = {}): Indicateur {
     return {

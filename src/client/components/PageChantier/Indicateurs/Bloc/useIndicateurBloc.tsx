@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { territoiresComparésTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import { DetailsIndicateur } from '@/server/domain/indicateur/DetailsIndicateur.interface';
+import { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import ValeurEtDate from './ValeurEtDate/ValeurEtDate';
 import { IndicateurDétailsParTerritoire } from './IndicateurBloc.interface';
 
@@ -22,7 +22,7 @@ const indicateurDétailsVide = {
 
 const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
 
-export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, DetailsIndicateur>) {
+export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, DétailsIndicateur>) {
   const territoiresComparés = territoiresComparésTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 

@@ -97,7 +97,7 @@ describe('IndicateurSQLRepository', () => {
       const repository = new IndicateurSQLRepository(prisma);
 
       // WHEN
-      const result = await repository.getCartographieDonnéesByMailleAndIndicateurId('IND-001',  'départementale');
+      const result = await repository.getCartographieDonnéesParMailleEtIndicateurId('IND-001',  'départementale');
 
       // THEN
       expect(result).toStrictEqual({});
@@ -140,7 +140,7 @@ describe('IndicateurSQLRepository', () => {
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
-      const result = await repository.getCartographieDonnéesByMailleAndIndicateurId(indicateurId, maille);
+      const result = await repository.getCartographieDonnéesParMailleEtIndicateurId(indicateurId, maille);
 
       // THEN
       expect(result).toStrictEqual({
@@ -162,7 +162,7 @@ describe('IndicateurSQLRepository', () => {
       const repository = new IndicateurSQLRepository(prisma);
 
       // WHEN
-      const result = await repository.getDetailsIndicateur('CH-001',  'départementale', ['01']);
+      const result = await repository.getFichesIndicateurs('CH-001',  'départementale', ['01']);
 
       // THEN
       expect(result).toStrictEqual({});
@@ -216,7 +216,7 @@ describe('IndicateurSQLRepository', () => {
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
-      const result = await repository.getDetailsIndicateur('CH-001', 'départementale', ['01', '02', '03']);
+      const result = await repository.getFichesIndicateurs('CH-001', 'départementale', ['01', '02', '03']);
 
       // THEN
       expect(result).toStrictEqual(
@@ -313,7 +313,7 @@ describe('IndicateurSQLRepository', () => {
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
-      const result = await repository.getDetailsIndicateur('CH-002', 'régionale', ['01', '02']);
+      const result = await repository.getFichesIndicateurs('CH-002', 'régionale', ['01', '02']);
 
       // THEN
       expect(result).toStrictEqual(

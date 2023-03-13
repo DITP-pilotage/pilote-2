@@ -2,8 +2,8 @@ import { indicateur, PrismaClient } from '@prisma/client';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { CartographieIndicateur, TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
-import { FichesIndicateurs } from '@/server/domain/indicateur/DetailsIndicateur.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { FichesIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
@@ -51,11 +51,11 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return this.mapToDomain(indicateurs);
   }
 
-  async getCartographieDonnéesByMailleAndIndicateurId(indicateurId: string, maille: Maille): Promise<CartographieIndicateur> {
+  async getCartographieDonnéesParMailleEtIndicateurId(indicateurId: string, mailleInterne: MailleInterne): Promise<CartographieIndicateur> {
     const indicateurs: indicateur[] = await this.prisma.indicateur.findMany({
       where: {
         id: indicateurId,
-        maille: CODES_MAILLES[maille],
+        maille: CODES_MAILLES[mailleInterne],
       },
     });
 
@@ -70,7 +70,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     );
   }
 
-  async getDetailsIndicateur(chantierId: string, maille: Maille, codesInsee: string[]): Promise<FichesIndicateurs> {
+  async getFichesIndicateurs(chantierId: string, maille: Maille, codesInsee: string[]): Promise<FichesIndicateurs> {
     const indicateurs: indicateur[] = await this.prisma.indicateur.findMany({
       where: {
         chantier_id: chantierId,

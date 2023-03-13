@@ -1,12 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import logger from '@/server/infrastructure/logger';
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 class ParsingError extends Error {}
 
-function parseQueryParams(request: NextApiRequest): { chantierId: string, maille: string, codesInsee: string[] } {
+function parseQueryParams(request: NextApiRequest): { chantierId: string, maille: Maille, codesInsee: CodeInsee[] } {
   const chantierId = request.query.chantierId as string;
-  const maille = request.query.maille as string;
-  let codesInsee = request.query.codesInsee as string[];
+  const maille = request.query.maille as Maille;
+  let codesInsee = request.query.codesInsee as CodeInsee[];
   if (typeof codesInsee === 'string') {
     codesInsee = [codesInsee];
   }
@@ -31,7 +33,7 @@ export default async function handle(request: NextApiRequest, response: NextApiR
     }
     throw error;
   }
-  const detailsIndicateur = await indicateurRepository.getDetailsIndicateur(params.chantierId, params.maille, params.codesInsee);
+  const detailsIndicateur = await indicateurRepository.getFichesIndicateurs(params.chantierId, params.maille, params.codesInsee);
   response
     .status(200)
     .json(detailsIndicateur);

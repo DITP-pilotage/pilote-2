@@ -1,15 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import logger from '@/server/infrastructure/logger';
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 
 class ParsingError extends Error {}
 
 // TODO: a refactor avec les autres parseQueryParams de l'api
-function parseQueryParams(request: NextApiRequest): { indicateurId: string, maille: Maille } {
+function parseQueryParams(request: NextApiRequest): { indicateurId: string, maille: MailleInterne } {
   const indicateurId = request.query.indicateurId as string;
-  const maille = request.query.maille as Maille;
+  const maille = request.query.maille as MailleInterne;
 
   if (!indicateurId || !maille) {
     const errorMessage = 'Le parsing de la query a échoué.';
@@ -31,7 +31,7 @@ export default async function handle(request: NextApiRequest, response: NextApiR
     }
     throw error;
   }
-  const cartographieIndicateurTerritorialisées = await indicateurRepository.getCartographieDonnéesByMailleAndIndicateurId(params.indicateurId, params.maille);
+  const cartographieIndicateurTerritorialisées = await indicateurRepository.getCartographieDonnéesParMailleEtIndicateurId(params.indicateurId, params.maille);
   response
     .status(200)
     .json(cartographieIndicateurTerritorialisées);

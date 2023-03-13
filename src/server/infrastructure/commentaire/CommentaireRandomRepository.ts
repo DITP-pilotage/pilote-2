@@ -4,11 +4,23 @@ import { Commentaires, DétailsCommentaire } from '@/server/domain/commentaire/C
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 
 export default class CommentaireRandomRepository implements CommentaireRepository {
-  getObjectifsByChantierId(_chantierId: string): Promise<DétailsCommentaire | null> {
-    throw new Error('Not Implemented');
+  async getObjectifsByChantierId(_chantierId: string): Promise<DétailsCommentaire | null> {
+    return {
+      contenu: 'contenu de commentaire objectif',
+      auteur: 'auteur de commentaire objectif',
+      date: '01/01/2023',
+    };
   }
 
-  findNewestByChantierIdAndTerritoire(_chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<Commentaires> {
-    throw new Error('Not Implemented');
+  async findNewestByChantierIdAndTerritoire(_chantierId: string, _maille: Maille, _codeInsee: CodeInsee): Promise<Commentaires> {
+    return (
+      { 
+        'freinsÀLever': {
+          contenu: 'contenu commentaire',
+          auteur: 'auteur commentaire',
+          date: '01/01/2023',
+        },
+      }
+    );
   }
 }
