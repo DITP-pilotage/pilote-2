@@ -3,22 +3,26 @@ import os
 
 
 def model(dbt, session):
-    dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_RP_RAW')
+    #dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_RP_RAW')
+    dump_dfakto_rp_raw = '/Users/fabien.roussel/Documents/Missions/DITP/ditp-pilote-draft/data/input_data/private_data/dump_dfakto_octo_2'
     fact_progress_indicateurs = pd.read_csv(
         f'{dump_dfakto_rp_raw}/fact_progress.csv',
         sep=';'
     )
 
     columns_type = {
-        'period_id': 'int16',
         'valeur_initiale': 'float64',
         'valeur_actuelle': 'float64',
-        'valeur_cible': 'float64',
-        'progress': 'float64',
-        'bounded_progress': 'float64',
+        'valeur_cible_intermediaire': 'float64',
+        'valeur_cible_globale': 'float64',
+        'progress_intermediaire': 'float64',
+        'bounded_progress_intermediaire': 'float64',
+        'progress_globale': 'float64',
+        'bounded_progress_globale': 'float64',
         'date_valeur_initiale': 'datetime64',
         'date_valeur_actuelle': 'datetime64',
-        'date_valeur_cible': 'datetime64',
+        'date_valeur_cible_intermediaire': 'datetime64',
+        'date_valeur_cible_globale': 'datetime64',
         'snapshot_date': 'datetime64',
     }
 
