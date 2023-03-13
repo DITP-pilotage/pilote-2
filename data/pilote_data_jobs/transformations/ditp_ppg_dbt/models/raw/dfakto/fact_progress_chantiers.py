@@ -3,16 +3,16 @@ import os
 
 
 def model(dbt, session):
-    dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_RP_RAW')
+    #dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_RP_RAW')
+    dump_dfakto_rp_raw = '/Users/fabien.roussel/Documents/Missions/DITP/ditp-pilote-draft/data/input_data/private_data/dump_dfakto_octo_2'
     fact_progress_chantiers = pd.read_csv(
-        f'{dump_dfakto_rp_raw}/fact_progress_reform.csv',
+        f'{dump_dfakto_rp_raw}/fact_progress_chantier.csv',
         sep=';'
     )
 
     columns_type = {
-        'period_id': 'int16',
-        'progress': 'float64',
-        'bounded_progress': 'float64',
+        'progress_intermediaire': 'float64',
+        'progress_globale': 'float64',
         'snapshot_date': 'datetime64',
     }
 
