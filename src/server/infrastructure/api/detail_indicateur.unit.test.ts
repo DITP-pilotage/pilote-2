@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
-import handle from '../../../../pages/api/chantier/[chantierId]/indicateurs';
+import handle from '../../../pages/api/chantier/[chantierId]/indicateurs';
 
 describe('/api/detail_indicateur', () => {
   it('renvoyer une liste vide de fiche indicateur', () => {
