@@ -53,8 +53,8 @@ chantier_est_barometre as (
         chantier_est_barometre.est_barometre,
         m_chantiers.est_territorialise
     FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantiers
-        LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom='Réforme'
         LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_zones.id = 'FRANCE' -- ou = COALESCE(d_chantiers.zone_code, 'FRANCE') -- mais pas fan d'écrire ça ...
+        LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom='Réforme'
         LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
         LEFT JOIN {{ ref('stg_ppg_metadata__chantier_meteos') }} chantier_meteos ON chantier_meteos.nom_dfakto = d_chantiers.meteo_nom
         LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id
@@ -91,7 +91,7 @@ UNION
         chantier_est_barometre.est_barometre,
         m_chantiers.est_territorialise
 FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantiers
-        JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_chantiers.est_territorialise=True AND m_zones.maille IN ('DEPT', 'REG')
+        JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_chantiers.est_territorialise = True AND m_zones.maille IN ('DEPT', 'REG')
         LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom IN ('Région', 'Département')
         LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
         LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id

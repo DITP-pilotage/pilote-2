@@ -1,5 +1,5 @@
 WITH
-
+-- TODO: passer certaines requêtes dans un intermédiaires
 historique_valeur_actuelle_indicateur AS (
 
     SELECT fact_fin.tree_node_id,
@@ -27,6 +27,35 @@ historique_valeur_actuelle_transpose_par_indicateur_et_maille AS (
 
 ),
 
+chantiers_territorialises as (
+
+	SELECT m_chantiers.id,
+		m_zones.maille,
+		m_zones.nom AS territoire_nom,
+		m_zones.code_insee
+	FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantiers
+	JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_chantiers.est_territorialise = TRUE AND m_zones.maille IN ('DEPT', 'REG', 'NAT')
+
+),
+
+chantiers_non_territorialises as (
+
+	SELECT m_chantiers.id,
+		m_zones.maille,
+		m_zones.nom AS territoire_nom,
+		m_zones.code_insee
+	FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantiers
+	JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_chantiers.est_territorialise IS NOT TRUE AND m_zones.maille IN ('NAT')
+
+),
+
+chantiers_ayant_des_indicateurs as (
+
+	SELECT * FROM chantiers_territorialises
+	UNION ALL
+	SELECT * FROM chantiers_non_territorialises
+),
+
 dfakto_indicateur AS (
 
     SELECT fact_progress_indicateurs.tree_node_id,
@@ -50,8 +79,8 @@ dfakto_indicateur AS (
             AND hist_va.effect_id = fact_progress_indicateurs.effect_id
 
 )
-(SELECT DISTINCT ON (effect_id, nom_structure, m_zones.code_insee)
-    m_indicateurs.id,
+
+SELECT m_indicateurs.id,
     m_indicateurs.nom,
     m_indicateurs.chantier_id,
     d_indicateurs.objectif_valeur_cible,
@@ -65,23 +94,16 @@ dfakto_indicateur AS (
     d_indicateurs.date_valeur_initiale,
     d_indicateurs.valeur_actuelle,
     d_indicateurs.valeur_initiale,
-    m_zones.code_insee,
-    CASE
-        WHEN d_indicateurs.nom_structure = 'Chantier'
-            THEN 'NAT'
-        WHEN d_indicateurs.nom_structure = 'Département'
-            THEN 'DEPT'
-        WHEN d_indicateurs.nom_structure = 'Région'
-            THEN 'REG'
-    END maille,
-    m_zones.nom AS territoire_nom,
+    chantiers_ayant_des_indicateurs.code_insee,
+    chantiers_ayant_des_indicateurs.maille,
+    chantiers_ayant_des_indicateurs.territoire_nom,
     d_indicateurs.evolution_valeur_actuelle,
     d_indicateurs.evolution_date_valeur_actuelle,
     m_indicateurs.description,
     m_indicateurs.source,
     m_indicateurs.mode_de_calcul
 FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
-    JOIN dfakto_indicateur d_indicateurs ON m_indicateurs.nom = d_indicateurs.effect_id AND d_indicateurs.nom_structure IN ('Département', 'Région', 'Réforme')
+	JOIN chantiers_ayant_des_indicateurs ON m_indicateurs.chantier_id = chantiers_ayant_des_indicateurs.id
     LEFT JOIN {{ ref('stg_ppg_metadata__indicateur_types') }} indicateur_types ON indicateur_types.id = m_indicateurs.indicateur_type_id
-    JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_zones.id = d_indicateurs.zone_code
-ORDER BY effect_id, nom_structure, m_zones.code_insee, d_indicateurs.date_valeur_actuelle DESC)
+    LEFT JOIN dfakto_indicateur d_indicateurs ON m_indicateurs.nom = d_indicateurs.effect_id AND d_indicateurs.nom_structure IN ('Département', 'Région', 'Réforme')
+ORDER BY m_indicateurs.nom, chantiers_ayant_des_indicateurs.maille, chantiers_ayant_des_indicateurs.code_insee, d_indicateurs.date_valeur_actuelle DESC
