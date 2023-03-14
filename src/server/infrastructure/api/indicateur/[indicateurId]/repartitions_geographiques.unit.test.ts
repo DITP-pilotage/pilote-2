@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
-import handle from '../../../pages/api/indicateur/[indicateurId]/repartitions_geographiques';
+import handle from './repartitions_geographiques';
 
 describe('/api/indicateur/:indicateurId/repartitions_geographiques', () => {
   it('renvoyer la cartographie pour l\'ensemble des territoires', async () => {

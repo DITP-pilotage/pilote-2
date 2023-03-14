@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import config from '@/server/infrastructure/Configuration';
 import logger from '@/server/infrastructure/logger';
-import { authOptions } from './api/auth/[...nextauth]';
+import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 
 export default function Signin() {
   return (

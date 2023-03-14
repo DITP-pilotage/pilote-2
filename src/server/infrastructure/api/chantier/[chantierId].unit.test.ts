@@ -3,7 +3,7 @@ import { commentairesNull } from '@/server/domain/commentaire/Commentaire.interf
 import {
   RécupérerLeDétailDUnChantierTerritorialiséeUseCase,
 } from '@/server/usecase/chantier/RécupérerLeDétailDUnChantierTerritorialiséeUseCase';
-import handle from '../../../pages/api/chantier/[chantierId]';
+import handle from './[chantierId]';
 
 describe('/api/chantier/:chantierId:', () => {
   it('renvoyer la synthèse des résultats d\'un chantier', async () => {
