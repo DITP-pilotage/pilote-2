@@ -11,6 +11,7 @@ dfakto_chantier as (
     FROM {{ ref('stg_dfakto__fact_progress_chantiers') }} fact_progress_chantier
         JOIN {{ ref('stg_dfakto__dim_tree_nodes') }} dim_tree_nodes ON fact_progress_chantier.tree_node_id = dim_tree_nodes.id
         JOIN {{ ref('stg_dfakto__dim_structures') }} dim_structures ON dim_tree_nodes.structure_id = dim_structures.id
+        -- TODO: suppression de la prochaine jointure car météo rentré dans l'application
         LEFT JOIN {{ ref('stg_dfakto__view_data_properties') }} view_data_properties ON view_data_properties.reforme_code = dim_tree_nodes.code
 
 ),
