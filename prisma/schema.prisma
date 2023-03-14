@@ -96,3 +96,14 @@ model commentaire {
     maille String
     code_insee String
 }
+
+////////////////////////////////////////////////
+// Authorisations
+
+model perm_chantier_permission {
+  chantier_id String
+  identite_id String
+  scope String[]
+
+  @@id([chantier_id, identite_id])
+}
