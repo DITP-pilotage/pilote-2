@@ -5,19 +5,19 @@ import ChantierRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/Ch
 import SyntheseDesResultatsRowBuilder
   from '@/server/infrastructure/test/tools/rowBuilder/SyntheseDesResultatsRowBuilder';
 import { commentairesNull } from '@/server/domain/commentaire/Commentaire.interface';
-import ChantierSQLRepository from '@/server/infrastructure/chantier/ChantierSQLRepository';
+import ChantierSQLRepository from '@/server/infrastructure/accès_données/chantier/ChantierSQLRepository';
 import SynthèseDesRésultatsRepository
   from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import {
   SynthèseDesRésultatsSQLRepository,
-} from '@/server/infrastructure/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
+} from '@/server/infrastructure/accès_données/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
-import CommentaireSQLRepository from '@/server/infrastructure/commentaire/CommentaireSQLRepository';
+import CommentaireSQLRepository from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
 import {
   RécupérerLeDétailDUnChantierTerritorialiséeUseCase,
 } from '@/server/usecase/chantier/RécupérerLeDétailDUnChantierTerritorialiséeUseCase';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
+import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 
 
 describe('RécupérerLeDétailDUnChantierTerritorialiséeUseCase', () => {

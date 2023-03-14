@@ -1,11 +1,11 @@
 import { synthese_des_resultats } from '@prisma/client';
-import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
+import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/accès_données/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import SyntheseDesResultatsRowBuilder
   from '@/server/infrastructure/test/tools/rowBuilder/SyntheseDesResultatsRowBuilder';
 import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
+import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 
 describe('SynthèseDesRésultatsSQLRepository ', function () {
   describe('findNewestByChantierIdAndTerritoire', () => {

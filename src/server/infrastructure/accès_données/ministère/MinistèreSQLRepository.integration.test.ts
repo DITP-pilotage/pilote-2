@@ -1,6 +1,6 @@
 import { perimetre, PrismaClient } from '@prisma/client';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
-import MinistèreSQLRepository from '@/server/infrastructure/ministère/MinistèreSQLRepository';
+import MinistèreSQLRepository from '@/server/infrastructure/accès_données/ministère/MinistèreSQLRepository';
 
 describe('MinistèreSQLRepository', () => {
   test('Accède à un ministère', async () => {

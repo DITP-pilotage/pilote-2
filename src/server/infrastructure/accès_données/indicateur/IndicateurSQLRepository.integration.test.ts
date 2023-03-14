@@ -3,7 +3,7 @@ import { indicateur } from '@prisma/client';
 import IndicateurRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/IndicateurRowBuilder';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
+import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import IndicateurSQLRepository from './IndicateurSQLRepository';
 
 describe('IndicateurSQLRepository', () => {

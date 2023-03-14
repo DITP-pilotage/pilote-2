@@ -1,4 +1,4 @@
-import ChantierRandomRepository from '@/server/infrastructure/chantier/ChantierRandomRepository';
+import ChantierRandomRepository from '@/server/infrastructure/accès_données/chantier/ChantierRandomRepository';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 

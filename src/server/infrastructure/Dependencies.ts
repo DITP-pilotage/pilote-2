@@ -1,30 +1,30 @@
 import { PrismaClient } from '@prisma/client';
-import ChantierSQLRepository from '@/server/infrastructure/chantier/ChantierSQLRepository';
+import ChantierSQLRepository from '@/server/infrastructure/accès_données/chantier/ChantierSQLRepository';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
-import ChantierRandomRepository from '@/server/infrastructure/chantier/ChantierRandomRepository';
+import ChantierRandomRepository from '@/server/infrastructure/accès_données/chantier/ChantierRandomRepository';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
-import IndicateurSQLRepository from '@/server/infrastructure/indicateur/IndicateurSQLRepository';
-import IndicateurRandomRepository from '@/server/infrastructure/indicateur/IndicateurRandomRepository';
-import MinistèreSQLRepository from '@/server/infrastructure/ministère/MinistèreSQLRepository';
-import MinistèreInMemoryRepository from '@/server/infrastructure/ministère/MinistèreInMemoryRepository';
+import IndicateurSQLRepository from '@/server/infrastructure/accès_données/indicateur/IndicateurSQLRepository';
+import IndicateurRandomRepository from '@/server/infrastructure/accès_données/indicateur/IndicateurRandomRepository';
+import MinistèreSQLRepository from '@/server/infrastructure/accès_données/ministère/MinistèreSQLRepository';
+import MinistèreInMemoryRepository from '@/server/infrastructure/accès_données/ministère/MinistèreInMemoryRepository';
 import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import SynthèseDesRésultatsRandomRepository
-  from '@/server/infrastructure/synthèseDesRésultats/SynthèseDesRésultatsRandomRepository';
-import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
+  from '@/server/infrastructure/accès_données/synthèseDesRésultats/SynthèseDesRésultatsRandomRepository';
+import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/accès_données/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import config from '@/server/infrastructure/Configuration';
 import logger from '@/server/infrastructure/logger';
 import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
-import AxeRandomRepository from '@/server/infrastructure/axe/AxeRandomRepository';
-import AxeSQLRepository from '@/server/infrastructure/axe/AxeSQLRepository';
+import AxeRandomRepository from '@/server/infrastructure/accès_données/axe/AxeRandomRepository';
+import AxeSQLRepository from '@/server/infrastructure/accès_données/axe/AxeSQLRepository';
 import PpgRepository from '@/server/domain/ppg/PpgRepository.interface';
-import PpgSQLRepository from '@/server/infrastructure/ppg/PpgSQLRepository';
-import PpgRandomRepository from '@/server/infrastructure/ppg/PpgRandomRepository';
+import PpgSQLRepository from '@/server/infrastructure/accès_données/ppg/PpgSQLRepository';
+import PpgRandomRepository from '@/server/infrastructure/accès_données/ppg/PpgRandomRepository';
 import AxeFixture from '@/fixtures/AxeFixture';
 import PpgFixture from '@/fixtures/PpgFixture';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
-import CommentaireSQLRepository from '@/server/infrastructure/commentaire/CommentaireSQLRepository';
-import CommentaireRandomRepository from '@/server/infrastructure/commentaire/CommentaireRandomRepository';
+import CommentaireSQLRepository from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
+import CommentaireRandomRepository from '@/server/infrastructure/accès_données/commentaire/CommentaireRandomRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
