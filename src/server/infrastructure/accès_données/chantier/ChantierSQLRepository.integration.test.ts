@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { chantier } from '@prisma/client';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import { permissionsPourChantierIds } from '@/server/domain/identité/Permissions';
+import { habilitationsPourChantierIds } from '@/server/domain/identité/Habilitations';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ChantierRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/ChantierRowBuilder';
 import { objectEntries } from '@/client/utils/objects/objects';
@@ -53,10 +53,10 @@ describe('ChantierSQLRepository', () => {
       data: new ChantierRowBuilder()
         .withId(chantierId).withMailleNationale().withTauxAvancement(18).withMinistères([]).build(),
     });
-    const permissions = permissionsPourChantierIds(chantierId);
+    const habilitations = habilitationsPourChantierIds(chantierId);
 
     // WHEN
-    const result = await repository.getListe(permissions);
+    const result = await repository.getListe(habilitations);
 
     // THEN
     expect(result).toStrictEqual([]);
@@ -144,10 +144,10 @@ describe('ChantierSQLRepository', () => {
           .withId('CH-002').withMaille('DEPT').withCodeInsee('13').withTauxAvancement(50).build(),
       ],
     });
-    const permissions = permissionsPourChantierIds('CH-001', 'CH-002');
+    const habilitations = habilitationsPourChantierIds('CH-001', 'CH-002');
 
     // WHEN
-    const chantiers = await repository.getListe(permissions);
+    const chantiers = await repository.getListe(habilitations);
 
     // THEN
     const ids = chantiers.map(ch => ch.id);
@@ -166,10 +166,10 @@ describe('ChantierSQLRepository', () => {
           .withId('CH-001').withMaille('DEPT').withCodeInsee('974').build(),
       ],
     });
-    const permissions = permissionsPourChantierIds('CH-001');
+    const habilitations = habilitationsPourChantierIds('CH-001');
 
     // WHEN
-    const chantiers = await repository.getListe(permissions);
+    const chantiers = await repository.getListe(habilitations);
 
     // THEN
     expect(chantiers[0].mailles.départementale['974']).toBeDefined();

@@ -3,7 +3,7 @@ import ChantierRepository from '@/server/domain/chantier/ChantierRepository.inte
 import { groupBy } from '@/client/utils/arrays';
 import { parseChantier } from '@/server/infrastructure/accès_données/chantier/ChantierSQLParser';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import Permissions, { permissionsChantierIds } from '@/server/domain/identité/Permissions';
+import Habilitations, { habilitationsChantierIds } from '@/server/domain/identité/Habilitations';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
@@ -35,11 +35,11 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return parseChantier(chantiers);
   }
 
-  async getListe(permissions: Permissions): Promise<Chantier[]> {
+  async getListe(habilitations: Habilitations): Promise<Chantier[]> {
     const chantiers = await this.prisma.chantier.findMany({
       where: {
         NOT: { ministeres: { isEmpty: true } },
-        id: { in: permissionsChantierIds(permissions) },
+        id: { in: habilitationsChantierIds(habilitations) },
       },
     });
     const chantiersGroupésParId = groupBy<chantier>(chantiers, c => c.id);

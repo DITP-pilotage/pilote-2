@@ -38,7 +38,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const chantierRepository = dependencies.getChantierRepository();
-  const chantiers = await chantierRepository.getListe(session.permissions);
+  const chantiers = await chantierRepository.getListe(session.habilitations);
 
   const ministèreRepository = dependencies.getMinistèreRepository();
   const ministères = await ministèreRepository.getListe();

@@ -1,5 +1,5 @@
 import { DefaultSession } from 'next-auth';
-import Permissions from '@server/domain/identité/Permissions';
+import Habilitations from '@server/domain/identité/Habilitations';
 
 declare module 'next-auth' {
   interface Session {
@@ -8,6 +8,6 @@ declare module 'next-auth' {
     } & DefaultSession['user']
     accessToken: string
     error: any
-    permissions: Permissions
+    habilitations: Habilitations
   }
 }

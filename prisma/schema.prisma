@@ -98,9 +98,18 @@ model commentaire {
 }
 
 ////////////////////////////////////////////////
-// Authorisations
+// Identité & Habilitations
+//
+// id_chantier_habilitation
+// ide_chantier_habilitation
+// idn_chantier_habilitation
+// idt_chantier_habilitation
+// idtt_chantier_habilitation
+// iden_chantier_habilitation
+// idte_chantier_habilitation
+// habi_chantier_habilitation
 
-model perm_chantier_permission {
+model iden_chantier_habilitation {
   chantier_id String
   identite_id String
   scope String[]
