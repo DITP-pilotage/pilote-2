@@ -1,4 +1,4 @@
-import Tableau from '@/components/_commons/Tableau/Tableau';
+import ListeChantiersTableau from '@/components/PageChantiers/ListeChantiers/Tableau/ListeChantiersTableau';
 import ListeChantiersStyled from '@/components/PageChantiers/ListeChantiers/ListeChantiers.styled';
 import {
   mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
@@ -24,7 +24,7 @@ export default function ListeChantiers({ chantiers }: ListeChantiersProps) {
 
   return (
     <ListeChantiersStyled>
-      <Tableau<DonnéesTableauChantiers>
+      <ListeChantiersTableau<DonnéesTableauChantiers>
         colonnes={colonnes}
         données={donnéesDuTableau}
         entité="chantier"
