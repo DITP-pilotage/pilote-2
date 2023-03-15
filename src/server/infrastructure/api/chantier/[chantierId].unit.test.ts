@@ -3,7 +3,7 @@ import { commentairesNull } from '@/server/domain/commentaire/Commentaire.interf
 import {
   RécupérerLeDétailDUnChantierTerritorialiséeUseCase,
 } from '@/server/usecase/chantier/RécupérerLeDétailDUnChantierTerritorialiséeUseCase';
-import handle from '../../../../pages/api/chantier/[chantierId]';
+import handleChantierId from './[chantierId]';
 
 describe('/api/chantier/:chantierId:', () => {
   it('renvoyer la synthèse des résultats d\'un chantier', async () => {
@@ -24,7 +24,7 @@ describe('/api/chantier/:chantierId:', () => {
     });
 
     // When
-    await handle(req, res, stubRécupérerLeDétailDUnChantierTerritorialiséeUseCase);
+    await handleChantierId(req, res, stubRécupérerLeDétailDUnChantierTerritorialiséeUseCase);
 
     // Then
     expect(res._getStatusCode()).toBe(200);
@@ -57,7 +57,7 @@ describe('/api/chantier/:chantierId:', () => {
     });
 
     // When
-    handle(req, res, stubRécupérerLeDétailDUnChantierTerritorialiséeUseCase);
+    handleChantierId(req, res, stubRécupérerLeDétailDUnChantierTerritorialiséeUseCase);
 
     // Then
     expect(res._getStatusCode()).toBe(400);
