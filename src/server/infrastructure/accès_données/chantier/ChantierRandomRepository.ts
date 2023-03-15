@@ -1,4 +1,5 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Permissions from '@/server/domain/identité/Permissions';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import ChantierFixture from '@/fixtures/ChantierFixture';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
@@ -16,7 +17,7 @@ export default class ChantierRandomRepository implements ChantierRepository {
     return ChantierFixture.générer({ id, ...this.valeursFixes?.[0] });
   }
 
-  async getListe(): Promise<Chantier[]> {
+  async getListe(_: Permissions): Promise<Chantier[]> {
     if (!this.valeursFixes) {
       return [];
     }

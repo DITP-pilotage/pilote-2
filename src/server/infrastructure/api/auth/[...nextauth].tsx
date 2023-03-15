@@ -2,6 +2,7 @@ import NextAuth, { AuthOptions, SessionOptions, User } from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import type { JWT } from 'next-auth/jwt';
+import { permissionsPourChantierIds } from '@/server/domain/identité/Permissions';
 import config from '@/server/infrastructure/Configuration';
 import logger from '@/server/infrastructure/logger';
 
@@ -167,6 +168,8 @@ export const authOptions: AuthOptions = {
           idToken: account.id_token,
           provider: account.provider,
           user,
+          // TODO: récupérer la liste des chantiers et l'ajouter dans le token / payload
+          permissions: permissionsPourChantierIds('CH-043'),
         };
       }
       //logger.warn('******')
@@ -185,6 +188,7 @@ export const authOptions: AuthOptions = {
       session.user = token.user;
       session.accessToken = token.accessToken;
       session.error = token.error;
+      session.permissions = token.permissions;
 
       return session;
     },

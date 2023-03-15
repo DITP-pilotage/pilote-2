@@ -1,6 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { chantier } from '@prisma/client';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import { permissionsPourChantierIds } from '@/server/domain/identité/Permissions';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ChantierRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/ChantierRowBuilder';
 import { objectEntries } from '@/client/utils/objects/objects';
@@ -47,16 +48,15 @@ describe('ChantierSQLRepository', () => {
   test('un chantier sans ministères est exclu du résultat', async () => {
     // GIVEN
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
-
     const chantierId = 'CH-001';
-
     await prisma.chantier.create({
       data: new ChantierRowBuilder()
         .withId(chantierId).withMailleNationale().withTauxAvancement(18).withMinistères([]).build(),
     });
+    const permissions = permissionsPourChantierIds(chantierId);
 
     // WHEN
-    const result = await repository.getListe();
+    const result = await repository.getListe(permissions);
 
     // THEN
     expect(result).toStrictEqual([]);
@@ -144,9 +144,10 @@ describe('ChantierSQLRepository', () => {
           .withId('CH-002').withMaille('DEPT').withCodeInsee('13').withTauxAvancement(50).build(),
       ],
     });
+    const permissions = permissionsPourChantierIds('CH-001', 'CH-002');
 
     // WHEN
-    const chantiers = await repository.getListe();
+    const chantiers = await repository.getListe(permissions);
 
     // THEN
     const ids = chantiers.map(ch => ch.id);
@@ -165,9 +166,10 @@ describe('ChantierSQLRepository', () => {
           .withId('CH-001').withMaille('DEPT').withCodeInsee('974').build(),
       ],
     });
+    const permissions = permissionsPourChantierIds('CH-001');
 
     // WHEN
-    const chantiers = await repository.getListe();
+    const chantiers = await repository.getListe(permissions);
 
     // THEN
     expect(chantiers[0].mailles.départementale['974']).toBeDefined();
