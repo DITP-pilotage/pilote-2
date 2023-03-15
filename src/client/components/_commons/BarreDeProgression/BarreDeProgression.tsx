@@ -5,6 +5,8 @@ export default function BarreDeProgression({
   taille,
   variante,
   fond = 'gris',
+  bordure = 'gris',
+  positionTexte = 'côté',
   valeur,
   afficherTexte = true,
 }: BarreDeProgressionProps) {
@@ -12,8 +14,10 @@ export default function BarreDeProgression({
 
   return (
     <BarreDeProgressionStyled
-      className="flex fr-grid-row--middle fr-pb-1v"
+      bordure={bordure}
+      className={`flex fr-pb-1v ${positionTexte}`}
       fond={fond}
+      positionTexte={positionTexte}
       taille={taille}
       variante={variante}
     >
