@@ -11,7 +11,7 @@ import TableauContenu from './TableauContenu/TableauContenu';
 import TableauPagination from './TableauPagination/TableauPagination';
 import TableauStyled from './Tableau.styled';
 
-export default function Tableau<T extends object>({ colonnes, données, titre, entité, afficherLaRecherche = true }: TableauProps<T>) {
+export default function Tableau<T extends object>({ colonnes, données, titre, entité, afficherLesActionsTableau = true }: TableauProps<T>) {
   const [tri, setTri] = useState<SortingState>([]);
   const [regroupement, setRegroupement] = useState<GroupingState>([]);
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
@@ -26,6 +26,9 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
       globalFilter: valeurDeLaRecherche,
       sorting: tri,
       grouping: regroupement,
+      columnVisibility: {
+        porteur: false,
+      },
     },
     onSortingChange: setTri,
     onGroupingChange: setRegroupement,
@@ -48,7 +51,7 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
   const changementDePageCallback = useCallback((numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1), [tableau]);  
 
   return (
-    <TableauStyled className='fr-table fr-m-0 fr-p-0'>
+    <TableauStyled className='fr-table fr-table--bordered fr-m-0 fr-p-0'>
       { titre ? 
         <Titre
           baliseHtml="h2"
@@ -57,28 +60,28 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
           {`${titre} (${tableau.getFilteredRowModel().rows.length})`}
         </Titre>
         : null }
-      { afficherLaRecherche ? 
-        <div className='barre-de-recherche fr-my-2w'>
+      { afficherLesActionsTableau ?
+        <div className='tableau-actions fr-mb-3v fr-mt-1w'>
           <BarreDeRecherche
             changementDeLaRechercheCallback={changementDeLaRechercheCallback}
             valeur={valeurDeLaRecherche}
           />
+          <div className="fr-toggle fr-ml-4w">
+            <input
+              className="fr-toggle__input"
+              id="interrupteur-grouper-par-ministères"
+              onChange={tableau.getColumn('porteur')?.getToggleGroupingHandler()}
+              type="checkbox"
+            />
+            <label
+              className="fr-toggle__label fr-pl-1w"
+              htmlFor="interrupteur-grouper-par-ministères"
+            >
+              Grouper par ministères
+            </label>
+          </div>
         </div>
         : null }
-      <div className="fr-toggle">
-        <input
-          className="fr-toggle__input"
-          id="interrupteur-grouper-par-ministères"
-          onChange={tableau.getColumn('porteur')?.getToggleGroupingHandler()}
-          type="checkbox"
-        />
-        <label
-          className="fr-toggle__label fr-pl-2w"
-          htmlFor="interrupteur-grouper-par-ministères"
-        >
-          Grouper par ministères
-        </label>
-      </div>
       {tableau.getRowModel().rows.length === 0
         ?
           <div className="fr-notice fr-notice--info">

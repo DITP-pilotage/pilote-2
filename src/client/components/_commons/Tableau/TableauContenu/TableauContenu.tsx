@@ -6,7 +6,10 @@ export default function TableauContenu<T>({ tableau }: TableauContenuProps<T>) {
     <tbody>
       {
         tableau.getRowModel().rows.map(row => (
-          <tr key={row.id}>
+          <tr
+            className={`${row.getIsGrouped() ? 'ligne-groupée' : 'ligne-non-groupée'}`}
+            key={row.id}
+          >
             {
               row.getVisibleCells().map(cell => (
                 <td

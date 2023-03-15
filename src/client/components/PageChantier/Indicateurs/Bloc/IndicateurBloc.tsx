@@ -32,7 +32,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur } : Indi
             Dernière mise à jour : Non renseigné
           </p>
           <Tableau<IndicateurDétailsParTerritoire>
-            afficherLaRecherche={false}
+            afficherLesActionsTableau={false}
             colonnes={colonnes}
             données={indicateurDétailsParTerritoires}
             entité='indicateur'

@@ -5,5 +5,5 @@ export default interface TableauProps<T extends object> {
   données: T[],
   entité: string,
   titre?: string,
-  afficherLaRecherche?: boolean,
+  afficherLesActionsTableau?: boolean,
 }

@@ -7,9 +7,9 @@ const TableauStyled = styled.section`
     display: table;
   }
 
-  .barre-de-recherche {
+  .tableau-actions {
     display: flex;
-    justify-content: space-between;
+    align-items: center;
 
     div {
       max-width: 100%;
@@ -20,6 +20,19 @@ const TableauStyled = styled.section`
     button {
       border-radius: 4px;
     }
+  }
+
+  tbody .ligne-groupée,
+  tbody .ligne-groupée:nth-of-type(2n) {
+    background-color: white;
+  }
+
+  tbody .ligne-non-groupée td {
+    background-color: var(--grey-975-75) !important;
+  }
+
+  tbody .ligne-non-groupée:nth-of-type(2n) td {
+    background-color: var(--grey-950-100) !important;
   }
 `;
 
