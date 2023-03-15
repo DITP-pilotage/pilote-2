@@ -1,15 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import logger from '@/server/infrastructure/logger';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 class ParsingError extends Error {}
 
 // TODO: a refactor avec les autres parseQueryParams de l'api
-function parseQueryParams(request: NextApiRequest): { indicateurId: string, maille: MailleInterne } {
+function parseQueryParams(request: NextApiRequest): { indicateurId: string, maille: Maille } {
   const indicateurId = request.query.indicateurId as string;
-  const maille = request.query.maille as MailleInterne;
+  const maille = request.query.maille as Maille;
 
   if (!indicateurId || !maille) {
     const errorMessage = 'Le parsing de la query a échoué.';
@@ -20,12 +19,13 @@ function parseQueryParams(request: NextApiRequest): { indicateurId: string, mail
   return { indicateurId, maille };
 }
 
-export default async function handleIndicateurRépartitionsGéographiques(
+export default async function handleIndicateurId(
   request: NextApiRequest,
   response: NextApiResponse,
   indicateurRepository = dependencies.getIndicateurRepository(),
 ) {
   let params;
+
   try {
     params = parseQueryParams(request);
   } catch (error) {
@@ -33,10 +33,11 @@ export default async function handleIndicateurRépartitionsGéographiques(
       response.status(400).json({ error: error.message });
       return;
     }
+
     throw error;
   }
-  const cartographieIndicateurTerritorialisées = await indicateurRepository.getCartographieDonnéesParMailleEtIndicateurId(params.indicateurId, params.maille);
-  response
-    .status(200)
-    .json(cartographieIndicateurTerritorialisées);
+
+  const détailsIndicateurs = await indicateurRepository.récupérerDétails(params.indicateurId, params.maille);
+
+  response.status(200).json(détailsIndicateurs);
 }

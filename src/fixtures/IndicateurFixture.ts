@@ -1,9 +1,8 @@
 import { faker } from '@faker-js/faker';
-import Indicateur, { CartographieIndicateur, typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
-import { codeInseeDépartements, codeInseeRégions } from '@/fixtures/codesInsee';
+import Indicateur, { typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
+import {  codeInseeRégions } from '@/fixtures/codesInsee';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import { DétailsIndicateur, FichesIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { DétailsIndicateur, DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import FixtureInterface from './Fixture.interface';
 import { générerUnIdentifiantUnique } from './utils';
 
@@ -32,20 +31,9 @@ class IndicateurFixture implements FixtureInterface<Indicateur> {
     return résultat;
   }
 
-  générerCartographieIndicateurDonnées(mailleInterne: MailleInterne): CartographieIndicateur {
-    const résultat: CartographieIndicateur = {};
-    const codesInsee = mailleInterne === 'départementale' ? codeInseeDépartements : codeInseeRégions;
-    codesInsee.forEach(codeInsee => {
-      résultat[codeInsee] = {
-        avancementAnnuel: faker.datatype.number({ min: 0, max: 100, precision: 0.01 }),
-        valeurActuelle: faker.helpers.arrayElement([null, faker.datatype.number({ max: 99 })]),
-      };
-    });
-    return résultat;
-  }
 
-  générerFichesIndicateurs(idsIndicateurs?: Indicateur['id'][], codesInsee?: CodeInsee[]): FichesIndicateurs {
-    const résultat: FichesIndicateurs = {};
+  générerDétailsIndicateurs(idsIndicateurs?: Indicateur['id'][], codesInsee?: CodeInsee[]): DétailsIndicateurs {
+    const résultat: DétailsIndicateurs = {};
     (idsIndicateurs || [générerUnIdentifiantUnique('IND')]).forEach(idIndicateur => {
       résultat[idIndicateur] = this.générerFakeDétailsIndicateurParTerritoires(codesInsee || codeInseeRégions);
     });

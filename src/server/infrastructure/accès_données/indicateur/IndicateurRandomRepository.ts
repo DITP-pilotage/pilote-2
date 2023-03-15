@@ -1,25 +1,60 @@
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
-import Indicateur, { CartographieIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
-import IndicateurFixture from '@/fixtures/IndicateurFixture';
-import { FichesIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import IndicateurBuilder from '@/server/domain/indicateur/Indicateur.builder';
+import DétailsIndicateurBuilder from '@/server/domain/indicateur/DétailsIndicateur.builder';
+import { codeInseeFrance, codesInseeDépartements, codesInseeRégions, CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export default class IndicateurRandomRepository implements IndicateurRepository {
-  indicateurs: Indicateur[];
+  private _indicateurs: Indicateur[];
 
   constructor() {
-    this.indicateurs = IndicateurFixture.générerPlusieurs(5, [{ id: 'IND-001' }, { id: 'IND-002' }, { id: 'IND-003' }, { id: 'IND-004' }, { id: 'IND-005' }]);
+    this._indicateurs = Array.from({ length: 3 }).map(() => new IndicateurBuilder().build());
   }
 
-  async getByChantierId(_chantierId: string): Promise<Indicateur[]> {
-    return this.indicateurs;
+  async récupérerParChantierId(_chantierId: string): Promise<Indicateur[]> {
+    return this._indicateurs;
   }
 
-  async getCartographieDonnéesParMailleEtIndicateurId(_indicateurId: string, _mailleInterne: MailleInterne): Promise<CartographieIndicateur> {
-    return IndicateurFixture.générerCartographieIndicateurDonnées(_mailleInterne);
+  async récupérerDétails(indicateurId: string, maille: Maille): Promise<DétailsIndicateurs> {
+    let codesInsee: readonly CodeInsee[];
+
+    if (maille === 'départementale')
+      codesInsee = codesInseeDépartements;
+    else if (maille === 'régionale')
+      codesInsee = codesInseeRégions;
+    else
+      codesInsee = [codeInseeFrance];
+
+    return {
+      [indicateurId]: this._générerDétailsIndicateurParTerritoire(codesInsee),
+    };
   }
-  
-  async getFichesIndicateurs(_chantierId: string, _maille: string, _codesInsee: string[]): Promise<FichesIndicateurs> {
-    return IndicateurFixture.générerFichesIndicateurs(this.indicateurs.map(indicateur => indicateur.id), _codesInsee);
+
+  async récupererDétailsParChantierIdEtTerritoire(_chantierId: string, _maille: Maille, codesInsee: string[]): Promise<DétailsIndicateurs> {
+    let détailsIndicateurs: DétailsIndicateurs = {};
+    
+    this._indicateurs.forEach(indicateur => {
+      détailsIndicateurs = {
+        ...détailsIndicateurs,
+        [indicateur.id]: this._générerDétailsIndicateurParTerritoire(codesInsee),
+      };
+    });
+
+    return détailsIndicateurs;
+  }
+
+  private _générerDétailsIndicateurParTerritoire(codesInsee: readonly CodeInsee[]) {
+    let détailsIndicateurParTerritoire = {};
+
+    codesInsee.forEach(codeInsee => { 
+      détailsIndicateurParTerritoire = {
+        ...détailsIndicateurParTerritoire, 
+        [codeInsee]: new DétailsIndicateurBuilder().avecCodeInsee(codeInsee).build(),
+      };
+    });
+
+    return détailsIndicateurParTerritoire;
   }
 }

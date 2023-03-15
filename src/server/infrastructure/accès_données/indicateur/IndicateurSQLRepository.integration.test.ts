@@ -3,7 +3,6 @@ import { indicateur } from '@prisma/client';
 import IndicateurRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/IndicateurRowBuilder';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import IndicateurSQLRepository from './IndicateurSQLRepository';
 
 describe('IndicateurSQLRepository', () => {
@@ -14,7 +13,7 @@ describe('IndicateurSQLRepository', () => {
       const repository = new IndicateurSQLRepository(prisma);
 
       // WHEN
-      const result = await repository.getByChantierId('CH-001');
+      const result = await repository.récupérerParChantierId('CH-001');
 
       // THEN
       expect(result).toStrictEqual([]);
@@ -79,7 +78,7 @@ describe('IndicateurSQLRepository', () => {
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
-      const result = await repository.getByChantierId(chantierId);
+      const result = await repository.récupérerParChantierId(chantierId);
 
       // THEN
       expect(result.length).toEqual(2);
@@ -91,19 +90,19 @@ describe('IndicateurSQLRepository', () => {
     });
   });
 
-  describe('getCartographieDonnéesByMailleAndIndicateurId', () => {
-    test('Récupère une cartographie vide si aucun indicateur présent en base', async () => {
+  describe('récupérerDétails', () => {
+    test('Retourne un objet vide si aucun indicateur présent en base', async () => {
       // GIVEN
       const repository = new IndicateurSQLRepository(prisma);
 
       // WHEN
-      const result = await repository.getCartographieDonnéesParMailleEtIndicateurId('IND-001',  'départementale');
+      const result = await repository.récupérerDétails('IND-001',  'départementale');
 
       // THEN
       expect(result).toStrictEqual({});
     });
 
-    test('Récupère les données de cartographie de deux indicateurs présent en base pour un id indicateur et une maille', async () => {
+    test('Récupère les détails de deux indicateurs présent en base pour un id indicateur et une maille', async () => {
       // GIVEN
       const indicateurId = 'IND-001';
       const maille: Maille = 'départementale';
@@ -112,57 +111,77 @@ describe('IndicateurSQLRepository', () => {
       const indicateurs: indicateur[] = [
         new IndicateurRowBuilder()
           .withId(indicateurId)
-          .withMaille(CODES_MAILLES[maille])
-          .withCodeInsee('01')
-          .withValeurActuelle(155)
-          .withObjectifTauxAvancement(50)
-          .build(),
-
-        new IndicateurRowBuilder()
-          .withId(indicateurId)
-          .withMaille(CODES_MAILLES[maille])
+          .withChantierId('CH-001')
+          .withMaille('DEPT')
           .withCodeInsee('02')
-          .withValeurActuelle(130)
-          .withObjectifTauxAvancement(70)
-          .build(),
-
-        new IndicateurRowBuilder()
-          .withId('IND-002')
-          .withMaille(CODES_MAILLES[maille])
+          .withEvolutionValeurActuelle( [1, 4, 6])
+          .withEvolutionDateValeurActuelle(['2021-01-01', '2021-02-01', '2021-03-01'])
+          .withValeurInitiale(1001)
+          .withDateValeurInitiale('2021-01-01')
+          .withObjectifValeurCible(1790)
+          .withObjectifTauxAvancement(40)
           .build(),
 
         new IndicateurRowBuilder()
           .withId(indicateurId)
-          .withMaille('REG')
+          .withChantierId('CH-001')
+          .withMaille('DEPT')
+          .withCodeInsee('03')
+          .withEvolutionValeurActuelle( [1, 4, 6])
+          .withEvolutionDateValeurActuelle(['2021-01-01', '2021-02-01', '2021-03-01'])
+          .withValeurInitiale(1001)
+          .withDateValeurInitiale('2021-01-01')
+          .withObjectifValeurCible(1790)
+          .withObjectifTauxAvancement(40)
           .build(),
       ];
 
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
-      const result = await repository.getCartographieDonnéesParMailleEtIndicateurId(indicateurId, maille);
+      const result = await repository.récupérerDétails(indicateurId, maille);
 
       // THEN
-      expect(result).toStrictEqual({
-        '01': {
-          avancementAnnuel : 50,
-          valeurActuelle: 155,
+      expect(result).toStrictEqual(
+        {
+          [indicateurId]: {
+            '02': {
+              codeInsee: '02',
+              valeurInitiale: 1001,
+              dateValeurInitiale: '2021-01-01T00:00:00.000Z',
+              valeurs: [1, 4, 6],
+              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
+              valeurCible: 1790,
+              avancement: {
+                global: 40,
+                annuel: null,
+              },
+            },
+            '03': {
+              codeInsee: '03',
+              valeurInitiale: 1001,
+              dateValeurInitiale: '2021-01-01T00:00:00.000Z',
+              valeurs: [1, 4, 6],
+              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
+              valeurCible: 1790,
+              avancement: {
+                global: 40,
+                annuel: null,
+              },
+            },
+          },
         },
-        '02': {
-          avancementAnnuel : 70,
-          valeurActuelle: 130,
-        },
-      });
+      );
     });
   });
 
-  describe('Détails indicateur', () => {
+  describe('récupererDétailsParChantierIdEtTerritoire', () => {
     test("Récupère une liste vide quand il n'y a pas d'indicateurs", async () => {
       // GIVEN
       const repository = new IndicateurSQLRepository(prisma);
 
       // WHEN
-      const result = await repository.getFichesIndicateurs('CH-001',  'départementale', ['01']);
+      const result = await repository.récupererDétailsParChantierIdEtTerritoire('CH-001',  'départementale', ['01']);
 
       // THEN
       expect(result).toStrictEqual({});
@@ -216,7 +235,7 @@ describe('IndicateurSQLRepository', () => {
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
-      const result = await repository.getFichesIndicateurs('CH-001', 'départementale', ['01', '02', '03']);
+      const result = await repository.récupererDétailsParChantierIdEtTerritoire('CH-001', 'départementale', ['01', '02', '03']);
 
       // THEN
       expect(result).toStrictEqual(
@@ -313,7 +332,7 @@ describe('IndicateurSQLRepository', () => {
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
-      const result = await repository.getFichesIndicateurs('CH-002', 'régionale', ['01', '02']);
+      const result = await repository.récupererDétailsParChantierIdEtTerritoire('CH-002', 'régionale', ['01', '02']);
 
       // THEN
       expect(result).toStrictEqual(

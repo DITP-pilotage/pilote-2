@@ -3,6 +3,7 @@ import { dependencies } from '@/server/infrastructure/Dependencies';
 import logger from '@/server/infrastructure/logger';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+
 class ParsingError extends Error {}
 
 function parseQueryParams(request: NextApiRequest): { chantierId: string, maille: Maille, codesInsee: CodeInsee[] } {
@@ -24,6 +25,7 @@ function parseQueryParams(request: NextApiRequest): { chantierId: string, maille
 
 export default async function handleChantierIdIndicateurs(request: NextApiRequest, response: NextApiResponse, indicateurRepository = dependencies.getIndicateurRepository()) {
   let params;
+
   try {
     params = parseQueryParams(request);
   } catch (error) {
@@ -31,10 +33,11 @@ export default async function handleChantierIdIndicateurs(request: NextApiReques
       response.status(400).json({ error: error.message });
       return;
     }
+
     throw error;
   }
-  const detailsIndicateur = await indicateurRepository.getFichesIndicateurs(params.chantierId, params.maille, params.codesInsee);
-  response
-    .status(200)
-    .json(detailsIndicateur);
+
+  const detailsIndicateurs = await indicateurRepository.récupererDétailsParChantierIdEtTerritoire(params.chantierId, params.maille, params.codesInsee);
+
+  response.status(200).json(detailsIndicateurs);
 }

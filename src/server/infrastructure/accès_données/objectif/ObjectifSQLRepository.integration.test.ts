@@ -2,9 +2,9 @@ import { commentaire } from '@prisma/client';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { CODES_MAILLES } from '@/server/infrastructure/maille/mailleSQLParser';
 import ObjectifSQLRepository from '@/server/infrastructure/accès_données/objectif/ObjectifSQLRepository';
-import CommentaireRowBuilder from '../../test/tools/rowBuilder/CommentaireRowBuilder';
+import CommentaireRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/CommentaireRowBuilder';
+import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 
 describe('ObjectifSQLRepository ', function () {
   describe('récupérerLePlusRécent', () => {
