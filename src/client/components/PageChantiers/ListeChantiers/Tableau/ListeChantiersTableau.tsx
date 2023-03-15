@@ -5,10 +5,10 @@ import { getCoreRowModel, getExpandedRowModel, getFilteredRowModel,  getGroupedR
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
+import TableauPagination from '@/components/_commons/Tableau/TableauPagination/TableauPagination';
 import ListeChantiersTableauProps from './ListeChantiersTableau.interface';
 import ListeChantiersTableauEnTête from './TableauEnTête/ListeChantiersTableauEnTête';
 import ListeChantiersTableauContenu from './TableauContenu/ListeChantiersTableauContenu';
-import ListeChantiersTableauPagination from './TableauPagination/ListeChantiersTableauPagination';
 import ListeChantiersTableauStyled from './ListeChantiersTableau.styled';
 
 export default function ListeChantiersTableau<T extends object>({ colonnes, données, titre, entité, afficherLesActionsTableau = true }: ListeChantiersTableauProps<T>) {
@@ -103,7 +103,7 @@ export default function ListeChantiersTableau<T extends object>({ colonnes, donn
               <ListeChantiersTableauEnTête<T> tableau={tableau} />
               <ListeChantiersTableauContenu<T> tableau={tableau} />
             </table>
-            <ListeChantiersTableauPagination
+            <TableauPagination
               changementDePageCallback={changementDePageCallback}
               nombreDePages={tableau.getPageCount()}
               numéroDePageInitiale={1}
