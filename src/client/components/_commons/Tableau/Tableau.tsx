@@ -2,7 +2,6 @@ import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import { useCallback, useEffect, useState } from 'react';
 import { getCoreRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
-import Titre from '@/components/_commons/Titre/Titre';
 import TableauProps from './Tableau.interface';
 import TableauEnTête from './TableauEnTête/TableauEnTête';
 import TableauContenu from './TableauContenu/TableauContenu';
@@ -17,9 +16,6 @@ export default function Tableau<T extends object>({ colonnes, données, titre }:
     columns: colonnes,
     state: {
       sorting: tri,
-      columnVisibility: {
-        porteur: false,
-      },
     },
     onSortingChange: setTri,
     getCoreRowModel: getCoreRowModel(),
@@ -35,14 +31,6 @@ export default function Tableau<T extends object>({ colonnes, données, titre }:
 
   return (
     <TableauStyled className='fr-table fr-m-0 fr-p-0'>
-      { titre ? 
-        <Titre
-          baliseHtml="h2"
-          className="fr-h6"
-        >
-          {`${titre} (${tableau.getFilteredRowModel().rows.length})`}
-        </Titre>
-        : null }
       {tableau.getRowModel().rows.length === 0
         ?
           <div className="fr-notice fr-notice--info">

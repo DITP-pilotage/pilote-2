@@ -32,10 +32,9 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur } : Indi
             Dernière mise à jour : Non renseigné
           </p>
           <Tableau<IndicateurDétailsParTerritoire>
-            afficherLesActionsTableau={false}
             colonnes={colonnes}
             données={indicateurDétailsParTerritoires}
-            entité='indicateur'
+            titre={`Tableau de l'indicateur : ${indicateur.nom}`}
           />
           <IndicateurDétails
             indicateur={indicateur}
