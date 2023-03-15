@@ -194,4 +194,5 @@ export const authOptions: AuthOptions = {
   },
 };
 
-export default NextAuth(authOptions);
+const handleNextAuth = NextAuth(authOptions);
+export default handleNextAuth;

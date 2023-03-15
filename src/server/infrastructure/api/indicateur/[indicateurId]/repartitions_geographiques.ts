@@ -20,7 +20,11 @@ function parseQueryParams(request: NextApiRequest): { indicateurId: string, mail
   return { indicateurId, maille };
 }
 
-export default async function handle(request: NextApiRequest, response: NextApiResponse, indicateurRepository = dependencies.getIndicateurRepository()) {
+export default async function handleIndicateurRépartitionsGéographiques(
+  request: NextApiRequest,
+  response: NextApiResponse,
+  indicateurRepository = dependencies.getIndicateurRepository(),
+) {
   let params;
   try {
     params = parseQueryParams(request);

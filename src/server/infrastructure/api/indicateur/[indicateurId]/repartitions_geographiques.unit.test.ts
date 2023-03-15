@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
-import handle from './repartitions_geographiques';
+import handleIndicateurRépartitionsGéographiques from './repartitions_geographiques';
 
 describe('/api/indicateur/:indicateurId/repartitions_geographiques', () => {
   it('renvoyer la cartographie pour l\'ensemble des territoires', async () => {
@@ -22,7 +22,7 @@ describe('/api/indicateur/:indicateurId/repartitions_geographiques', () => {
     });
 
     // When
-    await handle(req, res, stubIndicateurRepository);
+    await handleIndicateurRépartitionsGéographiques(req, res, stubIndicateurRepository);
 
     // Then
     expect(res._getStatusCode()).toBe(200);
@@ -48,7 +48,7 @@ describe('/api/indicateur/:indicateurId/repartitions_geographiques', () => {
     stubIndicateurRepository.getCartographieDonnéesParMailleEtIndicateurId = () => Promise.resolve({});
 
     // When
-    handle(req, res, stubIndicateurRepository);
+    handleIndicateurRépartitionsGéographiques(req, res, stubIndicateurRepository);
 
     // Then
     expect(res._getStatusCode()).toBe(400);

@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
-import handle from './indicateurs';
+import handleChantierIdIndicateurs from './indicateurs';
 
 describe('/api/detail_indicateur', () => {
   it('renvoyer une liste vide de fiche indicateur', () => {
@@ -13,7 +13,7 @@ describe('/api/detail_indicateur', () => {
     stubIndicateurRepository.getFichesIndicateurs = () => Promise.resolve({});
 
     // When
-    handle(req, res, stubIndicateurRepository);
+    handleChantierIdIndicateurs(req, res, stubIndicateurRepository);
 
     // Then
     expect(res._getStatusCode()).toBe(200);
@@ -44,7 +44,7 @@ describe('/api/detail_indicateur', () => {
     });
 
     // When
-    await handle(req, res, stubIndicateurRepository);
+    await handleChantierIdIndicateurs(req, res, stubIndicateurRepository);
 
     // Then
     expect(res._getStatusCode()).toBe(200);
@@ -76,7 +76,7 @@ describe('/api/detail_indicateur', () => {
     stubIndicateurRepository.getFichesIndicateurs = () => Promise.resolve({});
 
     // When
-    handle(req, res, stubIndicateurRepository);
+    handleChantierIdIndicateurs(req, res, stubIndicateurRepository);
 
     // Then
     expect(res._getStatusCode()).toBe(400);

@@ -22,7 +22,7 @@ function parseQueryParams(request: NextApiRequest): { chantierId: string, maille
   return { chantierId, maille, codesInsee };
 }
 
-export default async function handle(request: NextApiRequest, response: NextApiResponse, indicateurRepository = dependencies.getIndicateurRepository()) {
+export default async function handleChantierIdIndicateurs(request: NextApiRequest, response: NextApiResponse, indicateurRepository = dependencies.getIndicateurRepository()) {
   let params;
   try {
     params = parseQueryParams(request);

@@ -22,7 +22,7 @@ function parseQueryParams(request: NextApiRequest): { chantierId: string, maille
   return { chantierId, maille, codeInsee };
 }
 
-export default async function handle(
+export default async function handleChantierId(
   request: NextApiRequest,
   response: NextApiResponse,
   récupérerLeDétailDUnChantierTerritorialiséeUseCase = new RécupérerLeDétailDUnChantierTerritorialiséeUseCase(),
