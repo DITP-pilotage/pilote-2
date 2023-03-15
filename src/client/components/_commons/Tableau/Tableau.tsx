@@ -51,7 +51,7 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
   const changementDePageCallback = useCallback((numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1), [tableau]);  
 
   return (
-    <TableauStyled className='fr-table fr-table--bordered fr-m-0 fr-p-0'>
+    <TableauStyled className='fr-table fr-m-0 fr-p-0'>
       { titre ? 
         <Titre
           baliseHtml="h2"

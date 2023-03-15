@@ -25,14 +25,10 @@ const TableauStyled = styled.section`
   tbody .ligne-groupée,
   tbody .ligne-groupée:nth-of-type(2n) {
     background-color: white;
-  }
-
-  tbody .ligne-non-groupée td {
-    background-color: var(--grey-975-75) !important;
-  }
-
-  tbody .ligne-non-groupée:nth-of-type(2n) td {
-    background-color: var(--grey-950-100) !important;
+    background-size: 100% 1px;
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
   }
 `;
 

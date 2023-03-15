@@ -28,14 +28,7 @@ export default function useListeChantiers() {
           </Link>
         );
       },
-      aggregatedCell: nom => (
-        <button
-          onClick={nom.row.getToggleExpandedHandler()}
-          type="button"
-        >
-          {nom.row.original.porteur}
-        </button>
-      ),
+      aggregatedCell: nom => nom.row.original.porteur,
       enableSorting: false,
       enableGrouping: false,
     }),
