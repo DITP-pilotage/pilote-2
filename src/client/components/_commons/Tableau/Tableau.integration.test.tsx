@@ -58,7 +58,6 @@ class TableauTest {
       <Tableau
         colonnes={this.colonnes}
         données={this.données}
-        entité='chantiers'
         titre="Liste des données"
       />,
     );
@@ -112,16 +111,5 @@ describe("quand l'utilisateur clique sur le bouton de tri décroissant d'une col
     expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('Lutter');
     expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent('Election');
     expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent('Déployer');
-  });
-});
-
-test('la recherche applique un filtre sur les lignes', async () => {
-  // WHEN
-  await tableau.filtrerParContenuTextuel('fr');
-  
-  // THEN
-  expect(tableau.récupérerLeNombreDeLignesDuTableau()).toBe(2);
-  tableau.récupérerLesLignesDuTableau().forEach((ligne) => {
-    expect(ligne).toHaveTextContent(/.*fr.*/i);
   });
 });

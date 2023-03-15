@@ -62,7 +62,6 @@ export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
                 { header.column.getCanSort() && afficherIconesDeTriDeLaColonne(header) }
               </th>
             ))}
-            <th />
           </tr>
         ))
       }

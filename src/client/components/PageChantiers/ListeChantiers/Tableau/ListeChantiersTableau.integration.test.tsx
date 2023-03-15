@@ -26,6 +26,10 @@ class ListeChantiersTableauTest {
   ];
 
   private colonnes = [
+    columnHelper.accessor('porteur', {
+      header: 'Porteur',
+      cell: porteur => porteur.getValue(),
+    }),
     columnHelper.accessor('id', {
       header: '#',
       cell: id => '#' + id.getValue(),
