@@ -2,12 +2,12 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import PageChantier from '@/components/PageChantier/PageChantier';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import Objectif from '@/server/domain/objectif/Objectif.interface';
 
 interface NextPageChantierProps {
   chantier: Chantier
   indicateurs: Indicateur[]
-  objectif: DétailsCommentaire | null
+  objectif: Objectif
 }
 
 export default function NextPageChantier({ chantier, indicateurs, objectif }: NextPageChantierProps) {
@@ -27,8 +27,8 @@ export async function getServerSideProps({ params }: { params: { id: Chantier['i
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs: Indicateur[] = await indicateurRepository.getByChantierId(params.id);
 
-  const commentaireRepository = dependencies.getCommentaireRepository();
-  const objectif: DétailsCommentaire | null = await commentaireRepository.getObjectifsByChantierId(params.id);
+  const objectifRepository = dependencies.getObjectifRepository();
+  const objectif: Objectif = await objectifRepository.récupérerLePlusRécent(params.id);
 
   return {
     props: {

@@ -3,7 +3,7 @@ import { getAllByRole, getByText, queryByText, render, screen, waitFor, within }
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import ChantierFixture from '@/fixtures/ChantierFixture';
-import PérimètreMinistériel from '@/server/domain/ministère/PérimètreMinistériel.interface';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import AxeFixture from '@/fixtures/AxeFixture';
 import PageChantiers from './PageChantiers';
 

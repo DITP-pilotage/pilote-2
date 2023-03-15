@@ -4,7 +4,7 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 
 export type DirecteurAdministrationCentrale = { nom: string, direction: string };
-export type Contact = { nom: string, email: string | null };
+export type DirecteurProjet = { nom: string, email: string | null };
 
 export default interface Chantier {
   id: string;
@@ -17,7 +17,7 @@ export default interface Chantier {
     porteur: string,
     coporteurs: string[],
     directeursAdminCentrale: DirecteurAdministrationCentrale[],
-    directeursProjet: Contact[]
+    directeursProjet: DirecteurProjet[]
   }
   estBaromètre: boolean;
   estTerritorialisé: boolean;

@@ -6,8 +6,8 @@ import typesCommentaire from '@/client/constants/typesCommentaire';
 import Commentaire from '@/components/PageChantier/Commentaires/Commentaire/Commentaire';
 
 export default function Commentaires({ commentaires }: CommentairesProps) {
-
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  
   return (
     <section
       id="commentaires"

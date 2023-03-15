@@ -1,7 +1,7 @@
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import { DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import SynthèseDesRésultats from './SynthèseDesRésultats.interface';
 
 export default interface SynthèseDesRésultatsRepository {
-  récupérerLaPlusRécenteParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<DétailsCommentaire>
+  récupérerLaPlusRécenteParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<SynthèseDesRésultats>
 }

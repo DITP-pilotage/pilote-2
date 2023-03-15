@@ -25,6 +25,9 @@ import PpgFixture from '@/fixtures/PpgFixture';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import CommentaireSQLRepository from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
 import CommentaireRandomRepository from '@/server/infrastructure/accès_données/commentaire/CommentaireRandomRepository';
+import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
+import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
+import ObjectifRandomRepository from './accès_données/objectif/ObjectifRandomRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
@@ -41,6 +44,8 @@ class Dependencies {
 
   private readonly _commentaireRepository: CommentaireRepository;
 
+  private readonly _objectifRepository: ObjectifRepository;
+
   constructor() {
     if (config.isUsingDatabase) {
       logger.info('Using database.');
@@ -52,6 +57,7 @@ class Dependencies {
       this._indicateurRepository = new IndicateurSQLRepository(prisma);
       this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
       this._commentaireRepository = new CommentaireSQLRepository(prisma);
+      this._objectifRepository = new ObjectifSQLRepository(prisma);
     } else {
       logger.debug('Not using database.');
       const nombreDeChantiers = 500;
@@ -75,6 +81,7 @@ class Dependencies {
       this._commentaireRepository = new CommentaireRandomRepository();
       this._ministèreRepository = new MinistèreInMemoryRepository();
       this._indicateurRepository = new IndicateurRandomRepository();
+      this._objectifRepository = new ObjectifRandomRepository();
     }
   }
 
@@ -96,6 +103,10 @@ class Dependencies {
 
   getCommentaireRepository(): CommentaireRepository {
     return this._commentaireRepository;
+  }
+
+  getObjectifRepository(): ObjectifRepository {
+    return this._objectifRepository;
   }
 
   getMinistèreRepository(): MinistèreRepository {

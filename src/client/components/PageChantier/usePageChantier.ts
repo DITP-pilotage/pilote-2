@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo, useState } from 'react';
+import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoiresComparésTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { Commentaires, DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { Commentaires } from '@/server/domain/commentaire/Commentaire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { FichesIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { InfosChantier } from '@/server/domain/chantier/ChantierRepository.interface';
@@ -16,7 +17,7 @@ export default function usePageChantier(chantier: Chantier) {
   
   const [détailsIndicateurs, setDétailsIndicateurs] = useState<FichesIndicateurs | null>(null);
   const [commentaires, setCommentaires] = useState<Commentaires | null>(null);
-  const [synthèseDesRésultats, setSynthèseDesRésultats] = useState<DétailsCommentaire | null>(null);
+  const [synthèseDesRésultats, setSynthèseDesRésultats] = useState<SynthèseDesRésultats>(null);
   const [météo, setMétéo] = useState<Météo>('NON_RENSEIGNEE');
 
   useEffect(() => {

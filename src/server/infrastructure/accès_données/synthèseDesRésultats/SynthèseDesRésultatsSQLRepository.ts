@@ -3,7 +3,7 @@ import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésul
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import { DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
@@ -13,15 +13,18 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     this.prisma = prisma;
   }
 
-  private _toDomain(synthèse: synthese_des_resultats | null): DétailsCommentaire {
+  private _toDomain(synthèse: synthese_des_resultats | null): SynthèseDesRésultats {
+    if (synthèse === null || synthèse.commentaire === null || synthèse.date_commentaire === null)
+      return null;
+
     return {
-      contenu: synthèse?.commentaire || '',
-      date: synthèse?.date_commentaire?.toISOString() || '',
+      contenu: synthèse.commentaire,
+      date: synthèse.date_commentaire.toISOString(),
       auteur: '',
     };
   }
   
-  async récupérerLaPlusRécenteParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<DétailsCommentaire> {
+  async récupérerLaPlusRécenteParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<SynthèseDesRésultats> {
     const synthèseDesRésultats = await this.prisma.synthese_des_resultats.findFirst({
       where: {
         chantier_id: chantierId,

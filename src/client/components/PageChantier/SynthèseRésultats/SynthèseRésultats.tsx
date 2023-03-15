@@ -6,8 +6,11 @@ import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import météos from '@/client/constants/météos';
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
+import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 
 export default function SynthèseRésultats({ météo, synthèseDesRésultats }: SynthèseRésultatsProps) {
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
   return (
     <section id="synthèse">
       <Titre
@@ -16,7 +19,7 @@ export default function SynthèseRésultats({ météo, synthèseDesRésultats }:
       >
         Synthèse des résultats
       </Titre>
-      <Bloc titre="National">
+      <Bloc titre={territoireSélectionné.nom}>
         <SynthèseRésultatsStyled className='fr-grid-row fr-pt-2w'>
           <div className=" fr-col-12 fr-col-lg-2 conteneur-météo">
             <p className='libellé-météo fr-text--sm'>

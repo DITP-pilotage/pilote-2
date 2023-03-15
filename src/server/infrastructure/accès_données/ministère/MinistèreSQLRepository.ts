@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
-import PérimètreMinistériel from '@/server/domain/ministère/PérimètreMinistériel.interface';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 

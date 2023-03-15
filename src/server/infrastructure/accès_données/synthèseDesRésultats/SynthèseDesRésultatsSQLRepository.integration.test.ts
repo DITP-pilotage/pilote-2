@@ -9,7 +9,7 @@ import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/ma
 
 describe('SynthèseDesRésultatsSQLRepository ', function () {
   describe('findNewestByChantierIdAndTerritoire', () => {
-    test('Renvoie un détail commentaire null si aucune synthèses des résultats n\'est présente en base', async () => {
+    test('Renvoie null si aucune synthèses des résultats n\'est présente en base', async () => {
       // Given
       const repository = new SynthèseDesRésultatsSQLRepository(prisma);
 
@@ -17,7 +17,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       const result = await repository.récupérerLaPlusRécenteParChantierIdEtTerritoire('CH-001', 'départementale', 'O1');
 
       // Then
-      expect(result).toStrictEqual({ auteur: '', contenu: '', date: '' });
+      expect(result).toBeNull();
     });
 
     test('renvoie la synthèse des résultats la plus récente et dont le commentaire est non nul', async () => {
