@@ -2,27 +2,34 @@ import { getAllByRole, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { createColumnHelper } from '@tanstack/react-table';
-import Tableau from './Tableau';
+import ListeChantiersTableau from './ListeChantiersTableau';
 
 const columnHelper = createColumnHelper<{}>();
 
-class TableauTest {
+class ListeChantiersTableauTest {
   private données = [
     {
+      porteur: 'Ministère 1',
       nom: 'Déployer le programme FR',
       id: 1,
     },
     {
+      porteur: 'Ministère 1',
       nom: 'Lutter contre la fraude fiscale',
       id: 2,
     },
     {
+      porteur: 'Ministère 2',
       nom: 'Elections du maire',
       id: 3,
     },
   ];
 
   private colonnes = [
+    columnHelper.accessor('porteur', {
+      header: 'Porteur',
+      cell: porteur => porteur.getValue(),
+    }),
     columnHelper.accessor('id', {
       header: '#',
       cell: id => '#' + id.getValue(),
@@ -55,9 +62,10 @@ class TableauTest {
 
   render() {
     render(
-      <Tableau
+      <ListeChantiersTableau
         colonnes={this.colonnes}
         données={this.données}
+        entité='chantiers'
         titre="Liste des données"
       />,
     );
@@ -69,11 +77,11 @@ class TableauTest {
   }
 }
 
-let tableau: TableauTest;
+let tableau: ListeChantiersTableauTest;
 
 beforeEach(() => {
   // GIVEN
-  tableau = new TableauTest();
+  tableau = new ListeChantiersTableauTest();
 
   // WHEN
   tableau.render();
@@ -111,5 +119,16 @@ describe("quand l'utilisateur clique sur le bouton de tri décroissant d'une col
     expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('Lutter');
     expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent('Election');
     expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent('Déployer');
+  });
+});
+
+test('la recherche applique un filtre sur les lignes', async () => {
+  // WHEN
+  await tableau.filtrerParContenuTextuel('fr');
+  
+  // THEN
+  expect(tableau.récupérerLeNombreDeLignesDuTableau()).toBe(2);
+  tableau.récupérerLesLignesDuTableau().forEach((ligne) => {
+    expect(ligne).toHaveTextContent(/.*fr.*/i);
   });
 });

@@ -9,8 +9,13 @@ export default function TableauContenu<T>({ tableau }: TableauContenuProps<T>) {
           <tr key={row.id}>
             {
               row.getVisibleCells().map(cell => (
-                <td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                <td key={cell.id} >
+                  {
+                    flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext(),
+                    )
+                  }
                 </td>
               ))
             }

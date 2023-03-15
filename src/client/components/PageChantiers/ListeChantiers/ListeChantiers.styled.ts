@@ -14,6 +14,10 @@ const ListeChantiersStyled = styled.div`
       width: 15rem;
       min-width: 15rem;
     }
+
+    &:last-of-type {
+      width: 4rem;
+    }
   }
 
   tbody {
@@ -28,6 +32,10 @@ const ListeChantiersStyled = styled.div`
           color: var(--text-action-high-blue-france);
         }
       }
+    }
+
+    .icone {
+      color: var(--blue-france-sun-113-625)
     }
   }
 `;
