@@ -25,75 +25,51 @@ chantier_est_barometre as (
 
 (SELECT m_chantiers.id,
         m_chantiers.nom,
-        m_zones.code_insee,
+        m_chantiers.code_insee,
         d_chantiers.avancement_borne AS taux_avancement,
-        m_zones.nom AS territoire_nom,
+        m_chantiers.nom AS territoire_nom,
         m_chantiers.perimetre_ids,
-        m_zones.maille,
-        array(SELECT m_porteurs.directeur
-     		FROM   unnest(m_chantiers.directeurs_administration_centrale_ids) WITH ORDINALITY directeur(id, i)
-     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = directeur.id
-     		ORDER  BY directeur.i
-     	) AS directeurs_administration_centrale,
-        array(SELECT m_porteurs.nom_court
-     		FROM   unnest(m_chantiers.ministeres_ids) WITH ORDINALITY ministere(id, i)
-     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ministere.id
-     		ORDER  BY ministere.i
-     	) AS ministeres,
-        array(SELECT m_porteurs.nom_court
-     		FROM   unnest(m_chantiers.directeurs_administration_centrale_ids) WITH ORDINALITY direction(id, i)
-     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = direction.id
-     		ORDER  BY direction.i
-     	) AS directions_administration_centrale,
-        m_chantiers.directeurs_projet_noms AS directeurs_projet,
+        m_chantiers.maille,
+        m_chantiers.directeurs_administration_centrale,
+        m_chantiers.ministeres,
+        m_chantiers.directions_administration_centrale,
+        m_chantiers.directeurs_projet,
         COALESCE(chantier_meteos.id, 'NON_RENSEIGNEE') AS meteo,
         m_axes.nom AS axe,
         m_ppgs.nom AS ppg,
         m_chantiers.directeurs_projet_mails,
         chantier_est_barometre.est_barometre,
         m_chantiers.est_territorialise
-    FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantiers
-        LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_zones.id = 'FRANCE' -- ou = COALESCE(d_chantiers.zone_code, 'FRANCE') -- mais pas fan d'écrire ça ...
+    FROM {{ ref('int_chantiers_with_mailles_and_territoires') }} m_chantiers
         LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom='Réforme'
         LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
         LEFT JOIN {{ ref('stg_ppg_metadata__chantier_meteos') }} chantier_meteos ON chantier_meteos.nom_dfakto = d_chantiers.meteo_nom
         LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id
         LEFT JOIN {{ ref('stg_ppg_metadata__axes') }} m_axes ON m_axes.id = m_ppgs.axe_id
-        LEFT JOIN chantier_est_barometre on m_chantiers.id = chantier_est_barometre.chantier_id)
+        LEFT JOIN chantier_est_barometre on m_chantiers.id = chantier_est_barometre.chantier_id
+    WHERE m_chantiers.maille = 'NAT')
 UNION
     (SELECT m_chantiers.id,
         m_chantiers.nom,
-        m_zones.code_insee,
+        m_chantiers.code_insee,
         d_chantiers.avancement_borne AS taux_avancement,
-        m_zones.nom AS territoire_nom,
+        m_chantiers.nom AS territoire_nom,
         m_chantiers.perimetre_ids,
-        m_zones.maille,
-        array(SELECT m_porteurs.directeur
-     		FROM   unnest(m_chantiers.directeurs_administration_centrale_ids) WITH ORDINALITY directeur(id, i)
-     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = directeur.id
-     		ORDER  BY directeur.i
-     	) AS directeurs_administration_centrale,
-        array(SELECT m_porteurs.nom_court
-     		FROM   unnest(m_chantiers.ministeres_ids) WITH ORDINALITY ministere(id, i)
-     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ministere.id
-     		ORDER  BY ministere.i
-     	) AS ministeres,
-        array(SELECT m_porteurs.nom_court
-     		FROM   unnest(m_chantiers.directeurs_administration_centrale_ids) WITH ORDINALITY direction(id, i)
-     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = direction.id
-     		ORDER  BY direction.i
-     	) AS directions_administration_centrale,
-        m_chantiers.directeurs_projet_noms AS directeurs_projet,
+        m_chantiers.maille,
+        m_chantiers.directeurs_administration_centrale,
+        m_chantiers.ministeres,
+        m_chantiers.directions_administration_centrale,
+        m_chantiers.directeurs_projet,
         'NON_NECESSAIRE' AS meteo,
         m_axes.nom AS axe,
         m_ppgs.nom AS ppg,
         m_chantiers.directeurs_projet_mails,
         chantier_est_barometre.est_barometre,
         m_chantiers.est_territorialise
-FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantiers
-        JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_chantiers.est_territorialise = True AND m_zones.maille IN ('DEPT', 'REG')
+    FROM {{ ref('int_chantiers_with_mailles_and_territoires') }} m_chantiers
         LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom IN ('Région', 'Département')
         LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
         LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id
         LEFT JOIN {{ ref('stg_ppg_metadata__axes') }} m_axes ON m_axes.id = m_ppgs.axe_id
-        LEFT JOIN chantier_est_barometre on m_chantiers.id = chantier_est_barometre.chantier_id)
+        LEFT JOIN chantier_est_barometre on m_chantiers.id = chantier_est_barometre.chantier_id
+    WHERE m_chantiers.est_territorialise = True AND m_chantiers.maille IN ('DEPT', 'REG'))

@@ -39,6 +39,9 @@ models:
     staging:
       +schema: raw_data
       +materialized: view
+    intermediate:
+      +schema: raw_data
+      +materialized: view
     marts:
       +schema: public
       +materialized: table
