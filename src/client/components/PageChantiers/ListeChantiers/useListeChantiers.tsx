@@ -8,11 +8,16 @@ import ListeChantiersMétéo from '@/components/PageChantiers/ListeChantiers/Mé
 import ListeChantiersAvancement from '@/components/PageChantiers/ListeChantiers/Avancement/ListeChantiersAvancement';
 
 export default function useListeChantiers() {
-
   const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
   const taillePicto = { mesure: 1.25, unité: 'rem' } as const;
 
+
   const colonnes = [
+    reactTableColonnesHelper.accessor('porteur', {
+      header: 'Porteur',
+      cell: porteur => porteur.getValue(),
+      enableGrouping: true,
+    }),
     reactTableColonnesHelper.accessor('nom', {
       header: 'Chantiers',
       cell: nom => {
@@ -24,23 +29,29 @@ export default function useListeChantiers() {
         );
       },
       enableSorting: false,
+      enableGrouping: false,
     }),
     reactTableColonnesHelper.accessor('estBaromètre', {
       header: 'Typologie',
       enableSorting: false,
       cell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={taillePicto} /> : null,
+      enableGrouping: false,
     }),
     reactTableColonnesHelper.accessor('météo', {
       header: 'Météo',
       cell: météo => <ListeChantiersMétéo météo={météo.getValue()} />,
       enableGlobalFilter: false,
       sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
+      enableGrouping: false,
     }),
     reactTableColonnesHelper.accessor('avancement', {
       header: 'Avancement',
       cell: avancement => <ListeChantiersAvancement avancement={avancement.getValue()} />,
       enableGlobalFilter: false,
       sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
+      enableGrouping: false,
+      aggregationFn: 'mean',
+      aggregatedCell: avancement => <ListeChantiersAvancement avancement={avancement.getValue() ?? null} />,
     }),
   ];
 

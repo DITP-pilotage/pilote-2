@@ -19,6 +19,7 @@ export default function ListeChantiers({ chantiers }: ListeChantiersProps) {
     météo: chantier.mailles[maille][territoireSélectionné.codeInsee].météo,
     estBaromètre: chantier.estBaromètre,
     estTerritorialisé: chantier.estTerritorialisé,
+    porteur: chantier.responsables.porteur,
   }));
 
   return (

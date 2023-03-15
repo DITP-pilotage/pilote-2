@@ -1,7 +1,7 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import { getCoreRowModel, getFilteredRowModel,  getPaginationRowModel,  getSortedRowModel,  SortingState, useReactTable } from '@tanstack/react-table';
+import { getCoreRowModel, getExpandedRowModel, getFilteredRowModel,  getGroupedRowModel,  getPaginationRowModel,  getSortedRowModel,  GroupingState,  SortingState, useReactTable } from '@tanstack/react-table';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
@@ -13,6 +13,7 @@ import TableauStyled from './Tableau.styled';
 
 export default function Tableau<T extends object>({ colonnes, données, titre, entité, afficherLaRecherche = true }: TableauProps<T>) {
   const [tri, setTri] = useState<SortingState>([]);
+  const [regroupement, setRegroupement] = useState<GroupingState>([]);
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
 
   const tableau = useReactTable({
@@ -24,11 +25,15 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
     state: {
       globalFilter: valeurDeLaRecherche,
       sorting: tri,
+      grouping: regroupement,
     },
     onSortingChange: setTri,
+    onGroupingChange: setRegroupement,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
 
@@ -40,7 +45,7 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
     setValeurDeLaRecherche(event.target.value);
   }, [setValeurDeLaRecherche]);
 
-  const changementDePageCallback = useCallback((numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1), [tableau]);
+  const changementDePageCallback = useCallback((numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1), [tableau]);  
 
   return (
     <TableauStyled className='fr-table fr-m-0 fr-p-0'>
@@ -60,6 +65,20 @@ export default function Tableau<T extends object>({ colonnes, données, titre, e
           />
         </div>
         : null }
+      <div className="fr-toggle">
+        <input
+          className="fr-toggle__input"
+          id="interrupteur-grouper-par-ministères"
+          onChange={tableau.getColumn('porteur')?.getToggleGroupingHandler()}
+          type="checkbox"
+        />
+        <label
+          className="fr-toggle__label fr-pl-2w"
+          htmlFor="interrupteur-grouper-par-ministères"
+        >
+          Grouper par ministères
+        </label>
+      </div>
       {tableau.getRowModel().rows.length === 0
         ?
           <div className="fr-notice fr-notice--info">

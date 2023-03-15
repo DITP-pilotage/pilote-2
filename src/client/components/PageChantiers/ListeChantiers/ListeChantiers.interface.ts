@@ -11,4 +11,5 @@ export type DonnéesTableauChantiers = {
   avancement: number | null;
   météo: Météo;
   estBaromètre: boolean;
+  porteur: string;
 };
