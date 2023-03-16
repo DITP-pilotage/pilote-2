@@ -12,7 +12,7 @@ export default class HabilitationSQLRepository implements HabilitationRepository
     });
 
     for (const row of rows) {
-      result.chantiers[row.chantier_id] = new Set(row.scope);
+      result.chantiers[row.chantier_id] = row.scope;
     }
 
     return result;

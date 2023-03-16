@@ -2,9 +2,9 @@ import NextAuth, { AuthOptions, SessionOptions, User } from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import type { JWT } from 'next-auth/jwt';
-import { habilitationsPourChantierIds } from '@/server/domain/identité/Habilitations';
 import config from '@/server/infrastructure/Configuration';
 import logger from '@/server/infrastructure/logger';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export const keycloak = KeycloakProvider({
   clientId: config.keycloakClientId,
@@ -158,7 +158,8 @@ export const authOptions: AuthOptions = {
       // account is defined when recieved token from server (ie Keycloak)
       // Initial log in
       if (account && user) {
-        logger.debug({ token, user, account, profile, isNewUser, currentDate }, '------> JWT fnt');
+        const habilitations = await dependencies.getHabilitationRepository().getByUserId(user.email);
+        logger.debug({ token, user, account, profile, isNewUser, currentDate, habilitations }, '------> JWT fnt');
 
         return {
           accessToken: account.access_token,
@@ -168,12 +169,9 @@ export const authOptions: AuthOptions = {
           idToken: account.id_token,
           provider: account.provider,
           user,
-          // TODO: récupérer la liste des chantiers et l'ajouter dans le token / payload
-          habilitations: habilitationsPourChantierIds('CH-043'),
+          habilitations,
         };
       }
-      //logger.warn('******')
-      //logger.debug({ token, user, account, profile }, 'Token')
 
       if (token.provider == 'credentials' || currentDate < token.accessTokenExpires) {
         return token;

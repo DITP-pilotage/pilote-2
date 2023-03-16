@@ -35,11 +35,11 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return parseChantier(chantiers);
   }
 
-  async getListe(habilitations: Habilitations): Promise<Chantier[]> {
+  async getListe(habilitation: Habilitations): Promise<Chantier[]> {
     const chantiers = await this.prisma.chantier.findMany({
       where: {
         NOT: { ministeres: { isEmpty: true } },
-        id: { in: habilitationsChantierIds(habilitations) },
+        id: { in: habilitationsChantierIds(habilitation) },
       },
     });
     const chantiersGroupésParId = groupBy<chantier>(chantiers, c => c.id);

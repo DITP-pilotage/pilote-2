@@ -7,7 +7,7 @@ describe('HabilitationSQLRepository', () => {
   it("renvoie une habilitation vide si l'utilisateur n'est pas trouvé", async () => {
     // GIVEN
     const repository: HabilitationRepository = new HabilitationSQLRepository(prisma);
-    const emptyHabilitation = { chantiers: {} };
+    const emptyHabilitation = habilitationsPourChantierIds();
     // WHEN
     const result = await repository.getByUserId('no_user');
 

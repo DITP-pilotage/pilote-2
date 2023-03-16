@@ -1,4 +1,4 @@
-type HabilitationsChantier = { [key: ChantierId]: Set<string> };
+type HabilitationsChantier = { [key: ChantierId]: string[] };
 
 type ChantierId = string;
 
@@ -13,7 +13,7 @@ export function habilitationsChantierIds(habilitations: Habilitations) {
 export function habilitationsPourChantierIds(...chantierIds: string[]) {
   const habilitationsChantier: HabilitationsChantier = {};
   for (const chantierId of chantierIds) {
-    habilitationsChantier[chantierId] = new Set(['read']);
+    habilitationsChantier[chantierId] = ['read'];
   }
   return { chantiers: habilitationsChantier };
 }
