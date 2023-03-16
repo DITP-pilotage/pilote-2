@@ -8,20 +8,31 @@ import TerritoireBuilder from '@/server/domain/territoire/Territoire.builder';
 import AxeBuilder from '@/server/domain/axe/Axe.builder';
 
 export default class ChantierBuilder {
-  constructor(
-    private _id: Chantier['id'],
-    private _nom: Chantier['nom'],
-    private _axe: Chantier['axe'],
-    private _ppg: Chantier['ppg'],
-    private _périmètreIds: Chantier['périmètreIds'],
-    private _mailles: Chantier['mailles'],
-    private _porteur: Chantier['responsables']['porteur'],
-    private _coporteurs: Chantier['responsables']['coporteurs'],
-    private _directeursAdminCentrale: Chantier['responsables']['directeursAdminCentrale'],
-    private _directeursProjet: Chantier['responsables']['directeursProjet'],
-    private _estBaromètre: Chantier['estBaromètre'],
-    private _estTerritorialisé: Chantier['estTerritorialisé'],
-  ) {
+  private _id: Chantier['id'];
+
+  private _nom: Chantier['nom'];
+
+  private _axe: Chantier['axe'];
+
+  private _ppg: Chantier['ppg'];
+
+  private _périmètreIds: Chantier['périmètreIds'];
+
+  private _mailles: Chantier['mailles'];
+
+  private _porteur: Chantier['responsables']['porteur'];
+
+  private _coporteurs: Chantier['responsables']['coporteurs'];
+
+  private _directeursAdminCentrale: Chantier['responsables']['directeursAdminCentrale'];
+
+  private _directeursProjet: Chantier['responsables']['directeursProjet'];
+
+  private _estBaromètre: Chantier['estBaromètre'];
+
+  private _estTerritorialisé: Chantier['estTerritorialisé'];
+
+  constructor() {
     const axe = new AxeBuilder().build();
     const ppg = new PpgBuilder().build();
     const ministèrePorteur = new MinistèreBuilder().build();
