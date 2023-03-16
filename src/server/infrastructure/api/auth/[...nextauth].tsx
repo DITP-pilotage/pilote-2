@@ -158,8 +158,8 @@ export const authOptions: AuthOptions = {
       // account is defined when recieved token from server (ie Keycloak)
       // Initial log in
       if (account && user) {
-        const habilitatonRepository = dependencies.getHabilitationRepository();
-        const habilitation = await habilitatonRepository.getByUserId(user.email);
+        const habilitationRepository = dependencies.getHabilitationRepository();
+        const habilitation = await habilitationRepository.getByUserId(user.email);
         logger.debug({ token, user, account, profile, isNewUser, currentDate, habilitation }, '------> JWT fnt');
 
         return {
