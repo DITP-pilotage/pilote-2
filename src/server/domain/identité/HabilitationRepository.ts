@@ -1,5 +1,5 @@
-import Habilitations from '@/server/domain/identité/Habilitations';
+import Habilitation from '@/server/domain/identité/Habilitation';
 
 export default interface HabilitationRepository {
-  getByUserId(userId: string): Promise<Habilitations>,
+  getByUserId(userId: string): Promise<Habilitation>,
 }

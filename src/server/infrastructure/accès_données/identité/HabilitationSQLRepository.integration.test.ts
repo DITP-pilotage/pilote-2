@@ -1,13 +1,13 @@
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import HabilitationRepository from '@/server/domain/identité/HabilitationRepository';
 import HabilitationSQLRepository from '@/server/infrastructure/accès_données/identité/HabilitationSQLRepository';
-import { habilitationsPourChantierIds } from '@/server/domain/identité/Habilitations';
+import { habilitationPourChantierIds } from '@/server/domain/identité/Habilitation';
 
 describe('HabilitationSQLRepository', () => {
   it("renvoie une habilitation vide si l'utilisateur n'est pas trouvé", async () => {
     // GIVEN
     const repository: HabilitationRepository = new HabilitationSQLRepository(prisma);
-    const emptyHabilitation = habilitationsPourChantierIds();
+    const emptyHabilitation = habilitationPourChantierIds();
     // WHEN
     const result = await repository.getByUserId('no_user');
 
@@ -27,6 +27,6 @@ describe('HabilitationSQLRepository', () => {
     const result = await repository.getByUserId(userId);
 
     // THEN
-    expect(result).toStrictEqual(habilitationsPourChantierIds('CH-001'));
+    expect(result).toStrictEqual(habilitationPourChantierIds('CH-001'));
   });
 });

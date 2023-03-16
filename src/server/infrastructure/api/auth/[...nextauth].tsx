@@ -158,8 +158,9 @@ export const authOptions: AuthOptions = {
       // account is defined when recieved token from server (ie Keycloak)
       // Initial log in
       if (account && user) {
-        const habilitations = await dependencies.getHabilitationRepository().getByUserId(user.email);
-        logger.debug({ token, user, account, profile, isNewUser, currentDate, habilitations }, '------> JWT fnt');
+        const habilitatonRepository = dependencies.getHabilitationRepository();
+        const habilitation = await habilitatonRepository.getByUserId(user.email);
+        logger.debug({ token, user, account, profile, isNewUser, currentDate, habilitation }, '------> JWT fnt');
 
         return {
           accessToken: account.access_token,
@@ -169,7 +170,7 @@ export const authOptions: AuthOptions = {
           idToken: account.id_token,
           provider: account.provider,
           user,
-          habilitations,
+          habilitation,
         };
       }
 
@@ -186,7 +187,7 @@ export const authOptions: AuthOptions = {
       session.user = token.user;
       session.accessToken = token.accessToken;
       session.error = token.error;
-      session.habilitations = token.habilitations;
+      session.habilitation = token.habilitation;
 
       return session;
     },

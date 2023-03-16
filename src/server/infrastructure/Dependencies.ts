@@ -27,10 +27,10 @@ import CommentaireSQLRepository from '@/server/infrastructure/accès_données/co
 import CommentaireRandomRepository from '@/server/infrastructure/accès_données/commentaire/CommentaireRandomRepository';
 import HabilitationRepository from '@/server/domain/identité/HabilitationRepository';
 import HabilitationSQLRepository from '@/server/infrastructure/accès_données/identité/HabilitationSQLRepository';
-import Habilitations from '@/server/domain/identité/Habilitations';
+import Habilitation from '@/server/domain/identité/Habilitation';
 
 const notImplementedHabilitationRepository: HabilitationRepository = {
-  async getByUserId(_userId: string): Promise<Habilitations> { throw new Error('Not implemented.');},
+  async getByUserId(_userId: string): Promise<Habilitation> { throw new Error('Not implemented.');},
 };
 
 class Dependencies {
