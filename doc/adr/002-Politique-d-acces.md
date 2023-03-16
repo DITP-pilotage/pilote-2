@@ -1,0 +1,32 @@
+# 001. Gestion de la politque de contrôle
+
+Date : 2023-03-16
+
+## Contexte
+
+Pour la mise en place du système d'autorisation / habilitation, nous avons besoin de :
+
+- Définir la politique de controle d'access
+
+#### Propositions
+
+##### 2 Options:
+###### Tout est bloqué par défaut (white list)
+####### Avantages:
+
+####### Inconvénients:
+
+###### Tout est autorisé par default (black list)
+####### Avantages:
+
+####### Inconvénients:
+- politique de log pour identifier ce qui se passe 
+
+
+## Décision
+
+## État
+
+
+## Conséquences
+
