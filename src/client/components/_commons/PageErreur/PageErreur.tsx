@@ -1,10 +1,10 @@
 import '@gouvfr/dsfr/dist/component/badge/badge.min.css';
 import ovoidBackground from '@gouvfr/dsfr/dist/artwork/background/ovoid.svg';
 import technicalError from '@gouvfr/dsfr/dist/artwork/pictograms/system/technical-error.svg';
+import Titre from '@/components/_commons/Titre/Titre';
+import Bloc from '@/components/_commons/Bloc/Bloc';
 import PageErreurStyled from './PageErreurStyled';
 import PageErreurProps from './PageErreur.interface';
-import Titre from '../Titre/Titre';
-import Bloc from '../Bloc/Bloc';
 
 export default function PageErreur({ titre, sousTitre, message }: PageErreurProps) {
   return (

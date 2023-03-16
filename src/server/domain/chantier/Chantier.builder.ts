@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { CodeInsee, codeInseeFrance, codesInseeDépartements, codesInseeRégions, Territoires } from '@/server/domain/territoire/Territoire.interface';
-import PpgBuilder from '../ppg/Ppg.builder';
-import MinistèreBuilder from '../ministère/Ministère.builder';
-import TerritoireBuilder from '../territoire/Territoire.builder';
-import AxeBuilder from '../axe/Axe.builder';
-import { générerCaractèresSpéciaux, générerUnIdentifiantUnique, générerUnTableauVideAvecUneTailleDeZéroÀn } from '../../../tests/builders/utils';
+import { générerCaractèresSpéciaux, générerUnIdentifiantUnique, générerUnTableauVideAvecUneTailleDeZéroÀn } from '@/server/infrastructure/test/builders/utils';
+import PpgBuilder from '@/server/domain/ppg/Ppg.builder';
+import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
+import TerritoireBuilder from '@/server/domain/territoire/Territoire.builder';
+import AxeBuilder from '@/server/domain/axe/Axe.builder';
 
 export default class ChantierBuilder {
   constructor(

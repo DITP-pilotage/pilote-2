@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
-import { générerUnIdentifiantUnique } from '../../../tests/builders/utils';
+import { générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
 
 export default class PpgBuilder {
   private _id: Ppg['id'];

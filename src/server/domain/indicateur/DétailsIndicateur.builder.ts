@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { codesInseeDépartements, codesInseeRégions, codeInseeFrance } from '@/server/domain/territoire/Territoire.interface';
-import AvancementBuilder from '../avancement/Avancement.builder';
+import AvancementBuilder from '@/server/domain/avancement/Avancement.builder';
 
 export default class DétailsIndicateurBuilder {
   private _codeInsee: DétailsIndicateur['codeInsee'];

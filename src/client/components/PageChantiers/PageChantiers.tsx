@@ -9,13 +9,13 @@ import Avancements from '@/components/_commons/Avancements/Avancements';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import Filtres from '@/components/PageChantiers/Filtres/Filtres';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
+import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
-import useCartographie from '../_commons/Cartographie/useCartographie';
 
 export default function PageChantiers({ chantiers, ministères, axes, ppg }: PageChantiersProps) {  
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);

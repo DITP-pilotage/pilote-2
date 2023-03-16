@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { codesInseeDépartements, codesInseeRégions, codeInseeFrance, Territoire } from '@/server/domain/territoire/Territoire.interface';
-import MétéoBuilder from '../météo/Météo.builder';
-import AvancementBuilder from '../avancement/Avancement.builder';
+import MétéoBuilder from '@/server/domain/météo/Météo.builder';
+import AvancementBuilder from '@/server/domain/avancement/Avancement.builder';
 
 export default class TerritoireBuilder {
   private _codeInsee: Territoire['codeInsee'];

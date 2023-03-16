@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import Axe from '@/server/domain/axe/Axe.interface';
-import { générerUnIdentifiantUnique } from '../../../tests/builders/utils';
+import { générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
 
 export default class AxeBuilder {
   private _id: Axe['id'];

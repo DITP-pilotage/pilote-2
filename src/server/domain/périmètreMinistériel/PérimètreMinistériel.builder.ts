@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import { générerUnIdentifiantUnique } from '../../../tests/builders/utils';
+import { générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
 
 export default class PérimètreMinistérielBuilder {
   private _id: PérimètreMinistériel['id'];

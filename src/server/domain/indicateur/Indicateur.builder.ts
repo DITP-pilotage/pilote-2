@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import Indicateur, { typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
-import { générerUnIdentifiantUnique } from '../../../tests/builders/utils';
+import { générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
 
 export default class IndicateurBuilder {
   private _id: Indicateur['id'];

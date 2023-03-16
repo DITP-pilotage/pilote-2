@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import PérimètreMinistérielBuilder from '../périmètreMinistériel/PérimètreMinistériel.builder';
+import PérimètreMinistérielBuilder from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.builder';
 
 export default class MinistèreBuilder {
   private _nom: Ministère['nom'];
