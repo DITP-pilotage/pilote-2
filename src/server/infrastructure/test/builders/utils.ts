@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { CodeInsee, codesInseeDépartements, codesInseeRégions, codeInseeFrance } from '@/server/domain/territoire/Territoire.interface';
+import { codesInseeDépartements, codesInseeRégions, codeInseeFrance } from '@/server/domain/territoire/Territoire.interface';
 
 export function générerUnIdentifiantUnique(prefixe: string) {
   return `${prefixe}-${faker.helpers.unique(faker.random.numeric, [5])}`;
@@ -17,20 +17,16 @@ export function générerUnTableauVideAvecUneTailleDeZéroÀn(nombreMaxÉlément
   return Array.from({ length: nombreItération });
 }
 
-export function génèreUneMailleAléatoireEtUneListeDeCodesInseeCohérente() {
-  let codesInsee: readonly CodeInsee[];
+export function générerUneMailleAléatoire(): 'DEPT' | 'REG' | 'NAT' {
+  return faker.helpers.arrayElement(['DEPT', 'REG', 'NAT']);
+}
 
-  const maille = faker.helpers.arrayElement(['DEPT', 'REG', 'NAT']);
-
+export function retourneUneListeDeCodeInseeCohérentePourUneMaille(maille: string) {
   if (maille === 'DEPT')
-    codesInsee = codesInseeDépartements;
-  else if (maille === 'REG')
-    codesInsee = codesInseeRégions;
-  else
-    codesInsee = [codeInseeFrance];
+    return codesInseeDépartements;
 
-  return {
-    maille,
-    codesInsee,
-  };
+  if (maille === 'REG')
+    return codesInseeRégions;
+    
+  return [codeInseeFrance];
 }

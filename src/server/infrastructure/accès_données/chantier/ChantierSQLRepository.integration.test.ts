@@ -1,8 +1,8 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import { chantier } from '@prisma/client';
+import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
+/* eslint-disable sonarjs/no-duplicate-string */
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import ChantierRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/ChantierRowBuilder';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import ChantierSQLRepository from './ChantierSQLRepository';
@@ -13,17 +13,19 @@ describe('ChantierSQLRepository', () => {
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
     await prisma.chantier.createMany({
       data: [
-        new ChantierRowBuilder()
-          .withId('CH-001').withNom('Chantier 1').withAxe('Axe 1').withPpg('Ppg 1')
-          .withPérimètresIds(['PER-001', 'PER-002']).withMétéo('COUVERT')
-          .withDirecteursAdministrationCentrale(['Alain Térieur', 'Alex Térieur'])
-          .withDirectionsAdministrationCentrale(['Intérieur', 'Extérieur'])
-          .withDirecteursProjet(['Dir proj 1', 'Dir proj 2'])
-          .withDirecteursProjetMail(['dirproj1@example.com', 'dirproj2@example.com'])
-          .withEstTerritorialisé(true)
+        new ChantierSQLRowBuilder()
+          .avecMaille('NAT')
+          .avecId('CH-001').avecNom('Chantier 1').avecAxe('Axe 1').avecPpg('Ppg 1')
+          .avecPérimètreIds(['PER-001', 'PER-002']).avecMétéo('COUVERT')
+          .avecDirecteursAdminCentrale(['Alain Térieur', 'Alex Térieur'])
+          .avecDirectionsAdminCentrale(['Intérieur', 'Extérieur'])
+          .avecDirecteursProjet(['Dir proj 1', 'Dir proj 2'])
+          .avecDirecteursProjetMails(['dirproj1@example.com', 'dirproj2@example.com'])
+          .avecEstTerritorialisé(true)
           .build(),
-        new ChantierRowBuilder()
-          .withId('CH-002').withNom('Chantier 2').build(),
+        new ChantierSQLRowBuilder()
+          .avecMaille('NAT')
+          .avecId('CH-002').avecNom('Chantier 2').build(),
       ],
     });
 
@@ -51,8 +53,8 @@ describe('ChantierSQLRepository', () => {
     const chantierId = 'CH-001';
 
     await prisma.chantier.create({
-      data: new ChantierRowBuilder()
-        .withId(chantierId).withMailleNationale().withTauxAvancement(18).withMinistères([]).build(),
+      data: new ChantierSQLRowBuilder()
+        .avecId(chantierId).avecMaille('NAT').avecTauxAvancement(18).avecMinistères([]).build(),
     });
 
     // WHEN
@@ -67,10 +69,10 @@ describe('ChantierSQLRepository', () => {
     const chantierId = 'CH-001';
     await prisma.chantier.createMany({
       data: [
-        new ChantierRowBuilder()
-          .withId(chantierId).withMailleNationale().withTauxAvancement(18).build(),
-        new ChantierRowBuilder()
-          .withId(chantierId).withMaille('DEPT').withCodeInsee('13').withTauxAvancement(45).build(),
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId).avecMaille('NAT').avecMétéo('SOLEIL').avecTauxAvancement(18).build(),
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId).avecMaille('DEPT').avecMétéo('SOLEIL').avecCodeInsee('13').avecTauxAvancement(45).build(),
       ],
     });
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
@@ -108,13 +110,15 @@ describe('ChantierSQLRepository', () => {
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
     await prisma.chantier.createMany({
       data: [
-        new ChantierRowBuilder()
-          .withId('CH-001').withNom('Chantier 1')
-          .withMinistères(['Agriculture et Alimentation', 'Intérieur', 'Extérieur'])
+        new ChantierSQLRowBuilder()
+          .avecId('CH-001').avecNom('Chantier 1')
+          .avecMaille('NAT')
+          .avecMinistères(['Agriculture et Alimentation', 'Intérieur', 'Extérieur'])
           .build(),
-        new ChantierRowBuilder()
-          .withId('CH-002').withNom('Chantier 2')
-          .withMinistères(['Agriculture et Alimentation'])
+        new ChantierSQLRowBuilder()
+          .avecId('CH-002').avecNom('Chantier 2')
+          .avecMaille('NAT')
+          .avecMinistères(['Agriculture et Alimentation'])
           .build(),
       ],
     });
@@ -136,12 +140,12 @@ describe('ChantierSQLRepository', () => {
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
     await prisma.chantier.createMany({
       data: [
-        new ChantierRowBuilder()
-          .withId('CH-001').build(),
-        new ChantierRowBuilder()
-          .withId('CH-002').withMailleNationale().withTauxAvancement(50).build(),
-        new ChantierRowBuilder()
-          .withId('CH-002').withMaille('DEPT').withCodeInsee('13').withTauxAvancement(50).build(),
+        new ChantierSQLRowBuilder()
+          .avecId('CH-001').avecMaille('NAT').build(),
+        new ChantierSQLRowBuilder()
+          .avecId('CH-002').avecMaille('NAT').avecTauxAvancement(50).build(),
+        new ChantierSQLRowBuilder()
+          .avecId('CH-002').avecMaille('DEPT').avecCodeInsee('13').avecTauxAvancement(50).build(),
       ],
     });
 
@@ -159,10 +163,10 @@ describe('ChantierSQLRepository', () => {
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
     await prisma.chantier.createMany({
       data: [
-        new ChantierRowBuilder()
-          .withId('CH-001').build(),
-        new ChantierRowBuilder()
-          .withId('CH-001').withMaille('DEPT').withCodeInsee('974').build(),
+        new ChantierSQLRowBuilder()
+          .avecId('CH-001').avecMaille('NAT').build(),
+        new ChantierSQLRowBuilder()
+          .avecId('CH-001').avecMaille('DEPT').avecCodeInsee('974').build(),
       ],
     });
 
@@ -180,8 +184,8 @@ describe('ChantierSQLRepository', () => {
     const chantierId = 'CH-001';
 
     await prisma.chantier.create({
-      data: new ChantierRowBuilder()
-        .withId(chantierId).withDirecteursProjet(['Jean Bon']).withDirecteursProjetMail([]).build(),
+      data: new ChantierSQLRowBuilder()
+        .avecId(chantierId).avecMaille('NAT').avecDirecteursProjet(['Jean Bon']).avecDirecteursProjetMails([]).build(),
     });
 
     // WHEN
@@ -198,8 +202,8 @@ describe('ChantierSQLRepository', () => {
     const chantierId = 'CH-001';
 
     await prisma.chantier.create({
-      data: new ChantierRowBuilder()
-        .withId(chantierId).withEstBaromètre(true).build(),
+      data: new ChantierSQLRowBuilder()
+        .avecId(chantierId).avecMaille('NAT').avecEstBaromètre(true).build(),
     });
 
     // WHEN
@@ -215,7 +219,7 @@ describe('ChantierSQLRepository', () => {
       const repository: ChantierRepository = new ChantierSQLRepository(prisma);
       const chantierId = 'CH-001';
       await prisma.chantier.create({
-        data: new ChantierRowBuilder().withId(chantierId).withMailleNationale().build(),
+        data: new ChantierSQLRowBuilder().avecId(chantierId).avecMaille('NAT').build(),
       });
 
       // WHEN
@@ -232,7 +236,7 @@ describe('ChantierSQLRepository', () => {
       const repository: ChantierRepository = new ChantierSQLRepository(prisma);
       const chantierId = 'CH-001';
       await prisma.chantier.create({
-        data: new ChantierRowBuilder().withId(chantierId).withMaille('DEPT').build(),
+        data: new ChantierSQLRowBuilder().avecId(chantierId).avecMaille('DEPT').build(),
       });
 
       // WHEN
@@ -254,11 +258,11 @@ describe('ChantierSQLRepository', () => {
       const repository: ChantierRepository = new ChantierSQLRepository(prisma);
 
       const chantiers: chantier[] = [
-        new ChantierRowBuilder()
-          .withId(chantierId)
-          .withMaille(CODES_MAILLES[maille])
-          .withCodeInsee(codeInsee)
-          .withMétéo('ORAGE')
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecMétéo('ORAGE')
           .build(),
       ];
 

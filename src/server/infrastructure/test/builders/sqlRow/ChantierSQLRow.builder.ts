@@ -1,6 +1,6 @@
 import { chantier } from '@prisma/client';
 import { faker } from '@faker-js/faker';
-import { génèreUneMailleAléatoireEtUneListeDeCodesInseeCohérente } from '@/server/infrastructure/test/builders/utils';
+import { générerUneMailleAléatoire, retourneUneListeDeCodeInseeCohérentePourUneMaille } from '@/server/infrastructure/test/builders/utils';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 import AvancementBuilder from '@/server/domain/avancement/Avancement.builder';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
@@ -47,7 +47,8 @@ export default class ChantierRowBuilder {
     const météo = new MétéoBuilder().build();
     const ministères = faker.helpers.arrayElement([[new MinistèreBuilder().build()], [new MinistèreBuilder().build(), new MinistèreBuilder().build()]]);
 
-    const { maille, codesInsee } = génèreUneMailleAléatoireEtUneListeDeCodesInseeCohérente();
+    const maille = générerUneMailleAléatoire();
+    const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
       
     this._id = chantierGénéré.id;
     this._nom = chantierGénéré.nom;
@@ -94,7 +95,10 @@ export default class ChantierRowBuilder {
   }
 
   avecMaille(maille: typeof this._maille): ChantierRowBuilder {
+    const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
+    
     this._maille = maille;
+    this._codeInsee = faker.helpers.arrayElement(codesInsee);
     return this;
   }
 

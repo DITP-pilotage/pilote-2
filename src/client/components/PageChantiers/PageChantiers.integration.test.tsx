@@ -2,9 +2,15 @@
 import { getAllByRole, getByText, queryByText, render, screen, waitFor, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import ChantierFixture from '@/fixtures/ChantierFixture';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import AxeFixture from '@/fixtures/AxeFixture';
+import AxeBuilder from '@/server/domain/axe/Axe.builder';
+import PpgBuilder from '@/server/domain/ppg/Ppg.builder';
+import Axe from '@/server/domain/axe/Axe.interface';
+import Ppg from '@/server/domain/ppg/Ppg.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
+import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
+import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 import PageChantiers from './PageChantiers';
 
 // eslint-disable-next-line unicorn/consistent-function-scoping
@@ -13,34 +19,36 @@ jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function 
 jest.mock('next/router', () => require('next-router-mock'));
 
 class PageChantiersTest {
-  axes = AxeFixture.générerPlusieurs(6);
+  axes: Axe[];
 
-  ppg = AxeFixture.générerPlusieurs(40);
+  ppg: Ppg[];
 
-  // TODO temporaire en attendant la fixture
-  ministères = [
-    {
-      nom: 'Agriculture et Alimentation',
-      périmètresMinistériels: [
-        { id: 'PER-001', nom: 'Agriculture' },
-        { id: 'PER-002', nom: 'Alimentation' },
-      ],
-    },
-    {
-      nom: 'Cohésion des territoires et relations avec les collectivités territoriales',
-      périmètresMinistériels: [
-        { id: 'PER-003', nom: 'Cohésion des territoires, ville' },
-        { id: 'PER-004', nom: 'Aménagement du territoire' },
-        { id: 'PER-005', nom: 'Logement' },
-      ],
-    },
-  ];
+  ministères: Ministère[];
 
-  chantiers = ChantierFixture.générerPlusieurs(3, [
-    { périmètreIds: [this.ministères[0].périmètresMinistériels[0].id], axe: this.axes[0].nom, ppg: this.ppg[0].nom },
-    { périmètreIds: [this.ministères[0].périmètresMinistériels[0].id], axe: this.axes[1].nom, ppg: this.ppg[1].nom },
-    { périmètreIds: [this.ministères[0].périmètresMinistériels[1].id], axe: this.axes[2].nom, ppg: this.ppg[0].nom },
-  ]);
+  chantiers: Chantier[];
+
+  constructor() {
+    this.axes = Array.from({ length: 6 }).map(() => new AxeBuilder().build());
+    this.ppg = Array.from({ length: 40 }).map(() => new PpgBuilder().build());
+    this.ministères = Array.from({ length: 2 }).map(() => new MinistèreBuilder().build());
+    this.chantiers = [
+      new ChantierBuilder()
+        .avecPérimètreIds([this.ministères[0].périmètresMinistériels[0].id])
+        .avecAxe(this.axes[0].nom)
+        .avecPpg(this.ppg[0].nom)
+        .build(),
+      new ChantierBuilder()
+        .avecPérimètreIds([this.ministères[0].périmètresMinistériels[0].id])
+        .avecAxe(this.axes[1].nom)
+        .avecPpg(this.ppg[1].nom)
+        .build(),
+      new ChantierBuilder()
+        .avecPérimètreIds([this.ministères[1].périmètresMinistériels[0].id])
+        .avecAxe(this.axes[2].nom)
+        .avecPpg(this.ppg[0].nom)
+        .build(),
+    ];
+  }
 
   récupérerLesLignesDuTableau() {
     const conteneur = document.querySelector('tbody');
@@ -149,7 +157,7 @@ describe('quand je retire un filtre via le tag',  () => {
 describe('quand je retire un des filtres via les cases à cocher', () => {
   test('le tag correspondant à ce filtre est supprimé', async () => {
     const filtrePérimètreMinistériel1 = pageChantiers.ministères[0].périmètresMinistériels[0];
-    const filtrePérimètreMinistériel2 = pageChantiers.ministères[0].périmètresMinistériels[1];
+    const filtrePérimètreMinistériel2 = pageChantiers.ministères[1].périmètresMinistériels[0];
     await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel1.nom);
     await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel2.nom);
     await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel2.nom);
@@ -162,7 +170,7 @@ describe('quand je retire un des filtres via les cases à cocher', () => {
 describe('quand je clic sur le bouton de réinitisalisation de filtre', () => {
   test('les filtres se désactivent', async () => {
     const filtrePérimètreMinistériel1 = pageChantiers.ministères[0].périmètresMinistériels[0];
-    const filtrePérimètreMinistériel2 = pageChantiers.ministères[0].périmètresMinistériels[1];
+    const filtrePérimètreMinistériel2 = pageChantiers.ministères[1].périmètresMinistériels[0];
     await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel1.nom);
     await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel2.nom);
 

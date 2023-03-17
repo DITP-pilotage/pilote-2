@@ -41,7 +41,6 @@
       "error",
       {
         "devDependencies": [
-          "**/fixtures/**",
           "**/*.test.{ts,tsx}"
         ],
         "optionalDependencies": false

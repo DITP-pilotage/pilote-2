@@ -1,7 +1,7 @@
 import { commentaire } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
-import { génèreUneMailleAléatoireEtUneListeDeCodesInseeCohérente, générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
+import { générerUneMailleAléatoire, générerUnIdentifiantUnique, retourneUneListeDeCodeInseeCohérentePourUneMaille } from '@/server/infrastructure/test/builders/utils';
 
 export default class CommentaireRowBuilder {
   private _id: commentaire['id'];
@@ -23,13 +23,14 @@ export default class CommentaireRowBuilder {
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
     
-    const { maille, codesInsee } = génèreUneMailleAléatoireEtUneListeDeCodesInseeCohérente();
+    const maille = générerUneMailleAléatoire();
+    const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
 
     this._id = générerUnIdentifiantUnique('COM');
     this._chantierId = chantierGénéré.id;
     this._type = faker.helpers.arrayElement(['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus', 'objectifs']);
     this._contenu = faker.lorem.paragraph();
-    this._date = faker.date.recent(10);
+    this._date = faker.date.recent(10, '2023-02-01T00:00:00.000Z');
     this._auteur = faker.name.fullName();
     this._maille = maille;
     this._codeInsee = faker.helpers.arrayElement(codesInsee); 
@@ -66,7 +67,10 @@ export default class CommentaireRowBuilder {
   }
 
   avecMaille(maille: typeof this._maille): CommentaireRowBuilder {
+    const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
+    
     this._maille = maille;
+    this._codeInsee = faker.helpers.arrayElement(codesInsee);
     return this;
   }
 

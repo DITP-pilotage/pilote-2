@@ -21,7 +21,7 @@ export default class DétailsIndicateurBuilder {
   constructor() {
     this._codeInsee = faker.helpers.arrayElement([...codesInseeDépartements, ...codesInseeRégions, codeInseeFrance]);
     this._valeurInitiale = faker.helpers.arrayElement([null, faker.datatype.number({ precision: 0.01 })]);
-    this._dateValeurInitiale = this._valeurInitiale === null ? null : faker.date.recent(10).toISOString();
+    this._dateValeurInitiale = this._valeurInitiale === null ? null : faker.date.recent(10, '2023-02-01T00:00:00.000Z').toISOString();
     this._valeurs = this._valeurInitiale === null ? [] : [this._valeurInitiale, faker.datatype.number({ min: this._valeurInitiale, precision: 0.01 })];
     this._dateValeurs = this._dateValeurInitiale === null ? [] : [this._dateValeurInitiale, faker.date.between(this._dateValeurInitiale, faker.date.recent(5)).toISOString()];
     this._valeurCible = faker.helpers.arrayElement([null, faker.datatype.number({ min: this._valeurInitiale ?? 42, precision: 0.01 })]);

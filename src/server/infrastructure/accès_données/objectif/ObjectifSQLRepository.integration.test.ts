@@ -3,8 +3,8 @@ import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import ObjectifSQLRepository from '@/server/infrastructure/accès_données/objectif/ObjectifSQLRepository';
-import CommentaireRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/CommentaireRowBuilder';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 
 describe('ObjectifSQLRepository ', function () {
   describe('récupérerLePlusRécent', () => {
@@ -15,27 +15,25 @@ describe('ObjectifSQLRepository ', function () {
       const codeInsee = 'FR';
       const objectifRepository: ObjectifRepository = new ObjectifSQLRepository(prisma);
 
-      const commentaireRowBuilder = new CommentaireRowBuilder();
-
       const commentaires: commentaire[] = [
-        commentaireRowBuilder
-          .withChantierId(chantierId)
-          .withMaille(CODES_MAILLES[maille])
-          .withCodeInsee(codeInsee)
-          .withType('objectifs')
-          .withContenu('Mon objectif 2022')
-          .withDate('2022-12-31')
-          .withAuteur('Jean Bon')
+        new CommentaireRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecType('objectifs')
+          .avecContenu('Mon objectif 2022')
+          .avecDate(new Date('2022-12-31'))
+          .avecAuteur('Jean Bon')
           .build(),
 
-        commentaireRowBuilder
-          .withChantierId(chantierId)
-          .withMaille(CODES_MAILLES[maille])
-          .withCodeInsee(codeInsee)
-          .withType('objectifs')
-          .withContenu('Mon objectif 2023')
-          .withDate('2023-12-31')
-          .withAuteur('Jean Bon')
+        new CommentaireRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecType('objectifs')
+          .avecContenu('Mon objectif 2023')
+          .avecDate(new Date('2023-12-31'))
+          .avecAuteur('Jean Bon')
           .build(),
       ];
 

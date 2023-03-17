@@ -22,7 +22,6 @@
     "paths": {
       "@/components/*": ["client/components/*"],
       "@/client/*": ["client/*"],
-      "@/fixtures/*": ["fixtures/*"],
       "@/server/*": ["server/*"],
       "@/stores/*": ["client/stores/*"],
     }

@@ -1,11 +1,10 @@
 import { synthese_des_resultats } from '@prisma/client';
 import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/accès_données/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import SyntheseDesResultatsRowBuilder
-  from '@/server/infrastructure/test/tools/rowBuilder/SyntheseDesResultatsRowBuilder';
 import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import SynthèseDesRésultatsSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 
 describe('SynthèseDesRésultatsSQLRepository ', function () {
   describe('findNewestByChantierIdAndTerritoire', () => {
@@ -27,39 +26,38 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       const codeInsee = '01';
       const synthèseDesRésultatsRepository: SynthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
 
-      const syntheseDesResultatsRowBuilder = new SyntheseDesResultatsRowBuilder();
 
       const synthesesDesResultats: synthese_des_resultats[] = [
-        syntheseDesResultatsRowBuilder
-          .withChantierId(chantierId)
-          .withMaille(CODES_MAILLES[maille])
-          .withCodeInsee(codeInsee)
-          .withCommentaire('Premier commentaire')
-          .withDateCommentaire(null)
+        new SynthèseDesRésultatsSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecCommentaire('Premier commentaire')
+          .avecDateCommentaire(null)
           .build(),
 
-        syntheseDesResultatsRowBuilder
-          .withChantierId(chantierId)
-          .withMaille(CODES_MAILLES[maille])
-          .withCodeInsee(codeInsee)
-          .withCommentaire(null)
-          .withDateCommentaire('2023-01-01')
+        new SynthèseDesRésultatsSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecCommentaire(null)
+          .avecDateCommentaire(new Date('2023-01-01'))
           .build(),
 
-        syntheseDesResultatsRowBuilder
-          .withChantierId(chantierId)
-          .withMaille(CODES_MAILLES[maille])
-          .withCodeInsee(codeInsee)
-          .withCommentaire('Troisième commentaire')
-          .withDateCommentaire('2023-01-01')
+        new SynthèseDesRésultatsSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecCommentaire('Troisième commentaire')
+          .avecDateCommentaire(new Date('2023-01-01'))
           .build(),
 
-        syntheseDesResultatsRowBuilder
-          .withChantierId(chantierId)
-          .withMaille(CODES_MAILLES[maille])
-          .withCodeInsee(codeInsee)
-          .withCommentaire('Quatrième commentaire')
-          .withDateCommentaire('2023-12-31')
+        new SynthèseDesRésultatsSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecCommentaire('Quatrième commentaire')
+          .avecDateCommentaire(new Date('2023-12-31'))
           .build(),
       ];
 

@@ -11,7 +11,7 @@ export default class SynthèseDesRésultatBuilder {
   private _générerUneSynthèseDesRésultat() {
     return {
       contenu: faker.lorem.paragraph(),
-      date: faker.date.recent(10).toISOString(),
+      date: faker.date.recent(10, '2023-02-01T00:00:00.000Z').toISOString(),
       auteur: faker.helpers.arrayElement(['', faker.name.fullName()]),
     };
   }
