@@ -16,14 +16,14 @@ export default function useIndicateurDétails(indicateurId: Indicateur['id'], fu
 
   useEffect(() => {        
     if (futOuvert) {              
-      fetch(`/api/indicateur/${indicateurId}/repartitions_geographiques?maille=${mailleSélectionnée}`)
+      fetch(`/api/indicateur/${indicateurId}?maille=${mailleSélectionnée}`)
         .then(réponse => réponse.json() as Promise<DétailsIndicateurs>)
         .then(détailsIndicateurs => {
           setDonnéesCartographieAvancement(
             objectEntries(détailsIndicateurs[indicateurId]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.avancement.annuel, codeInsee: codeInsee })),
           );
           setDonnéesCartographieValeurActuelle(
-            objectEntries(détailsIndicateurs[indicateurId]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.valeurs[détailsIndicateur.valeurs.length - 1], codeInsee: codeInsee })),
+            objectEntries(détailsIndicateurs[indicateurId]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.valeurs[détailsIndicateur.valeurs.length - 1] ?? null, codeInsee: codeInsee })),
           );
         });
     }
