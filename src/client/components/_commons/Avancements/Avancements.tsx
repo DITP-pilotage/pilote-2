@@ -47,7 +47,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
               fond='grisClair'
               positionTexte='dessus'
               taille='fine'
-              valeur={30}
+              valeur={avancements.moyenneAnnuelle}
               variante="secondaire"
             />
             <p className='fr-text--xs'>

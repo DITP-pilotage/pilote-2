@@ -52,23 +52,24 @@ export default function usePageChantier(chantier: Chantier) {
     
   const avancementRégional = () => {
     if (mailleAssociéeAuTerritoireSélectionné === 'régionale')
-      return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements.moyenne;
+      return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne;
 
     if (mailleAssociéeAuTerritoireSélectionné === 'départementale' && territoireSélectionné.codeInseeParent)
-      return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInseeParent].répartition.avancements.moyenne;
+      return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInseeParent].répartition.avancements.global.moyenne;
   };
 
   const avancementDépartemental = () => {
     if (mailleAssociéeAuTerritoireSélectionné === 'départementale')
-      return donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireSélectionné.codeInsee].répartition.avancements.moyenne;
+      return donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne;
   };
 
   const avancements = {
     nationale: {
-      moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.moyenne,
-      médiane: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.médiane,
-      minimum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.minimum,
-      maximum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.maximum,
+      moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.global.moyenne,
+      moyenneAnnuelle: donnéesTerritoiresAgrégées.nationale.répartition.avancements.global.moyenne,
+      médiane: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.médiane,
+      minimum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.minimum,
+      maximum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.maximum,
     },
     départementale: {
       moyenne: avancementDépartemental(),

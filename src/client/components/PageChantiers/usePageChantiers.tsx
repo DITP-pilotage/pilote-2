@@ -48,17 +48,18 @@ export default function usePageChantiers(chantiers: Chantier[]) {
   }, [chantiersFiltrés]);
 
   const avancements = {
-    moyenne: donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.avancements.moyenne,
-    médiane: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.médiane,
-    minimum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.minimum,
-    maximum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.maximum,
+    moyenne: donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne,
+    moyenneAnnuelle: donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.avancements.annuel.moyenne,
+    médiane: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.médiane,
+    minimum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.minimum,
+    maximum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.maximum,
   };
 
   const météos = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.météos;
 
   const donnéesCartographie = useMemo(() => {
     return objectEntries(donnéesTerritoiresAgrégées[mailleSélectionnée].territoires).map(([codeInsee, territoire]) => ({
-      valeur: territoire.répartition.avancements.moyenne,
+      valeur: territoire.répartition.avancements.global.moyenne,
       codeInsee: codeInsee,
     }));
   }, [donnéesTerritoiresAgrégées, mailleSélectionnée]);

@@ -4,10 +4,15 @@ import { Météo } from '@/server/domain/météo/Météo.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 type RépartitionAvancements = {
-  moyenne: number | null,
-  médiane: number | null,
-  minimum: number | null,
-  maximum: number | null,
+  global: {
+    moyenne: number | null,
+    médiane: number | null,
+    minimum: number | null,
+    maximum: number | null,
+  },
+  annuel: {
+    moyenne: number | null,
+  }
 };
 
 type RépartitionMétéos = Record<Météo, number>;
