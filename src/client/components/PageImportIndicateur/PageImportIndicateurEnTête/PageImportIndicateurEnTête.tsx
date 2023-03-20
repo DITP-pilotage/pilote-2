@@ -3,20 +3,16 @@ import Titre from '@/components/_commons/Titre/Titre';
 import PageImportIndicateurEnTêteStyled from './PageImportIndicateurEnTête.styled';
 
 interface PageImportIndicateurEnTêteProps {
-  chantierId: string,
-  indicateurId: string
+  chantierId: string
 }
 
-export default function PageImportIndicateurEnTête({ chantierId, indicateurId }: PageImportIndicateurEnTêteProps) {
-  // eslint-disable-next-line no-console
-  console.log(chantierId);
-  
+export default function PageImportIndicateurEnTête({ chantierId }: PageImportIndicateurEnTêteProps) {
   return (
     <PageImportIndicateurEnTêteStyled>
       <div className='fr-container fr-py-4w'>
         <FilAriane
           chemin={[{ nom: 'Chantier', lien: '#' }]}
-          libelléPageCourante={`Indicateur ${indicateurId}`}
+          libelléPageCourante='Indicateurs'
         />
         <Titre baliseHtml='h1'>
           Hello world
