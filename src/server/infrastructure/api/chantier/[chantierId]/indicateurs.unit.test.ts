@@ -2,15 +2,15 @@ import { createMocks } from 'node-mocks-http';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import handleChantierIdIndicateurs from './indicateurs';
 
-describe('/api/detail_indicateur', () => {
-  it('renvoyer une liste vide de fiche indicateur', () => {
+describe('/api/chantier/:chantierId/indicateurs', () => {
+  it('renvoyer une liste vide de détails indicateur', () => {
     // Given
     const { req, res } = createMocks({
       method: 'GET',
       query: { chantierId: 'CH-001', maille: 'départemental', codesInsee: ['75'] },
     });
     const stubIndicateurRepository = <IndicateurRepository>{};
-    stubIndicateurRepository.getFichesIndicateurs = () => Promise.resolve({});
+    stubIndicateurRepository.récupererDétailsParChantierIdEtTerritoire = () => Promise.resolve({});
 
     // When
     handleChantierIdIndicateurs(req, res, stubIndicateurRepository);
@@ -26,7 +26,7 @@ describe('/api/detail_indicateur', () => {
       query: { chantierId: 'CH-001', maille: 'DEPT', codesInsee: ['75'] },
     });
     const stubIndicateurRepository = <IndicateurRepository>{};
-    stubIndicateurRepository.getFichesIndicateurs = () => Promise.resolve({
+    stubIndicateurRepository.récupererDétailsParChantierIdEtTerritoire = () => Promise.resolve({
       'IND-002': {
         '02': {
           codeInsee: '02',
@@ -73,7 +73,7 @@ describe('/api/detail_indicateur', () => {
       query: { chantierId: 'CH-001', maille: 'DEPT', codes_insee: ['75'] },
     });
     const stubIndicateurRepository = <IndicateurRepository>{};
-    stubIndicateurRepository.getFichesIndicateurs = () => Promise.resolve({});
+    stubIndicateurRepository.récupererDétailsParChantierIdEtTerritoire = () => Promise.resolve({});
 
     // When
     handleChantierIdIndicateurs(req, res, stubIndicateurRepository);

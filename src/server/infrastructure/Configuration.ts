@@ -1,6 +1,4 @@
 export class Configuration {
-  public readonly isUsingDatabase: Boolean;
-
   public readonly logLevel: string;
 
   public readonly keycloakClientSecret: string;
@@ -26,7 +24,6 @@ export class Configuration {
   public readonly devSessionMaxAge: number = 30 * 24 * 60 * 60; // 30 days
 
   constructor() {
-    this.isUsingDatabase = process.env.USE_DATABASE == 'true';
     this.logLevel = process.env.LOG_LEVEL || 'info';
 
     const devCredentials = process.env.DEV_CREDENTIALS;

@@ -1,4 +1,4 @@
-import PageVide from '../_commons/PageVide/PageVide';
+import PageVide from '@/components/_commons/PageVide/PageVide';
 
 export default function Nouveautés() {
   return (

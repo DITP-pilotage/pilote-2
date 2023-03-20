@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo, useState } from 'react';
+import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoiresComparésTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { Commentaires, DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { Commentaires } from '@/server/domain/commentaire/Commentaire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import { FichesIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { InfosChantier } from '@/server/domain/chantier/ChantierRepository.interface';
 
 export default function usePageChantier(chantier: Chantier) {
@@ -14,9 +15,9 @@ export default function usePageChantier(chantier: Chantier) {
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoiresComparés = territoiresComparésTerritoiresStore();  
   
-  const [détailsIndicateurs, setDétailsIndicateurs] = useState<FichesIndicateurs | null>(null);
+  const [détailsIndicateurs, setDétailsIndicateurs] = useState<DétailsIndicateurs | null>(null);
   const [commentaires, setCommentaires] = useState<Commentaires | null>(null);
-  const [synthèseDesRésultats, setSynthèseDesRésultats] = useState<DétailsCommentaire | null>(null);
+  const [synthèseDesRésultats, setSynthèseDesRésultats] = useState<SynthèseDesRésultats>(null);
   const [météo, setMétéo] = useState<Météo>('NON_RENSEIGNEE');
 
   useEffect(() => {
@@ -35,7 +36,7 @@ export default function usePageChantier(chantier: Chantier) {
   useEffect(() => {
     if (territoiresComparés.length > 0) return;    
     fetch(`/api/chantier/${chantier.id}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
-      .then(réponse => réponse.json() as Promise<FichesIndicateurs>)
+      .then(réponse => réponse.json() as Promise<DétailsIndicateurs>)
       .then(données => setDétailsIndicateurs(données));
   }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee, mailleSélectionnée]);
   
@@ -43,7 +44,7 @@ export default function usePageChantier(chantier: Chantier) {
     const codesInsee = territoiresComparés.map(territoire => `codesInsee=${territoire.codeInsee}`).join('&');
     if (codesInsee === '' || codesInsee === 'codesInsee=FR') return;
     fetch(`/api/chantier/${chantier.id}/indicateurs?${codesInsee}&maille=${mailleSélectionnée}`)
-      .then(réponse => réponse.json() as Promise<FichesIndicateurs>)
+      .then(réponse => réponse.json() as Promise<DétailsIndicateurs>)
       .then(données => setDétailsIndicateurs(données));
   }, [territoiresComparés]);
 

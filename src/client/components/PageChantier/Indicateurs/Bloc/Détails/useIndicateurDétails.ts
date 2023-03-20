@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { objectEntries } from '@/client/utils/objects/objects';
-import Indicateur, { CartographieIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { CartographieDonnéesValeurActuelle } from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle.interface';
 import { CartographieDonnéesAvancement } from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement.interface';
+import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 
 const donnéesCartographieVides = [{ valeur: null, codeInsee: '' }];
 
@@ -15,14 +16,14 @@ export default function useIndicateurDétails(indicateurId: Indicateur['id'], fu
 
   useEffect(() => {        
     if (futOuvert) {              
-      fetch(`/api/indicateur/${indicateurId}/repartitions_geographiques?maille=${mailleSélectionnée}`)
-        .then(réponse => réponse.json() as Promise<CartographieIndicateur>)
-        .then(donnéesCartographieIndicateur => {
+      fetch(`/api/indicateur/${indicateurId}?maille=${mailleSélectionnée}`)
+        .then(réponse => réponse.json() as Promise<DétailsIndicateurs>)
+        .then(détailsIndicateurs => {
           setDonnéesCartographieAvancement(
-            objectEntries(donnéesCartographieIndicateur).map(([codeInsee, valeurs]) => ({ valeur: valeurs.avancementAnnuel, codeInsee: codeInsee })),
+            objectEntries(détailsIndicateurs[indicateurId]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.avancement.annuel, codeInsee: codeInsee })),
           );
           setDonnéesCartographieValeurActuelle(
-            objectEntries(donnéesCartographieIndicateur).map(([codeInsee, valeurs]) => ({ valeur: valeurs.valeurActuelle, codeInsee: codeInsee })),
+            objectEntries(détailsIndicateurs[indicateurId]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.valeurs[détailsIndicateur.valeurs.length - 1] ?? null, codeInsee: codeInsee })),
           );
         });
     }

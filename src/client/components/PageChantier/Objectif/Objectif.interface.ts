@@ -1,5 +1,5 @@
-import { DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import Objectif from '@/server/domain/objectif/Objectif.interface';
 
 export interface ObjectifProps {
-  objectif: DétailsCommentaire | null
+  objectif: Objectif
 }

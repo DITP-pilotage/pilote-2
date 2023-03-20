@@ -15,7 +15,6 @@ const customJestConfig = {
   moduleNameMapper: {
     "@/components/(.*)": "<rootDir>/src/client/components/$1",
     "@/client/(.*)":"<rootDir>/src/client/$1",
-    "@/fixtures/(.*)":"<rootDir>/src/fixtures/$1",
     "@/server/(.*)": "<rootDir>/src/server/$1",
     "@/stores/(.*)": "<rootDir>/src/client/stores/$1",
   }

@@ -1,10 +1,10 @@
-import Indicateur, { CartographieIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
-import { FichesIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { CodeInsee } from '../territoire/Territoire.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export default interface IndicateurRepository {
-  getByChantierId(chantierId: string): Promise<Indicateur[]>;
-  getCartographieDonnéesParMailleEtIndicateurId(indicateurId: string, mailleInterne: MailleInterne): Promise<CartographieIndicateur>;
-  getFichesIndicateurs(chantierId: string, maille: Maille, codesInsee: CodeInsee[]): Promise<FichesIndicateurs>;
+  récupérerParChantierId(chantierId: string): Promise<Indicateur[]>;
+  récupérerDétails(indicateurId: string, maille: Maille): Promise<DétailsIndicateurs>;
+  récupererDétailsParChantierIdEtTerritoire(chantierId: string, maille: Maille, codesInsee: CodeInsee[]): Promise<DétailsIndicateurs>;
 }

@@ -1,9 +1,7 @@
 import { chantier, synthese_des_resultats } from '@prisma/client';
+import  SynthèseDesRésultatsSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import ChantierRowBuilder from '@/server/infrastructure/test/tools/rowBuilder/ChantierRowBuilder';
-import SyntheseDesResultatsRowBuilder
-  from '@/server/infrastructure/test/tools/rowBuilder/SyntheseDesResultatsRowBuilder';
 import { commentairesNull } from '@/server/domain/commentaire/Commentaire.interface';
 import ChantierSQLRepository from '@/server/infrastructure/accès_données/chantier/ChantierSQLRepository';
 import SynthèseDesRésultatsRepository
@@ -18,6 +16,7 @@ import {
 } from '@/server/usecase/chantier/RécupérerLeDétailDUnChantierTerritorialiséeUseCase';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
 
 
 describe('RécupérerLeDétailDUnChantierTerritorialiséeUseCase', () => {
@@ -71,11 +70,11 @@ describe('RécupérerLeDétailDUnChantierTerritorialiséeUseCase', () => {
       );
 
       const chantiers: chantier[] = [
-        new ChantierRowBuilder()
-          .withId(chantierId)
-          .withMaille(CODES_MAILLES[maille])
-          .withCodeInsee(codeInsee)
-          .withMétéo(null)
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecMétéo(null)
           .build(),
       ];
 
@@ -107,21 +106,21 @@ describe('RécupérerLeDétailDUnChantierTerritorialiséeUseCase', () => {
       );
 
       const synthesesDesResultats: synthese_des_resultats[] = [
-        new SyntheseDesResultatsRowBuilder()
-          .withChantierId(chantierId)
-          .withMaille(CODES_MAILLES[maille])
-          .withCodeInsee(codeInsee)
-          .withCommentaire('Lorem ipsum')
-          .withDateCommentaire('2023-01-01')
+        new SynthèseDesRésultatsSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecCommentaire('Lorem ipsum')
+          .avecDateCommentaire(new Date('2023-01-01'))
           .build(),
       ];
 
       const chantiers: chantier[] = [
-        new ChantierRowBuilder()
-          .withId(chantierId)
-          .withMaille(CODES_MAILLES[maille])
-          .withCodeInsee(codeInsee)
-          .withMétéo('ORAGE')
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecMétéo('ORAGE')
           .build(),
       ];
 
