@@ -10,7 +10,6 @@ import ListeChantiersTableauEnTête from './TableauEnTête/ListeChantiersTableau
 import ListeChantiersTableauStyled from './ListeChantiersTableau.styled';
 import useListeChantiersTableau from './useListeChantiersTableau';
 
-
 export default function ListeChantiersTableau({ données }: ListeChantiersTableauProps) {
   const { tableau, changementDeLaRechercheCallback, changementDePageCallback, valeurDeLaRecherche } = useListeChantiersTableau(données);
   

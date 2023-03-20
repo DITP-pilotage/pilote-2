@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 
 const ListeChantiersTableauStyled = styled.section`
-  display: grid;  overflow-x: auto;
+  display: grid;
+  overflow-x: auto;
   color: var(--text-action-high-grey);
   
   .tableau-actions {
@@ -76,7 +77,7 @@ const ListeChantiersTableauStyled = styled.section`
     }
   }
 
-  .icone {
+  .icône {
       color: var(--blue-france-sun-113-625)
     }
 `;
