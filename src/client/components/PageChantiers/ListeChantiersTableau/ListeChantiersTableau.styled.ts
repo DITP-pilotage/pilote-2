@@ -1,12 +1,21 @@
 import styled from '@emotion/styled';
 
 const ListeChantiersTableauStyled = styled.section`
-  overflow-x: auto;
-  display: grid;
+  display: grid;  overflow-x: auto;
   color: var(--text-action-high-grey);
+  
+  .tableau-actions {
+    display: flex;
+    align-items: center;
+
+    div {
+      max-width: 100%;
+    }
+  }
 
   table.tableau {
     display: table;
+
     th {
       &:nth-of-type(3) {
         width: 11rem;
@@ -30,21 +39,31 @@ const ListeChantiersTableauStyled = styled.section`
         a {
           text-decoration: none;
           background: none;
-
-          &:hover {
-            color: var(--text-action-high-blue-france);
-          }
         }
       }
-    }
-  }
 
-  .tableau-actions {
-    display: flex;
-    align-items: center;
+      .ligne-chantier {
+        &:hover:nth-of-type(even) {
+          background-color: var(--background-contrast-grey-hover);
+        }
+        
+        &:hover:nth-of-type(odd) {
+          background-color: var(--background-alt-grey-hover);
+        }
+      }
+      
+      .ligne-ministère,
+      .ligne-ministère:nth-of-type(2n) {
+        background-color: var(--background-default-grey);
+        background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
+        background-repeat: no-repeat;
+        background-position: bottom;
+        background-size: 100% 1px;
 
-    div {
-      max-width: 100%;
+        &:hover {
+          background-color: var(--background-default-grey-hover);
+        }
+      }
     }
   }
 
@@ -52,15 +71,6 @@ const ListeChantiersTableauStyled = styled.section`
     button {
       border-radius: 4px;
     }
-  }
-
-  tbody .ligne-groupée,
-  tbody .ligne-groupée:nth-of-type(2n) {
-    background-color: white;
-    background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
-    background-repeat: no-repeat;
-    background-position: bottom;
-    background-size: 100% 1px;
   }
 
   .icone {

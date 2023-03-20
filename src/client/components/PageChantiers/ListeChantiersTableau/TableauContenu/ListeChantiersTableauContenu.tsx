@@ -7,7 +7,7 @@ export default function ListeChantiersTableauContenu({ tableau }: ListeChantiers
       {
         tableau.getRowModel().rows.map(row => (
           <tr
-            className={`${row.getIsGrouped() && 'ligne-groupée'}`}
+            className={row.getIsGrouped() ? 'ligne-ministère' : 'ligne-chantier'}
             key={row.id}
           >
             {
