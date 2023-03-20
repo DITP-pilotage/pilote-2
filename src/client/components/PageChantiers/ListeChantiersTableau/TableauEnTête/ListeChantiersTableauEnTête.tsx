@@ -16,9 +16,8 @@ function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   return tupleTriAttributAriaSort[typeDeTri];
 }
 
-
 export default function ListeChantiersTableauEnTête({ tableau }: ListeChantiersTableauEnTêteProps) {
-  function afficherIconesDeTriDeLaColonne(header:  Header<DonnéesTableauChantiers, unknown>) {
+  function afficherIconesDeTriDeLaColonne(header: Header<DonnéesTableauChantiers, unknown>) {
     const triDécroissantActif = header.column.getIsSorted() === 'desc';
     const triCroissantActif = header.column.getIsSorted() === 'asc';
     return (
