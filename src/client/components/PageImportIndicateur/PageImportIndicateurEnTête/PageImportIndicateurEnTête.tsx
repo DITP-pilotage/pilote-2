@@ -2,13 +2,21 @@ import FilAriane from '@/components/_commons/FilAriane/FilAriane';
 import Titre from '@/components/_commons/Titre/Titre';
 import PageImportIndicateurEnTêteStyled from './PageImportIndicateurEnTête.styled';
 
-export default function PageImportIndicateurEnTête() {
+interface PageImportIndicateurEnTêteProps {
+  chantierId: string,
+  indicateurId: string
+}
+
+export default function PageImportIndicateurEnTête({ chantierId, indicateurId }: PageImportIndicateurEnTêteProps) {
+  // eslint-disable-next-line no-console
+  console.log(chantierId);
+  
   return (
     <PageImportIndicateurEnTêteStyled>
-      <div className='fr-container'>
+      <div className='fr-container fr-py-4w'>
         <FilAriane
           chemin={[{ nom: 'Chantier', lien: '#' }]}
-          libelléPageCourante="Indicateur XXX"
+          libelléPageCourante={`Indicateur ${indicateurId}`}
         />
         <Titre baliseHtml='h1'>
           Hello world

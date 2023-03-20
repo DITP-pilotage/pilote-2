@@ -11,6 +11,10 @@ const PageImportIndicateurEnTêteStyled = styled.header`
   .chantier-données-valeur {
     color: var(--text-label-blue-france);
   }
+  
+  .fr-breadcrumb {
+    margin: O;
+  }
 `;
 
 export default PageImportIndicateurEnTêteStyled;
