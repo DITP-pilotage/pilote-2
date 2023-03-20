@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import Link from 'next/link';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import { actions as actionsFiltresStore, filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
@@ -31,14 +30,6 @@ const colonnesListeChantiers = [
   }),
   reactTableColonnesHelper.accessor('nom', {
     header: 'Chantiers',
-    cell: nom => {
-      const id = nom.row.original.id;
-      return (
-        <Link href={`/chantier/${id}`}>
-          {nom.getValue()}
-        </Link>
-      );
-    },
     aggregatedCell: nom => nom.row.original.porteur,
     enableSorting: false,
     enableGrouping: false,

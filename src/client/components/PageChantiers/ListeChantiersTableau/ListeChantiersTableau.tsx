@@ -4,9 +4,9 @@ import { useEffect } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauPagination from '@/components/_commons/Tableau/TableauPagination/TableauPagination';
+import ListeChantiersTableauContenu from '@/components/PageChantiers/ListeChantiersTableau/TableauContenu/ListeChantiersTableauContenu';
 import ListeChantiersTableauProps from './ListeChantiersTableau.interface';
 import ListeChantiersTableauEnTête from './TableauEnTête/ListeChantiersTableauEnTête';
-import ListeChantiersTableauContenu from './TableauContenu/ListeChantiersTableauContenu';
 import ListeChantiersTableauStyled from './ListeChantiersTableau.styled';
 import useListeChantiersTableau from './useListeChantiersTableau';
 

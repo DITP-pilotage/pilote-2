@@ -5,6 +5,9 @@ import { createColumnHelper } from '@tanstack/react-table';
 import ListeChantiersTableau from './ListeChantiersTableau';
 import { DonnéesTableauChantiers } from './ListeChantiersTableau.interface';
 
+// eslint-disable-next-line unicorn/prefer-module
+jest.mock('next/router', () => require('next-router-mock'));
+
 const columnHelper = createColumnHelper<DonnéesTableauChantiers>();
 
 class ListeChantiersTableauTest {

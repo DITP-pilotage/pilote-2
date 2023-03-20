@@ -43,6 +43,8 @@ const ListeChantiersTableauStyled = styled.section`
       }
 
       .ligne-chantier {
+        cursor: pointer;
+        
         &:hover:nth-of-type(even) {
           background-color: var(--background-contrast-grey-hover);
         }
@@ -54,6 +56,7 @@ const ListeChantiersTableauStyled = styled.section`
       
       .ligne-ministère,
       .ligne-ministère:nth-of-type(2n) {
+        cursor: pointer;
         background-color: var(--background-default-grey);
         background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
         background-repeat: no-repeat;

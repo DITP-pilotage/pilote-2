@@ -9,6 +9,8 @@ import PageChantiers from './PageChantiers';
 
 // eslint-disable-next-line unicorn/consistent-function-scoping
 jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function Cartographie() { return 'Carto'; });
+// eslint-disable-next-line unicorn/prefer-module
+jest.mock('next/router', () => require('next-router-mock'));
 
 class PageChantiersTest {
   axes = AxeFixture.générerPlusieurs(6);
