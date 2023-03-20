@@ -27,7 +27,6 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
     météos,
     donnéesCartographie,
     donnéesListeChantiers,
-    colonnesListeChantiers, 
   } = usePageChantiers(chantiers);
 
   return (
@@ -120,7 +119,6 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
               <div className="fr-col">
                 <Bloc>
                   <ListeChantiersTableau
-                    colonnes={colonnesListeChantiers}
                     données={donnéesListeChantiers}
                   />
                 </Bloc>

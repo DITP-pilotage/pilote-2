@@ -11,8 +11,8 @@ import ListeChantiersTableauStyled from './ListeChantiersTableau.styled';
 import useListeChantiersTableau from './useListeChantiersTableau';
 
 
-export default function ListeChantiersTableau({ colonnes, données }: ListeChantiersTableauProps) {
-  const { tableau, changementDeLaRechercheCallback, changementDePageCallback, valeurDeLaRecherche } = useListeChantiersTableau(données, colonnes);
+export default function ListeChantiersTableau({ données }: ListeChantiersTableauProps) {
+  const { tableau, changementDeLaRechercheCallback, changementDePageCallback, valeurDeLaRecherche } = useListeChantiersTableau(données);
   
   useEffect(() => {
     tableau.setPageSize(50);

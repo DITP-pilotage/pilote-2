@@ -1,14 +1,10 @@
 import '@testing-library/jest-dom';
 import { getAllByRole, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createColumnHelper } from '@tanstack/react-table';
 import ListeChantiersTableau from './ListeChantiersTableau';
-import { DonnéesTableauChantiers } from './ListeChantiersTableau.interface';
 
 // eslint-disable-next-line unicorn/prefer-module
 jest.mock('next/router', () => require('next-router-mock'));
-
-const columnHelper = createColumnHelper<DonnéesTableauChantiers>();
 
 class ListeChantiersTableauTest {
   private données = [
@@ -16,7 +12,7 @@ class ListeChantiersTableauTest {
       porteur: 'Ministère 1',
       nom: 'Déployer le programme FR',
       id: '1',
-      avancement: 99,
+      avancement: 97,
       météo: 'COUVERT' as const,
       estBaromètre: false,
     },
@@ -24,7 +20,7 @@ class ListeChantiersTableauTest {
       porteur: 'Ministère 1',
       nom: 'Lutter contre la fraude fiscale',
       id: '2',
-      avancement: 99,
+      avancement: 98,
       météo: 'COUVERT' as const,
       estBaromètre: false,
     },
@@ -36,21 +32,6 @@ class ListeChantiersTableauTest {
       météo: 'SOLEIL' as const,
       estBaromètre: false,
     },
-  ];
-
-  private colonnes = [
-    columnHelper.accessor('porteur', {
-      header: 'Porteur',
-      cell: porteur => porteur.getValue(),
-    }),
-    columnHelper.accessor('id', {
-      header: '#',
-      cell: id => '#' + id.getValue(),
-    }),
-    columnHelper.accessor('nom', {
-      header: 'Nom du chantier',
-      cell: nomChantier => nomChantier.getValue(),
-    }),
   ];
 
   nombreDeDonnées() {
@@ -76,7 +57,6 @@ class ListeChantiersTableauTest {
   render() {
     render(
       <ListeChantiersTableau
-        colonnes={this.colonnes}
         données={this.données}
       />,
     );
@@ -105,31 +85,32 @@ test('le tableau comporte le nombre de lignes adéquat', () => {
 
 test('le tableau comporte les données d\'entrée', () => {
   // THEN
-  expect(screen.getByText('#1')).toBeInTheDocument();
   expect(screen.getByText('Déployer le programme FR')).toBeInTheDocument();
+  expect(screen.getByText('Lutter contre la fraude fiscale')).toBeInTheDocument();
+  expect(screen.getByText('Elections du maire')).toBeInTheDocument();
 });
 
 describe("quand l'utilisateur clique sur le bouton de tri croissant d'une colonne", () => {
   test('les éléments du tableau sont triés par ordre croissant', async () => {
     // WHEN
-    await tableau.trierSurLaColonne('trier la colonne Nom du chantier par ordre croissant');
+    await tableau.trierSurLaColonne('trier la colonne Avancement par ordre croissant');
     
     // THEN
-    expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('Déployer');
-    expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent('Election');
-    expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent('Lutter');
+    expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('97');
+    expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent('98');
+    expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent('99');
   });
 });
 
 describe("quand l'utilisateur clique sur le bouton de tri décroissant d'une colonne", () => {
   test('les éléments du tableau sont triés par ordre décroissant', async () => {
     // WHEN
-    await tableau.trierSurLaColonne('trier la colonne Nom du chantier par ordre décroissant');
+    await tableau.trierSurLaColonne('trier la colonne Avancement par ordre décroissant');
     
     // THEN
-    expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('Lutter');
-    expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent('Election');
-    expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent('Déployer');
+    expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('99');
+    expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent('98');
+    expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent('97');
   });
 });
 

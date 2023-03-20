@@ -1,8 +1,6 @@
-import { ColumnDef } from '@tanstack/react-table';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export default interface ListeChantiersTableauProps {
-  colonnes: ColumnDef<DonnéesTableauChantiers, any>[],
   données: DonnéesTableauChantiers[],
 }
 
