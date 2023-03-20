@@ -1,7 +1,8 @@
 import { Header, flexRender, SortDirection } from '@tanstack/react-table';
+import FlècheDeTri from '@/components/_commons/Tableau/TableauEnTête/FlècheDeTri/FlècheDeTri';
 import ListeChantiersTableauEnTêteProps from './ListeChantiersTableauEnTête.interface';
-import FlècheDeTri from './FlècheDeTri/FlècheDeTri';
 import ListeChantiersTableauEnTêteStyled from './ListeChantiersTableauEnTête.styled';
+import { DonnéesTableauChantiers } from '../ListeChantiersTableau.interface';
 
 function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   if (!typeDeTri)
@@ -16,8 +17,8 @@ function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
 }
 
 
-export default function ListeChantiersTableauEnTête<T>({ tableau }: ListeChantiersTableauEnTêteProps<T>) {
-  function afficherIconesDeTriDeLaColonne(header:  Header<T, unknown>) {
+export default function ListeChantiersTableauEnTête({ tableau }: ListeChantiersTableauEnTêteProps) {
+  function afficherIconesDeTriDeLaColonne(header:  Header<DonnéesTableauChantiers, unknown>) {
     const triDécroissantActif = header.column.getIsSorted() === 'desc';
     const triCroissantActif = header.column.getIsSorted() === 'asc';
     return (

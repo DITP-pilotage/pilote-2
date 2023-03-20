@@ -1,8 +1,9 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { ColumnDef } from '@tanstack/react-table';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 
-export default interface ListeChantiersProps {
-  chantiers: Chantier[]
+export default interface ListeChantiersTableauProps {
+  colonnes: ColumnDef<DonnéesTableauChantiers, any>[],
+  données: DonnéesTableauChantiers[],
 }
 
 export type DonnéesTableauChantiers = {

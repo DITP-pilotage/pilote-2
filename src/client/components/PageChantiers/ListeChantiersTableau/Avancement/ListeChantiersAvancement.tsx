@@ -1,6 +1,5 @@
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import ListeChantiersAvancementProps
-  from '@/components/PageChantiers/ListeChantiers/Avancement/ListeChantiersAvancement.interface';
+import ListeChantiersAvancementProps from '@/components/PageChantiers/ListeChantiersTableau/Avancement/ListeChantiersAvancement.interface';
 
 export default function ListeChantiersAvancement({ avancement }: ListeChantiersAvancementProps) {
   return (

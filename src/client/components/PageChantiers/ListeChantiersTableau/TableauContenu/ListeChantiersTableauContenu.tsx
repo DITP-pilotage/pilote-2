@@ -1,7 +1,7 @@
 import { flexRender } from '@tanstack/react-table';
 import ListeChantiersTableauContenuProps from './ListeChantiersTableauContenu.interface';
 
-export default function ListeChantiersTableauContenu<T>({ tableau }: ListeChantiersTableauContenuProps<T>) {
+export default function ListeChantiersTableauContenu({ tableau }: ListeChantiersTableauContenuProps) {
   return (
     <tbody>
       {
