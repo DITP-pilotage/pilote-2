@@ -19,6 +19,10 @@ import { DonnéesTableauChantiers } from './ListeChantiersTableau/ListeChantiers
 
 const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
 
+function déterminerTypologieDuGroupementParMinistère(chantiersDuGroupe: DonnéesTableauChantiers[]) {
+  return chantiersDuGroupe.some(chantier => chantier.estBaromètre);
+}
+
 const colonnesListeChantiers = [
   reactTableColonnesHelper.accessor('porteur', {
     header: 'Porteur',
@@ -44,6 +48,8 @@ const colonnesListeChantiers = [
     enableSorting: false,
     cell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null,
     enableGrouping: false,
+    aggregationFn: (_columnId, leafRows) => déterminerTypologieDuGroupementParMinistère(leafRows.map(row => row.original)),
+    aggregatedCell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null,
   }),
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
