@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/fr';
 import SynthèseDesRésultats  from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 
 export default class SynthèseDesRésultatBuilder {

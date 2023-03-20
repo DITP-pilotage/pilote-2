@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/fr';
 import Objectif  from '@/server/domain/objectif/Objectif.interface';
 
 export default class ObjectifBuilder {

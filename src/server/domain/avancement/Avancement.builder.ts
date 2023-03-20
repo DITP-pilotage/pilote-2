@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/fr';
 import Avancement from '@/server/domain/avancement/Avancement.interface';
 
 export default class AvancementBuilder {

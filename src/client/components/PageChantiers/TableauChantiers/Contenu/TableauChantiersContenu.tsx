@@ -1,10 +1,10 @@
 import { flexRender, Row } from '@tanstack/react-table';
 import { useCallback } from 'react';
 import { useRouter } from 'next/router';
-import TableauChantiersContenuProps from './TableauChantiersContenu.interface';
 import {
   DonnéesTableauChantiers,
 } from '@/components/PageChantiers/TableauChantiers/TableauChantiers.interface';
+import TableauChantiersContenuProps from './TableauChantiersContenu.interface';
 
 export default function TableauChantiersContenu({ tableau }: TableauChantiersContenuProps) {
   const router = useRouter();

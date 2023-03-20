@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/fr';
 import { Météo, météos } from '@/server/domain/météo/Météo.interface';
 
 export default class MétéoBuilder {

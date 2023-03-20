@@ -1,8 +1,8 @@
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/fr';
 import { codesInseeDépartements, codesInseeRégions, codeInseeFrance } from '@/server/domain/territoire/Territoire.interface';
 
 export function générerUnIdentifiantUnique(prefixe: string) {
-  return `${prefixe}-${faker.helpers.unique(faker.random.numeric, [5])}`;
+  return `${prefixe}-${faker.helpers.unique(faker.random.numeric, [7])}`;
 }
 
 export function générerCaractèresSpéciaux(nombre: number) {

@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/fr';
 import Indicateur, { typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
 

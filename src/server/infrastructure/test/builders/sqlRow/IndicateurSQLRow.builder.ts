@@ -1,5 +1,5 @@
 import { indicateur } from '@prisma/client';
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/fr';
 import IndicateurBuilder from '@/server/domain/indicateur/Indicateur.builder';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 import DétailsIndicateurBuilder from '@/server/domain/indicateur/DétailsIndicateur.builder';

@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/fr';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
 

@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/fr';
 import Axe from '@/server/domain/axe/Axe.interface';
 import { générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
 

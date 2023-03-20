@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/fr';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { CodeInsee, codeInseeFrance, codesInseeDépartements, codesInseeRégions, Territoires } from '@/server/domain/territoire/Territoire.interface';
 import { générerCaractèresSpéciaux, générerUnIdentifiantUnique, générerUnTableauVideAvecUneTailleDeZéroÀn } from '@/server/infrastructure/test/builders/utils';

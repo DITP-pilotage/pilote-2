@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/fr';
 import { Commentaires } from '@/server/domain/commentaire/Commentaire.interface';
 
 export default class CommentaireBuilder {

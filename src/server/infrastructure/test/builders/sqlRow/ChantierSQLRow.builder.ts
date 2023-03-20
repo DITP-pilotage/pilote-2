@@ -1,5 +1,5 @@
 import { chantier } from '@prisma/client';
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/fr';
 import { générerUneMailleAléatoire, retourneUneListeDeCodeInseeCohérentePourUneMaille } from '@/server/infrastructure/test/builders/utils';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 import AvancementBuilder from '@/server/domain/avancement/Avancement.builder';

@@ -1,8 +1,8 @@
 import { Header, flexRender, SortDirection } from '@tanstack/react-table';
 import FlècheDeTri from '@/components/_commons/Tableau/TableauEnTête/FlècheDeTri/FlècheDeTri';
+import { DonnéesTableauChantiers } from '@/client/components/PageChantiers/TableauChantiers/TableauChantiers.interface';
 import TableauChantiersEnTêteProps from './TableauChantiersEnTête.interface';
 import TableauChantiersEnTêteStyled from './TableauChantiersEnTête.styled';
-import { DonnéesTableauChantiers } from '../TableauChantiers.interface';
 
 function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   if (!typeDeTri)
