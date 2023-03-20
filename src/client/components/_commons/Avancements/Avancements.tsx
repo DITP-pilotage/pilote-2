@@ -10,7 +10,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
           <JaugeDeProgression
             couleur='bleu'
             libellé="Taux d'avancement global"
-            pourcentage={avancements.moyenne}
+            pourcentage={avancements.global.moyenne}
             taille='grande'
           />
         </div>
@@ -20,7 +20,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
               <JaugeDeProgression
                 couleur='orange'
                 libellé="Minimum"
-                pourcentage={avancements.minimum}
+                pourcentage={avancements.global.minimum}
                 taille='petite'
               />
             </div>
@@ -28,7 +28,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
               <JaugeDeProgression
                 couleur='violet'
                 libellé="Médiane"
-                pourcentage={avancements.médiane}
+                pourcentage={avancements.global.médiane}
                 taille='petite'
               />
             </div>
@@ -36,7 +36,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
               <JaugeDeProgression
                 couleur='vert'
                 libellé="Maximum"
-                pourcentage={avancements.maximum}
+                pourcentage={avancements.global.maximum}
                 taille='petite'
               />
             </div>
@@ -47,7 +47,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
               fond='grisClair'
               positionTexte='dessus'
               taille='fine'
-              valeur={avancements.moyenneAnnuelle}
+              valeur={avancements.annuel.moyenne}
               variante="secondaire"
             />
             <p className='fr-text--xs'>

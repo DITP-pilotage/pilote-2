@@ -49,7 +49,7 @@ export default function usePageChantier(chantier: Chantier) {
   }, [territoiresComparés]);
 
   const donnéesTerritoiresAgrégées = useMemo(() => new AgrégateurChantiersParTerritoire([chantier]).agréger(), [chantier]);
-    
+
   const avancementRégional = () => {
     if (mailleAssociéeAuTerritoireSélectionné === 'régionale')
       return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne;
@@ -65,11 +65,15 @@ export default function usePageChantier(chantier: Chantier) {
 
   const avancements = {
     nationale: {
-      moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.global.moyenne,
-      moyenneAnnuelle: donnéesTerritoiresAgrégées.nationale.répartition.avancements.global.moyenne,
-      médiane: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.médiane,
-      minimum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.minimum,
-      maximum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.maximum,
+      global: {
+        moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.global.moyenne,
+        médiane: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.médiane,
+        minimum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.minimum,
+        maximum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.maximum,
+      },
+      annuel: {
+        moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.annuel.moyenne,
+      },
     },
     départementale: {
       moyenne: avancementDépartemental(),
