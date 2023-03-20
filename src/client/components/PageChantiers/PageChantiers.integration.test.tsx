@@ -1,5 +1,5 @@
 /*eslint-disable sonarjs/no-duplicate-string*/
-import { getAllByRole, getByText, queryByText, render, screen, within } from '@testing-library/react';
+import { getAllByRole, getByText, queryByText, render, screen, waitFor, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import ChantierFixture from '@/fixtures/ChantierFixture';
@@ -74,14 +74,14 @@ class PageChantiersTest {
   }
 
   render() {
-    render(
+    waitFor(() => render(
       <PageChantiers
         axes={this.axes}
         chantiers={this.chantiers}
         ministères={this.ministères}
         ppg={this.ppg}
-      />,     
-    );
+      />,
+    ));
   }
 }
 

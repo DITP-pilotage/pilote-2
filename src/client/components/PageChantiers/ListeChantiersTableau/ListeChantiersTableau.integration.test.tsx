@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { getAllByRole, render, screen } from '@testing-library/react';
+import { getAllByRole, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ListeChantiersTableau from './ListeChantiersTableau';
 
@@ -38,8 +38,8 @@ class ListeChantiersTableauTest {
     return this.données.length;
   }
 
-  async filtrerParContenuTextuel(texte: string) {
-    await userEvent.type(screen.getByRole('textbox'), texte);
+  filtrerParContenuTextuel(texte: string) {
+    return waitFor(() => userEvent.type(screen.getByRole('textbox'), texte));
   }
 
   récupérerLeNombreDeLignesDuTableau() {
@@ -50,16 +50,16 @@ class ListeChantiersTableauTest {
     return this.récupérerLesLignesDuTableau()[numéroDeLigne - 1];
   }
 
-  async trierSurLaColonne(labelDuBoutonDeTri: string) {  
-    await userEvent.click(screen.getByLabelText(labelDuBoutonDeTri));
+  trierSurLaColonne(labelDuBoutonDeTri: string) {
+    return waitFor(() => userEvent.click(screen.getByLabelText(labelDuBoutonDeTri)));
   }
 
   render() {
-    render(
+    waitFor(() => render(
       <ListeChantiersTableau
         données={this.données}
       />,
-    );
+    ));
   }
 
   récupérerLesLignesDuTableau() {
