@@ -12,7 +12,7 @@ import { objectEntries } from '@/client/utils/objects/objects';
 export default function usePageChantiers(chantiers: Chantier[]) {
   const filtresActifs = filtresActifsStore();
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
-
+  const maille = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -63,11 +63,22 @@ export default function usePageChantiers(chantiers: Chantier[]) {
     }));
   }, [donnéesTerritoiresAgrégées, mailleSélectionnée]);
 
+  const donnéesTableauChantiers = chantiersFiltrés.map(chantier => ({
+    id: chantier.id,
+    nom: chantier.nom,
+    avancement: chantier.mailles[maille][territoireSélectionné.codeInsee].avancement.global,
+    météo: chantier.mailles[maille][territoireSélectionné.codeInsee].météo,
+    estBaromètre: chantier.estBaromètre,
+    estTerritorialisé: chantier.estTerritorialisé,
+    porteur: chantier.responsables.porteur,
+  }));
+
   return {
     nombreFiltresActifs: récupérerNombreFiltresActifs(),
     chantiersFiltrés,
     avancements,
     météos,
     donnéesCartographie,
+    donnéesTableauChantiers,
   };
 }

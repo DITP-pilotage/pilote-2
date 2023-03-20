@@ -1,8 +1,8 @@
 import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
 import météos from '@/client/constants/météos';
-import ListeChantiersMétéoProps from '@/components/PageChantiers/ListeChantiers/Météo/ListeChantiersMétéo.interface';
+import TableauChantiersMétéoProps from '@/components/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo.interface';
 
-export default function ListeChantiersMétéo({ météo }: ListeChantiersMétéoProps) {
+export default function TableauChantiersMétéo({ météo }: TableauChantiersMétéoProps) {
   return météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE'
     ? <PictoMétéo valeur={météo} />
     : (

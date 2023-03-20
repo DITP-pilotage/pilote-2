@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const ListeChantiersTableauEnTêteStyled = styled.thead`
+const TableauChantiersEnTêteStyled = styled.thead`
     background-color: var(--background-action-low-blue-france) !important;
     border: 1px solid var(--border-disabled-grey);
 
@@ -24,4 +24,4 @@ const ListeChantiersTableauEnTêteStyled = styled.thead`
     }
 `;
 
-export default ListeChantiersTableauEnTêteStyled;
+export default TableauChantiersEnTêteStyled;

@@ -1,7 +1,8 @@
 import { Header, flexRender, SortDirection } from '@tanstack/react-table';
-import ListeChantiersTableauEnTêteProps from './ListeChantiersTableauEnTête.interface';
-import FlècheDeTri from './FlècheDeTri/FlècheDeTri';
-import ListeChantiersTableauEnTêteStyled from './ListeChantiersTableauEnTête.styled';
+import FlècheDeTri from '@/components/_commons/Tableau/TableauEnTête/FlècheDeTri/FlècheDeTri';
+import TableauChantiersEnTêteProps from './TableauChantiersEnTête.interface';
+import TableauChantiersEnTêteStyled from './TableauChantiersEnTête.styled';
+import { DonnéesTableauChantiers } from '../TableauChantiers.interface';
 
 function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   if (!typeDeTri)
@@ -15,9 +16,8 @@ function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   return tupleTriAttributAriaSort[typeDeTri];
 }
 
-
-export default function ListeChantiersTableauEnTête<T>({ tableau }: ListeChantiersTableauEnTêteProps<T>) {
-  function afficherIconesDeTriDeLaColonne(header:  Header<T, unknown>) {
+export default function TableauChantiersEnTête({ tableau }: TableauChantiersEnTêteProps) {
+  function afficherIconesDeTriDeLaColonne(header: Header<DonnéesTableauChantiers, unknown>) {
     const triDécroissantActif = header.column.getIsSorted() === 'desc';
     const triCroissantActif = header.column.getIsSorted() === 'asc';
     return (
@@ -49,7 +49,7 @@ export default function ListeChantiersTableauEnTête<T>({ tableau }: ListeChanti
   }
   
   return (
-    <ListeChantiersTableauEnTêteStyled>
+    <TableauChantiersEnTêteStyled>
       {
         tableau.getHeaderGroups().map(headerGroup => (
           <tr key={headerGroup.id}>
@@ -66,6 +66,6 @@ export default function ListeChantiersTableauEnTête<T>({ tableau }: ListeChanti
           </tr>
         ))
       }
-    </ListeChantiersTableauEnTêteStyled>
+    </TableauChantiersEnTêteStyled>
   );
 }

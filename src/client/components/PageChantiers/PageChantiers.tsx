@@ -6,22 +6,28 @@ import Titre from '@/components/_commons/Titre/Titre';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import Avancements from '@/components/_commons/Avancements/Avancements';
-import usePageChantiers from '@/components/PageChantiers/usePageChantiers';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import Filtres from '@/components/PageChantiers/Filtres/Filtres';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
-import ListeChantiers from './ListeChantiers/ListeChantiers';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
+import TableauChantiers from './TableauChantiers/TableauChantiers';
+import usePageChantiers from './usePageChantiers';
 import useCartographie from '../_commons/Cartographie/useCartographie';
 
 export default function PageChantiers({ chantiers, ministères, axes, ppg }: PageChantiersProps) {  
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-
-  const { nombreFiltresActifs, chantiersFiltrés, avancements, météos, donnéesCartographie } = usePageChantiers(chantiers);
   const { auClicTerritoireCallback } = useCartographie();
+  const { 
+    nombreFiltresActifs, 
+    chantiersFiltrés,
+    avancements, 
+    météos,
+    donnéesCartographie,
+    donnéesTableauChantiers,
+  } = usePageChantiers(chantiers);
 
   return (
     <PageChantiersStyled className="flex">
@@ -112,7 +118,9 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
             <div className="fr-grid-row fr-mt-7v">
               <div className="fr-col">
                 <Bloc>
-                  <ListeChantiers chantiers={chantiersFiltrés}  />
+                  <TableauChantiers
+                    données={donnéesTableauChantiers}
+                  />
                 </Bloc>
               </div>
             </div>

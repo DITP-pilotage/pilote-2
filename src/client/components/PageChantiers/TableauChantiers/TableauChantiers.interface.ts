@@ -1,8 +1,7 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 
-export default interface ListeChantiersProps {
-  chantiers: Chantier[]
+export default interface TableauChantiersProps {
+  données: DonnéesTableauChantiers[],
 }
 
 export type DonnéesTableauChantiers = {
