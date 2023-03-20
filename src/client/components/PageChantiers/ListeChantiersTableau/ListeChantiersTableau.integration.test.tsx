@@ -3,25 +3,35 @@ import { getAllByRole, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createColumnHelper } from '@tanstack/react-table';
 import ListeChantiersTableau from './ListeChantiersTableau';
+import { DonnéesTableauChantiers } from './ListeChantiersTableau.interface';
 
-const columnHelper = createColumnHelper<{}>();
+const columnHelper = createColumnHelper<DonnéesTableauChantiers>();
 
 class ListeChantiersTableauTest {
   private données = [
     {
       porteur: 'Ministère 1',
       nom: 'Déployer le programme FR',
-      id: 1,
+      id: '1',
+      avancement: 99,
+      météo: 'COUVERT' as const,
+      estBaromètre: false,
     },
     {
       porteur: 'Ministère 1',
       nom: 'Lutter contre la fraude fiscale',
-      id: 2,
+      id: '2',
+      avancement: 99,
+      météo: 'COUVERT' as const,
+      estBaromètre: false,
     },
     {
       porteur: 'Ministère 2',
       nom: 'Elections du maire',
-      id: 3,
+      id: '3',
+      avancement: 99,
+      météo: 'SOLEIL' as const,
+      estBaromètre: false,
     },
   ];
 
@@ -65,8 +75,6 @@ class ListeChantiersTableauTest {
       <ListeChantiersTableau
         colonnes={this.colonnes}
         données={this.données}
-        entité='chantiers'
-        titre="Liste des données"
       />,
     );
   }
