@@ -3,9 +3,9 @@ import os
 
 
 def model(dbt, session):
-    dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_RP_RAW')
+    dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_2')
     dim_periods = pd.read_csv(
-        f'{dump_dfakto_rp_raw}/dim_periods.csv',
+        f'{dump_dfakto_rp_raw}/dim_periods_202303091524.csv',
         sep=';'
     )
 

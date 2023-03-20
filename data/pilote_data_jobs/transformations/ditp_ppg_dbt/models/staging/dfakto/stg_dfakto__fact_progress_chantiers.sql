@@ -10,10 +10,9 @@ renamed as (
 
     select
         tree_node_id,
-        period_id,
-        progress as avancement,
-        bounded_progress as avancement_borne,
-        is_representative as est_representatif,
+        progress_intermediaire as avancement_annuel,
+        progress_globale as avancement,
+        progress_globale as avancement_borne,
         snapshot_date
     from source
 

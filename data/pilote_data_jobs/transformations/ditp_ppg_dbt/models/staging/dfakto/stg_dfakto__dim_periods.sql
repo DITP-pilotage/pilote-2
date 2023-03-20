@@ -31,7 +31,6 @@ renamed as (
         period_next_year_flag,
         period_next_month_flag,
         period_next_quarter_flag,
-        period_total_flag,
         snapshot_date
     from source
 
