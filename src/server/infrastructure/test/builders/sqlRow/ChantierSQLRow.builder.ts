@@ -102,7 +102,7 @@ export default class ChantierRowBuilder {
     return this;
   }
 
-  avecTerritoireNomNom(territoireNom: typeof this._territoireNom): ChantierRowBuilder {
+  avecTerritoireNom(territoireNom: typeof this._territoireNom): ChantierRowBuilder {
     this._territoireNom = territoireNom;
     return this;
   }
