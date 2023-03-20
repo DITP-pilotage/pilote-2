@@ -13,12 +13,12 @@ import {
 import { ChangeEvent, useCallback, useState } from 'react';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
-import ListeChantiersMétéo from '@/components/PageChantiers/ListeChantiersTableau/Météo/ListeChantiersMétéo';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
-import ListeChantiersAvancement
-  from '@/components/PageChantiers/ListeChantiersTableau/Avancement/ListeChantiersAvancement';
 import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/avancement';
-import ListeChantiersTableauProps, { DonnéesTableauChantiers } from './ListeChantiersTableau.interface';
+import TableauChantiersAvancement
+  from '@/components/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
+import TableauChantiersMétéo from '@/components/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
+import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
 
 
 const déterminerTypologieDuGroupementParMinistère = (chantiersDuGroupe: DonnéesTableauChantiers[]) => {
@@ -27,7 +27,7 @@ const déterminerTypologieDuGroupementParMinistère = (chantiersDuGroupe: Donné
 
 const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
 
-const colonnesListeChantiers = [
+const colonnesTableauChantiers = [
   reactTableColonnesHelper.accessor('porteur', {
     header: 'Porteur',
     cell: porteur => porteur.getValue(),
@@ -49,30 +49,30 @@ const colonnesListeChantiers = [
   }),
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
-    cell: météo => <ListeChantiersMétéo météo={météo.getValue()} />,
+    cell: météo => <TableauChantiersMétéo météo={météo.getValue()} />,
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
     enableGrouping: false,
   }),
   reactTableColonnesHelper.accessor('avancement', {
     header: 'Avancement',
-    cell: avancement => <ListeChantiersAvancement avancement={avancement.getValue()} />,
+    cell: avancement => <TableauChantiersAvancement avancement={avancement.getValue()} />,
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
     enableGrouping: false,
     aggregationFn: 'mean',
-    aggregatedCell: avancement => <ListeChantiersAvancement avancement={avancement.getValue() ?? null} />,
+    aggregatedCell: avancement => <TableauChantiersAvancement avancement={avancement.getValue() ?? null} />,
   }),
 ];
 
-export default function useListeChantiersTableau(données: ListeChantiersTableauProps['données']) {
+export default function useTableauChantiers(données: TableauChantiersProps['données']) {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
   const [tri, setTri] = useState<SortingState>([]);
   const [regroupement, setRegroupement] = useState<GroupingState>([]);
 
   const tableau = useReactTable({
     data: données,
-    columns: colonnesListeChantiers,
+    columns: colonnesTableauChantiers,
     globalFilterFn: (ligne, colonneId, filtreValeur) => {
       return rechercheUnTexteContenuDansUnContenant(filtreValeur, ligne.getValue<DonnéesTableauChantiers>(colonneId).toString());
     },

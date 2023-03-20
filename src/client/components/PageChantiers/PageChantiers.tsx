@@ -13,7 +13,7 @@ import PageChantiersProps from './PageChantiers.interface';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import PageChantiersStyled from './PageChantiers.styled';
-import ListeChantiersTableau from './ListeChantiersTableau/ListeChantiersTableau';
+import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
 import useCartographie from '../_commons/Cartographie/useCartographie';
 
@@ -26,7 +26,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
     avancements, 
     météos,
     donnéesCartographie,
-    donnéesListeChantiers,
+    donnéesTableauChantiers,
   } = usePageChantiers(chantiers);
 
   return (
@@ -118,8 +118,8 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
             <div className="fr-grid-row fr-mt-7v">
               <div className="fr-col">
                 <Bloc>
-                  <ListeChantiersTableau
-                    données={donnéesListeChantiers}
+                  <TableauChantiers
+                    données={donnéesTableauChantiers}
                   />
                 </Bloc>
               </div>

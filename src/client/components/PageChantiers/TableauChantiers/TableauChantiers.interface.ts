@@ -1,6 +1,6 @@
 import { Météo } from '@/server/domain/météo/Météo.interface';
 
-export default interface ListeChantiersTableauProps {
+export default interface TableauChantiersProps {
   données: DonnéesTableauChantiers[],
 }
 

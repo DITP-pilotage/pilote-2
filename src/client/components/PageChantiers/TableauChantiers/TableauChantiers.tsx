@@ -4,21 +4,21 @@ import { useEffect } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauPagination from '@/components/_commons/Tableau/TableauPagination/TableauPagination';
-import ListeChantiersTableauContenu from '@/components/PageChantiers/ListeChantiersTableau/TableauContenu/ListeChantiersTableauContenu';
-import ListeChantiersTableauProps from './ListeChantiersTableau.interface';
-import ListeChantiersTableauEnTête from './TableauEnTête/ListeChantiersTableauEnTête';
-import ListeChantiersTableauStyled from './ListeChantiersTableau.styled';
-import useListeChantiersTableau from './useListeChantiersTableau';
+import TableauChantiersContenu from '@/components/PageChantiers/TableauChantiers/Contenu/TableauChantiersContenu';
+import TableauChantiersProps from './TableauChantiers.interface';
+import TableauChantiersEnTête from './EnTête/TableauChantiersEnTête';
+import TableauChantiersStyled from './TableauChantiers.styled';
+import useTableauChantiers from './useTableauChantiers';
 
-export default function ListeChantiersTableau({ données }: ListeChantiersTableauProps) {
-  const { tableau, changementDeLaRechercheCallback, changementDePageCallback, valeurDeLaRecherche } = useListeChantiersTableau(données);
+export default function TableauChantiers({ données }: TableauChantiersProps) {
+  const { tableau, changementDeLaRechercheCallback, changementDePageCallback, valeurDeLaRecherche } = useTableauChantiers(données);
   
   useEffect(() => {
     tableau.setPageSize(50);
   }, [tableau]);
 
   return (
-    <ListeChantiersTableauStyled className='fr-table fr-m-0 fr-p-0'>
+    <TableauChantiersStyled className='fr-table fr-m-0 fr-p-0'>
       <Titre
         baliseHtml="h2"
         className="fr-h6"
@@ -63,8 +63,8 @@ export default function ListeChantiersTableau({ données }: ListeChantiersTablea
               <caption className="fr-sr-only">
                 Liste des chantiers
               </caption>
-              <ListeChantiersTableauEnTête tableau={tableau} />
-              <ListeChantiersTableauContenu tableau={tableau} />
+              <TableauChantiersEnTête tableau={tableau} />
+              <TableauChantiersContenu tableau={tableau} />
             </table>
             <TableauPagination
               changementDePageCallback={changementDePageCallback}
@@ -72,6 +72,6 @@ export default function ListeChantiersTableau({ données }: ListeChantiersTablea
               numéroDePageInitiale={1}
             />
           </>}
-    </ListeChantiersTableauStyled>
+    </TableauChantiersStyled>
   );
 }

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const ListeChantiersTableauStyled = styled.section`
+const TableauChantiersStyled = styled.section`
   display: grid;
   overflow-x: auto;
   color: var(--text-action-high-grey);
@@ -82,4 +82,4 @@ const ListeChantiersTableauStyled = styled.section`
     }
 `;
 
-export default ListeChantiersTableauStyled;
+export default TableauChantiersStyled;

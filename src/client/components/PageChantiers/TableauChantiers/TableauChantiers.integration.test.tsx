@@ -1,12 +1,12 @@
 import '@testing-library/jest-dom';
 import { getAllByRole, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import ListeChantiersTableau from './ListeChantiersTableau';
+import TableauChantiers from './TableauChantiers';
 
 // eslint-disable-next-line unicorn/prefer-module
 jest.mock('next/router', () => require('next-router-mock'));
 
-class ListeChantiersTableauTest {
+class TableauChantiersTest {
   private données = [
     {
       porteur: 'Ministère 1',
@@ -56,7 +56,7 @@ class ListeChantiersTableauTest {
 
   render() {
     waitFor(() => render(
-      <ListeChantiersTableau
+      <TableauChantiers
         données={this.données}
       />,
     ));
@@ -68,11 +68,11 @@ class ListeChantiersTableauTest {
   }
 }
 
-let tableau: ListeChantiersTableauTest;
+let tableau: TableauChantiersTest;
 
 beforeEach(() => {
   // GIVEN
-  tableau = new ListeChantiersTableauTest();
+  tableau = new TableauChantiersTest();
 
   // WHEN
   tableau.render();

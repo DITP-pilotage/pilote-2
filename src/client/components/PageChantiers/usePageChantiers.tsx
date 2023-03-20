@@ -63,7 +63,7 @@ export default function usePageChantiers(chantiers: Chantier[]) {
     }));
   }, [donnéesTerritoiresAgrégées, mailleSélectionnée]);
 
-  const donnéesListeChantiers = chantiersFiltrés.map(chantier => ({
+  const donnéesTableauChantiers = chantiersFiltrés.map(chantier => ({
     id: chantier.id,
     nom: chantier.nom,
     avancement: chantier.mailles[maille][territoireSélectionné.codeInsee].avancement.global,
@@ -79,6 +79,6 @@ export default function usePageChantiers(chantiers: Chantier[]) {
     avancements,
     météos,
     donnéesCartographie,
-    donnéesListeChantiers,
+    donnéesTableauChantiers,
   };
 }
