@@ -6,6 +6,8 @@ interface PageImportIndicateurEnTêteProps {
   chantierId: string
 }
 
+// Le temps qu'il soit utilisé dans la prochaine MR
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function PageImportIndicateurEnTête({ chantierId }: PageImportIndicateurEnTêteProps) {
   return (
     <PageImportIndicateurEnTêteStyled>
@@ -15,7 +17,7 @@ export default function PageImportIndicateurEnTête({ chantierId }: PageImportIn
           libelléPageCourante='Indicateurs'
         />
         <Titre baliseHtml='h1'>
-          Hello world
+          Offrir à chaque enfant une éducation culturelle et artistique
         </Titre>
         <div className='fr-text--xs fr-mb-0'>
           <p className='fr-mb-0 fr-text--xs chantier-données-propriété'>
