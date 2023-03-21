@@ -4,7 +4,7 @@ export type DétailsCommentaire = {
   auteur: string
 };
 
-export const typeCommentaire = ['freinsÀLever', 'actionsÀVenir', 'actionsÀValoriser', 'autresRésultatsObtenus'];
+export const typeCommentaire = ['freinsÀLever', 'actionsÀVenir', 'actionsÀValoriser', 'autresRésultatsObtenus'] as const;
 export type TypeCommentaire = typeof typeCommentaire[number];
 
 

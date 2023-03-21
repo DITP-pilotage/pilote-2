@@ -96,7 +96,10 @@ export default function PageChantier({ chantier, indicateurs, objectif }: PageCh
             commentaires !== null && (
               <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                 <div className="fr-col-12">
-                  <Commentaires commentaires={commentaires} />
+                  <Commentaires
+                    chantierId={chantier.id}
+                    commentaires={commentaires}
+                  />
                 </div>
               </div>
             )

@@ -4,8 +4,21 @@ import CommentaireProps from '@/components/PageChantier/Commentaires/Commentaire
 import HistoriqueDUnCommentaire
   from '@/components/PageChantier/Commentaires/Commentaire/Historique/HistoriqueDUnCommentaire';
 import Publication from '@/components/PageChantier/Publication/Publication';
+import { formaterDate } from '@/client/utils/date/date';
+import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
+import { TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import CommentaireStyled from './Commentaire.styled';
 
-export default function Commentaire({ titre, commentaire, type }: CommentaireProps) {
+function handlePublierCommentaire(contenu: string, chantierId: string, typeDeCommentaire: TypeCommentaire): void {
+  fetch(`api/chantier/${chantierId}/commentaire/${typeDeCommentaire}`, {
+    method: 'POST',
+    body: JSON.stringify({ contenu: contenu, date: new Date().toISOString(), auteur: 'Jean Castex' }),
+  });
+}
+export default function Commentaire({ titre, commentaire, chantierId }: CommentaireProps) {
+  const [modeÉdition, setModeÉdition] = useState(false);
+  const [contenu, setContenu] = useState(commentaire?.contenu);
+  
   return (
     <CommentaireStyled>
       <Titre
@@ -52,7 +65,7 @@ export default function Commentaire({ titre, commentaire, type }: CommentairePro
               <div className='boutons'>
                 <button
                   className='fr-btn fr-mr-1w'
-                  onClick={() => setModeÉdition(false)}
+                  onClick={() => handlePublierCommentaire(contenu, chantierId, titre)}
                   type='button'
                 >
                   Publier
@@ -98,3 +111,4 @@ export default function Commentaire({ titre, commentaire, type }: CommentairePro
     </CommentaireStyled>
   );
 }
+

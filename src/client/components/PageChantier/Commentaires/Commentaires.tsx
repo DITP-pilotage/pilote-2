@@ -5,7 +5,7 @@ import CommentairesProps from '@/components/PageChantier/Commentaires/Commentair
 import typesCommentaire from '@/client/constants/typesCommentaire';
 import Commentaire from '@/components/PageChantier/Commentaires/Commentaire/Commentaire';
 
-export default function Commentaires({ commentaires }: CommentairesProps) {
+export default function Commentaires({ commentaires, chantierId }: CommentairesProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   
   return (
@@ -21,6 +21,7 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
       <Bloc titre={territoireSélectionné.nom}>
         <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
           <Commentaire
+            chantierId={chantierId}
             commentaire={commentaires['freinsÀLever']}
             titre={typesCommentaire['freinsÀLever']}
             type="freinsÀLever"
@@ -29,6 +30,7 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
         <hr className='fr-hr fr-mx-n2w' />
         <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
           <Commentaire
+            chantierId={chantierId}
             commentaire={commentaires['actionsÀVenir']}
             titre={typesCommentaire['actionsÀVenir']}
             type="actionsÀVenir"
@@ -37,6 +39,7 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
         <hr className='fr-hr fr-mx-n2w' />
         <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
           <Commentaire
+            chantierId={chantierId}
             commentaire={commentaires['actionsÀValoriser']}
             titre={typesCommentaire['actionsÀValoriser']}
             type="actionsÀValoriser"
@@ -45,6 +48,7 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
         <hr className='fr-hr fr-mx-n2w' />
         <div className='fr-mx-2w fr-mt-1w fr-mb-2w'>
           <Commentaire
+            chantierId={chantierId}
             commentaire={commentaires['autresRésultatsObtenus']}
             titre={typesCommentaire['autresRésultatsObtenus']}
             type="autresRésultatsObtenus"
