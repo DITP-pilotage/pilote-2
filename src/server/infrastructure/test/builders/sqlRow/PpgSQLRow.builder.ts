@@ -13,12 +13,12 @@ export default class PpgRowBuilder {
     this._nom = ppgGénérée.nom;
   }
 
-  avecId(id: typeof this._id): PpgRowBuilder {
+  avecId(id: ppg['id']): PpgRowBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: typeof this._nom): PpgRowBuilder {
+  avecNom(nom: ppg['nom']): PpgRowBuilder {
     this._nom = nom;
     return this;
   }

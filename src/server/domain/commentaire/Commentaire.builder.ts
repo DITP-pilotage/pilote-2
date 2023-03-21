@@ -25,22 +25,22 @@ export default class CommentaireBuilder {
     };
   }
 
-  avecFreinsÀLever(freinsÀLever: typeof this._freinsÀLever): CommentaireBuilder {
+  avecFreinsÀLever(freinsÀLever: Commentaires['freinsÀLever']): CommentaireBuilder {
     this._freinsÀLever = freinsÀLever;
     return this;
   }
 
-  avecActionsÀVenir(actionsÀVenir: typeof this._actionsÀVenir): CommentaireBuilder {
+  avecActionsÀVenir(actionsÀVenir: Commentaires['actionsÀVenir']): CommentaireBuilder {
     this._actionsÀVenir = actionsÀVenir;
     return this;
   }
 
-  avecActionsÀValoriser(actionsÀValoriser: typeof this._actionsÀValoriser): CommentaireBuilder {
+  avecActionsÀValoriser(actionsÀValoriser: Commentaires['actionsÀValoriser']): CommentaireBuilder {
     this._actionsÀValoriser = actionsÀValoriser;
     return this;
   }
 
-  avecAutresRésultatsObtenus(autresRésultatsObtenus: typeof this._autresRésultatsObtenus): CommentaireBuilder {
+  avecAutresRésultatsObtenus(autresRésultatsObtenus: Commentaires['autresRésultatsObtenus']): CommentaireBuilder {
     this._autresRésultatsObtenus = autresRésultatsObtenus;
     return this;
   }

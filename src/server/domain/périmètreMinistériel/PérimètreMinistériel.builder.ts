@@ -12,12 +12,12 @@ export default class PérimètreMinistérielBuilder {
     this._nom = `${this._id} ${faker.lorem.words()}`;
   }
 
-  avecId(id: typeof this._id): PérimètreMinistérielBuilder {
+  avecId(id: PérimètreMinistériel['id']): PérimètreMinistérielBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: typeof this._nom): PérimètreMinistérielBuilder {
+  avecNom(nom: PérimètreMinistériel['nom']): PérimètreMinistérielBuilder {
     this._nom = nom;
     return this;
   }

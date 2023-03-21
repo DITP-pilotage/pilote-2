@@ -27,17 +27,17 @@ export default class SyntheseDesResultatsRowBuilder {
     this._dateCommentaire = faker.helpers.arrayElement([null, faker.date.recent(10, '2023-02-01T00:00:00.000Z')]);
   }
 
-  avecId(id: typeof this._id): SyntheseDesResultatsRowBuilder {
+  avecId(id: synthese_des_resultats['id']): SyntheseDesResultatsRowBuilder {
     this._id = id;
     return this;
   }
 
-  avecChantierId(chantierId: typeof this._chantierId): SyntheseDesResultatsRowBuilder {
+  avecChantierId(chantierId: synthese_des_resultats['chantier_id']): SyntheseDesResultatsRowBuilder {
     this._chantierId = chantierId;
     return this;
   }
 
-  avecMaille(maille: typeof this._maille): SyntheseDesResultatsRowBuilder {
+  avecMaille(maille: synthese_des_resultats['maille']): SyntheseDesResultatsRowBuilder {
     const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
     
     this._maille = maille;
@@ -45,17 +45,17 @@ export default class SyntheseDesResultatsRowBuilder {
     return this;
   }
 
-  avecCodeInsee(codeInsee: typeof this._codeInsee): SyntheseDesResultatsRowBuilder {
+  avecCodeInsee(codeInsee: synthese_des_resultats['code_insee']): SyntheseDesResultatsRowBuilder {
     this._codeInsee = codeInsee;
     return this;
   }
 
-  avecCommentaire(commentaire: typeof this._commentaire): SyntheseDesResultatsRowBuilder {
+  avecCommentaire(commentaire: synthese_des_resultats['commentaire']): SyntheseDesResultatsRowBuilder {
     this._commentaire = commentaire;
     return this;
   }
 
-  avecDateCommentaire(dateCommentaire: typeof this._dateCommentaire): SyntheseDesResultatsRowBuilder {
+  avecDateCommentaire(dateCommentaire: synthese_des_resultats['date_commentaire']): SyntheseDesResultatsRowBuilder {
     this._dateCommentaire = dateCommentaire;
     return this;
   }

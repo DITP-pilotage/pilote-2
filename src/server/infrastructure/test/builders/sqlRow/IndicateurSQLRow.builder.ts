@@ -82,87 +82,87 @@ export default class IndicateurRowBuilder {
     this._modeDeCalcul = indicateurGénéré.modeDeCalcul;
   }
 
-  avecId(id: typeof this._id): IndicateurRowBuilder {
+  avecId(id: indicateur['id']): IndicateurRowBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: typeof this._nom): IndicateurRowBuilder {
+  avecNom(nom: indicateur['nom']): IndicateurRowBuilder {
     this._nom = nom;
     return this;
   }
 
-  avecChantierId(chantierId: typeof this._chantierId): IndicateurRowBuilder {
+  avecChantierId(chantierId: indicateur['chantier_id']): IndicateurRowBuilder {
     this._chantierId = chantierId;
     return this;
   }
 
-  avecValeurCible(valeurCible: typeof this._valeurCible): IndicateurRowBuilder {
+  avecValeurCible(valeurCible: indicateur['objectif_valeur_cible']): IndicateurRowBuilder {
     this._valeurCible = valeurCible;
     return this;
   }
 
-  avecTauxAvancementCible(tauxAvancementCible: typeof this._tauxAvancementCible): IndicateurRowBuilder {
+  avecTauxAvancementCible(tauxAvancementCible: indicateur['objectif_taux_avancement']): IndicateurRowBuilder {
     this._tauxAvancementCible = tauxAvancementCible;
     return this;
   }
 
-  avecDateValeurCible(dateValeurCible: typeof this._dateValeurCible): IndicateurRowBuilder {
+  avecDateValeurCible(dateValeurCible: indicateur['objectif_date_valeur_cible']): IndicateurRowBuilder {
     this._dateValeurCible = dateValeurCible;
     return this;
   }
 
-  avecTypeId(typeId: typeof this._typeId): IndicateurRowBuilder {
+  avecTypeId(typeId: indicateur['type_id']): IndicateurRowBuilder {
     this._typeId = typeId;
     return this;
   }
 
-  avecTypeNom(typeNom: typeof this._typeNom): IndicateurRowBuilder {
+  avecTypeNom(typeNom: indicateur['type_nom']): IndicateurRowBuilder {
     this._typeNom = typeNom;
     return this;
   }
 
-  avecEstBaromètre(estBaromètre: typeof this._estBaromètre): IndicateurRowBuilder {
+  avecEstBaromètre(estBaromètre: indicateur['est_barometre']): IndicateurRowBuilder {
     this._estBaromètre = estBaromètre;
     return this;
   }
 
-  avecEstPhare(estPhare: typeof this._estPhare): IndicateurRowBuilder {
+  avecEstPhare(estPhare: indicateur['est_phare']): IndicateurRowBuilder {
     this._estPhare = estPhare;
     return this;
   }
 
-  avecValeurInitiale(valeurInitiale: typeof this._valeurInitiale): IndicateurRowBuilder {
+  avecValeurInitiale(valeurInitiale: indicateur['valeur_initiale']): IndicateurRowBuilder {
     this._valeurInitiale = valeurInitiale;
     return this;
   }
 
-  avecDateValeurInitiale(dateValeurInitiale: typeof this._dateValeurInitiale): IndicateurRowBuilder {
+  avecDateValeurInitiale(dateValeurInitiale: indicateur['date_valeur_initiale']): IndicateurRowBuilder {
     this._dateValeurInitiale = dateValeurInitiale;
     return this;
   }
 
-  avecValeurActuelle(valeurActuelle: typeof this._valeurActuelle): IndicateurRowBuilder {
+  avecValeurActuelle(valeurActuelle: indicateur['valeur_actuelle']): IndicateurRowBuilder {
     this._valeurActuelle = valeurActuelle;
     return this;
   }
 
-  avecDateValeurActuelle(dateValeurActuelle: typeof this._dateValeurActuelle): IndicateurRowBuilder {
+  avecDateValeurActuelle(dateValeurActuelle: indicateur['date_valeur_actuelle']): IndicateurRowBuilder {
     this._dateValeurActuelle = dateValeurActuelle;
     return this;
   }
 
-  avecTerritoireNom(territoireNom: typeof this._territoireNom): IndicateurRowBuilder {
+  avecTerritoireNom(territoireNom: indicateur['territoire_nom']): IndicateurRowBuilder {
     this._territoireNom = territoireNom;
     return this;
   }
 
-  avecCodeInsee(codeInsee: typeof this._codeInsee): IndicateurRowBuilder {
+  avecCodeInsee(codeInsee: indicateur['code_insee']): IndicateurRowBuilder {
     this._codeInsee = codeInsee;
     return this;
   }
 
-  avecMaille(maille: typeof this._maille): IndicateurRowBuilder {
+  avecMaille(maille: indicateur['maille']): IndicateurRowBuilder {
     const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
     
     this._maille = maille;
@@ -170,27 +170,27 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
-  avecÉvolutionValeurActuelle(évolutionValeurActuelle: typeof this._évolutionValeurActuelle): IndicateurRowBuilder {
+  avecÉvolutionValeurActuelle(évolutionValeurActuelle: indicateur['evolution_valeur_actuelle']): IndicateurRowBuilder {
     this._évolutionValeurActuelle = évolutionValeurActuelle;
     return this;
   }
 
-  avecÉvolutionDateValeurActuelle(évolutionDateValeurActuelle: typeof this._évolutionDateValeurActuelle): IndicateurRowBuilder {
+  avecÉvolutionDateValeurActuelle(évolutionDateValeurActuelle: indicateur['evolution_date_valeur_actuelle']): IndicateurRowBuilder {
     this._évolutionDateValeurActuelle = évolutionDateValeurActuelle;
     return this;
   }
 
-  avecDescription(description: typeof this._description): IndicateurRowBuilder {
+  avecDescription(description: indicateur['description']): IndicateurRowBuilder {
     this._description = description;
     return this;
   }
 
-  avecSource(source: typeof this._source): IndicateurRowBuilder {
+  avecSource(source: indicateur['source']): IndicateurRowBuilder {
     this._source = source;
     return this;
   }
 
-  avecModeDeCalcul(modeDeCalcul: typeof this._modeDeCalcul): IndicateurRowBuilder {
+  avecModeDeCalcul(modeDeCalcul: indicateur['mode_de_calcul']): IndicateurRowBuilder {
     this._modeDeCalcul = modeDeCalcul;
     return this;
   }

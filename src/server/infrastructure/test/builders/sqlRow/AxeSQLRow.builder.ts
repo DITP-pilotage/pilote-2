@@ -13,12 +13,12 @@ export default class AxeRowBuilder {
     this._nom = axeGénéré.nom;
   }
 
-  avecId(id: typeof this._id): AxeRowBuilder {
+  avecId(id: axe['id']): AxeRowBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: typeof this._nom): AxeRowBuilder {
+  avecNom(nom: axe['nom']): AxeRowBuilder {
     this._nom = nom;
     return this;
   }

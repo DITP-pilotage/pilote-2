@@ -17,17 +17,17 @@ export default class PérimètreMinistérielRowBuilder {
     this._ministères = faker.helpers.arrayElement([null, `MIN - ${faker.lorem.words()}`]);
   }
 
-  avecId(id: typeof this._id): PérimètreMinistérielRowBuilder {
+  avecId(id: perimetre['id']): PérimètreMinistérielRowBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: typeof this._nom): PérimètreMinistérielRowBuilder {
+  avecNom(nom: perimetre['nom']): PérimètreMinistérielRowBuilder {
     this._nom = nom;
     return this;
   }
 
-  avecMinistères(ministères: typeof this._ministères): PérimètreMinistérielRowBuilder {
+  avecMinistères(ministères: perimetre['ministere']): PérimètreMinistérielRowBuilder {
     this._ministères = ministères;
     return this;
   }

@@ -36,37 +36,37 @@ export default class CommentaireRowBuilder {
     this._codeInsee = faker.helpers.arrayElement(codesInsee); 
   }
 
-  avecId(id: typeof this._id): CommentaireRowBuilder {
+  avecId(id: commentaire['id']): CommentaireRowBuilder {
     this._id = id;
     return this;
   }
 
-  avecChantierId(chantierId: typeof this._chantierId): CommentaireRowBuilder {
+  avecChantierId(chantierId: commentaire['chantier_id']): CommentaireRowBuilder {
     this._chantierId = chantierId;
     return this;
   }
 
-  avecType(type: typeof this._type): CommentaireRowBuilder {
+  avecType(type: commentaire['type']): CommentaireRowBuilder {
     this._type = type;
     return this;
   }
 
-  avecContenu(contenu: typeof this._contenu): CommentaireRowBuilder {
+  avecContenu(contenu: commentaire['contenu']): CommentaireRowBuilder {
     this._contenu = contenu;
     return this;
   }
 
-  avecDate(date: typeof this._date): CommentaireRowBuilder {
+  avecDate(date: commentaire['date']): CommentaireRowBuilder {
     this._date = date;
     return this;
   }
 
-  avecAuteur(auteur: typeof this._auteur): CommentaireRowBuilder {
+  avecAuteur(auteur: commentaire['auteur']): CommentaireRowBuilder {
     this._auteur = auteur;
     return this;
   }
 
-  avecMaille(maille: typeof this._maille): CommentaireRowBuilder {
+  avecMaille(maille: commentaire['maille']): CommentaireRowBuilder {
     const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
     
     this._maille = maille;
@@ -74,7 +74,7 @@ export default class CommentaireRowBuilder {
     return this;
   }
 
-  avecCodeInsee(codeInsee: typeof this._codeInsee): CommentaireRowBuilder {
+  avecCodeInsee(codeInsee: commentaire['code_insee']): CommentaireRowBuilder {
     this._codeInsee = codeInsee;
     return this;
   }

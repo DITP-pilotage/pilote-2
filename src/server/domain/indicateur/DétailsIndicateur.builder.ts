@@ -28,37 +28,37 @@ export default class DétailsIndicateurBuilder {
     this._avancement = new AvancementBuilder().build();
   }
 
-  avecCodeInsee(codeInsee: typeof this._codeInsee): DétailsIndicateurBuilder {
+  avecCodeInsee(codeInsee: DétailsIndicateur['codeInsee']): DétailsIndicateurBuilder {
     this._codeInsee = codeInsee;
     return this;
   }
 
-  avecValeurInitiale(valeurInitiale: typeof this._valeurInitiale): DétailsIndicateurBuilder {
+  avecValeurInitiale(valeurInitiale: DétailsIndicateur['valeurInitiale']): DétailsIndicateurBuilder {
     this._valeurInitiale = valeurInitiale;
     return this;
   }
 
-  avecDateValeurInitiale(dateValeurInitiale: typeof this._dateValeurInitiale): DétailsIndicateurBuilder {
+  avecDateValeurInitiale(dateValeurInitiale: DétailsIndicateur['dateValeurInitiale']): DétailsIndicateurBuilder {
     this._dateValeurInitiale = dateValeurInitiale;
     return this;
   }
 
-  avecValeurs(valeurs: typeof this._valeurs): DétailsIndicateurBuilder {
+  avecValeurs(valeurs: DétailsIndicateur['valeurs']): DétailsIndicateurBuilder {
     this._valeurs = valeurs;
     return this;
   }
 
-  avecDateValeurs(dateValeurs: typeof this._dateValeurs): DétailsIndicateurBuilder {
+  avecDateValeurs(dateValeurs: DétailsIndicateur['dateValeurs']): DétailsIndicateurBuilder {
     this._dateValeurs = dateValeurs;
     return this;
   }
 
-  avecValeurCible(valeurCible: typeof this._valeurCible): DétailsIndicateurBuilder {
+  avecValeurCible(valeurCible: DétailsIndicateur['valeurCible']): DétailsIndicateurBuilder {
     this._valeurCible = valeurCible;
     return this;
   }
 
-  avecAvancement(avancement: typeof this._avancement): DétailsIndicateurBuilder {
+  avecAvancement(avancement: DétailsIndicateur['avancement']): DétailsIndicateurBuilder {
     this._avancement = avancement;
     return this;
   }
