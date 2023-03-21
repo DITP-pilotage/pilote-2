@@ -96,4 +96,10 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
 
     return this.mapToDomain(commentaireObjectifs);
   }
+
+  async postNouveauCommentaire(chantierId: string, typeDeCommentaire: TypeCommentaire, détailsCommentaire: DétailsCommentaire) {
+    // this.prisma.commentaire.create()
+    console.log(chantierId, typeDeCommentaire, détailsCommentaire);
+    
+  }
 }
