@@ -23,7 +23,7 @@ const couleurDeBarreEtTexte = {
 export const dimensions = {
   fine: { hauteur: '0.5rem', largeurTexte: '2.75rem', classNameDsfr: 'fr-text--xs' },
   petite: { hauteur: '0.75rem', largeurTexte: '2.75rem', classNameDsfr: 'fr-text--xs' },
-  moyenne: { hauteur: '0.75rem', largeurTexte: '4rem', classNameDsfr: 'fr-h4' },
+  moyenne: { hauteur: '0.75rem', largeurTexte: '4rem', classNameDsfr: 'fr-text--sm' },
   grande: { hauteur: '2rem', largeurTexte: '6.5rem', classNameDsfr: 'fr-h1' },
 };
 
@@ -72,7 +72,7 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
   
   .pourcentage{
     p{
-      color: ${props => couleurDeFond[props.fond]};
+      color: ${props => couleurDeBarreEtTexte[props.variante]}
     }
   }
   
@@ -87,6 +87,7 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
 
     .pourcentage {
       p {
+        width: ${props => dimensions[props.taille].largeurTexte};  
         padding-left: 0.5em;
         text-align: right;
         white-space: nowrap;
