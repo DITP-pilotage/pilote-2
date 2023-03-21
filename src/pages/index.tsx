@@ -1,9 +1,12 @@
+import { getServerSession } from 'next-auth/next';
+import { GetServerSidePropsContext } from 'next/types';
 import PageChantiers from '@/client/components/PageChantiers/PageChantiers';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
+import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
@@ -23,9 +26,13 @@ export default function NextPageAccueil({ chantiers, ministères, axes, ppg }: N
   );
 }
 
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerSession(context.req, context.res, authOptions);
 
+  if (!session) {
+    return { props: {} };
+  }
 
-export async function getServerSideProps() {
   const chantierRepository = dependencies.getChantierRepository();
   const chantiers = await chantierRepository.getListe();
 
