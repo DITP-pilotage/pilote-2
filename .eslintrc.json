@@ -41,7 +41,8 @@
       "error",
       {
         "devDependencies": [
-          "**/*.test.{ts,tsx}"
+          "**/*.test.{ts,tsx}",
+          "./jest.setup.ts"
         ],
         "optionalDependencies": false
       }
