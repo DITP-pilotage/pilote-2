@@ -4,22 +4,47 @@ const createJestConfig = nextJest({
   dir: './',
 })
 
-const customJestConfig = {
-  moduleDirectories: ['node_modules', '<rootDir>/'],
-  modulePathIgnorePatterns: ['<rootDir>/db'],
-  testPathIgnorePatterns: ['<rootDir>/db'],
-  watchPathIgnorePatterns: ['<rootDir>/db'],
-  testEnvironment: 'jest-environment-jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+const globalConf = {
   moduleNameMapper: {
-    // corrige l'erreur : Unexpected token 'export' (voir https://github.com/facebook/jest/issues/12036)
-    "d3-(.*)$": `<rootDir>/node_modules/d3-$1/dist/d3-$1.min.js`,
-
+    "d3-(.*)$": `<rootDir>/node_modules/d3-$1/dist/d3-$1.min.js`, // (voir https://github.com/facebook/jest/issues/12036)
     "@/components/(.*)": "<rootDir>/src/client/components/$1",
     "@/client/(.*)": "<rootDir>/src/client/$1",
     "@/server/(.*)": "<rootDir>/src/server/$1",
     "@/stores/(.*)": "<rootDir>/src/client/stores/$1",
+  },
+};
+
+const nextJSGlobalConfAsync = createJestConfig(globalConf)
+
+module.exports = async () => {
+  const nextJSGlobalConf = await nextJSGlobalConfAsync()
+
+  return {
+    projects: [
+      {
+        ...nextJSGlobalConf,
+        displayName: 'Node - server integration tests',
+        testEnvironment: 'node',
+        setupFilesAfterEnv: ['<rootDir>/src/server/infrastructure/test/integrationTestSetup.ts'],
+        roots: ['<rootDir>/src/server'],
+        testMatch: ['**/*.integration.test.*'],
+        maxWorkers: 1,
+      },
+      {
+        ...nextJSGlobalConf,
+        displayName: 'Node - server unit tests',
+        testEnvironment: 'node',
+        roots: ['<rootDir>/src/server'],
+        testMatch: ['**/*.unit.test.*'],
+      },
+      {
+        ...nextJSGlobalConf,
+        displayName: 'JsDom - client tests',
+        testEnvironment: 'jest-environment-jsdom',
+        setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+        testMatch: ['**/*.unit.test.*', '**/*.integration.test.*'],
+        roots: ['<rootDir>/src/client'],
+      },
+    ]
   }
 }
-
-module.exports = createJestConfig(customJestConfig)
