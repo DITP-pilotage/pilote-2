@@ -86,7 +86,7 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Dé
       cell: avancementGlobal => (
         <BarreDeProgression
           afficherTexte
-          fond='bleu'
+          fond='grisClair'
           positionTexte='dessus'
           taille='moyenne'
           valeur={avancementGlobal.getValue()}
