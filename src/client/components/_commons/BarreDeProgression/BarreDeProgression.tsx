@@ -15,7 +15,7 @@ export default function BarreDeProgression({
   return (
     <BarreDeProgressionStyled
       bordure={bordure}
-      className={`flex fr-pb-1v ${positionTexte}`}
+      className={`barre-de-progression flex fr-pb-1v ${positionTexte}`}
       fond={fond}
       positionTexte={positionTexte}
       taille={taille}
@@ -31,8 +31,10 @@ export default function BarreDeProgression({
       </div>
       {
         !!afficherTexte && (
-          <div className='pourcentage'>
-            <p className={`${dimensions[taille].classNameDsfr}  fr-mb-0 bold`}>
+          <div className={`pourcentage ${positionTexte}`}>
+            <p
+              className={`${dimensions[taille].classNameDsfr}  fr-mb-0 bold`}
+            >
               {pourcentageAffiché}
             </p>
           </div>
