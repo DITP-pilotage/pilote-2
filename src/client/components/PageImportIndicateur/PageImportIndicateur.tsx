@@ -1,17 +1,15 @@
 import PageImportIndicateurEnTête from './PageImportIndicateurEnTête/PageImportIndicateurEnTête';
+import PageImportIndicateurSectionImport from './PageImportIndicateurSectionImport/PageImportIndicateurSectionImport';
 
 interface PageImportIndicateurProps {
-  chantierId: string,
-  indicateurId: string
+  chantierId: string
 }
 
-export default function PageImportIndicateur({ chantierId, indicateurId }: PageImportIndicateurProps) {
+export default function PageImportIndicateur({ chantierId }: PageImportIndicateurProps) {
   return (
-    <div>
-      <PageImportIndicateurEnTête
-        chantierId={chantierId}
-        indicateurId={indicateurId}
-      />
-    </div>
+    <main>
+      <PageImportIndicateurEnTête chantierId={chantierId} />
+      <PageImportIndicateurSectionImport chantierId={chantierId} />
+    </main>
   );
 }

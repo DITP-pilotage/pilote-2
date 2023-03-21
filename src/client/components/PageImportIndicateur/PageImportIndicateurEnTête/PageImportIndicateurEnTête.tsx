@@ -3,23 +3,21 @@ import Titre from '@/components/_commons/Titre/Titre';
 import PageImportIndicateurEnTêteStyled from './PageImportIndicateurEnTête.styled';
 
 interface PageImportIndicateurEnTêteProps {
-  chantierId: string,
-  indicateurId: string
+  chantierId: string
 }
 
-export default function PageImportIndicateurEnTête({ chantierId, indicateurId }: PageImportIndicateurEnTêteProps) {
-  // eslint-disable-next-line no-console
-  console.log(chantierId);
-  
+// Le temps qu'il soit utilisé dans la prochaine MR
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default function PageImportIndicateurEnTête({ chantierId }: PageImportIndicateurEnTêteProps) {
   return (
     <PageImportIndicateurEnTêteStyled>
       <div className='fr-container fr-py-4w'>
         <FilAriane
           chemin={[{ nom: 'Chantier', lien: '#' }]}
-          libelléPageCourante={`Indicateur ${indicateurId}`}
+          libelléPageCourante='Indicateurs'
         />
         <Titre baliseHtml='h1'>
-          Hello world
+          Offrir à chaque enfant une éducation culturelle et artistique
         </Titre>
         <div className='fr-text--xs fr-mb-0'>
           <p className='fr-mb-0 fr-text--xs chantier-données-propriété'>
