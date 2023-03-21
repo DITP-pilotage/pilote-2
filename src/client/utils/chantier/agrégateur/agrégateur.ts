@@ -73,7 +73,7 @@ export class AgrégateurChantiersParTerritoire {
     this.agrégat[maille].territoires[codeInsee].répartition.avancements.global.moyenne = calculerMoyenne(avancements.global);
     this.agrégat[maille].territoires[codeInsee].répartition.avancements.global.médiane = calculerMédiane(avancements.global);
 
-    this.agrégat[maille].territoires[codeInsee].répartition.avancements.annuel.moyenne = calculerMédiane(avancements.annuel);
+    this.agrégat[maille].territoires[codeInsee].répartition.avancements.annuel.moyenne = calculerMoyenne(avancements.annuel);
 
   }
 

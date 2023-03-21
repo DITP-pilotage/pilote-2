@@ -4,8 +4,8 @@ import BarreDeProgressionStyled, { dimensions } from './BarreDeProgression.style
 export default function BarreDeProgression({
   taille,
   variante,
-  fond = 'gris',
-  bordure = 'gris',
+  fond = 'grisMoyen',
+  bordure = 'grisMoyen',
   positionTexte = 'côté',
   valeur,
   afficherTexte = true,
@@ -15,7 +15,7 @@ export default function BarreDeProgression({
   return (
     <BarreDeProgressionStyled
       bordure={bordure}
-      className={`barre-de-progression flex fr-pb-1v ${positionTexte}`}
+      className={`barre-de-progression flex fr-pb-1v texte-${positionTexte}`}
       fond={fond}
       positionTexte={positionTexte}
       taille={taille}
@@ -31,9 +31,9 @@ export default function BarreDeProgression({
       </div>
       {
         !!afficherTexte && (
-          <div className={`pourcentage ${positionTexte}`}>
+          <div className={`pourcentage texte-${positionTexte}`}>
             <p
-              className={`${dimensions[taille].classNameDsfr}  fr-mb-0 bold`}
+              className={`${dimensions[taille].classNameDsfr} fr-mb-0 bold`}
             >
               {pourcentageAffiché}
             </p>

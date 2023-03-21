@@ -1,7 +1,8 @@
 export type BarreDeProgressionTaille = 'fine' | 'petite' | 'moyenne' | 'grande';
 export type BarreDeProgressionVariante = 'primaire' | 'secondaire';
-export type BarreDeProgressionFond = 'bleu' | 'blanc' | 'gris' | 'grisClair';
-export type BarreDeProgressionBordure = 'bleu' | 'gris' | null;
+export type BarreDeProgressionFond = 'bleu' | 'blanc' | 'grisMoyen' | 'grisClair';
+export type BarreDeProgressionBordure = 'bleu' | 'grisMoyen' | null;
+export type BarreDeProgressionPositionTexte = 'côté' | 'dessus';
 
 
 export default interface BarreDeProgressionProps {
@@ -10,7 +11,7 @@ export default interface BarreDeProgressionProps {
   fond?: BarreDeProgressionFond,
   bordure?: BarreDeProgressionBordure,
   valeur: number | null,
-  positionTexte? : 'côté' | 'dessus',
+  positionTexte? : BarreDeProgressionPositionTexte,
   afficherTexte?: boolean,
 }
 
@@ -18,6 +19,6 @@ export type BarreDeProgressionStyledProps = {
   variante: BarreDeProgressionVariante
   fond: BarreDeProgressionFond,
   bordure: BarreDeProgressionBordure,
-  positionTexte : 'côté' | 'dessus',
+  positionTexte : BarreDeProgressionPositionTexte,
   taille: BarreDeProgressionTaille,
 };

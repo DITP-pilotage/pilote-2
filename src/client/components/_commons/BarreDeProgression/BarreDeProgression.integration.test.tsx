@@ -40,7 +40,7 @@ describe('Barre de progression', () => {
       />,
     );
     const barreDeProgression = document.querySelectorAll('.barre-de-progression')[0];
-    expect(barreDeProgression).toHaveClass('dessus');
+    expect(barreDeProgression).toHaveClass('texte-dessus');
     expect(barreDeProgression).toHaveStyle('flex-direction: column-reverse');
   });
 
@@ -54,7 +54,7 @@ describe('Barre de progression', () => {
       />,
     );
     const barreDeProgression = document.querySelectorAll('.barre-de-progression')[0];
-    expect(barreDeProgression).toHaveClass('côté');
+    expect(barreDeProgression).toHaveClass('texte-côté');
     expect(barreDeProgression).toHaveStyle('flex-direction: row');
   });
 });

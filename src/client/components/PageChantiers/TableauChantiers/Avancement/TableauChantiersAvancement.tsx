@@ -10,7 +10,7 @@ export default function TableauChantiersAvancement({ avancement }: TableauChanti
         </span>
       ) : (
         <BarreDeProgression
-          fond="gris"
+          fond="blanc"
           taille="petite"
           valeur={avancement}
           variante='primaire'

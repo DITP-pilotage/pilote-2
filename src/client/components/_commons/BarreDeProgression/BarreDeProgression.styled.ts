@@ -6,13 +6,13 @@ const borderRadius = '0.375rem';
 const couleurDeFond = {
   'bleu': 'var(--blue-ecume-850-200)',
   'blanc': '#ffffff',
-  'gris': '#bababa',
+  'grisMoyen': '#bababa',
   'grisClair' : '#E5E5E5',
 };
 
 const couleurBordure = {
   'bleu' : 'var(--blue-ecume-850-200)',
-  'gris' : '#bababa',
+  'grisMoyen' : '#bababa',
 };
 
 const couleurDeBarreEtTexte = {
@@ -21,7 +21,7 @@ const couleurDeBarreEtTexte = {
 };
 
 export const dimensions = {
-  fine: { hauteur: '0.5rem', largeurTexte: '2.75rem', classNameDsfr: 'fr-text--xxs' },
+  fine: { hauteur: '0.5rem', largeurTexte: '2.75rem', classNameDsfr: 'fr-text--xs' },
   petite: { hauteur: '0.75rem', largeurTexte: '2.75rem', classNameDsfr: 'fr-text--xs' },
   moyenne: { hauteur: '0.75rem', largeurTexte: '4rem', classNameDsfr: 'fr-h4' },
   grande: { hauteur: '2rem', largeurTexte: '6.5rem', classNameDsfr: 'fr-h1' },
@@ -61,7 +61,7 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
       }
 
       &:not([value])::-moz-progress-bar {
-        background-color: ${props => couleurDeFond[props.fond]}0;
+        background-color: ${props => couleurDeFond[props.fond]};
       }
     }
 
@@ -72,11 +72,11 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
   
   .pourcentage{
     p{
-      color: ${props => couleurDeFond[props.fond]}1;
+      color: ${props => couleurDeFond[props.fond]};
     }
   }
   
-  &.côté{
+  &.texte-côté{
     flex-direction: row;
     align-items: center;
 
@@ -95,7 +95,7 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
     }
   }
   
-  &.dessus{
+  &.texte-dessus{
     flex-direction: column-reverse;
   }
   

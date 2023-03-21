@@ -84,16 +84,14 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Dé
     reactTableColonnesHelper.accessor('données.avancement.global', {
       header: 'Taux avancement global',
       cell: avancementGlobal => (
-        <>
-          {avancementGlobal.getValue() === null ? '- %' : `${avancementGlobal.getValue()!.toFixed(0)}%`}
-          <BarreDeProgression
-            afficherTexte={false}
-            fond='bleu'
-            taille='moyenne'
-            valeur={avancementGlobal.getValue()}
-            variante='primaire'
-          />
-        </>
+        <BarreDeProgression
+          afficherTexte
+          fond='bleu'
+          positionTexte='dessus'
+          taille='moyenne'
+          valeur={avancementGlobal.getValue()}
+          variante='primaire'
+        />
       ),
       enableSorting: false, 
     }),
