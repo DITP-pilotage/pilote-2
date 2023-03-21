@@ -27,37 +27,37 @@ export default class IndicateurBuilder {
     this._modeDeCalcul = faker.helpers.arrayElement([null, faker.lorem.sentence()]);
   }
 
-  avecId(id: typeof this._id): IndicateurBuilder {
+  avecId(id: Indicateur['id']): IndicateurBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: typeof this._nom): IndicateurBuilder {
+  avecNom(nom: Indicateur['nom']): IndicateurBuilder {
     this._nom = nom;
     return this;
   }
 
-  avecType(type: typeof this._type): IndicateurBuilder {
+  avecType(type: Indicateur['type']): IndicateurBuilder {
     this._type = type;
     return this;
   }
 
-  avecEstIndicateurDuBaromètre(estIndicateurDuBaromètre: typeof this._estIndicateurDuBaromètre): IndicateurBuilder {
+  avecEstIndicateurDuBaromètre(estIndicateurDuBaromètre: Indicateur['estIndicateurDuBaromètre']): IndicateurBuilder {
     this._estIndicateurDuBaromètre = estIndicateurDuBaromètre;
     return this;
   }
 
-  avecDescription(description: typeof this._description): IndicateurBuilder {
+  avecDescription(description: Indicateur['description']): IndicateurBuilder {
     this._description = description;
     return this;
   }
 
-  avecSource(source: typeof this._source): IndicateurBuilder {
+  avecSource(source: Indicateur['source']): IndicateurBuilder {
     this._source = source;
     return this;
   }
 
-  avecModeDeCalcul(modeDeCalcul: typeof this._modeDeCalcul): IndicateurBuilder {
+  avecModeDeCalcul(modeDeCalcul: Indicateur['modeDeCalcul']): IndicateurBuilder {
     this._modeDeCalcul = modeDeCalcul;
     return this;
   }

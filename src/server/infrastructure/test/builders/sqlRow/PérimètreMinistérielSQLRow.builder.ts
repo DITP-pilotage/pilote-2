@@ -1,6 +1,5 @@
 import { perimetre } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
-import { générerUnTableauVideAvecUneTailleDeZéroÀn } from '@/server/infrastructure/test/builders/utils';
 import PérimètreMinistérielBuilder from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.builder';
 
 export default class PérimètreMinistérielRowBuilder {
@@ -12,24 +11,23 @@ export default class PérimètreMinistérielRowBuilder {
 
   constructor() {
     const périmètreMinistérielGénéré = new PérimètreMinistérielBuilder().build();
-    const ministèreGénéré = générerUnTableauVideAvecUneTailleDeZéroÀn(3).map(() => `MIN - ${faker.lorem.words()}`).join(', ');
     
     this._id = périmètreMinistérielGénéré.id;
     this._nom = périmètreMinistérielGénéré.nom;
-    this._ministères = faker.helpers.arrayElement([null, ministèreGénéré]);
+    this._ministères = faker.helpers.arrayElement([null, `MIN - ${faker.lorem.words()}`]);
   }
 
-  avecId(id: typeof this._id): PérimètreMinistérielRowBuilder {
+  avecId(id: perimetre['id']): PérimètreMinistérielRowBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: typeof this._nom): PérimètreMinistérielRowBuilder {
+  avecNom(nom: perimetre['nom']): PérimètreMinistérielRowBuilder {
     this._nom = nom;
     return this;
   }
 
-  avecMinistères(ministères: typeof this._ministères): PérimètreMinistérielRowBuilder {
+  avecMinistères(ministères: perimetre['ministere']): PérimètreMinistérielRowBuilder {
     this._ministères = ministères;
     return this;
   }

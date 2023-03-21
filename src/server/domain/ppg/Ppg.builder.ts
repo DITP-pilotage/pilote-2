@@ -12,12 +12,12 @@ export default class PpgBuilder {
     this._nom = `${this._id} ${faker.lorem.words()}`;
   }
 
-  avecId(id: typeof this._id): PpgBuilder {
+  avecId(id: Ppg['id']): PpgBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: typeof this._nom): PpgBuilder {
+  avecNom(nom: Ppg['nom']): PpgBuilder {
     this._nom = nom;
     return this;
   }

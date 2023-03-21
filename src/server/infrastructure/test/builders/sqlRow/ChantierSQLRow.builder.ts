@@ -69,32 +69,32 @@ export default class ChantierRowBuilder {
     this._estTerritorialisé = faker.helpers.arrayElement([null, chantierGénéré.estTerritorialisé]);
   }
 
-  avecId(id: typeof this._id): ChantierRowBuilder {
+  avecId(id: chantier['id']): ChantierRowBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: typeof this._nom): ChantierRowBuilder {
+  avecNom(nom: chantier['nom']): ChantierRowBuilder {
     this._nom = nom;
     return this;
   }
 
-  avecAxe(axe: typeof this._axe): ChantierRowBuilder {
+  avecAxe(axe: chantier['axe']): ChantierRowBuilder {
     this._axe = axe;
     return this;
   }
 
-  avecPpg(ppg: typeof this._ppg): ChantierRowBuilder {
+  avecPpg(ppg: chantier['ppg']): ChantierRowBuilder {
     this._ppg = ppg;
     return this;
   }
 
-  avecPérimètreIds(périmètreIds: typeof this._périmètreIds): ChantierRowBuilder {
+  avecPérimètreIds(périmètreIds: chantier['perimetre_ids']): ChantierRowBuilder {
     this._périmètreIds = périmètreIds;
     return this;
   }
 
-  avecMaille(maille: typeof this._maille): ChantierRowBuilder {
+  avecMaille(maille: chantier['maille']): ChantierRowBuilder {
     const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
     
     this._maille = maille;
@@ -102,57 +102,57 @@ export default class ChantierRowBuilder {
     return this;
   }
 
-  avecTerritoireNom(territoireNom: typeof this._territoireNom): ChantierRowBuilder {
+  avecTerritoireNom(territoireNom: chantier['territoire_nom']): ChantierRowBuilder {
     this._territoireNom = territoireNom;
     return this;
   }
 
-  avecCodeInsee(codeInsee: typeof this._codeInsee): ChantierRowBuilder {
+  avecCodeInsee(codeInsee: chantier['code_insee']): ChantierRowBuilder {
     this._codeInsee = codeInsee;
     return this;
   }
 
-  avecTauxAvancement(tauxAvancement: typeof this._tauxAvancement): ChantierRowBuilder {
+  avecTauxAvancement(tauxAvancement: chantier['taux_avancement']): ChantierRowBuilder {
     this._tauxAvancement = tauxAvancement;
     return this;
   }
 
-  avecMinistères(ministères: typeof this._ministères): ChantierRowBuilder {
+  avecMinistères(ministères: chantier['ministeres']): ChantierRowBuilder {
     this._ministères = ministères;
     return this;
   }
 
-  avecMétéo(météo: typeof this._météo): ChantierRowBuilder {
+  avecMétéo(météo: chantier['meteo']): ChantierRowBuilder {
     this._météo = météo;
     return this;
   }
 
-  avecDirecteursAdminCentrale(directeursAdminCentrale: typeof this._directeursAdminCentrale): ChantierRowBuilder {
+  avecDirecteursAdminCentrale(directeursAdminCentrale: chantier['directeurs_administration_centrale']): ChantierRowBuilder {
     this._directeursAdminCentrale = directeursAdminCentrale;
     return this;
   }
 
-  avecDirectionsAdminCentrale(directionsAdminCentrale: typeof this._directionsAdminCentrale): ChantierRowBuilder {
+  avecDirectionsAdminCentrale(directionsAdminCentrale: chantier['directions_administration_centrale']): ChantierRowBuilder {
     this._directionsAdminCentrale = directionsAdminCentrale;
     return this;
   }
 
-  avecDirecteursProjet(directeursProjet: typeof this._directeursProjet): ChantierRowBuilder {
+  avecDirecteursProjet(directeursProjet: chantier['directeurs_projet']): ChantierRowBuilder {
     this._directeursProjet = directeursProjet;
     return this;
   }
 
-  avecDirecteursProjetMails(directeursProjetMails: typeof this._directeursProjetMails): ChantierRowBuilder {
+  avecDirecteursProjetMails(directeursProjetMails: chantier['directeurs_projet_mails']): ChantierRowBuilder {
     this._directeursProjetMails = directeursProjetMails;
     return this;
   }
 
-  avecEstBaromètre(estBaromètre: typeof this._estBaromètre): ChantierRowBuilder {
+  avecEstBaromètre(estBaromètre: chantier['est_barometre']): ChantierRowBuilder {
     this._estBaromètre = estBaromètre;
     return this;
   }
 
-  avecEstTerritorialisé(estTerritorialisé: typeof this._estTerritorialisé): ChantierRowBuilder {
+  avecEstTerritorialisé(estTerritorialisé: chantier['est_territorialise']): ChantierRowBuilder {
     this._estTerritorialisé = estTerritorialisé;
     return this;
   }

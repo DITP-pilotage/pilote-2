@@ -8,7 +8,7 @@ export default class MétéoBuilder {
     this._météo = faker.helpers.arrayElement(météos);
   }
 
-  avecMétéo(météo: typeof this._météo): MétéoBuilder {
+  avecMétéo(météo: Météo): MétéoBuilder {
     this._météo = météo;
     return this;
   }

@@ -20,10 +20,18 @@
     "incremental": true,
     "baseUrl": "./src",
     "paths": {
-      "@/components/*": ["client/components/*"],
-      "@/client/*": ["client/*"],
-      "@/server/*": ["server/*"],
-      "@/stores/*": ["client/stores/*"],
+      "@/components/*": [
+        "client/components/*"
+      ],
+      "@/client/*": [
+        "client/*"
+      ],
+      "@/server/*": [
+        "server/*"
+      ],
+      "@/stores/*": [
+        "client/stores/*"
+      ],
     }
   },
   "include": [
@@ -33,5 +41,10 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "ts-node": {
+    "require": [
+      "tsconfig-paths/register"
+    ]
+  }
 }

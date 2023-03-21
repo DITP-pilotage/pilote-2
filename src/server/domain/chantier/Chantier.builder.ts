@@ -64,72 +64,72 @@ export default class ChantierBuilder {
     return territoires;
   }
 
-  avecId(id: typeof this._id): ChantierBuilder {
+  avecId(id: Chantier['id']): ChantierBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: typeof this._nom): ChantierBuilder {
+  avecNom(nom: Chantier['nom']): ChantierBuilder {
     this._nom = nom;
     return this;
   }
 
-  avecAxe(axe: typeof this._axe): ChantierBuilder {
+  avecAxe(axe: Chantier['axe']): ChantierBuilder {
     this._axe = axe;
     return this;
   }
 
-  avecPpg(ppg: typeof this._ppg): ChantierBuilder {
+  avecPpg(ppg: Chantier['ppg']): ChantierBuilder {
     this._ppg = ppg;
     return this;
   }
 
-  avecPérimètreIds(périmètreIds: typeof this._périmètreIds): ChantierBuilder {
+  avecPérimètreIds(périmètreIds: Chantier['périmètreIds']): ChantierBuilder {
     this._périmètreIds = périmètreIds;
     return this;
   }
 
-  avecMailleRégionale(mailleRégionale: typeof this._mailles['régionale']): ChantierBuilder {
+  avecMailleRégionale(mailleRégionale: Chantier['mailles']['régionale']): ChantierBuilder {
     this._mailles.régionale = mailleRégionale;
     return this;
   }
 
-  avecMailleDépartementale(mailleDépartementale: typeof this._mailles['départementale']): ChantierBuilder {
+  avecMailleDépartementale(mailleDépartementale: Chantier['mailles']['départementale']): ChantierBuilder {
     this._mailles.départementale = mailleDépartementale;
     return this;
   }
 
-  avecMailleNationale(mailleNationale: typeof this._mailles['nationale']): ChantierBuilder {
+  avecMailleNationale(mailleNationale: Chantier['mailles']['nationale']): ChantierBuilder {
     this._mailles.nationale = mailleNationale;
     return this;
   }
 
-  avecPorteur(porteur: typeof this._porteur): ChantierBuilder {
+  avecPorteur(porteur: Chantier['responsables']['porteur']): ChantierBuilder {
     this._porteur = porteur;
     return this;
   }
 
-  avecCoporteurs(coporteurs: typeof this._coporteurs): ChantierBuilder {
+  avecCoporteurs(coporteurs: Chantier['responsables']['coporteurs']): ChantierBuilder {
     this._coporteurs = coporteurs;
     return this;
   }
 
-  avecDirecteursAdminCentrale(directeursAdminCentrale: typeof this._directeursAdminCentrale): ChantierBuilder {
+  avecDirecteursAdminCentrale(directeursAdminCentrale: Chantier['responsables']['directeursAdminCentrale']): ChantierBuilder {
     this._directeursAdminCentrale = directeursAdminCentrale;
     return this;
   }
 
-  avecDirecteursProjet(directeursProjet: typeof this._directeursProjet): ChantierBuilder {
+  avecDirecteursProjet(directeursProjet: Chantier['responsables']['directeursProjet']): ChantierBuilder {
     this._directeursProjet = directeursProjet;
     return this;
   }
 
-  avecEstBaromètre(estBaromètre: typeof this._estBaromètre): ChantierBuilder {
+  avecEstBaromètre(estBaromètre: Chantier['estBaromètre']): ChantierBuilder {
     this._estBaromètre = estBaromètre;
     return this;
   }
 
-  avecEstTerritorialisé(estTerritorialisé: typeof this._estTerritorialisé): ChantierBuilder {
+  avecEstTerritorialisé(estTerritorialisé: Chantier['estTerritorialisé']): ChantierBuilder {
     this._estTerritorialisé = estTerritorialisé;
     return this;
   }

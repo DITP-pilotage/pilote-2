@@ -12,12 +12,12 @@ export default class MinistèreBuilder {
     this._périmètresMinistériels = [new PérimètreMinistérielBuilder().build()];
   }
 
-  avecNom(nom: typeof this._nom): MinistèreBuilder {
+  avecNom(nom: Ministère['nom']): MinistèreBuilder {
     this._nom = nom;
     return this;
   }
 
-  avecPérimètresMinistériels(périmètresMinistériels: typeof this._périmètresMinistériels): MinistèreBuilder {
+  avecPérimètresMinistériels(périmètresMinistériels: Ministère['périmètresMinistériels']): MinistèreBuilder {
     this._périmètresMinistériels = périmètresMinistériels;
     return this;
   }

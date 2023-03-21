@@ -16,17 +16,17 @@ export default class TerritoireBuilder {
     this._météo = new MétéoBuilder().build();
   }
 
-  avecCodeInsee(codeInsee: typeof this._codeInsee): TerritoireBuilder {
+  avecCodeInsee(codeInsee: Territoire['codeInsee']): TerritoireBuilder {
     this._codeInsee = codeInsee;
     return this;
   }
 
-  avecAvancement(avancement: typeof this._avancement): TerritoireBuilder {
+  avecAvancement(avancement: Territoire['avancement']): TerritoireBuilder {
     this._avancement = avancement;
     return this;
   }
 
-  avecMétéo(météo: typeof this._météo): TerritoireBuilder {
+  avecMétéo(météo: Territoire['météo']): TerritoireBuilder {
     this._météo = météo;
     return this;
   }

@@ -16,7 +16,7 @@ export default class ObjectifBuilder {
     };
   }
 
-  avecObjectif(objectif: typeof this._objectif): ObjectifBuilder {
+  avecObjectif(objectif: Objectif): ObjectifBuilder {
     this._objectif = objectif;
     return this;
   }

@@ -16,7 +16,7 @@ export default class SynthèseDesRésultatBuilder {
     };
   }
 
-  avecSynthèseDesRésultats(synthèseDesRésultats: typeof this._synthèseDesRésultats): SynthèseDesRésultatBuilder {
+  avecSynthèseDesRésultats(synthèseDesRésultats: SynthèseDesRésultats): SynthèseDesRésultatBuilder {
     this._synthèseDesRésultats = synthèseDesRésultats;
     return this;
   }

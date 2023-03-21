@@ -11,12 +11,12 @@ export default class AvancementBuilder {
     this._annuel = faker.helpers.arrayElement([null, faker.datatype.number({ min: 0, max: 100, precision: 0.01 })]);
   }
 
-  avecGlobal(global: typeof this._global): AvancementBuilder {
+  avecGlobal(global: Avancement['global']): AvancementBuilder {
     this._global = global;
     return this;
   }
 
-  avecAnnuel(annuel: typeof this._annuel): AvancementBuilder {
+  avecAnnuel(annuel: Avancement['annuel']): AvancementBuilder {
     this._annuel = annuel;
     return this;
   }

@@ -12,12 +12,12 @@ export default class AxeBuilder {
     this._nom = `${this._id} ${faker.lorem.words()}`;
   }
 
-  avecId(id: typeof this._id): AxeBuilder {
+  avecId(id: Axe['id']): AxeBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: typeof this._nom): AxeBuilder {
+  avecNom(nom: Axe['nom']): AxeBuilder {
     this._nom = nom;
     return this;
   }
