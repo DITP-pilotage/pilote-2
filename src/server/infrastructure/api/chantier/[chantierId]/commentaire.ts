@@ -1,21 +1,20 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { DétailsCommentaire, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import logger from '@/server/infrastructure/logger';
 import PosterUnNouveauCommentaireUseCase from '@/server/usecase/commentaire/PosterUnNouveauCommentaireUseCase';
 
 class ParsingError extends Error {}
 
-function parseQueryParams(request: NextApiRequest): { chantierId: string, typeDeCommentaire: TypeCommentaire } {
+function parseQueryParams(request: NextApiRequest): { chantierId: string } {
   const chantierId = request.query.chantierId as string;
-  const typeDeCommentaire = request.query.typeDeCommentaire as TypeCommentaire;
-  
-  if (!chantierId || !typeDeCommentaire) {
+
+  if (!chantierId) {
     const errorMessage = 'Le parsing de la query a échoué.';
     logger.info(errorMessage + ', query: %o', request.query);
     throw new ParsingError(errorMessage);
   }
   
-  return { chantierId, typeDeCommentaire };
+  return { chantierId };
 }
 
 export default async function handlePostCommentaire(request: NextApiRequest, response: NextApiResponse, posterUnNouveauCommentaire = new PosterUnNouveauCommentaireUseCase(),
@@ -30,8 +29,9 @@ export default async function handlePostCommentaire(request: NextApiRequest, res
     }
     throw error;
   }
-  const détailsCommentaire: DétailsCommentaire = request.body.détailsCommentaire;
-  await posterUnNouveauCommentaire.run(params.chantierId, params.typeDeCommentaire, détailsCommentaire);
+  const body = JSON.parse(request.body);
+
+  await posterUnNouveauCommentaire.run(params.chantierId, body);
 
   response.status(200);
 }

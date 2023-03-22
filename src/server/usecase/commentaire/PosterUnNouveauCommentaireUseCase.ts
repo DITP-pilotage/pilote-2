@@ -1,4 +1,4 @@
-import { DétailsCommentaire, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { NouveauCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 
@@ -7,7 +7,7 @@ export default class PosterUnNouveauCommentaireUseCase {
     private readonly commentaireRepository: CommentaireRepository = dependencies.getCommentaireRepository(),
   ) {}
 
-  async run(chantierId: string, typeDeCommentaire: TypeCommentaire, détailsCommentaire: DétailsCommentaire) {
-    await this.commentaireRepository.postNouveauCommentaire(chantierId, typeDeCommentaire, détailsCommentaire);
+  async run(chantierId: string, nouveauCommentaire: NouveauCommentaire) {
+    await this.commentaireRepository.postNouveauCommentaire(chantierId, nouveauCommentaire.typeCommentaire, nouveauCommentaire.maille, nouveauCommentaire.codeInsee, nouveauCommentaire.détailsCommentaire);
   }
 }

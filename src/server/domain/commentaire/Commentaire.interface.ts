@@ -1,3 +1,6 @@
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+
 export type DétailsCommentaire = {
   contenu: string
   date: string
@@ -15,4 +18,11 @@ export const commentairesNull = {
   actionsÀVenir: null,
   actionsÀValoriser: null,
   autresRésultatsObtenus: null,
+};
+
+export type NouveauCommentaire = {
+  typeCommentaire: TypeCommentaire
+  maille: Maille
+  codeInsee: CodeInsee
+  détailsCommentaire: DétailsCommentaire
 };

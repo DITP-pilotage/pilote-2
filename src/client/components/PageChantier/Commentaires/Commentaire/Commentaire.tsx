@@ -6,13 +6,19 @@ import HistoriqueDUnCommentaire
 import Publication from '@/components/PageChantier/Publication/Publication';
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
-import { TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { NouveauCommentaire, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import CommentaireStyled from './Commentaire.styled';
 
 function handlePublierCommentaire(contenu: string, chantierId: string, typeDeCommentaire: TypeCommentaire): void {
-  fetch(`api/chantier/${chantierId}/commentaire/${typeDeCommentaire}`, {
+  const nouveauCommentaire: NouveauCommentaire = {
+    typeCommentaire: typeDeCommentaire,
+    maille: 'nationale',
+    codeInsee: 'FR',
+    détailsCommentaire: { contenu: contenu, date: new Date().toISOString(), auteur: 'Jean Castex' },
+  };
+  fetch(`/api/chantier/${chantierId}/commentaire/`, {
     method: 'POST',
-    body: JSON.stringify({ contenu: contenu, date: new Date().toISOString(), auteur: 'Jean Castex' }),
+    body: JSON.stringify(nouveauCommentaire),
   });
 }
 export default function Commentaire({ titre, commentaire, chantierId }: CommentaireProps) {
@@ -92,13 +98,6 @@ export default function Commentaire({ titre, commentaire, chantierId }: Commenta
                     __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(contenu),
                   }}
                 />
-                <button
-                  className='fr-btn fr-btn--secondary boutons'
-                  onClick={() => setModeÉdition(true)}
-                  type='button'
-                >
-                  Modifier
-                </button>
               </div>
             </>
           ))
@@ -108,6 +107,13 @@ export default function Commentaire({ titre, commentaire, chantierId }: Commenta
             </p>
           )
       }
+      <button
+        className='fr-btn fr-btn--secondary boutons'
+        onClick={() => setModeÉdition(true)}
+        type='button'
+      >
+        Modifier
+      </button>
     </CommentaireStyled>
   );
 }
