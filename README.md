@@ -7,8 +7,6 @@ Un fichier `docker-compose.yml` se trouve à la racine du projet et permet de d�
 
 <br />
 
---------------
-<br />
 
 ## Lancer l'application en mode dev
 
@@ -27,9 +25,6 @@ npm run database:seed
 ```bash
 npm run dev
 ```
-<br />
-
---------------------
 <br />
 
 ## Lancer les tests et les linters
@@ -61,9 +56,6 @@ npm run test:client -- --watch
 ```
 <br />
 
--------
-<br />
-
 ## Lancer l'application en mode production
 
 ### Prérequis
@@ -75,9 +67,6 @@ npm run test:client -- --watch
 npm run build
 npm run start
 ```
-<br />
-
---------------------
 <br />
 
 ## Commandes utiles
