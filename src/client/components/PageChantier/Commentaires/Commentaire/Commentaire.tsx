@@ -1,4 +1,6 @@
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
+import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import Titre from '@/components/_commons/Titre/Titre';
 import CommentaireProps from '@/components/PageChantier/Commentaires/Commentaire/Commentaire.interface';
 import HistoriqueDUnCommentaire
@@ -6,34 +8,16 @@ import HistoriqueDUnCommentaire
 import Publication from '@/components/PageChantier/Publication/Publication';
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
-import { NouveauCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import typesCommentaire from '@/client/constants/typesCommentaire';
 import CommentaireStyled from './Commentaire.styled';
+import useCommentaire from './useCommentaire';
 
 export default function Commentaire({ type, commentaire, chantierId }: CommentaireProps) {
-  const [modeÉdition, setModeÉdition] = useState(false);
   const [contenu, setContenu] = useState(commentaire?.contenu);
-  const [commentaireÉtat, setCommentaireÉtat] = useState(commentaire);
-  
-  function handlePublierCommentaire(): void {
-    const nouveauCommentaire: NouveauCommentaire = {
-      typeCommentaire: type,
-      maille: 'nationale',
-      codeInsee: 'FR',
-      détailsCommentaire: { contenu: contenu, date: new Date().toISOString(), auteur: 'Poutoux' },
-    };
+  const [compte, setCompte] = useState(contenu?.length);
 
-    fetch(
-      `/api/chantier/${chantierId}/commentaire/`, {
-        method: 'POST',
-        body: JSON.stringify(nouveauCommentaire),
-      },
-    )
-      .then(() => {
-        setCommentaireÉtat(nouveauCommentaire.détailsCommentaire);
-        setModeÉdition(false);
-      });
-  }
+  const { data: session } = useSession();
+  const { handlePublierCommentaire, modeÉdition, setModeÉdition, commentaireÉtat } = useCommentaire(commentaire);
   
   return (
     <CommentaireStyled>
@@ -69,24 +53,44 @@ export default function Commentaire({ type, commentaire, chantierId }: Commentai
                 htmlFor="saisie-contenu-commentaire"
         modeÉdition ? (
           <div className='contenu'>
-            <label
-              className="fr-label fr-sr-only"
-              htmlFor="saisie-contenu-commentaire"
-            >
-              Modification du commentaire
-            </label>
-            <textarea
-              className="fr-input fr-mb-6w"
-              id="saisie-contenu-commentaire"
-              maxLength={500}
-              name="saisie-contenu-commentaire"
-              onChange={(e) => setContenu(e.target.value)}
-              value={contenu}
-            />
+            <div className={`fr-mb-6w fr-input-group ${compte === 500 && 'fr-input-group--error'}`}>
+              <label
+                className="fr-label fr-sr-only"
+                htmlFor="saisie-contenu-commentaire"
+              >
+                Modification du commentaire
+              </label>
+              <textarea
+                className={`fr-input ${compte === 500 && 'fr-input--error'}`}
+                id="saisie-contenu-commentaire"
+                maxLength={500}
+                name="saisie-contenu-commentaire"
+                onChange={(e) => {
+                  setContenu(e.target.value);
+                  setCompte(e.target.value.length);
+                }}
+                value={contenu}
+              />
+              {compte === 500 &&
+              <p
+                className="fr-error-text"
+                id="text-input-error-desc-error"
+              >
+                Limite de caractères atteinte
+              </p>}
+            </div>
+            <div>
+              <span>
+                {compte}
+              </span>
+              <span>
+                /500
+              </span>
+            </div>
             <div className='boutons'>
               <button
                 className='fr-btn fr-mr-1w'
-                onClick={() => handlePublierCommentaire()}
+                onClick={() => contenu && session?.user?.name && handlePublierCommentaire(contenu, type, session?.user?.name, chantierId)}
                 type='button'
               >
                 Publier
@@ -128,7 +132,7 @@ export default function Commentaire({ type, commentaire, chantierId }: Commentai
         onClick={() => setModeÉdition(true)}
         type='button'
       >
-        Modifier
+        {commentaire ? 'Modifier' : 'Ajouter'}
       </button>
     </CommentaireStyled>
   );
