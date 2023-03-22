@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import logger from '@/server/infrastructure/logger';
 import PosterUnNouveauCommentaireUseCase from '@/server/usecase/commentaire/PosterUnNouveauCommentaireUseCase';
 
@@ -31,7 +30,7 @@ export default async function handlePostCommentaire(request: NextApiRequest, res
   }
   const body = JSON.parse(request.body);
 
-  await posterUnNouveauCommentaire.run(params.chantierId, body);
+  const res = await posterUnNouveauCommentaire.run(params.chantierId, body);
 
-  response.status(200);
+  response.status(200).json(res);
 }

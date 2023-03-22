@@ -2,7 +2,6 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import CommentairesProps from '@/components/PageChantier/Commentaires/Commentaires.interface';
-import typesCommentaire from '@/client/constants/typesCommentaire';
 import Commentaire from '@/components/PageChantier/Commentaires/Commentaire/Commentaire';
 
 export default function Commentaires({ commentaires, chantierId }: CommentairesProps) {

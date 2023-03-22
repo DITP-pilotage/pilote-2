@@ -1,4 +1,5 @@
 import { commentaire, PrismaClient } from '@prisma/client';
+import { faker } from '@faker-js/faker';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import {
   Commentaires,
@@ -100,9 +101,9 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   async postNouveauCommentaire(chantierId: string, typeDeCommentaire: TypeCommentaire, maille: Maille, codeInsee: CodeInsee, détailsCommentaire: DétailsCommentaire) {
     await this.prisma.commentaire.create({
       data: {
-        id: '1',
+        id: faker.helpers.unique(faker.datatype.number),
         chantier_id: chantierId,
-        type: typeDeCommentaire,
+        type: CODES_TYPES_COMMENTAIRES[typeDeCommentaire],
         contenu: détailsCommentaire.contenu,
         date: détailsCommentaire.date,
         auteur: détailsCommentaire.auteur,
