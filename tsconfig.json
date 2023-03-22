@@ -26,6 +26,9 @@
       "@/client/*": [
         "client/*"
       ],
+      "@/hooks/*": [
+        "hooks/*"
+      ],
       "@/server/*": [
         "server/*"
       ],

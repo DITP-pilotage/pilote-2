@@ -4,6 +4,7 @@ import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIn
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ChantierInformation } from '@/components/PageImportIndicateur/ChantierInformation.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
+import useImportIndicateur from '@/hooks/useImportIndicateur';
 
 interface NextPageImportIndicateurProps {
   chantierInformation: ChantierInformation
@@ -34,6 +35,9 @@ export async function getServerSideProps({ params }: GetServerSidePropsContext<{
 }
 
 export default function NextPageImportIndicateur({ chantierInformation }: NextPageImportIndicateurProps) {
+  const { détailsIndicateurs } = useImportIndicateur(chantierInformation.id);
+
+  console.log(détailsIndicateurs);
   return (
     <PageImportIndicateur chantierInformation={chantierInformation} />
   );
