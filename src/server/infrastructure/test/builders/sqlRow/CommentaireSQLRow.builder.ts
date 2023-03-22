@@ -1,7 +1,7 @@
 import { commentaire } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
-import { générerUneMailleAléatoire, générerUnIdentifiantUnique, retourneUneListeDeCodeInseeCohérentePourUneMaille } from '@/server/infrastructure/test/builders/utils';
+import { générerUneMailleAléatoire, retourneUneListeDeCodeInseeCohérentePourUneMaille } from '@/server/infrastructure/test/builders/utils';
 
 export default class CommentaireRowBuilder {
   private _id: commentaire['id'];
@@ -26,7 +26,7 @@ export default class CommentaireRowBuilder {
     const maille = générerUneMailleAléatoire();
     const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
 
-    this._id = générerUnIdentifiantUnique('COM');
+    this._id = faker.helpers.unique(faker.datatype.number);
     this._chantierId = chantierGénéré.id;
     this._type = faker.helpers.arrayElement(['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus', 'objectifs']);
     this._contenu = faker.lorem.paragraph();

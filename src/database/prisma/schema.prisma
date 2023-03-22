@@ -87,7 +87,7 @@ model ppg {
 }
 
 model commentaire {
-    id String @id
+    id Int @id
     chantier_id String
     type String
     contenu String
