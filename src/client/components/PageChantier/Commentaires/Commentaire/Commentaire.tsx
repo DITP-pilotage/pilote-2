@@ -18,7 +18,7 @@ export default function Commentaire({ type, commentaire, chantierId }: Commentai
   const limiteDeCaractères = 500;
   const { data: session } = useSession();
   const { 
-    handlePublierCommentaire, 
+    auClicPublierCommentaire, 
     modeÉdition, 
     setModeÉdition, 
     commentaireÉtat,
@@ -77,7 +77,7 @@ export default function Commentaire({ type, commentaire, chantierId }: Commentai
             <div className='boutons'>
               <button
                 className='fr-btn fr-mr-1w'
-                onClick={() => contenu && session?.user?.name && handlePublierCommentaire(contenu, type, session?.user?.name, chantierId)}
+                onClick={() => contenu && session?.user?.name && auClicPublierCommentaire(contenu, type, chantierId)}
                 type='button'
               >
                 Publier

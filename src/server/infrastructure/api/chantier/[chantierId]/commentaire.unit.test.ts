@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
-import handlePostCommentaire from '@/server/infrastructure/api/chantier/[chantierId]/commentaire';
-import PosterUnNouveauCommentaireUseCase from '@/server/usecase/commentaire/PosterUnNouveauCommentaireUseCase';
+import handlePublierCommentaire from '@/server/infrastructure/api/chantier/[chantierId]/commentaire';
+import PublierUnNouveauCommentaireUseCase from '@/server/usecase/commentaire/PublierUnNouveauCommentaireUseCase';
 
 describe('/api/chantier/:chantierId/commentaire', () => {
   it('renvoyer une erreur si un des champs n\'est pas bien renseigné', () => {
@@ -19,11 +19,11 @@ describe('/api/chantier/:chantierId/commentaire', () => {
         },
       },
     });
-    const stubPosterUnNouveauCommentaireUseCase = <PosterUnNouveauCommentaireUseCase>{};
+    const stubPosterUnNouveauCommentaireUseCase = <PublierUnNouveauCommentaireUseCase>{};
     stubPosterUnNouveauCommentaireUseCase.run = () => Promise.resolve();
 
     // When
-    handlePostCommentaire(req, res, stubPosterUnNouveauCommentaireUseCase);
+    handlePublierCommentaire(req, res, stubPosterUnNouveauCommentaireUseCase);
 
     // Then
     expect(res._getStatusCode()).toBe(400);
@@ -45,11 +45,11 @@ describe('/api/chantier/:chantierId/commentaire', () => {
         },
       },
     });
-    const stubPosterUnNouveauCommentaireUseCase = <PosterUnNouveauCommentaireUseCase>{};
+    const stubPosterUnNouveauCommentaireUseCase = <PublierUnNouveauCommentaireUseCase>{};
     stubPosterUnNouveauCommentaireUseCase.run = () => Promise.resolve();
 
     // When
-    handlePostCommentaire(req, res, stubPosterUnNouveauCommentaireUseCase);
+    handlePublierCommentaire(req, res, stubPosterUnNouveauCommentaireUseCase);
 
     // Then
     expect(res._getStatusCode()).toBe(405);

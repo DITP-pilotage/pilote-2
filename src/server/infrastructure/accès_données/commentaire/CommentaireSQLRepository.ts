@@ -98,18 +98,26 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return this.mapToDomain(commentaireObjectifs);
   }
 
-  async postNouveauCommentaire(chantierId: string, typeDeCommentaire: TypeCommentaire, maille: Maille, codeInsee: CodeInsee, détailsCommentaire: DétailsCommentaire) {
+  async postNouveauCommentaire(chantierId: string, typeDeCommentaire: TypeCommentaire, maille: Maille, codeInsee: CodeInsee, contenu: string, auteur: string, date: string) {
+    const commentaireRow = {
+      id: faker.helpers.unique(faker.datatype.number),
+      chantier_id: chantierId,
+      type: CODES_TYPES_COMMENTAIRES[typeDeCommentaire],
+      contenu: contenu,
+      date: date,
+      auteur: auteur,
+      maille: CODES_MAILLES[maille],
+      code_insee: codeInsee,
+    };
+
     await this.prisma.commentaire.create({
-      data: {
-        id: faker.helpers.unique(faker.datatype.number),
-        chantier_id: chantierId,
-        type: CODES_TYPES_COMMENTAIRES[typeDeCommentaire],
-        contenu: détailsCommentaire.contenu,
-        date: détailsCommentaire.date,
-        auteur: détailsCommentaire.auteur,
-        maille: CODES_MAILLES[maille],
-        code_insee: codeInsee,
-      },
+      data: commentaireRow,
     });
+
+    return {
+      contenu: commentaireRow.contenu,
+      date: commentaireRow.date,
+      auteur: commentaireRow.auteur,
+    };
   }
 }

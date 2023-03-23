@@ -35,6 +35,9 @@
       "@/stores/*": [
         "client/stores/*"
       ],
+      "@/pages/*": [
+        "pages/*"
+      ]
     }
   },
   "include": [

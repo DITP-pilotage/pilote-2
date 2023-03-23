@@ -20,9 +20,9 @@ export const commentairesNull = {
   autresRésultatsObtenus: null,
 };
 
-export type NouveauCommentaire = {
+export type CommentaireÀPublier = {
   typeCommentaire: TypeCommentaire
   maille: Maille
   codeInsee: CodeInsee
-  détailsCommentaire: DétailsCommentaire
+  contenu: string
 };
