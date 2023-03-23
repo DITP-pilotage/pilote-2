@@ -23,7 +23,6 @@ function vérifierLaMéthodeHttp(request: NextApiRequest) {
   }
 }
 
-
 export default async function handlePostCommentaire(request: NextApiRequest, response: NextApiResponse, posterUnNouveauCommentaire = new PosterUnNouveauCommentaireUseCase(),
 ) {
   try {

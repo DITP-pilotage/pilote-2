@@ -1,5 +1,4 @@
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
-import CommentaireSQLRepository from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
 import PosterUnNouveauCommentaireUseCase from './PosterUnNouveauCommentaireUseCase';
 
 describe('PosterUnNouveauCommentaire', () => {
@@ -15,15 +14,14 @@ describe('PosterUnNouveauCommentaire', () => {
         date: '01/01/2023',
         auteur: 'ditp',
       };
-      const stubCommentaireRepository = jest.spyOn(CommentaireSQLRepository, 'postNouveauCommentaire', chantierId);
-      stubCommentaireRepository.postNouveauCommentaire = () => {};
+      const stubCommentaireRepository = { postNouveauCommentaire: jest.fn() } as unknown as CommentaireRepository;
       const posterUnNouveauCommentaire = new PosterUnNouveauCommentaireUseCase(stubCommentaireRepository);
 
       // When
       await posterUnNouveauCommentaire.run(chantierId, { typeCommentaire: typeCommentaire, maille: maille, codeInsee: codeInsee, détailsCommentaire: détailsCommentaire });
 
       // Then
-      expect(stubCommentaireRepository.postNouveauCommentaire).toBeCalledWith(chantierId, typeCommentaire, maille, codeInsee, détailsCommentaire);
+      expect(stubCommentaireRepository.postNouveauCommentaire).toHaveBeenNthCalledWith(1, chantierId, typeCommentaire, maille, codeInsee, détailsCommentaire);
     });
   });
 });
