@@ -1,11 +1,30 @@
 import { render, screen, within } from '@testing-library/react';
 import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIndicateur';
 import { ChantierInformation } from '@/components/PageImportIndicateur/ChantierInformation.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import IndicateurBuilder from '@/server/domain/indicateur/Indicateur.builder';
 
 
 const CHANTIER_NOM = 'Offrir à chaque enfant une éducation culturelle et artistique';
 const CHANTIER_AXE = 'Ceci est un axe';
 const CHANTIER_PPG = 'Ceci est un ppg';
+
+jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function Cartographie() {
+  return (
+    <span>
+      Carto
+    </span>
+  );
+});
+// eslint-disable-next-line react/no-multi-comp
+jest.mock('@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.tsx', () => function IndicateurChart() {
+  return (
+    <span>
+      Indicateur Chart
+    </span>
+  );
+});
 
 describe('PageImportIndicateur', () => {
   describe('En tête', () => {
@@ -20,7 +39,11 @@ describe('PageImportIndicateur', () => {
 
       // WHEN
       render(
-        <PageImportIndicateur chantierInformation={chantierInformation} />,
+        <PageImportIndicateur
+          chantierInformation={chantierInformation}
+          détailsIndicateurs={null}
+          indicateurs={[]}
+        />,
       );
 
       // THEN
@@ -41,7 +64,11 @@ describe('PageImportIndicateur', () => {
 
       // WHEN
       render(
-        <PageImportIndicateur chantierInformation={chantierInformation} />,
+        <PageImportIndicateur
+          chantierInformation={chantierInformation}
+          détailsIndicateurs={null}
+          indicateurs={[]}
+        />,
       );
 
       // THEN
@@ -63,7 +90,11 @@ describe('PageImportIndicateur', () => {
 
       // WHEN
       render(
-        <PageImportIndicateur chantierInformation={chantierInformation} />,
+        <PageImportIndicateur
+          chantierInformation={chantierInformation}
+          détailsIndicateurs={null}
+          indicateurs={[]}
+        />,
       );
 
       // THEN
@@ -90,7 +121,11 @@ describe('PageImportIndicateur', () => {
 
       // WHEN
       render(
-        <PageImportIndicateur chantierInformation={chantierInformation} />,
+        <PageImportIndicateur
+          chantierInformation={chantierInformation}
+          détailsIndicateurs={null}
+          indicateurs={[]}
+        />,
       );
 
       // THEN
@@ -111,7 +146,11 @@ describe('PageImportIndicateur', () => {
 
       // WHEN
       render(
-        <PageImportIndicateur chantierInformation={chantierInformation} />,
+        <PageImportIndicateur
+          chantierInformation={chantierInformation}
+          détailsIndicateurs={null}
+          indicateurs={[]}
+        />,
       );
 
       // THEN
@@ -121,8 +160,15 @@ describe('PageImportIndicateur', () => {
       expect(titreCatégorieIndicateur).toHaveTextContent("Indicateurs d'impact");
     });
 
-    it("doit afficher le titre d'un indicateur", () => {
+    it('doit afficher la liste des titres des indicateurs', async () => {
       // GIVEN
+      const indicateurs: Indicateur[] = [
+        new IndicateurBuilder().avecType('IMPACT').avecNom('IND-CH-123 nom indicateur').build(),
+        new IndicateurBuilder().avecType('CONTEXTE').avecNom('IND-CH-124 nom indicateur 2').build(),
+      ];
+
+      const détailsIndicateurs: DétailsIndicateurs = {};
+
       const chantierInformation: ChantierInformation = {
         id: 'chantierId',
         nom: CHANTIER_NOM,
@@ -131,14 +177,26 @@ describe('PageImportIndicateur', () => {
       };
 
       // WHEN
-      render(
-        <PageImportIndicateur chantierInformation={chantierInformation} />,
+      await render(
+        <PageImportIndicateur
+          chantierInformation={chantierInformation}
+          détailsIndicateurs={détailsIndicateurs}
+          indicateurs={indicateurs}
+        />,
       );
 
       // THEN
-      const titreCatégorieIndicateur = screen.getByText("Titre de l'indicateur");
+      const titreCatégorieIndicateur1 = await screen.getByText('IND-CH-123 nom indicateur');
+      const titreCatégorieIndicateur2 = await screen.getByText('IND-CH-124 nom indicateur 2');
 
-      expect(titreCatégorieIndicateur).toBeInTheDocument();
+      expect(titreCatégorieIndicateur1).toBeInTheDocument();
+      expect(titreCatégorieIndicateur2).toBeInTheDocument();
+    });
+
+    it.todo("quand on a aucun indicateur, doit afficher un bloc indiquant qu'il ny a pas d'indicateur");
+
+    describe("doit afficher les détails de l'indicateur", () => {
+      it.todo('doit afficher sa description, son mode de calcul et sa source');
     });
 
     it("doit afficher un champ d'import de fichier de type tableur", () => {
@@ -152,7 +210,11 @@ describe('PageImportIndicateur', () => {
 
       // WHEN
       render(
-        <PageImportIndicateur chantierInformation={chantierInformation} />,
+        <PageImportIndicateur
+          chantierInformation={chantierInformation}
+          détailsIndicateurs={null}
+          indicateurs={[]}
+        />,
       );
 
       // THEN
@@ -174,7 +236,11 @@ describe('PageImportIndicateur', () => {
 
       // WHEN
       render(
-        <PageImportIndicateur chantierInformation={chantierInformation} />,
+        <PageImportIndicateur
+          chantierInformation={chantierInformation}
+          détailsIndicateurs={null}
+          indicateurs={[]}
+        />,
       );
 
       // THEN

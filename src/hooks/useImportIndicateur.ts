@@ -51,7 +51,7 @@ export default function useImportIndicateur(chantierId: Chantier['id']) {
     récupérerDétailIndicateursPourUnChantierDunTerritoireSelectionné(chantierId, codesInsee, maille)
       .then(réponse => réponse.json() as Promise<DétailsIndicateurs>)
       .then(données => setDétailsIndicateurs(données));
-  });
+  }, [chantierId, mailleAssociéeAuTerritoireSélectionné, mailleSélectionnée, territoireSélectionné.codeInsee, territoiresComparés]);
 
   return { détailsIndicateurs };
 }

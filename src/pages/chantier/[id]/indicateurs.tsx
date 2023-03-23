@@ -5,9 +5,11 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ChantierInformation } from '@/components/PageImportIndicateur/ChantierInformation.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import useImportIndicateur from '@/hooks/useImportIndicateur';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 
 interface NextPageImportIndicateurProps {
   chantierInformation: ChantierInformation
+  indicateurs: Indicateur[]
 }
 
 type GetServerSideProps = Promise<GetServerSidePropsResult<NextPageImportIndicateurProps>>;
@@ -22,8 +24,12 @@ export async function getServerSideProps({ params }: GetServerSidePropsContext<{
   const chantierRepository = dependencies.getChantierRepository();
   const chantier: Chantier = await chantierRepository.getById(params.id);
 
+  const indicateurRepository = dependencies.getIndicateurRepository();
+  const indicateurs = await indicateurRepository.récupérerParChantierId(params.id);
+
   return {
     props: {
+      indicateurs,
       chantierInformation: {
         id: chantier.id,
         nom: chantier.nom,
@@ -34,11 +40,14 @@ export async function getServerSideProps({ params }: GetServerSidePropsContext<{
   };
 }
 
-export default function NextPageImportIndicateur({ chantierInformation }: NextPageImportIndicateurProps) {
+export default function NextPageImportIndicateur({ chantierInformation, indicateurs }: NextPageImportIndicateurProps) {
   const { détailsIndicateurs } = useImportIndicateur(chantierInformation.id);
 
-  console.log(détailsIndicateurs);
   return (
-    <PageImportIndicateur chantierInformation={chantierInformation} />
+    <PageImportIndicateur
+      chantierInformation={chantierInformation}
+      détailsIndicateurs={détailsIndicateurs}
+      indicateurs={indicateurs}
+    />
   );
 }
