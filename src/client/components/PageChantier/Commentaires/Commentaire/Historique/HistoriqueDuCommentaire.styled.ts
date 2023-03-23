@@ -9,6 +9,7 @@ const HistoriqueDuCommentaireStyled = styled.dialog`
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    border-radius: 0.5rem;
 
     .commentaires {
       height: 100%;
