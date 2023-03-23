@@ -19,6 +19,13 @@ export function useHistoriqueDuCommentaire(typeCommentaire: TypeCommentaire) {
   }, [estModaleOuverte]);
 
   useEffect(() => {
+    setHistoriqueDuCommentaire(null);
+  }, [
+    chantierId, typeCommentaire,
+    mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee,
+  ]);
+
+  useEffect(() => {
     if (!chantierId || !estModaleOuverte)
       return;
 
