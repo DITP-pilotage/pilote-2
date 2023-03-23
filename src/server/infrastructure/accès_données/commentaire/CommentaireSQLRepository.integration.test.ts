@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import { commentaire } from '@prisma/client';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import CommentaireSQLRepository, {

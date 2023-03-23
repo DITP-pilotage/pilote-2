@@ -15,12 +15,13 @@ export function useHistoriqueDuCommentaire(typeCommentaire: TypeCommentaire) {
   const [estModaleOuverte, setEstModaleOuverte] = useState(false);
 
   useEffect(() => {
+    document.body.style.overflow = estModaleOuverte ? 'hidden' : 'unset';
+  }, [estModaleOuverte]);
+
+  useEffect(() => {
     if (!chantierId || !estModaleOuverte)
       return;
 
-    if (estModaleOuverte && historiqueDuCommentaire !== null)
-      return;
-    
     fetch(`/api/chantier/${chantierId}/historique-du-commentaire?`
       + new URLSearchParams({
         chantierId,
@@ -37,8 +38,8 @@ export function useHistoriqueDuCommentaire(typeCommentaire: TypeCommentaire) {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    chantierId, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee,
-    typeCommentaire, estModaleOuverte,
+    chantierId, typeCommentaire, estModaleOuverte,
+    mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee,
   ]);
 
   return {
