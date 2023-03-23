@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import logger from '@/server/infrastructure/logger';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { typeCommentaire, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import RécupérerLHistoriqueDuCommentaireUseCase
+  from '@/server/usecase/commentaire/RécupérerLHistoriqueDuCommentaireUseCase';
 
 class ParsingError extends Error {}
 
@@ -31,7 +32,7 @@ function parseQueryParams(request: NextApiRequest): { chantierId: string, maille
 export default async function handleHistoriqueDuCommentaire(
   request: NextApiRequest,
   response: NextApiResponse,
-  commentaireRepository = dependencies.getCommentaireRepository(),
+  récupérerLHistoriqueDuCommentaireUseCase = new RécupérerLHistoriqueDuCommentaireUseCase(),
 ) {
   let params;
 
@@ -46,7 +47,7 @@ export default async function handleHistoriqueDuCommentaire(
     throw error;
   }
 
-  const historiqueDuCommentaire = await commentaireRepository.chercherToutPourUnChantierUnTerritoireEtUnType(params.chantierId, params.maille, params.codeInsee, params.type);
+  const historiqueDuCommentaire = await récupérerLHistoriqueDuCommentaireUseCase.run(params.chantierId, params.maille, params.codeInsee, params.type);
 
-  response.status(200).json({ historiqueDuCommentaire });
+  response.status(200).json(historiqueDuCommentaire);
 }

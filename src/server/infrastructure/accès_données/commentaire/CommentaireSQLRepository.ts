@@ -68,7 +68,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   }
 
   async chercherToutPourUnChantierUnTerritoireEtUnType(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<DétailsCommentaire[]> {
-    const historiqueDuCommentaire: commentaire[] = await this.prisma.commentaire.findMany({
+    const commentaires: commentaire[] = await this.prisma.commentaire.findMany({
       where: {
         chantier_id: chantierId,
         maille: CODES_MAILLES[maille],
@@ -78,7 +78,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
       orderBy: { date: 'desc' },
     });
 
-    return historiqueDuCommentaire.map(commentaireDeLHistorique => this.mapToDomain(commentaireDeLHistorique));
+    return commentaires.map(commentaireDeLHistorique => this.mapToDomain(commentaireDeLHistorique));
   }
 
   async getObjectifsByChantierId(chantierId: string): Promise<DétailsCommentaire | null> {
