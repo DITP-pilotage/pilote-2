@@ -1,6 +1,17 @@
 import styled from '@emotion/styled';
 
 const HistoriqueDuCommentaireStyled = styled.div`
+  .bouton-ouvrir-modale {
+    font-size: 0.875rem;
+    line-height: 1.125rem;
+    border-bottom: 1px solid;
+  }
+  
+  .bouton-ouvrir-modale:hover {
+    background-color: unset;
+    border-bottom-width: 2px;
+  }
+  
   .bouton-fermer-modale {
     align-items: center;
   }

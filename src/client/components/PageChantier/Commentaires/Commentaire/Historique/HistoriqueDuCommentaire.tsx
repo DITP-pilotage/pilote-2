@@ -16,7 +16,7 @@ export default function HistoriqueDuCommentaire({ typeCommentaire }: HistoriqueD
   return (
     <HistoriqueDuCommentaireStyled>
       <button
-        className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-text--sm fr-mt-2w"
+        className="fr-link fr-link--icon-left fr-fi-arrow-right-line fr-mt-2w bouton-ouvrir-modale"
         onClick={() => {
           setEstModaleOuverte(!estModaleOuverte);
         }}
