@@ -12,4 +12,4 @@ then
   fi
 fi
 
-dbt run --project-dir pilote_data_jobs/transformations/ditp_ppg_dbt/ --profiles-dir pilote_data_jobs/transformations/dbt_root/ --select intermediate marts
+dbt run --project-dir pilote_data_jobs/ --select intermediate marts

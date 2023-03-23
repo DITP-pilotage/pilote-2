@@ -6,15 +6,14 @@ input_data/private_data
 ##
 # dbt
 # Root config
-pilote_data_jobs/transformations/dbt_root/.user.yml
+.user.yml
 # Project artifacts
-pilote_data_jobs/transformations/ditp_ppg_dbt/target/
+pilote_data_jobs/target/
 pilote_data_jobs/logs/
-pilote_data_jobs/transformations/ditp_ppg_dbt/dbt_packages/
-pilote_data_jobs/transformations/ditp_ppg_dbt/logs/
-pilote_data_jobs/transformations/ditp_ppg_dbt/dbt/logs
+pilote_data_jobs/dbt_packages/
+pilote_data_jobs/dbt/logs
 
-pilote_data_jobs/transformations/ditp_ppg_dbt/seeds/ppg_metadata
+pilote_data_jobs/seeds/ppg_metadata
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

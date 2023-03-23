@@ -100,7 +100,7 @@ Modifier les valeurs de votre `.env` pour les faire pointer vers votre tunnel
 Depuis le répertoire data :
 
 ```bash
-bash pilote_data_jobs/scripts/fill_tables_raw_data.sh private_data
+bash scripts/fill_tables_raw_data.sh private_data
 ```
 
 ### Transformations
@@ -116,7 +116,7 @@ local et un exemple en live).
 Depuis le répertoire data :
 
 ```bash
-bash pilote_data_jobs/scripts/fill_tables_public.sh
+bash scripts/fill_tables_public.sh
 ```
 
 #### Hypothèses actuelles pour les transformations
