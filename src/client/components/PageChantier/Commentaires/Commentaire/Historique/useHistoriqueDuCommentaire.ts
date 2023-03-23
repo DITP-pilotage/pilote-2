@@ -6,27 +6,19 @@ import {
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
-export function useHistoriqueDuCommentaire(typeCommentaire: TypeCommentaire) {
+export function useHistoriqueDuCommentaire(typeCommentaire: TypeCommentaire, estAffiché: boolean) {
   const router = useRouter();
   const chantierId = router.query.id as string; //TODO changer id pour chantierId
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const [historiqueDuCommentaire, setHistoriqueDuCommentaire] = useState<DétailsCommentaire[] | null>(null);
-  const [estModaleOuverte, setEstModaleOuverte] = useState(false);
-
-  useEffect(() => {
-    document.body.style.overflow = estModaleOuverte ? 'hidden' : 'unset';
-  }, [estModaleOuverte]);
 
   useEffect(() => {
     setHistoriqueDuCommentaire(null);
-  }, [
-    chantierId, typeCommentaire,
-    mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee,
-  ]);
+  }, [chantierId, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
 
   useEffect(() => {
-    if (!chantierId || !estModaleOuverte)
+    if (!chantierId || !estAffiché)
       return;
 
     fetch(`/api/chantier/${chantierId}/historique-du-commentaire?`
@@ -44,15 +36,10 @@ export function useHistoriqueDuCommentaire(typeCommentaire: TypeCommentaire) {
         setHistoriqueDuCommentaire(données.historiqueDuCommentaire ?? []);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    chantierId, typeCommentaire, estModaleOuverte,
-    mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee,
-  ]);
+  }, [estAffiché]);
 
   return {
     historiqueDuCommentaire,
     territoireSélectionné,
-    estModaleOuverte,
-    setEstModaleOuverte,
   };
 }
