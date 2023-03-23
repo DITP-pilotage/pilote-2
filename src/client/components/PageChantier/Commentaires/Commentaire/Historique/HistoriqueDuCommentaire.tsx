@@ -14,18 +14,19 @@ export default function HistoriqueDuCommentaire({ type }: HistoriqueDuCommentair
   const [estAffiché, setEstAffiché] = useState(false);
 
   useEffect(() => {
-    if (!modale.current)
+    const modaleHTML = modale.current;
+    if (!modaleHTML)
       return;
 
     const àLaFermetureDeLaModale = () => setEstAffiché(false);
     const àLOuvertureDeLaModale = () => setEstAffiché(true);
 
-    modale.current.addEventListener('dsfr.conceal', àLaFermetureDeLaModale);
-    modale.current.addEventListener('dsfr.disclose', àLOuvertureDeLaModale);
+    modaleHTML.addEventListener('dsfr.conceal', àLaFermetureDeLaModale);
+    modaleHTML.addEventListener('dsfr.disclose', àLOuvertureDeLaModale);
 
     return () => {
-      modale.current?.removeEventListener('dsfr.conceal', àLaFermetureDeLaModale);
-      modale.current?.removeEventListener('dsfr.disclose', àLOuvertureDeLaModale);
+      modaleHTML?.removeEventListener('dsfr.conceal', àLaFermetureDeLaModale);
+      modaleHTML?.removeEventListener('dsfr.disclose', àLOuvertureDeLaModale);
     };
   }, [modale]);
 
