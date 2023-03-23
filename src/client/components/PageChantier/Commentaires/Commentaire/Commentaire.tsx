@@ -1,9 +1,12 @@
+import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
 import Titre from '@/components/_commons/Titre/Titre';
 import CommentaireProps from '@/components/PageChantier/Commentaires/Commentaire/Commentaire.interface';
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
+import HistoriqueDuCommentaire
+  from '@/components/PageChantier/Commentaires/Commentaire/Historique/HistoriqueDuCommentaire';
 
-export default function Commentaire({ titre, commentaire }: CommentaireProps) {
+export default function Commentaire({ titre, commentaire, typeCommentaire }: CommentaireProps) {
   return (
     <section>
       <Titre
@@ -24,6 +27,21 @@ export default function Commentaire({ titre, commentaire }: CommentaireProps) {
               dangerouslySetInnerHTML={{
                 __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(commentaire.contenu),
               }}
+            />
+            <button
+              aria-controls={`modale-historique-commentaires-${typeCommentaire}`}
+              className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-text--sm fr-mt-2w"
+              data-fr-opened="false"
+              type="button"
+            >
+              Voir l&apos;historique
+            </button>
+            <HistoriqueDuCommentaire
+              auteur={commentaire.auteur}
+              chaîneDeCaractères={commentaire.contenu}
+              sousTitre="National"
+              sqlDate={commentaire.date}
+              typeCommentaire={typeCommentaire}
             />
           </>
         ) : (
