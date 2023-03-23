@@ -3,8 +3,8 @@ import logger from '@/server/infrastructure/logger';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { typeCommentaire, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
-import RécupérerLHistoriqueDuCommentaireUseCase
-  from '@/server/usecase/commentaire/RécupérerLHistoriqueDuCommentaireUseCase';
+import RécupérerLHistoriqueDUnCommentaireUseCase
+  from '@/server/usecase/commentaire/RécupérerLHistoriqueDUnCommentaireUseCase';
 
 class ParsingError extends Error {}
 
@@ -29,10 +29,10 @@ function parseQueryParams(request: NextApiRequest): { chantierId: string, maille
   return { chantierId, maille, codeInsee, type };
 }
 
-export default async function handleHistoriqueDuCommentaire(
+export default async function handleHistoriqueDUnCommentaire(
   request: NextApiRequest,
   response: NextApiResponse,
-  récupérerLHistoriqueDuCommentaireUseCase = new RécupérerLHistoriqueDuCommentaireUseCase(),
+  récupérerLHistoriqueDUnCommentaireUseCase = new RécupérerLHistoriqueDUnCommentaireUseCase(),
 ) {
   let params;
 
@@ -47,7 +47,7 @@ export default async function handleHistoriqueDuCommentaire(
     throw error;
   }
 
-  const historiqueDuCommentaire = await récupérerLHistoriqueDuCommentaireUseCase.run(params.chantierId, params.maille, params.codeInsee, params.type);
+  const historiqueDUnCommentaire = await récupérerLHistoriqueDUnCommentaireUseCase.run(params.chantierId, params.maille, params.codeInsee, params.type);
 
-  response.status(200).json(historiqueDuCommentaire);
+  response.status(200).json(historiqueDUnCommentaire);
 }

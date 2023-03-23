@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const HistoriqueDuCommentaireStyled = styled.div`
+const HistoriqueDUnCommentaireStyled = styled.div`
   .bouton-ouvrir-modale {
     font-size: 0.875rem;
     line-height: 1.125rem;
@@ -39,4 +39,4 @@ const HistoriqueDuCommentaireStyled = styled.div`
   }
 `;
 
-export default HistoriqueDuCommentaireStyled;
+export default HistoriqueDUnCommentaireStyled;

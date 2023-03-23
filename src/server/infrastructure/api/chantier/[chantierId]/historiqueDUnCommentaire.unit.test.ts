@@ -1,8 +1,8 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { createMocks } from 'node-mocks-http';
-import RécupérerLHistoriqueDuCommentaireUseCase
-  from '@/server/usecase/commentaire/RécupérerLHistoriqueDuCommentaireUseCase';
-import handleHistoriqueDuCommentaire from './historiqueDuChantier';
+import RécupérerLHistoriqueDUnCommentaireUseCase
+  from '@/server/usecase/commentaire/RécupérerLHistoriqueDUnCommentaireUseCase';
+import handleHistoriqueDUnCommentaire from './historiqueDUnCommentaire';
 
 describe('/api/chantier/:chantierId/historique-du-chantier', () => {
 
@@ -12,18 +12,18 @@ describe('/api/chantier/:chantierId/historique-du-chantier', () => {
       method: 'GET',
       query: { chantierId: 'CH-001', maille: 'départementale', codeInsee: '25', type: 'freinsÀLever' },
     });
-    const historiqueDuCommentaire =  {
-      historiqueDuCommentaire: [],
+    const historiqueDUnCommentaire =  {
+      historiqueDUnCommentaire: [],
     };
-    const stubRécupérerLHistoriqueDuCommentaireUseCase = <RécupérerLHistoriqueDuCommentaireUseCase>{};
-    stubRécupérerLHistoriqueDuCommentaireUseCase.run = () => Promise.resolve(historiqueDuCommentaire);
+    const stubRécupérerLHistoriqueDUnCommentaireUseCase = <RécupérerLHistoriqueDUnCommentaireUseCase>{};
+    stubRécupérerLHistoriqueDUnCommentaireUseCase.run = () => Promise.resolve(historiqueDUnCommentaire);
 
     // WHEN
-    await handleHistoriqueDuCommentaire(req, res, stubRécupérerLHistoriqueDuCommentaireUseCase);
+    await handleHistoriqueDUnCommentaire(req, res, stubRécupérerLHistoriqueDUnCommentaireUseCase);
 
     // THEN
     expect(res._getStatusCode()).toBe(200);
-    expect(res._getJSONData()).toStrictEqual(historiqueDuCommentaire);
+    expect(res._getJSONData()).toStrictEqual(historiqueDUnCommentaire);
   });
 
   test('renvoie l\'historique des commentaires enregistrés en base de données', async () => {
@@ -32,8 +32,8 @@ describe('/api/chantier/:chantierId/historique-du-chantier', () => {
       method: 'GET',
       query: { chantierId: 'CH-001', maille: 'départementale', codeInsee: '25', type: 'freinsÀLever' },
     });
-    const historiqueDuCommentaire =  {
-      historiqueDuCommentaire: [
+    const historiqueDUnCommentaire =  {
+      historiqueDUnCommentaire: [
         {
           auteur: 'Jean Bon',
           contenu: 'Mon commentaire 2023',
@@ -45,15 +45,15 @@ describe('/api/chantier/:chantierId/historique-du-chantier', () => {
         },
       ],
     };
-    const stubRécupérerLHistoriqueDuCommentaireUseCase = <RécupérerLHistoriqueDuCommentaireUseCase>{};
-    stubRécupérerLHistoriqueDuCommentaireUseCase.run = () => Promise.resolve(historiqueDuCommentaire);
+    const stubRécupérerLHistoriqueDUnCommentaireUseCase = <RécupérerLHistoriqueDUnCommentaireUseCase>{};
+    stubRécupérerLHistoriqueDUnCommentaireUseCase.run = () => Promise.resolve(historiqueDUnCommentaire);
 
     // WHEN
-    await handleHistoriqueDuCommentaire(req, res, stubRécupérerLHistoriqueDuCommentaireUseCase);
+    await handleHistoriqueDUnCommentaire(req, res, stubRécupérerLHistoriqueDUnCommentaireUseCase);
 
     // THEN
     expect(res._getStatusCode()).toBe(200);
-    expect(res._getJSONData()).toStrictEqual(historiqueDuCommentaire);
+    expect(res._getJSONData()).toStrictEqual(historiqueDUnCommentaire);
   });
 });
 
@@ -66,7 +66,7 @@ describe('quand les paramètres sont incomplets', () => {
       query: { maille: 'départementale', codeInsee: '27', type: 'freinsÀLever' },
     });
       // WHEN
-    await handleHistoriqueDuCommentaire(req, res, <RécupérerLHistoriqueDuCommentaireUseCase>{});
+    await handleHistoriqueDUnCommentaire(req, res, <RécupérerLHistoriqueDUnCommentaireUseCase>{});
     // THEN
     expect(res._getStatusCode()).toBe(400);
   });
@@ -78,7 +78,7 @@ describe('quand les paramètres sont incomplets', () => {
       query: { chantierId: 'CH-001', codeInsee: '28', type: 'freinsÀLever' },
     });
       // WHEN
-    await handleHistoriqueDuCommentaire(req, res, <RécupérerLHistoriqueDuCommentaireUseCase>{});
+    await handleHistoriqueDUnCommentaire(req, res, <RécupérerLHistoriqueDUnCommentaireUseCase>{});
     // THEN
     expect(res._getStatusCode()).toBe(400);
   });
@@ -90,7 +90,7 @@ describe('quand les paramètres sont incomplets', () => {
       query: { chantierId: 'CH-001', maille: 'départementale', type: 'freinsÀLever' },
     });
       // WHEN
-    await handleHistoriqueDuCommentaire(req, res, <RécupérerLHistoriqueDuCommentaireUseCase>{});
+    await handleHistoriqueDUnCommentaire(req, res, <RécupérerLHistoriqueDUnCommentaireUseCase>{});
     // THEN
     expect(res._getStatusCode()).toBe(400);
   });
@@ -102,7 +102,7 @@ describe('quand les paramètres sont incomplets', () => {
       query: { chantierId: 'CH-001', maille: 'départementale', codeInsee: '26' },
     });
       // WHEN
-    await handleHistoriqueDuCommentaire(req, res, <RécupérerLHistoriqueDuCommentaireUseCase>{});
+    await handleHistoriqueDUnCommentaire(req, res, <RécupérerLHistoriqueDUnCommentaireUseCase>{});
     // THEN
     expect(res._getStatusCode()).toBe(400);
   });
@@ -115,7 +115,7 @@ describe('quand les paramètres sont incomplets', () => {
         query: { chantierId: 'CH-001', maille: 'départementale', codeInsee: '26', type: 'TYPE_DE_COMMENTAIRE_INVALIDE' },
       });
       // WHEN
-      await handleHistoriqueDuCommentaire(req, res, <RécupérerLHistoriqueDuCommentaireUseCase>{});
+      await handleHistoriqueDUnCommentaire(req, res, <RécupérerLHistoriqueDUnCommentaireUseCase>{});
       // THEN
       expect(res._getStatusCode()).toBe(400);
     });

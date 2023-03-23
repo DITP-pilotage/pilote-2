@@ -4,14 +4,14 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { DétailsCommentaire, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 
-export default class RécupérerLHistoriqueDuCommentaireUseCase {
+export default class RécupérerLHistoriqueDUnCommentaireUseCase {
   constructor(
     private readonly commentaireRepository: CommentaireRepository = dependencies.getCommentaireRepository(),
   ) {}
 
-  async run(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<{ historiqueDuCommentaire: DétailsCommentaire[] }> {
+  async run(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<{ historiqueDUnCommentaire: DétailsCommentaire[] }> {
     return {
-      historiqueDuCommentaire: await this.commentaireRepository.chercherToutPourUnChantierUnTerritoireEtUnType(chantierId, maille, codeInsee, type),
+      historiqueDUnCommentaire: await this.commentaireRepository.chercherToutPourUnChantierUnTerritoireEtUnType(chantierId, maille, codeInsee, type),
     };
   }
 }

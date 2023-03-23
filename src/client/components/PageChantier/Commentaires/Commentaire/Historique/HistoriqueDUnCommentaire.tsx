@@ -3,12 +3,12 @@ import Titre from '@/components/_commons/Titre/Titre';
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
 import {
-  useHistoriqueDuCommentaire,
-} from '@/components/PageChantier/Commentaires/Commentaire/Historique/useHistoriqueDuCommentaire';
-import HistoriqueDuCommentaireProps from './HistoriqueDuCommentaire.interface';
-import HistoriqueDuCommentaireStyled from './HistoriqueDuCommentaire.styled';
+  useHistoriqueDUnCommentaire,
+} from '@/components/PageChantier/Commentaires/Commentaire/Historique/useHistoriqueDUnCommentaire';
+import HistoriqueDUnCommentaireProps from './HistoriqueDUnCommentaire.interface';
+import HistoriqueDUnCommentaireStyled from './HistoriqueDUnCommentaire.styled';
 
-export default function HistoriqueDuCommentaire({ type }: HistoriqueDuCommentaireProps) {
+export default function HistoriqueDUnCommentaire({ type }: HistoriqueDUnCommentaireProps) {
 
   const modale = useRef<HTMLDialogElement>(null);
   const [estAffiché, setEstAffiché] = useState(false);
@@ -30,10 +30,10 @@ export default function HistoriqueDuCommentaire({ type }: HistoriqueDuCommentair
     };
   }, [modale]);
 
-  const { historiqueDuCommentaire, territoireSélectionné } = useHistoriqueDuCommentaire(type, estAffiché);
+  const { historiqueDUnCommentaire, territoireSélectionné } = useHistoriqueDUnCommentaire(type, estAffiché);
 
   return (
-    <HistoriqueDuCommentaireStyled>
+    <HistoriqueDUnCommentaireStyled>
       <button
         aria-controls={`historique-commentaire-${type}`}
         className="fr-link fr-link--icon-left fr-fi-arrow-right-line fr-mt-2w bouton-ouvrir-modale"
@@ -73,12 +73,12 @@ export default function HistoriqueDuCommentaire({ type }: HistoriqueDuCommentair
             <div className="fr-modal__content fr-px-4w fr-mb-4w commentaires">
               <div>
                 {
-                  historiqueDuCommentaire === null ? (
+                  historiqueDUnCommentaire === null ? (
                     <p>
                       Chargement de l&apos;historique...
                     </p>
                   ) : (
-                    historiqueDuCommentaire.map((commentaire, i) => (
+                    historiqueDUnCommentaire.map((commentaire, i) => (
                       <Fragment key={commentaire.date}>
                         {
                           i !== 0 && (
@@ -106,6 +106,6 @@ export default function HistoriqueDuCommentaire({ type }: HistoriqueDuCommentair
           </div>
         </div>
       </dialog>
-    </HistoriqueDuCommentaireStyled>
+    </HistoriqueDUnCommentaireStyled>
   );
 }

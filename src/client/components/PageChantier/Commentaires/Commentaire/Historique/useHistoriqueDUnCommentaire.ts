@@ -6,22 +6,22 @@ import {
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
-export function useHistoriqueDuCommentaire(typeCommentaire: TypeCommentaire, estAffiché: boolean) {
+export function useHistoriqueDUnCommentaire(typeCommentaire: TypeCommentaire, estAffiché: boolean) {
   const router = useRouter();
   const chantierId = router.query.id as string; //TODO changer id pour chantierId
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-  const [historiqueDuCommentaire, setHistoriqueDuCommentaire] = useState<DétailsCommentaire[] | null>(null);
+  const [historiqueDUnCommentaire, setHistoriqueDUnCommentaire] = useState<DétailsCommentaire[] | null>(null);
 
   useEffect(() => {
-    setHistoriqueDuCommentaire(null);
+    setHistoriqueDUnCommentaire(null);
   }, [chantierId, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
 
   useEffect(() => {
     if (!chantierId || !estAffiché)
       return;
 
-    fetch(`/api/chantier/${chantierId}/historique-du-commentaire?`
+    fetch(`/api/chantier/${chantierId}/historique-d-un-commentaire?`
       + new URLSearchParams({
         chantierId,
         maille: mailleAssociéeAuTerritoireSélectionné,
@@ -33,13 +33,13 @@ export function useHistoriqueDuCommentaire(typeCommentaire: TypeCommentaire, est
       })
       .then(données => {
         // TODO améliorer la gestion d'erreur
-        setHistoriqueDuCommentaire(données.historiqueDuCommentaire ?? []);
+        setHistoriqueDUnCommentaire(données.historiqueDUnCommentaire ?? []);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [estAffiché]);
 
   return {
-    historiqueDuCommentaire,
+    historiqueDUnCommentaire,
     territoireSélectionné,
   };
 }

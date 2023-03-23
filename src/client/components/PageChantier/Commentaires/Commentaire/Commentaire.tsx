@@ -3,8 +3,8 @@ import Titre from '@/components/_commons/Titre/Titre';
 import CommentaireProps from '@/components/PageChantier/Commentaires/Commentaire/Commentaire.interface';
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
-import HistoriqueDuCommentaire
-  from '@/components/PageChantier/Commentaires/Commentaire/Historique/HistoriqueDuCommentaire';
+import HistoriqueDUnCommentaire
+  from '@/components/PageChantier/Commentaires/Commentaire/Historique/HistoriqueDUnCommentaire';
 
 export default function Commentaire({ titre, commentaire, type }: CommentaireProps) {
   return (
@@ -28,7 +28,7 @@ export default function Commentaire({ titre, commentaire, type }: CommentairePro
                 __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(commentaire.contenu),
               }}
             />
-            <HistoriqueDuCommentaire
+            <HistoriqueDUnCommentaire
               type={type}
             />
           </>
