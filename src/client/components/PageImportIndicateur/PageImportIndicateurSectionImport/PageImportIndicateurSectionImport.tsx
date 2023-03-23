@@ -29,8 +29,11 @@ export default function PageImportIndicateurSectionImport({ chantierId, détails
     }
   
     const body = new FormData();
+    let schéma = 'https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/templates/arbre/schema_arbre.json';
+
     body.append('file', file);
-  
+    body.append('schema', schéma);
+
     await fetch(`/api/chantier/${chantierId}/indicateur/indicateurIdToBeDefined`, {
       method: 'POST',
       body,

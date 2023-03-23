@@ -5,8 +5,11 @@ import MinistèreRepository from '@/server/domain/ministère/MinistèreRepositor
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import IndicateurSQLRepository from '@/server/infrastructure/accès_données/indicateur/IndicateurSQLRepository';
 import MinistèreSQLRepository from '@/server/infrastructure/accès_données/ministère/MinistèreSQLRepository';
-import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
-import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/accès_données/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
+import SynthèseDesRésultatsRepository
+  from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
+import {
+  SynthèseDesRésultatsSQLRepository,
+} from '@/server/infrastructure/accès_données/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import logger from '@/server/infrastructure/logger';
 import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
 import AxeSQLRepository from '@/server/infrastructure/accès_données/axe/AxeSQLRepository';
@@ -15,6 +18,13 @@ import PpgSQLRepository from '@/server/infrastructure/accès_données/ppg/PpgSQL
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import CommentaireSQLRepository from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
+import {
+  ValiderFichierIndicateurImporteUseCase,
+} from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
+import {
+  ValidataFichierIndicateurValidationService,
+} from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
+import { FetchHttpClient } from '@/server/import-indicateur/infrastructure/adapters/FetchHttpClient';
 import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
 
 class Dependencies {
@@ -34,7 +44,14 @@ class Dependencies {
 
   private readonly _objectifRepository: ObjectifRepository;
 
+  private readonly _validerFichierIndicateurImporteUseCase: ValiderFichierIndicateurImporteUseCase;
+
   constructor() {
+    const httpClient = new FetchHttpClient();
+    const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
+    this._validerFichierIndicateurImporteUseCase = new ValiderFichierIndicateurImporteUseCase({ fichierIndicateurValidationService });
+
+
     logger.info('Using database.');
     const prisma = new PrismaClient();
     this._chantierRepository = new ChantierSQLRepository(prisma);
@@ -77,6 +94,10 @@ class Dependencies {
 
   getIndicateurRepository(): IndicateurRepository {
     return this._indicateurRepository;
+  }
+
+  getValiderFichierIndicateurImporteUseCase(): ValiderFichierIndicateurImporteUseCase {
+    return this._validerFichierIndicateurImporteUseCase;
   }
 }
 
