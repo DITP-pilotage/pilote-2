@@ -1,8 +1,7 @@
 import { Fragment } from 'react';
-import { formaterDate } from '@/client/utils/date/date';
-import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
 import useHistoriqueDUnCommentaire from '@/components/PageChantier/Commentaires/Commentaire/Historique/useHistoriqueDUnCommentaire';
 import Modale from '@/components/_commons/Modale/Modale';
+import Publication from '@/components/PageChantier/Publication/Publication';
 import HistoriqueDUnCommentaireProps from './HistoriqueDUnCommentaire.interface';
 
 export default function HistoriqueDUnCommentaire({ type }: HistoriqueDUnCommentaireProps) {
@@ -32,15 +31,11 @@ export default function HistoriqueDUnCommentaire({ type }: HistoriqueDUnCommenta
                   )
                 }
                 <div className="fr-mx-2w">
-                  <p className="fr-text--xs texte-gris fr-mb-1w">
-                    {`Mis à jour le ${formaterDate(commentaire.date, 'jj/mm/aaaa')} | par ${commentaire.auteur}`}
-                  </p>
-                  <p
-                    className="fr-text--sm fr-mb-0"
-                    // eslint-disable-next-line react/no-danger
-                    dangerouslySetInnerHTML={{
-                      __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(commentaire.contenu),
-                    }}
+                  <Publication
+                    auteur={commentaire.auteur}
+                    contenu={commentaire.contenu}
+                    date={commentaire.date}
+                    messageSiAucunContenu="Le commentaire est vide."
                   />
                 </div>
               </Fragment>

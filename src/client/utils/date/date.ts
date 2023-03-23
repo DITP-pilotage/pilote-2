@@ -5,13 +5,13 @@ const toLocaleDateStringOptions: Record<FormatDeDate, Intl.DateTimeFormatOptions
   'jj/mm/aaaa': { year: 'numeric', month: 'numeric', day: 'numeric' },
 };
 
-export function formaterDate(sqlDate: string | null | undefined, format: FormatDeDate) {
-  if (!sqlDate)
+export function formaterDate(dateISO: string | null | undefined, format: FormatDeDate) {
+  if (!dateISO)
     return null;
 
-  if (Number.isNaN(Date.parse(sqlDate)))
+  if (Number.isNaN(Date.parse(dateISO)))
     return null;
 
-  const date = new Date(sqlDate);
+  const date = new Date(dateISO);
   return date.toLocaleDateString('fr-FR', toLocaleDateStringOptions[format]);
 }

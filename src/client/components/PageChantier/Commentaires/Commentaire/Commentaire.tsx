@@ -1,10 +1,9 @@
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
 import Titre from '@/components/_commons/Titre/Titre';
 import CommentaireProps from '@/components/PageChantier/Commentaires/Commentaire/Commentaire.interface';
-import { formaterDate } from '@/client/utils/date/date';
-import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
 import HistoriqueDUnCommentaire
   from '@/components/PageChantier/Commentaires/Commentaire/Historique/HistoriqueDUnCommentaire';
+import Publication from '@/components/PageChantier/Publication/Publication';
 
 export default function Commentaire({ titre, commentaire, type }: CommentaireProps) {
   return (
@@ -18,15 +17,11 @@ export default function Commentaire({ titre, commentaire, type }: CommentairePro
       {
         commentaire ? (
           <>
-            <p className="fr-text--xs texte-gris fr-mb-1w">
-              {`Mis à jour le ${formaterDate(commentaire.date, 'jj/mm/aaaa')} | par ${commentaire.auteur}`}
-            </p>
-            <p
-              className="fr-text--sm fr-mb-0"
-              // eslint-disable-next-line react/no-danger
-              dangerouslySetInnerHTML={{
-                __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(commentaire.contenu),
-              }}
+            <Publication
+              auteur={commentaire.auteur}
+              contenu={commentaire.contenu}
+              date={commentaire.date}
+              messageSiAucunContenu="Le commentaire est vide."
             />
             <HistoriqueDUnCommentaire
               type={type}
