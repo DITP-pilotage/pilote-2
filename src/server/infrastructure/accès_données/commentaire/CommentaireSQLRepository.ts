@@ -49,7 +49,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   }
 
 
-  async findNewestByChantierIdAndTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Commentaires> {
+  async getDernierCommentaireParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Commentaires> {
     const commentaires: commentaire[] = await this.prisma.commentaire.findMany({
       where: {
         chantier_id: chantierId,
@@ -61,10 +61,10 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     });
 
     return {
-      freinsÀLever: this.getFirstCommentaireForAGivenType(commentaires, 'freins_a_lever'),
-      actionsÀVenir: this.getFirstCommentaireForAGivenType(commentaires, 'actions_a_venir'),
-      actionsÀValoriser: this.getFirstCommentaireForAGivenType(commentaires, 'actions_a_valoriser'),
-      autresRésultatsObtenus: this.getFirstCommentaireForAGivenType(commentaires, 'autres_resultats_obtenus'),
+      freinsÀLever: this.getPremierCommentairePourUnTypeDonné(commentaires, 'freins_a_lever'),
+      actionsÀVenir: this.getPremierCommentairePourUnTypeDonné(commentaires, 'actions_a_venir'),
+      actionsÀValoriser: this.getPremierCommentairePourUnTypeDonné(commentaires, 'actions_a_valoriser'),
+      autresRésultatsObtenus: this.getPremierCommentairePourUnTypeDonné(commentaires, 'autres_resultats_obtenus'),
     };
   }
 

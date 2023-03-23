@@ -35,7 +35,7 @@ describe('RécupérerLeDétailDUnChantierTerritorialiséeUseCase', () => {
         auteur: 'un auteur',
       });
       const stubCommentaireRepository = <CommentaireRepository>{};
-      stubCommentaireRepository.findNewestByChantierIdAndTerritoire = () => Promise.resolve(commentairesNull);
+      stubCommentaireRepository.getDernierCommentaireParChantierIdEtTerritoire = () => Promise.resolve(commentairesNull);
       const récupérerLeDétailDUnChantierTerritorialiséeUseCase = new RécupérerLeDétailDUnChantierTerritorialiséeUseCase(
         stubChantierRepository, stubSynthèseDesRésultatsRepository, stubCommentaireRepository,
       );

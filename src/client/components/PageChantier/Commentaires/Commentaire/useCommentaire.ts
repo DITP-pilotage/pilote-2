@@ -5,6 +5,7 @@ import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoire
 export default function useCommentaire(commentaire: DétailsCommentaire | null) {
   const [modeÉdition, setModeÉdition] = useState(false);
   const [commentaireÉtat, setCommentaireÉtat] = useState(commentaire);
+  const [afficherAlerte, setAfficherAlerte] = useState(false);
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const terriotireSélectionné = territoireSélectionnéTerritoiresStore();
 
@@ -22,6 +23,7 @@ export default function useCommentaire(commentaire: DétailsCommentaire | null) 
     }).then(() => {
       setCommentaireÉtat(nouveauCommentaire.détailsCommentaire);
       setModeÉdition(false);
+      setAfficherAlerte(true);
     });
   }
 
@@ -30,5 +32,7 @@ export default function useCommentaire(commentaire: DétailsCommentaire | null) 
     setModeÉdition,
     commentaireÉtat,
     handlePublierCommentaire,
+    afficherAlerte,
+    setAfficherAlerte,
   };
 }

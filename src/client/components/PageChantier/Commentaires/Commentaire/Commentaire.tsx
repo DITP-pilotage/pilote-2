@@ -9,18 +9,34 @@ import Publication from '@/components/PageChantier/Publication/Publication';
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
 import typesCommentaire from '@/client/constants/typesCommentaire';
+import CompteurCaractères from '@/components/_commons/CompteurCaractères/CompteurCaractères';
 import CommentaireStyled from './Commentaire.styled';
 import useCommentaire from './useCommentaire';
 
 export default function Commentaire({ type, commentaire, chantierId }: CommentaireProps) {
   const [contenu, setContenu] = useState(commentaire?.contenu);
-  const [compte, setCompte] = useState(contenu?.length);
-
+  const [compte, setCompte] = useState(contenu?.length ?? 0);
+  const limiteDeCaractères = 500;
   const { data: session } = useSession();
-  const { handlePublierCommentaire, modeÉdition, setModeÉdition, commentaireÉtat } = useCommentaire(commentaire);
+
+  const { 
+    handlePublierCommentaire, 
+    modeÉdition, 
+    setModeÉdition, 
+    commentaireÉtat,
+    afficherAlerte,
+    setAfficherAlerte,
+  } = useCommentaire(commentaire);
   
   return (
     <CommentaireStyled>
+      {afficherAlerte ?
+        <div className="fr-alert fr-alert--success fr-mb-2w">
+          <h3 className="fr-alert__title">
+            Commentaire modifié
+          </h3>
+        </div>
+        : null}
       <Titre
         baliseHtml='h3'
         className="fr-text--lead fr-mb-1w"
@@ -52,8 +68,8 @@ export default function Commentaire({ type, commentaire, chantierId }: Commentai
                 className="fr-label fr-sr-only"
                 htmlFor="saisie-contenu-commentaire"
         modeÉdition ? (
-          <div className='contenu'>
-            <div className={`fr-mb-6w fr-input-group ${compte === 500 && 'fr-input-group--error'}`}>
+          <>
+            <div className={`fr-mb-0 fr-input-group ${compte === limiteDeCaractères && 'fr-input-group--error'}`}>
               <label
                 className="fr-label fr-sr-only"
                 htmlFor="saisie-contenu-commentaire"
@@ -61,17 +77,18 @@ export default function Commentaire({ type, commentaire, chantierId }: Commentai
                 Modification du commentaire
               </label>
               <textarea
-                className={`fr-input ${compte === 500 && 'fr-input--error'}`}
+                className={`fr-input fr-text--sm fr-mb-0 ${compte === limiteDeCaractères && 'fr-input--error'}`}
                 id="saisie-contenu-commentaire"
-                maxLength={500}
+                maxLength={limiteDeCaractères}
                 name="saisie-contenu-commentaire"
                 onChange={(e) => {
                   setContenu(e.target.value);
                   setCompte(e.target.value.length);
                 }}
+                rows={6}
                 value={contenu}
               />
-              {compte === 500 &&
+              {compte === limiteDeCaractères &&
               <p
                 className="fr-error-text"
                 id="text-input-error-desc-error"
@@ -79,14 +96,10 @@ export default function Commentaire({ type, commentaire, chantierId }: Commentai
                 Limite de caractères atteinte
               </p>}
             </div>
-            <div>
-              <span>
-                {compte}
-              </span>
-              <span>
-                /500
-              </span>
-            </div>
+            <CompteurCaractères
+              compte={compte}
+              limiteDeCaractères={limiteDeCaractères}
+            />
             <div className='boutons'>
               <button
                 className='fr-btn fr-mr-1w'
@@ -97,13 +110,16 @@ export default function Commentaire({ type, commentaire, chantierId }: Commentai
               </button>
               <button
                 className='fr-btn fr-btn--secondary'
-                onClick={() => setModeÉdition(false)}
+                onClick={() => {
+                  setContenu(commentaire?.contenu);
+                  setModeÉdition(false);
+                }}
                 type='button'
               >
                 Annuler
               </button>
             </div>
-          </div>
+          </>
         ) : (
           commentaireÉtat && contenu ? (
             <>
@@ -119,21 +135,33 @@ export default function Commentaire({ type, commentaire, chantierId }: Commentai
                   }}
                 />
               </div>
+              <button
+                className='fr-btn fr-btn--secondary boutons'
+                onClick={() => {
+                  setModeÉdition(true);
+                  setAfficherAlerte(false);
+                }}
+                type='button'
+              >
+                Modifier
+              </button>
             </>
           ) : (
-            <p className="fr-text--sm fr-mb-0">
-              Aucun commentaire à afficher
-            </p>
+            <>
+              <p className="fr-text--sm fr-mb-0">
+                Aucun commentaire à afficher
+              </p>
+              <button
+                className='fr-btn fr-btn--secondary boutons'
+                onClick={() => setModeÉdition(true)}
+                type='button'
+              >
+                Ajouter
+              </button>
+            </>
           )
         )
       }
-      <button
-        className='fr-btn fr-btn--secondary boutons'
-        onClick={() => setModeÉdition(true)}
-        type='button'
-      >
-        {commentaire ? 'Modifier' : 'Ajouter'}
-      </button>
     </CommentaireStyled>
   );
 }

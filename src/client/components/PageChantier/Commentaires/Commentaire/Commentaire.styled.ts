@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
 const CommentaireStyled = styled.section`
-    .contenu {
         display: flex;
         flex-direction: column;
 
@@ -9,8 +8,7 @@ const CommentaireStyled = styled.section`
             align-self: flex-end;
             display: flex;
         }
-    }
-
+        
     button {
         border-radius: 4px;
     }

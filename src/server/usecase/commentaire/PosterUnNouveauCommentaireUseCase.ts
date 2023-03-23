@@ -8,6 +8,12 @@ export default class PosterUnNouveauCommentaireUseCase {
   ) {}
 
   async run(chantierId: string, nouveauCommentaire: NouveauCommentaire) {
-    this.commentaireRepository.postNouveauCommentaire(chantierId, nouveauCommentaire.typeCommentaire, nouveauCommentaire.maille, nouveauCommentaire.codeInsee, nouveauCommentaire.détailsCommentaire);
+    this.commentaireRepository.postNouveauCommentaire(
+      chantierId, 
+      nouveauCommentaire.typeCommentaire, 
+      nouveauCommentaire.maille, 
+      nouveauCommentaire.codeInsee, 
+      nouveauCommentaire.détailsCommentaire,
+    );
   }
 }
