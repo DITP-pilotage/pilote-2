@@ -31,16 +31,20 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   }
 
 
+  private mapToDomain(commentairePrisma: commentaire) {
+    return {
+      contenu: commentairePrisma.contenu,
+      date: commentairePrisma.date.toISOString(),
+      auteur: commentairePrisma.auteur,
+    };
+  }
+
   private getFirstCommentaireForAGivenType(commentaires: commentaire[], typeCommentaire: string): DétailsCommentaire | null {
-    const commentaireByType = commentaires.filter((comm) => comm.type == typeCommentaire);
-    if (commentaireByType.length === 0) {
+    const commentairesByType = commentaires.filter((comm) => comm.type == typeCommentaire);
+    if (commentairesByType.length === 0) {
       return null;
     }
-    return {
-      contenu: commentaireByType[0].contenu,
-      date: commentaireByType[0].date.toISOString(),
-      auteur: commentaireByType[0].auteur,
-    };
+    return this.mapToDomain(commentairesByType[0]);
   }
 
 
@@ -63,6 +67,20 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     };
   }
 
+  async récupérerHistoriqueDUnCommentaire(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<DétailsCommentaire[]> {
+    const commentaires: commentaire[] = await this.prisma.commentaire.findMany({
+      where: {
+        chantier_id: chantierId,
+        maille: CODES_MAILLES[maille],
+        code_insee: codeInsee,
+        type: CODES_TYPES_COMMENTAIRES[type],
+      },
+      orderBy: { date: 'desc' },
+    });
+
+    return commentaires.map(commentaireDeLHistorique => this.mapToDomain(commentaireDeLHistorique));
+  }
+
   async getObjectifsByChantierId(chantierId: string): Promise<DétailsCommentaire | null> {
     const commentaireObjectifs: commentaire | null = await this.prisma.commentaire.findFirst({
       where: {
@@ -76,10 +94,6 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
       return null;
     }
 
-    return {
-      contenu: commentaireObjectifs.contenu,
-      auteur: commentaireObjectifs.auteur,
-      date: commentaireObjectifs.date.toISOString(),
-    };
+    return this.mapToDomain(commentaireObjectifs);
   }
 }

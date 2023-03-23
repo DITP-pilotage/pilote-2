@@ -23,6 +23,7 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
           <Commentaire
             commentaire={commentaires['freinsÀLever']}
             titre={typesCommentaire['freinsÀLever']}
+            type="freinsÀLever"
           />
         </div>
         <hr className='fr-hr fr-mx-n2w' />
@@ -30,6 +31,7 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
           <Commentaire
             commentaire={commentaires['actionsÀVenir']}
             titre={typesCommentaire['actionsÀVenir']}
+            type="actionsÀVenir"
           />
         </div>
         <hr className='fr-hr fr-mx-n2w' />
@@ -37,6 +39,7 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
           <Commentaire
             commentaire={commentaires['actionsÀValoriser']}
             titre={typesCommentaire['actionsÀValoriser']}
+            type="actionsÀValoriser"
           />
         </div>
         <hr className='fr-hr fr-mx-n2w' />
@@ -44,6 +47,7 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
           <Commentaire
             commentaire={commentaires['autresRésultatsObtenus']}
             titre={typesCommentaire['autresRésultatsObtenus']}
+            type="autresRésultatsObtenus"
           />
         </div>
       </Bloc>

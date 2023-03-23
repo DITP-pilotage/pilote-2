@@ -1,8 +1,7 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
-import { formaterDate } from '@/client/utils/date/date';
 import { ObjectifProps } from '@/components/PageChantier/Objectif/Objectif.interface';
-import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
+import Publication from '@/components/PageChantier/Publication/Publication';
 
 export default function Objectif({ objectif }: ObjectifProps) {
   return (
@@ -16,23 +15,12 @@ export default function Objectif({ objectif }: ObjectifProps) {
       <Bloc titre="National">
         <div className='fr-grid-row'>
           <div className="fr-col-12">
-            {
-              objectif && objectif?.contenu?.trim() !== ''
-                ?
-                  <>
-                    <div className="texte-gris fr-text--xs fr-mb-1w">
-                      {`Mis à jour le ${formaterDate(objectif.date, 'jj/mm/aaaa')}`}
-                    </div>
-                    <p
-                      className="fr-text--sm"  
-                      // eslint-disable-next-line react/no-danger
-                      dangerouslySetInnerHTML={{
-                        __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(objectif.contenu),
-                      }}
-                    />
-                  </>
-                : 'Aucun objectif renseigné.'
-            }
+            <Publication
+              auteur={objectif?.auteur ?? null}
+              contenu={objectif?.contenu ?? null}
+              date={objectif?.date ?? null}
+              messageSiAucunContenu='Aucun objectif renseigné.'
+            />
           </div>
         </div>
       </Bloc>

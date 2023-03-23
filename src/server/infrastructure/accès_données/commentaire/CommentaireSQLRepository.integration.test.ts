@@ -1,10 +1,11 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import { commentaire } from '@prisma/client';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import CommentaireSQLRepository, {
   CODES_TYPES_COMMENTAIRES,
 } from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import { commentairesNull } from '@/server/domain/commentaire/Commentaire.interface';
+import { commentairesNull, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import CommentaireSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
@@ -117,6 +118,77 @@ describe('CommentaireSQLRepository', () => {
           auteur: 'Jean Christophe',
         },
       });
+    });
+  });
+
+  describe('récupérerHistoriqueDUnCommentaire', () => {
+    test('Retourne tous les commentaires du type donné pour un chantier et un territoire', async () => {
+      // GIVEN
+      const chantierId = 'CH-001';
+      const maille: Maille = 'nationale';
+      const codeInsee = 'FR';
+      const typeCommentaire: TypeCommentaire = 'freinsÀLever';
+      const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
+
+      const commentaires: commentaire[] = [
+        new CommentaireSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecType(CODES_TYPES_COMMENTAIRES['freinsÀLever'])
+          .avecContenu('Mon commentaire frein FR 2022')
+          .avecDate(new Date('2022-12-31'))
+          .avecAuteur('Jean Bon')
+          .build(),
+
+        new CommentaireSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecType(CODES_TYPES_COMMENTAIRES['freinsÀLever'])
+          .avecContenu('Mon commentaire frein FR 2023')
+          .avecDate(new Date('2023-12-31'))
+          .avecAuteur('Jean Bon')
+          .build(),
+
+        new CommentaireSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecType(CODES_TYPES_COMMENTAIRES['actionsÀVenir'])
+          .avecContenu('Mon commentaire action')
+          .avecDate(new Date('2023-12-30'))
+          .avecAuteur('Jean Nemar')
+          .build(),
+
+        new CommentaireSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille('départementale')
+          .avecCodeInsee('01')
+          .avecType(CODES_TYPES_COMMENTAIRES['freinsÀLever'])
+          .avecContenu('Mon commentaire frein département 2023')
+          .avecDate(new Date('2023-12-31'))
+          .avecAuteur('Jean Bon')
+          .build(),
+      ];
+
+      await prisma.commentaire.createMany({ data: commentaires });
+
+      // WHEN
+      const result = await commentaireRepository.récupérerHistoriqueDUnCommentaire(chantierId, maille, codeInsee, typeCommentaire);
+
+      // THEN
+      expect(result).toStrictEqual([
+        {
+          auteur: 'Jean Bon',
+          contenu: 'Mon commentaire frein FR 2023',
+          date: '2023-12-31T00:00:00.000Z',
+        }, {
+          auteur: 'Jean Bon',
+          contenu: 'Mon commentaire frein FR 2022',
+          date: '2022-12-31T00:00:00.000Z',
+        },
+      ]);
     });
   });
 });
