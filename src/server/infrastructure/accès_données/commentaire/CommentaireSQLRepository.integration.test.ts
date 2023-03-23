@@ -121,7 +121,7 @@ describe('CommentaireSQLRepository', () => {
     });
   });
 
-  describe('chercherToutPourUnChantierUnTerritoireEtUnType', () => {
+  describe('récupérerHistoriqueDUnCommentaire', () => {
     test('Retourne tous les commentaires du type donné pour un chantier et un territoire', async () => {
       // GIVEN
       const chantierId = 'CH-001';
@@ -175,7 +175,7 @@ describe('CommentaireSQLRepository', () => {
       await prisma.commentaire.createMany({ data: commentaires });
 
       // WHEN
-      const result = await commentaireRepository.chercherToutPourUnChantierUnTerritoireEtUnType(chantierId, maille, codeInsee, typeCommentaire);
+      const result = await commentaireRepository.récupérerHistoriqueDUnCommentaire(chantierId, maille, codeInsee, typeCommentaire);
 
       // THEN
       expect(result).toStrictEqual([

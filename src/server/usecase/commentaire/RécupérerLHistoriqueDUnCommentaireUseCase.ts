@@ -11,7 +11,7 @@ export default class RécupérerLHistoriqueDUnCommentaireUseCase {
 
   async run(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<{ historiqueDUnCommentaire: DétailsCommentaire[] }> {
     return {
-      historiqueDUnCommentaire: await this.commentaireRepository.chercherToutPourUnChantierUnTerritoireEtUnType(chantierId, maille, codeInsee, type),
+      historiqueDUnCommentaire: await this.commentaireRepository.récupérerHistoriqueDUnCommentaire(chantierId, maille, codeInsee, type),
     };
   }
 }
