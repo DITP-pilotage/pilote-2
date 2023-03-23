@@ -6,19 +6,20 @@ import {
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
-export function useHistoriqueDUnCommentaire(typeCommentaire: TypeCommentaire, estAffiché: boolean) {
+export default function useHistoriqueDUnCommentaire(typeCommentaire: TypeCommentaire) {
   const router = useRouter();
   const chantierId = router.query.id as string; //TODO changer id pour chantierId
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const [historiqueDUnCommentaire, setHistoriqueDUnCommentaire] = useState<DétailsCommentaire[] | null>(null);
+  const [estModaleOuverte, setEstModaleOuverte] = useState(false);
 
   useEffect(() => {
     setHistoriqueDUnCommentaire(null);
   }, [chantierId, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
 
   useEffect(() => {
-    if (!chantierId || !estAffiché)
+    if (!chantierId || !estModaleOuverte)
       return;
 
     fetch(`/api/chantier/${chantierId}/historique-d-un-commentaire?`
@@ -36,10 +37,11 @@ export function useHistoriqueDUnCommentaire(typeCommentaire: TypeCommentaire, es
         setHistoriqueDUnCommentaire(données.historiqueDUnCommentaire ?? []);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [estAffiché]);
+  }, [estModaleOuverte]);
 
   return {
     historiqueDUnCommentaire,
     territoireSélectionné,
+    setEstModaleOuverte,
   };
 }

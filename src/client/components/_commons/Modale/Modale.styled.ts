@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const HistoriqueDUnCommentaireStyled = styled.div`
+const ModaleStyled = styled.div`
   .bouton-ouvrir-modale {
     font-size: 0.875rem;
     line-height: 1.125rem;
@@ -26,17 +26,17 @@ const HistoriqueDUnCommentaireStyled = styled.div`
     cursor: pointer;
   }
   
-  .commentaires-conteneur {
+  .modale-conteneur {
     display: flex;
     flex-direction: column;
     overflow: hidden;
     border-radius: 0.5rem;
 
-    .commentaires {
+    .modale-contenu {
       height: 100%;
       overflow-y: auto;
     }
   }
 `;
 
-export default HistoriqueDUnCommentaireStyled;
+export default ModaleStyled;
