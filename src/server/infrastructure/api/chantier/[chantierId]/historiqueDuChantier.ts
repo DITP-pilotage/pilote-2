@@ -28,7 +28,7 @@ function parseQueryParams(request: NextApiRequest): { chantierId: string, maille
   return { chantierId, maille, codeInsee, type };
 }
 
-export default async function handleChantierIdHistoriqueDuCommentaire(
+export default async function handleHistoriqueDuCommentaire(
   request: NextApiRequest,
   response: NextApiResponse,
   commentaireRepository = dependencies.getCommentaireRepository(),
@@ -46,7 +46,7 @@ export default async function handleChantierIdHistoriqueDuCommentaire(
     throw error;
   }
 
-  const historiqueDuCommentaire = await commentaireRepository.findAllByChantierIdAndTerritoireAndType(params.chantierId, params.maille, params.codeInsee, params.type);
+  const historiqueDuCommentaire = await commentaireRepository.chercherToutPourUnChantierUnTerritoireEtUnType(params.chantierId, params.maille, params.codeInsee, params.type);
 
   response.status(200).json({ historiqueDuCommentaire });
 }

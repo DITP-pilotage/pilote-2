@@ -6,7 +6,7 @@ import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils
 import HistoriqueDuCommentaire
   from '@/components/PageChantier/Commentaires/Commentaire/Historique/HistoriqueDuCommentaire';
 
-export default function Commentaire({ titre, commentaire, typeCommentaire }: CommentaireProps) {
+export default function Commentaire({ titre, commentaire, type }: CommentaireProps) {
   return (
     <section>
       <Titre
@@ -29,7 +29,7 @@ export default function Commentaire({ titre, commentaire, typeCommentaire }: Com
               }}
             />
             <HistoriqueDuCommentaire
-              typeCommentaire={typeCommentaire}
+              type={type}
             />
           </>
         ) : (

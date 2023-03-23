@@ -3,5 +3,5 @@ import { DétailsCommentaire, TypeCommentaire } from '@/server/domain/commentair
 export default interface CommentaireProps {
   titre: string,
   commentaire: DétailsCommentaire | null,
-  typeCommentaire: TypeCommentaire,
+  type: TypeCommentaire,
 }
