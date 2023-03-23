@@ -15,8 +15,9 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
   });
 
   useEffect(() => {
-    if (svgRef && svgRef.current)
+    if (svgRef?.current?.getBBox) {
       setViewbox(svgRef.current.getBBox());
+    }
   }, [svgRef]);
 
 

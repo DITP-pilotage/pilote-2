@@ -9,6 +9,7 @@ const globalConf = {
     "d3-(.*)$": `<rootDir>/node_modules/d3-$1/dist/d3-$1.min.js`, // (voir https://github.com/facebook/jest/issues/12036)
     "@/components/(.*)": "<rootDir>/src/client/components/$1",
     "@/client/(.*)": "<rootDir>/src/client/$1",
+    "@/hooks/(.*)": "<rootDir>/src/hooks/$1",
     "@/server/(.*)": "<rootDir>/src/server/$1",
     "@/stores/(.*)": "<rootDir>/src/client/stores/$1",
   },
