@@ -9,16 +9,14 @@ import Publication from '@/components/PageChantier/Publication/Publication';
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
 import typesCommentaire from '@/client/constants/typesCommentaire';
-import CompteurCaractères from '@/components/_commons/CompteurCaractères/CompteurCaractères';
 import CommentaireStyled from './Commentaire.styled';
 import useCommentaire from './useCommentaire';
+import ChampsDeSaisie from './ChampsDeSaisie/ChampsDeSaisie';
 
 export default function Commentaire({ type, commentaire, chantierId }: CommentaireProps) {
   const [contenu, setContenu] = useState(commentaire?.contenu);
-  const [compte, setCompte] = useState(contenu?.length ?? 0);
   const limiteDeCaractères = 500;
   const { data: session } = useSession();
-
   const { 
     handlePublierCommentaire, 
     modeÉdition, 
@@ -30,13 +28,14 @@ export default function Commentaire({ type, commentaire, chantierId }: Commentai
   
   return (
     <CommentaireStyled>
-      {afficherAlerte ?
-        <div className="fr-alert fr-alert--success fr-mb-2w">
-          <h3 className="fr-alert__title">
-            Commentaire modifié
-          </h3>
-        </div>
-        : null}
+      {
+        afficherAlerte === true &&
+          <div className="fr-alert fr-alert--success fr-mb-2w">
+            <p className="fr-alert__title">
+              Commentaire modifié
+            </p>
+          </div>
+        }
       <Titre
         baliseHtml='h3'
         className="fr-text--lead fr-mb-1w"
@@ -69,36 +68,11 @@ export default function Commentaire({ type, commentaire, chantierId }: Commentai
                 htmlFor="saisie-contenu-commentaire"
         modeÉdition ? (
           <>
-            <div className={`fr-mb-0 fr-input-group ${compte === limiteDeCaractères && 'fr-input-group--error'}`}>
-              <label
-                className="fr-label fr-sr-only"
-                htmlFor="saisie-contenu-commentaire"
-              >
-                Modification du commentaire
-              </label>
-              <textarea
-                className={`fr-input fr-text--sm fr-mb-0 ${compte === limiteDeCaractères && 'fr-input--error'}`}
-                id="saisie-contenu-commentaire"
-                maxLength={limiteDeCaractères}
-                name="saisie-contenu-commentaire"
-                onChange={(e) => {
-                  setContenu(e.target.value);
-                  setCompte(e.target.value.length);
-                }}
-                rows={6}
-                value={contenu}
-              />
-              {compte === limiteDeCaractères &&
-              <p
-                className="fr-error-text"
-                id="text-input-error-desc-error"
-              >
-                Limite de caractères atteinte
-              </p>}
-            </div>
-            <CompteurCaractères
-              compte={compte}
+            <ChampsDeSaisie
+              contenu={contenu}
+              libellé='Modification du commentaire'
               limiteDeCaractères={limiteDeCaractères}
+              setContenu={setContenu}
             />
             <div className='boutons'>
               <button
