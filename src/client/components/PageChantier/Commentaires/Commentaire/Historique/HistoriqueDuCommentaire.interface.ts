@@ -1,7 +1,5 @@
+import { TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+
 export default interface HistoriqueDuCommentaireProps {
-  typeCommentaire: string,
-  sousTitre: string,
-  sqlDate: string,
-  auteur: string,
-  chaîneDeCaractères: string
+  typeCommentaire: TypeCommentaire,
 }

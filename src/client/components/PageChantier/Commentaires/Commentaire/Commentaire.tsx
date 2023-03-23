@@ -28,19 +28,7 @@ export default function Commentaire({ titre, commentaire, typeCommentaire }: Com
                 __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(commentaire.contenu),
               }}
             />
-            <button
-              aria-controls={`modale-historique-commentaires-${typeCommentaire}`}
-              className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-text--sm fr-mt-2w"
-              data-fr-opened="false"
-              type="button"
-            >
-              Voir l&apos;historique
-            </button>
             <HistoriqueDuCommentaire
-              auteur={commentaire.auteur}
-              chaîneDeCaractères={commentaire.contenu}
-              sousTitre="National"
-              sqlDate={commentaire.date}
               typeCommentaire={typeCommentaire}
             />
           </>

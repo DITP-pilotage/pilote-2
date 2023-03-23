@@ -48,5 +48,5 @@ export default async function handleChantierIdHistoriqueDuCommentaire(
 
   const historiqueDuCommentaire = await commentaireRepository.findAllByChantierIdAndTerritoireAndType(params.chantierId, params.maille, params.codeInsee, params.type);
 
-  response.status(200).json(historiqueDuCommentaire);
+  response.status(200).json({ historiqueDuCommentaire });
 }

@@ -67,7 +67,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     };
   }
 
-  async findAllByChantierIdAndTerritoireAndType(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<(DétailsCommentaire | null)[]> {
+  async findAllByChantierIdAndTerritoireAndType(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<DétailsCommentaire[]> {
     const historiqueDuCommentaire: commentaire[] = await this.prisma.commentaire.findMany({
       where: {
         chantier_id: chantierId,

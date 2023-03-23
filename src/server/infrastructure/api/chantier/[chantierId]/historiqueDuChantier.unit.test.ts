@@ -5,7 +5,8 @@ import handleChantierIdHistoriqueDuCommentaire from './historiqueDuChantier';
 
 describe('/api/chantier/:chantierId/historique-du-chantier', () => {
   describe('dans le cas nominal', () => {
-    test('renvoie une liste vide quand il n\'y a eu aucun commentaire', () => {
+
+    test('renvoie l\'historique des commentaires enregistrés en base de données', async () => {
       // GIVEN
       const { req, res } = createMocks({
         method: 'GET',
@@ -15,10 +16,13 @@ describe('/api/chantier/:chantierId/historique-du-chantier', () => {
       stubCommentaireRepository.findAllByChantierIdAndTerritoireAndType = () => Promise.resolve([]);
 
       // WHEN
-      handleChantierIdHistoriqueDuCommentaire(req, res, stubCommentaireRepository);
+      await handleChantierIdHistoriqueDuCommentaire(req, res, stubCommentaireRepository);
 
       // THEN
       expect(res._getStatusCode()).toBe(200);
+      expect(res._getJSONData()).toStrictEqual({
+        historiqueDuCommentaire: [],
+      });
     });
 
     test('renvoie l\'historique des commentaires enregistrés en base de données', async () => {
@@ -27,7 +31,7 @@ describe('/api/chantier/:chantierId/historique-du-chantier', () => {
         method: 'GET',
         query: { chantierId: 'CH-001', maille: 'départementale', codeInsee: '25', type: 'freinsÀLever' },
       });
-      const commentaires = [
+      const historiqueDuCommentaire = [
         {
           auteur: 'Jean Bon',
           contenu: 'Mon commentaire 2023',
@@ -39,14 +43,16 @@ describe('/api/chantier/:chantierId/historique-du-chantier', () => {
         },
       ];
       const stubCommentaireRepository = <CommentaireRepository>{};
-      stubCommentaireRepository.findAllByChantierIdAndTerritoireAndType = () => Promise.resolve(commentaires);
+      stubCommentaireRepository.findAllByChantierIdAndTerritoireAndType = () => Promise.resolve(historiqueDuCommentaire);
 
       // WHEN
       await handleChantierIdHistoriqueDuCommentaire(req, res, stubCommentaireRepository);
 
       // THEN
       expect(res._getStatusCode()).toBe(200);
-      expect(res._getJSONData()).toStrictEqual(commentaires);
+      expect(res._getJSONData()).toStrictEqual({
+        historiqueDuCommentaire,
+      });
     });
   });
 
