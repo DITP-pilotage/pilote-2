@@ -12,15 +12,11 @@ describe('/api/chantier/:chantierId/commentaire', () => {
         typeCommentaire: 'freinsÀLever',
         maille: 'nationale',
         codeInsee: 'FR',
-        détailsCommentaire: {
-          contenu: 'Mon commentaire',
-          date: '23/03/2023',
-          auteur: 'ditp',
-        },
+        contenu: 'Mon commentaire',
       },
     });
     const stubPosterUnNouveauCommentaireUseCase = <PublierUnNouveauCommentaireUseCase>{};
-    stubPosterUnNouveauCommentaireUseCase.run = () => Promise.resolve();
+    stubPosterUnNouveauCommentaireUseCase.run = () => Promise.resolve({ contenu: req.body.contenu, date: '01/01/2023', auteur: 'auteur' });
 
     // When
     handlePublierCommentaire(req, res, stubPosterUnNouveauCommentaireUseCase);
@@ -38,15 +34,11 @@ describe('/api/chantier/:chantierId/commentaire', () => {
         typeCommentaire: 'freinsÀLever',
         maille: 'nationale',
         codeInsee: 'FR',
-        détailsCommentaire: {
-          contenu: 'Mon commentaire',
-          date: '23/03/2023',
-          auteur: 'ditp',
-        },
+        contenu: 'Mon commentaire',
       },
     });
     const stubPosterUnNouveauCommentaireUseCase = <PublierUnNouveauCommentaireUseCase>{};
-    stubPosterUnNouveauCommentaireUseCase.run = () => Promise.resolve();
+    stubPosterUnNouveauCommentaireUseCase.run = () => Promise.resolve({ contenu: req.body.contenu, date: '01/01/2023', auteur: 'auteur' });
 
     // When
     handlePublierCommentaire(req, res, stubPosterUnNouveauCommentaireUseCase);

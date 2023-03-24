@@ -21,7 +21,7 @@ describe('PosterUnNouveauCommentaire', () => {
       await posterUnNouveauCommentaire.run(chantierId, { typeCommentaire: typeCommentaire, maille: maille, codeInsee: codeInsee, contenu: contenu }, auteur );
 
       // Then
-      expect(stubCommentaireRepository.postNouveauCommentaire).toHaveBeenNthCalledWith(1, chantierId, typeCommentaire, maille, codeInsee, contenu, auteur, date);
+      expect(stubCommentaireRepository.postNouveauCommentaire).toHaveBeenNthCalledWith(1, chantierId, typeCommentaire, maille, codeInsee, { contenu, auteur, date });
     });
   });
 });

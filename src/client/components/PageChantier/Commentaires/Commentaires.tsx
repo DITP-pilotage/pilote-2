@@ -22,7 +22,6 @@ export default function Commentaires({ commentaires, chantierId }: CommentairesP
           <Commentaire
             chantierId={chantierId}
             commentaire={commentaires['freinsÀLever']}
-            titre={typesCommentaire['freinsÀLever']}
             type="freinsÀLever"
           />
         </div>
@@ -31,7 +30,6 @@ export default function Commentaires({ commentaires, chantierId }: CommentairesP
           <Commentaire
             chantierId={chantierId}
             commentaire={commentaires['actionsÀVenir']}
-            titre={typesCommentaire['actionsÀVenir']}
             type="actionsÀVenir"
           />
         </div>
@@ -40,7 +38,6 @@ export default function Commentaires({ commentaires, chantierId }: CommentairesP
           <Commentaire
             chantierId={chantierId}
             commentaire={commentaires['actionsÀValoriser']}
-            titre={typesCommentaire['actionsÀValoriser']}
             type="actionsÀValoriser"
           />
         </div>
@@ -49,7 +46,6 @@ export default function Commentaires({ commentaires, chantierId }: CommentairesP
           <Commentaire
             chantierId={chantierId}
             commentaire={commentaires['autresRésultatsObtenus']}
-            titre={typesCommentaire['autresRésultatsObtenus']}
             type="autresRésultatsObtenus"
           />
         </div>

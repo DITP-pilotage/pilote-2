@@ -40,7 +40,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     };
   }
 
-  private getFirstCommentaireForAGivenType(commentaires: commentaire[], typeCommentaire: string): DétailsCommentaire | null {
+  private getPremierCommentairePourUnTypeDonné(commentaires: commentaire[], typeCommentaire: string): DétailsCommentaire | null {
     const commentairesByType = commentaires.filter((comm) => comm.type == typeCommentaire);
     if (commentairesByType.length === 0) {
       return null;
@@ -98,14 +98,14 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return this.mapToDomain(commentaireObjectifs);
   }
 
-  async postNouveauCommentaire(chantierId: string, typeDeCommentaire: TypeCommentaire, maille: Maille, codeInsee: CodeInsee, contenu: string, auteur: string, date: string) {
+  async postNouveauCommentaire(chantierId: string, typeDeCommentaire: TypeCommentaire, maille: Maille, codeInsee: CodeInsee, détailsCommentaire: DétailsCommentaire) {
     const commentaireRow = {
       id: faker.helpers.unique(faker.datatype.number),
       chantier_id: chantierId,
       type: CODES_TYPES_COMMENTAIRES[typeDeCommentaire],
-      contenu: contenu,
-      date: date,
-      auteur: auteur,
+      contenu: détailsCommentaire.contenu,
+      date: détailsCommentaire.date,
+      auteur: détailsCommentaire.auteur,
       maille: CODES_MAILLES[maille],
       code_insee: codeInsee,
     };

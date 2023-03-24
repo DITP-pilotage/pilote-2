@@ -4,7 +4,7 @@ const CommentaireStyled = styled.section`
   display: flex;
   flex-direction: column;
 
-  .boutons {
+  .actions {
     display: flex;
     align-self: flex-end;
   }

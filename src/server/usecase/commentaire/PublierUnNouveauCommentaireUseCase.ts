@@ -14,9 +14,7 @@ export default class PublierUnNouveauCommentaireUseCase {
       nouveauCommentaire.typeCommentaire,
       nouveauCommentaire.maille,
       nouveauCommentaire.codeInsee,
-      nouveauCommentaire.contenu,
-      utilisateurNom,
-      date,
+      { contenu: nouveauCommentaire.contenu, auteur: utilisateurNom, date },
     );
   }
 }

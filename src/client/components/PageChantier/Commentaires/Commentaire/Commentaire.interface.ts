@@ -4,6 +4,5 @@ import { DétailsCommentaire, TypeCommentaire } from '@/server/domain/commentair
 export default interface CommentaireProps {
   type: TypeCommentaire,
   commentaire: DétailsCommentaire | null,
-  type: TypeCommentaire,
   chantierId: Chantier['id']
 }

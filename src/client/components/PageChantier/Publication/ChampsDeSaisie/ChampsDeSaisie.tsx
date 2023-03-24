@@ -27,13 +27,13 @@ export default function ChampsDeSaisie({ libellé, contenu, setContenu, limiteDe
           value={contenu}
         />
         {
-            compte === limiteDeCaractères &&
-            <p
-              className="fr-error-text"
-              id="text-input-error-desc-error"
-            >
-              Limite de caractères atteinte
-            </p>
+          compte === limiteDeCaractères &&
+          <p
+            className="fr-error-text"
+            id="text-input-error-desc-error"
+          >
+            Limite de caractères atteinte
+          </p>
         }
       </div>
       <CompteurCaractères
