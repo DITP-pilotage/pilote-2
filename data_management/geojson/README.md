@@ -12,7 +12,7 @@ Le traitement se déroule en quatre étapes :
 
 Télécharger les données géographiques sur [data.gouv.fr](https://miro.com/app/board/uXjVPMRtPuk=/?moveToWidget=3458764541842367374&cot=14).
 
-Rechercher `Départements de France avec Droms rapprochés` et `Régions de France avec Droms rapprochés` et les télécharger dans le répoertoire `/data/geojson/01_original`.
+Rechercher `Départements de France avec Droms rapprochés` et `Régions de France avec Droms rapprochés` et les télécharger dans le répoertoire `/data_management/geojson/01_original`.
 
 
 ## 01 -> 02
@@ -28,7 +28,7 @@ TODO
 ## 03 -> 04
 
 Pour générer le tracé SVG des territoires
-Depuis le répertoire `data/geojson/` :
+Depuis le répertoire `data_management/geojson/` :
 
 1. Exécuter la commande `node ./scripts/extraire_données_géographiques.js`.
 2. Exécuter le formateur de code sur les fichiers générés (`src/client/constants/départements.json` et `src/client/constants/régions.json`)

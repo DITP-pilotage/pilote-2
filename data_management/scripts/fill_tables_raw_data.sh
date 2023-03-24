@@ -13,4 +13,4 @@ then
 fi
 
 
-dbt run --project-dir pilote_data_jobs/transformations/ditp_ppg_dbt/ --profiles-dir pilote_data_jobs/transformations/dbt_root/ --select raw staging
+dbt run --project-dir data_factory/ --select raw staging
