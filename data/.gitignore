@@ -8,12 +8,12 @@ input_data/private_data
 # Root config
 .user.yml
 # Project artifacts
-pilote_data_jobs/target/
-pilote_data_jobs/logs/
-pilote_data_jobs/dbt_packages/
-pilote_data_jobs/dbt/logs
+data_factory/target/
+data_factory/logs/
+data_factory/dbt_packages/
+data_factory/dbt/logs
 
-pilote_data_jobs/seeds/ppg_metadata
+data_factory/seeds/ppg_metadata
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

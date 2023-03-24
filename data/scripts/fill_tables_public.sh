@@ -12,4 +12,4 @@ then
   fi
 fi
 
-dbt run --project-dir pilote_data_jobs/ --select intermediate marts
+dbt run --project-dir data_factory/ --select intermediate marts

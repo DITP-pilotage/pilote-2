@@ -84,7 +84,7 @@ cp ../.env.example .env
 Toujours depuis le répertoire data :
 
 ```bash
-bash pilote_data_jobs/scripts/fill_tables_raw_data.sh
+bash scripts/fill_tables_raw_data.sh
 ```
 
 #### Import des données privées vers la base live :
@@ -107,7 +107,7 @@ bash scripts/fill_tables_raw_data.sh private_data
 
 Les transformations sont effectuées par dbt, qui est déjà installé par le setup initial. 
 Les transformations sont décrites dans le répertoire
-`data/pilote_data_jobs/transformations`
+`data/data_factory`
 
 Vérifiez que les valeurs de votre `data/.env` correspondent bien à la base que
 vous souhaitez modifier (voir les sections sur l'import pour un exemple en
