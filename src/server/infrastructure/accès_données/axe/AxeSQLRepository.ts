@@ -1,6 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+
 
 export default class AxeSQLRepository implements AxeRepository {
   private prisma: PrismaClient;
@@ -11,6 +13,19 @@ export default class AxeSQLRepository implements AxeRepository {
 
   async getListe(): Promise<Axe[]> {
     return this.prisma.axe.findMany();
+  }
+
+  async getListePourChantiers(chantiers: Chantier[]): Promise<Axe[]> {
+    let list_chantier = chantiers.map(x => x.id)
+    const queryResults: Axe[] = await this.prisma.$queryRaw`
+    WITH axe_liste AS (
+      select DISTINCT c.axe as axe_id from chantier c where  c.id IN (${Prisma.join(list_chantier)})
+    )
+    select a.*
+    from axe a
+    JOIN axe_liste al ON al.axe_id = a.nom
+    `;
+    return queryResults;
   }
 }
 

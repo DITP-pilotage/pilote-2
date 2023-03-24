@@ -8,6 +8,7 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import Habilitation, { habilitationGetChantierIdsAvecScope } from '@/server/domain/identité/Habilitation';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -34,10 +35,13 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return parseChantier(chantiers);
   }
 
-  async getListe(): Promise<Chantier[]> {
+  async getListe(habilitation: Habilitation, scope: string): Promise<Chantier[]> {
+    const chantiers_lecture = habilitationGetChantierIdsAvecScope(habilitation, scope)
+
     const chantiers = await this.prisma.chantier.findMany({
       where: {
         NOT: { ministeres: { isEmpty: true } },
+        id: { in: chantiers_lecture },
       },
     });
     const chantiersGroupésParId = groupBy<chantier>(chantiers, c => c.id);

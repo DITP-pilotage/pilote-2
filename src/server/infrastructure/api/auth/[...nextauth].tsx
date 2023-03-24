@@ -186,6 +186,7 @@ export const authOptions: AuthOptions = {
       session.user = token.user;
       session.accessToken = token.accessToken;
       session.error = token.error;
+      session.habilitation = {'chantiers':{'CH-9138957': ['read'], 'CH-1112577': ['read'], 'CH-1302905': ['read'],}}
 
       return session;
     },
