@@ -10,7 +10,6 @@ import CommentaireStyled from './Commentaire.styled';
 import useCommentaire from './useCommentaire';
 
 export default function Commentaire({ type, commentaire, chantierId }: CommentaireProps) {
-  const [contenu, setContenu] = useState(commentaire?.contenu);
   const titre = typesCommentaire[type];
   const { 
     auClicPublierCommentaire, 
@@ -20,6 +19,7 @@ export default function Commentaire({ type, commentaire, chantierId }: Commentai
     afficherAlerte,
     setAfficherAlerte,
   } = useCommentaire(commentaire);
+  const [contenu, setContenu] = useState(commentaireÉtat?.contenu);
   
   return (
     <CommentaireStyled>
@@ -57,7 +57,7 @@ export default function Commentaire({ type, commentaire, chantierId }: Commentai
               <button
                 className='fr-btn fr-btn--secondary'
                 onClick={() => {
-                  setContenu(commentaire?.contenu);
+                  setContenu(commentaireÉtat?.contenu);
                   setModeÉdition(false);
                 }}
                 type='button'

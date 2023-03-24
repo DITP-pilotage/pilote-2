@@ -33,6 +33,7 @@ export default function useCommentaire(commentaire: DétailsCommentaire | null) 
     modeÉdition,
     setModeÉdition,
     commentaireÉtat,
+    setCommentaireÉtat,
     auClicPublierCommentaire,
     afficherAlerte,
     setAfficherAlerte,
