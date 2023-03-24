@@ -97,11 +97,21 @@ model commentaire {
     code_insee String
 }
 
+model territoire {
+  id String @id
+  nom String
+  maille String
+  code_insee String
+  path String
+  utilisateur utilisateur_territoire[]
+}
+
 model utilisateur {
   id String @id
   email String
   profil_id String
   ministere_id String?
+  territoire utilisateur_territoire[]
 }
 
 model utilisateur_chantier {
@@ -112,10 +122,12 @@ model utilisateur_chantier {
 }
 
 model utilisateur_territoire {
+  utilisateur utilisateur @relation(fields: [utilisateur_id], references: [id])
   utilisateur_id String
-  chantier_id String
+  territoire territoire @relation(fields: [territoire_id], references: [id])
+  territoire_id String
 
-  @@id([utilisateur_id, chantier_id])
+  @@id([utilisateur_id, territoire_id])
 }
 
 model profil {
