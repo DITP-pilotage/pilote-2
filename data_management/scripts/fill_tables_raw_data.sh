@@ -13,4 +13,4 @@ then
 fi
 
 
-dbt run --project-dir data_factory// --select raw staging
+dbt run --project-dir data_factory/ --select raw staging

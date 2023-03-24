@@ -35,13 +35,13 @@ Le client Postgres `psql` est également nécessaire pour les scripts d'import :
 Les projets et pipelines s'appuient sur des métadonnées à récupérer en provenance de plusieurs sources.
 
 Récupérez le zip des métadonnées PPG, dont le nom commence par `PPG_metadata` (demandez à l'équipe). 
-Décompressez le répertoire `PPG_metadata` dans `data/input_data/private_data`.
+Décompressez le répertoire `PPG_metadata` dans `data_management/input_data/private_data`.
 Ce projet est aussi récupérable de github.
 
 On se retrouve avec une arborescence qui ressemble à cela :
 
 ```
-data/input_data/private_data/
+data_management/input_data/private_data/
 └── PPG_metadata
     ├── CONTRIBUTING.md
     ├── PPG_metadata.Rproj
@@ -69,7 +69,7 @@ pipenv shell
 
 #### Initialisation de la base de données
 
-Copier le fichier `/.env.example` vers `/data/.env` :
+Copier le fichier `/.env.example` vers `/data_management/.env` :
 
 ```bash
 cp ../.env.example .env
@@ -107,9 +107,9 @@ bash scripts/fill_tables_raw_data.sh private_data
 
 Les transformations sont effectuées par dbt, qui est déjà installé par le setup initial. 
 Les transformations sont décrites dans le répertoire
-`data/data_factory`
+`data_management/data_factory`
 
-Vérifiez que les valeurs de votre `data/.env` correspondent bien à la base que
+Vérifiez que les valeurs de votre `data_management/.env` correspondent bien à la base que
 vous souhaitez modifier (voir les sections sur l'import pour un exemple en
 local et un exemple en live).
 
