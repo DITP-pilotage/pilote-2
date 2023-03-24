@@ -96,3 +96,42 @@ model commentaire {
     maille String
     code_insee String
 }
+
+model utilisateur {
+  id String @id
+  email String
+  profil_id String
+  ministere_id String?
+}
+
+model utilisateur_chantier {
+  utilisateur_id String
+  chantier_id String
+
+  @@id([utilisateur_id, chantier_id])
+}
+
+model utilisateur_territoire {
+  utilisateur_id String
+  chantier_id String
+
+  @@id([utilisateur_id, chantier_id])
+}
+
+model profil {
+  id String @id
+  nom String
+}
+
+model profil_habilitation {
+  profil_id String
+  habilitation_scope_id String
+
+  @@id([profil_id, habilitation_scope_id])
+}
+
+model habilitation_scope {
+  id String @id
+  nom String
+  description String
+}
