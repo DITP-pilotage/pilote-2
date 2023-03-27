@@ -20,6 +20,7 @@ export function PictoMétéo({ valeur }: PictoMétéoProps) {
   return pictosMétéos[valeur] !== null ? (
     <Image
       alt={météos[valeur]}
+      className="picto-météo"
       src={pictosMétéos[valeur]}
     />
   ) : null;

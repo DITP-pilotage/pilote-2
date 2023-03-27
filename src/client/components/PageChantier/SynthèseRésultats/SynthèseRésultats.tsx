@@ -11,7 +11,7 @@ export default function SynthèseRésultats({ météo, synthèseDesRésultats }:
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   return (
-    <section id="synthèse">
+    <SynthèseRésultatsStyled id="synthèse">
       <Titre
         baliseHtml='h2'
         className='fr-h4 fr-mb-2w'
@@ -19,7 +19,7 @@ export default function SynthèseRésultats({ météo, synthèseDesRésultats }:
         Synthèse des résultats
       </Titre>
       <Bloc titre={territoireSélectionné.nom}>
-        <SynthèseRésultatsStyled className='fr-grid-row fr-pt-2w'>
+        <div className='fr-grid-row fr-pt-2w'>
           <div className=" fr-col-12 fr-col-lg-2 conteneur-météo">
             <p className='libellé-météo fr-text--sm'>
               {météos[météo]}
@@ -34,8 +34,8 @@ export default function SynthèseRésultats({ météo, synthèseDesRésultats }:
               messageSiAucunContenu="Aucune synthèse des résultats."
             />
           </div>
-        </SynthèseRésultatsStyled>
+        </div>
       </Bloc>
-    </section>
+    </SynthèseRésultatsStyled>
   );
 }

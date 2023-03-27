@@ -12,7 +12,7 @@ const SynthèseRésultatsStyled = styled.div`
     background-color: rgb(22 155 98 / 20%);
   }
 
-  img {
+  .picto-météo {
     width: auto;
     height: 6rem;
   }
