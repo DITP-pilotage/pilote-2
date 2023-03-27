@@ -1,6 +1,5 @@
 import { Météo } from '@/server/domain/météo/Météo.interface';
 
-export default interface BadgeMétéoProps {
+export default interface MétéoBadgeProps {
   météo: Météo,
-  className?: string,
 }

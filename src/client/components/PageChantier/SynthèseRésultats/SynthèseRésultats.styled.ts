@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
-const SynthèseRésultatsStyled = styled.div`
+const SynthèseRésultatsStyled = styled.section`
   .conteneur-météo {
     text-align: center;
   }
 
-  .picto-météo {
+  .météo-picto {
     width: auto;
     height: 6rem;
   }

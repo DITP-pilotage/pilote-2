@@ -1,5 +1,5 @@
 import météos from '@/client/constants/météos';
-import BadgeMétéoProps from '@/components/_commons/BadgeMétéo/BadgeMétéo.interface';
+import MétéoBadgeProps from '@/components/_commons/Météo/Badge/MétéoBadge.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 
 const badgeÀPartirDeLaMétéo: Record<Météo, string> = {
@@ -11,9 +11,9 @@ const badgeÀPartirDeLaMétéo: Record<Météo, string> = {
   'NON_RENSEIGNEE': '',
 };
 
-export default function BadgeMétéo({ météo, className = '' }: BadgeMétéoProps) {
+export default function MétéoBadge({ météo }: MétéoBadgeProps) {
   return (
-    <p className={`fr-badge fr-badge--no-icon ${badgeÀPartirDeLaMétéo[météo]} ${className}`}>
+    <p className={`fr-badge fr-badge--no-icon ${badgeÀPartirDeLaMétéo[météo]} fr-mb-2w`}>
       {météos[météo]}
     </p>
   );

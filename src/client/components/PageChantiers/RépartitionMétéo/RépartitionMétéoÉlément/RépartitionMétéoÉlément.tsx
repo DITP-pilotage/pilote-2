@@ -1,5 +1,5 @@
 import météos from '@/client/constants/météos';
-import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
+import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import RépartitionMétéoÉlémentProps from './RépartitionMétéoÉlément.interface';
 import RépartitionMétéoÉlémentStyled from './RépartitionMétéoÉlément.styled';
 
@@ -7,7 +7,7 @@ export default function RépartitionMétéoÉlément({ météo, nombreDeChantier
   return (
     <RépartitionMétéoÉlémentStyled>
       <div className="fr-grid-row">
-        <PictoMétéo
+        <MétéoPicto
           valeur={météo}
         />
       </div>

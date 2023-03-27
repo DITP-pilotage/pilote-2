@@ -1,5 +1,5 @@
 import { Météo } from '@/server/domain/météo/Météo.interface';
 
-export default interface PictoMétéoProps {
+export default interface MétéoPictoProps {
   valeur: Météo,
 }

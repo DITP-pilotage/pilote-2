@@ -2,10 +2,10 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import { SynthèseRésultatsProps } from '@/components/PageChantier/SynthèseRésultats/SynthèseRésultats.interface';
 import SynthèseRésultatsStyled from '@/components/PageChantier/SynthèseRésultats/SynthèseRésultats.styled';
-import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
+import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import Publication from '@/components/PageChantier/Publication/Publication';
-import BadgeMétéo from '@/components/_commons/BadgeMétéo/BadgeMétéo';
+import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
 
 export default function SynthèseRésultats({ météo, synthèseDesRésultats }: SynthèseRésultatsProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -21,11 +21,8 @@ export default function SynthèseRésultats({ météo, synthèseDesRésultats }:
       <Bloc titre={territoireSélectionné.nom}>
         <div className='fr-grid-row fr-pt-2w'>
           <div className=" fr-col-12 fr-col-lg-2 conteneur-météo">
-            <BadgeMétéo
-              className="fr-mb-2w"
-              météo={météo}
-            />
-            <PictoMétéo valeur={météo} />
+            <MétéoBadge météo={météo} />
+            <MétéoPicto valeur={météo} />
           </div>
           <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
             <Publication

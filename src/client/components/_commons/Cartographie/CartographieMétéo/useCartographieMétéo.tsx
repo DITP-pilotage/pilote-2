@@ -5,7 +5,7 @@ import météos from '@/client/constants/météos';
 import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
 import { CartographieÉlémentDeLégendeListe } from '@/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
+import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import { CartographieDonnéesMétéo } from './CartographieMétéo.interface';
 
 const REMPLISSAGE_PAR_DÉFAUT = '#bababa';
@@ -14,22 +14,22 @@ const LÉGENDE: Record<string, CartographieÉlémentDeLégendeListe> = {
   'ORAGE': {
     libellé: météos.ORAGE,
     remplissage: '#B34000',
-    picto: <PictoMétéo valeur="ORAGE" />,
+    picto: <MétéoPicto valeur="ORAGE" />,
   },
   'COUVERT': {
     libellé: météos.COUVERT,
     remplissage: '#95E257',
-    picto: <PictoMétéo valeur="COUVERT" />,
+    picto: <MétéoPicto valeur="COUVERT" />,
   },
   'NUAGE': {
     libellé: météos.NUAGE,
     remplissage: '#EFCB3A',
-    picto: <PictoMétéo valeur="NUAGE" />,
+    picto: <MétéoPicto valeur="NUAGE" />,
   },
   'SOLEIL': {
     libellé: météos.SOLEIL,
     remplissage: '#27A658',
-    picto: <PictoMétéo valeur="SOLEIL" />,
+    picto: <MétéoPicto valeur="SOLEIL" />,
   },
   'DÉFAUT': {
     libellé: 'Territoire pour lequel la météo n’est pas renseignée',
