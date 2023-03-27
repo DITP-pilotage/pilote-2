@@ -3,11 +3,11 @@ import pictoCouvert from '/public/img/météo/couvert.svg';
 import pictoNuage from '/public/img/météo/nuage.svg';
 import pictoOrage from '/public/img/météo/orage.svg';
 import Image from 'next/image';
-import PictoMétéoProps from './PictoMétéo.interface';
+import MétéoPictoProps from './MétéoPicto.interface';
 import météos from '@/client/constants/météos';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 
-export const pictosMétéos: Record<Météo, any> = {
+export const météosPictos: Record<Météo, any> = {
   'ORAGE': pictoOrage,
   'NUAGE': pictoNuage,
   'COUVERT': pictoCouvert,
@@ -16,11 +16,12 @@ export const pictosMétéos: Record<Météo, any> = {
   'NON_NECESSAIRE': null,
 };
 
-export function PictoMétéo({ valeur }: PictoMétéoProps) {
-  return pictosMétéos[valeur] !== null ? (
+export default function MétéoPicto({ valeur }: MétéoPictoProps) {
+  return météosPictos[valeur] !== null ? (
     <Image
       alt={météos[valeur]}
-      src={pictosMétéos[valeur]}
+      className="météo-picto"
+      src={météosPictos[valeur]}
     />
   ) : null;
 }

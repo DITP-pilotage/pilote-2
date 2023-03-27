@@ -2,16 +2,16 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import { SynthèseRésultatsProps } from '@/components/PageChantier/SynthèseRésultats/SynthèseRésultats.interface';
 import SynthèseRésultatsStyled from '@/components/PageChantier/SynthèseRésultats/SynthèseRésultats.styled';
-import { PictoMétéo } from '@/components/_commons/PictoMétéo/PictoMétéo';
-import météos from '@/client/constants/météos';
+import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import Publication from '@/components/PageChantier/Publication/Publication';
+import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
 
 export default function SynthèseRésultats({ météo, synthèseDesRésultats }: SynthèseRésultatsProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   return (
-    <section id="synthèse">
+    <SynthèseRésultatsStyled id="synthèse">
       <Titre
         baliseHtml='h2'
         className='fr-h4 fr-mb-2w'
@@ -19,12 +19,10 @@ export default function SynthèseRésultats({ météo, synthèseDesRésultats }:
         Synthèse des résultats
       </Titre>
       <Bloc titre={territoireSélectionné.nom}>
-        <SynthèseRésultatsStyled className='fr-grid-row fr-pt-2w'>
+        <div className='fr-grid-row fr-pt-2w'>
           <div className=" fr-col-12 fr-col-lg-2 conteneur-météo">
-            <p className='libellé-météo fr-text--sm'>
-              {météos[météo]}
-            </p>
-            <PictoMétéo valeur={météo} />
+            <MétéoBadge météo={météo} />
+            <MétéoPicto valeur={météo} />
           </div>
           <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
             <Publication
@@ -34,8 +32,8 @@ export default function SynthèseRésultats({ météo, synthèseDesRésultats }:
               messageSiAucunContenu="Aucune synthèse des résultats."
             />
           </div>
-        </SynthèseRésultatsStyled>
+        </div>
       </Bloc>
-    </section>
+    </SynthèseRésultatsStyled>
   );
 }
