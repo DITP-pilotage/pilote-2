@@ -9,7 +9,7 @@ export default class CréerUnNouveauCommentaireUseCase {
     
   async run(chantierId: string, nouveauCommentaire: CommentaireÀCréer, utilisateurNom: string) {
     const date = new Date().toISOString();
-    return this.commentaireRepository.postNouveauCommentaire(
+    return this.commentaireRepository.créerNouveauCommentaire(
       chantierId, 
       nouveauCommentaire.typeCommentaire,
       nouveauCommentaire.maille,

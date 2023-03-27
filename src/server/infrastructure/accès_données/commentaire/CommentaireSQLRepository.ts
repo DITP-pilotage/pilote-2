@@ -98,7 +98,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return this.mapToDomain(commentaireObjectifs);
   }
 
-  async postNouveauCommentaire(chantierId: string, typeDeCommentaire: TypeCommentaire, maille: Maille, codeInsee: CodeInsee, détailsCommentaire: DétailsCommentaire) {
+  async créerNouveauCommentaire(chantierId: string, typeDeCommentaire: TypeCommentaire, maille: Maille, codeInsee: CodeInsee, détailsCommentaire: DétailsCommentaire) {
     const commentaireRow = {
       id: faker.helpers.unique(faker.datatype.number),
       chantier_id: chantierId,
