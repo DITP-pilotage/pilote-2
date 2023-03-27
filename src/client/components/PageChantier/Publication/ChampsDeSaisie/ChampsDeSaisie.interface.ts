@@ -1,5 +1,5 @@
 export default interface ChampsDeSaisieProps {
-  contenu: string | undefined
+  contenu?: string
   libellé: string
   limiteDeCaractères: number
   setContenu: (state: string) => void

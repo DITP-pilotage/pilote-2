@@ -1,5 +1,5 @@
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
-import PublierUnNouveauCommentaireUseCase from './PublierUnNouveauCommentaireUseCase';
+import CréerUnNouveauCommentaireUseCase from './CréerUnNouveauCommentaireUseCase';
 
 describe('PosterUnNouveauCommentaire', () => {
   describe('run', () => {
@@ -15,10 +15,10 @@ describe('PosterUnNouveauCommentaire', () => {
 
       jest.useFakeTimers().setSystemTime(new Date(date));
       const stubCommentaireRepository = { postNouveauCommentaire: jest.fn() } as unknown as CommentaireRepository;
-      const posterUnNouveauCommentaire = new PublierUnNouveauCommentaireUseCase(stubCommentaireRepository);
+      const posterUnNouveauCommentaire = new CréerUnNouveauCommentaireUseCase(stubCommentaireRepository);
 
       // When
-      await posterUnNouveauCommentaire.run(chantierId, { typeCommentaire: typeCommentaire, maille: maille, codeInsee: codeInsee, contenu: contenu }, auteur );
+      await posterUnNouveauCommentaire.run(chantierId, { typeCommentaire, maille, codeInsee, contenu }, auteur );
 
       // Then
       expect(stubCommentaireRepository.postNouveauCommentaire).toHaveBeenNthCalledWith(1, chantierId, typeCommentaire, maille, codeInsee, { contenu, auteur, date });

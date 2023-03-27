@@ -4,7 +4,7 @@ import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoires
 import CommentairesProps from '@/components/PageChantier/Commentaires/Commentaires.interface';
 import Commentaire from '@/components/PageChantier/Commentaires/Commentaire/Commentaire';
 
-export default function Commentaires({ commentaires, chantierId }: CommentairesProps) {
+export default function Commentaires({ commentaires }: CommentairesProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   
   return (
@@ -20,7 +20,6 @@ export default function Commentaires({ commentaires, chantierId }: CommentairesP
       <Bloc titre={territoireSélectionné.nom}>
         <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
           <Commentaire
-            chantierId={chantierId}
             commentaire={commentaires['freinsÀLever']}
             type="freinsÀLever"
           />
@@ -28,7 +27,6 @@ export default function Commentaires({ commentaires, chantierId }: CommentairesP
         <hr className='fr-hr fr-mx-n2w' />
         <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
           <Commentaire
-            chantierId={chantierId}
             commentaire={commentaires['actionsÀVenir']}
             type="actionsÀVenir"
           />
@@ -36,7 +34,6 @@ export default function Commentaires({ commentaires, chantierId }: CommentairesP
         <hr className='fr-hr fr-mx-n2w' />
         <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
           <Commentaire
-            chantierId={chantierId}
             commentaire={commentaires['actionsÀValoriser']}
             type="actionsÀValoriser"
           />
@@ -44,7 +41,6 @@ export default function Commentaires({ commentaires, chantierId }: CommentairesP
         <hr className='fr-hr fr-mx-n2w' />
         <div className='fr-mx-2w fr-mt-1w fr-mb-2w'>
           <Commentaire
-            chantierId={chantierId}
             commentaire={commentaires['autresRésultatsObtenus']}
             type="autresRésultatsObtenus"
           />

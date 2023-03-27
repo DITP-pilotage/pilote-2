@@ -8,10 +8,6 @@ const CommentaireStyled = styled.section`
     display: flex;
     align-self: flex-end;
   }
-  
-  button {
-    border-radius: 4px;
-  }
 `;
 
 export default CommentaireStyled;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DétailsCommentaire, CommentaireÀPublier, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { DétailsCommentaire, CommentaireÀCréer, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
 export default function useCommentaire(commentaire: DétailsCommentaire | null) {
@@ -10,7 +10,7 @@ export default function useCommentaire(commentaire: DétailsCommentaire | null) 
   const terriotireSélectionné = territoireSélectionnéTerritoiresStore();
 
   function auClicPublierCommentaire(contenu: string, type: TypeCommentaire, chantierId: string) {
-    const commentaireÀPublier: CommentaireÀPublier = {
+    const commentaireÀPublier: CommentaireÀCréer = {
       typeCommentaire: type,
       maille: mailleSélectionnée,
       codeInsee: terriotireSélectionné.codeInsee,
