@@ -5,13 +5,6 @@ const SynthèseRésultatsStyled = styled.div`
     text-align: center;
   }
 
-  .libellé-météo {
-    font-weight: 700;
-    color: #18753C;
-    text-transform: uppercase;
-    background-color: rgb(22 155 98 / 20%);
-  }
-
   .picto-météo {
     width: auto;
     height: 6rem;
