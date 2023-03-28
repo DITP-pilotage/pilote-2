@@ -3,103 +3,10 @@ import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient';
 import {
   ValidataFichierIndicateurValidationService,
 } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
-import { ReportErrorTask, ReportTask, ReportValidata } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
+import { ReportValidata } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
 import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidataBuilder';
-
-class ReportTaskBuilder {
-  private errors: ReportErrorTask[] = [];
-
-  avecErrors(...errors: ReportErrorTask[]): ReportTaskBuilder {
-    this.errors = errors;
-
-    return this;
-  }
-
-  build(): ReportTask {
-    return {
-      errors: this.errors,
-    };
-  }
-}
-
-class ReportErrorTaskBuilder {
-  private cell: string = 'Ma cellule';
-
-  private fieldName: string = 'Mon fieldName';
-
-  private fieldNumber: number = 3;
-
-  private fieldPosition: number = 3;
-
-  private message: string = 'La valeur ne doit comporter que des chiffres et le point comme séparateur décimal.';
-
-  private name: string = 'Format de nombre incorrect';
-
-  private rowNumber: number = 3;
-
-  private rowPosition: number = 3;
-
-  avecCell(cell: string): ReportErrorTaskBuilder {
-    this.cell = cell;
-
-    return this;
-  }
-
-  avecFieldName(fieldName: string): ReportErrorTaskBuilder {
-    this.fieldName = fieldName;
-
-    return this;
-  }
-
-  avecFieldNumber(fieldNumber: number): ReportErrorTaskBuilder {
-    this.fieldNumber = fieldNumber;
-
-    return this;
-  }
-
-  avecFieldPosition(fieldPosition: number): ReportErrorTaskBuilder {
-    this.fieldPosition = fieldPosition;
-
-    return this;
-  }
-
-  avecMessage(message: string): ReportErrorTaskBuilder {
-    this.message = message;
-
-    return this;
-  }
-
-  avecName(name: string): ReportErrorTaskBuilder {
-    this.name = name;
-
-    return this;
-  }
-
-  avecRowNumber(rowNumber: number): ReportErrorTaskBuilder {
-    this.rowNumber = rowNumber;
-
-    return this;
-  }
-
-  avecRowPosition(rowPosition: number): ReportErrorTaskBuilder {
-    this.rowPosition = rowPosition;
-
-    return this;
-  }
-
-  build(): ReportErrorTask {
-    return {
-      cell: this.cell,
-      fieldName: this.fieldName,
-      fieldNumber: this.fieldNumber,
-      fieldPosition: this.fieldPosition,
-      message: this.message,
-      name: this.name,
-      rowNumber: this.rowNumber,
-      rowPosition: this.rowPosition,
-    };
-  }
-}
+import { ReportTaskBuilder } from '@/server/import-indicateur/app/builder/ReportTaskBuilder';
+import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTaskBuilder';
 
 describe('ValidataFichierIndicateurValidationService', () => {
   let validataFichierIndicateurValidationService: ValidataFichierIndicateurValidationService;
@@ -147,8 +54,24 @@ describe('ValidataFichierIndicateurValidationService', () => {
       .avecTasks(
         new ReportTaskBuilder()
           .avecErrors(
-            new ReportErrorTaskBuilder().avecCell('cellule 1').build(),
-            new ReportErrorTaskBuilder().avecCell('cellule 2').build(),
+            new ReportErrorTaskBuilder()
+              .avecCell('cellule 1')
+              .avecName('nom 1')
+              .avecFieldName('nom du champ 1')
+              .avecFieldPosition(1)
+              .avecMessage('message 1')
+              .avecRowNumber(1)
+              .avecRowPosition(1)
+              .build(),
+            new ReportErrorTaskBuilder()
+              .avecCell('cellule 2')
+              .avecName('nom 2')
+              .avecFieldName('nom du champ 2')
+              .avecFieldPosition(2)
+              .avecMessage('message 2')
+              .avecRowNumber(2)
+              .avecRowPosition(2)
+              .build(),
           )
           .build(),
       )
@@ -164,5 +87,17 @@ describe('ValidataFichierIndicateurValidationService', () => {
     expect(result.listeErreursValidation).toHaveLength(2);
     expect(result.listeErreursValidation.at(0)?.cellule).toEqual('cellule 1');
     expect(result.listeErreursValidation.at(1)?.cellule).toEqual('cellule 2');
+    expect(result.listeErreursValidation.at(0)?.nom).toEqual('nom 1');
+    expect(result.listeErreursValidation.at(1)?.nom).toEqual('nom 2');
+    expect(result.listeErreursValidation.at(0)?.nomDuChamp).toEqual('nom du champ 1');
+    expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual('nom du champ 2');
+    expect(result.listeErreursValidation.at(0)?.positionDuChamp).toEqual(1);
+    expect(result.listeErreursValidation.at(1)?.positionDuChamp).toEqual(2);
+    expect(result.listeErreursValidation.at(0)?.message).toEqual('message 1');
+    expect(result.listeErreursValidation.at(1)?.message).toEqual('message 2');
+    expect(result.listeErreursValidation.at(0)?.numeroDeLigne).toEqual(1);
+    expect(result.listeErreursValidation.at(1)?.numeroDeLigne).toEqual(2);
+    expect(result.listeErreursValidation.at(0)?.positionDeLigne).toEqual(1);
+    expect(result.listeErreursValidation.at(1)?.positionDeLigne).toEqual(2);
   });
 });
