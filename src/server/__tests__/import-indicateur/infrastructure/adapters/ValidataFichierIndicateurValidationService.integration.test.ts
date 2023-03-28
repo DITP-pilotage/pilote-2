@@ -85,19 +85,21 @@ describe('ValidataFichierIndicateurValidationService', () => {
     // THEN
     expect(result.estValide).toEqual(false);
     expect(result.listeErreursValidation).toHaveLength(2);
+
     expect(result.listeErreursValidation.at(0)?.cellule).toEqual('cellule 1');
-    expect(result.listeErreursValidation.at(1)?.cellule).toEqual('cellule 2');
     expect(result.listeErreursValidation.at(0)?.nom).toEqual('nom 1');
-    expect(result.listeErreursValidation.at(1)?.nom).toEqual('nom 2');
     expect(result.listeErreursValidation.at(0)?.nomDuChamp).toEqual('nom du champ 1');
-    expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual('nom du champ 2');
     expect(result.listeErreursValidation.at(0)?.positionDuChamp).toEqual(1);
-    expect(result.listeErreursValidation.at(1)?.positionDuChamp).toEqual(2);
     expect(result.listeErreursValidation.at(0)?.message).toEqual('message 1');
-    expect(result.listeErreursValidation.at(1)?.message).toEqual('message 2');
     expect(result.listeErreursValidation.at(0)?.numeroDeLigne).toEqual(1);
-    expect(result.listeErreursValidation.at(1)?.numeroDeLigne).toEqual(2);
     expect(result.listeErreursValidation.at(0)?.positionDeLigne).toEqual(1);
+
+    expect(result.listeErreursValidation.at(1)?.cellule).toEqual('cellule 2');
+    expect(result.listeErreursValidation.at(1)?.nom).toEqual('nom 2');
+    expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual('nom du champ 2');
+    expect(result.listeErreursValidation.at(1)?.positionDuChamp).toEqual(2);
+    expect(result.listeErreursValidation.at(1)?.message).toEqual('message 2');
+    expect(result.listeErreursValidation.at(1)?.numeroDeLigne).toEqual(2);
     expect(result.listeErreursValidation.at(1)?.positionDeLigne).toEqual(2);
   });
 });

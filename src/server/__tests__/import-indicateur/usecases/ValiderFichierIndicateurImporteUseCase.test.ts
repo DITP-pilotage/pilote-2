@@ -17,7 +17,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
   });
 
   it("doit appeler le service de validation du fichier d'indicateur importé", async () => {
-    // Given
+    // GIVEN
     const detailValidationFichier = DetailValidationFichier.creerDetailValidationFichier({
       estValide: true,
     });
@@ -25,12 +25,13 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
     const contentType = 'content-type';
     fichierIndicateurValidationService.validerFichier.calledWith(formDataBody, contentType).mockResolvedValue(detailValidationFichier);
 
-    // When
+    // WHEN
     const result = await validerFichierIndicateurImporteUseCase.execute({
       formDataBody,
       contentType,
     });
-    // Then
+
+    // THEN
     expect(result.estValide).toEqual(true);
   });
 });
