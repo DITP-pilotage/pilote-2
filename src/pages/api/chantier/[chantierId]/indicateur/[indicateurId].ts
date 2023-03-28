@@ -1,7 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import handleImportIndicateur from '@/server/infrastructure/api/chantier/[chantierId]/indicateur/[indicateurId]';
+import handleValiderFichierImportIndicateur
+  from '@/server/import-indicateur/infrastructure/handlers/ImportIndicateurHandler';
+
 
 export default function handle(req: NextApiRequest, res: NextApiResponse) {
-  return handleImportIndicateur(req, res);
+  return handleValiderFichierImportIndicateur(req, res);
 }

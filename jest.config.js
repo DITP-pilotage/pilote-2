@@ -28,7 +28,7 @@ module.exports = async () => {
         testEnvironment: 'node',
         setupFilesAfterEnv: ['<rootDir>/src/server/infrastructure/test/integrationTestSetup.ts'],
         roots: ['<rootDir>/src/server'],
-        testMatch: ['**/*.integration.test.*'],
+        testMatch: ['**/*.integration.test.*', '**/__tests__/**/*.test.ts'],
         maxWorkers: 1,
       },
       {
