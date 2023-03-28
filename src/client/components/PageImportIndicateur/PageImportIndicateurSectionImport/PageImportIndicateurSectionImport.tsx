@@ -6,6 +6,8 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import Indicateurs from '@/components/PageChantier/Indicateurs/Indicateurs';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
+import ResultatValidationFichier from '@/client/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import PageImportIndicateurSectionImportStyled from './PageImportIndicateurSectionImport.styled';
 
 interface PageImportIndicateurSectionImportProps {
@@ -16,11 +18,13 @@ interface PageImportIndicateurSectionImportProps {
 
 export default function PageImportIndicateurSectionImport({ chantierId, détailsIndicateurs, indicateurs }:PageImportIndicateurSectionImportProps) {
   const [file, setFile] = useState<File | null>(null);
+  const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
   const définirLeFichier: ChangeEventHandler<HTMLInputElement> = (event) => {
     if (event.target.files && event.target.files[0]) {      
       setFile(event.target.files[0]);
     }
+    setRapport(null);
   };
   
   const uploadLeFichier: MouseEventHandler<HTMLButtonElement> = async () => {
@@ -34,10 +38,12 @@ export default function PageImportIndicateurSectionImport({ chantierId, détails
     body.append('file', file);
     body.append('schema', schéma);
 
-    await fetch(`/api/chantier/${chantierId}/indicateur/indicateurIdToBeDefined`, {
+    const detailValidationFichier: DetailValidationFichierContrat = await fetch(`/api/chantier/${chantierId}/indicateur/indicateurIdToBeDefined`, {
       method: 'POST',
       body,
-    });
+    }).then(response => response.json());
+    
+    setRapport(detailValidationFichier);
   };
 
   return (
@@ -64,6 +70,12 @@ export default function PageImportIndicateurSectionImport({ chantierId, détails
             />
           </div>
         </Bloc>
+        {
+        rapport !== null &&
+        <Bloc>
+          <ResultatValidationFichier rapport={rapport} />
+        </Bloc>
+        }
         {
           détailsIndicateurs !== null && (
             <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
