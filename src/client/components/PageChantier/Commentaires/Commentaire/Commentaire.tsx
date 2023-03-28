@@ -1,7 +1,6 @@
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-design/icons-design.min.css';
-import { useState } from 'react';
-import router from 'next/router';
+import { useEffect, useState } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import CommentaireProps from '@/components/PageChantier/Commentaires/Commentaire/Commentaire.interface';
 import HistoriqueDUnCommentaire from '@/components/PageChantier/Commentaires/Commentaire/Historique/HistoriqueDUnCommentaire';
@@ -9,23 +8,30 @@ import Publication from '@/components/PageChantier/Publication/Publication';
 import typesCommentaire from '@/client/constants/typesCommentaire';
 import ChampsDeSaisie from '@/client/components/PageChantier/Publication/ChampsDeSaisie/ChampsDeSaisie';
 import { limiteCaractèresCommentaire } from '@/server/domain/commentaire/Commentaire.validator';
+import { récupérerUnCookie } from '@/client/utils/cookies';
 import CommentaireStyled from './Commentaire.styled';
 import useCommentaire from './useCommentaire';
 
 
 export default function Commentaire({ type, commentaire }: CommentaireProps) {
   const titre = typesCommentaire[type];
-  const chantierId = router.query.id as string; 
   const { 
-    auClicPublierCommentaire, 
+    créerUnCommentaire, 
     modeÉdition, 
     setModeÉdition, 
     commentaireÉtat,
     afficherAlerte,
     setAfficherAlerte,
-  } = useCommentaire(commentaire);
+  } = useCommentaire(commentaire, type);
   const [contenu, setContenu] = useState(commentaireÉtat?.contenu);
+  const [csrf, setCsrf] = useState<string>();
   
+  useEffect(() => {
+    if (modeÉdition) {
+      setCsrf(récupérerUnCookie('csrf'));
+    }
+  }, [modeÉdition]);
+
   return (
     <CommentaireStyled>
       {
@@ -44,7 +50,19 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
       </Titre>
       {
         modeÉdition ? (
-          <>
+          <form
+            method="post"
+            onSubmit={e => {
+              e.preventDefault();
+              créerUnCommentaire(contenu, csrf); 
+            }}
+          >
+            <input
+              id="csrf"
+              name="csrf token"
+              type="hidden"
+              value={csrf}
+            />
             <ChampsDeSaisie
               contenu={contenu}
               libellé='Modification du commentaire'
@@ -54,8 +72,7 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
             <div className='actions'>
               <button
                 className='fr-btn fr-mr-3w border-radius-4px'
-                onClick={() => contenu && auClicPublierCommentaire(contenu, type, chantierId)}
-                type='button'
+                type='submit'
               >
                 Publier
               </button>
@@ -70,7 +87,7 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
                 Annuler
               </button>
             </div>
-          </>
+          </form>
         ) : (
           commentaireÉtat ? (
             <>

@@ -100,7 +100,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
 
   async créerNouveauCommentaire(chantierId: string, typeDeCommentaire: TypeCommentaire, maille: Maille, codeInsee: CodeInsee, détailsCommentaire: DétailsCommentaire) {
     const commentaireRow = {
-      id: faker.helpers.unique(faker.datatype.number),
+      id: faker.helpers.unique(faker.datatype.number), // TODO FIX !!
       chantier_id: chantierId,
       type: CODES_TYPES_COMMENTAIRES[typeDeCommentaire],
       contenu: détailsCommentaire.contenu,
