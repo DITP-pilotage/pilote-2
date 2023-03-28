@@ -1,4 +1,4 @@
-import { DetailValidationFichier } from '@/server/import-indicateur/domain/detail-validation.fichier';
+import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 
 export interface FichierIndicateurValidationService {
   validerFichier(formDataBody: FormData, contentType: string): Promise<DetailValidationFichier>;

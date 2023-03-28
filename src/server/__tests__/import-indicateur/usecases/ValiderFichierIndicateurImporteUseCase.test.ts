@@ -2,10 +2,8 @@ import { mock, MockProxy } from 'jest-mock-extended';
 import {
   ValiderFichierIndicateurImporteUseCase,
 } from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
-import { DetailValidationFichier } from '@/server/import-indicateur/domain/detail-validation.fichier';
-import {
-  FichierIndicateurValidationService,
-} from '@/server/import-indicateur/domain/ports/fichier-indicateur-validation.service';
+import { FichierIndicateurValidationService } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
+import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 
 describe('ValiderFichierIndicateurImporteUseCase', () => {
   let fichierIndicateurValidationService: MockProxy<FichierIndicateurValidationService>;

@@ -1,8 +1,6 @@
-import {
-  FichierIndicateurValidationService,
-} from '@/server/import-indicateur/domain/ports/fichier-indicateur-validation.service';
+import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
+import { FichierIndicateurValidationService } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
 import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient';
-import { DetailValidationFichier } from '@/server/import-indicateur/domain/detail-validation.fichier';
 
 interface Dependencies {
   httpClient: HttpClient

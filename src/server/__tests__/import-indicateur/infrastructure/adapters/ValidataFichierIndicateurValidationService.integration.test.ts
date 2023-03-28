@@ -13,6 +13,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
   let httpClient: MockProxy<HttpClient>;
 
   const contentType = 'content-type';
+
   beforeEach(() => {
     httpClient = mock<HttpClient>();
     validataFichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
