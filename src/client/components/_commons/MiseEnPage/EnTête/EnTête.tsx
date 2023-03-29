@@ -1,10 +1,13 @@
 import '@gouvfr/dsfr/dist/component/header/header.min.css';
 import '@gouvfr/dsfr/dist/component/logo/logo.min.css';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import Navigation from '@/components/_commons/MiseEnPage/Navigation/Navigation';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
 
 export default function EnTête() {
+  const { data: session } = useSession();
+
   return (
     <header
       className="fr-header"
@@ -62,7 +65,7 @@ export default function EnTête() {
           </div>
         </div>
       </div>
-      <Navigation />
+      {session?.user ? <Navigation /> : null}
     </header>
   );
 }

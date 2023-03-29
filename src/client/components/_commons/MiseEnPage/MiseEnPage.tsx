@@ -1,26 +1,25 @@
-import { signIn, useSession } from 'next-auth/react';
-import { Session } from 'next-auth';
-import { useEffect } from 'react';
-
+import { useSession } from 'next-auth/react';
+import PageLanding from '@/components/PageLanding/PageLanding';
+import Loader from '@/client/components/_commons/Loader/Loader';
 import MiseEnPageProps from './MiseEnPage.interface';
 import EnTête from './EnTête/EnTête';
 import PiedDePage from './PiedDePage/PiedDePage';
+import MiseEnPageStyled from './MiseEnPageStyled';
 
 export default function MiseEnPage({ children }: MiseEnPageProps) {
-  const { data: session } = useSession();
-  const mySession = session as Session & { error: String }; // TODO définir le type au même endroit qu'on ajoute tokenExp
+  const { status } = useSession();
 
-  useEffect(() => {
+  if (status === 'loading') 
+    return (
+      <MiseEnPageStyled className='fr-grid-row fr-grid-row--center fr-grid-row--middle'>
+        <Loader />
+      </MiseEnPageStyled>
+    );
     
-    if (mySession?.error === 'RefreshAccessTokenError') {
-      signIn('keycloak'); // Force sign in to hopefully resolve error
-    }
-  }, [mySession]);
-
   return (
     <>
       <EnTête />
-      {children}
+      {status === 'unauthenticated' ? <PageLanding /> : children}
       <PiedDePage />
     </>
   );

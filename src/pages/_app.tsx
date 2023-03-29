@@ -8,7 +8,6 @@ import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
 
-
 export default function MonApplication({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <>
@@ -20,7 +19,7 @@ export default function MonApplication({ Component, pageProps: { session, ...pag
         noModule
         src="/js/dsfr/dsfr.nomodule.min.js"
       />
-      <SessionProvider session={session} >
+      <SessionProvider session={session}>
         <MiseEnPage>
           <Component {...pageProps} />
         </MiseEnPage>
