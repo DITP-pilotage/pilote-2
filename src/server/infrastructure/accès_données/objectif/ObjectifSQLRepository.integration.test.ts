@@ -1,4 +1,4 @@
-import { commentaire } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -15,7 +15,7 @@ describe('ObjectifSQLRepository ', function () {
       const codeInsee = 'FR';
       const objectifRepository: ObjectifRepository = new ObjectifSQLRepository(prisma);
 
-      const commentaires: commentaire[] = [
+      const commentaires: Prisma.commentaireCreateArgs['data'][] = [
         new CommentaireRowBuilder()
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])

@@ -8,7 +8,8 @@ import Publication from '@/components/PageChantier/Publication/Publication';
 import typesCommentaire from '@/client/constants/typesCommentaire';
 import { limiteCaractèresCommentaire } from '@/server/domain/commentaire/Commentaire.validator';
 import { récupérerUnCookie } from '@/client/utils/cookies';
-import FormulaireDePublication from '@/client/components/PageChantier/Publication/FormulaireDePublication/FormulaireDePublication';
+import FormulaireDePublication from '@/components/_commons/FormulaireDePublication/FormulaireDePublication';
+import Alerte from '@/components/_commons/Alerte/Alerte';
 import CommentaireStyled from './Commentaire.styled';
 import useCommentaire from './useCommentaire';
 
@@ -23,8 +24,8 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
     alerte,
     setAlerte,
   } = useCommentaire(commentaire, type);
-  const [contenu, setContenu] = useState(commentaireÉtat?.contenu);
-  const [csrf, setCsrf] = useState<string>();
+  const [contenu, setContenu] = useState(commentaireÉtat?.contenu || '');
+  const [csrf, setCsrf] = useState<string>('');
   
   useEffect(() => {
     if (modeÉdition) {
@@ -36,11 +37,10 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
     <CommentaireStyled>
       {
         alerte !== null &&
-          <div className="fr-alert fr-alert--success fr-mb-2w">
-            <p className="fr-alert__title">
-              {alerte.message}
-            </p>
-          </div>
+        <Alerte
+          message={alerte.message}
+          type={alerte.type}
+        />
         }
       <Titre
         baliseHtml='h3'
@@ -58,7 +58,7 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
             onSubmit={() => créerUnCommentaire(contenu, csrf)}
             setContenu={setContenu}
             àLAnnulation={() => {
-              setContenu(commentaireÉtat?.contenu);
+              setContenu(commentaireÉtat?.contenu || '');
               setModeÉdition(false);
             }}
           />

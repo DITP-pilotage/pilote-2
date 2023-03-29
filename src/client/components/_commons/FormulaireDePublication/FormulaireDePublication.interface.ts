@@ -1,6 +1,6 @@
 export default interface ChampsDeSaisieProps {
   contenu?: string
-  csrf?: string
+  csrf: string
   libellé: string
   limiteDeCaractères: number
   onSubmit: () => void

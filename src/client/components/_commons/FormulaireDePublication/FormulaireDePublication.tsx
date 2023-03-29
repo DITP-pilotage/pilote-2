@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ChampsDeSaisieProps from './FormulaireDePublication.interface.';
+import ChampsDeSaisieProps from './FormulaireDePublication.interface';
 import CompteurCaractères from './CompteurCaractères/CompteurCaractères';
 
 export default function FormulaireDePublication({ libellé, contenu, setContenu, limiteDeCaractères, onSubmit, csrf, àLAnnulation }: ChampsDeSaisieProps) {

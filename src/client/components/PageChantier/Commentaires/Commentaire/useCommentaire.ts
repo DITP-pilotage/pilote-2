@@ -6,14 +6,14 @@ import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSé
 export default function useCommentaire(commentaire: DétailsCommentaire | null, type: TypeCommentaire) {
   const [modeÉdition, setModeÉdition] = useState(false);
   const [commentaireÉtat, setCommentaireÉtat] = useState(commentaire);
-  const [alerte, setAlerte] = useState <{ type: string, message: string } | null>(null);
+  const [alerte, setAlerte] = useState <{ type: 'succès' | 'erreur', message: string } | null>(null);
   const mailleSélectionnée = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const terriotireSélectionné = territoireSélectionnéTerritoiresStore();
 
-  function créerUnCommentaire(contenu: string | undefined, csrf: string | undefined) {
+  function créerUnCommentaire(contenu: string, csrf: string) {
     const chantierId = router.query.id as string; 
 
-    if (contenu === undefined || contenu === '') {
+    if (contenu === '') {
       setAlerte({ type: 'erreur', message: 'Vous ne pouvez pas publier de commentaire vide' });
       return;
     }
@@ -33,15 +33,20 @@ export default function useCommentaire(commentaire: DétailsCommentaire | null, 
       }),
     }).then(réponse => {
       if (!réponse.ok) {
-        throw new Error(réponse.statusText);
+        throw new Error(JSON.stringify({ status: réponse.status }));
       }
       return réponse.json() as Promise<DétailsCommentaire>;
     }).then(détailsNouveauCommentaire => {
       setCommentaireÉtat(détailsNouveauCommentaire);
       setModeÉdition(false);
       setAlerte({ type: 'succès', message: 'Commentaire modifié' });
-    }).catch(() => {
-      setAlerte({ type: 'erreur', message: "Une erreur s'est produite, veuillez recharger la page" });
+    }).catch(error => {    
+      const { status } = JSON.parse(error.message);
+      if (status === 500) {
+        setAlerte({ type: 'erreur', message: 'Le serveur est indisponible, veuillez réessayer ultérieurement' });
+      } else {
+        setAlerte({ type: 'erreur', message: "Une erreur s'est produite, veuillez actualiser la page" });
+      } 
     });
   }
 

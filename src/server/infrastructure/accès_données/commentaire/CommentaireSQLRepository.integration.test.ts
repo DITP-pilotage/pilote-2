@@ -1,5 +1,5 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-import { commentaire } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import CommentaireSQLRepository, {
   CODES_TYPES_COMMENTAIRES,
@@ -31,7 +31,7 @@ describe('CommentaireSQLRepository', () => {
       const autresRésultatsObtenus = 'autresRésultatsObtenus';
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
 
-      const commentaires: commentaire[] = [
+      const commentaires: Prisma.commentaireCreateArgs['data'][] = [
         new CommentaireSQLRowBuilder()
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
@@ -130,7 +130,7 @@ describe('CommentaireSQLRepository', () => {
       const typeCommentaire: TypeCommentaire = 'freinsÀLever';
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
 
-      const commentaires: commentaire[] = [
+      const commentaires: Prisma.commentaireCreateArgs['data'][]  = [
         new CommentaireSQLRowBuilder()
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])

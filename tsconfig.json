@@ -34,9 +34,6 @@
       ],
       "@/stores/*": [
         "client/stores/*"
-      ],
-      "@/pages/*": [
-        "pages/*"
       ]
     }
   },

@@ -1,6 +1,5 @@
 import { withAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
-import configuration from '@/server/infrastructure/Configuration';
 
 const pages = { signIn: '/' };
 

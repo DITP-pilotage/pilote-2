@@ -12,7 +12,7 @@ class CommentaireParamsError extends Error {}
 class ConnectionUtilisateurError extends Error {}
 class CSRFError extends Error {}
 
-function parseQueryParams(request: NextApiRequest): { chantierId: string } {
+function vérifierLaQuery(request: NextApiRequest): { chantierId: string } {
   const chantierId = request.query.chantierId as string | undefined;
 
   if (!chantierId) {
@@ -69,7 +69,7 @@ export default async function handleCréerCommentaire(request: NextApiRequest, r
   try { 
     vérifierLaMéthodeHttp(request);
     vérifierLeCSRF(request);
-    const params = parseQueryParams(request);
+    const params = vérifierLaQuery(request);
     const utilisateur = await vérifierLaConnexionDeLUtilisateur(request, response, serverSession);
     const nouveauCommentaire: CommentaireÀCréer = await vérifierLeCommentaire(request);
     const résultat = await créerUnNouveauCommentaire.run(params.chantierId, nouveauCommentaire, utilisateur?.name as string);
