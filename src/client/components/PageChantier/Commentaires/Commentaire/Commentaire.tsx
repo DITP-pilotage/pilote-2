@@ -6,9 +6,9 @@ import CommentaireProps from '@/components/PageChantier/Commentaires/Commentaire
 import HistoriqueDUnCommentaire from '@/components/PageChantier/Commentaires/Commentaire/Historique/HistoriqueDUnCommentaire';
 import Publication from '@/components/PageChantier/Publication/Publication';
 import typesCommentaire from '@/client/constants/typesCommentaire';
-import ChampsDeSaisie from '@/client/components/PageChantier/Publication/ChampsDeSaisie/ChampsDeSaisie';
 import { limiteCaractèresCommentaire } from '@/server/domain/commentaire/Commentaire.validator';
 import { récupérerUnCookie } from '@/client/utils/cookies';
+import FormulaireDePublication from '@/client/components/PageChantier/Publication/FormulaireDePublication/FormulaireDePublication';
 import CommentaireStyled from './Commentaire.styled';
 import useCommentaire from './useCommentaire';
 
@@ -20,8 +20,8 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
     modeÉdition, 
     setModeÉdition, 
     commentaireÉtat,
-    afficherAlerte,
-    setAfficherAlerte,
+    alerte,
+    setAlerte,
   } = useCommentaire(commentaire, type);
   const [contenu, setContenu] = useState(commentaireÉtat?.contenu);
   const [csrf, setCsrf] = useState<string>();
@@ -35,10 +35,10 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
   return (
     <CommentaireStyled>
       {
-        afficherAlerte === true &&
+        alerte !== null &&
           <div className="fr-alert fr-alert--success fr-mb-2w">
             <p className="fr-alert__title">
-              Commentaire modifié
+              {alerte.message}
             </p>
           </div>
         }
@@ -50,44 +50,19 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
       </Titre>
       {
         modeÉdition ? (
-          <form
-            method="post"
-            onSubmit={e => {
-              e.preventDefault();
-              créerUnCommentaire(contenu, csrf); 
+          <FormulaireDePublication
+            contenu={contenu}
+            csrf={csrf}
+            libellé='Modification du commentaire'
+            limiteDeCaractères={limiteCaractèresCommentaire}
+            onSubmit={() => créerUnCommentaire(contenu, csrf)}
+            setContenu={setContenu}
+            àLAnnulation={() => {
+              setContenu(commentaireÉtat?.contenu);
+              setModeÉdition(false);
             }}
-          >
-            <input
-              id="csrf"
-              name="csrf token"
-              type="hidden"
-              value={csrf}
-            />
-            <ChampsDeSaisie
-              contenu={contenu}
-              libellé='Modification du commentaire'
-              limiteDeCaractères={limiteCaractèresCommentaire}
-              setContenu={setContenu}
-            />
-            <div className='actions'>
-              <button
-                className='fr-btn fr-mr-3w border-radius-4px'
-                type='submit'
-              >
-                Publier
-              </button>
-              <button
-                className='fr-btn fr-btn--secondary border-radius-4px'
-                onClick={() => {
-                  setContenu(commentaireÉtat?.contenu);
-                  setModeÉdition(false);
-                }}
-                type='button'
-              >
-                Annuler
-              </button>
-            </div>
-          </form>
+          />
+           
         ) : (
           commentaireÉtat ? (
             <>
@@ -97,7 +72,7 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
                 date={commentaireÉtat.date}
                 messageSiAucunContenu="Le commentaire est vide."
               />
-              <div className='actions'>
+              <div className='actions fr-mt-4w'>
                 <HistoriqueDUnCommentaire
                   type={type}
                 />
@@ -105,7 +80,7 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
                   className='fr-btn fr-btn--secondary fr-ml-3w border-radius-4px'
                   onClick={() => {
                     setModeÉdition(true);
-                    setAfficherAlerte(false);
+                    setAlerte(null);
                   }}
                   type='button'
                 >

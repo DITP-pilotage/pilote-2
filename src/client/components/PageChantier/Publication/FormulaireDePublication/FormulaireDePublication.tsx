@@ -1,12 +1,24 @@
 import { useState } from 'react';
-import CompteurCaractères from '@/components/_commons/CompteurCaractères/CompteurCaractères';
-import ChampsDeSaisieProps from './ChampsDeSaisie.interface';
+import ChampsDeSaisieProps from './FormulaireDePublication.interface.';
+import CompteurCaractères from './CompteurCaractères/CompteurCaractères';
 
-export default function ChampsDeSaisie({ libellé, contenu, setContenu, limiteDeCaractères }: ChampsDeSaisieProps) {
+export default function FormulaireDePublication({ libellé, contenu, setContenu, limiteDeCaractères, onSubmit, csrf, àLAnnulation }: ChampsDeSaisieProps) {
   const [compte, setCompte] = useState(contenu?.length ?? 0);
-
+  
   return (
-    <>
+    <form
+      method="post"
+      onSubmit={e => {
+        e.preventDefault();
+        onSubmit();
+      }}
+    >
+      <input
+        id="csrf"
+        name="csrf token"
+        type="hidden"
+        value={csrf}
+      />
       <div className={`fr-mb-0 fr-input-group ${compte === limiteDeCaractères && 'fr-input-group--error'}`}>
         <label
           className="fr-label fr-sr-only"
@@ -40,6 +52,21 @@ export default function ChampsDeSaisie({ libellé, contenu, setContenu, limiteDe
         compte={compte}
         limiteDeCaractères={limiteDeCaractères}
       />
-    </>
+      <div className='actions'>
+        <button
+          className='fr-btn fr-mr-3w border-radius-4px'
+          type='submit'
+        >
+          Publier
+        </button>
+        <button
+          className='fr-btn fr-btn--secondary border-radius-4px'
+          onClick={àLAnnulation}
+          type='button'
+        >
+          Annuler
+        </button>
+      </div>
+    </form>
   );
 }

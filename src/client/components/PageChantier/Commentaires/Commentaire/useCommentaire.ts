@@ -6,7 +6,7 @@ import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSé
 export default function useCommentaire(commentaire: DétailsCommentaire | null, type: TypeCommentaire) {
   const [modeÉdition, setModeÉdition] = useState(false);
   const [commentaireÉtat, setCommentaireÉtat] = useState(commentaire);
-  const [afficherAlerte, setAfficherAlerte] = useState(false);
+  const [alerte, setAlerte] = useState <{ type: string, message: string } | null>(null);
   const mailleSélectionnée = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const terriotireSélectionné = territoireSélectionnéTerritoiresStore();
 
@@ -14,6 +14,7 @@ export default function useCommentaire(commentaire: DétailsCommentaire | null, 
     const chantierId = router.query.id as string; 
 
     if (contenu === undefined || contenu === '') {
+      setAlerte({ type: 'erreur', message: 'Vous ne pouvez pas publier de commentaire vide' });
       return;
     }
     
@@ -30,13 +31,18 @@ export default function useCommentaire(commentaire: DétailsCommentaire | null, 
         commentaireÀCréer,
         csrf,
       }),
-    }).then(réponse => {      
+    }).then(réponse => {
+      if (!réponse.ok) {
+        throw new Error(réponse.statusText);
+      }
       return réponse.json() as Promise<DétailsCommentaire>;
-    }).then((détailsNouveauCommentaire) => {
+    }).then(détailsNouveauCommentaire => {
       setCommentaireÉtat(détailsNouveauCommentaire);
       setModeÉdition(false);
-      setAfficherAlerte(true);
-    }).catch();
+      setAlerte({ type: 'succès', message: 'Commentaire modifié' });
+    }).catch(() => {
+      setAlerte({ type: 'erreur', message: "Une erreur s'est produite, veuillez recharger la page" });
+    });
   }
 
   return {
@@ -45,7 +51,7 @@ export default function useCommentaire(commentaire: DétailsCommentaire | null, 
     commentaireÉtat,
     setCommentaireÉtat,
     créerUnCommentaire,
-    afficherAlerte,
-    setAfficherAlerte,
+    alerte,
+    setAlerte,
   };
 }
