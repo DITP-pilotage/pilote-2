@@ -1,5 +1,5 @@
 /* eslint-disable unicorn/prefer-top-level-await */
-import { axe, chantier, commentaire, indicateur, perimetre, ppg, PrismaClient, synthese_des_resultats } from '@prisma/client';
+import { axe, chantier, indicateur, perimetre, ppg, Prisma, PrismaClient, synthese_des_resultats } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import SynthèseDesRésultatsSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
@@ -24,7 +24,7 @@ class DatabaseSeeder {
 
   private _indicateurs: indicateur[] = [];
 
-  private _commentaires: commentaire[] = [];
+  private _commentaires: Prisma.commentaireCreateArgs['data'][] = [];
 
   private _chantiers: chantier[] = [];
 
