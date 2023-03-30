@@ -4,6 +4,11 @@ import { dependencies } from '@/server/infrastructure/Dependencies';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { Objectifs } from '@/server/domain/objectif/Objectif.interface';
 
+import { getServerSession } from 'next-auth/next';
+import { GetServerSidePropsContext } from 'next';
+import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
+import logger from '@/server/infrastructure/logger';
+
 interface NextPageChantierProps {
   chantier: Chantier
   indicateurs: Indicateur[]
@@ -20,9 +25,18 @@ export default function NextPageChantier({ chantier, indicateurs, objectifs }: N
   );
 }
 
-export async function getServerSideProps({ params }: { params: { id: Chantier['id'] } }) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const params: {params: {id: ChantierId}} = context.params;
+  const session = await getServerSession(context.req, context.res, authOptions);
+  if (!session) {
+    logger.error('Not connected?');
+    // TODO: On renvoie une erreur ? Quelle erreur ?
+    throw new Error('Not connected?');
+  }
+  const habilitation = session.habilitation;
+
   const chantierRepository = dependencies.getChantierRepository();
-  const chantier: Chantier = await chantierRepository.getById(params.id);
+  const chantier: Chantier = await chantierRepository.getById(params.id, session.habilitation, 'lecture');
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params.id);
@@ -38,6 +52,7 @@ export async function getServerSideProps({ params }: { params: { id: Chantier['i
       chantier,
       indicateurs,
       objectifs,
+      habilitation, // -> surt le front, les function d'haibilitation sont utiliés        -> if checkChantierScope(habilitation, chantier, scope)
     },
   };
 }

@@ -8,11 +8,17 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import Habilitation, { habilitationGetChantierIdsAvecScope } from '@/server/domain/identité/Habilitation';
+import {Habilitation, Scope, récupereListeChantierAvecScope} from '@/server/domain/identité/Habilitation';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
     super(`Erreur: chantier '${idChantier}' non trouvé.`);
+  }
+}
+
+class ErreurChantierPermission extends Error {
+  constructor(idChantier: string, scope: string) {
+    super(`Erreur de Permission: l'utilisateur n'a pas le droit '${scope}' pour le chantier '${idChantier}'.`);
   }
 }
 
@@ -23,7 +29,15 @@ export default class ChantierSQLRepository implements ChantierRepository {
     this.prisma = prisma;
   }
 
-  async getById(id: string): Promise<Chantier> {
+  async getById(id: string, habilitation: Habilitation, scope: Scope): Promise<Chantier> {
+
+
+    const chantierIds = récupereListeChantierAvecScope(habilitation,  scope);
+  
+    if (chantierIds.find(elt => elt == id) === undefined) {
+      throw new ErreurChantierPermission(id, scope);
+    }
+
     const chantiers: chantier[] = await this.prisma.chantier.findMany({
       where: { id },
     });
@@ -35,8 +49,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return parseChantier(chantiers);
   }
 
-  async getListe(habilitation: Habilitation, scope: string): Promise<Chantier[]> {
-    const chantiers_lecture = habilitationGetChantierIdsAvecScope(habilitation, scope)
+  async getListe(habilitation: Habilitation, scope: Scope): Promise<Chantier[]> {
+    const chantiers_lecture = récupereListeChantierAvecScope(habilitation, scope)
 
     const chantiers = await this.prisma.chantier.findMany({
       where: {

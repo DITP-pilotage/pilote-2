@@ -8,6 +8,8 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import logger from '@/server/infrastructure/logger';
+import {Scope}  from '@/server/domain/identité/Habilitation'
+
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
@@ -34,17 +36,27 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     // TODO: On renvoie une erreur ? Quelle erreur ?
     throw new Error('Not connected?');
   }
+  
+  let scope: Scope = 'lecture';
 
   const chantierRepository = dependencies.getChantierRepository();
-  const chantiers = await chantierRepository.getListe(session.habilitation, 'read');
-  const ministèreRepository = dependencies.getMinistèreRepository();
-  const ministères = await ministèreRepository.getListePourChantiers(chantiers);
+  const chantiers = await chantierRepository.getListe(session.habilitation, scope);
 
-  const axeRepository = dependencies.getAxeRepository();
-  const axes = await axeRepository.getListePourChantiers(chantiers);
+  console.log("chantiers", chantiers)
+  let axes : Axe[] = [];
+  let ppgs: Ppg[] = [];
+  let ministères: Ministère[] = [];
 
-  const ppgRepository = dependencies.getPpgRepository();
-  const ppgs = await ppgRepository.getListePourChantiers(chantiers);
+  if (chantiers.length > 0) {
+    const ministèreRepository = dependencies.getMinistèreRepository();
+    ministères = await ministèreRepository.getListePourChantiers(chantiers);
+
+    const axeRepository = dependencies.getAxeRepository();
+    axes = await axeRepository.getListePourChantiers(chantiers);
+
+    const ppgRepository = dependencies.getPpgRepository();
+    ppgs = await ppgRepository.getListePourChantiers(chantiers);
+  }
 
   return {
     props: {
