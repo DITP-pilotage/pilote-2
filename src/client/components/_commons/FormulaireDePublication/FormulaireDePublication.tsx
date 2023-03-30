@@ -1,60 +1,81 @@
-import { useState } from 'react';
+import { FormEvent, useEffect, useId, useState } from 'react';
+import { récupérerUnCookie } from '@/client/utils/cookies';
 import ChampsDeSaisieProps from './FormulaireDePublication.interface';
 import CompteurCaractères from './CompteurCaractères/CompteurCaractères';
+import FormulaireDePublicationStyled from './FormulaireDePublication.styled';
 
-export default function FormulaireDePublication({ libellé, contenu, setContenu, limiteDeCaractères, onSubmit, csrf, àLAnnulation }: ChampsDeSaisieProps) {
-  const [compte, setCompte] = useState(contenu?.length ?? 0);
+export default function FormulaireDePublication({ libellé, contenuParDéfaut, limiteDeCaractères, àLaSoumissionDuFormulaire, àLAnnulation }: ChampsDeSaisieProps) {
+  const uniqueId = useId();
+  const [contenu, setContenu] = useState(contenuParDéfaut ?? '');
+  const [nombreDeCaractères, setNombreDeCaractères] = useState(contenu?.length ?? 0);
+  const [aDépasséLaLimiteDeCaractères, setADépasséLaLimiteDeCaractères] = useState(false);
+
+  const soumettreLeFormulaire = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (nombreDeCaractères === 0) {
+      return;
+    }
+
+    if (aDépasséLaLimiteDeCaractères) {
+      return;
+    }
+
+    àLaSoumissionDuFormulaire(contenu, récupérerUnCookie('csrf') ?? '');
+  };
+
+  useEffect(() => {
+    if (nombreDeCaractères > limiteDeCaractères) 
+      setADépasséLaLimiteDeCaractères(true);
+    else
+      setADépasséLaLimiteDeCaractères(false);
+  }, [nombreDeCaractères, limiteDeCaractères]);
   
   return (
-    <form
+    <FormulaireDePublicationStyled
       method="post"
-      onSubmit={e => {
-        e.preventDefault();
-        onSubmit();
-      }}
+      onSubmit={soumettreLeFormulaire}
     >
-      <input
-        id="csrf"
-        name="csrf token"
-        type="hidden"
-        value={csrf}
-      />
-      <div className={`fr-mb-0 fr-input-group ${compte === limiteDeCaractères && 'fr-input-group--error'}`}>
+      <div className={`fr-mb-0 fr-input-group ${aDépasséLaLimiteDeCaractères && 'fr-input-group--error'}`}>
         <label
           className="fr-label fr-sr-only"
-          htmlFor="saisie-contenu-commentaire"
+          htmlFor={`contenu-${uniqueId}`}
         >
           {libellé}
         </label>
         <textarea
-          className={`fr-input fr-text--sm fr-mb-0 ${compte === limiteDeCaractères && 'fr-input--error'}`}
-          id="saisie-contenu-commentaire"
-          maxLength={limiteDeCaractères}
-          name="saisie-contenu-commentaire"
+          className={`fr-input fr-text--sm fr-mb-0 ${aDépasséLaLimiteDeCaractères && 'fr-input--error'}`}
+          id={`contenu-${uniqueId}`}
+          name={`contenu-${uniqueId}`}
           onChange={(e) => {
             setContenu(e.target.value);
-            setCompte(e.target.value.length);
+            setNombreDeCaractères(e.target.value.length);
           }}
           rows={6}
           value={contenu}
         />
         {
-          compte === limiteDeCaractères &&
+          !!aDépasséLaLimiteDeCaractères &&
           <p
             className="fr-error-text"
-            id="text-input-error-desc-error"
+            id={`error-${uniqueId}`}
           >
-            Limite de caractères atteinte
+            La limite maximale de 
+            {' '}
+            {limiteDeCaractères}
+            {' '}
+            caractères a été dépassée
           </p>
         }
       </div>
       <CompteurCaractères
-        compte={compte}
+        compte={nombreDeCaractères}
         limiteDeCaractères={limiteDeCaractères}
       />
       <div className='actions'>
         <button
           className='fr-btn fr-mr-3w border-radius-4px'
+          disabled={aDépasséLaLimiteDeCaractères || nombreDeCaractères === 0}
           type='submit'
         >
           Publier
@@ -67,6 +88,6 @@ export default function FormulaireDePublication({ libellé, contenu, setContenu,
           Annuler
         </button>
       </div>
-    </form>
+    </FormulaireDePublicationStyled>
   );
 }

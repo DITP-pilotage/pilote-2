@@ -1,1 +1,1 @@
-export const limiteCaractèresCommentaire = 500;
+export const LIMITE_CARACTÈRES_COMMENTAIRE = 500;

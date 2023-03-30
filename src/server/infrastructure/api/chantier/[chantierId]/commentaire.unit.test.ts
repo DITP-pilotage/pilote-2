@@ -1,6 +1,8 @@
 import { createMocks, RequestOptions } from 'node-mocks-http';
-import handleCréerCommentaire from '@/server/infrastructure/api/chantier/[chantierId]/commentaire';
+import { faker } from '@faker-js/faker';
+import handleCréerCommentaire, { CommentaireParamsError } from '@/server/infrastructure/api/chantier/[chantierId]/commentaire';
 import CréerUnNouveauCommentaireUseCase from '@/server/usecase/commentaire/CréerUnNouveauCommentaireUseCase';
+import { LIMITE_CARACTÈRES_COMMENTAIRE } from '@/server/domain/commentaire/Commentaire.validator';
 
 describe('/api/chantier/:chantierId/commentaire', () => {
   const session = { user: { name: 'Utilisateur connecté' } };
@@ -70,6 +72,7 @@ describe('/api/chantier/:chantierId/commentaire', () => {
     });
 
     // When
+    stubCréerUnNouveauCommentaireUseCase.run = () => Promise.reject(new CommentaireParamsError('Le commentaire est imcomplet'));
     await handleCréerCommentaire({ ...req, body: JSON.stringify(req.body) }, res, getServerSession, stubCréerUnNouveauCommentaireUseCase);
 
     // Then
@@ -85,13 +88,13 @@ describe('/api/chantier/:chantierId/commentaire', () => {
         ...requêteMockéeValide.body,
         commentaireÀCréer: {
           ...requêteMockéeValide.body?.commentaireÀCréer,
-          contenu: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec convallis, libero sed sollicitudin volutpat, magna massa euismod erat, ac bibendum purus justo at libero. Ut vestibulum velit dolor, et blandit libero mattis non. Aenean eget sollicitudin tellus. Nam tortor dolor, sollicitudin at nisi ut, maximus laoreet mi. Aliquam ut gravida erat, a efficitur ex. Donec eleifend accumsan erat, vitae convallis dolor porta a. Vivamus leo nulla, congue non metus vitae, maximus vulputate mi. Vivamus atq111',
+          contenu: faker.lorem.word(LIMITE_CARACTÈRES_COMMENTAIRE + 1),
         }, 
       },
     });
 
-
     // When
+    stubCréerUnNouveauCommentaireUseCase.run = () => Promise.reject(new CommentaireParamsError('Le contenu du commentaire dépasse la limite de caractères'));
     await handleCréerCommentaire({ ...req, body: JSON.stringify(req.body) }, res, getServerSession, stubCréerUnNouveauCommentaireUseCase);
   
     // Then
@@ -107,7 +110,6 @@ describe('/api/chantier/:chantierId/commentaire', () => {
         'csrf': 'hello',
       },
     });
-
 
     // When
     await handleCréerCommentaire({ ...req, body: JSON.stringify(req.body) }, res, getServerSession, stubCréerUnNouveauCommentaireUseCase);
@@ -132,6 +134,21 @@ describe('/api/chantier/:chantierId/commentaire', () => {
     expect(res._getStatusCode()).toBe(400);
     expect(res._getJSONData()).toStrictEqual({ error: "Le cookie CSRF n'existe pas ou il n'est pas correctement soumis" });  
   });
+
+  it("renvoi une erreur si l'utilisateur n'est pas connecté", async () => {
+    // Given
+    const { req, res } = createMocks({
+      ...requêteMockéeValide,
+    });
+
+    // When
+    await handleCréerCommentaire({ ...req, body: JSON.stringify(req.body) }, res, jest.fn().mockReturnValue({ session: null }), stubCréerUnNouveauCommentaireUseCase);
+  
+    // Then
+    expect(res._getStatusCode()).toBe(401);
+    expect(res._getJSONData()).toStrictEqual({ error: 'Utilisateur non authentifié' });  
+  });
+
 
   it("renvoi un statut 200 et le commentaire quand il n'y a pas d'erreur", async () => {
     // Given

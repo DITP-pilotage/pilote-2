@@ -4,6 +4,6 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export default interface CommentaireRepository {
   récupérerHistoriqueDUnCommentaire(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<DétailsCommentaire[]>;
-  getDernierCommentaireParChantierIdEtTerritoire: (chantierId: string, maille: Maille, codeInsee: CodeInsee) => Promise<Commentaires>;
+  récupérerLePlusRécent: (chantierId: string, maille: Maille, codeInsee: CodeInsee) => Promise<Commentaires>;
   créerNouveauCommentaire(chantierId: string, typeDeCommentaire: TypeCommentaire, maille: Maille, codeInsee: CodeInsee, détailsCommentaire: DétailsCommentaire): Promise<DétailsCommentaire>
 }

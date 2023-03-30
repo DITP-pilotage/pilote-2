@@ -1,4 +1,4 @@
-export function récupérerUnCookie(nom: string): string {
+export function récupérerUnCookie(nom: string): string | undefined {
   const cookies = document.cookie.split('; ');
 
   for (const cookie of cookies) {
@@ -7,5 +7,5 @@ export function récupérerUnCookie(nom: string): string {
       return decodeURIComponent(contenu);
   }
 
-  return '';
+  return undefined;
 }

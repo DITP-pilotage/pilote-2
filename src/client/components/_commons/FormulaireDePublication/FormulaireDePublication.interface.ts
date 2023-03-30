@@ -1,9 +1,7 @@
-export default interface ChampsDeSaisieProps {
-  contenu?: string
-  csrf: string
+export default interface FormulaireDePublicationProps {
+  contenuParDéfaut?: string
   libellé: string
   limiteDeCaractères: number
-  onSubmit: () => void
-  setContenu: (state: string) => void
+  àLaSoumissionDuFormulaire: (contenuÀCréer: string, csrf: string) => void
   àLAnnulation: () => void
 }

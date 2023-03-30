@@ -13,6 +13,10 @@ const CommentaireStyled = styled.section`
     display: flex;
     align-self: flex-end;
   }
+
+  .bouton-modifier {
+    border-radius: 4px
+  }
 `;
 
 export default CommentaireStyled;

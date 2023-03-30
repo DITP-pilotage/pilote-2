@@ -3,16 +3,15 @@ import { getServerSession } from 'next-auth';
 import logger from '@/server/infrastructure/logger';
 import CréerUnNouveauCommentaireUseCase from '@/server/usecase/commentaire/CréerUnNouveauCommentaireUseCase';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import { CommentaireÀCréer } from '@/server/domain/commentaire/Commentaire.interface';
-import { limiteCaractèresCommentaire } from '@/server/domain/commentaire/Commentaire.validator';
+import { CommentaireÀCréer, DétailsCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 
 class ParsingError extends Error {}
 class HttpMéthodeError extends Error {}
-class CommentaireParamsError extends Error {}
+export class CommentaireParamsError extends Error {}
 class ConnectionUtilisateurError extends Error {}
 class CSRFError extends Error {}
 
-function vérifierLaQuery(request: NextApiRequest): { chantierId: string } {
+function récupérerQueryParams(request: NextApiRequest): { chantierId: string } {
   const chantierId = request.query.chantierId as string | undefined;
 
   if (!chantierId) {
@@ -30,23 +29,10 @@ function vérifierLaMéthodeHttp(request: NextApiRequest) {
   }
 }
 
-async function vérifierLeCommentaire(request: NextApiRequest) {
-  const commentaire = JSON.parse(request.body).commentaireÀCréer;
-
-  if (!commentaire.typeCommentaire || !commentaire.maille || !commentaire.codeInsee || !commentaire.contenu) {    
-    throw new CommentaireParamsError('Le commentaire est imcomplet');
-  }
-
-  if (commentaire.contenu.length > limiteCaractèresCommentaire) {
-    throw new CommentaireParamsError('Le contenu du commentaire dépasse la limite de caractères');
-  }
-  return commentaire;
-}
-
-async function vérifierLaConnexionDeLUtilisateur(request: NextApiRequest, response: NextApiResponse, serverSession: typeof getServerSession) {
+async function récupérerLUtilisateur(request: NextApiRequest, response: NextApiResponse, serverSession: typeof getServerSession) {
   const session = await serverSession(request, response, authOptions);
 
-  if (!session || !session.user) {       
+  if (!session?.user) {       
     throw new ConnectionUtilisateurError('Utilisateur non authentifié');
   }
 
@@ -54,13 +40,14 @@ async function vérifierLaConnexionDeLUtilisateur(request: NextApiRequest, respo
 }
 
 function vérifierLeCSRF(request: NextApiRequest) {
-  const body = JSON.parse(request.body);
+  const csfrCookie = request.cookies.csrf;
+  const csrfBody = JSON.parse(request.body).csrf;
 
-  if (!request.cookies.csrf || !body.csrf) {
+  if (!csfrCookie || !csrfBody) {
     throw new CSRFError("Le cookie CSRF n'existe pas ou il n'est pas correctement soumis");
   }
 
-  if (request.cookies.csrf !== body.csrf) {
+  if (csfrCookie !== csrfBody) {
     throw new CSRFError('Le CSRF est invalide');
   }
 }
@@ -69,11 +56,11 @@ export default async function handleCréerCommentaire(request: NextApiRequest, r
   try { 
     vérifierLaMéthodeHttp(request);
     vérifierLeCSRF(request);
-    const params = vérifierLaQuery(request);
-    const utilisateur = await vérifierLaConnexionDeLUtilisateur(request, response, serverSession);
-    const nouveauCommentaire: CommentaireÀCréer = await vérifierLeCommentaire(request);
-    const résultat = await créerUnNouveauCommentaire.run(params.chantierId, nouveauCommentaire, utilisateur?.name as string);
-    response.status(200).json(résultat);
+    const params = récupérerQueryParams(request);
+    const utilisateur = await récupérerLUtilisateur(request, response, serverSession);
+    const nouveauCommentaire: CommentaireÀCréer = JSON.parse(request.body).commentaireÀCréer;
+    const détailsCommentaireCréé: DétailsCommentaire = await créerUnNouveauCommentaire.run(params.chantierId, nouveauCommentaire, utilisateur.name!);
+    response.status(200).json(détailsCommentaireCréé);
   } catch (error) { 
     if (error instanceof HttpMéthodeError) {
       response.status(405).json({ error: error.message });

@@ -16,7 +16,7 @@ export class RécupérerLeDétailDUnChantierTerritorialiséeUseCase {
     const infosChantier: InfosChantier = {
       synthèseDesRésultats: await this.synthèseDesRésultatsRepository.récupérerLaPlusRécenteParChantierIdEtTerritoire(chantierId, maille, codeInsee),
       météo: await this.chantierRepository.récupérerMétéoParChantierIdEtTerritoire(chantierId, maille, codeInsee) ?? 'NON_RENSEIGNEE',
-      commentaires: await this.commentaireRepository.getDernierCommentaireParChantierIdEtTerritoire(chantierId, maille, codeInsee),
+      commentaires: await this.commentaireRepository.récupérerLePlusRécent(chantierId, maille, codeInsee),
     };
 
     return infosChantier;

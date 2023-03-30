@@ -8,20 +8,15 @@ export default function useCommentaire(commentaire: DétailsCommentaire | null, 
   const [commentaireÉtat, setCommentaireÉtat] = useState(commentaire);
   const [alerte, setAlerte] = useState <{ type: 'succès' | 'erreur', message: string } | null>(null);
   const mailleSélectionnée = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-  const terriotireSélectionné = territoireSélectionnéTerritoiresStore();
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   function créerUnCommentaire(contenu: string, csrf: string) {
     const chantierId = router.query.id as string; 
-
-    if (contenu === '') {
-      setAlerte({ type: 'erreur', message: 'Vous ne pouvez pas publier de commentaire vide' });
-      return;
-    }
     
     const commentaireÀCréer: CommentaireÀCréer = {
       typeCommentaire: type,
       maille: mailleSélectionnée,
-      codeInsee: terriotireSélectionné.codeInsee,
+      codeInsee: territoireSélectionné.codeInsee,
       contenu: contenu,
     };
     
@@ -33,20 +28,17 @@ export default function useCommentaire(commentaire: DétailsCommentaire | null, 
       }),
     }).then(réponse => {
       if (!réponse.ok) {
-        throw new Error(JSON.stringify({ status: réponse.status }));
+        if (réponse.status === 500) {
+          setAlerte({ type: 'erreur', message: 'Le serveur est indisponible, veuillez réessayer ultérieurement' });
+        } else {
+          setAlerte({ type: 'erreur', message: "Une erreur s'est produite, veuillez actualiser la page" });
+        } 
       }
       return réponse.json() as Promise<DétailsCommentaire>;
     }).then(détailsNouveauCommentaire => {
       setCommentaireÉtat(détailsNouveauCommentaire);
       setModeÉdition(false);
       setAlerte({ type: 'succès', message: 'Commentaire modifié' });
-    }).catch(error => {    
-      const { status } = JSON.parse(error.message);
-      if (status === 500) {
-        setAlerte({ type: 'erreur', message: 'Le serveur est indisponible, veuillez réessayer ultérieurement' });
-      } else {
-        setAlerte({ type: 'erreur', message: "Une erreur s'est produite, veuillez actualiser la page" });
-      } 
     });
   }
 

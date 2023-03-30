@@ -1,13 +1,10 @@
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
-import '@gouvfr/dsfr/dist/utility/icons/icons-design/icons-design.min.css';
-import { useEffect, useState } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import CommentaireProps from '@/components/PageChantier/Commentaires/Commentaire/Commentaire.interface';
 import HistoriqueDUnCommentaire from '@/components/PageChantier/Commentaires/Commentaire/Historique/HistoriqueDUnCommentaire';
 import Publication from '@/components/PageChantier/Publication/Publication';
 import typesCommentaire from '@/client/constants/typesCommentaire';
-import { limiteCaractèresCommentaire } from '@/server/domain/commentaire/Commentaire.validator';
-import { récupérerUnCookie } from '@/client/utils/cookies';
+import { LIMITE_CARACTÈRES_COMMENTAIRE } from '@/server/domain/commentaire/Commentaire.validator';
 import FormulaireDePublication from '@/components/_commons/FormulaireDePublication/FormulaireDePublication';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import CommentaireStyled from './Commentaire.styled';
@@ -24,14 +21,6 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
     alerte,
     setAlerte,
   } = useCommentaire(commentaire, type);
-  const [contenu, setContenu] = useState(commentaireÉtat?.contenu || '');
-  const [csrf, setCsrf] = useState<string>('');
-  
-  useEffect(() => {
-    if (modeÉdition) {
-      setCsrf(récupérerUnCookie('csrf'));
-    }
-  }, [modeÉdition]);
 
   return (
     <CommentaireStyled>
@@ -41,7 +30,7 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
           message={alerte.message}
           type={alerte.type}
         />
-        }
+      }
       <Titre
         baliseHtml='h3'
         className="fr-text--lead fr-mb-1w"
@@ -51,18 +40,12 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
       {
         modeÉdition ? (
           <FormulaireDePublication
-            contenu={contenu}
-            csrf={csrf}
+            contenuParDéfaut={commentaireÉtat?.contenu}
             libellé='Modification du commentaire'
-            limiteDeCaractères={limiteCaractèresCommentaire}
-            onSubmit={() => créerUnCommentaire(contenu, csrf)}
-            setContenu={setContenu}
-            àLAnnulation={() => {
-              setContenu(commentaireÉtat?.contenu || '');
-              setModeÉdition(false);
-            }}
+            limiteDeCaractères={LIMITE_CARACTÈRES_COMMENTAIRE}
+            àLAnnulation={() => setModeÉdition(false)}
+            àLaSoumissionDuFormulaire={(contenuÀCréer, csrf) => créerUnCommentaire(contenuÀCréer, csrf)}
           />
-           
         ) : (
           commentaireÉtat ? (
             <>
@@ -77,7 +60,7 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
                   type={type}
                 />
                 <button
-                  className='fr-btn fr-btn--secondary fr-ml-3w border-radius-4px'
+                  className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
                   onClick={() => {
                     setModeÉdition(true);
                     setAlerte(null);
@@ -99,7 +82,7 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
                 Aucun commentaire à afficher
               </p>
               <button
-                className='fr-btn fr-btn--secondary border-radius-4px actions'
+                className='fr-btn fr-btn--secondary bouton-modifier actions'
                 onClick={() => setModeÉdition(true)}
                 type='button'
               >

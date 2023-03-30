@@ -39,7 +39,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     };
   }
 
-  private getPremierCommentairePourUnTypeDonné(commentaires: commentaire[], typeCommentaire: string): DétailsCommentaire | null {
+  private récupérerPremierCommentairePourUnTypeDonné(commentaires: commentaire[], typeCommentaire: string): DétailsCommentaire | null {
     const commentairesByType = commentaires.filter((comm) => comm.type == typeCommentaire);
     if (commentairesByType.length === 0) {
       return null;
@@ -48,7 +48,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   }
 
 
-  async getDernierCommentaireParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Commentaires> {
+  async récupérerLePlusRécent(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Commentaires> {
     const commentaires: commentaire[] = await this.prisma.commentaire.findMany({
       where: {
         chantier_id: chantierId,
@@ -60,10 +60,10 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     });
 
     return {
-      freinsÀLever: this.getPremierCommentairePourUnTypeDonné(commentaires, 'freins_a_lever'),
-      actionsÀVenir: this.getPremierCommentairePourUnTypeDonné(commentaires, 'actions_a_venir'),
-      actionsÀValoriser: this.getPremierCommentairePourUnTypeDonné(commentaires, 'actions_a_valoriser'),
-      autresRésultatsObtenus: this.getPremierCommentairePourUnTypeDonné(commentaires, 'autres_resultats_obtenus'),
+      freinsÀLever: this.récupérerPremierCommentairePourUnTypeDonné(commentaires, 'freins_a_lever'),
+      actionsÀVenir: this.récupérerPremierCommentairePourUnTypeDonné(commentaires, 'actions_a_venir'),
+      actionsÀValoriser: this.récupérerPremierCommentairePourUnTypeDonné(commentaires, 'actions_a_valoriser'),
+      autresRésultatsObtenus: this.récupérerPremierCommentairePourUnTypeDonné(commentaires, 'autres_resultats_obtenus'),
     };
   }
 
@@ -81,7 +81,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return commentaires.map(commentaireDeLHistorique => this.mapToDomain(commentaireDeLHistorique));
   }
 
-  async getObjectifsByChantierId(chantierId: string): Promise<DétailsCommentaire | null> {
+  async récupérerObjectifsParChantierId(chantierId: string): Promise<DétailsCommentaire | null> {
     const commentaireObjectifs: commentaire | null = await this.prisma.commentaire.findFirst({
       where: {
         chantier_id: chantierId,
@@ -98,24 +98,18 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   }
 
   async créerNouveauCommentaire(chantierId: string, typeDeCommentaire: TypeCommentaire, maille: Maille, codeInsee: CodeInsee, détailsCommentaire: DétailsCommentaire) {
-    const commentaireRow = {
-      chantier_id: chantierId,
-      type: CODES_TYPES_COMMENTAIRES[typeDeCommentaire],
-      contenu: détailsCommentaire.contenu,
-      date: détailsCommentaire.date,
-      auteur: détailsCommentaire.auteur,
-      maille: CODES_MAILLES[maille],
-      code_insee: codeInsee,
-    };
-
-    await this.prisma.commentaire.create({
-      data: commentaireRow,
+    const commentaireCréé = await this.prisma.commentaire.create({
+      data: {
+        chantier_id: chantierId,
+        type: CODES_TYPES_COMMENTAIRES[typeDeCommentaire],
+        contenu: détailsCommentaire.contenu,
+        date: new Date(détailsCommentaire.date),
+        auteur: détailsCommentaire.auteur,
+        maille: CODES_MAILLES[maille],
+        code_insee: codeInsee,
+      },
     });
 
-    return {
-      contenu: commentaireRow.contenu,
-      date: commentaireRow.date,
-      auteur: commentaireRow.auteur,
-    };
+    return this.mapToDomain(commentaireCréé);
   }
 }

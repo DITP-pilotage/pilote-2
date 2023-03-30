@@ -11,13 +11,13 @@ import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/ma
 import CommentaireSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 
 describe('CommentaireSQLRepository', () => {
-  describe('findNewestByChantierIdAndTerritoire', () => {
+  describe('récupérerDernierCommentaireParChantierIdEtTerritoire', () => {
     test('Retourne une liste de commentaire vide quand pas de commentaire en base', async () => {
       // GIVEN
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
 
       // WHEN
-      const commentaires = await commentaireRepository.getDernierCommentaireParChantierIdEtTerritoire('CH-001', 'nationale', 'FR');
+      const commentaires = await commentaireRepository.récupérerLePlusRécent('CH-001', 'nationale', 'FR');
 
       // THEN
       await expect(commentaires).toStrictEqual(commentairesNull);
@@ -97,7 +97,7 @@ describe('CommentaireSQLRepository', () => {
 
 
       // WHEN
-      const result = await commentaireRepository.getDernierCommentaireParChantierIdEtTerritoire('CH-001', 'nationale', 'FR');
+      const result = await commentaireRepository.récupérerLePlusRécent('CH-001', 'nationale', 'FR');
 
       // THEN
       expect(result).toStrictEqual({
@@ -189,6 +189,27 @@ describe('CommentaireSQLRepository', () => {
           date: '2022-12-31T00:00:00.000Z',
         },
       ]);
+    });
+  });
+
+  describe('créerNouveauCommentaire', () => {
+    it('Crée le commentaire en base et retourne le détails du commentaire', async () => {
+      // Given
+      const date = '01/04/2023';
+      const chantierId = 'CH-001';
+      const maille: Maille = 'nationale';
+      const codeInsee = 'FR';
+      const typeCommentaire: TypeCommentaire = 'freinsÀLever';
+      const détailsCommentaire = { contenu: 'contenu', date: date, auteur: 'Jhon Do' };
+      const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
+      
+      // WHEN
+      const détailsCommentaireCréé = await commentaireRepository.créerNouveauCommentaire(chantierId, typeCommentaire, maille, codeInsee, détailsCommentaire );
+      
+      // THEN
+      const commentaireCrééEnBase = await prisma.commentaire.findFirst();
+      expect(détailsCommentaireCréé).toStrictEqual({ ...détailsCommentaire, date: new Date(date).toISOString() });
+      expect(commentaireCrééEnBase?.contenu).toEqual(détailsCommentaire.contenu);
     });
   });
 });
