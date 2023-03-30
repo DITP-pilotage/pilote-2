@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ ref('commentaires') }}
+    select * from {{ source('import_from_files', 'raw__mesures_indicateurs') }}
 
 ),
 
