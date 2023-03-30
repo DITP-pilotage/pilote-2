@@ -1,5 +1,7 @@
-import { ChangeEventHandler, Dispatch, MouseEventHandler, SetStateAction, useState } from 'react';
+import { ChangeEventHandler, Dispatch, FormEventHandler, SetStateAction, useState } from 'react';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
+
+type UploadFichierFormulaireElement = { 'file-upload': HTMLInputElement } & HTMLFormElement;
 
 export const useFormulaireIndicateur = (chantierId: string, setRapport: Dispatch<SetStateAction<DetailValidationFichierContrat | null>>) => {
   const [file, setFile] = useState<File | null>(null);
@@ -12,11 +14,13 @@ export const useFormulaireIndicateur = (chantierId: string, setRapport: Dispatch
     setRapport(null);
   };
 
-  const uploadLeFichier: MouseEventHandler<HTMLButtonElement> = async () => {
+  const uploadLeFichier: FormEventHandler<UploadFichierFormulaireElement> = async (event) => {
+    event.preventDefault();
+  
     if (!file) {
       return;
     }
-  
+
     const body = new FormData();
     const schéma = 'https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/templates/arbre/schema_arbre.json';
 
@@ -29,6 +33,8 @@ export const useFormulaireIndicateur = (chantierId: string, setRapport: Dispatch
     }).then(response => response.json());
     
     setRapport(detailValidationFichier);
+    setFile(null);
+    event.currentTarget['file-upload'].value = ''; 
   };
 
   return { définirLeFichier, uploadLeFichier };  
