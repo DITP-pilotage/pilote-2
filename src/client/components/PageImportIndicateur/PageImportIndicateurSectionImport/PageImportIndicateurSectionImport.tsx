@@ -5,9 +5,9 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import Indicateurs from '@/components/PageChantier/Indicateurs/Indicateurs';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import ResultatValidationFichier from '@/client/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
-import FormulaireIndicateur from '@/client/components/PageImportIndicateur/FormulaireIndicateur/FormulaireIndicateur';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import PageImportIndicateurSectionImportStyled from './PageImportIndicateurSectionImport.styled';
+import FormulaireIndicateur from './FormulaireIndicateur/FormulaireIndicateur';
 
 interface PageImportIndicateurSectionImportProps {
   chantierId: string

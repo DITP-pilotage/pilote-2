@@ -21,9 +21,11 @@ export const useFormulaireIndicateur = (chantierId: string, setRapport: Dispatch
       return;
     }
 
+    event.currentTarget['file-upload'].value = '';
+    
     const body = new FormData();
     const schéma = 'https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/templates/arbre/schema_arbre.json';
-
+    
     body.append('file', file);
     body.append('schema', schéma);
 
@@ -31,10 +33,9 @@ export const useFormulaireIndicateur = (chantierId: string, setRapport: Dispatch
       method: 'POST',
       body,
     }).then(response => response.json());
-    
+
     setRapport(detailValidationFichier);
     setFile(null);
-    event.currentTarget['file-upload'].value = ''; 
   };
 
   return { définirLeFichier, uploadLeFichier };  
