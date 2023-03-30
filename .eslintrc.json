@@ -62,6 +62,15 @@
     ],
     "no-console": "error",
     "no-unused-vars": "off",
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector":  "function",
+        "format": ["camelCase", "PascalCase"],
+        "leadingUnderscore":  "allow",
+        "filter": { "regex": "^(_+|[A-Za-z]+_[A-Z][a-z]+)$", "match": false }
+      }
+    ],
     "@typescript-eslint/no-unused-vars": [
       "error",
       {

@@ -1,5 +1,5 @@
 import { DefaultSession } from 'next-auth';
-import Habilitation from '@server/domain/identité/Habilitation';
+import { Habilitation } from '@/server/domain/identité/Habilitation';
 
 declare module 'next-auth' {
   interface Session {

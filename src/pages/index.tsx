@@ -8,7 +8,7 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import logger from '@/server/infrastructure/logger';
-import {Scope}  from '@/server/domain/identité/Habilitation'
+import { Scope } from '@/server/domain/identité/Habilitation';
 
 
 interface NextPageAccueilProps {
@@ -36,14 +36,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     // TODO: On renvoie une erreur ? Quelle erreur ?
     throw new Error('Not connected?');
   }
-  
+
   let scope: Scope = 'lecture';
 
   const chantierRepository = dependencies.getChantierRepository();
   const chantiers = await chantierRepository.getListe(session.habilitation, scope);
 
-  console.log("chantiers", chantiers)
-  let axes : Axe[] = [];
+  logger.debug({ chantiers });
+  let axes: Axe[] = [];
   let ppgs: Ppg[] = [];
   let ministères: Ministère[] = [];
 

@@ -1,13 +1,14 @@
+import { getServerSession } from 'next-auth/next';
+import { GetServerSidePropsContext } from 'next';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import PageChantier from '@/components/PageChantier/PageChantier';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { Objectifs } from '@/server/domain/objectif/Objectif.interface';
 
-import { getServerSession } from 'next-auth/next';
-import { GetServerSidePropsContext } from 'next';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import logger from '@/server/infrastructure/logger';
+import { ChantierId } from '@/server/domain/identité/Habilitation';
 
 interface NextPageChantierProps {
   chantier: Chantier
@@ -17,8 +18,8 @@ interface NextPageChantierProps {
 
 export default function NextPageChantier({ chantier, indicateurs, objectifs }: NextPageChantierProps) {
   return (
-    <PageChantier 
-      chantier={chantier} 
+    <PageChantier
+      chantier={chantier}
       indicateurs={indicateurs}
       objectifs={objectifs}
     />
@@ -26,7 +27,7 @@ export default function NextPageChantier({ chantier, indicateurs, objectifs }: N
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const params: {params: {id: ChantierId}} = context.params;
+  const params: { params: { id: ChantierId } } = context.params;
   const session = await getServerSession(context.req, context.res, authOptions);
   if (!session) {
     logger.error('Not connected?');

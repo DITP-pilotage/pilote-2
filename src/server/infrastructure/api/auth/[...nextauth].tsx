@@ -32,7 +32,12 @@ async function doFinalSignoutHandshake(token: JWT) {
         method: 'POST',
         body: params,
       });
-      logger.debug({ response, ok: response?.ok, statusText: response?.statusText, body: response?.body }, 'Logout response');
+      logger.debug({
+        response,
+        ok: response?.ok,
+        statusText: response?.statusText,
+        body: response?.body,
+      }, 'Logout response');
 
       const refreshedTokens = await response.json();
       if (response && !response.ok) {
@@ -186,13 +191,22 @@ export const authOptions: AuthOptions = {
       session.user = token.user;
       session.accessToken = token.accessToken;
       session.error = token.error;
-      session.habilitation = {'chantiers':{'CH-1694106':['lecture'],'CH-1023781': ['lecture', 'lecture', 'lecture', 'lecture','lecture'], 'CH-1477419': ['lecture'], 'CH-1497629': ['lecture'],}}
+      session.habilitation = {
+        'chantiers': {
+          'CH-1694106': ['lecture'],
+          'CH-1023781': ['lecture', 'lecture', 'lecture', 'lecture', 'lecture'],
+          'CH-1477419': ['lecture'],
+          'CH-1497629': ['lecture'],
+        },
+      };
 
       return session;
     },
   },
   events: {
-    signOut: ({ token }: any) => { return doFinalSignoutHandshake(token); },
+    signOut: ({ token }: any) => {
+      return doFinalSignoutHandshake(token);
+    },
   },
 };
 

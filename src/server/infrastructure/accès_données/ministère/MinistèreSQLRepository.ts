@@ -38,7 +38,7 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
   }
 
   async getListePourChantiers(chantiers: Chantier[]): Promise<Ministère[]> {
-    let list_chantier = chantiers.map(x => x.id)
+    let list_chantier = chantiers.map(x => x.id);
     const queryResults: MinistèreQueryResult[] = await this.prisma.$queryRaw`
     WITH ministere_liste AS (
       select DISTINCT unnest(c.perimetre_ids) as perimetre_id from chantier c where  c.id IN (${Prisma.join(list_chantier)})
