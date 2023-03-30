@@ -1,14 +1,13 @@
-import { useState, ChangeEventHandler, MouseEventHandler } from 'react';
-import Bouton from '@/components/_commons/Bouton/Bouton';
-import InputFichier from '@/components/_commons/InputFichier/InputFichier';
+import { useState } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import Indicateurs from '@/components/PageChantier/Indicateurs/Indicateurs';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import ResultatValidationFichier from '@/client/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
+import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import PageImportIndicateurSectionImportStyled from './PageImportIndicateurSectionImport.styled';
+import FormulaireIndicateur from './FormulaireIndicateur/FormulaireIndicateur';
 
 interface PageImportIndicateurSectionImportProps {
   chantierId: string
@@ -16,35 +15,8 @@ interface PageImportIndicateurSectionImportProps {
   indicateurs: Indicateur[]
 }
 
-export default function PageImportIndicateurSectionImport({ chantierId, détailsIndicateurs, indicateurs }:PageImportIndicateurSectionImportProps) {
-  const [file, setFile] = useState<File | null>(null);
+export default function PageImportIndicateurSectionImport({ chantierId, détailsIndicateurs, indicateurs }: PageImportIndicateurSectionImportProps) {
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
-
-  const définirLeFichier: ChangeEventHandler<HTMLInputElement> = (event) => {
-    if (event.target.files && event.target.files[0]) {      
-      setFile(event.target.files[0]);
-    }
-    setRapport(null);
-  };
-  
-  const uploadLeFichier: MouseEventHandler<HTMLButtonElement> = async () => {
-    if (!file) {
-      return;
-    }
-  
-    const body = new FormData();
-    const schéma = 'https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/templates/arbre/schema_arbre.json';
-
-    body.append('file', file);
-    body.append('schema', schéma);
-
-    const detailValidationFichier: DetailValidationFichierContrat = await fetch(`/api/chantier/${chantierId}/indicateur/indicateurIdToBeDefined`, {
-      method: 'POST',
-      body,
-    }).then(response => response.json());
-    
-    setRapport(detailValidationFichier);
-  };
 
   return (
     <PageImportIndicateurSectionImportStyled>
@@ -59,16 +31,10 @@ export default function PageImportIndicateurSectionImport({ chantierId, détails
           <span className='fr-h4'>
             Titre de l&apos;indicateur
           </span>
-          <div className='fr-grid-row fr-grid-row--middle fr-grid-row--center fr-gap-2w'>
-            <InputFichier
-              label='Importer des données'
-              onChange={définirLeFichier}
-            />
-            <Bouton
-              label='Importer les données'
-              onClick={uploadLeFichier}
-            />
-          </div>
+          <FormulaireIndicateur
+            chantierId={chantierId}
+            setRapport={setRapport}
+          />
         </Bloc>
         {
         rapport !== null &&

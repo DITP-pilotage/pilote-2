@@ -1,4 +1,5 @@
 import { ChangeEventHandler } from 'react';
+import '@gouvfr/dsfr/dist/component/upload/upload.min.css';
 
 interface InputFichierProps {
   label: string
