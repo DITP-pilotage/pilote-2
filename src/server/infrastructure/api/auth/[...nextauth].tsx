@@ -1,7 +1,8 @@
-import NextAuth, { AuthOptions, SessionOptions, User } from 'next-auth';
+import NextAuth, { AuthOptions, getServerSession, SessionOptions, User } from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import type { JWT } from 'next-auth/jwt';
+import { GetServerSidePropsContext } from 'next';
 import config from '@/server/infrastructure/Configuration';
 import logger from '@/server/infrastructure/logger';
 
@@ -192,6 +193,13 @@ export const authOptions: AuthOptions = {
   events: {
     signOut: ({ token }: any) => { return doFinalSignoutHandshake(token); },
   },
+};
+
+export const getServerAuthSession = (ctx: {
+  req: GetServerSidePropsContext['req'];
+  res: GetServerSidePropsContext['res'];
+}) => {
+  return getServerSession(ctx.req, ctx.res, authOptions);
 };
 
 const handleNextAuth = NextAuth(authOptions);
