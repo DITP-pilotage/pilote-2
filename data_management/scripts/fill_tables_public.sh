@@ -12,4 +12,13 @@ then
   fi
 fi
 
+# TODO: supprimer le truncate de commenantaire
+psql "$DATABASE_URL" -c "TRUNCATE TABLE public.commentaire"
+psql "$DATABASE_URL" -c "TRUNCATE TABLE public.synthese_des_resultats"
+psql "$DATABASE_URL" -c "TRUNCATE TABLE public.axe"
+psql "$DATABASE_URL" -c "TRUNCATE TABLE public.perimetre"
+psql "$DATABASE_URL" -c "TRUNCATE TABLE public.ppg"
+psql "$DATABASE_URL" -c "TRUNCATE TABLE public.chantier"
+psql "$DATABASE_URL" -c "TRUNCATE TABLE public.indicateur"
+
 dbt run --project-dir data_factory/ --select intermediate marts

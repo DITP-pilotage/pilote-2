@@ -44,4 +44,4 @@ models:
       +materialized: view
     marts:
       +schema: public
-      +materialized: table
+      +materialized: incremental
