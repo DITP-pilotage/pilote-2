@@ -10,7 +10,6 @@ import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import logger from '@/server/infrastructure/logger';
 import { Scope } from '@/server/domain/identité/Habilitation';
 
-
 interface NextPageAccueilProps {
   chantiers: Chantier[]
   ministères: Ministère[]
@@ -32,9 +31,7 @@ export default function NextPageAccueil({ chantiers, ministères, axes, ppg }: N
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerSession(context.req, context.res, authOptions);
   if (!session) {
-    logger.error('Not connected?');
-    // TODO: On renvoie une erreur ? Quelle erreur ?
-    throw new Error('Not connected?');
+    return { props: {} };
   }
 
   let scope: Scope = 'lecture';
