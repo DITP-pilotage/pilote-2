@@ -9,7 +9,7 @@ describe('HabilitationSQLRepository', () => {
     const utilisateurEmail = 'toto@example.com';
 
     const profilRow = await prisma.profil.create({
-      data: { nom: 'Directeur de chantier' },
+      data: { nom: 'Directeur de chantier', code: 'DIRC' },
     });
 
     const utilisateurRow = await prisma.utilisateur.create({
@@ -57,7 +57,7 @@ describe('HabilitationSQLRepository', () => {
     const utilisateurEmail = 'toto@example.com';
 
     const profilRow = await prisma.profil.create({
-      data: { nom: 'Directeur de chantier' },
+      data: { nom: 'Directeur de chantier', code: 'DIRC' },
     });
 
     const utilisateurRow = await prisma.utilisateur.create({
@@ -107,7 +107,7 @@ describe('HabilitationSQLRepository', () => {
     const utilisateurEmail = 'toto@example.com';
 
     const profilRow = await prisma.profil.create({
-      data: { nom: 'Directeur de chantier' },
+      data: { nom: 'Directeur de chantier', code: 'DIRC' },
     });
 
     const utilisateurRow = await prisma.utilisateur.create({
@@ -155,7 +155,7 @@ describe('HabilitationSQLRepository', () => {
     const utilisateurEmail = 'toto@example.com';
 
     const profilRow = await prisma.profil.create({
-      data: { nom: 'Directeur de chantier' },
+      data: { nom: 'Directeur de chantier', code: 'DIRC' },
     });
 
     const utilisateurRow = await prisma.utilisateur.create({

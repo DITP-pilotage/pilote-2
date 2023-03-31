@@ -158,6 +158,7 @@ model utilisateur_chantier {
 
 model profil {
   id String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  code String
   nom String
 }
 
