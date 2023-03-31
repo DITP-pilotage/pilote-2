@@ -122,7 +122,7 @@ describe('CommentaireSQLRepository', () => {
   });
 
   describe('récupérerHistoriqueDUnCommentaire', () => {
-    test('Retourne tous les commentaires du type donné pour un chantier et un territoire', async () => {
+    test('Retourne, par ordre antéchronologique, tous les commentaires du type donné pour un chantier et un territoire', async () => {
       // GIVEN
       const chantierId = 'CH-001';
       const maille: Maille = 'nationale';

@@ -4,4 +4,6 @@ import SynthèseDesRésultats from './SynthèseDesRésultats.interface';
 
 export default interface SynthèseDesRésultatsRepository {
   récupérerLaPlusRécenteParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<SynthèseDesRésultats>
+
+  récupérerHistorique(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<SynthèseDesRésultats[]>;
 }

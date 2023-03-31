@@ -13,7 +13,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     this.prisma = prisma;
   }
 
-  private _toDomain(synthèse: synthese_des_resultats | null): SynthèseDesRésultats {
+  private mapperVersDomaine(synthèse: synthese_des_resultats | null): SynthèseDesRésultats {
     if (synthèse === null || synthèse.commentaire === null || synthèse.date_commentaire === null)
       return null;
 
@@ -42,6 +42,21 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
       orderBy: { date_commentaire : 'desc' },
     });
 
-    return this._toDomain(synthèseDesRésultats);
+    return this.mapperVersDomaine(synthèseDesRésultats);
+  }
+
+  async récupérerHistorique(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<SynthèseDesRésultats[]> {
+    const synthèsesDesRésultats = await this.prisma.synthese_des_resultats.findMany({
+      where: {
+        chantier_id: chantierId,
+        maille: CODES_MAILLES[maille],
+        code_insee: codeInsee,
+      },
+      orderBy: { date_commentaire : 'desc' },
+    });
+
+    return synthèsesDesRésultats
+      .map((synthèse: synthese_des_resultats) => this.mapperVersDomaine(synthèse))
+      .filter((synthèse: SynthèseDesRésultats) => synthèse !== null);
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import { synthese_des_resultats } from '@prisma/client';
 import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/accès_données/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
@@ -8,12 +9,12 @@ import SynthèseDesRésultatsSQLRowBuilder from '@/server/infrastructure/test/bu
 
 describe('SynthèseDesRésultatsSQLRepository ', function () {
   describe('findNewestByChantierIdAndTerritoire', () => {
-    test('Renvoie null si aucune synthèses des résultats n\'est présente en base', async () => {
+    test('Renvoie null si aucune synthèse des résultats n\'est présente en base', async () => {
       // Given
-      const repository = new SynthèseDesRésultatsSQLRepository(prisma);
+      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
 
       // When
-      const result = await repository.récupérerLaPlusRécenteParChantierIdEtTerritoire('CH-001', 'départementale', 'O1');
+      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécenteParChantierIdEtTerritoire('CH-001', 'départementale', 'O1');
 
       // Then
       expect(result).toBeNull();
@@ -72,6 +73,60 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
         date: '2023-12-31T00:00:00.000Z',
         auteur: '',
       });
+    });
+  });
+
+  describe('récupérerHistoriqueDeLaSynthèseDesRésultats', () => {
+    test('Retourne, par ordre antéchronologique, toutes les synthèses des résultats pour un chantier et un territoire', async () => {
+      // GIVEN
+      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
+      const chantierId = 'CH-001';
+      const maille: Maille = 'régionale';
+      const codeInsee = '01';
+
+      const synthèsesDesResultats: synthese_des_resultats[] = [
+        new SynthèseDesRésultatsSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecCommentaire('Ma synthèse REG-01 2022')
+          .avecDateCommentaire(new Date('2022-12-31'))
+          .build(),
+
+        new SynthèseDesRésultatsSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecCommentaire('Ma synthèse REG-01 2023')
+          .avecDateCommentaire(new Date('2023-12-31'))
+          .build(),
+
+        new SynthèseDesRésultatsSQLRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille('départementale')
+          .avecCodeInsee('88')
+          .avecCommentaire('Ma synthèse DEPT-88')
+          .avecDateCommentaire(new Date('2023-12-31'))
+          .build(),
+      ];
+
+      await prisma.synthese_des_resultats.createMany({ data: synthèsesDesResultats });
+
+      // WHEN
+      const résultat = await synthèseDesRésultatsRepository.récupérerHistorique(chantierId, maille, codeInsee);
+
+      // THEN
+      expect(résultat).toStrictEqual([
+        {
+          auteur: '',
+          contenu: 'Ma synthèse REG-01 2023',
+          date: '2023-12-31T00:00:00.000Z',
+        }, {
+          auteur: '',
+          contenu: 'Ma synthèse REG-01 2022',
+          date: '2022-12-31T00:00:00.000Z',
+        },
+      ]);
     });
   });
 });
