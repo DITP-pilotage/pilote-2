@@ -70,27 +70,28 @@ npm run start
 <br />
 
 ## Commandes utiles
-| Commande                                        | Fonction                                                                                    |
-|-------------------------------------------------|---------------------------------------------------------------------------------------------|
-| npm run dev                                     | Lance le site en mode développeur (avec hot reload)                                         |
-| npm run build                                   | Prépare les fichiers (optimisations) afin de pouvoir les mettre en prod                       |
-| npm run start                                   | Lance un serveur en local qui utilise les fichiers créés pour la production (cf build)       |
-| npm run lint                                    | Lance le linter ESLint, Typescript et Stylelint                                             |
-| npm run lint:fix                                 | Lance le linter ESLint et Stylelint et tente de corriger les erreurs automatiquement        |
-| npm run lint:eslint                             | Lance le linter ESLint                                                                      |
-| npm run lint:tsc                                | Lance le linter Typescript                                                                  |
-| npm run lint:stylelint                          | Lance le linter Stylelint                                                                   |
-| npm run test                                    | Lance tous les tests (front et back)                                                        |
-| npm run test:ci                                 | Utilisé par la CI. Lance tous les tests (front et back)                                     |
-| npm run test:client                             | Lance tous les tests côté front (dossier src/client)                                        |
-| npm run test:client:unit                        | Lance les tests unitaires côté front (dossier src/client)                                   |
-| npm run test:client:integration                 | Lance les tests d'intégration côté front (dossier src/client)                               |
-| npm run test:client:coverage                    | Lance les tests d'intégration côté front et permet d'obtenir le code coverage               |
-| npm run test:server                             | Lance tous les tests côté back (dossier src/server)                                         |
-| npm run test:server:unit                        | Lance les tests unitaires côté back (dossier src/server)                                    |
-| npm run test:server:integration                 | Lance les tests d'intégration côté back (dossier src/server)                                |
-| npm run test:server:domain:coverage             | Lance les tests du dossier domain dans le back et permet d'obtenir le code coverage         |
-| npm run test:server:infrastructure:coverage     | Lance les tests du dossier infrastructure dans le back et permet d'obtenir le code coverage |
-| npm run test:database:init                      | Permet de réinitialiser la base de donnée de test sans aucune données                       |
-| npm run database:init                           | Permet de réinitialiser la base de donnée sans aucune données                               |
-| npm run database:seed                           | Permet de réinitialiser la base de donnée et de la populer avec un jeu de test              |
+| Commande                                    | Fonction                                                                                    |
+|---------------------------------------------|---------------------------------------------------------------------------------------------|
+| npm run dev                                 | Lance le site en mode développeur (avec hot reload)                                         |
+| npm run build                               | Prépare les fichiers (optimisations) afin de pouvoir les mettre en prod                       |
+| npm run start                               | Lance un serveur en local qui utilise les fichiers créés pour la production (cf build)       |
+| npm run lint                                | Lance le linter ESLint, Typescript et Stylelint                                             |
+| npm run lint:fix                            | Lance le linter ESLint et Stylelint et tente de corriger les erreurs automatiquement        |
+| npm run lint:eslint                         | Lance le linter ESLint                                                                      |
+| npm run lint:tsc                            | Lance le linter Typescript                                                                  |
+| npm run lint:stylelint                      | Lance le linter Stylelint                                                                   |
+| npm run test                                | Lance tous les tests (front et back)                                                        |
+| npm run test:ci                             | Utilisé par la CI. Lance tous les tests (front et back)                                     |
+| npm run test:client                         | Lance tous les tests côté front (dossier src/client)                                        |
+| npm run test:client:unit                    | Lance les tests unitaires côté front (dossier src/client)                                   |
+| npm run test:client:integration             | Lance les tests d'intégration côté front (dossier src/client)                               |
+| npm run test:client:coverage                | Lance les tests d'intégration côté front et permet d'obtenir le code coverage               |
+| npm run test:server                         | Lance tous les tests côté back (dossier src/server)                                         |
+| npm run test:server:unit                    | Lance les tests unitaires côté back (dossier src/server)                                    |
+| npm run test:server:integration             | Lance les tests d'intégration côté back (dossier src/server)                                |
+| npm run test:server:domain:coverage         | Lance les tests du dossier domain dans le back et permet d'obtenir le code coverage         |
+| npm run test:server:infrastructure:coverage | Lance les tests du dossier infrastructure dans le back et permet d'obtenir le code coverage |
+| npm run test:database:init                  | Permet de réinitialiser la base de donnée de test sans aucune données                       |
+| npm run database:init                       | Permet de réinitialiser la base de donnée sans aucune données                               |
+| npm run database:seed                       | Permet de réinitialiser la base de donnée et de la populer avec un jeu de test              |
+| npm run postdeploy                          | Utilisé automatiquement lors du déploiement sur Scalingo afin de jouer les migrations Prisma |
