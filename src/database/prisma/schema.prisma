@@ -145,7 +145,7 @@ model objectif {
 
 model utilisateur {
   id String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-  email String
+  email String @unique
   profil_id String @db.Uuid
 }
 
@@ -158,8 +158,8 @@ model utilisateur_chantier {
 
 model profil {
   id String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-  code String
-  nom String
+  code String @unique
+  nom String @unique
 }
 
 model profil_habilitation {
@@ -171,6 +171,6 @@ model profil_habilitation {
 
 model habilitation_scope {
   id String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-  code String
-  nom String
+  code String @unique
+  nom String @unique
 }
