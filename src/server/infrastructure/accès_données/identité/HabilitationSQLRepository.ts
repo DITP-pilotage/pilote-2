@@ -20,7 +20,7 @@ with chantier_from_list as (
     join habilitation_scope hs on hs.id = ph.habilitation_scope_id
    where u.email = ${utilisateurEmail})
 
-  select chantier_id, array_agg(nom) as noms from chantier_from_list group by chantier_id;
+  select chantier_id, array_agg(nom order by nom) as noms from chantier_from_list group by chantier_id;
 `;
 
     const chantiers = {};
