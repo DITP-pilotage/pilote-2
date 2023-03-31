@@ -28,8 +28,8 @@ describe('HabilitationSQLRepository', () => {
 
     const habilitationScopeRow = await prisma.habilitation_scope.create({
       data: {
-        nom: 'lecture',
-        description: 'Scope de lecture sur un chantier',
+        code: 'lecture',
+        nom: 'Scope de lecture sur un chantier',
       },
     });
 
@@ -76,8 +76,8 @@ describe('HabilitationSQLRepository', () => {
 
     const habilitationScopeRow = await prisma.habilitation_scope.create({
       data: {
-        nom: 'lecture',
-        description: 'Scope de lecture sur un chantier',
+        code: 'lecture',
+        nom: 'Scope de lecture sur un chantier',
       },
     });
 
@@ -125,10 +125,10 @@ describe('HabilitationSQLRepository', () => {
     });
 
     const habilitationScopeRow1 = await prisma.habilitation_scope.create({
-      data: { nom: 'lecture', description: 'Scope de lecture sur un chantier' },
+      data: { code: 'lecture', nom: 'Scope de lecture sur un chantier' },
     });
     const habilitationScopeRow2 = await prisma.habilitation_scope.create({
-      data: { nom: 'écriture', description: "Scope d'écriture sur un chantier" },
+      data: { code: 'écriture', nom: "Scope d'écriture sur un chantier" },
     });
 
     await prisma.profil_habilitation.createMany({
@@ -173,10 +173,10 @@ describe('HabilitationSQLRepository', () => {
     });
 
     const habilitationScopeRow1 = await prisma.habilitation_scope.create({
-      data: { nom: 'lecture', description: 'Scope de lecture sur un chantier' },
+      data: { code: 'lecture', nom: 'Scope de lecture sur un chantier' },
     });
     const habilitationScopeRow2 = await prisma.habilitation_scope.create({
-      data: { nom: 'écriture', description: "Scope d'écriture sur un chantier" },
+      data: { code: 'écriture', nom: "Scope d'écriture sur un chantier" },
     });
 
     await prisma.profil_habilitation.createMany({

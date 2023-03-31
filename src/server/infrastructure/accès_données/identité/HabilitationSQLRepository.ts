@@ -13,19 +13,19 @@ export default class HabilitationSQLRepository implements HabilitationRepository
   async récupèreHabilitationsPourUtilisateur(utilisateurEmail: string): Promise<Habilitation> {
     const rows = await this.prisma.$queryRaw`
 with chantier_from_list as (
-  select uc.chantier_id, hs.nom
+  select uc.chantier_id, hs.code
     from utilisateur_chantier uc
     join utilisateur u on u.id = uc.utilisateur_id
     join profil_habilitation ph on ph.profil_id = u.profil_id
     join habilitation_scope hs on hs.id = ph.habilitation_scope_id
    where u.email = ${utilisateurEmail})
 
-  select chantier_id, array_agg(nom order by nom) as noms from chantier_from_list group by chantier_id;
+  select chantier_id, array_agg(code order by code) as codes from chantier_from_list group by chantier_id;
 `;
 
     const chantiers = {};
     for (const row of rows) {
-      chantiers[row.chantier_id] = row.noms;
+      chantiers[row.chantier_id] = row.codes;
     }
 
     return { chantiers };

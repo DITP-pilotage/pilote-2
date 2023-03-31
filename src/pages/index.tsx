@@ -7,7 +7,6 @@ import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import logger from '@/server/infrastructure/logger';
 import { Scope } from '@/server/domain/identité/Habilitation';
 
 interface NextPageAccueilProps {
@@ -29,7 +28,7 @@ export default function NextPageAccueil({ chantiers, ministères, axes, ppg }: N
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSession(context.req, context.res, authOptions);
+  const session = await getServerSession(context.req as any, context.res as any, authOptions as any);
   if (!session) {
     return { props: {} };
   }
@@ -39,7 +38,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const chantierRepository = dependencies.getChantierRepository();
   const chantiers = await chantierRepository.getListe(session.habilitation, scope);
 
-  logger.debug({ chantiers });
   let axes: Axe[] = [];
   let ppgs: Ppg[] = [];
   let ministères: Ministère[] = [];
