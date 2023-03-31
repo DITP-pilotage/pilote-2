@@ -5,6 +5,7 @@ import type { JWT } from 'next-auth/jwt';
 import { GetServerSidePropsContext } from 'next';
 import config from '@/server/infrastructure/Configuration';
 import logger from '@/server/infrastructure/logger';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export const keycloak = KeycloakProvider({
   clientId: config.keycloakClientId,
@@ -165,6 +166,9 @@ export const authOptions: AuthOptions = {
       if (account && user) {
         logger.debug({ token, user, account, profile, isNewUser, currentDate }, '------> JWT fnt');
 
+        const habilitationRepository = dependencies.getHabilitationRepository();
+        const habilitation = await habilitationRepository.récupèreHabilitationsPourUtilisateur(user.email);
+
         return {
           accessToken: account.access_token,
           accessTokenExpires: currentDate + (account.expires_at - 10) * 1000,
@@ -172,6 +176,7 @@ export const authOptions: AuthOptions = {
           refreshToken: account.refresh_token,
           idToken: account.id_token,
           provider: account.provider,
+          habilitation,
           user,
         };
       }
@@ -191,14 +196,7 @@ export const authOptions: AuthOptions = {
       session.user = token.user;
       session.accessToken = token.accessToken;
       session.error = token.error;
-      session.habilitation = {
-        'chantiers': {
-          'CH-1694106': ['lecture'],
-          'CH-1023781': ['lecture', 'lecture', 'lecture', 'lecture', 'lecture'],
-          'CH-1477419': ['lecture'],
-          'CH-1497629': ['lecture'],
-        },
-      };
+      session.habilitation = token.habilitation;
 
       return session;
     },

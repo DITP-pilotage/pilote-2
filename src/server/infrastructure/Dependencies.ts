@@ -18,6 +18,8 @@ import PpgSQLRepository from '@/server/infrastructure/accès_données/ppg/PpgSQL
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import CommentaireSQLRepository from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
+import HabilitationRepository from '@/server/domain/identité/HabilitationRepository';
+import HabilitationSQLRepository from '@/server/infrastructure/accès_données/identité/HabilitationSQLRepository';
 import {
   ValiderFichierIndicateurImporteUseCase,
 } from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
@@ -47,6 +49,8 @@ class Dependencies {
 
   private readonly _objectifRepository: ObjectifRepository;
 
+  private readonly _habilitationRepository: HabilitationRepository;
+
   private readonly _validerFichierIndicateurImporteUseCase: ValiderFichierIndicateurImporteUseCase;
 
   constructor() {
@@ -60,7 +64,7 @@ class Dependencies {
     this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
     this._commentaireRepository = new CommentaireSQLRepository(prisma);
     this._objectifRepository = new ObjectifSQLRepository(prisma);
-
+    this._habilitationRepository = new HabilitationSQLRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
@@ -105,6 +109,10 @@ class Dependencies {
 
   getValiderFichierIndicateurImporteUseCase(): ValiderFichierIndicateurImporteUseCase {
     return this._validerFichierIndicateurImporteUseCase;
+  }
+
+  getHabilitationRepository() {
+    return this._habilitationRepository;
   }
 }
 
