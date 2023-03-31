@@ -4,8 +4,6 @@ import Publication from '@/components/PageChantier/Publication/Publication';
 import useHistoriqueDeLaSynthèseDesRésultats from './useHistoriqueDeLaSynthèseDesRésultats';
 
 export default function HistoriqueDeLaSynthèseDesRésultats() {
-
-
   const { historiqueDeLaSynthèseDesRésultats, territoireSélectionné, setEstModaleOuverte } = useHistoriqueDeLaSynthèseDesRésultats();
 
   return (

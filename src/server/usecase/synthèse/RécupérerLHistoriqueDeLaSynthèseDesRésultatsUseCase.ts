@@ -11,7 +11,7 @@ export default class RécupérerLHistoriqueDeLaSynthèseDesRésultatsUseCase {
 
   async run(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<{ historiqueDeLaSynthèseDesRésultats: SynthèseDesRésultats[] }> {
     return {
-      historiqueDeLaSynthèseDesRésultats: await this.synthèsesDesRésultatsRepository.récupérerHistoriqueDeLaSynthèseDesRésultats(chantierId, maille, codeInsee),
+      historiqueDeLaSynthèseDesRésultats: await this.synthèsesDesRésultatsRepository.récupérerHistorique(chantierId, maille, codeInsee),
     };
   }
 }

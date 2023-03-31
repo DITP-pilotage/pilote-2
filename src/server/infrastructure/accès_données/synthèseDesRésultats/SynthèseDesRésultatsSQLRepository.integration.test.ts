@@ -113,7 +113,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       await prisma.synthese_des_resultats.createMany({ data: synthèsesDesResultats });
 
       // WHEN
-      const résultat = await synthèseDesRésultatsRepository.récupérerHistoriqueDeLaSynthèseDesRésultats(chantierId, maille, codeInsee);
+      const résultat = await synthèseDesRésultatsRepository.récupérerHistorique(chantierId, maille, codeInsee);
 
       // THEN
       expect(résultat).toStrictEqual([
