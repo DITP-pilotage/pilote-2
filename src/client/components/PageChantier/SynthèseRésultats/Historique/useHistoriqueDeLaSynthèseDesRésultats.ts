@@ -1,45 +1,44 @@
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { DétailsCommentaire, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { useEffect, useState } from 'react';
 import {
   mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 
-export default function useHistoriqueDUnCommentaire(typeCommentaire: TypeCommentaire) {
+export default function useHistoriqueDeLaSynthèseDesRésultats() {
   const router = useRouter();
   const chantierId = router.query.id as string; //TODO changer id pour chantierId
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-  const [historiqueDUnCommentaire, setHistoriqueDUnCommentaire] = useState<DétailsCommentaire[] | null>(null);
+  const [historiqueDeLaSynthèseDesRésultats, setHistoriqueDeLaSynthèseDesRésultats] = useState<SynthèseDesRésultats[] | null>(null);
   const [estModaleOuverte, setEstModaleOuverte] = useState(false);
 
   useEffect(() => {
-    setHistoriqueDUnCommentaire(null);
+    setHistoriqueDeLaSynthèseDesRésultats(null);
   }, [chantierId, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
 
   useEffect(() => {
     if (!chantierId || !estModaleOuverte)
       return;
 
-    fetch(`/api/chantier/${chantierId}/historique-d-un-commentaire?`
+    fetch(`/api/chantier/${chantierId}/historique-de-la-synthese-des-resultats?`
       + new URLSearchParams({
         maille: mailleAssociéeAuTerritoireSélectionné,
         codeInsee: territoireSélectionné.codeInsee,
-        type: typeCommentaire,
       }))
       .then(réponse => {
         return réponse.json();
       })
       .then(données => {
         // TODO améliorer la gestion d'erreur
-        setHistoriqueDUnCommentaire(données.historiqueDUnCommentaire ?? []);
+        setHistoriqueDeLaSynthèseDesRésultats(données.historiqueDeLaSynthèseDesRésultats ?? []);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [estModaleOuverte]);
 
   return {
-    historiqueDUnCommentaire,
+    historiqueDeLaSynthèseDesRésultats,
     territoireSélectionné,
     setEstModaleOuverte,
   };

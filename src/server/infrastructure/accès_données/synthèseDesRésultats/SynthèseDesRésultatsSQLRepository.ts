@@ -55,6 +55,8 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
       orderBy: { date_commentaire : 'desc' },
     });
 
-    return synthèsesDesRésultats.map(synthèse => this._toDomain(synthèse));
+    return synthèsesDesRésultats
+      .map((synthèse: synthese_des_resultats) => this._toDomain(synthèse))
+      .filter((synthèse: SynthèseDesRésultats) => synthèse !== null);
   }
 }

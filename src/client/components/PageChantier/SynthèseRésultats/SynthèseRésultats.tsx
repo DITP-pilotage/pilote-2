@@ -6,6 +6,8 @@ import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import Publication from '@/components/PageChantier/Publication/Publication';
 import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
+import HistoriqueDeLaSynthèseDesRésultats
+  from '@/components/PageChantier/SynthèseRésultats/Historique/HistoriqueDeLaSynthèseDesRésultats';
 
 export default function SynthèseRésultats({ météo, synthèseDesRésultats }: SynthèseRésultatsProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -25,12 +27,23 @@ export default function SynthèseRésultats({ météo, synthèseDesRésultats }:
             <MétéoPicto valeur={météo} />
           </div>
           <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
-            <Publication
-              auteur={synthèseDesRésultats?.auteur ?? null}
-              contenu={synthèseDesRésultats?.contenu ?? null}
-              date={synthèseDesRésultats?.date ?? null}
-              messageSiAucunContenu="Aucune synthèse des résultats."
-            />
+            {
+              synthèseDesRésultats ? (
+                <>
+                  <Publication
+                    auteur={synthèseDesRésultats.auteur}
+                    contenu={synthèseDesRésultats.contenu}
+                    date={synthèseDesRésultats.date}
+                    messageSiAucunContenu="Aucune synthèse des résultats."
+                  />
+                  <HistoriqueDeLaSynthèseDesRésultats />
+                </>
+              ) : (
+                <p className='fr-text--sm texte-gris'>
+                  Aucune synthèse des résultats.
+                </p>
+              )
+            }
           </div>
         </div>
       </Bloc>
