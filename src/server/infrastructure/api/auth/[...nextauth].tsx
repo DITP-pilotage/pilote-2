@@ -62,6 +62,7 @@ async function doFinalSignoutHandshake(token: JWT) {
  * returns the old token and an error property
  */
 /**
+ * TODO: Actualiser les habilitations !!
  * @param  {JWT} token
  */
 async function refreshAccessToken(token: JWT) {

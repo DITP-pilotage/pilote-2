@@ -28,10 +28,14 @@ describe('ChantierSQLRepository', () => {
           .avecId('CH-002').avecNom('Chantier 2').build(),
       ],
     });
+    const habilitation = { chantiers: {
+      'CH-001': ['lecture'],
+      'CH-002': ['lecture'],
+    } };
 
     // WHEN
-    const result1 = await repository.getById('CH-001');
-    const result2 = await repository.getById('CH-002');
+    const result1 = await repository.getById('CH-001', habilitation, 'lecture');
+    const result2 = await repository.getById('CH-002', habilitation, 'lecture');
 
     // THEN
     expect(result1.nom).toEqual('Chantier 1');
@@ -51,6 +55,7 @@ describe('ChantierSQLRepository', () => {
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
 
     const chantierId = 'CH-001';
+    const habilitation = { chantiers: { 'CH-001': ['lecture'] } };
 
     await prisma.chantier.create({
       data: new ChantierSQLRowBuilder()
@@ -58,7 +63,7 @@ describe('ChantierSQLRepository', () => {
     });
 
     // WHEN
-    const result = await repository.getListe();
+    const result = await repository.getListe(habilitation, 'lecture');
 
     // THEN
     expect(result).toStrictEqual([]);
@@ -75,10 +80,11 @@ describe('ChantierSQLRepository', () => {
           .avecId(chantierId).avecMaille('DEPT').avecMétéo('SOLEIL').avecCodeInsee('13').avecTauxAvancement(45).build(),
       ],
     });
+    const habilitation = { chantiers: { 'CH-001': ['lecture'] } };
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
 
     // WHEN
-    const result = await repository.getById(chantierId);
+    const result = await repository.getById(chantierId, habilitation, 'lecture');
 
     // THEN
     expect(result.mailles.nationale).toStrictEqual({
@@ -122,10 +128,11 @@ describe('ChantierSQLRepository', () => {
           .build(),
       ],
     });
+    const habilitation = { chantiers: { 'CH-001': ['lecture'], 'CH-002': ['lecture'] } };
 
     // WHEN
-    const result1 = await repository.getById('CH-001');
-    const result2 = await repository.getById('CH-002');
+    const result1 = await repository.getById('CH-001', habilitation, 'lecture');
+    const result2 = await repository.getById('CH-002', habilitation, 'lecture');
 
     // THEN
     expect(result1.responsables.porteur).toEqual('Agriculture et Alimentation');
@@ -148,9 +155,10 @@ describe('ChantierSQLRepository', () => {
           .avecId('CH-002').avecMaille('DEPT').avecCodeInsee('13').avecTauxAvancement(50).build(),
       ],
     });
+    const habilitation = { chantiers: { 'CH-001': ['lecture'], 'CH-002': ['lecture'] } };
 
     // WHEN
-    const chantiers = await repository.getListe();
+    const chantiers = await repository.getListe(habilitation, 'lecture');
 
     // THEN
     const ids = chantiers.map(ch => ch.id);
@@ -169,9 +177,10 @@ describe('ChantierSQLRepository', () => {
           .avecId('CH-001').avecMaille('DEPT').avecCodeInsee('974').build(),
       ],
     });
+    const habilitation = { chantiers: { 'CH-001': ['lecture'] } };
 
     // WHEN
-    const chantiers = await repository.getListe();
+    const chantiers = await repository.getListe(habilitation, 'lecture');
 
     // THEN
     expect(chantiers[0].mailles.départementale['974']).toBeDefined();
@@ -187,9 +196,10 @@ describe('ChantierSQLRepository', () => {
       data: new ChantierSQLRowBuilder()
         .avecId(chantierId).avecMaille('NAT').avecDirecteursProjet(['Jean Bon']).avecDirecteursProjetMails([]).build(),
     });
+    const habilitation = { chantiers: { 'CH-001': ['lecture'] } };
 
     // WHEN
-    const result = await repository.getById(chantierId);
+    const result = await repository.getById(chantierId, habilitation, 'lecture');
 
     // THEN
     expect(result.responsables.directeursProjet[0]).toStrictEqual({ nom: 'Jean Bon', email: null });
@@ -205,9 +215,10 @@ describe('ChantierSQLRepository', () => {
       data: new ChantierSQLRowBuilder()
         .avecId(chantierId).avecMaille('NAT').avecEstBaromètre(true).build(),
     });
+    const habilitation = { chantiers: { 'CH-001': ['lecture'] } };
 
     // WHEN
-    const result = await repository.getById(chantierId);
+    const result = await repository.getById(chantierId, habilitation, 'lecture');
 
     // THEN
     expect(result.estBaromètre).toBe(true);
@@ -221,10 +232,11 @@ describe('ChantierSQLRepository', () => {
       await prisma.chantier.create({
         data: new ChantierSQLRowBuilder().avecId(chantierId).avecMaille('NAT').build(),
       });
+      const habilitation = { chantiers: { 'CH-001': ['lecture'], 'CH-002': ['lecture'] } };
 
       // WHEN
       const request = async () => {
-        await repository.getById('CH-002');
+        await repository.getById('CH-002', habilitation, 'lecture');
       };
 
       // THEN
@@ -238,10 +250,11 @@ describe('ChantierSQLRepository', () => {
       await prisma.chantier.create({
         data: new ChantierSQLRowBuilder().avecId(chantierId).avecMaille('DEPT').build(),
       });
+      const habilitation = { chantiers: { 'CH-001': ['lecture'] } };
 
       // WHEN
       const request = async () => {
-        await repository.getById(chantierId);
+        await repository.getById(chantierId, habilitation, 'lecture');
       };
 
       // THEN
