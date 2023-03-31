@@ -2,8 +2,6 @@ import styled from '@emotion/styled';
 
 const ModaleStyled = styled.div`
   .bouton-ouvrir-modale {
-    font-size: 0.875rem;
-    line-height: 1.125rem;
     border-bottom: 1px solid;
   }
   

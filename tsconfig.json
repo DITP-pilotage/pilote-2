@@ -34,7 +34,7 @@
       ],
       "@/stores/*": [
         "client/stores/*"
-      ],
+      ]
     }
   },
   "include": [

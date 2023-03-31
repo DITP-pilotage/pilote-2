@@ -22,18 +22,12 @@ export default function Publication({ contenu, auteur, date, messageSiAucunConte
       {
         doitAfficherAuteur || doitAfficherDate ? (
           <p className="fr-text--xs texte-gris fr-mb-1w">
-            {
-            doitAfficherDate && doitAfficherAuteur ? `Mis à jour le ${dateFormattée} | par ${auteur}` : null
-          }
-            {
-            doitAfficherDate && !doitAfficherAuteur ? `Mis à jour le ${dateFormattée}` : null
-          }
-            {
-            !doitAfficherDate && doitAfficherAuteur ? `Par ${auteur}` : null
-          }
+            { doitAfficherDate && doitAfficherAuteur ? `Mis à jour le ${dateFormattée} | par ${auteur}` : null }
+            { doitAfficherDate && !doitAfficherAuteur ? `Mis à jour le ${dateFormattée}` : null }
+            { !doitAfficherDate && doitAfficherAuteur ? `Par ${auteur}` : null }
           </p>
         ) : null
-    }
+      }
       {
       contenu ? (
         <p

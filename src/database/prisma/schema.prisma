@@ -11,88 +11,88 @@ datasource db {
 }
 
 model chantier {
-  id String
-  nom String
-  perimetre_ids String[]
-  taux_avancement Float?
-  territoire_nom String?
-  code_insee String
-  maille String
+  id                                 String
+  nom                                String
+  perimetre_ids                      String[]
+  taux_avancement                    Float?
+  territoire_nom                     String?
+  code_insee                         String
+  maille                             String
   directeurs_administration_centrale String[]
-  directeurs_projet String[]
-  ministeres String[]
+  directeurs_projet                  String[]
+  ministeres                         String[]
   directions_administration_centrale String[]
-  meteo String? @default("NON_RENSEIGNEE")
-  axe String @default("non renseignée")
-  ppg String @default("non renseignée")
-  directeurs_projet_mails String[]
-  est_barometre Boolean?
-  est_territorialise Boolean?
+  meteo                              String?  @default("NON_RENSEIGNEE")
+  axe                                String   @default("non renseignée")
+  ppg                                String   @default("non renseignée")
+  directeurs_projet_mails            String[]
+  est_barometre                      Boolean?
+  est_territorialise                 Boolean?
 
   @@id([id, code_insee, maille])
 }
 
 model perimetre {
-  id String @id
-  nom String
+  id        String  @id
+  nom       String
   ministere String?
 }
 
 model indicateur {
-  id String
-  nom String
-  chantier_id String
-  objectif_valeur_cible Float?
-  objectif_taux_avancement Float?
-  objectif_date_valeur_cible String?
-  type_id String?
-  type_nom String?
-  est_barometre Boolean?
-  est_phare Boolean?
-  valeur_initiale Float?
-  date_valeur_initiale DateTime? @db.Date
-  valeur_actuelle Float?
-  date_valeur_actuelle DateTime? @db.Date
-  territoire_nom String?
-  code_insee String
-  maille String
-  evolution_valeur_actuelle Float[]
+  id                             String
+  nom                            String
+  chantier_id                    String
+  objectif_valeur_cible          Float?
+  objectif_taux_avancement       Float?
+  objectif_date_valeur_cible     String?
+  type_id                        String?
+  type_nom                       String?
+  est_barometre                  Boolean?
+  est_phare                      Boolean?
+  valeur_initiale                Float?
+  date_valeur_initiale           DateTime?  @db.Date
+  valeur_actuelle                Float?
+  date_valeur_actuelle           DateTime?  @db.Date
+  territoire_nom                 String?
+  code_insee                     String
+  maille                         String
+  evolution_valeur_actuelle      Float[]
   evolution_date_valeur_actuelle DateTime[] @db.Date
-  description String?
-  source String?
-  mode_de_calcul String?
+  description                    String?
+  source                         String?
+  mode_de_calcul                 String?
 
   @@id([id, code_insee, maille])
 }
 
 model synthese_des_resultats {
-  id String @id
-  chantier_id String
-  maille String
-  code_insee String
-  meteo String?
-  date_meteo DateTime? @db.Timestamp
-  commentaire String?
+  id               String    @id
+  chantier_id      String
+  maille           String
+  code_insee       String
+  meteo            String?
+  date_meteo       DateTime? @db.Timestamp
+  commentaire      String?
   date_commentaire DateTime? @db.Timestamp
 }
 
 model axe {
-  id String @id
+  id  String @id
   nom String
 }
 
 model ppg {
-  id String @id
+  id  String @id
   nom String
 }
 
 model commentaire {
-    id String @id
-    chantier_id String
-    type String
-    contenu String
-    date DateTime @db.Timestamp
-    auteur String
-    maille String
-    code_insee String
+  id          Int      @id @default(autoincrement())
+  chantier_id String
+  type        String
+  contenu     String
+  date        DateTime @db.Timestamp
+  auteur      String
+  maille      String
+  code_insee  String
 }

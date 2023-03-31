@@ -1,7 +1,6 @@
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import SynthèseDesRésultatsRepository
-  from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
+import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import ChantierRepository, { InfosChantier } from '@/server/domain/chantier/ChantierRepository.interface';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -17,7 +16,7 @@ export class RécupérerLeDétailDUnChantierTerritorialiséeUseCase {
     const infosChantier: InfosChantier = {
       synthèseDesRésultats: await this.synthèseDesRésultatsRepository.récupérerLaPlusRécenteParChantierIdEtTerritoire(chantierId, maille, codeInsee),
       météo: await this.chantierRepository.récupérerMétéoParChantierIdEtTerritoire(chantierId, maille, codeInsee) ?? 'NON_RENSEIGNEE',
-      commentaires: await this.commentaireRepository.findNewestByChantierIdAndTerritoire(chantierId, maille, codeInsee),
+      commentaires: await this.commentaireRepository.récupérerLePlusRécent(chantierId, maille, codeInsee),
     };
 
     return infosChantier;

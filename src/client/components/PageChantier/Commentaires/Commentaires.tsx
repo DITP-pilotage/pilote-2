@@ -2,7 +2,6 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import CommentairesProps from '@/components/PageChantier/Commentaires/Commentaires.interface';
-import typesCommentaire from '@/client/constants/typesCommentaire';
 import Commentaire from '@/components/PageChantier/Commentaires/Commentaire/Commentaire';
 
 export default function Commentaires({ commentaires }: CommentairesProps) {
@@ -22,7 +21,6 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
         <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
           <Commentaire
             commentaire={commentaires['freinsÀLever']}
-            titre={typesCommentaire['freinsÀLever']}
             type="freinsÀLever"
           />
         </div>
@@ -30,7 +28,6 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
         <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
           <Commentaire
             commentaire={commentaires['actionsÀVenir']}
-            titre={typesCommentaire['actionsÀVenir']}
             type="actionsÀVenir"
           />
         </div>
@@ -38,7 +35,6 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
         <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
           <Commentaire
             commentaire={commentaires['actionsÀValoriser']}
-            titre={typesCommentaire['actionsÀValoriser']}
             type="actionsÀValoriser"
           />
         </div>
@@ -46,7 +42,6 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
         <div className='fr-mx-2w fr-mt-1w fr-mb-2w'>
           <Commentaire
             commentaire={commentaires['autresRésultatsObtenus']}
-            titre={typesCommentaire['autresRésultatsObtenus']}
             type="autresRésultatsObtenus"
           />
         </div>

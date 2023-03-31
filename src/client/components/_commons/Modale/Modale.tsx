@@ -11,7 +11,7 @@ export default function Modale({ children, titre, sousTitre, libelléBouton, idH
     <ModaleStyled>
       <button
         aria-controls={idHtml}
-        className="fr-link fr-link--icon-left fr-fi-arrow-right-line fr-mt-2w bouton-ouvrir-modale"
+        className="fr-link fr-link--icon-left fr-fi-arrow-right-line fr-mt-1w bouton-ouvrir-modale"
         data-fr-opened="false"
         type="button"
       >
