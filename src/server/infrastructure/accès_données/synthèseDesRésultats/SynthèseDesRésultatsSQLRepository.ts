@@ -44,4 +44,17 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
 
     return this._toDomain(synthèseDesRésultats);
   }
+
+  async récupérerHistoriqueDeLaSynthèseDesRésultats(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<SynthèseDesRésultats[]> {
+    const synthèsesDesRésultats = await this.prisma.synthese_des_resultats.findMany({
+      where: {
+        chantier_id: chantierId,
+        maille: CODES_MAILLES[maille],
+        code_insee: codeInsee,
+      },
+      orderBy: { date_commentaire : 'desc' },
+    });
+
+    return synthèsesDesRésultats.map(synthèse => this._toDomain(synthèse));
+  }
 }
