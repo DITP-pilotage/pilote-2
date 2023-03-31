@@ -19,6 +19,8 @@ export class Configuration {
 
   public readonly devPassword: string | undefined;
 
+  public readonly devEmail: string | null;
+
   public readonly isUsingDevCredentials: boolean;
 
   public readonly devSessionMaxAge: number = 30 * 24 * 60 * 60; // 30 days
@@ -32,6 +34,7 @@ export class Configuration {
       const parts = devCredentials.split(':');
       this.devUsername = parts[0];
       this.devPassword = parts[1];
+      this.devEmail = process.env.DEV_EMAIL;
     } else {
       this.isUsingDevCredentials = false;
     }
@@ -49,7 +52,6 @@ export class Configuration {
     this.redirectUri = process.env.NEXTAUTH_URL + '/api/auth/callback/keycloak';
   }
 }
-
 
 const config = new Configuration();
 export default config;

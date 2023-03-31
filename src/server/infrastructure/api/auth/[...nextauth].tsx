@@ -140,7 +140,7 @@ const credentialsProvider = CredentialsProvider({
     if (username != config.devUsername || password != config.devPassword) {
       return null;
     }
-    return { id: '1', name: username, email: `${username}@example.com` };
+    return { id: '1', name: username, email: config.devEmail };
   },
 });
 
