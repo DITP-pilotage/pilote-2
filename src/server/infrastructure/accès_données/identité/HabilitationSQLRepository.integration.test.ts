@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable sonarjs/no-duplicate-string */
 import HabilitationSQLRepository from '@/server/infrastructure/accès_données/identité/HabilitationSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import HabilitationRepository from '@/server/domain/identité/HabilitationRepository';
@@ -6,47 +6,35 @@ import HabilitationRepository from '@/server/domain/identité/HabilitationReposi
 describe('HabilitationSQLRepository', () => {
   it('récupère une habilitation sur un chantier', async () => {
     // GIVEN
-    const utilisateurEmail = 'toto@example.com';
-
-    const profilRow = await prisma.profil.create({
+    const { id: profil_id } = await prisma.profil.create({
       data: { nom: 'Directeur de chantier', code: 'DIRC' },
     });
 
-    const utilisateurRow = await prisma.utilisateur.create({
-      data: {
-        email: utilisateurEmail,
-        profil_id: profilRow.id,
-      },
+    const email = 'toto@example.com';
+    const { id: utilisateur_id } = await prisma.utilisateur.create({
+      data: { email, profil_id },
     });
 
+    const chantier_id = 'CH-001';
     await prisma.utilisateur_chantier.create({
-      data: {
-        utilisateur_id: utilisateurRow.id,
-        chantier_id: 'CH-001',
-      },
+      data: { utilisateur_id, chantier_id },
     });
 
-    const habilitationScopeRow = await prisma.habilitation_scope.create({
-      data: {
-        code: 'lecture',
-        nom: 'Scope de lecture sur un chantier',
-      },
+    const { id: habilitation_scope_id } = await prisma.habilitation_scope.create({
+      data: { code: 'lecture', nom: 'Scope de lecture sur un chantier' },
     });
 
     await prisma.profil_habilitation.create({
-      data: {
-        profil_id: profilRow.id,
-        habilitation_scope_id: habilitationScopeRow.id,
-      },
+      data: { profil_id, habilitation_scope_id },
     });
 
     const expectedHabilitation = {
-      chantiers: { 'CH-001': ['lecture'] },
+      chantiers: { [chantier_id]: ['lecture'] },
     };
 
     // WHEN
     const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
-    const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(utilisateurEmail);
+    const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(email);
 
     // THEN
     expect(result).toStrictEqual(expectedHabilitation);
@@ -54,38 +42,29 @@ describe('HabilitationSQLRepository', () => {
 
   it('récupère une habilitation sur deux chantier', async () => {
     // GIVEN
-    const utilisateurEmail = 'toto@example.com';
-
-    const profilRow = await prisma.profil.create({
+    const { id: profil_id } = await prisma.profil.create({
       data: { nom: 'Directeur de chantier', code: 'DIRC' },
     });
 
-    const utilisateurRow = await prisma.utilisateur.create({
-      data: {
-        email: utilisateurEmail,
-        profil_id: profilRow.id,
-      },
+    const email = 'toto@example.com';
+    const { id: utilisateur_id } = await prisma.utilisateur.create({
+      data: { email, profil_id },
     });
 
+    const chantier_id = 'CH-001';
     await prisma.utilisateur_chantier.createMany({
       data: [
-        { utilisateur_id: utilisateurRow.id, chantier_id: 'CH-001' },
-        { utilisateur_id: utilisateurRow.id, chantier_id: 'CH-002' },
+        { utilisateur_id, chantier_id: chantier_id },
+        { utilisateur_id, chantier_id: 'CH-002' },
       ],
     });
 
-    const habilitationScopeRow = await prisma.habilitation_scope.create({
-      data: {
-        code: 'lecture',
-        nom: 'Scope de lecture sur un chantier',
-      },
+    const { id: habilitation_scope_id } = await prisma.habilitation_scope.create({
+      data: { code: 'lecture', nom: 'Scope de lecture sur un chantier' },
     });
 
     await prisma.profil_habilitation.create({
-      data: {
-        profil_id: profilRow.id,
-        habilitation_scope_id: habilitationScopeRow.id,
-      },
+      data: { profil_id, habilitation_scope_id },
     });
 
     const expectedHabilitation = {
@@ -97,54 +76,48 @@ describe('HabilitationSQLRepository', () => {
 
     // WHEN
     const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
-    const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(utilisateurEmail);
+    const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(email);
 
     // THEN
     expect(result).toStrictEqual(expectedHabilitation);
   });
   it('récupère deux habilitations sur un chantier', async () => {
     // GIVEN
-    const utilisateurEmail = 'toto@example.com';
-
-    const profilRow = await prisma.profil.create({
+    const { id: profil_id } = await prisma.profil.create({
       data: { nom: 'Directeur de chantier', code: 'DIRC' },
     });
 
-    const utilisateurRow = await prisma.utilisateur.create({
-      data: {
-        email: utilisateurEmail,
-        profil_id: profilRow.id,
-      },
+    const email = 'toto@example.com';
+    const { id: utilisateur_id } = await prisma.utilisateur.create({
+      data: { email, profil_id },
     });
 
+    const chantier_id = 'CH-001';
     await prisma.utilisateur_chantier.create({
-      data: {
-        utilisateur_id: utilisateurRow.id,
-        chantier_id: 'CH-001',
-      },
+      data: { utilisateur_id, chantier_id },
     });
 
-    const habilitationScopeRow1 = await prisma.habilitation_scope.create({
+    const { id: habilitationScopeRowId1 } = await prisma.habilitation_scope.create({
       data: { code: 'lecture', nom: 'Scope de lecture sur un chantier' },
     });
-    const habilitationScopeRow2 = await prisma.habilitation_scope.create({
+    const { id: habilitationScopeRowId2 } = await prisma.habilitation_scope.create({
       data: { code: 'écriture', nom: "Scope d'écriture sur un chantier" },
     });
 
     await prisma.profil_habilitation.createMany({
       data: [
-        { profil_id: profilRow.id, habilitation_scope_id: habilitationScopeRow1.id },
-        { profil_id: profilRow.id, habilitation_scope_id: habilitationScopeRow2.id },
+        { profil_id, habilitation_scope_id: habilitationScopeRowId1 },
+        { profil_id, habilitation_scope_id: habilitationScopeRowId2 },
       ],
     });
 
     const expectedHabilitation = {
-      chantiers: { 'CH-001': ['écriture', 'lecture'] },
+      chantiers: { [chantier_id]: ['écriture', 'lecture'] },
     };
 
     // WHEN
     const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
-    const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(utilisateurEmail);
+    const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(email);
 
     // THEN
     expect(result).toStrictEqual(expectedHabilitation);
@@ -152,47 +125,44 @@ describe('HabilitationSQLRepository', () => {
 
   it('récupère deux habilitations sur un chantier', async () => {
     // GIVEN
-    const utilisateurEmail = 'toto@example.com';
-
-    const profilRow = await prisma.profil.create({
+    const { id: profil_id } = await prisma.profil.create({
       data: { nom: 'Directeur de chantier', code: 'DIRC' },
     });
 
-    const utilisateurRow = await prisma.utilisateur.create({
-      data: {
-        email: utilisateurEmail,
-        profil_id: profilRow.id,
-      },
+    const email = 'toto@example.com';
+    const { id: utilisateur_id } = await prisma.utilisateur.create({
+      data: { email, profil_id },
     });
 
+    const chantier_id = 'CH-001';
     await prisma.utilisateur_chantier.create({
       data: {
-        utilisateur_id: utilisateurRow.id,
-        chantier_id: 'CH-001',
+        utilisateur_id,
+        chantier_id: chantier_id,
       },
     });
 
-    const habilitationScopeRow1 = await prisma.habilitation_scope.create({
+    const { id: habilitationScopeRowId1 } = await prisma.habilitation_scope.create({
       data: { code: 'lecture', nom: 'Scope de lecture sur un chantier' },
     });
-    const habilitationScopeRow2 = await prisma.habilitation_scope.create({
+    const { id: habilitationScopeRowId2 } = await prisma.habilitation_scope.create({
       data: { code: 'écriture', nom: "Scope d'écriture sur un chantier" },
     });
 
     await prisma.profil_habilitation.createMany({
       data: [
-        { profil_id: profilRow.id, habilitation_scope_id: habilitationScopeRow1.id },
-        { profil_id: profilRow.id, habilitation_scope_id: habilitationScopeRow2.id },
+        { profil_id, habilitation_scope_id: habilitationScopeRowId1 },
+        { profil_id, habilitation_scope_id: habilitationScopeRowId2 },
       ],
     });
 
     const expectedHabilitation = {
-      chantiers: { 'CH-001': ['écriture', 'lecture'] },
+      chantiers: { [chantier_id]: ['écriture', 'lecture'] },
     };
 
     // WHEN
     const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
-    const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(utilisateurEmail);
+    const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(email);
 
     // THEN
     expect(result).toStrictEqual(expectedHabilitation);

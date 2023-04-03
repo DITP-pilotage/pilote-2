@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import HabilitationRepository from '@/server/domain/identité/HabilitationRepository';
 import { Habilitation } from '@/server/domain/identité/Habilitation';
-import logger from '@/server/infrastructure/logger';
 
 export default class HabilitationSQLRepository implements HabilitationRepository {
   private prisma: PrismaClient;
@@ -11,7 +10,8 @@ export default class HabilitationSQLRepository implements HabilitationRepository
   }
 
   async récupèreHabilitationsPourUtilisateur(utilisateurEmail: string): Promise<Habilitation> {
-    const rows = await this.prisma.$queryRaw`
+    type Row = { chantier_id: string, codes: string[] };
+    const rows = await this.prisma.$queryRaw<Row[]>`
 with chantier_from_list as (
     select uc.chantier_id, hs.code
       from utilisateur_chantier uc
