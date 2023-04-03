@@ -150,44 +150,29 @@ class DatabaseSeeder {
   }
 
   private async _créerDroits() {
-    const profil_DIRC = await prisma.profil.create({
-      data: { nom: 'Directeur de chantier', code: 'DIRC' },
-    });
+    const données = {
+      DIRC: { email_utilisateur: 'utilisateur_DIRC@example.com', nom_profil: 'Directeur de chantier' },
+      PM: { email_utilisateur: 'utilisateur_PM@example.com', nom_profil: 'Premier Ministre' },
+      DITP: { email_utilisateur: 'utilisateur_DITP@example.com', nom_profil: 'Admin DITP' },
+    };
 
-    const profil_PM = await prisma.profil.create({
-      data: { nom: 'Premier Ministre', code: 'PM' },
-    });
+    for (const [code, { nom_profil }] of Object.entries(données)) {
+      const { id } = await prisma.profil.create({ data: { code, nom: nom_profil } });
+      données[code].profil_id = id;
+    }
 
-    const profil_DITP = await prisma.profil.create({
-      data: { nom: 'Admin DITP', code: 'DITP' },
-    });
-
-    const utilisateur_DITP = await prisma.utilisateur.create({
-      data: {
-        email: 'utilisateur_DITP@example.com',
-        profil_id: profil_DITP.id,
-      },
-    });
-    const utilisateur_PM = await prisma.utilisateur.create({
-      data: {
-        email: 'utilisateur_PMP@example.com',
-        profil_id: profil_PM.id,
-      },
-    });
-    const utilisateur_DIRC = await prisma.utilisateur.create({
-      data: {
-        email: 'utilisateur_DIRC@example.com',
-        profil_id: profil_DIRC.id,
-      },
-    });
+    for (const [code, { email_utilisateur, profil_id } ] of Object.entries(données)) {
+      const { id } = await prisma.utilisateur.create({ data: { email: email_utilisateur, profil_id } });
+      données[code].utilisateur_id = id;
+    }
 
     const chantiersRows = await prisma.chantier.findMany({ distinct: ['id'], select: { id: true }, take: 10 });
 
     const utilisateurChantiers = [];
     for (const row of chantiersRows) {
-      for (const u of [utilisateur_DITP, utilisateur_PM, utilisateur_DIRC]) {
+      for (const { utilisateur_id } of Object.values(données)) {
         utilisateurChantiers.push({
-          utilisateur_id: u.id,
+          utilisateur_id,
           chantier_id: row.id,
         });
       }
@@ -208,19 +193,17 @@ class DatabaseSeeder {
       },
     });
 
-    const profilHabilitations = [];
-    for (const profil of [profil_DITP, profil_DIRC]) {
+    const profilHabilitations = [
+      { profil_id: données.PM.profil_id, habilitation_scope_id: habilitationScopeLecture.id },
+    ];
+    for (const code of ['DITP', 'DIRC']) {
       for (const habilitationScope of [habilitationScopeLecture, habilitationScopeÉcriture]) {
         profilHabilitations.push({
-          profil_id: profil.id,
+          profil_id: données[code].profil_id,
           habilitation_scope_id: habilitationScope.id,
         });
       }
     }
-    profilHabilitations.push({
-      profil_id: profil_PM.id,
-      habilitation_scope_id: habilitationScopeLecture.id,
-    });
 
     await prisma.profil_habilitation.createMany({ data: profilHabilitations });
   }
