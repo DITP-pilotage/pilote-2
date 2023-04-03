@@ -164,19 +164,19 @@ class DatabaseSeeder {
 
     const utilisateur_DITP = await prisma.utilisateur.create({
       data: {
-        email: 'user_DITP@example.com',
+        email: 'utilisateur_DITP@example.com',
         profil_id: profil_DITP.id,
       },
     });
     const utilisateur_PM = await prisma.utilisateur.create({
       data: {
-        email: 'user_PMP@example.com',
+        email: 'utilisateur_PMP@example.com',
         profil_id: profil_PM.id,
       },
     });
     const utilisateur_DIRC = await prisma.utilisateur.create({
       data: {
-        email: 'user_DIRC@example.com',
+        email: 'utilisateur_DIRC@example.com',
         profil_id: profil_DIRC.id,
       },
     });
