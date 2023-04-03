@@ -10,6 +10,8 @@ import {
   synthese_des_resultats,
 } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
+import { v4 as uuidv4 } from 'uuid';
+
 import SynthèseDesRésultatsSQLRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
@@ -150,20 +152,43 @@ class DatabaseSeeder {
   }
 
   private async _créerDroits() {
-    const données: any = {
-      DIRC: { email_utilisateur: 'utilisateur_DIRC@example.com', nom_profil: 'Directeur de chantier' },
-      PM: { email_utilisateur: 'utilisateur_PM@example.com', nom_profil: 'Premier Ministre', a_acces_tous_chantiers: true },
-      DITP: { email_utilisateur: 'utilisateur_DITP@example.com', nom_profil: 'Admin DITP', a_acces_tous_chantiers: true },
+    type LigneDeConf = {
+      utilisateur_id: string,
+      email_utilisateur: string,
+      profil_id: string,
+      nom_profil: string,
+      a_acces_tous_chantiers: boolean,
+    };
+    const données: Record<string, LigneDeConf> = {
+      DIRC: {
+        utilisateur_id: uuidv4(),
+        email_utilisateur: 'utilisateur_DIRC@example.com',
+        profil_id: uuidv4(),
+        nom_profil: 'Directeur de chantier',
+        a_acces_tous_chantiers: false,
+      },
+      PM: {
+        utilisateur_id: uuidv4(),
+        email_utilisateur: 'utilisateur_PM@example.com',
+        profil_id: uuidv4(),
+        nom_profil: 'Premier Ministre',
+        a_acces_tous_chantiers: true,
+      },
+      DITP: {
+        utilisateur_id: uuidv4(),
+        email_utilisateur: 'utilisateur_DITP@example.com',
+        profil_id: uuidv4(),
+        nom_profil: 'Admin DITP',
+        a_acces_tous_chantiers: true,
+      },
     };
 
     for (const [code, { nom_profil, a_acces_tous_chantiers }] of Object.entries(données)) {
-      const { id } = await prisma.profil.create({ data: { code, nom: nom_profil, a_acces_tous_chantiers } });
-      données[code].profil_id = id;
+      await prisma.profil.create({ data: { code, nom: nom_profil, a_acces_tous_chantiers } });
     }
 
-    for (const [code, { email_utilisateur, profil_id } ] of Object.entries(données)) {
-      const { id } = await prisma.utilisateur.create({ data: { email: email_utilisateur, profil_id } });
-      données[code].utilisateur_id = id;
+    for (const { email_utilisateur, profil_id } of Object.values(données)) {
+      await prisma.utilisateur.create({ data: { email: email_utilisateur, profil_id } });
     }
 
     // noinspection TypeScriptValidateTypes
@@ -180,14 +205,14 @@ class DatabaseSeeder {
     }
     await prisma.utilisateur_chantier.createMany({ data: utilisateurChantiers });
 
-    const habilitationScopeLecture = await prisma.habilitation_scope.create({
+    const { id: habilitationScopeLectureId } = await prisma.habilitation_scope.create({
       data: {
         code: 'lecture',
         nom: 'Scope de lecture sur un chantier',
       },
     });
 
-    const habilitationScopeÉcriture = await prisma.habilitation_scope.create({
+    const { id: habilitationScopeÉcritureId } = await prisma.habilitation_scope.create({
       data: {
         code: 'écriture',
         nom: "Scope d'écriture sur un chantier",
@@ -195,13 +220,13 @@ class DatabaseSeeder {
     });
 
     const profilHabilitations = [
-      { profil_id: données.PM.profil_id, habilitation_scope_id: habilitationScopeLecture.id },
+      { profil_id: données.PM.profil_id, habilitation_scope_id: habilitationScopeLectureId },
     ];
     for (const code of ['DITP', 'DIRC']) {
-      for (const habilitationScope of [habilitationScopeLecture, habilitationScopeÉcriture]) {
+      for (const habilitation_scope_id of [habilitationScopeLectureId, habilitationScopeÉcritureId]) {
         profilHabilitations.push({
           profil_id: données[code].profil_id,
-          habilitation_scope_id: habilitationScope.id,
+          habilitation_scope_id,
         });
       }
     }
