@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 
 export class IndicateurData {
-  constructor({
+  private constructor({
     id,
     indicId,
     zoneId,

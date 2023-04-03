@@ -1,6 +1,8 @@
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 import { FichierIndicateurValidationService } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
 import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient';
+import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
+import { ReportTask } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
 
 interface Dependencies {
   httpClient: HttpClient
@@ -64,6 +66,11 @@ export class ErreurValidationFichier {
   }
 }
 
+const extraireLesDonnees = (task: ReportTask): string[][] => {
+  const [, ...data] = task.resource.data;
+  return data;
+};
+
 export class ValidataFichierIndicateurValidationService implements FichierIndicateurValidationService {
   private httpClient: HttpClient;
 
@@ -75,7 +82,18 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     const report = await this.httpClient.post({ formDataBody, contentType });
   
     if (report.valid) {
-      return DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid });
+      const donneesSansHeader = report.tasks.map(extraireLesDonnees);
+
+      return DetailValidationFichier.creerDetailValidationFichier({
+        estValide: report.valid,
+        listeIndicateursData: donneesSansHeader.flat().map(donnee => IndicateurData.createIndicateurData({
+          indicId: donnee[0],
+          zoneId: donnee[1],
+          metricDate: donnee[2],
+          metricType: donnee[3],
+          metricValue: donnee[4],
+        })),
+      });
     }
     
     const listeErreursValidation = report.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({

@@ -96,3 +96,12 @@ model commentaire {
   maille      String
   code_insee  String
 }
+
+model mesure_indicateur {
+  id          String @id
+  indicId     String
+  zoneId      String
+  metricDate  String
+  metricType  String
+  metricValue String
+}

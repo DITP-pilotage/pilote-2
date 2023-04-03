@@ -1,7 +1,7 @@
 import {
   ErreurValidationFichier,
 } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
-import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
+import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
 
 export class DetailValidationFichier {
   private readonly _estValide: boolean;
@@ -36,7 +36,7 @@ export class DetailValidationFichier {
     estValide,
     listeErreursValidation = [],
     listeIndicateursData = [],
-  }: { estValide: boolean, listeErreursValidation?: ErreurValidationFichier[], listeIndicateursData: IndicateurData[] }) {
+  }: { estValide: boolean, listeErreursValidation?: ErreurValidationFichier[], listeIndicateursData?: IndicateurData[] }) {
     return new DetailValidationFichier({ estValide, listeErreursValidation, listeIndicateursData });
   }
 }

@@ -1,4 +1,4 @@
-import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
+import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
 
 export class IndicateurDataBuilder {
   private id: string = 'idIndicateur';

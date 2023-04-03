@@ -13,7 +13,7 @@ export class FetchHttpClient implements HttpClient {
       },
     }).then(response =>
       response.json(),
-    );
+    );    
     
     return report;
   }

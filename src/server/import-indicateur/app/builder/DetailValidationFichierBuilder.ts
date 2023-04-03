@@ -1,8 +1,8 @@
 import {
-  ErreurValidationFichier
-} from "@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService";
-import { DetailValidationFichier } from "@/server/import-indicateur/domain/DetailValidationFichier";
-import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
+  ErreurValidationFichier,
+} from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
+import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
+import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
 
 export class DetailValidationFichierBuilder {
   private estValide: boolean = false;
