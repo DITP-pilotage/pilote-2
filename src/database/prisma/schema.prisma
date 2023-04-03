@@ -160,6 +160,7 @@ model profil {
   id String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   code String @unique
   nom String @unique
+  a_acces_tous_chantiers Boolean @default(false)
 }
 
 model profil_habilitation {

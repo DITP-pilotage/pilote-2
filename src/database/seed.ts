@@ -150,14 +150,14 @@ class DatabaseSeeder {
   }
 
   private async _créerDroits() {
-    const données = {
+    const données: any = {
       DIRC: { email_utilisateur: 'utilisateur_DIRC@example.com', nom_profil: 'Directeur de chantier' },
-      PM: { email_utilisateur: 'utilisateur_PM@example.com', nom_profil: 'Premier Ministre' },
-      DITP: { email_utilisateur: 'utilisateur_DITP@example.com', nom_profil: 'Admin DITP' },
+      PM: { email_utilisateur: 'utilisateur_PM@example.com', nom_profil: 'Premier Ministre', a_acces_tous_chantiers: true },
+      DITP: { email_utilisateur: 'utilisateur_DITP@example.com', nom_profil: 'Admin DITP', a_acces_tous_chantiers: true },
     };
 
-    for (const [code, { nom_profil }] of Object.entries(données)) {
-      const { id } = await prisma.profil.create({ data: { code, nom: nom_profil } });
+    for (const [code, { nom_profil, a_acces_tous_chantiers }] of Object.entries(données)) {
+      const { id } = await prisma.profil.create({ data: { code, nom: nom_profil, a_acces_tous_chantiers } });
       données[code].profil_id = id;
     }
 
@@ -166,6 +166,7 @@ class DatabaseSeeder {
       données[code].utilisateur_id = id;
     }
 
+    // noinspection TypeScriptValidateTypes
     const chantiersRows = await prisma.chantier.findMany({ distinct: ['id'], select: { id: true }, take: 10 });
 
     const utilisateurChantiers = [];
