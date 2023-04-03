@@ -42,7 +42,7 @@ models:
     intermediate:
       +schema: raw_data
       +materialized: view
-    marts:
+    exposition:
       +schema: public
       +materialized: incremental
       commentaire:
