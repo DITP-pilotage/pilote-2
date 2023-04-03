@@ -19,7 +19,7 @@ describe('ResultatValidationFichier', () => {
     expect(screen.getByText('Le fichier est valide')).toBeInTheDocument();
   });
 
-  it("quand le fichier contient des erreurs doit afficher que le tableau d'erreur", () => {
+  it("quand le fichier contient des erreurs, doit afficher que le tableau d'erreur", () => {
     // GIVEN
     const rapport: DetailValidationFichierContrat = {
       estValide: false,
