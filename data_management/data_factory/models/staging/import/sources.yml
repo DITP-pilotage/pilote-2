@@ -3,6 +3,6 @@ version: 2
 sources:
   - name: import_from_files
     database: "{{ env_var('PGDATABASE') }}"
-    schema*: raw
+    schema: raw_data
     tables:
-      - name: raw__mesures_indicateurs
+      - name: mesures_indicateurs

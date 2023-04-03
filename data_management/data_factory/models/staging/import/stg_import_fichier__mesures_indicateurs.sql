@@ -2,21 +2,19 @@ with
 
 source as (
 
-    select * from {{ source('import_from_files', 'raw__mesures_indicateurs') }}
+    select * from {{ source('import_from_files', 'mesures_indicateurs') }}
 
 ),
 
 renamed as (
 
     select
-        chantier_id,
-        type,
-        contenu,
-        TO_DATE(date,'DD/MM/YYYY') as date,
-        nom as auteur,
-        maille,
-        code_insee
-
+        indic_id as indicateur_id,
+        zone_id,
+        TO_DATE(metric_date,'DD/MM/YYYY') as metric_date,
+        metric_type,
+        metric_value,
+        import_date
     from source
 
 )
