@@ -2,12 +2,14 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["public", "raw_data"]
 }
 
 model chantier {
@@ -30,12 +32,15 @@ model chantier {
   est_territorialise                 Boolean?
 
   @@id([id, code_insee, maille])
+  @@schema("public")
 }
 
 model perimetre {
   id        String  @id
   nom       String
   ministere String?
+
+  @@schema("public")
 }
 
 model indicateur {
@@ -63,6 +68,7 @@ model indicateur {
   mode_de_calcul                 String?
 
   @@id([id, code_insee, maille])
+  @@schema("public")
 }
 
 model synthese_des_resultats {
@@ -74,16 +80,22 @@ model synthese_des_resultats {
   date_meteo       DateTime? @db.Timestamp
   commentaire      String?
   date_commentaire DateTime? @db.Timestamp
+
+  @@schema("public")
 }
 
 model axe {
   id  String @id
   nom String
+
+  @@schema("public")
 }
 
 model ppg {
   id  String @id
   nom String
+
+  @@schema("public")
 }
 
 model commentaire {
@@ -95,6 +107,8 @@ model commentaire {
   auteur      String
   maille      String
   code_insee  String
+
+  @@schema("public")
 }
 
 model mesure_indicateur {
@@ -104,4 +118,6 @@ model mesure_indicateur {
   metricDate  String
   metricType  String
   metricValue String
+
+  @@schema("raw_data")
 }
