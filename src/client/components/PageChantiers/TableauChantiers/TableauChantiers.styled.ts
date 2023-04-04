@@ -10,8 +10,9 @@ const TableauChantiersStyled = styled.section`
     flex-wrap: wrap;
     column-gap: 2rem;
     align-items: center;
-    
-    .fr-search-bar {
+
+    .barre-de-recherche {
+      width: 100%;
       max-width: 22rem;
     }
   }
