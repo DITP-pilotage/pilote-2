@@ -11,7 +11,7 @@ import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
 import Responsables from './Responsables/Responsables';
-import SynthèseRésultats from './SynthèseRésultats/SynthèseRésultats';
+import SynthèseDesRésultats from './SynthèseDesRésultats/SynthèseDesRésultats';
 import PageChantierEnTête from './PageChantierEnTête/PageChantierEnTête';
 import Cartes from './Cartes/Cartes';
 import Sommaire from './Sommaire/Sommaire';
@@ -64,7 +64,7 @@ export default function PageChantier({ chantier, indicateurs, objectif }: PageCh
               <Responsables chantier={chantier} />
             </div>
             <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
-              <SynthèseRésultats
+              <SynthèseDesRésultats
                 météo={météo}
                 synthèseDesRésultats={synthèseDesRésultats}
               />

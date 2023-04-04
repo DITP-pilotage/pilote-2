@@ -1,6 +1,8 @@
 type SélecteurOption = {
   libellé: string,
   valeur: string,
+  désactivée?: boolean,
+  cachée?: boolean,
 };
 
 export default interface SélecteurProps {

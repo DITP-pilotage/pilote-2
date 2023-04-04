@@ -7,7 +7,7 @@ export default function Sélecteur({
   setValeur,
   options,
   libellé,
-  texteFantôme = '',
+  texteFantôme,
 }: SélecteurProps) {
 
   return (
@@ -30,16 +30,21 @@ export default function Sélecteur({
         }}
         value={valeur || ''}
       >
-        <option
-          disabled
-          hidden
-          value=""
-        >
-          { texteFantôme }
-        </option>
+        {
+          !!texteFantôme &&
+          <option
+            disabled
+            hidden
+            value=""
+          >
+            { texteFantôme }
+          </option>
+        }
         {
           options.map(option => (
             <option
+              disabled={option.désactivée ?? false}
+              hidden={option.cachée ?? false}
               key={option.valeur}
               value={option.valeur}
             >
