@@ -25,10 +25,12 @@ class TableauTest {
   private colonnes = [
     columnHelper.accessor('id', {
       header: '#',
+      id: 'numéro',
       cell: id => '#' + id.getValue(),
     }),
     columnHelper.accessor('nom', {
       header: 'Nom du chantier',
+      id: 'nom',
       cell: nomChantier => nomChantier.getValue(),
     }),
   ];
@@ -93,7 +95,7 @@ test('le tableau comporte les données d\'entrée', () => {
 describe("quand l'utilisateur clique sur le bouton de tri croissant d'une colonne", () => {
   test('les éléments du tableau sont triés par ordre croissant', async () => {
     // WHEN
-    await tableau.trierSurLaColonne('trier la colonne Nom du chantier par ordre croissant');
+    await tableau.trierSurLaColonne('trier la colonne "nom" par ordre croissant');
     
     // THEN
     expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('Déployer');
@@ -105,7 +107,7 @@ describe("quand l'utilisateur clique sur le bouton de tri croissant d'une colonn
 describe("quand l'utilisateur clique sur le bouton de tri décroissant d'une colonne", () => {
   test('les éléments du tableau sont triés par ordre décroissant', async () => {
     // WHEN
-    await tableau.trierSurLaColonne('trier la colonne Nom du chantier par ordre décroissant');
+    await tableau.trierSurLaColonne('trier la colonne "nom" par ordre décroissant');
     
     // THEN
     expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('Lutter');

@@ -41,6 +41,7 @@ export default function ActionsDeTri({
         <BoutonsDeTri
           changementDirectionDeTriCallback={changementDirectionDeTriCallback}
           directionDeTri={directionDeTri}
+          nomColonneÀTrier={colonneÀTrier}
         />
       </div>
     </ActionsDeTriStyled>

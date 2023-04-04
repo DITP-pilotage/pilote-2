@@ -38,17 +38,20 @@ const colonnesTableauChantiers = {
   vueBureau: [
     reactTableColonnesHelper.accessor('porteur', {
       header: 'Porteur',
+      id: 'porteur',
       cell: porteur => porteur.getValue(),
       enableGrouping: true,
     }),
     reactTableColonnesHelper.accessor('nom', {
       header: 'Chantiers',
+      id: 'chantiers',
       aggregatedCell: aggregatedCellContext => aggregatedCellContext.row.original.porteur,
       enableSorting: false,
       enableGrouping: false,
     }),
     reactTableColonnesHelper.accessor('estBaromètre', {
       header: 'Typologie',
+      id: 'typologie',
       enableSorting: false,
       cell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null,
       enableGrouping: false,
@@ -57,6 +60,7 @@ const colonnesTableauChantiers = {
     }),
     reactTableColonnesHelper.accessor('météo', {
       header: 'Météo',
+      id: 'météo',
       cell: météo => <TableauChantiersMétéo météo={météo.getValue()} />,
       enableGlobalFilter: false,
       sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
@@ -64,6 +68,7 @@ const colonnesTableauChantiers = {
     }),
     reactTableColonnesHelper.accessor('avancement', {
       header: 'Avancement',
+      id: 'avancement',
       cell: avancement => <TableauChantiersAvancement avancement={avancement.getValue()} />,
       enableGlobalFilter: false,
       sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
@@ -86,11 +91,13 @@ const colonnesTableauChantiers = {
   vueMobile: [
     reactTableColonnesHelper.accessor('porteur', {
       header: 'Porteur',
+      id: 'porteur',
       cell: porteur => porteur.getValue(),
       enableGrouping: true,
     }),
     reactTableColonnesHelper.display({
       header: 'Chantiers',
+      id: 'chantiers',
       cell: chantierCellContext => <TableauChantiersTuileChantier chantier={chantierCellContext.row.original} />,
       aggregatedCell: aggregatedCellContext => (
         <TableauChantiersTuileMinistère
@@ -109,10 +116,12 @@ const colonnesTableauChantiers = {
     }),
     reactTableColonnesHelper.accessor('météo', {
       header: 'Météo',
+      id: 'météo',
       sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
     }),
     reactTableColonnesHelper.accessor('avancement', {
       header: 'Avancement',
+      id: 'avancement',
       sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
     }),
   ],

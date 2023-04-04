@@ -33,6 +33,7 @@ export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
                   <BoutonsDeTri
                     changementDirectionDeTriCallback={(tri) => tri === false ? header.column.clearSorting() : header.column.toggleSorting(tri === 'desc')}
                     directionDeTri={header.column.getIsSorted()}
+                    nomColonneÀTrier={header.column.columnDef.id ?? ''}
                   />
                 ) }
               </th>
