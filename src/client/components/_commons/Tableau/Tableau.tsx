@@ -3,9 +3,9 @@ import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import { useCallback, useEffect, useState } from 'react';
 import { getCoreRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
 import TableauProps from './Tableau.interface';
-import TableauEnTête from './TableauEnTête/TableauEnTête';
-import TableauContenu from './TableauContenu/TableauContenu';
-import TableauPagination from './TableauPagination/TableauPagination';
+import TableauEnTête from './EnTête/TableauEnTête';
+import TableauContenu from './Contenu/TableauContenu';
+import TableauPagination from './Pagination/TableauPagination';
 import TableauStyled from './Tableau.styled';
 
 export default function Tableau<T extends object>({ colonnes, données, titre }: TableauProps<T>) {

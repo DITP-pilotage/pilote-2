@@ -3,7 +3,7 @@ import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import { useEffect } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
-import TableauPagination from '@/components/_commons/Tableau/TableauPagination/TableauPagination';
+import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import TableauChantiersContenu from '@/components/PageChantiers/TableauChantiers/Contenu/TableauChantiersContenu';
 import useEstVueMobile from '@/client/hooks/useEstVueMobile';
 import useTableauChantiers from '@/components/PageChantiers/TableauChantiers/useTableauChantiers';

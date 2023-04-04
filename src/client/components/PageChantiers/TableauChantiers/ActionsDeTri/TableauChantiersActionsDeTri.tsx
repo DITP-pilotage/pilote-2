@@ -1,4 +1,4 @@
-import BoutonsDeTri from '@/components/_commons/Tableau/TableauEnTête/BoutonsDeTri/BoutonsDeTri';
+import BoutonsDeTri from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri';
 import TableauChantiersActionsDeTriProps from '@/components/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri.interface';
 import TableauChantiersActionsDeTriStyled from '@/components/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri.styled';
 

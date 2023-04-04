@@ -1,5 +1,5 @@
 import { flexRender, SortDirection } from '@tanstack/react-table';
-import BoutonsDeTri from '@/components/_commons/Tableau/TableauEnTête/BoutonsDeTri/BoutonsDeTri';
+import BoutonsDeTri from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri';
 import TableauEnTêteProps from './TableauEnTête.interface';
 import TableauEnTêteStyled from './TableauEnTête.styled';
 

@@ -1,4 +1,4 @@
-import { DirectionDeTri } from '@/components/_commons/Tableau/TableauEnTête/BoutonsDeTri/BoutonsDeTri.interface';
+import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
 
 export default interface TableauChantiersActionsDeTriProps {
   changementColonneÀTrierCallback: (colonneId: string) => void;
