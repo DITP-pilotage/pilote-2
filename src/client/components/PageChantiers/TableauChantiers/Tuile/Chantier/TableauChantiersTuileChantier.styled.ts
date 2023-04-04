@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const TableauChantierTuileChantierStyled = styled.div`
+const TableauChantiersTuileChantierStyled = styled.div`
   .tuile-chantier-entête {
     display: grid;
     grid-template-columns: auto 2.25rem;
@@ -28,4 +28,4 @@ const TableauChantierTuileChantierStyled = styled.div`
   }
 `;
 
-export default TableauChantierTuileChantierStyled;
+export default TableauChantiersTuileChantierStyled;

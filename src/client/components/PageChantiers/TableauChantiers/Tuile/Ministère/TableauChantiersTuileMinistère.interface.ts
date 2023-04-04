@@ -1,4 +1,4 @@
-export default interface TableauChantierTuileMinistèreProps {
+export default interface TableauChantiersTuileMinistèreProps {
   ministère: {
     nom: string;
     avancement: number | null;

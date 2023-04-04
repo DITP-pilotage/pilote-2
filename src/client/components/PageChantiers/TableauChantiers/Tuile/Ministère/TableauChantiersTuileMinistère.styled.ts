@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const TableauChantierTuileMinistèreStyled = styled.div`
+const TableauChantiersTuileMinistèreStyled = styled.div`
   display: grid;
   grid-template-columns: auto max-content;
   
@@ -9,4 +9,4 @@ const TableauChantierTuileMinistèreStyled = styled.div`
   }
 `;
 
-export default TableauChantierTuileMinistèreStyled;
+export default TableauChantiersTuileMinistèreStyled;
