@@ -66,13 +66,15 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
             nombreFiltresActifs > 0 &&
             <FiltresActifs />
           }
-          <div className="fr-py-2w fr-px-4w fr-container--fluid">
-            <Titre
-              baliseHtml='h1'
-              className='fr-h4'
-            >
-              {`${chantiersFiltrés.length} chantiers`}
-            </Titre>
+          <div className="fr-py-2w fr-px-md-4w fr-container--fluid">
+            <div className="fr-px-2w fr-px-md-0">
+              <Titre
+                baliseHtml='h1'
+                className='fr-h4'
+              >
+                {`${chantiersFiltrés.length} chantiers`}
+              </Titre>
+            </div>
             <div className="fr-grid-row fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>

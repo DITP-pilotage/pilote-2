@@ -7,11 +7,8 @@ const TableauChantiersStyled = styled.section`
   
   .tableau-actions {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-
-    div {
-      max-width: 100%;
-    }
   }
 
   table.tableau {

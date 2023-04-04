@@ -5,7 +5,7 @@ import BarreDeRechercheStyled from './BarreDeRecherche.styled';
 
 export default function BarreDeRecherche({ changementDeLaRechercheCallback, valeur = '' }: BarreDeRechercheProps) {
   return (
-    <BarreDeRechercheStyled>
+    <BarreDeRechercheStyled className="fr-mx-2w">
       <div
         className='fr-search-bar'
         role="search"

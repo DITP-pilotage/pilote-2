@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
 
 const BarreDeRechercheStyled = styled.div`
+  width: 100%;
+  max-width: 22rem;
+  
   input {
-    width: 18rem;
     background-color: var(--background-alt-blue-france);
   }
 `;
