@@ -27,12 +27,12 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
       >
         {`Liste des chantiers (${tableau.getFilteredRowModel().rows.length})`}
       </Titre>
-      <div className='tableau-actions fr-mb-3v fr-mt-1w fr-mx-n2w'>
+      <div className='tableau-actions fr-mb-3v fr-mt-1w'>
         <BarreDeRecherche
           changementDeLaRechercheCallback={changementDeLaRechercheCallback}
           valeur={valeurDeLaRecherche}
         />
-        <div className="fr-toggle fr-mx-2w">
+        <div className="fr-toggle">
           <input
             className="fr-toggle__input"
             id="interrupteur-grouper-par-ministères"

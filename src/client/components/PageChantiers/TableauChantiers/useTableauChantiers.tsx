@@ -77,7 +77,7 @@ const colonnesTableauChantiers = {
       aggregatedCell: (aggregatedCellContext => (
         <span
           aria-hidden="true"
-          className={`${aggregatedCellContext.row.getIsExpanded() ? 'fr-icon-arrow-down-s-line' : 'fr-icon-arrow-up-s-line'} icone`}
+          className={`${aggregatedCellContext.row.getIsExpanded() ? 'fr-icon-arrow-down-s-line' : 'fr-icon-arrow-up-s-line'} chevron-accordéon`}
         />
       )),
     }),

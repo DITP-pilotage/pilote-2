@@ -8,7 +8,12 @@ const TableauChantiersStyled = styled.section`
   .tableau-actions {
     display: flex;
     flex-wrap: wrap;
+    column-gap: 2rem;
     align-items: center;
+    
+    .fr-search-bar {
+      max-width: 22rem;
+    }
   }
 
   table.tableau {
@@ -64,6 +69,10 @@ const TableauChantiersStyled = styled.section`
         &:hover {
           background-color: var(--background-default-grey-hover);
         }
+      }
+      
+      .chevron-accordéon::before {
+        background-color: var(--blue-france-sun-113-625);
       }
     }
   }
