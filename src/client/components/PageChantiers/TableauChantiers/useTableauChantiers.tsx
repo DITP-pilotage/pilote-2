@@ -18,7 +18,7 @@ import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/a
 import TableauChantiersAvancement
   from '@/components/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
 import TableauChantiersMétéo from '@/components/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
-import useEstVueMobile from '@/hooks/useEstVueMobile';
+import useEstVueMobile from '@/client/hooks/useEstVueMobile';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import { DirectionDeTri } from '@/components/_commons/Tableau/TableauEnTête/BoutonsDeTri/BoutonsDeTri.interface';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
@@ -171,7 +171,6 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
         avancement: false,
         typologie: false,
         'dérouler-groupe': false,
-
       }) : ({
         porteur: false,
         'chantier-tuile': false,

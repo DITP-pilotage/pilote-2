@@ -8,10 +8,26 @@ const TableauChantiersStyled = styled.section`
   .tableau-actions {
     display: flex;
     flex-wrap: wrap;
-    column-gap: 2rem;
-    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 
-    .barre-de-recherche {
+    .tableau-actions-gauche {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 2rem;
+      align-items: center;
+
+      & > * {
+        flex-basis: content;
+      }
+      
+      .barre-de-recherche {
+        width: 100%;
+        max-width: 22rem;
+      }
+    }
+
+    .tableau-actions-droite {
       width: 100%;
       max-width: 22rem;
     }

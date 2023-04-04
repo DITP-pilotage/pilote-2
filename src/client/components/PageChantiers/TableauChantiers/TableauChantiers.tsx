@@ -5,7 +5,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauPagination from '@/components/_commons/Tableau/TableauPagination/TableauPagination';
 import TableauChantiersContenu from '@/components/PageChantiers/TableauChantiers/Contenu/TableauChantiersContenu';
-import useEstVueMobile from '@/hooks/useEstVueMobile';
+import useEstVueMobile from '@/client/hooks/useEstVueMobile';
 import useTableauChantiers from '@/components/PageChantiers/TableauChantiers/useTableauChantiers';
 import TableauChantiersActionsDeTri from '@/components/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
 import TableauChantiersProps from './TableauChantiers.interface';
@@ -38,36 +38,36 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
         {`Liste des chantiers (${tableau.getFilteredRowModel().rows.length})`}
       </Titre>
       <div className='tableau-actions fr-mb-3v fr-mt-1w'>
-        <div className="barre-de-recherche">
-          <BarreDeRecherche
-            changementDeLaRechercheCallback={changementDeLaRechercheCallback}
-            valeur={valeurDeLaRecherche}
-          />
-        </div>
-        <div className="fr-toggle">
-          <input
-            className="fr-toggle__input"
-            id="interrupteur-grouper-par-ministères"
-            onChange={tableau.getColumn('porteur')?.getToggleGroupingHandler() ?? undefined}
-            type="checkbox"
-          />
-          <label
-            className="fr-toggle__label fr-pl-1w"
-            htmlFor="interrupteur-grouper-par-ministères"
-          >
-            Grouper par ministères
-          </label>
-        </div>
-        {
-          estVueMobile ? (
-            <TableauChantiersActionsDeTri
-              changementColonneÀTrierCallback={changementSélectionColonneÀTrierCallback}
-              changementDirectionDeTriCallback={changementDirectionDeTriCallback}
-              colonneÀTrier={sélectionColonneÀTrier}
-              directionDeTri={directionDeTri}
+        <div className="tableau-actions-gauche">
+          <div className="barre-de-recherche">
+            <BarreDeRecherche
+              changementDeLaRechercheCallback={changementDeLaRechercheCallback}
+              valeur={valeurDeLaRecherche}
             />
-          ) : null
-        }
+          </div>
+          <div className="fr-toggle">
+            <input
+              className="fr-toggle__input"
+              id="interrupteur-grouper-par-ministères"
+              onChange={tableau.getColumn('porteur')?.getToggleGroupingHandler() ?? undefined}
+              type="checkbox"
+            />
+            <label
+              className="fr-toggle__label fr-pl-1w"
+              htmlFor="interrupteur-grouper-par-ministères"
+            >
+              Grouper par ministères
+            </label>
+          </div>
+        </div>
+        <div className="tableau-actions-droite">
+          <TableauChantiersActionsDeTri
+            changementColonneÀTrierCallback={changementSélectionColonneÀTrierCallback}
+            changementDirectionDeTriCallback={changementDirectionDeTriCallback}
+            colonneÀTrier={sélectionColonneÀTrier}
+            directionDeTri={directionDeTri}
+          />
+        </div>
       </div>
       {tableau.getRowModel().rows.length === 0
         ?
