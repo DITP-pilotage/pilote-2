@@ -5,6 +5,7 @@ import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import météos from '@/client/constants/météos';
 import { Météo, météosSaisissables } from '@/server/domain/météo/Météo.interface';
 import Titre from '@/components/_commons/Titre/Titre';
+import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import SynthèseDesRésultatsFormulaireStyled from './SynthèseDesRésultatsFormulaire.styled';
 import SynthèseDesRésultatsFormulaireProps from './SynthèseDesRésultatsFormulaire.interface';
 
@@ -87,6 +88,7 @@ export default function SynthèseDesRésultatsFormulaire({ contenuParDéfaut, m�
           texteFantôme="Météo à renseigner"
           valeur={météosSaisissables.includes(météo) ? météo : ''}
         />
+        <MétéoPicto météo={météo} />
       </div>
       <div className='actions'>
         <button

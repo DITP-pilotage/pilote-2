@@ -44,7 +44,7 @@ export default function SynthèseDesRésultats({ météo, synthèseDesRésultats
               <>
                 <div className=" fr-col-12 fr-col-lg-2 conteneur-météo">
                   <MétéoBadge météo={météo} />
-                  <MétéoPicto valeur={météo} />
+                  <MétéoPicto météo={météo} />
                 </div>
                 <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
                   {
