@@ -1,6 +1,6 @@
 import { créerRouteurTRPC } from '@/server/infrastructure/api/trpc/trpc';
-import { indicateurRouter } from './indicateur';
+import { chantierRouter } from './chantier';
 
 export const appRouter = créerRouteurTRPC({
-  indicateur: indicateurRouter,
+  chantier: chantierRouter,
 });
