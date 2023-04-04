@@ -19,7 +19,12 @@ import TableauChantiersAvancement
   from '@/components/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
 import TableauChantiersMétéo from '@/components/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
 import useEstVueMobile from '@/hooks/useEstVueMobile';
+import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
+import TableauChantierTuileMinistèreProps
+  from '@/components/PageChantiers/TableauChantiers/Tuile/Ministère/TableauChantierTuileMinistère.interface';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
+import TableauChantierTuileChantier from './Tuile/Chantier/TableauChantierTuileChantier';
+import TableauChantierTuileMinistère from './Tuile/Ministère/TableauChantierTuileMinistère';
 
 
 const déterminerTypologieDuGroupementParMinistère = (chantiersDuGroupe: DonnéesTableauChantiers[]) => {
@@ -37,7 +42,7 @@ const colonnesTableauChantiers = {
     }),
     reactTableColonnesHelper.accessor('nom', {
       header: 'Chantiers',
-      aggregatedCell: nom => nom.row.original.porteur,
+      aggregatedCell: aggregatedCellContext => aggregatedCellContext.row.original.porteur,
       enableSorting: false,
       enableGrouping: false,
     }),
@@ -62,8 +67,19 @@ const colonnesTableauChantiers = {
       enableGlobalFilter: false,
       sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
       enableGrouping: false,
-      aggregationFn: 'mean',
+      aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
+        return calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement));
+      },
       aggregatedCell: avancement => <TableauChantiersAvancement avancement={avancement.getValue() ?? null} />,
+    }),
+    reactTableColonnesHelper.display({
+      id: 'dérouler-groupe',
+      aggregatedCell: (aggregatedCellContext => (
+        <span
+          aria-hidden="true"
+          className={`${aggregatedCellContext.row.getIsExpanded() ? 'fr-icon-arrow-down-s-line' : 'fr-icon-arrow-up-s-line'} icone`}
+        />
+      )),
     }),
   ],
   vueMobile: [
@@ -74,8 +90,19 @@ const colonnesTableauChantiers = {
     }),
     reactTableColonnesHelper.display({
       header: 'Chantiers',
-      cell: chantier => chantier.row.original.nom,
-      aggregatedCell: chantier => chantier.row.original.porteur,
+      cell: chantierCellContext => <TableauChantierTuileChantier chantier={chantierCellContext.row.original} />,
+      aggregatedCell: aggregatedCellContext => (
+        <TableauChantierTuileMinistère
+          estDéroulé={aggregatedCellContext.row.getIsExpanded()}
+          ministère={aggregatedCellContext.getValue() as TableauChantierTuileMinistèreProps['ministère']}
+        />
+      ),
+      aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
+        return {
+          nom: chantiersDuMinistèreRow[0].original.porteur,
+          avancement: calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement)),
+        } as TableauChantierTuileMinistèreProps['ministère'];
+      },
       enableSorting: false,
       enableGrouping: false,
     }),

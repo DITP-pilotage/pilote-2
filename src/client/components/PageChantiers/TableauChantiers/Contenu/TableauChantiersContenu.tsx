@@ -46,15 +46,6 @@ export default function TableauChantiersContenu({ tableau }: TableauChantiersCon
                 </td>
               ))
             }
-            <td>
-              {
-                row.getIsGrouped() &&
-                <span
-                  aria-hidden="true"
-                  className={`${row.getIsExpanded() ? 'fr-icon-arrow-down-s-line' : 'fr-icon-arrow-up-s-line'} icone`}
-                />
-              }
-            </td>
           </tr>
         ))
       }

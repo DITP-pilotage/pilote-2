@@ -5,12 +5,14 @@ import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauPagination from '@/components/_commons/Tableau/TableauPagination/TableauPagination';
 import TableauChantiersContenu from '@/components/PageChantiers/TableauChantiers/Contenu/TableauChantiersContenu';
+import useEstVueMobile from '@/hooks/useEstVueMobile';
+import useTableauChantiers from '@/components/PageChantiers/TableauChantiers/useTableauChantiers';
 import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersEnTête from './EnTête/TableauChantiersEnTête';
 import TableauChantiersStyled from './TableauChantiers.styled';
-import useTableauChantiers from './useTableauChantiers';
 
 export default function TableauChantiers({ données }: TableauChantiersProps) {
+  const estVueMobile = useEstVueMobile();
   const { tableau, changementDeLaRechercheCallback, changementDePageCallback, valeurDeLaRecherche } = useTableauChantiers(données);
   
   useEffect(() => {
@@ -63,7 +65,9 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
               <caption className="fr-sr-only">
                 Liste des chantiers
               </caption>
-              <TableauChantiersEnTête tableau={tableau} />
+              {
+                !estVueMobile && <TableauChantiersEnTête tableau={tableau} />
+              }
               <TableauChantiersContenu tableau={tableau} />
             </table>
             <TableauPagination

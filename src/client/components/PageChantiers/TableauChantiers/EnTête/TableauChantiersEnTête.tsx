@@ -62,7 +62,6 @@ export default function TableauChantiersEnTête({ tableau }: TableauChantiersEnT
                 { header.column.getCanSort() && afficherIconesDeTriDeLaColonne(header) }
               </th>
             ))}
-            <th />
           </tr>
         ))
       }

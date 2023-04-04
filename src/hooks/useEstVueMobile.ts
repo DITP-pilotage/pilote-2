@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const VUE_MOBILE_SEUIL_LARGEUR = 1500;
+const VUE_MOBILE_SEUIL_LARGEUR = 768;
 
 export default function useEstVueMobile() {
   const [largeurDÉcran, setLargeurDÉcran] = useState<number | null>(null);
