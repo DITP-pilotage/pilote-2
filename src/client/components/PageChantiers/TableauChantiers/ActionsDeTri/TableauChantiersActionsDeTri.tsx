@@ -1,16 +1,26 @@
 import BoutonsDeTri from '@/components/_commons/Tableau/TableauEnTête/BoutonsDeTri/BoutonsDeTri';
-import ActionsDeTriProps from '@/components/PageChantiers/TableauChantiers/ActionsDeTri/ActionsDeTri.interface';
-import ActionsDeTriStyled from '@/components/PageChantiers/TableauChantiers/ActionsDeTri/ActionsDeTri.styled';
+import TableauChantiersActionsDeTriProps from '@/components/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri.interface';
+import TableauChantiersActionsDeTriStyled from '@/components/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri.styled';
 
-export default function ActionsDeTri({
-  listeColonnesÀtrier,
-  colonneÀTrier,
+const listeColonnesÀtrier = [
+  {
+    libellé: 'Taux d\'avancement',
+    colonneId: 'avancement',
+  },
+  {
+    libellé: 'Météo',
+    colonneId: 'météo',
+  },
+];
+
+export default function TableauChantiersActionsDeTri({
   changementColonneÀTrierCallback,
   changementDirectionDeTriCallback,
+  colonneÀTrier,
   directionDeTri,
-}: ActionsDeTriProps) {
+}: TableauChantiersActionsDeTriProps) {
   return (
-    <ActionsDeTriStyled>
+    <TableauChantiersActionsDeTriStyled>
       <div className="fr-select-group sélecteur-colonne-à-trier">
         <label
           className="fr-label"
@@ -44,6 +54,6 @@ export default function ActionsDeTri({
           nomColonneÀTrier={colonneÀTrier}
         />
       </div>
-    </ActionsDeTriStyled>
+    </TableauChantiersActionsDeTriStyled>
   );
 }

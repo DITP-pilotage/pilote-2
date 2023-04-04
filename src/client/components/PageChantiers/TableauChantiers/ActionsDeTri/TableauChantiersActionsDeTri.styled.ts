@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const ActionsDeTriStyled = styled.div`
+const TableauChantiersActionsDeTriStyled = styled.div`
   display: flex;
   align-items: end;
   width: 100%;
@@ -15,4 +15,4 @@ const ActionsDeTriStyled = styled.div`
   }
 `;
 
-export default ActionsDeTriStyled;
+export default TableauChantiersActionsDeTriStyled;

@@ -7,21 +7,10 @@ import TableauPagination from '@/components/_commons/Tableau/TableauPagination/T
 import TableauChantiersContenu from '@/components/PageChantiers/TableauChantiers/Contenu/TableauChantiersContenu';
 import useEstVueMobile from '@/hooks/useEstVueMobile';
 import useTableauChantiers from '@/components/PageChantiers/TableauChantiers/useTableauChantiers';
-import ActionsDeTri from '@/components/PageChantiers/TableauChantiers/ActionsDeTri/ActionsDeTri';
+import TableauChantiersActionsDeTri from '@/components/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
 import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersEnTête from './EnTête/TableauChantiersEnTête';
 import TableauChantiersStyled from './TableauChantiers.styled';
-
-const listeColonnesÀtrier = [
-  {
-    libellé: 'Taux d\'avancement',
-    colonneId: 'avancement',
-  },
-  {
-    libellé: 'Météo',
-    colonneId: 'météo',
-  },
-];
 
 export default function TableauChantiers({ données }: TableauChantiersProps) {
   const estVueMobile = useEstVueMobile();
@@ -71,12 +60,11 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
         </div>
         {
           estVueMobile ? (
-            <ActionsDeTri
+            <TableauChantiersActionsDeTri
               changementColonneÀTrierCallback={changementSélectionColonneÀTrierCallback}
               changementDirectionDeTriCallback={changementDirectionDeTriCallback}
               colonneÀTrier={sélectionColonneÀTrier}
               directionDeTri={directionDeTri}
-              listeColonnesÀtrier={listeColonnesÀtrier}
             />
           ) : null
         }
