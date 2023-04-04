@@ -1,5 +1,5 @@
 import router from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import api from '@/server/infrastructure/api/trpc/api';
 import {
@@ -14,6 +14,10 @@ export default function useSynthèseDesRésultats() {
   const mutation = api.chantier.créerUneSynthèseDesRésultats.useMutation();
   const [modeÉdition, setModeÉdition] = useState(false);
     
+  useEffect(() => {
+    setModeÉdition(false);
+  }, [territoireSélectionné]);
+  
   function créerSynthèseDesRésultats(contenu: string, météo: Météo, csrf: string) {
     const chantierId = router.query.id as string;
 

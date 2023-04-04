@@ -16,14 +16,22 @@ export default function SynthèseDesRésultatsFormulaire({ contenuParDéfaut, m�
   const [nombreDeCaractères, setNombreDeCaractères] = useState(contenu?.length ?? 0);
   const [aDépasséLaLimiteDeCaractères, setADépasséLaLimiteDeCaractères] = useState(false);
 
+  const formulaireEstInvalide = () => {
+    if (nombreDeCaractères === 0 || aDépasséLaLimiteDeCaractères) {
+      return true;
+    }
+
+    // eslint-disable-next-line sonarjs/prefer-single-boolean-return
+    if (météo === 'NON_RENSEIGNEE')
+      return true;
+    
+    return false;
+  };
+
   const soumettreLeFormulaire = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (nombreDeCaractères === 0) {
-      return;
-    }
-
-    if (aDépasséLaLimiteDeCaractères) {
+    if (formulaireEstInvalide()) {
       return;
     }
 
@@ -80,20 +88,20 @@ export default function SynthèseDesRésultatsFormulaire({ contenuParDéfaut, m�
             caractères a été dépassée
           </p>
         }
-        <Sélecteur
-          htmlName='météo'
-          libellé="Météo"
-          options={météosSaisissables.map(optionMétéo => ({ libellé: météos[optionMétéo], valeur: optionMétéo }))}
-          setValeur={valeurMétéo => setMétéo(valeurMétéo as Météo)}
-          texteFantôme="Météo à renseigner"
-          valeur={météosSaisissables.includes(météo) ? météo : ''}
-        />
-        <MétéoPicto météo={météo} />
       </div>
+      <Sélecteur
+        htmlName='météo'
+        libellé="Météo"
+        options={météosSaisissables.map(optionMétéo => ({ libellé: météos[optionMétéo], valeur: optionMétéo }))}
+        setValeur={valeurMétéo => setMétéo(valeurMétéo as Météo)}
+        texteFantôme="Météo à renseigner"
+        valeur={météosSaisissables.includes(météo) ? météo : ''}
+      />
+      <MétéoPicto météo={météo} />
       <div className='actions'>
         <button
           className='fr-btn fr-mr-3w border-radius-4px'
-          disabled={aDépasséLaLimiteDeCaractères || nombreDeCaractères === 0}
+          disabled={formulaireEstInvalide()}
           type='submit'
         >
           Publier
