@@ -12,7 +12,7 @@ export default function TableauChantierTuileMinistère({ ministère, estDéroul�
         <div className="fr-mx-3w fr-mt-1v avancement">
           <BarreDeProgression
             fond="blanc"
-            taille="petite"
+            taille="sm"
             valeur={ministère.avancement}
             variante='primaire'
           />

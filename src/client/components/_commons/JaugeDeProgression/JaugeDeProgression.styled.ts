@@ -10,8 +10,8 @@ const couleurs = {
 };
 
 const largeurs = {
-  petite: '3.75rem',
-  grande: '10.5rem',
+  sm: '3.75rem',
+  lg: '10.5rem',
 };
 
 const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`

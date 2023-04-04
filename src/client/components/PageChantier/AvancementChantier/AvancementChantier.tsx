@@ -28,7 +28,7 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                   couleur="bleuClair"
                   libellé={territoireSélectionné.nom}
                   pourcentage={avancements.départementale.moyenne}
-                  taille="grande"
+                  taille="lg"
                 />
               </div>
             </Bloc>
@@ -43,7 +43,7 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                   couleur="bleuClair"
                   libellé={territoireSélectionné.territoireParent ? territoireSélectionné.territoireParent.nom : territoireSélectionné.nom}
                   pourcentage={avancements.régionale.moyenne}
-                  taille="grande"
+                  taille="lg"
                 />
               </div>
             </Bloc>

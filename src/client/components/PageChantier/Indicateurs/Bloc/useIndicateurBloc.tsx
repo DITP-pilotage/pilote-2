@@ -88,7 +88,7 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Dé
           afficherTexte
           fond='grisClair'
           positionTexte='dessus'
-          taille='moyenne'
+          taille='md'
           valeur={avancementGlobal.getValue()}
           variante='primaire'
         />

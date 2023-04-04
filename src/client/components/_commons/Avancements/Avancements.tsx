@@ -11,7 +11,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
             couleur='bleu'
             libellé="Taux d'avancement global"
             pourcentage={avancements.global.moyenne}
-            taille='grande'
+            taille='lg'
           />
         </div>
         <div className="fr-col-12 fr-col-lg-6 fr-pb-0">
@@ -21,7 +21,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
                 couleur='orange'
                 libellé="Minimum"
                 pourcentage={avancements.global.minimum}
-                taille='petite'
+                taille='sm'
               />
             </div>
             <div className="fr-col-4">
@@ -29,7 +29,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
                 couleur='violet'
                 libellé="Médiane"
                 pourcentage={avancements.global.médiane}
-                taille='petite'
+                taille='sm'
               />
             </div>
             <div className="fr-col-4">
@@ -37,7 +37,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
                 couleur='vert'
                 libellé="Maximum"
                 pourcentage={avancements.global.maximum}
-                taille='petite'
+                taille='sm'
               />
             </div>
           </div>
@@ -46,7 +46,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
               bordure={null}
               fond='grisClair'
               positionTexte='dessus'
-              taille='fine'
+              taille='xxs'
               valeur={avancements.annuel.moyenne}
               variante="secondaire"
             />
