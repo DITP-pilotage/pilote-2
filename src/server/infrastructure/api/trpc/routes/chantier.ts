@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { TRPCError } from '@trpc/server';
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -17,6 +18,7 @@ export const chantierRouter = créerRouteurTRPC({
       codeInsee: z.string(),
       contenu: z.string().max(5000).min(1),
       météo: z.enum(météos),
+      csrf: z.string(),
     }),
   ).mutation(({ input }) => {
     const créerUneSynthèseDesRésultatsUseCase =  new CréerUneSynthèseDesRésultatsUseCase(dependencies.getSynthèseDesRésultatsRepository());

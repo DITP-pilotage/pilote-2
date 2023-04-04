@@ -31,7 +31,7 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, objectif }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { avancements, détailsIndicateurs, commentaires, météo, synthèseDesRésultats } = usePageChantier(chantier);
+  const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   
   return (
@@ -65,8 +65,7 @@ export default function PageChantier({ chantier, indicateurs, objectif }: PageCh
             </div>
             <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
               <SynthèseDesRésultats
-                météo={météo}
-                synthèseDesRésultats={synthèseDesRésultats}
+                synthèseDesRésultatsInitiale={synthèseDesRésultats}
               />
             </div>
           </div>

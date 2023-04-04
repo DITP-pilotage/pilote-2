@@ -18,7 +18,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
       data: {
         id: id,
         chantier_id: chantierId,
-        maille: maille,
+        maille: CODES_MAILLES[maille],
         code_insee: codeInsee,
         commentaire: contenu,
         meteo: météo,

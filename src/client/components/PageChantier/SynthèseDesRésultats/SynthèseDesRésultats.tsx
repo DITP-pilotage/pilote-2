@@ -8,16 +8,19 @@ import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
 import HistoriqueDeLaSynthèseDesRésultats
   from '@/components/PageChantier/SynthèseDesRésultats/Historique/HistoriqueDeLaSynthèseDesRésultats';
 import useSynthèseDesRésultats from '@/components/PageChantier/SynthèseDesRésultats/useSynthèseDesRésultats';
+import Alerte from '@/components/_commons/Alerte/Alerte';
 import SynthèseDesRésultatsFormulaire from './SynthèseDesRésultatsFormulaire/SynthèseDesRésultatsFormulaire';
 
-export default function SynthèseDesRésultats({ météo, synthèseDesRésultats }: SynthèseDesRésultatsProps) {
+export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale }: SynthèseDesRésultatsProps) {
   const {
+    synthèseDesRésultats,
     nomTerritoireSélectionné,
     modeÉdition,
     setModeÉdition,
     créerSynthèseDesRésultats,
-    mutation,
-  } = useSynthèseDesRésultats();
+    alerte,
+    setAlerte,
+  } = useSynthèseDesRésultats(synthèseDesRésultatsInitiale);
 
   return (
     <SynthèseDesRésultatsStyled
@@ -34,17 +37,32 @@ export default function SynthèseDesRésultats({ météo, synthèseDesRésultats
           {
             modeÉdition ?
               <SynthèseDesRésultatsFormulaire
+                alerte={alerte}
                 contenuParDéfaut={synthèseDesRésultats?.contenu}
                 limiteDeCaractères={5000}
-                météoParDéfaut={météo}
-                àLAnnulation={() => setModeÉdition(false)}
-                àLaSoumission={(contenuÀCréer, valeurMétéo, csrf) => créerSynthèseDesRésultats(contenuÀCréer, valeurMétéo, csrf)}
+                météoParDéfaut={synthèseDesRésultats?.météo}
+                àLAnnulation={
+                  () => {
+                    setAlerte(null);
+                    setModeÉdition(false);
+                  }
+                }
+                àLaSoumission={(contenu, météo) => créerSynthèseDesRésultats(contenu, météo)}
               />
               :
               <>
+                {
+                  alerte !== null &&
+                  <Alerte
+                    message={alerte.message}
+                    type={alerte.type}
+                  />
+                }
                 <div className=" fr-col-12 fr-col-lg-2 conteneur-météo">
-                  <MétéoBadge météo={météo} />
-                  <MétéoPicto météo={météo} />
+                  <MétéoBadge météo={synthèseDesRésultats?.météo ?? 'NON_RENSEIGNEE'} />
+                  {
+                    !!synthèseDesRésultats && <MétéoPicto météo={synthèseDesRésultats.météo} />
+                  }
                 </div>
                 <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
                   {

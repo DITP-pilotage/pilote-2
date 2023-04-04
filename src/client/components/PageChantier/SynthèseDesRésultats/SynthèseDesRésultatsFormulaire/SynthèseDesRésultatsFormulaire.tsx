@@ -1,15 +1,15 @@
 import { useId, useState, FormEvent, useEffect } from 'react';
-import { récupérerUnCookie } from '@/client/utils/cookies';
 import CompteurCaractères from '@/components/_commons/FormulaireDePublication/CompteurCaractères/CompteurCaractères';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import météos from '@/client/constants/météos';
 import { Météo, météosSaisissables } from '@/server/domain/météo/Météo.interface';
 import Titre from '@/components/_commons/Titre/Titre';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
+import Alerte from '@/components/_commons/Alerte/Alerte';
 import SynthèseDesRésultatsFormulaireStyled from './SynthèseDesRésultatsFormulaire.styled';
 import SynthèseDesRésultatsFormulaireProps from './SynthèseDesRésultatsFormulaire.interface';
 
-export default function SynthèseDesRésultatsFormulaire({ contenuParDéfaut, météoParDéfaut, limiteDeCaractères, àLaSoumission, àLAnnulation }: SynthèseDesRésultatsFormulaireProps) {
+export default function SynthèseDesRésultatsFormulaire({ contenuParDéfaut, météoParDéfaut, limiteDeCaractères, àLaSoumission, àLAnnulation, alerte }: SynthèseDesRésultatsFormulaireProps) {
   const uniqueId = useId();
   const [contenu, setContenu] = useState(contenuParDéfaut ?? '');
   const [météo, setMétéo] = useState(météoParDéfaut ?? 'NON_RENSEIGNEE');
@@ -35,7 +35,7 @@ export default function SynthèseDesRésultatsFormulaire({ contenuParDéfaut, m�
       return;
     }
 
-    àLaSoumission(contenu, météo, récupérerUnCookie('csrf') ?? '');
+    àLaSoumission(contenu, météo);
   };
 
   useEffect(() => {
@@ -98,6 +98,13 @@ export default function SynthèseDesRésultatsFormulaire({ contenuParDéfaut, m�
         valeur={météosSaisissables.includes(météo) ? météo : ''}
       />
       <MétéoPicto météo={météo} />
+      {
+        alerte !== null &&
+        <Alerte
+          message={alerte.message}
+          type={alerte.type}
+        />
+      }
       <div className='actions'>
         <button
           className='fr-btn fr-mr-3w border-radius-4px'
