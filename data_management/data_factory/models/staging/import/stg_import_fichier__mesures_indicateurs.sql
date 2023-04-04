@@ -11,10 +11,10 @@ renamed as (
     select
         indic_id as indicateur_id,
         zone_id,
-        TO_DATE(metric_date,'DD/MM/YYYY') as metric_date,
-        metric_type,
-        metric_value,
-        import_date
+        TO_DATE(metric_date,'DD/MM/YYYY') as date_releve,
+        metric_type as type_mesure,
+        metric_value::numeric as valeur,
+        import_date as date_import
     from source
 
 )

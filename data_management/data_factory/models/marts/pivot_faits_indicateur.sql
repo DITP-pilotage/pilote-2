@@ -1,12 +1,12 @@
 with faits_indicateur_order_by_date as (
     SELECT
-        ROW_NUMBER() OVER (PARTITION BY indic_id, zone_id, metric_type ORDER BY metric_date ASC) AS row_id,
+        ROW_NUMBER() OVER (PARTITION BY indicateur_id, zone_id, type_mesure ORDER BY date_releve DESC) AS row_id,
         *,
         /* dimensions zones */
-        case when(zone_type like 'DEPT') then zone_code else NULL end as departement_code,
+        case when(zone_type = 'DEPT') then zone_code else NULL end as departement_code,
         case
             when(zone_type_parent = 'REG') then zone_code_parent
-            when(zone_type_parent = 'FRANCE') then zone_code
+            when(zone_type = 'REG') then zone_code
             else NULL
             end as region_code,
         'FRANCE' as national_code
@@ -17,14 +17,15 @@ with faits_indicateur_order_by_date as (
 SELECT
     indicateur_id,
     zone_id,
-    LAST(metric_value) FILTER (where metric_type = 'vi') as valeur_initiale,
-    COALESCE(LAST(metric_value) FILTER (where metric_type = 'va'), valeur_initiale) as valeur_actuelle,
-    LAST(metric_value) FILTER (where metric_type = 'vc') as valeur_cible,
-    LAST(metric_date) FILTER (where metric_type = 'vi') as date_valeur_initiale,
-    LAST(metric_date) FILTER (where metric_type = 'va') as date_valeur_actuelle,
-    LAST(metric_date) FILTER (where metric_type = 'vc') as date_valeur_cible,
-    ANY_VALUE(departement_code) as departement_code,
-    ANY_VALUE(region_code) as region_code,
-    ANY_VALUE(national_code) as national_code,
+    MAX(valeur) FILTER (where type_mesure = 'vi') as valeur_initiale,
+    COALESCE(MAX(valeur) FILTER (where type_mesure = 'va'), MAX(valeur) FILTER (where type_mesure = 'vi')) as valeur_actuelle,
+    MAX(valeur) FILTER (where type_mesure = 'vc') as valeur_cible,
+    MAX(date_releve) FILTER (where type_mesure = 'vi') as date_valeur_initiale,
+    MAX(date_releve) FILTER (where type_mesure = 'va') as date_valeur_actuelle,
+    MAX(date_releve) FILTER (where type_mesure = 'vc') as date_valeur_cible,
+    MAX(departement_code) as departement_code,
+    MAX(region_code) as region_code,
+    MAX(national_code) as national_code
 FROM faits_indicateur_order_by_date
+WHERE row_id = 1
 GROUP BY indicateur_id, zone_id
