@@ -8,6 +8,53 @@ import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/ma
 import SynthèseDesRésultatsSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 
 describe('SynthèseDesRésultatsSQLRepository ', function () {
+  describe('créer', () => {
+    test('Crée la synthèse des résultats en base', async () => {
+      // Given
+      const chantierId = 'CH-001';
+      const maille = 'régionale';
+      const codeInsee = '01';
+      const id = '123';
+      const contenu = 'Quatrième commentaire';
+      const date = new Date('2023-12-31T00:00:00.000Z');
+      const auteur = 'Jean DUPONT';
+      const météo = 'SOLEIL';
+
+      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
+
+      // When
+      await synthèseDesRésultatsRepository.créer(chantierId, maille, codeInsee, id, contenu, auteur, météo, date);
+
+      // Then
+      const synthèseDesRésultatsCrééeEnBase = await prisma.synthese_des_resultats.findUnique({ where: { id: id } });
+      expect(synthèseDesRésultatsCrééeEnBase?.id).toEqual(id);
+    });
+
+    test('Retourne la synthèse de résultats créée', async () => {
+      // Given
+      const chantierId = 'CH-001';
+      const maille = 'régionale';
+      const codeInsee = '01';
+      const id = '123';
+      const contenu = 'Quatrième commentaire';
+      const date = '2023-12-31T00:00:00.000Z';
+      const auteur = 'Jean DUPONT';
+      const météo = 'SOLEIL';
+
+      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
+
+      // When
+      const synthèseDesRésultatsCréée = await synthèseDesRésultatsRepository.créer(chantierId, maille, codeInsee, id, contenu, auteur, météo, new Date(date));
+
+      // Then
+      expect(synthèseDesRésultatsCréée).toStrictEqual({
+        contenu,
+        auteur: '',
+        date,
+      });
+    });
+  });
+
   describe('findNewestByChantierIdAndTerritoire', () => {
     test('Renvoie null si aucune synthèse des résultats n\'est présente en base', async () => {
       // Given

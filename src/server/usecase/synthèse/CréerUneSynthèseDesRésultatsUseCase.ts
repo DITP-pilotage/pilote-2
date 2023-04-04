@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -12,6 +13,7 @@ export default class CréerUneSynthèseDesRésultatsUseCase {
 
   async run(chantierId: string, maille: Maille, codeInsee: CodeInsee, contenu: string, auteur: string, météo: Météo): Promise<SynthèseDesRésultats> {
     const date = new Date();
-    return this.synthèsesDesRésultatsRepository.créer(chantierId, maille, codeInsee, contenu, auteur, météo, date);
+    const id = randomUUID();
+    return this.synthèsesDesRésultatsRepository.créer(chantierId, maille, codeInsee, id, contenu, auteur, météo, date);
   }
 }

@@ -1,16 +1,32 @@
 import { synthese_des_resultats, PrismaClient } from '@prisma/client';
+import { randomUUID } from 'node:crypto';
 import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
-
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
   private prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
+  }
+
+  async créer(chantierId: string, maille: Maille, codeInsee: CodeInsee, id: string, contenu: string, auteur: string, météo: Météo, date: Date): Promise<SynthèseDesRésultats> {
+    const synthèseDesRésultats =  await this.prisma.synthese_des_resultats.create({
+      data: {
+        id: id,
+        chantier_id: chantierId,
+        maille: maille,
+        code_insee: codeInsee,
+        commentaire: contenu,
+        meteo: météo,
+        date_commentaire: date,
+        date_meteo: date,
+      } });
+    return this.mapperVersDomaine(synthèseDesRésultats);
   }
 
   private mapperVersDomaine(synthèse: synthese_des_resultats | null): SynthèseDesRésultats {

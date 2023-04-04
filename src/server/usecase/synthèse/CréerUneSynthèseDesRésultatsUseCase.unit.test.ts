@@ -2,6 +2,12 @@ import SynthèseDesRésultatsRepository
   from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import CréerUneSynthèseDesRésultatsUseCase from '@/server/usecase/synthèse/CréerUneSynthèseDesRésultatsUseCase';
 
+const RANDOM_UUID = '123';
+
+jest.mock('node:crypto', () => ({
+  randomUUID: () => RANDOM_UUID,
+}));
+
 describe('CréerUneSynthèseDesRésultatsUseCase', () => {
   test('créé une synthèse des résultats', async () => {
     //GIVEN
@@ -21,7 +27,7 @@ describe('CréerUneSynthèseDesRésultatsUseCase', () => {
     await créerUneSynthèseDesRésultats.run(chantierId, maille, codeInsee, contenu, auteur, météo);
 
     //THEN
-    expect(stubSynthèseDesRésultatsRepository.créer).toHaveBeenNthCalledWith(1, chantierId, maille, codeInsee, contenu, auteur, météo, date);
+    expect(stubSynthèseDesRésultatsRepository.créer).toHaveBeenNthCalledWith(1, chantierId, maille, codeInsee, RANDOM_UUID, contenu, auteur, météo, date);
   });
 
   test('retourne la synthèse des résultats créée', async () => {
