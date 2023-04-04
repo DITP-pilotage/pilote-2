@@ -18,6 +18,7 @@ import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/a
 import TableauChantiersAvancement
   from '@/components/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
 import TableauChantiersMétéo from '@/components/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
+import useEstVueMobile from '@/hooks/useEstVueMobile';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
 
 
@@ -27,52 +28,69 @@ const déterminerTypologieDuGroupementParMinistère = (chantiersDuGroupe: Donné
 
 const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
 
-const colonnesTableauChantiers = [
-  reactTableColonnesHelper.accessor('porteur', {
-    header: 'Porteur',
-    cell: porteur => porteur.getValue(),
-    enableGrouping: true,
-  }),
-  reactTableColonnesHelper.accessor('nom', {
-    header: 'Chantiers',
-    aggregatedCell: nom => nom.row.original.porteur,
-    enableSorting: false,
-    enableGrouping: false,
-  }),
-  reactTableColonnesHelper.accessor('estBaromètre', {
-    header: 'Typologie',
-    enableSorting: false,
-    cell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null,
-    enableGrouping: false,
-    aggregationFn: (_columnId, leafRows) => déterminerTypologieDuGroupementParMinistère(leafRows.map(row => row.original)),
-    aggregatedCell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null,
-  }),
-  reactTableColonnesHelper.accessor('météo', {
-    header: 'Météo',
-    cell: météo => <TableauChantiersMétéo météo={météo.getValue()} />,
-    enableGlobalFilter: false,
-    sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
-    enableGrouping: false,
-  }),
-  reactTableColonnesHelper.accessor('avancement', {
-    header: 'Avancement',
-    cell: avancement => <TableauChantiersAvancement avancement={avancement.getValue()} />,
-    enableGlobalFilter: false,
-    sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
-    enableGrouping: false,
-    aggregationFn: 'mean',
-    aggregatedCell: avancement => <TableauChantiersAvancement avancement={avancement.getValue() ?? null} />,
-  }),
-];
+const colonnesTableauChantiers = {
+  vueBureau: [
+    reactTableColonnesHelper.accessor('porteur', {
+      header: 'Porteur',
+      cell: porteur => porteur.getValue(),
+      enableGrouping: true,
+    }),
+    reactTableColonnesHelper.accessor('nom', {
+      header: 'Chantiers',
+      aggregatedCell: nom => nom.row.original.porteur,
+      enableSorting: false,
+      enableGrouping: false,
+    }),
+    reactTableColonnesHelper.accessor('estBaromètre', {
+      header: 'Typologie',
+      enableSorting: false,
+      cell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null,
+      enableGrouping: false,
+      aggregationFn: (_columnId, leafRows) => déterminerTypologieDuGroupementParMinistère(leafRows.map(row => row.original)),
+      aggregatedCell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null,
+    }),
+    reactTableColonnesHelper.accessor('météo', {
+      header: 'Météo',
+      cell: météo => <TableauChantiersMétéo météo={météo.getValue()} />,
+      enableGlobalFilter: false,
+      sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
+      enableGrouping: false,
+    }),
+    reactTableColonnesHelper.accessor('avancement', {
+      header: 'Avancement',
+      cell: avancement => <TableauChantiersAvancement avancement={avancement.getValue()} />,
+      enableGlobalFilter: false,
+      sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
+      enableGrouping: false,
+      aggregationFn: 'mean',
+      aggregatedCell: avancement => <TableauChantiersAvancement avancement={avancement.getValue() ?? null} />,
+    }),
+  ],
+  vueMobile: [
+    reactTableColonnesHelper.accessor('porteur', {
+      header: 'Porteur',
+      cell: porteur => porteur.getValue(),
+      enableGrouping: true,
+    }),
+    reactTableColonnesHelper.display({
+      header: 'Chantiers',
+      cell: chantier => chantier.row.original.nom,
+      aggregatedCell: chantier => chantier.row.original.porteur,
+      enableSorting: false,
+      enableGrouping: false,
+    }),
+  ],
+};
 
 export default function useTableauChantiers(données: TableauChantiersProps['données']) {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
   const [tri, setTri] = useState<SortingState>([]);
   const [regroupement, setRegroupement] = useState<GroupingState>([]);
+  const estVueMobile = useEstVueMobile();
 
   const tableau = useReactTable({
     data: données,
-    columns: colonnesTableauChantiers,
+    columns: estVueMobile ? colonnesTableauChantiers.vueMobile : colonnesTableauChantiers.vueBureau,
     globalFilterFn: (ligne, colonneId, filtreValeur) => {
       return rechercheUnTexteContenuDansUnContenant(filtreValeur, ligne.getValue<DonnéesTableauChantiers>(colonneId).toString());
     },
