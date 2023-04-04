@@ -1,5 +1,4 @@
 import { synthese_des_resultats, PrismaClient } from '@prisma/client';
-import { randomUUID } from 'node:crypto';
 import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -34,9 +33,11 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
       return null;
 
     return {
+      id: synthèse.id,
       contenu: synthèse.commentaire,
       date: synthèse.date_commentaire.toISOString(),
       auteur: '',
+      météo: synthèse.meteo as Météo ?? 'NON_RENSEIGNEE',
     };
   }
   

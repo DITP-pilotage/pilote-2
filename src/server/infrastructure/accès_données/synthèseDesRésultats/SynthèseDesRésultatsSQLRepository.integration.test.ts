@@ -6,6 +6,7 @@ import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésul
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import SynthèseDesRésultatsSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
+import SynthèseDesRésultatsBuilder from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.builder';
 
 describe('SynthèseDesRésultatsSQLRepository ', function () {
   describe('créer', () => {
@@ -35,11 +36,16 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       const chantierId = 'CH-001';
       const maille = 'régionale';
       const codeInsee = '01';
-      const id = '123';
-      const contenu = 'Quatrième commentaire';
-      const date = '2023-12-31T00:00:00.000Z';
-      const auteur = 'Jean DUPONT';
-      const météo = 'SOLEIL';
+
+      const { id, contenu, auteur, météo, date } = new SynthèseDesRésultatsBuilder()
+        .avecSynthèseDesRésultats({
+          id: '123',
+          contenu: 'Quatrième commentaire',
+          date: '2023-12-31T00:00:00.000Z',
+          auteur: 'Jean DUPONT',
+          météo: 'SOLEIL',
+        })
+        .build()!;
 
       const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
 
@@ -51,6 +57,8 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
         contenu,
         auteur: '',
         date,
+        id,
+        météo,
       });
     });
   });
@@ -101,6 +109,8 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
           .build(),
 
         new SynthèseDesRésultatsSQLRowBuilder()
+          .avecId('aaa-aaa')
+          .avecMétéo('SOLEIL')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -116,6 +126,8 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
 
       // Then
       expect(result).toStrictEqual({
+        id: 'aaa-aaa',
+        météo: 'SOLEIL',
         contenu: 'Quatrième commentaire',
         date: '2023-12-31T00:00:00.000Z',
         auteur: '',
@@ -133,6 +145,8 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
 
       const synthèsesDesResultats: synthese_des_resultats[] = [
         new SynthèseDesRésultatsSQLRowBuilder()
+          .avecId('aaaa-aab')
+          .avecMétéo('SOLEIL')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -141,6 +155,8 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
           .build(),
 
         new SynthèseDesRésultatsSQLRowBuilder()
+          .avecId('aaaa-aaa')
+          .avecMétéo('SOLEIL')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -165,10 +181,14 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       // THEN
       expect(résultat).toStrictEqual([
         {
+          id: 'aaaa-aaa',
+          météo: 'SOLEIL',
           auteur: '',
           contenu: 'Ma synthèse REG-01 2023',
           date: '2023-12-31T00:00:00.000Z',
         }, {
+          id: 'aaaa-aab',
+          météo: 'SOLEIL',
           auteur: '',
           contenu: 'Ma synthèse REG-01 2022',
           date: '2022-12-31T00:00:00.000Z',
