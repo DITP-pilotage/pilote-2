@@ -1,13 +1,12 @@
 import FlècheDeTri from '@/components/_commons/Tableau/TableauEnTête/FlècheDeTri/FlècheDeTri';
 import BoutonsDeTriProps from '@/components/_commons/Tableau/TableauEnTête/BoutonsDeTri/BoutonsDeTri.interface';
+import BoutonsDeTriStyled from '@/components/_commons/Tableau/TableauEnTête/BoutonsDeTri/BoutonsDeTri.styled';
 
-export default function BoutonsDeTri({ libellé, tri, setTri }: BoutonsDeTriProps) {
-
+export default function BoutonsDeTri({ tri, setTri }: BoutonsDeTriProps) {
   return (
-    <>
+    <BoutonsDeTriStyled>
       <button
-        aria-label={`trier la colonne ${libellé} par ordre croissant`}
-        className={`${tri === 'asc' ? 'actif' : ''} flèche-de-tri fr-m-1w`}
+        className={`${tri === 'asc' ? 'actif' : ''} flèche-de-tri fr-mr-1w`}
         onClick={() => tri === 'asc' ? setTri(false) : setTri('asc')}
         type='button'
       >
@@ -17,7 +16,6 @@ export default function BoutonsDeTri({ libellé, tri, setTri }: BoutonsDeTriProp
         />
       </button>
       <button
-        aria-label={`trier la colonne ${libellé} par ordre décroissant`}
         className={`${tri === 'desc' ? 'actif' : ''} flèche-de-tri`}
         onClick={() => tri === 'desc' ? setTri(false) : setTri('desc')}
         type='button'
@@ -27,6 +25,6 @@ export default function BoutonsDeTri({ libellé, tri, setTri }: BoutonsDeTriProp
           estActif={tri === 'desc'}
         />
       </button>
-    </>
+    </BoutonsDeTriStyled>
   );
 }

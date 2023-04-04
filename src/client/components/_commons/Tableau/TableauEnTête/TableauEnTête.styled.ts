@@ -13,15 +13,6 @@ const TableauEnTêteStyled = styled.thead`
         border-radius: 0 8px 0 0;
       }
     }
-
-    .actif {
-      background: var(--background-active-blue-france);
-    }
-
-    .flèche-de-tri {
-      border: 1px solid var(--background-default-grey);
-      border-radius: 4px;
-    }
 `;
 
 export default TableauEnTêteStyled;

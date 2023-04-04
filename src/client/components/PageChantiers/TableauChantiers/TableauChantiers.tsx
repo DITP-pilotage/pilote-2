@@ -7,13 +7,25 @@ import TableauPagination from '@/components/_commons/Tableau/TableauPagination/T
 import TableauChantiersContenu from '@/components/PageChantiers/TableauChantiers/Contenu/TableauChantiersContenu';
 import useEstVueMobile from '@/hooks/useEstVueMobile';
 import useTableauChantiers from '@/components/PageChantiers/TableauChantiers/useTableauChantiers';
+import BoutonsDeTri from '@/components/_commons/Tableau/TableauEnTête/BoutonsDeTri/BoutonsDeTri';
 import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersEnTête from './EnTête/TableauChantiersEnTête';
 import TableauChantiersStyled from './TableauChantiers.styled';
 
+const optionsListeDéroulanteTri = [
+  {
+    libellé: 'Taux d\'avancement',
+    colonneId: 'avancement',
+  },
+  {
+    libellé: 'Météo',
+    colonneId: 'météo',
+  },
+];
+
 export default function TableauChantiers({ données }: TableauChantiersProps) {
   const estVueMobile = useEstVueMobile();
-  const { tableau, changementDeLaRechercheCallback, changementDePageCallback, valeurDeLaRecherche } = useTableauChantiers(données);
+  const { tableau, changementDeLaRechercheCallback, changementDePageCallback, valeurDeLaRecherche, sélectionColonneÀTrier, setSélectionColonneÀTrier, tri, setTri } = useTableauChantiers(données);
   
   useEffect(() => {
     tableau.setPageSize(50);
@@ -48,6 +60,53 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
             Grouper par ministères
           </label>
         </div>
+        {
+          estVueMobile ? (
+            <div className="tri-actions">
+              <div className="fr-select-group sélecteur-colonne-à-trier">
+                <label
+                  className="fr-label"
+                  htmlFor="tri-tableau-chantiers"
+                >
+                  Trier par
+                </label>
+                <select
+                  className="fr-select"
+                  id="tri-tableau-chantiers"
+                  name="tri-tableau-chantiers"
+                  onChange={(événement) => setSélectionColonneÀTrier(événement.currentTarget.value)}
+                >
+                  {
+                    optionsListeDéroulanteTri.map(option => (
+                      <option
+                        key={option.colonneId}
+                        selected={sélectionColonneÀTrier === option.colonneId}
+                        value={option.colonneId}
+                      >
+                        { option.libellé }
+                      </option>
+                    ))
+                  }
+                </select>
+              </div>
+              <div className="fr-mb-4w fr-ml-2w">
+                <BoutonsDeTri
+                  setTri={(directionTri) => {
+                    if (directionTri === false) {
+                      setTri([]);
+                    } else {
+                      setTri([{
+                        id: sélectionColonneÀTrier,
+                        desc: directionTri === 'desc',
+                      }]);
+                    }
+                  }}
+                  tri={tri[0] ? (tri[0].desc ? 'desc' : 'asc') : false}
+                />
+              </div>
+            </div>
+          ) : null
+        }
       </div>
       {tableau.getRowModel().rows.length === 0
         ?

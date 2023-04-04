@@ -10,7 +10,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
@@ -105,14 +105,34 @@ const colonnesTableauChantiers = {
       enableSorting: false,
       enableGrouping: false,
     }),
+    reactTableColonnesHelper.accessor('météo', {
+      header: 'Météo',
+      sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
+    }),
+    reactTableColonnesHelper.accessor('avancement', {
+      header: 'Avancement',
+      sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
+    }),
   ],
 };
 
 export default function useTableauChantiers(données: TableauChantiersProps['données']) {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
   const [tri, setTri] = useState<SortingState>([]);
+  const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
   const [regroupement, setRegroupement] = useState<GroupingState>([]);
   const estVueMobile = useEstVueMobile();
+
+  useEffect(() => {
+    setTri(précédentTri => (
+      précédentTri[0] ? [
+        {
+          id: sélectionColonneÀTrier,
+          desc: précédentTri[0].desc,
+        },
+      ] : []
+    ));
+  }, [sélectionColonneÀTrier]);
 
   const tableau = useReactTable({
     data: données,
@@ -124,9 +144,13 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       globalFilter: valeurDeLaRecherche,
       sorting: tri,
       grouping: regroupement,
-      columnVisibility: {
+      columnVisibility: estVueMobile ? ({
         porteur: false,
-      },
+        météo: false,
+        avancement: false,
+      }) : ({
+        porteur: false,
+      }),
     },
     onSortingChange: setTri,
     onGroupingChange: setRegroupement,
@@ -149,5 +173,9 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
     changementDeLaRechercheCallback,
     changementDePageCallback,
     valeurDeLaRecherche,
+    sélectionColonneÀTrier,
+    setSélectionColonneÀTrier,
+    tri,
+    setTri,
   };
 }

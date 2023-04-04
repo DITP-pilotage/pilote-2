@@ -29,7 +29,6 @@ export default function TableauChantiersEnTête({ tableau }: TableauChantiersEnT
                 { flexRender(header.column.columnDef.header, header.getContext()) }
                 { header.column.getCanSort() && (
                   <BoutonsDeTri
-                    libellé={header.column.columnDef.header?.toString() ?? ''}
                     setTri={(tri) => tri === false ? header.column.clearSorting() : header.column.toggleSorting(tri === 'desc')}
                     tri={header.column.getIsSorted()}
                   />
