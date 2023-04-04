@@ -26,7 +26,9 @@ export default function TableauChantiersEnTête({ tableau }: TableauChantiersEnT
                 aria-sort={renseignerAttributAriaSort(header.column.getIsSorted())} 
                 key={header.id}
               >
-                { flexRender(header.column.columnDef.header, header.getContext()) }
+                <p className="fr-mb-0 fr-mr-3v fr-text--sm">
+                  { flexRender(header.column.columnDef.header, header.getContext()) }
+                </p>
                 { header.column.getCanSort() && (
                   <BoutonsDeTri
                     changementDirectionDeTriCallback={(tri) => tri === false ? header.column.clearSorting() : header.column.toggleSorting(tri === 'desc')}

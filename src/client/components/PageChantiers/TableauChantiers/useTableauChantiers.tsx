@@ -155,6 +155,12 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
     ));
   }, [sélectionColonneÀTrier]);
 
+  useEffect(() => {
+    if (tri[0]) {
+      setSélectionColonneÀTrier(tri[0].id);
+    }
+  }, [tri]);
+
   const tableau = useReactTable({
     data: données,
     columns: estVueMobile ? colonnesTableauChantiers.vueMobile : colonnesTableauChantiers.vueBureau,

@@ -6,7 +6,7 @@ export default function BoutonsDeTri({ directionDeTri, changementDirectionDeTriC
   return (
     <BoutonsDeTriStyled>
       <button
-        className={`${directionDeTri === 'asc' ? 'actif' : ''} flèche-de-tri fr-mr-1w`}
+        className={`${directionDeTri === 'asc' ? 'actif' : ''} bouton-de-tri fr-mr-1w`}
         onClick={() => directionDeTri === 'asc' ? changementDirectionDeTriCallback(false) : changementDirectionDeTriCallback('asc')}
         type='button'
       >
@@ -16,7 +16,7 @@ export default function BoutonsDeTri({ directionDeTri, changementDirectionDeTriC
         />
       </button>
       <button
-        className={`${directionDeTri === 'desc' ? 'actif' : ''} flèche-de-tri`}
+        className={`${directionDeTri === 'desc' ? 'actif' : ''} bouton-de-tri`}
         onClick={() => directionDeTri === 'desc' ? changementDirectionDeTriCallback(false) : changementDirectionDeTriCallback('desc')}
         type='button'
       >
