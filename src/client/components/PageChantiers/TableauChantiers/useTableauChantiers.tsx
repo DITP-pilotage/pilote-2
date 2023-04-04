@@ -33,98 +33,83 @@ const déterminerTypologieDuGroupementParMinistère = (chantiersDuGroupe: Donné
 
 const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
 
-const colonnesTableauChantiers = {
-  vueBureau: [
-    reactTableColonnesHelper.accessor('porteur', {
-      header: 'Porteur',
-      id: 'porteur',
-      cell: porteur => porteur.getValue(),
-      enableGrouping: true,
-    }),
-    reactTableColonnesHelper.accessor('nom', {
-      header: 'Chantiers',
-      id: 'chantiers',
-      aggregatedCell: aggregatedCellContext => aggregatedCellContext.row.original.porteur,
-      enableSorting: false,
-      enableGrouping: false,
-    }),
-    reactTableColonnesHelper.accessor('estBaromètre', {
-      header: 'Typologie',
-      id: 'typologie',
-      enableSorting: false,
-      cell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null,
-      enableGrouping: false,
-      aggregationFn: (_columnId, leafRows) => déterminerTypologieDuGroupementParMinistère(leafRows.map(row => row.original)),
-      aggregatedCell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null,
-    }),
-    reactTableColonnesHelper.accessor('météo', {
-      header: 'Météo',
-      id: 'météo',
-      cell: météo => <TableauChantiersMétéo météo={météo.getValue()} />,
-      enableGlobalFilter: false,
-      sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
-      enableGrouping: false,
-    }),
-    reactTableColonnesHelper.accessor('avancement', {
-      header: 'Avancement',
-      id: 'avancement',
-      cell: avancement => <TableauChantiersAvancement avancement={avancement.getValue()} />,
-      enableGlobalFilter: false,
-      sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
-      enableGrouping: false,
-      aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
-        return calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement));
-      },
-      aggregatedCell: avancement => <TableauChantiersAvancement avancement={avancement.getValue() ?? null} />,
-    }),
-    reactTableColonnesHelper.display({
-      id: 'dérouler-groupe',
-      aggregatedCell: (aggregatedCellContext => (
-        <span
-          aria-hidden="true"
-          className={`${aggregatedCellContext.row.getIsExpanded() ? 'fr-icon-arrow-down-s-line' : 'fr-icon-arrow-up-s-line'} chevron-accordéon`}
-        />
-      )),
-    }),
-  ],
-  vueMobile: [
-    reactTableColonnesHelper.accessor('porteur', {
-      header: 'Porteur',
-      id: 'porteur',
-      cell: porteur => porteur.getValue(),
-      enableGrouping: true,
-    }),
-    reactTableColonnesHelper.display({
-      header: 'Chantiers',
-      id: 'chantiers',
-      cell: chantierCellContext => <TableauChantiersTuileChantier chantier={chantierCellContext.row.original} />,
-      aggregatedCell: aggregatedCellContext => (
-        <TableauChantiersTuileMinistère
-          estDéroulé={aggregatedCellContext.row.getIsExpanded()}
-          ministère={aggregatedCellContext.getValue() as TableauChantiersTuileMinistèreProps['ministère']}
-        />
-      ),
-      aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
-        return {
-          nom: chantiersDuMinistèreRow[0].original.porteur,
-          avancement: calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement)),
-        } as TableauChantiersTuileMinistèreProps['ministère'];
-      },
-      enableSorting: false,
-      enableGrouping: false,
-    }),
-    reactTableColonnesHelper.accessor('météo', {
-      header: 'Météo',
-      id: 'météo',
-      sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
-    }),
-    reactTableColonnesHelper.accessor('avancement', {
-      header: 'Avancement',
-      id: 'avancement',
-      sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
-    }),
-  ],
-};
+const colonnesTableauChantiers = [
+  reactTableColonnesHelper.accessor('porteur', {
+    header: 'Porteur',
+    id: 'porteur',
+    cell: porteur => porteur.getValue(),
+    enableGrouping: true,
+  }),
+
+  reactTableColonnesHelper.accessor('nom', {
+    header: 'Chantiers',
+    id: 'nom',
+    aggregatedCell: aggregatedCellContext => aggregatedCellContext.row.original.porteur,
+    enableSorting: false,
+    enableGrouping: false,
+  }),
+
+  reactTableColonnesHelper.accessor('estBaromètre', {
+    header: 'Typologie',
+    id: 'typologie',
+    enableSorting: false,
+    cell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null,
+    enableGrouping: false,
+    aggregationFn: (_columnId, leafRows) => déterminerTypologieDuGroupementParMinistère(leafRows.map(row => row.original)),
+    aggregatedCell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null,
+  }),
+
+  reactTableColonnesHelper.accessor('météo', {
+    header: 'Météo',
+    id: 'météo',
+    cell: météo => <TableauChantiersMétéo météo={météo.getValue()} />,
+    enableGlobalFilter: false,
+    sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
+    enableGrouping: false,
+  }),
+
+  reactTableColonnesHelper.accessor('avancement', {
+    header: 'Avancement',
+    id: 'avancement',
+    cell: avancement => <TableauChantiersAvancement avancement={avancement.getValue()} />,
+    enableGlobalFilter: false,
+    sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
+    enableGrouping: false,
+    aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
+      return calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement));
+    },
+    aggregatedCell: avancement => <TableauChantiersAvancement avancement={avancement.getValue() ?? null} />,
+  }),
+
+  reactTableColonnesHelper.display({
+    id: 'dérouler-groupe',
+    aggregatedCell: (aggregatedCellContext => (
+      <span
+        aria-hidden="true"
+        className={`${aggregatedCellContext.row.getIsExpanded() ? 'fr-icon-arrow-down-s-line' : 'fr-icon-arrow-up-s-line'} chevron-accordéon`}
+      />
+    )),
+  }),
+
+  reactTableColonnesHelper.display({
+    id: 'chantier-tuile',
+    cell: chantierCellContext => <TableauChantiersTuileChantier chantier={chantierCellContext.row.original} />,
+    aggregatedCell: aggregatedCellContext => (
+      <TableauChantiersTuileMinistère
+        estDéroulé={aggregatedCellContext.row.getIsExpanded()}
+        ministère={aggregatedCellContext.getValue() as TableauChantiersTuileMinistèreProps['ministère']}
+      />
+    ),
+    aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
+      return {
+        nom: chantiersDuMinistèreRow[0].original.porteur,
+        avancement: calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement)),
+      } as TableauChantiersTuileMinistèreProps['ministère'];
+    },
+    enableSorting: false,
+    enableGrouping: false,
+  }),
+];
 
 function transformerEnDirectionDeTri(tri: SortingState): DirectionDeTri {
   if (!tri[0]) {
@@ -171,7 +156,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
 
   const tableau = useReactTable({
     data: données,
-    columns: estVueMobile ? colonnesTableauChantiers.vueMobile : colonnesTableauChantiers.vueBureau,
+    columns: colonnesTableauChantiers,
     globalFilterFn: (ligne, colonneId, filtreValeur) => {
       return rechercheUnTexteContenuDansUnContenant(filtreValeur, ligne.getValue<DonnéesTableauChantiers>(colonneId).toString());
     },
@@ -181,10 +166,15 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       grouping: regroupement,
       columnVisibility: estVueMobile ? ({
         porteur: false,
+        nom: false,
         météo: false,
         avancement: false,
+        typologie: false,
+        'dérouler-groupe': false,
+
       }) : ({
         porteur: false,
+        'chantier-tuile': false,
       }),
     },
     onSortingChange: setTri,
