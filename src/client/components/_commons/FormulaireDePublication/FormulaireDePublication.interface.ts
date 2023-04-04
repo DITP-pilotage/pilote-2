@@ -1,7 +1,6 @@
 export default interface FormulaireDePublicationProps {
-  contenuParDéfaut?: string
-  libellé: string
+  contenuInitial?: string
   limiteDeCaractères: number
-  àLaSoumissionDuFormulaire: (contenuÀCréer: string, csrf: string) => void
+  àLaPublication: (contenuÀCréer: string, csrf: string) => void
   àLAnnulation: () => void
 }

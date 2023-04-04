@@ -40,11 +40,10 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
       {
         modeÉdition ? (
           <FormulaireDePublication
-            contenuParDéfaut={commentaireÉtat?.contenu}
-            libellé='Modification du commentaire'
+            contenuInitial={commentaireÉtat?.contenu}
             limiteDeCaractères={LIMITE_CARACTÈRES_COMMENTAIRE}
             àLAnnulation={() => setModeÉdition(false)}
-            àLaSoumissionDuFormulaire={(contenuÀCréer, csrf) => créerUnCommentaire(contenuÀCréer, csrf)}
+            àLaPublication={(contenuÀCréer, csrf) => créerUnCommentaire(contenuÀCréer, csrf)}
           />
         ) : (
           commentaireÉtat ? (

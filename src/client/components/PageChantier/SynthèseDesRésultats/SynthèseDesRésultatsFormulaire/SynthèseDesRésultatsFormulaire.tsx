@@ -1,4 +1,4 @@
-import { useId, useState, FormEvent, useEffect } from 'react';
+import { useState, FormEvent, useCallback } from 'react';
 import CompteurCaractères from '@/components/_commons/FormulaireDePublication/CompteurCaractères/CompteurCaractères';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import météos from '@/client/constants/météos';
@@ -9,24 +9,21 @@ import Alerte from '@/components/_commons/Alerte/Alerte';
 import SynthèseDesRésultatsFormulaireStyled from './SynthèseDesRésultatsFormulaire.styled';
 import SynthèseDesRésultatsFormulaireProps from './SynthèseDesRésultatsFormulaire.interface';
 
-export default function SynthèseDesRésultatsFormulaire({ contenuParDéfaut, météoParDéfaut, limiteDeCaractères, àLaSoumission, àLAnnulation, alerte }: SynthèseDesRésultatsFormulaireProps) {
-  const uniqueId = useId();
-  const [contenu, setContenu] = useState(contenuParDéfaut ?? '');
-  const [météo, setMétéo] = useState(météoParDéfaut ?? 'NON_RENSEIGNEE');
-  const [nombreDeCaractères, setNombreDeCaractères] = useState(contenu?.length ?? 0);
-  const [aDépasséLaLimiteDeCaractères, setADépasséLaLimiteDeCaractères] = useState(false);
+export default function SynthèseDesRésultatsFormulaire({ contenuInitial, météoInitiale, limiteDeCaractères, àLaPublication, àLAnnulation, alerte }: SynthèseDesRésultatsFormulaireProps) {
+  const [contenu, setContenu] = useState(contenuInitial ?? '');
+  const [météo, setMétéo] = useState(météoInitiale ?? 'NON_RENSEIGNEE');
 
-  const formulaireEstInvalide = () => {
-    if (nombreDeCaractères === 0 || aDépasséLaLimiteDeCaractères) {
-      return true;
-    }
+  const saisieContenuEstValide = useCallback(() => {
+    return contenu.length > 0 && contenu.length <= limiteDeCaractères;
+  }, [contenu.length, limiteDeCaractères]);
 
-    // eslint-disable-next-line sonarjs/prefer-single-boolean-return
-    if (météo === 'NON_RENSEIGNEE')
-      return true;
-    
-    return false;
-  };
+  const saisieMétéoEstValide = useCallback(() => {
+    return météo === 'NON_RENSEIGNEE';
+  }, [météo]);
+
+  const formulaireEstInvalide = useCallback(() => {
+    return !saisieContenuEstValide() || !saisieMétéoEstValide();
+  }, [saisieContenuEstValide, saisieMétéoEstValide]);
 
   const soumettreLeFormulaire = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,15 +32,8 @@ export default function SynthèseDesRésultatsFormulaire({ contenuParDéfaut, m�
       return;
     }
 
-    àLaSoumission(contenu, météo);
+    àLaPublication(contenu, météo);
   };
-
-  useEffect(() => {
-    if (nombreDeCaractères > limiteDeCaractères) 
-      setADépasséLaLimiteDeCaractères(true);
-    else
-      setADépasséLaLimiteDeCaractères(false);
-  }, [nombreDeCaractères, limiteDeCaractères]);
   
   return (
     <SynthèseDesRésultatsFormulaireStyled
@@ -57,36 +47,25 @@ export default function SynthèseDesRésultatsFormulaire({ contenuParDéfaut, m�
         Ajouter une synthèse des résultats
       </Titre>
       <p className='fr-text--xs texte-gris'>
-        Résumez l’état d’avancement du chantier en maximum 5000 caractères. Précisez si vous souhaitez solliciter du soutien pour déployer une action particulièrement efficace ou pour répondre à une difficulté.
+        {`Résumez l’état d’avancement du chantier en maximum ${limiteDeCaractères} caractères. Précisez si vous souhaitez solliciter du soutien pour déployer une action particulièrement efficace ou pour répondre à une difficulté.`}
       </p>
-      <div className={`fr-mb-0 fr-input-group ${aDépasséLaLimiteDeCaractères && 'fr-input-group--error'}`}>
+      <div className={`fr-mb-0 fr-input-group ${!saisieContenuEstValide() && 'fr-input-group--error'}`}>
         <textarea
-          className={`fr-input fr-text--sm fr-mb-0 ${aDépasséLaLimiteDeCaractères && 'fr-input--error'}`}
-          id={`contenu-${uniqueId}`}
-          name={`contenu-${uniqueId}`}
-          onChange={(e) => {
-            setContenu(e.target.value);
-            setNombreDeCaractères(e.target.value.length);
-          }}
+          className="fr-input fr-text--sm fr-mb-0"
+          onChange={(e) => setContenu(e.target.value)}
           rows={6}
           value={contenu}
         />
         <CompteurCaractères
-          compte={nombreDeCaractères}
+          compte={contenu.length}
           limiteDeCaractères={limiteDeCaractères}
         />
         {
-          !!aDépasséLaLimiteDeCaractères &&
-          <p
-            className="fr-error-text"
-            id={`error-${uniqueId}`}
-          >
-            La limite maximale de 
-            {' '}
-            {limiteDeCaractères}
-            {' '}
-            caractères a été dépassée
-          </p>
+          contenu.length > limiteDeCaractères && (
+            <p className="fr-error-text">
+              {`La limite maximale de ${limiteDeCaractères} caractères a été dépassée`}
+            </p>
+          )
         }
       </div>
       <Sélecteur
@@ -99,22 +78,23 @@ export default function SynthèseDesRésultatsFormulaire({ contenuParDéfaut, m�
       />
       <MétéoPicto météo={météo} />
       {
-        alerte !== null &&
-        <Alerte
-          message={alerte.message}
-          type={alerte.type}
-        />
+        !!alerte && (
+          <Alerte
+            message={alerte.message}
+            type={alerte.type}
+          />
+        )
       }
       <div className='actions'>
         <button
-          className='fr-btn fr-mr-3w border-radius-4px'
+          className='fr-btn fr-mr-3w'
           disabled={formulaireEstInvalide()}
           type='submit'
         >
           Publier
         </button>
         <button
-          className='fr-btn fr-btn--secondary border-radius-4px'
+          className='fr-btn fr-btn--secondary'
           onClick={àLAnnulation}
           type='button'
         >

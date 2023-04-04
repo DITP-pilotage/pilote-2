@@ -9,6 +9,7 @@ import HistoriqueDeLaSynthèseDesRésultats
   from '@/components/PageChantier/SynthèseDesRésultats/Historique/HistoriqueDeLaSynthèseDesRésultats';
 import useSynthèseDesRésultats from '@/components/PageChantier/SynthèseDesRésultats/useSynthèseDesRésultats';
 import Alerte from '@/components/_commons/Alerte/Alerte';
+import { LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS } from '@/server/domain/commentaire/Commentaire.validator';
 import SynthèseDesRésultatsFormulaire from './SynthèseDesRésultatsFormulaire/SynthèseDesRésultatsFormulaire';
 
 export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale }: SynthèseDesRésultatsProps) {
@@ -38,16 +39,16 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
             modeÉdition ?
               <SynthèseDesRésultatsFormulaire
                 alerte={alerte}
-                contenuParDéfaut={synthèseDesRésultats?.contenu}
-                limiteDeCaractères={5000}
-                météoParDéfaut={synthèseDesRésultats?.météo}
+                contenuInitial={synthèseDesRésultats?.contenu}
+                limiteDeCaractères={LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS}
+                météoInitiale={synthèseDesRésultats?.météo}
                 àLAnnulation={
                   () => {
                     setAlerte(null);
                     setModeÉdition(false);
                   }
                 }
-                àLaSoumission={(contenu, météo) => créerSynthèseDesRésultats(contenu, météo)}
+                àLaPublication={(contenu, météo) => créerSynthèseDesRésultats(contenu, météo)}
               />
               :
               <>
