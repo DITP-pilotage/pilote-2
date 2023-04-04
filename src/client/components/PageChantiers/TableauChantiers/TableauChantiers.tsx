@@ -5,15 +5,15 @@ import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import TableauChantiersContenu from '@/components/PageChantiers/TableauChantiers/Contenu/TableauChantiersContenu';
-import useEstVueMobile from '@/client/hooks/useEstVueMobile';
 import useTableauChantiers from '@/components/PageChantiers/TableauChantiers/useTableauChantiers';
 import TableauChantiersActionsDeTri from '@/components/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
+import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
 import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersEnTête from './EnTête/TableauChantiersEnTête';
 import TableauChantiersStyled from './TableauChantiers.styled';
 
 export default function TableauChantiers({ données }: TableauChantiersProps) {
-  const estVueMobile = useEstVueMobile();
+  const estVueMobile = estVueMobileStore();
   const {
     tableau,
     changementDeLaRechercheCallback,

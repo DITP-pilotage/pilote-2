@@ -18,9 +18,9 @@ import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/a
 import TableauChantiersAvancement
   from '@/components/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
 import TableauChantiersMétéo from '@/components/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
-import useEstVueMobile from '@/client/hooks/useEstVueMobile';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
+import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
 import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuileChantier';
 import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiersTuileMinistère';
@@ -135,7 +135,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
   const [tri, setTri] = useState<SortingState>([]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
   const [regroupement, setRegroupement] = useState<GroupingState>([]);
-  const estVueMobile = useEstVueMobile();
+  const estVueMobile = estVueMobileStore();
 
   useEffect(() => {
     setTri(précédentTri => (
