@@ -14,7 +14,10 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
   let fichierIndicateurValidationService: MockProxy<FichierIndicateurValidationService>;
   let validerFichierIndicateurImporteUseCase: ValiderFichierIndicateurImporteUseCase;
   let mesureIndicateurRepository: MesureIndicateurRepository;
-  const CONTENT_TYPE = 'content-type';
+
+  const CHEMIN_COMPLET_DU_FICHIER = 'cheminCompletDuFichier';
+  const NOM_DU_FICHIER = 'nomDuFichier';
+  const SCHEMA = 'schema';
 
   beforeEach(() => {
     fichierIndicateurValidationService = mock<FichierIndicateurValidationService>();
@@ -30,15 +33,12 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
     const detailValidationFichier = new DetailValidationFichierBuilder()
       .avecEstValide(true)
       .build();
-    const formDataBody = new FormData();
-    const contentType = CONTENT_TYPE;
-    fichierIndicateurValidationService.validerFichier.calledWith(formDataBody, contentType).mockResolvedValue(detailValidationFichier);
+
+    const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA };
+    fichierIndicateurValidationService.validerFichier.calledWith(payload).mockResolvedValue(detailValidationFichier);
 
     // WHEN
-    const result = await validerFichierIndicateurImporteUseCase.execute({
-      formDataBody,
-      contentType,
-    });
+    const result = await validerFichierIndicateurImporteUseCase.execute(payload);
 
     // THEN
     expect(result.estValide).toEqual(true);
@@ -65,17 +65,14 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       .avecEstValide(true)
       .avecListeIndicateurData(indicateurData1, indicateurData2)
       .build();
-    const formDataBody = new FormData();
-    const contentType = CONTENT_TYPE;
-    fichierIndicateurValidationService.validerFichier.calledWith(formDataBody, contentType).mockResolvedValue(detailValidationFichier);
+    const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA };
+
+    fichierIndicateurValidationService.validerFichier.calledWith(payload).mockResolvedValue(detailValidationFichier);
 
     const indicateurCaptor = captor<IndicateurData[]>();
 
     // WHEN
-    await validerFichierIndicateurImporteUseCase.execute({
-      formDataBody,
-      contentType,
-    });
+    await validerFichierIndicateurImporteUseCase.execute(payload);
 
     // THEN
     expect(mesureIndicateurRepository.sauvegarder).toHaveBeenNthCalledWith(1, indicateurCaptor);
@@ -103,15 +100,12 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
     const detailValidationFichier = new DetailValidationFichierBuilder()
       .avecEstValide(false)
       .build();
-    const formDataBody = new FormData();
-    const contentType = CONTENT_TYPE;
-    fichierIndicateurValidationService.validerFichier.calledWith(formDataBody, contentType).mockResolvedValue(detailValidationFichier);
+    const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA };
+
+    fichierIndicateurValidationService.validerFichier.calledWith(payload).mockResolvedValue(detailValidationFichier);
 
     // WHEN
-    await validerFichierIndicateurImporteUseCase.execute({
-      formDataBody,
-      contentType,
-    });
+    await validerFichierIndicateurImporteUseCase.execute(payload);
 
     // THEN
     expect(mesureIndicateurRepository.sauvegarder).not.toBeCalled();

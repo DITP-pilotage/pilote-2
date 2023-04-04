@@ -25,6 +25,9 @@ import {
   ValidataFichierIndicateurValidationService,
 } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
 import { FetchHttpClient } from '@/server/import-indicateur/infrastructure/adapters/FetchHttpClient';
+import {
+  PrismaMesureIndicateurRepository,
+} from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
 import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
 
 class Dependencies {
@@ -47,11 +50,6 @@ class Dependencies {
   private readonly _validerFichierIndicateurImporteUseCase: ValiderFichierIndicateurImporteUseCase;
 
   constructor() {
-    const httpClient = new FetchHttpClient();
-    const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
-    this._validerFichierIndicateurImporteUseCase = new ValiderFichierIndicateurImporteUseCase({ fichierIndicateurValidationService });
-
-
     logger.info('Using database.');
     const prisma = new PrismaClient();
     this._chantierRepository = new ChantierSQLRepository(prisma);
@@ -62,6 +60,15 @@ class Dependencies {
     this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
     this._commentaireRepository = new CommentaireSQLRepository(prisma);
     this._objectifRepository = new ObjectifSQLRepository(prisma);
+
+
+    const httpClient = new FetchHttpClient();
+    const prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
+    const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
+    this._validerFichierIndicateurImporteUseCase = new ValiderFichierIndicateurImporteUseCase({
+      fichierIndicateurValidationService,
+      mesureIndicateurRepository: prismaMesureIndicateurRepository,
+    });
   }
 
   getChantierRepository(): ChantierRepository {

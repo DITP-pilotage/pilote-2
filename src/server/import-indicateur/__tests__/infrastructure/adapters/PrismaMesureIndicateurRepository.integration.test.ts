@@ -1,16 +1,14 @@
 import { IndicateurDataBuilder } from '@/server/import-indicateur/app/builder/IndicateurDataBuilder';
 import { PrismaMesureIndicateurRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
+import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 
 describe('PrismaMesureIndicateurRepository', () => {
   let prismaMesureIndicateurRepository: PrismaMesureIndicateurRepository;
 
-  beforeEach(() => {
-    prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository();
-  });
-
   describe('#sauvegarder', () => {
     it('doit sauvegarder les données', async () => {
       // GIVEN
+      prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
       const listeIndicateursData = [
         new IndicateurDataBuilder()
           .avecId('b2450ce3-8006-4550-8132-e5aab19c0caf')

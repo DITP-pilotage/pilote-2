@@ -19,11 +19,12 @@ export class ValiderFichierIndicateurImporteUseCase {
     this.mesureIndicateurRepository = mesureIndicateurRepository;
   }
 
-  async execute({
-    formDataBody,
-    contentType,
-  }: { formDataBody: FormData, contentType: string }): Promise<DetailValidationFichier> {
-    const report = await this.fichierIndicateurValidationService.validerFichier(formDataBody, contentType);
+  async execute(payload: {
+    cheminCompletDuFichier: string
+    nomDuFichier: string
+    schema: string
+  }): Promise<DetailValidationFichier> {
+    const report = await this.fichierIndicateurValidationService.validerFichier(payload);
     if (report.estValide) {
       await this.mesureIndicateurRepository.sauvegarder(report.listeIndicateursData);
     }

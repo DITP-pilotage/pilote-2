@@ -6,12 +6,15 @@ import {
 import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidataBuilder';
 import { ReportResourceTaskBuilder, ReportTaskBuilder } from '@/server/import-indicateur/app/builder/ReportTaskBuilder';
 import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTaskBuilder';
+import { ValiderFichierPayload } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
 
 describe('ValidataFichierIndicateurValidationService', () => {
   let validataFichierIndicateurValidationService: ValidataFichierIndicateurValidationService;
   let httpClient: MockProxy<HttpClient>;
 
-  const contentType = 'content-type';
+  const cheminCompletDuFichier = 'cheminCompletDuFichier';
+  const nomDuFichier = 'nomDuFichier';
+  const schema = 'schema';
 
   beforeEach(() => {
     httpClient = mock<HttpClient>();
@@ -20,12 +23,11 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
   it('doit appeler le httpClient pour contacter validata', async () => {
     // GIVEN
-    const formDataBody = new FormData();
-    const body = { formDataBody, contentType };
+    const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
     httpClient.post.mockResolvedValue(new ReportValidataBuilder().build());
 
     // WHEN
-    await validataFichierIndicateurValidationService.validerFichier(formDataBody, contentType);
+    await validataFichierIndicateurValidationService.validerFichier(body);
 
     // THEN
     expect(httpClient.post).toHaveBeenNthCalledWith(1, body);
@@ -33,7 +35,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
   it('quand le fichier est valide, doit construire le rapport de validation du fichier', async () => {
     // GIVEN
-    const formDataBody = new FormData();
+    const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
     const report = new ReportValidataBuilder()
       .avecValid(true)
       .avecTasks(new ReportTaskBuilder()
@@ -51,9 +53,9 @@ describe('ValidataFichierIndicateurValidationService', () => {
       .build();
 
     httpClient.post.mockResolvedValue(report);
- 
+
     // WHEN
-    const result = await validataFichierIndicateurValidationService.validerFichier(formDataBody, contentType);
+    const result = await validataFichierIndicateurValidationService.validerFichier(body);
 
     // THEN
     expect(result.estValide).toEqual(true);
@@ -77,7 +79,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
   it("quand le fichier est invalide, doit construire le rapport d'erreur du fichier", async () => {
     // GIVEN
-    const formDataBody = new FormData();
+    const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
     const report = new ReportValidataBuilder()
       .avecValid(false)
       .avecTasks(
@@ -107,9 +109,9 @@ describe('ValidataFichierIndicateurValidationService', () => {
       .build();
 
     httpClient.post.mockResolvedValue(report);
- 
+
     // WHEN
-    const result = await validataFichierIndicateurValidationService.validerFichier(formDataBody, contentType);
+    const result = await validataFichierIndicateurValidationService.validerFichier(body);
 
     // THEN
     expect(result.estValide).toEqual(false);

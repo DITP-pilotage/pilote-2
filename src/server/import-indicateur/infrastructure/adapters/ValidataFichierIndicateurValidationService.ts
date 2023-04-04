@@ -1,5 +1,7 @@
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
-import { FichierIndicateurValidationService } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
+import {
+  FichierIndicateurValidationService, ValiderFichierPayload,
+} from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
 import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
 import { ReportTask } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
@@ -23,7 +25,15 @@ export class ErreurValidationFichier {
 
   private readonly _positionDuChamp: number;
 
-  private constructor({ cellule, nom, message, numeroDeLigne, positionDeLigne, nomDuChamp, positionDuChamp }: { cellule: string, nom: string, message: string, numeroDeLigne: number, positionDeLigne: number, nomDuChamp: string, positionDuChamp: number }) {
+  private constructor({ cellule, nom, message, numeroDeLigne, positionDeLigne, nomDuChamp, positionDuChamp }: {
+    cellule: string,
+    nom: string,
+    message: string,
+    numeroDeLigne: number,
+    positionDeLigne: number,
+    nomDuChamp: string,
+    positionDuChamp: number
+  }) {
     this._cellule = cellule;
     this._nom = nom;
     this._message = message;
@@ -61,8 +71,32 @@ export class ErreurValidationFichier {
     return this._positionDuChamp;
   }
 
-  static creerErreurValidationFichier({ cellule, nom, message, numeroDeLigne, positionDeLigne, nomDuChamp, positionDuChamp }: { cellule: string, nom: string, message: string, numeroDeLigne: number, positionDeLigne: number, nomDuChamp: string, positionDuChamp: number }) {
-    return new ErreurValidationFichier({ cellule, nom, message, numeroDeLigne, positionDeLigne, nomDuChamp, positionDuChamp });
+  static creerErreurValidationFichier({
+    cellule,
+    nom,
+    message,
+    numeroDeLigne,
+    positionDeLigne,
+    nomDuChamp,
+    positionDuChamp,
+  }: {
+    cellule: string,
+    nom: string,
+    message: string,
+    numeroDeLigne: number,
+    positionDeLigne: number,
+    nomDuChamp: string,
+    positionDuChamp: number
+  }) {
+    return new ErreurValidationFichier({
+      cellule,
+      nom,
+      message,
+      numeroDeLigne,
+      positionDeLigne,
+      nomDuChamp,
+      positionDuChamp,
+    });
   }
 }
 
@@ -78,9 +112,13 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     this.httpClient = httpClient;
   }
 
-  async validerFichier(formDataBody: FormData, contentType: string): Promise<DetailValidationFichier> {
-    const report = await this.httpClient.post({ formDataBody, contentType });
-  
+  async validerFichier({
+    cheminCompletDuFichier,
+    nomDuFichier,
+    schema,
+  }: ValiderFichierPayload): Promise<DetailValidationFichier> {
+    const report = await this.httpClient.post({ cheminCompletDuFichier, nomDuFichier, schema });
+
     if (report.valid) {
       const donneesSansHeader = report.tasks.map(extraireLesDonnees);
 
@@ -91,11 +129,11 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
           zoneId: donnee[1],
           metricDate: donnee[2],
           metricType: donnee[3],
-          metricValue: donnee[4],
+          metricValue: `${donnee[4]}`,
         })),
       });
     }
-    
+
     const listeErreursValidation = report.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
       cellule: taskError.cell,
       nom: taskError.name,
@@ -105,7 +143,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
       nomDuChamp: taskError.fieldName,
       positionDuChamp: taskError.fieldPosition,
     }));
-  
+
     return DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, listeErreursValidation });
   }
 }

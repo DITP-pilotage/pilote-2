@@ -1,7 +1,6 @@
-import { mesure_indicateur as MesureIndicateur } from '@prisma/client';
+import { mesure_indicateur as MesureIndicateur, PrismaClient } from '@prisma/client';
 import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
-import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 
 const convertirEnModel = (indicateurData: IndicateurData): MesureIndicateur => {
   return {
@@ -26,15 +25,16 @@ const convertirEnIndicateurData = (mesureIndicateur: MesureIndicateur): Indicate
 };
 
 export class PrismaMesureIndicateurRepository implements MesureIndicateurRepository {
+  constructor(private prisma: PrismaClient) {}
 
   async sauvegarder(listeIndicateursData: IndicateurData[]): Promise<void> {
     const listeMesuresIndicateursModel = listeIndicateursData.map(convertirEnModel);
 
-    await prisma.mesure_indicateur.createMany({ data: listeMesuresIndicateursModel });
+    await this.prisma.mesure_indicateur.createMany({ data: listeMesuresIndicateursModel });
   }
 
   async recupererTout(): Promise<IndicateurData[]> {
-    const listeMesuresIndicateursModel = await prisma.mesure_indicateur.findMany();
+    const listeMesuresIndicateursModel = await this.prisma.mesure_indicateur.findMany();
 
     return listeMesuresIndicateursModel.map(convertirEnIndicateurData);
   }

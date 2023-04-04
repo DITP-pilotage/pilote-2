@@ -1,8 +1,9 @@
 import { ReportValidata } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
 
 export type ValidataValidationFichierPayload = {
-  formDataBody: FormData,
-  contentType: string
+  cheminCompletDuFichier: string
+  nomDuFichier: string
+  schema: string
 };
 
 export interface HttpClient {
