@@ -12,3 +12,4 @@ then
   fi
 fi
 
+dbt run --project-dir data_factory/ --select marts

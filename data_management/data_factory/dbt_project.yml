@@ -39,8 +39,20 @@ models:
     staging:
       +schema: raw_data
       +materialized: view
+    marts:
+      +schema: marts
+      faits_indicateur:
+        +materialized: incremental
+        +unique_key:
+          - 'indicateur_id'
+          - 'zone_id'
+          - 'metric_date'
+          - 'metric_type'
+          - 'import_date'
+      pivot_faits_indicateur:
+        +materialized: table
     intermediate:
-      +schema: raw_data
+      +schema: marts
       +materialized: view
     exposition:
       +schema: public
