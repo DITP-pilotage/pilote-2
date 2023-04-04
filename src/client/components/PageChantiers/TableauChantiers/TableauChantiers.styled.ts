@@ -16,17 +16,6 @@ const TableauChantiersStyled = styled.section`
       max-width: 22rem;
     }
   }
-  
-  .tri-actions {
-    display: flex;
-    align-items: end;
-    width: 100%;
-    max-width: 22rem;
-    
-    .sélecteur-colonne-à-trier {
-      flex-grow: 1;
-    }
-  }
 
   table.tableau {
     display: table;

@@ -2,27 +2,27 @@ import FlècheDeTri from '@/components/_commons/Tableau/TableauEnTête/FlècheDe
 import BoutonsDeTriProps from '@/components/_commons/Tableau/TableauEnTête/BoutonsDeTri/BoutonsDeTri.interface';
 import BoutonsDeTriStyled from '@/components/_commons/Tableau/TableauEnTête/BoutonsDeTri/BoutonsDeTri.styled';
 
-export default function BoutonsDeTri({ tri, setTri }: BoutonsDeTriProps) {
+export default function BoutonsDeTri({ directionDeTri, changementDirectionDeTriCallback }: BoutonsDeTriProps) {
   return (
     <BoutonsDeTriStyled>
       <button
-        className={`${tri === 'asc' ? 'actif' : ''} flèche-de-tri fr-mr-1w`}
-        onClick={() => tri === 'asc' ? setTri(false) : setTri('asc')}
+        className={`${directionDeTri === 'asc' ? 'actif' : ''} flèche-de-tri fr-mr-1w`}
+        onClick={() => directionDeTri === 'asc' ? changementDirectionDeTriCallback(false) : changementDirectionDeTriCallback('asc')}
         type='button'
       >
         <FlècheDeTri
           direction='asc'
-          estActif={tri === 'asc'}
+          estActif={directionDeTri === 'asc'}
         />
       </button>
       <button
-        className={`${tri === 'desc' ? 'actif' : ''} flèche-de-tri`}
-        onClick={() => tri === 'desc' ? setTri(false) : setTri('desc')}
+        className={`${directionDeTri === 'desc' ? 'actif' : ''} flèche-de-tri`}
+        onClick={() => directionDeTri === 'desc' ? changementDirectionDeTriCallback(false) : changementDirectionDeTriCallback('desc')}
         type='button'
       >
         <FlècheDeTri
           direction='desc'
-          estActif={tri === 'desc'}
+          estActif={directionDeTri === 'desc'}
         />
       </button>
     </BoutonsDeTriStyled>

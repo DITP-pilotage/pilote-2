@@ -1,4 +1,5 @@
 import {
+  ColumnSort,
   createColumnHelper,
   getCoreRowModel,
   getExpandedRowModel,
@@ -20,6 +21,7 @@ import TableauChantiersAvancement
 import TableauChantiersMétéo from '@/components/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
 import useEstVueMobile from '@/hooks/useEstVueMobile';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
+import { DirectionDeTri } from '@/components/_commons/Tableau/TableauEnTête/BoutonsDeTri/BoutonsDeTri.interface';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
 import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuileChantier';
 import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiersTuileMinistère';
@@ -116,6 +118,25 @@ const colonnesTableauChantiers = {
   ],
 };
 
+function transformerEnDirectionDeTri(tri: SortingState): DirectionDeTri {
+  if (!tri[0]) {
+    return false;
+  }
+  return (tri[0].desc ? 'desc' : 'asc');
+}
+
+function transformerEnSortingState(sélectionColonneÀTrier: string, directionDeTri: DirectionDeTri): SortingState {
+  return directionDeTri === false
+    ? (
+      []
+    ) : (
+      [{
+        id: sélectionColonneÀTrier,
+        desc: directionDeTri === 'desc',
+      }]
+    );
+}
+
 export default function useTableauChantiers(données: TableauChantiersProps['données']) {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
   const [tri, setTri] = useState<SortingState>([]);
@@ -174,8 +195,8 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
     changementDePageCallback,
     valeurDeLaRecherche,
     sélectionColonneÀTrier,
-    setSélectionColonneÀTrier,
-    tri,
-    setTri,
+    changementSélectionColonneÀTrierCallback: setSélectionColonneÀTrier,
+    directionDeTri: transformerEnDirectionDeTri(tri),
+    changementDirectionDeTriCallback: (directionDeTri: DirectionDeTri) => setTri(transformerEnSortingState(sélectionColonneÀTrier, directionDeTri)),
   };
 }

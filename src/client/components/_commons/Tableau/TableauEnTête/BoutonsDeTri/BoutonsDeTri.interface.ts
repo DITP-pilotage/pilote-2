@@ -1,6 +1,6 @@
-type Tri = 'asc' | 'desc' | false;
+export type DirectionDeTri = 'asc' | 'desc' | false;
 
 export default interface BoutonsDeTriProps {
-  tri: Tri;
-  setTri: (tri: Tri) => void
+  directionDeTri: DirectionDeTri;
+  changementDirectionDeTriCallback: (tri: DirectionDeTri) => void
 }
