@@ -1,5 +1,4 @@
 import {
-  ColumnSort,
   createColumnHelper,
   getCoreRowModel,
   getExpandedRowModel,

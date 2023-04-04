@@ -39,7 +39,7 @@ class TableauChantiersTest {
   }
 
   filtrerParContenuTextuel(texte: string) {
-    return waitFor(() => userEvent.type(screen.getByRole('textbox'), texte));
+    return waitFor(() => userEvent.type(screen.getByRole('searchbox'), texte));
   }
 
   récupérerLeNombreDeLignesDuTableau() {

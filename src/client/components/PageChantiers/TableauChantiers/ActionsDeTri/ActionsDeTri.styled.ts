@@ -8,6 +8,10 @@ const ActionsDeTriStyled = styled.div`
 
   .sélecteur-colonne-à-trier {
     flex-grow: 1;
+
+    select {
+      background-color: var(--background-alt-blue-france);
+    }
   }
 `;
 

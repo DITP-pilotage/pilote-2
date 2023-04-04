@@ -13,16 +13,16 @@ export default function BarreDeRecherche({ changementDeLaRechercheCallback, vale
         className="fr-input"
         onChange={changementDeLaRechercheCallback}
         placeholder="Rechercher"
-        type='text'
+        type="search"
         value={valeur}
       />
-      <button
+      <div
+        aria-hidden
         className="fr-btn"
         title="Rechercher"
-        type="button"
       >
         Rechercher
-      </button>
+      </div>
     </BarreDeRechercheStyled>
   );
 }

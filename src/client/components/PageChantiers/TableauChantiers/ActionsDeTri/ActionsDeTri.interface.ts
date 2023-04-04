@@ -5,7 +5,7 @@ export default interface ActionsDeTriProps {
     libellé: string,
     colonneId: string,
   }>,
-  changementColonneÀTrierCallback: (string) => void;
+  changementColonneÀTrierCallback: (colonneId: string) => void;
   colonneÀTrier: string;
   changementDirectionDeTriCallback: (directionTri: DirectionDeTri) => void;
   directionDeTri: DirectionDeTri;
