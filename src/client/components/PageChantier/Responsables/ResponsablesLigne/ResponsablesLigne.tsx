@@ -13,11 +13,8 @@ export default function ResponsablesLigne({ libellé, contenu }: ResponsablesLig
             ? contenu.map((élément, i) => {
               return (
                 <Fragment key={`responsable-${élément}`}>
-                  {
-                    i === contenu.length - 1
-                      ? élément
-                      : élément + ', '
-                  }
+                  {élément}
+                  {contenu.length - 1 !== i ? ', ' : null}
                 </Fragment>
               );
             })
