@@ -3,15 +3,27 @@ import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import { useEffect } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
-import TableauPagination from '@/components/_commons/Tableau/TableauPagination/TableauPagination';
+import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import TableauChantiersContenu from '@/components/PageChantiers/TableauChantiers/Contenu/TableauChantiersContenu';
+import useTableauChantiers from '@/components/PageChantiers/TableauChantiers/useTableauChantiers';
+import TableauChantiersActionsDeTri from '@/components/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
+import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
 import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersEnTête from './EnTête/TableauChantiersEnTête';
 import TableauChantiersStyled from './TableauChantiers.styled';
-import useTableauChantiers from './useTableauChantiers';
 
 export default function TableauChantiers({ données }: TableauChantiersProps) {
-  const { tableau, changementDeLaRechercheCallback, changementDePageCallback, valeurDeLaRecherche } = useTableauChantiers(données);
+  const estVueMobile = estVueMobileStore();
+  const {
+    tableau,
+    changementDeLaRechercheCallback,
+    changementDePageCallback,
+    valeurDeLaRecherche,
+    sélectionColonneÀTrier,
+    changementSélectionColonneÀTrierCallback,
+    directionDeTri,
+    changementDirectionDeTriCallback,
+  } = useTableauChantiers(données);
   
   useEffect(() => {
     tableau.setPageSize(50);
@@ -26,23 +38,35 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
         {`Liste des chantiers (${tableau.getFilteredRowModel().rows.length})`}
       </Titre>
       <div className='tableau-actions fr-mb-3v fr-mt-1w'>
-        <BarreDeRecherche
-          changementDeLaRechercheCallback={changementDeLaRechercheCallback}
-          valeur={valeurDeLaRecherche}
-        />
-        <div className="fr-toggle fr-ml-4w">
-          <input
-            className="fr-toggle__input"
-            id="interrupteur-grouper-par-ministères"
-            onChange={tableau.getColumn('porteur')?.getToggleGroupingHandler() ?? undefined}
-            type="checkbox"
+        <div className="tableau-actions-gauche">
+          <div className="barre-de-recherche">
+            <BarreDeRecherche
+              changementDeLaRechercheCallback={changementDeLaRechercheCallback}
+              valeur={valeurDeLaRecherche}
+            />
+          </div>
+          <div className="fr-toggle">
+            <input
+              className="fr-toggle__input"
+              id="interrupteur-grouper-par-ministères"
+              onChange={tableau.getColumn('porteur')?.getToggleGroupingHandler() ?? undefined}
+              type="checkbox"
+            />
+            <label
+              className="fr-toggle__label fr-pl-1w"
+              htmlFor="interrupteur-grouper-par-ministères"
+            >
+              Grouper par ministères
+            </label>
+          </div>
+        </div>
+        <div className="tableau-actions-droite">
+          <TableauChantiersActionsDeTri
+            changementColonneÀTrierCallback={changementSélectionColonneÀTrierCallback}
+            changementDirectionDeTriCallback={changementDirectionDeTriCallback}
+            colonneÀTrier={sélectionColonneÀTrier}
+            directionDeTri={directionDeTri}
           />
-          <label
-            className="fr-toggle__label fr-pl-1w"
-            htmlFor="interrupteur-grouper-par-ministères"
-          >
-            Grouper par ministères
-          </label>
         </div>
       </div>
       {tableau.getRowModel().rows.length === 0
@@ -63,7 +87,9 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
               <caption className="fr-sr-only">
                 Liste des chantiers
               </caption>
-              <TableauChantiersEnTête tableau={tableau} />
+              {
+                !estVueMobile && <TableauChantiersEnTête tableau={tableau} />
+              }
               <TableauChantiersContenu tableau={tableau} />
             </table>
             <TableauPagination

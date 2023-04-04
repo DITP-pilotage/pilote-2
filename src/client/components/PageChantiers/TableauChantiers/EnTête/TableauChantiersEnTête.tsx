@@ -1,6 +1,4 @@
-import { Header, flexRender, SortDirection } from '@tanstack/react-table';
-import FlècheDeTri from '@/components/_commons/Tableau/TableauEnTête/FlècheDeTri/FlècheDeTri';
-import { DonnéesTableauChantiers } from '@/client/components/PageChantiers/TableauChantiers/TableauChantiers.interface';
+import { flexRender, SortDirection } from '@tanstack/react-table';
 import TableauChantiersEnTêteProps from './TableauChantiersEnTête.interface';
 import TableauChantiersEnTêteStyled from './TableauChantiersEnTête.styled';
 
@@ -17,37 +15,6 @@ function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
 }
 
 export default function TableauChantiersEnTête({ tableau }: TableauChantiersEnTêteProps) {
-  function afficherIconesDeTriDeLaColonne(header: Header<DonnéesTableauChantiers, unknown>) {
-    const triDécroissantActif = header.column.getIsSorted() === 'desc';
-    const triCroissantActif = header.column.getIsSorted() === 'asc';
-    return (
-      <>
-        <button
-          aria-label={`trier la colonne ${header.column.columnDef.header} par ordre croissant`}
-          className={`${triCroissantActif ? 'actif' : ''} flèche-de-tri fr-m-1w`}
-          onClick={() => header.column.toggleSorting(false)}
-          type='button'
-        >
-          <FlècheDeTri
-            direction='asc'
-            estActif={triCroissantActif}
-          />
-        </button>
-        <button
-          aria-label={`trier la colonne ${header.column.columnDef.header} par ordre décroissant`}
-          className={`${triDécroissantActif ? 'actif' : ''} flèche-de-tri`}
-          onClick={() => header.column.toggleSorting(true)}
-          type='button'
-        >
-          <FlècheDeTri
-            direction='desc'
-            estActif={triDécroissantActif}
-          />
-        </button>
-      </>
-    );
-  }
-  
   return (
     <TableauChantiersEnTêteStyled>
       {
@@ -58,11 +25,11 @@ export default function TableauChantiersEnTête({ tableau }: TableauChantiersEnT
                 aria-sort={renseignerAttributAriaSort(header.column.getIsSorted())} 
                 key={header.id}
               >
-                { flexRender(header.column.columnDef.header, header.getContext()) }
-                { header.column.getCanSort() && afficherIconesDeTriDeLaColonne(header) }
+                <p className="fr-mb-0 fr-mr-3v fr-text--sm">
+                  { flexRender(header.column.columnDef.header, header.getContext()) }
+                </p>
               </th>
             ))}
-            <th />
           </tr>
         ))
       }

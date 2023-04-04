@@ -3,12 +3,12 @@ import JaugeDeProgressionSVG from '@/components/_commons/JaugeDeProgression/Jaug
 import JaugeDeProgressionStyled from './JaugeDeProgression.styled';
 
 const classesÀPartirDeTaille = {
-  petite: {
+  sm: {
     valeur: 'jauge-valeur-dessous fr-h4',
     valeur_non_renseignée: 'jauge-valeur-dessous fr-text--xs',
     libellé: 'fr-text--xs fr-mb-0',
   },
-  grande: {
+  lg: {
     valeur: 'jauge-valeur-au-centre fr-display--xs',
     valeur_non_renseignée: 'jauge-valeur-au-centre fr-text--xs',
     libellé: 'jauge-libellé-au-centre fr-text--xs fr-mb-0',

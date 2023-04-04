@@ -7,10 +7,29 @@ const TableauChantiersStyled = styled.section`
   
   .tableau-actions {
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
 
-    div {
-      max-width: 100%;
+    .tableau-actions-gauche {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 2rem;
+      align-items: center;
+
+      & > * {
+        flex-basis: content;
+      }
+      
+      .barre-de-recherche {
+        width: 100%;
+        max-width: 22rem;
+      }
+    }
+
+    .tableau-actions-droite {
+      width: 100%;
+      max-width: 22rem;
     }
   }
 
@@ -67,6 +86,10 @@ const TableauChantiersStyled = styled.section`
         &:hover {
           background-color: var(--background-default-grey-hover);
         }
+      }
+      
+      .chevron-accordéon::before {
+        background-color: var(--blue-france-sun-113-625);
       }
     }
   }

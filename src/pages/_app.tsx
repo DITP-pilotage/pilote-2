@@ -10,10 +10,12 @@ import { SessionProvider } from 'next-auth/react';
 import { Router } from 'next/router';
 import { useState, useEffect } from 'react';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
+import useDétecterVueMobile from '@/client/hooks/useDétecterVueMobile';
 
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 
 export default function MonApplication({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+  useDétecterVueMobile();
   const [afficherLeLoader, setAfficherLeLoader] = useState(false);
   const [pageEnCoursDeChargement, setPageEnCoursDeChargement] = useState(false);
 

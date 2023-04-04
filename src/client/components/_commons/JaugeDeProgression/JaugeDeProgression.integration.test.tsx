@@ -9,7 +9,7 @@ describe('Jauge de progression', () => {
         couleur="bleu"
         libellé="test"
         pourcentage={24}
-        taille='grande'
+        taille='lg'
       />,
     );
     expect(screen.getByText('24%')).toBeInTheDocument();
@@ -21,7 +21,7 @@ describe('Jauge de progression', () => {
         couleur="vert"
         libellé="test"
         pourcentage={null}
-        taille='petite'
+        taille='sm'
       />,
     );
     expect(screen.getByText('Non renseigné')).toBeInTheDocument();
@@ -33,7 +33,7 @@ describe('Jauge de progression', () => {
         couleur="orange"
         libellé="C'est un libellé de taille moyenne"
         pourcentage={null}
-        taille='grande'
+        taille='lg'
       />,
     );
     expect(screen.getByText('C\'est un libellé de taille moyenne')).toBeInTheDocument();

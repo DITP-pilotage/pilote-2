@@ -1,27 +1,22 @@
 import styled from '@emotion/styled';
 
 const TableauChantiersEnTêteStyled = styled.thead`
-    background-color: var(--background-action-low-blue-france) !important;
-    border: 1px solid var(--border-disabled-grey);
+  background-color: var(--background-action-low-blue-france) !important;
+  border: 1px solid var(--border-disabled-grey);
 
-    th {
-      &:first-of-type {
-        border-radius: 8px 0 0;
-      }
-
-      &:last-child {
-        border-radius: 0 8px 0 0;
-      }
+  th {
+    &:first-of-type {
+      border-radius: 8px 0 0;
     }
 
-    .actif {
-      background: var(--background-active-blue-france);
+    &:last-child {
+      border-radius: 0 8px 0 0;
     }
-
-    .flèche-de-tri {
-      border: 1px solid var(--background-default-grey);
-      border-radius: 4px;
+    
+    p {
+      display: inline-block;
     }
+  }
 `;
 
 export default TableauChantiersEnTêteStyled;

@@ -1,4 +1,4 @@
-export type BarreDeProgressionTaille = 'fine' | 'petite' | 'moyenne' | 'grande';
+export type BarreDeProgressionTaille = 'xxs' | 'xs' | 'sm' | 'md' | 'lg';
 export type BarreDeProgressionVariante = 'primaire' | 'secondaire';
 export type BarreDeProgressionFond = 'bleu' | 'blanc' | 'grisMoyen' | 'grisClair';
 export type BarreDeProgressionBordure = 'bleu' | 'grisMoyen' | null;

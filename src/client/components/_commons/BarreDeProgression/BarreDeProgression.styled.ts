@@ -21,10 +21,12 @@ const couleurDeBarreEtTexte = {
 };
 
 export const dimensions = {
-  fine: { hauteur: '0.5rem', largeurTexte: '2.75rem', classNameDsfr: 'fr-text--xs' },
-  petite: { hauteur: '0.75rem', largeurTexte: '2.75rem', classNameDsfr: 'fr-text--xs' },
-  moyenne: { hauteur: '0.75rem', largeurTexte: '4rem', classNameDsfr: 'fr-text--sm' },
-  grande: { hauteur: '2rem', largeurTexte: '6.5rem', classNameDsfr: 'fr-h1' },
+  // eslint-disable-next-line sonarjs/no-duplicate-string
+  xxs: { hauteur: '0.5rem', largeurTexte: '2.5rem', classNameDsfr: 'fr-text--xs' },
+  xs: { hauteur: '0.625rem', largeurTexte: '2.5rem', classNameDsfr: 'fr-text--xs' },
+  sm: { hauteur: '0.75rem', largeurTexte: '2.5rem', classNameDsfr: 'fr-text--xs' },
+  md: { hauteur: '0.75rem', largeurTexte: '4rem', classNameDsfr: 'fr-text--sm' },
+  lg: { hauteur: '2rem', largeurTexte: '6.5rem', classNameDsfr: 'fr-h1' },
 };
 
 const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
@@ -64,10 +66,6 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
         background-color: ${props => couleurDeFond[props.fond]};
       }
     }
-
-    .conteneur-curseurs {
-      height: 0;
-    }
   }
   
   .pourcentage{
@@ -82,7 +80,6 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
 
     .barre{
       flex-grow: 1;
-      max-width: 12.5rem;
     }
 
     .pourcentage {

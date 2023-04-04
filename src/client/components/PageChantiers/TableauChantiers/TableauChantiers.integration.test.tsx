@@ -39,7 +39,7 @@ class TableauChantiersTest {
   }
 
   filtrerParContenuTextuel(texte: string) {
-    return waitFor(() => userEvent.type(screen.getByRole('textbox'), texte));
+    return waitFor(() => userEvent.type(screen.getByRole('searchbox'), texte));
   }
 
   récupérerLeNombreDeLignesDuTableau() {
@@ -93,7 +93,7 @@ test('le tableau comporte les données d\'entrée', () => {
 describe("quand l'utilisateur clique sur le bouton de tri croissant d'une colonne", () => {
   test('les éléments du tableau sont triés par ordre croissant', async () => {
     // WHEN
-    await tableau.trierSurLaColonne('trier la colonne Avancement par ordre croissant');
+    await tableau.trierSurLaColonne('trier la colonne "avancement" par ordre croissant');
     
     // THEN
     expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('97');
@@ -105,7 +105,7 @@ describe("quand l'utilisateur clique sur le bouton de tri croissant d'une colonn
 describe("quand l'utilisateur clique sur le bouton de tri décroissant d'une colonne", () => {
   test('les éléments du tableau sont triés par ordre décroissant', async () => {
     // WHEN
-    await tableau.trierSurLaColonne('trier la colonne Avancement par ordre décroissant');
+    await tableau.trierSurLaColonne('trier la colonne "avancement" par ordre décroissant');
     
     // THEN
     expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('99');

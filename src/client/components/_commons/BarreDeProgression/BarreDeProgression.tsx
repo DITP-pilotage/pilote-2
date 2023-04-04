@@ -15,7 +15,7 @@ export default function BarreDeProgression({
   return (
     <BarreDeProgressionStyled
       bordure={bordure}
-      className={`barre-de-progression flex fr-pb-1v texte-${positionTexte}`}
+      className={`barre-de-progression flex texte-${positionTexte}`}
       fond={fond}
       positionTexte={positionTexte}
       taille={taille}

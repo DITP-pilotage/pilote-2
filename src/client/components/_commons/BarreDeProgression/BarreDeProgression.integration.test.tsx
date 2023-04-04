@@ -7,7 +7,7 @@ describe('Barre de progression', () => {
     render(
       <BarreDeProgression
         afficherTexte
-        taille='petite'
+        taille='sm'
         valeur={20}
         variante='primaire'
       />,
@@ -21,7 +21,7 @@ describe('Barre de progression', () => {
     render(
       <BarreDeProgression
         afficherTexte={false}
-        taille='petite'
+        taille='sm'
         valeur={20}
         variante='primaire'
       />,
@@ -34,7 +34,7 @@ describe('Barre de progression', () => {
     render(
       <BarreDeProgression
         positionTexte="dessus"
-        taille='petite'
+        taille='sm'
         valeur={20}
         variante='primaire'
       />,
@@ -48,7 +48,7 @@ describe('Barre de progression', () => {
     render(
       <BarreDeProgression
         positionTexte="côté"
-        taille='petite'
+        taille='sm'
         valeur={20}
         variante='primaire'
       />,
