@@ -12,9 +12,9 @@ interface NextPageImportIndicateurProps {
   indicateurs: Indicateur[]
 }
 
-type GetServerSideProps = Promise<GetServerSidePropsResult<NextPageImportIndicateurProps>>;
+type GetServerSideProps = GetServerSidePropsResult<NextPageImportIndicateurProps>;
 
-export async function getServerSideProps({ params }: GetServerSidePropsContext<{ id: Chantier['id'] }>): GetServerSideProps {
+export async function getServerSideProps({ params }: GetServerSidePropsContext<{ id: Chantier['id'] }>): Promise<GetServerSideProps> {
   if (!params?.id) {
     return {
       notFound: true,

@@ -12,4 +12,5 @@ beforeEach(async () => {
     .join(', ');
 
   await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
+  await prisma.mesure_indicateur.deleteMany();
 });

@@ -5,7 +5,6 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import IndicateurBuilder from '@/server/domain/indicateur/Indicateur.builder';
 
-
 const CHANTIER_NOM = 'Offrir à chaque enfant une éducation culturelle et artistique';
 const CHANTIER_AXE = 'Ceci est un axe';
 const CHANTIER_PPG = 'Ceci est un ppg';

@@ -10,8 +10,13 @@ export interface ReportErrorTask {
   rowPosition: number,
 }
 
+export interface ReportResourceTask {
+  data: string[][]
+}
+
 export interface ReportTask {
   errors: ReportErrorTask[]
+  resource: ReportResourceTask
 }
 
 export interface ReportError {}
@@ -19,5 +24,5 @@ export interface ReportError {}
 export type ReportValidata = {
   errors: ReportError[];
   tasks: ReportTask[];
-  valid: false;
-} | { valid: true };
+  valid: boolean;
+};

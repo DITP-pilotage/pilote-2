@@ -1,7 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { File } from 'formidable';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
+import { parseForm } from '@/server/import-indicateur/infrastructure/handlers/ParseForm';
 
 const présenterEnContrat = (report: DetailValidationFichier): DetailValidationFichierContrat => {
   return {
@@ -24,10 +26,19 @@ export default async function handleValiderFichierImportIndicateur(
   validerFichierIndicateurImporteUseCase = dependencies.getValiderFichierIndicateurImporteUseCase(),
 ) {
 
+
+  const formData = await parseForm(request);
+
+  const fichier = <File>formData.file;
+
+
+  const schéma = 'https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/templates/indicateur/sans-contraintes/schema_pilote_sans_contraintes.json';
+
   const report = await validerFichierIndicateurImporteUseCase.execute(
     {
-      formDataBody: request.body,
-      contentType: request.headers['content-type']?.toString() as string,
+      cheminCompletDuFichier: fichier.filepath,
+      nomDuFichier: fichier.originalFilename as string,
+      schema: schéma,
     },
   );
 
