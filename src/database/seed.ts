@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/prefer-top-level-await */
+/* eslint-disable unicorn/prefer-top-level-await,sonarjs/no-duplicate-string */
 import {
   axe,
   chantier,
@@ -24,6 +24,7 @@ import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 import IndicateurRowBuilder from '@/server/infrastructure/test/builders/sqlRow/IndicateurSQLRow.builder';
 import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
+import { DIR_CHANTIER, DIR_PROJET, DITP_ADMIN, DITP_PILOTAGE, PM } from '@/server/domain/identité/Profil';
 
 const prisma = new PrismaClient();
 
@@ -152,54 +153,56 @@ class DatabaseSeeder {
   }
 
   private async _créerDroits() {
-    type LigneDeConf = {
-      utilisateur_id: string,
-      email_utilisateur: string,
-      profil_id: string,
-      nom_profil: string,
-      a_acces_tous_chantiers: boolean,
-    };
-    const données: Record<string, LigneDeConf> = {
-      DIRC: {
-        utilisateur_id: uuidv4(),
-        email_utilisateur: 'utilisateur_DIRC@example.com',
-        profil_id: uuidv4(),
-        nom_profil: 'Directeur de chantier',
-        a_acces_tous_chantiers: false,
-      },
-      PM: {
-        utilisateur_id: uuidv4(),
-        email_utilisateur: 'utilisateur_PM@example.com',
-        profil_id: uuidv4(),
-        nom_profil: 'Premier Ministre',
-        a_acces_tous_chantiers: true,
-      },
-      DITP: {
-        utilisateur_id: uuidv4(),
-        email_utilisateur: 'utilisateur_DITP@example.com',
-        profil_id: uuidv4(),
-        nom_profil: 'Admin DITP',
-        a_acces_tous_chantiers: true,
-      },
-    };
-
-    for (const [code, { profil_id, nom_profil, a_acces_tous_chantiers }] of Object.entries(données)) {
-      await prisma.profil.create({ data: {id:profil_id, code, nom: nom_profil, a_acces_tous_chantiers } });
-    }
-
-    for (const { utilisateur_id, email_utilisateur, profil_id } of Object.values(données)) {
-      await prisma.utilisateur.create({ data: { id:utilisateur_id, email: email_utilisateur, profil_id } });
-    }
+    const inputProfils = [
+      { code: PM, nom: 'Premier Ministre', a_acces_tous_chantiers: true },
+      { code: DITP_ADMIN, nom: 'DITP - Admin', a_acces_tous_chantiers: true },
+      { code: DITP_PILOTAGE, nom: 'DITP - Pilotage', a_acces_tous_chantiers: true },
+      { code: DIR_CHANTIER, nom: 'Directeur de chantier', a_acces_tous_chantiers: false },
+      { code: DIR_PROJET, nom: 'Directeur de projet', a_acces_tous_chantiers: false },
+    ];
 
     // noinspection TypeScriptValidateTypes
     const chantiersRows = await prisma.chantier.findMany({ distinct: ['id'], select: { id: true }, take: 10 });
+    const chantierIds = chantiersRows.map(it => it.id);
+    const inputUtilisateurs = [
+      { email: 'utilisateur_PM@example.com', profilCode: PM, chantierIds: [] },
+      { email: 'utilisateur_DITP_A@example.com', profilCode: DITP_ADMIN, chantierIds: [] },
+      { email: 'utilisateur_DITP_P@example.com', profilCode: DITP_PILOTAGE, chantierIds: [] },
+      { email: 'utilisateur_DIR_C@example.com', profilCode: DIR_CHANTIER, chantierIds },
+      { email: 'utilisateur_DIR_P@example.com', profilCode: DIR_PROJET, chantierIds },
+    ];
+
+    type DonnéesProfil = { id: string, code: string, nom: string, a_acces_tous_chantiers: boolean };
+    const donnéesProfils: Record<string, DonnéesProfil> = {};
+    for (const input of inputProfils) {
+      donnéesProfils[input.code] = { ...input, id: uuidv4() };
+    }
+
+    type DonnéesUtilisateur = { id: string, email: string, profil_id: string, chantier_ids: string[] };
+    const donnéesUtilisateurs: DonnéesUtilisateur[] = [];
+    for (const input of inputUtilisateurs) {
+      donnéesUtilisateurs.push({
+        id: uuidv4(),
+        email: input.email,
+        profil_id: donnéesProfils[input.profilCode].id,
+        chantier_ids: input.chantierIds,
+      });
+    }
+
+    for (const profil of Object.values(donnéesProfils)) {
+      await prisma.profil.create({ data: profil });
+    }
+
+    for (const { id, email, profil_id } of Object.values(donnéesUtilisateurs)) {
+      await prisma.utilisateur.create({ data: { id, email, profil_id } });
+    }
 
     const utilisateurChantiers = [];
-    for (const row of chantiersRows) {
-      for (const { utilisateur_id } of Object.values(données)) {
+    for (const { id: utilisateur_id, chantier_ids } of donnéesUtilisateurs) {
+      for (const chantier_id of chantier_ids) {
         utilisateurChantiers.push({
           utilisateur_id,
-          chantier_id: row.id,
+          chantier_id,
         });
       }
     }
@@ -220,14 +223,12 @@ class DatabaseSeeder {
     });
 
     const profilHabilitations = [
-      { profil_id: données.PM.profil_id, habilitation_scope_id: habilitationScopeLectureId },
+      { profil_id: donnéesProfils.PM.id, habilitation_scope_id: habilitationScopeLectureId },
     ];
-    for (const code of ['DITP', 'DIRC']) {
+    for (const code of [DITP_ADMIN, DIR_CHANTIER]) {
       for (const habilitation_scope_id of [habilitationScopeLectureId, habilitationScopeÉcritureId]) {
-        profilHabilitations.push({
-          profil_id: données[code].profil_id,
-          habilitation_scope_id,
-        });
+        const profil_id = donnéesProfils[code].id;
+        profilHabilitations.push({ profil_id, habilitation_scope_id });
       }
     }
 
