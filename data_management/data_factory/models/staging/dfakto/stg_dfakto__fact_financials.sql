@@ -14,7 +14,7 @@ renamed as (
         state_id as type_valeur,
         effect_id,
         financials_propilot_amount as valeur_cumulee,
-        CAST(financials_decumulated_amount AS DOUBLE PRECISION) as valeur
+        CAST(REPLACE(financials_decumulated_amount, ',', '.') as DOUBLE PRECISION) as valeur
 
     from source
 

@@ -13,6 +13,8 @@ renamed as (
         progress_intermediaire as avancement_annuel,
         progress_globale as avancement,
         progress_globale as avancement_borne,
+        completude_intermediaire,
+        completude_globale,
         snapshot_date
     from source
 
