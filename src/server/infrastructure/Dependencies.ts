@@ -54,7 +54,7 @@ class Dependencies {
   private readonly _validerFichierIndicateurImporteUseCase: ValiderFichierIndicateurImporteUseCase;
 
   constructor() {
-    logger.info('Using database.');
+    logger.debug('Using database.');
     const prisma = new PrismaClient();
     this._chantierRepository = new ChantierSQLRepository(prisma);
     this._axeRepository = new AxeSQLRepository(prisma);
