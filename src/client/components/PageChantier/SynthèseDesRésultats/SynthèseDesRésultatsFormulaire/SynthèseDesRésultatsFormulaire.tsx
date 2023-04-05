@@ -1,4 +1,4 @@
-import { useState, FormEvent, useCallback } from 'react';
+import { useState } from 'react';
 import CompteurCaractères from '@/components/_commons/FormulaireDePublication/CompteurCaractères/CompteurCaractères';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import météos from '@/client/constants/météos';
@@ -8,33 +8,19 @@ import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import SynthèseDesRésultatsFormulaireStyled from './SynthèseDesRésultatsFormulaire.styled';
 import SynthèseDesRésultatsFormulaireProps from './SynthèseDesRésultatsFormulaire.interface';
+import useSynthèseDesRésultatsFormulaire from './useSynthèseDesRésultatsFormulaire';
 
-export default function SynthèseDesRésultatsFormulaire({ contenuInitial, météoInitiale, limiteDeCaractères, àLaPublication, àLAnnulation, alerte }: SynthèseDesRésultatsFormulaireProps) {
+export default function SynthèseDesRésultatsFormulaire({ contenuInitial, météoInitiale, limiteDeCaractères, synthèseDesRésultatsCrééeCallback, annulationCallback }: SynthèseDesRésultatsFormulaireProps) {
   const [contenu, setContenu] = useState(contenuInitial ?? '');
   const [météo, setMétéo] = useState(météoInitiale ?? 'NON_RENSEIGNEE');
 
-  const saisieContenuEstValide = useCallback(() => {
-    return contenu.length > 0 && contenu.length <= limiteDeCaractères;
-  }, [contenu.length, limiteDeCaractères]);
+  const { 
+    contenuADépasséLaLimiteDeCaractères,
+    formulaireEstInvalide,
+    soumettreLeFormulaire, 
+    alerte, 
+  } = useSynthèseDesRésultatsFormulaire(limiteDeCaractères, synthèseDesRésultatsCrééeCallback, contenu, météo);  
 
-  const saisieMétéoEstValide = useCallback(() => {
-    return météo === 'NON_RENSEIGNEE';
-  }, [météo]);
-
-  const formulaireEstInvalide = useCallback(() => {
-    return !saisieContenuEstValide() || !saisieMétéoEstValide();
-  }, [saisieContenuEstValide, saisieMétéoEstValide]);
-
-  const soumettreLeFormulaire = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (formulaireEstInvalide()) {
-      return;
-    }
-
-    àLaPublication(contenu, météo);
-  };
-  
   return (
     <SynthèseDesRésultatsFormulaireStyled
       method="post"
@@ -49,7 +35,7 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
       <p className='fr-text--xs texte-gris'>
         {`Résumez l’état d’avancement du chantier en maximum ${limiteDeCaractères} caractères. Précisez si vous souhaitez solliciter du soutien pour déployer une action particulièrement efficace ou pour répondre à une difficulté.`}
       </p>
-      <div className={`fr-mb-0 fr-input-group ${!saisieContenuEstValide() && 'fr-input-group--error'}`}>
+      <div className={`fr-mb-0 fr-input-group ${contenuADépasséLaLimiteDeCaractères && 'fr-input-group--error'}`}>
         <textarea
           className="fr-input fr-text--sm fr-mb-0"
           onChange={(e) => setContenu(e.target.value)}
@@ -61,11 +47,10 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
           limiteDeCaractères={limiteDeCaractères}
         />
         {
-          contenu.length > limiteDeCaractères && (
+          !!contenuADépasséLaLimiteDeCaractères && 
             <p className="fr-error-text">
               {`La limite maximale de ${limiteDeCaractères} caractères a été dépassée`}
             </p>
-          )
         }
       </div>
       <Sélecteur
@@ -95,7 +80,7 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
         </button>
         <button
           className='fr-btn fr-btn--secondary'
-          onClick={àLAnnulation}
+          onClick={annulationCallback}
           type='button'
         >
           Annuler

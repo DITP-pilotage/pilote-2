@@ -17,16 +17,14 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
     synthèseDesRésultats,
     nomTerritoireSélectionné,
     modeÉdition,
-    setModeÉdition,
-    créerSynthèseDesRésultats,
     alerte,
-    setAlerte,
+    synthèseDesRésultatsCréée,
+    activerLeModeÉdition,
+    désactiverLeModeÉdition,
   } = useSynthèseDesRésultats(synthèseDesRésultatsInitiale);
 
   return (
-    <SynthèseDesRésultatsStyled
-      id="synthèse"
-    >
+    <SynthèseDesRésultatsStyled id="synthèse">
       <Titre
         baliseHtml='h2'
         className='fr-h4 fr-mb-2w'
@@ -38,22 +36,16 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
           {
             modeÉdition ?
               <SynthèseDesRésultatsFormulaire
-                alerte={alerte}
+                annulationCallback={désactiverLeModeÉdition}
                 contenuInitial={synthèseDesRésultats?.contenu}
                 limiteDeCaractères={LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS}
                 météoInitiale={synthèseDesRésultats?.météo}
-                àLAnnulation={
-                  () => {
-                    setAlerte(null);
-                    setModeÉdition(false);
-                  }
-                }
-                àLaPublication={(contenu, météo) => créerSynthèseDesRésultats(contenu, météo)}
+                synthèseDesRésultatsCrééeCallback={synthèseDesRésultatsCréée}
               />
               :
               <>
                 {
-                  alerte !== null &&
+                  !!alerte &&
                   <Alerte
                     message={alerte.message}
                     type={alerte.type}
@@ -61,25 +53,22 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
                 }
                 <div className=" fr-col-12 fr-col-lg-2 conteneur-météo">
                   <MétéoBadge météo={synthèseDesRésultats?.météo ?? 'NON_RENSEIGNEE'} />
-                  {
-                    !!synthèseDesRésultats && <MétéoPicto météo={synthèseDesRésultats.météo} />
-                  }
+                  { !!synthèseDesRésultats && <MétéoPicto météo={synthèseDesRésultats.météo} /> }
                 </div>
                 <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
                   {
                     synthèseDesRésultats
-                      ? (
+                      ? 
                         <Publication
                           auteur={synthèseDesRésultats.auteur}
                           contenu={synthèseDesRésultats.contenu}
                           date={synthèseDesRésultats.date}
                           messageSiAucunContenu="Aucune synthèse des résultats."
                         />
-                      ) : (
+                      : 
                         <p className='fr-text--sm texte-gris'>
                           Aucune synthèse des résultats.
                         </p>
-                      )
                   }
                   <div className='actions fr-mt-4w'>
                     {
@@ -87,9 +76,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
                     }
                     <button
                       className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
-                      onClick={() => {
-                        setModeÉdition(true);
-                      }}
+                      onClick={activerLeModeÉdition}
                       type='button'
                     >
                       <span

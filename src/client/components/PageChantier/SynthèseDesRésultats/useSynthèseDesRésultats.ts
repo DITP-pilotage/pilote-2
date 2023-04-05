@@ -1,72 +1,45 @@
-import router from 'next/router';
 import { useState, useEffect } from 'react';
-import { getHTTPStatusCodeFromError } from '@trpc/server/http';
-import { TRPCClientError } from '@trpc/client';
+import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
 import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
-import { Météo } from '@/server/domain/météo/Météo.interface';
-import api from '@/server/infrastructure/api/trpc/api';
-import {
-  mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
-  territoireSélectionnéTerritoiresStore,
-} from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { récupérerUnCookie } from '@/client/utils/cookies';
+import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
 export default function useSynthèseDesRésultats(synthèseDesRésultatsInitiale: SynthèseDesRésultats) {
-  const mailleSélectionnée = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   const [modeÉdition, setModeÉdition] = useState(false);
   const [synthèseDesRésultats, setSynthèseDesRésultats] = useState(synthèseDesRésultatsInitiale);
-  const [alerte, setAlerte] = useState <{ type: 'succès' | 'erreur', message: string } | null>(null);
+  const [alerte, setAlerte] = useState <AlerteProps | null>(null);
 
-  const mutation = api.chantier.créerUneSynthèseDesRésultats.useMutation({
-    onSuccess: (synthèseDesRésultatsCréée) => {
-      setSynthèseDesRésultats(synthèseDesRésultatsCréée);
-      setModeÉdition(false);
-      setAlerte({
-        type: 'succès',
-        message: 'Météo et synthèse des résultats publiées',
-      });
-    },
-    onError: (error) => {
-      if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
-        setAlerte({
-          type: 'erreur',
-          message: 'Une erreur est survenue, veuillez réessayer ultérieurement.',
-        });
-      }
-    },
-  });
+  const désactiverLeModeÉdition = () => {
+    setModeÉdition(false);
+  };
+
+  const activerLeModeÉdition = () => {
+    setModeÉdition(true);
+  };
+
+  const synthèseDesRésultatsCréée = (synthèse: SynthèseDesRésultats) => {
+    setSynthèseDesRésultats(synthèse);
+    setAlerte({
+      type: 'succès',
+      message: 'Météo et synthèse des résultats publiées',
+    });
+    désactiverLeModeÉdition();
+  };
 
   useEffect(() => {
     setSynthèseDesRésultats(synthèseDesRésultatsInitiale);
-  }, [synthèseDesRésultatsInitiale]);
-
-  useEffect(() => {
-    setModeÉdition(false);
-  }, [territoireSélectionné]);
-  
-  function créerSynthèseDesRésultats(contenu: string, météo: Météo) {
-    const chantierId = router.query.id as string;
-    const csrf = récupérerUnCookie('csrf') ?? '';
-
-    mutation.mutate({
-      contenu,
-      météo,
-      maille: mailleSélectionnée,
-      codeInsee: territoireSélectionné.codeInsee,
-      chantierId,
-      csrf,
-    });
-
-  }
+    setAlerte(null);
+    désactiverLeModeÉdition();
+  }, [synthèseDesRésultatsInitiale, territoireSélectionné]);
 
   return {
+    activerLeModeÉdition,
+    désactiverLeModeÉdition,
+    synthèseDesRésultatsCréée,
     synthèseDesRésultats,
     nomTerritoireSélectionné: territoireSélectionné.nom,
-    créerSynthèseDesRésultats,
     modeÉdition,
-    setModeÉdition,
     alerte,
     setAlerte,
   };
