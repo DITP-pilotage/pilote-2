@@ -1,11 +1,14 @@
 import { GetServerSidePropsResult } from 'next';
 import { GetServerSidePropsContext } from 'next/types';
+import { getServerSession } from 'next-auth/next';
 import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIndicateur';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ChantierInformation } from '@/components/PageImportIndicateur/ChantierInformation.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import useImportIndicateur from '@/hooks/useImportIndicateur';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
+import logger from '@/server/infrastructure/logger';
 
 interface NextPageImportIndicateurProps {
   chantierInformation: ChantierInformation
@@ -13,16 +16,26 @@ interface NextPageImportIndicateurProps {
 }
 
 type GetServerSideProps = GetServerSidePropsResult<NextPageImportIndicateurProps>;
+type Params = {
+  id: Chantier['id'],
+};
 
-export async function getServerSideProps({ params }: GetServerSidePropsContext<{ id: Chantier['id'] }>): Promise<GetServerSideProps> {
+export async function getServerSideProps({ params, req, res }: GetServerSidePropsContext<Params>): Promise<GetServerSideProps> {
   if (!params?.id) {
     return {
       notFound: true,
     };
   }
 
+  const session = await getServerSession(req, res, authOptions);
+  if (!session) {
+    logger.error('Not connected?');
+    // TODO: On renvoie une erreur ? Quelle erreur ?
+    throw new Error('Not connected?');
+  }
+
   const chantierRepository = dependencies.getChantierRepository();
-  const chantier: Chantier = await chantierRepository.getById(params.id);
+  const chantier: Chantier = await chantierRepository.getById(params.id, session.habilitation, 'lecture');
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs = await indicateurRepository.récupérerParChantierId(params.id);

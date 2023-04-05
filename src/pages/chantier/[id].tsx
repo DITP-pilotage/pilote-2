@@ -26,16 +26,21 @@ export default function NextPageChantier({ chantier, indicateurs, objectifs }: N
   );
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const params: { params: { id: ChantierId } } = context.params;
+type Params = {
+  id: ChantierId,
+};
+
+export async function getServerSideProps(context: GetServerSidePropsContext<Params>) {
+  const params = context.params as Params;
+
   const session = await getServerSession(context.req, context.res, authOptions);
   if (!session) {
     logger.error('Not connected?');
     // TODO: On renvoie une erreur ? Quelle erreur ?
     throw new Error('Not connected?');
   }
-  const habilitation = session.habilitation;
 
+  const habilitation = session.habilitation;
   const chantierRepository = dependencies.getChantierRepository();
   const chantier: Chantier = await chantierRepository.getById(params.id, session.habilitation, 'lecture');
 

@@ -39,7 +39,7 @@ select chantier_id, array_agg(code order by code) as codes
   group by chantier_id;
 `;
 
-    const chantiers = {};
+    const chantiers: Record<string, string[]> = {};
     for (const row of rows) {
       chantiers[row.chantier_id] = row.codes;
     }

@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/prefer-top-level-await,sonarjs/no-duplicate-string */
+/* eslint-disable unicorn/prefer-top-level-await */
 import {
   axe,
   chantier,

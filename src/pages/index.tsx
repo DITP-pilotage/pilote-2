@@ -27,8 +27,8 @@ export default function NextPageAccueil({ chantiers, ministères, axes, ppg }: N
   );
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSession(context.req as any, context.res as any, authOptions as any);
+export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
+  const session = await getServerSession(req, res, authOptions);
   if (!session) {
     return { props: {} };
   }
