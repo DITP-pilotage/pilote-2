@@ -28,11 +28,11 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
     >
       <Titre
         baliseHtml='h3'
-        className='fr-h5'
+        className='fr-h5 fr-mb-1v'
       >
-        Ajouter une synthèse des résultats
+        Modifier la météo et la synthèse des résultats
       </Titre>
-      <p className='fr-text--xs texte-gris'>
+      <p className='fr-text--xs fr-mb-1w texte-gris'>
         {`Résumez l’état d’avancement du chantier en maximum ${limiteDeCaractères} caractères. Précisez si vous souhaitez solliciter du soutien pour déployer une action particulièrement efficace ou pour répondre à une difficulté.`}
       </p>
       <div className={`fr-mb-0 fr-input-group ${contenuADépasséLaLimiteDeCaractères && 'fr-input-group--error'}`}>
@@ -53,39 +53,45 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
             </p>
         }
       </div>
-      <Sélecteur
-        htmlName='météo'
-        libellé="Météo"
-        options={météosSaisissables.map(optionMétéo => ({ libellé: météos[optionMétéo], valeur: optionMétéo }))}
-        setValeur={valeurMétéo => setMétéo(valeurMétéo as Météo)}
-        texteFantôme="Météo à renseigner"
-        valeur={météosSaisissables.includes(météo) ? météo : ''}
-      />
-      <MétéoPicto météo={météo} />
+      <div className="fr-mt-1v flex partie-basse">
+        <Sélecteur
+          htmlName='météo'
+          libellé="Météo"
+          options={météosSaisissables.map(optionMétéo => ({ libellé: météos[optionMétéo], valeur: optionMétéo }))}
+          setValeur={valeurMétéo => setMétéo(valeurMétéo as Météo)}
+          texteFantôme="Météo à renseigner"
+          valeur={météosSaisissables.includes(météo) ? météo : ''}
+        />
+        <div className="fr-px-3w">
+          <MétéoPicto météo={météo} />
+        </div>
+        <div className='actions'>
+          <button
+            className='fr-btn fr-mr-3w'
+            disabled={formulaireEstInvalide()}
+            type='submit'
+          >
+            Publier
+          </button>
+          <button
+            className='fr-btn fr-btn--secondary'
+            onClick={annulationCallback}
+            type='button'
+          >
+            Annuler
+          </button>
+        </div>
+      </div>
       {
         !!alerte && (
+        <div className="fr-mt-2w">
           <Alerte
             message={alerte.message}
             type={alerte.type}
           />
+        </div>
         )
       }
-      <div className='actions'>
-        <button
-          className='fr-btn fr-mr-3w'
-          disabled={formulaireEstInvalide()}
-          type='submit'
-        >
-          Publier
-        </button>
-        <button
-          className='fr-btn fr-btn--secondary'
-          onClick={annulationCallback}
-          type='button'
-        >
-          Annuler
-        </button>
-      </div>
     </SynthèseDesRésultatsFormulaireStyled>
   );
 }

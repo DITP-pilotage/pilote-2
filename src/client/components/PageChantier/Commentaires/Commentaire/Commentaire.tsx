@@ -26,10 +26,12 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
     <CommentaireStyled>
       {
         alerte !== null &&
-        <Alerte
-          message={alerte.message}
-          type={alerte.type}
-        />
+        <div className="fr-mb-2w">
+          <Alerte
+            message={alerte.message}
+            type={alerte.type}
+          />
+        </div>
       }
       <Titre
         baliseHtml='h3'

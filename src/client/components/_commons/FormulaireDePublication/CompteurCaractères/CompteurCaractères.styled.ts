@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 
 const CompteurCaractèresStyled = styled.div`
-    align-self: flex-end;
+  display: flex;
+  justify-content: end;
 `;
 
 export default CompteurCaractèresStyled;

@@ -32,7 +32,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
         Synthèse des résultats
       </Titre>
       <Bloc titre={nomTerritoireSélectionné}>
-        <div className='fr-grid-row fr-pt-2w'>
+        <div className='fr-px-1w'>
           {
             modeÉdition ?
               <SynthèseDesRésultatsFormulaire
@@ -46,46 +46,53 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
               <>
                 {
                   !!alerte &&
-                  <Alerte
-                    message={alerte.message}
-                    type={alerte.type}
-                  />
+                    <Alerte
+                      message={alerte.message}
+                      type={alerte.type}
+                    />
                 }
-                <div className=" fr-col-12 fr-col-lg-2 conteneur-météo">
-                  <MétéoBadge météo={synthèseDesRésultats?.météo ?? 'NON_RENSEIGNEE'} />
-                  { !!synthèseDesRésultats && <MétéoPicto météo={synthèseDesRésultats.météo} /> }
-                </div>
-                <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
-                  {
-                    synthèseDesRésultats
-                      ? 
-                        <Publication
-                          auteur={synthèseDesRésultats.auteur}
-                          contenu={synthèseDesRésultats.contenu}
-                          date={synthèseDesRésultats.date}
-                          messageSiAucunContenu="Aucune synthèse des résultats."
-                        />
-                      : 
-                        <p className='fr-text--sm texte-gris'>
-                          Aucune synthèse des résultats.
-                        </p>
-                  }
-                  <div className='actions fr-mt-4w'>
+                <div className="fr-grid-row fr-py-2w">
+                  <div className=" fr-col-12 fr-col-lg-2 conteneur-météo">
+                    <MétéoBadge météo={synthèseDesRésultats?.météo ?? 'NON_RENSEIGNEE'} />
                     {
-                      !!synthèseDesRésultats && <HistoriqueDeLaSynthèseDesRésultats />
+                      !!synthèseDesRésultats &&
+                      <div>
+                        <MétéoPicto météo={synthèseDesRésultats.météo} />
+                      </div>
                     }
-                    <button
-                      className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
-                      onClick={activerLeModeÉdition}
-                      type='button'
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="fr-icon-edit-line fr-mr-1w"
-                      />
-                      {}
-                      Modifier
-                    </button>
+                  </div>
+                  <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
+                    {
+                      synthèseDesRésultats
+                        ?
+                          <Publication
+                            auteur={synthèseDesRésultats.auteur}
+                            contenu={synthèseDesRésultats.contenu}
+                            date={synthèseDesRésultats.date}
+                            messageSiAucunContenu="Aucune synthèse des résultats."
+                          />
+                        :
+                          <p className='fr-text--sm texte-gris'>
+                            Aucune synthèse des résultats.
+                          </p>
+                    }
+                    <div className='actions fr-mt-4w'>
+                      {
+                        !!synthèseDesRésultats && <HistoriqueDeLaSynthèseDesRésultats />
+                      }
+                      <button
+                        className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
+                        onClick={activerLeModeÉdition}
+                        type='button'
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="fr-icon-edit-line fr-mr-1w"
+                        />
+                        {}
+                        Modifier
+                      </button>
+                    </div>
                   </div>
                 </div>
               </>
