@@ -183,12 +183,12 @@ class DatabaseSeeder {
       },
     };
 
-    for (const [code, { nom_profil, a_acces_tous_chantiers }] of Object.entries(données)) {
-      await prisma.profil.create({ data: { code, nom: nom_profil, a_acces_tous_chantiers } });
+    for (const [code, { profil_id, nom_profil, a_acces_tous_chantiers }] of Object.entries(données)) {
+      await prisma.profil.create({ data: {id:profil_id, code, nom: nom_profil, a_acces_tous_chantiers } });
     }
 
-    for (const { email_utilisateur, profil_id } of Object.values(données)) {
-      await prisma.utilisateur.create({ data: { email: email_utilisateur, profil_id } });
+    for (const { utilisateur_id, email_utilisateur, profil_id } of Object.values(données)) {
+      await prisma.utilisateur.create({ data: { id:utilisateur_id, email: email_utilisateur, profil_id } });
     }
 
     // noinspection TypeScriptValidateTypes
