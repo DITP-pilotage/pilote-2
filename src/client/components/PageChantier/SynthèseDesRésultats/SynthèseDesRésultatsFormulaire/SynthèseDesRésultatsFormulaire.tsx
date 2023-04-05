@@ -18,7 +18,7 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
     contenuADépasséLaLimiteDeCaractères,
     formulaireEstValide,
     soumettreLeFormulaire, 
-    alerte, 
+    alerte,
   } = useSynthèseDesRésultatsFormulaire(limiteDeCaractères, synthèseDesRésultatsCrééeCallback, contenu, météo);  
 
   return (
@@ -42,16 +42,20 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
           rows={6}
           value={contenu}
         />
-        <CompteurCaractères
-          compte={contenu.length}
-          limiteDeCaractères={limiteDeCaractères}
-        />
-        {
-          !!contenuADépasséLaLimiteDeCaractères && 
-            <p className="fr-error-text">
-              {`La limite maximale de ${limiteDeCaractères} caractères a été dépassée`}
-            </p>
-        }
+        <div className="flex justifyBetween">
+          <div>
+            {
+              !!contenuADépasséLaLimiteDeCaractères &&
+              <p className="fr-error-text fr-mt-0 fr-mr-2w">
+                {`La limite maximale de ${limiteDeCaractères} caractères a été dépassée.`}
+              </p>
+            }
+          </div>
+          <CompteurCaractères
+            compte={contenu.length}
+            limiteDeCaractères={limiteDeCaractères}
+          />
+        </div>
       </div>
       <div className="fr-mt-1v flex partie-basse">
         <Sélecteur<MétéoSaisissable>
@@ -62,12 +66,12 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
           texteFantôme="Météo à renseigner"
           valeurSélectionnée={météo ?? undefined}
         />
-        {
-          !!météo && 
-            <div className="fr-px-3w">
-              <MétéoPicto météo={météo} />
-            </div>
-        }
+        <div className="fr-mx-3w météo-picto-conteneur">
+          {
+            !!météo &&
+            <MétéoPicto météo={météo} />
+          }
+        </div>
         <div className='actions'>
           <button
             className='fr-btn fr-mr-3w'

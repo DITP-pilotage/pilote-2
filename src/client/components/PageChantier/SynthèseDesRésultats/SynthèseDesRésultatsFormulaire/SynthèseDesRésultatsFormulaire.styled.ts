@@ -10,9 +10,13 @@ const SynthèseDesRésultatsFormulaireStyled = styled.form`
       margin-bottom: 0;
     }
     
-    .météo-picto {
+    .météo-picto-conteneur {
       width: 4.5rem;
-      height: 100%;
+        
+      .météo-picto {
+        width: 100%;
+        height: 100%;
+      }
     }
     
     .actions {

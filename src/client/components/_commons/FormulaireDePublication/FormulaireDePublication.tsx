@@ -50,7 +50,7 @@ export default function FormulaireDePublication({ contenuInitial, limiteDeCaract
         compte={contenu.length}
         limiteDeCaractères={limiteDeCaractères}
       />
-      <div className='actions'>
+      <div className='actions fr-mt-1w'>
         <button
           className='fr-btn fr-mr-3w'
           disabled={!saisieContenuEstValide()}
