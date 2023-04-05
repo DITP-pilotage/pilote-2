@@ -21,6 +21,7 @@ prisma
 .DS_Store
 *.pem
 *.crt
+*.der
 
 # debug
 npm-debug.log*
