@@ -5,22 +5,23 @@ import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData
 const convertirEnModel = (indicateurData: IndicateurData): MesureIndicateur => {
   return {
     id: indicateurData.id,
-    indicId: indicateurData.indicId,
-    zoneId: indicateurData.zoneId,
-    metricDate: indicateurData.metricDate,
-    metricType: indicateurData.metricType,
-    metricValue: indicateurData.metricValue,
+    indic_id: indicateurData.indicId,
+    zone_id: indicateurData.zoneId,
+    metric_date: indicateurData.metricDate,
+    metric_type: indicateurData.metricType,
+    metric_value: indicateurData.metricValue,
+    date_import: null,
   };
 };
 
 const convertirEnIndicateurData = (mesureIndicateur: MesureIndicateur): IndicateurData => {
   return IndicateurData.createIndicateurData({
     id: mesureIndicateur.id,
-    indicId: mesureIndicateur.indicId,
-    zoneId: mesureIndicateur.zoneId,
-    metricDate: mesureIndicateur.metricDate,
-    metricType: mesureIndicateur.metricType,
-    metricValue: mesureIndicateur.metricValue,
+    indicId: mesureIndicateur.indic_id,
+    zoneId: mesureIndicateur.zone_id,
+    metricDate: mesureIndicateur.metric_date,
+    metricType: mesureIndicateur.metric_type,
+    metricValue: mesureIndicateur.metric_value,
   });
 };
 
