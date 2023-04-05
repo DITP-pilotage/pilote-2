@@ -24,6 +24,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
         meteo: météo,
         date_commentaire: date,
         date_meteo: date,
+        auteur: auteur,
       } });
     return this.mapperVersDomaine(synthèseDesRésultats);
   }
@@ -36,7 +37,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
       id: synthèse.id,
       contenu: synthèse.commentaire,
       date: synthèse.date_commentaire.toISOString(),
-      auteur: '',
+      auteur: synthèse.auteur ?? '',
       météo: synthèse.meteo as Météo ?? 'NON_RENSEIGNEE',
     };
   }

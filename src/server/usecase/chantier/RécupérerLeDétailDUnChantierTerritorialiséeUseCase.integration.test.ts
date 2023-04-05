@@ -116,6 +116,7 @@ describe('RécupérerLeDétailDUnChantierTerritorialiséeUseCase', () => {
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
+          .avecAuteur('Jean DUPONT')
           .avecCommentaire('Lorem ipsum')
           .avecDateCommentaire(new Date('2023-01-01'))
           .build(),
@@ -142,7 +143,7 @@ describe('RécupérerLeDétailDUnChantierTerritorialiséeUseCase', () => {
           synthèseDesRésultats: {
             contenu: 'Lorem ipsum',
             date: '2023-01-01T00:00:00.000Z',
-            auteur: '',
+            auteur: 'Jean DUPONT',
             id: 'aaaaaa-aaaa',
             météo: 'SOLEIL',
           },

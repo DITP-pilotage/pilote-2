@@ -30,7 +30,7 @@ export const useFormulaireIndicateur = (chantierId: string, setRapport: Dispatch
     const detailValidationFichier: DetailValidationFichierContrat = await fetch(`/api/chantier/${chantierId}/indicateur/indicateurIdToBeDefined`, {
       method: 'POST',
       body,
-    }).then(response => response.json());
+    }).then(response => response.json() as Promise<DetailValidationFichierContrat>);
 
     setRapport(detailValidationFichier);
     setFile(null);

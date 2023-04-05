@@ -64,9 +64,7 @@ export default function PageChantier({ chantier, indicateurs, objectif }: PageCh
               <Responsables chantier={chantier} />
             </div>
             <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
-              <SynthèseDesRésultats
-                synthèseDesRésultatsInitiale={synthèseDesRésultats}
-              />
+              <SynthèseDesRésultats synthèseDesRésultatsInitiale={synthèseDesRésultats} />
             </div>
           </div>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">

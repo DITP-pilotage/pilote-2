@@ -29,7 +29,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
         baliseHtml='h2'
         className='fr-h4 fr-mb-2w'
       >
-        Synthèse des résultats
+        Météo et synthèse des résultats 
       </Titre>
       <Bloc titre={nomTerritoireSélectionné}>
         <div className='fr-px-1w'>

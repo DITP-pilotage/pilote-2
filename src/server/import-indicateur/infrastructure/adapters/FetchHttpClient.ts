@@ -19,7 +19,7 @@ export class FetchHttpClient implements HttpClient {
           data += chunk;
         });
         response.on('end', function () {
-          resolve(JSON.parse(data));
+          resolve(JSON.parse(data) as Promise<any>);
         });
       });
     }).finally(() => fs.unlink(body.cheminCompletDuFichier, () => {}));

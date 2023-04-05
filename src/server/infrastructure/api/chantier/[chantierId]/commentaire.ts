@@ -40,8 +40,9 @@ async function récupérerLUtilisateur(request: NextApiRequest, response: NextAp
 }
 
 function vérifierLeCSRF(request: NextApiRequest) {
+  const bodyParsé = JSON.parse(request.body) as any; 
   const csfrCookie = request.cookies.csrf;
-  const csrfBody = JSON.parse(request.body).csrf;
+  const csrfBody = bodyParsé.csrf;
 
   if (!csfrCookie || !csrfBody) {
     throw new CSRFError("Le cookie CSRF n'existe pas ou il n'est pas correctement soumis");
@@ -58,7 +59,8 @@ export default async function handleCréerCommentaire(request: NextApiRequest, r
     vérifierLeCSRF(request);
     const params = récupérerQueryParams(request);
     const utilisateur = await récupérerLUtilisateur(request, response, serverSession);
-    const nouveauCommentaire: CommentaireÀCréer = JSON.parse(request.body).commentaireÀCréer;
+    const bodyParsé = JSON.parse(request.body) as any; 
+    const nouveauCommentaire: CommentaireÀCréer = bodyParsé.commentaireÀCréer;
     const détailsCommentaireCréé: DétailsCommentaire = await créerUnNouveauCommentaire.run(params.chantierId, nouveauCommentaire, utilisateur.name!);
     response.status(200).json(détailsCommentaireCréé);
   } catch (error) { 

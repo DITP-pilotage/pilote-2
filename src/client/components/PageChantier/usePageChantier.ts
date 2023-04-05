@@ -90,5 +90,11 @@ export default function usePageChantier(chantier: Chantier) {
     },
   };
 
-  return { avancements, détailsIndicateurs, commentaires, météo, synthèseDesRésultats };
+  return { 
+    avancements, 
+    détailsIndicateurs, 
+    commentaires, 
+    météo, 
+    synthèseDesRésultats: synthèseDesRésultats ?? null,
+  };
 }

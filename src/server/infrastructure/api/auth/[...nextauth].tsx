@@ -79,7 +79,7 @@ async function refreshAccessToken(token: JWT) {
         body: sendData,
       });
 
-      const refreshedTokens = await response.json();
+      const refreshedTokens = await (response.json() as Promise<any>);
 
       if (!response.ok) {
         // noinspection ExceptionCaughtLocallyJS

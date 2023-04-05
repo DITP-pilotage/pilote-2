@@ -55,7 +55,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       // Then
       expect(synthèseDesRésultatsCréée).toStrictEqual({
         contenu,
-        auteur: '',
+        auteur,
         date,
         id,
         météo,
@@ -115,6 +115,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
           .avecCommentaire('Quatrième commentaire')
+          .avecAuteur('Jean DUPONT')
           .avecDateCommentaire(new Date('2023-12-31'))
           .build(),
       ];
@@ -130,7 +131,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
         météo: 'SOLEIL',
         contenu: 'Quatrième commentaire',
         date: '2023-12-31T00:00:00.000Z',
-        auteur: '',
+        auteur: 'Jean DUPONT',
       });
     });
   });
@@ -147,6 +148,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
         new SynthèseDesRésultatsSQLRowBuilder()
           .avecId('aaaa-aab')
           .avecMétéo('SOLEIL')
+          .avecAuteur('Jean DUPONT')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -157,6 +159,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
         new SynthèseDesRésultatsSQLRowBuilder()
           .avecId('aaaa-aaa')
           .avecMétéo('SOLEIL')
+          .avecAuteur('Jean DUPONT')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -183,13 +186,13 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
         {
           id: 'aaaa-aaa',
           météo: 'SOLEIL',
-          auteur: '',
+          auteur: 'Jean DUPONT',
           contenu: 'Ma synthèse REG-01 2023',
           date: '2023-12-31T00:00:00.000Z',
         }, {
           id: 'aaaa-aab',
           météo: 'SOLEIL',
-          auteur: '',
+          auteur: 'Jean DUPONT',
           contenu: 'Ma synthèse REG-01 2022',
           date: '2022-12-31T00:00:00.000Z',
         },
