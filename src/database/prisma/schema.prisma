@@ -147,6 +147,8 @@ model utilisateur {
   id String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   email String @unique
   profil_id String @db.Uuid
+
+  @@schema("public")
 }
 
 model utilisateur_chantier {
@@ -154,6 +156,7 @@ model utilisateur_chantier {
   chantier_id String
 
   @@id([utilisateur_id, chantier_id])
+  @@schema("public")
 }
 
 model profil {
@@ -161,6 +164,8 @@ model profil {
   code String @unique
   nom String @unique
   a_acces_tous_chantiers Boolean @default(false)
+
+  @@schema("public")
 }
 
 model profil_habilitation {
@@ -168,10 +173,13 @@ model profil_habilitation {
   habilitation_scope_id String @db.Uuid
 
   @@id([profil_id, habilitation_scope_id])
+  @@schema("public")
 }
 
 model habilitation_scope {
   id String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
   code String @unique
   nom String @unique
+
+  @@schema("public")
 }
