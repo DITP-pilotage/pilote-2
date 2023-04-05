@@ -112,12 +112,13 @@ model commentaire {
 }
 
 model mesure_indicateur {
-  id          String @id
+  id          String   @id
   indicId     String
   zoneId      String
   metricDate  String
   metricType  String
   metricValue String
+  date_import DateTime @default(now()) @db.Timestamptz
 
   @@schema("raw_data")
 }
