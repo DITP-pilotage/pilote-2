@@ -3,11 +3,12 @@ import SélecteurProps from '@/components/_commons/Sélecteur/Sélecteur.interfa
 
 export default function Sélecteur<T extends string>({
   htmlName,
-  valeurSélectionnée,
-  setValeurSélectionnée,
+  register,
   options,
   libellé,
   texteFantôme,
+  valeurModifiéeCallback,
+  valeurSélectionnéeParDéfaut,
 }: SélecteurProps<T>) {
 
   return (
@@ -24,9 +25,10 @@ export default function Sélecteur<T extends string>({
       }
       <select
         className="fr-select"
+        defaultValue={valeurSélectionnéeParDéfaut || ''}
         name={htmlName}
-        onChange={(événement) => setValeurSélectionnée(événement.currentTarget.value as T)}
-        value={valeurSélectionnée || ''}
+        onChange={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.value as T)}
+        {...register}
       >
         {
           !!texteFantôme &&

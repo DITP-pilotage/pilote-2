@@ -1,29 +1,21 @@
 import router from 'next/router';
-import { FormEvent, useState, useMemo } from 'react';
+import { useState } from 'react';
+import { SubmitHandler } from 'react-hook-form';
 import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { récupérerUnCookie } from '@/client/utils/cookies';
-import { MétéoSaisissable, météosSaisissables } from '@/server/domain/météo/Météo.interface';
 import api from '@/server/infrastructure/api/trpc/api';
 import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
-import SynthèseDesRésultatsFormulaireProps from './SynthèseDesRésultatsFormulaire.interface';
+import SynthèseDesRésultatsFormulaireProps, { SynthèseDesRésultatsFormulaireInputs } from './SynthèseDesRésultatsFormulaire.interface';
 
-export default function useSynthèseDesRésultatsFormulaire(
-  limiteDeCaractères: SynthèseDesRésultatsFormulaireProps['limiteDeCaractères'], 
-  synthèseDesRésultatsCrééeCallback: SynthèseDesRésultatsFormulaireProps['synthèseDesRésultatsCrééeCallback'], 
-  contenu: string, 
-  météo: MétéoSaisissable | null,
-) {
+export default function useSynthèseDesRésultatsFormulaire(synthèseDesRésultatsCrééeCallback: SynthèseDesRésultatsFormulaireProps['synthèseDesRésultatsCrééeCallback']) {
   const [alerte, setAlerte] = useState <AlerteProps | null>(null);
 
   const mailleSélectionnée = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const chantierId = router.query.id as string;
-  const maille = mailleSélectionnée;
-  const codeInsee = territoireSélectionné.codeInsee;
   
   const mutationCréerSynthèseDesRésultats = api.synthèseDesRésultats.créer.useMutation({
-    onSuccess: (synthèseDesRésultatsCréée: SynthèseDesRésultats) => synthèseDesRésultatsCrééeCallback(synthèseDesRésultatsCréée),
+    onSuccess: (synthèseDesRésultatsCréée: SynthèseDesRésultats) => synthèseDesRésultatsCrééeCallback?.(synthèseDesRésultatsCréée),
     onError: (error) => {
       if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
         setAlerte({
@@ -34,40 +26,19 @@ export default function useSynthèseDesRésultatsFormulaire(
     },
   });
 
-  const créerSynthèseDesRésultats = (synthèseDesRésultatsÀCréer: { contenu: string, météo: MétéoSaisissable }) => {
-    const csrf = récupérerUnCookie('csrf') ?? '';
-
+  const créerSynthèseDesRésultats : SubmitHandler<SynthèseDesRésultatsFormulaireInputs> = data => {
     mutationCréerSynthèseDesRésultats.mutate({
-      contenu: synthèseDesRésultatsÀCréer.contenu,
-      météo: synthèseDesRésultatsÀCréer.météo,
-      maille,
-      codeInsee,
-      chantierId,
-      csrf,
+      contenu: data.contenu,
+      météo: data.météo,
+      maille: mailleSélectionnée,
+      codeInsee: territoireSélectionné.codeInsee,
+      chantierId: router.query.id as string,
+      csrf: récupérerUnCookie('csrf') ?? '',
     });
-  };
-
-  const contenuADépasséLaLimiteDeCaractères = useMemo(() => contenu.length > limiteDeCaractères, [contenu.length, limiteDeCaractères]);
-
-  const formulaireEstValide = useMemo(() => {
-    const saisieContenuEstValide = contenu.length > 0 && !contenuADépasséLaLimiteDeCaractères;
-    const saisieMétéoEstValide = Boolean(météo && météosSaisissables.includes(météo));
-
-    return saisieContenuEstValide && saisieMétéoEstValide;
-  }, [contenu.length, contenuADépasséLaLimiteDeCaractères, météo]);
-
-  const soumettreLeFormulaire = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (formulaireEstValide) {
-      créerSynthèseDesRésultats({ contenu, météo: météo as MétéoSaisissable });
-    }
   };
 
   return {
     alerte,
-    formulaireEstValide,
-    contenuADépasséLaLimiteDeCaractères,
-    soumettreLeFormulaire,
+    créerSynthèseDesRésultats,
   };
 }

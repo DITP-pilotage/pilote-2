@@ -9,7 +9,6 @@ import HistoriqueDeLaSynthèseDesRésultats
   from '@/components/PageChantier/SynthèseDesRésultats/Historique/HistoriqueDeLaSynthèseDesRésultats';
 import useSynthèseDesRésultats from '@/components/PageChantier/SynthèseDesRésultats/useSynthèseDesRésultats';
 import Alerte from '@/components/_commons/Alerte/Alerte';
-import { LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS } from '@/server/domain/commentaire/Commentaire.validator';
 import SynthèseDesRésultatsFormulaire from './SynthèseDesRésultatsFormulaire/SynthèseDesRésultatsFormulaire';
 
 export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale }: SynthèseDesRésultatsProps) {
@@ -38,7 +37,6 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
               <SynthèseDesRésultatsFormulaire
                 annulationCallback={désactiverLeModeÉdition}
                 contenuInitial={synthèseDesRésultats?.contenu}
-                limiteDeCaractères={LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS}
                 météoInitiale={synthèseDesRésultats?.météo}
                 synthèseDesRésultatsCrééeCallback={synthèseDesRésultatsCréée}
               />

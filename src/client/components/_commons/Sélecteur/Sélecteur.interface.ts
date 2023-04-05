@@ -1,3 +1,5 @@
+import { UseFormRegisterReturn } from 'react-hook-form';
+
 type SélecteurOption<T> = {
   libellé: string,
   valeur: T,
@@ -7,9 +9,10 @@ type SélecteurOption<T> = {
 
 export default interface SélecteurProps<T> {
   htmlName: string,
-  setValeurSélectionnée: (valeur: T) => void,
   options: SélecteurOption<T>[],
-  valeurSélectionnée?: T,
+  valeurModifiéeCallback?: (valeur: T) => void,
+  valeurSélectionnéeParDéfaut?: T,
   libellé?: string,
   texteFantôme?: string,
+  register?: UseFormRegisterReturn
 }
