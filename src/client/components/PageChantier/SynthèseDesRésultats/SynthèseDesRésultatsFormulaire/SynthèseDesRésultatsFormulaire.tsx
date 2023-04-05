@@ -2,7 +2,7 @@ import { useState } from 'react';
 import CompteurCaractères from '@/components/_commons/FormulaireDePublication/CompteurCaractères/CompteurCaractères';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import météos from '@/client/constants/météos';
-import { Météo, météosSaisissables } from '@/server/domain/météo/Météo.interface';
+import { MétéoSaisissable, météosSaisissables } from '@/server/domain/météo/Météo.interface';
 import Titre from '@/components/_commons/Titre/Titre';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import Alerte from '@/components/_commons/Alerte/Alerte';
@@ -12,11 +12,11 @@ import useSynthèseDesRésultatsFormulaire from './useSynthèseDesRésultatsForm
 
 export default function SynthèseDesRésultatsFormulaire({ contenuInitial, météoInitiale, limiteDeCaractères, synthèseDesRésultatsCrééeCallback, annulationCallback }: SynthèseDesRésultatsFormulaireProps) {
   const [contenu, setContenu] = useState(contenuInitial ?? '');
-  const [météo, setMétéo] = useState(météoInitiale ?? 'NON_RENSEIGNEE');
-
+  const [météo, setMétéo] = useState<MétéoSaisissable | null>(météoInitiale && météosSaisissables.includes(météoInitiale) ? météoInitiale as MétéoSaisissable : null);
+ 
   const { 
     contenuADépasséLaLimiteDeCaractères,
-    formulaireEstInvalide,
+    formulaireEstValide,
     soumettreLeFormulaire, 
     alerte, 
   } = useSynthèseDesRésultatsFormulaire(limiteDeCaractères, synthèseDesRésultatsCrééeCallback, contenu, météo);  
@@ -54,21 +54,24 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
         }
       </div>
       <div className="fr-mt-1v flex partie-basse">
-        <Sélecteur
+        <Sélecteur<MétéoSaisissable>
           htmlName='météo'
           libellé="Météo"
           options={météosSaisissables.map(optionMétéo => ({ libellé: météos[optionMétéo], valeur: optionMétéo }))}
-          setValeur={valeurMétéo => setMétéo(valeurMétéo as Météo)}
+          setValeurSélectionnée={météoSélectionnée => setMétéo(météoSélectionnée)}
           texteFantôme="Météo à renseigner"
-          valeur={météosSaisissables.includes(météo) ? météo : ''}
+          valeurSélectionnée={météo ?? undefined}
         />
-        <div className="fr-px-3w">
-          <MétéoPicto météo={météo} />
-        </div>
+        {
+          !!météo && 
+            <div className="fr-px-3w">
+              <MétéoPicto météo={météo} />
+            </div>
+        }
         <div className='actions'>
           <button
             className='fr-btn fr-mr-3w'
-            disabled={formulaireEstInvalide()}
+            disabled={!formulaireEstValide}
             type='submit'
           >
             Publier

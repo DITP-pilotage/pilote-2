@@ -2,14 +2,13 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
 import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
-import { PrismaClient } from '@prisma/client';
 import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { CreateContextOptions } from './trpc.interface';
 
 const créerContextTRPCInterne = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
-    prisma: new PrismaClient(),
+    csrfDuCookie: opts.csrfDuCookie,
   };
 };
 
@@ -17,9 +16,11 @@ export const créerContextTRPC = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
 
   const session = await getServerAuthSession({ req, res });
+  const csrfDuCookie = req.cookies.csrf ?? null;
 
   return créerContextTRPCInterne({
     session,
+    csrfDuCookie,
   });
 };
 
@@ -48,6 +49,15 @@ const vérifierSiUtilisateurEstConnectéTRPCMiddleware = trpc.middleware(({ ctx,
   });
 });
 
+export const vérifierSiLeCSRFEstValide = (csrfDuCookie: string | null, csrfDuBody: string) => {
+  if (!csrfDuCookie || !csrfDuBody) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: "Le cookie CSRF n'existe pas ou il n'est pas correctement soumis" });
+  }
+
+  if (csrfDuCookie !== csrfDuBody) {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Le CSRF est invalide' });
+  }
+};
+
 export const créerRouteurTRPC = trpc.router;
-export const procédurePublique = trpc.procedure;
 export const procédureProtégée = trpc.procedure.use(vérifierSiUtilisateurEstConnectéTRPCMiddleware);

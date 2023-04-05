@@ -14,7 +14,7 @@ const récupérerBaseUrl = () => {
 };
 
 const api = createTRPCNext<AppRouter>({
-  config() {
+  config({ ctx }) {
     return {
       transformer: superjson,
       links: [
@@ -27,6 +27,14 @@ const api = createTRPCNext<AppRouter>({
           url: `${récupérerBaseUrl()}/api/trpc`,
         }),
       ],
+      headers() {
+        if (ctx?.req) {
+          return {
+            ...ctx.req.headers,
+            'x-ssr': '1',
+          };
+        }
+      },
     };
   },
 });

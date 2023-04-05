@@ -1,14 +1,14 @@
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import SélecteurProps from '@/components/_commons/Sélecteur/Sélecteur.interface';
 
-export default function Sélecteur({
+export default function Sélecteur<T extends string>({
   htmlName,
-  valeur,
-  setValeur,
+  valeurSélectionnée,
+  setValeurSélectionnée,
   options,
   libellé,
   texteFantôme,
-}: SélecteurProps) {
+}: SélecteurProps<T>) {
 
   return (
     <div className="fr-select-group">
@@ -25,17 +25,15 @@ export default function Sélecteur({
       <select
         className="fr-select"
         name={htmlName}
-        onChange={(événement) => {
-          setValeur(événement.currentTarget.value);
-        }}
-        value={valeur || ''}
+        onChange={(événement) => setValeurSélectionnée(événement.currentTarget.value as T)}
+        value={valeurSélectionnée || ''}
       >
         {
           !!texteFantôme &&
           <option
             disabled
             hidden
-            value=""
+            value=''
           >
             { texteFantôme }
           </option>

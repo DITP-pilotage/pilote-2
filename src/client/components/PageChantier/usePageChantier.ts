@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo, useState } from 'react';
-import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoiresComparésTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -8,6 +7,7 @@ import { Commentaires } from '@/server/domain/commentaire/Commentaire.interface'
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { InfosChantier } from '@/server/domain/chantier/ChantierRepository.interface';
+import api from '@/server/infrastructure/api/trpc/api';
 
 export default function usePageChantier(chantier: Chantier) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -17,9 +17,17 @@ export default function usePageChantier(chantier: Chantier) {
   
   const [détailsIndicateurs, setDétailsIndicateurs] = useState<DétailsIndicateurs | null>(null);
   const [commentaires, setCommentaires] = useState<Commentaires | null>(null);
-  const [synthèseDesRésultats, setSynthèseDesRésultats] = useState<SynthèseDesRésultats>(null);
   const [météo, setMétéo] = useState<Météo>('NON_RENSEIGNEE');
 
+  const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
+    { 
+      chantierId: chantier.id, 
+      maille: mailleAssociéeAuTerritoireSélectionné, 
+      codeInsee: territoireSélectionné.codeInsee,
+    },
+    { staleTime: Number.POSITIVE_INFINITY },
+  );
+  
   useEffect(() => {
     fetch(`/api/chantier/${chantier.id}?codeInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
       .then(réponse => {
@@ -28,7 +36,6 @@ export default function usePageChantier(chantier: Chantier) {
       .then(données => {
         // TODO améliorer la gestion d'erreur
         setCommentaires(données?.commentaires ?? null);
-        setSynthèseDesRésultats(données?.synthèseDesRésultats ?? null);
         setMétéo(données?.météo ?? 'NON_RENSEIGNEE');
       });
   }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);

@@ -1,8 +1,8 @@
 import router from 'next/router';
-import { useCallback, FormEvent, useState, useMemo } from 'react';
+import { FormEvent, useState, useMemo } from 'react';
 import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { récupérerUnCookie } from '@/client/utils/cookies';
-import { Météo } from '@/server/domain/météo/Météo.interface';
+import { MétéoSaisissable, météosSaisissables } from '@/server/domain/météo/Météo.interface';
 import api from '@/server/infrastructure/api/trpc/api';
 import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
@@ -12,7 +12,7 @@ export default function useSynthèseDesRésultatsFormulaire(
   limiteDeCaractères: SynthèseDesRésultatsFormulaireProps['limiteDeCaractères'], 
   synthèseDesRésultatsCrééeCallback: SynthèseDesRésultatsFormulaireProps['synthèseDesRésultatsCrééeCallback'], 
   contenu: string, 
-  météo: Météo,
+  météo: MétéoSaisissable | null,
 ) {
   const [alerte, setAlerte] = useState <AlerteProps | null>(null);
 
@@ -34,7 +34,7 @@ export default function useSynthèseDesRésultatsFormulaire(
     },
   });
 
-  const créerSynthèseDesRésultats = (synthèseDesRésultatsÀCréer: { contenu: string, météo: Météo }) => {
+  const créerSynthèseDesRésultats = (synthèseDesRésultatsÀCréer: { contenu: string, météo: MétéoSaisissable }) => {
     const csrf = récupérerUnCookie('csrf') ?? '';
 
     mutationCréerSynthèseDesRésultats.mutate({
@@ -49,31 +49,24 @@ export default function useSynthèseDesRésultatsFormulaire(
 
   const contenuADépasséLaLimiteDeCaractères = useMemo(() => contenu.length > limiteDeCaractères, [contenu.length, limiteDeCaractères]);
 
-  const saisieContenuEstInvalide = useCallback(() => {
-    return contenu.length === 0 || contenuADépasséLaLimiteDeCaractères;
-  }, [contenu.length, contenuADépasséLaLimiteDeCaractères]);
+  const formulaireEstValide = useMemo(() => {
+    const saisieContenuEstValide = contenu.length > 0 && !contenuADépasséLaLimiteDeCaractères;
+    const saisieMétéoEstValide = Boolean(météo && météosSaisissables.includes(météo));
 
-  const saisieMétéoEstInvalide = useCallback(() => {
-    return météo === 'NON_RENSEIGNEE';
-  }, [météo]);
-
-  const formulaireEstInvalide = useCallback(() => {
-    return saisieContenuEstInvalide() || saisieMétéoEstInvalide();
-  }, [saisieContenuEstInvalide, saisieMétéoEstInvalide]);
+    return saisieContenuEstValide && saisieMétéoEstValide;
+  }, [contenu.length, contenuADépasséLaLimiteDeCaractères, météo]);
 
   const soumettreLeFormulaire = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (formulaireEstInvalide()) {
-      return;
+    if (formulaireEstValide) {
+      créerSynthèseDesRésultats({ contenu, météo: météo as MétéoSaisissable });
     }
-
-    créerSynthèseDesRésultats({ contenu, météo });
   };
 
   return {
     alerte,
-    formulaireEstInvalide,
+    formulaireEstValide,
     contenuADépasséLaLimiteDeCaractères,
     soumettreLeFormulaire,
   };

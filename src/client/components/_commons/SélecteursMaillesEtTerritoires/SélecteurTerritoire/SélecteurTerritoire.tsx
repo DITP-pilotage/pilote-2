@@ -29,8 +29,8 @@ export default function SélecteurTerritoire() {
       htmlName="périmètre-géographique"
       libellé="Périmètre géographique"
       options={construireLaListeDOptions()}
-      setValeur={codeInsee => modifierTerritoireSélectionné(codeInsee)}
-      valeur={territoireSélectionné.codeInsee}
+      setValeurSélectionnée={codeInsee => modifierTerritoireSélectionné(codeInsee)}
+      valeurSélectionnée={territoireSélectionné.codeInsee}
     />
   );
 }

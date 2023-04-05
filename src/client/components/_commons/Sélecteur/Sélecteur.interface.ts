@@ -1,15 +1,15 @@
-type SélecteurOption = {
+type SélecteurOption<T> = {
   libellé: string,
-  valeur: string,
+  valeur: T,
   désactivée?: boolean,
   cachée?: boolean,
 };
 
-export default interface SélecteurProps {
+export default interface SélecteurProps<T> {
   htmlName: string,
-  valeur?: string | null,
-  setValeur: (valeur: string) => void,
-  options: SélecteurOption[],
+  setValeurSélectionnée: (valeur: T) => void,
+  options: SélecteurOption<T>[],
+  valeurSélectionnée?: T,
   libellé?: string,
   texteFantôme?: string,
 }
