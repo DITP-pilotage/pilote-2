@@ -1,53 +1,45 @@
-import { useState } from 'react';
-import router from 'next/router';
-import { DétailsCommentaire, CommentaireÀCréer, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
-import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { useEffect, useState } from 'react';
+import { Commentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
 
-export default function useCommentaire(commentaire: DétailsCommentaire | null, type: TypeCommentaire) {
-  const [modeÉdition, setModeÉdition] = useState(false);
-  const [commentaireÉtat, setCommentaireÉtat] = useState(commentaire);
-  const [alerte, setAlerte] = useState <{ type: 'succès' | 'erreur', message: string } | null>(null);
-  const mailleSélectionnée = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
+export default function useCommentaire(commentaireInitial: Commentaire) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
-  function créerUnCommentaire(contenu: string, csrf: string) {
-    const chantierId = router.query.id as string; 
-    
-    const commentaireÀCréer: CommentaireÀCréer = {
-      typeCommentaire: type,
-      maille: mailleSélectionnée,
-      codeInsee: territoireSélectionné.codeInsee,
-      contenu: contenu,
-    };
-    
-    fetch(`/api/chantier/${chantierId}/commentaire/`, {
-      method: 'POST',
-      body: JSON.stringify({
-        commentaireÀCréer,
-        csrf,
-      }),
-    }).then(réponse => {
-      if (!réponse.ok) {
-        if (réponse.status === 500) {
-          setAlerte({ type: 'erreur', message: 'Le serveur est indisponible, veuillez réessayer ultérieurement' });
-        } else {
-          setAlerte({ type: 'erreur', message: "Une erreur s'est produite, veuillez actualiser la page" });
-        } 
-      }
-      return réponse.json() as Promise<DétailsCommentaire>;
-    }).then(détailsNouveauCommentaire => {
-      setCommentaireÉtat(détailsNouveauCommentaire);
-      setModeÉdition(false);
-      setAlerte({ type: 'succès', message: 'Commentaire modifié' });
+  const [modeÉdition, setModeÉdition] = useState(false);
+  const [commentaire, setCommentaire] = useState(commentaireInitial);
+  const [alerte, setAlerte] = useState <AlerteProps | null>(null);
+
+  const désactiverLeModeÉdition = () => {
+    setModeÉdition(false);
+  };
+
+  const activerLeModeÉdition = () => {
+    setModeÉdition(true);
+  };
+
+  const commentaireCréé = (c: Commentaire) => {
+    setCommentaire(c);
+    setAlerte({
+      type: 'succès',
+      message: 'Commentaire modifié',
     });
-  }
+    désactiverLeModeÉdition();
+  };
+
+  useEffect(() => {
+    setCommentaire(commentaireInitial);
+    setAlerte(null);
+    désactiverLeModeÉdition();
+  }, [commentaireInitial, territoireSélectionné]);
 
   return {
+    activerLeModeÉdition,
+    désactiverLeModeÉdition,
+    commentaireCréé,
+    commentaire,
+    nomTerritoireSélectionné: territoireSélectionné.nom,
     modeÉdition,
-    setModeÉdition,
-    commentaireÉtat,
-    setCommentaireÉtat,
-    créerUnCommentaire,
     alerte,
     setAlerte,
   };

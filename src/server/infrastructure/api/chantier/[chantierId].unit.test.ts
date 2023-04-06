@@ -1,11 +1,18 @@
 import { createMocks } from 'node-mocks-http';
-import { commentairesNull } from '@/server/domain/commentaire/Commentaire.interface';
 import {
   RécupérerLeDétailDUnChantierTerritorialiséeUseCase,
 } from '@/server/usecase/chantier/RécupérerLeDétailDUnChantierTerritorialiséeUseCase';
+import { Commentaires } from '@/server/domain/commentaire/Commentaire.interface';
 import handleChantierId from './[chantierId]';
 
 describe('/api/chantier/:chantierId:', () => {
+  const commentairesNull: Commentaires = {
+    actionsÀValoriser: null,
+    actionsÀVenir: null,
+    freinsÀLever: null,
+    autresRésultatsObtenus: null,
+  };
+
   it('renvoyer la synthèse des résultats d\'un chantier', async () => {
     // Given
     const { req, res } = createMocks({

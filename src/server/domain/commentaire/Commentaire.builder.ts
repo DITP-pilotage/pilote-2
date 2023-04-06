@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import { Commentaires } from '@/server/domain/commentaire/Commentaire.interface';
+import { Commentaires, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 
 export default class CommentaireBuilder {
   private _freinsÀLever: Commentaires['freinsÀLever'];
@@ -11,14 +11,16 @@ export default class CommentaireBuilder {
   private _autresRésultatsObtenus: Commentaires['autresRésultatsObtenus'];
 
   constructor() {
-    this._freinsÀLever = faker.helpers.arrayElement([null, this._générerUnCommentaire()]);
-    this._actionsÀVenir = faker.helpers.arrayElement([null, this._générerUnCommentaire()]);
-    this._actionsÀValoriser = faker.helpers.arrayElement([null, this._générerUnCommentaire()]);
-    this._autresRésultatsObtenus = faker.helpers.arrayElement([null, this._générerUnCommentaire()]);
+    this._freinsÀLever = faker.helpers.arrayElement([null, this._générerUnCommentaire('freinsÀLever')]);
+    this._actionsÀVenir = faker.helpers.arrayElement([null, this._générerUnCommentaire('actionsÀVenir')]);
+    this._actionsÀValoriser = faker.helpers.arrayElement([null, this._générerUnCommentaire('actionsÀValoriser')]);
+    this._autresRésultatsObtenus = faker.helpers.arrayElement([null, this._générerUnCommentaire('autresRésultatsObtenus')]);
   }
 
-  private _générerUnCommentaire() {
+  private _générerUnCommentaire(type: TypeCommentaire) {
     return {
+      id: faker.datatype.uuid(),
+      type: type,
       contenu: faker.lorem.paragraph(),
       date: faker.date.recent(10, '2023-02-01T00:00:00.000Z').toISOString(),
       auteur: faker.helpers.arrayElement(['', faker.name.fullName()]),

@@ -2,7 +2,6 @@ import { chantier, synthese_des_resultats } from '@prisma/client';
 import  SynthèseDesRésultatsSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import { commentairesNull } from '@/server/domain/commentaire/Commentaire.interface';
 import ChantierSQLRepository from '@/server/infrastructure/accès_données/chantier/ChantierSQLRepository';
 import SynthèseDesRésultatsRepository
   from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
@@ -17,9 +16,15 @@ import {
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
-
+import { Commentaires } from '@/server/domain/commentaire/Commentaire.interface';
 
 describe('RécupérerLeDétailDUnChantierTerritorialiséeUseCase', () => {
+  const commentairesNull: Commentaires = {
+    actionsÀValoriser: null,
+    actionsÀVenir: null,
+    freinsÀLever: null,
+    autresRésultatsObtenus: null,
+  };
   describe('run', function () {
     test('UNIT: renvoie une synthèse des résultats et une météo si le chantier en a en base', async () => {
       // Given

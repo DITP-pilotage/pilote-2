@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { DétailsCommentaire, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { Commentaire, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import {
   mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
@@ -11,7 +11,7 @@ export default function useHistoriqueDUnCommentaire(typeCommentaire: TypeComment
   const chantierId = router.query.id as string; //TODO changer id pour chantierId
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-  const [historiqueDUnCommentaire, setHistoriqueDUnCommentaire] = useState<DétailsCommentaire[] | null>(null);
+  const [historiqueDUnCommentaire, setHistoriqueDUnCommentaire] = useState<Commentaire[] | null>(null);
   const [estModaleOuverte, setEstModaleOuverte] = useState(false);
 
   useEffect(() => {

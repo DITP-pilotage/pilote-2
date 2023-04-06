@@ -18,30 +18,30 @@ export default function Commentaires({ commentaires }: CommentairesProps) {
         Commentaires du chantier
       </Titre>
       <Bloc titre={territoireSélectionné.nom}>
-        <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
-          <Commentaire
-            commentaire={commentaires['freinsÀLever']}
+        <div className='fr-mx-2w fr-my-1w'>
+          <Commentaire 
+            commentaireInitial={commentaires['freinsÀLever']}
             type="freinsÀLever"
           />
         </div>
         <hr className='fr-hr fr-mx-n2w' />
-        <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
+        <div className='fr-mx-2w fr-my-1w'>
           <Commentaire
-            commentaire={commentaires['actionsÀVenir']}
+            commentaireInitial={commentaires['actionsÀVenir']}
             type="actionsÀVenir"
           />
         </div>
         <hr className='fr-hr fr-mx-n2w' />
-        <div className='fr-mx-2w fr-mt-1w fr-mb-4w'>
+        <div className='fr-mx-2w fr-my-1w'>
           <Commentaire
-            commentaire={commentaires['actionsÀValoriser']}
+            commentaireInitial={commentaires['actionsÀValoriser']}
             type="actionsÀValoriser"
           />
         </div>
         <hr className='fr-hr fr-mx-n2w' />
-        <div className='fr-mx-2w fr-mt-1w fr-mb-2w'>
+        <div className='fr-mx-2w fr-mt-1w'>
           <Commentaire
-            commentaire={commentaires['autresRésultatsObtenus']}
+            commentaireInitial={commentaires['autresRésultatsObtenus']}
             type="autresRésultatsObtenus"
           />
         </div>
