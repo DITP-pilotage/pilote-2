@@ -4,92 +4,72 @@ import {
   Habilitation,
   récupereListeChantierAvecScope,
   Scope,
-  ScopeSet,
+  SCOPE_LECTURE,
+  SCOPE_SAISIE_INDICATEURS,
+  SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES,
 } from './Habilitation';
 
-function createScopeSet(scopes: Scope[]): ScopeSet {
-  return scopes;
-}
-
 function createHabilitation(chantier: ChantierId, scope: Scope): Habilitation {
-  const scopeListe = createScopeSet([scope]);
-  return { chantiers: { [chantier]: scopeListe } };
+  return { chantiers: { [chantier]: [scope] } };
 }
 
 // Hypothese
 // le parser ne laisse pas passer les cas null
 describe('Habilitation', () => {
+  const CHANTIER_ID: ChantierId = 'CH-001';
+
   describe('Scope Validation', () => {
     it("Valide l'authorisation pour un chantier si l'utlisateur a l'habilitation", () => {
       // GIVEN
-      const chantier: ChantierId = 'CH-001';
-      const scope: Scope = 'lire';
-      const habilitation: Habilitation = createHabilitation(chantier, scope);
+      const habilitation: Habilitation = createHabilitation(CHANTIER_ID, SCOPE_LECTURE);
       // WHEN
-      const result = checkAuthorizationChantierScope(habilitation, chantier, scope);
+      const result = checkAuthorizationChantierScope(habilitation, CHANTIER_ID, SCOPE_LECTURE);
       // THEN
       expect(result).toStrictEqual(true);
     });
 
     it("Invalide l'authorisation pour un chantier si l'utlisateur n'a pas l'habilitation", () => {
       // GIVEN
-      const chantier: ChantierId = 'CH-001';
-      const scope_utilisateur: Scope = 'lire';
-      const habilitation: Habilitation = createHabilitation(chantier, scope_utilisateur);
-      const scope_demande: Scope = 'ecrire';
+      const habilitation: Habilitation = createHabilitation(CHANTIER_ID, SCOPE_LECTURE);
       // WHEN
-      const result = checkAuthorizationChantierScope(habilitation, chantier, scope_demande);
+      const result = checkAuthorizationChantierScope(habilitation, CHANTIER_ID, SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES);
       // THEN
       expect(result).toStrictEqual(false);
     });
   });
 
-  describe("Récupération d'une liste de chantier à partier des droits", () => {
+  describe("Récupération d'une liste de chantier à partir des droits", () => {
     it('Retourne le bon chantier', () => {
       // GIVEN
-      const chantier: ChantierId = 'CH-001';
-      const scope_utilisateur: Scope = 'lire';
-      const habilitation: Habilitation = createHabilitation(chantier, scope_utilisateur);
-      const scope_demande: Scope = 'lire';
+      const habilitation: Habilitation = createHabilitation(CHANTIER_ID, SCOPE_LECTURE);
       // WHEN
-      const result = récupereListeChantierAvecScope(habilitation, scope_demande);
+      const result = récupereListeChantierAvecScope(habilitation, SCOPE_LECTURE);
       // THEN
-      expect(result).toStrictEqual([chantier]);
+      expect(result).toStrictEqual([CHANTIER_ID]);
     });
 
     it('Retourne aucun chantier', () => {
       // GIVEN
-      const chantier: ChantierId = 'CH-001';
-      const scope_utilisateur: Scope = 'lire';
-      const habilitation: Habilitation = createHabilitation(chantier, scope_utilisateur);
-      const scope_demande: Scope = 'écrire';
+      const habilitation: Habilitation = createHabilitation(CHANTIER_ID, SCOPE_LECTURE);
       // WHEN
-      const result = récupereListeChantierAvecScope(habilitation, scope_demande);
+      const result = récupereListeChantierAvecScope(habilitation, SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES);
       // THEN
       expect(result).toStrictEqual([]);
     });
 
-    it('Invalide si un scope dans une liste de scope', () => {
+    it('trouve les bons chantiers avec plusieurs chantiers et plusieurs scopes', () => {
       // GIVEN
+      const habilitation: Habilitation = {
+        chantiers: {
+          'CH-001': [SCOPE_LECTURE, SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES, SCOPE_SAISIE_INDICATEURS],
+          'CH-002': [SCOPE_LECTURE, SCOPE_SAISIE_INDICATEURS],
+          'CH-003': [SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES, SCOPE_SAISIE_INDICATEURS],
+        },
+      };
       // WHEN
+      const result = récupereListeChantierAvecScope(habilitation, SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES);
       // THEN
+      expect(result).toStrictEqual(['CH-001', 'CH-003']);
     });
-
-
   });
-  /* describe('Scope Liste', () => {
-       it("Valide si un scope dans une liste de scope", () => {
-           // GIVEN
-           // WHEN
-           // THEN
-       });
-   )
-   describe('Scope PLop', () => {
-       it("Valide si un scope dans une liste de scope", () => {
-           // GIVEN
-           // WHEN
-           // THEN
-       });
-   });
-   */
 });
