@@ -7,7 +7,7 @@ import { MétéoSaisissable, météosSaisissables } from '@/server/domain/mété
 import Titre from '@/components/_commons/Titre/Titre';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import Alerte from '@/components/_commons/Alerte/Alerte';
-import SynthèseDesRésultatsValidateur from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.validateur';
+import { LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS, validationSynthèseDesRésultatsFormulaire } from 'validation/synthèseDesRésultats';
 import SynthèseDesRésultatsFormulaireStyled from './SynthèseDesRésultatsFormulaire.styled';
 import SynthèseDesRésultatsFormulaireProps, { SynthèseDesRésultatsFormulaireInputs } from './SynthèseDesRésultatsFormulaire.interface';
 import useSynthèseDesRésultatsFormulaire from './useSynthèseDesRésultatsFormulaire';
@@ -17,7 +17,7 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
   
   const { register, handleSubmit, formState: { errors, isValid }, watch, getValues } = useForm<SynthèseDesRésultatsFormulaireInputs>({
     mode: 'all',
-    resolver: zodResolver(SynthèseDesRésultatsValidateur.créer()),
+    resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
     defaultValues: {
       contenu: contenuInitial,
       météo: météoInitiale && météosSaisissables.includes(météoInitiale) ? météoInitiale as MétéoSaisissable : undefined,
@@ -36,7 +36,7 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
         Modifier la météo et la synthèse des résultats
       </Titre>
       <p className='fr-text--xs fr-mb-1w texte-gris'>
-        {`Résumez l’état d’avancement du chantier en maximum ${SynthèseDesRésultatsValidateur.limiteDeCaractèresContenu} caractères. Précisez si vous souhaitez solliciter du soutien pour déployer une action particulièrement efficace ou pour répondre à une difficulté.`}
+        {`Résumez l’état d’avancement du chantier en maximum ${LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS} caractères. Précisez si vous souhaitez solliciter du soutien pour déployer une action particulièrement efficace ou pour répondre à une difficulté.`}
       </p>
       <div className={`fr-mb-0 fr-input-group ${errors.contenu && 'fr-input-group--error'}`}>
         <textarea
@@ -55,7 +55,7 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
           </div>
           <CompteurCaractères
             compte={watch('contenu')?.length ?? 0}
-            limiteDeCaractères={SynthèseDesRésultatsValidateur.limiteDeCaractèresContenu}
+            limiteDeCaractères={LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS}
           />
         </div>
       </div>

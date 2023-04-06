@@ -24,8 +24,8 @@ export default function usePageChantier(chantier: Chantier) {
       chantierId: chantier.id, 
       maille: mailleAssociéeAuTerritoireSélectionné, 
       codeInsee: territoireSélectionné.codeInsee,
-    },
-    { staleTime: Number.POSITIVE_INFINITY },
+    },  
+    { refetchOnWindowFocus: false },
   );
   
   useEffect(() => {

@@ -4,17 +4,10 @@ import {
   procédureProtégée,
   vérifierSiLeCSRFEstValide,
 } from '@/server/infrastructure/api/trpc/trpc';
-import { mailles } from '@/server/domain/maille/Maille.interface';
 import CréerUneSynthèseDesRésultatsUseCase from '@/server/usecase/synthèse/CréerUneSynthèseDesRésultatsUseCase';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase from '@/server/usecase/synthèse/RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase';
-import synthèseDesRésultatsValidateur from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.validateur';
-
-const zodValidateurSélecteur = z.object({
-  chantierId: z.string(),
-  maille: z.enum(mailles),
-  codeInsee: z.string(),
-});
+import { validationSynthèseDesRésultatsContexte, validationSynthèseDesRésultatsFormulaire } from 'validation/synthèseDesRésultats';
 
 const zodValidateurCSRF = z.object({
   csrf: z.string(),
@@ -22,7 +15,7 @@ const zodValidateurCSRF = z.object({
 
 export const synthèseDesRésultatsRouter = créerRouteurTRPC({
   créer: procédureProtégée
-    .input(zodValidateurSélecteur.merge(zodValidateurCSRF).merge(synthèseDesRésultatsValidateur.créer()))
+    .input(validationSynthèseDesRésultatsContexte.merge(zodValidateurCSRF).merge(validationSynthèseDesRésultatsFormulaire))
     .mutation(({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const auteur = ctx.session.user.name ?? '';
@@ -32,7 +25,7 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
     }),
 
   récupérerLaPlusRécente: procédureProtégée
-    .input(zodValidateurSélecteur)
+    .input(validationSynthèseDesRésultatsContexte)
     .query(({ input }) => {
       const récupérerSynthèseDesRésultatsLaPlusRécenteUseCase = new RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase(dependencies.getSynthèseDesRésultatsRepository());
       return récupérerSynthèseDesRésultatsLaPlusRécenteUseCase.run(input.chantierId, input.maille, input.codeInsee);
