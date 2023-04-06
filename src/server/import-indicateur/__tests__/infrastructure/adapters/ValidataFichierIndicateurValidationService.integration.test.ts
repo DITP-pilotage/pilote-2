@@ -24,7 +24,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
   it('doit appeler le httpClient pour contacter validata', async () => {
     // GIVEN
     const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
-    httpClient.post.mockResolvedValue(new ReportValidataBuilder().build());
+    httpClient.post.mockResolvedValue(new ReportValidataBuilder().avecValid(false).build());
 
     // WHEN
     await validataFichierIndicateurValidationService.validerFichier(body);
@@ -33,48 +33,97 @@ describe('ValidataFichierIndicateurValidationService', () => {
     expect(httpClient.post).toHaveBeenNthCalledWith(1, body);
   });
 
-  it('quand le fichier est valide, doit construire le rapport de validation du fichier', async () => {
-    // GIVEN
-    const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
-    const report = new ReportValidataBuilder()
-      .avecValid(true)
-      .avecTasks(new ReportTaskBuilder()
-        .avecResource(
-          new ReportResourceTaskBuilder()
-            .avecData([
-              ['indic_id', 'zone_id', 'metric_date', 'metric_type', 'metric_value'],
-              ['IND-001', 'D001', '30/12/2023', 'vi', '9'],
-              ['IND-002', 'D004', '31/12/2023', 'vc', '3'],
-            ])
-            .build(),
+  describe('quand le fichier est valide', () => {
+    const metricDateValue1 = '30/12/2023';
+    const metricDateValue2 = '31/12/2023';
+
+    it('doit construire le rapport de validation du fichier', async () => {
+      // GIVEN
+      const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
+      const report = new ReportValidataBuilder()
+        .avecValid(true)
+        .avecTasks(new ReportTaskBuilder()
+          .avecResource(
+            new ReportResourceTaskBuilder()
+              .avecData([
+                ['indic_id', 'zone_id', 'metric_date', 'metric_type', 'metric_value'],
+                ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+                ['IND-002', 'D004', metricDateValue2, 'vc', '3'],
+              ])
+              .build(),
+          )
+          .build(),
         )
-        .build(),
-      )
-      .build();
+        .build();
+  
+      httpClient.post.mockResolvedValue(report);
+  
+      // WHEN
+      const result = await validataFichierIndicateurValidationService.validerFichier(body);
+  
+      // THEN
+      expect(result.estValide).toEqual(true);
+  
+      expect(result.listeIndicateursData).toHaveLength(2);
+  
+      expect(result.listeIndicateursData[0].id).toBeDefined();
+      expect(result.listeIndicateursData[0].indicId).toEqual('IND-001');
+      expect(result.listeIndicateursData[0].metricDate).toEqual('30/12/2023');
+      expect(result.listeIndicateursData[0].metricType).toEqual('vi');
+      expect(result.listeIndicateursData[0].metricValue).toEqual('9');
+      expect(result.listeIndicateursData[0].zoneId).toEqual('D001');
+  
+      expect(result.listeIndicateursData[1].id).toBeDefined();
+      expect(result.listeIndicateursData[1].indicId).toEqual('IND-002');
+      expect(result.listeIndicateursData[1].metricDate).toEqual('31/12/2023');
+      expect(result.listeIndicateursData[1].metricType).toEqual('vc');
+      expect(result.listeIndicateursData[1].metricValue).toEqual('3');
+      expect(result.listeIndicateursData[1].zoneId).toEqual('D004');
+    });
 
-    httpClient.post.mockResolvedValue(report);
-
-    // WHEN
-    const result = await validataFichierIndicateurValidationService.validerFichier(body);
-
-    // THEN
-    expect(result.estValide).toEqual(true);
-
-    expect(result.listeIndicateursData).toHaveLength(2);
-
-    expect(result.listeIndicateursData[0].id).toBeDefined();
-    expect(result.listeIndicateursData[0].indicId).toEqual('IND-001');
-    expect(result.listeIndicateursData[0].metricDate).toEqual('30/12/2023');
-    expect(result.listeIndicateursData[0].metricType).toEqual('vi');
-    expect(result.listeIndicateursData[0].metricValue).toEqual('9');
-    expect(result.listeIndicateursData[0].zoneId).toEqual('D001');
-
-    expect(result.listeIndicateursData[1].id).toBeDefined();
-    expect(result.listeIndicateursData[1].indicId).toEqual('IND-002');
-    expect(result.listeIndicateursData[1].metricDate).toEqual('31/12/2023');
-    expect(result.listeIndicateursData[1].metricType).toEqual('vc');
-    expect(result.listeIndicateursData[1].metricValue).toEqual('3');
-    expect(result.listeIndicateursData[1].zoneId).toEqual('D004');
+    it('quand les en-têtes sont dans un autre ordre, doit construire le même rapport de validation du fichier', async () => {
+      // GIVEN
+      const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
+      const report = new ReportValidataBuilder()
+        .avecValid(true)
+        .avecTasks(new ReportTaskBuilder()
+          .avecResource(
+            new ReportResourceTaskBuilder()
+              .avecData([
+                ['metric_type', 'zone_id', 'metric_date', 'indic_id', 'metric_value'],
+                ['vi', 'D001', metricDateValue1, 'IND-001', '9'],
+                ['vc', 'D004', metricDateValue2, 'IND-002', '3'],
+              ])
+              .build(),
+          )
+          .build(),
+        )
+        .build();
+  
+      httpClient.post.mockResolvedValue(report);
+  
+      // WHEN
+      const result = await validataFichierIndicateurValidationService.validerFichier(body);
+  
+      // THEN
+      expect(result.estValide).toEqual(true);
+  
+      expect(result.listeIndicateursData).toHaveLength(2);
+  
+      expect(result.listeIndicateursData[0].id).toBeDefined();
+      expect(result.listeIndicateursData[0].indicId).toEqual('IND-001');
+      expect(result.listeIndicateursData[0].metricDate).toEqual(metricDateValue1);
+      expect(result.listeIndicateursData[0].metricType).toEqual('vi');
+      expect(result.listeIndicateursData[0].metricValue).toEqual('9');
+      expect(result.listeIndicateursData[0].zoneId).toEqual('D001');
+  
+      expect(result.listeIndicateursData[1].id).toBeDefined();
+      expect(result.listeIndicateursData[1].indicId).toEqual('IND-002');
+      expect(result.listeIndicateursData[1].metricDate).toEqual(metricDateValue2);
+      expect(result.listeIndicateursData[1].metricType).toEqual('vc');
+      expect(result.listeIndicateursData[1].metricValue).toEqual('3');
+      expect(result.listeIndicateursData[1].zoneId).toEqual('D004');
+    });
   });
 
   it("quand le fichier est invalide, doit construire le rapport d'erreur du fichier", async () => {
