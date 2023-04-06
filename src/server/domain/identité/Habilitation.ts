@@ -11,6 +11,10 @@ export type ScopeSet = Scope[];
 
 export type ChantierId = string;
 
+export const SCOPE_LECTURE = 'lecture';
+export const SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES = 'saisie.commentaire';
+export const SCOPE_SAISIE_INDICATEURS = 'saisie.indicateur';
+
 /*
 enum ScopeEnum {
   LIRE = 'read',

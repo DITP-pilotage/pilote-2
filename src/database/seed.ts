@@ -23,12 +23,17 @@ import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 import IndicateurRowBuilder from '@/server/infrastructure/test/builders/sqlRow/IndicateurSQLRow.builder';
 import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
-import { DIR_CHANTIER, DIR_PROJET, DITP_ADMIN, DITP_PILOTAGE, PM } from '@/server/domain/identité/Profil';
+import { EQUIPE_DIR_PROJET, DIR_PROJET, DITP_ADMIN, DITP_PILOTAGE, PM } from '@/server/domain/identité/Profil';
 import {
   créerUtilisateursAvecDroits,
   InputProfil,
   InputUtilisateur,
 } from '@/server/infrastructure/accès_données/identité/seed';
+import {
+  SCOPE_LECTURE,
+  SCOPE_SAISIE_INDICATEURS,
+  SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES,
+} from '@/server/domain/identité/Habilitation';
 
 const prisma = new PrismaClient();
 
@@ -157,26 +162,32 @@ class DatabaseSeeder {
   }
 
   private async _créerDroits() {
+    const inputScopesHabilitations = [
+      { code: SCOPE_LECTURE, nom: 'Lecture' },
+      { code: SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES, nom: 'Saisie de la synthèse et des commentaires' },
+      { code: SCOPE_SAISIE_INDICATEURS, nom: 'Saisie des indicateurs de chantiers' },
+    ];
+
     const inputProfils: InputProfil[] = [
-      { code: PM, nom: 'Premier Ministre', a_acces_tous_chantiers: true },
-      { code: DITP_ADMIN, nom: 'DITP - Admin', a_acces_tous_chantiers: true },
-      { code: DITP_PILOTAGE, nom: 'DITP - Pilotage', a_acces_tous_chantiers: true },
-      { code: DIR_CHANTIER, nom: 'Directeur de chantier', a_acces_tous_chantiers: false },
-      { code: DIR_PROJET, nom: 'Directeur de projet', a_acces_tous_chantiers: false },
+      { code: PM, nom: 'Premier Ministre', aAccesTousChantiers: true, habilitationScopeCodes: [SCOPE_LECTURE] },
+      { code: DITP_ADMIN, nom: 'DITP - Admin', aAccesTousChantiers: true, habilitationScopeCodes: [SCOPE_LECTURE, SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES, SCOPE_SAISIE_INDICATEURS] },
+      { code: DITP_PILOTAGE, nom: 'DITP - Pilotage', aAccesTousChantiers: true, habilitationScopeCodes: [SCOPE_LECTURE] },
+      { code: DIR_PROJET, nom: 'Directeur de projet', aAccesTousChantiers: false, habilitationScopeCodes: [SCOPE_LECTURE, SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES, SCOPE_SAISIE_INDICATEURS] },
+      { code: EQUIPE_DIR_PROJET, nom: 'Équipe de Directeur de projet', aAccesTousChantiers: false, habilitationScopeCodes: [SCOPE_LECTURE] },
     ];
 
     // noinspection TypeScriptValidateTypes
     const chantiersRows = await prisma.chantier.findMany({ distinct: ['id'], select: { id: true }, take: 10 });
     const chantierIds = chantiersRows.map(it => it.id);
     const inputUtilisateurs: InputUtilisateur[] = [
-      { email: 'utilisateur_PM@example.com', profilCode: PM, chantierIds: [] },
-      { email: 'utilisateur_DITP_A@example.com', profilCode: DITP_ADMIN, chantierIds: [] },
-      { email: 'utilisateur_DITP_P@example.com', profilCode: DITP_PILOTAGE, chantierIds: [] },
-      { email: 'utilisateur_DIR_C@example.com', profilCode: DIR_CHANTIER, chantierIds },
-      { email: 'utilisateur_DIR_P@example.com', profilCode: DIR_PROJET, chantierIds },
+      { email: 'premier.ministre@example.com', profilCode: PM, chantierIds: [] },
+      { email: 'ditp.admin@example.com', profilCode: DITP_ADMIN, chantierIds: [] },
+      { email: 'ditp.pilotage@example.com', profilCode: DITP_PILOTAGE, chantierIds: [] },
+      { email: 'directeur.projet@example.com', profilCode: DIR_PROJET, chantierIds },
+      { email: 'equipe.dir.projet@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds },
     ];
 
-    await créerUtilisateursAvecDroits(prisma, inputProfils, inputUtilisateurs);
+    await créerUtilisateursAvecDroits(prisma, inputScopesHabilitations, inputProfils, inputUtilisateurs);
   }
 }
 

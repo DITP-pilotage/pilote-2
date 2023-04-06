@@ -8,7 +8,7 @@ import { Objectifs } from '@/server/domain/objectif/Objectif.interface';
 
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import logger from '@/server/infrastructure/logger';
-import { ChantierId } from '@/server/domain/identité/Habilitation';
+import { ChantierId, SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
 
 interface NextPageChantierProps {
   chantier: Chantier
@@ -42,7 +42,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<Para
 
   const habilitation = session.habilitation;
   const chantierRepository = dependencies.getChantierRepository();
-  const chantier: Chantier = await chantierRepository.getById(params.id, session.habilitation, 'lecture');
+  const chantier: Chantier = await chantierRepository.getById(params.id, session.habilitation, SCOPE_LECTURE);
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params.id);

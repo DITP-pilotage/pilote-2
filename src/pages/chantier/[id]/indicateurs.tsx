@@ -9,6 +9,7 @@ import useImportIndicateur from '@/hooks/useImportIndicateur';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import logger from '@/server/infrastructure/logger';
+import { SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
 
 interface NextPageImportIndicateurProps {
   chantierInformation: ChantierInformation
@@ -35,7 +36,7 @@ export async function getServerSideProps({ params, req, res }: GetServerSideProp
   }
 
   const chantierRepository = dependencies.getChantierRepository();
-  const chantier: Chantier = await chantierRepository.getById(params.id, session.habilitation, 'lecture');
+  const chantier: Chantier = await chantierRepository.getById(params.id, session.habilitation, SCOPE_LECTURE);
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs = await indicateurRepository.récupérerParChantierId(params.id);
