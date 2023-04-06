@@ -13,22 +13,22 @@ then
 fi
 
 # 1er hypothèse : on prend l'hypothèse que les données sont validées dans le front et le back de la data factory
-#  c-a-d que si les données arrivent dans la table raw_data.mesures_indicateurs, elles sont valides
+#  c-a-d que si les données arrivent dans la table raw_data.mesure_indicateur, elles sont valides
 # 2nd hypothèse : le format n'est pas encore défini (a ajuster en amont de cette étape ou dans l'état staging)
 # Creation de la table temporaire pour charger les données en base dans la table temp_metric_indicateur
 
-psql "$DATABASE_URL" -c "DROP TABLE IF EXISTS raw_data.mesures_indicateurs CASCADE"
-psql "$DATABASE_URL" -c "CREATE TABLE IF NOT EXISTS raw_data.mesures_indicateurs (
+psql "$DATABASE_URL" -c "DROP TABLE IF EXISTS raw_data.mesure_indicateur CASCADE"
+psql "$DATABASE_URL" -c "CREATE TABLE IF NOT EXISTS raw_data.mesure_indicateur (
     indic_id      TEXT,
     zone_id       TEXT,
     metric_date   TEXT,
     metric_type   TEXT,
     metric_value  TEXT,
-    import_date TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    date_import TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );"
 
 # Remplissage de la table avec les dernières données indicateurs
-psql "$DATABASE_URL" -c "copy raw_data.mesures_indicateurs (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/pass_culture_indic_test.csv
+psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/pass_culture_indic_test.csv
 
 # Si n'existe pas, création de la table fait_indicateurs
 #psql "$DATABASE_URL" -c "CREATE SCHEMA IF NOT EXISTS marts"

@@ -5,4 +5,4 @@ sources:
     database: "{{ env_var('PGDATABASE') }}"
     schema: raw_data
     tables:
-      - name: mesures_indicateurs
+      - name: mesure_indicateur

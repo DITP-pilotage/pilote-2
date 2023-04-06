@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('import_from_files', 'mesures_indicateurs') }}
+    select * from {{ source('import_from_files', 'mesure_indicateur') }}
 
 ),
 
@@ -14,7 +14,7 @@ renamed as (
         TO_DATE(metric_date,'DD/MM/YYYY') as date_releve,
         metric_type as type_mesure,
         metric_value::numeric as valeur,
-        import_date as date_import
+        date_import
     from source
 
 )
