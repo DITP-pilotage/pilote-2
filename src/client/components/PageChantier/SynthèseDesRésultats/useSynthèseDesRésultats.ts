@@ -1,0 +1,46 @@
+import { useState, useEffect } from 'react';
+import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
+import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
+import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+
+export default function useSynthèseDesRésultats(synthèseDesRésultatsInitiale: SynthèseDesRésultats) {
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
+  const [modeÉdition, setModeÉdition] = useState(false);
+  const [synthèseDesRésultats, setSynthèseDesRésultats] = useState(synthèseDesRésultatsInitiale);
+  const [alerte, setAlerte] = useState <AlerteProps | null>(null);
+
+  const désactiverLeModeÉdition = () => {
+    setModeÉdition(false);
+  };
+
+  const activerLeModeÉdition = () => {
+    setModeÉdition(true);
+  };
+
+  const synthèseDesRésultatsCréée = (synthèse: SynthèseDesRésultats) => {
+    setSynthèseDesRésultats(synthèse);
+    setAlerte({
+      type: 'succès',
+      message: 'Météo et synthèse des résultats publiées',
+    });
+    désactiverLeModeÉdition();
+  };
+
+  useEffect(() => {
+    setSynthèseDesRésultats(synthèseDesRésultatsInitiale);
+    setAlerte(null);
+    désactiverLeModeÉdition();
+  }, [synthèseDesRésultatsInitiale, territoireSélectionné]);
+
+  return {
+    activerLeModeÉdition,
+    désactiverLeModeÉdition,
+    synthèseDesRésultatsCréée,
+    synthèseDesRésultats,
+    nomTerritoireSélectionné: territoireSélectionné.nom,
+    modeÉdition,
+    alerte,
+    setAlerte,
+  };
+}

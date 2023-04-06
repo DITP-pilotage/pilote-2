@@ -2,6 +2,7 @@
 import { createMocks } from 'node-mocks-http';
 import RécupérerLHistoriqueDeLaSynthèseDesRésultatsUseCase
   from '@/server/usecase/synthèse/RécupérerLHistoriqueDeLaSynthèseDesRésultatsUseCase';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 import handleHistoriqueDeLaSynthèseDesRésultats from './historiqueDeLaSynthèseDesRésultats';
 
 describe('/api/chantier/:chantierId/historique-de-la-synthèse-des-résultats', () => {
@@ -38,10 +39,14 @@ describe('/api/chantier/:chantierId/historique-de-la-synthèse-des-résultats', 
           auteur: 'Jean Bon',
           contenu: 'Ma synthèse DEPT-25 2023',
           date: '2023-12-31T00:00:00.000Z',
+          id: 'aaaaaa-aaaa',
+          météo: 'SOLEIL' as Météo,
         }, {
           auteur: 'Jean Bon',
           contenu: 'Ma synthèse DEPT-25 2022',
           date: '2022-12-31T00:00:00.000Z',
+          id: 'aaaaaa-aaaa',
+          météo: 'SOLEIL' as Météo,
         },
       ],
     };

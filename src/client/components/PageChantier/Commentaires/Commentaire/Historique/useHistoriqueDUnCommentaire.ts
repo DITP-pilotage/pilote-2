@@ -29,7 +29,7 @@ export default function useHistoriqueDUnCommentaire(typeCommentaire: TypeComment
         type: typeCommentaire,
       }))
       .then(réponse => {
-        return réponse.json();
+        return réponse.json() as Promise<any>;
       })
       .then(données => {
         // TODO améliorer la gestion d'erreur

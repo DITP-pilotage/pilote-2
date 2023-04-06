@@ -4,7 +4,7 @@ import TableauChantiersMétéoProps from '@/components/PageChantiers/TableauChan
 
 export default function TableauChantiersMétéo({ météo }: TableauChantiersMétéoProps) {
   return météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE'
-    ? <MétéoPicto valeur={météo} />
+    ? <MétéoPicto météo={météo} />
     : (
       <span className="texte-gris fr-text--xs">
         {météos[météo]}

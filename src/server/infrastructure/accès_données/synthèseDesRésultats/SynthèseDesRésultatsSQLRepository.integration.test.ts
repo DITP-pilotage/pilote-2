@@ -6,8 +6,63 @@ import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésul
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import SynthèseDesRésultatsSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
+import SynthèseDesRésultatsBuilder from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.builder';
 
 describe('SynthèseDesRésultatsSQLRepository ', function () {
+  describe('créer', () => {
+    test('Crée la synthèse des résultats en base', async () => {
+      // Given
+      const chantierId = 'CH-001';
+      const maille = 'régionale';
+      const codeInsee = '01';
+      const id = '123';
+      const contenu = 'Quatrième commentaire';
+      const date = new Date('2023-12-31T00:00:00.000Z');
+      const auteur = 'Jean DUPONT';
+      const météo = 'SOLEIL';
+
+      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
+
+      // When
+      await synthèseDesRésultatsRepository.créer(chantierId, maille, codeInsee, id, contenu, auteur, météo, date);
+
+      // Then
+      const synthèseDesRésultatsCrééeEnBase = await prisma.synthese_des_resultats.findUnique({ where: { id: id } });
+      expect(synthèseDesRésultatsCrééeEnBase?.id).toEqual(id);
+    });
+
+    test('Retourne la synthèse de résultats créée', async () => {
+      // Given
+      const chantierId = 'CH-001';
+      const maille = 'régionale';
+      const codeInsee = '01';
+
+      const { id, contenu, auteur, météo, date } = new SynthèseDesRésultatsBuilder()
+        .avecSynthèseDesRésultats({
+          id: '123',
+          contenu: 'Quatrième commentaire',
+          date: '2023-12-31T00:00:00.000Z',
+          auteur: 'Jean DUPONT',
+          météo: 'SOLEIL',
+        })
+        .build()!;
+
+      const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
+
+      // When
+      const synthèseDesRésultatsCréée = await synthèseDesRésultatsRepository.créer(chantierId, maille, codeInsee, id, contenu, auteur, météo, new Date(date));
+
+      // Then
+      expect(synthèseDesRésultatsCréée).toStrictEqual({
+        contenu,
+        auteur,
+        date,
+        id,
+        météo,
+      });
+    });
+  });
+
   describe('findNewestByChantierIdAndTerritoire', () => {
     test('Renvoie null si aucune synthèse des résultats n\'est présente en base', async () => {
       // Given
@@ -54,10 +109,13 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
           .build(),
 
         new SynthèseDesRésultatsSQLRowBuilder()
+          .avecId('aaa-aaa')
+          .avecMétéo('SOLEIL')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
           .avecCommentaire('Quatrième commentaire')
+          .avecAuteur('Jean DUPONT')
           .avecDateCommentaire(new Date('2023-12-31'))
           .build(),
       ];
@@ -69,9 +127,11 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
 
       // Then
       expect(result).toStrictEqual({
+        id: 'aaa-aaa',
+        météo: 'SOLEIL',
         contenu: 'Quatrième commentaire',
         date: '2023-12-31T00:00:00.000Z',
-        auteur: '',
+        auteur: 'Jean DUPONT',
       });
     });
   });
@@ -86,6 +146,9 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
 
       const synthèsesDesResultats: synthese_des_resultats[] = [
         new SynthèseDesRésultatsSQLRowBuilder()
+          .avecId('aaaa-aab')
+          .avecMétéo('SOLEIL')
+          .avecAuteur('Jean DUPONT')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -94,6 +157,9 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
           .build(),
 
         new SynthèseDesRésultatsSQLRowBuilder()
+          .avecId('aaaa-aaa')
+          .avecMétéo('SOLEIL')
+          .avecAuteur('Jean DUPONT')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -118,11 +184,15 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       // THEN
       expect(résultat).toStrictEqual([
         {
-          auteur: '',
+          id: 'aaaa-aaa',
+          météo: 'SOLEIL',
+          auteur: 'Jean DUPONT',
           contenu: 'Ma synthèse REG-01 2023',
           date: '2023-12-31T00:00:00.000Z',
         }, {
-          auteur: '',
+          id: 'aaaa-aab',
+          météo: 'SOLEIL',
+          auteur: 'Jean DUPONT',
           contenu: 'Ma synthèse REG-01 2022',
           date: '2022-12-31T00:00:00.000Z',
         },

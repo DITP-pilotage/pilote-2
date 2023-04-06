@@ -14,22 +14,22 @@ const LÉGENDE: Record<string, CartographieÉlémentDeLégendeListe> = {
   'ORAGE': {
     libellé: météos.ORAGE,
     remplissage: '#B34000',
-    picto: <MétéoPicto valeur="ORAGE" />,
+    picto: <MétéoPicto météo="ORAGE" />,
   },
   'COUVERT': {
     libellé: météos.COUVERT,
     remplissage: '#95E257',
-    picto: <MétéoPicto valeur="COUVERT" />,
+    picto: <MétéoPicto météo="COUVERT" />,
   },
   'NUAGE': {
     libellé: météos.NUAGE,
     remplissage: '#EFCB3A',
-    picto: <MétéoPicto valeur="NUAGE" />,
+    picto: <MétéoPicto météo="NUAGE" />,
   },
   'SOLEIL': {
     libellé: météos.SOLEIL,
     remplissage: '#27A658',
-    picto: <MétéoPicto valeur="SOLEIL" />,
+    picto: <MétéoPicto météo="SOLEIL" />,
   },
   'DÉFAUT': {
     libellé: 'Territoire pour lequel la météo n’est pas renseignée',

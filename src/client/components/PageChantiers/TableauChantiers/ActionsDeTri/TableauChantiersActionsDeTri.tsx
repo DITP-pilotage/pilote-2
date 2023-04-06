@@ -33,12 +33,12 @@ export default function TableauChantiersActionsDeTri({
           id="tri-tableau-chantiers"
           name="tri-tableau-chantiers"
           onChange={(événement) => changementColonneÀTrierCallback(événement.currentTarget.value)}
+          value={colonneÀTrier}
         >
           {
             listeColonnesÀtrier.map(option => (
               <option
                 key={option.colonneId}
-                selected={colonneÀTrier === option.colonneId}
                 value={option.colonneId}
               >
                 {option.libellé}

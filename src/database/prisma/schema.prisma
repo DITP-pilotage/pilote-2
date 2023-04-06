@@ -76,6 +76,7 @@ model synthese_des_resultats {
   chantier_id      String
   maille           String
   code_insee       String
+  auteur           String?
   meteo            String?
   date_meteo       DateTime? @db.Timestamp
   commentaire      String?

@@ -19,7 +19,7 @@ export default function TableauChantiersTuileChantier({ chantier }: TableauChant
       </div>
       <div className='fr-mt-1w tuile-chantier-corps'>
         <div className="météo">
-          <MétéoPicto valeur={chantier.météo} />
+          <MétéoPicto météo={chantier.météo} />
         </div>
         <div className='avancement fr-mr-2w'>
           <BarreDeProgression

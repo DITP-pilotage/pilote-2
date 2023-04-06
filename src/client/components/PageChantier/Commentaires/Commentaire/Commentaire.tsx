@@ -26,10 +26,12 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
     <CommentaireStyled>
       {
         alerte !== null &&
-        <Alerte
-          message={alerte.message}
-          type={alerte.type}
-        />
+        <div className="fr-mb-2w">
+          <Alerte
+            message={alerte.message}
+            type={alerte.type}
+          />
+        </div>
       }
       <Titre
         baliseHtml='h3'
@@ -40,11 +42,10 @@ export default function Commentaire({ type, commentaire }: CommentaireProps) {
       {
         modeÉdition ? (
           <FormulaireDePublication
-            contenuParDéfaut={commentaireÉtat?.contenu}
-            libellé='Modification du commentaire'
+            contenuInitial={commentaireÉtat?.contenu}
             limiteDeCaractères={LIMITE_CARACTÈRES_COMMENTAIRE}
             àLAnnulation={() => setModeÉdition(false)}
-            àLaSoumissionDuFormulaire={(contenuÀCréer, csrf) => créerUnCommentaire(contenuÀCréer, csrf)}
+            àLaPublication={(contenuÀCréer, csrf) => créerUnCommentaire(contenuÀCréer, csrf)}
           />
         ) : (
           commentaireÉtat ? (

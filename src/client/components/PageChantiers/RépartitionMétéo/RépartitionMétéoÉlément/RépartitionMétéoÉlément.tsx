@@ -8,7 +8,7 @@ export default function RépartitionMétéoÉlément({ météo, nombreDeChantier
     <RépartitionMétéoÉlémentStyled>
       <div className="fr-grid-row">
         <MétéoPicto
-          valeur={météo}
+          météo={météo}
         />
       </div>
       <p className='nombre-de-chantiers fr-grid-row fr-h1 fr-mb-0'>

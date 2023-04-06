@@ -16,12 +16,12 @@ export const météosPictos: Record<Météo, any> = {
   'NON_NECESSAIRE': null,
 };
 
-export default function MétéoPicto({ valeur }: MétéoPictoProps) {
-  return météosPictos[valeur] !== null ? (
+export default function MétéoPicto({ météo }: MétéoPictoProps) {
+  return météosPictos[météo] !== null ? (
     <Image
-      alt={météos[valeur]}
+      alt={météos[météo]}
       className="météo-picto"
-      src={météosPictos[valeur]}
+      src={météosPictos[météo]}
     />
   ) : null;
 }

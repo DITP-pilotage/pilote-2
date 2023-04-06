@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker/locale/fr';
 import { synthese_des_resultats } from '@prisma/client';
 import { générerUneMailleAléatoire, générerUnIdentifiantUnique, retourneUneListeDeCodeInseeCohérentePourUneMaille } from '@/server/infrastructure/test/builders/utils';
+import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 
 export default class SyntheseDesResultatsRowBuilder {
   private _id: synthese_des_resultats['id'];
@@ -15,6 +16,10 @@ export default class SyntheseDesResultatsRowBuilder {
 
   private _dateCommentaire: synthese_des_resultats['date_commentaire'];
 
+  private _météo: synthese_des_resultats['meteo'];
+
+  private _auteur: synthese_des_resultats['auteur'];
+
   constructor() {
     const maille = générerUneMailleAléatoire();
     const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
@@ -25,6 +30,8 @@ export default class SyntheseDesResultatsRowBuilder {
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
     this._commentaire = faker.helpers.arrayElement([null, faker.lorem.paragraphs()]);
     this._dateCommentaire = faker.helpers.arrayElement([null, faker.date.recent(10, '2023-02-01T00:00:00.000Z')]);
+    this._météo = new MétéoBuilder().build();
+    this._auteur = faker.helpers.arrayElement([null, faker.name.fullName()]);
   }
 
   avecId(id: synthese_des_resultats['id']): SyntheseDesResultatsRowBuilder {
@@ -60,16 +67,27 @@ export default class SyntheseDesResultatsRowBuilder {
     return this;
   }
 
+  avecMétéo(météo: synthese_des_resultats['meteo']): SyntheseDesResultatsRowBuilder {
+    this._météo = météo;
+    return this;
+  }
+
+  avecAuteur(auteur: synthese_des_resultats['auteur']): SyntheseDesResultatsRowBuilder {
+    this._auteur = auteur;
+    return this;
+  }
+
   build(): synthese_des_resultats {
     return {
       id: this._id,
       chantier_id: this._chantierId,
       maille: this._maille,
       code_insee: this._codeInsee,
-      meteo: null,
+      meteo: this._météo,
       date_meteo: null,
       commentaire: this._commentaire,
       date_commentaire: this._dateCommentaire,
+      auteur: this._auteur,
     };
   }
 }

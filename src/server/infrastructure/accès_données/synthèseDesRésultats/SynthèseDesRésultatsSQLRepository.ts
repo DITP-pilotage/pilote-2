@@ -4,7 +4,7 @@ import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/ma
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
-
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
   private prisma: PrismaClient;
@@ -13,14 +13,32 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     this.prisma = prisma;
   }
 
+  async créer(chantierId: string, maille: Maille, codeInsee: CodeInsee, id: string, contenu: string, auteur: string, météo: Météo, date: Date): Promise<SynthèseDesRésultats> {
+    const synthèseDesRésultats =  await this.prisma.synthese_des_resultats.create({
+      data: {
+        id: id,
+        chantier_id: chantierId,
+        maille: CODES_MAILLES[maille],
+        code_insee: codeInsee,
+        commentaire: contenu,
+        meteo: météo,
+        date_commentaire: date,
+        date_meteo: date,
+        auteur: auteur,
+      } });
+    return this.mapperVersDomaine(synthèseDesRésultats);
+  }
+
   private mapperVersDomaine(synthèse: synthese_des_resultats | null): SynthèseDesRésultats {
     if (synthèse === null || synthèse.commentaire === null || synthèse.date_commentaire === null)
       return null;
 
     return {
+      id: synthèse.id,
       contenu: synthèse.commentaire,
       date: synthèse.date_commentaire.toISOString(),
-      auteur: '',
+      auteur: synthèse.auteur ?? '',
+      météo: synthèse.meteo as Météo ?? 'NON_RENSEIGNEE',
     };
   }
   

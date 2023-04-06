@@ -33,6 +33,8 @@ describe('RécupérerLeDétailDUnChantierTerritorialiséeUseCase', () => {
         contenu: 'contenu',
         date: '2022-01-01T00:00:00.000Z',
         auteur: 'un auteur',
+        id: 'aaaaaa-aaaa2',
+        météo: 'SOLEIL',
       });
       const stubCommentaireRepository = <CommentaireRepository>{};
       stubCommentaireRepository.récupérerLePlusRécent = () => Promise.resolve(commentairesNull);
@@ -50,6 +52,8 @@ describe('RécupérerLeDétailDUnChantierTerritorialiséeUseCase', () => {
             contenu: 'contenu',
             date: '2022-01-01T00:00:00.000Z',
             auteur: 'un auteur',
+            id: 'aaaaaa-aaaa2',
+            météo: 'SOLEIL',
           },
           météo: 'ORAGE',
           commentaires: commentairesNull,
@@ -107,9 +111,12 @@ describe('RécupérerLeDétailDUnChantierTerritorialiséeUseCase', () => {
 
       const synthesesDesResultats: synthese_des_resultats[] = [
         new SynthèseDesRésultatsSQLRowBuilder()
+          .avecId('aaaaaa-aaaa')
+          .avecMétéo('SOLEIL')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
+          .avecAuteur('Jean DUPONT')
           .avecCommentaire('Lorem ipsum')
           .avecDateCommentaire(new Date('2023-01-01'))
           .build(),
@@ -136,7 +143,9 @@ describe('RécupérerLeDétailDUnChantierTerritorialiséeUseCase', () => {
           synthèseDesRésultats: {
             contenu: 'Lorem ipsum',
             date: '2023-01-01T00:00:00.000Z',
-            auteur: '',
+            auteur: 'Jean DUPONT',
+            id: 'aaaaaa-aaaa',
+            météo: 'SOLEIL',
           },
           météo: 'ORAGE',
           commentaires: commentairesNull,

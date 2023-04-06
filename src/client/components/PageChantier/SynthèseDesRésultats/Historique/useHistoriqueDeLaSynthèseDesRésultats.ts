@@ -28,7 +28,7 @@ export default function useHistoriqueDeLaSynthèseDesRésultats() {
         codeInsee: territoireSélectionné.codeInsee,
       }))
       .then(réponse => {
-        return réponse.json();
+        return réponse.json() as Promise<any>;
       })
       .then(données => {
         // TODO améliorer la gestion d'erreur

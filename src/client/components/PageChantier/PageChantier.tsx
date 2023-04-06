@@ -11,7 +11,7 @@ import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
 import Responsables from './Responsables/Responsables';
-import SynthèseRésultats from './SynthèseRésultats/SynthèseRésultats';
+import SynthèseDesRésultats from './SynthèseDesRésultats/SynthèseDesRésultats';
 import PageChantierEnTête from './PageChantierEnTête/PageChantierEnTête';
 import Cartes from './Cartes/Cartes';
 import Sommaire from './Sommaire/Sommaire';
@@ -31,7 +31,7 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, objectif }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { avancements, détailsIndicateurs, commentaires, météo, synthèseDesRésultats } = usePageChantier(chantier);
+  const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   
   return (
@@ -64,10 +64,7 @@ export default function PageChantier({ chantier, indicateurs, objectif }: PageCh
               <Responsables chantier={chantier} />
             </div>
             <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
-              <SynthèseRésultats
-                météo={météo}
-                synthèseDesRésultats={synthèseDesRésultats}
-              />
+              <SynthèseDesRésultats synthèseDesRésultatsInitiale={synthèseDesRésultats} />
             </div>
           </div>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">

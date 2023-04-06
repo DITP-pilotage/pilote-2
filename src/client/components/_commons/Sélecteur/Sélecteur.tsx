@@ -1,14 +1,15 @@
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import SélecteurProps from '@/components/_commons/Sélecteur/Sélecteur.interface';
 
-export default function Sélecteur({
+export default function Sélecteur<T extends string>({
   htmlName,
-  valeur,
-  setValeur,
+  register,
   options,
   libellé,
-  texteFantôme = '',
-}: SélecteurProps) {
+  texteFantôme,
+  valeurModifiéeCallback,
+  valeurSélectionnéeParDéfaut,
+}: SélecteurProps<T>) {
 
   return (
     <div className="fr-select-group">
@@ -24,22 +25,26 @@ export default function Sélecteur({
       }
       <select
         className="fr-select"
+        defaultValue={valeurSélectionnéeParDéfaut || ''}
         name={htmlName}
-        onChange={(événement) => {
-          setValeur(événement.currentTarget.value);
-        }}
-        value={valeur || ''}
+        onChange={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.value as T)}
+        {...register}
       >
-        <option
-          disabled
-          hidden
-          value=""
-        >
-          { texteFantôme }
-        </option>
+        {
+          !!texteFantôme &&
+          <option
+            disabled
+            hidden
+            value=''
+          >
+            { texteFantôme }
+          </option>
+        }
         {
           options.map(option => (
             <option
+              disabled={option.désactivée ?? false}
+              hidden={option.cachée ?? false}
               key={option.valeur}
               value={option.valeur}
             >
