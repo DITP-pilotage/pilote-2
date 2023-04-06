@@ -31,7 +31,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
         Météo et synthèse des résultats 
       </Titre>
       <Bloc titre={nomTerritoireSélectionné}>
-        <div className='fr-px-1w'>
+        <div className='fr-px-1w fr-py-2w'>
           {
             modeÉdition ?
               <SynthèseDesRésultatsFormulaire
@@ -44,13 +44,15 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
               <>
                 {
                   !!alerte &&
+                  <div className='fr-mb-4w'>
                     <Alerte
                       message={alerte.message}
                       type={alerte.type}
                     />
+                  </div>
                 }
-                <div className="fr-grid-row fr-py-2w">
-                  <div className=" fr-col-12 fr-col-lg-2 conteneur-météo">
+                <div className="conteneur">
+                  <div className="conteneur-météo fr-mb-3w fr-mb-md-0">
                     <MétéoBadge météo={synthèseDesRésultats?.météo ?? 'NON_RENSEIGNEE'} />
                     {
                       !!synthèseDesRésultats &&
@@ -59,7 +61,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
                       </div>
                     }
                   </div>
-                  <div className="fr-col-12 fr-col-lg-10 fr-pl-md-3w">
+                  <div className="fr-pl-md-3w">
                     {
                       synthèseDesRésultats
                         ?
@@ -74,23 +76,25 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
                             Aucune synthèse des résultats.
                           </p>
                     }
-                    <div className='actions fr-mt-4w'>
-                      {
+                  </div>
+                </div>
+                <div className='fr-grid-row fr-grid-row--right'>
+                  <div className='fr-col-12 actions fr-mt-1w'>
+                    {
                         !!synthèseDesRésultats && <HistoriqueDeLaSynthèseDesRésultats />
                       }
-                      <button
-                        className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
-                        onClick={activerLeModeÉdition}
-                        type='button'
-                      >
-                        <span
-                          aria-hidden="true"
-                          className="fr-icon-edit-line fr-mr-1w"
-                        />
-                        {}
-                        Modifier
-                      </button>
-                    </div>
+                    <button
+                      className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
+                      onClick={activerLeModeÉdition}
+                      type='button'
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="fr-icon-edit-line fr-mr-1w"
+                      />
+                      {}
+                      Modifier
+                    </button>
                   </div>
                 </div>
               </>

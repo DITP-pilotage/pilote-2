@@ -18,6 +18,11 @@ const SynthèseDesRésultatsStyled = styled.section`
   .bouton-modifier {
     border-radius: 4px
   }
+
+  .conteneur {
+    display: grid;
+    grid-template-columns: auto 1fr;
+  }
 `;
 
 export default SynthèseDesRésultatsStyled;
