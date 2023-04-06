@@ -30,7 +30,6 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     this.prisma = prisma;
   }
 
-
   private mapperVersDomaine(commentairePrisma: commentaire) {
     return {
       id: commentairePrisma.id,
@@ -49,8 +48,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return this.mapperVersDomaine(commentairesByType[0]);
   }
 
-
-  async récupérerLePlusRécent(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Commentaires> {
+  async récupérerLesPlusRécentsParType(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Commentaires> {
     const commentaires: commentaire[] = await this.prisma.commentaire.findMany({
       where: {
         chantier_id: chantierId,
