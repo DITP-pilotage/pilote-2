@@ -1,6 +1,6 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import { chantier } from '@prisma/client';
 import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
-/* eslint-disable sonarjs/no-duplicate-string */
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { objectEntries } from '@/client/utils/objects/objects';

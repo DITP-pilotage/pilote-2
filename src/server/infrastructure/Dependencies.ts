@@ -30,6 +30,8 @@ import { FetchHttpClient } from '@/server/import-indicateur/infrastructure/adapt
 import {
   PrismaMesureIndicateurRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
+import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepository';
+import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
 import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
 
 class Dependencies {
@@ -53,6 +55,8 @@ class Dependencies {
 
   private readonly _validerFichierIndicateurImporteUseCase: ValiderFichierIndicateurImporteUseCase;
 
+  private readonly _utilisateurRepository: UtilisateurRepository;
+
   constructor() {
     logger.debug('Using database.');
     const prisma = new PrismaClient();
@@ -65,6 +69,7 @@ class Dependencies {
     this._commentaireRepository = new CommentaireSQLRepository(prisma);
     this._objectifRepository = new ObjectifSQLRepository(prisma);
     this._habilitationRepository = new HabilitationSQLRepository(prisma);
+    this._utilisateurRepository = new UtilisateurSQLRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
@@ -113,6 +118,10 @@ class Dependencies {
 
   getHabilitationRepository() {
     return this._habilitationRepository;
+  }
+
+  getUtilisateurRepository() {
+    return this._utilisateurRepository;
   }
 }
 

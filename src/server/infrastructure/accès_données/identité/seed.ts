@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaClient } from '@prisma/client';
 
-export type InputScopeHabilitations = {
+export type InputScopesHabilitations = {
   code: string,
   nom: string,
 };
@@ -23,11 +23,11 @@ type withId = { id: string };
 
 export async function créerUtilisateursAvecDroits(
   prisma: PrismaClient,
-  inputScopeHabilitations: InputScopeHabilitations[],
+  inputScopeHabilitations: InputScopesHabilitations[],
   inputProfils: InputProfil[],
   inputUtilisateurs: InputUtilisateur[],
 ) {
-  const donnéesScopeHabilitations: Record<string, InputScopeHabilitations & withId> = {};
+  const donnéesScopeHabilitations: Record<string, InputScopesHabilitations & withId> = {};
   for (const input of inputScopeHabilitations) {
     donnéesScopeHabilitations[input.code] = { id: uuidv4(), ...input };
   }
@@ -62,6 +62,5 @@ export async function créerUtilisateursAvecDroits(
       profilScopeHabilitations.push({ profil_id, habilitation_scope_id });
     }
   }
-
   await prisma.profil_habilitation.createMany({ data: profilScopeHabilitations });
 }

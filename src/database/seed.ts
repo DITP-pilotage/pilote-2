@@ -26,7 +26,7 @@ import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/
 import { EQUIPE_DIR_PROJET, DIR_PROJET, DITP_ADMIN, DITP_PILOTAGE, PM } from '@/server/domain/identité/Profil';
 import {
   créerUtilisateursAvecDroits,
-  InputProfil,
+  InputProfil, InputScopesHabilitations,
   InputUtilisateur,
 } from '@/server/infrastructure/accès_données/identité/seed';
 import {
@@ -162,7 +162,7 @@ class DatabaseSeeder {
   }
 
   private async _créerDroits() {
-    const inputScopesHabilitations = [
+    const inputScopesHabilitations: InputScopesHabilitations[] = [
       { code: SCOPE_LECTURE, nom: 'Lecture' },
       { code: SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES, nom: 'Saisie de la synthèse et des commentaires' },
       { code: SCOPE_SAISIE_INDICATEURS, nom: 'Saisie des indicateurs de chantiers' },

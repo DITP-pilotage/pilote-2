@@ -1,14 +1,15 @@
 import { getServerSession } from 'next-auth/next';
 import { GetServerSidePropsContext } from 'next';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import PageChantier from '@/components/PageChantier/PageChantier';
-import { dependencies } from '@/server/infrastructure/Dependencies';
+
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { ChantierId, SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { Objectifs } from '@/server/domain/objectif/Objectif.interface';
 
-import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 import logger from '@/server/infrastructure/logger';
-import { ChantierId, SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
+import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 
 interface NextPageChantierProps {
   chantier: Chantier

@@ -130,17 +130,28 @@ const credentialsProvider = CredentialsProvider({
   // e.g. domain, username, password, 2FA token, etc.
   // You can pass any HTML attribute to the <input> tag through the object.
   credentials: {
-    username: { label: 'Utilisateur', type: 'text', placeholder: 'alicerichard' },
+    username: { label: 'Email', type: 'text', placeholder: 'alicerichard@example.com' },
     password: { label: 'Mot de Passe', type: 'password' },
   },
 
   async authorize(credentials, _req): Promise<User | null> {
-    const username = credentials?.username;
     const password = credentials?.password;
-    if (username != config.devUsername || password != config.devPassword) {
+    const username = credentials?.username;
+    if (!username || password != config.devPassword) {
+      return null;
+
+    }
+    const utilisateurRepository = dependencies.getUtilisateurRepository();
+    const utilisateur = await utilisateurRepository.findOneByEmail(username);
+    if (!utilisateur) {
       return null;
     }
-    return { id: '1', name: username, email: config.devUsername };
+
+    return {
+      id: utilisateur.id,
+      name: utilisateur.email,
+      email: utilisateur.email,
+    };
   },
 });
 

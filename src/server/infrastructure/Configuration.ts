@@ -15,8 +15,6 @@ export class Configuration {
 
   public readonly redirectUri: string;
 
-  public readonly devUsername: string | undefined;
-
   public readonly devPassword: string | undefined;
 
   public readonly isUsingDevCredentials: boolean;
@@ -26,15 +24,8 @@ export class Configuration {
   constructor() {
     this.logLevel = process.env.LOG_LEVEL || 'info';
 
-    const devCredentials = process.env.DEV_CREDENTIALS;
-    if (devCredentials) {
-      this.isUsingDevCredentials = true;
-      const parts = devCredentials.split(':');
-      this.devUsername = parts[0];
-      this.devPassword = parts[1];
-    } else {
-      this.isUsingDevCredentials = false;
-    }
+    this.devPassword = process.env.DEV_PASSWORD;
+    this.isUsingDevCredentials = Boolean(this.devPassword);
     if (process.env.DEV_SESSION_MAX_AGE_IN_SECONDS) {
       this.devSessionMaxAge = Number.parseInt(process.env.DEV_SESSION_MAX_AGE_IN_SECONDS);
     }
