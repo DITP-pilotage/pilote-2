@@ -1,9 +1,9 @@
-import { ReportErrorTask, ReportResourceTask, ReportTask } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
+import { ReportErrorTask, ReportResourceTask, ReportResourceTaskData, ReportTask } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
 
 export class ReportResourceTaskBuilder {
-  private data: string[][] = [];
+  private data: ReportResourceTaskData = [];
 
-  avecData(data: string[][]) {
+  avecData(data: ReportResourceTaskData) {
     this.data = data;
 
     return this;

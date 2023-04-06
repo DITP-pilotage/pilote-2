@@ -4,7 +4,7 @@ import {
 } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
 import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
-import { ReportTask } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
+import { ReportResourceTaskData, ReportTask } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
 
 interface Dependencies {
   httpClient: HttpClient
@@ -105,6 +105,41 @@ const extraireLesDonnees = (task: ReportTask): string[][] => {
   return data;
 };
 
+enum EnTeteFichierEnum {
+  INDIC_ID = 'indic_id',
+  ZONE_ID = 'zone_id',
+  METRIC_DATE = 'metric_date',
+  METRIC_TYPE = 'metric_type',
+  METRIC_VALUE = 'metric_value',
+}
+
+interface PositionEnTeteDuFichier {
+  indicId: number
+  zoneId: number
+  metricDate: number
+  metricType: number
+  metricValue: number
+}
+
+const recupererLesPositionsDesEnTetes = (donnees: ReportResourceTaskData): PositionEnTeteDuFichier => {
+  const enTetes = donnees[0];
+
+  return {
+    indicId: enTetes.indexOf(EnTeteFichierEnum.INDIC_ID),
+    zoneId: enTetes.indexOf(EnTeteFichierEnum.ZONE_ID),
+    metricDate: enTetes.indexOf(EnTeteFichierEnum.METRIC_DATE),
+    metricType: enTetes.indexOf(EnTeteFichierEnum.METRIC_TYPE),
+    metricValue: enTetes.indexOf(EnTeteFichierEnum.METRIC_VALUE),
+  };
+};
+
+const extraireLeContenuDuFichier = (tasks: ReportTask[]) => {
+  const enTetes = recupererLesPositionsDesEnTetes(tasks[0].resource.data);
+  const donnees = tasks.map(extraireLesDonnees);
+
+  return { enTetes, donnees };
+};
+
 export class ValidataFichierIndicateurValidationService implements FichierIndicateurValidationService {
   private httpClient: HttpClient;
 
@@ -119,19 +154,18 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
   }: ValiderFichierPayload): Promise<DetailValidationFichier> {
     const report = await this.httpClient.post({ cheminCompletDuFichier, nomDuFichier, schema });
 
-    if (report.valid) {
-      const donneesSansHeader = report.tasks.map(extraireLesDonnees);
+    if (report.valid && report.tasks[0].resource) {
+      const { enTetes, donnees } = extraireLeContenuDuFichier(report.tasks);
 
-      return DetailValidationFichier.creerDetailValidationFichier({
-        estValide: report.valid,
-        listeIndicateursData: donneesSansHeader.flat().map(donnee => IndicateurData.createIndicateurData({
-          indicId: donnee[0],
-          zoneId: donnee[1],
-          metricDate: donnee[2],
-          metricType: donnee[3],
-          metricValue: `${donnee[4]}`,
-        })),
-      });
+      const listeIndicateursData = donnees.flat().map(donnee => IndicateurData.createIndicateurData({
+        indicId: donnee[enTetes.indicId],
+        zoneId: donnee[enTetes.zoneId],
+        metricDate: donnee[enTetes.metricDate],
+        metricType: donnee[enTetes.metricType],
+        metricValue: `${donnee[enTetes.metricValue]}`,
+      }));
+
+      return DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, listeIndicateursData });
     }
 
     const listeErreursValidation = report.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
