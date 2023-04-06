@@ -19,10 +19,10 @@ SELECT
     zone_id,
     MAX(valeur) FILTER (where type_mesure = 'vi') as valeur_initiale,
     COALESCE(MAX(valeur) FILTER (where type_mesure = 'va'), MAX(valeur) FILTER (where type_mesure = 'vi')) as valeur_actuelle,
-    MAX(valeur) FILTER (where type_mesure = 'vc') as valeur_cible,
+    MAX(valeur) FILTER (where type_mesure = 'vc') as valeur_cible, -- dernière valeur cible dispo
     MAX(date_releve) FILTER (where type_mesure = 'vi') as date_valeur_initiale,
     MAX(date_releve) FILTER (where type_mesure = 'va') as date_valeur_actuelle,
-    MAX(date_releve) FILTER (where type_mesure = 'vc') as date_valeur_cible,
+    MAX(date_releve) FILTER (where type_mesure = 'vc') as date_valeur_cible, -- dernière valeur cible dispo
     MAX(departement_code) as departement_code,
     MAX(region_code) as region_code,
     MAX(national_code) as national_code
