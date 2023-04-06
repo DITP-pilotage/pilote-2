@@ -2,170 +2,208 @@
 import HabilitationSQLRepository from '@/server/infrastructure/accès_données/identité/HabilitationSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import HabilitationRepository from '@/server/domain/identité/HabilitationRepository';
-import { SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
+import {
+  SCOPE_LECTURE,
+  SCOPE_SAISIE_INDICATEURS,
+  SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES,
+} from '@/server/domain/identité/Habilitation';
+import {
+  créerProfilsEtHabilitations,
+  créerUtilisateurs,
+  INPUT_PROFILS,
+  INPUT_SCOPES_HABILITATIONS,
+  InputUtilisateur,
+  ProfilIdByCode,
+} from '@/server/infrastructure/accès_données/identité/seed';
+import {
+  CABINET_MINISTERIEL,
+  CABINET_MTFP,
+  DIR_ADMIN_CENTRALE,
+  DIR_PROJET,
+  DITP_ADMIN,
+  DITP_PILOTAGE,
+  EQUIPE_DIR_PROJET,
+  PM_ET_CABINET,
+  PR,
+  SECRETARIAT_GENERAL,
+} from '@/server/domain/identité/Profil';
+import ChantierRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
 
 describe('HabilitationSQLRepository', () => {
-  it('récupère une habilitation sur un chantier', async () => {
-    // GIVEN
-    const { id: profil_id } = await prisma.profil.create({
-      data: { nom: 'Directeur de chantier', code: 'DIRC' },
-    });
+  let profilIdByCode: ProfilIdByCode;
+  const tousScopes = [SCOPE_LECTURE, SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES, SCOPE_SAISIE_INDICATEURS];
 
-    const email = 'toto@example.com';
-    const { id: utilisateur_id } = await prisma.utilisateur.create({
-      data: { email, profil_id },
-    });
+  beforeEach(async () => {
+    profilIdByCode = await créerProfilsEtHabilitations(prisma, INPUT_PROFILS, INPUT_SCOPES_HABILITATIONS);
 
-    const chantier_id = 'CH-001';
-    await prisma.utilisateur_chantier.create({
-      data: { utilisateur_id, chantier_id },
-    });
+    const chantierRows = ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005']
+      .map(id => new ChantierRowBuilder().avecId(id).build());
+    await prisma.chantier.createMany({ data: chantierRows });
 
-    const { id: habilitation_scope_id } = await prisma.habilitation_scope.create({
-      data: { code: SCOPE_LECTURE, nom: 'Scope de lecture sur un chantier' },
-    });
+    const inputUtilisateurs: InputUtilisateur[] = [
+      { email: 'ditp.admin@example.com', profilCode: DITP_ADMIN, chantierIds: [] },
+      { email: 'ditp.pilotage@example.com', profilCode: DITP_PILOTAGE, chantierIds: [] },
+      { email: 'premiere.ministre@example.com', profilCode: PM_ET_CABINET, chantierIds: [] },
+      { email: 'presidence@example.com', profilCode: PR, chantierIds: [] },
+      { email: 'cabinet.mtfp@example.com', profilCode: CABINET_MTFP, chantierIds: [] },
+      { email: 'cabinet.ministeriel@example.com', profilCode: CABINET_MINISTERIEL, chantierIds: ['CH-001'] },
+      { email: 'direction.admin.centrale@example.com', profilCode: DIR_ADMIN_CENTRALE, chantierIds: ['CH-002'] },
+      { email: 'secretariat.general@example.com', profilCode: SECRETARIAT_GENERAL, chantierIds: ['CH-003'] },
+      { email: 'directeur.projet1@example.com', profilCode: DIR_PROJET, chantierIds: ['CH-001'] },
+      { email: 'equipe.dir.projet1@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds: ['CH-001'] },
+      { email: 'directeur.projet2@example.com', profilCode: DIR_PROJET, chantierIds: ['CH-001', 'CH-002'] },
+      { email: 'equipe.dir.projet2@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds: ['CH-001', 'CH-002'] },
+    ];
 
-    await prisma.profil_habilitation.create({
-      data: { profil_id, habilitation_scope_id },
-    });
-
-    const expectedHabilitation = {
-      chantiers: { [chantier_id]: [SCOPE_LECTURE] },
-    };
-
-    // WHEN
-    const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
-    const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(email);
-
-    // THEN
-    expect(result).toStrictEqual(expectedHabilitation);
+    await créerUtilisateurs(prisma, inputUtilisateurs, profilIdByCode);
   });
 
-  it('récupère une habilitation sur deux chantier', async () => {
-    // GIVEN
-    const { id: profil_id } = await prisma.profil.create({
-      data: { nom: 'Directeur de chantier', code: 'DIRC' },
+  describe('un admin DITP', () => {
+    it('a tous les droits sur tous les chantiers', async () => {
+      // WHEN
+      const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
+      const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur('ditp.admin@example.com');
+
+      // THEN
+      expect(result).toStrictEqual({
+        chantiers: {
+          'CH-001': tousScopes,
+          'CH-002': tousScopes,
+          'CH-003': tousScopes,
+          'CH-004': tousScopes,
+          'CH-005': tousScopes,
+        },
+      });
     });
-
-    const email = 'toto@example.com';
-    const { id: utilisateur_id } = await prisma.utilisateur.create({
-      data: { email, profil_id },
-    });
-
-    const chantier_id = 'CH-001';
-    await prisma.utilisateur_chantier.createMany({
-      data: [
-        { utilisateur_id, chantier_id: chantier_id },
-        { utilisateur_id, chantier_id: 'CH-002' },
-      ],
-    });
-
-    const { id: habilitation_scope_id } = await prisma.habilitation_scope.create({
-      data: { code: SCOPE_LECTURE, nom: 'Scope de lecture sur un chantier' },
-    });
-
-    await prisma.profil_habilitation.create({
-      data: { profil_id, habilitation_scope_id },
-    });
-
-    const expectedHabilitation = {
-      chantiers: {
-        'CH-001': [SCOPE_LECTURE],
-        'CH-002': [SCOPE_LECTURE],
-      },
-    };
-
-    // WHEN
-    const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
-    const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(email);
-
-    // THEN
-    expect(result).toStrictEqual(expectedHabilitation);
-  });
-  it('récupère deux habilitations sur un chantier', async () => {
-    // GIVEN
-    const { id: profil_id } = await prisma.profil.create({
-      data: { nom: 'Directeur de chantier', code: 'DIRC' },
-    });
-
-    const email = 'toto@example.com';
-    const { id: utilisateur_id } = await prisma.utilisateur.create({
-      data: { email, profil_id },
-    });
-
-    const chantier_id = 'CH-001';
-    await prisma.utilisateur_chantier.create({
-      data: { utilisateur_id, chantier_id },
-    });
-
-    const { id: habilitationScopeRowId1 } = await prisma.habilitation_scope.create({
-      data: { code: SCOPE_LECTURE, nom: 'Scope de lecture sur un chantier' },
-    });
-    const { id: habilitationScopeRowId2 } = await prisma.habilitation_scope.create({
-      data: { code: 'écriture', nom: "Scope d'écriture sur un chantier" },
-    });
-
-    await prisma.profil_habilitation.createMany({
-      data: [
-        { profil_id, habilitation_scope_id: habilitationScopeRowId1 },
-        { profil_id, habilitation_scope_id: habilitationScopeRowId2 },
-      ],
-    });
-
-    const expectedHabilitation = {
-      chantiers: { [chantier_id]: ['écriture', SCOPE_LECTURE] },
-    };
-
-    // WHEN
-    const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
-    const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(email);
-
-    // THEN
-    expect(result).toStrictEqual(expectedHabilitation);
   });
 
-  it('récupère deux habilitations sur un chantier', async () => {
-    // GIVEN
-    const { id: profil_id } = await prisma.profil.create({
-      data: { nom: 'Directeur de chantier', code: 'DIRC' },
+  for (const [description, email] of [
+    ['un·e équipier·e DITP', 'ditp.pilotage@example.com'],
+    ['un·e premier·ère ministre', 'premiere.ministre@example.com'],
+    ['la présidence', 'presidence@example.com'],
+    ['un cabinet MTFP', 'cabinet.mtfp@example.com'],
+  ]) {
+    // eslint-disable-next-line @typescript-eslint/no-loop-func
+    describe(description, () => {
+      it('a les droits de lecture sur tous les chantiers', async () => {
+        // WHEN
+        const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
+        const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(email);
+
+        // THEN
+        expect(result).toStrictEqual({
+          chantiers: {
+            'CH-001': [SCOPE_LECTURE],
+            'CH-002': [SCOPE_LECTURE],
+            'CH-003': [SCOPE_LECTURE],
+            'CH-004': [SCOPE_LECTURE],
+            'CH-005': [SCOPE_LECTURE],
+          },
+        });
+      });
+    });
+  }
+
+  for (const [description, email, chantierId] of [
+    ['un cabinet ministériel', 'cabinet.ministeriel@example.com', 'CH-001'],
+    ['une direction admin centrale', 'direction.admin.centrale@example.com', 'CH-002'],
+  ]) {
+    // eslint-disable-next-line @typescript-eslint/no-loop-func
+    describe(description, () => {
+      it('a les droits de lecture sur une liste de chantiers', async () => {
+        // GIVEN
+        const expectedResult = {
+          chantiers: { [chantierId]: [SCOPE_LECTURE] },
+        };
+        // WHEN
+        const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
+        const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(email);
+
+        // THEN
+        expect(result).toStrictEqual(expectedResult);
+      });
+    });
+  }
+
+  describe('le secrétariat général', () => {
+    it('a les droits de lecture sur une liste de chantiers', async () => {
+      // GIVEN
+      const expectedResult = {
+        chantiers: { 'CH-003': [SCOPE_LECTURE, SCOPE_SAISIE_INDICATEURS] },
+      };
+      // WHEN
+      const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
+      const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur('secretariat.general@example.com');
+
+      // THEN
+      expect(result).toStrictEqual(expectedResult);
+    });
+  });
+
+  describe('un directeur de projet', () => {
+    it('avec habilitation sur un chantier', async () => {
+      // WHEN
+      const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
+      const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur('directeur.projet1@example.com');
+
+      // THEN
+      expect(result).toStrictEqual({
+        chantiers: { 'CH-001': tousScopes },
+      });
     });
 
-    const email = 'toto@example.com';
-    const { id: utilisateur_id } = await prisma.utilisateur.create({
-      data: { email, profil_id },
+    it('avec habilitations sur deux chantiers', async () => {
+      // GIVEN
+      const expectedHabilitation = {
+        chantiers: { 'CH-001': tousScopes, 'CH-002': tousScopes },
+      };
+
+      // WHEN
+      const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
+      const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur('directeur.projet2@example.com');
+
+      // THEN
+      expect(result).toStrictEqual(expectedHabilitation);
+    });
+  });
+
+  describe('un équipier de projet', () => {
+    it('avec habilitation sur un chantier', async () => {
+      // WHEN
+      const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
+      const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur('equipe.dir.projet1@example.com');
+
+      // THEN
+      expect(result).toStrictEqual({
+        chantiers: { 'CH-001': tousScopes },
+      });
     });
 
-    const chantier_id = 'CH-001';
-    await prisma.utilisateur_chantier.create({
-      data: {
-        utilisateur_id,
-        chantier_id: chantier_id,
-      },
+    it('avec habilitations sur deux chantiers', async () => {
+      // GIVEN
+      const expectedHabilitation = {
+        chantiers: { 'CH-001': tousScopes, 'CH-002': tousScopes },
+      };
+
+      // WHEN
+      const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
+      const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur('equipe.dir.projet2@example.com');
+
+      // THEN
+      expect(result).toStrictEqual(expectedHabilitation);
     });
+  });
 
-    const { id: habilitationScopeRowId1 } = await prisma.habilitation_scope.create({
-      data: { code: SCOPE_LECTURE, nom: 'Scope de lecture sur un chantier' },
+  describe('un email non trouvé', () => {
+    it("n'a aucun droit sur aucun chantier", async () => {
+      // WHEN
+      const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
+      const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur('existe.pas@example.com');
+
+      // THEN
+      expect(result).toStrictEqual({
+        chantiers: {},
+      });
     });
-    const { id: habilitationScopeRowId2 } = await prisma.habilitation_scope.create({
-      data: { code: 'écriture', nom: "Scope d'écriture sur un chantier" },
-    });
-
-    await prisma.profil_habilitation.createMany({
-      data: [
-        { profil_id, habilitation_scope_id: habilitationScopeRowId1 },
-        { profil_id, habilitation_scope_id: habilitationScopeRowId2 },
-      ],
-    });
-
-    const expectedHabilitation = {
-      chantiers: { [chantier_id]: ['écriture', SCOPE_LECTURE] },
-    };
-
-    // WHEN
-    const habilitationRepository: HabilitationRepository = new HabilitationSQLRepository(prisma);
-    const result = await habilitationRepository.récupèreHabilitationsPourUtilisateur(email);
-
-    // THEN
-    expect(result).toStrictEqual(expectedHabilitation);
   });
 });

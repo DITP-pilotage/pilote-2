@@ -54,7 +54,7 @@ export const INPUT_PROFILS: InputProfil[] = [
   { code: EQUIPE_DIR_PROJET, nom: 'Équipe de Directeur de projet', aAccesTousChantiers: false, habilitationScopeCodes: tousScopes },
 ];
 
-type ProfilIdByCode = Record<string, string>;
+export type ProfilIdByCode = Record<string, string>;
 
 export async function créerProfilsEtHabilitations(
   prisma: PrismaClient,
