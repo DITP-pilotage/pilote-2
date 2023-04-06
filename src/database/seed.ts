@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-top-level-await */
 import {
   axe,
   chantier,
@@ -36,7 +35,8 @@ import {
   SECRETARIAT_GENERAL,
 } from '@/server/domain/identité/Profil';
 import {
-  créerUtilisateursAvecDroits,
+  créerProfilsEtHabilitations,
+  créerUtilisateurs,
   INPUT_PROFILS,
   INPUT_SCOPES_HABILITATIONS,
   InputUtilisateur,
@@ -71,7 +71,7 @@ class DatabaseSeeder {
     await this._créerCommentaires();
     await this._créerObjectifs();
     await this._créerIndicateurs();
-    await this._créerDroits();
+    await this._créerUtilisateursEtDroits();
   }
 
   private async _créerAxes() {
@@ -168,10 +168,8 @@ class DatabaseSeeder {
     await prisma.indicateur.createMany({ data: this._indicateurs });
   }
 
-  private async _créerDroits() {
-    // noinspection TypeScriptValidateTypes
-    const chantiersRows = await prisma.chantier.findMany({ distinct: ['id'], select: { id: true }, take: 10 });
-    const chantierIds = chantiersRows.map(it => it.id);
+  private async _créerUtilisateursEtDroits() {
+    const chantierIds = await this._getSomeChantierIds();
     const inputUtilisateurs: InputUtilisateur[] = [
       { email: 'ditp.admin@example.com', profilCode: DITP_ADMIN, chantierIds: [] },
       { email: 'ditp.pilotage@example.com', profilCode: DITP_PILOTAGE, chantierIds: [] },
@@ -185,7 +183,14 @@ class DatabaseSeeder {
       { email: 'equipe.dir.projet@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds },
     ];
 
-    await créerUtilisateursAvecDroits(prisma, INPUT_SCOPES_HABILITATIONS, INPUT_PROFILS, inputUtilisateurs);
+    const profilIdByCode = await créerProfilsEtHabilitations(prisma, INPUT_PROFILS, INPUT_SCOPES_HABILITATIONS);
+    await créerUtilisateurs(prisma, inputUtilisateurs, profilIdByCode);
+  }
+
+  private async _getSomeChantierIds() {
+    // noinspection TypeScriptValidateTypes
+    const chantiersRows = await prisma.chantier.findMany({ distinct: ['id'], select: { id: true }, take: 10 });
+    return chantiersRows.map(it => it.id);
   }
 }
 

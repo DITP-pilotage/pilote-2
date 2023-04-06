@@ -54,7 +54,13 @@ export const INPUT_PROFILS: InputProfil[] = [
   { code: EQUIPE_DIR_PROJET, nom: 'Équipe de Directeur de projet', aAccesTousChantiers: false, habilitationScopeCodes: tousScopes },
 ];
 
-export async function créerProfilsEtHabilitations(prisma: PrismaClient, inputProfils: InputProfil[], inputScopesHabilitations: InputScopesHabilitations[]) {
+type ProfilIdByCode = Record<string, string>;
+
+export async function créerProfilsEtHabilitations(
+  prisma: PrismaClient,
+  inputProfils: InputProfil[],
+  inputScopesHabilitations: InputScopesHabilitations[],
+): Promise<ProfilIdByCode> {
   const donnéesScopeHabilitations: Record<string, InputScopesHabilitations & withId> = {};
   for (const input of inputScopesHabilitations) {
     donnéesScopeHabilitations[input.code] = { id: uuidv4(), ...input };
@@ -69,31 +75,6 @@ export async function créerProfilsEtHabilitations(prisma: PrismaClient, inputPr
     data: Object.values(donnéesProfils)
       .map(it => ({ id: it.id, code: it.code, nom: it.nom, a_acces_tous_chantiers: it.aAccesTousChantiers })),
   });
-  return { donnéesProfils, donnéesScopeHabilitations };
-}
-
-export async function créerUtilisateursAvecDroits(
-  prisma: PrismaClient,
-  inputScopeHabilitations: InputScopesHabilitations[],
-  inputProfils: InputProfil[],
-  inputUtilisateurs: InputUtilisateur[],
-) {
-  const  { donnéesProfils, donnéesScopeHabilitations } = await créerProfilsEtHabilitations(prisma, inputProfils, inputScopeHabilitations);
-
-  const donnéesUtilisateurs: (InputUtilisateur & withId)[] = [];
-  for (const input of inputUtilisateurs) {
-    donnéesUtilisateurs.push({ id: uuidv4(), ...input });
-  }
-  await prisma.utilisateur.createMany({ data: donnéesUtilisateurs
-    .map(it => ({ id: it.id, email: it.email, profil_id: donnéesProfils[it.profilCode].id })) });
-
-  const utilisateurChantiers = [];
-  for (const { id: utilisateur_id, chantierIds } of donnéesUtilisateurs) {
-    for (const chantier_id of chantierIds) {
-      utilisateurChantiers.push({ utilisateur_id, chantier_id });
-    }
-  }
-  await prisma.utilisateur_chantier.createMany({ data: utilisateurChantiers });
 
   const profilScopeHabilitations = [];
   for (const { id: profil_id, habilitationScopeCodes } of Object.values(donnéesProfils)) {
@@ -103,4 +84,31 @@ export async function créerUtilisateursAvecDroits(
     }
   }
   await prisma.profil_habilitation.createMany({ data: profilScopeHabilitations });
+
+  const result: ProfilIdByCode = {};
+  for (const [code, { id }] of Object.entries(donnéesProfils)) {
+    result[code] = id;
+  }
+  return result;
+}
+
+export async function créerUtilisateurs(
+  prisma: PrismaClient,
+  inputUtilisateurs: InputUtilisateur[],
+  profilIdByCode: Record<string, string>,
+) {
+  const donnéesUtilisateurs: (InputUtilisateur & withId)[] = [];
+  for (const input of inputUtilisateurs) {
+    donnéesUtilisateurs.push({ id: uuidv4(), ...input });
+  }
+  await prisma.utilisateur.createMany({ data: donnéesUtilisateurs
+    .map(it => ({ id: it.id, email: it.email, profil_id: profilIdByCode[it.profilCode] })) });
+
+  const utilisateurChantiers = [];
+  for (const { id: utilisateur_id, chantierIds } of donnéesUtilisateurs) {
+    for (const chantier_id of chantierIds) {
+      utilisateurChantiers.push({ utilisateur_id, chantier_id });
+    }
+  }
+  await prisma.utilisateur_chantier.createMany({ data: utilisateurChantiers });
 }

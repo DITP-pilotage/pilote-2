@@ -83,6 +83,7 @@
     "unicorn/no-negated-condition": "off",
     "unicorn/no-null": "off",
     "unicorn/no-array-callback-reference": "off",
+    "unicorn/prefer-top-level-await": "off",
     "react/jsx-no-bind": "off",
     "react/jsx-no-literals": "off",
     "react/forbid-component-props": "off",
