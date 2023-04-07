@@ -96,4 +96,18 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
 
     return this.mapperVersDomaine(commentaireCréé);
   }
+  
+  async récupérerLePlusRécent(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<Commentaire> {
+    const commentaireLePlusRécent = await this.prisma.commentaire.findFirst({
+      where: {
+        chantier_id: chantierId,
+        maille: CODES_MAILLES[maille],
+        code_insee: codeInsee,
+        type: CODES_TYPES_COMMENTAIRES[type],
+      },
+      orderBy: { date: 'desc' },
+    });
+
+    return commentaireLePlusRécent ? this.mapperVersDomaine(commentaireLePlusRécent) : null;
+  }
 }

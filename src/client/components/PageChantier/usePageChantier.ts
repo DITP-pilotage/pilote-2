@@ -23,11 +23,12 @@ export default function usePageChantier(chantier: Chantier) {
     { refetchOnWindowFocus: false },
   );
 
-  const { data: commentaires } = api.commentaire.récupérerLesPlusRécentsParType.useQuery(
+  const { data: commentaires } = api.publication.récupérerLaPlusRécenteParType.useQuery(
     {
       chantierId: chantier.id,
       maille: mailleAssociéeAuTerritoireSélectionné,
       codeInsee: territoireSélectionné.codeInsee,
+      entité: 'commentaires',
     },
     { refetchOnWindowFocus: false },
   );

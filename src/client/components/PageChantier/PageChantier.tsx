@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
-import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
@@ -33,7 +33,8 @@ export default function PageChantier({ chantier, indicateurs, objectifs }: PageC
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-  
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
   return (
     <PageChantierStyled className="flex">
       <BarreLatérale
@@ -93,7 +94,12 @@ export default function PageChantier({ chantier, indicateurs, objectifs }: PageC
             commentaires !== null && (
               <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                 <div className="fr-col-12">
-                  <Commentaires commentaires={commentaires} />
+                  <Commentaires
+                    chantierId={chantier.id} 
+                    codeInsee={territoireSélectionné.codeInsee}
+                    commentaires={commentaires}
+                    maille={mailleAssociéeAuTerritoireSélectionné}
+                  />
                 </div>
               </div>
             )

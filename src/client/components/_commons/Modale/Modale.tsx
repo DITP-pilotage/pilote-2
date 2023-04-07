@@ -4,7 +4,6 @@ import ModaleStyled from './Modale.styled';
 import useModale from './useModale';
 
 export default function Modale({ children, titre, sousTitre, libelléBouton, idHtml, setEstAffichée }: ModaleProps) {
-
   const { modaleRef } = useModale(setEstAffichée);
 
   return (
