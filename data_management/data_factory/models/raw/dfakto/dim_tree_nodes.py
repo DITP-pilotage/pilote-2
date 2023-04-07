@@ -3,14 +3,13 @@ import os
 
 
 def model(dbt, session):
-    dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_2')
+    dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_3')
     dim_tree_nodes = pd.read_csv(
-        f'{dump_dfakto_rp_raw}/dim_tree_nodes_202303091524.csv',
+        f'{dump_dfakto_rp_raw}/dim_tree_nodes_202304051159.csv',
         sep=';'
     )
 
     columns_type = {
-        'tree_node_last_synchronization_date': 'datetime64[ns]',
         'tree_node_last_update_properties_date': 'datetime64[ns]',
         'tree_node_last_update_scorecard_date': 'datetime64[ns]',
         'tree_node_last_scorecard_update_by_anybody_date': 'datetime64[ns]',

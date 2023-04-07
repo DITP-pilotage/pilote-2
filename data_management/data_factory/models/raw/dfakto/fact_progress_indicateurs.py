@@ -3,21 +3,13 @@ import os
 
 
 def model(dbt, session):
-    dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_2')
+    dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_3')
     fact_progress_indicateurs = pd.read_csv(
-        f'{dump_dfakto_rp_raw}/fact_progress.csv',
+        f'{dump_dfakto_rp_raw}/fact_progress_202304051157.csv',
         sep=';'
     )
 
     columns_type = {
-        'valeur_initiale': 'float64',
-        'valeur_actuelle': 'float64',
-        'valeur_cible_intermediaire': 'float64',
-        'valeur_cible_globale': 'float64',
-        'progress_intermediaire': 'float64',
-        'bounded_progress_intermediaire': 'float64',
-        'progress_globale': 'float64',
-        'bounded_progress_globale': 'float64',
         'date_valeur_initiale': 'datetime64',
         'date_valeur_actuelle': 'datetime64',
         'date_valeur_cible_intermediaire': 'datetime64',

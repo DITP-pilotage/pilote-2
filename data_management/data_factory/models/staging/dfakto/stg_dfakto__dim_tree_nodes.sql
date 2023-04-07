@@ -18,7 +18,6 @@ renamed as (
         SUBSTRING(tree_node_code, 1, 6) as code_chantier,
         SUBSTRING(tree_node_code, 8) as zone_code,
         tree_node_status as status,
-        tree_node_last_synchronization_date as last_synchronization_date,
         tree_node_last_update_properties_date as last_update_properties_date,
         tree_node_last_update_scorecard_date as last_update_scorecard_date,
         tree_node_last_scorecard_update_by_anybody_date as last_scorecard_update_by_anybody_date,
