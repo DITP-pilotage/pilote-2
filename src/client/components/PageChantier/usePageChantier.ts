@@ -3,10 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoiresComparésTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { Commentaires } from '@/server/domain/commentaire/Commentaire.interface';
-import { Météo } from '@/server/domain/météo/Météo.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import { InfosChantier } from '@/server/domain/chantier/ChantierRepository.interface';
 import api from '@/server/infrastructure/api/trpc/api';
 
 export default function usePageChantier(chantier: Chantier) {
@@ -16,8 +13,6 @@ export default function usePageChantier(chantier: Chantier) {
   const territoiresComparés = territoiresComparésTerritoiresStore();  
   
   const [détailsIndicateurs, setDétailsIndicateurs] = useState<DétailsIndicateurs | null>(null);
-  const [commentaires, setCommentaires] = useState<Commentaires | null>(null);
-  const [météo, setMétéo] = useState<Météo>('NON_RENSEIGNEE');
 
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     { 
@@ -27,18 +22,15 @@ export default function usePageChantier(chantier: Chantier) {
     },  
     { refetchOnWindowFocus: false },
   );
-  
-  useEffect(() => {
-    fetch(`/api/chantier/${chantier.id}?codeInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
-      .then(réponse => {
-        return réponse.json() as Promise<InfosChantier>;
-      })
-      .then(données => {
-        // TODO améliorer la gestion d'erreur
-        setCommentaires(données?.commentaires ?? null);
-        setMétéo(données?.météo ?? 'NON_RENSEIGNEE');
-      });
-  }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
+
+  const { data: commentaires } = api.commentaire.récupérerLesPlusRécentsParType.useQuery(
+    {
+      chantierId: chantier.id,
+      maille: mailleAssociéeAuTerritoireSélectionné,
+      codeInsee: territoireSélectionné.codeInsee,
+    },
+    { refetchOnWindowFocus: false },
+  );
 
   useEffect(() => {
     if (territoiresComparés.length > 0) return;    
@@ -93,8 +85,7 @@ export default function usePageChantier(chantier: Chantier) {
   return { 
     avancements, 
     détailsIndicateurs, 
-    commentaires, 
-    météo, 
+    commentaires: commentaires ?? null,
     synthèseDesRésultats: synthèseDesRésultats ?? null,
   };
 }

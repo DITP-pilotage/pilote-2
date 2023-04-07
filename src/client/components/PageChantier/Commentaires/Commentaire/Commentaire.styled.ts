@@ -11,7 +11,7 @@ const CommentaireStyled = styled.section`
 
   .actions {
     display: flex;
-    align-self: flex-end;
+    justify-content: end;
   }
 
   .bouton-modifier {

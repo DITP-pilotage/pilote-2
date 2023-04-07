@@ -24,21 +24,22 @@ export default function HistoriqueDUnCommentaire({ type }: HistoriqueDUnCommenta
             </p>
           ) : (
             historiqueDUnCommentaire.map((commentaire, i) => (
-              <Fragment key={commentaire.date}>
-                {
+              commentaire && 
+                <Fragment key={commentaire.id}>
+                  {
                   i !== 0 && (
                     <hr className="fr-mt-4w" />
                   )
                 }
-                <div className="fr-mx-2w">
-                  <Publication
-                    auteur={commentaire.auteur}
-                    contenu={commentaire.contenu}
-                    date={commentaire.date}
-                    messageSiAucunContenu="Le commentaire est vide."
-                  />
-                </div>
-              </Fragment>
+                  <div className="fr-mx-2w">
+                    <Publication
+                      auteur={commentaire.auteur}
+                      contenu={commentaire.contenu}
+                      date={commentaire.date}
+                      messageSiAucunContenu="Le commentaire est vide."
+                    />
+                  </div>
+                </Fragment>
             ))
           )
         }

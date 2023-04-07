@@ -5,19 +5,26 @@ import CommentaireSQLRepository, {
   CODES_TYPES_COMMENTAIRES,
 } from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import { commentairesNull, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { Commentaires, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import CommentaireSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 
 describe('CommentaireSQLRepository', () => {
+  const commentairesNull: Commentaires = {
+    actionsÀValoriser: null,
+    actionsÀVenir: null,
+    freinsÀLever: null,
+    autresRésultatsObtenus: null,
+  };
+  
   describe('récupérerDernierCommentaireParChantierIdEtTerritoire', () => {
     test('Retourne une liste de commentaire vide quand pas de commentaire en base', async () => {
       // GIVEN
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
 
       // WHEN
-      const commentaires = await commentaireRepository.récupérerLePlusRécent('CH-001', 'nationale', 'FR');
+      const commentaires = await commentaireRepository.récupérerLesPlusRécentsParType('CH-001', 'nationale', 'FR');
 
       // THEN
       await expect(commentaires).toStrictEqual(commentairesNull);
@@ -33,6 +40,7 @@ describe('CommentaireSQLRepository', () => {
 
       const commentaires: Prisma.commentaireCreateArgs['data'][] = [
         new CommentaireSQLRowBuilder()
+          .avecId('13')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -43,6 +51,7 @@ describe('CommentaireSQLRepository', () => {
           .build(),
 
         new CommentaireSQLRowBuilder()
+          .avecId('1')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -53,6 +62,7 @@ describe('CommentaireSQLRepository', () => {
           .build(),
 
         new CommentaireSQLRowBuilder()
+          .avecId('12')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -63,6 +73,7 @@ describe('CommentaireSQLRepository', () => {
           .build(),
 
         new CommentaireSQLRowBuilder()
+          .avecId('123')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -73,6 +84,7 @@ describe('CommentaireSQLRepository', () => {
           .build(),
 
         new CommentaireSQLRowBuilder()
+          .avecId('1234')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -83,6 +95,7 @@ describe('CommentaireSQLRepository', () => {
           .build(),
 
         new CommentaireSQLRowBuilder()
+          .avecId('12345')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -97,22 +110,28 @@ describe('CommentaireSQLRepository', () => {
 
 
       // WHEN
-      const result = await commentaireRepository.récupérerLePlusRécent('CH-001', 'nationale', 'FR');
+      const result = await commentaireRepository.récupérerLesPlusRécentsParType('CH-001', 'nationale', 'FR');
 
       // THEN
       expect(result).toStrictEqual({
         freinsÀLever: {
+          id: '1',
+          type: 'freinsÀLever',
           contenu: 'Mon commentaire frein 2023',
           date: '2023-12-31T00:00:00.000Z',
           auteur: 'Jean Bon',
         },
         actionsÀVenir: {
+          id: '12',
+          type: 'actionsÀVenir',
           contenu: 'Mon commentaire action',
           date: '2023-12-30T00:00:00.000Z',
           auteur: 'Jean Nemar',
         },
         actionsÀValoriser: null,
         autresRésultatsObtenus: {
+          id: '1234',
+          type: 'autresRésultatsObtenus',
           contenu: 'Mon commentaire autres résultats en dernier',
           date: '2022-02-28T00:00:00.000Z',
           auteur: 'Jean Christophe',
@@ -132,6 +151,7 @@ describe('CommentaireSQLRepository', () => {
 
       const commentaires: Prisma.commentaireCreateArgs['data'][]  = [
         new CommentaireSQLRowBuilder()
+          .avecId('12345')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -142,6 +162,7 @@ describe('CommentaireSQLRepository', () => {
           .build(),
 
         new CommentaireSQLRowBuilder()
+          .avecId('1235')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -152,6 +173,7 @@ describe('CommentaireSQLRepository', () => {
           .build(),
 
         new CommentaireSQLRowBuilder()
+          .avecId('1234')
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
@@ -162,6 +184,7 @@ describe('CommentaireSQLRepository', () => {
           .build(),
 
         new CommentaireSQLRowBuilder()
+          .avecId('145')
           .avecChantierId(chantierId)
           .avecMaille('départementale')
           .avecCodeInsee('01')
@@ -180,10 +203,15 @@ describe('CommentaireSQLRepository', () => {
       // THEN
       expect(result).toStrictEqual([
         {
+          id: '1235',
+          type: 'freinsÀLever',
           auteur: 'Jean Bon',
           contenu: 'Mon commentaire frein FR 2023',
           date: '2023-12-31T00:00:00.000Z',
-        }, {
+        }, 
+        {
+          id: '12345',
+          type: 'freinsÀLever',
           auteur: 'Jean Bon',
           contenu: 'Mon commentaire frein FR 2022',
           date: '2022-12-31T00:00:00.000Z',
@@ -192,24 +220,52 @@ describe('CommentaireSQLRepository', () => {
     });
   });
 
-  describe('créerNouveauCommentaire', () => {
-    it('Crée le commentaire en base et retourne le détails du commentaire', async () => {
+  describe('créer', () => {
+    test('Crée le commentaire en base', async () => {
       // Given
-      const date = '01/04/2023';
       const chantierId = 'CH-001';
-      const maille: Maille = 'nationale';
-      const codeInsee = 'FR';
-      const typeCommentaire: TypeCommentaire = 'freinsÀLever';
-      const détailsCommentaire = { contenu: 'contenu', date: date, auteur: 'Jhon Do' };
-      const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
-      
-      // WHEN
-      const détailsCommentaireCréé = await commentaireRepository.créerNouveauCommentaire(chantierId, typeCommentaire, maille, codeInsee, détailsCommentaire );
-      
-      // THEN
-      const commentaireCrééEnBase = await prisma.commentaire.findFirst();
-      expect(détailsCommentaireCréé).toStrictEqual({ ...détailsCommentaire, date: new Date(date).toISOString() });
-      expect(commentaireCrééEnBase?.contenu).toEqual(détailsCommentaire.contenu);
+      const maille = 'régionale';
+      const codeInsee = '01';
+      const id = '123';
+      const contenu = 'Quatrième commentaire';
+      const date = new Date('2023-12-31T00:00:00.000Z');
+      const auteur = 'Jean DUPONT';
+      const type = 'freinsÀLever';
+
+      const commentaireRepository = new CommentaireSQLRepository(prisma);
+
+      // When
+      await commentaireRepository.créer(chantierId, maille, codeInsee, id, contenu, auteur, type, date);
+
+      // Then
+      const commentaireCrééeEnBase = await prisma.commentaire.findUnique({ where: { id: id } });
+      expect(commentaireCrééeEnBase?.id).toEqual(id);
+    });
+
+    test('Retourne le commentaire créé', async () => {
+      // Given
+      const chantierId = 'CH-001';
+      const maille = 'régionale';
+      const codeInsee = '01';
+      const id = '123';
+      const contenu = 'Quatrième commentaire';
+      const date = '2023-12-31T00:00:00.000Z';
+      const auteur = 'Jean DUPONT';
+      const type = 'freinsÀLever';
+
+      const commentaireRepository = new CommentaireSQLRepository(prisma);
+
+      // When
+      const commentaireCréée = await commentaireRepository.créer(chantierId, maille, codeInsee, id, contenu, auteur, type, new Date(date));
+
+      // Then
+      expect(commentaireCréée).toStrictEqual({
+        contenu,
+        auteur,
+        date,
+        id,
+        type,
+      });
     });
   });
 });

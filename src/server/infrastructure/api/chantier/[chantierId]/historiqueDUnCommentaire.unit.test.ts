@@ -2,6 +2,7 @@
 import { createMocks } from 'node-mocks-http';
 import RécupérerLHistoriqueDUnCommentaireUseCase
   from '@/server/usecase/commentaire/RécupérerLHistoriqueDUnCommentaireUseCase';
+import CommentaireBuilder from '@/server/domain/commentaire/Commentaire.builder';
 import handleHistoriqueDUnCommentaire from './historiqueDUnCommentaire';
 
 describe('/api/chantier/:chantierId/historique-du-chantier', () => {
@@ -32,17 +33,12 @@ describe('/api/chantier/:chantierId/historique-du-chantier', () => {
       method: 'GET',
       query: { chantierId: 'CH-001', maille: 'départementale', codeInsee: '25', type: 'freinsÀLever' },
     });
+
+    const fauxCommentaires = new CommentaireBuilder().build();
+
     const historiqueDUnCommentaire =  {
       historiqueDUnCommentaire: [
-        {
-          auteur: 'Jean Bon',
-          contenu: 'Mon commentaire 2023',
-          date: '2023-12-31T00:00:00.000Z',
-        }, {
-          auteur: 'Jean Bon',
-          contenu: 'Mon commentaire 2022',
-          date: '2022-12-31T00:00:00.000Z',
-        },
+        fauxCommentaires['freinsÀLever'],
       ],
     };
     const stubRécupérerLHistoriqueDUnCommentaireUseCase = <RécupérerLHistoriqueDUnCommentaireUseCase>{};

@@ -2,7 +2,7 @@ import { commentaire, PrismaClient } from '@prisma/client';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import {
   Commentaires,
-  DétailsCommentaire,
+  Commentaire,
   TypeCommentaire,
 } from '@/server/domain/commentaire/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -30,25 +30,25 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     this.prisma = prisma;
   }
 
-
-  private mapToDomain(commentairePrisma: commentaire) {
+  private mapperVersDomaine(commentairePrisma: commentaire) {
     return {
+      id: commentairePrisma.id,
       contenu: commentairePrisma.contenu,
       date: commentairePrisma.date.toISOString(),
       auteur: commentairePrisma.auteur,
+      type: NOMS_TYPES_COMMENTAIRES[commentairePrisma.type],
     };
   }
 
-  private récupérerPremierCommentairePourUnTypeDonné(commentaires: commentaire[], typeCommentaire: string): DétailsCommentaire | null {
+  private récupérerPremierCommentairePourUnTypeDonné(commentaires: commentaire[], typeCommentaire: string): Commentaire | null {
     const commentairesByType = commentaires.filter((comm) => comm.type == typeCommentaire);
     if (commentairesByType.length === 0) {
       return null;
     }
-    return this.mapToDomain(commentairesByType[0]);
+    return this.mapperVersDomaine(commentairesByType[0]);
   }
 
-
-  async récupérerLePlusRécent(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Commentaires> {
+  async récupérerLesPlusRécentsParType(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Commentaires> {
     const commentaires: commentaire[] = await this.prisma.commentaire.findMany({
       where: {
         chantier_id: chantierId,
@@ -67,7 +67,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     };
   }
 
-  async récupérerHistoriqueDUnCommentaire(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<DétailsCommentaire[]> {
+  async récupérerHistoriqueDUnCommentaire(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<Commentaire[]> {
     const commentaires: commentaire[] = await this.prisma.commentaire.findMany({
       where: {
         chantier_id: chantierId,
@@ -78,10 +78,10 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
       orderBy: { date: 'desc' },
     });
 
-    return commentaires.map(commentaireDeLHistorique => this.mapToDomain(commentaireDeLHistorique));
+    return commentaires.map(commentaireDeLHistorique => this.mapperVersDomaine(commentaireDeLHistorique));
   }
 
-  async récupérerObjectifsParChantierId(chantierId: string): Promise<DétailsCommentaire | null> {
+  async récupérerObjectifsParChantierId(chantierId: string): Promise<Commentaire | null> {
     const commentaireObjectifs: commentaire | null = await this.prisma.commentaire.findFirst({
       where: {
         chantier_id: chantierId,
@@ -94,22 +94,22 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
       return null;
     }
 
-    return this.mapToDomain(commentaireObjectifs);
+    return this.mapperVersDomaine(commentaireObjectifs);
   }
 
-  async créerNouveauCommentaire(chantierId: string, typeDeCommentaire: TypeCommentaire, maille: Maille, codeInsee: CodeInsee, détailsCommentaire: DétailsCommentaire) {
-    const commentaireCréé = await this.prisma.commentaire.create({
+  async créer(chantierId: string, maille: Maille, codeInsee: CodeInsee, id: string, contenu: string, auteur: string, type: TypeCommentaire, date: Date): Promise<Commentaire> {
+    const commentaireCréé =  await this.prisma.commentaire.create({
       data: {
+        id: id,
         chantier_id: chantierId,
-        type: CODES_TYPES_COMMENTAIRES[typeDeCommentaire],
-        contenu: détailsCommentaire.contenu,
-        date: new Date(détailsCommentaire.date),
-        auteur: détailsCommentaire.auteur,
         maille: CODES_MAILLES[maille],
         code_insee: codeInsee,
-      },
-    });
+        contenu: contenu,
+        type: CODES_TYPES_COMMENTAIRES[type],
+        date: date,
+        auteur: auteur,
+      } });
 
-    return this.mapToDomain(commentaireCréé);
+    return this.mapperVersDomaine(commentaireCréé);
   }
 }

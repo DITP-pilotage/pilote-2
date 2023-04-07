@@ -4,6 +4,8 @@ import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 import { générerUneMailleAléatoire, retourneUneListeDeCodeInseeCohérentePourUneMaille } from '@/server/infrastructure/test/builders/utils';
 
 export default class CommentaireRowBuilder {
+  private _id: commentaire['id'];
+
   private _chantierId: commentaire['chantier_id'];
 
   private _type: commentaire['type'];
@@ -24,6 +26,7 @@ export default class CommentaireRowBuilder {
     const maille = générerUneMailleAléatoire();
     const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
 
+    this._id = faker.datatype.uuid();
     this._chantierId = chantierGénéré.id;
     this._type = faker.helpers.arrayElement(['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus', 'objectifs']);
     this._contenu = faker.lorem.paragraph();
@@ -31,6 +34,11 @@ export default class CommentaireRowBuilder {
     this._auteur = faker.name.fullName();
     this._maille = maille;
     this._codeInsee = faker.helpers.arrayElement(codesInsee); 
+  }
+
+  avecId(id: commentaire['id']): CommentaireRowBuilder {
+    this._id = id;
+    return this;
   }
 
   avecChantierId(chantierId: commentaire['chantier_id']): CommentaireRowBuilder {
@@ -73,6 +81,7 @@ export default class CommentaireRowBuilder {
 
   build(): Prisma.commentaireCreateArgs['data'] {
     return {
+      id: this._id,
       chantier_id: this._chantierId,
       type: this._type,
       contenu: this._contenu,
