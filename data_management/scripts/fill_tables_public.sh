@@ -12,7 +12,6 @@ then
   fi
 fi
 
-psql "$DATABASE_URL" -c "TRUNCATE TABLE public.synthese_des_resultats"
 psql "$DATABASE_URL" -c "TRUNCATE TABLE public.axe"
 psql "$DATABASE_URL" -c "TRUNCATE TABLE public.perimetre"
 psql "$DATABASE_URL" -c "TRUNCATE TABLE public.ppg"

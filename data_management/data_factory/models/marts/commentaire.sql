@@ -1,5 +1,10 @@
 SELECT
-    floor(random() * 1000000000 + 1)::int as id, -- TODO remettre une surrogate key
+    {{ dbt_utils.surrogate_key(
+                 ['chantier_id',
+                 'type',
+                 'maille',
+                 'code_insee']
+             ) }} as id,
     chantier_id,
     type,
     contenu,
