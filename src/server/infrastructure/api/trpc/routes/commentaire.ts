@@ -5,10 +5,10 @@ import {
   vérifierSiLeCSRFEstValide,
 } from '@/server/infrastructure/api/trpc/trpc';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import { validationCommentaireContexte, validationCommentaireFormulaire } from 'validation/commentaire';
 import CréerUnCommentaireUseCase from '@/server/usecase/commentaire/CréerUnCommentaireUseCase';
 import RécupérerLesCommentairesLesPlusRécentsParTypeUseCase
   from '@/server/usecase/commentaire/RécupérerLesCommentairesLesPlusRécentsParTypeUseCase';
+import { validationCommentaireContexte, validationCommentaireFormulaire } from '@/validation/commentaire';
 
 const zodValidateurCSRF = z.object({
   csrf: z.string(),

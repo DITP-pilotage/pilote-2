@@ -12,6 +12,7 @@ const globalConf = {
     "@/hooks/(.*)": "<rootDir>/src/hooks/$1",
     "@/server/(.*)": "<rootDir>/src/server/$1",
     "@/stores/(.*)": "<rootDir>/src/client/stores/$1",
+    "@/validation/(.*)": "<rootDir>/src/client/validation/$1",
   },
 };
 

@@ -6,6 +6,7 @@ export type Commentaire = {
   type: TypeCommentaire
 } | null;
 
+//TODO renommer typesCommentaire
 export const typeCommentaire = ['freinsÀLever', 'actionsÀVenir', 'actionsÀValoriser', 'autresRésultatsObtenus'] as const;
 export type TypeCommentaire = typeof typeCommentaire[number];
 
