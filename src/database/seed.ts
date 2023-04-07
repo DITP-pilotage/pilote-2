@@ -10,6 +10,7 @@ import { codesInseeDépartements, codesInseeRégions } from '@/server/domain/ter
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 import IndicateurRowBuilder from '@/server/infrastructure/test/builders/sqlRow/IndicateurSQLRow.builder';
+import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
 
 const prisma = new PrismaClient();
 
@@ -26,6 +27,8 @@ class DatabaseSeeder {
 
   private _commentaires: Prisma.commentaireCreateArgs['data'][] = [];
 
+  private _objectifs: Prisma.objectifCreateArgs['data'][] = [];
+
   private _chantiers: chantier[] = [];
 
   async seed() {
@@ -35,6 +38,7 @@ class DatabaseSeeder {
     await this._créerChantiers();
     await this._créerSynthèsesDesRésultats();
     await this._créerCommentaires();
+    await this._créerObjectifs();
     await this._créerIndicateurs();
   }
 
@@ -103,6 +107,16 @@ class DatabaseSeeder {
     });
 
     await prisma.commentaire.createMany({ data: this._commentaires });
+  }
+
+  private async _créerObjectifs() {
+    this._chantiers.forEach(c => {
+      for (let i = 0; i < faker.datatype.number({ min: 0, max: 10 }); i++) {
+        this._objectifs = [...this._objectifs, new ObjectifSQLRowBuilder().avecChantierId(c.id).build()];
+      }
+    });
+
+    await prisma.objectif.createMany({ data: this._objectifs });
   }
 
   private async _créerIndicateurs() {

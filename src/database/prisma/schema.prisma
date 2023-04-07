@@ -135,7 +135,7 @@ enum type_objectif {
 model objectif {
   id           String        @id @default(uuid())
   auteur       String
-  type         type_objectif?
+  type         type_objectif
   contenu      String
   date         DateTime      @db.Timestamp
   chantier_id  String

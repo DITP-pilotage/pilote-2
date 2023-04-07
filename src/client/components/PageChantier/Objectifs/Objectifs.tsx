@@ -1,9 +1,9 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
-import { ObjectifProps } from '@/components/PageChantier/Objectif/Objectif.interface';
+import { ObjectifProps } from '@/components/PageChantier/Objectifs/Objectifs.interface';
 import Publication from '@/components/PageChantier/Publication/Publication';
 
-export default function Objectif({ objectif }: ObjectifProps) {
+export default function Objectifs({ objectifs }: ObjectifProps) {
   return (
     <section id="objectifs">
       <Titre
@@ -15,10 +15,16 @@ export default function Objectif({ objectif }: ObjectifProps) {
       <Bloc titre="National">
         <div className='fr-grid-row'>
           <div className="fr-col-12">
+            <Titre
+              baliseHtml="h3"
+              className="fr-h5 fr-mb-1w"
+            >
+              Notre ambition
+            </Titre>
             <Publication
-              auteur={objectif?.auteur ?? null}
-              contenu={objectif?.contenu ?? null}
-              date={objectif?.date ?? null}
+              auteur={objectifs.notreAmbition?.auteur ?? null}
+              contenu={objectifs.notreAmbition?.contenu ?? null}
+              date={objectifs.notreAmbition?.date ?? null}
               messageSiAucunContenu='Aucun objectif renseigné.'
             />
           </div>

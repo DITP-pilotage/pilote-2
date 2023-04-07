@@ -1,10 +1,18 @@
-import { PrismaClient, objectif as ObjectifPrisma, commentaire } from '@prisma/client';
+import { PrismaClient, objectif as ObjectifPrisma } from '@prisma/client';
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
-import Objectif from '@/server/domain/objectif/Objectif.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import { CODES_TYPES_COMMENTAIRES } from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
+import Objectif, { Objectifs, TypeObjectif } from '@/server/domain/objectif/Objectif.interface';
+
+export const NOMS_TYPES_OBJECTIFS: Record<string, TypeObjectif> = {
+  notre_ambition: 'notreAmbition',
+  deja_fait: 'déjàFait',
+  a_faire: 'àFaire',
+};
+
+export const CODES_TYPES_OBJECTIFS: Record<TypeObjectif, string> = {
+  notreAmbition: 'notre_ambition',
+  déjàFait: 'deja_fait',
+  àFaire: 'a_faire',
+};
 
 export default class ObjectifSQLRepository implements ObjectifRepository {
   private prisma: PrismaClient;
@@ -13,27 +21,36 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
     this.prisma = prisma;
   }
 
-  private mapperVersDomaine(objectif: ObjectifPrisma | null): Objectif {
-    if (objectif === null || objectif.contenu === '')
-      return null;
-
+  private mapperVersDomaine(objectif: ObjectifPrisma): Objectif {
     return {
       contenu: objectif.contenu,
       date: objectif.date.toISOString(),
       auteur: '',
     };
   }
+
+  private récupérerPremierObjectifPourUnTypeDonné(objectifs: ObjectifPrisma[], typeObjectif: string): Objectif | null {
+    const objectifsParType = objectifs.filter((objectif) => objectif.type == typeObjectif);
+    if (objectifsParType.length === 0) {
+      return null;
+    }
+    return this.mapperVersDomaine(objectifsParType[0]);
+  }
   
-  async récupérerLePlusRécent(chantierId: string): Promise<Objectif> {
-    const objectifTrouvé = await this.prisma.objectif.findFirst({
+  async récupérerLePlusRécentPourChaqueType(chantierId: string): Promise<Objectifs> {
+    const objectifs = await this.prisma.objectif.findMany({
       where: {
         chantier_id: chantierId,
-        type: undefined,
+        type: { in: ['notre_ambition', 'deja_fait', 'a_faire'] },
       },
       orderBy: { date: 'desc' },
     });
 
-    return this.mapperVersDomaine(objectifTrouvé);
+    return {
+      notreAmbition: this.récupérerPremierObjectifPourUnTypeDonné(objectifs, 'notre_ambition'),
+      déjàFait: this.récupérerPremierObjectifPourUnTypeDonné(objectifs, 'deja_fait'),
+      àFaire: this.récupérerPremierObjectifPourUnTypeDonné(objectifs, 'a_faire'),
+    };
   }
 
   async récupérerHistoriqueDUnObjectif(chantierId: string): Promise<Objectif[]> {
