@@ -5,6 +5,7 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import ObjectifSQLRepository from '@/server/infrastructure/accès_données/objectif/ObjectifSQLRepository';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
+import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
 
 describe('ObjectifSQLRepository ', function () {
   describe('récupérerLePlusRécent', () => {
@@ -48,6 +49,20 @@ describe('ObjectifSQLRepository ', function () {
         date: '2023-12-31T00:00:00.000Z',
         auteur: '',
       });
+    });
+  });
+  describe('récupérerHistoriqueDUnObjectif', () => {
+    test('Retourne, par ordre antéchronologique, tous les commentaires du type donné pour un chantier et un territoire', async () => {
+      // GIVEN
+      const objectifRepository: ObjectifRepository = new ObjectifSQLRepository(prisma);
+      const objectifs: Prisma.objectifCreateArgs['data'][] = [
+        new ObjectifSQLRowBuilder()
+          .build(),
+      ];
+
+      // WHEN
+
+      // THEN
     });
   });
 });
