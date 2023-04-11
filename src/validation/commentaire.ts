@@ -13,7 +13,7 @@ export const validationCommentaireContexte = z.object({
 export const validationCommentaireFormulaire = z.object({
   contenu: z
     .string()
-    .max(LIMITE_CARACTÈRES_COMMENTAIRE, `La limite maximale de ${LIMITE_CARACTÈRES_COMMENTAIRE} caractères a été dépassée`)
-    .min(1, 'Le commentaire ne peut pas être vide'),
+    .max(LIMITE_CARACTÈRES_COMMENTAIRE, `La limite maximale de ${LIMITE_CARACTÈRES_COMMENTAIRE} caractères a été dépassée.`)
+    .min(1, 'Le commentaire ne peut pas être vide.'),
   type: z.enum(typeCommentaire),
 });

@@ -123,3 +123,22 @@ model mesure_indicateur {
 
   @@schema("raw_data")
 }
+
+enum type_objectif {
+  notre_ambition
+  deja_fait
+  a_faire
+
+  @@schema("public")
+}
+
+model objectif {
+  id           String        @id @default(uuid())
+  auteur       String
+  type         type_objectif
+  contenu      String
+  date         DateTime      @db.Timestamp
+  chantier_id  String
+
+  @@schema("public")
+}

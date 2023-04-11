@@ -5,7 +5,7 @@ export default class ObjectifBuilder {
   private _objectif: Objectif;
 
   constructor() {
-    this._objectif = faker.helpers.arrayElement([null, this._générerUnObjectif()]);
+    this._objectif = faker.helpers.arrayElement([this._générerUnObjectif()]);
   }
 
   private _générerUnObjectif() {

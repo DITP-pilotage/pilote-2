@@ -1,5 +1,7 @@
-import Objectif from './Objectif.interface';
+import Objectif, { TypeObjectif } from './Objectif.interface';
 
 export default interface ObjectifRepository {
-  récupérerLePlusRécent(chantierId: string): Promise<Objectif>
+  récupérerHistoriqueDUnObjectif(chantierId: string, type: TypeObjectif): Promise<Objectif[]>
+  récupérerLePlusRécent(chantierId: string, type: TypeObjectif): Promise<Objectif>
+  créer(chantierId: string, id: string, contenu: string, auteur: string, type: TypeObjectif, date: Date): Promise<Objectif>;
 }

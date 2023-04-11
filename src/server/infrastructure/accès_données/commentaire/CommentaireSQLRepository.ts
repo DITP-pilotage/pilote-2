@@ -81,22 +81,6 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return commentaires.map(commentaireDeLHistorique => this.mapperVersDomaine(commentaireDeLHistorique));
   }
 
-  async récupérerObjectifsParChantierId(chantierId: string): Promise<Commentaire | null> {
-    const commentaireObjectifs: commentaire | null = await this.prisma.commentaire.findFirst({
-      where: {
-        chantier_id: chantierId,
-        type: 'objectifs',
-      },
-      orderBy: { date: 'desc' },
-    });
-
-    if (!commentaireObjectifs) {
-      return null;
-    }
-
-    return this.mapperVersDomaine(commentaireObjectifs);
-  }
-
   async créer(chantierId: string, maille: Maille, codeInsee: CodeInsee, id: string, contenu: string, auteur: string, type: TypeCommentaire, date: Date): Promise<Commentaire> {
     const commentaireCréé =  await this.prisma.commentaire.create({
       data: {
