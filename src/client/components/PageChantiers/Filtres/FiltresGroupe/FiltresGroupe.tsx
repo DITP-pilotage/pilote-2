@@ -1,6 +1,6 @@
 import FiltresGroupeProps from './FiltresGroupe.interface';
 
-export default function FiltresGroupeDeCatégories({ libellé, children }: FiltresGroupeProps) {
+export default function FiltresGroupe({ libellé, children }: FiltresGroupeProps) {
   return (
     <section className="fr-px-3w">
       {
