@@ -2,7 +2,7 @@ import { mesure_indicateur as MesureIndicateur, PrismaClient } from '@prisma/cli
 import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
 
-const convertirEnModel = (indicateurData: IndicateurData): MesureIndicateur => {
+const convertirEnModel = (indicateurData: IndicateurData): Omit<MesureIndicateur, 'date_import'>  => {
   return {
     id: indicateurData.id,
     indic_id: indicateurData.indicId,
@@ -10,7 +10,6 @@ const convertirEnModel = (indicateurData: IndicateurData): MesureIndicateur => {
     metric_date: indicateurData.metricDate,
     metric_type: indicateurData.metricType,
     metric_value: indicateurData.metricValue,
-    date_import: null,
   };
 };
 
