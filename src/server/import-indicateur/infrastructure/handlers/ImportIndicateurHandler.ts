@@ -25,12 +25,9 @@ export default async function handleValiderFichierImportIndicateur(
   response: NextApiResponse,
   validerFichierIndicateurImporteUseCase = dependencies.getValiderFichierIndicateurImporteUseCase(),
 ) {
-
-
   const formData = await parseForm(request);
 
   const fichier = <File>formData.file;
-
 
   const schéma = 'https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/templates/indicateur/sans-contraintes/schema_pilote_sans_contraintes.json';
 
