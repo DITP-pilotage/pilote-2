@@ -8,6 +8,7 @@ import {
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { objectEntries } from '@/client/utils/objects/objects';
+import { DonnéesTableauChantiers } from './TableauChantiers/TableauChantiers.interface';
 
 export default function usePageChantiers(chantiers: Chantier[]) {
   const filtresActifs = filtresActifsStore();
@@ -68,13 +69,12 @@ export default function usePageChantiers(chantiers: Chantier[]) {
     }));
   }, [donnéesTerritoiresAgrégées, mailleSélectionnée]);
 
-  const donnéesTableauChantiers = chantiersFiltrés.map(chantier => ({
+  const donnéesTableauChantiers: DonnéesTableauChantiers[] = chantiersFiltrés.map(chantier => ({
     id: chantier.id,
     nom: chantier.nom,
     avancement: chantier.mailles[maille][territoireSélectionné.codeInsee].avancement.global,
     météo: chantier.mailles[maille][territoireSélectionné.codeInsee].météo,
-    estBaromètre: chantier.estBaromètre,
-    estTerritorialisé: chantier.estTerritorialisé,
+    typologie: { estBaromètre: chantier.estBaromètre, estTerritorialisé: chantier.estTerritorialisé },
     porteur: chantier.responsables.porteur,
   }));
 

@@ -9,6 +9,6 @@ export type DonnéesTableauChantiers = {
   nom: string;
   avancement: number | null;
   météo: Météo;
-  estBaromètre: boolean;
+  typologie: { estBaromètre: boolean, estTerritorialisé: boolean };
   porteur: string;
 };

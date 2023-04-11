@@ -4,7 +4,7 @@ import { PictoBaromètreStyledProps } from '@/components/_commons/PictoBaromètr
 
 
 const PictoBaromètreStyled = styled.span<PictoBaromètreStyledProps>`
-  color: #006e6e;
+  color: var(--text-mention-gre);
 
   &::before {
     width: ${props => props.taille.mesure + props.taille.unité};
