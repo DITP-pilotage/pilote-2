@@ -15,13 +15,14 @@ describe('ObjectifSQLRepository ', function () {
   describe('récupérerLePlusRécent', () => {
     test('retourne l\'objectif avec un contenu, un auteur et une date le plus récent', async () => {
       // GIVEN
+      const type: TypeObjectif = 'àFaire';
       const objectifs: Prisma.objectifCreateArgs['data'][] = [
         new ObjectifSQLRowBuilder()
           .avecChantierId(chantierId)
           .avecDate(new Date('2022-12-31'))
           .avecAuteur('Jean Bon')
           .avecContenu('Objectif à faire blabla')
-          .avecType('a_faire')
+          .avecType(CODES_TYPES_OBJECTIFS[type])
           .build(),
 
         new ObjectifSQLRowBuilder()
@@ -52,25 +53,13 @@ describe('ObjectifSQLRepository ', function () {
       // WHEN
       await prisma.objectif.createMany({ data: objectifs });
 
-      const result = await objectifRepository.récupérerLesPlusRécentsParType(chantierId);
+      const result = await objectifRepository.récupérerLePlusRécent(chantierId, type);
 
       // THEN
       expect(result).toStrictEqual({
-        notreAmbition: {
-          auteur: 'Jean Bon',
-          contenu: 'Objectif notre ambition blabla',
-          date: '2023-12-31T00:00:00.000Z',
-        },
-        déjàFait: {
-          auteur: 'Jean Bon',
-          contenu: 'Objectif déjà fait blabla',
-          date: '2022-12-31T00:00:00.000Z',
-        },
-        àFaire: {
-          auteur: 'Jean Bon',
-          contenu: 'Objectif à faire blabla',
-          date: '2022-12-31T00:00:00.000Z',
-        },
+        auteur: 'Jean Bon',
+        contenu: 'Objectif à faire blabla',
+        date: '2022-12-31T00:00:00.000Z',
       });
     });
   });

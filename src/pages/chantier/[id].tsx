@@ -27,8 +27,11 @@ export async function getServerSideProps({ params }: { params: { id: Chantier['i
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params.id);
 
-  const objectifRepository = dependencies.getObjectifRepository();
-  const objectifs: Objectifs = await objectifRepository.récupérerLesPlusRécentsParType(params.id);
+  const objectifs: Objectifs = {
+    notreAmbition: null,
+    déjàFait: null,
+    àFaire: null,
+  };
 
   return {
     props: {
