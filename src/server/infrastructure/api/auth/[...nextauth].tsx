@@ -5,6 +5,7 @@ import type { JWT } from 'next-auth/jwt';
 import { GetServerSidePropsContext } from 'next';
 import config from '@/server/infrastructure/Configuration';
 import logger from '@/server/infrastructure/logger';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export const keycloak = KeycloakProvider({
   clientId: config.keycloakClientId,
@@ -32,7 +33,12 @@ async function doFinalSignoutHandshake(token: JWT) {
         method: 'POST',
         body: params,
       });
-      logger.debug({ response, ok: response?.ok, statusText: response?.statusText, body: response?.body }, 'Logout response');
+      logger.debug({
+        response,
+        ok: response?.ok,
+        statusText: response?.statusText,
+        body: response?.body,
+      }, 'Logout response');
 
       const refreshedTokens = await response.json();
       if (response && !response.ok) {
@@ -56,6 +62,7 @@ async function doFinalSignoutHandshake(token: JWT) {
  * returns the old token and an error property
  */
 /**
+ * TODO: Actualiser les habilitations !!
  * @param  {JWT} token
  */
 async function refreshAccessToken(token: JWT) {
@@ -123,17 +130,28 @@ const credentialsProvider = CredentialsProvider({
   // e.g. domain, username, password, 2FA token, etc.
   // You can pass any HTML attribute to the <input> tag through the object.
   credentials: {
-    username: { label: 'Utilisateur', type: 'text', placeholder: 'alicerichard' },
+    username: { label: 'Email', type: 'text', placeholder: 'alicerichard@example.com' },
     password: { label: 'Mot de Passe', type: 'password' },
   },
 
   async authorize(credentials, _req): Promise<User | null> {
-    const username = credentials?.username;
     const password = credentials?.password;
-    if (username != config.devUsername || password != config.devPassword) {
+    const username = credentials?.username;
+    if (!username || password != config.devPassword) {
+      return null;
+
+    }
+    const utilisateurRepository = dependencies.getUtilisateurRepository();
+    const utilisateur = await utilisateurRepository.findOneByEmail(username);
+    if (!utilisateur) {
       return null;
     }
-    return { id: '1', name: username, email: `${username}@example.com` };
+
+    return {
+      id: utilisateur.id,
+      name: utilisateur.email,
+      email: utilisateur.email,
+    };
   },
 });
 
@@ -160,6 +178,9 @@ export const authOptions: AuthOptions = {
       if (account && user) {
         logger.debug({ token, user, account, profile, isNewUser, currentDate }, '------> JWT fnt');
 
+        const habilitationRepository = dependencies.getHabilitationRepository();
+        const habilitation = await habilitationRepository.récupèreHabilitationsPourUtilisateur(user.email);
+
         return {
           accessToken: account.access_token,
           accessTokenExpires: currentDate + (account.expires_at - 10) * 1000,
@@ -167,6 +188,7 @@ export const authOptions: AuthOptions = {
           refreshToken: account.refresh_token,
           idToken: account.id_token,
           provider: account.provider,
+          habilitation,
           user,
         };
       }
@@ -186,12 +208,15 @@ export const authOptions: AuthOptions = {
       session.user = token.user;
       session.accessToken = token.accessToken;
       session.error = token.error;
+      session.habilitation = token.habilitation;
 
       return session;
     },
   },
   events: {
-    signOut: ({ token }: any) => { return doFinalSignoutHandshake(token); },
+    signOut: ({ token }: any) => {
+      return doFinalSignoutHandshake(token);
+    },
   },
 };
 

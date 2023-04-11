@@ -4,10 +4,11 @@ import { Météo } from '@/server/domain/météo/Météo.interface';
 import { Commentaires } from '@/server/domain/commentaire/Commentaire.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
+import { Habilitation, Scope } from '@/server/domain/identité/Habilitation';
 
 export default interface ChantierRepository {
-  getById(id: string): Promise<Chantier>;
-  getListe(): Promise<Chantier[]>;
+  getById(id: string, habilitation: Habilitation, scope: string): Promise<Chantier>;
+  getListe(habilitation: Habilitation, scope: Scope): Promise<Chantier[]>;
   récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null>
 }
 

@@ -18,6 +18,8 @@ import PpgSQLRepository from '@/server/infrastructure/accès_données/ppg/PpgSQL
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import CommentaireSQLRepository from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
+import HabilitationRepository from '@/server/domain/identité/HabilitationRepository';
+import HabilitationSQLRepository from '@/server/infrastructure/accès_données/identité/HabilitationSQLRepository';
 import {
   ValiderFichierIndicateurImporteUseCase,
 } from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
@@ -28,6 +30,8 @@ import { FetchHttpClient } from '@/server/import-indicateur/infrastructure/adapt
 import {
   PrismaMesureIndicateurRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
+import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepository';
+import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
 import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
 
 class Dependencies {
@@ -47,10 +51,14 @@ class Dependencies {
 
   private readonly _objectifRepository: ObjectifRepository;
 
+  private readonly _habilitationRepository: HabilitationRepository;
+
   private readonly _validerFichierIndicateurImporteUseCase: ValiderFichierIndicateurImporteUseCase;
 
+  private readonly _utilisateurRepository: UtilisateurRepository;
+
   constructor() {
-    logger.info('Using database.');
+    logger.debug('Using database.');
     const prisma = new PrismaClient();
     this._chantierRepository = new ChantierSQLRepository(prisma);
     this._axeRepository = new AxeSQLRepository(prisma);
@@ -60,7 +68,8 @@ class Dependencies {
     this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
     this._commentaireRepository = new CommentaireSQLRepository(prisma);
     this._objectifRepository = new ObjectifSQLRepository(prisma);
-
+    this._habilitationRepository = new HabilitationSQLRepository(prisma);
+    this._utilisateurRepository = new UtilisateurSQLRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
@@ -105,6 +114,14 @@ class Dependencies {
 
   getValiderFichierIndicateurImporteUseCase(): ValiderFichierIndicateurImporteUseCase {
     return this._validerFichierIndicateurImporteUseCase;
+  }
+
+  getHabilitationRepository() {
+    return this._habilitationRepository;
+  }
+
+  getUtilisateurRepository() {
+    return this._utilisateurRepository;
   }
 }
 

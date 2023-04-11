@@ -73,8 +73,8 @@ npm run start
 | Commande                                    | Fonction                                                                                    |
 |---------------------------------------------|---------------------------------------------------------------------------------------------|
 | npm run dev                                 | Lance le site en mode développeur (avec hot reload)                                         |
-| npm run build                               | Prépare les fichiers (optimisations) afin de pouvoir les mettre en prod                       |
-| npm run start                               | Lance un serveur en local qui utilise les fichiers créés pour la production (cf build)       |
+| npm run build                               | Prépare les fichiers (optimisations) afin de pouvoir les mettre en prod                     |
+| npm run start                               | Lance un serveur en local qui utilise les fichiers créés pour la production (cf build)      |
 | npm run lint                                | Lance le linter ESLint, Typescript et Stylelint                                             |
 | npm run lint:fix                            | Lance le linter ESLint et Stylelint et tente de corriger les erreurs automatiquement        |
 | npm run lint:eslint                         | Lance le linter ESLint                                                                      |
@@ -94,4 +94,5 @@ npm run start
 | npm run test:database:init                  | Permet de réinitialiser la base de donnée de test sans aucune données                       |
 | npm run database:init                       | Permet de réinitialiser la base de donnée sans aucune données                               |
 | npm run database:seed                       | Permet de réinitialiser la base de donnée et de la populer avec un jeu de test              |
-| npm run postdeploy                          | Utilisé automatiquement lors du déploiement sur Scalingo afin de jouer les migrations Prisma |
+| npm run postdeploy                          | Utilisé automatiquement lors du déploiement sur Scalingo afin de jouer les migrations Prisma|
+| npm ci                                      | Installation et mise à jour des dépendance node                                             |
