@@ -2,6 +2,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 import { Line } from 'react-chartjs-2';
 import Titre from '@/components/_commons/Titre/Titre';
 import IndicateurÉvolutionProps from '@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.interface';
+import IndicateurÉvolutionStyled from './IndicateurÉvolution.styled';
 import useIndicateurÉvolution from './useIndicateurÉvolution';
 
 ChartJS.register(
@@ -17,7 +18,7 @@ export default function IndicateurÉvolution({ indicateurDétailsParTerritoires 
   const { options, donnéesParTerritoire } = useIndicateurÉvolution(indicateurDétailsParTerritoires);
 
   return (
-    <section>
+    <IndicateurÉvolutionStyled>
       <Titre
         baliseHtml='h5'
         className='fr-text--lg fr-mb-0'
@@ -27,10 +28,22 @@ export default function IndicateurÉvolution({ indicateurDétailsParTerritoires 
       <p className="fr-text--xs texte-gris">
         Mis à jour le : Non renseigné | Source : Non renseigné
       </p>
-      <Line
-        data={donnéesParTerritoire}
-        options={options}
-      />
-    </section>
+      {
+        donnéesParTerritoire.datasets.some(dataset => dataset.data.length > 0) ? (
+          <div className="graphique-bloc">
+            <div className="graphique-conteneur">
+              <Line
+                data={donnéesParTerritoire}
+                options={options}
+              />
+            </div>
+          </div>
+        ) : (
+          <p className="fr-badge fr-badge--no-icon">
+            NON RENSEIGNÉ
+          </p>
+        )
+      }
+    </IndicateurÉvolutionStyled>
   );
 }
