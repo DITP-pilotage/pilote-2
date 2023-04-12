@@ -12,11 +12,9 @@ import {
 } from '@tanstack/react-table';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
-import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/avancement';
-import TableauChantiersAvancement
-  from '@/components/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
+import TableauChantiersAvancement from '@/components/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
 import TableauChantiersMétéo from '@/components/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
@@ -25,10 +23,14 @@ import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChanti
 import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuileChantier';
 import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiersTuileMinistère';
 import TableauChantiersTuileMinistèreProps from './Tuile/Ministère/TableauChantiersTuileMinistère.interface';
+import PictosTypologie from './PictosTypologie/PictosTypologie';
 
 
 const déterminerTypologieDuGroupementParMinistère = (chantiersDuGroupe: DonnéesTableauChantiers[]) => {
-  return chantiersDuGroupe.some(chantier => chantier.estBaromètre);
+  return { 
+    estBaromètre: chantiersDuGroupe.some(chantier => chantier.typologie.estBaromètre),
+    estTerritorialisé: chantiersDuGroupe.some(chantier => chantier.typologie.estTerritorialisé),
+  };
 };
 
 const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
@@ -49,14 +51,14 @@ const colonnesTableauChantiers = [
     enableGrouping: false,
   }),
 
-  reactTableColonnesHelper.accessor('estBaromètre', {
+  reactTableColonnesHelper.accessor('typologie', {
     header: 'Typologie',
     id: 'typologie',
     enableSorting: false,
-    cell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null,
+    cell: typologie => <PictosTypologie typologie={typologie.getValue()} />,
     enableGrouping: false,
     aggregationFn: (_columnId, leafRows) => déterminerTypologieDuGroupementParMinistère(leafRows.map(row => row.original)),
-    aggregatedCell: estBarometre => estBarometre.getValue() ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null,
+    aggregatedCell: typologie => typologie.getValue() ? <PictosTypologie typologie={typologie.getValue()} /> : null,
   }),
 
   reactTableColonnesHelper.accessor('météo', {

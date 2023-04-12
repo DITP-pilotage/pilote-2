@@ -3,15 +3,18 @@ import { useCallback } from 'react';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import { FiltreCatégorie } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
 import FiltresMinistèresProps from './FiltresMinistères.interface';
 import FiltresMinistèresStyled from './FiltresMinistères.styled';
 
-export default function FiltresMinistères({ libellé, catégorieDeFiltre, ministères }: FiltresMinistèresProps) {
+const catégorieDeFiltre: FiltreCatégorie = 'périmètresMinistériels';
+
+export default function FiltresMinistères({ ministères }: FiltresMinistèresProps) {
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
 
   const estDéroulé = useCallback((ministère: Ministère) => {
     return ministère.périmètresMinistériels.some(périmètre => estActif(périmètre.id, catégorieDeFiltre));
-  }, [catégorieDeFiltre, estActif]);
+  }, [estActif]);
 
   const auClicSurUnMinistèreCallback = useCallback(
     (ministère: Ministère) => {
@@ -21,7 +24,7 @@ export default function FiltresMinistères({ libellé, catégorieDeFiltre, minis
         ministère.périmètresMinistériels.forEach(périmètre => activerUnFiltre(périmètre, catégorieDeFiltre));
       }
     },
-    [activerUnFiltre, catégorieDeFiltre, désactiverUnFiltre, estDéroulé],
+    [activerUnFiltre, désactiverUnFiltre, estDéroulé],
   );
 
   const auClicSurUnPérimètreCallback = useCallback(
@@ -32,7 +35,7 @@ export default function FiltresMinistères({ libellé, catégorieDeFiltre, minis
         activerUnFiltre(périmètre, catégorieDeFiltre);
       }
     },
-    [activerUnFiltre, catégorieDeFiltre, désactiverUnFiltre, estActif],
+    [activerUnFiltre, désactiverUnFiltre, estActif],
   );
 
   return (
@@ -43,14 +46,14 @@ export default function FiltresMinistères({ libellé, catégorieDeFiltre, minis
         className="fr-sidemenu__btn fr-m-0"
         type='button'
       >
-        { libellé }
+        Ministères
       </button>
       <div
         className="fr-collapse"
         id={`fr-sidemenu-item-${catégorieDeFiltre}`}
       >
         <ul
-          aria-label={`Liste des filtres ${libellé}`}
+          aria-label="Liste des filtres ministères"
           className='fr-p-0 fr-m-0 ministères-liste'
         >
           {

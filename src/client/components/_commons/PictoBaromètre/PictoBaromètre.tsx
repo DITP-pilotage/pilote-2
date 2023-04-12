@@ -4,7 +4,7 @@ import PictoBaromètreProps from '@/components/_commons/PictoBaromètre/PictoBar
 export default function PictoBaromètre({ taille, className }: PictoBaromètreProps) {
   return (
     <PictoBaromètreStyled
-      aria-hidden="true"
+      aria-label='picto-baromètre'
       className={`fr-icon-dashboard-3-line ${className}`}
       taille={taille}
     />

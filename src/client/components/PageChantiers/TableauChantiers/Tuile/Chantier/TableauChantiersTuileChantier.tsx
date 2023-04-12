@@ -1,7 +1,7 @@
-import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import TableauChantiersTuileChantierStyled from '@/components/PageChantiers/TableauChantiers/Tuile/Chantier/TableauChantiersTuileChantier.styled';
+import PictosTypologie from '@/client/components/PageChantiers/TableauChantiers/PictosTypologie/PictosTypologie';
 import TableauChantiersTuileChantierProps from './TableauChantiersTuileChantier.interface';
 
 export default function TableauChantiersTuileChantier({ chantier }: TableauChantiersTuileChantierProps) {
@@ -12,9 +12,7 @@ export default function TableauChantiersTuileChantier({ chantier }: TableauChant
           {chantier.nom}
         </p>
         <div className='fr-ml-2w'>
-          {
-            chantier.estBaromètre ? <PictoBaromètre taille={{ mesure: 1.25, unité: 'rem' }} /> : null
-          }
+          <PictosTypologie typologie={chantier.typologie} />
         </div>
       </div>
       <div className='fr-mt-1w tuile-chantier-corps'>

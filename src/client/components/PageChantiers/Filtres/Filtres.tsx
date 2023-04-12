@@ -1,18 +1,18 @@
 import FiltresSélectionMultiple from '@/components/PageChantiers/Filtres/FiltresSélectionMultiple/FiltresSélectionMultiple';
-import FiltresGroupeDeCatégoriesDeFiltres from './FiltresGroupe/FiltresGroupe';
+import { FiltreTypologieType } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
+import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
 import FiltresProps from './Filtres.interface';
-import FiltreBaromètre from './FiltreBaromètre/FiltreBaromètre';
+import FiltreTypologie from './FiltreTypologie/FiltreTypologie';
+
+const filtreBaromètre: FiltreTypologieType = { id: 'filtreBaromètre', attribut: 'estBaromètre', nom: 'Chantiers du baromètre' };
+const filtreTerritorialisé: FiltreTypologieType = { id: 'filtreTerritorialisé', attribut: 'estTerritorialisé', nom: 'Chantiers territorialisés' };
 
 export default function Filtres({ ministères, axes, ppg }: FiltresProps) {
   return (
     <>
-      <FiltresGroupeDeCatégoriesDeFiltres>
-        <FiltresMinistères
-          catégorieDeFiltre='périmètresMinistériels'
-          libellé='Ministères'
-          ministères={ministères}
-        />
+      <FiltresGroupe>
+        <FiltresMinistères ministères={ministères} />
         <FiltresSélectionMultiple
           catégorieDeFiltre='axes'
           filtres={axes}
@@ -23,11 +23,12 @@ export default function Filtres({ ministères, axes, ppg }: FiltresProps) {
           filtres={ppg}
           libellé="PPG"
         />
-      </FiltresGroupeDeCatégoriesDeFiltres>
+      </FiltresGroupe>
       <hr className='fr-hr fr-mt-3w fr-pb-2w' />
-      <FiltresGroupeDeCatégoriesDeFiltres libellé='Autres critères'>
-        <FiltreBaromètre catégorieDeFiltre='autresFiltres' />
-      </FiltresGroupeDeCatégoriesDeFiltres>
+      <FiltresGroupe libellé='Autres critères'>
+        <FiltreTypologie filtre={filtreTerritorialisé} /> 
+        <FiltreTypologie filtre={filtreBaromètre} /> 
+      </FiltresGroupe>
     </>
   );
 }

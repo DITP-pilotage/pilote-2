@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export default interface FiltresGroupeDeCatégoriesProps {
+export default interface FiltresGroupeProps {
   libellé?: string,
   children: ReactNode,
 }

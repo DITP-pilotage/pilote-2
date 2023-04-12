@@ -1,5 +1,6 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
 import { useEffect } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';

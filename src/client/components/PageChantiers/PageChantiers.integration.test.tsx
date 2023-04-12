@@ -56,7 +56,7 @@ class PageChantiersTest {
   }
 
   async basculerEtatDuFiltrePérimètreMinistériel(nomDuPérimètreMinistériel: string) {
-    const filtresMinistères = screen.getByRole('list', { name : 'Liste des filtres Ministères' });
+    const filtresMinistères = screen.getByRole('list', { name : 'Liste des filtres ministères' });
     const boutonFiltrePérimètre = within(filtresMinistères).getByText(nomDuPérimètreMinistériel);
     await userEvent.click(boutonFiltrePérimètre);
   }
@@ -148,7 +148,7 @@ describe('quand je retire un filtre via le tag',  () => {
     await pageChantiers.basculerEtatDuFiltrePérimètreMinistériel(filtrePérimètreMinistériel.nom);
     await pageChantiers.supprimerTag(filtrePérimètreMinistériel.nom);
 
-    const choixFiltres = screen.getByRole('list', { name : 'Liste des filtres Ministères' });
+    const choixFiltres = screen.getByRole('list', { name : 'Liste des filtres ministères' });
     const boutonFiltrePérimètre = getByText(choixFiltres, filtrePérimètreMinistériel.nom);
     expect(boutonFiltrePérimètre).not.toHaveClass('actif');
   });
