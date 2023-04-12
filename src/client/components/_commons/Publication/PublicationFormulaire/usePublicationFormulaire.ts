@@ -3,6 +3,7 @@ import { SubmitHandler } from 'react-hook-form';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 import api from '@/server/infrastructure/api/trpc/api';
 import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { validationPublicationContexte, validationPublicationFormulaire, zodValidateurCSRF } from '@/validation/publication';
 import PublicationFormulaireProps, { PublicationFormulaireInputs } from './PublicationFormulaire.interface';
 
 export default function usePublicationFormulaire(succèsCallback: PublicationFormulaireProps['succèsCallback'], erreurCallback: PublicationFormulaireProps['erreurCallback']) {
@@ -19,7 +20,7 @@ export default function usePublicationFormulaire(succèsCallback: PublicationFor
   });
 
   const créerPublication : SubmitHandler<PublicationFormulaireInputs> = data => {
-    mutationCréerPublication.mutate({
+    const inputs = validationPublicationContexte.merge(zodValidateurCSRF).and(validationPublicationFormulaire).parse({
       contenu: data.contenu,
       type: data.type,
       entité: data.entité,
@@ -28,6 +29,8 @@ export default function usePublicationFormulaire(succèsCallback: PublicationFor
       chantierId: router.query.id as string,
       csrf: récupérerUnCookie('csrf') ?? '',
     });
+
+    mutationCréerPublication.mutate(inputs);
   };
 
   return {

@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -9,6 +8,7 @@ import CréerUnCommentaireUseCase from '@/server/usecase/commentaire/CréerUnCom
 import {
   validationPublicationContexte,
   validationPublicationFormulaire,
+  zodValidateurCSRF,
   zodValidateurEntité,
   zodValidateurEntitéType,
 } from 'validation/publication';
@@ -16,15 +16,15 @@ import RécupérerCommentaireLePlusRécentUseCase from '@/server/usecase/comment
 import RécupérerHistoriqueCommentaireUseCase from '@/server/usecase/commentaire/RécupérerHistoriqueCommentaireUseCase';
 import { typeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import { RouterInputs, RouterOutputs } from '@/server/infrastructure/api/trpc/trpc.interface';
-
-const zodValidateurCSRF = z.object({
-  csrf: z.string(),
-});
+import CréerUnObjectifUseCase from '@/server/usecase/objectif/CréerUnObjectifUseCase';
+import RécupérerObjectifLePlusRécentUseCase from '@/server/usecase/objectif/RécupérerObjectifLePlusRécentUseCase';
+import RécupérerHistoriqueObjectifUseCase from '@/server/usecase/objectif/RécupérerHistoriqueObjectifUseCase';
+import { typesObjectif } from '@/server/domain/objectif/Objectif.interface';
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
     .input(validationPublicationContexte.merge(zodValidateurCSRF).and(validationPublicationFormulaire))
-    .mutation(({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const auteur = ctx.session.user.name ?? '';
 
@@ -32,14 +32,24 @@ export const publicationRouter = créerRouteurTRPC({
         const créerUnCommentaireUseCase = new CréerUnCommentaireUseCase(dependencies.getCommentaireRepository());
         return créerUnCommentaireUseCase.run(input.chantierId, input.maille, input.codeInsee, input.contenu, auteur, input.type);
       }
+
+      if (input.entité === 'objectifs') {
+        const créerUnObjectifUseCase = new CréerUnObjectifUseCase(dependencies.getObjectifRepository());
+        return créerUnObjectifUseCase.run(input.chantierId, input.contenu, auteur, input.type);
+      }
     }),
     
   récupérerLaPlusRécente: procédureProtégée
     .input(validationPublicationContexte.and(zodValidateurEntitéType))
-    .query(({ input }) => {
+    .query(async ({ input }) => {
       if (input.entité === 'commentaires') {
         const récupérerCommentaireLePlusRécentUseCase = new RécupérerCommentaireLePlusRécentUseCase(dependencies.getCommentaireRepository());
         return récupérerCommentaireLePlusRécentUseCase.run(input.chantierId, input.maille, input.codeInsee, input.type);
+      }
+
+      if (input.entité === 'objectifs') {
+        const récupérerObjectifLePlusRécentUseCase = new RécupérerObjectifLePlusRécentUseCase(dependencies.getObjectifRepository());
+        return récupérerObjectifLePlusRécentUseCase.run(input.chantierId, input.type);
       }
     }),
 
@@ -47,6 +57,7 @@ export const publicationRouter = créerRouteurTRPC({
     .input(validationPublicationContexte.merge(zodValidateurEntité))
     .query(async ({ input }) => {
       const publications: { type: RouterInputs['publication']['récupérerLaPlusRécente']['type'], publication: RouterOutputs['publication']['récupérerLaPlusRécente'] }[] = [];
+      
       if (input.entité === 'commentaires') {
         const récupérerCommentaireLePlusRécentUseCase = new RécupérerCommentaireLePlusRécentUseCase(dependencies.getCommentaireRepository());
 
@@ -59,14 +70,32 @@ export const publicationRouter = créerRouteurTRPC({
         }
         return publications;
       }
+
+      if (input.entité === 'objectifs') {
+        const récupérerObjectifLePlusRécentUseCase = new RécupérerObjectifLePlusRécentUseCase(dependencies.getObjectifRepository());
+
+        for (const type of typesObjectif) {
+          const objectif = await récupérerObjectifLePlusRécentUseCase.run(input.chantierId, type);
+          publications.push({
+            type,
+            publication: objectif,
+          });
+        }
+        return publications;
+      }
     }),
 
   récupérerHistorique: procédureProtégée
     .input(validationPublicationContexte.and(zodValidateurEntitéType))
-    .query(({ input }) => {
+    .query(async ({ input }) => {
       if (input.entité === 'commentaires') {
         const récupérerHistoriqueCommentaireUseCase = new RécupérerHistoriqueCommentaireUseCase(dependencies.getCommentaireRepository());
         return récupérerHistoriqueCommentaireUseCase.run(input.chantierId, input.maille, input.codeInsee, input.type);
+      } 
+      
+      if (input.entité === 'objectifs') {
+        const récupérerHistoriqueObjectifUseCase = new RécupérerHistoriqueObjectifUseCase(dependencies.getObjectifRepository());
+        return récupérerHistoriqueObjectifUseCase.run(input.chantierId, input.type);
       }
     }),
 });

@@ -5,14 +5,14 @@ import PublicationHistoriqueProps from './PublicationHistorique.interface';
 import usePublicationHistorique from './usePublicationHistorique';
 
 export default function PublicationHistorique({ type, entité, chantierId, maille, codeInsee }: PublicationHistoriqueProps) {
-  const { publications, territoireSélectionné, récupérerPublications } = usePublicationHistorique(type, entité, chantierId, maille, codeInsee);
+  const { publications, nomTerritoire, récupérerPublications } = usePublicationHistorique(type, entité, chantierId, maille, codeInsee);
 
   return (
     <Modale
       idHtml={`historique-${entité}-${type}`}
       libelléBouton="Voir l'historique"
-      setEstAffichée={estOuverte => estOuverte && récupérerPublications()}
-      sousTitre={territoireSélectionné.nom}
+      ouvertureCallback={récupérerPublications}
+      sousTitre={nomTerritoire}
       titre={`Historique - ${entité}`}
     >
       <div>

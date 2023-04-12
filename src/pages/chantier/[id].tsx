@@ -5,7 +5,6 @@ import PageChantier from '@/components/PageChantier/PageChantier';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ChantierId, SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { Objectifs } from '@/server/domain/objectif/Objectif.interface';
 
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import logger from '@/server/infrastructure/logger';
@@ -14,15 +13,13 @@ import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 interface NextPageChantierProps {
   chantier: Chantier
   indicateurs: Indicateur[]
-  objectifs: Objectifs
 }
 
-export default function NextPageChantier({ chantier, indicateurs, objectifs }: NextPageChantierProps) {
+export default function NextPageChantier({ chantier, indicateurs }: NextPageChantierProps) {
   return (
     <PageChantier
       chantier={chantier}
       indicateurs={indicateurs}
-      objectifs={objectifs}
     />
   );
 }
@@ -48,17 +45,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext<Para
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params.id);
 
-  const objectifs: Objectifs = {
-    notreAmbition: null,
-    déjàFait: null,
-    àFaire: null,
-  };
-
   return {
     props: {
       chantier,
       indicateurs,
-      objectifs,
       habilitation, // -> surt le front, les function d'haibilitation sont utiliés        -> if checkChantierScope(habilitation, chantier, scope)
     },
   };

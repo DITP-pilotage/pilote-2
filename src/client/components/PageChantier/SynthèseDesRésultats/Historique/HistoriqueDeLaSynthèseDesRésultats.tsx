@@ -4,13 +4,13 @@ import Publication from '@/components/PageChantier/Publication/Publication';
 import useHistoriqueDeLaSynthèseDesRésultats from './useHistoriqueDeLaSynthèseDesRésultats';
 
 export default function HistoriqueDeLaSynthèseDesRésultats() {
-  const { historiqueDeLaSynthèseDesRésultats, territoireSélectionné, setEstModaleOuverte } = useHistoriqueDeLaSynthèseDesRésultats();
+  const { historiqueDeLaSynthèseDesRésultats, territoireSélectionné, récupérerPublications } = useHistoriqueDeLaSynthèseDesRésultats();
 
   return (
     <Modale
       idHtml="historique-synthèse-des-résultats"
       libelléBouton="Voir l'historique"
-      setEstAffichée={setEstModaleOuverte}
+      ouvertureCallback={récupérerPublications}
       sousTitre={territoireSélectionné.nom}
       titre="Historique - Synthèse des résultats"
     >

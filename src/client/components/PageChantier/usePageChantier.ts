@@ -33,6 +33,16 @@ export default function usePageChantier(chantier: Chantier) {
     { refetchOnWindowFocus: false },
   );
 
+  const { data: objectifs } = api.publication.récupérerLaPlusRécenteParType.useQuery(
+    {
+      chantierId: chantier.id,
+      maille: 'nationale',
+      codeInsee: 'FR',
+      entité: 'objectifs',
+    },
+    { refetchOnWindowFocus: false },
+  );
+
   useEffect(() => {
     if (territoiresComparés.length > 0) return;    
     fetch(`/api/chantier/${chantier.id}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
@@ -87,6 +97,7 @@ export default function usePageChantier(chantier: Chantier) {
     avancements, 
     détailsIndicateurs, 
     commentaires: commentaires ?? null,
+    objectifs: objectifs ?? null,
     synthèseDesRésultats: synthèseDesRésultats ?? null,
   };
 }

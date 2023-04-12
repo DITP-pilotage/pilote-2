@@ -5,6 +5,7 @@ import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoires
 import CommentairesProps from '@/components/PageChantier/Commentaires/Commentaires.interface';
 import Publication from '@/components/_commons/Publication/Publication';
 import typesCommentaire from '@/client/constants/typesCommentaire';
+import { TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 
 export default function Commentaires({ commentaires, chantierId, maille, codeInsee }: CommentairesProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -33,7 +34,7 @@ export default function Commentaires({ commentaires, chantierId, maille, codeIns
                   entité="commentaires"
                   maille={maille}
                   publicationInitiale={publication}
-                  type={{ id: type, libellé: typesCommentaire[type] }}
+                  type={{ id: type, libellé: typesCommentaire[type as TypeCommentaire] }}
                 />
               </Fragment>
             ))

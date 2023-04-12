@@ -18,6 +18,7 @@ describe('ObjectifSQLRepository ', function () {
       const type: TypeObjectif = 'àFaire';
       const objectifs: Prisma.objectifCreateArgs['data'][] = [
         new ObjectifSQLRowBuilder()
+          .avecId('123abc')
           .avecChantierId(chantierId)
           .avecDate(new Date('2022-12-31'))
           .avecAuteur('Jean Bon')
@@ -57,6 +58,8 @@ describe('ObjectifSQLRepository ', function () {
 
       // THEN
       expect(result).toStrictEqual({
+        id: '123abc',
+        type,
         auteur: 'Jean Bon',
         contenu: 'Objectif à faire blabla',
         date: '2022-12-31T00:00:00.000Z',
@@ -129,6 +132,8 @@ describe('ObjectifSQLRepository ', function () {
 
       // Then
       expect(objectifCréée).toStrictEqual({
+        id,
+        type,
         contenu,
         auteur,
         date,

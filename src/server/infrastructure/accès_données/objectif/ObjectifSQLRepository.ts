@@ -23,6 +23,8 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
 
   private mapperVersDomaine(objectif: ObjectifPrisma): Objectif {
     return {
+      id: objectif.id,
+      type: NOMS_TYPES_OBJECTIFS[objectif.type],
       contenu: objectif.contenu,
       date: objectif.date.toISOString(),
       auteur: objectif.auteur,

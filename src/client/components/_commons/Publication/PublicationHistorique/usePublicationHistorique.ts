@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import api from '@/server/infrastructure/api/trpc/api';
 import { RouterOutputs } from '@/server/infrastructure/api/trpc/trpc.interface';
+import { validationPublicationContexte, zodValidateurEntitéType } from '@/validation/publication';
 import PublicationHistoriqueProps from './PublicationHistorique.interface';
 
-export default function useHistoriqueDUnCommentaire(
+export default function usePublicationHistorique(
   type: PublicationHistoriqueProps['type'], 
   entité: PublicationHistoriqueProps['entité'],
   chantierId: PublicationHistoriqueProps['chantierId'],
@@ -12,10 +13,10 @@ export default function useHistoriqueDUnCommentaire(
   codeInsee: PublicationHistoriqueProps['codeInsee'],
 ) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  
+
   const [publications, setPublications] = useState<RouterOutputs['publication']['récupérerHistorique']>();
 
-  const { data } = api.publication.récupérerHistorique.useQuery({
+  const inputs = validationPublicationContexte.and(zodValidateurEntitéType).parse({
     maille,
     chantierId,
     codeInsee,
@@ -23,13 +24,18 @@ export default function useHistoriqueDUnCommentaire(
     entité,
   });
 
-  const récupérerPublications = () => {
-    setPublications(data);
+  const { refetch: fetchRécupérerPublications } = api.publication.récupérerHistorique.useQuery(inputs, {
+    enabled: false,
+  });
+
+  const récupérerPublications = async () => {
+    const { data: données } = await fetchRécupérerPublications();
+    setPublications(données);
   };
 
   return {
     publications,
-    territoireSélectionné,
+    nomTerritoire: maille === 'nationale' ? 'France' : territoireSélectionné.nom,
     récupérerPublications,
   };
 }

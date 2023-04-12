@@ -3,8 +3,8 @@ import ModaleProps from './Modale.interface';
 import ModaleStyled from './Modale.styled';
 import useModale from './useModale';
 
-export default function Modale({ children, titre, sousTitre, libelléBouton, idHtml, setEstAffichée }: ModaleProps) {
-  const { modaleRef } = useModale(setEstAffichée);
+export default function Modale({ children, titre, sousTitre, libelléBouton, idHtml, ouvertureCallback, fermetureCallback }: ModaleProps) {
+  const { modaleRef } = useModale(ouvertureCallback, fermetureCallback);
 
   return (
     <ModaleStyled>
