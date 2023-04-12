@@ -1,13 +1,15 @@
 import KcAdminClient from '@keycloak/keycloak-admin-client';
+import logger from '../src/server/infrastructure/logger';
 
 // TODO
 // [x] installer le client keycloak
-// [ ] créer le client keycloak sur dev-keycloak
-// [ ] faire un get sur l'api keycloak
+// [x] créer le client keycloak sur dev-keycloak
+// [x] faire un get sur l'api keycloak
+// [ ] faire fonctionner en ts ? abandonner le ts ?
 // [ ] type: module = c'est quoi les conséquences ? on garde ? on jette ?
 // [ ] faire un post pour créer un utilisateurs
-// [ ] pouvoir lire les données dans un csv (quelle lib ?)
-// [ ] quel format csv ?
+// [x] pouvoir lire les données dans un csv (quelle lib ?)
+// [x] quel format csv ?
 // [ ] faire le ou les posts pour créer les utilisateurs
 // [ ] comment on structure ça dans du code serveur admin ?
 // [ ] changer de devDependencies en dependencies pour le client kc
