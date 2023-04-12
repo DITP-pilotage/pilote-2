@@ -11,6 +11,7 @@ export default function useIndicateurÉvolution(indicateurDétailsParTerritoires
 
   const options: ChartOptions<'line'> = {
     responsive: true,
+    maintainAspectRatio: false,
     scales: {
       x: { border: { dash: [2, 4] } },
       y: { border: { dash: [2, 4] }, beginAtZero: true },
