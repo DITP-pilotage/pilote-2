@@ -36,9 +36,9 @@ export default function usePageChantiers(chantiers: Chantier[]) {
         filtresActifs.ppg.some(filtre => (chantier.ppg === filtre.nom))
       ));
     }
-    if (filtresActifs.filtresFeuilleDeRoute.length > 0) {
+    if (filtresActifs.filtresTypologie.length > 0) {
       résultat = résultat.filter(chantier => (
-        filtresActifs.filtresFeuilleDeRoute.some(filtre => (chantier[filtre.attribut]))
+        filtresActifs.filtresTypologie.some(filtre => (chantier[filtre.attribut]))
       ));
     }
     return résultat;

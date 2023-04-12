@@ -7,7 +7,7 @@ const filtresActifsInitiaux: FiltresActifs = {
   périmètresMinistériels: [],
   axes: [],
   ppg: [],
-  filtresFeuilleDeRoute: [],
+  filtresTypologie: [],
 };
 
 const useFiltresStore = create<FiltresStore>((set, get) => ({

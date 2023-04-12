@@ -1,23 +1,23 @@
 import '@gouvfr/dsfr/dist/component/toggle/toggle.min.css';
 import { useCallback } from 'react';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
-import FiltreFeuilleDeRouteProps from './FiltreFeuilleDeRoute.interface';
+import FiltreTypologieProps from './FiltreTypologie.interface';
 
-export default function FiltreFeuilleDeRoute({ filtre }: FiltreFeuilleDeRouteProps) {
+export default function FiltreTypologie({ filtre }: FiltreTypologieProps) {
   const { activerUnFiltre, désactiverUnFiltre, estActif } = actionsFiltresStore();
 
   const auClicSurUnPérimètreCallback = useCallback(() => {
-    if (estActif(filtre.id, 'filtresFeuilleDeRoute')) {
-      désactiverUnFiltre(filtre.id, 'filtresFeuilleDeRoute');
+    if (estActif(filtre.id, 'filtresTypologie')) {
+      désactiverUnFiltre(filtre.id, 'filtresTypologie');
     } else {
-      activerUnFiltre(filtre, 'filtresFeuilleDeRoute');
+      activerUnFiltre(filtre, 'filtresTypologie');
     }
   }, [activerUnFiltre, désactiverUnFiltre, estActif, filtre]);
 
   return (
     <div className="fr-toggle">
       <input
-        checked={estActif(filtre.id, 'filtresFeuilleDeRoute')}
+        checked={estActif(filtre.id, 'filtresTypologie')}
         className="fr-toggle__input"
         id={`interrupteur-${filtre.id}`}
         onChange={() => auClicSurUnPérimètreCallback()}

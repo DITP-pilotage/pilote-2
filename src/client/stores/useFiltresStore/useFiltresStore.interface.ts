@@ -5,9 +5,9 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 
 export type FiltreCatégorie = keyof FiltresActifs;
 
-export type FiltreFeuilleDeRoute = { id: string, attribut: keyof Chantier, nom: string };
+export type FiltreTypologieType = { id: string, attribut: keyof Chantier, nom: string };
 
-export type Filtre = PérimètreMinistériel | FiltreFeuilleDeRoute | Ppg | Axe;
+export type Filtre = PérimètreMinistériel | FiltreTypologieType | Ppg | Axe;
 
 export interface FiltreCatégorieTuple {
   catégorie: FiltreCatégorie,
@@ -18,7 +18,7 @@ export interface FiltresActifs {
   périmètresMinistériels: PérimètreMinistériel[],
   axes: Axe[],
   ppg: Ppg[],
-  filtresFeuilleDeRoute: FiltreFeuilleDeRoute[],
+  filtresTypologie: FiltreTypologieType[],
 }
 
 export default interface FiltresStore {

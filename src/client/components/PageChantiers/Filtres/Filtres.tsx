@@ -1,12 +1,12 @@
 import FiltresSélectionMultiple from '@/components/PageChantiers/Filtres/FiltresSélectionMultiple/FiltresSélectionMultiple';
-import { FiltreFeuilleDeRoute } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
+import { FiltreTypologieType } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
 import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
 import FiltresProps from './Filtres.interface';
-import FiltresFeuilleDeRoute from './FiltresFeuilleDeRoute/FiltresFeuilleDeRoute';
+import FiltreTypologie from './FiltreTypologie/FiltreTypologie';
 
-const filtreBaromètre: FiltreFeuilleDeRoute = { id: 'filtreBaromètre', attribut: 'estBaromètre', nom: 'Chantiers du baromètre' };
-const filtreTerritorialisé: FiltreFeuilleDeRoute = { id: 'filtreTerritorialisé', attribut: 'estTerritorialisé', nom: 'Chantiers territorialisés' };
+const filtreBaromètre: FiltreTypologieType = { id: 'filtreBaromètre', attribut: 'estBaromètre', nom: 'Chantiers du baromètre' };
+const filtreTerritorialisé: FiltreTypologieType = { id: 'filtreTerritorialisé', attribut: 'estTerritorialisé', nom: 'Chantiers territorialisés' };
 
 export default function Filtres({ ministères, axes, ppg }: FiltresProps) {
   return (
@@ -26,7 +26,8 @@ export default function Filtres({ ministères, axes, ppg }: FiltresProps) {
       </FiltresGroupe>
       <hr className='fr-hr fr-mt-3w fr-pb-2w' />
       <FiltresGroupe libellé='Autres critères'>
-        <FiltresFeuilleDeRoute filtres={[filtreTerritorialisé, filtreBaromètre]} />
+        <FiltreTypologie filtre={filtreTerritorialisé} /> 
+        <FiltreTypologie filtre={filtreBaromètre} /> 
       </FiltresGroupe>
     </>
   );

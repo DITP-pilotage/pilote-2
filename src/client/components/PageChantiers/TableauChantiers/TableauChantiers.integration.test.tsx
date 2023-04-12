@@ -1,20 +1,22 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import '@testing-library/jest-dom';
-import { getAllByRole, render, screen, waitFor } from '@testing-library/react';
+import { getAllByRole, queryByLabelText, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TableauChantiers from './TableauChantiers';
+import { DonnéesTableauChantiers } from './TableauChantiers.interface';
 
 // eslint-disable-next-line unicorn/prefer-module
 jest.mock('next/router', () => require('next-router-mock'));
 
 class TableauChantiersTest {
-  private données = [
+  private données: DonnéesTableauChantiers[] = [
     {
       porteur: 'Ministère 1',
       nom: 'Déployer le programme FR',
       id: '1',
       avancement: 97,
       météo: 'COUVERT' as const,
-      estBaromètre: false,
+      typologie: { estBaromètre: false, estTerritorialisé: true },
     },
     {
       porteur: 'Ministère 1',
@@ -22,7 +24,7 @@ class TableauChantiersTest {
       id: '2',
       avancement: 98,
       météo: 'COUVERT' as const,
-      estBaromètre: false,
+      typologie: { estBaromètre: true, estTerritorialisé: true },
     },
     {
       porteur: 'Ministère 2',
@@ -30,7 +32,7 @@ class TableauChantiersTest {
       id: '3',
       avancement: 99,
       météo: 'SOLEIL' as const,
-      estBaromètre: false,
+      typologie: { estBaromètre: false, estTerritorialisé: false },
     },
   ];
 
@@ -42,12 +44,21 @@ class TableauChantiersTest {
     return waitFor(() => userEvent.type(screen.getByRole('searchbox'), texte));
   }
 
+  récupérerLesLignesDuTableau() {
+    const conteneur = document.querySelector('tbody');
+    return getAllByRole(conteneur!, 'row');
+  }
+
   récupérerLeNombreDeLignesDuTableau() {
     return this.récupérerLesLignesDuTableau().length;
   }
 
   récupérerUneLigneDuTableau(numéroDeLigne: number) {
     return this.récupérerLesLignesDuTableau()[numéroDeLigne - 1];
+  }
+
+  récupérerUneLigneParLeNomDuChantier(nom: DonnéesTableauChantiers['nom']) {
+    return screen.getByRole('row', { name: new RegExp('.*' + nom + '.*') });
   }
 
   trierSurLaColonne(labelDuBoutonDeTri: string) {
@@ -60,11 +71,6 @@ class TableauChantiersTest {
         données={this.données}
       />,
     ));
-  }
-
-  récupérerLesLignesDuTableau() {
-    const conteneur = document.querySelector('tbody');
-    return getAllByRole(conteneur!, 'row');
   }
 }
 
@@ -122,5 +128,40 @@ test('la recherche applique un filtre sur les lignes', async () => {
   expect(tableau.récupérerLeNombreDeLignesDuTableau()).toBe(2);
   tableau.récupérerLesLignesDuTableau().forEach((ligne) => {
     expect(ligne).toHaveTextContent(/.*fr.*/i);
+  });
+});
+
+describe('Les bons pictogrammes de typologie apparaissent dans la colonnes typologie', () => {
+  test('Quand le chantier est territorialisé et du baromètre', () => {
+    // GIVEN 
+    const ligneDUnChantierTerritorialisé = tableau.récupérerUneLigneParLeNomDuChantier('Lutter contre la fraude fiscale');
+    const pictoTerritorialisé = queryByLabelText(ligneDUnChantierTerritorialisé, 'picto-chantier-territorialisé');
+    const pictoBaromère = queryByLabelText(ligneDUnChantierTerritorialisé, 'picto-baromètre');
+    
+    // THEN
+    expect(pictoTerritorialisé).toBeInTheDocument();
+    expect(pictoBaromère).toBeInTheDocument();
+  });
+
+  test("Quand le chantier est territorialisé et n'est pas du baromètre", () => {
+    // GIVEN 
+    const ligneDUnChantierTerritorialisé = tableau.récupérerUneLigneParLeNomDuChantier('Déployer le programme FR');
+    const pictoTerritorialisé = queryByLabelText(ligneDUnChantierTerritorialisé, 'picto-chantier-territorialisé');
+    const pictoBaromère = queryByLabelText(ligneDUnChantierTerritorialisé, 'picto-baromètre');
+    
+    // THEN
+    expect(pictoTerritorialisé).toBeInTheDocument();
+    expect(pictoBaromère).not.toBeInTheDocument();
+  });
+
+  test("Quand le chantier n'est ni territorialisé et ni du baromètre", () => {
+    // GIVEN 
+    const ligneDUnChantierTerritorialisé = tableau.récupérerUneLigneParLeNomDuChantier('Elections du maire');
+    const pictoTerritorialisé = queryByLabelText(ligneDUnChantierTerritorialisé, 'picto-chantier-territorialisé');
+    const pictoBaromère = queryByLabelText(ligneDUnChantierTerritorialisé, 'picto-baromètre');
+    
+    // THEN
+    expect(pictoTerritorialisé).not.toBeInTheDocument();
+    expect(pictoBaromère).not.toBeInTheDocument();
   });
 });
