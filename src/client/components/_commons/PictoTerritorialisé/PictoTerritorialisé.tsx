@@ -3,7 +3,7 @@ import PictoTerritorialiséstyled from '@/components/_commons/PictoTerritorialis
 export default function PictoTerritorialisé() {
   return (
     <PictoTerritorialiséstyled
-      aria-hidden="true"
+      aria-label='picto-chantier-territorialisé'
       className="fr-icon-map-pin-2-line"
     />
   );
