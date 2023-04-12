@@ -1,20 +1,18 @@
-# Pilote Data jobs
-Ce répertoire les pipelines d'imports, de chargement et transformation des données de _Pilote V2_. 
+# Data factory
+Ce répertoire administre les pipelines d'imports, de chargement et transformation des données de _Pilote V2_. 
 Il gère également les migrations de base pour les données brutes.
 
 ## Description
 
-Ce projet est décomposé de 3 parties : 
-1. Migration des tables avec alembic : 
-   - Afin de versionner les changements de tables sur le schéma `raw_data` de la database du projet _Pilote V2_.
-   - L'ensemble des migrations de base se trouve dans le dossier `migrations`
-2. Exploration des données issues de _Dfakto_ et du projet _PPG_metadata_ : 
+Ce projet est décomposé de 2 parties : 
+1. Exploration des données issues de _Dfakto_ et du projet _PPG_metadata_ : 
    - Projet python pour explorer les données du projet.
    - Ces données se situent dans le dossier `input_data`. 
    On mettra les données privées dans le repertoire `private_data` et les données publiques dans `open_data`. 
-3. Pipelines d'imports, de chargement et transformation des données
-   - Les jobs d'imports et chargement des données seront exécutés via des commandes `psql` dans un script.
+2. Pipelines d'imports, de chargement et transformation des données
+   - Les jobs d'imports et chargement des données seront exécutés via des commandes `psql` dans un script pour simuler les imports massifs en local.
    - Les transformations seront faites avec DBT dans un environnement python et également exécutées par script.
+   - Enfin les données sont exposées dans des tables dont le schéma est géré par Prisma et exposées à l'application Pilote.  
 
 
 ## Avant de démarrer

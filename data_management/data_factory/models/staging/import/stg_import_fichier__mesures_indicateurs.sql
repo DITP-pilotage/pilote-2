@@ -9,6 +9,7 @@ source as (
 renamed as (
 
     select
+        id,
         indic_id as indicateur_id,
         zone_id,
         TO_DATE(metric_date,'DD/MM/YYYY') as date_releve,

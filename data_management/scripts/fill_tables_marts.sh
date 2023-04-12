@@ -12,4 +12,4 @@ then
   fi
 fi
 
-dbt run --project-dir data_factory/ --select marts
+dbt run --project-dir data_factory/ --select marts --full-refresh # TODO ne pas laisser en full refresh en production

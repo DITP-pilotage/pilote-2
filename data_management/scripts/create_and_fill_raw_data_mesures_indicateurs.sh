@@ -17,15 +17,9 @@ fi
 # 2nd hypothèse : le format n'est pas encore défini (a ajuster en amont de cette étape ou dans l'état staging)
 # Creation de la table temporaire pour charger les données en base dans la table temp_metric_indicateur
 
-psql "$DATABASE_URL" -c "DROP TABLE IF EXISTS raw_data.mesure_indicateur CASCADE"
-psql "$DATABASE_URL" -c "CREATE TABLE IF NOT EXISTS raw_data.mesure_indicateur (
-    indic_id      TEXT,
-    zone_id       TEXT,
-    metric_date   TEXT,
-    metric_type   TEXT,
-    metric_value  TEXT,
-    date_import TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);"
+#psql "$DATABASE_URL" -c "TRUNCATE TABLE raw_data.mesure_indicateur"
+#psql "$DATABASE_URL" -c "ALTER TABLE raw_data.mesure_indicateur DROP COLUMN id"
+#psql "$DATABASE_URL" -c "ALTER TABLE raw_data.mesure_indicateur ADD COLUMN id UUID DEFAULT (gen_random_uuid())"
 
 # Remplissage de la table avec les dernières données indicateurs
 psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/pass_culture_indic_test.csv
