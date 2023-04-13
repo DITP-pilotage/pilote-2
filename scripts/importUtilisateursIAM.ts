@@ -67,6 +67,7 @@ import logger from '@/server/infrastructure/logger';
  * - Ajouter un rôle au client (onglet Service Accounts roles)
  *     - cliquer sur Assign role, chercher realm-admin (de realm-management) et l'assigner
  * - Noter le Client secret (onglet Credentials)
+ * - Dans son .env, ajouter IMPORT_KEYCLOAK_URL, l'url de base du Keycloak cible
  * - Dans son .env, ajouter IMPORT_CLIENT_ID avec le clientId
  * - Dans son .env, ajouter IMPORT_CLIENT_SECRET avec le client secret
  *
@@ -83,7 +84,6 @@ const CSV_PARSE_OPTIONS = {
   columns: true,
   skipEmptyLines: true,
 };
-
 const CSV_WRITE_OPTIONS = {
   header:true,
 };
@@ -100,7 +100,6 @@ const FIELDS = {
 const EXPECTED_RECORD_FIELDS = Object.values(FIELDS);
 
 const KEYCLOAK_REALM = 'DITP';
-const KEYCLOAK_URL = 'https://dev-keycloak-ditp.osc-fr1.scalingo.io';
 
 type CsvRecord = Record<string, string>;
 
@@ -136,8 +135,10 @@ const dynamicImport = new Function('specifier', 'return import(specifier)');
 
 async function loginKcAdminClient() {
   const { default: KcAdminClient } = await dynamicImport('@keycloak/keycloak-admin-client');
+  const keycloakUrl = process.env.IMPORT_KEYCLOAK_URL;
+  assert(keycloakUrl, 'Variable IMPORT_KEYCLOAK_URL manquante');
   const kcAdminClient = new KcAdminClient({
-    baseUrl: KEYCLOAK_URL,
+    baseUrl: keycloakUrl,
     realmName: KEYCLOAK_REALM,
     requestArgOptions: {},
   });
@@ -145,7 +146,7 @@ async function loginKcAdminClient() {
   const clientId = process.env.IMPORT_CLIENT_ID;
   const clientSecret = process.env.IMPORT_CLIENT_SECRET;
   if (!clientId || !clientSecret) {
-    throw new Error('Variable d\'env IMPORT_CLIENT_ID ou IMPORT_CLIENT_SECRET manquante.');
+    throw new Error('Variable IMPORT_CLIENT_ID ou IMPORT_CLIENT_SECRET manquante.');
   }
 
   await kcAdminClient.auth({
@@ -181,8 +182,6 @@ async function importeUtilisateur(kcAdminClient: any, record: CsvRecord) {
     }
   }
 }
-
-
 
 async function main() {
   const filename = process.argv[2];
