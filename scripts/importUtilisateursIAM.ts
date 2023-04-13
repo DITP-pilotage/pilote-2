@@ -3,11 +3,12 @@ import { parse } from 'csv-parse/sync';
 import { stringify } from 'csv-stringify/sync';
 import dotenv from 'dotenv';
 import { faker } from '@faker-js/faker/locale/fr';
+import { PrismaClient } from '@prisma/client';
 import process from 'node:process';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import logger from '@/server/infrastructure/logger';
-// import { InputUtilisateur } from '@/server/infrastructure/accès_données/identité/seed';
+import { créerUtilisateurs, InputUtilisateur } from '@/server/infrastructure/accès_données/identité/seed';
 import { DIR_PROJET, DITP_PILOTAGE } from '@/server/domain/identité/Profil';
 
 // TODO: Must have
@@ -29,7 +30,8 @@ import { DIR_PROJET, DITP_PILOTAGE } from '@/server/domain/identité/Profil';
 //         - poursuivre le traitement
 // [x] ajouter l'action 'doit reset son mot de passe' à la création de l'utilisateur
 // [x] documenter
-// [ ] créer les utilisateurs dans l'app avec leur liste de chantiers
+// [x] créer les utilisateurs dans l'app avec leur liste de chantiers
+// [ ] si un utilisateur existe déjà chez nous, mettre à jour
 // [ ] réfléchir 2 s à la gestion d'erreurs
 // [ ] supprimer version .mjs
 // [ ] faire marcher si pas de chantier id (profils DITP Pilotage)
@@ -235,17 +237,24 @@ async function importeUtilisateursIAM(records: ImportRecord[]) {
   }
 }
 
-// async function importeUtilisateursPilote(records: ImportRecord[]) {
-//   const donnéesÀImporter: InputUtilisateur[] = [];
-//   for (const record of records) {
-//     donnéesÀImporter.push({
-//       email: record.email,
-//       profilCode: record.profilCode,
-//       chantierIds: record.chantierIds,
-//     });
-//   }
-//   logger.info(donnéesÀImporter);
-// }
+async function importeUtilisateursPilote(records: ImportRecord[]) {
+  const donnéesÀImporter: InputUtilisateur[] = [];
+  for (const record of records) {
+    donnéesÀImporter.push({
+      email: record.email,
+      profilCode: record.profilCode,
+      chantierIds: record.chantierIds,
+    });
+  }
+
+  const prisma = new PrismaClient();
+  const resultSet = await prisma.profil.findMany({ select: { id: true, code: true } });
+  const profilIdByCode: Record<string, string> = {};
+  for (const profilRow of resultSet) {
+    profilIdByCode[profilRow.code] = profilRow.id;
+  }
+  await créerUtilisateurs(prisma, donnéesÀImporter, profilIdByCode);
+}
 
 async function main() {
   const filename = process.argv[2];
@@ -261,7 +270,7 @@ async function main() {
   const importRecords = parseCsvRecords(csvRecords);
 
   await importeUtilisateursIAM(importRecords);
-  // await importeUtilisateursPilote(importRecords);
+  await importeUtilisateursPilote(importRecords);
 }
 
 main().catch((error) => {
