@@ -224,7 +224,7 @@ describe('IndicateurSQLRepository', () => {
       expect(result).toStrictEqual(
         {
           'IND-001': {
-            '01' : {
+            '01': {
               codeInsee: '01',
               valeurInitiale: 1000,
               dateValeurInitiale: '2021-01-01T00:00:00.000Z',

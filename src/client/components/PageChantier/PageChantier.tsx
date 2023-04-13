@@ -19,6 +19,7 @@ import Sommaire from './Sommaire/Sommaire';
 import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
 import Objectifs from './Objectifs/Objectifs';
+import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
 
 const listeRubriques: Rubrique[] = [
   { nom: 'Avancement du chantier', ancre: 'avancement' },
@@ -32,7 +33,7 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, habilitation }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats, objectifs } = usePageChantier(chantier);
+  const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats, objectifs, décisionsStratégiques } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   
@@ -105,6 +106,15 @@ export default function PageChantier({ chantier, indicateurs, habilitation }: Pa
               </div>
             )
           }
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className="fr-col-12">
+              <DécisionsStratégiques
+                chantierId={chantier.id}
+                décisionsStratégiques={[{ type: 'suivi_des_decisions', publication: décisionsStratégiques }]}
+                modeÉcriture={modeÉcriture}
+              />
+            </div>
+          </div>
           {
             commentaires !== null && (
               <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">

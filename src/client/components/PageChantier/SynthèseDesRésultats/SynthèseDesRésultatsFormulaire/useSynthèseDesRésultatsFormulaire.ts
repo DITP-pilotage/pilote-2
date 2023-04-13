@@ -26,7 +26,7 @@ export default function useSynthèseDesRésultatsFormulaire(synthèseDesRésulta
     },
   });
 
-  const créerSynthèseDesRésultats : SubmitHandler<SynthèseDesRésultatsFormulaireInputs> = data => {
+  const créerSynthèseDesRésultats: SubmitHandler<SynthèseDesRésultatsFormulaireInputs> = data => {
     mutationCréerSynthèseDesRésultats.mutate({
       contenu: data.contenu,
       météo: data.météo,

@@ -43,6 +43,17 @@ export default function usePageChantier(chantier: Chantier) {
     { refetchOnWindowFocus: false },
   );
 
+  const { data: décisionsStratégiques } = api.publication.récupérerLaPlusRécente.useQuery(
+    {
+      chantierId: chantier.id,
+      maille: 'nationale',
+      codeInsee: 'FR',
+      entité: 'décisions stratégiques',
+      type: 'suivi_des_decisions',
+    },
+    { refetchOnWindowFocus: false },
+  );
+
   useEffect(() => {
     if (territoiresComparés.length > 0) return;    
     fetch(`/api/chantier/${chantier.id}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
@@ -99,5 +110,6 @@ export default function usePageChantier(chantier: Chantier) {
     commentaires: commentaires ?? null,
     objectifs: objectifs ?? null,
     synthèseDesRésultats: synthèseDesRésultats ?? null,
+    décisionsStratégiques: décisionsStratégiques ?? null,
   };
 }

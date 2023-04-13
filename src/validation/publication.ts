@@ -24,10 +24,14 @@ export const zodValidateurEntitéType = z.discriminatedUnion('entité', [
     entité: z.literal('objectifs'),
     type: z.enum(typesObjectif), 
   }),
+  z.object({
+    entité: z.literal('décisions stratégiques'),
+    type: z.enum(['suivi_des_decisions']), 
+  }),
 ]);
 
 export const zodValidateurEntité = z.object({
-  entité: z.enum(['commentaires', 'objectifs']),
+  entité: z.enum(['commentaires', 'objectifs', 'décisions stratégiques']),
 });
 
 export const validationPublicationFormulaire = zodValidateurEntitéType.and(
