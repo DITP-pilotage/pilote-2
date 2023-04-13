@@ -62,7 +62,7 @@ async function main() {
   checkRecords(records);
   for (const record of records) {
     await processRecord(kcAdminClient, record);
-  };
+  }
 }
 
 main();
