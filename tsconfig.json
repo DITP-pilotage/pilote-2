@@ -55,6 +55,7 @@
     },
     "require": [
       "tsconfig-paths/register"
-    ]
+    ],
+    "transpileOnly": true
   }
 }

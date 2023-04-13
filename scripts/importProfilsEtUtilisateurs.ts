@@ -1,7 +1,7 @@
 /*
  *
  * Usage:
- *     $ npx ts-node  -O '{"module": "commonjs"}' scripts/importProfilsEtUtilisateurs.ts build/input.json | npx pino-pretty
+ *     $ npx ts-node scripts/importProfilsEtUtilisateurs.ts build/input.json | npx pino-pretty
  *
  * Voir src/server/infrastructure/accès_données/identité/seed.ts pour un exemple de struture à fournir.
  *
