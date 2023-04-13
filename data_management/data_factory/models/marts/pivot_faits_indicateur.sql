@@ -17,7 +17,8 @@ with faits_indicateur_order_by_date as (
 SELECT
     indicateur_id,
     zone_id,
-    MAX(valeur) FILTER (where type_mesure = 'vi') as valeur_initiale,
+    -- FIXME: il faut récupérer la première valeur actuelle si pas de valeur initiale, cependant avec le filtre sur le row_id on récupère uniquement la dernière valeur (et non la première)
+    COALESCE(MAX(valeur) FILTER (where type_mesure = 'vi'), MAX(valeur) FILTER (where type_mesure = 'va')) as valeur_initiale,
     COALESCE(MAX(valeur) FILTER (where type_mesure = 'va'), MAX(valeur) FILTER (where type_mesure = 'vi')) as valeur_actuelle,
     MAX(valeur) FILTER (where type_mesure = 'vc') as valeur_cible, -- dernière valeur cible dispo
     MAX(date_releve) FILTER (where type_mesure = 'vi') as date_valeur_initiale,
