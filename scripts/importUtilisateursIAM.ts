@@ -125,15 +125,6 @@ const CODES_PROFILS: Record<string, string> = {
 
 export type CsvRecord = Record<string, string>;
 
-type ImportRecord = {
-  nom: string,
-  prénom: string,
-  email: string,
-  profilCode: string,
-  chantierIds: string[],
-  motDePasse: string,
-};
-
 function contientMotsDePasse(records: CsvRecord[]) {
   const firstRecord = records[0];
   return Boolean(firstRecord[FIELDS.motDePasse]);
@@ -149,24 +140,37 @@ function générerEtÉcrireMotsDePasse(records: CsvRecord[], filename: string) {
   fs.writeFileSync(filename, contents);
 }
 
-export function créerImportRecord(csvRecord: CsvRecord): ImportRecord {
-  const profilCode = CODES_PROFILS[csvRecord[FIELDS.profils]];
-  const chantierIds = [];
-  const csvChantierId = csvRecord[FIELDS.idChantier];
-  if (csvChantierId != '') {
-    chantierIds.push(csvChantierId);
+export class ImportRecord {
+  constructor(
+    public readonly nom: string,
+    public readonly prénom: string,
+    public readonly email: string,
+    public readonly motDePasse: string,
+    public readonly profilCode: string,
+    public readonly chantierIds: string[],
+  ) {}
+
+  static fromCsvRecord(csvRecord: CsvRecord): ImportRecord {
+    const profilCode = CODES_PROFILS[csvRecord[FIELDS.profils]];
+
+    const chantierIds = [];
+    const csvChantierId = csvRecord[FIELDS.idChantier];
+    if (csvChantierId != '') {
+      chantierIds.push(csvChantierId);
+    }
+
+    return new ImportRecord(
+      csvRecord[FIELDS.nom],
+      csvRecord[FIELDS.prénom],
+      csvRecord[FIELDS.email],
+      csvRecord[FIELDS.motDePasse],
+      profilCode,
+      chantierIds,
+    );
   }
-  return {
-    nom: csvRecord[FIELDS.nom],
-    prénom: csvRecord[FIELDS.prénom],
-    email: csvRecord[FIELDS.email],
-    profilCode,
-    chantierIds,
-    motDePasse: csvRecord[FIELDS.motDePasse],
-  };
 }
 
-function parseCsvRecords(csvRecords: CsvRecord[]): ImportRecord[] {
+export function parseCsvRecords(csvRecords: CsvRecord[]): ImportRecord[] {
   assert(csvRecords, 'Erreur de parsing CSV. Pas de lignes ?');
 
   const result: ImportRecord[] = [];
@@ -178,7 +182,7 @@ function parseCsvRecords(csvRecords: CsvRecord[]): ImportRecord[] {
     }
     const nomDeProfil = csvRecord[FIELDS.profils];
     assert(CODES_PROFILS[nomDeProfil], `Nom de profil ${nomDeProfil} inconnu. Profils connus : ${Object.keys(CODES_PROFILS)}`);
-    const importRecord = créerImportRecord(csvRecord);
+    const importRecord = ImportRecord.fromCsvRecord(csvRecord);
     result.push(importRecord);
   }
   return result;

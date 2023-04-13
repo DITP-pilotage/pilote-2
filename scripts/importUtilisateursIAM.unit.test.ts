@@ -1,9 +1,9 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { DIR_PROJET } from '@/server/domain/identité/Profil';
-import { créerImportRecord, CsvRecord } from './importUtilisateursIAM';
+import { CsvRecord, ImportRecord, parseCsvRecords } from './importUtilisateursIAM';
 
 describe('Script import utilisateurs', () => {
-  it('crée des données à importer', () => {
+  it('parse des données à importer', () => {
     const csvRecord: CsvRecord = {
       ['Nom']: 'Dylan',
       ['Prénom']: 'Bob',
@@ -13,15 +13,10 @@ describe('Script import utilisateurs', () => {
       ['ID du chantier']: 'CH-1234',
       ['Mot de passe']: 'abc1234',
     };
-    const result = créerImportRecord(csvRecord);
-    expect(result).toEqual({
-      nom: 'Dylan',
-      prénom: 'Bob',
-      profilCode: DIR_PROJET,
-      email: 'bob@dylan.com',
-      chantierIds: ['CH-1234'],
-      motDePasse: 'abc1234',
-    });
+    const result = parseCsvRecords([csvRecord]);
+    expect(result).toStrictEqual([
+      new ImportRecord('Dylan', 'Bob', 'bob@dylan.com', 'abc1234', DIR_PROJET, ['CH-1234']),
+    ]);
   });
 
   it('un id de chantier vide dans le csv génère une liste vide à importer', () => {
@@ -34,14 +29,9 @@ describe('Script import utilisateurs', () => {
       ['ID du chantier']: '',
       ['Mot de passe']: 'abc1234',
     };
-    const result = créerImportRecord(csvRecord);
-    expect(result).toEqual({
-      nom: 'Dylan',
-      prénom: 'Bob',
-      profilCode: DIR_PROJET,
-      email: 'bob@dylan.com',
-      chantierIds: [],
-      motDePasse: 'abc1234',
-    });
+    const result = parseCsvRecords([csvRecord]);
+    expect(result).toStrictEqual([
+      new ImportRecord('Dylan', 'Bob', 'bob@dylan.com', 'abc1234', DIR_PROJET, []),
+    ]);
   });
 });
