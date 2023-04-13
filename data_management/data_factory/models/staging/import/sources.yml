@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: import_from_files
+    database: "{{ env_var('PGDATABASE') }}"
+    schema: raw_data
+    tables:
+      - name: mesure_indicateur
