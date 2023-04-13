@@ -38,7 +38,7 @@ export default function usePageChantiers(chantiers: Chantier[]) {
     }
     if (filtresActifs.filtresTypologie.length > 0) {
       résultat = résultat.filter(chantier => (
-        filtresActifs.filtresTypologie.some(filtre => (chantier[filtre.attribut]))
+        filtresActifs.filtresTypologie.every(filtre => (chantier[filtre.attribut]))
       ));
     }
     return résultat;
