@@ -7,7 +7,7 @@ export default class RécupérerObjectifLePlusRécentUseCase {
     private readonly objectifRepository: ObjectifRepository = dependencies.getObjectifRepository(),
   ) {}
 
-  async run(chantierId: string, type: TypeObjectif) :Promise<Objectif> {
+  async run(chantierId: string, type: TypeObjectif): Promise<Objectif> {
     return this.objectifRepository.récupérerLePlusRécent(chantierId, type);
   }
 }

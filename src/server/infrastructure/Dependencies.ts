@@ -37,7 +37,9 @@ import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_donnée
 import { UtilisateurIAMRepository } from '@/server/domain/identité/UtilisateurIAMRepository';
 import UtilisateurIAMKeycloakRepository
   from '@/server/infrastructure/accès_données/identité/UtilisateurIAMKeycloakRepository';
+import DécisionsStratégiquesRepository from '@/server/domain/décisionsStratégiques/DécisionsStratégiquesRepository.interface';
 import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
+import DécisionsStratégiquesSQLRepository from './accès_données/décisionsStratégiques/DécisionsStratégiquesSQLRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
@@ -55,6 +57,8 @@ class Dependencies {
   private readonly _commentaireRepository: CommentaireRepository;
 
   private readonly _objectifRepository: ObjectifRepository;
+
+  private readonly _décisionsStratégiquesRepository: DécisionsStratégiquesRepository;
 
   private readonly _habilitationRepository: HabilitationRepository;
 
@@ -75,6 +79,7 @@ class Dependencies {
     this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
     this._commentaireRepository = new CommentaireSQLRepository(prisma);
     this._objectifRepository = new ObjectifSQLRepository(prisma);
+    this._décisionsStratégiquesRepository = new DécisionsStratégiquesSQLRepository(prisma);
     this._habilitationRepository = new HabilitationSQLRepository(prisma);
     this._utilisateurRepository = new UtilisateurSQLRepository(prisma);
 
@@ -109,6 +114,10 @@ class Dependencies {
 
   getObjectifRepository(): ObjectifRepository {
     return this._objectifRepository;
+  }
+
+  getDécisionsStratégiquesRepository(): DécisionsStratégiquesRepository {
+    return this._décisionsStratégiquesRepository;
   }
 
   getMinistèreRepository(): MinistèreRepository {
