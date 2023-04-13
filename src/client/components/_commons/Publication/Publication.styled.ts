@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const CommentaireStyled = styled.section`
+const PublicationStyled = styled.section`
   display: flex;
   flex-direction: column;
 
@@ -19,4 +19,4 @@ const CommentaireStyled = styled.section`
   }
 `;
 
-export default CommentaireStyled;
+export default PublicationStyled;

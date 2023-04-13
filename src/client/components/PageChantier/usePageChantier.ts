@@ -23,11 +23,22 @@ export default function usePageChantier(chantier: Chantier) {
     { refetchOnWindowFocus: false },
   );
 
-  const { data: commentaires } = api.commentaire.récupérerLesPlusRécentsParType.useQuery(
+  const { data: commentaires } = api.publication.récupérerLaPlusRécenteParType.useQuery(
     {
       chantierId: chantier.id,
       maille: mailleAssociéeAuTerritoireSélectionné,
       codeInsee: territoireSélectionné.codeInsee,
+      entité: 'commentaires',
+    },
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: objectifs } = api.publication.récupérerLaPlusRécenteParType.useQuery(
+    {
+      chantierId: chantier.id,
+      maille: 'nationale',
+      codeInsee: 'FR',
+      entité: 'objectifs',
     },
     { refetchOnWindowFocus: false },
   );
@@ -86,6 +97,7 @@ export default function usePageChantier(chantier: Chantier) {
     avancements, 
     détailsIndicateurs, 
     commentaires: commentaires ?? null,
+    objectifs: objectifs ?? null,
     synthèseDesRésultats: synthèseDesRésultats ?? null,
   };
 }

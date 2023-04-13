@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const CommentaireFormulaireStyled = styled.form`
+const PublicationFormulaireStyled = styled.form`
   .partie-basse {
     flex-wrap: wrap;
     row-gap: 2rem;
@@ -18,4 +18,4 @@ const CommentaireFormulaireStyled = styled.form`
   }
 `;
 
-export default CommentaireFormulaireStyled;
+export default PublicationFormulaireStyled;

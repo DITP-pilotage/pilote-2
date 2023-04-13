@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
-import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
@@ -29,11 +29,12 @@ const listeRubriques: Rubrique[] = [
   { nom: 'Commentaires', ancre: 'commentaires' },
 ];
 
-export default function PageChantier({ chantier, indicateurs, objectifs }: PageChantierProps) {
+export default function PageChantier({ chantier, indicateurs, modeÉcriture }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats } = usePageChantier(chantier);
+  const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats, objectifs } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-  
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
   return (
     <PageChantierStyled className="flex">
       <BarreLatérale
@@ -64,7 +65,10 @@ export default function PageChantier({ chantier, indicateurs, objectifs }: PageC
               <Responsables chantier={chantier} />
             </div>
             <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
-              <SynthèseDesRésultats synthèseDesRésultatsInitiale={synthèseDesRésultats} />
+              <SynthèseDesRésultats
+                modeÉcriture={modeÉcriture}
+                synthèseDesRésultatsInitiale={synthèseDesRésultats}
+              />
             </div>
           </div>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
@@ -72,11 +76,20 @@ export default function PageChantier({ chantier, indicateurs, objectifs }: PageC
               <Cartes chantier={chantier} />
             </div>
           </div>
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <div className="fr-col-12">
-              <Objectifs objectifs={objectifs} />
+          {
+            objectifs !== null && 
+            <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+              <div className="fr-col-12">
+                <Objectifs
+                  chantierId={chantier.id} 
+                  codeInsee='FR'
+                  maille='nationale'
+                  modeÉcriture={modeÉcriture}
+                  objectifs={objectifs}
+                />
+              </div>
             </div>
-          </div>
+          }
           {
             détailsIndicateurs !== null && (
               <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
@@ -93,7 +106,13 @@ export default function PageChantier({ chantier, indicateurs, objectifs }: PageC
             commentaires !== null && (
               <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                 <div className="fr-col-12">
-                  <Commentaires commentaires={commentaires} />
+                  <Commentaires
+                    chantierId={chantier.id} 
+                    codeInsee={territoireSélectionné.codeInsee}
+                    commentaires={commentaires}
+                    maille={mailleAssociéeAuTerritoireSélectionné}
+                    modeÉcriture={modeÉcriture}
+                  />
                 </div>
               </div>
             )

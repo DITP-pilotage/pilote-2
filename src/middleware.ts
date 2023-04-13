@@ -20,6 +20,6 @@ export default withAuth(
 );
 
 export const config = {
-  // s'applique à toutes les urls sauf / - ^/js/ - ^/api/trpc
-  matcher: ['/((?![js/|api/trpc/]).+)'],
+  // s'applique à toutes les urls sauf / - ^/js/
+  matcher: ['/((?!js/).+)'],
 };

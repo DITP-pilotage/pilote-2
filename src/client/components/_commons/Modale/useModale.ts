@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
+import ModaleProps from '@/components/_commons/Modale/Modale.interface';
 
-export default function useModale(setEstAffichée: (valeur: boolean) => void) {
+export default function useModale(ouvertureCallback: ModaleProps['ouvertureCallback'], fermetureCallback: ModaleProps['fermetureCallback']) {
   const modaleRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -8,8 +9,8 @@ export default function useModale(setEstAffichée: (valeur: boolean) => void) {
     if (!modaleHTML)
       return;
 
-    const àLaFermetureDeLaModale = () => setEstAffichée(false);
-    const àLOuvertureDeLaModale = () => setEstAffichée(true);
+    const àLaFermetureDeLaModale = () => fermetureCallback?.();
+    const àLOuvertureDeLaModale = () => ouvertureCallback?.();
 
     modaleHTML.addEventListener('dsfr.conceal', àLaFermetureDeLaModale);
     modaleHTML.addEventListener('dsfr.disclose', àLOuvertureDeLaModale);
@@ -18,7 +19,8 @@ export default function useModale(setEstAffichée: (valeur: boolean) => void) {
       modaleHTML?.removeEventListener('dsfr.conceal', àLaFermetureDeLaModale);
       modaleHTML?.removeEventListener('dsfr.disclose', àLOuvertureDeLaModale);
     };
-  }, [modaleRef, setEstAffichée]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modaleRef]);
 
   return {
     modaleRef,

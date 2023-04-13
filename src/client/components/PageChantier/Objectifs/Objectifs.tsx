@@ -1,9 +1,12 @@
+import { Fragment } from 'react';
+import typesObjectif from '@/client/constants/typesObjectif';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import { ObjectifProps } from '@/components/PageChantier/Objectifs/Objectifs.interface';
-import Publication from '@/components/PageChantier/Publication/Publication';
+import Publication from '@/components/_commons/Publication/Publication';
+import { TypeObjectif } from '@/server/domain/objectif/Objectif.interface';
 
-export default function Objectifs({ objectifs }: ObjectifProps) {
+export default function Objectifs({ objectifs, chantierId, maille, codeInsee, modeÉcriture }: ObjectifProps) {
   return (
     <section id="objectifs">
       <Titre
@@ -12,23 +15,28 @@ export default function Objectifs({ objectifs }: ObjectifProps) {
       >
         Objectifs
       </Titre>
-      <Bloc titre="National">
-        <div className='fr-grid-row'>
-          <div className="fr-col-12">
-            <Titre
-              baliseHtml="h3"
-              className="fr-h5 fr-mb-1w"
-            >
-              Notre ambition
-            </Titre>
-            <Publication
-              auteur={objectifs.notreAmbition?.auteur ?? null}
-              contenu={objectifs.notreAmbition?.contenu ?? null}
-              date={objectifs.notreAmbition?.date ?? null}
-              messageSiAucunContenu='Aucun objectif renseigné.'
-            />
-          </div>
-        </div>
+      <Bloc titre="France">
+        {
+          !!objectifs &&
+            objectifs.map(({ publication, type }, i) => (
+              <Fragment key={type}>
+                {
+                  i !== 0 && (
+                    <hr className="fr-hr fr-mx-n2w" />
+                  )
+                }
+                <Publication
+                  chantierId={chantierId}
+                  codeInsee={codeInsee}
+                  entité="objectifs"
+                  maille={maille}
+                  modeÉcriture={modeÉcriture}
+                  publicationInitiale={publication}
+                  type={{ id: type, libellé: typesObjectif[type as TypeObjectif] }}
+                />
+              </Fragment>
+            ))
+        }
       </Bloc>
     </section>
   );

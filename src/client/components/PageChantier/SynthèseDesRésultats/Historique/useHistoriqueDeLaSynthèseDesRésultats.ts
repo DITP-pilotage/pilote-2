@@ -12,16 +12,12 @@ export default function useHistoriqueDeLaSynthèseDesRésultats() {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const [historiqueDeLaSynthèseDesRésultats, setHistoriqueDeLaSynthèseDesRésultats] = useState<SynthèseDesRésultats[] | null>(null);
-  const [estModaleOuverte, setEstModaleOuverte] = useState(false);
 
   useEffect(() => {
     setHistoriqueDeLaSynthèseDesRésultats(null);
   }, [chantierId, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
 
-  useEffect(() => {
-    if (!chantierId || !estModaleOuverte)
-      return;
-
+  const récupérerPublications = () => {
     fetch(`/api/chantier/${chantierId}/historique-de-la-synthese-des-resultats?`
       + new URLSearchParams({
         maille: mailleAssociéeAuTerritoireSélectionné,
@@ -34,12 +30,11 @@ export default function useHistoriqueDeLaSynthèseDesRésultats() {
         // TODO améliorer la gestion d'erreur
         setHistoriqueDeLaSynthèseDesRésultats(données.historiqueDeLaSynthèseDesRésultats ?? []);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [estModaleOuverte]);
+  };
 
   return {
     historiqueDeLaSynthèseDesRésultats,
     territoireSélectionné,
-    setEstModaleOuverte,
+    récupérerPublications,
   };
 }

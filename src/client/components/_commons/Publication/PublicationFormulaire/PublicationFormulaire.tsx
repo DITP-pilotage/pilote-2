@@ -1,36 +1,29 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { LIMITE_CARACTÈRES_COMMENTAIRE, validationCommentaireFormulaire } from 'validation/commentaire';
+import { LIMITE_CARACTÈRES_PUBLICATION, validationPublicationFormulaire } from 'validation/publication';
 import CompteurCaractères from '@/components/_commons/FormulaireDePublication/CompteurCaractères/CompteurCaractères';
-import Titre from '@/components/_commons/Titre/Titre';
-import Alerte from '@/components/_commons/Alerte/Alerte';
-import CommentaireFormulaireStyled from './CommentaireFormulaire.styled';
-import CommentaireFormulaireProps, { CommentaireFormulaireInputs } from './CommentaireFormulaire.interface';
-import useCommentaireFormulaire from './useCommentaireFormulaire';
+import PublicationFormulaireStyled from './PublicationFormulaire.styled';
+import PublicationFormulaireProps, { PublicationFormulaireInputs } from './PublicationFormulaire.interface';
+import usePublicationFormulaire from './usePublicationFormulaire';
 
-export default function CommentaireFormulaire({ contenuInitial, type, commentaireCrééCallback, annulationCallback }: CommentaireFormulaireProps) {
-  const { créerCommentaire, alerte } = useCommentaireFormulaire(commentaireCrééCallback);
+export default function PublicationFormulaire({ contenuInitial, type, entité, succèsCallback, erreurCallback, annulationCallback }: PublicationFormulaireProps) {
+  const { créerPublication } = usePublicationFormulaire(succèsCallback, erreurCallback);
   
-  const { register, handleSubmit, formState: { errors, isValid }, watch } = useForm<CommentaireFormulaireInputs>({
+  const { register, handleSubmit, formState: { errors, isValid }, watch } = useForm<PublicationFormulaireInputs>({
     mode: 'all',
-    resolver: zodResolver(validationCommentaireFormulaire),
+    resolver: zodResolver(validationPublicationFormulaire),
     defaultValues: {
       contenu: contenuInitial,
       type: type,
+      entité: entité,
     },
   });
 
   return (
-    <CommentaireFormulaireStyled
+    <PublicationFormulaireStyled
       method="post"
-      onSubmit={handleSubmit(créerCommentaire)}
+      onSubmit={handleSubmit(créerPublication)}
     >
-      <Titre
-        baliseHtml='h3'
-        className='fr-h5 fr-mb-1v'
-      >
-        Modifier le commentaire
-      </Titre>
       <div className={`fr-mb-0 fr-input-group ${errors.contenu && 'fr-input-group--error'}`}>
         <textarea
           className="fr-input fr-text--sm fr-mb-0"
@@ -40,6 +33,10 @@ export default function CommentaireFormulaire({ contenuInitial, type, commentair
         <input
           type="hidden"
           {...register('type')}
+        />
+        <input
+          type="hidden"
+          {...register('entité')}
         />
         <div className="flex justifyBetween">
           <div>
@@ -52,7 +49,7 @@ export default function CommentaireFormulaire({ contenuInitial, type, commentair
           </div>
           <CompteurCaractères
             compte={watch('contenu')?.length ?? 0}
-            limiteDeCaractères={LIMITE_CARACTÈRES_COMMENTAIRE}
+            limiteDeCaractères={LIMITE_CARACTÈRES_PUBLICATION}
           />
         </div>
       </div>
@@ -74,16 +71,6 @@ export default function CommentaireFormulaire({ contenuInitial, type, commentair
           </button>
         </div>
       </div>
-      {
-        !!alerte && (
-        <div className="fr-mt-2w">
-          <Alerte
-            message={alerte.message}
-            type={alerte.type}
-          />
-        </div>
-        )
-      }
-    </CommentaireFormulaireStyled>
+    </PublicationFormulaireStyled>
   );
 }

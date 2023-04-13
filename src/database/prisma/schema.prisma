@@ -133,19 +133,19 @@ enum type_objectif {
 }
 
 model objectif {
-  id           String        @id @default(uuid())
-  auteur       String
-  type         type_objectif
-  contenu      String
-  date         DateTime      @db.Timestamp
-  chantier_id  String
+  id          String        @id
+  auteur      String
+  type        type_objectif
+  contenu     String
+  date        DateTime      @db.Timestamp
+  chantier_id String
 
   @@schema("public")
 }
 
 model utilisateur {
-  id String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-  email String @unique
+  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email     String @unique
   profil_id String @db.Uuid
 
   @@schema("public")
@@ -153,23 +153,23 @@ model utilisateur {
 
 model utilisateur_chantier {
   utilisateur_id String @db.Uuid
-  chantier_id String
+  chantier_id    String
 
   @@id([utilisateur_id, chantier_id])
   @@schema("public")
 }
 
 model profil {
-  id String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
-  code String @unique
-  nom String @unique
+  id                     String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code                   String  @unique
+  nom                    String  @unique
   a_acces_tous_chantiers Boolean @default(false)
 
   @@schema("public")
 }
 
 model profil_habilitation {
-  profil_id String @db.Uuid
+  profil_id             String @db.Uuid
   habilitation_scope_id String @db.Uuid
 
   @@id([profil_id, habilitation_scope_id])
@@ -177,9 +177,9 @@ model profil_habilitation {
 }
 
 model habilitation_scope {
-  id String @id @db.Uuid @default(dbgenerated("gen_random_uuid()"))
+  id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   code String @unique
-  nom String @unique
+  nom  String @unique
 
   @@schema("public")
 }

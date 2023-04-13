@@ -1,10 +1,11 @@
 import { ReactNode } from 'react';
 
-export default interface ModaleStyledProps {
+export default interface ModaleProps {
   children: ReactNode,
   titre: string,
   sousTitre: string,
   libelléBouton: string,
   idHtml: string,
-  setEstAffichée: (valeur: boolean) => void,
+  ouvertureCallback?: () => void,
+  fermetureCallback?: () => void
 }
