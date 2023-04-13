@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { parse } from 'csv-parse/sync';
 import dotenv from 'dotenv';
+import { faker } from '@faker-js/faker/locale/fr';
 import process from 'node:process';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
@@ -16,7 +17,8 @@ import logger from '@/server/infrastructure/logger';
 // [x] pouvoir lire les données dans un csv (quelle lib ?)
 // [x] quel format csv ?
 // [x] faire le ou les posts pour créer les utilisateurs
-// [ ] générer les mots de passe temporaires et les écrire dans un log ou csv ou stdout pour pouvoir les communiquer ?
+// [x] générer les mots de passe temporaires
+// [ ] écrire les mots de passe temporaires dans un log ou csv ou stdout pour pouvoir les communiquer
 // [ ] ajouter l'action 'doit reset son mot de passe' à la création de l'utilisateur
 // TODO: Nice to have
 // [ ] besoin d'une confirmation car une fois les mots de passe générés ou affichés, si on relance la machine on écrase les valeurs et on les perd ?
@@ -53,6 +55,8 @@ function checkRecords(records: CsvRecord[]) {
 
 async function processRecord(kcAdminClient: any, record: CsvRecord) {
   const email = record[FIELDS.email];
+  // ex. de mot de passe généré : JHqVoxOoHnGLbhR
+  const password = faker.internet.password(15, false, /\w/, '');
   try {
     await kcAdminClient.users.create({
       realm: REALM,
@@ -62,9 +66,10 @@ async function processRecord(kcAdminClient: any, record: CsvRecord) {
       lastName: record[FIELDS.nom],
       enabled: true,
       requiredActions: [],
-      credentials: [{ temporary: true, type: 'password', value: Math.random().toString() }],
+      credentials: [{ temporary: true, type: 'password', value: password }],
     });
     logger.info(`Utilisateur ${email} créé.`);
+    logger.debug({ password });
   } catch (error: any) {
     if (error.message == 'Request failed with status code 409') {
       logger.warn(`L'email ${email} existe déjà.`);
