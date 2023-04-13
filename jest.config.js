@@ -47,6 +47,13 @@ module.exports = async () => {
         testMatch: ['**/*.unit.test.*', '**/*.integration.test.*'],
         roots: ['<rootDir>/src/client'],
       },
+      {
+        ...nextJSGlobalConf,
+        displayName: 'TypeScript - scripts unit tests',
+        testEnvironment: 'node',
+        roots: ['<rootDir>/scripts'],
+        testMatch: ['**/*.unit.test.*'],
+      },
     ]
   }
 }

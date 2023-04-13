@@ -8,8 +8,12 @@ import process from 'node:process';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import logger from '@/server/infrastructure/logger';
-import { créerUtilisateurs, InputUtilisateur } from '@/server/infrastructure/accès_données/identité/seed';
-import { DIR_PROJET, DITP_PILOTAGE } from '@/server/domain/identité/Profil';
+import {
+  créerUtilisateurs,
+  InputUtilisateur,
+  ProfilIdByCode,
+} from '@/server/infrastructure/accès_données/identité/seed';
+import { DIR_PROJET, DITP_ADMIN, DITP_PILOTAGE } from '@/server/domain/identité/Profil';
 
 // TODO: Must have
 // [x] installer le client keycloak
@@ -32,8 +36,8 @@ import { DIR_PROJET, DITP_PILOTAGE } from '@/server/domain/identité/Profil';
 // [x] documenter
 // [x] créer les utilisateurs dans l'app avec leur liste de chantiers
 // [x] supprimer version .mjs
+// [x] faire marcher si pas de chantier id (profils DITP Pilotage)
 // [ ] si un utilisateur existe déjà chez nous, mettre à jour
-// [ ] faire marcher si pas de chantier id (profils DITP Pilotage)
 // [ ] ajouter nom et prénom dans notre table utilisateur
 // [ ] réfléchir 2 s à la gestion d'erreurs
 // [ ] vérifier qu'on n'a pas besoin du groupe dans keycloak, c'est une redondance des notions de profil et fonction.
@@ -114,11 +118,12 @@ const EXPECTED_RECORD_FIELDS = Object.values(FIELDS);
 const KEYCLOAK_REALM = 'DITP';
 
 const CODES_PROFILS: Record<string, string> = {
-  ['Directeur de projet']: DIR_PROJET,
+  ['DITP - Admin']: DITP_ADMIN,
   ['DITP - Pilotage']: DITP_PILOTAGE,
+  ['Directeur de projet']: DIR_PROJET,
 };
 
-type CsvRecord = Record<string, string>;
+export type CsvRecord = Record<string, string>;
 
 type ImportRecord = {
   nom: string,
@@ -144,16 +149,20 @@ function générerEtÉcrireMotsDePasse(records: CsvRecord[], filename: string) {
   fs.writeFileSync(filename, contents);
 }
 
-function créerImportRecord(csvRecord: CsvRecord): ImportRecord {
+export function créerImportRecord(csvRecord: CsvRecord): ImportRecord {
   const profilCode = CODES_PROFILS[csvRecord[FIELDS.profils]];
-  const chantierIds = [csvRecord[FIELDS.idChantier]];
+  const chantierIds = [];
+  const csvChantierId = csvRecord[FIELDS.idChantier];
+  if (csvChantierId != '') {
+    chantierIds.push(csvChantierId);
+  }
   return {
     nom: csvRecord[FIELDS.nom],
     prénom: csvRecord[FIELDS.prénom],
     email: csvRecord[FIELDS.email],
     profilCode,
     chantierIds,
-    motDePasse: csvRecord[FIELDS.nom],
+    motDePasse: csvRecord[FIELDS.motDePasse],
   };
 }
 
@@ -165,7 +174,7 @@ function parseCsvRecords(csvRecords: CsvRecord[]): ImportRecord[] {
   for (const csvRecord of csvRecords) {
     lineNb += 1;
     for (const field of EXPECTED_RECORD_FIELDS) {
-      assert(csvRecord[field], `Erreur de parsing CSV ligne: ${lineNb}. Mauvais header ?`);
+      assert.notEqual(csvRecord[field], null, `Erreur de parsing CSV ligne: ${lineNb}. Mauvais header ?`);
     }
     const nomDeProfil = csvRecord[FIELDS.profils];
     assert(CODES_PROFILS[nomDeProfil], `Nom de profil ${nomDeProfil} inconnu. Profils connus : ${Object.keys(CODES_PROFILS)}`);
@@ -238,9 +247,9 @@ async function importeUtilisateursIAM(records: ImportRecord[]) {
 }
 
 async function importeUtilisateursPilote(records: ImportRecord[]) {
-  const donnéesÀImporter: InputUtilisateur[] = [];
+  const inputUtilisateurs: InputUtilisateur[] = [];
   for (const record of records) {
-    donnéesÀImporter.push({
+    inputUtilisateurs.push({
       email: record.email,
       profilCode: record.profilCode,
       chantierIds: record.chantierIds,
@@ -249,11 +258,11 @@ async function importeUtilisateursPilote(records: ImportRecord[]) {
 
   const prisma = new PrismaClient();
   const resultSet = await prisma.profil.findMany({ select: { id: true, code: true } });
-  const profilIdByCode: Record<string, string> = {};
+  const profilIdByCode: ProfilIdByCode = {};
   for (const profilRow of resultSet) {
     profilIdByCode[profilRow.code] = profilRow.id;
   }
-  await créerUtilisateurs(prisma, donnéesÀImporter, profilIdByCode);
+  await créerUtilisateurs(prisma, inputUtilisateurs, profilIdByCode);
 }
 
 async function main() {
