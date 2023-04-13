@@ -7,6 +7,8 @@ import process from 'node:process';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import logger from '@/server/infrastructure/logger';
+// import { InputUtilisateur } from '@/server/infrastructure/accès_données/identité/seed';
+import { DIR_PROJET, DITP_PILOTAGE } from '@/server/domain/identité/Profil';
 
 // TODO: Must have
 // [x] installer le client keycloak
@@ -21,7 +23,8 @@ import logger from '@/server/infrastructure/logger';
 // [x] générer les mots de passe temporaires
 // [x] écrire les mots de passe temporaires dans un log ou csv ou stdout pour pouvoir les communiquer
 //     autre option au début du traitement :
-//         - si l'entête du csv ne contient pas le champs 'Mot de passe', ajouter cette colonne et ré-écrire le csv source
+//         - si l'entête du csv ne contient pas le champs 'Mot de passe', ajouter cette colonne et ré-écrire le csv
+//           source
 //         - sinon ne rien faire
 //         - poursuivre le traitement
 // [x] ajouter l'action 'doit reset son mot de passe' à la création de l'utilisateur
@@ -29,12 +32,19 @@ import logger from '@/server/infrastructure/logger';
 // [ ] créer les utilisateurs dans l'app avec leur liste de chantiers
 // [ ] réfléchir 2 s à la gestion d'erreurs
 // [ ] supprimer version .mjs
+// [ ] faire marcher si pas de chantier id (profils DITP Pilotage)
+// [ ] vérifier qu'on n'a pas besoin du groupe dans keycloak, c'est une redondance des notions de profil et fonction.
+// [ ] ajouter nom et prénom dans notre table utilisateur
 // TODO: Nice to have
-// [x] besoin d'une confirmation car une fois les mots de passe générés ou affichés, si on relance la machine on écrase les valeurs et on les perd ?
+// [x] besoin d'une confirmation car une fois les mots de passe générés ou affichés, si on relance la machine on écrase
+//     les valeurs et on les perd ?
+// [ ] convertir les records en données alignées au plus tôt pour ne plus avoir besoin de FIELDS au plus tôt.
 // [ ] envoie d'email aux utilisateurs créés ?
+// [ ] passer l'email à vérifié / non vérifié ?
 // [ ] ajouter une colonne status (utilisateur créé, utilisateur non créé, etc.) dans le csv à l'issu du script ?
 // [ ] comment on structure ça dans du code serveur admin ?
-// [ ] changer de devDependencies en dependencies pour le client kc
+// [ ] changer de devDependencies en dependencies pour le client kc ?
+// [ ] étendre à d'autres profils ?
 
 /**
  * Exemple de CSV :
@@ -88,7 +98,7 @@ const CSV_WRITE_OPTIONS = {
   header:true,
 };
 
-const FIELDS = {
+const FIELDS: Record<string, string> = {
   nom: 'Nom',
   prénom: 'Prénom',
   email: 'E-mail',
@@ -101,7 +111,21 @@ const EXPECTED_RECORD_FIELDS = Object.values(FIELDS);
 
 const KEYCLOAK_REALM = 'DITP';
 
+const CODES_PROFILS: Record<string, string> = {
+  ['Directeur de projet']: DIR_PROJET,
+  ['DITP - Pilotage']: DITP_PILOTAGE,
+};
+
 type CsvRecord = Record<string, string>;
+
+type ImportRecord = {
+  nom: string,
+  prénom: string,
+  email: string,
+  profilCode: string,
+  chantierIds: string[],
+  motDePasse: string,
+};
 
 function contientMotsDePasse(records: CsvRecord[]) {
   const firstRecord = records[0];
@@ -118,15 +142,35 @@ function générerEtÉcrireMotsDePasse(records: CsvRecord[], filename: string) {
   fs.writeFileSync(filename, contents);
 }
 
-function checkRecords(records: CsvRecord[]) {
-  assert(records, 'Erreur de parsing CSV. Pas de lignes ?');
+function créerImportRecord(csvRecord: CsvRecord): ImportRecord {
+  const profilCode = CODES_PROFILS[csvRecord[FIELDS.profils]];
+  const chantierIds = [csvRecord[FIELDS.idChantier]];
+  return {
+    nom: csvRecord[FIELDS.nom],
+    prénom: csvRecord[FIELDS.prénom],
+    email: csvRecord[FIELDS.email],
+    profilCode,
+    chantierIds,
+    motDePasse: csvRecord[FIELDS.nom],
+  };
+}
+
+function parseCsvRecords(csvRecords: CsvRecord[]): ImportRecord[] {
+  assert(csvRecords, 'Erreur de parsing CSV. Pas de lignes ?');
+
+  const result: ImportRecord[] = [];
   let lineNb = 0;
-  for (const record of records) {
+  for (const csvRecord of csvRecords) {
     lineNb += 1;
     for (const field of EXPECTED_RECORD_FIELDS) {
-      assert(record[field], `Erreur de parsing CSV ligne: ${lineNb}. Mauvais header ?`);
+      assert(csvRecord[field], `Erreur de parsing CSV ligne: ${lineNb}. Mauvais header ?`);
     }
+    const nomDeProfil = csvRecord[FIELDS.profils];
+    assert(CODES_PROFILS[nomDeProfil], `Nom de profil ${nomDeProfil} inconnu. Profils connus : ${Object.keys(CODES_PROFILS)}`);
+    const importRecord = créerImportRecord(csvRecord);
+    result.push(importRecord);
   }
+  return result;
 }
 
 // Oups?! Voir : https://github.com/TypeStrong/ts-node/discussions/1290
@@ -158,17 +202,18 @@ async function loginKcAdminClient() {
   return kcAdminClient;
 }
 
-async function importeUtilisateur(kcAdminClient: any, record: CsvRecord) {
-  const email = record[FIELDS.email];
-  const passwordCred = { temporary: true, type: 'password', value: record[FIELDS.motDePasse] };
+async function importeUtilisateurIAM(kcAdminClient: any, record: ImportRecord) {
+  const email = record.email;
+  const passwordCred = { temporary: true, type: 'password', value: record.motDePasse };
   try {
     await kcAdminClient.users.create({
       realm: KEYCLOAK_REALM,
       username: email,
       email,
-      firstName: record[FIELDS.prénom],
-      lastName: record[FIELDS.nom],
+      firstName: record.prénom,
+      lastName: record.nom,
       enabled: true,
+      emailVerified: true,
       requiredActions: ['UPDATE_PASSWORD'],
       credentials: [passwordCred],
     });
@@ -183,23 +228,40 @@ async function importeUtilisateur(kcAdminClient: any, record: CsvRecord) {
   }
 }
 
+async function importeUtilisateursIAM(records: ImportRecord[]) {
+  const kcAdminClient = await loginKcAdminClient();
+  for (const record of records) {
+    await importeUtilisateurIAM(kcAdminClient, record);
+  }
+}
+
+// async function importeUtilisateursPilote(records: ImportRecord[]) {
+//   const donnéesÀImporter: InputUtilisateur[] = [];
+//   for (const record of records) {
+//     donnéesÀImporter.push({
+//       email: record.email,
+//       profilCode: record.profilCode,
+//       chantierIds: record.chantierIds,
+//     });
+//   }
+//   logger.info(donnéesÀImporter);
+// }
+
 async function main() {
   const filename = process.argv[2];
   assert(filename, 'Nom de fichier CSV manquant');
 
   const contents = fs.readFileSync(filename, 'utf8');
-  const records: CsvRecord[] = parse(contents, CSV_PARSE_OPTIONS);
+  const csvRecords: CsvRecord[] = parse(contents, CSV_PARSE_OPTIONS);
 
-  if (!contientMotsDePasse(records)) {
-    générerEtÉcrireMotsDePasse(records, filename);
+  if (!contientMotsDePasse(csvRecords)) {
+    générerEtÉcrireMotsDePasse(csvRecords, filename);
   }
 
-  checkRecords(records);
+  const importRecords = parseCsvRecords(csvRecords);
 
-  const kcAdminClient = await loginKcAdminClient();
-  for (const record of records) {
-    await importeUtilisateur(kcAdminClient, record);
-  }
+  await importeUtilisateursIAM(importRecords);
+  // await importeUtilisateursPilote(importRecords);
 }
 
 main().catch((error) => {
