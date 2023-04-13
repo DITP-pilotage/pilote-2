@@ -143,6 +143,23 @@ model objectif {
   @@schema("public")
 }
 
+enum type_decisions_strategique {
+  suivi_des_decisions
+
+  @@schema("public")
+}
+
+model decisions_strategiques {
+  id          String        @id
+  auteur      String
+  type        type_decisions_strategique
+  contenu     String
+  date        DateTime      @db.Timestamp
+  chantier_id String
+
+  @@schema("public")
+}
+
 model utilisateur {
   id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email     String  @unique

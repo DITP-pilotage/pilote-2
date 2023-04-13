@@ -42,6 +42,7 @@ import {
 } from '@/server/infrastructure/accès_données/identité/seed';
 import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
 import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
+import DécisionsStratégiquesSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/DécisionsStratégiquesSQLRow.builder';
 
 const chantierStatiqueId123 = new ChantierSQLRowBuilder()
   .avecAxe('axe chantier')
@@ -79,6 +80,8 @@ class DatabaseSeeder {
 
   private _objectifs: Prisma.objectifCreateArgs['data'][] = [];
 
+  private _décisions_stratégiques: Prisma.decisions_strategiquesCreateArgs['data'][] = [];
+
   private _chantiers: chantier[] = [];
 
   async seed() {
@@ -90,6 +93,7 @@ class DatabaseSeeder {
     await this._créerSynthèsesDesRésultats();
     await this._créerCommentaires();
     await this._créerObjectifs();
+    await this._créerDécisionsStratégiques();
     await this._créerIndicateurs();
     await this._créerUtilisateursEtDroits();
   }
@@ -178,6 +182,16 @@ class DatabaseSeeder {
     });
 
     await prisma.objectif.createMany({ data: this._objectifs });
+  }
+
+  private async _créerDécisionsStratégiques() {
+    this._chantiers.forEach(c => {
+      for (let i = 0; i < faker.datatype.number({ min: 0, max: 10 }); i++) {
+        this._décisions_stratégiques = [...this._décisions_stratégiques, new DécisionsStratégiquesSQLRowBuilder().avecChantierId(c.id).build()];
+      }
+    });
+
+    await prisma.decisions_strategiques.createMany({ data: this._décisions_stratégiques });
   }
 
   private async _créerIndicateurs() {
