@@ -31,12 +31,12 @@ import { DIR_PROJET, DITP_PILOTAGE } from '@/server/domain/identité/Profil';
 // [x] ajouter l'action 'doit reset son mot de passe' à la création de l'utilisateur
 // [x] documenter
 // [x] créer les utilisateurs dans l'app avec leur liste de chantiers
+// [x] supprimer version .mjs
 // [ ] si un utilisateur existe déjà chez nous, mettre à jour
-// [ ] réfléchir 2 s à la gestion d'erreurs
-// [ ] supprimer version .mjs
 // [ ] faire marcher si pas de chantier id (profils DITP Pilotage)
-// [ ] vérifier qu'on n'a pas besoin du groupe dans keycloak, c'est une redondance des notions de profil et fonction.
 // [ ] ajouter nom et prénom dans notre table utilisateur
+// [ ] réfléchir 2 s à la gestion d'erreurs
+// [ ] vérifier qu'on n'a pas besoin du groupe dans keycloak, c'est une redondance des notions de profil et fonction.
 // TODO: Nice to have
 // [x] besoin d'une confirmation car une fois les mots de passe générés ou affichés, si on relance la machine on écrase
 //     les valeurs et on les perd ?
