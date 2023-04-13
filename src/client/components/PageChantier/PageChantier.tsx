@@ -29,7 +29,7 @@ const listeRubriques: Rubrique[] = [
   { nom: 'Commentaires', ancre: 'commentaires' },
 ];
 
-export default function PageChantier({ chantier, indicateurs }: PageChantierProps) {
+export default function PageChantier({ chantier, indicateurs, modeÉcriture }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats, objectifs } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
@@ -65,7 +65,10 @@ export default function PageChantier({ chantier, indicateurs }: PageChantierProp
               <Responsables chantier={chantier} />
             </div>
             <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
-              <SynthèseDesRésultats synthèseDesRésultatsInitiale={synthèseDesRésultats} />
+              <SynthèseDesRésultats
+                modeÉcriture={modeÉcriture}
+                synthèseDesRésultatsInitiale={synthèseDesRésultats}
+              />
             </div>
           </div>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
@@ -81,6 +84,7 @@ export default function PageChantier({ chantier, indicateurs }: PageChantierProp
                   chantierId={chantier.id} 
                   codeInsee='FR'
                   maille='nationale'
+                  modeÉcriture={modeÉcriture}
                   objectifs={objectifs}
                 />
               </div>
@@ -107,6 +111,7 @@ export default function PageChantier({ chantier, indicateurs }: PageChantierProp
                     codeInsee={territoireSélectionné.codeInsee}
                     commentaires={commentaires}
                     maille={mailleAssociéeAuTerritoireSélectionné}
+                    modeÉcriture={modeÉcriture}
                   />
                 </div>
               </div>

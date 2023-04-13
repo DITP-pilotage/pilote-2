@@ -6,7 +6,7 @@ import { ObjectifProps } from '@/components/PageChantier/Objectifs/Objectifs.int
 import Publication from '@/components/_commons/Publication/Publication';
 import { TypeObjectif } from '@/server/domain/objectif/Objectif.interface';
 
-export default function Objectifs({ objectifs, chantierId, maille, codeInsee }: ObjectifProps) {
+export default function Objectifs({ objectifs, chantierId, maille, codeInsee, modeÉcriture }: ObjectifProps) {
   return (
     <section id="objectifs">
       <Titre
@@ -30,6 +30,7 @@ export default function Objectifs({ objectifs, chantierId, maille, codeInsee }: 
                   codeInsee={codeInsee}
                   entité="objectifs"
                   maille={maille}
+                  modeÉcriture={modeÉcriture}
                   publicationInitiale={publication}
                   type={{ id: type, libellé: typesObjectif[type as TypeObjectif] }}
                 />

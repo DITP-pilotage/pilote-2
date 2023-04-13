@@ -8,4 +8,5 @@ export default interface CommentairesProps {
   chantierId: Chantier['id']
   maille: Maille
   codeInsee: CodeInsee
+  modeÉcriture: boolean
 }

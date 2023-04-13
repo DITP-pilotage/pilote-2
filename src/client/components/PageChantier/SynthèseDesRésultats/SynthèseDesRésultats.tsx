@@ -11,7 +11,7 @@ import useSynthèseDesRésultats from '@/components/PageChantier/SynthèseDesRé
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import SynthèseDesRésultatsFormulaire from './SynthèseDesRésultatsFormulaire/SynthèseDesRésultatsFormulaire';
 
-export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale }: SynthèseDesRésultatsProps) {
+export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale, modeÉcriture }: SynthèseDesRésultatsProps) {
   const {
     synthèseDesRésultats,
     nomTerritoireSélectionné,
@@ -33,7 +33,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
       <Bloc titre={nomTerritoireSélectionné}>
         <div className='fr-px-1w fr-py-2w'>
           {
-            modeÉdition ?
+            modeÉdition && modeÉcriture ?
               <SynthèseDesRésultatsFormulaire
                 annulationCallback={désactiverLeModeÉdition}
                 contenuInitial={synthèseDesRésultats?.contenu}
@@ -83,18 +83,21 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale 
                     {
                         !!synthèseDesRésultats && <HistoriqueDeLaSynthèseDesRésultats />
                       }
-                    <button
-                      className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
-                      onClick={activerLeModeÉdition}
-                      type='button'
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="fr-icon-edit-line fr-mr-1w"
-                      />
-                      {}
-                      Modifier
-                    </button>
+                    {
+                      !!modeÉcriture &&
+                      <button
+                        className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
+                        onClick={activerLeModeÉdition}
+                        type='button'
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="fr-icon-edit-line fr-mr-1w"
+                        />
+                        {}
+                        Modifier
+                      </button>
+                    }
                   </div>
                 </div>
               </>

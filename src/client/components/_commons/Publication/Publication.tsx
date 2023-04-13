@@ -8,7 +8,7 @@ import PublicationProps from './Publication.interface';
 import PublicationHistorique from './PublicationHistorique/PublicationHistorique';
 import PublicationAffichage from './PublicationAffichage/PublicationAffichage';
 
-export default function Publication({ type, publicationInitiale, entité, chantierId, maille, codeInsee }: PublicationProps) {
+export default function Publication({ type, publicationInitiale, entité, chantierId, maille, codeInsee, modeÉcriture }: PublicationProps) {
   const {
     publication,
     modeÉdition,
@@ -37,7 +37,7 @@ export default function Publication({ type, publicationInitiale, entité, chanti
         </div>
       }
       {
-        modeÉdition ?
+        modeÉdition && modeÉcriture ?
           <PublicationFormulaire
             annulationCallback={désactiverLeModeÉdition}
             contenuInitial={publication?.contenu}
@@ -61,18 +61,21 @@ export default function Publication({ type, publicationInitiale, entité, chanti
                       type={type.id}
                     />
                 }
-                <button
-                  className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
-                  onClick={activerLeModeÉdition}
-                  type='button'
-                >
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-edit-line fr-mr-1w"
-                  />
-                  {}
-                  Modifier
-                </button>
+                {
+                  !!modeÉcriture &&
+                  <button
+                    className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
+                    onClick={activerLeModeÉdition}
+                    type='button'
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="fr-icon-edit-line fr-mr-1w"
+                    />
+                    {}
+                    Modifier
+                  </button>
+                }
               </div>
             </div>
           </>

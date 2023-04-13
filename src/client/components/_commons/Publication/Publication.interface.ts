@@ -13,4 +13,5 @@ export default interface PublicationProps {
   chantierId: Chantier['id']
   maille: Maille
   codeInsee: CodeInsee
+  modeÉcriture: boolean
 }

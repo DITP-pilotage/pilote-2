@@ -4,4 +4,5 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 export default interface PageChantierProps {
   chantier: Chantier
   indicateurs: Indicateur[]
+  modeÉcriture: boolean
 }

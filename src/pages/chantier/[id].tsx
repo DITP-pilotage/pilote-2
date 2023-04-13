@@ -12,14 +12,16 @@ import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 
 interface NextPageChantierProps {
   chantier: Chantier
-  indicateurs: Indicateur[]
+  indicateurs: Indicateur[],
+  modeÉcriture: boolean
 }
 
-export default function NextPageChantier({ chantier, indicateurs }: NextPageChantierProps) {
+export default function NextPageChantier({ chantier, indicateurs, modeÉcriture }: NextPageChantierProps) {
   return (
     <PageChantier
       chantier={chantier}
       indicateurs={indicateurs}
+      modeÉcriture={modeÉcriture}
     />
   );
 }
@@ -45,10 +47,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext<Para
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params.id);
 
+  const modeÉcriture = true;
   return {
     props: {
       chantier,
       indicateurs,
+      modeÉcriture,
       habilitation, // -> surt le front, les function d'haibilitation sont utiliés        -> if checkChantierScope(habilitation, chantier, scope)
     },
   };

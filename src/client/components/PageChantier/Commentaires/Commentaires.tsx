@@ -7,7 +7,7 @@ import Publication from '@/components/_commons/Publication/Publication';
 import typesCommentaire from '@/client/constants/typesCommentaire';
 import { TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 
-export default function Commentaires({ commentaires, chantierId, maille, codeInsee }: CommentairesProps) {
+export default function Commentaires({ commentaires, chantierId, maille, codeInsee, modeÉcriture }: CommentairesProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   
   return (
@@ -33,6 +33,7 @@ export default function Commentaires({ commentaires, chantierId, maille, codeIns
                   codeInsee={codeInsee}
                   entité="commentaires"
                   maille={maille}
+                  modeÉcriture={modeÉcriture}
                   publicationInitiale={publication}
                   type={{ id: type, libellé: typesCommentaire[type as TypeCommentaire] }}
                 />
