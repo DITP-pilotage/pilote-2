@@ -24,7 +24,7 @@ import logger from '@/server/infrastructure/logger';
 //         - si l'entête du csv ne contient pas le champs 'Mot de passe', ajouter cette colonne et ré-écrire le csv source
 //         - sinon ne rien faire
 //         - poursuivre le traitement
-// [ ] ajouter l'action 'doit reset son mot de passe' à la création de l'utilisateur
+// [x] ajouter l'action 'doit reset son mot de passe' à la création de l'utilisateur
 // TODO: Nice to have
 // [x] besoin d'une confirmation car une fois les mots de passe générés ou affichés, si on relance la machine on écrase les valeurs et on les perd ?
 // [ ] comment on structure ça dans du code serveur admin ?
@@ -121,7 +121,7 @@ async function importeUtilisateur(kcAdminClient: any, record: CsvRecord) {
       firstName: record[FIELDS.prénom],
       lastName: record[FIELDS.nom],
       enabled: true,
-      requiredActions: [],
+      requiredActions: ['UPDATE_PASSWORD'],
       credentials: [passwordCred],
     });
     logger.info(`Utilisateur ${email} créé.`);
