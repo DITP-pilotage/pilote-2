@@ -34,9 +34,9 @@ module.exports = async () => {
       },
       {
         ...nextJSGlobalConf,
-        displayName: 'Node - server unit tests',
+        displayName: 'Node - server & scripts unit tests',
         testEnvironment: 'node',
-        roots: ['<rootDir>/src/server'],
+        roots: ['<rootDir>/src/server', '<rootDir>/scripts'],
         testMatch: ['**/*.unit.test.*'],
       },
       {
@@ -46,13 +46,6 @@ module.exports = async () => {
         setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
         testMatch: ['**/*.unit.test.*', '**/*.integration.test.*'],
         roots: ['<rootDir>/src/client'],
-      },
-      {
-        ...nextJSGlobalConf,
-        displayName: 'TypeScript - scripts unit tests',
-        testEnvironment: 'node',
-        roots: ['<rootDir>/scripts'],
-        testMatch: ['**/*.unit.test.*'],
       },
     ]
   }

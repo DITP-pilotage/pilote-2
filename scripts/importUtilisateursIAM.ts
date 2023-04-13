@@ -37,13 +37,13 @@ import { DIR_PROJET, DITP_ADMIN, DITP_PILOTAGE } from '@/server/domain/identité
 // [x] créer les utilisateurs dans l'app avec leur liste de chantiers
 // [x] supprimer version .mjs
 // [x] faire marcher si pas de chantier id (profils DITP Pilotage)
-// [ ] si un utilisateur existe déjà chez nous, mettre à jour
-// [ ] ajouter nom et prénom dans notre table utilisateur
-// [ ] réfléchir 2 s à la gestion d'erreurs
-// [ ] vérifier qu'on n'a pas besoin du groupe dans keycloak, c'est une redondance des notions de profil et fonction.
+// [ ] ajouter nom et prénom dans notre table utilisateur (on ne veut pas avoir à repasser sur les utilisateurs créés)
+// [ ] réfléchir 2 s à la gestion d'erreurs, qu'est-ce qui fait qu'on a confiance pour que ça marche ?
 // TODO: Nice to have
 // [x] besoin d'une confirmation car une fois les mots de passe générés ou affichés, si on relance la machine on écrase
 //     les valeurs et on les perd ?
+// [ ] si un utilisateur existe déjà chez nous, mettre à jour
+// [ ] vérifier qu'on n'a pas besoin du groupe dans keycloak, c'est une redondance des notions de profil et fonction.
 // [ ] convertir les records en données alignées au plus tôt pour ne plus avoir besoin de FIELDS au plus tôt.
 // [ ] envoie d'email aux utilisateurs créés ?
 // [ ] passer l'email à vérifié / non vérifié ?
@@ -286,6 +286,9 @@ async function main() {
   await importeUtilisateursPilote(importRecords);
 }
 
-main().catch((error) => {
-  logger.error(error);
-});
+const isMain = eval('require.main === module');
+if (isMain) {
+  main().catch((error) => {
+    logger.error(error);
+  });
+}

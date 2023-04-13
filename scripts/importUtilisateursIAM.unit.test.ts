@@ -2,7 +2,7 @@
 import { DIR_PROJET } from '@/server/domain/identité/Profil';
 import { CsvRecord, ImportRecord, parseCsvRecords } from './importUtilisateursIAM';
 
-describe('Script import utilisateurs', () => {
+describe('importUtilisateursIAM', () => {
   it('parse des données à importer', () => {
     const csvRecord: CsvRecord = {
       ['Nom']: 'Dylan',
