@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 const MiseEnPageStyled = styled.div`
-  height: 100vh;
+  word-break: break-word;
 `;
 
 export default MiseEnPageStyled;

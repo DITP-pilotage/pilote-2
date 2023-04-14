@@ -14,7 +14,11 @@ const animationOpacité = keyframes`
 `;
 
 const LoaderStyled = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
   text-align: center;
+  transform: translate(-50%, -50%);
 
   img {
     animation: ${animationOpacité} 2s ease-in-out infinite;

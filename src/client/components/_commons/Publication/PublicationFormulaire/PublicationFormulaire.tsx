@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { LIMITE_CARACTÈRES_PUBLICATION, validationPublicationFormulaire } from 'validation/publication';
-import CompteurCaractères from '@/components/_commons/FormulaireDePublication/CompteurCaractères/CompteurCaractères';
+import CompteurCaractères from '@/components/_commons/Publication/PublicationFormulaire/CompteurCaractères/CompteurCaractères';
 import PublicationFormulaireStyled from './PublicationFormulaire.styled';
 import PublicationFormulaireProps, { PublicationFormulaireInputs } from './PublicationFormulaire.interface';
 import usePublicationFormulaire from './usePublicationFormulaire';

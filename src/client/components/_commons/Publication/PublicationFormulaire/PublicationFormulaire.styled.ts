@@ -1,6 +1,11 @@
 import styled from '@emotion/styled';
 
 const PublicationFormulaireStyled = styled.form`
+  textarea {
+    max-height: 85vh;
+    resize: vertical;
+  }
+  
   .partie-basse {
     flex-wrap: wrap;
     row-gap: 2rem;
