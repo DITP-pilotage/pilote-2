@@ -7,11 +7,8 @@ import MinistèreRepository from '@/server/domain/ministère/MinistèreRepositor
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import IndicateurSQLRepository from '@/server/infrastructure/accès_données/indicateur/IndicateurSQLRepository';
 import MinistèreSQLRepository from '@/server/infrastructure/accès_données/ministère/MinistèreSQLRepository';
-import SynthèseDesRésultatsRepository
-  from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
-import {
-  SynthèseDesRésultatsSQLRepository,
-} from '@/server/infrastructure/accès_données/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
+import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
+import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/accès_données/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import logger from '@/server/infrastructure/logger';
 import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
 import AxeSQLRepository from '@/server/infrastructure/accès_données/axe/AxeSQLRepository';
@@ -22,16 +19,10 @@ import CommentaireSQLRepository from '@/server/infrastructure/accès_données/co
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
 import HabilitationRepository from '@/server/domain/identité/HabilitationRepository';
 import HabilitationSQLRepository from '@/server/infrastructure/accès_données/identité/HabilitationSQLRepository';
-import {
-  ValiderFichierIndicateurImporteUseCase,
-} from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
-import {
-  ValidataFichierIndicateurValidationService,
-} from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
+import { ValiderFichierIndicateurImporteUseCase } from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
+import { ValidataFichierIndicateurValidationService } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
 import { FetchHttpClient } from '@/server/import-indicateur/infrastructure/adapters/FetchHttpClient';
-import {
-  PrismaMesureIndicateurRepository,
-} from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
+import { PrismaMesureIndicateurRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
 import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepository';
 import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
 import { UtilisateurIAMRepository } from '@/server/domain/identité/UtilisateurIAMRepository';

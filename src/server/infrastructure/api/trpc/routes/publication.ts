@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -22,6 +23,7 @@ import RécupérerHistoriqueObjectifUseCase from '@/server/usecase/objectif/Réc
 import { typesObjectif } from '@/server/domain/objectif/Objectif.interface';
 import RécupérerDécisionStratégiqueLePlusRécentUseCase from '@/server/usecase/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
 import CréerUneDécisionStratégiqueUseCase from '@/server/usecase/décision/CréerUneDécisionStratégiqueUseCase';
+import RécupérerHistoriqueDécisionStratégiqueUseCase from '@/server/usecase/décision/RécupérerHistoriqueDécisionStratégiqueUseCase';
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
@@ -108,6 +110,11 @@ export const publicationRouter = créerRouteurTRPC({
       if (input.entité === 'objectifs') {
         const récupérerHistoriqueObjectifUseCase = new RécupérerHistoriqueObjectifUseCase(dependencies.getObjectifRepository());
         return récupérerHistoriqueObjectifUseCase.run(input.chantierId, input.type);
+      }
+
+      if (input.entité === 'décisions stratégiques') {
+        const récupérerHistoriqueDésionStratégiqueUseCase = new RécupérerHistoriqueDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
+        return récupérerHistoriqueDésionStratégiqueUseCase.run(input.chantierId);
       }
     }),
 });

@@ -68,7 +68,7 @@ describe('ObjectifSQLRepository', function () {
   });
 
   describe('récupérerHistoriqueDUnObjectif', () => {
-    test('Retourne, par ordre antéchronologique, tous les objectifs pour un chantier', async () => {
+    test('Retourne, par ordre antéchronologique, tous les objectifs pour un type et un chantier', async () => {
       // GIVEN
       const type: TypeObjectif = 'notreAmbition';
       const objectifs: Prisma.objectifCreateArgs['data'][] = [
