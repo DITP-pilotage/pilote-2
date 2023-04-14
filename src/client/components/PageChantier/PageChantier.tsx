@@ -106,15 +106,18 @@ export default function PageChantier({ chantier, indicateurs, habilitation }: Pa
               </div>
             )
           }
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <div className="fr-col-12">
-              <DécisionsStratégiques
-                chantierId={chantier.id}
-                décisionStratégique={[{ type: 'suivi_des_decisions', publication: décisionStratégique }]}
-                modeÉcriture={modeÉcriture}
-              />
+          {
+            décisionStratégique !== null && mailleAssociéeAuTerritoireSélectionné === 'nationale' && 
+            <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+              <div className="fr-col-12">
+                <DécisionsStratégiques
+                  chantierId={chantier.id}
+                  décisionStratégique={décisionStratégique}
+                  modeÉcriture={modeÉcriture}
+                />
+              </div>
             </div>
-          </div>
+          }
           {
             commentaires !== null && (
               <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">

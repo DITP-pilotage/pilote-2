@@ -1,10 +1,9 @@
 import { Fragment } from 'react';
 import Modale from '@/components/_commons/Modale/Modale';
-import Publication from '@/components/PageChantier/Publication/Publication';
 import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
-import HistoriqueDeLaSynthèseDesRésultatsStyled
-  from '@/components/PageChantier/SynthèseDesRésultats/Historique/HistoriqueDeLaSynthèseDesRésultats.styled';
+import SynthèseDesRésultatsAffichage from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultatsAffichage/SynthèseDesRésultatsAffichage';
+import HistoriqueDeLaSynthèseDesRésultatsStyled from './SynthèseDesRésultatsHistorique.styled';
 import useHistoriqueDeLaSynthèseDesRésultats from './useHistoriqueDeLaSynthèseDesRésultats';
 
 export default function HistoriqueDeLaSynthèseDesRésultats() {
@@ -20,11 +19,7 @@ export default function HistoriqueDeLaSynthèseDesRésultats() {
     >
       <HistoriqueDeLaSynthèseDesRésultatsStyled>
         {
-          historiqueDeLaSynthèseDesRésultats === null ? (
-            <p>
-              Chargement de l&apos;historique...
-            </p>
-          ) : (
+          historiqueDeLaSynthèseDesRésultats ?
             historiqueDeLaSynthèseDesRésultats.map((synthèse, i) => (
               <Fragment key={synthèse?.date ?? 'MANQUANT'}>
                 {
@@ -43,25 +38,15 @@ export default function HistoriqueDeLaSynthèseDesRésultats() {
                     }
                   </div>
                   <div className="fr-pl-md-3w">
-                    {
-                      synthèse
-                        ?
-                          <Publication
-                            auteur={synthèse.auteur}
-                            contenu={synthèse.contenu}
-                            date={synthèse.date}
-                            messageSiAucunContenu="Aucune synthèse des résultats."
-                          />
-                        :
-                          <p className='fr-text--sm texte-gris'>
-                            Aucune synthèse des résultats.
-                          </p>
-                    }
+                    <SynthèseDesRésultatsAffichage synthèseDesRésultats={synthèse} />
                   </div>
                 </div>
               </Fragment>
             ))
-          )
+            :
+            <p>
+              Chargement de l&apos;historique...
+            </p>
         }
       </HistoriqueDeLaSynthèseDesRésultatsStyled>
     </Modale>
