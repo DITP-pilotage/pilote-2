@@ -8,6 +8,7 @@ import CréerUneSynthèseDesRésultatsUseCase from '@/server/usecase/synthèse/C
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase from '@/server/usecase/synthèse/RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase';
 import { validationSynthèseDesRésultatsContexte, validationSynthèseDesRésultatsFormulaire } from 'validation/synthèseDesRésultats';
+import RécupérerHistoriqueSynthèseDesRésultatsUseCase from '@/server/usecase/synthèse/RécupérerHistoriqueSynthèseDesRésultatsUseCase';
 
 const zodValidateurCSRF = z.object({
   csrf: z.string(),
@@ -22,6 +23,13 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
 
       const créerUneSynthèseDesRésultatsUseCase = new CréerUneSynthèseDesRésultatsUseCase(dependencies.getSynthèseDesRésultatsRepository());
       return créerUneSynthèseDesRésultatsUseCase.run(input.chantierId, input.maille, input.codeInsee, input.contenu, auteur, input.météo);
+    }),
+
+  récupérerHistorique: procédureProtégée
+    .input(validationSynthèseDesRésultatsContexte)
+    .query(({ input }) =>{
+      const récupérerHistoriqueSynthèseDesRésultatsUseCase = new RécupérerHistoriqueSynthèseDesRésultatsUseCase(dependencies.getSynthèseDesRésultatsRepository());
+      return récupérerHistoriqueSynthèseDesRésultatsUseCase.run(input.chantierId, input.maille, input.codeInsee);
     }),
 
   récupérerLaPlusRécente: procédureProtégée
