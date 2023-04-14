@@ -7,6 +7,7 @@ import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMa
 import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
+import { SCOPE_SAISIE_INDICATEURS, checkAuthorizationChantierScope } from '@/server/domain/identité/Habilitation';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
@@ -29,11 +30,13 @@ const listeRubriques: Rubrique[] = [
   { nom: 'Commentaires', ancre: 'commentaires' },
 ];
 
-export default function PageChantier({ chantier, indicateurs, modeÉcriture }: PageChantierProps) {
+export default function PageChantier({ chantier, indicateurs, habilitation }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats, objectifs } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  
+  const modeÉcriture = checkAuthorizationChantierScope(habilitation, chantier.id, SCOPE_SAISIE_INDICATEURS);
 
   return (
     <PageChantierStyled className="flex">

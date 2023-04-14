@@ -57,16 +57,18 @@ function _checkScopeDansScopeSet(scope: Scope, scopeSet: ScopeSet): boolean {
 
 export function checkAuthorizationChantierScope(habilitation: Habilitation, chantier: ChantierId, scope: Scope) {
   const chantiers: HabilitationChantier = habilitation.chantiers;
+  let result = true;
 
   const scopesChantier = chantiers[chantier];
   if (!scopesChantier) {
     logger.debug('Pas le chantier');
-    return false;
+    result = false;
   }
-  const result = _checkScopeDansScopeSet(scope, scopesChantier);
-  if (!result) {
-    logger.debug('Pas le scope');
-    return false;
+  if (result) {
+    result = _checkScopeDansScopeSet(scope, scopesChantier);
+    if (!result) {
+      logger.debug('Pas le scope');
+    }
   }
   return result;
 }
