@@ -1,35 +1,18 @@
-import { PrismaClient, synthese_des_resultats } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { CodeInsee, Territoires } from '@/server/domain/territoire/Territoire.interface';
-import {
-  DonnéesTerritoriales,
-} from '@/server/domain/chantierDonnéesTerritoriales/chantierDonnéesTerritoriales.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import départements from '@/client/constants/départements.json';
 import régions from '@/client/constants/régions.json';
 import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
-import { Météo } from '@/server/domain/météo/Météo.interface';
+import {
+  ChantierDonnéesTerritoriales,
+} from '@/server/domain/chantierDonnéesTerritoriales/chantierDonnéesTerritoriales.interface';
 import ChantierDonnéesTerritorialesRepository from './ChantierDonnéesTerritorialesRepository.interface';
 
-function créerDonnéesTerritoires(
-  territoires: TerritoireGéographique[],
-  avancementsTerritorials: Array<{ code_insee: string, taux_avancement: number | null }>,
-  météosTerritoriales: Array<{ code_insee: string, meteo: string | null }>,
-) {
-  let donnéesTerritoires: Territoires = {};
-
-  territoires.forEach(territoire => {
-    const avancementTerritorial = avancementsTerritorials.find(c => c.code_insee === territoire.codeInsee);
-    const météoTerritoriale = météosTerritoriales.find(s => s.code_insee === territoire.codeInsee);
-
-    donnéesTerritoires[territoire.codeInsee] = {
-      codeInsee: territoire.codeInsee,
-      avancement: { annuel: null, global: avancementTerritorial?.taux_avancement ?? null },
-      météo: météoTerritoriale?.meteo as Météo ?? 'NON_RENSEIGNEE',
-    };
-  });
-
-  return donnéesTerritoires;
-}
+type chantier_donnees_territoriales = {
+  code_insee: string,
+  taux_avancement: number | null,
+};
 
 export default class ChantierDonnéesTerritorialesSQLRepository implements ChantierDonnéesTerritorialesRepository {
   private prisma: PrismaClient;
@@ -38,55 +21,70 @@ export default class ChantierDonnéesTerritorialesSQLRepository implements Chant
     this.prisma = prisma;
   }
 
-  async récupérerTousLesAvancementsDUnChantier(chantierId: string): Promise<Record<Maille, Record<CodeInsee, DonnéesTerritoriales>>> {
+  private mapperVersDomaine(chantierDonnéesTerritoriales: chantier_donnees_territoriales): ChantierDonnéesTerritoriales {
+    return {
+      avancement: {
+        annuel: null,
+        global: chantierDonnéesTerritoriales?.taux_avancement ?? null,
+      },
+    };
+  }
+
+  async récupérerTousLesAvancementsDUnChantier(chantierId: string): Promise<Record<Maille, Record<CodeInsee, {
+    codeInsee: CodeInsee,
+    chantierDonnéesTerritoriales: ChantierDonnéesTerritoriales,
+  }>>> {
     const chantierRows = await this.prisma.chantier.findMany({
       where: {
         id: chantierId,
       },
     });
 
-    type Row = Pick<synthese_des_resultats, 'maille' | 'code_insee' | 'meteo'>;
-
-    const synthèseDesRésultatsRows = await this.prisma.$queryRaw<Row[]>`
-      with meteos_les_plus_recentes as (
-        select maille, code_insee, max(date_commentaire) as max_date
-        from synthese_des_resultats
-        where chantier_id = ${chantierId}
-        group by maille, code_insee
-      )
-      select maille, code_insee, meteo
-      from synthese_des_resultats as m
-        inner join meteos_les_plus_recentes as m_recentes
-          on m.maille = m_recentes.maille
-            and m.code_insee = m_recentes.code_insee
-            and m.date_commentaire = m_recentes.max_date
-      where chantier_id = ${chantierId}
-    `;
-
-    const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
-    const synthèseDesRésultatsMailleNationale = synthèseDesRésultatsRows.find(s => s.maille === 'NAT');
+    const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT') ?? null;
 
     return {
       nationale: {
         FR: {
           codeInsee: 'FR',
-          avancement: {
-            annuel: null,
-            global: chantierMailleNationale?.taux_avancement ?? null,
+          chantierDonnéesTerritoriales: chantierMailleNationale ? this.mapperVersDomaine(chantierMailleNationale) : {
+            avancement: {
+              annuel: null,
+              global: null,
+            },
           },
-          météo: synthèseDesRésultatsMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
         },
       },
-      régionale: créerDonnéesTerritoires(
+      régionale: this._territorialiser(
         régions,
         chantierRows.filter(c => c.maille === 'REG'),
-        synthèseDesRésultatsRows.filter(s => s.maille === 'REG'),
       ),
-      départementale: créerDonnéesTerritoires(
+      départementale: this._territorialiser(
         départements,
         chantierRows.filter(c => c.maille === 'DEPT'),
-        synthèseDesRésultatsRows.filter(s => s.maille === 'DEPT'),
       ),
     };
+  }
+
+  private _territorialiser(
+    territoires: TerritoireGéographique[],
+    chantierDonnéesTerritoriales: chantier_donnees_territoriales[],
+  ) {
+    let donnéesTerritoires: Record<CodeInsee, { codeInsee: CodeInsee, chantierDonnéesTerritoriales: ChantierDonnéesTerritoriales }> = {};
+
+    territoires.forEach(territoire => {
+      const avancementTerritorial = chantierDonnéesTerritoriales.find(c => c.code_insee === territoire.codeInsee) ?? null;
+
+      donnéesTerritoires[territoire.codeInsee] = {
+        codeInsee: territoire.codeInsee,
+        chantierDonnéesTerritoriales: avancementTerritorial ? this.mapperVersDomaine(avancementTerritorial) : {
+          avancement: {
+            annuel: null,
+            global: null,
+          },
+        },
+      };
+    });
+
+    return donnéesTerritoires;
   }
 }

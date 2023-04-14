@@ -32,7 +32,7 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, habilitation }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { avancements, synthèseDesRésultats, cartes, objectifs, détailsIndicateurs, commentaires } = usePageChantier(chantier);
+  const { avancements, synthèseDesRésultats, répartitionGéographique, objectifs, détailsIndicateurs, commentaires } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   
@@ -75,10 +75,13 @@ export default function PageChantier({ chantier, indicateurs, habilitation }: Pa
             </div>
           </div>
           {
-            cartes !== null &&
+            répartitionGéographique !== null &&
             <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
               <div className="fr-col-12">
-                <RépartitionGéographique données={cartes} />
+                <RépartitionGéographique
+                  avancementsGlobauxTerritoriaux={répartitionGéographique.avancementsGlobauxTerritoriaux}
+                  météosTerritoriales={répartitionGéographique.météosTerritoriales}
+                />
               </div>
             </div>
           }

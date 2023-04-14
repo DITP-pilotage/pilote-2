@@ -5,6 +5,9 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import régions from '@/client/constants/régions.json';
+import départements from '@/client/constants/départements.json';
+import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
   private prisma: PrismaClient;
@@ -63,6 +66,46 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     return this.mapperVersDomaine(synthèseDesRésultats);
   }
 
+  async récupérerLesPlusRécentesPourTousLesTerritoires(chantierId: string): Promise<Record<Maille, Record<CodeInsee, {
+    codeInsee: CodeInsee,
+    synthèseDesRésultats: SynthèseDesRésultats,
+  }>>> {
+    const synthèsesDesRésultats = await this.prisma.$queryRaw<synthese_des_resultats[]>`
+      with meteos_les_plus_recentes as (
+        select maille, code_insee, max(date_commentaire) as max_date
+        from synthese_des_resultats
+        where chantier_id = ${chantierId}
+        group by maille, code_insee
+      )
+      select s.*
+      from synthese_des_resultats as s
+        inner join meteos_les_plus_recentes as m_recentes
+          on s.maille = m_recentes.maille
+            and s.code_insee = m_recentes.code_insee
+            and s.date_commentaire = m_recentes.max_date
+      where chantier_id = ${chantierId}
+    `;
+
+    const synthèsesDesRésultatsMailleNationale = synthèsesDesRésultats.find(c => c.maille === 'NAT') ?? null;
+
+    return {
+      nationale: {
+        FR: {
+          codeInsee: 'FR',
+          synthèseDesRésultats: this.mapperVersDomaine(synthèsesDesRésultatsMailleNationale),
+        },
+      },
+      régionale: this._territorialiser(
+        régions,
+        synthèsesDesRésultats.filter(c => c.maille === 'REG'),
+      ),
+      départementale: this._territorialiser(
+        départements,
+        synthèsesDesRésultats.filter(c => c.maille === 'DEPT'),
+      ),
+    };
+  }
+
   async récupérerHistorique(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<SynthèseDesRésultats[]> {
     const synthèsesDesRésultats = await this.prisma.synthese_des_resultats.findMany({
       where: {
@@ -76,5 +119,23 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     return synthèsesDesRésultats
       .map((synthèse: synthese_des_resultats) => this.mapperVersDomaine(synthèse))
       .filter((synthèse: SynthèseDesRésultats) => synthèse !== null);
+  }
+
+  private _territorialiser(
+    territoires: TerritoireGéographique[],
+    synthèsesDesRésultatsTerritoriales: synthese_des_resultats[],
+  ) {
+    let donnéesTerritoires: Record<CodeInsee, { codeInsee: string, synthèseDesRésultats: SynthèseDesRésultats }> = {};
+
+    territoires.forEach(territoire => {
+      const synthèseTerritoriale = synthèsesDesRésultatsTerritoriales.find(c => c.code_insee === territoire.codeInsee) ?? null;
+
+      donnéesTerritoires[territoire.codeInsee] = {
+        codeInsee: territoire.codeInsee,
+        synthèseDesRésultats: this.mapperVersDomaine(synthèseTerritoriale),
+      };
+    });
+
+    return donnéesTerritoires;
   }
 }

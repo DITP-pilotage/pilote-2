@@ -7,17 +7,17 @@ import Titre from '@/components/_commons/Titre/Titre';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
 
-export default function RépartitionGéographique({ données }: RépartitionGéographiqueProps) {
+export default function RépartitionGéographique({ avancementsGlobauxTerritoriaux, météosTerritoriales }: RépartitionGéographiqueProps) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const { auClicTerritoireCallback } = useCartographie();
 
-  const donnéesCartographieAvancement = objectEntries(données[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
-    valeur: territoire.avancement.global,
+  const donnéesCartographieAvancement = objectEntries(avancementsGlobauxTerritoriaux[mailleSélectionnée]).map(([codeInsee, donnéesTerritoriales]) => ({
+    valeur: donnéesTerritoriales.avancementGlobal,
     codeInsee: codeInsee,
   }));
 
-  const donnéesCartographieMétéo = objectEntries(données[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
-    valeur: territoire.météo,
+  const donnéesCartographieMétéo = objectEntries(météosTerritoriales[mailleSélectionnée]).map(([codeInsee, donnéesTerritoriales]) => ({
+    valeur: donnéesTerritoriales.météo,
     codeInsee: codeInsee,
   }));
 

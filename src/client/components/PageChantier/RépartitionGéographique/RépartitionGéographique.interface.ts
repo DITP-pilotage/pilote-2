@@ -1,9 +1,15 @@
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import {
-  DonnéesTerritoriales,
-} from '@/server/domain/chantierDonnéesTerritoriales/chantierDonnéesTerritoriales.interface';
+import { Météo } from '@/server/domain/météo/Météo.interface';
+import Avancement from '@/server/domain/avancement/Avancement.interface';
 
 export default interface CartesProps {
-  données: Record<Maille, Record<CodeInsee, DonnéesTerritoriales>>,
+  avancementsGlobauxTerritoriaux: Record<Maille, Record<CodeInsee, {
+    codeInsee: CodeInsee,
+    avancementGlobal: Avancement['global'],
+  }>>,
+  météosTerritoriales: Record<Maille, Record<CodeInsee, {
+    codeInsee: CodeInsee,
+    météo: Météo,
+  }>>
 }

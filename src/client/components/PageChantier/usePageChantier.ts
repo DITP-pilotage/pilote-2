@@ -43,7 +43,7 @@ export default function usePageChantier(chantier: Chantier) {
     { refetchOnWindowFocus: false },
   );
 
-  const { data: cartes } = api.chantierDonnéesTerritoriales.récupérerRépartitionGéographique.useQuery(
+  const { data: répartitionGéographique } = api.chantierDonnéesTerritoriales.récupérerRépartitionGéographique.useQuery(
     {
       chantierId: chantier.id,
     },
@@ -103,7 +103,7 @@ export default function usePageChantier(chantier: Chantier) {
   return { 
     avancements, 
     synthèseDesRésultats: synthèseDesRésultats ?? null,
-    cartes: cartes ?? null,
+    répartitionGéographique: répartitionGéographique ?? null,
     objectifs: objectifs ?? null,
     détailsIndicateurs,
     commentaires: commentaires ?? null,
