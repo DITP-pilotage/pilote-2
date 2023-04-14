@@ -3,4 +3,5 @@ import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/Synth
 export interface SynthèseDesRésultatsProps {
   synthèseDesRésultatsInitiale: SynthèseDesRésultats
   modeÉcriture: boolean
+  refetchRépartitionGéographique: () => void
 }

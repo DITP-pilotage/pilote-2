@@ -32,7 +32,15 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, habilitation }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { avancements, synthèseDesRésultats, répartitionGéographique, objectifs, détailsIndicateurs, commentaires } = usePageChantier(chantier);
+  const {
+    avancements,
+    synthèseDesRésultats,
+    répartitionGéographique,
+    objectifs,
+    détailsIndicateurs,
+    commentaires,
+    refetchRépartitionGéographique,
+  } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   
@@ -70,6 +78,7 @@ export default function PageChantier({ chantier, indicateurs, habilitation }: Pa
             <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
               <SynthèseDesRésultats
                 modeÉcriture={modeÉcriture}
+                refetchRépartitionGéographique={refetchRépartitionGéographique}
                 synthèseDesRésultatsInitiale={synthèseDesRésultats}
               />
             </div>

@@ -11,7 +11,7 @@ import useSynthèseDesRésultats from '@/components/PageChantier/SynthèseDesRé
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import SynthèseDesRésultatsFormulaire from './SynthèseDesRésultatsFormulaire/SynthèseDesRésultatsFormulaire';
 
-export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale, modeÉcriture }: SynthèseDesRésultatsProps) {
+export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale, modeÉcriture, refetchRépartitionGéographique }: SynthèseDesRésultatsProps) {
   const {
     synthèseDesRésultats,
     nomTerritoireSélectionné,
@@ -20,7 +20,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
     synthèseDesRésultatsCréée,
     activerLeModeÉdition,
     désactiverLeModeÉdition,
-  } = useSynthèseDesRésultats(synthèseDesRésultatsInitiale);
+  } = useSynthèseDesRésultats(synthèseDesRésultatsInitiale, refetchRépartitionGéographique);
 
   return (
     <SynthèseDesRésultatsStyled id="synthèse">

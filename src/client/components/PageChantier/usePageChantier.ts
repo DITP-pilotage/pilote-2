@@ -43,11 +43,13 @@ export default function usePageChantier(chantier: Chantier) {
     { refetchOnWindowFocus: false },
   );
 
-  const { data: répartitionGéographique } = api.chantierDonnéesTerritoriales.récupérerRépartitionGéographique.useQuery(
+  const { data: répartitionGéographique, refetch: refetchRépartitionGéographique } = api.chantierDonnéesTerritoriales.récupérerRépartitionGéographique.useQuery(
     {
       chantierId: chantier.id,
     },
-    { refetchOnWindowFocus: false },
+    {
+      refetchOnWindowFocus: false,
+    },
   );
 
   useEffect(() => {
@@ -107,5 +109,6 @@ export default function usePageChantier(chantier: Chantier) {
     objectifs: objectifs ?? null,
     détailsIndicateurs,
     commentaires: commentaires ?? null,
+    refetchRépartitionGéographique,
   };
 }
