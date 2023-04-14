@@ -29,4 +29,19 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
   
     return décisionStratégiqueLaPlusRécente ? this.mapperVersDomaine(décisionStratégiqueLaPlusRécente) : null;
   }
+
+
+  async créer(chantierId: string, id: string, contenu: string, type: DécisionStratégique['type'], auteur: string, date: Date): Promise<DécisionStratégique> {
+    const décisionStratégiqueCrée =  await this.prisma.decision_strategique.create({
+      data: {
+        id,
+        chantier_id: chantierId,
+        contenu,
+        type,
+        date,
+        auteur,
+      } });
+
+    return this.mapperVersDomaine(décisionStratégiqueCrée);
+  }
 }

@@ -8,7 +8,7 @@ import ObjectifSQLRepository, {
 import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
 import { TypeObjectif } from '@/server/domain/objectif/Objectif.interface';
 
-describe('ObjectifSQLRepository ', function () {
+describe('ObjectifSQLRepository', function () {
   const chantierId = 'CH-001';
   const objectifRepository: ObjectifRepository = new ObjectifSQLRepository(prisma);
 
