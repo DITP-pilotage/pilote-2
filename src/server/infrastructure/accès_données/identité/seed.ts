@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, utilisateur, utilisateur_chantier } from '@prisma/client';
 import {
   SCOPE_LECTURE,
   SCOPE_SAISIE_INDICATEURS,
@@ -102,14 +102,16 @@ export async function créerUtilisateurs(
   for (const input of inputUtilisateurs) {
     donnéesUtilisateurs.push({ id: uuidv4(), ...input });
   }
-  await prisma.utilisateur.createMany({ data: donnéesUtilisateurs
-    .map(it => ({ id: it.id, email: it.email, profil_id: profilIdByCode[it.profilCode] })) });
-
-  const utilisateurChantiers = [];
+  const utilisateurRows: utilisateur[] =  donnéesUtilisateurs.map(it => {
+    return { id: it.id, email: it.email, profil_id: profilIdByCode[it.profilCode] };
+  });
+  const utilisateurChantierRows: utilisateur_chantier[] = [];
   for (const { id: utilisateur_id, chantierIds } of donnéesUtilisateurs) {
     for (const chantier_id of chantierIds) {
-      utilisateurChantiers.push({ utilisateur_id, chantier_id });
+      utilisateurChantierRows.push({ utilisateur_id, chantier_id });
     }
   }
-  await prisma.utilisateur_chantier.createMany({ data: utilisateurChantiers });
+
+  await prisma.utilisateur.createMany({ data: utilisateurRows });
+  await prisma.utilisateur_chantier.createMany({ data: utilisateurChantierRows });
 }
