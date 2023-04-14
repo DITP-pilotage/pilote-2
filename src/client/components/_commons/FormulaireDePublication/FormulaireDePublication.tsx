@@ -38,6 +38,7 @@ export default function FormulaireDePublication({ contenuInitial, limiteDeCaract
           }}
           rows={6}
           value={contenu}
+
         />
         {
           contenu.length > limiteDeCaractères &&
