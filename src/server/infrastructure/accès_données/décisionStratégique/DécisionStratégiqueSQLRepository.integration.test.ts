@@ -5,26 +5,32 @@ import DécisionStratégiqueRepository from '@/server/domain/décisionStratégiq
 import DécisionStratégiqueSQLRepository from './DécisionStratégiqueSQLRepository';
 
 describe('DécisionStratégiqueSQLRepository', () => {
+  // GIVEN
   const chantierId = 'CH-001';
   const décisionStratégiqueRepository: DécisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
 
+  const décisionStratégiqueLaPlusRécente = new DécisionStratégiqueSQLRowBuilder()
+    .avecChantierId(chantierId)
+    .avecDate(new Date('2023-03-30'))
+    .build();
+        
+  const décisionStratégiqueMoinsRécente = new DécisionStratégiqueSQLRowBuilder()
+    .avecChantierId(chantierId)
+    .avecDate(new Date('2023-01-30'))
+    .build();
+
+  const décisionStratégiqueLaPlusAncienne = new DécisionStratégiqueSQLRowBuilder()
+    .avecChantierId(chantierId)
+    .avecDate(new Date('2022-09-30'))
+    .build();
+
+  const décisionsStratégiques: Prisma.decision_strategiqueCreateArgs['data'][] = [décisionStratégiqueMoinsRécente, décisionStratégiqueLaPlusRécente, décisionStratégiqueLaPlusAncienne];
+  
   describe('récupérerLePlusRécent', () => {
     it('Retourne la décision stratégique la plus récente pour un chantier avec son contenu, auteur et date', async () => {
-      // GIVEN
-      const décisionStratégiqueLaPlusRécente = new DécisionStratégiqueSQLRowBuilder()
-        .avecChantierId(chantierId)
-        .avecDate(new Date('2023-03-30'))
-        .build();
-        
-      const décisionStratégiqueMoinsRécente = new DécisionStratégiqueSQLRowBuilder()
-        .avecChantierId(chantierId)
-        .avecDate(new Date('2023-01-30'))
-        .build();
-
-      const décisionsStratégiques: Prisma.decision_strategiqueCreateArgs['data'][] = [décisionStratégiqueMoinsRécente, décisionStratégiqueLaPlusRécente];
+      await prisma.decision_strategique.createMany({ data: décisionsStratégiques });
 
       // WHEN
-      await prisma.decision_strategique.createMany({ data: décisionsStratégiques });
       const résultat = await décisionStratégiqueRepository.récupérerLePlusRécent(chantierId);
 
       // THEN
@@ -35,6 +41,20 @@ describe('DécisionStratégiqueSQLRepository', () => {
         contenu: décisionStratégiqueLaPlusRécente.contenu,
         date: (décisionStratégiqueLaPlusRécente.date as Date).toISOString(),
       });
+    });
+  });
+
+  describe('RécupérerLHistorique', () => {
+    it("Retourne toutes les publications de décisions stratégiques pour un chantier, dans l'ordre décroissant", async () => {
+      await prisma.decision_strategique.createMany({ data: décisionsStratégiques });
+
+      // WHEN 
+      const résultat = await décisionStratégiqueRepository.récupérerLHistorique(chantierId);
+
+      // THEN
+      expect(résultat[0]?.date).toStrictEqual((décisionStratégiqueLaPlusRécente.date as Date).toISOString());
+      expect(résultat[1]?.date).toStrictEqual((décisionStratégiqueMoinsRécente.date as Date).toISOString());
+      expect(résultat[2]?.date).toStrictEqual((décisionStratégiqueLaPlusAncienne.date as Date).toISOString());
     });
   });
 

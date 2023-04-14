@@ -1,5 +1,5 @@
 import { PrismaClient, decision_strategique as DécisionStratégiquePrisma } from '@prisma/client';
-import DécisionStratégique from '@/server/domain/décisionStratégique/DécisionStratégique.interface';
+import DécisionStratégique, { TypeDécisionStratégique } from '@/server/domain/décisionStratégique/DécisionStratégique.interface';
 import DécisionStratégiqueRepository from '@/server/domain/décisionStratégique/DécisionStratégiqueRepository.interface';
 
 export default class DécisionStratégiqueSQLRepository implements DécisionStratégiqueRepository {
@@ -30,8 +30,18 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
     return décisionStratégiqueLaPlusRécente ? this.mapperVersDomaine(décisionStratégiqueLaPlusRécente) : null;
   }
 
+  async récupérerLHistorique(chantierId: string): Promise<DécisionStratégique[]> {
+    const décisionsStratégiques: DécisionStratégiquePrisma[] = await this.prisma.decision_strategique.findMany({
+      where: {
+        chantier_id: chantierId,
+      },
+      orderBy: { date: 'desc' },
+    });
 
-  async créer(chantierId: string, id: string, contenu: string, type: DécisionStratégique['type'], auteur: string, date: Date): Promise<DécisionStratégique> {
+    return décisionsStratégiques.map(décisionStratégique => this.mapperVersDomaine(décisionStratégique));
+  }
+
+  async créer(chantierId: string, id: string, contenu: string, type: TypeDécisionStratégique, auteur: string, date: Date): Promise<DécisionStratégique> {
     const décisionStratégiqueCrée =  await this.prisma.decision_strategique.create({
       data: {
         id,
