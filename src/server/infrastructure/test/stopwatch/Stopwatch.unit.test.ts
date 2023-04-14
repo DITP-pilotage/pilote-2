@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import { Clock, Logger, Stopwatch } from './Stopwatch';
 
 function fakeLogger(logs: string[]): Logger {

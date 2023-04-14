@@ -18,6 +18,7 @@ export default function useHistoriqueDeLaSynthèseDesRésultats() {
   }, [chantierId, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee]);
 
   const récupérerPublications = () => {
+    // TODO A supprimer
     fetch(`/api/chantier/${chantierId}/historique-de-la-synthese-des-resultats?`
       + new URLSearchParams({
         maille: mailleAssociéeAuTerritoireSélectionné,

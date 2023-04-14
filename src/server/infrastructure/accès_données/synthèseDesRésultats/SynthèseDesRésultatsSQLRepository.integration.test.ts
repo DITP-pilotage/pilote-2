@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import { synthese_des_resultats } from '@prisma/client';
 import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/accès_données/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
