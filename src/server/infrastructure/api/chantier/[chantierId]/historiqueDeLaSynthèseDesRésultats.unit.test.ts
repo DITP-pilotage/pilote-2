@@ -1,7 +1,6 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import { createMocks } from 'node-mocks-http';
 import RécupérerLHistoriqueDeLaSynthèseDesRésultatsUseCase
-  from '@/server/usecase/synthèse/RécupérerLHistoriqueDeLaSynthèseDesRésultatsUseCase';
+  from '@/server/usecase/synthèse/RécupérerHistoriqueSynthèseDesRésultatsUseCase';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import handleHistoriqueDeLaSynthèseDesRésultats from './historiqueDeLaSynthèseDesRésultats';
 

@@ -65,10 +65,16 @@
     "@typescript-eslint/naming-convention": [
       "error",
       {
-        "selector":  "function",
-        "format": ["camelCase", "PascalCase"],
-        "leadingUnderscore":  "allow",
-        "filter": { "regex": "^(_+|[A-Za-z]+_[A-Z][a-z]+)$", "match": false }
+        "selector": "function",
+        "format": [
+          "camelCase",
+          "PascalCase"
+        ],
+        "leadingUnderscore": "allow",
+        "filter": {
+          "regex": "^(_+|[A-Za-z]+_[A-Z][a-z]+)$",
+          "match": false
+        }
       }
     ],
     "@typescript-eslint/no-unused-vars": [
@@ -77,6 +83,7 @@
         "argsIgnorePattern": "^_"
       }
     ],
+    "sonarjs/no-duplicate-string": "off",
     "unicorn/prevent-abbreviations": "off",
     "unicorn/filename-case": "off",
     "unicorn/no-array-for-each": "off",

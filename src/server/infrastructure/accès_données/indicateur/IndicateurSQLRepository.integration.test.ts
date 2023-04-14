@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import { indicateur } from '@prisma/client';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { Maille } from '@/server/domain/maille/Maille.interface';

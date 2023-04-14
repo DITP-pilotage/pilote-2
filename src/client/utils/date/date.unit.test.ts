@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import { formaterDate } from '@/client/utils/date/date';
 
 describe('formaterDate', () => {

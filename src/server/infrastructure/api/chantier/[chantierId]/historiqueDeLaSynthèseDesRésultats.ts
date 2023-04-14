@@ -3,7 +3,7 @@ import logger from '@/server/infrastructure/logger';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import RécupérerLHistoriqueDeLaSynthèseDesRésultatsUseCase
-  from '@/server/usecase/synthèse/RécupérerLHistoriqueDeLaSynthèseDesRésultatsUseCase';
+  from '@/server/usecase/synthèse/RécupérerHistoriqueSynthèseDesRésultatsUseCase';
 
 class ParsingError extends Error {}
 
