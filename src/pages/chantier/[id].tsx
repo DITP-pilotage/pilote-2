@@ -3,7 +3,7 @@ import { GetServerSidePropsContext } from 'next';
 import PageChantier from '@/components/PageChantier/PageChantier';
 
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { ChantierId, SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
+import { ChantierId, Habilitation, SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -11,17 +11,17 @@ import logger from '@/server/infrastructure/logger';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 
 interface NextPageChantierProps {
-  chantier: Chantier
+  chantier: Chantier,
+  habilitation: Habilitation,
   indicateurs: Indicateur[],
-  modeÉcriture: boolean
 }
 
-export default function NextPageChantier({ chantier, indicateurs, modeÉcriture }: NextPageChantierProps) {
+export default function NextPageChantier({ chantier, indicateurs, habilitation }: NextPageChantierProps) {
   return (
     <PageChantier
       chantier={chantier}
+      habilitation={habilitation}
       indicateurs={indicateurs}
-      modeÉcriture={modeÉcriture}
     />
   );
 }
@@ -47,13 +47,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext<Para
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params.id);
 
-  const modeÉcriture = true;
   return {
     props: {
       chantier,
       indicateurs,
-      modeÉcriture,
-      habilitation, // -> surt le front, les function d'haibilitation sont utiliés        -> if checkChantierScope(habilitation, chantier, scope)
+      habilitation,
     },
   };
 }
