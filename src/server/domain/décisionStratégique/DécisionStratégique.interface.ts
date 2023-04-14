@@ -1,4 +1,4 @@
-type DécisionsStratégiques = {
+type DécisionStratégique = {
   id: string
   contenu: string
   date: string
@@ -6,4 +6,4 @@ type DécisionsStratégiques = {
   type: 'suivi_des_decisions'
 } | null;
 
-export default DécisionsStratégiques;
+export default DécisionStratégique;

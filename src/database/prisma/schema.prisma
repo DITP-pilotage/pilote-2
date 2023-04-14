@@ -143,16 +143,16 @@ model objectif {
   @@schema("public")
 }
 
-enum type_decisions_strategique {
+enum type_decision_strategique {
   suivi_des_decisions
 
   @@schema("public")
 }
 
-model decisions_strategiques {
+model decision_strategique {
   id          String        @id
   auteur      String
-  type        type_decisions_strategique
+  type        type_decision_strategique
   contenu     String
   date        DateTime      @db.Timestamp
   chantier_id String
