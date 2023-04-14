@@ -103,7 +103,7 @@ export default function usePageChantier(chantier: Chantier) {
   return { 
     avancements, 
     synthèseDesRésultats: synthèseDesRésultats ?? null,
-    cartes,
+    cartes: cartes ?? null,
     objectifs: objectifs ?? null,
     détailsIndicateurs,
     commentaires: commentaires ?? null,

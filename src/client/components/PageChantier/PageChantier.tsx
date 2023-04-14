@@ -8,13 +8,13 @@ import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSé
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
 import { SCOPE_SAISIE_INDICATEURS, checkAuthorizationChantierScope } from '@/server/domain/identité/Habilitation';
+import RépartitionGéographique from '@/components/PageChantier/RépartitionGéographique/RépartitionGéographique';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
 import Responsables from './Responsables/Responsables';
 import SynthèseDesRésultats from './SynthèseDesRésultats/SynthèseDesRésultats';
 import PageChantierEnTête from './PageChantierEnTête/PageChantierEnTête';
-import Cartes from './Cartes/Cartes';
 import Sommaire from './Sommaire/Sommaire';
 import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
@@ -37,8 +37,6 @@ export default function PageChantier({ chantier, indicateurs, habilitation }: Pa
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   
   const modeÉcriture = checkAuthorizationChantierScope(habilitation, chantier.id, SCOPE_SAISIE_INDICATEURS);
-
-  console.log(chantier.mailles, cartes);
 
   return (
     <PageChantierStyled className="flex">
@@ -76,11 +74,14 @@ export default function PageChantier({ chantier, indicateurs, habilitation }: Pa
               />
             </div>
           </div>
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <div className="fr-col-12">
-              <Cartes chantier={chantier} />
+          {
+            cartes !== null &&
+            <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+              <div className="fr-col-12">
+                <RépartitionGéographique données={cartes} />
+              </div>
             </div>
-          </div>
+          }
           {
             objectifs !== null && 
             <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">

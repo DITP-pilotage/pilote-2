@@ -5,18 +5,18 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
 import Titre from '@/components/_commons/Titre/Titre';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
-import CartesProps from './Cartes.interface';
+import RépartitionGéographiqueProps from './RépartitionGéographique.interface';
 
-export default function Cartes({ chantier }: CartesProps) {
+export default function RépartitionGéographique({ données }: RépartitionGéographiqueProps) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const { auClicTerritoireCallback } = useCartographie();
 
-  const donnéesCartographieAvancement = objectEntries(chantier.mailles[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
+  const donnéesCartographieAvancement = objectEntries(données[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
     valeur: territoire.avancement.global,
     codeInsee: codeInsee,
   }));
 
-  const donnéesCartographieMétéo = objectEntries(chantier.mailles[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
+  const donnéesCartographieMétéo = objectEntries(données[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
     valeur: territoire.météo,
     codeInsee: codeInsee,
   }));
