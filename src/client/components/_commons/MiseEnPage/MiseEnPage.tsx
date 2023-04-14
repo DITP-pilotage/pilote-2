@@ -5,7 +5,6 @@ import Loader from '@/client/components/_commons/Loader/Loader';
 import MiseEnPageProps from './MiseEnPage.interface';
 import EnTête from './EnTête/EnTête';
 import PiedDePage from './PiedDePage/PiedDePage';
-import MiseEnPageStyled from './MiseEnPageStyled';
 
 export default function MiseEnPage({ afficherLeLoader, children }: MiseEnPageProps) {
   const { status } = useSession();
@@ -21,13 +20,16 @@ export default function MiseEnPage({ afficherLeLoader, children }: MiseEnPagePro
       {
         status === 'loading' || afficherLeLoader 
           ?
-            <MiseEnPageStyled className='fr-grid-row fr-grid-row--center fr-grid-row--middle'>
-              <Loader />
-            </MiseEnPageStyled>
-          :
-          (status === 'unauthenticated' ? <PageLanding /> : children)
+            <Loader />
+          : (
+            <>
+              {
+                status === 'unauthenticated' ? <PageLanding /> : children
+              }
+              <PiedDePage />
+            </>
+          )
       }
-      <PiedDePage />
     </>
   );
 }
