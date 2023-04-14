@@ -33,7 +33,7 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, habilitation }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats, objectifs, décisionsStratégiques } = usePageChantier(chantier);
+  const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats, objectifs, décisionStratégique } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   
@@ -110,7 +110,7 @@ export default function PageChantier({ chantier, indicateurs, habilitation }: Pa
             <div className="fr-col-12">
               <DécisionsStratégiques
                 chantierId={chantier.id}
-                décisionsStratégiques={[{ type: 'suivi_des_decisions', publication: décisionsStratégiques }]}
+                décisionStratégique={[{ type: 'suivi_des_decisions', publication: décisionStratégique }]}
                 modeÉcriture={modeÉcriture}
               />
             </div>

@@ -20,7 +20,7 @@ import CréerUnObjectifUseCase from '@/server/usecase/objectif/CréerUnObjectifU
 import RécupérerObjectifLePlusRécentUseCase from '@/server/usecase/objectif/RécupérerObjectifLePlusRécentUseCase';
 import RécupérerHistoriqueObjectifUseCase from '@/server/usecase/objectif/RécupérerHistoriqueObjectifUseCase';
 import { typesObjectif } from '@/server/domain/objectif/Objectif.interface';
-import RécupérerDécisionsStratégiquesLePlusRécentUseCase from '@/server/usecase/décisions/RécupérerDécisionsStratégiquesLePlusRécentUseCase';
+import RécupérerDécisionStratégiqueLePlusRécentUseCase from '@/server/usecase/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
@@ -54,8 +54,8 @@ export const publicationRouter = créerRouteurTRPC({
       }
 
       if (input.entité === 'décisions stratégiques') {
-        const récupérerDésionsStratégiquesLePlusRécentUseCase = new RécupérerDécisionsStratégiquesLePlusRécentUseCase(dependencies.getDécisionsStratégiquesRepository());
-        return récupérerDésionsStratégiquesLePlusRécentUseCase.run(input.chantierId);
+        const récupérerDésionStratégiqueLaPlusRécenteUseCase = new RécupérerDécisionStratégiqueLePlusRécentUseCase(dependencies.getDécisionStratégiqueRepository());
+        return récupérerDésionStratégiqueLaPlusRécenteUseCase.run(input.chantierId);
       }
     }),
 

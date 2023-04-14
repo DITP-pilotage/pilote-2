@@ -43,7 +43,7 @@ export default function usePageChantier(chantier: Chantier) {
     { refetchOnWindowFocus: false },
   );
 
-  const { data: décisionsStratégiques } = api.publication.récupérerLaPlusRécente.useQuery(
+  const { data: décisionStratégique } = api.publication.récupérerLaPlusRécente.useQuery(
     {
       chantierId: chantier.id,
       maille: 'nationale',
@@ -110,6 +110,6 @@ export default function usePageChantier(chantier: Chantier) {
     commentaires: commentaires ?? null,
     objectifs: objectifs ?? null,
     synthèseDesRésultats: synthèseDesRésultats ?? null,
-    décisionsStratégiques: décisionsStratégiques ?? null,
+    décisionStratégique: décisionStratégique ?? null,
   };
 }
