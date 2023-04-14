@@ -1,3 +1,4 @@
+export const SANS_HABILITATIONS = 'SANS_HABILITATIONS';
 export const DITP_ADMIN = 'DITP_ADMIN';
 export const DITP_PILOTAGE = 'DITP_PILOTAGE';
 export const PM_ET_CABINET = 'PM_ET_CABINET';

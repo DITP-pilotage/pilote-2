@@ -24,7 +24,7 @@ import {
   DITP_PILOTAGE,
   EQUIPE_DIR_PROJET,
   PM_ET_CABINET,
-  PR,
+  PR, SANS_HABILITATIONS,
   SECRETARIAT_GENERAL,
 } from '@/server/domain/identité/Profil';
 import ChantierRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
@@ -41,6 +41,7 @@ describe('HabilitationSQLRepository', () => {
     await prisma.chantier.createMany({ data: chantierRows });
 
     const inputUtilisateurs: InputUtilisateur[] = [
+      { email: 'sans.habilitations@example.com', profilCode: SANS_HABILITATIONS, chantierIds: [] },
       { email: 'ditp.admin@example.com', profilCode: DITP_ADMIN, chantierIds: [] },
       { email: 'ditp.pilotage@example.com', profilCode: DITP_PILOTAGE, chantierIds: [] },
       { email: 'premiere.ministre@example.com', profilCode: PM_ET_CABINET, chantierIds: [] },
@@ -205,5 +206,37 @@ describe('HabilitationSQLRepository', () => {
         chantiers: {},
       });
     });
+  });
+
+  describe('Suppression des habilitations', () => {
+    it('pour un utilisateur qui voit tous les chantiers', async () => {
+      // GIVEN
+      const email = 'ditp.admin@example.com';
+      const repository: HabilitationRepository = new HabilitationSQLRepository(prisma);
+
+      // WHEN
+      await repository.supprimeHabilitationsPourUtilisateur(email);
+
+      // THEN
+      const habilitations = await repository.récupèreHabilitationsPourUtilisateur(email);
+      expect(habilitations).toStrictEqual({ chantiers: {} });
+    });
+  });
+
+  it('pour un utilisateur qui voit une liste de chantiers', async () => {
+    // GIVEN
+    const email = 'equipe.dir.projet2@example.com';
+    const repository = new HabilitationSQLRepository(prisma);
+
+    // WHEN
+    await repository.supprimeHabilitationsPourUtilisateur(email);
+
+    // THEN
+    const habilitations = await repository.récupèreHabilitationsPourUtilisateur(email);
+    expect(habilitations).toStrictEqual({ chantiers: {} });
+    const associationsChantiers = await repository.récupèreAssociationsAvecChantier(email);
+    expect(associationsChantiers).toStrictEqual([]);
+    const associationsChantiersAutreUtilisateur = await repository.récupèreAssociationsAvecChantier('equipe.dir.projet1@example.com');
+    expect(associationsChantiersAutreUtilisateur).not.toStrictEqual([]);
   });
 });

@@ -11,7 +11,7 @@ import {
   DITP_ADMIN,
   DITP_PILOTAGE, EQUIPE_DIR_PROJET,
   PM_ET_CABINET,
-  PR, SECRETARIAT_GENERAL,
+  PR, SANS_HABILITATIONS, SECRETARIAT_GENERAL,
 } from '@/server/domain/identité/Profil';
 
 export type InputScopesHabilitations = {
@@ -42,6 +42,7 @@ export const INPUT_SCOPES_HABILITATIONS: InputScopesHabilitations[] = [
 
 const tousScopes = [SCOPE_LECTURE, SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES, SCOPE_SAISIE_INDICATEURS];
 export const INPUT_PROFILS: InputProfil[] = [
+  { code: SANS_HABILITATIONS, nom: 'Sans Habilitations', aAccesTousChantiers: false, habilitationScopeCodes: [] },
   { code: DITP_ADMIN, nom: 'DITP - Admin', aAccesTousChantiers: true, habilitationScopeCodes: tousScopes },
   { code: DITP_PILOTAGE, nom: 'DITP - Pilotage', aAccesTousChantiers: true, habilitationScopeCodes: [SCOPE_LECTURE] },
   { code: PM_ET_CABINET, nom: 'Première Ministre et cabinet', aAccesTousChantiers: true, habilitationScopeCodes: [SCOPE_LECTURE] },
