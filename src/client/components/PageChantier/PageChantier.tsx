@@ -32,11 +32,13 @@ const listeRubriques: Rubrique[] = [
 
 export default function PageChantier({ chantier, indicateurs, habilitation }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats, objectifs } = usePageChantier(chantier);
+  const { avancements, synthèseDesRésultats, cartes, objectifs, détailsIndicateurs, commentaires } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   
   const modeÉcriture = checkAuthorizationChantierScope(habilitation, chantier.id, SCOPE_SAISIE_INDICATEURS);
+
+  console.log(chantier.mailles, cartes);
 
   return (
     <PageChantierStyled className="flex">

@@ -43,6 +43,13 @@ export default function usePageChantier(chantier: Chantier) {
     { refetchOnWindowFocus: false },
   );
 
+  const { data: cartes } = api.chantierDonnéesTerritoriales.récupérerRépartitionGéographique.useQuery(
+    {
+      chantierId: chantier.id,
+    },
+    { refetchOnWindowFocus: false },
+  );
+
   useEffect(() => {
     if (territoiresComparés.length > 0) return;    
     fetch(`/api/chantier/${chantier.id}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
@@ -95,9 +102,10 @@ export default function usePageChantier(chantier: Chantier) {
 
   return { 
     avancements, 
-    détailsIndicateurs, 
-    commentaires: commentaires ?? null,
-    objectifs: objectifs ?? null,
     synthèseDesRésultats: synthèseDesRésultats ?? null,
+    cartes,
+    objectifs: objectifs ?? null,
+    détailsIndicateurs,
+    commentaires: commentaires ?? null,
   };
 }

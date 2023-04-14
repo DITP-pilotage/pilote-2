@@ -37,10 +37,14 @@ import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_donnée
 import { UtilisateurIAMRepository } from '@/server/domain/identité/UtilisateurIAMRepository';
 import UtilisateurIAMKeycloakRepository
   from '@/server/infrastructure/accès_données/identité/UtilisateurIAMKeycloakRepository';
+import ChantierDonnéesTerritorialesSQLRepository from './accès_données/chantierDonnéesTerritoriales/ChantierDonnéesTerritorialesSQLRepository';
+import ChantierDonnéesTerritorialesRepository from './accès_données/chantierDonnéesTerritoriales/ChantierDonnéesTerritorialesRepository.interface';
 import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
+
+  private readonly _chantierDonnéesTerritorialesRepository: ChantierDonnéesTerritorialesRepository;
 
   private readonly _axeRepository: AxeRepository;
 
@@ -68,6 +72,7 @@ class Dependencies {
     logger.debug('Using database.');
     const prisma = new PrismaClient();
     this._chantierRepository = new ChantierSQLRepository(prisma);
+    this._chantierDonnéesTerritorialesRepository = new ChantierDonnéesTerritorialesSQLRepository(prisma);
     this._axeRepository = new AxeSQLRepository(prisma);
     this._ppgRepository = new PpgSQLRepository(prisma);
     this._ministèreRepository = new MinistèreSQLRepository(prisma);
@@ -89,6 +94,10 @@ class Dependencies {
 
   getChantierRepository(): ChantierRepository {
     return this._chantierRepository;
+  }
+
+  getChantierDonnéesTerritorialesRepository(): ChantierDonnéesTerritorialesRepository {
+    return this._chantierDonnéesTerritorialesRepository;
   }
 
   getAxeRepository(): AxeRepository {
