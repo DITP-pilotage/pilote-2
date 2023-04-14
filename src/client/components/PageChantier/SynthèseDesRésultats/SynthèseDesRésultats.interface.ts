@@ -1,6 +1,6 @@
-import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
+import { RouterOutputs } from '@/server/infrastructure/api/trpc/trpc.interface';
 
 export interface SynthèseDesRésultatsProps {
-  synthèseDesRésultatsInitiale: SynthèseDesRésultats
+  synthèseDesRésultatsInitiale: RouterOutputs['synthèseDesRésultats']['récupérerLaPlusRécente']
   modeÉcriture: boolean
 }

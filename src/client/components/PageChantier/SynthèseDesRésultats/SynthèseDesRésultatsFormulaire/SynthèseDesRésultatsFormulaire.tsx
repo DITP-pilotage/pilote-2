@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import CompteurCaractères from '@/components/_commons/Publication/PublicationFormulaire/CompteurCaractères/CompteurCaractères';
+import CompteurCaractères from '@/components/_commons/CompteurCaractères/CompteurCaractères';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import météos from '@/client/constants/météos';
 import { MétéoSaisissable, météosSaisissables } from '@/server/domain/météo/Météo.interface';
