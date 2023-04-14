@@ -9,9 +9,7 @@ export default class RécupérerHistoriqueSynthèseDesRésultatsUseCase {
     private readonly synthèsesDesRésultatsRepository: SynthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository(),
   ) {}
 
-  async run(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<{ historiqueDeLaSynthèseDesRésultats: SynthèseDesRésultats[] }> {
-    return {
-      historiqueDeLaSynthèseDesRésultats: await this.synthèsesDesRésultatsRepository.récupérerHistorique(chantierId, maille, codeInsee),
-    };
+  async run(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<SynthèseDesRésultats[]> {
+    return this.synthèsesDesRésultatsRepository.récupérerHistorique(chantierId, maille, codeInsee);
   }
 }

@@ -7,13 +7,13 @@ import HistoriqueDeLaSynthèseDesRésultatsStyled from './SynthèseDesRésultats
 import useHistoriqueDeLaSynthèseDesRésultats from './useHistoriqueDeLaSynthèseDesRésultats';
 
 export default function HistoriqueDeLaSynthèseDesRésultats() {
-  const { historiqueDeLaSynthèseDesRésultats, territoireSélectionné, récupérerPublications } = useHistoriqueDeLaSynthèseDesRésultats();
+  const { historiqueDeLaSynthèseDesRésultats, territoireSélectionné, récupérerHistoriqueSynthèseDesRésultats } = useHistoriqueDeLaSynthèseDesRésultats();
 
   return (
     <Modale
       idHtml="historique-synthèse-des-résultats"
       libelléBouton="Voir l'historique"
-      ouvertureCallback={récupérerPublications}
+      ouvertureCallback={récupérerHistoriqueSynthèseDesRésultats}
       sousTitre={territoireSélectionné.nom}
       titre="Historique - Synthèse des résultats"
     >
