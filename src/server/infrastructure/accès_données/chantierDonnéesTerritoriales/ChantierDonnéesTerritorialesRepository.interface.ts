@@ -5,8 +5,5 @@ import {
 } from '@/server/domain/chantierDonnéesTerritoriales/chantierDonnéesTerritoriales.interface';
 
 export default interface ChantierDonnéesTerritorialesRepository {
-  récupérerTousLesAvancementsDUnChantier(chantierId: string): Promise<Record<Maille, Record<CodeInsee, {
-    codeInsee: CodeInsee,
-    chantierDonnéesTerritoriales: ChantierDonnéesTerritoriales,
-  }>>>
+  récupérerTousLesAvancementsDUnChantier(chantierId: string): Promise<Record<Maille, Record<CodeInsee, ChantierDonnéesTerritoriales>>>
 }

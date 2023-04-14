@@ -11,13 +11,13 @@ export default function RépartitionGéographique({ avancementsGlobauxTerritoria
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const { auClicTerritoireCallback } = useCartographie();
 
-  const donnéesCartographieAvancement = objectEntries(avancementsGlobauxTerritoriaux[mailleSélectionnée]).map(([codeInsee, donnéesTerritoriales]) => ({
-    valeur: donnéesTerritoriales.avancementGlobal,
+  const donnéesCartographieAvancement = objectEntries(avancementsGlobauxTerritoriaux[mailleSélectionnée]).map(([codeInsee, avancementGlobal]) => ({
+    valeur: avancementGlobal,
     codeInsee: codeInsee,
   }));
 
-  const donnéesCartographieMétéo = objectEntries(météosTerritoriales[mailleSélectionnée]).map(([codeInsee, donnéesTerritoriales]) => ({
-    valeur: donnéesTerritoriales.météo,
+  const donnéesCartographieMétéo = objectEntries(météosTerritoriales[mailleSélectionnée]).map(([codeInsee, météo]) => ({
+    valeur: météo,
     codeInsee: codeInsee,
   }));
 

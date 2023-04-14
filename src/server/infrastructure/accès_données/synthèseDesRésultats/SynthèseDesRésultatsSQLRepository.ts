@@ -66,10 +66,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     return this.mapperVersDomaine(synthèseDesRésultats);
   }
 
-  async récupérerLesPlusRécentesPourTousLesTerritoires(chantierId: string): Promise<Record<Maille, Record<CodeInsee, {
-    codeInsee: CodeInsee,
-    synthèseDesRésultats: SynthèseDesRésultats,
-  }>>> {
+  async récupérerLesPlusRécentesPourTousLesTerritoires(chantierId: string) {
     const synthèsesDesRésultats = await this.prisma.$queryRaw<synthese_des_resultats[]>`
       with meteos_les_plus_recentes as (
         select maille, code_insee, max(date_commentaire) as max_date
@@ -90,10 +87,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
 
     return {
       nationale: {
-        FR: {
-          codeInsee: 'FR',
-          synthèseDesRésultats: this.mapperVersDomaine(synthèsesDesRésultatsMailleNationale),
-        },
+        FR: this.mapperVersDomaine(synthèsesDesRésultatsMailleNationale),
       },
       régionale: this._territorialiser(
         régions,
@@ -125,15 +119,12 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     territoires: TerritoireGéographique[],
     synthèsesDesRésultatsTerritoriales: synthese_des_resultats[],
   ) {
-    let donnéesTerritoires: Record<CodeInsee, { codeInsee: string, synthèseDesRésultats: SynthèseDesRésultats }> = {};
+    let donnéesTerritoires: Record<CodeInsee, SynthèseDesRésultats> = {};
 
     territoires.forEach(territoire => {
       const synthèseTerritoriale = synthèsesDesRésultatsTerritoriales.find(c => c.code_insee === territoire.codeInsee) ?? null;
 
-      donnéesTerritoires[territoire.codeInsee] = {
-        codeInsee: territoire.codeInsee,
-        synthèseDesRésultats: this.mapperVersDomaine(synthèseTerritoriale),
-      };
+      donnéesTerritoires[territoire.codeInsee] = this.mapperVersDomaine(synthèseTerritoriale);
     });
 
     return donnéesTerritoires;

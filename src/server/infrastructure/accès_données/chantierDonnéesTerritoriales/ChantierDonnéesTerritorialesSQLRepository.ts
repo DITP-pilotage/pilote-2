@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import départements from '@/client/constants/départements.json';
 import régions from '@/client/constants/régions.json';
@@ -30,10 +29,7 @@ export default class ChantierDonnéesTerritorialesSQLRepository implements Chant
     };
   }
 
-  async récupérerTousLesAvancementsDUnChantier(chantierId: string): Promise<Record<Maille, Record<CodeInsee, {
-    codeInsee: CodeInsee,
-    chantierDonnéesTerritoriales: ChantierDonnéesTerritoriales,
-  }>>> {
+  async récupérerTousLesAvancementsDUnChantier(chantierId: string) {
     const chantierRows = await this.prisma.chantier.findMany({
       where: {
         id: chantierId,
@@ -44,13 +40,10 @@ export default class ChantierDonnéesTerritorialesSQLRepository implements Chant
 
     return {
       nationale: {
-        FR: {
-          codeInsee: 'FR',
-          chantierDonnéesTerritoriales: chantierMailleNationale ? this.mapperVersDomaine(chantierMailleNationale) : {
-            avancement: {
-              annuel: null,
-              global: null,
-            },
+        FR: chantierMailleNationale ? this.mapperVersDomaine(chantierMailleNationale) : {
+          avancement: {
+            annuel: null,
+            global: null,
           },
         },
       },
@@ -69,18 +62,15 @@ export default class ChantierDonnéesTerritorialesSQLRepository implements Chant
     territoires: TerritoireGéographique[],
     chantierDonnéesTerritoriales: chantier_donnees_territoriales[],
   ) {
-    let donnéesTerritoires: Record<CodeInsee, { codeInsee: CodeInsee, chantierDonnéesTerritoriales: ChantierDonnéesTerritoriales }> = {};
+    let donnéesTerritoires: Record<CodeInsee, ChantierDonnéesTerritoriales> = {};
 
     territoires.forEach(territoire => {
       const avancementTerritorial = chantierDonnéesTerritoriales.find(c => c.code_insee === territoire.codeInsee) ?? null;
 
-      donnéesTerritoires[territoire.codeInsee] = {
-        codeInsee: territoire.codeInsee,
-        chantierDonnéesTerritoriales: avancementTerritorial ? this.mapperVersDomaine(avancementTerritorial) : {
-          avancement: {
-            annuel: null,
-            global: null,
-          },
+      donnéesTerritoires[territoire.codeInsee] = avancementTerritorial ? this.mapperVersDomaine(avancementTerritorial) : {
+        avancement: {
+          annuel: null,
+          global: null,
         },
       };
     });

@@ -21,30 +21,24 @@ export default class RécupérerChantierRépartitionGéographiqueUseCase {
       this.synthèseDesRésultatsRepository.récupérerLesPlusRécentesPourTousLesTerritoires(chantierId),
     ]);
 
-    let avancementsGlobauxTerritoriaux: Record<Maille, Record<CodeInsee, { codeInsee: string, avancementGlobal: Avancement['global'] }>> = {
+    let avancementsGlobauxTerritoriaux: Record<Maille, Record<CodeInsee, Avancement['global']>> = {
       nationale: {},
       régionale: {},
       départementale: {},
     };
 
-    let météosTerritoriales: Record<Maille, Record<CodeInsee, { codeInsee: string, météo: Météo }>> = {
+    let météosTerritoriales: Record<Maille, Record<CodeInsee, Météo>> = {
       nationale: {},
       régionale: {},
       départementale: {},
     };
 
     for (const maille of mailles) {
-      for (const [codeInsee, données] of objectEntries(chantierDonnéesTerritoriales[maille])) {
-        avancementsGlobauxTerritoriaux[maille][codeInsee] = {
-          codeInsee,
-          avancementGlobal: données.chantierDonnéesTerritoriales.avancement.global,
-        };
+      for (const [codeInsee, donnéesTerritoriales] of objectEntries(chantierDonnéesTerritoriales[maille])) {
+        avancementsGlobauxTerritoriaux[maille][codeInsee] = donnéesTerritoriales.avancement.global;
       }
-      for (const [codeInsee, données] of objectEntries(synthèsesDesRésultatsTerritoriales[maille])) {
-        météosTerritoriales[maille][codeInsee] = {
-          codeInsee,
-          météo: données.synthèseDesRésultats?.météo ?? 'NON_RENSEIGNEE',
-        };
+      for (const [codeInsee, synthèseDesRésultats] of objectEntries(synthèsesDesRésultatsTerritoriales[maille])) {
+        météosTerritoriales[maille][codeInsee] = synthèseDesRésultats?.météo ?? 'NON_RENSEIGNEE';
       }
     }
 
