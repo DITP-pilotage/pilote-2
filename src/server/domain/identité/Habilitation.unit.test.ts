@@ -36,6 +36,15 @@ describe('Habilitation', () => {
       // THEN
       expect(result).toStrictEqual(false);
     });
+
+    it("Renvoie faux si je n'ai accès à aucun chantier", () => {
+      // GIVEN
+      const habilitation: Habilitation = { chantiers: {} };
+      // WHEN
+      const result = checkAuthorizationChantierScope(habilitation, CHANTIER_ID, SCOPE_LECTURE);
+      // THEN
+      expect(result).toStrictEqual(false);
+    });
   });
 
   describe("Récupération d'une liste de chantier à partir des droits", () => {
