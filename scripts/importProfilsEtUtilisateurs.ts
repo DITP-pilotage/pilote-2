@@ -48,7 +48,7 @@ créerProfilsEtHabilitations(prisma, input.inputProfils, input.inputScopesHabili
       logger.info({ profilIdByCode });
       if (input.inputUtilisateurs) {
         logger.info('Import des utilisateurs...');
-        return new UtilisateurSQLRepository(prisma).créerUtilisateurs(input.inputUtilisateurs);
+        return new UtilisateurSQLRepository(prisma).créerOuRemplaceUtilisateurs(input.inputUtilisateurs);
       }
     })
   .then(

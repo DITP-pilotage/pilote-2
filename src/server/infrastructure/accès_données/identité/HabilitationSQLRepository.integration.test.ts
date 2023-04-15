@@ -55,7 +55,7 @@ describe('HabilitationSQLRepository', () => {
       { email: 'equipe.dir.projet2@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds: ['CH-001', 'CH-002'] },
     ];
 
-    await new UtilisateurSQLRepository(prisma).créerUtilisateurs(inputUtilisateurs);
+    await new UtilisateurSQLRepository(prisma).créerOuRemplaceUtilisateurs(inputUtilisateurs);
   });
 
   describe('un admin DITP', () => {

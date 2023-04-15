@@ -15,7 +15,7 @@ export default class ImporteUtilisateursUseCase {
     assert.notDeepEqual([], utilisateursÀImporter);
   }
 
-  async run() {
+  async run(): Promise<void> {
     const utilisateursPourIAM = this.utilisateursÀImporter.map(
       it => it.pourIAM(),
     );
@@ -29,6 +29,6 @@ export default class ImporteUtilisateursUseCase {
 
     // TODO: qu'est-ce qu'on fait si l'un réussit et pas l'autre ?
     await this.utilisateurIAMRepository.ajouteUtilisateurs(utilisateursPourIAM);
-    await this.utilisateurRepository.créerUtilisateurs(utilisateursPourImportPilote);
+    await this.utilisateurRepository.créerOuRemplaceUtilisateurs(utilisateursPourImportPilote);
   }
 }
