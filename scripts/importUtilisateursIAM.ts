@@ -12,17 +12,18 @@ import ImportCsvUtilisateurs from '@/server/infrastructure/import_csv/identité/
  *
  * Exemple d'usage :
  *
- * $ npx ts-node scripts/importUtilisateursIAM.ts buid/test.csv | npx pino-pretty
+ * $ npx ts-node scripts/importUtilisateursIAM.ts tmp/test.csv | npx pino-pretty | tee -a import.log
  *
  * Règles pour le CSV & comportement du script
  *
  * - Le CSV doit être encodé en utf8, et nous n'avons testé que sans BOM.
  * - Le CSV doit contenir le même nombre de champs pour toutes les lignes, séparés par des ",".
- * - S'il n'y a pas de colonne 'Mot de passe' dans le CSV, le script l'ajoute et génère des mots de passe.
- * - S'il y a une colonne 'Mot de passe' dans le CSV, celle-ci reste inchangée.
- * - Si un email est déjà utilisé dans Keycloak, le script loggue un warning (WARN) et ignore cet utilisateur. Un mot de
- *   passe est peut-être généré pour lui (condition ci-dessus) mais pas utilisé.
- * - Si l'utilisateur est bien importé dans Keycloak, le script loggue une info (INFO) de création.
+ * - Lors d'un ajout réussi de l'utilisateur dans Keycloak, son mot de passe temporaire généré aparaît dans les logs.
+ * - Si l'utilisateur est bien importé dans Keycloak, le script loggue une info (INFO) de création avec son email et son
+ *   mot de passe temporaire généré
+ * - Si un email est déjà utilisé dans Keycloak, le script loggue un warning (WARN) et ignore cet utilisateur pour
+ *   Keycloak.
+ * - Ensuite les utilisateurs sont importés dans Pilote, les utilisateurs existants sont remplacés.
  *
  * Prérequis = Création de client dans l'admin Keycloak & variables d'env
  *
@@ -56,9 +57,10 @@ const isMain = eval('require.main === module');
 if (isMain) {
   main()
     .then(() => {
-      logger.info('Import terminé.');
+      logger.info('Import OK.');
     })
     .catch((error) => {
       logger.error(error);
+      throw new Error('Import échoué.');
     });
 }

@@ -1,6 +1,4 @@
 import { parse } from 'csv-parse/sync';
-import { faker } from '@faker-js/faker/locale/fr';
-import { stringify } from 'csv-stringify/sync';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { DIR_PROJET, DITP_ADMIN, DITP_PILOTAGE } from '@/server/domain/identité/Profil';
@@ -12,10 +10,6 @@ const CSV_PARSE_OPTIONS = {
   skipEmptyLines: true,
 };
 
-const CSV_WRITE_OPTIONS = {
-  header:true,
-};
-
 const FIELDS: Record<string, string> = {
   nom: 'Nom',
   prénom: 'Prénom',
@@ -23,7 +17,6 @@ const FIELDS: Record<string, string> = {
   profils: 'Profils',
   nomChantier: 'Nom du chantier',
   idChantier: 'ID du chantier',
-  motDePasse: 'Mot de passe',
 };
 const EXPECTED_RECORD_FIELDS = Object.values(FIELDS);
 
@@ -34,21 +27,6 @@ const CODES_PROFILS: Record<string, string> = {
 };
 
 export type CsvRecord = Record<string, string>;
-
-function contientMotsDePasse(records: CsvRecord[]) {
-  const firstRecord = records[0];
-  return Boolean(firstRecord[FIELDS.motDePasse]);
-}
-
-function générerEtÉcrireMotsDePasse(records: CsvRecord[], filename: string) {
-  for (const record of records) {
-    assert(!record[FIELDS.motDePasse]);
-    // ex. de mot de passe généré : JHqVoxOoHnGLbhR
-    record[FIELDS.motDePasse] = faker.internet.password(15, false, /\w/, '');
-  }
-  const contents = stringify(records, CSV_WRITE_OPTIONS);
-  fs.writeFileSync(filename, contents);
-}
 
 function toImportRecord(csvRecord: CsvRecord): UtilisateurPourImport {
   const profilCode = CODES_PROFILS[csvRecord[FIELDS.profils]];
@@ -63,7 +41,6 @@ function toImportRecord(csvRecord: CsvRecord): UtilisateurPourImport {
     csvRecord[FIELDS.nom],
     csvRecord[FIELDS.prénom],
     csvRecord[FIELDS.email],
-    csvRecord[FIELDS.motDePasse],
     profilCode,
     chantierIds,
   );
@@ -98,10 +75,6 @@ export default class ImportCsvUtilisateurs {
   private parseCsvUtilisateurs(filename: string): UtilisateurPourImport[] {
     const contents = fs.readFileSync(filename, 'utf8');
     const csvRecords: CsvRecord[] = parse(contents, CSV_PARSE_OPTIONS);
-
-    if (!contientMotsDePasse(csvRecords)) {
-      générerEtÉcrireMotsDePasse(csvRecords, filename);
-    }
 
     return parseCsvRecords(csvRecords);
   }

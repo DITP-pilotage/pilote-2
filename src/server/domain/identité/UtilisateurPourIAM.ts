@@ -3,6 +3,5 @@ export default class UtilisateurPourIAM {
     public readonly nom: string,
     public readonly prénom: string,
     public readonly email: string,
-    public readonly motDePasse: string,
   ) {}
 }

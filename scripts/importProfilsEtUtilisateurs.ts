@@ -53,10 +53,11 @@ créerProfilsEtHabilitations(prisma, input.inputProfils, input.inputScopesHabili
     })
   .then(
     () => {
-      logger.info('OK.');
+      logger.info('Import OK.');
     })
   .catch(
     (error) => {
       logger.error({ error });
+      throw new Error('Import échoué.');
     },
   );

@@ -5,7 +5,6 @@ export default class UtilisateurPourImport {
     public readonly nom: string,
     public readonly prénom: string,
     public readonly email: string,
-    public readonly motDePasse: string,
     public readonly profilCode: string,
     public readonly chantierIds: string[],
   ) {}
@@ -15,7 +14,6 @@ export default class UtilisateurPourImport {
       this.nom,
       this.prénom,
       this.email,
-      this.motDePasse,
     );
   }
 }
