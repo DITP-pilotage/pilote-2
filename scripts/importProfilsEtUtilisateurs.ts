@@ -16,15 +16,15 @@ import {
   créerProfilsEtHabilitations,
   InputProfil,
   InputScopesHabilitations,
-  InputUtilisateur,
 } from '@/server/infrastructure/accès_données/identité/seed';
 import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
+import UtilisateurDTO from '@/server/domain/identité/UtilisateurDTO';
 import logger from '../src/server/infrastructure/logger';
 
 type Input = {
   inputProfils: InputProfil[],
   inputScopesHabilitations: InputScopesHabilitations[],
-  inputUtilisateurs?: InputUtilisateur[],
+  inputUtilisateurs?: UtilisateurDTO[],
 };
 
 const filename = process.argv[2];

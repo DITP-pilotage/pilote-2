@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
-import { InputUtilisateur } from '@/server/infrastructure/accès_données/identité/seed';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { UtilisateurIAMRepository } from '@/server/domain/identité/UtilisateurIAMRepository';
 import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepository';
+import UtilisateurDTO from '@/server/domain/identité/UtilisateurDTO';
 
 export default class ImporteUtilisateursUseCase {
   constructor(
@@ -19,9 +19,11 @@ export default class ImporteUtilisateursUseCase {
     const utilisateursPourIAM = this.utilisateursÀImporter.map(
       it => it.pourIAM(),
     );
-    const utilisateursPourImportPilote: InputUtilisateur[] = this.utilisateursÀImporter.map(
+    const utilisateursPourImportPilote: UtilisateurDTO[] = this.utilisateursÀImporter.map(
       it => ({
         email: it.email,
+        nom: it.nom,
+        prénom: it.prénom,
         profilCode: it.profilCode,
         chantierIds: it.chantierIds,
       }),

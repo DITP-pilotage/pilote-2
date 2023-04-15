@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaClient } from '@prisma/client';
+import { faker } from '@faker-js/faker/locale/fr';
 import {
   SCOPE_LECTURE,
   SCOPE_SAISIE_INDICATEURS,
@@ -18,6 +19,7 @@ import {
   SANS_HABILITATIONS,
   SECRETARIAT_GENERAL,
 } from '@/server/domain/identité/Profil';
+import UtilisateurDTO from '@/server/domain/identité/UtilisateurDTO';
 
 export type InputScopesHabilitations = {
   code: string,
@@ -31,11 +33,15 @@ export type InputProfil = {
   habilitationScopeCodes: string[],
 };
 
-export type InputUtilisateur = {
-  email: string,
-  profilCode: string,
-  chantierIds: string[],
-};
+export function créerUtilisateurDTO({ email, nom, prénom, profilCode, chantierIds }: Partial<UtilisateurDTO> = {}) {
+  return {
+    email: email || faker.internet.exampleEmail(),
+    nom: nom || faker.name.lastName(),
+    prénom: prénom || faker.name.firstName(),
+    profilCode: profilCode || DIR_PROJET,
+    chantierIds: chantierIds || [],
+  };
+}
 
 type withId = { id: string };
 

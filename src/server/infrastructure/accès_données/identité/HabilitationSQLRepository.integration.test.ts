@@ -11,7 +11,8 @@ import {
   créerProfilsEtHabilitations,
   INPUT_PROFILS,
   INPUT_SCOPES_HABILITATIONS,
-  InputUtilisateur,
+
+  créerUtilisateurDTO,
 } from '@/server/infrastructure/accès_données/identité/seed';
 import {
   CABINET_MINISTERIEL,
@@ -28,6 +29,7 @@ import {
 } from '@/server/domain/identité/Profil';
 import ChantierRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
 import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
+import UtilisateurDTO from '@/server/domain/identité/UtilisateurDTO';
 
 describe('HabilitationSQLRepository', () => {
   const tousScopes = [SCOPE_LECTURE, SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES, SCOPE_SAISIE_INDICATEURS];
@@ -39,20 +41,20 @@ describe('HabilitationSQLRepository', () => {
       .map(id => new ChantierRowBuilder().avecId(id).build());
     await prisma.chantier.createMany({ data: chantierRows });
 
-    const inputUtilisateurs: InputUtilisateur[] = [
-      { email: 'sans.habilitations@example.com', profilCode: SANS_HABILITATIONS, chantierIds: [] },
-      { email: 'ditp.admin@example.com', profilCode: DITP_ADMIN, chantierIds: [] },
-      { email: 'ditp.pilotage@example.com', profilCode: DITP_PILOTAGE, chantierIds: [] },
-      { email: 'premiere.ministre@example.com', profilCode: PM_ET_CABINET, chantierIds: [] },
-      { email: 'presidence@example.com', profilCode: PR, chantierIds: [] },
-      { email: 'cabinet.mtfp@example.com', profilCode: CABINET_MTFP, chantierIds: [] },
-      { email: 'cabinet.ministeriel@example.com', profilCode: CABINET_MINISTERIEL, chantierIds: ['CH-001'] },
-      { email: 'direction.admin.centrale@example.com', profilCode: DIR_ADMIN_CENTRALE, chantierIds: ['CH-002'] },
-      { email: 'secretariat.general@example.com', profilCode: SECRETARIAT_GENERAL, chantierIds: ['CH-003'] },
-      { email: 'directeur.projet1@example.com', profilCode: DIR_PROJET, chantierIds: ['CH-001'] },
-      { email: 'equipe.dir.projet1@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds: ['CH-001'] },
-      { email: 'directeur.projet2@example.com', profilCode: DIR_PROJET, chantierIds: ['CH-001', 'CH-002'] },
-      { email: 'equipe.dir.projet2@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds: ['CH-001', 'CH-002'] },
+    const inputUtilisateurs: UtilisateurDTO[] = [
+      créerUtilisateurDTO({ email: 'sans.habilitations@example.com', profilCode: SANS_HABILITATIONS }),
+      créerUtilisateurDTO({ email: 'ditp.admin@example.com', profilCode: DITP_ADMIN }),
+      créerUtilisateurDTO({ email: 'ditp.pilotage@example.com', profilCode: DITP_PILOTAGE }),
+      créerUtilisateurDTO({ email: 'premiere.ministre@example.com', profilCode: PM_ET_CABINET }),
+      créerUtilisateurDTO({ email: 'presidence@example.com', profilCode: PR }),
+      créerUtilisateurDTO({ email: 'cabinet.mtfp@example.com', profilCode: CABINET_MTFP }),
+      créerUtilisateurDTO({ email: 'cabinet.ministeriel@example.com', profilCode: CABINET_MINISTERIEL, chantierIds: ['CH-001'] }),
+      créerUtilisateurDTO({ email: 'direction.admin.centrale@example.com', profilCode: DIR_ADMIN_CENTRALE, chantierIds: ['CH-002'] }),
+      créerUtilisateurDTO({ email: 'secretariat.general@example.com', profilCode: SECRETARIAT_GENERAL, chantierIds: ['CH-003'] }),
+      créerUtilisateurDTO({ email: 'directeur.projet1@example.com', profilCode: DIR_PROJET, chantierIds: ['CH-001'] }),
+      créerUtilisateurDTO({ email: 'equipe.dir.projet1@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds: ['CH-001'] }),
+      créerUtilisateurDTO({ email: 'directeur.projet2@example.com', profilCode: DIR_PROJET, chantierIds: ['CH-001', 'CH-002'] }),
+      créerUtilisateurDTO({ email: 'equipe.dir.projet2@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds: ['CH-001', 'CH-002'] }),
     ];
 
     await new UtilisateurSQLRepository(prisma).créerOuRemplaceUtilisateurs(inputUtilisateurs);

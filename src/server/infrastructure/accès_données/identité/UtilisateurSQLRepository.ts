@@ -2,13 +2,16 @@ import { Prisma, PrismaClient, utilisateur, utilisateur_chantier } from '@prisma
 import { v4 as uuidv4 } from 'uuid';
 import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepository';
 import { Utilisateur } from '@/server/domain/identité/Utilisateur';
-import { InputUtilisateur, ProfilIdByCode } from '@/server/infrastructure/accès_données/identité/seed';
+import { ProfilIdByCode } from '@/server/infrastructure/accès_données/identité/seed';
 import logger from '@/server/infrastructure/logger';
+import UtilisateurDTO from '@/server/domain/identité/UtilisateurDTO';
 
 function _toDomain(row: utilisateur): Utilisateur {
   return {
     id: row.id,
     email: row.email,
+    nom: row.nom,
+    prénom: row.prenom,
     profilId: row.profil_id,
   };
 }
@@ -38,19 +41,24 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return _toDomain(row);
   }
 
-  async créerOuRemplaceUtilisateurs(inputUtilisateurs: InputUtilisateur[]) {
+  async créerOuRemplaceUtilisateurs(inputUtilisateurs: UtilisateurDTO[]) {
     const resultSet = await this._prisma.profil.findMany({ select: { id: true, code: true } });
     const profilIdByCode: ProfilIdByCode = {};
     for (const profilRow of resultSet) {
       profilIdByCode[profilRow.code] = profilRow.id;
     }
 
-    const donnéesUtilisateurs: (InputUtilisateur & { id: string })[] = [];
+    const donnéesUtilisateurs: (UtilisateurDTO & { id: string })[] = [];
     for (const input of inputUtilisateurs) {
       donnéesUtilisateurs.push({ id: uuidv4(), ...input });
     }
     const utilisateurRows: utilisateur[] = donnéesUtilisateurs.map(it => {
-      return { id: it.id, email: it.email, profil_id: profilIdByCode[it.profilCode] };
+      return {
+        id: it.id,
+        email: it.email,
+        nom: it.nom,
+        prenom: it.prénom,
+        profil_id: profilIdByCode[it.profilCode] };
     });
     const utilisateurChantierRows: utilisateur_chantier[] = [];
     for (const { id: utilisateur_id, chantierIds } of donnéesUtilisateurs) {
