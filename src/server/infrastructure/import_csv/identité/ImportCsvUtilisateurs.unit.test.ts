@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { DIR_PROJET } from '@/server/domain/identité/Profil';
-import { CsvRecord, parseCsvRecords } from '@/server/infrastructure/import_csv/identité/ImportCsvUtilisateurs';
+import { CsvRecord, parseCsvRecord } from '@/server/infrastructure/import_csv/identité/ImportCsvUtilisateurs';
 import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 
 describe('ImportCsvUtilisateurs', () => {
@@ -12,10 +12,10 @@ describe('ImportCsvUtilisateurs', () => {
       Profil: DIR_PROJET,
       ChantierIds: 'CH-1234',
     };
-    const result = parseCsvRecords([csvRecord]);
-    expect(result).toStrictEqual([
+    const result = parseCsvRecord(csvRecord);
+    expect(result).toStrictEqual(
       new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-1234']),
-    ]);
+    );
   });
 
   it('accepte des champs non normalisés', () => {
@@ -26,10 +26,10 @@ describe('ImportCsvUtilisateurs', () => {
       ['profils']: DIR_PROJET,
       ['id du chantier']: 'CH-001|CH-002',
     };
-    const result = parseCsvRecords([csvRecord]);
-    expect(result).toStrictEqual([
+    const result = parseCsvRecord(csvRecord);
+    expect(result).toStrictEqual(
       new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-001', 'CH-002']),
-    ]);
+    );
   });
 
   it('ignore les colonnes inconnues', () => {
@@ -40,10 +40,10 @@ describe('ImportCsvUtilisateurs', () => {
       Profils: DIR_PROJET,
       colonneInconnue: 'valeur',
     };
-    const result = parseCsvRecords([csvRecord]);
-    expect(result).toStrictEqual([
+    const result = parseCsvRecord(csvRecord);
+    expect(result).toStrictEqual(
       new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, []),
-    ]);
+    );
   });
 
   describe('Le champs profil', () => {
@@ -55,10 +55,10 @@ describe('ImportCsvUtilisateurs', () => {
         Profil: DIR_PROJET,
         ChantierIds: 'CH-1234',
       };
-      const result = parseCsvRecords([csvRecord]);
-      expect(result).toStrictEqual([
+      const result = parseCsvRecord(csvRecord);
+      expect(result).toStrictEqual(
         new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-1234']),
-      ]);
+      );
     });
 
     it('accepte "profils" comme nom de colonne', () => {
@@ -69,10 +69,10 @@ describe('ImportCsvUtilisateurs', () => {
         Profils: DIR_PROJET,
         ChantierIds: 'CH-1234',
       };
-      const result = parseCsvRecords([csvRecord]);
-      expect(result).toStrictEqual([
+      const result = parseCsvRecord(csvRecord);
+      expect(result).toStrictEqual(
         new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-1234']),
-      ]);
+      );
     });
 
     it('accepte une description comme profil', () => {
@@ -83,10 +83,10 @@ describe('ImportCsvUtilisateurs', () => {
         Profils: 'Directeur de projet',
         ChantierIds: 'CH-1234',
       };
-      const result = parseCsvRecords([csvRecord]);
-      expect(result).toStrictEqual([
+      const result = parseCsvRecord(csvRecord);
+      expect(result).toStrictEqual(
         new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-1234']),
-      ]);
+      );
     });
   });
 
@@ -99,10 +99,10 @@ describe('ImportCsvUtilisateurs', () => {
         Profils: DIR_PROJET,
         ChantierIds: 'CH-001|CH-002  | CH-003',
       };
-      const result = parseCsvRecords([csvRecord]);
-      expect(result).toStrictEqual([
+      const result = parseCsvRecord(csvRecord);
+      expect(result).toStrictEqual(
         new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-001', 'CH-002', 'CH-003']),
-      ]);
+      );
     });
 
     it('donne une liste de chantiers vide si colonne absente', () => {
@@ -112,10 +112,10 @@ describe('ImportCsvUtilisateurs', () => {
         Email: 'bob@dylan.com',
         Profil: DIR_PROJET,
       };
-      const result = parseCsvRecords([csvRecord]);
-      expect(result).toStrictEqual([
+      const result = parseCsvRecord(csvRecord);
+      expect(result).toStrictEqual(
         new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, []),
-      ]);
+      );
     });
 
     it('donne une liste vide si la cellule ChantierIds est vide', () => {
@@ -126,10 +126,10 @@ describe('ImportCsvUtilisateurs', () => {
         Profils: DIR_PROJET,
         ChantierIds: '',
       };
-      const result = parseCsvRecords([csvRecord]);
-      expect(result).toStrictEqual([
+      const result = parseCsvRecord(csvRecord);
+      expect(result).toStrictEqual(
         new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, []),
-      ]);
+      );
     });
 
     it('cumule les valeurs trouvées dans les colonnes possibles pour ChantierIds', () => {
@@ -141,10 +141,10 @@ describe('ImportCsvUtilisateurs', () => {
         ChantierIds: 'CH-001',
         ['Id du chantier']: 'CH-002',
       };
-      const result = parseCsvRecords([csvRecord]);
-      expect(result).toStrictEqual([
+      const result = parseCsvRecord(csvRecord);
+      expect(result).toStrictEqual(
         new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-001', 'CH-002']),
-      ]);
+      );
     });
   });
 });

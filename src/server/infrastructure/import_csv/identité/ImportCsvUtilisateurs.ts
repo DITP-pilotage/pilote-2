@@ -49,7 +49,7 @@ function splitCsvCell(cell: string): string[] {
   return cell.split(/ *\| */);
 }
 
-function parseCsvRecord(csvRecord: CsvRecord): UtilisateurPourImport {
+export function parseCsvRecord(csvRecord: CsvRecord): UtilisateurPourImport {
   const normalizedRecord = normalizeCsvRecord(csvRecord);
   const codeProfilCsv = normalizedRecord[FIELDS.profil] || normalizedRecord[FIELDS.profils];
   const profilCode = vérifieCodeProfil(codeProfilCsv)
@@ -80,7 +80,7 @@ function parseCsvRecord(csvRecord: CsvRecord): UtilisateurPourImport {
 }
 
 
-export function parseCsvRecords(csvRecords: CsvRecord[]): UtilisateurPourImport[] {
+function parseCsvRecords(csvRecords: CsvRecord[]): UtilisateurPourImport[] {
   assert(csvRecords, 'Erreur de parsing CSV. Pas de lignes ?');
 
   const result: UtilisateurPourImport[] = [];
