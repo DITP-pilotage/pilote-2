@@ -48,8 +48,9 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       }
     }
 
-    // TODO: gérer la réussite / échec corrélés avec une transaction ?
-    await this._prisma.utilisateur.createMany({ data: utilisateurRows });
-    await this._prisma.utilisateur_chantier.createMany({ data: utilisateurChantierRows });
+    await this._prisma.$transaction([
+      this._prisma.utilisateur.createMany({ data: utilisateurRows }),
+      this._prisma.utilisateur_chantier.createMany({ data: utilisateurChantierRows }),
+    ]);
   }
 }
