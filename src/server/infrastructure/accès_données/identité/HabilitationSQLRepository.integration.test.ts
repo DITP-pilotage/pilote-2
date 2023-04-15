@@ -9,11 +9,9 @@ import {
 } from '@/server/domain/identité/Habilitation';
 import {
   créerProfilsEtHabilitations,
-  créerUtilisateurs,
   INPUT_PROFILS,
   INPUT_SCOPES_HABILITATIONS,
   InputUtilisateur,
-  ProfilIdByCode,
 } from '@/server/infrastructure/accès_données/identité/seed';
 import {
   CABINET_MINISTERIEL,
@@ -24,17 +22,18 @@ import {
   DITP_PILOTAGE,
   EQUIPE_DIR_PROJET,
   PM_ET_CABINET,
-  PR, SANS_HABILITATIONS,
+  PR,
+  SANS_HABILITATIONS,
   SECRETARIAT_GENERAL,
 } from '@/server/domain/identité/Profil';
 import ChantierRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
+import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
 
 describe('HabilitationSQLRepository', () => {
-  let profilIdByCode: ProfilIdByCode;
   const tousScopes = [SCOPE_LECTURE, SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES, SCOPE_SAISIE_INDICATEURS];
 
   beforeEach(async () => {
-    profilIdByCode = await créerProfilsEtHabilitations(prisma, INPUT_PROFILS, INPUT_SCOPES_HABILITATIONS);
+    await créerProfilsEtHabilitations(prisma, INPUT_PROFILS, INPUT_SCOPES_HABILITATIONS);
 
     const chantierRows = ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005']
       .map(id => new ChantierRowBuilder().avecId(id).build());
@@ -56,7 +55,7 @@ describe('HabilitationSQLRepository', () => {
       { email: 'equipe.dir.projet2@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds: ['CH-001', 'CH-002'] },
     ];
 
-    await créerUtilisateurs(prisma, inputUtilisateurs, profilIdByCode);
+    await new UtilisateurSQLRepository(prisma).créerUtilisateurs(inputUtilisateurs);
   });
 
   describe('un admin DITP', () => {

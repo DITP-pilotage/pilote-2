@@ -1,6 +1,8 @@
-import { PrismaClient, utilisateur } from '@prisma/client';
+import { PrismaClient, utilisateur, utilisateur_chantier } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
 import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepository';
 import { Utilisateur } from '@/server/domain/identité/Utilisateur';
+import { InputUtilisateur, ProfilIdByCode } from '@/server/infrastructure/accès_données/identité/seed';
 
 function _toDomain(row: utilisateur): Utilisateur {
   return {
@@ -23,5 +25,31 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       return null;
     }
     return _toDomain(row);
+  }
+
+  async créerUtilisateurs(inputUtilisateurs: InputUtilisateur[]) {
+    const resultSet = await this._prisma.profil.findMany({ select: { id: true, code: true } });
+    const profilIdByCode: ProfilIdByCode = {};
+    for (const profilRow of resultSet) {
+      profilIdByCode[profilRow.code] = profilRow.id;
+    }
+
+    const donnéesUtilisateurs: (InputUtilisateur & { id: string })[] = [];
+    for (const input of inputUtilisateurs) {
+      donnéesUtilisateurs.push({ id: uuidv4(), ...input });
+    }
+    const utilisateurRows: utilisateur[] = donnéesUtilisateurs.map(it => {
+      return { id: it.id, email: it.email, profil_id: profilIdByCode[it.profilCode] };
+    });
+    const utilisateurChantierRows: utilisateur_chantier[] = [];
+    for (const { id: utilisateur_id, chantierIds } of donnéesUtilisateurs) {
+      for (const chantier_id of chantierIds) {
+        utilisateurChantierRows.push({ utilisateur_id, chantier_id });
+      }
+    }
+
+    // TODO: gérer la réussite / échec corrélés avec une transaction ?
+    await this._prisma.utilisateur.createMany({ data: utilisateurRows });
+    await this._prisma.utilisateur_chantier.createMany({ data: utilisateurChantierRows });
   }
 }

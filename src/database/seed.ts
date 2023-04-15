@@ -36,11 +36,11 @@ import {
 } from '@/server/domain/identité/Profil';
 import {
   créerProfilsEtHabilitations,
-  créerUtilisateurs,
   INPUT_PROFILS,
   INPUT_SCOPES_HABILITATIONS,
   InputUtilisateur,
 } from '@/server/infrastructure/accès_données/identité/seed';
+import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
 
 const prisma = new PrismaClient();
 
@@ -183,8 +183,8 @@ class DatabaseSeeder {
       { email: 'equipe.dir.projet@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds },
     ];
 
-    const profilIdByCode = await créerProfilsEtHabilitations(prisma, INPUT_PROFILS, INPUT_SCOPES_HABILITATIONS);
-    await créerUtilisateurs(prisma, inputUtilisateurs, profilIdByCode);
+    await créerProfilsEtHabilitations(prisma, INPUT_PROFILS, INPUT_SCOPES_HABILITATIONS);
+    await new UtilisateurSQLRepository(prisma).créerUtilisateurs(inputUtilisateurs);
   }
 
   private async _getSomeChantierIds() {

@@ -1,6 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { DIR_PROJET } from '@/server/domain/identité/Profil';
-import { CsvRecord, ImportRecord, parseCsvRecords } from './importUtilisateursIAM';
+import { CsvRecord, parseCsvRecords } from '@/server/infrastructure/import_csv/identité/ImportCsvUtilisateurs';
+import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 
 describe('importUtilisateursIAM', () => {
   it('parse des données à importer', () => {
@@ -15,7 +16,7 @@ describe('importUtilisateursIAM', () => {
     };
     const result = parseCsvRecords([csvRecord]);
     expect(result).toStrictEqual([
-      new ImportRecord('Dylan', 'Bob', 'bob@dylan.com', 'abc1234', DIR_PROJET, ['CH-1234']),
+      new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', 'abc1234', DIR_PROJET, ['CH-1234']),
     ]);
   });
 
@@ -31,7 +32,7 @@ describe('importUtilisateursIAM', () => {
     };
     const result = parseCsvRecords([csvRecord]);
     expect(result).toStrictEqual([
-      new ImportRecord('Dylan', 'Bob', 'bob@dylan.com', 'abc1234', DIR_PROJET, []),
+      new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', 'abc1234', DIR_PROJET, []),
     ]);
   });
 });

@@ -13,10 +13,12 @@
 import { PrismaClient } from '@prisma/client';
 import { readFileSync } from 'node:fs';
 import {
-  créerProfilsEtHabilitations, créerUtilisateurs,
+  créerProfilsEtHabilitations,
   InputProfil,
-  InputScopesHabilitations, InputUtilisateur,
+  InputScopesHabilitations,
+  InputUtilisateur,
 } from '@/server/infrastructure/accès_données/identité/seed';
+import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
 import logger from '../src/server/infrastructure/logger';
 
 type Input = {
@@ -46,7 +48,7 @@ créerProfilsEtHabilitations(prisma, input.inputProfils, input.inputScopesHabili
       logger.info({ profilIdByCode });
       if (input.inputUtilisateurs) {
         logger.info('Import des utilisateurs...');
-        return créerUtilisateurs(prisma, input.inputUtilisateurs, profilIdByCode);
+        return new UtilisateurSQLRepository(prisma).créerUtilisateurs(input.inputUtilisateurs);
       }
     })
   .then(

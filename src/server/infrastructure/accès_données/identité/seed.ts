@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { PrismaClient, utilisateur, utilisateur_chantier } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import {
   SCOPE_LECTURE,
   SCOPE_SAISIE_INDICATEURS,
@@ -7,11 +7,16 @@ import {
 } from '@/server/domain/identité/Habilitation';
 import {
   CABINET_MINISTERIEL,
-  CABINET_MTFP, DIR_ADMIN_CENTRALE, DIR_PROJET,
+  CABINET_MTFP,
+  DIR_ADMIN_CENTRALE,
+  DIR_PROJET,
   DITP_ADMIN,
-  DITP_PILOTAGE, EQUIPE_DIR_PROJET,
+  DITP_PILOTAGE,
+  EQUIPE_DIR_PROJET,
   PM_ET_CABINET,
-  PR, SANS_HABILITATIONS, SECRETARIAT_GENERAL,
+  PR,
+  SANS_HABILITATIONS,
+  SECRETARIAT_GENERAL,
 } from '@/server/domain/identité/Profil';
 
 export type InputScopesHabilitations = {
@@ -57,6 +62,7 @@ export const INPUT_PROFILS: InputProfil[] = [
 
 export type ProfilIdByCode = Record<string, string>;
 
+// TODO: à déplacer dans HabilitationRepository ou créer un ProfilRepository
 export async function créerProfilsEtHabilitations(
   prisma: PrismaClient,
   inputProfils: InputProfil[],
@@ -91,27 +97,4 @@ export async function créerProfilsEtHabilitations(
     result[code] = id;
   }
   return result;
-}
-
-export async function créerUtilisateurs(
-  prisma: PrismaClient,
-  inputUtilisateurs: InputUtilisateur[],
-  profilIdByCode: Record<string, string>,
-) {
-  const donnéesUtilisateurs: (InputUtilisateur & withId)[] = [];
-  for (const input of inputUtilisateurs) {
-    donnéesUtilisateurs.push({ id: uuidv4(), ...input });
-  }
-  const utilisateurRows: utilisateur[] =  donnéesUtilisateurs.map(it => {
-    return { id: it.id, email: it.email, profil_id: profilIdByCode[it.profilCode] };
-  });
-  const utilisateurChantierRows: utilisateur_chantier[] = [];
-  for (const { id: utilisateur_id, chantierIds } of donnéesUtilisateurs) {
-    for (const chantier_id of chantierIds) {
-      utilisateurChantierRows.push({ utilisateur_id, chantier_id });
-    }
-  }
-
-  await prisma.utilisateur.createMany({ data: utilisateurRows });
-  await prisma.utilisateur_chantier.createMany({ data: utilisateurChantierRows });
 }
