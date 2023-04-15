@@ -11,14 +11,12 @@ const CSV_PARSE_OPTIONS = {
 };
 
 const FIELDS: Record<string, string> = {
-  nom: 'Nom',
-  prénom: 'Prénom',
-  email: 'E-mail',
-  profils: 'Profils',
-  nomChantier: 'Nom du chantier',
-  idChantier: 'ID du chantier',
+  nom: 'nom',
+  prénom: 'prenom',
+  email: 'email',
+  profils: 'profils',
+  idDuChantier: 'id du chantier',
 };
-const EXPECTED_RECORD_FIELDS = Object.values(FIELDS);
 
 const CODES_PROFILS: Record<string, string> = {
   ['DITP - Admin']: DITP_ADMIN,
@@ -27,13 +25,14 @@ const CODES_PROFILS: Record<string, string> = {
 };
 
 export type CsvRecord = Record<string, string>;
+export type NormalizedCsvRecord = Record<string, string>;
 
-function toImportRecord(csvRecord: CsvRecord): UtilisateurPourImport {
+function toImportRecord(csvRecord: NormalizedCsvRecord): UtilisateurPourImport {
   const profilCode = CODES_PROFILS[csvRecord[FIELDS.profils]];
 
   const chantierIds = [];
-  const csvChantierId = csvRecord[FIELDS.idChantier];
-  if (csvChantierId != '') {
+  const csvChantierId = csvRecord[FIELDS.idDuChantier];
+  if (csvChantierId && csvChantierId != '') {
     chantierIds.push(csvChantierId);
   }
 
@@ -46,16 +45,28 @@ function toImportRecord(csvRecord: CsvRecord): UtilisateurPourImport {
   );
 }
 
+function normalizeFieldname(fieldname: string) {
+  return fieldname
+    .toLowerCase()
+    .normalize('NFD').replace(/\p{Diacritic}/gu, '')
+    .replace(/-/g, '')
+    .trim();
+}
+
+function normalizeCsvRecord(record: CsvRecord): NormalizedCsvRecord {
+  const result: CsvRecord = {};
+  for (const [k, v] of Object.entries(record)) {
+    result[normalizeFieldname(k)] = v;
+  }
+  return result;
+}
+
 export function parseCsvRecords(csvRecords: CsvRecord[]): UtilisateurPourImport[] {
   assert(csvRecords, 'Erreur de parsing CSV. Pas de lignes ?');
 
+  const normalizedCsvRecord = csvRecords.map(normalizeCsvRecord);
   const result: UtilisateurPourImport[] = [];
-  let lineNb = 0;
-  for (const csvRecord of csvRecords) {
-    lineNb += 1;
-    for (const field of EXPECTED_RECORD_FIELDS) {
-      assert.notEqual(csvRecord[field], null, `Erreur de parsing CSV ligne: ${lineNb}. Mauvais header ?`);
-    }
+  for (const csvRecord of normalizedCsvRecord) {
     const nomDeProfil = csvRecord[FIELDS.profils];
     assert(CODES_PROFILS[nomDeProfil], `Nom de profil ${nomDeProfil} inconnu. Profils connus : ${Object.keys(CODES_PROFILS)}`);
     const importRecord = toImportRecord(csvRecord);

@@ -1,4 +1,6 @@
+import assert from 'node:assert/strict';
 import UtilisateurPourIAM from '@/server/domain/identité/UtilisateurPourIAM';
+import { vérifieCodeProfil } from '@/server/domain/identité/Profil';
 
 export default class UtilisateurPourImport {
   constructor(
@@ -7,7 +9,14 @@ export default class UtilisateurPourImport {
     public readonly email: string,
     public readonly profilCode: string,
     public readonly chantierIds: string[],
-  ) {}
+  ) {
+    assert(nom);
+    assert(prénom);
+    assert(email);
+    assert(profilCode);
+    assert(vérifieCodeProfil(profilCode));
+    assert(chantierIds);
+  }
 
   pourIAM(): UtilisateurPourIAM {
     return new UtilisateurPourIAM(
