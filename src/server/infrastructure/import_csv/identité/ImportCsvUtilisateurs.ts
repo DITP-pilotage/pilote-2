@@ -28,38 +28,6 @@ const CODES_PROFILS: Record<string, string> = {
 };
 
 export type CsvRecord = Record<string, string>;
-export type NormalizedCsvRecord = Record<string, string>;
-
-function splitCsvCell(cell: string): string[] {
-  return cell.split(/ *\| */);
-}
-
-function toImportRecord(csvRecord: NormalizedCsvRecord): UtilisateurPourImport {
-  const codeProfilCsv = csvRecord[FIELDS.profil] || csvRecord[FIELDS.profils];
-  const profilCode = vérifieCodeProfil(codeProfilCsv)
-    ? codeProfilCsv
-    : CODES_PROFILS[codeProfilCsv];
-
-  const chantierIds = [];
-  const idDuChantier = csvRecord[FIELDS.idDuChantier];
-  if (idDuChantier && idDuChantier != '') {
-    chantierIds.push(idDuChantier);
-  }
-  const chantierIdsCsv = csvRecord[FIELDS.chantierIds];
-  if (chantierIdsCsv && chantierIdsCsv != '') {
-    for (const id of splitCsvCell(chantierIdsCsv)) {
-      chantierIds.push(id);
-    }
-  }
-
-  return new UtilisateurPourImport(
-    csvRecord[FIELDS.nom],
-    csvRecord[FIELDS.prénom],
-    csvRecord[FIELDS.email],
-    profilCode,
-    chantierIds,
-  );
-}
 
 function normalizeFieldname(fieldname: string) {
   return fieldname
@@ -69,7 +37,7 @@ function normalizeFieldname(fieldname: string) {
     .trim();
 }
 
-function normalizeCsvRecord(record: CsvRecord): NormalizedCsvRecord {
+function normalizeCsvRecord(record: CsvRecord): CsvRecord {
   const result: CsvRecord = {};
   for (const [k, v] of Object.entries(record)) {
     result[normalizeFieldname(k)] = v;
@@ -77,13 +45,47 @@ function normalizeCsvRecord(record: CsvRecord): NormalizedCsvRecord {
   return result;
 }
 
+function splitCsvCell(cell: string): string[] {
+  return cell.split(/ *\| */);
+}
+
+function parseCsvRecord(csvRecord: CsvRecord): UtilisateurPourImport {
+  const normalizedRecord = normalizeCsvRecord(csvRecord);
+  const codeProfilCsv = normalizedRecord[FIELDS.profil] || normalizedRecord[FIELDS.profils];
+  const profilCode = vérifieCodeProfil(codeProfilCsv)
+    ? codeProfilCsv
+    : CODES_PROFILS[codeProfilCsv];
+
+  const chantierIds = [];
+  const chantierIdsCsv = normalizedRecord[FIELDS.chantierIds];
+  if (chantierIdsCsv && chantierIdsCsv != '') {
+    for (const id of splitCsvCell(chantierIdsCsv)) {
+      chantierIds.push(id);
+    }
+  }
+  const idDuChantier = normalizedRecord[FIELDS.idDuChantier];
+  if (idDuChantier && idDuChantier != '') {
+    for (const id of splitCsvCell(idDuChantier)) {
+      chantierIds.push(id);
+    }
+  }
+
+  return new UtilisateurPourImport(
+    normalizedRecord[FIELDS.nom],
+    normalizedRecord[FIELDS.prénom],
+    normalizedRecord[FIELDS.email],
+    profilCode,
+    chantierIds,
+  );
+}
+
+
 export function parseCsvRecords(csvRecords: CsvRecord[]): UtilisateurPourImport[] {
   assert(csvRecords, 'Erreur de parsing CSV. Pas de lignes ?');
 
-  const normalizedCsvRecord = csvRecords.map(normalizeCsvRecord);
   const result: UtilisateurPourImport[] = [];
-  for (const csvRecord of normalizedCsvRecord) {
-    const importRecord = toImportRecord(csvRecord);
+  for (const csvRecord of csvRecords) {
+    const importRecord = parseCsvRecord(csvRecord);
     result.push(importRecord);
   }
   return result;
