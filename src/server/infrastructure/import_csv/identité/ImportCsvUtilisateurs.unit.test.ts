@@ -8,10 +8,9 @@ describe('ImportCsvUtilisateurs', () => {
     const csvRecord: CsvRecord = {
       ['Nom']: 'Dylan',
       ['Prénom']: 'Bob',
-      ['E-mail']: 'bob@dylan.com',
-      ['Profils']: 'Directeur de projet',
-      ['Nom du chantier']: 'Un chantier',
-      ['ID du chantier']: 'CH-1234',
+      ['Email']: 'bob@dylan.com',
+      ['Profil']: DIR_PROJET,
+      ['ChantierIds']: 'CH-1234',
     };
     const result = parseCsvRecords([csvRecord]);
     expect(result).toStrictEqual([
@@ -23,9 +22,8 @@ describe('ImportCsvUtilisateurs', () => {
     const csvRecord: CsvRecord = {
       ['nom']: 'Dylan',
       ['  PRENOM  ']: 'Bob',
-      ['eMail']: 'bob@dylan.com',
-      ['profils']: 'Directeur de projet',
-      ['nom du chantier']: 'Un chantier',
+      ['e-mail']: 'bob@dylan.com',
+      ['profils']: DIR_PROJET,
       ['id du chantier']: 'CH-1234',
     };
     const result = parseCsvRecords([csvRecord]);
@@ -34,42 +32,13 @@ describe('ImportCsvUtilisateurs', () => {
     ]);
   });
 
-  it('donne une liste de chantiers vide si pas renseignée', () => {
-    const csvRecord: CsvRecord = {
-      ['Nom']: 'Dylan',
-      ['Prénom']: 'Bob',
-      ['E-mail']: 'bob@dylan.com',
-      ['Profils']: 'Directeur de projet',
-    };
-    const result = parseCsvRecords([csvRecord]);
-    expect(result).toStrictEqual([
-      new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, []),
-    ]);
-  });
-
   it('ignore les colonnes inconnues', () => {
     const csvRecord: CsvRecord = {
       ['Nom']: 'Dylan',
       ['Prénom']: 'Bob',
-      ['E-mail']: 'bob@dylan.com',
-      ['Profils']: 'Directeur de projet',
-      ['ID du chantier']: 'CH-1234',
+      ['Email']: 'bob@dylan.com',
+      ['Profils']: DIR_PROJET,
       colonneInconnue: 'valeur',
-    };
-    const result = parseCsvRecords([csvRecord]);
-    expect(result).toStrictEqual([
-      new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-1234']),
-    ]);
-  });
-
-  it('un id de chantier vide dans le csv génère une liste vide à importer', () => {
-    const csvRecord: CsvRecord = {
-      ['Nom']: 'Dylan',
-      ['Prénom']: 'Bob',
-      ['E-mail']: 'bob@dylan.com',
-      ['Profils']: 'Directeur de projet',
-      ['Nom du chantier']: 'Un chantier',
-      ['ID du chantier']: '',
     };
     const result = parseCsvRecords([csvRecord]);
     expect(result).toStrictEqual([
@@ -77,17 +46,91 @@ describe('ImportCsvUtilisateurs', () => {
     ]);
   });
 
-  it('accepte une liste d\'id chantiers', () => {
-    const csvRecord: CsvRecord = {
-      ['nom']: 'Dylan',
-      ['prénom']: 'Bob',
-      ['email']: 'bob@dylan.com',
-      ['profils']: 'Directeur de projet',
-      ['chantierIds']: 'CH-001|CH-002  | CH-003',
-    };
-    const result = parseCsvRecords([csvRecord]);
-    expect(result).toStrictEqual([
-      new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-001', 'CH-002', 'CH-003']),
-    ]);
+  describe('Le champs profil', () => {
+    it('accepte les codes de profils', () => {
+      const csvRecord: CsvRecord = {
+        ['Nom']: 'Dylan',
+        ['Prénom']: 'Bob',
+        ['Email']: 'bob@dylan.com',
+        ['Profil']: DIR_PROJET,
+        ['ChantierIds']: 'CH-1234',
+      };
+      const result = parseCsvRecords([csvRecord]);
+      expect(result).toStrictEqual([
+        new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-1234']),
+      ]);
+    });
+
+    it('accepte "profils" comme nom de colonne', () => {
+      const csvRecord: CsvRecord = {
+        ['Nom']: 'Dylan',
+        ['Prénom']: 'Bob',
+        ['Email']: 'bob@dylan.com',
+        ['Profils']: DIR_PROJET,
+        ['ChantierIds']: 'CH-1234',
+      };
+      const result = parseCsvRecords([csvRecord]);
+      expect(result).toStrictEqual([
+        new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-1234']),
+      ]);
+    });
+
+    it('accepte une description comme profil', () => {
+      const csvRecord: CsvRecord = {
+        ['Nom']: 'Dylan',
+        ['Prénom']: 'Bob',
+        ['Email']: 'bob@dylan.com',
+        ['Profils']: 'Directeur de projet',
+        ['ChantierIds']: 'CH-1234',
+      };
+      const result = parseCsvRecords([csvRecord]);
+      expect(result).toStrictEqual([
+        new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-1234']),
+      ]);
+    });
+  });
+
+  describe('Le champs ChantierId', () => {
+    it('accepte une liste d\'id chantiers', () => {
+      const csvRecord: CsvRecord = {
+        ['Nom']: 'Dylan',
+        ['Prénom']: 'Bob',
+        ['Email']: 'bob@dylan.com',
+        ['Profils']: DIR_PROJET,
+        ['ChantierIds']: 'CH-001|CH-002  | CH-003',
+      };
+      const result = parseCsvRecords([csvRecord]);
+      expect(result).toStrictEqual([
+        new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-001', 'CH-002', 'CH-003']),
+      ]);
+    });
+
+    it('donne une liste de chantiers vide si pas renseignée', () => {
+      const csvRecord: CsvRecord = {
+        ['Nom']: 'Dylan',
+        ['Prénom']: 'Bob',
+        ['Email']: 'bob@dylan.com',
+        ['Profil']: DIR_PROJET,
+      };
+      const result = parseCsvRecords([csvRecord]);
+      expect(result).toStrictEqual([
+        new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, []),
+      ]);
+    });
+
+    it('un id de chantier vide dans le csv génère une liste vide à importer', () => {
+      const csvRecord: CsvRecord = {
+        ['Nom']: 'Dylan',
+        ['Prénom']: 'Bob',
+        ['Email']: 'bob@dylan.com',
+        ['Profils']: DIR_PROJET,
+        ['Nom du chantier']: 'Un chantier',
+        ['ID du chantier']: '',
+      };
+      const result = parseCsvRecords([csvRecord]);
+      expect(result).toStrictEqual([
+        new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, []),
+      ]);
+    });
   });
 });

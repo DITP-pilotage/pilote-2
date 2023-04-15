@@ -1,7 +1,7 @@
 import { parse } from 'csv-parse/sync';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
-import { DIR_PROJET, DITP_ADMIN, DITP_PILOTAGE } from '@/server/domain/identité/Profil';
+import { DIR_PROJET, DITP_ADMIN, DITP_PILOTAGE, vérifieCodeProfil } from '@/server/domain/identité/Profil';
 import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 import ImporteUtilisateursUseCase from '@/server/usecase/identité/ImporteUtilisateursUseCase';
 
@@ -14,9 +14,11 @@ const FIELDS: Record<string, string> = {
   nom: 'nom',
   prénom: 'prenom',
   email: 'email',
+  profil: 'profil',
+  chantierIds: 'chantierids',
+  // TODO: erreurs des fichiers fournis, à supprimer quand fichiers CSV mieux définis
   profils: 'profils',
   idDuChantier: 'id du chantier',
-  chantierIds: 'chantierids',
 };
 
 const CODES_PROFILS: Record<string, string> = {
@@ -28,8 +30,15 @@ const CODES_PROFILS: Record<string, string> = {
 export type CsvRecord = Record<string, string>;
 export type NormalizedCsvRecord = Record<string, string>;
 
+function splitCsvCell(cell: string): string[] {
+  return cell.split(/ *\| */);
+}
+
 function toImportRecord(csvRecord: NormalizedCsvRecord): UtilisateurPourImport {
-  const profilCode = CODES_PROFILS[csvRecord[FIELDS.profils]];
+  const codeProfilCsv = csvRecord[FIELDS.profil] || csvRecord[FIELDS.profils];
+  const profilCode = vérifieCodeProfil(codeProfilCsv)
+    ? codeProfilCsv
+    : CODES_PROFILS[codeProfilCsv];
 
   const chantierIds = [];
   const idDuChantier = csvRecord[FIELDS.idDuChantier];
@@ -38,7 +47,7 @@ function toImportRecord(csvRecord: NormalizedCsvRecord): UtilisateurPourImport {
   }
   const chantierIdsCsv = csvRecord[FIELDS.chantierIds];
   if (chantierIdsCsv && chantierIdsCsv != '') {
-    for (const id of chantierIdsCsv.split(/ *\| */)) {
+    for (const id of splitCsvCell(chantierIdsCsv)) {
       chantierIds.push(id);
     }
   }
@@ -74,8 +83,6 @@ export function parseCsvRecords(csvRecords: CsvRecord[]): UtilisateurPourImport[
   const normalizedCsvRecord = csvRecords.map(normalizeCsvRecord);
   const result: UtilisateurPourImport[] = [];
   for (const csvRecord of normalizedCsvRecord) {
-    const nomDeProfil = csvRecord[FIELDS.profils];
-    assert(CODES_PROFILS[nomDeProfil], `Nom de profil ${nomDeProfil} inconnu. Profils connus : ${Object.keys(CODES_PROFILS)}`);
     const importRecord = toImportRecord(csvRecord);
     result.push(importRecord);
   }
