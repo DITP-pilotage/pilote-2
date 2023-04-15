@@ -76,4 +76,18 @@ describe('ImportCsvUtilisateurs', () => {
       new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, []),
     ]);
   });
+
+  it('accepte une liste d\'id chantiers', () => {
+    const csvRecord: CsvRecord = {
+      ['nom']: 'Dylan',
+      ['prénom']: 'Bob',
+      ['email']: 'bob@dylan.com',
+      ['profils']: 'Directeur de projet',
+      ['chantierIds']: 'CH-001|CH-002  | CH-003',
+    };
+    const result = parseCsvRecords([csvRecord]);
+    expect(result).toStrictEqual([
+      new UtilisateurPourImport('Dylan', 'Bob', 'bob@dylan.com', DIR_PROJET, ['CH-001', 'CH-002', 'CH-003']),
+    ]);
+  });
 });

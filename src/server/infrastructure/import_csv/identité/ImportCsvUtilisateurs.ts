@@ -16,6 +16,7 @@ const FIELDS: Record<string, string> = {
   email: 'email',
   profils: 'profils',
   idDuChantier: 'id du chantier',
+  chantierIds: 'chantierids',
 };
 
 const CODES_PROFILS: Record<string, string> = {
@@ -31,9 +32,15 @@ function toImportRecord(csvRecord: NormalizedCsvRecord): UtilisateurPourImport {
   const profilCode = CODES_PROFILS[csvRecord[FIELDS.profils]];
 
   const chantierIds = [];
-  const csvChantierId = csvRecord[FIELDS.idDuChantier];
-  if (csvChantierId && csvChantierId != '') {
-    chantierIds.push(csvChantierId);
+  const idDuChantier = csvRecord[FIELDS.idDuChantier];
+  if (idDuChantier && idDuChantier != '') {
+    chantierIds.push(idDuChantier);
+  }
+  const chantierIdsCsv = csvRecord[FIELDS.chantierIds];
+  if (chantierIdsCsv && chantierIdsCsv != '') {
+    for (const id of chantierIdsCsv.split(/ *\| */)) {
+      chantierIds.push(id);
+    }
   }
 
   return new UtilisateurPourImport(
