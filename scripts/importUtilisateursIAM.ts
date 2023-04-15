@@ -54,7 +54,11 @@ async function main() {
 
 const isMain = eval('require.main === module');
 if (isMain) {
-  main().catch((error) => {
-    logger.error(error);
-  });
+  main()
+    .then(() => {
+      logger.info('Import terminé.');
+    })
+    .catch((error) => {
+      logger.error(error);
+    });
 }
