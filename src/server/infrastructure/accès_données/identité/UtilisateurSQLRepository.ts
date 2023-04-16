@@ -4,7 +4,7 @@ import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepo
 import { Utilisateur } from '@/server/domain/identité/Utilisateur';
 import { ProfilIdByCode } from '@/server/infrastructure/accès_données/identité/seed';
 import logger from '@/server/infrastructure/logger';
-import UtilisateurDTO from '@/server/domain/identité/UtilisateurDTO';
+import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 
 function _toDomain(row: utilisateur): Utilisateur {
   return {
@@ -41,7 +41,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return _toDomain(row);
   }
 
-  async créerOuRemplacerUtilisateurs(inputUtilisateurs: UtilisateurDTO[]) {
+  async créerOuRemplacerUtilisateurs(inputUtilisateurs: UtilisateurPourImport[]) {
     const resultSet = await this._prisma.profil.findMany({ select: { id: true, code: true } });
     const profilIdByCode: ProfilIdByCode = {};
     for (const profilRow of resultSet) {
@@ -49,12 +49,11 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     }
 
     const idUtilisateursByEmail: Record<string, string> = {};
-    for (const input of inputUtilisateurs) {
-      idUtilisateursByEmail[input.email] = randomUUID();
-    }
     const utilisateurRows: utilisateur[] = inputUtilisateurs.map(it => {
+      const id = randomUUID();
+      idUtilisateursByEmail[it.email] = id;
       return {
-        id: idUtilisateursByEmail[it.email],
+        id,
         email: it.email,
         nom: it.nom,
         prenom: it.prénom,
@@ -68,7 +67,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       }
     }
 
-    const emails = utilisateurRows.map(it => it.email);
+    const emails = inputUtilisateurs.map(it => it.email);
     await this._prisma.$transaction([
       this._prisma.$executeRaw`
         delete

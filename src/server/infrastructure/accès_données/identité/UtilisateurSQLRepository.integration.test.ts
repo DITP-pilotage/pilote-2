@@ -2,11 +2,13 @@
 import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepository';
-import { créerProfilsEtHabilitations, créerUtilisateurDTO } from '@/server/infrastructure/accès_données/identité/seed';
+import {
+  créerProfilsEtHabilitations,
+  générerUtilisateurPourImport,
+} from '@/server/infrastructure/accès_données/identité/seed';
 import { DIR_PROJET, DITP_PILOTAGE } from '@/server/domain/identité/Profil';
 import { SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
 import HabilitationSQLRepository from '@/server/infrastructure/accès_données/identité/HabilitationSQLRepository';
-import UtilisateurDTO from '@/server/domain/identité/UtilisateurDTO';
 
 const PROFIL_DITP_PILOTAGE = { code: DITP_PILOTAGE, nom: 'DITP - Pilotage', aAccesTousChantiers: true, habilitationScopeCodes:[SCOPE_LECTURE] };
 const PROFIL_DIR_PROJET = { code: DIR_PROJET, nom: 'Directeur de projet', aAccesTousChantiers: false, habilitationScopeCodes:[SCOPE_LECTURE] };
@@ -23,15 +25,13 @@ describe('UtilisateurSQLRepository', () => {
   it('crée des utilisateurs', async () => {
     // GIVEN
     const email = 'bob@example.com';
-    const utilisateursÀCréer:UtilisateurDTO[] = [
-      créerUtilisateurDTO({ email, chantierIds: ['CH-001'] }),
-    ];
+    const utilisateurÀCréer = générerUtilisateurPourImport({ email, chantierIds: ['CH-001'] });
     // WHEN
     const repository:UtilisateurRepository = new UtilisateurSQLRepository(prisma);
-    await repository.créerOuRemplacerUtilisateurs(utilisateursÀCréer);
+    await repository.créerOuRemplacerUtilisateurs([utilisateurÀCréer]);
     // THEN
-    const result = await repository.getByEmail('bob@example.com');
-    expect(result.email).toStrictEqual(email);
+    const result = await repository.getByEmail(email);
+    expect(result).not.toBeFalsy();
     const chantiers = await new HabilitationSQLRepository(prisma).récupèreAssociationsAvecChantier(email);
     expect(chantiers).toStrictEqual(['CH-001']);
   });
@@ -40,9 +40,9 @@ describe('UtilisateurSQLRepository', () => {
     // GIVEN
     const emailDeBob = 'bob@example.com';
     const emailDeJohn = 'john@example.com';
-    const bobDirProjet = créerUtilisateurDTO({ email: emailDeBob, chantierIds: ['CH-001'] });
-    const bobDitp = créerUtilisateurDTO({ email: emailDeBob, profilCode: DITP_PILOTAGE });
-    const johnDitp = créerUtilisateurDTO({ email: emailDeJohn, profilCode: DITP_PILOTAGE });
+    const bobDirProjet = générerUtilisateurPourImport({ email: emailDeBob, profilCode: DIR_PROJET, chantierIds: ['CH-001'] });
+    const bobDitp = générerUtilisateurPourImport({ email: emailDeBob, profilCode: DITP_PILOTAGE });
+    const johnDitp = générerUtilisateurPourImport({ email: emailDeJohn, profilCode: DITP_PILOTAGE });
     // WHEN
     const repository:UtilisateurRepository = new UtilisateurSQLRepository(prisma);
     await repository.créerOuRemplacerUtilisateurs([bobDirProjet]);

@@ -3,7 +3,6 @@ import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImpo
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { UtilisateurIAMRepository } from '@/server/domain/identité/UtilisateurIAMRepository';
 import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepository';
-import UtilisateurDTO from '@/server/domain/identité/UtilisateurDTO';
 
 export default class ImporterUtilisateursUseCase {
   constructor(
@@ -19,18 +18,9 @@ export default class ImporterUtilisateursUseCase {
     const utilisateursPourIAM = this.utilisateursÀImporter.map(
       it => it.pourIAM(),
     );
-    const utilisateursPourImportPilote: UtilisateurDTO[] = this.utilisateursÀImporter.map(
-      it => ({
-        email: it.email,
-        nom: it.nom,
-        prénom: it.prénom,
-        profilCode: it.profilCode,
-        chantierIds: it.chantierIds,
-      }),
-    );
 
     // TODO: qu'est-ce qu'on fait si l'un réussit et pas l'autre ?
     await this.utilisateurIAMRepository.ajouteUtilisateurs(utilisateursPourIAM);
-    await this.utilisateurRepository.créerOuRemplacerUtilisateurs(utilisateursPourImportPilote);
+    await this.utilisateurRepository.créerOuRemplacerUtilisateurs(this.utilisateursÀImporter);
   }
 }

@@ -4,15 +4,15 @@ import { vérifieCodeProfil } from '@/server/domain/identité/Profil';
 
 export default class UtilisateurPourImport {
   constructor(
+    public readonly email: string,
     public readonly nom: string,
     public readonly prénom: string,
-    public readonly email: string,
     public readonly profilCode: string,
     public readonly chantierIds: string[],
   ) {
+    assert(email);
     assert(nom);
     assert(prénom);
-    assert(email);
     assert(profilCode);
     assert(vérifieCodeProfil(profilCode));
     assert(chantierIds);
@@ -20,9 +20,19 @@ export default class UtilisateurPourImport {
 
   pourIAM(): UtilisateurPourIAM {
     return new UtilisateurPourIAM(
+      this.email,
       this.nom,
       this.prénom,
-      this.email,
+    );
+  }
+
+  static fromRecord(record: Record<string, any>): UtilisateurPourImport {
+    return new UtilisateurPourImport(
+      record.email,
+      record.nom,
+      record.prénom,
+      record.profilCode,
+      record.chantierIds,
     );
   }
 }

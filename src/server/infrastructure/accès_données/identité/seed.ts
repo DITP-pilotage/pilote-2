@@ -19,7 +19,7 @@ import {
   SANS_HABILITATIONS,
   SECRETARIAT_GENERAL,
 } from '@/server/domain/identité/Profil';
-import UtilisateurDTO from '@/server/domain/identité/UtilisateurDTO';
+import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 
 export type InputScopesHabilitations = {
   code: string,
@@ -33,14 +33,14 @@ export type InputProfil = {
   habilitationScopeCodes: string[],
 };
 
-export function créerUtilisateurDTO({ email, nom, prénom, profilCode, chantierIds }: Partial<UtilisateurDTO> = {}) {
-  return {
-    email: email || faker.internet.exampleEmail(),
-    nom: nom || faker.name.lastName(),
-    prénom: prénom || faker.name.firstName(),
-    profilCode: profilCode || DIR_PROJET,
-    chantierIds: chantierIds || [],
-  };
+export function générerUtilisateurPourImport({ email, nom, prénom, profilCode, chantierIds }: Partial<UtilisateurPourImport> = {}) {
+  return new UtilisateurPourImport(
+    email || faker.internet.exampleEmail(),
+    nom || faker.name.lastName(),
+    prénom || faker.name.firstName(),
+    profilCode || DIR_PROJET,
+    chantierIds || [],
+  );
 }
 
 type withId = { id: string };

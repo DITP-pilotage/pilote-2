@@ -18,13 +18,13 @@ import {
   InputScopesHabilitations,
 } from '@/server/infrastructure/accès_données/identité/seed';
 import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
-import UtilisateurDTO from '@/server/domain/identité/UtilisateurDTO';
+import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 import logger from '../src/server/infrastructure/logger';
 
 type Input = {
   inputProfils: InputProfil[],
   inputScopesHabilitations: InputScopesHabilitations[],
-  inputUtilisateurs?: UtilisateurDTO[],
+  inputUtilisateurs?: Record<string, any>[],
 };
 
 const filename = process.argv[2];
@@ -36,6 +36,7 @@ const input = JSON.parse(file) as Input;
 const nbProfils = input.inputProfils.length;
 const nbScopes = input.inputScopesHabilitations.length;
 const nbUtilisateurs = input.inputUtilisateurs ? input.inputUtilisateurs.length : 0;
+const utilisateursPourImport = input.inputUtilisateurs ? input.inputUtilisateurs.map(UtilisateurPourImport.fromRecord) : null;
 logger.info({ nbProfils, nbScopes, nbUtilisateurs }, 'Fichier parsé.');
 
 logger.info('Connexion à la base de données...');
@@ -46,9 +47,9 @@ créerProfilsEtHabilitations(prisma, input.inputProfils, input.inputScopesHabili
   .then(
     (profilIdByCode) => {
       logger.info({ profilIdByCode });
-      if (input.inputUtilisateurs) {
+      if (utilisateursPourImport) {
         logger.info('Import des utilisateurs...');
-        return new UtilisateurSQLRepository(prisma).créerOuRemplacerUtilisateurs(input.inputUtilisateurs);
+        return new UtilisateurSQLRepository(prisma).créerOuRemplacerUtilisateurs(utilisateursPourImport);
       }
     })
   .then(

@@ -71,9 +71,9 @@ export function parseCsvRecord(csvRecord: CsvRecord): UtilisateurPourImport {
   }
 
   return new UtilisateurPourImport(
+    normalizedRecord[FIELDS.email],
     normalizedRecord[FIELDS.nom],
     normalizedRecord[FIELDS.prénom],
-    normalizedRecord[FIELDS.email],
     profilCode,
     chantierIds,
   );
