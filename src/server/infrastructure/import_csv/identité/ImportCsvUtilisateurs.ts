@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { DIR_PROJET, DITP_ADMIN, DITP_PILOTAGE, vérifieCodeProfil } from '@/server/domain/identité/Profil';
 import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
-import ImporteUtilisateursUseCase from '@/server/usecase/identité/ImporteUtilisateursUseCase';
+import ImporterUtilisateursUseCase from '@/server/usecase/identité/ImporterUtilisateursUseCase';
 
 const CSV_PARSE_OPTIONS = {
   columns: true,
@@ -95,7 +95,7 @@ export default class ImportCsvUtilisateurs {
   async importeFichierUtilisateurs(filename: string) {
     assert(filename);
     const utilisateursPourImport = this.parseCsvUtilisateurs(filename);
-    const usecase = new ImporteUtilisateursUseCase(utilisateursPourImport);
+    const usecase = new ImporterUtilisateursUseCase(utilisateursPourImport);
     await usecase.run();
   }
 

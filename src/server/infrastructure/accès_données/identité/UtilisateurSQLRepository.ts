@@ -41,7 +41,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return _toDomain(row);
   }
 
-  async créerOuRemplaceUtilisateurs(inputUtilisateurs: UtilisateurDTO[]) {
+  async créerOuRemplacerUtilisateurs(inputUtilisateurs: UtilisateurDTO[]) {
     const resultSet = await this._prisma.profil.findMany({ select: { id: true, code: true } });
     const profilIdByCode: ProfilIdByCode = {};
     for (const profilRow of resultSet) {

@@ -184,7 +184,7 @@ class DatabaseSeeder {
     ];
 
     await créerProfilsEtHabilitations(prisma, INPUT_PROFILS, INPUT_SCOPES_HABILITATIONS);
-    await new UtilisateurSQLRepository(prisma).créerOuRemplaceUtilisateurs(inputUtilisateurs);
+    await new UtilisateurSQLRepository(prisma).créerOuRemplacerUtilisateurs(inputUtilisateurs);
   }
 
   private async _getSomeChantierIds() {

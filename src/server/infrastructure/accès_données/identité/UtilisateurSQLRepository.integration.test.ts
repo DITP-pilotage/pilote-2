@@ -28,7 +28,7 @@ describe('UtilisateurSQLRepository', () => {
     ];
     // WHEN
     const repository:UtilisateurRepository = new UtilisateurSQLRepository(prisma);
-    await repository.créerOuRemplaceUtilisateurs(utilisateursÀCréer);
+    await repository.créerOuRemplacerUtilisateurs(utilisateursÀCréer);
     // THEN
     const result = await repository.getByEmail('bob@example.com');
     expect(result.email).toStrictEqual(email);
@@ -45,9 +45,9 @@ describe('UtilisateurSQLRepository', () => {
     const johnDitp = créerUtilisateurDTO({ email: emailDeJohn, profilCode: DITP_PILOTAGE });
     // WHEN
     const repository:UtilisateurRepository = new UtilisateurSQLRepository(prisma);
-    await repository.créerOuRemplaceUtilisateurs([bobDirProjet]);
+    await repository.créerOuRemplacerUtilisateurs([bobDirProjet]);
     const oldBob = await repository.getByEmail(emailDeBob);
-    await repository.créerOuRemplaceUtilisateurs([bobDitp, johnDitp]);
+    await repository.créerOuRemplacerUtilisateurs([bobDitp, johnDitp]);
     // THEN
     const newBob = await repository.getByEmail(emailDeBob);
     expect(newBob.profilId).not.toEqual(oldBob.profilId);

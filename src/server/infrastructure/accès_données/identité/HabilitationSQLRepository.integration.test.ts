@@ -57,7 +57,7 @@ describe('HabilitationSQLRepository', () => {
       créerUtilisateurDTO({ email: 'equipe.dir.projet2@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds: ['CH-001', 'CH-002'] }),
     ];
 
-    await new UtilisateurSQLRepository(prisma).créerOuRemplaceUtilisateurs(inputUtilisateurs);
+    await new UtilisateurSQLRepository(prisma).créerOuRemplacerUtilisateurs(inputUtilisateurs);
   });
 
   describe('un admin DITP', () => {

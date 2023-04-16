@@ -5,7 +5,7 @@ import { UtilisateurIAMRepository } from '@/server/domain/identité/UtilisateurI
 import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepository';
 import UtilisateurDTO from '@/server/domain/identité/UtilisateurDTO';
 
-export default class ImporteUtilisateursUseCase {
+export default class ImporterUtilisateursUseCase {
   constructor(
     private readonly utilisateursÀImporter: UtilisateurPourImport[],
     private readonly utilisateurRepository: UtilisateurRepository = dependencies.getUtilisateurRepository(),
@@ -31,6 +31,6 @@ export default class ImporteUtilisateursUseCase {
 
     // TODO: qu'est-ce qu'on fait si l'un réussit et pas l'autre ?
     await this.utilisateurIAMRepository.ajouteUtilisateurs(utilisateursPourIAM);
-    await this.utilisateurRepository.créerOuRemplaceUtilisateurs(utilisateursPourImportPilote);
+    await this.utilisateurRepository.créerOuRemplacerUtilisateurs(utilisateursPourImportPilote);
   }
 }
