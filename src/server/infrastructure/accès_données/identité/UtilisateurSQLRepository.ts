@@ -48,20 +48,21 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       profilIdByCode[profilRow.code] = profilRow.id;
     }
 
-    const donnéesUtilisateurs: (UtilisateurDTO & { id: string })[] = [];
+    const idUtilisateursByEmail: Record<string, string> = {};
     for (const input of inputUtilisateurs) {
-      donnéesUtilisateurs.push({ id: randomUUID(), ...input });
+      idUtilisateursByEmail[input.email] = randomUUID();
     }
-    const utilisateurRows: utilisateur[] = donnéesUtilisateurs.map(it => {
+    const utilisateurRows: utilisateur[] = inputUtilisateurs.map(it => {
       return {
-        id: it.id,
+        id: idUtilisateursByEmail[it.email],
         email: it.email,
         nom: it.nom,
         prenom: it.prénom,
         profil_id: profilIdByCode[it.profilCode] };
     });
     const utilisateurChantierRows: utilisateur_chantier[] = [];
-    for (const { id: utilisateur_id, chantierIds } of donnéesUtilisateurs) {
+    for (const { email, chantierIds } of inputUtilisateurs) {
+      const utilisateur_id = idUtilisateursByEmail[email];
       for (const chantier_id of chantierIds) {
         utilisateurChantierRows.push({ utilisateur_id, chantier_id });
       }
