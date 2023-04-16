@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { DIR_PROJET } from '@/server/domain/identité/Profil';
-import { CsvRecord, parseCsvRecord } from '@/server/infrastructure/import_csv/identité/ImportCsvUtilisateurs';
+import { CsvRecord, parseCsvRecord } from '@/server/infrastructure/import_csv/identité/ImportateurCsvUtilisateurs';
 import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 
 describe('ImportCsvUtilisateurs', () => {

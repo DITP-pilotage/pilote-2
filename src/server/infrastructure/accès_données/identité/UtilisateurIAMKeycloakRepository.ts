@@ -38,7 +38,6 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
       requestArgOptions: {},
     });
 
-
     await this.kcAdminClient.auth({
       grantType: 'client_credentials',
       clientId: this.clientId,

@@ -1,7 +1,7 @@
 import process from 'node:process';
 import assert from 'node:assert/strict';
 import logger from '@/server/infrastructure/logger';
-import ImportCsvUtilisateurs from '@/server/infrastructure/import_csv/identité/ImportCsvUtilisateurs';
+import ImportateurCsvUtilisateurs from '@/server/infrastructure/import_csv/identité/ImportateurCsvUtilisateurs';
 
 /**
  * Exemple de CSV :
@@ -49,7 +49,7 @@ import ImportCsvUtilisateurs from '@/server/infrastructure/import_csv/identité/
 async function main() {
   const filename = process.argv[2];
   assert(filename, 'Nom de fichier CSV manquant');
-  const importateur = new ImportCsvUtilisateurs();
+  const importateur = new ImportateurCsvUtilisateurs();
   await importateur.importeFichierUtilisateurs(filename);
 }
 
