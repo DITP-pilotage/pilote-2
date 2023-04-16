@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient, utilisateur, utilisateur_chantier } from '@prisma/client';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepository';
 import { Utilisateur } from '@/server/domain/identité/Utilisateur';
 import { ProfilIdByCode } from '@/server/infrastructure/accès_données/identité/seed';
@@ -50,7 +50,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
     const donnéesUtilisateurs: (UtilisateurDTO & { id: string })[] = [];
     for (const input of inputUtilisateurs) {
-      donnéesUtilisateurs.push({ id: uuidv4(), ...input });
+      donnéesUtilisateurs.push({ id: randomUUID(), ...input });
     }
     const utilisateurRows: utilisateur[] = donnéesUtilisateurs.map(it => {
       return {

@@ -1,6 +1,6 @@
-import { v4 as uuidv4 } from 'uuid';
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
+import { randomUUID } from 'node:crypto';
 import {
   SCOPE_LECTURE,
   SCOPE_SAISIE_INDICATEURS,
@@ -76,13 +76,13 @@ export async function créerProfilsEtHabilitations(
 ): Promise<ProfilIdByCode> {
   const donnéesScopeHabilitations: Record<string, InputScopesHabilitations & withId> = {};
   for (const input of inputScopesHabilitations) {
-    donnéesScopeHabilitations[input.code] = { id: uuidv4(), ...input };
+    donnéesScopeHabilitations[input.code] = { id: randomUUID(), ...input };
   }
   await prisma.habilitation_scope.createMany({ data: Object.values(donnéesScopeHabilitations) });
 
   const donnéesProfils: Record<string, InputProfil & withId> = {};
   for (const input of inputProfils) {
-    donnéesProfils[input.code] = { id: uuidv4(), ...input };
+    donnéesProfils[input.code] = { id: randomUUID(), ...input };
   }
   await prisma.profil.createMany({
     data: Object.values(donnéesProfils)

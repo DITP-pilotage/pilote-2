@@ -81,7 +81,6 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.9",
     "superjson": "^1.12.2",
-    "uuid": "^9.0.0",
     "zod": "^3.21.4",
     "zustand": "^4.3.6"
   },
@@ -101,7 +100,6 @@
     "@types/node": "^18.15.10",
     "@types/react": "^18.0.30",
     "@types/react-dom": "^18.0.11",
-    "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.57.0",
     "@typescript-eslint/parser": "^5.57.0",
     "dotenv": "^16.0.3",
