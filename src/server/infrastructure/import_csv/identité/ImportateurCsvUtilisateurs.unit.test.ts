@@ -46,6 +46,33 @@ describe('ImportCsvUtilisateurs', () => {
     );
   });
 
+  describe('Les noms et prénoms', () => {
+    it('ne peuvent pas être vides (nom)', () => {
+      const csvRecord: CsvRecord = {
+        Nom: '',
+        Prénom: 'Bob',
+        Email: 'bob@dylan.com',
+        Profils: DIR_PROJET,
+      };
+
+      expect(() => {
+        parseCsvRecord(csvRecord);
+      }).toThrow(/bob@dylan.com/);
+    });
+
+    it('ne peuvent pas être vides (prénom)', () => {
+      const csvRecord: CsvRecord = {
+        Nom: 'Dylan',
+        Prénom: '',
+        Email: 'bob@dylan.com',
+        Profils: DIR_PROJET,
+      };
+
+      expect(() => {
+        parseCsvRecord(csvRecord);
+      }).toThrow(/bob@dylan.com/);
+    });
+  });
   describe('Le champs profil', () => {
     it('accepte les codes de profils', () => {
       const csvRecord: CsvRecord = {
