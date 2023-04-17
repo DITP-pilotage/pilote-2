@@ -26,6 +26,43 @@ jobs:
         continue-on-error: true
         run: npm ci
 
+  playwright:
+    name: Run playwright tests
+    needs: install
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13.9
+        env:
+          POSTGRES_USER: postgresql
+          POSTGRES_PASSWORD: secret
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Copy .env.ci to .env
+        run: cp .env.ci .env
+        
+      - name: Seed Database
+        run: npm run database:seed
+
+      - name: Install playwright browser
+        run: npx playwright install chromium
+      
+      - name: Launch playwright tests
+        run: npx playwright test
+
   test:
     name: Run tests
     needs: install
