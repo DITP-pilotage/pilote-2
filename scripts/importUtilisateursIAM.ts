@@ -12,7 +12,7 @@ import ImportateurCsvUtilisateurs from '@/server/infrastructure/import_csv/ident
  *
  * Exemple d'usage :
  *
- * $ npx ts-node scripts/importUtilisateursIAM.ts tmp/test.csv | npx pino-pretty | tee -a import.log
+ * $ npx ts-node scripts/importUtilisateursIAM.ts /tmp/import.csv | npx pino-pretty | tee -a /tmp/import.log
  *
  * Règles pour le CSV & comportement du script
  *
@@ -37,7 +37,11 @@ import ImportateurCsvUtilisateurs from '@/server/infrastructure/import_csv/ident
  * - Noter le Client secret (onglet Credentials)
  * - Dans son .env, ajouter IMPORT_KEYCLOAK_URL, l'url de base du Keycloak cible
  * - Dans son .env, ajouter IMPORT_CLIENT_ID avec le clientId
- * - Dans son .env, ajouter IMPORT_CLIENT_SECRET avec le client secret
+ * - Dans son .env, ajouter IMPORT_CLIENT_SECRET avec le client
+ * - Si besoin d'importer les seeds sur un one-off, prévoir une taille L (`run --size L`)
+ * - Sur un one-off, ajouter les devDependencies :
+ *     export NPM_CONFIG_PRODUCTION=false
+ *     npm ci
  *
  * Références :
  *

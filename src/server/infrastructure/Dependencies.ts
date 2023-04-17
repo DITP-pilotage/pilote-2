@@ -134,11 +134,11 @@ class Dependencies {
   getUtilisateurIAMRepository(): UtilisateurIAMRepository {
     if (!this._utilisateurIAMRepository) {
       const keycloakUrl = process.env.IMPORT_KEYCLOAK_URL;
-      assert(keycloakUrl);
+      assert.ok(keycloakUrl, 'IMPORT_KEYCLOAK_URL manquant.');
       const clientId = process.env.IMPORT_CLIENT_ID;
-      assert(clientId);
+      assert.ok(clientId, 'IMPORT_CLIENT_ID manquant.');
       const clientSecret = process.env.IMPORT_CLIENT_SECRET;
-      assert(clientSecret);
+      assert.ok(clientSecret, 'IMPORT_CLIENT_SECRET manquant.');
 
       this._utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
     }
