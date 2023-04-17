@@ -22,7 +22,11 @@ fi
 #psql "$DATABASE_URL" -c "ALTER TABLE raw_data.mesure_indicateur ADD COLUMN id UUID DEFAULT (gen_random_uuid())"
 
 # Remplissage de la table avec les dernières données indicateurs
-psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/pass_culture_indic_test.csv
+#psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/pass_culture_indic_test.csv
+psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/data_import1_IND-228.csv
+psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/data_import1_IND-229.csv
+psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/data_import1_IND-230.csv
+psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/data_import1_IND-243.csv
 
 # Si n'existe pas, création de la table fait_indicateurs
 #psql "$DATABASE_URL" -c "CREATE SCHEMA IF NOT EXISTS marts"

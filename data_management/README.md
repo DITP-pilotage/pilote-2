@@ -73,13 +73,27 @@ Copier le fichier `/.env.example` vers `/data_management/.env` :
 cp ../.env.example .env
 ```
 
+#### Initialisation des dépendances de DBT
+
+```bash
+dbt deps --project-dir data_factory
+```
+
 ## Usage
 
 ### Import des données
 
 #### Import des données open data en local
 
-Toujours depuis le répertoire data :
+Toujours depuis le répertoire data, 
+executer la commande suivante pour remplir la table `raw_data.mesure_indicateur` avec de fausses données 
+(à ajouter dans le dossier de la variable d'environnement `INPUT_DATA_INDICATEURS`) :
+
+```bash
+bash scripts/create_and_fill_raw_data_mesures_indicateurs.sh
+```
+
+Pour remplir l'ensemble des tables pour le schéma `raw_data` :
 
 ```bash
 bash scripts/fill_tables_raw_data.sh
@@ -138,7 +152,6 @@ PM(PPG_metadata) --> PG[(Base PG Pilote 2)]
 PT(ImportCommentaires) --> PG[(Base PG Pilote 2)]
 DFAK(Dump Dfakto) --> PG
 PG --> BE(Back-end) --> FE(Front-end)
-
 ```
 
 ## Zoom sur la partie ingestion de données
