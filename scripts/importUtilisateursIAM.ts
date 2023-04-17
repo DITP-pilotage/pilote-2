@@ -33,7 +33,9 @@ import ImportateurCsvUtilisateurs from '@/server/infrastructure/import_csv/ident
  *     - Authorization = Off
  *     - Authentication flow = tous Off, sauf Service accounts roles = On (active Client Credentials)
  * - Ajouter un rôle au client (onglet Service Accounts roles)
- *     - cliquer sur Assign role, chercher realm-admin (de realm-management) et l'assigner
+ *     - cliquer sur Assign role
+ *     - changer le filtre en "Filter by client"
+ *     - chercher realm-admin (de realm-management) et l'assigner
  * - Noter le Client secret (onglet Credentials)
  * - Dans son .env, ajouter IMPORT_KEYCLOAK_URL, l'url de base du Keycloak cible
  * - Dans son .env, ajouter IMPORT_CLIENT_ID avec le clientId
@@ -42,6 +44,12 @@ import ImportateurCsvUtilisateurs from '@/server/infrastructure/import_csv/ident
  * - Sur un one-off, ajouter les devDependencies :
  *     export NPM_CONFIG_PRODUCTION=false
  *     npm ci
+ *
+ * Troubleshooting
+ *
+ * - Quand le mot de passe généré ne satisfait pas les règles configurées sur Keycloak (longueur, caractères, etc.) dans
+ *   le menu "Authentication", onglet "Policies", alors l'API client admin Keycloak renvoit un code 400 bad request.
+ *   => Si vous avez une erreur 400, vérifiez si le mot de passe temporaire généré satisfait les règles configurées.
  *
  * Références :
  *
