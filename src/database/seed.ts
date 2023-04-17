@@ -36,11 +36,12 @@ import {
 } from '@/server/domain/identité/Profil';
 import {
   créerProfilsEtHabilitations,
-  créerUtilisateurs,
+  générerUtilisateurPourImport,
   INPUT_PROFILS,
   INPUT_SCOPES_HABILITATIONS,
-  InputUtilisateur,
 } from '@/server/infrastructure/accès_données/identité/seed';
+import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
+import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 
 const prisma = new PrismaClient();
 
@@ -170,21 +171,21 @@ class DatabaseSeeder {
 
   private async _créerUtilisateursEtDroits() {
     const chantierIds = await this._getSomeChantierIds();
-    const inputUtilisateurs: InputUtilisateur[] = [
-      { email: 'ditp.admin@example.com', profilCode: DITP_ADMIN, chantierIds: [] },
-      { email: 'ditp.pilotage@example.com', profilCode: DITP_PILOTAGE, chantierIds: [] },
-      { email: 'premiere.ministre@example.com', profilCode: PM_ET_CABINET, chantierIds: [] },
-      { email: 'presidence@example.com', profilCode: PR, chantierIds: [] },
-      { email: 'cabinet.mtfp@example.com', profilCode: CABINET_MTFP, chantierIds: [] },
-      { email: 'cabinet.ministeriel@example.com', profilCode: CABINET_MINISTERIEL, chantierIds: [] },
-      { email: 'direction.admin.centrale@example.com', profilCode: DIR_ADMIN_CENTRALE, chantierIds: [] },
-      { email: 'secretariat.general@example.com', profilCode: SECRETARIAT_GENERAL, chantierIds: [] },
+    const inputUtilisateurs: UtilisateurPourImport[] = [
+      { email: 'ditp.admin@example.com', profilCode: DITP_ADMIN },
+      { email: 'ditp.pilotage@example.com', profilCode: DITP_PILOTAGE },
+      { email: 'premiere.ministre@example.com', profilCode: PM_ET_CABINET },
+      { email: 'presidence@example.com', profilCode: PR },
+      { email: 'cabinet.mtfp@example.com', profilCode: CABINET_MTFP },
+      { email: 'cabinet.ministeriel@example.com', profilCode: CABINET_MINISTERIEL },
+      { email: 'direction.admin.centrale@example.com', profilCode: DIR_ADMIN_CENTRALE },
+      { email: 'secretariat.general@example.com', profilCode: SECRETARIAT_GENERAL },
       { email: 'directeur.projet@example.com', profilCode: DIR_PROJET, chantierIds },
       { email: 'equipe.dir.projet@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds },
-    ];
+    ].map(générerUtilisateurPourImport);
 
-    const profilIdByCode = await créerProfilsEtHabilitations(prisma, INPUT_PROFILS, INPUT_SCOPES_HABILITATIONS);
-    await créerUtilisateurs(prisma, inputUtilisateurs, profilIdByCode);
+    await créerProfilsEtHabilitations(prisma, INPUT_PROFILS, INPUT_SCOPES_HABILITATIONS);
+    await new UtilisateurSQLRepository(prisma).créerOuRemplacerUtilisateurs(inputUtilisateurs);
   }
 
   private async _getSomeChantierIds() {

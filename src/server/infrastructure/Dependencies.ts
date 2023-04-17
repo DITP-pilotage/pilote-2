@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import process from 'node:process';
+import assert from 'node:assert/strict';
 import ChantierSQLRepository from '@/server/infrastructure/accès_données/chantier/ChantierSQLRepository';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
@@ -32,6 +34,9 @@ import {
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
 import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepository';
 import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
+import { UtilisateurIAMRepository } from '@/server/domain/identité/UtilisateurIAMRepository';
+import UtilisateurIAMKeycloakRepository
+  from '@/server/infrastructure/accès_données/identité/UtilisateurIAMKeycloakRepository';
 import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
 
 class Dependencies {
@@ -56,6 +61,8 @@ class Dependencies {
   private readonly _validerFichierIndicateurImporteUseCase: ValiderFichierIndicateurImporteUseCase;
 
   private readonly _utilisateurRepository: UtilisateurRepository;
+
+  private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
 
   constructor() {
     logger.debug('Using database.');
@@ -122,6 +129,20 @@ class Dependencies {
 
   getUtilisateurRepository() {
     return this._utilisateurRepository;
+  }
+
+  getUtilisateurIAMRepository(): UtilisateurIAMRepository {
+    if (!this._utilisateurIAMRepository) {
+      const keycloakUrl = process.env.IMPORT_KEYCLOAK_URL;
+      assert(keycloakUrl);
+      const clientId = process.env.IMPORT_CLIENT_ID;
+      assert(clientId);
+      const clientSecret = process.env.IMPORT_CLIENT_SECRET;
+      assert(clientSecret);
+
+      this._utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
+    }
+    return this._utilisateurIAMRepository;
   }
 }
 

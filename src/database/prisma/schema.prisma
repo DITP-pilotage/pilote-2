@@ -144,9 +144,11 @@ model objectif {
 }
 
 model utilisateur {
-  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email     String @unique
-  profil_id String @db.Uuid
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email     String  @unique
+  nom       String?
+  prenom    String?
+  profil_id String  @db.Uuid
 
   @@schema("public")
 }

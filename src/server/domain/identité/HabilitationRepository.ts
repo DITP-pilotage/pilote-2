@@ -1,5 +1,6 @@
 import { Habilitation } from '@/server/domain/identité/Habilitation';
 
 export default interface HabilitationRepository {
-  récupèreHabilitationsPourUtilisateur(utilisateurId: string): Promise<Habilitation>
+  récupèreHabilitationsPourUtilisateur(email: string): Promise<Habilitation>
+  supprimeHabilitationsPourUtilisateur(email: string): Promise<void>
 }

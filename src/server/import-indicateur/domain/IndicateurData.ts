@@ -1,4 +1,4 @@
-import { v4 as uuid } from 'uuid';
+import { randomUUID } from 'node:crypto';
 
 export class IndicateurData {
   private constructor({
@@ -70,7 +70,7 @@ export class IndicateurData {
     metricValue: string,
   }) {
     return new IndicateurData({
-      id: id || uuid(),
+      id: id || randomUUID(),
       indicId,
       zoneId,
       metricDate,

@@ -1,5 +1,6 @@
-import { v4 as uuidv4 } from 'uuid';
 import { PrismaClient } from '@prisma/client';
+import { faker } from '@faker-js/faker/locale/fr';
+import { randomUUID } from 'node:crypto';
 import {
   SCOPE_LECTURE,
   SCOPE_SAISIE_INDICATEURS,
@@ -7,12 +8,18 @@ import {
 } from '@/server/domain/identité/Habilitation';
 import {
   CABINET_MINISTERIEL,
-  CABINET_MTFP, DIR_ADMIN_CENTRALE, DIR_PROJET,
+  CABINET_MTFP,
+  DIR_ADMIN_CENTRALE,
+  DIR_PROJET,
   DITP_ADMIN,
-  DITP_PILOTAGE, EQUIPE_DIR_PROJET,
+  DITP_PILOTAGE,
+  EQUIPE_DIR_PROJET,
   PM_ET_CABINET,
-  PR, SECRETARIAT_GENERAL,
+  PR,
+  SANS_HABILITATIONS,
+  SECRETARIAT_GENERAL,
 } from '@/server/domain/identité/Profil';
+import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 
 export type InputScopesHabilitations = {
   code: string,
@@ -26,11 +33,15 @@ export type InputProfil = {
   habilitationScopeCodes: string[],
 };
 
-export type InputUtilisateur = {
-  email: string,
-  profilCode: string,
-  chantierIds: string[],
-};
+export function générerUtilisateurPourImport({ email, nom, prénom, profilCode, chantierIds }: Partial<UtilisateurPourImport> = {}) {
+  return new UtilisateurPourImport(
+    email || faker.internet.exampleEmail(),
+    nom || faker.name.lastName(),
+    prénom || faker.name.firstName(),
+    profilCode || DIR_PROJET,
+    chantierIds || [],
+  );
+}
 
 type withId = { id: string };
 
@@ -42,6 +53,7 @@ export const INPUT_SCOPES_HABILITATIONS: InputScopesHabilitations[] = [
 
 const tousScopes = [SCOPE_LECTURE, SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES, SCOPE_SAISIE_INDICATEURS];
 export const INPUT_PROFILS: InputProfil[] = [
+  { code: SANS_HABILITATIONS, nom: 'Sans Habilitations', aAccesTousChantiers: false, habilitationScopeCodes: [] },
   { code: DITP_ADMIN, nom: 'DITP - Admin', aAccesTousChantiers: true, habilitationScopeCodes: tousScopes },
   { code: DITP_PILOTAGE, nom: 'DITP - Pilotage', aAccesTousChantiers: true, habilitationScopeCodes: [SCOPE_LECTURE] },
   { code: PM_ET_CABINET, nom: 'Première Ministre et cabinet', aAccesTousChantiers: true, habilitationScopeCodes: [SCOPE_LECTURE] },
@@ -56,6 +68,7 @@ export const INPUT_PROFILS: InputProfil[] = [
 
 export type ProfilIdByCode = Record<string, string>;
 
+// TODO: à déplacer dans HabilitationRepository ou créer un ProfilRepository
 export async function créerProfilsEtHabilitations(
   prisma: PrismaClient,
   inputProfils: InputProfil[],
@@ -63,13 +76,13 @@ export async function créerProfilsEtHabilitations(
 ): Promise<ProfilIdByCode> {
   const donnéesScopeHabilitations: Record<string, InputScopesHabilitations & withId> = {};
   for (const input of inputScopesHabilitations) {
-    donnéesScopeHabilitations[input.code] = { id: uuidv4(), ...input };
+    donnéesScopeHabilitations[input.code] = { id: randomUUID(), ...input };
   }
   await prisma.habilitation_scope.createMany({ data: Object.values(donnéesScopeHabilitations) });
 
   const donnéesProfils: Record<string, InputProfil & withId> = {};
   for (const input of inputProfils) {
-    donnéesProfils[input.code] = { id: uuidv4(), ...input };
+    donnéesProfils[input.code] = { id: randomUUID(), ...input };
   }
   await prisma.profil.createMany({
     data: Object.values(donnéesProfils)
@@ -90,25 +103,4 @@ export async function créerProfilsEtHabilitations(
     result[code] = id;
   }
   return result;
-}
-
-export async function créerUtilisateurs(
-  prisma: PrismaClient,
-  inputUtilisateurs: InputUtilisateur[],
-  profilIdByCode: Record<string, string>,
-) {
-  const donnéesUtilisateurs: (InputUtilisateur & withId)[] = [];
-  for (const input of inputUtilisateurs) {
-    donnéesUtilisateurs.push({ id: uuidv4(), ...input });
-  }
-  await prisma.utilisateur.createMany({ data: donnéesUtilisateurs
-    .map(it => ({ id: it.id, email: it.email, profil_id: profilIdByCode[it.profilCode] })) });
-
-  const utilisateurChantiers = [];
-  for (const { id: utilisateur_id, chantierIds } of donnéesUtilisateurs) {
-    for (const chantier_id of chantierIds) {
-      utilisateurChantiers.push({ utilisateur_id, chantier_id });
-    }
-  }
-  await prisma.utilisateur_chantier.createMany({ data: utilisateurChantiers });
 }

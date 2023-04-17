@@ -34,9 +34,9 @@ module.exports = async () => {
       },
       {
         ...nextJSGlobalConf,
-        displayName: 'Node - server unit tests',
+        displayName: 'Node - server & scripts unit tests',
         testEnvironment: 'node',
-        roots: ['<rootDir>/src/server'],
+        roots: ['<rootDir>/src/server', '<rootDir>/scripts'],
         testMatch: ['**/*.unit.test.*'],
       },
       {

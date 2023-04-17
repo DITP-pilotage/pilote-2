@@ -9,11 +9,9 @@ import {
 } from '@/server/domain/identité/Habilitation';
 import {
   créerProfilsEtHabilitations,
-  créerUtilisateurs,
+  générerUtilisateurPourImport,
   INPUT_PROFILS,
   INPUT_SCOPES_HABILITATIONS,
-  InputUtilisateur,
-  ProfilIdByCode,
 } from '@/server/infrastructure/accès_données/identité/seed';
 import {
   CABINET_MINISTERIEL,
@@ -25,27 +23,30 @@ import {
   EQUIPE_DIR_PROJET,
   PM_ET_CABINET,
   PR,
+  SANS_HABILITATIONS,
   SECRETARIAT_GENERAL,
 } from '@/server/domain/identité/Profil';
 import ChantierRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
+import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
+import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 
 describe('HabilitationSQLRepository', () => {
-  let profilIdByCode: ProfilIdByCode;
   const tousScopes = [SCOPE_LECTURE, SCOPE_SAISIE_SYNTHESE_ET_COMMENTAIRES, SCOPE_SAISIE_INDICATEURS];
 
   beforeEach(async () => {
-    profilIdByCode = await créerProfilsEtHabilitations(prisma, INPUT_PROFILS, INPUT_SCOPES_HABILITATIONS);
+    await créerProfilsEtHabilitations(prisma, INPUT_PROFILS, INPUT_SCOPES_HABILITATIONS);
 
     const chantierRows = ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005']
       .map(id => new ChantierRowBuilder().avecId(id).build());
     await prisma.chantier.createMany({ data: chantierRows });
 
-    const inputUtilisateurs: InputUtilisateur[] = [
-      { email: 'ditp.admin@example.com', profilCode: DITP_ADMIN, chantierIds: [] },
-      { email: 'ditp.pilotage@example.com', profilCode: DITP_PILOTAGE, chantierIds: [] },
-      { email: 'premiere.ministre@example.com', profilCode: PM_ET_CABINET, chantierIds: [] },
-      { email: 'presidence@example.com', profilCode: PR, chantierIds: [] },
-      { email: 'cabinet.mtfp@example.com', profilCode: CABINET_MTFP, chantierIds: [] },
+    const inputUtilisateurs: UtilisateurPourImport[] = [
+      { email: 'sans.habilitations@example.com', profilCode: SANS_HABILITATIONS },
+      { email: 'ditp.admin@example.com', profilCode: DITP_ADMIN },
+      { email: 'ditp.pilotage@example.com', profilCode: DITP_PILOTAGE },
+      { email: 'premiere.ministre@example.com', profilCode: PM_ET_CABINET },
+      { email: 'presidence@example.com', profilCode: PR },
+      { email: 'cabinet.mtfp@example.com', profilCode: CABINET_MTFP },
       { email: 'cabinet.ministeriel@example.com', profilCode: CABINET_MINISTERIEL, chantierIds: ['CH-001'] },
       { email: 'direction.admin.centrale@example.com', profilCode: DIR_ADMIN_CENTRALE, chantierIds: ['CH-002'] },
       { email: 'secretariat.general@example.com', profilCode: SECRETARIAT_GENERAL, chantierIds: ['CH-003'] },
@@ -53,9 +54,9 @@ describe('HabilitationSQLRepository', () => {
       { email: 'equipe.dir.projet1@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds: ['CH-001'] },
       { email: 'directeur.projet2@example.com', profilCode: DIR_PROJET, chantierIds: ['CH-001', 'CH-002'] },
       { email: 'equipe.dir.projet2@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds: ['CH-001', 'CH-002'] },
-    ];
+    ].map(générerUtilisateurPourImport);
 
-    await créerUtilisateurs(prisma, inputUtilisateurs, profilIdByCode);
+    await new UtilisateurSQLRepository(prisma).créerOuRemplacerUtilisateurs(inputUtilisateurs);
   });
 
   describe('un admin DITP', () => {
@@ -205,5 +206,37 @@ describe('HabilitationSQLRepository', () => {
         chantiers: {},
       });
     });
+  });
+
+  describe('Suppression des habilitations', () => {
+    it('pour un utilisateur qui voit tous les chantiers', async () => {
+      // GIVEN
+      const email = 'ditp.admin@example.com';
+      const repository: HabilitationRepository = new HabilitationSQLRepository(prisma);
+
+      // WHEN
+      await repository.supprimeHabilitationsPourUtilisateur(email);
+
+      // THEN
+      const habilitations = await repository.récupèreHabilitationsPourUtilisateur(email);
+      expect(habilitations).toStrictEqual({ chantiers: {} });
+    });
+  });
+
+  it('pour un utilisateur qui voit une liste de chantiers', async () => {
+    // GIVEN
+    const email = 'equipe.dir.projet2@example.com';
+    const repository = new HabilitationSQLRepository(prisma);
+
+    // WHEN
+    await repository.supprimeHabilitationsPourUtilisateur(email);
+
+    // THEN
+    const habilitations = await repository.récupèreHabilitationsPourUtilisateur(email);
+    expect(habilitations).toStrictEqual({ chantiers: {} });
+    const associationsChantiers = await repository.récupèreAssociationsAvecChantier(email);
+    expect(associationsChantiers).toStrictEqual([]);
+    const associationsChantiersAutreUtilisateur = await repository.récupèreAssociationsAvecChantier('equipe.dir.projet1@example.com');
+    expect(associationsChantiersAutreUtilisateur).not.toStrictEqual([]);
   });
 });
