@@ -1,3 +1,5 @@
+import { ChantierInformation } from '@/client/components/PageImportIndicateur/ChantierInformation.interface';
+
 export default interface PageImportIndicateurEnTêteProps {
-  nom: string
+  chantierInformation: ChantierInformation
 }
