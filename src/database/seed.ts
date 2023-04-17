@@ -43,6 +43,25 @@ import {
 import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
 import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 
+const chantierStatiqueId123 = new ChantierSQLRowBuilder()
+  .avecAxe('axe chantier')
+  .avecCodeInsee('FR')
+  .avecDirecteursAdminCentrale(['Alain Térieur', 'Alex Térieur'])
+  .avecDirectionsAdminCentrale(['Intérieur', 'Extérieur'])
+  .avecDirecteursProjet(['John Doe'])
+  .avecDirecteursProjetMails(['john-doe@test.fr'])
+  .avecEstBaromètre(null)
+  .avecEstTerritorialisé(null)
+  .avecId('CH-123')
+  .avecMaille('NAT')
+  .avecMétéo('SOLEIL')
+  .avecNom('CH-123 Chantier test')
+  .avecPpg('ppg chantier')
+  .avecPérimètreIds([])
+  .avecTauxAvancement(66)
+  .avecMinistères(['Agriculture et Alimentation'])
+  .avecTerritoireNom(null);
+
 const prisma = new PrismaClient();
 
 class DatabaseSeeder {
@@ -94,6 +113,9 @@ class DatabaseSeeder {
   }
 
   private async _créerChantiers() {
+
+    const CHANTIERS_STATIQUES = [chantierStatiqueId123];
+
     for (let i = 0; i < 100; i++) {
       const périmètres = faker.helpers.arrayElements(this._périmètresMinistériels, faker.datatype.number({
         min: 0,
@@ -101,11 +123,14 @@ class DatabaseSeeder {
       }));
       const ministères = périmètres.map(périmètreMinistériel => périmètreMinistériel.ministere!);
 
-      const c = new ChantierSQLRowBuilder()
-        .avecAxe(faker.helpers.arrayElement(this._axes).nom)
-        .avecPpg(faker.helpers.arrayElement(this._ppgs).nom)
-        .avecPérimètreIds(périmètres.map(périmètreMinistériel => périmètreMinistériel.id))
-        .avecMinistères(ministères);
+      // On souhaite rendre des chantiers statiques avec des valeurs controllées afin de pouvoir créer des jeux de données de bout en bout maitrisés
+      const c = i <= CHANTIERS_STATIQUES.length - 1
+        ? CHANTIERS_STATIQUES[i]
+        : new ChantierSQLRowBuilder()
+          .avecAxe(faker.helpers.arrayElement(this._axes).nom)
+          .avecPpg(faker.helpers.arrayElement(this._ppgs).nom)
+          .avecPérimètreIds(périmètres.map(périmètreMinistériel => périmètreMinistériel.id))
+          .avecMinistères(ministères);
 
       const chantierNational = c.avecMaille('NAT').build();
 
@@ -123,7 +148,7 @@ class DatabaseSeeder {
         return c.avecTauxAvancement(avancement).avecMétéo(météo).avecMaille('REG').avecCodeInsee(codeInsee).build();
       });
 
-      this._chantiers = [...this._chantiers, chantierNational, ...chantiersDépartementaux, ...chantiersRégionaux];
+      this._chantiers.push(chantierNational, ...chantiersDépartementaux, ...chantiersRégionaux);
     }
 
     await prisma.chantier.createMany({ data: this._chantiers });
