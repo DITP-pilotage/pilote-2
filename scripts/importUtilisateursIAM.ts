@@ -61,6 +61,6 @@ if (isMain) {
     })
     .catch((error) => {
       logger.error(error);
-      throw new Error('Import échoué.');
+      throw new Error('Import échoué.', { cause: error });
     });
 }

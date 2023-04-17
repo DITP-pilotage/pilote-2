@@ -10,12 +10,16 @@ export default class UtilisateurPourImport {
     public readonly profilCode: string,
     public readonly chantierIds: string[],
   ) {
-    assert(email);
-    assert(nom);
-    assert(prénom);
-    assert(profilCode);
-    assert(vérifieCodeProfil(profilCode));
-    assert(chantierIds);
+    this.assertNotBlank(email);
+    this.assertNotBlank(nom);
+    this.assertNotBlank(prénom);
+    assert.ok(vérifieCodeProfil(profilCode), `Code inconnu: ${profilCode}`);
+    assert.ok(chantierIds);
+  }
+
+  private assertNotBlank(field: string): void {
+    assert.ok(field, `email: ${this.email}`);
+    assert.notStrictEqual('', field, `email: ${this.email}`);
   }
 
   pourIAM(): UtilisateurPourIAM {

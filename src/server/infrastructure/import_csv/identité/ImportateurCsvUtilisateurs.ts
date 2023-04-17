@@ -1,7 +1,13 @@
 import { parse } from 'csv-parse/sync';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
-import { DIR_PROJET, DITP_ADMIN, DITP_PILOTAGE, vérifieCodeProfil } from '@/server/domain/identité/Profil';
+import {
+  CABINET_MINISTERIEL,
+  DIR_PROJET,
+  DITP_ADMIN,
+  DITP_PILOTAGE,
+  vérifieCodeProfil,
+} from '@/server/domain/identité/Profil';
 import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 import ImporterUtilisateursUseCase from '@/server/usecase/identité/ImporterUtilisateursUseCase';
 
@@ -25,6 +31,7 @@ const CODES_PROFILS: Record<string, string> = {
   ['DITP - Admin']: DITP_ADMIN,
   ['DITP - Pilotage']: DITP_PILOTAGE,
   ['Directeur de projet']: DIR_PROJET,
+  ['Cabinets ministériels et direction d\'administration centrale']: CABINET_MINISTERIEL,
 };
 
 export type CsvRecord = Record<string, string>;
