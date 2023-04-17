@@ -8,7 +8,6 @@ const PageChantierStyled = styled.div`
     background: var(--background-alt-blue-france);
   }
 
-  h1,
   h2 {
     color: var(--text-title-blue-france);
   }
