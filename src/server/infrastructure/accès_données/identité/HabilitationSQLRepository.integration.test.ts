@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import HabilitationSQLRepository from '@/server/infrastructure/accès_données/identité/HabilitationSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import HabilitationRepository from '@/server/domain/identité/HabilitationRepository';

@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';

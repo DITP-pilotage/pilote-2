@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 import '@testing-library/jest-dom';
 import { getAllByRole, queryByLabelText, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
