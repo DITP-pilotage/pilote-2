@@ -50,7 +50,9 @@ models:
           - 'metric_type'
           - 'import_date'
       pivot_faits_indicateur:
-        +materialized: table
+        +materialized: view
+      pivot_faits_indicateur_avec_taux_avancement:
+        +materialized: view
       pivot_faits_indicateur_par_date:
         +materialized: view
     intermediate:
