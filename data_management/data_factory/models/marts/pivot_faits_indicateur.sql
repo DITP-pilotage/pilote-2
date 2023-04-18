@@ -58,7 +58,9 @@ premiere_mesure_valeur_actuelle_par_indicateur_et_zone AS (
 SELECT
     faits_indicateur_order_by_date.indicateur_id,
     faits_indicateur_order_by_date.zone_id,
+    MAX(faits_indicateur_order_by_date.zone_type) as zone_type,
     faits_indicateur_order_by_date.zone_id_parent,
+    MAX(faits_indicateur_order_by_date.zone_type_parent) as zone_type_parent,
     COALESCE(MAX(valeur) FILTER (WHERE type_mesure = 'vi'), MAX(premiere_mesure_valeur_actuelle)) AS valeur_initiale,
     MAX(valeur) FILTER (WHERE type_mesure = 'va') AS valeur_actuelle,
     MAX(valeur) FILTER (WHERE type_mesure = 'vc') AS valeur_cible, -- dernière valeur cible dispo

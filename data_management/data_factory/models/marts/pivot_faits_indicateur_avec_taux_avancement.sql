@@ -8,7 +8,11 @@ WITH pivot_fait_indicateur_renommage AS (
 pivot_fait_indicateur_avec_avancement AS (
     SELECT
         *,
-        (valeur_actuelle_comparable - valeur_initiale) / (valeur_cible - valeur_initiale) * 100 AS avancement_global
+        CASE
+            WHEN valeur_cible <> valeur_initiale
+                THEN (valeur_actuelle_comparable - valeur_initiale) / (valeur_cible - valeur_initiale) * 100
+            ELSE NULL
+            END AS avancement_global
     FROM pivot_fait_indicateur_renommage
 )
 
