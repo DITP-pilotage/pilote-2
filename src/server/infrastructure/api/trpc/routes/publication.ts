@@ -15,7 +15,7 @@ import {
 } from 'validation/publication';
 import RécupérerCommentaireLePlusRécentUseCase from '@/server/usecase/commentaire/RécupérerCommentaireLePlusRécentUseCase';
 import RécupérerHistoriqueCommentaireUseCase from '@/server/usecase/commentaire/RécupérerHistoriqueCommentaireUseCase';
-import { typesCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
 import { RouterInputs, RouterOutputs } from '@/server/infrastructure/api/trpc/trpc.interface';
 import CréerUnObjectifUseCase from '@/server/usecase/objectif/CréerUnObjectifUseCase';
 import RécupérerObjectifLePlusRécentUseCase from '@/server/usecase/objectif/RécupérerObjectifLePlusRécentUseCase';
@@ -74,8 +74,9 @@ export const publicationRouter = créerRouteurTRPC({
       
       if (input.entité === 'commentaires') {
         const récupérerCommentaireLePlusRécentUseCase = new RécupérerCommentaireLePlusRécentUseCase(dependencies.getCommentaireRepository());
+        const types = input.maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale;
 
-        for (const type of typesCommentaire) {
+        for (const type of types) {
           const commentaire = await récupérerCommentaireLePlusRécentUseCase.run(input.chantierId, input.maille, input.codeInsee, type);
           publications.push({
             type,
@@ -87,7 +88,6 @@ export const publicationRouter = créerRouteurTRPC({
 
       if (input.entité === 'objectifs') {
         const récupérerObjectifLePlusRécentUseCase = new RécupérerObjectifLePlusRécentUseCase(dependencies.getObjectifRepository());
-
         for (const type of typesObjectif) {
           const objectif = await récupérerObjectifLePlusRécentUseCase.run(input.chantierId, type);
           publications.push({

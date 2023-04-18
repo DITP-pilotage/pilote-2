@@ -10,6 +10,6 @@ export default class RécupérerHistoriqueCommentaireUseCase {
   ) {}
 
   async run(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<Commentaire[]> {
-    return this.commentaireRepository.récupérerHistoriqueDUnCommentaire(chantierId, maille, codeInsee, type);
+    return this.commentaireRepository.récupérerHistorique(chantierId, maille, codeInsee, type);
   }
 }

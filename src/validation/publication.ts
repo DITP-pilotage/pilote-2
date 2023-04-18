@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { typesCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
 import { mailles } from '@/server/domain/maille/Maille.interface';
 import { typesObjectif } from '@/server/domain/objectif/Objectif.interface';
 
@@ -15,10 +15,16 @@ export const validationPublicationContexte = z.object({
   codeInsee: z.string(),
 });
 
-export const zodValidateurEntitéType = z.discriminatedUnion('entité', [
+export const zodValidateurEntitéType = z.union([
   z.object({
     entité: z.literal('commentaires'),
-    type: z.enum(typesCommentaire), 
+    maille: z.literal('nationale'),
+    type: z.enum(typesCommentaireMailleNationale), 
+  }),
+  z.object({
+    entité: z.literal('commentaires'),
+    maille: z.enum(['régionale', 'départementale']),
+    type: z.enum(typesCommentaireMailleRégionaleOuDépartementale), 
   }),
   z.object({
     entité: z.literal('objectifs'),
@@ -26,7 +32,7 @@ export const zodValidateurEntitéType = z.discriminatedUnion('entité', [
   }),
   z.object({
     entité: z.literal('décisions stratégiques'),
-    type: z.enum(['suivi_des_decisions']), 
+    type: z.literal('suivi_des_decisions'), 
   }),
 ]);
 

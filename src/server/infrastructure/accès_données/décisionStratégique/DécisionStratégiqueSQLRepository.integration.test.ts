@@ -49,7 +49,7 @@ describe('DécisionStratégiqueSQLRepository', () => {
       await prisma.decision_strategique.createMany({ data: décisionsStratégiques });
 
       // WHEN 
-      const résultat = await décisionStratégiqueRepository.récupérerLHistorique(chantierId);
+      const résultat = await décisionStratégiqueRepository.récupérerHistorique(chantierId);
 
       // THEN
       expect(résultat[0]?.date).toStrictEqual((décisionStratégiqueLaPlusRécente.date as Date).toISOString());

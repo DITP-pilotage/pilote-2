@@ -8,6 +8,6 @@ export default class RécupérerHistoriqueDécisionStratégiqueUseCase {
   ) {}
 
   async run(chantierId: string): Promise<DécisionStratégique[]> {
-    return this.décisionStratégiqueRepository.récupérerLHistorique(chantierId);
+    return this.décisionStratégiqueRepository.récupérerHistorique(chantierId);
   }
 }

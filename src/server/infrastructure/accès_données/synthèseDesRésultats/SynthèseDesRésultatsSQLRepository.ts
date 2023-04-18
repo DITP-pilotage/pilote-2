@@ -42,7 +42,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     };
   }
   
-  async récupérerLaPlusRécenteParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<SynthèseDesRésultats> {
+  async récupérerLaPlusRécente(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<SynthèseDesRésultats> {
     const synthèseDesRésultats = await this.prisma.synthese_des_resultats.findFirst({
       where: {
         chantier_id: chantierId,

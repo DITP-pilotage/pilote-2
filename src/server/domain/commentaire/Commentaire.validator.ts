@@ -1,1 +1,0 @@
-export const LIMITE_CARACTÈRES_COMMENTAIRE = 5000;

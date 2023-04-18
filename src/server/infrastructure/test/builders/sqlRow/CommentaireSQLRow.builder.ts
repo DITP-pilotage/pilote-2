@@ -28,7 +28,7 @@ export default class CommentaireRowBuilder {
 
     this._id = faker.datatype.uuid();
     this._chantierId = chantierGénéré.id;
-    this._type = faker.helpers.arrayElement(['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus', 'objectifs']);
+    this._type = faker.helpers.arrayElement(['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus', 'commentaires_sur_les_donnees']);
     this._contenu = faker.lorem.paragraph();
     this._date = faker.date.recent(10, '2023-02-01T00:00:00.000Z');
     this._auteur = faker.name.fullName();

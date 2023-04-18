@@ -30,7 +30,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
     return décisionStratégiqueLaPlusRécente ? this.mapperVersDomaine(décisionStratégiqueLaPlusRécente) : null;
   }
 
-  async récupérerLHistorique(chantierId: string): Promise<DécisionStratégique[]> {
+  async récupérerHistorique(chantierId: string): Promise<DécisionStratégique[]> {
     const décisionsStratégiques: DécisionStratégiquePrisma[] = await this.prisma.decision_strategique.findMany({
       where: {
         chantier_id: chantierId,

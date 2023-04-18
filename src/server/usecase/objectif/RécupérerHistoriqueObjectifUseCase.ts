@@ -8,6 +8,6 @@ export default class RécupérerHistoriqueObjectifUseCase {
   ) {}
 
   async run(chantierId: string, type: TypeObjectif): Promise<Objectif[]> {
-    return this.objectifRepository.récupérerHistoriqueDUnObjectif(chantierId, type);
+    return this.objectifRepository.récupérerHistorique(chantierId, type);
   }
 }
