@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { typeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { typesCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import { mailles } from '@/server/domain/maille/Maille.interface';
 import { typesObjectif } from '@/server/domain/objectif/Objectif.interface';
 
@@ -18,7 +18,7 @@ export const validationPublicationContexte = z.object({
 export const zodValidateurEntitéType = z.discriminatedUnion('entité', [
   z.object({
     entité: z.literal('commentaires'),
-    type: z.enum(typeCommentaire), 
+    type: z.enum(typesCommentaire), 
   }),
   z.object({
     entité: z.literal('objectifs'),

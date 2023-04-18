@@ -11,9 +11,9 @@ import CommentaireSQLRowBuilder from '@/server/infrastructure/test/builders/sqlR
 
 describe('CommentaireSQLRepository', () => {
   const commentairesNull: Commentaires = {
-    actionsÀValoriser: null,
-    actionsÀVenir: null,
-    freinsÀLever: null,
+    exemplesConcretsDeRéussite: null,
+    solutionsEtActionsÀVenir: null,
+    risquesEtFreinsÀLever: null,
     autresRésultatsObtenus: null,
   };
   
@@ -43,7 +43,7 @@ describe('CommentaireSQLRepository', () => {
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
-          .avecType(CODES_TYPES_COMMENTAIRES['freinsÀLever'])
+          .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
           .avecContenu('Mon commentaire frein 2022')
           .avecDate(new Date('2022-12-31'))
           .avecAuteur('Jean Bon')
@@ -54,7 +54,7 @@ describe('CommentaireSQLRepository', () => {
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
-          .avecType(CODES_TYPES_COMMENTAIRES['freinsÀLever'])
+          .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
           .avecContenu('Mon commentaire frein 2023')
           .avecDate(new Date('2023-12-31'))
           .avecAuteur('Jean Bon')
@@ -65,7 +65,7 @@ describe('CommentaireSQLRepository', () => {
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
-          .avecType(CODES_TYPES_COMMENTAIRES['actionsÀVenir'])
+          .avecType(CODES_TYPES_COMMENTAIRES['solutionsEtActionsÀVenir'])
           .avecContenu('Mon commentaire action')
           .avecDate(new Date('2023-12-30'))
           .avecAuteur('Jean Nemar')
@@ -113,21 +113,21 @@ describe('CommentaireSQLRepository', () => {
 
       // THEN
       expect(result).toStrictEqual({
-        freinsÀLever: {
+        risquesEtFreinsÀLever: {
           id: '1',
-          type: 'freinsÀLever',
+          type: 'risquesEtFreinsÀLever',
           contenu: 'Mon commentaire frein 2023',
           date: '2023-12-31T00:00:00.000Z',
           auteur: 'Jean Bon',
         },
-        actionsÀVenir: {
+        solutionsEtActionsÀVenir: {
           id: '12',
-          type: 'actionsÀVenir',
+          type: 'solutionsEtActionsÀVenir',
           contenu: 'Mon commentaire action',
           date: '2023-12-30T00:00:00.000Z',
           auteur: 'Jean Nemar',
         },
-        actionsÀValoriser: null,
+        exemplesConcretsDeRéussite: null,
         autresRésultatsObtenus: {
           id: '1234',
           type: 'autresRésultatsObtenus',
@@ -145,7 +145,7 @@ describe('CommentaireSQLRepository', () => {
       const chantierId = 'CH-001';
       const maille: Maille = 'nationale';
       const codeInsee = 'FR';
-      const typeCommentaire: TypeCommentaire = 'freinsÀLever';
+      const typeCommentaire: TypeCommentaire = 'risquesEtFreinsÀLever';
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
 
       const commentaires: Prisma.commentaireCreateArgs['data'][]  = [
@@ -154,7 +154,7 @@ describe('CommentaireSQLRepository', () => {
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
-          .avecType(CODES_TYPES_COMMENTAIRES['freinsÀLever'])
+          .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
           .avecContenu('Mon commentaire frein FR 2022')
           .avecDate(new Date('2022-12-31'))
           .avecAuteur('Jean Bon')
@@ -165,7 +165,7 @@ describe('CommentaireSQLRepository', () => {
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
-          .avecType(CODES_TYPES_COMMENTAIRES['freinsÀLever'])
+          .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
           .avecContenu('Mon commentaire frein FR 2023')
           .avecDate(new Date('2023-12-31'))
           .avecAuteur('Jean Bon')
@@ -176,7 +176,7 @@ describe('CommentaireSQLRepository', () => {
           .avecChantierId(chantierId)
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
-          .avecType(CODES_TYPES_COMMENTAIRES['actionsÀVenir'])
+          .avecType(CODES_TYPES_COMMENTAIRES['solutionsEtActionsÀVenir'])
           .avecContenu('Mon commentaire action')
           .avecDate(new Date('2023-12-30'))
           .avecAuteur('Jean Nemar')
@@ -187,7 +187,7 @@ describe('CommentaireSQLRepository', () => {
           .avecChantierId(chantierId)
           .avecMaille('départementale')
           .avecCodeInsee('01')
-          .avecType(CODES_TYPES_COMMENTAIRES['freinsÀLever'])
+          .avecType(CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'])
           .avecContenu('Mon commentaire frein département 2023')
           .avecDate(new Date('2023-12-31'))
           .avecAuteur('Jean Bon')
@@ -203,14 +203,14 @@ describe('CommentaireSQLRepository', () => {
       expect(result).toStrictEqual([
         {
           id: '1235',
-          type: 'freinsÀLever',
+          type: 'risquesEtFreinsÀLever',
           auteur: 'Jean Bon',
           contenu: 'Mon commentaire frein FR 2023',
           date: '2023-12-31T00:00:00.000Z',
         }, 
         {
           id: '12345',
-          type: 'freinsÀLever',
+          type: 'risquesEtFreinsÀLever',
           auteur: 'Jean Bon',
           contenu: 'Mon commentaire frein FR 2022',
           date: '2022-12-31T00:00:00.000Z',
@@ -229,7 +229,7 @@ describe('CommentaireSQLRepository', () => {
       const contenu = 'Quatrième commentaire';
       const date = new Date('2023-12-31T00:00:00.000Z');
       const auteur = 'Jean DUPONT';
-      const type = 'freinsÀLever';
+      const type = 'risquesEtFreinsÀLever';
 
       const commentaireRepository = new CommentaireSQLRepository(prisma);
 
@@ -250,7 +250,7 @@ describe('CommentaireSQLRepository', () => {
       const contenu = 'Quatrième commentaire';
       const date = '2023-12-31T00:00:00.000Z';
       const auteur = 'Jean DUPONT';
-      const type = 'freinsÀLever';
+      const type = 'risquesEtFreinsÀLever';
 
       const commentaireRepository = new CommentaireSQLRepository(prisma);
 

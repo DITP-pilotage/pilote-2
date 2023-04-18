@@ -2,18 +2,18 @@ import { faker } from '@faker-js/faker/locale/fr';
 import { Commentaires, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 
 export default class CommentaireBuilder {
-  private _freinsÀLever: Commentaires['freinsÀLever'];
+  private _risquesEtFreinsÀLever: Commentaires['risquesEtFreinsÀLever'];
 
-  private _actionsÀVenir: Commentaires['actionsÀVenir'];
+  private _solutionsEtActionsÀVenir: Commentaires['solutionsEtActionsÀVenir'];
 
-  private _actionsÀValoriser: Commentaires['actionsÀValoriser'];
+  private _exemplesConcretsDeRéussite: Commentaires['exemplesConcretsDeRéussite'];
 
   private _autresRésultatsObtenus: Commentaires['autresRésultatsObtenus'];
 
   constructor() {
-    this._freinsÀLever = faker.helpers.arrayElement([null, this._générerUnCommentaire('freinsÀLever')]);
-    this._actionsÀVenir = faker.helpers.arrayElement([null, this._générerUnCommentaire('actionsÀVenir')]);
-    this._actionsÀValoriser = faker.helpers.arrayElement([null, this._générerUnCommentaire('actionsÀValoriser')]);
+    this._risquesEtFreinsÀLever = faker.helpers.arrayElement([null, this._générerUnCommentaire('risquesEtFreinsÀLever')]);
+    this._solutionsEtActionsÀVenir = faker.helpers.arrayElement([null, this._générerUnCommentaire('solutionsEtActionsÀVenir')]);
+    this._exemplesConcretsDeRéussite = faker.helpers.arrayElement([null, this._générerUnCommentaire('exemplesConcretsDeRéussite')]);
     this._autresRésultatsObtenus = faker.helpers.arrayElement([null, this._générerUnCommentaire('autresRésultatsObtenus')]);
   }
 
@@ -27,18 +27,18 @@ export default class CommentaireBuilder {
     };
   }
 
-  avecFreinsÀLever(freinsÀLever: Commentaires['freinsÀLever']): CommentaireBuilder {
-    this._freinsÀLever = freinsÀLever;
+  avecRisquesEtFreinsÀLever(risquesEtFreinsÀLever: Commentaires['risquesEtFreinsÀLever']): CommentaireBuilder {
+    this._risquesEtFreinsÀLever = risquesEtFreinsÀLever;
     return this;
   }
 
-  avecActionsÀVenir(actionsÀVenir: Commentaires['actionsÀVenir']): CommentaireBuilder {
-    this._actionsÀVenir = actionsÀVenir;
+  avecSolutionsEtActionsÀVenir(solutionsEtActionsÀVenir: Commentaires['solutionsEtActionsÀVenir']): CommentaireBuilder {
+    this._solutionsEtActionsÀVenir = solutionsEtActionsÀVenir;
     return this;
   }
 
-  avecActionsÀValoriser(actionsÀValoriser: Commentaires['actionsÀValoriser']): CommentaireBuilder {
-    this._actionsÀValoriser = actionsÀValoriser;
+  avecExemplesConcretsDeRéussite(exemplesConcretsDeRéussite: Commentaires['exemplesConcretsDeRéussite']): CommentaireBuilder {
+    this._exemplesConcretsDeRéussite = exemplesConcretsDeRéussite;
     return this;
   }
 
@@ -49,9 +49,9 @@ export default class CommentaireBuilder {
 
   build(): Commentaires {
     return {
-      freinsÀLever: this._freinsÀLever,
-      actionsÀVenir: this._actionsÀVenir,
-      actionsÀValoriser: this._actionsÀValoriser,
+      risquesEtFreinsÀLever: this._risquesEtFreinsÀLever,
+      solutionsEtActionsÀVenir: this._solutionsEtActionsÀVenir,
+      exemplesConcretsDeRéussite: this._exemplesConcretsDeRéussite,
       autresRésultatsObtenus: this._autresRésultatsObtenus,
     };
   }

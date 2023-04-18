@@ -10,17 +10,17 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 
 export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaire> = {
-  freins_a_lever: 'freinsÀLever',
-  actions_a_venir: 'actionsÀVenir',
-  actions_a_valoriser: 'actionsÀValoriser',
   autres_resultats_obtenus: 'autresRésultatsObtenus',
+  freins_a_lever: 'risquesEtFreinsÀLever',
+  actions_a_venir: 'solutionsEtActionsÀVenir',
+  actions_a_valoriser: 'exemplesConcretsDeRéussite',
 };
 
 export const CODES_TYPES_COMMENTAIRES: Record<TypeCommentaire, string> = {
-  freinsÀLever: 'freins_a_lever',
-  actionsÀVenir: 'actions_a_venir',
-  actionsÀValoriser: 'actions_a_valoriser',
   autresRésultatsObtenus: 'autres_resultats_obtenus',
+  risquesEtFreinsÀLever: 'freins_a_lever',
+  solutionsEtActionsÀVenir: 'actions_a_venir',
+  exemplesConcretsDeRéussite: 'actions_a_valoriser',
 };
 
 export default class CommentaireSQLRepository implements CommentaireRepository {
@@ -54,16 +54,16 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
         chantier_id: chantierId,
         maille: CODES_MAILLES[maille],
         code_insee: codeInsee,
-        type: { in: ['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus'] },
+        type: { in: ['autres_resultats_obtenus', 'freins_a_lever', 'actions_a_venir', 'actions_a_valoriser'] },
       },
       orderBy: { date: 'desc' },
     });
 
     return {
-      freinsÀLever: this.récupérerPremierCommentairePourUnTypeDonné(commentaires, 'freins_a_lever'),
-      actionsÀVenir: this.récupérerPremierCommentairePourUnTypeDonné(commentaires, 'actions_a_venir'),
-      actionsÀValoriser: this.récupérerPremierCommentairePourUnTypeDonné(commentaires, 'actions_a_valoriser'),
       autresRésultatsObtenus: this.récupérerPremierCommentairePourUnTypeDonné(commentaires, 'autres_resultats_obtenus'),
+      risquesEtFreinsÀLever: this.récupérerPremierCommentairePourUnTypeDonné(commentaires, 'freins_a_lever'),
+      solutionsEtActionsÀVenir: this.récupérerPremierCommentairePourUnTypeDonné(commentaires, 'actions_a_venir'),
+      exemplesConcretsDeRéussite: this.récupérerPremierCommentairePourUnTypeDonné(commentaires, 'actions_a_valoriser'),
     };
   }
 

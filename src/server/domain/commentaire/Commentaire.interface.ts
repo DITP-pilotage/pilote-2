@@ -7,7 +7,8 @@ export type Commentaire = {
 } | null;
 
 //TODO renommer typesCommentaire
-export const typeCommentaire = ['freinsÀLever', 'actionsÀVenir', 'actionsÀValoriser', 'autresRésultatsObtenus'] as const;
-export type TypeCommentaire = typeof typeCommentaire[number];
+export const typesCommentaire = ['autresRésultatsObtenus', 'risquesEtFreinsÀLever', 'solutionsEtActionsÀVenir', 'exemplesConcretsDeRéussite'] as const;
+
+export type TypeCommentaire = typeof typesCommentaire[number];
 
 export type Commentaires = Record<TypeCommentaire, Commentaire>;

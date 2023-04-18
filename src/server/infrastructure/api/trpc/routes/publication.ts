@@ -15,7 +15,7 @@ import {
 } from 'validation/publication';
 import RécupérerCommentaireLePlusRécentUseCase from '@/server/usecase/commentaire/RécupérerCommentaireLePlusRécentUseCase';
 import RécupérerHistoriqueCommentaireUseCase from '@/server/usecase/commentaire/RécupérerHistoriqueCommentaireUseCase';
-import { typeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { typesCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import { RouterInputs, RouterOutputs } from '@/server/infrastructure/api/trpc/trpc.interface';
 import CréerUnObjectifUseCase from '@/server/usecase/objectif/CréerUnObjectifUseCase';
 import RécupérerObjectifLePlusRécentUseCase from '@/server/usecase/objectif/RécupérerObjectifLePlusRécentUseCase';
@@ -75,7 +75,7 @@ export const publicationRouter = créerRouteurTRPC({
       if (input.entité === 'commentaires') {
         const récupérerCommentaireLePlusRécentUseCase = new RécupérerCommentaireLePlusRécentUseCase(dependencies.getCommentaireRepository());
 
-        for (const type of typeCommentaire) {
+        for (const type of typesCommentaire) {
           const commentaire = await récupérerCommentaireLePlusRécentUseCase.run(input.chantierId, input.maille, input.codeInsee, type);
           publications.push({
             type,

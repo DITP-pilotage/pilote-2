@@ -4,12 +4,12 @@ import Titre from '@/components/_commons/Titre/Titre';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import CommentairesProps from '@/components/PageChantier/Commentaires/Commentaires.interface';
 import Publication from '@/components/_commons/Publication/Publication';
-import typesCommentaire from '@/client/constants/typesCommentaire';
+import libellésTypesCommentaire from '@/client/constants/libellésTypesCommentaire';
 import { TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 
 export default function Commentaires({ commentaires, chantierId, maille, codeInsee, modeÉcriture }: CommentairesProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  
+
   return (
     <section id="commentaires">
       <Titre
@@ -35,7 +35,7 @@ export default function Commentaires({ commentaires, chantierId, maille, codeIns
                   maille={maille}
                   modeÉcriture={modeÉcriture}
                   publicationInitiale={publication}
-                  type={{ id: type, libellé: typesCommentaire[type as TypeCommentaire] }}
+                  type={{ id: type, libellé: libellésTypesCommentaire[type as TypeCommentaire] }}
                 />
               </Fragment>
             ))
