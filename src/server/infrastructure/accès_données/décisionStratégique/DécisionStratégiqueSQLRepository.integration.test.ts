@@ -31,7 +31,7 @@ describe('DécisionStratégiqueSQLRepository', () => {
       await prisma.decision_strategique.createMany({ data: décisionsStratégiques });
 
       // WHEN
-      const résultat = await décisionStratégiqueRepository.récupérerLePlusRécent(chantierId);
+      const résultat = await décisionStratégiqueRepository.récupérerLaPlusRécente(chantierId);
 
       // THEN
       expect(résultat).toStrictEqual({
