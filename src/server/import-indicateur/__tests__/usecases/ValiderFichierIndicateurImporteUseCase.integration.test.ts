@@ -18,6 +18,8 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
   const CHEMIN_COMPLET_DU_FICHIER = 'cheminCompletDuFichier';
   const NOM_DU_FICHIER = 'nomDuFichier';
   const SCHEMA = 'schema';
+  const METRIC_DATE_1 = '30/12/2022';
+  const METRIC_DATE_2 = '12/12/2022';
 
   beforeEach(() => {
     fichierIndicateurValidationService = mock<FichierIndicateurValidationService>();
@@ -34,7 +36,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       .avecEstValide(true)
       .build();
 
-    const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA };
+    const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA, indicateurId: 'IND-001' };
     fichierIndicateurValidationService.validerFichier.calledWith(payload).mockResolvedValue(detailValidationFichier);
 
     // WHEN
@@ -49,15 +51,15 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
     const indicateurData1 = new IndicateurDataBuilder()
       .avecIndicId('IND-001')
       .avecZoneId('D001')
-      .avecMetricDate('30/12/2022')
+      .avecMetricDate(METRIC_DATE_1)
       .avecMetricType('vi')
       .avecMetricValue('72')
 
       .build();
     const indicateurData2 = new IndicateurDataBuilder()
-      .avecIndicId('IND-003')
+      .avecIndicId('IND-001')
       .avecZoneId('D007')
-      .avecMetricDate('12/12/2022')
+      .avecMetricDate(METRIC_DATE_2)
       .avecMetricType('vc')
       .avecMetricValue('14')
       .build();
@@ -65,7 +67,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       .avecEstValide(true)
       .avecListeIndicateurData(indicateurData1, indicateurData2)
       .build();
-    const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA };
+    const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA, indicateurId: 'IND-001' };
 
     fichierIndicateurValidationService.validerFichier.calledWith(payload).mockResolvedValue(detailValidationFichier);
 
@@ -83,31 +85,81 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
     expect(reportFichierData[0].id).toBeDefined();
     expect(reportFichierData[0].indicId).toEqual('IND-001');
     expect(reportFichierData[0].zoneId).toEqual('D001');
-    expect(reportFichierData[0].metricDate).toEqual('30/12/2022');
+    expect(reportFichierData[0].metricDate).toEqual(METRIC_DATE_1);
     expect(reportFichierData[0].metricType).toEqual('vi');
     expect(reportFichierData[0].metricValue).toEqual('72');
 
     expect(reportFichierData[1].id).toBeDefined();
-    expect(reportFichierData[1].indicId).toEqual('IND-003');
+    expect(reportFichierData[1].indicId).toEqual('IND-001');
     expect(reportFichierData[1].zoneId).toEqual('D007');
-    expect(reportFichierData[1].metricDate).toEqual('12/12/2022');
+    expect(reportFichierData[1].metricDate).toEqual(METRIC_DATE_2);
     expect(reportFichierData[1].metricType).toEqual('vc');
     expect(reportFichierData[1].metricValue).toEqual('14');
   });
 
-  it('quand le fichier est invalide, ne doit pas sauvegarder les données du fichier', async () => {
+  describe('quand le fichier est invalide', () => {
+    it('ne doit pas sauvegarder les données du fichier', async () => {
+      // GIVEN
+      const detailValidationFichier = new DetailValidationFichierBuilder()
+        .avecEstValide(false)
+        .build();
+      const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA, indicateurId: 'IND-001' };
+
+      fichierIndicateurValidationService.validerFichier.calledWith(payload).mockResolvedValue(detailValidationFichier);
+
+      // WHEN
+      await validerFichierIndicateurImporteUseCase.execute(payload);
+
+      // THEN
+      expect(mesureIndicateurRepository.sauvegarder).not.toBeCalled();
+    });
+    it('quand au moins un indicateur est invalide, doit inclure les erreurs de validation des données du rapport', () => {
+      // GIVEN
+
+      // WHEN
+      // THEN
+    });
+  });
+
+  it('quand le fichier possède des indic_id différent de celui en paramètre, doit remonter un rapport invalide', async () => {
     // GIVEN
-    const detailValidationFichier = new DetailValidationFichierBuilder()
-      .avecEstValide(false)
+    const indicateurData1 = new IndicateurDataBuilder()
+      .avecIndicId('IND-001')
+      .avecZoneId('D001')
+      .avecMetricDate(METRIC_DATE_1)
+      .avecMetricType('vi')
+      .avecMetricValue('72')
+
       .build();
-    const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA };
+    const indicateurData2 = new IndicateurDataBuilder()
+      .avecIndicId('IND-003')
+      .avecZoneId('D007')
+      .avecMetricDate(METRIC_DATE_2)
+      .avecMetricType('vc')
+      .avecMetricValue('14')
+      .build();
+    const detailValidationFichier = new DetailValidationFichierBuilder()
+      .avecEstValide(true)
+      .avecListeIndicateurData(indicateurData1, indicateurData2)
+      .build();
+    const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA, indicateurId: 'IND-001' };
 
     fichierIndicateurValidationService.validerFichier.calledWith(payload).mockResolvedValue(detailValidationFichier);
 
     // WHEN
-    await validerFichierIndicateurImporteUseCase.execute(payload);
+    const report = await validerFichierIndicateurImporteUseCase.execute(payload);
 
     // THEN
+    expect(report.estValide).toEqual(false);
     expect(mesureIndicateurRepository.sauvegarder).not.toBeCalled();
+
+    expect(report.listeErreursValidation).toHaveLength(1);
+    expect(report.listeErreursValidation[0].cellule).toEqual('IND-003');
+    expect(report.listeErreursValidation[0].message).toEqual("L'indicateur IND-003 ne correpond pas à l'indicateur choisit (IND-001)");
+    expect(report.listeErreursValidation[0].nomDuChamp).toEqual('indic_id');
+    expect(report.listeErreursValidation[0].nom).toEqual('INDICATEUR_ERROR');
+    expect(report.listeErreursValidation[0].positionDeLigne).toEqual(1);
+    expect(report.listeErreursValidation[0].numeroDeLigne).toEqual(2);
+    expect(report.listeErreursValidation[0].positionDuChamp).toEqual(-1);
   });
 });
