@@ -8,7 +8,7 @@ import ObjectifSQLRepository, {
 import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
 import { TypeObjectif } from '@/server/domain/objectif/Objectif.interface';
 
-describe('ObjectifSQLRepository ', function () {
+describe('ObjectifSQLRepository', function () {
   const chantierId = 'CH-001';
   const objectifRepository: ObjectifRepository = new ObjectifSQLRepository(prisma);
 
@@ -68,7 +68,7 @@ describe('ObjectifSQLRepository ', function () {
   });
 
   describe('récupérerHistoriqueDUnObjectif', () => {
-    test('Retourne, par ordre antéchronologique, tous les objectifs pour un chantier', async () => {
+    test('Retourne, par ordre antéchronologique, tous les objectifs pour un type et un chantier', async () => {
       // GIVEN
       const type: TypeObjectif = 'notreAmbition';
       const objectifs: Prisma.objectifCreateArgs['data'][] = [

@@ -1,6 +1,6 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
@@ -19,24 +19,41 @@ import Sommaire from './Sommaire/Sommaire';
 import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
 import Objectifs from './Objectifs/Objectifs';
-
-const listeRubriques: Rubrique[] = [
-  { nom: 'Avancement du chantier', ancre: 'avancement' },
-  { nom: 'Responsables', ancre: 'responsables' },
-  { nom: 'Synthèse des résultats', ancre: 'synthèse' },
-  { nom: 'Répartition géographique', ancre: 'cartes' },
-  { nom: 'Objectifs', ancre: 'objectifs' },
-  { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateurs },
-  { nom: 'Commentaires', ancre: 'commentaires' },
-];
+import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
 
 export default function PageChantier({ chantier, indicateurs, habilitation }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats, objectifs } = usePageChantier(chantier);
+  const { avancements, détailsIndicateurs, commentaires, synthèseDesRésultats, objectifs, décisionStratégique } = usePageChantier(chantier);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   
   const modeÉcriture = checkAuthorizationChantierScope(habilitation, chantier.id, SCOPE_SAISIE_INDICATEURS);
+
+  const listeRubriques: Rubrique[] = useMemo(() => (
+    mailleAssociéeAuTerritoireSélectionné === 'nationale'
+    && process.env.NEXT_PUBLIC_FT_DECISIONS_STRATEGIQUES_DISABLED !== 'true' ? (
+        [
+          { nom: 'Avancement du chantier', ancre: 'avancement' },
+          { nom: 'Responsables', ancre: 'responsables' },
+          { nom: 'Synthèse des résultats', ancre: 'synthèse' },
+          { nom: 'Répartition géographique', ancre: 'cartes' },
+          { nom: 'Objectifs', ancre: 'objectifs' },
+          { nom: 'Décisions stratégiques', ancre: 'décisions-stratégiques' },
+          { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateurs },
+          { nom: 'Commentaires', ancre: 'commentaires' },
+        ]
+      ) : (
+        [
+          { nom: 'Avancement du chantier', ancre: 'avancement' },
+          { nom: 'Responsables', ancre: 'responsables' },
+          { nom: 'Synthèse des résultats', ancre: 'synthèse' },
+          { nom: 'Répartition géographique', ancre: 'cartes' },
+          { nom: 'Objectifs', ancre: 'objectifs' },
+          { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateurs },
+          { nom: 'Commentaires', ancre: 'commentaires' },
+        ]
+      )
+  ), [mailleAssociéeAuTerritoireSélectionné]);
 
   return (
     <PageChantierStyled className="flex">
@@ -104,6 +121,20 @@ export default function PageChantier({ chantier, indicateurs, habilitation }: Pa
                 </div>
               </div>
             )
+          }
+          {
+            décisionStratégique !== null
+            && mailleAssociéeAuTerritoireSélectionné === 'nationale'
+            && process.env.NEXT_PUBLIC_FT_DECISIONS_STRATEGIQUES_DISABLED !== 'true' &&
+            <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+              <div className="fr-col-12">
+                <DécisionsStratégiques
+                  chantierId={chantier.id}
+                  décisionStratégique={décisionStratégique}
+                  modeÉcriture={modeÉcriture}
+                />
+              </div>
+            </div>
           }
           {
             commentaires !== null && (

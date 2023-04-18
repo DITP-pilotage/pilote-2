@@ -57,7 +57,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
           },
         ],
       },
-      orderBy: { date_commentaire : 'desc' },
+      orderBy: { date_commentaire: 'desc' },
     });
 
     return this.mapperVersDomaine(synthèseDesRésultats);
@@ -70,7 +70,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
         maille: CODES_MAILLES[maille],
         code_insee: codeInsee,
       },
-      orderBy: { date_commentaire : 'desc' },
+      orderBy: { date_commentaire: 'desc' },
     });
 
     return synthèsesDesRésultats

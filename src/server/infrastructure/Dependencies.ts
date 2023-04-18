@@ -7,11 +7,8 @@ import MinistèreRepository from '@/server/domain/ministère/MinistèreRepositor
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import IndicateurSQLRepository from '@/server/infrastructure/accès_données/indicateur/IndicateurSQLRepository';
 import MinistèreSQLRepository from '@/server/infrastructure/accès_données/ministère/MinistèreSQLRepository';
-import SynthèseDesRésultatsRepository
-  from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
-import {
-  SynthèseDesRésultatsSQLRepository,
-} from '@/server/infrastructure/accès_données/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
+import SynthèseDesRésultatsRepository from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
+import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/accès_données/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import logger from '@/server/infrastructure/logger';
 import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
 import AxeSQLRepository from '@/server/infrastructure/accès_données/axe/AxeSQLRepository';
@@ -22,22 +19,18 @@ import CommentaireSQLRepository from '@/server/infrastructure/accès_données/co
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
 import HabilitationRepository from '@/server/domain/identité/HabilitationRepository';
 import HabilitationSQLRepository from '@/server/infrastructure/accès_données/identité/HabilitationSQLRepository';
-import {
-  ValiderFichierIndicateurImporteUseCase,
-} from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
-import {
-  ValidataFichierIndicateurValidationService,
-} from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
+import { ValiderFichierIndicateurImporteUseCase } from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
+import { ValidataFichierIndicateurValidationService } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
 import { FetchHttpClient } from '@/server/import-indicateur/infrastructure/adapters/FetchHttpClient';
-import {
-  PrismaMesureIndicateurRepository,
-} from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
+import { PrismaMesureIndicateurRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
 import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepository';
 import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
 import { UtilisateurIAMRepository } from '@/server/domain/identité/UtilisateurIAMRepository';
 import UtilisateurIAMKeycloakRepository
   from '@/server/infrastructure/accès_données/identité/UtilisateurIAMKeycloakRepository';
+import DécisionStratégiqueRepository from '@/server/domain/décisionStratégique/DécisionStratégiqueRepository.interface';
 import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
+import DécisionStratégiqueSQLRepository from './accès_données/décisionStratégique/DécisionStratégiqueSQLRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
@@ -55,6 +48,8 @@ class Dependencies {
   private readonly _commentaireRepository: CommentaireRepository;
 
   private readonly _objectifRepository: ObjectifRepository;
+
+  private readonly _décisionStratégiqueRepository: DécisionStratégiqueRepository;
 
   private readonly _habilitationRepository: HabilitationRepository;
 
@@ -75,6 +70,7 @@ class Dependencies {
     this._synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
     this._commentaireRepository = new CommentaireSQLRepository(prisma);
     this._objectifRepository = new ObjectifSQLRepository(prisma);
+    this._décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
     this._habilitationRepository = new HabilitationSQLRepository(prisma);
     this._utilisateurRepository = new UtilisateurSQLRepository(prisma);
 
@@ -109,6 +105,10 @@ class Dependencies {
 
   getObjectifRepository(): ObjectifRepository {
     return this._objectifRepository;
+  }
+
+  getDécisionStratégiqueRepository(): DécisionStratégiqueRepository {
+    return this._décisionStratégiqueRepository;
   }
 
   getMinistèreRepository(): MinistèreRepository {

@@ -3,12 +3,11 @@ import Titre from '@/components/_commons/Titre/Titre';
 import { SynthèseDesRésultatsProps } from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultats.interface';
 import SynthèseDesRésultatsStyled from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultats.styled';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
-import Publication from '@/components/PageChantier/Publication/Publication';
 import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
-import HistoriqueDeLaSynthèseDesRésultats
-  from '@/components/PageChantier/SynthèseDesRésultats/Historique/HistoriqueDeLaSynthèseDesRésultats';
+import HistoriqueDeLaSynthèseDesRésultats from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultatsHistorique/SynthèseDesRésultatsHistorique';
 import useSynthèseDesRésultats from '@/components/PageChantier/SynthèseDesRésultats/useSynthèseDesRésultats';
 import Alerte from '@/components/_commons/Alerte/Alerte';
+import SynthèseDesRésultatsAffichage from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultatsAffichage/SynthèseDesRésultatsAffichage';
 import SynthèseDesRésultatsFormulaire from './SynthèseDesRésultatsFormulaire/SynthèseDesRésultatsFormulaire';
 
 export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale, modeÉcriture }: SynthèseDesRésultatsProps) {
@@ -62,20 +61,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
                     }
                   </div>
                   <div className="fr-pl-md-3w">
-                    {
-                      synthèseDesRésultats
-                        ?
-                          <Publication
-                            auteur={synthèseDesRésultats.auteur}
-                            contenu={synthèseDesRésultats.contenu}
-                            date={synthèseDesRésultats.date}
-                            messageSiAucunContenu="Aucune synthèse des résultats."
-                          />
-                        :
-                          <p className='fr-text--sm texte-gris'>
-                            Aucune synthèse des résultats.
-                          </p>
-                    }
+                    <SynthèseDesRésultatsAffichage synthèseDesRésultats={synthèseDesRésultats} />
                   </div>
                 </div>
                 <div className='fr-grid-row fr-grid-row--right'>

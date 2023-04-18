@@ -9,7 +9,7 @@ export default class RécupérerLesCommentairesLesPlusRécentsParTypeUseCase {
     private readonly commentaireRepository: CommentaireRepository = dependencies.getCommentaireRepository(),
   ) {}
 
-  async run(chantierId: string, maille: Maille, codeInsee: CodeInsee) :Promise<Commentaires> {
+  async run(chantierId: string, maille: Maille, codeInsee: CodeInsee):Promise<Commentaires> {
     return this.commentaireRepository.récupérerLesPlusRécentsParType(chantierId, maille, codeInsee);
   }
 }

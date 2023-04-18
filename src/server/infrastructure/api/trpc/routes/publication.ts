@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -20,6 +21,9 @@ import CréerUnObjectifUseCase from '@/server/usecase/objectif/CréerUnObjectifU
 import RécupérerObjectifLePlusRécentUseCase from '@/server/usecase/objectif/RécupérerObjectifLePlusRécentUseCase';
 import RécupérerHistoriqueObjectifUseCase from '@/server/usecase/objectif/RécupérerHistoriqueObjectifUseCase';
 import { typesObjectif } from '@/server/domain/objectif/Objectif.interface';
+import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from '@/server/usecase/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
+import CréerUneDécisionStratégiqueUseCase from '@/server/usecase/décision/CréerUneDécisionStratégiqueUseCase';
+import RécupérerHistoriqueDécisionStratégiqueUseCase from '@/server/usecase/décision/RécupérerHistoriqueDécisionStratégiqueUseCase';
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
@@ -37,6 +41,11 @@ export const publicationRouter = créerRouteurTRPC({
         const créerUnObjectifUseCase = new CréerUnObjectifUseCase(dependencies.getObjectifRepository());
         return créerUnObjectifUseCase.run(input.chantierId, input.contenu, auteur, input.type);
       }
+
+      if (input.entité === 'décisions stratégiques') {
+        const créerUneDécisionStratégiqueUseCase = new CréerUneDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
+        return créerUneDécisionStratégiqueUseCase.run(input.chantierId, input.contenu, auteur);
+      }
     }),
     
   récupérerLaPlusRécente: procédureProtégée
@@ -50,6 +59,11 @@ export const publicationRouter = créerRouteurTRPC({
       if (input.entité === 'objectifs') {
         const récupérerObjectifLePlusRécentUseCase = new RécupérerObjectifLePlusRécentUseCase(dependencies.getObjectifRepository());
         return récupérerObjectifLePlusRécentUseCase.run(input.chantierId, input.type);
+      }
+
+      if (input.entité === 'décisions stratégiques') {
+        const récupérerDésionStratégiqueLaPlusRécenteUseCase = new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(dependencies.getDécisionStratégiqueRepository());
+        return récupérerDésionStratégiqueLaPlusRécenteUseCase.run(input.chantierId);
       }
     }),
 
@@ -96,6 +110,11 @@ export const publicationRouter = créerRouteurTRPC({
       if (input.entité === 'objectifs') {
         const récupérerHistoriqueObjectifUseCase = new RécupérerHistoriqueObjectifUseCase(dependencies.getObjectifRepository());
         return récupérerHistoriqueObjectifUseCase.run(input.chantierId, input.type);
+      }
+
+      if (input.entité === 'décisions stratégiques') {
+        const récupérerHistoriqueDésionStratégiqueUseCase = new RécupérerHistoriqueDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
+        return récupérerHistoriqueDésionStratégiqueUseCase.run(input.chantierId);
       }
     }),
 });
