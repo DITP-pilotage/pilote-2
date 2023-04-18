@@ -21,6 +21,7 @@ export async function parseForm(request: NextApiRequest): Promise<Files> {
         return;
       }
     }
+
     const form = new IncomingForm({
       multiples: false,
       uploadDir,
@@ -30,8 +31,11 @@ export async function parseForm(request: NextApiRequest): Promise<Files> {
         }`;
       },
     });
+
     form.parse(request, (err, fields, files) => {
-      if (err) return reject(err);
+      if (err) {
+        return reject(err);
+      }
       resolve(files);
     });
   });
