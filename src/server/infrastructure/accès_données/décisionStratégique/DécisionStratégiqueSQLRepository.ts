@@ -19,7 +19,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
     };
   }
   
-  async récupérerLePlusRécent(chantierId: string): Promise<DécisionStratégique> {
+  async récupérerLaPlusRécente(chantierId: string): Promise<DécisionStratégique> {
     const décisionStratégiqueLaPlusRécente = await this.prisma.decision_strategique.findFirst({
       where: {
         chantier_id: chantierId,
@@ -42,7 +42,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
   }
 
   async créer(chantierId: string, id: string, contenu: string, type: TypeDécisionStratégique, auteur: string, date: Date): Promise<DécisionStratégique> {
-    const décisionStratégiqueCrée =  await this.prisma.decision_strategique.create({
+    const décisionStratégiqueCréée = await this.prisma.decision_strategique.create({
       data: {
         id,
         chantier_id: chantierId,
@@ -52,6 +52,6 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
         auteur,
       } });
 
-    return this.mapperVersDomaine(décisionStratégiqueCrée);
+    return this.mapperVersDomaine(décisionStratégiqueCréée);
   }
 }

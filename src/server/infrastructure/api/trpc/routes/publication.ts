@@ -21,7 +21,7 @@ import CréerUnObjectifUseCase from '@/server/usecase/objectif/CréerUnObjectifU
 import RécupérerObjectifLePlusRécentUseCase from '@/server/usecase/objectif/RécupérerObjectifLePlusRécentUseCase';
 import RécupérerHistoriqueObjectifUseCase from '@/server/usecase/objectif/RécupérerHistoriqueObjectifUseCase';
 import { typesObjectif } from '@/server/domain/objectif/Objectif.interface';
-import RécupérerDécisionStratégiqueLePlusRécentUseCase from '@/server/usecase/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
+import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from '@/server/usecase/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
 import CréerUneDécisionStratégiqueUseCase from '@/server/usecase/décision/CréerUneDécisionStratégiqueUseCase';
 import RécupérerHistoriqueDécisionStratégiqueUseCase from '@/server/usecase/décision/RécupérerHistoriqueDécisionStratégiqueUseCase';
 
@@ -62,7 +62,7 @@ export const publicationRouter = créerRouteurTRPC({
       }
 
       if (input.entité === 'décisions stratégiques') {
-        const récupérerDésionStratégiqueLaPlusRécenteUseCase = new RécupérerDécisionStratégiqueLePlusRécentUseCase(dependencies.getDécisionStratégiqueRepository());
+        const récupérerDésionStratégiqueLaPlusRécenteUseCase = new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(dependencies.getDécisionStratégiqueRepository());
         return récupérerDésionStratégiqueLaPlusRécenteUseCase.run(input.chantierId);
       }
     }),

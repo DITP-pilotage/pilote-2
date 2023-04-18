@@ -8,6 +8,6 @@ export default class RécupérerDécisionStratégiqueLaPlusRécenteUseCase {
   ) {}
 
   async run(chantierId: string): Promise<DécisionStratégique> {
-    return this.décisionStratégiqueRepository.récupérerLePlusRécent(chantierId);
+    return this.décisionStratégiqueRepository.récupérerLaPlusRécente(chantierId);
   }
 }
