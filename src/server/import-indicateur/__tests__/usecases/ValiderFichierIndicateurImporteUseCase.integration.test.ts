@@ -9,6 +9,7 @@ import { IndicateurDataBuilder } from '@/server/import-indicateur/app/builder/In
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichierBuilder';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
 import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository';
+import { ErreurValidationFichierBuilder } from '@/server/import-indicateur/app/builder/ErreurValidationFichierBuilder';
 
 describe('ValiderFichierIndicateurImporteUseCase', () => {
   let fichierIndicateurValidationService: MockProxy<FichierIndicateurValidationService>;
@@ -113,11 +114,52 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       // THEN
       expect(mesureIndicateurRepository.sauvegarder).not.toBeCalled();
     });
-    it('quand au moins un indicateur est invalide, doit inclure les erreurs de validation des données du rapport', () => {
+
+    it('quand au moins un indicateur est invalide, doit inclure les erreurs de validation des données du rapport', async () => {
       // GIVEN
+      const indicateurData1 = new IndicateurDataBuilder()
+        .avecIndicId('IND-001')
+        .avecZoneId('D001')
+        .avecMetricDate(METRIC_DATE_1)
+        .avecMetricType('vi')
+        .avecMetricValue('72')
+        .build();
+      const indicateurData2 = new IndicateurDataBuilder()
+        .avecIndicId('IND-003')
+        .avecZoneId('D007')
+        .avecMetricDate(METRIC_DATE_2)
+        .avecMetricType('vc')
+        .avecMetricValue('14')
+        .build();
+      const detailValidationFichier = new DetailValidationFichierBuilder()
+        .avecEstValide(false)
+        .avecListeErreursValidation(
+          new ErreurValidationFichierBuilder()
+            .avecCellule('IND-02')
+            .avecMessage('Indicateur invalide')
+            .avecNom('METRIC_INVALIDE')
+            .avecNomDuChamp('indic_id')
+            .avecNumeroDeLigne(1)
+            .avecPositionDeLigne(1)
+            .avecPositionDuChamp(1)
+            .build(),
+        )
+        .avecListeIndicateurData(indicateurData1, indicateurData2)
+        .build();
+
+      const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA, indicateurId: 'IND-001' };
+
+      fichierIndicateurValidationService.validerFichier.calledWith(payload).mockResolvedValue(detailValidationFichier);
 
       // WHEN
+      const report = await validerFichierIndicateurImporteUseCase.execute(payload);
+
       // THEN
+      expect(report.estValide).toEqual(false);
+
+      expect(report.listeErreursValidation).toHaveLength(2);
+      expect(report.listeErreursValidation[0].nom).toEqual('METRIC_INVALIDE');
+      expect(report.listeErreursValidation[1].nom).toEqual('INDICATEUR_INVALIDE');
     });
   });
 
@@ -129,7 +171,6 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       .avecMetricDate(METRIC_DATE_1)
       .avecMetricType('vi')
       .avecMetricValue('72')
-
       .build();
     const indicateurData2 = new IndicateurDataBuilder()
       .avecIndicId('IND-003')
@@ -157,7 +198,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
     expect(report.listeErreursValidation[0].cellule).toEqual('IND-003');
     expect(report.listeErreursValidation[0].message).toEqual("L'indicateur IND-003 ne correpond pas à l'indicateur choisit (IND-001)");
     expect(report.listeErreursValidation[0].nomDuChamp).toEqual('indic_id');
-    expect(report.listeErreursValidation[0].nom).toEqual('INDICATEUR_ERROR');
+    expect(report.listeErreursValidation[0].nom).toEqual('INDICATEUR_INVALIDE');
     expect(report.listeErreursValidation[0].positionDeLigne).toEqual(1);
     expect(report.listeErreursValidation[0].numeroDeLigne).toEqual(2);
     expect(report.listeErreursValidation[0].positionDuChamp).toEqual(-1);
