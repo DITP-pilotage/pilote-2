@@ -7,4 +7,5 @@ export type ÉlémentPageIndicateursType = Rubrique & { typeIndicateur: NonNulla
 export default interface RubriquesIndicateursProps {
   indicateurs: Indicateur[];
   détailsIndicateurs: DétailsIndicateurs
+  estDisponibleALImport?: boolean
 }

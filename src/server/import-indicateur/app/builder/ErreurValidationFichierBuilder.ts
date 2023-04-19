@@ -3,7 +3,7 @@ import { ErreurValidationFichier } from '@/server/import-indicateur/infrastructu
 export class ErreurValidationFichierBuilder {
   private cellule: string = 'IND-12';
 
-  private nom: string = 'INDICATEUR_INVALIDE';
+  private nom: string = 'Indicateur invalide';
 
   private message: string = 'L\'indicateur est invalide';
 

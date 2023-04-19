@@ -159,7 +159,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
 
       expect(report.listeErreursValidation).toHaveLength(2);
       expect(report.listeErreursValidation[0].nom).toEqual('METRIC_INVALIDE');
-      expect(report.listeErreursValidation[1].nom).toEqual('INDICATEUR_INVALIDE');
+      expect(report.listeErreursValidation[1].nom).toEqual('Indicateur invalide');
     });
   });
 
@@ -198,7 +198,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
     expect(report.listeErreursValidation[0].cellule).toEqual('IND-003');
     expect(report.listeErreursValidation[0].message).toEqual("L'indicateur IND-003 ne correpond pas à l'indicateur choisit (IND-001)");
     expect(report.listeErreursValidation[0].nomDuChamp).toEqual('indic_id');
-    expect(report.listeErreursValidation[0].nom).toEqual('INDICATEUR_INVALIDE');
+    expect(report.listeErreursValidation[0].nom).toEqual('Indicateur invalide');
     expect(report.listeErreursValidation[0].positionDeLigne).toEqual(1);
     expect(report.listeErreursValidation[0].numeroDeLigne).toEqual(2);
     expect(report.listeErreursValidation[0].positionDuChamp).toEqual(-1);

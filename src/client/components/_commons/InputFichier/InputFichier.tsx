@@ -2,19 +2,12 @@ import { ChangeEventHandler } from 'react';
 import '@gouvfr/dsfr/dist/component/upload/upload.min.css';
 
 interface InputFichierProps {
-  label: string
   onChange: ChangeEventHandler<HTMLInputElement>
 } 
 
-export default function InputFichier({ label, onChange }: InputFichierProps) {
+export default function InputFichier({ onChange }: InputFichierProps) {
   return (
-    <div className="fr-upload-group">    
-      <label
-        className="fr-label"
-        htmlFor="file-upload"
-      >
-        {label}
-      </label>
+    <div className="fr-upload-group">
       <input
         accept='.csv, .xls, .xlsx'
         className="fr-upload"

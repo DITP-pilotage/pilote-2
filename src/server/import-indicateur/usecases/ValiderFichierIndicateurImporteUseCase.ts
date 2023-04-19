@@ -31,12 +31,13 @@ export class ValiderFichierIndicateurImporteUseCase {
     const report = await this.fichierIndicateurValidationService.validerFichier(payload);
 
     const listeErreursValidation: ErreurValidationFichier[] = report.listeErreursValidation;
+
     report.listeIndicateursData.forEach((indicateurData, index) => {
       if (indicateurData.indicId.localeCompare(payload.indicateurId)) {
         listeErreursValidation.push(
           ErreurValidationFichier.creerErreurValidationFichier({
             cellule: indicateurData.indicId,
-            nom: 'INDICATEUR_INVALIDE',
+            nom: 'Indicateur invalide',
             message: `L'indicateur ${indicateurData.indicId} ne correpond pas à l'indicateur choisit (${payload.indicateurId})`,
             numeroDeLigne: index + 1,
             positionDeLigne: index,
@@ -46,6 +47,8 @@ export class ValiderFichierIndicateurImporteUseCase {
         );
       }
     });
+
+    
 
     if (listeErreursValidation.length > 0) {
       return DetailValidationFichier.creerDetailValidationFichier({
