@@ -30,29 +30,28 @@ export default function PageChantier({ chantier, indicateurs, habilitation }: Pa
   const modeÉcriture = checkAuthorizationChantierScope(habilitation, chantier.id, SCOPE_SAISIE_INDICATEURS);
 
   const listeRubriques: Rubrique[] = useMemo(() => (
-    mailleAssociéeAuTerritoireSélectionné === 'nationale'
-    && process.env.NEXT_PUBLIC_FT_DECISIONS_STRATEGIQUES_DISABLED !== 'true' ? (
-        [
-          { nom: 'Avancement du chantier', ancre: 'avancement' },
-          { nom: 'Responsables', ancre: 'responsables' },
-          { nom: 'Synthèse des résultats', ancre: 'synthèse' },
-          { nom: 'Répartition géographique', ancre: 'cartes' },
-          { nom: 'Objectifs', ancre: 'objectifs' },
-          { nom: 'Décisions stratégiques', ancre: 'décisions-stratégiques' },
-          { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateurs },
-          { nom: 'Commentaires', ancre: 'commentaires' },
-        ]
-      ) : (
-        [
-          { nom: 'Avancement du chantier', ancre: 'avancement' },
-          { nom: 'Responsables', ancre: 'responsables' },
-          { nom: 'Synthèse des résultats', ancre: 'synthèse' },
-          { nom: 'Répartition géographique', ancre: 'cartes' },
-          { nom: 'Objectifs', ancre: 'objectifs' },
-          { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateurs },
-          { nom: 'Commentaires', ancre: 'commentaires' },
-        ]
-      )
+    mailleAssociéeAuTerritoireSélectionné === 'nationale' ? (
+      [
+        { nom: 'Avancement du chantier', ancre: 'avancement' },
+        { nom: 'Responsables', ancre: 'responsables' },
+        { nom: 'Synthèse des résultats', ancre: 'synthèse' },
+        { nom: 'Répartition géographique', ancre: 'cartes' },
+        { nom: 'Objectifs', ancre: 'objectifs' },
+        { nom: 'Décisions stratégiques', ancre: 'décisions-stratégiques' },
+        { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateurs },
+        { nom: 'Commentaires', ancre: 'commentaires' },
+      ]
+    ) : (
+      [
+        { nom: 'Avancement du chantier', ancre: 'avancement' },
+        { nom: 'Responsables', ancre: 'responsables' },
+        { nom: 'Synthèse des résultats', ancre: 'synthèse' },
+        { nom: 'Répartition géographique', ancre: 'cartes' },
+        { nom: 'Objectifs', ancre: 'objectifs' },
+        { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateurs },
+        { nom: 'Commentaires', ancre: 'commentaires' },
+      ]
+    )
   ), [mailleAssociéeAuTerritoireSélectionné]);
 
   return (
@@ -124,8 +123,7 @@ export default function PageChantier({ chantier, indicateurs, habilitation }: Pa
           }
           {
             décisionStratégique !== null
-            && mailleAssociéeAuTerritoireSélectionné === 'nationale'
-            && process.env.NEXT_PUBLIC_FT_DECISIONS_STRATEGIQUES_DISABLED !== 'true' &&
+            && mailleAssociéeAuTerritoireSélectionné === 'nationale' &&
             <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
               <div className="fr-col-12">
                 <DécisionsStratégiques
