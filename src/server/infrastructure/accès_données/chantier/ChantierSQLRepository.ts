@@ -79,4 +79,19 @@ export default class ChantierSQLRepository implements ChantierRepository {
     // TODO: avoir une réflexion sur avoir un mapper et retourné un objet du domainz Chantier
     return chantierRow.meteo as Météo | null;
   }
+
+  async modifierMétéo(chantierId: string, maille: Maille, codeInsee: CodeInsee, météo: Météo) {
+    await this.prisma.chantier.update({
+      data: {
+        meteo: météo,
+      },
+      where: {
+        id_code_insee_maille: {
+          id: chantierId,
+          maille: CODES_MAILLES[maille],
+          code_insee: codeInsee,
+        },
+      },
+    });
+  }
 }

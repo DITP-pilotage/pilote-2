@@ -1,6 +1,7 @@
 import SynthèseDesRésultatsRepository
   from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import CréerUneSynthèseDesRésultatsUseCase from '@/server/usecase/synthèse/CréerUneSynthèseDesRésultatsUseCase';
+import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 
 const RANDOM_UUID = '123';
 
@@ -21,7 +22,8 @@ describe('CréerUneSynthèseDesRésultatsUseCase', () => {
 
     jest.useFakeTimers().setSystemTime(date);
     const stubSynthèseDesRésultatsRepository = { créer: jest.fn() } as unknown as SynthèseDesRésultatsRepository;
-    const créerUneSynthèseDesRésultats = new CréerUneSynthèseDesRésultatsUseCase(stubSynthèseDesRésultatsRepository);
+    const stubChantierRepository = { modifierMétéo: jest.fn() } as unknown as ChantierRepository;
+    const créerUneSynthèseDesRésultats = new CréerUneSynthèseDesRésultatsUseCase(stubSynthèseDesRésultatsRepository, stubChantierRepository);
 
     //WHEN
     await créerUneSynthèseDesRésultats.run(chantierId, maille, codeInsee, contenu, auteur, météo);
@@ -47,7 +49,8 @@ describe('CréerUneSynthèseDesRésultatsUseCase', () => {
       date,
       météo,
     }) } as unknown as SynthèseDesRésultatsRepository;
-    const créerUneSynthèseDesRésultats = new CréerUneSynthèseDesRésultatsUseCase(stubSynthèseDesRésultatsRepository);
+    const stubChantierRepository = { modifierMétéo: jest.fn() } as unknown as ChantierRepository;
+    const créerUneSynthèseDesRésultats = new CréerUneSynthèseDesRésultatsUseCase(stubSynthèseDesRésultatsRepository, stubChantierRepository);
 
     //WHEN
     const synthèseDesRésultatsCréée = await créerUneSynthèseDesRésultats.run(chantierId, maille, codeInsee, contenu, auteur, météo);
