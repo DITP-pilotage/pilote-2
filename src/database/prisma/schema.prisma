@@ -12,6 +12,28 @@ datasource db {
   schemas  = ["public", "raw_data"]
 }
 
+enum Maille {
+  NAT  @map("nat")
+  DEPT @map("dept")
+  REG  @map("reg")
+
+  @@map("maille")
+  @@schema("public")
+}
+
+model territoire {
+  code        String     @id
+  nom         String
+  nom_affiche String
+  maille      Maille
+  code_insee  String
+  trace_svg   String
+  code_parent String?
+  chantier    chantier[]
+
+  @@schema("public")
+}
+
 model chantier {
   id                                 String
   nom                                String
@@ -24,12 +46,14 @@ model chantier {
   directeurs_projet                  String[]
   ministeres                         String[]
   directions_administration_centrale String[]
-  meteo                              String?  @default("NON_RENSEIGNEE")
-  axe                                String   @default("non renseignée")
-  ppg                                String   @default("non renseignée")
+  meteo                              String?    @default("NON_RENSEIGNEE")
+  axe                                String     @default("non renseignée")
+  ppg                                String     @default("non renseignée")
   directeurs_projet_mails            String[]
   est_barometre                      Boolean?
   est_territorialise                 Boolean?
+  territoire                         territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  territoire_code                    String
 
   @@id([id, code_insee, maille])
   @@schema("public")
@@ -150,11 +174,11 @@ enum type_decision_strategique {
 }
 
 model decision_strategique {
-  id          String        @id
+  id          String                    @id
   auteur      String
   type        type_decision_strategique
   contenu     String
-  date        DateTime      @db.Timestamp
+  date        DateTime                  @db.Timestamp
   chantier_id String
 
   @@schema("public")

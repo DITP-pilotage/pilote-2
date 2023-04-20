@@ -8,7 +8,7 @@ beforeEach(async () => {
 
   const tables = tablenames
     .map(({ tablename }) => tablename)
-    .filter((name) => name !== '_prisma_migrations')
+    .filter((name) => ['_prisma_migrations', 'territoire'].includes(name) === false)
     .map((name) => `"public"."${name}"`)
     .join(', ');
 

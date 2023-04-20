@@ -41,6 +41,8 @@ export default class ChantierRowBuilder {
 
   private _estTerritorialisé: chantier['est_territorialise'];
 
+  private _territoireCode: chantier['territoire_code'];
+
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
     const avancement = new AvancementBuilder().build();
@@ -67,6 +69,7 @@ export default class ChantierRowBuilder {
     this._directeursProjetMails = chantierGénéré.responsables.directeursProjet.map(directeur => directeur.email ?? 'example@example.te');
     this._estBaromètre = faker.helpers.arrayElement([null, chantierGénéré.estBaromètre]);
     this._estTerritorialisé = faker.helpers.arrayElement([null, chantierGénéré.estTerritorialisé]);
+    this._territoireCode = `${this._maille}-${this._codeInsee}`;
   }
 
   avecId(id: chantier['id']): ChantierRowBuilder {
@@ -99,6 +102,7 @@ export default class ChantierRowBuilder {
     
     this._maille = maille;
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
+    this._territoireCode = `${this._maille}-${this._codeInsee}`;
     return this;
   }
 
@@ -109,6 +113,7 @@ export default class ChantierRowBuilder {
 
   avecCodeInsee(codeInsee: chantier['code_insee']): ChantierRowBuilder {
     this._codeInsee = codeInsee;
+    this._territoireCode = `${this._maille}-${this._codeInsee}`;
     return this;
   }
 
@@ -176,6 +181,7 @@ export default class ChantierRowBuilder {
       directeurs_projet_mails: this._directeursProjetMails,
       est_barometre: this._estBaromètre,
       est_territorialise: this._estTerritorialisé,
+      territoire_code: this._territoireCode,
     };
   }
 }
