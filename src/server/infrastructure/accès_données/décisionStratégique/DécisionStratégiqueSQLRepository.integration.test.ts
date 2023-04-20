@@ -39,7 +39,7 @@ describe('DécisionStratégiqueSQLRepository', () => {
         type: décisionStratégiqueLaPlusRécente.type,
         auteur: décisionStratégiqueLaPlusRécente.auteur,
         contenu: décisionStratégiqueLaPlusRécente.contenu,
-        date: (décisionStratégiqueLaPlusRécente.date as Date).toISOString(),
+        date: (décisionStratégiqueLaPlusRécente.date).toISOString(),
       });
     });
   });
@@ -52,9 +52,9 @@ describe('DécisionStratégiqueSQLRepository', () => {
       const résultat = await décisionStratégiqueRepository.récupérerHistorique(chantierId);
 
       // THEN
-      expect(résultat[0]?.date).toStrictEqual((décisionStratégiqueLaPlusRécente.date as Date).toISOString());
-      expect(résultat[1]?.date).toStrictEqual((décisionStratégiqueMoinsRécente.date as Date).toISOString());
-      expect(résultat[2]?.date).toStrictEqual((décisionStratégiqueLaPlusAncienne.date as Date).toISOString());
+      expect(résultat[0]?.date).toStrictEqual((décisionStratégiqueLaPlusRécente.date).toISOString());
+      expect(résultat[1]?.date).toStrictEqual((décisionStratégiqueMoinsRécente.date).toISOString());
+      expect(résultat[2]?.date).toStrictEqual((décisionStratégiqueLaPlusAncienne.date).toISOString());
     });
   });
 

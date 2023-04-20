@@ -1,4 +1,4 @@
-import { commentaire, Prisma } from '@prisma/client';
+import { commentaire } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 import { générerUneMailleAléatoire, retourneUneListeDeCodeInseeCohérentePourUneMaille } from '@/server/infrastructure/test/builders/utils';
@@ -23,17 +23,23 @@ export default class CommentaireRowBuilder {
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
     
-    const maille = générerUneMailleAléatoire();
-    const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
-
     this._id = faker.datatype.uuid();
     this._chantierId = chantierGénéré.id;
-    this._type = faker.helpers.arrayElement(['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus', 'commentaires_sur_les_donnees']);
     this._contenu = faker.lorem.paragraph();
     this._date = faker.date.recent(10, '2023-02-01T00:00:00.000Z');
     this._auteur = faker.name.fullName();
-    this._maille = maille;
-    this._codeInsee = faker.helpers.arrayElement(codesInsee); 
+    this._type = faker.helpers.arrayElement(['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus', 'commentaires_sur_les_donnees']);
+   
+    if (this._type === 'freins_a_lever' || this._type === 'actions_a_venir' || this._type === 'actions_a_valoriser') {
+      this._maille = 'NAT';
+      this._codeInsee = 'FR';
+    } else if (this._type === 'commentaires_sur_les_donnees') {
+      this._maille = faker.helpers.arrayElement(['DEPT', 'REG']);
+      this._codeInsee = faker.helpers.arrayElement(retourneUneListeDeCodeInseeCohérentePourUneMaille(this._maille));
+    } else {
+      this._maille = générerUneMailleAléatoire();
+      this._codeInsee = faker.helpers.arrayElement(retourneUneListeDeCodeInseeCohérentePourUneMaille(this._maille)); 
+    }
   }
 
   avecId(id: commentaire['id']): CommentaireRowBuilder {
@@ -79,7 +85,7 @@ export default class CommentaireRowBuilder {
     return this;
   }
 
-  build(): Prisma.commentaireCreateArgs['data'] {
+  build(): commentaire {
     return {
       id: this._id,
       chantier_id: this._chantierId,

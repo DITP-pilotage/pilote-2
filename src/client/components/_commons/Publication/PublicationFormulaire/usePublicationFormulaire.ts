@@ -1,15 +1,10 @@
-import router from 'next/router';
 import { SubmitHandler } from 'react-hook-form';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 import api from '@/server/infrastructure/api/trpc/api';
-import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { validationPublicationContexte, validationPublicationFormulaire, zodValidateurCSRF } from '@/validation/publication';
 import PublicationFormulaireProps, { PublicationFormulaireInputs } from './PublicationFormulaire.interface';
 
 export default function usePublicationFormulaire(succèsCallback: PublicationFormulaireProps['succèsCallback'], erreurCallback: PublicationFormulaireProps['erreurCallback']) {
-  const mailleSélectionnée = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  
   const mutationCréerPublication = api.publication.créer.useMutation({
     onSuccess: (publicationCréée) => publicationCréée && succèsCallback?.(publicationCréée),
     onError: (error) => {
@@ -24,9 +19,9 @@ export default function usePublicationFormulaire(succèsCallback: PublicationFor
       contenu: data.contenu,
       type: data.type,
       entité: data.entité,
-      maille: mailleSélectionnée,
-      codeInsee: territoireSélectionné.codeInsee,
-      chantierId: router.query.id as string,
+      maille: data.maille,
+      codeInsee: data.codeInsee,
+      chantierId: data.chantierId,
       csrf: récupérerUnCookie('csrf') ?? '',
     });
 

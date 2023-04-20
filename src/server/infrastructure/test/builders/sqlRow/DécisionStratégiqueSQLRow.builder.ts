@@ -1,4 +1,4 @@
-import { decision_strategique, Prisma } from '@prisma/client';
+import { decision_strategique } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 
@@ -51,7 +51,7 @@ export default class DécisionStratégiqueSQLRowBuilder {
     return this;
   }
 
-  build(): Prisma.decision_strategiqueCreateArgs['data'] {
+  build(): decision_strategique {
     return {
       id: this._id,
       auteur: this._auteur,

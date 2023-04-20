@@ -64,7 +64,7 @@ describe('CommentaireSQLRepository', () => {
       expect(résultat).toStrictEqual({
         id: commentaireRisqueEtFreinsÀLeverLePlusRécent.id,
         contenu: commentaireRisqueEtFreinsÀLeverLePlusRécent.contenu,
-        date: (commentaireRisqueEtFreinsÀLeverLePlusRécent.date as Date).toISOString(),
+        date: (commentaireRisqueEtFreinsÀLeverLePlusRécent.date).toISOString(),
         auteur: commentaireRisqueEtFreinsÀLeverLePlusRécent.auteur,
         type: NOMS_TYPES_COMMENTAIRES[commentaireRisqueEtFreinsÀLeverLePlusRécent.type],
       });
