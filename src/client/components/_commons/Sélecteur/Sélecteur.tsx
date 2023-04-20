@@ -8,7 +8,7 @@ export default function Sélecteur<T extends string>({
   libellé,
   texteFantôme,
   valeurModifiéeCallback,
-  valeurSélectionnéeParDéfaut,
+  valeurSélectionnée,
 }: SélecteurProps<T>) {
 
   return (
@@ -25,9 +25,9 @@ export default function Sélecteur<T extends string>({
       }
       <select
         className="fr-select"
-        defaultValue={valeurSélectionnéeParDéfaut || ''}
         name={htmlName}
         onChange={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.value as T)}
+        value={valeurSélectionnée || ''}
         {...register}
       >
         {

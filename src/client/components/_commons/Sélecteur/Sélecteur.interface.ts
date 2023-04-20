@@ -11,7 +11,7 @@ export default interface SélecteurProps<T> {
   htmlName: string,
   options: SélecteurOption<T>[],
   valeurModifiéeCallback?: (valeur: T) => void,
-  valeurSélectionnéeParDéfaut?: T,
+  valeurSélectionnée?: T,
   libellé?: string,
   texteFantôme?: string,
   register?: UseFormRegisterReturn
