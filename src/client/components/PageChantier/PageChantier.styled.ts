@@ -15,6 +15,36 @@ const PageChantierStyled = styled.div`
   tbody {
     background: none;
   }
+  
+  .texte-impression{
+    display: none;
+  }
+  
+@media print{
+  @page {
+    size: 1800px 2545px;
+  }
+  
+  .texte-impression{
+    position: fixed;
+    left: 50%;
+    display: block;
+    transform: translate(-50%, 0);
+  }
+
+  section {
+    break-inside: avoid;
+  }
+  
+  .contenu-principal {
+    background: #FFF;
+  }
+
+  .barre-latérale, .fr-btn, .fr-link {
+    display: none;
+  }
+}
+  
 `;
 
 export default PageChantierStyled;
