@@ -5,6 +5,7 @@ import {
   recupererFichier,
   supprimerLeFichier,
 } from '@/server/import-indicateur/infrastructure/adapters/FichierService';
+import logger from '@/server/infrastructure/logger';
 
 export class FetchHttpClient implements HttpClient {
   private readonly urlValidata = 'https://api.validata.etalab.studio/validate';
@@ -14,6 +15,8 @@ export class FetchHttpClient implements HttpClient {
     formData.append('file', recupererFichier(body.cheminCompletDuFichier), body.nomDuFichier);
     formData.append('schema', body.schema);
 
+    logger.info(`Soummission du fichier ${body.nomDuFichier} à validata`);
+    
     const { report } = await new Promise<{ report: ReportValidata }>(async (resolve) => {
       await formData.submit(this.urlValidata, (error, response) => {
         let data = '';
@@ -24,7 +27,12 @@ export class FetchHttpClient implements HttpClient {
           resolve(JSON.parse(data) as Promise<{ report: ReportValidata }>);
         });
       });
+    }).catch((error: Error) => {
+      logger.error(`Erreur: ${error.stack}`);
+      throw error;
     }).finally(() => supprimerLeFichier(body.cheminCompletDuFichier));
+
+    logger.info('Validation du fichier par validata');
 
     return report;
   }
