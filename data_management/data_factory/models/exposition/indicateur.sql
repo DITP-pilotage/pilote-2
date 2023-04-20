@@ -9,8 +9,8 @@ with avancement_indicateur as (
         date_valeur_actuelle,
         date_valeur_cible,
         avancement_global_borne
-    FROM {{ ref('pivot_faits_indicateur_avec_taux_avancement')}}
-    WHERE zone_type = 'DEPT' AND zone_type_parent = 'REG'
+    FROM {{ ref('taux_avancement_indicateur__departement')}}
+    WHERE zone_type_parent = 'REG'
 )
 
 SELECT m_indicateurs.id,
