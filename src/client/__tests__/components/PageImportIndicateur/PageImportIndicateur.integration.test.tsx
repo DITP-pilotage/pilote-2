@@ -25,6 +25,9 @@ jest.mock('@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/Indica
   );
 });
 
+// eslint-disable-next-line unicorn/prefer-module
+jest.mock('next/router', () => require('next-router-mock'));
+
 describe('PageImportIndicateur', () => {
   describe('En tête', () => {
     it("doit afficher un titre indiquant que l'on est sur la page indicateur", () => {
@@ -190,62 +193,6 @@ describe('PageImportIndicateur', () => {
 
       expect(titreCatégorieIndicateur1).toBeInTheDocument();
       expect(titreCatégorieIndicateur2).toBeInTheDocument();
-    });
-
-    it.todo("quand on a aucun indicateur, doit afficher un bloc indiquant qu'il ny a pas d'indicateur");
-
-    describe("doit afficher les détails de l'indicateur", () => {
-      it.todo('doit afficher sa description, son mode de calcul et sa source');
-    });
-
-    it("doit afficher un champ d'import de fichier de type tableur", () => {
-      // GIVEN
-      const chantierInformation: ChantierInformation = {
-        id: 'chantierId',
-        nom: CHANTIER_NOM,
-        axe: CHANTIER_AXE,
-        ppg: CHANTIER_PPG,
-      };
-
-      // WHEN
-      render(
-        <PageImportIndicateur
-          chantierInformation={chantierInformation}
-          détailsIndicateurs={null}
-          indicateurs={[]}
-        />,
-      );
-
-      // THEN
-      const boutonImport = screen.getByLabelText('Importer des données');
-
-      expect(boutonImport).toBeInTheDocument();
-      expect(boutonImport).toHaveAttribute('type', 'file');
-      expect(boutonImport).toHaveAttribute('accept', '.csv, .xls, .xlsx');
-    });
-
-    it('doit afficher un bouton de soumission du fichier', () => {
-      // GIVEN
-      const chantierInformation: ChantierInformation = {
-        id: 'chantierId',
-        nom: CHANTIER_NOM,
-        axe: CHANTIER_AXE,
-        ppg: CHANTIER_PPG,
-      };
-
-      // WHEN
-      render(
-        <PageImportIndicateur
-          chantierInformation={chantierInformation}
-          détailsIndicateurs={null}
-          indicateurs={[]}
-        />,
-      );
-
-      // THEN
-      const boutonSoumission = screen.getByRole('button', { name: 'Importer les données' });
-
-      expect(boutonSoumission).toBeInTheDocument();
     });
   });
 });

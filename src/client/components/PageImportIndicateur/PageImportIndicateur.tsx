@@ -15,7 +15,6 @@ export default function PageImportIndicateur({ chantierInformation, indicateurs,
     <main>
       <PageImportIndicateurEnTête chantierInformation={chantierInformation} />
       <PageImportIndicateurSectionImport
-        chantierId={chantierInformation.id}
         détailsIndicateurs={détailsIndicateurs}
         indicateurs={indicateurs}
       />

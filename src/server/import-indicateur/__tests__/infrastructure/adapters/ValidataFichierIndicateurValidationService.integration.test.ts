@@ -15,6 +15,8 @@ describe('ValidataFichierIndicateurValidationService', () => {
   const cheminCompletDuFichier = 'cheminCompletDuFichier';
   const nomDuFichier = 'nomDuFichier';
   const schema = 'schema';
+  const metricDateValue1 = '30/12/2023';
+  const metricDateValue2 = '31/12/2023';
 
   beforeEach(() => {
     httpClient = mock<HttpClient>();
@@ -24,7 +26,23 @@ describe('ValidataFichierIndicateurValidationService', () => {
   it('doit appeler le httpClient pour contacter validata', async () => {
     // GIVEN
     const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
-    httpClient.post.mockResolvedValue(new ReportValidataBuilder().avecValid(false).build());
+    const report = new ReportValidataBuilder()
+      .avecValid(true)
+      .avecTasks(new ReportTaskBuilder()
+        .avecResource(
+          new ReportResourceTaskBuilder()
+            .avecData([
+              ['indic_id', 'zone_id', 'metric_date', 'metric_type', 'metric_value'],
+              ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+              ['IND-002', 'D004', metricDateValue2, 'vc', '3'],
+            ])
+            .build(),
+        )
+        .build(),
+      )
+      .build();
+  
+    httpClient.post.mockResolvedValue(report);
 
     // WHEN
     await validataFichierIndicateurValidationService.validerFichier(body);
@@ -34,9 +52,6 @@ describe('ValidataFichierIndicateurValidationService', () => {
   });
 
   describe('quand le fichier est valide', () => {
-    const metricDateValue1 = '30/12/2023';
-    const metricDateValue2 = '31/12/2023';
-
     it('doit construire le rapport de validation du fichier', async () => {
       // GIVEN
       const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
@@ -126,60 +141,111 @@ describe('ValidataFichierIndicateurValidationService', () => {
     });
   });
 
-  it("quand le fichier est invalide, doit construire le rapport d'erreur du fichier", async () => {
-    // GIVEN
-    const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
-    const report = new ReportValidataBuilder()
-      .avecValid(false)
-      .avecTasks(
-        new ReportTaskBuilder()
-          .avecErrors(
-            new ReportErrorTaskBuilder()
-              .avecCell('cellule 1')
-              .avecName('nom 1')
-              .avecFieldName('nom du champ 1')
-              .avecFieldPosition(1)
-              .avecMessage('message 1')
-              .avecRowNumber(1)
-              .avecRowPosition(1)
-              .build(),
-            new ReportErrorTaskBuilder()
-              .avecCell('cellule 2')
-              .avecName('nom 2')
-              .avecFieldName('nom du champ 2')
-              .avecFieldPosition(2)
-              .avecMessage('message 2')
-              .avecRowNumber(2)
-              .avecRowPosition(2)
-              .build(),
-          )
-          .build(),
-      )
-      .build();
+  describe('quand le fichier est invalide', () => {
+    it("doit construire le rapport d'erreur du fichier", async () => {
+      // GIVEN
+      const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
+      const report = new ReportValidataBuilder()
+        .avecValid(false)
+        .avecTasks(
+          new ReportTaskBuilder()
+            .avecErrors(
+              new ReportErrorTaskBuilder()
+                .avecCell('cellule 1')
+                .avecName('nom 1')
+                .avecFieldName('nom du champ 1')
+                .avecFieldPosition(1)
+                .avecMessage('message 1')
+                .avecRowNumber(1)
+                .avecRowPosition(1)
+                .build(),
+              new ReportErrorTaskBuilder()
+                .avecCell('cellule 2')
+                .avecName('nom 2')
+                .avecFieldName('nom du champ 2')
+                .avecFieldPosition(2)
+                .avecMessage('message 2')
+                .avecRowNumber(2)
+                .avecRowPosition(2)
+                .build(),
+            ).avecResource(
+              new ReportResourceTaskBuilder()
+                .avecData([
+                  ['indic_id', 'zone_id', 'metric_date', 'metric_type', 'metric_value'],
+                  ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+                  ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
+                ])
+                .build(),
+            )
+            .build(),
+        )
+        .build();
+  
+      httpClient.post.mockResolvedValue(report);
+  
+      // WHEN
+      const result = await validataFichierIndicateurValidationService.validerFichier(body);
+  
+      // THEN
+      expect(result.estValide).toEqual(false);
+      expect(result.listeErreursValidation).toHaveLength(2);
+  
+      expect(result.listeErreursValidation.at(0)?.cellule).toEqual('cellule 1');
+      expect(result.listeErreursValidation.at(0)?.nom).toEqual('nom 1');
+      expect(result.listeErreursValidation.at(0)?.nomDuChamp).toEqual('nom du champ 1');
+      expect(result.listeErreursValidation.at(0)?.positionDuChamp).toEqual(1);
+      expect(result.listeErreursValidation.at(0)?.message).toEqual('message 1');
+      expect(result.listeErreursValidation.at(0)?.numeroDeLigne).toEqual(1);
+      expect(result.listeErreursValidation.at(0)?.positionDeLigne).toEqual(1);
+  
+      expect(result.listeErreursValidation.at(1)?.cellule).toEqual('cellule 2');
+      expect(result.listeErreursValidation.at(1)?.nom).toEqual('nom 2');
+      expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual('nom du champ 2');
+      expect(result.listeErreursValidation.at(1)?.positionDuChamp).toEqual(2);
+      expect(result.listeErreursValidation.at(1)?.message).toEqual('message 2');
+      expect(result.listeErreursValidation.at(1)?.numeroDeLigne).toEqual(2);
+      expect(result.listeErreursValidation.at(1)?.positionDeLigne).toEqual(2);
+    });
 
-    httpClient.post.mockResolvedValue(report);
-
-    // WHEN
-    const result = await validataFichierIndicateurValidationService.validerFichier(body);
-
-    // THEN
-    expect(result.estValide).toEqual(false);
-    expect(result.listeErreursValidation).toHaveLength(2);
-
-    expect(result.listeErreursValidation.at(0)?.cellule).toEqual('cellule 1');
-    expect(result.listeErreursValidation.at(0)?.nom).toEqual('nom 1');
-    expect(result.listeErreursValidation.at(0)?.nomDuChamp).toEqual('nom du champ 1');
-    expect(result.listeErreursValidation.at(0)?.positionDuChamp).toEqual(1);
-    expect(result.listeErreursValidation.at(0)?.message).toEqual('message 1');
-    expect(result.listeErreursValidation.at(0)?.numeroDeLigne).toEqual(1);
-    expect(result.listeErreursValidation.at(0)?.positionDeLigne).toEqual(1);
-
-    expect(result.listeErreursValidation.at(1)?.cellule).toEqual('cellule 2');
-    expect(result.listeErreursValidation.at(1)?.nom).toEqual('nom 2');
-    expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual('nom du champ 2');
-    expect(result.listeErreursValidation.at(1)?.positionDuChamp).toEqual(2);
-    expect(result.listeErreursValidation.at(1)?.message).toEqual('message 2');
-    expect(result.listeErreursValidation.at(1)?.numeroDeLigne).toEqual(2);
-    expect(result.listeErreursValidation.at(1)?.positionDeLigne).toEqual(2);
+    it("doit construire le rapport d'erreur du fichier", async () => {
+      // GIVEN
+      const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
+      const report = new ReportValidataBuilder()
+        .avecValid(false)
+        .avecTasks(
+          new ReportTaskBuilder()
+            .avecErrors(
+              new ReportErrorTaskBuilder()
+                .avecCell('cellule 1')
+                .avecName('nom 1')
+                .avecFieldName('nom du champ 1')
+                .avecFieldPosition(1)
+                .avecMessage('message 1')
+                .avecRowNumber(1)
+                .avecRowPosition(1)
+                .build(),
+            )
+            .avecResource(
+              new ReportResourceTaskBuilder()
+                .avecData([
+                  ['indic_id', 'zone_id', 'metric_date', 'metric_type', 'metric_value'],
+                  ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+                  ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
+                ])
+                .build(),
+            )
+            .build(),
+        )
+        .build();
+  
+      httpClient.post.mockResolvedValue(report);
+  
+      // WHEN
+      const result = await validataFichierIndicateurValidationService.validerFichier(body);
+  
+      // THEN
+      expect(result.listeErreursValidation).toHaveLength(1);
+      expect(result.listeIndicateursData).toHaveLength(2);
+    });
   });
 });

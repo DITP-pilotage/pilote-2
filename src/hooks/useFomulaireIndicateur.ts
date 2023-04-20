@@ -3,7 +3,7 @@ import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailVali
 
 type UploadFichierFormulaireElement = { 'file-upload': HTMLInputElement } & HTMLFormElement;
 
-export const useFormulaireIndicateur = (chantierId: string, setRapport: Dispatch<SetStateAction<DetailValidationFichierContrat | null>>) => {
+export const useFormulaireIndicateur = (chantierId: string, indicateurId: string, setRapport: Dispatch<SetStateAction<DetailValidationFichierContrat | null>>) => {
   const [file, setFile] = useState<File | null>(null);
 
   const définirLeFichier: ChangeEventHandler<HTMLInputElement> = (event) => {
@@ -27,7 +27,7 @@ export const useFormulaireIndicateur = (chantierId: string, setRapport: Dispatch
 
     body.append('file', file);
 
-    const detailValidationFichier: DetailValidationFichierContrat = await fetch(`/api/chantier/${chantierId}/indicateur/indicateurIdToBeDefined`, {
+    const detailValidationFichier: DetailValidationFichierContrat = await fetch(`/api/chantier/${chantierId}/indicateur/${indicateurId}`, {
       method: 'POST',
       body,
     }).then(response => response.json() as Promise<DetailValidationFichierContrat>);
@@ -36,5 +36,5 @@ export const useFormulaireIndicateur = (chantierId: string, setRapport: Dispatch
     setFile(null);
   };
 
-  return { définirLeFichier, uploadLeFichier };  
+  return { définirLeFichier, uploadLeFichier, file };  
 };

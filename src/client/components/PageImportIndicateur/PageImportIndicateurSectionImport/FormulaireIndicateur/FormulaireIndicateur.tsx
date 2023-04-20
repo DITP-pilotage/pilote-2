@@ -6,22 +6,25 @@ import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 
 interface FormulaireIndicateurProps {
   chantierId: string,
+  indicateurId: string,
   setRapport: Dispatch<SetStateAction<DetailValidationFichierContrat | null>>
 }
 
-export default function FormulaireIndicateur({ chantierId, setRapport }: FormulaireIndicateurProps) {
-  const { définirLeFichier, uploadLeFichier } = useFormulaireIndicateur(chantierId, setRapport);
+export default function FormulaireIndicateur({ chantierId, indicateurId, setRapport }: FormulaireIndicateurProps) {
+  const { définirLeFichier, uploadLeFichier, file } = useFormulaireIndicateur(chantierId, indicateurId, setRapport);  
 
   return (
     <form
-      className='fr-grid-row fr-grid-row--middle fr-grid-row--center fr-gap-2w'
+      className='flex align-center'
       onSubmit={uploadLeFichier}
     >
       <InputFichier
-        label='Importer des données'
         onChange={définirLeFichier}
       />
-      <SubmitBouton label='Importer les données' />
+      <SubmitBouton
+        disabled={!file}
+        label='Importer les données'
+      />
     </form>
   );
 }

@@ -206,8 +206,8 @@ class DatabaseSeeder {
   private async _créerIndicateurs() {
     this._indicateurs = this._chantiers.map(c =>
       new IndicateurRowBuilder()
-        .avecId(`IND-${c.id}`)
-        .avecNom(`IND-${c.id}-${faker.lorem.words()}`)
+        .avecId(`IND-${c.id.slice(3)}`)
+        .avecNom(`IND-${c.id.slice(3)}-${faker.lorem.words()}`)
         .avecChantierId(c.id)
         .avecMaille(c.maille)
         .avecCodeInsee(c.code_insee)

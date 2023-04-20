@@ -37,7 +37,7 @@ describe('ImportIndicateurHandler', () => {
                 .avecData([
                   ['indic_id', 'zone_id', 'metric_date', 'metric_type', 'metric_value'],
                   ['IND-001', 'D001', DONNEE_DATE_1, 'vi', '9'],
-                  ['IND-002', 'D004', DONNEE_DATE_2, 'vc', '3'],
+                  ['IND-001', 'D004', DONNEE_DATE_2, 'vc', '3'],
                 ])
                 .build(),
             )
@@ -55,6 +55,7 @@ describe('ImportIndicateurHandler', () => {
       const { req, res } = createMocks({
         method: 'POST',
         body: formData,
+        query: { indicateurId: 'IND-001' },
       });
       await handleValiderFichierImportIndicateur(req, res);
 
@@ -77,7 +78,7 @@ describe('ImportIndicateurHandler', () => {
                 .avecData([
                   ['indic_id', 'zone_id', 'metric_date', 'metric_type', 'metric_value'],
                   ['IND-001', 'D001', DONNEE_DATE_1, 'vi', '9'],
-                  ['IND-002', 'D004', DONNEE_DATE_2, 'vc', '3'],
+                  ['IND-001', 'D004', DONNEE_DATE_2, 'vc', '3'],
                 ])
                 .build(),
             )
@@ -95,6 +96,7 @@ describe('ImportIndicateurHandler', () => {
       const { req, res } = createMocks({
         method: 'POST',
         body: formData,
+        query: { indicateurId: 'IND-001' },
       });
       await handleValiderFichierImportIndicateur(req, res);
 
@@ -107,7 +109,7 @@ describe('ImportIndicateurHandler', () => {
       expect(listeDonneesFichier[0].metric_type).toEqual('vi');
       expect(listeDonneesFichier[0].metric_value).toEqual('9');
       
-      expect(listeDonneesFichier[1].indic_id).toEqual('IND-002');
+      expect(listeDonneesFichier[1].indic_id).toEqual('IND-001');
       expect(listeDonneesFichier[1].zone_id).toEqual('D004');
       expect(listeDonneesFichier[1].metric_date).toEqual(DONNEE_DATE_2);
       expect(listeDonneesFichier[1].metric_type).toEqual('vc');
@@ -140,6 +142,14 @@ describe('ImportIndicateurHandler', () => {
               .avecRowNumber(2)
               .avecRowPosition(2)
               .build(),
+          ).avecResource(
+            new ReportResourceTaskBuilder()
+              .avecData([
+                ['indic_id', 'zone_id', 'metric_date', 'metric_type', 'metric_value'],
+                ['IND-001', 'D001', '30/12/2023', 'vi', '9'],
+                ['IND-001', 'D004', '31/12/2023', 'vc', '3'],
+              ])
+              .build(),
           )
           .build(),
       ).build();
@@ -156,6 +166,7 @@ describe('ImportIndicateurHandler', () => {
     const { req, res } = createMocks({
       method: 'POST',
       body: formData,
+      query: { indicateurId: 'IND-001' },
     });
     await handleValiderFichierImportIndicateur(req, res);
 

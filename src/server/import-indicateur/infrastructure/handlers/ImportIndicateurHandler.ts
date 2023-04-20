@@ -25,6 +25,7 @@ export default async function handleValiderFichierImportIndicateur(
   response: NextApiResponse,
   validerFichierIndicateurImporteUseCase = dependencies.getValiderFichierIndicateurImporteUseCase(),
 ) {
+  
   const formData = await parseForm(request);
 
   const fichier = <File>formData.file;
@@ -36,6 +37,7 @@ export default async function handleValiderFichierImportIndicateur(
       cheminCompletDuFichier: fichier.filepath,
       nomDuFichier: fichier.originalFilename as string,
       schema: schéma,
+      indicateurId: request.query.indicateurId as string,
     },
   );
 

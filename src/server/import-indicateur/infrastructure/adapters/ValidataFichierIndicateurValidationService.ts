@@ -154,17 +154,20 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
   }: ValiderFichierPayload): Promise<DetailValidationFichier> {
     const report = await this.httpClient.post({ cheminCompletDuFichier, nomDuFichier, schema });
 
-    if (report.valid && report.tasks[0].resource) {
-      const { enTetes, donnees } = extraireLeContenuDuFichier(report.tasks);
-
-      const listeIndicateursData = donnees.flat().map(donnee => IndicateurData.createIndicateurData({
+    const { enTetes, donnees } = extraireLeContenuDuFichier(report.tasks);
+    
+    let listeIndicateursData: IndicateurData[] = [];
+    if (report.tasks[0].resource) {
+      listeIndicateursData = donnees.flat().map(donnee => IndicateurData.createIndicateurData({
         indicId: donnee[enTetes.indicId],
         zoneId: donnee[enTetes.zoneId],
         metricDate: donnee[enTetes.metricDate],
         metricType: donnee[enTetes.metricType],
         metricValue: `${donnee[enTetes.metricValue]}`,
       }));
-
+    }
+    
+    if (report.valid) {
       return DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, listeIndicateursData });
     }
 
@@ -178,6 +181,6 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
       positionDuChamp: taskError.fieldPosition,
     }));
 
-    return DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, listeErreursValidation });
+    return DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, listeErreursValidation, listeIndicateursData });
   }
 }
