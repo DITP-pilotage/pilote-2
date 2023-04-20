@@ -1,6 +1,6 @@
-import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
+import { ResultatValidationFichierProps } from './ResultatValidationFichier.interface';
 
-export default function ResultatValidationFichier({ rapport } : { rapport: DetailValidationFichierContrat }) {
+export default function ResultatValidationFichier({ rapport }: ResultatValidationFichierProps) {
   return (
     <section>
       {

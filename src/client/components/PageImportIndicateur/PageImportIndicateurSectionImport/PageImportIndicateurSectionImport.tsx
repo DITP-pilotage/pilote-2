@@ -1,13 +1,7 @@
 import Titre from '@/components/_commons/Titre/Titre';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import Indicateurs from '@/components/PageChantier/Indicateurs/Indicateurs';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import PageImportIndicateurSectionImportStyled from './PageImportIndicateurSectionImport.styled';
-
-interface PageImportIndicateurSectionImportProps {
-  détailsIndicateurs: DétailsIndicateurs | null
-  indicateurs: Indicateur[]
-}
+import { PageImportIndicateurSectionImportProps } from './PageImportIndicateurSectionImport.interface';
 
 export default function PageImportIndicateurSectionImport({ détailsIndicateurs, indicateurs }: PageImportIndicateurSectionImportProps) {
   return (

@@ -1,14 +1,7 @@
-import { Dispatch, SetStateAction } from 'react';
 import InputFichier from '@/components/_commons/InputFichier/InputFichier';
 import { useFormulaireIndicateur } from '@/hooks/useFomulaireIndicateur';
-import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
-
-interface FormulaireIndicateurProps {
-  chantierId: string,
-  indicateurId: string,
-  setRapport: Dispatch<SetStateAction<DetailValidationFichierContrat | null>>
-}
+import { FormulaireIndicateurProps } from './FormulaireIndicateur.interface';
 
 export default function FormulaireIndicateur({ chantierId, indicateurId, setRapport }: FormulaireIndicateurProps) {
   const { définirLeFichier, uploadLeFichier, file } = useFormulaireIndicateur(chantierId, indicateurId, setRapport);  
