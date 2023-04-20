@@ -5,7 +5,10 @@ import EnTêteChantierStyled from './EnTêteChantier.styled';
 export default function EnTêteChantier({ nom, axe, ppg }: EnTêteChantierProps) {
   return (
     <EnTêteChantierStyled className='fr-mt-2w'>
-      <Titre baliseHtml='h1'>
+      <Titre
+        baliseHtml='h1'
+        className='fr-h2 fr-mb-1w'
+      >
         { nom }
       </Titre>
       <p className='fr-mb-0 fr-text--xs chantier-données-propriété'>
