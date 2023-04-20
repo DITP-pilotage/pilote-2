@@ -66,7 +66,7 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
           options={météosSaisissables.map(optionMétéo => ({ libellé: météos[optionMétéo], valeur: optionMétéo }))}
           register={{ ...register('météo') }}
           texteFantôme="Météo à renseigner"
-          valeurSélectionnéeParDéfaut={getValues('météo')}
+          valeurSélectionnée={getValues('météo')}
         />
         <div className="fr-mx-3w météo-picto-conteneur">
           {
