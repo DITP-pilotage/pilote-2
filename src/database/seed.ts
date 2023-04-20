@@ -159,7 +159,16 @@ class DatabaseSeeder {
   }
 
   private async _créerSynthèsesDesRésultats() {
-    this._synthèsesDesRésultats = this._chantiers.map(c => new SynthèseDesRésultatsSQLRowBuilder().avecChantierId(c.id).build());
+    this._synthèsesDesRésultats = this._chantiers.map(c => {
+      const possèdeCommentaireEtMétéo = c.meteo !== 'NON_RENSEIGNEE';
+      return (
+        new SynthèseDesRésultatsSQLRowBuilder(possèdeCommentaireEtMétéo)
+          .avecChantierId(c.id)
+          .avecMaille(c.maille).avecCodeInsee(c.code_insee)
+          .avecMétéo(c.meteo)
+          .build()
+      );
+    });
 
     await prisma.synthese_des_resultats.createMany({ data: this._synthèsesDesRésultats });
   }

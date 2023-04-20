@@ -18,9 +18,11 @@ export default class SyntheseDesResultatsRowBuilder {
 
   private _météo: synthese_des_resultats['meteo'];
 
+  private _dateMétéo: synthese_des_resultats['date_meteo'];
+
   private _auteur: synthese_des_resultats['auteur'];
 
-  constructor() {
+  constructor(possèdeCommentaireEtMétéo = Math.random() < 0.95) {
     const maille = générerUneMailleAléatoire();
     const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
 
@@ -28,10 +30,11 @@ export default class SyntheseDesResultatsRowBuilder {
     this._chantierId = générerUnIdentifiantUnique('CH');
     this._maille = maille;
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
-    this._commentaire = faker.helpers.arrayElement([null, faker.lorem.paragraphs()]);
-    this._dateCommentaire = faker.helpers.arrayElement([null, faker.date.recent(10, '2023-02-01T00:00:00.000Z')]);
-    this._météo = new MétéoBuilder().build();
-    this._auteur = faker.helpers.arrayElement([null, faker.name.fullName()]);
+    this._commentaire = possèdeCommentaireEtMétéo ? faker.lorem.paragraphs() : null;
+    this._dateCommentaire = possèdeCommentaireEtMétéo ? faker.date.recent(10, '2023-02-01T00:00:00.000Z') : null;
+    this._météo = possèdeCommentaireEtMétéo ? new MétéoBuilder().build() : null;
+    this._dateMétéo = possèdeCommentaireEtMétéo ? faker.date.recent(10, '2023-02-01T00:00:00.000Z') : null;
+    this._auteur = possèdeCommentaireEtMétéo ? faker.name.fullName() : null;
   }
 
   avecId(id: synthese_des_resultats['id']): SyntheseDesResultatsRowBuilder {
@@ -46,7 +49,7 @@ export default class SyntheseDesResultatsRowBuilder {
 
   avecMaille(maille: synthese_des_resultats['maille']): SyntheseDesResultatsRowBuilder {
     const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
-    
+
     this._maille = maille;
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
     return this;
@@ -72,6 +75,11 @@ export default class SyntheseDesResultatsRowBuilder {
     return this;
   }
 
+  avecDateMétéo(dateMétéo: synthese_des_resultats['date_meteo']): SyntheseDesResultatsRowBuilder {
+    this._dateMétéo = dateMétéo;
+    return this;
+  }
+
   avecAuteur(auteur: synthese_des_resultats['auteur']): SyntheseDesResultatsRowBuilder {
     this._auteur = auteur;
     return this;
@@ -84,7 +92,7 @@ export default class SyntheseDesResultatsRowBuilder {
       maille: this._maille,
       code_insee: this._codeInsee,
       meteo: this._météo,
-      date_meteo: null,
+      date_meteo: this._dateMétéo,
       commentaire: this._commentaire,
       date_commentaire: this._dateCommentaire,
       auteur: this._auteur,

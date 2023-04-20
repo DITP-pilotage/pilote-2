@@ -1,12 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoiresComparésTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import api from '@/server/infrastructure/api/trpc/api';
+import {
+  checkAuthorizationChantierScope,
+  Habilitation,
+  SCOPE_SAISIE_INDICATEURS,
+} from '@/server/domain/identité/Habilitation';
 
-export default function usePageChantier(chantier: Chantier) {
+export default function usePageChantier(habilitation: Habilitation) {
+  const chantierId = useRouter().query.id as string;
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
@@ -14,9 +20,17 @@ export default function usePageChantier(chantier: Chantier) {
   
   const [détailsIndicateurs, setDétailsIndicateurs] = useState<DétailsIndicateurs | null>(null);
 
+  const { data: chantier, refetch: rechargerChantier } = api.chantier.récupérer.useQuery(
+    {
+      chantierId,
+    },
+    { refetchOnWindowFocus: false },
+
+  );
+
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     { 
-      chantierId: chantier.id, 
+      chantierId,
       maille: mailleAssociéeAuTerritoireSélectionné, 
       codeInsee: territoireSélectionné.codeInsee,
     },  
@@ -25,7 +39,7 @@ export default function usePageChantier(chantier: Chantier) {
 
   const { data: commentaires } = api.publication.récupérerLaPlusRécenteParType.useQuery(
     {
-      chantierId: chantier.id,
+      chantierId,
       maille: mailleAssociéeAuTerritoireSélectionné,
       codeInsee: territoireSélectionné.codeInsee,
       entité: 'commentaires',
@@ -35,7 +49,7 @@ export default function usePageChantier(chantier: Chantier) {
 
   const { data: objectifs } = api.publication.récupérerLaPlusRécenteParType.useQuery(
     {
-      chantierId: chantier.id,
+      chantierId,
       maille: 'nationale',
       codeInsee: 'FR',
       entité: 'objectifs',
@@ -45,7 +59,7 @@ export default function usePageChantier(chantier: Chantier) {
 
   const { data: décisionStratégique } = api.publication.récupérerLaPlusRécente.useQuery(
     {
-      chantierId: chantier.id,
+      chantierId,
       maille: 'nationale',
       codeInsee: 'FR',
       entité: 'décisions stratégiques',
@@ -56,60 +70,70 @@ export default function usePageChantier(chantier: Chantier) {
 
   useEffect(() => {
     if (territoiresComparés.length > 0) return;    
-    fetch(`/api/chantier/${chantier.id}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
+    fetch(`/api/chantier/${chantierId}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
       .then(réponse => réponse.json() as Promise<DétailsIndicateurs>)
       .then(données => setDétailsIndicateurs(données));
-  }, [chantier.id, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee, mailleSélectionnée]);
+  }, [chantierId, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee, mailleSélectionnée]);
   
   useEffect(() => {
     const codesInsee = territoiresComparés.map(territoire => `codesInsee=${territoire.codeInsee}`).join('&');
     if (codesInsee === '' || codesInsee === 'codesInsee=FR') return;
-    fetch(`/api/chantier/${chantier.id}/indicateurs?${codesInsee}&maille=${mailleSélectionnée}`)
+    fetch(`/api/chantier/${chantierId}/indicateurs?${codesInsee}&maille=${mailleSélectionnée}`)
       .then(réponse => réponse.json() as Promise<DétailsIndicateurs>)
       .then(données => setDétailsIndicateurs(données));
   }, [territoiresComparés]);
 
-  const donnéesTerritoiresAgrégées = useMemo(() => new AgrégateurChantiersParTerritoire([chantier]).agréger(), [chantier]);
+  const avancements = useMemo(() => {
+    if (!chantier)
+      return null;
 
-  const avancementRégional = () => {
-    if (mailleAssociéeAuTerritoireSélectionné === 'régionale')
-      return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne;
+    const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire([chantier]).agréger();
 
-    if (mailleAssociéeAuTerritoireSélectionné === 'départementale' && territoireSélectionné.codeInseeParent)
-      return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInseeParent].répartition.avancements.global.moyenne;
-  };
+    const avancementRégional = () => {
+      if (mailleAssociéeAuTerritoireSélectionné === 'régionale')
+        return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne;
 
-  const avancementDépartemental = () => {
-    if (mailleAssociéeAuTerritoireSélectionné === 'départementale')
-      return donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne;
-  };
+      if (mailleAssociéeAuTerritoireSélectionné === 'départementale' && territoireSélectionné.codeInseeParent)
+        return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInseeParent].répartition.avancements.global.moyenne;
+    };
 
-  const avancements = {
-    nationale: {
-      global: {
-        moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.global.moyenne,
-        médiane: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.médiane,
-        minimum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.minimum,
-        maximum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.maximum,
+    const avancementDépartemental = () => {
+      if (mailleAssociéeAuTerritoireSélectionné === 'départementale')
+        return donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne;
+    };
+
+    return {
+      nationale: {
+        global: {
+          moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.global.moyenne,
+          médiane: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.médiane,
+          minimum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.minimum,
+          maximum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.maximum,
+        },
+        annuel: {
+          moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.annuel.moyenne,
+        },
       },
-      annuel: {
-        moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.annuel.moyenne,
+      départementale: {
+        moyenne: avancementDépartemental(),
       },
-    },
-    départementale: {
-      moyenne: avancementDépartemental(),
-    },
-    régionale: {
-      moyenne: avancementRégional(),
-    },
-  };
+      régionale: {
+        moyenne: avancementRégional(),
+      },
+    };
+  }, [chantier]);
 
-  return { 
+  const modeÉcriture = checkAuthorizationChantierScope(habilitation, chantierId, SCOPE_SAISIE_INDICATEURS);
+
+  return {
+    chantier: chantier ?? null,
+    rechargerChantier,
     avancements, 
     détailsIndicateurs, 
     commentaires: commentaires ?? null,
     objectifs: objectifs ?? null,
     synthèseDesRésultats: synthèseDesRésultats ?? null,
     décisionStratégique: décisionStratégique ?? null,
+    modeÉcriture,
   };
 }
