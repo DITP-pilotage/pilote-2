@@ -68,7 +68,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
 
       // When
-      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécenteParChantierIdEtTerritoire('CH-001', 'départementale', 'O1');
+      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécente('CH-001', 'départementale', 'O1');
 
       // Then
       expect(result).toBeNull();
@@ -122,7 +122,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       await prisma.synthese_des_resultats.createMany({ data: synthesesDesResultats });
 
       // When
-      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécenteParChantierIdEtTerritoire(chantierId, maille, codeInsee);
+      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécente(chantierId, maille, codeInsee);
 
       // Then
       expect(result).toStrictEqual({

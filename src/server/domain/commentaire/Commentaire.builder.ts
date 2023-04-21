@@ -1,20 +1,26 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import { Commentaires, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { Commentaires, CommentairesMailleNationale, CommentairesMailleRégionaleOuDépartementale, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 
 export default class CommentaireBuilder {
-  private _freinsÀLever: Commentaires['freinsÀLever'];
+  private _commentaireSurLesDonnées: CommentairesMailleRégionaleOuDépartementale['commentairesSurLesDonnées'];
 
-  private _actionsÀVenir: Commentaires['actionsÀVenir'];
+  private _autresRésultatsObtenus: CommentairesMailleRégionaleOuDépartementale['autresRésultatsObtenus'];
 
-  private _actionsÀValoriser: Commentaires['actionsÀValoriser'];
+  private _autresRésultatsObtenusNonCorrélésAuxIndicateurs: CommentairesMailleNationale['autresRésultatsObtenusNonCorrélésAuxIndicateurs'];
 
-  private _autresRésultatsObtenus: Commentaires['autresRésultatsObtenus'];
+  private _risquesEtFreinsÀLever: CommentairesMailleNationale['risquesEtFreinsÀLever'];
+
+  private _solutionsEtActionsÀVenir: CommentairesMailleNationale['solutionsEtActionsÀVenir'];
+
+  private _exemplesConcretsDeRéussite: CommentairesMailleNationale['exemplesConcretsDeRéussite'];
 
   constructor() {
-    this._freinsÀLever = faker.helpers.arrayElement([null, this._générerUnCommentaire('freinsÀLever')]);
-    this._actionsÀVenir = faker.helpers.arrayElement([null, this._générerUnCommentaire('actionsÀVenir')]);
-    this._actionsÀValoriser = faker.helpers.arrayElement([null, this._générerUnCommentaire('actionsÀValoriser')]);
+    this._commentaireSurLesDonnées = faker.helpers.arrayElement([null, this._générerUnCommentaire('commentairesSurLesDonnées')]);
     this._autresRésultatsObtenus = faker.helpers.arrayElement([null, this._générerUnCommentaire('autresRésultatsObtenus')]);
+    this._autresRésultatsObtenusNonCorrélésAuxIndicateurs = faker.helpers.arrayElement([null, this._générerUnCommentaire('autresRésultatsObtenusNonCorrélésAuxIndicateurs')]);
+    this._risquesEtFreinsÀLever = faker.helpers.arrayElement([null, this._générerUnCommentaire('risquesEtFreinsÀLever')]);
+    this._solutionsEtActionsÀVenir = faker.helpers.arrayElement([null, this._générerUnCommentaire('solutionsEtActionsÀVenir')]);
+    this._exemplesConcretsDeRéussite = faker.helpers.arrayElement([null, this._générerUnCommentaire('exemplesConcretsDeRéussite')]);
   }
 
   private _générerUnCommentaire(type: TypeCommentaire) {
@@ -27,32 +33,44 @@ export default class CommentaireBuilder {
     };
   }
 
-  avecFreinsÀLever(freinsÀLever: Commentaires['freinsÀLever']): CommentaireBuilder {
-    this._freinsÀLever = freinsÀLever;
+  avecRisquesEtFreinsÀLever(risquesEtFreinsÀLever: CommentairesMailleNationale['risquesEtFreinsÀLever']): CommentaireBuilder {
+    this._risquesEtFreinsÀLever = risquesEtFreinsÀLever;
     return this;
   }
 
-  avecActionsÀVenir(actionsÀVenir: Commentaires['actionsÀVenir']): CommentaireBuilder {
-    this._actionsÀVenir = actionsÀVenir;
+  avecSolutionsEtActionsÀVenir(solutionsEtActionsÀVenir: CommentairesMailleNationale['solutionsEtActionsÀVenir']): CommentaireBuilder {
+    this._solutionsEtActionsÀVenir = solutionsEtActionsÀVenir;
     return this;
   }
 
-  avecActionsÀValoriser(actionsÀValoriser: Commentaires['actionsÀValoriser']): CommentaireBuilder {
-    this._actionsÀValoriser = actionsÀValoriser;
+  avecExemplesConcretsDeRéussite(exemplesConcretsDeRéussite: CommentairesMailleNationale['exemplesConcretsDeRéussite']): CommentaireBuilder {
+    this._exemplesConcretsDeRéussite = exemplesConcretsDeRéussite;
     return this;
   }
 
-  avecAutresRésultatsObtenus(autresRésultatsObtenus: Commentaires['autresRésultatsObtenus']): CommentaireBuilder {
+  avecAutresRésultatsObtenusNonCorrélésAuxIndicateurs(autresRésultatsObtenusNonCorrélésAuxIndicateurs: CommentairesMailleNationale['autresRésultatsObtenusNonCorrélésAuxIndicateurs']): CommentaireBuilder {
+    this._autresRésultatsObtenusNonCorrélésAuxIndicateurs = autresRésultatsObtenusNonCorrélésAuxIndicateurs;
+    return this;
+  }
+
+  avecAutresRésultatsObtenus(autresRésultatsObtenus: CommentairesMailleRégionaleOuDépartementale['autresRésultatsObtenus']): CommentaireBuilder {
     this._autresRésultatsObtenus = autresRésultatsObtenus;
+    return this;
+  }
+
+  avecCommentairesSurLesDonnées(commentairesSurLesDonnées: CommentairesMailleRégionaleOuDépartementale['commentairesSurLesDonnées']): CommentaireBuilder {
+    this._commentaireSurLesDonnées = commentairesSurLesDonnées;
     return this;
   }
 
   build(): Commentaires {
     return {
-      freinsÀLever: this._freinsÀLever,
-      actionsÀVenir: this._actionsÀVenir,
-      actionsÀValoriser: this._actionsÀValoriser,
+      commentairesSurLesDonnées: this._commentaireSurLesDonnées,
       autresRésultatsObtenus: this._autresRésultatsObtenus,
+      autresRésultatsObtenusNonCorrélésAuxIndicateurs: this._autresRésultatsObtenusNonCorrélésAuxIndicateurs,
+      risquesEtFreinsÀLever: this._risquesEtFreinsÀLever,
+      solutionsEtActionsÀVenir: this._solutionsEtActionsÀVenir,
+      exemplesConcretsDeRéussite: this._exemplesConcretsDeRéussite,
     };
   }
 }

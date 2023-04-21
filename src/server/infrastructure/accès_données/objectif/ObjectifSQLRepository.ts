@@ -43,7 +43,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
     return objectifLePlusRécent ? this.mapperVersDomaine(objectifLePlusRécent) : null;
   }
 
-  async récupérerHistoriqueDUnObjectif(chantierId: string, type: TypeObjectif): Promise<Objectif[]> {
+  async récupérerHistorique(chantierId: string, type: TypeObjectif): Promise<Objectif[]> {
     const objectifs: ObjectifPrisma[] = await this.prisma.objectif.findMany({
       where: {
         chantier_id: chantierId,

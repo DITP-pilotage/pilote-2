@@ -17,7 +17,7 @@ describe('CréerUnCommentaireUseCase', () => {
     const codeInsee = '01';
     const auteur = 'Jean DDDD';
     const date = new Date('2023-03-22T00:00:00.000Z');
-    const type = 'freinsÀLever';
+    const type = 'risquesEtFreinsÀLever';
 
     jest.useFakeTimers().setSystemTime(date);
     const stubCommentaireRepository = { créer: jest.fn() } as unknown as CommentaireRepository;
@@ -38,7 +38,7 @@ describe('CréerUnCommentaireUseCase', () => {
     const codeInsee = '01';
     const auteur = 'Jean DDDD';
     const date = new Date('2023-03-22T00:00:00.000Z');
-    const type = 'freinsÀLever';
+    const type = 'risquesEtFreinsÀLever';
 
     jest.useFakeTimers().setSystemTime(date);
     const stubCommentaireRepository = { créer: jest.fn().mockReturnValue({

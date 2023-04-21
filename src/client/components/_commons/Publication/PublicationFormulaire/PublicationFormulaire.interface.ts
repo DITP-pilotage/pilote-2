@@ -9,4 +9,4 @@ export default interface PublicationFormulaireProps {
   annulationCallback?: () => void
 }
 
-export type PublicationFormulaireInputs = Pick<RouterInputs['publication']['créer'], 'contenu' | 'type' | 'entité'>;
+export type PublicationFormulaireInputs = Pick<RouterInputs['publication']['créer'], 'contenu' | 'type' | 'entité' | 'maille' | 'codeInsee' | 'chantierId'>;

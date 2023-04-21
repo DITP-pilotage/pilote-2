@@ -93,7 +93,7 @@ describe('ObjectifSQLRepository', function () {
       await prisma.objectif.createMany({ data: objectifs });
 
       // WHEN
-      const result = await objectifRepository.récupérerHistoriqueDUnObjectif(chantierId, type);
+      const result = await objectifRepository.récupérerHistorique(chantierId, type);
 
       // THEN
       expect(result[0]?.date).toStrictEqual('2023-04-01T00:00:00.000Z');

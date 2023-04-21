@@ -1,7 +1,8 @@
 import { z } from 'zod';
-import { typeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
 import { mailles } from '@/server/domain/maille/Maille.interface';
 import { typesObjectif } from '@/server/domain/objectif/Objectif.interface';
+import { codeInseeFrance, codesInseeDépartements, codesInseeRégions } from '@/server/domain/territoire/Territoire.interface';
 
 export const LIMITE_CARACTÈRES_PUBLICATION = 5000;
 
@@ -15,18 +16,34 @@ export const validationPublicationContexte = z.object({
   codeInsee: z.string(),
 });
 
-export const zodValidateurEntitéType = z.discriminatedUnion('entité', [
+export const zodValidateurEntitéType = z.union([
   z.object({
     entité: z.literal('commentaires'),
-    type: z.enum(typeCommentaire), 
+    type: z.enum(typesCommentaireMailleNationale), 
+    maille: z.literal('nationale'),
+    codeInsee: z.literal(codeInseeFrance),
+    chantierId: z.string(),
+  }),
+  z.object({
+    entité: z.literal('commentaires'),
+    type: z.enum(typesCommentaireMailleRégionaleOuDépartementale), 
+    maille: z.enum(['régionale', 'départementale']),
+    codeInsee: z.enum([...codesInseeDépartements, ...codesInseeRégions]),
+    chantierId: z.string(),
   }),
   z.object({
     entité: z.literal('objectifs'),
     type: z.enum(typesObjectif), 
+    maille: z.enum(mailles),
+    codeInsee: z.string(),
+    chantierId: z.string(),
   }),
   z.object({
     entité: z.literal('décisions stratégiques'),
-    type: z.enum(['suivi_des_decisions']), 
+    type: z.literal('suivi_des_decisions'), 
+    maille: z.enum(mailles),
+    codeInsee: z.string(),
+    chantierId: z.string(),
   }),
 ]);
 

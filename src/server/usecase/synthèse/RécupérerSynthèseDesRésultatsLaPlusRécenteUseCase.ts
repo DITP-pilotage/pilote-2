@@ -10,6 +10,6 @@ export default class RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase {
   ) {}
 
   async run(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<SynthèseDesRésultats> {
-    return this.synthèsesDesRésultatsRepository.récupérerLaPlusRécenteParChantierIdEtTerritoire(chantierId, maille, codeInsee);
+    return this.synthèsesDesRésultatsRepository.récupérerLaPlusRécente(chantierId, maille, codeInsee);
   }
 }

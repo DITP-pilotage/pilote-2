@@ -15,15 +15,14 @@ import {
 } from 'validation/publication';
 import RécupérerCommentaireLePlusRécentUseCase from '@/server/usecase/commentaire/RécupérerCommentaireLePlusRécentUseCase';
 import RécupérerHistoriqueCommentaireUseCase from '@/server/usecase/commentaire/RécupérerHistoriqueCommentaireUseCase';
-import { typeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
-import { RouterInputs, RouterOutputs } from '@/server/infrastructure/api/trpc/trpc.interface';
 import CréerUnObjectifUseCase from '@/server/usecase/objectif/CréerUnObjectifUseCase';
 import RécupérerObjectifLePlusRécentUseCase from '@/server/usecase/objectif/RécupérerObjectifLePlusRécentUseCase';
 import RécupérerHistoriqueObjectifUseCase from '@/server/usecase/objectif/RécupérerHistoriqueObjectifUseCase';
-import { typesObjectif } from '@/server/domain/objectif/Objectif.interface';
 import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from '@/server/usecase/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
 import CréerUneDécisionStratégiqueUseCase from '@/server/usecase/décision/CréerUneDécisionStratégiqueUseCase';
 import RécupérerHistoriqueDécisionStratégiqueUseCase from '@/server/usecase/décision/RécupérerHistoriqueDécisionStratégiqueUseCase';
+import RécupérerCommentairesLesPlusRécentsParTypeUseCase from '@/server/usecase/commentaire/RécupérerCommentairesLesPlusRécentsParTypeUseCase';
+import RécupérerObjectifsLesPlusRécentsParTypeUseCase from '@/server/usecase/objectif/RécupérerObjectifsLesPlusRécentsParTypeUseCase';
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
@@ -69,33 +68,15 @@ export const publicationRouter = créerRouteurTRPC({
 
   récupérerLaPlusRécenteParType: procédureProtégée
     .input(validationPublicationContexte.merge(zodValidateurEntité))
-    .query(async ({ input }) => {
-      const publications: { type: RouterInputs['publication']['récupérerLaPlusRécente']['type'], publication: RouterOutputs['publication']['récupérerLaPlusRécente'] }[] = [];
-      
+    .query(async ({ input }) => {      
       if (input.entité === 'commentaires') {
-        const récupérerCommentaireLePlusRécentUseCase = new RécupérerCommentaireLePlusRécentUseCase(dependencies.getCommentaireRepository());
-
-        for (const type of typeCommentaire) {
-          const commentaire = await récupérerCommentaireLePlusRécentUseCase.run(input.chantierId, input.maille, input.codeInsee, type);
-          publications.push({
-            type,
-            publication: commentaire,
-          });
-        }
-        return publications;
+        const récupérerCommentairesLesPlusRécentsParTypeUseCase = new RécupérerCommentairesLesPlusRécentsParTypeUseCase(dependencies.getCommentaireRepository());
+        return récupérerCommentairesLesPlusRécentsParTypeUseCase.run(input.chantierId, input.maille, input.codeInsee);
       }
 
       if (input.entité === 'objectifs') {
-        const récupérerObjectifLePlusRécentUseCase = new RécupérerObjectifLePlusRécentUseCase(dependencies.getObjectifRepository());
-
-        for (const type of typesObjectif) {
-          const objectif = await récupérerObjectifLePlusRécentUseCase.run(input.chantierId, type);
-          publications.push({
-            type,
-            publication: objectif,
-          });
-        }
-        return publications;
+        const récupérerObjectifsLesPlusRécentsParTypeUseCase = new RécupérerObjectifsLesPlusRécentsParTypeUseCase(dependencies.getObjectifRepository());
+        return récupérerObjectifsLesPlusRécentsParTypeUseCase.run(input.chantierId);
       }
     }),
 
