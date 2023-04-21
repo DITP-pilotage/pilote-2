@@ -20,6 +20,6 @@ export default withAuth(
 );
 
 export const config = {
-  // s'applique à toutes les urls sauf / - ^/js/
-  matcher: ['/((?!js/).+)'],
+  // s'applique à toutes les urls sauf / - ^/js/ - _next/static - _next/image - favicon.ico
+  matcher: ['/((?!js/|_next/static|_next/image|favicon.ico).+)'],
 };

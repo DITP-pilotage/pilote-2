@@ -178,9 +178,6 @@ export const authOptions: AuthOptions = {
       if (account && user) {
         logger.debug({ token, user, account, profile, isNewUser, currentDate }, '------> JWT fnt');
 
-        const habilitationRepository = dependencies.getHabilitationRepository();
-        const habilitation = await habilitationRepository.récupèreHabilitationsPourUtilisateur(user.email);
-
         return {
           accessToken: account.access_token,
           accessTokenExpires: currentDate + (account.expires_at - 10) * 1000,
@@ -188,7 +185,6 @@ export const authOptions: AuthOptions = {
           refreshToken: account.refresh_token,
           idToken: account.id_token,
           provider: account.provider,
-          habilitation,
           user,
         };
       }
@@ -204,11 +200,14 @@ export const authOptions: AuthOptions = {
     },
 
     async session({ session, token }: any) {
+      const habilitationRepository = dependencies.getHabilitationRepository();
+      const habilitation = await habilitationRepository.récupèreHabilitationsPourUtilisateur(token.user.email);
+
       // Send properties to the client, like an access_token from a provider.
       session.user = token.user;
       session.accessToken = token.accessToken;
       session.error = token.error;
-      session.habilitation = token.habilitation;
+      session.habilitation = habilitation;
 
       return session;
     },
