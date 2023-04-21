@@ -4,7 +4,9 @@ import { Commentaires, CommentairesMailleNationale, CommentairesMailleRégionale
 export default class CommentaireBuilder {
   private _commentaireSurLesDonnées: CommentairesMailleRégionaleOuDépartementale['commentairesSurLesDonnées'];
 
-  private _autresRésultatsObtenus: Commentaires['autresRésultatsObtenus'];
+  private _autresRésultatsObtenus: CommentairesMailleRégionaleOuDépartementale['autresRésultatsObtenus'];
+
+  private _autresRésultatsObtenusNonCorrélésAuxIndicateurs: CommentairesMailleNationale['autresRésultatsObtenusNonCorrélésAuxIndicateurs'];
 
   private _risquesEtFreinsÀLever: CommentairesMailleNationale['risquesEtFreinsÀLever'];
 
@@ -15,6 +17,7 @@ export default class CommentaireBuilder {
   constructor() {
     this._commentaireSurLesDonnées = faker.helpers.arrayElement([null, this._générerUnCommentaire('commentairesSurLesDonnées')]);
     this._autresRésultatsObtenus = faker.helpers.arrayElement([null, this._générerUnCommentaire('autresRésultatsObtenus')]);
+    this._autresRésultatsObtenusNonCorrélésAuxIndicateurs = faker.helpers.arrayElement([null, this._générerUnCommentaire('autresRésultatsObtenusNonCorrélésAuxIndicateurs')]);
     this._risquesEtFreinsÀLever = faker.helpers.arrayElement([null, this._générerUnCommentaire('risquesEtFreinsÀLever')]);
     this._solutionsEtActionsÀVenir = faker.helpers.arrayElement([null, this._générerUnCommentaire('solutionsEtActionsÀVenir')]);
     this._exemplesConcretsDeRéussite = faker.helpers.arrayElement([null, this._générerUnCommentaire('exemplesConcretsDeRéussite')]);
@@ -45,7 +48,12 @@ export default class CommentaireBuilder {
     return this;
   }
 
-  avecAutresRésultatsObtenus(autresRésultatsObtenus: Commentaires['autresRésultatsObtenus']): CommentaireBuilder {
+  avecAutresRésultatsObtenusNonCorrélésAuxIndicateurs(autresRésultatsObtenusNonCorrélésAuxIndicateurs: CommentairesMailleNationale['autresRésultatsObtenusNonCorrélésAuxIndicateurs']): CommentaireBuilder {
+    this._autresRésultatsObtenusNonCorrélésAuxIndicateurs = autresRésultatsObtenusNonCorrélésAuxIndicateurs;
+    return this;
+  }
+
+  avecAutresRésultatsObtenus(autresRésultatsObtenus: CommentairesMailleRégionaleOuDépartementale['autresRésultatsObtenus']): CommentaireBuilder {
     this._autresRésultatsObtenus = autresRésultatsObtenus;
     return this;
   }
@@ -59,6 +67,7 @@ export default class CommentaireBuilder {
     return {
       commentairesSurLesDonnées: this._commentaireSurLesDonnées,
       autresRésultatsObtenus: this._autresRésultatsObtenus,
+      autresRésultatsObtenusNonCorrélésAuxIndicateurs: this._autresRésultatsObtenusNonCorrélésAuxIndicateurs,
       risquesEtFreinsÀLever: this._risquesEtFreinsÀLever,
       solutionsEtActionsÀVenir: this._solutionsEtActionsÀVenir,
       exemplesConcretsDeRéussite: this._exemplesConcretsDeRéussite,

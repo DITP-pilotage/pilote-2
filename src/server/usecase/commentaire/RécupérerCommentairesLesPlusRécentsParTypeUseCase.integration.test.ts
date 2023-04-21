@@ -51,16 +51,16 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeUseCase', () => {
     .avecMaille('NAT')
     .avecDate(new Date('2023-04-19'))
     .build();
-  const commentaireAutresRésultatsObtenusMailleDépartementale = new CommentaireSQLRowBuilder()
+  const commentaireAutresRésultatsObtenus = new CommentaireSQLRowBuilder()
     .avecChantierId(chantierId)
     .avecType(CODES_TYPES_COMMENTAIRES['autresRésultatsObtenus'])
     .avecMaille('DEPT')
     .avecCodeInsee('75')
     .avecDate(new Date('2023-04-19'))
     .build();
-  const commentaireAutresRésultatsObtenusMailleNationale = new CommentaireSQLRowBuilder()
+  const commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs = new CommentaireSQLRowBuilder()
     .avecChantierId(chantierId)
-    .avecType(CODES_TYPES_COMMENTAIRES['autresRésultatsObtenus'])
+    .avecType(CODES_TYPES_COMMENTAIRES['autresRésultatsObtenusNonCorrélésAuxIndicateurs'])
     .avecMaille('NAT')
     .avecDate(new Date('2023-04-19'))
     .build();
@@ -82,12 +82,12 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeUseCase', () => {
   describe('Pour la maille nationale', () => {
     it('Retourne un objet contenant les commentaires les plus récents avec les bons types', async () => {
       // WHEN
-      await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenusMailleDépartementale, commentaireAutresRésultatsObtenusMailleNationale, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
+      await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
       const résultat = await récupérerCommentairesLesPlusRécentsParTypeUseCase.run(chantierId, 'nationale', 'FR');
 
       // THEN
       const attendu = [
-        { type: 'autresRésultatsObtenus', publication: mapperVersDomaine(commentaireAutresRésultatsObtenusMailleNationale) },
+        { type: 'autresRésultatsObtenusNonCorrélésAuxIndicateurs', publication: mapperVersDomaine(commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs) },
         { type: 'risquesEtFreinsÀLever', publication: mapperVersDomaine(commentaireRisquesEtFreinsÀLeverLePlusRécent) },
         { type: 'solutionsEtActionsÀVenir', publication: mapperVersDomaine(commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale) },
         { type: 'exemplesConcretsDeRéussite', publication: mapperVersDomaine(commentaireExemplesConcretsDeRéussite) },
@@ -99,7 +99,7 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeUseCase', () => {
   describe('Pour les mailles départementale et régionale ', () => {
     it('Retourne un objet contenant les bons types et des commentaires null', async () => {
       // WHEN
-      await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenusMailleDépartementale, commentaireAutresRésultatsObtenusMailleNationale, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
+      await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
       const résultat = await récupérerCommentairesLesPlusRécentsParTypeUseCase.run(chantierId, 'régionale', '01');
 
       // THEN
@@ -112,13 +112,13 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeUseCase', () => {
 
     it('Retourne un objet contenant les commentaires les plus récents avec les bons types', async () => {
       // WHEN
-      await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenusMailleDépartementale, commentaireAutresRésultatsObtenusMailleNationale, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
+      await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
       const résultat = await récupérerCommentairesLesPlusRécentsParTypeUseCase.run(chantierId, 'départementale', '75');
 
       // THEN
       const attendu = [
         { type: 'commentairesSurLesDonnées', publication: mapperVersDomaine(commentairesSurLesDonnéesDept75) },
-        { type: 'autresRésultatsObtenus', publication: mapperVersDomaine(commentaireAutresRésultatsObtenusMailleDépartementale) },
+        { type: 'autresRésultatsObtenus', publication: mapperVersDomaine(commentaireAutresRésultatsObtenus) },
       ];
       expect(résultat).toStrictEqual(attendu);
     });

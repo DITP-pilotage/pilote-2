@@ -19,7 +19,7 @@ describe('CommentaireSQLRepository', () => {
       const résultat = await commentaireRepository.récupérerLePlusRécent('CH-001', 'nationale', 'FR', 'autresRésultatsObtenus');
 
       // THEN
-      await expect(résultat).toStrictEqual(null);
+      expect(résultat).toStrictEqual(null);
     });
 
     it('Retourne le commentaire le plus récent pour un type et un chantier', async () => {

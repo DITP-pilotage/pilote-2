@@ -6,7 +6,7 @@ export type Commentaire = {
   type: TypeCommentaire
 } | null;
 
-export const typesCommentaireMailleNationale = ['autresRésultatsObtenus', 'risquesEtFreinsÀLever', 'solutionsEtActionsÀVenir', 'exemplesConcretsDeRéussite'] as const;
+export const typesCommentaireMailleNationale = ['autresRésultatsObtenusNonCorrélésAuxIndicateurs', 'risquesEtFreinsÀLever', 'solutionsEtActionsÀVenir', 'exemplesConcretsDeRéussite'] as const;
 export const typesCommentaireMailleRégionaleOuDépartementale = ['commentairesSurLesDonnées', 'autresRésultatsObtenus'] as const;
 
 export type TypeCommentaireMailleNationale = typeof typesCommentaireMailleNationale[number];

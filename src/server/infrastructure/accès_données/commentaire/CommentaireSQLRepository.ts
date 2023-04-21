@@ -11,6 +11,7 @@ import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/ma
 export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaire> = {
   commentaires_sur_les_donnees: 'commentairesSurLesDonnées',
   autres_resultats_obtenus: 'autresRésultatsObtenus',
+  autres_resultats_obtenus_non_correles_aux_indicateurs: 'autresRésultatsObtenusNonCorrélésAuxIndicateurs',
   freins_a_lever: 'risquesEtFreinsÀLever',
   actions_a_venir: 'solutionsEtActionsÀVenir',
   actions_a_valoriser: 'exemplesConcretsDeRéussite',
@@ -19,6 +20,7 @@ export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaire> = {
 export const CODES_TYPES_COMMENTAIRES: Record<TypeCommentaire, string> = {
   commentairesSurLesDonnées: 'commentaires_sur_les_donnees',
   autresRésultatsObtenus: 'autres_resultats_obtenus',
+  autresRésultatsObtenusNonCorrélésAuxIndicateurs: 'autres_resultats_obtenus_non_correles_aux_indicateurs',
   risquesEtFreinsÀLever: 'freins_a_lever',
   solutionsEtActionsÀVenir: 'actions_a_venir',
   exemplesConcretsDeRéussite: 'actions_a_valoriser',
