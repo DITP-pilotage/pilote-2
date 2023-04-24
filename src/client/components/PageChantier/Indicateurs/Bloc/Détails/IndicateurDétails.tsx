@@ -33,7 +33,11 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
         <div className="fr-container">
           <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
             <div className="fr-col-12">
-              <IndicateurSpécifications indicateur={indicateur} />
+              <IndicateurSpécifications
+                description={indicateur.description}
+                modeDeCalcul={indicateur.modeDeCalcul}
+                source={indicateur.source}
+              />
             </div>
             <section className="fr-col-12 fr-col-xl-6">
               <Titre
