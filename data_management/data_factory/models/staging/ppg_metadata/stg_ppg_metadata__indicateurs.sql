@@ -21,7 +21,8 @@ renamed as (
         indic_source as source,
         indic_source_url as source_url,
         indic_methode_calcul as mode_de_calcul,
-        indic_unite as unite
+        indic_unite as unite,
+        indic_hidden_pilote as est_cache_dans_pilote
 
     from source
 

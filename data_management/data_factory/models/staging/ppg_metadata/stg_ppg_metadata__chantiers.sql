@@ -22,7 +22,9 @@ renamed as (
         string_to_array(ch_per, ' | ') as perimetre_ids,
         string_to_array(ch_dp, ' | ') as directeurs_projet_noms,
         string_to_array(ch_dp_mail, ' | ') as directeurs_projet_mails,
-        ch_territo as est_territorialise
+        ch_territo as est_territorialise,
+        engagement_short as nom_engagement,
+        ch_hidden_pilote as est_cache_dans_pilote
 
     from source
 
