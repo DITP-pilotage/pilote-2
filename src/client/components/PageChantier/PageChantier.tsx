@@ -144,9 +144,7 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
                   )
                 }
                 {
-                  décisionStratégique !== null
-                  && mailleAssociéeAuTerritoireSélectionné === 'nationale'
-                  && process.env.NEXT_PUBLIC_FT_DECISIONS_STRATEGIQUES_DISABLED !== 'true' &&
+                  mailleAssociéeAuTerritoireSélectionné === 'nationale' &&
                   <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                     <div className="fr-col-12">
                       <DécisionsStratégiques
