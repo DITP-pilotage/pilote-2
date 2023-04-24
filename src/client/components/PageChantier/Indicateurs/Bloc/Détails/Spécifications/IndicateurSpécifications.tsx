@@ -1,7 +1,7 @@
 import IndicateurSpécificationsProps from '@/components/PageChantier/Indicateurs/Bloc/Détails/Spécifications/IndicateurSpécifications.interface';
 import IndicateurSpécificationsStyled from './IndicateurSpécifications.styled';
 
-export default function IndicateurSpécifications({ indicateur } : IndicateurSpécificationsProps) {
+export default function IndicateurSpécifications({ description,  modeDeCalcul, source } : IndicateurSpécificationsProps) {
   const libelléValeurNull = 'Non renseignée';
 
   return (
@@ -14,19 +14,19 @@ export default function IndicateurSpécifications({ indicateur } : IndicateurSp�
         Description de l&apos;indicateur
       </p>
       <p className='fr-text--xs'>
-        {indicateur.description ?? libelléValeurNull}
+        { description ?? libelléValeurNull }
       </p>
       <p className='fr-text--md sous-titre fr-mt-2w'>
         Mode de calcul
       </p>
       <p className='fr-text--xs'>
-        {indicateur.modeDeCalcul ?? libelléValeurNull}
+        { modeDeCalcul ?? libelléValeurNull }
       </p>
       <p className='fr-text--md sous-titre fr-mt-2w'>
         Source
       </p>
       <p className='fr-text--xs'>
-        {indicateur.source ?? libelléValeurNull}
+        { source ?? libelléValeurNull }
       </p>
     </IndicateurSpécificationsStyled>
   );
