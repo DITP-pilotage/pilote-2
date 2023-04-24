@@ -38,7 +38,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
         <BarreLatéraleEncart>
           <SélecteursMaillesEtTerritoires />
         </BarreLatéraleEncart>
-        <section>
+        <section title='filtres'>
           <Titre
             baliseHtml="h1"
             className="fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8"

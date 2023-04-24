@@ -44,6 +44,11 @@ import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_donnée
 import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 import DécisionStratégiqueSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/DécisionStratégiqueSQLRow.builder';
 
+const périmètreMinistérielStatique = new PérimètreMinistérielRowBuilder()
+  .avecMinistères('Agriculture et Alimentation')
+  .avecNom('Agriculture')
+  .build();
+
 const chantierStatiqueId123 = new ChantierSQLRowBuilder()
   .avecAxe('axe chantier')
   .avecCodeInsee('FR')
@@ -58,9 +63,8 @@ const chantierStatiqueId123 = new ChantierSQLRowBuilder()
   .avecMétéo('SOLEIL')
   .avecNom('CH-123 Chantier test')
   .avecPpg('ppg chantier')
-  .avecPérimètreIds([])
+  .avecPérimètreIds([périmètreMinistérielStatique.id])
   .avecTauxAvancement(66)
-  .avecMinistères(['Agriculture et Alimentation'])
   .avecTerritoireNom(null);
 
 const prisma = new PrismaClient();
@@ -113,7 +117,7 @@ class DatabaseSeeder {
   private async _créerPérimètresMinistériels() {
     this._périmètresMinistériels = Array.from({ length: 15 }).map(() => new PérimètreMinistérielRowBuilder().build()).filter(périmètre => périmètre.ministere !== null);
 
-    await prisma.perimetre.createMany({ data: this._périmètresMinistériels });
+    await prisma.perimetre.createMany({ data: [...this._périmètresMinistériels, périmètreMinistérielStatique] });
   }
 
   private async _créerChantiers() {

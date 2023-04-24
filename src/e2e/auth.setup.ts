@@ -1,7 +1,8 @@
 // auth.setup.ts
-import { test as setup } from '@playwright/test';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { expect, test as setup } from '@playwright/test';
 
-const authFile = 'playwright/.auth/user.json';
+const authFile = 'src/e2e/.auth/user.json';
 
 setup('authenticate', async ({ page }) => {
   await page.goto('/');
@@ -9,8 +10,6 @@ setup('authenticate', async ({ page }) => {
   await page.getByLabel('Email').type('ditp.admin@example.com');
   await page.getByLabel('Mot de Passe').type(process.env.DEV_PASSWORD!);
   await page.getByRole('button').click();
-
-  await page.waitForURL('/');
 
   await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toContainText(/chantiers/i);
 

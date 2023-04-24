@@ -41,5 +41,5 @@ yarn-error.log*
 .vscode/
 *.pgsql
 /test-results/
-e2e/.auth
+src/e2e/.auth
 
