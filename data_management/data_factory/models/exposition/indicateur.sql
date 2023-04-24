@@ -11,6 +11,18 @@ with avancement_indicateur as (
         avancement_global_borne
     FROM {{ ref('taux_avancement_indicateur__departement')}}
     WHERE zone_type_parent = 'REG'
+    UNION
+    SELECT
+        indicateur_id,
+        zone_id,
+        valeur_initiale,
+        valeur_actuelle,
+        valeur_cible,
+        date_valeur_initiale,
+        date_valeur_actuelle,
+        date_valeur_cible,
+        avancement_global_borne
+    FROM {{ ref('taux_avancement_indicateur__region')}}
 )
 
 SELECT m_indicateurs.id,
