@@ -5,7 +5,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
-  testDir: './e2e',
+  testDir: './src/e2e',
   expect: { timeout: 5000 },
   /* Run tests in files in parallel */
   fullyParallel: true,
