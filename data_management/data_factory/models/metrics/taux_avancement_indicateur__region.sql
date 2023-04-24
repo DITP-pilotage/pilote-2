@@ -1,4 +1,4 @@
-WITH pivot_faits_indicateur_reg_dept AS (
+WITH pivot_faits_indicateur_region AS (
     SELECT * from {{ ref("pivot_faits_indicateur") }} WHERE zone_type = 'REG'
 ),
 
@@ -18,8 +18,7 @@ taux_avancement_region_avec_mesures AS (
                 THEN (valeur_actuelle - valeur_initiale) / (valeur_cible - valeur_initiale) * 100
             ELSE NULL
             END AS avancement_global
-    FROM pivot_faits_indicateur_reg_dept
-    WHERE departement_code is null -- TODO condition vraiment nécessaire ? car avant zone_type = 'REG' a vérifier si on peut enlever quand on aura plus de données
+    FROM pivot_faits_indicateur_region
 ),
 
 pivot_faits_indicateur_departements_sans_mesure_regionale AS (
