@@ -53,6 +53,24 @@ premiere_mesure_valeur_actuelle_par_indicateur_et_zone AS (
 	FROM faits_indicateur_order_by_date
 	WHERE row_id_by_date_releve_asc = 1 AND type_mesure = 'va'
 	GROUP BY indicateur_id, zone_id, zone_id_parent, type_mesure
+),
+
+valeurs_actuelles_ordonnees_par_date_de_releve AS (
+    SELECT ROW_NUMBER() OVER (PARTITION BY indicateur_id, zone_id, zone_id_parent, date_releve ORDER BY date_releve ASC, date_import DESC) AS row_id,
+        *
+    FROM {{ ref("faits_indicateur")}}
+    WHERE type_mesure = 'va'
+),
+
+evolution_indicateur AS (
+    SELECT indicateur_id,
+        zone_id,
+        zone_id_parent,
+        array_agg(valeur) AS evolution_valeur_actuelle,
+        array_agg(date_releve) AS evolution_date_valeur_actuelle
+    FROM valeurs_actuelles_ordonnees_par_date_de_releve
+    WHERE row_id = 1
+    GROUP BY indicateur_id, zone_id, zone_id_parent
 )
 
 SELECT
@@ -67,6 +85,8 @@ SELECT
     COALESCE(MAX(date_releve) FILTER (WHERE type_mesure = 'vi'), MAX(date_releve_premiere_mesure_valeur_actuelle)) AS date_valeur_initiale,
     MAX(date_releve) FILTER (WHERE type_mesure = 'va') AS date_valeur_actuelle,
     MAX(date_releve) FILTER (WHERE type_mesure = 'vc') AS date_valeur_cible, -- dernière valeur cible dispo
+    MAX(evolution_indicateur.evolution_valeur_actuelle) AS evolution_valeur_actuelle,
+    MAX(evolution_indicateur.evolution_date_valeur_actuelle) AS evolution_date_valeur_actuelle,
     MAX(departement_code) AS departement_code,
     MAX(region_code) AS region_code,
     MAX(national_code) AS national_code
@@ -74,5 +94,9 @@ FROM faits_indicateur_order_by_date LEFT JOIN premiere_mesure_valeur_actuelle_pa
 	ON faits_indicateur_order_by_date.indicateur_id = premiere_mesure_valeur_actuelle_par_indicateur_et_zone.indicateur_id
                AND faits_indicateur_order_by_date.zone_id = premiere_mesure_valeur_actuelle_par_indicateur_et_zone.zone_id
                AND faits_indicateur_order_by_date.zone_id_parent = premiere_mesure_valeur_actuelle_par_indicateur_et_zone.zone_id_parent
+LEFT JOIN evolution_indicateur
+    ON faits_indicateur_order_by_date.indicateur_id = evolution_indicateur.indicateur_id
+               AND faits_indicateur_order_by_date.zone_id = evolution_indicateur.zone_id
+               AND faits_indicateur_order_by_date.zone_id_parent = evolution_indicateur.zone_id_parent
 WHERE row_id_by_date_releve_desc = 1
 GROUP BY faits_indicateur_order_by_date.indicateur_id, faits_indicateur_order_by_date.zone_id, faits_indicateur_order_by_date.zone_id_parent
