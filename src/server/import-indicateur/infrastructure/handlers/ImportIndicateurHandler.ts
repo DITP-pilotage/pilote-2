@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { File } from 'formidable';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import { parseForm } from '@/server/import-indicateur/infrastructure/handlers/ParseForm';
+import { DetailValidationFichier } from '@/server/domain/fichier/DetailValidationFichier';
 
 const présenterEnContrat = (report: DetailValidationFichier): DetailValidationFichierContrat => {
   return {

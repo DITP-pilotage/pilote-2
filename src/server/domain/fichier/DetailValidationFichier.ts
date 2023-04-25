@@ -1,6 +1,4 @@
-import {
-  ErreurValidationFichier,
-} from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
+import { ErreurValidationFichier } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
 
 export class DetailValidationFichier {

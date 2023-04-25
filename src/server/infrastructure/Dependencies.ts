@@ -19,7 +19,6 @@ import CommentaireSQLRepository from '@/server/infrastructure/accès_données/co
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
 import HabilitationRepository from '@/server/domain/identité/HabilitationRepository';
 import HabilitationSQLRepository from '@/server/infrastructure/accès_données/identité/HabilitationSQLRepository';
-import { ValiderFichierIndicateurImporteUseCase } from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
 import { ValidataFichierIndicateurValidationService } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
 import { FetchHttpClient } from '@/server/import-indicateur/infrastructure/adapters/FetchHttpClient';
 import { PrismaMesureIndicateurRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
@@ -29,6 +28,7 @@ import { UtilisateurIAMRepository } from '@/server/domain/identité/UtilisateurI
 import UtilisateurIAMKeycloakRepository
   from '@/server/infrastructure/accès_données/identité/UtilisateurIAMKeycloakRepository';
 import DécisionStratégiqueRepository from '@/server/domain/décisionStratégique/DécisionStratégiqueRepository.interface';
+import { ValiderFichierIndicateurImporteUseCase } from '@/server/usecase/fichier/ValiderFichierIndicateurImporteUseCase';
 import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
 import DécisionStratégiqueSQLRepository from './accès_données/décisionStratégique/DécisionStratégiqueSQLRepository';
 
@@ -77,10 +77,10 @@ class Dependencies {
     const httpClient = new FetchHttpClient();
     const prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
     const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
-    this._validerFichierIndicateurImporteUseCase = new ValiderFichierIndicateurImporteUseCase({
+    this._validerFichierIndicateurImporteUseCase = new ValiderFichierIndicateurImporteUseCase(
       fichierIndicateurValidationService,
-      mesureIndicateurRepository: prismaMesureIndicateurRepository,
-    });
+      prismaMesureIndicateurRepository,
+    );
   }
 
   getChantierRepository(): ChantierRepository {

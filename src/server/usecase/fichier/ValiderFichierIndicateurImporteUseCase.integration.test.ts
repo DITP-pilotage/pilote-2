@@ -1,15 +1,13 @@
 import { captor, mock, MockProxy } from 'jest-mock-extended';
 import {
-  ValiderFichierIndicateurImporteUseCase,
-} from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
-import {
   FichierIndicateurValidationService,
-} from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
+} from '@/server/domain/fichier/FichierIndicateurValidationService.interface';
 import { IndicateurDataBuilder } from '@/server/import-indicateur/app/builder/IndicateurDataBuilder';
-import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichierBuilder';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
 import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository';
-import { ErreurValidationFichierBuilder } from '@/server/import-indicateur/app/builder/ErreurValidationFichierBuilder';
+import { DetailValidationFichierBuilder } from '@/server/domain/fichier/DetailValidationFichier.builder';
+import { ErreurValidationFichierBuilder } from '@/server/domain/fichier/ErreurValidationFichier.builder';
+import { ValiderFichierIndicateurImporteUseCase } from './ValiderFichierIndicateurImporteUseCase';
 
 describe('ValiderFichierIndicateurImporteUseCase', () => {
   let fichierIndicateurValidationService: MockProxy<FichierIndicateurValidationService>;
@@ -25,10 +23,10 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
   beforeEach(() => {
     fichierIndicateurValidationService = mock<FichierIndicateurValidationService>();
     mesureIndicateurRepository = mock<MesureIndicateurRepository>();
-    validerFichierIndicateurImporteUseCase = new ValiderFichierIndicateurImporteUseCase({
+    validerFichierIndicateurImporteUseCase = new ValiderFichierIndicateurImporteUseCase(
       fichierIndicateurValidationService,
       mesureIndicateurRepository,
-    });
+    );
   });
 
   it("doit appeler le service de validation du fichier d'indicateur importé", async () => {

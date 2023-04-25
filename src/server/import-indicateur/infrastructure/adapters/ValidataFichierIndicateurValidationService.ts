@@ -1,8 +1,7 @@
-import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 import {
   FichierIndicateurValidationService,
   ValiderFichierPayload,
-} from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
+} from '@/server/domain/fichier/FichierIndicateurValidationService.interface';
 import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
 import {
@@ -10,6 +9,7 @@ import {
   ReportResourceTaskData,
   ReportTask,
 } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
+import { DetailValidationFichier } from '@/server/domain/fichier/DetailValidationFichier';
 
 interface Dependencies {
   httpClient: HttpClient

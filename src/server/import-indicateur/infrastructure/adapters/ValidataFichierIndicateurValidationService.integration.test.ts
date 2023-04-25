@@ -6,7 +6,7 @@ import {
 import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidataBuilder';
 import { ReportResourceTaskBuilder, ReportTaskBuilder } from '@/server/import-indicateur/app/builder/ReportTaskBuilder';
 import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTaskBuilder';
-import { ValiderFichierPayload } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
+import { ValiderFichierPayload } from '@/server/domain/fichier/FichierIndicateurValidationService.interface';
 
 describe('ValidataFichierIndicateurValidationService', () => {
   let validataFichierIndicateurValidationService: ValidataFichierIndicateurValidationService;

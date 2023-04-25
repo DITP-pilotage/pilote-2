@@ -1,4 +1,4 @@
-import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
+import { DetailValidationFichier } from './DetailValidationFichier';
 
 export type ValiderFichierPayload = {
   cheminCompletDuFichier: string

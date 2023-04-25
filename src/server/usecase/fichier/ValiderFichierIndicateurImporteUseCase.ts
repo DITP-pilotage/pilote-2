@@ -1,26 +1,13 @@
-import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
-import {
-  FichierIndicateurValidationService,
-} from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
+import { DetailValidationFichier } from '@/server/domain/fichier/DetailValidationFichier';
+import { FichierIndicateurValidationService } from '@/server/domain/fichier/FichierIndicateurValidationService.interface';
 import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository';
-import {
-  ErreurValidationFichier,
-} from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
-
-interface Dependencies {
-  fichierIndicateurValidationService: FichierIndicateurValidationService
-  mesureIndicateurRepository: MesureIndicateurRepository
-}
+import { ErreurValidationFichier } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
 
 export class ValiderFichierIndicateurImporteUseCase {
-  private fichierIndicateurValidationService: FichierIndicateurValidationService;
-
-  private mesureIndicateurRepository: MesureIndicateurRepository;
-
-  constructor({ fichierIndicateurValidationService, mesureIndicateurRepository }: Dependencies) {
-    this.fichierIndicateurValidationService = fichierIndicateurValidationService;
-    this.mesureIndicateurRepository = mesureIndicateurRepository;
-  }
+  constructor(
+    private readonly fichierIndicateurValidationService: FichierIndicateurValidationService,
+    private readonly mesureIndicateurRepository: MesureIndicateurRepository,
+  ) {}
 
   async execute(payload: {
     cheminCompletDuFichier: string
@@ -47,8 +34,6 @@ export class ValiderFichierIndicateurImporteUseCase {
         );
       }
     });
-
-    
 
     if (listeErreursValidation.length > 0) {
       return DetailValidationFichier.creerDetailValidationFichier({
