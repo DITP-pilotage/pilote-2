@@ -145,30 +145,40 @@ const extraireLeContenuDuFichier = (tasks: ReportTask[]) => {
   return { enTetes, donnees };
 };
 
+const initialiserMapFieldNameErreurDITP: (taskError: ReportErrorTask) => Record<string, Record<string, string>> =  (taskError) => ({
+  'indic_id': {
+    'constraint \"required\" is \"True\"': `Un indicateur ne peut etre vide. C'est le cas à la ligne ${taskError.rowPosition}.`,
+    'constraint \"pattern\" is \"^IND-[0-9]{3}$\"': "L'identifiant de l'indicateur doit être renseigné dans le format IND-XXX. Vous pouvez vous référer au guide des indicateurs pour trouver l'identifiant de votre indicateur.",
+  },
+  'metric_type': {
+    "constraint \"enum\" is \"['vi', 'va', 'vc']\"": 'Le type de valeur doit être vi (valeur initiale), va (valeur actuelle) ou vc (valeur cible).',
+    "constraint \"enum\" is \"['va']\"": 'Le type de valeur doit être va (valeur actuelle). Vous ne pouvez saisir que des valeurs actuelles.',
+  },
+  'zone_id': {
+    'constraint "pattern" is "^(R[0-9]{2,3})$"': `Veuillez entrer uniquement une zone régionale dans la colonne zone_id. '${taskError.cell}' n'est pas une zone régionale.`,
+  },
+});
+const initialiserMapCodeErreurDITP: (taskError: ReportErrorTask) => Record<string, Record<string, string>> =  (taskError) => {
+  const cléPourCode = `the same as in the row at position ${taskError.rowPosition}`;
+  const mapCodeNote: Record<string, string>  = {};
+  mapCodeNote[cléPourCode] = `La ligne ${taskError.rowPosition} comporte la même zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux.`;
+  return {
+    'primary-key-error': mapCodeNote,
+  };
+};
 const personnaliserValidataMessage = (taskError: ReportErrorTask): string => {
-  if (taskError.fieldName === 'indic_id') {
-    if (taskError.note === 'constraint \"required\" is \"True\"') {
-      return `Un indicateur ne peut etre vide. C'est le cas à la ligne ${taskError.rowPosition}.`;
-    } else if (taskError.note === 'constraint \"pattern\" is \"^IND-[0-9]{3}$\"') {
-      return "L'identifiant de l'indicateur doit être renseigné dans le format IND-XXX. Vous pouvez vous référer au guide des indicateurs pour trouver l'identifiant de votre indicateur.";
-    }
-  } else if (taskError.fieldName === 'metric_type') {
-    if (taskError.note === "constraint \"enum\" is \"['vi', 'va', 'vc']\"") {
-      return 'Le type de valeur doit être vi (valeur initiale), va (valeur actuelle) ou vc (valeur cible).';
-    } else if (taskError.note === "constraint \"enum\" is \"['va']\"") {
-      return 'Le type de valeur doit être va (valeur actuelle). Vous ne pouvez saisir que des valeurs actuelles.';
-    }
-  } else if (taskError.fieldName === 'zone_id') {
-    if (taskError.note === 'constraint "pattern" is "^(R[0-9]{2,3})$"') {
-      return `Veuillez entrer uniquement une zone régionale dans la colonne zone_id. '${taskError.cell}' n'est pas une zone régionale.`;
-    }
+  const fieldName = taskError.fieldName || 'unknown';
+  const { note, code, message } = taskError;
+
+  const mapFieldNameErreurDITP = initialiserMapFieldNameErreurDITP(taskError);
+  if (mapFieldNameErreurDITP[fieldName] && mapFieldNameErreurDITP[fieldName][note]) {
+    return mapFieldNameErreurDITP[fieldName][note];
   }
-  if (taskError.code === 'primary-key-error') {
-    if (taskError.note === `the same as in the row at position ${taskError.rowPosition}`) {
-      return `La ligne ${taskError.rowPosition} comporte la même zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux.`;
-    }
+  const mapCodeErreurDITP = initialiserMapCodeErreurDITP(taskError);
+  if (mapCodeErreurDITP[code] && mapCodeErreurDITP[code][note]) {
+    return mapCodeErreurDITP[code][note];
   }
-  return taskError.message;
+  return message;
 };
 
 export class ValidataFichierIndicateurValidationService implements FichierIndicateurValidationService {

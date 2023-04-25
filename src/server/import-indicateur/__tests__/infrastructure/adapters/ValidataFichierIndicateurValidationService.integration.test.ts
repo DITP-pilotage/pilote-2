@@ -264,8 +264,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
         expect(result.listeErreursValidation.at(0)?.message).toEqual(expected);
       });
-    })
-
+    });
 
     it('quand le fichier possède des données, doit construire le remonter les données du fichier', async () => {
       // GIVEN
