@@ -3,7 +3,7 @@ import { ReportErrorTask } from '@/server/import-indicateur/infrastructure/Repor
 export class ReportErrorTaskBuilder {
   private cell: string = 'Ma cellule';
   
-  private fieldName: string = 'Mon fieldName';
+  private fieldName: string | null = 'Mon fieldName';
   
   private fieldNumber: number = 3;
   
@@ -16,6 +16,10 @@ export class ReportErrorTaskBuilder {
   private rowNumber: number = 3;
   
   private rowPosition: number = 3;
+
+  private code: string = 'constraint-error';
+
+  private note: string = 'note';
   
   avecCell(cell: string): ReportErrorTaskBuilder {
     this.cell = cell;
@@ -23,7 +27,7 @@ export class ReportErrorTaskBuilder {
     return this;
   }
   
-  avecFieldName(fieldName: string): ReportErrorTaskBuilder {
+  avecFieldName(fieldName: string | null): ReportErrorTaskBuilder {
     this.fieldName = fieldName;
   
     return this;
@@ -64,7 +68,17 @@ export class ReportErrorTaskBuilder {
   
     return this;
   }
-  
+
+  avecCode(code: string): ReportErrorTaskBuilder {
+    this.code = code;
+    return this;
+  }
+
+  avecNote(note: string): ReportErrorTaskBuilder {
+    this.note = note;
+    return this;
+  }
+
   build(): ReportErrorTask {
     return {
       cell: this.cell,
@@ -75,6 +89,8 @@ export class ReportErrorTaskBuilder {
       name: this.name,
       rowNumber: this.rowNumber,
       rowPosition: this.rowPosition,
+      code: this.code,
+      note: this.note,
     };
   }
 }

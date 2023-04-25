@@ -13,13 +13,15 @@ export interface ReportTask {
 
 export interface ReportErrorTask {
   cell: string,
-  fieldName: string,
+  fieldName: string | null,
   fieldNumber: number,
   fieldPosition: number,
   message: string,
   name: string,
   rowNumber: number,
   rowPosition: number,
+  code: string,
+  note: string
 }
 
 export interface ReportResourceTask {
