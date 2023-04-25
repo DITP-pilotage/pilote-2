@@ -1,10 +1,15 @@
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 import {
-  FichierIndicateurValidationService, ValiderFichierPayload,
+  FichierIndicateurValidationService,
+  ValiderFichierPayload,
 } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
 import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
-import { ReportResourceTaskData, ReportTask } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
+import {
+  ReportErrorTask,
+  ReportResourceTaskData,
+  ReportTask,
+} from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
 
 interface Dependencies {
   httpClient: HttpClient
@@ -140,6 +145,32 @@ const extraireLeContenuDuFichier = (tasks: ReportTask[]) => {
   return { enTetes, donnees };
 };
 
+const personnaliserValidataMessage = (taskError: ReportErrorTask): string => {
+  if (taskError.fieldName === 'indic_id') {
+    if (taskError.note === 'constraint \"required\" is \"True\"') {
+      return `Un indicateur ne peut etre vide. C'est le cas à la ligne ${taskError.rowPosition}.`;
+    } else if (taskError.note === 'constraint \"pattern\" is \"^IND-[0-9]{3}$\"') {
+      return "L'identifiant de l'indicateur doit être renseigné dans le format IND-XXX. Vous pouvez vous référer au guide des indicateurs pour trouver l'identifiant de votre indicateur.";
+    }
+  } else if (taskError.fieldName === 'metric_type') {
+    if (taskError.note === "constraint \"enum\" is \"['vi', 'va', 'vc']\"") {
+      return 'Le type de valeur doit être vi (valeur initiale), va (valeur actuelle) ou vc (valeur cible).';
+    } else if (taskError.note === "constraint \"enum\" is \"['va']\"") {
+      return 'Le type de valeur doit être va (valeur actuelle). Vous ne pouvez saisir que des valeurs actuelles.';
+    }
+  } else if (taskError.fieldName === 'zone_id') {
+    if (taskError.note === 'constraint "pattern" is "^(R[0-9]{2,3})$"') {
+      return `Veuillez entrer uniquement une zone régionale dans la colonne zone_id. '${taskError.cell}' n'est pas une zone régionale.`;
+    }
+  }
+  if (taskError.code === 'primary-key-error') {
+    if (taskError.note === `the same as in the row at position ${taskError.rowPosition}`) {
+      return `La ligne ${taskError.rowPosition} comporte la même zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux.`;
+    }
+  }
+  return taskError.message;
+};
+
 export class ValidataFichierIndicateurValidationService implements FichierIndicateurValidationService {
   private httpClient: HttpClient;
 
@@ -155,7 +186,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     const report = await this.httpClient.post({ cheminCompletDuFichier, nomDuFichier, schema });
 
     const { enTetes, donnees } = extraireLeContenuDuFichier(report.tasks);
-    
+
     let listeIndicateursData: IndicateurData[] = [];
     if (report.tasks[0].resource) {
       listeIndicateursData = donnees.flat().map(donnee => IndicateurData.createIndicateurData({
@@ -166,7 +197,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
         metricValue: `${donnee[enTetes.metricValue]}`,
       }));
     }
-    
+
     if (report.valid) {
       return DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, listeIndicateursData });
     }
@@ -174,13 +205,17 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     const listeErreursValidation = report.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
       cellule: taskError.cell,
       nom: taskError.name,
-      message: taskError.message,
+      message: personnaliserValidataMessage(taskError),
       numeroDeLigne: taskError.rowNumber,
       positionDeLigne: taskError.rowPosition,
-      nomDuChamp: taskError.fieldName,
+      nomDuChamp: taskError.fieldName || '',
       positionDuChamp: taskError.fieldPosition,
     }));
 
-    return DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, listeErreursValidation, listeIndicateursData });
+    return DetailValidationFichier.creerDetailValidationFichier({
+      estValide: report.valid,
+      listeErreursValidation,
+      listeIndicateursData,
+    });
   }
 }
