@@ -3,9 +3,9 @@ import os
 
 
 def model(dbt, session):
-    dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_3')
+    dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_4')
     dim_tree_nodes = pd.read_csv(
-        f'{dump_dfakto_rp_raw}/dim_tree_nodes_202304051159.csv',
+        f'{dump_dfakto_rp_raw}/dim_tree_nodes_202304131653.csv',
         sep=';'
     )
 
