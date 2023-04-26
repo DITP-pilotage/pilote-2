@@ -1,15 +1,12 @@
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
-import {
-  FichierIndicateurValidationService,
-  ValiderFichierPayload,
-} from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
-import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
 import {
   ReportErrorTask,
   ReportResourceTaskData,
   ReportTask,
 } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
+import { FichierIndicateurValidationService, ValiderFichierPayload } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
+import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient.interface';
 import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
 
 interface Dependencies {
@@ -55,7 +52,7 @@ const extraireLeContenuDuFichier = (tasks: ReportTask[]) => {
   return { enTetes, donnees };
 };
 
-const initialiserMapFieldNameErreurDITP: (taskError: ReportErrorTask) => Record<EnTeteFichierEnum.INDIC_ID | EnTeteFichierEnum.METRIC_TYPE | EnTeteFichierEnum.ZONE_ID | string, Record<string, string>> =  (taskError) => ({
+const initialiserMapFieldNameErreurDITP: (taskError: ReportErrorTask) => Record<EnTeteFichierEnum.INDIC_ID | EnTeteFichierEnum.METRIC_TYPE | EnTeteFichierEnum.ZONE_ID | string, Record<string, string>> = (taskError) => ({
   [EnTeteFichierEnum.INDIC_ID]: {
     'constraint \"required\" is \"True\"': `Un indicateur ne peut etre vide. C'est le cas à la ligne ${taskError.rowPosition}.`,
     'constraint \"pattern\" is \"^IND-[0-9]{3}$\"': "L'identifiant de l'indicateur doit être renseigné dans le format IND-XXX. Vous pouvez vous référer au guide des indicateurs pour trouver l'identifiant de votre indicateur.",
@@ -68,9 +65,9 @@ const initialiserMapFieldNameErreurDITP: (taskError: ReportErrorTask) => Record<
     'constraint "pattern" is "^(R[0-9]{2,3})$"': `Veuillez entrer uniquement une zone régionale dans la colonne zone_id. '${taskError.cell}' n'est pas une zone régionale.`,
   },
 });
-const initialiserMapCodeErreurDITP: (taskError: ReportErrorTask) => Record<string, Record<string, string>> =  (taskError) => {
+const initialiserMapCodeErreurDITP: (taskError: ReportErrorTask) => Record<string, Record<string, string>> = (taskError) => {
   const cléPourCode = `the same as in the row at position ${taskError.rowPosition}`;
-  const mapCodeNote: Record<string, string>  = {};
+  const mapCodeNote: Record<string, string> = {};
   mapCodeNote[cléPourCode] = `La ligne ${taskError.rowPosition} comporte la même zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux.`;
   return {
     'primary-key-error': mapCodeNote,

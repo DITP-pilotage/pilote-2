@@ -1,15 +1,11 @@
 import { captor, mock, MockProxy } from 'jest-mock-extended';
-import {
-  ValiderFichierIndicateurImporteUseCase,
-} from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
-import {
-  FichierIndicateurValidationService,
-} from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
-import { IndicateurDataBuilder } from '@/server/import-indicateur/app/builder/IndicateurDataBuilder';
-import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichierBuilder';
+import { ValiderFichierIndicateurImporteUseCase } from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
-import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository';
-import { ErreurValidationFichierBuilder } from '@/server/import-indicateur/app/builder/ErreurValidationFichierBuilder';
+import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
+import { ErreurValidationFichierBuilder } from '@/server/import-indicateur/app/builder/ErreurValidationFichier.builder';
+import { IndicateurDataBuilder } from '@/server/import-indicateur/app/builder/IndicateurData.builder';
+import { FichierIndicateurValidationService } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
+import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
 
 describe('ValiderFichierIndicateurImporteUseCase', () => {
   let fichierIndicateurValidationService: MockProxy<FichierIndicateurValidationService>;

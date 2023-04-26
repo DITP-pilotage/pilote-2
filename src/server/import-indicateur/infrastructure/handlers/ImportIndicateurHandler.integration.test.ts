@@ -2,12 +2,12 @@ import nock from 'nock';
 import { createMocks } from 'node-mocks-http';
 import { mock } from 'jest-mock-extended';
 import PersistentFile from 'formidable/PersistentFile';
-import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidataBuilder';
 import handleValiderFichierImportIndicateur
   from '@/server/import-indicateur/infrastructure/handlers/ImportIndicateurHandler';
-import { ReportResourceTaskBuilder, ReportTaskBuilder } from '@/server/import-indicateur/app/builder/ReportTaskBuilder';
-import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTaskBuilder';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTask.builder';
+import { ReportTaskBuilder, ReportResourceTaskBuilder } from '@/server/import-indicateur/app/builder/ReportTask.builder';
+import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidata.builder';
 
 jest.mock('@/server/import-indicateur/infrastructure/handlers/ParseForm', () => ({
   parseForm: () => ({
