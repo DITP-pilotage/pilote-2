@@ -28,7 +28,6 @@ export function useRapportDétailléChantier(chantier: Chantier) {
   );
 
   return {
-    indicateurs: [],
     détailsIndicateurs,
     commentaires: commentaires ?? null,
     objectifs: objectifs ?? null,

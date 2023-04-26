@@ -1,7 +1,7 @@
 import { indicateur, PrismaClient } from '@prisma/client';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
-import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import { CODES_MAILLES, NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
@@ -23,6 +23,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         description: row.description,
         source: row.source,
         modeDeCalcul: row.mode_de_calcul,
+        chantierId: row.chantier_id,
+        maille: NOMS_MAILLES[row.maille],
+        codeInsee: row.code_insee,
       });
     });
   }
@@ -50,6 +53,12 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     }
 
     return détailsIndicateurs;
+  }
+
+  async récupérerTous(): Promise<Indicateur[]> {
+    const indicateurs: indicateur[] = await this.prisma.indicateur.findMany();
+
+    return this._mapToDomain(indicateurs);
   }
 
   async récupérerParChantierId(chantierId: string): Promise<Indicateur[]> {

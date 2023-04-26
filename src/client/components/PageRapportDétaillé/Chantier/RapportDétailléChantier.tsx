@@ -17,11 +17,10 @@ import {
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
-export default function RapportDétailléChantier({ chantier }: RapportDétailléChantierProps) {
+export default function RapportDétailléChantier({ chantier, indicateurs }: RapportDétailléChantierProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const {
-    indicateurs,
     détailsIndicateurs,
     commentaires,
     objectifs,
@@ -94,7 +93,10 @@ export default function RapportDétailléChantier({ chantier }: RapportDétaill�
               <div className="fr-col-12">
                 <Indicateurs
                   détailsIndicateurs={détailsIndicateurs}
-                  indicateurs={indicateurs}
+                  indicateurs={indicateurs.filter(indicateur =>
+                    indicateur.codeInsee === territoireSélectionné.codeInsee
+                    && indicateur.maille === mailleAssociéeAuTerritoireSélectionné,
+                  )}
                 />
               </div>
             </div>
