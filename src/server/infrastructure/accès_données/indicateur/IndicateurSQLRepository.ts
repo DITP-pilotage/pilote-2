@@ -1,10 +1,11 @@
-import { indicateur, PrismaClient } from '@prisma/client';
+import { indicateur as IndicateurPrisma, PrismaClient } from '@prisma/client';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES, NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { groupByAndTransform } from '@/client/utils/arrays';
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
   private prisma: PrismaClient;
@@ -13,24 +14,22 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     this.prisma = prisma;
   }
 
-  private _mapToDomain(indicateurs: indicateur[]): Indicateur[] {
-    return indicateurs.map(row => {
-      return ({
-        id: row.id,
-        nom: row.nom,
-        type: row.type_id as TypeIndicateur,
-        estIndicateurDuBaromètre: row.est_barometre ?? false,
-        description: row.description,
-        source: row.source,
-        modeDeCalcul: row.mode_de_calcul,
-        chantierId: row.chantier_id,
-        maille: NOMS_MAILLES[row.maille],
-        codeInsee: row.code_insee,
-      });
+  private _mapToDomain(indicateur: IndicateurPrisma): Indicateur {
+    return ({
+      id: indicateur.id,
+      nom: indicateur.nom,
+      type: indicateur.type_id as TypeIndicateur,
+      estIndicateurDuBaromètre: indicateur.est_barometre ?? false,
+      description: indicateur.description,
+      source: indicateur.source,
+      modeDeCalcul: indicateur.mode_de_calcul,
+      chantierId: indicateur.chantier_id,
+      maille: NOMS_MAILLES[indicateur.maille],
+      codeInsee: indicateur.code_insee,
     });
   }
 
-  private _mapDétailsToDomain(indicateurs: indicateur[]): DétailsIndicateurs {
+  private _mapDétailsToDomain(indicateurs: IndicateurPrisma[]): DétailsIndicateurs {
     const détailsIndicateurs: DétailsIndicateurs = {};
 
     for (const indic of indicateurs) {
@@ -55,22 +54,31 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return détailsIndicateurs;
   }
 
-  async récupérerTous(): Promise<Indicateur[]> {
-    const indicateurs: indicateur[] = await this.prisma.indicateur.findMany();
+  async récupérerGroupésParChantier(maille: Maille, codeInsee: CodeInsee): Promise<Record<string, Indicateur[]>> {
+    const indicateurs: IndicateurPrisma[] = await this.prisma.indicateur.findMany({
+      where: {
+        maille: CODES_MAILLES[maille],
+        code_insee: codeInsee,
+      },
+    });
 
-    return this._mapToDomain(indicateurs);
+    return groupByAndTransform(
+      indicateurs,
+      (indicateur) => indicateur.chantier_id,
+      this._mapToDomain,
+    );
   }
 
   async récupérerParChantierId(chantierId: string): Promise<Indicateur[]> {
-    const indicateurs: indicateur[] = await this.prisma.indicateur.findMany({
+    const indicateurs: IndicateurPrisma[] = await this.prisma.indicateur.findMany({
       where: { chantier_id: chantierId, maille: 'NAT' },
     });
     
-    return this._mapToDomain(indicateurs);
+    return indicateurs.map((indicateur) => this._mapToDomain(indicateur));
   }
 
   async récupérerDétails(indicateurId: string, maille: Maille): Promise<DétailsIndicateurs> {
-    const indicateurs: indicateur[] = await this.prisma.indicateur.findMany({
+    const indicateurs: IndicateurPrisma[] = await this.prisma.indicateur.findMany({
       where: { 
         id: indicateurId,
         maille: CODES_MAILLES[maille],
@@ -81,7 +89,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   }
 
   async récupererDétailsParChantierIdEtTerritoire(chantierId: string, maille: Maille, codesInsee: CodeInsee[]): Promise<DétailsIndicateurs> {
-    const indicateurs: indicateur[] = await this.prisma.indicateur.findMany({
+    const indicateurs: IndicateurPrisma[] = await this.prisma.indicateur.findMany({
       where: {
         chantier_id: chantierId,
         maille: CODES_MAILLES[maille],

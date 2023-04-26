@@ -3,7 +3,6 @@ import {
   mailleSélectionnéeTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import useChantier from '@/components/useChantier';
 import calculerChantierAvancements from '@/client/utils/chantier/avancement/calculerChantierAvancements';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 
@@ -18,7 +17,13 @@ export function useRapportDétailléChantier(chantier: Chantier) {
     objectifs,
     synthèseDesRésultats,
     décisionStratégique,
-  } = useChantier(chantier.id);
+  } = {
+    détailsIndicateurs: null,
+    commentaires: null,
+    objectifs: null,
+    synthèseDesRésultats: null,
+    décisionStratégique: null,
+  };
 
   const avancements = calculerChantierAvancements(
     chantier,

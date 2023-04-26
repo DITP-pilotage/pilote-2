@@ -5,7 +5,6 @@ import { dependencies } from '@/server/infrastructure/Dependencies';
 import { SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
 import PageRapportDétaillé from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { groupBy } from '@/client/utils/arrays';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 
 interface NextPageRapportDétailléProps {
@@ -27,11 +26,14 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
   if (!session || !session.habilitation) {
     return { props: {} };
   }
+
+  const maille = 'nationale';
+  const codeInsee = 'FR';
+
   const chantierRepository = dependencies.getChantierRepository();
   const chantiers = await chantierRepository.getListe(session.habilitation, SCOPE_LECTURE);
   const indicateursRepository = dependencies.getIndicateurRepository();
-  const indicateurs = await indicateursRepository.récupérerTous();
-  const indicateursGroupésParChantier = groupBy(indicateurs, (indicateur) => indicateur.chantierId);
+  const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(maille, codeInsee);
 
   return {
     props: {

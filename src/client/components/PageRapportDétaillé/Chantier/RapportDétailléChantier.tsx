@@ -28,6 +28,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs }: Rap
     décisionStratégique,
     avancements,
   } = useRapportDétailléChantier(chantier);
+
   return (
     <section
       className="fr-mt-4w"
@@ -97,10 +98,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs }: Rap
               <div className="fr-col-12">
                 <Indicateurs
                   détailsIndicateurs={détailsIndicateurs}
-                  indicateurs={indicateurs.filter(indicateur =>
-                    indicateur.codeInsee === territoireSélectionné.codeInsee
-                    && indicateur.maille === mailleAssociéeAuTerritoireSélectionné,
-                  )}
+                  indicateurs={indicateurs}
                 />
               </div>
             </div>
