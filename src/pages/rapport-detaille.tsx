@@ -52,6 +52,10 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
   const détailsIndicateursGroupésParChantier = await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(maille, codeInsee);
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();
   const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(maille, codeInsee);    
+  const commentaireRepository = dependencies.getCommentaireRepository();
+  const commentairesGroupésParChantier = await commentaireRepository.récupérerLesPlusRécentesGroupéesParChantier(maille, codeInsee);
+  console.log(commentairesGroupésParChantier);
+  
 
   return {
     props: {
