@@ -69,7 +69,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
             <FiltresActifs />
           }
           <div className="fr-py-2w fr-px-md-4w fr-container--fluid">
-            <div className="fr-px-2w fr-px-md-0 flex justifyBetween">
+            <div className="fr-px-2w fr-px-md-0 flex justify-between">
               <Titre
                 baliseHtml='h1'
                 className='fr-h4'
