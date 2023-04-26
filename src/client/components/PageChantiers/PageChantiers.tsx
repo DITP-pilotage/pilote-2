@@ -1,6 +1,8 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import { useState } from 'react';
+import Link from 'next/link';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
@@ -67,13 +69,23 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
             <FiltresActifs />
           }
           <div className="fr-py-2w fr-px-md-4w fr-container--fluid">
-            <div className="fr-px-2w fr-px-md-0">
+            <div className="fr-px-2w fr-px-md-0 flex justifyBetween">
               <Titre
                 baliseHtml='h1'
                 className='fr-h4'
               >
                 {`${chantiersFiltrés.length} chantiers`}
               </Titre>
+              <div>
+                <div className="fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm">
+                  <Link
+                    href="/rapport-détaillé"
+                    title="Voir le rapport détaillé"
+                  >
+                    Voir le rapport détaillé
+                  </Link>
+                </div>
+              </div>
             </div>
             <div className="fr-grid-row fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-lg-6">
