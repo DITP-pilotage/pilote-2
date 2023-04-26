@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import Encart from '@/components/PageRapportDétaillé/Encart/Encart';
+import EnTêteChantier from '@/components/_commons/EnTêteChantier/EnTêteChantier';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 
@@ -19,6 +21,13 @@ export default function RapportDétailléChantier({ chantier }: RapportDétaill�
       >
         Haut de page
       </Link>
+      <Encart>
+        <EnTêteChantier
+          axe={chantier.axe}
+          nom={chantier.nom}
+          ppg={chantier.ppg}
+        />
+      </Encart>
     </section>
   );
 }

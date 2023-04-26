@@ -14,11 +14,13 @@ export default function PageChantierEnTête({ chantier }: PageChantierEnTêtePro
       >
         Retour
       </Link>
-      <EnTêteChantier
-        axe={chantier.axe}
-        nom={chantier.nom}
-        ppg={chantier.ppg}
-      />
+      <div className="fr-mt-2w">
+        <EnTêteChantier
+          axe={chantier.axe}
+          nom={chantier.nom}
+          ppg={chantier.ppg}
+        />
+      </div>
       <button
         className='fr-btn fr-btn--secondary fr-mt-3w bouton-impression'
         onClick={() => window.print()}
