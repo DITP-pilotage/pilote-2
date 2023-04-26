@@ -1,14 +1,12 @@
 import Link from 'next/link';
 import Encart from '@/components/PageRapportDétaillé/Encart/Encart';
 import EnTêteChantier from '@/components/_commons/EnTêteChantier/EnTêteChantier';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
-
-interface RapportDétailléChantierProps {
-  chantier: Chantier
-}
+import RapportDétailléChantierProps from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface';
+import { useRapportDétailléChantier } from '@/components/PageRapportDétaillé/Chantier/useRapportDétailléChantier';
 
 export default function RapportDétailléChantier({ chantier }: RapportDétailléChantierProps) {
+  const {} = useRapportDétailléChantier();
   return (
     <section
       className="fr-mt-4w"

@@ -13,7 +13,7 @@ export const htmlId = {
   chantier: (chantierId: string) => `chantier-${chantierId}`,
 };
 
-export default function PageRapportDétaillé({ chantiers }: PageRapportDétailléProps) {
+export default function PageRapportDétaillé({ chantiers, habilitation }: PageRapportDétailléProps) {
   const chantiersFiltrés = useChantiersFiltrés(chantiers);
   return (
     <PageRapportDétailléStyled>
@@ -49,6 +49,7 @@ export default function PageRapportDétaillé({ chantiers }: PageRapportDétaill
               i > 0 ? null :
               <RapportDétailléChantier
                 chantier={chantier}
+                habilitation={habilitation}
                 key={chantier.id}
               />
             ))
