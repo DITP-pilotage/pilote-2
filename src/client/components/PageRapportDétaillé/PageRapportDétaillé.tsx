@@ -52,9 +52,11 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
               <RapportDétailléChantier
                 chantier={chantier}
                 commentaires={publicationsGroupéesParChantier.commentaires[chantier.id]}
+                décisionStratégique={publicationsGroupéesParChantier.décisionStratégique[chantier.id]}
                 détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id]}
                 indicateurs={indicateursGroupésParChantier[chantier.id]}
                 key={chantier.id}
+                objectifs={publicationsGroupéesParChantier.objectifs[chantier.id]}
                 synthèseDesRésultats={publicationsGroupéesParChantier.synthèsesDesRésultats[chantier.id]}
               />
             ))

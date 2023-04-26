@@ -47,9 +47,13 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
   const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(maille, codeInsee);
   const détailsIndicateursGroupésParChantier = await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(maille, codeInsee);
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();
-  const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(maille, codeInsee);    
+  const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(maille, codeInsee);
   const commentaireRepository = dependencies.getCommentaireRepository();
   const commentairesGroupésParChantier = await commentaireRepository.récupérerLesPlusRécentesGroupéesParChantier(maille, codeInsee);
+  const objectifRepository = dependencies.getObjectifRepository();
+  const objectifsGroupésParChantier = await objectifRepository.récupérerLesPlusRécentsGroupésParChantier();
+  const décisionStratégiqueRepository = dependencies.getDécisionStratégiqueRepository();
+  const décisionStratégiquesGroupéesParChantier = await décisionStratégiqueRepository.récupérerLesPlusRécentesGroupéesParChantier();
 
   return {
     props: {
@@ -59,6 +63,8 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
       publicationsGroupéesParChantier: {
         commentaires: commentairesGroupésParChantier,
         synthèsesDesRésultats: synthèsesDesRésultatsGroupéesParChantier,
+        objectifs: objectifsGroupésParChantier,
+        décisionStratégique: décisionStratégiquesGroupéesParChantier,
       },
     },
   };

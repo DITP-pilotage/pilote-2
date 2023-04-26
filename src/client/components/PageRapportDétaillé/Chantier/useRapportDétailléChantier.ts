@@ -11,14 +11,6 @@ export function useRapportDétailléChantier(chantier: Chantier) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
 
-  const {
-    objectifs,
-    décisionStratégique,
-  } = {
-    objectifs: null,
-    décisionStratégique: null,
-  };
-
   const avancements = calculerChantierAvancements(
     chantier,
     mailleSélectionnée,
@@ -27,8 +19,6 @@ export function useRapportDétailléChantier(chantier: Chantier) {
   );
 
   return {
-    objectifs: objectifs ?? null,
-    décisionStratégique: décisionStratégique ?? null,
     avancements,
   };
 }

@@ -2,7 +2,6 @@ import { commentaire as CommentairePrisma, PrismaClient } from '@prisma/client';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import {
   Commentaire,
-  Commentaires,
   TypeCommentaire,
 } from '@/server/domain/commentaire/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';

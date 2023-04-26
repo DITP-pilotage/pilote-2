@@ -54,4 +54,28 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
 
     return this.mapperVersDomaine(décisionStratégiqueCréée);
   }
+
+  async récupérerLesPlusRécentesGroupéesParChantier() {
+    const décisionsStratégiques = await this.prisma.$queryRaw<DécisionStratégiquePrisma[]>`
+        SELECT d.*
+        FROM decision_strategique d
+            INNER JOIN
+            (
+            SELECT chantier_id, MAX(date) as maxdate
+            FROM decision_strategique
+            GROUP BY chantier_id
+            ) d_recents
+        ON d.date = d_recents.maxdate
+            AND d.chantier_id = d_recents.chantier_id
+    `;
+
+    return Object.fromEntries(
+      décisionsStratégiques.map(décisionStratégique => (
+        [
+          décisionStratégique.chantier_id,
+          this.mapperVersDomaine(décisionStratégique),
+        ]
+      )),
+    );
+  }
 }
