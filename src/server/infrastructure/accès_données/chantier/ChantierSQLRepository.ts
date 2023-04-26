@@ -127,10 +127,12 @@ export default class ChantierSQLRepository implements ChantierRepository {
     `;
     return rows.map(it => new ChantierPourExport(
       it.id,
+      it.nom,
       it.maille,
       it.code_insee,
       it.code_regional,
       it.code_departemental,
+      it.ministeres[0], // <-- en fait ce sont les porteurs
       it.taux_national,
       it.taux_regional,
       it.taux_departemental,

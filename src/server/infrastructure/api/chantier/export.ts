@@ -11,10 +11,12 @@ const OUI = 'Oui';
 const NON = 'Non';
 
 const COLONNES = [
+  'Chantier',
   'Id',
   'Maille',
   'Région',
   'Département',
+  'Ministère',
   'Chantier du baromètre',
   'Chantier territorialisé',
   'Taux d\'avancement national',
@@ -24,11 +26,6 @@ const COLONNES = [
 ];
 
 /**
- Ministère <-- on a la desc dans les lignes chantier normalement
- Chantier
- Taux d’avancement départemental
- Taux d’avancement région
- Taux d’avancement national
  Méthodologie du calcul du taux d’avancement <-- c'est ou ?
  Synthèse des résultats
  Objectifs
@@ -36,15 +33,18 @@ const COLONNES = [
  Actions à venir <-- typologie de commentaire
  Actions à valoriser <-- ??
  Autres résultats obtenus <-- ??
+
  Plus deux autres types ? pas pour le 5 mai.
  */
 
 function asCsvRow(chantierPourExport: ChantierPourExport): string[] {
   return [
+    chantierPourExport.nom || NON_APPLICABLE,
     chantierPourExport.chantierId,
     chantierPourExport.maille,
     chantierPourExport.codeRégion || NON_APPLICABLE,
     chantierPourExport.codeDépartement || NON_APPLICABLE,
+    chantierPourExport.ministère || NON_APPLICABLE,
     chantierPourExport.estBaromètre ? OUI : NON,
     chantierPourExport.estTerritorialisé ? OUI : NON,
     chantierPourExport.tauxDAvancementNational?.toString() || NON_APPLICABLE,
