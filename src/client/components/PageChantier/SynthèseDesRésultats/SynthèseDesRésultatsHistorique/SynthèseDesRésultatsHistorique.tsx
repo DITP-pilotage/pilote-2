@@ -6,8 +6,8 @@ import SynthèseDesRésultatsAffichage from '@/components/PageChantier/Synthèse
 import HistoriqueDeLaSynthèseDesRésultatsStyled from './SynthèseDesRésultatsHistorique.styled';
 import useHistoriqueDeLaSynthèseDesRésultats from './useHistoriqueDeLaSynthèseDesRésultats';
 
-export default function HistoriqueDeLaSynthèseDesRésultats() {
-  const { historiqueDeLaSynthèseDesRésultats, territoireSélectionné, récupérerHistoriqueSynthèseDesRésultats } = useHistoriqueDeLaSynthèseDesRésultats();
+export default function HistoriqueDeLaSynthèseDesRésultats({ chantierId }: { chantierId: string }) {
+  const { historiqueDeLaSynthèseDesRésultats, territoireSélectionné, récupérerHistoriqueSynthèseDesRésultats } = useHistoriqueDeLaSynthèseDesRésultats(chantierId);
 
   return (
     <Modale

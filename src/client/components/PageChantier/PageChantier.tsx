@@ -111,6 +111,7 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
                   }
                   <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
                     <SynthèseDesRésultats
+                      chantierId={chantier.id}
                       modeÉcriture={modeÉcriture}
                       rechargerChantier={rechargerChantier}
                       synthèseDesRésultatsInitiale={synthèseDesRésultats}

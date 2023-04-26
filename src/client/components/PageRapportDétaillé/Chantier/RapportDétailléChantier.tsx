@@ -62,6 +62,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs }: Rap
           }
           <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
             <SynthèseDesRésultats
+              chantierId={chantier.id}
               modeÉcriture={false}
               rechargerChantier={() => {}}
               synthèseDesRésultatsInitiale={synthèseDesRésultats}

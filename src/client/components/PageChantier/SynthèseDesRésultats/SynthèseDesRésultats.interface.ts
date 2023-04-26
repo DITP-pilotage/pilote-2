@@ -4,4 +4,5 @@ export interface SynthèseDesRésultatsProps {
   synthèseDesRésultatsInitiale: RouterOutputs['synthèseDesRésultats']['récupérerLaPlusRécente']
   modeÉcriture: boolean
   rechargerChantier: () => void
+  chantierId: string
 }
