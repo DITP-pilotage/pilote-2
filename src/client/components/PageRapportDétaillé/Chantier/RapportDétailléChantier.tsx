@@ -70,7 +70,10 @@ export default function RapportDétailléChantier({ chantier, indicateurs }: Rap
         </div>
         <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
           <div className="fr-col-12">
-            <Cartes chantier={chantier} />
+            <Cartes
+              chantier={chantier}
+              estCliquable={false}
+            />
           </div>
         </div>
         {

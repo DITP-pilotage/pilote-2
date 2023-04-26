@@ -1,4 +1,3 @@
-import '@gouvfr/dsfr/dist/component/link/link.min.css';
 import { GetServerSidePropsContext } from 'next/types';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';

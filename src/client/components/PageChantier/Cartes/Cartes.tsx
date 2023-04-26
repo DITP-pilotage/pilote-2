@@ -7,7 +7,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import CartesProps from './Cartes.interface';
 
-export default function Cartes({ chantier }: CartesProps) {
+export default function Cartes({ chantier, estCliquable = true }: CartesProps) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const { auClicTerritoireCallback } = useCartographie();
 
@@ -44,7 +44,7 @@ export default function Cartes({ chantier }: CartesProps) {
               <CartographieAvancement
                 auClicTerritoireCallback={auClicTerritoireCallback}
                 données={donnéesCartographieAvancement}
-                options={{ territoireSélectionnable: true }}
+                options={{ territoireSélectionnable: estCliquable }}
               />
             </section>
           </Bloc>
@@ -61,7 +61,7 @@ export default function Cartes({ chantier }: CartesProps) {
               <CartographieMétéo
                 auClicTerritoireCallback={auClicTerritoireCallback}
                 données={donnéesCartographieMétéo}
-                options={{ territoireSélectionnable: true }}
+                options={{ territoireSélectionnable: estCliquable }}
               />
             </section>
           </Bloc>
