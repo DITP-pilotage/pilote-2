@@ -79,7 +79,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
               <div>
                 <div className="fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm">
                   <Link
-                    href="/rapport-détaillé"
+                    href="/rapport-detaille"
                     title="Voir le rapport détaillé"
                   >
                     Voir le rapport détaillé
