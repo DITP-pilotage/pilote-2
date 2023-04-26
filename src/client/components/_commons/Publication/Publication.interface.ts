@@ -14,4 +14,5 @@ export default interface PublicationProps {
   maille: Maille
   codeInsee: CodeInsee
   modeÉcriture: boolean
+  estInteractif: boolean
 }

@@ -77,4 +77,32 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
       .map((synthèse: synthese_des_resultats) => this.mapperVersDomaine(synthèse))
       .filter((synthèse: SynthèseDesRésultats) => synthèse !== null);
   }
+
+  async récupérerLesPlusRécentesGroupéesParChantier(maille: Maille, codeInsee: CodeInsee) {
+    const synthèsesDesRésultats = await this.prisma.$queryRaw<synthese_des_resultats[]>`
+      SELECT s.*
+      FROM synthese_des_resultats s
+               INNER JOIN
+           (
+               SELECT chantier_id, maille, code_insee, MAX(date_commentaire) as maxdate
+               FROM synthese_des_resultats
+               GROUP BY chantier_id, maille, code_insee
+           ) s_recentes
+           ON s.date_commentaire = s_recentes.maxdate
+               AND s.chantier_id = s_recentes.chantier_id
+               AND s.maille = s_recentes.maille
+               AND s.code_insee = s_recentes.code_insee
+      WHERE s.maille = ${CODES_MAILLES[maille]}
+        AND s.code_insee = ${codeInsee}
+    `;    
+
+    return Object.fromEntries(
+      synthèsesDesRésultats.map(synthèseDesRésultats => (
+        [
+          synthèseDesRésultats.chantier_id,
+          this.mapperVersDomaine(synthèseDesRésultats),
+        ]
+      )),
+    );
+  }
 }

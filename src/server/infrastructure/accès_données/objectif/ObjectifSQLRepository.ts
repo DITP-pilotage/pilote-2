@@ -1,6 +1,9 @@
 import { PrismaClient, objectif as ObjectifPrisma, type_objectif as TypeObjectifPrisma } from '@prisma/client';
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
 import Objectif, { TypeObjectif } from '@/server/domain/objectif/Objectif.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { ObjectifTypé } from '@/server/usecase/objectif/RécupérerObjectifsLesPlusRécentsParTypeUseCase';
+import { groupByAndTransform } from '@/client/utils/arrays';
 
 export const NOMS_TYPES_OBJECTIFS: Record<TypeObjectifPrisma, TypeObjectif> = {
   notre_ambition: 'notreAmbition',
@@ -67,5 +70,30 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
       } });
 
     return this.mapperVersDomaine(objectifCréé);
+  }
+
+  async récupérerLesPlusRécentsGroupésParChantier(): Promise<Record<Chantier['id'], ObjectifTypé[]>> {
+    const objectifs = await this.prisma.$queryRaw<ObjectifPrisma[]>`
+      SELECT o.*
+      FROM objectif o
+          INNER JOIN
+          (
+          SELECT type, chantier_id, MAX(date) as maxdate
+          FROM objectif
+          GROUP BY type, chantier_id
+          ) o_recents
+      ON o.type = o_recents.type
+          AND o.date = o_recents.maxdate
+          AND o.chantier_id = o_recents.chantier_id
+    `;
+
+    return groupByAndTransform(
+      objectifs,
+      (objectif) => objectif.chantier_id,
+      (obj: ObjectifPrisma) => ({
+        type: NOMS_TYPES_OBJECTIFS[obj.type],
+        publication: this.mapperVersDomaine(obj),
+      }),
+    );
   }
 }

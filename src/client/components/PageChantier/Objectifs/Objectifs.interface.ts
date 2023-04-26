@@ -8,5 +8,6 @@ export interface ObjectifProps {
   chantierId: Chantier['id']
   maille: Maille
   codeInsee: CodeInsee
-  modeÉcriture: boolean
+  modeÉcriture?: boolean
+  estInteractif?: boolean 
 }

@@ -1,14 +1,7 @@
-import { Météo } from '@/server/domain/météo/Météo.interface';
+import { ChantierVueDEnsemble } from '@/components/useVueDEnsemble';
 
 export default interface TableauChantiersProps {
   données: DonnéesTableauChantiers[],
 }
 
-export type DonnéesTableauChantiers = {
-  id: string;
-  nom: string;
-  avancement: number | null;
-  météo: Météo;
-  typologie: { estBaromètre: boolean, estTerritorialisé: boolean };
-  porteur: string;
-};
+export type DonnéesTableauChantiers = ChantierVueDEnsemble;

@@ -1,4 +1,4 @@
-import { commentaire, PrismaClient } from '@prisma/client';
+import { commentaire as CommentairePrisma, PrismaClient } from '@prisma/client';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import {
   Commentaire,
@@ -7,6 +7,9 @@ import {
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { CommentaireTypé } from '@/server/usecase/commentaire/RécupérerCommentairesLesPlusRécentsParTypeUseCase';
+import { groupByAndTransform } from '@/client/utils/arrays';
 
 export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaire> = {
   commentaires_sur_les_donnees: 'commentairesSurLesDonnées',
@@ -33,7 +36,8 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     this.prisma = prisma;
   }
 
-  private mapperVersDomaine(commentairePrisma: commentaire) {
+  private mapperVersDomaine(commentairePrisma: CommentairePrisma | undefined) {
+    if (commentairePrisma === undefined) return null;
     return {
       id: commentairePrisma.id,
       contenu: commentairePrisma.contenu,
@@ -58,7 +62,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
   }
 
   async récupérerHistorique(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<Commentaire[]> {
-    const commentaires: commentaire[] = await this.prisma.commentaire.findMany({
+    const commentaires: CommentairePrisma[] = await this.prisma.commentaire.findMany({
       where: {
         chantier_id: chantierId,
         maille: CODES_MAILLES[maille],
@@ -85,5 +89,34 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
       } });
 
     return this.mapperVersDomaine(commentaireCréé);
+  }
+
+  async récupérerLesPlusRécentesGroupéesParChantier(maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], CommentaireTypé[]>> {
+    const commentaires = await this.prisma.$queryRaw<CommentairePrisma[]>`
+      SELECT c.chantier_id, c.contenu, c.auteur, c.type, id, date
+      FROM commentaire c
+          INNER JOIN
+          (
+          SELECT type, chantier_id, maille, code_insee, MAX(date) as maxdate
+          FROM commentaire
+          GROUP BY type, chantier_id, maille, code_insee
+          ) c_recents
+      ON c.type = c_recents.type
+          AND c.date = c_recents.maxdate
+          AND c.chantier_id = c_recents.chantier_id
+          AND c.maille = c_recents.maille
+          AND c.code_insee = c_recents.code_insee
+      WHERE c.code_insee = ${codeInsee}
+      and c.maille = ${CODES_MAILLES[maille]}
+    `;
+
+    return groupByAndTransform(
+      commentaires,
+      (commentaire) => commentaire.chantier_id,
+      (c1: CommentairePrisma) => ({
+        type: NOMS_TYPES_COMMENTAIRES[c1.type],
+        publication: this.mapperVersDomaine(c1),
+      }),
+    );
   }
 }

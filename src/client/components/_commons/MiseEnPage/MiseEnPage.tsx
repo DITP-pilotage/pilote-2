@@ -2,7 +2,7 @@ import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 import PageLanding from '@/components/PageLanding/PageLanding';
 import Loader from '@/client/components/_commons/Loader/Loader';
-import MiseEnPageStyled from '@/components/_commons/MiseEnPage/MiseEnPageStyled';
+import MiseEnPageStyled from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
 import MiseEnPageProps from './MiseEnPage.interface';
 import EnTête from './EnTête/EnTête';
 import PiedDePage from './PiedDePage/PiedDePage';

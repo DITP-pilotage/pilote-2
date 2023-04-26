@@ -8,4 +8,5 @@ export default interface RubriquesIndicateursProps {
   indicateurs: Indicateur[];
   détailsIndicateurs: DétailsIndicateurs
   estDisponibleALImport?: boolean
+  estInteractif?: boolean
 }

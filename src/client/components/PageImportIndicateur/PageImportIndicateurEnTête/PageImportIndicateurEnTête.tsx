@@ -11,11 +11,13 @@ export default function PageImportIndicateurEnTête({ chantierInformation }: Pag
           chemin={[{ nom: 'Chantier', lien: `/chantier/${chantierInformation.id}` }]}
           libelléPageCourante='Indicateurs'
         />
-        <EnTêteChantier
-          axe={chantierInformation.axe}
-          nom={chantierInformation.nom}
-          ppg={chantierInformation.ppg}
-        />
+        <div className="fr-mt-2w">
+          <EnTêteChantier
+            axe={chantierInformation.axe}
+            nom={chantierInformation.nom}
+            ppg={chantierInformation.ppg}
+          />
+        </div>
       </div>
     </PageImportIndicateurEnTêteStyled>
   );

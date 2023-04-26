@@ -12,7 +12,7 @@ export default function CartographieLégendeDégradé({ contenu }: CartographieL
         { contenu.libellé }
       </p>
       <div className="dégradé-de-surface" />
-      <div className="flex justifyBetween">
+      <div className="flex justify-between">
         <p className="fr-text--xs texte-gris fr-mb-0">
           { contenu.valeurMin }
         </p>

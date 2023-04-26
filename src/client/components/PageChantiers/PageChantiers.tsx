@@ -1,6 +1,8 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import { useState } from 'react';
+import Link from 'next/link';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
@@ -13,7 +15,6 @@ import useCartographie from '@/components/_commons/Cartographie/useCartographie'
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
-import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
 
@@ -23,14 +24,14 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
   const { 
     nombreFiltresActifs, 
     chantiersFiltrés,
-    avancements, 
-    météos,
+    avancementsAgrégés,
+    répartitionMétéos,
     donnéesCartographie,
     donnéesTableauChantiers,
   } = usePageChantiers(chantiers);
 
   return (
-    <PageChantiersStyled className="flex">
+    <div className="flex">
       <BarreLatérale
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
@@ -67,13 +68,25 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
             <FiltresActifs />
           }
           <div className="fr-py-2w fr-px-md-4w fr-container--fluid">
-            <div className="fr-px-2w fr-px-md-0">
+            <div className="fr-px-2w fr-px-md-0 flex justify-between">
               <Titre
                 baliseHtml='h1'
                 className='fr-h4'
               >
                 {`${chantiersFiltrés.length} chantiers`}
               </Titre>
+              {
+                process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
+                <div>
+                  <Link
+                    className="fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm"
+                    href="/rapport-detaille"
+                    title="Voir le rapport détaillé"
+                  >
+                    Voir le rapport détaillé
+                  </Link>
+                </div>
+              }
             </div>
             <div className="fr-grid-row fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-lg-6">
@@ -81,9 +94,9 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                   <section>
                     <Titre
                       baliseHtml='h2'
-                      className='fr-h6'
+                      className='fr-text--lg'
                     >
-                      Répartition géographique
+                      Taux d’avancement des chantiers par territoire
                     </Titre>
                     <CartographieAvancement
                       auClicTerritoireCallback={auClicTerritoireCallback}
@@ -98,21 +111,21 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                   <section>
                     <Titre
                       baliseHtml='h2'
-                      className='fr-h6'
+                      className='fr-text--lg'
                     >
-                      Taux d’avancement moyen de la sélection
+                      Taux d’avancement moyen
                     </Titre>
-                    <Avancements avancements={avancements} />
+                    <Avancements avancements={avancementsAgrégés} />
                   </section>
                   <hr className='fr-hr fr-my-3w fr-pb-1v' />
                   <section>
                     <Titre
                       baliseHtml='h2'
-                      className='fr-h6'
+                      className='fr-text--lg'
                     >
-                      Répartition des météos de la sélection
+                      Répartition des météos renseignées
                     </Titre>
-                    <RépartitionMétéo météos={météos} />
+                    <RépartitionMétéo météos={répartitionMétéos} />
                   </section>
                 </Bloc>
               </div>
@@ -129,6 +142,6 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
           </div>
         </div>
       </main>
-    </PageChantiersStyled>
+    </div>
   );
 }

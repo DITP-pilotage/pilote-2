@@ -34,7 +34,7 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
     <TableauChantiersStyled className='fr-table fr-m-0 fr-p-0'>
       <Titre
         baliseHtml="h2"
-        className="fr-h6"
+        className="fr-text--lg"
       >
         {`Liste des chantiers (${tableau.getFilteredRowModel().rows.length})`}
       </Titre>

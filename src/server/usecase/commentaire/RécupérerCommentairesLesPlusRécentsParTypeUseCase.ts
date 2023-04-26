@@ -4,13 +4,15 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 
+export type CommentaireTypé = { type: TypeCommentaire, publication: Commentaire };
+
 export default class RécupérerCommentairesLesPlusRécentsParTypeUseCase {
   constructor(
     private readonly commentaireRepository: CommentaireRepository = dependencies.getCommentaireRepository(),
   ) {}
 
   async run(chantierId: string, maille: Maille, codeInsee: CodeInsee) {
-    const commentaires: { type: TypeCommentaire, publication: Commentaire }[] = [];
+    const commentaires: CommentaireTypé[] = [];
     const types = maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale;
 
     for (const type of types) {

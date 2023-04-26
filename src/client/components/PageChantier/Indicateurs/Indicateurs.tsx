@@ -12,7 +12,7 @@ export const listeRubriquesIndicateurs: ÉlémentPageIndicateursType[] = [
   { nom: 'Indicateurs de contexte', ancre: 'contexte', typeIndicateur: 'CONTEXTE' },
 ];
 
-export default function Indicateurs({ indicateurs, détailsIndicateurs, estDisponibleALImport = false }: IndicateursProps) {
+export default function Indicateurs({ indicateurs, détailsIndicateurs, estDisponibleALImport = false, estInteractif = true }: IndicateursProps) {
   const indicateursGroupésParType: Record<NonNullable<TypeIndicateur>, Indicateur[]> = Object.fromEntries(
     typesIndicateur.map(type => [type, indicateurs.filter(indicateur => indicateur.type === type)]),
   );
@@ -52,6 +52,7 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, estDispo
                     <IndicateurBloc
                       détailsIndicateur={détailsIndicateurs[indicateur.id]}
                       estDisponibleALImport={estDisponibleALImport}
+                      estInteractif={estInteractif}
                       indicateur={indicateur}
                       key={indicateur.id}
                     />

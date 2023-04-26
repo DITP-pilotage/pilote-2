@@ -10,7 +10,7 @@ import Alerte from '@/components/_commons/Alerte/Alerte';
 import SynthèseDesRésultatsAffichage from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultatsAffichage/SynthèseDesRésultatsAffichage';
 import SynthèseDesRésultatsFormulaire from './SynthèseDesRésultatsFormulaire/SynthèseDesRésultatsFormulaire';
 
-export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale, modeÉcriture, rechargerChantier }: SynthèseDesRésultatsProps) {
+export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale, rechargerChantier, chantierId, modeÉcriture = false, estInteractif = true }: SynthèseDesRésultatsProps) {
   const {
     synthèseDesRésultats,
     nomTerritoireSélectionné,
@@ -64,10 +64,11 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
                     <SynthèseDesRésultatsAffichage synthèseDesRésultats={synthèseDesRésultats} />
                   </div>
                 </div>
+                {!!estInteractif && 
                 <div className='fr-grid-row fr-grid-row--right'>
                   <div className='fr-col-12 actions fr-mt-1w'>
                     {
-                        !!synthèseDesRésultats && <HistoriqueDeLaSynthèseDesRésultats />
+                      !!synthèseDesRésultats && <HistoriqueDeLaSynthèseDesRésultats chantierId={chantierId} />
                       }
                     {
                       !!modeÉcriture &&
@@ -85,7 +86,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
                       </button>
                     }
                   </div>
-                </div>
+                </div>}
               </>
           }
         </div>

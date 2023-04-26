@@ -2,12 +2,14 @@ import { Fragment } from 'react';
 import Modale from '@/components/_commons/Modale/Modale';
 import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
-import SynthèseDesRésultatsAffichage from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultatsAffichage/SynthèseDesRésultatsAffichage';
+import SynthèseDesRésultatsAffichage
+  from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultatsAffichage/SynthèseDesRésultatsAffichage';
+import HistoriqueDeLaSynthèseDesRésultatsProps from './HistoriqueDeLaSynthèseDesRésultats.interface';
 import HistoriqueDeLaSynthèseDesRésultatsStyled from './SynthèseDesRésultatsHistorique.styled';
 import useHistoriqueDeLaSynthèseDesRésultats from './useHistoriqueDeLaSynthèseDesRésultats';
 
-export default function HistoriqueDeLaSynthèseDesRésultats() {
-  const { historiqueDeLaSynthèseDesRésultats, territoireSélectionné, récupérerHistoriqueSynthèseDesRésultats } = useHistoriqueDeLaSynthèseDesRésultats();
+export default function HistoriqueDeLaSynthèseDesRésultats({ chantierId }: HistoriqueDeLaSynthèseDesRésultatsProps) {
+  const { historiqueDeLaSynthèseDesRésultats, territoireSélectionné, récupérerHistoriqueSynthèseDesRésultats } = useHistoriqueDeLaSynthèseDesRésultats(chantierId);
 
   return (
     <Modale

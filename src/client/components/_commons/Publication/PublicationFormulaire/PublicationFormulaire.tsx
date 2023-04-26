@@ -57,7 +57,7 @@ export default function PublicationFormulaire({ contenuInitial, type, entité, s
           type="hidden"
           {...register('chantierId')}
         />
-        <div className="flex justifyBetween">
+        <div className="flex justify-between">
           <div>
             {
               !!errors.contenu &&

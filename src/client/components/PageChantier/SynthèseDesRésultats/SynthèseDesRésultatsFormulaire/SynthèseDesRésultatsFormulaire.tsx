@@ -44,7 +44,7 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
           rows={6}
           {...register('contenu')}
         />
-        <div className="flex justifyBetween">
+        <div className="flex justify-between">
           <div>
             {
               !!errors.contenu &&
