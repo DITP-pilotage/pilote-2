@@ -12,11 +12,9 @@ export function useRapportDétailléChantier(chantier: Chantier) {
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
 
   const {
-    commentaires,
     objectifs,
     décisionStratégique,
   } = {
-    commentaires: null,
     objectifs: null,
     décisionStratégique: null,
   };
@@ -29,7 +27,6 @@ export function useRapportDétailléChantier(chantier: Chantier) {
   );
 
   return {
-    commentaires: commentaires ?? null,
     objectifs: objectifs ?? null,
     décisionStratégique: décisionStratégique ?? null,
     avancements,

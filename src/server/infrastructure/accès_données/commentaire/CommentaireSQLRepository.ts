@@ -9,6 +9,8 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { CommentaireTypé } from '@/server/usecase/commentaire/RécupérerCommentairesLesPlusRécentsParTypeUseCase';
+import { groupByAndTransform } from '@/client/utils/arrays';
 
 export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaire> = {
   commentaires_sur_les_donnees: 'commentairesSurLesDonnées',
@@ -90,52 +92,32 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return this.mapperVersDomaine(commentaireCréé);
   }
 
-  async récupérerLesPlusRécentesGroupéesParChantier(maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], Commentaires>> {
+  async récupérerLesPlusRécentesGroupéesParChantier(maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], CommentaireTypé[]>> {
     const commentaires = await this.prisma.$queryRaw<CommentairePrisma[]>`
-    SELECT t1.chantier_id, t1.contenu, t1.auteur, t1.type, id, date
-    FROM commentaire t1
-            INNER JOIN
-        (
-            SELECT type,chantier_id, MAX(date) as maxdate
-            FROM commentaire
-            GROUP BY type,chantier_id
-        ) t2
-      ON t1.type = t2.type
-      AND t1.date = t2.maxdate
-      AND t1.chantier_id = t2.chantier_id
-      WHERE t1.code_insee = 'FR' 
-      and t1.maille='NAT'
+      SELECT c.chantier_id, c.contenu, c.auteur, c.type, id, date
+      FROM commentaire c
+          INNER JOIN
+          (
+          SELECT type, chantier_id, maille, code_insee, MAX(date) as maxdate
+          FROM commentaire
+          GROUP BY type, chantier_id, maille, code_insee
+          ) c_recents
+      ON c.type = c_recents.type
+          AND c.date = c_recents.maxdate
+          AND c.chantier_id = c_recents.chantier_id
+          AND c.maille = c_recents.maille
+          AND c.code_insee = c_recents.code_insee
+      WHERE c.code_insee = ${codeInsee}
+      and c.maille = ${CODES_MAILLES[maille]}
     `;
-    
-    const chantiersIds = commentaires.map(commentaire => commentaire.chantier_id);
-    return Object.fromEntries(
-      chantiersIds.map(chantierId => (
-        [
-          chantierId,
-          {
-            autresRésultatsObtenusNonCorrélésAuxIndicateurs: this.mapperVersDomaine(
-              commentaires.find(
-                commentaire => commentaire.chantier_id === chantierId && commentaire.type === CODES_TYPES_COMMENTAIRES['autresRésultatsObtenusNonCorrélésAuxIndicateurs'],
-              ),
-            ), 
-            risquesEtFreinsÀLever: this.mapperVersDomaine(
-              commentaires.find(
-                commentaire => commentaire.chantier_id === chantierId && commentaire.type === CODES_TYPES_COMMENTAIRES['risquesEtFreinsÀLever'],
-              ),
-            ),
-            solutionsEtActionsÀVenir: this.mapperVersDomaine(
-              commentaires.find(
-                commentaire => commentaire.chantier_id === chantierId && commentaire.type === CODES_TYPES_COMMENTAIRES['solutionsEtActionsÀVenir'],
-              ),
-            ),
-            exemplesConcretsDeRéussite: this.mapperVersDomaine(
-              commentaires.find(
-                commentaire => commentaire.chantier_id === chantierId && commentaire.type === CODES_TYPES_COMMENTAIRES['exemplesConcretsDeRéussite'],
-              ),
-            ),
-          },
-        ]
-      )),
+
+    return groupByAndTransform(
+      commentaires,
+      (commentaire) => commentaire.chantier_id,
+      (c1: CommentairePrisma) => ({
+        type: NOMS_TYPES_COMMENTAIRES[c1.type],
+        publication: this.mapperVersDomaine(c1),
+      }),
     );
   }
 }
