@@ -1,10 +1,14 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
 import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
-import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import {
+  mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
+  territoireSélectionnéTerritoiresStore,
+} from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
 import Loader from '@/components/_commons/Loader/Loader';
@@ -23,17 +27,18 @@ import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStraté
 
 export default function PageChantier({ indicateurs, habilitation }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
+  const chantierId = useRouter().query.id as string;
   const {
-    chantier,
-    rechargerChantier,
-    avancements,
     détailsIndicateurs,
     commentaires,
     synthèseDesRésultats,
     objectifs,
     décisionStratégique,
     modeÉcriture,
-  } = usePageChantier(habilitation);
+    chantier,
+    rechargerChantier,
+    avancements,
+  } = usePageChantier(chantierId, habilitation);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
