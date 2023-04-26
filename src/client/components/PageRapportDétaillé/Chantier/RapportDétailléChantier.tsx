@@ -17,14 +17,12 @@ import {
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
-export default function RapportDétailléChantier({ chantier, indicateurs }: RapportDétailléChantierProps) {
+export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats }: RapportDétailléChantierProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const {
-    détailsIndicateurs,
     commentaires,
     objectifs,
-    synthèseDesRésultats,
     décisionStratégique,
     avancements,
   } = useRapportDétailléChantier(chantier);
@@ -92,18 +90,14 @@ export default function RapportDétailléChantier({ chantier, indicateurs }: Rap
             </div>
           </div>
         }
-        {
-          détailsIndicateurs !== null && (
-            <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-              <div className="fr-col-12">
-                <Indicateurs
-                  détailsIndicateurs={détailsIndicateurs}
-                  indicateurs={indicateurs}
-                />
-              </div>
-            </div>
-          )
-        }
+        <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+          <div className="fr-col-12">
+            <Indicateurs
+              détailsIndicateurs={détailsIndicateurs}
+              indicateurs={indicateurs}
+            />
+          </div>
+        </div>
         {
           décisionStratégique !== null
           && mailleAssociéeAuTerritoireSélectionné === 'nationale'

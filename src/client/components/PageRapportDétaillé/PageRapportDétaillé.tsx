@@ -15,7 +15,7 @@ export const htmlId = {
   chantier: (chantierId: string) => `chantier-${chantierId}`,
 };
 
-export default function PageRapportDétaillé({ chantiers, indicateursGroupésParChantier }: PageRapportDétailléProps) {
+export default function PageRapportDétaillé({ chantiers, indicateursGroupésParChantier, détailsIndicateursGroupésParChantier, synthèsesDesRésultatsGroupéesParChantier }: PageRapportDétailléProps) {
   const chantiersFiltrés = useChantiersFiltrés(chantiers);
   return (
     <PageRapportDétailléStyled>
@@ -51,8 +51,10 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
               //i > 4 ? null :
               <RapportDétailléChantier
                 chantier={chantier}
+                détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id]}
                 indicateurs={indicateursGroupésParChantier[chantier.id]}
                 key={chantier.id}
+                synthèseDesRésultats={synthèsesDesRésultatsGroupéesParChantier[chantier.id]}
               />
             ))
           }

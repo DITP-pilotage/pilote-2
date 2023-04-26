@@ -6,17 +6,32 @@ import { SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
 import PageRapportDétaillé from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
+import { Publication } from '@/components/_commons/Publication/Publication.interface';
 
 interface NextPageRapportDétailléProps {
   chantiers: Chantier[]
   indicateursGroupésParChantier: Record<string, Indicateur[]>
+  détailsIndicateursGroupésParChantier: Record<Chantier['id'], DétailsIndicateurs>
+  publicationsGroupéesParChantier: Record<Chantier['id'], Publication>
+  synthèsesDesRésultatsGroupéesParChantier: Record<Chantier['id'], SynthèseDesRésultats>
 }
 
-export default function NextPageAccueil({ chantiers, indicateursGroupésParChantier }: NextPageRapportDétailléProps) {
+export default function NextPageAccueil({
+  chantiers,
+  indicateursGroupésParChantier,
+  détailsIndicateursGroupésParChantier,
+  publicationsGroupéesParChantier,
+  synthèsesDesRésultatsGroupéesParChantier,
+}: NextPageRapportDétailléProps) {
   return (
     <PageRapportDétaillé
       chantiers={chantiers}
+      détailsIndicateursGroupésParChantier={détailsIndicateursGroupésParChantier}
       indicateursGroupésParChantier={indicateursGroupésParChantier}
+      publicationsGroupéesParChantier={publicationsGroupéesParChantier}
+      synthèsesDesRésultatsGroupéesParChantier={synthèsesDesRésultatsGroupéesParChantier}
     />
   );
 }
@@ -34,11 +49,18 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
   const chantiers = await chantierRepository.getListe(session.habilitation, SCOPE_LECTURE);
   const indicateursRepository = dependencies.getIndicateurRepository();
   const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(maille, codeInsee);
+  const détailsIndicateursGroupésParChantier = await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(maille, codeInsee);
+
+  const synthèsesDesRésultatsGroupéesParChantier = await dependencies.getSynthèseDesRésultatsRepository()
+    .récupérerLesPlusRécentesGroupéesParChantier(maille, codeInsee);
 
   return {
     props: {
       chantiers,
       indicateursGroupésParChantier,
+      détailsIndicateursGroupésParChantier,
+      publicationsGroupéesParChantier: {},
+      synthèsesDesRésultatsGroupéesParChantier,
     },
   };
 }

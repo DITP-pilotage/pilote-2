@@ -5,6 +5,7 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import { groupByAndTransform } from '@/client/utils/arrays';
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
   private prisma: PrismaClient;
@@ -76,5 +77,32 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     return synthèsesDesRésultats
       .map((synthèse: synthese_des_resultats) => this.mapperVersDomaine(synthèse))
       .filter((synthèse: SynthèseDesRésultats) => synthèse !== null);
+  }
+
+  async récupérerLesPlusRécentesGroupéesParChantier(maille: Maille, codeInsee: CodeInsee) {
+    const synthèsesDesRésultats = await this.prisma.$queryRaw<synthese_des_resultats[]>`
+      select s.*
+      from synthese_des_resultats s
+      where maille = ${maille}
+      and code_insee = ${codeInsee}   
+      and s.id IN (
+          select id
+          from synthese_des_resultats
+          where chantier_id = s.chantier_id
+            and code_insee = s.code_insee
+            and maille = s.maille
+          order by date_commentaire desc
+          limit 1
+      )
+    `;
+
+    return Object.fromEntries(
+      synthèsesDesRésultats.map(synthèseDesRésultats => (
+        [
+          synthèseDesRésultats.chantier_id,
+          this.mapperVersDomaine(synthèseDesRésultats),
+        ]
+      )),
+    );
   }
 }

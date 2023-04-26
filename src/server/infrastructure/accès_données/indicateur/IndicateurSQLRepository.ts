@@ -6,6 +6,7 @@ import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicate
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
   private prisma: PrismaClient;
@@ -69,6 +70,24 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     );
   }
 
+  async récupérerDétailsGroupésParChantierEtParIndicateur(maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], DétailsIndicateurs>> {
+    const indicateurs: IndicateurPrisma[] = await this.prisma.indicateur.findMany({
+      where: {
+        maille: CODES_MAILLES[maille],
+        code_insee: codeInsee,
+      },
+    });  
+
+    return Object.fromEntries(
+      indicateurs.map(indicateur => (
+        [
+          indicateur.chantier_id,
+          this._mapDétailsToDomain(indicateurs.filter(ind => ind.chantier_id === indicateur.chantier_id)),
+        ]
+      )),
+    );
+  }
+
   async récupérerParChantierId(chantierId: string): Promise<Indicateur[]> {
     const indicateurs: IndicateurPrisma[] = await this.prisma.indicateur.findMany({
       where: { chantier_id: chantierId, maille: 'NAT' },
@@ -96,7 +115,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         code_insee: { in: codesInsee },
       },
     });
-
     return this._mapDétailsToDomain(indicateurs);
   }
+
 }
