@@ -32,10 +32,10 @@ export function RapportDétailléVueDEnsemble({
           <Bloc>
             <section>
               <Titre
-                baliseHtml="h2"
-                className="fr-h6"
+                baliseHtml="h3"
+                className="fr-text--lg"
               >
-                Répartition géographique
+                Taux d’avancement des chantiers par territoire
               </Titre>
               <CartographieAvancement
                 auClicTerritoireCallback={() => {}}
@@ -49,20 +49,20 @@ export function RapportDétailléVueDEnsemble({
           <Bloc>
             <section>
               <Titre
-                baliseHtml="h2"
-                className="fr-h6"
+                baliseHtml="h3"
+                className="fr-text--lg"
               >
-                Taux d’avancement moyen de la sélection
+                Taux d’avancement moyen
               </Titre>
               <Avancements avancements={avancementsAgrégés} />
             </section>
             <hr className="fr-hr fr-my-3w fr-pb-1v" />
             <section>
               <Titre
-                baliseHtml="h2"
-                className="fr-h6"
+                baliseHtml="h3"
+                className="fr-text--lg"
               >
-                Répartition des météos de la sélection
+                Répartition des météos renseignées
               </Titre>
               <RépartitionMétéo météos={répartitionMétéos} />
             </section>

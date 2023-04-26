@@ -15,8 +15,8 @@ export default function RapportDétailléTableauChantiers({ données }: RapportD
   return (
     <RapportDétailléTableauChantiersStyled className='fr-table fr-m-0 fr-p-0'>
       <Titre
-        baliseHtml="h2"
-        className="fr-h6 fr-mb-2w"
+        baliseHtml="h3"
+        className="fr-text--lg fr-mb-2w"
       >
         {`Liste des chantiers (${tableau.getFilteredRowModel().rows.length})`}
       </Titre>

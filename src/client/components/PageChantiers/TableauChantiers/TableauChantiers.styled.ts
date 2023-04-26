@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 const TableauChantiersStyled = styled.section`
   display: grid;
   overflow-x: auto;
-  color: var(--text-action-high-grey);
+  color: var(--text-title-grey);
   
   .tableau-actions {
     display: flex;

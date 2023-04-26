@@ -93,9 +93,9 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                   <section>
                     <Titre
                       baliseHtml='h2'
-                      className='fr-h6'
+                      className='fr-text--lg'
                     >
-                      Répartition géographique
+                      Taux d’avancement des chantiers par territoire
                     </Titre>
                     <CartographieAvancement
                       auClicTerritoireCallback={auClicTerritoireCallback}
@@ -110,9 +110,9 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                   <section>
                     <Titre
                       baliseHtml='h2'
-                      className='fr-h6'
+                      className='fr-text--lg'
                     >
-                      Taux d’avancement moyen de la sélection
+                      Taux d’avancement moyen
                     </Titre>
                     <Avancements avancements={avancementsAgrégés} />
                   </section>
@@ -120,9 +120,9 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                   <section>
                     <Titre
                       baliseHtml='h2'
-                      className='fr-h6'
+                      className='fr-text--lg'
                     >
-                      Répartition des météos de la sélection
+                      Répartition des météos renseignées
                     </Titre>
                     <RépartitionMétéo météos={répartitionMétéos} />
                   </section>
