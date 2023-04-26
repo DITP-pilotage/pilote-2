@@ -76,15 +76,18 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
               >
                 {`${chantiersFiltrés.length} chantiers`}
               </Titre>
-              <div>
-                <Link
-                  className="fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm"
-                  href="/rapport-detaille"
-                  title="Voir le rapport détaillé"
-                >
-                  Voir le rapport détaillé
-                </Link>
-              </div>
+              {
+                process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
+                <div>
+                  <Link
+                    className="fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm"
+                    href="/rapport-detaille"
+                    title="Voir le rapport détaillé"
+                  >
+                    Voir le rapport détaillé
+                  </Link>
+                </div>
+              }
             </div>
             <div className="fr-grid-row fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-lg-6">

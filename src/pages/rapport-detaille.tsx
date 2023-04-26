@@ -16,13 +16,14 @@ interface NextPageRapportDétailléProps {
   publicationsGroupéesParChantier: PublicationsGroupéesParChantier
 }
 
-export default function NextPageAccueil({
+export default function NextPageRapportDétaillé({
   chantiers,
   indicateursGroupésParChantier,
   détailsIndicateursGroupésParChantier,
   publicationsGroupéesParChantier,
 }: NextPageRapportDétailléProps) {
   return (
+    process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
     <PageRapportDétaillé
       chantiers={chantiers}
       détailsIndicateursGroupésParChantier={détailsIndicateursGroupésParChantier}
@@ -33,6 +34,13 @@ export default function NextPageAccueil({
 }
 
 export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
+  if (process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE !== 'true') {
+    res.setHeader('location', '/');
+    res.statusCode = 302;
+    res.end();
+    return;
+  }
+
   const session = await getServerSession(req, res, authOptions);
   if (!session || !session.habilitation) {
     return { props: {} };
