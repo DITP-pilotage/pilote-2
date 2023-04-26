@@ -21,16 +21,13 @@ export default function PageRapportDétaillé({ chantiers }: PageRapportDétaill
               {`Rapport détaillé : ${chantiersFiltrés.length} chantiers`}
             </Titre>
             <div className="non-imprimé">
-              <div
+              <Link
                 className="fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-go-back-fill fr-btn--icon-left fr-text--sm"
+                href="/"
+                title="Revenir à l'accueil"
               >
-                <Link
-                  href="/"
-                  title="Revenir à l'accueil"
-                >
-                  Revenir à l&apos;accueil
-                </Link>
-              </div>
+                Revenir à l&apos;accueil
+              </Link>
               <button
                 className="fr-btn fr-btn--tertiary-no-outline fr-icon-printer-line fr-btn--icon-left fr-text--sm"
                 onClick={() => window.print()}
