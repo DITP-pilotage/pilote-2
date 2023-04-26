@@ -108,14 +108,21 @@ export default class ChantierSQLRepository implements ChantierRepository {
         with chantier_ids as (select distinct c.id
                               from chantier c
                               where c.id in (${Prisma.join(chantiers_lecture)})
-                                and ministeres <> '{}')
+                                and ministeres <> '{}'),
+             objectifs as (select *
+                           from (select c.*,
+                                        row_number() over (partition by chantier_id, maille, code_insee order by date desc) r
+                                 from commentaire c
+                                 where type = 'objectifs') o
+                           where o.r = 1)
 
         select c.*,
                r.territoire_code code_regional,
                d.territoire_code code_departemental,
                n.taux_avancement taux_national,
                r.taux_avancement taux_regional,
-               d.taux_avancement taux_departemental
+               d.taux_avancement taux_departemental,
+               o.contenu         objectif
         from chantier_ids cids
                  cross join territoire t
                  left outer join chantier c on c.id = cids.id and c.territoire_code = t.code
@@ -123,6 +130,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
                  left outer join chantier r on (r.id = cids.id and r.maille = 'REG')
             and (r.territoire_code = t.code or r.territoire_code = t.code_parent)
                  left outer join chantier d on d.id = cids.id and d.maille = 'DEPT' and d.territoire_code = t.code
+                 left outer join objectifs o
+                                 on o.chantier_id = c.id and o.maille = c.maille and o.code_insee = c.code_insee
         order by c.id, t.code
     `;
     return rows.map(it => new ChantierPourExport(
@@ -139,6 +148,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       it.meteo,
       it.est_barometre,
       it.est_territorialise,
+      it.objectif,
     ));
   }
 }

@@ -17,5 +17,6 @@ export class ChantierPourExport {
     public readonly météo: Météo,
     public readonly estBaromètre: boolean,
     public readonly estTerritorialisé: boolean,
+    public readonly objectif: string | null,
   ) {}
 }

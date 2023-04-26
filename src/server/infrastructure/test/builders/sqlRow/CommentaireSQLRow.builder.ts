@@ -28,13 +28,24 @@ export default class CommentaireRowBuilder {
     this._contenu = faker.lorem.paragraph();
     this._date = faker.date.recent(10, '2023-02-01T00:00:00.000Z');
     this._auteur = faker.name.fullName();
-    this._type = faker.helpers.arrayElement(['freins_a_lever', 'actions_a_venir', 'actions_a_valoriser', 'autres_resultats_obtenus_non_correles_aux_indicateurs', 'autres_resultats_obtenus', 'commentaires_sur_les_donnees']);
+    this._type = faker.helpers.arrayElement([
+      'actions_a_valoriser',
+      'actions_a_venir',
+      'autres_resultats_obtenus',
+      'autres_resultats_obtenus_non_correles_aux_indicateurs',
+      'commentaires_sur_les_donnees',
+      'freins_a_lever',
+      'objectifs',
+    ]);
    
     if (this._type === 'freins_a_lever' || this._type === 'actions_a_venir' || this._type === 'actions_a_valoriser' || this._type === 'autres_resultats_obtenus_non_correles_aux_indicateurs') {
       this._maille = 'NAT';
       this._codeInsee = 'FR';
     } else if (this._type === 'commentaires_sur_les_donnees' || this._type === 'autres_resultats_obtenus') {
       this._maille = faker.helpers.arrayElement(['DEPT', 'REG']);
+      this._codeInsee = faker.helpers.arrayElement(retourneUneListeDeCodeInseeCohérentePourUneMaille(this._maille));
+    } else {
+      this._maille = faker.helpers.arrayElement(['DEPT', 'REG', 'NAT']);
       this._codeInsee = faker.helpers.arrayElement(retourneUneListeDeCodeInseeCohérentePourUneMaille(this._maille));
     }
   }
