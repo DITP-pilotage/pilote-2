@@ -80,19 +80,20 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
 
   async récupérerLesPlusRécentesGroupéesParChantier(maille: Maille, codeInsee: CodeInsee) {
     const synthèsesDesRésultats = await this.prisma.$queryRaw<synthese_des_resultats[]>`
-      select s.*
-      from synthese_des_resultats s
-      where maille = ${CODES_MAILLES[maille]}
-      and code_insee = ${codeInsee}   
-      and s.id IN (
-          select id
-          from synthese_des_resultats
-          where chantier_id = s.chantier_id
-            and code_insee = s.code_insee
-            and maille = s.maille
-          order by date_commentaire desc
-          limit 1
-      )
+      SELECT s.*
+      FROM synthese_des_resultats s
+               INNER JOIN
+           (
+               SELECT chantier_id, maille, code_insee, MAX(date_commentaire) as maxdate
+               FROM synthese_des_resultats
+               GROUP BY chantier_id, maille, code_insee
+           ) s_recentes
+           ON s.date_commentaire = s_recentes.maxdate
+               AND s.chantier_id = s_recentes.chantier_id
+               AND s.maille = s_recentes.maille
+               AND s.code_insee = s_recentes.code_insee
+      WHERE s.maille = ${CODES_MAILLES[maille]}
+        AND s.code_insee = ${codeInsee}
     `;    
 
     return Object.fromEntries(
