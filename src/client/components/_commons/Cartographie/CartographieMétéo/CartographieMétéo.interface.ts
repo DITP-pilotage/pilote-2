@@ -7,5 +7,6 @@ export type CartographieDonnéesMétéo = { valeur: Météo, codeInsee: CodeInse
 export default interface CartographieMétéoProps {
   données: CartographieDonnéesMétéo,
   options?: Partial<CartographieOptions>,
-  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void
+  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
+  estInteractif: boolean
 }

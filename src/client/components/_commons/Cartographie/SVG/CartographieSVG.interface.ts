@@ -16,6 +16,7 @@ export default interface CartographieSVGProps {
   options: CartographieOptions,
   territoires: CartographieTerritoires['territoires'],
   frontières: CartographieTerritoires['frontières'],
-  setInfoBulle:  (state: CartographieInfoBulle | null) => void
-  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void
+  setInfoBulle:  (state: CartographieInfoBulle | null) => void,
+  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
+  estInteractif: boolean
 }

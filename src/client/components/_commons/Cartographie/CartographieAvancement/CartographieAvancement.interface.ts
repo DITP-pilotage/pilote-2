@@ -7,4 +7,5 @@ export default interface CartographieAvancementProps {
   données: CartographieDonnéesAvancement,
   options?: Partial<CartographieOptions>,
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void
+  estInteractif: boolean
 }

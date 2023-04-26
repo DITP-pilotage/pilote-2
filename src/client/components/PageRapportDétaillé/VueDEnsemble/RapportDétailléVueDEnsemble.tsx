@@ -41,6 +41,7 @@ export function RapportDétailléVueDEnsemble({
               <CartographieAvancement
                 auClicTerritoireCallback={() => {}}
                 données={donnéesCartographie}
+                estInteractif={false}
                 options={{ territoireSélectionnable: true }}
               />
             </section>

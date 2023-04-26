@@ -10,6 +10,7 @@ export default function CartographieValeurActuelle({ données, options, auClicTe
     <Cartographie
       auClicTerritoireCallback={auClicTerritoireCallback}
       données={donnéesCartographie}
+      estInteractif
       options={options}
     >
       <CartographieLégendeDégradé contenu={légende} />

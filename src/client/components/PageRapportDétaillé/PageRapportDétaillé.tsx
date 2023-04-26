@@ -48,7 +48,6 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
           <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
           {
             chantiersFiltrés.map((chantier) => (
-              //i > 4 ? null :
               <RapportDétailléChantier
                 chantier={chantier}
                 commentaires={publicationsGroupéesParChantier.commentaires[chantier.id]}
