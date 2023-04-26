@@ -1,6 +1,7 @@
 import { PrismaClient, decision_strategique as DécisionStratégiquePrisma } from '@prisma/client';
 import DécisionStratégique, { TypeDécisionStratégique } from '@/server/domain/décisionStratégique/DécisionStratégique.interface';
 import DécisionStratégiqueRepository from '@/server/domain/décisionStratégique/DécisionStratégiqueRepository.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 
 export default class DécisionStratégiqueSQLRepository implements DécisionStratégiqueRepository {
   private prisma: PrismaClient;
@@ -55,18 +56,18 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
     return this.mapperVersDomaine(décisionStratégiqueCréée);
   }
 
-  async récupérerLesPlusRécentesGroupéesParChantier() {
+  async récupérerLesPlusRécentesGroupéesParChantier(chantiersIds: Chantier['id'][]) {
     const décisionsStratégiques = await this.prisma.$queryRaw<DécisionStratégiquePrisma[]>`
         SELECT d.*
         FROM decision_strategique d
-            INNER JOIN
-            (
+          INNER JOIN (
             SELECT chantier_id, MAX(date) as maxdate
             FROM decision_strategique
+            WHERE chantier_id = ANY (${chantiersIds})
             GROUP BY chantier_id
-            ) d_recents
-        ON d.date = d_recents.maxdate
-            AND d.chantier_id = d_recents.chantier_id
+          ) d_recents
+          ON d.date = d_recents.maxdate
+          AND d.chantier_id = d_recents.chantier_id
     `;
 
     return Object.fromEntries(

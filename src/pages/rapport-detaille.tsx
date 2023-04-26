@@ -51,17 +51,23 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
 
   const chantierRepository = dependencies.getChantierRepository();
   const chantiers = await chantierRepository.getListe(session.habilitation, SCOPE_LECTURE);
+  const chantiersIds = chantiers.map(chantier => chantier.id);
+
   const indicateursRepository = dependencies.getIndicateurRepository();
-  const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(maille, codeInsee);
-  const détailsIndicateursGroupésParChantier = await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(maille, codeInsee);
+  const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(chantiersIds, maille, codeInsee);
+  const détailsIndicateursGroupésParChantier = await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds, maille, codeInsee);
+
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();
-  const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(maille, codeInsee);
+  const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds, maille, codeInsee);
+
   const commentaireRepository = dependencies.getCommentaireRepository();
-  const commentairesGroupésParChantier = await commentaireRepository.récupérerLesPlusRécentesGroupéesParChantier(maille, codeInsee);
+  const commentairesGroupésParChantier = await commentaireRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds, maille, codeInsee);
+
   const objectifRepository = dependencies.getObjectifRepository();
-  const objectifsGroupésParChantier = await objectifRepository.récupérerLesPlusRécentsGroupésParChantier();
+  const objectifsGroupésParChantier = await objectifRepository.récupérerLesPlusRécentsGroupésParChantier(chantiersIds);
+
   const décisionStratégiqueRepository = dependencies.getDécisionStratégiqueRepository();
-  const décisionStratégiquesGroupéesParChantier = await décisionStratégiqueRepository.récupérerLesPlusRécentesGroupéesParChantier();
+  const décisionStratégiquesGroupéesParChantier = await décisionStratégiqueRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds);
 
   return {
     props: {

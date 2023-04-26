@@ -91,23 +91,23 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return this.mapperVersDomaine(commentaireCréé);
   }
 
-  async récupérerLesPlusRécentesGroupéesParChantier(maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], CommentaireTypé[]>> {
+  async récupérerLesPlusRécentesGroupéesParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], CommentaireTypé[]>> {
     const commentaires = await this.prisma.$queryRaw<CommentairePrisma[]>`
       SELECT c.chantier_id, c.contenu, c.auteur, c.type, id, date
       FROM commentaire c
-          INNER JOIN
-          (
+        INNER JOIN (
           SELECT type, chantier_id, maille, code_insee, MAX(date) as maxdate
           FROM commentaire
+          WHERE chantier_id = ANY (${chantiersIds})
+            AND maille = ${CODES_MAILLES[maille]}
+            AND code_insee = ${codeInsee}
           GROUP BY type, chantier_id, maille, code_insee
-          ) c_recents
-      ON c.type = c_recents.type
+        ) c_recents
+          ON c.type = c_recents.type
           AND c.date = c_recents.maxdate
           AND c.chantier_id = c_recents.chantier_id
           AND c.maille = c_recents.maille
           AND c.code_insee = c_recents.code_insee
-      WHERE c.code_insee = ${codeInsee}
-      and c.maille = ${CODES_MAILLES[maille]}
     `;
 
     return groupByAndTransform(

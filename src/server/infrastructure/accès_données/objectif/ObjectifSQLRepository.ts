@@ -72,19 +72,19 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
     return this.mapperVersDomaine(objectifCréé);
   }
 
-  async récupérerLesPlusRécentsGroupésParChantier(): Promise<Record<Chantier['id'], ObjectifTypé[]>> {
+  async récupérerLesPlusRécentsGroupésParChantier(chantiersIds: Chantier['id'][]): Promise<Record<Chantier['id'], ObjectifTypé[]>> {
     const objectifs = await this.prisma.$queryRaw<ObjectifPrisma[]>`
       SELECT o.*
       FROM objectif o
-          INNER JOIN
-          (
+        INNER JOIN (
           SELECT type, chantier_id, MAX(date) as maxdate
           FROM objectif
+          WHERE  chantier_id = ANY (${chantiersIds})
           GROUP BY type, chantier_id
-          ) o_recents
-      ON o.type = o_recents.type
-          AND o.date = o_recents.maxdate
-          AND o.chantier_id = o_recents.chantier_id
+        ) o_recents
+          ON o.type = o_recents.type
+            AND o.date = o_recents.maxdate
+            AND o.chantier_id = o_recents.chantier_id
     `;
 
     return groupByAndTransform(
