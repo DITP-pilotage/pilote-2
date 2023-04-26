@@ -15,7 +15,6 @@ import useCartographie from '@/components/_commons/Cartographie/useCartographie'
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
-import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
 
@@ -32,7 +31,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
   } = usePageChantiers(chantiers);
 
   return (
-    <PageChantiersStyled className="flex">
+    <div className="flex">
       <BarreLatérale
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
@@ -143,6 +142,6 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
           </div>
         </div>
       </main>
-    </PageChantiersStyled>
+    </div>
   );
 }
