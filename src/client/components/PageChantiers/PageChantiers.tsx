@@ -25,8 +25,8 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
   const { 
     nombreFiltresActifs, 
     chantiersFiltrés,
-    avancements, 
-    météos,
+    avancementsAgrégés,
+    répartitionMétéos,
     donnéesCartographie,
     donnéesTableauChantiers,
   } = usePageChantiers(chantiers);
@@ -114,7 +114,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                     >
                       Taux d’avancement moyen de la sélection
                     </Titre>
-                    <Avancements avancements={avancements} />
+                    <Avancements avancements={avancementsAgrégés} />
                   </section>
                   <hr className='fr-hr fr-my-3w fr-pb-1v' />
                   <section>
@@ -124,7 +124,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                     >
                       Répartition des météos de la sélection
                     </Titre>
-                    <RépartitionMétéo météos={météos} />
+                    <RépartitionMétéo météos={répartitionMétéos} />
                   </section>
                 </Bloc>
               </div>

@@ -9,18 +9,18 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import RépartitionMétéo from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéo';
-import usePageChantiers from '@/components/PageChantiers/usePageChantiers';
 import RapportDétailléTableauChantiers
   from '@/components/PageRapportDétaillé/RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
+import usePageRapportDétaillé from '@/components/PageRapportDétaillé/usePageRapportDétaillé';
 
 export default function PageRapportDétaillé({ chantiers }: PageRapportDétailléProps) {
   const {
     chantiersFiltrés,
-    avancements,
-    météos,
+    avancementsAgrégés,
+    répartitionMétéos,
     donnéesCartographie,
     donnéesTableauChantiers,
-  } = usePageChantiers(chantiers);
+  } = usePageRapportDétaillé(chantiers);
   return (
     <PageRapportDétailléStyled>
       <main className="fr-py-4w">
@@ -85,7 +85,7 @@ export default function PageRapportDétaillé({ chantiers }: PageRapportDétaill
                   >
                     Taux d’avancement moyen de la sélection
                   </Titre>
-                  <Avancements avancements={avancements} />
+                  <Avancements avancements={avancementsAgrégés} />
                 </section>
                 <hr className='fr-hr fr-my-3w fr-pb-1v' />
                 <section>
@@ -95,7 +95,7 @@ export default function PageRapportDétaillé({ chantiers }: PageRapportDétaill
                   >
                     Répartition des météos de la sélection
                   </Titre>
-                  <RépartitionMétéo météos={météos} />
+                  <RépartitionMétéo météos={répartitionMétéos} />
                 </section>
               </Bloc>
             </div>
