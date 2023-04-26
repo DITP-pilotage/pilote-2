@@ -3,6 +3,7 @@ import Link from 'next/link';
 import PageRapportDétailléStyled from '@/components/PageRapportDétaillé/PageRapportDétaillé.styled';
 import Titre from '@/components/_commons/Titre/Titre';
 import PageRapportDétailléProps from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
+import Encart from '@/components/PageRapportDétaillé/Encart/Encart';
 
 
 export default function PageRapportDétaillé({ chantiers }: PageRapportDétailléProps) {
@@ -35,6 +36,14 @@ export default function PageRapportDétaillé({ chantiers }: PageRapportDétaill
               </button>
             </div>
           </div>
+          <Encart>
+            <Titre
+              baliseHtml="h2"
+              className="fr-h2 fr-mb-0"
+            >
+              Vue d&apos;ensemble
+            </Titre>
+          </Encart>
         </div>
       </main>
     </PageRapportDétailléStyled>
