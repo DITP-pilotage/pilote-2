@@ -4,9 +4,31 @@ import EnTêteChantier from '@/components/_commons/EnTêteChantier/EnTêteChanti
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import RapportDétailléChantierProps from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface';
 import { useRapportDétailléChantier } from '@/components/PageRapportDétaillé/Chantier/useRapportDétailléChantier';
+import AvancementChantier from '@/components/PageChantier/AvancementChantier/AvancementChantier';
+import Responsables from '@/components/PageChantier/Responsables/Responsables';
+import SynthèseDesRésultats from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultats';
+import Cartes from '@/components/PageChantier/Cartes/Cartes';
+import Objectifs from '@/components/PageChantier/Objectifs/Objectifs';
+import Indicateurs from '@/components/PageChantier/Indicateurs/Indicateurs';
+import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
+import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
+import {
+  mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
+  territoireSélectionnéTerritoiresStore,
+} from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
 export default function RapportDétailléChantier({ chantier }: RapportDétailléChantierProps) {
-  const {} = useRapportDétailléChantier();
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
+  const {
+    indicateurs,
+    détailsIndicateurs,
+    commentaires,
+    objectifs,
+    synthèseDesRésultats,
+    décisionStratégique,
+    avancements,
+  } = useRapportDétailléChantier(chantier);
   return (
     <section
       className="fr-mt-4w"
@@ -26,6 +48,88 @@ export default function RapportDétailléChantier({ chantier }: RapportDétaill�
           ppg={chantier.ppg}
         />
       </Encart>
+      <div className='fr-p-4w'>
+        <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+          {
+            avancements !== null &&
+            <>
+              <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-6' : 'fr-col-xl-12'} fr-col-12`}>
+                <AvancementChantier avancements={avancements} />
+              </div>
+              <div className='fr-col-xl-6 fr-col-12'>
+                <Responsables chantier={chantier} />
+              </div>
+            </>
+          }
+          <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
+            <SynthèseDesRésultats
+              modeÉcriture={false}
+              rechargerChantier={() => {}}
+              synthèseDesRésultatsInitiale={synthèseDesRésultats}
+            />
+          </div>
+        </div>
+        <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+          <div className="fr-col-12">
+            <Cartes chantier={chantier} />
+          </div>
+        </div>
+        {
+          objectifs !== null &&
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className="fr-col-12">
+              <Objectifs
+                chantierId={chantier.id}
+                codeInsee='FR'
+                maille='nationale'
+                modeÉcriture={false}
+                objectifs={objectifs}
+              />
+            </div>
+          </div>
+        }
+        {
+          détailsIndicateurs !== null && (
+            <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+              <div className="fr-col-12">
+                <Indicateurs
+                  détailsIndicateurs={détailsIndicateurs}
+                  indicateurs={indicateurs}
+                />
+              </div>
+            </div>
+          )
+        }
+        {
+          décisionStratégique !== null
+          && mailleAssociéeAuTerritoireSélectionné === 'nationale'
+          && process.env.NEXT_PUBLIC_FT_DECISIONS_STRATEGIQUES_DISABLED !== 'true' &&
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className="fr-col-12">
+              <DécisionsStratégiques
+                chantierId={chantier.id}
+                décisionStratégique={décisionStratégique}
+                modeÉcriture={false}
+              />
+            </div>
+          </div>
+        }
+        {
+          commentaires !== null && (
+            <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+              <div className="fr-col-12">
+                <Commentaires
+                  chantierId={chantier.id}
+                  codeInsee={territoireSélectionné.codeInsee}
+                  commentaires={commentaires}
+                  maille={mailleAssociéeAuTerritoireSélectionné}
+                  modeÉcriture={false}
+                />
+              </div>
+            </div>
+          )
+        }
+      </div>
     </section>
   );
 }
