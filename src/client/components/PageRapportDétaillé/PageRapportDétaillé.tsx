@@ -17,7 +17,7 @@ export default function PageRapportDétaillé({ chantiers }: PageRapportDétaill
             >
               {`Rapport détaillé : ${ chantiers.length } chantiers`}
             </Titre>
-            <div>
+            <div className="non-imprimé">
               <div className="fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-go-back-fill fr-btn--icon-left fr-text--sm">
                 <Link
                   href="/"
