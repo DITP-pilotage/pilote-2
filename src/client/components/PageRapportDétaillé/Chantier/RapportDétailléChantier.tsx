@@ -47,7 +47,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs }: Rap
           ppg={chantier.ppg}
         />
       </Encart>
-      <div className='fr-p-4w'>
+      <div className='fr-mt-2w'>
         <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
           {
             avancements !== null &&

@@ -17,25 +17,6 @@ const MiseEnPageStyled = styled.div`
       color: var(--text-title-blue-france);
     }
   }
-
-  @media print {
-    @page {
-      margin: 0;
-    }
-    
-    -webkit-print-color-adjust: exact !important;
-    color-adjust: exact !important;
-    
-
-    .non-imprimé,
-    footer {
-      display: none;
-    }
-
-    main {
-      background: none;
-    }
-  }
 `;
 
 export default MiseEnPageStyled;
