@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import {
   DonnéesTableauChantiers,
 } from '@/components/PageChantiers/TableauChantiers/TableauChantiers.interface';
+import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import TableauChantiersContenuProps from './RapportDétailléTableauChantiersContenu.interface';
 
 export default function RapportDétailléTableauChantiersContenu({ tableau }: TableauChantiersContenuProps) {
@@ -13,7 +14,7 @@ export default function RapportDétailléTableauChantiersContenu({ tableau }: Ta
     if (row.getIsGrouped()) {
       row.getToggleExpandedHandler()();
     } else {
-      void router.push(`/chantier/${row.original.id}`);
+      void router.push(`#${htmlId.chantier(row.original.id)}`);
     }
   }, [router]);
 

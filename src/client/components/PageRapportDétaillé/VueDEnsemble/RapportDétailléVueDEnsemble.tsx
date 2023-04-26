@@ -6,6 +6,7 @@ import Avancements from '@/components/_commons/Avancements/Avancements';
 import RépartitionMétéo from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéo';
 import RapportDétailléVueDEnsembleProps from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble.interface';
 import usePageRapportDétaillé from '@/components/PageRapportDétaillé/usePageRapportDétaillé';
+import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
 export function RapportDétailléVueDEnsemble({
@@ -69,7 +70,10 @@ export function RapportDétailléVueDEnsemble({
           </Bloc>
         </div>
       </div>
-      <div className="fr-grid-row fr-mt-7v">
+      <div
+        className="fr-grid-row fr-mt-7v"
+        id={htmlId.listeDesChantiers()}
+      >
         <div className="fr-col">
           <Bloc>
             <RapportDétailléTableauChantiers

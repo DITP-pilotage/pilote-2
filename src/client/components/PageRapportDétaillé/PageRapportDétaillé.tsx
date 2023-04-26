@@ -6,6 +6,12 @@ import Titre from '@/components/_commons/Titre/Titre';
 import PageRapportDétailléProps from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
 import { RapportDétailléVueDEnsemble } from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble';
 import useChantiersFiltrés from '@/components/useChantiersFiltrés';
+import RapportDétailléChantier from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier';
+
+export const htmlId = {
+  listeDesChantiers: () => 'liste-des-chantiers',
+  chantier: (chantierId: string) => `chantier-${chantierId}`,
+};
 
 export default function PageRapportDétaillé({ chantiers }: PageRapportDétailléProps) {
   const chantiersFiltrés = useChantiersFiltrés(chantiers);
@@ -38,6 +44,15 @@ export default function PageRapportDétaillé({ chantiers }: PageRapportDétaill
             </div>
           </div>
           <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
+          {
+            chantiersFiltrés.map((chantier, i) => (
+              i > 0 ? null :
+              <RapportDétailléChantier
+                chantier={chantier}
+                key={chantier.id}
+              />
+            ))
+          }
         </div>
       </main>
     </PageRapportDétailléStyled>
