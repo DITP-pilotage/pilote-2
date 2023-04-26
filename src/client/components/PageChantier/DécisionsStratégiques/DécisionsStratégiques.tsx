@@ -3,7 +3,7 @@ import Publication from '@/components/_commons/Publication/Publication';
 import Titre from '@/components/_commons/Titre/Titre';
 import DécisionsStratégiquesProps from './DécisionsStratégiques.interface';
 
-export default function DécisionsStratégiques({ décisionStratégique, chantierId, modeÉcriture }: DécisionsStratégiquesProps) {
+export default function DécisionsStratégiques({ décisionStratégique, chantierId, modeÉcriture = false, estInteractif = true }: DécisionsStratégiquesProps) {
   return (
     <section id="décisions-stratégiques">
       <Titre
@@ -17,6 +17,7 @@ export default function DécisionsStratégiques({ décisionStratégique, chantie
           chantierId={chantierId}
           codeInsee='FR'
           entité="décisions stratégiques"
+          estInteractif={estInteractif}
           maille="nationale"
           modeÉcriture={modeÉcriture}
           publicationInitiale={décisionStratégique}

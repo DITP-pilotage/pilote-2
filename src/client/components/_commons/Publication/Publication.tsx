@@ -8,7 +8,7 @@ import PublicationProps from './Publication.interface';
 import PublicationHistorique from './PublicationHistorique/PublicationHistorique';
 import PublicationAffichage from './PublicationAffichage/PublicationAffichage';
 
-export default function Publication({ type, publicationInitiale, entité, chantierId, maille, codeInsee, modeÉcriture }: PublicationProps) {
+export default function Publication({ type, publicationInitiale, entité, chantierId, maille, codeInsee, modeÉcriture, estInteractif }: PublicationProps) {
   const {
     publication,
     modeÉdition,
@@ -49,35 +49,38 @@ export default function Publication({ type, publicationInitiale, entité, chanti
           :
           <>
             <PublicationAffichage publication={publication} />
-            <div className='fr-grid-row fr-grid-row--right'>
-              <div className='fr-col-12 actions fr-mt-1w'>
-                {
-                  !!publication && 
-                    <PublicationHistorique
-                      chantierId={chantierId}
-                      codeInsee={codeInsee}
-                      entité={entité}
-                      maille={maille}
-                      type={type.id}
-                    />
-                }
-                {
-                  !!modeÉcriture &&
-                  <button
-                    className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
-                    onClick={activerLeModeÉdition}
-                    type='button'
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="fr-icon-edit-line fr-mr-1w"
-                    />
-                    {}
-                    Modifier
-                  </button>
-                }
-              </div>
-            </div>
+            {
+              !!estInteractif &&
+                <div className='fr-grid-row fr-grid-row--right'>
+                  <div className='fr-col-12 actions fr-mt-1w'>
+                    {
+                        !!publication &&
+                          <PublicationHistorique
+                            chantierId={chantierId}
+                            codeInsee={codeInsee}
+                            entité={entité}
+                            maille={maille}
+                            type={type.id}
+                          />
+                      }
+                    {
+                        !!modeÉcriture &&
+                        <button
+                          className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
+                          onClick={activerLeModeÉdition}
+                          type='button'
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="fr-icon-edit-line fr-mr-1w"
+                          />
+                          {}
+                          Modifier
+                        </button>
+                      }
+                  </div>
+                </div>
+            }
           </>
       }
     </PublicationStyled>

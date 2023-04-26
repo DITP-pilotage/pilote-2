@@ -10,4 +10,5 @@ export default interface IndicateurBlocProps {
   indicateur: Indicateur
   détailsIndicateur: Record<CodeInsee, DétailsIndicateur>
   estDisponibleALImport: boolean
+  estInteractif: boolean
 }

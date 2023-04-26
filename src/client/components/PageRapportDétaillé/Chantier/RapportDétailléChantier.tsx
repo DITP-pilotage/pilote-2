@@ -61,7 +61,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
             <SynthèseDesRésultats
               chantierId={chantier.id}
-              modeÉcriture={false}
+              estInteractif={false}
               rechargerChantier={() => {}}
               synthèseDesRésultatsInitiale={synthèseDesRésultats}
             />
@@ -82,8 +82,8 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
               <Objectifs
                 chantierId={chantier.id}
                 codeInsee='FR'
+                estInteractif={false}
                 maille='nationale'
-                modeÉcriture={false}
                 objectifs={objectifs}
               />
             </div>
@@ -93,6 +93,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           <div className="fr-col-12">
             <Indicateurs
               détailsIndicateurs={détailsIndicateurs}
+              estInteractif={false}
               indicateurs={indicateurs}
             />
           </div>
@@ -106,7 +107,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
               <DécisionsStratégiques
                 chantierId={chantier.id}
                 décisionStratégique={décisionStratégique}
-                modeÉcriture={false}
+                estInteractif={false}
               />
             </div>
           </div>
@@ -119,8 +120,8 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                   chantierId={chantier.id}
                   codeInsee={territoireSélectionné.codeInsee}
                   commentaires={commentaires}
+                  estInteractif={false}
                   maille={mailleAssociéeAuTerritoireSélectionné}
-                  modeÉcriture={false}
                 />
               </div>
             </div>
