@@ -1,7 +1,7 @@
 import { indicateur as IndicateurPrisma, PrismaClient } from '@prisma/client';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
-import { CODES_MAILLES, NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
@@ -24,9 +24,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       description: indicateur.description,
       source: indicateur.source,
       modeDeCalcul: indicateur.mode_de_calcul,
-      chantierId: indicateur.chantier_id,
-      maille: NOMS_MAILLES[indicateur.maille],
-      codeInsee: indicateur.code_insee,
     });
   }
 

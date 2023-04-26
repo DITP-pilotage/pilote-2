@@ -5,7 +5,6 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import { groupByAndTransform } from '@/client/utils/arrays';
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
   private prisma: PrismaClient;
@@ -83,7 +82,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     const synthèsesDesRésultats = await this.prisma.$queryRaw<synthese_des_resultats[]>`
       select s.*
       from synthese_des_resultats s
-      where maille = ${maille}
+      where maille = ${CODES_MAILLES[maille]}
       and code_insee = ${codeInsee}   
       and s.id IN (
           select id
@@ -94,7 +93,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
           order by date_commentaire desc
           limit 1
       )
-    `;
+    `;    
 
     return Object.fromEntries(
       synthèsesDesRésultats.map(synthèseDesRésultats => (

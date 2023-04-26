@@ -47,7 +47,7 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
           </div>
           <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
           {
-            chantiersFiltrés.map((chantier, i) => (
+            chantiersFiltrés.map((chantier) => (
               //i > 4 ? null :
               <RapportDétailléChantier
                 chantier={chantier}
