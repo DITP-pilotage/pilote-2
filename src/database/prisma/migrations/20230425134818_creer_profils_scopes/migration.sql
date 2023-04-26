@@ -153,7 +153,7 @@ VALUES (
         (
             SELECT id
             FROM habilitation_scope
-            WHERE code = 'saisie.commentaire'
+            WHERE code = 'saisie.commentaire.nationale'
         )
     ),
     (
@@ -165,7 +165,7 @@ VALUES (
         (
             SELECT id
             FROM habilitation_scope
-            WHERE code = 'saisie.indicateur'
+            WHERE code = 'saisie.indicateur.nationale'
         )
     ),
     (
@@ -189,7 +189,7 @@ VALUES (
         (
             SELECT id
             FROM habilitation_scope
-            WHERE code = 'saisie.commentaire'
+            WHERE code = 'saisie.commentaire.nationale'
         )
     ),
     (
@@ -201,7 +201,7 @@ VALUES (
         (
             SELECT id
             FROM habilitation_scope
-            WHERE code = 'saisie.indicateur'
+            WHERE code = 'saisie.indicateur.nationale'
         )
     ),
     (
@@ -316,7 +316,7 @@ VALUES (
         (
             SELECT id
             FROM profil
-            WHERE code = 'MIOM'
+            WHERE code = 'DROM'
         ),
         (
             SELECT id
@@ -328,7 +328,7 @@ VALUES (
         (
             SELECT id
             FROM profil
-            WHERE code = 'MIOM'
+            WHERE code = 'DROM'
         ),
         (
             SELECT id

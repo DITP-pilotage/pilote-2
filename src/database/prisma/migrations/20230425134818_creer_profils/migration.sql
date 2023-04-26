@@ -72,8 +72,8 @@ VALUES (
         false
     ),
     (
-        'MIOM',
-        'MIOM/Outre-Mer',
+        'DROM',
+        'DROM/Outre-Mer',
         false,
         true
     ),

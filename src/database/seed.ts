@@ -24,24 +24,8 @@ import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 import IndicateurRowBuilder from '@/server/infrastructure/test/builders/sqlRow/IndicateurSQLRow.builder';
 import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
-import {
-  CABINET_MINISTERIEL,
-  CABINET_MTFP,
-  DIR_ADMIN_CENTRALE,
-  DIR_PROJET,
-  DITP_ADMIN,
-  DITP_PILOTAGE,
-  EQUIPE_DIR_PROJET,
-  PM_ET_CABINET,
-  PR,
-  SECRETARIAT_GENERAL,
-} from '@/server/domain/identité/Profil';
-import {
-  créerProfilsEtHabilitations,
-  générerUtilisateurPourImport,
-  INPUT_PROFILS,
-  INPUT_SCOPES_HABILITATIONS,
-} from '@/server/infrastructure/accès_données/identité/seed';
+import * as Profil from '@/server/domain/identité/Profil';
+import { générerUtilisateurPourImport } from '@/server/infrastructure/accès_données/identité/seed';
 import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
 import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 import DécisionStratégiqueSQLRowBuilder
@@ -231,24 +215,29 @@ class DatabaseSeeder {
   private async _créerUtilisateursEtDroits() {
     const chantierIds = await this._getSomeChantierIds();
     const inputUtilisateurs: UtilisateurPourImport[] = [
-      { email: 'ditp.admin@example.com', profilCode: DITP_ADMIN },
-      { email: 'ditp.pilotage@example.com', profilCode: DITP_PILOTAGE },
-      { email: 'premiere.ministre@example.com', profilCode: PM_ET_CABINET },
-      { email: 'presidence@example.com', profilCode: PR },
-      { email: 'cabinet.mtfp@example.com', profilCode: CABINET_MTFP },
-      { email: 'cabinet.ministeriel@example.com', profilCode: CABINET_MINISTERIEL },
-      { email: 'direction.admin.centrale@example.com', profilCode: DIR_ADMIN_CENTRALE },
-      { email: 'secretariat.general@example.com', profilCode: SECRETARIAT_GENERAL },
-      { email: 'directeur.projet@example.com', profilCode: DIR_PROJET, chantierIds },
-      { email: 'equipe.dir.projet@example.com', profilCode: EQUIPE_DIR_PROJET, chantierIds },
+      { email: 'ditp.admin@example.com', profilCode: Profil.DITP_ADMIN },
+      { email: 'ditp.pilotage@example.com', profilCode: Profil.DITP_PILOTAGE },
+      { email: 'premiere.ministre@example.com', profilCode: Profil.PM_ET_CABINET },
+      { email: 'presidence@example.com', profilCode: Profil.PR },
+      { email: 'cabinet.mtfp@example.com', profilCode: Profil.CABINET_MTFP },
+      { email: 'cabinet.ministeriel@example.com', profilCode: Profil.CABINET_MINISTERIEL },
+      { email: 'direction.admin.centrale@example.com', profilCode: Profil.DIR_ADMIN_CENTRALE },
+      { email: 'secretariat.general@example.com', profilCode: Profil.SECRETARIAT_GENERAL },
+      { email: 'directeur.projet@example.com', profilCode: Profil.DIR_PROJET, chantierIds },
+      { email: 'equipe.dir.projet@example.com', profilCode: Profil.EQUIPE_DIR_PROJET, chantierIds },
+      { email: 'referent.region@example.com', profilCode: Profil.REFERENT_REGION },
+      { email: 'prefet.region@example.com', profilCode: Profil.PREFET_REGION },
+      { email: 'services.deconcentres.region@example.com', profilCode: Profil.SERVICES_DECONCENTRES_REGION },
+      { email: 'referent.departement@example.com', profilCode: Profil.REFERENT_DEPARTEMENT },
+      { email: 'prefet.departement@example.com', profilCode: Profil.PREFET_DEPARTEMENT },
+      { email: 'services.deconcentres.departement@example.com', profilCode: Profil.SERVICES_DECONCENTRES_DEPARTEMENT },
+      { email: 'drom@example.com', profilCode: Profil.DROM, chantierIds },
     ].map(générerUtilisateurPourImport);
 
-    await créerProfilsEtHabilitations(prisma, INPUT_PROFILS, INPUT_SCOPES_HABILITATIONS);
     await new UtilisateurSQLRepository(prisma).créerOuRemplacerUtilisateurs(inputUtilisateurs);
   }
 
   private async _getSomeChantierIds() {
-    // noinspection TypeScriptValidateTypes
     const chantiersRows = await prisma.chantier.findMany({ distinct: ['id'], select: { id: true }, take: 10 });
     return chantiersRows.map(it => it.id);
   }
