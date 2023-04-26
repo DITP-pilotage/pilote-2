@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
-import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
 import {
   mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
   mailleSélectionnéeTerritoiresStore,
@@ -20,41 +19,14 @@ export type ChantierVueDEnsemble = {
 };
 
 export default function useVueDEnsemble(chantiers: Chantier[]) {
-  const filtresActifs = filtresActifsStore();
   const maille = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
-  const chantiersFiltrés = useMemo(() => {
-    let résultat: Chantier[] = chantiers;
-
-    if (filtresActifs.périmètresMinistériels.length > 0) {
-      résultat = résultat.filter(chantier => (
-        filtresActifs.périmètresMinistériels.some(filtre => (chantier.périmètreIds.includes(filtre.id)))
-      ));
-    }
-    if (filtresActifs.axes.length > 0) {
-      résultat = résultat.filter(chantier => (
-        filtresActifs.axes.some(filtre => (chantier.axe === filtre.nom))
-      ));
-    }
-    if (filtresActifs.ppg.length > 0) {
-      résultat = résultat.filter(chantier => (
-        filtresActifs.ppg.some(filtre => (chantier.ppg === filtre.nom))
-      ));
-    }
-    if (filtresActifs.filtresTypologie.length > 0) {
-      résultat = résultat.filter(chantier => (
-        filtresActifs.filtresTypologie.every(filtre => (chantier[filtre.attribut]))
-      ));
-    }
-    return résultat;
-  }, [chantiers, filtresActifs]);
-
   const donnéesTerritoiresAgrégées = useMemo(() => {
-    return new AgrégateurChantiersParTerritoire(chantiersFiltrés).agréger();
-  }, [chantiersFiltrés]);
+    return new AgrégateurChantiersParTerritoire(chantiers).agréger();
+  }, [chantiers]);
 
   const avancementsAgrégés = {
     global: {
@@ -77,7 +49,7 @@ export default function useVueDEnsemble(chantiers: Chantier[]) {
     }));
   }, [donnéesTerritoiresAgrégées, mailleSélectionnée]);
 
-  const chantiersVueDEnsemble: ChantierVueDEnsemble[] = chantiersFiltrés.map(chantier => ({
+  const chantiersVueDEnsemble: ChantierVueDEnsemble[] = chantiers.map(chantier => ({
     id: chantier.id,
     nom: chantier.nom,
     avancement: chantier.mailles[maille][territoireSélectionné.codeInsee].avancement.global,
@@ -87,7 +59,6 @@ export default function useVueDEnsemble(chantiers: Chantier[]) {
   }));
 
   return {
-    chantiersFiltrés,
     avancementsAgrégés,
     répartitionMétéos,
     avancementsGlobauxTerritoriauxMoyens,

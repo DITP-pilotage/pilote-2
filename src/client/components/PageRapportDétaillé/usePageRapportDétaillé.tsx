@@ -1,14 +1,15 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import useVueDEnsemble from '@/components/useVueDEnsemble';
+import useChantiersFiltrés from '@/components/useChantiersFiltrés';
 
 export default function usePageRapportDétaillé(chantiers: Chantier[]) {
+  const chantiersFiltrés = useChantiersFiltrés(chantiers);
   const {
-    chantiersFiltrés,
     avancementsAgrégés,
     répartitionMétéos,
     avancementsGlobauxTerritoriauxMoyens,
     chantiersVueDEnsemble,
-  } = useVueDEnsemble(chantiers);
+  } = useVueDEnsemble(chantiersFiltrés);
 
   return {
     chantiersFiltrés,

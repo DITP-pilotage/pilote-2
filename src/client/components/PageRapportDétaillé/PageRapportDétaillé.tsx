@@ -4,17 +4,11 @@ import Link from 'next/link';
 import PageRapportDétailléStyled from '@/components/PageRapportDétaillé/PageRapportDétaillé.styled';
 import Titre from '@/components/_commons/Titre/Titre';
 import PageRapportDétailléProps from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
-import usePageRapportDétaillé from '@/components/PageRapportDétaillé/usePageRapportDétaillé';
 import { RapportDétailléVueDEnsemble } from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble';
+import useChantiersFiltrés from '@/components/useChantiersFiltrés';
 
 export default function PageRapportDétaillé({ chantiers }: PageRapportDétailléProps) {
-  const {
-    chantiersFiltrés,
-    avancementsAgrégés,
-    répartitionMétéos,
-    donnéesCartographie,
-    donnéesTableauChantiers,
-  } = usePageRapportDétaillé(chantiers);
+  const chantiersFiltrés = useChantiersFiltrés(chantiers);
   return (
     <PageRapportDétailléStyled>
       <main className="fr-py-4w">
@@ -46,13 +40,7 @@ export default function PageRapportDétaillé({ chantiers }: PageRapportDétaill
               </button>
             </div>
           </div>
-          <RapportDétailléVueDEnsemble
-            auClicTerritoireCallback={() => {}}
-            avancements={avancementsAgrégés}
-            donnéesCartographie={donnéesCartographie}
-            donnéesTableauChantiers={donnéesTableauChantiers}
-            météos={répartitionMétéos}
-          />
+          <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
         </div>
       </main>
     </PageRapportDétailléStyled>

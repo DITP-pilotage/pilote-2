@@ -5,15 +5,18 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import RépartitionMétéo from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéo';
 import RapportDétailléVueDEnsembleProps from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble.interface';
+import usePageRapportDétaillé from '@/components/PageRapportDétaillé/usePageRapportDétaillé';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
 export function RapportDétailléVueDEnsemble({
-  auClicTerritoireCallback,
-  avancements,
-  donnéesCartographie,
-  donnéesTableauChantiers,
-  météos,
+  chantiers,
 }: RapportDétailléVueDEnsembleProps) {
+  const {
+    avancementsAgrégés,
+    répartitionMétéos,
+    donnéesCartographie,
+    donnéesTableauChantiers,
+  } = usePageRapportDétaillé(chantiers);
   return (
     <section>
       <Encart>
@@ -35,7 +38,7 @@ export function RapportDétailléVueDEnsemble({
                 Répartition géographique
               </Titre>
               <CartographieAvancement
-                auClicTerritoireCallback={auClicTerritoireCallback}
+                auClicTerritoireCallback={() => {}}
                 données={donnéesCartographie}
                 options={{ territoireSélectionnable: true }}
               />
@@ -51,7 +54,7 @@ export function RapportDétailléVueDEnsemble({
               >
                 Taux d’avancement moyen de la sélection
               </Titre>
-              <Avancements avancements={avancements} />
+              <Avancements avancements={avancementsAgrégés} />
             </section>
             <hr className="fr-hr fr-my-3w fr-pb-1v" />
             <section>
@@ -61,7 +64,7 @@ export function RapportDétailléVueDEnsemble({
               >
                 Répartition des météos de la sélection
               </Titre>
-              <RépartitionMétéo météos={météos} />
+              <RépartitionMétéo météos={répartitionMétéos} />
             </section>
           </Bloc>
         </div>
