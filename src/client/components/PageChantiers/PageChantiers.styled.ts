@@ -1,14 +1,9 @@
+// noinspection Stylelint
+
 import styled from '@emotion/styled';
 
 const PageChantiersStyled = styled.div`
-  main {
-    flex: 1;
-    background: var(--background-alt-blue-france);
-
-    h1 {
-      color: var(--text-title-blue-france);
-    }
-  }
+  /* retirer la ligne 1 si modification ici */
 `;
 
 export default PageChantiersStyled;

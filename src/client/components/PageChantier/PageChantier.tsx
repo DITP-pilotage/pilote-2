@@ -73,7 +73,7 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
         </BarreLatéraleEncart>
         <Sommaire rubriques={listeRubriques} />
       </BarreLatérale>
-      <div className='contenu-principal fr-pb-5w'>
+      <main className='fr-pb-5w'>
         <div className="texte-impression fr-text--lg fr-mb-5w">
           Pilote - Chantiers prioritaires / Extraction de la page chantier générée le
           {' '}
@@ -176,7 +176,7 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
             <Loader />
           )
         }
-      </div>
+      </main>
     </PageChantierStyled>
   );
 }
