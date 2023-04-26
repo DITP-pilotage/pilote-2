@@ -4,14 +4,8 @@ import Link from 'next/link';
 import PageRapportDétailléStyled from '@/components/PageRapportDétaillé/PageRapportDétaillé.styled';
 import Titre from '@/components/_commons/Titre/Titre';
 import PageRapportDétailléProps from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
-import Encart from '@/components/PageRapportDétaillé/Encart/Encart';
-import Bloc from '@/components/_commons/Bloc/Bloc';
-import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
-import Avancements from '@/components/_commons/Avancements/Avancements';
-import RépartitionMétéo from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéo';
-import RapportDétailléTableauChantiers
-  from '@/components/PageRapportDétaillé/RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 import usePageRapportDétaillé from '@/components/PageRapportDétaillé/usePageRapportDétaillé';
+import { RapportDétailléVueDEnsemble } from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble';
 
 export default function PageRapportDétaillé({ chantiers }: PageRapportDétailléProps) {
   const {
@@ -30,10 +24,12 @@ export default function PageRapportDétaillé({ chantiers }: PageRapportDétaill
               baliseHtml="h1"
               className="fr-h2"
             >
-              {`Rapport détaillé : ${ chantiersFiltrés.length } chantiers`}
+              {`Rapport détaillé : ${chantiersFiltrés.length} chantiers`}
             </Titre>
             <div className="non-imprimé">
-              <div className="fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-go-back-fill fr-btn--icon-left fr-text--sm">
+              <div
+                className="fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-go-back-fill fr-btn--icon-left fr-text--sm"
+              >
                 <Link
                   href="/"
                   title="Revenir à l'accueil"
@@ -50,65 +46,13 @@ export default function PageRapportDétaillé({ chantiers }: PageRapportDétaill
               </button>
             </div>
           </div>
-          <Encart>
-            <Titre
-              baliseHtml="h2"
-              className="fr-h2 fr-mb-0"
-            >
-              Vue d&apos;ensemble
-            </Titre>
-          </Encart>
-          <div className="fr-grid-row fr-grid-row--gutters fr-mt-2w">
-            <div className="fr-col-12 fr-col-lg-6">
-              <Bloc>
-                <section>
-                  <Titre
-                    baliseHtml='h2'
-                    className='fr-h6'
-                  >
-                    Répartition géographique
-                  </Titre>
-                  <CartographieAvancement
-                    auClicTerritoireCallback={() => {}}
-                    données={donnéesCartographie}
-                    options={{ territoireSélectionnable: true }}
-                  />
-                </section>
-              </Bloc>
-            </div>
-            <div className="fr-col-12 fr-col-lg-6">
-              <Bloc>
-                <section>
-                  <Titre
-                    baliseHtml='h2'
-                    className='fr-h6'
-                  >
-                    Taux d’avancement moyen de la sélection
-                  </Titre>
-                  <Avancements avancements={avancementsAgrégés} />
-                </section>
-                <hr className='fr-hr fr-my-3w fr-pb-1v' />
-                <section>
-                  <Titre
-                    baliseHtml='h2'
-                    className='fr-h6'
-                  >
-                    Répartition des météos de la sélection
-                  </Titre>
-                  <RépartitionMétéo météos={répartitionMétéos} />
-                </section>
-              </Bloc>
-            </div>
-          </div>
-          <div className="fr-grid-row fr-mt-7v">
-            <div className="fr-col">
-              <Bloc>
-                <RapportDétailléTableauChantiers
-                  données={donnéesTableauChantiers}
-                />
-              </Bloc>
-            </div>
-          </div>
+          <RapportDétailléVueDEnsemble
+            auClicTerritoireCallback={() => {}}
+            avancements={avancementsAgrégés}
+            donnéesCartographie={donnéesCartographie}
+            donnéesTableauChantiers={donnéesTableauChantiers}
+            météos={répartitionMétéos}
+          />
         </div>
       </main>
     </PageRapportDétailléStyled>
