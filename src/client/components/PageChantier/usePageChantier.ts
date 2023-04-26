@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
 import {
   checkAuthorizationChantierScope,
   Habilitation,
@@ -12,15 +11,12 @@ import {
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import api from '@/server/infrastructure/api/trpc/api';
 import calculerChantierAvancements from '@/client/utils/chantier/avancement/calculerChantierAvancements';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 
 export default function usePageChantier(chantierId: string, habilitation: Habilitation) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoiresComparés = territoiresComparésTerritoiresStore();
-
-  const [détailsIndicateurs, setDétailsIndicateurs] = useState<DétailsIndicateurs | null>(null);
 
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {
@@ -62,20 +58,14 @@ export default function usePageChantier(chantierId: string, habilitation: Habili
     { refetchOnWindowFocus: false },
   );
 
-  useEffect(() => {
-    if (territoiresComparés.length > 0) return;
-    fetch(`/api/chantier/${chantierId}/indicateurs?codesInsee=${territoireSélectionné.codeInsee}&maille=${mailleAssociéeAuTerritoireSélectionné}`)
-      .then(réponse => réponse.json() as Promise<DétailsIndicateurs>)
-      .then(données => setDétailsIndicateurs(données));
-  }, [chantierId, mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee, mailleSélectionnée]);
-
-  useEffect(() => {
-    const codesInsee = territoiresComparés.map(territoire => `codesInsee=${territoire.codeInsee}`).join('&');
-    if (codesInsee === '' || codesInsee === 'codesInsee=FR') return;
-    fetch(`/api/chantier/${chantierId}/indicateurs?${codesInsee}&maille=${mailleSélectionnée}`)
-      .then(réponse => réponse.json() as Promise<DétailsIndicateurs>)
-      .then(données => setDétailsIndicateurs(données));
-  }, [territoiresComparés]);
+  const { data: détailsIndicateurs } = api.indicateur.récupererDétailsIndicateurs.useQuery(
+    {
+      chantierId,
+      maille: territoiresComparés.length > 0 ? mailleSélectionnée : mailleAssociéeAuTerritoireSélectionné,
+      codesInsee: territoiresComparés.length > 0 ? territoiresComparés.map(territoire => territoire.codeInsee) : [territoireSélectionné.codeInsee],
+    },
+    { refetchOnWindowFocus: false, keepPreviousData: true },
+  );
 
   const modeÉcriture = checkAuthorizationChantierScope(habilitation, chantierId, SCOPE_SAISIE_INDICATEURS);
 
@@ -98,7 +88,7 @@ export default function usePageChantier(chantierId: string, habilitation: Habili
     );
 
   return {
-    détailsIndicateurs, 
+    détailsIndicateurs: détailsIndicateurs ?? null,
     commentaires: commentaires ?? null,
     objectifs: objectifs ?? null,
     synthèseDesRésultats: synthèseDesRésultats ?? null,
