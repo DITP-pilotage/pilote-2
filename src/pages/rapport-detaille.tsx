@@ -8,6 +8,8 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { PublicationsGroupéesParChantier } from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 interface NextPageRapportDétailléProps {
   chantiers: Chantier[]
@@ -22,6 +24,7 @@ export default function NextPageRapportDétaillé({
   détailsIndicateursGroupésParChantier,
   publicationsGroupéesParChantier,
 }: NextPageRapportDétailléProps) {
+  
   return (
     process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
     <PageRapportDétaillé
@@ -33,7 +36,7 @@ export default function NextPageRapportDétaillé({
   );
 }
 
-export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
+export async function getServerSideProps({ req, res, query }: GetServerSidePropsContext) {
   if (process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE !== 'true') {
     res.setHeader('location', '/');
     res.statusCode = 302;
@@ -41,13 +44,11 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
     return;
   }
 
-  const session = await getServerSession(req, res, authOptions);
-  if (!session || !session.habilitation) {
-    return { props: {} };
-  }
+  if (!query.maille || !query.codeInsee) return { props: {} };
+  const { maille, codeInsee } = query as { maille: Maille, codeInsee: CodeInsee };
 
-  const maille = 'nationale';
-  const codeInsee = 'FR';
+  const session = await getServerSession(req, res, authOptions);
+  if (!session || !session.habilitation) return { props: {} };
 
   const chantierRepository = dependencies.getChantierRepository();
   const chantiers = await chantierRepository.getListe(session.habilitation, SCOPE_LECTURE);
