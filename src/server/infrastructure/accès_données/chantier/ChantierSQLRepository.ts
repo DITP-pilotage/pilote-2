@@ -38,8 +38,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
   async getById(id: string, habilitation: Habilitation, scope: Scope): Promise<Chantier> {
 
 
-    const chantierIds = récupereListeChantierAvecScope(habilitation,  scope);
-  
+    const chantierIds = récupereListeChantierAvecScope(habilitation, scope);
+
     if (!chantierIds.some(elt => elt == id)) {
       throw new ErreurChantierPermission(id, scope);
     }
@@ -122,7 +122,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
                r.taux_avancement taux_regional,
                d.taux_avancement taux_departemental,
                o.contenu         objectif,
-               a.contenu         action_a_venir
+               a.contenu         action_a_venir,
+               f.contenu         frein_a_lever
         from chantier_ids cids
                  cross join territoire t
                  left outer join chantier c on c.id = cids.id and c.territoire_code = t.code
@@ -136,6 +137,9 @@ export default class ChantierSQLRepository implements ChantierRepository {
                  left outer join derniers_commentaires a
                                  on a.chantier_id = c.id and a.maille = c.maille and a.code_insee = c.code_insee
                                      and a.type = 'actions_a_venir'
+                 left outer join derniers_commentaires f
+                                 on f.chantier_id = c.id and f.maille = c.maille and f.code_insee = c.code_insee
+                                     and f.type = 'freins_a_lever'
         where c.id is not null
         order by nom, maille, code_regional, code_departemental
     `;
@@ -155,6 +159,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       it.est_territorialise,
       it.objectif,
       it.action_a_venir,
+      it.frein_a_lever,
     ));
   }
 }

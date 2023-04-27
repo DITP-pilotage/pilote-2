@@ -344,6 +344,10 @@ describe('ChantierSQLRepository', () => {
           .avecType('actions_a_venir')
           .avecContenu('action à venir 1')
           .build(),
+        commentaireBuilder.shallowCopy()
+          .avecType('freins_a_lever')
+          .avecContenu('frein à lever 1')
+          .build(),
       ] });
 
       // When
@@ -367,6 +371,7 @@ describe('ChantierSQLRepository', () => {
           tauxDAvancementDépartemental: 30,
           objectif: 'objectif 1 v2',
           actionÀVenir: 'action à venir 1',
+          freinÀLever: 'frein à lever 1',
         }),
         expect.objectContaining({ chantierId: 'CH-001', maille: 'NAT' }),
         expect.objectContaining({ chantierId: 'CH-001', maille: 'REG' }),

@@ -25,13 +25,11 @@ const COLONNES = [
   'Météo',
   'Objectif',
   'Action à venir',
+  'Frein à lever',
 ];
 
 /**
  Synthèse des résultats
- Freins à lever <-- typologie de commentaire
- Actions à venir <-- typologie de commentaire
-
  Actions à valoriser <-- ??
  Autres résultats obtenus <-- ??
  Méthodologie du calcul du taux d’avancement <-- c'est ou ?
@@ -54,6 +52,7 @@ function asCsvRow(chantierPourExport: ChantierPourExport): string[] {
     chantierPourExport.météo,
     chantierPourExport.objectif || NON_APPLICABLE,
     chantierPourExport.actionÀVenir || NON_APPLICABLE,
+    chantierPourExport.freinÀLever || NON_APPLICABLE,
   ];
 }
 

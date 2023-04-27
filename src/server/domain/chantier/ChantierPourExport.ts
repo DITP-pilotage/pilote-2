@@ -19,5 +19,6 @@ export class ChantierPourExport {
     public readonly estTerritorialisé: boolean,
     public readonly objectif: string | null,
     public readonly actionÀVenir: string | null,
+    public readonly freinÀLever: string | null,
   ) {}
 }
