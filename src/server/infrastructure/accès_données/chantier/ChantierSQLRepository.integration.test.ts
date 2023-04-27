@@ -326,26 +326,24 @@ describe('ChantierSQLRepository', () => {
         new ChantierSQLRowBuilder().avecId('CH-004').avecNom('b').build(),
         new ChantierSQLRowBuilder().avecId('CH-005').avecNom('d').build(),
       ] });
-      const commentaire01 = new CommentaireRowBuilder()
-        .avecChantierId('CH-001')
-        .avecMaille('DEPT')
-        .avecCodeInsee('01')
-        .avecType('objectifs')
-        .avecContenu('lorem ipsum 1')
-        .avecDate(new Date(0))
-        .build();
-      const commentaire02 = new CommentaireRowBuilder()
-        .avecChantierId('CH-001')
-        .avecMaille('DEPT')
-        .avecCodeInsee('01')
-        .avecType('objectifs')
-        .avecContenu('lorem ipsum 2')
-        .avecDate(new Date(1))
-        .build();
 
+      const commentaireBuilder = new CommentaireRowBuilder()
+        .avecChantierId('CH-001')
+        .avecMaille('DEPT')
+        .avecCodeInsee('01')
+        .avecType('objectifs')
+        .avecContenu('objectif 1 v1')
+        .avecDate(new Date(0));
       await prisma.commentaire.createMany({ data: [
-        commentaire01,
-        commentaire02,
+        commentaireBuilder.build(),
+        commentaireBuilder.shallowCopy()
+          .avecContenu('objectif 1 v2')
+          .avecDate(new Date(1))
+          .build(),
+        commentaireBuilder.shallowCopy()
+          .avecType('actions_a_venir')
+          .avecContenu('action à venir 1')
+          .build(),
       ] });
 
       // When
@@ -367,7 +365,8 @@ describe('ChantierSQLRepository', () => {
           tauxDAvancementNational: 10,
           tauxDAvancementRégional: 20,
           tauxDAvancementDépartemental: 30,
-          objectif: 'lorem ipsum 2',
+          objectif: 'objectif 1 v2',
+          actionÀVenir: 'action à venir 1',
         }),
         expect.objectContaining({ chantierId: 'CH-001', maille: 'NAT' }),
         expect.objectContaining({ chantierId: 'CH-001', maille: 'REG' }),

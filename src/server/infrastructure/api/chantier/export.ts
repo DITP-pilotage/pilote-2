@@ -24,6 +24,7 @@ const COLONNES = [
   'Taux d\'avancement départemental',
   'Météo',
   'Objectif',
+  'Action à venir',
 ];
 
 /**
@@ -52,6 +53,7 @@ function asCsvRow(chantierPourExport: ChantierPourExport): string[] {
     chantierPourExport.tauxDAvancementDépartemental?.toString() || NON_APPLICABLE,
     chantierPourExport.météo,
     chantierPourExport.objectif || NON_APPLICABLE,
+    chantierPourExport.actionÀVenir || NON_APPLICABLE,
   ];
 }
 

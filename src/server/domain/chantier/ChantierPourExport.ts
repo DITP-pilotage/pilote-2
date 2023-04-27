@@ -18,5 +18,6 @@ export class ChantierPourExport {
     public readonly estBaromètre: boolean,
     public readonly estTerritorialisé: boolean,
     public readonly objectif: string | null,
+    public readonly actionÀVenir: string | null,
   ) {}
 }

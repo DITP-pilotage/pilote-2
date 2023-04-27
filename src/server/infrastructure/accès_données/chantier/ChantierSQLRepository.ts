@@ -109,12 +109,11 @@ export default class ChantierSQLRepository implements ChantierRepository {
                               from chantier c
                               where c.id in (${Prisma.join(chantiers_lecture)})
                                 and ministeres <> '{}'),
-             objectifs as (select *
-                           from (select c.*,
-                                        row_number() over (partition by chantier_id, maille, code_insee order by date desc) r
-                                 from commentaire c
-                                 where type = 'objectifs') o
-                           where o.r = 1)
+             derniers_commentaires as (select *
+                                       from (select c.*,
+                                                    row_number() over (partition by chantier_id, maille, code_insee, type order by date desc) r
+                                             from commentaire c) o
+                                       where o.r = 1)
 
         select c.*,
                r.territoire_code code_regional,
@@ -122,7 +121,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
                n.taux_avancement taux_national,
                r.taux_avancement taux_regional,
                d.taux_avancement taux_departemental,
-               o.contenu         objectif
+               o.contenu         objectif,
+               a.contenu         action_a_venir
         from chantier_ids cids
                  cross join territoire t
                  left outer join chantier c on c.id = cids.id and c.territoire_code = t.code
@@ -130,8 +130,12 @@ export default class ChantierSQLRepository implements ChantierRepository {
                  left outer join chantier r on (r.id = cids.id and r.maille = 'REG')
             and (r.territoire_code = t.code or r.territoire_code = t.code_parent)
                  left outer join chantier d on d.id = cids.id and d.maille = 'DEPT' and d.territoire_code = t.code
-                 left outer join objectifs o
+                 left outer join derniers_commentaires o
                                  on o.chantier_id = c.id and o.maille = c.maille and o.code_insee = c.code_insee
+                                     and o.type = 'objectifs'
+                 left outer join derniers_commentaires a
+                                 on a.chantier_id = c.id and a.maille = c.maille and a.code_insee = c.code_insee
+                                     and a.type = 'actions_a_venir'
         where c.id is not null
         order by nom, maille, code_regional, code_departemental
     `;
@@ -150,6 +154,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       it.est_barometre,
       it.est_territorialise,
       it.objectif,
+      it.action_a_venir,
     ));
   }
 }

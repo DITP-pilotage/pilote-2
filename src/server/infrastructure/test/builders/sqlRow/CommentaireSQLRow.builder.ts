@@ -93,6 +93,17 @@ export default class CommentaireRowBuilder {
     return this;
   }
 
+  shallowCopy(): CommentaireRowBuilder {
+    const result = new CommentaireRowBuilder() as any;
+    for (const attribut in this) {
+      if (attribut == '_id') {
+        continue;
+      }
+      result[attribut] = this[attribut];
+    }
+    return result as CommentaireRowBuilder;
+  }
+
   build(): commentaire {
     return {
       id: this._id,
