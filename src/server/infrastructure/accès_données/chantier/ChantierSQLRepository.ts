@@ -132,7 +132,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
                  left outer join chantier d on d.id = cids.id and d.maille = 'DEPT' and d.territoire_code = t.code
                  left outer join objectifs o
                                  on o.chantier_id = c.id and o.maille = c.maille and o.code_insee = c.code_insee
-        order by c.id, t.code
+        where c.id is not null
+        order by nom, maille, code_regional, code_departemental
     `;
     return rows.map(it => new ChantierPourExport(
       it.id,
@@ -141,7 +142,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       it.code_insee,
       it.code_regional,
       it.code_departemental,
-      it.ministeres[0], // <-- en fait ce sont les porteurs
+      it.ministeres ? it.ministeres[0] : null, // <-- en fait ce sont les porteurs
       it.taux_national,
       it.taux_regional,
       it.taux_departemental,

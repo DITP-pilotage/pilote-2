@@ -27,14 +27,13 @@ const COLONNES = [
 ];
 
 /**
- Méthodologie du calcul du taux d’avancement <-- c'est ou ?
  Synthèse des résultats
- Objectifs
  Freins à lever <-- typologie de commentaire
  Actions à venir <-- typologie de commentaire
+
  Actions à valoriser <-- ??
  Autres résultats obtenus <-- ??
-
+ Méthodologie du calcul du taux d’avancement <-- c'est ou ?
  Plus deux autres types ? pas pour le 5 mai.
  */
 
