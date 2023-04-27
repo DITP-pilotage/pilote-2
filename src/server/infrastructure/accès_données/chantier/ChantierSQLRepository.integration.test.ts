@@ -6,6 +6,8 @@ import { objectEntries } from '@/client/utils/objects/objects';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { Habilitation, SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
 import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
+import SyntheseDesResultatsRowBuilder
+  from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -350,6 +352,32 @@ describe('ChantierSQLRepository', () => {
           .build(),
       ] });
 
+      await prisma.synthese_des_resultats.createMany({ data: [
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId('CH-001')
+          .avecMaille('DEPT')
+          .avecCodeInsee('01')
+          .avecDateCommentaire(new Date(1))
+          .avecCommentaire('synthèse des résultats 1 v1')
+          .build(),
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId('CH-001')
+          .avecMaille('DEPT')
+          .avecCodeInsee('01')
+          .avecDateCommentaire(new Date(2))
+          .avecCommentaire('synthèse des résultats 1 v2')
+          .build(),
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId('CH-001')
+          .avecMaille('DEPT')
+          .avecCodeInsee('01')
+          .avecDateCommentaire(null)
+          .avecCommentaire(null)
+          .avecDateMétéo(new Date(3))
+          .avecMétéo('SOLEIL')
+          .build(),
+      ] });
+
       // When
       const result = await repository.getChantiersPourExports(habilitation);
 
@@ -372,6 +400,7 @@ describe('ChantierSQLRepository', () => {
           objectif: 'objectif 1 v2',
           actionÀVenir: 'action à venir 1',
           freinÀLever: 'frein à lever 1',
+          synthèseDesResultats: 'synthèse des résultats 1 v2',
         }),
         expect.objectContaining({ chantierId: 'CH-001', maille: 'NAT' }),
         expect.objectContaining({ chantierId: 'CH-001', maille: 'REG' }),

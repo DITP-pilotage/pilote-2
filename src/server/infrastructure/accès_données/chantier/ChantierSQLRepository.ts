@@ -113,7 +113,13 @@ export default class ChantierSQLRepository implements ChantierRepository {
                                        from (select c.*,
                                                     row_number() over (partition by chantier_id, maille, code_insee, type order by date desc) r
                                              from commentaire c) o
-                                       where o.r = 1)
+                                       where o.r = 1),
+             dernieres_syntheses as (select *
+                                     from (select s.*,
+                                                  row_number() over (partition by chantier_id, maille, code_insee order by date_commentaire desc) r
+                                           from synthese_des_resultats s
+                                           where date_commentaire is not null) sr
+                                     where sr.r = 1)
 
         select c.*,
                r.territoire_code code_regional,
@@ -123,7 +129,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
                d.taux_avancement taux_departemental,
                o.contenu         objectif,
                a.contenu         action_a_venir,
-               f.contenu         frein_a_lever
+               f.contenu         frein_a_lever,
+               s.commentaire     synthese_des_resultats
         from chantier_ids cids
                  cross join territoire t
                  left outer join chantier c on c.id = cids.id and c.territoire_code = t.code
@@ -140,6 +147,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
                  left outer join derniers_commentaires f
                                  on f.chantier_id = c.id and f.maille = c.maille and f.code_insee = c.code_insee
                                      and f.type = 'freins_a_lever'
+                 left outer join dernieres_syntheses s
+                                 on s.chantier_id = c.id and s.maille = c.maille and s.code_insee = c.code_insee
         where c.id is not null
         order by nom, maille, code_regional, code_departemental
     `;
@@ -160,6 +169,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       it.objectif,
       it.action_a_venir,
       it.frein_a_lever,
+      it.synthese_des_resultats,
     ));
   }
 }

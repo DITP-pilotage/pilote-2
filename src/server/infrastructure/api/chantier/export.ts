@@ -26,10 +26,10 @@ const COLONNES = [
   'Objectif',
   'Action à venir',
   'Frein à lever',
+  'Synthèse des résultats',
 ];
 
 /**
- Synthèse des résultats
  Actions à valoriser <-- ??
  Autres résultats obtenus <-- ??
  Méthodologie du calcul du taux d’avancement <-- c'est ou ?
@@ -53,6 +53,7 @@ function asCsvRow(chantierPourExport: ChantierPourExport): string[] {
     chantierPourExport.objectif || NON_APPLICABLE,
     chantierPourExport.actionÀVenir || NON_APPLICABLE,
     chantierPourExport.freinÀLever || NON_APPLICABLE,
+    chantierPourExport.synthèseDesResultats || NON_APPLICABLE,
   ];
 }
 

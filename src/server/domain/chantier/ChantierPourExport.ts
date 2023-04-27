@@ -20,5 +20,6 @@ export class ChantierPourExport {
     public readonly objectif: string | null,
     public readonly actionÀVenir: string | null,
     public readonly freinÀLever: string | null,
+    public readonly synthèseDesResultats: string | null,
   ) {}
 }
