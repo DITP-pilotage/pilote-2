@@ -4,7 +4,8 @@ import ChantierRepository from '@/server/domain/chantier/ChantierRepository.inte
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import { SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
+import { Habilitation, SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
+import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -286,6 +287,95 @@ describe('ChantierSQLRepository', () => {
 
       // Then
       expect(result).toStrictEqual('ORAGE');
+    });
+  });
+
+  describe('Données des chantiers pour l\'export CSV', () => {
+    it('renvoie les bonnes données dans les bons attributs', async () => {
+      // Given
+      const repository = new ChantierSQLRepository(prisma);
+      const habilitation: Habilitation = { chantiers: {} };
+      for (const chantierId of ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005']) {
+        habilitation.chantiers[chantierId] = [SCOPE_LECTURE];
+      }
+      const chantier001Builder = new ChantierSQLRowBuilder()
+        .avecId('CH-001')
+        .avecNom('a Chantier 1')
+        .avecMaille('DEPT')
+        .avecCodeInsee('01')
+        .avecTauxAvancement(30)
+        .avecMinistères(['MIN a', 'MIN b'])
+        .avecMétéo('SOLEIL')
+        .avecEstBaromètre(true)
+        .avecEstTerritorialisé(false);
+
+      await prisma.chantier.createMany({ data: [
+        chantier001Builder.build(),
+        chantier001Builder.shallowCopy()
+          .avecMaille('REG')
+          .avecCodeInsee('84')
+          .avecTauxAvancement(20)
+          .build(),
+        chantier001Builder.shallowCopy()
+          .avecMaille('NAT')
+          .avecCodeInsee('FR')
+          .avecTauxAvancement(10)
+          .build(),
+        new ChantierSQLRowBuilder().avecId('CH-002').avecNom('c').build(),
+        new ChantierSQLRowBuilder().avecId('CH-003').avecNom('e').build(),
+        new ChantierSQLRowBuilder().avecId('CH-004').avecNom('b').build(),
+        new ChantierSQLRowBuilder().avecId('CH-005').avecNom('d').build(),
+      ] });
+      const commentaire01 = new CommentaireRowBuilder()
+        .avecChantierId('CH-001')
+        .avecMaille('DEPT')
+        .avecCodeInsee('01')
+        .avecType('objectifs')
+        .avecContenu('lorem ipsum 1')
+        .avecDate(new Date(0))
+        .build();
+      const commentaire02 = new CommentaireRowBuilder()
+        .avecChantierId('CH-001')
+        .avecMaille('DEPT')
+        .avecCodeInsee('01')
+        .avecType('objectifs')
+        .avecContenu('lorem ipsum 2')
+        .avecDate(new Date(1))
+        .build();
+
+      await prisma.commentaire.createMany({ data: [
+        commentaire01,
+        commentaire02,
+      ] });
+
+      // When
+      const result = await repository.getChantiersPourExports(habilitation);
+
+      // Then
+      expect(result).toEqual([
+        expect.objectContaining({
+          chantierId: 'CH-001',
+          nom: 'a Chantier 1',
+          maille: 'DEPT',
+          codeInsee: '01',
+          codeDépartement: 'DEPT-01',
+          codeRégion: 'REG-84',
+          ministère: 'MIN a',
+          météo: 'SOLEIL',
+          estBaromètre: true,
+          estTerritorialisé: false,
+          tauxDAvancementNational: 10,
+          tauxDAvancementRégional: 20,
+          tauxDAvancementDépartemental: 30,
+          objectif: 'lorem ipsum 2',
+        }),
+        expect.objectContaining({ chantierId: 'CH-001', maille: 'NAT' }),
+        expect.objectContaining({ chantierId: 'CH-001', maille: 'REG' }),
+        expect.objectContaining({ chantierId: 'CH-004', nom: 'b' }),
+        expect.objectContaining({ chantierId: 'CH-002', nom: 'c' }),
+        expect.objectContaining({ chantierId: 'CH-005', nom: 'd' }),
+        expect.objectContaining({ chantierId: 'CH-003', nom: 'e' }),
+      ]);
     });
   });
 });

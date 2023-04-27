@@ -1,6 +1,10 @@
 import { chantier } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
-import { générerUneMailleAléatoire, retourneUneListeDeCodeInseeCohérentePourUneMaille } from '@/server/infrastructure/test/builders/utils';
+import {
+  générerCaractèresSpéciaux,
+  générerUneMailleAléatoire,
+  retourneUneListeDeCodeInseeCohérentePourUneMaille,
+} from '@/server/infrastructure/test/builders/utils';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 import AvancementBuilder from '@/server/domain/avancement/Avancement.builder';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
@@ -74,6 +78,7 @@ export default class ChantierRowBuilder {
 
   avecId(id: chantier['id']): ChantierRowBuilder {
     this._id = id;
+    this._nom = `${this._id} ${faker.lorem.words(6)} ${générerCaractèresSpéciaux(3)}`;
     return this;
   }
 
@@ -160,6 +165,14 @@ export default class ChantierRowBuilder {
   avecEstTerritorialisé(estTerritorialisé: chantier['est_territorialise']): ChantierRowBuilder {
     this._estTerritorialisé = estTerritorialisé;
     return this;
+  }
+
+  shallowCopy(): ChantierRowBuilder {
+    const result = new ChantierRowBuilder() as any;
+    for (const attribut in this) {
+      result[attribut] = this[attribut];
+    }
+    return result as ChantierRowBuilder;
   }
 
   build(): chantier {
