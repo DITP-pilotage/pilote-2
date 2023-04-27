@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-max-depth */
 import '@gouvfr/dsfr/dist/component/link/link.min.css';
 import '@gouvfr/dsfr/dist/component/badge/badge.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css';
@@ -21,14 +22,53 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
     <PageRapportDétailléStyled>
       <main className="fr-py-4w">
         <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
-          <div className="fr-px-2w fr-px-md-0 flex justify-between">
+          <div className="première-page-impression">
+            <header
+              className="fr-header"
+              role="banner"
+            >
+              <div className="fr-header__body">
+                <div className="fr-container">
+                  <div className="fr-header__body-row">
+                    <div className="fr-header__brand fr-enlarge-link">
+                      <div className="fr-header__brand-top">
+                        <div className="fr-header__logo">
+                          <p className="fr-logo">
+                            République
+                            <br />
+                            Française
+                          </p>
+                        </div>
+                      </div>
+                      <div className="fr-header__service">
+                        <p className="fr-header__service-title">
+                          PILOTE
+                        </p>
+                        <p className="fr-header__service-tagline fr-hidden fr-unhidden-sm">
+                          Piloter les politiques publiques par leurs impacts
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </header>
+            <div className="titre-rapport-détaillé fr-display--xl fr-mt-12w" >
+              Pilote - Chantiers prioritaires
+            </div>
+            <hr className='fr-hr fr-mt-4w fr-mb-6w' />
+            <div className="sous-titre-rapport-détaillé fr-display--xl" >
+              Rapport détaillé
+            </div>
+          </div>
+          <div className="fr-px-2w fr-px-md-0 flex justify-between entête-rapport-détaillé">
             <Titre
               baliseHtml="h1"
               className="fr-h2"
             >
               {`Rapport détaillé : ${chantiersFiltrés.length} chantiers`}
             </Titre>
-            <div className="non-imprimé">
+            <div>
               <Link
                 className="fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-go-back-fill fr-btn--icon-left fr-text--sm"
                 href="/"
