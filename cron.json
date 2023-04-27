@@ -1,0 +1,7 @@
+{
+  "jobs": [
+    {
+      "command": "*/10 * * * * bash data_management/scripts/retrieve_tables_from_dfakto.sh"
+    }
+  ]
+}
