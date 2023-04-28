@@ -24,12 +24,9 @@ import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 import IndicateurRowBuilder from '@/server/infrastructure/test/builders/sqlRow/IndicateurSQLRow.builder';
 import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
-import * as Profil from '@/server/domain/identité/Profil';
-import { générerUtilisateurPourImport } from '@/server/infrastructure/accès_données/identité/seed';
-import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
-import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
-import DécisionStratégiqueSQLRowBuilder
-  from '@/server/infrastructure/test/builders/sqlRow/DécisionStratégiqueSQLRow.builder';
+import DécisionStratégiqueSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/DécisionStratégiqueSQLRow.builder';
+import { UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 const chantierStatiqueId123 = new ChantierSQLRowBuilder()
   .avecAxe('axe chantier')
@@ -213,28 +210,59 @@ class DatabaseSeeder {
   }
 
   private async _créerUtilisateursEtDroits() {
-    const chantierIds = await this._getSomeChantierIds();
-    const inputUtilisateurs: UtilisateurPourImport[] = [
-      { email: 'ditp.admin@example.com', profilCode: Profil.DITP_ADMIN },
-      { email: 'ditp.pilotage@example.com', profilCode: Profil.DITP_PILOTAGE },
-      { email: 'premiere.ministre@example.com', profilCode: Profil.PM_ET_CABINET },
-      { email: 'presidence@example.com', profilCode: Profil.PR },
-      { email: 'cabinet.mtfp@example.com', profilCode: Profil.CABINET_MTFP },
-      { email: 'cabinet.ministeriel@example.com', profilCode: Profil.CABINET_MINISTERIEL },
-      { email: 'direction.admin.centrale@example.com', profilCode: Profil.DIR_ADMIN_CENTRALE },
-      { email: 'secretariat.general@example.com', profilCode: Profil.SECRETARIAT_GENERAL },
-      { email: 'directeur.projet@example.com', profilCode: Profil.DIR_PROJET, chantierIds },
-      { email: 'equipe.dir.projet@example.com', profilCode: Profil.EQUIPE_DIR_PROJET, chantierIds },
-      { email: 'referent.region@example.com', profilCode: Profil.REFERENT_REGION },
-      { email: 'prefet.region@example.com', profilCode: Profil.PREFET_REGION },
-      { email: 'services.deconcentres.region@example.com', profilCode: Profil.SERVICES_DECONCENTRES_REGION },
-      { email: 'referent.departement@example.com', profilCode: Profil.REFERENT_DEPARTEMENT },
-      { email: 'prefet.departement@example.com', profilCode: Profil.PREFET_DEPARTEMENT },
-      { email: 'services.deconcentres.departement@example.com', profilCode: Profil.SERVICES_DECONCENTRES_DEPARTEMENT },
-      { email: 'drom@example.com', profilCode: Profil.DROM, chantierIds },
-    ].map(générerUtilisateurPourImport);
+    const utilisateurs: UtilisateurÀCréerOuMettreÀJour[] = [
+      {
+        id: '1234',
+        nom: 'ditp',
+        prénom: 'admin',
+        email: 'ditp.admin@example.com',
+        profil: 'DITP_ADMIN',
+        scopes: {
+          'lecture': {
+            scope: 'lecture',
+            chantiers: [],
+            territoires: ['NAT-FR'],
+            périmètres: [],
+          },
+          'saisie.commentaire': {
+            scope: 'saisie.commentaire',
+            chantiers: [],
+            territoires: ['NAT-FR'],
+            périmètres: [],
+          },
+          'saisie.indicateur': {
+            scope: 'saisie.indicateur',
+            chantiers: [],
+            territoires: ['NAT-FR'],
+            périmètres: [],
+          },
+        },
+      },
+    ];
+    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateurs[0]);
+    // WIP
+    // const chantierIds = await this._getSomeChantierIds();
+    // const inputUtilisateurs: UtilisateurÀCréerOuMettreÀJour[] = [
+    //   { email: 'ditp.admin@example.com', profilCode: Profil.DITP_ADMIN },
+    //   { email: 'ditp.pilotage@example.com', profilCode: Profil.DITP_PILOTAGE },
+    //   { email: 'premiere.ministre@example.com', profilCode: Profil.PM_ET_CABINET },
+    //   { email: 'presidence@example.com', profilCode: Profil.PR },
+    //   { email: 'cabinet.mtfp@example.com', profilCode: Profil.CABINET_MTFP },
+    //   { email: 'cabinet.ministeriel@example.com', profilCode: Profil.CABINET_MINISTERIEL },
+    //   { email: 'direction.admin.centrale@example.com', profilCode: Profil.DIR_ADMIN_CENTRALE },
+    //   { email: 'secretariat.general@example.com', profilCode: Profil.SECRETARIAT_GENERAL },
+    //   { email: 'directeur.projet@example.com', profilCode: Profil.DIR_PROJET, chantierIds },
+    //   { email: 'equipe.dir.projet@example.com', profilCode: Profil.EQUIPE_DIR_PROJET, chantierIds },
+    //   { email: 'referent.region@example.com', profilCode: Profil.REFERENT_REGION },
+    //   { email: 'prefet.region@example.com', profilCode: Profil.PREFET_REGION },
+    //   { email: 'services.deconcentres.region@example.com', profilCode: Profil.SERVICES_DECONCENTRES_REGION },
+    //   { email: 'referent.departement@example.com', profilCode: Profil.REFERENT_DEPARTEMENT },
+    //   { email: 'prefet.departement@example.com', profilCode: Profil.PREFET_DEPARTEMENT },
+    //   { email: 'services.deconcentres.departement@example.com', profilCode: Profil.SERVICES_DECONCENTRES_DEPARTEMENT },
+    //   { email: 'drom@example.com', profilCode: Profil.DROM, chantierIds },
+    // ].map(générerUtilisateurPourImport);
 
-    await new UtilisateurSQLRepository(prisma).créerOuRemplacerUtilisateurs(inputUtilisateurs);
+    // await new UtilisateurSQLRepository(prisma).créerOuMettreÀJour(inputUtilisateurs);
   }
 
   private async _getSomeChantierIds() {

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
-import { UtilisateurIAMRepository } from '@/server/domain/identité/UtilisateurIAMRepository';
-import UtilisateurPourIAM from '@/server/domain/identité/UtilisateurPourIAM';
+import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 import logger from '@/server/infrastructure/logger';
 import configuration from '@/server/infrastructure/Configuration';
+import UtilisateurPourIAM from '@/server/domain/utilisateur/UtilisateurIAM.interface';
 
 const KEYCLOAK_REALM = 'DITP';
 

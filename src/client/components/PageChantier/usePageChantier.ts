@@ -1,18 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
-  checkAuthorizationChantierScope,
-  Habilitation,
-  SCOPE_SAISIE_INDICATEURS,
-} from '@/server/domain/identité/Habilitation';
-import {
   mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
   mailleSélectionnéeTerritoiresStore, territoiresComparésTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import api from '@/server/infrastructure/api/trpc/api';
 import calculerChantierAvancements from '@/client/utils/chantier/avancement/calculerChantierAvancements';
+import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import PeutModifierLeChantierUseCase from '@/server/usecase/utilisateur/PeutModifierLeChantierUseCase/PeutModifierLeChantierUseCase';
 
-export default function usePageChantier(chantierId: string, habilitation: Habilitation) {
+export default function usePageChantier(chantierId: string, habilitation: Utilisateur['scopes']) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
@@ -67,7 +64,7 @@ export default function usePageChantier(chantierId: string, habilitation: Habili
     { refetchOnWindowFocus: false, keepPreviousData: true },
   );
 
-  const modeÉcriture = checkAuthorizationChantierScope(habilitation, chantierId, SCOPE_SAISIE_INDICATEURS);
+  const modeÉcriture = new PeutModifierLeChantierUseCase(habilitation, chantierId, 'NAT-FR').run();
 
   const { data: chantier, refetch: rechargerChantier } = api.chantier.récupérer.useQuery(
     {

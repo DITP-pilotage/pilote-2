@@ -8,13 +8,11 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import {
-  Habilitation,
-  récupereListeChantierAvecScope,
-  Scope,
-  SCOPE_LECTURE,
-} from '@/server/domain/identité/Habilitation';
 import { ChantierPourExport } from '@/server/domain/chantier/ChantierPourExport';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import RécupérerListeChantierIdsAccessiblesEnLectureUseCase from '@/server/usecase/utilisateur/RécupérerListeChantierIdsAccessiblesEnLectureUseCase/RécupérerListeChantierIdsAccessiblesEnLectureUseCase';
+import PeutAccéderAuChantierUseCase from '@/server/usecase/utilisateur/PeutAccéderAuChantierUseCase/PeutAccéderAuChantierUseCase';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -23,8 +21,8 @@ class ErreurChantierNonTrouvé extends Error {
 }
 
 class ErreurChantierPermission extends Error {
-  constructor(idChantier: string, scope: string) {
-    super(`Erreur de Permission: l'utilisateur n'a pas le droit '${scope}' pour le chantier '${idChantier}'.`);
+  constructor(idChantier: string) {
+    super(`Erreur de Permission: l'utilisateur n'a pas le droit de lecture pour le chantier '${idChantier}'.`);
   }
 }
 
@@ -35,13 +33,11 @@ export default class ChantierSQLRepository implements ChantierRepository {
     this.prisma = prisma;
   }
 
-  async getById(id: string, habilitation: Habilitation, scope: Scope): Promise<Chantier> {
-
-
-    const chantierIds = récupereListeChantierAvecScope(habilitation, scope);
-
-    if (!chantierIds.some(elt => elt == id)) {
-      throw new ErreurChantierPermission(id, scope);
+  async getById(id: string, habilitation: Utilisateur['scopes']): Promise<Chantier> {
+    const peutAccéderAuChantier = new PeutAccéderAuChantierUseCase(habilitation, id, 'NAT-FR').run();
+  
+    if (!peutAccéderAuChantier) {
+      throw new ErreurChantierPermission(id);
     }
 
     const chantiers: chantier[] = await this.prisma.chantier.findMany({
@@ -55,8 +51,19 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return parseChantier(chantiers);
   }
 
-  async getListe(habilitation: Habilitation, scope: Scope): Promise<Chantier[]> {
-    const chantiers_lecture = récupereListeChantierAvecScope(habilitation, scope);
+  async récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][]): Promise<Chantier['id'][]> {
+    const chantiers = await this.prisma.chantier.findMany({
+      distinct: ['id'],
+      where: {
+        perimetre_ids: { hasSome: périmètreIds },
+      },
+    });
+
+    return chantiers.map(c => c.id);
+  }
+
+  async getListe(habilitation: Utilisateur['scopes']): Promise<Chantier[]> {
+    const chantiers_lecture = new RécupérerListeChantierIdsAccessiblesEnLectureUseCase(habilitation).run();
 
     const chantiers = await this.prisma.chantier.findMany({
       where: {
@@ -101,8 +108,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
     });
   }
 
-  async getChantiersPourExports(habilitation: Habilitation): Promise<ChantierPourExport[]> {
-    const chantiers_lecture = récupereListeChantierAvecScope(habilitation, SCOPE_LECTURE);
+  async getChantiersPourExports(habilitation: Utilisateur['scopes']): Promise<ChantierPourExport[]> {
+    const chantiers_lecture = new RécupérerListeChantierIdsAccessiblesEnLectureUseCase(habilitation).run();
 
     const rows = await this.prisma.$queryRaw<any[]>`
         with chantier_ids as (select distinct c.id

@@ -22,15 +22,14 @@ enum Maille {
 }
 
 model territoire {
-  code                   String                   @id
-  nom                    String
-  nom_affiche            String
-  maille                 Maille
-  code_insee             String
-  trace_svg              String
-  code_parent            String?
-  chantier               chantier[]
-  utilisateur_territoire utilisateur_territoire[]
+  code        String     @id
+  nom         String
+  nom_affiche String
+  maille      Maille
+  code_insee  String
+  trace_svg   String
+  code_parent String?
+  chantier    chantier[]
 
   @@schema("public")
 }
@@ -197,63 +196,44 @@ model decision_strategique {
 }
 
 model utilisateur {
-  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email     String  @unique
-  nom       String?
-  prenom    String?
-  profil_id String  @db.Uuid
+  id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String         @unique
+  nom          String?
+  prenom       String?
+  profil       profil         @relation(fields: [profilCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  profilCode   String
+  habilitation habilitation[]
 
-  @@schema("public")
-}
-
-model utilisateur_chantier {
-  utilisateur_id String @db.Uuid
-  chantier_id    String
-
-  @@id([utilisateur_id, chantier_id])
-  @@schema("public")
-}
-
-model utilisateur_territoire {
-  utilisateur_id  String     @db.Uuid
-  territoire      territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  territoire_code String
-
-  @@id([utilisateur_id, territoire_code])
-  @@schema("public")
-}
-
-model utilisateur_perimetre {
-  utilisateur_id String    @db.Uuid
-  perimetre      perimetre @relation(fields: [perimetre_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  perimetre_id   String
-
-  @@id([utilisateur_id, perimetre_id])
   @@schema("public")
 }
 
 model profil {
-  id                                     String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  code                                   String  @unique
-  nom                                    String  @unique
-  a_acces_tous_chantiers                 Boolean @default(false)
-  a_acces_tous_chantiers_territorialises Boolean @default(false)
+  code                                   String        @id
+  nom                                    String
+  a_acces_tous_chantiers                 Boolean       @default(false)
+  a_acces_tous_chantiers_territorialises Boolean       @default(false)
+  utilisateur                            utilisateur[]
 
   @@schema("public")
 }
 
-model profil_habilitation {
-  profil_id             String @db.Uuid
-  habilitation_scope_id String @db.Uuid
+model habilitation {
+  utilisateur   utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  utilisateurId String      @db.Uuid
+  scope         scope       @relation(fields: [scopeCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  scopeCode     String
+  territoires   String[]
+  perimetres    String[]
+  chantiers     String[]
 
-  @@id([profil_id, habilitation_scope_id])
+  @@unique([utilisateurId, scopeCode])
   @@schema("public")
 }
 
-model habilitation_scope {
-  id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  code String @unique
-  nom  String @unique
+model scope {
+  code         String         @id
+  nom          String
+  habilitation habilitation[]
 
   @@schema("public")
 }

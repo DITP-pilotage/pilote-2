@@ -9,43 +9,31 @@ VALUES (
         'DITP_ADMIN',
         'DITP - Admin',
         true,
-        false
+        true
     ),
     (
         'DITP_PILOTAGE',
         'DITP - Pilotage',
         true,
-        false
-    ),
-    (
-        'PM_ET_CABINET',
-        'Première Ministre et cabinet',
-        true,
-        false
+        true
     ),
     (
         'PR',
         'Présidence de la République',
         true,
-        false
+        true
+    ),
+    (
+        'PM_ET_CABINET',
+        'Première Ministre et cabinet',
+        true,
+        true
     ),
     (
         'CABINET_MTFP',
         'Cabinet MTFP',
         true,
-        false
-    ),
-    (
-        'SANS_HABILITATIONS',
-        'Sans Habilitations',
-        false,
-        false
-    ),
-    (
-        'EQUIPE_DIR_PROJET',
-        'Équipe de Directeur de projet',
-        false,
-        false
+        true
     ),
     (
         'CABINET_MINISTERIEL',
@@ -66,16 +54,16 @@ VALUES (
         false
     ),
     (
-        'DIR_PROJET',
-        'Directeur de projet',
+        'EQUIPE_DIR_PROJET',
+        'Équipe de Directeur de projet',
         false,
         false
     ),
     (
-        'DROM',
-        'DROM/Outre-Mer',
+        'DIR_PROJET',
+        'Directeur de projet',
         false,
-        true
+        false
     ),
     (
         'REFERENT_REGION',
@@ -110,6 +98,18 @@ VALUES (
     (
         'SERVICES_DECONCENTRES_DEPARTEMENT',
         'Services déconcentrés départementaux',
+        false,
+        false
+    ),
+    (
+        'DROM',
+        'DROM/Outre-Mer',
+        false,
+        true
+    ),
+    (
+        'SANS_HABILITATIONS',
+        'Sans Habilitations',
         false,
         false
     ) ON CONFLICT (code) DO NOTHING;

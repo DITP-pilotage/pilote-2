@@ -2,15 +2,15 @@ import { getServerSession } from 'next-auth/next';
 import { GetServerSidePropsContext } from 'next';
 import PageChantier from '@/components/PageChantier/PageChantier';
 
-import { ChantierId, Habilitation } from '@/server/domain/identité/Habilitation';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import logger from '@/server/infrastructure/logger';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 
 interface NextPageChantierProps {
-  habilitation: Habilitation,
+  habilitation: Utilisateur['scopes'],
   indicateurs: Indicateur[],
 }
 
@@ -23,24 +23,18 @@ export default function NextPageChantier({ indicateurs, habilitation }: NextPage
   );
 }
 
-type Params = {
-  id: ChantierId,
-};
 
-export async function getServerSideProps(context: GetServerSidePropsContext<Params>) {
-  const params = context.params as Params;
-
+export async function getServerSideProps(context: GetServerSidePropsContext<{ id: Chantier['id'] }>) {
   const session = await getServerSession(context.req, context.res, authOptions);
+
   if (!session) {
-    logger.error('Not connected?');
-    // TODO: On renvoie une erreur ? Quelle erreur ?
     throw new Error('Not connected?');
   }
 
   const habilitation = session.habilitation;
 
   const indicateurRepository = dependencies.getIndicateurRepository();
-  const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params.id);
+  const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(context.params!.id);
 
   return {
     props: {

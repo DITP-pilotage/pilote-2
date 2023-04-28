@@ -1,5 +1,5 @@
 import { DefaultSession } from 'next-auth';
-import { Habilitation } from '@/server/domain/identité/Habilitation';
+import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 
 declare module 'next-auth' {
   interface Session {
@@ -8,6 +8,6 @@ declare module 'next-auth' {
     } & DefaultSession['user']
     accessToken: string
     error: any
-    habilitation: Habilitation
+    habilitation: Utilisateur['scopes']
   }
 }
