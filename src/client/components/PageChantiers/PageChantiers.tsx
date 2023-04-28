@@ -6,7 +6,8 @@ import Link from 'next/link';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
-import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
+import SélecteursMaillesEtTerritoires
+  from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import Filtres from '@/components/PageChantiers/Filtres/Filtres';
@@ -18,11 +19,11 @@ import FiltresActifs from './FiltresActifs/FiltresActifs';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
 
-export default function PageChantiers({ chantiers, ministères, axes, ppg }: PageChantiersProps) {  
+export default function PageChantiers({ chantiers, ministères, axes, ppg }: PageChantiersProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { auClicTerritoireCallback } = useCartographie();
-  const { 
-    nombreFiltresActifs, 
+  const {
+    nombreFiltresActifs,
     chantiersFiltrés,
     avancementsAgrégés,
     répartitionMétéos,
@@ -70,31 +71,45 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
           <div className="fr-py-2w fr-px-md-4w fr-container--fluid">
             <div className="fr-px-2w fr-px-md-0 flex justify-between">
               <Titre
-                baliseHtml='h1'
-                className='fr-h4'
+                baliseHtml="h1"
+                className="fr-h4"
               >
                 {`${chantiersFiltrés.length} chantiers`}
               </Titre>
-              {
-                process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
-                <div>
-                  <Link
-                    className="fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm"
-                    href="/rapport-detaille"
-                    title="Voir le rapport détaillé"
-                  >
-                    Voir le rapport détaillé
-                  </Link>
-                </div>
-              }
+              <div className="flex">
+                {
+                  process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
+                  <div>
+                    <Link
+                      className="fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm"
+                      href="/rapport-detaille"
+                      title="Voir le rapport détaillé"
+                    >
+                      Voir le rapport détaillé
+                    </Link>
+                  </div>
+                }
+                {
+                  process.env.NEXT_PUBLIC_FF_EXPORT_CSV === 'true' &&
+                  <div>
+                    <a
+                      className="fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm"
+                      href="/api/chantier/export"
+                      title="Exporter les données"
+                    >
+                      Exporter les données
+                    </a>
+                  </div>
+                }
+              </div>
             </div>
             <div className="fr-grid-row fr-grid-row--gutters">
               <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
                   <section>
                     <Titre
-                      baliseHtml='h2'
-                      className='fr-text--lg'
+                      baliseHtml="h2"
+                      className="fr-text--lg"
                     >
                       Taux d’avancement des chantiers par territoire
                     </Titre>
@@ -110,18 +125,18 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                 <Bloc>
                   <section>
                     <Titre
-                      baliseHtml='h2'
-                      className='fr-text--lg'
+                      baliseHtml="h2"
+                      className="fr-text--lg"
                     >
                       Taux d’avancement moyen
                     </Titre>
                     <Avancements avancements={avancementsAgrégés} />
                   </section>
-                  <hr className='fr-hr fr-my-3w fr-pb-1v' />
+                  <hr className="fr-hr fr-my-3w fr-pb-1v" />
                   <section>
                     <Titre
-                      baliseHtml='h2'
-                      className='fr-text--lg'
+                      baliseHtml="h2"
+                      className="fr-text--lg"
                     >
                       Répartition des météos renseignées
                     </Titre>
