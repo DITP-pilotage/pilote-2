@@ -15,7 +15,7 @@ export class FetchHttpClient implements HttpClient {
     formData.append('file', recupererFichier(body.cheminCompletDuFichier), body.nomDuFichier);
     formData.append('schema', body.schema);
 
-    logger.info(`Soummission du fichier ${body.nomDuFichier} à validata`);
+    logger.info(`Soumission du fichier ${body.nomDuFichier} à validata`);
     
     const { report } = await new Promise<{ report: ReportValidata }>(async (resolve) => {
       await formData.submit(this.urlValidata, (error, response) => {

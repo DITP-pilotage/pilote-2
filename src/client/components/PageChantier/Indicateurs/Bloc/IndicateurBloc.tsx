@@ -25,7 +25,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estDisp
     >
       <Bloc>
         <section>
-          <div className='flex justifyBetween'>
+          <div className='flex justify-between'>
             <div>
               <Titre
                 baliseHtml="h4"

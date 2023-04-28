@@ -1,7 +1,5 @@
-import {
-  ErreurValidationFichier,
-} from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
+import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
 
 export class DetailValidationFichier {
   private readonly _estValide: boolean;

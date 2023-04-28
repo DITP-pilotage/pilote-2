@@ -5,15 +5,16 @@ import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIn
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ChantierInformation } from '@/components/PageImportIndicateur/ChantierInformation.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import useImportIndicateur from '@/hooks/useImportIndicateur';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import logger from '@/server/infrastructure/logger';
-import { SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
+import { Habilitation, SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
+import usePageChantier from '@/components/PageChantier/usePageChantier';
 
 interface NextPageImportIndicateurProps {
   chantierInformation: ChantierInformation
-  indicateurs: Indicateur[]
+  indicateurs: Indicateur[],
+  habilitation: Habilitation
 }
 
 type GetServerSideProps = GetServerSidePropsResult<NextPageImportIndicateurProps>;
@@ -21,7 +22,11 @@ type Params = {
   id: Chantier['id'],
 };
 
-export async function getServerSideProps({ params, req, res }: GetServerSidePropsContext<Params>): Promise<GetServerSideProps> {
+export async function getServerSideProps({
+  params,
+  req,
+  res,
+}: GetServerSidePropsContext<Params>): Promise<GetServerSideProps> {
   if (!params?.id) {
     return {
       notFound: true,
@@ -35,8 +40,10 @@ export async function getServerSideProps({ params, req, res }: GetServerSideProp
     throw new Error('Not connected?');
   }
 
+  const { habilitation } = session;
+
   const chantierRepository = dependencies.getChantierRepository();
-  const chantier: Chantier = await chantierRepository.getById(params.id, session.habilitation, SCOPE_LECTURE);
+  const chantier: Chantier = await chantierRepository.getById(params.id, habilitation, SCOPE_LECTURE);
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs = await indicateurRepository.récupérerParChantierId(params.id);
@@ -44,6 +51,7 @@ export async function getServerSideProps({ params, req, res }: GetServerSideProp
   return {
     props: {
       indicateurs,
+      habilitation,
       chantierInformation: {
         id: chantier.id,
         nom: chantier.nom,
@@ -54,8 +62,12 @@ export async function getServerSideProps({ params, req, res }: GetServerSideProp
   };
 }
 
-export default function NextPageImportIndicateur({ chantierInformation, indicateurs }: NextPageImportIndicateurProps) {
-  const { détailsIndicateurs } = useImportIndicateur(chantierInformation.id);
+export default function NextPageImportIndicateur({
+  chantierInformation,
+  indicateurs,
+  habilitation,
+}: NextPageImportIndicateurProps) {
+  const { détailsIndicateurs } = usePageChantier(chantierInformation.id, habilitation);
 
   return (
     <PageImportIndicateur

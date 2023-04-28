@@ -1,4 +1,4 @@
-import { ErreurValidationFichier } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
+import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
 
 export class ErreurValidationFichierBuilder {
   private cellule: string = 'IND-12';

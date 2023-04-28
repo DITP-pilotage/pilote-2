@@ -3,7 +3,10 @@ import Indicateurs from '@/components/PageChantier/Indicateurs/Indicateurs';
 import PageImportIndicateurSectionImportStyled from './PageImportIndicateurSectionImport.styled';
 import { PageImportIndicateurSectionImportProps } from './PageImportIndicateurSectionImport.interface';
 
-export default function PageImportIndicateurSectionImport({ détailsIndicateurs, indicateurs }: PageImportIndicateurSectionImportProps) {
+export default function PageImportIndicateurSectionImport({
+  détailsIndicateurs,
+  indicateurs,
+}: PageImportIndicateurSectionImportProps) {
   return (
     <PageImportIndicateurSectionImportStyled>
       <div className='fr-container fr-py-3w'>
@@ -14,7 +17,7 @@ export default function PageImportIndicateurSectionImport({ détailsIndicateurs,
           Indicateurs d&apos;impact
         </Titre>
         {
-          détailsIndicateurs !== null && (
+          détailsIndicateurs !== null ? (
             <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
               <div className="fr-col-12">
                 <Indicateurs
@@ -24,7 +27,10 @@ export default function PageImportIndicateurSectionImport({ détailsIndicateurs,
                 />
               </div>
             </div>
-          )
+          ) :
+            <p>
+              Chargement des indicateurs...
+            </p>
         }
       </div>
     </PageImportIndicateurSectionImportStyled>

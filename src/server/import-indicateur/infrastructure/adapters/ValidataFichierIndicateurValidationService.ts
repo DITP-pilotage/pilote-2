@@ -10,99 +10,10 @@ import {
   ReportResourceTaskData,
   ReportTask,
 } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
+import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
 
 interface Dependencies {
   httpClient: HttpClient
-}
-
-export class ErreurValidationFichier {
-  private readonly _cellule: string;
-
-  private readonly _nom: string;
-
-  private readonly _message: string;
-
-  private readonly _numeroDeLigne: number;
-
-  private readonly _positionDeLigne: number;
-
-  private readonly _nomDuChamp: string;
-
-  private readonly _positionDuChamp: number;
-
-  private constructor({ cellule, nom, message, numeroDeLigne, positionDeLigne, nomDuChamp, positionDuChamp }: {
-    cellule: string,
-    nom: string,
-    message: string,
-    numeroDeLigne: number,
-    positionDeLigne: number,
-    nomDuChamp: string,
-    positionDuChamp: number
-  }) {
-    this._cellule = cellule;
-    this._nom = nom;
-    this._message = message;
-    this._numeroDeLigne = numeroDeLigne;
-    this._positionDeLigne = positionDeLigne;
-    this._nomDuChamp = nomDuChamp;
-    this._positionDuChamp = positionDuChamp;
-  }
-
-  get cellule() {
-    return this._cellule;
-  }
-
-  get nom() {
-    return this._nom;
-  }
-
-  get message() {
-    return this._message;
-  }
-
-  get numeroDeLigne() {
-    return this._numeroDeLigne;
-  }
-
-  get positionDeLigne() {
-    return this._positionDeLigne;
-  }
-
-  get nomDuChamp() {
-    return this._nomDuChamp;
-  }
-
-  get positionDuChamp() {
-    return this._positionDuChamp;
-  }
-
-  static creerErreurValidationFichier({
-    cellule,
-    nom,
-    message,
-    numeroDeLigne,
-    positionDeLigne,
-    nomDuChamp,
-    positionDuChamp,
-  }: {
-    cellule: string,
-    nom: string,
-    message: string,
-    numeroDeLigne: number,
-    positionDeLigne: number,
-    nomDuChamp: string,
-    positionDuChamp: number
-  }) {
-    return new ErreurValidationFichier({
-      cellule,
-      nom,
-      message,
-      numeroDeLigne,
-      positionDeLigne,
-      nomDuChamp,
-      positionDuChamp,
-    });
-  }
 }
 
 const extraireLesDonnees = (task: ReportTask): string[][] => {
@@ -111,11 +22,11 @@ const extraireLesDonnees = (task: ReportTask): string[][] => {
 };
 
 enum EnTeteFichierEnum {
-  INDIC_ID = 'indic_id',
+  INDIC_ID = 'identifiant_indic',
   ZONE_ID = 'zone_id',
-  METRIC_DATE = 'metric_date',
-  METRIC_TYPE = 'metric_type',
-  METRIC_VALUE = 'metric_value',
+  METRIC_DATE = 'date_valeur',
+  METRIC_TYPE = 'type_valeur',
+  METRIC_VALUE = 'valeur',
 }
 
 interface PositionEnTeteDuFichier {
@@ -128,7 +39,6 @@ interface PositionEnTeteDuFichier {
 
 const recupererLesPositionsDesEnTetes = (donnees: ReportResourceTaskData): PositionEnTeteDuFichier => {
   const enTetes = donnees[0];
-
   return {
     indicId: enTetes.indexOf(EnTeteFichierEnum.INDIC_ID),
     zoneId: enTetes.indexOf(EnTeteFichierEnum.ZONE_ID),
@@ -145,16 +55,16 @@ const extraireLeContenuDuFichier = (tasks: ReportTask[]) => {
   return { enTetes, donnees };
 };
 
-const initialiserMapFieldNameErreurDITP: (taskError: ReportErrorTask) => Record<string, Record<string, string>> =  (taskError) => ({
-  'indic_id': {
+const initialiserMapFieldNameErreurDITP: (taskError: ReportErrorTask) => Record<EnTeteFichierEnum.INDIC_ID | EnTeteFichierEnum.METRIC_TYPE | EnTeteFichierEnum.ZONE_ID | string, Record<string, string>> =  (taskError) => ({
+  [EnTeteFichierEnum.INDIC_ID]: {
     'constraint \"required\" is \"True\"': `Un indicateur ne peut etre vide. C'est le cas à la ligne ${taskError.rowPosition}.`,
     'constraint \"pattern\" is \"^IND-[0-9]{3}$\"': "L'identifiant de l'indicateur doit être renseigné dans le format IND-XXX. Vous pouvez vous référer au guide des indicateurs pour trouver l'identifiant de votre indicateur.",
   },
-  'metric_type': {
+  [EnTeteFichierEnum.METRIC_TYPE]: {
     "constraint \"enum\" is \"['vi', 'va', 'vc']\"": 'Le type de valeur doit être vi (valeur initiale), va (valeur actuelle) ou vc (valeur cible).',
     "constraint \"enum\" is \"['va']\"": 'Le type de valeur doit être va (valeur actuelle). Vous ne pouvez saisir que des valeurs actuelles.',
   },
-  'zone_id': {
+  [EnTeteFichierEnum.ZONE_ID]: {
     'constraint "pattern" is "^(R[0-9]{2,3})$"': `Veuillez entrer uniquement une zone régionale dans la colonne zone_id. '${taskError.cell}' n'est pas une zone régionale.`,
   },
 });
@@ -194,7 +104,6 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     schema,
   }: ValiderFichierPayload): Promise<DetailValidationFichier> {
     const report = await this.httpClient.post({ cheminCompletDuFichier, nomDuFichier, schema });
-
     const { enTetes, donnees } = extraireLeContenuDuFichier(report.tasks);
 
     let listeIndicateursData: IndicateurData[] = [];
