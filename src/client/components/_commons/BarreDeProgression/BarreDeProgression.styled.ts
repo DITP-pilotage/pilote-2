@@ -84,7 +84,7 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
 
     .pourcentage {
       p {
-        width: ${props => dimensions[props.taille].largeurTexte};  
+        width: ${props => dimensions[props.taille].largeurTexte};
         padding-left: 0.5em;
         text-align: right;
         white-space: nowrap;

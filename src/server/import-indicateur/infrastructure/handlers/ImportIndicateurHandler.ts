@@ -30,7 +30,7 @@ export default async function handleValiderFichierImportIndicateur(
 
   const fichier = <File>formData.file;
 
-  const schéma = 'https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/templates/indicateur/sans-contraintes/schema_pilote_sans_contraintes.json';
+  const schéma = 'https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/prod/sans-contraintes.json';
 
   const report = await validerFichierIndicateurImporteUseCase.execute(
     {

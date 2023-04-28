@@ -32,7 +32,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
         .avecResource(
           new ReportResourceTaskBuilder()
             .avecData([
-              ['indic_id', 'zone_id', 'metric_date', 'metric_type', 'metric_value'],
+              ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
               ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
               ['IND-002', 'D004', metricDateValue2, 'vc', '3'],
             ])
@@ -61,7 +61,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
           .avecResource(
             new ReportResourceTaskBuilder()
               .avecData([
-                ['indic_id', 'zone_id', 'metric_date', 'metric_type', 'metric_value'],
+                ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
                 ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
                 ['IND-002', 'D004', metricDateValue2, 'vc', '3'],
               ])
@@ -105,7 +105,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
           .avecResource(
             new ReportResourceTaskBuilder()
               .avecData([
-                ['metric_type', 'zone_id', 'metric_date', 'indic_id', 'metric_value'],
+                ['type_valeur', 'zone_id', 'date_valeur', 'identifiant_indic', 'valeur'],
                 ['vi', 'D001', metricDateValue1, 'IND-001', '9'],
                 ['vc', 'D004', metricDateValue2, 'IND-002', '3'],
               ])
@@ -171,7 +171,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
             ).avecResource(
               new ReportResourceTaskBuilder()
                 .avecData([
-                  ['indic_id', 'zone_id', 'metric_date', 'metric_type', 'metric_value'],
+                  ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
                   ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
                   ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
                 ])
@@ -209,13 +209,13 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
     describe('et que le rapport possèdes des erreurs spécifiques, doit personnaliser le message', () => {
       it.each([
-        ['indic_id', 'constraint-error', 'constraint \"required\" is \"True\"', 1, "Un indicateur ne peut etre vide. C'est le cas à la ligne 1."],
-        ['indic_id', 'constraint-error', 'constraint \"required\" is \"True\"', 2, "Un indicateur ne peut etre vide. C'est le cas à la ligne 2."],
-        ['indic_id', 'constraint-error', 'constraint \"pattern\" is \"^IND-[0-9]{3}$\"', 2, "L'identifiant de l'indicateur doit être renseigné dans le format IND-XXX. Vous pouvez vous référer au guide des indicateurs pour trouver l'identifiant de votre indicateur."],
-        ['indic_id', 'constraint-error', 'another message', 2, "message d'origine"],
-        ['metric_type', 'constraint-error', "constraint \"enum\" is \"['vi', 'va', 'vc']\"", 2, 'Le type de valeur doit être vi (valeur initiale), va (valeur actuelle) ou vc (valeur cible).'],
-        ['metric_type', 'constraint-error', "constraint \"enum\" is \"['va']\"",  2, 'Le type de valeur doit être va (valeur actuelle). Vous ne pouvez saisir que des valeurs actuelles.'],
-        ['metric_type', 'constraint-error', 'another message', 2, "message d'origine"],
+        ['identifiant_indic', 'constraint-error', 'constraint \"required\" is \"True\"', 1, "Un indicateur ne peut etre vide. C'est le cas à la ligne 1."],
+        ['identifiant_indic', 'constraint-error', 'constraint \"required\" is \"True\"', 2, "Un indicateur ne peut etre vide. C'est le cas à la ligne 2."],
+        ['identifiant_indic', 'constraint-error', 'constraint \"pattern\" is \"^IND-[0-9]{3}$\"', 2, "L'identifiant de l'indicateur doit être renseigné dans le format IND-XXX. Vous pouvez vous référer au guide des indicateurs pour trouver l'identifiant de votre indicateur."],
+        ['identifiant_indic', 'constraint-error', 'another message', 2, "message d'origine"],
+        ['type_valeur', 'constraint-error', "constraint \"enum\" is \"['vi', 'va', 'vc']\"", 2, 'Le type de valeur doit être vi (valeur initiale), va (valeur actuelle) ou vc (valeur cible).'],
+        ['type_valeur', 'constraint-error', "constraint \"enum\" is \"['va']\"",  2, 'Le type de valeur doit être va (valeur actuelle). Vous ne pouvez saisir que des valeurs actuelles.'],
+        ['type_valeur', 'constraint-error', 'another message', 2, "message d'origine"],
         ['zone_id', 'constraint-error', 'constraint "pattern" is "^(R[0-9]{2,3})$"',  2, "Veuillez entrer uniquement une zone régionale dans la colonne zone_id. 'F001' n'est pas une zone régionale."],
         ['zone_id', 'constraint-error', 'another message', 2, "message d'origine"],
         [null, 'primary-key-error', 'the same as in the row at position 2',  2, "La ligne 2 comporte la même zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux."],
@@ -247,7 +247,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
               .avecResource(
                 new ReportResourceTaskBuilder()
                   .avecData([
-                    ['indic_id', 'zone_id', 'metric_date', 'metric_type', 'metric_value'],
+                    ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
                     ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
                     ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
                   ])
@@ -287,7 +287,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
             .avecResource(
               new ReportResourceTaskBuilder()
                 .avecData([
-                  ['indic_id', 'zone_id', 'metric_date', 'metric_type', 'metric_value'],
+                  ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
                   ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
                   ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
                 ])

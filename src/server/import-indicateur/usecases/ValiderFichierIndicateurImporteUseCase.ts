@@ -3,9 +3,8 @@ import {
   FichierIndicateurValidationService,
 } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
 import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository';
-import {
-  ErreurValidationFichier,
-} from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
+
+import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
 
 interface Dependencies {
   fichierIndicateurValidationService: FichierIndicateurValidationService
