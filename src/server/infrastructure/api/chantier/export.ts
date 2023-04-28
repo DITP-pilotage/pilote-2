@@ -67,7 +67,13 @@ export default async function handleExportCsv(request: NextApiRequest, response:
   response.setHeader('Content-Type', 'text/csv');
   response.setHeader('Content-Disposition', 'attachment; filename="chantiers.csv"');
 
-  const stringifier = stringify({ header: true, columns: COLONNES });
+  const stringifier = stringify({
+    header: true,
+    columns: COLONNES,
+    delimiter: ';',
+    bom: true,
+  });
+
   stringifier.pipe(response);
   for (const chantierPourExport of chantiersPourExport) {
     const csvRow = asCsvRow(chantierPourExport);
