@@ -1,17 +1,5 @@
 #!/bin/bash
 
-# Uniquement sur du local
-if [ -z $PASSWORD_DFAKTO_DATABASE ] || [ -z $DFAKTO_DATABASE_USER ] || [ -z $DFAKTO_DATABASE_SCHEMA ] || [ -z $DFAKTO_DATABASE_DBNAME ] || [ -z $DFAKTO_DATABASE_HOST ] || [ -z $DFAKTO_DATABASE_PORT ] ;
-then
-  if [ -f .env ];
-  then
-    export $(grep -v '^#' .env | xargs)
-  else
-    echo "ERROR : .env does not exist. Cannot load variable DATABASE_URL. Exiting"
-    exit 1
-  fi
-fi
-
 echo "INFO : Récupération des données de DFAKTO"
 
 if [ $ENVIRONMENT = 'PROD' ] ;
