@@ -25,6 +25,9 @@ export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
               <th
                 aria-sort={renseignerAttributAriaSort(header.column.getIsSorted())}
                 key={header.id}
+                style={{
+                  width: header.column.columnDef.meta?.width ?? undefined,
+                }}
               >
                 <p className="fr-mb-0 fr-mr-3v fr-text--sm">
                   { flexRender(header.column.columnDef.header, header.getContext()) }

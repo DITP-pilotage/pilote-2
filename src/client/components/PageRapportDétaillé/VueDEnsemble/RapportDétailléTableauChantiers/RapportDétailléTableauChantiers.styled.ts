@@ -8,22 +8,6 @@ const RapportDétailléTableauChantiersStyled = styled.section`
   table.tableau {
     display: table;
 
-    th {
-      &:nth-of-type(3) {
-        width: 11rem;
-        min-width: 11rem;
-      }
-
-      &:nth-of-type(4) {
-        width: 15rem;
-        min-width: 15rem;
-      }
-
-      &:last-of-type {
-        width: 4rem;
-      }
-    }
-
     tbody {
       tr {
         height: 4.7rem;

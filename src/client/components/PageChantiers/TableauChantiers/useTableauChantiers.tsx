@@ -49,6 +49,9 @@ const colonnesTableauChantiers = [
     aggregatedCell: aggregatedCellContext => aggregatedCellContext.row.original.porteur,
     enableSorting: false,
     enableGrouping: false,
+    meta: {
+      width: 'auto',
+    },
   }),
 
   reactTableColonnesHelper.accessor('typologie', {
@@ -59,6 +62,9 @@ const colonnesTableauChantiers = [
     enableGrouping: false,
     aggregationFn: (_columnId, leafRows) => déterminerTypologieDuGroupementParMinistère(leafRows.map(row => row.original)),
     aggregatedCell: typologie => typologie.getValue() ? <PictosTypologie typologie={typologie.getValue()} /> : null,
+    meta: {
+      width: '8rem',
+    },
   }),
 
   reactTableColonnesHelper.accessor('météo', {
@@ -68,6 +74,9 @@ const colonnesTableauChantiers = [
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
     enableGrouping: false,
+    meta: {
+      width: '10rem',
+    },
   }),
 
   reactTableColonnesHelper.accessor('avancement', {
@@ -81,6 +90,9 @@ const colonnesTableauChantiers = [
       return calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement));
     },
     aggregatedCell: avancement => <TableauChantiersAvancement avancement={avancement.getValue() ?? null} />,
+    meta: {
+      width: '11rem',
+    },
   }),
 
   reactTableColonnesHelper.display({
@@ -91,6 +103,9 @@ const colonnesTableauChantiers = [
         className={`${aggregatedCellContext.row.getIsExpanded() ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'} chevron-accordéon`}
       />
     )),
+    meta: {
+      width: '3.5rem',
+    },
   }),
 
   reactTableColonnesHelper.display({
