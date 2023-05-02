@@ -5,7 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE "public"."perimetre" ADD COLUMN     "ministere_id" TEXT NOT NULL DEFAULT '1009';
+ALTER TABLE "public"."perimetre" ADD COLUMN     "ministere_id" TEXT ;
 
 -- AddForeignKey
 ALTER TABLE "public"."perimetre" ADD CONSTRAINT "perimetre_ministere_id_fkey" FOREIGN KEY ("ministere_id") REFERENCES "public"."ministere"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -71,8 +71,8 @@ model perimetre {
   id                String  @id
   nom               String
   ministere         String?
-  ministere_table   ministere @relation(fields: [ministere_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  ministere_id      String @default("1009")
+  ministere_table   ministere? @relation(fields: [ministere_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ministere_id      String?
 
   @@schema("public")
 }
