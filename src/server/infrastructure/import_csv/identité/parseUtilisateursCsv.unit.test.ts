@@ -1,9 +1,9 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { DIR_PROJET } from '@/server/domain/identité/Profil';
-import { CsvRecord, parseCsvRecord } from '@/server/infrastructure/import_csv/identité/ImportateurCsvUtilisateurs';
+import { CsvRecord, parseCsvRecord } from '@/server/infrastructure/import_csv/identité/parseUtilisateursCsv';
 import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
 
-describe('ImportCsvUtilisateurs', () => {
+describe('parseUtilisateursCsv', () => {
   it('parse des données à importer', () => {
     const csvRecord: CsvRecord = {
       Email: 'bob@dylan.com',

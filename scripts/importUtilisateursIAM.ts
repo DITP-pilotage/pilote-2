@@ -1,7 +1,8 @@
 import process from 'node:process';
 import assert from 'node:assert/strict';
 import logger from '@/server/infrastructure/logger';
-import ImportateurCsvUtilisateurs from '@/server/infrastructure/import_csv/identité/ImportateurCsvUtilisateurs';
+import parseUtilisateursCsv from '@/server/infrastructure/import_csv/identité/parseUtilisateursCsv';
+import ImporterUtilisateursUseCase from '@/server/usecase/identité/ImporterUtilisateursUseCase';
 
 /**
  * Exemple de CSV :
@@ -61,8 +62,9 @@ import ImportateurCsvUtilisateurs from '@/server/infrastructure/import_csv/ident
 async function main() {
   const filename = process.argv[2];
   assert(filename, 'Nom de fichier CSV manquant');
-  const importateur = new ImportateurCsvUtilisateurs();
-  await importateur.importeFichierUtilisateurs(filename);
+  const utilisateursPourImport = parseUtilisateursCsv(filename);
+  const usecase = new ImporterUtilisateursUseCase(utilisateursPourImport);
+  await usecase.run();
 }
 
 const isMain = eval('require.main === module');

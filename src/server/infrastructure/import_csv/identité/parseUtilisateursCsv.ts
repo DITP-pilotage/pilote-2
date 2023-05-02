@@ -9,7 +9,6 @@ import {
   vérifieCodeProfil,
 } from '@/server/domain/identité/Profil';
 import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
-import ImporterUtilisateursUseCase from '@/server/usecase/identité/ImporterUtilisateursUseCase';
 
 const CSV_PARSE_OPTIONS = {
   columns: true,
@@ -86,29 +85,20 @@ export function parseCsvRecord(csvRecord: CsvRecord): UtilisateurPourImport {
   );
 }
 
-export default class ImportateurCsvUtilisateurs {
-  async importeFichierUtilisateurs(filename: string) {
-    assert(filename);
-    const utilisateursPourImport = this.parseCsvUtilisateurs(filename);
-    const usecase = new ImporterUtilisateursUseCase(utilisateursPourImport);
-    await usecase.run();
+function _parseCsvRecords(csvRecords: CsvRecord[]): UtilisateurPourImport[] {
+  assert(csvRecords, 'Erreur de parsing CSV. Pas de lignes ?');
+
+  const result: UtilisateurPourImport[] = [];
+  for (const csvRecord of csvRecords) {
+    const importRecord = parseCsvRecord(csvRecord);
+    result.push(importRecord);
   }
+  return result;
+}
 
-  private parseCsvUtilisateurs(filename: string): UtilisateurPourImport[] {
-    const contents = fs.readFileSync(filename, 'utf8');
-    const csvRecords: CsvRecord[] = parse(contents, CSV_PARSE_OPTIONS);
+export default function parseUtilisateursCsv(filename: string): UtilisateurPourImport[] {
+  const contents = fs.readFileSync(filename, 'utf8');
+  const csvRecords: CsvRecord[] = parse(contents, CSV_PARSE_OPTIONS);
 
-    return this.parseCsvRecords(csvRecords);
-  }
-
-  private parseCsvRecords(csvRecords: CsvRecord[]): UtilisateurPourImport[] {
-    assert(csvRecords, 'Erreur de parsing CSV. Pas de lignes ?');
-
-    const result: UtilisateurPourImport[] = [];
-    for (const csvRecord of csvRecords) {
-      const importRecord = parseCsvRecord(csvRecord);
-      result.push(importRecord);
-    }
-    return result;
-  }
+  return _parseCsvRecords(csvRecords);
 }
