@@ -20,7 +20,7 @@ export default function TableauChantiersTuileMinistère({ ministère, estDéroul
       </div>
       <span
         aria-hidden="true"
-        className={`${estDéroulé ? 'fr-icon-arrow-down-s-line' : 'fr-icon-arrow-up-s-line'} chevron-accordéon`}
+        className={`${estDéroulé ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'} chevron-accordéon`}
       />
     </TableauChantiersTuileMinistèreStyled>
   );
