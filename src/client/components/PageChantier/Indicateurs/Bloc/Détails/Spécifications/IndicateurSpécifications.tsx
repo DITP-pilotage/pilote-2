@@ -17,7 +17,7 @@ export default function IndicateurSpécifications({ description,  modeDeCalcul, 
         { description ?? libelléValeurNull }
       </p>
       <p className='fr-text--md sous-titre fr-mt-2w'>
-        Mode de calcul
+        Méthode de calcul
       </p>
       <p className='fr-text--xs'>
         { modeDeCalcul ?? libelléValeurNull }

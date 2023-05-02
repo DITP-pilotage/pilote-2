@@ -16,43 +16,43 @@ const LÉGENDE: Record<string, CartographieÉlémentDeLégendeListe> = {
   },
   '0-10': {
     libellé: '0-10%',
-    remplissage: '#8C8CCD',
+    remplissage: '#e6e6f4',
   },
   '10-20': {
     libellé: '10-20%',
-    remplissage: '#7D7DC7',
+    remplissage: '#d7d7ee',
   },
   '20-30': {
     libellé: '20-30%',
-    remplissage: '#6E6EC0',
+    remplissage: '#cbcbe8',
   },
   '30-40': {
     libellé: '30-40%',
-    remplissage: '#5E5EBA',
+    remplissage: '#bbbbe2',
   },
   '40-50': {
     libellé: '40-50%',
-    remplissage: '#4F4FB3',
+    remplissage: '#aeaedc',
   },
   '50-60': {
     libellé: '50-60%',
-    remplissage: '#3D3DAB',
+    remplissage: '#9a9ad4',
   },
   '60-70': {
     libellé: '60-70%',
-    remplissage: '#2E2EA5',
+    remplissage: '#8686cb',
   },
   '70-80': {
     libellé: '70-80%',
-    remplissage: '#1F1F9E',
+    remplissage: '#6666bd',
   },
   '80-90': {
     libellé: '80-90%',
-    remplissage: '#0F0F98',
+    remplissage: '#4040ad',
   },
   '90-100': {
     libellé: '90-100%',
-    remplissage: '#00006C',
+    remplissage: '#000091',
   },
   '=100': {
     libellé: '100%',
