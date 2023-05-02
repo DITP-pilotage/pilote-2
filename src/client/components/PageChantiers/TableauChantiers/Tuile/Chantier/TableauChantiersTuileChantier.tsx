@@ -22,7 +22,7 @@ export default function TableauChantiersTuileChantier({ chantier }: TableauChant
         <div className='avancement fr-mr-2w'>
           <BarreDeProgression
             fond="blanc"
-            taille="xs"
+            taille="sm"
             valeur={chantier.avancement}
             variante='primaire'
           />
