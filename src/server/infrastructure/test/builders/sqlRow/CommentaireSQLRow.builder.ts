@@ -35,7 +35,6 @@ export default class CommentaireRowBuilder {
       'autres_resultats_obtenus_non_correles_aux_indicateurs',
       'commentaires_sur_les_donnees',
       'freins_a_lever',
-      'objectifs',
     ]);
    
     if (this._type === 'freins_a_lever' || this._type === 'actions_a_venir' || this._type === 'actions_a_valoriser' || this._type === 'autres_resultats_obtenus_non_correles_aux_indicateurs') {

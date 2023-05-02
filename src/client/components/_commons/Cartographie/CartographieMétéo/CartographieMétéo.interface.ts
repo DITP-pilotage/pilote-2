@@ -8,5 +8,4 @@ export default interface CartographieMétéoProps {
   données: CartographieDonnéesMétéo,
   options?: Partial<CartographieOptions>,
   auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
-  estInteractif: boolean
 }

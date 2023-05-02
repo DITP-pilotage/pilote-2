@@ -9,15 +9,14 @@ import usePageRapportDétaillé from '@/components/PageRapportDétaillé/usePage
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
-export function RapportDétailléVueDEnsemble({
-  chantiers,
-}: RapportDétailléVueDEnsembleProps) {
+export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVueDEnsembleProps) {
   const {
     avancementsAgrégés,
     répartitionMétéos,
     donnéesCartographie,
     donnéesTableauChantiers,
   } = usePageRapportDétaillé(chantiers);
+  
   return (
     <section>
       <Encart>
@@ -41,8 +40,7 @@ export function RapportDétailléVueDEnsemble({
               <CartographieAvancement
                 auClicTerritoireCallback={() => {}}
                 données={donnéesCartographie}
-                estInteractif={false}
-                options={{ territoireSélectionnable: true }}
+                options={{ estInteractif: false }}
               />
             </section>
           </Bloc>

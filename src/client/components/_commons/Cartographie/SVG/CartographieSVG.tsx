@@ -5,7 +5,7 @@ import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoo
 import CartographieSVGStyled from './CartographieSVG.styled';
 import CartographieTerritoireSélectionné from './CartographieTerritoireSélectionné';
 
-function CartographieSVG({ options, territoires, frontières, setInfoBulle, auClicTerritoireCallback, estInteractif }: CartographieSVGProps) {  
+function CartographieSVG({ options, territoires, frontières, setInfoBulle, auClicTerritoireCallback }: CartographieSVGProps) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [viewbox, setViewbox] = useState<Viewbox>({
     x: 0,
@@ -23,7 +23,7 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
 
   return (
     <CartographieSVGStyled>
-      {!!estInteractif && 
+      {!!options.estInteractif && 
       <CartographieZoomEtDéplacement
         svgRef={svgRef}
         viewbox={viewbox}
@@ -56,9 +56,9 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
                   d={territoire.tracéSVG}
                   fill={territoire.remplissage}
                   key={`territoire-${territoire.codeInsee}`}
-                  onClick={() => estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
+                  onClick={() => options.estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
                   onMouseEnter={() =>
-                    estInteractif &&
+                    options.estInteractif &&
                     setInfoBulle({
                       libellé: territoire.libellé,
                       valeurAffichée: territoire.valeurAffichée,

@@ -6,7 +6,7 @@ import CartographieProps from './Cartographie.interface';
 import BulleDInfo from './BulleDInfo/BulleDInfo';
 import CartographieSVG from './SVG/CartographieSVG';
 
-export default function Cartographie({ options, données, children, auClicTerritoireCallback, estInteractif }: CartographieProps) {
+export default function Cartographie({ options, données, children, auClicTerritoireCallback }: CartographieProps) {
   const niveauDeMaille = mailleSélectionnéeTerritoiresStore();
   const départements = départementsTerritoiresStore();
 
@@ -44,7 +44,6 @@ export default function Cartographie({ options, données, children, auClicTerrit
       }
       <CartographieSVG
         auClicTerritoireCallback={auClicTerritoireCallback}
-        estInteractif={estInteractif}
         frontières={territoiresEtFrontières.frontières}
         options={optionsEffectives}
         setInfoBulle={setInfoBulle}

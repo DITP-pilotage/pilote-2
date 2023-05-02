@@ -49,7 +49,6 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
               <CartographieAvancement
                 auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
                 données={donnéesCartographieAvancement}
-                estInteractif
                 options={{ territoireSélectionnable: true, multiséléction: true }}
               />
             </section>

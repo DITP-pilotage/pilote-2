@@ -91,7 +91,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return this.mapperVersDomaine(commentaireCréé);
   }
 
-  async récupérerLesPlusRécentesGroupéesParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], CommentaireTypé[]>> {
+  async récupérerLesPlusRécentsGroupésParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], CommentaireTypé[]>> {
     const commentaires = await this.prisma.$queryRaw<CommentairePrisma[]>`
       SELECT c.chantier_id, c.contenu, c.auteur, c.type, id, date
       FROM commentaire c

@@ -68,7 +68,7 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
   const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds, maille, codeInsee);
 
   const commentaireRepository = dependencies.getCommentaireRepository();
-  const commentairesGroupésParChantier = await commentaireRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds, maille, codeInsee);
+  const commentairesGroupésParChantier = await commentaireRepository.récupérerLesPlusRécentsGroupésParChantier(chantiersIds, maille, codeInsee);
 
   const objectifRepository = dependencies.getObjectifRepository();
   const objectifsGroupésParChantier = await objectifRepository.récupérerLesPlusRécentsGroupésParChantier(chantiersIds);

@@ -13,6 +13,7 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import Filtres from '@/components/PageChantiers/Filtres/Filtres';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
+import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
@@ -20,6 +21,8 @@ import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
 
 export default function PageChantiers({ chantiers, ministères, axes, ppg }: PageChantiersProps) {  
+  const maille = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
+  const codeInsee = territoireSélectionnéTerritoiresStore().codeInsee;
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { auClicTerritoireCallback } = useCartographie();
   const {
@@ -82,7 +85,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                   <div>
                     <Link
                       className="fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm"
-                      href="/rapport-detaille"
+                      href={`/rapport-detaille?maille=${maille}&codeInsee=${codeInsee}`}
                       title="Voir le rapport détaillé"
                     >
                       Voir le rapport détaillé
@@ -116,7 +119,6 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                     <CartographieAvancement
                       auClicTerritoireCallback={auClicTerritoireCallback}
                       données={donnéesCartographie}
-                      estInteractif
                       options={{ territoireSélectionnable: true }}
                     />
                   </section>

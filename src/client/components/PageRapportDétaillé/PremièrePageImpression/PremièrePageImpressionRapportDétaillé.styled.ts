@@ -17,7 +17,7 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
     }
     
     main {
-      background: #FFF;
+      background: var(--grey-1000-50);
 
       .fr-container {
         max-width: 90em;
@@ -29,13 +29,7 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
       filter: none;
     }
 
-    .barre-latérale, .fr-btn, .fr-link {
-      display: none;
-    }
 
-    /* .entête-rapport-détaillé {
-      display: none;
-    } */
 
     .date {
       position: absolute;

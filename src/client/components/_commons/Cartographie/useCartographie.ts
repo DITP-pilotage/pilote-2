@@ -43,6 +43,7 @@ export default function useCartographie() {
     },
     territoireSélectionnable: false,
     multiséléction: false,
+    estInteractif: true,
   };
 
   function auClicTerritoireCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {

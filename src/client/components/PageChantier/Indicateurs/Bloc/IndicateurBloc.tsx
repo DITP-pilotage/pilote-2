@@ -12,7 +12,7 @@ import ResultatValidationFichier from '@/components/PageImportIndicateur/Resulta
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurs from './useIndicateurBloc';
 
-export default function IndicateurBloc({ indicateur, détailsIndicateur, estDisponibleALImport = false, estInteractif } : IndicateurBlocProps) {
+export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, estDisponibleALImport = false } : IndicateurBlocProps) {
   const router = useRouter();
   const chantierId = router.query.chantierId  as string;
   const { indicateurDétailsParTerritoires, colonnes } = useIndicateurs(détailsIndicateur);
