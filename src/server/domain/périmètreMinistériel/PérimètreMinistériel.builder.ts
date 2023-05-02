@@ -7,9 +7,12 @@ export default class PérimètreMinistérielBuilder {
 
   private _nom: PérimètreMinistériel['nom'];
 
+  private _minister_id: PérimètreMinistériel['ministere_id'];
+
   constructor() {
     this._id = générerUnIdentifiantUnique('PM');
     this._nom = `${this._id} ${faker.lorem.words()}`;
+    this._minister_id = générerUnIdentifiantUnique('M');
   }
 
   avecId(id: PérimètreMinistériel['id']): PérimètreMinistérielBuilder {
@@ -26,6 +29,7 @@ export default class PérimètreMinistérielBuilder {
     return {
       id: this._id,
       nom: this._nom,
+      ministere_id: this._minister_id,
     };
   }
 }

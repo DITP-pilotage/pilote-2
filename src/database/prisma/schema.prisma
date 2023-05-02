@@ -60,8 +60,9 @@ model chantier {
 }
 
 model ministere {
-  id   String @id
-  nom  String
+  id        String @id
+  nom       String
+  perimetre perimetre[]
 
   @@schema("public")
 }

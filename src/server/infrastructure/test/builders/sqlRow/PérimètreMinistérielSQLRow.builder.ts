@@ -9,12 +9,15 @@ export default class PérimètreMinistérielRowBuilder {
 
   private _ministères: perimetre['ministere'];
 
+  private _ministères_id: perimetre['ministere_id'];
+
   constructor() {
     const périmètreMinistérielGénéré = new PérimètreMinistérielBuilder().build();
     
     this._id = périmètreMinistérielGénéré.id;
     this._nom = périmètreMinistérielGénéré.nom;
     this._ministères = faker.helpers.arrayElement([null, `MIN - ${faker.lorem.words()}`]);
+    this._ministères_id = '';
   }
 
   avecId(id: perimetre['id']): PérimètreMinistérielRowBuilder {
@@ -37,6 +40,7 @@ export default class PérimètreMinistérielRowBuilder {
       id: this._id,
       nom: this._nom,
       ministere: this._ministères,
+      ministere_id: this._ministères_id,
     };
   }
 }
