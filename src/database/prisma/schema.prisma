@@ -226,3 +226,10 @@ model habilitation_scope {
 
   @@schema("public")
 }
+
+model ministere {
+  id   String @id
+  nom  String
+
+  @@schema("public")
+}
