@@ -17,7 +17,8 @@ renamed as (
         porteur_type_short as porteur_type_polygramme,
         porteur_type_name as porteur_type_nom,
         porteur_directeur as directeur,
-        porteur_name_short as nom_court
+        porteur_name_short as nom_court,
+        porteur_picto as pictogramme
 
     from source
 
