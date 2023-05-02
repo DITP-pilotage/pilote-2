@@ -16,6 +16,8 @@ interface NextPageRapportDétailléProps {
   indicateursGroupésParChantier: Record<string, Indicateur[]>
   détailsIndicateursGroupésParChantier: Record<Chantier['id'], DétailsIndicateurs>
   publicationsGroupéesParChantier: PublicationsGroupéesParChantier
+  maille: Maille
+  codeInsee: CodeInsee
 }
 
 export default function NextPageRapportDétaillé({
@@ -23,14 +25,18 @@ export default function NextPageRapportDétaillé({
   indicateursGroupésParChantier,
   détailsIndicateursGroupésParChantier,
   publicationsGroupéesParChantier,
+  maille,
+  codeInsee,
 }: NextPageRapportDétailléProps) {
   
   return (
     process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
     <PageRapportDétaillé
       chantiers={chantiers}
+      codeInsee={codeInsee}
       détailsIndicateursGroupésParChantier={détailsIndicateursGroupésParChantier}
       indicateursGroupésParChantier={indicateursGroupésParChantier}
+      maille={maille}
       publicationsGroupéesParChantier={publicationsGroupéesParChantier}
     />
   );
@@ -75,6 +81,8 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
       chantiers,
       indicateursGroupésParChantier,
       détailsIndicateursGroupésParChantier,
+      maille,
+      codeInsee,
       publicationsGroupéesParChantier: {
         commentaires: commentairesGroupésParChantier,
         synthèsesDesRésultats: synthèsesDesRésultatsGroupéesParChantier,

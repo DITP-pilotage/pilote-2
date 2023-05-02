@@ -10,13 +10,20 @@ import PageRapportDétailléProps from '@/components/PageRapportDétaillé/PageR
 import { RapportDétailléVueDEnsemble } from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble';
 import useChantiersFiltrés from '@/components/useChantiersFiltrés';
 import RapportDétailléChantier from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier';
+import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
 export const htmlId = {
   listeDesChantiers: () => 'liste-des-chantiers',
   chantier: (chantierId: string) => `chantier-${chantierId}`,
 };
 
-export default function PageRapportDétaillé({ chantiers, indicateursGroupésParChantier, détailsIndicateursGroupésParChantier, publicationsGroupéesParChantier }: PageRapportDétailléProps) {
+export default function PageRapportDétaillé({ chantiers, indicateursGroupésParChantier, détailsIndicateursGroupésParChantier, publicationsGroupéesParChantier, maille, codeInsee }: PageRapportDétailléProps) {
+  const { modifierMailleSélectionnée, modifierTerritoireSélectionné } = actionsTerritoiresStore();
+  if (maille != 'nationale') {
+    modifierMailleSélectionnée(maille);
+  }
+  modifierTerritoireSélectionné(codeInsee);
+
   const chantiersFiltrés = useChantiersFiltrés(chantiers);
   return (
     <PageRapportDétailléStyled>
