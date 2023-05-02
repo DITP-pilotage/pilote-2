@@ -19,7 +19,7 @@ export default function usePublication(publicationInitiale: PublicationProps['pu
   const afficherAlerteErreur = (message: string) => {
     setAlerte({
       type: 'erreur',
-      message,
+      titre: message,
     });
   };
 
@@ -27,7 +27,7 @@ export default function usePublication(publicationInitiale: PublicationProps['pu
     setPublication(p);
     setAlerte({
       type: 'succès',
-      message: 'Modification effectuée',
+      titre: 'Modification effectuée',
     });
     désactiverLeModeÉdition();
   };

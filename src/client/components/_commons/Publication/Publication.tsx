@@ -31,7 +31,7 @@ export default function Publication({ type, publicationInitiale, entité, chanti
         !!alerte &&
         <div className='fr-mb-4w'>
           <Alerte
-            message={alerte.message}
+            titre={alerte.titre}
             type={alerte.type}
           />
         </div>

@@ -1,16 +1,28 @@
+import { useRouter } from 'next/router';
+import Alerte from '@/components/_commons/Alerte/Alerte';
 import { ResultatValidationFichierProps } from './ResultatValidationFichier.interface';
-
+import '@gouvfr/dsfr/dist/component/table/table.min.css';
 export default function ResultatValidationFichier({ rapport }: ResultatValidationFichierProps) {
+  const { query } = useRouter();
+  const { indicateurId } = query;
+
   return (
     <section>
       {
       rapport.estValide
         ?
-          <p>
-            Le fichier est valide
-          </p>
+          <Alerte
+            message='La mise à jour des taux d’avancement sera effective dans un durée maximale de 24h. Vous pouvez, en attendant, mettre à jour d’autres indicateurs.'
+            titre={`Les données ont été importées avec succès pour l’indicateur ${indicateurId}`}
+            type='succès'
+          />
         :
           <div className='fr-py-4w'>
+            <Alerte
+              message='Nous vous invitons à confirmer que les potentielles anomalies détaillées ci-dessous ne sont pas des erreurs avant de passer à l’étape suivante.'
+              titre='Votre fichier est conforme mais il comporte de potentielles anomalies'
+              type='erreur'
+            />
             <h5>
               Rapport d&apos;erreur de la validation du fichier
             </h5>

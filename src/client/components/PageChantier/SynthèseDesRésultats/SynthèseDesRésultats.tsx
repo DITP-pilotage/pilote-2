@@ -45,7 +45,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
                   !!alerte &&
                   <div className='fr-mb-4w'>
                     <Alerte
-                      message={alerte.message}
+                      titre={alerte.titre}
                       type={alerte.type}
                     />
                   </div>

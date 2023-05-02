@@ -20,7 +20,7 @@ export default function useSynthèseDesRésultatsFormulaire(synthèseDesRésulta
       if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
         setAlerte({
           type: 'erreur',
-          message: 'Une erreur est survenue, veuillez réessayer ultérieurement.',
+          titre: 'Une erreur est survenue, veuillez réessayer ultérieurement.',
         });
       }
     },
