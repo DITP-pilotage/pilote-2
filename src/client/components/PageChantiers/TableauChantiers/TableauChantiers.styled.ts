@@ -83,8 +83,10 @@ const TableauChantiersStyled = styled.section`
         background-position: bottom;
         background-size: 100% 1px;
 
-        &:hover {
-          background-color: var(--background-default-grey-hover);
+        @media (hover: hover) {
+          &:hover {
+            background-color: var(--background-default-grey-hover);
+          }
         }
       }
       
