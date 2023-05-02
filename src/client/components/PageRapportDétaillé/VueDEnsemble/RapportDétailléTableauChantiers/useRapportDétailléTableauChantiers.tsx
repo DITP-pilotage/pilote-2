@@ -8,7 +8,7 @@ import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/a
 import TableauChantiersAvancement from '@/components/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
 import TableauChantiersMétéo from '@/components/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
-import PictosTypologie from '@/components/PageChantiers/TableauChantiers/PictosTypologie/PictosTypologie';
+import TypologiesPictos from '@/components/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import { DonnéesTableauChantiers } from '@/components/PageChantiers/TableauChantiers/TableauChantiers.interface';
 import RapportDétailléTableauChantiersProps from './RapportDétailléTableauChantiers.interface';
 
@@ -28,16 +28,22 @@ const colonnesTableauChantiers = [
     aggregatedCell: aggregatedCellContext => aggregatedCellContext.row.original.porteur,
     enableSorting: false,
     enableGrouping: false,
+    meta: {
+      width: 'auto',
+    },
   }),
 
   reactTableColonnesHelper.accessor('typologie', {
     header: 'Typologie',
     id: 'typologie',
     enableSorting: false,
-    cell: typologie => <PictosTypologie typologie={typologie.getValue()} />,
+    cell: typologie => <TypologiesPictos typologies={typologie.getValue()} />,
     enableGrouping: false,
     aggregationFn: (_columnId, leafRows) => déterminerTypologieDuGroupementParMinistère(leafRows.map(row => row.original)),
-    aggregatedCell: typologie => typologie.getValue() ? <PictosTypologie typologie={typologie.getValue()} /> : null,
+    aggregatedCell: typologie => typologie.getValue() ? <TypologiesPictos typologies={typologie.getValue()} /> : null,
+    meta: {
+      width: '8rem',
+    },
   }),
 
   reactTableColonnesHelper.accessor('météo', {
@@ -47,6 +53,9 @@ const colonnesTableauChantiers = [
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
     enableGrouping: false,
+    meta: {
+      width: '10rem',
+    },
   }),
 
   reactTableColonnesHelper.accessor('avancement', {
@@ -60,6 +69,9 @@ const colonnesTableauChantiers = [
       return calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement));
     },
     aggregatedCell: avancement => <TableauChantiersAvancement avancement={avancement.getValue() ?? null} />,
+    meta: {
+      width: '11rem',
+    },
   }),
 ];
 

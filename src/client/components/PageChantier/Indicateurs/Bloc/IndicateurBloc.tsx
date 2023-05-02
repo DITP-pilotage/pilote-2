@@ -31,11 +31,10 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estDisp
                 baliseHtml="h4"
                 className="fr-text--xl fr-mb-1w"
               >
-                { !!indicateur.estIndicateurDuBaromètre &&
-                <PictoBaromètre
-                  className='fr-mr-1w'
-                  taille={{ mesure: 1.25, unité: 'rem' }}
-                /> }
+                {
+                  !!indicateur.estIndicateurDuBaromètre &&
+                  <PictoBaromètre />
+                }
                 { indicateur.nom }
               </Titre>
               <p className='fr-mb-2w information-secondaire texte-gris'>

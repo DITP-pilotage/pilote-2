@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 const TableauChantiersTuileChantierStyled = styled.div`
   .tuile-chantier-entête {
     display: grid;
-    grid-template-columns: auto 2.25rem;
+    grid-template-columns: auto auto;
   }
   
   .tuile-chantier-corps {

@@ -1,14 +1,11 @@
 import styled from '@emotion/styled';
-import { PictoBaromètreStyledProps } from '@/components/_commons/PictoBaromètre/PictoBaromètre.interface';
 
-
-
-const PictoBaromètreStyled = styled.span<PictoBaromètreStyledProps>`
+const PictoBaromètreStyled = styled.span`
   color: var(--text-mention-grey);
 
   &::before {
-    width: ${props => props.taille.mesure + props.taille.unité};
-    height: ${props => props.taille.mesure + props.taille.unité};
+    width: 1.25rem;
+    height: 1.25rem;
     mask-size: contain;
   }
 `;

@@ -1,52 +1,64 @@
-import { flexRender, Row } from '@tanstack/react-table';
-import { useCallback } from 'react';
-import { useRouter } from 'next/router';
-import {
-  DonnéesTableauChantiers,
-} from '@/components/PageChantiers/TableauChantiers/TableauChantiers.interface';
+import { Cell, flexRender } from '@tanstack/react-table';
+import Link from 'next/link';
+import { ChantierVueDEnsemble } from '@/components/useVueDEnsemble';
 import TableauChantiersContenuProps from './TableauChantiersContenu.interface';
 
-export default function TableauChantiersContenu({ tableau }: TableauChantiersContenuProps) {
-  const router = useRouter();
-  
-  const auClicSurLaLigne = useCallback((row: Row<DonnéesTableauChantiers>) => {
-    if (row.getIsGrouped()) {
-      row.getToggleExpandedHandler()();
-    } else {
-      void router.push(`/chantier/${row.original.id}`);
-    }
-  }, [router]);
+function afficherContenuDeLaCellule(cell: Cell<ChantierVueDEnsemble, unknown>) {
+  return !cell.getIsGrouped() && (
+    cell.getIsAggregated() ? (
+      flexRender(
+        cell.column.columnDef.aggregatedCell ??
+        cell.column.columnDef.cell,
+        cell.getContext(),
+      )
+    ) : flexRender(
+      cell.column.columnDef.cell,
+      cell.getContext(),
+    )
+  );
+}
 
+export default function TableauChantiersContenu({ tableau }: TableauChantiersContenuProps) {
   return (
     <tbody>
       {
         tableau.getRowModel().rows.map(row => (
-          <tr
-            className={row.getIsGrouped() ? 'ligne-ministère' : 'ligne-chantier'}
-            key={row.id}
-            onClick={() => auClicSurLaLigne(row)}
-          >
-            {
-              row.getVisibleCells().map(cell => (
-                <td key={cell.id}>
-                  {
-                    !cell.getIsGrouped() && (
-                      cell.getIsAggregated() ? (
-                        flexRender(
-                          cell.column.columnDef.aggregatedCell ??
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )
-                      ) : flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )
-                    )
-                  }
-                </td>
-              ))
-            }
-          </tr>
+          row.getIsGrouped() ? (
+            <tr
+              className="ligne-ministère"
+              key={row.id}
+              onClick={() => row.getToggleExpandedHandler()()}
+            >
+              {
+                row.getVisibleCells().map(cell => (
+                  <td key={cell.id}>
+                    { afficherContenuDeLaCellule(cell) }
+                  </td>
+                ))
+              }
+            </tr>
+          ) : (
+            <tr
+              className="ligne-chantier"
+              key={row.id}
+            >
+              {
+                row.getVisibleCells().map(cell => (
+                  <td
+                    className="fr-p-0"
+                    key={cell.id}
+                  >
+                    <Link
+                      className="fr-p-2w"
+                      href={`/chantier/${row.original.id}`}
+                    >
+                      { afficherContenuDeLaCellule(cell) }
+                    </Link>
+                  </td>
+                ))
+              }
+            </tr>
+          )
         ))
       }
     </tbody>

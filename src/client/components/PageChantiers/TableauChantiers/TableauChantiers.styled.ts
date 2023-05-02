@@ -36,58 +36,49 @@ const TableauChantiersStyled = styled.section`
   table.tableau {
     display: table;
 
-    th {
-      &:nth-of-type(3) {
-        width: 11rem;
-        min-width: 11rem;
-      }
-
-      &:nth-of-type(4) {
-        width: 15rem;
-        min-width: 15rem;
-      }
-
-      &:last-of-type {
-        width: 4rem;
-      }
-    }
-
     tbody {
       tr {
-        height: 4.7rem;
-
-        a {
+        height: 4.5rem;
+        
+        td > a {
+          display: flex;
+          align-items: center;
+          height: 100%;
           text-decoration: none;
           background: none;
         }
+        
+        .météo-picto {
+          height: 2rem;
+        }
+
+        &.ligne-chantier {
+          &:hover:nth-of-type(even) {
+            background-color: var(--background-contrast-grey-hover);
+          }
+
+          &:hover:nth-of-type(odd) {
+            background-color: var(--background-alt-grey-hover);
+          }
+        }
+
+        &.ligne-ministère,
+        &.ligne-ministère:nth-of-type(2n) {
+          cursor: pointer;
+          background-color: var(--background-default-grey);
+          background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
+          background-repeat: no-repeat;
+          background-position: bottom;
+          background-size: 100% 1px;
+
+          @media (hover: hover) {
+            &:hover {
+              background-color: var(--background-default-grey-hover);
+            }
+          }
+        }
       }
 
-      .ligne-chantier {
-        cursor: pointer;
-        
-        &:hover:nth-of-type(even) {
-          background-color: var(--background-contrast-grey-hover);
-        }
-        
-        &:hover:nth-of-type(odd) {
-          background-color: var(--background-alt-grey-hover);
-        }
-      }
-      
-      .ligne-ministère,
-      .ligne-ministère:nth-of-type(2n) {
-        cursor: pointer;
-        background-color: var(--background-default-grey);
-        background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
-        background-repeat: no-repeat;
-        background-position: bottom;
-        background-size: 100% 1px;
-
-        &:hover {
-          background-color: var(--background-default-grey-hover);
-        }
-      }
-      
       .chevron-accordéon::before {
         background-color: var(--blue-france-sun-113-625);
       }
