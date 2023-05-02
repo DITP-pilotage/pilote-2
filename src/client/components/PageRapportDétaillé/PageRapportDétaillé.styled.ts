@@ -9,55 +9,26 @@ const PageRapportDétailléStyled = styled.div`
     color: var(--text-title-blue-france);
   }
 
-  .entête-rapport-détaillé{
+  .entête-rapport-détaillé {
     display: flex;
   }
-  
-  .première-page-impression{
-    display: none;
-    page-break-after: always;
-    
-    
-    .titre-rapport-détaillé, .sous-titre-rapport-détaillé{
-      color: var(--background-action-high-blue-france);
-      text-align: center;
-    }
-  }
-  
-  @media print{
-    @page {
-      size: 1700px 2545px;
-    }
-    
-    main {
-      background: #FFF;
 
-      .fr-container{
-        max-width: 90em;
-      }
+  @media print {
+    section:not(:first-of-type) {
+      break-inside: avoid;
+    }
+
+    #cartes { 
+      break-inside: avoid;
     }
 
     .barre-latérale, .fr-btn, .fr-link {
       display: none;
     }
 
-    .première-page-impression{
-      display: block;
-      
-      .fr-header{
-        display: block;
-        filter: none;
-      }
-    }
-
-    .entête-rapport-détaillé{
+    .entête-rapport-détaillé {
       display: none;
     }
-    
-    section:not(:first-of-type) {
-      break-inside: avoid;
-    }
-    
   }
 `;
 

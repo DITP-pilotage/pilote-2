@@ -11,6 +11,7 @@ import { RapportDétailléVueDEnsemble } from '@/components/PageRapportDétaill�
 import useChantiersFiltrés from '@/components/useChantiersFiltrés';
 import RapportDétailléChantier from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import PremièrePageImpressionRapportDétaillé from './PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
 
 export const htmlId = {
   listeDesChantiers: () => 'liste-des-chantiers',
@@ -19,55 +20,18 @@ export const htmlId = {
 
 export default function PageRapportDétaillé({ chantiers, indicateursGroupésParChantier, détailsIndicateursGroupésParChantier, publicationsGroupéesParChantier, maille, codeInsee }: PageRapportDétailléProps) {
   const { modifierMailleSélectionnée, modifierTerritoireSélectionné } = actionsTerritoiresStore();
-  if (maille != 'nationale') {
+
+  if (maille !== 'nationale') {
     modifierMailleSélectionnée(maille);
+    modifierTerritoireSélectionné(codeInsee);
   }
-  modifierTerritoireSélectionné(codeInsee);
 
   const chantiersFiltrés = useChantiersFiltrés(chantiers);
   return (
     <PageRapportDétailléStyled>
       <main className="fr-py-4w">
         <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
-          <div className="première-page-impression">
-            <header
-              className="fr-header"
-              role="banner"
-            >
-              <div className="fr-header__body">
-                <div className="fr-container">
-                  <div className="fr-header__body-row">
-                    <div className="fr-header__brand fr-enlarge-link">
-                      <div className="fr-header__brand-top">
-                        <div className="fr-header__logo">
-                          <p className="fr-logo">
-                            République
-                            <br />
-                            Française
-                          </p>
-                        </div>
-                      </div>
-                      <div className="fr-header__service">
-                        <p className="fr-header__service-title">
-                          PILOTE
-                        </p>
-                        <p className="fr-header__service-tagline fr-hidden fr-unhidden-sm">
-                          Piloter les politiques publiques par leurs impacts
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </header>
-            <div className="titre-rapport-détaillé fr-display--xl fr-mt-12w" >
-              Pilote - Chantiers prioritaires
-            </div>
-            <hr className='fr-hr fr-mt-4w fr-mb-6w' />
-            <div className="sous-titre-rapport-détaillé fr-display--xl" >
-              Rapport détaillé
-            </div>
-          </div>
+          <PremièrePageImpressionRapportDétaillé />
           <div className="fr-px-2w fr-px-md-0 flex justify-between entête-rapport-détaillé">
             <Titre
               baliseHtml="h1"

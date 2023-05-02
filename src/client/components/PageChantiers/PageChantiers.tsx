@@ -13,7 +13,6 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import Filtres from '@/components/PageChantiers/Filtres/Filtres';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
-import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
@@ -21,8 +20,6 @@ import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
 
 export default function PageChantiers({ chantiers, ministères, axes, ppg }: PageChantiersProps) {  
-  const maille = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-  const codeInsee = territoireSélectionnéTerritoiresStore().codeInsee;
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { auClicTerritoireCallback } = useCartographie();
   const {
@@ -95,13 +92,13 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                 {
                   process.env.NEXT_PUBLIC_FF_EXPORT_CSV === 'true' &&
                   <div>
-                    <a
+                    <Link
                       className="fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm"
                       href="/api/chantier/export"
                       title="Exporter les données"
                     >
                       Exporter les données
-                    </a>
+                    </Link>
                   </div>
                 }
               </div>
