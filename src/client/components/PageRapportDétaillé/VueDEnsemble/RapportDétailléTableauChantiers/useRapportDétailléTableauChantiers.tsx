@@ -8,7 +8,7 @@ import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/a
 import TableauChantiersAvancement from '@/components/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
 import TableauChantiersMétéo from '@/components/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
-import PictosTypologie from '@/components/PageChantiers/TableauChantiers/PictosTypologie/PictosTypologie';
+import TypologiesPictos from '@/components/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import { DonnéesTableauChantiers } from '@/components/PageChantiers/TableauChantiers/TableauChantiers.interface';
 import RapportDétailléTableauChantiersProps from './RapportDétailléTableauChantiers.interface';
 
@@ -37,10 +37,10 @@ const colonnesTableauChantiers = [
     header: 'Typologie',
     id: 'typologie',
     enableSorting: false,
-    cell: typologie => <PictosTypologie typologie={typologie.getValue()} />,
+    cell: typologie => <TypologiesPictos typologies={typologie.getValue()} />,
     enableGrouping: false,
     aggregationFn: (_columnId, leafRows) => déterminerTypologieDuGroupementParMinistère(leafRows.map(row => row.original)),
-    aggregatedCell: typologie => typologie.getValue() ? <PictosTypologie typologie={typologie.getValue()} /> : null,
+    aggregatedCell: typologie => typologie.getValue() ? <TypologiesPictos typologies={typologie.getValue()} /> : null,
     meta: {
       width: '8rem',
     },

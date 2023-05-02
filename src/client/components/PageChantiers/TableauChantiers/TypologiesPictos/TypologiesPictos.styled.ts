@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const PictosTypologieStyled = styled.ul`
+const TypologiesPictosStyled = styled.ul`
   list-style-type: none;
   
   li {
@@ -8,4 +8,4 @@ const PictosTypologieStyled = styled.ul`
   }
 `;
 
-export default PictosTypologieStyled;
+export default TypologiesPictosStyled;
