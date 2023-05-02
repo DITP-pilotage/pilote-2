@@ -4,7 +4,7 @@ import MinistèreRepository from '@/server/domain/ministère/MinistèreRepositor
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 
-type MinistèreQueryResult = { ministere: string, ids: string[], noms: string[] };
+type MinistèreQueryResult = { ministere: string, ids: string[], noms: string[], ministere_id: string };
 
 export default class MinistèreSQLRepository implements MinistèreRepository {
   private prisma: PrismaClient;
@@ -16,11 +16,12 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
   async getListe(): Promise<Ministère[]> {
     const queryResults: MinistèreQueryResult[] = await this.prisma.$queryRaw`
         select ministere,
+               ministere_id,
                array_agg(id order by nom) as ids,
                array_agg(nom order by nom) as noms
         from perimetre
-        group by ministere
-        order by ministere;
+        group by ministere, ministere_id
+        order by ministere, ministere_id;
     `;
     return queryResults.map(queryResult => this.parseMinistère(queryResult));
   }
@@ -28,7 +29,7 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
   private parseMinistère(ministèreQueryResult: MinistèreQueryResult): Ministère {
     const périmètres: PérimètreMinistériel[] = [];
     for (let i = 0; i < ministèreQueryResult.ids.length; ++i) {
-      périmètres.push({ id: ministèreQueryResult.ids[i], nom: ministèreQueryResult.noms[i] });
+      périmètres.push({ id: ministèreQueryResult.ids[i], nom: ministèreQueryResult.noms[i], ministere_id: ministèreQueryResult.ministere_id });
     }
 
     return {
