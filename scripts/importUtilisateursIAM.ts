@@ -63,8 +63,8 @@ async function main() {
   const filename = process.argv[2];
   assert(filename, 'Nom de fichier CSV manquant');
   const utilisateursPourImport = parseUtilisateursCsv(filename);
-  const usecase = new ImporterUtilisateursUseCase(utilisateursPourImport);
-  await usecase.run();
+  const usecase = new ImporterUtilisateursUseCase();
+  await usecase.run(utilisateursPourImport);
 }
 
 const isMain = eval('require.main === module');

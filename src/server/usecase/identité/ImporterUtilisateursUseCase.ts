@@ -6,21 +6,20 @@ import { UtilisateurRepository } from '@/server/domain/identité/UtilisateurRepo
 
 export default class ImporterUtilisateursUseCase {
   constructor(
-    private readonly utilisateursÀImporter: UtilisateurPourImport[],
     private readonly utilisateurRepository: UtilisateurRepository = dependencies.getUtilisateurRepository(),
     private readonly utilisateurIAMRepository: UtilisateurIAMRepository = dependencies.getUtilisateurIAMRepository(),
-  ) {
+  ) {}
+
+  async run(utilisateursÀImporter: UtilisateurPourImport[]): Promise<void> {
     assert(utilisateursÀImporter);
     assert.notDeepEqual([], utilisateursÀImporter);
-  }
 
-  async run(): Promise<void> {
-    const utilisateursPourIAM = this.utilisateursÀImporter.map(
+    const utilisateursPourIAM = utilisateursÀImporter.map(
       it => it.pourIAM(),
     );
 
     // TODO: qu'est-ce qu'on fait si l'un réussit et pas l'autre ?
     await this.utilisateurIAMRepository.ajouteUtilisateurs(utilisateursPourIAM);
-    await this.utilisateurRepository.créerOuRemplacerUtilisateurs(this.utilisateursÀImporter);
+    await this.utilisateurRepository.créerOuRemplacerUtilisateurs(utilisateursÀImporter);
   }
 }
