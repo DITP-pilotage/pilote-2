@@ -1,8 +1,3 @@
-import dotenv from 'dotenv';
-import process from 'node:process';
-
-dotenv.config();
-
 export class Configuration {
   public readonly logLevel: string;
 
