@@ -1,41 +1,41 @@
 import styled from '@emotion/styled';
 
 const ExplicationEtapeIndicateurStyled = styled.div`
+    height: 100%;
     background-color: #FFF;
     border: 1px solid var(--border-default-grey);
-    height: 100%;
     
     .explication-indicateur__numero {
-        --diamètre: 2rem;
+        --diametre: 2rem;
 
         position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: var(--background-action-high-blue-france);
+        width: var(--diametre);
+        height: var(--diametre);
         color: #FFF;
-        height: var(--diamètre);
-        width: var(--diamètre);
-        border-radius: var(--diamètre);
+        background-color: var(--background-action-high-blue-france);
+        border-radius: var(--diametre);
 
         &::before,
         &::after {
             position: absolute;
-            content: '';
             display: block;
             height: .5rem;
+            content: '';
             background-color: var(--background-action-high-blue-france);
-            border-radius: var(--diamètre);
+            border-radius: var(--diametre);
         }
 
         &::before {
-            width: var(--diamètre);
-            left: calc(var(--diamètre) - .5rem);
+            left: calc(var(--diametre) - .5rem);
+            width: var(--diametre);
         }
 
         &::after {
+            left: calc(var(--diametre) * 2);
             width: .5rem;
-            left: calc(var(--diamètre) * 2);
         }
     }
 `;

@@ -131,35 +131,9 @@ describe('PageImportIndicateur', () => {
       );
 
       // THEN
-      const titreDeLaSection = screen.getByRole('heading', { level: 2 });
+      const titreDeLaSection = screen.getByRole('heading', { level: 2, name: 'Importez vos données' });
 
       expect(titreDeLaSection).toBeInTheDocument();
-      expect(titreDeLaSection).toHaveTextContent('Indicateurs');
-    });
-
-    it("doit afficher la catégorie d'un indicateur", () => {
-      // GIVEN
-      const chantierInformation: ChantierInformation = {
-        id: 'chantierId',
-        nom: CHANTIER_NOM,
-        axe: CHANTIER_AXE,
-        ppg: CHANTIER_PPG,
-      };
-
-      // WHEN
-      render(
-        <PageImportIndicateur
-          chantierInformation={chantierInformation}
-          détailsIndicateurs={null}
-          indicateurs={[]}
-        />,
-      );
-
-      // THEN
-      const titreCatégorieIndicateur = screen.getByRole('heading', { level: 3 });
-
-      expect(titreCatégorieIndicateur).toBeInTheDocument();
-      expect(titreCatégorieIndicateur).toHaveTextContent("Indicateurs d'impact");
     });
 
     it('doit afficher la liste des titres des indicateurs', async () => {

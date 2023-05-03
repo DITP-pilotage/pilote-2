@@ -12,11 +12,11 @@ const PageImportIndicateurExplicationEtapeImportStyled = styled.section`
   }
 
   @media(min-width: 62rem) {
-    li:first-child {
+    li:first-of-type {
       padding-left: 0;
     }
 
-    li:last-child {
+    li:last-of-type {
       padding-right: 0;
     }
   }

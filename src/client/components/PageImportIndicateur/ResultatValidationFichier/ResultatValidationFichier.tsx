@@ -19,8 +19,8 @@ export default function ResultatValidationFichier({ rapport }: ResultatValidatio
         :
           <div className='fr-py-4w'>
             <Alerte
-              message='Nous vous invitons à confirmer que les potentielles anomalies détaillées ci-dessous ne sont pas des erreurs avant de passer à l’étape suivante.'
-              titre='Votre fichier est conforme mais il comporte de potentielles anomalies'
+              message='Il contient des erreurs expliquées dans le rapport d’erreurs ci-dessous. Nous vous recommandons de consulter les ressources et/ou de remplir le modèle de fichier à remplir.'
+              titre='Le fichier ne peut pas être importé'
               type='erreur'
             />
             <h5>
