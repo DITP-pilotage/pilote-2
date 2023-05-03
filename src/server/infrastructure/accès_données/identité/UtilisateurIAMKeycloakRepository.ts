@@ -1,4 +1,3 @@
-import { faker } from '@faker-js/faker/locale/fr';
 import assert from 'node:assert/strict';
 import { UtilisateurIAMRepository } from '@/server/domain/identité/UtilisateurIAMRepository';
 import UtilisateurPourIAM from '@/server/domain/identité/UtilisateurPourIAM';
@@ -49,14 +48,8 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
     return this.kcAdminClient;
   }
 
-  private générerMotDePasse(): string {
-    return faker.internet.password(15, false, /\w/, '');
-  }
-
   private async importeUtilisateurIAM(utilisateur: UtilisateurPourIAM) {
     const email = utilisateur.email;
-    const motDePasse = this.générerMotDePasse();
-    const passwordCred = { temporary: true, type: 'password', value: motDePasse };
     try {
       const { id: idUtilisateur } = await this.kcAdminClient.users.create({
         realm: KEYCLOAK_REALM,
@@ -67,9 +60,8 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
         enabled: true,
         emailVerified: true,
         requiredActions: ['UPDATE_PASSWORD'],
-        credentials: [passwordCred],
       });
-      logger.info(`Utilisateur ${email} créé, mot de passe temporaire: '${motDePasse}'.`);
+      logger.info(`Utilisateur ${email} créé.`);
 
       // Note : pour que la redirectUri fonctionne, il faut ajouter le clientId et configurer les Valid redirect URIs
       // pour le client en question (du script d'import donc).
