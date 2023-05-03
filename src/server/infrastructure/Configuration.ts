@@ -23,16 +23,6 @@ export class Configuration {
 
   public readonly devSessionMaxAge: number = 30 * 24 * 60 * 60; // 30 days
 
-  public readonly smtpPort: number;
-
-  public readonly smtpHost: string;
-
-  public readonly smtpUsername: string;
-
-  public readonly smtpPassword: string;
-
-  public readonly fromAddress: string;
-
   constructor() {
     this.logLevel = process.env.LOG_LEVEL || 'info';
 
@@ -52,12 +42,6 @@ export class Configuration {
 
     this.webappBaseUrl = process.env.WEBAPP_BASE_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
     this.redirectUri = this.webappBaseUrl + '/api/auth/callback/keycloak';
-
-    this.smtpPort = Number.parseInt(process.env.SMTP_PORT || '8025');
-    this.smtpHost = process.env.SMTP_HOST || 'localhost';
-    this.smtpUsername = process.env.SMTP_USERNAME || 'user';
-    this.smtpPassword = process.env.SMTP_PASSWORD || 'password';
-    this.fromAddress = process.env.FROM_ADDRESS || 'ditp@example.com';
   }
 }
 
