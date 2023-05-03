@@ -4,15 +4,16 @@ import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImpo
 import configuration from '@/server/infrastructure/Configuration';
 import logger from '@/server/infrastructure/logger';
 
-
 /**
  * TODO:
+ * - Remplacé par Keycloak ? Supprimer ? Sinon 👇
  * - Pourquoi ça quitte pas ?
  * - Combien d'adresses email on peut mettre dans le champs `to` ?
  * - Comprendre les params ici : https://nodemailer.com/smtp/
  * - Extraire un service ?
  * - Pour tester j'ai utilisé ça : https://github.com/gessnerfl/fake-smtp-server
  */
+
 export default class EnvoyerEmailsUtilisateursUseCase {
 
   async run(utilisateursPourImport: UtilisateurPourImport[]) {

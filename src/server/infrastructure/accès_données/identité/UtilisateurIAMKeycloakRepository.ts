@@ -3,13 +3,15 @@ import assert from 'node:assert/strict';
 import { UtilisateurIAMRepository } from '@/server/domain/identité/UtilisateurIAMRepository';
 import UtilisateurPourIAM from '@/server/domain/identité/UtilisateurPourIAM';
 import logger from '@/server/infrastructure/logger';
+import configuration from '@/server/infrastructure/Configuration';
 
 const KEYCLOAK_REALM = 'DITP';
 
 // Oups?! Voir : https://github.com/TypeStrong/ts-node/discussions/1290
 // eslint-disable-next-line @typescript-eslint/no-implied-eval
-const dynamicImport = new Function('specifier', 'return import(specifier)');
+const _dynamicImport = new Function('specifier', 'return import(specifier)');
 
+const DAY_IN_SECONDS = 3600 * 24;
 export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepository {
   private kcAdminClient: any;
 
@@ -31,7 +33,7 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
   }
 
   private async loginKcAdminClient() {
-    const { default: KcAdminClient } = await dynamicImport('@keycloak/keycloak-admin-client');
+    const { default: KcAdminClient } = await _dynamicImport('@keycloak/keycloak-admin-client');
     this.kcAdminClient = new KcAdminClient({
       baseUrl: this.keycloakUrl,
       realmName: KEYCLOAK_REALM,
@@ -56,7 +58,7 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
     const motDePasse = this.générerMotDePasse();
     const passwordCred = { temporary: true, type: 'password', value: motDePasse };
     try {
-      await this.kcAdminClient.users.create({
+      const { id: idUtilisateur } = await this.kcAdminClient.users.create({
         realm: KEYCLOAK_REALM,
         username: email,
         email,
@@ -68,6 +70,19 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
         credentials: [passwordCred],
       });
       logger.info(`Utilisateur ${email} créé, mot de passe temporaire: '${motDePasse}'.`);
+
+      // Note : pour que la redirectUri fonctionne, il faut ajouter le clientId et configurer les Valid redirect URIs
+      // pour le client en question (du script d'import donc).
+      await this.kcAdminClient.users.executeActionsEmail({
+        realm: KEYCLOAK_REALM,
+        clientId: this.clientId,
+        redirectUri: configuration.webappBaseUrl,
+        id: idUtilisateur,
+        lifespan: 4 * DAY_IN_SECONDS,
+        actions: ['UPDATE_PASSWORD'],
+      });
+      logger.info('Email envoyé à l\'utilisateur.');
+
     } catch (error: any) {
       if (error.message == 'Request failed with status code 409') {
         logger.warn(`L'email ${email} existe déjà.`);

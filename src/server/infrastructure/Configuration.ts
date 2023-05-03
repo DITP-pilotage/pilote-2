@@ -1,3 +1,8 @@
+import dotenv from 'dotenv';
+import process from 'node:process';
+
+dotenv.config();
+
 export class Configuration {
   public readonly logLevel: string;
 
@@ -12,6 +17,8 @@ export class Configuration {
   public readonly logoutUrl: string;
 
   public readonly tokenUrl: string;
+
+  public readonly webappBaseUrl: string;
 
   public readonly redirectUri: string;
 
@@ -47,7 +54,9 @@ export class Configuration {
     this.tokenUrl = this.keycloakIssuer + '/protocol/openid-connect/token';
     this.authUrl = this.keycloakIssuer + '/protocol/openid-connect/auth'; // '/api/auth/signin/keycloak';
     this.logoutUrl = this.keycloakIssuer + '/protocol/openid-connect/logout';
-    this.redirectUri = process.env.NEXTAUTH_URL + '/api/auth/callback/keycloak';
+
+    this.webappBaseUrl = process.env.WEBAPP_BASE_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    this.redirectUri = this.webappBaseUrl + '/api/auth/callback/keycloak';
 
     this.smtpPort = Number.parseInt(process.env.SMTP_PORT || '8025');
     this.smtpHost = process.env.SMTP_HOST || 'localhost';

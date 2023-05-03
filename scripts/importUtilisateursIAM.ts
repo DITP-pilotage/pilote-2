@@ -33,6 +33,7 @@ import ImporterUtilisateursUseCase from '@/server/usecase/identité/ImporterUtil
  *     - Client authentication = On
  *     - Authorization = Off
  *     - Authentication flow = tous Off, sauf Service accounts roles = On (active Client Credentials)
+ *     - Valid redirect URIs (à renseigner pour que les executeUserActions fonctionnent)
  * - Ajouter un rôle au client (onglet Service Accounts roles)
  *     - cliquer sur Assign role
  *     - changer le filtre en "Filter by client"
