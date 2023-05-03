@@ -224,12 +224,12 @@ class DatabaseSeeder {
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('secretariat.general@example.com').avecProfil('SECRETARIAT_GENERAL').build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('directeur.projet@example.com').avecProfil('DIR_PROJET').avecHabilitationLecture(chantierIds).build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('equipe.dir.projet@example.com').avecProfil('EQUIPE_DIR_PROJET').avecHabilitationLecture(chantierIds).build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('referent.region@example.com').avecProfil('REFERENT_REGION').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('prefet.region@example.com').avecProfil('PREFET_REGION').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('services.deconcentres.region@example.com').avecProfil('SERVICES_DECONCENTRES_REGION').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('referent.departement@example.com').avecProfil('REFERENT_DEPARTEMENT').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('prefet.departement@example.com').avecProfil('PREFET_DEPARTEMENT').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('services.deconcentres.departement@example.com').avecProfil('SERVICES_DECONCENTRES_DEPARTEMENT').build(),
+      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('referent.region@example.com').avecProfil('REFERENT_REGION').avecHabilitationLecture([], ['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22']).avecHabilitationsaisieCommentaire([], ['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22']).build(),
+      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('prefet.region@example.com').avecProfil('PREFET_REGION').avecHabilitationLecture([], ['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22']).avecHabilitationsaisieCommentaire([], ['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22']).build(),
+      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('services.deconcentres.region@example.com').avecProfil('SERVICES_DECONCENTRES_REGION').avecHabilitationLecture(chantierIds, ['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22']).avecHabilitationsaisieCommentaire(chantierIds, ['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22']).build(),
+      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('referent.departement@example.com').avecProfil('REFERENT_DEPARTEMENT').avecHabilitationLecture([], ['DEPT-22']).avecHabilitationsaisieCommentaire([], ['DEPT-22']).build(),
+      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('prefet.departement@example.com').avecProfil('PREFET_DEPARTEMENT').avecHabilitationLecture([], ['DEPT-22']).avecHabilitationsaisieCommentaire([], ['DEPT-22']).build(),
+      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('services.deconcentres.departement@example.com').avecProfil('SERVICES_DECONCENTRES_DEPARTEMENT').avecHabilitationLecture(chantierIds, ['DEPT-22']).avecHabilitationsaisieCommentaire([], ['DEPT-22']).build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('drom@example.com').avecProfil('DROM').avecHabilitationLecture(chantierIds).build(),
     ];
 
