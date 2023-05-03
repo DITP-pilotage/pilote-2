@@ -7,12 +7,12 @@ const couleurDeFond = {
   'bleu': 'var(--blue-ecume-850-200)',
   'blanc': '#ffffff',
   'grisMoyen': '#bababa',
-  'grisClair' : '#E5E5E5',
+  'grisClair': '#E5E5E5',
 };
 
 const couleurBordure = {
-  'bleu' : 'var(--blue-ecume-850-200)',
-  'grisMoyen' : '#bababa',
+  'bleu': 'var(--blue-ecume-850-200)',
+  'grisMoyen': '#bababa',
 };
 
 const couleurDeBarreEtTexte = {
@@ -70,7 +70,7 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
   
   .pourcentage{
     p{
-      color: ${props => couleurDeBarreEtTexte[props.variante]}
+      color: ${props => couleurDeFond[props.fond]}
     }
   }
   
@@ -84,7 +84,7 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
 
     .pourcentage {
       p {
-        width: ${props => dimensions[props.taille].largeurTexte};
+        width: ${props => couleurDeFond[props.fond]};
         padding-left: 0.5em;
         text-align: right;
         white-space: nowrap;

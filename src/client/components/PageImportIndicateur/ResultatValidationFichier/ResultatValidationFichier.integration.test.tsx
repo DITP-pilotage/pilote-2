@@ -1,6 +1,10 @@
 import { render, screen } from '@testing-library/react';
+import mockRouter from 'next-router-mock';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import ResultatValidationFichier from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
+
+// eslint-disable-next-line unicorn/prefer-module
+jest.mock('next/router', () => require('next-router-mock'));
 
 describe('ResultatValidationFichier', () => {
   it('quand le fichier est valide doit afficher que le fichier est correct', () => {
@@ -9,6 +13,8 @@ describe('ResultatValidationFichier', () => {
       estValide: true,
       listeErreursValidation: [],
     };
+
+    mockRouter.push('chantier/CH-123/indicateurs?indicateurId=IND-123');
     
     // WHEN
     render(
@@ -16,7 +22,7 @@ describe('ResultatValidationFichier', () => {
     );
 
     // THEN
-    expect(screen.getByText('Le fichier est valide')).toBeInTheDocument();
+    expect(screen.getByText('Les données ont été importées avec succès pour l’indicateur IND-123')).toBeInTheDocument();
   });
 
   it("quand le fichier contient des erreurs, doit afficher que le tableau d'erreur", () => {

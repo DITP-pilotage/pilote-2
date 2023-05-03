@@ -23,7 +23,7 @@ export default function useSynthèseDesRésultats(synthèseDesRésultatsInitiale
     setSynthèseDesRésultats(synthèse);
     setAlerte({
       type: 'succès',
-      message: 'Météo et synthèse des résultats publiées',
+      titre: 'Météo et synthèse des résultats publiées',
     });
     désactiverLeModeÉdition();
   };

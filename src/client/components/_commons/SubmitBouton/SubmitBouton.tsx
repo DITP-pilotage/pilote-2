@@ -2,10 +2,10 @@ import '@gouvfr/dsfr/dist/component/button/button.min.css';
 
 interface SubmitBoutonProps {
   label: string
-  disabled: boolean
+  disabled?: boolean
 }  
 
-export default function SubmitBouton({ label, disabled = false }: SubmitBoutonProps) {
+export default function SubmitBouton({ label, disabled }: SubmitBoutonProps) {
   return (
     <button
       className="fr-btn"
@@ -16,3 +16,7 @@ export default function SubmitBouton({ label, disabled = false }: SubmitBoutonPr
     </button>
   );
 }
+
+SubmitBouton.defaultProps = {
+  disabled: false,
+};
