@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-max-depth */
 import '@gouvfr/dsfr/dist/component/link/link.min.css';
 import '@gouvfr/dsfr/dist/component/badge/badge.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css';
@@ -9,26 +10,36 @@ import PageRapportDétailléProps from '@/components/PageRapportDétaillé/PageR
 import { RapportDétailléVueDEnsemble } from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble';
 import useChantiersFiltrés from '@/components/useChantiersFiltrés';
 import RapportDétailléChantier from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier';
+import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import PremièrePageImpressionRapportDétaillé from './PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
 
 export const htmlId = {
   listeDesChantiers: () => 'liste-des-chantiers',
   chantier: (chantierId: string) => `chantier-${chantierId}`,
 };
 
-export default function PageRapportDétaillé({ chantiers, indicateursGroupésParChantier, détailsIndicateursGroupésParChantier, publicationsGroupéesParChantier }: PageRapportDétailléProps) {
+export default function PageRapportDétaillé({ chantiers, indicateursGroupésParChantier, détailsIndicateursGroupésParChantier, publicationsGroupéesParChantier, maille, codeInsee }: PageRapportDétailléProps) {
+  const { modifierMailleSélectionnée, modifierTerritoireSélectionné } = actionsTerritoiresStore();
+
+  if (maille !== 'nationale') {
+    modifierMailleSélectionnée(maille);
+    modifierTerritoireSélectionné(codeInsee);
+  }
+
   const chantiersFiltrés = useChantiersFiltrés(chantiers);
   return (
     <PageRapportDétailléStyled>
       <main className="fr-py-4w">
         <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
-          <div className="fr-px-2w fr-px-md-0 flex justify-between">
+          <PremièrePageImpressionRapportDétaillé />
+          <div className="fr-px-2w fr-px-md-0 flex justify-between entête-rapport-détaillé">
             <Titre
               baliseHtml="h1"
               className="fr-h2"
             >
               {`Rapport détaillé : ${chantiersFiltrés.length} chantiers`}
             </Titre>
-            <div className="non-imprimé">
+            <div>
               <Link
                 className="fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-go-back-fill fr-btn--icon-left fr-text--sm"
                 href="/"
@@ -48,7 +59,6 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
           <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
           {
             chantiersFiltrés.map((chantier) => (
-              //i > 4 ? null :
               <RapportDétailléChantier
                 chantier={chantier}
                 commentaires={publicationsGroupéesParChantier.commentaires[chantier.id]}

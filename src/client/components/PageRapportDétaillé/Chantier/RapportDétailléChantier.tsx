@@ -20,9 +20,7 @@ import {
 export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats, commentaires, objectifs, décisionStratégique }: RapportDétailléChantierProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-  const {
-    avancements,
-  } = useRapportDétailléChantier(chantier);
+  const { avancements } = useRapportDétailléChantier(chantier);
 
   return (
     <section
@@ -69,7 +67,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           <div className="fr-col-12">
             <Cartes
               chantier={chantier}
-              estCliquable={false}
+              estInteractif={false}
             />
           </div>
         </div>

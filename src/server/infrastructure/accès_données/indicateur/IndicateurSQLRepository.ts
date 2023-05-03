@@ -52,9 +52,10 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return détailsIndicateurs;
   }
 
-  async récupérerGroupésParChantier(maille: Maille, codeInsee: CodeInsee): Promise<Record<string, Indicateur[]>> {
+  async récupérerGroupésParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<string, Indicateur[]>> {
     const indicateurs: IndicateurPrisma[] = await this.prisma.indicateur.findMany({
       where: {
+        chantier_id: { in: chantiersIds },
         maille: CODES_MAILLES[maille],
         code_insee: codeInsee,
       },
@@ -67,9 +68,10 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     );
   }
 
-  async récupérerDétailsGroupésParChantierEtParIndicateur(maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], DétailsIndicateurs>> {
+  async récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], DétailsIndicateurs>> {
     const indicateurs: IndicateurPrisma[] = await this.prisma.indicateur.findMany({
       where: {
+        chantier_id: { in: chantiersIds },
         maille: CODES_MAILLES[maille],
         code_insee: codeInsee,
       },

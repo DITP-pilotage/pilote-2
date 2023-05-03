@@ -23,10 +23,11 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
 
   return (
     <CartographieSVGStyled>
+      {!!options.estInteractif && 
       <CartographieZoomEtDéplacement
         svgRef={svgRef}
         viewbox={viewbox}
-      />
+      />}
       <div className="carte">
         <svg
           ref={svgRef}
@@ -55,13 +56,13 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
                   d={territoire.tracéSVG}
                   fill={territoire.remplissage}
                   key={`territoire-${territoire.codeInsee}`}
-                  onClick={() => auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
-                  onMouseEnter={() => {
+                  onClick={() => options.estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
+                  onMouseEnter={() =>
+                    options.estInteractif &&
                     setInfoBulle({
                       libellé: territoire.libellé,
                       valeurAffichée: territoire.valeurAffichée,
-                    });
-                  }}
+                    })}
                 />),
               )
             }

@@ -8,6 +8,28 @@ const PageRapportDétailléStyled = styled.div`
   h2 {
     color: var(--text-title-blue-france);
   }
+
+  .entête-rapport-détaillé {
+    display: flex;
+  }
+
+  @media print {
+    section:not(:first-of-type) {
+      break-inside: avoid;
+    }
+
+    #cartes { 
+      break-inside: avoid;
+    }
+
+    .barre-latérale, .fr-btn, .fr-link {
+      display: none;
+    }
+
+    .entête-rapport-détaillé {
+      display: none;
+    }
+  }
 `;
 
 export default PageRapportDétailléStyled;

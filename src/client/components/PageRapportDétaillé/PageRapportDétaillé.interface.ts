@@ -5,6 +5,8 @@ import DécisionStratégique from '@/server/domain/décisionStratégique/Décisi
 import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { CommentaireTypé } from '@/server/usecase/commentaire/RécupérerCommentairesLesPlusRécentsParTypeUseCase';
 import { ObjectifTypé } from '@/server/usecase/objectif/RécupérerObjectifsLesPlusRécentsParTypeUseCase';
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export type PublicationsGroupéesParChantier = {
   commentaires: Record<Chantier['id'], CommentaireTypé[]>
@@ -18,4 +20,6 @@ export default interface PageRapportDétailléProps {
   indicateursGroupésParChantier: Record<string, Indicateur[]>
   détailsIndicateursGroupésParChantier: Record<Chantier['id'], DétailsIndicateurs>
   publicationsGroupéesParChantier: PublicationsGroupéesParChantier
+  maille: Maille
+  codeInsee: CodeInsee
 }

@@ -12,7 +12,8 @@ export default function ResponsablesLigne({ libellé, contenu }: ResponsablesLig
           contenu.length > 0 
             ? contenu.map((élément, i) => {
               return (
-                <Fragment key={`responsable-${élément}`}>
+                // eslint-disable-next-line react/no-array-index-key
+                <Fragment key={`responsable-${élément}-${i}`}>
                   {élément}
                   {contenu.length - 1 !== i ? ', ' : null}
                 </Fragment>

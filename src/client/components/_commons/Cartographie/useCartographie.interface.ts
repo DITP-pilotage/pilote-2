@@ -27,4 +27,5 @@ export type CartographieOptions = {
   territoireAffiché: CartographieTerritoireAffiché,
   territoireSélectionnable: boolean,
   multiséléction: boolean,
+  estInteractif: boolean
 };

@@ -14,5 +14,5 @@ export default interface CartographieProps {
   options?: Partial<CartographieOptions>,
   données: CartographieDonnées,
   children?: ReactNode,
-  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void
+  auClicTerritoireCallback: (territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) => void,
 }

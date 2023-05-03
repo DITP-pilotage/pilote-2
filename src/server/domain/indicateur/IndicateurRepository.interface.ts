@@ -8,6 +8,6 @@ export default interface IndicateurRepository {
   récupérerParChantierId(chantierId: string): Promise<Indicateur[]>;
   récupérerDétails(indicateurId: string, maille: Maille): Promise<DétailsIndicateurs>;
   récupererDétailsParChantierIdEtTerritoire(chantierId: string, maille: Maille, codesInsee: CodeInsee[]): Promise<DétailsIndicateurs>;
-  récupérerGroupésParChantier(maille: Maille, codeInsee: CodeInsee): Promise<Record<string, Indicateur[]>>
-  récupérerDétailsGroupésParChantierEtParIndicateur(maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], DétailsIndicateurs>>
+  récupérerGroupésParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<string, Indicateur[]>>
+  récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], DétailsIndicateurs>>
 }
