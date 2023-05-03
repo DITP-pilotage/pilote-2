@@ -24,6 +24,26 @@ import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
 import Objectifs from './Objectifs/Objectifs';
 import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
+import PeutModifierLeChantierUseCase from '@/server/usecase/utilisateur/PeutModifierLeChantierUseCase/PeutModifierLeChantierUseCase';
+
+function convertitMailleCodeInseeEnCodeTerritoire(maille: string, codeInsee: string) {
+  const lowerMaille = maille.toLowerCase();
+  let codeMaille = 'DEPT'
+
+  switch (lowerMaille){
+    case 'nationale':
+    case 'nat':
+      codeMaille = 'NAT';
+      break;
+    case 'régionale':
+    case 'reg':
+      codeMaille = 'REG';
+      break;
+  }
+  return codeMaille + '-' + codeInsee;
+}
+
+
 
 export default function PageChantier({ indicateurs, habilitation }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
@@ -34,13 +54,22 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
     synthèseDesRésultats,
     objectifs,
     décisionStratégique,
-    modeÉcriture,
     chantier,
     rechargerChantier,
-    avancements,
+    avancements
   } = usePageChantier(chantierId, habilitation);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
+  //console.log('territoire', territoireSélectionné, 'maille', mailleAssociéeAuTerritoireSélectionné)
+  const codeTerritoire = convertitMailleCodeInseeEnCodeTerritoire(mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee);
+  console.log(codeTerritoire);
+  const modeÉcritureSynthese = new PeutModifierLeChantierUseCase(habilitation, chantierId, codeTerritoire).run();
+  const modeÉcritureCommentaires = modeÉcritureSynthese;
+  const modeÉcritureDécisionsStratégiques = modeÉcritureSynthese;
+  const modeÉcritureObjectifs = new PeutModifierLeChantierUseCase(habilitation, chantierId, 'NAT-FR').run();
+
+
 
   const listeRubriques: Rubrique[] = useMemo(() => (
     mailleAssociéeAuTerritoireSélectionné === 'nationale' ? (
@@ -112,7 +141,7 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
                   <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
                     <SynthèseDesRésultats
                       chantierId={chantier.id}
-                      modeÉcriture={modeÉcriture}
+                      modeÉcriture={modeÉcritureSynthese}
                       rechargerChantier={rechargerChantier}
                       synthèseDesRésultatsInitiale={synthèseDesRésultats}
                     />
@@ -131,7 +160,7 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
                         chantierId={chantier.id}
                         codeInsee='FR'
                         maille='nationale'
-                        modeÉcriture={modeÉcriture}
+                        modeÉcriture={modeÉcritureObjectifs}
                         objectifs={objectifs}
                       />
                     </div>
@@ -156,7 +185,7 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
                       <DécisionsStratégiques
                         chantierId={chantier.id}
                         décisionStratégique={décisionStratégique}
-                        modeÉcriture={modeÉcriture}
+                        modeÉcriture={modeÉcritureDécisionsStratégiques}
                       />
                     </div>
                   </div>
@@ -170,7 +199,7 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
                           codeInsee={territoireSélectionné.codeInsee}
                           commentaires={commentaires}
                           maille={mailleAssociéeAuTerritoireSélectionné}
-                          modeÉcriture={modeÉcriture}
+                          modeÉcriture={modeÉcritureCommentaires}
                         />
                       </div>
                     </div>

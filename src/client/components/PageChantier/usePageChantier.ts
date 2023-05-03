@@ -7,7 +7,6 @@ import {
 import api from '@/server/infrastructure/api/trpc/api';
 import calculerChantierAvancements from '@/client/utils/chantier/avancement/calculerChantierAvancements';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
-import PeutModifierLeChantierUseCase from '@/server/usecase/utilisateur/PeutModifierLeChantierUseCase/PeutModifierLeChantierUseCase';
 
 export default function usePageChantier(chantierId: string, habilitation: Utilisateur['scopes']) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -64,8 +63,6 @@ export default function usePageChantier(chantierId: string, habilitation: Utilis
     { refetchOnWindowFocus: false, keepPreviousData: true },
   );
 
-  const modeÉcriture = new PeutModifierLeChantierUseCase(habilitation, chantierId, 'NAT-FR').run();
-
   const { data: chantier, refetch: rechargerChantier } = api.chantier.récupérer.useQuery(
     {
       chantierId,
@@ -90,7 +87,6 @@ export default function usePageChantier(chantierId: string, habilitation: Utilis
     objectifs: objectifs ?? null,
     synthèseDesRésultats: synthèseDesRésultats ?? null,
     décisionStratégique: décisionStratégique ?? null,
-    modeÉcriture,
     chantier: chantier ?? null,
     rechargerChantier,
     avancements,
