@@ -194,6 +194,18 @@ model decision_strategique {
   @@schema("public")
 }
 
+model projet_structurant {
+    id                          String  @id @db.Uuid
+    code                        String
+    nom                         String
+    direction_administration    String[]
+    ministeres                  String[]
+    chefferie_de_projet         String[]
+    co_porteur                  String[]
+
+  @@schema("public")
+}
+
 model utilisateur {
   id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email     String  @unique
