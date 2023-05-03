@@ -26,6 +26,7 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
     return queryResults.map(queryResult => this.parseMinistère(queryResult));
   }
 
+
   private parseMinistère(ministèreQueryResult: MinistèreQueryResult): Ministère {
     const périmètres: PérimètreMinistériel[] = [];
     for (let i = 0; i < ministèreQueryResult.ids.length; ++i) {
@@ -45,12 +46,13 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
       select DISTINCT unnest(c.perimetre_ids) as perimetre_id from chantier c where  c.id IN (${Prisma.join(list_chantier)})
     )
     select ministere,
+           ministere_id,
            array_agg(id order by nom) as ids,
            array_agg(nom order by nom) as noms
     from perimetre p
     JOIN ministere_liste pl ON pl.perimetre_id = p.id
-    group by ministere
-    order by ministere;
+    group by ministere, ministere_id
+    order by ministere, ministere_id;
     `;
     return queryResults.map(queryResult => this.parseMinistère(queryResult));
   }
