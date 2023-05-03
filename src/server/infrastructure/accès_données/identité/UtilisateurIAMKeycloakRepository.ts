@@ -1,6 +1,4 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import dotenv from 'dotenv';
-dotenv.config();
 import assert from 'node:assert/strict';
 import { UtilisateurIAMRepository } from '@/server/domain/identité/UtilisateurIAMRepository';
 import UtilisateurPourIAM from '@/server/domain/identité/UtilisateurPourIAM';

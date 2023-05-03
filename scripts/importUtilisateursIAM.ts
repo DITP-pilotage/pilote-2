@@ -1,5 +1,10 @@
+import { loadEnvConfig } from '@next/env';
 import process from 'node:process';
 import assert from 'node:assert/strict';
+
+const projectDir = process.cwd();
+loadEnvConfig(projectDir);  // ⚠️ À appeler avant nos imports, because Configuration.ts est aussi chargée côté front
+
 import logger from '@/server/infrastructure/logger';
 import parseUtilisateursCsv from '@/server/infrastructure/import_csv/identité/parseUtilisateursCsv';
 import ImporterUtilisateursUseCase from '@/server/usecase/identité/ImporterUtilisateursUseCase';
