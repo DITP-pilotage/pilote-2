@@ -29,7 +29,7 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
   private parseMinistère(ministèreQueryResult: MinistèreQueryResult): Ministère {
     const périmètres: PérimètreMinistériel[] = [];
     for (let i = 0; i < ministèreQueryResult.ids.length; ++i) {
-      périmètres.push({ id: ministèreQueryResult.ids[i], nom: ministèreQueryResult.noms[i], ministere_id: ministèreQueryResult.ministere_id });
+      périmètres.push({ id: ministèreQueryResult.ids[i], nom: ministèreQueryResult.noms[i], ministere_id: ministèreQueryResult.ministere_id ?? null });
     }
 
     return {

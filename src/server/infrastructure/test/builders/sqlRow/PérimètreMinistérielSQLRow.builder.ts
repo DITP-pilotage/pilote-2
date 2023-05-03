@@ -7,17 +7,17 @@ export default class PérimètreMinistérielRowBuilder {
 
   private _nom: perimetre['nom'];
 
-  private _ministères: perimetre['ministere'];
+  private _ministère: perimetre['ministere'];
 
-  private _ministères_id: perimetre['ministere_id'];
+  private _ministère_id: perimetre['ministere_id'];
 
   constructor() {
     const périmètreMinistérielGénéré = new PérimètreMinistérielBuilder().build();
     
     this._id = périmètreMinistérielGénéré.id;
     this._nom = périmètreMinistérielGénéré.nom;
-    this._ministères = faker.helpers.arrayElement([null, `MIN - ${faker.lorem.words()}`]);
-    this._ministères_id = '';
+    this._ministère = faker.helpers.arrayElement([null, `MIN - ${faker.lorem.words()}`]);
+    this._ministère_id = this._ministère ? `MIN-${faker.datatype.number()}` : null;
   }
 
   avecId(id: perimetre['id']): PérimètreMinistérielRowBuilder {
@@ -31,7 +31,7 @@ export default class PérimètreMinistérielRowBuilder {
   }
 
   avecMinistères(ministères: perimetre['ministere']): PérimètreMinistérielRowBuilder {
-    this._ministères = ministères;
+    this._ministère = ministères;
     return this;
   }
 
@@ -39,8 +39,8 @@ export default class PérimètreMinistérielRowBuilder {
     return {
       id: this._id,
       nom: this._nom,
-      ministere: this._ministères,
-      ministere_id: this._ministères_id,
+      ministere: this._ministère,
+      ministere_id: this._ministère_id,
     };
   }
 }

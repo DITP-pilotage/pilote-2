@@ -2,6 +2,7 @@ import {
   axe,
   chantier,
   indicateur,
+  ministere,
   perimetre,
   ppg,
   Prisma,
@@ -10,6 +11,7 @@ import {
 } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 
+import assert from 'node:assert/strict';
 import SynthèseDesRésultatsSQLRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
@@ -42,7 +44,8 @@ import {
 } from '@/server/infrastructure/accès_données/identité/seed';
 import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/identité/UtilisateurSQLRepository';
 import UtilisateurPourImport from '@/server/domain/identité/UtilisateurPourImport';
-import DécisionStratégiqueSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/DécisionStratégiqueSQLRow.builder';
+import DécisionStratégiqueSQLRowBuilder
+  from '@/server/infrastructure/test/builders/sqlRow/DécisionStratégiqueSQLRow.builder';
 
 const chantierStatiqueId123 = new ChantierSQLRowBuilder()
   .avecAxe('axe chantier')
@@ -88,7 +91,7 @@ class DatabaseSeeder {
     faker.seed(2023);
     await this._créerAxes();
     await this._créerPpgs();
-    await this._créerPérimètresMinistériels();
+    await this._créerMinistèresEtPérimètresMinistériels();
     await this._créerChantiers();
     await this._créerSynthèsesDesRésultats();
     await this._créerCommentaires();
@@ -110,9 +113,17 @@ class DatabaseSeeder {
     await prisma.ppg.createMany({ data: this._ppgs });
   }
 
-  private async _créerPérimètresMinistériels() {
+  private async _créerMinistèresEtPérimètresMinistériels() {
     this._périmètresMinistériels = Array.from({ length: 15 }).map(() => new PérimètreMinistérielRowBuilder().build()).filter(périmètre => périmètre.ministere !== null);
+    const donnéesMinistères: ministere[] = this._périmètresMinistériels
+      .filter(it => Boolean(it.ministere_id))
+      .map(it => {
+        assert(it.ministere_id, 'Id ministère manquant pour périmètre ' + it.id);
+        assert(it.ministere, 'Description ministère manquante pour périmètre ' + it.id);
+        return { id: it.ministere_id, nom: it.ministere };
+      });
 
+    await prisma.ministere.createMany({ data: donnéesMinistères });
     await prisma.perimetre.createMany({ data: this._périmètresMinistériels });
   }
 
