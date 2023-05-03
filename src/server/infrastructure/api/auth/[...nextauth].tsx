@@ -209,7 +209,7 @@ export const authOptions: AuthOptions = {
       session.accessToken = token.accessToken;
       session.error = token.error;
       session.profil = utilisateur?.profil;
-      session.habilitations = utilisateur?.scopes;
+      session.habilitations = utilisateur!.habilitations;
 
       return session;
     },

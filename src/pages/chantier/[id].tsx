@@ -7,17 +7,17 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
 interface NextPageChantierProps {
-  habilitation: Utilisateur['scopes'],
+  habilitations: Habilitation,
   indicateurs: Indicateur[],
 }
 
-export default function NextPageChantier({ indicateurs, habilitation }: NextPageChantierProps) {
+export default function NextPageChantier({ indicateurs, habilitations }: NextPageChantierProps) {
   return (
     <PageChantier
-      habilitation={habilitation}
+      habilitations={habilitations}
       indicateurs={indicateurs}
     />
   );
@@ -31,7 +31,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ id
     throw new Error('Not connected?');
   }
 
-  const habilitation = session.habilitation;
+  const habilitations = session.habilitations;
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(context.params!.id);
@@ -39,7 +39,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ id
   return {
     props: {
       indicateurs,
-      habilitation,
+      habilitations,
     },
   };
 }

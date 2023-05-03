@@ -1,13 +1,13 @@
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { ChantierPourExport } from '@/server/domain/chantier/ChantierPourExport';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 export class ExportCsvUseCase {
   constructor(
     private readonly chantierRepository = dependencies.getChantierRepository(),
   ) {}
 
-  public async run(habilitation: Utilisateur['scopes']): Promise<ChantierPourExport[]> {
-    return this.chantierRepository.getChantiersPourExports(habilitation);
+  public async run(habilitations: Habilitations): Promise<ChantierPourExport[]> {
+    return this.chantierRepository.getChantiersPourExports(habilitations);
   }
 }

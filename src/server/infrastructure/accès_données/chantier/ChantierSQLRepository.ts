@@ -10,9 +10,8 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { ChantierPourExport } from '@/server/domain/chantier/ChantierPourExport';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
-import RécupérerListeChantierIdsAccessiblesEnLectureUseCase from '@/server/usecase/utilisateur/RécupérerListeChantierIdsAccessiblesEnLectureUseCase/RécupérerListeChantierIdsAccessiblesEnLectureUseCase';
-import RécupérerListeTerritoireCodesAccessiblesEnLectureUseCase from '@/server/usecase/utilisateur/RécupérerListeTerritoireCodesAccessiblesEnLectureUseCase/RécupérerListeTerritoireCodesAccessiblesEnLectureUseCase';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -33,18 +32,19 @@ export default class ChantierSQLRepository implements ChantierRepository {
     this.prisma = prisma;
   }
 
-  async getById(id: string, habilitation: Utilisateur['scopes']): Promise<Chantier> {
-    const chantiersLecture = new RécupérerListeChantierIdsAccessiblesEnLectureUseCase(habilitation).run();
-    
+  async getById(id: string, habilitations: Habilitations): Promise<Chantier> {
+    const h = new Habilitation(habilitations);
+    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+    // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
+    territoiresLecture.push('NAT-FR');
+
     const peutAccéderAuChantier = chantiersLecture.includes(id);
   
     if (!peutAccéderAuChantier) {
       throw new ErreurChantierPermission(id);
     }
-
-    const territoiresLecture = new RécupérerListeTerritoireCodesAccessiblesEnLectureUseCase(habilitation).run();
-    // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
-    territoiresLecture.push('NAT-FR');
+    
     const chantiers: chantier[] = await this.prisma.chantier.findMany({
       where: { 
         id,
@@ -70,11 +70,13 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiers.map(c => c.id);
   }
 
-  async getListe(habilitation: Utilisateur['scopes']): Promise<Chantier[]> {
-    const chantiersLecture = new RécupérerListeChantierIdsAccessiblesEnLectureUseCase(habilitation).run();
-    const territoiresLecture = new RécupérerListeTerritoireCodesAccessiblesEnLectureUseCase(habilitation).run();
+  async getListe(habilitations: Habilitations): Promise<Chantier[]> {
+    const h = new Habilitation(habilitations);
+    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
     // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
     territoiresLecture.push('NAT-FR');
+
     const chantiers = await this.prisma.chantier.findMany({
       where: {
         NOT: { ministeres: { isEmpty: true } },
@@ -119,14 +121,14 @@ export default class ChantierSQLRepository implements ChantierRepository {
     });
   }
 
-  async getChantiersPourExports(habilitation: Utilisateur['scopes']): Promise<ChantierPourExport[]> {
-    const chantiers_lecture = new RécupérerListeChantierIdsAccessiblesEnLectureUseCase(habilitation).run();
-    
+  async getChantiersPourExports(habilitations: Habilitations): Promise<ChantierPourExport[]> {
+    const h = new Habilitation(habilitations);
+    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
 
     const rows = await this.prisma.$queryRaw<any[]>`
         with chantier_ids as (select distinct c.id
                               from chantier c
-                              where c.id in (${Prisma.join(chantiers_lecture)})
+                              where c.id in (${Prisma.join(chantiersLecture)})
                                 and ministeres <> '{}'),
              derniers_commentaires as (select *
                                        from (select c.*,

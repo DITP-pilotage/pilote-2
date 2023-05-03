@@ -62,7 +62,7 @@ export default async function handleExportCsv(request: NextApiRequest, response:
   assert(session);
 
   const exportCsvUseCase = new ExportCsvUseCase();
-  const chantiersPourExport = await exportCsvUseCase.run(session.habilitation);
+  const chantiersPourExport = await exportCsvUseCase.run(session.habilitations);
 
   response.setHeader('Content-Type', 'text/csv');
   response.setHeader('Content-Disposition', 'attachment; filename="chantiers.csv"');

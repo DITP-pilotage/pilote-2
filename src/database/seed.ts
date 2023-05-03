@@ -222,15 +222,15 @@ class DatabaseSeeder {
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('cabinet.ministeriel@example.com').avecProfil('CABINET_MINISTERIEL').build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('direction.admin.centrale@example.com').avecProfil('DIR_ADMIN_CENTRALE').build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('secretariat.general@example.com').avecProfil('SECRETARIAT_GENERAL').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('directeur.projet@example.com').avecProfil('DIR_PROJET').avecScopeLecture(chantierIds).build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('equipe.dir.projet@example.com').avecProfil('EQUIPE_DIR_PROJET').avecScopeLecture(chantierIds).build(),
+      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('directeur.projet@example.com').avecProfil('DIR_PROJET').avecHabilitationLecture(chantierIds).build(),
+      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('equipe.dir.projet@example.com').avecProfil('EQUIPE_DIR_PROJET').avecHabilitationLecture(chantierIds).build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('referent.region@example.com').avecProfil('REFERENT_REGION').build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('prefet.region@example.com').avecProfil('PREFET_REGION').build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('services.deconcentres.region@example.com').avecProfil('SERVICES_DECONCENTRES_REGION').build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('referent.departement@example.com').avecProfil('REFERENT_DEPARTEMENT').build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('prefet.departement@example.com').avecProfil('PREFET_DEPARTEMENT').build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('services.deconcentres.departement@example.com').avecProfil('SERVICES_DECONCENTRES_DEPARTEMENT').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('drom@example.com').avecProfil('DROM').avecScopeLecture(chantierIds).build(),
+      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('drom@example.com').avecProfil('DROM').avecHabilitationLecture(chantierIds).build(),
     ];
 
     for (const utilisateur of utilisateurs) {

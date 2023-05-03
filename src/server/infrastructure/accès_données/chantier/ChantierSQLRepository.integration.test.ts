@@ -32,10 +32,9 @@ describe('ChantierSQLRepository', () => {
       ],
     });
     const habilitation = { lecture: {
-      scope: 'lecture',
       chantiers: ['CH-001', 'CH-002'],
       territoires: ['NAT-FR'],
-    } } as unknown as Utilisateur['scopes'];
+    } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
     const result1 = await repository.getById('CH-001', habilitation);
@@ -61,10 +60,9 @@ describe('ChantierSQLRepository', () => {
     const chantierId = 'CH-001';
 
     const habilitation = { lecture: {
-      scope: 'lecture',
       chantiers: ['CH-001'],
       territoires: ['NAT-FR'],
-    } } as unknown as Utilisateur['scopes'];
+    } } as unknown as Utilisateur['habilitations'];
 
     await prisma.chantier.create({
       data: new ChantierSQLRowBuilder()
@@ -92,10 +90,9 @@ describe('ChantierSQLRepository', () => {
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
 
     const habilitation = { lecture: {
-      scope: 'lecture',
       chantiers: ['CH-001'],
       territoires: ['NAT-FR'],
-    } } as unknown as Utilisateur['scopes'];
+    } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
     const result = await repository.getById(chantierId, habilitation);
@@ -144,10 +141,9 @@ describe('ChantierSQLRepository', () => {
     });
 
     const habilitation = { lecture: {
-      scope: 'lecture',
       chantiers: ['CH-001', 'CH-002'],
       territoires: ['NAT-FR'],
-    } } as unknown as Utilisateur['scopes'];
+    } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
     const result1 = await repository.getById('CH-001', habilitation);
@@ -176,10 +172,9 @@ describe('ChantierSQLRepository', () => {
     });
     
     const habilitation = { lecture: {
-      scope: 'lecture',
       chantiers: ['CH-001', 'CH-002'],
       territoires: ['NAT-FR'],
-    } } as unknown as Utilisateur['scopes'];
+    } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
     const chantiers = await repository.getListe(habilitation);
@@ -203,10 +198,9 @@ describe('ChantierSQLRepository', () => {
     });
     
     const habilitation = { lecture: {
-      scope: 'lecture',
       chantiers: ['CH-001'],
       territoires: ['NAT-FR'],
-    } } as unknown as Utilisateur['scopes'];
+    } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
     const chantiers = await repository.getListe(habilitation);
@@ -227,10 +221,9 @@ describe('ChantierSQLRepository', () => {
     });
 
     const habilitation = { lecture: {
-      scope: 'lecture',
       chantiers: ['CH-001'],
       territoires: ['NAT-FR'],
-    } } as unknown as Utilisateur['scopes'];
+    } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
     const result = await repository.getById(chantierId, habilitation);
@@ -251,10 +244,9 @@ describe('ChantierSQLRepository', () => {
     });
     
     const habilitation = { lecture: {
-      scope: 'lecture',
       chantiers: ['CH-001'],
       territoires: ['NAT-FR'],
-    } } as unknown as Utilisateur['scopes'];
+    } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
     const result = await repository.getById(chantierId, habilitation);
@@ -273,10 +265,10 @@ describe('ChantierSQLRepository', () => {
       });
       
       const habilitation = { lecture: {
-        scope: 'lecture',
+
         chantiers: ['CH-001', 'CH-002'],
         territoires: ['NAT-FR'],
-      } } as unknown as Utilisateur['scopes'];
+      } } as unknown as Utilisateur['habilitations'];
 
       // WHEN
       const request = async () => {
@@ -296,10 +288,10 @@ describe('ChantierSQLRepository', () => {
       });
       
       const habilitation = { lecture: {
-        scope: 'lecture',
+
         chantiers: ['CH-001'],
         territoires: ['NAT-FR'],
-      } } as unknown as Utilisateur['scopes'];
+      } } as unknown as Utilisateur['habilitations'];
 
       // WHEN
       const request = async () => {
@@ -344,10 +336,10 @@ describe('ChantierSQLRepository', () => {
       const repository = new ChantierSQLRepository(prisma);
 
       const habilitation = { lecture: {
-        scope: 'lecture',
+
         chantiers: ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005'],
         territoires: ['NAT-FR'],
-      } } as unknown as Utilisateur['scopes'];
+      } } as unknown as Utilisateur['habilitations'];
 
       const chantier001Builder = new ChantierSQLRowBuilder()
         .avecId('CH-001')

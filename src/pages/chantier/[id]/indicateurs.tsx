@@ -35,10 +35,8 @@ export async function getServerSideProps({
     throw new Error('Not connected?');
   }
 
-  const { habilitation } = session;
-
   const chantierRepository = dependencies.getChantierRepository();
-  const chantier: Chantier = await chantierRepository.getById(params.id, habilitation);
+  const chantier: Chantier = await chantierRepository.getById(params.id, session.habilitations);
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs = await indicateurRepository.récupérerParChantierId(params.id);

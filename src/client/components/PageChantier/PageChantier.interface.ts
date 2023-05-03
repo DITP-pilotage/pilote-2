@@ -1,7 +1,7 @@
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 export default interface PageChantierProps {
   indicateurs: Indicateur[]
-  habilitation: Utilisateur['scopes']
+  habilitations: Habilitations
 }

@@ -14,7 +14,7 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
 
   private _profil: UtilisateurÀCréerOuMettreÀJour['profil'];
 
-  private _scopes: UtilisateurÀCréerOuMettreÀJour['scopes'];
+  private _habilitations: UtilisateurÀCréerOuMettreÀJour['habilitations'];
 
   constructor() {
     this._id = faker.datatype.uuid();
@@ -22,14 +22,14 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     this._prénom = faker.name.firstName();
     this._email = faker.internet.email();
     this._profil = faker.helpers.arrayElement(profils);
-    this._scopes = {
-      'lecture': this._créerScope(),
-      'saisie.commentaire': this._créerScope(),
-      'saisie.indicateur': this._créerScope(),
+    this._habilitations = {
+      'lecture': this._créerHabilitation(),
+      'saisie.commentaire': this._créerHabilitation(),
+      'saisie.indicateur': this._créerHabilitation(),
     };
   }
 
-  _créerScope(chantierIds: Chantier['id'][] = [], territoireCodes: string[] = [], périmètreIds: PérimètreMinistériel['id'][] = []) {
+  _créerHabilitation(chantierIds: Chantier['id'][] = [], territoireCodes: string[] = [], périmètreIds: PérimètreMinistériel['id'][] = []) {
     return {
       chantiers: chantierIds,
       territoires: territoireCodes,
@@ -47,18 +47,18 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     return this;
   }
 
-  avecScopeLecture(chantierIds: Chantier['id'][] = [], territoireCodes: string[] = [], périmètreIds: PérimètreMinistériel['id'][] = []): UtilisateurÀCréerOuMettreÀJourBuilder {
-    this._scopes.lecture = this._créerScope(chantierIds, territoireCodes, périmètreIds);
+  avecHabilitationLecture(chantierIds: Chantier['id'][] = [], territoireCodes: string[] = [], périmètreIds: PérimètreMinistériel['id'][] = []): UtilisateurÀCréerOuMettreÀJourBuilder {
+    this._habilitations.lecture = this._créerHabilitation(chantierIds, territoireCodes, périmètreIds);
     return this;
   }
 
-  avecScopeSaisieCommentaire(chantierIds: Chantier['id'][] = [], territoireCodes: string[] = [], périmètreIds: PérimètreMinistériel['id'][] = []): UtilisateurÀCréerOuMettreÀJourBuilder {
-    this._scopes['saisie.commentaire'] = this._créerScope(chantierIds, territoireCodes, périmètreIds);
+  avecHabilitationsaisieCommentaire(chantierIds: Chantier['id'][] = [], territoireCodes: string[] = [], périmètreIds: PérimètreMinistériel['id'][] = []): UtilisateurÀCréerOuMettreÀJourBuilder {
+    this._habilitations['saisie.commentaire'] = this._créerHabilitation(chantierIds, territoireCodes, périmètreIds);
     return this;
   }
 
-  avecScopeSaisieIndicateur(chantierIds: Chantier['id'][] = [], territoireCodes: string[] = [], périmètreIds: PérimètreMinistériel['id'][] = []): UtilisateurÀCréerOuMettreÀJourBuilder {
-    this._scopes['saisie.indicateur'] = this._créerScope(chantierIds, territoireCodes, périmètreIds);
+  avecHabilitationsaisieIndicateur(chantierIds: Chantier['id'][] = [], territoireCodes: string[] = [], périmètreIds: PérimètreMinistériel['id'][] = []): UtilisateurÀCréerOuMettreÀJourBuilder {
+    this._habilitations['saisie.indicateur'] = this._créerHabilitation(chantierIds, territoireCodes, périmètreIds);
     return this;
   }
 
@@ -69,7 +69,7 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
       prénom: this._prénom,
       email: this._email,
       profil: this._profil,
-      scopes: this._scopes,
+      habilitations: this._habilitations,
     };
   }
 }

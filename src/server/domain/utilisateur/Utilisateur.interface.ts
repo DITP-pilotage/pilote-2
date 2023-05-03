@@ -1,5 +1,4 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import { Habilitations, HabilitationsÀCréerOuMettreÀJour } from './habilitation/Habilitation.interface';
 
 export const profils = [
   'DITP_ADMIN', 
@@ -22,22 +21,13 @@ export const profils = [
 ] as const;
 export type Profil = typeof profils[number];
 
-export const scopes = ['lecture', 'saisie.commentaire', 'saisie.indicateur'] as const;
-export type Scope = typeof scopes[number];
-
 type Utilisateur = {
   id: string
   nom: string
   prénom: string
   email: string
   profil: Profil
-  scopes: {
-    [key in Scope]: {
-      scope: key,
-      chantiers: Chantier['id'][]
-      territoires: string[]
-    }
-  }
+  habilitations: Habilitations
 };
 
 export type UtilisateurÀCréerOuMettreÀJour =  { 
@@ -46,11 +36,7 @@ export type UtilisateurÀCréerOuMettreÀJour =  {
   prénom: string
   email: string
   profil: Profil
-  scopes: Record<Scope, {
-    chantiers: Chantier['id'][]
-    territoires: string[],
-    périmètres: PérimètreMinistériel['id'][]
-  }>
+  habilitations: HabilitationsÀCréerOuMettreÀJour
 };
 
 export default Utilisateur;

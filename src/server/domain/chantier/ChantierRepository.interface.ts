@@ -4,13 +4,13 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { ChantierPourExport } from '@/server/domain/chantier/ChantierPourExport';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 export default interface ChantierRepository {
-  getById(id: string, habilitation: Utilisateur['scopes']): Promise<Chantier>;
-  getListe(habilitation: Utilisateur['scopes']): Promise<Chantier[]>;
+  getById(id: string, habilitations: Habilitations): Promise<Chantier>;
+  getListe(habilitations: Habilitations): Promise<Chantier[]>;
   récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null>
   modifierMétéo(chantierId: string, maille: Maille, codeInsee: CodeInsee, météo: Météo): Promise<void>;
-  getChantiersPourExports(habilitation: Utilisateur['scopes']): Promise<ChantierPourExport[]>;
+  getChantiersPourExports(habilitations: Habilitations): Promise<ChantierPourExport[]>;
   récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][]): Promise<Chantier['id'][]> 
 }

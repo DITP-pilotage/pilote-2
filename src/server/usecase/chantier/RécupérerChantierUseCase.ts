@@ -1,6 +1,6 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export default class RécupérerChantierUseCase {
@@ -8,7 +8,7 @@ export default class RécupérerChantierUseCase {
     private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
   ) {}
 
-  async run(chantierId: string, habilitation: Utilisateur['scopes']): Promise<Chantier> {
-    return this.chantierRepository.getById(chantierId, habilitation);
+  async run(chantierId: string, habilitations: Habilitations): Promise<Chantier> {
+    return this.chantierRepository.getById(chantierId, habilitations);
   }
 }

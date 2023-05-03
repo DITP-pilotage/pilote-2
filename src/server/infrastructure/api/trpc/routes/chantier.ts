@@ -11,6 +11,6 @@ export const chantierRouter = créerRouteurTRPC({
     .input(validationChantierContexte)
     .query(({ input, ctx }) => {
       const récupérerChantierUseCase = new RécupérerChantierUseCase(dependencies.getChantierRepository());
-      return récupérerChantierUseCase.run(input.chantierId, ctx.session.habilitation);
+      return récupérerChantierUseCase.run(input.chantierId, ctx.session.habilitations);
     }),
 });

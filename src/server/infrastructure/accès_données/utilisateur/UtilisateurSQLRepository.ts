@@ -1,8 +1,9 @@
 import { PrismaClient, habilitation, profil, utilisateur, chantier } from '@prisma/client';
-import Utilisateur, { Profil, Scope, UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
+import Utilisateur, { Profil, UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
+import { Scope } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 export class UtilisateurSQLRepository implements UtilisateurRepository {
   constructor(private _prisma: PrismaClient) {}
@@ -41,12 +42,12 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       },
     });
 
-    const scopesÀCréer = Object.entries(u.scopes).map(scope => ({
+    const habilitationsÀCréer = Object.entries(u.habilitations).map(h => ({
       utilisateurId: utilisateurCrééOuMisÀJour.id,
-      scopeCode: scope[0],
-      territoires: scope[1].territoires,
-      perimetres: scope[1].périmètres,
-      chantiers: scope[1].chantiers,
+      scopeCode: h[0],
+      territoires: h[1].territoires,
+      perimetres: h[1].périmètres,
+      chantiers: h[1].chantiers,
     }));
 
     await this._prisma.habilitation.deleteMany({
@@ -56,7 +57,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     });
 
     await this._prisma.habilitation.createMany({
-      data: scopesÀCréer,
+      data: habilitationsÀCréer,
     });
   }
 
@@ -75,58 +76,55 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   private async _récupérerTerritoiresParDéfaut(profilUtilisateur: profil): Promise<Record<Scope, string[]>> {
     const territoires = await this._prisma.territoire.findMany();
 
-    let scopesTerritoires: Record<Scope, string[]> = {
+    let habilitationsTerritoires: Record<Scope, string[]> = {
       lecture: [],
       'saisie.commentaire': [],
       'saisie.indicateur': [],
     };
 
     if (profilUtilisateur.a_acces_tous_les_territoires_lecture === true) {
-      scopesTerritoires.lecture =  territoires.map(t => t.code);
+      habilitationsTerritoires.lecture =  territoires.map(t => t.code);
     } 
     
     if (profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire === true) {
-      scopesTerritoires['saisie.commentaire'] =  territoires.map(t => t.code);
+      habilitationsTerritoires['saisie.commentaire'] =  territoires.map(t => t.code);
     }
 
     if (profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur === true) {
-      scopesTerritoires['saisie.indicateur'] =  territoires.map(t => t.code);
+      habilitationsTerritoires['saisie.indicateur'] =  territoires.map(t => t.code);
     }
 
-    return scopesTerritoires;
+    return habilitationsTerritoires;
   }
 
-  private async _créerLesScopes(p: profil, habilitations: habilitation[]) {
+  private async _créerLesHabilitations(p: profil, habilitations: habilitation[]) {
     const chantiersParDéfautPourUtilisateur = await this._récupérerChantiersParDéfaut(p);
     const territoiresParDéfautPourUtilisateur = await this._récupérerTerritoiresParDéfaut(p);
 
-    let scopes: Utilisateur['scopes'] = {
+    let habilitationsGénérées: Utilisateur['habilitations'] = {
       lecture: {
-        scope: 'lecture',
         chantiers: chantiersParDéfautPourUtilisateur,
         territoires: territoiresParDéfautPourUtilisateur.lecture,
       },
       'saisie.commentaire': {
-        scope: 'saisie.commentaire',
         chantiers: chantiersParDéfautPourUtilisateur,
         territoires: territoiresParDéfautPourUtilisateur['saisie.commentaire'],
       },
       'saisie.indicateur': {
-        scope: 'saisie.indicateur',
         chantiers: chantiersParDéfautPourUtilisateur,
         territoires: territoiresParDéfautPourUtilisateur['saisie.indicateur'],
       },
     };
 
     for await (const h of habilitations) {
-      const scopeCode = h.scopeCode as keyof Utilisateur['scopes'];
+      const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
 
       const chantiersAssociésAuxPérimètresMinistériels = await dependencies.getChantierRepository().récupérerChantierIdsAssociésAuxPérimètresMinistèriels(h.perimetres);
-      scopes[scopeCode].chantiers = [...scopes[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...h.chantiers];
-      scopes[scopeCode].territoires = [...scopes[scopeCode].territoires, ...h.territoires];
+      habilitationsGénérées[scopeCode].chantiers = [...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...h.chantiers];
+      habilitationsGénérées[scopeCode].territoires = [...habilitationsGénérées[scopeCode].territoires, ...h.territoires];
     }
     
-    return scopes;
+    return habilitationsGénérées;
   }
 
   private async _mapperVersDomaine(utilisateurBrut: utilisateur & { profil: profil; habilitation: habilitation[]; }): Promise<Utilisateur> {
@@ -136,7 +134,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       prénom: utilisateurBrut.prenom || 'Inconnu',
       email: utilisateurBrut.email,
       profil: utilisateurBrut.profilCode as Profil,
-      scopes: await this._créerLesScopes(utilisateurBrut.profil, utilisateurBrut.habilitation),
+      habilitations: await this._créerLesHabilitations(utilisateurBrut.profil, utilisateurBrut.habilitation),
     };
   }
 }
