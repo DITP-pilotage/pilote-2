@@ -1,6 +1,6 @@
-import { IndicateurDataBuilder } from '@/server/import-indicateur/app/builder/IndicateurDataBuilder';
 import { PrismaMesureIndicateurRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import { IndicateurDataBuilder } from '@/server/import-indicateur/app/builder/IndicateurData.builder';
 
 describe('PrismaMesureIndicateurRepository', () => {
   let prismaMesureIndicateurRepository: PrismaMesureIndicateurRepository;

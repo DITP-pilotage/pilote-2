@@ -1,12 +1,10 @@
 import { mock, MockProxy } from 'jest-mock-extended';
-import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient';
-import {
-  ValidataFichierIndicateurValidationService,
-} from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
-import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidataBuilder';
-import { ReportResourceTaskBuilder, ReportTaskBuilder } from '@/server/import-indicateur/app/builder/ReportTaskBuilder';
-import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTaskBuilder';
-import { ValiderFichierPayload } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
+import {  ValidataFichierIndicateurValidationService } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
+import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTask.builder';
+import { ReportTaskBuilder, ReportResourceTaskBuilder } from '@/server/import-indicateur/app/builder/ReportTask.builder';
+import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidata.builder';
+import { ValiderFichierPayload } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
+import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient.interface';
 
 describe('ValidataFichierIndicateurValidationService', () => {
   let validataFichierIndicateurValidationService: ValidataFichierIndicateurValidationService;

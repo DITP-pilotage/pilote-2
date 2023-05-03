@@ -1,9 +1,6 @@
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
-import {
-  FichierIndicateurValidationService,
-} from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService';
-import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository';
-
+import { FichierIndicateurValidationService } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
+import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
 import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
 
 interface Dependencies {
@@ -46,8 +43,6 @@ export class ValiderFichierIndicateurImporteUseCase {
         );
       }
     });
-
-    
 
     if (listeErreursValidation.length > 0) {
       return DetailValidationFichier.creerDetailValidationFichier({
