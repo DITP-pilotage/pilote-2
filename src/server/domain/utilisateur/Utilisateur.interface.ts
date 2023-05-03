@@ -40,15 +40,17 @@ type Utilisateur = {
   }
 };
 
-export type UtilisateurÀCréerOuMettreÀJour = Utilisateur & { 
-  scopes: {
-    [key in Scope]: {
-      scope: key,
-      chantiers: Chantier['id'][]
-      périmètres: PérimètreMinistériel['id'][]
-      territoires: string[]
-    }
-  } 
+export type UtilisateurÀCréerOuMettreÀJour =  { 
+  id: string
+  nom: string
+  prénom: string
+  email: string
+  profil: Profil
+  scopes: Record<Scope, {
+    chantiers: Chantier['id'][]
+    territoires: string[],
+    périmètres: PérimètreMinistériel['id'][]
+  }>
 };
 
 export default Utilisateur;

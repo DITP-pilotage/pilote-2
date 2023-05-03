@@ -12,6 +12,7 @@ import {
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
 import Loader from '@/components/_commons/Loader/Loader';
+import PeutModifierLeChantierUseCase from '@/server/usecase/utilisateur/PeutModifierLeChantierUseCase/PeutModifierLeChantierUseCase';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
@@ -24,21 +25,22 @@ import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
 import Objectifs from './Objectifs/Objectifs';
 import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
-import PeutModifierLeChantierUseCase from '@/server/usecase/utilisateur/PeutModifierLeChantierUseCase/PeutModifierLeChantierUseCase';
 
 function convertitMailleCodeInseeEnCodeTerritoire(maille: string, codeInsee: string) {
   const lowerMaille = maille.toLowerCase();
-  let codeMaille = 'DEPT'
+  let codeMaille = 'DEPT';
 
-  switch (lowerMaille){
+  switch (lowerMaille) {
     case 'nationale':
-    case 'nat':
+    case 'nat': {
       codeMaille = 'NAT';
       break;
+    }
     case 'régionale':
-    case 'reg':
+    case 'reg': {
       codeMaille = 'REG';
       break;
+    }
   }
   return codeMaille + '-' + codeInsee;
 }
@@ -56,20 +58,18 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
     décisionStratégique,
     chantier,
     rechargerChantier,
-    avancements
-  } = usePageChantier(chantierId, habilitation);
+    avancements,
+  } = usePageChantier(chantierId);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   //console.log('territoire', territoireSélectionné, 'maille', mailleAssociéeAuTerritoireSélectionné)
   const codeTerritoire = convertitMailleCodeInseeEnCodeTerritoire(mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee);
-  console.log(codeTerritoire);
+
   const modeÉcritureSynthese = new PeutModifierLeChantierUseCase(habilitation, chantierId, codeTerritoire).run();
   const modeÉcritureCommentaires = modeÉcritureSynthese;
   const modeÉcritureDécisionsStratégiques = modeÉcritureSynthese;
   const modeÉcritureObjectifs = new PeutModifierLeChantierUseCase(habilitation, chantierId, 'NAT-FR').run();
-
-
 
   const listeRubriques: Rubrique[] = useMemo(() => (
     mailleAssociéeAuTerritoireSélectionné === 'nationale' ? (

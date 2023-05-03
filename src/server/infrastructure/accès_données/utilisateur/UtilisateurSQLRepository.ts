@@ -41,28 +41,23 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       },
     });
 
-    for (let scope of Object.entries(u.scopes)) {
-      await this._prisma.habilitation.upsert({
-        create: {
-          utilisateurId: utilisateurCrééOuMisÀJour.id,
-          scopeCode: scope[1].scope as Scope,
-          territoires: scope[1].territoires,
-          perimetres: scope[1].périmètres,
-          chantiers: scope[1].chantiers,
-        },
-        update: {
-          territoires: scope[1].territoires,
-          perimetres: scope[1].périmètres,
-          chantiers: scope[1].chantiers,
-        },
-        where: {
-          utilisateurId_scopeCode: {
-            utilisateurId: utilisateurCrééOuMisÀJour.id,
-            scopeCode: scope[1].scope as Scope,
-          },
-        },
-      });
-    }
+    const scopesÀCréer = Object.entries(u.scopes).map(scope => ({
+      utilisateurId: utilisateurCrééOuMisÀJour.id,
+      scopeCode: scope[0],
+      territoires: scope[1].territoires,
+      perimetres: scope[1].périmètres,
+      chantiers: scope[1].chantiers,
+    }));
+
+    await this._prisma.habilitation.deleteMany({
+      where: {
+        utilisateurId: utilisateurCrééOuMisÀJour.id,
+      },
+    });
+
+    await this._prisma.habilitation.createMany({
+      data: scopesÀCréer,
+    });
   }
 
   private async _récupérerChantiersParDéfaut(profilUtilisateur: profil): Promise<Chantier['id'][]> {
@@ -77,31 +72,58 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return chantiers.map(c => c.id);
   }
 
+  private async _récupérerTerritoiresParDéfaut(profilUtilisateur: profil): Promise<Record<Scope, string[]>> {
+    const territoires = await this._prisma.territoire.findMany();
+
+    let scopesTerritoires: Record<Scope, string[]> = {
+      lecture: [],
+      'saisie.commentaire': [],
+      'saisie.indicateur': [],
+    };
+
+    if (profilUtilisateur.a_acces_tous_les_territoires_lecture === true) {
+      scopesTerritoires.lecture =  territoires.map(t => t.code);
+    } 
+    
+    if (profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire === true) {
+      scopesTerritoires['saisie.commentaire'] =  territoires.map(t => t.code);
+    }
+
+    if (profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur === true) {
+      scopesTerritoires['saisie.indicateur'] =  territoires.map(t => t.code);
+    }
+
+    return scopesTerritoires;
+  }
+
   private async _créerLesScopes(p: profil, habilitations: habilitation[]) {
+    const chantiersParDéfautPourUtilisateur = await this._récupérerChantiersParDéfaut(p);
+    const territoiresParDéfautPourUtilisateur = await this._récupérerTerritoiresParDéfaut(p);
+
     let scopes: Utilisateur['scopes'] = {
       lecture: {
         scope: 'lecture',
-        chantiers: [],
-        territoires: [],
+        chantiers: chantiersParDéfautPourUtilisateur,
+        territoires: territoiresParDéfautPourUtilisateur.lecture,
       },
       'saisie.commentaire': {
         scope: 'saisie.commentaire',
-        chantiers: [],
-        territoires: [],
+        chantiers: chantiersParDéfautPourUtilisateur,
+        territoires: territoiresParDéfautPourUtilisateur['saisie.commentaire'],
       },
       'saisie.indicateur': {
         scope: 'saisie.indicateur',
-        chantiers: [],
-        territoires: [],
+        chantiers: chantiersParDéfautPourUtilisateur,
+        territoires: territoiresParDéfautPourUtilisateur['saisie.indicateur'],
       },
     };
 
-    const chantiersParDéfautPourUtilisateur = await this._récupérerChantiersParDéfaut(p);
-
     for await (const h of habilitations) {
+      const scopeCode = h.scopeCode as keyof Utilisateur['scopes'];
+
       const chantiersAssociésAuxPérimètresMinistériels = await dependencies.getChantierRepository().récupérerChantierIdsAssociésAuxPérimètresMinistèriels(h.perimetres);
-      scopes[h.scopeCode as keyof Utilisateur['scopes']].chantiers = [...chantiersParDéfautPourUtilisateur, ...chantiersAssociésAuxPérimètresMinistériels, ...h.chantiers];
-      scopes[h.scopeCode as keyof Utilisateur['scopes']].territoires = h.territoires;
+      scopes[scopeCode].chantiers = [...scopes[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...h.chantiers];
+      scopes[scopeCode].territoires = [...scopes[scopeCode].territoires, ...h.territoires];
     }
     
     return scopes;

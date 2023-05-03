@@ -7,13 +7,11 @@ import { ChantierInformation } from '@/components/PageImportIndicateur/ChantierI
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import usePageChantier from '@/components/PageChantier/usePageChantier';
 
 interface NextPageImportIndicateurProps {
   chantierInformation: ChantierInformation
   indicateurs: Indicateur[],
-  habilitation: Utilisateur['scopes']
 }
 
 type GetServerSideProps = GetServerSidePropsResult<NextPageImportIndicateurProps>;
@@ -48,7 +46,6 @@ export async function getServerSideProps({
   return {
     props: {
       indicateurs,
-      habilitation,
       chantierInformation: {
         id: chantier.id,
         nom: chantier.nom,
@@ -62,9 +59,8 @@ export async function getServerSideProps({
 export default function NextPageImportIndicateur({
   chantierInformation,
   indicateurs,
-  habilitation,
 }: NextPageImportIndicateurProps) {
-  const { détailsIndicateurs } = usePageChantier(chantierInformation.id, habilitation);
+  const { détailsIndicateurs } = usePageChantier(chantierInformation.id);
 
   return (
     <PageImportIndicateur
