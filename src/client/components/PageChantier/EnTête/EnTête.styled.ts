@@ -10,6 +10,10 @@ const PageChantierEnTêteStyled = styled.header`
   .bouton-impression{
     border-radius: 4px;
   }
+
+  .en-tete__boutons {
+    gap: 1rem;
+  }
 `;
 
 export default PageChantierEnTêteStyled;

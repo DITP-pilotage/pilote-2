@@ -4,7 +4,11 @@ import Titre from '@/components/_commons/Titre/Titre';
 import PageChantierEnTêteProps from './EnTête.interface';
 import PageChantierEnTêteStyled from './EnTête.styled';
 
-export default function PageChantierEnTête({ chantier, afficheLeBoutonImpression = false }: PageChantierEnTêteProps) {
+export default function PageChantierEnTête({
+  chantier,
+  afficheLeBoutonImpression = false,
+  afficheLeBoutonMiseAJourDonnee = false,
+}: PageChantierEnTêteProps) {
   return (
     <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-4w fr-py-4w'>
       <Link
@@ -18,8 +22,17 @@ export default function PageChantierEnTête({ chantier, afficheLeBoutonImpressio
         baliseHtml='h1'
         className='fr-h2 fr-mb-1w  fr-mt-3w'
       >
-        { chantier.nom }
+        {chantier.nom}
       </Titre>
+      {
+        !!afficheLeBoutonMiseAJourDonnee &&
+          <Link
+            className='fr-btn fr-btn--primary fr-mr-2w'
+            href={`${chantier.id}/indicateurs`}
+          >
+            Mettre à jour les données
+          </Link>
+      }
       {
         !!afficheLeBoutonImpression &&
           <button
