@@ -1,20 +1,22 @@
 import météos from '@/client/constants/météos';
 import MétéoBadgeProps from '@/components/_commons/Météo/Badge/MétéoBadge.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import Badge from '@/components/_commons/Badge/Badge';
+import { BadgeType } from '@/components/_commons/Badge/Badge.interface';
 
-const badgeÀPartirDeLaMétéo: Record<Météo, string> = {
-  'ORAGE': 'fr-badge--error',
-  'NUAGE': 'fr-badge--warning',
-  'COUVERT': 'fr-badge--info',
-  'SOLEIL': 'fr-badge--success',
-  'NON_NECESSAIRE': '',
-  'NON_RENSEIGNEE': '',
+const badgeÀPartirDeLaMétéo: Record<Météo, BadgeType> = {
+  'ORAGE': 'rouge',
+  'NUAGE': 'jaune',
+  'COUVERT': 'bleu',
+  'SOLEIL': 'vert',
+  'NON_NECESSAIRE': 'gris',
+  'NON_RENSEIGNEE': 'gris',
 };
 
 export default function MétéoBadge({ météo }: MétéoBadgeProps) {
   return (
-    <p className={`fr-badge fr-badge--no-icon ${badgeÀPartirDeLaMétéo[météo]} fr-mb-2w`}>
+    <Badge type={badgeÀPartirDeLaMétéo[météo]}>
       {météos[météo]}
-    </p>
+    </Badge>
   );
 }
