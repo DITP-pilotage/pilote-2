@@ -41,7 +41,6 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
   const chantierRepository = dependencies.getChantierRepository();
   const chantiers = await chantierRepository.getListe(habilitation);
 
-
   let axes: Axe[] = [];
   let ppgs: Ppg[] = [];
   let ministères: Ministère[] = [];

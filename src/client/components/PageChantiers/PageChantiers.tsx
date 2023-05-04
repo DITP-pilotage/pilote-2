@@ -27,7 +27,9 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg, habil
   const territoireFiltre = habilitation.récupérerMailleEtCodeEnLecture();
 
   const maille = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-  
+  const maillesDisponibles = habilitation.recupererListeMailleEnLectureDisponible();
+  const codesInseeDisponibles = habilitation.recupererListeCodeInseeEnLectureDisponible(maille);
+
   const { modifierMailleSélectionnée, modifierTerritoireSélectionné } = actionsTerritoiresStore();
   useEffect(() =>{
     let mailleAAfficher: "départementale" | "régionale" = 'régionale';
@@ -65,7 +67,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg, habil
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteursMaillesEtTerritoires />
+          <SélecteursMaillesEtTerritoires maillesDisponibles={maillesDisponibles} codesInseeDisponibles={codesInseeDisponibles}/>
         </BarreLatéraleEncart>
         <section>
           <Titre

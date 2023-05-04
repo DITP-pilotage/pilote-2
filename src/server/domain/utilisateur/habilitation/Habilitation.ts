@@ -1,5 +1,7 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Habilitations, TerritoiresFiltre } from './Habilitation.interface';
+import { MailleInterne } from '../../maille/Maille.interface';
+import { CodeInsee } from '../../territoire/Territoire.interface';
 
 export default class Habilitation {
   constructor(private _habilitations: Habilitations) {}
@@ -43,4 +45,32 @@ export default class Habilitation {
     }
     return result;
   }
+
+  recupererListeMailleEnLectureDisponible(): MailleInterne[] {
+    const territoires = this.récupérerListeTerritoireCodesAccessiblesEnLecture();
+    let result: MailleInterne[]= [];
+
+    for (const codeTerritoire of territoires) {
+      if (codeTerritoire.startsWith('REG') && (result.find((x)=> {x == 'régionale'}) === undefined)) {
+        result.push('régionale');
+      } else if (codeTerritoire.startsWith('DEPT') && (result.find((x)=> {x == 'départementale'}) === undefined)) {
+        result.push('départementale');
+      }
+    }
+    return result;
+  }
+
+  recupererListeCodeInseeEnLectureDisponible(maille: string) : CodeInsee[] {
+    let result = [];
+    const territoires = this.récupérerListeTerritoireCodesAccessiblesEnLecture();
+    const codeMaille = (maille == 'régionale') ? 'REG' : 'DEPT';
+
+    for (const territoire of territoires) {
+      if (territoire.startsWith(codeMaille) || territoire.startsWith('NAT'))
+        result.push(territoire.split('-')[1])
+    }
+    console.log('TOTO', result, this)
+    return result;
+  }
+  
 }

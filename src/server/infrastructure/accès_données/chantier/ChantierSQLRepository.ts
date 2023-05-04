@@ -73,9 +73,9 @@ export default class ChantierSQLRepository implements ChantierRepository {
   async getListe(habilitation: Habilitation): Promise<Chantier[]> {
     
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
+    let territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
     // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
-    territoiresLecture.push('NAT-FR');
+    territoiresLecture = [...territoiresLecture, 'NAT-FR'];
 
     const chantiers = await this.prisma.chantier.findMany({
       where: {
