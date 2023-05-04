@@ -32,7 +32,7 @@ const construireLaListeDOptions = (listeCodeInsee: string[]) => {
 export default function SélecteurTerritoire({codesInseeDisponibles} : SélecteurTerritoireProps) {
   const { modifierTerritoireSélectionné } = actionsTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-
+  
   return (
     <Sélecteur
       htmlName="périmètre-géographique"

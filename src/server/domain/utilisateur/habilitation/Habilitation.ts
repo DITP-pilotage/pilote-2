@@ -69,7 +69,6 @@ export default class Habilitation {
       if (territoire.startsWith(codeMaille) || territoire.startsWith('NAT'))
         result.push(territoire.split('-')[1])
     }
-    console.log('TOTO', result, this)
     return result;
   }
   
