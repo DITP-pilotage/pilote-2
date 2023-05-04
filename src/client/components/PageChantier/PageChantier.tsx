@@ -137,15 +137,15 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
                   {
                     avancements !== null &&
                     <>
-                      <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-6' : 'fr-col-xl-12'} fr-col-12`}>
+                      <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-7' : 'fr-col-xl-12'} fr-col-12`}>
                         <AvancementChantier avancements={avancements} />
                       </div>
-                      <div className='fr-col-xl-6 fr-col-12'>
+                      <div className='fr-col-xl-5 fr-col-12'>
                         <Responsables chantier={chantier} />
                       </div>
                     </>
                   }
-                  <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
+                  <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-7'} fr-col-12`}>
                     <SynthèseDesRésultats
                       chantierId={chantier.id}
                       modeÉcriture={modeÉcritureSynthese}
