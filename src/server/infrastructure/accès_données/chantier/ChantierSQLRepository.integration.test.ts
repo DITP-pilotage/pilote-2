@@ -91,7 +91,7 @@ describe('ChantierSQLRepository', () => {
 
     const habilitation = { lecture: {
       chantiers: ['CH-001'],
-      territoires: ['NAT-FR'],
+      territoires: ['NAT-FR', 'DEPT-13'],
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
@@ -284,13 +284,13 @@ describe('ChantierSQLRepository', () => {
       const repository: ChantierRepository = new ChantierSQLRepository(prisma);
       const chantierId = 'CH-001';
       await prisma.chantier.create({
-        data: new ChantierSQLRowBuilder().avecId(chantierId).avecMaille('DEPT').build(),
+        data: new ChantierSQLRowBuilder().avecId(chantierId).avecMaille('DEPT').avecCodeInsee('12').build(),
       });
       
       const habilitation = { lecture: {
 
         chantiers: ['CH-001'],
-        territoires: ['NAT-FR'],
+        territoires: ['NAT-FR', 'DEPT-12'],
       } } as unknown as Utilisateur['habilitations'];
 
       // WHEN

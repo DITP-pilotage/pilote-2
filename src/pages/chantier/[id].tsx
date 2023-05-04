@@ -7,10 +7,10 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 interface NextPageChantierProps {
-  habilitations: Habilitation,
+  habilitations: Habilitations,
   indicateurs: Indicateur[],
 }
 
