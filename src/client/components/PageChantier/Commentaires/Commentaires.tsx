@@ -4,7 +4,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import CommentairesProps from '@/components/PageChantier/Commentaires/Commentaires.interface';
 import Publication from '@/components/_commons/Publication/Publication';
-import libellésTypesCommentaire from '@/client/constants/libellésTypesCommentaire';
+import { consignesDÉcritureCommentaire, libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
 import { TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
 
 export default function Commentaires({ commentaires, chantierId, maille, codeInsee, modeÉcriture = false, estInteractif = true }: CommentairesProps) {
@@ -29,14 +29,18 @@ export default function Commentaires({ commentaires, chantierId, maille, codeIns
                   )
                 }
                 <Publication
+                  caractéristiques={{
+                    entité: 'commentaires',
+                    type: type,
+                    libelléType: libellésTypesCommentaire[type as TypeCommentaire],
+                    consigneDÉcriture: consignesDÉcritureCommentaire[type as TypeCommentaire],
+                  }}
                   chantierId={chantierId}
                   codeInsee={codeInsee}
-                  entité="commentaires"
                   estInteractif={estInteractif}
                   maille={maille}
                   modeÉcriture={modeÉcriture}
                   publicationInitiale={publication}
-                  type={{ id: type, libellé: libellésTypesCommentaire[type as TypeCommentaire] }}
                 />
               </Fragment>
             ))

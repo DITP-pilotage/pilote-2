@@ -8,7 +8,7 @@ import PublicationFormulaireStyled from './PublicationFormulaire.styled';
 import PublicationFormulaireProps, { PublicationFormulaireInputs } from './PublicationFormulaire.interface';
 import usePublicationFormulaire from './usePublicationFormulaire';
 
-export default function PublicationFormulaire({ contenuInitial, type, entité, succèsCallback, erreurCallback, annulationCallback }: PublicationFormulaireProps) {
+export default function PublicationFormulaire({ caractéristiques, contenuInitial, succèsCallback, erreurCallback, annulationCallback }: PublicationFormulaireProps) {
   const mailleSélectionnée = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const { créerPublication } = usePublicationFormulaire(succèsCallback, erreurCallback);
@@ -18,8 +18,8 @@ export default function PublicationFormulaire({ contenuInitial, type, entité, s
     resolver: zodResolver(validationPublicationFormulaire),
     defaultValues: {
       contenu: contenuInitial,
-      type: type,
-      entité: entité,
+      type: caractéristiques.type,
+      entité: caractéristiques.entité,
       maille: mailleSélectionnée,
       codeInsee: territoireSélectionné.codeInsee,
       chantierId: router.query.id as string,
@@ -31,6 +31,9 @@ export default function PublicationFormulaire({ contenuInitial, type, entité, s
       method="post"
       onSubmit={handleSubmit(créerPublication)}
     >
+      <p className='fr-text--xs fr-mb-1w texte-gris'>
+        { caractéristiques.consigneDÉcriture }
+      </p>
       <div className={`fr-mb-0 fr-input-group ${errors.contenu && 'fr-input-group--error'}`}>
         <textarea
           className="fr-input fr-text--sm fr-mb-0"
