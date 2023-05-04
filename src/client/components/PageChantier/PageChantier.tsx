@@ -71,30 +71,37 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
   const modeÉcritureDécisionsStratégiques = modeÉcritureSynthese;
   const modeÉcritureObjectifs = new Habilitation(habilitations).peutModifierLeChantier(chantierId, 'NAT-FR');
 
-  const listeRubriques: Rubrique[] = useMemo(() => (
-    mailleAssociéeAuTerritoireSélectionné === 'nationale' ? (
-      [
-        { nom: 'Avancement du chantier', ancre: 'avancement' },
-        { nom: 'Responsables', ancre: 'responsables' },
-        { nom: 'Synthèse des résultats', ancre: 'synthèse' },
-        { nom: 'Répartition géographique', ancre: 'cartes' },
-        { nom: 'Objectifs', ancre: 'objectifs' },
-        { nom: 'Décisions stratégiques', ancre: 'décisions-stratégiques' },
-        { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateurs },
-        { nom: 'Commentaires', ancre: 'commentaires' },
-      ]
-    ) : (
-      [
-        { nom: 'Avancement du chantier', ancre: 'avancement' },
-        { nom: 'Responsables', ancre: 'responsables' },
-        { nom: 'Synthèse des résultats', ancre: 'synthèse' },
-        { nom: 'Répartition géographique', ancre: 'cartes' },
-        { nom: 'Objectifs', ancre: 'objectifs' },
-        { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateurs },
-        { nom: 'Commentaires', ancre: 'commentaires' },
-      ]
-    )
-  ), [mailleAssociéeAuTerritoireSélectionné]);
+  const listeRubriques: Rubrique[] = useMemo(() => {
+    const rubriquesIndicateursNonVides = listeRubriquesIndicateurs.filter(
+      (rubriqueIndicateur) => (
+        indicateurs.some(indicateur => indicateur.type === rubriqueIndicateur.typeIndicateur)
+      ),
+    );
+    return (
+      mailleAssociéeAuTerritoireSélectionné === 'nationale' ? (
+        [
+          { nom: 'Avancement du chantier', ancre: 'avancement' },
+          { nom: 'Responsables', ancre: 'responsables' },
+          { nom: 'Synthèse des résultats', ancre: 'synthèse' },
+          { nom: 'Répartition géographique', ancre: 'cartes' },
+          { nom: 'Objectifs', ancre: 'objectifs' },
+          { nom: 'Décisions stratégiques', ancre: 'décisions-stratégiques' },
+          { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: rubriquesIndicateursNonVides },
+          { nom: 'Commentaires', ancre: 'commentaires' },
+        ]
+      ) : (
+        [
+          { nom: 'Avancement du chantier', ancre: 'avancement' },
+          { nom: 'Responsables', ancre: 'responsables' },
+          { nom: 'Synthèse des résultats', ancre: 'synthèse' },
+          { nom: 'Répartition géographique', ancre: 'cartes' },
+          { nom: 'Objectifs', ancre: 'objectifs' },
+          { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: rubriquesIndicateursNonVides },
+          { nom: 'Commentaires', ancre: 'commentaires' },
+        ]
+      )
+    );
+  }, [indicateurs, mailleAssociéeAuTerritoireSélectionné]);
 
   return (
     <PageChantierStyled className="flex">
