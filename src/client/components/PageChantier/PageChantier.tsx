@@ -64,10 +64,11 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
 
   const codeTerritoire = convertitMailleCodeInseeEnCodeTerritoire(mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee);
 
-  const modeÉcritureSynthese = new Habilitation(habilitations).peutModifierLeChantier(chantierId, codeTerritoire);
+  const habilitation = new Habilitation(habilitations);
+  const modeÉcritureSynthese = habilitation.peutModifierLeChantier(chantierId, codeTerritoire);
   const modeÉcritureCommentaires = modeÉcritureSynthese;
   const modeÉcritureDécisionsStratégiques = modeÉcritureSynthese;
-  const modeÉcritureObjectifs = new Habilitation(habilitations).peutModifierLeChantier(chantierId, 'NAT-FR');
+  const modeÉcritureObjectifs = habilitation.peutModifierLeChantier(chantierId, 'NAT-FR');
 
   const listeRubriques: Rubrique[] = useMemo(() => {
     const rubriquesIndicateursNonVides = listeRubriquesIndicateurs.filter(
@@ -101,6 +102,9 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
     );
   }, [indicateurs, mailleAssociéeAuTerritoireSélectionné]);
 
+  const maillesDisponibles = habilitation.recupererListeMailleEnLectureDisponible();
+  const codesInseeDisponibles = habilitation.recupererListeCodeInseeEnLectureDisponible(mailleAssociéeAuTerritoireSélectionné);
+
   return (
     <PageChantierStyled className="flex">
       <BarreLatérale
@@ -108,7 +112,7 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteursMaillesEtTerritoires />
+          <SélecteursMaillesEtTerritoires maillesDisponibles={maillesDisponibles} codesInseeDisponibles={codesInseeDisponibles} />
         </BarreLatéraleEncart>
         <Sommaire rubriques={listeRubriques} />
       </BarreLatérale>
