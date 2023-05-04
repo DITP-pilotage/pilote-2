@@ -77,12 +77,12 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Dé
       enableSorting: false,
     }),
     reactTableColonnesHelper.accessor('données.valeurCible', {
-      header: 'Valeur cible',
+      header: 'Cible 2026',
       cell: valeurCible => <ValeurEtDate valeur={valeurCible.getValue()} />,
       enableSorting: false,
     }),
     reactTableColonnesHelper.accessor('données.avancement.global', {
-      header: 'Taux avancement global',
+      header: 'Avancement 2026',
       cell: avancementGlobal => (
         <BarreDeProgression
           afficherTexte
