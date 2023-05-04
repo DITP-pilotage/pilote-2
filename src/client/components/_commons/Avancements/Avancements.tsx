@@ -15,7 +15,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
         />
       </div>
       <div>
-        <div className="flex">
+        <div className="jauges-statistiques">
           <div>
             <JaugeDeProgression
               couleur='orange'
@@ -24,7 +24,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
               taille='sm'
             />
           </div>
-          <div className="fr-ml-3w">
+          <div>
             <JaugeDeProgression
               couleur='violet'
               libellé="Médiane"
@@ -32,7 +32,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
               taille='sm'
             />
           </div>
-          <div className="fr-ml-3w">
+          <div>
             <JaugeDeProgression
               couleur='vert'
               libellé="Maximum"

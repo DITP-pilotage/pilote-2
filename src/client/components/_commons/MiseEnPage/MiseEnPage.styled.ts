@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 
+export const breakpointXL = '1248px';
+
 const MiseEnPageStyled = styled.div`
   word-break: break-word;
 

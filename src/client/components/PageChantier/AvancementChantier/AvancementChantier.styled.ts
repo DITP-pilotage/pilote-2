@@ -11,6 +11,10 @@ const AvancementChantierStyled = styled.section`
     row-gap: 1.5rem;
     column-gap: 1.5rem;
 
+    @media (width < 1350px) {
+      column-gap: 1rem;
+    }
+
     & > * {
       flex-grow: 1;
     }

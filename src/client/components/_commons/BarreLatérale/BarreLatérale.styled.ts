@@ -1,9 +1,6 @@
 import styled from '@emotion/styled';
+import { breakpointXL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
 import { BarreLatéraleStyledProps } from './BarreLatérale.interface';
-
-const breakpointXL = '1248px';
-
-
 
 const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
   .barre-latérale {

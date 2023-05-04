@@ -107,7 +107,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
               </div>
             </div>
             <div className="fr-grid-row fr-grid-row--gutters">
-              <div className="fr-col-12 fr-col-lg-6 fr-col-xl-5">
+              <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
                   <section>
                     <Titre
@@ -123,7 +123,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                   </section>
                 </Bloc>
               </div>
-              <div className="fr-col-12 fr-col-lg-6 fr-col-xl-7">
+              <div className="fr-col-12 fr-col-lg-6">
                 <Bloc>
                   <section>
                     <Titre
