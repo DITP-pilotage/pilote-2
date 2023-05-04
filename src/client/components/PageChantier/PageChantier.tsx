@@ -1,8 +1,10 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
-import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
+import SélecteursMaillesEtTerritoires
+  from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import Loader from '@/components/_commons/Loader/Loader';
@@ -12,12 +14,16 @@ import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousL
 import Titre from '@/components/_commons/Titre/Titre';
 import Objectifs from '@/components/_commons/Objectifs/Objectifs';
 import { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
-import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
+import {
+  typesCommentaireMailleNationale,
+  typesCommentaireMailleRégionaleOuDépartementale,
+} from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import Indicateurs from '@/client/components/_commons/Indicateurs/Indicateurs';
 import { listeRubriquesChantier, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
+import { estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierProps from './PageChantier.interface';
 import ResponsablesPageChantier from './Responsables/Responsables';
@@ -45,6 +51,8 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
   const modeÉcritureObjectifs = territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication === true);
   const listeRubriques = listeRubriquesChantier(indicateurs.map(i => i.type), territoireSélectionné!.maille);
 
+  const { data: session } = useSession();
+
   return (
     <PageChantierStyled className="flex">
       <BarreLatérale
@@ -58,7 +66,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
       </BarreLatérale>
       <main className='fr-pb-5w'>
         <div className="texte-impression fr-mb-5w">
-          Pilote   •   Extrait de la page chantier généré le
+          Pilote • Extrait de la page chantier généré le
           {' '}
           {new Date().toLocaleString('FR-fr')}
         </div>
@@ -74,41 +82,42 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
             <>
               <PageChantierEnTête
                 afficheLeBoutonImpression
+                afficheLeBoutonMiseAJourDonnee={estAutoriséAImporterDesIndicateurs(session!.profil)}
                 chantier={chantier}
               />
               <div className='fr-container--fluid fr-py-2w fr-px-md-4w'>
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                   {
                     avancements !== null &&
-                    <>
-                      <section
-                        className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-7' : 'fr-col-xl-12'} fr-col-12 rubrique`}
-                        id="avancement"
-                      >
-                        <Titre
-                          baliseHtml='h2'
-                          className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                      <>
+                        <section
+                          className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-7' : 'fr-col-xl-12'} fr-col-12 rubrique`}
+                          id="avancement"
                         >
-                          Avancement du chantier
-                        </Titre>
-                        <AvancementChantier
-                          avancements={avancements}
-                          chantierId={chantierId}
-                        />
-                      </section>
-                      <section
-                        className='fr-col-xl-5 fr-col-12 rubrique'
-                        id="responsables"
-                      >
-                        <Titre
-                          baliseHtml='h2'
-                          className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                          <Titre
+                            baliseHtml='h2'
+                            className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                          >
+                            Avancement du chantier
+                          </Titre>
+                          <AvancementChantier
+                            avancements={avancements}
+                            chantierId={chantierId}
+                          />
+                        </section>
+                        <section
+                          className='fr-col-xl-5 fr-col-12 rubrique'
+                          id="responsables"
                         >
-                          Responsables
-                        </Titre>
-                        <ResponsablesPageChantier responsables={chantier.responsables} />
-                      </section>
-                    </>
+                          <Titre
+                            baliseHtml='h2'
+                            className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                          >
+                            Responsables
+                          </Titre>
+                          <ResponsablesPageChantier responsables={chantier.responsables} />
+                        </section>
+                      </>
                   }
                   <section
                     className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-7'} fr-col-12 rubrique`}
@@ -123,7 +132,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         Météo et synthèse des résultats
                       </Titre>
                       <Infobulle idHtml="infobulle-chantier-météoEtSynthèseDesRésultats">
-                        { INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats }
+                        {INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats}
                       </Infobulle>
                     </TitreInfobulleConteneur>
                     <SynthèseDesRésultats
@@ -163,7 +172,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         Objectifs
                       </Titre>
                       <Infobulle idHtml="infobulle-chantier-objectifs">
-                        { INFOBULLE_CONTENUS.chantier.objectifs }
+                        {INFOBULLE_CONTENUS.chantier.objectifs}
                       </Infobulle>
                     </TitreInfobulleConteneur>
                     <Objectifs
@@ -201,30 +210,30 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 }
                 {
                   territoireSélectionné!.maille === 'nationale' &&
-                  <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-                    <section
-                      className="fr-col-12 rubrique"
-                      id="décisions-stratégiques"
-                    >
-                      <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
-                        <Titre
-                          baliseHtml="h2"
-                          className="fr-h4"
-                          estInline
-                        >
-                          Décisions stratégiques
-                        </Titre>
-                        <Infobulle idHtml="infobulle-chantier-décisionsStratégiques">
-                          { INFOBULLE_CONTENUS.chantier.décisionsStratégiques }
-                        </Infobulle>
-                      </TitreInfobulleConteneur>
-                      <DécisionsStratégiques
-                        chantierId={chantier.id}
-                        décisionStratégique={décisionStratégique}
-                        modeÉcriture={territoireSélectionné?.accèsSaisiePublication}
-                      />
-                    </section>
-                  </div>
+                    <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+                      <section
+                        className="fr-col-12 rubrique"
+                        id="décisions-stratégiques"
+                      >
+                        <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+                          <Titre
+                            baliseHtml="h2"
+                            className="fr-h4"
+                            estInline
+                          >
+                            Décisions stratégiques
+                          </Titre>
+                          <Infobulle idHtml="infobulle-chantier-décisionsStratégiques">
+                            {INFOBULLE_CONTENUS.chantier.décisionsStratégiques}
+                          </Infobulle>
+                        </TitreInfobulleConteneur>
+                        <DécisionsStratégiques
+                          chantierId={chantier.id}
+                          décisionStratégique={décisionStratégique}
+                          modeÉcriture={territoireSélectionné?.accèsSaisiePublication}
+                        />
+                      </section>
+                    </div>
                 }
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                   <section
