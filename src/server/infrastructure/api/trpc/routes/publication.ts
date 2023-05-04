@@ -21,8 +21,8 @@ import RécupérerHistoriqueObjectifUseCase from '@/server/usecase/objectif/Réc
 import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from '@/server/usecase/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
 import CréerUneDécisionStratégiqueUseCase from '@/server/usecase/décision/CréerUneDécisionStratégiqueUseCase';
 import RécupérerHistoriqueDécisionStratégiqueUseCase from '@/server/usecase/décision/RécupérerHistoriqueDécisionStratégiqueUseCase';
-import RécupérerCommentairesLesPlusRécentsParTypeUseCase from '@/server/usecase/commentaire/RécupérerCommentairesLesPlusRécentsParTypeUseCase';
-import RécupérerObjectifsLesPlusRécentsParTypeUseCase from '@/server/usecase/objectif/RécupérerObjectifsLesPlusRécentsParTypeUseCase';
+import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
+import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
@@ -66,17 +66,17 @@ export const publicationRouter = créerRouteurTRPC({
       }
     }),
 
-  récupérerLaPlusRécenteParType: procédureProtégée
+  récupérerLesPlusRécentesParTypeGroupéesParChantiers: procédureProtégée
     .input(validationPublicationContexte.merge(zodValidateurEntité))
     .query(async ({ input }) => {      
       if (input.entité === 'commentaires') {
-        const récupérerCommentairesLesPlusRécentsParTypeUseCase = new RécupérerCommentairesLesPlusRécentsParTypeUseCase(dependencies.getCommentaireRepository());
-        return récupérerCommentairesLesPlusRécentsParTypeUseCase.run(input.chantierId, input.maille, input.codeInsee);
+        const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getCommentaireRepository());
+        return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.chantierId], input.maille, input.codeInsee);
       }
 
       if (input.entité === 'objectifs') {
-        const récupérerObjectifsLesPlusRécentsParTypeUseCase = new RécupérerObjectifsLesPlusRécentsParTypeUseCase(dependencies.getObjectifRepository());
-        return récupérerObjectifsLesPlusRécentsParTypeUseCase.run(input.chantierId);
+        const récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getObjectifRepository());
+        return récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.chantierId]);
       }
     }),
 

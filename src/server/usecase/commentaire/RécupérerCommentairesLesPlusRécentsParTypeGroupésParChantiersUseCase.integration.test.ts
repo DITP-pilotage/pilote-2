@@ -3,7 +3,7 @@ import { Commentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import CommentaireSQLRepository, { CODES_TYPES_COMMENTAIRES, NOMS_TYPES_COMMENTAIRES } from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
 import CommentaireSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import RécupérerCommentairesLesPlusRécentsParTypeUseCase from './RécupérerCommentairesLesPlusRécentsParTypeUseCase';
+import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from './RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
 
 function mapperVersDomaine(commentairePrisma: commentaire): Commentaire {
   return {
@@ -15,9 +15,9 @@ function mapperVersDomaine(commentairePrisma: commentaire): Commentaire {
   };
 }
 
-describe('RécupérerCommentairesLesPlusRécentsParTypeUseCase', () => {
+describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase', () => {
   const commentaireRepository = new CommentaireSQLRepository(prisma);
-  const récupérerCommentairesLesPlusRécentsParTypeUseCase = new RécupérerCommentairesLesPlusRécentsParTypeUseCase(commentaireRepository);
+  const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(commentaireRepository);
 
   const chantierId = 'CH-001';
   const commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale = new CommentaireSQLRowBuilder()
@@ -80,46 +80,43 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeUseCase', () => {
     .build();
     
   describe('Pour la maille nationale', () => {
-    it('Retourne un objet contenant les commentaires les plus récents avec les bons types', async () => {
+    it('Retourne un objet contenant les commentaires les plus récents de chaque type groupés par chantier id', async () => {
       // WHEN
       await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
-      const résultat = await récupérerCommentairesLesPlusRécentsParTypeUseCase.run(chantierId, 'nationale', 'FR');
+      const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([chantierId], 'nationale', 'FR');
 
       // THEN
-      const attendu = [
-        { type: 'autresRésultatsObtenusNonCorrélésAuxIndicateurs', publication: mapperVersDomaine(commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs) },
-        { type: 'risquesEtFreinsÀLever', publication: mapperVersDomaine(commentaireRisquesEtFreinsÀLeverLePlusRécent) },
-        { type: 'solutionsEtActionsÀVenir', publication: mapperVersDomaine(commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale) },
-        { type: 'exemplesConcretsDeRéussite', publication: mapperVersDomaine(commentaireExemplesConcretsDeRéussite) },
-      ];
+      const attendu = { [chantierId]: [ 
+        mapperVersDomaine(commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale),
+        mapperVersDomaine(commentaireRisquesEtFreinsÀLeverLePlusRécent),
+        mapperVersDomaine(commentaireExemplesConcretsDeRéussite),
+        mapperVersDomaine(commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs),
+      ] };
       expect(résultat).toStrictEqual(attendu);
     });
   });
 
   describe('Pour les mailles départementale et régionale ', () => {
-    it('Retourne un objet contenant les bons types et des commentaires null', async () => {
+    it('Retourne un objet vide', async () => {
       // WHEN
       await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
-      const résultat = await récupérerCommentairesLesPlusRécentsParTypeUseCase.run(chantierId, 'régionale', '01');
+      const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([chantierId], 'régionale', '01');
 
       // THEN
-      const attendu = [
-        { type: 'commentairesSurLesDonnées', publication: null },
-        { type: 'autresRésultatsObtenus', publication: null },
-      ];
-      expect(résultat).toStrictEqual(attendu);
+      expect(résultat).toStrictEqual({});
     });
 
-    it('Retourne un objet contenant les commentaires les plus récents avec les bons types', async () => {
+    it('Retourne un objet contenant les commentaires les plus récents de chaque type groupés par chantier id', async () => {
       // WHEN
       await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
-      const résultat = await récupérerCommentairesLesPlusRécentsParTypeUseCase.run(chantierId, 'départementale', '75');
+      const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([chantierId], 'départementale', '75');
 
       // THEN
-      const attendu = [
-        { type: 'commentairesSurLesDonnées', publication: mapperVersDomaine(commentairesSurLesDonnéesDept75) },
-        { type: 'autresRésultatsObtenus', publication: mapperVersDomaine(commentaireAutresRésultatsObtenus) },
-      ];
+      const attendu = { [chantierId]: [
+        mapperVersDomaine(commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale),
+        mapperVersDomaine(commentaireAutresRésultatsObtenus),
+        mapperVersDomaine(commentairesSurLesDonnéesDept75),
+      ] };
       expect(résultat).toStrictEqual(attendu);
     });
   });
