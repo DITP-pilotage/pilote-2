@@ -1,7 +1,6 @@
 import Sélecteur from '@/client/components/_commons/Sélecteur/Sélecteur';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, départementsTerritoiresStore, régionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import SélecteurTerritoireProps from './SélecteurTerritoire.interface';
-import { codeInseeFrance } from '@/server/domain/territoire/Territoire.interface';
 
 const construireLaListeDOptions = (listeCodeInsee: string[]) => {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -10,14 +9,14 @@ const construireLaListeDOptions = (listeCodeInsee: string[]) => {
 
   const territoires = mailleSélectionnée === 'départementale' ? départements : régions;
 
-  const territoiresDisponibles = territoires.filter((c) => (listeCodeInsee.find((code) => code === c.codeInsee)))
+  const territoiresDisponibles = territoires.filter((c) => (listeCodeInsee.find((code) => code === c.codeInsee)));
   
-  let result = []
-  if (listeCodeInsee.find((x) => x == 'FR') !== undefined) {
+  let result = [];
+  if (!listeCodeInsee.includes('FR')) {
     result.push({
       libellé: 'France',
       valeur: 'FR',
-    })
+    });
   }
 
   return [
@@ -29,7 +28,7 @@ const construireLaListeDOptions = (listeCodeInsee: string[]) => {
   ];
 };
 
-export default function SélecteurTerritoire({codesInseeDisponibles} : SélecteurTerritoireProps) {
+export default function SélecteurTerritoire({ codesInseeDisponibles } : SélecteurTerritoireProps) {
   const { modifierTerritoireSélectionné } = actionsTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   

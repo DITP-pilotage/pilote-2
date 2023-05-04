@@ -5,7 +5,7 @@ import SélecteursMaillesEtTerritoiresProps from './SélecteursMaillesEtTerritoi
 
 
 
-export default function SélecteursMaillesEtTerritoires({maillesDisponibles, codesInseeDisponibles}: SélecteursMaillesEtTerritoiresProps) {
+export default function SélecteursMaillesEtTerritoires({ maillesDisponibles, codesInseeDisponibles }: SélecteursMaillesEtTerritoiresProps) {
   return (
     <>
       <SélecteurMaille maillesDisponibles={maillesDisponibles} />

@@ -3,7 +3,7 @@ import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore  } from '
 import SélecteurMailleStyled from './SélecteurMaille.styled';
 import SélecteurMailleProps from './SélecteurMaille.interface';
 
-export default function SélecteurMaille({maillesDisponibles}: SélecteurMailleProps) {
+export default function SélecteurMaille({ maillesDisponibles }: SélecteurMailleProps) {
 
   const { modifierMailleSélectionnée } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -21,7 +21,8 @@ export default function SélecteurMaille({maillesDisponibles}: SélecteurMailleP
 
   if (maillesDisponibles.length  == 1) {
     const maille = maillesÀAfficher[(maillesDisponibles[0] == 'départementale') ? 0 : 1 ];
-      return (<SélecteurMailleStyled className='fr-p-1v'>
+    return (
+      <SélecteurMailleStyled className='fr-p-1v'>
         <button
           className={`${mailleSélectionnée === maille.valeur && 'sélectionné fr-text--bold'}`}
           key={maille.valeur}
@@ -30,8 +31,8 @@ export default function SélecteurMaille({maillesDisponibles}: SélecteurMailleP
         >
           {maille.label}
         </button>
-        </SélecteurMailleStyled>
-      )
+      </SélecteurMailleStyled>
+    );
   }
   
   return (

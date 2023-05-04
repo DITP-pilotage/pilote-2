@@ -13,16 +13,15 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import Filtres from '@/components/PageChantiers/Filtres/Filtres';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
-import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore, actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 
-export default function PageChantiers({ chantiers, ministères, axes, ppg, habilitations }: PageChantiersProps) {  
+export default function PageChantiers({ chantiers, ministères, axes, ppg, habilitations }: PageChantiersProps) {
   const habilitation = new Habilitation(habilitations);
   const territoireFiltre = habilitation.récupérerMailleEtCodeEnLecture();
 
@@ -32,21 +31,21 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg, habil
 
   const { modifierMailleSélectionnée, modifierTerritoireSélectionné } = actionsTerritoiresStore();
   useEffect(() =>{
-    let mailleAAfficher: "départementale" | "régionale" = 'régionale';
+    let mailleAAfficher: 'départementale' | 'régionale' = 'régionale';
 
     let territoires = territoireFiltre.REG.territoires;
-    if (territoires.length == 0) {
+    if (territoires.length === 0) {
       territoires = territoireFiltre.DEPT.territoires;
-      mailleAAfficher = "départementale";
+      mailleAAfficher = 'départementale';
     }
-    
+
     modifierMailleSélectionnée(mailleAAfficher);
     if (territoires.length == 1) {
       const codeInsee = territoires[0].split('-')[1];
       modifierTerritoireSélectionné(codeInsee);
     }
   }, []);
-  
+
 
   const codeInsee = territoireSélectionnéTerritoiresStore().codeInsee;
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
@@ -67,7 +66,10 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg, habil
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteursMaillesEtTerritoires maillesDisponibles={maillesDisponibles} codesInseeDisponibles={codesInseeDisponibles}/>
+          <SélecteursMaillesEtTerritoires
+            codesInseeDisponibles={codesInseeDisponibles}
+            maillesDisponibles={maillesDisponibles}
+          />
         </BarreLatéraleEncart>
         <section>
           <Titre

@@ -112,7 +112,10 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteursMaillesEtTerritoires maillesDisponibles={maillesDisponibles} codesInseeDisponibles={codesInseeDisponibles} />
+          <SélecteursMaillesEtTerritoires
+            codesInseeDisponibles={codesInseeDisponibles}
+            maillesDisponibles={maillesDisponibles}
+          />
         </BarreLatéraleEncart>
         <Sommaire rubriques={listeRubriques} />
       </BarreLatérale>

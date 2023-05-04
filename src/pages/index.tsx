@@ -23,9 +23,9 @@ export default function NextPageAccueil({ chantiers, ministères, axes, ppg, hab
     <PageChantiers
       axes={axes}
       chantiers={chantiers}
+      habilitations={habilitations}
       ministères={ministères}
       ppg={ppg}
-      habilitations={habilitations}
     />
   );
 }
@@ -37,7 +37,7 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
     return { props: {} };
   }
   
-  const habilitation =  new Habilitation(session.habilitations)
+  const habilitation =  new Habilitation(session.habilitations);
   const chantierRepository = dependencies.getChantierRepository();
   const chantiers = await chantierRepository.getListe(habilitation);
 
@@ -62,7 +62,7 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
       ministères,
       axes: axes,
       ppg: ppgs,
-      habilitations: session.habilitations
+      habilitations: session.habilitations,
     },
   };
 }

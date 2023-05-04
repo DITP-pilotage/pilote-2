@@ -5,10 +5,10 @@ export const scopes = ['lecture', 'saisie.commentaire', 'saisie.indicateur'] as 
 export type Scope = typeof scopes[number];
 
 export type TerritoiresFiltre =  {
-  DEPT: {maille: string, territoires: string[]},
-  REG: {maille: string, territoires: string[]},
-  NAT: {maille: string, territoires: string[]}
-}
+  DEPT: { maille: string, territoires: string[] },
+  REG: { maille: string, territoires: string[] },
+  NAT: { maille: string, territoires: string[] }
+};
 
 
 type Habilitation = {

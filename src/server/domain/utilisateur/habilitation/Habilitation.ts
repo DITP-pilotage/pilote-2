@@ -1,7 +1,7 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Habilitations, TerritoiresFiltre } from './Habilitation.interface';
-import { MailleInterne } from '../../maille/Maille.interface';
-import { CodeInsee } from '../../territoire/Territoire.interface';
 
 export default class Habilitation {
   constructor(private _habilitations: Habilitations) {}
@@ -26,12 +26,12 @@ export default class Habilitation {
     return this._habilitations.lecture.territoires;
   }
 
-  récupérerMailleEtCodeEnLecture() : TerritoiresFiltre{
+  récupérerMailleEtCodeEnLecture() : TerritoiresFiltre {
     const territoires = this.récupérerListeTerritoireCodesAccessiblesEnLecture();
     const result = {
-      REG: {maille: 'régionale', territoires: [] as string[]},
-      DEPT: {maille: 'départementale', territoires: [] as string[]},
-      NAT: {maille: 'nationale', territoires: [] as string[]}
+      REG: { maille: 'régionale', territoires: [] as string[] },
+      DEPT: { maille: 'départementale', territoires: [] as string[] },
+      NAT: { maille: 'nationale', territoires: [] as string[] },
     };
 
     for (const codeTerritoire of territoires) {
@@ -48,12 +48,12 @@ export default class Habilitation {
 
   recupererListeMailleEnLectureDisponible(): MailleInterne[] {
     const territoires = this.récupérerListeTerritoireCodesAccessiblesEnLecture();
-    let result: MailleInterne[]= [];
+    let result: MailleInterne[] = [];
 
     for (const codeTerritoire of territoires) {
-      if (codeTerritoire.startsWith('REG') && (result.find((x)=> {x == 'régionale'}) === undefined)) {
+      if (codeTerritoire.startsWith('REG') && !result.includes('régionale')) {
         result.push('régionale');
-      } else if (codeTerritoire.startsWith('DEPT') && (result.find((x)=> {x == 'départementale'}) === undefined)) {
+      } else if (codeTerritoire.startsWith('DEPT') && !result.includes('départementale')) {
         result.push('départementale');
       }
     }
@@ -67,7 +67,7 @@ export default class Habilitation {
 
     for (const territoire of territoires) {
       if (territoire.startsWith(codeMaille) || territoire.startsWith('NAT'))
-        result.push(territoire.split('-')[1])
+        result.push(territoire.split('-')[1]);
     }
     return result;
   }
