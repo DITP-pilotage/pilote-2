@@ -95,13 +95,14 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                 {
                   process.env.NEXT_PUBLIC_FF_EXPORT_CSV === 'true' &&
                   <div>
-                    <Link
+                    {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                    <a
                       className="fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm"
                       href="/api/chantier/export"
                       title="Exporter les données"
                     >
                       Exporter les données
-                    </Link>
+                    </a>
                   </div>
                 }
               </div>

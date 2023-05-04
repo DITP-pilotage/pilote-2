@@ -63,9 +63,12 @@ export default async function handleExportCsv(request: NextApiRequest, response:
 
   const exportCsvUseCase = new ExportCsvUseCase();
   const chantiersPourExport = await exportCsvUseCase.run(session.habilitations);
+  const now = new Date();
+  const horodatage = now.toISOString().replaceAll(/[:T]/g, '-').replace(/\..*/, '');
+  const csvFilename = `PILOTE-Chantiers-sans-filtre-${horodatage}.csv`;
 
   response.setHeader('Content-Type', 'text/csv');
-  response.setHeader('Content-Disposition', 'attachment; filename="chantiers.csv"');
+  response.setHeader('Content-Disposition', `attachment; filename="${csvFilename}"`);
 
   const stringifier = stringify({
     header: true,
