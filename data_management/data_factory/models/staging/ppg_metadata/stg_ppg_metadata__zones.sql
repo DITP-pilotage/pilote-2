@@ -17,6 +17,14 @@ renamed as (
 
     from source
 
+),
+
+filtered as (
+
+    select
+        *
+    from renamed
+    where zone_parent_id is NULL or (code_insee <> 'COM' and not 'COM' = ANY(zone_parent_id))
 )
 
-select * from renamed
+select * from filtered

@@ -40,7 +40,7 @@ chantier_est_barometre as (
         m_chantiers.directeurs_projet_mails,
         chantier_est_barometre.est_barometre,
         m_chantiers.est_territorialise,
-        'NAT-FR' as territoire_code
+        CONCAT(m_chantiers.maille, '-', m_chantiers.code_insee) as territoire_code
     FROM {{ ref('int_chantiers_with_mailles_and_territoires') }} m_chantiers
         LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom='Réforme'
         LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
@@ -67,7 +67,7 @@ UNION
         m_chantiers.directeurs_projet_mails,
         chantier_est_barometre.est_barometre,
         m_chantiers.est_territorialise,
-        'NAT-FR' as territoire_code
+        CONCAT(m_chantiers.maille, '-', m_chantiers.code_insee) as territoire_code
     FROM {{ ref('int_chantiers_with_mailles_and_territoires') }} m_chantiers
         LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom IN ('Région', 'Département')
         LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
