@@ -39,7 +39,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
                 }
                 { indicateur.nom }
               </Titre>
-              <div className="fr-ml-3w">
+              <div className="fr-ml-2w">
                 <p className='fr-mb-3w fr-text--xs texte-gris'>
                   Dernière mise à jour :
                   {' '}

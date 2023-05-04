@@ -5,8 +5,8 @@ import PublicationAffichageProps from './PublicationAffichage.interface';
 export default function PublicationAffichage({ publication }: PublicationAffichageProps) {
   if (!publication) {
     return (
-      <p className="fr-badge fr-badge--no-icon">
-        NON RENSEIGNÉ
+      <p className="fr-mt-1v fr-badge fr-badge--no-icon">
+        Non renseigné
       </p>
     );
   }
