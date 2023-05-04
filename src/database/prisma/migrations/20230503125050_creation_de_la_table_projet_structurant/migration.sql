@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "public"."projet_structurant" (
-    "id" UUID NOT NULL,
+    "id" TEXT NOT NULL,
     "code" TEXT NOT NULL,
     "nom" TEXT NOT NULL,
     "direction_administration" TEXT[],

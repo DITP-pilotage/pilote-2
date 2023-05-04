@@ -195,7 +195,7 @@ model decision_strategique {
 }
 
 model projet_structurant {
-    id                          String  @id @db.Uuid
+    id                          String  @id
     code                        String
     nom                         String
     direction_administration    String[]
