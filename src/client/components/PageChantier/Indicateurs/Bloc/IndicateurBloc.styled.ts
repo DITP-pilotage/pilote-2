@@ -1,11 +1,6 @@
 import styled from '@emotion/styled';
 
 const IndicateurBlocStyled = styled.div`
-  .information-secondaire {
-    font-size: 0.625rem;
-    line-height: 1rem;
-  }
-
   td {
     min-height: 2rem;
     vertical-align: top;

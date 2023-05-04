@@ -18,32 +18,29 @@ const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`
   position: relative;
   width: ${(props) => largeurs[props.taille]};
 
-  .jauge-valeur-au-centre,
-  .jauge-valeur-dessous {
-    margin-bottom: 0;
-    color: ${(props) => couleurs[props.couleur]};
-    word-break: normal;
-  }
+  .jauge-tracé {
+    position: relative;
 
-  .jauge-valeur-au-centre {
-    position: absolute;
-    top: calc(50% - 1rem);
-    width: 100%;
-    margin: 0;
-    line-height: 0.5rem !important;
-    text-align: center;
-  }
+    .jauge-valeur {
+      margin-bottom: 0;
+      color: ${(props) => couleurs[props.couleur]};
+      word-break: normal;
 
-  .jauge-libellé-au-centre {
-    text-align: center;
-  }
+      &.jauge-valeur-au-centre {
+        position: absolute;
+        top: calc(50% - 1.4rem);
+        width: 100%;
+        line-height: 2.5rem !important;
+      }
+    }
 
-  .jauge-barre-fond {
-    fill: #d9d9d9;
-  }
+    .jauge-barre-fond {
+      fill: #d9d9d9;
+    }
 
-  .jauge-barre-valeur {
-    fill: ${(props) => couleurs[props.couleur]};
+    .jauge-barre-valeur {
+      fill: ${(props) => couleurs[props.couleur]};
+    }
   }
 `;
 

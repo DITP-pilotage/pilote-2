@@ -8,7 +8,7 @@ import PublicationProps from './Publication.interface';
 import PublicationHistorique from './PublicationHistorique/PublicationHistorique';
 import PublicationAffichage from './PublicationAffichage/PublicationAffichage';
 
-export default function Publication({ type, publicationInitiale, entité, chantierId, maille, codeInsee, modeÉcriture, estInteractif }: PublicationProps) {
+export default function Publication({ caractéristiques, publicationInitiale, chantierId, maille, codeInsee, modeÉcriture, estInteractif }: PublicationProps) {
   const {
     publication,
     modeÉdition,
@@ -25,11 +25,11 @@ export default function Publication({ type, publicationInitiale, entité, chanti
         baliseHtml='h3'
         className="fr-h5 fr-mb-1w"
       >
-        { modeÉdition ? `Modifier ${entité}` : type.libellé }
+        { modeÉdition ? `Modifier : ${caractéristiques.libelléType}` : caractéristiques.libelléType }
       </Titre>
       {
         !!alerte &&
-        <div className='fr-mb-4w'>
+        <div className='fr-mb-2w'>
           <Alerte
             titre={alerte.titre}
             type={alerte.type}
@@ -40,11 +40,10 @@ export default function Publication({ type, publicationInitiale, entité, chanti
         modeÉdition && modeÉcriture ?
           <PublicationFormulaire
             annulationCallback={désactiverLeModeÉdition}
+            caractéristiques={caractéristiques}
             contenuInitial={publication?.contenu}
-            entité={entité}
             erreurCallback={afficherAlerteErreur}
             succèsCallback={publicationCréée}
-            type={type.id}
           />
           :
           <>
@@ -58,9 +57,9 @@ export default function Publication({ type, publicationInitiale, entité, chanti
                           <PublicationHistorique
                             chantierId={chantierId}
                             codeInsee={codeInsee}
-                            entité={entité}
+                            entité={caractéristiques.entité}
                             maille={maille}
-                            type={type.id}
+                            type={caractéristiques.type}
                           />
                       }
                     {
@@ -86,4 +85,3 @@ export default function Publication({ type, publicationInitiale, entité, chanti
     </PublicationStyled>
   );
 }
-

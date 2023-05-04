@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import libellésTypesObjectif from '@/client/constants/libellésTypesObjectif';
+import { consignesDÉcritureObjectif, libellésTypesObjectif } from '@/client/constants/libellésObjectif';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import { ObjectifProps } from '@/components/PageChantier/Objectifs/Objectifs.interface';
@@ -26,14 +26,18 @@ export default function Objectifs({ objectifs, chantierId, maille, codeInsee, mo
                   )
                 }
                 <Publication
+                  caractéristiques={{
+                    type: type,
+                    entité: 'objectifs',
+                    libelléType: libellésTypesObjectif[type as TypeObjectif],
+                    consigneDÉcriture: consignesDÉcritureObjectif[type as TypeObjectif],
+                  }}
                   chantierId={chantierId}
                   codeInsee={codeInsee}
-                  entité="objectifs"
                   estInteractif={estInteractif}
                   maille={maille}
                   modeÉcriture={modeÉcriture}
                   publicationInitiale={publication}
-                  type={{ id: type, libellé: libellésTypesObjectif[type as TypeObjectif] }}
                 />
               </Fragment>
             ))

@@ -33,13 +33,21 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
               >
                 {
                   !!indicateur.estIndicateurDuBaromètre &&
-                  <PictoBaromètre />
+                  <span className='fr-mr-1v'>
+                    <PictoBaromètre />
+                  </span>
                 }
                 { indicateur.nom }
               </Titre>
-              <p className='fr-mb-2w information-secondaire texte-gris'>
-                Dernière mise à jour : Non renseigné
-              </p>
+              <div className="fr-ml-2w">
+                <p className='fr-mb-3w fr-text--xs texte-gris'>
+                  Dernière mise à jour :
+                  {' '}
+                  <span className="fr-text--bold">
+                    Non renseigné
+                  </span>
+                </p>
+              </div>
             </div>
             {
             estDisponibleALImport ? 

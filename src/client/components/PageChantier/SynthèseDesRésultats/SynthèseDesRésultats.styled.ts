@@ -1,13 +1,31 @@
 import styled from '@emotion/styled';
 
 const SynthèseDesRésultatsStyled = styled.section`
-  .conteneur-météo {
+  .contenu {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1.5rem;
+    justify-content: center;
+  }
+  
+  .météo-affichage {
+    flex-basis: 8rem;
     text-align: center;
+    
+    p {
+      font-size: 0.75rem;
+      line-height: 1.25rem;
+    }
+  }
+  
+  .synthèse-affichage {
+    flex-basis: 18rem;
+    flex-grow: 1;
   }
 
   .météo-picto {
-    width: auto;
-    height: 6rem;
+    width: 5rem;
+    height: auto;
   }
 
   .actions {
@@ -16,12 +34,7 @@ const SynthèseDesRésultatsStyled = styled.section`
   }
 
   .bouton-modifier {
-    border-radius: 4px
-  }
-
-  .conteneur {
-    display: grid;
-    grid-template-columns: auto 1fr;
+    border-radius: 0.25rem;
   }
 `;
 

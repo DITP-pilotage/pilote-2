@@ -43,15 +43,15 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
               <>
                 {
                   !!alerte &&
-                  <div className='fr-mb-4w'>
+                  <div className='fr-mb-2w'>
                     <Alerte
                       titre={alerte.titre}
                       type={alerte.type}
                     />
                   </div>
                 }
-                <div className="conteneur">
-                  <div className="conteneur-météo fr-mb-3w fr-mb-md-0">
+                <div className="contenu">
+                  <div className="météo-affichage">
                     <MétéoBadge météo={synthèseDesRésultats?.météo ?? 'NON_RENSEIGNEE'} />
                     {
                       !!synthèseDesRésultats &&
@@ -60,7 +60,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
                       </div>
                     }
                   </div>
-                  <div className="fr-pl-md-3w">
+                  <div className="synthèse-affichage">
                     <SynthèseDesRésultatsAffichage synthèseDesRésultats={synthèseDesRésultats} />
                   </div>
                 </div>

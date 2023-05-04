@@ -9,7 +9,10 @@ export default function TableauContenu<T>({ tableau }: TableauContenuProps<T>) {
           <tr key={row.id}>
             {
               row.getVisibleCells().map(cell => (
-                <td key={cell.id} >
+                <td
+                  className="fr-py-1w"
+                  key={cell.id}
+                >
                   {
                     flexRender(
                       cell.column.columnDef.cell,

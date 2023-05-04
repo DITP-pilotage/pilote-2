@@ -13,18 +13,19 @@ export default function DécisionsStratégiques({ décisionStratégique, chantie
         Décisions stratégiques
       </Titre>
       <Bloc titre='France'>
-        <Publication 
+        <Publication
+          caractéristiques={{
+            type: 'suivi_des_decisions',
+            libelléType: 'Suivi des décisions stratégiques',
+            entité: 'décisions stratégiques',
+            consigneDÉcriture: 'Notez les décisions prises lors des réunions Elysée <> Matignon (AKAR) et indiquez les actions envisagées et/ou réalisées pour mettre en œuvre ou répondre à ces décisions.',
+          }}
           chantierId={chantierId}
           codeInsee='FR'
-          entité="décisions stratégiques"
           estInteractif={estInteractif}
           maille="nationale"
           modeÉcriture={modeÉcriture}
           publicationInitiale={décisionStratégique}
-          type={{
-            id: 'suivi_des_decisions',
-            libellé: 'Suivi des décisions stratégiques',
-          }}
         />
       </Bloc>
     </section>

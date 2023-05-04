@@ -15,7 +15,7 @@ describe('Jauge de progression', () => {
     expect(screen.getByText('24%')).toBeInTheDocument();
   });
 
-  test('la jauge contient "Non renseigné" si son pourcentage est null', () => {
+  test('la jauge contient "- %" si son pourcentage est null', () => {
     render(
       <JaugeDeProgression
         couleur="vert"
@@ -24,7 +24,7 @@ describe('Jauge de progression', () => {
         taille='sm'
       />,
     );
-    expect(screen.getByText('Non renseigné')).toBeInTheDocument();
+    expect(screen.getByText('- %')).toBeInTheDocument();
   });
 
   test("le libellé correspondant à la jauge s'affiche", () => {

@@ -24,6 +24,7 @@ export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
             {headerGroup.headers.map(header => (
               <th
                 aria-sort={renseignerAttributAriaSort(header.column.getIsSorted())}
+                className="fr-py-1w"
                 key={header.id}
                 style={{
                   width: header.column.columnDef.meta?.width ?? undefined,
