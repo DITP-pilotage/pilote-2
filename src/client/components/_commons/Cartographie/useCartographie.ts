@@ -41,7 +41,7 @@ export default function useCartographie() {
       codeInsee: 'FR',
       maille: 'nationale',
     },
-    territoireSélectionnable: false,
+    territoireSélectionnable: true,
     multiséléction: false,
     estInteractif: true,
   };

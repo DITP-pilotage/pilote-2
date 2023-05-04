@@ -119,7 +119,6 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
                     <CartographieAvancement
                       auClicTerritoireCallback={auClicTerritoireCallback}
                       données={donnéesCartographie}
-                      options={{ territoireSélectionnable: true }}
                     />
                   </section>
                 </Bloc>
