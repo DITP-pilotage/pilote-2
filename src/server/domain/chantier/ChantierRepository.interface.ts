@@ -5,10 +5,11 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { ChantierPourExport } from '@/server/domain/chantier/ChantierPourExport';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import Habilitation from '../utilisateur/habilitation/Habilitation';
 
 export default interface ChantierRepository {
   getById(id: string, habilitations: Habilitations): Promise<Chantier>;
-  getListe(habilitations: Habilitations): Promise<Chantier[]>;
+  getListe(habilitations: Habilitation): Promise<Chantier[]>;
   récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null>
   modifierMétéo(chantierId: string, maille: Maille, codeInsee: CodeInsee, météo: Météo): Promise<void>;
   getChantiersPourExports(habilitations: Habilitations): Promise<ChantierPourExport[]>;

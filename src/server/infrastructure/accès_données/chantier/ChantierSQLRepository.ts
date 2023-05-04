@@ -70,10 +70,10 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiers.map(c => c.id);
   }
 
-  async getListe(habilitations: Habilitations): Promise<Chantier[]> {
-    const h = new Habilitation(habilitations);
-    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+  async getListe(habilitation: Habilitation): Promise<Chantier[]> {
+    
+    const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
     // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
     territoiresLecture.push('NAT-FR');
 
