@@ -1,9 +1,8 @@
 import { PrismaClient, objectif as ObjectifPrisma, type_objectif as TypeObjectifPrisma } from '@prisma/client';
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
-import Objectif, { TypeObjectif } from '@/server/domain/objectif/Objectif.interface';
+import Objectif, { TypeObjectif, typesObjectif } from '@/server/domain/objectif/Objectif.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ObjectifTypé } from '@/server/usecase/objectif/RécupérerObjectifsLesPlusRécentsParTypeUseCase';
-import { groupByAndTransform } from '@/client/utils/arrays';
 
 export const NOMS_TYPES_OBJECTIFS: Record<TypeObjectifPrisma, TypeObjectif> = {
   notre_ambition: 'notreAmbition',
@@ -24,7 +23,8 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
     this.prisma = prisma;
   }
 
-  private mapperVersDomaine(objectif: ObjectifPrisma): Objectif {
+  private mapperVersDomaine(objectif: ObjectifPrisma | undefined): Objectif {
+    if (objectif === undefined) return null;
     return {
       id: objectif.id,
       type: NOMS_TYPES_OBJECTIFS[objectif.type],
@@ -72,7 +72,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
     return this.mapperVersDomaine(objectifCréé);
   }
 
-  async récupérerLesPlusRécentsGroupésParChantier(chantiersIds: Chantier['id'][]): Promise<Record<Chantier['id'], ObjectifTypé[]>> {
+  async récupérerLesPlusRécentsGroupésParChantier(chantiersIds: Chantier['id'][]) {
     const objectifs = await this.prisma.$queryRaw<ObjectifPrisma[]>`
       SELECT o.*
       FROM objectif o
@@ -87,13 +87,15 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
             AND o.chantier_id = o_recents.chantier_id
     `;
 
-    return groupByAndTransform(
-      objectifs,
-      (objectif) => objectif.chantier_id,
-      (obj: ObjectifPrisma) => ({
-        type: NOMS_TYPES_OBJECTIFS[obj.type],
-        publication: this.mapperVersDomaine(obj),
-      }),
-    );
+    const résultat: Record<Chantier['id'], ObjectifTypé[]> = {};
+
+    for (const chantierId of chantiersIds) {
+      résultat[chantierId] = [];
+      for (const type of typesObjectif) {
+        const objectif = objectifs.find(o => o.chantier_id === chantierId && NOMS_TYPES_OBJECTIFS[o.type] === type);
+        résultat[chantierId].push({ type, publication: this.mapperVersDomaine(objectif) });
+      }
+    }
+    return résultat;
   }
 }

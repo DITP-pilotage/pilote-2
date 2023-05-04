@@ -3,13 +3,14 @@ import CommentaireRepository from '@/server/domain/commentaire/CommentaireReposi
 import {
   Commentaire,
   TypeCommentaire,
+  typesCommentaireMailleNationale,
+  typesCommentaireMailleRégionaleOuDépartementale,
 } from '@/server/domain/commentaire/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { CommentaireTypé } from '@/server/usecase/commentaire/RécupérerCommentairesLesPlusRécentsParTypeUseCase';
-import { groupByAndTransform } from '@/client/utils/arrays';
 
 export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaire> = {
   commentaires_sur_les_donnees: 'commentairesSurLesDonnées',
@@ -91,7 +92,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return this.mapperVersDomaine(commentaireCréé);
   }
 
-  async récupérerLesPlusRécentsGroupésParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], CommentaireTypé[]>> {
+  async récupérerLesPlusRécentsGroupésParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee) {
     const commentaires = await this.prisma.$queryRaw<CommentairePrisma[]>`
       SELECT c.chantier_id, c.contenu, c.auteur, c.type, id, date
       FROM commentaire c
@@ -109,14 +110,19 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
           AND c.maille = c_recents.maille
           AND c.code_insee = c_recents.code_insee
     `;
+    
+    const typesCommentaires = maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale;
 
-    return groupByAndTransform(
-      commentaires,
-      (commentaire) => commentaire.chantier_id,
-      (c1: CommentairePrisma) => ({
-        type: NOMS_TYPES_COMMENTAIRES[c1.type],
-        publication: this.mapperVersDomaine(c1),
-      }),
-    );
+    const résultat: Record<Chantier['id'], CommentaireTypé[]> = {};
+
+    for (const chantierId of chantiersIds) {
+      résultat[chantierId] = [];
+      for (const type of typesCommentaires) {
+        const commentaire = commentaires.find(c => c.chantier_id === chantierId && NOMS_TYPES_COMMENTAIRES[c.type] === type);
+        résultat[chantierId].push({ type, publication: this.mapperVersDomaine(commentaire) });
+      }
+    }
+
+    return résultat;
   }
 }
