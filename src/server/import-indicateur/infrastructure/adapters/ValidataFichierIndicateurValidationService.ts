@@ -101,10 +101,12 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     schema,
   }: ValiderFichierPayload): Promise<DetailValidationFichier> {
     const report = await this.httpClient.post({ cheminCompletDuFichier, nomDuFichier, schema });
-    const { enTetes, donnees } = extraireLeContenuDuFichier(report.tasks);
-
     let listeIndicateursData: IndicateurData[] = [];
-    if (report.tasks[0].resource) {
+    let listeErreursValidation: ErreurValidationFichier[] = [];
+
+    if (report.tasks[0].resource.data[0].includes('identifiant_indic')) {
+      const { enTetes, donnees } = extraireLeContenuDuFichier(report.tasks);
+
       listeIndicateursData = donnees.flat().map(donnee => IndicateurData.createIndicateurData({
         indicId: donnee[enTetes.indicId],
         zoneId: donnee[enTetes.zoneId],
@@ -112,13 +114,23 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
         metricType: donnee[enTetes.metricType],
         metricValue: `${donnee[enTetes.metricValue]}`,
       }));
+    } else {
+      listeErreursValidation = [ErreurValidationFichier.creerErreurValidationFichier({
+        cellule: 'identifiant_indic',
+        nom: 'identifiant_indic',
+        message: "L'en-tête identifiant_indic n'est pas présente",
+        numeroDeLigne: 0,
+        positionDeLigne: 0,
+        nomDuChamp: 'identifiant_indic',
+        positionDuChamp: 0,
+      })];
     }
 
     if (report.valid) {
       return DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, listeIndicateursData });
     }
 
-    const listeErreursValidation = report.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
+    const listeErreursReport = report.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
       cellule: taskError.cell,
       nom: taskError.name,
       message: personnaliserValidataMessage(taskError),
@@ -127,6 +139,8 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
       nomDuChamp: taskError.fieldName || '',
       positionDuChamp: taskError.fieldPosition,
     }));
+
+    listeErreursValidation = [...listeErreursValidation, ...listeErreursReport];
 
     return DetailValidationFichier.creerDetailValidationFichier({
       estValide: report.valid,
