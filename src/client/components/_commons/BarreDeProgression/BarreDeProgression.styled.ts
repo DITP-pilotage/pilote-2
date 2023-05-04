@@ -70,7 +70,7 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
   
   .pourcentage{
     p{
-      color: ${props => couleurDeFond[props.fond]}
+      color: ${props => couleurDeBarreEtTexte[props.variante]}
     }
   }
   
@@ -84,7 +84,7 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
 
     .pourcentage {
       p {
-        width: ${props => couleurDeFond[props.fond]};
+        width: ${props => dimensions[props.taille].largeurTexte};
         padding-left: 0.5em;
         text-align: right;
         white-space: nowrap;
