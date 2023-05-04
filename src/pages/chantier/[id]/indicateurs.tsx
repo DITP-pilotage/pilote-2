@@ -7,14 +7,11 @@ import { ChantierInformation } from '@/components/PageImportIndicateur/ChantierI
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import logger from '@/server/infrastructure/logger';
-import { Habilitation, SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
 import usePageChantier from '@/components/PageChantier/usePageChantier';
 
 interface NextPageImportIndicateurProps {
   chantierInformation: ChantierInformation
   indicateurs: Indicateur[],
-  habilitation: Habilitation
 }
 
 type GetServerSideProps = GetServerSidePropsResult<NextPageImportIndicateurProps>;
@@ -35,15 +32,11 @@ export async function getServerSideProps({
 
   const session = await getServerSession(req, res, authOptions);
   if (!session) {
-    logger.error('Not connected?');
-    // TODO: On renvoie une erreur ? Quelle erreur ?
     throw new Error('Not connected?');
   }
 
-  const { habilitation } = session;
-
   const chantierRepository = dependencies.getChantierRepository();
-  const chantier: Chantier = await chantierRepository.getById(params.id, habilitation, SCOPE_LECTURE);
+  const chantier: Chantier = await chantierRepository.getById(params.id, session.habilitations);
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs = await indicateurRepository.récupérerParChantierId(params.id);
@@ -51,7 +44,6 @@ export async function getServerSideProps({
   return {
     props: {
       indicateurs,
-      habilitation,
       chantierInformation: {
         id: chantier.id,
         nom: chantier.nom,
@@ -65,9 +57,8 @@ export async function getServerSideProps({
 export default function NextPageImportIndicateur({
   chantierInformation,
   indicateurs,
-  habilitation,
 }: NextPageImportIndicateurProps) {
-  const { détailsIndicateurs } = usePageChantier(chantierInformation.id, habilitation);
+  const { détailsIndicateurs } = usePageChantier(chantierInformation.id);
 
   return (
     <PageImportIndicateur

@@ -14,10 +14,11 @@ type AvancementRegroupementDonnéesBrutes = {
 };
 
 export class AgrégateurChantiersParTerritoire {
-  private agrégat: AgrégatParTerritoire = this._créerAgrégatInitial();
+  private agrégat: AgrégatParTerritoire;
 
   constructor(private chantiers: Chantier[]) {
     this.chantiers = chantiers;
+    this.agrégat = this._créerAgrégatInitial();
   }
 
   agréger() {
@@ -43,17 +44,18 @@ export class AgrégateurChantiersParTerritoire {
         global: [],
         annuel: [],
       };
-
-
       objectEntries(codesInsee.territoires).forEach(([codeInsee, donnéesTerritoire]) => {
-        const avancementsGlobaux = donnéesTerritoire.donnéesBrutes.avancements.map(avancement => avancement.global);
-        const avancementsAnnuels = donnéesTerritoire.donnéesBrutes.avancements.map(avancement => avancement.annuel);
-        avancementsPourCetteMaille.global = [...avancementsPourCetteMaille.global, ...avancementsGlobaux];
-        avancementsPourCetteMaille.annuel = [...avancementsPourCetteMaille.annuel, ...avancementsAnnuels];
-
-
+        let avancementsPourCeCodeInsee: AvancementRegroupementDonnéesBrutes = {
+          global: [],
+          annuel: [],
+        };
+        avancementsPourCeCodeInsee.global = donnéesTerritoire.donnéesBrutes.avancements.map(avancement => avancement.global);
+        avancementsPourCeCodeInsee.annuel = donnéesTerritoire.donnéesBrutes.avancements.map(avancement => avancement.annuel);
+        avancementsPourCetteMaille.global = [...avancementsPourCetteMaille.global, ...avancementsPourCeCodeInsee.global];
+        avancementsPourCetteMaille.annuel = [...avancementsPourCetteMaille.annuel, ...avancementsPourCeCodeInsee.annuel];
+        
         this._calculerLaRépartitionDesMétéosParTerritoire(maille, codeInsee, donnéesTerritoire.donnéesBrutes.météos);
-        this._calculerLaRépartitionDesAvancementsParTerritoire(maille, avancementsPourCetteMaille, codeInsee);
+        this._calculerLaRépartitionDesAvancementsParTerritoire(maille, avancementsPourCeCodeInsee, codeInsee);
       });
   
       this._calculerLaRépartitionDesAvancementsParMaille(maille, avancementsPourCetteMaille);
@@ -66,8 +68,7 @@ export class AgrégateurChantiersParTerritoire {
     });
   }
 
-  private _calculerLaRépartitionDesAvancementsParTerritoire(maille: Maille, avancements: AvancementRegroupementDonnéesBrutes, codeInsee: string | number) {
-
+  private _calculerLaRépartitionDesAvancementsParTerritoire(maille: Maille, avancements: AvancementRegroupementDonnéesBrutes, codeInsee: string) {
     this.agrégat[maille].territoires[codeInsee].répartition.avancements.global.minimum = valeurMinimum(avancements.global);
     this.agrégat[maille].territoires[codeInsee].répartition.avancements.global.maximum = valeurMaximum(avancements.global);
     this.agrégat[maille].territoires[codeInsee].répartition.avancements.global.moyenne = calculerMoyenne(avancements.global);

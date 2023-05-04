@@ -1,10 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
-  checkAuthorizationChantierScope,
-  Habilitation,
-  SCOPE_SAISIE_INDICATEURS,
-} from '@/server/domain/identité/Habilitation';
-import {
   mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
   mailleSélectionnéeTerritoiresStore, territoiresComparésTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
@@ -12,7 +7,7 @@ import {
 import api from '@/server/infrastructure/api/trpc/api';
 import calculerChantierAvancements from '@/client/utils/chantier/avancement/calculerChantierAvancements';
 
-export default function usePageChantier(chantierId: string, habilitation: Habilitation) {
+export default function usePageChantier(chantierId: string) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
@@ -67,8 +62,6 @@ export default function usePageChantier(chantierId: string, habilitation: Habili
     { refetchOnWindowFocus: false, keepPreviousData: true },
   );
 
-  const modeÉcriture = checkAuthorizationChantierScope(habilitation, chantierId, SCOPE_SAISIE_INDICATEURS);
-
   const { data: chantier, refetch: rechargerChantier } = api.chantier.récupérer.useQuery(
     {
       chantierId,
@@ -93,7 +86,6 @@ export default function usePageChantier(chantierId: string, habilitation: Habili
     objectifs: objectifs ?? null,
     synthèseDesRésultats: synthèseDesRésultats ?? null,
     décisionStratégique: décisionStratégique ?? null,
-    modeÉcriture,
     chantier: chantier ?? null,
     rechargerChantier,
     avancements,

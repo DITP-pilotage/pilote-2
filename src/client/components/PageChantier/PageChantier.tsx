@@ -12,6 +12,7 @@ import {
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
 import Loader from '@/components/_commons/Loader/Loader';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
@@ -25,7 +26,28 @@ import usePageChantier from './usePageChantier';
 import Objectifs from './Objectifs/Objectifs';
 import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
 
-export default function PageChantier({ indicateurs, habilitation }: PageChantierProps) {
+function convertitMailleCodeInseeEnCodeTerritoire(maille: string, codeInsee: string) {
+  const lowerMaille = maille.toLowerCase();
+  let codeMaille = 'DEPT';
+
+  switch (lowerMaille) {
+    case 'nationale':
+    case 'nat': {
+      codeMaille = 'NAT';
+      break;
+    }
+    case 'régionale':
+    case 'reg': {
+      codeMaille = 'REG';
+      break;
+    }
+  }
+  return codeMaille + '-' + codeInsee;
+}
+
+
+
+export default function PageChantier({ indicateurs, habilitations }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const chantierId = useRouter().query.id as string;
   const {
@@ -34,13 +56,20 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
     synthèseDesRésultats,
     objectifs,
     décisionStratégique,
-    modeÉcriture,
     chantier,
     rechargerChantier,
     avancements,
-  } = usePageChantier(chantierId, habilitation);
+  } = usePageChantier(chantierId);
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
+  //console.log('territoire', territoireSélectionné, 'maille', mailleAssociéeAuTerritoireSélectionné)
+  const codeTerritoire = convertitMailleCodeInseeEnCodeTerritoire(mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee);
+
+  const modeÉcritureSynthese = new Habilitation(habilitations).peutModifierLeChantier(chantierId, codeTerritoire);
+  const modeÉcritureCommentaires = modeÉcritureSynthese;
+  const modeÉcritureDécisionsStratégiques = modeÉcritureSynthese;
+  const modeÉcritureObjectifs = new Habilitation(habilitations).peutModifierLeChantier(chantierId, 'NAT-FR');
 
   const listeRubriques: Rubrique[] = useMemo(() => (
     mailleAssociéeAuTerritoireSélectionné === 'nationale' ? (
@@ -112,7 +141,7 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
                   <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
                     <SynthèseDesRésultats
                       chantierId={chantier.id}
-                      modeÉcriture={modeÉcriture}
+                      modeÉcriture={modeÉcritureSynthese}
                       rechargerChantier={rechargerChantier}
                       synthèseDesRésultatsInitiale={synthèseDesRésultats}
                     />
@@ -131,7 +160,7 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
                         chantierId={chantier.id}
                         codeInsee='FR'
                         maille='nationale'
-                        modeÉcriture={modeÉcriture}
+                        modeÉcriture={modeÉcritureObjectifs}
                         objectifs={objectifs}
                       />
                     </div>
@@ -156,7 +185,7 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
                       <DécisionsStratégiques
                         chantierId={chantier.id}
                         décisionStratégique={décisionStratégique}
-                        modeÉcriture={modeÉcriture}
+                        modeÉcriture={modeÉcritureDécisionsStratégiques}
                       />
                     </div>
                   </div>
@@ -170,7 +199,7 @@ export default function PageChantier({ indicateurs, habilitation }: PageChantier
                           codeInsee={territoireSélectionné.codeInsee}
                           commentaires={commentaires}
                           maille={mailleAssociéeAuTerritoireSélectionné}
-                          modeÉcriture={modeÉcriture}
+                          modeÉcriture={modeÉcritureCommentaires}
                         />
                       </div>
                     </div>

@@ -142,7 +142,8 @@ const credentialsProvider = CredentialsProvider({
 
     }
     const utilisateurRepository = dependencies.getUtilisateurRepository();
-    const utilisateur = await utilisateurRepository.findOneByEmail(username);
+    const utilisateur = await utilisateurRepository.récupérer(username);
+    
     if (!utilisateur) {
       return null;
     }
@@ -200,14 +201,15 @@ export const authOptions: AuthOptions = {
     },
 
     async session({ session, token }: any) {
-      const habilitationRepository = dependencies.getHabilitationRepository();
-      const habilitation = await habilitationRepository.récupèreHabilitationsPourUtilisateur(token.user.email);
+      const utilisateurRepository = dependencies.getUtilisateurRepository();
+      const utilisateur = await utilisateurRepository.récupérer(token.user.email);
 
       // Send properties to the client, like an access_token from a provider.
       session.user = token.user;
       session.accessToken = token.accessToken;
       session.error = token.error;
-      session.habilitation = habilitation;
+      session.profil = utilisateur?.profil;
+      session.habilitations = utilisateur!.habilitations;
 
       return session;
     },

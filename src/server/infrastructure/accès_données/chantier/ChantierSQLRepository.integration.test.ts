@@ -4,10 +4,10 @@ import ChantierRepository from '@/server/domain/chantier/ChantierRepository.inte
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import { Habilitation, SCOPE_LECTURE } from '@/server/domain/identité/Habilitation';
 import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 import SyntheseDesResultatsRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
+import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -31,14 +31,14 @@ describe('ChantierSQLRepository', () => {
           .avecId('CH-002').avecNom('Chantier 2').build(),
       ],
     });
-    const habilitation = { chantiers: {
-      'CH-001': [SCOPE_LECTURE],
-      'CH-002': [SCOPE_LECTURE],
-    } };
+    const habilitation = { lecture: {
+      chantiers: ['CH-001', 'CH-002'],
+      territoires: ['NAT-FR'],
+    } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result1 = await repository.getById('CH-001', habilitation, SCOPE_LECTURE);
-    const result2 = await repository.getById('CH-002', habilitation, SCOPE_LECTURE);
+    const result1 = await repository.getById('CH-001', habilitation);
+    const result2 = await repository.getById('CH-002', habilitation);
 
     // THEN
     expect(result1.nom).toEqual('Chantier 1');
@@ -58,7 +58,11 @@ describe('ChantierSQLRepository', () => {
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
 
     const chantierId = 'CH-001';
-    const habilitation = { chantiers: { 'CH-001': [SCOPE_LECTURE] } };
+
+    const habilitation = { lecture: {
+      chantiers: ['CH-001'],
+      territoires: ['NAT-FR'],
+    } } as unknown as Utilisateur['habilitations'];
 
     await prisma.chantier.create({
       data: new ChantierSQLRowBuilder()
@@ -66,7 +70,7 @@ describe('ChantierSQLRepository', () => {
     });
 
     // WHEN
-    const result = await repository.getListe(habilitation, SCOPE_LECTURE);
+    const result = await repository.getListe(habilitation);
 
     // THEN
     expect(result).toStrictEqual([]);
@@ -83,11 +87,15 @@ describe('ChantierSQLRepository', () => {
           .avecId(chantierId).avecMaille('DEPT').avecMétéo('SOLEIL').avecCodeInsee('13').avecTauxAvancement(45).build(),
       ],
     });
-    const habilitation = { chantiers: { 'CH-001': [SCOPE_LECTURE] } };
     const repository: ChantierRepository = new ChantierSQLRepository(prisma);
 
+    const habilitation = { lecture: {
+      chantiers: ['CH-001'],
+      territoires: ['NAT-FR', 'DEPT-13'],
+    } } as unknown as Utilisateur['habilitations'];
+
     // WHEN
-    const result = await repository.getById(chantierId, habilitation, SCOPE_LECTURE);
+    const result = await repository.getById(chantierId, habilitation);
 
     // THEN
     expect(result.mailles.nationale).toStrictEqual({
@@ -131,11 +139,15 @@ describe('ChantierSQLRepository', () => {
           .build(),
       ],
     });
-    const habilitation = { chantiers: { 'CH-001': [SCOPE_LECTURE], 'CH-002': [SCOPE_LECTURE] } };
+
+    const habilitation = { lecture: {
+      chantiers: ['CH-001', 'CH-002'],
+      territoires: ['NAT-FR'],
+    } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result1 = await repository.getById('CH-001', habilitation, SCOPE_LECTURE);
-    const result2 = await repository.getById('CH-002', habilitation, SCOPE_LECTURE);
+    const result1 = await repository.getById('CH-001', habilitation);
+    const result2 = await repository.getById('CH-002', habilitation);
 
     // THEN
     expect(result1.responsables.porteur).toEqual('Agriculture et Alimentation');
@@ -158,15 +170,19 @@ describe('ChantierSQLRepository', () => {
           .avecId('CH-002').avecMaille('DEPT').avecCodeInsee('13').avecTauxAvancement(50).build(),
       ],
     });
-    const habilitation = { chantiers: { 'CH-001': [SCOPE_LECTURE], 'CH-002': [SCOPE_LECTURE] } };
+    
+    const habilitation = { lecture: {
+      chantiers: ['CH-001', 'CH-002'],
+      territoires: ['NAT-FR'],
+    } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const chantiers = await repository.getListe(habilitation, SCOPE_LECTURE);
+    const chantiers = await repository.getListe(habilitation);
 
     // THEN
     const ids = chantiers.map(ch => ch.id);
     expect(ids).toStrictEqual(['CH-001', 'CH-002']);
-    expect(chantiers[1].mailles.départementale['13'].avancement.global).toBe(50);
+    expect(chantiers[1].mailles.nationale.FR.avancement.global).toBe(50);
   });
 
   test('Un code insee sur trois caractères fonctionne', async () => {
@@ -180,10 +196,14 @@ describe('ChantierSQLRepository', () => {
           .avecId('CH-001').avecMaille('DEPT').avecCodeInsee('974').build(),
       ],
     });
-    const habilitation = { chantiers: { 'CH-001': [SCOPE_LECTURE] } };
+    
+    const habilitation = { lecture: {
+      chantiers: ['CH-001'],
+      territoires: ['NAT-FR'],
+    } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const chantiers = await repository.getListe(habilitation, SCOPE_LECTURE);
+    const chantiers = await repository.getListe(habilitation);
 
     // THEN
     expect(chantiers[0].mailles.départementale['974']).toBeDefined();
@@ -199,10 +219,14 @@ describe('ChantierSQLRepository', () => {
       data: new ChantierSQLRowBuilder()
         .avecId(chantierId).avecMaille('NAT').avecDirecteursProjet(['Jean Bon']).avecDirecteursProjetMails([]).build(),
     });
-    const habilitation = { chantiers: { 'CH-001': [SCOPE_LECTURE] } };
+
+    const habilitation = { lecture: {
+      chantiers: ['CH-001'],
+      territoires: ['NAT-FR'],
+    } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await repository.getById(chantierId, habilitation, SCOPE_LECTURE);
+    const result = await repository.getById(chantierId, habilitation);
 
     // THEN
     expect(result.responsables.directeursProjet[0]).toStrictEqual({ nom: 'Jean Bon', email: null });
@@ -218,10 +242,14 @@ describe('ChantierSQLRepository', () => {
       data: new ChantierSQLRowBuilder()
         .avecId(chantierId).avecMaille('NAT').avecEstBaromètre(true).build(),
     });
-    const habilitation = { chantiers: { 'CH-001': [SCOPE_LECTURE] } };
+    
+    const habilitation = { lecture: {
+      chantiers: ['CH-001'],
+      territoires: ['NAT-FR'],
+    } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await repository.getById(chantierId, habilitation, SCOPE_LECTURE);
+    const result = await repository.getById(chantierId, habilitation);
 
     // THEN
     expect(result.estBaromètre).toBe(true);
@@ -235,11 +263,16 @@ describe('ChantierSQLRepository', () => {
       await prisma.chantier.create({
         data: new ChantierSQLRowBuilder().avecId(chantierId).avecMaille('NAT').build(),
       });
-      const habilitation = { chantiers: { 'CH-001': [SCOPE_LECTURE], 'CH-002': [SCOPE_LECTURE] } };
+      
+      const habilitation = { lecture: {
+
+        chantiers: ['CH-001', 'CH-002'],
+        territoires: ['NAT-FR'],
+      } } as unknown as Utilisateur['habilitations'];
 
       // WHEN
       const request = async () => {
-        await repository.getById('CH-002', habilitation, SCOPE_LECTURE);
+        await repository.getById('CH-002', habilitation);
       };
 
       // THEN
@@ -251,13 +284,18 @@ describe('ChantierSQLRepository', () => {
       const repository: ChantierRepository = new ChantierSQLRepository(prisma);
       const chantierId = 'CH-001';
       await prisma.chantier.create({
-        data: new ChantierSQLRowBuilder().avecId(chantierId).avecMaille('DEPT').build(),
+        data: new ChantierSQLRowBuilder().avecId(chantierId).avecMaille('DEPT').avecCodeInsee('12').build(),
       });
-      const habilitation = { chantiers: { 'CH-001': [SCOPE_LECTURE] } };
+      
+      const habilitation = { lecture: {
+
+        chantiers: ['CH-001'],
+        territoires: ['NAT-FR', 'DEPT-12'],
+      } } as unknown as Utilisateur['habilitations'];
 
       // WHEN
       const request = async () => {
-        await repository.getById(chantierId, habilitation, SCOPE_LECTURE);
+        await repository.getById(chantierId, habilitation);
       };
 
       // THEN
@@ -296,10 +334,13 @@ describe('ChantierSQLRepository', () => {
     it('renvoie les bonnes données dans les bons attributs', async () => {
       // Given
       const repository = new ChantierSQLRepository(prisma);
-      const habilitation: Habilitation = { chantiers: {} };
-      for (const chantierId of ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005']) {
-        habilitation.chantiers[chantierId] = [SCOPE_LECTURE];
-      }
+
+      const habilitation = { lecture: {
+
+        chantiers: ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005'],
+        territoires: ['NAT-FR'],
+      } } as unknown as Utilisateur['habilitations'];
+
       const chantier001Builder = new ChantierSQLRowBuilder()
         .avecId('CH-001')
         .avecNom('a Chantier 1')

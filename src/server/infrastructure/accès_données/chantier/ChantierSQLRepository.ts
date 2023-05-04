@@ -8,13 +8,10 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import {
-  Habilitation,
-  récupereListeChantierAvecScope,
-  Scope,
-  SCOPE_LECTURE,
-} from '@/server/domain/identité/Habilitation';
 import { ChantierPourExport } from '@/server/domain/chantier/ChantierPourExport';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -23,8 +20,8 @@ class ErreurChantierNonTrouvé extends Error {
 }
 
 class ErreurChantierPermission extends Error {
-  constructor(idChantier: string, scope: string) {
-    super(`Erreur de Permission: l'utilisateur n'a pas le droit '${scope}' pour le chantier '${idChantier}'.`);
+  constructor(idChantier: string) {
+    super(`Erreur de Permission: l'utilisateur n'a pas le droit de lecture pour le chantier '${idChantier}'.`);
   }
 }
 
@@ -35,17 +32,24 @@ export default class ChantierSQLRepository implements ChantierRepository {
     this.prisma = prisma;
   }
 
-  async getById(id: string, habilitation: Habilitation, scope: Scope): Promise<Chantier> {
+  async getById(id: string, habilitations: Habilitations): Promise<Chantier> {
+    const h = new Habilitation(habilitations);
+    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+    // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
+    territoiresLecture.push('NAT-FR');
 
-
-    const chantierIds = récupereListeChantierAvecScope(habilitation, scope);
-
-    if (!chantierIds.some(elt => elt == id)) {
-      throw new ErreurChantierPermission(id, scope);
+    const peutAccéderAuChantier = chantiersLecture.includes(id);
+  
+    if (!peutAccéderAuChantier) {
+      throw new ErreurChantierPermission(id);
     }
-
+    
     const chantiers: chantier[] = await this.prisma.chantier.findMany({
-      where: { id },
+      where: { 
+        id,
+        territoire_code: { in: territoiresLecture },
+      },
     });
 
     if (!chantiers || chantiers.length === 0) {
@@ -55,13 +59,29 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return parseChantier(chantiers);
   }
 
-  async getListe(habilitation: Habilitation, scope: Scope): Promise<Chantier[]> {
-    const chantiers_lecture = récupereListeChantierAvecScope(habilitation, scope);
+  async récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][]): Promise<Chantier['id'][]> {
+    const chantiers = await this.prisma.chantier.findMany({
+      distinct: ['id'],
+      where: {
+        perimetre_ids: { hasSome: périmètreIds },
+      },
+    });
+
+    return chantiers.map(c => c.id);
+  }
+
+  async getListe(habilitations: Habilitations): Promise<Chantier[]> {
+    const h = new Habilitation(habilitations);
+    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+    // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
+    territoiresLecture.push('NAT-FR');
 
     const chantiers = await this.prisma.chantier.findMany({
       where: {
         NOT: { ministeres: { isEmpty: true } },
-        id: { in: chantiers_lecture },
+        id: { in: chantiersLecture },
+        territoire_code: { in: territoiresLecture },
       },
     });
     const chantiersGroupésParId = groupBy<chantier>(chantiers, c => c.id);
@@ -101,13 +121,14 @@ export default class ChantierSQLRepository implements ChantierRepository {
     });
   }
 
-  async getChantiersPourExports(habilitation: Habilitation): Promise<ChantierPourExport[]> {
-    const chantiers_lecture = récupereListeChantierAvecScope(habilitation, SCOPE_LECTURE);
+  async getChantiersPourExports(habilitations: Habilitations): Promise<ChantierPourExport[]> {
+    const h = new Habilitation(habilitations);
+    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
 
     const rows = await this.prisma.$queryRaw<any[]>`
         with chantier_ids as (select distinct c.id
                               from chantier c
-                              where c.id in (${Prisma.join(chantiers_lecture)})
+                              where c.id in (${Prisma.join(chantiersLecture)})
                                 and ministeres <> '{}'),
              derniers_commentaires as (select *
                                        from (select c.*,
