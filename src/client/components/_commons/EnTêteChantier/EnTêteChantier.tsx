@@ -11,17 +11,21 @@ export default function EnTêteChantier({ nom, axe, ppg }: EnTêteChantierProps)
       >
         { nom }
       </Titre>
-      <p className='fr-mb-0 fr-text--xs chantier-données-propriété'>
-        Axe
+      <p className='fr-mb-1w fr-text--xs'>
+        <span className='chantier-données-propriété'>
+          Axe
+        </span>
+        <span className='fr-ml-1w chantier-données-valeur'>
+          { axe }
+        </span>
       </p>
-      <p className='fr-mb-1w fr-text--xs chantier-données-valeur'>
-        { axe }
-      </p>
-      <p className='fr-mb-0 fr-text--xs chantier-données-propriété'>
-        Politique Prioritaire du Gouvernement
-      </p>
-      <p className='fr-mb-0 fr-text--xs chantier-données-valeur'>
-        { ppg }
+      <p className='fr-mb-0 fr-text--xs'>
+        <span className='chantier-données-propriété'>
+          PPG
+        </span>
+        <span className='fr-ml-1w chantier-données-valeur'>
+          { ppg }
+        </span>
       </p>
     </EnTêteChantierStyled>
   );
