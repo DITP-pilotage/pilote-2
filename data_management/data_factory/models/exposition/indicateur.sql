@@ -67,5 +67,9 @@ FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
         AND chantiers_ayant_des_indicateurs.zone_id = pivot_faits_indicateur.zone_id
         AND pivot_faits_indicateur.zone_type_parent <> 'ACAD'
     LEFT JOIN {{ ref('stg_ppg_metadata__indicateur_types') }} indicateur_types ON indicateur_types.id = m_indicateurs.indicateur_type_id
-    LEFT JOIN {{ ref('int_dfakto_indicateurs_metrics') }} d_indicateurs ON m_indicateurs.nom = d_indicateurs.effect_id AND d_indicateurs.nom_structure IN ('Département', 'Région', 'Réforme')
+    LEFT JOIN {{ ref('int_dfakto_indicateurs_metrics') }} d_indicateurs
+	    ON m_indicateurs.id = d_indicateurs.effect_id
+	    AND chantiers_ayant_des_indicateurs.id = d_indicateurs.code_chantier  -- TODO: a supprimer car temporaire pour bug dfakto avec ligne 43 du fichier int_dfakto_indicateurs_metrics.sql
+	    AND chantiers_ayant_des_indicateurs.zone_id = d_indicateurs.zone_code
+	    AND d_indicateurs.nom_structure IN ('Département', 'Région', 'Chantier')
 ORDER BY m_indicateurs.nom, chantiers_ayant_des_indicateurs.maille, chantiers_ayant_des_indicateurs.code_insee, d_indicateurs.date_valeur_actuelle DESC
