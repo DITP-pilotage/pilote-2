@@ -37,7 +37,7 @@ export default function useVueDEnsemble(chantiers: Chantier[]) {
     { refetchOnWindowFocus: false, keepPreviousData: true },
   );
   if (avancementsAgrégés)
-    avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne
+    avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne;
 
   const répartitionMétéos = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.météos;
 
@@ -58,7 +58,7 @@ export default function useVueDEnsemble(chantiers: Chantier[]) {
   }));
 
   return {
-    avancementsAgrégés,
+    avancementsAgrégés: avancementsAgrégés ?? null,
     répartitionMétéos,
     avancementsGlobauxTerritoriauxMoyens,
     chantiersVueDEnsemble,

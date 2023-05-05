@@ -66,7 +66,6 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
 
   const habilitation = new Habilitation(habilitations);
 
-  console.log('pgChantier', habilitation)
   const modeÉcritureSynthese = habilitation.peutModifierLeChantier(chantierId, codeTerritoire);
   const modeÉcritureCommentaires = modeÉcritureSynthese;
   const modeÉcritureDécisionsStratégiques = modeÉcritureSynthese;
@@ -114,7 +113,7 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteursMaillesEtTerritoires habilitation={habilitation}/>
+          <SélecteursMaillesEtTerritoires habilitation={habilitation} />
         </BarreLatéraleEncart>
         <Sommaire rubriques={listeRubriques} />
       </BarreLatérale>

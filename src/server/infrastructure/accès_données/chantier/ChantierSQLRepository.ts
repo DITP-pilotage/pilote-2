@@ -201,7 +201,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const chantiersLecture = listeChantier.filter((x) => chaniterAutorisés.includes(x));
 
 
-  const rows = await this.prisma.$queryRaw<any[]>`
+    const rows = await this.prisma.$queryRaw<any[]>`
     WITH chantier_average AS (
       SELECT 
         territoire_code, 
@@ -220,20 +220,19 @@ export default class ChantierSQLRepository implements ChantierRepository {
       NULL AS stat_avg_annuel
     FROM chantier_average
   `;
-  const values = rows[0];
-  const avancementsStatistiques : AvancementsStatistiques = {
-    global: {
-      moyenne: values['stat_avg'],
-      médiane: values['stat_median'],
-      maximum: values['stat_max'],
-      minimum: values['stat_min'],
-    },
-    annuel: {
-      moyenne: values['stat_avg_annuel'],
-    }
+    const values = rows[0];
+    const avancementsStatistiques : AvancementsStatistiques = {
+      global: {
+        moyenne: values.stat_avg,
+        médiane: values.stat_median,
+        maximum: values.stat_max,
+        minimum: values.stat_min,
+      },
+      annuel: {
+        moyenne: values.stat_avg_annuel,
+      },
     
-  }
-  console.log(avancementsStatistiques)
-  return avancementsStatistiques;
+    };
+    return avancementsStatistiques;
   }
 }

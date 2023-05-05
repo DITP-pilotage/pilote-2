@@ -28,14 +28,14 @@ const construireLaListeDOptions = (listeCodeInsee: string[]) => {
   ];
 };
 
-export default function SélecteurTerritoire({habilitation} : SélecteurTerritoireProps) {
+export default function SélecteurTerritoire({ habilitation } : SélecteurTerritoireProps) {
   const { modifierTerritoireSélectionné } = actionsTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const listeCodeInsee = habilitation.recupererListeCodeInseeEnLectureDisponible(mailleSélectionnée);
   
   if (!listeCodeInsee.includes(territoireSélectionné.codeInsee)) {
-    modifierTerritoireSélectionné(listeCodeInsee[0])
+    modifierTerritoireSélectionné(listeCodeInsee[0]);
   }
 
   return (

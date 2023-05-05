@@ -10,6 +10,8 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import PageChantiers from './PageChantiers';
 
 // eslint-disable-next-line unicorn/consistent-function-scoping
@@ -25,6 +27,8 @@ class PageChantiersTest {
   ministères: Ministère[];
 
   chantiers: Chantier[];
+
+  habilitations: Habilitations;
 
   constructor() {
     this.axes = Array.from({ length: 6 }).map(() => new AxeBuilder().build());
@@ -47,6 +51,15 @@ class PageChantiersTest {
         .avecPpg(this.ppg[0].nom)
         .build(),
     ];
+
+    this.habilitations = {
+      'lecture': {
+        chantiers: this.chantiers.map(ch => ( ch.id)),
+        territoires: [],
+      },
+      'saisie.commentaire': { chantiers: [], territoires: [] },
+      'saisie.indicateur': { chantiers: [], territoires: [] },
+    };
   }
 
   récupérerLesLignesDuTableau() {
@@ -85,6 +98,7 @@ class PageChantiersTest {
       <PageChantiers
         axes={this.axes}
         chantiers={this.chantiers}
+        habilitations={this.habilitations}
         ministères={this.ministères}
         ppg={this.ppg}
       />,
