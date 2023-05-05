@@ -31,7 +31,6 @@ type Utilisateur = {
 };
 
 export type UtilisateurÀCréerOuMettreÀJour =  { 
-  id: string
   nom: string
   prénom: string
   email: string

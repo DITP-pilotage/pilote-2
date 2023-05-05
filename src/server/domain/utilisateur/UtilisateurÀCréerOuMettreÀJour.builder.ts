@@ -4,8 +4,6 @@ import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/Pé
 import { UtilisateurÀCréerOuMettreÀJour, profils } from './Utilisateur.interface';
 
 export default class UtilisateurÀCréerOuMettreÀJourBuilder {
-  private _id: UtilisateurÀCréerOuMettreÀJour['id'];
-
   private _nom: UtilisateurÀCréerOuMettreÀJour['nom'];
 
   private _prénom: UtilisateurÀCréerOuMettreÀJour['prénom'];
@@ -17,7 +15,6 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
   private _habilitations: UtilisateurÀCréerOuMettreÀJour['habilitations'];
 
   constructor() {
-    this._id = faker.datatype.uuid();
     this._nom = faker.name.lastName();
     this._prénom = faker.name.firstName();
     this._email = faker.internet.email();
@@ -64,7 +61,6 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
 
   build(): UtilisateurÀCréerOuMettreÀJour {
     return {
-      id: this._id,
       nom: this._nom,
       prénom: this._prénom,
       email: this._email,
