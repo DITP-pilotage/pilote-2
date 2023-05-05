@@ -4,6 +4,8 @@ import AvancementsStyled from '@/components/_commons/Avancements/Avancements.sty
 import AvancementsProps from './Avancements.interface';
 
 export default function Avancements({ avancements }: AvancementsProps) {
+  if (!avancements)
+    return ;
   return (
     <AvancementsStyled>
       <div>

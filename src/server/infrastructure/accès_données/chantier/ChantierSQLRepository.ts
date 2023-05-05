@@ -12,6 +12,7 @@ import { ChantierPourExport } from '@/server/domain/chantier/ChantierPourExport'
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -192,5 +193,47 @@ export default class ChantierSQLRepository implements ChantierRepository {
       it.frein_a_lever,
       it.synthese_des_resultats,
     ));
+  }
+
+  async getChantierStatistiques(habilitations: Habilitations, listeChantier: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques> {
+    const habilitation = new Habilitation(habilitations);
+    const chaniterAutorisés = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const chantiersLecture = listeChantier.filter((x) => chaniterAutorisés.includes(x));
+
+
+  const rows = await this.prisma.$queryRaw<any[]>`
+    WITH chantier_average AS (
+      SELECT 
+        territoire_code, 
+        AVG(taux_avancement) AS stat
+      FROM chantier 
+      WHERE 
+        chantier.id IN (${Prisma.join(chantiersLecture)}) 
+        AND maille = ${CODES_MAILLES[maille]}
+      GROUP BY territoire_code
+    )
+    SELECT 
+      AVG(stat) AS stat_avg,
+      MIN(stat) AS stat_min, 
+      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY stat) AS stat_median,
+      MAX(stat) AS stat_max,
+      NULL AS stat_avg_annuel
+    FROM chantier_average
+  `;
+  const values = rows[0];
+  const avancementsStatistiques : AvancementsStatistiques = {
+    global: {
+      moyenne: values['stat_avg'],
+      médiane: values['stat_median'],
+      maximum: values['stat_max'],
+      minimum: values['stat_min'],
+    },
+    annuel: {
+      moyenne: values['stat_avg_annuel'],
+    }
+    
+  }
+  console.log(avancementsStatistiques)
+  return avancementsStatistiques;
   }
 }

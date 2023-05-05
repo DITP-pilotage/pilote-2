@@ -7,6 +7,7 @@ import { validationChantierContexte, validationChantiersContexte } from '@/valid
 import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';
 import RécupérerStatistiquesAvancementChantiersUseCase
   from '@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 export const chantierRouter = créerRouteurTRPC({
   récupérer: procédureProtégée
@@ -20,7 +21,7 @@ export const chantierRouter = créerRouteurTRPC({
     .input(validationChantiersContexte)
     .query(({ input }) =>{
       const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
-      return récupérerStatistiquesChantiersUseCase.run(input.chantiers, input.maille);
+      return récupérerStatistiquesChantiersUseCase.run(input.chantiers, input.maille as Maille);
     }),
 });
 

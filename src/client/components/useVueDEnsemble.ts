@@ -29,13 +29,15 @@ export default function useVueDEnsemble(chantiers: Chantier[]) {
     return new AgrégateurChantiersParTerritoire(chantiers).agréger();
   }, [chantiers]);
 
-  const { data: avancementsAgrégés } = api.chantier.récupérerStatistiquesAvancements.useQuery(
+  let { data: avancementsAgrégés } = api.chantier.récupérerStatistiquesAvancements.useQuery(
     {
       chantiers: chantiers.map(chantier => (chantier.id)),
       maille: mailleAssociéeAuTerritoireSélectionné,
     },
     { refetchOnWindowFocus: false, keepPreviousData: true },
   );
+  if (avancementsAgrégés)
+    avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne
 
   const répartitionMétéos = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.météos;
 
