@@ -5,10 +5,11 @@ import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoires
 import CommentairesProps from '@/components/PageChantier/Commentaires/Commentaires.interface';
 import Publication from '@/components/_commons/Publication/Publication';
 import { consignesDÉcritureCommentaire, libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
-import { TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { TypeCommentaire, typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
 
 export default function Commentaires({ commentaires, chantierId, maille, codeInsee, modeÉcriture = false, estInteractif = true }: CommentairesProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  const typesCommentaires = maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale;
 
   return (
     <section id="commentaires">
@@ -20,30 +21,29 @@ export default function Commentaires({ commentaires, chantierId, maille, codeIns
       </Titre>
       <Bloc titre={territoireSélectionné.nom}>
         {
-          !!commentaires &&
-            commentaires.map(({ publication, type }, i) => (
-              <Fragment key={type}>
-                {
-                  i !== 0 && (
-                    <hr className="fr-hr fr-mx-n2w" />
-                  )
-                }
-                <Publication
-                  caractéristiques={{
-                    entité: 'commentaires',
-                    type: type,
-                    libelléType: libellésTypesCommentaire[type as TypeCommentaire],
-                    consigneDÉcriture: consignesDÉcritureCommentaire[type as TypeCommentaire],
-                  }}
-                  chantierId={chantierId}
-                  codeInsee={codeInsee}
-                  estInteractif={estInteractif}
-                  maille={maille}
-                  modeÉcriture={modeÉcriture}
-                  publicationInitiale={publication}
-                />
-              </Fragment>
-            ))
+          typesCommentaires.map((type, i) => (
+            <Fragment key={type}>
+              {
+                i !== 0 && (
+                  <hr className="fr-hr fr-mx-n2w" />
+                )
+              }
+              <Publication
+                caractéristiques={{
+                  entité: 'commentaires',
+                  type: type,
+                  libelléType: libellésTypesCommentaire[type as TypeCommentaire],
+                  consigneDÉcriture: consignesDÉcritureCommentaire[type as TypeCommentaire],
+                }}
+                chantierId={chantierId}
+                codeInsee={codeInsee}
+                estInteractif={estInteractif}
+                maille={maille}
+                modeÉcriture={modeÉcriture}
+                publicationInitiale={commentaires?.find(commentaire => commentaire?.type === type) || null}
+              />
+            </Fragment>
+          ))
         }
       </Bloc>
     </section>

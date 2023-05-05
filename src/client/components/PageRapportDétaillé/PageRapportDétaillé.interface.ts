@@ -3,15 +3,15 @@ import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicate
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import DécisionStratégique from '@/server/domain/décisionStratégique/DécisionStratégique.interface';
 import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
-import { CommentaireTypé } from '@/server/usecase/commentaire/RécupérerCommentairesLesPlusRécentsParTypeUseCase';
-import { ObjectifTypé } from '@/server/usecase/objectif/RécupérerObjectifsLesPlusRécentsParTypeUseCase';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { Commentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import Objectif from '@/server/domain/objectif/Objectif.interface';
 
 export type PublicationsGroupéesParChantier = {
-  commentaires: Record<Chantier['id'], CommentaireTypé[]>
+  commentaires: Record<Chantier['id'], Commentaire[]>
   décisionStratégique: Record<Chantier['id'], DécisionStratégique>
-  objectifs: Record<Chantier['id'], ObjectifTypé[]>
+  objectifs: Record<Chantier['id'], Objectif[]>
   synthèsesDesRésultats: Record<Chantier['id'], SynthèseDesRésultats>
 };
 

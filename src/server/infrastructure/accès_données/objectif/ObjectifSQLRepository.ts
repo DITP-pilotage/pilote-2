@@ -1,8 +1,8 @@
 import { PrismaClient, objectif as ObjectifPrisma, type_objectif as TypeObjectifPrisma } from '@prisma/client';
 import ObjectifRepository from '@/server/domain/objectif/ObjectifRepository.interface';
-import Objectif, { TypeObjectif, typesObjectif } from '@/server/domain/objectif/Objectif.interface';
+import Objectif, { TypeObjectif } from '@/server/domain/objectif/Objectif.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { ObjectifTypé } from '@/server/usecase/objectif/RécupérerObjectifsLesPlusRécentsParTypeUseCase';
+import { groupByAndTransform } from '@/client/utils/arrays';
 
 export const NOMS_TYPES_OBJECTIFS: Record<TypeObjectifPrisma, TypeObjectif> = {
   notre_ambition: 'notreAmbition',
@@ -87,15 +87,10 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
             AND o.chantier_id = o_recents.chantier_id
     `;
 
-    const résultat: Record<Chantier['id'], ObjectifTypé[]> = {};
-
-    for (const chantierId of chantiersIds) {
-      résultat[chantierId] = [];
-      for (const type of typesObjectif) {
-        const objectif = objectifs.find(o => o.chantier_id === chantierId && NOMS_TYPES_OBJECTIFS[o.type] === type);
-        résultat[chantierId].push({ type, publication: this.mapperVersDomaine(objectif) });
-      }
-    }
-    return résultat;
+    return groupByAndTransform(
+      objectifs,
+      o => o.chantier_id,
+      (o: ObjectifPrisma) => this.mapperVersDomaine(o),
+    );
   }
 }

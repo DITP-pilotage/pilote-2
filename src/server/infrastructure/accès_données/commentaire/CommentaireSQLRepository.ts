@@ -3,14 +3,12 @@ import CommentaireRepository from '@/server/domain/commentaire/CommentaireReposi
 import {
   Commentaire,
   TypeCommentaire,
-  typesCommentaireMailleNationale,
-  typesCommentaireMailleRégionaleOuDépartementale,
 } from '@/server/domain/commentaire/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { CommentaireTypé } from '@/server/usecase/commentaire/RécupérerCommentairesLesPlusRécentsParTypeUseCase';
+import { groupByAndTransform } from '@/client/utils/arrays';
 
 export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaire> = {
   commentaires_sur_les_donnees: 'commentairesSurLesDonnées',
@@ -110,19 +108,11 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
           AND c.maille = c_recents.maille
           AND c.code_insee = c_recents.code_insee
     `;
-    
-    const typesCommentaires = maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale;
 
-    const résultat: Record<Chantier['id'], CommentaireTypé[]> = {};
-
-    for (const chantierId of chantiersIds) {
-      résultat[chantierId] = [];
-      for (const type of typesCommentaires) {
-        const commentaire = commentaires.find(c => c.chantier_id === chantierId && NOMS_TYPES_COMMENTAIRES[c.type] === type);
-        résultat[chantierId].push({ type, publication: this.mapperVersDomaine(commentaire) });
-      }
-    }
-
-    return résultat;
+    return groupByAndTransform(
+      commentaires,
+      c => c.chantier_id,
+      (c: CommentairePrisma) => this.mapperVersDomaine(c),
+    );
   }
 }

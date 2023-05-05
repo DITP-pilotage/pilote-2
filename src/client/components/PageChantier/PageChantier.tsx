@@ -45,8 +45,6 @@ function convertitMailleCodeInseeEnCodeTerritoire(maille: string, codeInsee: str
   return codeMaille + '-' + codeInsee;
 }
 
-
-
 export default function PageChantier({ indicateurs, habilitations }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const chantierId = useRouter().query.id as string;
@@ -63,7 +61,6 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
-  //console.log('territoire', territoireSélectionné, 'maille', mailleAssociéeAuTerritoireSélectionné)
   const codeTerritoire = convertitMailleCodeInseeEnCodeTerritoire(mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee);
 
   const modeÉcritureSynthese = new Habilitation(habilitations).peutModifierLeChantier(chantierId, codeTerritoire);

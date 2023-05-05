@@ -9,6 +9,8 @@ import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicate
 import { PublicationsGroupéesParChantier } from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
+import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
+import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
 
 interface NextPageRapportDétailléProps {
   chantiers: Chantier[]
@@ -66,15 +68,14 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
 
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();
   const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds, maille, codeInsee);
-
-  const commentaireRepository = dependencies.getCommentaireRepository();
-  const commentairesGroupésParChantier = await commentaireRepository.récupérerLesPlusRécentsGroupésParChantier(chantiersIds, maille, codeInsee);
-
-  const objectifRepository = dependencies.getObjectifRepository();
-  const objectifsGroupésParChantier = await objectifRepository.récupérerLesPlusRécentsGroupésParChantier(chantiersIds);
-
+  
   const décisionStratégiqueRepository = dependencies.getDécisionStratégiqueRepository();
   const décisionStratégiquesGroupéesParChantier = await décisionStratégiqueRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds);
+
+  const commentairesGroupésParChantier = await new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase().run(chantiersIds, maille, codeInsee);
+
+  const objectifsGroupésParChantier = await new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase().run(chantiersIds);
+
 
   return {
     props: {
