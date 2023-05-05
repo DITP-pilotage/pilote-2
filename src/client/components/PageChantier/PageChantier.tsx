@@ -65,6 +65,8 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
   const codeTerritoire = convertitMailleCodeInseeEnCodeTerritoire(mailleAssociéeAuTerritoireSélectionné, territoireSélectionné.codeInsee);
 
   const habilitation = new Habilitation(habilitations);
+
+  console.log('pgChantier', habilitation)
   const modeÉcritureSynthese = habilitation.peutModifierLeChantier(chantierId, codeTerritoire);
   const modeÉcritureCommentaires = modeÉcritureSynthese;
   const modeÉcritureDécisionsStratégiques = modeÉcritureSynthese;
@@ -102,8 +104,8 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
     );
   }, [indicateurs, mailleAssociéeAuTerritoireSélectionné]);
 
-  const maillesDisponibles = habilitation.recupererListeMailleEnLectureDisponible();
-  const codesInseeDisponibles = habilitation.recupererListeCodeInseeEnLectureDisponible(mailleAssociéeAuTerritoireSélectionné);
+  
+  
 
   return (
     <PageChantierStyled className="flex">
@@ -112,10 +114,7 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteursMaillesEtTerritoires
-            codesInseeDisponibles={codesInseeDisponibles}
-            maillesDisponibles={maillesDisponibles}
-          />
+          <SélecteursMaillesEtTerritoires habilitation={habilitation}/>
         </BarreLatéraleEncart>
         <Sommaire rubriques={listeRubriques} />
       </BarreLatérale>

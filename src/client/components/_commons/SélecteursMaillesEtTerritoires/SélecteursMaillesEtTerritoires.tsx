@@ -2,14 +2,11 @@ import SélecteurMaille from './SélecteurMaille/SélecteurMaille';
 import SélecteurTerritoire from './SélecteurTerritoire/SélecteurTerritoire';
 import SélecteursMaillesEtTerritoiresProps from './SélecteursMaillesEtTerritoire.interface';
 
-
-
-
-export default function SélecteursMaillesEtTerritoires({ maillesDisponibles, codesInseeDisponibles }: SélecteursMaillesEtTerritoiresProps) {
+export default function SélecteursMaillesEtTerritoires({habilitation}: SélecteursMaillesEtTerritoiresProps) {
   return (
     <>
-      <SélecteurMaille maillesDisponibles={maillesDisponibles} />
-      <SélecteurTerritoire codesInseeDisponibles={codesInseeDisponibles} />
+      <SélecteurMaille habilitation={habilitation} />
+      <SélecteurTerritoire habilitation={habilitation} />
     </>
   );
 }

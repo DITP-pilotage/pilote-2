@@ -26,8 +26,6 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg, habil
   const territoireFiltre = habilitation.récupérerMailleEtCodeEnLecture();
 
   const maille = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-  const maillesDisponibles = habilitation.recupererListeMailleEnLectureDisponible();
-  const codesInseeDisponibles = habilitation.recupererListeCodeInseeEnLectureDisponible(maille);
 
   const { modifierMailleSélectionnée, modifierTerritoireSélectionné } = actionsTerritoiresStore();
   useEffect(() =>{
@@ -66,9 +64,8 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg, habil
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteursMaillesEtTerritoires
-            codesInseeDisponibles={codesInseeDisponibles}
-            maillesDisponibles={maillesDisponibles}
+          <SélecteursMaillesEtTerritoires 
+            habilitation={habilitation}
           />
         </BarreLatéraleEncart>
         <section>

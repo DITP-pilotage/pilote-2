@@ -28,15 +28,21 @@ const construireLaListeDOptions = (listeCodeInsee: string[]) => {
   ];
 };
 
-export default function SélecteurTerritoire({ codesInseeDisponibles } : SélecteurTerritoireProps) {
+export default function SélecteurTerritoire({habilitation} : SélecteurTerritoireProps) {
   const { modifierTerritoireSélectionné } = actionsTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+  const listeCodeInsee = habilitation.recupererListeCodeInseeEnLectureDisponible(mailleSélectionnée);
   
+  if (!listeCodeInsee.includes(territoireSélectionné.codeInsee)) {
+    modifierTerritoireSélectionné(listeCodeInsee[0])
+  }
+
   return (
     <Sélecteur
       htmlName="périmètre-géographique"
       libellé="Périmètre géographique"
-      options={construireLaListeDOptions(codesInseeDisponibles)}
+      options={construireLaListeDOptions(listeCodeInsee)}
       valeurModifiéeCallback={codeInsee => modifierTerritoireSélectionné(codeInsee)}
       valeurSélectionnée={territoireSélectionné.codeInsee}
     />

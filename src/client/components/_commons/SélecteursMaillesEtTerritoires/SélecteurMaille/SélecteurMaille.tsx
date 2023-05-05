@@ -3,11 +3,12 @@ import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore  } from '
 import SélecteurMailleStyled from './SélecteurMaille.styled';
 import SélecteurMailleProps from './SélecteurMaille.interface';
 
-export default function SélecteurMaille({ maillesDisponibles }: SélecteurMailleProps) {
+export default function SélecteurMaille({habilitation}: SélecteurMailleProps) {
 
   const { modifierMailleSélectionnée } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
+  console.log("habilitation", habilitation)
   const maillesÀAfficher: { label: string, valeur: MailleInterne }[] = [
     {
       label: 'Départements',
@@ -18,6 +19,7 @@ export default function SélecteurMaille({ maillesDisponibles }: SélecteurMaill
       valeur: 'régionale',
     },
   ];
+  const maillesDisponibles = habilitation.recupererListeMailleEnLectureDisponible();
 
   if (maillesDisponibles.length  == 1) {
     const maille = maillesÀAfficher[(maillesDisponibles[0] == 'départementale') ? 0 : 1 ];

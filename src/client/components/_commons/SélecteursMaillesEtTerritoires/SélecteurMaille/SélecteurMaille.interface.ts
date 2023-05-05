@@ -1,5 +1,5 @@
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 
 export default interface SélecteurMailleProps {
-  maillesDisponibles: MailleInterne[], 
+    habilitation: Habilitation, 
 }

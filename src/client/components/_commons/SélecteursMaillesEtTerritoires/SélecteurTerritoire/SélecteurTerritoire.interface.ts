@@ -1,5 +1,5 @@
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 
 export default interface SélecteurTerritoireProps {
-  codesInseeDisponibles: CodeInsee[]
+  habilitation: Habilitation
 }

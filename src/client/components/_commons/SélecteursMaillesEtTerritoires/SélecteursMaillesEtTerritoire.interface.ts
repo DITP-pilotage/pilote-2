@@ -1,7 +1,5 @@
-import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 
 export default interface SélecteursMaillesEtTerritoiresProps {
-  maillesDisponibles: MailleInterne[], 
-  codesInseeDisponibles: CodeInsee[]
+  habilitation: Habilitation
 }
