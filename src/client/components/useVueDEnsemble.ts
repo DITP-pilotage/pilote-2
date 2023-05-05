@@ -8,6 +8,7 @@ import {
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import api from '@/server/infrastructure/api/trpc/api';
 
 export type ChantierVueDEnsemble = {
   id: string;
@@ -28,17 +29,13 @@ export default function useVueDEnsemble(chantiers: Chantier[]) {
     return new AgrégateurChantiersParTerritoire(chantiers).agréger();
   }, [chantiers]);
 
-  const avancementsAgrégés = {
-    global: {
-      moyenne: donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne,
-      médiane: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.médiane,
-      minimum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.minimum,
-      maximum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.maximum,
+  const { data: avancementsAgrégés } = api.chantier.récupérerStatistiquesAvancements.useQuery(
+    {
+      chantiers: chantiers.map(chantier => (chantier.id)),
+      maille: mailleAssociéeAuTerritoireSélectionné,
     },
-    annuel: {
-      moyenne: donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.avancements.annuel.moyenne,
-    },
-  };
+    { refetchOnWindowFocus: false, keepPreviousData: true },
+  );
 
   const répartitionMétéos = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.météos;
 
