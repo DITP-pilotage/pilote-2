@@ -5,7 +5,7 @@ dfakto_chantier as (
     SELECT fact_progress_chantier.tree_node_id,
         fact_progress_chantier.avancement_borne,
         dim_tree_nodes.code_chantier,
-        dim_tree_nodes.zone_code,
+        dim_tree_nodes.zone_code as zone_id,
         dim_structures.nom as structure_nom,
         view_data_properties.meteo_nom
     FROM {{ ref('stg_dfakto__fact_progress_chantiers') }} fact_progress_chantier
@@ -42,7 +42,10 @@ chantier_est_barometre as (
         m_chantiers.est_territorialise,
         CONCAT(m_chantiers.maille, '-', m_chantiers.code_insee) as territoire_code
     FROM {{ ref('int_chantiers_with_mailles_and_territoires') }} m_chantiers
-        LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom='Réforme'
+        LEFT JOIN dfakto_chantier d_chantiers
+            ON m_chantiers.id = d_chantiers.code_chantier
+                AND m_chantiers.zone_id = d_chantiers.zone_id
+                AND d_chantiers.structure_nom='Chantier'
         LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
         LEFT JOIN {{ ref('stg_ppg_metadata__chantier_meteos') }} chantier_meteos ON chantier_meteos.nom_dfakto = d_chantiers.meteo_nom
         LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id
@@ -69,7 +72,10 @@ UNION
         m_chantiers.est_territorialise,
         CONCAT(m_chantiers.maille, '-', m_chantiers.code_insee) as territoire_code
     FROM {{ ref('int_chantiers_with_mailles_and_territoires') }} m_chantiers
-        LEFT JOIN dfakto_chantier d_chantiers ON m_chantiers.id_chantier_perseverant = d_chantiers.code_chantier AND d_chantiers.structure_nom IN ('Région', 'Département')
+        LEFT JOIN dfakto_chantier d_chantiers
+            ON m_chantiers.id = d_chantiers.code_chantier
+                AND m_chantiers.zone_id = d_chantiers.zone_id
+                AND d_chantiers.structure_nom IN ('Région', 'Département')
         LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
         LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id
         LEFT JOIN {{ ref('stg_ppg_metadata__axes') }} m_axes ON m_axes.id = m_ppgs.axe_id
