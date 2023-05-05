@@ -46,6 +46,10 @@ const TableauChantiersStyled = styled.section`
           height: 100%;
           text-decoration: none;
           background: none;
+          
+          & > * {
+            width: 100%;
+          }
         }
         
         .météo-picto {
