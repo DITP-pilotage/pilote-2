@@ -19,6 +19,7 @@ SELECT
     indicateur_id,
     zone_id,
     date_releve,
+    date_trunc('month', date_releve) as mois_releve,
     CASE WHEN type_mesure = 'va' and row_id_par_indicateur_et_zone = 1
         THEN 'vi'
         ELSE type_mesure
