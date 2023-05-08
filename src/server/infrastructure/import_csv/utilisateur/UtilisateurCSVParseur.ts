@@ -25,7 +25,7 @@ export default class UtilisateurCSVParseur {
 
   constructor(private _filename: string) {}
 
-  parse() {
+  parse(): UtilisateurÀCréerOuMettreÀJour[] {
     const contents = fs.readFileSync(this._filename, 'utf8');
     const csvRecords: CsvRecord[] = parse(contents, this._CSV_PARSE_OPTIONS);
 

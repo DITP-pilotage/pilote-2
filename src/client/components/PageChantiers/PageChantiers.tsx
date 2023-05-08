@@ -42,6 +42,7 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg, habil
       const codeInsee = territoires[0].split('-')[1];
       modifierTerritoireSélectionné(codeInsee);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 

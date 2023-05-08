@@ -26,9 +26,11 @@ import UtilisateurIAMKeycloakRepository
   from '@/server/infrastructure/accès_données/utilisateur/UtilisateurIAMKeycloakRepository';
 import DécisionStratégiqueRepository from '@/server/domain/décisionStratégique/DécisionStratégiqueRepository.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
+import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
 import DécisionStratégiqueSQLRepository from './accès_données/décisionStratégique/DécisionStratégiqueSQLRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
+import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
@@ -53,6 +55,8 @@ class Dependencies {
 
   private readonly _utilisateurRepository: UtilisateurRepository;
 
+  private readonly _territoireRepository: TerritoireRepository;
+
   private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
 
   constructor() {
@@ -68,6 +72,7 @@ class Dependencies {
     this._objectifRepository = new ObjectifSQLRepository(prisma);
     this._décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
     this._utilisateurRepository = new UtilisateurSQLRepository(prisma);
+    this._territoireRepository = new TerritoireSQLRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
@@ -120,6 +125,10 @@ class Dependencies {
 
   getUtilisateurRepository() {
     return this._utilisateurRepository;
+  }
+
+  getTerritoireRepository() {
+    return this._territoireRepository;
   }
 
   getUtilisateurIAMRepository(): UtilisateurIAMRepository {
