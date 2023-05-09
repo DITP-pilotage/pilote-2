@@ -8,7 +8,7 @@ export type AvancementsStatistiques = {
   annuel: {
     moyenne: number | null,
   }
-};
+} | null;
 
 export default interface AvancementsProps {
   avancements: AvancementsStatistiques

@@ -8,6 +8,7 @@ import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/
 import SyntheseDesResultatsRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -69,8 +70,9 @@ describe('ChantierSQLRepository', () => {
         .avecId(chantierId).avecMaille('NAT').avecTauxAvancement(18).avecMinistères([]).build(),
     });
 
+    const habilitations = new Habilitation(habilitation);
     // WHEN
-    const result = await repository.getListe(habilitation);
+    const result = await repository.getListe(habilitations);
 
     // THEN
     expect(result).toStrictEqual([]);
@@ -177,7 +179,8 @@ describe('ChantierSQLRepository', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const chantiers = await repository.getListe(habilitation);
+    const habilitations = new Habilitation(habilitation);
+    const chantiers = await repository.getListe(habilitations);
 
     // THEN
     const ids = chantiers.map(ch => ch.id);
@@ -203,7 +206,8 @@ describe('ChantierSQLRepository', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const chantiers = await repository.getListe(habilitation);
+    const habilitations = new Habilitation(habilitation);
+    const chantiers = await repository.getListe(habilitations);
 
     // THEN
     expect(chantiers[0].mailles.départementale['974']).toBeDefined();

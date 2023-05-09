@@ -4,6 +4,13 @@ import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/Pé
 export const scopes = ['lecture', 'saisie.commentaire', 'saisie.indicateur'] as const;
 export type Scope = typeof scopes[number];
 
+export type TerritoiresFiltre =  {
+  DEPT: { maille: string, territoires: string[] },
+  REG: { maille: string, territoires: string[] },
+  NAT: { maille: string, territoires: string[] }
+};
+
+
 type Habilitation = {
   chantiers: Chantier['id'][]
   territoires: string[]

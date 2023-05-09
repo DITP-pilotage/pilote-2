@@ -11,6 +11,7 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
 import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
 interface NextPageRapportDétailléProps {
   chantiers: Chantier[]
@@ -59,7 +60,9 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
 
   const chantierRepository = dependencies.getChantierRepository();
 
-  const chantiers = await chantierRepository.getListe(session.habilitations);
+  const habilitation = new Habilitation(session.habilitations);
+
+  const chantiers = await chantierRepository.getListe(habilitation);
   const chantiersIds = chantiers.map(chantier => chantier.id);
 
   const indicateursRepository = dependencies.getIndicateurRepository();

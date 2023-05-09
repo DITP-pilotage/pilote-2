@@ -7,19 +7,23 @@ import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
   ministères: Ministère[]
   axes: Axe[],
-  ppg: Ppg[]
+  ppg: Ppg[],
+  habilitations: Habilitations
 }
 
-export default function NextPageAccueil({ chantiers, ministères, axes, ppg }: NextPageAccueilProps) {
+export default function NextPageAccueil({ chantiers, ministères, axes, ppg, habilitations }: NextPageAccueilProps) {
   return (
     <PageChantiers
       axes={axes}
       chantiers={chantiers}
+      habilitations={habilitations}
       ministères={ministères}
       ppg={ppg}
     />
@@ -32,9 +36,10 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
   if (!session) {
     return { props: {} };
   }
-
+  
+  const habilitation =  new Habilitation(session.habilitations);
   const chantierRepository = dependencies.getChantierRepository();
-  const chantiers = await chantierRepository.getListe(session.habilitations);
+  const chantiers = await chantierRepository.getListe(habilitation);
 
   let axes: Axe[] = [];
   let ppgs: Ppg[] = [];
@@ -57,6 +62,7 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
       ministères,
       axes: axes,
       ppg: ppgs,
+      habilitations: session.habilitations,
     },
   };
 }

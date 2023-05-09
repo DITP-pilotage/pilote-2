@@ -1,7 +1,7 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
@@ -13,15 +13,39 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import Filtres from '@/components/PageChantiers/Filtres/Filtres';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
-import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore, actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
 
-export default function PageChantiers({ chantiers, ministères, axes, ppg }: PageChantiersProps) {  
+export default function PageChantiers({ chantiers, ministères, axes, ppg, habilitations }: PageChantiersProps) {
+  const habilitation = new Habilitation(habilitations);
+  const territoireFiltre = habilitation.récupérerMailleEtCodeEnLecture();
+
   const maille = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
+
+  const { modifierMailleSélectionnée, modifierTerritoireSélectionné } = actionsTerritoiresStore();
+  useEffect(() =>{
+    let mailleAAfficher: 'départementale' | 'régionale' = 'régionale';
+
+    let territoires = territoireFiltre.REG.territoires;
+    if (territoires.length === 0) {
+      territoires = territoireFiltre.DEPT.territoires;
+      mailleAAfficher = 'départementale';
+    }
+
+    modifierMailleSélectionnée(mailleAAfficher);
+    if (territoires.length == 1) {
+      const codeInsee = territoires[0].split('-')[1];
+      modifierTerritoireSélectionné(codeInsee);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
   const codeInsee = territoireSélectionnéTerritoiresStore().codeInsee;
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { auClicTerritoireCallback } = useCartographie();
@@ -41,7 +65,9 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg }: Pag
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteursMaillesEtTerritoires />
+          <SélecteursMaillesEtTerritoires 
+            habilitation={habilitation}
+          />
         </BarreLatéraleEncart>
         <section>
           <Titre

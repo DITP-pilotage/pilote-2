@@ -10,7 +10,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
         <JaugeDeProgression
           couleur='bleu'
           libellé="Taux d'avancement global"
-          pourcentage={avancements.global.moyenne}
+          pourcentage={!!avancements ? avancements.global.moyenne : null}
           taille='lg'
         />
       </div>
@@ -20,7 +20,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
             <JaugeDeProgression
               couleur='orange'
               libellé="Minimum"
-              pourcentage={avancements.global.minimum}
+              pourcentage={!!avancements ? avancements.global.minimum : null}
               taille='sm'
             />
           </div>
@@ -28,7 +28,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
             <JaugeDeProgression
               couleur='violet'
               libellé="Médiane"
-              pourcentage={avancements.global.médiane}
+              pourcentage={!!avancements ? avancements.global.médiane : null}
               taille='sm'
             />
           </div>
@@ -36,14 +36,14 @@ export default function Avancements({ avancements }: AvancementsProps) {
             <JaugeDeProgression
               couleur='vert'
               libellé="Maximum"
-              pourcentage={avancements.global.maximum}
+              pourcentage={!!avancements ? avancements.global.maximum : null}
               taille='sm'
             />
           </div>
         </div>
         <div className='fr-mt-2w'>
           <p className="fr-text--xl fr-text--bold fr-mb-0 texte-gris">
-            { `${avancements.annuel.moyenne?.toFixed(0) ?? '- '}%` }
+            { `${avancements?.annuel.moyenne?.toFixed(0) ?? '- '}%` }
           </p>
           <BarreDeProgression
             afficherTexte={false}
@@ -51,7 +51,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
             fond='grisClair'
             positionTexte='dessus'
             taille='xxs'
-            valeur={avancements.annuel.moyenne}
+            valeur={!!avancements ? avancements.annuel.moyenne : null}
             variante="secondaire"
           />
           <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
