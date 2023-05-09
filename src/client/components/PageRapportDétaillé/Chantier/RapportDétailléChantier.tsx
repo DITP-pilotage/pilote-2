@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Encart from '@/components/PageRapportDétaillé/Encart/Encart';
-import EnTêteChantier from '@/components/_commons/EnTêteChantier/EnTêteChantier';
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import RapportDétailléChantierProps from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface';
 import { useRapportDétailléChantier } from '@/components/PageRapportDétaillé/Chantier/useRapportDétailléChantier';
@@ -16,6 +15,7 @@ import {
   mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import Titre from '@/components/_commons/Titre/Titre';
 
 export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats, commentaires, objectifs, décisionStratégique }: RapportDétailléChantierProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -35,11 +35,12 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         Haut de page
       </Link>
       <Encart>
-        <EnTêteChantier
-          axe={chantier.axe}
-          nom={chantier.nom}
-          ppg={chantier.ppg}
-        />
+        <Titre
+          baliseHtml='h1'
+          className='fr-h2 fr-mb-1w'
+        >
+          { chantier.nom }
+        </Titre>
       </Encart>
       <div className='fr-mt-2w'>
         <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">

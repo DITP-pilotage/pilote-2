@@ -1,5 +1,5 @@
 import FilAriane from '@/components/_commons/FilAriane/FilAriane';
-import EnTêteChantier from '@/components/_commons/EnTêteChantier/EnTêteChantier';
+import Titre from '@/components/_commons/Titre/Titre';
 import PageImportIndicateurEnTêteStyled from './PageImportIndicateurEnTête.styled';
 import PageImportIndicateurEnTêteProps from './PageImportIndicateurEnTête.interface';
 
@@ -11,13 +11,12 @@ export default function PageImportIndicateurEnTête({ chantierInformation }: Pag
           chemin={[{ nom: 'Chantier', lien: `/chantier/${chantierInformation.id}` }]}
           libelléPageCourante='Indicateurs'
         />
-        <div className="fr-mt-2w">
-          <EnTêteChantier
-            axe={chantierInformation.axe}
-            nom={chantierInformation.nom}
-            ppg={chantierInformation.ppg}
-          />
-        </div>
+        <Titre
+          baliseHtml='h1'
+          className='fr-h2 fr-mt-2w fr-mb-1w'
+        >
+          { chantierInformation.nom }
+        </Titre>
       </div>
     </PageImportIndicateurEnTêteStyled>
   );
