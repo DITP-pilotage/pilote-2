@@ -65,10 +65,10 @@ export default class UtilisateurCSVParseur {
   
   _générerUtilisateurÀCréerOuMettreÀJour(csvRecord: CsvRecord) {
     return {
-      email: csvRecord[this._colonnes.email],
-      nom: csvRecord[this._colonnes.nom],
-      prénom: csvRecord[this._colonnes.prénom],
-      profil: csvRecord[this._colonnes.profil] as Profil,
+      email: csvRecord[this._colonnes.email].toLowerCase(),
+      nom: csvRecord[this._colonnes.nom].toLowerCase(),
+      prénom: csvRecord[this._colonnes.prénom].toLowerCase(),
+      profil: csvRecord[this._colonnes.profil].toUpperCase() as Profil,
       habilitations: {
         lecture: this._générerUneHabilitation(),
         'saisie.commentaire': this._générerUneHabilitation(),

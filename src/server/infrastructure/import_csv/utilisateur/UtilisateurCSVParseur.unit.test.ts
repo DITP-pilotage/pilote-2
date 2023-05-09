@@ -26,6 +26,18 @@ describe('UtilisateurCSVParseur', () => {
     jest.spyOn(fs, 'readFileSync').mockReturnValueOnce(contenuFichierCSV);
 
     const result = new UtilisateurCSVParseur('monfichier.csv').parse();
-    expect(result).toStrictEqual([utilisateurÀImporter1, utilisateurÀImporter2]);
+    expect(result).toStrictEqual([
+      {
+        ...utilisateurÀImporter1,
+        nom: utilisateurÀImporter1.nom.toLowerCase(),
+        prénom: utilisateurÀImporter1.prénom.toLowerCase(),
+        email: utilisateurÀImporter1.email.toLowerCase(),
+      },
+      {
+        ...utilisateurÀImporter2,
+        nom: utilisateurÀImporter2.nom.toLowerCase(),
+        prénom: utilisateurÀImporter2.prénom.toLowerCase(),
+        email: utilisateurÀImporter2.email.toLowerCase(),
+      }]);
   });
 });
