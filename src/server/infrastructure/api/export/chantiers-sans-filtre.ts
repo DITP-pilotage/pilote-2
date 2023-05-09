@@ -20,19 +20,25 @@ const COLONNES = [
   'Taux d\'avancement régional',
   'Taux d\'avancement départemental',
   'Météo',
-  'Objectif',
-  'Action à venir',
-  'Frein à lever',
+  'Actions à venir',
+  'Actions à valoriser',
+  'Freins à lever',
+  'Commentaires sur les données',
+  'Autres résultats',
+  'Autres résultats (non corrélés aux indicateurs)',
+  'Suivi des décisions',
+  'Notre ambition',
+  'Déjà fait',
+  'À faire',
   'Synthèse des résultats',
 ];
 
 /**
- Actions à valoriser <-- ??
- Autres résultats obtenus <-- ??
  Méthodologie du calcul du taux d’avancement <-- c'est ou ?
  Plus deux autres types ? pas pour le 5 mai.
  */
 
+// eslint-disable-next-line sonarjs/cognitive-complexity
 function asCsvRow(chantierPourExport: ChantierPourExport): string[] {
   return [
     chantierPourExport.nom || NON_APPLICABLE,
@@ -47,10 +53,17 @@ function asCsvRow(chantierPourExport: ChantierPourExport): string[] {
     chantierPourExport.tauxDAvancementRégional?.toString() || NON_APPLICABLE,
     chantierPourExport.tauxDAvancementDépartemental?.toString() || NON_APPLICABLE,
     chantierPourExport.météo,
-    chantierPourExport.objectif || NON_APPLICABLE,
-    chantierPourExport.actionÀVenir || NON_APPLICABLE,
-    chantierPourExport.freinÀLever || NON_APPLICABLE,
-    chantierPourExport.synthèseDesResultats || NON_APPLICABLE,
+    chantierPourExport.commActionsÀVenir || NON_APPLICABLE,
+    chantierPourExport.commActionsÀValoriser || NON_APPLICABLE,
+    chantierPourExport.commFreinsÀLever || NON_APPLICABLE,
+    chantierPourExport.commCommentairesSurLesDonnées || NON_APPLICABLE,
+    chantierPourExport.commAutresRésultats || NON_APPLICABLE,
+    chantierPourExport.commAutresRésultatsNonCorrélésAuxIndicateurs || NON_APPLICABLE,
+    chantierPourExport.decStratSuiviDesDécisions || NON_APPLICABLE,
+    chantierPourExport.objNotreAmbition || NON_APPLICABLE,
+    chantierPourExport.objDéjàFait || NON_APPLICABLE,
+    chantierPourExport.objÀFaire || NON_APPLICABLE,
+    chantierPourExport.synthèseDesRésultats || NON_APPLICABLE,
   ];
 }
 
