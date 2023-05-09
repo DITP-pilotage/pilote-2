@@ -37,6 +37,7 @@ describe('/api/indicateur/:indicateurId', () => {
           valeurs: [1, 4, 6],
           dateValeurs: ['2022-01-02T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
           valeurCible: 1790,
+          dateValeurCible: '2025-01-02T00:00:00.000Z',
           avancement: {
             global: 40,
             annuel: null,
@@ -59,6 +60,7 @@ describe('/api/indicateur/:indicateurId', () => {
           valeurs: [1, 4, 6],
           dateValeurs: ['2022-01-02T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
           valeurCible: 1790,
+          dateValeurCible: '2025-01-02T00:00:00.000Z',
           avancement: {
             global: 40,
             annuel: null,

@@ -11,5 +11,6 @@ export type DétailsIndicateur = {
   valeurs: number[],
   dateValeurs: string[],
   valeurCible: number | null,
+  dateValeurCible: string | null,
   avancement: Avancement,
 };

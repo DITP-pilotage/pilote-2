@@ -134,8 +134,21 @@ export default class ChantierSQLRepository implements ChantierRepository {
              derniers_commentaires as (select *
                                        from (select c.*,
                                                     row_number() over (partition by chantier_id, maille, code_insee, type order by date desc) r
-                                             from commentaire c) o
-                                       where o.r = 1),
+                                             from commentaire c
+                                            ) comm
+                                       where comm.r = 1),
+             dernieres_decisions_strat as (select *
+                                           from (select ds.*,
+                                                        row_number() over (partition by chantier_id, type order by date desc) r
+                                                 from decision_strategique ds
+                                                ) decis_s
+                                           where decis_s.r = 1),
+             derniers_objectifs as (select *
+                                    from (select ob.*,
+                                                 row_number() over (partition by chantier_id, type order by date desc) r
+                                          from objectif ob
+                                         ) obj
+                                    where obj.r = 1),
              dernieres_syntheses as (select *
                                      from (select s.*,
                                                   row_number() over (partition by chantier_id, maille, code_insee order by date_commentaire desc) r
@@ -144,15 +157,24 @@ export default class ChantierSQLRepository implements ChantierRepository {
                                      where sr.r = 1)
 
         select c.*,
-               r.territoire_code code_regional,
-               d.territoire_code code_departemental,
+               r.territoire_code code_region,
+               d.territoire_code code_departement,
                n.taux_avancement taux_national,
                r.taux_avancement taux_regional,
                d.taux_avancement taux_departemental,
-               o.contenu         objectif,
-               a.contenu         action_a_venir,
-               f.contenu         frein_a_lever,
-               s.commentaire     synthese_des_resultats
+               c_aavn.contenu    comm_actions_a_venir,
+               c_aavl.contenu    comm_actions_a_valoriser,
+               c_fal.contenu     comm_freins_a_lever,
+               c_csld.contenu    comm_commentaires_sur_les_donnees,
+               c_ar.contenu      comm_autres_resultats,
+               c_arncai.contenu  comm_autres_resultats_non_correles_aux_indicateurs,
+               ds_sdd.contenu    dec_strat_suivi_des_decisions,
+               o_na.contenu      obj_notre_ambition,
+               o_df.contenu      obj_deja_fait,
+               o_af.contenu      obj_a_faire,
+               s.commentaire     synthese_des_resultats,
+               s.meteo           meteo
+
         from chantier_ids cids
                  cross join territoire t
                  left outer join chantier c on c.id = cids.id and c.territoire_code = t.code
@@ -160,27 +182,59 @@ export default class ChantierSQLRepository implements ChantierRepository {
                  left outer join chantier r on (r.id = cids.id and r.maille = 'REG')
             and (r.territoire_code = t.code or r.territoire_code = t.code_parent)
                  left outer join chantier d on d.id = cids.id and d.maille = 'DEPT' and d.territoire_code = t.code
-                 left outer join derniers_commentaires o
-                                 on o.chantier_id = c.id and o.maille = c.maille and o.code_insee = c.code_insee
-                                     and o.type = 'objectifs'
-                 left outer join derniers_commentaires a
-                                 on a.chantier_id = c.id and a.maille = c.maille and a.code_insee = c.code_insee
-                                     and a.type = 'actions_a_venir'
-                 left outer join derniers_commentaires f
-                                 on f.chantier_id = c.id and f.maille = c.maille and f.code_insee = c.code_insee
-                                     and f.type = 'freins_a_lever'
+                 left outer join derniers_commentaires c_aavn
+                                 on c_aavn.chantier_id = c.id and c_aavn.maille = c.maille and c_aavn.code_insee = c.code_insee
+                                     and c_aavn.type = 'actions_a_venir'
+                 left outer join derniers_commentaires c_aavl
+                                 on c_aavl.chantier_id = c.id and c_aavl.maille = c.maille and c_aavl.code_insee = c.code_insee
+                                     and c_aavl.type = 'actions_a_valoriser'
+                 left outer join derniers_commentaires c_fal
+                                 on c_fal.chantier_id = c.id and c_fal.maille = c.maille and c_fal.code_insee = c.code_insee
+                                     and c_fal.type = 'freins_a_lever'
+                 left outer join derniers_commentaires c_csld
+                                 on c_csld.chantier_id = c.id and c_csld.maille = c.maille and c_csld.code_insee = c.code_insee
+                                     and c_csld.type = 'commentaires_sur_les_donnees'
+                 left outer join derniers_commentaires c_ar
+                                 on c_ar.chantier_id = c.id and c_ar.maille = c.maille and c_ar.code_insee = c.code_insee
+                                     and c_ar.type = 'autres_resultats_obtenus'
+                 left outer join derniers_commentaires c_arncai
+                                 on c_arncai.chantier_id = c.id and c_arncai.maille = c.maille and c_arncai.code_insee = c.code_insee
+                                     and c_arncai.type = 'autres_resultats_obtenus_non_correles_aux_indicateurs'
+                 left outer join dernieres_decisions_strat ds_sdd
+                                 on ds_sdd.chantier_id = c.id
+                                     and ds_sdd.type = 'suivi_des_decisions'
+                                     and c.maille = 'NAT' -- ne pas afficher les décisions strat. pour les territoires non nationaux
+                 left outer join derniers_objectifs o_na
+                                 on o_na.chantier_id = c.id
+                                     and o_na.type = 'notre_ambition'
+                                     and c.maille = 'NAT' -- ne pas afficher les objectifs pour les territoires non nationaux
+                 left outer join derniers_objectifs o_df
+                                 on o_df.chantier_id = c.id
+                                     and o_df.type = 'deja_fait'
+                                     and c.maille = 'NAT' -- ne pas afficher les objectifs pour les territoires non nationaux
+                 left outer join derniers_objectifs o_af
+                                 on o_af.chantier_id = c.id
+                                     and o_af.type = 'a_faire'
+                                     and c.maille = 'NAT' -- ne pas afficher les objectifs pour les territoires non nationaux
                  left outer join dernieres_syntheses s
                                  on s.chantier_id = c.id and s.maille = c.maille and s.code_insee = c.code_insee
         where c.id is not null
-        order by nom, maille, code_regional, code_departemental
+        order by
+            c.nom,
+            CASE c.maille
+                WHEN 'NAT' THEN 1
+                WHEN 'REG' THEN 2
+                WHEN 'DEPT' THEN 3
+                ELSE 4 END,
+            code_region,
+            code_departement,
+            c.ministeres
     `;
     return rows.map(it => new ChantierPourExport(
-      it.id,
       it.nom,
       it.maille,
-      it.code_insee,
-      it.code_regional,
-      it.code_departemental,
+      it.code_region,
+      it.code_departement,
       it.ministeres ? it.ministeres[0] : null, // <-- en fait ce sont les porteurs
       it.taux_national,
       it.taux_regional,
@@ -188,9 +242,16 @@ export default class ChantierSQLRepository implements ChantierRepository {
       it.meteo,
       it.est_barometre,
       it.est_territorialise,
-      it.objectif,
-      it.action_a_venir,
-      it.frein_a_lever,
+      it.comm_actions_a_venir,
+      it.comm_actions_a_valoriser,
+      it.comm_freins_a_lever,
+      it.comm_commentaires_sur_les_donnees,
+      it.comm_autres_resultats,
+      it.comm_autres_resultats_non_correles_aux_indicateurs,
+      it.dec_strat_suivi_des_decisions,
+      it.obj_notre_ambition,
+      it.obj_deja_fait,
+      it.obj_a_faire,
       it.synthese_des_resultats,
     ));
   }
