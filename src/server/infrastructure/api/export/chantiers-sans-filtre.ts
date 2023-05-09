@@ -2,13 +2,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { stringify } from 'csv-stringify';
 import assert from 'node:assert/strict';
-import { ExportCsvUseCase } from '@/server/usecase/export/ExportCsvUseCase';
+import { ExportCsvDesChantiersSansFiltreUseCase } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { ChantierPourExport } from '@/server/domain/chantier/ChantierPourExport';
-
-const NON_APPLICABLE = 'N/A';
-const OUI = 'Oui';
-const NON = 'Non';
+import { NON, NON_APPLICABLE, OUI } from '@/server/constants/csv';
 
 const COLONNES = [
   'Chantier',
@@ -57,12 +54,12 @@ function asCsvRow(chantierPourExport: ChantierPourExport): string[] {
   ];
 }
 
-export default async function handleExportCsv(request: NextApiRequest, response: NextApiResponse): Promise<void> {
+export default async function handleExportDesChantiersSansFiltre(request: NextApiRequest, response: NextApiResponse): Promise<void> {
   const session = await getServerSession(request, response, authOptions);
   assert(session);
 
-  const exportCsvUseCase = new ExportCsvUseCase();
-  const chantiersPourExport = await exportCsvUseCase.run(session.habilitations);
+  const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase();
+  const chantiersPourExport = await exportCsvDesChantiersSansFiltreUseCase.run(session.habilitations);
   const now = new Date();
   const horodatage = now.toISOString().replaceAll(/[:T]/g, '-').replace(/\..*/, '');
   const csvFilename = `PILOTE-Chantiers-sans-filtre-${horodatage}.csv`;

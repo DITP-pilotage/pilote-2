@@ -6,12 +6,12 @@ const options = [
   {
     libellé: 'Les chantiers sans filtre',
     id: 'chantiers-sans-filtre',
-    url: '/api/chantier/export',
+    url: '/api/export/chantiers-sans-filtre',
   },
   {
     libellé: 'Les indicateurs sans filtre',
     id: 'indicateurs-sans-filtre',
-    url: '/api/indicateur/export',
+    url: '/api/export/indicateurs-sans-filtre',
   },
 ];
 

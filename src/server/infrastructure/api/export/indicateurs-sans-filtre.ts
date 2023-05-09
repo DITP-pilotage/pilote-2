@@ -4,11 +4,8 @@ import { stringify } from 'csv-stringify';
 import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { IndicateurPourExport } from '@/server/domain/indicateur/IndicateurPourExport';
-import ExportCsvDesIndicateursUseCase from '@/server/usecase/indicateur/ExportCsvDesIndicateursUseCase';
-
-const NON_APPLICABLE = 'N/A';
-const OUI = 'Oui';
-const NON = 'Non';
+import ExportCsvDesIndicateursSansFiltreUseCase from '@/server/usecase/indicateur/ExportCsvDesIndicateursSansFiltreUseCase';
+import { NON, NON_APPLICABLE, OUI } from '@/server/constants/csv';
 
 const COLONNES = [
   'Maille',
@@ -48,12 +45,12 @@ function asCsvRow(indicateurPourExport: IndicateurPourExport): string[] {
   ];
 }
 
-export default async function handleExportCsvDesIndicateurs(request: NextApiRequest, response: NextApiResponse): Promise<void> {
+export default async function handleExportDesIndicateursSansFiltre(request: NextApiRequest, response: NextApiResponse): Promise<void> {
   const session = await getServerSession(request, response, authOptions);
   assert(session);
 
-  const exportCsvDesIndicateursUseCase = new ExportCsvDesIndicateursUseCase();
-  const indicateursPourExport = await exportCsvDesIndicateursUseCase.run(session.habilitations);
+  const exportCsvDesIndicateursSansFiltreUseCase = new ExportCsvDesIndicateursSansFiltreUseCase();
+  const indicateursPourExport = await exportCsvDesIndicateursSansFiltreUseCase.run(session.habilitations);
 
   const now = new Date();
   const horodatage = now.toISOString().replaceAll(/[:T]/g, '-').replace(/\..*/, '');
