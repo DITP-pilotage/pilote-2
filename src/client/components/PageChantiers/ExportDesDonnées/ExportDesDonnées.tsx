@@ -78,7 +78,7 @@ export default function ExportDesDonnées() {
               </div>
             ))
           }
-          <div className="fr-mt-2w">
+          <div className="fr-mt-2w flex">
             <button
               className="fr-btn fr-btn--icon-left fr-icon-download-line btn-radius"
               type="submit"
