@@ -8,27 +8,32 @@ import FiltreTypologie from './FiltreTypologie/FiltreTypologie';
 const filtreBaromètre: FiltreTypologieType = { id: 'filtreBaromètre', attribut: 'estBaromètre', nom: 'Chantiers du baromètre' };
 const filtreTerritorialisé: FiltreTypologieType = { id: 'filtreTerritorialisé', attribut: 'estTerritorialisé', nom: 'Chantiers territorialisés' };
 
-export default function Filtres({ ministères, axes, ppg }: FiltresProps) {
+export default function Filtres({ ministères, axes, ppg, afficherToutLesFiltres }: FiltresProps) {
   return (
     <>
-      <FiltresGroupe>
+      <section className="fr-px-3w">
         <FiltresMinistères ministères={ministères} />
-        <FiltresSélectionMultiple
-          catégorieDeFiltre='axes'
-          filtres={axes}
-          libellé="Axes"
-        />
-        <FiltresSélectionMultiple
-          catégorieDeFiltre='ppg'
-          filtres={ppg}
-          libellé="PPG"
-        />
-      </FiltresGroupe>
-      <hr className='fr-hr fr-mt-3w fr-pb-2w' />
-      <FiltresGroupe libellé='Autres critères'>
-        <FiltreTypologie filtre={filtreTerritorialisé} /> 
-        <FiltreTypologie filtre={filtreBaromètre} /> 
-      </FiltresGroupe>
+      </section>
+      {!!afficherToutLesFiltres &&
+        <>
+          <FiltresGroupe>
+            <FiltresSélectionMultiple
+              catégorieDeFiltre='axes'
+              filtres={axes}
+              libellé="Axes"
+            />
+            <FiltresSélectionMultiple
+              catégorieDeFiltre='ppg'
+              filtres={ppg}
+              libellé="PPG"
+            />
+          </FiltresGroupe>
+          <hr className='fr-hr fr-mt-3w fr-pb-2w' />
+          <FiltresGroupe libellé='Autres critères'>
+            <FiltreTypologie filtre={filtreTerritorialisé} /> 
+            <FiltreTypologie filtre={filtreBaromètre} /> 
+          </FiltresGroupe>
+        </>}
     </>
   );
 }

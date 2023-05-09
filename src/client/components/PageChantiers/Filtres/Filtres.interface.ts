@@ -5,5 +5,6 @@ import Ppg from '@/server/domain/ppg/Ppg.interface';
 export default interface BarreLatéraleProps {
   ministères: Ministère[],
   axes: Axe[],
-  ppg: Ppg[]
+  ppg: Ppg[],
+  afficherToutLesFiltres: boolean
 }

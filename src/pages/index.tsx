@@ -1,6 +1,5 @@
 import { getServerSession } from 'next-auth/next';
 import { GetServerSidePropsContext } from 'next/types';
-import PageChantiers from '@/client/components/PageChantiers/PageChantiers';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
@@ -9,6 +8,7 @@ import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import PageAccueil from '@/components/PageAccueil/PageAccueil';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
@@ -20,7 +20,7 @@ interface NextPageAccueilProps {
 
 export default function NextPageAccueil({ chantiers, ministères, axes, ppg, habilitations }: NextPageAccueilProps) {
   return (
-    <PageChantiers
+    <PageAccueil
       axes={axes}
       chantiers={chantiers}
       habilitations={habilitations}

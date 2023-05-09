@@ -4,7 +4,6 @@ import SélecteurMailleStyled from './SélecteurMaille.styled';
 import SélecteurMailleProps from './SélecteurMaille.interface';
 
 export default function SélecteurMaille({ habilitation }: SélecteurMailleProps) {
-
   const { modifierMailleSélectionnée } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
@@ -18,6 +17,7 @@ export default function SélecteurMaille({ habilitation }: SélecteurMailleProps
       valeur: 'régionale',
     },
   ];
+
   const maillesDisponibles = habilitation.recupererListeMailleEnLectureDisponible();
 
   if (maillesDisponibles.length === 1) {
