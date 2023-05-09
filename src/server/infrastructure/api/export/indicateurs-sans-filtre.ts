@@ -55,7 +55,13 @@ export default async function handleExportDesIndicateursSansFiltre(request: Next
   const indicateursPourExport = await exportCsvDesIndicateursSansFiltreUseCase.run(session.habilitations);
 
   const now = new Date();
-  const horodatage = now.toISOString().replaceAll(/[:T]/g, '-').replace(/\..*/, '');
+  const horodatage = now.getFullYear() + '-'
+    + now.getMonth().toString().padStart(2, '0') + '-'
+    + now.getDay().toString().padStart(2, '0') + '-'
+    + now.getHours().toString().padStart(2, '0') + '-'
+    + now.getMinutes().toString().padStart(2, '0') + '-'
+    + now.getSeconds().toString().padStart(2, '0');
+
   const csvFilename = `PILOTE-Indicateurs-sans-filtre-${horodatage}.csv`;
 
   response.setHeader('Content-Type', 'text/csv');

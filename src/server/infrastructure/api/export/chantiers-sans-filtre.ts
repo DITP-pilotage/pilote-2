@@ -71,8 +71,15 @@ export default async function handleExportDesChantiersSansFiltre(request: NextAp
 
   const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase();
   const chantiersPourExport = await exportCsvDesChantiersSansFiltreUseCase.run(session.habilitations);
+
   const now = new Date();
-  const horodatage = now.toISOString().replaceAll(/[:T]/g, '-').replace(/\..*/, '');
+  const horodatage = now.getFullYear() + '-'
+    + now.getMonth().toString().padStart(2, '0') + '-'
+    + now.getDay().toString().padStart(2, '0') + '-'
+    + now.getHours().toString().padStart(2, '0') + '-'
+    + now.getMinutes().toString().padStart(2, '0') + '-'
+    + now.getSeconds().toString().padStart(2, '0');
+
   const csvFilename = `PILOTE-Chantiers-sans-filtre-${horodatage}.csv`;
 
   response.setHeader('Content-Type', 'text/csv');
