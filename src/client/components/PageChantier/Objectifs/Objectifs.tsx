@@ -36,7 +36,7 @@ export default function Objectifs({ objectifs, chantierId, maille, codeInsee, mo
                 estInteractif={estInteractif}
                 maille={maille}
                 modeÉcriture={modeÉcriture}
-                publicationInitiale={objectifs.find(objectif => objectif?.type === type) || null}
+                publicationInitiale={objectifs?.find(objectif => objectif?.type === type) || null}
               />
             </Fragment>
           ))

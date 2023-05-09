@@ -4,7 +4,7 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export default interface CommentairesProps {
-  commentaires: Commentaire[]
+  commentaires: Commentaire[] | null
   chantierId: Chantier['id']
   maille: Maille
   codeInsee: CodeInsee

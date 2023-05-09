@@ -58,6 +58,7 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
     rechargerChantier,
     avancements,
   } = usePageChantier(chantierId);
+  
   const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
@@ -156,20 +157,17 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
                     <Cartes chantier={chantier} />
                   </div>
                 </div>
-                {
-                  objectifs !== null &&
-                  <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-                    <div className="fr-col-12">
-                      <Objectifs
-                        chantierId={chantier.id}
-                        codeInsee='FR'
-                        maille='nationale'
-                        modeÉcriture={modeÉcritureObjectifs}
-                        objectifs={objectifs}
-                      />
-                    </div>
+                <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+                  <div className="fr-col-12">
+                    <Objectifs
+                      chantierId={chantier.id}
+                      codeInsee='FR'
+                      maille='nationale'
+                      modeÉcriture={modeÉcritureObjectifs}
+                      objectifs={objectifs}
+                    />
                   </div>
-                }
+                </div>
                 {
                   détailsIndicateurs !== null && (
                     <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
@@ -194,21 +192,17 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
                     </div>
                   </div>
                 }
-                {
-                  commentaires !== null && (
-                    <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-                      <div className="fr-col-12">
-                        <Commentaires
-                          chantierId={chantier.id}
-                          codeInsee={territoireSélectionné.codeInsee}
-                          commentaires={commentaires}
-                          maille={mailleAssociéeAuTerritoireSélectionné}
-                          modeÉcriture={modeÉcritureCommentaires}
-                        />
-                      </div>
-                    </div>
-                  )
-                }
+                <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+                  <div className="fr-col-12">
+                    <Commentaires
+                      chantierId={chantier.id}
+                      codeInsee={territoireSélectionné.codeInsee}
+                      commentaires={commentaires}
+                      maille={mailleAssociéeAuTerritoireSélectionné}
+                      modeÉcriture={modeÉcritureCommentaires}
+                    />
+                  </div>
+                </div>
               </div>
             </>
           ) : (
