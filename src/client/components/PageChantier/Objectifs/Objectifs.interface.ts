@@ -4,7 +4,7 @@ import Objectif from '@/server/domain/objectif/Objectif.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export interface ObjectifProps {
-  objectifs: Objectif[]
+  objectifs: Objectif[] | null
   chantierId: Chantier['id']
   maille: Maille
   codeInsee: CodeInsee
