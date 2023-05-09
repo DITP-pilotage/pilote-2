@@ -9,7 +9,8 @@ historique_valeur_actuelle_indicateur AS (
         dim_periods.date
     FROM {{ ref('stg_dfakto__fact_financials') }} AS fact_fin
     JOIN {{ ref('stg_dfakto__dim_periods') }} dim_periods ON fact_fin.period_id = dim_periods.id
-    WHERE type_valeur = 'Valeur réalisée'
+    WHERE valeur is not NULL
+        AND type_valeur = 'Valeur réalisée'
         AND length(period_id::text) = 8
     ORDER BY tree_node_id, effect_id, period_id
 
