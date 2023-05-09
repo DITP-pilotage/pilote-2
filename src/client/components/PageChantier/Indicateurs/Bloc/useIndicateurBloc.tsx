@@ -16,6 +16,7 @@ const indicateurDétailsVide = {
     valeurs: [],
     dateValeurs: [],
     valeurCible: null,
+    dateValeurCible: null,
     avancement: { annuel: null, global: null },
   },
 };

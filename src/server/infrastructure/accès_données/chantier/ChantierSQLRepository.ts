@@ -172,7 +172,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
                o_na.contenu      obj_notre_ambition,
                o_df.contenu      obj_deja_fait,
                o_af.contenu      obj_a_faire,
-               s.commentaire     synthese_des_resultats
+               s.commentaire     synthese_des_resultats,
+               s.meteo           meteo
 
         from chantier_ids cids
                  cross join territoire t
@@ -224,7 +225,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
       it.id,
       it.nom,
       it.maille,
-      it.code_insee,
       it.code_region,
       it.code_departement,
       it.ministeres ? it.ministeres[0] : null, // <-- en fait ce sont les porteurs

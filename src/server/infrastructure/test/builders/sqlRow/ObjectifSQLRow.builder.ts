@@ -56,6 +56,17 @@ export default class ObjectifSQLRowBuilder {
     return this;
   }
 
+  shallowCopy(): ObjectifSQLRowBuilder {
+    const result = new ObjectifSQLRowBuilder() as any;
+    for (const attribut in this) {
+      if (attribut == '_id') {
+        continue;
+      }
+      result[attribut] = this[attribut];
+    }
+    return result as ObjectifSQLRowBuilder;
+  }
+
   build(): Prisma.objectifCreateArgs['data'] {
     return {
       id: this._id,

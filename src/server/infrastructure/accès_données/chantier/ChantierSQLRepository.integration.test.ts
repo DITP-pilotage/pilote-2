@@ -9,6 +9,7 @@ import SyntheseDesResultatsRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -340,7 +341,6 @@ describe('ChantierSQLRepository', () => {
       const repository = new ChantierSQLRepository(prisma);
 
       const habilitation = { lecture: {
-
         chantiers: ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005'],
         territoires: ['NAT-FR'],
       } } as unknown as Utilisateur['habilitations'];
@@ -352,7 +352,6 @@ describe('ChantierSQLRepository', () => {
         .avecCodeInsee('01')
         .avecTauxAvancement(30)
         .avecMinistères(['MIN a', 'MIN b'])
-        .avecMétéo('SOLEIL')
         .avecEstBaromètre(true)
         .avecEstTerritorialisé(false);
 
@@ -375,25 +374,114 @@ describe('ChantierSQLRepository', () => {
       ] });
 
       const commentaireBuilder = new CommentaireRowBuilder()
-        .avecChantierId('CH-001')
-        .avecMaille('DEPT')
-        .avecCodeInsee('01')
-        .avecType('objectifs')
-        .avecContenu('objectif 1 v1')
-        .avecDate(new Date(0));
+        .avecChantierId('CH-001');
       await prisma.commentaire.createMany({ data: [
-        commentaireBuilder.build(),
         commentaireBuilder.shallowCopy()
-          .avecContenu('objectif 1 v2')
+          .avecMaille('DEPT').avecCodeInsee('01')
+          .avecType('autres_resultats_obtenus')
+          .avecContenu('commentaire ARO 1 v1')
           .avecDate(new Date(1))
           .build(),
         commentaireBuilder.shallowCopy()
-          .avecType('actions_a_venir')
-          .avecContenu('action à venir 1')
+          .avecMaille('DEPT').avecCodeInsee('01')
+          .avecType('autres_resultats_obtenus')
+          .avecContenu('commentaire ARO 1 v2')
+          .avecDate(new Date(2))
           .build(),
         commentaireBuilder.shallowCopy()
+          .avecMaille('DEPT').avecCodeInsee('01')
+          .avecType('commentaires_sur_les_donnees')
+          .avecContenu('commentaire CSLD 1 v1')
+          .avecDate(new Date(1))
+          .build(),
+        commentaireBuilder.shallowCopy()
+          .avecMaille('DEPT').avecCodeInsee('01')
+          .avecType('commentaires_sur_les_donnees')
+          .avecContenu('commentaire CSLD 1 v2')
+          .avecDate(new Date(2))
+          .build(),
+
+        commentaireBuilder.shallowCopy()
+          .avecMaille('NAT').avecCodeInsee('FR')
+          .avecType('actions_a_venir')
+          .avecContenu('commentaire AAVN 1 v1')
+          .avecDate(new Date(1))
+          .build(),
+        commentaireBuilder.shallowCopy()
+          .avecMaille('NAT').avecCodeInsee('FR')
+          .avecType('actions_a_venir')
+          .avecContenu('commentaire AAVN 1 v2')
+          .avecDate(new Date(2))
+          .build(),
+        commentaireBuilder.shallowCopy()
+          .avecMaille('NAT').avecCodeInsee('FR')
+          .avecType('actions_a_valoriser')
+          .avecContenu('commentaire AAVL 1 v1')
+          .avecDate(new Date(1))
+          .build(),
+        commentaireBuilder.shallowCopy()
+          .avecMaille('NAT').avecCodeInsee('FR')
+          .avecType('actions_a_valoriser')
+          .avecContenu('commentaire AAVL 1 v2')
+          .avecDate(new Date(2))
+          .build(),
+        commentaireBuilder.shallowCopy()
+          .avecMaille('NAT').avecCodeInsee('FR')
           .avecType('freins_a_lever')
-          .avecContenu('frein à lever 1')
+          .avecContenu('commentaire FAL 1 v1')
+          .avecDate(new Date(1))
+          .build(),
+        commentaireBuilder.shallowCopy()
+          .avecMaille('NAT').avecCodeInsee('FR')
+          .avecType('freins_a_lever')
+          .avecContenu('commentaire FAL 1 v2')
+          .avecDate(new Date(2))
+          .build(),
+        commentaireBuilder.shallowCopy()
+          .avecMaille('NAT').avecCodeInsee('FR')
+          .avecType('autres_resultats_obtenus_non_correles_aux_indicateurs')
+          .avecContenu('commentaire ARONCAI 1 v1')
+          .avecDate(new Date(1))
+          .build(),
+        commentaireBuilder.shallowCopy()
+          .avecMaille('NAT').avecCodeInsee('FR')
+          .avecType('autres_resultats_obtenus_non_correles_aux_indicateurs')
+          .avecContenu('commentaire ARONCAI 1 v2')
+          .avecDate(new Date(2))
+          .build(),
+      ] });
+
+      const objectifBuilder = new ObjectifSQLRowBuilder()
+        .avecChantierId('CH-001')
+        .avecType('notre_ambition')
+        .avecContenu('objectif NA 1 v1')
+        .avecDate(new Date(1));
+      await prisma.objectif.createMany({ data: [
+        objectifBuilder.build(),
+        objectifBuilder.shallowCopy()
+          .avecType('notre_ambition')
+          .avecContenu('objectif NA 1 v2')
+          .avecDate(new Date(2))
+          .build(),
+        objectifBuilder.shallowCopy()
+          .avecType('a_faire')
+          .avecContenu('objectif AF 1 v1')
+          .avecDate(new Date(1))
+          .build(),
+        objectifBuilder.shallowCopy()
+          .avecType('a_faire')
+          .avecContenu('objectif AF 1 v2')
+          .avecDate(new Date(2))
+          .build(),
+        objectifBuilder.shallowCopy()
+          .avecType('deja_fait')
+          .avecContenu('objectif DF 1 v1')
+          .avecDate(new Date(1))
+          .build(),
+        objectifBuilder.shallowCopy()
+          .avecType('deja_fait')
+          .avecContenu('objectif DF 1 v2')
+          .avecDate(new Date(2))
           .build(),
       ] });
 
@@ -404,6 +492,7 @@ describe('ChantierSQLRepository', () => {
           .avecCodeInsee('01')
           .avecDateCommentaire(new Date(1))
           .avecCommentaire('synthèse des résultats 1 v1')
+          .avecMétéo('COUVERT')
           .build(),
         new SyntheseDesResultatsRowBuilder()
           .avecChantierId('CH-001')
@@ -411,14 +500,6 @@ describe('ChantierSQLRepository', () => {
           .avecCodeInsee('01')
           .avecDateCommentaire(new Date(2))
           .avecCommentaire('synthèse des résultats 1 v2')
-          .build(),
-        new SyntheseDesResultatsRowBuilder()
-          .avecChantierId('CH-001')
-          .avecMaille('DEPT')
-          .avecCodeInsee('01')
-          .avecDateCommentaire(null)
-          .avecCommentaire(null)
-          .avecDateMétéo(new Date(3))
           .avecMétéo('SOLEIL')
           .build(),
       ] });
@@ -429,25 +510,43 @@ describe('ChantierSQLRepository', () => {
       // Then
       expect(result).toEqual([
         expect.objectContaining({
-          chantierId: 'CH-001',
           nom: 'a Chantier 1',
+          chantierId: 'CH-001',
           maille: 'DEPT',
-          codeInsee: '01',
-          codeDépartement: 'DEPT-01',
           codeRégion: 'REG-84',
+          codeDépartement: 'DEPT-01',
           ministère: 'MIN a',
-          météo: 'SOLEIL',
           estBaromètre: true,
           estTerritorialisé: false,
           tauxDAvancementNational: 10,
           tauxDAvancementRégional: 20,
           tauxDAvancementDépartemental: 30,
-          objectif: 'objectif 1 v2',
-          actionÀVenir: 'action à venir 1',
-          freinÀLever: 'frein à lever 1',
-          synthèseDesResultats: 'synthèse des résultats 1 v2',
+          météo: 'SOLEIL',
+          commActionsÀVenir: null,
+          commActionsÀValoriser: null,
+          commFreinsÀLever: null,
+          commCommentairesSurLesDonnées: 'commentaire CSLD 1 v2',
+          commAutresRésultats: 'commentaire ARO 1 v2',
+          commAutresRésultatsNonCorrélésAuxIndicateurs: null,
+          decStratSuiviDesDécisions: null,
+          objNotreAmbition: null,
+          objDéjàFait: null,
+          objÀFaire: null,
+          synthèseDesRésultats: 'synthèse des résultats 1 v2',
         }),
-        expect.objectContaining({ chantierId: 'CH-001', maille: 'NAT' }),
+        expect.objectContaining({
+          chantierId: 'CH-001',
+          maille: 'NAT',
+          commActionsÀVenir: 'commentaire AAVN 1 v2',
+          commActionsÀValoriser: 'commentaire AAVL 1 v2',
+          commFreinsÀLever: 'commentaire FAL 1 v2',
+          commCommentairesSurLesDonnées: null,
+          commAutresRésultats: null,
+          commAutresRésultatsNonCorrélésAuxIndicateurs: 'commentaire ARONCAI 1 v2',
+          objNotreAmbition: 'objectif NA 1 v2',
+          objDéjàFait: 'objectif DF 1 v2',
+          objÀFaire: 'objectif AF 1 v2',
+        }),
         expect.objectContaining({ chantierId: 'CH-001', maille: 'REG' }),
         expect.objectContaining({ chantierId: 'CH-004', nom: 'b' }),
         expect.objectContaining({ chantierId: 'CH-002', nom: 'c' }),
