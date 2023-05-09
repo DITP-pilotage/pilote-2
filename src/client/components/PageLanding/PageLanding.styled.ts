@@ -1,6 +1,10 @@
 import styled from '@emotion/styled';
 
 const PageLandingStyled = styled.main`
+  h1 {
+    color: #000 !important;
+  }
+
   .conteneur-capture-pilote {
     display: flex;
     justify-content: center;
@@ -16,8 +20,8 @@ const PageLandingStyled = styled.main`
     background-color: var(--background-alt-grey);
   }
 
-  .bloc-questions, .bloc-hero, .fr-card__img {
-    background-color: var(--background-alt-blue-france);
+  .bloc-questions, .bloc-pour-qui {
+    background-color: var(--background-default-grey);
   }
 
   .fr-btn {
