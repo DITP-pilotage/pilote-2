@@ -28,23 +28,10 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg, habil
   const territoireFiltre = habilitation.récupérerMailleEtCodeEnLecture();
   const maille = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
 
-  const { modifierMailleSélectionnée, modifierTerritoireSélectionné } = actionsTerritoiresStore();
-  useEffect(() =>{
-    let mailleAAfficher: 'départementale' | 'régionale' = 'régionale';
-
-    let territoires = territoireFiltre.REG.territoires;
-    if (territoires.length === 0) {
-      territoires = territoireFiltre.DEPT.territoires;
-      mailleAAfficher = 'départementale';
-    }
-
-    modifierMailleSélectionnée(mailleAAfficher);
-    if (territoires.length == 1) {
-      const codeInsee = territoires[0].split('-')[1];
-      modifierTerritoireSélectionné(codeInsee);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { initialiserValeursParDéfaut } = actionsTerritoiresStore();
+  useEffect(() => {
+    initialiserValeursParDéfaut(territoireFiltre);
+  }, [territoireFiltre, initialiserValeursParDéfaut]);
 
 
   const codeInsee = territoireSélectionnéTerritoiresStore().codeInsee;

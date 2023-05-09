@@ -12,7 +12,7 @@ const construireLaListeDOptions = (listeCodeInsee: string[]) => {
   const territoiresDisponibles = territoires.filter((c) => (listeCodeInsee.find((code) => code === c.codeInsee)));
   
   let result = [];
-  if (!listeCodeInsee.includes('FR')) {
+  if (listeCodeInsee.includes('FR')) {
     result.push({
       libellé: 'France',
       valeur: 'FR',

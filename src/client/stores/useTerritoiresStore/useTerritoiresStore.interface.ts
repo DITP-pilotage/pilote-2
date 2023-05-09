@@ -1,5 +1,6 @@
 import { MailleInterne, Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { TerritoiresFiltre } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 export type TerritoireGéographique = {
   tracéSVG: string
@@ -17,7 +18,9 @@ export default interface TerritoiresStore {
     territoireParent?: TerritoireGéographique
   },
   territoiresComparés: TerritoireGéographique[]
+  aÉtéInitialisé: boolean
   actions: {
+    initialiserValeursParDéfaut: (territoiresAccessiblesEnLecture: TerritoiresFiltre) => void,
     modifierMailleSélectionnée: (maille: MailleInterne) => void,
     modifierTerritoireSélectionné: (codeInsee: CodeInsee) => void,
     récupérerDétailsSurUnTerritoire: (codeInsee: CodeInsee, maille: MailleInterne) => TerritoireGéographique | undefined

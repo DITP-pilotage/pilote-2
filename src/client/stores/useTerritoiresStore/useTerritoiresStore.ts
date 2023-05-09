@@ -19,6 +19,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
   territoireSélectionné: territoireFrance,
   mailleAssociéeAuTerritoireSélectionné: 'nationale',
   territoiresComparés: [],
+  aÉtéInitialisé: false,
 
   actions: {
     modifierMailleSélectionnée: maille => set({ 
@@ -27,6 +28,18 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       mailleAssociéeAuTerritoireSélectionné: 'nationale', 
       territoiresComparés: [],
     }),
+
+    initialiserValeursParDéfaut: territoiresAccessiblesEnLecture => {
+      if (get().aÉtéInitialisé === false) {
+        if (territoiresAccessiblesEnLecture.REG.territoires.length > 0 && territoiresAccessiblesEnLecture.NAT.territoires.length === 0) {
+          set({ mailleSélectionnée: 'régionale', aÉtéInitialisé: true });
+          get().actions.modifierTerritoireSélectionné(territoiresAccessiblesEnLecture.REG.territoires[0].split('-')[1]);
+        } else if (territoiresAccessiblesEnLecture.NAT.territoires.length === 0) {
+          set({ mailleSélectionnée: 'départementale', aÉtéInitialisé: true });
+          get().actions.modifierTerritoireSélectionné(territoiresAccessiblesEnLecture.DEPT.territoires[0].split('-')[1]);
+        }
+      }
+    },
 
     modifierTerritoireSélectionné: codeInsee => {
       if (codeInsee === 'FR') {

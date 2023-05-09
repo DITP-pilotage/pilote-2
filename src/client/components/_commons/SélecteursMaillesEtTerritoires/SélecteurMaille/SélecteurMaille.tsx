@@ -20,20 +20,8 @@ export default function SélecteurMaille({ habilitation }: SélecteurMailleProps
   ];
   const maillesDisponibles = habilitation.recupererListeMailleEnLectureDisponible();
 
-  if (maillesDisponibles.length  == 1) {
-    const maille = maillesÀAfficher[(maillesDisponibles[0] == 'départementale') ? 0 : 1 ];
-    return (
-      <SélecteurMailleStyled className='fr-p-1v'>
-        <button
-          className={`${mailleSélectionnée === maille.valeur && 'sélectionné fr-text--bold'}`}
-          key={maille.valeur}
-          onClick={() => modifierMailleSélectionnée(maille.valeur)}
-          type='button'
-        >
-          {maille.label}
-        </button>
-      </SélecteurMailleStyled>
-    );
+  if (maillesDisponibles.length === 1) {
+    return null;
   }
   
   return (
