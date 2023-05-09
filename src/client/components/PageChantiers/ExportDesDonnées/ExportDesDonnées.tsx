@@ -18,7 +18,7 @@ const options = [
 export const ID_HTML_MODALE_EXPORT = 'modale-exporter-les-données';
 
 export default function ExportDesDonnées() {
-  const [valeur, setValeur] = useState(options[0].id);
+  const [valeur, setValeur] = useState<string | undefined>();
 
   const auChangementDeValeur = (événement: ChangeEvent) => {
     setValeur(événement.target.id);
@@ -48,7 +48,7 @@ export default function ExportDesDonnées() {
             className="fr-fieldset__legend--regular fr-fieldset__legend"
             id="légende-données-à-exporter"
           >
-            Sélectionnez les données à exporter
+            Sélectionnez les données à exporter&nbsp;:
             {' '}
             <span className="fr-hint-text">
               Les données exportées seront téléchargées au format .csv
@@ -78,22 +78,29 @@ export default function ExportDesDonnées() {
               </div>
             ))
           }
-          <div className="fr-mt-2w flex">
+        </fieldset>
+        <ul
+          className="fr-btns-group fr-btns-group--left fr-btns-group--inline-sm fr-btns-group--icon-left"
+        >
+          <li>
             <button
               className="fr-btn fr-btn--icon-left fr-icon-download-line btn-radius"
+              disabled={valeur === undefined}
               type="submit"
             >
               Exporter les données
             </button>
+          </li>
+          <li>
             <button
               aria-controls={ID_HTML_MODALE_EXPORT}
-              className="fr-btn fr-btn--secondary fr-ml-4w btn-radius"
+              className="fr-btn fr-btn--secondary btn-radius"
               type="button"
             >
               Annuler
             </button>
-          </div>
-        </fieldset>
+          </li>
+        </ul>
       </form>
     </Modale>
   );
