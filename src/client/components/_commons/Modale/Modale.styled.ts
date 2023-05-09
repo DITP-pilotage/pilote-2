@@ -1,15 +1,6 @@
 import styled from '@emotion/styled';
 
 const ModaleStyled = styled.div`
-  .bouton-ouvrir-modale {
-    border-bottom: 1px solid;
-  }
-  
-  .bouton-ouvrir-modale:hover {
-    background-color: unset;
-    border-bottom-width: 2px;
-  }
-  
   .bouton-fermer-modale {
     align-items: center;
   }

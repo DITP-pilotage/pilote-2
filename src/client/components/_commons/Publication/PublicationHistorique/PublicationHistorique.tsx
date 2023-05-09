@@ -1,43 +1,52 @@
-import { Fragment } from 'react';
+import { Fragment, useMemo } from 'react';
 import Modale from '@/components/_commons/Modale/Modale';
 import PublicationAffichage from '@/components/_commons/Publication/PublicationAffichage/PublicationAffichage';
+import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import PublicationHistoriqueProps from './PublicationHistorique.interface';
 import usePublicationHistorique from './usePublicationHistorique';
 
 export default function PublicationHistorique({ type, entité, chantierId, maille, codeInsee }: PublicationHistoriqueProps) {
   const { publications, nomTerritoire, récupérerPublications } = usePublicationHistorique(type, entité, chantierId, maille, codeInsee);
 
+  const ID_HTML = useMemo(() => `historique-${entité}-${type}`, [entité, type]);
+
   return (
-    <Modale
-      idHtml={`historique-${entité}-${type}`}
-      libelléBouton="Voir l'historique"
-      ouvertureCallback={récupérerPublications}
-      sousTitre={nomTerritoire}
-      titre={`Historique - ${entité}`}
-    >
-      <div>
-        {
-          publications 
-            ? 
-            publications.map((publication, i) => (
-              publication &&
-              <Fragment key={publication.id}>
-                {
-                  i !== 0 && (
-                    <hr className="fr-mt-4w" />
-                  )
-                }
-                <div className="fr-mx-2w">
-                  <PublicationAffichage publication={publication} />
-                </div>
-              </Fragment>
-            ))
-            :
-            <p>
-              Chargement de l&apos;historique...
-            </p>
-        }
-      </div>
-    </Modale>
+    <>
+      <BoutonSousLigné
+        idHtml={ID_HTML}
+      >
+        Voir l&apos;historique
+      </BoutonSousLigné>
+      <Modale
+        idHtml={ID_HTML}
+        ouvertureCallback={récupérerPublications}
+        sousTitre={nomTerritoire}
+        titre={`Historique - ${entité}`}
+      >
+        <div>
+          {
+            publications
+              ?
+              publications.map((publication, i) => (
+                publication &&
+                <Fragment key={publication.id}>
+                  {
+                    i !== 0 && (
+                      <hr className="fr-mt-4w" />
+                    )
+                  }
+                  <div className="fr-mx-2w">
+                    <PublicationAffichage publication={publication} />
+                  </div>
+                </Fragment>
+              ))
+              :
+              <p>
+                Chargement de l&apos;historique...
+              </p>
+          }
+        </div>
+      </Modale>
+    </>
   );
 }

@@ -1,4 +1,3 @@
-import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import Titre from '@/components/_commons/Titre/Titre';
 import PublicationStyled from './Publication.styled';

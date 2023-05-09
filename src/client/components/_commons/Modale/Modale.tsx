@@ -1,21 +1,14 @@
+import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
 import Titre from '@/components/_commons/Titre/Titre';
 import ModaleProps from './Modale.interface';
 import ModaleStyled from './Modale.styled';
 import useModale from './useModale';
 
-export default function Modale({ children, titre, sousTitre, libelléBouton, idHtml, ouvertureCallback, fermetureCallback }: ModaleProps) {
+export default function Modale({ children, titre, sousTitre, idHtml, ouvertureCallback, fermetureCallback }: ModaleProps) {
   const { modaleRef } = useModale(ouvertureCallback, fermetureCallback);
 
   return (
     <ModaleStyled>
-      <button
-        aria-controls={idHtml}
-        className="fr-link fr-link--icon-left fr-fi-arrow-right-line fr-mt-1w bouton-ouvrir-modale"
-        data-fr-opened="false"
-        type="button"
-      >
-        { libelléBouton }
-      </button>
       <dialog
         className="fr-modal"
         id={idHtml}
@@ -40,9 +33,12 @@ export default function Modale({ children, titre, sousTitre, libelléBouton, idH
               >
                 {titre}
               </Titre>
-              <p className="fr-text--lg bold">
-                {sousTitre}
-              </p>
+              {
+                !!sousTitre &&
+                <p className="fr-text--lg bold">
+                  {sousTitre}
+                </p>
+              }
             </div>
             <div className="fr-modal__content fr-px-4w fr-mb-4w modale-contenu">
               { children }
