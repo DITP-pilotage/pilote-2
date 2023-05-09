@@ -18,7 +18,7 @@ const options = [
 export const ID_HTML_MODALE_EXPORT = 'modale-exporter-les-données';
 
 export default function ExportDesDonnées() {
-  const [valeur, setValeur] = useState(options[0].id);
+  const [valeur, setValeur] = useState<string | undefined>();
 
   const auChangementDeValeur = (événement: ChangeEvent) => {
     setValeur(événement.target.id);
@@ -81,6 +81,7 @@ export default function ExportDesDonnées() {
           <div className="fr-mt-2w flex">
             <button
               className="fr-btn fr-btn--icon-left fr-icon-download-line btn-radius"
+              disabled={valeur === undefined}
               type="submit"
             >
               Exporter les données
