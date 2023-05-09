@@ -1,4 +1,5 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
+import '@gouvfr/dsfr/dist/component/link/link.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import { useEffect, useState } from 'react';
@@ -15,6 +16,7 @@ import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLat�
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore, actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import ExportDesDonnées, { ID_HTML_MODALE_EXPORT } from '@/components/PageChantiers/ExportDesDonnées/ExportDesDonnées';
 import PageChantiersProps from './PageChantiers.interface';
 import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import FiltresActifs from './FiltresActifs/FiltresActifs';
@@ -24,7 +26,6 @@ import usePageChantiers from './usePageChantiers';
 export default function PageChantiers({ chantiers, ministères, axes, ppg, habilitations }: PageChantiersProps) {
   const habilitation = new Habilitation(habilitations);
   const territoireFiltre = habilitation.récupérerMailleEtCodeEnLecture();
-
   const maille = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
 
   const { modifierMailleSélectionnée, modifierTerritoireSélectionné } = actionsTerritoiresStore();
@@ -118,32 +119,17 @@ export default function PageChantiers({ chantiers, ministères, axes, ppg, habil
                     </Link>
                   </div>
                 }
-                {
-                  process.env.NEXT_PUBLIC_FF_EXPORT_CSV === 'true' &&
-                  <div>
-                    {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-                    <a
-                      className="fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm"
-                      href="/api/chantier/export"
-                      title="Exporter les données"
-                    >
-                      Exporter les données
-                    </a>
-                  </div>
-                }
-                {
-                  process.env.NEXT_PUBLIC_FF_EXPORT_CSV_INDICATEURS === 'true' &&
-                  <div>
-                    {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-                    <a
-                      className="fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm"
-                      href="/api/indicateur/export"
-                      title="Exporter les indicateurs"
-                    >
-                      Exporter les indicateurs
-                    </a>
-                  </div>
-                }
+                <div>
+                  <button
+                    aria-controls={ID_HTML_MODALE_EXPORT}
+                    className="fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm"
+                    data-fr-opened="false"
+                    type="button"
+                  >
+                    Exporter les données
+                  </button>
+                  <ExportDesDonnées />
+                </div>
               </div>
             </div>
             <div className="fr-grid-row fr-grid-row--gutters">
