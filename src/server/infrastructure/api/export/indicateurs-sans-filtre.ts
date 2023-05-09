@@ -16,11 +16,13 @@ const COLONNES = [
   'Chantier du baromètre',
   'Taux d\'avancement (chantier)',
   'Météo',
+  'Indicateur',
   'Valeur initiale',
   'Date valeur initiale',
   'Valeur actuelle',
   'Date valeur actuelle',
   'Valeur cible',
+  'Date valeur cible',
   'Taux d\'avancement (indicateur)',
 ];
 
