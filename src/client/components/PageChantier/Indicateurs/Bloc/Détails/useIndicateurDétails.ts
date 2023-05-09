@@ -20,7 +20,7 @@ export default function useIndicateurDétails(indicateurId: Indicateur['id'], fu
         .then(réponse => réponse.json() as Promise<DétailsIndicateurs>)
         .then(détailsIndicateurs => {
           setDonnéesCartographieAvancement(
-            objectEntries(détailsIndicateurs[indicateurId]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.avancement.annuel, codeInsee: codeInsee })),
+            objectEntries(détailsIndicateurs[indicateurId]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.avancement.global, codeInsee: codeInsee })),
           );
           setDonnéesCartographieValeurActuelle(
             objectEntries(détailsIndicateurs[indicateurId]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.valeurs[détailsIndicateur.valeurs.length - 1] ?? null, codeInsee: codeInsee })),
