@@ -3,6 +3,8 @@ import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicate
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { IndicateurPourExport } from '@/server/domain/indicateur/IndicateurPourExport';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 export default interface IndicateurRepository {
   récupérerParChantierId(chantierId: string): Promise<Indicateur[]>;
@@ -10,4 +12,5 @@ export default interface IndicateurRepository {
   récupererDétailsParChantierIdEtTerritoire(chantierId: string, maille: Maille, codesInsee: CodeInsee[]): Promise<DétailsIndicateurs>;
   récupérerGroupésParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<string, Indicateur[]>>
   récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<Chantier['id'], DétailsIndicateurs>>
+  récupérerPourExports(habilitations: Habilitations): Promise<IndicateurPourExport[]>;
 }

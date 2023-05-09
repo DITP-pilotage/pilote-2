@@ -16,6 +16,8 @@ export default class DétailsIndicateurBuilder {
 
   private _valeurCible: DétailsIndicateur['valeurCible'];
 
+  private _dateValeurCible: DétailsIndicateur['dateValeurCible'];
+
   private _avancement: DétailsIndicateur['avancement'];
 
   constructor() {
@@ -25,6 +27,7 @@ export default class DétailsIndicateurBuilder {
     this._valeurs = this._valeurInitiale === null ? [] : [this._valeurInitiale, faker.datatype.number({ min: this._valeurInitiale, precision: 0.01 })];
     this._dateValeurs = this._dateValeurInitiale === null ? [] : [this._dateValeurInitiale, faker.date.between(this._dateValeurInitiale, faker.date.recent(5)).toISOString()];
     this._valeurCible = faker.helpers.arrayElement([null, faker.datatype.number({ min: this._valeurInitiale ?? 42, precision: 0.01 })]);
+    this._dateValeurCible = this._valeurInitiale === null ? null : faker.date.future(10, '2023-02-01T00:00:00.000Z').toISOString();
     this._avancement = new AvancementBuilder().build();
   }
 
@@ -58,6 +61,11 @@ export default class DétailsIndicateurBuilder {
     return this;
   }
 
+  avecDateValeurCible(dateValeurCible: DétailsIndicateur['dateValeurCible']): DétailsIndicateurBuilder {
+    this._dateValeurCible = dateValeurCible;
+    return this;
+  }
+
   avecAvancement(avancement: DétailsIndicateur['avancement']): DétailsIndicateurBuilder {
     this._avancement = avancement;
     return this;
@@ -71,6 +79,7 @@ export default class DétailsIndicateurBuilder {
       valeurs: this._valeurs,
       dateValeurs: this._dateValeurs,
       valeurCible: this._valeurCible,
+      dateValeurCible: this._dateValeurCible,
       avancement: this._avancement,
     };
   }
