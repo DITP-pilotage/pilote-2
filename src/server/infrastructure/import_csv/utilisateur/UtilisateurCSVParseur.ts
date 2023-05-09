@@ -38,8 +38,8 @@ export default class UtilisateurCSVParseur {
     let utilisateurs: Record<string, UtilisateurÀCréerOuMettreÀJour> = {};
   
     for (const csvRecord of csvRecords) {
-      const email = csvRecord[this._colonnes.email];
-      const scope = csvRecord[this._colonnes.scope] as Scope;
+      const email = csvRecord[this._colonnes.email].toLowerCase();
+      const scope = csvRecord[this._colonnes.scope].toLowerCase() as Scope;
   
       if (utilisateurs[email] === undefined) {
         utilisateurs[email] = this._générerUtilisateurÀCréerOuMettreÀJour(csvRecord);
