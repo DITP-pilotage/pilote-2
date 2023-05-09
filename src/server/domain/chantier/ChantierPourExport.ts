@@ -1,10 +1,8 @@
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export class ChantierPourExport {
   constructor(
-    public readonly chantierId: string,
     public readonly nom: string | null,
     public readonly maille: Maille,
     public readonly codeRégion: string | null,

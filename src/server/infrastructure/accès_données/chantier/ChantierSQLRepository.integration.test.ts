@@ -347,7 +347,7 @@ describe('ChantierSQLRepository', () => {
 
       const chantier001Builder = new ChantierSQLRowBuilder()
         .avecId('CH-001')
-        .avecNom('a Chantier 1')
+        .avecNom('chantier 1')
         .avecMaille('DEPT')
         .avecCodeInsee('01')
         .avecTauxAvancement(30)
@@ -367,10 +367,10 @@ describe('ChantierSQLRepository', () => {
           .avecCodeInsee('FR')
           .avecTauxAvancement(10)
           .build(),
-        new ChantierSQLRowBuilder().avecId('CH-002').avecNom('c').build(),
-        new ChantierSQLRowBuilder().avecId('CH-003').avecNom('e').build(),
-        new ChantierSQLRowBuilder().avecId('CH-004').avecNom('b').build(),
-        new ChantierSQLRowBuilder().avecId('CH-005').avecNom('d').build(),
+        new ChantierSQLRowBuilder().avecId('CH-002').avecNom('chantier 2').build(),
+        new ChantierSQLRowBuilder().avecId('CH-003').avecNom('chantier 3').build(),
+        new ChantierSQLRowBuilder().avecId('CH-004').avecNom('chantier 4').build(),
+        new ChantierSQLRowBuilder().avecId('CH-005').avecNom('chantier 5').build(),
       ] });
 
       const commentaireBuilder = new CommentaireRowBuilder()
@@ -510,8 +510,21 @@ describe('ChantierSQLRepository', () => {
       // Then
       expect(result).toEqual([
         expect.objectContaining({
-          nom: 'a Chantier 1',
-          chantierId: 'CH-001',
+          nom: 'chantier 1',
+          maille: 'NAT',
+          commActionsÀVenir: 'commentaire AAVN 1 v2',
+          commActionsÀValoriser: 'commentaire AAVL 1 v2',
+          commFreinsÀLever: 'commentaire FAL 1 v2',
+          commCommentairesSurLesDonnées: null,
+          commAutresRésultats: null,
+          commAutresRésultatsNonCorrélésAuxIndicateurs: 'commentaire ARONCAI 1 v2',
+          objNotreAmbition: 'objectif NA 1 v2',
+          objDéjàFait: 'objectif DF 1 v2',
+          objÀFaire: 'objectif AF 1 v2',
+        }),
+        expect.objectContaining({ nom: 'chantier 1', maille: 'REG' }),
+        expect.objectContaining({
+          nom: 'chantier 1',
           maille: 'DEPT',
           codeRégion: 'REG-84',
           codeDépartement: 'DEPT-01',
@@ -534,24 +547,10 @@ describe('ChantierSQLRepository', () => {
           objÀFaire: null,
           synthèseDesRésultats: 'synthèse des résultats 1 v2',
         }),
-        expect.objectContaining({
-          chantierId: 'CH-001',
-          maille: 'NAT',
-          commActionsÀVenir: 'commentaire AAVN 1 v2',
-          commActionsÀValoriser: 'commentaire AAVL 1 v2',
-          commFreinsÀLever: 'commentaire FAL 1 v2',
-          commCommentairesSurLesDonnées: null,
-          commAutresRésultats: null,
-          commAutresRésultatsNonCorrélésAuxIndicateurs: 'commentaire ARONCAI 1 v2',
-          objNotreAmbition: 'objectif NA 1 v2',
-          objDéjàFait: 'objectif DF 1 v2',
-          objÀFaire: 'objectif AF 1 v2',
-        }),
-        expect.objectContaining({ chantierId: 'CH-001', maille: 'REG' }),
-        expect.objectContaining({ chantierId: 'CH-004', nom: 'b' }),
-        expect.objectContaining({ chantierId: 'CH-002', nom: 'c' }),
-        expect.objectContaining({ chantierId: 'CH-005', nom: 'd' }),
-        expect.objectContaining({ chantierId: 'CH-003', nom: 'e' }),
+        expect.objectContaining({ nom: 'chantier 2' }),
+        expect.objectContaining({ nom: 'chantier 3' }),
+        expect.objectContaining({ nom: 'chantier 4' }),
+        expect.objectContaining({ nom: 'chantier 5' }),
       ]);
     });
   });

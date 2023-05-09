@@ -172,7 +172,16 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
                left outer join dernieres_syntheses s
                                on s.chantier_id = c.id and s.maille = c.maille and s.code_insee = c.code_insee
       where c.id is not null
-      order by i.nom, maille, code_region, code_departement
+      order by
+          i.nom,
+          CASE i.maille
+            WHEN 'NAT' THEN 1
+            WHEN 'REG' THEN 2
+            WHEN 'DEPT' THEN 3
+            ELSE 4 END,
+          code_region,
+          code_departement,
+          c.ministeres
     `;
 
     return rows.map(it => new IndicateurPourExport(

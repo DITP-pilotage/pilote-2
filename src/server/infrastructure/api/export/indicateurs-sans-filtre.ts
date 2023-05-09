@@ -33,7 +33,7 @@ function asCsvRow(indicateurPourExport: IndicateurPourExport): string[] {
     indicateurPourExport.chantierNom,
     indicateurPourExport.chantierEstBaromètre ? OUI : NON,
     indicateurPourExport.chantierAvancementGlobal?.toString() || NON_APPLICABLE,
-    indicateurPourExport.météo,
+    indicateurPourExport.météo || NON_APPLICABLE,
     indicateurPourExport.nom,
     indicateurPourExport.valeurInitiale?.toString() || NON_APPLICABLE,
     indicateurPourExport.dateValeurInitiale || NON_APPLICABLE,
