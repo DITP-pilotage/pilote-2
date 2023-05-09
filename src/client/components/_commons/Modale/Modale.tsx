@@ -16,7 +16,7 @@ export default function Modale({ children, titre, sousTitre, idHtml, ouvertureCa
       >
         <div className="fr-container fr-container--fluid fr-container-md">
           <div className="fr-modal__body fr-col-12 fr-col-md-10 fr-col-lg-9 fr-mx-auto modale-conteneur">
-            <div className="fr-modal__header fr-pb-0">
+            <div className="fr-modal__header fr-pb-0 fr-mr-2w fr-mr-md-0">
               <button
                 aria-controls={idHtml}
                 className="fr-link--close fr-link bouton-fermer-modale"
