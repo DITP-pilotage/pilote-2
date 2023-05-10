@@ -16,17 +16,17 @@ export default function PageLanding() {
       <section className='bloc-hero'>
         <div className='fr-container'>
           <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-            <div className="fr-col-12 fr-col-lg-6 fr-py-8w">
+            <div className="fr-col-12 fr-col-lg-6 fr-pt-8w">
               <Titre
                 baliseHtml='h1'
               >
                 Piloter l’action publique par les résultats
               </Titre>
               <p className='fr-text--xl'>
-                PILOTE permet de rendre compte des résultats des politiques prioritaires à chaque échelon territorial et de prévenir rapidement les difficultés de mise en œuvre.
-              </p>
-              <p className='fr-text--xl'>
-                PILOTE est réservé aux agents de l’Etat impliqués sur les politiques prioritaires.
+                PILOTE est l’outil de pilotage territorialisé des politiques prioritaires du Gouvernement. Il permet de partager les objectifs assignés à chaque chantier et les résultats obtenus afin d’identifier les freins et obstacles rencontrés.
+                <br />
+                <br />
+                PILOTE sert ainsi à ajuster les actions entreprises, organiser l’appui des administrations centrales et rendre les arbitrages nécessaires pour garantir l’atteinte des objectifs de la feuille de route du Gouvernement.
               </p>
               <button
                 className='fr-btn fr-mr-2w'
@@ -36,7 +36,7 @@ export default function PageLanding() {
                 Se connecter
               </button>
             </div>
-            <div className="fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg conteneur-capture-pilote fr-pb-0">
+            <div className="fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg conteneur-capture-pilote">
               <Image
                 alt=""
                 src={captureÉcranPilote}
@@ -45,7 +45,7 @@ export default function PageLanding() {
           </div>
         </div>
       </section>
-      <section>
+      <section className='bloc-pour-qui'>
         <div className='fr-container fr-py-8w'>
           <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
             <div className="fr-col-12">
@@ -56,7 +56,7 @@ export default function PageLanding() {
                 A qui s’adresse PILOTE ?
               </Titre>
               <p className="fr-text--lg" >
-                PILOTE mobilise l’ensemble des responsables politiques et administratifs autour des politiques prioritaires. PILOTE permet d’harmoniser les informations utiles au pilotage en réunissant données quantitatives et appréciations qualitatives.
+                PILOTE mobilise l’ensemble des responsables de la mise en œuvre des politiques prioritaires du Gouvernement à tous les niveaux de l’organisation administrative.
               </p>
             </div>
           </div>
@@ -77,7 +77,7 @@ export default function PageLanding() {
                   Pour les administrations centrales
                 </Titre>
                 <p className="fr-text--lg fr-mb-0" >
-                  PILOTE permet de suivre l’avancement de ses politiques publiques, de détecter les territoires en difficulté et de préparer les réunions interministérielles.
+                  PILOTE permet de fixer les objectifs aux services déconcentrés, de suivre l’avancement des chantiers et d’en rendre compte. Il permet d’identifier les freins et blocages pour apporter l’appui aux équipes opérationnelles sur le terrain ou susciter des arbitrages ministériels ou interministériels pour les lever.
                 </p>
               </div>
             </div>
@@ -97,7 +97,7 @@ export default function PageLanding() {
                   Pour les préfets
                 </Titre>
                 <p className="fr-text--lg fr-mb-0">
-                  PILOTE permet d’assurer le suivi des politiques prioritaires sur leurs territoires et d’identifier les politiques en difficulté, nécessitant un soutien.
+                  PILOTE offre aux préfets une vision transversale des objectifs et résultats de la feuille de route du Gouvernement dans le territoire pour lequel ils sont chargés d’en superviser la mise en œuvre. Dans une logique de « management par exception », il leur permet d’identifier les chantiers sur lesquels un appui est nécessaire.
                 </p>
               </div>
             </div>
@@ -117,7 +117,7 @@ export default function PageLanding() {
                   Pour les services déconcentrés
                 </Titre>
                 <p className="fr-text--lg fr-mb-0">
-                  PILOTE permet de commenter les données des politiques publiques et d’alerter lorsqu’il y a besoin d’un soutien interministériel.
+                  PILOTE permet de s’entendre avec l’administration centrale sur les objectifs de chaque chantier prioritaire et de rendre compte des résultats obtenus. Il permet aussi d’alerter sur les obstacles rencontrés afin de demander des arbitrages, des ressources ou un appui du préfet, des équipes régionales ou des administrations centrales.
                 </p>
               </div>
             </div>
@@ -135,13 +135,13 @@ export default function PageLanding() {
                 Le pilotage des politiques prioritaires
               </Titre>
               <p className='fr-text--lg'>
-                Les politiques prioritaires du Gouvernement font l&apos;objet d&apos;un suivi régulier à haut niveau, par le secrétaire général de la Présidence de la République et le directeur de cabinet de la Première ministre. 
+                Les politiques prioritaires du Gouvernement font l&apos;objet d&apos;un suivi régulier à haut niveau dans chaque ministère mais aussi au niveau interministériel. Chaque trimestre, les ministères présentent leurs résultats dans des réunions présidées par le secrétaire général de la Présidence de la République et le directeur du cabinet de la Première ministre.
               </p>
               <p className='fr-text--lg bold'>
-                Objectif : veiller à la cohérence des objectifs et des décisions, identifier les obstacles et les lever et, le cas échéant, provoquer les arbitrages nécessaires lors de réunions interministérielles.
+                Objectif : veiller en continu à la cohérence des objectifs et des décisions, au rythme de mise en œuvre des chantiers et rendre les arbitrages pour lever les freins rencontrés.
               </p>
               <p className='fr-text--lg'>
-                La DITP est en charge de la mise en œuvre de ce suivi. L’outil PILOTE permet à chaque échelon opérationnel de rendre compte au Gouvernement de l’avancement dans la mise en œuvre des politiques prioritaires et de mobiliser le soutien des échelons supérieurs pour lever les difficultés rencontrées.
+                La DITP est chargée d’animer, sous l’autorité de la Première ministre, le déploiement des politiques prioritaires du Gouvernement et la supervision interministérielle de leur mise en œuvre.
               </p>
               <Link
                 className='fr-btn fr-btn--secondary fr-mt-3w'
@@ -167,7 +167,7 @@ export default function PageLanding() {
                       </Link>
                     </Titre>
                     <p className="fr-card__desc">
-                      La carte donne des aperçus cliquables d’une page de contenu à l’utilisateur. Elle fait généralement partie d&apos;une collection ou liste d’aperçus de contenu similaires. La carte n’est jamais présentée de manière isolée.
+                      Le baromètre des résultats de l’action publique reprend les données de PILOTE pour rendre compte de l’avancement des politiques publiques aux citoyens.
                     </p>
                   </div>
                 </div>
@@ -187,22 +187,20 @@ export default function PageLanding() {
       </section>
       <section className='bloc-questions'>
         <div className='fr-container'>
-          <div className="fr-grid-row fr-grid-row--center">
-            <div className="fr-col-12 fr-py-8w">
-              <Titre
-                baliseHtml='h2'
-                className='fr-h3'
-              >
-                Vous avez des questions ?
-              </Titre>
-              <Link
-                className='fr-btn fr-btn--secondary fr-mt-2w'
-                href="mailto:support.ditp@modernisation.gouv.fr"
-                target="_blank"
-              >
-                Contacter l&apos;équipe
-              </Link>
-            </div>
+          <div className="fr-grid-row fr-py-8w">
+            <Titre
+              baliseHtml='h2'
+              className='fr-h3 fr-m-0'
+            >
+              Vous avez des questions ?
+            </Titre>
+            <Link
+              className='fr-btn fr-ml-6w'
+              href="mailto:support.ditp@modernisation.gouv.fr"
+              target="_blank"
+            >
+              Contacter l&apos;équipe
+            </Link>
           </div>
         </div>
       </section>
