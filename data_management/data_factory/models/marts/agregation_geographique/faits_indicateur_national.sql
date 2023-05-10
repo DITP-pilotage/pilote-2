@@ -24,7 +24,7 @@ SELECT
     MAX(fi_reg.zone_code_parent) as zone_code,
     MAX(fi_reg.zone_type_parent) as zone_type
 FROM
-    {{ ref("faits_indicateur_par_regions") }} fi_reg
+    {{ ref("faits_indicateur_regional") }} fi_reg
     INNER JOIN {{ ref("stg_ppg_metadata__config_vac") }} config_vac
         ON fi_reg.indicateur_id = config_vac.indicateur_id
 GROUP BY
