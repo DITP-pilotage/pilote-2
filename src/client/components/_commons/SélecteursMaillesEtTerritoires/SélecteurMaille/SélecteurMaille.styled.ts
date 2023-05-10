@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 const SélecteurMailleStyled = styled.div`
+  display: flex;
   background: var(--background-alt-blue-france);
   border-radius: 0.25rem;
 
@@ -10,7 +11,7 @@ const SélecteurMailleStyled = styled.div`
 
   button {
     width: 50%;
-    height: 2.625rem;
+    min-height: 2.625rem;
     border-radius: 0.25rem;
 
     &.sélectionné {

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 const SélecteurEntitéStyled = styled.div`
+  display: flex;
   background: var(--background-alt-blue-france);
   border-radius: 0.25rem;
 
@@ -10,7 +11,6 @@ const SélecteurEntitéStyled = styled.div`
 
   button {
     width: 50%;
-    height: 2.625rem;
     border-radius: 0.25rem;
 
     &.sélectionné {
