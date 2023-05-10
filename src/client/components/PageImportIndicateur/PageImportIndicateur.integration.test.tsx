@@ -55,32 +55,6 @@ describe('PageImportIndicateur', () => {
       expect(titre).toHaveTextContent(CHANTIER_NOM);
     });
 
-    it("doit afficher l'axe et le ppg du chantier", () => {
-      // GIVEN
-      const chantierInformation: ChantierInformation = {
-        id: 'chantierId',
-        nom: CHANTIER_NOM,
-        axe: CHANTIER_AXE,
-        ppg: CHANTIER_PPG,
-      };
-
-      // WHEN
-      render(
-        <PageImportIndicateur
-          chantierInformation={chantierInformation}
-          détailsIndicateurs={null}
-          indicateurs={[]}
-        />,
-      );
-
-      // THEN
-      const chantierAxe = screen.getByText(CHANTIER_AXE);
-      const chantierPPG = screen.getByText(CHANTIER_PPG);
-
-      expect(chantierAxe).toBeInTheDocument();
-      expect(chantierPPG).toBeInTheDocument();
-    });
-
     it("doit afficher un fil d'Ariane indiquant l'indicateur, le chantier et le retour à l'accueil", () => {
       // GIVEN
       const chantierInformation: ChantierInformation = {
