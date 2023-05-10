@@ -11,6 +11,7 @@ export type CartographieTerritoire = {
   remplissage: string,
   libellé: string,
   valeurAffichée: string,
+  estInteractif: boolean
 };
 
 export type CartographieTerritoireAffiché = {
@@ -18,7 +19,7 @@ export type CartographieTerritoireAffiché = {
   maille: 'nationale' | 'régionale',
 };
 
-export type CartographieTerritoires = { 
+export type CartographieTerritoires = {
   territoires: CartographieTerritoire[]
   frontières: { codeInsee: CodeInsee, tracéSVG: string }[]
 };

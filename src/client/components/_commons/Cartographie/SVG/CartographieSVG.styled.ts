@@ -20,12 +20,15 @@ const CartographieSVGStyled = styled.div`
     }
 
     .territoire-rempli {
-      cursor: pointer;
       stroke-width: 0.15;
 
       &:hover {
         opacity: 0.72;
       }
+    }
+
+    .territoire-interactif {
+      cursor: pointer;
     }
   }
 `;

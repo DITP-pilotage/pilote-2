@@ -10,8 +10,8 @@ export type TerritoireGéographique = {
 };
 
 export default interface TerritoiresStore {
-  départements: TerritoireGéographique[] 
-  régions: TerritoireGéographique[] 
+  départements: TerritoireGéographique[]
+  régions: TerritoireGéographique[]
   mailleSélectionnée: MailleInterne,
   mailleAssociéeAuTerritoireSélectionné: Maille,
   territoireSélectionné: TerritoireGéographique & {
@@ -19,7 +19,13 @@ export default interface TerritoiresStore {
   },
   territoiresComparés: TerritoireGéographique[]
   aÉtéInitialisé: boolean
+  territoiresAccessiblesEnLecture: string[]
   actions: {
+    territoireEstUneRégion: (territoireCode: string) => boolean,
+    territoireEstUnDépartement: (territoireCode: string) => boolean,
+    territoireEstNational: (territoireCode: string) => boolean,
+    extraireCodeInsee: (territoireCode: string) => string,
+    générerCodeTerritoire: (maille: Maille, codeInsee: CodeInsee) => string,
     initialiserValeursParDéfaut: (territoiresAccessiblesEnLecture: TerritoiresFiltre) => void,
     modifierMailleSélectionnée: (maille: MailleInterne) => void,
     modifierTerritoireSélectionné: (codeInsee: CodeInsee) => void,
