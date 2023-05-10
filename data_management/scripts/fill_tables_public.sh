@@ -19,5 +19,6 @@ psql "$DATABASE_URL" -c "TRUNCATE TABLE public.chantier"
 psql "$DATABASE_URL" -c "TRUNCATE TABLE public.indicateur"
 psql "$DATABASE_URL" -c "TRUNCATE TABLE public.ministere CASCADE"
 psql "$DATABASE_URL" -c "TRUNCATE TABLE public.projet_structurant"
+psql "$DATABASE_URL" -c "TRUNCATE TABLE public.indicateur_projet_structurant"
 
 dbt run --project-dir data_factory/ --select intermediate exposition
