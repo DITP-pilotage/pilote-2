@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { IndicateurPourExport } from '@/server/domain/indicateur/IndicateurPourExport';
 import ExportCsvDesIndicateursSansFiltreUseCase from '@/server/usecase/indicateur/ExportCsvDesIndicateursSansFiltreUseCase';
-import { formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
+import { formaterMétéo, horodatage, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 
 const COLONNES = [
   'Maille',
@@ -54,15 +54,7 @@ export default async function handleExportDesIndicateursSansFiltre(request: Next
   const exportCsvDesIndicateursSansFiltreUseCase = new ExportCsvDesIndicateursSansFiltreUseCase();
   const indicateursPourExport = await exportCsvDesIndicateursSansFiltreUseCase.run(session.habilitations);
 
-  const now = new Date(new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }));
-  const horodatage = now.getFullYear() + '-'
-    + now.getMonth().toString().padStart(2, '0') + '-'
-    + now.getDay().toString().padStart(2, '0') + '-'
-    + now.getHours().toString().padStart(2, '0') + '-'
-    + now.getMinutes().toString().padStart(2, '0') + '-'
-    + now.getSeconds().toString().padStart(2, '0');
-
-  const csvFilename = `PILOTE-Indicateurs-sans-filtre-${horodatage}.csv`;
+  const csvFilename = `PILOTE-Indicateurs-sans-filtre-${horodatage()}.csv`;
 
   response.setHeader('Content-Type', 'text/csv');
   response.setHeader('Content-Disposition', `attachment; filename="${csvFilename}"`);
