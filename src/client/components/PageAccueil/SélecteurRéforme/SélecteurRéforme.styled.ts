@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const SélecteurEntitéStyled = styled.div`
+const SélecteurRéformeStyled = styled.div`
   display: flex;
   background: var(--background-alt-blue-france);
   border-radius: 0.25rem;
@@ -20,4 +20,4 @@ const SélecteurEntitéStyled = styled.div`
   }
 `;
 
-export default SélecteurEntitéStyled;
+export default SélecteurRéformeStyled;

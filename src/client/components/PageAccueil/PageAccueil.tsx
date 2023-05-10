@@ -8,12 +8,12 @@ import BarreLatérale from '@/client/components/_commons/BarreLatérale/BarreLat
 import BarreLatéraleEncart from '@/client/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import PageAccueilProps from './PageAccueil.interface';
-import { Entité } from './SélecteurEntité/SélecteurEntité.interface';
-import SélecteurEntité from './SélecteurEntité/SélecteurEntité';
+import { Réforme } from './SélecteurRéforme/SélecteurRéforme.interface';
+import SélecteurRéforme from './SélecteurRéforme/SélecteurRéforme';
 
 export default function PageAccueil({ chantiers, ministères, axes, ppg, habilitations }: PageAccueilProps) {
   const habilitation = new Habilitation(habilitations);
-  const [entitéSélectionnée, setEntitéSélectionnée] = useState<Entité>('chantier');
+  const [réformeSélectionnée, setRéformeSélectionnée] = useState<Réforme>('chantier');
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
@@ -23,9 +23,9 @@ export default function PageAccueil({ chantiers, ministères, axes, ppg, habilit
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteurEntité
-            entitéSélectionnée={entitéSélectionnée} 
-            modifierEntitéSélectionnée={setEntitéSélectionnée}
+          <SélecteurRéforme
+            modifierRéformeSélectionnée={setRéformeSélectionnée}
+            réformeSélectionnée={réformeSélectionnée}
           />
           <SélecteursMaillesEtTerritoires 
             habilitation={habilitation}
@@ -39,7 +39,7 @@ export default function PageAccueil({ chantiers, ministères, axes, ppg, habilit
             Filtres
           </Titre>
           <Filtres
-            afficherToutLesFiltres={entitéSélectionnée === 'chantier' ? true : false}
+            afficherToutLesFiltres={réformeSélectionnée === 'chantier' ? true : false}
             axes={axes}
             ministères={ministères}
             ppg={ppg}
@@ -55,7 +55,7 @@ export default function PageAccueil({ chantiers, ministères, axes, ppg, habilit
         Filtres
       </button>
       {
-        entitéSélectionnée === 'chantier' ? 
+        réformeSélectionnée === 'chantier' ?
           <PageChantiers
             chantiers={chantiers}
             habilitation={habilitation}
