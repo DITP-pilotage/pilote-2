@@ -2,8 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import CompteurCaractères from '@/components/_commons/CompteurCaractères/CompteurCaractères';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import météos from '@/client/constants/météos';
-import { MétéoSaisissable, météosSaisissables } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, MétéoSaisissable, météosSaisissables } from '@/server/domain/météo/Météo.interface';
 import Titre from '@/components/_commons/Titre/Titre';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import Alerte from '@/components/_commons/Alerte/Alerte';
@@ -63,7 +62,7 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
         <Sélecteur<MétéoSaisissable>
           htmlName='météo'
           libellé="Météo"
-          options={météosSaisissables.map(optionMétéo => ({ libellé: météos[optionMétéo], valeur: optionMétéo }))}
+          options={météosSaisissables.map(optionMétéo => ({ libellé: libellésMétéos[optionMétéo], valeur: optionMétéo }))}
           register={{ ...register('météo') }}
           texteFantôme="Météo à renseigner"
           valeurSélectionnée={getValues('météo')}
