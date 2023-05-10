@@ -30,7 +30,7 @@ SELECT
     'FR' as zone_code_parent,
     'NAT' as zone_type_parent
 FROM
-    {{ ref("faits_indicateur_par_departements") }} fi_dept
+    {{ ref("faits_indicateur_departemental") }} fi_dept
     INNER JOIN {{ ref("stg_ppg_metadata__config_vac") }} config_vac
         ON fi_dept.indicateur_id = config_vac.indicateur_id
 GROUP BY
