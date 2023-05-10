@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { IndicateurPourExport } from '@/server/domain/indicateur/IndicateurPourExport';
 import ExportCsvDesIndicateursSansFiltreUseCase from '@/server/usecase/indicateur/ExportCsvDesIndicateursSansFiltreUseCase';
-import { NON, NON_APPLICABLE, OUI } from '@/server/constants/csv';
+import { formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 
 const COLONNES = [
   'Maille',
@@ -35,7 +35,7 @@ function asCsvRow(indicateurPourExport: IndicateurPourExport): string[] {
     indicateurPourExport.chantierNom,
     indicateurPourExport.chantierEstBaromètre ? OUI : NON,
     indicateurPourExport.chantierAvancementGlobal?.toString() || NON_APPLICABLE,
-    indicateurPourExport.météo || NON_APPLICABLE,
+    formaterMétéo(indicateurPourExport.météo),
     indicateurPourExport.nom,
     indicateurPourExport.valeurInitiale?.toString() || NON_APPLICABLE,
     indicateurPourExport.dateValeurInitiale || NON_APPLICABLE,
@@ -54,7 +54,7 @@ export default async function handleExportDesIndicateursSansFiltre(request: Next
   const exportCsvDesIndicateursSansFiltreUseCase = new ExportCsvDesIndicateursSansFiltreUseCase();
   const indicateursPourExport = await exportCsvDesIndicateursSansFiltreUseCase.run(session.habilitations);
 
-  const now = new Date();
+  const now = new Date(new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }));
   const horodatage = now.getFullYear() + '-'
     + now.getMonth().toString().padStart(2, '0') + '-'
     + now.getDay().toString().padStart(2, '0') + '-'

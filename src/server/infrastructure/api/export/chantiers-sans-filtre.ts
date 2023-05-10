@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { ExportCsvDesChantiersSansFiltreUseCase } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { ChantierPourExport } from '@/server/domain/chantier/ChantierPourExport';
-import { NON, NON_APPLICABLE, OUI } from '@/server/constants/csv';
+import { formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 
 const COLONNES = [
   'Maille',
@@ -50,7 +50,7 @@ function asCsvRow(chantierPourExport: ChantierPourExport): string[] {
     chantierPourExport.tauxDAvancementDépartemental?.toString() || NON_APPLICABLE,
     chantierPourExport.tauxDAvancementRégional?.toString() || NON_APPLICABLE,
     chantierPourExport.tauxDAvancementNational?.toString() || NON_APPLICABLE,
-    chantierPourExport.météo || NON_APPLICABLE,
+    formaterMétéo(chantierPourExport.météo),
     chantierPourExport.synthèseDesRésultats || NON_APPLICABLE,
     chantierPourExport.objNotreAmbition || NON_APPLICABLE,
     chantierPourExport.objDéjàFait || NON_APPLICABLE,
@@ -72,7 +72,7 @@ export default async function handleExportDesChantiersSansFiltre(request: NextAp
   const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase();
   const chantiersPourExport = await exportCsvDesChantiersSansFiltreUseCase.run(session.habilitations);
 
-  const now = new Date();
+  const now = new Date(new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }));
   const horodatage = now.getFullYear() + '-'
     + now.getMonth().toString().padStart(2, '0') + '-'
     + now.getDay().toString().padStart(2, '0') + '-'
