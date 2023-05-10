@@ -5,11 +5,11 @@ import {
 } from '@tanstack/react-table';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/avancement';
-import TableauChantiersAvancement from '@/components/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
-import TableauChantiersMétéo from '@/components/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
+import TableauChantiersAvancement from '@/components/PageAccueil/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
+import TableauChantiersMétéo from '@/components/PageAccueil/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
-import TypologiesPictos from '@/components/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
-import { DonnéesTableauChantiers } from '@/components/PageChantiers/TableauChantiers/TableauChantiers.interface';
+import TypologiesPictos from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
+import { DonnéesTableauChantiers } from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
 import RapportDétailléTableauChantiersProps from './RapportDétailléTableauChantiers.interface';
 
 const déterminerTypologieDuGroupementParMinistère = (chantiersDuGroupe: DonnéesTableauChantiers[]) => {

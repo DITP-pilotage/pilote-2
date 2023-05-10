@@ -1,7 +1,7 @@
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import TableauChantiersTuileChantierStyled from '@/components/PageChantiers/TableauChantiers/Tuile/Chantier/TableauChantiersTuileChantier.styled';
-import TypologiesPictos from '@/components/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
+import TableauChantiersTuileChantierStyled from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tuile/Chantier/TableauChantiersTuileChantier.styled';
+import TypologiesPictos from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import TableauChantiersTuileChantierProps from './TableauChantiersTuileChantier.interface';
 
 export default function TableauChantiersTuileChantier({ chantier }: TableauChantiersTuileChantierProps) {

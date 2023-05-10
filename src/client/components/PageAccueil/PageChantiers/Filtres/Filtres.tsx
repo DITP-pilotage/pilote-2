@@ -1,4 +1,4 @@
-import FiltresSélectionMultiple from '@/components/PageChantiers/Filtres/FiltresSélectionMultiple/FiltresSélectionMultiple';
+import FiltresSélectionMultiple from '@/components/PageAccueil/PageChantiers/Filtres/FiltresSélectionMultiple/FiltresSélectionMultiple';
 import { FiltreTypologieType } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
 import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
@@ -8,7 +8,7 @@ import FiltreTypologie from './FiltreTypologie/FiltreTypologie';
 const filtreBaromètre: FiltreTypologieType = { id: 'filtreBaromètre', attribut: 'estBaromètre', nom: 'Chantiers du baromètre' };
 const filtreTerritorialisé: FiltreTypologieType = { id: 'filtreTerritorialisé', attribut: 'estTerritorialisé', nom: 'Chantiers territorialisés' };
 
-export default function Filtres({ ministères, axes, ppg, afficherToutLesFiltres }: FiltresProps) {
+export default function Filtres({ ministères, axes, ppgs, afficherToutLesFiltres }: FiltresProps) {
   return (
     <>
       <section className="fr-px-3w">
@@ -24,7 +24,7 @@ export default function Filtres({ ministères, axes, ppg, afficherToutLesFiltres
             />
             <FiltresSélectionMultiple
               catégorieDeFiltre='ppg'
-              filtres={ppg}
+              filtres={ppgs}
               libellé="PPG"
             />
           </FiltresGroupe>

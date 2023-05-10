@@ -14,12 +14,12 @@ import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/avancement';
-import TableauChantiersAvancement from '@/components/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
-import TableauChantiersMétéo from '@/components/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
+import TableauChantiersAvancement from '@/components/PageAccueil/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
+import TableauChantiersMétéo from '@/components/PageAccueil/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
 import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
-import TypologiesPictos from '@/components/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
+import TypologiesPictos from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
 import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuileChantier';
 import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiersTuileMinistère';
@@ -42,7 +42,6 @@ const colonnesTableauChantiers = [
     cell: porteur => porteur.getValue(),
     enableGrouping: true,
   }),
-
   reactTableColonnesHelper.accessor('nom', {
     header: 'Chantiers',
     id: 'nom',
@@ -53,7 +52,6 @@ const colonnesTableauChantiers = [
       width: 'auto',
     },
   }),
-
   reactTableColonnesHelper.accessor('typologie', {
     header: 'Typologie',
     id: 'typologie',
@@ -66,7 +64,6 @@ const colonnesTableauChantiers = [
       width: '8rem',
     },
   }),
-
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
     id: 'météo',
@@ -78,7 +75,6 @@ const colonnesTableauChantiers = [
       width: '10rem',
     },
   }),
-
   reactTableColonnesHelper.accessor('avancement', {
     header: 'Avancement',
     id: 'avancement',
@@ -94,7 +90,6 @@ const colonnesTableauChantiers = [
       width: '11rem',
     },
   }),
-
   reactTableColonnesHelper.display({
     id: 'dérouler-groupe',
     aggregatedCell: (aggregatedCellContext => (
@@ -107,7 +102,6 @@ const colonnesTableauChantiers = [
       width: '3.5rem',
     },
   }),
-
   reactTableColonnesHelper.display({
     id: 'chantier-tuile',
     cell: chantierCellContext => <TableauChantiersTuileChantier chantier={chantierCellContext.row.original} />,
