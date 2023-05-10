@@ -145,30 +145,32 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
               where sr.r = 1
           )
       
-      select i.maille,
-             r.territoire_code code_region,
-             d.territoire_code code_departement,
-             c.ministeres as chantier_ministeres,
-             c.nom as chantier_nom,
-             c.est_barometre as chantier_est_barometre,
-             c.taux_avancement as chantier_taux_avancement,
-             s.meteo,
-             i.nom,
-             i.valeur_initiale,
-             i.date_valeur_initiale,
-             i.valeur_actuelle,
-             i.date_valeur_actuelle,
-             i.objectif_valeur_cible as valeur_cible,
-             i.objectif_date_valeur_cible as date_valeur_cible,
-             i.objectif_taux_avancement as taux_avancement
+      select i.maille                      maille,
+             t_r.nom                       nom_region,
+             t_d.nom                       nom_departement,
+             c.ministeres                  chantier_ministeres,
+             c.nom                         chantier_nom,
+             c.est_barometre               chantier_est_barometre,
+             c.taux_avancement             chantier_taux_avancement,
+             s.meteo                       meteo,
+             i.nom                         nom,
+             i.valeur_initiale             valeur_initiale,
+             i.date_valeur_initiale        date_valeur_initiale,
+             i.valeur_actuelle             valeur_actuelle,
+             i.date_valeur_actuelle        date_valeur_actuelle,
+             i.objectif_valeur_cible       valeur_cible,
+             i.objectif_date_valeur_cible  date_valeur_cible,
+             i.objectif_taux_avancement    taux_avancement
       
       from chantier_ids cids
                cross join territoire t
                left outer join indicateur i on i.chantier_id = cids.id and lower(i.maille) = cast(t.maille as text) and i.code_insee = t.code_insee
                left outer join chantier c on c.id = cids.id and c.territoire_code = t.code
-               left outer join chantier r on (r.id = cids.id and r.maille = 'REG')
-          and (r.territoire_code = t.code or r.territoire_code = t.code_parent)
-               left outer join chantier d on d.id = cids.id and d.maille = 'DEPT' and d.territoire_code = t.code
+               left outer join chantier c_r on (c_r.id = cids.id and c_r.maille = 'REG')
+                                            and (c_r.territoire_code = t.code or c_r.territoire_code = t.code_parent)
+               left outer join chantier c_d on c_d.id = cids.id and c_d.maille = 'DEPT' and c_d.territoire_code = t.code
+               left outer join territoire t_r on t_r.code = c_r.territoire_code
+               left outer join territoire t_d on t_d.code = c_d.territoire_code
                left outer join dernieres_syntheses s
                                on s.chantier_id = c.id and s.maille = c.maille and s.code_insee = c.code_insee
       where c.id is not null
@@ -179,15 +181,15 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
             WHEN 'REG' THEN 2
             WHEN 'DEPT' THEN 3
             ELSE 4 END,
-          code_region,
-          code_departement,
+          nom_region,
+          t_d.code_insee, -- on ordonne en fonction du numéro du département et pas par ordre alphabétique (le Haut-Rhin vient juste après le Bas-Rhin)
           c.ministeres
     `;
 
     return rows.map(it => new IndicateurPourExport(
       it.maille,
-      it.code_region,
-      it.code_departement,
+      it.nom_region,
+      it.nom_departement,
       it.chantier_ministeres ? it.chantier_ministeres[0] : null,
       it.chantier_nom,
       it.chantier_est_barometre,

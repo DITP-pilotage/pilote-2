@@ -41,8 +41,8 @@ const COLONNES = [
 function asCsvRow(chantierPourExport: ChantierPourExport): string[] {
   return [
     chantierPourExport.maille,
-    chantierPourExport.codeRégion || NON_APPLICABLE,
-    chantierPourExport.codeDépartement || NON_APPLICABLE,
+    chantierPourExport.nomRégion || NON_APPLICABLE,
+    chantierPourExport.nomDépartement || NON_APPLICABLE,
     chantierPourExport.ministère || NON_APPLICABLE,
     chantierPourExport.nom || NON_APPLICABLE,
     chantierPourExport.estBaromètre ? OUI : NON,

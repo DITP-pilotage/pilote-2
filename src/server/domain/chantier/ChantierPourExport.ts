@@ -5,8 +5,8 @@ export class ChantierPourExport {
   constructor(
     public readonly nom: string | null,
     public readonly maille: Maille,
-    public readonly codeRégion: string | null,
-    public readonly codeDépartement: string | null,
+    public readonly nomRégion: string | null,
+    public readonly nomDépartement: string | null,
     public readonly ministère: string | null,
     public readonly tauxDAvancementNational: number | null,
     public readonly tauxDAvancementRégional: number | null,

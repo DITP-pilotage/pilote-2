@@ -526,8 +526,8 @@ describe('ChantierSQLRepository', () => {
         expect.objectContaining({
           nom: 'chantier 1',
           maille: 'DEPT',
-          codeRégion: 'REG-84',
-          codeDépartement: 'DEPT-01',
+          nomRégion: 'Auvergne-Rhône-Alpes',
+          nomDépartement: 'Ain',
           ministère: 'MIN a',
           estBaromètre: true,
           estTerritorialisé: false,

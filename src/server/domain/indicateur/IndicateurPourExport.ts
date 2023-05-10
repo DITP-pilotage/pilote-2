@@ -9,8 +9,8 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 export class IndicateurPourExport {
   constructor(
     public readonly maille: Maille,
-    public readonly codeRégion: string | null,
-    public readonly codeDépartement: string | null,
+    public readonly nomRégion: string | null,
+    public readonly nomDépartement: string | null,
     public readonly chantierMinistèreNom: Ministère['nom'],
     public readonly chantierNom: Chantier['nom'],
     public readonly chantierEstBaromètre: Chantier['estBaromètre'],
