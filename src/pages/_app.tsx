@@ -14,11 +14,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
 import useDétecterVueMobile from '@/client/hooks/useDétecterVueMobile';
 import api from '@/server/infrastructure/api/trpc/api';
+import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 const queryClient = new QueryClient();
 
-function MonApplication({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+function MonApplication({ Component, pageProps }: AppProps) {
+  const { data: territoires, isLoading } = api.territoire.récupérerTous.useQuery(undefined, { refetchOnWindowFocus: false });
   useDétecterVueMobile();
   const [afficherLeLoader, setAfficherLeLoader] = useState(false);
   const [pageEnCoursDeChargement, setPageEnCoursDeChargement] = useState(false);
@@ -29,6 +31,15 @@ function MonApplication({ Component, pageProps: { session, ...pageProps } }: App
   const finChargement = () => {
     setPageEnCoursDeChargement(false);
   };
+
+  const { initialiserLesTerritoires, initialiserLaMailleSélectionnéeParDéfaut } = actionsTerritoiresStore();
+
+  useEffect(() => {
+    if (territoires) {
+      initialiserLesTerritoires(territoires);
+      initialiserLaMailleSélectionnéeParDéfaut();
+    }
+  }, [territoires, initialiserLesTerritoires, initialiserLaMailleSélectionnéeParDéfaut]);
 
   useEffect(() => {
     Router.events.on('routeChangeStart', débutChargement);
@@ -45,7 +56,7 @@ function MonApplication({ Component, pageProps: { session, ...pageProps } }: App
   useEffect(() => {
     let timer = setTimeout(() => {});
 
-    if (pageEnCoursDeChargement)
+    if (pageEnCoursDeChargement || isLoading)
       timer = setTimeout(() => setAfficherLeLoader(true), DELAI_AVANT_APPARITION_DU_LOADER_EN_MS);
     else {
       clearTimeout(timer);
@@ -53,7 +64,7 @@ function MonApplication({ Component, pageProps: { session, ...pageProps } }: App
     }
 
     return () => clearTimeout(timer);
-  }, [pageEnCoursDeChargement]);
+  }, [pageEnCoursDeChargement, isLoading]);
 
   return (
     <>
@@ -66,7 +77,7 @@ function MonApplication({ Component, pageProps: { session, ...pageProps } }: App
         src="/js/dsfr/dsfr.nomodule.min.js"
       />
       <QueryClientProvider client={queryClient}>
-        <SessionProvider session={session}>
+        <SessionProvider session={pageProps.session}>
           <MiseEnPage afficherLeLoader={afficherLeLoader}>
             <Component {...pageProps} />
           </MiseEnPage>

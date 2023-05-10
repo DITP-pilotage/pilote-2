@@ -1,6 +1,5 @@
 import { MailleInterne, Maille } from '@/server/domain/maille/Maille.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import { TerritoiresFiltre } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { CodeInsee, DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 
 export type TerritoireGéographique = {
   tracéSVG: string
@@ -17,16 +16,17 @@ export default interface TerritoiresStore {
   territoireSélectionné: TerritoireGéographique & {
     territoireParent?: TerritoireGéographique
   },
+  territoires: DétailTerritoire[]
+  territoiresAccessiblesEnLecture: DétailTerritoire[]
+  territoiresAccessiblesEnSaisiePublication: DétailTerritoire[]
+  territoiresAccessiblesEnSaisieIndicateur: DétailTerritoire[]
   territoiresComparés: TerritoireGéographique[]
+  maillesAccessiblesEnLecture: Maille[],
   aÉtéInitialisé: boolean
-  territoiresAccessiblesEnLecture: string[]
   actions: {
-    territoireEstUneRégion: (territoireCode: string) => boolean,
-    territoireEstUnDépartement: (territoireCode: string) => boolean,
-    territoireEstNational: (territoireCode: string) => boolean,
-    extraireCodeInsee: (territoireCode: string) => string,
+    initialiserLesTerritoires: (territoires: DétailTerritoire[]) => void,
+    initialiserLaMailleSélectionnéeParDéfaut: () => void,
     générerCodeTerritoire: (maille: Maille, codeInsee: CodeInsee) => string,
-    initialiserValeursParDéfaut: (territoiresAccessiblesEnLecture: TerritoiresFiltre) => void,
     modifierMailleSélectionnée: (maille: MailleInterne) => void,
     modifierTerritoireSélectionné: (codeInsee: CodeInsee) => void,
     récupérerDétailsSurUnTerritoire: (codeInsee: CodeInsee, maille: MailleInterne) => TerritoireGéographique | undefined

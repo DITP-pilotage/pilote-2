@@ -18,6 +18,18 @@ export default class Habilitation {
     return this._habilitations['saisie.indicateur'].chantiers.includes(chantierId) && this._habilitations['saisie.indicateur'].territoires.includes(territoireCode) ? true : false;
   }
 
+  peutAccéderAuTerritoire(territoireCode: string): boolean {
+    return this._habilitations.lecture.territoires.includes(territoireCode) ? true : false;
+  }
+
+  peutSaisirDesPublicationsPourUnTerritoire(territoireCode: string): boolean {
+    return this._habilitations['saisie.commentaire'].territoires.includes(territoireCode) ? true : false;
+  }
+
+  peutSaisirDesIndicateursPourUnTerritoire(territoireCode: string): boolean {
+    return this._habilitations['saisie.indicateur'].territoires.includes(territoireCode) ? true : false;
+  }
+
   récupérerListeChantiersIdsAccessiblesEnLecture(): Chantier['id'][] {
     return this._habilitations.lecture.chantiers;
   }

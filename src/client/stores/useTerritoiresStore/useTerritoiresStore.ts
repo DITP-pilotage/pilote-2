@@ -19,31 +19,47 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
   territoireSélectionné: territoireFrance,
   mailleAssociéeAuTerritoireSélectionné: 'nationale',
   territoiresComparés: [],
+  territoires: [],
   aÉtéInitialisé: false,
   territoiresAccessiblesEnLecture: [],
+  territoiresAccessiblesEnSaisiePublication: [],
+  territoiresAccessiblesEnSaisieIndicateur: [],
+  maillesAccessiblesEnLecture: [],
   actions: {
+    initialiserLesTerritoires: territoires => {
+      const territoiresAccessiblesEnLecture = territoires.filter(territoire => territoire.accèsLecture === true);
+      set({
+        territoires,
+        territoiresAccessiblesEnLecture: territoiresAccessiblesEnLecture,
+        territoiresAccessiblesEnSaisiePublication: territoires.filter(territoire => territoire.accèsSaisiePublication === true),
+        territoiresAccessiblesEnSaisieIndicateur: territoires.filter(territoire => territoire.accèsSaisieIndicateur === true),
+        maillesAccessiblesEnLecture: [...new Set(territoiresAccessiblesEnLecture.map(territoire => territoire.maille))],
+      });
+    },
+
+    initialiserLaMailleSélectionnéeParDéfaut: () => {
+      const aAccèsÀUnTerritoireNational = get().maillesAccessiblesEnLecture.includes('nationale');
+      const premierTerritoireRégional = get().territoiresAccessiblesEnLecture.find(territoire => territoire.maille === 'régionale');
+      const premierTerritoireDépartemental = get().territoiresAccessiblesEnLecture.find(territoire => territoire.maille === 'départementale');
+
+      if (aAccèsÀUnTerritoireNational) {
+        return;
+      }  
+      
+      if (premierTerritoireRégional) {
+        set({ mailleSélectionnée: 'régionale' });
+        get().actions.modifierTerritoireSélectionné(premierTerritoireRégional.codeInsee);
+      } else if (premierTerritoireDépartemental) {
+        get().actions.modifierTerritoireSélectionné(premierTerritoireDépartemental.codeInsee);
+      }
+    },
+
     modifierMailleSélectionnée: maille => set({
       mailleSélectionnée: maille,
       territoireSélectionné: territoireFrance,
       mailleAssociéeAuTerritoireSélectionné: 'nationale',
       territoiresComparés: [],
     }),
-
-    territoireEstUneRégion: territoireCode => {
-      return territoireCode.includes('REG-');
-    },
-
-    territoireEstUnDépartement: territoireCode => {
-      return territoireCode.includes('DEPT-');
-    },
-
-    territoireEstNational: territoireCode => {
-      return territoireCode === 'NAT-FR';
-    },
-
-    extraireCodeInsee: territoireCode => {
-      return territoireCode.split('-')[1];
-    },
 
     générerCodeTerritoire: (maille, codeInsee) => {
       if (maille === 'départementale')
@@ -53,32 +69,6 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       if (maille === 'nationale')
         return 'NAT-' + codeInsee;
       return '';
-    },
-
-    initialiserValeursParDéfaut: territoiresHabilitationLecture => {
-      if (!get().aÉtéInitialisé) {
-        set({
-          territoiresAccessiblesEnLecture: [...territoiresHabilitationLecture.REG.territoires, ...territoiresHabilitationLecture.NAT.territoires, ...territoiresHabilitationLecture.DEPT.territoires],
-          aÉtéInitialisé: true,
-        });
-
-        const { territoireEstUneRégion, territoireEstUnDépartement, territoireEstNational, extraireCodeInsee } = get().actions;
-        const territoiresAccessiblesEnLecture = get().territoiresAccessiblesEnLecture;
-
-        const nationalAccessibleEnLecture = territoiresAccessiblesEnLecture.filter(territoireCode => territoireEstNational(territoireCode));
-        const régionsAccessiblesEnLecture = territoiresAccessiblesEnLecture.filter(territoireCode => territoireEstUneRégion(territoireCode));
-        const départementsAccessiblesEnLecture = territoiresAccessiblesEnLecture.filter(territoireCode => territoireEstUnDépartement(territoireCode));
-
-        if (nationalAccessibleEnLecture.length > 0) {
-          set({ mailleSélectionnée: 'départementale' });
-        } else if (régionsAccessiblesEnLecture.length > 0) {
-          set({ mailleSélectionnée: 'régionale' });
-          get().actions.modifierTerritoireSélectionné(extraireCodeInsee(régionsAccessiblesEnLecture[0]));
-        } else if (départementsAccessiblesEnLecture.length > 0) {
-          set({ mailleSélectionnée: 'départementale' });
-          get().actions.modifierTerritoireSélectionné(extraireCodeInsee(départementsAccessiblesEnLecture[0]));
-        }
-      }
     },
 
     modifierTerritoireSélectionné: codeInsee => {
@@ -151,3 +141,5 @@ export const mailleAssociéeAuTerritoireSélectionnéTerritoiresStore = () => us
 export const territoireSélectionnéTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoireSélectionné);
 export const territoiresComparésTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoiresComparés);
 export const territoiresAccessiblesEnLectureStore = () => useTerritoiresStore(étatActuel => étatActuel.territoiresAccessiblesEnLecture);
+export const maillesAccessiblesEnLectureStore = () => useTerritoiresStore(étatActuel => étatActuel.maillesAccessiblesEnLecture);
+

@@ -7,7 +7,6 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import PageAccueil from '@/components/PageAccueil/PageAccueil';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 
@@ -17,15 +16,13 @@ interface NextPageAccueilProps {
   ministères: Ministère[]
   axes: Axe[],
   ppgs: Ppg[],
-  habilitations: Habilitations
 }
 
-export default function NextPageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs, habilitations }: NextPageAccueilProps) {
+export default function NextPageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs }: NextPageAccueilProps) {
   return (
     <PageAccueil
       axes={axes}
       chantiers={chantiers}
-      habilitations={habilitations}
       ministères={ministères}
       ppgs={ppgs}
       projetsStructurants={projetsStructurants}
@@ -88,7 +85,6 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
       ministères,
       axes,
       ppgs,
-      habilitations: session.habilitations,
     },
   };
 }

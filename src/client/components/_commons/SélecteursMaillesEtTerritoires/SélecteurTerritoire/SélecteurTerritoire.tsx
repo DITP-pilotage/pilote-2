@@ -1,48 +1,39 @@
 import Sélecteur from '@/client/components/_commons/Sélecteur/Sélecteur';
-import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, départementsTerritoiresStore, régionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import SélecteurTerritoireProps from './SélecteurTerritoire.interface';
+import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
+import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, territoiresAccessiblesEnLectureStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
-const construireLaListeDOptions = (listeCodeInsee: string[]) => {
+const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerritoire[]) => {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
-  const départements = départementsTerritoiresStore();
-  const régions = régionsTerritoiresStore();
 
-  const territoires = mailleSélectionnée === 'départementale' ? départements : régions;
-
-  const territoiresDisponibles = territoires.filter((c) => (listeCodeInsee.find((code) => code === c.codeInsee)));
+  const territoiresDisponibles = territoiresAccessiblesEnLecture.filter(territoire => territoire.maille === mailleSélectionnée);
   
-  let result = [];
-  if (listeCodeInsee.includes('FR')) {
-    result.push({
+  let options = [];
+  if (territoiresAccessiblesEnLecture.some(territoire => territoire.maille === 'nationale')) {
+    options.push({
       libellé: 'France',
       valeur: 'FR',
     });
   }
 
   return [
-    ...result, 
+    ...options, 
     ...territoiresDisponibles.map(territoire => ({
-      libellé: mailleSélectionnée === 'départementale' ? `${territoire.codeInsee} – ${territoire.nom}` : territoire.nom,
+      libellé: territoire.nomAffiché,
       valeur: territoire.codeInsee,
     })),
   ];
 };
 
-export default function SélecteurTerritoire({ habilitation } : SélecteurTerritoireProps) {
+export default function SélecteurTerritoire() {
   const { modifierTerritoireSélectionné } = actionsTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
-  const listeCodeInsee = habilitation.recupererListeCodeInseeEnLectureDisponible(mailleSélectionnée);
+  const territoiresAccessiblesEnLecture = territoiresAccessiblesEnLectureStore();
   
-  if (!listeCodeInsee.includes(territoireSélectionné.codeInsee)) {
-    modifierTerritoireSélectionné(listeCodeInsee[0]);
-  }
-
   return (
     <Sélecteur
       htmlName="périmètre-géographique"
       libellé="Périmètre géographique"
-      options={construireLaListeDOptions(listeCodeInsee)}
+      options={construireLaListeDOptions(territoiresAccessiblesEnLecture)}
       valeurModifiéeCallback={codeInsee => modifierTerritoireSélectionné(codeInsee)}
       valeurSélectionnée={territoireSélectionné.codeInsee}
     />

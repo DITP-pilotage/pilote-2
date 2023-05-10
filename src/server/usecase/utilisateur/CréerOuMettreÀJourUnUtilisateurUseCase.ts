@@ -42,7 +42,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
 
           // AJOUTER AUTOMATIQUEMENT LES DEPARTEMENTS ENFANTS
           if (/^REG-.*/.test(territoireCode)) {
-            const territoiresEnfants = territoires.filter(territoire => territoire.code_parent === territoireCode);
+            const territoiresEnfants = territoires.filter(territoire => territoire.codeParent === territoireCode);
             const territoireCodeEnfants = territoiresEnfants.map(territoire => territoire.code);
             utilisateur.habilitations[habilitation[0]].territoires = [...utilisateur.habilitations[habilitation[0]].territoires, ...territoireCodeEnfants];
           }

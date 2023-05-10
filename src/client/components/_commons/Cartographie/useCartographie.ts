@@ -35,7 +35,7 @@ export default function useCartographie() {
         remplissage: données[territoire.codeInsee]?.remplissage ?? '#bababa', // TODO où gérer ce undefined ?
         libellé: données[territoire.codeInsee]?.libellé ?? '-', // TODO où gérer ce undefined ?
         valeurAffichée: données[territoire.codeInsee]?.valeurAffichée ?? 'Non renseignée', // TODO où gérer ce undefined ?
-        estInteractif: territoiresAccessiblesEnLecture.includes(générerCodeTerritoire(mailleSélectionnée, territoire.codeInsee)),
+        estInteractif: territoiresAccessiblesEnLecture.some(t => t.code === générerCodeTerritoire(mailleSélectionnée, territoire.codeInsee)),
       })),
       frontières: frontièresÀTracer.map(frontière => ({
         codeInsee: frontière.codeInsee,

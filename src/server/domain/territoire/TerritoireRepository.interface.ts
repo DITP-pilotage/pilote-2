@@ -1,5 +1,5 @@
-import { territoire } from '@prisma/client';
+import { TerritoireDeBDD } from './Territoire.interface';
 
 export default interface TerritoireRepository {
-  récupérerTous(): Promise<territoire[]>
+  récupérerTous(): Promise<TerritoireDeBDD[]>
 }

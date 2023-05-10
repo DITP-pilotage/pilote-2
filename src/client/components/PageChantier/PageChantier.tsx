@@ -103,9 +103,6 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
     );
   }, [indicateurs, mailleAssociéeAuTerritoireSélectionné]);
 
-  
-  
-
   return (
     <PageChantierStyled className="flex">
       <BarreLatérale
@@ -113,7 +110,7 @@ export default function PageChantier({ indicateurs, habilitations }: PageChantie
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteursMaillesEtTerritoires habilitation={habilitation} />
+          <SélecteursMaillesEtTerritoires />
         </BarreLatéraleEncart>
         <Sommaire rubriques={listeRubriques} />
       </BarreLatérale>
