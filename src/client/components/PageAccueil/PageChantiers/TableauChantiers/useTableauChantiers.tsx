@@ -13,18 +13,18 @@ import {
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
-import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/avancement';
-import TableauChantiersAvancement from '@/components/PageAccueil/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
-import TableauChantiersMétéo from '@/components/PageAccueil/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
+import { comparerAvancementRéforme } from '@/client/utils/chantier/avancement/avancement';
+import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement';
+import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
 import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
 import TypologiesPictos from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
+import useTableauRéformes from '@/components/PageAccueil/TableauRéformes/useTableauRéformes';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
 import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuileChantier';
 import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiersTuileMinistère';
 import TableauChantiersTuileMinistèreProps from './Tuile/Ministère/TableauChantiersTuileMinistère.interface';
-
 
 const déterminerTypologieDuGroupementParMinistère = (chantiersDuGroupe: DonnéesTableauChantiers[]) => {
   return { 
@@ -67,7 +67,7 @@ const colonnesTableauChantiers = [
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
     id: 'météo',
-    cell: météo => <TableauChantiersMétéo météo={météo.getValue()} />,
+    cell: météo => <TableauRéformesMétéo météo={météo.getValue()} />,
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
     enableGrouping: false,
@@ -78,14 +78,14 @@ const colonnesTableauChantiers = [
   reactTableColonnesHelper.accessor('avancement', {
     header: 'Avancement',
     id: 'avancement',
-    cell: avancement => <TableauChantiersAvancement avancement={avancement.getValue()} />,
+    cell: avancement => <TableauRéformesAvancement avancement={avancement.getValue()} />,
     enableGlobalFilter: false,
-    sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
+    sortingFn: (a, b, columnId) => comparerAvancementRéforme(a.getValue(columnId), b.getValue(columnId)),
     enableGrouping: false,
     aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
       return calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement));
     },
-    aggregatedCell: avancement => <TableauChantiersAvancement avancement={avancement.getValue() ?? null} />,
+    aggregatedCell: avancement => <TableauRéformesAvancement avancement={avancement.getValue() ?? null} />,
     meta: {
       width: '11rem',
     },
@@ -122,24 +122,6 @@ const colonnesTableauChantiers = [
   }),
 ];
 
-function transformerEnDirectionDeTri(tri: SortingState): DirectionDeTri {
-  if (!tri[0]) {
-    return false;
-  }
-  return (tri[0].desc ? 'desc' : 'asc');
-}
-
-function transformerEnSortingState(sélectionColonneÀTrier: string, directionDeTri: DirectionDeTri): SortingState {
-  return directionDeTri === false
-    ? (
-      []
-    ) : (
-      [{
-        id: sélectionColonneÀTrier,
-        desc: directionDeTri === 'desc',
-      }]
-    );
-}
 
 export default function useTableauChantiers(données: TableauChantiersProps['données']) {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
@@ -201,7 +183,11 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
     setValeurDeLaRecherche(event.target.value);
   }, [setValeurDeLaRecherche]);
 
-  const changementDePageCallback = useCallback((numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1), [tableau]);
+  const {
+    transformerEnDirectionDeTri,
+    transformerEnSortingState,
+    changementDePageCallback, 
+  } = useTableauRéformes(tableau);
 
   return {
     tableau,

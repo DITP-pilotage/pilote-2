@@ -1,13 +1,13 @@
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export default interface ProjetStructurant {
   id: string,
-  code: string,
   nom: string,
   tauxAvancement: number;
-  dateTauxAvancement: Date;
+  dateTauxAvancement: string;
   territoireNom: string;
   maille: MailleInterne;
-  directionAdministration: string; // le nom ? le code ?
   ministèresIds: string[];
+  météo: Météo
 }

@@ -1,20 +1,18 @@
-import '@gouvfr/dsfr/dist/component/table/table.min.css';
-import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
-import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
 import { useEffect } from 'react';
 import Titre from '@/components/_commons/Titre/Titre';
-import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
+import { estVueMobileStore } from '@/client/stores/useEstVueMobileStore/useEstVueMobileStore';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
-import useTableauChantiers from '@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers';
-import TableauChantiersActionsDeTri from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
-import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
 import TableauRéformesEnTête from '@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête';
-import TableauChantiersProps from './TableauChantiers.interface';
-import TableauChantiersStyled from './TableauChantiers.styled';
-import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
+import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
+import TableauChantiersActionsDeTri from '@/client/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
+import TableauProjetsStructurantsProps from './TableauProjetsStructurants.interface';
+import useTableauProjetsStructurants from './useTableauProjetsStructurants';
+import TableauProjetsStructurantsContenu from './Contenu/TableauProjetsStructurantsContenu';
+import TableauProjetsStructurantsStyled from './TableauProjetsStructurants.styled';
 
-export default function TableauChantiers({ données }: TableauChantiersProps) {
+export default function TableauProjetsStructurants({ données }: TableauProjetsStructurantsProps) {
   const estVueMobile = estVueMobileStore();
+
   const {
     tableau,
     changementDeLaRechercheCallback,
@@ -24,19 +22,19 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
     changementSélectionColonneÀTrierCallback,
     directionDeTri,
     changementDirectionDeTriCallback,
-  } = useTableauChantiers(données);
-  
+  } = useTableauProjetsStructurants(données);
+
   useEffect(() => {
     tableau.setPageSize(50);
   }, [tableau]);
 
   return (
-    <TableauChantiersStyled className='fr-table fr-m-0 fr-p-0'>
+    <TableauProjetsStructurantsStyled className='fr-table fr-m-0 fr-p-0'>
       <Titre
         baliseHtml="h2"
         className="fr-text--lg"
       >
-        {`Liste des chantiers (${tableau.getFilteredRowModel().rows.length})`}
+        {`Liste des projets structurants (${tableau.getFilteredRowModel().rows.length})`}
       </Titre>
       <div className='tableau-actions fr-mb-3v fr-mt-1w'>
         <div className="tableau-actions-gauche">
@@ -45,20 +43,6 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
               changementDeLaRechercheCallback={changementDeLaRechercheCallback}
               valeur={valeurDeLaRecherche}
             />
-          </div>
-          <div className="fr-toggle">
-            <input
-              className="fr-toggle__input"
-              id="interrupteur-grouper-par-ministères"
-              onChange={tableau.getColumn('porteur')?.getToggleGroupingHandler() ?? undefined}
-              type="checkbox"
-            />
-            <label
-              className="fr-toggle__label fr-pl-1w"
-              htmlFor="interrupteur-grouper-par-ministères"
-            >
-              Grouper par ministères
-            </label>
           </div>
         </div>
         <div className="tableau-actions-droite">
@@ -76,7 +60,7 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
             <div className="fr-container">
               <div className="fr-notice__body">
                 <p className="fr-notice__title">
-                  Aucun chantier ne correspond à votre recherche !
+                  Aucun projet ne correspond à votre recherche !
                 </p>
                 Vous pouvez modifier vos filtres pour élargir votre recherche.
               </div>
@@ -88,10 +72,8 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
               <caption className="fr-sr-only">
                 Liste des chantiers
               </caption>
-              {
-                !estVueMobile && <TableauRéformesEnTête tableau={tableau} />
-              }
-              <TableauChantiersContenu tableau={tableau} />
+              { !estVueMobile && <TableauRéformesEnTête tableau={tableau} />}
+              <TableauProjetsStructurantsContenu tableau={tableau} />
             </table>
             <TableauPagination
               changementDePageCallback={changementDePageCallback}
@@ -99,6 +81,6 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
               numéroDePageInitiale={1}
             />
           </>}
-    </TableauChantiersStyled>
+    </TableauProjetsStructurantsStyled>
   );
 }

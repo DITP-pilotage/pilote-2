@@ -1,19 +1,19 @@
 import { useState } from 'react';
-import PageChantiers from '@/client/components/PageChantiers/PageChantiers';
-import PageProjetsStructurants from '@/client/components/PageProjetsStructurants/PageProjetsStructurants';
+import PageChantiers from '@/components/PageAccueil/PageChantiers/PageChantiers';
+import PageProjetsStructurants from '@/components/PageAccueil/PageProjetsStructurants/PageProjetsStructurants';
 import SélecteursMaillesEtTerritoires from '@/client/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import Titre from '@/client/components/_commons/Titre/Titre';
-import Filtres from '@/client/components/PageChantiers/Filtres/Filtres';
+import Filtres from '@/components/PageAccueil/PageChantiers/Filtres/Filtres';
 import BarreLatérale from '@/client/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/client/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import PageAccueilProps from './PageAccueil.interface';
-import { Réforme } from './SélecteurRéforme/SélecteurRéforme.interface';
-import SélecteurRéforme from './SélecteurRéforme/SélecteurRéforme';
+import { TypeDeRéforme } from './SélecteurTypeDeRéforme/SélecteurTypeDeRéforme.interface';
+import SélecteurTypeDeRéforme from './SélecteurTypeDeRéforme/SélecteurTypeDeRéforme';
 
-export default function PageAccueil({ chantiers, ministères, axes, ppg, habilitations }: PageAccueilProps) {
+export default function PageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs, habilitations }: PageAccueilProps) {
   const habilitation = new Habilitation(habilitations);
-  const [réformeSélectionnée, setRéformeSélectionnée] = useState<Réforme>('chantier');
+  const [typeDeRéformeSélectionné, setTypeDeRéformeSélectionné] = useState<TypeDeRéforme>('chantier');
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
@@ -23,9 +23,9 @@ export default function PageAccueil({ chantiers, ministères, axes, ppg, habilit
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteurRéforme
-            modifierRéformeSélectionnée={setRéformeSélectionnée}
-            réformeSélectionnée={réformeSélectionnée}
+          <SélecteurTypeDeRéforme
+            modifierTypeDeRéformeSélectionné={setTypeDeRéformeSélectionné}
+            typeDeRéformeSélectionné={typeDeRéformeSélectionné}
           />
           <SélecteursMaillesEtTerritoires 
             habilitation={habilitation}
@@ -39,10 +39,10 @@ export default function PageAccueil({ chantiers, ministères, axes, ppg, habilit
             Filtres
           </Titre>
           <Filtres
-            afficherToutLesFiltres={réformeSélectionnée === 'chantier' ? true : false}
+            afficherToutLesFiltres={typeDeRéformeSélectionné === 'chantier' ? true : false}
             axes={axes}
             ministères={ministères}
-            ppg={ppg}
+            ppgs={ppgs}
           />
         </section>
       </BarreLatérale>
@@ -55,13 +55,13 @@ export default function PageAccueil({ chantiers, ministères, axes, ppg, habilit
         Filtres
       </button>
       {
-        réformeSélectionnée === 'chantier' ?
+        typeDeRéformeSélectionné === 'chantier' ?
           <PageChantiers
             chantiers={chantiers}
             habilitation={habilitation}
           />
           : 
-          <PageProjetsStructurants />
+          <PageProjetsStructurants projetsStructurants={projetsStructurants} />
         }
     </div> 
   );

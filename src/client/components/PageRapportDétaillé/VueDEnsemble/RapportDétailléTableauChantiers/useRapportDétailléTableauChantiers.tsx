@@ -4,12 +4,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
-import { comparerAvancementChantier } from '@/client/utils/chantier/avancement/avancement';
-import TableauChantiersAvancement from '@/components/PageAccueil/PageChantiers/TableauChantiers/Avancement/TableauChantiersAvancement';
-import TableauChantiersMétéo from '@/components/PageAccueil/PageChantiers/TableauChantiers/Météo/TableauChantiersMétéo';
+import { comparerAvancementRéforme } from '@/client/utils/chantier/avancement/avancement';
+import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import TypologiesPictos from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import { DonnéesTableauChantiers } from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
+import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
 import RapportDétailléTableauChantiersProps from './RapportDétailléTableauChantiers.interface';
 
 const déterminerTypologieDuGroupementParMinistère = (chantiersDuGroupe: DonnéesTableauChantiers[]) => {
@@ -49,7 +49,7 @@ const colonnesTableauChantiers = [
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
     id: 'météo',
-    cell: météo => <TableauChantiersMétéo météo={météo.getValue()} />,
+    cell: météo => <TableauRéformesMétéo météo={météo.getValue()} />,
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
     enableGrouping: false,
@@ -61,14 +61,14 @@ const colonnesTableauChantiers = [
   reactTableColonnesHelper.accessor('avancement', {
     header: 'Avancement',
     id: 'avancement',
-    cell: avancement => <TableauChantiersAvancement avancement={avancement.getValue()} />,
+    cell: avancement => <TableauRéformesAvancement avancement={avancement.getValue()} />,
     enableGlobalFilter: false,
-    sortingFn: (a, b, columnId) => comparerAvancementChantier(a.getValue(columnId), b.getValue(columnId)),
+    sortingFn: (a, b, columnId) => comparerAvancementRéforme(a.getValue(columnId), b.getValue(columnId)),
     enableGrouping: false,
     aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
       return calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement));
     },
-    aggregatedCell: avancement => <TableauChantiersAvancement avancement={avancement.getValue() ?? null} />,
+    aggregatedCell: avancement => <TableauRéformesAvancement avancement={avancement.getValue() ?? null} />,
     meta: {
       width: '11rem',
     },

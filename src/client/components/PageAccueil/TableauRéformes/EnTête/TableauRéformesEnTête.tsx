@@ -1,6 +1,6 @@
 import { flexRender, SortDirection } from '@tanstack/react-table';
-import TableauChantiersEnTêteProps from './TableauChantiersEnTête.interface';
-import TableauChantiersEnTêteStyled from './TableauChantiersEnTête.styled';
+import TableauRéformesEnTêteProps from './TableauRéformesEnTête.interface';
+import TableauRéformesEnTêteStyled from './TableauRéformesEnTête.styled';
 
 function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   if (!typeDeTri)
@@ -14,9 +14,9 @@ function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   return tupleTriAttributAriaSort[typeDeTri];
 }
 
-export default function TableauChantiersEnTête({ tableau }: TableauChantiersEnTêteProps) {
+export default function TableauRéformesEnTête({ tableau }: TableauRéformesEnTêteProps) {
   return (
-    <TableauChantiersEnTêteStyled>
+    <TableauRéformesEnTêteStyled>
       {
         tableau.getHeaderGroups().map(headerGroup => (
           <tr key={headerGroup.id}>
@@ -36,6 +36,6 @@ export default function TableauChantiersEnTête({ tableau }: TableauChantiersEnT
           </tr>
         ))
       }
-    </TableauChantiersEnTêteStyled>
+    </TableauRéformesEnTêteStyled>
   );
 }

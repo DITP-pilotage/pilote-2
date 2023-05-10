@@ -1,16 +1,13 @@
 import Titre from '@/client/components/_commons/Titre/Titre';
-import FiltresActifs from '@/client/components/PageChantiers/FiltresActifs/FiltresActifs';
+import FiltresActifs from '@/components/PageAccueil/PageChantiers/FiltresActifs/FiltresActifs';
 import Bloc from '@/client/components/_commons/Bloc/Bloc';
-import CartographieAvancement from '@/client/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
-import Avancements from '@/client/components/_commons/Avancements/Avancements';
-import RépartitionMétéo from '@/client/components/PageChantiers/RépartitionMétéo/RépartitionMétéo';
-import useCartographie from '@/client/components/_commons/Cartographie/useCartographie';
 import usePageProjetsStructurants from './usePageProjetsStructurants';
 import PageProjetsStructurantsProps from './PageProjetsStructurants.interface';
+import TableauProjetsStructurants from './TableauProjetsStructurants/TableauProjetsStructurants';
 
 export default function PageProjetsStructurants({ projetsStructurants }: PageProjetsStructurantsProps) {
   const { nombreFiltresActifs } = usePageProjetsStructurants();
-  const { auClicTerritoireCallback } = useCartographie();
+  // const { auClicTerritoireCallback } = useCartographie();
 
   return (
     <main>
@@ -72,7 +69,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
         <div className="fr-grid-row fr-mt-7v">
           <div className="fr-col">
             <Bloc>
-              {/* <TableauChantiers données={donnéesTableauChantiers} /> */}
+              <TableauProjetsStructurants données={projetsStructurants} />
             </Bloc>
           </div>
         </div>

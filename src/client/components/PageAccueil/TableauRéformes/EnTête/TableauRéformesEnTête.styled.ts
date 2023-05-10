@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const TableauChantiersEnTêteStyled = styled.thead`
+const TableauRéformesEnTêteStyled = styled.thead`
   background-color: var(--background-action-low-blue-france) !important;
   border: 1px solid var(--border-disabled-grey);
 
@@ -19,4 +19,4 @@ const TableauChantiersEnTêteStyled = styled.thead`
   }
 `;
 
-export default TableauChantiersEnTêteStyled;
+export default TableauRéformesEnTêteStyled;

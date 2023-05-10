@@ -9,23 +9,26 @@ import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import PageAccueil from '@/components/PageAccueil/PageAccueil';
+import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
+  projetsStructurants: ProjetStructurant[]
   ministères: Ministère[]
   axes: Axe[],
-  ppg: Ppg[],
+  ppgs: Ppg[],
   habilitations: Habilitations
 }
 
-export default function NextPageAccueil({ chantiers, ministères, axes, ppg, habilitations }: NextPageAccueilProps) {
+export default function NextPageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs, habilitations }: NextPageAccueilProps) {
   return (
     <PageAccueil
       axes={axes}
       chantiers={chantiers}
       habilitations={habilitations}
       ministères={ministères}
-      ppg={ppg}
+      ppgs={ppgs}
+      projetsStructurants={projetsStructurants}
     />
   );
 }
@@ -40,6 +43,28 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
   const habilitation =  new Habilitation(session.habilitations);
   const chantierRepository = dependencies.getChantierRepository();
   const chantiers = await chantierRepository.getListe(habilitation);
+  const projetsStructurants: ProjetStructurant[] = [
+    { 
+      id: 'PS-001',
+      nom: 'Projet structurant 1',
+      tauxAvancement: 95,
+      dateTauxAvancement: new Date().toISOString(),
+      territoireNom: 'Yvelines',
+      maille: 'départementale',
+      ministèresIds: ['MIN-001'],
+      météo: 'SOLEIL',
+    },
+    {
+      id: 'PS-002',
+      nom: 'Projet structurant 2',
+      tauxAvancement: 55,
+      dateTauxAvancement: new Date().toISOString(),
+      territoireNom: 'Yvelines',
+      maille: 'départementale',
+      ministèresIds: ['MIN-001'],
+      météo: 'COUVERT',
+    },
+  ];
 
   let axes: Axe[] = [];
   let ppgs: Ppg[] = [];
@@ -59,9 +84,10 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
   return {
     props: {
       chantiers,
+      projetsStructurants,
       ministères,
-      axes: axes,
-      ppg: ppgs,
+      axes,
+      ppgs,
       habilitations: session.habilitations,
     },
   };
