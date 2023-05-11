@@ -122,7 +122,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     });
   }
 
-  async getChantiersPourExports(habilitations: Habilitations): Promise<ChantierPourExport[]> {
+  async récupérerPourExports(habilitations: Habilitations): Promise<ChantierPourExport[]> {
     const h = new Habilitation(habilitations);
     const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
 
@@ -157,8 +157,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
                                      where sr.r = 1)
 
         select c.*,
-               t_r.nom             nom_region,
-               t_d.nom             nom_departement,
+               t_r.nom             region_nom,
+               t_d.nom             departement_nom,
                c_n.taux_avancement taux_national,
                c_r.taux_avancement taux_regional,
                c_d.taux_avancement taux_departemental,
@@ -228,34 +228,34 @@ export default class ChantierSQLRepository implements ChantierRepository {
                 WHEN 'REG' THEN 2
                 WHEN 'DEPT' THEN 3
                 ELSE 4 END,
-            nom_region,
+            region_nom,
             t_d.code_insee, -- on ordonne en fonction du numéro du département et pas par ordre alphabétique (le Haut-Rhin vient juste après le Bas-Rhin)
             c.ministeres
     `;
-    return rows.map(it => new ChantierPourExport(
-      it.nom,
-      it.maille,
-      it.nom_region,
-      it.nom_departement,
-      it.ministeres ? it.ministeres[0] : null, // <-- en fait ce sont les porteurs
-      it.taux_national,
-      it.taux_regional,
-      it.taux_departemental,
-      it.meteo,
-      it.est_barometre,
-      it.est_territorialise,
-      it.comm_actions_a_venir,
-      it.comm_actions_a_valoriser,
-      it.comm_freins_a_lever,
-      it.comm_commentaires_sur_les_donnees,
-      it.comm_autres_resultats,
-      it.comm_autres_resultats_non_correles_aux_indicateurs,
-      it.dec_strat_suivi_des_decisions,
-      it.obj_notre_ambition,
-      it.obj_deja_fait,
-      it.obj_a_faire,
-      it.synthese_des_resultats,
-    ));
+    return rows.map(it => ({
+      nom: it.nom,
+      maille: it.maille,
+      régionNom: it.region_nom,
+      départementNom: it.departement_nom,
+      ministèreNom: it.ministeres ? it.ministeres[0] : null, // <-- en fait ce sont les porteurs
+      tauxDAvancementNational: it.taux_national,
+      tauxDAvancementRégional: it.taux_regional,
+      tauxDAvancementDépartemental: it.taux_departemental,
+      météo: it.meteo,
+      estBaromètre: it.est_barometre,
+      estTerritorialisé: it.est_territorialise,
+      commActionsÀVenir: it.comm_actions_a_venir,
+      commActionsÀValoriser: it.comm_actions_a_valoriser,
+      commFreinsÀLever: it.comm_freins_a_lever,
+      commCommentairesSurLesDonnées: it.comm_commentaires_sur_les_donnees,
+      commAutresRésultats: it.comm_autres_resultats,
+      commAutresRésultatsNonCorrélésAuxIndicateurs: it.comm_autres_resultats_non_correles_aux_indicateurs,
+      decStratSuiviDesDécisions: it.dec_strat_suivi_des_decisions,
+      objNotreAmbition: it.obj_notre_ambition,
+      objDéjàFait: it.obj_deja_fait,
+      objÀFaire: it.obj_a_faire,
+      synthèseDesRésultats: it.synthese_des_resultats,
+    }));
   }
 
   async getChantierStatistiques(habilitations: Habilitations, listeChantier: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques> {

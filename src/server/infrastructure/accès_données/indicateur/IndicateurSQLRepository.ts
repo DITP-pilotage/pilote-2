@@ -146,8 +146,8 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
           )
       
       select i.maille                      maille,
-             t_r.nom                       nom_region,
-             t_d.nom                       nom_departement,
+             t_r.nom                       region_nom,
+             t_d.nom                       departement_nom,
              c.ministeres                  chantier_ministeres,
              c.nom                         chantier_nom,
              c.est_barometre               chantier_est_barometre,
@@ -181,28 +181,28 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
             WHEN 'REG' THEN 2
             WHEN 'DEPT' THEN 3
             ELSE 4 END,
-          nom_region,
+          region_nom,
           t_d.code_insee, -- on ordonne en fonction du numéro du département et pas par ordre alphabétique (le Haut-Rhin vient juste après le Bas-Rhin)
           c.ministeres
     `;
 
-    return rows.map(it => new IndicateurPourExport(
-      it.maille,
-      it.nom_region,
-      it.nom_departement,
-      it.chantier_ministeres ? it.chantier_ministeres[0] : null,
-      it.chantier_nom,
-      it.chantier_est_barometre,
-      it.chantier_taux_avancement,
-      it.meteo,
-      it.nom,
-      it.valeur_initiale,
-      it.date_valeur_initiale,
-      it.valeur_actuelle,
-      it.date_valeur_actuelle,
-      it.valeur_cible,
-      it.date_valeur_cible,
-      it.taux_avancement,
-    ));
+    return rows.map(it => ({
+      maille: it.maille,
+      régionNom: it.region_nom,
+      départementNom: it.departement_nom,
+      chantierMinistèreNom: it.chantier_ministeres ? it.chantier_ministeres[0] : null,
+      chantierNom: it.chantier_nom,
+      chantierEstBaromètre: it.chantier_est_barometre,
+      chantierAvancementGlobal: it.chantier_taux_avancement,
+      météo: it.meteo,
+      nom: it.nom,
+      valeurInitiale: it.valeur_initiale,
+      dateValeurInitiale: it.date_valeur_initiale,
+      valeurActuelle: it.valeur_actuelle,
+      dateValeurActuelle: it.date_valeur_actuelle,
+      valeurCible: it.valeur_cible,
+      dateValeurCible: it.date_valeur_cible,
+      avancementGlobal: it.taux_avancement,
+    }));
   }
 }

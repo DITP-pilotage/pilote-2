@@ -505,7 +505,7 @@ describe('ChantierSQLRepository', () => {
       ] });
 
       // When
-      const result = await repository.getChantiersPourExports(habilitation);
+      const result = await repository.récupérerPourExports(habilitation);
 
       // Then
       expect(result).toEqual([
@@ -526,9 +526,9 @@ describe('ChantierSQLRepository', () => {
         expect.objectContaining({
           nom: 'chantier 1',
           maille: 'DEPT',
-          nomRégion: 'Auvergne-Rhône-Alpes',
-          nomDépartement: 'Ain',
-          ministère: 'MIN a',
+          régionNom: 'Auvergne-Rhône-Alpes',
+          départementNom: 'Ain',
+          ministèreNom: 'MIN a',
           estBaromètre: true,
           estTerritorialisé: false,
           tauxDAvancementNational: 10,
