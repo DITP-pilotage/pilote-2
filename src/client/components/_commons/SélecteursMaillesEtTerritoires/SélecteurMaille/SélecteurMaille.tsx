@@ -1,5 +1,6 @@
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, maillesAccessiblesEnLectureStore  } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { objectEntries } from '@/client/utils/objects/objects';
 import SélecteurMailleStyled from './SélecteurMaille.styled';
 
 export default function SélecteurMaille() {
@@ -21,16 +22,18 @@ export default function SélecteurMaille() {
   return (
     <SélecteurMailleStyled className='fr-p-1v'>
       {
-        maillesInternesAccessiblesEnLecture.map(maille => (
-          <button
-            className={`${mailleSélectionnée === maille && 'sélectionné fr-text--bold'}`}
-            key={maille}
-            onClick={() => modifierMailleSélectionnée(maille)}
-            type='button'
-          >
-            {mailles[maille]}
-          </button>
-        ))
+        objectEntries(mailles)
+          .filter(([maille]) => maillesInternesAccessiblesEnLecture.includes(maille))
+          .map(([maille, libellé]) => (
+            <button
+              className={`${mailleSélectionnée === maille && 'sélectionné fr-text--bold'}`}
+              key={maille}
+              onClick={() => modifierMailleSélectionnée(maille)}
+              type='button'
+            >
+              {libellé}
+            </button>
+          ))
       }
     </SélecteurMailleStyled>
   );

@@ -1,5 +1,6 @@
 import FiltresSélectionMultiple from '@/components/PageAccueil/PageChantiers/Filtres/FiltresSélectionMultiple/FiltresSélectionMultiple';
 import { FiltreTypologieType } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
+import { filtresActifs } from '@/client/stores/useFiltresStore/useFiltresStore';
 import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
 import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
 import FiltresProps from './Filtres.interface';
@@ -9,6 +10,8 @@ const filtreBaromètre: FiltreTypologieType = { id: 'filtreBaromètre', attribut
 const filtreTerritorialisé: FiltreTypologieType = { id: 'filtreTerritorialisé', attribut: 'estTerritorialisé', nom: 'Chantiers territorialisés' };
 
 export default function Filtres({ ministères, axes, ppgs, afficherToutLesFiltres }: FiltresProps) {
+  filtresActifs();
+
   return (
     <>
       <section className="fr-px-3w">

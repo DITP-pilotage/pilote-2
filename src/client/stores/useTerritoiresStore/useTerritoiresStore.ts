@@ -15,11 +15,14 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
   maillesAccessiblesEnLecture: [],
   actions: {
     initialiserLesTerritoires: territoires => {
+      if (get().territoires.length > 0) {
+        return;
+      }
+
       const territoiresAccessiblesEnLecture = territoires.filter(territoire => territoire.accèsLecture === true);
 
       set({
         territoires,
-        territoireSélectionné: territoires.find(territoire => territoire.maille === 'nationale'),
         départements: territoires.filter(territoire => territoire.maille === 'départementale'),
         régions: territoires.filter(territoire => territoire.maille === 'régionale'),
         territoiresAccessiblesEnLecture: territoiresAccessiblesEnLecture,
@@ -28,24 +31,32 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
     },
 
     initialiserLeTerritoireSélectionnéParDéfaut: () => {
+      if (get().territoireSélectionné) {
+        return;
+      }
+
       const territoireNational = get().territoiresAccessiblesEnLecture.find(territoire => territoire.maille === 'nationale');
       const premierTerritoireRégional = get().territoiresAccessiblesEnLecture.find(territoire => territoire.maille === 'régionale');
       const premierTerritoireDépartemental = get().territoiresAccessiblesEnLecture.find(territoire => territoire.maille === 'départementale');
 
       const territoireSélectionné = territoireNational ?? premierTerritoireRégional ?? premierTerritoireDépartemental;
 
-      if (territoireSélectionné)
+      if (territoireSélectionné) {
+        set({ mailleSélectionnée: territoireSélectionné.maille === 'régionale' ? 'régionale' : 'départementale' });
         get().actions.modifierTerritoireSélectionné(territoireSélectionné.code);
+      }
     },
 
     modifierMailleSélectionnée: maille => {
       const territoire = get().territoiresAccessiblesEnLecture.find(t => t.maille === 'nationale') ?? get().territoiresAccessiblesEnLecture.find(t => t.maille === maille)!;
       get().actions.modifierTerritoireSélectionné(territoire.code);
+
+      set({ mailleSélectionnée: maille });
     },
 
     modifierTerritoireSélectionné: territoireCode => {
       const territoire = get().territoiresAccessiblesEnLecture.find(t => t.code === territoireCode)!;
-      
+
       set({
         territoireSélectionné: territoire,
         territoiresComparés: territoire?.maille === 'nationale' ? [] : [territoire],
@@ -83,6 +94,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
 export const actionsTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.actions);
 export const départementsTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.départements);
 export const régionsTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.régions);
+export const territoiresTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoires);
 export const mailleSélectionnéeTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.mailleSélectionnée);
 export const territoireSélectionnéTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoireSélectionné);
 export const territoiresComparésTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoiresComparés);

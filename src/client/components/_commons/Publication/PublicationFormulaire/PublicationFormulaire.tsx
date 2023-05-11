@@ -3,13 +3,12 @@ import { useForm } from 'react-hook-form';
 import router from 'next/router';
 import { LIMITE_CARACTÈRES_PUBLICATION, validationPublicationFormulaire } from 'validation/publication';
 import CompteurCaractères from '@/components/_commons/CompteurCaractères/CompteurCaractères';
-import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import PublicationFormulaireStyled from './PublicationFormulaire.styled';
 import PublicationFormulaireProps, { PublicationFormulaireInputs } from './PublicationFormulaire.interface';
 import usePublicationFormulaire from './usePublicationFormulaire';
 
 export default function PublicationFormulaire({ caractéristiques, contenuInitial, succèsCallback, erreurCallback, annulationCallback }: PublicationFormulaireProps) {
-  const mailleSélectionnée = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const { créerPublication } = usePublicationFormulaire(succèsCallback, erreurCallback);
   
@@ -20,8 +19,8 @@ export default function PublicationFormulaire({ caractéristiques, contenuInitia
       contenu: contenuInitial,
       type: caractéristiques.type,
       entité: caractéristiques.entité,
-      maille: mailleSélectionnée,
-      codeInsee: territoireSélectionné.codeInsee,
+      maille: territoireSélectionné?.maille,
+      codeInsee: territoireSélectionné?.codeInsee,
       chantierId: router.query.id as string,
     },
   });

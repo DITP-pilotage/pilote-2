@@ -46,10 +46,13 @@ export default class ChantierSQLRepository implements ChantierRepository {
       throw new ErreurChantierPermission(id);
     }
     
-    const chantiers: chantier[] = await this.prisma.chantier.findMany({
+    const chantiers = await this.prisma.chantier.findMany({
       where: { 
         id,
         territoire_code: { in: territoiresLecture },
+      },
+      include: {
+        territoire: true,
       },
     });
 
@@ -57,7 +60,9 @@ export default class ChantierSQLRepository implements ChantierRepository {
       throw new ErreurChantierNonTrouvé(id);
     }
 
-    return parseChantier(chantiers);
+    const territoires = await this.prisma.territoire.findMany();
+
+    return parseChantier(chantiers, territoires);
   }
 
   async récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][]): Promise<Chantier['id'][]> {
@@ -85,9 +90,11 @@ export default class ChantierSQLRepository implements ChantierRepository {
         territoire_code: { in: territoiresLecture },
       },
     });
+
+    const territoires = await this.prisma.territoire.findMany();
     const chantiersGroupésParId = groupBy<chantier>(chantiers, c => c.id);
 
-    return objectEntries(chantiersGroupésParId).map(([_, c]) => parseChantier(c));
+    return objectEntries(chantiersGroupésParId).map(([_, c]) => parseChantier(c, territoires));
   }
 
   async récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null> {
@@ -263,7 +270,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const chaniterAutorisés = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const chantiersLecture = listeChantier.filter((x) => chaniterAutorisés.includes(x));
 
-
     const rows = await this.prisma.$queryRaw<any[]>`
     WITH chantier_average AS (
       SELECT 
@@ -271,7 +277,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
         AVG(taux_avancement) AS stat
       FROM chantier 
       WHERE 
-        chantier.id IN (${Prisma.join(chantiersLecture)}) 
+        chantier.id IN (${chantiersLecture.length > 0 ? Prisma.join(chantiersLecture) : undefined}) 
         AND maille = ${CODES_MAILLES[maille]}
       GROUP BY territoire_code
     )

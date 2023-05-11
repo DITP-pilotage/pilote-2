@@ -10,16 +10,7 @@ export default class RécupérerStatistiquesAvancementChantiersUseCase {
     private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
   ) {}
 
-  async run(chantiers: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques> {
-    // FIXME recuperer les bonnes habilitations !!!
-    const habilitations : Habilitations = {
-      lecture: {
-        chantiers: chantiers,
-        territoires: [],
-      },
-      'saisie.commentaire': { chantiers: [], territoires: [] },
-      'saisie.indicateur': { chantiers: [], territoires: [] },
-    };
+  async run(chantiers: Chantier['id'][], maille: Maille, habilitations: Habilitations): Promise<AvancementsStatistiques> {
     return this.chantierRepository.getChantierStatistiques(habilitations, chantiers, maille);
   }
 }

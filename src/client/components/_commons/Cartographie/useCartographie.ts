@@ -3,6 +3,7 @@ import {
   actionsTerritoiresStore,
   régionsTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
+  territoiresAccessiblesEnLectureStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CodeInsee, DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import { CartographieTerritoireAffiché, CartographieOptions, CartographieTerritoires } from './useCartographie.interface';
@@ -10,8 +11,9 @@ import { CartographieDonnées } from './Cartographie.interface';
 
 export default function useCartographie() {
   const régions = régionsTerritoiresStore();
-  const { modifierTerritoireSélectionné, modifierTerritoiresComparés } = actionsTerritoiresStore();
+  const { modifierTerritoireSélectionné, modifierTerritoiresComparés, récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  const territoiresAccessiblesEnLecture = territoiresAccessiblesEnLectureStore();
 
   function déterminerRégionsÀTracer(territoireAffiché: CartographieTerritoireAffiché) {
     return territoireAffiché.maille === 'régionale'
@@ -53,15 +55,15 @@ export default function useCartographie() {
   function auClicTerritoireCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
     if (!territoireSélectionnable || !territoireSélectionné) return;
 
-    if (territoireSélectionné.codeInsee === territoireCodeInsee)
-      modifierTerritoireSélectionné('FR');
-    else
-      modifierTerritoireSélectionné(territoireCodeInsee);
+    if (territoireSélectionné.codeInsee === territoireCodeInsee && territoiresAccessiblesEnLecture.some(t => t.maille === 'nationale'))
+      modifierTerritoireSélectionné('NAT-FR');
+    else 
+      modifierTerritoireSélectionné(récupérerDétailsSurUnTerritoireAvecCodeInsee(territoireCodeInsee).code);
   }
 
   function auClicTerritoireMultiSélectionCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
     if (!territoireSélectionnable) return;
-    modifierTerritoiresComparés(territoireCodeInsee);
+    modifierTerritoiresComparés(récupérerDétailsSurUnTerritoireAvecCodeInsee(territoireCodeInsee).code);
   }
 
   return {

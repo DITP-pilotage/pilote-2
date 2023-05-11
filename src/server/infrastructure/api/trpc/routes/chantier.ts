@@ -19,9 +19,9 @@ export const chantierRouter = créerRouteurTRPC({
 
   récupérerStatistiquesAvancements: procédureProtégée
     .input(validationChantiersContexte)
-    .query(({ input }) =>{
+    .query(({ input, ctx }) =>{
       const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
-      return récupérerStatistiquesChantiersUseCase.run(input.chantiers, input.maille as Maille);
+      return récupérerStatistiquesChantiersUseCase.run(input.chantiers, input.maille as Maille, ctx.session.habilitations);
     }),
 });
 

@@ -39,7 +39,7 @@ export default function useSynthèseDesRésultats(synthèseDesRésultatsInitiale
     désactiverLeModeÉdition,
     synthèseDesRésultatsCréée,
     synthèseDesRésultats,
-    nomTerritoireSélectionné: territoireSélectionné.nom,
+    nomTerritoireSélectionné: territoireSélectionné!.nomAffiché,
     modeÉdition,
     alerte,
     setAlerte,

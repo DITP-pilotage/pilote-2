@@ -11,15 +11,15 @@ const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerri
   if (territoiresAccessiblesEnLecture.some(territoire => territoire.maille === 'nationale')) {
     options.push({
       libellé: 'France',
-      valeur: 'FR',
+      valeur: 'NAT-FR',
     });
   }
 
   return [
     ...options, 
-    ...territoiresDisponibles.map(territoire => ({
+    ...territoiresDisponibles.sort((a, b) => a.codeInsee < b.codeInsee ? -1 : 1).map(territoire => ({
       libellé: territoire.nomAffiché,
-      valeur: territoire.codeInsee,
+      valeur: territoire.code,
     })),
   ];
 };
@@ -34,8 +34,8 @@ export default function SélecteurTerritoire() {
       htmlName="périmètre-géographique"
       libellé="Périmètre géographique"
       options={construireLaListeDOptions(territoiresAccessiblesEnLecture)}
-      valeurModifiéeCallback={codeInsee => modifierTerritoireSélectionné(codeInsee)}
-      valeurSélectionnée={territoireSélectionné.codeInsee}
+      valeurModifiéeCallback={territoireCode => modifierTerritoireSélectionné(territoireCode)}
+      valeurSélectionnée={territoireSélectionné?.code}
     />
   );
 }

@@ -4,7 +4,7 @@ export default function CartographieTerritoireSélectionné({ multiséléction }
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const territoiresComparés = territoiresComparésTerritoiresStore();
 
-  if (territoireSélectionné === null) return;
+  if (territoireSélectionné === null) return null;
 
   return (
     <g>

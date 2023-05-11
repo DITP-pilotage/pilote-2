@@ -19,11 +19,11 @@ export const htmlId = {
 };
 
 export default function PageRapportDétaillé({ chantiers, indicateursGroupésParChantier, détailsIndicateursGroupésParChantier, publicationsGroupéesParChantier, maille, codeInsee }: PageRapportDétailléProps) {
-  const { modifierMailleSélectionnée, modifierTerritoireSélectionné } = actionsTerritoiresStore();
+  const { modifierMailleSélectionnée, modifierTerritoireSélectionné, récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
   if (maille !== 'nationale') {
     modifierMailleSélectionnée(maille);
-    modifierTerritoireSélectionné(codeInsee);
+    modifierTerritoireSélectionné(récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee).code);
   }
 
   const chantiersFiltrés = useChantiersFiltrés(chantiers);

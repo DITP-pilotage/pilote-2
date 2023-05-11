@@ -19,7 +19,7 @@ export default function Commentaires({ commentaires, chantierId, maille, codeIns
       >
         Commentaires du chantier
       </Titre>
-      <Bloc titre={territoireSélectionné.nom}>
+      <Bloc titre={territoireSélectionné!.nomAffiché}>
         {
           typesCommentaires.map((type, i) => (
             <Fragment key={type}>

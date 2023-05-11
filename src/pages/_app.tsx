@@ -9,18 +9,15 @@ import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
 import { Router } from 'next/router';
 import { useState, useEffect } from 'react';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
 import useDétecterVueMobile from '@/client/hooks/useDétecterVueMobile';
 import api from '@/server/infrastructure/api/trpc/api';
-import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 const queryClient = new QueryClient();
 
 function MonApplication({ Component, pageProps }: AppProps) {
-  const { data: territoires, isLoading } = api.territoire.récupérerTous.useQuery(undefined, { refetchOnWindowFocus: false });
   useDétecterVueMobile();
   const [afficherLeLoader, setAfficherLeLoader] = useState(false);
   const [pageEnCoursDeChargement, setPageEnCoursDeChargement] = useState(false);
@@ -31,15 +28,6 @@ function MonApplication({ Component, pageProps }: AppProps) {
   const finChargement = () => {
     setPageEnCoursDeChargement(false);
   };
-
-  const { initialiserLesTerritoires, initialiserLaMailleSélectionnéeParDéfaut } = actionsTerritoiresStore();
-
-  useEffect(() => {
-    if (territoires) {
-      initialiserLesTerritoires(territoires);
-      initialiserLaMailleSélectionnéeParDéfaut();
-    }
-  }, [territoires, initialiserLesTerritoires, initialiserLaMailleSélectionnéeParDéfaut]);
 
   useEffect(() => {
     Router.events.on('routeChangeStart', débutChargement);
@@ -56,7 +44,7 @@ function MonApplication({ Component, pageProps }: AppProps) {
   useEffect(() => {
     let timer = setTimeout(() => {});
 
-    if (pageEnCoursDeChargement || isLoading)
+    if (pageEnCoursDeChargement)
       timer = setTimeout(() => setAfficherLeLoader(true), DELAI_AVANT_APPARITION_DU_LOADER_EN_MS);
     else {
       clearTimeout(timer);
@@ -64,7 +52,7 @@ function MonApplication({ Component, pageProps }: AppProps) {
     }
 
     return () => clearTimeout(timer);
-  }, [pageEnCoursDeChargement, isLoading]);
+  }, [pageEnCoursDeChargement]);
 
   return (
     <>
@@ -82,7 +70,6 @@ function MonApplication({ Component, pageProps }: AppProps) {
             <Component {...pageProps} />
           </MiseEnPage>
         </SessionProvider>
-        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </>
   );

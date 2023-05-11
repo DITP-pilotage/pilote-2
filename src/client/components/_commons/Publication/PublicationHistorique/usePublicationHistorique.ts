@@ -35,7 +35,7 @@ export default function usePublicationHistorique(
 
   return {
     publications,
-    nomTerritoire: maille === 'nationale' ? 'France' : territoireSélectionné.nom,
+    nomTerritoire: maille === 'nationale' ? 'France' : territoireSélectionné?.nom,
     récupérerPublications,
   };
 }

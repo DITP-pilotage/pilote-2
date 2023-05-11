@@ -107,6 +107,7 @@ export default function useCartographieAvancement(données: CartographieDonnées
 
     données.forEach(({ valeur, codeInsee }) => {
       const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
+
       donnéesFormatées[codeInsee] = {
         valeurAffichée: déterminerValeurAffichée(valeur),
         remplissage: déterminerRemplissage(valeur),

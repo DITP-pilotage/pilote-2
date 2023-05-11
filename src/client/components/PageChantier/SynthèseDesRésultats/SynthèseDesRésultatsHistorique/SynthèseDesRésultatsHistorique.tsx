@@ -24,7 +24,7 @@ export default function HistoriqueDeLaSynthèseDesRésultats({ chantierId }: His
       <Modale
         idHtml={ID_HTML}
         ouvertureCallback={récupérerHistoriqueSynthèseDesRésultats}
-        sousTitre={territoireSélectionné.nom}
+        sousTitre={territoireSélectionné!.nomAffiché}
         titre="Historique - Synthèse des résultats"
       >
         <HistoriqueDeLaSynthèseDesRésultatsStyled>
