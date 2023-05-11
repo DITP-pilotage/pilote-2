@@ -13,7 +13,7 @@ import SélecteurTypeDeRéforme from './SélecteurTypeDeRéforme/SélecteurTypeD
 
 export default function PageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs, habilitations }: PageAccueilProps) {
   const habilitation = new Habilitation(habilitations);
-  const [typeDeRéformeSélectionné, setTypeDeRéformeSélectionné] = useState<TypeDeRéforme>('projetStructurant');
+  const [typeDeRéformeSélectionné, setTypeDeRéformeSélectionné] = useState<TypeDeRéforme>('chantier');
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
