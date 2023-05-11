@@ -30,8 +30,14 @@ import DécisionStratégiqueSQLRowBuilder
 import { UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
-import { générerTableau, générerUnLibellé, répéter } from '@/server/infrastructure/test/builders/utils';
+import {
+  générerPeutÊtreNull,
+  générerTableau,
+  générerUnLibellé,
+  répéter,
+} from '@/server/infrastructure/test/builders/utils';
 import { typesCommentaireMailleNationale } from '@/server/domain/commentaire/Commentaire.interface';
+import { typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { formaterId } from './format';
 
 const chantierStatiqueId123 = new ChantierSQLRowBuilder()
@@ -254,10 +260,18 @@ class DatabaseSeeder {
     for (const c of this._chantiersDonnéesCommunes) {
       répéter(0, 4, () => {
         const id = `IND-${formaterId(this.compter())}`;
+        const typeId = faker.helpers.arrayElement(typesIndicateur);
         indicateursDonnéesCommunes.push({
           id,
           nom: `${générerUnLibellé(5, 15)} ${id}`,
           chantier_id: c.id,
+          type_id: typeId,
+          type_nom: `nom ${typeId}`,
+          est_barometre: générerPeutÊtreNull(0.2, faker.datatype.boolean()),
+          est_phare: générerPeutÊtreNull(0.2, faker.datatype.boolean()),
+          description: générerPeutÊtreNull(0.2, faker.lorem.paragraph(2)),
+          source: générerPeutÊtreNull(0.2, faker.lorem.paragraph(2)),
+          mode_de_calcul: générerPeutÊtreNull(0.2, faker.lorem.paragraph(5)),
         });
       });
     }
@@ -269,6 +283,13 @@ class DatabaseSeeder {
             .avecId(ind.id)
             .avecNom(ind.nom)
             .avecChantierId(ind.chantier_id)
+            .avecTypeId(ind.type_id)
+            .avecTypeNom(ind.type_nom)
+            .avecEstBaromètre(ind.est_barometre)
+            .avecEstPhare(ind.est_phare)
+            .avecDescription(ind.description)
+            .avecSource(ind.source)
+            .avecModeDeCalcul(ind.mode_de_calcul)
             .avecMaille(terr.maille)
             .avecCodeInsee(terr.code_insee)
             .avecTerritoireNom(terr.nom)
