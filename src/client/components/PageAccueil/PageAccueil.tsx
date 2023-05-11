@@ -13,7 +13,7 @@ import SélecteurTypeDeRéforme from './SélecteurTypeDeRéforme/SélecteurTypeD
 
 export default function PageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs, habilitations }: PageAccueilProps) {
   const habilitation = new Habilitation(habilitations);
-  const [typeDeRéformeSélectionné, setTypeDeRéformeSélectionné] = useState<TypeDeRéforme>('chantier');
+  const [typeDeRéformeSélectionné, setTypeDeRéformeSélectionné] = useState<TypeDeRéforme>('projetStructurant');
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
@@ -23,10 +23,13 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteurTypeDeRéforme
-            modifierTypeDeRéformeSélectionné={setTypeDeRéformeSélectionné}
-            typeDeRéformeSélectionné={typeDeRéformeSélectionné}
-          />
+          {
+            process.env.NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS === 'true' &&
+            <SélecteurTypeDeRéforme
+              modifierTypeDeRéformeSélectionné={setTypeDeRéformeSélectionné}
+              typeDeRéformeSélectionné={typeDeRéformeSélectionné}
+            />
+        }
           <SélecteursMaillesEtTerritoires 
             habilitation={habilitation}
           />
@@ -60,8 +63,8 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
             chantiers={chantiers}
             habilitation={habilitation}
           />
-          : 
-          <PageProjetsStructurants projetsStructurants={projetsStructurants} />
+          :
+          process.env.NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS === 'true' && <PageProjetsStructurants projetsStructurants={projetsStructurants} />
         }
     </div> 
   );
