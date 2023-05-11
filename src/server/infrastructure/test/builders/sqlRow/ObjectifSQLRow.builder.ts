@@ -22,7 +22,7 @@ export default class ObjectifSQLRowBuilder {
     this._auteur = faker.name.fullName();
     this._type = faker.helpers.arrayElement(['notre_ambition', 'deja_fait', 'a_faire']);
     this._contenu = faker.lorem.paragraph();
-    this._date = faker.date.recent(10, '2023-02-01T00:00:00.000Z');
+    this._date = faker.date.recent(10, '2022-06-01T00:00:00.000Z');
     this._chantierId = chantierGénéré.id;
   }
 

@@ -3,7 +3,11 @@ import { faker } from '@faker-js/faker/locale/fr';
 import IndicateurBuilder from '@/server/domain/indicateur/Indicateur.builder';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 import DétailsIndicateurBuilder from '@/server/domain/indicateur/DétailsIndicateur.builder';
-import { générerUneMailleAléatoire, retourneUneListeDeCodeInseeCohérentePourUneMaille } from '@/server/infrastructure/test/builders/utils';
+import {
+  générerPeutÊtreNull,
+  générerUneMailleAléatoire,
+  retourneUneListeDeCodeInseeCohérentePourUneMaille,
+} from '@/server/infrastructure/test/builders/utils';
 
 export default class IndicateurRowBuilder {
   private _id: indicateur['id'];
@@ -63,20 +67,20 @@ export default class IndicateurRowBuilder {
     this._chantierId = chantierGénéré.id;
     this._valeurCible = détailsIndicateurGénéré.valeurCible;
     this._tauxAvancementCible = détailsIndicateurGénéré.avancement.global;
-    this._dateValeurCible = faker.helpers.arrayElement([null, faker.date.recent(10, '2023-02-01T00:00:00.000Z').getFullYear().toString()]);
+    this._dateValeurCible = faker.date.recent(10, '2022-06-01T00:00:00.000Z').getFullYear().toString();
     this._typeId = indicateurGénéré.type;
     this._typeNom = faker.lorem.words();
     this._estBaromètre = faker.helpers.arrayElement([null, faker.datatype.boolean()]);
     this._estPhare = faker.helpers.arrayElement([null, faker.datatype.boolean()]);
     this._valeurInitiale = détailsIndicateurGénéré.valeurInitiale;
-    this._dateValeurInitiale = this._valeurInitiale === null ? null : faker.date.recent(10, '2023-02-01T00:00:00.000Z');
-    this._valeurActuelle = this._valeurInitiale === null ? null : faker.datatype.number({ min: this._valeurInitiale, precision: 0.01 });
-    this._dateValeurActuelle = this._dateValeurInitiale === null ? null : faker.date.between(this._dateValeurInitiale, faker.date.recent(5));
-    this._territoireNom = faker.helpers.arrayElement([null, faker.address.state()]);
+    this._dateValeurInitiale = this._valeurInitiale === null ? null : faker.date.recent(10, '2022-06-01T00:00:00.000Z');
+    this._valeurActuelle = détailsIndicateurGénéré.valeurs.length === 0 ? null : détailsIndicateurGénéré.valeurs[détailsIndicateurGénéré.valeurs.length - 1];
+    this._dateValeurActuelle = détailsIndicateurGénéré.dateValeurs.length === 0 ? null : new Date(détailsIndicateurGénéré.dateValeurs[détailsIndicateurGénéré.dateValeurs.length - 1]);
+    this._territoireNom = générerPeutÊtreNull(0.2, faker.address.state());
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
     this._maille = maille;
-    this._évolutionValeurActuelle = this._valeurInitiale === null ? [] : [this._valeurInitiale, faker.datatype.number({ min: this._valeurInitiale, precision: 0.01 })];
-    this._évolutionDateValeurActuelle = this._dateValeurInitiale === null ? [] : [this._dateValeurInitiale, faker.date.between(this._dateValeurInitiale, faker.date.recent(5))];
+    this._évolutionValeurActuelle = détailsIndicateurGénéré.valeurs;
+    this._évolutionDateValeurActuelle = détailsIndicateurGénéré.dateValeurs.map(d => new Date(d));
     this._description = indicateurGénéré.description;
     this._source = indicateurGénéré.source;
     this._modeDeCalcul = indicateurGénéré.modeDeCalcul;

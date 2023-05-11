@@ -22,9 +22,9 @@ export default class IndicateurBuilder {
     this._nom = `${this._id} ${faker.lorem.words()}`;
     this._type = faker.helpers.arrayElement(typesIndicateur);
     this._estIndicateurDuBaromètre = faker.datatype.boolean();
-    this._description = faker.helpers.arrayElement([null, faker.lorem.sentence()]);
-    this._source = faker.helpers.arrayElement([null, faker.lorem.sentence()]);
-    this._modeDeCalcul = faker.helpers.arrayElement([null, faker.lorem.sentence()]);
+    this._description = faker.helpers.arrayElement([null, faker.lorem.paragraph(2)]);
+    this._source = faker.helpers.arrayElement([null, faker.lorem.paragraph(2)]);
+    this._modeDeCalcul = faker.helpers.arrayElement([null, faker.lorem.paragraph(5)]);
   }
 
   avecId(id: Indicateur['id']): IndicateurBuilder {

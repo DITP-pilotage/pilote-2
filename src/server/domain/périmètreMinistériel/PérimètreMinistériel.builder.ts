@@ -1,6 +1,5 @@
-import { faker } from '@faker-js/faker/locale/fr';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import { générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
+import { générerUnIdentifiantUnique, générerUnLibellé } from '@/server/infrastructure/test/builders/utils';
 
 export default class PérimètreMinistérielBuilder {
   private _id: PérimètreMinistériel['id'];
@@ -11,7 +10,7 @@ export default class PérimètreMinistérielBuilder {
 
   constructor() {
     this._id = générerUnIdentifiantUnique('PM');
-    this._nom = `${this._id} ${faker.lorem.words()}`;
+    this._nom = `${générerUnLibellé(1, 3)} périmètre`;
     this._minister_id = générerUnIdentifiantUnique('M');
   }
 

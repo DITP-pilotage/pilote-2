@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker/locale/fr';
 import { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { codesInseeDépartements, codesInseeRégions, codeInseeFrance } from '@/server/domain/territoire/Territoire.interface';
 import AvancementBuilder from '@/server/domain/avancement/Avancement.builder';
+import { générerTableau } from '@/server/infrastructure/test/builders/utils';
 
 export default class DétailsIndicateurBuilder {
   private _codeInsee: DétailsIndicateur['codeInsee'];
@@ -21,13 +22,18 @@ export default class DétailsIndicateurBuilder {
   private _avancement: DétailsIndicateur['avancement'];
 
   constructor() {
+    const nombreDeValeurs = faker.datatype.number({ min: 0, max: 48 });
+
     this._codeInsee = faker.helpers.arrayElement([...codesInseeDépartements, ...codesInseeRégions, codeInseeFrance]);
-    this._valeurInitiale = faker.helpers.arrayElement([null, faker.datatype.number({ precision: 0.01 })]);
-    this._dateValeurInitiale = this._valeurInitiale === null ? null : faker.date.recent(10, '2023-02-01T00:00:00.000Z').toISOString();
-    this._valeurs = this._valeurInitiale === null ? [] : [this._valeurInitiale, faker.datatype.number({ min: this._valeurInitiale, precision: 0.01 })];
-    this._dateValeurs = this._dateValeurInitiale === null ? [] : [this._dateValeurInitiale, faker.date.between(this._dateValeurInitiale, faker.date.recent(5)).toISOString()];
-    this._valeurCible = faker.helpers.arrayElement([null, faker.datatype.number({ min: this._valeurInitiale ?? 42, precision: 0.01 })]);
-    this._dateValeurCible = this._valeurInitiale === null ? null : faker.date.future(10, '2023-02-01T00:00:00.000Z').toISOString();
+    this._valeurInitiale = faker.datatype.number({ precision: 0.01 });
+    this._dateValeurInitiale = faker.date.recent(10, '2022-06-01T00:00:00.000Z').toISOString();
+    this._valeurCible = faker.datatype.number({ min: this._valeurInitiale ?? 42, precision: 0.01 });
+    this._dateValeurCible = faker.date.future(10, '2022-06-01T00:00:00.000Z').toISOString();
+
+    const valeursEtDates = this.générerValeursEtDates(nombreDeValeurs, this._valeurInitiale, this._valeurCible);
+
+    this._valeurs = [this._valeurInitiale, ...valeursEtDates.valeurs];
+    this._dateValeurs = [this._dateValeurInitiale, ...valeursEtDates.dateValeurs];
     this._avancement = new AvancementBuilder().build();
   }
 
@@ -81,6 +87,20 @@ export default class DétailsIndicateurBuilder {
       valeurCible: this._valeurCible,
       dateValeurCible: this._dateValeurCible,
       avancement: this._avancement,
+    };
+  }
+
+  private générerValeursEtDates(nombre: number, valeurActuelle: number, valeurCible: number) {
+    const min = Math.min(valeurActuelle, valeurCible);
+    const max = Math.max(valeurActuelle, valeurCible);
+    return {
+      valeurs: générerTableau(nombre, nombre, () => {
+        return faker.datatype.number({ min, max, precision: 0.01 });
+      }),
+      dateValeurs: générerTableau(nombre, nombre, (i) => {
+        const date = new Date('2022-07-01');
+        return new Date(date.setMonth(date.getMonth() + i)).toISOString();
+      }),
     };
   }
 }

@@ -2,7 +2,7 @@ import { chantier } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import {
   générerCaractèresSpéciaux,
-  générerUneMailleAléatoire,
+  générerUneMailleAléatoire, générerUnLibellé,
   retourneUneListeDeCodeInseeCohérentePourUneMaille,
 } from '@/server/infrastructure/test/builders/utils';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
@@ -78,7 +78,7 @@ export default class ChantierRowBuilder {
 
   avecId(id: chantier['id']): ChantierRowBuilder {
     this._id = id;
-    this._nom = `${this._id} ${faker.lorem.words(6)} ${générerCaractèresSpéciaux(3)}`;
+    this._nom = `${générerUnLibellé(6, 14)} ${générerCaractèresSpéciaux(3)} ${this._id}`;
     return this;
   }
 

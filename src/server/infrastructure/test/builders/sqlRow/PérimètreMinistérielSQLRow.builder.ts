@@ -1,6 +1,7 @@
 import { perimetre } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import PérimètreMinistérielBuilder from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.builder';
+import { générerUnLibellé } from '@/server/infrastructure/test/builders/utils';
 
 export default class PérimètreMinistérielRowBuilder {
   private _id: perimetre['id'];
@@ -16,7 +17,7 @@ export default class PérimètreMinistérielRowBuilder {
     
     this._id = périmètreMinistérielGénéré.id;
     this._nom = périmètreMinistérielGénéré.nom;
-    this._ministère = faker.helpers.arrayElement([null, `MIN - ${faker.lorem.words()}`]);
+    this._ministère = faker.helpers.arrayElement([null, `${générerUnLibellé(1, 3)} ministère`]);
     this._ministère_id = this._ministère ? `MIN-${faker.datatype.number()}` : null;
   }
 

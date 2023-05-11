@@ -31,9 +31,9 @@ export default class SyntheseDesResultatsRowBuilder {
     this._maille = maille;
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
     this._commentaire = possèdeCommentaireEtMétéo ? faker.lorem.paragraphs() : null;
-    this._dateCommentaire = possèdeCommentaireEtMétéo ? faker.date.recent(10, '2023-02-01T00:00:00.000Z') : null;
+    this._dateCommentaire = possèdeCommentaireEtMétéo ? faker.date.recent(10, '2022-06-01T00:00:00.000Z') : null;
     this._météo = possèdeCommentaireEtMétéo ? new MétéoBuilder().build() : null;
-    this._dateMétéo = possèdeCommentaireEtMétéo ? faker.date.recent(10, '2023-02-01T00:00:00.000Z') : null;
+    this._dateMétéo = possèdeCommentaireEtMétéo ? faker.date.recent(10, '2022-06-01T00:00:00.000Z') : null;
     this._auteur = possèdeCommentaireEtMétéo ? faker.name.fullName() : null;
   }
 

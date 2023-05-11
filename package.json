@@ -28,7 +28,7 @@
     "test:server:infrastructure:coverage": "jest --collectCoverage --collectCoverageFrom=src/server/infrastructure/**/*.ts src/server/infrastructure/.*.test.*",
     "test:database:init": "dotenv -e .env.test -- npm run database:init -- --force",
     "database:init": "prisma migrate reset",
-    "database:seed": "npm run database:init -- --force && npx ts-node src/database/seed.ts"
+    "database:seed": "npm run database:init -- --force && npx ts-node src/database/seed/DatabaseSeeder.ts"
   },
   "prisma": {
     "schema": "src/database/prisma/schema.prisma"
