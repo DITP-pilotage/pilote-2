@@ -67,7 +67,10 @@ models:
       +materialized: incremental
       commentaire:
         +unique_key:
-          - 'chantier_id'
-          - 'type'
-          - 'maille'
-          - 'code_insee'
+          - 'id'
+      objectif:
+        +unique_key:
+          - 'id'
+      decision_strategique:
+        +unique_key:
+          - 'id'
