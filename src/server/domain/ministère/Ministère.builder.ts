@@ -1,6 +1,6 @@
-import { faker } from '@faker-js/faker/locale/fr';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import PérimètreMinistérielBuilder from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.builder';
+import { générerUnLibellé } from '@/server/infrastructure/test/builders/utils';
 
 export default class MinistèreBuilder {
   private _nom: Ministère['nom'];
@@ -8,7 +8,7 @@ export default class MinistèreBuilder {
   private _périmètresMinistériels: Ministère['périmètresMinistériels'];
 
   constructor() {
-    this._nom = `MIN - ${faker.lorem.words()}`;
+    this._nom = `${générerUnLibellé(1, 3)} ministère`;
     this._périmètresMinistériels = [new PérimètreMinistérielBuilder().build()];
   }
 

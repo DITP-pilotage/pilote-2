@@ -1,5 +1,9 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import { codesInseeDépartements, codesInseeRégions, codeInseeFrance } from '@/server/domain/territoire/Territoire.interface';
+import {
+  codeInseeFrance,
+  codesInseeDépartements,
+  codesInseeRégions,
+} from '@/server/domain/territoire/Territoire.interface';
 
 export function générerUnIdentifiantUnique(prefixe: string) {
   return `${prefixe}-${faker.helpers.unique(faker.random.numeric, [7])}`;
@@ -29,4 +33,25 @@ export function retourneUneListeDeCodeInseeCohérentePourUneMaille(maille: strin
     return codesInseeRégions;
     
   return [codeInseeFrance];
+}
+
+export function générerUnLibellé(nomdeDeMotsMin: number, nomdeDeMotsMax: number) {
+  const nom = faker.lorem.words(faker.datatype.number({ min: nomdeDeMotsMin, max: nomdeDeMotsMax }));
+  return nom.charAt(0).toUpperCase() + nom.slice(1);
+}
+
+export function générerTableau<T>(nombreOccurrenceMin: number, nombreOccurrenceMax: number, entitéBuilder: (i: number) => T): T[] {
+  return Array.from({
+    length: faker.datatype.number({ min: nombreOccurrenceMin, max: nombreOccurrenceMax }),
+  }).map((_, i) => entitéBuilder(i));
+}
+
+export function répéter(nombreOccurrenceMin: number, nombreOccurrenceMax: number, action: () => void) {
+  for (let i = 0; i < faker.datatype.number({ min: nombreOccurrenceMin, max: nombreOccurrenceMax }); ++i) {
+    action();
+  }
+}
+
+export function générerPeutÊtreNull<T>(probabilitéNull: number, valeurSinon: T): T | null {
+  return faker.datatype.number({ min: 0, max: 1, precision: 0.001 }) < probabilitéNull ? null : valeurSinon;
 }

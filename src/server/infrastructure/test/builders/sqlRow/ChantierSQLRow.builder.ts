@@ -1,8 +1,8 @@
 import { chantier } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import {
-  générerCaractèresSpéciaux,
-  générerUneMailleAléatoire,
+  générerCaractèresSpéciaux, générerPeutÊtreNull,
+  générerUneMailleAléatoire, générerUnLibellé,
   retourneUneListeDeCodeInseeCohérentePourUneMaille,
 } from '@/server/infrastructure/test/builders/utils';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
@@ -62,23 +62,23 @@ export default class ChantierRowBuilder {
     this._ppg = chantierGénéré.ppg;
     this._périmètreIds = ministères.flatMap(ministère => ministère.périmètresMinistériels).map(périmètreMinistériel => périmètreMinistériel.id);
     this._maille = maille;
-    this._territoireNom = faker.helpers.arrayElement([null, faker.address.state()]);
+    this._territoireNom = générerPeutÊtreNull(0.2, faker.address.state());
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
     this._tauxAvancement = avancement.global;
     this._ministères = ministères.map(ministère => ministère.nom);
-    this._météo = faker.helpers.arrayElement([null, météo]);
+    this._météo = générerPeutÊtreNull(0.05, météo);
     this._directeursAdminCentrale = chantierGénéré.responsables.directeursAdminCentrale.map(directeur => directeur.nom);
     this._directionsAdminCentrale = chantierGénéré.responsables.directeursAdminCentrale.map(directeur => directeur.direction);
     this._directeursProjet = chantierGénéré.responsables.directeursProjet.map(directeur => directeur.nom);
     this._directeursProjetMails = chantierGénéré.responsables.directeursProjet.map(directeur => directeur.email ?? 'example@example.te');
-    this._estBaromètre = faker.helpers.arrayElement([null, chantierGénéré.estBaromètre]);
-    this._estTerritorialisé = faker.helpers.arrayElement([null, chantierGénéré.estTerritorialisé]);
+    this._estBaromètre = générerPeutÊtreNull(0.2, chantierGénéré.estBaromètre);
+    this._estTerritorialisé = générerPeutÊtreNull(0.2, chantierGénéré.estTerritorialisé);
     this._territoireCode = `${this._maille}-${this._codeInsee}`;
   }
 
   avecId(id: chantier['id']): ChantierRowBuilder {
     this._id = id;
-    this._nom = `${this._id} ${faker.lorem.words(6)} ${générerCaractèresSpéciaux(3)}`;
+    this._nom = `${générerUnLibellé(6, 14)} ${générerCaractèresSpéciaux(3)} ${this._id}`;
     return this;
   }
 

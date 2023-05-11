@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker/locale/fr';
 import { Commentaires, CommentairesMailleNationale, CommentairesMailleRégionaleOuDépartementale, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { générerPeutÊtreNull } from '@/server/infrastructure/test/builders/utils';
 
 export default class CommentaireBuilder {
   private _commentaireSurLesDonnées: CommentairesMailleRégionaleOuDépartementale['commentairesSurLesDonnées'];
@@ -15,12 +16,12 @@ export default class CommentaireBuilder {
   private _exemplesConcretsDeRéussite: CommentairesMailleNationale['exemplesConcretsDeRéussite'];
 
   constructor() {
-    this._commentaireSurLesDonnées = faker.helpers.arrayElement([null, this._générerUnCommentaire('commentairesSurLesDonnées')]);
-    this._autresRésultatsObtenus = faker.helpers.arrayElement([null, this._générerUnCommentaire('autresRésultatsObtenus')]);
-    this._autresRésultatsObtenusNonCorrélésAuxIndicateurs = faker.helpers.arrayElement([null, this._générerUnCommentaire('autresRésultatsObtenusNonCorrélésAuxIndicateurs')]);
-    this._risquesEtFreinsÀLever = faker.helpers.arrayElement([null, this._générerUnCommentaire('risquesEtFreinsÀLever')]);
-    this._solutionsEtActionsÀVenir = faker.helpers.arrayElement([null, this._générerUnCommentaire('solutionsEtActionsÀVenir')]);
-    this._exemplesConcretsDeRéussite = faker.helpers.arrayElement([null, this._générerUnCommentaire('exemplesConcretsDeRéussite')]);
+    this._commentaireSurLesDonnées = générerPeutÊtreNull(0.1, this._générerUnCommentaire('commentairesSurLesDonnées'));
+    this._autresRésultatsObtenus = générerPeutÊtreNull(0.1, this._générerUnCommentaire('autresRésultatsObtenus'));
+    this._autresRésultatsObtenusNonCorrélésAuxIndicateurs = générerPeutÊtreNull(0.5, this._générerUnCommentaire('autresRésultatsObtenusNonCorrélésAuxIndicateurs'));
+    this._risquesEtFreinsÀLever = générerPeutÊtreNull(0.1, this._générerUnCommentaire('risquesEtFreinsÀLever'));
+    this._solutionsEtActionsÀVenir = générerPeutÊtreNull(0.1, this._générerUnCommentaire('solutionsEtActionsÀVenir'));
+    this._exemplesConcretsDeRéussite = générerPeutÊtreNull(0.1, this._générerUnCommentaire('exemplesConcretsDeRéussite'));
   }
 
   private _générerUnCommentaire(type: TypeCommentaire) {
@@ -28,7 +29,7 @@ export default class CommentaireBuilder {
       id: faker.datatype.uuid(),
       type: type,
       contenu: faker.lorem.paragraph(),
-      date: faker.date.recent(10, '2023-02-01T00:00:00.000Z').toISOString(),
+      date: faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString(),
       auteur: faker.helpers.arrayElement(['', faker.name.fullName()]),
     };
   }

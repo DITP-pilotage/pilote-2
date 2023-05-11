@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-unused-collection,no-console */
 import {
   axe,
   chantier,
@@ -8,6 +9,7 @@ import {
   Prisma,
   PrismaClient,
   synthese_des_resultats,
+  territoire,
 } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 
@@ -19,15 +21,23 @@ import AxeRowBuilder from '@/server/infrastructure/test/builders/sqlRow/AxeSQLRo
 import PpgRowBuilder from '@/server/infrastructure/test/builders/sqlRow/PpgSQLRow.builder';
 import PérimètreMinistérielRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/PérimètreMinistérielSQLRow.builder';
-import { codesInseeDépartements, codesInseeRégions } from '@/server/domain/territoire/Territoire.interface';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 import IndicateurRowBuilder from '@/server/infrastructure/test/builders/sqlRow/IndicateurSQLRow.builder';
 import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
-import DécisionStratégiqueSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/DécisionStratégiqueSQLRow.builder';
+import DécisionStratégiqueSQLRowBuilder
+  from '@/server/infrastructure/test/builders/sqlRow/DécisionStratégiqueSQLRow.builder';
 import { UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
+import {
+  générerPeutÊtreNull,
+  générerTableau,
+  générerUnLibellé,
+  répéter,
+} from '@/server/infrastructure/test/builders/utils';
+import { typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
+import { formaterId } from './format';
 
 const chantierStatiqueId123 = new ChantierSQLRowBuilder()
   .avecAxe('axe chantier')
@@ -51,6 +61,15 @@ const chantierStatiqueId123 = new ChantierSQLRowBuilder()
 const prisma = new PrismaClient();
 
 class DatabaseSeeder {
+  private _territoires: territoire[] = [];
+
+  private _territoiresDept: territoire[] = [];
+
+  private _territoiresReg: territoire[] = [];
+
+  private _compteur: number = 1;
+
+
   private _axes: axe[] = [];
 
   private _ppgs: ppg[] = [];
@@ -69,34 +88,61 @@ class DatabaseSeeder {
 
   private _chantiers: chantier[] = [];
 
+  private _chantiersDonnéesCommunes: chantier[] = [];
+
+  async init() {
+    this._territoires = await prisma.territoire.findMany();
+    this._territoiresDept = this._territoires.filter(t => t.maille === 'DEPT');
+    this._territoiresReg = this._territoires.filter(t => t.maille === 'REG');
+  }
+
+  compter() {
+    return this._compteur++;
+  }
+
   async seed() {
+    console.log('---- Génération des fausses données ----');
     faker.seed(2023);
+    await this.init();
+    console.log('  Axes...');
     await this._créerAxes();
+    console.log('  Ppgs...');
     await this._créerPpgs();
+    console.log('  MinistèresEtPérimètresMinistériels...');
     await this._créerMinistèresEtPérimètresMinistériels();
+    console.log('  Chantiers...');
     await this._créerChantiers();
+    console.log('  SynthèsesDesRésultats...');
     await this._créerSynthèsesDesRésultats();
+    console.log('  Commentaires...');
     await this._créerCommentaires();
+    console.log('  Objectifs...');
     await this._créerObjectifs();
+    console.log('  DécisionsStratégiques...');
     await this._créerDécisionsStratégiques();
+    console.log('  Indicateurs...');
     await this._créerIndicateurs();
+    console.log('  UtilisateursEtDroits...');
     await this._créerUtilisateursEtDroits();
+    console.log('----------------- Fin ------------------');
   }
 
   private async _créerAxes() {
-    this._axes = Array.from({ length: 5 }).map(() => new AxeRowBuilder().build());
+    this._axes = générerTableau<axe>(5, 5, () => new AxeRowBuilder().build());
 
     await prisma.axe.createMany({ data: this._axes });
   }
 
   private async _créerPpgs() {
-    this._ppgs = Array.from({ length: 5 }).map(() => new PpgRowBuilder().build());
+    this._ppgs = générerTableau<ppg>(5, 5, () => new PpgRowBuilder().build());
 
     await prisma.ppg.createMany({ data: this._ppgs });
   }
 
   private async _créerMinistèresEtPérimètresMinistériels() {
-    this._périmètresMinistériels = Array.from({ length: 15 }).map(() => new PérimètreMinistérielRowBuilder().build()).filter(périmètre => périmètre.ministere !== null);
+    this._périmètresMinistériels = générerTableau<perimetre>(15, 15, () => new PérimètreMinistérielRowBuilder().build())
+      .filter(périmètre => périmètre.ministere !== null);
+
     const donnéesMinistères: ministere[] = this._périmètresMinistériels
       .filter(it => Boolean(it.ministere_id))
       .map(it => {
@@ -124,6 +170,7 @@ class DatabaseSeeder {
       const c = i <= CHANTIERS_STATIQUES.length - 1
         ? CHANTIERS_STATIQUES[i]
         : new ChantierSQLRowBuilder()
+          .avecId(`CH-${formaterId(this.compter())}`)
           .avecAxe(faker.helpers.arrayElement(this._axes).nom)
           .avecPpg(faker.helpers.arrayElement(this._ppgs).nom)
           .avecPérimètreIds(périmètres.map(périmètreMinistériel => périmètreMinistériel.id))
@@ -131,36 +178,44 @@ class DatabaseSeeder {
 
       const chantierNational = c.avecMaille('NAT').build();
 
-      const chantiersDépartementaux = codesInseeDépartements.map(codeInsee => {
+      const chantiersDépartementaux = this._territoiresDept.map(terr => {
         const météo = new MétéoBuilder().build();
         const avancement = faker.datatype.number({ min: 0, max: 100, precision: 0.01 });
 
-        return c.avecTauxAvancement(avancement).avecMétéo(météo).avecMaille('DEPT').avecCodeInsee(codeInsee).build();
+        return c.avecTauxAvancement(avancement).avecMétéo(météo).avecMaille('DEPT')
+          .avecCodeInsee(terr.code_insee).avecTerritoireNom(terr.nom).build();
       });
 
-      const chantiersRégionaux = codesInseeRégions.map(codeInsee => {
+      const chantiersRégionaux = this._territoiresReg.map(terr => {
         const météo = new MétéoBuilder().build();
         const avancement = faker.datatype.number({ min: 0, max: 100, precision: 0.01 });
 
-        return c.avecTauxAvancement(avancement).avecMétéo(météo).avecMaille('REG').avecCodeInsee(codeInsee).build();
+        return c.avecTauxAvancement(avancement).avecMétéo(météo).avecMaille('REG')
+          .avecCodeInsee(terr.code_insee).avecTerritoireNom(terr.nom).build();
       });
 
       this._chantiers.push(chantierNational, ...chantiersDépartementaux, ...chantiersRégionaux);
+      this._chantiersDonnéesCommunes = [...new Map(this._chantiers.map((ch) => [ch.id, ch])).values()];
     }
 
     await prisma.chantier.createMany({ data: this._chantiers });
   }
 
   private async _créerSynthèsesDesRésultats() {
-    this._synthèsesDesRésultats = this._chantiers.map(c => {
-      const possèdeCommentaireEtMétéo = c.meteo !== 'NON_RENSEIGNEE';
-      return (
-        new SynthèseDesRésultatsSQLRowBuilder(possèdeCommentaireEtMétéo)
-          .avecChantierId(c.id)
-          .avecMaille(c.maille).avecCodeInsee(c.code_insee)
-          .avecMétéo(c.meteo)
-          .build()
-      );
+    this._chantiers.forEach(c => {
+      répéter(1, 5, () => {
+        const possèdeCommentaireEtMétéo = c.meteo !== 'NON_RENSEIGNEE';
+        if (possèdeCommentaireEtMétéo) {
+          this._synthèsesDesRésultats.push(
+            new SynthèseDesRésultatsSQLRowBuilder(possèdeCommentaireEtMétéo)
+              .avecChantierId(c.id)
+              .avecMaille(c.maille)
+              .avecCodeInsee(c.code_insee)
+              .avecMétéo(c.meteo)
+              .build(),
+          );
+        }
+      });
     });
 
     await prisma.synthese_des_resultats.createMany({ data: this._synthèsesDesRésultats });
@@ -168,45 +223,79 @@ class DatabaseSeeder {
 
   private async _créerCommentaires() {
     this._chantiers.forEach(c => {
-      for (let i = 0; i < faker.datatype.number({ min: 0, max: 10 }); i++) {
-        this._commentaires = [...this._commentaires, new CommentaireRowBuilder().avecChantierId(c.id).build()];
-      }
+      répéter(0, 12, () => {
+        this._commentaires.push(new CommentaireRowBuilder().avecChantierId(c.id)
+          .avecMaille(c.maille).avecCodeInsee(c.code_insee)
+          .build());
+      });
     });
 
     await prisma.commentaire.createMany({ data: this._commentaires });
   }
 
   private async _créerObjectifs() {
-    this._chantiers.forEach(c => {
-      for (let i = 0; i < faker.datatype.number({ min: 0, max: 10 }); i++) {
-        this._objectifs = [...this._objectifs, new ObjectifSQLRowBuilder().avecChantierId(c.id).build()];
-      }
+    this._chantiersDonnéesCommunes.forEach(c => {
+      répéter(0, 9, () => {
+        this._objectifs.push(new ObjectifSQLRowBuilder().avecChantierId(c.id).build());
+      });
     });
 
     await prisma.objectif.createMany({ data: this._objectifs });
   }
 
   private async _créerDécisionsStratégiques() {
-    this._chantiers.forEach(c => {
-      for (let i = 0; i < faker.datatype.number({ min: 0, max: 10 }); i++) {
-        this._décisions_stratégiques = [...this._décisions_stratégiques, new DécisionStratégiqueSQLRowBuilder().avecChantierId(c.id).build()];
-      }
+    this._chantiersDonnéesCommunes.forEach(c => {
+      répéter(0, 9, () => {
+        this._décisions_stratégiques.push(new DécisionStratégiqueSQLRowBuilder().avecChantierId(c.id).build());
+      });
     });
 
     await prisma.decision_strategique.createMany({ data: this._décisions_stratégiques });
   }
 
   private async _créerIndicateurs() {
-    this._indicateurs = this._chantiers.map(c =>
-      new IndicateurRowBuilder()
-        .avecId(`IND-${c.id.slice(3)}`)
-        .avecNom(`IND-${c.id.slice(3)}-${faker.lorem.words()}`)
-        .avecChantierId(c.id)
-        .avecMaille(c.maille)
-        .avecCodeInsee(c.code_insee)
-        .build(),
-    );
+    const indicateursDonnéesCommunes: any[] = [];
 
+    for (const c of this._chantiersDonnéesCommunes) {
+      répéter(0, 4, () => {
+        const id = `IND-${formaterId(this.compter())}`;
+        const typeId = faker.helpers.arrayElement(typesIndicateur);
+        indicateursDonnéesCommunes.push({
+          id,
+          nom: `${générerUnLibellé(5, 15)} ${id}`,
+          chantier_id: c.id,
+          type_id: typeId,
+          type_nom: `nom ${typeId}`,
+          est_barometre: générerPeutÊtreNull(0.2, faker.datatype.boolean()),
+          est_phare: générerPeutÊtreNull(0.2, faker.datatype.boolean()),
+          description: générerPeutÊtreNull(0.2, faker.lorem.paragraph(2)),
+          source: générerPeutÊtreNull(0.2, faker.lorem.paragraph(2)),
+          mode_de_calcul: générerPeutÊtreNull(0.2, faker.lorem.paragraph(5)),
+        });
+      });
+    }
+
+    for (const ind of indicateursDonnéesCommunes) {
+      for (const terr of this._territoires) {
+        this._indicateurs.push(
+          new IndicateurRowBuilder()
+            .avecId(ind.id)
+            .avecNom(ind.nom)
+            .avecChantierId(ind.chantier_id)
+            .avecTypeId(ind.type_id)
+            .avecTypeNom(ind.type_nom)
+            .avecEstBaromètre(ind.est_barometre)
+            .avecEstPhare(ind.est_phare)
+            .avecDescription(ind.description)
+            .avecSource(ind.source)
+            .avecModeDeCalcul(ind.mode_de_calcul)
+            .avecMaille(terr.maille)
+            .avecCodeInsee(terr.code_insee)
+            .avecTerritoireNom(terr.nom)
+            .build(),
+        );
+      }
+    }
     await prisma.indicateur.createMany({ data: this._indicateurs });
   }
 

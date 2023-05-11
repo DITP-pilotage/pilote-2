@@ -79,7 +79,12 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Dé
     }),
     reactTableColonnesHelper.accessor('données.valeurCible', {
       header: 'Cible 2026',
-      cell: valeurCible => <ValeurEtDate valeur={valeurCible.getValue()} />,
+      cell: valeurCible => (
+        <ValeurEtDate
+          date={valeurCible.row.original.données.dateValeurCible}
+          valeur={valeurCible.getValue()}
+        />
+      ),
       enableSorting: false,
     }),
     reactTableColonnesHelper.accessor('données.avancement.global', {

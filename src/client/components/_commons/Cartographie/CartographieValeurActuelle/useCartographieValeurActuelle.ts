@@ -39,7 +39,7 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
   const valeurMax = useMemo(() => valeurMaximum(données.map(donnée => donnée.valeur)), [données]);
 
   const légende = useMemo(() => ({
-    libellé: 'En nombre d’unités',
+    libellé: '',
     valeurMin: valeurMin !== null ? valeurMin.toLocaleString() : '-',
     valeurMax: valeurMax !== null ? valeurMax.toLocaleString() : '-',
     couleurMin: COULEUR_DÉPART,

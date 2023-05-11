@@ -1,7 +1,12 @@
 import { faker } from '@faker-js/faker/locale/fr';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { CodeInsee, codeInseeFrance, codesInseeDépartements, codesInseeRégions, Territoires } from '@/server/domain/territoire/Territoire.interface';
-import { générerCaractèresSpéciaux, générerUnIdentifiantUnique, générerUnTableauVideAvecUneTailleDeZéroÀn } from '@/server/infrastructure/test/builders/utils';
+import {
+  générerCaractèresSpéciaux,
+  générerUnIdentifiantUnique,
+  générerUnLibellé,
+  générerUnTableauVideAvecUneTailleDeZéroÀn,
+} from '@/server/infrastructure/test/builders/utils';
 import PpgBuilder from '@/server/domain/ppg/Ppg.builder';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 import TerritoireBuilder from '@/server/domain/territoire/Territoire.builder';
@@ -41,7 +46,7 @@ export default class ChantierBuilder {
     const directeursProjet = générerUnTableauVideAvecUneTailleDeZéroÀn(2).map(() => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
 
     this._id = générerUnIdentifiantUnique('CH');
-    this._nom = `${this._id} ${faker.lorem.words(6)} ${générerCaractèresSpéciaux(3)}`;
+    this._nom = `${générerUnLibellé(6, 14)} ${générerCaractèresSpéciaux(3)} ${this._id}`;
     this._axe = axe.nom;
     this._ppg = ppg.nom;
     this._périmètreIds = ministèrePorteur.périmètresMinistériels.map(périmètreMinistériel => périmètreMinistériel.id);
