@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useRouter } from 'next/router';
 import {
   DonnéesTableauChantiers,
-} from '@/components/PageChantiers/TableauChantiers/TableauChantiers.interface';
+} from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import TableauChantiersContenuProps from './RapportDétailléTableauChantiersContenu.interface';
 

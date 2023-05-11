@@ -1,4 +1,4 @@
-export function comparerAvancementChantier(a: number | null, b: number | null) {
+export function comparerAvancementRéforme(a: number | null, b: number | null) {
   if (a === null && b === null)
     return 0;
   if (a === null)
