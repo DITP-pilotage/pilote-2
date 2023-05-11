@@ -22,13 +22,13 @@ export default class DétailsIndicateurBuilder {
   private _avancement: DétailsIndicateur['avancement'];
 
   constructor() {
-    const nombreDeValeurs = faker.datatype.number({ min: 0, max: 48 });
+    const nombreDeValeurs = faker.datatype.number({ min: 28, max: 35 });
 
     this._codeInsee = faker.helpers.arrayElement([...codesInseeDépartements, ...codesInseeRégions, codeInseeFrance]);
     this._valeurInitiale = faker.datatype.number({ precision: 0.01 });
-    this._dateValeurInitiale = faker.date.recent(10, '2022-06-01T00:00:00.000Z').toISOString();
+    this._dateValeurInitiale = new Date('2020-06-01T00:00:00.000Z').toISOString();
     this._valeurCible = faker.datatype.number({ min: this._valeurInitiale ?? 42, precision: 0.01 });
-    this._dateValeurCible = faker.date.future(10, '2022-06-01T00:00:00.000Z').toISOString();
+    this._dateValeurCible = faker.date.future(3, '2024-06-01T00:00:00.000Z').toISOString();
 
     const valeursEtDates = this.générerValeursEtDates(nombreDeValeurs, this._valeurInitiale, this._valeurCible);
 
@@ -98,8 +98,9 @@ export default class DétailsIndicateurBuilder {
         return faker.datatype.number({ min, max, precision: 0.01 });
       }),
       dateValeurs: générerTableau(nombre, nombre, (i) => {
-        const date = new Date('2022-07-01');
-        return new Date(date.setMonth(date.getMonth() + i)).toISOString();
+        const date = new Date(this._dateValeurInitiale ?? '2020-06-01');
+        const dateMoisSuivant = new Date(date.setMonth(date.getMonth() + 1));
+        return new Date(dateMoisSuivant.setMonth(dateMoisSuivant.getMonth() + i)).toISOString();
       }),
     };
   }

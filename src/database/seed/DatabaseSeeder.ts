@@ -202,7 +202,8 @@ class DatabaseSeeder {
         this._synthèsesDesRésultats.push(
           new SynthèseDesRésultatsSQLRowBuilder(possèdeCommentaireEtMétéo)
             .avecChantierId(c.id)
-            .avecMaille(c.maille).avecCodeInsee(c.code_insee)
+            .avecMaille(c.maille)
+            .avecCodeInsee(c.code_insee)
             .avecMétéo(c.meteo)
             .build(),
         );

@@ -67,13 +67,13 @@ export default class IndicateurRowBuilder {
     this._chantierId = chantierGénéré.id;
     this._valeurCible = détailsIndicateurGénéré.valeurCible;
     this._tauxAvancementCible = détailsIndicateurGénéré.avancement.global;
-    this._dateValeurCible = faker.date.recent(10, '2022-06-01T00:00:00.000Z').getFullYear().toString();
+    this._dateValeurCible = détailsIndicateurGénéré.dateValeurCible;
     this._typeId = indicateurGénéré.type;
-    this._typeNom = faker.lorem.words();
+    this._typeNom = `nom ${indicateurGénéré.type}`;
     this._estBaromètre = générerPeutÊtreNull(0.2, faker.datatype.boolean());
     this._estPhare = générerPeutÊtreNull(0.2, faker.datatype.boolean());
     this._valeurInitiale = détailsIndicateurGénéré.valeurInitiale;
-    this._dateValeurInitiale = this._valeurInitiale === null ? null : faker.date.recent(10, '2022-06-01T00:00:00.000Z');
+    this._dateValeurInitiale = détailsIndicateurGénéré.dateValeurInitiale ? new Date(détailsIndicateurGénéré.dateValeurInitiale) : null;
     this._valeurActuelle = détailsIndicateurGénéré.valeurs.length === 0 ? null : détailsIndicateurGénéré.valeurs[détailsIndicateurGénéré.valeurs.length - 1];
     this._dateValeurActuelle = détailsIndicateurGénéré.dateValeurs.length === 0 ? null : new Date(détailsIndicateurGénéré.dateValeurs[détailsIndicateurGénéré.dateValeurs.length - 1]);
     this._territoireNom = générerPeutÊtreNull(0.2, faker.address.state());
