@@ -8,6 +8,6 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
   ) {}
 
   public async run(habilitations: Habilitations): Promise<ChantierPourExport[]> {
-    return this.chantierRepository.getChantiersPourExports(habilitations);
+    return this.chantierRepository.récupérerPourExports(habilitations);
   }
 }

@@ -1,6 +1,5 @@
 import RépartitionMétéoProps from '@/components/PageChantiers/RépartitionMétéo/RépartitionMétéo.interface';
-import météosConstantes from '@/client/constants/météos';
-import { Météo } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
 import RépartitionMétéoÉlément from './RépartitionMétéoÉlément/RépartitionMétéoÉlément';
 import RépartitionMétéoStyled from './RépartitionMétéo.styled';
 
@@ -14,7 +13,7 @@ export default function RépartitionMétéo({ météos }: RépartitionMétéoPro
           météosÀAfficher.map(météo => (
             <li
               className='fr-col-12 fr-col-sm-6 fr-col-xl-3'
-              key={météosConstantes[météo]}
+              key={libellésMétéos[météo]}
             >
               <RépartitionMétéoÉlément
                 météo={météo}

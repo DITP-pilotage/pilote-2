@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
-import météos from '@/client/constants/météos';
 import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
 import { CartographieÉlémentDeLégendeListe } from '@/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe.interface';
-import { Météo } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import { CartographieDonnéesMétéo } from './CartographieMétéo.interface';
 
@@ -12,22 +11,22 @@ const REMPLISSAGE_PAR_DÉFAUT = '#bababa';
 
 const LÉGENDE: Record<string, CartographieÉlémentDeLégendeListe> = {
   'ORAGE': {
-    libellé: météos.ORAGE,
+    libellé: libellésMétéos.ORAGE,
     remplissage: '#B34000',
     picto: <MétéoPicto météo="ORAGE" />,
   },
   'COUVERT': {
-    libellé: météos.COUVERT,
+    libellé: libellésMétéos.COUVERT,
     remplissage: '#95E257',
     picto: <MétéoPicto météo="COUVERT" />,
   },
   'NUAGE': {
-    libellé: météos.NUAGE,
+    libellé: libellésMétéos.NUAGE,
     remplissage: '#EFCB3A',
     picto: <MétéoPicto météo="NUAGE" />,
   },
   'SOLEIL': {
-    libellé: météos.SOLEIL,
+    libellé: libellésMétéos.SOLEIL,
     remplissage: '#27A658',
     picto: <MétéoPicto météo="SOLEIL" />,
   },
@@ -74,7 +73,7 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
       const territoireGéographique = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
   
       donnéesFormatées[codeInsee] = {
-        valeurAffichée: météos[valeur],
+        valeurAffichée: libellésMétéos[valeur],
         remplissage: déterminerRemplissage(valeur),
         libellé: déterminerLibellé(territoireGéographique, mailleSélectionnée === 'départementale'),
       };

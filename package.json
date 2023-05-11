@@ -69,6 +69,7 @@
     "csv-stringify": "^6.3.0",
     "d3-selection": "^3.0.0",
     "d3-zoom": "^3.0.0",
+    "dayjs": "^1.11.7",
     "dotenv-cli": "^7.1.0",
     "form-data": "^4.0.0",
     "formidable": "^2.1.1",

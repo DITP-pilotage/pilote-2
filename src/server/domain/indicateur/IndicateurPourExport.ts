@@ -6,23 +6,21 @@ import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Avancement from '@/server/domain/avancement/Avancement.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 
-export class IndicateurPourExport {
-  constructor(
-    public readonly maille: Maille,
-    public readonly codeRégion: string | null,
-    public readonly codeDépartement: string | null,
-    public readonly chantierMinistèreNom: Ministère['nom'],
-    public readonly chantierNom: Chantier['nom'],
-    public readonly chantierEstBaromètre: Chantier['estBaromètre'],
-    public readonly chantierAvancementGlobal: Avancement['global'],
-    public readonly météo: Météo,
-    public readonly nom: Indicateur['nom'],
-    public readonly valeurInitiale: DétailsIndicateur['valeurInitiale'],
-    public readonly dateValeurInitiale: DétailsIndicateur['dateValeurInitiale'],
-    public readonly valeurActuelle: DétailsIndicateur['valeurs'][number],
-    public readonly dateValeurActuelle: DétailsIndicateur['dateValeurs'][number],
-    public readonly valeurCible: DétailsIndicateur['valeurCible'],
-    public readonly dateValeurCible: DétailsIndicateur['dateValeurCible'],
-    public readonly avancementGlobal: DétailsIndicateur['avancement']['global'],
-  ) {}
-}
+export type IndicateurPourExport = {
+  maille: Maille,
+  régionNom: string | null,
+  départementNom: string | null,
+  chantierMinistèreNom: Ministère['nom'],
+  chantierNom: Chantier['nom'],
+  chantierEstBaromètre: Chantier['estBaromètre'],
+  chantierAvancementGlobal: Avancement['global'],
+  météo: Météo,
+  nom: Indicateur['nom'],
+  valeurInitiale: DétailsIndicateur['valeurInitiale'],
+  dateValeurInitiale: DétailsIndicateur['dateValeurInitiale'],
+  valeurActuelle: DétailsIndicateur['valeurs'][number],
+  dateValeurActuelle: DétailsIndicateur['dateValeurs'][number],
+  valeurCible: DétailsIndicateur['valeurCible'],
+  dateValeurCible: DétailsIndicateur['dateValeurCible'],
+  avancementGlobal: DétailsIndicateur['avancement']['global'],
+};

@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { ExportCsvDesChantiersSansFiltreUseCase } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { ChantierPourExport } from '@/server/domain/chantier/ChantierPourExport';
-import { NON, NON_APPLICABLE, OUI } from '@/server/constants/csv';
+import { formaterMétéo, horodatage, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 
 const COLONNES = [
   'Maille',
@@ -41,16 +41,16 @@ const COLONNES = [
 function asCsvRow(chantierPourExport: ChantierPourExport): string[] {
   return [
     chantierPourExport.maille,
-    chantierPourExport.codeRégion || NON_APPLICABLE,
-    chantierPourExport.codeDépartement || NON_APPLICABLE,
-    chantierPourExport.ministère || NON_APPLICABLE,
+    chantierPourExport.régionNom || NON_APPLICABLE,
+    chantierPourExport.départementNom || NON_APPLICABLE,
+    chantierPourExport.ministèreNom || NON_APPLICABLE,
     chantierPourExport.nom || NON_APPLICABLE,
     chantierPourExport.estBaromètre ? OUI : NON,
     chantierPourExport.estTerritorialisé ? OUI : NON,
     chantierPourExport.tauxDAvancementDépartemental?.toString() || NON_APPLICABLE,
     chantierPourExport.tauxDAvancementRégional?.toString() || NON_APPLICABLE,
     chantierPourExport.tauxDAvancementNational?.toString() || NON_APPLICABLE,
-    chantierPourExport.météo || NON_APPLICABLE,
+    formaterMétéo(chantierPourExport.météo),
     chantierPourExport.synthèseDesRésultats || NON_APPLICABLE,
     chantierPourExport.objNotreAmbition || NON_APPLICABLE,
     chantierPourExport.objDéjàFait || NON_APPLICABLE,
@@ -72,15 +72,7 @@ export default async function handleExportDesChantiersSansFiltre(request: NextAp
   const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase();
   const chantiersPourExport = await exportCsvDesChantiersSansFiltreUseCase.run(session.habilitations);
 
-  const now = new Date();
-  const horodatage = now.getFullYear() + '-'
-    + now.getMonth().toString().padStart(2, '0') + '-'
-    + now.getDay().toString().padStart(2, '0') + '-'
-    + now.getHours().toString().padStart(2, '0') + '-'
-    + now.getMinutes().toString().padStart(2, '0') + '-'
-    + now.getSeconds().toString().padStart(2, '0');
-
-  const csvFilename = `PILOTE-Chantiers-sans-filtre-${horodatage}.csv`;
+  const csvFilename = `PILOTE-Chantiers-sans-filtre-${horodatage()}.csv`;
 
   response.setHeader('Content-Type', 'text/csv');
   response.setHeader('Content-Disposition', `attachment; filename="${csvFilename}"`);
