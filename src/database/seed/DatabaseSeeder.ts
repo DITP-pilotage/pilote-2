@@ -36,7 +36,6 @@ import {
   générerUnLibellé,
   répéter,
 } from '@/server/infrastructure/test/builders/utils';
-import { typesCommentaireMailleNationale } from '@/server/domain/commentaire/Commentaire.interface';
 import { typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { formaterId } from './format';
 
