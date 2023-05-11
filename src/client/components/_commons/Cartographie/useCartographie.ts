@@ -1,21 +1,17 @@
 /* eslint-disable unicorn/consistent-function-scoping */
 import {
-  actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore,
+  actionsTerritoiresStore,
   régionsTerritoiresStore,
-  territoiresAccessiblesEnLectureStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { CodeInsee, DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import { CartographieTerritoireAffiché, CartographieOptions, CartographieTerritoires } from './useCartographie.interface';
 import { CartographieDonnées } from './Cartographie.interface';
 
 export default function useCartographie() {
   const régions = régionsTerritoiresStore();
-  const { modifierTerritoireSélectionné, modifierTerritoiresComparés, générerCodeTerritoire } = actionsTerritoiresStore();
-  const territoiresAccessiblesEnLecture = territoiresAccessiblesEnLectureStore();
+  const { modifierTerritoireSélectionné, modifierTerritoiresComparés } = actionsTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
   function déterminerRégionsÀTracer(territoireAffiché: CartographieTerritoireAffiché) {
     return territoireAffiché.maille === 'régionale'
@@ -24,22 +20,22 @@ export default function useCartographie() {
   }
 
   function créerTerritoires(
-    territoiresÀTracer: TerritoireGéographique[],
-    frontièresÀTracer: TerritoireGéographique[],
+    territoiresÀTracer: DétailTerritoire[],
+    frontièresÀTracer: DétailTerritoire[],
     données: CartographieDonnées,
   ): CartographieTerritoires {
     return {
       territoires: territoiresÀTracer.map(territoire => ({
         codeInsee: territoire.codeInsee,
-        tracéSVG: territoire.tracéSVG,
+        tracéSVG: territoire.tracéSvg,
         remplissage: données[territoire.codeInsee]?.remplissage ?? '#bababa', // TODO où gérer ce undefined ?
         libellé: données[territoire.codeInsee]?.libellé ?? '-', // TODO où gérer ce undefined ?
         valeurAffichée: données[territoire.codeInsee]?.valeurAffichée ?? 'Non renseignée', // TODO où gérer ce undefined ?
-        estInteractif: territoiresAccessiblesEnLecture.some(t => t.code === générerCodeTerritoire(mailleSélectionnée, territoire.codeInsee)),
+        estInteractif: territoire.accèsLecture,
       })),
       frontières: frontièresÀTracer.map(frontière => ({
         codeInsee: frontière.codeInsee,
-        tracéSVG: frontière.tracéSVG,
+        tracéSVG: frontière.tracéSvg,
       })),
     };
   }
@@ -55,7 +51,7 @@ export default function useCartographie() {
   };
 
   function auClicTerritoireCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
-    if (!territoireSélectionnable) return;
+    if (!territoireSélectionnable || !territoireSélectionné) return;
 
     if (territoireSélectionné.codeInsee === territoireCodeInsee)
       modifierTerritoireSélectionné('FR');

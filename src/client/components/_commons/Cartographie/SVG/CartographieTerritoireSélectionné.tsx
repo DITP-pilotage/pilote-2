@@ -4,19 +4,21 @@ export default function CartographieTerritoireSélectionné({ multiséléction }
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const territoiresComparés = territoiresComparésTerritoiresStore();
 
+  if (territoireSélectionné === null) return;
+
   return (
     <g>
       { multiséléction ?
         territoiresComparés.map(territoire => (
           <path
             className='territoire-sélectionné'
-            d={territoire.tracéSVG}
+            d={territoire.tracéSvg}
             key={territoire.codeInsee}
           />
         )) :
         <path
           className='territoire-sélectionné'
-          d={territoireSélectionné.tracéSVG}
+          d={territoireSélectionné.tracéSvg}
           key={territoireSélectionné.codeInsee}
         />}
     </g>

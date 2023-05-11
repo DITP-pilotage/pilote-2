@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
-import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
-import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
 import { CartographieÉlémentDeLégendeListe } from '@/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe.interface';
 import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
@@ -45,18 +44,8 @@ function déterminerRemplissage(valeur: Météo | null) {
   else return LÉGENDE.DÉFAUT.remplissage;
 }
 
-function déterminerLibellé(territoireGéographique: TerritoireGéographique | undefined, estDépartement: boolean) {
-  if (!territoireGéographique)
-    return '-';
-
-  return estDépartement
-    ? `${territoireGéographique.codeInsee} - ${territoireGéographique.nom}`
-    : territoireGéographique.nom;
-}
-
 export default function useCartographieMétéo(données: CartographieDonnéesMétéo) {
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+  const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
   const légende = useMemo(() => (
     Object.values(LÉGENDE).map(({ remplissage, libellé, picto }) => ({
@@ -70,17 +59,17 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
     let donnéesFormatées: CartographieDonnées = {};
 
     données.forEach(({ valeur, codeInsee }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
+      const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
   
       donnéesFormatées[codeInsee] = {
         valeurAffichée: libellésMétéos[valeur],
         remplissage: déterminerRemplissage(valeur),
-        libellé: déterminerLibellé(territoireGéographique, mailleSélectionnée === 'départementale'),
+        libellé: territoireGéographique.nomAffiché,
       };
     });
 
     return donnéesFormatées;
-  }, [données, mailleSélectionnée, récupérerDétailsSurUnTerritoire]);
+  }, [données, récupérerDétailsSurUnTerritoireAvecCodeInsee]);
 
   return {
     légende,

@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
-import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
 import { CartographieDonnéesValeurActuelle } from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle.interface';
 import { valeurMaximum, valeurMinimum } from '@/client/utils/statistiques/statistiques';
 import { interpolerCouleurs } from '@/client/utils/couleur/couleur';
-import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
 
 const COULEUR_DÉPART = '#8bcdb1';
 const COULEUR_ARRIVÉE = '#083a25';
@@ -22,18 +21,8 @@ function déterminerRemplissage(valeur: number | null, valeurMin: number | null,
   return interpolerCouleurs(COULEUR_DÉPART, COULEUR_ARRIVÉE, pourcentageInterpolation);
 }
 
-function déterminerLibellé(territoireGéographique: TerritoireGéographique | undefined, estDépartement: boolean) {
-  if (!territoireGéographique)
-    return '-';
-
-  return estDépartement
-    ? `${territoireGéographique.codeInsee} - ${territoireGéographique.nom}`
-    : territoireGéographique.nom;
-}
-
 export default function useCartographieValeurActuelle(données: CartographieDonnéesValeurActuelle) {
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+  const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
   const valeurMin = useMemo(() => valeurMinimum(données.map(donnée => donnée.valeur)), [données]);
   const valeurMax = useMemo(() => valeurMaximum(données.map(donnée => donnée.valeur)), [données]);
@@ -50,16 +39,16 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
     let donnéesFormatées: CartographieDonnées = {};
 
     données.forEach(({ valeur, codeInsee }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
+      const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
       donnéesFormatées[codeInsee] = {
         valeurAffichée: déterminerValeurAffichée(valeur),
         remplissage: déterminerRemplissage(valeur, valeurMin, valeurMax),
-        libellé: déterminerLibellé(territoireGéographique, mailleSélectionnée === 'départementale'),
+        libellé: territoireGéographique.nomAffiché,
       };
     });
 
     return donnéesFormatées;
-  }, [données, mailleSélectionnée, récupérerDétailsSurUnTerritoire, valeurMax, valeurMin]);
+  }, [données, récupérerDétailsSurUnTerritoireAvecCodeInsee, valeurMax, valeurMin]);
 
   return {
     légende,

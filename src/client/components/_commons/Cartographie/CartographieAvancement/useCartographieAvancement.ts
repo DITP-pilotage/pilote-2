@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
-import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
-import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
 import {
   CartographieÉlémentDeLégendeListe,
 } from '@/components/_commons/Cartographie/Légende/Liste/CartographieLégendeListe.interface';
@@ -93,18 +92,8 @@ function déterminerRemplissage(valeur: number | null) {
   else return LÉGENDE.DÉFAUT.remplissage;
 }
 
-function déterminerLibellé(territoireGéographique: TerritoireGéographique | undefined, estDépartement: boolean) {
-  if (!territoireGéographique)
-    return '-';
-
-  return estDépartement
-    ? `${territoireGéographique.codeInsee} - ${territoireGéographique.nom}`
-    : territoireGéographique.nom;
-}
-
 export default function useCartographieAvancement(données: CartographieDonnéesAvancement) {
-  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
   const légende = useMemo(() => (
     Object.values(LÉGENDE).map(({ remplissage, libellé }) => ({
@@ -117,16 +106,16 @@ export default function useCartographieAvancement(données: CartographieDonnées
     const donnéesFormatées: CartographieDonnées = {};
 
     données.forEach(({ valeur, codeInsee }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoire(codeInsee, mailleSélectionnée);
+      const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
       donnéesFormatées[codeInsee] = {
         valeurAffichée: déterminerValeurAffichée(valeur),
         remplissage: déterminerRemplissage(valeur),
-        libellé: déterminerLibellé(territoireGéographique, mailleSélectionnée === 'départementale'),
+        libellé: territoireGéographique.nomAffiché,
       };
     });
 
     return donnéesFormatées;
-  }, [données, mailleSélectionnée, récupérerDétailsSurUnTerritoire]);
+  }, [données, récupérerDétailsSurUnTerritoireAvecCodeInsee]);
 
   return {
     légende,
