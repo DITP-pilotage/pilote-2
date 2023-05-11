@@ -2,6 +2,11 @@ import { commentaire } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 import { retourneUneListeDeCodeInseeCohérentePourUneMaille } from '@/server/infrastructure/test/builders/utils';
+import {
+  typesCommentaireMailleNationale,
+  typesCommentaireMailleRégionaleOuDépartementale,
+} from '@/server/domain/commentaire/Commentaire.interface';
+import { CODES_TYPES_COMMENTAIRES } from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
 
 export default class CommentaireRowBuilder {
   private _id: commentaire['id'];
@@ -83,6 +88,9 @@ export default class CommentaireRowBuilder {
     const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
     
     this._maille = maille;
+    this._type = maille === 'NAT'
+      ? CODES_TYPES_COMMENTAIRES[faker.helpers.arrayElement(typesCommentaireMailleNationale)]
+      : CODES_TYPES_COMMENTAIRES[faker.helpers.arrayElement(typesCommentaireMailleRégionaleOuDépartementale)];
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
     return this;
   }

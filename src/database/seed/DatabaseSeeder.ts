@@ -31,6 +31,7 @@ import { UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/U
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import { générerTableau, générerUnLibellé, répéter } from '@/server/infrastructure/test/builders/utils';
+import { typesCommentaireMailleNationale } from '@/server/domain/commentaire/Commentaire.interface';
 import { formaterId } from './format';
 
 const chantierStatiqueId123 = new ChantierSQLRowBuilder()
@@ -196,17 +197,19 @@ class DatabaseSeeder {
   }
 
   private async _créerSynthèsesDesRésultats() {
-    this._chantiersDonnéesCommunes.forEach(c => {
-      répéter(0, 5, () => {
+    this._chantiers.forEach(c => {
+      répéter(1, 5, () => {
         const possèdeCommentaireEtMétéo = c.meteo !== 'NON_RENSEIGNEE';
-        this._synthèsesDesRésultats.push(
-          new SynthèseDesRésultatsSQLRowBuilder(possèdeCommentaireEtMétéo)
-            .avecChantierId(c.id)
-            .avecMaille(c.maille)
-            .avecCodeInsee(c.code_insee)
-            .avecMétéo(c.meteo)
-            .build(),
-        );
+        if (possèdeCommentaireEtMétéo) {
+          this._synthèsesDesRésultats.push(
+            new SynthèseDesRésultatsSQLRowBuilder(possèdeCommentaireEtMétéo)
+              .avecChantierId(c.id)
+              .avecMaille(c.maille)
+              .avecCodeInsee(c.code_insee)
+              .avecMétéo(c.meteo)
+              .build(),
+          );
+        }
       });
     });
 
@@ -215,9 +218,10 @@ class DatabaseSeeder {
 
   private async _créerCommentaires() {
     this._chantiers.forEach(c => {
-      répéter(2, 8, () => {
+      répéter(0, 12, () => {
         this._commentaires.push(new CommentaireRowBuilder().avecChantierId(c.id)
-          .avecMaille(c.maille).avecCodeInsee(c.code_insee).build());
+          .avecMaille(c.maille).avecCodeInsee(c.code_insee)
+          .build());
       });
     });
 
@@ -226,7 +230,7 @@ class DatabaseSeeder {
 
   private async _créerObjectifs() {
     this._chantiersDonnéesCommunes.forEach(c => {
-      répéter(0, 15, () => {
+      répéter(0, 9, () => {
         this._objectifs.push(new ObjectifSQLRowBuilder().avecChantierId(c.id).build());
       });
     });
@@ -236,7 +240,7 @@ class DatabaseSeeder {
 
   private async _créerDécisionsStratégiques() {
     this._chantiersDonnéesCommunes.forEach(c => {
-      répéter(0, 15, () => {
+      répéter(0, 9, () => {
         this._décisions_stratégiques.push(new DécisionStratégiqueSQLRowBuilder().avecChantierId(c.id).build());
       });
     });
