@@ -32,8 +32,8 @@ export default class DétailsIndicateurBuilder {
 
     const valeursEtDates = this.générerValeursEtDates(nombreDeValeurs, this._valeurInitiale, this._valeurCible);
 
-    this._valeurs = [this._valeurInitiale, ...valeursEtDates.valeurs];
-    this._dateValeurs = [this._dateValeurInitiale, ...valeursEtDates.dateValeurs];
+    this._valeurs = valeursEtDates.valeurs;
+    this._dateValeurs = valeursEtDates.dateValeurs;
     this._avancement = new AvancementBuilder().build();
   }
 
