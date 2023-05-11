@@ -70,8 +70,8 @@ export default class IndicateurRowBuilder {
     this._dateValeurCible = faker.date.recent(10, '2022-06-01T00:00:00.000Z').getFullYear().toString();
     this._typeId = indicateurGénéré.type;
     this._typeNom = faker.lorem.words();
-    this._estBaromètre = faker.helpers.arrayElement([null, faker.datatype.boolean()]);
-    this._estPhare = faker.helpers.arrayElement([null, faker.datatype.boolean()]);
+    this._estBaromètre = générerPeutÊtreNull(0.2, faker.datatype.boolean());
+    this._estPhare = générerPeutÊtreNull(0.2, faker.datatype.boolean());
     this._valeurInitiale = détailsIndicateurGénéré.valeurInitiale;
     this._dateValeurInitiale = this._valeurInitiale === null ? null : faker.date.recent(10, '2022-06-01T00:00:00.000Z');
     this._valeurActuelle = détailsIndicateurGénéré.valeurs.length === 0 ? null : détailsIndicateurGénéré.valeurs[détailsIndicateurGénéré.valeurs.length - 1];

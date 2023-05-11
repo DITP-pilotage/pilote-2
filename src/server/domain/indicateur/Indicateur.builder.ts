@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker/locale/fr';
 import Indicateur, { typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
-import { générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
+import { générerPeutÊtreNull, générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
 
 export default class IndicateurBuilder {
   private _id: Indicateur['id'];
@@ -22,9 +22,9 @@ export default class IndicateurBuilder {
     this._nom = `${this._id} ${faker.lorem.words()}`;
     this._type = faker.helpers.arrayElement(typesIndicateur);
     this._estIndicateurDuBaromètre = faker.datatype.boolean();
-    this._description = faker.helpers.arrayElement([null, faker.lorem.paragraph(2)]);
-    this._source = faker.helpers.arrayElement([null, faker.lorem.paragraph(2)]);
-    this._modeDeCalcul = faker.helpers.arrayElement([null, faker.lorem.paragraph(5)]);
+    this._description = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
+    this._source = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
+    this._modeDeCalcul = générerPeutÊtreNull(0.2, faker.lorem.paragraph(5));
   }
 
   avecId(id: Indicateur['id']): IndicateurBuilder {
