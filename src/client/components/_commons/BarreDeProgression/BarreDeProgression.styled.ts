@@ -37,9 +37,12 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
       display: block;
       width: 100%;
       height: ${props => dimensions[props.taille].hauteur};
-      background-color: ${props => couleurDeFond[props.fond]};
-      border: ${props => props.bordure ? `1px solid ${couleurBordure[props.bordure]}` : 'none'};
-      border-radius: ${borderRadius};
+
+      @media screen {
+        background-color: ${props => couleurDeFond[props.fond]};
+        border: ${props => props.bordure ? `1px solid ${couleurBordure[props.bordure]}` : 'none'};
+        border-radius: ${borderRadius};
+      }
 
       &::-webkit-progress-bar {
         background-color: ${props => couleurDeFond[props.fond]};
@@ -68,17 +71,17 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
     }
   }
   
-  .pourcentage{
-    p{
+  .pourcentage {
+    p {
       color: ${props => couleurDeBarreEtTexte[props.variante]}
     }
   }
   
-  &.texte-côté{
+  &.texte-côté {
     flex-direction: row;
     align-items: center;
 
-    .barre{
+    .barre {
       flex-grow: 1;
     }
 
@@ -93,7 +96,7 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
     }
   }
   
-  &.texte-dessus{
+  &.texte-dessus {
     flex-direction: column-reverse;
   }
   
