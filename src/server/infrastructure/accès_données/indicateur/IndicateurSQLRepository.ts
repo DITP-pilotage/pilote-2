@@ -197,11 +197,11 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       météo: it.meteo,
       nom: it.nom,
       valeurInitiale: it.valeur_initiale,
-      dateValeurInitiale: new Date(it.date_valeur_initiale).toISOString(),
+      dateValeurInitiale: it.date_valeur_initiale === null ? null : new Date(it.date_valeur_initiale).toISOString(),
       valeurActuelle: it.valeur_actuelle,
-      dateValeurActuelle: new Date(it.date_valeur_actuelle).toISOString(),
+      dateValeurActuelle: it.date_valeur_actuelle === null ? null : new Date(it.date_valeur_actuelle).toISOString(),
       valeurCible: it.valeur_cible,
-      dateValeurCible: new Date(it.date_valeur_cible).toISOString(),
+      dateValeurCible: it.date_valeur_cible === null ? null : new Date(it.date_valeur_cible).toISOString(),
       avancementGlobal: it.taux_avancement,
     }));
   }

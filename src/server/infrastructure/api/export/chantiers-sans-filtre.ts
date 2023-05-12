@@ -40,7 +40,7 @@ const COLONNES = [
 // eslint-disable-next-line sonarjs/cognitive-complexity
 function asCsvRow(chantierPourExport: ChantierPourExport): string[] {
   return [
-    chantierPourExport.maille,
+    chantierPourExport.maille || NON_APPLICABLE,
     chantierPourExport.régionNom || NON_APPLICABLE,
     chantierPourExport.départementNom || NON_APPLICABLE,
     chantierPourExport.ministèreNom || NON_APPLICABLE,

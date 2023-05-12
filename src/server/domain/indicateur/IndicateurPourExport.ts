@@ -17,10 +17,10 @@ export type IndicateurPourExport = {
   météo: Météo,
   nom: Indicateur['nom'],
   valeurInitiale: DétailsIndicateur['valeurInitiale'],
-  dateValeurInitiale: DétailsIndicateur['dateValeurInitiale'],
+  dateValeurInitiale: DétailsIndicateur['dateValeurInitiale'] | null,
   valeurActuelle: DétailsIndicateur['valeurs'][number],
-  dateValeurActuelle: DétailsIndicateur['dateValeurs'][number],
+  dateValeurActuelle: DétailsIndicateur['dateValeurs'][number] | null,
   valeurCible: DétailsIndicateur['valeurCible'],
-  dateValeurCible: DétailsIndicateur['dateValeurCible'],
+  dateValeurCible: DétailsIndicateur['dateValeurCible'] | null,
   avancementGlobal: DétailsIndicateur['avancement']['global'],
 };
