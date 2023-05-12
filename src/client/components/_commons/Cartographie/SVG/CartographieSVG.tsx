@@ -23,7 +23,7 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
 
   return (
     <CartographieSVGStyled>
-      {!!options.estInteractif && 
+      {!!options.estInteractif &&
       <CartographieZoomEtDéplacement
         svgRef={svgRef}
         viewbox={viewbox}
@@ -52,17 +52,22 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
             {
               territoires.map(territoire => (
                 <path
-                  className='territoire-rempli'
+                  className={`territoire-rempli ${(options.estInteractif && territoire.estInteractif) && 'territoire-interactif'}`}
                   d={territoire.tracéSVG}
                   fill={territoire.remplissage}
                   key={`territoire-${territoire.codeInsee}`}
-                  onClick={() => options.estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
-                  onMouseEnter={() =>
-                    options.estInteractif &&
-                    setInfoBulle({
-                      libellé: territoire.libellé,
-                      valeurAffichée: territoire.valeurAffichée,
-                    })}
+                  onClick={() => options.estInteractif && territoire.estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
+                  onMouseEnter={() => {
+                    if (options.estInteractif && territoire.estInteractif) {
+                      setInfoBulle({
+                        libellé: territoire.libellé,
+                        valeurAffichée: territoire.valeurAffichée,
+                      });
+                    } else {
+                      setInfoBulle(null);
+                    }
+                  }}
+
                 />),
               )
             }

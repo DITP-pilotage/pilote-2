@@ -1,5 +1,6 @@
 import Avancement from '@/server/domain/avancement/Avancement.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 export const codesInseeDépartements = [
   '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13',
@@ -27,4 +28,20 @@ export type Territoire = {
   codeInsee: CodeInsee,
   avancement: Avancement,
   météo: Météo,
+};
+
+export type TerritoireDeBDD = {
+  code: string,
+  nom: string,
+  nomAffiché: string,
+  codeInsee: string,
+  tracéSvg: string,
+  codeParent: string | null,
+  maille: Maille,
+};
+
+export type DétailTerritoire = TerritoireDeBDD & {
+  accèsLecture: boolean
+  accèsSaisiePublication: boolean
+  accèsSaisieIndicateur: boolean
 };

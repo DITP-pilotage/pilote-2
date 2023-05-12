@@ -30,45 +30,50 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
         className="fr-collapse"
         id={`détails-${indicateur.id}`}
       >
-        <div className="fr-container">
-          <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
-            <div className="fr-col-12">
-              <IndicateurSpécifications
-                description={indicateur.description}
-                modeDeCalcul={indicateur.modeDeCalcul}
-                source={indicateur.source}
-              />
+        {
+          !!futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle &&
+          <>
+            <div className="fr-container">
+              <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
+                <div className="fr-col-12">
+                  <IndicateurSpécifications
+                    description={indicateur.description}
+                    modeDeCalcul={indicateur.modeDeCalcul}
+                    source={indicateur.source}
+                  />
+                </div>
+                <section className="fr-col-12 fr-col-xl-6">
+                  <Titre
+                    baliseHtml='h5'
+                    className='fr-text--lg'
+                  >
+                    Répartition géographique de l&apos;avancement
+                  </Titre>
+                  <CartographieAvancement
+                    auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
+                    données={donnéesCartographieAvancement}
+                    options={{ multiséléction: true }}
+                  />
+                </section>
+                <section className="fr-col-12 fr-col-xl-6">
+                  <Titre
+                    baliseHtml='h5'
+                    className='fr-text--lg'
+                  >
+                    Répartition géographique de la valeur actuelle de l&apos;indicateur
+                  </Titre>
+                  <CartographieValeurActuelle
+                    auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
+                    données={donnéesCartographieValeurActuelle}
+                    options={{ multiséléction: true }}
+                  />
+                </section>
+              </div>
             </div>
-            <section className="fr-col-12 fr-col-xl-6">
-              <Titre
-                baliseHtml='h5'
-                className='fr-text--lg'
-              >
-                Répartition géographique de l&apos;avancement
-              </Titre>
-              <CartographieAvancement
-                auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
-                données={donnéesCartographieAvancement}
-                options={{ multiséléction: true }}
-              />
-            </section>
-            <section className="fr-col-12 fr-col-xl-6">
-              <Titre
-                baliseHtml='h5'
-                className='fr-text--lg'
-              >
-                Répartition géographique de la valeur actuelle de l&apos;indicateur
-              </Titre>
-              <CartographieValeurActuelle
-                auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
-                données={donnéesCartographieValeurActuelle}
-                options={{ multiséléction: true }}
-              />
-            </section>
-          </div>
-        </div>
-        <hr className='fr-hr' />
-        <IndicateurÉvolution indicateurDétailsParTerritoires={indicateurDétailsParTerritoires} />
+            <hr className='fr-hr' />
+            <IndicateurÉvolution indicateurDétailsParTerritoires={indicateurDétailsParTerritoires} />
+          </>
+        }
       </div>
     </div>
   );

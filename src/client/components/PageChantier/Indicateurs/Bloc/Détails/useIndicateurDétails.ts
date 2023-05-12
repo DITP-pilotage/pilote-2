@@ -6,13 +6,11 @@ import { CartographieDonnéesValeurActuelle } from '@/components/_commons/Cartog
 import { CartographieDonnéesAvancement } from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 
-const donnéesCartographieVides = [{ valeur: null, codeInsee: '' }];
-
 export default function useIndicateurDétails(indicateurId: Indicateur['id'], futOuvert: boolean) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
-  const [donnéesCartographieAvancement, setDonnéesCartographieAvancement] = useState<CartographieDonnéesAvancement>(donnéesCartographieVides);
-  const [donnéesCartographieValeurActuelle, setDonnéesCartographieValeurActuelle] = useState<CartographieDonnéesValeurActuelle>(donnéesCartographieVides);
+  const [donnéesCartographieAvancement, setDonnéesCartographieAvancement] = useState<CartographieDonnéesAvancement | null>(null);
+  const [donnéesCartographieValeurActuelle, setDonnéesCartographieValeurActuelle] = useState<CartographieDonnéesValeurActuelle | null>(null);
 
   useEffect(() => {        
     if (futOuvert) {              

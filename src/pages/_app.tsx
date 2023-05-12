@@ -9,7 +9,6 @@ import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
 import { Router } from 'next/router';
 import { useState, useEffect } from 'react';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
 import useDétecterVueMobile from '@/client/hooks/useDétecterVueMobile';
@@ -18,7 +17,7 @@ import api from '@/server/infrastructure/api/trpc/api';
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 const queryClient = new QueryClient();
 
-function MonApplication({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+function MonApplication({ Component, pageProps }: AppProps) {
   useDétecterVueMobile();
   const [afficherLeLoader, setAfficherLeLoader] = useState(false);
   const [pageEnCoursDeChargement, setPageEnCoursDeChargement] = useState(false);
@@ -66,12 +65,11 @@ function MonApplication({ Component, pageProps: { session, ...pageProps } }: App
         src="/js/dsfr/dsfr.nomodule.min.js"
       />
       <QueryClientProvider client={queryClient}>
-        <SessionProvider session={session}>
+        <SessionProvider session={pageProps.session}>
           <MiseEnPage afficherLeLoader={afficherLeLoader}>
             <Component {...pageProps} />
           </MiseEnPage>
         </SessionProvider>
-        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </>
   );

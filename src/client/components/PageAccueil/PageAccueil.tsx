@@ -6,13 +6,11 @@ import Titre from '@/client/components/_commons/Titre/Titre';
 import Filtres from '@/components/PageAccueil/PageChantiers/Filtres/Filtres';
 import BarreLatérale from '@/client/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/client/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import PageAccueilProps from './PageAccueil.interface';
 import { TypeDeRéforme } from './SélecteurTypeDeRéforme/SélecteurTypeDeRéforme.interface';
 import SélecteurTypeDeRéforme from './SélecteurTypeDeRéforme/SélecteurTypeDeRéforme';
 
-export default function PageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs, habilitations }: PageAccueilProps) {
-  const habilitation = new Habilitation(habilitations);
+export default function PageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs }: PageAccueilProps) {
   const [typeDeRéformeSélectionné, setTypeDeRéformeSélectionné] = useState<TypeDeRéforme>('chantier');
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
@@ -30,9 +28,7 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
               typeDeRéformeSélectionné={typeDeRéformeSélectionné}
             />
         }
-          <SélecteursMaillesEtTerritoires 
-            habilitation={habilitation}
-          />
+          <SélecteursMaillesEtTerritoires />
         </BarreLatéraleEncart>
         <section>
           <Titre
@@ -59,10 +55,7 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
       </button>
       {
         typeDeRéformeSélectionné === 'chantier' ?
-          <PageChantiers
-            chantiers={chantiers}
-            habilitation={habilitation}
-          />
+          <PageChantiers chantiers={chantiers} />
           :
           process.env.NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS === 'true' && <PageProjetsStructurants projetsStructurants={projetsStructurants} />
         }

@@ -16,7 +16,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: `default-src 'self' connect-src https://api.validata.etalab.studio/ data: 'unsafe-inline'; script-src 'self' ${process.env.NODE_ENV !== 'production' && "'unsafe-eval'"};`,
+            value: `default-src 'self' data: 'unsafe-inline'; connect-src https://api.validata.etalab.studio/ 'self' data: 'unsafe-inline' ws:; script-src 'self' ${process.env.NODE_ENV !== 'production' && "'unsafe-eval'"};`,
           },
           {
             key: 'X-Frame-Options',

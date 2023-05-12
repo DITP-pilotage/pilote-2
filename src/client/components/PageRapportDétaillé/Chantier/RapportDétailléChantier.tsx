@@ -11,15 +11,11 @@ import Objectifs from '@/components/PageChantier/Objectifs/Objectifs';
 import Indicateurs from '@/components/PageChantier/Indicateurs/Indicateurs';
 import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
 import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
-import {
-  mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
-  territoireSélectionnéTerritoiresStore,
-} from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Titre from '@/components/_commons/Titre/Titre';
 
 export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats, commentaires, objectifs, décisionStratégique }: RapportDétailléChantierProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const { avancements } = useRapportDétailléChantier(chantier);
 
   return (
@@ -47,7 +43,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           {
             avancements !== null &&
             <>
-              <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-6' : 'fr-col-xl-12'} fr-col-12`}>
+              <div className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-6' : 'fr-col-xl-12'} fr-col-12`}>
                 <AvancementChantier avancements={avancements} />
               </div>
               <div className='fr-col-xl-6 fr-col-12'>
@@ -55,7 +51,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
               </div>
             </>
           }
-          <div className={`${mailleAssociéeAuTerritoireSélectionné === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
+          <div className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
             <SynthèseDesRésultats
               chantierId={chantier.id}
               estInteractif={false}
@@ -97,7 +93,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         </div>
         {
           décisionStratégique !== null
-          && mailleAssociéeAuTerritoireSélectionné === 'nationale'
+          && territoireSélectionné!.maille === 'nationale'
           && process.env.NEXT_PUBLIC_FT_DECISIONS_STRATEGIQUES_DISABLED !== 'true' &&
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
@@ -115,10 +111,10 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
               <div className="fr-col-12">
                 <Commentaires
                   chantierId={chantier.id}
-                  codeInsee={territoireSélectionné.codeInsee}
+                  codeInsee={territoireSélectionné!.codeInsee}
                   commentaires={commentaires}
                   estInteractif={false}
-                  maille={mailleAssociéeAuTerritoireSélectionné}
+                  maille={territoireSélectionné!.maille}
                 />
               </div>
             </div>

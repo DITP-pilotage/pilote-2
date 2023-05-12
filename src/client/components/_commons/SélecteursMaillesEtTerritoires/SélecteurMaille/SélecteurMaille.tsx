@@ -1,42 +1,39 @@
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore  } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, maillesAccessiblesEnLectureStore  } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { objectEntries } from '@/client/utils/objects/objects';
 import SélecteurMailleStyled from './SélecteurMaille.styled';
-import SélecteurMailleProps from './SélecteurMaille.interface';
 
-export default function SélecteurMaille({ habilitation }: SélecteurMailleProps) {
+export default function SélecteurMaille() {
   const { modifierMailleSélectionnée } = actionsTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+  const maillesAccessiblesEnLecture = maillesAccessiblesEnLectureStore();
 
-  const maillesÀAfficher: { label: string, valeur: MailleInterne }[] = [
-    {
-      label: 'Départements',
-      valeur: 'départementale',
-    },
-    {
-      label: 'Régions',
-      valeur: 'régionale',
-    },
-  ];
+  const maillesInternesAccessiblesEnLecture = maillesAccessiblesEnLecture.filter((maille): maille is MailleInterne => maille !== 'nationale');
 
-  const maillesDisponibles = habilitation.recupererListeMailleEnLectureDisponible();
+  const mailles: Record<MailleInterne, string> = {
+    'départementale': 'Départements',
+    'régionale': 'Régions',
+  };
 
-  if (maillesDisponibles.length === 1) {
+  if (maillesInternesAccessiblesEnLecture.length <= 1) {
     return null;
   }
   
   return (
     <SélecteurMailleStyled className='fr-p-1v'>
       {
-        maillesÀAfficher.map(maille => (
-          <button
-            className={`${mailleSélectionnée === maille.valeur && 'sélectionné fr-text--bold'}`}
-            key={maille.valeur}
-            onClick={() => modifierMailleSélectionnée(maille.valeur)}
-            type='button'
-          >
-            {maille.label}
-          </button>
-        ))
+        objectEntries(mailles)
+          .filter(([maille]) => maillesInternesAccessiblesEnLecture.includes(maille))
+          .map(([maille, libellé]) => (
+            <button
+              className={`${mailleSélectionnée === maille && 'sélectionné fr-text--bold'}`}
+              key={maille}
+              onClick={() => modifierMailleSélectionnée(maille)}
+              type='button'
+            >
+              {libellé}
+            </button>
+          ))
       }
     </SélecteurMailleStyled>
   );

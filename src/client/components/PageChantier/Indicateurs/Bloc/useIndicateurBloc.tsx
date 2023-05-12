@@ -45,7 +45,7 @@ export default function useIndicateurs(détailsIndicateur: Record<CodeInsee, Dé
             .sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee)),
         );
       } else {
-        setIndicateurDétailsParTerritoires([{ territoireNom: territoireSélectionné.nom, données: détailsIndicateur[territoireSélectionné.codeInsee] }]);
+        setIndicateurDétailsParTerritoires([{ territoireNom: territoireSélectionné!.nomAffiché, données: détailsIndicateur[territoireSélectionné!.codeInsee] }]);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

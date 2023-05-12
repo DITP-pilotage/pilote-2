@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import {
-  mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
   mailleSélectionnéeTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
@@ -20,8 +19,6 @@ export type ChantierVueDEnsemble = {
 };
 
 export default function useVueDEnsemble(chantiers: Chantier[]) {
-  const maille = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
-  const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
@@ -32,14 +29,14 @@ export default function useVueDEnsemble(chantiers: Chantier[]) {
   let { data: avancementsAgrégés } = api.chantier.récupérerStatistiquesAvancements.useQuery(
     {
       chantiers: chantiers.map(chantier => (chantier.id)),
-      maille: mailleAssociéeAuTerritoireSélectionné,
+      maille: territoireSélectionné!.maille,
     },
     { refetchOnWindowFocus: false, keepPreviousData: true },
   );
   if (avancementsAgrégés)
-    avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne;
+    avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[territoireSélectionné!.maille].territoires[territoireSélectionné!.codeInsee].répartition.avancements.global.moyenne;
 
-  const répartitionMétéos = donnéesTerritoiresAgrégées[mailleAssociéeAuTerritoireSélectionné].territoires[territoireSélectionné.codeInsee].répartition.météos;
+  const répartitionMétéos = donnéesTerritoiresAgrégées[territoireSélectionné!.maille].territoires[territoireSélectionné!.codeInsee].répartition.météos;
 
   const avancementsGlobauxTerritoriauxMoyens = useMemo(() => {
     return objectEntries(donnéesTerritoiresAgrégées[mailleSélectionnée].territoires).map(([codeInsee, territoire]) => ({
@@ -51,8 +48,8 @@ export default function useVueDEnsemble(chantiers: Chantier[]) {
   const chantiersVueDEnsemble: ChantierVueDEnsemble[] = chantiers.map(chantier => ({
     id: chantier.id,
     nom: chantier.nom,
-    avancement: chantier.mailles[maille][territoireSélectionné.codeInsee].avancement.global,
-    météo: chantier.mailles[maille][territoireSélectionné.codeInsee].météo,
+    avancement: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].avancement.global,
+    météo: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].météo,
     typologie: { estBaromètre: chantier.estBaromètre, estTerritorialisé: chantier.estTerritorialisé },
     porteur: chantier.responsables.porteur,
   }));

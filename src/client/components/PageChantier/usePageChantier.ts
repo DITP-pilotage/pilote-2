@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
-  mailleAssociéeAuTerritoireSélectionnéTerritoiresStore,
+  actionsTerritoiresStore,
   mailleSélectionnéeTerritoiresStore, territoiresComparésTerritoiresStore,
+  territoiresTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import api from '@/server/infrastructure/api/trpc/api';
@@ -12,14 +13,16 @@ import Objectif from '@/server/domain/objectif/Objectif.interface';
 export default function usePageChantier(chantierId: string) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const mailleAssociéeAuTerritoireSélectionné = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoiresComparés = territoiresComparésTerritoiresStore();
+  const territoires = territoiresTerritoiresStore();
+  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const territoireParent = territoireSélectionné?.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent) : null;
 
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {
       chantierId,
-      maille: mailleAssociéeAuTerritoireSélectionné,
-      codeInsee: territoireSélectionné.codeInsee,
+      maille: territoireSélectionné!.maille,
+      codeInsee: territoireSélectionné!.codeInsee,
     },
     { refetchOnWindowFocus: false },
   );
@@ -27,8 +30,8 @@ export default function usePageChantier(chantierId: string) {
   const { data: commentaires } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParChantiers.useQuery(
     {
       chantierId,
-      maille: mailleAssociéeAuTerritoireSélectionné,
-      codeInsee: territoireSélectionné.codeInsee,
+      maille: territoireSélectionné!.maille,
+      codeInsee: territoireSélectionné!.codeInsee,
       entité: 'commentaires',
     },
     { refetchOnWindowFocus: false },
@@ -58,8 +61,8 @@ export default function usePageChantier(chantierId: string) {
   const { data: détailsIndicateurs } = api.indicateur.récupererDétailsIndicateurs.useQuery(
     {
       chantierId,
-      maille: territoiresComparés.length > 0 ? mailleSélectionnée : mailleAssociéeAuTerritoireSélectionné,
-      codesInsee: territoiresComparés.length > 0 ? territoiresComparés.map(territoire => territoire.codeInsee) : [territoireSélectionné.codeInsee],
+      maille: territoiresComparés.length > 0 ? mailleSélectionnée : territoireSélectionné!.maille,
+      codesInsee: territoiresComparés.length > 0 ? territoiresComparés.map(territoire => territoire.codeInsee) : [territoireSélectionné!.codeInsee],
     },
     { refetchOnWindowFocus: false, keepPreviousData: true },
   );
@@ -77,8 +80,8 @@ export default function usePageChantier(chantierId: string) {
       calculerChantierAvancements(
         chantier,
         mailleSélectionnée,
-        territoireSélectionné,
-        mailleAssociéeAuTerritoireSélectionné,
+        territoireSélectionné!,
+        territoireParent,
       )
     );
 
@@ -90,6 +93,8 @@ export default function usePageChantier(chantierId: string) {
     décisionStratégique: décisionStratégique ?? null,
     chantier: chantier ?? null,
     rechargerChantier,
+    territoireSélectionné,
+    territoires,
     avancements,
   };
 }

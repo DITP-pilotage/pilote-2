@@ -4,14 +4,13 @@ import { SubmitHandler } from 'react-hook-form';
 import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 import api from '@/server/infrastructure/api/trpc/api';
-import { mailleAssociéeAuTerritoireSélectionnéTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
 import SynthèseDesRésultatsFormulaireProps, { SynthèseDesRésultatsFormulaireInputs } from './SynthèseDesRésultatsFormulaire.interface';
 
 export default function useSynthèseDesRésultatsFormulaire(synthèseDesRésultatsCrééeCallback: SynthèseDesRésultatsFormulaireProps['synthèseDesRésultatsCrééeCallback']) {
   const [alerte, setAlerte] = useState <AlerteProps | null>(null);
 
-  const mailleSélectionnée = mailleAssociéeAuTerritoireSélectionnéTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   
   const mutationCréerSynthèseDesRésultats = api.synthèseDesRésultats.créer.useMutation({
@@ -30,8 +29,8 @@ export default function useSynthèseDesRésultatsFormulaire(synthèseDesRésulta
     mutationCréerSynthèseDesRésultats.mutate({
       contenu: data.contenu,
       météo: data.météo,
-      maille: mailleSélectionnée,
-      codeInsee: territoireSélectionné.codeInsee,
+      maille: territoireSélectionné!.maille,
+      codeInsee: territoireSélectionné!.codeInsee,
       chantierId: router.query.id as string,
       csrf: récupérerUnCookie('csrf') ?? '',
     });

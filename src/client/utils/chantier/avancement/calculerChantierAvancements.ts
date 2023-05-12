@@ -1,27 +1,27 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { TerritoireGéographique } from '@/stores/useTerritoiresStore/useTerritoiresStore.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
+import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 
 export default function calculerChantierAvancements(
   chantier: Chantier,
   mailleSélectionnée: MailleInterne,
-  territoireSélectionné: TerritoireGéographique & { territoireParent?: TerritoireGéographique | undefined },
-  mailleAssociéeAuTerritoireSélectionné: Maille,
+  territoireSélectionné: DétailTerritoire,
+  territoireParent: DétailTerritoire | null,
 ) {
-
+  
   const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire([chantier]).agréger();
 
   const avancementRégional = () => {
-    if (mailleAssociéeAuTerritoireSélectionné === 'régionale')
+    if (territoireSélectionné.maille === 'régionale')
       return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne;
 
-    if (mailleAssociéeAuTerritoireSélectionné === 'départementale' && territoireSélectionné.codeInseeParent)
-      return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInseeParent].répartition.avancements.global.moyenne;
+    if (territoireSélectionné.maille === 'départementale' && territoireParent)
+      return donnéesTerritoiresAgrégées.régionale.territoires[territoireParent.codeInsee].répartition.avancements.global.moyenne;
   };
 
   const avancementDépartemental = () => {
-    if (mailleAssociéeAuTerritoireSélectionné === 'départementale')
+    if (territoireSélectionné.maille === 'départementale')
       return donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne;
   };
 
