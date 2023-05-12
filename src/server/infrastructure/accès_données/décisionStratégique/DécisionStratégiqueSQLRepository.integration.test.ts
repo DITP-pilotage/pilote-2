@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import DécisionStratégiqueSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/DécisionStratégiqueSQLRow.builder';
 import DécisionStratégiqueRepository from '@/server/domain/décisionStratégique/DécisionStratégiqueRepository.interface';
-import DécisionStratégiqueSQLRepository from './DécisionStratégiqueSQLRepository';
+import DécisionStratégiqueSQLRepository, { NOMS_TYPES_DÉCISION_STRATÉGIQUE } from './DécisionStratégiqueSQLRepository';
 
 describe('DécisionStratégiqueSQLRepository', () => {
   // GIVEN
@@ -36,7 +36,7 @@ describe('DécisionStratégiqueSQLRepository', () => {
       // THEN
       expect(résultat).toStrictEqual({
         id: décisionStratégiqueLaPlusRécente.id,
-        type: décisionStratégiqueLaPlusRécente.type,
+        type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégiqueLaPlusRécente.type],
         auteur: décisionStratégiqueLaPlusRécente.auteur,
         contenu: décisionStratégiqueLaPlusRécente.contenu,
         date: (décisionStratégiqueLaPlusRécente.date).toISOString(),
@@ -62,7 +62,7 @@ describe('DécisionStratégiqueSQLRepository', () => {
     // GIVEN
     const id = '123';
     const contenu = 'Décision importante';
-    const type = 'suivi_des_decisions';
+    const type = 'suiviDesDécisionsStratégiques';
     const date = new Date('2023-04-14');
     const auteur = 'Jean DUPONT';
 
@@ -83,7 +83,7 @@ describe('DécisionStratégiqueSQLRepository', () => {
       // Then
       expect(décisionStratégiqueCrééeRetournéeParLeRepo).toStrictEqual({
         id,
-        type,
+        type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[type],
         contenu,
         auteur,
         date: date.toISOString(),

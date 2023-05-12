@@ -24,7 +24,7 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
     libellésTypesObjectif['notreAmbition'],
     libellésTypesObjectif['déjàFait'],
     libellésTypesObjectif['àFaire'],
-    libellésTypesDécisionStratégique['suivi_des_decisions'],
+    libellésTypesDécisionStratégique['suiviDesDécisionsStratégiques'],
     libellésTypesCommentaire['autresRésultatsObtenusNonCorrélésAuxIndicateurs'],
     libellésTypesCommentaire['risquesEtFreinsÀLever'],
     libellésTypesCommentaire['solutionsEtActionsÀVenir'],

@@ -16,8 +16,8 @@ export default function DécisionsStratégiques({ décisionStratégique, chantie
       <Bloc titre='France'>
         <Publication
           caractéristiques={{
-            type: 'suivi_des_decisions',
-            libelléType: libellésTypesDécisionStratégique.suivi_des_decisions,
+            type: 'suiviDesDécisionsStratégiques',
+            libelléType: libellésTypesDécisionStratégique.suiviDesDécisionsStratégiques,
             entité: 'décisions stratégiques',
             consigneDÉcriture: 'Notez les décisions prises lors des réunions Elysée <> Matignon (AKAR) et indiquez les actions envisagées et/ou réalisées pour mettre en œuvre ou répondre à ces décisions.',
           }}

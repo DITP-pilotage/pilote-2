@@ -53,7 +53,7 @@ export default function usePageChantier(chantierId: string) {
       maille: 'nationale',
       codeInsee: 'FR',
       entité: 'décisions stratégiques',
-      type: 'suivi_des_decisions',
+      type: 'suiviDesDécisionsStratégiques',
     },
     { refetchOnWindowFocus: false },
   );

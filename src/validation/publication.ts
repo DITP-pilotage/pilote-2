@@ -3,6 +3,7 @@ import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDép
 import { mailles } from '@/server/domain/maille/Maille.interface';
 import { typesObjectif } from '@/server/domain/objectif/Objectif.interface';
 import { codeInseeFrance, codesInseeDépartements, codesInseeRégions } from '@/server/domain/territoire/Territoire.interface';
+import { typesDécisionStratégique } from '@/server/domain/décisionStratégique/DécisionStratégique.interface';
 
 export const LIMITE_CARACTÈRES_PUBLICATION = 5000;
 
@@ -40,7 +41,7 @@ export const zodValidateurEntitéType = z.union([
   }),
   z.object({
     entité: z.literal('décisions stratégiques'),
-    type: z.literal('suivi_des_decisions'), 
+    type: z.enum(typesDécisionStratégique),
     maille: z.enum(mailles),
     codeInsee: z.string(),
     chantierId: z.string(),

@@ -22,7 +22,7 @@ export default class DécisionStratégiqueSQLRowBuilder {
     this._auteur = faker.name.fullName();
     this._contenu = faker.lorem.paragraph();
     this._date = faker.date.recent(60, '2023-05-01T00:00:00.000Z');
-    this._type = 'suivi_des_decisions';
+    this._type = faker.helpers.arrayElement(['suivi_des_decisions']);
     this._chantierId = chantierGénéré.id;
   }
 
