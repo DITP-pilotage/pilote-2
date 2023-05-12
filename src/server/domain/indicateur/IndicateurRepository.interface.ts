@@ -3,8 +3,8 @@ import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicate
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { IndicateurPourExport } from '@/server/domain/indicateur/IndicateurPourExport';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { IndicateurPourExport } from '@/server/usecase/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 
 export default interface IndicateurRepository {
   récupérerParChantierId(chantierId: string): Promise<Indicateur[]>;

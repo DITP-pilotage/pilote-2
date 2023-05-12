@@ -7,7 +7,10 @@ export const NON_APPLICABLE = 'N/A';
 export const OUI = 'Oui';
 export const NON = 'Non';
 
-export function formaterMétéo(météo: Météo) {
+export function formaterMétéo(météo: Météo | null) {
+  if (météo === null) {
+    return NON_APPLICABLE;
+  }
   return libellésMétéos[météo]?.toUpperCase() || NON_APPLICABLE;
 }
 

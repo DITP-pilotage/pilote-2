@@ -7,9 +7,9 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { IndicateurPourExport } from '@/server/domain/indicateur/IndicateurPourExport';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { IndicateurPourExport } from '@/server/usecase/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
   private prisma: PrismaClient;
