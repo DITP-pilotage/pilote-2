@@ -4,7 +4,6 @@ import { stringify } from 'csv-stringify';
 import assert from 'node:assert/strict';
 import { ExportCsvDesChantiersSansFiltreUseCase } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import { horodatage } from '@/server/infrastructure/export_csv/valeurs';
 
 
 export default async function handleExportDesChantiersSansFiltre(request: NextApiRequest, response: NextApiResponse): Promise<void> {
@@ -14,10 +13,7 @@ export default async function handleExportDesChantiersSansFiltre(request: NextAp
   const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase();
   const chantiersPourExport = await exportCsvDesChantiersSansFiltreUseCase.run(session.habilitations);
 
-  const csvFilename = `PILOTE-Chantiers-sans-filtre-${horodatage()}.csv`;
-
   response.setHeader('Content-Type', 'text/csv');
-  response.setHeader('Content-Disposition', `attachment; filename="${csvFilename}"`);
 
   const stringifier = stringify({
     header: true,

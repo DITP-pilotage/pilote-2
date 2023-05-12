@@ -1,28 +1,27 @@
 import '@gouvfr/dsfr/dist/component/radio/radio.min.css';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import Modale from '@/components/_commons/Modale/Modale';
+import { horodatage } from '@/client/utils/date/date';
 
-const options = [
-  {
+const ressources = {
+  'chantiers-sans-filtre': {
     libellé: 'Les chantiers sans filtre',
-    id: 'chantiers-sans-filtre',
+    id: 'chantiers-sans-filtre' as const,
+    baseDuNomDeFichier: 'PILOTE-Chantiers-sans-filtre',
     url: '/api/export/chantiers-sans-filtre',
   },
-  {
+  'indicateurs-sans-filtre': {
     libellé: 'Les indicateurs sans filtre',
-    id: 'indicateurs-sans-filtre',
+    id: 'indicateurs-sans-filtre' as const,
+    baseDuNomDeFichier: 'PILOTE-Indicateurs-sans-filtre',
     url: '/api/export/indicateurs-sans-filtre',
   },
-];
+};
 
 export const ID_HTML_MODALE_EXPORT = 'modale-exporter-les-données';
 
 export default function ExportDesDonnées() {
-  const [valeur, setValeur] = useState<string | undefined>();
-
-  const auChangementDeValeur = (événement: ChangeEvent) => {
-    setValeur(événement.target.id);
-  };
+  const [ressourceÀExporter, setRessourceÀExporter] = useState<keyof typeof ressources | undefined>();
 
   return (
     <Modale
@@ -33,20 +32,29 @@ export default function ExportDesDonnées() {
         className="fr-mt-2w"
         onSubmit={(événement) => {
           événement.preventDefault();
-          const url = options.find(option => option.id === valeur)?.url ?? null;
+          if (!ressourceÀExporter)
+            return;
+
+          const { url, baseDuNomDeFichier } = ressources[ressourceÀExporter];
           if (url) {
-            window.open(url, '_self');
+            const a = window.document.createElement('a');
+            a.href = url;
+            a.target = '_self';
+            a.download = `${baseDuNomDeFichier}-${horodatage()}.csv`;
+            document.body.append(a);
+            a.click();
+            a.remove();
           }
         }}
       >
         <fieldset
-          aria-labelledby="légende-données-à-exporter"
+          aria-labelledby="légende-ressource-à-exporter"
           className="fr-fieldset"
-          id="données-à-exporter"
+          id="ressource-à-exporter"
         >
           <legend
             className="fr-fieldset__legend--regular fr-fieldset__legend"
-            id="légende-données-à-exporter"
+            id="légende-ressource-à-exporter"
           >
             Sélectionnez les données à exporter&nbsp;:
             {' '}
@@ -55,24 +63,24 @@ export default function ExportDesDonnées() {
             </span>
           </legend>
           {
-            options.map(option => (
+            Object.values(ressources).map((ressource) => (
               <div
                 className="fr-fieldset__element"
-                key={option.id}
+                key={ressource.id}
               >
                 <div className="fr-radio-group">
                   <input
-                    checked={valeur === option.id}
-                    id={option.id}
-                    name="données-à-exporter"
-                    onChange={auChangementDeValeur}
+                    checked={ressourceÀExporter === ressource.id}
+                    id={ressource.id}
+                    name="ressource-à-exporter"
+                    onChange={() => setRessourceÀExporter(ressource.id)}
                     type="radio"
                   />
                   <label
                     className="fr-label"
-                    htmlFor={option.id}
+                    htmlFor={ressource.id}
                   >
-                    { option.libellé }
+                    { ressource.libellé }
                   </label>
                 </div>
               </div>
@@ -85,7 +93,7 @@ export default function ExportDesDonnées() {
           <li>
             <button
               className="fr-btn fr-btn--icon-left fr-icon-download-line btn-radius"
-              disabled={valeur === undefined}
+              disabled={ressourceÀExporter === undefined}
               type="submit"
             >
               Exporter les données
