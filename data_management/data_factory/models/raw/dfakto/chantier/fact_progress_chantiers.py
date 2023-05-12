@@ -3,9 +3,9 @@ import os
 
 
 def model(dbt, session):
-    dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_5')
+    dump_dfakto_rp_raw = os.getenv('DUMP_DFAKTO_TEMP')
     fact_progress_chantiers = pd.read_csv(
-        f'{dump_dfakto_rp_raw}/fact_progress_chantier_202305041027.csv',
+        f'{dump_dfakto_rp_raw}/fact_progress_chantier.csv',
         sep=';'
     )
 

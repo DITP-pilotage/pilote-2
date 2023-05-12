@@ -1,7 +1,7 @@
 #!/bin/env bash
 
 # Uniquement sur du local
-if [[ -z $SSH_KEY_INGEST_DATA_DFAKTO ]] || [[ -z $URL_INGEST_CHANTIER_DFAKTO ]];
+if [[ -z $SSH_KEY_INGEST_DATA_DFAKTO ]] || [[ -z $URL_INGEST_CHANTIER_DFAKTO ]] || [[ -z $PGHOST ]] || [[ -z $PGPORT ]] || [[ -z $PGUSER ]] || [[ -z $PGPASSWORD ]] || [[ -z $PGDATABASE ]];
 then
   if [ -f .env ];
   then
@@ -29,4 +29,6 @@ EOF
 
 ssh-keyscan -p 2022 -H $URL_INGEST_CHANTIER_DFAKTO >> ~/.ssh/known_hosts
 
-echo -e "$cmd_retrieve_files" | sftp -oPort=2022 -i input_data/temp/id_ed25519 $URL_INGEST_CHANTIER_DFAKTO
+echo -e "$cmd_retrieve_files" | sftp -oPort=2022 -i input_data/temp/id_ed25519 "$USER_INGEST_CHANTIER_DFAKTO@$URL_INGEST_CHANTIER_DFAKTO"
+
+dbt run --project-dir data_factory/ --select raw.dfakto.chantier
