@@ -164,7 +164,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       
       from chantier_ids cids
                cross join territoire t
-               left outer join indicateur i on i.chantier_id = cids.id and lower(i.maille) = cast(t.maille as text) and i.code_insee = t.code_insee
+               inner join indicateur i on i.chantier_id = cids.id and lower(i.maille) = cast(t.maille as text) and i.code_insee = t.code_insee
                left outer join chantier c on c.id = cids.id and c.territoire_code = t.code
                left outer join chantier c_r on (c_r.id = cids.id and c_r.maille = 'REG')
                                             and (c_r.territoire_code = t.code or c_r.territoire_code = t.code_parent)
