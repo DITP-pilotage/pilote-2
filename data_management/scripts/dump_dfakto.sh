@@ -27,4 +27,6 @@ get fact_progress_chantier.csv input_data/temp/
 EOF
 )
 
+ssh-keyscan -p 2022 -H $URL_INGEST_CHANTIER_DFAKTO >> ~/.ssh/known_hosts
+
 echo -e "$cmd_retrieve_files" | sftp -oPort=2022 -i input_data/temp/id_ed25519 $URL_INGEST_CHANTIER_DFAKTO
