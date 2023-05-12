@@ -230,6 +230,19 @@ model objectif_projet_structurant {
   @@schema("public")
 }
 
+model synthese_des_resultats_projet_structurant {
+  id                    String    @id
+  projet_structurant_id String
+  territoire_id         String
+  meteo                 String?
+  date_meteo            DateTime? @db.Timestamp
+  commentaire           String?
+  date_commentaire      DateTime? @db.Timestamp
+  auteur                String?
+
+  @@schema("public")
+}
+
 model utilisateur {
   id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email        String         @unique
