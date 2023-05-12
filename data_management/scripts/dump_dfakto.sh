@@ -1,7 +1,7 @@
 #!/bin/env bash
 
 # Uniquement sur du local
-if [ -z $SSH_KEY_INGEST_DATA_DFAKTO ] || [ -z $URL_INGEST_CHANTIER_DFAKTO ];
+if [[ -z $SSH_KEY_INGEST_DATA_DFAKTO ]] || [[ -z $URL_INGEST_CHANTIER_DFAKTO ]];
 then
   if [ -f .env ];
   then
