@@ -30,7 +30,6 @@ model territoire {
   trace_svg   String
   code_parent String?
   chantier    chantier[]
-  maille_maj  String
   zone_id     String
 
   @@schema("public")
