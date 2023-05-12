@@ -206,6 +206,18 @@ model projet_structurant {
   @@schema("public")
 }
 
+model indicateur_projet_structurant {
+  id String @id
+  nom String
+  projet_structurant_code String
+  type_id String?
+  description String?
+  source String?
+  mode_de_calcul String?
+
+  @@schema("public")
+}
+
 model utilisateur {
   id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email        String         @unique
