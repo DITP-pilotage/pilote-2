@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, useState } from 'react';
-import hachuresGrisBlanc from '@/client/constants/hachure/hachuresGrisBlanc';
+import hachuresGrisBlanc from '@/client/constants/légendes/hachure/hachuresGrisBlanc';
 import CartographieSVGProps, { Viewbox } from './CartographieSVG.interface';
 import CartographieZoomEtDéplacement from './ZoomEtDéplacement/CartographieZoomEtDéplacement';
 import CartographieSVGStyled from './CartographieSVG.styled';

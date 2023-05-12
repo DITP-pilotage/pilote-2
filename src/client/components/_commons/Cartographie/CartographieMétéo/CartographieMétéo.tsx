@@ -4,8 +4,8 @@ import CartographieLégendeListe
 import CartographieMétéoProps from './CartographieMétéo.interface';
 import useCartographieMétéo from './useCartographieMétéo';
 
-export default function CartographieMétéo({ données, options, auClicTerritoireCallback }: CartographieMétéoProps) {
-  const { donnéesCartographie, légende } = useCartographieMétéo(données);
+export default function CartographieMétéo({ données, options, auClicTerritoireCallback, élémentsDeLégende }: CartographieMétéoProps) {
+  const { donnéesCartographie, légende } = useCartographieMétéo(données, élémentsDeLégende);
 
   return (
     <Cartographie

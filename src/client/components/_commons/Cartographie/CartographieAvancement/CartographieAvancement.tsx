@@ -4,8 +4,8 @@ import CartographieLégendeListe
 import CartographieAvancementProps from './CartographieAvancement.interface';
 import useCartographieAvancement from './useCartographieAvancement';
 
-export default function CartographieAvancement({ données, options, auClicTerritoireCallback }: CartographieAvancementProps) {
-  const { donnéesCartographie, légende } = useCartographieAvancement(données);
+export default function CartographieAvancement({ données, options, auClicTerritoireCallback, élémentsDeLégende }: CartographieAvancementProps) {
+  const { donnéesCartographie, légende } = useCartographieAvancement(données, élémentsDeLégende);
 
   return (
     <Cartographie

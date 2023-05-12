@@ -19,6 +19,6 @@ export default function usePageProjetsStructurants(projetsStructurants: ProjetSt
 
   return { 
     nombreFiltresActifs: récupérerNombreFiltresActifs(),
-    donnéesCartographie: avancementsGlobauxTerritoriauxMoyens(),
+    donnéesCartographieAvancement: avancementsGlobauxTerritoriauxMoyens(),
   };
 }

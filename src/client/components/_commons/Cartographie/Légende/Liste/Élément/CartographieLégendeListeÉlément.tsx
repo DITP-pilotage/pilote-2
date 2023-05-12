@@ -1,5 +1,5 @@
-import hachuresGrisBlanc from '@/client/constants/hachure/hachuresGrisBlanc';
-import { estHachure } from '@/client/constants/hachure/hachure';
+import hachuresGrisBlanc from '@/client/constants/légendes/hachure/hachuresGrisBlanc';
+import { estHachure } from '@/client/constants/légendes/hachure/hachure';
 import CartographieLégendeListeÉlémentStyled from './CartographieLégendeListeÉlément.styled';
 import CartographieLégendeListeÉlémentProps from './CartographieLégendeListeÉlément.interface';
 

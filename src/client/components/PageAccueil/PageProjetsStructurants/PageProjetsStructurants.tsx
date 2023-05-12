@@ -3,12 +3,13 @@ import FiltresActifs from '@/components/PageAccueil/PageChantiers/FiltresActifs/
 import Bloc from '@/client/components/_commons/Bloc/Bloc';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
+import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_PROJETS_STRUCTURANTS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import usePageProjetsStructurants from './usePageProjetsStructurants';
 import PageProjetsStructurantsProps from './PageProjetsStructurants.interface';
 import TableauProjetsStructurants from './TableauProjetsStructurants/TableauProjetsStructurants';
 
 export default function PageProjetsStructurants({ projetsStructurants }: PageProjetsStructurantsProps) {
-  const { nombreFiltresActifs, donnéesCartographie } = usePageProjetsStructurants(projetsStructurants);
+  const { nombreFiltresActifs, donnéesCartographieAvancement } = usePageProjetsStructurants(projetsStructurants);
   const { auClicTerritoireCallback } = useCartographie();
 
   return (
@@ -39,7 +40,8 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                 </Titre>
                 <CartographieAvancement
                   auClicTerritoireCallback={auClicTerritoireCallback}
-                  données={donnéesCartographie}
+                  données={donnéesCartographieAvancement}
+                  élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_PROJETS_STRUCTURANTS}
                 />
               </section>
             </Bloc>
