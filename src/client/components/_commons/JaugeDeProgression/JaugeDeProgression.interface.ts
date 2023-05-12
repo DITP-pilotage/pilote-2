@@ -1,4 +1,4 @@
-type JaugeDeProgressionCouleur = 'bleu' | 'bleuClair' | 'violet' | 'orange' | 'vert';
+type JaugeDeProgressionCouleur = 'bleu' | 'bleuClair' | 'violet' | 'orange' | 'vert' | 'rose';
 export type JaugeDeProgressionTaille = 'sm' | 'lg';
 
 export interface JaugeDeProgressionProps {

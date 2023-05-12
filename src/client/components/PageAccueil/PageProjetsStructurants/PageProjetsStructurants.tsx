@@ -4,13 +4,16 @@ import Bloc from '@/client/components/_commons/Bloc/Bloc';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_PROJETS_STRUCTURANTS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
+import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
+import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import usePageProjetsStructurants from './usePageProjetsStructurants';
 import PageProjetsStructurantsProps from './PageProjetsStructurants.interface';
 import TableauProjetsStructurants from './TableauProjetsStructurants/TableauProjetsStructurants';
 
 export default function PageProjetsStructurants({ projetsStructurants }: PageProjetsStructurantsProps) {
-  const { nombreFiltresActifs, donnéesCartographieAvancement } = usePageProjetsStructurants(projetsStructurants);
+  const { nombreFiltresActifs, donnéesCartographieAvancement, donnéesAvancementsMoyens } = usePageProjetsStructurants(projetsStructurants);
   const { auClicTerritoireCallback } = useCartographie();
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();  
 
   return (
     <main>
@@ -55,7 +58,14 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                 >
                   Taux d’avancement moyen
                 </Titre>
-                {/* <Avancements avancements={avancementsAgrégés} /> */}
+                <div className='fr-grid-row fr-grid-row--center'>
+                  <JaugeDeProgression
+                    couleur='rose'
+                    libellé="Taux d'avancement global"
+                    pourcentage={donnéesAvancementsMoyens[territoireSélectionné.codeInsee]}
+                    taille='lg'
+                  />
+                </div>
               </section>
               <hr className="fr-hr fr-my-3w fr-pb-1v" />
               <section>

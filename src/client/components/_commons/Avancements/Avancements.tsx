@@ -6,24 +6,20 @@ import AvancementsProps from './Avancements.interface';
 export default function Avancements({ avancements }: AvancementsProps) {
   return (
     <AvancementsStyled>
-      <div>
-        <JaugeDeProgression
-          couleur='bleu'
-          libellé="Taux d'avancement global"
-          pourcentage={!!avancements ? avancements.global.moyenne : null}
-          taille='lg'
-        />
-      </div>
+      <JaugeDeProgression
+        couleur='bleu'
+        libellé="Taux d'avancement global"
+        pourcentage={!!avancements ? avancements.global.moyenne : null}
+        taille='lg'
+      />
       <div>
         <div className="jauges-statistiques">
-          <div>
-            <JaugeDeProgression
-              couleur='orange'
-              libellé="Minimum"
-              pourcentage={!!avancements ? avancements.global.minimum : null}
-              taille='sm'
-            />
-          </div>
+          <JaugeDeProgression
+            couleur='orange'
+            libellé="Minimum"
+            pourcentage={!!avancements ? avancements.global.minimum : null}
+            taille='sm'
+          />
           <div>
             <JaugeDeProgression
               couleur='violet'
@@ -32,14 +28,12 @@ export default function Avancements({ avancements }: AvancementsProps) {
               taille='sm'
             />
           </div>
-          <div>
-            <JaugeDeProgression
-              couleur='vert'
-              libellé="Maximum"
-              pourcentage={!!avancements ? avancements.global.maximum : null}
-              taille='sm'
-            />
-          </div>
+          <JaugeDeProgression
+            couleur='vert'
+            libellé="Maximum"
+            pourcentage={!!avancements ? avancements.global.maximum : null}
+            taille='sm'
+          />
         </div>
         <div className='fr-mt-2w'>
           <p className="fr-text--xl fr-text--bold fr-mb-0 texte-gris">

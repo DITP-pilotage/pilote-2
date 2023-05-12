@@ -70,6 +70,17 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
       ministèresIds: ['MIN-001'],
       météo: 'COUVERT',
     },
+    {
+      id: 'PS-003',
+      nom: 'Projet structurant 3',
+      tauxAvancement: 10,
+      dateTauxAvancement: new Date().toISOString(),
+      territoireNom: 'Île-de-France',
+      codeInsee: '11',
+      maille: 'régionale',
+      ministèresIds: ['MIN-001'],
+      météo: 'COUVERT',
+    },
   ];
 
   let axes: Axe[] = [];
