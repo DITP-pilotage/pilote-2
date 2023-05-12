@@ -1,7 +1,11 @@
+/* eslint-disable @typescript-eslint/dot-notation */
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
+import { libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
+import { libellésTypesObjectif } from '@/client/constants/libellésObjectif';
+import { libellésTypesDécisionStratégique } from '@/client/constants/libellésDécisionStratégique';
 
 export class ExportCsvDesChantiersSansFiltreUseCase {
   public static readonly NOMS_COLONNES = [
@@ -17,16 +21,16 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
     'Taux d\'avancement national',
     'Météo',
     'Synthèse des résultats',
-    'Notre ambition',
-    'Déjà fait',
-    'À faire',
-    'Suivi des décisions',
-    'Actions à venir',
-    'Actions à valoriser',
-    'Freins à lever',
-    'Commentaires sur les données',
-    'Autres résultats',
-    'Autres résultats (non corrélés aux indicateurs)',
+    libellésTypesObjectif['notreAmbition'],
+    libellésTypesObjectif['déjàFait'],
+    libellésTypesObjectif['àFaire'],
+    libellésTypesDécisionStratégique['suivi_des_decisions'],
+    libellésTypesCommentaire['autresRésultatsObtenusNonCorrélésAuxIndicateurs'],
+    libellésTypesCommentaire['risquesEtFreinsÀLever'],
+    libellésTypesCommentaire['solutionsEtActionsÀVenir'],
+    libellésTypesCommentaire['exemplesConcretsDeRéussite'],
+    libellésTypesCommentaire['commentairesSurLesDonnées'],
+    libellésTypesCommentaire['autresRésultatsObtenus'],
   ];
 
   constructor(
@@ -57,12 +61,12 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
       chantierPourExport.objDéjàFait || NON_APPLICABLE,
       chantierPourExport.objÀFaire || NON_APPLICABLE,
       chantierPourExport.decStratSuiviDesDécisions || NON_APPLICABLE,
+      chantierPourExport.commAutresRésultatsNonCorrélésAuxIndicateurs || NON_APPLICABLE,
+      chantierPourExport.commFreinsÀLever || NON_APPLICABLE,
       chantierPourExport.commActionsÀVenir || NON_APPLICABLE,
       chantierPourExport.commActionsÀValoriser || NON_APPLICABLE,
-      chantierPourExport.commFreinsÀLever || NON_APPLICABLE,
       chantierPourExport.commCommentairesSurLesDonnées || NON_APPLICABLE,
       chantierPourExport.commAutresRésultats || NON_APPLICABLE,
-      chantierPourExport.commAutresRésultatsNonCorrélésAuxIndicateurs || NON_APPLICABLE,
     ];
   }
 }
