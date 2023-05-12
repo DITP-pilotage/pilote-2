@@ -58,9 +58,9 @@ const chantierStatiqueId123 = new ChantierSQLRowBuilder()
   .avecMinistères(['Agriculture et Alimentation'])
   .avecTerritoireNom(null);
 
-const prisma = new PrismaClient();
+export class DatabaseSeeder {
+  private _prisma : PrismaClient;
 
-class DatabaseSeeder {
   private _territoires: territoire[] = [];
 
   private _territoiresDept: territoire[] = [];
@@ -90,8 +90,12 @@ class DatabaseSeeder {
 
   private _chantiersDonnéesCommunes: chantier[] = [];
 
+  constructor(prisma: PrismaClient) {
+    this._prisma = prisma;
+  }
+
   async init() {
-    this._territoires = await prisma.territoire.findMany();
+    this._territoires = await this._prisma.territoire.findMany();
     this._territoiresDept = this._territoires.filter(t => t.maille === 'DEPT');
     this._territoiresReg = this._territoires.filter(t => t.maille === 'REG');
   }
@@ -130,13 +134,13 @@ class DatabaseSeeder {
   private async _créerAxes() {
     this._axes = générerTableau<axe>(5, 5, () => new AxeRowBuilder().build());
 
-    await prisma.axe.createMany({ data: this._axes });
+    await this._prisma.axe.createMany({ data: this._axes });
   }
 
   private async _créerPpgs() {
     this._ppgs = générerTableau<ppg>(5, 5, () => new PpgRowBuilder().build());
 
-    await prisma.ppg.createMany({ data: this._ppgs });
+    await this._prisma.ppg.createMany({ data: this._ppgs });
   }
 
   private async _créerMinistèresEtPérimètresMinistériels() {
@@ -151,8 +155,8 @@ class DatabaseSeeder {
         return { id: it.ministere_id, nom: it.ministere };
       });
 
-    await prisma.ministere.createMany({ data: donnéesMinistères });
-    await prisma.perimetre.createMany({ data: this._périmètresMinistériels });
+    await this._prisma.ministere.createMany({ data: donnéesMinistères });
+    await this._prisma.perimetre.createMany({ data: this._périmètresMinistériels });
   }
 
   private async _créerChantiers() {
@@ -198,7 +202,7 @@ class DatabaseSeeder {
       this._chantiersDonnéesCommunes = [...new Map(this._chantiers.map((ch) => [ch.id, ch])).values()];
     }
 
-    await prisma.chantier.createMany({ data: this._chantiers });
+    await this._prisma.chantier.createMany({ data: this._chantiers });
   }
 
   private async _créerSynthèsesDesRésultats() {
@@ -218,7 +222,7 @@ class DatabaseSeeder {
       });
     });
 
-    await prisma.synthese_des_resultats.createMany({ data: this._synthèsesDesRésultats });
+    await this._prisma.synthese_des_resultats.createMany({ data: this._synthèsesDesRésultats });
   }
 
   private async _créerCommentaires() {
@@ -230,7 +234,7 @@ class DatabaseSeeder {
       });
     });
 
-    await prisma.commentaire.createMany({ data: this._commentaires });
+    await this._prisma.commentaire.createMany({ data: this._commentaires });
   }
 
   private async _créerObjectifs() {
@@ -240,7 +244,7 @@ class DatabaseSeeder {
       });
     });
 
-    await prisma.objectif.createMany({ data: this._objectifs });
+    await this._prisma.objectif.createMany({ data: this._objectifs });
   }
 
   private async _créerDécisionsStratégiques() {
@@ -250,7 +254,7 @@ class DatabaseSeeder {
       });
     });
 
-    await prisma.decision_strategique.createMany({ data: this._décisions_stratégiques });
+    await this._prisma.decision_strategique.createMany({ data: this._décisions_stratégiques });
   }
 
   private async _créerIndicateurs() {
@@ -296,7 +300,7 @@ class DatabaseSeeder {
         );
       }
     }
-    await prisma.indicateur.createMany({ data: this._indicateurs });
+    await this._prisma.indicateur.createMany({ data: this._indicateurs });
   }
 
   private async _créerUtilisateursEtDroits() {
@@ -328,17 +332,7 @@ class DatabaseSeeder {
   }
 
   private async _getSomeChantierIds() {
-    const chantiersRows = await prisma.chantier.findMany({ distinct: ['id'], select: { id: true }, take: 10 });
+    const chantiersRows = await this._prisma.chantier.findMany({ distinct: ['id'], select: { id: true }, take: 10 });
     return chantiersRows.map(it => it.id);
   }
 }
-
-new DatabaseSeeder()
-  .seed()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (error) => {
-    await prisma.$disconnect();
-    throw new Error(`Erreur durant le seed de la base de données ${error}`);
-  });
