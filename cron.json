@@ -1,7 +1,7 @@
 {
   "jobs": [
     {
-      "command": "55 */1 * * * cd data_management && bash scripts/dump_dfakto.sh"
+      "command": "30 */1 * * * cd data_management && bash scripts/dump_dfakto.sh"
     }
   ]
 }
