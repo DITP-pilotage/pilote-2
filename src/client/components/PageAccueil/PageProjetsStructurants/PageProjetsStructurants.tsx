@@ -1,13 +1,15 @@
 import Titre from '@/client/components/_commons/Titre/Titre';
 import FiltresActifs from '@/components/PageAccueil/PageChantiers/FiltresActifs/FiltresActifs';
 import Bloc from '@/client/components/_commons/Bloc/Bloc';
+import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
+import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import usePageProjetsStructurants from './usePageProjetsStructurants';
 import PageProjetsStructurantsProps from './PageProjetsStructurants.interface';
 import TableauProjetsStructurants from './TableauProjetsStructurants/TableauProjetsStructurants';
 
 export default function PageProjetsStructurants({ projetsStructurants }: PageProjetsStructurantsProps) {
-  const { nombreFiltresActifs } = usePageProjetsStructurants();
-  // const { auClicTerritoireCallback } = useCartographie();
+  const { nombreFiltresActifs, donnéesCartographie } = usePageProjetsStructurants(projetsStructurants);
+  const { auClicTerritoireCallback } = useCartographie();
 
   return (
     <main>
@@ -35,10 +37,10 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                 >
                   Taux d’avancement des projets structurants par territoire
                 </Titre>
-                {/* <CartographieAvancement
+                <CartographieAvancement
                   auClicTerritoireCallback={auClicTerritoireCallback}
                   données={donnéesCartographie}
-                /> */}
+                />
               </section>
             </Bloc>
           </div>
