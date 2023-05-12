@@ -13,6 +13,7 @@ then
 fi
 
 mkdir -p input_data/temp
+mkdir -p ~/.ssh
 
 echo "$SSH_KEY_INGEST_DATA_DFAKTO" > input_data/temp/id_ed25519
 chmod 600 input_data/temp/id_ed25519
