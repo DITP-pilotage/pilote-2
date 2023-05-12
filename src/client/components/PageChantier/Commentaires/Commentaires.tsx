@@ -9,7 +9,7 @@ import { TypeCommentaire, typesCommentaireMailleNationale, typesCommentaireMaill
 
 export default function Commentaires({ commentaires, chantierId, maille, codeInsee, modeÉcriture = false, estInteractif = true }: CommentairesProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const typesCommentaires = maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale;
+  const typesCommentaire = maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale;
 
   return (
     <section id="commentaires">
@@ -21,7 +21,7 @@ export default function Commentaires({ commentaires, chantierId, maille, codeIns
       </Titre>
       <Bloc titre={territoireSélectionné!.nomAffiché}>
         {
-          typesCommentaires.map((type, i) => (
+          typesCommentaire.map((type, i) => (
             <Fragment key={type}>
               {
                 i !== 0 && (

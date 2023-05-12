@@ -7,9 +7,9 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { IndicateurPourExport } from '@/server/domain/indicateur/IndicateurPourExport';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { IndicateurPourExport } from '@/server/usecase/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
   private prisma: PrismaClient;
@@ -164,7 +164,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       
       from chantier_ids cids
                cross join territoire t
-               left outer join indicateur i on i.chantier_id = cids.id and lower(i.maille) = cast(t.maille as text) and i.code_insee = t.code_insee
+               inner join indicateur i on i.chantier_id = cids.id and lower(i.maille) = cast(t.maille as text) and i.code_insee = t.code_insee
                left outer join chantier c on c.id = cids.id and c.territoire_code = t.code
                left outer join chantier c_r on (c_r.id = cids.id and c_r.maille = 'REG')
                                             and (c_r.territoire_code = t.code or c_r.territoire_code = t.code_parent)
@@ -197,11 +197,11 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       météo: it.meteo,
       nom: it.nom,
       valeurInitiale: it.valeur_initiale,
-      dateValeurInitiale: new Date(it.date_valeur_initiale).toISOString(),
+      dateValeurInitiale: it.date_valeur_initiale,
       valeurActuelle: it.valeur_actuelle,
-      dateValeurActuelle: new Date(it.date_valeur_actuelle).toISOString(),
+      dateValeurActuelle: it.date_valeur_actuelle,
       valeurCible: it.valeur_cible,
-      dateValeurCible: new Date(it.date_valeur_cible).toISOString(),
+      dateValeurCible: it.date_valeur_cible,
       avancementGlobal: it.taux_avancement,
     }));
   }

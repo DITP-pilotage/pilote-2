@@ -12,7 +12,7 @@ export default class CréerUneDécisionStratégiqueUseCase {
   async run(chantierId: Chantier['id'], contenu: string, auteur: string): Promise<DécisionStratégique> {
     const date = new Date();
     const id = randomUUID();
-    const type = 'suivi_des_decisions';
+    const type = 'suiviDesDécisionsStratégiques';
     return this.décisionStratégiqueRepository.créer(chantierId, id, contenu, type, auteur, date);
   }
 }

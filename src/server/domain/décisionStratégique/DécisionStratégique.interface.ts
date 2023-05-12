@@ -1,4 +1,5 @@
-export type TypeDécisionStratégique = 'suivi_des_decisions';
+export const typesDécisionStratégique = ['suiviDesDécisionsStratégiques'] as const;
+export type TypeDécisionStratégique = typeof typesDécisionStratégique[number];
 
 type DécisionStratégique = {
   id: string

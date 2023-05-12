@@ -8,11 +8,11 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import { ChantierPourExport } from '@/server/domain/chantier/ChantierPourExport';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
+import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {

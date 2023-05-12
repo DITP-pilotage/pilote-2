@@ -1,6 +1,7 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Publication from '@/components/_commons/Publication/Publication';
 import Titre from '@/components/_commons/Titre/Titre';
+import { libellésTypesDécisionStratégique } from '@/client/constants/libellésDécisionStratégique';
 import DécisionsStratégiquesProps from './DécisionsStratégiques.interface';
 
 export default function DécisionsStratégiques({ décisionStratégique, chantierId, modeÉcriture = false, estInteractif = true }: DécisionsStratégiquesProps) {
@@ -15,8 +16,8 @@ export default function DécisionsStratégiques({ décisionStratégique, chantie
       <Bloc titre='France'>
         <Publication
           caractéristiques={{
-            type: 'suivi_des_decisions',
-            libelléType: 'Suivi des décisions stratégiques',
+            type: 'suiviDesDécisionsStratégiques',
+            libelléType: libellésTypesDécisionStratégique.suiviDesDécisionsStratégiques,
             entité: 'décisions stratégiques',
             consigneDÉcriture: 'Notez les décisions prises lors des réunions Elysée <> Matignon (AKAR) et indiquez les actions envisagées et/ou réalisées pour mettre en œuvre ou répondre à ces décisions.',
           }}

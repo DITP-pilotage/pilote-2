@@ -1,7 +1,15 @@
-import { PrismaClient, decision_strategique as DécisionStratégiquePrisma } from '@prisma/client';
+import { PrismaClient, decision_strategique as DécisionStratégiquePrisma, type_decision_strategique as TypeDécisionStratégiquePrisma } from '@prisma/client';
 import DécisionStratégique, { TypeDécisionStratégique } from '@/server/domain/décisionStratégique/DécisionStratégique.interface';
 import DécisionStratégiqueRepository from '@/server/domain/décisionStratégique/DécisionStratégiqueRepository.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+
+export const NOMS_TYPES_DÉCISION_STRATÉGIQUE: Record<string, TypeDécisionStratégique> = {
+  suivi_des_decision: 'suiviDesDécisionsStratégiques',
+};
+
+export const CODES_TYPES_DÉCISION_STRATÉGIQUE: Record<TypeDécisionStratégique, TypeDécisionStratégiquePrisma> = {
+  suiviDesDécisionsStratégiques: 'suivi_des_decisions',
+};
 
 export default class DécisionStratégiqueSQLRepository implements DécisionStratégiqueRepository {
   private prisma: PrismaClient;
@@ -13,7 +21,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
   private mapperVersDomaine(décisionStratégique: DécisionStratégiquePrisma): DécisionStratégique {
     return {
       id: décisionStratégique.id,
-      type: décisionStratégique.type,
+      type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[décisionStratégique.type],
       contenu: décisionStratégique.contenu,
       date: décisionStratégique.date.toISOString(),
       auteur: décisionStratégique.auteur,
@@ -48,7 +56,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
         id,
         chantier_id: chantierId,
         contenu,
-        type,
+        type: CODES_TYPES_DÉCISION_STRATÉGIQUE[type],
         date,
         auteur,
       } });

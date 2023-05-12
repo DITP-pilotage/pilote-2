@@ -2,11 +2,11 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { ChantierPourExport } from '@/server/domain/chantier/ChantierPourExport';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
+import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 
 export default interface ChantierRepository {
   getById(id: string, habilitations: Habilitations): Promise<Chantier>;
