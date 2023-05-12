@@ -14,6 +14,13 @@ export function formaterMétéo(météo: Météo | null) {
   return libellésMétéos[météo]?.toUpperCase() || NON_APPLICABLE;
 }
 
+export function formaterDateHeure(date: string | null) {
+  if (date === null) {
+    return NON_APPLICABLE;
+  }
+  return dayjs.tz(date, 'CET').format('YYYY-MM-DD HH:mm:ss');
+}
+
 export function horodatage() {
   dayjs.extend(utc);
   dayjs.extend(timezone);

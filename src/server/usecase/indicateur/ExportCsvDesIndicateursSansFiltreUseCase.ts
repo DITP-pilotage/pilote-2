@@ -1,6 +1,6 @@
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
+import { formaterDateHeure, formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 import { IndicateurPourExport } from '@/server/usecase/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 
 export default class ExportCsvDesIndicateursSansFiltreUseCase {
@@ -45,11 +45,11 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
       formaterMétéo(indicateurPourExport.météo),
       indicateurPourExport.nom || NON_APPLICABLE,
       indicateurPourExport.valeurInitiale?.toString() || NON_APPLICABLE,
-      indicateurPourExport.dateValeurInitiale || NON_APPLICABLE,
+      formaterDateHeure(indicateurPourExport.dateValeurInitiale),
       indicateurPourExport.valeurActuelle?.toString() || NON_APPLICABLE,
-      indicateurPourExport.dateValeurActuelle || NON_APPLICABLE,
+      formaterDateHeure(indicateurPourExport.dateValeurActuelle),
       indicateurPourExport.valeurCible?.toString() || NON_APPLICABLE,
-      indicateurPourExport.dateValeurCible || NON_APPLICABLE,
+      formaterDateHeure(indicateurPourExport.dateValeurCible),
       indicateurPourExport.avancementGlobal?.toString() || NON_APPLICABLE,
     ];
   }
