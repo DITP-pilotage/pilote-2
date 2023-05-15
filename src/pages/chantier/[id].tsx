@@ -1,6 +1,5 @@
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import { getServerSession } from 'next-auth/next';
 import PageChantier from '@/components/PageChantier/PageChantier';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';

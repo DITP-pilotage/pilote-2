@@ -83,7 +83,7 @@ describe('DécisionStratégiqueSQLRepository', () => {
       // Then
       expect(décisionStratégiqueCrééeRetournéeParLeRepo).toStrictEqual({
         id,
-        type: NOMS_TYPES_DÉCISION_STRATÉGIQUE[type],
+        type,
         contenu,
         auteur,
         date: date.toISOString(),
