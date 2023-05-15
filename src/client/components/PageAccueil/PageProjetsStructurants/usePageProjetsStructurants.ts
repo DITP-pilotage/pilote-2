@@ -5,7 +5,7 @@ import { météos } from '@/server/domain/météo/Météo.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { codesInseeDépartements, codesInseeRégions } from '@/server/domain/territoire/Territoire.interface';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
-import { RépartitionMétéos } from '@/client/components/PageAccueil/PageChantiers/RépartitionMétéo/RépartitionMétéo.interface';
+import { RépartitionMétéos } from '@/components/PageAccueil/RépartitionMétéo/RépartitionMétéo.interface';
 
 export default function usePageProjetsStructurants(projetsStructurants: ProjetStructurant[]) {
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
@@ -36,7 +36,8 @@ export default function usePageProjetsStructurants(projetsStructurants: ProjetSt
     ) as RépartitionMétéos;
   };
 
-  return { 
+  return {
+    projetsDuTerritoireSélectionné: projetsDuTerritoireSélectionné,
     nombreFiltresActifs: récupérerNombreFiltresActifs(),
     donnéesCartographieAvancement: avancementsMoyensTerritoiresMailleSélectionnée(),
     donnéesAvancementsMoyens: avancementMoyenTerritoireSélectionné(),

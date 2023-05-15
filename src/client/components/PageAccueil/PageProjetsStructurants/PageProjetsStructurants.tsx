@@ -5,13 +5,19 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_PROJETS_STRUCTURANTS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
-import RépartitionMétéo from '@/client/components/PageAccueil/PageChantiers/RépartitionMétéo/RépartitionMétéo';
+import RépartitionMétéo from '@/components/PageAccueil/RépartitionMétéo/RépartitionMétéo';
 import usePageProjetsStructurants from './usePageProjetsStructurants';
 import PageProjetsStructurantsProps from './PageProjetsStructurants.interface';
 import TableauProjetsStructurants from './TableauProjetsStructurants/TableauProjetsStructurants';
 
 export default function PageProjetsStructurants({ projetsStructurants }: PageProjetsStructurantsProps) {
-  const { nombreFiltresActifs, donnéesCartographieAvancement, donnéesAvancementsMoyens, répartitionMétéos } = usePageProjetsStructurants(projetsStructurants);
+  const { 
+    projetsDuTerritoireSélectionné,
+    nombreFiltresActifs,
+    donnéesCartographieAvancement,
+    donnéesAvancementsMoyens,
+    répartitionMétéos,
+  } = usePageProjetsStructurants(projetsStructurants);
   
   const { auClicTerritoireCallback } = useCartographie();
 
@@ -28,7 +34,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
             baliseHtml="h1"
             className='fr-h4'
           >
-            {`${projetsStructurants.length} projets`}
+            {`${projetsDuTerritoireSélectionné.length} projets`}
           </Titre>
         </div>
         <div className="fr-grid-row fr-grid-row--gutters">
@@ -83,7 +89,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
         <div className="fr-grid-row fr-mt-7v">
           <div className="fr-col">
             <Bloc>
-              <TableauProjetsStructurants données={projetsStructurants} />
+              <TableauProjetsStructurants données={projetsDuTerritoireSélectionné} />
             </Bloc>
           </div>
         </div>
