@@ -5,15 +5,15 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_PROJETS_STRUCTURANTS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
-import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import RépartitionMétéo from '@/client/components/PageAccueil/PageChantiers/RépartitionMétéo/RépartitionMétéo';
 import usePageProjetsStructurants from './usePageProjetsStructurants';
 import PageProjetsStructurantsProps from './PageProjetsStructurants.interface';
 import TableauProjetsStructurants from './TableauProjetsStructurants/TableauProjetsStructurants';
 
 export default function PageProjetsStructurants({ projetsStructurants }: PageProjetsStructurantsProps) {
-  const { nombreFiltresActifs, donnéesCartographieAvancement, donnéesAvancementsMoyens } = usePageProjetsStructurants(projetsStructurants);
+  const { nombreFiltresActifs, donnéesCartographieAvancement, donnéesAvancementsMoyens, répartitionMétéos } = usePageProjetsStructurants(projetsStructurants);
+  
   const { auClicTerritoireCallback } = useCartographie();
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();  
 
   return (
     <main>
@@ -62,7 +62,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                   <JaugeDeProgression
                     couleur='rose'
                     libellé="Taux d'avancement global"
-                    pourcentage={donnéesAvancementsMoyens[territoireSélectionné!.codeInsee]}
+                    pourcentage={donnéesAvancementsMoyens}
                     taille='lg'
                   />
                 </div>
@@ -75,7 +75,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                 >
                   Répartition des météos renseignées
                 </Titre>
-                {/* <RépartitionMétéo météos={répartitionMétéos} /> */}
+                <RépartitionMétéo météos={répartitionMétéos} />
               </section>
             </Bloc>
           </div>
