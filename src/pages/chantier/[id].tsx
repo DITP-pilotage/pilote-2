@@ -1,4 +1,6 @@
 import { GetServerSidePropsContext } from 'next';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
 import PageChantier from '@/components/PageChantier/PageChantier';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -9,7 +11,20 @@ interface NextPageChantierProps {
 }
 
 export default function NextPageChantier({ indicateurs }: NextPageChantierProps) {
-  return <PageChantier indicateurs={indicateurs} />;
+  const id = useRouter().query.id;
+  const chantierId = Array.isArray(id) ? id[0] : id;
+  return (
+    <>
+      <Head>
+        <title>
+          {`Chantier ${chantierId?.replace('CH-', '') ?? ''} - PILOTE`}
+        </title>
+      </Head>
+      <PageChantier
+        indicateurs={indicateurs}
+      />
+    </>
+  );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ id: Chantier['id'] }>) {

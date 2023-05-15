@@ -1,6 +1,7 @@
 import { GetServerSidePropsResult } from 'next';
 import { GetServerSidePropsContext } from 'next/types';
 import { getServerSession } from 'next-auth/next';
+import Head from 'next/head';
 import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIndicateur';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ChantierInformation } from '@/components/PageImportIndicateur/ChantierInformation.interface';
@@ -61,10 +62,17 @@ export default function NextPageImportIndicateur({
   const { détailsIndicateurs } = usePageChantier(chantierInformation.id);
 
   return (
-    <PageImportIndicateur
-      chantierInformation={chantierInformation}
-      détailsIndicateurs={détailsIndicateurs}
-      indicateurs={indicateurs}
-    />
+    <>
+      <Head>
+        <title>
+          Import des indicateurs - PILOTE
+        </title>
+      </Head>
+      <PageImportIndicateur
+        chantierInformation={chantierInformation}
+        détailsIndicateurs={détailsIndicateurs}
+        indicateurs={indicateurs}
+      />
+    </>
   );
 }

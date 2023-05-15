@@ -5,7 +5,7 @@ export default function Erreur500() {
     <PageErreur
       message="Nous vous invitons à réessayer plus tard."
       sousTitre="Désolé, le service rencontre un problème, nous travaillons pour le résoudre le plus rapidement possible."
-      titre='Erreur innatendue'
+      titre='Erreur inattendue'
     />
   );
 }
