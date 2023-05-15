@@ -3,7 +3,7 @@ import PageChantiers from '@/components/PageAccueil/PageChantiers/PageChantiers'
 import PageProjetsStructurants from '@/components/PageAccueil/PageProjetsStructurants/PageProjetsStructurants';
 import SélecteursMaillesEtTerritoires from '@/client/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import Titre from '@/client/components/_commons/Titre/Titre';
-import Filtres from '@/components/PageAccueil/PageChantiers/Filtres/Filtres';
+import Filtres from '@/components/PageAccueil/Filtres/Filtres';
 import BarreLatérale from '@/client/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/client/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import PageAccueilProps from './PageAccueil.interface';

@@ -1,5 +1,5 @@
 import Titre from '@/client/components/_commons/Titre/Titre';
-import FiltresActifs from '@/components/PageAccueil/PageChantiers/FiltresActifs/FiltresActifs';
+import FiltresActifs from '@/components/PageAccueil/FiltresActifs/FiltresActifs';
 import Bloc from '@/client/components/_commons/Bloc/Bloc';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';

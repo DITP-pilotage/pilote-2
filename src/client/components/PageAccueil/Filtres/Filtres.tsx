@@ -1,4 +1,4 @@
-import FiltresSélectionMultiple from '@/components/PageAccueil/PageChantiers/Filtres/FiltresSélectionMultiple/FiltresSélectionMultiple';
+import FiltresSélectionMultiple from '@/components/PageAccueil/Filtres/FiltresSélectionMultiple/FiltresSélectionMultiple';
 import { FiltreTypologieType } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
 import { filtresActifs } from '@/client/stores/useFiltresStore/useFiltresStore';
 import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
