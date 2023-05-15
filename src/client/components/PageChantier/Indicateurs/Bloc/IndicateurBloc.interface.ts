@@ -1,6 +1,5 @@
-import { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateur, DétailsIndicateurCodeInsee } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 
 export type IndicateurDétailsParTerritoire = {
   territoireNom: string
@@ -8,7 +7,7 @@ export type IndicateurDétailsParTerritoire = {
 };
 export default interface IndicateurBlocProps {
   indicateur: Indicateur
-  détailsIndicateur: Record<CodeInsee, DétailsIndicateur>
+  détailsIndicateur: DétailsIndicateurCodeInsee
   estDisponibleALImport: boolean
   estInteractif: boolean
 }

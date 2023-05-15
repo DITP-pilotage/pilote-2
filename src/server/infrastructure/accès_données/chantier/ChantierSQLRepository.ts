@@ -20,7 +20,7 @@ class ErreurChantierNonTrouvé extends Error {
   }
 }
 
-class ErreurChantierPermission extends Error {
+export class ErreurChantierPermission extends Error {
   constructor(idChantier: string) {
     super(`Erreur de Permission: l'utilisateur n'a pas le droit de lecture pour le chantier '${idChantier}'.`);
   }
