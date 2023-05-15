@@ -81,6 +81,17 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
       ministèresIds: ['MIN-001'],
       météo: 'COUVERT',
     },
+    {
+      id: 'PS-004',
+      nom: 'Projet structurant 4',
+      tauxAvancement: 100,
+      dateTauxAvancement: new Date().toISOString(),
+      territoireNom: 'Bretagne',
+      codeInsee: '53',
+      maille: 'régionale',
+      ministèresIds: ['MIN-001'],
+      météo: 'ORAGE',
+    },
   ];
 
   let axes: Axe[] = [];

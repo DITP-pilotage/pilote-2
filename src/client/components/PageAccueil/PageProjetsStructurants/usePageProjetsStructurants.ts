@@ -1,4 +1,4 @@
-import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import { CartographieDonnéesAvancement } from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement.interface';
 import { météos } from '@/server/domain/météo/Météo.interface';
@@ -10,11 +10,19 @@ import { RépartitionMétéos } from '@/components/PageAccueil/RépartitionMét�
 export default function usePageProjetsStructurants(projetsStructurants: ProjetStructurant[]) {
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
-  const codeInseeTerritoireSélectionné = territoireSélectionnéTerritoiresStore()?.codeInsee;
+  const codeInseeTerritoireSélectionné = territoireSélectionnéTerritoiresStore()!.codeInsee;
+  const { récupérerDépartementsAssociésÀLaRégionSélectionnée } = actionsTerritoiresStore();
 
   const projetsDuTerritoireSélectionné = codeInseeTerritoireSélectionné === 'FR' 
     ? projetsStructurants
-    : projetsStructurants.filter(projetStructurant => projetStructurant.maille === mailleSélectionnée && projetStructurant.codeInsee === codeInseeTerritoireSélectionné);
+    : projetsStructurants.filter(projetStructurant => projetStructurant.maille === mailleSélectionnée && projetStructurant.codeInsee === codeInseeTerritoireSélectionné); 
+
+  const projetsDuTerritoireSélectionnéEtTerritoiresEnfants = mailleSélectionnée === 'départementale' 
+    ? projetsDuTerritoireSélectionné
+    : [
+      ...projetsDuTerritoireSélectionné,
+      ...projetsStructurants.filter(projetStructurant => projetStructurant.maille === 'départementale' && récupérerDépartementsAssociésÀLaRégionSélectionnée().includes(projetStructurant.codeInsee)),
+    ];
   
   const avancementMoyenTerritoireSélectionné = (): number | null => {
     return calculerMoyenne(projetsDuTerritoireSélectionné.map(projet => projet.tauxAvancement));
@@ -37,7 +45,8 @@ export default function usePageProjetsStructurants(projetsStructurants: ProjetSt
   };
 
   return {
-    projetsDuTerritoireSélectionné: projetsDuTerritoireSélectionné,
+    projetsDuTerritoireSélectionné,
+    projetsDuTerritoireSélectionnéEtTerritoiresEnfants,
     nombreFiltresActifs: récupérerNombreFiltresActifs(),
     donnéesCartographieAvancement: avancementsMoyensTerritoiresMailleSélectionnée(),
     donnéesAvancementsMoyens: avancementMoyenTerritoireSélectionné(),

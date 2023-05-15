@@ -11,8 +11,9 @@ import PageProjetsStructurantsProps from './PageProjetsStructurants.interface';
 import TableauProjetsStructurants from './TableauProjetsStructurants/TableauProjetsStructurants';
 
 export default function PageProjetsStructurants({ projetsStructurants }: PageProjetsStructurantsProps) {
-  const { 
+  const {
     projetsDuTerritoireSélectionné,
+    projetsDuTerritoireSélectionnéEtTerritoiresEnfants,
     nombreFiltresActifs,
     donnéesCartographieAvancement,
     donnéesAvancementsMoyens,
@@ -89,7 +90,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
         <div className="fr-grid-row fr-mt-7v">
           <div className="fr-col">
             <Bloc>
-              <TableauProjetsStructurants données={projetsDuTerritoireSélectionné} />
+              <TableauProjetsStructurants données={projetsDuTerritoireSélectionnéEtTerritoiresEnfants} />
             </Bloc>
           </div>
         </div>

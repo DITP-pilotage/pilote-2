@@ -14,6 +14,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
   territoiresComparés: [],
   maillesAccessiblesEnLecture: [],
   actions: {
+
     initialiserLesTerritoires: territoires => {
       if (get().territoires.length > 0) {
         return;
@@ -42,7 +43,6 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       const territoireSélectionné = territoireNational ?? premierTerritoireRégional ?? premierTerritoireDépartemental;
 
       if (territoireSélectionné) {
-        set({ mailleSélectionnée: territoireSélectionné.maille === 'régionale' ? 'régionale' : 'départementale' });
         get().actions.modifierTerritoireSélectionné(territoireSélectionné.code);
       }
     },
@@ -88,7 +88,14 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       
       set({ territoiresComparés });
     },
+
+    récupérerDépartementsAssociésÀLaRégionSélectionnée: () => {
+      if (get().mailleSélectionnée === 'départementale') return [];
+      return get().départements.filter(département => département.codeParent === get().territoireSélectionné!.code).map(département => département.codeInsee);
+    },
   },
+
+  
 }));
 
 export const actionsTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.actions);
