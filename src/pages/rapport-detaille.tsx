@@ -39,7 +39,7 @@ export default function NextPageRapportDétaillé({
     <>
       <Head>
         <title>
-          Page non trouvée - PILOTE
+          Rapport détaillé - PILOTE
         </title>
       </Head>
       <PageRapportDétaillé
@@ -62,11 +62,15 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
     return;
   }
 
-  if (!query.maille || !query.codeInsee) return { props: {} };
+  if (!query.maille || !query.codeInsee)
+    return { props: {} };
+
   const { maille, codeInsee } = query as { maille: Maille, codeInsee: CodeInsee };
 
   const session = await getServerSession(req, res, authOptions);
-  if (!session || !session.habilitations) return { props: {} };
+
+  if (!session || !session.habilitations)
+    return { props: {} };
 
   const chantierRepository = dependencies.getChantierRepository();
 

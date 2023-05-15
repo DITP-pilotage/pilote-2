@@ -65,7 +65,7 @@ export default function NextPageImportIndicateur({
     <>
       <Head>
         <title>
-          Import des indicateurs - PILOTE
+          {`Mettre à jour les données - Chantier ${chantierInformation.id.replace('CH-', '')} - PILOTE`}
         </title>
       </Head>
       <PageImportIndicateur

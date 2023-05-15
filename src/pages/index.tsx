@@ -24,7 +24,7 @@ export default function NextPageAccueil({ chantiers, projetsStructurants, minist
     <>
       <Head>
         <title>
-          Accueil - PILOTE
+          PILOTE - Piloter l’action publique par les résultats
         </title>
       </Head>
       <PageAccueil
@@ -40,10 +40,9 @@ export default function NextPageAccueil({ chantiers, projetsStructurants, minist
 
 export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
   const session = await getServerSession(req, res, authOptions);
-  
-  if (!session) {
+
+  if (!session || !session.habilitations)
     return { props: {} };
-  }
   
   const habilitation =  new Habilitation(session.habilitations);
   const chantierRepository = dependencies.getChantierRepository();

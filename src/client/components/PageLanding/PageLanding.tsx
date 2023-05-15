@@ -16,7 +16,7 @@ export default function PageLanding() {
     <>
       <Head>
         <title>
-          PILOTE
+          PILOTE - Piloter l’action publique par les résultats
         </title>
       </Head>
       <PageLandingStyled>

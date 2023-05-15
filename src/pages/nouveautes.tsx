@@ -6,7 +6,7 @@ export default function NextPageNouveautés() {
     <>
       <Head>
         <title>
-          Nouveautés - PILOTE
+          Nouveautés : Service bientôt disponible ! - PILOTE
         </title>
       </Head>
       <Nouveautés />

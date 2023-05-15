@@ -6,7 +6,7 @@ export default function NextPageCentreDAide() {
     <>
       <Head>
         <title>
-          Centre d&apos;aide - PILOTE
+          Centre d&apos;aide : Service bientôt disponible ! - PILOTE
         </title>
       </Head>
       <CentreDAide />

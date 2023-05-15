@@ -6,7 +6,7 @@ export default function NextPageSuiviDeLActivité() {
     <>
       <Head>
         <title>
-          Suivi de l&apos;activité - PILOTE
+          Suivi de l&apos;activité : Service bientôt disponible ! - PILOTE
         </title>
       </Head>
       <SuiviDeLActivité />
