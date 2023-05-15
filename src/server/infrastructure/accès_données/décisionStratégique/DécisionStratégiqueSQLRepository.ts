@@ -4,7 +4,7 @@ import DécisionStratégiqueRepository from '@/server/domain/décisionStratégiq
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 
 export const NOMS_TYPES_DÉCISION_STRATÉGIQUE: Record<string, TypeDécisionStratégique> = {
-  suivi_des_decision: 'suiviDesDécisionsStratégiques',
+  suivi_des_decisions: 'suiviDesDécisionsStratégiques',
 };
 
 export const CODES_TYPES_DÉCISION_STRATÉGIQUE: Record<TypeDécisionStratégique, TypeDécisionStratégiquePrisma> = {
