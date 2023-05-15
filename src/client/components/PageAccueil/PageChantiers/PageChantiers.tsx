@@ -12,8 +12,8 @@ import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerr
 import ExportDesDonnées, { ID_HTML_MODALE_EXPORT } from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import FiltresActifs from '@/client/components/PageAccueil/FiltresActifs/FiltresActifs';
+import RépartitionMétéo from '@/client/components/PageAccueil/RépartitionMétéo/RépartitionMétéo';
 import PageChantiersProps from './PageChantiers.interface';
-import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
 

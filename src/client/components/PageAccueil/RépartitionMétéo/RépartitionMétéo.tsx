@@ -1,5 +1,5 @@
 import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
-import RépartitionMétéoProps from '@/components/PageAccueil/PageChantiers/RépartitionMétéo/RépartitionMétéo.interface';
+import RépartitionMétéoProps from '@/components/PageAccueil/RépartitionMétéo/RépartitionMétéo.interface';
 import RépartitionMétéoÉlément from './RépartitionMétéoÉlément/RépartitionMétéoÉlément';
 import RépartitionMétéoStyled from './RépartitionMétéo.styled';
 
