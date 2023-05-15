@@ -16,7 +16,7 @@ function déterminerRemplissage(valeur: Météo | null, élémentsDeLégende: Ca
 }
 
 export default function useCartographieMétéo(données: CartographieDonnéesMétéo, élémentsDeLégende: CartographieÉlémentsDeLégende) {
-  const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
+  const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
   const légende = useMemo(() => (
     Object.values(élémentsDeLégende).map(({ remplissage, libellé, picto }) => ({
@@ -30,7 +30,7 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
     let donnéesFormatées: CartographieDonnées = {};
 
     données.forEach(({ valeur, codeInsee }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoire(codeInsee);
+      const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
   
       donnéesFormatées[codeInsee] = {
         valeurAffichée: libellésMétéos[valeur],
@@ -40,7 +40,7 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
     });
 
     return donnéesFormatées;
-  }, [données, récupérerDétailsSurUnTerritoire, élémentsDeLégende]);
+  }, [données, récupérerDétailsSurUnTerritoireAvecCodeInsee, élémentsDeLégende]);
 
   return {
     légende,

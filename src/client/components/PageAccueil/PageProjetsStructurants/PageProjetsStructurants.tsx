@@ -62,7 +62,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                   <JaugeDeProgression
                     couleur='rose'
                     libellé="Taux d'avancement global"
-                    pourcentage={donnéesAvancementsMoyens[territoireSélectionné.codeInsee]}
+                    pourcentage={donnéesAvancementsMoyens[territoireSélectionné!.codeInsee]}
                     taille='lg'
                   />
                 </div>
