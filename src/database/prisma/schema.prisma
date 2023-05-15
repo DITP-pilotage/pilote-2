@@ -257,6 +257,17 @@ model synthese_des_resultats_projet_structurant {
   @@schema("public")
 }
 
+model commentaire_projet_structurant {
+  id                    String   @id @db.Uuid
+  projet_structurant_id String
+  type                  String
+  contenu               String
+  date                  DateTime @db.Timestamp
+  auteur                String?
+
+  @@schema("public")
+}
+
 model utilisateur {
   id                               String                             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email                            String                             @unique
