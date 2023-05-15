@@ -10,6 +10,7 @@ import { SessionProvider } from 'next-auth/react';
 import { Router } from 'next/router';
 import { useState, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Head from 'next/head';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
 import useDétecterVueMobile from '@/client/hooks/useDétecterVueMobile';
 import api from '@/server/infrastructure/api/trpc/api';
@@ -64,6 +65,27 @@ function MonApplication({ Component, pageProps }: AppProps) {
         noModule
         src="/js/dsfr/dsfr.nomodule.min.js"
       />
+      <Head>
+        <link
+          href="/favicon/apple-touch-icon.png"
+          rel="apple-touch-icon"
+        />
+        <link
+          href="/favicon/favicon.svg"
+          rel="icon"
+          type="image/svg+xml"
+        />
+        <link
+          href="/favicon/favicon.ico"
+          rel="shortcut icon"
+          type="image/x-icon"
+        />
+        <link
+          crossOrigin="use-credentials"
+          href="/favicon/manifest.webmanifest"
+          rel="manifest"
+        />
+      </Head>
       <QueryClientProvider client={queryClient}>
         <SessionProvider session={pageProps.session}>
           <MiseEnPage afficherLeLoader={afficherLeLoader}>

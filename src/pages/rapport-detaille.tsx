@@ -1,5 +1,6 @@
 import { GetServerSidePropsContext } from 'next/types';
 import { getServerSession } from 'next-auth/next';
+import Head from 'next/head';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import PageRapportDétaillé from '@/components/PageRapportDétaillé/PageRapportDétaillé';
@@ -30,17 +31,26 @@ export default function NextPageRapportDétaillé({
   maille,
   codeInsee,
 }: NextPageRapportDétailléProps) {
+  if (process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE !== 'true') {
+    return;
+  }
   
   return (
-    process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
-    <PageRapportDétaillé
-      chantiers={chantiers}
-      codeInsee={codeInsee}
-      détailsIndicateursGroupésParChantier={détailsIndicateursGroupésParChantier}
-      indicateursGroupésParChantier={indicateursGroupésParChantier}
-      maille={maille}
-      publicationsGroupéesParChantier={publicationsGroupéesParChantier}
-    />
+    <>
+      <Head>
+        <title>
+          Rapport détaillé - PILOTE
+        </title>
+      </Head>
+      <PageRapportDétaillé
+        chantiers={chantiers}
+        codeInsee={codeInsee}
+        détailsIndicateursGroupésParChantier={détailsIndicateursGroupésParChantier}
+        indicateursGroupésParChantier={indicateursGroupésParChantier}
+        maille={maille}
+        publicationsGroupéesParChantier={publicationsGroupéesParChantier}
+      />
+    </>
   );
 }
 
@@ -52,11 +62,15 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
     return;
   }
 
-  if (!query.maille || !query.codeInsee) return { props: {} };
+  if (!query.maille || !query.codeInsee)
+    return { props: {} };
+
   const { maille, codeInsee } = query as { maille: Maille, codeInsee: CodeInsee };
 
   const session = await getServerSession(req, res, authOptions);
-  if (!session || !session.habilitations) return { props: {} };
+
+  if (!session || !session.habilitations)
+    return { props: {} };
 
   const chantierRepository = dependencies.getChantierRepository();
 

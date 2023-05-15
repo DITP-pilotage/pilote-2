@@ -1,5 +1,6 @@
 import { getServerSession } from 'next-auth/next';
 import { GetServerSidePropsContext } from 'next/types';
+import Head from 'next/head';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
@@ -20,22 +21,28 @@ interface NextPageAccueilProps {
 
 export default function NextPageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs }: NextPageAccueilProps) {
   return (
-    <PageAccueil
-      axes={axes}
-      chantiers={chantiers}
-      ministères={ministères}
-      ppgs={ppgs}
-      projetsStructurants={projetsStructurants}
-    />
+    <>
+      <Head>
+        <title>
+          PILOTE - Piloter l’action publique par les résultats
+        </title>
+      </Head>
+      <PageAccueil
+        axes={axes}
+        chantiers={chantiers}
+        ministères={ministères}
+        ppgs={ppgs}
+        projetsStructurants={projetsStructurants}
+      />
+    </>
   );
 }
 
 export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
   const session = await getServerSession(req, res, authOptions);
-  
-  if (!session) {
+
+  if (!session || !session.habilitations)
     return { props: {} };
-  }
   
   const habilitation =  new Habilitation(session.habilitations);
   const chantierRepository = dependencies.getChantierRepository();

@@ -1,7 +1,15 @@
+import Head from 'next/head';
 import Nouveautés from '@/components/Nouveautés/Nouveautés';
 
 export default function NextPageNouveautés() {
   return (
-    <Nouveautés />
+    <>
+      <Head>
+        <title>
+          Nouveautés : Service bientôt disponible ! - PILOTE
+        </title>
+      </Head>
+      <Nouveautés />
+    </>
   );
 }
