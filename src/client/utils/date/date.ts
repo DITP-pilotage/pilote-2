@@ -2,6 +2,9 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 type FormatDeDate = 'mm/aaaa' | 'jj/mm/aaaa';
 
 const toLocaleDateStringOptions: Record<FormatDeDate, Intl.DateTimeFormatOptions> = {
@@ -21,7 +24,5 @@ export function formaterDate(dateISO: string | null | undefined, format: FormatD
 }
 
 export function horodatage() {
-  dayjs.extend(utc);
-  dayjs.extend(timezone);
   return dayjs.tz(new Date, dayjs.tz.guess()).format('YYYY-MM-DD-HH-mm-ss');
 }

@@ -1,5 +1,10 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const NON_APPLICABLE = 'N/A';
 export const OUI = 'Oui';
