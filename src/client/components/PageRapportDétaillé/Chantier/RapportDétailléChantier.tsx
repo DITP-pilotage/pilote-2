@@ -96,8 +96,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         </div>
         {
           décisionStratégique !== null
-          && territoireSélectionné!.maille === 'nationale'
-          && process.env.NEXT_PUBLIC_FT_DECISIONS_STRATEGIQUES_DISABLED !== 'true' &&
+          && territoireSélectionné!.maille === 'nationale' &&
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
               <DécisionsStratégiques
