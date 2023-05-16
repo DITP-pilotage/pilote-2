@@ -79,3 +79,6 @@ models:
           - 'projet_structurant_id'
           - 'territoire_id'
           - 'date'
+      synthese_des_resultats_projet_structurant:
+        +unique_key:
+          - 'id'
