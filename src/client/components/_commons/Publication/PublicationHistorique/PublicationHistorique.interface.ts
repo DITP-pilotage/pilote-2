@@ -3,7 +3,7 @@ import PublicationProps from '@/client/components/_commons/Publication/Publicati
 export default interface PublicationHistoriqueProps {
   type: PublicationProps['caractéristiques']['type']
   entité: PublicationProps['caractéristiques']['entité']
-  chantierId: PublicationProps['chantierId']
+  réformeId: PublicationProps['réformeId'] 
   maille: PublicationProps['maille']
   codeInsee: PublicationProps['codeInsee']
 }

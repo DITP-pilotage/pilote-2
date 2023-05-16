@@ -7,10 +7,10 @@ import AvancementChantier from '@/components/PageChantier/AvancementChantier/Ava
 import Responsables from '@/components/PageChantier/Responsables/Responsables';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Cartes from '@/components/PageChantier/Cartes/Cartes';
-import Objectifs from '@/components/PageChantier/Objectifs/Objectifs';
+import ObjectifsPageChantier from '@/components/PageChantier/Objectifs/Objectifs';
 import Indicateurs from '@/components/PageChantier/Indicateurs/Indicateurs';
 import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
-import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
+import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Titre from '@/components/_commons/Titre/Titre';
 
@@ -76,7 +76,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           objectifs !== null &&
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
-              <Objectifs
+              <ObjectifsPageChantier
                 chantierId={chantier.id}
                 codeInsee='FR'
                 estInteractif={false}
@@ -113,11 +113,11 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
             <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
               <div className="fr-col-12">
                 <Commentaires
-                  chantierId={chantier.id}
                   codeInsee={territoireSélectionné!.codeInsee}
                   commentaires={commentaires}
                   estInteractif={false}
                   maille={territoireSélectionné!.maille}
+                  réformeId={chantier.id}
                 />
               </div>
             </div>

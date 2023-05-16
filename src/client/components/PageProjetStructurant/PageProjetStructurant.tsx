@@ -5,10 +5,12 @@ import { Rubrique } from '@/components/_commons/Sommaire/Sommaire.interface';
 import Bloc from '@/client/components/_commons/Bloc/Bloc';
 import Titre from '@/client/components/_commons/Titre/Titre';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
+import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import PageProjetStructurantProps from './PageProjetStructurant.interface';
 import PageProjetStructurantEnTête from './EnTête/EnTête';
 import PageProjetStructurantStyled from './PageProjetStructurant.styled';
-import AvancementProjet from './AvancementProjet/AvancementProjet';
+import AvancementPageProjetStructurant from './Avancement/AvancementPageProjetStructurant';
+import ObjectifsPageProjetStructurant from './Objectifs/Objectifs';
 
 export default function PageProjetStructurant({ projetStructurant }: PageProjetStructurantProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);  
@@ -45,7 +47,7 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
         <div className='fr-p-4w'>
           <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-my-0 fr-pb-1w">
             <div className='fr-col'>
-              <AvancementProjet
+              <AvancementPageProjetStructurant
                 avancement={projetStructurant.tauxAvancement}
                 territoireNom={projetStructurant.territoireNomÀAfficher}
               />
@@ -74,17 +76,22 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
               />
             </div>
           </div>
-          {/* <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
-              <Objectifs
-                chantierId={chantier.id}
-                codeInsee='FR'
-                maille='nationale'
-                modeÉcriture={modeÉcritureObjectifs}
-                objectifs={objectifs}
+              <ObjectifsPageProjetStructurant nomTerritoire={projetStructurant.territoireNomÀAfficher}  />
+            </div>
+          </div>
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <div className="fr-col-12">
+              <Commentaires
+                codeInsee={projetStructurant.codeInsee}
+                commentaires={[]}
+                maille={projetStructurant.maille}
+                modeÉcriture={false}
+                réformeId={projetStructurant.id}
               />
             </div>
-          </div> */}
+          </div>
         </div>
       </main>
     </PageProjetStructurantStyled>

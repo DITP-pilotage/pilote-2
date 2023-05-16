@@ -2,12 +2,12 @@ import { Fragment } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import CommentairesProps from '@/components/PageChantier/Commentaires/Commentaires.interface';
+import CommentairesProps from '@/components/_commons/Commentaires/Commentaires.interface';
 import Publication from '@/components/_commons/Publication/Publication';
 import { consignesDÉcritureCommentaire, libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
 import { TypeCommentaire, typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
 
-export default function Commentaires({ commentaires, chantierId, maille, codeInsee, modeÉcriture = false, estInteractif = true }: CommentairesProps) {
+export default function Commentaires({ commentaires, réformeId, maille, codeInsee, modeÉcriture = false, estInteractif = true }: CommentairesProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const typesCommentaire = maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale;
 
@@ -35,12 +35,12 @@ export default function Commentaires({ commentaires, chantierId, maille, codeIns
                   libelléType: libellésTypesCommentaire[type as TypeCommentaire],
                   consigneDÉcriture: consignesDÉcritureCommentaire[type as TypeCommentaire],
                 }}
-                chantierId={chantierId}
                 codeInsee={codeInsee}
                 estInteractif={estInteractif}
                 maille={maille}
                 modeÉcriture={modeÉcriture}
                 publicationInitiale={commentaires?.find(commentaire => commentaire?.type === type) || null}
+                réformeId={réformeId}
               />
             </Fragment>
           ))

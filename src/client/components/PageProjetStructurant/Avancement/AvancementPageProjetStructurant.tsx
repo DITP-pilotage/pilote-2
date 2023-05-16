@@ -1,9 +1,9 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import Titre from '@/components/_commons/Titre/Titre';
-import AvancementProjetProps from './AvancementProjet.interface';
+import AvancementPageProjetStructurantProps from './AvancementPageProjetStructurant.interface';
 
-export default function AvancementProjet({ territoireNom, avancement }: AvancementProjetProps) {
+export default function AvancementPageProjetStructurant({ territoireNom, avancement }: AvancementPageProjetStructurantProps) {
   return (
     <section id='avancement'>
       <Titre

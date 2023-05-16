@@ -8,7 +8,7 @@ import PublicationHistoriqueProps from './PublicationHistorique.interface';
 export default function usePublicationHistorique(
   type: PublicationHistoriqueProps['type'], 
   entité: PublicationHistoriqueProps['entité'],
-  chantierId: PublicationHistoriqueProps['chantierId'],
+  chantierId: PublicationHistoriqueProps['réformeId'],
   maille: PublicationHistoriqueProps['maille'],
   codeInsee: PublicationHistoriqueProps['codeInsee'],
 ) {

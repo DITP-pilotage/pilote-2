@@ -5,11 +5,11 @@ import { Rubrique } from '@/components/_commons/Sommaire/Sommaire.interface';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
-import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
+import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import Loader from '@/components/_commons/Loader/Loader';
 import SynthèseDesRésultats from '@/client/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Sommaire from '@/client/components/_commons/Sommaire/Sommaire';
-import Objectifs from '@/components/PageChantier/Objectifs/Objectifs';
+import ObjectifsPageChantier from '@/components/PageChantier/Objectifs/Objectifs';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
@@ -131,7 +131,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 </div>
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                   <div className="fr-col-12">
-                    <Objectifs
+                    <ObjectifsPageChantier
                       chantierId={chantier.id}
                       codeInsee='FR'
                       maille='nationale'
@@ -167,11 +167,11 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                   <div className="fr-col-12">
                     <Commentaires
-                      chantierId={chantier.id}
                       codeInsee={territoireSélectionné!.codeInsee}
                       commentaires={commentaires}
                       maille={territoireSélectionné!.maille}
                       modeÉcriture={territoireSélectionné?.accèsSaisiePublication}
+                      réformeId={chantier.id}
                     />
                   </div>
                 </div>
