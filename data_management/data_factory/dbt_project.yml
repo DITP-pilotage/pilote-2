@@ -74,3 +74,8 @@ models:
       decision_strategique:
         +unique_key:
           - 'id'
+      objectif_projet_structurant:
+        +unique_key:
+          - 'projet_structurant_id'
+          - 'territoire_id'
+          - 'date'

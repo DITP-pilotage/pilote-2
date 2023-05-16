@@ -5,7 +5,7 @@ if [ -z $PGHOST ] || [ -z $PGPORT ] || [ -z $PGUSER ] || [ -z $PGPASSWORD ] || [
 then
   if [ -f .env ];
   then
-    export $(grep -v '^#' .env | xargs)
+    source .env
   else
     echo "ERROR : .env does not exist. Cannot load variable DATABASE_URL. Exiting"
     exit 1
