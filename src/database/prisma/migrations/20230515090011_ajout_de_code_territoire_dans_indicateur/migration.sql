@@ -5,7 +5,12 @@
 
 */
 -- AlterTable
-ALTER TABLE "public"."indicateur" ADD COLUMN     "territoire_code" TEXT NOT NULL;
+ALTER TABLE "public"."indicateur" ADD COLUMN "territoire_code" TEXT;
+
+UPDATE indicateur
+SET territoire_code = CONCAT(maille, '-', code_insee);
+
+ALTER TABLE "public"."indicateur" ALTER COLUMN "territoire_code" SET NOT NULL;
 
 -- AddForeignKey
 ALTER TABLE "public"."indicateur" ADD CONSTRAINT "indicateur_territoire_code_fkey" FOREIGN KEY ("territoire_code") REFERENCES "public"."territoire"("code") ON DELETE CASCADE ON UPDATE CASCADE;

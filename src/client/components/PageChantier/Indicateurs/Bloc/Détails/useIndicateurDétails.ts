@@ -15,9 +15,11 @@ export default function useIndicateurDétails(indicateurId: Indicateur['id'], fu
 
   const [donnéesCartographieAvancement, setDonnéesCartographieAvancement] = useState<CartographieDonnéesAvancement | null>(null);
   const [donnéesCartographieValeurActuelle, setDonnéesCartographieValeurActuelle] = useState<CartographieDonnéesValeurActuelle | null>(null);
-  const { refetch: fetchDétailsIndicateur } = api.indicateur.récupererDétailsIndicateur.useQuery(
+  const { refetch: fetchDétailsIndicateur  } = api.indicateur.récupererDétailsIndicateur.useQuery(
     { indicateurId },
-    { refetchOnWindowFocus: false, enabled: false,
+    {
+      refetchOnWindowFocus: false,
+      enabled: false,
       onSuccess: (data: DétailsIndicateurTerritoire) => {
         setDonnéesCartographieAvancement(
           objectEntries(data[mailleSélectionnée]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.avancement.global, codeInsee: codeInsee })),
@@ -25,7 +27,8 @@ export default function useIndicateurDétails(indicateurId: Indicateur['id'], fu
         setDonnéesCartographieValeurActuelle(
           objectEntries(data[mailleSélectionnée]).map(([codeInsee, détailsIndicateur]) => ({ valeur: détailsIndicateur.valeurs[détailsIndicateur.valeurs.length - 1] ?? null, codeInsee: codeInsee })),
         );
-      } },
+      },
+    },
   );
   useEffect(() => {
     if (futOuvert) {
