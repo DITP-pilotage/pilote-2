@@ -51,8 +51,9 @@ models:
           - 'import_date'
       pivot_faits_indicateur:
         +materialized: table
-      pivot_faits_indicateur_par_date:
-        +materialized: view
+      2_pivot_faits_indicateur:
+        pivot_faits_indicateur_par_date:
+          +materialized: view
     metrics:
       +schema: marts
       taux_avancement_indicateur__departement:
