@@ -44,7 +44,10 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
             avancements !== null &&
             <>
               <div className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-6' : 'fr-col-xl-12'} fr-col-12`}>
-                <AvancementChantier avancements={avancements} />
+                <AvancementChantier
+                  avancements={avancements}
+                  chantierId={chantier.id}
+                />
               </div>
               <div className='fr-col-xl-6 fr-col-12'>
                 <Responsables chantier={chantier} />
