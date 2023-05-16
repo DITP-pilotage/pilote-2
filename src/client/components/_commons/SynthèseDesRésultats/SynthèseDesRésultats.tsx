@@ -1,25 +1,24 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
-import { SynthèseDesRésultatsProps } from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultats.interface';
-import SynthèseDesRésultatsStyled from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultats.styled';
+import { SynthèseDesRésultatsProps } from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats.interface';
+import SynthèseDesRésultatsStyled from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats.styled';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
-import HistoriqueDeLaSynthèseDesRésultats from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultatsHistorique/SynthèseDesRésultatsHistorique';
-import useSynthèseDesRésultats from '@/components/PageChantier/SynthèseDesRésultats/useSynthèseDesRésultats';
+import SynthèseDesRésultatsHistorique from '@/components/_commons/SynthèseDesRésultats/Historique/Historique';
+import useSynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/useSynthèseDesRésultats';
 import Alerte from '@/components/_commons/Alerte/Alerte';
-import SynthèseDesRésultatsAffichage from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultatsAffichage/SynthèseDesRésultatsAffichage';
-import SynthèseDesRésultatsFormulaire from './SynthèseDesRésultatsFormulaire/SynthèseDesRésultatsFormulaire';
+import SynthèseDesRésultatsAffichage from '@/components/_commons/SynthèseDesRésultats/Affichage/Affichage';
+import SynthèseDesRésultatsFormulaire from './Formulaire/Formulaire';
 
-export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale, rechargerChantier, chantierId, modeÉcriture = false, estInteractif = true }: SynthèseDesRésultatsProps) {
+export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale, rechargerRéforme, réformeId, nomTerritoire, modeÉcriture = false, estInteractif = true }: SynthèseDesRésultatsProps) {  
   const {
     synthèseDesRésultats,
-    nomTerritoireSélectionné,
     modeÉdition,
     alerte,
     synthèseDesRésultatsCréée,
     activerLeModeÉdition,
     désactiverLeModeÉdition,
-  } = useSynthèseDesRésultats(synthèseDesRésultatsInitiale, rechargerChantier);
+  } = useSynthèseDesRésultats(synthèseDesRésultatsInitiale, rechargerRéforme);
 
   return (
     <SynthèseDesRésultatsStyled id="synthèse">
@@ -29,7 +28,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
       >
         Météo et synthèse des résultats 
       </Titre>
-      <Bloc titre={nomTerritoireSélectionné}>
+      <Bloc titre={nomTerritoire}>
         <div className='fr-px-1w fr-py-2w'>
           {
             modeÉdition && modeÉcriture ?
@@ -68,7 +67,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
                 <div className='fr-grid-row fr-grid-row--right'>
                   <div className='fr-col-12 actions fr-mt-1w'>
                     {
-                      !!synthèseDesRésultats && <HistoriqueDeLaSynthèseDesRésultats chantierId={chantierId} />
+                      !!synthèseDesRésultats && <SynthèseDesRésultatsHistorique réformeId={réformeId} />
                       }
                     {
                       !!modeÉcriture &&

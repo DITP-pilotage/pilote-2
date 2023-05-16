@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const HistoriqueDeLaSynthèseDesRésultatsStyled = styled.div`
+const SynthèseDesRésultatsHistoriqueStyled = styled.div`
   .conteneur-météo {
     text-align: center;
   }
@@ -17,4 +17,4 @@ const HistoriqueDeLaSynthèseDesRésultatsStyled = styled.div`
   }
 `;
 
-export default HistoriqueDeLaSynthèseDesRésultatsStyled;
+export default SynthèseDesRésultatsHistoriqueStyled;

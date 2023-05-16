@@ -3,10 +3,10 @@ import PageImportIndicateurEnTête from './PageImportIndicateurEnTête/PageImpor
 import PageImportIndicateurExplicationEtapeImport from './PageImportIndicateurExplicationEtapeImport/PageImportIndicateurExplicationEtapeImport';
 import PageImportIndicateurSectionImport from './PageImportIndicateurSectionImport/PageImportIndicateurSectionImport';
 
-export default function PageImportIndicateur({ chantierInformation, indicateurs, détailsIndicateurs }: PageImportIndicateurProps) {  
+export default function PageImportIndicateur({ chantierInformations, indicateurs, détailsIndicateurs }: PageImportIndicateurProps) {  
   return (
     <main>
-      <PageImportIndicateurEnTête chantierInformation={chantierInformation} />
+      <PageImportIndicateurEnTête chantierInformations={chantierInformations} />
       <PageImportIndicateurExplicationEtapeImport />
       <PageImportIndicateurSectionImport
         détailsIndicateurs={détailsIndicateurs}

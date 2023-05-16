@@ -1,8 +1,8 @@
 import '@gouvfr/dsfr/dist/dsfr.min.css';
 import Link from 'next/link';
 import Titre from '@/components/_commons/Titre/Titre';
-import PageChantierEnTêteProps from './PageChantierEnTête.interface';
-import PageChantierEnTêteStyled from './PageChantierEnTête.styled';
+import PageChantierEnTêteProps from './EnTête.interface';
+import PageChantierEnTêteStyled from './EnTête.styled';
 
 export default function PageChantierEnTête({ chantier }: PageChantierEnTêteProps) {
   return (
@@ -30,7 +30,7 @@ export default function PageChantierEnTête({ chantier }: PageChantierEnTêtePro
           className="fr-icon-download-line"
         />
         {' '}
-        Exporter
+        Imprimer
       </button>
     </PageChantierEnTêteStyled>
   );

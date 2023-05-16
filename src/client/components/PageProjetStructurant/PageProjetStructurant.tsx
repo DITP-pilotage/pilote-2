@@ -5,7 +5,6 @@ import { Rubrique } from '@/components/_commons/Sommaire/Sommaire.interface';
 import Bloc from '@/client/components/_commons/Bloc/Bloc';
 import Titre from '@/client/components/_commons/Titre/Titre';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
-import Objectifs from '@/client/components/PageChantier/Objectifs/Objectifs';
 import PageProjetStructurantProps from './PageProjetStructurant.interface';
 import PageProjetStructurantEnTête from './EnTête/EnTête';
 import PageProjetStructurantStyled from './PageProjetStructurant.styled';
@@ -75,7 +74,7 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
               />
             </div>
           </div>
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+          {/* <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
               <Objectifs
                 chantierId={chantier.id}
@@ -85,7 +84,7 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
                 objectifs={objectifs}
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </main>
     </PageProjetStructurantStyled>

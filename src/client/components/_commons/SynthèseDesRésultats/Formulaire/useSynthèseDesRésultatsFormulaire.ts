@@ -6,7 +6,7 @@ import { récupérerUnCookie } from '@/client/utils/cookies';
 import api from '@/server/infrastructure/api/trpc/api';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
-import SynthèseDesRésultatsFormulaireProps, { SynthèseDesRésultatsFormulaireInputs } from './SynthèseDesRésultatsFormulaire.interface';
+import SynthèseDesRésultatsFormulaireProps, { SynthèseDesRésultatsFormulaireInputs } from './Formulaire.interface';
 
 export default function useSynthèseDesRésultatsFormulaire(synthèseDesRésultatsCrééeCallback: SynthèseDesRésultatsFormulaireProps['synthèseDesRésultatsCrééeCallback']) {
   const [alerte, setAlerte] = useState <AlerteProps | null>(null);

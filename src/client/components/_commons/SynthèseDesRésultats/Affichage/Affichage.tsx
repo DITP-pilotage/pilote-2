@@ -1,6 +1,6 @@
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
-import SynthèseDesRésultatsAffichageProps from './SynthèseDesRésultatsAffichage.interface';
+import SynthèseDesRésultatsAffichageProps from './Affichage.interface';
 
 export default function SynthèseDesRésultatsAffichage({ synthèseDesRésultats }: SynthèseDesRésultatsAffichageProps) {
   if (!synthèseDesRésultats) {

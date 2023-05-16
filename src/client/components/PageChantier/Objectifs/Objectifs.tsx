@@ -20,10 +20,10 @@ export default function Objectifs({ objectifs, chantierId, maille, codeInsee, mo
           typesObjectif.map((type, i ) => (
             <Fragment key={type}>
               {
-                  i !== 0 && (
-                    <hr className="fr-hr fr-mx-n2w" />
-                  )
-                }
+                i !== 0 && (
+                  <hr className="fr-hr fr-mx-n2w" />
+                )
+              }
               <Publication
                 caractéristiques={{
                   type: type,

@@ -4,14 +4,14 @@ import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
 import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIndicateur';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { ChantierInformation } from '@/components/PageImportIndicateur/ChantierInformation.interface';
+import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import usePageChantier from '@/components/PageChantier/usePageChantier';
 
 interface NextPageImportIndicateurProps {
-  chantierInformation: ChantierInformation
+  chantierInformations: ChantierInformations
   indicateurs: Indicateur[],
 }
 
@@ -45,31 +45,29 @@ export async function getServerSideProps({
   return {
     props: {
       indicateurs,
-      chantierInformation: {
+      chantierInformations: {
         id: chantier.id,
         nom: chantier.nom,
-        axe: chantier.axe,
-        ppg: chantier.ppg,
       },
     },
   };
 }
 
 export default function NextPageImportIndicateur({
-  chantierInformation,
+  chantierInformations,
   indicateurs,
 }: NextPageImportIndicateurProps) {
-  const { détailsIndicateurs } = usePageChantier(chantierInformation.id);
+  const { détailsIndicateurs } = usePageChantier(chantierInformations.id);
 
   return (
     <>
       <Head>
         <title>
-          {`Mettre à jour les données - Chantier ${chantierInformation.id.replace('CH-', '')} - PILOTE`}
+          {`Mettre à jour les données - Chantier ${chantierInformations.id.replace('CH-', '')} - PILOTE`}
         </title>
       </Head>
       <PageImportIndicateur
-        chantierInformation={chantierInformation}
+        chantierInformations={chantierInformations}
         détailsIndicateurs={détailsIndicateurs}
         indicateurs={indicateurs}
       />

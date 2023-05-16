@@ -1,13 +1,11 @@
 import { render, screen, within } from '@testing-library/react';
 import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIndicateur';
-import { ChantierInformation } from '@/components/PageImportIndicateur/ChantierInformation.interface';
+import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import IndicateurBuilder from '@/server/domain/indicateur/Indicateur.builder';
 
 const CHANTIER_NOM = 'Offrir à chaque enfant une éducation culturelle et artistique';
-const CHANTIER_AXE = 'Ceci est un axe';
-const CHANTIER_PPG = 'Ceci est un ppg';
 
 jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function Cartographie() {
   return (
@@ -32,17 +30,15 @@ describe('PageImportIndicateur', () => {
   describe('En tête', () => {
     it("doit afficher un titre indiquant que l'on est sur la page indicateur", () => {
       // GIVEN
-      const chantierInformation: ChantierInformation = {
+      const chantierInformations: ChantierInformations = {
         id: 'chantierId',
         nom: CHANTIER_NOM,
-        axe: CHANTIER_AXE,
-        ppg: CHANTIER_PPG,
       };
 
       // WHEN
       render(
         <PageImportIndicateur
-          chantierInformation={chantierInformation}
+          chantierInformations={chantierInformations}
           détailsIndicateurs={null}
           indicateurs={[]}
         />,
@@ -57,17 +53,15 @@ describe('PageImportIndicateur', () => {
 
     it("doit afficher un fil d'Ariane indiquant l'indicateur, le chantier et le retour à l'accueil", () => {
       // GIVEN
-      const chantierInformation: ChantierInformation = {
+      const chantierInformation: ChantierInformations = {
         id: 'chantierId',
         nom: CHANTIER_NOM,
-        axe: CHANTIER_AXE,
-        ppg: CHANTIER_PPG,
       };
 
       // WHEN
       render(
         <PageImportIndicateur
-          chantierInformation={chantierInformation}
+          chantierInformations={chantierInformation}
           détailsIndicateurs={null}
           indicateurs={[]}
         />,
@@ -88,17 +82,15 @@ describe('PageImportIndicateur', () => {
   describe('Section import fichier indicateur pour un chantier', () => {
     it('doit afficher le titre de la section', () => {
       // GIVEN
-      const chantierInformation: ChantierInformation = {
+      const chantierInformation: ChantierInformations = {
         id: 'chantierId',
         nom: CHANTIER_NOM,
-        axe: CHANTIER_AXE,
-        ppg: CHANTIER_PPG,
       };
 
       // WHEN
       render(
         <PageImportIndicateur
-          chantierInformation={chantierInformation}
+          chantierInformations={chantierInformation}
           détailsIndicateurs={null}
           indicateurs={[]}
         />,
@@ -119,17 +111,15 @@ describe('PageImportIndicateur', () => {
 
       const détailsIndicateurs: DétailsIndicateurs = {};
 
-      const chantierInformation: ChantierInformation = {
+      const chantierInformation: ChantierInformations = {
         id: 'chantierId',
         nom: CHANTIER_NOM,
-        axe: CHANTIER_AXE,
-        ppg: CHANTIER_PPG,
       };
 
       // WHEN
       await render(
         <PageImportIndicateur
-          chantierInformation={chantierInformation}
+          chantierInformations={chantierInformation}
           détailsIndicateurs={détailsIndicateurs}
           indicateurs={indicateurs}
         />,

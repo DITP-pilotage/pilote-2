@@ -7,8 +7,8 @@ import Titre from '@/components/_commons/Titre/Titre';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import { LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS, validationSynthèseDesRésultatsFormulaire } from 'validation/synthèseDesRésultats';
-import SynthèseDesRésultatsFormulaireStyled from './SynthèseDesRésultatsFormulaire.styled';
-import SynthèseDesRésultatsFormulaireProps, { SynthèseDesRésultatsFormulaireInputs } from './SynthèseDesRésultatsFormulaire.interface';
+import SynthèseDesRésultatsFormulaireStyled from './Formulaire.styled';
+import SynthèseDesRésultatsFormulaireProps, { SynthèseDesRésultatsFormulaireInputs } from './Formulaire.interface';
 import useSynthèseDesRésultatsFormulaire from './useSynthèseDesRésultatsFormulaire';
 
 export default function SynthèseDesRésultatsFormulaire({ contenuInitial, météoInitiale, synthèseDesRésultatsCrééeCallback, annulationCallback }: SynthèseDesRésultatsFormulaireProps) {

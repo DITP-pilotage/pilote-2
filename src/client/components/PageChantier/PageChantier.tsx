@@ -9,6 +9,7 @@ import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
 import Loader from '@/components/_commons/Loader/Loader';
 import SynthèseDesRésultats from '@/client/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Sommaire from '@/client/components/_commons/Sommaire/Sommaire';
+import Objectifs from '@/components/PageChantier/Objectifs/Objectifs';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
@@ -17,7 +18,6 @@ import PageChantierEnTête from './EnTête/EnTête';
 import Cartes from './Cartes/Cartes';
 import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
-import Objectifs from './Objectifs/Objectifs';
 import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
 
 export default function PageChantier({ indicateurs, chantierId }: PageChantierProps) {
