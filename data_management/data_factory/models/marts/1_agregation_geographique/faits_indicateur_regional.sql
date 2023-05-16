@@ -20,8 +20,8 @@ SELECT
     fi_dept.mois_releve,
     fi_dept.type_mesure,
     CASE
-        WHEN MAX(config_vac.operation) = 'sum' THEN SUM(fi_dept.valeur)
-        WHEN MAX(config_vac.operation) = 'avg' THEN AVG(fi_dept.valeur)
+        WHEN MAX(parametrage_indicateurs.vacg_operation) = 'sum' THEN SUM(fi_dept.valeur)
+        WHEN MAX(parametrage_indicateurs.vacg_operation) = 'avg' THEN AVG(fi_dept.valeur)
         ELSE NULL
     END AS valeur,
     MAX(fi_dept.zone_code_parent) as zone_code,
@@ -31,8 +31,8 @@ SELECT
     'NAT' as zone_type_parent
 FROM
     {{ ref("faits_indicateur_departemental") }} fi_dept
-    INNER JOIN {{ ref("stg_ppg_metadata__config_vac") }} config_vac
-        ON fi_dept.indicateur_id = config_vac.indicateur_id
+    INNER JOIN {{ ref("stg_ppg_metadata__parametrage_indicateurs") }} parametrage_indicateurs
+        ON fi_dept.indicateur_id = parametrage_indicateurs.indicateur_id
 GROUP BY
     fi_dept.indicateur_id,
     fi_dept.zone_id_parent,
