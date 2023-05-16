@@ -58,7 +58,8 @@ SELECT m_indicateurs.id,
     COALESCE(pivot_faits_indicateur.evolution_date_valeur_actuelle, d_indicateurs.evolution_date_valeur_actuelle) as evolution_date_valeur_actuelle,
     m_indicateurs.description,
     m_indicateurs.source,
-    m_indicateurs.mode_de_calcul
+    m_indicateurs.mode_de_calcul,
+    CONCAT(chantiers_ayant_des_indicateurs.maille, '-', chantiers_ayant_des_indicateurs.code_insee) as territoire_code
 FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
 	JOIN {{ ref('int_chantiers_with_mailles_and_territoires') }} chantiers_ayant_des_indicateurs ON m_indicateurs.chantier_id = chantiers_ayant_des_indicateurs.id
 	LEFT JOIN avancement_indicateur ON m_indicateurs.id = avancement_indicateur.indicateur_id
