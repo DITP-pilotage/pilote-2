@@ -20,10 +20,9 @@ const colonnesTableauProjetsStructurants = [
       width: 'auto',
     },
   }),
-  reactTableColonnesHelper.accessor('territoireNom', {
+  reactTableColonnesHelper.accessor('territoireNomÀAfficher', {
     header: 'Territoire',
     id: 'territoire',
-    cell: territoireNom => territoireNom.row.original.maille === 'régionale' ? territoireNom.getValue() : `${territoireNom.row.original.codeInsee} - ${territoireNom.getValue()}`,
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('météo', {

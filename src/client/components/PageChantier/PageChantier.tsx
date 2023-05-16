@@ -1,29 +1,27 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import { useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
-import { Rubrique } from '@/components/PageChantier/Sommaire/Sommaire.interface';
+import { Rubrique } from '@/components/_commons/Sommaire/Sommaire.interface';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import SélecteursMaillesEtTerritoires from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
 import Loader from '@/components/_commons/Loader/Loader';
+import SynthèseDesRésultats from '@/client/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
+import Sommaire from '@/client/components/_commons/Sommaire/Sommaire';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
 import Responsables from './Responsables/Responsables';
-import SynthèseDesRésultats from './SynthèseDesRésultats/SynthèseDesRésultats';
-import PageChantierEnTête from './PageChantierEnTête/PageChantierEnTête';
+import PageChantierEnTête from './EnTête/EnTête';
 import Cartes from './Cartes/Cartes';
-import Sommaire from './Sommaire/Sommaire';
 import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
 import Objectifs from './Objectifs/Objectifs';
 import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
 
-export default function PageChantier({ indicateurs }: PageChantierProps) {
+export default function PageChantier({ indicateurs, chantierId }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
-  const chantierId = useRouter().query.id as string;
   const {
     détailsIndicateurs,
     commentaires,
@@ -50,7 +48,7 @@ export default function PageChantier({ indicateurs }: PageChantierProps) {
         [
           { nom: 'Avancement du chantier', ancre: 'avancement' },
           { nom: 'Responsables', ancre: 'responsables' },
-          { nom: 'Synthèse des résultats', ancre: 'synthèse' },
+          { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
           { nom: 'Répartition géographique', ancre: 'cartes' },
           { nom: 'Objectifs', ancre: 'objectifs' },
           { nom: 'Décisions stratégiques', ancre: 'décisions-stratégiques' },
@@ -61,7 +59,7 @@ export default function PageChantier({ indicateurs }: PageChantierProps) {
         [
           { nom: 'Avancement du chantier', ancre: 'avancement' },
           { nom: 'Responsables', ancre: 'responsables' },
-          { nom: 'Synthèse des résultats', ancre: 'synthèse' },
+          { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
           { nom: 'Répartition géographique', ancre: 'cartes' },
           { nom: 'Objectifs', ancre: 'objectifs' },
           { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: rubriquesIndicateursNonVides },
@@ -112,15 +110,16 @@ export default function PageChantier({ indicateurs }: PageChantierProps) {
                         />
                       </div>
                       <div className='fr-col-xl-5 fr-col-12'>
-                        <Responsables chantier={chantier} />
+                        <Responsables responsables={chantier.responsables} />
                       </div>
                     </>
                   }
                   <div className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-7'} fr-col-12`}>
                     <SynthèseDesRésultats
-                      chantierId={chantier.id}
                       modeÉcriture={territoireSélectionné?.accèsSaisiePublication}
-                      rechargerChantier={rechargerChantier}
+                      nomTerritoire={territoireSélectionné!.nomAffiché}
+                      rechargerRéforme={rechargerChantier}
+                      réformeId={chantier.id}
                       synthèseDesRésultatsInitiale={synthèseDesRésultats}
                     />
                   </div>

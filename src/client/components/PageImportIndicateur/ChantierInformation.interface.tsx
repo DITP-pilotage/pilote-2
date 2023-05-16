@@ -1,8 +1,6 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 
-export interface ChantierInformation {
+export interface ChantierInformations {
   id: Chantier['id'],
   nom: Chantier['nom']
-  axe: Chantier['axe']
-  ppg: Chantier['ppg']
 }

@@ -7,7 +7,7 @@ export default interface ProjetStructurant {
   nom: string,
   tauxAvancement: number;
   dateTauxAvancement: string;
-  territoireNom: string;
+  territoireNomÀAfficher: string;
   codeInsee: CodeInsee;
   maille: MailleInterne;
   ministèresIds: string[];

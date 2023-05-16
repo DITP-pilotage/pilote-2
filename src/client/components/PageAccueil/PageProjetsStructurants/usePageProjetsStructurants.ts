@@ -15,13 +15,13 @@ export default function usePageProjetsStructurants(projetsStructurants: ProjetSt
 
   const projetsDuTerritoireSélectionné = codeInseeTerritoireSélectionné === 'FR' 
     ? projetsStructurants
-    : projetsStructurants.filter(projetStructurant => projetStructurant.maille === mailleSélectionnée && projetStructurant.codeInsee === codeInseeTerritoireSélectionné); 
+    : projetsStructurants.filter(projet => projet.maille === mailleSélectionnée && projet.codeInsee === codeInseeTerritoireSélectionné); 
 
   const projetsDuTerritoireSélectionnéEtTerritoiresEnfants = mailleSélectionnée === 'départementale' 
     ? projetsDuTerritoireSélectionné
     : [
       ...projetsDuTerritoireSélectionné,
-      ...projetsStructurants.filter(projetStructurant => projetStructurant.maille === 'départementale' && récupérerDépartementsAssociésÀLaRégionSélectionnée().includes(projetStructurant.codeInsee)),
+      ...projetsStructurants.filter(projet => projet.maille === 'départementale' && récupérerDépartementsAssociésÀLaRégionSélectionnée().includes(projet.codeInsee)),
     ];
   
   const avancementMoyenTerritoireSélectionné = (): number | null => {
@@ -31,7 +31,7 @@ export default function usePageProjetsStructurants(projetsStructurants: ProjetSt
   const avancementsMoyensTerritoiresMailleSélectionnée = (): CartographieDonnéesAvancement => {
     const codesInsee = mailleSélectionnée === 'départementale' ? codesInseeDépartements : codesInseeRégions;
     return codesInsee.map(codeInsee => {
-      const projetsDuTerritoire = projetsStructurants.filter(projetStructurant => projetStructurant.maille === mailleSélectionnée && projetStructurant.codeInsee === codeInsee);
+      const projetsDuTerritoire = projetsStructurants.filter(projet => projet.maille === mailleSélectionnée && projet.codeInsee === codeInsee);
       const avancementMoyen = calculerMoyenne(projetsDuTerritoire.map(projet => projet.tauxAvancement));
       return { valeur: avancementMoyen, codeInsee: codeInsee };
     });

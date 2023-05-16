@@ -11,35 +11,34 @@ const PageChantierStyled = styled.div`
     background: none;
   }
   
-  .texte-impression{
+  .texte-impression {
     display: none;
   }
   
-@media print{
-  @page {
-    size: 1800px 2545px;
-  }
-  
-  .texte-impression{
-    position: fixed;
-    left: 50%;
-    display: block;
-    transform: translate(-50%, 0);
-  }
+  @media print {
+    @page {
+      size: 1800px 2545px;
+    }
+    
+    .texte-impression {
+      position: fixed;
+      left: 50%;
+      display: block;
+      transform: translate(-50%, 0);
+    }
 
-  section {
-    break-inside: avoid;
-  }
-  
-  main {
-    background: #FFF;
-  }
+    section {
+      break-inside: avoid;
+    }
+    
+    main {
+      background: #FFF;
+    }
 
-  .barre-latérale, .fr-btn, .fr-link {
-    display: none;
+    .barre-latérale, .fr-btn, .fr-link {
+      display: none;
+    }
   }
-}
-  
 `;
 
 export default PageChantierStyled;
