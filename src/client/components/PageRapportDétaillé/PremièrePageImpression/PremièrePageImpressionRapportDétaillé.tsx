@@ -36,7 +36,7 @@ export default function PremièrePageImpressionRapportDétaillé() {
         </div>
       </header>
       <div className="titre-rapport-détaillé fr-display--xl fr-mt-12w" >
-        Pilote - Chantiers prioritaires
+        Pilote
       </div>
       <hr className='fr-hr fr-mt-4w fr-mb-6w' />
       <div className="sous-titre-rapport-détaillé fr-display--xl" >
