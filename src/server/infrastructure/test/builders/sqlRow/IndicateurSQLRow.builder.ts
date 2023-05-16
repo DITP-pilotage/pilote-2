@@ -54,6 +54,9 @@ export default class IndicateurRowBuilder {
 
   private _modeDeCalcul: indicateur['mode_de_calcul'];
 
+  private _territoireCode: indicateur['territoire_code'];
+
+
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
     const détailsIndicateurGénéré = new DétailsIndicateurBuilder().build();
@@ -84,6 +87,7 @@ export default class IndicateurRowBuilder {
     this._description = indicateurGénéré.description;
     this._source = indicateurGénéré.source;
     this._modeDeCalcul = indicateurGénéré.modeDeCalcul;
+    this._territoireCode = `${this._maille}-${this._codeInsee}`;
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {
@@ -163,6 +167,7 @@ export default class IndicateurRowBuilder {
 
   avecCodeInsee(codeInsee: indicateur['code_insee']): IndicateurRowBuilder {
     this._codeInsee = codeInsee;
+    this._territoireCode = `${this._maille}-${this._codeInsee}`;
     return this;
   }
 
@@ -171,6 +176,7 @@ export default class IndicateurRowBuilder {
     
     this._maille = maille;
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
+    this._territoireCode = `${this._maille}-${this._codeInsee}`;
     return this;
   }
 
@@ -199,6 +205,11 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  avecTerritoireCode(territoireCode: indicateur['territoire_code']): IndicateurRowBuilder {
+    this._territoireCode = territoireCode;
+    return this;
+  }
+
   build(): indicateur {
     return {
       id: this._id,
@@ -223,6 +234,7 @@ export default class IndicateurRowBuilder {
       description: this._description,
       source: this._source,
       mode_de_calcul: this._modeDeCalcul,
+      territoire_code: this._territoireCode,
     };
   }
 }

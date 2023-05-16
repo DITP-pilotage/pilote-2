@@ -2,7 +2,10 @@ import { indicateur as IndicateurPrisma, Prisma, PrismaClient } from '@prisma/cl
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import {
+  DétailsIndicateurs,
+  DétailsIndicateurTerritoire,
+} from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
@@ -10,6 +13,13 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { IndicateurPourExport } from '@/server/usecase/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
+import { parseDétailsIndicateur } from '@/server/infrastructure/accès_données/indicateur/IndicateurSQLParser';
+
+class ErreurIndicateurNonTrouvé extends Error {
+  constructor(idIndicateur: string) {
+    super(`Erreur: indicateur '${idIndicateur}' non trouvé.`);
+  }
+}
 
 export default class IndicateurSQLRepository implements IndicateurRepository {
   private prisma: PrismaClient;
@@ -28,6 +38,28 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       source: indicateur.source,
       modeDeCalcul: indicateur.mode_de_calcul,
     });
+  }
+
+  async getById(id: string, habilitations: Habilitations): Promise<DétailsIndicateurTerritoire> {
+    const h = new Habilitation(habilitations);
+    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+
+    const indicateur = await this.prisma.indicateur.findMany({
+      where: {
+        id,
+        territoire_code: { in: territoiresLecture },
+        chantier_id: { in: chantiersLecture },
+      },
+    });
+
+    if (!indicateur || indicateur.length === 0) {
+      throw new ErreurIndicateurNonTrouvé(id);
+    }
+
+    const territoires = await this.prisma.territoire.findMany();
+
+    return parseDétailsIndicateur(indicateur, territoires);
   }
 
   private _mapDétailsToDomain(indicateurs: IndicateurPrisma[]): DétailsIndicateurs {

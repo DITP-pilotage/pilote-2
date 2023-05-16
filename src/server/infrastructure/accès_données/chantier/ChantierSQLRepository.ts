@@ -20,7 +20,7 @@ class ErreurChantierNonTrouvé extends Error {
   }
 }
 
-class ErreurChantierPermission extends Error {
+export class ErreurChantierPermission extends Error {
   constructor(idChantier: string) {
     super(`Erreur de Permission: l'utilisateur n'a pas le droit de lecture pour le chantier '${idChantier}'.`);
   }
@@ -267,8 +267,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
 
   async getChantierStatistiques(habilitations: Habilitations, listeChantier: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques> {
     const habilitation = new Habilitation(habilitations);
-    const chaniterAutorisés = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const chantiersLecture = listeChantier.filter((x) => chaniterAutorisés.includes(x));
+    const chantiersAutorisés = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const chantiersLecture = listeChantier.filter((x) => chantiersAutorisés.includes(x));
 
     const rows = await this.prisma.$queryRaw<any[]>`
     WITH chantier_average AS (

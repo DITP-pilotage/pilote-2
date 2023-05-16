@@ -29,7 +29,7 @@ export default function useVueDEnsemble(chantiers: Chantier[]) {
   let { data: avancementsAgrégés } = api.chantier.récupérerStatistiquesAvancements.useQuery(
     {
       chantiers: chantiers.map(chantier => (chantier.id)),
-      maille: territoireSélectionné!.maille,
+      maille: mailleSélectionnée,
     },
     { refetchOnWindowFocus: false, keepPreviousData: true },
   );

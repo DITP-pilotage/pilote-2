@@ -1,8 +1,11 @@
 import Avancement from '@/server/domain/avancement/Avancement.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 import Indicateur from './Indicateur.interface';
 
-export type DétailsIndicateurs = Record<Indicateur['id'], Record<CodeInsee, DétailsIndicateur>>;
+export type DétailsIndicateurCodeInsee = Record<CodeInsee, DétailsIndicateur>;
+export type DétailsIndicateurTerritoire = Record<Maille, DétailsIndicateurCodeInsee>;
+export type DétailsIndicateurs = Record<Indicateur['id'], DétailsIndicateurCodeInsee>;
 
 export type DétailsIndicateur = {
   codeInsee: string,

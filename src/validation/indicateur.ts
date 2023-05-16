@@ -6,3 +6,7 @@ export const validationDétailsIndicateurs = z.object({
   maille: z.enum(mailles),
   codesInsee: z.string().array(),
 });
+
+export const validationDétailsIndicateur = z.object({
+  indicateurId: z.string(),
+});

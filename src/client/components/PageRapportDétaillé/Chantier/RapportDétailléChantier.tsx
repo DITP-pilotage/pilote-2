@@ -44,7 +44,10 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
             avancements !== null &&
             <>
               <div className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-6' : 'fr-col-xl-12'} fr-col-12`}>
-                <AvancementChantier avancements={avancements} />
+                <AvancementChantier
+                  avancements={avancements}
+                  chantierId={chantier.id}
+                />
               </div>
               <div className='fr-col-xl-6 fr-col-12'>
                 <Responsables chantier={chantier} />
@@ -93,8 +96,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         </div>
         {
           décisionStratégique !== null
-          && territoireSélectionné!.maille === 'nationale'
-          && process.env.NEXT_PUBLIC_FT_DECISIONS_STRATEGIQUES_DISABLED !== 'true' &&
+          && territoireSélectionné!.maille === 'nationale' &&
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
               <DécisionsStratégiques

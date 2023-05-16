@@ -106,7 +106,10 @@ export default function PageChantier({ indicateurs }: PageChantierProps) {
                     avancements !== null &&
                     <>
                       <div className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-7' : 'fr-col-xl-12'} fr-col-12`}>
-                        <AvancementChantier avancements={avancements} />
+                        <AvancementChantier
+                          avancements={avancements}
+                          chantierId={chantierId}
+                        />
                       </div>
                       <div className='fr-col-xl-5 fr-col-12'>
                         <Responsables chantier={chantier} />

@@ -13,6 +13,7 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
 import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import DécisionStratégique from '@/server/domain/décisionStratégique/DécisionStratégique.interface';
 
 interface NextPageRapportDétailléProps {
   chantiers: Chantier[]
@@ -86,13 +87,15 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();
   const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds, maille, codeInsee);
   
-  const décisionStratégiqueRepository = dependencies.getDécisionStratégiqueRepository();
-  const décisionStratégiquesGroupéesParChantier = await décisionStratégiqueRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds);
+  let décisionStratégiquesGroupéesParChantier: Record<string, DécisionStratégique | null> = Object.fromEntries(chantiersIds.map(id => [id, null]));
+  if (habilitation.peutAccéderAuTerritoire('NAT-FR')) {
+    const décisionStratégiqueRepository = dependencies.getDécisionStratégiqueRepository();
+    décisionStratégiquesGroupéesParChantier = await décisionStratégiqueRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds);
+  }
 
   const commentairesGroupésParChantier = await new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase().run(chantiersIds, maille, codeInsee);
 
   const objectifsGroupésParChantier = await new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase().run(chantiersIds);
-
 
   return {
     props: {
