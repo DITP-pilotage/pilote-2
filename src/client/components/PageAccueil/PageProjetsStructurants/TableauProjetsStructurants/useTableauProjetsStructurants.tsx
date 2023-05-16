@@ -23,6 +23,7 @@ const colonnesTableauProjetsStructurants = [
   reactTableColonnesHelper.accessor('territoireNom', {
     header: 'Territoire',
     id: 'territoire',
+    cell: territoireNom => territoireNom.row.original.maille === 'régionale' ? territoireNom.getValue() : `${territoireNom.row.original.codeInsee} - ${territoireNom.getValue()}`,
     enableSorting: false,
   }),
   reactTableColonnesHelper.accessor('météo', {
