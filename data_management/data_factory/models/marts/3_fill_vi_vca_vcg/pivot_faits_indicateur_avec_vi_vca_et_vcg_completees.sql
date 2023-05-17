@@ -4,36 +4,36 @@ WITH valeurs_cibles_annuelles AS (
         indicateur_id,
         zone_id,
         date_trunc('year', date_releve) AS annee_releve,
-        indicateur_valeur_cible AS valeur
+        valeur_cible AS valeur
     FROM {{ ref('pivot_faits_indicateur_toutes_mailles')}}
-    WHERE indicateur_valeur_cible is not NULL
+    WHERE valeur_cible is not NULL
 )
 
 SELECT
     pivot.indicateur_id,
     pivot.zone_id,
     pivot.date_releve,
-    COALESCE(pivot.indicateur_valeur_initiale, (
-        SELECT pivot_pour_derniere_valeur_intitiale_non_nulle.indicateur_valeur_initiale
+    COALESCE(pivot.valeur_initiale, (
+        SELECT pivot_pour_derniere_valeur_intitiale_non_nulle.valeur_initiale
         FROM {{ ref('pivot_faits_indicateur_toutes_mailles')}} pivot_pour_derniere_valeur_intitiale_non_nulle
         WHERE pivot_pour_derniere_valeur_intitiale_non_nulle.indicateur_id = pivot.indicateur_id
             AND pivot_pour_derniere_valeur_intitiale_non_nulle.zone_id = pivot.zone_id
-            AND pivot_pour_derniere_valeur_intitiale_non_nulle.indicateur_valeur_initiale IS NOT NULL
+            AND pivot_pour_derniere_valeur_intitiale_non_nulle.valeur_initiale IS NOT NULL
             AND pivot_pour_derniere_valeur_intitiale_non_nulle.date_releve < pivot.date_releve
         ORDER BY pivot_pour_derniere_valeur_intitiale_non_nulle.date_releve DESC
         LIMIT 1
-    )) AS indicateur_valeur_initiale,
-    pivot.indicateur_valeur_actuelle,
-    valeurs_cibles_annuelles.valeur AS indicateur_valeur_cible_annuelle,
+    )) AS valeur_initiale,
+    pivot.valeur_actuelle,
+    valeurs_cibles_annuelles.valeur AS valeur_cible_annuelle,
     (
-        SELECT pivot_pour_derniere_valeur_cible_non_nulle.indicateur_valeur_cible
+        SELECT pivot_pour_derniere_valeur_cible_non_nulle.valeur_cible
         FROM {{ ref('pivot_faits_indicateur_toutes_mailles')}} pivot_pour_derniere_valeur_cible_non_nulle
         WHERE pivot_pour_derniere_valeur_cible_non_nulle.indicateur_id = pivot.indicateur_id
             AND pivot_pour_derniere_valeur_cible_non_nulle.zone_id = pivot.zone_id
-            AND pivot_pour_derniere_valeur_cible_non_nulle.indicateur_valeur_cible IS NOT NULL
+            AND pivot_pour_derniere_valeur_cible_non_nulle.valeur_cible IS NOT NULL
         ORDER BY pivot_pour_derniere_valeur_cible_non_nulle.date_releve DESC
         LIMIT 1
-    ) AS indicateur_valeur_cible_globale
+    ) AS valeur_cible_globale
 FROM {{ ref('pivot_faits_indicateur_toutes_mailles')}} pivot
 LEFT JOIN valeurs_cibles_annuelles
     ON pivot.indicateur_id = valeurs_cibles_annuelles.indicateur_id
