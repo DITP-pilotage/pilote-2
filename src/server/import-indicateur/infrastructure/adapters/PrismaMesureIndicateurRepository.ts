@@ -5,6 +5,7 @@ import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/po
 const convertirEnModel = (indicateurData: IndicateurData): Omit<MesureIndicateur, 'date_import'>  => {
   return {
     id: indicateurData.id,
+    rapport_id: indicateurData.rapportId,
     indic_id: indicateurData.indicId,
     zone_id: indicateurData.zoneId,
     metric_date: indicateurData.metricDate,
@@ -16,6 +17,7 @@ const convertirEnModel = (indicateurData: IndicateurData): Omit<MesureIndicateur
 const convertirEnIndicateurData = (mesureIndicateur: MesureIndicateur): IndicateurData => {
   return IndicateurData.createIndicateurData({
     id: mesureIndicateur.id,
+    rapportId: mesureIndicateur.rapport_id,
     indicId: mesureIndicateur.indic_id,
     zoneId: mesureIndicateur.zone_id,
     metricDate: mesureIndicateur.metric_date,

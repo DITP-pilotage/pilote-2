@@ -7,6 +7,8 @@ export class Configuration {
 
   public readonly keycloakIssuer: string;
 
+  public readonly nextAuthSecret: string;
+
   public readonly authUrl: string;
 
   public readonly logoutUrl: string;
@@ -35,6 +37,8 @@ export class Configuration {
     this.keycloakClientId = process.env.KEYCLOAK_CLIENT_ID || 'N/A';
     this.keycloakClientSecret = process.env.KEYCLOAK_CLIENT_SECRET || 'N/A';
     this.keycloakIssuer = process.env.KEYCLOAK_ISSUER || 'N/A';
+
+    this.nextAuthSecret = process.env.NEXTAUTH_SECRET || 'next_auth_secret';
 
     this.tokenUrl = this.keycloakIssuer + '/protocol/openid-connect/token';
     this.authUrl = this.keycloakIssuer + '/protocol/openid-connect/auth'; // '/api/auth/signin/keycloak';

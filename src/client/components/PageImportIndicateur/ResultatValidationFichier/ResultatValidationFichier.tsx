@@ -7,7 +7,7 @@ export default function ResultatValidationFichier({ rapport }: ResultatValidatio
   const { indicateurId } = query;
 
   return (
-    <section>
+    <section className='fr-my-2w'>
       {
       rapport.estValide
         ?

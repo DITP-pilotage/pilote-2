@@ -3,6 +3,8 @@ import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData
 export class IndicateurDataBuilder {
   private id: string = 'idIndicateur';
 
+  private rapportId: string = 'rapportId';
+
   private indicId: string = 'IND-001';
 
   private zoneId: string = 'D009';
@@ -16,6 +18,11 @@ export class IndicateurDataBuilder {
 
   avecId(id: string): IndicateurDataBuilder {
     this.id = id;
+    return this;
+  }
+
+  avecRapportId(rapportId: string): IndicateurDataBuilder {
+    this.rapportId = rapportId;
     return this;
   }
 
@@ -47,6 +54,7 @@ export class IndicateurDataBuilder {
   build(): IndicateurData {
     return IndicateurData.createIndicateurData({
       id: this.id,
+      rapportId: this.rapportId,
       indicId: this.indicId,
       zoneId: this.zoneId,
       metricDate: this.metricDate,

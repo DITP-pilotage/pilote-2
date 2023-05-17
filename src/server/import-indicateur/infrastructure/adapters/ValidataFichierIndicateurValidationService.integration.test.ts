@@ -13,6 +13,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
   const cheminCompletDuFichier = 'cheminCompletDuFichier';
   const nomDuFichier = 'nomDuFichier';
   const schema = 'schema';
+  const utilisateurEmail = 'ditp.admin@example.com';
   const metricDateValue1 = '30/12/2023';
   const metricDateValue2 = '31/12/2023';
 
@@ -23,7 +24,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
   it('doit appeler le httpClient pour contacter validata', async () => {
     // GIVEN
-    const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
+    const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
     const report = new ReportValidataBuilder()
       .avecValid(true)
       .avecTasks(new ReportTaskBuilder()
@@ -46,13 +47,13 @@ describe('ValidataFichierIndicateurValidationService', () => {
     await validataFichierIndicateurValidationService.validerFichier(body);
 
     // THEN
-    expect(httpClient.post).toHaveBeenNthCalledWith(1, body);
+    expect(httpClient.post).toHaveBeenNthCalledWith(1, { cheminCompletDuFichier, nomDuFichier, schema });
   });
 
   describe('quand le fichier est valide', () => {
     it('doit construire le rapport de validation du fichier', async () => {
       // GIVEN
-      const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
+      const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
       const report = new ReportValidataBuilder()
         .avecValid(true)
         .avecTasks(new ReportTaskBuilder()
@@ -75,11 +76,15 @@ describe('ValidataFichierIndicateurValidationService', () => {
       const result = await validataFichierIndicateurValidationService.validerFichier(body);
 
       // THEN
+      expect(result.id).toBeDefined();
       expect(result.estValide).toEqual(true);
+      expect(result.dateCreation).toBeDefined();
+      expect(result.utilisateurEmail).toEqual('ditp.admin@example.com');
 
       expect(result.listeIndicateursData).toHaveLength(2);
 
       expect(result.listeIndicateursData[0].id).toBeDefined();
+      expect(result.listeIndicateursData[0].rapportId).toEqual(result.id);
       expect(result.listeIndicateursData[0].indicId).toEqual('IND-001');
       expect(result.listeIndicateursData[0].metricDate).toEqual('30/12/2023');
       expect(result.listeIndicateursData[0].metricType).toEqual('vi');
@@ -87,6 +92,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
       expect(result.listeIndicateursData[0].zoneId).toEqual('D001');
 
       expect(result.listeIndicateursData[1].id).toBeDefined();
+      expect(result.listeIndicateursData[1].rapportId).toEqual(result.id);
       expect(result.listeIndicateursData[1].indicId).toEqual('IND-002');
       expect(result.listeIndicateursData[1].metricDate).toEqual('31/12/2023');
       expect(result.listeIndicateursData[1].metricType).toEqual('vc');
@@ -96,7 +102,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
     it('quand les en-têtes sont dans un autre ordre, doit construire le même rapport de validation du fichier', async () => {
       // GIVEN
-      const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
+      const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
       const report = new ReportValidataBuilder()
         .avecValid(true)
         .avecTasks(new ReportTaskBuilder()
@@ -142,7 +148,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
   describe('quand le fichier est invalide', () => {
     it("doit construire le rapport d'erreur du fichier", async () => {
       // GIVEN
-      const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
+      const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
       const report = new ReportValidataBuilder()
         .avecValid(false)
         .avecTasks(
@@ -227,7 +233,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
         expected,
       ) => {
         // GIVEN
-        const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
+        const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
         const report = new ReportValidataBuilder()
           .avecValid(false)
           .avecTasks(
@@ -267,7 +273,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
     describe("quand identifiant_indic n'est pas défini dans les en-têtes", () => {
       it("doit identifier que l'en-tête identifiant_indic n'est pas présente", async () => {
         // GIVEN
-        const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
+        const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
         const report = new ReportValidataBuilder()
           .avecValid(false)
           .avecTasks(
@@ -317,7 +323,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
     it('quand le fichier possède des données, doit construire le remonter les données du fichier', async () => {
       // GIVEN
-      const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema };
+      const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
       const report = new ReportValidataBuilder()
         .avecValid(false)
         .avecTasks(

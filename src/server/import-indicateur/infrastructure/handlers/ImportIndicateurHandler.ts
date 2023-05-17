@@ -1,9 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { File } from 'formidable';
+import { decode } from 'next-auth/jwt';
+import assert from 'node:assert/strict';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import { parseForm } from '@/server/import-indicateur/infrastructure/handlers/ParseForm';
+import configuration from '@/server/infrastructure/Configuration';
 
 const présenterEnContrat = (report: DetailValidationFichier): DetailValidationFichierContrat => {
   return {
@@ -25,12 +28,20 @@ export default async function handleValiderFichierImportIndicateur(
   response: NextApiResponse,
   validerFichierIndicateurImporteUseCase = dependencies.getValiderFichierIndicateurImporteUseCase(),
 ) {
-  
+
   const formData = await parseForm(request);
 
   const fichier = <File>formData.file;
 
   const schéma = 'https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/prod/sans-contraintes.json';
+  const sessionToken = request.cookies['next-auth.session-token'];
+
+  const decoded = await decode({
+    token: sessionToken,
+    secret: configuration.nextAuthSecret,
+  });
+
+  assert(decoded?.user);
 
   const report = await validerFichierIndicateurImporteUseCase.execute(
     {
@@ -38,6 +49,7 @@ export default async function handleValiderFichierImportIndicateur(
       nomDuFichier: fichier.originalFilename as string,
       schema: schéma,
       indicateurId: request.query.indicateurId as string,
+      utilisateurAuteurDeLimportEmail: (decoded.user as { email: string }).email,
     },
   );
 
