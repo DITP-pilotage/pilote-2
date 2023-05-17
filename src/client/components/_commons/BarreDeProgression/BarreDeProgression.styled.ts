@@ -21,7 +21,6 @@ const couleurDeBarreEtTexte = {
 };
 
 export const dimensions = {
-  // eslint-disable-next-line sonarjs/no-duplicate-string
   xxs: { hauteur: '0.5rem', largeurTexte: '2.5rem', classNameDsfr: 'fr-text--xs' },
   xs: { hauteur: '0.625rem', largeurTexte: '2.5rem', classNameDsfr: 'fr-text--xs' },
   sm: { hauteur: '0.75rem', largeurTexte: '2.5rem', classNameDsfr: 'fr-text--xs' },

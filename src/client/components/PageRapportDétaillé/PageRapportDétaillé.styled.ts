@@ -14,6 +14,8 @@ const PageRapportDétailléStyled = styled.div`
   }
 
   @media print {
+    overflow: hidden;
+    
     section:not(:first-of-type) {
       break-inside: avoid;
     }

@@ -66,7 +66,7 @@ function JaugeDeProgressionSVG({ pourcentage, taille }: JaugeDeProgressionSVGPro
           ?
             <path
               className="jauge-barre-valeur"
-              d={tracerValeurJauge(pourcentage!, taille)}
+              d={tracerValeurJauge(pourcentage, taille)}
               transform={`rotate(${TRACÉS[taille].angleDépart} ${CENTRE_VIEWBOX.x} ${CENTRE_VIEWBOX.y})`}
             />
           : null

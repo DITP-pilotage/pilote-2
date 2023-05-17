@@ -24,7 +24,7 @@ export default function BarreDeProgression({
       <div className="barre">
         <progress
           max="100"
-          value={valeur ?? undefined}
+          value={valeur ?? 0}
         >
           {pourcentageAffiché}
         </progress>
