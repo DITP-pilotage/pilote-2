@@ -1,55 +1,60 @@
+import { useCallback, useMemo } from 'react';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import { CartographieDonnéesAvancement } from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement.interface';
 import { météos } from '@/server/domain/météo/Météo.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
-import { codesInseeDépartements, codesInseeRégions } from '@/server/domain/territoire/Territoire.interface';
+import { CodeInsee, codesInseeDépartements, codesInseeRégions } from '@/server/domain/territoire/Territoire.interface';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import { RépartitionMétéos } from '@/components/PageAccueil/RépartitionMétéo/RépartitionMétéo.interface';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 export default function usePageProjetsStructurants(projetsStructurants: ProjetStructurant[]) {
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const codeInseeTerritoireSélectionné = territoireSélectionnéTerritoiresStore()!.codeInsee;
-  const { récupérerDépartementsAssociésÀLaRégionSélectionnée } = actionsTerritoiresStore();
+  const { récupérerDépartementsAssociésÀLaRégion } = actionsTerritoiresStore();
 
-  const projetsDuTerritoireSélectionné = codeInseeTerritoireSélectionné === 'FR' 
-    ? projetsStructurants
-    : projetsStructurants.filter(projet => projet.maille === mailleSélectionnée && projet.codeInsee === codeInseeTerritoireSélectionné); 
+  const projetsDuTerritoire = useCallback((codeInsee: CodeInsee, maille: MailleInterne) => {
+    return codeInsee === 'FR' 
+      ? projetsStructurants
+      : projetsStructurants.filter(projet => projet.maille === maille && projet.codeInsee === codeInsee);
+  }, [projetsStructurants]);
 
-  const projetsDuTerritoireSélectionnéEtTerritoiresEnfants = mailleSélectionnée === 'départementale' 
-    ? projetsDuTerritoireSélectionné
-    : [
-      ...projetsDuTerritoireSélectionné,
-      ...projetsStructurants.filter(projet => projet.maille === 'départementale' && récupérerDépartementsAssociésÀLaRégionSélectionnée().includes(projet.codeInsee)),
-    ];
+  const projetsDuTerritoireEtTerritoiresEnfants = useCallback((codeInsee: CodeInsee, maille: MailleInterne) => {    
+    return maille === 'départementale' 
+      ? projetsDuTerritoire(codeInsee, maille)
+      : [
+        ...projetsDuTerritoire(codeInsee, maille),
+        ...projetsStructurants.filter(projet => projet.maille === 'départementale' && récupérerDépartementsAssociésÀLaRégion(codeInsee, maille).includes(projet.codeInsee)),
+      ];
+  }, [projetsDuTerritoire, projetsStructurants, récupérerDépartementsAssociésÀLaRégion]);
   
-  const avancementMoyenTerritoireSélectionné = (): number | null => {
-    return calculerMoyenne(projetsDuTerritoireSélectionné.map(projet => projet.tauxAvancement));
+  const avancementMoyenDuTerritoireSélectionné = (): number | null => {
+    return calculerMoyenne(projetsDuTerritoireEtTerritoiresEnfants(codeInseeTerritoireSélectionné, mailleSélectionnée).map(projet => projet.tauxAvancement));
   };
-
-  const avancementsMoyensTerritoiresMailleSélectionnée = (): CartographieDonnéesAvancement => {
+  
+  const avancementsMoyensTerritoiresMailleSélectionnée = useMemo((): CartographieDonnéesAvancement => {
     const codesInsee = mailleSélectionnée === 'départementale' ? codesInseeDépartements : codesInseeRégions;
     return codesInsee.map(codeInsee => {
-      const projetsDuTerritoire = projetsStructurants.filter(projet => projet.maille === mailleSélectionnée && projet.codeInsee === codeInsee);
-      const avancementMoyen = calculerMoyenne(projetsDuTerritoire.map(projet => projet.tauxAvancement));
+      const projets = projetsDuTerritoireEtTerritoiresEnfants(codeInsee, mailleSélectionnée);
+      const avancementMoyen = calculerMoyenne(projets.map(projet => projet.tauxAvancement));
       return { valeur: avancementMoyen, codeInsee: codeInsee };
     });
-  };
+  }, [mailleSélectionnée, projetsDuTerritoireEtTerritoiresEnfants]);
 
   const répartitionMétéosTerritoireSélectionné = (): RépartitionMétéos => {
     return Object.fromEntries(
       météos.map(météo => 
-        [météo, (projetsDuTerritoireSélectionné.filter(projet => projet.météo === météo)).length]),
+        [météo, (projetsDuTerritoireEtTerritoiresEnfants(codeInseeTerritoireSélectionné, mailleSélectionnée).filter(projet => projet.météo === météo)).length]),
     ) as RépartitionMétéos;
   };
 
   return {
-    projetsDuTerritoireSélectionné,
-    projetsDuTerritoireSélectionnéEtTerritoiresEnfants,
+    projetsDuTerritoireSélectionnéEtTerritoiresEnfants: projetsDuTerritoireEtTerritoiresEnfants(codeInseeTerritoireSélectionné, mailleSélectionnée),
     nombreFiltresActifs: récupérerNombreFiltresActifs(),
-    donnéesCartographieAvancement: avancementsMoyensTerritoiresMailleSélectionnée(),
-    donnéesAvancementsMoyens: avancementMoyenTerritoireSélectionné(),
+    donnéesCartographieAvancement: avancementsMoyensTerritoiresMailleSélectionnée,
+    donnéesAvancementMoyen: avancementMoyenDuTerritoireSélectionné(),
     répartitionMétéos: répartitionMétéosTerritoireSélectionné(),
   };
 }

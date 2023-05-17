@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { create } from 'zustand';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import TerritoiresStore from './useTerritoiresStore.interface';
 
 const MAILLE_DÉPARTEMENTALE = 'départementale';
@@ -89,9 +91,11 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       set({ territoiresComparés });
     },
 
-    récupérerDépartementsAssociésÀLaRégionSélectionnée: () => {
-      if (get().mailleSélectionnée === 'départementale') return [];
-      return get().départements.filter(département => département.codeParent === get().territoireSélectionné!.code).map(département => département.codeInsee);
+    récupérerDépartementsAssociésÀLaRégion: (codeInsee: CodeInsee, maille: MailleInterne) => {
+      if (maille === 'départementale') return [];
+      return get().départements.filter(département =>
+        département.codeParent === (get().régions.find(région => région.codeInsee === codeInsee))?.code,
+      ).map(département => département.codeInsee);
     },
   },
 

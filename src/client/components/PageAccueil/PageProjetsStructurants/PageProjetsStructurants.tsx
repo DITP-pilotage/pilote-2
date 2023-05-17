@@ -12,13 +12,12 @@ import TableauProjetsStructurants from './TableauProjetsStructurants/TableauProj
 
 export default function PageProjetsStructurants({ projetsStructurants }: PageProjetsStructurantsProps) {
   const {
-    projetsDuTerritoireSélectionné,
     projetsDuTerritoireSélectionnéEtTerritoiresEnfants,
     nombreFiltresActifs,
     donnéesCartographieAvancement,
-    donnéesAvancementsMoyens,
+    donnéesAvancementMoyen,
     répartitionMétéos,
-  } = usePageProjetsStructurants(projetsStructurants);
+  } = usePageProjetsStructurants(projetsStructurants);  
   
   const { auClicTerritoireCallback } = useCartographie();
 
@@ -35,7 +34,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
             baliseHtml="h1"
             className='fr-h4'
           >
-            {`${projetsDuTerritoireSélectionné.length} projets`}
+            {`${projetsDuTerritoireSélectionnéEtTerritoiresEnfants.length} projets`}
           </Titre>
         </div>
         <div className="fr-grid-row fr-grid-row--gutters">
@@ -69,7 +68,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                   <JaugeDeProgression
                     couleur='rose'
                     libellé="Taux d'avancement global"
-                    pourcentage={donnéesAvancementsMoyens}
+                    pourcentage={donnéesAvancementMoyen}
                     taille='lg'
                   />
                 </div>
