@@ -39,8 +39,8 @@ describe('ChantierSQLRepository', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result1 = await repository.getById('CH-001', habilitation);
-    const result2 = await repository.getById('CH-002', habilitation);
+    const result1 = await repository.récupérer('CH-001', habilitation);
+    const result2 = await repository.récupérer('CH-002', habilitation);
 
     // THEN
     expect(result1.nom).toEqual('Chantier 1');
@@ -73,7 +73,7 @@ describe('ChantierSQLRepository', () => {
 
     const habilitations = new Habilitation(habilitation);
     // WHEN
-    const result = await repository.getListe(habilitations);
+    const result = await repository.récupérerListe(habilitations);
 
     // THEN
     expect(result).toStrictEqual([]);
@@ -98,7 +98,7 @@ describe('ChantierSQLRepository', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await repository.getById(chantierId, habilitation);
+    const result = await repository.récupérer(chantierId, habilitation);
 
     // THEN
     expect(result.mailles.nationale).toStrictEqual({
@@ -149,8 +149,8 @@ describe('ChantierSQLRepository', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result1 = await repository.getById('CH-001', habilitation);
-    const result2 = await repository.getById('CH-002', habilitation);
+    const result1 = await repository.récupérer('CH-001', habilitation);
+    const result2 = await repository.récupérer('CH-002', habilitation);
 
     // THEN
     expect(result1.responsables.porteur).toEqual('Agriculture et Alimentation');
@@ -181,7 +181,7 @@ describe('ChantierSQLRepository', () => {
 
     // WHEN
     const habilitations = new Habilitation(habilitation);
-    const chantiers = await repository.getListe(habilitations);
+    const chantiers = await repository.récupérerListe(habilitations);
 
     // THEN
     const ids = chantiers.map(ch => ch.id);
@@ -208,7 +208,7 @@ describe('ChantierSQLRepository', () => {
 
     // WHEN
     const habilitations = new Habilitation(habilitation);
-    const chantiers = await repository.getListe(habilitations);
+    const chantiers = await repository.récupérerListe(habilitations);
 
     // THEN
     expect(chantiers[0].mailles.départementale['974']).toBeDefined();
@@ -231,7 +231,7 @@ describe('ChantierSQLRepository', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await repository.getById(chantierId, habilitation);
+    const result = await repository.récupérer(chantierId, habilitation);
 
     // THEN
     expect(result.responsables.directeursProjet[0]).toStrictEqual({ nom: 'Jean Bon', email: null });
@@ -254,7 +254,7 @@ describe('ChantierSQLRepository', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await repository.getById(chantierId, habilitation);
+    const result = await repository.récupérer(chantierId, habilitation);
 
     // THEN
     expect(result.estBaromètre).toBe(true);
@@ -277,7 +277,7 @@ describe('ChantierSQLRepository', () => {
 
       // WHEN
       const request = async () => {
-        await repository.getById('CH-002', habilitation);
+        await repository.récupérer('CH-002', habilitation);
       };
 
       // THEN
@@ -300,7 +300,7 @@ describe('ChantierSQLRepository', () => {
 
       // WHEN
       const request = async () => {
-        await repository.getById(chantierId, habilitation);
+        await repository.récupérer(chantierId, habilitation);
       };
 
       // THEN

@@ -33,7 +33,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     this.prisma = prisma;
   }
 
-  async getById(id: string, habilitations: Habilitations): Promise<Chantier> {
+  async récupérer(id: string, habilitations: Habilitations): Promise<Chantier> {
     const h = new Habilitation(habilitations);
     const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
@@ -76,7 +76,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiers.map(c => c.id);
   }
 
-  async getListe(habilitation: Habilitation): Promise<Chantier[]> {
+  async récupérerListe(habilitation: Habilitation): Promise<Chantier[]> {
     
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     let territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();

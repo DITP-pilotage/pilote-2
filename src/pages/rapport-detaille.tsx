@@ -77,7 +77,7 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
 
   const habilitation = new Habilitation(session.habilitations);
 
-  const chantiers = await chantierRepository.getListe(habilitation);
+  const chantiers = await chantierRepository.récupérerListe(habilitation);
   const chantiersIds = chantiers.map(chantier => chantier.id);
 
   const indicateursRepository = dependencies.getIndicateurRepository();

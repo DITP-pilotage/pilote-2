@@ -31,14 +31,14 @@ export default function usePageProjetsStructurants(projetsStructurants: ProjetSt
   }, [projetsDuTerritoire, projetsStructurants, récupérerDépartementsAssociésÀLaRégion]);
   
   const avancementMoyenDuTerritoireSélectionné = (): number | null => {
-    return calculerMoyenne(projetsDuTerritoireEtTerritoiresEnfants(codeInseeTerritoireSélectionné, mailleSélectionnée).map(projet => projet.tauxAvancement));
+    return calculerMoyenne(projetsDuTerritoireEtTerritoiresEnfants(codeInseeTerritoireSélectionné, mailleSélectionnée).map(projet => projet.avancement));
   };
   
   const avancementsMoyensTerritoiresMailleSélectionnée = useMemo((): CartographieDonnéesAvancement => {
     const codesInsee = mailleSélectionnée === 'départementale' ? codesInseeDépartements : codesInseeRégions;
     return codesInsee.map(codeInsee => {
       const projets = projetsDuTerritoireEtTerritoiresEnfants(codeInsee, mailleSélectionnée);
-      const avancementMoyen = calculerMoyenne(projets.map(projet => projet.tauxAvancement));
+      const avancementMoyen = calculerMoyenne(projets.map(projet => projet.avancement));
       return { valeur: avancementMoyen, codeInsee: codeInsee };
     });
   }, [mailleSélectionnée, projetsDuTerritoireEtTerritoiresEnfants]);

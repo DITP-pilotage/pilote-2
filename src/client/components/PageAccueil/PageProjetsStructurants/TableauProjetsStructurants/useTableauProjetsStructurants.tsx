@@ -35,7 +35,7 @@ const colonnesTableauProjetsStructurants = [
       width: '10rem',
     },
   }),
-  reactTableColonnesHelper.accessor('tauxAvancement', {
+  reactTableColonnesHelper.accessor('avancement', {
     header: 'Avancement',
     id: 'avancement',
     cell: avancement => <TableauRéformesAvancement avancement={avancement.getValue()} />,

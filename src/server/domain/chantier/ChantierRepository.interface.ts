@@ -9,8 +9,8 @@ import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avanc
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 
 export default interface ChantierRepository {
-  getById(id: string, habilitations: Habilitations): Promise<Chantier>;
-  getListe(habilitations: Habilitation): Promise<Chantier[]>;
+  récupérer(id: string, habilitations: Habilitations): Promise<Chantier>;
+  récupérerListe(habilitations: Habilitation): Promise<Chantier[]>;
   getChantierStatistiques(habilitations: Habilitations, listeChantier: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques>;
 
   récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null>

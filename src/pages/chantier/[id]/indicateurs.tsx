@@ -37,7 +37,7 @@ export async function getServerSideProps({
   }
 
   const chantierRepository = dependencies.getChantierRepository();
-  const chantier: Chantier = await chantierRepository.getById(params.id, session.habilitations);
+  const chantier: Chantier = await chantierRepository.récupérer(params.id, session.habilitations);
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs = await indicateurRepository.récupérerParChantierId(params.id);

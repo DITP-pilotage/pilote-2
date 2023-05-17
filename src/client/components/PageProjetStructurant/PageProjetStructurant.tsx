@@ -48,7 +48,7 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
           <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-my-0 fr-pb-1w">
             <div className='fr-col'>
               <AvancementPageProjetStructurant
-                avancement={projetStructurant.tauxAvancement}
+                avancement={projetStructurant.avancement}
                 territoireNom={projetStructurant.territoireNomÀAfficher}
               />
             </div>

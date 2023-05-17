@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import PageProjetStructurant from '@/components/PageProjetStructurant/PageProjetStructurant';
+import ProjetStructurantBuilder from '@/server/domain/projetStructurant/ProjetStructurant.builder';
 
 interface NextPageProjetStructurantProps {
   projetStructurant: ProjetStructurant,
@@ -20,17 +21,7 @@ export default function NextPageProjetStructurant({ projetStructurant }: NextPag
 }
 
 export async function getServerSideProps() {
-  const projetStructurant: ProjetStructurant = { 
-    id: 'PS-001',
-    nom: 'Projet structurant 1',
-    tauxAvancement: 95,
-    dateTauxAvancement: new Date().toISOString(),
-    territoireNomÀAfficher: '78 - Yvelines',
-    codeInsee: '78',
-    maille: 'départementale',
-    ministèresIds: ['MIN-001'],
-    météo: 'SOLEIL',
-  };
+  const projetStructurant: ProjetStructurant = new ProjetStructurantBuilder().build();
 
   return {
     props: {
