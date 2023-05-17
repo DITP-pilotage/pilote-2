@@ -16,7 +16,7 @@ pivot_valeur_actuelle as (
         date_releve,
         valeur as indicateur_valeur_actuelle
     FROM {{ ref("faits_indicateur_toutes_mailles") }}
-    WHERE type_mesure = 'va'
+    WHERE type_mesure = 'va' OR type_mesure = 'vi'
 ),
 
 pivot_valeur_cible as (
