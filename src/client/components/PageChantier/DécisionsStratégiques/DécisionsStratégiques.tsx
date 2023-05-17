@@ -21,7 +21,6 @@ export default function DécisionsStratégiques({ décisionStratégique, chantie
             entité: 'décisions stratégiques',
             consigneDÉcriture: 'Notez les décisions prises lors des réunions Elysée <> Matignon (AKAR) et indiquez les actions envisagées et/ou réalisées pour mettre en œuvre ou répondre à ces décisions.',
           }}
-          codeInsee='FR'
           estInteractif={estInteractif}
           maille="nationale"
           modeÉcriture={modeÉcriture}

@@ -19,8 +19,7 @@ export default function usePublicationFormulaire(succèsCallback: PublicationFor
       contenu: data.contenu,
       type: data.type,
       entité: data.entité,
-      maille: data.maille,
-      codeInsee: data.codeInsee,
+      territoireCode: data.territoireCode,
       chantierId: data.chantierId,
       csrf: récupérerUnCookie('csrf') ?? '',
     });

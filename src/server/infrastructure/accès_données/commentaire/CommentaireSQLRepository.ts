@@ -4,11 +4,9 @@ import {
   Commentaire,
   TypeCommentaire,
 } from '@/server/domain/commentaire/Commentaire.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
-import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaire> = {
   commentaires_sur_les_donnees: 'commentairesSurLesDonnées',
@@ -46,11 +44,13 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     };
   }
 
-  async récupérerLePlusRécent(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<Commentaire> {
+  async récupérerLePlusRécent(chantierId: string, territoireCode: string, type: TypeCommentaire): Promise<Commentaire> {
+    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+
     const commentaireLePlusRécent = await this.prisma.commentaire.findFirst({
       where: {
         chantier_id: chantierId,
-        maille: CODES_MAILLES[maille],
+        maille: maille,
         code_insee: codeInsee,
         type: CODES_TYPES_COMMENTAIRES[type],
       },
@@ -60,11 +60,13 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return commentaireLePlusRécent ? this.mapperVersDomaine(commentaireLePlusRécent) : null;
   }
 
-  async récupérerHistorique(chantierId: string, maille: Maille, codeInsee: CodeInsee, type: TypeCommentaire): Promise<Commentaire[]> {
+  async récupérerHistorique(chantierId: string, territoireCode: string, type: TypeCommentaire): Promise<Commentaire[]> {
+    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+
     const commentaires: CommentairePrisma[] = await this.prisma.commentaire.findMany({
       where: {
         chantier_id: chantierId,
-        maille: CODES_MAILLES[maille],
+        maille: maille,
         code_insee: codeInsee,
         type: CODES_TYPES_COMMENTAIRES[type],
       },
@@ -74,12 +76,14 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return commentaires.map(commentaireDeLHistorique => this.mapperVersDomaine(commentaireDeLHistorique));
   }
 
-  async créer(chantierId: string, maille: Maille, codeInsee: CodeInsee, id: string, contenu: string, auteur: string, type: TypeCommentaire, date: Date): Promise<Commentaire> {
+  async créer(chantierId: string, territoireCode: string, id: string, contenu: string, auteur: string, type: TypeCommentaire, date: Date): Promise<Commentaire> {
+    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+
     const commentaireCréé =  await this.prisma.commentaire.create({
       data: {
         id: id,
         chantier_id: chantierId,
-        maille: CODES_MAILLES[maille],
+        maille: maille,
         code_insee: codeInsee,
         contenu: contenu,
         type: CODES_TYPES_COMMENTAIRES[type],
@@ -90,7 +94,9 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return this.mapperVersDomaine(commentaireCréé);
   }
 
-  async récupérerLesPlusRécentsGroupésParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee) {
+  async récupérerLesPlusRécentsGroupésParChantier(chantiersIds: Chantier['id'][], territoireCode: string) {
+    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+
     const commentaires = await this.prisma.$queryRaw<CommentairePrisma[]>`
       SELECT c.chantier_id, c.contenu, c.auteur, c.type, id, date
       FROM commentaire c
@@ -98,7 +104,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
           SELECT type, chantier_id, maille, code_insee, MAX(date) as maxdate
           FROM commentaire
           WHERE chantier_id = ANY (${chantiersIds})
-            AND maille = ${CODES_MAILLES[maille]}
+            AND maille = ${maille}
             AND code_insee = ${codeInsee}
           GROUP BY type, chantier_id, maille, code_insee
         ) c_recents

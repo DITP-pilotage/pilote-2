@@ -7,7 +7,7 @@ import PublicationProps from './Publication.interface';
 import PublicationHistorique from './PublicationHistorique/PublicationHistorique';
 import PublicationAffichage from './PublicationAffichage/PublicationAffichage';
 
-export default function Publication({ caractéristiques, publicationInitiale, réformeId, maille, codeInsee, modeÉcriture, estInteractif }: PublicationProps) {
+export default function Publication({ caractéristiques, publicationInitiale, réformeId, maille, modeÉcriture, estInteractif }: PublicationProps) {
   const {
     publication,
     modeÉdition,
@@ -52,15 +52,14 @@ export default function Publication({ caractéristiques, publicationInitiale, r�
                 <div className='fr-grid-row fr-grid-row--right'>
                   <div className='fr-col-12 actions fr-mt-1w'>
                     {
-                      !!publication &&
-                        <PublicationHistorique
-                          codeInsee={codeInsee}
-                          entité={caractéristiques.entité}
-                          maille={maille}
-                          réformeId={réformeId}
-                          type={caractéristiques.type}
-                        />
-                    }
+                        !!publication &&
+                          <PublicationHistorique
+                            entité={caractéristiques.entité}
+                            maille={maille}
+                            réformeId={réformeId}
+                            type={caractéristiques.type}
+                          />
+                      }
                     {
                       !!modeÉcriture &&
                         <button

@@ -7,9 +7,9 @@ import RécupérerDétailsIndicateurUseCase from '@/server/usecase/indicateur/R�
 export const indicateurRouter = créerRouteurTRPC({
   récupererDétailsIndicateurs: procédureProtégée
     .input(validationDétailsIndicateurs)
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const récupérerDétailsIndicateursUseCase = new RécupérerDétailsIndicateursUseCase(dependencies.getIndicateurRepository());
-      return récupérerDétailsIndicateursUseCase.run(input.chantierId, input.maille, input.codesInsee);
+      return récupérerDétailsIndicateursUseCase.run(input.chantierId, input.territoireCodes, ctx.session.habilitations);
     }),
   récupererDétailsIndicateur: procédureProtégée
     .input(validationDétailsIndicateur)

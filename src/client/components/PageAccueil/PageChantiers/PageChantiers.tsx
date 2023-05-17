@@ -50,7 +50,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                   <div>
                     <Link
                       className="fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm"
-                      href={`/rapport-detaille?maille=${territoireSélectionné!.maille}&codeInsee=${territoireSélectionné!.codeInsee}`}
+                      href={`/rapport-detaille?territoireCode=${territoireSélectionné!.code}`}
                       title="Voir le rapport détaillé"
                     >
                       Voir le rapport détaillé

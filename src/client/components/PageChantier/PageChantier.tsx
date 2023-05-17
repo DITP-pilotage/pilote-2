@@ -133,7 +133,6 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                   <div className="fr-col-12">
                     <ObjectifsPageChantier
                       chantierId={chantier.id}
-                      codeInsee='FR'
                       maille='nationale'
                       modeÉcriture={modeÉcritureObjectifs}
                       objectifs={objectifs}
@@ -167,7 +166,6 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                   <div className="fr-col-12">
                     <Commentaires
-                      codeInsee={territoireSélectionné!.codeInsee}
                       commentaires={commentaires}
                       maille={territoireSélectionné!.maille}
                       modeÉcriture={territoireSélectionné?.accèsSaisiePublication}

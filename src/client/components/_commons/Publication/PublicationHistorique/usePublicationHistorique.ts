@@ -10,16 +10,14 @@ export default function usePublicationHistorique(
   entité: PublicationHistoriqueProps['entité'],
   chantierId: PublicationHistoriqueProps['réformeId'],
   maille: PublicationHistoriqueProps['maille'],
-  codeInsee: PublicationHistoriqueProps['codeInsee'],
 ) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   const [publications, setPublications] = useState<RouterOutputs['publication']['récupérerHistorique']>();
 
   const inputs = validationPublicationContexte.and(zodValidateurEntitéType).parse({
-    maille,
     chantierId,
-    codeInsee,
+    territoireCode: territoireSélectionné!.code,
     type,
     entité,
   });

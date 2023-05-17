@@ -21,57 +21,47 @@ export default function usePageChantier(chantierId: string) {
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {
       chantierId,
-      maille: territoireSélectionné!.maille,
-      codeInsee: territoireSélectionné!.codeInsee,
+      territoireCode: territoireSélectionné!.code,
     },
-    { refetchOnWindowFocus: false },
   );
 
   const { data: commentaires } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParChantiers.useQuery(
     {
       chantierId,
-      maille: territoireSélectionné!.maille,
-      codeInsee: territoireSélectionné!.codeInsee,
+      territoireCode: territoireSélectionné!.code,
       entité: 'commentaires',
     },
-    { refetchOnWindowFocus: false },
   );
 
   const { data: objectifs } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParChantiers.useQuery(
     {
       chantierId,
-      maille: 'nationale',
-      codeInsee: 'FR',
+      territoireCode: 'NAT-FR',
       entité: 'objectifs',
     },
-    { refetchOnWindowFocus: false },
   );
 
   const { data: décisionStratégique } = api.publication.récupérerLaPlusRécente.useQuery(
     {
       chantierId,
-      maille: 'nationale',
-      codeInsee: 'FR',
+      territoireCode: 'NAT-FR',
       entité: 'décisions stratégiques',
       type: 'suiviDesDécisionsStratégiques',
     },
-    { refetchOnWindowFocus: false },
   );
 
   const { data: détailsIndicateurs } = api.indicateur.récupererDétailsIndicateurs.useQuery(
     {
       chantierId,
-      maille: territoiresComparés.length > 0 ? mailleSélectionnée : territoireSélectionné!.maille,
-      codesInsee: territoiresComparés.length > 0 ? territoiresComparés.map(territoire => territoire.codeInsee) : [territoireSélectionné!.codeInsee],
+      territoireCodes: territoiresComparés.map(territoire => territoire.code),
     },
-    { refetchOnWindowFocus: false, keepPreviousData: true },
+    { keepPreviousData: true },
   );
 
   const { data: chantier, refetch: rechargerChantier } = api.chantier.récupérer.useQuery(
     {
       chantierId,
     },
-    { refetchOnWindowFocus: false },
   );
 
   const avancements = !chantier

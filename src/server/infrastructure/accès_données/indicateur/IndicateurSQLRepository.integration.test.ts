@@ -167,7 +167,7 @@ describe('IndicateurSQLRepository', () => {
       const repository = new IndicateurSQLRepository(prisma);
 
       // WHEN
-      const result = await repository.récupererDétailsParChantierIdEtTerritoire('CH-001',  'départementale', ['01']);
+      const result = await repository.récupererDétailsParChantierIdEtTerritoire('CH-001', ['DEPT-01']);
 
       // THEN
       expect(result).toStrictEqual({});
@@ -224,7 +224,7 @@ describe('IndicateurSQLRepository', () => {
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
-      const result = await repository.récupererDétailsParChantierIdEtTerritoire('CH-001', 'départementale', ['01', '02', '03']);
+      const result = await repository.récupererDétailsParChantierIdEtTerritoire('CH-001', ['DEPT-01', 'DEPT-02', 'DEPT-03']);
 
       // THEN
       expect(result).toStrictEqual(
@@ -320,7 +320,7 @@ describe('IndicateurSQLRepository', () => {
       await prisma.indicateur.createMany({ data: indicateurs });
 
       // WHEN
-      const result = await repository.récupererDétailsParChantierIdEtTerritoire('CH-002', 'régionale', ['01', '02']);
+      const result = await repository.récupererDétailsParChantierIdEtTerritoire('CH-002', ['REG-01', 'REG-02']);
 
       // THEN
       expect(result).toStrictEqual(

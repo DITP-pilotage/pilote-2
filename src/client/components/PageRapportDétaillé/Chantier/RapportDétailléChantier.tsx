@@ -78,7 +78,6 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
             <div className="fr-col-12">
               <ObjectifsPageChantier
                 chantierId={chantier.id}
-                codeInsee='FR'
                 estInteractif={false}
                 maille='nationale'
                 objectifs={objectifs}
@@ -113,7 +112,6 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
             <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
               <div className="fr-col-12">
                 <Commentaires
-                  codeInsee={territoireSélectionné!.codeInsee}
                   commentaires={commentaires}
                   estInteractif={false}
                   maille={territoireSélectionné!.maille}

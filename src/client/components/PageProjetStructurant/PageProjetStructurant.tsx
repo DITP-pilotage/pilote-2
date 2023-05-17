@@ -84,7 +84,6 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
               <Commentaires
-                codeInsee={projetStructurant.codeInsee}
                 commentaires={[]}
                 maille={projetStructurant.maille}
                 modeÉcriture={false}

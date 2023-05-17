@@ -1,7 +1,6 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { RouterInputs, RouterOutputs } from '@/server/infrastructure/api/trpc/trpc.interface';
 
 export type PublicationCaractéristiques = {
@@ -16,7 +15,6 @@ export default interface PublicationProps {
   publicationInitiale: RouterOutputs['publication']['récupérerLaPlusRécente'],
   réformeId: Chantier['id'] | ProjetStructurant['id']
   maille: Maille
-  codeInsee: CodeInsee
   modeÉcriture: boolean
   estInteractif: boolean
 }

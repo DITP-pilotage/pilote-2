@@ -6,7 +6,7 @@ import Publication from '@/components/_commons/Publication/Publication';
 import { TypeObjectif, typesObjectif } from '@/server/domain/objectif/Objectif.interface';
 import { ObjectifsPageChantierProps } from './Objectifs.interface';
 
-export default function ObjectifsPageChantier({ objectifs, chantierId, maille, codeInsee, modeÉcriture = false, estInteractif = true }: ObjectifsPageChantierProps) {
+export default function ObjectifsPageChantier({ objectifs, chantierId, maille, modeÉcriture = false, estInteractif = true }: ObjectifsPageChantierProps) {
   return (
     <section id="objectifs">
       <Titre
@@ -31,7 +31,6 @@ export default function ObjectifsPageChantier({ objectifs, chantierId, maille, c
                   libelléType: libellésTypesObjectif[type as TypeObjectif],
                   consigneDÉcriture: consignesDÉcritureObjectif[type as TypeObjectif],
                 }}
-                codeInsee={codeInsee}
                 estInteractif={estInteractif}
                 maille={maille}
                 modeÉcriture={modeÉcriture}

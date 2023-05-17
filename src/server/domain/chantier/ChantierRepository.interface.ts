@@ -13,7 +13,7 @@ export default interface ChantierRepository {
   récupérerListe(habilitations: Habilitation): Promise<Chantier[]>;
   getChantierStatistiques(habilitations: Habilitations, listeChantier: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques>;
   récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null>
-  modifierMétéo(chantierId: string, maille: Maille, codeInsee: CodeInsee, météo: Météo): Promise<void>;
+  modifierMétéo(chantierId: string, territoireCode: string, météo: Météo): Promise<void>;
   récupérerPourExports(habilitations: Habilitations): Promise<ChantierPourExport[]>;
   récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][]): Promise<Chantier['id'][]> 
 }

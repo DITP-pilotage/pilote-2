@@ -16,7 +16,7 @@ describe('CommentaireSQLRepository', () => {
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
 
       // WHEN
-      const résultat = await commentaireRepository.récupérerLePlusRécent('CH-001', 'nationale', 'FR', 'autresRésultatsObtenus');
+      const résultat = await commentaireRepository.récupérerLePlusRécent('CH-001', 'NAT-FR', 'autresRésultatsObtenus');
 
       // THEN
       expect(résultat).toStrictEqual(null);
@@ -58,7 +58,7 @@ describe('CommentaireSQLRepository', () => {
       await prisma.commentaire.createMany({ data: commentaires });
 
       // WHEN
-      const résultat = await commentaireRepository.récupérerLePlusRécent(chantierId, maille, codeInsee, 'risquesEtFreinsÀLever');
+      const résultat = await commentaireRepository.récupérerLePlusRécent(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`, 'risquesEtFreinsÀLever');
 
       // THEN
       expect(résultat).toStrictEqual({
@@ -129,7 +129,7 @@ describe('CommentaireSQLRepository', () => {
       await prisma.commentaire.createMany({ data: commentaires });
 
       // WHEN
-      const result = await commentaireRepository.récupérerHistorique(chantierId, maille, codeInsee, typeCommentaire);
+      const result = await commentaireRepository.récupérerHistorique(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`, typeCommentaire);
 
       // THEN
       expect(result).toStrictEqual([
@@ -166,7 +166,7 @@ describe('CommentaireSQLRepository', () => {
       const commentaireRepository = new CommentaireSQLRepository(prisma);
 
       // When
-      await commentaireRepository.créer(chantierId, maille, codeInsee, id, contenu, auteur, type, date);
+      await commentaireRepository.créer(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`, id, contenu, auteur, type, date);
 
       // Then
       const commentaireCrééeEnBase = await prisma.commentaire.findUnique({ where: { id: id } });
@@ -187,7 +187,7 @@ describe('CommentaireSQLRepository', () => {
       const commentaireRepository = new CommentaireSQLRepository(prisma);
 
       // When
-      const commentaireCréée = await commentaireRepository.créer(chantierId, maille, codeInsee, id, contenu, auteur, type, new Date(date));
+      const commentaireCréée = await commentaireRepository.créer(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`, id, contenu, auteur, type, new Date(date));
 
       // Then
       expect(commentaireCréée).toStrictEqual({

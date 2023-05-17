@@ -25,3 +25,16 @@ export class ResourceNotFound extends ExtendableError {
     this.data = { resource, query };
   }
 }
+export class NonAutorisé extends Error {}
+
+export class TerritoireNonAutoriséErreur extends NonAutorisé {
+  constructor() { super('Territoire non autorisé'); }
+}
+
+export class ChantierNonAutoriséErreur extends NonAutorisé {
+  constructor() { super('Chantier non autorisé'); }
+}
+
+export class MailleNonAutoriséeErreur extends NonAutorisé {
+  constructor() { super('Maille non autorisée'); }
+}
