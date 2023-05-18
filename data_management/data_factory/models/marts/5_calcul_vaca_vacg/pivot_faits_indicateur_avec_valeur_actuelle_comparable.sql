@@ -16,7 +16,7 @@ SELECT
                     AND date_trunc('year', pivot_pour_cumuler_valeur_actuelle.date_releve) = date_trunc('year', pivot.date_releve)
                     AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
             )
-        ELSE valeur_actuelle_decumulee
+        ELSE valeur_actuelle_decumulee -- todo: mettre à nulle cette valeur afin de ne pas calculer de taux d'avancement annuel (et donc utiliser celui de dfakto pour le moment)
     END AS valeur_actuelle_comparable_annuelle,
     CASE
         WHEN parametrage.partitionne_vacg_par = 'from_custom_date' AND parametrage.vacg_operation = 'sum' THEN
@@ -29,7 +29,7 @@ SELECT
                     AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
                     AND pivot_pour_cumuler_valeur_actuelle.date_releve >= parametrage.partitionne_vacg_depuis
             )
-        ELSE valeur_actuelle_decumulee
+        ELSE valeur_actuelle_decumulee -- todo: mettre à nulle cette valeur afin de ne pas calculer de taux d'avancement global (et donc utiliser celui de dfakto pour le moment)
     END AS valeur_actuelle_comparable_globale,
     pivot.valeur_cible_annuelle,
     pivot.valeur_cible_globale
