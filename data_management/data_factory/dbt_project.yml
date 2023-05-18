@@ -57,6 +57,9 @@ models:
       6_calcul_ta_indicateur:
         taux_avancement_indicateur:
           +materialized: table
+      7_calcul_ta_chantier:
+        taux_avancement_chantier:
+          +materialized: table
     metrics:
       +schema: marts
       taux_avancement_indicateur__departement:
