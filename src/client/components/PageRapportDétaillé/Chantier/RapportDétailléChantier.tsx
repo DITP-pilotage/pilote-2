@@ -4,7 +4,7 @@ import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé
 import RapportDétailléChantierProps from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface';
 import { useRapportDétailléChantier } from '@/components/PageRapportDétaillé/Chantier/useRapportDétailléChantier';
 import AvancementChantier from '@/components/PageChantier/AvancementChantier/AvancementChantier';
-import Responsables from '@/components/PageChantier/Responsables/Responsables';
+import ResponsablesPageProjetStructurant from '@/components/PageChantier/Responsables/Responsables';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Cartes from '@/components/PageChantier/Cartes/Cartes';
 import ObjectifsPageChantier from '@/components/PageChantier/Objectifs/Objectifs';
@@ -50,7 +50,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                 />
               </div>
               <div className='fr-col-xl-6 fr-col-12'>
-                <Responsables responsables={chantier.responsables} />
+                <ResponsablesPageProjetStructurant responsables={chantier.responsables} />
               </div>
             </>
           }
@@ -67,7 +67,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
           <div className="fr-col-12">
             <Cartes
-              chantier={chantier}
+              chantierMailles={chantier.mailles}
               estInteractif={false}
             />
           </div>
@@ -115,6 +115,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                   commentaires={commentaires}
                   estInteractif={false}
                   maille={territoireSélectionné!.maille}
+                  nomTerritoire={territoireSélectionné!.nomAffiché}
                   réformeId={chantier.id}
                 />
               </div>

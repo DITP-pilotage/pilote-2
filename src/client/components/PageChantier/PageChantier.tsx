@@ -14,7 +14,7 @@ import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousL
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
-import Responsables from './Responsables/Responsables';
+import ResponsablesPageProjetStructurant from './Responsables/Responsables';
 import PageChantierEnTête from './EnTête/EnTête';
 import Cartes from './Cartes/Cartes';
 import PageChantierStyled from './PageChantier.styled';
@@ -113,7 +113,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         />
                       </div>
                       <div className='fr-col-xl-5 fr-col-12'>
-                        <Responsables responsables={chantier.responsables} />
+                        <ResponsablesPageProjetStructurant responsables={chantier.responsables} />
                       </div>
                     </>
                   }
@@ -129,7 +129,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 </div>
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                   <div className="fr-col-12">
-                    <Cartes chantier={chantier} />
+                    <Cartes chantierMailles={chantier.mailles} />
                   </div>
                 </div>
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
@@ -171,7 +171,8 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     <Commentaires
                       commentaires={commentaires}
                       maille={territoireSélectionné!.maille}
-                      modeÉcriture={territoireSélectionné?.accèsSaisiePublication}
+                      modeÉcriture={territoireSélectionné!.accèsSaisiePublication}
+                      nomTerritoire={territoireSélectionné!.nomAffiché}
                       réformeId={chantier.id}
                     />
                   </div>
