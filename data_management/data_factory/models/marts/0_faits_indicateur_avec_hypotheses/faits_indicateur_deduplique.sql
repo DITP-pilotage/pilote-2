@@ -3,7 +3,8 @@ WITH faits_indicateur_order_by_date as (
         ROW_NUMBER() OVER (PARTITION BY indicateur_id, zone_id, type_mesure, date_trunc('month', date_releve) ORDER BY date_releve DESC, date_import DESC) AS row_id_by_date_releve_desc,
         *
     FROM {{ ref("faits_indicateur") }}
-    WHERE faits_indicateur.zone_type_parent <> 'ACAD'
+    WHERE (faits_indicateur.zone_type_parent <> 'ACAD' OR faits_indicateur.zone_type_parent IS NULL)
+        AND NOT (date_trunc('year', date_releve) > CURRENT_DATE AND type_mesure = 'va')
     ORDER BY indicateur_id, zone_id, type_mesure, date_trunc('month', date_releve), row_id_by_date_releve_desc -- pour les tests à supprimer
 ),
 
