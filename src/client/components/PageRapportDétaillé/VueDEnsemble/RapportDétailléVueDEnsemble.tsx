@@ -3,10 +3,11 @@ import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import Avancements from '@/components/_commons/Avancements/Avancements';
-import RépartitionMétéo from '@/components/PageAccueil/PageChantiers/RépartitionMétéo/RépartitionMétéo';
+import RépartitionMétéo from '@/components/PageAccueil/RépartitionMétéo/RépartitionMétéo';
 import RapportDétailléVueDEnsembleProps from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble.interface';
 import usePageRapportDétaillé from '@/components/PageRapportDétaillé/usePageRapportDétaillé';
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
+import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
 export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVueDEnsembleProps) {
@@ -41,6 +42,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
                 auClicTerritoireCallback={() => {}}
                 données={donnéesCartographie}
                 options={{ estInteractif: false }}
+                élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
               />
             </section>
           </Bloc>

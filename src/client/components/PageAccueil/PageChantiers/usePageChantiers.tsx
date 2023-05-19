@@ -18,7 +18,7 @@ export default function usePageChantiers(chantiers: Chantier[]) {
     chantiersFiltrés,
     avancementsAgrégés,
     répartitionMétéos,
-    donnéesCartographie: avancementsGlobauxTerritoriauxMoyens,
+    donnéesCartographieAvancement: avancementsGlobauxTerritoriauxMoyens,
     donnéesTableauChantiers: chantiersVueDEnsemble,
   };
 }

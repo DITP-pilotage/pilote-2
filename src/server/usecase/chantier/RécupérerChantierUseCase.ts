@@ -9,6 +9,6 @@ export default class RécupérerChantierUseCase {
   ) {}
 
   async run(chantierId: string, habilitations: Habilitations): Promise<Chantier> {
-    return this.chantierRepository.getById(chantierId, habilitations);
+    return this.chantierRepository.récupérer(chantierId, habilitations);
   }
 }

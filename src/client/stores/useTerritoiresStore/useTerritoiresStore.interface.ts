@@ -18,5 +18,6 @@ export default interface TerritoiresStore {
     récupérerDétailsSurUnTerritoireAvecCodeInsee: (codeInsee: CodeInsee) => DétailTerritoire
     récupérerDétailsSurUnTerritoire: (territoireCode: DétailTerritoire['code']) => DétailTerritoire
     modifierTerritoiresComparés: (territoireCode: DétailTerritoire['code']) => void
+    récupérerDépartementsAssociésÀLaRégion: (codeInsee: CodeInsee, maille: MailleInterne) => CodeInsee[]
   },
 }

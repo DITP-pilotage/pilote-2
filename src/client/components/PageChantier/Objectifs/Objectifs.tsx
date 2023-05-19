@@ -2,11 +2,11 @@ import { Fragment } from 'react';
 import { consignesDÉcritureObjectif, libellésTypesObjectif } from '@/client/constants/libellésObjectif';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
-import { ObjectifProps } from '@/components/PageChantier/Objectifs/Objectifs.interface';
 import Publication from '@/components/_commons/Publication/Publication';
 import { TypeObjectif, typesObjectif } from '@/server/domain/objectif/Objectif.interface';
+import { ObjectifsPageChantierProps } from './Objectifs.interface';
 
-export default function Objectifs({ objectifs, chantierId, maille, codeInsee, modeÉcriture = false, estInteractif = true }: ObjectifProps) {
+export default function ObjectifsPageChantier({ objectifs, chantierId, maille, codeInsee, modeÉcriture = false, estInteractif = true }: ObjectifsPageChantierProps) {
   return (
     <section id="objectifs">
       <Titre
@@ -20,10 +20,10 @@ export default function Objectifs({ objectifs, chantierId, maille, codeInsee, mo
           typesObjectif.map((type, i ) => (
             <Fragment key={type}>
               {
-                  i !== 0 && (
-                    <hr className="fr-hr fr-mx-n2w" />
-                  )
-                }
+                i !== 0 && (
+                  <hr className="fr-hr fr-mx-n2w" />
+                )
+              }
               <Publication
                 caractéristiques={{
                   type: type,
@@ -31,12 +31,12 @@ export default function Objectifs({ objectifs, chantierId, maille, codeInsee, mo
                   libelléType: libellésTypesObjectif[type as TypeObjectif],
                   consigneDÉcriture: consignesDÉcritureObjectif[type as TypeObjectif],
                 }}
-                chantierId={chantierId}
                 codeInsee={codeInsee}
                 estInteractif={estInteractif}
                 maille={maille}
                 modeÉcriture={modeÉcriture}
                 publicationInitiale={objectifs?.find(objectif => objectif?.type === type) || null}
+                réformeId={chantierId}
               />
             </Fragment>
           ))

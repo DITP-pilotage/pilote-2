@@ -10,9 +10,10 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import ExportDesDonnées, { ID_HTML_MODALE_EXPORT } from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
+import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
+import FiltresActifs from '@/client/components/PageAccueil/FiltresActifs/FiltresActifs';
+import RépartitionMétéo from '@/client/components/PageAccueil/RépartitionMétéo/RépartitionMétéo';
 import PageChantiersProps from './PageChantiers.interface';
-import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
-import FiltresActifs from './FiltresActifs/FiltresActifs';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
 
@@ -25,7 +26,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
     chantiersFiltrés,
     avancementsAgrégés,
     répartitionMétéos,
-    donnéesCartographie,
+    donnéesCartographieAvancement,
     donnéesTableauChantiers,
   } = usePageChantiers(chantiers);
 
@@ -84,7 +85,8 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                 </Titre>
                 <CartographieAvancement
                   auClicTerritoireCallback={auClicTerritoireCallback}
-                  données={donnéesCartographie}
+                  données={donnéesCartographieAvancement}
+                  élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                 />
               </section>
             </Bloc>

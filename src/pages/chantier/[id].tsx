@@ -6,22 +6,23 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import { ChantierInformation } from '@/components/PageImportIndicateur/ChantierInformation.interface';
+import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[],
-  chantierInformation: ChantierInformation,
+  chantierInformations: ChantierInformations,
 }
 
-export default function NextPageChantier({ indicateurs, chantierInformation }: NextPageChantierProps) {
+export default function NextPageChantier({ indicateurs, chantierInformations }: NextPageChantierProps) {
   return (
     <>
       <Head>
         <title>
-          {`Chantier ${chantierInformation.id.replace('CH-', '')} - ${chantierInformation.nom} - PILOTE`}
+          {`Chantier ${chantierInformations.id.replace('CH-', '')} - ${chantierInformations.nom} - PILOTE`}
         </title>
       </Head>
       <PageChantier
+        chantierId={chantierInformations.id}
         indicateurs={indicateurs}
       />
     </>
@@ -37,16 +38,14 @@ export async function getServerSideProps({ req, res, params }: GetServerSideProp
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params!.id);
   const chantierRepository = dependencies.getChantierRepository();
-  const chantier: Chantier = await chantierRepository.getById(params!.id, session.habilitations);
+  const chantier: Chantier = await chantierRepository.récupérer(params!.id, session.habilitations);
 
   return {
     props: {
       indicateurs,
-      chantierInformation: {
+      chantierInformations: {
         id: chantier.id,
         nom: chantier.nom,
-        axe: chantier.axe,
-        ppg: chantier.ppg,
       },
     },
   };

@@ -21,12 +21,12 @@ export default function DécisionsStratégiques({ décisionStratégique, chantie
             entité: 'décisions stratégiques',
             consigneDÉcriture: 'Notez les décisions prises lors des réunions Elysée <> Matignon (AKAR) et indiquez les actions envisagées et/ou réalisées pour mettre en œuvre ou répondre à ces décisions.',
           }}
-          chantierId={chantierId}
           codeInsee='FR'
           estInteractif={estInteractif}
           maille="nationale"
           modeÉcriture={modeÉcriture}
           publicationInitiale={décisionStratégique}
+          réformeId={chantierId}
         />
       </Bloc>
     </section>

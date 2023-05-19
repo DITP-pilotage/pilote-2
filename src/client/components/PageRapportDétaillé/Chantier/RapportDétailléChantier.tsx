@@ -5,12 +5,12 @@ import RapportDétailléChantierProps from '@/components/PageRapportDétaillé/C
 import { useRapportDétailléChantier } from '@/components/PageRapportDétaillé/Chantier/useRapportDétailléChantier';
 import AvancementChantier from '@/components/PageChantier/AvancementChantier/AvancementChantier';
 import Responsables from '@/components/PageChantier/Responsables/Responsables';
-import SynthèseDesRésultats from '@/components/PageChantier/SynthèseDesRésultats/SynthèseDesRésultats';
+import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Cartes from '@/components/PageChantier/Cartes/Cartes';
-import Objectifs from '@/components/PageChantier/Objectifs/Objectifs';
+import ObjectifsPageChantier from '@/components/PageChantier/Objectifs/Objectifs';
 import Indicateurs from '@/components/PageChantier/Indicateurs/Indicateurs';
 import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
-import Commentaires from '@/components/PageChantier/Commentaires/Commentaires';
+import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Titre from '@/components/_commons/Titre/Titre';
 
@@ -50,15 +50,16 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                 />
               </div>
               <div className='fr-col-xl-6 fr-col-12'>
-                <Responsables chantier={chantier} />
+                <Responsables responsables={chantier.responsables} />
               </div>
             </>
           }
           <div className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-6'} fr-col-12`}>
             <SynthèseDesRésultats
-              chantierId={chantier.id}
               estInteractif={false}
-              rechargerChantier={() => {}}
+              nomTerritoire={territoireSélectionné!.nomAffiché}
+              rechargerRéforme={() => {}}
+              réformeId={chantier.id}
               synthèseDesRésultatsInitiale={synthèseDesRésultats}
             />
           </div>
@@ -75,7 +76,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           objectifs !== null &&
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
-              <Objectifs
+              <ObjectifsPageChantier
                 chantierId={chantier.id}
                 codeInsee='FR'
                 estInteractif={false}
@@ -112,11 +113,11 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
             <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
               <div className="fr-col-12">
                 <Commentaires
-                  chantierId={chantier.id}
                   codeInsee={territoireSélectionné!.codeInsee}
                   commentaires={commentaires}
                   estInteractif={false}
                   maille={territoireSélectionné!.maille}
+                  réformeId={chantier.id}
                 />
               </div>
             </div>

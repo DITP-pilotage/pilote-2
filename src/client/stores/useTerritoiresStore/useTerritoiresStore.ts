@@ -1,5 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { create } from 'zustand';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import TerritoiresStore from './useTerritoiresStore.interface';
 
 const MAILLE_DÉPARTEMENTALE = 'départementale';
@@ -14,6 +16,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
   territoiresComparés: [],
   maillesAccessiblesEnLecture: [],
   actions: {
+
     initialiserLesTerritoires: territoires => {
       if (get().territoires.length > 0) {
         return;
@@ -42,7 +45,6 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       const territoireSélectionné = territoireNational ?? premierTerritoireRégional ?? premierTerritoireDépartemental;
 
       if (territoireSélectionné) {
-        set({ mailleSélectionnée: territoireSélectionné.maille === 'régionale' ? 'régionale' : 'départementale' });
         get().actions.modifierTerritoireSélectionné(territoireSélectionné.code);
       }
     },
@@ -88,7 +90,16 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       
       set({ territoiresComparés });
     },
+
+    récupérerDépartementsAssociésÀLaRégion: (codeInsee: CodeInsee, maille: MailleInterne) => {
+      if (maille === 'départementale') return [];
+      return get().départements.filter(département =>
+        département.codeParent === (get().régions.find(région => région.codeInsee === codeInsee))?.code,
+      ).map(département => département.codeInsee);
+    },
   },
+
+  
 }));
 
 export const actionsTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.actions);

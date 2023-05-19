@@ -33,7 +33,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     this.prisma = prisma;
   }
 
-  async getById(id: string, habilitations: Habilitations): Promise<Chantier> {
+  async récupérer(id: string, habilitations: Habilitations): Promise<Chantier> {
     const h = new Habilitation(habilitations);
     const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
@@ -76,7 +76,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiers.map(c => c.id);
   }
 
-  async getListe(habilitation: Habilitation): Promise<Chantier[]> {
+  async récupérerListe(habilitation: Habilitation): Promise<Chantier[]> {
     
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     let territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
@@ -271,26 +271,27 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const chantiersLecture = listeChantier.filter((x) => chantiersAutorisés.includes(x));
 
     const rows = await this.prisma.$queryRaw<any[]>`
-    WITH chantier_average AS (
-      SELECT 
-        territoire_code, 
-        AVG(taux_avancement) AS stat
-      FROM chantier 
-      WHERE 
+      WITH chantier_average AS (
+        SELECT 
+          territoire_code, 
+          AVG(taux_avancement) AS stat
+        FROM chantier 
+        WHERE 
         chantier.id IN (${chantiersLecture.length > 0 ? Prisma.join(chantiersLecture) : undefined}) 
-        AND maille = ${CODES_MAILLES[maille]}
-      GROUP BY territoire_code
-    )
-    SELECT 
-      AVG(stat) AS stat_avg,
-      MIN(stat) AS stat_min, 
-      PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY stat) AS stat_median,
-      MAX(stat) AS stat_max,
-      NULL AS stat_avg_annuel
-    FROM chantier_average
+          AND maille = ${CODES_MAILLES[maille]}
+        GROUP BY territoire_code
+      )
+      SELECT 
+        AVG(stat) AS stat_avg,
+        MIN(stat) AS stat_min, 
+        PERCENTILE_CONT(0.5) WITHIN GROUP(ORDER BY stat) AS stat_median,
+        MAX(stat) AS stat_max,
+        NULL AS stat_avg_annuel
+      FROM chantier_average
   `;
+  
     const values = rows[0];
-    const avancementsStatistiques : AvancementsStatistiques = {
+    return {
       global: {
         moyenne: values.stat_avg,
         médiane: values.stat_median,
@@ -300,8 +301,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
       annuel: {
         moyenne: values.stat_avg_annuel,
       },
-    
     };
-    return avancementsStatistiques;
   }
 }

@@ -5,6 +5,8 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
 import Titre from '@/components/_commons/Titre/Titre';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
+import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
+import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieMétéo';
 import CartesProps from './Cartes.interface';
 
 export default function Cartes({ chantier, estInteractif = true }: CartesProps) {
@@ -45,6 +47,7 @@ export default function Cartes({ chantier, estInteractif = true }: CartesProps) 
                 auClicTerritoireCallback={auClicTerritoireCallback}
                 données={donnéesCartographieAvancement}
                 options={{ estInteractif: estInteractif }}
+                élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
               />
             </section>
           </Bloc>
@@ -62,6 +65,7 @@ export default function Cartes({ chantier, estInteractif = true }: CartesProps) 
                 auClicTerritoireCallback={auClicTerritoireCallback}
                 données={donnéesCartographieMétéo}
                 options={{ estInteractif: estInteractif }}
+                élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
               />
             </section>
           </Bloc>

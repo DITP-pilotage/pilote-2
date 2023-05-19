@@ -12,8 +12,7 @@ const mailTo = (label: string, mail: string | null) => (
     : label
 );
 
-export default function Responsables({ chantier }: ResponsablesProps) {
-  const responsables = chantier.responsables;
+export default function Responsables({ responsables }: ResponsablesProps) {
    
   return (
     <ResponsablesStyled id="responsables">

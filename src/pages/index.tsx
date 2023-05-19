@@ -10,6 +10,7 @@ import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import PageAccueil from '@/components/PageAccueil/PageAccueil';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+import ProjetStructurantBuilder from '@/server/domain/projetStructurant/ProjetStructurant.builder';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
@@ -46,29 +47,8 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
   
   const habilitation =  new Habilitation(session.habilitations);
   const chantierRepository = dependencies.getChantierRepository();
-  const chantiers = await chantierRepository.getListe(habilitation);
-  const projetsStructurants: ProjetStructurant[] = [
-    { 
-      id: 'PS-001',
-      nom: 'Projet structurant 1',
-      tauxAvancement: 95,
-      dateTauxAvancement: new Date().toISOString(),
-      territoireNom: 'Yvelines',
-      maille: 'départementale',
-      ministèresIds: ['MIN-001'],
-      météo: 'SOLEIL',
-    },
-    {
-      id: 'PS-002',
-      nom: 'Projet structurant 2',
-      tauxAvancement: 55,
-      dateTauxAvancement: new Date().toISOString(),
-      territoireNom: 'Yvelines',
-      maille: 'départementale',
-      ministèresIds: ['MIN-001'],
-      météo: 'COUVERT',
-    },
-  ];
+  const chantiers = await chantierRepository.récupérerListe(habilitation);
+  const projetsStructurants: ProjetStructurant[] = await Promise.all(Array.from({ length: 150 }, () => new ProjetStructurantBuilder().build()));
 
   let axes: Axe[] = [];
   let ppgs: Ppg[] = [];

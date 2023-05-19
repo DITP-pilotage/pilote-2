@@ -5,8 +5,8 @@ import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousL
 import PublicationHistoriqueProps from './PublicationHistorique.interface';
 import usePublicationHistorique from './usePublicationHistorique';
 
-export default function PublicationHistorique({ type, entité, chantierId, maille, codeInsee }: PublicationHistoriqueProps) {
-  const { publications, nomTerritoire, récupérerPublications } = usePublicationHistorique(type, entité, chantierId, maille, codeInsee);
+export default function PublicationHistorique({ type, entité, réformeId, maille, codeInsee }: PublicationHistoriqueProps) {
+  const { publications, nomTerritoire, récupérerPublications } = usePublicationHistorique(type, entité, réformeId, maille, codeInsee);
 
   const ID_HTML = useMemo(() => `historique-${entité}-${type}`, [entité, type]);
 

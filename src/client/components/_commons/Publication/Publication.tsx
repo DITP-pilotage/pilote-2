@@ -7,7 +7,7 @@ import PublicationProps from './Publication.interface';
 import PublicationHistorique from './PublicationHistorique/PublicationHistorique';
 import PublicationAffichage from './PublicationAffichage/PublicationAffichage';
 
-export default function Publication({ caractéristiques, publicationInitiale, chantierId, maille, codeInsee, modeÉcriture, estInteractif }: PublicationProps) {
+export default function Publication({ caractéristiques, publicationInitiale, réformeId, maille, codeInsee, modeÉcriture, estInteractif }: PublicationProps) {
   const {
     publication,
     modeÉdition,
@@ -52,17 +52,17 @@ export default function Publication({ caractéristiques, publicationInitiale, ch
                 <div className='fr-grid-row fr-grid-row--right'>
                   <div className='fr-col-12 actions fr-mt-1w'>
                     {
-                        !!publication &&
-                          <PublicationHistorique
-                            chantierId={chantierId}
-                            codeInsee={codeInsee}
-                            entité={caractéristiques.entité}
-                            maille={maille}
-                            type={caractéristiques.type}
-                          />
-                      }
+                      !!publication &&
+                        <PublicationHistorique
+                          codeInsee={codeInsee}
+                          entité={caractéristiques.entité}
+                          maille={maille}
+                          réformeId={réformeId}
+                          type={caractéristiques.type}
+                        />
+                    }
                     {
-                        !!modeÉcriture &&
+                      !!modeÉcriture &&
                         <button
                           className='fr-btn fr-btn--secondary fr-ml-3w bouton-modifier'
                           onClick={activerLeModeÉdition}
@@ -75,7 +75,7 @@ export default function Publication({ caractéristiques, publicationInitiale, ch
                           {}
                           Modifier
                         </button>
-                      }
+                     }
                   </div>
                 </div>
             }

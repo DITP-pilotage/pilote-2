@@ -5,6 +5,7 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import CartographieValeurActuelle from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import IndicateurSpécifications from '@/components/PageChantier/Indicateurs/Bloc/Détails/Spécifications/IndicateurSpécifications';
+import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 import useIndicateurDétails from './useIndicateurDétails';
 
@@ -53,6 +54,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
                     auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
                     données={donnéesCartographieAvancement}
                     options={{ multiséléction: true }}
+                    élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
                   />
                 </section>
                 <section className="fr-col-12 fr-col-xl-6">

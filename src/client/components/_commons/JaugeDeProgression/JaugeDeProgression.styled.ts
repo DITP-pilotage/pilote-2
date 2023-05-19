@@ -7,6 +7,7 @@ const couleurs = {
   violet: '#8585F6',
   orange: '#FC5D00',
   vert: '#27A658',
+  rose: 'var(--background-action-high-pink-tuile)',
 };
 
 const largeurs = {

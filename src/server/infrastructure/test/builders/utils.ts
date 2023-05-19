@@ -25,6 +25,10 @@ export function générerUneMailleAléatoire(): 'DEPT' | 'REG' | 'NAT' {
   return faker.helpers.arrayElement(['DEPT', 'REG', 'NAT']);
 }
 
+export function générerUneMailleInterneAléatoire(): 'DEPT' | 'REG' {
+  return faker.helpers.arrayElement(['DEPT', 'REG']);
+}
+
 export function retourneUneListeDeCodeInseeCohérentePourUneMaille(maille: string) {
   if (maille === 'DEPT')
     return codesInseeDépartements;

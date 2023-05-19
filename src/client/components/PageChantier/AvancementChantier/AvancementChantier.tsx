@@ -36,30 +36,30 @@ export default function AvancementChantier({ avancements, chantierId }: Avanceme
       </Titre>
       <div className='blocs'>
         {
-            avancements.départementale.moyenne !== undefined &&
-            <Bloc titre={territoireSélectionné?.nomAffiché}>
-              <div className='fr-py-1w jauge'>
-                <JaugeDeProgression
-                  couleur="bleuClair"
-                  libellé={territoireSélectionné!.nom}
-                  pourcentage={avancements.départementale.moyenne}
-                  taille="lg"
-                />
-              </div>
-            </Bloc>
-          }
+          !!avancements.départementale.moyenne &&
+          <Bloc titre={territoireSélectionné?.nomAffiché}>
+            <div className='fr-py-1w jauge'>
+              <JaugeDeProgression
+                couleur="bleuClair"
+                libellé={territoireSélectionné!.nom}
+                pourcentage={avancements.départementale.moyenne}
+                taille="lg"
+              />
+            </div>
+          </Bloc>
+        }
         {
-            avancements.régionale.moyenne !== undefined &&
-            <Bloc titre={territoireSélectionné!.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné!.codeParent).nomAffiché : territoireSélectionné!.nomAffiché}>
-              <div className='fr-py-1w jauge'>
-                <JaugeDeProgression
-                  couleur="bleuClair"
-                  libellé={territoireSélectionné!.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné!.codeParent).nomAffiché : territoireSélectionné!.nomAffiché}
-                  pourcentage={avancements.régionale.moyenne}
-                  taille="lg"
-                />
-              </div>
-            </Bloc>
+          !!avancements.régionale.moyenne &&
+          <Bloc titre={territoireSélectionné!.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné!.codeParent).nomAffiché : territoireSélectionné!.nomAffiché}>
+            <div className='fr-py-1w jauge'>
+              <JaugeDeProgression
+                couleur="bleuClair"
+                libellé={territoireSélectionné!.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné!.codeParent).nomAffiché : territoireSélectionné!.nomAffiché}
+                pourcentage={avancements.régionale.moyenne}
+                taille="lg"
+              />
+            </div>
+          </Bloc>
           }
         <div className='avancement-national'>
           <Bloc titre='National'>
