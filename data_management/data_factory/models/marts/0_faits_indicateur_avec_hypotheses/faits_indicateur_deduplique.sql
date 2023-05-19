@@ -4,13 +4,16 @@ WITH faits_indicateur_order_by_date as (
         *
     FROM {{ ref("faits_indicateur") }}
     WHERE (faits_indicateur.zone_type_parent <> 'ACAD' OR faits_indicateur.zone_type_parent IS NULL)
-        AND NOT (date_trunc('year', date_releve) > CURRENT_DATE AND type_mesure = 'va')
+        --AND NOT (date_trunc('year', date_releve) > CURRENT_DATE AND type_mesure = 'va') -- a decommenter ou non selon réponse à la question 2 du mail ROFA 22 Mai
     ORDER BY indicateur_id, zone_id, type_mesure, date_trunc('month', date_releve), row_id_by_date_releve_desc -- pour les tests à supprimer
 ),
 
 faits_indicateur_group_by_indicateur_et_zone_order_by_date as (
     SELECT
-        ROW_NUMBER() OVER (PARTITION BY indicateur_id, zone_id ORDER BY date_releve ASC, date_import DESC) AS row_id_par_indicateur_et_zone,
+        ROW_NUMBER() OVER (
+            PARTITION BY indicateur_id, zone_id
+            ORDER BY (case when type_mesure = 'vi' then 0 else 1 END) ASC, date_releve ASC, date_import DESC
+        ) AS row_id_par_indicateur_et_zone,
         *
     FROM faits_indicateur_order_by_date
     WHERE row_id_by_date_releve_desc = 1
