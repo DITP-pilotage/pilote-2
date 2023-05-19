@@ -48,7 +48,7 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
   const habilitation =  new Habilitation(session.habilitations);
   const chantierRepository = dependencies.getChantierRepository();
   const chantiers = await chantierRepository.récupérerListe(habilitation);
-  const projetsStructurants: ProjetStructurant[] = Array.from({ length: 150 }, () => new ProjetStructurantBuilder().build());
+  const projetsStructurants: ProjetStructurant[] = await Promise.all(Array.from({ length: 150 }, () => new ProjetStructurantBuilder().build()));
 
   let axes: Axe[] = [];
   let ppgs: Ppg[] = [];

@@ -9,7 +9,7 @@ import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import PageProjetStructurantProps from './PageProjetStructurant.interface';
 import PageProjetStructurantEnTête from './EnTête/EnTête';
 import PageProjetStructurantStyled from './PageProjetStructurant.styled';
-import AvancementPageProjetStructurant from './Avancement/AvancementPageProjetStructurant';
+import AvancementPageProjetStructurant from './Avancement/Avancement';
 import ObjectifsPageProjetStructurant from './Objectifs/Objectifs';
 
 export default function PageProjetStructurant({ projetStructurant }: PageProjetStructurantProps) {

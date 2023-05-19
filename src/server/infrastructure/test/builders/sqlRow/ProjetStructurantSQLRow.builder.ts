@@ -8,32 +8,39 @@ import { ProjetStructurantPrisma } from '@/server/infrastructure/accès_données
 import ProjetStructurantBuilder from '@/server/domain/projetStructurant/ProjetStructurant.builder';
 
 export default class ProjetStructurantRowBuilder {
-  private _id: ProjetStructurantPrisma['id'];
+  private _id: ProjetStructurantPrisma['id'] = '';
 
-  private _code: ProjetStructurantPrisma['code'];
+  private _code: ProjetStructurantPrisma['code'] = '';
 
-  private _nom: ProjetStructurantPrisma['nom'];
+  private _nom: ProjetStructurantPrisma['nom'] = '';
   
-  private _maille: ProjetStructurantPrisma['maille'];
+  private _maille: ProjetStructurantPrisma['maille'] = 'DEPT';
 
-  private _codeInsee: ProjetStructurantPrisma['code_insee'];
+  private _codeInsee: ProjetStructurantPrisma['code_insee'] = '';
 
-  private _directionAdministration: ProjetStructurantPrisma['direction_administration'];
+  private _directionAdministration: ProjetStructurantPrisma['direction_administration'] = [];
 
-  private _périmètreIds: ProjetStructurantPrisma['perimetres_ids'];
+  private _périmètreIds: ProjetStructurantPrisma['perimetres_ids'] = [];
 
-  private _chefferieDeProjet: ProjetStructurantPrisma['chefferie_de_projet'];
+  private _chefferieDeProjet: ProjetStructurantPrisma['chefferie_de_projet'] = [];
 
-  private _coporteur: ProjetStructurantPrisma['co_porteur'];
+  private _coporteur: ProjetStructurantPrisma['co_porteur'] = [];
 
 
   constructor() {
-    const projetGénéré = new ProjetStructurantBuilder().build();
-    const ministères = faker.helpers.arrayElement([[new MinistèreBuilder().build()], [new MinistèreBuilder().build(), new MinistèreBuilder().build()]]);
-
+    this.initialise();
+  }
+  
+  async initialise() {
+    const projetGénéré = await new ProjetStructurantBuilder().build();
+    const ministères = faker.helpers.arrayElement([
+      [new MinistèreBuilder().build()],
+      [new MinistèreBuilder().build(), new MinistèreBuilder().build()],
+    ]);
+  
     const maille = générerUneMailleInterneAléatoire();
     const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
-      
+  
     this._id = projetGénéré.id;
     this._code = projetGénéré.codeInsee;
     this._nom = `${générerUnLibellé(6, 14)} ${générerCaractèresSpéciaux(3)} ${this._id}`;

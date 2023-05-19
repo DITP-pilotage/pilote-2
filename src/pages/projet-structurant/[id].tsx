@@ -21,7 +21,7 @@ export default function NextPageProjetStructurant({ projetStructurant }: NextPag
 }
 
 export async function getServerSideProps() {
-  const projetStructurant: ProjetStructurant = new ProjetStructurantBuilder().build();
+  const projetStructurant: ProjetStructurant = await new ProjetStructurantBuilder().build();
 
   return {
     props: {

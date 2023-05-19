@@ -10,6 +10,7 @@ import {
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import RécupérerDétailsTerritoireUseCase from '@/server/usecase/territoire/RécupérerDétailsTerritoireUseCase';
 import ProjetStructurant from './ProjetStructurant.interface';
 
 
@@ -21,8 +22,6 @@ export default class ProjetStructurantBuilder {
   private _maille: ProjetStructurant['maille'];
 
   private _codeInsee: ProjetStructurant['codeInsee'];
-
-  private _territoireNomÀAfficher: ProjetStructurant['territoireNomÀAfficher'];
 
   private _périmètreIds: ProjetStructurant['périmètresIds'];
 
@@ -54,7 +53,6 @@ export default class ProjetStructurantBuilder {
     this._périmètreIds = ministèrePorteur.périmètresMinistériels.map(périmètreMinistériel => périmètreMinistériel.id);
     this._maille = faker.helpers.arrayElement(['départementale', 'régionale']);
     this._codeInsee = faker.helpers.arrayElement(retourneUneListeDeCodeInseeCohérentePourUneMaille(CODES_MAILLES[this._maille]));
-    this._territoireNomÀAfficher = this._maille === 'départementale' ? `${this._codeInsee} - nom territoire` : 'nom territoire';
     this._avancement = générerPeutÊtreNull(0.1, faker.datatype.number({ min: 0, max: 100, precision: 0.01 }));
     this._dateAvancement = faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString();
     this._météo = new MétéoBuilder().build();
@@ -85,13 +83,14 @@ export default class ProjetStructurantBuilder {
     return this;
   }
 
-  build(): ProjetStructurant {
+  async build(): Promise<ProjetStructurant> {
+    const terrioire = await new RécupérerDétailsTerritoireUseCase().run(this._codeInsee, CODES_MAILLES[this._maille]);
     return {
       id: this._id,
       nom: this._nom,
       maille: this._maille,
       codeInsee: this._codeInsee,
-      territoireNomÀAfficher: this._territoireNomÀAfficher,
+      territoireNomÀAfficher: terrioire.nomAffiché,
       périmètresIds: this._périmètreIds,
       avancement: this._avancement,
       dateAvancement: this._dateAvancement,

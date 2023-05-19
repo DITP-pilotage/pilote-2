@@ -1,7 +1,7 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import Titre from '@/components/_commons/Titre/Titre';
-import AvancementPageProjetStructurantProps from './AvancementPageProjetStructurant.interface';
+import AvancementPageProjetStructurantProps from './Avancement.interface';
 
 export default function AvancementPageProjetStructurant({ territoireNom, avancement }: AvancementPageProjetStructurantProps) {
   return (
