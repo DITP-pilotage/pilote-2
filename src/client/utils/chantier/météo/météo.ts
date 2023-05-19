@@ -5,8 +5,10 @@ const ORDRE_DES_MÉTÉOS: typeof météos = ['NON_RENSEIGNEE', 'ORAGE', 'NUAGE',
 export function comparerMétéo(a: Météo, b: Météo) {
   const indexA = ORDRE_DES_MÉTÉOS.indexOf(a);
   const indexB = ORDRE_DES_MÉTÉOS.indexOf(b);
-  if (indexA === -1 || indexB === -1)
-    throw new Error('météo inconnue');
+  if (indexA === -1)
+    return -1;
+  if (indexB === -1)
+    return 1;
   if (indexA < indexB)
     return -1;
   if (indexA > indexB)

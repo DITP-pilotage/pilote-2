@@ -69,7 +69,11 @@ const colonnesTableauChantiers = [
     id: 'météo',
     cell: météo => <TableauRéformesMétéo météo={météo.getValue()} />,
     enableGlobalFilter: false,
-    sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
+    sortingFn: (a, b, columnId) => (
+      a.getIsGrouped() || b.getIsGrouped()
+        ? 0
+        : comparerMétéo(a.getValue(columnId), b.getValue(columnId))
+    ),
     enableGrouping: false,
     meta: {
       width: '10rem',
