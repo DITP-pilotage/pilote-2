@@ -1,8 +1,5 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import {
-  générerCaractèresSpéciaux, générerUneMailleInterneAléatoire, générerUnLibellé,
-  retourneUneListeDeCodeInseeCohérentePourUneMaille,
-} from '@/server/infrastructure/test/builders/utils';
+import {  générerCaractèresSpéciaux, générerUnLibellé } from '@/server/infrastructure/test/builders/utils';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 import { ProjetStructurantPrisma } from '@/server/infrastructure/accès_données/projetStructurant/ProjetStructurantSQLRepository';
 import ProjetStructurantBuilder from '@/server/domain/projetStructurant/ProjetStructurant.builder';
@@ -14,9 +11,7 @@ export default class ProjetStructurantRowBuilder {
 
   private _nom: ProjetStructurantPrisma['nom'] = '';
   
-  private _maille: ProjetStructurantPrisma['maille'] = 'DEPT';
-
-  private _codeInsee: ProjetStructurantPrisma['code_insee'] = '';
+  private _codeTerritoire: ProjetStructurantPrisma['code_territoire'] = '';
 
   private _directionAdministration: ProjetStructurantPrisma['direction_administration'] = [];
 
@@ -38,14 +33,10 @@ export default class ProjetStructurantRowBuilder {
       [new MinistèreBuilder().build(), new MinistèreBuilder().build()],
     ]);
   
-    const maille = générerUneMailleInterneAléatoire();
-    const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
-  
     this._id = projetGénéré.id;
     this._code = projetGénéré.codeInsee;
     this._nom = `${générerUnLibellé(6, 14)} ${générerCaractèresSpéciaux(3)} ${this._id}`;
-    this._maille = maille;
-    this._codeInsee = faker.helpers.arrayElement(codesInsee);
+    this._codeTerritoire = projetGénéré.codeTerritoire;
     this._périmètreIds = ministères.flatMap(ministère => ministère.périmètresMinistériels).map(périmètreMinistériel => périmètreMinistériel.id);
     this._directionAdministration = projetGénéré.responsables.directionAdmininstration;
     this._chefferieDeProjet = projetGénéré.responsables.chefferieDeProjet;
@@ -68,19 +59,6 @@ export default class ProjetStructurantRowBuilder {
     this._périmètreIds = périmètreIds;
     return this;
   }
-
-  avecMaille(maille: ProjetStructurantPrisma['maille']): ProjetStructurantRowBuilder {
-    const codesInsee = retourneUneListeDeCodeInseeCohérentePourUneMaille(maille);
-    
-    this._maille = maille;
-    this._codeInsee = faker.helpers.arrayElement(codesInsee);
-    return this;
-  }
-
-  avecCodeInsee(codeInsee: ProjetStructurantPrisma['code_insee']): ProjetStructurantRowBuilder {
-    this._codeInsee = codeInsee;
-    return this;
-  }
   
   shallowCopy(): ProjetStructurantRowBuilder {
     const result = new ProjetStructurantRowBuilder() as any;
@@ -95,8 +73,7 @@ export default class ProjetStructurantRowBuilder {
       id: this._id,
       code: this._code,
       nom: this._nom,
-      maille: this._maille,
-      code_insee: this._codeInsee,
+      code_territoire: this._codeTerritoire,
       direction_administration: this._directionAdministration,
       perimetres_ids: this._périmètreIds,
       chefferie_de_projet: this._chefferieDeProjet,

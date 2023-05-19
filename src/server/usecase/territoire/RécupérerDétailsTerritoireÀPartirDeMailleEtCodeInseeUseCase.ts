@@ -3,12 +3,12 @@ import TerritoireRepository from '@/server/domain/territoire/TerritoireRepositor
 import { dependencies } from '@/server/infrastructure/Dependencies';
 
 
-export default class RécupérerDétailsTerritoireUseCase {
+export default class RécupérerDétailsTerritoireÀPartirDeMailleEtCodeInseeUseCase {
   constructor(
     private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
   ) {}
     
-  async run(code: TerritoireDeBDD['code']): Promise<TerritoireDeBDD> {
-    return this.territoireRepository.récupérer(code);
+  async run(codeInsee: TerritoireDeBDD['codeInsee'], maille: TerritoireDeBDD['maille']): Promise<TerritoireDeBDD> {
+    return this.territoireRepository.récupérerÀPartirDeMailleEtCodeInsee(codeInsee, maille);
   }
 }

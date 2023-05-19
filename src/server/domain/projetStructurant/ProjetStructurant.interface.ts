@@ -1,10 +1,11 @@
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { CodeInsee, TerritoireDeBDD } from '@/server/domain/territoire/Territoire.interface';
 
 export default interface ProjetStructurant {
   id: string,
   nom: string,
+  codeTerritoire: TerritoireDeBDD['code']
   maille: MailleInterne;
   codeInsee: CodeInsee;
   territoireNomÀAfficher: string;

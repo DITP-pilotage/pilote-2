@@ -43,7 +43,7 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
         >
           Menu latéral
         </button>
-        <PageProjetStructurantEnTête projetStructurant={projetStructurant} />
+        <PageProjetStructurantEnTête nomProjetStructurant={projetStructurant.nom} />
         <div className='fr-p-4w'>
           <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-my-0 fr-pb-1w">
             <div className='fr-col'>

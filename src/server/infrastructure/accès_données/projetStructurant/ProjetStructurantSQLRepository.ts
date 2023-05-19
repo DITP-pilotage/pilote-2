@@ -1,5 +1,5 @@
 // import { projet_structurant as ProjetStructurantPrisma, PrismaClient } from '@prisma/client';
-import { Maille, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import ProjetStructurantRepository from '@/server/domain/projetStructurant/ProjetStructurantRepository.interface';
@@ -17,8 +17,7 @@ export type ProjetStructurantPrisma = {
   id: string;
   code: string;
   nom: string;
-  maille: Maille;
-  code_insee: string;
+  code_territoire: string;
   direction_administration: string[];
   perimetres_ids: string[];
   chefferie_de_projet: string[];
@@ -37,10 +36,11 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
     return {
       id: projetStructurantPrisma.id,
       nom: projetStructurantPrisma.nom,
+      codeTerritoire: projetStructurantPrisma.code_territoire,
       avancement: null,
       dateAvancement: Date.now().toString(),
-      maille: projetStructurantPrisma.maille as MailleInterne,
-      codeInsee: projetStructurantPrisma.code_insee,
+      maille: territoire.maille as MailleInterne,
+      codeInsee: territoire.codeInsee,
       territoireNomÀAfficher: territoire.nomAffiché,
       périmètresIds: projetStructurantPrisma.perimetres_ids,
       météo: 'NON_RENSEIGNEE',
@@ -56,7 +56,7 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
   }
 
   private async _récupérerTerritoireAssocié(projetStructurant: ProjetStructurantPrisma): Promise<TerritoireDeBDD> {
-    return new RécupérerDétailsTerritoireUseCase().run(projetStructurant.code_insee, projetStructurant.maille);
+    return new RécupérerDétailsTerritoireUseCase().run(projetStructurant.code_territoire);
   }
 
 

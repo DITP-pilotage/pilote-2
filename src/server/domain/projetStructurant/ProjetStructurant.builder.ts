@@ -10,7 +10,7 @@ import {
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import RécupérerDétailsTerritoireUseCase from '@/server/usecase/territoire/RécupérerDétailsTerritoireUseCase';
+import RécupérerDétailsTerritoireÀPartirDeMailleEtCodeInseeUseCase from '@/server/usecase/territoire/RécupérerDétailsTerritoireÀPartirDeMailleEtCodeInseeUseCase';
 import ProjetStructurant from './ProjetStructurant.interface';
 
 
@@ -53,7 +53,7 @@ export default class ProjetStructurantBuilder {
     this._périmètreIds = ministèrePorteur.périmètresMinistériels.map(périmètreMinistériel => périmètreMinistériel.id);
     this._maille = faker.helpers.arrayElement(['départementale', 'régionale']);
     this._codeInsee = faker.helpers.arrayElement(retourneUneListeDeCodeInseeCohérentePourUneMaille(CODES_MAILLES[this._maille]));
-    this._avancement = générerPeutÊtreNull(0.1, faker.datatype.number({ min: 0, max: 100, precision: 0.01 }));
+    this._avancement = générerPeutÊtreNull(0.1, faker.datatype.number({ min: 0, max: 120, precision: 0.01 }));
     this._dateAvancement = faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString();
     this._météo = new MétéoBuilder().build();
     this._ministèrePorteur = ministèrePorteur.nom;
@@ -84,10 +84,11 @@ export default class ProjetStructurantBuilder {
   }
 
   async build(): Promise<ProjetStructurant> {
-    const terrioire = await new RécupérerDétailsTerritoireUseCase().run(this._codeInsee, CODES_MAILLES[this._maille]);
+    const terrioire = await new RécupérerDétailsTerritoireÀPartirDeMailleEtCodeInseeUseCase().run(this._codeInsee, this._maille);
     return {
       id: this._id,
       nom: this._nom,
+      codeTerritoire: terrioire.code,
       maille: this._maille,
       codeInsee: this._codeInsee,
       territoireNomÀAfficher: terrioire.nomAffiché,

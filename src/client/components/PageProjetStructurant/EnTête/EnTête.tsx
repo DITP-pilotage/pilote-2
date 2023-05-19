@@ -4,7 +4,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import PageProjetStructurantEnTêteProps from './EnTête.interface';
 import PageProjetStructurantEnTêteStyled from './EnTête.styled';
 
-export default function PageProjetStructurantEnTête({ projetStructurant }: PageProjetStructurantEnTêteProps) {
+export default function PageProjetStructurantEnTête({ nomProjetStructurant }: PageProjetStructurantEnTêteProps) {
   return (
     <PageProjetStructurantEnTêteStyled className='fr-p-4w'>
       <Link
@@ -18,7 +18,7 @@ export default function PageProjetStructurantEnTête({ projetStructurant }: Page
         baliseHtml='h1'
         className='fr-h2 fr-my-1w'
       >
-        { projetStructurant.nom }
+        { nomProjetStructurant }
       </Titre>
     </PageProjetStructurantEnTêteStyled>
   );
