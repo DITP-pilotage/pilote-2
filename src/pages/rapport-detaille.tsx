@@ -1,6 +1,7 @@
 import { GetServerSidePropsContext } from 'next/types';
 import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
+import { Maille as MaillePrisma } from '@prisma/client';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import PageRapportDétaillé from '@/components/PageRapportDétaillé/PageRapportDétaillé';
@@ -14,6 +15,8 @@ import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase 
 import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import DécisionStratégique from '@/server/domain/décisionStratégique/DécisionStratégique.interface';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 
 interface NextPageRapportDétailléProps {
   chantiers: Chantier[]
@@ -63,10 +66,12 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
     return;
   }
 
-  if (!query.maille || !query.codeInsee)
+  if (!query.territoireCode)
     return { props: {} };
 
-  const { maille, codeInsee } = query as { maille: Maille, codeInsee: CodeInsee };
+  const territoireCode = query.territoireCode as string;
+  const { maille: mailleBrute, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+  const maille = NOMS_MAILLES[mailleBrute as MaillePrisma];
 
   const session = await getServerSession(req, res, authOptions);
 
@@ -93,9 +98,9 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
     décisionStratégiquesGroupéesParChantier = await décisionStratégiqueRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds);
   }
 
-  const commentairesGroupésParChantier = await new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase().run(chantiersIds, maille, codeInsee);
+  const commentairesGroupésParChantier = await new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase().run(chantiersIds, territoireCode, session.habilitations);
 
-  const objectifsGroupésParChantier = await new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase().run(chantiersIds);
+  const objectifsGroupésParChantier = await new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase().run(chantiersIds, session.habilitations);
 
   return {
     props: {

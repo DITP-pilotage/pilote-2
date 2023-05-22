@@ -33,69 +33,69 @@ export const publicationRouter = créerRouteurTRPC({
 
       if (input.entité === 'commentaires') {
         const créerUnCommentaireUseCase = new CréerUnCommentaireUseCase(dependencies.getCommentaireRepository());
-        return créerUnCommentaireUseCase.run(input.chantierId, input.maille, input.codeInsee, input.contenu, auteur, input.type);
+        return créerUnCommentaireUseCase.run(input.chantierId, input.territoireCode, input.contenu, auteur, input.type, ctx.session.habilitations);
       }
 
       if (input.entité === 'objectifs') {
         const créerUnObjectifUseCase = new CréerUnObjectifUseCase(dependencies.getObjectifRepository());
-        return créerUnObjectifUseCase.run(input.chantierId, input.contenu, auteur, input.type);
+        return créerUnObjectifUseCase.run(input.chantierId, input.contenu, auteur, input.type, ctx.session.habilitations);
       }
 
       if (input.entité === 'décisions stratégiques') {
         const créerUneDécisionStratégiqueUseCase = new CréerUneDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
-        return créerUneDécisionStratégiqueUseCase.run(input.chantierId, input.contenu, auteur);
+        return créerUneDécisionStratégiqueUseCase.run(input.chantierId, input.contenu, auteur, ctx.session.habilitations);
       }
     }),
     
   récupérerLaPlusRécente: procédureProtégée
     .input(validationPublicationContexte.and(zodValidateurEntitéType))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       if (input.entité === 'commentaires') {
         const récupérerCommentaireLePlusRécentUseCase = new RécupérerCommentaireLePlusRécentUseCase(dependencies.getCommentaireRepository());
-        return récupérerCommentaireLePlusRécentUseCase.run(input.chantierId, input.maille, input.codeInsee, input.type);
+        return récupérerCommentaireLePlusRécentUseCase.run(input.chantierId, input.territoireCode, input.type, ctx.session.habilitations);
       }
 
       if (input.entité === 'objectifs') {
         const récupérerObjectifLePlusRécentUseCase = new RécupérerObjectifLePlusRécentUseCase(dependencies.getObjectifRepository());
-        return récupérerObjectifLePlusRécentUseCase.run(input.chantierId, input.type);
+        return récupérerObjectifLePlusRécentUseCase.run(input.chantierId, input.type, ctx.session.habilitations);
       }
 
       if (input.entité === 'décisions stratégiques') {
         const récupérerDésionStratégiqueLaPlusRécenteUseCase = new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(dependencies.getDécisionStratégiqueRepository());
-        return récupérerDésionStratégiqueLaPlusRécenteUseCase.run(input.chantierId);
+        return récupérerDésionStratégiqueLaPlusRécenteUseCase.run(input.chantierId, ctx.session.habilitations);
       }
     }),
 
   récupérerLesPlusRécentesParTypeGroupéesParChantiers: procédureProtégée
     .input(validationPublicationContexte.merge(zodValidateurEntité))
-    .query(async ({ input }) => {      
+    .query(async ({ input, ctx }) => {      
       if (input.entité === 'commentaires') {
         const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getCommentaireRepository());
-        return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.chantierId], input.maille, input.codeInsee);
+        return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.chantierId], input.territoireCode, ctx.session.habilitations);
       }
 
       if (input.entité === 'objectifs') {
         const récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getObjectifRepository());
-        return récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.chantierId]);
+        return récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.chantierId], ctx.session.habilitations);
       }
     }),
 
   récupérerHistorique: procédureProtégée
     .input(validationPublicationContexte.and(zodValidateurEntitéType))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       if (input.entité === 'commentaires') {
         const récupérerHistoriqueCommentaireUseCase = new RécupérerHistoriqueCommentaireUseCase(dependencies.getCommentaireRepository());
-        return récupérerHistoriqueCommentaireUseCase.run(input.chantierId, input.maille, input.codeInsee, input.type);
+        return récupérerHistoriqueCommentaireUseCase.run(input.chantierId, input.territoireCode, input.type, ctx.session.habilitations);
       } 
       
       if (input.entité === 'objectifs') {
         const récupérerHistoriqueObjectifUseCase = new RécupérerHistoriqueObjectifUseCase(dependencies.getObjectifRepository());
-        return récupérerHistoriqueObjectifUseCase.run(input.chantierId, input.type);
+        return récupérerHistoriqueObjectifUseCase.run(input.chantierId, input.type, ctx.session.habilitations);
       }
 
       if (input.entité === 'décisions stratégiques') {
         const récupérerHistoriqueDésionStratégiqueUseCase = new RécupérerHistoriqueDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
-        return récupérerHistoriqueDésionStratégiqueUseCase.run(input.chantierId);
+        return récupérerHistoriqueDésionStratégiqueUseCase.run(input.chantierId, ctx.session.habilitations);
       }
     }),
 });

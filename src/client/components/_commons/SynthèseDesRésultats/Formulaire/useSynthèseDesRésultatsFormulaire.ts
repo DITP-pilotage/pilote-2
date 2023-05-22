@@ -29,8 +29,7 @@ export default function useSynthèseDesRésultatsFormulaire(synthèseDesRésulta
     mutationCréerSynthèseDesRésultats.mutate({
       contenu: data.contenu,
       météo: data.météo,
-      maille: territoireSélectionné!.maille,
-      codeInsee: territoireSélectionné!.codeInsee,
+      territoireCode: territoireSélectionné!.code,
       chantierId: router.query.id as string,
       csrf: récupérerUnCookie('csrf') ?? '',
     });

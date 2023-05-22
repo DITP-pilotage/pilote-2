@@ -11,12 +11,25 @@ import { Router } from 'next/router';
 import { useState, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Head from 'next/head';
+import { TRPCClientError } from '@trpc/client';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
 import useDétecterVueMobile from '@/client/hooks/useDétecterVueMobile';
 import api from '@/server/infrastructure/api/trpc/api';
 
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: { 
+    queries: { 
+      refetchOnWindowFocus: false, 
+      retry: (failureCount, error) => {
+        if (error instanceof TRPCClientError && error?.data.code === 'UNAUTHORIZED') {
+          return false;
+        }
+        return failureCount < 3;
+      },
+    }, 
+  }, 
+});
 
 function MonApplication({ Component, pageProps }: AppProps) {
   useDétecterVueMobile();

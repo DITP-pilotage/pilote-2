@@ -13,6 +13,7 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -36,9 +37,9 @@ export default class ChantierSQLRepository implements ChantierRepository {
   async récupérer(id: string, habilitations: Habilitations): Promise<Chantier> {
     const h = new Habilitation(habilitations);
     const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+    let territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
     // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
-    territoiresLecture.push('NAT-FR');
+    territoiresLecture = [...territoiresLecture, 'NAT-FR'];
 
     const peutAccéderAuChantier = chantiersLecture.includes(id);
   
@@ -114,7 +115,9 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantierRow.meteo as Météo | null;
   }
 
-  async modifierMétéo(chantierId: string, maille: Maille, codeInsee: CodeInsee, météo: Météo) {
+  async modifierMétéo(chantierId: string, territoireCode: string, météo: Météo) {
+    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+
     await this.prisma.chantier.update({
       data: {
         meteo: météo,
@@ -122,7 +125,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       where: {
         id_code_insee_maille: {
           id: chantierId,
-          maille: CODES_MAILLES[maille],
+          maille: maille,
           code_insee: codeInsee,
         },
       },
@@ -269,7 +272,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const habilitation = new Habilitation(habilitations);
     const chantiersAutorisés = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const chantiersLecture = listeChantier.filter((x) => chantiersAutorisés.includes(x));
-
+    
     const rows = await this.prisma.$queryRaw<any[]>`
       WITH chantier_average AS (
         SELECT 

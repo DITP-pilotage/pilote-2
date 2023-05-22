@@ -7,7 +7,7 @@ import Publication from '@/components/_commons/Publication/Publication';
 import { consignesDÉcritureCommentaire, libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
 import { TypeCommentaire, typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
 
-export default function Commentaires({ commentaires, réformeId, maille, codeInsee, modeÉcriture = false, estInteractif = true }: CommentairesProps) {
+export default function Commentaires({ commentaires, réformeId, maille, modeÉcriture = false, estInteractif = true }: CommentairesProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const typesCommentaire = maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale;
 
@@ -35,7 +35,6 @@ export default function Commentaires({ commentaires, réformeId, maille, codeIns
                   libelléType: libellésTypesCommentaire[type as TypeCommentaire],
                   consigneDÉcriture: consignesDÉcritureCommentaire[type as TypeCommentaire],
                 }}
-                codeInsee={codeInsee}
                 estInteractif={estInteractif}
                 maille={maille}
                 modeÉcriture={modeÉcriture}

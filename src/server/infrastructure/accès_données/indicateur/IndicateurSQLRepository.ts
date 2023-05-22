@@ -14,6 +14,7 @@ import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilita
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { IndicateurPourExport } from '@/server/usecase/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 import { parseDétailsIndicateur } from '@/server/infrastructure/accès_données/indicateur/IndicateurSQLParser';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 class ErreurIndicateurNonTrouvé extends Error {
   constructor(idIndicateur: string) {
@@ -38,6 +39,16 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       source: indicateur.source,
       modeDeCalcul: indicateur.mode_de_calcul,
     });
+  }
+  
+  async récupérerChantierIdAssocié(id: string): Promise<string> {
+    const indicateur = await this.prisma.indicateur.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    return indicateur!.chantier_id;
   }
 
   async getById(id: string, habilitations: Habilitations): Promise<DétailsIndicateurTerritoire> {
@@ -142,11 +153,14 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return this._mapDétailsToDomain(indicateurs);
   }
 
-  async récupererDétailsParChantierIdEtTerritoire(chantierId: string, maille: Maille, codesInsee: CodeInsee[]): Promise<DétailsIndicateurs> {
+  async récupererDétailsParChantierIdEtTerritoire(chantierId: string, territoireCodes: string[]): Promise<DétailsIndicateurs> {
+    const { maille } = territoireCodeVersMailleCodeInsee(territoireCodes[0]);
+    const codesInsee = territoireCodes.map(territoireCode => territoireCodeVersMailleCodeInsee(territoireCode).codeInsee);
+
     const indicateurs: IndicateurPrisma[] = await this.prisma.indicateur.findMany({
       where: {
         chantier_id: chantierId,
-        maille: CODES_MAILLES[maille],
+        maille: maille,
         code_insee: { in: codesInsee },
       },
     });

@@ -45,6 +45,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       const territoireSélectionné = territoireNational ?? premierTerritoireRégional ?? premierTerritoireDépartemental;
 
       if (territoireSélectionné) {
+        set({ mailleSélectionnée: territoireSélectionné.maille === 'régionale' ? 'régionale' : 'départementale' });
         get().actions.modifierTerritoireSélectionné(territoireSélectionné.code);
       }
     },

@@ -12,7 +12,6 @@ import api from '@/server/infrastructure/api/trpc/api';
 export default function useIndicateurDétails(indicateurId: Indicateur['id'], futOuvert: boolean) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
-
   const [donnéesCartographieAvancement, setDonnéesCartographieAvancement] = useState<CartographieDonnéesAvancement | null>(null);
   const [donnéesCartographieValeurActuelle, setDonnéesCartographieValeurActuelle] = useState<CartographieDonnéesValeurActuelle | null>(null);
   const { refetch: fetchDétailsIndicateur  } = api.indicateur.récupererDétailsIndicateur.useQuery(

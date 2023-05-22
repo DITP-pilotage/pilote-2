@@ -2,6 +2,8 @@ import SynthèseDesRésultatsRepository
   from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import CréerUneSynthèseDesRésultatsUseCase from '@/server/usecase/synthèse/CréerUneSynthèseDesRésultatsUseCase';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 
 const RANDOM_UUID = '123';
 
@@ -25,11 +27,18 @@ describe('CréerUneSynthèseDesRésultatsUseCase', () => {
     const stubChantierRepository = { modifierMétéo: jest.fn() } as unknown as ChantierRepository;
     const créerUneSynthèseDesRésultats = new CréerUneSynthèseDesRésultatsUseCase(stubSynthèseDesRésultatsRepository, stubChantierRepository);
 
+    const territoireCode = `${CODES_MAILLES[maille]}-${codeInsee}`;
+
+    const habilitation = { 'saisie.commentaire': {
+      chantiers: [chantierId],
+      territoires: [territoireCode],
+    } } as unknown as Utilisateur['habilitations'];
+
     //WHEN
-    await créerUneSynthèseDesRésultats.run(chantierId, maille, codeInsee, contenu, auteur, météo);
+    await créerUneSynthèseDesRésultats.run(chantierId, territoireCode, contenu, auteur, météo, habilitation);
 
     //THEN
-    expect(stubSynthèseDesRésultatsRepository.créer).toHaveBeenNthCalledWith(1, chantierId, maille, codeInsee, RANDOM_UUID, contenu, auteur, météo, date);
+    expect(stubSynthèseDesRésultatsRepository.créer).toHaveBeenNthCalledWith(1, chantierId, territoireCode, RANDOM_UUID, contenu, auteur, météo, date);
   });
 
   test('retourne la synthèse des résultats créée', async () => {
@@ -52,8 +61,15 @@ describe('CréerUneSynthèseDesRésultatsUseCase', () => {
     const stubChantierRepository = { modifierMétéo: jest.fn() } as unknown as ChantierRepository;
     const créerUneSynthèseDesRésultats = new CréerUneSynthèseDesRésultatsUseCase(stubSynthèseDesRésultatsRepository, stubChantierRepository);
 
+    const territoireCode = `${CODES_MAILLES[maille]}-${codeInsee}`;
+
+    const habilitation = { 'saisie.commentaire': {
+      chantiers: [chantierId],
+      territoires: [territoireCode],
+    } } as unknown as Utilisateur['habilitations'];
+    
     //WHEN
-    const synthèseDesRésultatsCréée = await créerUneSynthèseDesRésultats.run(chantierId, maille, codeInsee, contenu, auteur, météo);
+    const synthèseDesRésultatsCréée = await créerUneSynthèseDesRésultats.run(chantierId, territoireCode, contenu, auteur, météo, habilitation);
 
     //THEN
     expect(synthèseDesRésultatsCréée).toStrictEqual({

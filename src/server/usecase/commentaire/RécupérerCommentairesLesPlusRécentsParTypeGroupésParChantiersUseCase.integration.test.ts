@@ -3,6 +3,7 @@ import { Commentaire } from '@/server/domain/commentaire/Commentaire.interface';
 import CommentaireSQLRepository, { CODES_TYPES_COMMENTAIRES, NOMS_TYPES_COMMENTAIRES } from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
 import CommentaireSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
+import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from './RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
 
 function mapperVersDomaine(commentairePrisma: commentaire): Commentaire {
@@ -81,9 +82,14 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
     
   describe('Pour la maille nationale', () => {
     it('Retourne un objet contenant les commentaires les plus récents de chaque type groupés par chantier id', async () => {
+      const habilitation = { lecture: {
+        chantiers: [chantierId],
+        territoires: ['NAT-FR'],
+      } } as unknown as Utilisateur['habilitations'];
+
       // WHEN
       await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
-      const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([chantierId], 'nationale', 'FR');
+      const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([chantierId], 'NAT-FR', habilitation);
 
       // THEN
       const attendu = { [chantierId]: [ 
@@ -98,18 +104,28 @@ describe('RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
 
   describe('Pour les mailles départementale et régionale ', () => {
     it('Retourne un objet vide', async () => {
+      const habilitation = { lecture: {
+        chantiers: [chantierId],
+        territoires: ['REG-01'],
+      } } as unknown as Utilisateur['habilitations'];
+
       // WHEN
       await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
-      const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([chantierId], 'régionale', '01');
+      const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([chantierId], 'REG-01', habilitation);
 
       // THEN
       expect(résultat).toStrictEqual({});
     });
 
     it('Retourne un objet contenant les commentaires les plus récents de chaque type groupés par chantier id', async () => {
+      const habilitation = { lecture: {
+        chantiers: [chantierId],
+        territoires: ['DEPT-75'],
+      } } as unknown as Utilisateur['habilitations'];
+
       // WHEN
       await prisma.commentaire.createMany({ data: [commentaireSolutionsEtActionsÀVenirMoinsRécentMailleNationale, commentaireSolutionsEtActionsÀVenirLePlusRécentMailleDépartementale, commentaireRisquesEtFreinsÀLeverMoinsRécent, commentaireRisquesEtFreinsÀLeverLePlusRécent, commentaireExemplesConcretsDeRéussite, commentaireAutresRésultatsObtenus, commentaireAutresRésultatsObtenusNonCorrélésAuxIndicateurs, commentairesSurLesDonnéesDept93, commentairesSurLesDonnéesDept75] });
-      const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([chantierId], 'départementale', '75');
+      const résultat = await récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([chantierId], 'DEPT-75', habilitation);
 
       // THEN
       const attendu = { [chantierId]: [

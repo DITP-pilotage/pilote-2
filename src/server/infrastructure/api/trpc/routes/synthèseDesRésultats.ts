@@ -22,20 +22,20 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       const auteur = ctx.session.user.name ?? '';
 
       const créerUneSynthèseDesRésultatsUseCase = new CréerUneSynthèseDesRésultatsUseCase(dependencies.getSynthèseDesRésultatsRepository());
-      return créerUneSynthèseDesRésultatsUseCase.run(input.chantierId, input.maille, input.codeInsee, input.contenu, auteur, input.météo);
+      return créerUneSynthèseDesRésultatsUseCase.run(input.chantierId, input.territoireCode, input.contenu, auteur, input.météo, ctx.session.habilitations);
     }),
 
   récupérerHistorique: procédureProtégée
     .input(validationSynthèseDesRésultatsContexte)
-    .query(({ input }) =>{
+    .query(({ input, ctx }) =>{
       const récupérerHistoriqueSynthèseDesRésultatsUseCase = new RécupérerHistoriqueSynthèseDesRésultatsUseCase(dependencies.getSynthèseDesRésultatsRepository());
-      return récupérerHistoriqueSynthèseDesRésultatsUseCase.run(input.chantierId, input.maille, input.codeInsee);
+      return récupérerHistoriqueSynthèseDesRésultatsUseCase.run(input.chantierId, input.territoireCode, ctx.session.habilitations);
     }),
 
   récupérerLaPlusRécente: procédureProtégée
     .input(validationSynthèseDesRésultatsContexte)
-    .query(({ input }) => {
+    .query(({ input, ctx }) => {
       const récupérerSynthèseDesRésultatsLaPlusRécenteUseCase = new RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase(dependencies.getSynthèseDesRésultatsRepository());
-      return récupérerSynthèseDesRésultatsLaPlusRécenteUseCase.run(input.chantierId, input.maille, input.codeInsee);
+      return récupérerSynthèseDesRésultatsLaPlusRécenteUseCase.run(input.chantierId, input.territoireCode, ctx.session.habilitations);
     }),
 });

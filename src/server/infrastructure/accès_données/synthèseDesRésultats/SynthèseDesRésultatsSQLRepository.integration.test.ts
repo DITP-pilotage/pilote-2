@@ -23,7 +23,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
 
       // When
-      await synthèseDesRésultatsRepository.créer(chantierId, maille, codeInsee, id, contenu, auteur, météo, date);
+      await synthèseDesRésultatsRepository.créer(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`, id, contenu, auteur, météo, date);
 
       // Then
       const synthèseDesRésultatsCrééeEnBase = await prisma.synthese_des_resultats.findUnique({ where: { id: id } });
@@ -49,7 +49,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
 
       // When
-      const synthèseDesRésultatsCréée = await synthèseDesRésultatsRepository.créer(chantierId, maille, codeInsee, id, contenu, auteur, météo, new Date(date));
+      const synthèseDesRésultatsCréée = await synthèseDesRésultatsRepository.créer(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`, id, contenu, auteur, météo, new Date(date));
 
       // Then
       expect(synthèseDesRésultatsCréée).toStrictEqual({
@@ -68,7 +68,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       const synthèseDesRésultatsRepository = new SynthèseDesRésultatsSQLRepository(prisma);
 
       // When
-      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécente('CH-001', 'départementale', 'O1');
+      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécente('CH-001', 'DEPT-01');
 
       // Then
       expect(result).toBeNull();
@@ -122,7 +122,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       await prisma.synthese_des_resultats.createMany({ data: synthesesDesResultats });
 
       // When
-      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécente(chantierId, maille, codeInsee);
+      const result = await synthèseDesRésultatsRepository.récupérerLaPlusRécente(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`);
 
       // Then
       expect(result).toStrictEqual({
@@ -178,7 +178,7 @@ describe('SynthèseDesRésultatsSQLRepository ', function () {
       await prisma.synthese_des_resultats.createMany({ data: synthèsesDesResultats });
 
       // WHEN
-      const résultat = await synthèseDesRésultatsRepository.récupérerHistorique(chantierId, maille, codeInsee);
+      const résultat = await synthèseDesRésultatsRepository.récupérerHistorique(chantierId, `${CODES_MAILLES[maille]}-${codeInsee}`);
 
       // THEN
       expect(résultat).toStrictEqual([

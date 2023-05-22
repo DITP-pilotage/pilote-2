@@ -3,6 +3,7 @@ import superjson from 'superjson';
 import { ZodError } from 'zod';
 import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
 import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
+import { NonAutorisé } from '@/server/utils/errors';
 import { CreateContextOptions } from './trpc.interface';
 
 const créerContextTRPCInterne = (opts: CreateContextOptions) => {
@@ -31,6 +32,8 @@ const trpc = initTRPC.context<typeof créerContextTRPC>().create({
       ...shape,
       data: {
         ...shape.data,
+        httpStatus: error.cause instanceof NonAutorisé ? 403 : 500,
+        code: error.cause instanceof NonAutorisé ? 'UNAUTHORIZED' : 'INTERNAL_SERVER_ERROR',
         zodError:
           error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
@@ -42,6 +45,7 @@ const vérifierSiUtilisateurEstConnectéTRPCMiddleware = trpc.middleware(({ ctx,
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
+
   return next({
     ctx: {
       session: { ...ctx.session, user: ctx.session.user },

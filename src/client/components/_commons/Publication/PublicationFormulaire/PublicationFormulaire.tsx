@@ -19,8 +19,7 @@ export default function PublicationFormulaire({ caractéristiques, contenuInitia
       contenu: contenuInitial,
       type: caractéristiques.type,
       entité: caractéristiques.entité,
-      maille: territoireSélectionné?.maille,
-      codeInsee: territoireSélectionné?.codeInsee,
+      territoireCode: territoireSélectionné!.code,
       chantierId: router.query.id as string,
     },
   });
@@ -49,11 +48,7 @@ export default function PublicationFormulaire({ caractéristiques, contenuInitia
         />
         <input
           type="hidden"
-          {...register('maille')}
-        />
-        <input
-          type="hidden"
-          {...register('codeInsee')}
+          {...register('territoireCode')}
         />
         <input
           type="hidden"

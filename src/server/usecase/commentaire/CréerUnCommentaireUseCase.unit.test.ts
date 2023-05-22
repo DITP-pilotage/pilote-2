@@ -1,5 +1,7 @@
 import CommentaireRepository
   from '@/server/domain/commentaire/CommentaireRepository.interface';
+import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import CréerUnCommentaireUseCase from './CréerUnCommentaireUseCase';
 
 const RANDOM_UUID = '123';
@@ -23,11 +25,18 @@ describe('CréerUnCommentaireUseCase', () => {
     const stubCommentaireRepository = { créer: jest.fn() } as unknown as CommentaireRepository;
     const créerUnCommentaire = new CréerUnCommentaireUseCase(stubCommentaireRepository);
 
+    const territoireCode = `${CODES_MAILLES[maille]}-${codeInsee}`;
+
+    const habilitation = { 'saisie.commentaire': {
+      chantiers: [chantierId],
+      territoires: [territoireCode],
+    } } as unknown as Utilisateur['habilitations'];
+
     //WHEN
-    await créerUnCommentaire.run(chantierId, maille, codeInsee, contenu, auteur, type);
+    await créerUnCommentaire.run(chantierId, territoireCode, contenu, auteur, type, habilitation);
 
     //THEN
-    expect(stubCommentaireRepository.créer).toHaveBeenNthCalledWith(1, chantierId, maille, codeInsee, RANDOM_UUID, contenu, auteur, type, date);
+    expect(stubCommentaireRepository.créer).toHaveBeenNthCalledWith(1, chantierId, territoireCode, RANDOM_UUID, contenu, auteur, type, date);
   });
 
   test('retourne le commentaire créé', async () => {
@@ -48,8 +57,15 @@ describe('CréerUnCommentaireUseCase', () => {
     }) } as unknown as CommentaireRepository;
     const créerUnCommentaire = new CréerUnCommentaireUseCase(stubCommentaireRepository);
 
+    const territoireCode = `${CODES_MAILLES[maille]}-${codeInsee}`;
+
+    const habilitation = { 'saisie.commentaire': {
+      chantiers: [chantierId],
+      territoires: [territoireCode],
+    } } as unknown as Utilisateur['habilitations'];
+
     //WHEN
-    const commentaireCréé = await créerUnCommentaire.run(chantierId, maille, codeInsee, contenu, auteur, type);
+    const commentaireCréé = await créerUnCommentaire.run(chantierId, territoireCode, contenu, auteur, type, habilitation);
 
     //THEN
     expect(commentaireCréé).toStrictEqual({

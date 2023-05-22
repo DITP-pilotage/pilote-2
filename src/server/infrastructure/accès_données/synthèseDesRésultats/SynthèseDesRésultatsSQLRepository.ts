@@ -6,6 +6,7 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
 export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésultatsRepository {
   private prisma: PrismaClient;
@@ -14,12 +15,14 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     this.prisma = prisma;
   }
 
-  async créer(chantierId: string, maille: Maille, codeInsee: CodeInsee, id: string, contenu: string, auteur: string, météo: Météo, date: Date): Promise<SynthèseDesRésultats> {
+  async créer(chantierId: string, territoireCode: string, id: string, contenu: string, auteur: string, météo: Météo, date: Date): Promise<SynthèseDesRésultats> {
+    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+
     const synthèseDesRésultats =  await this.prisma.synthese_des_resultats.create({
       data: {
         id: id,
         chantier_id: chantierId,
-        maille: CODES_MAILLES[maille],
+        maille: maille,
         code_insee: codeInsee,
         commentaire: contenu,
         meteo: météo,
@@ -43,11 +46,13 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     };
   }
   
-  async récupérerLaPlusRécente(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<SynthèseDesRésultats> {
+  async récupérerLaPlusRécente(chantierId: string, territoireCode: string): Promise<SynthèseDesRésultats> {
+    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+    
     const synthèseDesRésultats = await this.prisma.synthese_des_resultats.findFirst({
       where: {
         chantier_id: chantierId,
-        maille: CODES_MAILLES[maille],
+        maille: maille,
         code_insee: codeInsee,
         NOT: [
           {
@@ -64,11 +69,13 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
     return this.mapperVersDomaine(synthèseDesRésultats);
   }
 
-  async récupérerHistorique(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<SynthèseDesRésultats[]> {
+  async récupérerHistorique(chantierId: string, territoireCode: string): Promise<SynthèseDesRésultats[]> {
+    const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
+    
     const synthèsesDesRésultats = await this.prisma.synthese_des_resultats.findMany({
       where: {
         chantier_id: chantierId,
-        maille: CODES_MAILLES[maille],
+        maille: maille,
         code_insee: codeInsee,
       },
       orderBy: { date_commentaire: 'desc' },

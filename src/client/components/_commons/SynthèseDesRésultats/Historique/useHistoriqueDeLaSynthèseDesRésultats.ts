@@ -9,8 +9,7 @@ export default function useHistoriqueDeLaSynthèseDesRésultats(chantierId: stri
   
   const { refetch: fetchRécupérerHistoriqueSynthèseDesRésultats } = api.synthèseDesRésultats.récupérerHistorique.useQuery({
     chantierId,
-    maille: territoireSélectionné!.maille,
-    codeInsee: territoireSélectionné!.codeInsee,
+    territoireCode: territoireSélectionné!.code,
   }, {
     enabled: false,
   });

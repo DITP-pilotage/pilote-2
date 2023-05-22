@@ -1,5 +1,6 @@
 import ObjectifRepository
   from '@/server/domain/objectif/ObjectifRepository.interface';
+import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import CréerUnObjectifUseCase from './CréerUnObjectifUseCase';
 
 const RANDOM_UUID = '123';
@@ -21,8 +22,13 @@ describe('CréerUnObjectifUseCase', () => {
     const stubObjectifRepository = { créer: jest.fn() } as unknown as ObjectifRepository;
     const créerUnObjectif = new CréerUnObjectifUseCase(stubObjectifRepository);
 
+    const habilitation = { 'saisie.commentaire': {
+      chantiers: [chantierId],
+      territoires: ['NAT-FR'],
+    } } as unknown as Utilisateur['habilitations'];
+
     //WHEN
-    await créerUnObjectif.run(chantierId, contenu, auteur, type);
+    await créerUnObjectif.run(chantierId, contenu, auteur, type, habilitation);
 
     //THEN
     expect(stubObjectifRepository.créer).toHaveBeenNthCalledWith(1, chantierId, RANDOM_UUID, contenu, auteur, type, date);
@@ -44,8 +50,13 @@ describe('CréerUnObjectifUseCase', () => {
     }) } as unknown as ObjectifRepository;
     const créerUnObjectif = new CréerUnObjectifUseCase(stubObjectifRepository);
 
+    const habilitation = { 'saisie.commentaire': {
+      chantiers: [chantierId],
+      territoires: ['NAT-FR'],
+    } } as unknown as Utilisateur['habilitations'];
+
     //WHEN
-    const objectifCréé = await créerUnObjectif.run(chantierId, contenu, auteur, type);
+    const objectifCréé = await créerUnObjectif.run(chantierId, contenu, auteur, type, habilitation);
 
     //THEN
     expect(objectifCréé).toStrictEqual({

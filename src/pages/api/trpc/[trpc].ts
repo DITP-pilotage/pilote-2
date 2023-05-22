@@ -7,8 +7,13 @@ import { créerContextTRPC } from '@/server/infrastructure/api/trpc/trpc';
 export default createNextApiHandler({
   router: appRouter,
   createContext: créerContextTRPC,
-  onError:
-    process.env.NODE_ENV === 'development'
-      ? ({ path, error }) => logger.error(`Erreur TRPC pour ${path ?? '<no-path>'}: ${error.message}`)
-      : undefined,
+  onError:({ error, ctx, path, input }) => 
+    logger.error({ 
+      'type': error.name,
+      'message': error.message,
+      'path': path,
+      'input': input,
+      'utilisateur': ctx?.session?.user.email,
+      'habilitations': ctx?.session?.habilitations,
+    }),
 });
