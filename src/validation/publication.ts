@@ -18,22 +18,18 @@ export const zodValidateurEntitéType = z.union([
   z.object({
     entité: z.literal('commentaires'),
     type: z.enum(typesCommentaireMailleNationale), 
-    chantierId: z.string(),
   }),
   z.object({
     entité: z.literal('commentaires'),
     type: z.enum(typesCommentaireMailleRégionaleOuDépartementale), 
-    chantierId: z.string(),
   }),
   z.object({
     entité: z.literal('objectifs'),
     type: z.enum(typesObjectif), 
-    chantierId: z.string(),
   }),
   z.object({
     entité: z.literal('décisions stratégiques'),
     type: z.enum(typesDécisionStratégique),
-    chantierId: z.string(),
   }),
 ]);
 
@@ -41,7 +37,7 @@ export const zodValidateurEntité = z.object({
   entité: z.enum(['commentaires', 'objectifs', 'décisions stratégiques']),
 });
 
-export const validationPublicationFormulaire = zodValidateurEntitéType.and(
+export const validationPublicationFormulaire = validationPublicationContexte.and(zodValidateurEntitéType).and(
   z.object({
     contenu: z
       .string()

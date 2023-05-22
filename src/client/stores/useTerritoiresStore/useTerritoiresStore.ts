@@ -62,7 +62,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
 
       set({
         territoireSélectionné: territoire,
-        territoiresComparés: territoire?.maille === 'nationale' ? [] : [territoire],
+        territoiresComparés: [territoire],
       });
     },
 
@@ -83,12 +83,11 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
     },
 
     modifierTerritoiresComparés: territoireCode => {
-      const territoiresComparésInitiaux = get().territoiresComparés;
+      const territoiresComparésInitiaux = get().territoiresComparés.some(t => t.code === 'NAT-FR') ? [] : get().territoiresComparés;
       const territoireExisteDansTerritoiresComparés = territoiresComparésInitiaux.some(t => t.code === territoireCode);
       const récupérerDétailsDuTerritoire = get().actions.récupérerDétailsSurUnTerritoire(territoireCode);
 
       const territoiresComparés = territoireExisteDansTerritoiresComparés ? territoiresComparésInitiaux.filter(t => t.code !== territoireCode) : [...territoiresComparésInitiaux, récupérerDétailsDuTerritoire];
-      
       set({ territoiresComparés });
     },
 
