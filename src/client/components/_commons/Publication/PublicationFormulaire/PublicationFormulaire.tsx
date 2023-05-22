@@ -20,7 +20,7 @@ export default function PublicationFormulaire({ caractéristiques, contenuInitia
       type: caractéristiques.type,
       entité: caractéristiques.entité,
       territoireCode: territoireSélectionné!.code,
-      chantierId: router.query.id as string,
+      réformeId: router.query.id as string,
     },
   });
 

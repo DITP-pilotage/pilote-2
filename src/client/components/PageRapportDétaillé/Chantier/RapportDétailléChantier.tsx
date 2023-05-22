@@ -7,7 +7,7 @@ import AvancementChantier from '@/components/PageChantier/AvancementChantier/Ava
 import ResponsablesPageProjetStructurant from '@/components/PageChantier/Responsables/Responsables';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Cartes from '@/components/PageChantier/Cartes/Cartes';
-import ObjectifsPageChantier from '@/components/PageChantier/Objectifs/Objectifs';
+import Objectifs from '@/components/_commons/Objectifs/Objectifs';
 import Indicateurs from '@/components/PageChantier/Indicateurs/Indicateurs';
 import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
@@ -76,7 +76,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           objectifs !== null &&
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
-              <ObjectifsPageChantier
+              <Objectifs
                 chantierId={chantier.id}
                 estInteractif={false}
                 maille='nationale'

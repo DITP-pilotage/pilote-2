@@ -20,7 +20,7 @@ export default function usePublicationFormulaire(succèsCallback: PublicationFor
       type: data.type,
       entité: data.entité,
       territoireCode: data.territoireCode,
-      chantierId: data.chantierId,
+      chantierId: data.réformeId,
       csrf: récupérerUnCookie('csrf') ?? '',
     });
 

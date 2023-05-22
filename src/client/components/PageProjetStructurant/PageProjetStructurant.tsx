@@ -4,15 +4,17 @@ import Sommaire from '@/components/_commons/Sommaire/Sommaire';
 import { Rubrique } from '@/components/_commons/Sommaire/Sommaire.interface';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
+import Objectifs from '@/client/components/_commons/Objectifs/Objectifs';
 import ResponsablesPageProjetStructurant from './Responsables/Responsables';
 import PageProjetStructurantProps from './PageProjetStructurant.interface';
 import PageProjetStructurantEnTête from './EnTête/EnTête';
 import PageProjetStructurantStyled from './PageProjetStructurant.styled';
 import AvancementPageProjetStructurant from './Avancement/Avancement';
-import ObjectifsPageProjetStructurant from './Objectifs/Objectifs';
+import usePageProjetSTructurant from './usePageProjetStructurant';
 
 export default function PageProjetStructurant({ projetStructurant }: PageProjetStructurantProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);  
+  const { objectifs } = usePageProjetSTructurant(projetStructurant.id, projetStructurant.codeTerritoire);
 
   const listeRubriques: Rubrique[] =
     [
@@ -69,7 +71,11 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
           </div>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
-              <ObjectifsPageProjetStructurant nomTerritoire={projetStructurant.territoireNomÀAfficher}  />
+              <Objectifs
+                maille={projetStructurant.maille}
+                objectifs={objectifs}
+                réformeId={projetStructurant.id}
+              />
             </div>
           </div>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">

@@ -9,8 +9,8 @@ import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import Loader from '@/components/_commons/Loader/Loader';
 import SynthèseDesRésultats from '@/client/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Sommaire from '@/client/components/_commons/Sommaire/Sommaire';
-import ObjectifsPageChantier from '@/components/PageChantier/Objectifs/Objectifs';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
+import Objectifs from '@/components/_commons/Objectifs/Objectifs';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
@@ -134,7 +134,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 </div>
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                   <div className="fr-col-12">
-                    <ObjectifsPageChantier
+                    <Objectifs
                       chantierId={chantier.id}
                       maille='nationale'
                       modeÉcriture={modeÉcritureObjectifs}

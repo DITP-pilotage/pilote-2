@@ -23,8 +23,8 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
     this.prisma = prisma;
   }
 
-  private mapperVersDomaine(objectif: ObjectifPrisma | undefined): Objectif {
-    if (objectif === undefined) return null;
+  private mapperVersDomaine(objectif: ObjectifPrisma | null): Objectif {
+    if (objectif === null) return null;
     return {
       id: objectif.id,
       type: NOMS_TYPES_OBJECTIFS[objectif.type],
@@ -43,7 +43,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
       orderBy: { date: 'desc' },
     });
 
-    return objectifLePlusRécent ? this.mapperVersDomaine(objectifLePlusRécent) : null;
+    return this.mapperVersDomaine(objectifLePlusRécent);
   }
 
   async récupérerHistorique(chantierId: string, type: TypeObjectif): Promise<Objectif[]> {

@@ -1,4 +1,6 @@
-export const typesObjectif = ['notreAmbition', 'déjàFait', 'àFaire'] as const;
+import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
+
+export const typesObjectif = ['notreAmbition', 'déjàFait', 'àFaire', typeObjectifProjetStructurant] as const;
 export type TypeObjectif = typeof typesObjectif[number];
 
 type Objectif = {

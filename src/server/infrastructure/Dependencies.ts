@@ -28,10 +28,14 @@ import DécisionStratégiqueRepository from '@/server/domain/décisionStratégiq
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
+import ObjectifProjetStructurantRepository from '@/server/domain/projetStructurant/objectif/ObjectifRepository.interface';
+import ProjetStructurantRepository from '@/server/domain/projetStructurant/ProjetStructurantRepository.interface';
 import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
 import DécisionStratégiqueSQLRepository from './accès_données/décisionStratégique/DécisionStratégiqueSQLRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
+import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
+import ObjectifProjetStructurantSQLRepository from './accès_données/projetStructurant/objectif/ObjectifProjetStructurantSQLRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
@@ -58,6 +62,10 @@ class Dependencies {
 
   private readonly _territoireRepository: TerritoireRepository;
 
+  private readonly _projetStructurantRepository: ProjetStructurantRepository;
+
+  private readonly _objectifProjetStructurantRepository: ObjectifProjetStructurantRepository;
+
   private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
 
   constructor() {
@@ -74,6 +82,8 @@ class Dependencies {
     this._décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
     this._utilisateurRepository = new UtilisateurSQLRepository(prisma);
     this._territoireRepository = new TerritoireSQLRepository(prisma);
+    this._projetStructurantRepository = new ProjetStructurantSQLRepository(prisma);
+    this._objectifProjetStructurantRepository = new ObjectifProjetStructurantSQLRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
@@ -132,6 +142,14 @@ class Dependencies {
 
   getTerritoireRepository() {
     return this._territoireRepository;
+  }
+
+  getProjetStructurantRepository() {
+    return this._projetStructurantRepository;
+  }
+
+  getObjectifProjetStructurantrepository() {
+    return this._objectifProjetStructurantRepository;
   }
 
   getUtilisateurIAMRepository(): UtilisateurIAMRepository {
