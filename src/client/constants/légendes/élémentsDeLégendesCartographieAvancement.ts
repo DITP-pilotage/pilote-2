@@ -47,10 +47,6 @@ export const ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS: CartographieÉlémentsDeL
     libellé: '90-100%',
     remplissage: '#000091',
   },
-  '=100': {
-    libellé: '100%',
-    remplissage: '#2F2F2F',
-  },
   'DÉFAUT': {
     libellé: 'Territoire pour lequel la donnée n’est pas disponible',
     remplissage: REMPLISSAGE_PAR_DÉFAUT,
