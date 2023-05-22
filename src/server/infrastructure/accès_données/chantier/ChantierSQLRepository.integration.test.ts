@@ -342,7 +342,7 @@ describe('ChantierSQLRepository', () => {
 
       const habilitation = { lecture: {
         chantiers: ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005'],
-        territoires: ['NAT-FR'],
+        territoires: ['NAT-FR', 'DEPT-01', 'REG-84'],
       } } as unknown as Utilisateur['habilitations'];
 
       const chantier001Builder = new ChantierSQLRowBuilder()
@@ -367,10 +367,10 @@ describe('ChantierSQLRepository', () => {
           .avecCodeInsee('FR')
           .avecTauxAvancement(10)
           .build(),
-        new ChantierSQLRowBuilder().avecId('CH-002').avecNom('chantier 2').build(),
-        new ChantierSQLRowBuilder().avecId('CH-003').avecNom('chantier 3').build(),
-        new ChantierSQLRowBuilder().avecId('CH-004').avecNom('chantier 4').build(),
-        new ChantierSQLRowBuilder().avecId('CH-005').avecNom('chantier 5').build(),
+        new ChantierSQLRowBuilder().avecId('CH-002').avecNom('chantier 2').avecMaille('NAT').avecCodeInsee('FR').build(),
+        new ChantierSQLRowBuilder().avecId('CH-003').avecNom('chantier 3').avecMaille('NAT').avecCodeInsee('FR').build(),
+        new ChantierSQLRowBuilder().avecId('CH-004').avecNom('chantier 4').avecMaille('NAT').avecCodeInsee('FR').build(),
+        new ChantierSQLRowBuilder().avecId('CH-005').avecNom('chantier 5').avecMaille('NAT').avecCodeInsee('FR').build(),
       ] });
 
       const commentaireBuilder = new CommentaireRowBuilder()
@@ -552,6 +552,65 @@ describe('ChantierSQLRepository', () => {
         expect.objectContaining({ nom: 'chantier 4' }),
         expect.objectContaining({ nom: 'chantier 5' }),
       ]);
+    });
+
+    it('renvoie seulement les données pour les chantiers et territoires habilités', async () => {
+      // Given
+      const territoireHabilité = {
+        code: 'DEPT-26',
+        maille: 'DEPT',
+        codeInsee: '26',
+        nom: 'Drôme',
+      };
+
+      const repository = new ChantierSQLRepository(prisma);
+
+      const habilitation = { lecture: {
+        chantiers: ['CH-001'],
+        territoires: [territoireHabilité.code],
+      } } as unknown as Utilisateur['habilitations'];
+
+      const chantiersHabilités = [
+        new ChantierSQLRowBuilder()
+          .avecId('CH-001')
+          .avecNom('chantier 1')
+          .avecMaille(territoireHabilité.maille)
+          .avecCodeInsee(territoireHabilité.codeInsee)
+          .build(),
+      ];
+
+      const chantiersNonHabilités = [
+        new ChantierSQLRowBuilder()
+          .avecId('CH-002')
+          .avecNom('chantier 2')
+          .avecMaille(territoireHabilité.maille)
+          .avecCodeInsee(territoireHabilité.codeInsee)
+          .build(),
+        new ChantierSQLRowBuilder()
+          .avecId('CH-001')
+          .avecNom('chantier 1')
+          .avecMaille('REG')
+          .avecCodeInsee('84')
+          .build(),
+      ];
+
+      await prisma.chantier.createMany({ data: [
+        ...chantiersHabilités,
+        ...chantiersNonHabilités,
+      ] });
+
+      // When
+      const result = await repository.récupérerPourExports(habilitation);
+
+      // Then
+      expect(result).toEqual([
+        expect.objectContaining({
+          nom: 'chantier 1',
+          maille: territoireHabilité.maille,
+          départementNom: territoireHabilité.nom,
+        }),
+      ]);
+
     });
   });
 });
