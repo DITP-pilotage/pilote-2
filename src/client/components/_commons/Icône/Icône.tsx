@@ -21,23 +21,28 @@ import { useMemo } from 'react';
 import IcôneProps from '@/components/_commons/Icône/Icône.interface';
 import IcôneStyled from '@/components/_commons/Icône/Icône.styled';
 
+const VARIANTES_MATERIAL_DESIGN = new Set(['outlined', 'round', 'sharp', 'two-tone']);
+
 export default function Icône({ id }: IcôneProps) {
   const icône = useMemo(() => id.split('::'), [id]);
   if (icône === null) {
     return null;
   }
 
-  const [bibliothèqueDIcônes, identifiantIcône, varianteSéparée] = icône;
+  const [bibliothèqueDIcônes, identifiantIcône, varianteExplicite] = icône;
 
   if (bibliothèqueDIcônes === 'dsfr') {
     return (
-      <IcôneStyled className={`fr-mr-1w fr-icon-${identifiantIcône}`} />
+      <IcôneStyled className={`fr-icon-${identifiantIcône}`} />
     );
   }
 
   if (bibliothèqueDIcônes === 'google') {
+    const variante = VARIANTES_MATERIAL_DESIGN.has(varianteExplicite) ? varianteExplicite : null;
     return (
-      <IcôneStyled className={`fr-mr-1w material-icons${varianteSéparée ? '-' + varianteSéparée : ''}`}>
+      <IcôneStyled
+        className={`material-icons${variante ? '-' + variante : ''}`}
+      >
         { identifiantIcône }
       </IcôneStyled>
     );
@@ -45,7 +50,7 @@ export default function Icône({ id }: IcôneProps) {
 
   if (bibliothèqueDIcônes === 'remix') {
     return (
-      <IcôneStyled className={`fr-mr-1w ri-${identifiantIcône}`} />
+      <IcôneStyled className={`ri-${identifiantIcône}`} />
     );
   }
 
