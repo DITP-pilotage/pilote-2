@@ -95,7 +95,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const territoires = await this.prisma.territoire.findMany();
     const chantiersGroupésParId = groupBy<chantier>(chantiers, c => c.id);
 
-    return objectEntries(chantiersGroupésParId).map(([_, c]) => parseChantier(c, territoires));
+    return Promise.all(objectEntries(chantiersGroupésParId).map(async ([_, c]) => parseChantier(c, territoires)));
   }
 
   async récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null> {

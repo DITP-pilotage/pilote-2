@@ -21,7 +21,6 @@ interface NextPageAccueilProps {
 }
 
 export default function NextPageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs }: NextPageAccueilProps) {
-  console.log(chantiers.map(c => c.responsables.porteur));
   return (
     <>
       <Head>

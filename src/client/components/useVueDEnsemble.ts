@@ -16,7 +16,7 @@ export type ChantierVueDEnsemble = {
   avancement: number | null;
   météo: Météo;
   typologie: { estBaromètre: boolean, estTerritorialisé: boolean };
-  porteur: Ministère;
+  porteur: Ministère | null;
 };
 
 export default function useVueDEnsemble(chantiers: Chantier[]) {

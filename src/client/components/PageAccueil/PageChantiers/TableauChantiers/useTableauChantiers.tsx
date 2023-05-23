@@ -48,9 +48,9 @@ const colonnesTableauChantiers = [
     id: 'nom',
     aggregatedCell: aggregatedCellContext => (
       <IcônesMultiplesEtTexte
-        icônesId={[]}
+        icônesId={aggregatedCellContext.row.original.porteur?.icône ? [aggregatedCellContext.row.original.porteur.icône] : []}
       >
-        {aggregatedCellContext.row.original.porteur.nom}
+        {aggregatedCellContext.row.original.porteur?.nom ?? ''}
       </IcônesMultiplesEtTexte>
     ),
     cell: cellContext => (
@@ -62,7 +62,7 @@ const colonnesTableauChantiers = [
         </IcônesMultiplesEtTexte>
       ) : (
         <IcônesMultiplesEtTexte
-          icônesId={[]}
+          icônesId={cellContext.row.original.porteur?.icône ? [cellContext.row.original.porteur.icône] : []}
         >
           {cellContext.getValue()}
         </IcônesMultiplesEtTexte>
@@ -139,7 +139,7 @@ const colonnesTableauChantiers = [
     ),
     aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
       return {
-        nom: chantiersDuMinistèreRow[0].original.porteur.nom,
+        nom: chantiersDuMinistèreRow[0].original.porteur?.nom ?? '',
         avancement: calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement)),
       } as TableauChantiersTuileMinistèreProps['ministère'];
     },

@@ -15,7 +15,7 @@ export default interface Chantier {
   périmètreIds: string[];
   mailles: Record<Maille, Territoires>;
   responsables: {
-    porteur: Ministère,
+    porteur: Ministère | null,
     coporteurs: Ministère[],
     directeursAdminCentrale: DirecteurAdministrationCentrale[],
     directeursProjet: DirecteurProjet[]

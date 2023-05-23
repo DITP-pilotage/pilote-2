@@ -2,6 +2,7 @@ import { chantier, territoire } from '@prisma/client';
 import { Territoires } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 class ErreurChantierSansMailleNationale extends Error {
   constructor(idChantier: string) {
@@ -25,7 +26,10 @@ function créerDonnéesTerritoires(territoires: territoire[], chantierRows: chan
   return donnéesTerritoires;
 }
 
-export function parseChantier(chantierRows: chantier[], territoires: territoire[]): Chantier {
+export async function parseChantier(chantierRows: chantier[], territoires: territoire[]): Promise<Chantier> {
+  const ministèreSQLRepository = dependencies.getMinistèreRepository();
+  const ministères = await ministèreSQLRepository.getListe();
+
   const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
   const chantierMailleDépartementale = chantierRows.filter(c => c.maille === 'DEPT');
   const chantierMailleRégionale = chantierRows.filter(c => c.maille === 'REG');
@@ -52,11 +56,7 @@ export function parseChantier(chantierRows: chantier[], territoires: territoire[
       régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'REG'), chantierMailleRégionale),
     },
     responsables: {
-      porteur: {
-        nom: chantierMailleNationale.ministeres[0],
-        icône: null,
-        périmètresMinistériels: [],
-      },
+      porteur: ministères.find(m => m.nom === chantierMailleNationale.ministeres[0]) ?? null,
       coporteurs: chantierMailleNationale.ministeres.slice(1).map(ministère => ({
         nom: ministère,
         icône: null,

@@ -25,7 +25,7 @@ export default function Responsables({ responsables }: ResponsablesProps) {
       <Bloc titre="National">
         <div>
           <ResponsablesLigne
-            contenu={[responsables.porteur.nom]}
+            contenu={responsables.porteur ? [responsables.porteur.nom] : []}
             libellé="Ministère porteur"
           />
           <hr className='fr-hr fr-py-1w' />
