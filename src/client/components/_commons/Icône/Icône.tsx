@@ -1,3 +1,4 @@
+import '@gouvfr/dsfr/dist/utility/icons/icons.min.css';
 import 'material-icons/iconfont/material-icons.css';
 import 'remixicon/fonts/remixicon.css';
 import { useMemo } from 'react';
@@ -10,11 +11,17 @@ export default function Icône({ id }: IcôneProps) {
     return null;
   }
 
-  const [bibliothèqueDIcônes, identifiantIcône] = icône;
+  const [bibliothèqueDIcônes, identifiantIcône, varianteSéparée] = icône;
+
+  if (bibliothèqueDIcônes === 'dsfr') {
+    return (
+      <IcôneStyled className={`fr-mr-1w fr-icon-${identifiantIcône}`} />
+    );
+  }
 
   if (bibliothèqueDIcônes === 'google') {
     return (
-      <IcôneStyled className="fr-mr-1w material-icons-outlined">
+      <IcôneStyled className={`fr-mr-1w material-icons${varianteSéparée ? '-' + varianteSéparée : ''}`}>
         { identifiantIcône }
       </IcôneStyled>
     );

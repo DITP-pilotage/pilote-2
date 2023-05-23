@@ -10,7 +10,7 @@ const ÉCHANTILLONS_ICÔNES = [
   'remix::book-open-fill',
   'google::radar',
   'remix::ball-pen-fill',
-  'remix::france-fill',
+  'dsfr::france-fill',
   'remix::alarm-warning-fill',
   'remix::scales-3-fill',
   'remix::government-fill',

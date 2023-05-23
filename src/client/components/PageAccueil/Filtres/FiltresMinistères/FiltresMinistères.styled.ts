@@ -27,12 +27,25 @@ const FiltresMinistèresStyled = styled.div`
 
   .tuile {
     border-radius: 0.25rem;
+    
+    .tuile-ministère-contenu {
+      display: grid;
+      grid-template-columns: 2rem auto;
+    }
+  }
+
+  .icône {
+    color: var(--background-active-blue-france);
   }
 
   .actif {
     font-weight: bold;
     color: var(--background-default-grey);
     background-color: var(--background-active-blue-france);
+
+    .icône {
+      color: white;
+    }
   }
 
   .actif:hover {

@@ -72,12 +72,16 @@ export default function FiltresMinistères({ ministères }: FiltresMinistèresPr
                     onClick={() => auClicSurUnMinistèreCallback(ministère)}
                     type="button"
                   >
-                    <div className="flex">
-                      {
-                        !!ministère.icône &&
-                        <Icône id={ministère.icône} />
-                      }
-                      {ministère.nom}
+                    <div className="tuile-ministère-contenu">
+                      <span className="icône">
+                        {
+                          !!ministère.icône &&
+                          <Icône id={ministère.icône} />
+                        }
+                      </span>
+                      <span>
+                        {ministère.nom}
+                      </span>
                     </div>
                   </button>
                   <ul className="fr-p-0 fr-m-0 fr-mb-1w périmètres-liste">
