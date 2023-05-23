@@ -84,14 +84,15 @@ export default class ProjetStructurantBuilder {
   }
 
   async build(): Promise<ProjetStructurant> {
-    const terrioire = await new RécupérerDétailsTerritoireÀPartirDeMailleEtCodeInseeUseCase().run(this._codeInsee, this._maille);
+    const territoire = await new RécupérerDétailsTerritoireÀPartirDeMailleEtCodeInseeUseCase().run(this._codeInsee, this._maille);
+
     return {
       id: this._id,
       nom: this._nom,
-      codeTerritoire: terrioire.code,
+      codeTerritoire: territoire.code,
       maille: this._maille,
       codeInsee: this._codeInsee,
-      territoireNomÀAfficher: terrioire.nomAffiché,
+      territoireNomÀAfficher: territoire.nomAffiché,
       périmètresIds: this._périmètreIds,
       avancement: this._avancement,
       dateAvancement: this._dateAvancement,

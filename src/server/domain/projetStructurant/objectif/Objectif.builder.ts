@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import Objectif, { typesObjectifChantier }  from '@/server/domain/objectif/Objectif.interface';
+import ObjectifProjetStructurant, { typeObjectifProjetStructurant } from './Objectif.interface';
 
-export default class ObjectifBuilder {
-  private _objectif: Objectif;
+export default class ObjectifProjetStructurantBuilder {
+  private _objectif: ObjectifProjetStructurant;
 
   constructor() {
     this._objectif = faker.helpers.arrayElement([this._générerUnObjectif(), null]);
@@ -11,19 +11,19 @@ export default class ObjectifBuilder {
   private _générerUnObjectif() {
     return {
       id: faker.datatype.uuid(),
-      type: faker.helpers.arrayElement(typesObjectifChantier),
+      type: typeObjectifProjetStructurant,
       contenu: faker.lorem.paragraph(),
       date: faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString(),
       auteur: faker.helpers.arrayElement(['', faker.name.fullName()]),
     };
   }
 
-  avecObjectif(objectif: Objectif): ObjectifBuilder {
+  avecObjectif(objectif: ObjectifProjetStructurant): ObjectifProjetStructurantBuilder {
     this._objectif = objectif;
     return this;
   }
 
-  build(): Objectif {
+  build(): ObjectifProjetStructurant {
     return this._objectif;
   }
 }

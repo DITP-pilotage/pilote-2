@@ -9,7 +9,6 @@ import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import PageAccueil from '@/components/PageAccueil/PageAccueil';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
-import ProjetStructurantBuilder from '@/server/domain/projetStructurant/ProjetStructurant.builder';
 import RécupérerListeChantiersUseCase from '@/server/usecase/chantier/RécupérerListeChantiersUseCase';
 
 interface NextPageAccueilProps {
@@ -47,7 +46,11 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
 
   const chantiers = await new RécupérerListeChantiersUseCase().run(session.habilitations, session.profil);
   
-  const projetsStructurants: ProjetStructurant[] = await Promise.all(Array.from({ length: 150 }, () => new ProjetStructurantBuilder().build()));
+  const habilitation =  new Habilitation(session.habilitations);
+  const chantiers = await new RécupérerListeChantiersUseCase().run(habilitation);
+  const projetStructurantRepository = dependencies.getProjetStructurantRepository();
+  const projetsStructurants: ProjetStructurant[] = await projetStructurantRepository.récupérerListe();
+  
 
   let axes: Axe[] = [];
   let ppgs: Ppg[] = [];
