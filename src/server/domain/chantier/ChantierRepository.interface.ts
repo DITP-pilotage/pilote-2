@@ -1,4 +1,4 @@
-import { chantier } from '@prisma/client';
+import { chantier as ChantierPrisma } from '@prisma/client';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
@@ -10,8 +10,8 @@ import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avanc
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 
 export default interface ChantierRepository {
-  récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations): Promise<chantier[]>;
-  récupérerLesEntréesDeTousLesChantiersHabilités(habilitation: Habilitation): Promise<chantier[]>;
+  récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations): Promise<ChantierPrisma[]>;
+  récupérerLesEntréesDeTousLesChantiersHabilités(habilitation: Habilitation): Promise<ChantierPrisma[]>;
   getChantierStatistiques(habilitations: Habilitations, listeChantier: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques>;
   récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null>
   modifierMétéo(chantierId: string, territoireCode: string, météo: Météo): Promise<void>;

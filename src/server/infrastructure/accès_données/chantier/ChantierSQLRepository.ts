@@ -1,4 +1,4 @@
-import { chantier, Prisma, PrismaClient } from '@prisma/client';
+import { chantier as ChantierPrisma, Prisma, PrismaClient } from '@prisma/client';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -31,7 +31,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     this.prisma = prisma;
   }
 
-  async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations): Promise<chantier[]> {
+  async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations): Promise<ChantierPrisma[]> {
     const h = new Habilitation(habilitations);
     const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
     let territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
@@ -72,7 +72,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiers.map(c => c.id);
   }
 
-  async récupérerLesEntréesDeTousLesChantiersHabilités(habilitation: Habilitation): Promise<chantier[]> {
+  async récupérerLesEntréesDeTousLesChantiersHabilités(habilitation: Habilitation): Promise<ChantierPrisma[]> {
     
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     let territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
@@ -89,7 +89,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
   }
 
   async récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null> {
-    const chantierRow: chantier | null = await this.prisma.chantier.findFirst({
+    const chantierRow: ChantierPrisma | null = await this.prisma.chantier.findFirst({
       where: {
         id: chantierId,
         maille: CODES_MAILLES[maille],
