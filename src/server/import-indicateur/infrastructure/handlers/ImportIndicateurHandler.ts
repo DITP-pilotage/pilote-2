@@ -33,7 +33,7 @@ export default async function handleValiderFichierImportIndicateur(
 
   const fichier = <File>formData.file;
 
-  const schéma = 'https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/prod/sans-contraintes.json';
+  const schéma = 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/main/public/schema/sans-contraintes.json';
   const sessionToken = request.cookies['next-auth.session-token'];
 
   const decoded = await decode({
