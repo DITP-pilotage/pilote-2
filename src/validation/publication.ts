@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
-import { typesObjectif } from '@/server/domain/objectif/Objectif.interface';
+import { typesObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
 import { typesDécisionStratégique } from '@/server/domain/décisionStratégique/DécisionStratégique.interface';
 import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
 
@@ -22,7 +22,7 @@ export const zodValidateurEntitéType = z.union([
   }),
   z.object({
     entité: z.literal('objectifs'),
-    type: z.enum([...typesObjectif, typeObjectifProjetStructurant]), 
+    type: z.enum([...typesObjectifChantier, typeObjectifProjetStructurant]), 
   }),
   z.object({
     entité: z.literal('décisions stratégiques'),

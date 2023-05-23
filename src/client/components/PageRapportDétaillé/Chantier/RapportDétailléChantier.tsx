@@ -13,6 +13,7 @@ import DécisionsStratégiques from '@/components/PageChantier/DécisionsStraté
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Titre from '@/components/_commons/Titre/Titre';
+import { typesObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
 
 export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats, commentaires, objectifs, décisionStratégique }: RapportDétailléChantierProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -77,10 +78,11 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
               <Objectifs
-                chantierId={chantier.id}
                 estInteractif={false}
                 maille='nationale'
                 objectifs={objectifs}
+                réformeId={chantier.id}
+                typesObjectif={typesObjectifChantier}
               />
             </div>
           </div>

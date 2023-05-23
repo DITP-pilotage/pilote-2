@@ -5,6 +5,7 @@ import { Rubrique } from '@/components/_commons/Sommaire/Sommaire.interface';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import Objectifs from '@/client/components/_commons/Objectifs/Objectifs';
+import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
 import ResponsablesPageProjetStructurant from './Responsables/Responsables';
 import PageProjetStructurantProps from './PageProjetStructurant.interface';
 import PageProjetStructurantEnTête from './EnTête/EnTête';
@@ -73,8 +74,10 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
             <div className="fr-col-12">
               <Objectifs
                 maille={projetStructurant.maille}
+                modeÉcriture
                 objectifs={objectifs}
                 réformeId={projetStructurant.id}
+                typesObjectif={[typeObjectifProjetStructurant]}
               />
             </div>
           </div>

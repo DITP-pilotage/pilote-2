@@ -5,7 +5,7 @@ type ObjectifProjetStructurant = {
   id: string
   contenu: string
   date: string
-  auteur: string | null
+  auteur: string
   type: TypeObjectifProjetStructurant
 } | null;
 

@@ -52,7 +52,7 @@ export default function PublicationFormulaire({ caractéristiques, contenuInitia
         />
         <input
           type="hidden"
-          {...register('chantierId')}
+          {...register('réformeId')}
         />
         <div className="flex justify-between">
           <div>

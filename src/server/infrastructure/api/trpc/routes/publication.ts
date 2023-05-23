@@ -26,6 +26,7 @@ import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase fro
 import { déterminerLeTypeDeRéforme } from '@/server/utils/réforme';
 import CréerUnObjectifProjetStructurantUseCase from '@/server/usecase/projetStructurant/objectif/CréerUnObjectifUseCase';
 import RécupérerObjectifProjetStructurantLePlusRécentUseCase from '@/server/usecase/projetStructurant/objectif/RécupérerObjectifLePlusRécentUseCase';
+import { TypeObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
@@ -43,7 +44,7 @@ export const publicationRouter = créerRouteurTRPC({
         
         if (input.entité === 'objectifs') {
           const créerUnObjectifUseCase = new CréerUnObjectifUseCase(dependencies.getObjectifRepository());
-          return créerUnObjectifUseCase.run(input.réformeId, input.contenu, auteur, input.type, ctx.session.habilitations);
+          return créerUnObjectifUseCase.run(input.réformeId, input.contenu, auteur, input.type as TypeObjectifChantier, ctx.session.habilitations);
         }
         
         if (input.entité === 'décisions stratégiques') {
@@ -76,7 +77,7 @@ export const publicationRouter = créerRouteurTRPC({
 
         if (input.entité === 'objectifs') {
           const récupérerObjectifLePlusRécentUseCase = new RécupérerObjectifLePlusRécentUseCase(dependencies.getObjectifRepository());
-          return récupérerObjectifLePlusRécentUseCase.run(input.réformeId, input.type, ctx.session.habilitations);
+          return récupérerObjectifLePlusRécentUseCase.run(input.réformeId, input.type as TypeObjectifChantier, ctx.session.habilitations);
         }
 
         if (input.entité === 'décisions stratégiques') {
@@ -120,7 +121,7 @@ export const publicationRouter = créerRouteurTRPC({
       
       if (input.entité === 'objectifs') {
         const récupérerHistoriqueObjectifUseCase = new RécupérerHistoriqueObjectifUseCase(dependencies.getObjectifRepository());
-        return récupérerHistoriqueObjectifUseCase.run(input.réformeId, input.type, ctx.session.habilitations);
+        return récupérerHistoriqueObjectifUseCase.run(input.réformeId, input.type as TypeObjectifChantier, ctx.session.habilitations);
       }
 
       if (input.entité === 'décisions stratégiques') {

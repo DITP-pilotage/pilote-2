@@ -3,10 +3,9 @@ import { consignesDÉcritureObjectif, libellésTypesObjectif } from '@/client/co
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Publication from '@/components/_commons/Publication/Publication';
-import { TypeObjectif, typesObjectif } from '@/server/domain/objectif/Objectif.interface';
-import { ObjectifsProps } from './Objectifs.interface';
+import { ObjectifsProps, TypeObjectif } from './Objectifs.interface';
 
-export default function Objectifs({ objectifs, réformeId, maille, modeÉcriture = false, estInteractif = true }: ObjectifsProps) {
+export default function Objectifs({ objectifs, réformeId, maille, typesObjectif, modeÉcriture = false, estInteractif = true }: ObjectifsProps) {
   return (
     <section id="objectifs">
       <Titre

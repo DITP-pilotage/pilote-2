@@ -18,7 +18,7 @@ export default class ObjectifProjetStructurantSQLRepository implements ObjectifP
       type: objectif.type as TypeObjectifProjetStructurant,
       contenu: objectif.contenu,
       date: objectif.date.toISOString(),
-      auteur: objectif.auteur,
+      auteur: objectif.auteur ?? '',
     };
   }
 
