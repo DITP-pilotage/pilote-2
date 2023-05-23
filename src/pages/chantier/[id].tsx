@@ -31,14 +31,20 @@ export default function NextPageChantier({ indicateurs, chantierInformations }: 
 }
 
 export async function getServerSideProps({ req, res, params }: GetServerSidePropsContext<{ id: Chantier['id'] }>) {
+  if (!params?.id) {
+    return {
+      notFound: true,
+    };
+  }
+
   const session = await getServerSession(req, res, authOptions);
 
   if (!session || !session.habilitations)
     return { props: {} };
 
   const indicateurRepository = dependencies.getIndicateurRepository();
-  const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params!.id);
-  const chantier: Chantier = await new RécupérerChantierUseCase().run(params!.id, session.habilitations);
+  const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params.id);
+  const chantier: Chantier = await new RécupérerChantierUseCase().run(params.id, session.habilitations);
 
   return {
     props: {
