@@ -17,6 +17,7 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import DécisionStratégique from '@/server/domain/décisionStratégique/DécisionStratégique.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
+import RécupérerListeChantiersUseCase from '@/server/usecase/chantier/RécupérerListeChantiersUseCase';
 
 interface NextPageRapportDétailléProps {
   chantiers: Chantier[]
@@ -78,11 +79,9 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
   if (!session || !session.habilitations)
     return { props: {} };
 
-  const chantierRepository = dependencies.getChantierRepository();
-
   const habilitation = new Habilitation(session.habilitations);
 
-  const chantiers = await chantierRepository.récupérerListe(habilitation);
+  const chantiers = await new RécupérerListeChantiersUseCase().run(habilitation);
   const chantiersIds = chantiers.map(chantier => chantier.id);
 
   const indicateursRepository = dependencies.getIndicateurRepository();

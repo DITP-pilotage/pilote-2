@@ -10,7 +10,7 @@ import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChanti
 
 export default interface ChantierRepository {
   récupérer(id: string, habilitations: Habilitations): Promise<Chantier>;
-  récupérerListe(habilitations: Habilitation): Promise<Chantier[]>;
+  récupérerListe(habilitation: Habilitation): Promise<Chantier[]>;
   getChantierStatistiques(habilitations: Habilitations, listeChantier: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques>;
   récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null>
   modifierMétéo(chantierId: string, territoireCode: string, météo: Météo): Promise<void>;

@@ -11,6 +11,7 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import PageAccueil from '@/components/PageAccueil/PageAccueil';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import ProjetStructurantBuilder from '@/server/domain/projetStructurant/ProjetStructurant.builder';
+import RécupérerListeChantiersUseCase from '@/server/usecase/chantier/RécupérerListeChantiersUseCase';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
@@ -46,8 +47,7 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
     return { props: {} };
   
   const habilitation =  new Habilitation(session.habilitations);
-  const chantierRepository = dependencies.getChantierRepository();
-  const chantiers = await chantierRepository.récupérerListe(habilitation);
+  const chantiers = await new RécupérerListeChantiersUseCase().run(habilitation);
   const projetsStructurants: ProjetStructurant[] = await Promise.all(Array.from({ length: 150 }, () => new ProjetStructurantBuilder().build()));
 
   let axes: Axe[] = [];

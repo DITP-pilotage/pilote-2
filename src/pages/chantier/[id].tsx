@@ -7,6 +7,7 @@ import { dependencies } from '@/server/infrastructure/Dependencies';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
+import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[],
@@ -37,8 +38,7 @@ export async function getServerSideProps({ req, res, params }: GetServerSideProp
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params!.id);
-  const chantierRepository = dependencies.getChantierRepository();
-  const chantier: Chantier = await chantierRepository.récupérer(params!.id, session.habilitations);
+  const chantier: Chantier = await new RécupérerChantierUseCase().run(params!.id, session.habilitations);
 
   return {
     props: {
