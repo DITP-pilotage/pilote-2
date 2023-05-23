@@ -9,6 +9,10 @@ const MiseEnPageStyled = styled.div`
     .fr-header, .fr-footer{
       display: none;
     }
+    
+    *::-webkit-scrollbar {
+      display: none;
+    }
   }
   
   main {
