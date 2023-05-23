@@ -6,18 +6,11 @@ import {
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import { comparerAvancementRéforme } from '@/client/utils/chantier/avancement/avancement';
 import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement';
-import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import TypologiesPictos from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import { DonnéesTableauChantiers } from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
 import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
+import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import RapportDétailléTableauChantiersProps from './RapportDétailléTableauChantiers.interface';
-
-const déterminerTypologieDuGroupementParMinistère = (chantiersDuGroupe: DonnéesTableauChantiers[]) => {
-  return { 
-    estBaromètre: chantiersDuGroupe.some(chantier => chantier.typologie.estBaromètre),
-    estTerritorialisé: chantiersDuGroupe.some(chantier => chantier.typologie.estTerritorialisé),
-  };
-};
 
 const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
 
@@ -25,9 +18,14 @@ const colonnesTableauChantiers = [
   reactTableColonnesHelper.accessor('nom', {
     header: 'Chantiers',
     id: 'nom',
-    aggregatedCell: aggregatedCellContext => aggregatedCellContext.row.original.porteur,
+    cell: cellContext => (
+      <IcônesMultiplesEtTexte
+        icônesId={cellContext.row.original.porteur?.icône ? [cellContext.row.original.porteur.icône] : []}
+      >
+        {cellContext.getValue()}
+      </IcônesMultiplesEtTexte>
+    ),
     enableSorting: false,
-    enableGrouping: false,
     meta: {
       width: 'auto',
     },
@@ -37,10 +35,7 @@ const colonnesTableauChantiers = [
     header: 'Typologie',
     id: 'typologie',
     enableSorting: false,
-    cell: typologie => <TypologiesPictos typologies={typologie.getValue()} />,
-    enableGrouping: false,
-    aggregationFn: (_columnId, leafRows) => déterminerTypologieDuGroupementParMinistère(leafRows.map(row => row.original)),
-    aggregatedCell: typologie => typologie.getValue() ? <TypologiesPictos typologies={typologie.getValue()} /> : null,
+    cell: cellContext => <TypologiesPictos typologies={cellContext.getValue()} />,
     meta: {
       width: '8rem',
     },
@@ -49,10 +44,9 @@ const colonnesTableauChantiers = [
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
     id: 'météo',
-    cell: météo => <TableauRéformesMétéo météo={météo.getValue()} />,
+    cell: cellContext => <TableauRéformesMétéo météo={cellContext.getValue()} />,
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
-    enableGrouping: false,
     meta: {
       width: '10rem',
     },
@@ -61,14 +55,9 @@ const colonnesTableauChantiers = [
   reactTableColonnesHelper.accessor('avancement', {
     header: 'Avancement',
     id: 'avancement',
-    cell: avancement => <TableauRéformesAvancement avancement={avancement.getValue()} />,
+    cell: cellContext => <TableauRéformesAvancement avancement={cellContext.getValue()} />,
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerAvancementRéforme(a.getValue(columnId), b.getValue(columnId)),
-    enableGrouping: false,
-    aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
-      return calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement));
-    },
-    aggregatedCell: avancement => <TableauRéformesAvancement avancement={avancement.getValue() ?? null} />,
     meta: {
       width: '11rem',
     },
