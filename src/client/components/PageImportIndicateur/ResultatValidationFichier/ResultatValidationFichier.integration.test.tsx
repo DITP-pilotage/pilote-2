@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import mockRouter from 'next-router-mock';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
-import ResultatValidationFichier from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
+import ResultatValidationFichier
+  from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 
 // eslint-disable-next-line unicorn/prefer-module
 jest.mock('next/router', () => require('next-router-mock'));
@@ -10,24 +11,26 @@ describe('ResultatValidationFichier', () => {
   it('quand le fichier est valide doit afficher que le fichier est correct', () => {
     // GIVEN
     const rapport: DetailValidationFichierContrat = {
+      id: '0df7df91-7c63-4e45-ba85-6553bf873705',
       estValide: true,
       listeErreursValidation: [],
     };
 
     mockRouter.push('chantier/CH-123/indicateurs?indicateurId=IND-123');
-    
+
     // WHEN
     render(
       <ResultatValidationFichier rapport={rapport} />,
     );
 
     // THEN
-    expect(screen.getByText('Les données ont été importées avec succès pour l’indicateur IND-123')).toBeInTheDocument();
+    expect(screen.getByText('Bravo, le fichier est conforme !')).toBeInTheDocument();
   });
 
   it("quand le fichier contient des erreurs, doit afficher que le tableau d'erreur", () => {
     // GIVEN
     const rapport: DetailValidationFichierContrat = {
+      id: '9e058686-eecb-4079-a192-29547a3ee842',
       estValide: false,
       listeErreursValidation: [
         {
@@ -50,7 +53,7 @@ describe('ResultatValidationFichier', () => {
         },
       ],
     };
-    
+
     // WHEN
     render(
       <ResultatValidationFichier rapport={rapport} />,

@@ -1,19 +1,15 @@
-import { useRouter } from 'next/router';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import { ResultatValidationFichierProps } from './ResultatValidationFichier.interface';
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 export default function ResultatValidationFichier({ rapport }: ResultatValidationFichierProps) {
-  const { query } = useRouter();
-  const { indicateurId } = query;
-
   return (
     <section className='fr-my-2w'>
       {
       rapport.estValide
         ?
           <Alerte
-            message='La mise à jour des taux d’avancement sera effective dans un durée maximale de 24h. Vous pouvez, en attendant, mettre à jour d’autres indicateurs.'
-            titre={`Les données ont été importées avec succès pour l’indicateur ${indicateurId}`}
+            message='Passez à l’étape suivante pour prévisualiser les données et confirmer leur publication.'
+            titre="Bravo, le fichier est conforme !"
             type='succès'
           />
         :

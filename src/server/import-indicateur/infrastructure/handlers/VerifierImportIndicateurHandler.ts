@@ -10,6 +10,7 @@ import configuration from '@/server/infrastructure/Configuration';
 
 const présenterEnContrat = (report: DetailValidationFichier): DetailValidationFichierContrat => {
   return {
+    id: report.id,
     estValide: report.estValide,
     listeErreursValidation: report.listeErreursValidation.map(erreur => ({
       cellule: erreur.cellule,
@@ -23,10 +24,10 @@ const présenterEnContrat = (report: DetailValidationFichier): DetailValidationF
   };
 };
 
-export default async function handleValiderFichierImportIndicateur(
+export default async function handleVerifierFichierImportIndicateur(
   request: NextApiRequest,
   response: NextApiResponse,
-  validerFichierIndicateurImporteUseCase = dependencies.getValiderFichierIndicateurImporteUseCase(),
+  verifierFichierIndicateurImporteUseCase = dependencies.getVerifierFichierIndicateurImporteUseCase(),
 ) {
 
   const formData = await parseForm(request);
@@ -43,7 +44,7 @@ export default async function handleValiderFichierImportIndicateur(
 
   assert(decoded?.user);
 
-  const report = await validerFichierIndicateurImporteUseCase.execute(
+  const report = await verifierFichierIndicateurImporteUseCase.execute(
     {
       cheminCompletDuFichier: fichier.filepath,
       nomDuFichier: fichier.originalFilename as string,

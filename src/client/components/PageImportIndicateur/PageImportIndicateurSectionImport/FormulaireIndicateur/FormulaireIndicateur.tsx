@@ -4,19 +4,19 @@ import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 import { FormulaireIndicateurProps } from './FormulaireIndicateur.interface';
 
 export default function FormulaireIndicateur({ chantierId, indicateurId, setRapport }: FormulaireIndicateurProps) {
-  const { définirLeFichier, uploadLeFichier, file } = useFormulaireIndicateur(chantierId, indicateurId, setRapport);  
+  const { définirLeFichier, verifierLeFichier, file } = useFormulaireIndicateur(chantierId, indicateurId, setRapport);
 
   return (
     <form
       className='flex align-center'
-      onSubmit={uploadLeFichier}
+      onSubmit={verifierLeFichier}
     >
       <InputFichier
         onChange={définirLeFichier}
       />
       <SubmitBouton
         disabled={!file}
-        label='Importer les données'
+        label='Vérifier le fichier'
       />
     </form>
   );

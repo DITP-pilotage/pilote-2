@@ -1,24 +1,24 @@
 import { captor, mock, MockProxy } from 'jest-mock-extended';
 import {
-  ValiderFichierIndicateurImporteUseCase,
-} from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
-import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
+  VerifierFichierIndicateurImporteUseCase,
+} from '@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase';
+import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import { ErreurValidationFichierBuilder } from '@/server/import-indicateur/app/builder/ErreurValidationFichier.builder';
-import { IndicateurDataBuilder } from '@/server/import-indicateur/app/builder/IndicateurData.builder';
+import { MesureIndicateurTemporaireBuilder } from '@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder';
 import {
   FichierIndicateurValidationService,
 } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
-import {
-  MesureIndicateurRepository,
-} from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 import { RapportRepository } from '@/server/import-indicateur/domain/ports/RapportRepository';
+import {
+  MesureIndicateurTemporaireRepository,
+} from '@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface';
 
-describe('ValiderFichierIndicateurImporteUseCase', () => {
+describe('VerifierFichierIndicateurImporteUseCase', () => {
   let fichierIndicateurValidationService: MockProxy<FichierIndicateurValidationService>;
-  let validerFichierIndicateurImporteUseCase: ValiderFichierIndicateurImporteUseCase;
-  let mesureIndicateurRepository: MesureIndicateurRepository;
+  let verifierFichierIndicateurImporteUseCase: VerifierFichierIndicateurImporteUseCase;
+  let mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
   let rapportRepository: RapportRepository;
 
   const CHEMIN_COMPLET_DU_FICHIER = 'cheminCompletDuFichier';
@@ -29,11 +29,11 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
 
   beforeEach(() => {
     fichierIndicateurValidationService = mock<FichierIndicateurValidationService>();
-    mesureIndicateurRepository = mock<MesureIndicateurRepository>();
+    mesureIndicateurTemporaireRepository = mock<MesureIndicateurTemporaireRepository>();
     rapportRepository = mock<RapportRepository>();
-    validerFichierIndicateurImporteUseCase = new ValiderFichierIndicateurImporteUseCase({
+    verifierFichierIndicateurImporteUseCase = new VerifierFichierIndicateurImporteUseCase({
       fichierIndicateurValidationService,
-      mesureIndicateurRepository,
+      mesureIndicateurTemporaireRepository,
       rapportRepository,
     });
   });
@@ -54,7 +54,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
     fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
 
     // WHEN
-    const result = await validerFichierIndicateurImporteUseCase.execute(payload);
+    const result = await verifierFichierIndicateurImporteUseCase.execute(payload);
 
     // THEN
     expect(result.estValide).toEqual(true);
@@ -62,7 +62,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
 
   it('quand le fichier est valide, doit sauvegarder les données du fichier contenu dans le rapport', async () => {
     // GIVEN
-    const indicateurData1 = new IndicateurDataBuilder()
+    const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId('IND-001')
       .avecZoneId('D001')
       .avecMetricDate(METRIC_DATE_1)
@@ -70,7 +70,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       .avecMetricValue('72')
 
       .build();
-    const indicateurData2 = new IndicateurDataBuilder()
+    const mesureIndicateurTemporaire2 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId('IND-001')
       .avecZoneId('D007')
       .avecMetricDate(METRIC_DATE_2)
@@ -79,7 +79,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       .build();
     const detailValidationFichier = new DetailValidationFichierBuilder()
       .avecEstValide(true)
-      .avecListeIndicateurData(indicateurData1, indicateurData2)
+      .avecListeMesuresIndicateurTemporaire(mesureIndicateurTemporaire1, mesureIndicateurTemporaire2)
       .build();
     const payload = {
       cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
@@ -91,13 +91,13 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
 
     fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
 
-    const indicateurCaptor = captor<IndicateurData[]>();
+    const indicateurCaptor = captor<MesureIndicateurTemporaire[]>();
 
     // WHEN
-    await validerFichierIndicateurImporteUseCase.execute(payload);
+    await verifierFichierIndicateurImporteUseCase.execute(payload);
 
     // THEN
-    expect(mesureIndicateurRepository.sauvegarder).toHaveBeenNthCalledWith(1, indicateurCaptor);
+    expect(mesureIndicateurTemporaireRepository.sauvegarder).toHaveBeenNthCalledWith(1, indicateurCaptor);
 
     const reportFichierData = indicateurCaptor.value;
     expect(reportFichierData).toHaveLength(2);
@@ -134,22 +134,22 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
 
       // WHEN
-      await validerFichierIndicateurImporteUseCase.execute(payload);
+      await verifierFichierIndicateurImporteUseCase.execute(payload);
 
       // THEN
-      expect(mesureIndicateurRepository.sauvegarder).not.toBeCalled();
+      expect(mesureIndicateurTemporaireRepository.sauvegarder).not.toBeCalled();
     });
 
     it('quand au moins un indicateur est invalide, doit inclure les erreurs de validation des données du rapport', async () => {
       // GIVEN
-      const indicateurData1 = new IndicateurDataBuilder()
+      const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
         .avecIndicId('IND-001')
         .avecZoneId('D001')
         .avecMetricDate(METRIC_DATE_1)
         .avecMetricType('vi')
         .avecMetricValue('72')
         .build();
-      const indicateurData2 = new IndicateurDataBuilder()
+      const mesureIndicateurTemporaire2 = new MesureIndicateurTemporaireBuilder()
         .avecIndicId('IND-003')
         .avecZoneId('D007')
         .avecMetricDate(METRIC_DATE_2)
@@ -169,7 +169,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
             .avecPositionDuChamp(1)
             .build(),
         )
-        .avecListeIndicateurData(indicateurData1, indicateurData2)
+        .avecListeMesuresIndicateurTemporaire(mesureIndicateurTemporaire1, mesureIndicateurTemporaire2)
         .build();
 
       const payload = {
@@ -183,7 +183,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
 
       // WHEN
-      const report = await validerFichierIndicateurImporteUseCase.execute(payload);
+      const report = await verifierFichierIndicateurImporteUseCase.execute(payload);
 
       // THEN
       expect(report.estValide).toEqual(false);
@@ -196,14 +196,14 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
 
   it('quand le fichier possède des indic_id différent de celui en paramètre, doit remonter un rapport invalide', async () => {
     // GIVEN
-    const indicateurData1 = new IndicateurDataBuilder()
+    const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId('IND-001')
       .avecZoneId('D001')
       .avecMetricDate(METRIC_DATE_1)
       .avecMetricType('vi')
       .avecMetricValue('72')
       .build();
-    const indicateurData2 = new IndicateurDataBuilder()
+    const mesureIndicateurTemporaire2 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId('IND-003')
       .avecZoneId('D007')
       .avecMetricDate(METRIC_DATE_2)
@@ -212,7 +212,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       .build();
     const detailValidationFichier = new DetailValidationFichierBuilder()
       .avecEstValide(true)
-      .avecListeIndicateurData(indicateurData1, indicateurData2)
+      .avecListeMesuresIndicateurTemporaire(mesureIndicateurTemporaire1, mesureIndicateurTemporaire2)
       .build();
     const payload = {
       cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
@@ -225,11 +225,11 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
     fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
 
     // WHEN
-    const report = await validerFichierIndicateurImporteUseCase.execute(payload);
+    const report = await verifierFichierIndicateurImporteUseCase.execute(payload);
 
     // THEN
     expect(report.estValide).toEqual(false);
-    expect(mesureIndicateurRepository.sauvegarder).not.toBeCalled();
+    expect(mesureIndicateurTemporaireRepository.sauvegarder).not.toBeCalled();
 
     expect(report.listeErreursValidation).toHaveLength(1);
     expect(report.listeErreursValidation[0].cellule).toEqual('IND-003');
@@ -260,7 +260,7 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
     fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
 
     // WHEN
-    await validerFichierIndicateurImporteUseCase.execute(payload);
+    await verifierFichierIndicateurImporteUseCase.execute(payload);
     // THEN
     expect(rapportRepository.sauvegarder).toHaveBeenNthCalledWith(1, rapportCaptor);
 

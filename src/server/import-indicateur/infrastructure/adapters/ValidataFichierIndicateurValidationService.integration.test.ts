@@ -81,23 +81,23 @@ describe('ValidataFichierIndicateurValidationService', () => {
       expect(result.dateCreation).toBeDefined();
       expect(result.utilisateurEmail).toEqual('ditp.admin@example.com');
 
-      expect(result.listeIndicateursData).toHaveLength(2);
+      expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
 
-      expect(result.listeIndicateursData[0].id).toBeDefined();
-      expect(result.listeIndicateursData[0].rapportId).toEqual(result.id);
-      expect(result.listeIndicateursData[0].indicId).toEqual('IND-001');
-      expect(result.listeIndicateursData[0].metricDate).toEqual('30/12/2023');
-      expect(result.listeIndicateursData[0].metricType).toEqual('vi');
-      expect(result.listeIndicateursData[0].metricValue).toEqual('9');
-      expect(result.listeIndicateursData[0].zoneId).toEqual('D001');
+      expect(result.listeMesuresIndicateurTemporaire[0].id).toBeDefined();
+      expect(result.listeMesuresIndicateurTemporaire[0].rapportId).toEqual(result.id);
+      expect(result.listeMesuresIndicateurTemporaire[0].indicId).toEqual('IND-001');
+      expect(result.listeMesuresIndicateurTemporaire[0].metricDate).toEqual('30/12/2023');
+      expect(result.listeMesuresIndicateurTemporaire[0].metricType).toEqual('vi');
+      expect(result.listeMesuresIndicateurTemporaire[0].metricValue).toEqual('9');
+      expect(result.listeMesuresIndicateurTemporaire[0].zoneId).toEqual('D001');
 
-      expect(result.listeIndicateursData[1].id).toBeDefined();
-      expect(result.listeIndicateursData[1].rapportId).toEqual(result.id);
-      expect(result.listeIndicateursData[1].indicId).toEqual('IND-002');
-      expect(result.listeIndicateursData[1].metricDate).toEqual('31/12/2023');
-      expect(result.listeIndicateursData[1].metricType).toEqual('vc');
-      expect(result.listeIndicateursData[1].metricValue).toEqual('3');
-      expect(result.listeIndicateursData[1].zoneId).toEqual('D004');
+      expect(result.listeMesuresIndicateurTemporaire[1].id).toBeDefined();
+      expect(result.listeMesuresIndicateurTemporaire[1].rapportId).toEqual(result.id);
+      expect(result.listeMesuresIndicateurTemporaire[1].indicId).toEqual('IND-002');
+      expect(result.listeMesuresIndicateurTemporaire[1].metricDate).toEqual('31/12/2023');
+      expect(result.listeMesuresIndicateurTemporaire[1].metricType).toEqual('vc');
+      expect(result.listeMesuresIndicateurTemporaire[1].metricValue).toEqual('3');
+      expect(result.listeMesuresIndicateurTemporaire[1].zoneId).toEqual('D004');
     });
 
     it('quand les en-têtes sont dans un autre ordre, doit construire le même rapport de validation du fichier', async () => {
@@ -127,21 +127,21 @@ describe('ValidataFichierIndicateurValidationService', () => {
       // THEN
       expect(result.estValide).toEqual(true);
 
-      expect(result.listeIndicateursData).toHaveLength(2);
+      expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
 
-      expect(result.listeIndicateursData[0].id).toBeDefined();
-      expect(result.listeIndicateursData[0].indicId).toEqual('IND-001');
-      expect(result.listeIndicateursData[0].metricDate).toEqual(metricDateValue1);
-      expect(result.listeIndicateursData[0].metricType).toEqual('vi');
-      expect(result.listeIndicateursData[0].metricValue).toEqual('9');
-      expect(result.listeIndicateursData[0].zoneId).toEqual('D001');
+      expect(result.listeMesuresIndicateurTemporaire[0].id).toBeDefined();
+      expect(result.listeMesuresIndicateurTemporaire[0].indicId).toEqual('IND-001');
+      expect(result.listeMesuresIndicateurTemporaire[0].metricDate).toEqual(metricDateValue1);
+      expect(result.listeMesuresIndicateurTemporaire[0].metricType).toEqual('vi');
+      expect(result.listeMesuresIndicateurTemporaire[0].metricValue).toEqual('9');
+      expect(result.listeMesuresIndicateurTemporaire[0].zoneId).toEqual('D001');
 
-      expect(result.listeIndicateursData[1].id).toBeDefined();
-      expect(result.listeIndicateursData[1].indicId).toEqual('IND-002');
-      expect(result.listeIndicateursData[1].metricDate).toEqual(metricDateValue2);
-      expect(result.listeIndicateursData[1].metricType).toEqual('vc');
-      expect(result.listeIndicateursData[1].metricValue).toEqual('3');
-      expect(result.listeIndicateursData[1].zoneId).toEqual('D004');
+      expect(result.listeMesuresIndicateurTemporaire[1].id).toBeDefined();
+      expect(result.listeMesuresIndicateurTemporaire[1].indicId).toEqual('IND-002');
+      expect(result.listeMesuresIndicateurTemporaire[1].metricDate).toEqual(metricDateValue2);
+      expect(result.listeMesuresIndicateurTemporaire[1].metricType).toEqual('vc');
+      expect(result.listeMesuresIndicateurTemporaire[1].metricValue).toEqual('3');
+      expect(result.listeMesuresIndicateurTemporaire[1].zoneId).toEqual('D004');
     });
   });
 
@@ -310,7 +310,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
         // THEN
         expect(result.estValide).toEqual(false);
         expect(result.listeErreursValidation).toHaveLength(2);
-        expect(result.listeIndicateursData).toHaveLength(0);
+        expect(result.listeMesuresIndicateurTemporaire).toHaveLength(0);
 
         expect(result.listeErreursValidation.at(0)?.nom).toEqual('identifiant_indic');
         expect(result.listeErreursValidation.at(0)?.message).toEqual("L'en-tête identifiant_indic n'est pas présente");
@@ -359,7 +359,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
       // THEN
       expect(result.listeErreursValidation).toHaveLength(1);
-      expect(result.listeIndicateursData).toHaveLength(2);
+      expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
     });
   });
 });
