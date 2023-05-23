@@ -29,8 +29,7 @@ function déterminerRemplissage(valeur: number | null, élémentsDeLégende: Car
   else if (valeurArrondie >= 60 && valeurArrondie < 70) return élémentsDeLégende['60-70'].remplissage;
   else if (valeurArrondie >= 70 && valeurArrondie < 80) return élémentsDeLégende['70-80'].remplissage;
   else if (valeurArrondie >= 80 && valeurArrondie < 90) return élémentsDeLégende['80-90'].remplissage;
-  else if (valeurArrondie >= 90 && valeurArrondie < 100) return élémentsDeLégende['90-100'].remplissage;
-  else if (valeurArrondie === 100) return élémentsDeLégende['=100'].remplissage;
+  else if (valeurArrondie >= 90 && valeurArrondie <= 100) return élémentsDeLégende['90-100'].remplissage;
   else return élémentsDeLégende.DÉFAUT.remplissage;
 }
 
