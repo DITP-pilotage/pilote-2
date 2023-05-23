@@ -27,6 +27,7 @@ import { déterminerLeTypeDeRéforme } from '@/server/utils/réforme';
 import CréerUnObjectifProjetStructurantUseCase from '@/server/usecase/projetStructurant/objectif/CréerUnObjectifUseCase';
 import RécupérerObjectifProjetStructurantLePlusRécentUseCase from '@/server/usecase/projetStructurant/objectif/RécupérerObjectifLePlusRécentUseCase';
 import { TypeObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
+import RécupérerHistoriqueObjectifProjetStructurantUseCase from '@/server/usecase/projetStructurant/objectif/RécupérerHistoriqueObjectifUseCase';
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
@@ -114,19 +115,32 @@ export const publicationRouter = créerRouteurTRPC({
   récupérerHistorique: procédureProtégée
     .input(validationPublicationContexte.and(zodValidateurEntitéType))
     .query(async ({ input, ctx }) => {
-      if (input.entité === 'commentaires') {
-        const récupérerHistoriqueCommentaireUseCase = new RécupérerHistoriqueCommentaireUseCase(dependencies.getCommentaireRepository());
-        return récupérerHistoriqueCommentaireUseCase.run(input.réformeId, input.territoireCode, input.type, ctx.session.habilitations);
-      } 
-      
-      if (input.entité === 'objectifs') {
-        const récupérerHistoriqueObjectifUseCase = new RécupérerHistoriqueObjectifUseCase(dependencies.getObjectifRepository());
-        return récupérerHistoriqueObjectifUseCase.run(input.réformeId, input.type as TypeObjectifChantier, ctx.session.habilitations);
-      }
-
-      if (input.entité === 'décisions stratégiques') {
-        const récupérerHistoriqueDésionStratégiqueUseCase = new RécupérerHistoriqueDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
-        return récupérerHistoriqueDésionStratégiqueUseCase.run(input.réformeId, ctx.session.habilitations);
+      const typeDeRéforme = déterminerLeTypeDeRéforme(input.réformeId);
+      if (typeDeRéforme === 'chantier') {
+        if (input.entité === 'commentaires') {
+          const récupérerHistoriqueCommentaireUseCase = new RécupérerHistoriqueCommentaireUseCase(dependencies.getCommentaireRepository());
+          return récupérerHistoriqueCommentaireUseCase.run(input.réformeId, input.territoireCode, input.type, ctx.session.habilitations);
+        } 
+  
+        if (input.entité === 'objectifs') {
+          const récupérerHistoriqueObjectifUseCase = new RécupérerHistoriqueObjectifUseCase(dependencies.getObjectifRepository());
+          return récupérerHistoriqueObjectifUseCase.run(input.réformeId, input.type as TypeObjectifChantier, ctx.session.habilitations);
+        }
+  
+        if (input.entité === 'décisions stratégiques') {
+          const récupérerHistoriqueDésionStratégiqueUseCase = new RécupérerHistoriqueDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
+          return récupérerHistoriqueDésionStratégiqueUseCase.run(input.réformeId, ctx.session.habilitations);
+        }
+      } else if (typeDeRéforme === 'projetStructurant') {
+        if (input.entité === 'commentaires') {
+          // const récupérerHistoriqueCommentaireUseCase = new RécupérerHistoriqueCommentaireUseCase(dependencies.getCommentaireRepository());
+          // return récupérerHistoriqueCommentaireUseCase.run(input.réformeId, input.territoireCode, input.type, ctx.session.habilitations);
+        } 
+  
+        if (input.entité === 'objectifs') {
+          const récupérerHistoriqueObjectifUseCase = new RécupérerHistoriqueObjectifProjetStructurantUseCase(dependencies.getObjectifProjetStructurantrepository());
+          return récupérerHistoriqueObjectifUseCase.run(input.réformeId);
+        }
       }
     }),
 });

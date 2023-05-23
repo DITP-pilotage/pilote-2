@@ -8,7 +8,7 @@ import PublicationHistoriqueProps from './PublicationHistorique.interface';
 export default function usePublicationHistorique(
   type: PublicationHistoriqueProps['type'], 
   entité: PublicationHistoriqueProps['entité'],
-  chantierId: PublicationHistoriqueProps['réformeId'],
+  réformeId: PublicationHistoriqueProps['réformeId'],
   maille: PublicationHistoriqueProps['maille'],
 ) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -16,7 +16,7 @@ export default function usePublicationHistorique(
   const [publications, setPublications] = useState<RouterOutputs['publication']['récupérerHistorique']>();
 
   const inputs = validationPublicationContexte.and(zodValidateurEntitéType).parse({
-    chantierId,
+    réformeId,
     territoireCode: territoireSélectionné!.code,
     type,
     entité,
@@ -33,7 +33,7 @@ export default function usePublicationHistorique(
 
   return {
     publications,
-    nomTerritoire: maille === 'nationale' ? 'France' : territoireSélectionné?.nom,
+    nomTerritoire: maille === 'nationale' ? 'France' : territoireSélectionné!.nom,
     récupérerPublications,
   };
 }

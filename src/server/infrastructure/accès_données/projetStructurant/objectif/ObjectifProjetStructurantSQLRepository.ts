@@ -13,7 +13,6 @@ export default class ObjectifProjetStructurantSQLRepository implements ObjectifP
   private mapperVersDomaine(objectif: ObjectifProjetStructurantPrisma | null): ObjectifProjetStructurant {
     if (objectif === null) return null;
     return {
-      // TODO en attendant le bon format de données dans prisma
       id: objectif.id,
       type: objectif.type as TypeObjectifProjetStructurant,
       contenu: objectif.contenu,
@@ -45,5 +44,14 @@ export default class ObjectifProjetStructurantSQLRepository implements ObjectifP
       } });
 
     return this.mapperVersDomaine(objectifCréé);
+  }
+
+  async récupérerHistorique(projetStructurantId: string): Promise<ObjectifProjetStructurant[]> {
+    const objectifs: ObjectifProjetStructurantPrisma[] = await this.prisma.objectif_projet_structurant.findMany({
+      where: { projet_structurant_id: projetStructurantId },
+      orderBy: { date: 'desc' },
+    });
+
+    return objectifs.map(objectifDeLHistorique => this.mapperVersDomaine(objectifDeLHistorique));
   }
 }

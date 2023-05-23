@@ -14,13 +14,13 @@ export default function usePublicationFormulaire(succèsCallback: PublicationFor
     },
   });
 
-  const créerPublication : SubmitHandler<PublicationFormulaireInputs> = data => {
+  const créerPublication: SubmitHandler<PublicationFormulaireInputs> = data => {    
     const inputs = validationPublicationContexte.merge(zodValidateurCSRF).and(validationPublicationFormulaire).parse({
       contenu: data.contenu,
       type: data.type,
       entité: data.entité,
       territoireCode: data.territoireCode,
-      chantierId: data.réformeId,
+      réformeId: data.réformeId,
       csrf: récupérerUnCookie('csrf') ?? '',
     });
 
