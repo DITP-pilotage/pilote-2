@@ -165,11 +165,11 @@ export class DatabaseSeeder {
     const CHANTIERS_STATIQUES = [chantierStatiqueId123];
 
     for (let i = 0; i < 100; i++) {
-      const périmètres = faker.helpers.arrayElements(this._périmètresMinistériels, faker.datatype.number({
-        min: 0,
-        max: 2,
-      }));
-      const ministères = périmètres.map(périmètreMinistériel => périmètreMinistériel.ministere!);
+      const périmètre = faker.helpers.arrayElement(this._périmètresMinistériels);
+      const ministères = [
+        périmètre.ministere,
+        ...faker.helpers.arrayElements(this._ministères.map(m => m.nom), faker.datatype.number({ min: 0, max: 2 })),
+      ].filter((m): m is string => m !== null);
 
       // On souhaite rendre des chantiers statiques avec des valeurs controllées afin de pouvoir créer des jeux de données de bout en bout maitrisés
       const c = i <= CHANTIERS_STATIQUES.length - 1
@@ -178,7 +178,7 @@ export class DatabaseSeeder {
           .avecId(`CH-${formaterId(this.compter())}`)
           .avecAxe(faker.helpers.arrayElement(this._axes).nom)
           .avecPpg(faker.helpers.arrayElement(this._ppgs).nom)
-          .avecPérimètreIds(périmètres.map(périmètreMinistériel => périmètreMinistériel.id))
+          .avecPérimètreIds([périmètre.id])
           .avecMinistères(ministères);
 
       const chantierNational = c.avecMaille('NAT').build();

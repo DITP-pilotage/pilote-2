@@ -8,6 +8,7 @@ import {
 import { objectEntries } from '@/client/utils/objects/objects';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import api from '@/server/infrastructure/api/trpc/api';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
 
 export type ChantierVueDEnsemble = {
   id: string;
@@ -15,7 +16,7 @@ export type ChantierVueDEnsemble = {
   avancement: number | null;
   météo: Météo;
   typologie: { estBaromètre: boolean, estTerritorialisé: boolean };
-  porteur: string;
+  porteur: Ministère | null;
 };
 
 export default function useVueDEnsemble(chantiers: Chantier[]) {

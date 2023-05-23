@@ -95,9 +95,9 @@ const TableauChantiersStyled = styled.section`
     }
   }
 
-  .icône {
-      color: var(--blue-france-sun-113-625)
-    }
+  .icônes {
+    color: var(--background-active-blue-france)
+  }
 `;
 
 export default TableauChantiersStyled;

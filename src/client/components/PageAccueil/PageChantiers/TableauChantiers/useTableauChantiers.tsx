@@ -21,6 +21,7 @@ import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeT
 import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
 import TypologiesPictos from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import useTableauRéformes from '@/components/PageAccueil/TableauRéformes/useTableauRéformes';
+import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
 import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuileChantier';
 import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiersTuileMinistère';
@@ -36,16 +37,37 @@ const déterminerTypologieDuGroupementParMinistère = (chantiersDuGroupe: Donné
 const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
 
 const colonnesTableauChantiers = [
-  reactTableColonnesHelper.accessor('porteur', {
+  reactTableColonnesHelper.accessor('porteur.nom', {
     header: 'Porteur',
     id: 'porteur',
-    cell: porteur => porteur.getValue(),
+    cell: cellContext => cellContext.getValue(),
     enableGrouping: true,
   }),
   reactTableColonnesHelper.accessor('nom', {
     header: 'Chantiers',
     id: 'nom',
-    aggregatedCell: aggregatedCellContext => aggregatedCellContext.row.original.porteur,
+    aggregatedCell: aggregatedCellContext => (
+      <IcônesMultiplesEtTexte
+        icônesId={aggregatedCellContext.row.original.porteur?.icône ? [aggregatedCellContext.row.original.porteur.icône] : []}
+      >
+        {aggregatedCellContext.row.original.porteur?.nom ?? ''}
+      </IcônesMultiplesEtTexte>
+    ),
+    cell: cellContext => (
+      cellContext.table.getColumn('porteur')?.getIsGrouped() ? (
+        <IcônesMultiplesEtTexte
+          icônesId={[]}
+        >
+          {cellContext.getValue()}
+        </IcônesMultiplesEtTexte>
+      ) : (
+        <IcônesMultiplesEtTexte
+          icônesId={cellContext.row.original.porteur?.icône ? [cellContext.row.original.porteur.icône] : []}
+        >
+          {cellContext.getValue()}
+        </IcônesMultiplesEtTexte>
+      )
+    ),
     enableSorting: false,
     enableGrouping: false,
     meta: {
@@ -56,7 +78,7 @@ const colonnesTableauChantiers = [
     header: 'Typologie',
     id: 'typologie',
     enableSorting: false,
-    cell: typologie => <TypologiesPictos typologies={typologie.getValue()} />,
+    cell: cellContext => <TypologiesPictos typologies={cellContext.getValue()} />,
     enableGrouping: false,
     aggregationFn: (_columnId, leafRows) => déterminerTypologieDuGroupementParMinistère(leafRows.map(row => row.original)),
     aggregatedCell: typologie => typologie.getValue() ? <TypologiesPictos typologies={typologie.getValue()} /> : null,
@@ -67,7 +89,7 @@ const colonnesTableauChantiers = [
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
     id: 'météo',
-    cell: météo => <TableauRéformesMétéo météo={météo.getValue()} />,
+    cell: cellContext => <TableauRéformesMétéo météo={cellContext.getValue()} />,
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => (
       a.getIsGrouped() || b.getIsGrouped()
@@ -82,7 +104,7 @@ const colonnesTableauChantiers = [
   reactTableColonnesHelper.accessor('avancement', {
     header: 'Avancement',
     id: 'avancement',
-    cell: avancement => <TableauRéformesAvancement avancement={avancement.getValue()} />,
+    cell: cellContext => <TableauRéformesAvancement avancement={cellContext.getValue()} />,
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerAvancementRéforme(a.getValue(columnId), b.getValue(columnId)),
     enableGrouping: false,
@@ -117,7 +139,7 @@ const colonnesTableauChantiers = [
     ),
     aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
       return {
-        nom: chantiersDuMinistèreRow[0].original.porteur,
+        nom: chantiersDuMinistèreRow[0].original.porteur?.nom ?? '',
         avancement: calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement)),
       } as TableauChantiersTuileMinistèreProps['ministère'];
     },

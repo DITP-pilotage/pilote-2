@@ -1,7 +1,8 @@
-import { chantier, territoire } from '@prisma/client';
-import { Territoires } from '@/server/domain/territoire/Territoire.interface';
+import { chantier } from '@prisma/client';
+import { TerritoireDeBDD, Territoires } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
 
 class ErreurChantierSansMailleNationale extends Error {
   constructor(idChantier: string) {
@@ -9,14 +10,14 @@ class ErreurChantierSansMailleNationale extends Error {
   }
 }
 
-function créerDonnéesTerritoires(territoires: territoire[], chantierRows: chantier[]) {
+function créerDonnéesTerritoires(territoires: TerritoireDeBDD[], chantierRows: chantier[]) {
   let donnéesTerritoires: Territoires = {};
 
   territoires.forEach(t => {
-    const chantierRow = chantierRows.find(c => c.code_insee === t.code_insee);
+    const chantierRow = chantierRows.find(c => c.code_insee === t.codeInsee);
 
-    donnéesTerritoires[t.code_insee] = {
-      codeInsee: t.code_insee,
+    donnéesTerritoires[t.codeInsee] = {
+      codeInsee: t.codeInsee,
       avancement: { annuel: null, global: chantierRow?.taux_avancement ?? null },
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
     };
@@ -25,7 +26,8 @@ function créerDonnéesTerritoires(territoires: territoire[], chantierRows: chan
   return donnéesTerritoires;
 }
 
-export function parseChantier(chantierRows: chantier[], territoires: territoire[]): Chantier {
+export function parseChantier(chantierRows: chantier[], territoires: TerritoireDeBDD[], ministères: Ministère[]): Chantier {
+
   const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
   const chantierMailleDépartementale = chantierRows.filter(c => c.maille === 'DEPT');
   const chantierMailleRégionale = chantierRows.filter(c => c.maille === 'REG');
@@ -48,12 +50,16 @@ export function parseChantier(chantierRows: chantier[], territoires: territoire[
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
         },
       },
-      départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'DEPT'), chantierMailleDépartementale),
-      régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'REG'), chantierMailleRégionale),
+      départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale),
+      régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'régionale'), chantierMailleRégionale),
     },
     responsables: {
-      porteur: chantierMailleNationale.ministeres[0],
-      coporteurs: chantierMailleNationale.ministeres.slice(1),
+      porteur: ministères.find(m => m.nom === chantierMailleNationale.ministeres[0]) ?? null,
+      coporteurs: chantierMailleNationale.ministeres.slice(1).map(ministère => ({
+        nom: ministère,
+        icône: null,
+        périmètresMinistériels: [],
+      })),
       directeursAdminCentrale: [],
       directeursProjet: [],
     },
