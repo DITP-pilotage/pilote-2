@@ -13,7 +13,10 @@ export default function PublicationHistorique({ type, entité, réformeId, maill
   return (
     <>
       <BoutonSousLigné
-        idHtml={ID_HTML}
+        ariaControls={ID_HTML}
+        classNameSupplémentaires='fr-mt-1w'
+        dataFrOpened={false}
+        type='button'
       >
         Voir l&apos;historique
       </BoutonSousLigné>

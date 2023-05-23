@@ -1,13 +1,21 @@
 import BoutonSousLignéInterface from '@/components/_commons/BoutonSousLigné/BoutonSousLigné.interface';
 import BoutonSousLignéStyled from '@/components/_commons/BoutonSousLigné/BoutonSousLigné.styled';
 
-export default function BoutonSousLigné({ idHtml, children }: BoutonSousLignéInterface) {
+export default function BoutonSousLigné({
+  ariaControls,
+  classNameSupplémentaires,
+  dataFrOpened,
+  onClick,
+  type,
+  children,
+}: BoutonSousLignéInterface) {
   return (
     <BoutonSousLignéStyled
-      aria-controls={idHtml}
-      className="fr-link fr-mt-1w override"
-      data-fr-opened="false"
-      type="button"
+      aria-controls={ariaControls}
+      className={`fr-link override ${classNameSupplémentaires ?? ''}`}
+      data-fr-opened={dataFrOpened}
+      onClick={onClick}
+      type={type}
     >
       { children }
     </BoutonSousLignéStyled>
