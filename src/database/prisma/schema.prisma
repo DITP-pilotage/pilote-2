@@ -234,13 +234,13 @@ model indicateur_projet_structurant {
 }
 
 model objectif_projet_structurant {
+  id                    String   @id
   projet_structurant_id String
-  territoire_id         String
+  type                  String
   contenu               String
   date                  DateTime @db.Timestamp
   auteur                String?
 
-  @@id([projet_structurant_id, territoire_id, date])
   @@schema("public")
 }
 
