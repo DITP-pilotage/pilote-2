@@ -1,14 +1,12 @@
 SELECT
-DISTINCT ON(ps.id, dfakto_view.zone_code, dfakto_view.synthese_des_resultats_date, dfakto_view.meteo_date)
+DISTINCT ON(ps.id, dfakto_view.synthese_des_resultats_date, dfakto_view.meteo_date)
     {{ dbt_utils.surrogate_key(
         ['ps.id',
-        'dfakto_view.zone_code',
         'dfakto_view.synthese_des_resultats_date',
         'dfakto_view.meteo_date',
         ]
     ) }} as id,
     ps.id as projet_structurant_id,
-    dfakto_view.zone_code as territoire_id,
     dfakto_view.meteo as meteo,
     dfakto_view.meteo_date as date_meteo,
     dfakto_view.synthese_des_resultats as commentaire,
