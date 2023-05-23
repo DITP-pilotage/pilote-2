@@ -1,8 +1,8 @@
-import { chantier, territoire } from '@prisma/client';
-import { Territoires } from '@/server/domain/territoire/Territoire.interface';
+import { chantier } from '@prisma/client';
+import { TerritoireDeBDD, Territoires } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
 
 class ErreurChantierSansMailleNationale extends Error {
   constructor(idChantier: string) {
@@ -10,14 +10,14 @@ class ErreurChantierSansMailleNationale extends Error {
   }
 }
 
-function créerDonnéesTerritoires(territoires: territoire[], chantierRows: chantier[]) {
+function créerDonnéesTerritoires(territoires: TerritoireDeBDD[], chantierRows: chantier[]) {
   let donnéesTerritoires: Territoires = {};
 
   territoires.forEach(t => {
-    const chantierRow = chantierRows.find(c => c.code_insee === t.code_insee);
+    const chantierRow = chantierRows.find(c => c.code_insee === t.codeInsee);
 
-    donnéesTerritoires[t.code_insee] = {
-      codeInsee: t.code_insee,
+    donnéesTerritoires[t.codeInsee] = {
+      codeInsee: t.codeInsee,
       avancement: { annuel: null, global: chantierRow?.taux_avancement ?? null },
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
     };
@@ -26,9 +26,7 @@ function créerDonnéesTerritoires(territoires: territoire[], chantierRows: chan
   return donnéesTerritoires;
 }
 
-export async function parseChantier(chantierRows: chantier[], territoires: territoire[]): Promise<Chantier> {
-  const ministèreSQLRepository = dependencies.getMinistèreRepository();
-  const ministères = await ministèreSQLRepository.getListe();
+export function parseChantier(chantierRows: chantier[], territoires: TerritoireDeBDD[], ministères: Ministère[]): Chantier {
 
   const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
   const chantierMailleDépartementale = chantierRows.filter(c => c.maille === 'DEPT');
@@ -52,8 +50,8 @@ export async function parseChantier(chantierRows: chantier[], territoires: terri
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
         },
       },
-      départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'DEPT'), chantierMailleDépartementale),
-      régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'REG'), chantierMailleRégionale),
+      départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale),
+      régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'régionale'), chantierMailleRégionale),
     },
     responsables: {
       porteur: ministères.find(m => m.nom === chantierMailleNationale.ministeres[0]) ?? null,
