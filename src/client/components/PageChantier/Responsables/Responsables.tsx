@@ -25,12 +25,12 @@ export default function Responsables({ responsables }: ResponsablesProps) {
       <Bloc titre="National">
         <div>
           <ResponsablesLigne
-            contenu={[responsables.porteur]}
+            contenu={[responsables.porteur.nom]}
             libellé="Ministère porteur"
           />
           <hr className='fr-hr fr-py-1w' />
           <ResponsablesLigne
-            contenu={responsables.coporteurs.map(coporteur => coporteur)}
+            contenu={responsables.coporteurs.map(coporteur => coporteur.nom)}
             libellé="Autres ministères co-porteurs"
           />
           <hr className='fr-hr fr-py-1w' />

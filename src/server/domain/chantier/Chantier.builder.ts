@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker/locale/fr';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { CodeInsee, codeInseeFrance, codesInseeDépartements, codesInseeRégions, Territoires } from '@/server/domain/territoire/Territoire.interface';
 import {
-  générerCaractèresSpéciaux,
+  générerCaractèresSpéciaux, générerTableau,
   générerUnIdentifiantUnique,
   générerUnLibellé,
   générerUnTableauVideAvecUneTailleDeZéroÀn,
@@ -41,7 +41,7 @@ export default class ChantierBuilder {
     const axe = new AxeBuilder().build();
     const ppg = new PpgBuilder().build();
     const ministèrePorteur = new MinistèreBuilder().build();
-    const ministèresCoPorteurs = générerUnTableauVideAvecUneTailleDeZéroÀn(2).map(() => new MinistèreBuilder().build().nom);
+    const ministèresCoPorteurs = générerTableau(0, 3, () => new MinistèreBuilder().build());
     const directeursAdminCentrale = générerUnTableauVideAvecUneTailleDeZéroÀn(2).map(() => ({ nom: faker.name.fullName(), direction: faker.lorem.word() }));
     const directeursProjet = générerUnTableauVideAvecUneTailleDeZéroÀn(2).map(() => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
 
@@ -55,7 +55,7 @@ export default class ChantierBuilder {
       régionale: this._générerTerritoires(codesInseeRégions),
       départementale: this._générerTerritoires(codesInseeDépartements),
     };
-    this._porteur = ministèrePorteur.nom;
+    this._porteur = ministèrePorteur;
     this._coporteurs = ministèresCoPorteurs;
     this._directeursAdminCentrale = directeursAdminCentrale;
     this._directeursProjet = directeursProjet;

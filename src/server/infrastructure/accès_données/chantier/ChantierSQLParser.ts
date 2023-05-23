@@ -52,8 +52,16 @@ export function parseChantier(chantierRows: chantier[], territoires: territoire[
       régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'REG'), chantierMailleRégionale),
     },
     responsables: {
-      porteur: chantierMailleNationale.ministeres[0],
-      coporteurs: chantierMailleNationale.ministeres.slice(1),
+      porteur: {
+        nom: chantierMailleNationale.ministeres[0],
+        icône: null,
+        périmètresMinistériels: [],
+      },
+      coporteurs: chantierMailleNationale.ministeres.slice(1).map(ministère => ({
+        nom: ministère,
+        icône: null,
+        périmètresMinistériels: [],
+      })),
       directeursAdminCentrale: [],
       directeursProjet: [],
     },

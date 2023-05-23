@@ -37,7 +37,7 @@ const déterminerTypologieDuGroupementParMinistère = (chantiersDuGroupe: Donné
 const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
 
 const colonnesTableauChantiers = [
-  reactTableColonnesHelper.accessor('porteur', {
+  reactTableColonnesHelper.accessor('porteur.nom', {
     header: 'Porteur',
     id: 'porteur',
     cell: cellContext => cellContext.getValue(),
@@ -50,7 +50,7 @@ const colonnesTableauChantiers = [
       <IcônesMultiplesEtTexte
         icônesId={[]}
       >
-        {aggregatedCellContext.row.original.porteur}
+        {aggregatedCellContext.row.original.porteur.nom}
       </IcônesMultiplesEtTexte>
     ),
     cell: cellContext => (
@@ -139,7 +139,7 @@ const colonnesTableauChantiers = [
     ),
     aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
       return {
-        nom: chantiersDuMinistèreRow[0].original.porteur,
+        nom: chantiersDuMinistèreRow[0].original.porteur.nom,
         avancement: calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement)),
       } as TableauChantiersTuileMinistèreProps['ministère'];
     },
