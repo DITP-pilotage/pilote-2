@@ -3,7 +3,8 @@ import { faker } from '@faker-js/faker/locale/fr';
 import PérimètreMinistérielBuilder from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.builder';
 import { générerPeutÊtreNull, générerUnLibellé } from '@/server/infrastructure/test/builders/utils';
 
-export default class PérimètreMinistérielRowBuilder {
+type MinistèreDUnPérimètreMinistériel = { nom: perimetre['ministere'], id: perimetre['ministere_id'] };
+export default class PérimètreMinistérielSQLRowBuilder {
   private _id: perimetre['id'];
 
   private _nom: perimetre['nom'];
@@ -21,18 +22,19 @@ export default class PérimètreMinistérielRowBuilder {
     this._ministère_id = this._ministère ? `MIN-${faker.datatype.number()}` : null;
   }
 
-  avecId(id: perimetre['id']): PérimètreMinistérielRowBuilder {
+  avecId(id: perimetre['id']): PérimètreMinistérielSQLRowBuilder {
     this._id = id;
     return this;
   }
 
-  avecNom(nom: perimetre['nom']): PérimètreMinistérielRowBuilder {
+  avecNom(nom: perimetre['nom']): PérimètreMinistérielSQLRowBuilder {
     this._nom = nom;
     return this;
   }
 
-  avecMinistères(ministères: perimetre['ministere']): PérimètreMinistérielRowBuilder {
-    this._ministère = ministères;
+  avecMinistère({ nom, id }: MinistèreDUnPérimètreMinistériel): PérimètreMinistérielSQLRowBuilder {
+    this._ministère = nom;
+    this._ministère_id = id;
     return this;
   }
 

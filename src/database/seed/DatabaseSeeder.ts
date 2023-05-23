@@ -12,14 +12,12 @@ import {
   territoire,
 } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
-
-import assert from 'node:assert/strict';
 import SynthèseDesRésultatsSQLRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
 import AxeRowBuilder from '@/server/infrastructure/test/builders/sqlRow/AxeSQLRow.builder';
 import PpgRowBuilder from '@/server/infrastructure/test/builders/sqlRow/PpgSQLRow.builder';
-import PérimètreMinistérielRowBuilder
+import PérimètreMinistérielSQLRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/PérimètreMinistérielSQLRow.builder';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import CommentaireRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
@@ -37,6 +35,7 @@ import {
   répéter,
 } from '@/server/infrastructure/test/builders/utils';
 import { typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
+import MinistèreSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/MinistèreSQLRow.builder';
 import { formaterId } from './format';
 
 const chantierStatiqueId123 = new ChantierSQLRowBuilder()
@@ -73,6 +72,8 @@ export class DatabaseSeeder {
   private _axes: axe[] = [];
 
   private _ppgs: ppg[] = [];
+
+  private _ministères: ministere[] = [];
 
   private _périmètresMinistériels: perimetre[] = [];
 
@@ -144,18 +145,18 @@ export class DatabaseSeeder {
   }
 
   private async _créerMinistèresEtPérimètresMinistériels() {
-    this._périmètresMinistériels = générerTableau<perimetre>(15, 15, () => new PérimètreMinistérielRowBuilder().build())
-      .filter(périmètre => périmètre.ministere !== null);
+    this._ministères = générerTableau<ministere>(20, 20, () => {
+      const ministère = new MinistèreSQLRowBuilder().build();
+      this._périmètresMinistériels = [
+        ...this._périmètresMinistériels,
+        ...générerTableau<perimetre>(1, 3, () => (
+          new PérimètreMinistérielSQLRowBuilder().avecMinistère(ministère).build()
+        )),
+      ];
+      return ministère;
+    });
 
-    const donnéesMinistères: ministere[] = this._périmètresMinistériels
-      .filter(it => Boolean(it.ministere_id))
-      .map(it => {
-        assert(it.ministere_id, 'Id ministère manquant pour périmètre ' + it.id);
-        assert(it.ministere, 'Description ministère manquante pour périmètre ' + it.id);
-        return { id: it.ministere_id, nom: it.ministere };
-      });
-
-    await this._prisma.ministere.createMany({ data: donnéesMinistères });
+    await this._prisma.ministere.createMany({ data: this._ministères });
     await this._prisma.perimetre.createMany({ data: this._périmètresMinistériels });
   }
 

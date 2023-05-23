@@ -4,6 +4,7 @@ import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFilt
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { FiltreCatégorie } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
+import Icône from '@/components/_commons/Icône/Icône';
 import FiltresMinistèresProps from './FiltresMinistères.interface';
 import FiltresMinistèresStyled from './FiltresMinistères.styled';
 
@@ -71,7 +72,17 @@ export default function FiltresMinistères({ ministères }: FiltresMinistèresPr
                     onClick={() => auClicSurUnMinistèreCallback(ministère)}
                     type="button"
                   >
-                    {ministère.nom}
+                    <div className="tuile-ministère-contenu">
+                      <span className="icône">
+                        {
+                          !!ministère.icône &&
+                          <Icône id={ministère.icône} />
+                        }
+                      </span>
+                      <span>
+                        {ministère.nom}
+                      </span>
+                    </div>
                   </button>
                   <ul className="fr-p-0 fr-m-0 fr-mb-1w périmètres-liste">
                     {
