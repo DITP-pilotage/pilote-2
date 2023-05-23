@@ -1,23 +1,9 @@
 import { randomUUID } from 'node:crypto';
 
 export class IndicateurData {
-  private constructor({
-    id,
-    indicId,
-    zoneId,
-    metricDate,
-    metricType,
-    metricValue,
-  }: { id: string, indicId: string; metricType: string; metricValue: string; zoneId: string; metricDate: string }) {
-    this._id = id;
-    this._indicId = indicId;
-    this._zoneId = zoneId;
-    this._metricDate = metricDate;
-    this._metricType = metricType;
-    this._metricValue = metricValue;
-  }
-
   private readonly _id: string;
+
+  private readonly _rapportId: string;
 
   private readonly _indicId: string;
 
@@ -29,9 +15,31 @@ export class IndicateurData {
 
   private readonly _metricValue: string;
 
+  private constructor({
+    id,
+    rapportId,
+    indicId,
+    zoneId,
+    metricDate,
+    metricType,
+    metricValue,
+  }: { id: string, rapportId: string, indicId: string; metricType: string; metricValue: string; zoneId: string; metricDate: string }) {
+    this._id = id;
+    this._rapportId = rapportId;
+    this._indicId = indicId;
+    this._zoneId = zoneId;
+    this._metricDate = metricDate;
+    this._metricType = metricType;
+    this._metricValue = metricValue;
+  }
+
 
   get id(): string {
     return this._id;
+  }
+
+  get rapportId(): string {
+    return this._rapportId;
   }
 
   get indicId(): string {
@@ -56,6 +64,7 @@ export class IndicateurData {
 
   static createIndicateurData({
     id,
+    rapportId,
     indicId,
     zoneId,
     metricDate,
@@ -63,6 +72,7 @@ export class IndicateurData {
     metricValue,
   }: {
     id?: string,
+    rapportId: string,
     indicId: string,
     zoneId: string,
     metricDate: string,
@@ -71,6 +81,7 @@ export class IndicateurData {
   }) {
     return new IndicateurData({
       id: id || randomUUID(),
+      rapportId,
       indicId,
       zoneId,
       metricDate,

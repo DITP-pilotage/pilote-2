@@ -8,6 +8,9 @@ import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTask.builder';
 import { ReportTaskBuilder, ReportResourceTaskBuilder } from '@/server/import-indicateur/app/builder/ReportTask.builder';
 import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidata.builder';
+import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
+import { dependencies } from '@/server/infrastructure/Dependencies';
+import { getNextAuthSessionTokenPourUtilisateurEmail } from '@/server/infrastructure/test/NextAuthHelper';
 
 jest.mock('@/server/import-indicateur/infrastructure/handlers/ParseForm', () => ({
   parseForm: () => ({
@@ -43,6 +46,10 @@ describe('ImportIndicateurHandler', () => {
             )
             .build(),
         ).build();
+
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
+      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur);
+
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
           JSON.stringify({ report }),
@@ -52,11 +59,16 @@ describe('ImportIndicateurHandler', () => {
       const formData = new FormData();
       const file = mock<File>();
       formData.append('file', file);
+
       const { req, res } = createMocks({
         method: 'POST',
         body: formData,
+        cookies: {
+          'next-auth.session-token': await getNextAuthSessionTokenPourUtilisateurEmail('ditp.admin@example.com'),
+        },
         query: { indicateurId: 'IND-001' },
       });
+
       await handleValiderFichierImportIndicateur(req, res);
 
       // THEN
@@ -89,15 +101,22 @@ describe('ImportIndicateurHandler', () => {
           JSON.stringify({ report }),
         );
 
-      // WHEN
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
+      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur);
+
       const formData = new FormData();
       const file = mock<File>();
       formData.append('file', file);
       const { req, res } = createMocks({
         method: 'POST',
         body: formData,
+        cookies: {
+          'next-auth.session-token': await getNextAuthSessionTokenPourUtilisateurEmail('ditp.admin@example.com'),
+        },
         query: { indicateurId: 'IND-001' },
       });
+
+      // WHEN
       await handleValiderFichierImportIndicateur(req, res);
 
       // THEN
@@ -114,6 +133,53 @@ describe('ImportIndicateurHandler', () => {
       expect(listeDonneesFichier[1].metric_date).toEqual(DONNEE_DATE_2);
       expect(listeDonneesFichier[1].metric_type).toEqual('vc');
       expect(listeDonneesFichier[1].metric_value).toEqual('3');
+    });
+
+    it('doit sauvegarder le rapport pour lié à l\'utilisateur', async () => {
+      // GIVEN
+      const report = new ReportValidataBuilder()
+        .avecValid(true)
+        .avecTasks(
+          new ReportTaskBuilder()
+            .avecResource(
+              new ReportResourceTaskBuilder()
+                .avecData([
+                  ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
+                  ['IND-001', 'D001', DONNEE_DATE_1, 'vi', '9'],
+                  ['IND-001', 'D004', DONNEE_DATE_2, 'vc', '3'],
+                ])
+                .build(),
+            )
+            .build(),
+        ).build();
+      nock(BASE_URL_VALIDATA)
+        .post('/validate').reply(200,
+          JSON.stringify({ report }),
+        );
+
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
+      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur);
+
+      const formData = new FormData();
+      const file = mock<File>();
+      formData.append('file', file);
+      const { req, res } = createMocks({
+        method: 'POST',
+        body: formData,
+        cookies: {
+          'next-auth.session-token': await getNextAuthSessionTokenPourUtilisateurEmail('ditp.admin@example.com'),
+        },
+        query: { indicateurId: 'IND-001' },
+      });
+
+      // WHEN
+      await handleValiderFichierImportIndicateur(req, res);
+
+      // THEN
+      const listeRapport = await prisma.rapport_import_mesure_indicateur.findMany();
+      expect(listeRapport).toHaveLength(1);
+
+      expect(listeRapport[0].utilisateurEmail).toEqual('ditp.admin@example.com');
     });
   });
 
@@ -154,6 +220,9 @@ describe('ImportIndicateurHandler', () => {
           .build(),
       ).build();
 
+    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
+    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur);
+
     nock(BASE_URL_VALIDATA)
       .post('/validate').reply(200,
         JSON.stringify({ report }),
@@ -163,9 +232,13 @@ describe('ImportIndicateurHandler', () => {
     const formData = new FormData();
     const file = mock<File>();
     formData.append('file', file);
+
     const { req, res } = createMocks({
       method: 'POST',
       body: formData,
+      cookies: {
+        'next-auth.session-token': await getNextAuthSessionTokenPourUtilisateurEmail('ditp.admin@example.com'),
+      },
       query: { indicateurId: 'IND-001' },
     });
     await handleValiderFichierImportIndicateur(req, res);

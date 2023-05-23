@@ -1,16 +1,25 @@
 import { captor, mock, MockProxy } from 'jest-mock-extended';
-import { ValiderFichierIndicateurImporteUseCase } from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
+import {
+  ValiderFichierIndicateurImporteUseCase,
+} from '@/server/import-indicateur/usecases/ValiderFichierIndicateurImporteUseCase';
 import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import { ErreurValidationFichierBuilder } from '@/server/import-indicateur/app/builder/ErreurValidationFichier.builder';
 import { IndicateurDataBuilder } from '@/server/import-indicateur/app/builder/IndicateurData.builder';
-import { FichierIndicateurValidationService } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
-import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
+import {
+  FichierIndicateurValidationService,
+} from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
+import {
+  MesureIndicateurRepository,
+} from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
+import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
+import { RapportRepository } from '@/server/import-indicateur/domain/ports/RapportRepository';
 
 describe('ValiderFichierIndicateurImporteUseCase', () => {
   let fichierIndicateurValidationService: MockProxy<FichierIndicateurValidationService>;
   let validerFichierIndicateurImporteUseCase: ValiderFichierIndicateurImporteUseCase;
   let mesureIndicateurRepository: MesureIndicateurRepository;
+  let rapportRepository: RapportRepository;
 
   const CHEMIN_COMPLET_DU_FICHIER = 'cheminCompletDuFichier';
   const NOM_DU_FICHIER = 'nomDuFichier';
@@ -21,9 +30,11 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
   beforeEach(() => {
     fichierIndicateurValidationService = mock<FichierIndicateurValidationService>();
     mesureIndicateurRepository = mock<MesureIndicateurRepository>();
+    rapportRepository = mock<RapportRepository>();
     validerFichierIndicateurImporteUseCase = new ValiderFichierIndicateurImporteUseCase({
       fichierIndicateurValidationService,
       mesureIndicateurRepository,
+      rapportRepository,
     });
   });
 
@@ -33,8 +44,14 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       .avecEstValide(true)
       .build();
 
-    const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA, indicateurId: 'IND-001' };
-    fichierIndicateurValidationService.validerFichier.calledWith(payload).mockResolvedValue(detailValidationFichier);
+    const payload = {
+      cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+      nomDuFichier: NOM_DU_FICHIER,
+      schema: SCHEMA,
+      indicateurId: 'IND-001',
+      utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
+    };
+    fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
 
     // WHEN
     const result = await validerFichierIndicateurImporteUseCase.execute(payload);
@@ -64,9 +81,15 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       .avecEstValide(true)
       .avecListeIndicateurData(indicateurData1, indicateurData2)
       .build();
-    const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA, indicateurId: 'IND-001' };
+    const payload = {
+      cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+      nomDuFichier: NOM_DU_FICHIER,
+      schema: SCHEMA,
+      indicateurId: 'IND-001',
+      utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
+    };
 
-    fichierIndicateurValidationService.validerFichier.calledWith(payload).mockResolvedValue(detailValidationFichier);
+    fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
 
     const indicateurCaptor = captor<IndicateurData[]>();
 
@@ -100,9 +123,15 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       const detailValidationFichier = new DetailValidationFichierBuilder()
         .avecEstValide(false)
         .build();
-      const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA, indicateurId: 'IND-001' };
+      const payload = {
+        cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+        nomDuFichier: NOM_DU_FICHIER,
+        schema: SCHEMA,
+        indicateurId: 'IND-001',
+        utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
+      };
 
-      fichierIndicateurValidationService.validerFichier.calledWith(payload).mockResolvedValue(detailValidationFichier);
+      fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
 
       // WHEN
       await validerFichierIndicateurImporteUseCase.execute(payload);
@@ -143,9 +172,15 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
         .avecListeIndicateurData(indicateurData1, indicateurData2)
         .build();
 
-      const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA, indicateurId: 'IND-001' };
+      const payload = {
+        cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+        nomDuFichier: NOM_DU_FICHIER,
+        schema: SCHEMA,
+        indicateurId: 'IND-001',
+        utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
+      };
 
-      fichierIndicateurValidationService.validerFichier.calledWith(payload).mockResolvedValue(detailValidationFichier);
+      fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
 
       // WHEN
       const report = await validerFichierIndicateurImporteUseCase.execute(payload);
@@ -179,9 +214,15 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
       .avecEstValide(true)
       .avecListeIndicateurData(indicateurData1, indicateurData2)
       .build();
-    const payload = { cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER, nomDuFichier: NOM_DU_FICHIER, schema: SCHEMA, indicateurId: 'IND-001' };
+    const payload = {
+      cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+      nomDuFichier: NOM_DU_FICHIER,
+      schema: SCHEMA,
+      indicateurId: 'IND-001',
+      utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
+    };
 
-    fichierIndicateurValidationService.validerFichier.calledWith(payload).mockResolvedValue(detailValidationFichier);
+    fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
 
     // WHEN
     const report = await validerFichierIndicateurImporteUseCase.execute(payload);
@@ -198,5 +239,34 @@ describe('ValiderFichierIndicateurImporteUseCase', () => {
     expect(report.listeErreursValidation[0].positionDeLigne).toEqual(1);
     expect(report.listeErreursValidation[0].numeroDeLigne).toEqual(2);
     expect(report.listeErreursValidation[0].positionDuChamp).toEqual(-1);
+  });
+
+  it('doit enregistrer le rapport', async () => {
+    // GIVEN
+    const detailValidationFichier = new DetailValidationFichierBuilder()
+      .avecId('d6f7e603-ace5-49f4-8ab7-78cb6d7108cf')
+      .avecUtilisateurEmail('ditp.admin@example.com')
+      .avecEstValide(false)
+      .build();
+    const payload = {
+      cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+      nomDuFichier: NOM_DU_FICHIER,
+      schema: SCHEMA,
+      indicateurId: 'IND-001',
+      utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
+    };
+    const rapportCaptor = captor<DetailValidationFichier>();
+
+    fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
+
+    // WHEN
+    await validerFichierIndicateurImporteUseCase.execute(payload);
+    // THEN
+    expect(rapportRepository.sauvegarder).toHaveBeenNthCalledWith(1, rapportCaptor);
+
+    const nouveauRapport = rapportCaptor.value;
+    expect(nouveauRapport.id).toBeDefined();
+    expect(nouveauRapport.utilisateurEmail).toEqual('ditp.admin@example.com');
+    expect(nouveauRapport.dateCreation).toBeDefined();
   });
 });

@@ -99,15 +99,19 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     cheminCompletDuFichier,
     nomDuFichier,
     schema,
+    utilisateurEmail,
   }: ValiderFichierPayload): Promise<DetailValidationFichier> {
     const report = await this.httpClient.post({ cheminCompletDuFichier, nomDuFichier, schema });
     let listeIndicateursData: IndicateurData[] = [];
     let listeErreursValidation: ErreurValidationFichier[] = [];
 
+    const rapport =  DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, utilisateurEmail });
+
     if (report.tasks[0].resource.data[0].includes('identifiant_indic')) {
       const { enTetes, donnees } = extraireLeContenuDuFichier(report.tasks);
 
       listeIndicateursData = donnees.flat().map(donnee => IndicateurData.createIndicateurData({
+        rapportId: rapport.id,
         indicId: donnee[enTetes.indicId],
         zoneId: donnee[enTetes.zoneId],
         metricDate: donnee[enTetes.metricDate],
@@ -126,10 +130,6 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
       })];
     }
 
-    if (report.valid) {
-      return DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, listeIndicateursData });
-    }
-
     const listeErreursReport = report.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
       cellule: taskError.cell,
       nom: taskError.name,
@@ -142,10 +142,9 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
 
     listeErreursValidation = [...listeErreursValidation, ...listeErreursReport];
 
-    return DetailValidationFichier.creerDetailValidationFichier({
-      estValide: report.valid,
-      listeErreursValidation,
-      listeIndicateursData,
-    });
+    rapport.affecterListeIndicateursData(listeIndicateursData);
+    rapport.affecterListeErreursValidation(listeErreursValidation);
+
+    return rapport;
   }
 }

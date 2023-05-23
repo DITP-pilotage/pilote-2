@@ -27,6 +27,7 @@ import UtilisateurIAMKeycloakRepository
 import DécisionStratégiqueRepository from '@/server/domain/décisionStratégique/DécisionStratégiqueRepository.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
+import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
 import DécisionStratégiqueSQLRepository from './accès_données/décisionStratégique/DécisionStratégiqueSQLRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
@@ -77,9 +78,11 @@ class Dependencies {
     const httpClient = new FetchHttpClient();
     const prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
     const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
+    let prismaRapportRepository = new PrismaRapportRepository(prisma);
     this._validerFichierIndicateurImporteUseCase = new ValiderFichierIndicateurImporteUseCase({
       fichierIndicateurValidationService,
       mesureIndicateurRepository: prismaMesureIndicateurRepository,
+      rapportRepository: prismaRapportRepository,
     });
   }
 

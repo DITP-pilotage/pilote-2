@@ -262,7 +262,9 @@ export class DatabaseSeeder {
 
     for (const c of this._chantiersDonnéesCommunes) {
       répéter(0, 4, () => {
-        const id = `IND-${formaterId(this.compter())}`;
+        // Un identifiant d'indicateur est valide s'il est au format IND-XXX avec 3 chiffres seulement
+        // Voir schema sans contraite de validation
+        const id = `IND-${formaterId(this.compter(), 3)}`;
         const typeId = faker.helpers.arrayElement(typesIndicateur);
         indicateursDonnéesCommunes.push({
           id,

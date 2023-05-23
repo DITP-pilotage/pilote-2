@@ -1,3 +1,3 @@
-export function formaterId(id: string | number) {
-  return id.toString().padStart(4, '0');
+export function formaterId(id: string | number, nombreZeroDebut: number = 4) {
+  return id.toString().padStart(nombreZeroDebut, '0');
 }

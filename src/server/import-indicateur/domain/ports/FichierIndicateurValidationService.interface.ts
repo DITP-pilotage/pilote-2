@@ -4,7 +4,8 @@ export type ValiderFichierPayload = {
   cheminCompletDuFichier: string
   nomDuFichier: string
   schema: string
+  utilisateurEmail: string
 };
 export interface FichierIndicateurValidationService {
-  validerFichier({ cheminCompletDuFichier, nomDuFichier, schema }: ValiderFichierPayload): Promise<DetailValidationFichier>;
+  validerFichier(payload: ValiderFichierPayload): Promise<DetailValidationFichier>;
 }

@@ -22,7 +22,7 @@ enum Maille {
 }
 
 model territoire {
-  code        String     @id
+  code        String       @id
   nom         String
   nom_affiche String
   maille      Maille
@@ -157,9 +157,19 @@ model mesure_indicateur {
   metric_date  String
   metric_type  String
   metric_value String
+  rapport_id   String    @db.Uuid
   date_import  DateTime? @default(now()) @db.Timestamptz
 
   @@schema("raw_data")
+}
+
+model rapport_import_mesure_indicateur {
+  id               String      @id @db.Uuid
+  date_creation    DateTime    @db.Timestamptz
+  utilisateurEmail String
+  utilisateur      utilisateur @relation(fields: [utilisateurEmail], references: [email])
+
+  @@schema("public")
 }
 
 enum type_objectif {
@@ -247,13 +257,14 @@ model synthese_des_resultats_projet_structurant {
 }
 
 model utilisateur {
-  id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email        String         @unique
-  nom          String?
-  prenom       String?
-  profil       profil         @relation(fields: [profilCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  profilCode   String
-  habilitation habilitation[]
+  id                               String                             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                            String                             @unique
+  nom                              String?
+  prenom                           String?
+  profil                           profil                             @relation(fields: [profilCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  profilCode                       String
+  habilitation                     habilitation[]
+  rapport_import_mesure_indicateur rapport_import_mesure_indicateur[]
 
   @@schema("public")
 }
