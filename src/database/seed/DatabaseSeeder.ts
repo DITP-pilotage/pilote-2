@@ -152,7 +152,7 @@ export class DatabaseSeeder {
       .map(it => {
         assert(it.ministere_id, 'Id ministère manquant pour périmètre ' + it.id);
         assert(it.ministere, 'Description ministère manquante pour périmètre ' + it.id);
-        return { id: it.ministere_id, nom: it.ministere };
+        return { id: it.ministere_id, nom: it.ministere, icone: null }; // TODO 47 MinistereSQLRowbuilder
       });
 
     await this._prisma.ministere.createMany({ data: donnéesMinistères });

@@ -65,6 +65,7 @@ model ministere {
   id        String      @id
   nom       String
   perimetre perimetre[]
+  icone     String?
 
   @@schema("public")
 }

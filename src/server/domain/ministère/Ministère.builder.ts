@@ -26,6 +26,7 @@ export default class MinistèreBuilder {
     return {
       nom: this._nom,
       périmètresMinistériels: this._périmètresMinistériels,
+      icône: null,
     };
   }
 }
