@@ -10,6 +10,7 @@ import Loader from '@/components/_commons/Loader/Loader';
 import SynthèseDesRésultats from '@/client/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Sommaire from '@/client/components/_commons/Sommaire/Sommaire';
 import ObjectifsPageChantier from '@/components/PageChantier/Objectifs/Objectifs';
+import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
@@ -86,14 +87,13 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
           {' '}
           {new Date().toLocaleString('FR-fr')}
         </div>
-        <button
-          className="fr-sr-only-xl fr-btn fr-btn--secondary fr-mb-2w"
+        <BoutonSousLigné
+          classNameSupplémentaires="fr-link--icon-left fr-fi-arrow-right-line fr-sr-only-xl fr-m-2w"
           onClick={() => setEstOuverteBarreLatérale(true)}
-          title="Ouvrir le menu latéral"
           type="button"
         >
-          Menu latéral
-        </button>
+          Filtres
+        </BoutonSousLigné>
         {
           chantier !== null ? (
             <>

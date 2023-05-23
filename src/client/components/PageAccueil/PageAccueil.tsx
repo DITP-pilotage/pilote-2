@@ -6,6 +6,8 @@ import Titre from '@/client/components/_commons/Titre/Titre';
 import Filtres from '@/components/PageAccueil/Filtres/Filtres';
 import BarreLatérale from '@/client/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/client/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
+import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
+import PageAccueilStyled from '@/components/PageAccueil/PageAccueil.styled';
 import PageAccueilProps from './PageAccueil.interface';
 import { TypeDeRéforme } from './SélecteurTypeDeRéforme/SélecteurTypeDeRéforme.interface';
 import SélecteurTypeDeRéforme from './SélecteurTypeDeRéforme/SélecteurTypeDeRéforme';
@@ -15,7 +17,7 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
-    <div className="flex">
+    <PageAccueilStyled className='flex'>
       <BarreLatérale
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
@@ -45,20 +47,21 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
           />
         </section>
       </BarreLatérale>
-      <button
-        className="fr-sr-only-xl fr-btn fr-btn--secondary fr-mb-2w"
-        onClick={() => setEstOuverteBarreLatérale(true)}
-        title="Ouvrir les filtres"
-        type="button"
-      >
-        Filtres
-      </button>
-      {
-        typeDeRéformeSélectionné === 'chantier' ?
-          <PageChantiers chantiers={chantiers} />
-          :
-          process.env.NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS === 'true' && <PageProjetsStructurants projetsStructurants={projetsStructurants} />
+      <div>
+        <BoutonSousLigné
+          classNameSupplémentaires="fr-link--icon-left fr-fi-arrow-right-line fr-sr-only-xl fr-m-2w"
+          onClick={() => setEstOuverteBarreLatérale(true)}
+          type="button"
+        >
+          Filtres
+        </BoutonSousLigné>
+        {
+          typeDeRéformeSélectionné === 'chantier' ?
+            <PageChantiers chantiers={chantiers} />
+            :
+            process.env.NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS === 'true' && <PageProjetsStructurants projetsStructurants={projetsStructurants} />
         }
-    </div> 
+      </div>
+    </PageAccueilStyled>
   );
 }

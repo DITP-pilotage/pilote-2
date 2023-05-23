@@ -1,6 +1,10 @@
-import { ReactNode } from 'react';
+import { ButtonHTMLAttributes, ReactNode, MouseEventHandler } from 'react';
 
 export default interface BoutonSousLignéProps {
-  idHtml: string,
-  children: ReactNode,
+  ariaControls?: string,
+  children?: ReactNode,
+  classNameSupplémentaires?: string,
+  dataFrOpened?: boolean
+  onClick?: MouseEventHandler<HTMLButtonElement>,
+  type?: ButtonHTMLAttributes<never>['type'],
 }
