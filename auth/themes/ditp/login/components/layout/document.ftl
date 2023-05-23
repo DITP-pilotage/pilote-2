@@ -13,7 +13,7 @@
 
   <#if properties.favicons?has_content>
     <#list properties.favicons?split(" ") as favicon>
-      <link href="${url.resourcesPath}/${favicon?split('==')[0]}" rel="${meta?split('==')[1]}">
+      <link href="${url.resourcesPath}/${favicon?split('==')[0]}" rel="${favicon?split('==')[1]}" type="${favicon?split('==')[2]}"/>
     </#list>
   </#if>
 
