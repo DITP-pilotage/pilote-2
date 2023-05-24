@@ -34,8 +34,8 @@ const PageChantierStyled = styled.div`
     main {
       background: #FFF;
     }
-
-    .barre-latérale, .fr-btn, .fr-link {
+    
+    .barre-latérale, .fr-btn, .fr-link, .fr-accordion, #indicateurs section:not(:has(table)) {
       display: none;
     }
   }
