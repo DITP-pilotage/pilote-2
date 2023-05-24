@@ -46,31 +46,28 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
           </Titre>
           <div className="flex">
             {
-                  process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
-                  <div>
-                    <Link
-                      className="fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm"
-                      href={`/rapport-detaille?territoireCode=${territoireSélectionné!.code}`}
-                      title="Voir le rapport détaillé"
-                    >
-                      Voir le rapport détaillé
-                    </Link>
-                  </div>
-                }
-            {
-                  process.env.NEXT_PUBLIC_FF_EXPORT_CSV === 'true' &&
-                  <div>
-                    <button
-                      aria-controls={ID_HTML_MODALE_EXPORT}
-                      className="fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm"
-                      data-fr-opened="false"
-                      type="button"
-                    >
-                      Exporter les données
-                    </button>
-                    <ExportDesDonnées />
-                  </div>
-                }
+              process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
+              <div>
+                <Link
+                  className="fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm"
+                  href={`/rapport-detaille?territoireCode=${territoireSélectionné!.code}`}
+                  title="Voir le rapport détaillé"
+                >
+                  Voir le rapport détaillé
+                </Link>
+              </div>
+            }
+            <div>
+              <button
+                aria-controls={ID_HTML_MODALE_EXPORT}
+                className="fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm"
+                data-fr-opened="false"
+                type="button"
+              >
+                Exporter les données
+              </button>
+              <ExportDesDonnées />
+            </div>
           </div>
         </div>
         <div className="fr-grid-row fr-grid-row--gutters">
