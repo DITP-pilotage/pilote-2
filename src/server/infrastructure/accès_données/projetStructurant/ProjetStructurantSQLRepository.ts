@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import ProjetStructurantRepository from '@/server/domain/projetStructurant/ProjetStructurantRepository.interface';
-import { TerritoireDeBDD } from '@/server/domain/territoire/Territoire.interface';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import RécupérerDétailsTerritoireUseCase from '@/server/usecase/territoire/RécupérerDétailsTerritoireUseCase';
 import { générerPeutÊtreNull } from '@/server/infrastructure/test/builders/utils';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
@@ -46,7 +46,7 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
     };
   }
 
-  private async _récupérerTerritoireAssocié(projetStructurant: ProjetStructurantPrisma): Promise<TerritoireDeBDD> {
+  private async _récupérerTerritoireAssocié(projetStructurant: ProjetStructurantPrisma): Promise<Territoire> {
     return new RécupérerDétailsTerritoireUseCase().run(projetStructurant.territoire_code);
   }
 

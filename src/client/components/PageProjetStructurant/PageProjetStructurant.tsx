@@ -11,11 +11,11 @@ import PageProjetStructurantProps from './PageProjetStructurant.interface';
 import PageProjetStructurantEnTête from './EnTête/EnTête';
 import PageProjetStructurantStyled from './PageProjetStructurant.styled';
 import AvancementPageProjetStructurant from './Avancement/Avancement';
-import usePageProjetSTructurant from './usePageProjetStructurant';
+import usePageProjetStructurant from './usePageProjetStructurant';
 
 export default function PageProjetStructurant({ projetStructurant }: PageProjetStructurantProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);  
-  const { objectifs } = usePageProjetSTructurant(projetStructurant.id, projetStructurant.codeTerritoire);
+  const { objectifs } = usePageProjetStructurant(projetStructurant.id, projetStructurant.codeTerritoire);  
 
   const listeRubriques: Rubrique[] =
     [
@@ -73,6 +73,7 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
               <Objectifs
+                estInteractif={false}
                 maille={projetStructurant.maille}
                 nomTerritoire={projetStructurant.territoireNomÀAfficher}
                 objectifs={objectifs}

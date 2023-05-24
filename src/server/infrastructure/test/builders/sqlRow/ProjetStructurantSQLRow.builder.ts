@@ -23,9 +23,9 @@ export default class ProjetStructurantRowBuilder {
   private _chefferieDeProjet: ProjetStructurantPrisma['chefferie_de_projet'] = [];
 
   private _coporteur: ProjetStructurantPrisma['co_porteur'] = [];
-  
-  async initialise() {
-    const projetGénéré = await new ProjetStructurantBuilder().build();
+
+  constructor() {
+    const projetGénéré =  new ProjetStructurantBuilder().build();
     const ministèrePorteur = new MinistèreBuilder().build();
     const ministèresCoPorteurs = faker.helpers.arrayElement([
       [new MinistèreBuilder().build()],
@@ -42,7 +42,6 @@ export default class ProjetStructurantRowBuilder {
     this._chefferieDeProjet = projetGénéré.responsables.chefferieDeProjet;
     this._coporteur = projetGénéré.responsables.coporteurs;
   }
-
 
   avecId(id: ProjetStructurantPrisma['id']): ProjetStructurantRowBuilder {
     this._id = id;
@@ -73,9 +72,7 @@ export default class ProjetStructurantRowBuilder {
     return result as ProjetStructurantRowBuilder;
   }
 
-  async build(): Promise<ProjetStructurantPrisma> {
-    await this.initialise();
-
+  build(): ProjetStructurantPrisma {
     return {
       id: this._id,
       code: this._code,

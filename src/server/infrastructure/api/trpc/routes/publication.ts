@@ -54,7 +54,7 @@ export const publicationRouter = créerRouteurTRPC({
     .input(validationPublicationContexte.and(zodValidateurEntitéType))
     .query(async ({ input, ctx }) => {
       const typeDeRéforme = déterminerLeTypeDeRéforme(input.réformeId);
-      
+
       if (typeDeRéforme === 'chantier') {
         if (input.entité === 'commentaires') {
           const récupérerCommentaireLePlusRécentUseCase = new RécupérerCommentaireLePlusRécentUseCase(dependencies.getCommentaireRepository());

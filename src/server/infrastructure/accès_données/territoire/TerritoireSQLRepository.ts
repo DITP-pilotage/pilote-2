@@ -1,7 +1,7 @@
 import { PrismaClient, territoire as TerritoirePrisma } from '@prisma/client';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { CODES_MAILLES, NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import { TerritoireDeBDD } from '@/server/domain/territoire/Territoire.interface';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 
 class ErreurTerritoireNonTrouvé extends Error {
   constructor() {
@@ -11,7 +11,7 @@ class ErreurTerritoireNonTrouvé extends Error {
 export class TerritoireSQLRepository implements TerritoireRepository { 
   constructor(private _prisma: PrismaClient) {}
 
-  _mapperVersLeDomaine(t: TerritoirePrisma): TerritoireDeBDD {
+  _mapperVersLeDomaine(t: TerritoirePrisma): Territoire {
     return {
       code: t.code,
       nom: t.nom,
@@ -28,7 +28,7 @@ export class TerritoireSQLRepository implements TerritoireRepository {
     return territoires.map(t => this._mapperVersLeDomaine(t));
   }
 
-  async récupérer(code: TerritoireDeBDD['code']) {
+  async récupérer(code: Territoire['code']) {
     const territoire = await this._prisma.territoire.findUnique({
       where: { code: code },
     });
@@ -38,7 +38,7 @@ export class TerritoireSQLRepository implements TerritoireRepository {
     return this._mapperVersLeDomaine(territoire);
   }
 
-  async récupérerÀPartirDeMailleEtCodeInsee(codeInsee: TerritoireDeBDD['codeInsee'], maille: TerritoireDeBDD['maille']) {
+  async récupérerÀPartirDeMailleEtCodeInsee(codeInsee: Territoire['codeInsee'], maille: Territoire['maille']) {
     const territoire = await this._prisma.territoire.findFirst({
       where: { code_insee: codeInsee, maille: CODES_MAILLES[maille] },
     });

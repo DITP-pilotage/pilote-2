@@ -22,15 +22,15 @@ export const codeInseeFrance = 'FR';
 
 export type CodeInsee = string;
 
-export type Territoires = Record<CodeInsee, Territoire>;
+export type TerritoiresDonnées = Record<CodeInsee, TerritoireDonnées>;
 
-export type Territoire = {
+export type TerritoireDonnées = {
   codeInsee: CodeInsee,
   avancement: Avancement,
   météo: Météo,
 };
 
-export type TerritoireDeBDD = {
+export type Territoire = {
   code: string,
   nom: string,
   nomAffiché: string,
@@ -40,7 +40,7 @@ export type TerritoireDeBDD = {
   maille: Maille,
 };
 
-export type DétailTerritoire = TerritoireDeBDD & {
+export type DétailTerritoire = Territoire & {
   accèsLecture: boolean
   accèsSaisiePublication: boolean
   accèsSaisieIndicateur: boolean

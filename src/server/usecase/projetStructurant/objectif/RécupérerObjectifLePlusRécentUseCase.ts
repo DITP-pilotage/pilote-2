@@ -7,7 +7,7 @@ export default class RécupérerObjectifProjetStructurantLePlusRécentUseCase {
     private readonly objectifRepository: ObjectifProjetStructurantRepository = dependencies.getObjectifProjetStructurantrepository(),
   ) {}
 
-  async run(projetStructurantId: string): Promise<ObjectifProjetStructurant> {
+  async run(projetStructurantId: string): Promise<ObjectifProjetStructurant> {    
     return this.objectifRepository.récupérerLePlusRécent(projetStructurantId);
   }
 }

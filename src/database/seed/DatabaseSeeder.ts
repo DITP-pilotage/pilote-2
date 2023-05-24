@@ -39,6 +39,7 @@ import {
 import { typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import MinistèreSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/MinistèreSQLRow.builder';
 import ProjetStructurantRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ProjetStructurantSQLRow.builder';
+import ObjectifProjetStructurantSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifProjetStructurantSQLRow.builder';
 import { formaterId } from './format';
 
 const chantierStatiqueId123 = new ChantierSQLRowBuilder()
@@ -137,6 +138,8 @@ export class DatabaseSeeder {
     await this._créerUtilisateursEtDroits();
     console.log('  ProjetsStructurants...');
     await this._créerProjetsStructurants();
+    console.log('  ObjectifsProjetsStructurants');
+    await this._créerObjectifsProjetsStructurants();    
     console.log('----------------- Fin ------------------');
   }
 
@@ -353,13 +356,10 @@ export class DatabaseSeeder {
         max: 4,
       }));
 
-      const c = await new ProjetStructurantRowBuilder()
-        .avecId(`CH-${formaterId(this.compter())}`)
+      const c = new ProjetStructurantRowBuilder()
         .avecPérimètresIdsMinistèrePorteur([périmètres[0].id])
         .avecPérimètresIdsMinistèrsCoPorteurs(périmètres.slice(1).map(périmètre => périmètre.id))
         .build();
-
-
 
       this._projets_structurants.push(c);
     }
@@ -367,5 +367,11 @@ export class DatabaseSeeder {
     await this._prisma.projet_structurant.createMany({ data: this._projets_structurants });
   }
 
-  // private async _créerObjectifsProjetsStructurants() {}
+  private async _créerObjectifsProjetsStructurants() {
+    this._projets_structurants.forEach(p => {
+      this._objectifs_projets_structurants.push(new ObjectifProjetStructurantSQLRowBuilder().avecProjetStructurantId(p.id).build());
+    });
+    
+    await this._prisma.objectif_projet_structurant.createMany({ data: this._objectifs_projets_structurants });
+  }
 }

@@ -1,4 +1,4 @@
-import { TerritoireDeBDD } from '@/server/domain/territoire/Territoire.interface';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 
@@ -8,7 +8,7 @@ export default class RécupérerDétailsTerritoireÀPartirDeMailleEtCodeInseeUse
     private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
   ) {}
     
-  async run(codeInsee: TerritoireDeBDD['codeInsee'], maille: TerritoireDeBDD['maille']): Promise<TerritoireDeBDD> {
+  async run(codeInsee: Territoire['codeInsee'], maille: Territoire['maille']): Promise<Territoire> {
     return this.territoireRepository.récupérerÀPartirDeMailleEtCodeInsee(codeInsee, maille);
   }
 }

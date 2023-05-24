@@ -15,16 +15,17 @@ export default class ObjectifProjetStructurantSQLRowBuilder {
 
   private _projetStructurantId: ObjectifProjetStructurantPrisma['projet_structurant_id'] = '';
 
-  async initialise() {
-    const projetStructurantGénéré = await new ProjetStructurantBuilder().build();
+  constructor() {
+    const projetStructurantGénéré = new ProjetStructurantBuilder().build();
 
     this._id = faker.datatype.uuid();
     this._auteur = faker.name.fullName();
     this._type = 'objectifs';
     this._contenu = faker.lorem.paragraph();
     this._date = faker.date.recent(60, '2023-05-01T00:00:00.000Z');
-    this._projetStructurantId = projetStructurantGénéré.id;
+    this._projetStructurantId = projetStructurantGénéré.id; 
   }
+
 
   avecId(id: ObjectifProjetStructurantPrisma['id']): ObjectifProjetStructurantSQLRowBuilder {
     this._id = id;
@@ -46,7 +47,7 @@ export default class ObjectifProjetStructurantSQLRowBuilder {
     return this;
   }
 
-  avecChantierId(projetStructurantId: ObjectifProjetStructurantPrisma['projet_structurant_id']): ObjectifProjetStructurantSQLRowBuilder {
+  avecProjetStructurantId(projetStructurantId: ObjectifProjetStructurantPrisma['projet_structurant_id']): ObjectifProjetStructurantSQLRowBuilder {
     this._projetStructurantId = projetStructurantId;
     return this;
   }
@@ -62,9 +63,7 @@ export default class ObjectifProjetStructurantSQLRowBuilder {
     return result as ObjectifProjetStructurantSQLRowBuilder;
   }
 
-  async build(): Promise<ObjectifProjetStructurantPrisma> {
-    await this.initialise();
-
+  build(): ObjectifProjetStructurantPrisma {
     return {
       id: this._id,
       auteur: this._auteur,

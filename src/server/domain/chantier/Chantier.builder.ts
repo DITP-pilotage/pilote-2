@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker/locale/fr';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { CodeInsee, codeInseeFrance, codesInseeDépartements, codesInseeRégions, Territoires } from '@/server/domain/territoire/Territoire.interface';
+import { CodeInsee, codeInseeFrance, codesInseeDépartements, codesInseeRégions, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import {
   générerCaractèresSpéciaux, générerTableau,
   générerUnIdentifiantUnique,
@@ -9,7 +9,7 @@ import {
 } from '@/server/infrastructure/test/builders/utils';
 import PpgBuilder from '@/server/domain/ppg/Ppg.builder';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
-import TerritoireBuilder from '@/server/domain/territoire/Territoire.builder';
+import TerritoireDonnéesBuilder from '@/server/domain/territoire/TerritoireDonnées.builder';
 import AxeBuilder from '@/server/domain/axe/Axe.builder';
 
 export default class ChantierBuilder {
@@ -64,8 +64,8 @@ export default class ChantierBuilder {
   }
 
   private _générerTerritoires(codesInsee: readonly CodeInsee[]) {
-    const territoires: Territoires = {};
-    codesInsee.forEach(codeInsee => territoires[codeInsee] = new TerritoireBuilder().avecCodeInsee(codeInsee).build());
+    const territoires: TerritoiresDonnées = {};
+    codesInsee.forEach(codeInsee => territoires[codeInsee] = new TerritoireDonnéesBuilder().avecCodeInsee(codeInsee).build());
     return territoires;
   }
 

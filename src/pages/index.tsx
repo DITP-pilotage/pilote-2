@@ -46,8 +46,6 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
 
   const chantiers = await new RécupérerListeChantiersUseCase().run(session.habilitations, session.profil);
   
-  const habilitation =  new Habilitation(session.habilitations);
-  const chantiers = await new RécupérerListeChantiersUseCase().run(habilitation);
   const projetStructurantRepository = dependencies.getProjetStructurantRepository();
   const projetsStructurants: ProjetStructurant[] = await projetStructurantRepository.récupérerListe();
   
