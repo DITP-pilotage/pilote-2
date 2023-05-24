@@ -1,7 +1,7 @@
 import { PrismaClient, objectif_projet_structurant as ObjectifProjetStructurantPrisma } from '@prisma/client';
 import ObjectifProjetStructurantRepository from '@/server/domain/projetStructurant/objectif/ObjectifRepository.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
-import ObjectifProjetStructurant, { typeObjectifProjetStructurant, TypeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
+import ObjectifProjetStructurant, { TypeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
 
 export default class ObjectifProjetStructurantSQLRepository implements ObjectifProjetStructurantRepository {
   private prisma: PrismaClient;
@@ -30,28 +30,5 @@ export default class ObjectifProjetStructurantSQLRepository implements ObjectifP
     });
 
     return this.mapperVersDomaine(objectifLePlusRécent);
-  }
-
-  async créer(projetStructurantId: string, id: string, contenu: string, auteur: string, date: Date): Promise<ObjectifProjetStructurant> {
-    const objectifCréé = await this.prisma.objectif_projet_structurant.create({
-      data: {
-        id: id,
-        projet_structurant_id: projetStructurantId,
-        type: typeObjectifProjetStructurant,
-        contenu: contenu,
-        date: date,
-        auteur: auteur,
-      } });
-
-    return this.mapperVersDomaine(objectifCréé);
-  }
-
-  async récupérerHistorique(projetStructurantId: string): Promise<ObjectifProjetStructurant[]> {
-    const objectifs: ObjectifProjetStructurantPrisma[] = await this.prisma.objectif_projet_structurant.findMany({
-      where: { projet_structurant_id: projetStructurantId },
-      orderBy: { date: 'desc' },
-    });
-
-    return objectifs.map(objectifDeLHistorique => this.mapperVersDomaine(objectifDeLHistorique));
   }
 }

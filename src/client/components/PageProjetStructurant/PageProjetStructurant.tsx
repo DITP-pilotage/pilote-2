@@ -74,7 +74,7 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
             <div className="fr-col-12">
               <Objectifs
                 maille={projetStructurant.maille}
-                modeÉcriture
+                nomTerritoire={projetStructurant.territoireNomÀAfficher}
                 objectifs={objectifs}
                 réformeId={projetStructurant.id}
                 typesObjectif={[typeObjectifProjetStructurant]}

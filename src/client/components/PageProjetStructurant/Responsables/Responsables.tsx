@@ -35,6 +35,7 @@ export default function ResponsablesPageProjetStructurant({ responsables, nomTer
             contenu={responsables.chefferieDeProjet}
             libellé="Chefferie de projet"
           />
+          <hr className='fr-hr fr-py-1w' />
           <ResponsablesLigne
             contenu={responsables.coporteurs}
             libellé="Co-porteur(s) du projet"

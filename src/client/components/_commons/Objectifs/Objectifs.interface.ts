@@ -11,6 +11,7 @@ export interface ObjectifsProps {
   objectifs: (Objectif | ObjectifProjetStructurant)[] | null
   réformeId: Chantier['id'] | ProjetStructurant['id']
   maille: Maille
+  nomTerritoire: string
   typesObjectif: typeof typesObjectifChantier | TypeObjectifProjetStructurant[]
   modeÉcriture?: boolean
   estInteractif?: boolean 

@@ -138,6 +138,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     <Objectifs
                       maille='nationale'
                       modeÉcriture={modeÉcritureObjectifs}
+                      nomTerritoire='National'
                       objectifs={objectifs}
                       réformeId={chantier.id}
                       typesObjectif={typesObjectifChantier}

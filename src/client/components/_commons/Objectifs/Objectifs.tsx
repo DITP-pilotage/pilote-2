@@ -5,7 +5,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import Publication from '@/components/_commons/Publication/Publication';
 import { ObjectifsProps, TypeObjectif } from './Objectifs.interface';
 
-export default function Objectifs({ objectifs, réformeId, maille, typesObjectif, modeÉcriture = false, estInteractif = true }: ObjectifsProps) {
+export default function Objectifs({ objectifs, réformeId, maille, nomTerritoire, typesObjectif, modeÉcriture = false, estInteractif = true }: ObjectifsProps) {
   return (
     <section id="objectifs">
       <Titre
@@ -14,7 +14,7 @@ export default function Objectifs({ objectifs, réformeId, maille, typesObjectif
       >
         Objectifs
       </Titre>
-      <Bloc titre="France">
+      <Bloc titre={nomTerritoire}>
         {
           typesObjectif.map((type, i ) => (
             <Fragment key={type}>
