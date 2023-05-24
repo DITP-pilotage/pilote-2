@@ -17,10 +17,6 @@ const pages = [
     lien: '/',
   },
   {
-    nom: 'Suivi de l’activité',
-    lien: '/activite',
-  },
-  {
     nom: 'Nouveautés',
     lien: '/nouveautes',
   },
