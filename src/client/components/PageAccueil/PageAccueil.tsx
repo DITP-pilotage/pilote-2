@@ -47,7 +47,7 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
           />
         </section>
       </BarreLatérale>
-      <div>
+      <div className='contenu-principal fr-px-2w fr-px-md-0'>
         <BoutonSousLigné
           classNameSupplémentaires="fr-link--icon-left fr-fi-arrow-right-line fr-sr-only-xl fr-m-2w"
           onClick={() => setEstOuverteBarreLatérale(true)}

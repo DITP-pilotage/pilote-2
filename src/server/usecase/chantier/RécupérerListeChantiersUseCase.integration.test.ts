@@ -1,7 +1,6 @@
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import RécupérerListeChantiersUseCase from '@/server/usecase/chantier/RécupérerListeChantiersUseCase';
 
 describe('RécupérerListeChantiersUseCase', () => {
@@ -21,9 +20,8 @@ describe('RécupérerListeChantiersUseCase', () => {
         .avecId(chantierId).avecMaille('NAT').avecTauxAvancement(18).avecMinistères([]).build(),
     });
 
-    const habilitations = new Habilitation(habilitation);
     // WHEN
-    const result = await new RécupérerListeChantiersUseCase().run(habilitations);
+    const result = await new RécupérerListeChantiersUseCase().run(habilitation, 'DITP_ADMIN');
 
     // THEN
     expect(result).toStrictEqual([]);
@@ -48,8 +46,7 @@ describe('RécupérerListeChantiersUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const habilitations = new Habilitation(habilitation);
-    const chantiers = await new RécupérerListeChantiersUseCase().run(habilitations);
+    const chantiers = await new RécupérerListeChantiersUseCase().run(habilitation, 'DITP_ADMIN');
 
     // THEN
     const ids = chantiers.map(ch => ch.id);
@@ -74,8 +71,7 @@ describe('RécupérerListeChantiersUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const habilitations = new Habilitation(habilitation);
-    const chantiers = await new RécupérerListeChantiersUseCase().run(habilitations);
+    const chantiers = await new RécupérerListeChantiersUseCase().run(habilitation, 'DITP_ADMIN');
 
     // THEN
     expect(chantiers[0].mailles.départementale['974']).toBeDefined();

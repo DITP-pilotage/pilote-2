@@ -7,7 +7,6 @@ import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import PageAccueil from '@/components/PageAccueil/PageAccueil';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import ProjetStructurantBuilder from '@/server/domain/projetStructurant/ProjetStructurant.builder';
@@ -45,9 +44,9 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
 
   if (!session || !session.habilitations)
     return { props: {} };
+
+  const chantiers = await new RécupérerListeChantiersUseCase().run(session.habilitations, session.profil);
   
-  const habilitation =  new Habilitation(session.habilitations);
-  const chantiers = await new RécupérerListeChantiersUseCase().run(habilitation);
   const projetsStructurants: ProjetStructurant[] = await Promise.all(Array.from({ length: 150 }, () => new ProjetStructurantBuilder().build()));
 
   let axes: Axe[] = [];

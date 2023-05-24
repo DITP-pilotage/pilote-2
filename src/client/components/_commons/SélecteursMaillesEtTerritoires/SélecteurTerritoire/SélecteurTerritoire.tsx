@@ -1,8 +1,10 @@
+import { useSession } from 'next-auth/react';
 import Sélecteur from '@/client/components/_commons/Sélecteur/Sélecteur';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, territoiresAccessiblesEnLectureStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
 
-const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerritoire[]) => {
+const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerritoire[], profil: Profil | undefined) => {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
   const territoiresDisponibles = territoiresAccessiblesEnLecture.filter(territoire => territoire.maille === mailleSélectionnée);
@@ -10,7 +12,7 @@ const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerri
   let options = [];
   if (territoiresAccessiblesEnLecture.some(territoire => territoire.maille === 'nationale')) {
     options.push({
-      libellé: 'France',
+      libellé: profil === 'DROM' ? 'Ensemble des 5 DROM' : 'France',
       valeur: 'NAT-FR',
     });
   }
@@ -25,6 +27,7 @@ const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerri
 };
 
 export default function SélecteurTerritoire() {
+  const { data: session } = useSession();
   const { modifierTerritoireSélectionné } = actionsTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const territoiresAccessiblesEnLecture = territoiresAccessiblesEnLectureStore();
@@ -33,7 +36,7 @@ export default function SélecteurTerritoire() {
     <Sélecteur
       htmlName="périmètre-géographique"
       libellé="Périmètre géographique"
-      options={construireLaListeDOptions(territoiresAccessiblesEnLecture)}
+      options={construireLaListeDOptions(territoiresAccessiblesEnLecture, session?.profil)}
       valeurModifiéeCallback={territoireCode => modifierTerritoireSélectionné(territoireCode)}
       valeurSélectionnée={territoireSélectionné?.code}
     />

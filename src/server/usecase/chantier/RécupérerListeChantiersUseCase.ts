@@ -1,4 +1,4 @@
-import { chantier } from '@prisma/client';
+import { chantier as chantierPrisma } from '@prisma/client';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -8,6 +8,8 @@ import TerritoireRepository from '@/server/domain/territoire/TerritoireRepositor
 import { parseChantier } from '@/server/infrastructure/accès_données/chantier/ChantierSQLParser';
 import { groupBy } from '@/client/utils/arrays';
 import { objectEntries } from '@/client/utils/objects/objects';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export default class RécupérerListeChantiersUseCase {
   constructor(
@@ -16,11 +18,27 @@ export default class RécupérerListeChantiersUseCase {
     private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
   ) {}
 
-  async run(habilitation: Habilitation): Promise<Chantier[]> {
+  async run(habilitations: Habilitations, profil: Profil): Promise<Chantier[]> {
+    const habilitation = new Habilitation(habilitations);
+
     const ministères = await this.ministèreRepository.getListe();
     const territoires = await this.territoireRepository.récupérerTous();
     const chantiersRows = await this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(habilitation);
-    const chantiersGroupésParId = groupBy<chantier>(chantiersRows, c => c.id);
-    return objectEntries(chantiersGroupésParId).map(([_, c]) => parseChantier(c, territoires, ministères));
+    const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRows, chantier => chantier.id);
+    let chantiers = objectEntries(chantiersGroupésParId).map(([_, chantier]) => parseChantier(chantier, territoires, ministères));
+
+    if (profil === 'DROM') {
+      chantiers = chantiers.map(chantier => {
+        if (!chantier.périmètreIds.includes('PER-018')) {
+          chantier.mailles.nationale.FR.avancement.global = null;
+          chantier.mailles.nationale.FR.avancement.annuel = null;
+          chantier.mailles.nationale.FR.météo = 'NON_RENSEIGNEE';
+        }
+  
+        return chantier;
+      });
+    }
+
+    return chantiers;
   }
 }

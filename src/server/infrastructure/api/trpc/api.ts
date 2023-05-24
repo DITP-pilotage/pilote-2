@@ -25,6 +25,7 @@ const api = createTRPCNext<AppRouter>({
         }),
         httpBatchLink({
           url: `${récupérerBaseUrl()}/api/trpc`,
+          maxURLLength: 6000,
         }),
       ],
       headers() {

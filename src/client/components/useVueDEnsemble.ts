@@ -32,7 +32,7 @@ export default function useVueDEnsemble(chantiers: Chantier[]) {
       chantiers: chantiers.map(chantier => (chantier.id)),
       maille: mailleSélectionnée,
     },
-    { refetchOnWindowFocus: false, keepPreviousData: true },
+    { keepPreviousData: true },
   );
   if (avancementsAgrégés)
     avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[territoireSélectionné!.maille].territoires[territoireSélectionné!.codeInsee].répartition.avancements.global.moyenne;

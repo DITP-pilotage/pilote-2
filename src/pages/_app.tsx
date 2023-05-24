@@ -22,7 +22,7 @@ const queryClient = new QueryClient({
     queries: { 
       refetchOnWindowFocus: false, 
       retry: (failureCount, error) => {
-        if (error instanceof TRPCClientError && error?.data.code === 'UNAUTHORIZED') {
+        if (error instanceof TRPCClientError && error?.data?.code === 'UNAUTHORIZED') {
           return false;
         }
         return failureCount < 3;
