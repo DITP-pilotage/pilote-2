@@ -98,6 +98,17 @@ const TableauChantiersStyled = styled.section`
   .icônes {
     color: var(--background-active-blue-france)
   }
+
+  .ligne-ministère ~ .ligne-chantier .tuile-chantier-entête {
+  
+    & div:first-child {
+      grid-template-columns: auto;
+    }
+
+    & .icônes {
+      display: none;
+    }
+}
 `;
 
 export default TableauChantiersStyled;

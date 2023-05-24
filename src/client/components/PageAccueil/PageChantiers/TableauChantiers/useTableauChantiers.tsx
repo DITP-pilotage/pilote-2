@@ -134,6 +134,7 @@ const colonnesTableauChantiers = [
     aggregatedCell: aggregatedCellContext => (
       <TableauChantiersTuileMinistère
         estDéroulé={aggregatedCellContext.row.getIsExpanded()}
+        icônes={aggregatedCellContext.row.original.porteur?.icône ? [aggregatedCellContext.row.original.porteur.icône] : []}
         ministère={aggregatedCellContext.getValue() as TableauChantiersTuileMinistèreProps['ministère']}
       />
     ),

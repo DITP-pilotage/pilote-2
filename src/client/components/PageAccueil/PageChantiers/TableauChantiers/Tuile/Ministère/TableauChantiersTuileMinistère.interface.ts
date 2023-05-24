@@ -4,4 +4,5 @@ export default interface TableauChantiersTuileMinistèreProps {
     avancement: number | null;
   };
   estDéroulé: boolean,
+  icônes: string[]
 }

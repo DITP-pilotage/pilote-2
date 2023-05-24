@@ -1,14 +1,17 @@
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import TableauChantiersTuileMinistèreStyled from './TableauChantiersTuileMinistère.styled';
 import TableauChantiersTuileMinistèreProps from './TableauChantiersTuileMinistère.interface';
 
-export default function TableauChantiersTuileMinistère({ ministère, estDéroulé }: TableauChantiersTuileMinistèreProps) {
+export default function TableauChantiersTuileMinistère({ ministère, estDéroulé, icônes }: TableauChantiersTuileMinistèreProps) {
   return (
     <TableauChantiersTuileMinistèreStyled>
       <div>
-        <p className="fr-text--sm">
+        <IcônesMultiplesEtTexte
+          icônesId={icônes}
+        >
           {ministère.nom}
-        </p>
+        </IcônesMultiplesEtTexte>
         <div className="fr-mx-3w fr-mt-1v avancement">
           <BarreDeProgression
             fond="blanc"

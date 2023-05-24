@@ -4,6 +4,10 @@ const TableauChantiersTuileChantierStyled = styled.div`
   .tuile-chantier-entête {
     display: grid;
     grid-template-columns: auto max-content;
+
+    .icônes {
+      align-content: start;
+    }
   }
   
   .tuile-chantier-corps {
