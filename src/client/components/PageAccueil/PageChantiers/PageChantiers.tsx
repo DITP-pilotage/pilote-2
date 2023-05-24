@@ -17,6 +17,7 @@ import PageChantiersStyled from './PageChantiers.styled';
 import PageChantiersProps from './PageChantiers.interface';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
+import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 
 export default function PageChantiers({ chantiers }: PageChantiersProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -101,15 +102,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                 <Avancements avancements={avancementsAgrégés} />
               </section>
               <hr className="fr-hr fr-my-3w fr-pb-1v" />
-              <section>
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg"
-                >
-                  Répartition des météos renseignées
-                </Titre>
-                <RépartitionMétéo météos={répartitionMétéos} />
-              </section>
+              <RépartitionMétéo météos={répartitionMétéos} />
             </Bloc>
           </div>
         </div>
