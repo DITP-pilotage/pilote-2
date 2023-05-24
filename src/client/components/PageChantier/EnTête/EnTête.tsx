@@ -4,7 +4,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import PageChantierEnTêteProps from './EnTête.interface';
 import PageChantierEnTêteStyled from './EnTête.styled';
 
-export default function PageChantierEnTête({ chantier }: PageChantierEnTêteProps) {
+export default function PageChantierEnTête({ chantier, afficheLeBoutonImpression = false }: PageChantierEnTêteProps) {
   return (
     <PageChantierEnTêteStyled className='fr-p-4w'>
       <Link
@@ -20,18 +20,21 @@ export default function PageChantierEnTête({ chantier }: PageChantierEnTêtePro
       >
         { chantier.nom }
       </Titre>
-      <button
-        className='fr-btn fr-btn--secondary fr-mt-3w bouton-impression'
-        onClick={() => window.print()}
-        type='button'
-      >
-        <span
-          aria-hidden="true"
-          className="fr-icon-download-line"
-        />
-        {' '}
-        Imprimer
-      </button>
+      {
+        !!afficheLeBoutonImpression &&
+          <button
+            className='fr-btn fr-btn--secondary fr-mt-3w bouton-impression'
+            onClick={() => window.print()}
+            type='button'
+          >
+            <span
+              aria-hidden="true"
+              className="fr-icon-download-line"
+            />
+            {' '}
+            Imprimer
+          </button>
+      }
     </PageChantierEnTêteStyled>
   );
 }
