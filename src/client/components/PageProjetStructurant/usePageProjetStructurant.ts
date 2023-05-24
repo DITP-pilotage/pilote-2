@@ -1,4 +1,4 @@
-import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
+import ObjectifProjetStructurant, { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import api from '@/server/infrastructure/api/trpc/api';
 
@@ -13,6 +13,6 @@ export default function usePageProjetStructurant(projetStructurantId: ProjetStru
   );
     
   return {
-    objectifs: objectif ? [objectif] : null, 
+    objectif: objectif ? objectif as ObjectifProjetStructurant : null, 
   };
 }

@@ -80,6 +80,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
               <Objectifs
                 estInteractif={false}
                 maille='nationale'
+                nomTerritoire='National'
                 objectifs={objectifs}
                 réformeId={chantier.id}
                 typesObjectif={typesObjectifChantier}

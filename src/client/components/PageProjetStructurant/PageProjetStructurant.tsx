@@ -15,7 +15,7 @@ import usePageProjetStructurant from './usePageProjetStructurant';
 
 export default function PageProjetStructurant({ projetStructurant }: PageProjetStructurantProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);  
-  const { objectifs } = usePageProjetStructurant(projetStructurant.id, projetStructurant.codeTerritoire);  
+  const { objectif } = usePageProjetStructurant(projetStructurant.id, projetStructurant.codeTerritoire);  
 
   const listeRubriques: Rubrique[] =
     [
@@ -76,7 +76,7 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
                 estInteractif={false}
                 maille={projetStructurant.maille}
                 nomTerritoire={projetStructurant.territoireNomÀAfficher}
-                objectifs={objectifs}
+                objectifs={[objectif]}
                 réformeId={projetStructurant.id}
                 typesObjectif={[typeObjectifProjetStructurant]}
               />

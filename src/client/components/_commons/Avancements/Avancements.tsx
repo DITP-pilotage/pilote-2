@@ -3,7 +3,7 @@ import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDe
 import AvancementsStyled from '@/components/_commons/Avancements/Avancements.styled';
 import AvancementsProps from './Avancements.interface';
 
-export default function Avancements({ avancements }: AvancementsProps) {  
+export default function Avancements({ avancements }: AvancementsProps) {
   return (
     <AvancementsStyled>
       <JaugeDeProgression
