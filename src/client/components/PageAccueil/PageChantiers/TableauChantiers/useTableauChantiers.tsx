@@ -177,7 +177,10 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
     data: données,
     columns: colonnesTableauChantiers,
     globalFilterFn: (ligne, colonneId, filtreValeur) => {
-      return rechercheUnTexteContenuDansUnContenant(filtreValeur, ligne.getValue<DonnéesTableauChantiers>(colonneId).toString());
+      const texteContenant: unknown = ligne.getValue<DonnéesTableauChantiers>(colonneId);
+      if (!texteContenant)
+        return false;
+      return rechercheUnTexteContenuDansUnContenant(filtreValeur, texteContenant.toString());
     },
     state: {
       globalFilter: valeurDeLaRecherche,
