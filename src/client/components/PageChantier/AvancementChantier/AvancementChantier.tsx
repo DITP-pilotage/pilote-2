@@ -36,7 +36,7 @@ export default function AvancementChantier({ avancements, chantierId }: Avanceme
       </Titre>
       <div className='blocs'>
         {
-          !!avancements.départementale.moyenne &&
+          avancements.départementale.moyenne !== undefined &&
           <Bloc titre={territoireSélectionné?.nomAffiché}>
             <div className='fr-py-1w jauge'>
               <JaugeDeProgression
@@ -49,7 +49,7 @@ export default function AvancementChantier({ avancements, chantierId }: Avanceme
           </Bloc>
         }
         {
-          !!avancements.régionale.moyenne &&
+          avancements.régionale.moyenne !== undefined &&
           <Bloc titre={territoireSélectionné!.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné!.codeParent).nomAffiché : territoireSélectionné!.nomAffiché}>
             <div className='fr-py-1w jauge'>
               <JaugeDeProgression

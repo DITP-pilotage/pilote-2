@@ -1,6 +1,7 @@
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { getServerSession } from 'next-auth/next';
+import { useSession } from 'next-auth/react';
 import PageChantier from '@/components/PageChantier/PageChantier';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -8,6 +9,8 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
 import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';
+import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import ChoixTerritoire from '@/components/PageChantier/ChoixTerritoire/ChoixTerritoire';
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[],
@@ -15,6 +18,10 @@ interface NextPageChantierProps {
 }
 
 export default function NextPageChantier({ indicateurs, chantierInformations }: NextPageChantierProps) {
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
+  const { data: session } = useSession();
+  
   return (
     <>
       <Head>
@@ -22,10 +29,15 @@ export default function NextPageChantier({ indicateurs, chantierInformations }: 
           {`Chantier ${chantierInformations.id.replace('CH-', '')} - ${chantierInformations.nom} - PILOTE`}
         </title>
       </Head>
-      <PageChantier
-        chantierId={chantierInformations.id}
-        indicateurs={indicateurs}
-      />
+      {
+        territoireSélectionné!.code === 'NAT-FR' && session?.profil === 'DROM' && !chantierInformations.estUnChantierDROM ?
+          <ChoixTerritoire chantierId={chantierInformations.id} />
+          :
+          <PageChantier
+            chantierId={chantierInformations.id}
+            indicateurs={indicateurs}
+          />
+      }
     </>
   );
 }
@@ -52,6 +64,7 @@ export async function getServerSideProps({ req, res, params }: GetServerSideProp
       chantierInformations: {
         id: chantier.id,
         nom: chantier.nom,
+        estUnChantierDROM: chantier.périmètreIds.includes('PER-018'),
       },
     },
   };

@@ -97,7 +97,10 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
         {
           chantier !== null ? (
             <>
-              <PageChantierEnTête chantier={chantier} />
+              <PageChantierEnTête
+                afficheLeBoutonImpression
+                chantier={chantier}
+              />
               <div className='fr-p-4w'>
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                   {
