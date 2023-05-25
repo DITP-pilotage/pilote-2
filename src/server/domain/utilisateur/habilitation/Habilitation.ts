@@ -23,6 +23,10 @@ export default class Habilitation {
       throw new TerritoireNonAutoriséErreur();
   }
 
+  peutConsulterLaListeDesUtilisateurs() {
+    return this._habilitations['utilisateurs.lecture'].chantiers.length > 0;
+  }
+
   peutAccéderAuChantier(chantierId: Chantier['id'], territoireCode: string): boolean {
     return this._habilitations.lecture.chantiers.includes(chantierId) && this._habilitations.lecture.territoires.includes(territoireCode) ? true : false;
   }
