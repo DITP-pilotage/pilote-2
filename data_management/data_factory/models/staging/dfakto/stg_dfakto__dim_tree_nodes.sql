@@ -16,7 +16,10 @@ renamed as (
         tree_node_name as nom,
         tree_node_code as code,
         SUBSTRING(tree_node_code, 1, 6) as code_chantier,
-        SUBSTRING(tree_node_code, 8) as zone_code,
+        CASE
+            WHEN CHAR_LENGTH(tree_node_code) > 6 THEN SUBSTRING(tree_node_code, 8)
+            ELSE 'NAT'
+        END as zone_code,
         tree_node_status as status,
         tree_node_last_update_properties_date as last_update_properties_date,
         tree_node_last_update_scorecard_date as last_update_scorecard_date,
@@ -29,5 +32,4 @@ renamed as (
 select *
     from renamed
     where LOWER(code) not like '%temporaire%' and
-          LOWER(code) not like '%test%' and
-          CHAR_LENGTH(code) > 6
+          LOWER(code) not like '%test%'
