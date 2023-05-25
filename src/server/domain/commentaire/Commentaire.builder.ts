@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import { Commentaires, CommentairesMailleNationale, CommentairesMailleRégionaleOuDépartementale, TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { Commentaires, CommentairesMailleNationale, CommentairesMailleRégionaleOuDépartementale, TypeCommentaireChantier } from '@/server/domain/commentaire/Commentaire.interface';
 import { générerPeutÊtreNull } from '@/server/infrastructure/test/builders/utils';
 
 export default class CommentaireBuilder {
@@ -24,7 +24,7 @@ export default class CommentaireBuilder {
     this._exemplesConcretsDeRéussite = générerPeutÊtreNull(0.1, this._générerUnCommentaire('exemplesConcretsDeRéussite'));
   }
 
-  private _générerUnCommentaire(type: TypeCommentaire) {
+  private _générerUnCommentaire(type: TypeCommentaireChantier) {
     return {
       id: faker.datatype.uuid(),
       type: type,

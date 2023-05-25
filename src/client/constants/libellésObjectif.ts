@@ -1,4 +1,8 @@
-import { TypeObjectif } from '@/components/_commons/Objectifs/Objectifs.interface';
+import { typesObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
+import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
+
+export const typesObjectif = [...typesObjectifChantier, typeObjectifProjetStructurant] as const;
+export type TypeObjectif = typeof typesObjectif[number];
 
 export const libellésTypesObjectif: Record<TypeObjectif, string> = {
   notreAmbition: 'Notre ambition',

@@ -14,6 +14,7 @@ import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoires
 import Titre from '@/components/_commons/Titre/Titre';
 import { typesObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
 import ObjectifsPageChantier from '@/components/_commons/Objectifs/Objectifs';
+import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 
 export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats, commentaires, objectifs, décisionStratégique }: RapportDétailléChantierProps) {
@@ -173,6 +174,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                   maille={territoireSélectionné!.maille}
                   nomTerritoire={territoireSélectionné!.nomAffiché}
                   réformeId={chantier.id}
+                  typesCommentaire={territoireSélectionné!.maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale}
                 />
               </section>
             </div>

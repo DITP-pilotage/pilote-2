@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { TypeCommentaireChantier } from '@/server/domain/commentaire/Commentaire.interface';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
@@ -10,7 +10,7 @@ export default class CréerUnCommentaireUseCase {
     private readonly commentaireRepository: CommentaireRepository = dependencies.getCommentaireRepository(),
   ) {}
 
-  async run(chantierId: string, territoireCode: string, contenu: string, auteur: string, type: TypeCommentaire, habilitations: Habilitations) {
+  async run(chantierId: string, territoireCode: string, contenu: string, auteur: string, type: TypeCommentaireChantier, habilitations: Habilitations) {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnSaisieDesPublications(chantierId, territoireCode);
     

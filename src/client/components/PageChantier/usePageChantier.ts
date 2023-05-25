@@ -25,7 +25,7 @@ export default function usePageChantier(chantierId: string) {
     },
   );
 
-  const { data: commentaires } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParChantiers.useQuery(
+  const { data: commentaires } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParRéformes.useQuery(
     {
       réformeId: chantierId,
       territoireCode: territoireSélectionné!.code,
@@ -33,7 +33,7 @@ export default function usePageChantier(chantierId: string) {
     },
   );
 
-  const { data: objectifs } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParChantiers.useQuery(
+  const { data: objectifs } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParRéformes.useQuery(
     {
       réformeId: chantierId,
       territoireCode: 'NAT-FR',

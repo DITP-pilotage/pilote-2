@@ -6,6 +6,7 @@ import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import Objectifs from '@/client/components/_commons/Objectifs/Objectifs';
 import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
+import { typesCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 import ResponsablesPageProjetStructurant from './Responsables/Responsables';
 import PageProjetStructurantProps from './PageProjetStructurant.interface';
 import PageProjetStructurantEnTête from './EnTête/EnTête';
@@ -15,7 +16,7 @@ import usePageProjetStructurant from './usePageProjetStructurant';
 
 export default function PageProjetStructurant({ projetStructurant }: PageProjetStructurantProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);  
-  const { objectif } = usePageProjetStructurant(projetStructurant.id, projetStructurant.codeTerritoire);  
+  const { objectif, commentaires } = usePageProjetStructurant(projetStructurant.id, projetStructurant.codeTerritoire);  
 
   const listeRubriques: Rubrique[] =
     [
@@ -85,11 +86,12 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
               <Commentaires
-                commentaires={[]}
+                commentaires={commentaires}
                 maille={projetStructurant.maille}
                 modeÉcriture={false}
                 nomTerritoire={projetStructurant.territoireNomÀAfficher}
                 réformeId={projetStructurant.id}
+                typesCommentaire={typesCommentaireProjetStructurant}
               />
             </div>
           </div>

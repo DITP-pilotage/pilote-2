@@ -2,13 +2,13 @@ import { commentaire as CommentairePrisma, PrismaClient } from '@prisma/client';
 import CommentaireRepository from '@/server/domain/commentaire/CommentaireRepository.interface';
 import {
   Commentaire,
-  TypeCommentaire,
+  TypeCommentaireChantier,
 } from '@/server/domain/commentaire/Commentaire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 
-export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaire> = {
+export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaireChantier> = {
   commentaires_sur_les_donnees: 'commentairesSurLesDonnées',
   autres_resultats_obtenus: 'autresRésultatsObtenus',
   autres_resultats_obtenus_non_correles_aux_indicateurs: 'autresRésultatsObtenusNonCorrélésAuxIndicateurs',
@@ -17,7 +17,7 @@ export const NOMS_TYPES_COMMENTAIRES: Record<string, TypeCommentaire> = {
   actions_a_valoriser: 'exemplesConcretsDeRéussite',
 };
 
-export const CODES_TYPES_COMMENTAIRES: Record<TypeCommentaire, string> = {
+export const CODES_TYPES_COMMENTAIRES: Record<TypeCommentaireChantier, string> = {
   commentairesSurLesDonnées: 'commentaires_sur_les_donnees',
   autresRésultatsObtenus: 'autres_resultats_obtenus',
   autresRésultatsObtenusNonCorrélésAuxIndicateurs: 'autres_resultats_obtenus_non_correles_aux_indicateurs',
@@ -44,7 +44,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     };
   }
 
-  async récupérerLePlusRécent(chantierId: string, territoireCode: string, type: TypeCommentaire): Promise<Commentaire> {
+  async récupérerLePlusRécent(chantierId: string, territoireCode: string, type: TypeCommentaireChantier): Promise<Commentaire> {
     const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
     const commentaireLePlusRécent = await this.prisma.commentaire.findFirst({
@@ -60,7 +60,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return commentaireLePlusRécent ? this.mapperVersDomaine(commentaireLePlusRécent) : null;
   }
 
-  async récupérerHistorique(chantierId: string, territoireCode: string, type: TypeCommentaire): Promise<Commentaire[]> {
+  async récupérerHistorique(chantierId: string, territoireCode: string, type: TypeCommentaireChantier): Promise<Commentaire[]> {
     const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
     const commentaires: CommentairePrisma[] = await this.prisma.commentaire.findMany({
@@ -76,7 +76,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     return commentaires.map(commentaireDeLHistorique => this.mapperVersDomaine(commentaireDeLHistorique));
   }
 
-  async créer(chantierId: string, territoireCode: string, id: string, contenu: string, auteur: string, type: TypeCommentaire, date: Date): Promise<Commentaire> {
+  async créer(chantierId: string, territoireCode: string, id: string, contenu: string, auteur: string, type: TypeCommentaireChantier, date: Date): Promise<Commentaire> {
     const { maille, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
 
     const commentaireCréé =  await this.prisma.commentaire.create({

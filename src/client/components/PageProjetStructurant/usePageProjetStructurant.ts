@@ -1,3 +1,4 @@
+import CommentaireProjetStructurant from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 import ObjectifProjetStructurant, { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import api from '@/server/infrastructure/api/trpc/api';
@@ -11,8 +12,17 @@ export default function usePageProjetStructurant(projetStructurantId: ProjetStru
       type: typeObjectifProjetStructurant,
     },
   );
+
+  const { data: commentaires } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParRéformes.useQuery(
+    {
+      réformeId: projetStructurantId,
+      territoireCode: territoireCode,
+      entité: 'objectifs',
+    },
+  );  
     
   return {
-    objectif: objectif ? objectif as ObjectifProjetStructurant : null, 
+    objectif: objectif ? objectif as ObjectifProjetStructurant : null,
+    commentaires: commentaires ? commentaires[projetStructurantId] as CommentaireProjetStructurant[] : null,
   };
 }

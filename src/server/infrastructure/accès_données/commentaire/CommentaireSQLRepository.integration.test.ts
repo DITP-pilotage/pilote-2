@@ -4,7 +4,7 @@ import CommentaireSQLRepository, {
   CODES_TYPES_COMMENTAIRES, NOMS_TYPES_COMMENTAIRES,
 } from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import { TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { TypeCommentaireChantier } from '@/server/domain/commentaire/Commentaire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import CommentaireSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireSQLRow.builder';
@@ -77,7 +77,7 @@ describe('CommentaireSQLRepository', () => {
       const chantierId = 'CH-001';
       const maille: Maille = 'nationale';
       const codeInsee = 'FR';
-      const typeCommentaire: TypeCommentaire = 'risquesEtFreinsÀLever';
+      const typeCommentaire: TypeCommentaireChantier = 'risquesEtFreinsÀLever';
       const commentaireRepository: CommentaireRepository = new CommentaireSQLRepository(prisma);
 
       const commentaires: Prisma.commentaireCreateArgs['data'][]  = [
