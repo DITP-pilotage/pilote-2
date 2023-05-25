@@ -37,7 +37,7 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
       périmètresIds: projetStructurantPrisma.perimetres_ids,
       responsables: {
         //mapping périmètre ministère
-        ministèrePorteur: '',
+        ministèrePorteur: projetStructurantPrisma.perimetres_ids[0],
         ministèresCoporteurs: [],
         directionAdmininstration: projetStructurantPrisma.direction_administration,
         chefferieDeProjet: projetStructurantPrisma.chefferie_de_projet,
@@ -49,6 +49,8 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
   private async _récupérerTerritoireAssocié(projetStructurant: ProjetStructurantPrisma): Promise<Territoire> {
     return new RécupérerDétailsTerritoireUseCase().run(projetStructurant.territoire_code);
   }
+
+  
 
 
   async récupérer(id: string): Promise<ProjetStructurant> {

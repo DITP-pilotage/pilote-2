@@ -1,4 +1,4 @@
-import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
+import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import { typesCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 
 export const typesCommentaire = [...typesCommentaireMailleNationale, ...typesCommentaireMailleRégionaleOuDépartementale, ...typesCommentaireProjetStructurant] as const;

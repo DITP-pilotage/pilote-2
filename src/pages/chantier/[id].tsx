@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { getServerSession } from 'next-auth/next';
 import { useSession } from 'next-auth/react';
 import PageChantier from '@/components/PageChantier/PageChantier';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur from '@/server/domain/chantier/indicateur/Indicateur.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';

@@ -6,7 +6,7 @@ import {
   retourneUneListeDeCodeInseeCohérentePourUneMaille,
 } from '@/server/infrastructure/test/builders/utils';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
-import AvancementBuilder from '@/server/domain/avancement/Avancement.builder';
+import AvancementBuilder from '@/server/domain/chantier/avancement/Avancement.builder';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 

@@ -11,11 +11,11 @@ import {
   territoireSélectionnéTerritoiresStore,
 } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import { DétailsIndicateurCodeInsee } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
 import IndicateurBlocIndicateurTuile from '@/components/PageChantier/Indicateurs/Bloc/indicateurBlocIndicateurTuile';
-import { IndicateurDétailsParTerritoire } from './IndicateurBloc.interface';
+import { DétailsIndicateurCodeInsee } from '@/server/domain/chantier/indicateur/DétailsIndicateur.interface';
 import ValeurEtDate from './ValeurEtDate/ValeurEtDate';
+import { IndicateurDétailsParTerritoire } from './IndicateurBloc.interface';
 
 const indicateurDétailsVide = {
   territoireNom: '',

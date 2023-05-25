@@ -5,8 +5,8 @@ import { retourneUneListeDeCodeInseeCohérentePourUneMaille } from '@/server/inf
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
-} from '@/server/domain/commentaire/Commentaire.interface';
-import { CODES_TYPES_COMMENTAIRES } from '@/server/infrastructure/accès_données/commentaire/CommentaireSQLRepository';
+} from '@/server/domain/chantier/commentaire/Commentaire.interface';
+import { CODES_TYPES_COMMENTAIRES } from '@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository';
 
 export default class CommentaireRowBuilder {
   private _id: commentaire['id'];

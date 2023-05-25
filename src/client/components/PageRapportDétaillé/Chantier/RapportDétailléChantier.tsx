@@ -12,9 +12,9 @@ import DécisionsStratégiques from '@/components/PageChantier/DécisionsStraté
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Titre from '@/components/_commons/Titre/Titre';
-import { typesObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
 import ObjectifsPageChantier from '@/components/_commons/Objectifs/Objectifs';
-import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
+import { typesObjectifChantier } from '@/server/domain/chantier/objectif/Objectif.interface';
+import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 
 export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats, commentaires, objectifs, décisionStratégique }: RapportDétailléChantierProps) {

@@ -1,6 +1,6 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import Objectif, { typesObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
+import Objectif, { typesObjectifChantier } from '@/server/domain/chantier/objectif/Objectif.interface';
 import ObjectifProjetStructurant, { TypeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 

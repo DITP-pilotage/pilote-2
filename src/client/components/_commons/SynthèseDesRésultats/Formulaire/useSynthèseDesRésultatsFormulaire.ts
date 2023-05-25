@@ -1,7 +1,7 @@
 import router from 'next/router';
 import { useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
-import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
+import SynthèseDesRésultats from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 import api from '@/server/infrastructure/api/trpc/api';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';

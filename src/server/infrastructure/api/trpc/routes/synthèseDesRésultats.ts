@@ -4,11 +4,11 @@ import {
   procédureProtégée,
   vérifierSiLeCSRFEstValide,
 } from '@/server/infrastructure/api/trpc/trpc';
-import CréerUneSynthèseDesRésultatsUseCase from '@/server/usecase/synthèse/CréerUneSynthèseDesRésultatsUseCase';
+import CréerUneSynthèseDesRésultatsUseCase from '@/server/usecase/chantier/synthèse/CréerUneSynthèseDesRésultatsUseCase';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase from '@/server/usecase/synthèse/RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase';
+import RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase from '@/server/usecase/chantier/synthèse/RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase';
 import { validationSynthèseDesRésultatsContexte, validationSynthèseDesRésultatsFormulaire } from 'validation/synthèseDesRésultats';
-import RécupérerHistoriqueSynthèseDesRésultatsUseCase from '@/server/usecase/synthèse/RécupérerHistoriqueSynthèseDesRésultatsUseCase';
+import RécupérerHistoriqueSynthèseDesRésultatsUseCase from '@/server/usecase/chantier/synthèse/RécupérerHistoriqueSynthèseDesRésultatsUseCase';
 
 const zodValidateurCSRF = z.object({
   csrf: z.string(),

@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { stringify } from 'csv-stringify';
 import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import ExportCsvDesIndicateursSansFiltreUseCase from '@/server/usecase/indicateur/ExportCsvDesIndicateursSansFiltreUseCase';
+import ExportCsvDesIndicateursSansFiltreUseCase from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase';
 
 export default async function handleExportDesIndicateursSansFiltre(request: NextApiRequest, response: NextApiResponse): Promise<void> {
   const session = await getServerSession(request, response, authOptions);

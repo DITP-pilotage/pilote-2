@@ -10,10 +10,10 @@ import Loader from '@/components/_commons/Loader/Loader';
 import SynthèseDesRésultats from '@/client/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Sommaire from '@/client/components/_commons/Sommaire/Sommaire';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
-import ObjectifsPageChantier from '@/components/_commons/Objectifs/Objectifs';
-import { typesObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
 import Titre from '@/components/_commons/Titre/Titre';
-import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
+import Objectifs from '@/components/_commons/Objectifs/Objectifs';
+import { typesObjectifChantier } from '@/server/domain/chantier/objectif/Objectif.interface';
+import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
@@ -23,6 +23,7 @@ import Cartes from './Cartes/Cartes';
 import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
 import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
+
 
 export default function PageChantier({ indicateurs, chantierId }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
@@ -183,7 +184,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     >
                       Objectifs
                     </Titre>
-                    <ObjectifsPageChantier
+                    <Objectifs
                       maille='nationale'
                       modeÉcriture={modeÉcritureObjectifs}
                       nomTerritoire='National'

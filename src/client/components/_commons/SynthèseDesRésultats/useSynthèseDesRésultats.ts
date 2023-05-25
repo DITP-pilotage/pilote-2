@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
-import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
+import SynthèseDesRésultats from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
 export default function useSynthèseDesRésultats(synthèseDesRésultatsInitiale: SynthèseDesRésultats, rechargerChantier: () => void) {

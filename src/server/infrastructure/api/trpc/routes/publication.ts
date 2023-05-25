@@ -5,7 +5,7 @@ import {
   vérifierSiLeCSRFEstValide,
 } from '@/server/infrastructure/api/trpc/trpc';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import CréerUnCommentaireUseCase from '@/server/usecase/commentaire/CréerUnCommentaireUseCase';
+import CréerUnCommentaireUseCase from '@/server/usecase/chantier/commentaire/CréerUnCommentaireUseCase';
 import {
   validationPublicationContexte,
   validationPublicationFormulaire,
@@ -13,21 +13,21 @@ import {
   zodValidateurEntité,
   zodValidateurEntitéType,
 } from 'validation/publication';
-import RécupérerCommentaireLePlusRécentUseCase from '@/server/usecase/commentaire/RécupérerCommentaireLePlusRécentUseCase';
-import RécupérerHistoriqueCommentaireUseCase from '@/server/usecase/commentaire/RécupérerHistoriqueCommentaireUseCase';
-import CréerUnObjectifUseCase from '@/server/usecase/objectif/CréerUnObjectifUseCase';
-import RécupérerObjectifLePlusRécentUseCase from '@/server/usecase/objectif/RécupérerObjectifLePlusRécentUseCase';
-import RécupérerHistoriqueObjectifUseCase from '@/server/usecase/objectif/RécupérerHistoriqueObjectifUseCase';
-import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from '@/server/usecase/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
-import CréerUneDécisionStratégiqueUseCase from '@/server/usecase/décision/CréerUneDécisionStratégiqueUseCase';
-import RécupérerHistoriqueDécisionStratégiqueUseCase from '@/server/usecase/décision/RécupérerHistoriqueDécisionStratégiqueUseCase';
-import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
-import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
+import RécupérerCommentaireLePlusRécentUseCase from '@/server/usecase/chantier/commentaire/RécupérerCommentaireLePlusRécentUseCase';
+import RécupérerHistoriqueCommentaireUseCase from '@/server/usecase/chantier/commentaire/RécupérerHistoriqueCommentaireUseCase';
+import CréerUnObjectifUseCase from '@/server/usecase/chantier/objectif/CréerUnObjectifUseCase';
+import RécupérerObjectifLePlusRécentUseCase from '@/server/usecase/chantier/objectif/RécupérerObjectifLePlusRécentUseCase';
+import RécupérerHistoriqueObjectifUseCase from '@/server/usecase/chantier/objectif/RécupérerHistoriqueObjectifUseCase';
+import RécupérerDécisionStratégiqueLaPlusRécenteUseCase from '@/server/usecase/chantier/décision/RécupérerDécisionStratégiqueLaPlusRécenteUseCase';
+import CréerUneDécisionStratégiqueUseCase from '@/server/usecase/chantier/décision/CréerUneDécisionStratégiqueUseCase';
+import RécupérerHistoriqueDécisionStratégiqueUseCase from '@/server/usecase/chantier/décision/RécupérerHistoriqueDécisionStratégiqueUseCase';
+import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
+import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
 import { déterminerLeTypeDeRéforme } from '@/server/utils/réforme';
 import RécupérerObjectifProjetStructurantLePlusRécentUseCase from '@/server/usecase/projetStructurant/objectif/RécupérerObjectifLePlusRécentUseCase';
-import { TypeObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
+import { TypeObjectifChantier } from '@/server/domain/chantier/objectif/Objectif.interface';
 import RécupérerCommentaireProjetStructurantLePlusRécentUseCase from '@/server/usecase/projetStructurant/commentaire/RécupérerCommentaireLePlusRécentUseCase';
-import { TypeCommentaireChantier } from '@/server/domain/commentaire/Commentaire.interface';
+import { TypeCommentaireChantier } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import { TypeCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase from '@/server/usecase/projetStructurant/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase';
 

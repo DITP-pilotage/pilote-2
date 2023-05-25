@@ -6,7 +6,7 @@ import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIn
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import Indicateur from '@/server/domain/chantier/indicateur/Indicateur.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import usePageChantier from '@/components/PageChantier/usePageChantier';
 import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';

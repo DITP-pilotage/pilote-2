@@ -1,4 +1,4 @@
-import SynthèseDesRésultats from '@/server/domain/synthèseDesRésultats/SynthèseDesRésultats.interface';
+import SynthèseDesRésultats from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { Météo, MétéoSaisissable } from '@/server/domain/météo/Météo.interface';
 
 export default interface SynthèseDesRésultatsFormulaireProps {

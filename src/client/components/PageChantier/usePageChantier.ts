@@ -7,8 +7,8 @@ import {
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import api from '@/server/infrastructure/api/trpc/api';
 import calculerChantierAvancements from '@/client/utils/chantier/avancement/calculerChantierAvancements';
-import { Commentaire } from '@/server/domain/commentaire/Commentaire.interface';
-import Objectif from '@/server/domain/objectif/Objectif.interface';
+import { Commentaire } from '@/server/domain/chantier/commentaire/Commentaire.interface';
+import Objectif from '@/server/domain/chantier/objectif/Objectif.interface';
 
 export default function usePageChantier(chantierId: string) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
