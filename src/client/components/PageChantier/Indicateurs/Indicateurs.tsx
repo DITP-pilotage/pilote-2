@@ -1,8 +1,6 @@
 import Titre from '@/components/_commons/Titre/Titre';
 import IndicateursProps, { ÉlémentPageIndicateursType } from '@/components/PageChantier/Indicateurs/Indicateurs.interface';
 import IndicateurBloc from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc';
-import Indicateur, { TypeIndicateur, typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
-import Bloc from '@/components/_commons/Bloc/Bloc';
 
 export const listeRubriquesIndicateurs: ÉlémentPageIndicateursType[] = [
   { nom: 'Indicateurs d\'impact', ancre: 'impact', typeIndicateur: 'IMPACT' },
@@ -13,9 +11,10 @@ export const listeRubriquesIndicateurs: ÉlémentPageIndicateursType[] = [
 ];
 
 export default function Indicateurs({ indicateurs, détailsIndicateurs, estDisponibleALImport = false, estInteractif = true }: IndicateursProps) {
-  const indicateursGroupésParType: Record<NonNullable<TypeIndicateur>, Indicateur[]> = Object.fromEntries(
-    typesIndicateur.map(type => [type, indicateurs.filter(indicateur => indicateur.type === type)]),
-  );
+
+  if (indicateurs.length === 0) {
+    return null;
+  }
 
   return (
     <section id="indicateurs">
@@ -26,41 +25,30 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, estDispo
         Indicateurs
       </Titre>
       { 
-        listeRubriquesIndicateurs.map(rubrique => (
-          <section
-            className='fr-mb-3w'
-            id={rubrique.ancre}
-            key={rubrique.ancre}
-          >
-            <Titre
-              baliseHtml='h3'
-              className='fr-text--lg fr-mb-1w'
+        indicateurs.map(indicateur => {
+          const rubriqueIndicateur = listeRubriquesIndicateurs.find(ind => ind.typeIndicateur === indicateur.type);
+          return (
+            <section
+              className='fr-mb-3w'
+              id={rubriqueIndicateur?.ancre}
+              key={rubriqueIndicateur?.ancre}
             >
-              {rubrique.nom}
-            </Titre>
-            {
-              (indicateursGroupésParType[rubrique.typeIndicateur].length === 0
-                ? (
-                  <Bloc>
-                    <p className="fr-m-0">
-                      Aucun indicateur
-                    </p>
-                  </Bloc>
-                )
-                : (
-                  indicateursGroupésParType[rubrique.typeIndicateur].map(indicateur => (
-                    <IndicateurBloc
-                      détailsIndicateur={détailsIndicateurs[indicateur.id]}
-                      estDisponibleALImport={estDisponibleALImport}
-                      estInteractif={estInteractif}
-                      indicateur={indicateur}
-                      key={indicateur.id}
-                    />
-                  ))
-                ))
-            }
-          </section>
-        ))
+              <Titre
+                baliseHtml='h3'
+                className='fr-text--lg fr-mb-1w'
+              >
+                {rubriqueIndicateur?.nom}
+              </Titre>
+              <IndicateurBloc
+                détailsIndicateur={détailsIndicateurs[indicateur.id]}
+                estDisponibleALImport={estDisponibleALImport}
+                estInteractif={estInteractif}
+                indicateur={indicateur}
+                key={indicateur.id}
+              />
+            </section>
+          );
+        })
       }
     </section>
   );
