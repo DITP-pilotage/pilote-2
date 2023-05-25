@@ -4,12 +4,14 @@ import {
   chantier,
   indicateur,
   ministere,
+  objectif_projet_structurant,
   perimetre,
   ppg,
   Prisma,
   PrismaClient,
   synthese_des_resultats,
   territoire,
+  projet_structurant,
 } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import SynthèseDesRésultatsSQLRowBuilder
@@ -36,6 +38,8 @@ import {
 } from '@/server/infrastructure/test/builders/utils';
 import { typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import MinistèreSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/MinistèreSQLRow.builder';
+import ProjetStructurantRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ProjetStructurantSQLRow.builder';
+import ObjectifProjetStructurantSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifProjetStructurantSQLRow.builder';
 import { formaterId } from './format';
 
 const chantierStatiqueId123 = new ChantierSQLRowBuilder()
@@ -68,7 +72,6 @@ export class DatabaseSeeder {
 
   private _compteur: number = 1;
 
-
   private _axes: axe[] = [];
 
   private _ppgs: ppg[] = [];
@@ -90,6 +93,10 @@ export class DatabaseSeeder {
   private _chantiers: chantier[] = [];
 
   private _chantiersDonnéesCommunes: chantier[] = [];
+
+  private _projets_structurants: projet_structurant[] = [];
+
+  private _objectifs_projets_structurants: objectif_projet_structurant[] = [];
 
   constructor(prisma: PrismaClient) {
     this._prisma = prisma;
@@ -129,6 +136,10 @@ export class DatabaseSeeder {
     await this._créerIndicateurs();
     console.log('  UtilisateursEtDroits...');
     await this._créerUtilisateursEtDroits();
+    console.log('  ProjetsStructurants...');
+    await this._créerProjetsStructurants();
+    console.log('  ObjectifsProjetsStructurants');
+    await this._créerObjectifsProjetsStructurants();    
     console.log('----------------- Fin ------------------');
   }
 
@@ -161,7 +172,6 @@ export class DatabaseSeeder {
   }
 
   private async _créerChantiers() {
-
     const CHANTIERS_STATIQUES = [chantierStatiqueId123];
 
     for (let i = 0; i < 100; i++) {
@@ -337,5 +347,30 @@ export class DatabaseSeeder {
   private async _getSomeChantierIds() {
     const chantiersRows = await this._prisma.chantier.findMany({ distinct: ['id'], select: { id: true }, take: 10 });
     return chantiersRows.map(it => it.id);
+  }
+
+  private async _créerProjetsStructurants() {
+    for (let i = 0; i < 200; i++) {
+      const périmètres = faker.helpers.arrayElements(this._périmètresMinistériels, faker.datatype.number({
+        min: 1,
+        max: 4,
+      }));
+
+      const c = new ProjetStructurantRowBuilder()
+        .avecPérimètresIds(périmètres.map(périmètre => périmètre.id))
+        .build();
+
+      this._projets_structurants.push(c);
+    }
+
+    await this._prisma.projet_structurant.createMany({ data: this._projets_structurants });
+  }
+
+  private async _créerObjectifsProjetsStructurants() {
+    this._projets_structurants.forEach(p => {
+      this._objectifs_projets_structurants.push(new ObjectifProjetStructurantSQLRowBuilder().avecProjetStructurantId(p.id).build());
+    });
+    
+    await this._prisma.objectif_projet_structurant.createMany({ data: this._objectifs_projets_structurants });
   }
 }

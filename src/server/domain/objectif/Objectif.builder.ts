@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import Objectif, { typesObjectif }  from '@/server/domain/objectif/Objectif.interface';
+import Objectif, { typesObjectifChantier }  from '@/server/domain/objectif/Objectif.interface';
 
 export default class ObjectifBuilder {
   private _objectif: Objectif;
@@ -11,7 +11,7 @@ export default class ObjectifBuilder {
   private _générerUnObjectif() {
     return {
       id: faker.datatype.uuid(),
-      type: faker.helpers.arrayElement(typesObjectif),
+      type: faker.helpers.arrayElement(typesObjectifChantier),
       contenu: faker.lorem.paragraph(),
       date: faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString(),
       auteur: faker.helpers.arrayElement(['', faker.name.fullName()]),

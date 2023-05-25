@@ -1,5 +1,5 @@
 import { chantier } from '@prisma/client';
-import { TerritoireDeBDD, Territoires } from '@/server/domain/territoire/Territoire.interface';
+import { Territoire, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
@@ -10,8 +10,8 @@ class ErreurChantierSansMailleNationale extends Error {
   }
 }
 
-function créerDonnéesTerritoires(territoires: TerritoireDeBDD[], chantierRows: chantier[]) {
-  let donnéesTerritoires: Territoires = {};
+function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: chantier[]) {
+  let donnéesTerritoires: TerritoiresDonnées = {};
 
   territoires.forEach(t => {
     const chantierRow = chantierRows.find(c => c.code_insee === t.codeInsee);
@@ -26,7 +26,7 @@ function créerDonnéesTerritoires(territoires: TerritoireDeBDD[], chantierRows:
   return donnéesTerritoires;
 }
 
-export function parseChantier(chantierRows: chantier[], territoires: TerritoireDeBDD[], ministères: Ministère[]): Chantier {
+export function parseChantier(chantierRows: chantier[], territoires: Territoire[], ministères: Ministère[]): Chantier {
 
   const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
   const chantierMailleDépartementale = chantierRows.filter(c => c.maille === 'DEPT');

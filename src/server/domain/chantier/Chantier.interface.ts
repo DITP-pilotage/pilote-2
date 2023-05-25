@@ -1,5 +1,5 @@
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import { Territoires } from '@/server/domain/territoire/Territoire.interface';
+import { TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
@@ -13,7 +13,7 @@ export default interface Chantier {
   axe: Axe['nom'];
   ppg: Ppg['nom'];
   périmètreIds: string[];
-  mailles: Record<Maille, Territoires>;
+  mailles: Record<Maille, TerritoiresDonnées>;
   responsables: {
     porteur: Ministère | null,
     coporteurs: Ministère[],

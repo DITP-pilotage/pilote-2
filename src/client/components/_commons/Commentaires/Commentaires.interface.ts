@@ -7,6 +7,7 @@ export default interface CommentairesProps {
   commentaires: Commentaire[] | null
   réformeId: Chantier['id'] | ProjetStructurant['id']
   maille: Maille
+  nomTerritoire: string
   modeÉcriture?: boolean
   estInteractif?: boolean
 }

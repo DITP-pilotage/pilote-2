@@ -1,8 +1,9 @@
+
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
-import ResponsablesStyled from './Responsables.styled';
-import ResponsablesProps from './Responsables.interface';
-import ResponsablesLigne from './ResponsablesLigne/ResponsablesLigne';
+import ResponsablesLigne from '@/client/components/_commons/ResponsablesLigne/ResponsablesLigne';
+import ResponsablesPageChantierStyled from './Responsables.styled';
+import ResponsablesPageChantierProps from './Responsables.interface';
 
 const mailTo = (label: string, mail: string | null) => (
   mail ?
@@ -12,10 +13,10 @@ const mailTo = (label: string, mail: string | null) => (
     : label
 );
 
-export default function Responsables({ responsables }: ResponsablesProps) {
+export default function ResponsablesPageChantier({ responsables }: ResponsablesPageChantierProps) {
    
   return (
-    <ResponsablesStyled id="responsables">
+    <ResponsablesPageChantierStyled id="responsables">
       <Titre
         baliseHtml='h2'
         className='fr-h4 fr-mb-2w'
@@ -45,6 +46,6 @@ export default function Responsables({ responsables }: ResponsablesProps) {
           />
         </div>
       </Bloc>
-    </ResponsablesStyled>
+    </ResponsablesPageChantierStyled>
   );
 }

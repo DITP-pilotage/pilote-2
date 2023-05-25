@@ -2,18 +2,20 @@ import { useState } from 'react';
 import BarreLatérale from '@/client/components/_commons/BarreLatérale/BarreLatérale';
 import Sommaire from '@/components/_commons/Sommaire/Sommaire';
 import { Rubrique } from '@/components/_commons/Sommaire/Sommaire.interface';
-import Bloc from '@/client/components/_commons/Bloc/Bloc';
-import Titre from '@/client/components/_commons/Titre/Titre';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
+import Objectifs from '@/client/components/_commons/Objectifs/Objectifs';
+import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
+import ResponsablesPageProjetStructurant from './Responsables/Responsables';
 import PageProjetStructurantProps from './PageProjetStructurant.interface';
 import PageProjetStructurantEnTête from './EnTête/EnTête';
 import PageProjetStructurantStyled from './PageProjetStructurant.styled';
 import AvancementPageProjetStructurant from './Avancement/Avancement';
-import ObjectifsPageProjetStructurant from './Objectifs/Objectifs';
+import usePageProjetStructurant from './usePageProjetStructurant';
 
 export default function PageProjetStructurant({ projetStructurant }: PageProjetStructurantProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);  
+  const { objectif } = usePageProjetStructurant(projetStructurant.id, projetStructurant.codeTerritoire);  
 
   const listeRubriques: Rubrique[] =
     [
@@ -43,7 +45,7 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
         >
           Menu latéral
         </button>
-        <PageProjetStructurantEnTête projetStructurant={projetStructurant} />
+        <PageProjetStructurantEnTête nomProjetStructurant={projetStructurant.nom} />
         <div className='fr-p-4w'>
           <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-my-0 fr-pb-1w">
             <div className='fr-col'>
@@ -53,18 +55,10 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
               />
             </div>
             <div className='fr-col'>
-              <section id='responsables'>
-                <Titre
-                  baliseHtml='h2'
-                  className='fr-h4 fr-mb-2w'
-                >
-                  Responsables
-                </Titre>
-                <Bloc titre={projetStructurant.territoireNomÀAfficher}>
-                  placeholder
-                </Bloc>
-              </section>
-              {/* <Responsables chantier={chantier} /> */}
+              <ResponsablesPageProjetStructurant 
+                nomTerritoire={projetStructurant.territoireNomÀAfficher}
+                responsables={projetStructurant.responsables}
+              />
             </div>
             <div className='fr-col-12'>
               <SynthèseDesRésultats
@@ -78,7 +72,14 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
           </div>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
-              <ObjectifsPageProjetStructurant nomTerritoire={projetStructurant.territoireNomÀAfficher}  />
+              <Objectifs
+                estInteractif={false}
+                maille={projetStructurant.maille}
+                nomTerritoire={projetStructurant.territoireNomÀAfficher}
+                objectifs={[objectif]}
+                réformeId={projetStructurant.id}
+                typesObjectif={[typeObjectifProjetStructurant]}
+              />
             </div>
           </div>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
@@ -87,6 +88,7 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
                 commentaires={[]}
                 maille={projetStructurant.maille}
                 modeÉcriture={false}
+                nomTerritoire={projetStructurant.territoireNomÀAfficher}
                 réformeId={projetStructurant.id}
               />
             </div>

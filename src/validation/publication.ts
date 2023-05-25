@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
-import { typesObjectif } from '@/server/domain/objectif/Objectif.interface';
+import { typesObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
 import { typesDécisionStratégique } from '@/server/domain/décisionStratégique/DécisionStratégique.interface';
+import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
 
 export const LIMITE_CARACTÈRES_PUBLICATION = 5000;
 
@@ -10,22 +11,18 @@ export const zodValidateurCSRF = z.object({
 });
 
 export const validationPublicationContexte = z.object({
-  chantierId: z.string(),
+  réformeId: z.string(),
   territoireCode: z.string(),
 });
 
 export const zodValidateurEntitéType = z.union([
   z.object({
     entité: z.literal('commentaires'),
-    type: z.enum(typesCommentaireMailleNationale), 
-  }),
-  z.object({
-    entité: z.literal('commentaires'),
-    type: z.enum(typesCommentaireMailleRégionaleOuDépartementale), 
+    type: z.enum([...typesCommentaireMailleNationale, ...typesCommentaireMailleRégionaleOuDépartementale]), 
   }),
   z.object({
     entité: z.literal('objectifs'),
-    type: z.enum(typesObjectif), 
+    type: z.enum([...typesObjectifChantier, typeObjectifProjetStructurant]), 
   }),
   z.object({
     entité: z.literal('décisions stratégiques'),

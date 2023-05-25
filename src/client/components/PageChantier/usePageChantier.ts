@@ -27,7 +27,7 @@ export default function usePageChantier(chantierId: string) {
 
   const { data: commentaires } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParChantiers.useQuery(
     {
-      chantierId,
+      réformeId: chantierId,
       territoireCode: territoireSélectionné!.code,
       entité: 'commentaires',
     },
@@ -35,7 +35,7 @@ export default function usePageChantier(chantierId: string) {
 
   const { data: objectifs } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParChantiers.useQuery(
     {
-      chantierId,
+      réformeId: chantierId,
       territoireCode: 'NAT-FR',
       entité: 'objectifs',
     },
@@ -43,7 +43,7 @@ export default function usePageChantier(chantierId: string) {
 
   const { data: décisionStratégique } = api.publication.récupérerLaPlusRécente.useQuery(
     {
-      chantierId,
+      réformeId: chantierId,
       territoireCode: 'NAT-FR',
       entité: 'décisions stratégiques',
       type: 'suiviDesDécisionsStratégiques',

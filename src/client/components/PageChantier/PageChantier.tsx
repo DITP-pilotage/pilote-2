@@ -9,12 +9,13 @@ import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import Loader from '@/components/_commons/Loader/Loader';
 import SynthèseDesRésultats from '@/client/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Sommaire from '@/client/components/_commons/Sommaire/Sommaire';
-import ObjectifsPageChantier from '@/components/PageChantier/Objectifs/Objectifs';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
+import Objectifs from '@/components/_commons/Objectifs/Objectifs';
+import { typesObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
-import Responsables from './Responsables/Responsables';
+import ResponsablesPageProjetStructurant from './Responsables/Responsables';
 import PageChantierEnTête from './EnTête/EnTête';
 import Cartes from './Cartes/Cartes';
 import PageChantierStyled from './PageChantier.styled';
@@ -113,7 +114,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         />
                       </div>
                       <div className='fr-col-xl-5 fr-col-12'>
-                        <Responsables responsables={chantier.responsables} />
+                        <ResponsablesPageProjetStructurant responsables={chantier.responsables} />
                       </div>
                     </>
                   }
@@ -129,16 +130,18 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 </div>
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                   <div className="fr-col-12">
-                    <Cartes chantier={chantier} />
+                    <Cartes chantierMailles={chantier.mailles} />
                   </div>
                 </div>
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                   <div className="fr-col-12">
-                    <ObjectifsPageChantier
-                      chantierId={chantier.id}
+                    <Objectifs
                       maille='nationale'
                       modeÉcriture={modeÉcritureObjectifs}
+                      nomTerritoire='National'
                       objectifs={objectifs}
+                      réformeId={chantier.id}
+                      typesObjectif={typesObjectifChantier}
                     />
                   </div>
                 </div>
@@ -171,7 +174,8 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     <Commentaires
                       commentaires={commentaires}
                       maille={territoireSélectionné!.maille}
-                      modeÉcriture={territoireSélectionné?.accèsSaisiePublication}
+                      modeÉcriture={territoireSélectionné!.accèsSaisiePublication}
+                      nomTerritoire={territoireSélectionné!.nomAffiché}
                       réformeId={chantier.id}
                     />
                   </div>

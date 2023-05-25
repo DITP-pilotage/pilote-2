@@ -1,29 +1,18 @@
-// import { projet_structurant as ProjetStructurantPrisma, PrismaClient } from '@prisma/client';
-import { Maille, PrismaClient } from '@prisma/client';
+import { projet_structurant as ProjetStructurantPrisma, PrismaClient } from '@prisma/client';
+import { faker } from '@faker-js/faker';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import ProjetStructurantRepository from '@/server/domain/projetStructurant/ProjetStructurantRepository.interface';
-import { TerritoireDeBDD } from '@/server/domain/territoire/Territoire.interface';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import RécupérerDétailsTerritoireUseCase from '@/server/usecase/territoire/RécupérerDétailsTerritoireUseCase';
+import { générerPeutÊtreNull } from '@/server/infrastructure/test/builders/utils';
+import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 
 class ErreurProjetStructurantNonTrouvé extends Error {
   constructor(id: string) {
     super(`Erreur: projet structurant '${id}' non trouvé.`);
   }
 }
-
-// en attendant d'ajouter les ligne maille et code insee dans prisma
-export type ProjetStructurantPrisma = {
-  id: string;
-  code: string;
-  nom: string;
-  maille: Maille;
-  code_insee: string;
-  direction_administration: string[];
-  perimetres_ids: string[];
-  chefferie_de_projet: string[];
-  co_porteur: string[];
-};
 
 export default class ProjetStructurantSQLRepository implements ProjetStructurantRepository {
   private prisma: PrismaClient;
@@ -37,33 +26,35 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
     return {
       id: projetStructurantPrisma.id,
       nom: projetStructurantPrisma.nom,
-      avancement: null,
-      dateAvancement: Date.now().toString(),
-      maille: projetStructurantPrisma.maille as MailleInterne,
-      codeInsee: projetStructurantPrisma.code_insee,
+      codeTerritoire: projetStructurantPrisma.territoire_code,
+      // en attendant d'avoir les tables
+      avancement: générerPeutÊtreNull(0.1, faker.datatype.number({ min: 0, max: 120, precision: 0.01 })),
+      dateAvancement: faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString(),
+      météo: new MétéoBuilder().build(),
+      maille: territoire.maille as MailleInterne,
+      codeInsee: territoire.codeInsee,
       territoireNomÀAfficher: territoire.nomAffiché,
       périmètresIds: projetStructurantPrisma.perimetres_ids,
-      météo: 'NON_RENSEIGNEE',
       responsables: {
         //mapping périmètre ministère
         ministèrePorteur: '',
         ministèresCoporteurs: [],
         directionAdmininstration: projetStructurantPrisma.direction_administration,
         chefferieDeProjet: projetStructurantPrisma.chefferie_de_projet,
-        coporteurs: projetStructurantPrisma.co_porteur,
+        coporteurs: projetStructurantPrisma.co_porteurs,
       },
     };
   }
 
-  private async _récupérerTerritoireAssocié(projetStructurant: ProjetStructurantPrisma): Promise<TerritoireDeBDD> {
-    return new RécupérerDétailsTerritoireUseCase().run(projetStructurant.code_insee, projetStructurant.maille);
+  private async _récupérerTerritoireAssocié(projetStructurant: ProjetStructurantPrisma): Promise<Territoire> {
+    return new RécupérerDétailsTerritoireUseCase().run(projetStructurant.territoire_code);
   }
 
 
   async récupérer(id: string): Promise<ProjetStructurant> {
     const projetStructurant = await this.prisma.projet_structurant.findFirst({
       where: { id  },
-    }) as unknown as ProjetStructurantPrisma;
+    });
 
     if (!projetStructurant) {
       throw new ErreurProjetStructurantNonTrouvé(id);
@@ -73,7 +64,7 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
   }
 
   async récupérerListe(): Promise<ProjetStructurant[]> {
-    const projetsStructurants = await this.prisma.projet_structurant.findMany() as unknown as ProjetStructurantPrisma[];
+    const projetsStructurants = await this.prisma.projet_structurant.findMany();    
     return Promise.all(projetsStructurants.map(projetStructurant => this._mapperVersDomaine(projetStructurant)));
   }
 

@@ -9,16 +9,16 @@ import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/lé
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieMétéo';
 import CartesProps from './Cartes.interface';
 
-export default function Cartes({ chantier, estInteractif = true }: CartesProps) {
+export default function Cartes({ chantierMailles, estInteractif = true }: CartesProps) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const { auClicTerritoireCallback } = useCartographie();
 
-  const donnéesCartographieAvancement = objectEntries(chantier.mailles[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
+  const donnéesCartographieAvancement = objectEntries(chantierMailles[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
     valeur: territoire.avancement.global,
     codeInsee: codeInsee,
   }));
 
-  const donnéesCartographieMétéo = objectEntries(chantier.mailles[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
+  const donnéesCartographieMétéo = objectEntries(chantierMailles[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
     valeur: territoire.météo,
     codeInsee: codeInsee,
   }));

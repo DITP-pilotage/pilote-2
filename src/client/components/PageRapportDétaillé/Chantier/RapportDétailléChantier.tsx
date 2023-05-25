@@ -4,15 +4,16 @@ import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé
 import RapportDétailléChantierProps from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface';
 import { useRapportDétailléChantier } from '@/components/PageRapportDétaillé/Chantier/useRapportDétailléChantier';
 import AvancementChantier from '@/components/PageChantier/AvancementChantier/AvancementChantier';
-import Responsables from '@/components/PageChantier/Responsables/Responsables';
+import ResponsablesPageProjetStructurant from '@/components/PageChantier/Responsables/Responsables';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Cartes from '@/components/PageChantier/Cartes/Cartes';
-import ObjectifsPageChantier from '@/components/PageChantier/Objectifs/Objectifs';
+import Objectifs from '@/components/_commons/Objectifs/Objectifs';
 import Indicateurs from '@/components/PageChantier/Indicateurs/Indicateurs';
 import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Titre from '@/components/_commons/Titre/Titre';
+import { typesObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
 
 export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats, commentaires, objectifs, décisionStratégique }: RapportDétailléChantierProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -50,7 +51,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                 />
               </div>
               <div className='fr-col-xl-6 fr-col-12'>
-                <Responsables responsables={chantier.responsables} />
+                <ResponsablesPageProjetStructurant responsables={chantier.responsables} />
               </div>
             </>
           }
@@ -67,7 +68,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
           <div className="fr-col-12">
             <Cartes
-              chantier={chantier}
+              chantierMailles={chantier.mailles}
               estInteractif={false}
             />
           </div>
@@ -76,11 +77,13 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           objectifs !== null &&
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
             <div className="fr-col-12">
-              <ObjectifsPageChantier
-                chantierId={chantier.id}
+              <Objectifs
                 estInteractif={false}
                 maille='nationale'
+                nomTerritoire='National'
                 objectifs={objectifs}
+                réformeId={chantier.id}
+                typesObjectif={typesObjectifChantier}
               />
             </div>
           </div>
@@ -115,6 +118,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                   commentaires={commentaires}
                   estInteractif={false}
                   maille={territoireSélectionné!.maille}
+                  nomTerritoire={territoireSélectionné!.nomAffiché}
                   réformeId={chantier.id}
                 />
               </div>
