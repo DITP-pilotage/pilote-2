@@ -1,4 +1,5 @@
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import TableauChantiersTuileMinistèreStyled from './TableauChantiersTuileMinistère.styled';
 import TableauChantiersTuileMinistèreProps from './TableauChantiersTuileMinistère.interface';
 
@@ -6,8 +7,15 @@ export default function TableauChantiersTuileMinistère({ ministère, estDéroul
   return (
     <TableauChantiersTuileMinistèreStyled>
       <div>
-        <p className="fr-text--sm">
-          {ministère.nom}
+        <p className="fr-mb-0 fr-ml-n1w">
+          <IcônesMultiplesEtTexte
+            icônesId={ministère.icône ? [ministère.icône] : []}
+            largeurDesIcônes='1.75rem'
+          >
+            <span className='fr-text--sm'>
+              {ministère?.nom ?? ''}
+            </span>
+          </IcônesMultiplesEtTexte>
         </p>
         <div className="fr-mx-3w fr-mt-1v avancement">
           <BarreDeProgression

@@ -2,4 +2,5 @@ import { DonnéesTableauChantiers } from '@/components/PageAccueil/PageChantiers
 
 export default interface TableauChantiersTuileChantierProps {
   chantier: DonnéesTableauChantiers;
+  afficherIcône: boolean;
 }
