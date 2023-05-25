@@ -130,7 +130,12 @@ const colonnesTableauChantiers = [
   }),
   reactTableColonnesHelper.display({
     id: 'chantier-tuile',
-    cell: chantierCellContext => <TableauChantiersTuileChantier chantier={chantierCellContext.row.original} />,
+    cell: chantierCellContext => (
+      <TableauChantiersTuileChantier
+        afficherIcône={!chantierCellContext.table.getColumn('porteur')?.getIsGrouped()}
+        chantier={chantierCellContext.row.original}
+      />
+    ),
     aggregatedCell: aggregatedCellContext => (
       <TableauChantiersTuileMinistère
         estDéroulé={aggregatedCellContext.row.getIsExpanded()}
@@ -140,6 +145,7 @@ const colonnesTableauChantiers = [
     aggregationFn: (_columnId, chantiersDuMinistèreRow) => {
       return {
         nom: chantiersDuMinistèreRow[0].original.porteur?.nom ?? '',
+        icône: chantiersDuMinistèreRow[0].original.porteur?.icône ?? null,
         avancement: calculerMoyenne(chantiersDuMinistèreRow.map(chantierRow => chantierRow.original.avancement)),
       } as TableauChantiersTuileMinistèreProps['ministère'];
     },

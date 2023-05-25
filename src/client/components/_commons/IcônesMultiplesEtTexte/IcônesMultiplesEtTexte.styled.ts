@@ -1,15 +1,18 @@
 import styled from '@emotion/styled';
 
-const IcônesMultiplesEtTexteStyled = styled.div`
+interface IcônesMultiplesEtTexteStyledProps {
+  largeurDesIcônes: `${number}rem`;
+}
+
+const IcônesMultiplesEtTexteStyled = styled.div<IcônesMultiplesEtTexteStyledProps>`
   display: grid;
-  grid-template-columns: 3.5rem auto;
-  align-items: center;
+  grid-template-columns: ${(props) => props.largeurDesIcônes} auto;
+  align-items: start;
   
   .icônes {
     display: flex;
     flex-flow: column wrap;
     align-content: center;
-    align-items: center;
     max-height: 3rem;
   }
 `;
