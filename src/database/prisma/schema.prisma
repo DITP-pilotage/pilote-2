@@ -214,11 +214,10 @@ model projet_structurant {
   code                                  String
   nom                                   String
   territoire_code                       String
-  perimetres_ids_ministere_porteur      String[]
-  perimetres_ids_ministeres_coporteurs  String[]
+  perimetres_ids                        String[]
   direction_administration              String[]
   chefferie_de_projet                   String[]
-  co_porteur                            String[]
+  co_porteurs                           String[]
 
   @@schema("public")
 }

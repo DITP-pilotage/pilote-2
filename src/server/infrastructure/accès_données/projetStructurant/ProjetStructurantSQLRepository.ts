@@ -34,14 +34,14 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
       maille: territoire.maille as MailleInterne,
       codeInsee: territoire.codeInsee,
       territoireNomÀAfficher: territoire.nomAffiché,
-      périmètresIds: [...projetStructurantPrisma.perimetres_ids_ministere_porteur, ...projetStructurantPrisma.perimetres_ids_ministeres_coporteurs],
+      périmètresIds: projetStructurantPrisma.perimetres_ids,
       responsables: {
         //mapping périmètre ministère
         ministèrePorteur: '',
         ministèresCoporteurs: [],
         directionAdmininstration: projetStructurantPrisma.direction_administration,
         chefferieDeProjet: projetStructurantPrisma.chefferie_de_projet,
-        coporteurs: projetStructurantPrisma.co_porteur,
+        coporteurs: projetStructurantPrisma.co_porteurs,
       },
     };
   }

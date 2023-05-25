@@ -357,8 +357,7 @@ export class DatabaseSeeder {
       }));
 
       const c = new ProjetStructurantRowBuilder()
-        .avecPérimètresIdsMinistèrePorteur([périmètres[0].id])
-        .avecPérimètresIdsMinistèrsCoPorteurs(périmètres.slice(1).map(périmètre => périmètre.id))
+        .avecPérimètresIds(périmètres.map(périmètre => périmètre.id))
         .build();
 
       this._projets_structurants.push(c);
