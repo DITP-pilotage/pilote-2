@@ -92,21 +92,21 @@ export const publicationRouter = créerRouteurTRPC({
     .query(async ({ input, ctx }) => {
       const typeDeRéforme = déterminerLeTypeDeRéforme(input.réformeId);
 
-      if (input.entité === 'commentaires') {
-        if (typeDeRéforme === 'chantier') {
+      if (typeDeRéforme === 'chantier') {
+        if (input.entité === 'commentaires') {
           const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getCommentaireRepository());
           return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.réformeId], input.territoireCode, ctx.session.habilitations);
         }
 
-        if (typeDeRéforme === 'projet structurant') {
-          const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase(dependencies.getCommentaireProjetStructurantRepository());
-          return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.réformeId]);
+        if (input.entité === 'objectifs') {
+          const récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getObjectifRepository());
+          return récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.réformeId], ctx.session.habilitations);
         }
       }
-
-      if (input.entité === 'objectifs') {
-        const récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getObjectifRepository());
-        return récupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.réformeId], ctx.session.habilitations);
+      
+      if (typeDeRéforme === 'projet structurant' && input.entité === 'commentaires') {
+        const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase(dependencies.getCommentaireProjetStructurantRepository());
+        return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.réformeId]);
       }
     }),
 

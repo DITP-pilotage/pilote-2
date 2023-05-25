@@ -35,7 +35,8 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
       périmètres.push({
         id: ministèreQueryResult.perimetre_ids[i],
         nom: ministèreQueryResult.perimetre_noms[i],
-        ministere_id: ministèreQueryResult.ministere_id,
+        ministèreId: ministèreQueryResult.ministere_id,
+        ministèreNom: ministèreQueryResult.ministere,
       });
     }
 

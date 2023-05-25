@@ -23,8 +23,7 @@ import {
   PrismaMesureIndicateurTemporaireRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurTemporaireRepository';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
-import UtilisateurIAMKeycloakRepository
-  from '@/server/infrastructure/accès_données/utilisateur/UtilisateurIAMKeycloakRepository';
+import UtilisateurIAMKeycloakRepository from '@/server/infrastructure/accès_données/utilisateur/UtilisateurIAMKeycloakRepository';
 import DécisionStratégiqueRepository from '@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
@@ -46,6 +45,7 @@ import {
 } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
 import CommentaireProjetStructurantRepository from '@/server/domain/projetStructurant/commentaire/CommentaireRepository.interface';
 import { PublierFichierIndicateurImporteUseCase } from '@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase';
+import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import ObjectifSQLRepository from './accès_données/chantier/objectif/ObjectifSQLRepository';
 import DécisionStratégiqueSQLRepository from './accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
@@ -53,6 +53,7 @@ import { TerritoireSQLRepository } from './accès_données/territoire/Territoire
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
 import ObjectifProjetStructurantSQLRepository from './accès_données/projetStructurant/objectif/ObjectifProjetStructurantSQLRepository';
 import CommentaireProjetStructurantSQLRepository from './accès_données/projetStructurant/commentaire/CommentaireProjetStructurantSQLRepository';
+import PérimètreMinistérielSQLRepository from './accès_données/périmètreMinistériel/PérimètreMinistérielSQLRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
@@ -93,6 +94,8 @@ class Dependencies {
   
   private readonly _commentaireProjetStructurantRepository: CommentaireProjetStructurantRepository;
 
+  private readonly _périmètreMinistérielRepository: PérimètreMinistérielRepository;
+
   private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
 
   constructor() {
@@ -115,6 +118,7 @@ class Dependencies {
     this._mesureIndicateurTemporaireRepository = new PrismaMesureIndicateurTemporaireRepository(prisma);
     this._mesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
     this._commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository(prisma);
+    this._périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
@@ -202,6 +206,10 @@ class Dependencies {
 
   getCommentaireProjetStructurantRepository() {
     return this._commentaireProjetStructurantRepository;
+  }
+
+  getPérimètreMinistérielRepository() {
+    return this._périmètreMinistérielRepository;
   }
 
   getUtilisateurIAMRepository(): UtilisateurIAMRepository {

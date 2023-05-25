@@ -7,6 +7,8 @@ import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import RécupérerDétailsTerritoireUseCase from '@/server/usecase/territoire/RécupérerDétailsTerritoireUseCase';
 import { générerPeutÊtreNull } from '@/server/infrastructure/test/builders/utils';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 class ErreurProjetStructurantNonTrouvé extends Error {
   constructor(id: string) {
@@ -23,6 +25,8 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
 
   private async _mapperVersDomaine(projetStructurantPrisma: ProjetStructurantPrisma): Promise<ProjetStructurant> {
     const territoire = await this._récupérerTerritoireAssocié(projetStructurantPrisma);
+    const périmètres = await this._récupérerPérimètresAssociés(projetStructurantPrisma.perimetres_ids);
+
     return {
       id: projetStructurantPrisma.id,
       nom: projetStructurantPrisma.nom,
@@ -36,9 +40,8 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
       territoireNomÀAfficher: territoire.nomAffiché,
       périmètresIds: projetStructurantPrisma.perimetres_ids,
       responsables: {
-        //mapping périmètre ministère
-        ministèrePorteur: projetStructurantPrisma.perimetres_ids[0],
-        ministèresCoporteurs: [],
+        ministèrePorteur: périmètres[0].ministèreNom,
+        ministèresCoporteurs: périmètres.slice(1).map(p => p.ministèreNom),
         directionAdmininstration: projetStructurantPrisma.direction_administration,
         chefferieDeProjet: projetStructurantPrisma.chefferie_de_projet,
         coporteurs: projetStructurantPrisma.co_porteurs,
@@ -50,7 +53,10 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
     return new RécupérerDétailsTerritoireUseCase().run(projetStructurant.territoire_code);
   }
 
-  
+  private async _récupérerPérimètresAssociés(périmètresIds: string[]): Promise<PérimètreMinistériel[]> {
+    const périmètreMinistérielRepository = dependencies.getPérimètreMinistérielRepository();
+    return Promise.all(périmètresIds.map(async périmètreId => périmètreMinistérielRepository.récupérer(périmètreId)));    
+  }
 
 
   async récupérer(id: string): Promise<ProjetStructurant> {
@@ -58,9 +64,7 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
       where: { id  },
     });
 
-    if (!projetStructurant) {
-      throw new ErreurProjetStructurantNonTrouvé(id);
-    }
+    if (!projetStructurant) throw new ErreurProjetStructurantNonTrouvé(id);
 
     return this._mapperVersDomaine(projetStructurant);
   }
@@ -69,5 +73,4 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
     const projetsStructurants = await this.prisma.projet_structurant.findMany();    
     return Promise.all(projetsStructurants.map(projetStructurant => this._mapperVersDomaine(projetStructurant)));
   }
-
 }

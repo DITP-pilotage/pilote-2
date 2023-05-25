@@ -356,11 +356,11 @@ export class DatabaseSeeder {
         max: 4,
       }));
 
-      const c = new ProjetStructurantRowBuilder()
+      const p = new ProjetStructurantRowBuilder()
         .avecPérimètresIds(périmètres.map(périmètre => périmètre.id))
         .build();
 
-      this._projets_structurants.push(c);
+      this._projets_structurants.push(p);
     }
 
     await this._prisma.projet_structurant.createMany({ data: this._projets_structurants });
