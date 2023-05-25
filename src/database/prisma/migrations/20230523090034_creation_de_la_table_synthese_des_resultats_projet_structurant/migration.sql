@@ -2,6 +2,7 @@
 CREATE TABLE "public"."synthese_des_resultats_projet_structurant" (
     "id" TEXT NOT NULL,
     "projet_structurant_id" TEXT NOT NULL,
+    "territoire_id" TEXT NOT NULL,
     "meteo" TEXT,
     "date_meteo" TIMESTAMP,
     "commentaire" TEXT,
