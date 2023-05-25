@@ -52,12 +52,14 @@ import {
 import {
   MesureIndicateurRepository,
 } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
+import CommentaireProjetStructurantRepository from '@/server/domain/projetStructurant/commentaire/CommentaireRepository.interface';
 import ObjectifSQLRepository from './accès_données/objectif/ObjectifSQLRepository';
 import DécisionStratégiqueSQLRepository from './accès_données/décisionStratégique/DécisionStratégiqueSQLRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
 import ObjectifProjetStructurantSQLRepository from './accès_données/projetStructurant/objectif/ObjectifProjetStructurantSQLRepository';
+import CommentaireProjetStructurantSQLRepository from './accès_données/projetStructurant/commentaire/CommentaireProjetStructurantSQLRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
@@ -95,6 +97,8 @@ class Dependencies {
   private readonly _mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
 
   private readonly _mesureIndicateurRepository: MesureIndicateurRepository;
+  
+  private readonly _commentaireProjetStructurantRepository: CommentaireProjetStructurantRepository;
 
   private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
 
@@ -117,6 +121,7 @@ class Dependencies {
     this._rapportRepository = new PrismaRapportRepository(prisma);
     this._mesureIndicateurTemporaireRepository = new PrismaMesureIndicateurTemporaireRepository(prisma);
     this._mesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
+    this._commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
@@ -198,8 +203,12 @@ class Dependencies {
     return this._projetStructurantRepository;
   }
 
-  getObjectifProjetStructurantrepository() {
+  getObjectifProjetStructurantRepository() {
     return this._objectifProjetStructurantRepository;
+  }
+
+  getCommentaireProjetStructurantRepository() {
+    return this._commentaireProjetStructurantRepository;
   }
 
   getUtilisateurIAMRepository(): UtilisateurIAMRepository {

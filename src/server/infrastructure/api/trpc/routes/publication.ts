@@ -26,6 +26,10 @@ import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase fro
 import { déterminerLeTypeDeRéforme } from '@/server/utils/réforme';
 import RécupérerObjectifProjetStructurantLePlusRécentUseCase from '@/server/usecase/projetStructurant/objectif/RécupérerObjectifLePlusRécentUseCase';
 import { TypeObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
+import RécupérerCommentaireProjetStructurantLePlusRécentUseCase from '@/server/usecase/projetStructurant/commentaire/RécupérerCommentaireLePlusRécentUseCase';
+import { TypeCommentaire } from '@/server/domain/commentaire/Commentaire.interface';
+import { TypeCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
+import RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase from '@/server/usecase/projetStructurant/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase';
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
@@ -36,7 +40,7 @@ export const publicationRouter = créerRouteurTRPC({
       
       if (input.entité === 'commentaires') {
         const créerUnCommentaireUseCase = new CréerUnCommentaireUseCase(dependencies.getCommentaireRepository());
-        return créerUnCommentaireUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur, input.type, ctx.session.habilitations);
+        return créerUnCommentaireUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur, input.type as TypeCommentaire, ctx.session.habilitations);
       }
         
       if (input.entité === 'objectifs') {
@@ -58,7 +62,7 @@ export const publicationRouter = créerRouteurTRPC({
       if (typeDeRéforme === 'chantier') {
         if (input.entité === 'commentaires') {
           const récupérerCommentaireLePlusRécentUseCase = new RécupérerCommentaireLePlusRécentUseCase(dependencies.getCommentaireRepository());
-          return récupérerCommentaireLePlusRécentUseCase.run(input.réformeId, input.territoireCode, input.type, ctx.session.habilitations);
+          return récupérerCommentaireLePlusRécentUseCase.run(input.réformeId, input.territoireCode, input.type as TypeCommentaire, ctx.session.habilitations);
         }
 
         if (input.entité === 'objectifs') {
@@ -72,23 +76,32 @@ export const publicationRouter = créerRouteurTRPC({
         }
       } else if (typeDeRéforme === 'projetStructurant') {
         if (input.entité === 'commentaires') {
-          // const récupérerCommentaireLePlusRécentUseCase = new RécupérerCommentaireLePlusRécentUseCase(dependencies.getCommentaireRepository());
-          // return récupérerCommentaireLePlusRécentUseCase.run(input.réformeId, input.territoireCode, input.type, ctx.session.habilitations);
+          const récupérerCommentaireLePlusRécentUseCase = new RécupérerCommentaireProjetStructurantLePlusRécentUseCase(dependencies.getCommentaireProjetStructurantRepository());
+          return récupérerCommentaireLePlusRécentUseCase.run(input.réformeId, input.type as TypeCommentaireProjetStructurant);
         }
       
         if (input.entité === 'objectifs') {
-          const récupérerObjectifLePlusRécentUseCase = new RécupérerObjectifProjetStructurantLePlusRécentUseCase(dependencies.getObjectifProjetStructurantrepository());
+          const récupérerObjectifLePlusRécentUseCase = new RécupérerObjectifProjetStructurantLePlusRécentUseCase(dependencies.getObjectifProjetStructurantRepository());
           return récupérerObjectifLePlusRécentUseCase.run(input.réformeId);
         }
       }
-    }),
+    }), 
 
   récupérerLesPlusRécentesParTypeGroupéesParChantiers: procédureProtégée
     .input(validationPublicationContexte.merge(zodValidateurEntité))
-    .query(async ({ input, ctx }) => {      
+    .query(async ({ input, ctx }) => {
+      const typeDeRéforme = déterminerLeTypeDeRéforme(input.réformeId);
+
       if (input.entité === 'commentaires') {
-        const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getCommentaireRepository());
-        return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.réformeId], input.territoireCode, ctx.session.habilitations);
+        if (typeDeRéforme === 'chantier') {
+          const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getCommentaireRepository());
+          return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.réformeId], input.territoireCode, ctx.session.habilitations);
+        }
+
+        if (typeDeRéforme === 'projetStructurant') {
+          const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase(dependencies.getCommentaireProjetStructurantRepository());
+          return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.réformeId]);
+        }
       }
 
       if (input.entité === 'objectifs') {
@@ -102,7 +115,7 @@ export const publicationRouter = créerRouteurTRPC({
     .query(async ({ input, ctx }) => {
       if (input.entité === 'commentaires') {
         const récupérerHistoriqueCommentaireUseCase = new RécupérerHistoriqueCommentaireUseCase(dependencies.getCommentaireRepository());
-        return récupérerHistoriqueCommentaireUseCase.run(input.réformeId, input.territoireCode, input.type, ctx.session.habilitations);
+        return récupérerHistoriqueCommentaireUseCase.run(input.réformeId, input.territoireCode, input.type as TypeCommentaire, ctx.session.habilitations);
       } 
   
       if (input.entité === 'objectifs') {
