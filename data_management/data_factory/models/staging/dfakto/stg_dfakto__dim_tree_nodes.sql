@@ -18,7 +18,7 @@ renamed as (
         SUBSTRING(tree_node_code, 1, 6) as code_chantier,
         CASE
             WHEN CHAR_LENGTH(tree_node_code) > 6 THEN SUBSTRING(tree_node_code, 8)
-            ELSE 'NAT'
+            ELSE 'FRANCE'
         END as zone_code,
         tree_node_status as status,
         tree_node_last_update_properties_date as last_update_properties_date,
