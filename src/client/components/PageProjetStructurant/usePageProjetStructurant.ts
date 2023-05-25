@@ -17,7 +17,7 @@ export default function usePageProjetStructurant(projetStructurantId: ProjetStru
     {
       réformeId: projetStructurantId,
       territoireCode: territoireCode,
-      entité: 'objectifs',
+      entité: 'commentaires',
     },
   );  
     

@@ -12,6 +12,7 @@ import {
   synthese_des_resultats,
   territoire,
   projet_structurant,
+  commentaire_projet_structurant,
 } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import SynthèseDesRésultatsSQLRowBuilder
@@ -40,6 +41,7 @@ import { typesIndicateur } from '@/server/domain/chantier/indicateur/Indicateur.
 import MinistèreSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/MinistèreSQLRow.builder';
 import ProjetStructurantRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ProjetStructurantSQLRow.builder';
 import ObjectifProjetStructurantSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifProjetStructurantSQLRow.builder';
+import CommentaireProjetStructurantRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireProjetStructurantSQLRow.builder';
 import { formaterId } from './format';
 
 const chantierStatiqueId123 = new ChantierSQLRowBuilder()
@@ -96,7 +98,9 @@ export class DatabaseSeeder {
 
   private _projets_structurants: projet_structurant[] = [];
 
-  private _objectifs_projets_structurants: objectif_projet_structurant[] = [];
+  private _objectifs_projet_structurant: objectif_projet_structurant[] = [];
+
+  private _commentaires_projet_structurant: commentaire_projet_structurant[] = [];
 
   constructor(prisma: PrismaClient) {
     this._prisma = prisma;
@@ -138,8 +142,10 @@ export class DatabaseSeeder {
     await this._créerUtilisateursEtDroits();
     console.log('  ProjetsStructurants...');
     await this._créerProjetsStructurants();
-    console.log('  ObjectifsProjetsStructurants');
-    await this._créerObjectifsProjetsStructurants();    
+    console.log('  ObjectifsProjetStructurant');
+    await this._créerObjectifsProjetsStructurants();
+    console.log('  CommentairesProjetStructurant');
+    await this._créerCommentairesProjetStructurant();
     console.log('----------------- Fin ------------------');
   }
 
@@ -368,9 +374,21 @@ export class DatabaseSeeder {
 
   private async _créerObjectifsProjetsStructurants() {
     this._projets_structurants.forEach(p => {
-      this._objectifs_projets_structurants.push(new ObjectifProjetStructurantSQLRowBuilder().avecProjetStructurantId(p.id).build());
+      this._objectifs_projet_structurant.push(new ObjectifProjetStructurantSQLRowBuilder().avecProjetStructurantId(p.id).build());
     });
     
-    await this._prisma.objectif_projet_structurant.createMany({ data: this._objectifs_projets_structurants });
+    await this._prisma.objectif_projet_structurant.createMany({ data: this._objectifs_projet_structurant });
+  }
+
+  private async _créerCommentairesProjetStructurant() {
+    this._projets_structurants.forEach(p => {
+      répéter(0, 12, () => {
+        this._commentaires_projet_structurant.push(new CommentaireProjetStructurantRowBuilder()
+          .avecProjetStructurantId(p.id)
+          .build());
+      });
+    });
+
+    await this._prisma.commentaire_projet_structurant.createMany({ data: this._commentaires_projet_structurant });
   }
 }

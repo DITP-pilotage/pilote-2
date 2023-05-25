@@ -61,17 +61,17 @@ export default class CommentaireProjetStructurantSQLRepository implements Commen
   async récupérerLesPlusRécentsGroupésParProjetsStructurants(projetStructurantIds: ProjetStructurant['id'][]): Promise<Record<ProjetStructurant['id'], CommentaireProjetStructurant[]>> {
     const commentaires = await this.prisma.$queryRaw<CommentaireProjetStructurantPrisma[]>`
       SELECT c.projet_structurant_id, c.contenu, c.auteur, c.type, id, date
-      FROM commentaire c
+      FROM commentaire_projet_structurant c
         INNER JOIN (
-          SELECT type, projet_structurant_id, maille, code_insee, MAX(date) as maxdate
-          FROM commentaire
-          WHERE projet_structurant_id =  ANY (${projetStructurantIds})
+          SELECT type, projet_structurant_id, MAX(date) as maxdate
+          FROM commentaire_projet_structurant
+          WHERE projet_structurant_id = ANY (${projetStructurantIds})
           GROUP BY type, projet_structurant_id
         ) c_recents
           ON c.type = c_recents.type
           AND c.date = c_recents.maxdate
           AND c.projet_structurant_id = c_recents.projet_structurant_id
-    `;
+    `;    
 
     return groupByAndTransform(
       commentaires,
