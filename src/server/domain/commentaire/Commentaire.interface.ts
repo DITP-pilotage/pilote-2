@@ -12,7 +12,3 @@ export const typesCommentaireMailleRégionaleOuDépartementale = ['commentairesS
 export type TypeCommentaireMailleNationale = typeof typesCommentaireMailleNationale[number];
 export type TypeCommentaireMailleRégionaleOuDépartementale = typeof typesCommentaireMailleRégionaleOuDépartementale[number];
 export type TypeCommentaireChantier = TypeCommentaireMailleNationale | TypeCommentaireMailleRégionaleOuDépartementale;
-
-export type CommentairesMailleNationale = Record<TypeCommentaireMailleNationale, Commentaire>;
-export type CommentairesMailleRégionaleOuDépartementale = Record<TypeCommentaireMailleRégionaleOuDépartementale, Commentaire>;
-export type Commentaires = CommentairesMailleNationale | CommentairesMailleRégionaleOuDépartementale;

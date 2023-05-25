@@ -87,8 +87,8 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
             <div className="fr-col-12">
               <Commentaires
                 commentaires={commentaires}
+                estInteractif={false}
                 maille={projetStructurant.maille}
-                modeÉcriture={false}
                 nomTerritoire={projetStructurant.territoireNomÀAfficher}
                 réformeId={projetStructurant.id}
                 typesCommentaire={typesCommentaireProjetStructurant}
