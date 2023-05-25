@@ -35,7 +35,7 @@ const PageChantierStyled = styled.div`
       background: #FFF;
     }
 
-    .barre-latérale, .fr-btn, .fr-link {
+    .barre-latérale, .fr-btn, .fr-link, .fr-accordion {
       display: none;
     }
   }
