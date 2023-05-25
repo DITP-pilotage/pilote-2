@@ -1,7 +1,13 @@
 SELECT
-DISTINCT ON(ps.id, dfakto_view.zone_code, dfakto_view.objectif, dfakto_view.objectif_date)
+DISTINCT ON(ps.id, dfakto_view.objectif, dfakto_view.objectif_date)
+    {{ dbt_utils.surrogate_key(
+        ['ps.id',
+        'dfakto_view.objectif',
+        'dfakto_view.objectif_date',
+        ]
+    ) }} as id,
     ps.id as projet_structurant_id,
-    dfakto_view.zone_code as territoire_id,
+    'suivi_des_objectifs' as type,
     dfakto_view.objectif as contenu,
     dfakto_view.objectif_date as date,
     NULL as auteur
