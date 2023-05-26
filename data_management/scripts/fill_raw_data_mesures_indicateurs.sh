@@ -17,7 +17,7 @@ fi
 # 2nd hypothèse : le format n'est pas encore défini (a ajuster en amont de cette étape ou dans l'état staging)
 # Creation de la table temporaire pour charger les données en base dans la table temp_metric_indicateur
 
-#psql "$DATABASE_URL" -c "TRUNCATE TABLE raw_data.mesure_indicateur"
+psql "$DATABASE_URL" -c "TRUNCATE TABLE raw_data.mesure_indicateur"
 #psql "$DATABASE_URL" -c "ALTER TABLE raw_data.mesure_indicateur DROP COLUMN id"
 #psql "$DATABASE_URL" -c "ALTER TABLE raw_data.mesure_indicateur ADD COLUMN id UUID DEFAULT (gen_random_uuid())"
 
@@ -25,9 +25,10 @@ fi
 #  Fichier de tests
 #psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/pass_culture_indic_test.csv
 #psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/pass_culture_indic_with_dept_and_reg.csv
-psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/indicateur_cumule_et_decumule.csv
-sleep 2
-psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/indicateur_cumule_et_decumule_doublon.csv
+#psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/indicateur_cumule_et_decumule.csv
+#sleep 2
+#psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/indicateur_cumule_et_decumule_doublon.csv
+psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < input_data/private_data/PPG_metadata/config_calculs/valeurs-sample.csv
 
 #  Quelques fichiers de prod
 #psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/data_import1_IND-228.csv

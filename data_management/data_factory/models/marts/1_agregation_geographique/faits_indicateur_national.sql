@@ -27,6 +27,7 @@ FROM
     {{ ref("faits_indicateur_regional") }} fi_reg
     INNER JOIN {{ ref("stg_ppg_metadata__parametrage_indicateurs") }} parametrage_indicateurs
         ON fi_reg.indicateur_id = parametrage_indicateurs.indicateur_id
+WHERE fi_reg.indicateur_id NOT IN (SELECT indicateur_id FROM faits_indicateur__national) -- condition temporaire en attendant le paramétrage
 GROUP BY
     fi_reg.indicateur_id,
     fi_reg.zone_id_parent,
