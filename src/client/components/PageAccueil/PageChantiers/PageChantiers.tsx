@@ -13,6 +13,7 @@ import ExportDesDonnées, { ID_HTML_MODALE_EXPORT } from '@/components/PageAccue
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import FiltresActifs from '@/client/components/PageAccueil/FiltresActifs/FiltresActifs';
 import RépartitionMétéo from '@/client/components/PageAccueil/RépartitionMétéo/RépartitionMétéo';
+import PageChantiersStyled from './PageChantiers.styled';
 import PageChantiersProps from './PageChantiers.interface';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -31,20 +32,20 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
   } = usePageChantiers(chantiers);
 
   return (
-    <main>
+    <PageChantiersStyled>
       {
         nombreFiltresActifs > 0 &&
         <FiltresActifs />
       }
       <div className="fr-py-2w fr-px-md-4w fr-container--fluid">
-        <div className="fr-px-2w fr-px-md-0 flex justify-between">
+        <div className="fr-mb-2w titre">
           <Titre
             baliseHtml="h1"
-            className="fr-h4"
+            className="fr-h4 fr-px-2w fr-px-md-0 fr-mb-1w"
           >
             {`${chantiersFiltrés.length} chantiers`}
           </Titre>
-          <div className="flex">
+          <div className="titre-liens">
             {
               process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
               <div>
@@ -122,6 +123,6 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
           </div>
         </div>
       </div>
-    </main>
+    </PageChantiersStyled>
   );
 }
