@@ -11,7 +11,7 @@ export default async function handleExportDesChantiersSansFiltre(request: NextAp
   assert(session);
 
   const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase();
-  const chantiersPourExport = await exportCsvDesChantiersSansFiltreUseCase.run(session.habilitations);
+  const chantiersPourExport = await exportCsvDesChantiersSansFiltreUseCase.run(session.habilitations, session.profil);
 
   response.setHeader('Content-Type', 'text/csv');
 

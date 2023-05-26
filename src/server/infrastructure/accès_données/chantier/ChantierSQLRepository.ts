@@ -242,6 +242,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       tauxDAvancementNational: it.taux_national,
       tauxDAvancementRégional: it.taux_regional,
       tauxDAvancementDépartemental: it.taux_departemental,
+      périmètreIds: it.perimetre_ids,
       météo: it.meteo,
       estBaromètre: it.est_barometre,
       estTerritorialisé: it.est_territorialise,
