@@ -15,7 +15,7 @@
             </div>
             <div class="fr-header__service">
               <p class="fr-header__service-title">PILOTE</p>
-              <p class="fr-header__service-tagline">Piloter les politiques publiques par leurs impacts</p>
+              <p class="fr-header__service-tagline">Piloter l’action publique par les résultats</p>
             </div>
           </div>
         </div>

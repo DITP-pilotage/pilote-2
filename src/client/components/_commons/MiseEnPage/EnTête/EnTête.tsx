@@ -49,7 +49,7 @@ export default function EnTête() {
                   </p>
                 </Link>
                 <p className="fr-header__service-tagline fr-hidden fr-unhidden-sm">
-                  Piloter les politiques publiques par leurs impacts
+                  Piloter l’action publique par les résultats
                 </p>
               </div>
             </div>
