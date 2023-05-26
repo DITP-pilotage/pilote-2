@@ -10,7 +10,7 @@ export default async function handleExportDesIndicateursSansFiltre(request: Next
   assert(session);
 
   const exportCsvDesIndicateursSansFiltreUseCase = new ExportCsvDesIndicateursSansFiltreUseCase();
-  const indicateursPourExport = await exportCsvDesIndicateursSansFiltreUseCase.run(session.habilitations);
+  const indicateursPourExport = await exportCsvDesIndicateursSansFiltreUseCase.run(session.habilitations, session.profil);
 
   response.setHeader('Content-Type', 'text/csv');
 
