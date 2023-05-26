@@ -152,13 +152,13 @@ model commentaire {
 }
 
 model mesure_indicateur {
-  id           String    @id @db.Uuid
+  id           String    @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
   indic_id     String
   zone_id      String
   metric_date  String
   metric_type  String
   metric_value String
-  rapport_id   String    @db.Uuid
+  rapport_id   String    @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
   date_import  DateTime? @default(now()) @db.Timestamptz
 
   @@schema("raw_data")
