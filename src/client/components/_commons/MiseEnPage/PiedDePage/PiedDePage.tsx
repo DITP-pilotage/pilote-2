@@ -68,6 +68,28 @@ export default function PiedDePage() {
             </ul>
           </div>
         </div>
+        <div className="fr-footer__bottom">
+          <ul className="fr-footer__bottom-list">
+            <li className="fr-footer__bottom-item">
+              <p className="fr-footer__bottom-link fr-mb-0">
+                Accessibilité : non conforme
+              </p>
+            </li>
+          </ul>
+          <div className="fr-footer__bottom-copy">
+            <p>
+              Sauf mention contraire, tous les contenus de ce site sont sous
+              {' '}
+              <a
+                href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
+                target="_blank"
+              >
+                licence
+                etalab-2.0
+              </a>
+            </p>
+          </div>
+        </div>
       </div>
     </footer>
   );
