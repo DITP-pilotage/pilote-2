@@ -2,6 +2,7 @@ import { dependencies } from '@/server/infrastructure/Dependencies';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { formaterDateHeure, formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 import { IndicateurPourExport } from '@/server/usecase/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
+import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export default class ExportCsvDesIndicateursSansFiltreUseCase {
 
@@ -28,9 +29,15 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     private readonly indicateurRepository = dependencies.getIndicateurRepository(),
   ) {}
 
-  public async run(habilitations: Habilitations): Promise<string[][]> {
+  public async run(habilitations: Habilitations, profil: Profil): Promise<string[][]> {
     const indicateursPourExports = await this.indicateurRepository.récupérerPourExports(habilitations);
-    return indicateursPourExports.map(ind => this.transformer(ind));
+    return indicateursPourExports
+      .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind))
+      .map(ind => this.transformer(ind));
+  }
+
+  private masquerIndicateurPourProfilDROM(profil: Profil, indicateur : IndicateurPourExport) {
+    return profil == 'DROM' && !indicateur.périmètreIds.includes('PER-018') && indicateur.maille === 'NAT';
   }
 
   private transformer(indicateurPourExport: IndicateurPourExport): string[] {

@@ -6,6 +6,7 @@ import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChanti
 import { libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
 import { libellésTypesObjectif } from '@/client/constants/libellésObjectif';
 import { libellésTypesDécisionStratégique } from '@/client/constants/libellésDécisionStratégique';
+import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export class ExportCsvDesChantiersSansFiltreUseCase {
   public static readonly NOMS_COLONNES = [
@@ -37,13 +38,23 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
     private readonly chantierRepository = dependencies.getChantierRepository(),
   ) {}
 
-  public async run(habilitations: Habilitations): Promise<string[][]> {
+  public async run(habilitations: Habilitations, profil: Profil): Promise<string[][]> {
     const chantiersPourExports = await this.chantierRepository.récupérerPourExports(habilitations);
-    return chantiersPourExports.map(c => this.transformer(c));
+    return chantiersPourExports
+      .filter(c => !this.masquerChantierPourProfilDROM(profil, c))
+      .map(c => this.transformer(c, profil));
+  }
+
+  private masquerPourProfilDROM(profil: Profil, périmètreIds : string[]) {
+    return profil == 'DROM' && !périmètreIds.includes('PER-018');
+  }
+
+  private masquerChantierPourProfilDROM(profil: Profil, chantier : ChantierPourExport) {
+    return this.masquerPourProfilDROM(profil, chantier.périmètreIds) && chantier.maille === 'NAT';
   }
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
-  private transformer(chantierPourExport: ChantierPourExport): string[] {
+  private transformer(chantierPourExport: ChantierPourExport, profil: Profil): string[] {
     return [
       chantierPourExport.maille || NON_APPLICABLE,
       chantierPourExport.régionNom || NON_APPLICABLE,
@@ -54,7 +65,9 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
       chantierPourExport.estTerritorialisé ? OUI : NON,
       chantierPourExport.tauxDAvancementDépartemental?.toString() || NON_APPLICABLE,
       chantierPourExport.tauxDAvancementRégional?.toString() || NON_APPLICABLE,
-      chantierPourExport.tauxDAvancementNational?.toString() || NON_APPLICABLE,
+      this.masquerPourProfilDROM(profil, chantierPourExport.périmètreIds)
+        ?  NON_APPLICABLE
+        : chantierPourExport.tauxDAvancementNational?.toString() || NON_APPLICABLE,
       formaterMétéo(chantierPourExport.météo),
       chantierPourExport.synthèseDesRésultats || NON_APPLICABLE,
       chantierPourExport.objNotreAmbition || NON_APPLICABLE,
