@@ -1,4 +1,4 @@
-import Objectif, { TypeObjectifChantier } from '@/server/domain/chantier/objectif/Objectif.interface';
+import Objectif, { TypeObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 import ObjectifRepository from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
@@ -9,7 +9,7 @@ export default class RécupérerObjectifLePlusRécentUseCase {
     private readonly objectifRepository: ObjectifRepository = dependencies.getObjectifRepository(),
   ) {}
 
-  async run(chantierId: string, type: TypeObjectifChantier, habilitations: Habilitations): Promise<Objectif> {
+  async run(chantierId: string, type: TypeObjectif, habilitations: Habilitations): Promise<Objectif> {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnLecture(chantierId, null);
     

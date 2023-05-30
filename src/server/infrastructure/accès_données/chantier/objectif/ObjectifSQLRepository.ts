@@ -1,16 +1,16 @@
 import { PrismaClient, objectif as ObjectifPrisma, type_objectif as TypeObjectifPrisma } from '@prisma/client';
 import ObjectifRepository from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
-import Objectif, { TypeObjectifChantier } from '@/server/domain/chantier/objectif/Objectif.interface';
+import Objectif, { TypeObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
 
-export const NOMS_TYPES_OBJECTIFS: Record<TypeObjectifPrisma, TypeObjectifChantier> = {
+export const NOMS_TYPES_OBJECTIFS: Record<TypeObjectifPrisma, TypeObjectif> = {
   notre_ambition: 'notreAmbition',
   deja_fait: 'déjàFait',
   a_faire: 'àFaire',
 };
 
-export const CODES_TYPES_OBJECTIFS: Record<TypeObjectifChantier, TypeObjectifPrisma> = {
+export const CODES_TYPES_OBJECTIFS: Record<TypeObjectif, TypeObjectifPrisma> = {
   notreAmbition: 'notre_ambition',
   déjàFait: 'deja_fait',
   àFaire: 'a_faire',
@@ -34,7 +34,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
     };
   }
 
-  async récupérerLePlusRécent(chantierId: string, type: TypeObjectifChantier): Promise<Objectif> {
+  async récupérerLePlusRécent(chantierId: string, type: TypeObjectif): Promise<Objectif> {
     const objectifLePlusRécent = await this.prisma.objectif.findFirst({
       where: {
         chantier_id: chantierId,
@@ -46,7 +46,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
     return this.mapperVersDomaine(objectifLePlusRécent);
   }
 
-  async récupérerHistorique(chantierId: string, type: TypeObjectifChantier): Promise<Objectif[]> {
+  async récupérerHistorique(chantierId: string, type: TypeObjectif): Promise<Objectif[]> {
     const objectifs: ObjectifPrisma[] = await this.prisma.objectif.findMany({
       where: {
         chantier_id: chantierId,
@@ -58,7 +58,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
     return objectifs.map(objectifDeLHistorique => this.mapperVersDomaine(objectifDeLHistorique));
   }
 
-  async créer(chantierId: string, id: string, contenu: string, auteur: string, type: TypeObjectifChantier, date: Date): Promise<Objectif> {
+  async créer(chantierId: string, id: string, contenu: string, auteur: string, type: TypeObjectif, date: Date): Promise<Objectif> {
     const objectifCréé =  await this.prisma.objectif.create({
       data: {
         id: id,

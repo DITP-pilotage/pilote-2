@@ -13,8 +13,8 @@ import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Titre from '@/components/_commons/Titre/Titre';
 import ObjectifsPageChantier from '@/components/_commons/Objectifs/Objectifs';
-import { typesObjectifChantier } from '@/server/domain/chantier/objectif/Objectif.interface';
 import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
+import { typesObjectif } from '@/client/constants/libellésObjectif';
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 
 export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats, commentaires, objectifs, décisionStratégique }: RapportDétailléChantierProps) {
@@ -116,7 +116,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                 nomTerritoire='National'
                 objectifs={objectifs}
                 réformeId={chantier.id}
-                typesObjectif={typesObjectifChantier}
+                typesObjectif={typesObjectif}
               />
             </section>
           </div>

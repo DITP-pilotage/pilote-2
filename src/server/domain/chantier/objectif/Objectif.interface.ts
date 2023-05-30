@@ -1,14 +1,14 @@
-export const typesObjectifChantier = ['notreAmbition', 'déjàFait', 'àFaire'] as const;
-export type TypeObjectifChantier = typeof typesObjectifChantier[number];
+export const typesObjectif = ['notreAmbition', 'déjàFait', 'àFaire'] as const;
+export type TypeObjectif = typeof typesObjectif[number];
 
 type Objectif = {
   id: string
   contenu: string
   date: string
   auteur: string
-  type: TypeObjectifChantier
+  type: TypeObjectif
 } | null;
 
-export type Objectifs = Record<TypeObjectifChantier, Objectif>;
+export type Objectifs = Record<TypeObjectif, Objectif>;
 
 export default Objectif;

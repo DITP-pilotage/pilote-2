@@ -12,7 +12,7 @@ import Sommaire from '@/client/components/_commons/Sommaire/Sommaire';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import Titre from '@/components/_commons/Titre/Titre';
 import Objectifs from '@/components/_commons/Objectifs/Objectifs';
-import { typesObjectifChantier } from '@/server/domain/chantier/objectif/Objectif.interface';
+import { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
@@ -190,7 +190,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       nomTerritoire='National'
                       objectifs={objectifs}
                       réformeId={chantier.id}
-                      typesObjectif={typesObjectifChantier}
+                      typesObjectif={typesObjectif}
                     />
                   </section>
                 </div>

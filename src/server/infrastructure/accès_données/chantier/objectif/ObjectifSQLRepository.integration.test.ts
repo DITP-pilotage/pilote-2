@@ -5,7 +5,7 @@ import ObjectifSQLRepository, {
   CODES_TYPES_OBJECTIFS,
 } from '@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository';
 import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
-import { TypeObjectifChantier } from '@/server/domain/chantier/objectif/Objectif.interface';
+import { TypeObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 
 describe('ObjectifSQLRepository', function () {
   const chantierId = 'CH-001';
@@ -14,7 +14,7 @@ describe('ObjectifSQLRepository', function () {
   describe('récupérerLePlusRécent', () => {
     test('retourne l\'objectif avec un contenu, un auteur et une date le plus récent', async () => {
       // GIVEN
-      const type: TypeObjectifChantier = 'àFaire';
+      const type: TypeObjectif = 'àFaire';
       const objectifs: Prisma.objectifCreateArgs['data'][] = [
         new ObjectifSQLRowBuilder()
           .avecId('123abc')
@@ -69,7 +69,7 @@ describe('ObjectifSQLRepository', function () {
   describe('récupérerHistoriqueDUnObjectif', () => {
     test('Retourne, par ordre antéchronologique, tous les objectifs pour un type et un chantier', async () => {
       // GIVEN
-      const type: TypeObjectifChantier = 'notreAmbition';
+      const type: TypeObjectif = 'notreAmbition';
       const objectifs: Prisma.objectifCreateArgs['data'][] = [
         new ObjectifSQLRowBuilder()
           .avecChantierId(chantierId)

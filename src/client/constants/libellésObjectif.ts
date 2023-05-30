@@ -1,4 +1,4 @@
-import { typesObjectifChantier } from '@/server/domain/chantier/objectif/Objectif.interface';
+import { typesObjectif as typesObjectifChantier } from '@/server/domain/chantier/objectif/Objectif.interface';
 import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
 
 export const typesObjectif = [...typesObjectifChantier, typeObjectifProjetStructurant] as const;
