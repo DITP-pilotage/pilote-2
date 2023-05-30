@@ -22,12 +22,12 @@ describe('MinistèreSQLRepository', () => {
     expect(ministères).toStrictEqual([
       {
         nom: 'Agriculture',
-        périmètresMinistériels: [{ id: 'PER-003', nom: 'Périmètre 3', ministere_id: '2' }],
+        périmètresMinistériels: [{ id: 'PER-003', nom: 'Périmètre 3', ministèreId: '2', ministèreNom: 'Agriculture' }],
         icône: 'remix::icon-2',
       },
       {
         nom: 'Justice',
-        périmètresMinistériels: [{ id: 'PER-001', nom: 'Périmètre 1', ministere_id: '1' }, { id: 'PER-002', nom: 'Périmètre 2', ministere_id: '1' }],
+        périmètresMinistériels: [{ id: 'PER-001', nom: 'Périmètre 1', ministèreId: '1', ministèreNom: 'Justice' }, { id: 'PER-002', nom: 'Périmètre 2', ministèreId: '1', ministèreNom: 'Justice' }],
         icône: 'remix::icon-1',
       },
     ]);
