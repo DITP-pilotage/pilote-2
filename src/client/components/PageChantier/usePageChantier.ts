@@ -20,7 +20,7 @@ export default function usePageChantier(chantierId: string) {
 
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {
-      chantierId,
+      réformeId: chantierId,
       territoireCode: territoireSélectionné!.code,
     },
   );

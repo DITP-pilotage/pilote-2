@@ -16,7 +16,7 @@ import usePageProjetStructurant from './usePageProjetStructurant';
 
 export default function PageProjetStructurant({ projetStructurant }: PageProjetStructurantProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);  
-  const { objectif, commentaires } = usePageProjetStructurant(projetStructurant.id, projetStructurant.codeTerritoire);  
+  const { synthèseDesRésultats, objectif, commentaires } = usePageProjetStructurant(projetStructurant.id, projetStructurant.codeTerritoire);
 
   const listeRubriques: Rubrique[] =
     [
@@ -63,11 +63,11 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
             </div>
             <div className='fr-col-12'>
               <SynthèseDesRésultats
-                modeÉcriture={false}
+                estInteractif={false}
                 nomTerritoire={projetStructurant.territoireNomÀAfficher}
                 rechargerRéforme={() => {}}
                 réformeId={projetStructurant.id}
-                synthèseDesRésultatsInitiale={null}
+                synthèseDesRésultatsInitiale={synthèseDesRésultats}
               />
             </div>
           </div>

@@ -13,6 +13,7 @@ import {
   territoire,
   projet_structurant,
   commentaire_projet_structurant,
+  synthese_des_resultats_projet_structurant,
 } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import SynthèseDesRésultatsSQLRowBuilder
@@ -42,6 +43,8 @@ import MinistèreSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRo
 import ProjetStructurantRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ProjetStructurantSQLRow.builder';
 import ObjectifProjetStructurantSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifProjetStructurantSQLRow.builder';
 import CommentaireProjetStructurantRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireProjetStructurantSQLRow.builder';
+import SynthèseDesRésultatsProjetStructurantSQLRowBuilder
+  from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsProjetStructurantSQLRow.builder';
 import { formaterId } from './format';
 
 const chantierStatiqueId123 = new ChantierSQLRowBuilder()
@@ -102,6 +105,8 @@ export class DatabaseSeeder {
 
   private _commentaires_projet_structurant: commentaire_projet_structurant[] = [];
 
+  private _synthèsesDesRésultatsProjetStructurant: synthese_des_resultats_projet_structurant[] = [];
+
   constructor(prisma: PrismaClient) {
     this._prisma = prisma;
   }
@@ -142,6 +147,8 @@ export class DatabaseSeeder {
     await this._créerUtilisateursEtDroits();
     console.log('  ProjetsStructurants...');
     await this._créerProjetsStructurants();
+    console.log('  SynthèseDesRésultatsProjetsStructurants');
+    await this._créerSynthèseDesRésultatsProjetsStructurants();
     console.log('  ObjectifsProjetStructurant');
     await this._créerObjectifsProjetsStructurants();
     console.log('  CommentairesProjetStructurant');
@@ -372,11 +379,19 @@ export class DatabaseSeeder {
     await this._prisma.projet_structurant.createMany({ data: this._projets_structurants });
   }
 
+  private async _créerSynthèseDesRésultatsProjetsStructurants() {
+    this._projets_structurants.forEach(p => {
+      this._synthèsesDesRésultatsProjetStructurant.push(new SynthèseDesRésultatsProjetStructurantSQLRowBuilder().avecProjetStructurantId(p.id).build());
+    });
+
+    await this._prisma.synthese_des_resultats_projet_structurant.createMany({ data: this._synthèsesDesRésultatsProjetStructurant });
+  }
+
   private async _créerObjectifsProjetsStructurants() {
     this._projets_structurants.forEach(p => {
       this._objectifs_projet_structurant.push(new ObjectifProjetStructurantSQLRowBuilder().avecProjetStructurantId(p.id).build());
     });
-    
+
     await this._prisma.objectif_projet_structurant.createMany({ data: this._objectifs_projet_structurant });
   }
 

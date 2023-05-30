@@ -46,6 +46,11 @@ import {
 import CommentaireProjetStructurantRepository from '@/server/domain/projetStructurant/commentaire/CommentaireRepository.interface';
 import { PublierFichierIndicateurImporteUseCase } from '@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase';
 import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
+import {
+  SynthèseDesRésultatsProjetStructurantSQLRepository,
+} from '@/server/infrastructure/accès_données/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsProjetStructurantSQLRepository';
+import SynthèseDesRésultatsProjetStructurantRepository
+  from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import ObjectifSQLRepository from './accès_données/chantier/objectif/ObjectifSQLRepository';
 import DécisionStratégiqueSQLRepository from './accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
@@ -98,6 +103,8 @@ class Dependencies {
 
   private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
 
+  private readonly _synthèseDesRésultatsProjetStructurantRepository: SynthèseDesRésultatsProjetStructurantRepository;
+
   constructor() {
     logger.debug('Using database.');
     const prisma = new PrismaClient();
@@ -119,6 +126,7 @@ class Dependencies {
     this._mesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
     this._commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository(prisma);
     this._périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository(prisma);
+    this._synthèseDesRésultatsProjetStructurantRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
@@ -224,6 +232,10 @@ class Dependencies {
       this._utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
     }
     return this._utilisateurIAMRepository;
+  }
+
+  getSynthèseDesRésultatsProjetStructurantRepository(): SynthèseDesRésultatsProjetStructurantRepository {
+    return this._synthèseDesRésultatsProjetStructurantRepository;
   }
 }
 
