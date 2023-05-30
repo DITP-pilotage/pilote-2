@@ -30,7 +30,7 @@ export default function useSynthèseDesRésultatsFormulaire(synthèseDesRésulta
       contenu: data.contenu,
       météo: data.météo,
       territoireCode: territoireSélectionné!.code,
-      chantierId: router.query.id as string,
+      réformeId: router.query.id as string,
       csrf: récupérerUnCookie('csrf') ?? '',
     });
   };

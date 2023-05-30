@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { GetServerSidePropsContext } from 'next';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import PageProjetStructurant from '@/components/PageProjetStructurant/PageProjetStructurant';
-import { dependencies } from '@/server/infrastructure/Dependencies';
+import RécupérerProjetStructurantUseCase from '@/server/usecase/projetStructurant/RécupérerProjetStructurantUseCase';
 
 interface NextPageProjetStructurantProps {
   projetStructurant: ProjetStructurant,
@@ -28,7 +28,7 @@ export async function getServerSideProps({ params }: GetServerSidePropsContext<{
     };
   }
   
-  const projetStructurant: ProjetStructurant = await dependencies.getProjetStructurantRepository().récupérer(params.id);
+  const projetStructurant: ProjetStructurant = await new RécupérerProjetStructurantUseCase().run(params.id);
 
   return {
     props: {

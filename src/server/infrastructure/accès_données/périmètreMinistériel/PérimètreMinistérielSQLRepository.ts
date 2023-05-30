@@ -40,4 +40,18 @@ export default class PérimètreMinistérielSQLRepository implements Périmètre
 
     return this._mapperVersDomaine(périmètre);
   }
+
+  async récupérerTous(): Promise<PérimètreMinistériel[]> {
+    const périmètres = await this.prisma.perimetre.findMany();
+
+    return périmètres.map(périmètre => this._mapperVersDomaine(périmètre));
+  }
+
+  async récupérerListe(ids: string[]): Promise<PérimètreMinistériel[]> {
+    const périmètres = await this.prisma.perimetre.findMany({
+      where: { id: { in: ids } },
+    });
+
+    return périmètres.map(périmètre => this._mapperVersDomaine(périmètre));
+  }
 }

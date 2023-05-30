@@ -1,4 +1,4 @@
-import { synthese_des_resultats_projet_structurant, PrismaClient } from '@prisma/client';
+import { synthese_des_resultats_projet_structurant as SynthèseDesRésultatsProjetStructurantPrisma, PrismaClient } from '@prisma/client';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import SynthèseDesRésultatsProjetStructurantRepository from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import SynthèseDesRésultatsProjetStructurant from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultats.interface';
@@ -10,7 +10,7 @@ export class SynthèseDesRésultatsProjetStructurantSQLRepository implements Syn
     this.prisma = prisma;
   }
 
-  private mapperVersDomaine(synthèse: synthese_des_resultats_projet_structurant | null): SynthèseDesRésultatsProjetStructurant {
+  private mapperVersDomaine(synthèse: SynthèseDesRésultatsProjetStructurantPrisma | null): SynthèseDesRésultatsProjetStructurant {
     if (synthèse === null || synthèse.commentaire === null || synthèse.date_commentaire === null)
       return null;
 
@@ -24,7 +24,6 @@ export class SynthèseDesRésultatsProjetStructurantSQLRepository implements Syn
   }
   
   async récupérerLaPlusRécente(projetStructurantId: string): Promise<SynthèseDesRésultatsProjetStructurant> {
-    
     const synthèseDesRésultats = await this.prisma.synthese_des_resultats_projet_structurant.findFirst({
       where: {
         projet_structurant_id: projetStructurantId,
@@ -41,5 +40,20 @@ export class SynthèseDesRésultatsProjetStructurantSQLRepository implements Syn
     });
 
     return this.mapperVersDomaine(synthèseDesRésultats);
+  }
+
+  async récupérerToutesLesMétéosLesPlusRécentes(): Promise<{ projetStructurantId: string, météo: Météo }[]> {
+    return this.prisma.$queryRaw<{ projetStructurantId: string, météo: Météo }[]>`
+        select projet_structurant_id, meteo
+        from (
+          select *,
+          row_number() over (
+              partition by projet_structurant_id order by date_commentaire desc
+          ) r
+          from synthese_des_resultats_projet_structurant s
+          where date_commentaire is not null
+        ) sr
+        where sr.r = 1
+    `;
   }
 }

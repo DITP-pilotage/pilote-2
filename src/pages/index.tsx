@@ -10,6 +10,7 @@ import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import PageAccueil from '@/components/PageAccueil/PageAccueil';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import RécupérerListeChantiersUseCase from '@/server/usecase/chantier/RécupérerListeChantiersUseCase';
+import RécupérerListeProjetsStructurantsUseCase from '@/server/usecase/projetStructurant/RécupérerListeProjetsStructurantsUseCase';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
@@ -46,8 +47,10 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
 
   const chantiers = await new RécupérerListeChantiersUseCase().run(session.habilitations, session.profil);
   
-  const projetStructurantRepository = dependencies.getProjetStructurantRepository();
-  const projetsStructurants: ProjetStructurant[] = await projetStructurantRepository.récupérerListe();
+  const projetsStructurants: ProjetStructurant[] = new RécupérerListeProjetsStructurantsUseCase().run();
+
+  console.log(projetsStructurants);
+  
   
 
   let axes: Axe[] = [];

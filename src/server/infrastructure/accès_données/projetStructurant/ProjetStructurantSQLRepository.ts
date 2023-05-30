@@ -59,18 +59,17 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
   }
 
 
-  async récupérer(id: string): Promise<ProjetStructurant> {
+  async récupérer(id: string): Promise<ProjetStructurantPrisma> {
     const projetStructurant = await this.prisma.projet_structurant.findFirst({
       where: { id  },
     });
 
     if (!projetStructurant) throw new ErreurProjetStructurantNonTrouvé(id);
 
-    return this._mapperVersDomaine(projetStructurant);
+    return projetStructurant;
   }
 
-  async récupérerListe(): Promise<ProjetStructurant[]> {
-    const projetsStructurants = await this.prisma.projet_structurant.findMany();    
-    return Promise.all(projetsStructurants.map(projetStructurant => this._mapperVersDomaine(projetStructurant)));
+  async récupérerListe(): Promise<ProjetStructurantPrisma[]> {
+    return this.prisma.projet_structurant.findMany();    
   }
 }
