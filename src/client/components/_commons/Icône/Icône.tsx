@@ -15,13 +15,13 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-health/icons-health.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-others/icons-others.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.min.css';
-import 'material-icons/iconfont/material-icons.css';
+import 'material-symbols/index.css';
 import 'remixicon/fonts/remixicon.css';
 import { useMemo } from 'react';
 import IcôneProps from '@/components/_commons/Icône/Icône.interface';
 import IcôneStyled from '@/components/_commons/Icône/Icône.styled';
 
-const VARIANTES_MATERIAL_DESIGN = new Set(['outlined', 'round', 'sharp', 'two-tone']);
+const VARIANTES_MATERIAL_DESIGN = new Set(['outlined', 'rounded', 'sharp']);
 
 export default function Icône({ id }: IcôneProps) {
   const icône = useMemo(() => id.split('::'), [id]);
@@ -38,10 +38,10 @@ export default function Icône({ id }: IcôneProps) {
   }
 
   if (bibliothèqueDIcônes === 'google') {
-    const variante = VARIANTES_MATERIAL_DESIGN.has(varianteExplicite) ? varianteExplicite : null;
+    const variante = VARIANTES_MATERIAL_DESIGN.has(varianteExplicite) ? varianteExplicite : 'outlined';
     return (
       <IcôneStyled
-        className={`material-icons${variante ? '-' + variante : ''}`}
+        className={`material-symbols-${variante}`}
       >
         { identifiantIcône }
       </IcôneStyled>
