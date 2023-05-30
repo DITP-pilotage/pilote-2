@@ -21,3 +21,15 @@ export default interface ProjetStructurant {
     coporteurs: string[],
   }
 }
+
+export interface ProjetStructurantVueDEnsemble {
+  id: string;
+  nom: string;
+  maille: MailleInterne;
+  codeInsee: CodeInsee;
+  territoireNomÀAfficher: string;
+  périmètresIds: string[];
+  avancement: number | null;
+  dateAvancement: string;
+  météo: Météo
+}

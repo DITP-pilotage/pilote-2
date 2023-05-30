@@ -1,4 +1,4 @@
-import { ChantierVueDEnsemble } from '@/components/useVueDEnsemble';
+import { ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
 
 export default interface TableauChantiersProps {
   données: DonnéesTableauChantiers[],

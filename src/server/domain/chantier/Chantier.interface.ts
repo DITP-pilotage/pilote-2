@@ -3,6 +3,7 @@ import { TerritoiresDonnées } from '@/server/domain/territoire/Territoire.inter
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export type DirecteurAdministrationCentrale = { nom: string, direction: string };
 export type DirecteurProjet = { nom: string, email: string | null };
@@ -23,3 +24,12 @@ export default interface Chantier {
   estBaromètre: boolean;
   estTerritorialisé: boolean;
 }
+
+export type ChantierVueDEnsemble = {
+  id: string;
+  nom: string;
+  avancement: number | null;
+  météo: Météo;
+  typologie: { estBaromètre: boolean, estTerritorialisé: boolean };
+  porteur: Ministère | null;
+};

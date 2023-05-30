@@ -3,13 +3,15 @@ import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, territoi
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import { CartographieDonnéesAvancement } from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement.interface';
 import { météos } from '@/server/domain/météo/Météo.interface';
-import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+import {
+  ProjetStructurantVueDEnsemble,
+} from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { CodeInsee, codesInseeDépartements, codesInseeRégions } from '@/server/domain/territoire/Territoire.interface';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import { RépartitionMétéos } from '@/components/_commons/RépartitionMétéo/RépartitionMétéo.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
-export default function usePageProjetsStructurants(projetsStructurants: ProjetStructurant[]) {
+export default function usePageProjetsStructurants(projetsStructurants: ProjetStructurantVueDEnsemble[]) {
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const codeInseeTerritoireSélectionné = territoireSélectionnéTerritoiresStore()!.codeInsee;

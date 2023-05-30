@@ -8,13 +8,15 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import PageAccueil from '@/components/PageAccueil/PageAccueil';
-import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+import {
+  ProjetStructurantVueDEnsemble,
+} from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import RécupérerListeChantiersUseCase from '@/server/usecase/chantier/RécupérerListeChantiersUseCase';
-import RécupérerListeProjetsStructurantsUseCase from '@/server/usecase/projetStructurant/RécupérerListeProjetsStructurantsUseCase';
+import RécupérerListeProjetsStructurantsVueDEnsembleUseCase from '@/server/usecase/projetStructurant/RécupérerListeProjetsStructurantsVueDEnsembleUseCase';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
-  projetsStructurants: ProjetStructurant[]
+  projetsStructurants: ProjetStructurantVueDEnsemble[]
   ministères: Ministère[]
   axes: Axe[],
   ppgs: Ppg[],
@@ -47,11 +49,7 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
 
   const chantiers = await new RécupérerListeChantiersUseCase().run(session.habilitations, session.profil);
   
-  const projetsStructurants: ProjetStructurant[] = new RécupérerListeProjetsStructurantsUseCase().run();
-
-  console.log(projetsStructurants);
-  
-  
+  const projetsStructurants: ProjetStructurantVueDEnsemble[] = await new RécupérerListeProjetsStructurantsVueDEnsembleUseCase().run();
 
   let axes: Axe[] = [];
   let ppgs: Ppg[] = [];

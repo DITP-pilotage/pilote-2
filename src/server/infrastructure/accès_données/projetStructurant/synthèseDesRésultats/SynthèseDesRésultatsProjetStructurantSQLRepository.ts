@@ -43,7 +43,7 @@ export class SynthèseDesRésultatsProjetStructurantSQLRepository implements Syn
   }
 
   async récupérerToutesLesMétéosLesPlusRécentes(): Promise<{ projetStructurantId: string, météo: Météo }[]> {
-    return this.prisma.$queryRaw<{ projetStructurantId: string, météo: Météo }[]>`
+    const couplesPSetMétéo = await this.prisma.$queryRaw<{ projet_structurant_id: string, meteo: Météo }[]>`
         select projet_structurant_id, meteo
         from (
           select *,
@@ -55,5 +55,10 @@ export class SynthèseDesRésultatsProjetStructurantSQLRepository implements Syn
         ) sr
         where sr.r = 1
     `;
+
+    return couplesPSetMétéo.map((couple) => ({
+      projetStructurantId: couple.projet_structurant_id,
+      météo: couple.meteo,
+    }));
   }
 }
