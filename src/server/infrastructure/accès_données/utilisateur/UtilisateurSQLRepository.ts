@@ -23,7 +23,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return this._mapperVersDomaine(row);
   }
 
-  async récupérerTous(chantierIds: string[]): Promise<Utilisateur[]> {
+  async récupérerTous(chantierIds: string[], territoireCodes: string[]): Promise<Utilisateur[]> {
     let utilisateursMappés:Utilisateur[] = [];
 
     const utilisateurs = await this._prisma.utilisateur.findMany(
@@ -39,7 +39,12 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       const utilisateurMappé = await this._mapperVersDomaine(u);
       utilisateursMappés.push(utilisateurMappé);
     }
-    return utilisateursMappés.filter(u => chantierIds.some(id => u.habilitations.lecture.chantiers.includes(id)));
+    return utilisateursMappés.filter(
+      u => (
+        chantierIds.some(id => u.habilitations.lecture.chantiers.includes(id))
+        && territoireCodes.some(code => u.habilitations.lecture.territoires.includes(code))
+      ),
+    );
   }
 
   async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJour): Promise<void> {

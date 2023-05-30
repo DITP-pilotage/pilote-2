@@ -2,6 +2,6 @@ import Utilisateur, { UtilisateurÀCréerOuMettreÀJour } from './Utilisateur.in
 
 export default interface UtilisateurRepository {
   récupérer(email: string): Promise<Utilisateur | null>
-  récupérerTous(chantierIds: string[]): Promise<Utilisateur[]>
+  récupérerTous(chantierIds: string[], territoireCodes: string[]): Promise<Utilisateur[]>
   créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJour): Promise<void>
 }

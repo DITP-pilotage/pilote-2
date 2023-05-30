@@ -9,8 +9,6 @@ export default class RécupérerListeUtilisateursUseCase {
   ) {}
 
   async run(habilitation: Habilitations): Promise<Utilisateur[]> {
-
-    return this.utilisateurRepository.récupérerTous(['CH-0001']);
-
+    return this.utilisateurRepository.récupérerTous(habilitation['utilisateurs.lecture'].chantiers, habilitation['utilisateurs.lecture'].territoires);
   }
 }
