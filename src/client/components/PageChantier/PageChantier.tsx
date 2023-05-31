@@ -17,7 +17,7 @@ import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDép
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
-import ResponsablesPageProjetStructurant from './Responsables/Responsables';
+import ResponsablesPageChantier from './Responsables/Responsables';
 import PageChantierEnTête from './EnTête/EnTête';
 import Cartes from './Cartes/Cartes';
 import PageChantierStyled from './PageChantier.styled';
@@ -136,7 +136,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         >
                           Responsables
                         </Titre>
-                        <ResponsablesPageProjetStructurant responsables={chantier.responsables} />
+                        <ResponsablesPageChantier responsables={chantier.responsables} />
                       </section>
                     </>
                   }

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const ResponsablesPageProjetStructurantStyled = styled.section`
+const ResponsablesPageProjetStructurantStyled = styled.div`
   .ligne:last-child {
     padding-bottom: 0 !important;
   }
