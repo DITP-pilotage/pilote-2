@@ -171,7 +171,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     <Cartes chantierMailles={chantier.mailles} />
                   </section>
                 </div>
-                <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w rubrique">
+                <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                   <section
                     className="fr-col-12 rubrique"
                     id="objectifs"
@@ -194,7 +194,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 </div>
                 {
                   détailsIndicateurs !== null && (
-                    <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w rubrique">
+                    <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                       <section
                         className="fr-col-12"
                         id="indicateurs rubrique"
