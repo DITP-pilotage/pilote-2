@@ -4,7 +4,6 @@ import {
   ProjetStructurantVueDEnsemble,
 } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import ProjetStructurantRepository from '@/server/domain/projetStructurant/ProjetStructurantRepository.interface';
-import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -17,11 +16,14 @@ export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
   constructor(
     private readonly projetStructurantrepository: ProjetStructurantRepository = dependencies.getProjetStructurantRepository(),
     private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
-    private readonly périmètreMinistérielRepository: PérimètreMinistérielRepository = dependencies.getPérimètreMinistérielRepository(),
     private readonly synthèseDesRésultatsRepository: SynthèseDesRésultatsProjetStructurantRepository = dependencies.getSynthèseDesRésultatsProjetStructurantRepository(),
   ) {}
 
-  private construireListeProjetsStructurants(projetsStructurantsPrisma: ProjetStructurantPrisma[], territoires: Territoire[], météos: { projetStructurantId: string, météo: Météo }[]) {
+  private construireListeProjetsStructurants(
+    projetsStructurantsPrisma: ProjetStructurantPrisma[],
+    territoires: Territoire[],
+    météos: { projetStructurantId: string, météo: Météo }[],
+  ) {
     return projetsStructurantsPrisma.map(projetStructurantPrisma => {
       const territoire = territoires.find(t => t.code === projetStructurantPrisma.territoire_code);
 

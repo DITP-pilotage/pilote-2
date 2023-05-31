@@ -21,6 +21,8 @@ export default class RécupérerProjetStructurantUseCase {
   ) {}
 
   private construireProjetStructurant(projetStructurantPrisma: ProjetStructurantPrisma, territoire: Territoire, périmètres: PérimètreMinistériel[], météo: Météo) {
+    const ministèresNoms = [...new Set(périmètres.map(p => p.ministèreNom))];
+
     return {
       id: projetStructurantPrisma.id,
       nom: projetStructurantPrisma.nom,
@@ -34,8 +36,8 @@ export default class RécupérerProjetStructurantUseCase {
       territoireNomÀAfficher: territoire.nomAffiché,
       périmètresIds: projetStructurantPrisma.perimetres_ids,
       responsables: {
-        ministèrePorteur: périmètres[0].ministèreNom,
-        ministèresCoporteurs: périmètres.slice(1).map(p => p.ministèreNom),
+        ministèrePorteur: ministèresNoms[0] ?? '',
+        ministèresCoporteurs: ministèresNoms.slice(1) ?? [],
         directionAdmininstration: projetStructurantPrisma.direction_administration,
         chefferieDeProjet: projetStructurantPrisma.chefferie_de_projet,
         coporteurs: projetStructurantPrisma.co_porteurs,

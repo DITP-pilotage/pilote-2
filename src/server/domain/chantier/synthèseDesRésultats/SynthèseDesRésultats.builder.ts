@@ -20,6 +20,11 @@ export default class SynthèseDesRésultatsBuilder {
     };
   }
 
+  nonNull() {
+    this._synthèseDesRésultats = this._générerUneSynthèseDesRésultat();
+    return this;
+  }
+
   avecSynthèseDesRésultats(synthèseDesRésultats: SynthèseDesRésultats): SynthèseDesRésultatsBuilder {
     this._synthèseDesRésultats = synthèseDesRésultats;
     return this;

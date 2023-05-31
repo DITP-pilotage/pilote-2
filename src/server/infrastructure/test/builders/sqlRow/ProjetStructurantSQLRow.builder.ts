@@ -55,6 +55,11 @@ export default class ProjetStructurantRowBuilder {
     this._périmètreIds = périmètreIds;
     return this;
   }
+
+  avecTerritoireCode(territoireCode: ProjetStructurantPrisma['territoire_code']): ProjetStructurantRowBuilder {
+    this._territoireCode = territoireCode;
+    return this;
+  }
   
   shallowCopy(): ProjetStructurantRowBuilder {
     const result = new ProjetStructurantRowBuilder() as any;
