@@ -24,53 +24,43 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
   }));
 
   return (
-    <section
-      id="cartes"
-    >
-      <Titre
-        baliseHtml='h2'
-        className='fr-h4 fr-mb-2w'
-      >
-        Répartition géographique
-      </Titre>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-xl-6">
-          <Bloc>
-            <section>
-              <Titre
-                baliseHtml='h3'
-                className='fr-text--lg'
-              >
-                Taux d&apos;avancement
-              </Titre>
-              <CartographieAvancement
-                auClicTerritoireCallback={auClicTerritoireCallback}
-                données={donnéesCartographieAvancement}
-                options={{ estInteractif: estInteractif }}
-                élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
-              />
-            </section>
-          </Bloc>
-        </div>
-        <div className="fr-col-12 fr-col-xl-6">
-          <Bloc>
-            <section>
-              <Titre
-                baliseHtml='h3'
-                className='fr-text--lg'
-              >
-                Niveau de confiance
-              </Titre>
-              <CartographieMétéo
-                auClicTerritoireCallback={auClicTerritoireCallback}
-                données={donnéesCartographieMétéo}
-                options={{ estInteractif: estInteractif }}
-                élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
-              />
-            </section>
-          </Bloc>
-        </div>
+    <div className="fr-grid-row fr-grid-row--gutters">
+      <div className="fr-col-12 fr-col-xl-6">
+        <Bloc>
+          <section>
+            <Titre
+              baliseHtml='h3'
+              className='fr-text--lg'
+            >
+              Taux d&apos;avancement
+            </Titre>
+            <CartographieAvancement
+              auClicTerritoireCallback={auClicTerritoireCallback}
+              données={donnéesCartographieAvancement}
+              options={{ estInteractif: estInteractif }}
+              élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
+            />
+          </section>
+        </Bloc>
       </div>
-    </section>
+      <div className="fr-col-12 fr-col-xl-6">
+        <Bloc>
+          <section>
+            <Titre
+              baliseHtml='h3'
+              className='fr-text--lg'
+            >
+              Niveau de confiance
+            </Titre>
+            <CartographieMétéo
+              auClicTerritoireCallback={auClicTerritoireCallback}
+              données={donnéesCartographieMétéo}
+              options={{ estInteractif: estInteractif }}
+              élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
+            />
+          </section>
+        </Bloc>
+      </div>
+    </div>
   );
 }

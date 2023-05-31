@@ -1,5 +1,4 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import Titre from '@/components/_commons/Titre/Titre';
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import {
@@ -27,13 +26,7 @@ export default function AvancementChantier({ avancements, chantierId }: Avanceme
     avancementsAgrégés.global.moyenne = avancements.nationale?.global.moyenne ?? null;
 
   return (
-    <AvancementChantierStyled id="avancement">
-      <Titre
-        baliseHtml='h2'
-        className='fr-h4 fr-mb-2w'
-      >
-        Avancement du chantier
-      </Titre>
+    <AvancementChantierStyled>
       <div className='blocs'>
         {
           avancements.départementale.moyenne !== undefined &&

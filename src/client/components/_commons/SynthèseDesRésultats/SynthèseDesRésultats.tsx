@@ -1,5 +1,4 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import Titre from '@/components/_commons/Titre/Titre';
 import { SynthèseDesRésultatsProps } from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats.interface';
 import SynthèseDesRésultatsStyled from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats.styled';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
@@ -21,13 +20,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
   } = useSynthèseDesRésultats(synthèseDesRésultatsInitiale, rechargerRéforme);
 
   return (
-    <SynthèseDesRésultatsStyled id="synthèse">
-      <Titre
-        baliseHtml='h2'
-        className='fr-h4 fr-mb-2w'
-      >
-        Météo et synthèse des résultats 
-      </Titre>
+    <SynthèseDesRésultatsStyled>
       <Bloc titre={nomTerritoire}>
         <div className='fr-px-1w fr-py-2w'>
           {

@@ -17,27 +17,21 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, estDispo
   }
 
   return (
-    <section id="indicateurs">
-      <Titre
-        baliseHtml='h2'
-        className='fr-h4 fr-mb-2w'
-      >
-        Indicateurs
-      </Titre>
+    <>
       {
-        listeRubriquesIndicateurs.map(rubriqueIndicateur => {
+        listeRubriquesIndicateurs.map((rubriqueIndicateur, i) => {
           const indicateursDeCetteRubrique = indicateurs.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
 
           if (indicateursDeCetteRubrique.length > 0) {
             return (
               <section
-                className='fr-mb-3w'
+                className={i < listeRubriquesIndicateurs.length - 1 ? 'fr-mb-3w' : ''}
                 id={rubriqueIndicateur.ancre}
                 key={rubriqueIndicateur.ancre}
               >
                 <Titre
                   baliseHtml='h3'
-                  className='fr-text--lg fr-mb-1w'
+                  className='fr-text--lg fr-mb-1w fr-mx-2w fr-mx-md-0'
                 >
                   {rubriqueIndicateur.nom}
                 </Titre>
@@ -57,6 +51,6 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, estDispo
           }
         })
       }
-    </section>
+    </>
   );
 }

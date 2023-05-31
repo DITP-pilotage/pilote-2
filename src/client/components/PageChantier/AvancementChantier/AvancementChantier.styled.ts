@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const AvancementChantierStyled = styled.section`
+const AvancementChantierStyled = styled.div`
   .jauge > div {
     margin: auto;
   }

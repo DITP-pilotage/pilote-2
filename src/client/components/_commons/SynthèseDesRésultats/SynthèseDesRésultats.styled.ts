@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const SynthèseDesRésultatsStyled = styled.section`
+const SynthèseDesRésultatsStyled = styled.div`
   .contenu {
     display: flex;
     flex-wrap: wrap;

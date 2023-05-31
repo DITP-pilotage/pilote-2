@@ -10,8 +10,9 @@ import Loader from '@/components/_commons/Loader/Loader';
 import SynthèseDesRésultats from '@/client/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Sommaire from '@/client/components/_commons/Sommaire/Sommaire';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
-import Objectifs from '@/components/_commons/Objectifs/Objectifs';
+import ObjectifsPageChantier from '@/components/_commons/Objectifs/Objectifs';
 import { typesObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
+import Titre from '@/components/_commons/Titre/Titre';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
@@ -108,18 +109,45 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                   {
                     avancements !== null &&
                     <>
-                      <div className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-7' : 'fr-col-xl-12'} fr-col-12`}>
+                      <section
+                        className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-7' : 'fr-col-xl-12'} fr-col-12`}
+                        id="avancement"
+                      >
+                        <Titre
+                          baliseHtml='h2'
+                          className='fr-h4 fr-mb-2w'
+                        >
+                          Avancement du chantier
+                        </Titre>
                         <AvancementChantier
                           avancements={avancements}
                           chantierId={chantierId}
                         />
-                      </div>
-                      <div className='fr-col-xl-5 fr-col-12'>
+                      </section>
+                      <section
+                        className='fr-col-xl-5 fr-col-12'
+                        id="responsables"
+                      >
+                        <Titre
+                          baliseHtml='h2'
+                          className='fr-h4 fr-mb-2w'
+                        >
+                          Responsables
+                        </Titre>
                         <ResponsablesPageProjetStructurant responsables={chantier.responsables} />
-                      </div>
+                      </section>
                     </>
                   }
-                  <div className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-7'} fr-col-12`}>
+                  <section
+                    className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-7'} fr-col-12`}
+                    id="synthèse"
+                  >
+                    <Titre
+                      baliseHtml='h2'
+                      className='fr-h4 fr-mb-2w'
+                    >
+                      Météo et synthèse des résultats
+                    </Titre>
                     <SynthèseDesRésultats
                       modeÉcriture={territoireSélectionné?.accèsSaisiePublication}
                       nomTerritoire={territoireSélectionné!.nomAffiché}
@@ -127,16 +155,34 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       réformeId={chantier.id}
                       synthèseDesRésultatsInitiale={synthèseDesRésultats}
                     />
-                  </div>
+                  </section>
                 </div>
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-                  <div className="fr-col-12">
+                  <section
+                    className="fr-col-12"
+                    id="cartes"
+                  >
+                    <Titre
+                      baliseHtml='h2'
+                      className='fr-h4 fr-mb-2w'
+                    >
+                      Répartition géographique
+                    </Titre>
                     <Cartes chantierMailles={chantier.mailles} />
-                  </div>
+                  </section>
                 </div>
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-                  <div className="fr-col-12">
-                    <Objectifs
+                  <section
+                    className="fr-col-12"
+                    id="objectifs"
+                  >
+                    <Titre
+                      baliseHtml='h2'
+                      className='fr-h4 fr-mb-2w'
+                    >
+                      Objectifs
+                    </Titre>
+                    <ObjectifsPageChantier
                       maille='nationale'
                       modeÉcriture={modeÉcritureObjectifs}
                       nomTerritoire='National'
@@ -144,24 +190,42 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       réformeId={chantier.id}
                       typesObjectif={typesObjectifChantier}
                     />
-                  </div>
+                  </section>
                 </div>
                 {
                   détailsIndicateurs !== null && (
                     <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-                      <div className="fr-col-12">
+                      <section
+                        className="fr-col-12"
+                        id="indicateurs"
+                      >
+                        <Titre
+                          baliseHtml='h2'
+                          className='fr-h4 fr-mb-2w'
+                        >
+                          Indicateurs
+                        </Titre>
                         <Indicateurs
                           détailsIndicateurs={détailsIndicateurs}
                           indicateurs={indicateurs}
                         />
-                      </div>
+                      </section>
                     </div>
                   )
                 }
                 {
                   territoireSélectionné!.maille === 'nationale' &&
                   <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-                    <div className="fr-col-12">
+                    <div
+                      className="fr-col-12"
+                      id="décisions-stratégiques"
+                    >
+                      <Titre
+                        baliseHtml="h2"
+                        className="fr-h4 fr-mb-2w"
+                      >
+                        Décisions stratégiques
+                      </Titre>
                       <DécisionsStratégiques
                         chantierId={chantier.id}
                         décisionStratégique={décisionStratégique}
@@ -171,7 +235,16 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                   </div>
                 }
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-                  <div className="fr-col-12">
+                  <div
+                    className="fr-col-12"
+                    id="commentaires"
+                  >
+                    <Titre
+                      baliseHtml='h2'
+                      className='fr-h4 fr-mb-2w'
+                    >
+                      Commentaires du chantier
+                    </Titre>
                     <Commentaires
                       commentaires={commentaires}
                       maille={territoireSélectionné!.maille}
