@@ -15,7 +15,7 @@ import useIndicateurs from './useIndicateurBloc';
 export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, estDisponibleALImport = false } : IndicateurBlocProps) {
   const router = useRouter();
   const chantierId = router.query.chantierId  as string;
-  const { indicateurDétailsParTerritoires, colonnes } = useIndicateurs(détailsIndicateur);
+  const { indicateurDétailsParTerritoires, tableau } = useIndicateurs(détailsIndicateur);
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
   return (
@@ -64,8 +64,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
               <ResultatValidationFichier rapport={rapport} />
           }
           <Tableau<IndicateurDétailsParTerritoire>
-            colonnes={colonnes}
-            données={indicateurDétailsParTerritoires}
+            tableau={tableau}
             titre={`Tableau de l'indicateur : ${indicateur.nom}`}
           />
           {

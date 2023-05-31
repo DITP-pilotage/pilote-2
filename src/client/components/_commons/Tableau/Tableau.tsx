@@ -1,27 +1,13 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
-import { useCallback, useEffect, useState } from 'react';
-import { getCoreRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
+import { useCallback, useEffect } from 'react';
 import TableauProps from './Tableau.interface';
 import TableauEnTête from './EnTête/TableauEnTête';
 import TableauContenu from './Contenu/TableauContenu';
 import TableauPagination from './Pagination/TableauPagination';
 import TableauStyled from './Tableau.styled';
 
-export default function Tableau<T extends object>({ colonnes, données, titre }: TableauProps<T>) {
-  const [tri, setTri] = useState<SortingState>([]);
-
-  const tableau = useReactTable({
-    data: données,
-    columns: colonnes,
-    state: {
-      sorting: tri,
-    },
-    onSortingChange: setTri,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  });
+export default function Tableau<T extends object>({ tableau, titre }: TableauProps<T>) {
 
   useEffect(() => {
     tableau.setPageSize(50);

@@ -1,4 +1,10 @@
-import { createColumnHelper } from '@tanstack/react-table';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 import { territoiresComparésTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
@@ -102,8 +108,16 @@ export default function useIndicateurs(détailsIndicateur: DétailsIndicateurCod
     }),
   ];
 
-  return { 
-    indicateurDétailsParTerritoires, 
-    colonnes, 
+  const tableau = useReactTable({
+    data: indicateurDétailsParTerritoires,
+    columns: colonnes,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
+
+  return {
+    indicateurDétailsParTerritoires,
+    tableau,
   };
 }
