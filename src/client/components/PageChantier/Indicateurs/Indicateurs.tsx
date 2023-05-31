@@ -24,30 +24,37 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, estDispo
       >
         Indicateurs
       </Titre>
-      { 
-        indicateurs.map(indicateur => {
-          const rubriqueIndicateur = listeRubriquesIndicateurs.find(ind => ind.typeIndicateur === indicateur.type);
-          return (
-            <section
-              className='fr-mb-3w'
-              id={rubriqueIndicateur?.ancre}
-              key={rubriqueIndicateur?.ancre}
-            >
-              <Titre
-                baliseHtml='h3'
-                className='fr-text--lg fr-mb-1w'
+      {
+        listeRubriquesIndicateurs.map(rubriqueIndicateur => {
+          const indicateursDeCetteRubrique = indicateurs.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
+
+          if (indicateursDeCetteRubrique.length > 0) {
+            return (
+              <section
+                className='fr-mb-3w'
+                id={rubriqueIndicateur.ancre}
+                key={rubriqueIndicateur.ancre}
               >
-                {rubriqueIndicateur?.nom}
-              </Titre>
-              <IndicateurBloc
-                détailsIndicateur={détailsIndicateurs[indicateur.id]}
-                estDisponibleALImport={estDisponibleALImport}
-                estInteractif={estInteractif}
-                indicateur={indicateur}
-                key={indicateur.id}
-              />
-            </section>
-          );
+                <Titre
+                  baliseHtml='h3'
+                  className='fr-text--lg fr-mb-1w'
+                >
+                  {rubriqueIndicateur.nom}
+                </Titre>
+                {
+                  indicateursDeCetteRubrique.map(indicateur => (
+                    <IndicateurBloc
+                      détailsIndicateur={détailsIndicateurs[indicateur.id]}
+                      estDisponibleALImport={estDisponibleALImport}
+                      estInteractif={estInteractif}
+                      indicateur={indicateur}
+                      key={indicateur.id}
+                    />
+                  ))
+                }
+              </section>
+            );
+          }
         })
       }
     </section>

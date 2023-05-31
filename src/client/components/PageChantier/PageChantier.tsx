@@ -45,30 +45,31 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
         indicateurs.some(indicateur => indicateur.type === rubriqueIndicateur.typeIndicateur)
       ),
     );
-    return (
-      territoireSélectionné!.maille === 'nationale' ? (
-        [
-          { nom: 'Avancement du chantier', ancre: 'avancement' },
-          { nom: 'Responsables', ancre: 'responsables' },
-          { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
-          { nom: 'Répartition géographique', ancre: 'cartes' },
-          { nom: 'Objectifs', ancre: 'objectifs' },
-          { nom: 'Décisions stratégiques', ancre: 'décisions-stratégiques' },
-          { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: rubriquesIndicateursNonVides },
-          { nom: 'Commentaires', ancre: 'commentaires' },
-        ]
-      ) : (
-        [
-          { nom: 'Avancement du chantier', ancre: 'avancement' },
-          { nom: 'Responsables', ancre: 'responsables' },
-          { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
-          { nom: 'Répartition géographique', ancre: 'cartes' },
-          { nom: 'Objectifs', ancre: 'objectifs' },
-          { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: rubriquesIndicateursNonVides },
-          { nom: 'Commentaires', ancre: 'commentaires' },
-        ]
-      )
-    );
+    let rubriques = [];
+
+    rubriques = territoireSélectionné!.maille === 'nationale' ? [
+      { nom: 'Avancement du chantier', ancre: 'avancement' },
+      { nom: 'Responsables', ancre: 'responsables' },
+      { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
+      { nom: 'Répartition géographique', ancre: 'cartes' },
+      { nom: 'Objectifs', ancre: 'objectifs' },
+      { nom: 'Décisions stratégiques', ancre: 'décisions-stratégiques' },
+      { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: rubriquesIndicateursNonVides },
+      { nom: 'Commentaires', ancre: 'commentaires' },
+    ] : [
+      { nom: 'Avancement du chantier', ancre: 'avancement' },
+      { nom: 'Responsables', ancre: 'responsables' },
+      { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
+      { nom: 'Répartition géographique', ancre: 'cartes' },
+      { nom: 'Objectifs', ancre: 'objectifs' },
+      { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: rubriquesIndicateursNonVides },
+      { nom: 'Commentaires', ancre: 'commentaires' },
+    ];
+
+    if (rubriquesIndicateursNonVides.length === 0)
+      rubriques = rubriques.filter(rubrique => rubrique.nom != 'Indicateurs');
+
+    return rubriques;
   }, [indicateurs, territoireSélectionné]);
 
   return (
