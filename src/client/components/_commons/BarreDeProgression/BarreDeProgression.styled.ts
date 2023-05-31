@@ -24,7 +24,7 @@ export const dimensions = {
   xxs: { hauteur: '0.5rem', largeurTexte: '2.5rem', classNameDsfr: 'fr-text--xs' },
   xs: { hauteur: '0.625rem', largeurTexte: '2.5rem', classNameDsfr: 'fr-text--xs' },
   sm: { hauteur: '0.75rem', largeurTexte: '2.5rem', classNameDsfr: 'fr-text--xs' },
-  md: { hauteur: '0.75rem', largeurTexte: '4rem', classNameDsfr: 'fr-text--sm' },
+  md: { hauteur: '0.75rem', largeurTexte: '2.5rem', classNameDsfr: 'fr-text--sm' },
   lg: { hauteur: '2rem', largeurTexte: '6.5rem', classNameDsfr: 'fr-h1' },
 };
 
