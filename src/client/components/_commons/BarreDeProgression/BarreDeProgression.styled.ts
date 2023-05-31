@@ -36,12 +36,9 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
       display: block;
       width: 100%;
       height: ${props => dimensions[props.taille].hauteur};
-
-      @media screen {
-        background-color: ${props => couleurDeFond[props.fond]};
-        border: ${props => props.bordure ? `1px solid ${couleurBordure[props.bordure]}` : 'none'};
-        border-radius: ${borderRadius};
-      }
+      background-color: ${props => couleurDeFond[props.fond]};
+      border: ${props => props.bordure ? `1px solid ${couleurBordure[props.bordure]}` : 'none'};
+      border-radius: ${borderRadius};
 
       &::-webkit-progress-bar {
         background-color: ${props => couleurDeFond[props.fond]};
