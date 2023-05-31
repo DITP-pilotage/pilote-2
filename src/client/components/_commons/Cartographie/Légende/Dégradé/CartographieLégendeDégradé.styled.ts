@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { CartographieLégendeDégradéStyledProps } from './CartographieLégendeDégradé.interface';
 
 const CartographieLégendeDégradéStyled = styled.div<CartographieLégendeDégradéStyledProps>`
-  max-width: 28rem;
+  max-width: 25rem;
   margin: auto;
   
   .dégradé-de-surface {

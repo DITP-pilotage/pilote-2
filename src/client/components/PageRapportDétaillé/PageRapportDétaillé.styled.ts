@@ -16,13 +16,13 @@ const PageRapportDétailléStyled = styled.div`
   @media print {
     table {
       overflow: hidden;
-    }
-    
-    section:not(:first-of-type) {
-      break-inside: avoid;
+      
+      td {
+        background-color: var(--grey-1000-50);
+      }
     }
 
-    #cartes { 
+    .chantiers section {
       break-inside: avoid;
     }
 

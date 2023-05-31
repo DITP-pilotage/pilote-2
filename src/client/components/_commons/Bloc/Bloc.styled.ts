@@ -10,6 +10,14 @@ const BlocStyled = styled.div`
     background: var(--background-action-low-blue-france);
     border-bottom: 2px solid var(--border-plain-grey);
   }
+  
+  @media print {
+    height: unset;
+    
+    .titre {
+      break-after: avoid;
+    }
+  }
 `;
 
 export default BlocStyled;

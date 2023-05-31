@@ -85,7 +85,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
         <Sommaire rubriques={listeRubriques} />
       </BarreLatérale>
       <main className='fr-pb-5w'>
-        <div className="texte-impression fr-text--lg fr-mb-5w">
+        <div className="texte-impression fr-mb-5w">
           Pilote - Chantiers prioritaires / Extraction de la page chantier générée le
           {' '}
           {new Date().toLocaleString('FR-fr')}
@@ -196,8 +196,8 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                   détailsIndicateurs !== null && indicateurs.length > 0 && (
                     <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                       <section
-                        className="fr-col-12"
-                        id="indicateurs rubrique"
+                        className="fr-col-12 rubrique"
+                        id="indicateurs"
                       >
                         <Titre
                           baliseHtml='h2'

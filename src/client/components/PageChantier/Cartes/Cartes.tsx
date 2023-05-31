@@ -7,6 +7,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieMétéo';
+import CartesStyled from '@/components/PageChantier/Cartes/Cartes.styled';
 import CartesProps from './Cartes.interface';
 
 export default function Cartes({ chantierMailles, estInteractif = true }: CartesProps) {
@@ -24,8 +25,8 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
   }));
 
   return (
-    <div className="fr-grid-row fr-grid-row--gutters">
-      <div className="fr-col-12 fr-col-xl-6">
+    <CartesStyled className="flex">
+      <div>
         <Bloc>
           <section>
             <Titre
@@ -43,7 +44,7 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
           </section>
         </Bloc>
       </div>
-      <div className="fr-col-12 fr-col-xl-6">
+      <div>
         <Bloc>
           <section>
             <Titre
@@ -61,6 +62,6 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
           </section>
         </Bloc>
       </div>
-    </div>
+    </CartesStyled>
   );
 }

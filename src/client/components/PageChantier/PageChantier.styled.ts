@@ -28,20 +28,23 @@ const PageChantierStyled = styled.div`
     @page {
       size: 1800px 2545px;
     }
+
+    zoom: 125%;
     
     .texte-impression {
       position: fixed;
-      left: 50%;
       display: block;
-      transform: translate(-50%, 0);
+      width: 100%;
+      text-align: right;
     }
-
-    section {
+    
+    .rubrique {
+      display: block;
       break-inside: avoid;
     }
     
     main {
-      background: #FFF;
+      background: #FFF !important;
     }
 
     .barre-latérale, .fr-btn, .fr-link, .fr-accordion {

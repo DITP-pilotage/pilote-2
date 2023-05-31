@@ -57,20 +57,22 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
             </div>
           </div>
           <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
-          {
-            chantiersFiltrés.map((chantier) => (
-              <RapportDétailléChantier
-                chantier={chantier}
-                commentaires={publicationsGroupéesParChantier.commentaires[chantier.id] ?? []}
-                décisionStratégique={publicationsGroupéesParChantier.décisionStratégique[chantier.id] ?? null}
-                détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id] ?? []}
-                indicateurs={indicateursGroupésParChantier[chantier.id] ?? []}
-                key={chantier.id}
-                objectifs={publicationsGroupéesParChantier.objectifs[chantier.id] ?? []}
-                synthèseDesRésultats={publicationsGroupéesParChantier.synthèsesDesRésultats[chantier.id] ?? null}
-              />
-            ))
-          }
+          <div className="chantiers">
+            {
+              chantiersFiltrés.map((chantier) => (
+                <RapportDétailléChantier
+                  chantier={chantier}
+                  commentaires={publicationsGroupéesParChantier.commentaires[chantier.id] ?? []}
+                  décisionStratégique={publicationsGroupéesParChantier.décisionStratégique[chantier.id] ?? null}
+                  détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id] ?? []}
+                  indicateurs={indicateursGroupésParChantier[chantier.id] ?? []}
+                  key={chantier.id}
+                  objectifs={publicationsGroupéesParChantier.objectifs[chantier.id] ?? []}
+                  synthèseDesRésultats={publicationsGroupéesParChantier.synthèsesDesRésultats[chantier.id] ?? null}
+                />
+              ))
+            }
+          </div>
         </div>
       </main>
     </PageRapportDétailléStyled>
