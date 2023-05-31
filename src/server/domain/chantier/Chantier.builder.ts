@@ -12,6 +12,8 @@ import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 import TerritoireDonnéesBuilder from '@/server/domain/territoire/TerritoireDonnées.builder';
 import AxeBuilder from '@/server/domain/axe/Axe.builder';
 
+const ÉCHANTILLON_DIRECTIONS = ['SESVAS', 'DGASD', 'DG2TCC', 'DGFPAZ', 'DGRAOP', 'MINAFESD', 'SGFET', 'SGPECM', 'SGNGF'];
+
 export default class ChantierBuilder {
   private _id: Chantier['id'];
 
@@ -42,8 +44,8 @@ export default class ChantierBuilder {
     const ppg = new PpgBuilder().build();
     const ministèrePorteur = new MinistèreBuilder().build();
     const ministèresCoPorteurs = générerTableau(0, 3, () => new MinistèreBuilder().build());
-    const directeursAdminCentrale = générerUnTableauVideAvecUneTailleDeZéroÀn(2).map(() => ({ nom: faker.name.fullName(), direction: faker.lorem.word() }));
-    const directeursProjet = générerUnTableauVideAvecUneTailleDeZéroÀn(2).map(() => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
+    const directeursAdminCentrale = générerTableau(1, 2, () => ({ nom: faker.name.fullName(), direction: faker.helpers.arrayElement(ÉCHANTILLON_DIRECTIONS) }));
+    const directeursProjet = générerTableau(1, 3, () => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
 
     this._id = générerUnIdentifiantUnique('CH');
     this._nom = `${générerUnLibellé(6, 14)} ${générerCaractèresSpéciaux(3)} ${this._id}`;
