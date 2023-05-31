@@ -104,7 +104,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 afficheLeBoutonImpression
                 chantier={chantier}
               />
-              <div className='fr-py-2w fr-px-md-4w'>
+              <div className='fr-container--fluid fr-py-2w fr-px-md-4w'>
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                   {
                     avancements !== null &&
@@ -173,7 +173,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 </div>
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w rubrique">
                   <section
-                    className="fr-col-12"
+                    className="fr-col-12 rubrique"
                     id="objectifs"
                   >
                     <Titre
@@ -197,7 +197,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w rubrique">
                       <section
                         className="fr-col-12"
-                        id="indicateurs"
+                        id="indicateurs rubrique"
                       >
                         <Titre
                           baliseHtml='h2'

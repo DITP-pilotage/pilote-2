@@ -2,10 +2,10 @@ import styled from '@emotion/styled';
 
 const AvancementChantierStyled = styled.div`
   display: flex;
-  height: 100%;
   flex-wrap: wrap;
   row-gap: 1.5rem;
   column-gap: 1.5rem;
+  height: 100%;
 
   @media (width < 1350px) {
     column-gap: 1rem;

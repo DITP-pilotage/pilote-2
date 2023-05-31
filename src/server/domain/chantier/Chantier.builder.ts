@@ -5,7 +5,6 @@ import {
   générerCaractèresSpéciaux, générerTableau,
   générerUnIdentifiantUnique,
   générerUnLibellé,
-  générerUnTableauVideAvecUneTailleDeZéroÀn,
 } from '@/server/infrastructure/test/builders/utils';
 import PpgBuilder from '@/server/domain/ppg/Ppg.builder';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
