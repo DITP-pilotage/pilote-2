@@ -5,13 +5,14 @@ import TableauAdminUtilisateursProps
 import useTableauPageAdminUtilisateurs
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/useTableauAdminUtilisateurs';
 import TableauEnTête from '@/components/_commons/Tableau/EnTête/TableauEnTête';
-import TableauContenu from '@/components/_commons/Tableau/Contenu/TableauContenu';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import TableauAdminUtilisateursStyled
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs.styled';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import Titre from '@/components/_commons/Titre/Titre';
+import TableauAdminUtilisateursContenu
+  from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/Contenu/TableauAdminUtilisateursContenu';
 
 export default function TableauAdminUtilisateurs({ utilisateurs } :TableauAdminUtilisateursProps) {
 
@@ -43,7 +44,7 @@ export default function TableauAdminUtilisateurs({ utilisateurs } :TableauAdminU
             Tableau des utilisateurs
           </caption>
           <TableauEnTête<Utilisateur> tableau={tableau} />
-          <TableauContenu<Utilisateur> tableau={tableau} />
+          <TableauAdminUtilisateursContenu tableau={tableau} />
         </table>
         <TableauPagination
           changementDePageCallback={changementDePageCallback}

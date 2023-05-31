@@ -23,6 +23,22 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return this._mapperVersDomaine(row);
   }
 
+  async getById(id: string): Promise<Utilisateur | null> {
+    const row = await this._prisma.utilisateur.findUnique({
+      where: { id },
+      include: {
+        profil: true,
+        habilitation: true,
+      },
+    });
+
+    if (!row) {
+      return null;
+    }
+
+    return this._mapperVersDomaine(row);
+  }
+
   async récupérerTous(chantierIds: string[], territoireCodes: string[]): Promise<Utilisateur[]> {
     let utilisateursMappés:Utilisateur[] = [];
 
