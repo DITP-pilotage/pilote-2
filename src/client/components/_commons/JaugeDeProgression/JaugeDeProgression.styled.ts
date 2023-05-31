@@ -17,10 +17,11 @@ const largeurs = {
 
 const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`
   position: relative;
-  width: ${(props) => largeurs[props.taille]};
 
   .jauge-tracé {
     position: relative;
+    width: ${(props) => largeurs[props.taille]};
+    margin: 0 auto;
 
     .jauge-valeur {
       margin-bottom: 0;
