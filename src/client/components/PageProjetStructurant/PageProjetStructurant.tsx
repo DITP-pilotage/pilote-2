@@ -16,7 +16,7 @@ import usePageProjetStructurant from './usePageProjetStructurant';
 
 export default function PageProjetStructurant({ projetStructurant }: PageProjetStructurantProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);  
-  const { synthèseDesRésultats, objectif, commentaires } = usePageProjetStructurant(projetStructurant.id, projetStructurant.codeTerritoire);
+  const { synthèseDesRésultats, objectif, commentaires } = usePageProjetStructurant(projetStructurant.id, projetStructurant.territoire.code);
 
   const listeRubriques: Rubrique[] =
     [
@@ -52,19 +52,19 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
             <div className='fr-col'>
               <AvancementPageProjetStructurant
                 avancement={projetStructurant.avancement}
-                territoireNom={projetStructurant.territoireNomÀAfficher}
+                territoireNom={projetStructurant.territoire.nomAffiché}
               />
             </div>
             <div className='fr-col'>
               <ResponsablesPageProjetStructurant 
-                nomTerritoire={projetStructurant.territoireNomÀAfficher}
+                nomTerritoire={projetStructurant.territoire.nomAffiché}
                 responsables={projetStructurant.responsables}
               />
             </div>
             <div className='fr-col-12'>
               <SynthèseDesRésultats
                 estInteractif={false}
-                nomTerritoire={projetStructurant.territoireNomÀAfficher}
+                nomTerritoire={projetStructurant.territoire.nomAffiché}
                 rechargerRéforme={() => {}}
                 réformeId={projetStructurant.id}
                 synthèseDesRésultatsInitiale={synthèseDesRésultats}
@@ -75,8 +75,8 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
             <div className="fr-col-12">
               <Objectifs
                 estInteractif={false}
-                maille={projetStructurant.maille}
-                nomTerritoire={projetStructurant.territoireNomÀAfficher}
+                maille={projetStructurant.territoire.maille}
+                nomTerritoire={projetStructurant.territoire.nomAffiché}
                 objectifs={[objectif]}
                 réformeId={projetStructurant.id}
                 typesObjectif={[typeObjectifProjetStructurant]}
@@ -88,8 +88,8 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
               <Commentaires
                 commentaires={commentaires}
                 estInteractif={false}
-                maille={projetStructurant.maille}
-                nomTerritoire={projetStructurant.territoireNomÀAfficher}
+                maille={projetStructurant.territoire.maille}
+                nomTerritoire={projetStructurant.territoire.nomAffiché}
                 réformeId={projetStructurant.id}
                 typesCommentaire={typesCommentaireProjetStructurant}
               />

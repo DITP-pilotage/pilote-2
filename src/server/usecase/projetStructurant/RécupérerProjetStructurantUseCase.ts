@@ -20,21 +20,23 @@ export default class RécupérerProjetStructurantUseCase {
     private readonly synthèseDesRésultatsRepository: SynthèseDesRésultatsProjetStructurantRepository = dependencies.getSynthèseDesRésultatsProjetStructurantRepository(),
   ) {}
 
-  private construireProjetStructurant(projetStructurantPrisma: ProjetStructurantPrisma, territoire: Territoire, périmètres: PérimètreMinistériel[], météo: Météo) {
+  private construireProjetStructurant(projetStructurantPrisma: ProjetStructurantPrisma, territoire: Territoire, périmètres: PérimètreMinistériel[], météo: Météo): ProjetStructurant {
     const ministèresNoms = [...new Set(périmètres.map(p => p.ministèreNom))];
 
     return {
       id: projetStructurantPrisma.id,
       nom: projetStructurantPrisma.nom,
-      codeTerritoire: projetStructurantPrisma.territoire_code,
       // en attendant d'avoir les tables
       avancement: générerPeutÊtreNull(0.1, faker.datatype.number({ min: 0, max: 120, precision: 0.01 })),
       dateAvancement: faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString(),
       météo: météo,
-      maille: territoire.maille as MailleInterne,
-      codeInsee: territoire.codeInsee,
-      territoireNomÀAfficher: territoire.nomAffiché,
       périmètresIds: projetStructurantPrisma.perimetres_ids,
+      territoire: {
+        code: projetStructurantPrisma.territoire_code,
+        maille: territoire.maille as MailleInterne,
+        codeInsee: territoire.codeInsee,
+        nomAffiché: territoire.nomAffiché,
+      },
       responsables: {
         ministèrePorteur: ministèresNoms[0] ?? '',
         ministèresCoporteurs: ministèresNoms.slice(1) ?? [],

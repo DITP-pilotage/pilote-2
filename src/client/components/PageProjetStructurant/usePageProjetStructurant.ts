@@ -5,7 +5,7 @@ import api from '@/server/infrastructure/api/trpc/api';
 import SynthèseDesRésultatsProjetStructurant
   from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultats.interface';
 
-export default function usePageProjetStructurant(projetStructurantId: ProjetStructurant['id'], territoireCode: ProjetStructurant['codeTerritoire']) {
+export default function usePageProjetStructurant(projetStructurantId: ProjetStructurant['id'], territoireCode: ProjetStructurant['territoire']['code']) {
 
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {

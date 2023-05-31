@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker/locale/fr';
 import { projet_structurant as ProjetStructurantPrisma } from '@prisma/client';
-import {  générerCaractèresSpéciaux, générerUnLibellé } from '@/server/infrastructure/test/builders/utils';
+import {  générerCaractèresSpéciaux, générerUnIdentifiantUnique, générerUnLibellé } from '@/server/infrastructure/test/builders/utils';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 import ProjetStructurantBuilder from '@/server/domain/projetStructurant/ProjetStructurant.builder';
 
@@ -31,9 +31,9 @@ export default class ProjetStructurantRowBuilder {
     ]);
   
     this._id = projetGénéré.id;
-    this._code = projetGénéré.codeInsee;
+    this._code = générerUnIdentifiantUnique('code');
     this._nom = `${générerUnLibellé(6, 14)} ${générerCaractèresSpéciaux(3)} ${this._id}`;
-    this._territoireCode = projetGénéré.codeTerritoire;
+    this._territoireCode = projetGénéré.territoire.code;
     this._périmètreIds = [faker.helpers.arrayElement(ministèrePorteur.périmètresMinistériels).id, ...ministèresCoPorteurs.map(ministère => faker.helpers.arrayElement(ministère.périmètresMinistériels).id)];
     this._directionAdministration = projetGénéré.responsables.directionAdmininstration;
     this._chefferieDeProjet = projetGénéré.responsables.chefferieDeProjet;

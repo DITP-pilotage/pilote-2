@@ -73,11 +73,11 @@ describe('Récupérer projet structurant', () => {
       const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id);
 
       //THEN
-      expect(résultat.codeTerritoire).toEqual(projetStructurantPrisma.territoire_code);
-      expect(résultat.codeTerritoire).toEqual(territoire.code);
-      expect(résultat.maille).toEqual(territoire.maille);
-      expect(résultat.codeInsee).toEqual(territoire.codeInsee);
-      expect(résultat.territoireNomÀAfficher).toEqual(territoire.nomAffiché);
+      expect(résultat.territoire.code).toEqual(projetStructurantPrisma.territoire_code);
+      expect(résultat.territoire.code).toEqual(territoire.code);
+      expect(résultat.territoire.maille).toEqual(territoire.maille);
+      expect(résultat.territoire.codeInsee).toEqual(territoire.codeInsee);
+      expect(résultat.territoire.nomAffiché).toEqual(territoire.nomAffiché);
     });
 
     it('Récupère les noms des minisères associés', async () => {

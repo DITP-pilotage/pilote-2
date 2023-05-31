@@ -5,14 +5,16 @@ import { CodeInsee, Territoire } from '@/server/domain/territoire/Territoire.int
 export default interface ProjetStructurant {
   id: string,
   nom: string,
-  codeTerritoire: Territoire['code']
-  maille: MailleInterne;
-  codeInsee: CodeInsee;
-  territoireNomÀAfficher: string;
   périmètresIds: string[];
   avancement: number | null;
   dateAvancement: string;
   météo: Météo
+  territoire: {
+    code: Territoire['code']
+    maille: MailleInterne;
+    codeInsee: CodeInsee;
+    nomAffiché: string;
+  }
   responsables: {
     ministèrePorteur: string,
     ministèresCoporteurs: string[],
