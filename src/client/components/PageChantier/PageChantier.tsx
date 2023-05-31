@@ -110,7 +110,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     avancements !== null &&
                     <>
                       <section
-                        className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-7' : 'fr-col-xl-12'} fr-col-12`}
+                        className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-7' : 'fr-col-xl-12'} fr-col-12 rubrique`}
                         id="avancement"
                       >
                         <Titre
@@ -125,7 +125,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         />
                       </section>
                       <section
-                        className='fr-col-xl-5 fr-col-12'
+                        className='fr-col-xl-5 fr-col-12 rubrique'
                         id="responsables"
                       >
                         <Titre
@@ -139,7 +139,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     </>
                   }
                   <section
-                    className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-7'} fr-col-12`}
+                    className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-7'} fr-col-12 rubrique`}
                     id="synthèse"
                   >
                     <Titre
@@ -159,7 +159,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 </div>
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                   <section
-                    className="fr-col-12"
+                    className="fr-col-12 rubrique"
                     id="cartes"
                   >
                     <Titre
@@ -171,7 +171,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     <Cartes chantierMailles={chantier.mailles} />
                   </section>
                 </div>
-                <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+                <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w rubrique">
                   <section
                     className="fr-col-12"
                     id="objectifs"
@@ -194,7 +194,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 </div>
                 {
                   détailsIndicateurs !== null && (
-                    <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+                    <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w rubrique">
                       <section
                         className="fr-col-12"
                         id="indicateurs"
@@ -216,8 +216,8 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 {
                   territoireSélectionné!.maille === 'nationale' &&
                   <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-                    <div
-                      className="fr-col-12"
+                    <section
+                      className="fr-col-12 rubrique"
                       id="décisions-stratégiques"
                     >
                       <Titre
@@ -231,12 +231,12 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         décisionStratégique={décisionStratégique}
                         modeÉcriture={territoireSélectionné?.accèsSaisiePublication}
                       />
-                    </div>
+                    </section>
                   </div>
                 }
                 <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-                  <div
-                    className="fr-col-12"
+                  <section
+                    className="fr-col-12 rubrique"
                     id="commentaires"
                   >
                     <Titre
@@ -252,7 +252,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       nomTerritoire={territoireSélectionné!.nomAffiché}
                       réformeId={chantier.id}
                     />
-                  </div>
+                  </section>
                 </div>
               </div>
             </>
