@@ -6,6 +6,7 @@ const SommaireStyled = styled.div`
   max-width: 20rem;
 
   li {
+    line-height: 2rem;
     color: var(--text-action-high-blue-france);
     list-style: none;
 

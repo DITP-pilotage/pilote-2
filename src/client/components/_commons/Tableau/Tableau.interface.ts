@@ -1,7 +1,6 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { Table } from '@tanstack/react-table';
 
 export default interface TableauProps<T extends object> {
-  colonnes: ColumnDef<T, any>[],
-  données: T[],
+  tableau:  Table<T>
   titre: string,
 }

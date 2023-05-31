@@ -1,14 +1,25 @@
-import { createColumnHelper } from '@tanstack/react-table';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
-import { territoiresComparésTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import {
+  territoiresComparésTerritoiresStore,
+  territoireSélectionnéTerritoiresStore,
+} from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { DétailsIndicateurCodeInsee } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import ValeurEtDate from './ValeurEtDate/ValeurEtDate';
+import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
+import IndicateurBlocIndicateurTuile from '@/components/PageChantier/Indicateurs/Bloc/indicateurBlocIndicateurTuile';
 import { IndicateurDétailsParTerritoire } from './IndicateurBloc.interface';
+import ValeurEtDate from './ValeurEtDate/ValeurEtDate';
 
 const indicateurDétailsVide = {
-  territoireNom: '', 
-  données: {  
+  territoireNom: '',
+  données: {
     codeInsee: '',
     valeurInitiale: null,
     dateValeurInitiale: null,
@@ -23,6 +34,7 @@ const indicateurDétailsVide = {
 const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
 
 export default function useIndicateurs(détailsIndicateur: DétailsIndicateurCodeInsee) {
+  const estVueMobile = estVueMobileStore();
   const territoiresComparés = territoiresComparésTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
@@ -49,15 +61,17 @@ export default function useIndicateurs(détailsIndicateur: DétailsIndicateurCod
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [détailsIndicateur]);
-  
+
   const colonnes = [
     reactTableColonnesHelper.accessor( 'territoireNom', {
       header: 'Territoire(s)',
+      id: 'territoire',
       cell: nomDuTerritoire => nomDuTerritoire.getValue(),
       enableSorting: false,
     }),
     reactTableColonnesHelper.accessor('données.valeurInitiale', {
       header: 'Valeur initiale',
+      id: 'valeurInitiale',
       cell: valeurInitiale => (
         <ValeurEtDate
           date={valeurInitiale.row.original.données.dateValeurInitiale}
@@ -68,6 +82,7 @@ export default function useIndicateurs(détailsIndicateur: DétailsIndicateurCod
     }),
     reactTableColonnesHelper.accessor('données.valeurs', {
       header: 'Valeur actuelle',
+      id: 'valeurActuelle',
       cell: valeurs => (
         <ValeurEtDate
           date={valeurs.row.original.données.dateValeurs[valeurs.getValue().length - 1]}
@@ -78,6 +93,7 @@ export default function useIndicateurs(détailsIndicateur: DétailsIndicateurCod
     }),
     reactTableColonnesHelper.accessor('données.valeurCible', {
       header: 'Cible 2026',
+      id: 'cible2026',
       cell: valeurCible => (
         <ValeurEtDate
           date={valeurCible.row.original.données.dateValeurCible}
@@ -88,6 +104,7 @@ export default function useIndicateurs(détailsIndicateur: DétailsIndicateurCod
     }),
     reactTableColonnesHelper.accessor('données.avancement.global', {
       header: 'Avancement 2026',
+      id: 'avancement2026',
       cell: avancementGlobal => (
         <BarreDeProgression
           afficherTexte
@@ -98,12 +115,37 @@ export default function useIndicateurs(détailsIndicateur: DétailsIndicateurCod
           variante='primaire'
         />
       ),
-      enableSorting: false, 
+      enableSorting: false,
+    }),
+    reactTableColonnesHelper.display({
+      id: 'indicateur-tuile',
+      cell: indicateurCellContext => <IndicateurBlocIndicateurTuile indicateurDétailsParTerritoire={indicateurCellContext.row.original} />,
+      enableSorting: false,
+      enableGrouping: false,
     }),
   ];
 
-  return { 
-    indicateurDétailsParTerritoires, 
-    colonnes, 
+  const tableau = useReactTable({
+    data: indicateurDétailsParTerritoires,
+    columns: colonnes,
+    state: {
+      columnVisibility: estVueMobile ? ({
+        territoire: false,
+        valeurInitiale: false,
+        valeurActuelle: false,
+        cible2026: false,
+        avancement2026: false,
+      }) : ({
+        'indicateur-tuile': false,
+      }),
+    },
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
+
+  return {
+    indicateurDétailsParTerritoires,
+    tableau,
   };
 }

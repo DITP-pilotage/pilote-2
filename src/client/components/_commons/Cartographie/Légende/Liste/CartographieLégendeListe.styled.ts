@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 const CartographieLégendeListeStyled = styled.ul`
   display: flex;
   flex-wrap: wrap;
-  max-width: 28rem;
+  max-width: 25rem;
   margin: auto;
   list-style-type: none;
 `;

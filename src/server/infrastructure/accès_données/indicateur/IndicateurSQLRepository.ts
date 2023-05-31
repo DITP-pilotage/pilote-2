@@ -105,6 +105,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         chantier_id: { in: chantiersIds },
         maille: CODES_MAILLES[maille],
         code_insee: codeInsee,
+        NOT: {
+          type_id : null,
+        },
       },
     });
 
@@ -121,6 +124,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         chantier_id: { in: chantiersIds },
         maille: CODES_MAILLES[maille],
         code_insee: codeInsee,
+        NOT: {
+          type_id : null,
+        },
       },
     });  
 
@@ -136,10 +142,13 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
 
   async récupérerParChantierId(chantierId: string): Promise<Indicateur[]> {
     const indicateurs: IndicateurPrisma[] = await this.prisma.indicateur.findMany({
-      where: { chantier_id: chantierId, maille: 'NAT',
+      where: {
+        chantier_id: chantierId,
+        maille: 'NAT',
         NOT: {
           type_id : null,
-        } },
+        },
+      },
     });
     
     return indicateurs.map((indicateur) => this._mapToDomain(indicateur));
@@ -150,6 +159,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       where: { 
         id: indicateurId,
         maille: CODES_MAILLES[maille],
+        NOT: {
+          type_id : null,
+        },
       },
     });
 
@@ -165,6 +177,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         chantier_id: chantierId,
         maille: maille,
         code_insee: { in: codesInsee },
+        NOT: {
+          type_id : null,
+        },
       },
     });
     return this._mapDétailsToDomain(indicateurs);
@@ -215,7 +230,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       
       from chantier_ids cids
                inner join territoire t on t.code in (${Prisma.join(territoiresLecture)})
-               inner join indicateur i on i.chantier_id = cids.id and lower(i.maille) = cast(t.maille as text) and i.code_insee = t.code_insee
+               inner join indicateur i on i.chantier_id = cids.id and lower(i.maille) = cast(t.maille as text) and i.code_insee = t.code_insee and i.type_id is not null
                left outer join chantier c on c.id = cids.id and c.territoire_code = t.code
                left outer join chantier c_r on (c_r.id = cids.id and c_r.maille = 'REG')
                                             and (c_r.territoire_code = t.code or c_r.territoire_code = t.code_parent)

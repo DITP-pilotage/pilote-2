@@ -16,7 +16,7 @@ export default function Sommaire({ rubriques }: SommaireProps) {
             rubriques.map(rubrique => (
               <li
                 aria-current={rubriqueCourante === rubrique.ancre}
-                className='fr-pb-1w'
+                className='fr-pb-0'
                 key={rubrique.ancre}
               >
                 <a
@@ -26,12 +26,12 @@ export default function Sommaire({ rubriques }: SommaireProps) {
                   {rubrique.nom}
                 </a>
                 { 
-                  !!rubrique.sousRubriques &&
-                  <ul className='fr-pl-3w'>
+                  !!rubrique.sousRubriques && rubrique.sousRubriques.length > 0 &&
+                  <ul className='fr-pl-3w fr-my-0'>
                     {
                       rubrique.sousRubriques.map(sousRubrique => (
                         <li
-                          className='fr-pb-1w'
+                          className='fr-pb-0'
                           key={sousRubrique.nom}
                         >
                           <a href={`#${sousRubrique.ancre}`}>

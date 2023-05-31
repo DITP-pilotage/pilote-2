@@ -7,8 +7,8 @@ const AvancementsStyled = styled.div`
   column-gap: 2.5rem;
   justify-content: center;
 
-  @media (width < 1300px) {
-    column-gap: 1.5rem;
+  @media (width < 84rem) {
+    column-gap: 1rem;
   }
 
   @media (width < ${breakpointXL}) {
@@ -19,7 +19,7 @@ const AvancementsStyled = styled.div`
     display: flex;
     column-gap: 1.5rem;
     
-    @media (width > ${breakpointXL}) and (width < 1350px) {
+    @media (width > ${breakpointXL}) and (width < 84rem) {
       column-gap: 0.5rem;
     }
   }

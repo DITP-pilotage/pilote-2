@@ -1,5 +1,4 @@
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import Titre from '@/components/_commons/Titre/Titre';
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import {
@@ -27,16 +26,10 @@ export default function AvancementChantier({ avancements, chantierId }: Avanceme
     avancementsAgrégés.global.moyenne = avancements.nationale?.global.moyenne ?? null;
 
   return (
-    <AvancementChantierStyled id="avancement">
-      <Titre
-        baliseHtml='h2'
-        className='fr-h4 fr-mb-2w'
-      >
-        Avancement du chantier
-      </Titre>
-      <div className='blocs'>
-        {
-          avancements.départementale.moyenne !== undefined &&
+    <AvancementChantierStyled>
+      {
+        !!avancements.départementale.moyenne &&
+        <div>
           <Bloc titre={territoireSélectionné?.nomAffiché}>
             <div className='fr-py-1w jauge'>
               <JaugeDeProgression
@@ -47,9 +40,11 @@ export default function AvancementChantier({ avancements, chantierId }: Avanceme
               />
             </div>
           </Bloc>
-        }
-        {
-          avancements.régionale.moyenne !== undefined &&
+        </div>
+      }
+      {
+        !!avancements.régionale.moyenne &&
+        <div>
           <Bloc titre={territoireSélectionné!.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné!.codeParent).nomAffiché : territoireSélectionné!.nomAffiché}>
             <div className='fr-py-1w jauge'>
               <JaugeDeProgression
@@ -60,14 +55,14 @@ export default function AvancementChantier({ avancements, chantierId }: Avanceme
               />
             </div>
           </Bloc>
-          }
-        <div className='avancement-national'>
-          <Bloc titre='National'>
-            <div className='fr-py-1w'>
-              <Avancements avancements={avancementsAgrégés ?? null} />
-            </div>
-          </Bloc>
         </div>
+      }
+      <div className='avancement-national'>
+        <Bloc titre='National'>
+          <div className='fr-py-1w'>
+            <Avancements avancements={avancementsAgrégés ?? null} />
+          </div>
+        </Bloc>
       </div>
     </AvancementChantierStyled>
   );

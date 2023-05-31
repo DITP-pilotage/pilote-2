@@ -6,12 +6,25 @@ const MiseEnPageStyled = styled.div`
   word-break: break-word;
 
   @media print {
+    @page {
+      margin: 1.5cm 1cm;
+    }
+    
+    zoom: 125%;
+    
     .fr-header, .fr-footer{
       display: none;
     }
     
     *::-webkit-scrollbar {
       display: none;
+    }
+    
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    
+    main {
+      background: none !important;
     }
   }
   

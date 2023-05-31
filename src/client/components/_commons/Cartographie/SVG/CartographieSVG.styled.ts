@@ -4,7 +4,7 @@ const CartographieSVGStyled = styled.div`
   position: relative;
 
   .carte {
-    max-width: 28rem;
+    max-width: 25rem;
     margin: auto;
     stroke: var(--grey-1000-50);
 
