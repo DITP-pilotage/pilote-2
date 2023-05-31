@@ -257,7 +257,9 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
               </div>
             </>
           ) : (
-            <Loader />
+            <div className='loader'>
+              <Loader />
+            </div>
           )
         }
       </main>

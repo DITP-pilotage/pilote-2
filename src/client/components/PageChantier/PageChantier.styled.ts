@@ -20,6 +20,10 @@ const PageChantierStyled = styled.div`
     display: none;
   }
   
+  .loader {
+    height: 100vh;
+  }
+  
   @media print {
     @page {
       size: 1800px 2545px;
