@@ -6,7 +6,7 @@ export default function Bloc({ children, titre }: BlocProps) {
     <BlocStyled>
       {
         !!titre &&
-        <div className='titre fr-mb-0 fr-p-2w fr-text--sm fr-text--bold'>
+        <div className='titre fr-mb-0 fr-px-2w fr-p-1w fr-py-md-2w fr-text--sm fr-text--bold'>
           {titre}
         </div>
       }

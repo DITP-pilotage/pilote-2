@@ -6,7 +6,7 @@ import PageChantierEnTêteStyled from './EnTête.styled';
 
 export default function PageChantierEnTête({ chantier, afficheLeBoutonImpression = false }: PageChantierEnTêteProps) {
   return (
-    <PageChantierEnTêteStyled className='fr-p-4w'>
+    <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-4w fr-py-4w'>
       <Link
         aria-label="Retour à l'accueil"
         className="fr-link fr-fi-arrow-left-line fr-link--icon-left"
@@ -16,7 +16,7 @@ export default function PageChantierEnTête({ chantier, afficheLeBoutonImpressio
       </Link>
       <Titre
         baliseHtml='h1'
-        className='fr-h2 fr-my-1w'
+        className='fr-h2 fr-mb-1w  fr-mt-3w'
       >
         { chantier.nom }
       </Titre>

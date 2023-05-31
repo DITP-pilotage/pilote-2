@@ -19,7 +19,7 @@ export default function Publication({ caract√©ristiques, publicationInitiale, r√
   } = usePublication(publicationInitiale);
 
   return (
-    <PublicationStyled className='fr-px-1w fr-py-2w'>
+    <PublicationStyled className='fr-px-0 fr-px-md-1w fr-py-2w'>
       <Titre
         baliseHtml='h3'
         className="fr-h5 fr-mb-1w"

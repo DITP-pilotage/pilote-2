@@ -115,7 +115,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       >
                         <Titre
                           baliseHtml='h2'
-                          className='fr-h4 fr-mb-2w fr-mx-2w fr-mx-md-0'
+                          className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
                         >
                           Avancement du chantier
                         </Titre>
@@ -130,7 +130,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       >
                         <Titre
                           baliseHtml='h2'
-                          className='fr-h4 fr-mb-2w fr-mx-2w fr-mx-md-0'
+                          className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
                         >
                           Responsables
                         </Titre>
@@ -144,7 +144,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                   >
                     <Titre
                       baliseHtml='h2'
-                      className='fr-h4 fr-mb-2w fr-mx-2w fr-mx-md-0'
+                      className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
                     >
                       Météo et synthèse des résultats
                     </Titre>
@@ -164,7 +164,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                   >
                     <Titre
                       baliseHtml='h2'
-                      className='fr-h4 fr-mb-2w fr-mx-2w fr-mx-md-0'
+                      className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
                     >
                       Répartition géographique
                     </Titre>
@@ -178,7 +178,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                   >
                     <Titre
                       baliseHtml='h2'
-                      className='fr-h4 fr-mb-2w fr-mx-2w fr-mx-md-0'
+                      className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
                     >
                       Objectifs
                     </Titre>
@@ -201,7 +201,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       >
                         <Titre
                           baliseHtml='h2'
-                          className='fr-h4 fr-mb-2w fr-mx-2w fr-mx-md-0'
+                          className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
                         >
                           Indicateurs
                         </Titre>
@@ -222,7 +222,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     >
                       <Titre
                         baliseHtml="h2"
-                        className="fr-h4 fr-mb-2w fr-mx-2w fr-mx-md-0"
+                        className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
                       >
                         Décisions stratégiques
                       </Titre>
@@ -241,7 +241,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                   >
                     <Titre
                       baliseHtml='h2'
-                      className='fr-h4 fr-mb-2w fr-mx-2w fr-mx-md-0'
+                      className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
                     >
                       Commentaires du chantier
                     </Titre>

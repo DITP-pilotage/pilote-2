@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 const CartographieLégendeListeÉlémentStyled = styled.li`
   display: flex;
-  align-items: center;
+  align-items: start;
   font-size: 0.75rem;
   line-height: 1rem;
 

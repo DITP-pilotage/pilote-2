@@ -22,7 +22,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
   return (
     <SynthèseDesRésultatsStyled>
       <Bloc titre={nomTerritoire}>
-        <div className='fr-px-1w fr-py-2w'>
+        <div className='fr-py-1w'>
           {
             modeÉdition && modeÉcriture ?
               <SynthèseDesRésultatsFormulaire
@@ -43,7 +43,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
                   </div>
                 }
                 <div className="contenu">
-                  <div className="météo-affichage">
+                  <div className="fr-mx-1w fr-mb-2w fr-mb-md-0 météo-affichage">
                     <MétéoBadge météo={synthèseDesRésultats?.météo ?? 'NON_RENSEIGNEE'} />
                     {
                       !!synthèseDesRésultats &&

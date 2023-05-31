@@ -4,7 +4,7 @@ const SynthèseDesRésultatsStyled = styled.div`
   .contenu {
     display: flex;
     flex-wrap: wrap;
-    column-gap: 1.5rem;
+    column-gap: 1rem;
     justify-content: center;
   }
   
