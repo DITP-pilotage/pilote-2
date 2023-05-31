@@ -5,7 +5,7 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_PROJETS_STRUCTURANTS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
-import RépartitionMétéo from '@/components/PageAccueil/RépartitionMétéo/RépartitionMétéo';
+import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
 import usePageProjetsStructurants from './usePageProjetsStructurants';
 import PageProjetsStructurantsProps from './PageProjetsStructurants.interface';
 import TableauProjetsStructurants from './TableauProjetsStructurants/TableauProjetsStructurants';

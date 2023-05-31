@@ -12,11 +12,11 @@ import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerr
 import ExportDesDonnées, { ID_HTML_MODALE_EXPORT } from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import FiltresActifs from '@/client/components/PageAccueil/FiltresActifs/FiltresActifs';
-import RépartitionMétéo from '@/client/components/PageAccueil/RépartitionMétéo/RépartitionMétéo';
 import PageChantiersStyled from './PageChantiers.styled';
 import PageChantiersProps from './PageChantiers.interface';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
+import RépartitionMétéo from './RépartitionMétéo/RépartitionMétéo';
 
 export default function PageChantiers({ chantiers }: PageChantiersProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -101,15 +101,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                 <Avancements avancements={avancementsAgrégés} />
               </section>
               <hr className="fr-hr fr-my-3w fr-pb-1v" />
-              <section>
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg"
-                >
-                  Répartition des météos renseignées
-                </Titre>
-                <RépartitionMétéo météos={répartitionMétéos} />
-              </section>
+              <RépartitionMétéo météos={répartitionMétéos} />
             </Bloc>
           </div>
         </div>
