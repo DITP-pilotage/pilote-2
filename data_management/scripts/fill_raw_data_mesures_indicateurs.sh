@@ -28,7 +28,7 @@ psql "$DATABASE_URL" -c "TRUNCATE TABLE raw_data.mesure_indicateur"
 #psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/indicateur_cumule_et_decumule.csv
 #sleep 2
 #psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/indicateur_cumule_et_decumule_doublon.csv
-psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < input_data/private_data/PPG_metadata/config_calculs/valeurs-sample.csv
+psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value, id, rapport_id) from STDIN with csv delimiter ',' header;" < input_data/private_data/PPG_metadata/config_calculs/valeurs-sample-uuid.csv
 
 #  Quelques fichiers de prod
 #psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/data_import1_IND-228.csv
