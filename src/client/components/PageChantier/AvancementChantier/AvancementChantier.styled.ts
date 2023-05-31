@@ -7,7 +7,7 @@ const AvancementChantierStyled = styled.div`
   column-gap: 1.5rem;
   height: 100%;
 
-  @media (width < 1350px) {
+  @media (width < 84rem) {
     column-gap: 1rem;
   }
 

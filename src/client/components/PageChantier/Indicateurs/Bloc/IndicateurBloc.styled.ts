@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
 const IndicateurBlocStyled = styled.div`
-  &:not(:last-of-type) {
-    margin-bottom: 1rem;
+  &:last-of-type {
+    margin-bottom: 0 !important;
   }
   
   td {

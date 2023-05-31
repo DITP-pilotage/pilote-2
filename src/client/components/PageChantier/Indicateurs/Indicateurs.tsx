@@ -26,7 +26,7 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, estDispo
           if (indicateursDeCetteRubrique.length > 0) {
             return (
               <section
-                className="sous-rubrique-indicateur"
+                className="fr-mb-3w sous-rubrique-indicateur"
                 id={rubriqueIndicateur.ancre}
                 key={rubriqueIndicateur.ancre}
               >

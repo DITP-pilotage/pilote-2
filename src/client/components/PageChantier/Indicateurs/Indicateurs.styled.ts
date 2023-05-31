@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
 const IndicateursStyled = styled.section`
-  .sous-rubrique-indicateur:not(:last-of-type) {
-    margin-bottom: 1.5rem;
+  .sous-rubrique-indicateur:last-of-type {
+    margin-bottom: 0 !important;
   }
 `;
 

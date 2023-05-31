@@ -20,6 +20,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
 
   return (
     <IndicateurBlocStyled
+      className="fr-mb-2w"
       key={indicateur.id}
     >
       <Bloc>

@@ -25,12 +25,12 @@ const IndicateurBlocIndicateurTuile = styled.div`
   tbody {
     tr {
       background-color: unset !important;
+    }
 
-      td {
-        line-height: 1.25rem;
-      }
-
-      td.libellés {
+    td {
+      line-height: 1.25rem;
+      
+      &.libellés {
         width: 9rem;
         font-weight: bold;
       }

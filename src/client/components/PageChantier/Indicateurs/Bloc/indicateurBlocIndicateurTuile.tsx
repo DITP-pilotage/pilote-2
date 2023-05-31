@@ -1,11 +1,7 @@
-import { IndicateurDétailsParTerritoire } from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc.interface';
 import IndicateurBlocIndicateurTuileStyled
   from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBlocIndicateurTuile.styled';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-
-interface IndicateurDétailsParTerritoireProps {
-  indicateurDétailsParTerritoire: IndicateurDétailsParTerritoire
-}
+import IndicateurDétailsParTerritoireProps from './indicateurDétailsParTerritoire.interface';
 
 export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTerritoire }: IndicateurDétailsParTerritoireProps) {
   return (
