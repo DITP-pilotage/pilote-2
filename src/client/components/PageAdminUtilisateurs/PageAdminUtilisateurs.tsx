@@ -3,7 +3,6 @@ import PageAdminUtilisateursProps from '@/components/PageAdminUtilisateurs/PageA
 import Titre from '@/components/_commons/Titre/Titre';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import PageAdminUtilisateursStyled from '@/components/PageAdminUtilisateurs/PageAdminUtilisateurs.styled';
 import TableauAdminUtilisateurs
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs';
 
@@ -11,7 +10,7 @@ export default function PageAdminUtilisateurs({ utilisateurs } :PageAdminUtilisa
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
-    <PageAdminUtilisateursStyled className='flex'>
+    <div className='flex'>
       <BarreLatérale
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
@@ -27,18 +26,10 @@ export default function PageAdminUtilisateurs({ utilisateurs } :PageAdminUtilisa
             Gestion des profils
           </Titre>
           <Bloc>
-            <Titre
-              baliseHtml='h2'
-              className='fr-h4 titre-tableau'
-            >
-              {utilisateurs.length}
-              {' '}
-              utilisateurs
-            </Titre>
             <TableauAdminUtilisateurs utilisateurs={utilisateurs} />
           </Bloc>
         </div>
       </main>
-    </PageAdminUtilisateursStyled>
+    </div>
   );
 }

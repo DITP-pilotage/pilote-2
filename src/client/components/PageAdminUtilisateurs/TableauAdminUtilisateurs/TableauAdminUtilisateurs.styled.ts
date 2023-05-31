@@ -2,6 +2,15 @@ import styled from '@emotion/styled';
 
 const TableauAdminUtilisateursStyled = styled.section`
 
+  .barre-de-recherche {
+    width: 100%;
+    max-width: 20.5rem;
+  }
+
+  .titre-tableau{
+    color: var(--text-title-blue-france);
+  }
+
   table.tableau {
     display: table;
     

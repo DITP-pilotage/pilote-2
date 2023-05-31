@@ -1,19 +1,20 @@
 import {
   createColumnHelper,
-  getCoreRowModel,
+  getCoreRowModel, getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useCallback } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
+import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 
 const reactTableColonnesHelper = createColumnHelper<Utilisateur>();
 const colonnes = [
   reactTableColonnesHelper.accessor('email', {
     header: 'Adresse email',
     cell: props => props.getValue(),
-    size: 200,
   }),
   reactTableColonnesHelper.accessor('nom', {
     header: 'Nom',
@@ -32,17 +33,29 @@ const colonnes = [
   }),
   reactTableColonnesHelper.display({
     header: 'Dernière modification',
-    cell: '',
+    cell: 'Pas de données',
 
   }),
 ];
 
 export default function useTableauPageAdminUtilisateurs(utilisateurs :Utilisateur[]) {
+  const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
+
+  const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setValeurDeLaRecherche(event.target.value);
+  }, [setValeurDeLaRecherche]);
 
   const tableau = useReactTable({
     data : utilisateurs,
     columns: colonnes,
+    globalFilterFn: (ligne, colonneId, filtreValeur) => {
+      return rechercheUnTexteContenuDansUnContenant(filtreValeur, ligne.getValue<ProjetStructurant>(colonneId).toString());
+    },
+    state: {
+      globalFilter: valeurDeLaRecherche,
+    },
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
@@ -54,5 +67,7 @@ export default function useTableauPageAdminUtilisateurs(utilisateurs :Utilisateu
   return {
     tableau,
     changementDePageCallback,
+    valeurDeLaRecherche,
+    changementDeLaRechercheCallback,
   };
 }
