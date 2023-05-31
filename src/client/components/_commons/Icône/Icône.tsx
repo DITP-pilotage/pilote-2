@@ -16,41 +16,74 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-others/icons-others.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.min.css';
 import 'material-symbols/index.css';
+import 'material-icons/iconfont/material-icons.css';
 import 'remixicon/fonts/remixicon.css';
 import { useMemo } from 'react';
 import IcôneProps from '@/components/_commons/Icône/Icône.interface';
 import IcôneStyled from '@/components/_commons/Icône/Icône.styled';
 
-const VARIANTES_MATERIAL_DESIGN = new Set(['outlined', 'rounded', 'sharp']);
+const MATERIAL_SYMBOLS_CLASSES_CSS_À_PARTIR_DE_LA_VARIANTE: Record<string, string> = {
+  'outlined': 'material-symbols-outlined',
+  'rounded': 'material-symbols-rounded',
+  'sharp': 'material-symbols-sharp',
+};
+
+const MATERIAL_ICONS_CLASSES_CSS_À_PARTIR_DE_LA_VARIANTE: Record<string, string> = {
+  'filled': 'material-icons',
+  'outlined': 'material-icons-outlined',
+  'rounded': 'material-icons-round',
+  'sharp': 'material-icons-sharp',
+  'two-tone': 'material-icons-two-tone',
+};
+
+const DSFR_ICONS_VARIANTES = new Set(['fill', 'line']);
+const REMIX_ICONS_VARIANTES = new Set(['fill', 'line']);
 
 export default function Icône({ id }: IcôneProps) {
-  const icône = useMemo(() => id.split('::'), [id]);
-  if (icône === null) {
+  const identifiantIcône = useMemo(() => id.split('::'), [id]);
+  if (identifiantIcône === null) {
     return null;
   }
 
-  const [bibliothèqueDIcônes, identifiantIcône, varianteExplicite] = icône;
+  const [bibliothèqueDIcônes, nomIcône, varianteExplicite] = identifiantIcône;
 
   if (bibliothèqueDIcônes === 'dsfr') {
+    const variante = DSFR_ICONS_VARIANTES.has(varianteExplicite) ? varianteExplicite : 'fill';
     return (
-      <IcôneStyled className={`fr-icon-${identifiantIcône}`} />
+      <IcôneStyled className={`fr-icon-${nomIcône}-${variante}`} />
     );
   }
 
-  if (bibliothèqueDIcônes === 'google') {
-    const variante = VARIANTES_MATERIAL_DESIGN.has(varianteExplicite) ? varianteExplicite : 'outlined';
+  if (bibliothèqueDIcônes === 'material-symbols') {
+    const variante = MATERIAL_SYMBOLS_CLASSES_CSS_À_PARTIR_DE_LA_VARIANTE[varianteExplicite]
+      ?? MATERIAL_SYMBOLS_CLASSES_CSS_À_PARTIR_DE_LA_VARIANTE.outlined;
+
     return (
       <IcôneStyled
-        className={`material-symbols-${variante}`}
+        className={variante}
       >
-        { identifiantIcône }
+        { nomIcône }
+      </IcôneStyled>
+    );
+  }
+
+  if (bibliothèqueDIcônes === 'material-icons') {
+    const variante = MATERIAL_ICONS_CLASSES_CSS_À_PARTIR_DE_LA_VARIANTE[varianteExplicite]
+      ?? MATERIAL_ICONS_CLASSES_CSS_À_PARTIR_DE_LA_VARIANTE.filled;
+
+    return (
+      <IcôneStyled
+        className={variante}
+      >
+        { nomIcône }
       </IcôneStyled>
     );
   }
 
   if (bibliothèqueDIcônes === 'remix') {
+    const variante = REMIX_ICONS_VARIANTES.has(varianteExplicite) ? varianteExplicite : 'fill';
     return (
-      <IcôneStyled className={`ri-${identifiantIcône}`} />
+      <IcôneStyled className={`ri-${nomIcône}-${variante}`} />
     );
   }
 
