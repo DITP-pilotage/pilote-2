@@ -1,6 +1,7 @@
 import Titre from '@/components/_commons/Titre/Titre';
 import IndicateursProps, { ÉlémentPageIndicateursType } from '@/components/PageChantier/Indicateurs/Indicateurs.interface';
 import IndicateurBloc from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc';
+import IndicateursStyled from '@/components/PageChantier/Indicateurs/Indicateurs.styled';
 
 export const listeRubriquesIndicateurs: ÉlémentPageIndicateursType[] = [
   { nom: 'Indicateurs d\'impact', ancre: 'impact', typeIndicateur: 'IMPACT' },
@@ -17,15 +18,15 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, estDispo
   }
 
   return (
-    <>
+    <IndicateursStyled>
       {
-        listeRubriquesIndicateurs.map((rubriqueIndicateur, i) => {
+        listeRubriquesIndicateurs.map((rubriqueIndicateur) => {
           const indicateursDeCetteRubrique = indicateurs.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
 
           if (indicateursDeCetteRubrique.length > 0) {
             return (
               <section
-                className={i < listeRubriquesIndicateurs.length - 1 ? 'fr-mb-3w' : ''}
+                className="sous-rubrique-indicateur"
                 id={rubriqueIndicateur.ancre}
                 key={rubriqueIndicateur.ancre}
               >
@@ -51,6 +52,6 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, estDispo
           }
         })
       }
-    </>
+    </IndicateursStyled>
   );
 }

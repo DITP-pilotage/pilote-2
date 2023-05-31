@@ -193,7 +193,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                   </section>
                 </div>
                 {
-                  détailsIndicateurs !== null && (
+                  détailsIndicateurs !== null && indicateurs.length > 0 && (
                     <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
                       <section
                         className="fr-col-12"

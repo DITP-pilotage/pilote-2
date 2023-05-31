@@ -120,21 +120,24 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
             </section>
           </div>
         }
-        <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-          <section className="fr-col-12 rubrique indicateurs">
-            <Titre
-              baliseHtml='h2'
-              className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-            >
-              Indicateurs
-            </Titre>
-            <Indicateurs
-              détailsIndicateurs={détailsIndicateurs}
-              estInteractif={false}
-              indicateurs={indicateurs}
-            />
-          </section>
-        </div>
+        {
+          indicateurs.length > 0 &&
+          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+            <section className="fr-col-12 rubrique indicateurs">
+              <Titre
+                baliseHtml='h2'
+                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+              >
+                Indicateurs
+              </Titre>
+              <Indicateurs
+                détailsIndicateurs={détailsIndicateurs}
+                estInteractif={false}
+                indicateurs={indicateurs}
+              />
+            </section>
+          </div>
+        }
         {
           décisionStratégique !== null
           && territoireSélectionné!.maille === 'nationale' &&
