@@ -210,14 +210,14 @@ model decision_strategique {
 }
 
 model projet_structurant {
-  id                                    String   @id
-  code                                  String
-  nom                                   String
-  territoire_code                       String
-  perimetres_ids                        String[]
-  direction_administration              String[]
-  chefferie_de_projet                   String[]
-  co_porteurs                           String[]
+  id                       String   @id
+  code                     String
+  nom                      String
+  territoire_code          String
+  perimetres_ids           String[]
+  direction_administration String[]
+  chefferie_de_projet      String[]
+  co_porteurs              String[]
 
   @@schema("public")
 }
@@ -264,6 +264,15 @@ model commentaire_projet_structurant {
   contenu               String
   date                  DateTime @db.Timestamp
   auteur                String?
+
+  @@schema("public")
+}
+
+model perimetre_projet_structurant {
+  id                 String @id
+  perimetres_ppg_nom String
+  perimetres_ppg_id  String
+  perimetre_ps_nom   String
 
   @@schema("public")
 }
