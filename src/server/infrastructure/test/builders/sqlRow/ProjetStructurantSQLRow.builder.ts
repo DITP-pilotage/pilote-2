@@ -22,6 +22,10 @@ export default class ProjetStructurantRowBuilder {
 
   private _coporteurs: ProjetStructurantPrisma['co_porteurs'] = [];
 
+  private _tauxAvancement: ProjetStructurantPrisma['taux_avancement'] = null;
+
+  private _dateTauxAvancement: ProjetStructurantPrisma['date_taux_avancement'] = null;
+
   constructor() {
     const projetGénéré =  new ProjetStructurantBuilder().build();
     const ministèrePorteur = new MinistèreBuilder().build();
@@ -60,6 +64,16 @@ export default class ProjetStructurantRowBuilder {
     this._territoireCode = territoireCode;
     return this;
   }
+
+  avecTauxDAvancement(tauxAvancement: ProjetStructurantPrisma['taux_avancement']): ProjetStructurantRowBuilder {
+    this._tauxAvancement = tauxAvancement;
+    return this;
+  }
+
+  avecDateTauxDAvancement(dateTauxAvancement: ProjetStructurantPrisma['date_taux_avancement']): ProjetStructurantRowBuilder {
+    this._dateTauxAvancement = dateTauxAvancement;
+    return this;
+  }
   
   shallowCopy(): ProjetStructurantRowBuilder {
     const result = new ProjetStructurantRowBuilder() as any;
@@ -79,6 +93,8 @@ export default class ProjetStructurantRowBuilder {
       perimetres_ids: this._périmètreIds,
       chefferie_de_projet: this._chefferieDeProjet,
       co_porteurs: this._coporteurs,
+      taux_avancement: this._tauxAvancement,
+      date_taux_avancement: this._dateTauxAvancement,
     };
   }
 }

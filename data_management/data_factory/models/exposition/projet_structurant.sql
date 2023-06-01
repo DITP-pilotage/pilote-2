@@ -3,6 +3,8 @@ SELECT
     {{ dbt_utils.surrogate_key(['projet_structurant.projet_structurant_code']) }} as id,
     projet_structurant.projet_structurant_code as code,
     projet_structurant.projet_structurant_nom as nom,
+    fact_progress_ps.avancement as taux_avancement,
+    projet_structurant.taux_avancement_date_de_mise_a_jour as date_taux_avancement,
     territoire.code as territoire_code,
     ARRAY(
         SELECT perimetre_projet_structurant.perimetres_ppg_id
@@ -39,4 +41,6 @@ SELECT
     END as co_porteurs
     FROM {{ ref('stg_dfakto__ps_view_data_financials') }} projet_structurant
         JOIN territoire ON projet_structurant.zone_code = territoire.zone_id
+        JOIN {{ ref('stg_dfakto__ps_dim_tree_nodes') }} dim_tree_nodes_ps ON projet_structurant.projet_structurant_code = dim_tree_nodes_ps.code
+        LEFT JOIN {{ ref('stg_dfakto__fact_progress_project') }} fact_progress_ps ON dim_tree_nodes_ps.id = fact_progress_ps.tree_node_id
     ORDER BY projet_structurant.projet_structurant_code

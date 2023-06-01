@@ -227,7 +227,7 @@ model decision_strategique {
 }
 
 model projet_structurant {
-  id                       String   @id
+  id                       String    @id
   code                     String
   nom                      String
   territoire_code          String
@@ -235,6 +235,8 @@ model projet_structurant {
   direction_administration String[]
   chefferie_de_projet      String[]
   co_porteurs              String[]
+  taux_avancement          Float?
+  date_taux_avancement     DateTime? @db.Timestamp
 
   @@schema("public")
 }
