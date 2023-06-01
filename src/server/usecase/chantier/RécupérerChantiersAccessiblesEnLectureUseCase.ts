@@ -11,7 +11,7 @@ import { objectEntries } from '@/client/utils/objects/objects';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
 
-export default class RécupérerListeChantiersUseCase {
+export default class RécupérerChantiersAccessiblesEnLectureUseCase {
   constructor(
     private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
     private readonly ministèreRepository: MinistèreRepository = dependencies.getMinistèreRepository(),

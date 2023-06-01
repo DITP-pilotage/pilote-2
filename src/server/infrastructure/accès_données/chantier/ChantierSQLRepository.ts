@@ -88,6 +88,10 @@ export default class ChantierSQLRepository implements ChantierRepository {
     });
   }
 
+  async récupérerTous(): Promise<ChantierPrisma[]> {
+    return this.prisma.chantier.findMany();
+  }
+
   async récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null> {
     const chantierRow: ChantierPrisma | null = await this.prisma.chantier.findFirst({
       where: {

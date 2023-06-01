@@ -2,45 +2,51 @@ import { GetServerSidePropsContext } from 'next/types';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import PageUtilisateur from '@/components/PageUtilisateur/PageUtilisateur';
+import RécupérerUnUtilisateurUseCase from '@/server/usecase/utilisateur/RécupérerUnUtilisateurUseCase';
+import RécupérerChantiersUseCase from '@/server/usecase/chantier/RécupérerChantiersUseCase';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 
 interface NextPageAdminUtilisateurProps {
   utilisateur: Utilisateur
+  chantiers: Record<Chantier['id'], Chantier['nom']>
 }
-export default function NextPageAdminUtilisateur({ utilisateur } :NextPageAdminUtilisateurProps) {
+export default function NextPageAdminUtilisateur({ utilisateur, chantiers } :NextPageAdminUtilisateurProps) {
   return (
-    <PageUtilisateur utilisateur={utilisateur} />
+    <PageUtilisateur
+      chantiers={chantiers}
+      utilisateur={utilisateur}
+    />
   );
 }
 
 export async function getServerSideProps({ req, res, params } :GetServerSidePropsContext<{ id :Utilisateur['id'] }>) {
-  if (!params?.id) {
-    return {
-      notFound: true,
-    };
-  }
+  const redirigerVersPageAccueil = {
+    redirect: {
+      destination: '/',
+      permanent: false,
+    },
+  };
 
   const session = await getServerSession(req, res, authOptions);
 
-  if (!session || !session.habilitations)
-    return { props: {} };
-
-  //TODO : checker le droit de la personne sur l'utilisateur avec ses habilitation
-  const habilitation = new Habilitation(session.habilitations);
-  const utilisateurDemandé = await dependencies.getUtilisateurRepository().getById(params.id);
-
-  if (!utilisateurDemandé || !habilitation.peutConsulterUnUtilisateur(
-    utilisateurDemandé?.habilitations.lecture.chantiers,
-    utilisateurDemandé?.habilitations.lecture.territoires)
-  ) {
-    return { props: {} };
+  if (!params?.id || !session || !session.habilitations) {
+    return redirigerVersPageAccueil;
   }
-  
+
+  const utilisateurDemandé = await new RécupérerUnUtilisateurUseCase().run(session.habilitations, params.id);
+  const chantiersExistants = await new RécupérerChantiersUseCase().run();
+  if (!utilisateurDemandé) {
+    return redirigerVersPageAccueil;
+  }
+
+  let chantiers: Record<Chantier['id'], Chantier['nom']> = {};
+  chantiersExistants.forEach(chantier => chantiers[chantier.id] = chantier.nom);
+
   return {
     props: {
       utilisateur: utilisateurDemandé,
+      chantiers,
     },
   };
 }

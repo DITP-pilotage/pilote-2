@@ -5,10 +5,13 @@ import FilAriane from '@/components/_commons/FilAriane/FilAriane';
 import PageUtilisateurStyled from '@/components/PageUtilisateur/PageUtilisateur.styled';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
+import DétailsDroitsUtilisateur from '@/components/PageUtilisateur/DétailsDroitsUtilisateur/DétailsDroitsUtilisateur';
+import TableauUtilisateur from '@/components/PageUtilisateur/TableauUtilisateur/TableauUtilisateur';
+import usePageUtilisateur from '@/components/PageUtilisateur/usePageUtilisateur';
 
-export default function PageUtilisateur({ utilisateur }:PageUtilisateurProps) {
+export default function PageUtilisateur({ utilisateur, chantiers }:PageUtilisateurProps) {
   const chemin = [{ nom:'Gestion de Profils', lien:'/admin/utilisateurs' }];
-
+  const { listeTerritoiresEnLecture, listeChantiersEnLecture } = usePageUtilisateur(utilisateur, chantiers);
   return (
     <main>
       <PageUtilisateurStyled className='fr-pt-2w fr-pl-15w'>
@@ -20,7 +23,7 @@ export default function PageUtilisateur({ utilisateur }:PageUtilisateurProps) {
           <Link
             aria-label="Retour à la liste des utilisateurs"
             className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-text--sm bouton-retour"
-            href='/'
+            href='/admin/utilisateurs'
           >
             Retour
           </Link>
@@ -38,48 +41,22 @@ export default function PageUtilisateur({ utilisateur }:PageUtilisateurProps) {
               >
                 Utilisateur
               </Titre>
-              <div className='fr-table'>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>
-                        Adresse email
-                      </th>
-                      <th>
-                        Nom
-                      </th>
-                      <th>
-                        Prénom
-                      </th>
-                      <th>
-                        Profil
-                      </th>
-                      <th>
-                        Dernière modification
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        {utilisateur.email}
-                      </td>
-                      <td>
-                        {utilisateur.nom}
-                      </td>
-                      <td>
-                        {utilisateur.prénom}
-                      </td>
-                      <td>
-                        {utilisateur.profil}
-                      </td>
-                      <td>
-                        Non renseigné
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <TableauUtilisateur utilisateur={utilisateur} />
+              <DétailsDroitsUtilisateur
+                chantiers={listeChantiersEnLecture}
+                territoires={listeTerritoiresEnLecture}
+                titre='Droits de visualisation'
+              />
+              <DétailsDroitsUtilisateur
+                chantiers={listeChantiersEnLecture}
+                territoires={listeTerritoiresEnLecture}
+                titre='Droits de saisie des données quantitatives'
+              />
+              <DétailsDroitsUtilisateur
+                chantiers={listeChantiersEnLecture}
+                territoires={listeTerritoiresEnLecture}
+                titre='Droits de saisie des commentaires'
+              />
             </div>
           </Bloc>
         </div>
