@@ -58,7 +58,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return utilisateursMappés.filter(
       u => (
         chantierIds.some(id => u.habilitations.lecture.chantiers.includes(id))
-        && territoireCodes.some(code => u.habilitations.lecture.territoires.includes(code))
+        || territoireCodes.some(code => u.habilitations.lecture.territoires.includes(code))
       ),
     );
   }
@@ -70,6 +70,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
         nom: u.nom,
         prenom: u.prénom,
         profilCode: u.profil,
+        auteur_modification: u.auteurModification,
       },
       update: {
         nom: u.nom,
@@ -176,8 +177,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
 
       const chantiersAssociésAuxPérimètresMinistériels = await dependencies.getChantierRepository().récupérerChantierIdsAssociésAuxPérimètresMinistèriels(h.perimetres);
-      habilitationsGénérées[scopeCode].chantiers = [...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...h.chantiers];
-      habilitationsGénérées[scopeCode].territoires = [...habilitationsGénérées[scopeCode].territoires, ...h.territoires];
+      habilitationsGénérées[scopeCode].chantiers = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...h.chantiers])];
+      habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
     }
     
     return habilitationsGénérées;

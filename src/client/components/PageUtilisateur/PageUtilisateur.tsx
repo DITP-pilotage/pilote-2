@@ -11,7 +11,8 @@ import usePageUtilisateur from '@/components/PageUtilisateur/usePageUtilisateur'
 
 export default function PageUtilisateur({ utilisateur, chantiers }:PageUtilisateurProps) {
   const chemin = [{ nom:'Gestion de Profils', lien:'/admin/utilisateurs' }];
-  const { listeTerritoiresEnLecture, listeChantiersEnLecture } = usePageUtilisateur(utilisateur, chantiers);
+  const { listeTerritoiresScope, listeChantiersScope } = usePageUtilisateur(utilisateur, chantiers);
+
   return (
     <main>
       <PageUtilisateurStyled className='fr-pt-2w fr-pl-15w'>
@@ -43,19 +44,34 @@ export default function PageUtilisateur({ utilisateur, chantiers }:PageUtilisate
               </Titre>
               <TableauUtilisateur utilisateur={utilisateur} />
               <DétailsDroitsUtilisateur
-                chantiers={listeChantiersEnLecture}
-                territoires={listeTerritoiresEnLecture}
+                chantiers={listeChantiersScope.lecture}
+                territoires={listeTerritoiresScope.lecture}
                 titre='Droits de visualisation'
               />
               <DétailsDroitsUtilisateur
-                chantiers={listeChantiersEnLecture}
-                territoires={listeTerritoiresEnLecture}
+                chantiers={listeChantiersScope['saisie.indicateur']}
+                territoires={listeTerritoiresScope['saisie.indicateur']}
                 titre='Droits de saisie des données quantitatives'
               />
               <DétailsDroitsUtilisateur
-                chantiers={listeChantiersEnLecture}
-                territoires={listeTerritoiresEnLecture}
+                chantiers={listeChantiersScope['saisie.commentaire']}
+                territoires={listeTerritoiresScope['saisie.commentaire']}
                 titre='Droits de saisie des commentaires'
+              />
+              <DétailsDroitsUtilisateur
+                chantiers={listeChantiersScope['utilisateurs.lecture']}
+                territoires={listeTerritoiresScope['utilisateurs.lecture']}
+                titre='Droits de visualisation des utilisateurs'
+              />
+              <DétailsDroitsUtilisateur
+                chantiers={listeChantiersScope['utilisateurs.modification']}
+                territoires={listeTerritoiresScope['utilisateurs.modification']}
+                titre='Droits de modification des utilisateurs'
+              />
+              <DétailsDroitsUtilisateur
+                chantiers={listeChantiersScope['utilisateurs.suppression']}
+                territoires={listeTerritoiresScope['utilisateurs.suppression']}
+                titre='Droits de suppression des utilisateurs'
               />
             </div>
           </Bloc>

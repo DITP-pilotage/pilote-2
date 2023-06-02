@@ -5,7 +5,7 @@ export default function ÉlémentAccessible({ libellé }: { libellé : string })
   return (
     <ÉlémentStyled>
       <IcônesMultiplesEtTexte
-        icônesId={['dsfr::check-line']}
+        icônesId={['dsfr::check::line']}
         largeurDesIcônes='2rem'
       >
         <span className='libellé'>

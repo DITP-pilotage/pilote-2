@@ -5,7 +5,7 @@ export default function AucunÉlément() {
   return (
     <ÉlémentStyled>
       <IcônesMultiplesEtTexte
-        icônesId={['dsfr::close-line']}
+        icônesId={['dsfr::close::line']}
         largeurDesIcônes='2rem'
       >
         <span className='libellé'>

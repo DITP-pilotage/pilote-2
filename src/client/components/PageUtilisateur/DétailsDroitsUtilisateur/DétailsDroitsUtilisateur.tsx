@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import DétailsDroitsUtilisateurProps
   from '@/components/PageUtilisateur/DétailsDroitsUtilisateur/DétailsDroitsUtilisateur.interface';
 import Titre from '@/components/_commons/Titre/Titre';
@@ -7,6 +8,7 @@ import AucunÉlément from '@/components/PageUtilisateur/Élément/AucunÉlémen
 import ÉlémentAccessible from '@/components/PageUtilisateur/Élément/ÉlémentAccessible';
 
 export default function DétailsDroitsUtilisateur({ titre, territoires, chantiers }: DétailsDroitsUtilisateurProps) {
+  const id = useId();
   return (
     <DétailsDroitsUtilisateurStyled>
       <Titre
@@ -27,7 +29,7 @@ export default function DétailsDroitsUtilisateur({ titre, territoires, chantier
               :
               territoires.map(territoire => (
                 <ÉlémentAccessible
-                  key={territoire}
+                  key={`${id} ${territoire}`}
                   libellé={territoire}
                 />
               ),
@@ -45,7 +47,7 @@ export default function DétailsDroitsUtilisateur({ titre, territoires, chantier
               :
               chantiers.map(chantier => (
                 <ÉlémentAccessible
-                  key={chantier}
+                  key={`${id} ${chantier}`}
                   libellé={chantier}
                 />
               ),
