@@ -180,6 +180,11 @@ export class DatabaseSeeder {
       return ministère;
     });
 
+    // Créé le périmètre PER-018 pour l'outre mer et le profil DROM
+    const ministère = new MinistèreSQLRowBuilder().avecNom('Outre Mer').build();
+    this._ministères = [...this._ministères, ministère];
+    this._périmètresMinistériels = [...this._périmètresMinistériels, new PérimètreMinistérielSQLRowBuilder().avecMinistère(ministère).avecId('PER-018').build()];
+
     await this._prisma.ministere.createMany({ data: this._ministères });
     await this._prisma.perimetre.createMany({ data: this._périmètresMinistériels });
   }
@@ -349,7 +354,7 @@ export class DatabaseSeeder {
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('referent.departement@example.com').avecProfil('REFERENT_DEPARTEMENT').avecHabilitationLecture([], ['DEPT-22']).avecHabilitationsaisieCommentaire(chantierIds, ['DEPT-22']).build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('prefet.departement@example.com').avecProfil('PREFET_DEPARTEMENT').avecHabilitationLecture([], ['DEPT-22']).avecHabilitationsaisieCommentaire(chantierIds, ['DEPT-22']).build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('services.deconcentres.departement@example.com').avecProfil('SERVICES_DECONCENTRES_DEPARTEMENT').avecHabilitationLecture(chantierIds, ['DEPT-22']).avecHabilitationsaisieCommentaire(chantierIds, ['DEPT-22']).build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('drom@example.com').avecProfil('DROM').avecHabilitationLecture(chantierIds).build(),
+      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('drom@example.com').avecProfil('DROM').avecHabilitationLecture(undefined, ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976']).avecHabilitationsaisieCommentaire(undefined, ['NAT-FR'], ['PER-018']).avecHabilitationsaisieIndicateur(undefined, ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976']).build(),
     ];
 
     for (const utilisateur of utilisateurs) {

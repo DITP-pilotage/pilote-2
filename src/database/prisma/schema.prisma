@@ -297,12 +297,15 @@ model perimetre_projet_structurant {
 model utilisateur {
   id                               String                             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email                            String                             @unique
-  nom                              String?
-  prenom                           String?
+  nom                              String
+  prenom                           String
+  fonction                         String?
   profil                           profil                             @relation(fields: [profilCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
   profilCode                       String
   habilitation                     habilitation[]
   rapport_import_mesure_indicateur rapport_import_mesure_indicateur[]
+  date_modification                DateTime                           @default(now())
+  auteur_modification              String?
 
   @@schema("public")
 }
