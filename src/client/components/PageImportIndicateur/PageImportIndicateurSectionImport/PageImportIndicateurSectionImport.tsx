@@ -7,7 +7,7 @@ import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import FormulaireIndicateur
   from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
-import Indicateur from '@/server/domain/chantier/indicateur/Indicateur.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import ResultatValidationFichier
   from '@/client/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';

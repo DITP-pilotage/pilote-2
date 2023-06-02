@@ -1,11 +1,11 @@
 import { indicateur as IndicateurPrisma, Prisma, PrismaClient } from '@prisma/client';
-import IndicateurRepository from '@/server/domain/chantier/indicateur/IndicateurRepository.interface';
-import Indicateur, { TypeIndicateur } from '@/server/domain/chantier/indicateur/Indicateur.interface';
+import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
+import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import {
   DétailsIndicateurs,
-  DétailsIndicateurTerritoire,
-} from '@/server/domain/chantier/indicateur/DétailsIndicateur.interface';
+  DétailsIndicateurMailles,
+} from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
@@ -56,7 +56,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return indicateur!.chantier_id;
   }
 
-  async getById(id: string, habilitations: Habilitations): Promise<DétailsIndicateurTerritoire> {
+  async getById(id: string, habilitations: Habilitations): Promise<DétailsIndicateurMailles> {
     const h = new Habilitation(habilitations);
     const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();

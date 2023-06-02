@@ -1,5 +1,5 @@
 import IndicateurBlocIndicateurTuileStyled
-  from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBlocIndicateurTuile.styled';
+  from '@/components/_commons/Indicateurs/Bloc/IndicateurBlocIndicateurTuile.styled';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import IndicateurDétailsParTerritoireProps from './indicateurDétailsParTerritoire.interface';
 

@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import IndicateurÉvolution from '@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution';
+import IndicateurÉvolution from '@/components/_commons/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import CartographieValeurActuelle from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
-import IndicateurSpécifications from '@/components/PageChantier/Indicateurs/Bloc/Détails/Spécifications/IndicateurSpécifications';
+import IndicateurSpécifications from '@/components/_commons/Indicateurs/Bloc/Détails/Spécifications/IndicateurSpécifications';
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 import useIndicateurDétails from './useIndicateurDétails';
 
-export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires }: IndicateurDétailsProps) {
+export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme }: IndicateurDétailsProps) {
   const [futOuvert, setFutOuvert] = useState(false);
   const { auClicTerritoireMultiSélectionCallback } = useCartographie();
   const { donnéesCartographieAvancement, donnéesCartographieValeurActuelle } = useIndicateurDétails(indicateur.id, futOuvert);
@@ -32,7 +32,15 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
         id={`détails-${indicateur.id}`}
       >
         {
-          !!futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle &&
+          typeDeRéforme === 'projet structurant' &&
+            <IndicateurSpécifications
+              description={indicateur.description}
+              modeDeCalcul={indicateur.modeDeCalcul}
+              source={indicateur.source}
+            />
+        }
+        {
+          typeDeRéforme === 'chantier' && !!futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle &&
           <>
             <div className="fr-container">
               <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">

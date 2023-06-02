@@ -7,7 +7,7 @@ import AvancementChantier from '@/components/PageChantier/AvancementChantier/Ava
 import ResponsablesPageProjetStructurant from '@/components/PageChantier/Responsables/Responsables';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
 import Cartes from '@/components/PageChantier/Cartes/Cartes';
-import Indicateurs from '@/components/PageChantier/Indicateurs/Indicateurs';
+import Indicateurs from '@/components/_commons/Indicateurs/Indicateurs';
 import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
@@ -15,6 +15,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import ObjectifsPageChantier from '@/components/_commons/Objectifs/Objectifs';
 import { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
+import { listeRubriquesIndicateurs } from '@/components/PageChantier/PageChantier';
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 
 export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats, commentaires, objectifs, décisionStratégique }: RapportDétailléChantierProps) {
@@ -135,6 +136,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                 détailsIndicateurs={détailsIndicateurs}
                 estInteractif={false}
                 indicateurs={indicateurs}
+                listeRubriquesIndicateurs={listeRubriquesIndicateurs}
               />
             </section>
           </div>

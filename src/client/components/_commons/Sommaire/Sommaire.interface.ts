@@ -1,8 +1,4 @@
-export type Rubrique = {
-  nom: string,
-  ancre: string,
-  sousRubriques?: Rubrique[]
-};
+import { Rubrique } from '@/client/utils/rubriques';
 
 export default interface SommaireProps {
   rubriques: Rubrique[]

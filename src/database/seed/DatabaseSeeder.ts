@@ -38,7 +38,7 @@ import {
   générerUnLibellé,
   répéter,
 } from '@/server/infrastructure/test/builders/utils';
-import { typesIndicateur } from '@/server/domain/chantier/indicateur/Indicateur.interface';
+import { typesIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import MinistèreSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/MinistèreSQLRow.builder';
 import ProjetStructurantRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ProjetStructurantSQLRow.builder';
 import ObjectifProjetStructurantSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifProjetStructurantSQLRow.builder';

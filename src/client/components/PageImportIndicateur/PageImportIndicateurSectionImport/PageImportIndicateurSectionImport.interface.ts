@@ -1,5 +1,5 @@
-import Indicateur from '@/server/domain/chantier/indicateur/Indicateur.interface';
 import { RapportContrat } from '@/server/app/contrats/RapportContrat';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 
 export interface PageImportIndicateurSectionImportProps {
   indicateurs: Indicateur[]

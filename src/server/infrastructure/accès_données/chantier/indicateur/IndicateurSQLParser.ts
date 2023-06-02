@@ -1,11 +1,11 @@
 import { indicateur, territoire } from '@prisma/client';
 import {
-  DétailsIndicateurCodeInsee,
   DétailsIndicateurTerritoire,
-} from '@/server/domain/chantier/indicateur/DétailsIndicateur.interface';
+  DétailsIndicateurMailles,
+} from '@/server/domain/indicateur/DétailsIndicateur.interface';
 
 function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: indicateur[]) {
-  let donnéesTerritoires: DétailsIndicateurCodeInsee = {};
+  let donnéesTerritoires: DétailsIndicateurTerritoire = {};
 
   territoires.forEach(t => {
     const indicateurRow = indicateurRows.find(c => c.code_insee === t.code_insee);
@@ -25,12 +25,12 @@ function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: in
   return donnéesTerritoires;
 }
 
-export function parseDétailsIndicateur(indicateurRows: indicateur[], territoires: territoire[]): DétailsIndicateurTerritoire {
+export function parseDétailsIndicateur(indicateurRows: indicateur[], territoires: territoire[]): DétailsIndicateurMailles {
   const indicateurMailleNationale = indicateurRows.filter(c => c.maille === 'NAT');
   const indicateurMailleDépartementale = indicateurRows.filter(c => c.maille === 'DEPT');
   const indicateurMailleRégionale = indicateurRows.filter(c => c.maille === 'REG');
 
-  const result: DétailsIndicateurTerritoire = {
+  const result: DétailsIndicateurMailles = {
     nationale:  créerDonnéesTerritoires(territoires.filter(t => t.maille === 'NAT'), indicateurMailleNationale),
     départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'DEPT'), indicateurMailleDépartementale),
     régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'REG'), indicateurMailleRégionale),

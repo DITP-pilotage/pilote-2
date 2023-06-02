@@ -12,8 +12,9 @@ import {
 } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
-import IndicateurBlocIndicateurTuile from '@/components/PageChantier/Indicateurs/Bloc/indicateurBlocIndicateurTuile';
-import { DétailsIndicateurCodeInsee } from '@/server/domain/chantier/indicateur/DétailsIndicateur.interface';
+import IndicateurBlocIndicateurTuile from '@/components/_commons/Indicateurs/Bloc/indicateurBlocIndicateurTuile';
+import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { TypeDeRéforme } from '@/components/PageAccueil/SélecteurTypeDeRéforme/SélecteurTypeDeRéforme.interface';
 import ValeurEtDate from './ValeurEtDate/ValeurEtDate';
 import { IndicateurDétailsParTerritoire } from './IndicateurBloc.interface';
 
@@ -33,23 +34,24 @@ const indicateurDétailsVide = {
 
 const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
 
-export default function useIndicateurs(détailsIndicateur: DétailsIndicateurCodeInsee) {
+export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, typeDeRéforme: TypeDeRéforme) {
   const estVueMobile = estVueMobileStore();
   const territoiresComparés = territoiresComparésTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
+  let colonnes;
 
   useEffect(() => {
-    if (territoiresComparés.length === 0) {
+    if (territoiresComparés.length === 0 && typeDeRéforme == 'chantier') {
       setIndicateurDétailsParTerritoires([indicateurDétailsVide]);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [territoiresComparés]);
-
+  
   useEffect(() => {
     if (détailsIndicateur) {
-      if (territoiresComparés.length > 0) {
+      if (territoiresComparés.length > 0 && typeDeRéforme === 'chantier') {
         setIndicateurDétailsParTerritoires(
           territoiresComparés
             .map(territoire => ({ territoireNom: territoire.nom, données: détailsIndicateur[territoire.codeInsee] }))
@@ -58,11 +60,12 @@ export default function useIndicateurs(détailsIndicateur: DétailsIndicateurCod
       } else {
         setIndicateurDétailsParTerritoires([{ territoireNom: territoireSélectionné!.nomAffiché, données: détailsIndicateur[territoireSélectionné!.codeInsee] }]);
       }
+  
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [détailsIndicateur]);
-
-  const colonnes = [
+    
+  colonnes = typeDeRéforme === 'chantier' ? [
     reactTableColonnesHelper.accessor( 'territoireNom', {
       header: 'Territoire(s)',
       id: 'territoire',
@@ -113,6 +116,67 @@ export default function useIndicateurs(détailsIndicateur: DétailsIndicateurCod
           taille='md'
           valeur={avancementGlobal.getValue()}
           variante='primaire'
+        />
+      ),
+      enableSorting: false,
+    }),
+    reactTableColonnesHelper.display({
+      id: 'indicateur-tuile',
+      cell: indicateurCellContext => <IndicateurBlocIndicateurTuile indicateurDétailsParTerritoire={indicateurCellContext.row.original} />,
+      enableSorting: false,
+      enableGrouping: false,
+    }),
+  ] : [
+    reactTableColonnesHelper.accessor( 'territoireNom', {
+      header: 'Territoire)',
+      id: 'territoire',
+      cell: nomDuTerritoire => nomDuTerritoire.getValue(),
+      enableSorting: false,
+    }),
+    reactTableColonnesHelper.accessor('données.valeurInitiale', {
+      header: 'Valeur initiale',
+      id: 'valeurInitiale',
+      cell: valeurInitiale => (
+        <ValeurEtDate
+          date={valeurInitiale.row.original.données.dateValeurInitiale}
+          valeur={valeurInitiale.getValue()}
+        />
+      ),
+      enableSorting: false,
+    }),
+    reactTableColonnesHelper.accessor('données.valeurs', {
+      header: 'Valeur actuelle',
+      id: 'valeurActuelle',
+      cell: valeurs => (
+        <ValeurEtDate
+          date={valeurs.row.original.données.dateValeurs[valeurs.getValue().length - 1]}
+          valeur={valeurs.getValue()[valeurs.getValue().length - 1]}
+        />
+      ),
+      enableSorting: false,
+    }),
+    reactTableColonnesHelper.accessor('données.valeurCible', {
+      header: 'Cible',
+      id: 'cible',
+      cell: valeurCible => (
+        <ValeurEtDate
+          date={valeurCible.row.original.données.dateValeurCible}
+          valeur={valeurCible.getValue()}
+        />
+      ),
+      enableSorting: false,
+    }),
+    reactTableColonnesHelper.accessor('données.avancement.global', {
+      header: 'Avancement',
+      id: 'avancement',
+      cell: avancementGlobal => (
+        <BarreDeProgression
+          afficherTexte
+          fond='grisClair'
+          positionTexte='dessus'
+          taille='md'
+          valeur={avancementGlobal.getValue()}
+          variante='rose'
         />
       ),
       enableSorting: false,

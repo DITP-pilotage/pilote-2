@@ -1,4 +1,4 @@
-import Indicateur from '@/server/domain/chantier/indicateur/Indicateur.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 
 export default interface IndicateurSpécificationsProps {
   description: Indicateur['description']

@@ -1,4 +1,4 @@
-import { IndicateurDétailsParTerritoire } from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc.interface';
+import { IndicateurDétailsParTerritoire } from '@/components/_commons/Indicateurs/Bloc/IndicateurBloc.interface';
 
 export default interface IndicateurDétailsParTerritoireProps {
   indicateurDétailsParTerritoire: IndicateurDétailsParTerritoire

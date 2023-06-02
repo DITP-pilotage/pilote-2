@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import ChantierSQLRepository from '@/server/infrastructure/accès_données/chantier/ChantierSQLRepository';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
-import IndicateurRepository from '@/server/domain/chantier/indicateur/IndicateurRepository.interface';
+import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import IndicateurSQLRepository from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository';
 import MinistèreSQLRepository from '@/server/infrastructure/accès_données/ministère/MinistèreSQLRepository';
 import SynthèseDesRésultatsRepository

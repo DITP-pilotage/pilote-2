@@ -18,6 +18,7 @@ const couleurBordure = {
 const couleurDeBarreEtTexte = {
   'primaire': 'var(--background-action-high-blue-france)',
   'secondaire': 'var(--grey-625-425)',
+  'rose': 'var(--background-action-high-pink-tuile)',
 };
 
 export const dimensions = {

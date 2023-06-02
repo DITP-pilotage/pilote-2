@@ -4,27 +4,25 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
-import IndicateurDétails from '@/components/PageChantier/Indicateurs/Bloc/Détails/IndicateurDétails';
-import IndicateurBlocProps, {
-  IndicateurDétailsParTerritoire,
-} from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc.interface';
-import FormulaireIndicateur
-  from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur';
+import IndicateurDétails from '@/components/_commons/Indicateurs/Bloc/Détails/IndicateurDétails';
+import IndicateurBlocProps, { IndicateurDétailsParTerritoire } from '@/components/_commons/Indicateurs/Bloc/IndicateurBloc.interface';
+import FormulaireIndicateur from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
-import ResultatValidationFichier
-  from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
-import {
-  IndicateurBlocCaractéristiques,
-} from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBlocCaractéristiques/IndicateurBlocCaractéristiques';
+import ResultatValidationFichier from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
+import { déterminerLeTypeDeRéforme } from '@/server/utils/réforme';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { IndicateurBlocCaractéristiques } from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBlocCaractéristiques/IndicateurBlocCaractéristiques';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
-import useIndicateurs from './useIndicateurBloc';
+import useIndicateurBloc from './useIndicateurBloc';
+
 
 export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, estDisponibleALImport = false } : IndicateurBlocProps) {
   const router = useRouter();
-  const chantierId = router.query.chantierId  as string;
+  const réformeId = router.query.id as string;
+
   const mailleSélectionnée = territoireSélectionnéTerritoiresStore()?.maille ?? 'nationale';
-  const { indicateurDétailsParTerritoires, tableau } = useIndicateurs(détailsIndicateur);
+  const typeDeRéforme = déterminerLeTypeDeRéforme(réformeId);
+  const { indicateurDétailsParTerritoires, tableau } = useIndicateurBloc(détailsIndicateur, typeDeRéforme);
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
   return (
@@ -56,14 +54,14 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
               </div>
             </div>
             {
-              estDisponibleALImport ?
-                <FormulaireIndicateur
-                  chantierId={chantierId}
-                  indicateurId={indicateur.id}
-                  setRapport={setRapport}
-                />
-                : null
-            }
+            estDisponibleALImport ? 
+              <FormulaireIndicateur
+                chantierId={réformeId}
+                indicateurId={indicateur.id}
+                setRapport={setRapport}
+              />
+              : null
+              }
           </div>
           {
             rapport !== null &&
@@ -75,10 +73,11 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
           />
           {
             !!estInteractif &&
-            <IndicateurDétails
-              indicateur={indicateur}
-              indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
-            />
+              <IndicateurDétails
+                indicateur={indicateur}
+                indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
+                typeDeRéforme={typeDeRéforme}
+              />
           }
         </section>
       </Bloc>

@@ -1,4 +1,4 @@
-import IndicateurSpécificationsProps from '@/components/PageChantier/Indicateurs/Bloc/Détails/Spécifications/IndicateurSpécifications.interface';
+import IndicateurSpécificationsProps from '@/components/_commons/Indicateurs/Bloc/Détails/Spécifications/IndicateurSpécifications.interface';
 import IndicateurSpécificationsStyled from './IndicateurSpécifications.styled';
 
 export default function IndicateurSpécifications({ description,  modeDeCalcul, source } : IndicateurSpécificationsProps) {
