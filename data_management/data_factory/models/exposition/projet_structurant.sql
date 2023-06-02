@@ -6,6 +6,14 @@ SELECT
     fact_progress_ps.avancement as taux_avancement,
     projet_structurant.taux_avancement_date_de_mise_a_jour as date_taux_avancement,
     territoire.code as territoire_code,
+    projet_structurant.taux_avancement_date_de_mise_a_jour as date_donnees_quantitative, -- ?? doublon avec date_taux_avancement ??
+    (
+        SELECT GREATEST(
+            (SELECT MAX(date) FROM {{ ref('objectif_projet_structurant') }} WHERE projet_structurant_id = projet_structurant.id),
+            (SELECT MAX(date_meteo) FROM {{ ref('synthese_des_resultats_projet_structurant')}} WHERE projet_structurant_id = projet_structurant.id),
+            (SELECT MAX(date) FROM {{ ref('commentaire_projet_structurant') }} WHERE projet_structurant_id = projet_structurant.id)
+        )
+    ) as date_donnees_qualitative,,
     ARRAY(
         SELECT perimetre_projet_structurant.perimetres_ppg_id
         FROM {{ ref('perimetre_projet_structurant')}} perimetre_projet_structurant
