@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import handleValiderFichierImportIndicateur
-  from '@/server/import-indicateur/infrastructure/handlers/ImportIndicateurHandler';
+import handleVerifierFichierImportIndicateur
+  from '@/server/import-indicateur/infrastructure/handlers/VerifierImportIndicateurHandler';
 
 
 export const config = {
@@ -11,5 +11,5 @@ export const config = {
 };
 
 export default function handle(req: NextApiRequest, res: NextApiResponse) {
-  return handleValiderFichierImportIndicateur(req, res);
+  return handleVerifierFichierImportIndicateur(req, res);
 }

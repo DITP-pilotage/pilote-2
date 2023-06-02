@@ -1,12 +1,15 @@
 import nock from 'nock';
 import { createMocks } from 'node-mocks-http';
-import { mock } from 'jest-mock-extended';
+import { anyString, mock } from 'jest-mock-extended';
 import PersistentFile from 'formidable/PersistentFile';
-import handleValiderFichierImportIndicateur
-  from '@/server/import-indicateur/infrastructure/handlers/ImportIndicateurHandler';
+import handleVerifierFichierImportIndicateur
+  from '@/server/import-indicateur/infrastructure/handlers/VerifierImportIndicateurHandler';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTask.builder';
-import { ReportTaskBuilder, ReportResourceTaskBuilder } from '@/server/import-indicateur/app/builder/ReportTask.builder';
+import {
+  ReportResourceTaskBuilder,
+  ReportTaskBuilder,
+} from '@/server/import-indicateur/app/builder/ReportTask.builder';
 import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidata.builder';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -27,7 +30,7 @@ const DONNEE_DATE_1 = '30/12/2023';
 const DONNEE_DATE_2 = '31/12/2023';
 const BASE_URL_VALIDATA = 'https://api.validata.etalab.studio';
 
-describe('ImportIndicateurHandler', () => {
+describe('VerifierImportIndicateurHandler', () => {
   describe('Quand le fichier envoyé est correct', () => {
     it('doit retourner que le fichier est valide', async () => {
       // GIVEN
@@ -69,11 +72,12 @@ describe('ImportIndicateurHandler', () => {
         query: { indicateurId: 'IND-001' },
       });
 
-      await handleValiderFichierImportIndicateur(req, res);
+      await handleVerifierFichierImportIndicateur(req, res);
 
       // THEN
       expect(res._getStatusCode()).toEqual(200);
       expect(res._getJSONData()).toStrictEqual({
+        id: anyString(),
         estValide: true,
         listeErreursValidation: [],
       });
@@ -117,10 +121,10 @@ describe('ImportIndicateurHandler', () => {
       });
 
       // WHEN
-      await handleValiderFichierImportIndicateur(req, res);
+      await handleVerifierFichierImportIndicateur(req, res);
 
       // THEN
-      const listeDonneesFichier = await prisma.mesure_indicateur.findMany({ orderBy: { indic_id: 'asc' } });
+      const listeDonneesFichier = await prisma.mesure_indicateur_temporaire.findMany({ orderBy: { indic_id: 'asc' } });
       expect(listeDonneesFichier).toHaveLength(2);
       expect(listeDonneesFichier[0].indic_id).toEqual('IND-001');
       expect(listeDonneesFichier[0].zone_id).toEqual('D001');
@@ -173,7 +177,7 @@ describe('ImportIndicateurHandler', () => {
       });
 
       // WHEN
-      await handleValiderFichierImportIndicateur(req, res);
+      await handleVerifierFichierImportIndicateur(req, res);
 
       // THEN
       const listeRapport = await prisma.rapport_import_mesure_indicateur.findMany();
@@ -241,11 +245,12 @@ describe('ImportIndicateurHandler', () => {
       },
       query: { indicateurId: 'IND-001' },
     });
-    await handleValiderFichierImportIndicateur(req, res);
+    await handleVerifierFichierImportIndicateur(req, res);
 
     // THEN
     expect(res._getStatusCode()).toEqual(200);
     expect(res._getJSONData()).toStrictEqual({
+      id: anyString(),
       estValide: false,
       listeErreursValidation: [
         {

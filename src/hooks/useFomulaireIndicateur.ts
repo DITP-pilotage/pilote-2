@@ -14,20 +14,20 @@ export const useFormulaireIndicateur = (chantierId: string, indicateurId: string
     setRapport(null);
   };
 
-  const uploadLeFichier: FormEventHandler<UploadFichierFormulaireElement> = async (event) => {
+  const verifierLeFichier: FormEventHandler<UploadFichierFormulaireElement> = async (event) => {
     event.preventDefault();
-  
+
     if (!file) {
       return;
     }
 
     event.currentTarget['file-upload'].value = '';
-    
+
     const body = new FormData();
 
     body.append('file', file);
 
-    const detailValidationFichier: DetailValidationFichierContrat = await fetch(`/api/chantier/${chantierId}/indicateur/${indicateurId}`, {
+    const detailValidationFichier: DetailValidationFichierContrat = await fetch(`/api/chantier/${chantierId}/indicateur/${indicateurId}/verifier`, {
       method: 'POST',
       body,
     }).then(response => response.json() as Promise<DetailValidationFichierContrat>);
@@ -36,5 +36,5 @@ export const useFormulaireIndicateur = (chantierId: string, indicateurId: string
     setFile(null);
   };
 
-  return { définirLeFichier, uploadLeFichier, file };  
+  return { définirLeFichier, file, verifierLeFichier };
 };

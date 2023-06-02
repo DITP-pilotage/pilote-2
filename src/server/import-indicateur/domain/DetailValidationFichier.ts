@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
+import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
 import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
 
 export class DetailValidationFichier {
@@ -9,7 +9,7 @@ export class DetailValidationFichier {
 
   private readonly _listeErreursValidation: ErreurValidationFichier[];
   
-  private readonly _listeIndicateursData: IndicateurData[];
+  private readonly _listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[];
 
   private readonly _utilisateurEmail: string;
 
@@ -21,14 +21,14 @@ export class DetailValidationFichier {
     dateCreation,
     utilisateurEmail,
     listeErreursValidation,
-    listeIndicateursData,
-  }: { id: string, estValide: boolean, dateCreation: Date, utilisateurEmail: string,  listeErreursValidation: ErreurValidationFichier[], listeIndicateursData: IndicateurData[] }) {
+    listeMesuresIndicateurTemporaire,
+  }: { id: string, estValide: boolean, dateCreation: Date, utilisateurEmail: string,  listeErreursValidation: ErreurValidationFichier[], listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[] }) {
     this._id = id;
     this._estValide = estValide;
     this._dateCreation = dateCreation;
     this._utilisateurEmail = utilisateurEmail;
     this._listeErreursValidation = listeErreursValidation;
-    this._listeIndicateursData = listeIndicateursData;
+    this._listeMesuresIndicateurTemporaire = listeMesuresIndicateurTemporaire;
   }
 
   get id(): string {
@@ -51,8 +51,8 @@ export class DetailValidationFichier {
     return this._listeErreursValidation;
   }
 
-  get listeIndicateursData(): IndicateurData[] {
-    return this._listeIndicateursData;
+  get listeMesuresIndicateurTemporaire(): MesureIndicateurTemporaire[] {
+    return this._listeMesuresIndicateurTemporaire;
   }
 
   static creerDetailValidationFichier({
@@ -61,13 +61,13 @@ export class DetailValidationFichier {
     dateCreation,
     utilisateurEmail,
     listeErreursValidation = [],
-    listeIndicateursData = [],
-  }: { id?: string, estValide: boolean, dateCreation?: Date, utilisateurEmail: string, listeErreursValidation?: ErreurValidationFichier[], listeIndicateursData?: IndicateurData[] }) {
-    return new DetailValidationFichier({ id: id || randomUUID(), dateCreation: dateCreation || new Date(), utilisateurEmail, estValide, listeErreursValidation, listeIndicateursData });
+    listeMesuresIndicateurTemporaire = [],
+  }: { id?: string, estValide: boolean, dateCreation?: Date, utilisateurEmail: string, listeErreursValidation?: ErreurValidationFichier[], listeMesuresIndicateurTemporaire?: MesureIndicateurTemporaire[] }) {
+    return new DetailValidationFichier({ id: id || randomUUID(), dateCreation: dateCreation || new Date(), utilisateurEmail, estValide, listeErreursValidation, listeMesuresIndicateurTemporaire });
   }
 
-  affecterListeIndicateursData(listeIndicateursData: IndicateurData[]) {
-    this._listeIndicateursData.push(...listeIndicateursData);
+  affecterListeMesuresIndicateurTemporaire(listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[]) {
+    this._listeMesuresIndicateurTemporaire.push(...listeMesuresIndicateurTemporaire);
   }
 
   affecterListeErreursValidation(listeErreursValidation: ErreurValidationFichier[]) {

@@ -1,14 +1,34 @@
-import { PrismaMesureIndicateurRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
+import {
+  PrismaMesureIndicateurRepository,
+} from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { IndicateurDataBuilder } from '@/server/import-indicateur/app/builder/IndicateurData.builder';
+import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
+import { dependencies } from '@/server/infrastructure/Dependencies';
+import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
+import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 
 describe('PrismaMesureIndicateurRepository', () => {
+  let prismaRapportRepository: PrismaRapportRepository;
   let prismaMesureIndicateurRepository: PrismaMesureIndicateurRepository;
 
   describe('#sauvegarder', () => {
+
+    beforeEach(() => {
+      prismaRapportRepository = new PrismaRapportRepository(prisma);
+      prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
+    });
     it('doit sauvegarder les données', async () => {
       // GIVEN
-      prismaMesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
+      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur);
+
+      const rapport = new DetailValidationFichierBuilder()
+        .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')
+        .avecUtilisateurEmail('ditp.admin@example.com')
+        .build();
+      await prismaRapportRepository.sauvegarder(rapport);
+
       const listeIndicateursData = [
         new IndicateurDataBuilder()
           .avecId('b2450ce3-8006-4550-8132-e5aab19c0caf')

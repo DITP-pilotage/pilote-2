@@ -1,5 +1,5 @@
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
-import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
+import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
 import {
   ReportErrorTask,
   ReportResourceTaskData,
@@ -102,7 +102,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     utilisateurEmail,
   }: ValiderFichierPayload): Promise<DetailValidationFichier> {
     const report = await this.httpClient.post({ cheminCompletDuFichier, nomDuFichier, schema });
-    let listeIndicateursData: IndicateurData[] = [];
+    let listeIndicateursData: MesureIndicateurTemporaire[] = [];
     let listeErreursValidation: ErreurValidationFichier[] = [];
 
     const rapport =  DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, utilisateurEmail });
@@ -110,7 +110,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     if (report.tasks[0].resource.data[0].includes('identifiant_indic')) {
       const { enTetes, donnees } = extraireLeContenuDuFichier(report.tasks);
 
-      listeIndicateursData = donnees.flat().map(donnee => IndicateurData.createIndicateurData({
+      listeIndicateursData = donnees.flat().map(donnee => MesureIndicateurTemporaire.createMesureIndicateurTemporaire({
         rapportId: rapport.id,
         indicId: donnee[enTetes.indicId],
         zoneId: donnee[enTetes.zoneId],
@@ -142,7 +142,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
 
     listeErreursValidation = [...listeErreursValidation, ...listeErreursReport];
 
-    rapport.affecterListeIndicateursData(listeIndicateursData);
+    rapport.affecterListeMesuresIndicateurTemporaire(listeIndicateursData);
     rapport.affecterListeErreursValidation(listeErreursValidation);
 
     return rapport;

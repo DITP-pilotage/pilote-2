@@ -1,27 +1,31 @@
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
-import { FichierIndicateurValidationService } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
-import { MesureIndicateurRepository } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
+import {
+  FichierIndicateurValidationService,
+} from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
+import {
+  MesureIndicateurTemporaireRepository,
+} from '@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface';
 import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
 
 import { RapportRepository } from '@/server/import-indicateur/domain/ports/RapportRepository';
 
 interface Dependencies {
   fichierIndicateurValidationService: FichierIndicateurValidationService
-  mesureIndicateurRepository: MesureIndicateurRepository
+  mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository
   rapportRepository: RapportRepository;
 }
 
-export class ValiderFichierIndicateurImporteUseCase {
+export class VerifierFichierIndicateurImporteUseCase {
   private fichierIndicateurValidationService: FichierIndicateurValidationService;
 
-  private mesureIndicateurRepository: MesureIndicateurRepository;
-  
+  private mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
+
   private rapportRepository: RapportRepository;
 
 
-  constructor({ fichierIndicateurValidationService, mesureIndicateurRepository, rapportRepository }: Dependencies) {
+  constructor({ fichierIndicateurValidationService, mesureIndicateurTemporaireRepository, rapportRepository }: Dependencies) {
     this.fichierIndicateurValidationService = fichierIndicateurValidationService;
-    this.mesureIndicateurRepository = mesureIndicateurRepository;
+    this.mesureIndicateurTemporaireRepository = mesureIndicateurTemporaireRepository;
     this.rapportRepository = rapportRepository;
   }
 
@@ -44,16 +48,17 @@ export class ValiderFichierIndicateurImporteUseCase {
       schema,
       utilisateurEmail: utilisateurAuteurDeLimportEmail,
     });
+    await this.rapportRepository.sauvegarder(report);
 
     const listeErreursValidation: ErreurValidationFichier[] = report.listeErreursValidation;
 
-    report.listeIndicateursData.forEach((indicateurData, index) => {
-      if (indicateurData.indicId.localeCompare(indicateurId)) {
+    report.listeMesuresIndicateurTemporaire.forEach((mesureIndicateurTemporaire, index) => {
+      if (mesureIndicateurTemporaire.indicId.localeCompare(indicateurId)) {
         listeErreursValidation.push(
           ErreurValidationFichier.creerErreurValidationFichier({
-            cellule: indicateurData.indicId,
+            cellule: mesureIndicateurTemporaire.indicId,
             nom: 'Indicateur invalide',
-            message: `L'indicateur ${indicateurData.indicId} ne correpond pas à l'indicateur choisit (${indicateurId})`,
+            message: `L'indicateur ${mesureIndicateurTemporaire.indicId} ne correpond pas à l'indicateur choisit (${indicateurId})`,
             numeroDeLigne: index + 1,
             positionDeLigne: index,
             nomDuChamp: 'indic_id',
@@ -72,10 +77,9 @@ export class ValiderFichierIndicateurImporteUseCase {
     }
 
     if (report.estValide) {
-      await this.mesureIndicateurRepository.sauvegarder(report.listeIndicateursData);
+      await this.mesureIndicateurTemporaireRepository.sauvegarder(report.listeMesuresIndicateurTemporaire);
     }
-    
-    await this.rapportRepository.sauvegarder(report);
+
 
     return report;
   }
