@@ -11,6 +11,10 @@ const PageImportIndicateurSectionImportStyled = styled.section`
   button {
     margin-left: 2rem;
   }
+
+  table {
+    width: 100%;
+  }
 `;
 
 export default PageImportIndicateurSectionImportStyled;

@@ -21,6 +21,7 @@ const étapes = ['Sélectionnez l’indicateur', 'Chargez votre fichier et véri
 
 export default function PageImportIndicateurSectionImport({
   indicateurs,
+  rapport: rapportImport,
 }: PageImportIndicateurSectionImportProps) {
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
   const [estFichierPublie, setEstFichierPublie] = useState<boolean>(false);
@@ -126,7 +127,6 @@ export default function PageImportIndicateurSectionImport({
             }
           </div>
           <div className={`${etapeCourante != Etapes.IMPORT_FICHIER && 'fr-hidden'}`}>
-
             {
               estFichierPublie ?
                 <div className="fr-mt-4w">
@@ -136,12 +136,59 @@ export default function PageImportIndicateurSectionImport({
                     type='succès'
                   />
                 </div>
-                : <FormulairePublierImportIndicateur
+                :
+                <div>
+                  <table className='fr-table fr-mb-3w fr-p-0 '>
+                    <thead>
+                      <tr>
+                        <th>
+                          identifiant_indic
+                        </th>
+                        <th>
+                          zone_id
+                        </th>
+                        <th>
+                          date_valeur
+                        </th>
+                        <th>
+                          type_valeur
+                        </th>
+                        <th>
+                          valeur
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rapportImport?.listeMesuresIndicateurTemporaire.map(mesureIndicateurTemporaire => {
+                        return (
+                          <tr key={`${mesureIndicateurTemporaire.metricType}-${mesureIndicateurTemporaire.zoneId}`}>
+                            <td>
+                              {mesureIndicateurTemporaire.indicId}
+                            </td>
+                            <td>
+                              {mesureIndicateurTemporaire.zoneId}
+                            </td>
+                            <td>
+                              {mesureIndicateurTemporaire.metricDate}
+                            </td>
+                            <td>
+                              {mesureIndicateurTemporaire.metricType}
+                            </td>
+                            <td>
+                              {mesureIndicateurTemporaire.metricValue}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  <FormulairePublierImportIndicateur
                     chantierId={chantierId}
                     indicateurId={indicateurId}
                     rapportId={rapportId}
                     setEstFichierPublie={setEstFichierPublie}
                   />
+                </div>
             }
           </div>
         </Bloc>

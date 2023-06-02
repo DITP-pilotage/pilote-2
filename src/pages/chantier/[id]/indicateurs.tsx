@@ -8,20 +8,24 @@ import { ChantierInformations } from '@/components/PageImportIndicateur/Chantier
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Indicateur from '@/server/domain/chantier/indicateur/Indicateur.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import usePageChantier from '@/components/PageChantier/usePageChantier';
 import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';
+import { presenterEnRapportContrat, RapportContrat } from '@/server/app/contrats/RapportContrat';
 
 interface NextPageImportIndicateurProps {
   chantierInformations: ChantierInformations
   indicateurs: Indicateur[],
+  rapport: RapportContrat | null,
 }
 
 type GetServerSideProps = GetServerSidePropsResult<NextPageImportIndicateurProps>;
 type Params = {
   id: Chantier['id'],
+  indicateurId: string,
+  rapportId: string
 };
 
 export async function getServerSideProps({
+  query,
   params,
   req,
   res,
@@ -42,9 +46,16 @@ export async function getServerSideProps({
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs = await indicateurRepository.récupérerParChantierId(params.id);
 
+  let rapport: RapportContrat | null = null;
+
+  if (query.rapportId) {
+    rapport = presenterEnRapportContrat(await dependencies.getRapportRepository().récupérerRapportParId(query.rapportId as string));
+  }
+
   return {
     props: {
       indicateurs,
+      rapport,
       chantierInformations: {
         id: chantier.id,
         nom: chantier.nom,
@@ -56,8 +67,8 @@ export async function getServerSideProps({
 export default function NextPageImportIndicateur({
   chantierInformations,
   indicateurs,
+  rapport,
 }: NextPageImportIndicateurProps) {
-  const { détailsIndicateurs } = usePageChantier(chantierInformations.id);
 
   return (
     <>
@@ -68,8 +79,8 @@ export default function NextPageImportIndicateur({
       </Head>
       <PageImportIndicateur
         chantierInformations={chantierInformations}
-        détailsIndicateurs={détailsIndicateurs}
         indicateurs={indicateurs}
+        rapport={rapport}
       />
     </>
   );

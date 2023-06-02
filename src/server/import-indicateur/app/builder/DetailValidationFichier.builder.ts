@@ -1,6 +1,7 @@
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
 import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
+import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
 
 export class DetailValidationFichierBuilder {
   private id: string = 'rapportId';
@@ -14,6 +15,8 @@ export class DetailValidationFichierBuilder {
   private listeErreursValidation: ErreurValidationFichier[] = [];
 
   private listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[] = [];
+
+  private listeIndicateursData: IndicateurData[] = [];
 
   avecId(id: string) {
     this.id = id;
@@ -44,6 +47,11 @@ export class DetailValidationFichierBuilder {
     this.listeMesuresIndicateurTemporaire = listeMesuresIndicateurTemporaire;
     return this;
   }
+  
+  avecListeIndicateursData(...listeIndicateursData: IndicateurData[]): DetailValidationFichierBuilder {
+    this.listeIndicateursData = listeIndicateursData;
+    return this;
+  }
 
   build(): DetailValidationFichier {
     return DetailValidationFichier.creerDetailValidationFichier({
@@ -53,6 +61,7 @@ export class DetailValidationFichierBuilder {
       estValide: this.estValide,
       listeErreursValidation: this.listeErreursValidation,
       listeMesuresIndicateurTemporaire: this.listeMesuresIndicateurTemporaire,
+      listeIndicateursData: this.listeIndicateursData,
     });
   }
 }

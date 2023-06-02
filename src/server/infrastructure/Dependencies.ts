@@ -7,28 +7,37 @@ import MinistèreRepository from '@/server/domain/ministère/MinistèreRepositor
 import IndicateurRepository from '@/server/domain/chantier/indicateur/IndicateurRepository.interface';
 import IndicateurSQLRepository from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository';
 import MinistèreSQLRepository from '@/server/infrastructure/accès_données/ministère/MinistèreSQLRepository';
-import SynthèseDesRésultatsRepository from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
-import { SynthèseDesRésultatsSQLRepository } from '@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
+import SynthèseDesRésultatsRepository
+  from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
+import {
+  SynthèseDesRésultatsSQLRepository,
+} from '@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
 import logger from '@/server/infrastructure/logger';
 import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
 import AxeSQLRepository from '@/server/infrastructure/accès_données/axe/AxeSQLRepository';
 import PpgRepository from '@/server/domain/ppg/PpgRepository.interface';
 import PpgSQLRepository from '@/server/infrastructure/accès_données/ppg/PpgSQLRepository';
 import CommentaireRepository from '@/server/domain/chantier/commentaire/CommentaireRepository.interface';
-import CommentaireSQLRepository from '@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository';
+import CommentaireSQLRepository
+  from '@/server/infrastructure/accès_données/chantier/commentaire/CommentaireSQLRepository';
 import ObjectifRepository from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
-import { ValidataFichierIndicateurValidationService } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
+import {
+  ValidataFichierIndicateurValidationService,
+} from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
 import { FetchHttpClient } from '@/server/import-indicateur/infrastructure/adapters/FetchHttpClient';
 import {
   PrismaMesureIndicateurTemporaireRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurTemporaireRepository';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
-import UtilisateurIAMKeycloakRepository from '@/server/infrastructure/accès_données/utilisateur/UtilisateurIAMKeycloakRepository';
-import DécisionStratégiqueRepository from '@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface';
+import UtilisateurIAMKeycloakRepository
+  from '@/server/infrastructure/accès_données/utilisateur/UtilisateurIAMKeycloakRepository';
+import DécisionStratégiqueRepository
+  from '@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
-import ObjectifProjetStructurantRepository from '@/server/domain/projetStructurant/objectif/ObjectifRepository.interface';
+import ObjectifProjetStructurantRepository
+  from '@/server/domain/projetStructurant/objectif/ObjectifRepository.interface';
 import ProjetStructurantRepository from '@/server/domain/projetStructurant/ProjetStructurantRepository.interface';
 import {
   VerifierFichierIndicateurImporteUseCase,
@@ -43,21 +52,28 @@ import {
 import {
   MesureIndicateurRepository,
 } from '@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface';
-import CommentaireProjetStructurantRepository from '@/server/domain/projetStructurant/commentaire/CommentaireRepository.interface';
-import { PublierFichierIndicateurImporteUseCase } from '@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase';
-import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
+import CommentaireProjetStructurantRepository
+  from '@/server/domain/projetStructurant/commentaire/CommentaireRepository.interface';
+import {
+  PublierFichierIndicateurImporteUseCase,
+} from '@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase';
+import PérimètreMinistérielRepository
+  from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import {
   SynthèseDesRésultatsProjetStructurantSQLRepository,
 } from '@/server/infrastructure/accès_données/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsProjetStructurantSQLRepository';
 import SynthèseDesRésultatsProjetStructurantRepository
   from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
-import ObjectifSQLRepository from './accès_données/chantier/objectif/ObjectifSQLRepository';
-import DécisionStratégiqueSQLRepository from './accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository';
+import ObjectifSQLRepository from '@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository';
+import DécisionStratégiqueSQLRepository
+  from '@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
-import ObjectifProjetStructurantSQLRepository from './accès_données/projetStructurant/objectif/ObjectifProjetStructurantSQLRepository';
-import CommentaireProjetStructurantSQLRepository from './accès_données/projetStructurant/commentaire/CommentaireProjetStructurantSQLRepository';
+import ObjectifProjetStructurantSQLRepository
+  from './accès_données/projetStructurant/objectif/ObjectifProjetStructurantSQLRepository';
+import CommentaireProjetStructurantSQLRepository
+  from './accès_données/projetStructurant/commentaire/CommentaireProjetStructurantSQLRepository';
 import PérimètreMinistérielSQLRepository from './accès_données/périmètreMinistériel/PérimètreMinistérielSQLRepository';
 
 class Dependencies {
@@ -96,7 +112,7 @@ class Dependencies {
   private readonly _mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
 
   private readonly _mesureIndicateurRepository: MesureIndicateurRepository;
-  
+
   private readonly _commentaireProjetStructurantRepository: CommentaireProjetStructurantRepository;
 
   private readonly _périmètreMinistérielRepository: PérimètreMinistérielRepository;
@@ -186,6 +202,10 @@ class Dependencies {
 
   getMesureIndicateurTemporaireRepository(): MesureIndicateurTemporaireRepository {
     return this._mesureIndicateurTemporaireRepository;
+  }
+
+  getMesureIndicateurRepository(): MesureIndicateurRepository {
+    return this._mesureIndicateurRepository;
   }
 
   getPublierFichierIndicateurImporteUseCase(): PublierFichierIndicateurImporteUseCase {

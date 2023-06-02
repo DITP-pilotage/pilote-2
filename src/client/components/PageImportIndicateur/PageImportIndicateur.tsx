@@ -10,15 +10,15 @@ import PageImportIndicateurSectionImport from './PageImportIndicateurSectionImpo
 export default function PageImportIndicateur({
   chantierInformations,
   indicateurs,
-  détailsIndicateurs,
+  rapport,
 }: PageImportIndicateurProps) {
   return (
     <main>
       <PageImportIndicateurEnTête chantierInformations={chantierInformations} />
       <PageImportIndicateurExplicationEtapeImport />
       <PageImportIndicateurSectionImport
-        détailsIndicateurs={détailsIndicateurs}
         indicateurs={indicateurs}
+        rapport={rapport}
       />
       <PageImportIndicateurSectionRessource />
     </main>
