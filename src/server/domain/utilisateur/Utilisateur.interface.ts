@@ -27,6 +27,9 @@ type Utilisateur = {
   prénom: string
   email: string
   profil: Profil
+  dateModification: string
+  auteurModification: string
+  fonction: string | null
   habilitations: Habilitations
 };
 

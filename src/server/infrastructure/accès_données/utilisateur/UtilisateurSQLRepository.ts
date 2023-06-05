@@ -191,6 +191,9 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       prénom: utilisateurBrut.prenom || 'Inconnu',
       email: utilisateurBrut.email,
       profil: utilisateurBrut.profilCode as Profil,
+      dateModification: utilisateurBrut.date_modification.toISOString(),
+      auteurModification: utilisateurBrut.auteur_modification,
+      fonction: utilisateurBrut.fonction,
       habilitations: await this._créerLesHabilitations(utilisateurBrut.profil, utilisateurBrut.habilitation),
     };
   }

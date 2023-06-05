@@ -36,7 +36,7 @@ export default function TableauAdminUtilisateurs({ utilisateurs } :TableauAdminU
       >
         {tableau.getRowModel().rows.length}
         {' '}
-        {tableau.getRowModel().rows.length > 1 ? 'utilisateurs' : 'utilisateur'}
+        {tableau.getRowModel().rows.length > 1 ? 'comptes' : 'compte'}
       </Titre>
       <div className="fr-table">
         <table className='tableau fr-m-0 fr-p-0'>

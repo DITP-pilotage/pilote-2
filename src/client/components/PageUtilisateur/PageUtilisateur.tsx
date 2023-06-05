@@ -10,7 +10,7 @@ import TableauUtilisateur from '@/components/PageUtilisateur/TableauUtilisateur/
 import usePageUtilisateur from '@/components/PageUtilisateur/usePageUtilisateur';
 
 export default function PageUtilisateur({ utilisateur, chantiers }:PageUtilisateurProps) {
-  const chemin = [{ nom:'Gestion de Profils', lien:'/admin/utilisateurs' }];
+  const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];
   const { listeTerritoiresScope, listeChantiersScope } = usePageUtilisateur(utilisateur, chantiers);
 
   return (
@@ -32,7 +32,7 @@ export default function PageUtilisateur({ utilisateur, chantiers }:PageUtilisate
             baliseHtml='h1'
             className='fr-h1 fr-mt-4w'
           >
-            Fiche profil
+            Fiche du compte
           </Titre>
           <Bloc>
             <div className='fr-py-4w fr-px-10w'>

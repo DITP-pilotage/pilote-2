@@ -32,6 +32,13 @@ const PageUtilisateurStyled = styled.section`
           border-radius: 8px 0 0;
         }
       }
+
+      td{
+        max-width: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
   }
 `;

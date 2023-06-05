@@ -24,6 +24,7 @@ export default function TableauAdminUtilisateursContenu({ tableau }: TableauAdmi
               <td
                 className="fr-py-1w"
                 key={cell.id}
+                title={cell.row.getValue(cell.column.id)}
               >
                 {
                   flexRender(

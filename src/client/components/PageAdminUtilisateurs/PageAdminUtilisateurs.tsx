@@ -23,7 +23,7 @@ export default function PageAdminUtilisateurs({ utilisateurs } :PageAdminUtilisa
             baliseHtml="h1"
             className="fr-h1"
           >
-            Gestion des profils
+            Gestion des comptes
           </Titre>
           <Bloc>
             <TableauAdminUtilisateurs utilisateurs={utilisateurs} />

@@ -24,6 +24,13 @@ const TableauAdminUtilisateursStyled = styled.section`
       &:hover:nth-of-type(odd) {
         background-color: var(--background-alt-grey-hover);
       }
+
+      td{
+        max-width: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
   }
 

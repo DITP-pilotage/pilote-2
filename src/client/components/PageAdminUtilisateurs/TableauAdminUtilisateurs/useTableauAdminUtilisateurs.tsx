@@ -9,32 +9,33 @@ import { ChangeEvent, useCallback, useState } from 'react';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+import { formaterDate } from '@/client/utils/date/date';
 
 const reactTableColonnesHelper = createColumnHelper<Utilisateur>();
 const colonnes = [
   reactTableColonnesHelper.accessor('email', {
-    header: 'Adresse email',
+    header: 'Adresse électronique',
     cell: props => props.getValue(),
   }),
   reactTableColonnesHelper.accessor('nom', {
     header: 'Nom',
     cell: props => props.getValue(),
-
   }),
   reactTableColonnesHelper.accessor('prénom', {
     header: 'Prénom',
     cell: props => props.getValue(),
-
   }),
   reactTableColonnesHelper.accessor('profil', {
     header: 'Profil',
     cell: props => props.getValue(),
-
   }),
-  reactTableColonnesHelper.display({
+  reactTableColonnesHelper.accessor('fonction', {
+    header: 'Fonction',
+    cell: props => props.getValue(),
+  }),
+  reactTableColonnesHelper.accessor('dateModification', {
     header: 'Dernière modification',
-    cell: 'Pas de données',
-
+    cell: props => `${formaterDate(props.row.original.dateModification, 'jj/mm/aaaa')} par ${props.row.original.auteurModification}`,
   }),
 ];
 

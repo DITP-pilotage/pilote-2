@@ -305,7 +305,7 @@ model utilisateur {
   habilitation                     habilitation[]
   rapport_import_mesure_indicateur rapport_import_mesure_indicateur[]
   date_modification                DateTime                           @default(now())
-  auteur_modification              String?
+  auteur_modification              String
 
   @@schema("public")
 }

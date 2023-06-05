@@ -1,4 +1,5 @@
 import TableauUtilisateurProps from '@/components/PageUtilisateur/TableauUtilisateur/TableauUtilisateur.interface';
+import { formaterDate } from '@/client/utils/date/date';
 
 export default function TableauUtilisateur({ utilisateur }: TableauUtilisateurProps) {
   return (
@@ -7,7 +8,7 @@ export default function TableauUtilisateur({ utilisateur }: TableauUtilisateurPr
         <thead>
           <tr>
             <th>
-              Adresse email
+              Adresse électronique
             </th>
             <th>
               Nom
@@ -19,26 +20,32 @@ export default function TableauUtilisateur({ utilisateur }: TableauUtilisateurPr
               Profil
             </th>
             <th>
+              Fonction
+            </th>
+            <th>
               Dernière modification
             </th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>
+            <td title={utilisateur.email}>
               {utilisateur.email}
             </td>
-            <td>
+            <td title={utilisateur.nom}>
               {utilisateur.nom}
             </td>
-            <td>
+            <td title={utilisateur.prénom}>
               {utilisateur.prénom}
             </td>
-            <td>
+            <td title={utilisateur.profil}>
               {utilisateur.profil}
             </td>
-            <td>
-              Non renseigné
+            <td title={utilisateur.fonction ?? undefined}>
+              {utilisateur.fonction}
+            </td>
+            <td title={`${formaterDate(utilisateur.dateModification, 'jj/mm/aaaa')} par ${utilisateur.auteurModification}`}>
+              {`${formaterDate(utilisateur.dateModification, 'jj/mm/aaaa')} par ${utilisateur.auteurModification}`}
             </td>
           </tr>
         </tbody>
