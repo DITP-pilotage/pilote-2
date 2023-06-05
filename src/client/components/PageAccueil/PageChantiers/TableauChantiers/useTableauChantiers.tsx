@@ -27,13 +27,6 @@ import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuil
 import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiersTuileMinistère';
 import TableauChantiersTuileMinistèreProps from './Tuile/Ministère/TableauChantiersTuileMinistère.interface';
 
-const déterminerTypologieDuGroupementParMinistère = (chantiersDuGroupe: DonnéesTableauChantiers[]) => {
-  return { 
-    estBaromètre: chantiersDuGroupe.some(chantier => chantier.typologie.estBaromètre),
-    estTerritorialisé: chantiersDuGroupe.some(chantier => chantier.typologie.estTerritorialisé),
-  };
-};
-
 const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
 
 const colonnesTableauChantiers = [
@@ -80,8 +73,6 @@ const colonnesTableauChantiers = [
     enableSorting: false,
     cell: cellContext => <TypologiesPictos typologies={cellContext.getValue()} />,
     enableGrouping: false,
-    aggregationFn: (_columnId, leafRows) => déterminerTypologieDuGroupementParMinistère(leafRows.map(row => row.original)),
-    aggregatedCell: typologie => typologie.getValue() ? <TypologiesPictos typologies={typologie.getValue()} /> : null,
     meta: {
       width: '8rem',
     },
