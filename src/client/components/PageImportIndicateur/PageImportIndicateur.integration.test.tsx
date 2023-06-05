@@ -2,7 +2,6 @@ import { render, screen, within } from '@testing-library/react';
 import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIndicateur';
 import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
 import Indicateur from '@/server/domain/chantier/indicateur/Indicateur.interface';
-import { DétailsIndicateurs } from '@/server/domain/chantier/indicateur/DétailsIndicateur.interface';
 import IndicateurBuilder from '@/server/domain/chantier/indicateur/Indicateur.builder';
 
 const CHANTIER_NOM = 'Offrir à chaque enfant une éducation culturelle et artistique';
@@ -39,8 +38,8 @@ describe('PageImportIndicateur', () => {
       render(
         <PageImportIndicateur
           chantierInformations={chantierInformations}
-          détailsIndicateurs={null}
           indicateurs={[]}
+          rapport={null}
         />,
       );
 
@@ -62,8 +61,8 @@ describe('PageImportIndicateur', () => {
       render(
         <PageImportIndicateur
           chantierInformations={chantierInformation}
-          détailsIndicateurs={null}
           indicateurs={[]}
+          rapport={null}
         />,
       );
 
@@ -91,8 +90,8 @@ describe('PageImportIndicateur', () => {
       render(
         <PageImportIndicateur
           chantierInformations={chantierInformation}
-          détailsIndicateurs={null}
           indicateurs={[]}
+          rapport={null}
         />,
       );
 
@@ -109,8 +108,6 @@ describe('PageImportIndicateur', () => {
         new IndicateurBuilder().avecType('CONTEXTE').avecNom('IND-CH-124 nom indicateur 2').build(),
       ];
 
-      const détailsIndicateurs: DétailsIndicateurs = {};
-
       const chantierInformation: ChantierInformations = {
         id: 'chantierId',
         nom: CHANTIER_NOM,
@@ -120,8 +117,8 @@ describe('PageImportIndicateur', () => {
       await render(
         <PageImportIndicateur
           chantierInformations={chantierInformation}
-          détailsIndicateurs={détailsIndicateurs}
           indicateurs={indicateurs}
+          rapport={null}
         />,
       );
 

@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
 import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
+import { IndicateurData } from '@/server/import-indicateur/domain/IndicateurData';
 
 export class DetailValidationFichier {
   private readonly _id: string;
@@ -8,8 +9,10 @@ export class DetailValidationFichier {
   private readonly _estValide: boolean;
 
   private readonly _listeErreursValidation: ErreurValidationFichier[];
-  
+
   private readonly _listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[];
+
+  private readonly _listeIndicateursData: IndicateurData[];
 
   private readonly _utilisateurEmail: string;
 
@@ -22,13 +25,23 @@ export class DetailValidationFichier {
     utilisateurEmail,
     listeErreursValidation,
     listeMesuresIndicateurTemporaire,
-  }: { id: string, estValide: boolean, dateCreation: Date, utilisateurEmail: string,  listeErreursValidation: ErreurValidationFichier[], listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[] }) {
+    listeIndicateursData,
+  }: {
+    id: string,
+    estValide: boolean,
+    dateCreation: Date,
+    utilisateurEmail: string,
+    listeErreursValidation: ErreurValidationFichier[],
+    listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[],
+    listeIndicateursData: IndicateurData[]
+  }) {
     this._id = id;
     this._estValide = estValide;
     this._dateCreation = dateCreation;
     this._utilisateurEmail = utilisateurEmail;
     this._listeErreursValidation = listeErreursValidation;
     this._listeMesuresIndicateurTemporaire = listeMesuresIndicateurTemporaire;
+    this._listeIndicateursData = listeIndicateursData;
   }
 
   get id(): string {
@@ -55,6 +68,10 @@ export class DetailValidationFichier {
     return this._listeMesuresIndicateurTemporaire;
   }
 
+  get listeIndicateursData(): IndicateurData[] {
+    return this._listeIndicateursData;
+  }
+
   static creerDetailValidationFichier({
     id,
     estValide,
@@ -62,8 +79,25 @@ export class DetailValidationFichier {
     utilisateurEmail,
     listeErreursValidation = [],
     listeMesuresIndicateurTemporaire = [],
-  }: { id?: string, estValide: boolean, dateCreation?: Date, utilisateurEmail: string, listeErreursValidation?: ErreurValidationFichier[], listeMesuresIndicateurTemporaire?: MesureIndicateurTemporaire[] }) {
-    return new DetailValidationFichier({ id: id || randomUUID(), dateCreation: dateCreation || new Date(), utilisateurEmail, estValide, listeErreursValidation, listeMesuresIndicateurTemporaire });
+    listeIndicateursData = [],
+  }: {
+    id?: string,
+    estValide: boolean,
+    dateCreation?: Date,
+    utilisateurEmail: string,
+    listeErreursValidation?: ErreurValidationFichier[],
+    listeMesuresIndicateurTemporaire?: MesureIndicateurTemporaire[]
+    listeIndicateursData?: IndicateurData[]
+  }) {
+    return new DetailValidationFichier({
+      id: id || randomUUID(),
+      dateCreation: dateCreation || new Date(),
+      utilisateurEmail,
+      estValide,
+      listeErreursValidation,
+      listeMesuresIndicateurTemporaire,
+      listeIndicateursData,
+    });
   }
 
   affecterListeMesuresIndicateurTemporaire(listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[]) {

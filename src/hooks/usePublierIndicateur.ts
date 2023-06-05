@@ -4,6 +4,7 @@ import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailVali
 type UploadFichierFormulaireElement = { 'file-upload': HTMLInputElement } & HTMLFormElement;
 
 export const usePublierIndicateur = (chantierId: string, indicateurId: string, rapportId: string, setEstFichierPublie: Dispatch<SetStateAction<boolean>>) => {
+
   const publierLeFichier: FormEventHandler<UploadFichierFormulaireElement> = async (event) => {
     event.preventDefault();
 
