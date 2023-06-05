@@ -14,6 +14,7 @@ import {
   projet_structurant,
   commentaire_projet_structurant,
   synthese_des_resultats_projet_structurant,
+  indicateur_projet_structurant,
 } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import SynthèseDesRésultatsSQLRowBuilder
@@ -45,6 +46,7 @@ import ObjectifProjetStructurantSQLRowBuilder from '@/server/infrastructure/test
 import CommentaireProjetStructurantRowBuilder from '@/server/infrastructure/test/builders/sqlRow/CommentaireProjetStructurantSQLRow.builder';
 import SynthèseDesRésultatsProjetStructurantSQLRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsProjetStructurantSQLRow.builder';
+import IndicateurProjetStructurantRowBuilder from '@/server/infrastructure/test/builders/sqlRow/IndicateurProjetStructurantSQLRow.builder';
 import { formaterId } from './format';
 
 const chantierStatiqueId123 = new ChantierSQLRowBuilder()
@@ -107,6 +109,8 @@ export class DatabaseSeeder {
 
   private _synthèsesDesRésultatsProjetStructurant: synthese_des_resultats_projet_structurant[] = [];
 
+  private _indicateursProjetStructurant: indicateur_projet_structurant[] = [];
+
   constructor(prisma: PrismaClient) {
     this._prisma = prisma;
   }
@@ -153,6 +157,8 @@ export class DatabaseSeeder {
     await this._créerObjectifsProjetsStructurants();
     console.log('  CommentairesProjetStructurant');
     await this._créerCommentairesProjetStructurant();
+    await this._créerIndicateursProjetsStructurants();
+    console.log('  IndicateursProjetStructant');
     console.log('----------------- Fin ------------------');
   }
 
@@ -411,5 +417,17 @@ export class DatabaseSeeder {
     });
 
     await this._prisma.commentaire_projet_structurant.createMany({ data: this._commentairesProjetStructurant });
+  }
+
+  private async _créerIndicateursProjetsStructurants() {
+    this._projetsStructurants.forEach(p => {
+      répéter(0, 3, () => {
+        this._indicateursProjetStructurant.push(new IndicateurProjetStructurantRowBuilder()
+          .avecProjetStructurantCode(p.id)
+          .build());
+      });
+    });
+
+    await this._prisma.indicateur_projet_structurant.createMany({ data: this._indicateursProjetStructurant });
   }
 }

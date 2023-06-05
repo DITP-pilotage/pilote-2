@@ -56,7 +56,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return indicateur!.chantier_id;
   }
 
-  async getById(id: string, habilitations: Habilitations): Promise<DétailsIndicateurMailles> {
+  async récupérerDétailsParMailles(id: string, habilitations: Habilitations): Promise<DétailsIndicateurMailles> {
     const h = new Habilitation(habilitations);
     const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();

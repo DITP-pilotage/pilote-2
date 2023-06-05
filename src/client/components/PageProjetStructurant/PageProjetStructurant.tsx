@@ -9,7 +9,6 @@ import { typesCommentaireProjetStructurant } from '@/server/domain/projetStructu
 import Titre from '@/client/components/_commons/Titre/Titre';
 import { listeRubriquesIndicateursProjetStructurant, listeRubriquesProjetStructurant } from '@/client/utils/rubriques';
 import Indicateurs from '@/client/components/_commons/Indicateurs/Indicateurs';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import ResponsablesPageProjetStructurant from './Responsables/Responsables';
 import PageProjetStructurantProps from './PageProjetStructurant.interface';
@@ -18,28 +17,7 @@ import PageProjetStructurantStyled from './PageProjetStructurant.styled';
 import AvancementPageProjetStructurant from './Avancement/Avancement';
 import usePageProjetStructurant from './usePageProjetStructurant';
 
-const indicateurs: Indicateur[] = [
-  {
-    id: 'IND-001',
-    nom: 'Indicateur 1',
-    type: 'IMPACT',
-    description: "c'est un idicateur d'impact",
-    source: null,
-    modeDeCalcul: null,
-    estIndicateurDuBaromètre: false,
-  },
-  {
-    id: 'IND-002',
-    nom: 'Indicateur 2',
-    type: 'FINANCE',
-    description: "c'est un idicateur financier",
-    source: null,
-    modeDeCalcul: null,
-    estIndicateurDuBaromètre: false,
-  },
-];
-
-export default function PageProjetStructurant({ projetStructurant }: PageProjetStructurantProps) {
+export default function PageProjetStructurant({ projetStructurant, indicateurs }: PageProjetStructurantProps) {
   const détailsIndicateurs: DétailsIndicateurs = { 
     'IND-001': {
       [projetStructurant.territoire.codeInsee]: {

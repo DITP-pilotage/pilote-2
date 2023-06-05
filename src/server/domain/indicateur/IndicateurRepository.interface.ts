@@ -8,7 +8,7 @@ import { IndicateurPourExport } from '@/server/usecase/chantier/indicateur/Expor
 
 export default interface IndicateurRepository {
   récupérerChantierIdAssocié(indicateurId: string): Promise<string>
-  getById(IndicateurId: string, habilitations: Habilitations): Promise<DétailsIndicateurMailles>
+  récupérerDétailsParMailles(IndicateurId: string, habilitations: Habilitations): Promise<DétailsIndicateurMailles>
   récupérerParChantierId(chantierId: string): Promise<Indicateur[]>;
   récupérerDétails(indicateurId: string, maille: Maille): Promise<DétailsIndicateurs>;
   récupererDétailsParChantierIdEtTerritoire(chantierId: string, territoireCodes: string[]): Promise<DétailsIndicateurs>;

@@ -13,6 +13,6 @@ export default class RécupérerDétailsIndicateurUseCase {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnLecture(chantierId, null);
     
-    return this.indicateurRepository.getById(indicateurId, habilitations);
+    return this.indicateurRepository.récupérerDétailsParMailles(indicateurId, habilitations);
   }
 }

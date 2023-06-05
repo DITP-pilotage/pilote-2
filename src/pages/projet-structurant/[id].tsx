@@ -5,12 +5,15 @@ import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructura
 import PageProjetStructurant from '@/components/PageProjetStructurant/PageProjetStructurant';
 import RécupérerProjetStructurantUseCase from '@/server/usecase/projetStructurant/RécupérerProjetStructurantUseCase';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
+import { dependencies } from '@/server/infrastructure/Dependencies';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 
 interface NextPageProjetStructurantProps {
   projetStructurant: ProjetStructurant,
+  indicateurs: Indicateur[],
 }
 
-export default function NextPageProjetStructurant({ projetStructurant }: NextPageProjetStructurantProps) {
+export default function NextPageProjetStructurant({ projetStructurant, indicateurs }: NextPageProjetStructurantProps) {
   return (
     <>
       <Head>
@@ -18,7 +21,10 @@ export default function NextPageProjetStructurant({ projetStructurant }: NextPag
           {`Projet structurant ${projetStructurant.id.replace('PS-', '')} - ${projetStructurant.nom} - PILOTE`}
         </title>
       </Head>
-      <PageProjetStructurant projetStructurant={projetStructurant} />
+      <PageProjetStructurant
+        indicateurs={indicateurs}
+        projetStructurant={projetStructurant}
+      />
     </>
   );
 }
@@ -36,10 +42,13 @@ export async function getServerSideProps({ req, res, params }: GetServerSideProp
     return { props: {} };
   
   const projetStructurant: ProjetStructurant = await new RécupérerProjetStructurantUseCase().run(params.id, session.habilitations);
+  const indicateurRepository = dependencies.getIndicateurProjetStructurantRepository();
+  const indicateurs: Indicateur[] = await indicateurRepository.récupérerParProjetStructurant(projetStructurant.id, projetStructurant.territoire.codeInsee);
 
   return {
     props: {
       projetStructurant,
+      indicateurs,
     },
   };
 }
