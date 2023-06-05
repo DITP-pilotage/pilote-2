@@ -1,11 +1,10 @@
 import styled from '@emotion/styled';
 
 
-const PageUtilisateurStyled = styled.section`
-  
+const PageUtilisateurStyled = styled.div`
+  background: var(--background-alt-blue-france);
+
   .fiche-utilisateur{
-    padding-right: 11.25rem;
-    
     h1, h2{
       color: var(--text-title-blue-france);
     }

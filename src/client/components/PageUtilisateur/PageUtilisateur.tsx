@@ -11,16 +11,16 @@ import usePageUtilisateur from '@/components/PageUtilisateur/usePageUtilisateur'
 
 export default function PageUtilisateur({ utilisateur, chantiers }:PageUtilisateurProps) {
   const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];
-  const { listeTerritoiresScope, listeChantiersScope } = usePageUtilisateur(utilisateur, chantiers);
+  const { scopes } = usePageUtilisateur(utilisateur, chantiers);
 
   return (
-    <main>
-      <PageUtilisateurStyled className='fr-pt-2w fr-pl-15w'>
+    <PageUtilisateurStyled className='fr-pt-2w'>
+      <main className='fr-container'>
         <FilAriane
           chemin={chemin}
           libelléPageCourante='Utilisateur'
         />
-        <div className='fiche-utilisateur fr-pl-15v fr-pt-1w fr-pb-13w'>
+        <div className='fiche-utilisateur fr-pt-1w fr-pb-13w'>
           <Link
             aria-label="Retour à la liste des utilisateurs"
             className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-text--sm bouton-retour"
@@ -44,39 +44,39 @@ export default function PageUtilisateur({ utilisateur, chantiers }:PageUtilisate
               </Titre>
               <TableauUtilisateur utilisateur={utilisateur} />
               <DétailsDroitsUtilisateur
-                chantiers={listeChantiersScope.lecture}
-                territoires={listeTerritoiresScope.lecture}
+                chantiers={scopes.lecture.chantiers}
+                territoires={scopes.lecture.territoires}
                 titre='Droits de visualisation'
               />
               <DétailsDroitsUtilisateur
-                chantiers={listeChantiersScope['saisie.indicateur']}
-                territoires={listeTerritoiresScope['saisie.indicateur']}
+                chantiers={scopes['saisie.indicateur'].chantiers}
+                territoires={scopes['saisie.indicateur'].territoires}
                 titre='Droits de saisie des données quantitatives'
               />
               <DétailsDroitsUtilisateur
-                chantiers={listeChantiersScope['saisie.commentaire']}
-                territoires={listeTerritoiresScope['saisie.commentaire']}
+                chantiers={scopes['saisie.commentaire'].chantiers}
+                territoires={scopes['saisie.commentaire'].territoires}
                 titre='Droits de saisie des commentaires'
               />
               <DétailsDroitsUtilisateur
-                chantiers={listeChantiersScope['utilisateurs.lecture']}
-                territoires={listeTerritoiresScope['utilisateurs.lecture']}
+                chantiers={scopes['utilisateurs.lecture'].chantiers}
+                territoires={scopes['utilisateurs.lecture'].territoires}
                 titre='Droits de visualisation des utilisateurs'
               />
               <DétailsDroitsUtilisateur
-                chantiers={listeChantiersScope['utilisateurs.modification']}
-                territoires={listeTerritoiresScope['utilisateurs.modification']}
+                chantiers={scopes['utilisateurs.modification'].chantiers}
+                territoires={scopes['utilisateurs.modification'].territoires}
                 titre='Droits de modification des utilisateurs'
               />
               <DétailsDroitsUtilisateur
-                chantiers={listeChantiersScope['utilisateurs.suppression']}
-                territoires={listeTerritoiresScope['utilisateurs.suppression']}
+                chantiers={scopes['utilisateurs.suppression'].chantiers}
+                territoires={scopes['utilisateurs.suppression'].territoires}
                 titre='Droits de suppression des utilisateurs'
               />
             </div>
           </Bloc>
         </div>
-      </PageUtilisateurStyled>
-    </main>
+      </main>
+    </PageUtilisateurStyled>
   );
 }

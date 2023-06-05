@@ -1,30 +1,60 @@
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import { actionsTerritoiresStore, territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { Scope } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { objectEntries } from '@/client/utils/objects/objects';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { Scope, scopes } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import PageUtilisateurProps from './PageUtilisateur.interface';
 
-export default function usePageUtilisateur(utilisateur: Utilisateur, chantiers: Record<Chantier['id'], Chantier['nom']>) {
-
+export default function usePageUtilisateur(utilisateur: Utilisateur, chantiers: PageUtilisateurProps['chantiers']) {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const tousLesTerritoires = territoiresTerritoiresStore();
 
-  const scopesParDéfaut: { [key in Scope] : string[] } = {
-    lecture: [],
-    'saisie.indicateur': [],
-    'saisie.commentaire': [],
-    'utilisateurs.lecture': [],
-    'utilisateurs.modification': [],
-    'utilisateurs.suppression': [],
+  const scopes: { [key in Scope]: { chantiers: Chantier['nom'][], territoires: Territoire['nomAffiché'][] } } = {
+    lecture: {
+      chantiers: [],
+      territoires: [],
+    },
+    'saisie.indicateur': {
+      chantiers: [],
+      territoires: [],
+    },
+    'saisie.commentaire': {
+      chantiers: [],
+      territoires: [],
+    },
+    'utilisateurs.lecture': {
+      chantiers: [],
+      territoires: [],
+    },
+    'utilisateurs.modification': {
+      chantiers: [],
+      territoires: [],
+    },
+    'utilisateurs.suppression': {
+      chantiers: [],
+      territoires: [],
+    },
+  };
+  
+  let chantiersTerritorialisésIds: string[] = objectEntries(chantiers).filter(([_, chantier]) => chantier.estTerritorialisé).map(c => c[0]);
+
+  const aAccèsATousLesChantiers = (chantiersAccessibles: string[]) => {
+    return chantiersAccessibles.length === Object.keys(chantiers).length; 
   };
 
-  let listeTerritoiresScope = { ...scopesParDéfaut };
-  let listeChantiersScope = { ...scopesParDéfaut };
+  const aAccèsATousLesChantiersTerritorialisés = (chantiersAccessibles: string[]) => {
+    return chantiersTerritorialisésIds.every(chantierId => chantiersAccessibles.includes(chantierId));
+  };
 
-  scopes.forEach(scope => {
-    const territoiresScopeUtilisateur = utilisateur.habilitations[scope].territoires;
-    listeTerritoiresScope[scope] = territoiresScopeUtilisateur.length === tousLesTerritoires.length
-      ? ['Tous']
-      : territoiresScopeUtilisateur.map(
+  objectEntries(scopes).forEach(([scope, _]) => {
+    const territoiresAccessibles = utilisateur.habilitations[scope].territoires;
+    const chantiersAccessibles = utilisateur.habilitations[scope].chantiers;
+    const chantiersAccessiblesNonTerritorialisés = chantiersAccessibles.filter(c => !chantiersTerritorialisésIds.includes(c));
+
+    scopes[scope].territoires = territoiresAccessibles.length === tousLesTerritoires.length
+      ? ['Tous les territoires']
+      : territoiresAccessibles.map(
         territoire => (
           utilisateur.profil === 'DROM' && territoire === 'NAT-FR'
             ? 'Ensemble des 5 DROMS'
@@ -32,14 +62,18 @@ export default function usePageUtilisateur(utilisateur: Utilisateur, chantiers: 
         ),
       );
 
-    const chantiersScopeUtilisateur = utilisateur.habilitations[scope].chantiers;
-    listeChantiersScope[scope] = chantiersScopeUtilisateur.length === Object.keys(chantiers).length
-      ? ['Tous']
-      : chantiersScopeUtilisateur.map(chantierId => chantiers[chantierId]);
+    if (aAccèsATousLesChantiers(chantiersAccessibles)) {
+      scopes[scope].chantiers = ['Tous les chantiers'];
+      return;
+    } 
+    
+    if (aAccèsATousLesChantiersTerritorialisés(chantiersAccessibles))
+      scopes[scope].chantiers = ['Tous les chantiers territorialisés'];  
+
+    scopes[scope].chantiers = [...scopes[scope].chantiers, ...chantiersAccessiblesNonTerritorialisés.map(chantierId => chantiers[chantierId].nom)];
   });
 
   return {
-    listeTerritoiresScope,
-    listeChantiersScope,
+    scopes,
   };
 }

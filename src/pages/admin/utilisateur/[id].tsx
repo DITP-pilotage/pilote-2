@@ -7,11 +7,14 @@ import RécupérerUnUtilisateurUseCase from '@/server/usecase/utilisateur/Récup
 import RécupérerChantiersUseCase from '@/server/usecase/chantier/RécupérerChantiersUseCase';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 
-interface NextPageAdminUtilisateurProps {
+export interface NextPageAdminUtilisateurProps {
   utilisateur: Utilisateur
-  chantiers: Record<Chantier['id'], Chantier['nom']>
+  chantiers: Record<Chantier['id'], {
+    nom: Chantier['nom']
+    estTerritorialisé: Chantier['estTerritorialisé']
+  }>
 }
-export default function NextPageAdminUtilisateur({ utilisateur, chantiers } :NextPageAdminUtilisateurProps) {
+export default function NextPageAdminUtilisateur({ utilisateur, chantiers } : NextPageAdminUtilisateurProps) {
   return (
     <PageUtilisateur
       chantiers={chantiers}
@@ -40,8 +43,13 @@ export async function getServerSideProps({ req, res, params } :GetServerSideProp
     return redirigerVersPageAccueil;
   }
 
-  let chantiers: Record<Chantier['id'], Chantier['nom']> = {};
-  chantiersExistants.forEach(chantier => chantiers[chantier.id] = chantier.nom);
+  let chantiers: NextPageAdminUtilisateurProps['chantiers'] = {};
+  chantiersExistants.forEach(chantier => {
+    chantiers[chantier.id] = {
+      nom: chantier.nom,
+      estTerritorialisé: chantier.estTerritorialisé,
+    };
+  });
 
   return {
     props: {
