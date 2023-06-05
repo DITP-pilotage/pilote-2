@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { File } from 'formidable';
-import { decode } from 'next-auth/jwt';
+import { getToken } from 'next-auth/jwt';
 import assert from 'node:assert/strict';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
@@ -35,14 +35,9 @@ export default async function handleVerifierFichierImportIndicateur(
   const fichier = <File>formData.file;
 
   const schéma = 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/main/public/schema/sans-contraintes.json';
-  const sessionToken = request.cookies['next-auth.session-token'];
+  const sessionToken = await getToken({ req: request, secureCookie: configuration.securedEnv, secret: configuration.nextAuthSecret });
 
-  const decoded = await decode({
-    token: sessionToken,
-    secret: configuration.nextAuthSecret,
-  });
-
-  assert(decoded?.user);
+  assert(sessionToken?.user);
 
   const report = await verifierFichierIndicateurImporteUseCase.execute(
     {
@@ -50,7 +45,7 @@ export default async function handleVerifierFichierImportIndicateur(
       nomDuFichier: fichier.originalFilename as string,
       schema: schéma,
       indicateurId: request.query.indicateurId as string,
-      utilisateurAuteurDeLimportEmail: (decoded.user as { email: string }).email,
+      utilisateurAuteurDeLimportEmail: (sessionToken.user as { email: string }).email,
     },
   );
 

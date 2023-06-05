@@ -5,4 +5,10 @@ const logger = pino({
   level: config.logLevel,
 });
 
+logger.info({
+  logLevel: config.logLevel,
+  env: config.env,
+  securedEnv: config.securedEnv,
+});
+
 export default logger;
