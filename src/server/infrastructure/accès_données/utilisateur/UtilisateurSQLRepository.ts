@@ -1,12 +1,32 @@
-import { PrismaClient, habilitation, profil, utilisateur, chantier } from '@prisma/client';
+import { PrismaClient, habilitation, profil, utilisateur, chantier, territoire } from '@prisma/client';
 import Utilisateur, { Profil, UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { Scope } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 export class UtilisateurSQLRepository implements UtilisateurRepository {
+  private _territoires: string[] = [];
+
+  private _chantiers: string[] = [];
+
+  private _chantiersTerritorialisés: string[] = [];
+
   constructor(private _prisma: PrismaClient) {}
+
+  async _récupérerTerritoires() {
+    if (this._territoires.length === 0) {
+      const tousLesTerritoires = await this._prisma.territoire.findMany();
+      this._territoires = tousLesTerritoires.map(c => c.code);
+    }
+  }
+
+  async _récupérerChantiers() {
+    if (this._chantiers.length === 0) {
+      const tousLesChantiers = await this._prisma.chantier.findMany({ distinct: ['id'] });
+      this._chantiers = tousLesChantiers.map(c => c.id);
+      this._chantiersTerritorialisés = tousLesChantiers.filter(c => c.est_territorialise === true).map(c => c.id);
+    }
+  }
 
   async récupérer(email: string): Promise<Utilisateur | null> {
     const row = await this._prisma.utilisateur.findUnique({ 
@@ -24,6 +44,47 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return this._mapperVersDomaine(row);
   }
 
+  async getById(id: string): Promise<Utilisateur | null> {
+    const row = await this._prisma.utilisateur.findUnique({
+      where: { id },
+      include: {
+        profil: true,
+        habilitation: true,
+      },
+    });
+
+    if (!row) {
+      return null;
+    }
+
+    return this._mapperVersDomaine(row);
+  }
+
+  async récupérerTous(chantierIds: string[], territoireCodes: string[]): Promise<Utilisateur[]> {
+    let utilisateursMappés:Utilisateur[] = [];
+
+    const utilisateurs = await this._prisma.utilisateur.findMany(
+      {
+        include: {
+          profil: true,
+          habilitation: true,
+        },
+      },
+    );
+
+    for (const u of utilisateurs) {
+      const utilisateurMappé = await this._mapperVersDomaine(u);
+      utilisateursMappés.push(utilisateurMappé);
+    }
+
+    return utilisateursMappés.filter(
+      u => (
+        chantierIds.some(id => u.habilitations.lecture.chantiers.includes(id))
+        || territoireCodes.some(code => u.habilitations.lecture.territoires.includes(code))
+      ),
+    );
+  }
+
   async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJour): Promise<void> {
     const utilisateurCrééOuMisÀJour = await this._prisma.utilisateur.upsert({
       create: {
@@ -31,6 +92,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
         nom: u.nom,
         prenom: u.prénom,
         profilCode: u.profil,
+        auteur_modification: u.auteurModification,
       },
       update: {
         nom: u.nom,
@@ -61,79 +123,95 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     });
   }
 
-  private async _récupérerChantiersParDéfaut(profilUtilisateur: profil): Promise<Chantier['id'][]> {
-    let chantiers: chantier[] = [];
+  private async _récupérerChantiersParDéfaut(profilUtilisateur: profil): Promise<Record<Scope, chantier['id'][]>> {
+    let chantiersAccessibles: chantier['id'][] = [];
 
     if (profilUtilisateur.a_acces_tous_chantiers === true) {
-      chantiers = await this._prisma.chantier.findMany({ distinct: ['id'] });
+      chantiersAccessibles = this._chantiers;
     } else if (profilUtilisateur.a_acces_tous_chantiers_territorialises === true) {
-      chantiers = await this._prisma.chantier.findMany({ where: { est_territorialise: true }, distinct: ['id'] });
+      chantiersAccessibles = this._chantiersTerritorialisés;
     }
 
-    return chantiers.map(c => c.id);
-  }
-
-  private async _récupérerTerritoiresParDéfaut(profilUtilisateur: profil): Promise<Record<Scope, string[]>> {
-    const territoires = await this._prisma.territoire.findMany();
-
-    let habilitationsTerritoires: Record<Scope, string[]> = {
-      lecture: [],
-      'saisie.commentaire': [],
-      'saisie.indicateur': [],
+    const chantiersParDéfaut: Record<Scope, chantier['id'][]>  = {
+      'lecture': chantiersAccessibles,
+      'saisie.commentaire': chantiersAccessibles,
+      'saisie.indicateur': chantiersAccessibles,
+      'utilisateurs.lecture': profilUtilisateur.a_access_lecture_utilisateurs_pour_tous_les_chantiers === true ? this._chantiers : [],
+      'utilisateurs.modification': profilUtilisateur.a_access_modification_utilisateurs_pour_tous_les_chantiers === true ? this._chantiers : [],
+      'utilisateurs.suppression': profilUtilisateur.a_access_suppression_utilisateurs_pour_tous_les_chantiers === true ? this._chantiers : [],
     };
 
-    if (profilUtilisateur.a_acces_tous_les_territoires_lecture === true) {
-      habilitationsTerritoires.lecture =  territoires.map(t => t.code);
-    } 
-    
-    if (profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire === true) {
-      habilitationsTerritoires['saisie.commentaire'] =  territoires.map(t => t.code);
-    }
+    return chantiersParDéfaut;
+  }
 
-    if (profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur === true) {
-      habilitationsTerritoires['saisie.indicateur'] =  territoires.map(t => t.code);
-    }
+  private async _récupérerTerritoiresParDéfaut(profilUtilisateur: profil): Promise<Record<Scope, territoire['code'][]>> {
+    const territoiresParDéfaut: Record<Scope, territoire['code'][]>  = {
+      'lecture': profilUtilisateur.a_acces_tous_les_territoires_lecture === true ? this._territoires : [],
+      'saisie.commentaire': profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire === true ? this._territoires : [],
+      'saisie.indicateur': profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur === true ? this._territoires : [],
+      'utilisateurs.lecture': profilUtilisateur.a_access_lecture_utilisateurs_pour_tous_les_chantiers === true ? this._territoires : [],
+      'utilisateurs.modification': profilUtilisateur.a_access_modification_utilisateurs_pour_tous_les_chantiers === true ? this._territoires : [],
+      'utilisateurs.suppression': profilUtilisateur.a_access_suppression_utilisateurs_pour_tous_les_chantiers === true ? this._territoires : [],
+    };
 
-    return habilitationsTerritoires;
+    return territoiresParDéfaut;
   }
 
   private async _créerLesHabilitations(p: profil, habilitations: habilitation[]) {
-    const chantiersParDéfautPourUtilisateur = await this._récupérerChantiersParDéfaut(p);
-    const territoiresParDéfautPourUtilisateur = await this._récupérerTerritoiresParDéfaut(p);
+    const chantiersParDéfaut = await this._récupérerChantiersParDéfaut(p);
+    const territoiresParDéfaut = await this._récupérerTerritoiresParDéfaut(p);
 
     let habilitationsGénérées: Utilisateur['habilitations'] = {
       lecture: {
-        chantiers: chantiersParDéfautPourUtilisateur,
-        territoires: territoiresParDéfautPourUtilisateur.lecture,
+        chantiers: chantiersParDéfaut.lecture,
+        territoires: territoiresParDéfaut.lecture,
       },
       'saisie.commentaire': {
-        chantiers: chantiersParDéfautPourUtilisateur,
-        territoires: territoiresParDéfautPourUtilisateur['saisie.commentaire'],
+        chantiers: chantiersParDéfaut['saisie.commentaire'],
+        territoires: territoiresParDéfaut['saisie.commentaire'],
       },
       'saisie.indicateur': {
-        chantiers: chantiersParDéfautPourUtilisateur,
-        territoires: territoiresParDéfautPourUtilisateur['saisie.indicateur'],
+        chantiers: chantiersParDéfaut['saisie.indicateur'],
+        territoires: territoiresParDéfaut['saisie.indicateur'],
+      },
+      'utilisateurs.lecture': {
+        chantiers: chantiersParDéfaut['utilisateurs.lecture'],
+        territoires: territoiresParDéfaut['utilisateurs.lecture'],
+      },
+      'utilisateurs.modification': {
+        chantiers: chantiersParDéfaut['utilisateurs.modification'],
+        territoires: territoiresParDéfaut['utilisateurs.modification'],
+      },
+      'utilisateurs.suppression': {
+        chantiers: chantiersParDéfaut['utilisateurs.suppression'],
+        territoires: territoiresParDéfaut['utilisateurs.suppression'],
       },
     };
 
     for await (const h of habilitations) {
       const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
 
-      const chantiersAssociésAuxPérimètresMinistériels = await dependencies.getChantierRepository().récupérerChantierIdsAssociésAuxPérimètresMinistèriels(h.perimetres);
-      habilitationsGénérées[scopeCode].chantiers = [...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...h.chantiers];
-      habilitationsGénérées[scopeCode].territoires = [...habilitationsGénérées[scopeCode].territoires, ...h.territoires];
+      const chantiersAssociésAuxPérimètresMinistériels = h.perimetres.length > 0 ? await dependencies.getChantierRepository().récupérerChantierIdsAssociésAuxPérimètresMinistèriels(h.perimetres) : [];
+      habilitationsGénérées[scopeCode].chantiers = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...h.chantiers])];
+      habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
     }
     
     return habilitationsGénérées;
   }
 
   private async _mapperVersDomaine(utilisateurBrut: utilisateur & { profil: profil; habilitation: habilitation[]; }): Promise<Utilisateur> {
+    await this._récupérerTerritoires();
+    await this._récupérerChantiers();
+
     return {
       id: utilisateurBrut.id,
       nom: utilisateurBrut.nom || 'Inconnu',
       prénom: utilisateurBrut.prenom || 'Inconnu',
       email: utilisateurBrut.email,
       profil: utilisateurBrut.profilCode as Profil,
+      dateModification: utilisateurBrut.date_modification.toISOString(),
+      auteurModification: utilisateurBrut.auteur_modification,
+      fonction: utilisateurBrut.fonction,
       habilitations: await this._créerLesHabilitations(utilisateurBrut.profil, utilisateurBrut.habilitation),
     };
   }

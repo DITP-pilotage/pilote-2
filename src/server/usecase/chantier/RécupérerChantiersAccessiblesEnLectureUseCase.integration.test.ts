@@ -1,9 +1,9 @@
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
-import RécupérerListeChantiersUseCase from '@/server/usecase/chantier/RécupérerListeChantiersUseCase';
+import RécupérerChantiersAccessiblesEnLectureUseCase from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
 
-describe('RécupérerListeChantiersUseCase', () => {
+describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
 
   test('un chantier sans ministères est exclu du résultat', async () => {
     // GIVEN
@@ -21,7 +21,7 @@ describe('RécupérerListeChantiersUseCase', () => {
     });
 
     // WHEN
-    const result = await new RécupérerListeChantiersUseCase().run(habilitation, 'DITP_ADMIN');
+    const result = await new RécupérerChantiersAccessiblesEnLectureUseCase().run(habilitation, 'DITP_ADMIN');
 
     // THEN
     expect(result).toStrictEqual([]);
@@ -46,7 +46,7 @@ describe('RécupérerListeChantiersUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const chantiers = await new RécupérerListeChantiersUseCase().run(habilitation, 'DITP_ADMIN');
+    const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase().run(habilitation, 'DITP_ADMIN');
 
     // THEN
     const ids = chantiers.map(ch => ch.id);
@@ -71,7 +71,7 @@ describe('RécupérerListeChantiersUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const chantiers = await new RécupérerListeChantiersUseCase().run(habilitation, 'DITP_ADMIN');
+    const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase().run(habilitation, 'DITP_ADMIN');
 
     // THEN
     expect(chantiers[0].mailles.départementale['974']).toBeDefined();

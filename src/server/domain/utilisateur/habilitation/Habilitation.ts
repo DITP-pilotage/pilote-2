@@ -1,6 +1,6 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { CodeInsee, Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { ChantierNonAutoriséErreur, TerritoireNonAutoriséErreur } from '@/server/utils/errors';
 import { Habilitations, TerritoiresFiltre } from './Habilitation.interface';
 
@@ -21,6 +21,15 @@ export default class Habilitation {
 
     if (!this._habilitations['saisie.commentaire'].territoires.includes(territoireCode))
       throw new TerritoireNonAutoriséErreur();
+  }
+
+  peutConsulterLaListeDesUtilisateurs() {
+    return this._habilitations['utilisateurs.lecture'].chantiers.length > 0;
+  }
+
+  peutConsulterUnUtilisateur(chantiersIds: Chantier['id'][], territoireCodes: Territoire['code'][]) {
+    return (chantiersIds.some(id => this._habilitations['utilisateurs.lecture'].chantiers.includes(id))
+    && territoireCodes.some(code => this._habilitations['utilisateurs.lecture'].territoires.includes(code)));
   }
 
   peutAccéderAuChantier(chantierId: Chantier['id'], territoireCode: string): boolean {

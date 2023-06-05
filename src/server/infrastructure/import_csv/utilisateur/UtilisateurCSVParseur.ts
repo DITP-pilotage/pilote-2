@@ -69,10 +69,14 @@ export default class UtilisateurCSVParseur {
       nom: csvRecord[this._colonnes.nom].toLowerCase(),
       prénom: csvRecord[this._colonnes.prénom].toLowerCase(),
       profil: csvRecord[this._colonnes.profil].toUpperCase() as Profil,
+      auteurModification: 'Import CSV',
       habilitations: {
         lecture: this._générerUneHabilitation(),
         'saisie.commentaire': this._générerUneHabilitation(),
         'saisie.indicateur': this._générerUneHabilitation(),
+        'utilisateurs.lecture' : this._générerUneHabilitation(),
+        'utilisateurs.modification' : this._générerUneHabilitation(),
+        'utilisateurs.suppression' : this._générerUneHabilitation(),
       },
     };
   }

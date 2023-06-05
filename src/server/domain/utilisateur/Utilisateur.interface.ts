@@ -27,6 +27,9 @@ type Utilisateur = {
   prénom: string
   email: string
   profil: Profil
+  dateModification: string
+  auteurModification: string
+  fonction: string | null
   habilitations: Habilitations
 };
 
@@ -35,6 +38,7 @@ export type UtilisateurÀCréerOuMettreÀJour =  {
   prénom: string
   email: string
   profil: Profil
+  auteurModification: string
   habilitations: HabilitationsÀCréerOuMettreÀJour
 };
 
