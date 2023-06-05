@@ -182,7 +182,7 @@ model mesure_indicateur_temporaire {
 model rapport_import_mesure_indicateur {
   id                           String                         @id @db.Uuid
   date_creation                DateTime                       @db.Timestamptz
-  utilisateurEmail             String
+  utilisateurEmail             String                         @map("utilisateur_email")
   utilisateur                  utilisateur                    @relation(fields: [utilisateurEmail], references: [email])
   mesure_indicateur_temporaire mesure_indicateur_temporaire[]
   mesure_indicateur            mesure_indicateur[]
