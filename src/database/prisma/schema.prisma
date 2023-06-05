@@ -301,7 +301,7 @@ model utilisateur {
   prenom                           String
   fonction                         String?
   profil                           profil                             @relation(fields: [profilCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  profilCode                       String
+  profilCode                       String                             @map("profil_code")
   habilitation                     habilitation[]
   rapport_import_mesure_indicateur rapport_import_mesure_indicateur[]
   date_modification                DateTime                           @default(now())
