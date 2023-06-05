@@ -182,7 +182,7 @@ model mesure_indicateur_temporaire {
 model rapport_import_mesure_indicateur {
   id                           String                         @id @db.Uuid
   date_creation                DateTime                       @db.Timestamptz
-  utilisateurEmail             String
+  utilisateurEmail             String                         @map("utilisateur_email")
   utilisateur                  utilisateur                    @relation(fields: [utilisateurEmail], references: [email])
   mesure_indicateur_temporaire mesure_indicateur_temporaire[]
   mesure_indicateur            mesure_indicateur[]
@@ -301,7 +301,7 @@ model utilisateur {
   prenom                           String
   fonction                         String?
   profil                           profil                             @relation(fields: [profilCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  profilCode                       String
+  profilCode                       String                             @map("profil_code")
   habilitation                     habilitation[]
   rapport_import_mesure_indicateur rapport_import_mesure_indicateur[]
   date_modification                DateTime                           @default(now())
@@ -331,9 +331,9 @@ model profil {
 
 model habilitation {
   utilisateur   utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  utilisateurId String      @db.Uuid
+  utilisateurId String      @map("utilisateur_id") @db.Uuid
   scope         scope       @relation(fields: [scopeCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  scopeCode     String
+  scopeCode     String      @map("scope_code")
   territoires   String[]
   perimetres    String[]
   chantiers     String[]
