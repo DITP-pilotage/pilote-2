@@ -34,7 +34,8 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
             baliseHtml="h1"
             className='fr-h4'
           >
-            {`${projetsDuTerritoireSélectionnéEtTerritoiresEnfants.length} projets`}
+            {`${projetsDuTerritoireSélectionnéEtTerritoiresEnfants.length}`}
+            {` ${projetsDuTerritoireSélectionnéEtTerritoiresEnfants.length >= 2 ? 'projets' : 'projet'}`}
           </Titre>
         </div>
         <div className="fr-grid-row fr-grid-row--gutters">

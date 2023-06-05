@@ -43,7 +43,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
             baliseHtml="h1"
             className="fr-h4 fr-px-2w fr-px-md-0 fr-mb-1w"
           >
-            {`${chantiersFiltrés.length} chantiers`}
+            {`${chantiersFiltrés.length} ${chantiersFiltrés.length >= 2 ? 'chantiers' : 'chantier'}`}
           </Titre>
           <div className="titre-liens">
             {
