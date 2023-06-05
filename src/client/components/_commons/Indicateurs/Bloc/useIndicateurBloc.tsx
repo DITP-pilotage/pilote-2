@@ -15,6 +15,7 @@ import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobile
 import IndicateurBlocIndicateurTuile from '@/components/_commons/Indicateurs/Bloc/indicateurBlocIndicateurTuile';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { TypeDeRéforme } from '@/components/PageAccueil/SélecteurTypeDeRéforme/SélecteurTypeDeRéforme.interface';
+import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import ValeurEtDate from './ValeurEtDate/ValeurEtDate';
 import { IndicateurDétailsParTerritoire } from './IndicateurBloc.interface';
 
@@ -33,14 +34,37 @@ const indicateurDétailsVide = {
 };
 
 const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
+let colonnes;
 
-export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, typeDeRéforme: TypeDeRéforme) {
+export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, typeDeRéforme: TypeDeRéforme, territoireProjetStructurant?: ProjetStructurant['territoire']) {
   const estVueMobile = estVueMobileStore();
   const territoiresComparés = territoiresComparésTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
-  let colonnes;
+
+  const metÀJourDétailsParTerritoires = () => {
+    if (typeDeRéforme === 'chantier') {
+      if (territoiresComparés.length > 0) {
+        setIndicateurDétailsParTerritoires(
+          territoiresComparés
+            .map(t => ({ territoireNom: t.nomAffiché, données: détailsIndicateur[t.codeInsee] }))
+            .sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee)),
+        );
+      } else {
+        setIndicateurDétailsParTerritoires([{ territoireNom: territoireSélectionné!.nomAffiché, données: détailsIndicateur[territoireSélectionné!.codeInsee] }]);
+      }
+    } else if (typeDeRéforme === 'projet structurant' && territoireProjetStructurant) {
+      setIndicateurDétailsParTerritoires([{ territoireNom: territoireProjetStructurant.nomAffiché, données: détailsIndicateur[territoireProjetStructurant.codeInsee] }]);
+    }
+  };
+  
+  useEffect(() => {
+    if (détailsIndicateur) {
+      metÀJourDétailsParTerritoires();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [détailsIndicateur]);
 
   useEffect(() => {
     if (territoiresComparés.length === 0 && typeDeRéforme == 'chantier') {
@@ -48,28 +72,11 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [territoiresComparés]);
-  
-  useEffect(() => {
-    if (détailsIndicateur) {
-      if (territoiresComparés.length > 0 && typeDeRéforme === 'chantier') {
-        setIndicateurDétailsParTerritoires(
-          territoiresComparés
-            .map(territoire => ({ territoireNom: territoire.nom, données: détailsIndicateur[territoire.codeInsee] }))
-            .sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) => indicateurDétailsTerritoire1.données.codeInsee.localeCompare(indicateurDétailsTerritoire2.données.codeInsee)),
-        );
-      } else {
-        setIndicateurDétailsParTerritoires([{ territoireNom: territoireSélectionné!.nomAffiché, données: détailsIndicateur[territoireSélectionné!.codeInsee] }]);
-      }
-  
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [détailsIndicateur]);
     
   colonnes = typeDeRéforme === 'chantier' ? [
     reactTableColonnesHelper.accessor( 'territoireNom', {
       header: 'Territoire(s)',
       id: 'territoire',
-      cell: nomDuTerritoire => nomDuTerritoire.getValue(),
       enableSorting: false,
     }),
     reactTableColonnesHelper.accessor('données.valeurInitiale', {
@@ -130,7 +137,6 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     reactTableColonnesHelper.accessor( 'territoireNom', {
       header: 'Territoire)',
       id: 'territoire',
-      cell: nomDuTerritoire => nomDuTerritoire.getValue(),
       enableSorting: false,
     }),
     reactTableColonnesHelper.accessor('données.valeurInitiale', {

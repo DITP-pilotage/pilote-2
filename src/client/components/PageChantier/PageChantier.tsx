@@ -27,8 +27,6 @@ import PageChantierStyled from './PageChantier.styled';
 import usePageChantier from './usePageChantier';
 import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
 
-
-
 export default function PageChantier({ indicateurs, chantierId }: PageChantierProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const {
@@ -45,7 +43,6 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
   } = usePageChantier(chantierId);
 
   const modeÉcritureObjectifs = territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication === true);
-
   const listeRubriques = listeRubriquesChantier(indicateurs.map(i => i.type), territoireSélectionné!.maille);
 
   return (
@@ -132,7 +129,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       </TitreInfobulleConteneur>
                     </div>
                     <SynthèseDesRésultats
-                      modeÉcriture={territoireSélectionné?.accèsSaisiePublication}
+                      modeÉcriture={territoireSélectionné!.accèsSaisiePublication}
                       nomTerritoire={territoireSélectionné!.nomAffiché}
                       rechargerRéforme={rechargerChantier}
                       réformeId={chantier.id}
@@ -200,6 +197,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                           détailsIndicateurs={détailsIndicateurs}
                           indicateurs={indicateurs}
                           listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
+                          typeDeRéforme='chantier'
                         />
                       </section>
                     </div>

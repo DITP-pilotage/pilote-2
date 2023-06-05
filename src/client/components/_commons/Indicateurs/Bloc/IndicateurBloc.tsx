@@ -9,20 +9,17 @@ import IndicateurBlocProps, { IndicateurDétailsParTerritoire } from '@/componen
 import FormulaireIndicateur from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import ResultatValidationFichier from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
-import { déterminerLeTypeDeRéforme } from '@/server/utils/réforme';
-import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { IndicateurBlocCaractéristiques } from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBlocCaractéristiques/IndicateurBlocCaractéristiques';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
-
-export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, estDisponibleALImport = false } : IndicateurBlocProps) {
+export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, typeDeRéforme, territoireProjetStructurant, estDisponibleALImport = false } : IndicateurBlocProps) {
   const router = useRouter();
   const réformeId = router.query.id as string;
-
+  
   const mailleSélectionnée = territoireSélectionnéTerritoiresStore()?.maille ?? 'nationale';
-  const typeDeRéforme = déterminerLeTypeDeRéforme(réformeId);
-  const { indicateurDétailsParTerritoires, tableau } = useIndicateurBloc(détailsIndicateur, typeDeRéforme);
+  const { indicateurDétailsParTerritoires, tableau } = useIndicateurBloc(détailsIndicateur, typeDeRéforme, territoireProjetStructurant);
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
   return (

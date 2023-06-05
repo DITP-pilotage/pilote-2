@@ -53,7 +53,7 @@ export default function usePageChantier(chantierId: string) {
   const { data: détailsIndicateurs } = api.indicateur.récupererDétailsIndicateurs.useQuery(
     {
       chantierId,
-      territoireCodes: territoiresComparés.map(territoire => territoire.code),
+      territoireCodes: territoiresComparés.length > 0 ? territoiresComparés.map(territoire => territoire.code) : [territoireSélectionné!.code],
     },
     { keepPreviousData: true },
   );

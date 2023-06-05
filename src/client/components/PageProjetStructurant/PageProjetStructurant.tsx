@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import BarreLatérale from '@/client/components/_commons/BarreLatérale/BarreLatérale';
 import Sommaire from '@/components/_commons/Sommaire/Sommaire';
 import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats/SynthèseDesRésultats';
@@ -9,7 +9,6 @@ import { typesCommentaireProjetStructurant } from '@/server/domain/projetStructu
 import Titre from '@/client/components/_commons/Titre/Titre';
 import { listeRubriquesIndicateursProjetStructurant, listeRubriquesProjetStructurant } from '@/client/utils/rubriques';
 import Indicateurs from '@/client/components/_commons/Indicateurs/Indicateurs';
-import { actionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import ResponsablesPageProjetStructurant from './Responsables/Responsables';
@@ -37,7 +36,6 @@ const indicateurs: Indicateur[] = [
     source: null,
     modeDeCalcul: null,
     estIndicateurDuBaromètre: false,
-
   },
 ];
 
@@ -71,11 +69,6 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
 
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);  
   const { synthèseDesRésultats, objectif, commentaires } = usePageProjetStructurant(projetStructurant.id, projetStructurant.territoire.code);
-  const { modifierTerritoireSélectionné } = actionsTerritoiresStore();
-
-  useEffect(() => {
-    modifierTerritoireSélectionné(projetStructurant.territoire.code);
-  });
 
   return (
     <PageProjetStructurantStyled className='flex'>
@@ -182,6 +175,8 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
                 détailsIndicateurs={détailsIndicateurs}
                 indicateurs={indicateurs}
                 listeRubriquesIndicateurs={listeRubriquesIndicateursProjetStructurant}
+                territoireProjetStructurant={projetStructurant.territoire}
+                typeDeRéforme='projet structurant'
               />
             </section>
           </div>
