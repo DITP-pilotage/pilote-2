@@ -17,15 +17,15 @@
           </p>
         </div>
       </div>
-    </div>
-    <div class="fr-footer__bottom">
-      <ul class="fr-footer__bottom-list">
-        <li class="fr-footer__bottom-item">
-          <p class="fr-footer__bottom-link fr-mb-0">
-            Accessibilité : non conforme
-          </p>
-        </li>
-      </ul>
+      <div class="fr-footer__bottom">
+        <ul class="fr-footer__bottom-list">
+          <li class="fr-footer__bottom-item">
+            <p class="fr-footer__bottom-link fr-mb-0">
+              Accessibilité : non conforme
+            </p>
+          </li>
+        </ul>
+      </div>
     </div>
   </footer>
 </#macro>
