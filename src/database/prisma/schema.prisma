@@ -331,7 +331,7 @@ model profil {
 
 model habilitation {
   utilisateur   utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  utilisateurId String      @db.Uuid
+  utilisateurId String      @map("utilisateur_id") @db.Uuid
   scope         scope       @relation(fields: [scopeCode], references: [code], onDelete: Cascade, onUpdate: Cascade)
   scopeCode     String      @map("scope_code")
   territoires   String[]
