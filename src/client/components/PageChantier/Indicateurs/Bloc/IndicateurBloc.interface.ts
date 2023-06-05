@@ -1,5 +1,5 @@
-import { DétailsIndicateur, DétailsIndicateurCodeInsee } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { DétailsIndicateur, DétailsIndicateurCodeInsee } from '@/server/domain/chantier/indicateur/DétailsIndicateur.interface';
+import Indicateur from '@/server/domain/chantier/indicateur/Indicateur.interface';
 
 export type IndicateurDétailsParTerritoire = {
   territoireNom: string

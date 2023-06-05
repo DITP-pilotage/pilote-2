@@ -8,7 +8,7 @@ export default function useHistoriqueDeLaSynthèseDesRésultats(chantierId: stri
   const [historiqueDeLaSynthèseDesRésultats, setHistoriqueDeLaSynthèseDesRésultats] = useState<RouterOutputs['synthèseDesRésultats']['récupérerHistorique']>();
   
   const { refetch: fetchRécupérerHistoriqueSynthèseDesRésultats } = api.synthèseDesRésultats.récupérerHistorique.useQuery({
-    chantierId,
+    réformeId: chantierId,
     territoireCode: territoireSélectionné!.code,
   }, {
     enabled: false,

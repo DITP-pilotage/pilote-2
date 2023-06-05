@@ -17,27 +17,25 @@ export default function ResponsablesPageChantier({ responsables }: ResponsablesP
   return (
     <ResponsablesPageChantierStyled>
       <Bloc titre="National">
-        <div>
-          <ResponsablesLigne
-            contenu={responsables.porteur ? [responsables.porteur.nom] : []}
-            libellé="Ministère porteur"
-          />
-          <hr className='fr-hr fr-py-1w' />
-          <ResponsablesLigne
-            contenu={responsables.coporteurs.map(coporteur => coporteur.nom)}
-            libellé="Autres ministères co-porteurs"
-          />
-          <hr className='fr-hr fr-py-1w' />
-          <ResponsablesLigne
-            contenu={responsables.directeursAdminCentrale.map(directeur => (`${directeur.nom} (${directeur.direction})`))}
-            libellé="Directeur(s) / directrice(s) d’Administration Centrale"
-          />
-          <hr className='fr-hr fr-py-1w' />
-          <ResponsablesLigne
-            contenu={responsables.directeursProjet.map(directeur => (mailTo(directeur.nom, directeur.email)))}
-            libellé="Directeur(s) / directrice(s) du projet"
-          />
-        </div>
+        <ResponsablesLigne
+          contenu={responsables.porteur ? [responsables.porteur.nom] : []}
+          libellé="Ministère porteur"
+        />
+        <hr className='fr-hr fr-py-1w' />
+        <ResponsablesLigne
+          contenu={responsables.coporteurs.map(coporteur => coporteur.nom)}
+          libellé="Autres ministères co-porteurs"
+        />
+        <hr className='fr-hr fr-py-1w' />
+        <ResponsablesLigne
+          contenu={responsables.directeursAdminCentrale.map(directeur => (`${directeur.nom} (${directeur.direction})`))}
+          libellé="Directeur(s) / directrice(s) d’Administration Centrale"
+        />
+        <hr className='fr-hr fr-py-1w' />
+        <ResponsablesLigne
+          contenu={responsables.directeursProjet.map(directeur => (mailTo(directeur.nom, directeur.email)))}
+          libellé="Directeur(s) / directrice(s) du projet"
+        />
       </Bloc>
     </ResponsablesPageChantierStyled>
   );

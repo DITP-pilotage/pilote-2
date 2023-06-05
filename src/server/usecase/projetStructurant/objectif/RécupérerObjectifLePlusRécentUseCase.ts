@@ -4,7 +4,7 @@ import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export default class RécupérerObjectifProjetStructurantLePlusRécentUseCase {
   constructor(
-    private readonly objectifRepository: ObjectifProjetStructurantRepository = dependencies.getObjectifProjetStructurantrepository(),
+    private readonly objectifRepository: ObjectifProjetStructurantRepository = dependencies.getObjectifProjetStructurantRepository(),
   ) {}
 
   async run(projetStructurantId: string): Promise<ObjectifProjetStructurant> {    

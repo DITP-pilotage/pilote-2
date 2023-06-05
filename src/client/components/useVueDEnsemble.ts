@@ -1,23 +1,12 @@
 import { useMemo } from 'react';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import {
   mailleSélectionnéeTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { objectEntries } from '@/client/utils/objects/objects';
-import { Météo } from '@/server/domain/météo/Météo.interface';
 import api from '@/server/infrastructure/api/trpc/api';
-import Ministère from '@/server/domain/ministère/Ministère.interface';
-
-export type ChantierVueDEnsemble = {
-  id: string;
-  nom: string;
-  avancement: number | null;
-  météo: Météo;
-  typologie: { estBaromètre: boolean, estTerritorialisé: boolean };
-  porteur: Ministère | null;
-};
 
 export default function useVueDEnsemble(chantiers: Chantier[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();

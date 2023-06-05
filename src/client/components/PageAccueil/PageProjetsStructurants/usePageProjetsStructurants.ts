@@ -3,32 +3,49 @@ import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, territoi
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import { CartographieDonnéesAvancement } from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement.interface';
 import { météos } from '@/server/domain/météo/Météo.interface';
-import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+import {
+  ProjetStructurantVueDEnsemble,
+} from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { CodeInsee, codesInseeDépartements, codesInseeRégions } from '@/server/domain/territoire/Territoire.interface';
-import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
+import { actions as actionsFiltresStore, filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
 import { RépartitionMétéos } from '@/components/_commons/RépartitionMétéo/RépartitionMétéo.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
-export default function usePageProjetsStructurants(projetsStructurants: ProjetStructurant[]) {
+
+export default function usePageProjetsStructurants(projetsStructurants: ProjetStructurantVueDEnsemble[]) {
+  const filtresActifs = filtresActifsStore();
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
+  
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const codeInseeTerritoireSélectionné = territoireSélectionnéTerritoiresStore()!.codeInsee;
   const { récupérerDépartementsAssociésÀLaRégion } = actionsTerritoiresStore();
+ 
+  const projetsStructurantsFiltrés = useMemo(() => {
+    let résultat: ProjetStructurantVueDEnsemble[] = projetsStructurants;
+
+    if (filtresActifs.périmètresMinistériels.length > 0) {
+      résultat = résultat.filter(projet => (
+        filtresActifs.périmètresMinistériels.some(filtre => (projet.périmètresIds.includes(filtre.id)))
+      ));
+    }
+    return résultat;
+  }, [filtresActifs, projetsStructurants]);
+
 
   const projetsDuTerritoire = useCallback((codeInsee: CodeInsee, maille: MailleInterne) => {
     return codeInsee === 'FR' 
-      ? projetsStructurants
-      : projetsStructurants.filter(projet => projet.maille === maille && projet.codeInsee === codeInsee);
-  }, [projetsStructurants]);
+      ? projetsStructurantsFiltrés
+      : projetsStructurantsFiltrés.filter(projet => projet.maille === maille && projet.codeInsee === codeInsee);
+  }, [projetsStructurantsFiltrés]);
 
   const projetsDuTerritoireEtTerritoiresEnfants = useCallback((codeInsee: CodeInsee, maille: MailleInterne) => {    
     return maille === 'départementale' 
       ? projetsDuTerritoire(codeInsee, maille)
       : [
         ...projetsDuTerritoire(codeInsee, maille),
-        ...projetsStructurants.filter(projet => projet.maille === 'départementale' && récupérerDépartementsAssociésÀLaRégion(codeInsee, maille).includes(projet.codeInsee)),
+        ...projetsStructurantsFiltrés.filter(projet => projet.maille === 'départementale' && récupérerDépartementsAssociésÀLaRégion(codeInsee, maille).includes(projet.codeInsee)),
       ];
-  }, [projetsDuTerritoire, projetsStructurants, récupérerDépartementsAssociésÀLaRégion]);
+  }, [projetsDuTerritoire, projetsStructurantsFiltrés, récupérerDépartementsAssociésÀLaRégion]);
   
   const avancementMoyenDuTerritoireSélectionné = (): number | null => {
     return calculerMoyenne(projetsDuTerritoireEtTerritoiresEnfants(codeInseeTerritoireSélectionné, mailleSélectionnée).map(projet => projet.avancement));

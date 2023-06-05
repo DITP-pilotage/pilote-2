@@ -1,6 +1,6 @@
 import { Rubrique } from '@/components/_commons/Sommaire/Sommaire.interface';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
-import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
+import { DétailsIndicateurs } from '@/server/domain/chantier/indicateur/DétailsIndicateur.interface';
+import Indicateur, { TypeIndicateur } from '@/server/domain/chantier/indicateur/Indicateur.interface';
 
 export type ÉlémentPageIndicateursType = Rubrique & { typeIndicateur: TypeIndicateur };
 

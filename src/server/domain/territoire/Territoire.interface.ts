@@ -1,4 +1,4 @@
-import Avancement from '@/server/domain/avancement/Avancement.interface';
+import Avancement from '@/server/domain/chantier/avancement/Avancement.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 

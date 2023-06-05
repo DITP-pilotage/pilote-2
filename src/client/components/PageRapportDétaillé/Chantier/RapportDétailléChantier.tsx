@@ -12,8 +12,9 @@ import DécisionsStratégiques from '@/components/PageChantier/DécisionsStraté
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Titre from '@/components/_commons/Titre/Titre';
-import { typesObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
 import ObjectifsPageChantier from '@/components/_commons/Objectifs/Objectifs';
+import { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
+import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 
 export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats, commentaires, objectifs, décisionStratégique }: RapportDétailléChantierProps) {
@@ -115,7 +116,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                 nomTerritoire='National'
                 objectifs={objectifs}
                 réformeId={chantier.id}
-                typesObjectif={typesObjectifChantier}
+                typesObjectif={typesObjectif}
               />
             </section>
           </div>
@@ -173,6 +174,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                   maille={territoireSélectionné!.maille}
                   nomTerritoire={territoireSélectionné!.nomAffiché}
                   réformeId={chantier.id}
+                  typesCommentaire={territoireSélectionné!.maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale}
                 />
               </section>
             </div>

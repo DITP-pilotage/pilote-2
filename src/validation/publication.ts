@@ -1,8 +1,9 @@
 import { z } from 'zod';
-import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
-import { typesObjectifChantier } from '@/server/domain/objectif/Objectif.interface';
-import { typesDécisionStratégique } from '@/server/domain/décisionStratégique/DécisionStratégique.interface';
+import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
+import { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
+import { typesDécisionStratégique } from '@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface';
 import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
+import { typesCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 
 export const LIMITE_CARACTÈRES_PUBLICATION = 5000;
 
@@ -18,11 +19,11 @@ export const validationPublicationContexte = z.object({
 export const zodValidateurEntitéType = z.union([
   z.object({
     entité: z.literal('commentaires'),
-    type: z.enum([...typesCommentaireMailleNationale, ...typesCommentaireMailleRégionaleOuDépartementale]), 
+    type: z.enum([...typesCommentaireMailleNationale, ...typesCommentaireMailleRégionaleOuDépartementale, ...typesCommentaireProjetStructurant]), 
   }),
   z.object({
     entité: z.literal('objectifs'),
-    type: z.enum([...typesObjectifChantier, typeObjectifProjetStructurant]), 
+    type: z.enum([...typesObjectif, typeObjectifProjetStructurant]), 
   }),
   z.object({
     entité: z.literal('décisions stratégiques'),

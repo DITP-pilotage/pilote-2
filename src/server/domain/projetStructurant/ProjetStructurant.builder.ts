@@ -18,13 +18,13 @@ export default class ProjetStructurantBuilder {
 
   private _nom: ProjetStructurant['nom'];
 
-  private _codeTerritoire: ProjetStructurant['codeTerritoire'];
+  private _codeTerritoire: ProjetStructurant['territoire']['code'];
 
-  private _maille: ProjetStructurant['maille'];
+  private _maille: ProjetStructurant['territoire']['maille'];
 
-  private _codeInsee: ProjetStructurant['codeInsee'];
+  private _codeInsee: ProjetStructurant['territoire']['codeInsee'];
 
-  private _territoireNomÀAfficher: ProjetStructurant['territoireNomÀAfficher'];
+  private _territoireNomÀAfficher: ProjetStructurant['territoire']['nomAffiché'];
 
   private _périmètreIds: ProjetStructurant['périmètresIds'];
 
@@ -84,7 +84,7 @@ export default class ProjetStructurantBuilder {
     return this;
   }
 
-  avecMaille(maille: ProjetStructurant['maille']): ProjetStructurantBuilder {
+  avecMaille(maille: ProjetStructurant['territoire']['maille']): ProjetStructurantBuilder {
     this._maille = maille;
     return this;
   }
@@ -93,14 +93,16 @@ export default class ProjetStructurantBuilder {
     return {
       id: this._id,
       nom: this._nom,
-      codeTerritoire: this._codeTerritoire,
-      maille: this._maille,
-      codeInsee: this._codeInsee,
-      territoireNomÀAfficher: this._territoireNomÀAfficher,
       périmètresIds: this._périmètreIds,
       avancement: this._avancement,
       dateAvancement: this._dateAvancement,
       météo: this._météo,
+      territoire: {
+        code: this._codeTerritoire,
+        maille: this._maille,
+        codeInsee: this._codeInsee,
+        nomAffiché: this._territoireNomÀAfficher,
+      },
       responsables: {
         ministèrePorteur: this._ministèrePorteur,
         ministèresCoporteurs: this._ministèresCoporteurs,

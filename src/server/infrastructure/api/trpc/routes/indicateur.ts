@@ -1,8 +1,8 @@
 import { créerRouteurTRPC, procédureProtégée } from '@/server/infrastructure/api/trpc/trpc';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { validationDétailsIndicateur, validationDétailsIndicateurs } from '@/validation/indicateur';
-import RécupérerDétailsIndicateursUseCase from '@/server/usecase/indicateur/RécupérerDétailsIndicateursUseCase';
-import RécupérerDétailsIndicateurUseCase from '@/server/usecase/indicateur/RécupérerDétailsIndicateurUseCase';
+import RécupérerDétailsIndicateursUseCase from '@/server/usecase/chantier/indicateur/RécupérerDétailsIndicateursUseCase';
+import RécupérerDétailsIndicateurUseCase from '@/server/usecase/chantier/indicateur/RécupérerDétailsIndicateurUseCase';
 
 export const indicateurRouter = créerRouteurTRPC({
   récupererDétailsIndicateurs: procédureProtégée

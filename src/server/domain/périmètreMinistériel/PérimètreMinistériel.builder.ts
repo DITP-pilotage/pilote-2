@@ -6,12 +6,15 @@ export default class PérimètreMinistérielBuilder {
 
   private _nom: PérimètreMinistériel['nom'];
 
-  private _minister_id: PérimètreMinistériel['ministere_id'];
+  private _ministerId: PérimètreMinistériel['ministèreId'];
+
+  private _ministèreNom: PérimètreMinistériel['ministèreNom'];
 
   constructor() {
     this._id = générerUnIdentifiantUnique('PM');
     this._nom = `${générerUnLibellé(1, 3)} périmètre`;
-    this._minister_id = générerUnIdentifiantUnique('M');
+    this._ministerId = générerUnIdentifiantUnique('M');
+    this._ministèreNom = `${générerUnLibellé(1, 3)} ministère`;
   }
 
   avecId(id: PérimètreMinistériel['id']): PérimètreMinistérielBuilder {
@@ -24,11 +27,17 @@ export default class PérimètreMinistérielBuilder {
     return this;
   }
 
+  avecMinistèreNom(ministèreNom: PérimètreMinistériel['ministèreNom']): PérimètreMinistérielBuilder {
+    this._ministèreNom = ministèreNom;
+    return this;
+  }
+
   build(): PérimètreMinistériel {
     return {
       id: this._id,
       nom: this._nom,
-      ministere_id: this._minister_id,
+      ministèreId: this._ministerId,
+      ministèreNom: this._ministèreNom,
     };
   }
 }

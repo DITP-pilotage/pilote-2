@@ -28,6 +28,14 @@ export class TerritoireSQLRepository implements TerritoireRepository {
     return territoires.map(t => this._mapperVersLeDomaine(t));
   }
 
+  async récupérerListe(codes: Territoire['code'][]) {
+    const territoires = await this._prisma.territoire.findMany({
+      where: { code: { in: codes } },
+    });
+
+    return territoires.map(territoire => this._mapperVersLeDomaine(territoire));
+  }
+
   async récupérer(code: Territoire['code']) {
     const territoire = await this._prisma.territoire.findUnique({
       where: { code: code },

@@ -1,6 +1,6 @@
 import { Cell, flexRender } from '@tanstack/react-table';
 import Link from 'next/link';
-import { ChantierVueDEnsemble } from '@/components/useVueDEnsemble';
+import { ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
 import TableauChantiersContenuProps from './TableauChantiersContenu.interface';
 
 function afficherContenuDeLaCellule(cell: Cell<ChantierVueDEnsemble, unknown>) {

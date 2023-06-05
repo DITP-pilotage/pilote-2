@@ -4,4 +4,5 @@ export default interface TerritoireRepository {
   récupérerTous(): Promise<Territoire[]>
   récupérer(code: Territoire['code']): Promise<Territoire>
   récupérerÀPartirDeMailleEtCodeInsee(codeInsee: Territoire['codeInsee'], maille: Territoire['maille']): Promise<Territoire>
+  récupérerListe(codes: Territoire['code'][]): Promise<Territoire[]>
 }

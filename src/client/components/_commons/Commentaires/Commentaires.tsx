@@ -1,13 +1,11 @@
 import { Fragment } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Publication from '@/components/_commons/Publication/Publication';
-import { consignesDÉcritureCommentaire, libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
-import { TypeCommentaire, typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/commentaire/Commentaire.interface';
+import { consignesDÉcritureCommentaire, libellésTypesCommentaire, TypeCommentaire } from '@/client/constants/libellésCommentaire';
 import CommentairesProps from './Commentaires.interface';
 
-export default function Commentaires({ commentaires, réformeId, maille, nomTerritoire, modeÉcriture = false, estInteractif = true }: CommentairesProps) {
-  const typesCommentaire = maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale;
-
+export default function Commentaires({ commentaires, réformeId, maille, nomTerritoire, typesCommentaire, modeÉcriture = false, estInteractif = true }: CommentairesProps) {
+  
   return (
     <Bloc titre={nomTerritoire}>
       {

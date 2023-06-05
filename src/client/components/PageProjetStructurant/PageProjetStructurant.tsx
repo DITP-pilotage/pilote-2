@@ -6,6 +6,8 @@ import SynthèseDesRésultats from '@/components/_commons/SynthèseDesRésultats
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
 import Objectifs from '@/client/components/_commons/Objectifs/Objectifs';
 import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
+import { typesCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
+import Titre from '@/client/components/_commons/Titre/Titre';
 import ResponsablesPageProjetStructurant from './Responsables/Responsables';
 import PageProjetStructurantProps from './PageProjetStructurant.interface';
 import PageProjetStructurantEnTête from './EnTête/EnTête';
@@ -15,7 +17,7 @@ import usePageProjetStructurant from './usePageProjetStructurant';
 
 export default function PageProjetStructurant({ projetStructurant }: PageProjetStructurantProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);  
-  const { objectif } = usePageProjetStructurant(projetStructurant.id, projetStructurant.codeTerritoire);  
+  const { synthèseDesRésultats, objectif, commentaires } = usePageProjetStructurant(projetStructurant.id, projetStructurant.territoire.code);
 
   const listeRubriques: Rubrique[] =
     [
@@ -48,50 +50,96 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
         <PageProjetStructurantEnTête nomProjetStructurant={projetStructurant.nom} />
         <div className='fr-p-4w'>
           <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-my-0 fr-pb-1w">
-            <div className='fr-col'>
+            <section
+              className='fr-col rubrique'
+              id='avancement'
+            >
+              <Titre
+                baliseHtml='h2'
+                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+              >
+                Avancement du projet
+              </Titre>
               <AvancementPageProjetStructurant
                 avancement={projetStructurant.avancement}
-                territoireNom={projetStructurant.territoireNomÀAfficher}
+                territoireNom={projetStructurant.territoire.nomAffiché}
               />
-            </div>
-            <div className='fr-col'>
+            </section>
+            <section
+              className='fr-col rubrique'
+              id="responsables"
+            >
+              <Titre
+                baliseHtml='h2'
+                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+              >
+                Responsables
+              </Titre>
               <ResponsablesPageProjetStructurant 
-                nomTerritoire={projetStructurant.territoireNomÀAfficher}
+                nomTerritoire={projetStructurant.territoire.nomAffiché}
                 responsables={projetStructurant.responsables}
               />
-            </div>
-            <div className='fr-col-12'>
+            </section>
+            <section
+              className='fr-col-12 rubrique'
+              id='synthèse'
+            >
+              <Titre
+                baliseHtml='h2'
+                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+              >
+                Météo et synthèse des résultats
+              </Titre>
               <SynthèseDesRésultats
-                modeÉcriture={false}
-                nomTerritoire={projetStructurant.territoireNomÀAfficher}
+                estInteractif={false}
+                nomTerritoire={projetStructurant.territoire.nomAffiché}
                 rechargerRéforme={() => {}}
                 réformeId={projetStructurant.id}
-                synthèseDesRésultatsInitiale={null}
+                synthèseDesRésultatsInitiale={synthèseDesRésultats}
               />
-            </div>
+            </section>
           </div>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <div className="fr-col-12">
+            <section
+              className="fr-col-12 rubrique"
+              id="objectifs"
+            >
+              <Titre
+                baliseHtml='h2'
+                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+              >
+                Objectifs
+              </Titre>
               <Objectifs
                 estInteractif={false}
-                maille={projetStructurant.maille}
-                nomTerritoire={projetStructurant.territoireNomÀAfficher}
+                maille={projetStructurant.territoire.maille}
+                nomTerritoire={projetStructurant.territoire.nomAffiché}
                 objectifs={[objectif]}
                 réformeId={projetStructurant.id}
                 typesObjectif={[typeObjectifProjetStructurant]}
               />
-            </div>
+            </section>
           </div>
           <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <div className="fr-col-12">
+            <section
+              className="fr-col-12 rubrique"
+              id="commentaires"
+            >
+              <Titre
+                baliseHtml='h2'
+                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+              >
+                Commentaires du projet structurant
+              </Titre>
               <Commentaires
-                commentaires={[]}
-                maille={projetStructurant.maille}
-                modeÉcriture={false}
-                nomTerritoire={projetStructurant.territoireNomÀAfficher}
+                commentaires={commentaires}
+                estInteractif={false}
+                maille={projetStructurant.territoire.maille}
+                nomTerritoire={projetStructurant.territoire.nomAffiché}
                 réformeId={projetStructurant.id}
+                typesCommentaire={typesCommentaireProjetStructurant}
               />
-            </div>
+            </section>
           </div>
         </div>
       </main>

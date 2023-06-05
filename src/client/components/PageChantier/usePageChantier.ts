@@ -7,8 +7,8 @@ import {
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import api from '@/server/infrastructure/api/trpc/api';
 import calculerChantierAvancements from '@/client/utils/chantier/avancement/calculerChantierAvancements';
-import { Commentaire } from '@/server/domain/commentaire/Commentaire.interface';
-import Objectif from '@/server/domain/objectif/Objectif.interface';
+import { Commentaire } from '@/server/domain/chantier/commentaire/Commentaire.interface';
+import Objectif from '@/server/domain/chantier/objectif/Objectif.interface';
 
 export default function usePageChantier(chantierId: string) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -20,12 +20,12 @@ export default function usePageChantier(chantierId: string) {
 
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {
-      chantierId,
+      réformeId: chantierId,
       territoireCode: territoireSélectionné!.code,
     },
   );
 
-  const { data: commentaires } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParChantiers.useQuery(
+  const { data: commentaires } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParRéformes.useQuery(
     {
       réformeId: chantierId,
       territoireCode: territoireSélectionné!.code,
@@ -33,7 +33,7 @@ export default function usePageChantier(chantierId: string) {
     },
   );
 
-  const { data: objectifs } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParChantiers.useQuery(
+  const { data: objectifs } = api.publication.récupérerLesPlusRécentesParTypeGroupéesParRéformes.useQuery(
     {
       réformeId: chantierId,
       territoireCode: 'NAT-FR',

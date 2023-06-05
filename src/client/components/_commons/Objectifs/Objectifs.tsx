@@ -1,8 +1,8 @@
 import { Fragment } from 'react';
-import { consignesDÉcritureObjectif, libellésTypesObjectif } from '@/client/constants/libellésObjectif';
+import { consignesDÉcritureObjectif, libellésTypesObjectif, TypeObjectif } from '@/client/constants/libellésObjectif';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Publication from '@/components/_commons/Publication/Publication';
-import { ObjectifsProps, TypeObjectif } from './Objectifs.interface';
+import { ObjectifsProps } from './Objectifs.interface';
 
 export default function Objectifs({ objectifs, réformeId, maille, nomTerritoire, typesObjectif, modeÉcriture = false, estInteractif = true }: ObjectifsProps) {
   return (

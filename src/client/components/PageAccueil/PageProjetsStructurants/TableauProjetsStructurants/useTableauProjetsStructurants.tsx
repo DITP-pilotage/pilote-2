@@ -1,6 +1,8 @@
 import { createColumnHelper, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table';
 import { ChangeEvent, useCallback, useState } from 'react';
-import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+import ProjetStructurant, {
+  ProjetStructurantVueDEnsemble,
+} from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
 import { comparerAvancementRéforme } from '@/client/utils/chantier/avancement/avancement';
@@ -9,7 +11,7 @@ import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTe
 import useTableauRéformes from '@/client/components/PageAccueil/TableauRéformes/useTableauRéformes';
 import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
 
-const reactTableColonnesHelper = createColumnHelper<ProjetStructurant>();
+const reactTableColonnesHelper = createColumnHelper<ProjetStructurantVueDEnsemble>();
 
 const colonnesTableauProjetsStructurants = [
   reactTableColonnesHelper.accessor('nom', {
@@ -47,7 +49,7 @@ const colonnesTableauProjetsStructurants = [
   }),
 ];
 
-export default function useTableauProjetsStructurants(projetsStructurants: ProjetStructurant[]) {
+export default function useTableauProjetsStructurants(projetsStructurants: ProjetStructurantVueDEnsemble[]) {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
   const [tri, setTri] = useState<SortingState>([]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
