@@ -3,6 +3,7 @@ import '@gouvfr/dsfr/dist/component/button/button.min.css';
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
 
 const fermerLaModaleDuMenu = () => {
@@ -11,23 +12,32 @@ const fermerLaModaleDuMenu = () => {
   }
 };
 
-const pages = [
-  {
-    nom: 'Accueil',
-    lien: '/',
-  },
-  {
-    nom: 'Nouveautés',
-    lien: '/nouveautes',
-  },
-  {
-    nom: 'Centre d\'aide',
-    lien: '/aide',
-  },
-];
-
 export default function Navigation() {
+  const { data: session } = useSession();
   const urlActuelle = useRouter().pathname;
+
+  const pages = [
+    {
+      nom: 'Accueil',
+      lien: '/',
+      accessible: true,
+    },
+    {
+      nom: 'Gestion des comptes',
+      lien: '/admin/utilisateurs',
+      accessible: session?.profil === 'DITP_ADMIN',
+    },
+    {
+      nom: 'Nouveautés',
+      lien: '/nouveautes',
+      accessible: true,
+    },
+    {
+      nom: 'Centre d\'aide',
+      lien: '/aide',
+      accessible: true,
+    },
+  ];
 
   return (
     <div
@@ -56,6 +66,7 @@ export default function Navigation() {
           <ul className="fr-nav__list">
             {
               pages.map(page => (
+                page.accessible &&
                 <li
                   className="fr-nav__item"
                   key={page.lien}
@@ -71,7 +82,6 @@ export default function Navigation() {
                 </li>
               ))
             }
-
           </ul>
         </nav>
       </div>
