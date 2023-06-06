@@ -237,6 +237,7 @@ model projet_structurant {
   co_porteurs              String[]
   taux_avancement          Float?
   date_taux_avancement     DateTime? @db.Timestamp
+  date_donnees_qualitative DateTime? @db.Timestamp
 
   @@schema("public")
 }
