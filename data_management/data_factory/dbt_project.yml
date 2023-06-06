@@ -58,6 +58,8 @@ models:
         taux_avancement_indicateur:
           +materialized: table
       7_calcul_ta_chantier:
+        taux_avancement_chantier_historique:
+          +materialized: view
         taux_avancement_chantier:
           +materialized: table
     metrics:

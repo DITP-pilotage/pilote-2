@@ -17,7 +17,10 @@ fi
 # 2nd hypothèse : le format n'est pas encore défini (a ajuster en amont de cette étape ou dans l'état staging)
 # Creation de la table temporaire pour charger les données en base dans la table temp_metric_indicateur
 
-psql "$DATABASE_URL" -c "TRUNCATE TABLE raw_data.mesure_indicateur"
+psql "$DATABASE_URL" -c "TRUNCATE TABLE utilisateur CASCADE"
+psql "$DATABASE_URL" -c "TRUNCATE TABLE rapport_import_mesure_indicateur CASCADE"
+psql "$DATABASE_URL" -c "TRUNCATE TABLE raw_data.mesure_indicateur CASCADE"
+
 #psql "$DATABASE_URL" -c "ALTER TABLE raw_data.mesure_indicateur DROP COLUMN id"
 #psql "$DATABASE_URL" -c "ALTER TABLE raw_data.mesure_indicateur ADD COLUMN id UUID DEFAULT (gen_random_uuid())"
 
@@ -28,6 +31,8 @@ psql "$DATABASE_URL" -c "TRUNCATE TABLE raw_data.mesure_indicateur"
 #psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/indicateur_cumule_et_decumule.csv
 #sleep 2
 #psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/indicateur_cumule_et_decumule_doublon.csv
+psql "$DATABASE_URL" -c "copy utilisateur (id ,email, nom, prenom, profil_code, auteur_modification, date_modification, fonction) from STDIN with csv delimiter ',' header;" < input_data/private_data/PPG_metadata/config_calculs/sample-1/utilisateur_uuid.csv
+psql "$DATABASE_URL" -c "copy rapport_import_mesure_indicateur (id, date_creation, utilisateur_email) from STDIN with csv delimiter ',' header;" < input_data/private_data/PPG_metadata/config_calculs/sample-1/rapport_import_mesure_indicateur_uuid.csv
 psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value, id, rapport_id) from STDIN with csv delimiter ',' header;" < input_data/private_data/PPG_metadata/config_calculs/sample-1/valeurs-sample-uuid.csv
 
 #  Quelques fichiers de prod
