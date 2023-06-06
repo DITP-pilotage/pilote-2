@@ -1,17 +1,20 @@
 WITH faits_indicateur__regions as (
     SELECT
-        indicateur_id,
-        zone_id,
-        mois_releve,
-        type_mesure,
-        valeur,
-        zone_code,
-        zone_type,
-        zone_id_parent,
-        zone_code_parent,
-        zone_type_parent
-    FROM {{ ref("faits_indicateur_deduplique") }}
+        fi_deduplique.indicateur_id,
+        fi_deduplique.zone_id,
+        fi_deduplique.mois_releve,
+        fi_deduplique.type_mesure,
+        fi_deduplique.valeur,
+        fi_deduplique.zone_code,
+        fi_deduplique.zone_type,
+        fi_deduplique.zone_id_parent,
+        fi_deduplique.zone_code_parent,
+        fi_deduplique.zone_type_parent
+    FROM {{ ref("faits_indicateur_deduplique") }} fi_deduplique
+    LEFT JOIN {{ ref("stg_ppg_metadata__parametrage_indicateurs") }} parametrage_indicateurs
+        ON fi_deduplique.indicateur_id = parametrage_indicateurs.indicateur_id
     WHERE zone_type = 'REG'
+        AND parametrage_indicateurs.vi_reg_from='user_input'
 )
 
 SELECT
@@ -33,7 +36,7 @@ FROM
     {{ ref("faits_indicateur_departemental") }} fi_dept
     INNER JOIN {{ ref("stg_ppg_metadata__parametrage_indicateurs") }} parametrage_indicateurs
         ON fi_dept.indicateur_id = parametrage_indicateurs.indicateur_id
-WHERE fi_dept.indicateur_id NOT IN (SELECT indicateur_id FROM faits_indicateur__regions) -- condition temporaire en attendant le paramétrage
+WHERE parametrage_indicateurs.vi_reg_from='DEPT' -- on considère que c'est la même agrégation pour vi, va, vc
 GROUP BY
     fi_dept.indicateur_id,
     fi_dept.zone_id_parent,
