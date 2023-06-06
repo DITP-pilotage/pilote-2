@@ -34,7 +34,6 @@ const indicateurDétailsVide = {
 };
 
 const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
-let colonnes;
 
 export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, typeDeRéforme: TypeDeRéforme, territoireProjetStructurant?: ProjetStructurant['territoire']) {
   const estVueMobile = estVueMobileStore();
@@ -73,7 +72,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [territoiresComparés]);
     
-  colonnes = typeDeRéforme === 'chantier' ? [
+  const colonnes = typeDeRéforme === 'chantier' ? [
     reactTableColonnesHelper.accessor( 'territoireNom', {
       header: 'Territoire(s)',
       id: 'territoire',
@@ -103,7 +102,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     }),
     reactTableColonnesHelper.accessor('données.valeurCible', {
       header: 'Cible 2026',
-      id: 'cible2026',
+      id: 'cible',
       cell: valeurCible => (
         <ValeurEtDate
           date={valeurCible.row.original.données.dateValeurCible}
@@ -114,7 +113,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     }),
     reactTableColonnesHelper.accessor('données.avancement.global', {
       header: 'Avancement 2026',
-      id: 'avancement2026',
+      id: 'avancement',
       cell: avancementGlobal => (
         <BarreDeProgression
           afficherTexte
@@ -128,8 +127,13 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       enableSorting: false,
     }),
     reactTableColonnesHelper.display({
-      id: 'indicateur-tuile',
-      cell: indicateurCellContext => <IndicateurBlocIndicateurTuile indicateurDétailsParTerritoire={indicateurCellContext.row.original} />,
+      id: 'indicateurTuile',
+      cell: indicateurCellContext => (
+        <IndicateurBlocIndicateurTuile
+          indicateurDétailsParTerritoire={indicateurCellContext.row.original}
+          typeDeRéforme='chantier'
+        />
+      ),
       enableSorting: false,
       enableGrouping: false,
     }),
@@ -188,8 +192,13 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       enableSorting: false,
     }),
     reactTableColonnesHelper.display({
-      id: 'indicateur-tuile',
-      cell: indicateurCellContext => <IndicateurBlocIndicateurTuile indicateurDétailsParTerritoire={indicateurCellContext.row.original} />,
+      id: 'indicateurTuile',
+      cell: indicateurCellContext => (
+        <IndicateurBlocIndicateurTuile
+          indicateurDétailsParTerritoire={indicateurCellContext.row.original}
+          typeDeRéforme='projet structurant'
+        />
+      ),
       enableSorting: false,
       enableGrouping: false,
     }),
@@ -203,10 +212,10 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
         territoire: false,
         valeurInitiale: false,
         valeurActuelle: false,
-        cible2026: false,
-        avancement2026: false,
+        cible: false,
+        avancement: false,
       }) : ({
-        'indicateur-tuile': false,
+        indicateurTuile: false,
       }),
     },
     getCoreRowModel: getCoreRowModel(),

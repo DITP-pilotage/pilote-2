@@ -3,7 +3,7 @@ import IndicateurBlocIndicateurTuileStyled
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import IndicateurDétailsParTerritoireProps from './indicateurDétailsParTerritoire.interface';
 
-export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTerritoire }: IndicateurDétailsParTerritoireProps) {
+export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTerritoire, typeDeRéforme }: IndicateurDétailsParTerritoireProps) {
   return (
     <IndicateurBlocIndicateurTuileStyled>
       <table className='fr-p-0 fr-pb-2w'>
@@ -36,7 +36,7 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
           </tr>
           <tr>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
-              Cible 2026
+              {typeDeRéforme === 'chantier' ? 'Cible 2026' : 'Cible'}
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0">
               { indicateurDétailsParTerritoire.données.valeurCible?.toLocaleString() }
@@ -44,7 +44,7 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
           </tr>
           <tr>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
-              Avancement 2026
+              {typeDeRéforme === 'chantier' ? 'Avancement 2026' : 'Avancement'}
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0">
               <BarreDeProgression
@@ -53,7 +53,7 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
                 positionTexte='côté'
                 taille='md'
                 valeur={indicateurDétailsParTerritoire.données.avancement.global}
-                variante='primaire'
+                variante={typeDeRéforme === 'chantier' ? 'primaire' : 'rose'}
               />
             </td>
           </tr>

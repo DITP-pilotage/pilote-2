@@ -69,7 +69,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs }
         <div className='fr-p-4w'>
           <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-my-0 fr-pb-1w">
             <section
-              className='fr-col rubrique'
+              className='fr-col-12 fr-col-md-6 rubrique'
               id='avancement'
             >
               <Titre
@@ -84,7 +84,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs }
               />
             </section>
             <section
-              className='fr-col rubrique'
+              className='fr-col-12 fr-col-md-6 rubrique'
               id="responsables"
             >
               <Titre
