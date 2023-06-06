@@ -114,20 +114,18 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-7'} fr-col-12 rubrique`}
                     id="synthèse"
                   >
-                    <div>
-                      <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
-                        <Titre
-                          baliseHtml='h2'
-                          className='fr-h4'
-                          estInline
-                        >
-                          Météo et synthèse des résultats
-                        </Titre>
-                        <Infobulle idHtml="infobulle-chantier-météoEtSynthèseDesRésultats">
-                          { INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats }
-                        </Infobulle>
-                      </TitreInfobulleConteneur>
-                    </div>
+                    <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+                      <Titre
+                        baliseHtml='h2'
+                        className='fr-h4'
+                        estInline
+                      >
+                        Météo et synthèse des résultats
+                      </Titre>
+                      <Infobulle idHtml="infobulle-chantier-météoEtSynthèseDesRésultats">
+                        { INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats }
+                      </Infobulle>
+                    </TitreInfobulleConteneur>
                     <SynthèseDesRésultats
                       modeÉcriture={territoireSélectionné!.accèsSaisiePublication}
                       nomTerritoire={territoireSélectionné!.nomAffiché}
@@ -156,20 +154,18 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     className="fr-col-12 rubrique"
                     id="objectifs"
                   >
-                    <div>
-                      <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
-                        <Titre
-                          baliseHtml='h2'
-                          className='fr-h4'
-                          estInline
-                        >
-                          Objectifs
-                        </Titre>
-                        <Infobulle idHtml="infobulle-chantier-objectifs">
-                          { INFOBULLE_CONTENUS.chantier.objectifs }
-                        </Infobulle>
-                      </TitreInfobulleConteneur>
-                    </div>
+                    <TitreInfobulleConteneur>
+                      <Titre
+                        baliseHtml='h2'
+                        className='fr-h4'
+                        estInline
+                      >
+                        Objectifs
+                      </Titre>
+                      <Infobulle idHtml="infobulle-chantier-objectifs">
+                        { INFOBULLE_CONTENUS.chantier.objectifs }
+                      </Infobulle>
+                    </TitreInfobulleConteneur>
                     <Objectifs
                       maille='nationale'
                       modeÉcriture={modeÉcritureObjectifs}
@@ -210,20 +206,18 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       className="fr-col-12 rubrique"
                       id="décisions-stratégiques"
                     >
-                      <div>
-                        <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
-                          <Titre
-                            baliseHtml="h2"
-                            className="fr-h4"
-                            estInline
-                          >
-                            Décisions stratégiques
-                          </Titre>
-                          <Infobulle idHtml="infobulle-chantier-décisionsStratégiques">
-                            { INFOBULLE_CONTENUS.chantier.décisionsStratégiques }
-                          </Infobulle>
-                        </TitreInfobulleConteneur>
-                      </div>
+                      <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+                        <Titre
+                          baliseHtml="h2"
+                          className="fr-h4"
+                          estInline
+                        >
+                          Décisions stratégiques
+                        </Titre>
+                        <Infobulle idHtml="infobulle-chantier-décisionsStratégiques">
+                          { INFOBULLE_CONTENUS.chantier.décisionsStratégiques }
+                        </Infobulle>
+                      </TitreInfobulleConteneur>
                       <DécisionsStratégiques
                         chantierId={chantier.id}
                         décisionStratégique={décisionStratégique}
@@ -237,24 +231,22 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     className="fr-col-12 rubrique"
                     id="commentaires"
                   >
-                    <div>
-                      <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
-                        <Titre
-                          baliseHtml='h2'
-                          className='fr-h4'
-                          estInline
-                        >
-                          Commentaires du chantier
-                        </Titre>
-                        <Infobulle idHtml="infobulle-chantier-commentaires">
-                          {
+                    <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+                      <Titre
+                        baliseHtml='h2'
+                        className='fr-h4'
+                        estInline
+                      >
+                        Commentaires du chantier
+                      </Titre>
+                      <Infobulle idHtml="infobulle-chantier-décisionsStratégiques">
+                        {
                           territoireSélectionné!.maille === 'nationale'
                             ? INFOBULLE_CONTENUS.chantier.commentaires.territoireNational
                             : INFOBULLE_CONTENUS.chantier.commentaires.territoireNonNational
                         }
-                        </Infobulle>
-                      </TitreInfobulleConteneur>
-                    </div>
+                      </Infobulle>
+                    </TitreInfobulleConteneur>
                     <Commentaires
                       commentaires={commentaires}
                       maille={territoireSélectionné!.maille}

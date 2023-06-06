@@ -4,4 +4,5 @@ import {
 
 export default interface TableauProjetsStructurantsProps {
   données: ProjetStructurantVueDEnsemble[]
+  setNombreProjetsStructurantsDansLeTableau: (nombreProjetsStructurantsDansLeTableau: number) => void
 }
