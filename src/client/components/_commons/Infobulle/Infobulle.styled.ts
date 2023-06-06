@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { breakpointXL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
 
 const InfobulleStyled = styled.div`
   display: inline-block;
@@ -36,7 +37,7 @@ const InfobulleStyled = styled.div`
     margin-bottom: 0;
   }
 
-  @media (width < 992px) {
+  @media (width < ${breakpointXL}) {
     .infobulle-texte {
       position: absolute;
       right: 4rem;
