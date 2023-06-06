@@ -9,10 +9,16 @@ import Avancements from '@/components/_commons/Avancements/Avancements';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import ExportDesDonnées, { ID_HTML_MODALE_EXPORT } from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
-import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
+import ExportDesDonnées, {
+  ID_HTML_MODALE_EXPORT,
+} from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
+import {
+  ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
+} from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import FiltresActifs from '@/client/components/PageAccueil/FiltresActifs/FiltresActifs';
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import PageChantiersStyled from './PageChantiers.styled';
 import PageChantiersProps from './PageChantiers.interface';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
@@ -101,6 +107,9 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                 >
                   Taux d’avancement moyen
                 </Titre>
+                <Infobulle>
+                  { INFOBULLE_CONTENUS.chantiers.jauges }
+                </Infobulle>
                 <Avancements avancements={avancementsAgrégés} />
               </section>
               <hr className="fr-hr fr-my-3w fr-pb-1v" />
