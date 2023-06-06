@@ -1,13 +1,13 @@
 import TitreProps from './Titre.interface';
 
-export default function Titre({ children, baliseHtml, className, estInlineBlock = false }: TitreProps) {
+export default function Titre({ children, baliseHtml, className, estInline = false }: TitreProps) {
   const Balise = `${baliseHtml}` as keyof JSX.IntrinsicElements;
 
   return (
     <Balise
       className={className}
       style={{
-        display: estInlineBlock ? 'inline-block' : undefined,
+        display: estInline ? 'inline' : undefined,
       }}
     >
       {children}

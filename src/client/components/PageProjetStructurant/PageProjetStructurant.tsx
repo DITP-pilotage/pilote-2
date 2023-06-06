@@ -58,11 +58,11 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
               id='avancement'
             >
               <div>
-                <TitreInfobulleConteneur>
+                <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                   <Titre
                     baliseHtml='h2'
-                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                    estInlineBlock
+                    className='fr-h4'
+                    estInline
                   >
                     Avancement du projet
                   </Titre>
@@ -96,11 +96,11 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
               id='synthèse'
             >
               <div>
-                <TitreInfobulleConteneur>
+                <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                   <Titre
                     baliseHtml='h2'
-                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                    estInlineBlock
+                    className='fr-h4'
+                    estInline
                   >
                     Météo et synthèse des résultats
                   </Titre>
@@ -124,11 +124,11 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
               id="objectifs"
             >
               <div>
-                <TitreInfobulleConteneur>
+                <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                   <Titre
                     baliseHtml='h2'
-                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                    estInlineBlock
+                    className='fr-h4'
+                    estInline
                   >
                     Objectifs
                   </Titre>
@@ -153,11 +153,11 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
               id="commentaires"
             >
               <div>
-                <TitreInfobulleConteneur>
+                <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                   <Titre
                     baliseHtml='h2'
-                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                    estInlineBlock
+                    className='fr-h4'
+                    estInline
                   >
                     Commentaires du projet structurant
                   </Titre>

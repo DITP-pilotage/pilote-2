@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 const InfobulleStyled = styled.div`
   display: inline-block;
-  vertical-align: -0.2em;
+  vertical-align: -0.3em;
   
   .bouton:hover,
   .bouton:active {
@@ -11,8 +11,8 @@ const InfobulleStyled = styled.div`
 
   .infobulle-texte {
     position: absolute;
-    right: 1rem;
-    left: 1rem;
+    right: 0;
+    left: 0;
     z-index: 2;
     display: none;
     max-width: 30rem;
@@ -37,10 +37,10 @@ const InfobulleStyled = styled.div`
     margin-bottom: 0;
   }
 
-  @media (width < 576px) {
+  @media (min-width: 576px) {
     .infobulle-texte {
-      right: 0;
-      left: 0;
+      right: 1rem;
+      left: 1rem;
     }
   }
 `;

@@ -148,11 +148,11 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     id="synthèse"
                   >
                     <div>
-                      <TitreInfobulleConteneur>
+                      <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                         <Titre
                           baliseHtml='h2'
-                          className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                          estInlineBlock
+                          className='fr-h4'
+                          estInline
                         >
                           Météo et synthèse des résultats
                         </Titre>
@@ -190,11 +190,11 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     id="objectifs"
                   >
                     <div>
-                      <TitreInfobulleConteneur>
+                      <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                         <Titre
                           baliseHtml='h2'
-                          className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                          estInlineBlock
+                          className='fr-h4'
+                          estInline
                         >
                           Objectifs
                         </Titre>
@@ -242,11 +242,11 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       id="décisions-stratégiques"
                     >
                       <div>
-                        <TitreInfobulleConteneur>
+                        <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                           <Titre
                             baliseHtml="h2"
-                            className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
-                            estInlineBlock
+                            className="fr-h4"
+                            estInline
                           >
                             Décisions stratégiques
                           </Titre>
@@ -269,11 +269,11 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     id="commentaires"
                   >
                     <div>
-                      <TitreInfobulleConteneur>
+                      <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                         <Titre
                           baliseHtml='h2'
-                          className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                          estInlineBlock
+                          className='fr-h4'
+                          estInline
                         >
                           Commentaires du chantier
                         </Titre>
