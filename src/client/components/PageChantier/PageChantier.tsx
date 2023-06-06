@@ -14,6 +14,8 @@ import Titre from '@/components/_commons/Titre/Titre';
 import Objectifs from '@/components/_commons/Objectifs/Objectifs';
 import { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import Indicateurs, { listeRubriquesIndicateurs } from './Indicateurs/Indicateurs';
 import PageChantierProps from './PageChantier.interface';
@@ -144,12 +146,17 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-7'} fr-col-12 rubrique`}
                     id="synthèse"
                   >
-                    <Titre
-                      baliseHtml='h2'
-                      className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                    >
-                      Météo et synthèse des résultats
-                    </Titre>
+                    <div>
+                      <Titre
+                        baliseHtml='h2'
+                        className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                      >
+                        Météo et synthèse des résultats
+                      </Titre>
+                      <Infobulle>
+                        { INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats }
+                      </Infobulle>
+                    </div>
                     <SynthèseDesRésultats
                       modeÉcriture={territoireSélectionné?.accèsSaisiePublication}
                       nomTerritoire={territoireSélectionné!.nomAffiché}
@@ -178,12 +185,17 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     className="fr-col-12 rubrique"
                     id="objectifs"
                   >
-                    <Titre
-                      baliseHtml='h2'
-                      className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                    >
-                      Objectifs
-                    </Titre>
+                    <div>
+                      <Titre
+                        baliseHtml='h2'
+                        className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                      >
+                        Objectifs
+                      </Titre>
+                      <Infobulle>
+                        { INFOBULLE_CONTENUS.chantier.objectifs }
+                      </Infobulle>
+                    </div>
                     <Objectifs
                       maille='nationale'
                       modeÉcriture={modeÉcritureObjectifs}
@@ -222,12 +234,17 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       className="fr-col-12 rubrique"
                       id="décisions-stratégiques"
                     >
-                      <Titre
-                        baliseHtml="h2"
-                        className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
-                      >
-                        Décisions stratégiques
-                      </Titre>
+                      <div>
+                        <Titre
+                          baliseHtml="h2"
+                          className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
+                        >
+                          Décisions stratégiques
+                        </Titre>
+                        <Infobulle>
+                          { INFOBULLE_CONTENUS.chantier.décisionsStratégiques }
+                        </Infobulle>
+                      </div>
                       <DécisionsStratégiques
                         chantierId={chantier.id}
                         décisionStratégique={décisionStratégique}
@@ -241,12 +258,21 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     className="fr-col-12 rubrique"
                     id="commentaires"
                   >
-                    <Titre
-                      baliseHtml='h2'
-                      className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                    >
-                      Commentaires du chantier
-                    </Titre>
+                    <div>
+                      <Titre
+                        baliseHtml='h2'
+                        className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                      >
+                        Commentaires du chantier
+                      </Titre>
+                      <Infobulle>
+                        {
+                          territoireSélectionné!.maille === 'nationale'
+                            ? INFOBULLE_CONTENUS.chantier.commentaires.territoireNational
+                            : INFOBULLE_CONTENUS.chantier.commentaires.territoireNonNational
+                        }
+                      </Infobulle>
+                    </div>
                     <Commentaires
                       commentaires={commentaires}
                       maille={territoireSélectionné!.maille}

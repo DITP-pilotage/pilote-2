@@ -53,6 +53,76 @@ const INFOBULLE_CONTENUS = {
       </>
     ),
   },
+  chantier: {
+    météoEtSynthèseDesRésultats: (
+      <>
+        <p className="fr-text--sm">
+          La météo désigne le niveau de confiance, estimé par le responsable, sur la possibilité d’atteindre les objectifs du chantier.
+        </p>
+        <p className="fr-text--sm">
+          La synthèse est une présentation synthétique de l’état d’avancement du chantier, actualisé depuis la dernière mise à jour des données.
+        </p>
+      </>
+    ),
+    répartitionGéographiqueTauxAvancement: (
+      <p className="fr-text--sm">
+        Territorialisation du taux d’avancement du chantier 
+      </p>
+    ),
+    répartitionGéographiqueNiveauDeConfiance: (
+      <p className="fr-text--sm">
+        Répartition de la météo déclarée par chaque responsable local pour l’avancement de son chantier dans son territoire.
+      </p>
+    ),
+    objectifs: (
+      <p className="fr-text--sm">
+        Présentation des objectifs et des principales actions passées et à venir au niveau national. Si le chantier est territorialisé, ces éléments seront visibles par les services déconcentrés et doivent les aider à comprendre le chantier et à le faire avancer localement.
+      </p>
+    ),
+    décisionsStratégiques: (
+      <p className="fr-text--sm">
+        Décisions prises lors des réunions Elysée ↔ Matignon (AKAR) et suivi des actions prises pour répondre à ces décisions. 
+      </p>
+    ),
+    commentaires: {
+      territoireNational: (
+        <>
+          <p className="fr-text--sm">
+            Diagnostic du directeur de projet repris pour les supports de présentation des réunions Elysée ↔ Matignon (AKAR).
+          </p>
+          <ul className="fr-text--sm fr-mb-0">
+            <li>
+              Explication des résultats chiffrés
+            </li>
+            <li>
+              Analyse des résultats qui ne transparaissent pas dans les données
+            </li>
+            <li>
+              Analyse des freins et solutions envisagées
+            </li>
+            <li>
+              Exemples de réussites pouvant être communiqués plus largement.
+            </li>
+          </ul>
+        </>
+      ),
+      territoireNonNational: (
+        <>
+          <p className="fr-text--sm">
+            Diagnostic du responsable local du chantier repris pour préparer les RIM régionales.
+          </p>
+          <ul className="fr-text--sm fr-mb-0">
+            <li>
+              Explication des résultats chiffrés
+            </li>
+            <li>
+              Présentation des résultats qui ne transparaissent pas dans les données.
+            </li>
+          </ul>
+        </>
+      ),
+    },
+  },
 };
 
 export default INFOBULLE_CONTENUS;

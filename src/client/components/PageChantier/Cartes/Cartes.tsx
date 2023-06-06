@@ -8,6 +8,8 @@ import useCartographie from '@/components/_commons/Cartographie/useCartographie'
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieMétéo';
 import CartesStyled from '@/components/PageChantier/Cartes/Cartes.styled';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import CartesProps from './Cartes.interface';
 
 export default function Cartes({ chantierMailles, estInteractif = true }: CartesProps) {
@@ -35,6 +37,9 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
             >
               Taux d&apos;avancement
             </Titre>
+            <Infobulle>
+              { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueTauxAvancement }
+            </Infobulle>
             <CartographieAvancement
               auClicTerritoireCallback={auClicTerritoireCallback}
               données={donnéesCartographieAvancement}
@@ -53,6 +58,9 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
             >
               Niveau de confiance
             </Titre>
+            <Infobulle>
+              { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueNiveauDeConfiance }
+            </Infobulle>
             <CartographieMétéo
               auClicTerritoireCallback={auClicTerritoireCallback}
               données={donnéesCartographieMétéo}
