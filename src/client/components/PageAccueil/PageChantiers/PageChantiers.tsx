@@ -108,6 +108,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                 <Titre
                   baliseHtml="h2"
                   className="fr-text--lg"
+                  estInlineBlock
                 >
                   Taux d’avancement moyen
                 </Titre>
@@ -121,6 +122,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                 <Titre
                   baliseHtml="h2"
                   className="fr-text--lg"
+                  estInlineBlock
                 >
                   Répartition des météos renseignées
                 </Titre>
@@ -138,6 +140,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
               <Titre
                 baliseHtml="h2"
                 className="fr-text--lg fr-mb-0"
+                estInlineBlock
               >
                 Liste des chantiers (
                 { nombreChantiersDansLeTableau }

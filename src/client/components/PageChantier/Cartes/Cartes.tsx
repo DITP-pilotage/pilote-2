@@ -34,6 +34,7 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
             <Titre
               baliseHtml='h3'
               className='fr-text--lg'
+              estInlineBlock
             >
               Taux d&apos;avancement
             </Titre>
@@ -55,6 +56,7 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
             <Titre
               baliseHtml='h3'
               className='fr-text--lg'
+              estInlineBlock
             >
               Niveau de confiance
             </Titre>
