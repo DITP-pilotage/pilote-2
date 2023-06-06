@@ -8,6 +8,8 @@ import Objectifs from '@/client/components/_commons/Objectifs/Objectifs';
 import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
 import { typesCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 import Titre from '@/client/components/_commons/Titre/Titre';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import ResponsablesPageProjetStructurant from './Responsables/Responsables';
 import PageProjetStructurantProps from './PageProjetStructurant.interface';
 import PageProjetStructurantEnTête from './EnTête/EnTête';
@@ -54,12 +56,18 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
               className='fr-col rubrique'
               id='avancement'
             >
-              <Titre
-                baliseHtml='h2'
-                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-              >
-                Avancement du projet
-              </Titre>
+              <div>
+                <Titre
+                  baliseHtml='h2'
+                  className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                  estInlineBlock
+                >
+                  Avancement du projet
+                </Titre>
+                <Infobulle>
+                  { INFOBULLE_CONTENUS.projetStructurant.avancements }
+                </Infobulle>
+              </div>
               <AvancementPageProjetStructurant
                 avancement={projetStructurant.avancement}
                 territoireNom={projetStructurant.territoire.nomAffiché}
@@ -84,12 +92,18 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
               className='fr-col-12 rubrique'
               id='synthèse'
             >
-              <Titre
-                baliseHtml='h2'
-                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-              >
-                Météo et synthèse des résultats
-              </Titre>
+              <div>
+                <Titre
+                  baliseHtml='h2'
+                  className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                  estInlineBlock
+                >
+                  Météo et synthèse des résultats
+                </Titre>
+                <Infobulle>
+                  { INFOBULLE_CONTENUS.projetStructurant.météoEtSynthèseDesRésultats }
+                </Infobulle>
+              </div>
               <SynthèseDesRésultats
                 estInteractif={false}
                 nomTerritoire={projetStructurant.territoire.nomAffiché}
@@ -104,12 +118,18 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
               className="fr-col-12 rubrique"
               id="objectifs"
             >
-              <Titre
-                baliseHtml='h2'
-                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-              >
-                Objectifs
-              </Titre>
+              <div>
+                <Titre
+                  baliseHtml='h2'
+                  className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                  estInlineBlock
+                >
+                  Objectifs
+                </Titre>
+                <Infobulle>
+                  { INFOBULLE_CONTENUS.projetStructurant.objectifs }
+                </Infobulle>
+              </div>
               <Objectifs
                 estInteractif={false}
                 maille={projetStructurant.territoire.maille}
@@ -125,12 +145,18 @@ export default function PageProjetStructurant({ projetStructurant }: PageProjetS
               className="fr-col-12 rubrique"
               id="commentaires"
             >
-              <Titre
-                baliseHtml='h2'
-                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-              >
-                Commentaires du projet structurant
-              </Titre>
+              <div>
+                <Titre
+                  baliseHtml='h2'
+                  className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                  estInlineBlock
+                >
+                  Commentaires du projet structurant
+                </Titre>
+                <Infobulle>
+                  { INFOBULLE_CONTENUS.projetStructurant.commentaires }
+                </Infobulle>
+              </div>
               <Commentaires
                 commentaires={commentaires}
                 estInteractif={false}
