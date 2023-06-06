@@ -79,8 +79,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
     return utilisateursMappés.filter(
       u => (
-        chantierIds.some(id => u.habilitations.lecture.chantiers.includes(id))
-        || territoireCodes.some(code => u.habilitations.lecture.territoires.includes(code))
+        u.habilitations.lecture.chantiers.every(id => chantierIds.includes(id))
+        && u.habilitations.lecture.territoires.every(code => territoireCodes.includes(code))
       ),
     );
   }
@@ -136,9 +136,9 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       'lecture': chantiersAccessibles,
       'saisie.commentaire': chantiersAccessibles,
       'saisie.indicateur': chantiersAccessibles,
-      'utilisateurs.lecture': profilUtilisateur.a_access_lecture_utilisateurs_pour_tous_les_chantiers === true ? this._chantiers : [],
-      'utilisateurs.modification': profilUtilisateur.a_access_modification_utilisateurs_pour_tous_les_chantiers === true ? this._chantiers : [],
-      'utilisateurs.suppression': profilUtilisateur.a_access_suppression_utilisateurs_pour_tous_les_chantiers === true ? this._chantiers : [],
+      'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs === true ? chantiersAccessibles : [],
+      'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs === true ? chantiersAccessibles : [],
+      'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs === true ? chantiersAccessibles : [],
     };
 
     return chantiersParDéfaut;
@@ -149,9 +149,9 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       'lecture': profilUtilisateur.a_acces_tous_les_territoires_lecture === true ? this._territoires : [],
       'saisie.commentaire': profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire === true ? this._territoires : [],
       'saisie.indicateur': profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur === true ? this._territoires : [],
-      'utilisateurs.lecture': profilUtilisateur.a_access_lecture_utilisateurs_pour_tous_les_chantiers === true ? this._territoires : [],
-      'utilisateurs.modification': profilUtilisateur.a_access_modification_utilisateurs_pour_tous_les_chantiers === true ? this._territoires : [],
-      'utilisateurs.suppression': profilUtilisateur.a_access_suppression_utilisateurs_pour_tous_les_chantiers === true ? this._territoires : [],
+      'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs === true ? this._territoires : [],
+      'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs === true ? this._territoires : [],
+      'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs === true ? this._territoires : [],
     };
 
     return territoiresParDéfaut;

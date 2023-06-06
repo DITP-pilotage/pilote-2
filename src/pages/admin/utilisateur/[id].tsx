@@ -1,6 +1,5 @@
 import { GetServerSidePropsContext } from 'next/types';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
+import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import PageUtilisateur from '@/components/PageUtilisateur/PageUtilisateur';
 import RécupérerUnUtilisateurUseCase from '@/server/usecase/utilisateur/RécupérerUnUtilisateurUseCase';
@@ -31,19 +30,19 @@ export async function getServerSideProps({ req, res, params } :GetServerSideProp
     },
   };
 
-  const session = await getServerSession(req, res, authOptions);
+  const session = await getServerAuthSession({ req, res });
 
   if (!params?.id || !session || !session.habilitations) {
     return redirigerVersPageAccueil;
   }
 
   const utilisateurDemandé = await new RécupérerUnUtilisateurUseCase().run(session.habilitations, params.id);
-  const chantiersExistants = await new RécupérerChantiersUseCase().run();
   if (!utilisateurDemandé) {
     return redirigerVersPageAccueil;
   }
 
   let chantiers: NextPageAdminUtilisateurProps['chantiers'] = {};
+  const chantiersExistants = await new RécupérerChantiersUseCase().run();
   chantiersExistants.forEach(chantier => {
     chantiers[chantier.id] = {
       nom: chantier.nom,

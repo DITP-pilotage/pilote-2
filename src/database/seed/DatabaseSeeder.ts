@@ -343,7 +343,7 @@ export class DatabaseSeeder {
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('premiere.ministre@example.com').avecProfil('PM_ET_CABINET').build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('presidence@example.com').avecProfil('PR').build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('cabinet.mtfp@example.com').avecProfil('CABINET_MTFP').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('cabinet.ministeriel@example.com').avecProfil('CABINET_MINISTERIEL').build(),
+      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('cabinet.ministeriel@example.com').avecProfil('CABINET_MINISTERIEL').avecHabilitationLecture(chantierIds).build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('direction.admin.centrale@example.com').avecProfil('DIR_ADMIN_CENTRALE').build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('secretariat.general@example.com').avecProfil('SECRETARIAT_GENERAL').build(),
       new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('directeur.projet@example.com').avecProfil('DIR_PROJET').avecHabilitationLecture(chantierIds).build(),
