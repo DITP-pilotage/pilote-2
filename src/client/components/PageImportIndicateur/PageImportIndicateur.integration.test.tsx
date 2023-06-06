@@ -14,7 +14,7 @@ jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function 
   );
 });
 // eslint-disable-next-line react/no-multi-comp
-jest.mock('@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.tsx', () => function IndicateurChart() {
+jest.mock('@/components/_commons/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.tsx', () => function IndicateurChart() {
   return (
     <span>
       Indicateur Chart

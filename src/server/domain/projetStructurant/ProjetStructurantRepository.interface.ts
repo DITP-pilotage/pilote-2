@@ -1,6 +1,6 @@
-import { projet_structurant as ProjetStructurantPrisma } from '@prisma/client';
+import { ProjetStructurantPrismaVersDomaine } from './ProjetStructurant.interface';
 
 export default interface ProjetStructurantRepository {
-  récupérer(id: string): Promise<ProjetStructurantPrisma>;
-  récupérerListe(): Promise<ProjetStructurantPrisma[]>;
+  récupérer(id: string): Promise<ProjetStructurantPrismaVersDomaine>;
+  récupérerListe(): Promise<ProjetStructurantPrismaVersDomaine[]>;
 }
