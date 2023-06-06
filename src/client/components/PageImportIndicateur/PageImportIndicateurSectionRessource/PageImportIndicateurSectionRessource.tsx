@@ -169,9 +169,9 @@ export function PageImportIndicateurSectionRessource() {
                   download
                   href="/referentiel/referentiel_territoires.xlsx"
                 >
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.LABEL_TELECHARGEMENT_REFERENTIEL_INDICATEUR}
+                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.LABEL_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR}
                   <span className="fr-download__detail">
-                    {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.FORMAT_TELECHARGEMENT_REFERENTIEL_INDICATEUR}
+                    {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.FORMAT_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR}
                   </span>
                 </a>
               </p>
@@ -183,9 +183,9 @@ export function PageImportIndicateurSectionRessource() {
                   download
                   href="/referentiel/referentiel_territoires.xlsx"
                 >
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.LABEL_TELECHARGEMENT_REFERENTIEL_TERRITOIRE}
+                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.LABEL_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE}
                   <span className="fr-download__detail">
-                    {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.FORMAT_TELECHARGEMENT_REFERENTIEL_TERRITOIRE}
+                    {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.FORMAT_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE}
                   </span>
                 </a>
               </p>
