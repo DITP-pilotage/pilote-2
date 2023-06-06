@@ -112,7 +112,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                 </Infobulle>
                 <Avancements avancements={avancementsAgrégés} />
               </section>
-              <hr className="fr-hr fr-my-3w fr-pb-1v" />
+              <hr className="fr-hr fr-mt-3w fr-mb-3v fr-pb-1v" />
               <section>
                 <Titre
                   baliseHtml="h2"
@@ -120,6 +120,9 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                 >
                   Répartition des météos renseignées
                 </Titre>
+                <Infobulle>
+                  { INFOBULLE_CONTENUS.chantiers.météos }
+                </Infobulle>
                 <RépartitionMétéo météos={répartitionMétéos} />
               </section>
             </Bloc>
@@ -128,6 +131,17 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
         <div className="fr-grid-row fr-mt-7v">
           <div className="fr-col">
             <Bloc>
+              <Titre
+                baliseHtml="h2"
+                className="fr-text--lg"
+              >
+                Liste des chantiers (
+                { 100 }
+                )
+              </Titre>
+              <Infobulle>
+                { INFOBULLE_CONTENUS.chantiers.listeDesChantiers }
+              </Infobulle>
               <TableauChantiers
                 données={donnéesTableauChantiers}
               />

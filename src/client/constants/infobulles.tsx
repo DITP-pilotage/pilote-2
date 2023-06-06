@@ -28,10 +28,16 @@ const INFOBULLE_CONTENUS = {
     ),
     listeDesChantiers: (
       <>
-        <PictoBaromètre />
-        : Chantier présent dans le baromètre des résultats de l’action publique
-        <PictoTerritorialisé />
-        : Chantier dont le pilotage est territorialisé.
+        <p className="fr-text--sm">
+          <PictoBaromètre />
+          {' '}
+          : Chantier présent dans le baromètre des résultats de l’action publique
+        </p>
+        <p className="fr-text--sm">
+          <PictoTerritorialisé />
+          {' '}
+          : Chantier dont le pilotage est territorialisé.
+        </p>
         <p className="fr-text--sm">
           La date affichée sous la météo correspond à la date de la dernière modification de la météo, de la synthèse ou d’un commentaire.
         </p>

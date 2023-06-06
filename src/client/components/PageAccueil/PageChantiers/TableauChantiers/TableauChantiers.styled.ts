@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
 const TableauChantiersStyled = styled.section`
-  display: grid;
   overflow-x: auto;
   color: var(--text-title-grey);
   

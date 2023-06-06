@@ -9,6 +9,8 @@ import useTableauChantiers from '@/components/PageAccueil/PageChantiers/TableauC
 import TableauChantiersActionsDeTri from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
 import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
 import TableauRéformesEnTête from '@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersStyled from './TableauChantiers.styled';
 import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
@@ -38,6 +40,9 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
       >
         {`Liste des chantiers (${tableau.getFilteredRowModel().rows.length})`}
       </Titre>
+      <Infobulle>
+        { INFOBULLE_CONTENUS.chantiers.listeDesChantiers }
+      </Infobulle>
       <div className='tableau-actions fr-mb-3v fr-mt-1w'>
         <div className="tableau-actions-gauche">
           <div className="barre-de-recherche">
