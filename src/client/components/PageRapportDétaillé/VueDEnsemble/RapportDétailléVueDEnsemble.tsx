@@ -8,6 +8,8 @@ import RapportDétailléVueDEnsembleProps from '@/components/PageRapportDétaill
 import usePageRapportDétaillé from '@/components/PageRapportDétaillé/usePageRapportDétaillé';
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
+import RapportDétailléVueDEnsembleStyled
+  from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble.styled';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
 export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVueDEnsembleProps) {
@@ -19,7 +21,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
   } = usePageRapportDétaillé(chantiers);
   
   return (
-    <section>
+    <RapportDétailléVueDEnsembleStyled>
       <Encart>
         <Titre
           baliseHtml="h2"
@@ -77,12 +79,18 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
       >
         <div className="fr-col">
           <Bloc>
+            <Titre
+              baliseHtml="h2"
+              className="fr-text--lg fr-mb-2w titre-liste-chantiers"
+            >
+              Liste des chantiers
+            </Titre>
             <RapportDétailléTableauChantiers
               données={donnéesTableauChantiers}
             />
           </Bloc>
         </div>
       </div>
-    </section>
+    </RapportDétailléVueDEnsembleStyled>
   );
 }

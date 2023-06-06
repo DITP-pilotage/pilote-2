@@ -8,6 +8,9 @@ import useCartographie from '@/components/_commons/Cartographie/useCartographie'
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieMétéo';
 import CartesStyled from '@/components/PageChantier/Cartes/Cartes.styled';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
+import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import CartesProps from './Cartes.interface';
 
 export default function Cartes({ chantierMailles, estInteractif = true }: CartesProps) {
@@ -29,12 +32,18 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
       <div>
         <Bloc>
           <section>
-            <Titre
-              baliseHtml='h3'
-              className='fr-text--lg'
-            >
-              Taux d&apos;avancement
-            </Titre>
+            <TitreInfobulleConteneur>
+              <Titre
+                baliseHtml='h3'
+                className='fr-text--lg'
+                estInline
+              >
+                Taux d&apos;avancement
+              </Titre>
+              <Infobulle>
+                { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueTauxAvancement }
+              </Infobulle>
+            </TitreInfobulleConteneur>
             <CartographieAvancement
               auClicTerritoireCallback={auClicTerritoireCallback}
               données={donnéesCartographieAvancement}
@@ -47,12 +56,18 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
       <div>
         <Bloc>
           <section>
-            <Titre
-              baliseHtml='h3'
-              className='fr-text--lg'
-            >
-              Niveau de confiance
-            </Titre>
+            <TitreInfobulleConteneur>
+              <Titre
+                baliseHtml='h3'
+                className='fr-text--lg'
+                estInline
+              >
+                Niveau de confiance
+              </Titre>
+              <Infobulle>
+                { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueNiveauDeConfiance }
+              </Infobulle>
+            </TitreInfobulleConteneur>
             <CartographieMétéo
               auClicTerritoireCallback={auClicTerritoireCallback}
               données={donnéesCartographieMétéo}

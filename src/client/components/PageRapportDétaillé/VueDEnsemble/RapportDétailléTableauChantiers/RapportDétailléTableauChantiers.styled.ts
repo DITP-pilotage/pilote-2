@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 const RapportDétailléTableauChantiersStyled = styled.section`
   display: grid;
   overflow-x: auto;
-  color: var(--text-title-grey);
 
   table.tableau {
     display: table;
