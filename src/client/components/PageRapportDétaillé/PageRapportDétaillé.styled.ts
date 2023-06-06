@@ -13,7 +13,19 @@ const PageRapportDétailléStyled = styled.div`
     display: flex;
   }
 
+  .texte-impression {
+    display: none;
+  }
+
   @media print {
+    zoom: 125%;
+    
+    .texte-impression {
+      display: block;
+      width: 100%;
+      text-align: center
+    }
+
     table {
       overflow: hidden;
       

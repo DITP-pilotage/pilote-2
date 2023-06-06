@@ -30,6 +30,11 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
   return (
     <PageRapportDétailléStyled>
       <main className="fr-py-4w">
+        <div className="texte-impression fr-mb-5w">
+          Pilote  •  Rapport détaillé généré le
+          {' '}
+          {new Date().toLocaleString('FR-fr')}
+        </div>
         <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
           <PremièrePageImpressionRapportDétaillé />
           <div className="fr-px-2w fr-px-md-0 flex justify-between entête-rapport-détaillé">
