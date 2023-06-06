@@ -7,7 +7,7 @@ export default interface ProjetStructurant {
   nom: string,
   périmètresIds: string[];
   avancement: number | null;
-  dateAvancement: string;
+  dateAvancement: string | null;
   météo: Météo
   territoire: {
     code: Territoire['code']

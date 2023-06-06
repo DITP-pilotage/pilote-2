@@ -1,5 +1,4 @@
 import { projet_structurant as ProjetStructurantPrisma } from '@prisma/client';
-import { faker } from '@faker-js/faker';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import ProjetStructurantRepository from '@/server/domain/projetStructurant/ProjetStructurantRepository.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
@@ -7,7 +6,6 @@ import PérimètreMinistérielRepository from '@/server/domain/périmètreMinist
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import { générerPeutÊtreNull } from '@/server/infrastructure/test/builders/utils';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import SynthèseDesRésultatsProjetStructurantRepository from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
@@ -28,9 +26,8 @@ export default class RécupérerProjetStructurantUseCase {
     return {
       id: projetStructurantPrisma.id,
       nom: projetStructurantPrisma.nom,
-      // en attendant d'avoir les tables
-      avancement: générerPeutÊtreNull(0.1, faker.datatype.number({ min: 0, max: 120, precision: 0.01 })),
-      dateAvancement: faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString(),
+      avancement: projetStructurantPrisma.taux_avancement,
+      dateAvancement: projetStructurantPrisma.date_taux_avancement?.toISOString() ?? null,
       météo: météo,
       périmètresIds: projetStructurantPrisma.perimetres_ids,
       territoire: {

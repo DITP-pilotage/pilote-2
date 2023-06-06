@@ -15,7 +15,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import ObjectifsPageChantier from '@/components/_commons/Objectifs/Objectifs';
 import { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
-import { listeRubriquesIndicateurs } from '@/components/PageChantier/PageChantier';
+import { listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 
 export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats, commentaires, objectifs, décisionStratégique }: RapportDétailléChantierProps) {
@@ -136,7 +136,8 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                 détailsIndicateurs={détailsIndicateurs}
                 estInteractif={false}
                 indicateurs={indicateurs}
-                listeRubriquesIndicateurs={listeRubriquesIndicateurs}
+                listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
+                typeDeRéforme='chantier'
               />
             </section>
           </div>
