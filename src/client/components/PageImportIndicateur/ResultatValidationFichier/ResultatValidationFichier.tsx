@@ -1,7 +1,7 @@
+import { wording } from '@/client/utils/i18n/i18n';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import { ResultatValidationFichierProps } from './ResultatValidationFichier.interface';
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
-import { wording } from '@/client/utils/i18n/i18n';
 
 export default function ResultatValidationFichier({ rapport }: ResultatValidationFichierProps) {
   return (

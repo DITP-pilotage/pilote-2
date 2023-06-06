@@ -144,57 +144,65 @@ export default function PageImportIndicateurSectionImport({
                 </div>
                 :
                 <div>
-                  <table className='fr-table fr-mb-3w fr-p-0 '>
-                    <thead>
-                      <tr>
-                        <th>
-                          {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.IDENTIFIANT_INDIC}
-                        </th>
-                        <th>
-                          {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.ZONE_ID}
-                        </th>
-                        <th>
-                          {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.DATE_VALEUR}
-                        </th>
-                        <th>
-                          {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.TYPE_VALEUR}
-                        </th>
-                        <th>
-                          {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.VALEUR}
+                  {rapportImport?.listeMesuresIndicateurTemporaire.length ?
+                    <>
+                      <table className='fr-table fr-mb-3w fr-p-0 '>
+                        <thead>
+                          <tr>
+                            <th>
+                              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.IDENTIFIANT_INDIC}
+                            </th>
+                            <th>
+                              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.ZONE_ID}
+                            </th>
+                            <th>
+                              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.DATE_VALEUR}
+                            </th>
+                            <th>
+                              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.TYPE_VALEUR}
+                            </th>
+                            <th>
+                              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.VALEUR}
 
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {rapportImport?.listeMesuresIndicateurTemporaire.map(mesureIndicateurTemporaire => {
-                        return (
-                          <tr key={`${mesureIndicateurTemporaire.metricType}-${mesureIndicateurTemporaire.zoneId}`}>
-                            <td>
-                              {mesureIndicateurTemporaire.indicId}
-                            </td>
-                            <td>
-                              {mesureIndicateurTemporaire.zoneId}
-                            </td>
-                            <td>
-                              {mesureIndicateurTemporaire.metricDate}
-                            </td>
-                            <td>
-                              {mesureIndicateurTemporaire.metricType}
-                            </td>
-                            <td>
-                              {mesureIndicateurTemporaire.metricValue}
-                            </td>
+                            </th>
                           </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                  <FormulairePublierImportIndicateur
-                    chantierId={chantierId}
-                    indicateurId={indicateurId}
-                    rapportId={rapportId}
-                    setEstFichierPublie={setEstFichierPublie}
-                  />
+                        </thead>
+                        <tbody>
+                          {rapportImport?.listeMesuresIndicateurTemporaire.map(mesureIndicateurTemporaire => {
+                            return (
+                              <tr key={`${mesureIndicateurTemporaire.metricType}-${mesureIndicateurTemporaire.zoneId}`}>
+                                <td>
+                                  {mesureIndicateurTemporaire.indicId}
+                                </td>
+                                <td>
+                                  {mesureIndicateurTemporaire.zoneId}
+                                </td>
+                                <td>
+                                  {mesureIndicateurTemporaire.metricDate}
+                                </td>
+                                <td>
+                                  {mesureIndicateurTemporaire.metricType}
+                                </td>
+                                <td>
+                                  {mesureIndicateurTemporaire.metricValue}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                      <FormulairePublierImportIndicateur
+                        chantierId={chantierId}
+                        indicateurId={indicateurId}
+                        rapportId={rapportId}
+                        setEstFichierPublie={setEstFichierPublie}
+                      />
+                    </>
+                    :
+                    <Alerte
+                      titre={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TITRE_ALERT_ERREUR}
+                      type='erreur'
+                    />}
                 </div>
             }
           </div>

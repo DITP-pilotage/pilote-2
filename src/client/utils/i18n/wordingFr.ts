@@ -24,6 +24,11 @@ export const wordingFr = {
         TITRE: 'Pour quel indicateur souhaitez vous mettre à jour les données ?',
         LABEL_BOUTON_VERIFIER_FICHIER: 'Vérifier le fichier',
         LABEL_BOUTON_PROCHAINE_ETAPE: 'Suivant',
+        EXPLICATION_TELECHARGEMENT_TEMPLATE: 'Si vous n’avez pas de fichier au bon format, téléchargez le modèle à remplir et consultez les règles et consignes de remplissage dans les ressources ci-dessous.',
+        LABEL_BOUTON_TELECHARGER_MODELE_CSV: 'Télécharger le modèle csv',
+        FORMAT_BOUTON_TELECHARGER_MODELE_CSV: '.csv',
+        LABEL_BOUTON_TELECHARGER_MODELE_XLSX: 'Télécharger le modèle xslx',
+        FORMAT_BOUTON_TELECHARGER_MODELE_XLSX: '.xslx',
       },
       ETAPE_CHARGER_FICHIER: {
         TITRE: 'Vos données doivent être au bon format pour être importées dans PILOTE',
@@ -60,6 +65,7 @@ export const wordingFr = {
         LABEL_BOUTON_PROCHAINE_ETAPE: 'Publier les données',
         TITRE_ALERT_SUCCES: (indicateurId: string) => `Les données ont été importées avec succès pour l’indicateur ${indicateurId}`,
         MESSAGE_ALERT_SUCCES: 'La mise à jour des taux d’avancement sera effective dans une durée maximale de 24h. Vous pouvez, en attendant, mettre à jour d’autres indicateurs.',
+        TITRE_ALERT_ERREUR: 'Le fichier à déjà été importé',
       },
     },
     SECTION_RESSOURCE: {
@@ -124,10 +130,10 @@ export const wordingFr = {
       SECTION_REFERENTIEL: {
         TITRE: 'Référentiels',
         SOUS_TITRE: 'Consultez les référentiels pour retrouver l’identifiant de votre indicateur et les codes de tous les territoires (départements, régions, et national).',
-        LABEL_TELECHARGEMENT_REFERENTIEL_INDICATEUR: 'Télécharger le référentiel pour les indicateurs  ',
-        FORMAT_TELECHARGEMENT_REFERENTIEL_INDICATEUR: 'XLSX – 12 ko',
-        LABEL_TELECHARGEMENT_REFERENTIEL_TERRITOIRE: 'Télécharger le référentiel pour les territoires  ',
-        FORMAT_TELECHARGEMENT_REFERENTIEL_TERRITOIRE: 'XLSX – 12 ko',
+        LABEL_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR: 'Télécharger le référentiel pour les indicateurs  ',
+        FORMAT_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR: 'XLSX – 12 ko',
+        LABEL_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE: 'Télécharger le référentiel pour les territoires  ',
+        FORMAT_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE: 'XLSX – 12 ko',
       },
       SECTION_EXPLICATION_FICHIER: {
         TITRE: 'Comment bien remplir le fichier d’import ?',

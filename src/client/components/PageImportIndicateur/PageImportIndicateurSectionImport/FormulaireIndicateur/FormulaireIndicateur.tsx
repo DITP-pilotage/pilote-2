@@ -8,17 +8,53 @@ export default function FormulaireIndicateur({ chantierId, indicateurId, setRapp
   const { définirLeFichier, verifierLeFichier, file } = useFormulaireIndicateur(chantierId, indicateurId, setRapport);
 
   return (
-    <form
-      className='flex align-center'
-      onSubmit={verifierLeFichier}
-    >
-      <InputFichier
-        onChange={définirLeFichier}
-      />
-      <SubmitBouton
-        disabled={!file}
-        label={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_VERIFIER_FICHIER}
-      />
-    </form>
+
+    <>
+      <form
+        className='flex align-center fr-mb-3w'
+        onSubmit={verifierLeFichier}
+      >
+        <InputFichier
+          onChange={définirLeFichier}
+        />
+        <SubmitBouton
+          disabled={!file}
+          label={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_VERIFIER_FICHIER}
+        />
+      </form>
+      <p>
+        {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.EXPLICATION_TELECHARGEMENT_TEMPLATE}
+      </p>
+      <div className="flex">
+        <div className="fr-download fr-mr-3w">
+          <p>
+            <a
+              className="fr-download__link"
+              download
+              href="/model/template_import_PILOTE.csv"
+            >
+              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_TELECHARGER_MODELE_CSV}
+              <span className="fr-download__detail">
+                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.FORMAT_BOUTON_TELECHARGER_MODELE_CSV}
+              </span>
+            </a>
+          </p>
+        </div>
+        <div className="fr-download">
+          <p>
+            <a
+              className="fr-download__link"
+              download
+              href="/model/template_import_PILOTE.xlsx"
+            >
+              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_TELECHARGER_MODELE_XLSX}
+              <span className="fr-download__detail">
+                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.FORMAT_BOUTON_TELECHARGER_MODELE_XLSX}
+              </span>
+            </a>
+          </p>
+        </div>
+      </div>
+    </>
   );
 }
