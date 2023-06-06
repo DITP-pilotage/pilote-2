@@ -62,6 +62,9 @@ models:
           +materialized: view
         taux_avancement_chantier:
           +materialized: table
+      8_evolution_indicateur:
+        evolution_indicateur:
+          +materialized: table
     metrics:
       +schema: marts
       taux_avancement_indicateur__departement:
