@@ -1,46 +1,35 @@
+WITH toutes_les_dates as (
+    (SELECT
+            commentaire_projet_structurant.projet_structurant_id as id,
+            MAX(date) as max_date
+        FROM {{ ref('commentaire_projet_structurant') }} commentaire_projet_structurant
+        GROUP BY projet_structurant_id
+    )
+    UNION
+    (SELECT 
+            objectif_projet_structurant.projet_structurant_id as id,
+            MAX(date) as max_date
+        FROM objectif_projet_structurant
+        GROUP BY projet_structurant_id
+    )
+   UNION
+    (SELECT 
+            synthese_des_resultats_projet_structurant.projet_structurant_id as id,
+            MAX(GREATEST(date_meteo, date_commentaire)) as max_date
+        FROM synthese_des_resultats_projet_structurant
+        GROUP BY projet_structurant_id
+    )
+),
+max_date as (
+    SELECT
+        id,
+        MAX(max_date) as max_date
+        FROM toutes_les_dates
+        GROUP BY id
+)   
+
 SELECT
-    DISTINCT ON (projet_structurant.projet_structurant_code)
-    {{ dbt_utils.surrogate_key(['projet_structurant.projet_structurant_code']) }} as id,
-    projet_structurant.projet_structurant_code as code,
-    projet_structurant.projet_structurant_nom as nom,
-    fact_progress_ps.avancement as taux_avancement,
-    projet_structurant.taux_avancement_date_de_mise_a_jour as date_taux_avancement,
-    territoire.code as territoire_code,
-    ARRAY(
-        SELECT perimetre_projet_structurant.perimetres_ppg_id
-        FROM {{ ref('perimetre_projet_structurant')}} perimetre_projet_structurant
-        WHERE perimetre_projet_structurant.perimetre_ps_nom = projet_structurant.perimetre_ministeriel_1
-        AND projet_structurant.perimetre_ministeriel_1 IS NOT NULL
-    ) || ARRAY(
-        SELECT perimetre_projet_structurant.perimetres_ppg_id
-        FROM {{ ref('perimetre_projet_structurant')}} perimetre_projet_structurant
-        WHERE perimetre_projet_structurant.perimetre_ps_nom = projet_structurant.perimetre_ministeriel_2
-        AND projet_structurant.perimetre_ministeriel_2 IS NOT NULL
-    ) || ARRAY(
-        SELECT perimetre_projet_structurant.perimetres_ppg_id
-        FROM {{ ref('perimetre_projet_structurant')}} perimetre_projet_structurant
-        WHERE perimetre_projet_structurant.perimetre_ps_nom = projet_structurant.perimetre_ministeriel_3
-        AND projet_structurant.perimetre_ministeriel_3 IS NOT NULL
-    ) || ARRAY(
-        SELECT perimetre_projet_structurant.perimetres_ppg_id
-        FROM {{ ref('perimetre_projet_structurant')}} perimetre_projet_structurant
-        WHERE perimetre_projet_structurant.perimetre_ps_nom = projet_structurant.perimetre_ministeriel_4
-        AND projet_structurant.perimetre_ministeriel_4 IS NOT NULL
-    ) as perimetres_ids,
-    CASE 
-        WHEN projet_structurant.direction_de_l_administration_porteuse_du_projet IS NULL THEN ARRAY[]::varchar[]
-        ELSE ARRAY[direction_de_l_administration_porteuse_du_projet]
-    END as direction_administration,
-    CASE 
-        WHEN projet_structurant.chefferie_de_projet IS NULL THEN ARRAY[]::varchar[]
-        ELSE ARRAY[chefferie_de_projet]
-    END as chefferie_de_projet,
-    CASE 
-        WHEN projet_structurant.co_porteur_du_projet IS NULL THEN ARRAY[]::varchar[]
-        ELSE ARRAY[co_porteur_du_projet]
-    END as co_porteurs
-    FROM {{ ref('stg_dfakto__ps_view_data_financials') }} projet_structurant
-        JOIN territoire ON projet_structurant.zone_code = territoire.zone_id
-        JOIN {{ ref('stg_dfakto__ps_dim_tree_nodes') }} dim_tree_nodes_ps ON projet_structurant.projet_structurant_code = dim_tree_nodes_ps.code
-        LEFT JOIN {{ ref('stg_dfakto__fact_progress_project') }} fact_progress_ps ON dim_tree_nodes_ps.id = fact_progress_ps.tree_node_id
-    ORDER BY projet_structurant.projet_structurant_code
+    projet_structurant_temporaire.*,
+    max_date.max_date as date_donnees_qualitative
+    FROM {{ ref('projet_structurant_temporaire') }} projet_structurant_temporaire
+    LEFT JOIN max_date ON projet_structurant_temporaire.id = max_date.id

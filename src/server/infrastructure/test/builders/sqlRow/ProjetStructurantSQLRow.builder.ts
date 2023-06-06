@@ -26,6 +26,8 @@ export default class ProjetStructurantRowBuilder {
 
   private _dateTauxAvancement: ProjetStructurantPrisma['date_taux_avancement'] = null;
 
+  private _dateDonneesQualitative: ProjetStructurantPrisma['date_donnees_qualitative'] = null;
+
   constructor() {
     const projetGénéré =  new ProjetStructurantBuilder().build();
     const ministèrePorteur = new MinistèreBuilder().build();
@@ -74,6 +76,11 @@ export default class ProjetStructurantRowBuilder {
     this._dateTauxAvancement = dateTauxAvancement;
     return this;
   }
+
+  avecDateDonneesQualitative(dateDonneesQualitative: ProjetStructurantPrisma['date_donnees_qualitative']): ProjetStructurantRowBuilder {
+    this._dateDonneesQualitative = dateDonneesQualitative;
+    return this;
+  }
   
   shallowCopy(): ProjetStructurantRowBuilder {
     const result = new ProjetStructurantRowBuilder() as any;
@@ -95,6 +102,7 @@ export default class ProjetStructurantRowBuilder {
       co_porteurs: this._coporteurs,
       taux_avancement: this._tauxAvancement,
       date_taux_avancement: this._dateTauxAvancement,
+      date_donnees_qualitative: this._dateDonneesQualitative,
     };
   }
 }
