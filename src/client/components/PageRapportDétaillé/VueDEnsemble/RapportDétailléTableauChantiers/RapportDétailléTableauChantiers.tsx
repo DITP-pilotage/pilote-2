@@ -1,7 +1,6 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
-import Titre from '@/components/_commons/Titre/Titre';
 import useRapportDétailléTableauChantiers
   from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléTableauChantiers/useRapportDétailléTableauChantiers';
 import RapportDétailléTableauChantiersProps from './RapportDétailléTableauChantiers.interface';
@@ -14,12 +13,6 @@ export default function RapportDétailléTableauChantiers({ données }: RapportD
 
   return (
     <RapportDétailléTableauChantiersStyled className='fr-table fr-m-0 fr-p-0'>
-      <Titre
-        baliseHtml="h3"
-        className="fr-text--lg fr-mb-2w"
-      >
-        {`Liste des chantiers (${tableau.getFilteredRowModel().rows.length})`}
-      </Titre>
       {
         tableau.getRowModel().rows.length === 0
           ?

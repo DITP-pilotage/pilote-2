@@ -3,6 +3,7 @@ import '@gouvfr/dsfr/dist/component/link/link.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import Link from 'next/link';
+import { useState } from 'react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Avancements from '@/components/_commons/Avancements/Avancements';
@@ -28,6 +29,9 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   const { auClicTerritoireCallback } = useCartographie();
+
+  const [nombreChantiersDansLeTableau, setNombreChantiersDansLeTableau] = useState<number>();
+
   const {
     nombreFiltresActifs,
     chantiersFiltrés,
@@ -133,10 +137,10 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
             <Bloc>
               <Titre
                 baliseHtml="h2"
-                className="fr-text--lg"
+                className="fr-text--lg fr-mb-0"
               >
                 Liste des chantiers (
-                { 100 }
+                { nombreChantiersDansLeTableau }
                 )
               </Titre>
               <Infobulle>
@@ -144,6 +148,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
               </Infobulle>
               <TableauChantiers
                 données={donnéesTableauChantiers}
+                setNombreChantiersDansLeTableau={setNombreChantiersDansLeTableau}
               />
             </Bloc>
           </div>

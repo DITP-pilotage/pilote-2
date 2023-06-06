@@ -2,20 +2,17 @@ import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
 import { useEffect } from 'react';
-import Titre from '@/components/_commons/Titre/Titre';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import useTableauChantiers from '@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers';
 import TableauChantiersActionsDeTri from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
 import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
 import TableauRéformesEnTête from '@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête';
-import Infobulle from '@/components/_commons/Infobulle/Infobulle';
-import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersStyled from './TableauChantiers.styled';
 import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
 
-export default function TableauChantiers({ données }: TableauChantiersProps) {
+export default function TableauChantiers({ données, setNombreChantiersDansLeTableau }: TableauChantiersProps) {
   const estVueMobile = estVueMobileStore();
   const {
     tableau,
@@ -32,18 +29,16 @@ export default function TableauChantiers({ données }: TableauChantiersProps) {
     tableau.setPageSize(50);
   }, [tableau]);
 
+  useEffect(() => {
+    if (setNombreChantiersDansLeTableau) {
+      setNombreChantiersDansLeTableau(tableau.getFilteredRowModel().rows.length);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tableau.getFilteredRowModel().rows.length]);
+
   return (
     <TableauChantiersStyled className='fr-table fr-m-0 fr-p-0'>
-      <Titre
-        baliseHtml="h2"
-        className="fr-text--lg"
-      >
-        {`Liste des chantiers (${tableau.getFilteredRowModel().rows.length})`}
-      </Titre>
-      <Infobulle>
-        { INFOBULLE_CONTENUS.chantiers.listeDesChantiers }
-      </Infobulle>
-      <div className='tableau-actions fr-mb-3v fr-mt-1w'>
+      <div className='tableau-actions fr-mb-3v'>
         <div className="tableau-actions-gauche">
           <div className="barre-de-recherche">
             <BarreDeRecherche
