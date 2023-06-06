@@ -1,5 +1,67 @@
 export const wordingFr = {
   PAGE_IMPORT_MESURE_INDICATEUR: {
+    SECTION_EXPLICATION_ETAPE_IMPORT : {
+      TITRE: '3 étapes pour mettre à jour vos données',
+      ETAPE_SELECTION_INDICATEUR: {
+        TITRE: 'Sélectionner l’indicateur',
+        SOUS_TITRE_SELECTEUR: 'Sélectionnez l’indicateur',
+        TEXTE: 'Sélectionnez l’indicateur que vous souhaitez mettre à jour et cliquez sur le bouton “suivant”. Vous pourrez ensuite télécharger le modèle à remplir ou adapter votre fichier au formalisme demandé. ',
+      },
+      ETAPE_CHARGER_FICHIER: {
+        TITRE: 'Charger le fichier',
+        SOUS_TITRE_SELECTEUR: 'Chargez votre fichier et vérifiez sa conformité',
+        TEXTE: 'Dès que votre fichier vous semble correct, vous pouvez le charger pour vérifier que les données sont au bon format. Un rapport d’erreurs vous renseignera sur les potentiels éléments à adapter.',
+      },
+      ETAPE_PUBLIER_FICHIER: {
+        TITRE: 'Publier le fichier validé',
+        SOUS_TITRE_SELECTEUR: 'Vérifiez les valeurs saisies avant de publier vos données',
+        TEXTE: 'Prévisualisez vos données et validez la publication. Vous devrez ensuite attendre quelques jours pour que ces données soient prises en compte dans le calcul des taux d’avancement. Vous pouvez mettre à jour d’autres indicateurs.',
+      },
+    },
+    SECTION_ETAPE_IMPORT: {
+      TITRE: 'Importez vos données',
+      ETAPE_SELECTION_INDICATEUR: {
+        TITRE: 'Pour quel indicateur souhaitez vous mettre à jour les données ?',
+        LABEL_BOUTON_VERIFIER_FICHIER: 'Vérifier le fichier',
+        LABEL_BOUTON_PROCHAINE_ETAPE: 'Suivant',
+      },
+      ETAPE_CHARGER_FICHIER: {
+        TITRE: 'Vos données doivent être au bon format pour être importées dans PILOTE',
+        SOUS_TITRE: 'Si vous avez déjà un fichier en votre possession, chargez votre fichier, nous vous indiquerons s’il est correctement formaté ou s’il doit être adapté.',
+        LABEL_BOUTON_CHARGER_FICHIER: (indicateurNom: string) => `Ajouter un fichier pour l’indicateur ${indicateurNom}`,
+        LABEL_BOUTON_PROCHAINE_ETAPE: 'Suivant',
+        TITRE_ALERT_SUCCES: 'Bravo, le fichier est conforme !',
+        MESSAGE_ALERT_SUCCES: 'Passez à l’étape suivante pour prévisualiser les données et confirmer leur publication.',
+        TITRE_ALERT_ERREUR: 'Le fichier ne peut pas être importé',
+        MESSAGE_ALERT_ERREUR: 'Il contient des erreurs expliquées dans le rapport d’erreurs ci-dessous. Nous vous recommandons de consulter les ressources et/ou de remplir le modèle de fichier à remplir.',
+        TABLEAU_ERREUR: {
+          ENTETE: {
+            NOM: 'Nom',
+            CELLULE: 'Cellule',
+            MESSAGE: 'Message',
+            NOM_DU_CHAMP: 'Nom du champ',
+            NUMERO_DE_LIGNE: 'Numéro de ligne',
+            POSITION_DE_LIGNE: 'Position de ligne',
+            POSITION_DU_CHAMP: 'Position du champ',
+          },
+        },
+      },
+      ETAPE_PUBLIER_FICHIER: {
+        TITRE: 'Pour quel indicateur souhaitez vous mettre à jour les données ?',
+        TABLEAU_PREVISUALISATION: {
+          ENTETE: {
+            IDENTIFIANT_INDIC: 'identifiant_indic',
+            ZONE_ID: 'zone_id',
+            DATE_VALEUR: 'date_valeur',
+            TYPE_VALEUR: 'type_valeur',
+            VALEUR: 'valeur',
+          },
+        },
+        LABEL_BOUTON_PROCHAINE_ETAPE: 'Publier les données',
+        TITRE_ALERT_SUCCES: (indicateurId: string) => `Les données ont été importées avec succès pour l’indicateur ${indicateurId}`,
+        MESSAGE_ALERT_SUCCES: 'La mise à jour des taux d’avancement sera effective dans une durée maximale de 24h. Vous pouvez, en attendant, mettre à jour d’autres indicateurs.',
+      },
+    },
     SECTION_RESSOURCE: {
       TITRE: 'Ressources',
       SECTION_EXPLICATION_IMPORT: {
@@ -71,7 +133,7 @@ export const wordingFr = {
         TITRE: 'Comment bien remplir le fichier d’import ?',
         EXPLICATION_FICHIER_1: 'Si vous choisissez le format CSV pour importer les données, veuillez utiliser la virgule (,) pour délimiter les colonnes et les guillemets (") pour délimiter les chaines de caractères',
         EXPLICATION_FICHIER_2: 'Si vous choisissez le format xlsx, évitez d’utiliser des formules dans les cellules',
-        EXPLICATION_FICHIER_3: 'Si vous saisissez un taux, la valeur saisie doit se trouver entre [0,100] (et non [0,1])',
+        EXPLICATION_FICHIER_3: 'Si vous saisissez un taux, la valeur saisie doit se trouver entre 1 et 100. Par exemple, pour 78%, renseignez la valeur 78.',
         EXPLICATION_FICHIER_4: 'Si vous saisissez un nombre avec une décimale, mettez une virgule et non un point',
         EXPLICATION_FICHIER_5: 'L\'encodage du fichier doit être en UTF-8',
         EXPLICATION_FICHIER_6: 'Si vous importez une cellule vide, la valeur précédente sera écrasée (si existante)',

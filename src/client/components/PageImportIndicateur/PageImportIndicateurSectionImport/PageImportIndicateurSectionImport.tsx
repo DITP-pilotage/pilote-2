@@ -14,10 +14,15 @@ import ResultatValidationFichier
 import FormulairePublierImportIndicateur
   from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireImportIndicateur/FormulairePublierImportIndicateur';
 import Alerte from '@/components/_commons/Alerte/Alerte';
+import { wording } from '@/client/utils/i18n/i18n';
 import PageImportIndicateurSectionImportStyled from './PageImportIndicateurSectionImport.styled';
 import { PageImportIndicateurSectionImportProps } from './PageImportIndicateurSectionImport.interface';
 
-const étapes = ['Sélectionnez l’indicateur', 'Chargez votre fichier et vérifiez sa conformité', 'Vérifiez les valeurs saisies avant de publier vos données'];
+const étapes = [
+  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_EXPLICATION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.SOUS_TITRE_SELECTEUR,
+  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_EXPLICATION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.SOUS_TITRE_SELECTEUR,
+  wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_EXPLICATION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.SOUS_TITRE_SELECTEUR,
+];
 
 export default function PageImportIndicateurSectionImport({
   indicateurs,
@@ -49,7 +54,7 @@ export default function PageImportIndicateurSectionImport({
     <PageImportIndicateurSectionImportStyled>
       <div className='fr-container fr-py-3w'>
         <Titre baliseHtml='h2'>
-          Importez vos données
+          {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.TITRE}
         </Titre>
         <Bloc>
           <IndicateurDEtapes
@@ -61,7 +66,7 @@ export default function PageImportIndicateurSectionImport({
             method='GET'
           >
             <Titre baliseHtml='h4'>
-              Pour quel indicateur souhaitez vous mettre à jour les données ?
+              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.TITRE}
             </Titre>
             <input
               name='etapeCourante'
@@ -74,23 +79,22 @@ export default function PageImportIndicateurSectionImport({
               options={optionsSélecteur}
             />
             <div className='fr-mt-4w'>
-              <SubmitBouton label="Suivant" />
+              <SubmitBouton
+                label={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_PROCHAINE_ETAPE}
+              />
             </div>
           </form>
           <div
             className={`${etapeCourante != Etapes.VERIFIER_FICHIER && 'fr-hidden'}`}
           >
             <Titre baliseHtml='h4'>
-              Vos données doivent être structurées pour être importées dans PILOTE
+              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.TITRE}
             </Titre>
             <p>
-              Si vous avez déjà un fichier en votre possession, chargez votre fichier, nous vous indiquerons s’il est
-              correctement formaté ou s’il doit être adapté.
+              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.SOUS_TITRE}
             </p>
             <p>
-              Ajouter un fichier pour l’indicateur
-              {' '}
-              {indicateur?.nom}
+              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.LABEL_BOUTON_CHARGER_FICHIER(indicateur?.nom)}
             </p>
             <FormulaireIndicateur
               chantierId={chantierId}
@@ -120,7 +124,9 @@ export default function PageImportIndicateurSectionImport({
                       type="hidden"
                       value={rapport?.id}
                     />
-                    <SubmitBouton label="Suivant" />
+                    <SubmitBouton
+                      label={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.LABEL_BOUTON_PROCHAINE_ETAPE}
+                    />
                   </form>
                 </div>
                 : null
@@ -131,8 +137,8 @@ export default function PageImportIndicateurSectionImport({
               estFichierPublie ?
                 <div className="fr-mt-4w">
                   <Alerte
-                    message='La mise à jour des taux d’avancement sera effective dans une durée maximale de 24h. Vous pouvez, en attendant, mettre à jour d’autres indicateurs.'
-                    titre={`Les données ont été importées avec succès pour l’indicateur ${indicateurId}`}
+                    message={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.MESSAGE_ALERT_SUCCES}
+                    titre={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TITRE_ALERT_SUCCES(indicateurId)}
                     type='succès'
                   />
                 </div>
@@ -142,19 +148,20 @@ export default function PageImportIndicateurSectionImport({
                     <thead>
                       <tr>
                         <th>
-                          identifiant_indic
+                          {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.IDENTIFIANT_INDIC}
                         </th>
                         <th>
-                          zone_id
+                          {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.ZONE_ID}
                         </th>
                         <th>
-                          date_valeur
+                          {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.DATE_VALEUR}
                         </th>
                         <th>
-                          type_valeur
+                          {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.TYPE_VALEUR}
                         </th>
                         <th>
-                          valeur
+                          {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TABLEAU_PREVISUALISATION.ENTETE.VALEUR}
+
                         </th>
                       </tr>
                     </thead>
