@@ -1,5 +1,6 @@
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 import { usePublierIndicateur } from '@/hooks/usePublierIndicateur';
+import { wording } from '@/client/utils/i18n/i18n';
 import { FormulairePublierImportIndicateurProps } from './FormulairePublierImportIndicateur.interface';
 
 export default function FormulairePublierImportIndicateur({
@@ -16,7 +17,7 @@ export default function FormulairePublierImportIndicateur({
       onSubmit={publierLeFichier}
     >
       <SubmitBouton
-        label='Publier les données'
+        label={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.LABEL_BOUTON_PROCHAINE_ETAPE}
       />
     </form>
   );

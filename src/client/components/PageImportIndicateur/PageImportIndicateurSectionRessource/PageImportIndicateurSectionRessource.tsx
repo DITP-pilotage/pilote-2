@@ -162,7 +162,7 @@ export function PageImportIndicateurSectionRessource() {
             {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.SOUS_TITRE}
           </p>
           <div className="flex">
-            <div className="fr-download fr-mr-3w">
+            <div className="fr-download fr-mr-3w fr-hidden">
               <p>
                 <a
                   className="fr-download__link"

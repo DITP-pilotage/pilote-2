@@ -1,6 +1,7 @@
 import InputFichier from '@/components/_commons/InputFichier/InputFichier';
 import { useFormulaireIndicateur } from '@/hooks/useFomulaireIndicateur';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
+import { wording } from '@/client/utils/i18n/i18n';
 import { FormulaireIndicateurProps } from './FormulaireIndicateur.interface';
 
 export default function FormulaireIndicateur({ chantierId, indicateurId, setRapport }: FormulaireIndicateurProps) {
@@ -16,7 +17,7 @@ export default function FormulaireIndicateur({ chantierId, indicateurId, setRapp
       />
       <SubmitBouton
         disabled={!file}
-        label='Vérifier le fichier'
+        label={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_VERIFIER_FICHIER}
       />
     </form>
   );
