@@ -20,6 +20,7 @@ import FiltresActifs from '@/client/components/PageAccueil/FiltresActifs/Filtres
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
+import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import PageChantiersStyled from './PageChantiers.styled';
 import PageChantiersProps from './PageChantiers.interface';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
@@ -105,30 +106,34 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
           <div className="fr-col-12 fr-col-lg-6">
             <Bloc>
               <section>
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg"
-                  estInlineBlock
-                >
-                  Taux d’avancement moyen
-                </Titre>
-                <Infobulle>
-                  { INFOBULLE_CONTENUS.chantiers.jauges }
-                </Infobulle>
+                <TitreInfobulleConteneur>
+                  <Titre
+                    baliseHtml="h2"
+                    className="fr-text--lg"
+                    estInlineBlock
+                  >
+                    Taux d’avancement moyen
+                  </Titre>
+                  <Infobulle>
+                    { INFOBULLE_CONTENUS.chantiers.jauges }
+                  </Infobulle>
+                </TitreInfobulleConteneur>
                 <Avancements avancements={avancementsAgrégés} />
               </section>
               <hr className="fr-hr fr-mt-3w fr-mb-3v fr-pb-1v" />
               <section>
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg"
-                  estInlineBlock
-                >
-                  Répartition des météos renseignées
-                </Titre>
-                <Infobulle>
-                  { INFOBULLE_CONTENUS.chantiers.météos }
-                </Infobulle>
+                <TitreInfobulleConteneur>
+                  <Titre
+                    baliseHtml="h2"
+                    className="fr-text--lg"
+                    estInlineBlock
+                  >
+                    Répartition des météos renseignées
+                  </Titre>
+                  <Infobulle>
+                    { INFOBULLE_CONTENUS.chantiers.météos }
+                  </Infobulle>
+                </TitreInfobulleConteneur>
                 <RépartitionMétéo météos={répartitionMétéos} />
               </section>
             </Bloc>
@@ -137,18 +142,20 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
         <div className="fr-grid-row fr-mt-7v">
           <div className="fr-col">
             <Bloc>
-              <Titre
-                baliseHtml="h2"
-                className="fr-text--lg fr-mb-0"
-                estInlineBlock
-              >
-                Liste des chantiers (
-                { nombreChantiersDansLeTableau }
-                )
-              </Titre>
-              <Infobulle>
-                { INFOBULLE_CONTENUS.chantiers.listeDesChantiers }
-              </Infobulle>
+              <TitreInfobulleConteneur>
+                <Titre
+                  baliseHtml="h2"
+                  className="fr-text--lg fr-mb-0"
+                  estInlineBlock
+                >
+                  Liste des chantiers (
+                  { nombreChantiersDansLeTableau }
+                  )
+                </Titre>
+                <Infobulle>
+                  { INFOBULLE_CONTENUS.chantiers.listeDesChantiers }
+                </Infobulle>
+              </TitreInfobulleConteneur>
               <TableauChantiers
                 données={donnéesTableauChantiers}
                 setNombreChantiersDansLeTableau={setNombreChantiersDansLeTableau}

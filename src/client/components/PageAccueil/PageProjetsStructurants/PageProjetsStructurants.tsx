@@ -9,6 +9,7 @@ import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDe
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
+import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import usePageProjetsStructurants from './usePageProjetsStructurants';
 import PageProjetsStructurantsProps from './PageProjetsStructurants.interface';
 import TableauProjetsStructurants from './TableauProjetsStructurants/TableauProjetsStructurants';
@@ -64,16 +65,18 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
           <div className="fr-col-12 fr-col-lg-6">
             <Bloc>
               <section>
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg"
-                  estInlineBlock
-                >
-                  Taux d’avancement moyen
-                </Titre>
-                <Infobulle>
-                  { INFOBULLE_CONTENUS.projetsStructurants.jauges }
-                </Infobulle>
+                <TitreInfobulleConteneur>
+                  <Titre
+                    baliseHtml="h2"
+                    className="fr-text--lg"
+                    estInlineBlock
+                  >
+                    Taux d’avancement moyen
+                  </Titre>
+                  <Infobulle>
+                    { INFOBULLE_CONTENUS.projetsStructurants.jauges }
+                  </Infobulle>
+                </TitreInfobulleConteneur>
                 <div className='fr-grid-row fr-grid-row--center'>
                   <JaugeDeProgression
                     couleur='rose'
@@ -85,16 +88,18 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
               </section>
               <hr className="fr-hr fr-my-3w fr-pb-1v" />
               <section>
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg"
-                  estInlineBlock
-                >
-                  Répartition des météos renseignées
-                </Titre>
-                <Infobulle>
-                  { INFOBULLE_CONTENUS.projetsStructurants.météos }
-                </Infobulle>
+                <TitreInfobulleConteneur>
+                  <Titre
+                    baliseHtml="h2"
+                    className="fr-text--lg"
+                    estInlineBlock
+                  >
+                    Répartition des météos renseignées
+                  </Titre>
+                  <Infobulle>
+                    { INFOBULLE_CONTENUS.projetsStructurants.météos }
+                  </Infobulle>
+                </TitreInfobulleConteneur>
                 <RépartitionMétéo météos={répartitionMétéos} />
               </section>
             </Bloc>
@@ -103,18 +108,20 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
         <div className="fr-grid-row fr-mt-7v">
           <div className="fr-col">
             <Bloc>
-              <Titre
-                baliseHtml="h2"
-                className="fr-text--lg fr-mb-0"
-                estInlineBlock
-              >
-                Liste des projets structurants (
-                { nombreProjetsStructurantsDansLeTableau }
-                )
-              </Titre>
-              <Infobulle>
-                { INFOBULLE_CONTENUS.projetsStructurants.listeDesProjetsStructurants }
-              </Infobulle>
+              <TitreInfobulleConteneur>
+                <Titre
+                  baliseHtml="h2"
+                  className="fr-text--lg fr-mb-0"
+                  estInlineBlock
+                >
+                  Liste des projets structurants (
+                  { nombreProjetsStructurantsDansLeTableau }
+                  )
+                </Titre>
+                <Infobulle>
+                  { INFOBULLE_CONTENUS.projetsStructurants.listeDesProjetsStructurants }
+                </Infobulle>
+              </TitreInfobulleConteneur>
               <TableauProjetsStructurants
                 données={projetsDuTerritoireSélectionnéEtTerritoiresEnfants}
                 setNombreProjetsStructurantsDansLeTableau={setNombreProjetsStructurantsDansLeTableau}
