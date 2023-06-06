@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import Titre from '@/components/_commons/Titre/Titre';
 import { estVueMobileStore } from '@/client/stores/useEstVueMobileStore/useEstVueMobileStore';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import TableauRéformesEnTête from '@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête';
@@ -9,7 +10,7 @@ import useTableauProjetsStructurants from './useTableauProjetsStructurants';
 import TableauProjetsStructurantsContenu from './Contenu/TableauProjetsStructurantsContenu';
 import TableauProjetsStructurantsStyled from './TableauProjetsStructurants.styled';
 
-export default function TableauProjetsStructurants({ données, setNombreProjetsStructurantsDansLeTableau }: TableauProjetsStructurantsProps) {
+export default function TableauProjetsStructurants({ données }: TableauProjetsStructurantsProps) {
   const estVueMobile = estVueMobileStore();
 
   const {
@@ -27,15 +28,16 @@ export default function TableauProjetsStructurants({ données, setNombreProjetsS
     tableau.setPageSize(50);
   }, [tableau]);
 
-  useEffect(() => {
-    setNombreProjetsStructurantsDansLeTableau(tableau.getFilteredRowModel().rows.length);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tableau.getFilteredRowModel().rows.length]);
-
   return (
     <TableauProjetsStructurantsStyled className='fr-table fr-m-0 fr-p-0'>
-      <div className='tableau-actions fr-mb-3v'>
-        <div className="tableau-actions-gauche fr-py-1w">
+      <Titre
+        baliseHtml="h2"
+        className="fr-text--lg"
+      >
+        {`Liste des projets structurants (${tableau.getFilteredRowModel().rows.length})`}
+      </Titre>
+      <div className='tableau-actions fr-mb-3v fr-mt-1w'>
+        <div className="tableau-actions-gauche">
           <div className="barre-de-recherche">
             <BarreDeRecherche
               changementDeLaRechercheCallback={changementDeLaRechercheCallback}
