@@ -5,6 +5,8 @@ import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nexta
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import RécupérerChantiersUseCase from '@/server/usecase/chantier/RécupérerChantiersUseCase';
 import RécupérerPérimètresMinistérielsUseCase from '@/server/usecase/périmètreMinistériel/RécupérerPérimètresMinistérielsUseCase';
+import MultiSelect from '@/components/_commons/MultiSelect/MultiSelect';
+import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
 
 interface NextPageCréerUtilisateurProps {
   chantiers: Record<Chantier['id'], {
@@ -16,8 +18,15 @@ interface NextPageCréerUtilisateurProps {
 }
 
 export default function NextPageCréerUtilisateur({ chantiers, périmètresMinistériels } : NextPageCréerUtilisateurProps) {
-  console.log({ chantiers, périmètresMinistériels } );
-  return null;
+  return (
+    <div className='fr-container'>
+      <div className='fr-grid-row fr-m-5w'>
+        <div className='fr-col'>
+          <MultiSelectTerritoire />
+        </div>
+      </div>
+    </div>
+  );
   // return (
   //   <NextPageCréerUtilisateur
   //     chantiers={chantiers}
