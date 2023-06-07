@@ -59,7 +59,10 @@ SELECT m_indicateurs.id,
     m_indicateurs.description,
     m_indicateurs.source,
     m_indicateurs.mode_de_calcul,
-    CONCAT(chantiers_ayant_des_indicateurs.maille, '-', chantiers_ayant_des_indicateurs.code_insee) as territoire_code
+    CONCAT(chantiers_ayant_des_indicateurs.maille, '-', chantiers_ayant_des_indicateurs.code_insee) as territoire_code,
+    parametrage_indicateurs.poids_pourcent_dept as ponderation_dept,
+    parametrage_indicateurs.poids_pourcent_nat as ponderation_nat,
+    parametrage_indicateurs.poids_pourcent_reg as ponderation_reg
 FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
 	JOIN {{ ref('int_chantiers_with_mailles_and_territoires') }} chantiers_ayant_des_indicateurs ON m_indicateurs.chantier_id = chantiers_ayant_des_indicateurs.id
 	LEFT JOIN avancement_indicateur ON m_indicateurs.id = avancement_indicateur.indicateur_id
@@ -73,4 +76,5 @@ FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
 	    AND chantiers_ayant_des_indicateurs.id = d_indicateurs.code_chantier  -- TODO: a supprimer car temporaire pour bug dfakto avec ligne 43 du fichier int_dfakto_indicateurs_metrics.sql
 	    AND chantiers_ayant_des_indicateurs.zone_id = d_indicateurs.zone_code
 	    AND d_indicateurs.nom_structure IN ('Département', 'Région', 'Chantier')
+	LEFT JOIN {{ ref('stg_ppg_metadata__parametrage_indicateurs') }} parametrage_indicateurs ON parametrage_indicateurs.indicateur_id = m_indicateurs.id
 ORDER BY m_indicateurs.nom, chantiers_ayant_des_indicateurs.maille, chantiers_ayant_des_indicateurs.code_insee, d_indicateurs.date_valeur_actuelle DESC
