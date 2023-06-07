@@ -3,6 +3,10 @@ import styled from '@emotion/styled';
 const RépartitionMétéoStyled = styled.ul`
   list-style: none;
 
+  .fr-col-3 {
+    padding: .5rem;
+  }
+
   @media screen and (max-width: 48rem) {
     .fr-col-3 {
       padding: .125rem;
