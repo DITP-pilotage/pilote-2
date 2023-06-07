@@ -1,14 +1,19 @@
-WITH faits_indicateur__national as (
+WITH faits_indicateur__national_user_input as (
     SELECT
-        indicateur_id,
-        zone_id,
-        mois_releve,
-        type_mesure,
-        valeur,
-        zone_code,
-        zone_type
-    FROM {{ ref("faits_indicateur_deduplique") }}
+        fi_deduplique.indicateur_id,
+        fi_deduplique.zone_id,
+        fi_deduplique.mois_releve,
+        fi_deduplique.type_mesure,
+        fi_deduplique.valeur,
+        fi_deduplique.zone_code,
+        fi_deduplique.zone_type
+    FROM {{ ref("faits_indicateur_deduplique") }} fi_deduplique
+    LEFT JOIN {{ ref("stg_ppg_metadata__parametrage_indicateurs") }} parametrage_indicateurs
+        ON fi_deduplique.indicateur_id = parametrage_indicateurs.indicateur_id
     WHERE zone_type = 'NAT'
+        AND (parametrage_indicateurs.vi_nat_from = 'user_input' AND fi_deduplique.type_mesure = 'vi')
+        OR (parametrage_indicateurs.va_nat_from = 'user_input' AND fi_deduplique.type_mesure = 'va')
+        OR (parametrage_indicateurs.vc_nat_from = 'user_input' AND fi_deduplique.type_mesure = 'vc')
 )
 
 SELECT
@@ -27,12 +32,39 @@ FROM
     {{ ref("faits_indicateur_regional") }} fi_reg
     INNER JOIN {{ ref("stg_ppg_metadata__parametrage_indicateurs") }} parametrage_indicateurs
         ON fi_reg.indicateur_id = parametrage_indicateurs.indicateur_id
-WHERE fi_reg.indicateur_id NOT IN (SELECT indicateur_id FROM faits_indicateur__national) -- condition temporaire en attendant le paramétrage
+WHERE parametrage_indicateurs.vi_nat_from='REG'
+    OR parametrage_indicateurs.va_nat_from='REG'
+    OR parametrage_indicateurs.vc_nat_from='REG'
 GROUP BY
     fi_reg.indicateur_id,
     fi_reg.zone_id_parent,
     fi_reg.mois_releve,
     fi_reg.type_mesure
 UNION
+SELECT
+    fi_dept.indicateur_id,
+    fi_dept.zone_id_parent as zone_id,
+    fi_dept.mois_releve,
+    fi_dept.type_mesure,
+    CASE
+        WHEN MAX(parametrage_indicateurs.vacg_operation) = 'sum' THEN SUM(fi_dept.valeur)
+        WHEN MAX(parametrage_indicateurs.vacg_operation) = 'avg' THEN AVG(fi_dept.valeur)
+        ELSE NULL
+    END AS valeur,
+    MAX(fi_dept.zone_code_parent) as zone_code,
+    MAX(fi_dept.zone_type_parent) as zone_type
+FROM
+    {{ ref("faits_indicateur_departemental") }} fi_dept
+    INNER JOIN {{ ref("stg_ppg_metadata__parametrage_indicateurs") }} parametrage_indicateurs
+        ON fi_dept.indicateur_id = parametrage_indicateurs.indicateur_id
+WHERE parametrage_indicateurs.vi_nat_from='DEPT'
+    OR parametrage_indicateurs.va_nat_from='DEPT'
+    OR parametrage_indicateurs.vc_nat_from='DEPT'
+GROUP BY
+    fi_dept.indicateur_id,
+    fi_dept.zone_id_parent,
+    fi_dept.mois_releve,
+    fi_dept.type_mesure
+UNION
 SELECT *
-FROM faits_indicateur__national
+FROM faits_indicateur__national_user_input
