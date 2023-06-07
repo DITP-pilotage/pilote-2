@@ -8,4 +8,15 @@ def model(dbt, session):
         sep=';'
     )
 
-    return fact_progress_kpis 
+    columns_type = {
+        'date_last_update_valeur_initiale': 'datetime64[ns]',
+        'date_last_update_valeur_actuelle': 'datetime64[ns]',
+        'date_last_update_valeur_cible': 'datetime64[ns]',
+        'valeur_initiale': 'float64',
+        'valeur_actuelle': 'float64',
+        'valeur_cible': 'float64',
+    }
+
+    fact_progress_kpis = fact_progress_kpis.astype(columns_type)
+
+    return fact_progress_kpis
