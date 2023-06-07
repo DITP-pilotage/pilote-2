@@ -1,4 +1,4 @@
-WITH faits_indicateur__national as (
+WITH faits_indicateur__national_user_input as (
     SELECT
         fi_deduplique.indicateur_id,
         fi_deduplique.zone_id,
@@ -11,7 +11,9 @@ WITH faits_indicateur__national as (
     LEFT JOIN {{ ref("stg_ppg_metadata__parametrage_indicateurs") }} parametrage_indicateurs
         ON fi_deduplique.indicateur_id = parametrage_indicateurs.indicateur_id
     WHERE zone_type = 'NAT'
-        AND parametrage_indicateurs.vi_nat_from='user_input'
+        AND (parametrage_indicateurs.vi_nat_from = 'user_input' AND fi_deduplique.type_mesure = 'vi')
+        OR (parametrage_indicateurs.va_nat_from = 'user_input' AND fi_deduplique.type_mesure = 'va')
+        OR (parametrage_indicateurs.vc_nat_from = 'user_input' AND fi_deduplique.type_mesure = 'vc')
 )
 
 SELECT
@@ -30,7 +32,9 @@ FROM
     {{ ref("faits_indicateur_regional") }} fi_reg
     INNER JOIN {{ ref("stg_ppg_metadata__parametrage_indicateurs") }} parametrage_indicateurs
         ON fi_reg.indicateur_id = parametrage_indicateurs.indicateur_id
-WHERE parametrage_indicateurs.vi_nat_from='REG' -- on considère que c'est la même agrégation pour vi, va, vc
+WHERE parametrage_indicateurs.vi_nat_from='REG'
+    OR parametrage_indicateurs.va_nat_from='REG'
+    OR parametrage_indicateurs.vc_nat_from='REG'
 GROUP BY
     fi_reg.indicateur_id,
     fi_reg.zone_id_parent,
@@ -53,7 +57,9 @@ FROM
     {{ ref("faits_indicateur_departemental") }} fi_dept
     INNER JOIN {{ ref("stg_ppg_metadata__parametrage_indicateurs") }} parametrage_indicateurs
         ON fi_dept.indicateur_id = parametrage_indicateurs.indicateur_id
-WHERE parametrage_indicateurs.vi_nat_from='DEPT' -- on considère que c'est la même agrégation pour vi, va, vc
+WHERE parametrage_indicateurs.vi_nat_from='DEPT'
+    OR parametrage_indicateurs.va_nat_from='DEPT'
+    OR parametrage_indicateurs.vc_nat_from='DEPT'
 GROUP BY
     fi_dept.indicateur_id,
     fi_dept.zone_id_parent,
@@ -61,4 +67,4 @@ GROUP BY
     fi_dept.type_mesure
 UNION
 SELECT *
-FROM faits_indicateur__national
+FROM faits_indicateur__national_user_input

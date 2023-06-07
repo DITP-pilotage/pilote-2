@@ -1,5 +1,5 @@
-WITH faits_indicateur__regions as (
-    SELECT
+WITH faits_indicateur__regions_user_input as (
+    SELECT -- premier select : les vi avec user input
         fi_deduplique.indicateur_id,
         fi_deduplique.zone_id,
         fi_deduplique.mois_releve,
@@ -14,7 +14,9 @@ WITH faits_indicateur__regions as (
     LEFT JOIN {{ ref("stg_ppg_metadata__parametrage_indicateurs") }} parametrage_indicateurs
         ON fi_deduplique.indicateur_id = parametrage_indicateurs.indicateur_id
     WHERE zone_type = 'REG'
-        AND parametrage_indicateurs.vi_reg_from='user_input'
+        AND (parametrage_indicateurs.vi_reg_from = 'user_input' AND fi_deduplique.type_mesure = 'vi')
+        OR (parametrage_indicateurs.va_reg_from = 'user_input' AND fi_deduplique.type_mesure = 'va')
+        OR (parametrage_indicateurs.vc_reg_from = 'user_input' AND fi_deduplique.type_mesure = 'vc')
 )
 
 SELECT
@@ -36,7 +38,9 @@ FROM
     {{ ref("faits_indicateur_departemental") }} fi_dept
     INNER JOIN {{ ref("stg_ppg_metadata__parametrage_indicateurs") }} parametrage_indicateurs
         ON fi_dept.indicateur_id = parametrage_indicateurs.indicateur_id
-WHERE parametrage_indicateurs.vi_reg_from='DEPT' -- on considère que c'est la même agrégation pour vi, va, vc
+WHERE parametrage_indicateurs.vi_reg_from='DEPT'
+    OR parametrage_indicateurs.va_reg_from='DEPT'
+    OR parametrage_indicateurs.vc_reg_from='DEPT'
 GROUP BY
     fi_dept.indicateur_id,
     fi_dept.zone_id_parent,
@@ -44,4 +48,4 @@ GROUP BY
     fi_dept.type_mesure
 UNION
 SELECT *
-from faits_indicateur__regions
+from faits_indicateur__regions_user_input
