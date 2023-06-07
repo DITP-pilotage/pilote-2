@@ -19,6 +19,22 @@ export default class IndicateurProjetStructurantRowBuilder {
    
   private _modeDeCalcul: indicateur_projet_structurant['mode_de_calcul'];
 
+  private _valeurActuelle: indicateur_projet_structurant['valeur_actuelle'];
+
+  private _valeurInitiale: indicateur_projet_structurant['valeur_initiale'];
+
+  private _valeurCible: indicateur_projet_structurant['valeur_cible'];
+
+  private _tauxAvancement: indicateur_projet_structurant['taux_avancement'];
+
+  private _dateValeurActuelle: indicateur_projet_structurant['date_valeur_actuelle'];
+
+  private _dateValeurInitiale: indicateur_projet_structurant['date_valeur_initiale'];
+
+  private _dateValeurCible: indicateur_projet_structurant['date_valeur_cible'];
+
+  private _dateTauxAvancement: indicateur_projet_structurant['date_taux_avancement'];
+
   constructor() {
     const projetStructantGénéré = new ProjetStructurantBuilder().build();
 
@@ -29,6 +45,14 @@ export default class IndicateurProjetStructurantRowBuilder {
     this._source = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._modeDeCalcul = générerPeutÊtreNull(0.2, faker.lorem.paragraph(5));
     this._projetStructurantCode = projetStructantGénéré.id;
+    this._valeurInitiale = faker.datatype.number({ precision: 0.01 });
+    this._valeurCible = faker.datatype.number({ min: this._valeurInitiale ?? 42, precision: 0.01 });  
+    this._valeurActuelle = faker.datatype.number({ min: this._valeurInitiale, max: this._valeurCible, precision: 0.01 });
+    this._tauxAvancement = générerPeutÊtreNull(0.1, faker.datatype.number({ min: 0, max: 100, precision: 0.01 }));
+    this._dateValeurInitiale = new Date('2020-06-01');
+    this._dateValeurActuelle = new Date('2023-06-01');
+    this._dateValeurCible = new Date('2024-06-01');
+    this._dateTauxAvancement = new Date('2023-06-01');
   }
 
   avecProjetStructurantCode(projetStructurantCode: indicateur_projet_structurant['projet_structurant_code']): IndicateurProjetStructurantRowBuilder {
@@ -40,11 +64,19 @@ export default class IndicateurProjetStructurantRowBuilder {
     return {
       id: this._id,
       nom: this._nom,
+      projet_structurant_code: this._projetStructurantCode,
       type_id: this._typeId,
       description: this._description,
       source: this._source,
       mode_de_calcul: this._modeDeCalcul,
-      projet_structurant_code: this._projetStructurantCode,
+      valeur_initiale: this._valeurInitiale,
+      valeur_actuelle: this._valeurActuelle,
+      valeur_cible: this._valeurCible,
+      taux_avancement: this._tauxAvancement,
+      date_valeur_initiale: this._dateValeurInitiale,
+      date_valeur_actuelle: this._dateValeurActuelle,
+      date_valeur_cible: this._dateValeurCible,
+      date_taux_avancement: this._dateTauxAvancement,
     };
   }
 

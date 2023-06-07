@@ -54,11 +54,23 @@ export const listeRubriquesIndicateursProjetStructurant: ÉlémentPageIndicateur
   { nom: 'Indicateurs financiers', ancre: 'financier', typeIndicateur: 'FINANCE' },
 ];
   
-export const listeRubriquesProjetStructurant: Rubrique[] = [
-  { nom: 'Avancement du projet', ancre: 'avancement' },
-  { nom: 'Responsables', ancre: 'responsables' },
-  { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
-  { nom: 'Objectifs', ancre: 'objectifs' },
-  { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: listeRubriquesIndicateursProjetStructurant },
-  { nom: 'Commentaires', ancre: 'commentaires' },
-];
+export const listeRubriquesProjetStructurant = (typesIndicateurs: TypeIndicateur[]): Rubrique[] => {
+  const rubriquesIndicateursNonVides = listeRubriquesIndicateursProjetStructurant.filter(
+    rubriqueIndicateur => typesIndicateurs.includes(rubriqueIndicateur.typeIndicateur),
+  );
+  
+  let rubriques = [];
+  rubriques = [
+    { nom: 'Avancement du projet', ancre: 'avancement' },
+    { nom: 'Responsables', ancre: 'responsables' },
+    { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
+    { nom: 'Objectifs', ancre: 'objectifs' },
+    { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: rubriquesIndicateursNonVides },
+    { nom: 'Commentaires', ancre: 'commentaires' },
+  ];
+
+  if (rubriquesIndicateursNonVides.length === 0)
+    rubriques = rubriques.filter(rubrique => rubrique.nom != 'Indicateurs');
+
+  return rubriques;
+};

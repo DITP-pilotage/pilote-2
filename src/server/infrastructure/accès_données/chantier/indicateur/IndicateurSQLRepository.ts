@@ -45,6 +45,32 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       },
     });
   }
+
+  private _mapDétailsToDomain(indicateurs: IndicateurPrisma[]): DétailsIndicateurs {
+    const détailsIndicateurs: DétailsIndicateurs = {};
+
+    for (const indic of indicateurs) {
+      if (!détailsIndicateurs[indic.id]) {
+        détailsIndicateurs[indic.id] = {};
+      }
+
+      détailsIndicateurs[indic.id][indic.code_insee] = {
+        codeInsee: indic.code_insee,
+        valeurInitiale: indic.valeur_initiale,
+        dateValeurInitiale: indic.date_valeur_initiale !== null ? indic.date_valeur_initiale.toISOString() : null,
+        valeurs: indic.evolution_valeur_actuelle ?? [],
+        dateValeurs: indic.evolution_date_valeur_actuelle.map((date) => date.toISOString()) ?? [],
+        valeurCible: indic.objectif_valeur_cible,
+        dateValeurCible: indic.objectif_date_valeur_cible,
+        avancement: {
+          global: indic.objectif_taux_avancement,
+          annuel: null,
+        },
+      };
+    }
+
+    return détailsIndicateurs;
+  }
   
   async récupérerChantierIdAssocié(id: string): Promise<string> {
     const indicateur = await this.prisma.indicateur.findFirst({
@@ -76,32 +102,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     const territoires = await this.prisma.territoire.findMany();
 
     return parseDétailsIndicateur(indicateur, territoires);
-  }
-
-  private _mapDétailsToDomain(indicateurs: IndicateurPrisma[]): DétailsIndicateurs {
-    const détailsIndicateurs: DétailsIndicateurs = {};
-
-    for (const indic of indicateurs) {
-      if (!détailsIndicateurs[indic.id]) {
-        détailsIndicateurs[indic.id] = {};
-      }
-
-      détailsIndicateurs[indic.id][indic.code_insee] = {
-        codeInsee: indic.code_insee,
-        valeurInitiale: indic.valeur_initiale,
-        dateValeurInitiale: indic.date_valeur_initiale !== null ? indic.date_valeur_initiale.toISOString() : null,
-        valeurs: indic.evolution_valeur_actuelle ?? [],
-        dateValeurs: indic.evolution_date_valeur_actuelle.map((date) => date.toISOString()) ?? [],
-        valeurCible: indic.objectif_valeur_cible,
-        dateValeurCible: indic.objectif_date_valeur_cible,
-        avancement: {
-          global: indic.objectif_taux_avancement,
-          annuel: null,
-        },
-      };
-    }
-
-    return détailsIndicateurs;
   }
 
   async récupérerGroupésParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<string, Indicateur[]>> {

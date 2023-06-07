@@ -8,12 +8,14 @@ import {
   DétailsIndicateurMailles,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import api from '@/server/infrastructure/api/trpc/api';
+import { TypeDeRéforme } from '@/components/PageAccueil/SélecteurTypeDeRéforme/SélecteurTypeDeRéforme.interface';
 
-export default function useIndicateurDétails(indicateurId: Indicateur['id'], futOuvert: boolean) {
+export default function useIndicateurDétails(indicateurId: Indicateur['id'], futOuvert: boolean, typeDeRéforme: TypeDeRéforme) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
   const [donnéesCartographieAvancement, setDonnéesCartographieAvancement] = useState<CartographieDonnéesAvancement | null>(null);
   const [donnéesCartographieValeurActuelle, setDonnéesCartographieValeurActuelle] = useState<CartographieDonnéesValeurActuelle | null>(null);
+  
   const { refetch: fetchDétailsIndicateur  } = api.indicateur.récupererDétailsIndicateur.useQuery(
     { indicateurId },
     {
@@ -31,10 +33,10 @@ export default function useIndicateurDétails(indicateurId: Indicateur['id'], fu
   );
 
   useEffect(() => {
-    if (futOuvert) {
+    if (futOuvert && typeDeRéforme === 'chantier') {
       fetchDétailsIndicateur();
     }
-  }, [fetchDétailsIndicateur, futOuvert, indicateurId, mailleSélectionnée]);
+  }, [fetchDétailsIndicateur, futOuvert, indicateurId, mailleSélectionnée, typeDeRéforme]);
 
   return {
     donnéesCartographieAvancement,

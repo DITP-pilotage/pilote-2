@@ -9,7 +9,6 @@ import { typesCommentaireProjetStructurant } from '@/server/domain/projetStructu
 import Titre from '@/client/components/_commons/Titre/Titre';
 import { listeRubriquesIndicateursProjetStructurant, listeRubriquesProjetStructurant } from '@/client/utils/rubriques';
 import Indicateurs from '@/client/components/_commons/Indicateurs/Indicateurs';
-import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import TitreInfobulleConteneur from '@/client/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import Infobulle from '@/client/components/_commons/Infobulle/Infobulle';
@@ -20,34 +19,7 @@ import PageProjetStructurantStyled from './PageProjetStructurant.styled';
 import AvancementPageProjetStructurant from './Avancement/Avancement';
 import usePageProjetStructurant from './usePageProjetStructurant';
 
-export default function PageProjetStructurant({ projetStructurant, indicateurs }: PageProjetStructurantProps) {
-  const détailsIndicateurs: DétailsIndicateurs = { 
-    'IND-001': {
-      [projetStructurant.territoire.codeInsee]: {
-        codeInsee: projetStructurant.territoire.codeInsee,
-        valeurInitiale: 10,
-        dateValeurInitiale: new Date().toISOString(),
-        valeurs: [34],
-        dateValeurs: [new Date().toISOString()],
-        valeurCible: 90,
-        dateValeurCible: new Date().toISOString(),
-        avancement: { global: 45, annuel: null },
-      },
-    },
-    'IND-002': {
-      [projetStructurant.territoire.codeInsee]: {
-        codeInsee: projetStructurant.territoire.codeInsee,
-        valeurInitiale: null,
-        dateValeurInitiale: null,
-        valeurs: [54],
-        dateValeurs: [new Date().toISOString()],
-        valeurCible: 96,
-        dateValeurCible: new Date().toISOString(),
-        avancement: { global: 56, annuel: null },
-      },
-    },
-  };
-
+export default function PageProjetStructurant({ projetStructurant, indicateurs, détailsIndicateurs }: PageProjetStructurantProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);  
   const { synthèseDesRésultats, objectif, commentaires } = usePageProjetStructurant(projetStructurant.id, projetStructurant.territoire.code);
 
@@ -57,7 +29,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs }
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
       >
-        <Sommaire rubriques={listeRubriquesProjetStructurant} />
+        <Sommaire rubriques={listeRubriquesProjetStructurant(indicateurs.map(i => i.type))} />
       </BarreLatérale>
       <main className='fr-pb-5w'>
         <button
@@ -70,9 +42,9 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs }
         </button>
         <PageProjetStructurantEnTête nomProjetStructurant={projetStructurant.nom} />
         <div className='fr-p-4w'>
-          <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-my-0 fr-pb-1w">
+          <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-my-0 fr-pb-4w">
             <section
-              className='fr-col-12 fr-col-md-6 rubrique'
+              className='fr-col-12 fr-col-md-6 fr-py-0 rubrique'
               id='avancement'
             >
               <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
@@ -93,12 +65,12 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs }
               />
             </section>
             <section
-              className='fr-col-12 fr-col-md-6 rubrique'
+              className='fr-col-12 fr-col-md-6 fr-py-0 rubrique'
               id="responsables"
             >
               <Titre
                 baliseHtml='h2'
-                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0 fr-py-1v'
               >
                 Responsables
               </Titre>
@@ -107,105 +79,102 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs }
                 responsables={projetStructurant.responsables}
               />
             </section>
-            <section
-              className='fr-col-12 rubrique'
-              id='synthèse'
-            >
-              <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
-                <Titre
-                  baliseHtml='h2'
-                  className='fr-h4'
-                  estInline
-                >
-                  Météo et synthèse des résultats
-                </Titre>
-                <Infobulle>
-                  {INFOBULLE_CONTENUS.projetStructurant.météoEtSynthèseDesRésultats}
-                </Infobulle>
-              </TitreInfobulleConteneur>
-              <SynthèseDesRésultats
-                estInteractif={false}
-                nomTerritoire={projetStructurant.territoire.nomAffiché}
-                rechargerRéforme={() => {}}
-                réformeId={projetStructurant.id}
-                synthèseDesRésultatsInitiale={synthèseDesRésultats}
-              />
-            </section>
           </div>
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <section
-              className="fr-col-12 rubrique"
-              id="objectifs"
-            >
-              <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
-                <Titre
-                  baliseHtml='h2'
-                  className='fr-h4'
-                  estInline
-                >
-                  Objectifs
-                </Titre>
-                <Infobulle>
-                  {INFOBULLE_CONTENUS.projetStructurant.objectifs}
-                </Infobulle>
-              </TitreInfobulleConteneur>
-              <Objectifs
-                estInteractif={false}
-                maille={projetStructurant.territoire.maille}
-                nomTerritoire={projetStructurant.territoire.nomAffiché}
-                objectifs={[objectif]}
-                réformeId={projetStructurant.id}
-                typesObjectif={[typeObjectifProjetStructurant]}
-              />
-            </section>
-          </div>
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <section
-              className="fr-col-12 rubrique"
-              id="indicateurs"
-            >
+          <section
+            className='rubrique fr-pb-4w'
+            id='synthèse'
+          >
+            <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
               <Titre
                 baliseHtml='h2'
-                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                className='fr-h4'
+                estInline
               >
-                Indicateurs
+                Météo et synthèse des résultats
               </Titre>
-              <Indicateurs
-                détailsIndicateurs={détailsIndicateurs}
-                indicateurs={indicateurs}
-                listeRubriquesIndicateurs={listeRubriquesIndicateursProjetStructurant}
-                territoireProjetStructurant={projetStructurant.territoire}
-                typeDeRéforme='projet structurant'
-              />
-            </section>
-          </div>
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <section
-              className="fr-col-12 rubrique"
-              id="commentaires"
-            >
-              <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+              <Infobulle>
+                {INFOBULLE_CONTENUS.projetStructurant.météoEtSynthèseDesRésultats}
+              </Infobulle>
+            </TitreInfobulleConteneur>
+            <SynthèseDesRésultats
+              estInteractif={false}
+              nomTerritoire={projetStructurant.territoire.nomAffiché}
+              rechargerRéforme={() => {}}
+              réformeId={projetStructurant.id}
+              synthèseDesRésultatsInitiale={synthèseDesRésultats}
+            />
+          </section>
+          <section
+            className="rubrique fr-pb-4w"
+            id="objectifs"
+          >
+            <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+              <Titre
+                baliseHtml='h2'
+                className='fr-h4'
+                estInline
+              >
+                Objectifs
+              </Titre>
+              <Infobulle>
+                {INFOBULLE_CONTENUS.projetStructurant.objectifs}
+              </Infobulle>
+            </TitreInfobulleConteneur>
+            <Objectifs
+              estInteractif={false}
+              maille={projetStructurant.territoire.maille}
+              nomTerritoire={projetStructurant.territoire.nomAffiché}
+              objectifs={[objectif]}
+              réformeId={projetStructurant.id}
+              typesObjectif={[typeObjectifProjetStructurant]}
+            />
+          </section>
+          {
+            !!détailsIndicateurs && indicateurs.length > 0 &&
+              <section
+                className="rubrique fr-pb-4w"
+                id="indicateurs"
+              >
                 <Titre
                   baliseHtml='h2'
-                  className='fr-h4'
-                  estInline
+                  className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
                 >
-                  Commentaires du projet structurant
+                  Indicateurs
                 </Titre>
-                <Infobulle>
-                  {INFOBULLE_CONTENUS.projetStructurant.commentaires}
-                </Infobulle>
-              </TitreInfobulleConteneur>
-              <Commentaires
-                commentaires={commentaires}
-                estInteractif={false}
-                maille={projetStructurant.territoire.maille}
-                nomTerritoire={projetStructurant.territoire.nomAffiché}
-                réformeId={projetStructurant.id}
-                typesCommentaire={typesCommentaireProjetStructurant}
-              />
-            </section>
-          </div>
+                <Indicateurs
+                  détailsIndicateurs={détailsIndicateurs}
+                  indicateurs={indicateurs}
+                  listeRubriquesIndicateurs={listeRubriquesIndicateursProjetStructurant}
+                  territoireProjetStructurant={projetStructurant.territoire}
+                  typeDeRéforme='projet structurant'
+                />
+              </section>
+          }
+          <section
+            className="rubrique fr-pb-4w"
+            id="commentaires"
+          >
+            <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+              <Titre
+                baliseHtml='h2'
+                className='fr-h4'
+                estInline
+              >
+                Commentaires du projet structurant
+              </Titre>
+              <Infobulle>
+                {INFOBULLE_CONTENUS.projetStructurant.commentaires}
+              </Infobulle>
+            </TitreInfobulleConteneur>
+            <Commentaires
+              commentaires={commentaires}
+              estInteractif={false}
+              maille={projetStructurant.territoire.maille}
+              nomTerritoire={projetStructurant.territoire.nomAffiché}
+              réformeId={projetStructurant.id}
+              typesCommentaire={typesCommentaireProjetStructurant}
+            />
+          </section>
         </div>
       </main>
     </PageProjetStructurantStyled>
