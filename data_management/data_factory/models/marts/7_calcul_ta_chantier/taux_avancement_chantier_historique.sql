@@ -1,6 +1,5 @@
 SELECT
     metadata_indicateur.chantier_id,
-    avancement_indicateur.indicateur_id,
     avancement_indicateur.zone_id,
     avancement_indicateur.date_releve,
     CASE
@@ -26,4 +25,4 @@ SELECT
 FROM {{ ref('taux_avancement_indicateur')}} avancement_indicateur
     LEFT JOIN {{ ref('stg_ppg_metadata__parametrage_indicateurs')}} parametrage ON avancement_indicateur.indicateur_id = parametrage.indicateur_id
     LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs')}} metadata_indicateur ON avancement_indicateur.indicateur_id = metadata_indicateur.id
-GROUP BY metadata_indicateur.chantier_id, avancement_indicateur.indicateur_id, avancement_indicateur.zone_id, avancement_indicateur.date_releve
+GROUP BY metadata_indicateur.chantier_id, avancement_indicateur.zone_id, avancement_indicateur.date_releve
