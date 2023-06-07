@@ -34,9 +34,9 @@ export default function TableauAdminUtilisateurs({ utilisateurs } :TableauAdminU
         baliseHtml='h2'
         className='fr-h4 fr-mt-3w  fr-mb-0 titre-tableau'
       >
-        {tableau.getRowModel().rows.length}
+        {tableau.getFilteredRowModel().rows.length}
         {' '}
-        {tableau.getRowModel().rows.length > 1 ? 'comptes' : 'compte'}
+        {tableau.getFilteredRowModel().rows.length > 1 ? 'comptes' : 'compte'}
       </Titre>
       <div className="fr-table">
         <table className='tableau fr-m-0 fr-p-0'>

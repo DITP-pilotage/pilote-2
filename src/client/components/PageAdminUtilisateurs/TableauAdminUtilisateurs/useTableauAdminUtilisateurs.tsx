@@ -33,9 +33,23 @@ const colonnes = [
     header: 'Fonction',
     cell: props => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor('dateModification', {
+  reactTableColonnesHelper.accessor(row =>  `${formaterDate(row.dateModification, 'jj/mm/aaaa')} par ${row.auteurModification}`, {
     header: 'Dernière modification',
-    cell: props => `${formaterDate(props.row.original.dateModification, 'jj/mm/aaaa')} par ${props.row.original.auteurModification}`,
+    cell: props => props.getValue(),
+    sortingFn: (a, b) => {
+      const dateA = new Date(a.original.dateModification);
+      const dateB = new Date(b.original.dateModification);
+
+      if ( dateA.getTime() > dateB.getTime()) {
+        return 1;
+      }
+
+      if ( dateA.getTime() < dateB.getTime()) {
+        return -1;
+      }
+
+      return 0;
+    },
   }),
 ];
 
@@ -49,6 +63,7 @@ export default function useTableauPageAdminUtilisateurs(utilisateurs :Utilisateu
   const tableau = useReactTable({
     data : utilisateurs,
     columns: colonnes,
+
     globalFilterFn: (ligne, colonneId, filtreValeur) => {
       return rechercheUnTexteContenuDansUnContenant(filtreValeur, ligne.getValue<ProjetStructurant>(colonneId).toString());
     },
