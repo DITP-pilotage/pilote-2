@@ -17,6 +17,8 @@ export default class IndicateurBuilder {
 
   private _modeDeCalcul: Indicateur['modeDeCalcul'];
 
+  private _pondération: Indicateur['pondération'];
+
   constructor() {
     this._id = générerUnIdentifiantUnique('IND');
     this._nom = `${this._id} ${faker.lorem.words()}`;
@@ -25,6 +27,11 @@ export default class IndicateurBuilder {
     this._description = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._source = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._modeDeCalcul = générerPeutÊtreNull(0.2, faker.lorem.paragraph(5));
+    this._pondération = {
+      nationale: faker.helpers.arrayElement([null, 0, faker.datatype.number({ min: 0, max: 100, precision: 2 })]),
+      régionale: faker.helpers.arrayElement([null, 0, faker.datatype.number({ min: 0, max: 100, precision: 2 })]),
+      départementale: faker.helpers.arrayElement([null, 0, faker.datatype.number({ min: 0, max: 100, precision: 2 })]),
+    };
   }
 
   avecId(id: Indicateur['id']): IndicateurBuilder {
@@ -62,6 +69,11 @@ export default class IndicateurBuilder {
     return this;
   }
 
+  avecPondération(pondération: Indicateur['pondération']): IndicateurBuilder {
+    this._pondération = pondération;
+    return this;
+  }
+
   build(): Indicateur {
     return {
       id: this._id,
@@ -71,6 +83,7 @@ export default class IndicateurBuilder {
       description: this._description,
       source: this._source,
       modeDeCalcul: this._modeDeCalcul,
+      pondération: this._pondération,
     };
   }
 }

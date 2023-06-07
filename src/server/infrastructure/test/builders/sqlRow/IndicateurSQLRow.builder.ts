@@ -56,6 +56,12 @@ export default class IndicateurRowBuilder {
 
   private _territoireCode: indicateur['territoire_code'];
 
+  private _ponderation_dept: indicateur['ponderation_dept'];
+
+  private _ponderation_reg: indicateur['ponderation_reg'];
+
+  private _ponderation_nat: indicateur['ponderation_nat'];
+
 
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
@@ -88,6 +94,9 @@ export default class IndicateurRowBuilder {
     this._source = indicateurGénéré.source;
     this._modeDeCalcul = indicateurGénéré.modeDeCalcul;
     this._territoireCode = `${this._maille}-${this._codeInsee}`;
+    this._ponderation_dept = indicateurGénéré.pondération.nationale;
+    this._ponderation_reg = indicateurGénéré.pondération.régionale;
+    this._ponderation_nat = indicateurGénéré.pondération.départementale;
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {
@@ -210,6 +219,21 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  avecPonderationDept(ponderation_dept: indicateur['ponderation_dept']): IndicateurRowBuilder {
+    this._ponderation_dept = ponderation_dept;
+    return this;
+  }
+
+  avecPonderationReg(ponderation_reg: indicateur['ponderation_reg']): IndicateurRowBuilder {
+    this._ponderation_reg = ponderation_reg;
+    return this;
+  }
+
+  avecPonderationNat(ponderation_nat: indicateur['ponderation_nat']): IndicateurRowBuilder {
+    this._ponderation_nat = ponderation_nat;
+    return this;
+  }
+
   build(): indicateur {
     return {
       id: this._id,
@@ -235,6 +259,9 @@ export default class IndicateurRowBuilder {
       source: this._source,
       mode_de_calcul: this._modeDeCalcul,
       territoire_code: this._territoireCode,
+      ponderation_dept: this._ponderation_dept,
+      ponderation_reg: this._ponderation_reg,
+      ponderation_nat: this._ponderation_nat,
     };
   }
 }
