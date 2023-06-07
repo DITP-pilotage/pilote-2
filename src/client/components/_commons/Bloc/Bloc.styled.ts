@@ -13,8 +13,10 @@ const BlocStyled = styled.div`
   
   @media print {
     height: unset;
+    border: 1px solid #7B7B7B;
     
     .titre {
+      border-radius: 8px 8px 0 0;
       break-after: avoid;
     }
   }

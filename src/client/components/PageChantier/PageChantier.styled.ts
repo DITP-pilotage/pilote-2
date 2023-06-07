@@ -32,10 +32,9 @@ const PageChantierStyled = styled.div`
     zoom: 125%;
     
     .texte-impression {
-      position: fixed;
       display: block;
       width: 100%;
-      text-align: right;
+      text-align: center
     }
     
     .rubrique {

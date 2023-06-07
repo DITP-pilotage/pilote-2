@@ -91,7 +91,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
       </BarreLatérale>
       <main className='fr-pb-5w'>
         <div className="texte-impression fr-mb-5w">
-          Pilote - Chantiers prioritaires / Extraction de la page chantier générée le
+          Pilote   •   Extrait de la page chantier généré le
           {' '}
           {new Date().toLocaleString('FR-fr')}
         </div>
