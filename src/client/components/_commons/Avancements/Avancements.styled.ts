@@ -12,6 +12,7 @@ const AvancementsStyled = styled.div`
   }
 
   @media (width < ${breakpointXL}) {
+    flex-basis: 100%;
     flex-wrap: wrap;
   }
   
