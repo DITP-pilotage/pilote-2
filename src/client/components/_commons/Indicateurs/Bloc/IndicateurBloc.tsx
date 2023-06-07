@@ -10,11 +10,11 @@ import FormulaireIndicateur from '@/components/PageImportIndicateur/PageImportIn
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import ResultatValidationFichier from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
-import { IndicateurBlocCaractéristiques } from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBlocCaractéristiques/IndicateurBlocCaractéristiques';
+import { IndicateurPondération } from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPondération';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
-export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, typeDeRéforme, territoireProjetStructurant, estDisponibleALImport = false } : IndicateurBlocProps) {
+export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, typeDeRéforme, territoireProjetStructurant, estDisponibleALImport = false }: IndicateurBlocProps) {
   const router = useRouter();
   const réformeId = router.query.id as string;
   
@@ -43,11 +43,21 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
                 }
                 {indicateur.nom}
               </Titre>
-              <div className="fr-ml-2w">
-                <IndicateurBlocCaractéristiques
-                  indicateurPondération={indicateur.pondération}
-                  mailleSélectionnée={mailleSélectionnée}
-                />
+              <div className="fr-ml-2w fr-mb-3w">
+                <p className="fr-mb-0 fr-text--xs texte-gris">
+                  Dernière mise à jour :
+                  {' '}
+                  <span className="fr-text--bold">
+                    Non renseigné
+                  </span>
+                </p>
+                {
+                !!indicateur.pondération && 
+                  <IndicateurPondération
+                    indicateurPondération={indicateur.pondération}
+                    mailleSélectionnée={mailleSélectionnée}
+                  />
+                }
               </div>
             </div>
             {

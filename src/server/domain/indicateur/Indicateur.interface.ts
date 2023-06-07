@@ -15,5 +15,5 @@ export default interface Indicateur {
   description: string | null;
   source: string | null;
   modeDeCalcul: string | null;
-  pondération: IndicateurPondération;
+  pondération?: IndicateurPondération;
 }
