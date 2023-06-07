@@ -105,6 +105,9 @@ model indicateur {
   mode_de_calcul                 String?
   territoire                     territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
   territoire_code                String
+  ponderation_dept               Float?
+  ponderation_reg                Float?
+  ponderation_nat                Float?
 
   @@id([id, code_insee, maille])
   @@schema("public")
