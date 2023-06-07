@@ -38,6 +38,11 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       description: indicateur.description,
       source: indicateur.source,
       modeDeCalcul: indicateur.mode_de_calcul,
+      pondération: {
+        nationale: indicateur.ponderation_nat,
+        régionale: indicateur.ponderation_reg,
+        départementale: indicateur.ponderation_dept,
+      },
     });
   }
   
