@@ -22,8 +22,8 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
                array_agg(p.nom order by p.nom) as perimetre_noms
         from perimetre p
                  left join ministere m on p.ministere_id = m.id
-        group by p.ministere_id, m.nom, m.icone
-        order by p.ministere_id, m.nom;
+        group by m.nom, p.ministere_id, m.icone
+        order by m.nom, p.ministere_id;
     `;
     return queryResults.map(queryResult => this.parseMinistère(queryResult));
   }
@@ -62,8 +62,8 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
         from perimetre p
                  JOIN perimetres_visibles pv ON pv.perimetre_id = p.id
                  left join ministere m on p.ministere_id = m.id
-        group by p.ministere_id, m.nom, m.icone
-        order by p.ministere_id, m.nom;
+        group by m.nom, p.ministere_id, m.icone
+        order by m.nom, p.ministere_id;
     `;
     return queryResults.map(queryResult => this.parseMinistère(queryResult));
   }
