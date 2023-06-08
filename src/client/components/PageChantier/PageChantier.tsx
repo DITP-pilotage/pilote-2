@@ -156,7 +156,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         >
                           Météo et synthèse des résultats
                         </Titre>
-                        <Infobulle>
+                        <Infobulle idHtml="infobulle-chantier-météoEtSynthèseDesRésultats">
                           { INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats }
                         </Infobulle>
                       </TitreInfobulleConteneur>
@@ -198,7 +198,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         >
                           Objectifs
                         </Titre>
-                        <Infobulle>
+                        <Infobulle idHtml="infobulle-chantier-objectifs">
                           { INFOBULLE_CONTENUS.chantier.objectifs }
                         </Infobulle>
                       </TitreInfobulleConteneur>
@@ -250,7 +250,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                           >
                             Décisions stratégiques
                           </Titre>
-                          <Infobulle>
+                          <Infobulle idHtml="infobulle-chantier-décisionsStratégiques">
                             { INFOBULLE_CONTENUS.chantier.décisionsStratégiques }
                           </Infobulle>
                         </TitreInfobulleConteneur>
@@ -277,7 +277,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         >
                           Commentaires du chantier
                         </Titre>
-                        <Infobulle>
+                        <Infobulle idHtml="infobulle-chantier-commentaires">
                           {
                           territoireSélectionné!.maille === 'nationale'
                             ? INFOBULLE_CONTENUS.chantier.commentaires.territoireNational

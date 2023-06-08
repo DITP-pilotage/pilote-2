@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 const InfobulleStyled = styled.div`
   display: inline-block;
+  color: var(--text-title-grey);
   vertical-align: -0.3em;
   
   .bouton:hover,
@@ -14,19 +15,12 @@ const InfobulleStyled = styled.div`
     right: 0;
     left: 0;
     z-index: 2;
-    display: none;
     max-width: 30rem;
     padding: 0.5rem;
-    background-color: var(--info-950-100);
-    border: 1px solid var(--border-disabled-grey);
+    background-color: var(--background-alt-blue-france);
+    border: 1px solid var(--background-action-high-blue-france);
     border-radius: 0.5rem;
     box-shadow: 0 4px 2px #0002;
-  }
-
-  &:hover {
-    .infobulle-texte {
-      display: block;
-    }
   }
 
   p {

@@ -114,7 +114,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                   >
                     Taux d’avancement moyen
                   </Titre>
-                  <Infobulle>
+                  <Infobulle idHtml="infobulle-chantiers-jauges">
                     { INFOBULLE_CONTENUS.chantiers.jauges }
                   </Infobulle>
                 </TitreInfobulleConteneur>
@@ -130,7 +130,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                   >
                     Répartition des météos renseignées
                   </Titre>
-                  <Infobulle>
+                  <Infobulle idHtml="infobulle-chantiers-météos">
                     { INFOBULLE_CONTENUS.chantiers.météos }
                   </Infobulle>
                 </TitreInfobulleConteneur>
@@ -152,7 +152,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                   { nombreChantiersDansLeTableau }
                   )
                 </Titre>
-                <Infobulle>
+                <Infobulle idHtml="infobulle-chantiers-listeDesChantiers">
                   { INFOBULLE_CONTENUS.chantiers.listeDesChantiers }
                 </Infobulle>
               </TitreInfobulleConteneur>
