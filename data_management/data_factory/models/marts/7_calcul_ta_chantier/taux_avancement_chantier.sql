@@ -4,8 +4,7 @@ WITH taux_avancement_chantier_historique as (
         *
     FROM {{ ref('taux_avancement_chantier_historique')}}
     WHERE taux_avancement_annuel IS NOT NULL
-    -- on retire les lignes dont le ta n'est pas calculé
-    -- => condition a vérifier mais en gros fallait pas récupérer la dernière par groupe car sinon tu as que la valeur cible sur cette ligne donc TA = NULL
+    -- on retire les lignes où le taa n'est pas calculé car si pas de taa alors pas de taab, tag, tagb
 )
 
 SELECT
