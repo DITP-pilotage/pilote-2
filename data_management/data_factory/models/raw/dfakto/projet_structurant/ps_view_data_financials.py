@@ -3,9 +3,9 @@ import os
 
 
 def model(dbt, session):
-    dump_dfakto_octo_ps = os.getenv('DUMP_DFAKTO_PS')
+    dump_dfakto_ps = os.getenv('DUMP_DFAKTO_TEMP')
     ps_view_data_financials = pd.read_csv(
-        f'{dump_dfakto_octo_ps}/ps_view_data_financials_202304191200.csv',
+        f'{dump_dfakto_ps}/ps_view_data_financials.csv',
         sep=';',
     )
 
@@ -31,7 +31,7 @@ def model(dbt, session):
         "Co-porteur du projet": 'co_porteur_du_projet',
         "Objectif - date de mise à jour": 'objectif_date_de_mise_a_jour',
         "Synthèse des résultats - date de mise à jour": 'synthese_des_resultats_date_de_mise_a_jour',
-        "Difficultés rencontrées et risques anticipés - date de mise": 'difficultes_rencontrees_et_risques_anticipes_date_de_mise_a_jour',
+        "Difficultés rencontrées et risques anticipés - date de mise ": 'difficultes_rencontrees_et_risques_anticipes_date_de_mise_a_jour',
         "Dernières réalisations et suivi des décisions - date de mise": 'dernieres_realisation_et_suivi_des_decisions_date_de_mise_a_jour',
         "Solutions proposées et prochaines étapes - date de mise à jo": 'solutions_proposees_et_prochaines_etapes_date_de_mise_a_jo',
         "Partenariats et moyens mobilisés - date de mise à jour": 'partenariats_et_moyens_mobilises_date_de_mise_a_jour',

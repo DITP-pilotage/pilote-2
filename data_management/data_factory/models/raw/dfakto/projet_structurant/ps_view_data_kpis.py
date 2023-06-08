@@ -3,9 +3,9 @@ import os
 
 
 def model(dbt, session):
-    dump_dfakto_octo_ps = os.getenv('DUMP_DFAKTO_PS')
+    dump_dfakto_ps = os.getenv('DUMP_DFAKTO_TEMP')
     ps_view_data_kpis = pd.read_csv(
-        f'{dump_dfakto_octo_ps}/ps_view_data_kpis_202304191200.csv',
+        f'{dump_dfakto_ps}/ps_view_data_kpis.csv',
         sep=';',
         dtype = {'unite': str, 'ps_code': str}
     )

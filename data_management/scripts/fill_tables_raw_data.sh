@@ -12,4 +12,4 @@ then
   fi
 fi
 
-dbt run --project-dir data_factory/ --select raw.dfakto.projet_structurant raw.import_commentaires raw.ppg_metadata staging
+dbt run --project-dir data_factory/ --select raw.import_commentaires raw.ppg_metadata staging
