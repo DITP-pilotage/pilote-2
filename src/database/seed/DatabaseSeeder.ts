@@ -63,7 +63,7 @@ const chantierStatiqueId123 = new ChantierSQLRowBuilder()
   .avecPpg('ppg chantier')
   .avecPérimètreIds([])
   .avecTauxAvancement(66)
-  .avecMinistères(['Agriculture et Alimentation'])
+  .avecMinistères(['MIN-0000000'])
   .avecTerritoireNom(null);
 
 export class DatabaseSeeder {
@@ -195,8 +195,8 @@ export class DatabaseSeeder {
     for (let i = 0; i < 100; i++) {
       const périmètre = faker.helpers.arrayElement(this._périmètresMinistériels);
       const ministères = [
-        périmètre.ministere,
-        ...faker.helpers.arrayElements(this._ministères.map(m => m.nom), faker.datatype.number({ min: 0, max: 2 })),
+        périmètre.ministere_id,
+        ...faker.helpers.arrayElements(this._ministères.map(m => m.id), faker.datatype.number({ min: 0, max: 2 })),
       ].filter((m): m is string => m !== null);
 
       // On souhaite rendre des chantiers statiques avec des valeurs controllées afin de pouvoir créer des jeux de données de bout en bout maitrisés

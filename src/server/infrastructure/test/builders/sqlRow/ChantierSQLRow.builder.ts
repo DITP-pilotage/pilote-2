@@ -65,7 +65,7 @@ export default class ChantierRowBuilder {
     this._territoireNom = générerPeutÊtreNull(0.2, faker.address.state());
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
     this._tauxAvancement = avancement.global;
-    this._ministères = ministères.map(ministère => ministère.nom);
+    this._ministères = ministères.map(ministère => ministère.id);
     this._météo = générerPeutÊtreNull(0.05, météo);
     this._directeursAdminCentrale = chantierGénéré.responsables.directeursAdminCentrale.map(directeur => directeur.nom);
     this._directionsAdminCentrale = chantierGénéré.responsables.directeursAdminCentrale.map(directeur => directeur.direction);

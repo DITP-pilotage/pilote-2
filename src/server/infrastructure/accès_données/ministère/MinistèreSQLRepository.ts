@@ -41,6 +41,7 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
     }
 
     return {
+      id: ministèreQueryResult.ministere_id,
       nom: ministèreQueryResult.ministere,
       périmètresMinistériels: périmètres,
       icône: ministèreQueryResult.icone ?? null,
