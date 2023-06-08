@@ -98,9 +98,9 @@ describe('RécupérerChantierUseCase', () => {
   test('Contient des porteurs et des coporteurs', async () => {
     // GIVEN
     const ministères = [
-      new MinistèreSQLRowBuilder().avecNom('Agriculture et Alimentation').build(),
-      new MinistèreSQLRowBuilder().avecNom('Intérieur').build(),
-      new MinistèreSQLRowBuilder().avecNom('Extérieur').build(),
+      new MinistèreSQLRowBuilder().avecId('1').avecNom('Agriculture et Alimentation').build(),
+      new MinistèreSQLRowBuilder().avecId('2').avecNom('Intérieur').build(),
+      new MinistèreSQLRowBuilder().avecId('3').avecNom('Extérieur').build(),
     ];
     await prisma.ministere.createMany({ data: ministères });
     await prisma.perimetre.createMany({
@@ -116,12 +116,12 @@ describe('RécupérerChantierUseCase', () => {
         new ChantierSQLRowBuilder()
           .avecId('CH-001').avecNom('Chantier 1')
           .avecMaille('NAT')
-          .avecMinistères(['Agriculture et Alimentation', 'Intérieur', 'Extérieur'])
+          .avecMinistères(['1', '2', '3'])
           .build(),
         new ChantierSQLRowBuilder()
           .avecId('CH-002').avecNom('Chantier 2')
           .avecMaille('NAT')
-          .avecMinistères(['Intérieur'])
+          .avecMinistères(['2'])
           .build(),
       ],
     });
