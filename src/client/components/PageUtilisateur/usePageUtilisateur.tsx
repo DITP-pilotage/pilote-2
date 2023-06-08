@@ -1,6 +1,9 @@
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import { actionsTerritoiresStore, territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { Scope } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import {
+  ScopeChantiers,
+  ScopeUtilisateurs,
+} from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -10,7 +13,7 @@ export default function usePageUtilisateur(utilisateur: Utilisateur, chantiers: 
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const tousLesTerritoires = territoiresTerritoiresStore();
 
-  const scopes: { [key in Scope]: { chantiers: Chantier['nom'][], territoires: Territoire['nomAffiché'][] } } = {
+  const scopes: { [key in (ScopeChantiers | ScopeUtilisateurs)]: { chantiers: Chantier['nom'][], territoires: Territoire['nomAffiché'][] } } = {
     lecture: {
       chantiers: [],
       territoires: [],

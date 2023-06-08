@@ -1,7 +1,15 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 
-export const scopes = ['lecture', 'saisie.commentaire', 'saisie.indicateur', 'utilisateurs.lecture', 'utilisateurs.modification', 'utilisateurs.suppression'] as const;
+export const scopesUtilisateurs = ['utilisateurs.lecture', 'utilisateurs.modification', 'utilisateurs.suppression'] as const;
+export const scopesChantiers = ['lecture', 'saisie.commentaire', 'saisie.indicateur'] as const;
+export const scopesProjetsStructurants = ['projetsStructurants.lecture'] as const;
+export const scopes = [...scopesChantiers, ...scopesProjetsStructurants, ...scopesUtilisateurs] as const;
+
+export type ScopeUtilisateurs = typeof scopesUtilisateurs[number];
+export type ScopeChantiers = typeof scopesChantiers[number];
+export type ScopeProjetsStructurants = typeof scopesProjetsStructurants[number];
 export type Scope = typeof scopes[number];
 
 export type TerritoiresFiltre =  {
@@ -10,13 +18,20 @@ export type TerritoiresFiltre =  {
   NAT: { maille: string, territoires: string[] }
 };
 
-type Habilitation = {
+type HabilitationChantiers = {
   chantiers: Chantier['id'][]
   territoires: string[]
 };
 
-export type Habilitations = {
-  [key in Scope]: Habilitation
+type HabilitationUtilisateurs = {
+  chantiers: Chantier['id'][]
+  territoires: string[]
 };
 
-export type HabilitationsÀCréerOuMettreÀJour = Record<Scope, Habilitation & { périmètres: PérimètreMinistériel['id'][] }>;
+type HabilitationProjetsStructurants = { projetsStructurants: ProjetStructurant['id'][] };
+
+export type Habilitations = Record<ScopeUtilisateurs, HabilitationUtilisateurs> 
+& Record<ScopeChantiers, HabilitationChantiers> 
+& Record<ScopeProjetsStructurants, HabilitationProjetsStructurants>;
+
+export type HabilitationsÀCréerOuMettreÀJour = Record<ScopeChantiers, HabilitationChantiers & { périmètres: PérimètreMinistériel['id'][] }>;

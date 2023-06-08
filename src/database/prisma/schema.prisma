@@ -246,21 +246,21 @@ model projet_structurant {
 }
 
 model indicateur_projet_structurant {
-  id                               String   @id
-  nom                              String
-  projet_structurant_code          String
-  type_id                          String?
-  description                      String?
-  source                           String?
-  mode_de_calcul                   String?
-  valeur_actuelle                  Float?
-  valeur_initiale                  Float?
-  valeur_cible                     Float?
-  taux_avancement                  Float?
-  date_valeur_actuelle             DateTime? @db.Timestamp
-  date_valeur_initiale             DateTime? @db.Timestamp
-  date_valeur_cible                DateTime? @db.Timestamp
-  date_taux_avancement             DateTime? @db.Timestamp
+  id                      String    @id
+  nom                     String
+  projet_structurant_code String
+  type_id                 String?
+  description             String?
+  source                  String?
+  mode_de_calcul          String?
+  valeur_actuelle         Float?
+  valeur_initiale         Float?
+  valeur_cible            Float?
+  taux_avancement         Float?
+  date_valeur_actuelle    DateTime? @db.Timestamp
+  date_valeur_initiale    DateTime? @db.Timestamp
+  date_valeur_cible       DateTime? @db.Timestamp
+  date_taux_avancement    DateTime? @db.Timestamp
 
   @@schema("public")
 }
@@ -325,17 +325,21 @@ model utilisateur {
 }
 
 model profil {
-  code                                            String        @id
-  nom                                             String
-  a_acces_tous_chantiers                          Boolean       @default(false)
-  a_acces_tous_chantiers_territorialises          Boolean       @default(false)
-  a_acces_tous_les_territoires_lecture            Boolean       @default(false)
-  a_acces_tous_les_territoires_saisie_commentaire Boolean       @default(false)
-  a_acces_tous_les_territoires_saisie_indicateur  Boolean       @default(false)
-  peut_consulter_les_utilisateurs                 Boolean       @default(false)
-  peut_modifier_les_utilisateurs                  Boolean       @default(false)
-  peut_supprimer_les_utilisateurs                 Boolean       @default(false)
-  utilisateur                                     utilisateur[]
+  code                                                        String        @id
+  nom                                                         String
+  a_acces_tous_chantiers                                      Boolean       @default(false)
+  a_acces_tous_chantiers_territorialises                      Boolean       @default(false)
+  projets_structurants_lecture_tous_perimetres                Boolean       @default(false)
+  projets_structurants_lecture_meme_perimetres_que_chantiers  Boolean       @default(false)
+  projets_structurants_lecture_tous_territoires               Boolean       @default(false)
+  projets_structurants_lecture_meme_territoires_que_chantiers Boolean       @default(false)
+  a_acces_tous_les_territoires_lecture                        Boolean       @default(false)
+  a_acces_tous_les_territoires_saisie_commentaire             Boolean       @default(false)
+  a_acces_tous_les_territoires_saisie_indicateur              Boolean       @default(false)
+  peut_consulter_les_utilisateurs                             Boolean       @default(false)
+  peut_modifier_les_utilisateurs                              Boolean       @default(false)
+  peut_supprimer_les_utilisateurs                             Boolean       @default(false)
+  utilisateur                                                 utilisateur[]
 
   @@schema("public")
 }

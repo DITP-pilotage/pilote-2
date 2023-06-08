@@ -35,6 +35,10 @@ export class ChantierNonAutoriséErreur extends NonAutorisé {
   constructor() { super('Chantier non autorisé'); }
 }
 
+export class ProjetStructurantNonAutoriséErreur extends NonAutorisé {
+  constructor() { super('Projet structurant non autorisé'); }
+}
+
 export class MailleNonAutoriséeErreur extends NonAutorisé {
   constructor() { super('Maille non autorisée'); }
 }

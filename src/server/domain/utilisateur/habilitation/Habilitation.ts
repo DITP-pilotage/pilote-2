@@ -1,7 +1,8 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee, Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { ChantierNonAutoriséErreur, TerritoireNonAutoriséErreur } from '@/server/utils/errors';
+import { ChantierNonAutoriséErreur, ProjetStructurantNonAutoriséErreur, TerritoireNonAutoriséErreur } from '@/server/utils/errors';
+import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { Habilitations, TerritoiresFiltre } from './Habilitation.interface';
 
 export default class Habilitation {
@@ -13,6 +14,11 @@ export default class Habilitation {
 
     if (territoireCode && !this._habilitations.lecture.territoires.includes(territoireCode))
       throw new TerritoireNonAutoriséErreur();
+  }
+
+  vérifierLesHabilitationsEnLectureProjetStructurant(projetStructurantId: ProjetStructurant['id']): Error | void {
+    if (!this._habilitations['projetsStructurants.lecture'].projetsStructurants.includes(projetStructurantId))
+      throw new ProjetStructurantNonAutoriséErreur();
   }
 
   vérifierLesHabilitationsEnSaisieDesPublications(chantierId: Chantier['id'], territoireCode: string): Error | void {
@@ -30,6 +36,10 @@ export default class Habilitation {
   peutConsulterUnUtilisateur(chantiersIds: Chantier['id'][], territoireCodes: Territoire['code'][]) {
     return (chantiersIds.some(id => this._habilitations['utilisateurs.lecture'].chantiers.includes(id))
     && territoireCodes.some(code => this._habilitations['utilisateurs.lecture'].territoires.includes(code)));
+  }
+
+  peutAccéderAuProjetStructurant(projetStructurantId: ProjetStructurant['id']): boolean {
+    return this._habilitations['projetsStructurants.lecture'].projetsStructurants.includes(projetStructurantId);
   }
 
   peutAccéderAuChantier(chantierId: Chantier['id'], territoireCode: string): boolean {

@@ -6,6 +6,7 @@ import PérimètreMinistérielRepository from '@/server/domain/périmètreMinist
 import TerritoireBuilder from '@/server/domain/territoire/Territoire.builder';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import ProjetStructurantRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ProjetStructurantSQLRow.builder';
+import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import RécupérerProjetStructurantUseCase from './RécupérerProjetStructurantUseCase';
 
 describe('Récupérer projet structurant', () => {
@@ -52,6 +53,11 @@ describe('Récupérer projet structurant', () => {
       .avecPérimètresIds([périmètre1.id, périmètre2.id, périmètre3.id])
       .avecTerritoireCode(territoire.code)
       .build();
+
+    const habilitation = {
+      'projetsStructurants.lecture': {
+        projetsStructurants: [projetStructurantPrisma.id],
+      } } as unknown as Utilisateur['habilitations'];
     
     beforeEach(() => {
       (projetStructurantRepository.récupérer as jest.Mock).mockResolvedValue(projetStructurantPrisma);
@@ -62,7 +68,7 @@ describe('Récupérer projet structurant', () => {
   
     it('Accède à un projet structurant par son id', async () => {
     //WHEN
-      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id);
+      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id, habilitation);
 
       //THEN
       expect(résultat.id).toEqual(projetStructurantPrisma.id);
@@ -70,7 +76,7 @@ describe('Récupérer projet structurant', () => {
 
     it('Récupère le terrioire associé avec sa maille, son code insee et son nom à afficher', async () => {
     //WHEN
-      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id);
+      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id, habilitation);
 
       //THEN
       expect(résultat.territoire.code).toEqual(projetStructurantPrisma.territoire_code);
@@ -82,7 +88,7 @@ describe('Récupérer projet structurant', () => {
 
     it('Récupère les noms des minisères associés', async () => {
       //WHEN
-      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id);
+      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id, habilitation);
 
       //THEN
       expect(résultat.responsables.ministèrePorteur).toEqual(périmètre1.ministèreNom);
@@ -91,7 +97,7 @@ describe('Récupérer projet structurant', () => {
 
     it('Récupère la météo associée', async () => {
       //WHEN
-      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id);
+      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id, habilitation);
 
       //THEN
       expect(résultat.météo).toEqual(synthèseDesRésultats!.météo);
@@ -110,6 +116,11 @@ describe('Récupérer projet structurant', () => {
       .avecPérimètresIds([périmètre1.id, périmètre2.id, périmètre3.id])
       .avecTerritoireCode(territoire.code)
       .build();
+
+    const habilitation = {
+      'projetsStructurants.lecture': {
+        projetsStructurants: [projetStructurantPrisma.id],
+      } } as unknown as Utilisateur['habilitations'];
         
     beforeEach(() => {
       (projetStructurantRepository.récupérer as jest.Mock).mockResolvedValue(projetStructurantPrisma);
@@ -120,7 +131,7 @@ describe('Récupérer projet structurant', () => {
 
     it('Retourne la liste des minisètes associés sans doublon', async () => {
       //WHEN
-      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id);
+      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id, habilitation);
 
       //THEN
       expect(résultat.responsables.ministèrePorteur).toEqual(périmètre1.ministèreNom);
@@ -139,6 +150,11 @@ describe('Récupérer projet structurant', () => {
       .avecPérimètresIds([périmètre.id])
       .avecTerritoireCode(territoire.code)
       .build();
+
+    const habilitation = {
+      'projetsStructurants.lecture': {
+        projetsStructurants: [projetStructurantPrisma.id],
+      } } as unknown as Utilisateur['habilitations'];
         
     beforeEach(() => {
       (projetStructurantRepository.récupérer as jest.Mock).mockResolvedValue(projetStructurantPrisma);
@@ -149,7 +165,7 @@ describe('Récupérer projet structurant', () => {
 
     it('Retourne le nom du ministère poteur et une liste vide de ministères coporteurs', async () => {
       //WHEN
-      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id);
+      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id, habilitation);
 
       //THEN
       expect(résultat.responsables.ministèrePorteur).toEqual(périmètre.ministèreNom);
@@ -166,6 +182,11 @@ describe('Récupérer projet structurant', () => {
       .avecPérimètresIds([périmètre.id])
       .avecTerritoireCode(territoire.code)
       .build();
+
+    const habilitation = {
+      'projetsStructurants.lecture': {
+        projetsStructurants: [projetStructurantPrisma.id],
+      } } as unknown as Utilisateur['habilitations'];
         
     beforeEach(() => {
       (projetStructurantRepository.récupérer as jest.Mock).mockResolvedValue(projetStructurantPrisma);
@@ -175,7 +196,7 @@ describe('Récupérer projet structurant', () => {
 
     it('Retourne une météo non renseignée', async () => {
       //WHEN
-      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id);
+      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id, habilitation);
 
       //THEN
       expect(résultat.météo).toEqual('NON_RENSEIGNEE');

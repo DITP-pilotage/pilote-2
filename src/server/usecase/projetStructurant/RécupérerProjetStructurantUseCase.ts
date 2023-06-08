@@ -11,6 +11,8 @@ import { générerPeutÊtreNull } from '@/server/infrastructure/test/builders/ut
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import SynthèseDesRésultatsProjetStructurantRepository from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
 export default class RécupérerProjetStructurantUseCase {
   constructor(
@@ -47,7 +49,10 @@ export default class RécupérerProjetStructurantUseCase {
     };
   }
 
-  async run(projetStructurantId: string): Promise<ProjetStructurant> {
+  async run(projetStructurantId: string, habilitations: Habilitations): Promise<ProjetStructurant> {
+    const habilitation = new Habilitation(habilitations);
+    habilitation.vérifierLesHabilitationsEnLectureProjetStructurant(projetStructurantId);
+    
     const projetStructurant = await this.projetStructurantrepository.récupérer(projetStructurantId);
     const territoire = await this.territoireRepository.récupérer(projetStructurant.territoire_code);
     const périmètres = await this.périmètreMinistérielRepository.récupérerListe(projetStructurant.perimetres_ids);
