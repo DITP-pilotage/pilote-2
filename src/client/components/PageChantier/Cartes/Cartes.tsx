@@ -40,7 +40,7 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
               >
                 Taux d&apos;avancement
               </Titre>
-              <Infobulle>
+              <Infobulle idHtml="infobulle-chantier-répartitionGéographiqueTauxAvancement">
                 { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueTauxAvancement }
               </Infobulle>
             </TitreInfobulleConteneur>
@@ -64,7 +64,7 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
               >
                 Niveau de confiance
               </Titre>
-              <Infobulle>
+              <Infobulle idHtml="infobulle-chantier-répartitionGéographiqueNiveauDeConfiance">
                 { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueNiveauDeConfiance }
               </Infobulle>
             </TitreInfobulleConteneur>
