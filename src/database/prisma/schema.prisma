@@ -261,6 +261,7 @@ model indicateur_projet_structurant {
   date_valeur_initiale    DateTime? @db.Timestamp
   date_valeur_cible       DateTime? @db.Timestamp
   date_taux_avancement    DateTime? @db.Timestamp
+  projet_structurant_id   String
 
   @@schema("public")
 }
