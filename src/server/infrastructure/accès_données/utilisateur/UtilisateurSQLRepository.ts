@@ -1,15 +1,40 @@
-import { PrismaClient, habilitation, profil, utilisateur, chantier, territoire } from '@prisma/client';
+import { PrismaClient, habilitation, profil, utilisateur, chantier, territoire, projet_structurant, perimetre } from '@prisma/client';
 import Utilisateur, { Profil, UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import { Scope } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import {
+  ScopeChantiers,
+  ScopeUtilisateurs,
+} from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 export class UtilisateurSQLRepository implements UtilisateurRepository {
   private _territoires: string[] = [];
 
-  private _chantiers: string[] = [];
+  private _chantiers: {
+    donnéesBrutes: chantier[]
+    groupésParId: Record<chantier['id'], chantier>
+    chantiersIdsPérimètresIds: Record<chantier['id'], perimetre['id'][]> 
+    ids: chantier['id'][]
+  } = {
+      donnéesBrutes: [],
+      groupésParId: {},
+      chantiersIdsPérimètresIds: {},
+      ids: [],
+    };
 
-  private _chantiersTerritorialisés: string[] = [];
+  private _projetsStructurants: {
+    donnéesBrutes: projet_structurant[]
+    groupésParId: Record<projet_structurant['id'], projet_structurant>
+    périmètresIdsProjetsStructurantsIds: Record<perimetre['id'], projet_structurant['id'][]>
+    ids: projet_structurant['id'][]
+  } = {
+      donnéesBrutes: [],
+      groupésParId: {},
+      périmètresIdsProjetsStructurantsIds: {},
+      ids: [],
+    };
+
+  private _chantiersTerritorialisésIds: string[] = [];
 
   constructor(private _prisma: PrismaClient) {}
 
@@ -20,11 +45,42 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     }
   }
 
+  async _récupérerProjetsStructurants() {
+    if (this._projetsStructurants.donnéesBrutes.length === 0) {
+      const tousLesProjetsStructurants = await this._prisma.projet_structurant.findMany();
+
+      this._projetsStructurants.donnéesBrutes = tousLesProjetsStructurants;
+
+      tousLesProjetsStructurants.forEach(ps => {
+        this._projetsStructurants.groupésParId[ps.id] = ps;
+        this._projetsStructurants.ids.push(ps.id);
+
+        ps.perimetres_ids.forEach(périmètreId => {
+          if (périmètreId in this._projetsStructurants.périmètresIdsProjetsStructurantsIds) {
+            this._projetsStructurants.périmètresIdsProjetsStructurantsIds[périmètreId].push(ps.id);
+          } else {
+            this._projetsStructurants.périmètresIdsProjetsStructurantsIds[périmètreId] = [ps.id];
+          }
+        });
+      });
+    }
+  }
+
   async _récupérerChantiers() {
-    if (this._chantiers.length === 0) {
+    if (this._chantiers.donnéesBrutes.length === 0) {
       const tousLesChantiers = await this._prisma.chantier.findMany({ distinct: ['id'] });
-      this._chantiers = tousLesChantiers.map(c => c.id);
-      this._chantiersTerritorialisés = tousLesChantiers.filter(c => c.est_territorialise === true).map(c => c.id);
+
+      this._chantiers.donnéesBrutes = tousLesChantiers;
+
+      tousLesChantiers.forEach(c => {
+        this._chantiers.groupésParId[c.id] = c;
+        this._chantiers.ids.push(c.id);
+        this._chantiers.chantiersIdsPérimètresIds[c.id] = c.perimetre_ids;
+
+        if (c.est_territorialise === true) {
+          this._chantiersTerritorialisésIds.push(c.id);
+        }
+      });
     }
   }
 
@@ -123,43 +179,71 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     });
   }
 
-  private async _récupérerChantiersParDéfaut(profilUtilisateur: profil): Promise<Record<Scope, chantier['id'][]>> {
+  private async _récupérerChantiersParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, chantier['id'][]>> {
     let chantiersAccessibles: chantier['id'][] = [];
 
-    if (profilUtilisateur.a_acces_tous_chantiers === true) {
-      chantiersAccessibles = this._chantiers;
-    } else if (profilUtilisateur.a_acces_tous_chantiers_territorialises === true) {
-      chantiersAccessibles = this._chantiersTerritorialisés;
+    if (profilUtilisateur.a_acces_tous_chantiers) {
+      chantiersAccessibles = this._chantiers.ids;
+    } else if (profilUtilisateur.a_acces_tous_chantiers_territorialises) {
+      chantiersAccessibles = this._chantiersTerritorialisésIds;
     }
 
-    const chantiersParDéfaut: Record<Scope, chantier['id'][]>  = {
+    return {
       'lecture': chantiersAccessibles,
       'saisie.commentaire': chantiersAccessibles,
       'saisie.indicateur': chantiersAccessibles,
-      'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs === true ? chantiersAccessibles : [],
-      'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs === true ? chantiersAccessibles : [],
-      'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs === true ? chantiersAccessibles : [],
+      'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs ? chantiersAccessibles : [],
+      'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs ? chantiersAccessibles : [],
+      'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs ? chantiersAccessibles : [],
     };
-
-    return chantiersParDéfaut;
   }
 
-  private async _récupérerTerritoiresParDéfaut(profilUtilisateur: profil): Promise<Record<Scope, territoire['code'][]>> {
-    const territoiresParDéfaut: Record<Scope, territoire['code'][]>  = {
-      'lecture': profilUtilisateur.a_acces_tous_les_territoires_lecture === true ? this._territoires : [],
-      'saisie.commentaire': profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire === true ? this._territoires : [],
-      'saisie.indicateur': profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur === true ? this._territoires : [],
-      'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs === true ? this._territoires : [],
-      'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs === true ? this._territoires : [],
-      'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs === true ? this._territoires : [],
+  private async _récupérerTerritoiresParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, territoire['code'][]>> {
+    return {
+      'lecture': profilUtilisateur.a_acces_tous_les_territoires_lecture ? this._territoires : [],
+      'saisie.commentaire': profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire ? this._territoires : [],
+      'saisie.indicateur': profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur ? this._territoires : [],
+      'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs ? this._territoires : [],
+      'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs ? this._territoires : [],
+      'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs ? this._territoires : [],
     };
-
-    return territoiresParDéfaut;
   }
 
-  private async _créerLesHabilitations(p: profil, habilitations: habilitation[]) {
-    const chantiersParDéfaut = await this._récupérerChantiersParDéfaut(p);
-    const territoiresParDéfaut = await this._récupérerTerritoiresParDéfaut(p);
+  private async _récupérerProjetsStructurantsUtilisateur(profilUtilisateur: profil, chantiersIdsAccessiblesEnLecture: string[], territoiresCodesAccessiblesEnLecture: string[]): Promise<string[]> {
+    const accèsTousPérimètres = profilUtilisateur.projets_structurants_lecture_tous_perimetres;
+    const accèsTousTerritoires = profilUtilisateur.projets_structurants_lecture_tous_territoires;
+    const accèsMêmePérimètresQueChantiers = profilUtilisateur.projets_structurants_lecture_meme_perimetres_que_chantiers;
+    const accèsMêmeTerritoiresQueChantiers = profilUtilisateur.projets_structurants_lecture_meme_territoires_que_chantiers;
+    
+    if (accèsTousPérimètres && accèsTousTerritoires) {
+      return this._projetsStructurants.ids;
+    }
+
+    if (accèsTousPérimètres && accèsMêmeTerritoiresQueChantiers) {
+      return this._projetsStructurants.donnéesBrutes
+        .filter(ps => territoiresCodesAccessiblesEnLecture.includes(ps.territoire_code))
+        .map(ps => ps.id);
+    }
+
+    if (accèsMêmePérimètresQueChantiers) {
+      const périmètresIdsAccessiblesEnLecture = [...new Set(chantiersIdsAccessiblesEnLecture.flatMap(chantierId => this._chantiers.chantiersIdsPérimètresIds[chantierId]))];
+      const projetsStructurantsIdsIssusDesPérimètresAccessibles = [...new Set(périmètresIdsAccessiblesEnLecture.flatMap(perimètreId => this._projetsStructurants.périmètresIdsProjetsStructurantsIds[perimètreId]))];
+
+      if (accèsTousTerritoires) {
+        return projetsStructurantsIdsIssusDesPérimètresAccessibles;
+      }
+
+      if (accèsMêmeTerritoiresQueChantiers) {
+        return projetsStructurantsIdsIssusDesPérimètresAccessibles.filter(id => territoiresCodesAccessiblesEnLecture.includes(this._projetsStructurants.groupésParId[id].territoire_code));
+      }
+    }
+
+    return [];
+  }
+
+  private async _créerLesHabilitations(profilUtilisateur: profil, habilitations: habilitation[]) {
+    const chantiersParDéfaut = await this._récupérerChantiersParDéfaut(profilUtilisateur);
+    const territoiresParDéfaut = await this._récupérerTerritoiresParDéfaut(profilUtilisateur);
 
     let habilitationsGénérées: Utilisateur['habilitations'] = {
       lecture: {
@@ -186,15 +270,22 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
         chantiers: chantiersParDéfaut['utilisateurs.suppression'],
         territoires: territoiresParDéfaut['utilisateurs.suppression'],
       },
+      'projetsStructurants.lecture': {
+        projetsStructurants: [],
+      },
     };
 
     for await (const h of habilitations) {
       const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
 
-      const chantiersAssociésAuxPérimètresMinistériels = h.perimetres.length > 0 ? await dependencies.getChantierRepository().récupérerChantierIdsAssociésAuxPérimètresMinistèriels(h.perimetres) : [];
-      habilitationsGénérées[scopeCode].chantiers = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...h.chantiers])];
-      habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
+      if (scopeCode !== 'projetsStructurants.lecture') {
+        const chantiersAssociésAuxPérimètresMinistériels = h.perimetres.length > 0 ? await dependencies.getChantierRepository().récupérerChantierIdsAssociésAuxPérimètresMinistèriels(h.perimetres) : [];
+        habilitationsGénérées[scopeCode].chantiers = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...h.chantiers])];
+        habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
+      }
     }
+
+    habilitationsGénérées['projetsStructurants.lecture'].projetsStructurants = await this._récupérerProjetsStructurantsUtilisateur(profilUtilisateur, habilitationsGénérées.lecture.chantiers, habilitationsGénérées.lecture.territoires);
     
     return habilitationsGénérées;
   }
@@ -202,6 +293,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   private async _mapperVersDomaine(utilisateurBrut: utilisateur & { profil: profil; habilitation: habilitation[]; }): Promise<Utilisateur> {
     await this._récupérerTerritoires();
     await this._récupérerChantiers();
+    await this._récupérerProjetsStructurants();
 
     return {
       id: utilisateurBrut.id,

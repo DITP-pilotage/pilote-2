@@ -2,7 +2,7 @@ import { Options, parse } from 'csv-parse/sync';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { Profil, UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
-import { Scope } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { ScopeChantiers } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { CsvRecord } from './UtilisateurCSVParseur.interface';
 
 export default class UtilisateurCSVParseur {
@@ -36,11 +36,11 @@ export default class UtilisateurCSVParseur {
     assert(csvRecords, 'Erreur de parsing CSV. Pas de lignes ?');
   
     let utilisateurs: Record<string, UtilisateurÀCréerOuMettreÀJour> = {};
-  
+
     for (const csvRecord of csvRecords) {
       const email = csvRecord[this._colonnes.email].toLowerCase();
-      const scope = csvRecord[this._colonnes.scope].toLowerCase() as Scope;
-  
+      const scope = csvRecord[this._colonnes.scope].toLowerCase() as ScopeChantiers;
+
       if (utilisateurs[email] === undefined) {
         utilisateurs[email] = this._générerUtilisateurÀCréerOuMettreÀJour(csvRecord);
       }
@@ -63,7 +63,7 @@ export default class UtilisateurCSVParseur {
     };
   }
   
-  _générerUtilisateurÀCréerOuMettreÀJour(csvRecord: CsvRecord) {
+  _générerUtilisateurÀCréerOuMettreÀJour(csvRecord: CsvRecord): UtilisateurÀCréerOuMettreÀJour {
     return {
       email: csvRecord[this._colonnes.email].toLowerCase(),
       nom: csvRecord[this._colonnes.nom].toLowerCase(),
@@ -74,9 +74,6 @@ export default class UtilisateurCSVParseur {
         lecture: this._générerUneHabilitation(),
         'saisie.commentaire': this._générerUneHabilitation(),
         'saisie.indicateur': this._générerUneHabilitation(),
-        'utilisateurs.lecture' : this._générerUneHabilitation(),
-        'utilisateurs.modification' : this._générerUneHabilitation(),
-        'utilisateurs.suppression' : this._générerUneHabilitation(),
       },
     };
   }

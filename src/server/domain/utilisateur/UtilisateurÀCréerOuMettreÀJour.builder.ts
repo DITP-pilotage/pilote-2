@@ -26,9 +26,6 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
       'lecture': this._créerHabilitation(),
       'saisie.commentaire': this._créerHabilitation(),
       'saisie.indicateur': this._créerHabilitation(),
-      'utilisateurs.lecture' : this._créerHabilitation(),
-      'utilisateurs.modification' : this._créerHabilitation(),
-      'utilisateurs.suppression' : this._créerHabilitation(),
     };
   }
 

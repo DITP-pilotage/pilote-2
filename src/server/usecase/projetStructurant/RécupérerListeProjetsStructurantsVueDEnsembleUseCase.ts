@@ -11,6 +11,8 @@ import { générerPeutÊtreNull } from '@/server/infrastructure/test/builders/ut
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import SynthèseDesRésultatsProjetStructurantRepository from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
 export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
   constructor(
@@ -45,11 +47,15 @@ export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
     }).filter((ps): ps is ProjetStructurantVueDEnsemble => ps !== null);
   }
 
-  async run(): Promise<ProjetStructurantVueDEnsemble[]> {
+  async run(habilitations: Habilitations): Promise<ProjetStructurantVueDEnsemble[]> {
+    const habilitation = new Habilitation(habilitations);
+    const projetsStructurantsIdsAccessiblesEnLecture = habilitation.récupérerListeProjetsStructurantsIdsAccessiblesEnLecture();
+    
     const projetsStructurants = await this.projetStructurantrepository.récupérerListe();
-    const territoires = await this.territoireRepository.récupérerListe(projetsStructurants.map(projet => projet.territoire_code));
+    const projetsStructurantsAccessibles = projetsStructurants.filter(ps => projetsStructurantsIdsAccessiblesEnLecture.includes(ps.id));
+    const territoires = await this.territoireRepository.récupérerListe(projetsStructurantsAccessibles.map(projet => projet.territoire_code));
     const météos = await this.synthèseDesRésultatsRepository.récupérerToutesLesMétéosLesPlusRécentes();
 
-    return this.construireListeProjetsStructurants(projetsStructurants, territoires, météos);
+    return this.construireListeProjetsStructurants(projetsStructurantsAccessibles, territoires, météos);
   }
 }
