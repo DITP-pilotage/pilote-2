@@ -10,11 +10,7 @@ chantiers_territorialises as (
      		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = directeur.id
      		ORDER  BY directeur.i
      	) AS directeurs_administration_centrale,
-        array(SELECT m_porteurs.nom_court
-     		FROM   unnest(m_chantiers.ministeres_ids) WITH ORDINALITY ministere(id, i)
-     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ministere.id
-     		ORDER  BY ministere.i
-     	) AS ministeres,
+        m_chantiers.ministeres_ids AS ministeres,
         array(SELECT m_porteurs.nom_court
      		FROM   unnest(m_chantiers.directeurs_administration_centrale_ids) WITH ORDINALITY direction(id, i)
      		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = direction.id
@@ -45,11 +41,7 @@ chantiers_non_territorialises as (
      		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = directeur.id
      		ORDER  BY directeur.i
      	) AS directeurs_administration_centrale,
-        array(SELECT m_porteurs.nom_court
-     		FROM   unnest(m_chantiers.ministeres_ids) WITH ORDINALITY ministere(id, i)
-     		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ministere.id
-     		ORDER  BY ministere.i
-     	) AS ministeres,
+        m_chantiers.ministeres_ids AS ministeres,
         array(SELECT m_porteurs.nom_court
      		FROM   unnest(m_chantiers.directeurs_administration_centrale_ids) WITH ORDINALITY direction(id, i)
      		JOIN   {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = direction.id
