@@ -140,6 +140,67 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
       expect(mesureIndicateurTemporaireRepository.sauvegarder).not.toBeCalled();
     });
 
+    it("quand l'indic_id est null, ne doit pas controler la valeur de l'indic_id", async () => {
+      // GIVEN
+      const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
+        .avecIndicId('IND-001')
+        .avecZoneId('D001')
+        .avecMetricDate(METRIC_DATE_1)
+        .avecMetricType('vi')
+        .avecMetricValue('72')
+        .build();
+      const mesureIndicateurTemporaire2 = new MesureIndicateurTemporaireBuilder()
+        .avecIndicId(null)
+        .avecZoneId('D007')
+        .avecMetricDate(METRIC_DATE_2)
+        .avecMetricType('vc')
+        .avecMetricValue('14')
+        .build();
+      const detailValidationFichier = new DetailValidationFichierBuilder()
+        .avecEstValide(false)
+        .avecListeErreursValidation(
+          new ErreurValidationFichierBuilder()
+            .avecCellule('None')
+            .avecMessage('Un indicateur ne peut etre vide. C\'est le cas à la ligne 2.')
+            .avecNom('Cellule vide')
+            .avecNomDuChamp('indic_id')
+            .avecNumeroDeLigne(1)
+            .avecPositionDeLigne(1)
+            .avecPositionDuChamp(1)
+            .build(),
+          new ErreurValidationFichierBuilder()
+            .avecCellule('IND-02')
+            .avecMessage('Indicateur invalide')
+            .avecNom('METRIC_INVALIDE')
+            .avecNomDuChamp('indic_id')
+            .avecNumeroDeLigne(1)
+            .avecPositionDeLigne(1)
+            .avecPositionDuChamp(1)
+            .build(),
+        )
+        .avecListeMesuresIndicateurTemporaire(mesureIndicateurTemporaire1, mesureIndicateurTemporaire2)
+        .build();
+
+      const payload = {
+        cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+        nomDuFichier: NOM_DU_FICHIER,
+        schema: SCHEMA,
+        indicateurId: 'IND-001',
+        utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
+      };
+
+      fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
+
+      // WHEN
+      const report = await verifierFichierIndicateurImporteUseCase.execute(payload);
+
+      // THEN
+      expect(report.estValide).toEqual(false);
+
+      expect(report.listeErreursValidation).toHaveLength(2);
+      expect(report.listeErreursValidation[0].nom).toEqual('Cellule vide');
+      expect(report.listeErreursValidation[1].nom).toEqual('METRIC_INVALIDE');
+    });
     it('quand au moins un indicateur est invalide, doit inclure les erreurs de validation des données du rapport', async () => {
       // GIVEN
       const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()

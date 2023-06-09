@@ -32,13 +32,15 @@ export class PublierFichierIndicateurImporteUseCase {
     const listeMesuresIndicateurTemporaire = await this.mesureIndicateurTemporaireRepository.recupererToutParRapportId(rapportId);
 
     const listeIndicateursData = listeMesuresIndicateurTemporaire.map(mesureIndicateurTemporaire =>
+      // En arrivant ici on a déjà vérifié les valeurs par validata, on est donc sur que les valeurs sont présentes d'où le as string
+      // TODO: Pour plus de clarté on pourrait créer un nouveau type MesureIndicateurTemporaireVerifie avec des valeurs figés à string
       IndicateurData.createIndicateurData({
         rapportId: mesureIndicateurTemporaire.rapportId,
-        zoneId: mesureIndicateurTemporaire.zoneId,
-        indicId: mesureIndicateurTemporaire.indicId,
-        metricType: mesureIndicateurTemporaire.metricType,
-        metricDate: mesureIndicateurTemporaire.metricDate,
-        metricValue: mesureIndicateurTemporaire.metricValue,
+        zoneId: mesureIndicateurTemporaire.zoneId as string,
+        indicId: mesureIndicateurTemporaire.indicId as string,
+        metricType: mesureIndicateurTemporaire.metricType as string,
+        metricDate: mesureIndicateurTemporaire.metricDate as string,
+        metricValue: mesureIndicateurTemporaire.metricValue as string,
       }),
     );
 

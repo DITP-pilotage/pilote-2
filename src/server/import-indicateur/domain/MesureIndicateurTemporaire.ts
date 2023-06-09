@@ -5,15 +5,15 @@ export class MesureIndicateurTemporaire {
 
   private readonly _rapportId: string;
 
-  private readonly _indicId: string;
+  private readonly _indicId: string | null;
 
-  private readonly _zoneId: string;
+  private readonly _zoneId: string | null;
 
-  private readonly _metricDate: string;
+  private readonly _metricDate: string | null;
 
-  private readonly _metricType: string;
+  private readonly _metricType: string | null;
 
-  private readonly _metricValue: string;
+  private readonly _metricValue: string | null;
 
   private constructor({
     id,
@@ -23,7 +23,15 @@ export class MesureIndicateurTemporaire {
     metricDate,
     metricType,
     metricValue,
-  }: { id: string, rapportId: string, indicId: string; metricType: string; metricValue: string; zoneId: string; metricDate: string }) {
+  }: {
+    id: string,
+    rapportId: string,
+    indicId: string | null;
+    metricType: string | null;
+    metricValue: string | null;
+    zoneId: string | null;
+    metricDate: string | null
+  }) {
     this._id = id;
     this._rapportId = rapportId;
     this._indicId = indicId;
@@ -42,23 +50,23 @@ export class MesureIndicateurTemporaire {
     return this._rapportId;
   }
 
-  get indicId(): string {
+  get indicId(): string | null {
     return this._indicId;
   }
 
-  get zoneId(): string {
+  get zoneId(): string | null {
     return this._zoneId;
   }
 
-  get metricDate(): string {
+  get metricDate(): string | null {
     return this._metricDate;
   }
 
-  get metricType(): string {
+  get metricType(): string | null {
     return this._metricType;
   }
 
-  get metricValue(): string {
+  get metricValue(): string | null {
     return this._metricValue;
   }
 
@@ -73,11 +81,11 @@ export class MesureIndicateurTemporaire {
   }: {
     id?: string,
     rapportId: string,
-    indicId: string,
-    zoneId: string,
-    metricDate: string,
-    metricType: string,
-    metricValue: string,
+    indicId: string | null,
+    zoneId: string | null,
+    metricDate: string | null,
+    metricType: string | null,
+    metricValue: string | null,
   }) {
     return new MesureIndicateurTemporaire({
       id: id || randomUUID(),

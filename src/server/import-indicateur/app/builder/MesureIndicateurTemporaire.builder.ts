@@ -5,7 +5,7 @@ export class MesureIndicateurTemporaireBuilder {
 
   private rapportId: string = 'rapportId';
 
-  private indicId: string = 'IND-001';
+  private indicId: string | null = 'IND-001';
 
   private zoneId: string = 'D009';
 
@@ -26,7 +26,7 @@ export class MesureIndicateurTemporaireBuilder {
     return this;
   }
 
-  avecIndicId(indicId: string): MesureIndicateurTemporaireBuilder {
+  avecIndicId(indicId: string | null): MesureIndicateurTemporaireBuilder {
     this.indicId = indicId;
     return this;
   }
