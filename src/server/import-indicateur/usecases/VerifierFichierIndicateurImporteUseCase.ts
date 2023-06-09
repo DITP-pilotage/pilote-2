@@ -53,7 +53,7 @@ export class VerifierFichierIndicateurImporteUseCase {
     const listeErreursValidation: ErreurValidationFichier[] = report.listeErreursValidation;
 
     report.listeMesuresIndicateurTemporaire.forEach((mesureIndicateurTemporaire, index) => {
-      if (mesureIndicateurTemporaire.indicId.localeCompare(indicateurId)) {
+      if (mesureIndicateurTemporaire.indicId?.localeCompare(indicateurId)) {
         listeErreursValidation.push(
           ErreurValidationFichier.creerErreurValidationFichier({
             cellule: mesureIndicateurTemporaire.indicId,

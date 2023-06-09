@@ -1,11 +1,11 @@
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 
 interface MesureIndicateurTemporaireContrat {
-  indicId: string
-  metricDate: string
-  metricType: string
-  metricValue: string
-  zoneId: string
+  indicId: string | null
+  metricDate: string | null
+  metricType: string | null
+  metricValue: string | null
+  zoneId: string | null
 }
 
 export interface RapportContrat {
