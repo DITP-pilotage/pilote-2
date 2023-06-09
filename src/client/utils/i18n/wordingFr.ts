@@ -27,8 +27,8 @@ export const wordingFr = {
         EXPLICATION_TELECHARGEMENT_TEMPLATE: 'Si vous n’avez pas de fichier au bon format, téléchargez le modèle à remplir et consultez les règles et consignes de remplissage dans les ressources ci-dessous.',
         LABEL_BOUTON_TELECHARGER_MODELE_CSV: 'Télécharger le modèle csv',
         FORMAT_BOUTON_TELECHARGER_MODELE_CSV: '.csv',
-        LABEL_BOUTON_TELECHARGER_MODELE_XLSX: 'Télécharger le modèle xslx',
-        FORMAT_BOUTON_TELECHARGER_MODELE_XLSX: '.xslx',
+        LABEL_BOUTON_TELECHARGER_MODELE_XLSX: 'Télécharger le modèle xlsx',
+        FORMAT_BOUTON_TELECHARGER_MODELE_XLSX: '.xlsx',
       },
       ETAPE_CHARGER_FICHIER: {
         TITRE: 'Vos données doivent être au bon format pour être importées dans PILOTE',
