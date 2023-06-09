@@ -16,6 +16,7 @@ export interface ReportErrorTask {
   fieldName: string | null,
   fieldNumber: number,
   fieldPosition: number,
+  description: string,
   message: string,
   name: string,
   rowNumber: number,

@@ -20,7 +20,9 @@ export class ReportErrorTaskBuilder {
   private code: string = 'constraint-error';
 
   private note: string = 'note';
-  
+
+  private description: string = 'une description';
+
   avecCell(cell: string): ReportErrorTaskBuilder {
     this.cell = cell;
   
@@ -79,6 +81,12 @@ export class ReportErrorTaskBuilder {
     return this;
   }
 
+  avecDescription(description: string): ReportErrorTaskBuilder {
+    this.description = description;
+    return this;
+  }
+
+
   build(): ReportErrorTask {
     return {
       cell: this.cell,
@@ -91,6 +99,7 @@ export class ReportErrorTaskBuilder {
       rowPosition: this.rowPosition,
       code: this.code,
       note: this.note,
+      description: this.description,
     };
   }
 }

@@ -66,24 +66,30 @@ const initialiserMapFieldNameErreurDITP: (taskError: ReportErrorTask) => Record<
   },
 });
 const initialiserMapCodeErreurDITP: (taskError: ReportErrorTask) => Record<string, Record<string, string>> = (taskError) => {
-  const cléPourCode = `the same as in the row at position ${taskError.rowPosition}`;
   const mapCodeNote: Record<string, string> = {};
-  mapCodeNote[cléPourCode] = `La ligne ${taskError.rowPosition} comporte la même zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux.`;
+  const mapCodeNoteEnteteInvalide: Record<string, string> = {};
+
+  const cléPourCodeLigneDuplique = 'Values in the primary key fields should be unique for every row';
+  mapCodeNote[cléPourCodeLigneDuplique] = `La ligne ${taskError.rowNumber} comporte la même zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux.`;
+
+  const cléPourCodeEnteteInvalide = 'Provided schema is not valid.';
+  mapCodeNoteEnteteInvalide[cléPourCodeEnteteInvalide] = 'Les entêtes du fichier sont invalide, les entêtes doivent être [identifiant_indic, zone_id, date_valeur, type_valeur, valeur]';
   return {
     'primary-key-error': mapCodeNote,
+    'schema-error': mapCodeNoteEnteteInvalide,
   };
 };
 const personnaliserValidataMessage = (taskError: ReportErrorTask): string => {
   const fieldName = taskError.fieldName || 'unknown';
-  const { note, code, message } = taskError;
+  const { note, code, message, description } = taskError;
 
   const mapFieldNameErreurDITP = initialiserMapFieldNameErreurDITP(taskError);
   if (mapFieldNameErreurDITP[fieldName] && mapFieldNameErreurDITP[fieldName][note]) {
     return mapFieldNameErreurDITP[fieldName][note];
   }
   const mapCodeErreurDITP = initialiserMapCodeErreurDITP(taskError);
-  if (mapCodeErreurDITP[code] && mapCodeErreurDITP[code][note]) {
-    return mapCodeErreurDITP[code][note];
+  if (mapCodeErreurDITP[code] && mapCodeErreurDITP[code][description]) {
+    return mapCodeErreurDITP[code][description];
   }
   return message;
 };
