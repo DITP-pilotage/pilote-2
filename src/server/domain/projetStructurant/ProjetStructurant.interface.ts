@@ -33,7 +33,8 @@ export interface ProjetStructurantVueDEnsemble {
   périmètresIds: string[];
   avancement: number | null;
   dateAvancement: string;
-  météo: Météo
+  météo: Météo;
+  iconesMinistères: string[];
 }
 
 export type ProjetStructurantPrismaVersDomaine = {

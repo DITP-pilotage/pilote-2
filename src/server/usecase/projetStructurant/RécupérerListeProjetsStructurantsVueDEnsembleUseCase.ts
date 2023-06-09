@@ -11,24 +11,27 @@ import SynthèseDesRésultatsProjetStructurantRepository from '@/server/domain/p
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
 
 export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
   constructor(
     private readonly projetStructurantrepository: ProjetStructurantRepository = dependencies.getProjetStructurantRepository(),
     private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
     private readonly synthèseDesRésultatsRepository: SynthèseDesRésultatsProjetStructurantRepository = dependencies.getSynthèseDesRésultatsProjetStructurantRepository(),
+    private readonly ministèreRepository: MinistèreRepository = dependencies.getMinistèreRepository(),
   ) {}
 
   private construireListeProjetsStructurants(
     projetsStructurants: ProjetStructurantPrismaVersDomaine[],
     territoires: Territoire[],
     météos: { projetStructurantId: string, météo: Météo }[],
+    icônesMinisterielsGroupéesParProjetStructurant: Record<ProjetStructurantVueDEnsemble['id'], Ministère['icône'][]>,
   ): ProjetStructurantVueDEnsemble[] {
     return projetsStructurants.map(projetStructurant => {
       const territoire = territoires.find(t => t.code === projetStructurant.territoireCode);
 
-      if (!territoire)
-        return null;
+      if (!territoire) return null;
 
       return {
         id: projetStructurant.id,
@@ -40,19 +43,28 @@ export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
         codeInsee: territoire.codeInsee,
         territoireNomÀAfficher: territoire.nomAffiché,
         périmètresIds: projetStructurant.périmètresIds,
+        iconesMinistères: icônesMinisterielsGroupéesParProjetStructurant[projetStructurant.id],
       };
     }).filter((ps): ps is ProjetStructurantVueDEnsemble => ps !== null);
   }
 
   async run(habilitations: Habilitations): Promise<ProjetStructurantVueDEnsemble[]> {
+    
     const habilitation = new Habilitation(habilitations);
     const projetsStructurantsIdsAccessiblesEnLecture = habilitation.récupérerListeProjetsStructurantsIdsAccessiblesEnLecture();
     
     const projetsStructurants = await this.projetStructurantrepository.récupérerListe();
     const projetsStructurantsAccessibles = projetsStructurants.filter(ps => projetsStructurantsIdsAccessiblesEnLecture.includes(ps.id));
-    const territoires = await this.territoireRepository.récupérerListe(projetsStructurantsAccessibles.map(projet => projet.territoire_code));
+    const territoires = await this.territoireRepository.récupérerListe(projetsStructurantsAccessibles.map(projet => projet.territoireCode));
     const météos = await this.synthèseDesRésultatsRepository.récupérerToutesLesMétéosLesPlusRécentes();
+    
+    let icônesMinisterielsGroupéesParProjetStructurant: Record<ProjetStructurantVueDEnsemble['id'], string[]> = {}; 
+    
+    for (const ps of projetsStructurants) {
+      icônesMinisterielsGroupéesParProjetStructurant[ps.id] = await this.ministèreRepository.récupérerIconesÀPartirDePérimètres(ps.périmètresIds);
+    }
+  
 
-    return this.construireListeProjetsStructurants(projetsStructurantsAccessibles, territoires, météos);
+    return this.construireListeProjetsStructurants(projetsStructurantsAccessibles, territoires, météos, icônesMinisterielsGroupéesParProjetStructurant);
   }
 }

@@ -55,7 +55,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
                 >
                   Avancement du projet
                 </Titre>
-                <Infobulle>
+                <Infobulle idHtml="infobulle-projetStructurant-avancement">
                   { INFOBULLE_CONTENUS.projetStructurant.avancements }
                 </Infobulle>
               </TitreInfobulleConteneur>
@@ -92,7 +92,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
               >
                 Météo et synthèse des résultats
               </Titre>
-              <Infobulle>
+              <Infobulle idHtml="infobulle-projetStructurant-météoEtSynthèse">
                 {INFOBULLE_CONTENUS.projetStructurant.météoEtSynthèseDesRésultats}
               </Infobulle>
             </TitreInfobulleConteneur>
@@ -116,7 +116,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
               >
                 Objectifs
               </Titre>
-              <Infobulle>
+              <Infobulle idHtml="infobulle-projetStructurant-objectifs">
                 {INFOBULLE_CONTENUS.projetStructurant.objectifs}
               </Infobulle>
             </TitreInfobulleConteneur>
@@ -162,7 +162,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
               >
                 Commentaires du projet structurant
               </Titre>
-              <Infobulle>
+              <Infobulle idHtml="infobulle-projetStructurant-commentaires">
                 {INFOBULLE_CONTENUS.projetStructurant.commentaires}
               </Infobulle>
             </TitreInfobulleConteneur>

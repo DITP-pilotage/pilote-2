@@ -10,6 +10,7 @@ import TableauRéformesAvancement from '@/client/components/PageAccueil/TableauR
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import useTableauRéformes from '@/client/components/PageAccueil/TableauRéformes/useTableauRéformes';
 import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
+import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 
 const reactTableColonnesHelper = createColumnHelper<ProjetStructurantVueDEnsemble>();
 
@@ -17,6 +18,13 @@ const colonnesTableauProjetsStructurants = [
   reactTableColonnesHelper.accessor('nom', {
     header: 'Projets',
     id: 'nom',
+    cell: cellContext => (
+      <IcônesMultiplesEtTexte
+        icônesId={cellContext.row.original.iconesMinistères ?? []}
+      >
+        {cellContext.getValue()}
+      </IcônesMultiplesEtTexte>
+    ),
     enableSorting: false,
     meta: {
       width: 'auto',

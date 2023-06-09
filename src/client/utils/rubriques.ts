@@ -22,8 +22,7 @@ export const listeRubriquesChantier = (typesIndicateurs: TypeIndicateur[], maill
     rubriqueIndicateur => typesIndicateurs.includes(rubriqueIndicateur.typeIndicateur),
   );
 
-  let rubriques = [];
-  rubriques = maille === 'nationale' ? [
+  let rubriques = maille === 'nationale' ? [
     { nom: 'Avancement du chantier', ancre: 'avancement' },
     { nom: 'Responsables', ancre: 'responsables' },
     { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
@@ -59,8 +58,7 @@ export const listeRubriquesProjetStructurant = (typesIndicateurs: TypeIndicateur
     rubriqueIndicateur => typesIndicateurs.includes(rubriqueIndicateur.typeIndicateur),
   );
   
-  let rubriques = [];
-  rubriques = [
+  let rubriques = [
     { nom: 'Avancement du projet', ancre: 'avancement' },
     { nom: 'Responsables', ancre: 'responsables' },
     { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },

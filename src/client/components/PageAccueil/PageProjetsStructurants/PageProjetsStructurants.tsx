@@ -25,7 +25,8 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
   
   const { auClicTerritoireCallback } = useCartographie();
   const [nombreProjetsStructurantsDansLeTableau, setNombreProjetsStructurantsDansLeTableau] = useState<number>();
-
+  
+  const nombreDeProjets = projetsDuTerritoireSélectionnéEtTerritoiresEnfants.length;
 
   return (
     <main>
@@ -40,8 +41,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
             baliseHtml="h1"
             className='fr-h4'
           >
-            {`${projetsDuTerritoireSélectionnéEtTerritoiresEnfants.length}`}
-            {` ${projetsDuTerritoireSélectionnéEtTerritoiresEnfants.length >= 2 ? 'projets' : 'projet'}`}
+            {`${nombreDeProjets} ${nombreDeProjets ? 'projets' : 'projet'}`}
           </Titre>
         </div>
         <div className="fr-grid-row fr-grid-row--gutters">
@@ -73,7 +73,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                   >
                     Taux d’avancement moyen
                   </Titre>
-                  <Infobulle>
+                  <Infobulle idHtml="infobulle-projetsStructurants-avancements">
                     {INFOBULLE_CONTENUS.projetsStructurants.jauges}
                   </Infobulle>
                 </TitreInfobulleConteneur>
@@ -95,7 +95,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                   >
                     Répartition des météos renseignées
                   </Titre>
-                  <Infobulle>
+                  <Infobulle idHtml="infobulle-projetsStructurants-météos">
                     {INFOBULLE_CONTENUS.projetsStructurants.météos}
                   </Infobulle>
                 </TitreInfobulleConteneur>
@@ -117,7 +117,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                   {nombreProjetsStructurantsDansLeTableau}
                   )
                 </Titre>
-                <Infobulle>
+                <Infobulle idHtml="infobulle-projetsStructurants-liste">
                   {INFOBULLE_CONTENUS.projetsStructurants.listeDesProjetsStructurants}
                 </Infobulle>
               </TitreInfobulleConteneur>
