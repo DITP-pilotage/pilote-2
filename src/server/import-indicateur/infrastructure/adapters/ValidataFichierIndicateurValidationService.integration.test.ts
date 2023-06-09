@@ -225,7 +225,8 @@ describe('ValidataFichierIndicateurValidationService', () => {
         [null, 'primary-key-error', 'Values in the primary key fields should be unique for every row', 'the same as in the row at position 2', 2, 3, "La ligne 2 comporte la même zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux."],
         [null, 'primary-key-error', 'Values in the primary key fields should be unique for every row', 'the same as in the row at position 3', 3, 4, "La ligne 3 comporte la même zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux."],
         [null, 'schema-error', 'Provided schema is not valid.', 'primary key "[\'identifiant_indic\', \'zone_id\', \'date_valeur\', \'type_valeur\']" does not match the fields "[\'identifiant_indic\', \'ZONE_id\', \'zone_nom\', \'date_valeur\', \'TYPE\', \'valeur\']"', 3, 4, 'Les entêtes du fichier sont invalide, les entêtes doivent être [identifiant_indic, zone_id, date_valeur, type_valeur, valeur]'],
-      ])('pour le champ %s, le code %s et la note %s à la ligne %i', async (
+        [null, 'general-error', 'There is an error.', 'Duplicate labels in header is not supported with "schema_sync"', 3, 4, 'Il existe des entêtes en doublon dans le fichier'],
+      ])('pour le champ %s, le code %s, la description %s et la note %s à la ligne %i', async (
         fieldName,
         code,
         description,
