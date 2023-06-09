@@ -70,6 +70,10 @@ export default class Habilitation {
     return [...this._habilitations.lecture.chantiers];
   }
 
+  récupérerListeProjetsStructurantsIdsAccessiblesEnLecture(): ProjetStructurant['id'][] {
+    return [...this._habilitations['projetsStructurants.lecture'].projetsStructurants];
+  }
+
   récupérerListeTerritoireCodesAccessiblesEnLecture(): string[] {
     return [...this._habilitations.lecture.territoires];
   }

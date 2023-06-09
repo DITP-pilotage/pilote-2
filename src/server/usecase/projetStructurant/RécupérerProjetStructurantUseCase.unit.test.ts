@@ -7,6 +7,7 @@ import TerritoireBuilder from '@/server/domain/territoire/Territoire.builder';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import ProjetStructurantRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ProjetStructurantSQLRow.builder';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProjetStructurantNonAutoriséErreur } from '@/server/utils/errors';
 import RécupérerProjetStructurantUseCase from './RécupérerProjetStructurantUseCase';
 
 describe('Récupérer projet structurant', () => {
@@ -200,6 +201,19 @@ describe('Récupérer projet structurant', () => {
 
       //THEN
       expect(résultat.météo).toEqual('NON_RENSEIGNEE');
+    });
+  });
+
+  describe("Essayer d'accéder à un projet structurant non autorisé", () => {
+    it('renvoi une erreur ProjetStructurantNonAutoriséErreur', async () => {
+      //WHEN
+      const habilitation = {
+        'projetsStructurants.lecture': {
+          projetsStructurants: [],
+        } } as unknown as Utilisateur['habilitations'];
+
+      //THEN
+      await expect(récupérerProjetStructurantUseCase.run('PS-123', habilitation)).rejects.toThrowError(ProjetStructurantNonAutoriséErreur);
     });
   });
 });

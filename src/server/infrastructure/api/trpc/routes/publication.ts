@@ -77,12 +77,12 @@ export const publicationRouter = créerRouteurTRPC({
       } else if (typeDeRéforme === 'projet structurant') {
         if (input.entité === 'commentaires') {
           const récupérerCommentaireLePlusRécentUseCase = new RécupérerCommentaireProjetStructurantLePlusRécentUseCase(dependencies.getCommentaireProjetStructurantRepository());
-          return récupérerCommentaireLePlusRécentUseCase.run(input.réformeId, input.type as TypeCommentaireProjetStructurant);
+          return récupérerCommentaireLePlusRécentUseCase.run(input.réformeId, input.type as TypeCommentaireProjetStructurant, ctx.session.habilitations);
         }
       
         if (input.entité === 'objectifs') {
           const récupérerObjectifLePlusRécentUseCase = new RécupérerObjectifProjetStructurantLePlusRécentUseCase(dependencies.getObjectifProjetStructurantRepository());
-          return récupérerObjectifLePlusRécentUseCase.run(input.réformeId);
+          return récupérerObjectifLePlusRécentUseCase.run(input.réformeId, ctx.session.habilitations);
         }
       }
     }), 
@@ -106,7 +106,7 @@ export const publicationRouter = créerRouteurTRPC({
       
       if (typeDeRéforme === 'projet structurant' && input.entité === 'commentaires') {
         const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase(dependencies.getCommentaireProjetStructurantRepository());
-        return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.réformeId]);
+        return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.réformeId], ctx.session.habilitations);
       }
     }),
 

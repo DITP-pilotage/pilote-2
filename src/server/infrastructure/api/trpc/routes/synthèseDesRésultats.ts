@@ -45,7 +45,7 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
         return récupérerSynthèseDesRésultatsLaPlusRécenteUseCase.run(input.réformeId, input.territoireCode, ctx.session.habilitations);
       } else if (typeDeRéforme === 'projet structurant') {
         const récupérerSynthèseDesRésultatsLaPlusRécenteUseCase = new RécupérerSynthèseDesRésultatsLaPlusRécenteProjetStructurantUseCase(dependencies.getSynthèseDesRésultatsProjetStructurantRepository());
-        return récupérerSynthèseDesRésultatsLaPlusRécenteUseCase.run(input.réformeId);
+        return récupérerSynthèseDesRésultatsLaPlusRécenteUseCase.run(input.réformeId, ctx.session.habilitations);
       }
     }),
 });
