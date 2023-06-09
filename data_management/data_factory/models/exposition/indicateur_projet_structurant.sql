@@ -2,7 +2,7 @@ SELECT
     DISTINCT ON (indicateur_nom)
     {{ dbt_utils.surrogate_key(['indicateur_nom']) }} as id,
     data_kpis.indicateur_nom as nom,
-    data_kpis.projet_structurant_code,
+    data_kpis.projet_structurant_code::INTEGER,
     CASE
         WHEN type_nom = 'RealisationHausse' OR type_nom = 'RealisationBaisse' THEN 'REALISATION'
         WHEN type_nom = 'FinancierHausse' OR type_nom = 'FinancierBaisse' THEN 'FINANCIER'
