@@ -5,7 +5,10 @@ import {
   ReportResourceTaskData,
   ReportTask,
 } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
-import { FichierIndicateurValidationService, ValiderFichierPayload } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
+import {
+  FichierIndicateurValidationService,
+  ValiderFichierPayload,
+} from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
 import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient.interface';
 import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
 
@@ -66,24 +69,39 @@ const initialiserMapFieldNameErreurDITP: (taskError: ReportErrorTask) => Record<
   },
 });
 const initialiserMapCodeErreurDITP: (taskError: ReportErrorTask) => Record<string, Record<string, string>> = (taskError) => {
-  const cléPourCode = `the same as in the row at position ${taskError.rowPosition}`;
   const mapCodeNote: Record<string, string> = {};
-  mapCodeNote[cléPourCode] = `La ligne ${taskError.rowPosition} comporte la même zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux.`;
+  const mapCodeNoteEnteteInvalide: Record<string, string> = {};
+  const mapCodeNoteEnteteDoublon: Record<string, string> = {};
+
+  const cléPourCodeLigneDuplique = `the same as in the row at position ${taskError.rowNumber}`;
+  const cléPourCodeLigneVide = 'cells composing the primary keys are all "None"';
+  mapCodeNote[cléPourCodeLigneDuplique] = `La ligne ${taskError.rowNumber} comporte la même zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux.`;
+  mapCodeNote[cléPourCodeLigneVide] = `Toute les celulles de la ligne ${taskError.rowPosition} sont vides`;
+
+  const cléPourCodeEnteteInvalide = 'Provided schema is not valid.';
+  mapCodeNoteEnteteInvalide[cléPourCodeEnteteInvalide] = 'Les entêtes du fichier sont invalide, les entêtes doivent être [identifiant_indic, zone_id, date_valeur, type_valeur, valeur]';
+
+  const cléPourCodeEnteteDoublon = 'Duplicate labels in header is not supported with "schema_sync"';
+  mapCodeNoteEnteteDoublon[cléPourCodeEnteteDoublon] = 'Il existe des entêtes en doublon dans le fichier';
+
   return {
     'primary-key-error': mapCodeNote,
+    'schema-error': mapCodeNoteEnteteInvalide,
+    'general-error': mapCodeNoteEnteteDoublon,
   };
 };
 const personnaliserValidataMessage = (taskError: ReportErrorTask): string => {
   const fieldName = taskError.fieldName || 'unknown';
-  const { note, code, message } = taskError;
+  const { note, code, message, description } = taskError;
 
   const mapFieldNameErreurDITP = initialiserMapFieldNameErreurDITP(taskError);
   if (mapFieldNameErreurDITP[fieldName] && mapFieldNameErreurDITP[fieldName][note]) {
     return mapFieldNameErreurDITP[fieldName][note];
   }
+
   const mapCodeErreurDITP = initialiserMapCodeErreurDITP(taskError);
-  if (mapCodeErreurDITP[code] && mapCodeErreurDITP[code][note]) {
-    return mapCodeErreurDITP[code][note];
+  if (mapCodeErreurDITP[code] && (mapCodeErreurDITP[code][description] || mapCodeErreurDITP[code][note])) {
+    return mapCodeErreurDITP[code][description] || mapCodeErreurDITP[code][note];
   }
   return message;
 };
@@ -105,7 +123,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     let listeIndicateursData: MesureIndicateurTemporaire[] = [];
     let listeErreursValidation: ErreurValidationFichier[] = [];
 
-    const rapport =  DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, utilisateurEmail });
+    const rapport = DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, utilisateurEmail });
 
     if (report.tasks[0].resource.data[0].includes('identifiant_indic')) {
       const { enTetes, donnees } = extraireLeContenuDuFichier(report.tasks);
