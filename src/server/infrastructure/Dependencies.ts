@@ -67,6 +67,8 @@ import ObjectifSQLRepository from '@/server/infrastructure/accès_données/chant
 import DécisionStratégiqueSQLRepository
   from '@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository';
 import IndicateurProjetStructurantRepository from '@/server/domain/indicateur/IndicateurProjetStructurantRepository.interface';
+import ProfilSQLRepository from '@/server/infrastructure/accès_données/profil/ProfilSQLRepository';
+import ProfilRepository from '@/server/domain/profil/ProfilRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
@@ -105,6 +107,8 @@ class Dependencies {
   private readonly _territoireRepository: TerritoireRepository;
 
   private readonly _projetStructurantRepository: ProjetStructurantRepository;
+  
+  private readonly _profilRepository: ProfilRepository;
 
   private readonly _objectifProjetStructurantRepository: ObjectifProjetStructurantRepository;
 
@@ -138,6 +142,7 @@ class Dependencies {
     this._utilisateurRepository = new UtilisateurSQLRepository(prisma);
     this._territoireRepository = new TerritoireSQLRepository(prisma);
     this._projetStructurantRepository = new ProjetStructurantSQLRepository(prisma);
+    this._profilRepository = new ProfilSQLRepository(prisma);
     this._objectifProjetStructurantRepository = new ObjectifProjetStructurantSQLRepository(prisma);
     this._rapportRepository = new PrismaRapportRepository(prisma);
     this._mesureIndicateurTemporaireRepository = new PrismaMesureIndicateurTemporaireRepository(prisma);
@@ -229,6 +234,10 @@ class Dependencies {
 
   getProjetStructurantRepository() {
     return this._projetStructurantRepository;
+  }
+
+  getProfilRepository() {
+    return this._profilRepository;
   }
 
   getObjectifProjetStructurantRepository() {
