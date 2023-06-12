@@ -61,7 +61,7 @@ export class Configuration {
     // En test, le NODE_ENV est à test
     this.securedEnv = process.env.NODE_ENV === 'production';
 
-    this.exportCsvChantierIdChunkSize = Number.parseInt(process.env.EXPORT_CSV_CHANTIER_ID_CHUNK_SIZE || '10');
+    this.exportCsvChantierIdChunkSize = Number.parseInt(process.env.EXPORT_CSV_CHANTIER_ID_CHUNK_SIZE || '5');
   }
 }
 

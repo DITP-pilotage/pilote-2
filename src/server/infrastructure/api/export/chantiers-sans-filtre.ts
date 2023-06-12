@@ -10,9 +10,6 @@ export default async function handleExportDesChantiersSansFiltre(request: NextAp
   const session = await getServerSession(request, response, authOptions);
   assert(session);
 
-  const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase();
-  const chantiersPourExport = await exportCsvDesChantiersSansFiltreUseCase.run(session.habilitations, session.profil);
-
   response.setHeader('Content-Type', 'text/csv');
 
   const stringifier = stringify({
@@ -21,10 +18,14 @@ export default async function handleExportDesChantiersSansFiltre(request: NextAp
     delimiter: ';',
     bom: true,
   });
-
   stringifier.pipe(response);
-  for (const chantierPourExport of chantiersPourExport) {
-    stringifier.write(chantierPourExport);
+
+  const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase();
+  for await (const partialResult of exportCsvDesChantiersSansFiltreUseCase.run(session.habilitations, session.profil)) {
+    for (const chantierPourExport of partialResult) {
+      stringifier.write(chantierPourExport);
+    }
   }
+
   stringifier.end();
 }

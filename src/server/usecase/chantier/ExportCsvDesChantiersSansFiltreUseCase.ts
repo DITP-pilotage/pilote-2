@@ -40,23 +40,19 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
     private readonly chantierRepository = dependencies.getChantierRepository(),
   ) {}
 
-  public async run(habilitations: Habilitations, profil: Profil): Promise<string[][]> {
+  public async* run(habilitations: Habilitations, profil: Profil): AsyncGenerator<string[][]> {
     const h = new Habilitation(habilitations);
     const chantierIdsLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoireCodesLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
-    let chantiersPourExports: ChantierPourExport[] = [];
     const chunkSize = configuration.exportCsvChantierIdChunkSize;
     for (let i = 0; i < chantierIdsLecture.length; i += chunkSize) {
       const partialChantierIds = chantierIdsLecture.slice(i, i + chunkSize);
       const partialResult = await this.chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
-      // eslint-disable-next-line unicorn/prefer-spread
-      chantiersPourExports = chantiersPourExports.concat(partialResult);
+      yield partialResult
+        .filter(c => !this.masquerChantierPourProfilDROM(profil, c))
+        .map(c => this.transformer(c, profil));
     }
-
-    return chantiersPourExports
-      .filter(c => !this.masquerChantierPourProfilDROM(profil, c))
-      .map(c => this.transformer(c, profil));
   }
 
   private masquerPourProfilDROM(profil: Profil, périmètreIds : string[]) {
