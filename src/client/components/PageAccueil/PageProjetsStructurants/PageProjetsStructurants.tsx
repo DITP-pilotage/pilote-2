@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Titre from '@/client/components/_commons/Titre/Titre';
 import FiltresActifs from '@/components/PageAccueil/FiltresActifs/FiltresActifs';
 import Bloc from '@/client/components/_commons/Bloc/Bloc';
@@ -6,6 +7,9 @@ import useCartographie from '@/components/_commons/Cartographie/useCartographie'
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_PROJETS_STRUCTURANTS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
+import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import usePageProjetsStructurants from './usePageProjetsStructurants';
 import PageProjetsStructurantsProps from './PageProjetsStructurants.interface';
 import TableauProjetsStructurants from './TableauProjetsStructurants/TableauProjetsStructurants';
@@ -20,6 +24,9 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
   } = usePageProjetsStructurants(projetsStructurants);  
   
   const { auClicTerritoireCallback } = useCartographie();
+  const [nombreProjetsStructurantsDansLeTableau, setNombreProjetsStructurantsDansLeTableau] = useState<number>();
+  
+  const nombreDeProjets = projetsDuTerritoireSélectionnéEtTerritoiresEnfants.length;
 
   return (
     <main>
@@ -34,8 +41,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
             baliseHtml="h1"
             className='fr-h4'
           >
-            {`${projetsDuTerritoireSélectionnéEtTerritoiresEnfants.length}`}
-            {` ${projetsDuTerritoireSélectionnéEtTerritoiresEnfants.length >= 2 ? 'projets' : 'projet'}`}
+            {`${nombreDeProjets} ${nombreDeProjets ? 'projets' : 'projet'}`}
           </Titre>
         </div>
         <div className="fr-grid-row fr-grid-row--gutters">
@@ -59,12 +65,18 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
           <div className="fr-col-12 fr-col-lg-6">
             <Bloc>
               <section>
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg"
-                >
-                  Taux d’avancement moyen
-                </Titre>
+                <TitreInfobulleConteneur>
+                  <Titre
+                    baliseHtml="h2"
+                    className="fr-text--lg"
+                    estInline
+                  >
+                    Taux d’avancement moyen
+                  </Titre>
+                  <Infobulle idHtml="infobulle-projetsStructurants-avancements">
+                    {INFOBULLE_CONTENUS.projetsStructurants.jauges}
+                  </Infobulle>
+                </TitreInfobulleConteneur>
                 <div className='fr-grid-row fr-grid-row--center'>
                   <JaugeDeProgression
                     couleur='rose'
@@ -76,12 +88,17 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
               </section>
               <hr className="fr-hr fr-my-3w fr-pb-1v" />
               <section>
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg"
-                >
-                  Répartition des météos renseignées
-                </Titre>
+                <TitreInfobulleConteneur>
+                  <Titre
+                    baliseHtml="h2"
+                    className="fr-text--lg"
+                  >
+                    Répartition des météos renseignées
+                  </Titre>
+                  <Infobulle idHtml="infobulle-projetsStructurants-météos">
+                    {INFOBULLE_CONTENUS.projetsStructurants.météos}
+                  </Infobulle>
+                </TitreInfobulleConteneur>
                 <RépartitionMétéo météos={répartitionMétéos} />
               </section>
             </Bloc>
@@ -90,7 +107,24 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
         <div className="fr-grid-row fr-mt-7v">
           <div className="fr-col">
             <Bloc>
-              <TableauProjetsStructurants données={projetsDuTerritoireSélectionnéEtTerritoiresEnfants} />
+              <TitreInfobulleConteneur>
+                <Titre
+                  baliseHtml="h2"
+                  className="fr-text--lg"
+                  estInline
+                >
+                  Liste des projets structurants (
+                  {nombreProjetsStructurantsDansLeTableau}
+                  )
+                </Titre>
+                <Infobulle idHtml="infobulle-projetsStructurants-liste">
+                  {INFOBULLE_CONTENUS.projetsStructurants.listeDesProjetsStructurants}
+                </Infobulle>
+              </TitreInfobulleConteneur>
+              <TableauProjetsStructurants
+                données={projetsDuTerritoireSélectionnéEtTerritoiresEnfants}
+                setNombreProjetsStructurantsDansLeTableau={setNombreProjetsStructurantsDansLeTableau}
+              />
             </Bloc>
           </div>
         </div>

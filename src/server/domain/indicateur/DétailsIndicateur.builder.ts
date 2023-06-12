@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import { DétailsIndicateur } from '@/server/domain/chantier/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { codesInseeDépartements, codesInseeRégions, codeInseeFrance } from '@/server/domain/territoire/Territoire.interface';
 import AvancementBuilder from '@/server/domain/chantier/avancement/Avancement.builder';
 import { générerTableau } from '@/server/infrastructure/test/builders/utils';

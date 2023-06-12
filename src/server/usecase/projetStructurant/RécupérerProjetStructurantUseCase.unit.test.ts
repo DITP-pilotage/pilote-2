@@ -59,9 +59,21 @@ describe('Récupérer projet structurant', () => {
       'projetsStructurants.lecture': {
         projetsStructurants: [projetStructurantPrisma.id],
       } } as unknown as Utilisateur['habilitations'];
+      
+    const projetStructurantPrismaVersLeDomaine = {
+      id: projetStructurantPrisma.id,
+      nom: projetStructurantPrisma.nom,
+      territoireCode: projetStructurantPrisma.territoire_code,
+      périmètresIds: projetStructurantPrisma.perimetres_ids,
+      avancement: projetStructurantPrisma.taux_avancement,
+      dateAvancement: projetStructurantPrisma.date_taux_avancement ? projetStructurantPrisma.date_taux_avancement.toISOString() : null,
+      directionAdmininstration: projetStructurantPrisma.direction_administration,
+      chefferieDeProjet: projetStructurantPrisma.chefferie_de_projet,
+      coporteurs: projetStructurantPrisma.co_porteurs,
+    };
     
     beforeEach(() => {
-      (projetStructurantRepository.récupérer as jest.Mock).mockResolvedValue(projetStructurantPrisma);
+      (projetStructurantRepository.récupérer as jest.Mock).mockResolvedValue(projetStructurantPrismaVersLeDomaine);
       (territoireRepository.récupérer as jest.Mock).mockResolvedValue(territoire);
       (périmètreMinistérielRepository.récupérerListe as jest.Mock).mockResolvedValue([périmètre1, périmètre2, périmètre3]);
       (synthèseDesRésultatsRepository.récupérerLaPlusRécente as jest.Mock).mockResolvedValue(synthèseDesRésultats);

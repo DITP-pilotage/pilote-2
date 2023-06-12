@@ -1,4 +1,4 @@
-import IndicateurBlocCaractéristiquesProps from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBlocCaractéristiques/IndicateurBlocCaractéristiques.interface';
+import IndicateurPondérationProps from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPondération.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 
 const adjectifÀPartirDeLaMaille: Record<Maille, string> = {
@@ -7,18 +7,10 @@ const adjectifÀPartirDeLaMaille: Record<Maille, string> = {
   départementale: 'départemental',
 };
 
-export function IndicateurBlocCaractéristiques({ indicateurPondération, mailleSélectionnée }: IndicateurBlocCaractéristiquesProps) {
+export function IndicateurPondération({ indicateurPondération, mailleSélectionnée }: IndicateurPondérationProps) {
   return (
-    <>
-      <p className="fr-mb-0 fr-text--xs texte-gris">
-        Dernière mise à jour :
-        {' '}
-        <span className="fr-text--bold">
-          Non renseigné
-        </span>
-      </p>
-      <p className="fr-mb-3w fr-text--xs texte-gris">
-        {
+    <p className="fr-text--xs texte-gris">
+      {
           indicateurPondération[mailleSélectionnée] === null
             ? `La pondération n'est pas disponible pour le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleSélectionnée]}.`
             : (
@@ -42,7 +34,6 @@ export function IndicateurBlocCaractéristiques({ indicateurPondération, maille
                 )
             )
           }
-      </p>
-    </>
+    </p>
   );
 }

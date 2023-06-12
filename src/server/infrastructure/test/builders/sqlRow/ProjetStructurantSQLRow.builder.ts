@@ -6,25 +6,25 @@ import ProjetStructurantBuilder from '@/server/domain/projetStructurant/ProjetSt
 
 
 export default class ProjetStructurantRowBuilder {
-  private _id: ProjetStructurantPrisma['id'] = '';
+  private _id: ProjetStructurantPrisma['id'];
 
-  private _code: ProjetStructurantPrisma['code'] = '';
+  private _code: ProjetStructurantPrisma['code'];
 
-  private _nom: ProjetStructurantPrisma['nom'] = '';
+  private _nom: ProjetStructurantPrisma['nom'];
   
-  private _territoireCode: ProjetStructurantPrisma['territoire_code'] = '';
+  private _territoireCode: ProjetStructurantPrisma['territoire_code'];
 
-  private _directionAdministration: ProjetStructurantPrisma['direction_administration'] = [];
+  private _directionAdministration: ProjetStructurantPrisma['direction_administration'];
 
-  private _périmètreIds: ProjetStructurantPrisma['perimetres_ids'] = [];
+  private _périmètreIds: ProjetStructurantPrisma['perimetres_ids'];
 
-  private _chefferieDeProjet: ProjetStructurantPrisma['chefferie_de_projet'] = [];
+  private _chefferieDeProjet: ProjetStructurantPrisma['chefferie_de_projet'];
 
-  private _coporteurs: ProjetStructurantPrisma['co_porteurs'] = [];
+  private _coporteurs: ProjetStructurantPrisma['co_porteurs'];
 
-  private _tauxAvancement: ProjetStructurantPrisma['taux_avancement'] = null;
+  private _tauxAvancement: ProjetStructurantPrisma['taux_avancement'];
 
-  private _dateTauxAvancement: ProjetStructurantPrisma['date_taux_avancement'] = null;
+  private _dateTauxAvancement: ProjetStructurantPrisma['date_taux_avancement'];
 
   private _dateDonneesQualitative: ProjetStructurantPrisma['date_donnees_qualitative'] = null;
 
@@ -38,12 +38,14 @@ export default class ProjetStructurantRowBuilder {
   
     this._id = projetGénéré.id;
     this._code = générerUnIdentifiantUnique('code');
-    this._nom = `${générerUnLibellé(6, 14)} ${générerCaractèresSpéciaux(3)} ${this._id}`;
+    this._nom = projetGénéré.nom;
     this._territoireCode = projetGénéré.territoire.code;
     this._périmètreIds = [faker.helpers.arrayElement(ministèrePorteur.périmètresMinistériels).id, ...ministèresCoPorteurs.map(ministère => faker.helpers.arrayElement(ministère.périmètresMinistériels).id)];
     this._directionAdministration = projetGénéré.responsables.directionAdmininstration;
     this._chefferieDeProjet = projetGénéré.responsables.chefferieDeProjet;
     this._coporteurs = projetGénéré.responsables.coporteurs;
+    this._tauxAvancement = projetGénéré.avancement;
+    this._dateTauxAvancement = projetGénéré.dateAvancement ? new Date(projetGénéré.dateAvancement) : null;
   }
 
   avecId(id: ProjetStructurantPrisma['id']): ProjetStructurantRowBuilder {

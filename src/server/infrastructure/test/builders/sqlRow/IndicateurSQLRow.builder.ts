@@ -1,8 +1,8 @@
 import { indicateur } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
-import IndicateurBuilder from '@/server/domain/chantier/indicateur/Indicateur.builder';
+import IndicateurBuilder from '@/server/domain/indicateur/Indicateur.builder';
 import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
-import DétailsIndicateurBuilder from '@/server/domain/chantier/indicateur/DétailsIndicateur.builder';
+import DétailsIndicateurBuilder from '@/server/domain/indicateur/DétailsIndicateur.builder';
 import {
   générerPeutÊtreNull,
   générerUneMailleAléatoire,
@@ -94,9 +94,9 @@ export default class IndicateurRowBuilder {
     this._source = indicateurGénéré.source;
     this._modeDeCalcul = indicateurGénéré.modeDeCalcul;
     this._territoireCode = `${this._maille}-${this._codeInsee}`;
-    this._ponderation_dept = indicateurGénéré.pondération.nationale;
-    this._ponderation_reg = indicateurGénéré.pondération.régionale;
-    this._ponderation_nat = indicateurGénéré.pondération.départementale;
+    this._ponderation_dept = indicateurGénéré.pondération?.nationale ?? null;
+    this._ponderation_reg = indicateurGénéré.pondération?.régionale ?? null;
+    this._ponderation_nat = indicateurGénéré.pondération?.départementale ?? null;
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {

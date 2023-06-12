@@ -11,6 +11,7 @@ export const indicateurRouter = créerRouteurTRPC({
       const récupérerDétailsIndicateursUseCase = new RécupérerDétailsIndicateursUseCase(dependencies.getIndicateurRepository());
       return récupérerDétailsIndicateursUseCase.run(input.chantierId, input.territoireCodes, ctx.session.habilitations);
     }),
+
   récupererDétailsIndicateur: procédureProtégée
     .input(validationDétailsIndicateur)
     .query(async ({ input, ctx }) => {

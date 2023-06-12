@@ -7,7 +7,7 @@ export default interface ProjetStructurant {
   nom: string,
   périmètresIds: string[];
   avancement: number | null;
-  dateAvancement: string;
+  dateAvancement: string | null;
   météo: Météo
   territoire: {
     code: Territoire['code']
@@ -33,5 +33,18 @@ export interface ProjetStructurantVueDEnsemble {
   périmètresIds: string[];
   avancement: number | null;
   dateAvancement: string;
-  météo: Météo
+  météo: Météo;
+  iconesMinistères: string[];
 }
+
+export type ProjetStructurantPrismaVersDomaine = {
+  id: string
+  nom: string
+  territoireCode: Territoire['code']
+  périmètresIds: string[]
+  avancement: number | null
+  dateAvancement: string | null,
+  directionAdmininstration: string[]
+  chefferieDeProjet: string[]
+  coporteurs: string[]
+};

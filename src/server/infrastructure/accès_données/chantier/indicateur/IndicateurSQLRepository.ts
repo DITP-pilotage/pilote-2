@@ -1,11 +1,11 @@
 import { indicateur as IndicateurPrisma, Prisma, PrismaClient } from '@prisma/client';
-import IndicateurRepository from '@/server/domain/chantier/indicateur/IndicateurRepository.interface';
-import Indicateur, { TypeIndicateur } from '@/server/domain/chantier/indicateur/Indicateur.interface';
+import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
+import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import {
   DétailsIndicateurs,
-  DétailsIndicateurTerritoire,
-} from '@/server/domain/chantier/indicateur/DétailsIndicateur.interface';
+  DétailsIndicateurMailles,
+} from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
@@ -45,38 +45,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       },
     });
   }
-  
-  async récupérerChantierIdAssocié(id: string): Promise<string> {
-    const indicateur = await this.prisma.indicateur.findFirst({
-      where: {
-        id,
-      },
-    });
-
-    return indicateur!.chantier_id;
-  }
-
-  async getById(id: string, habilitations: Habilitations): Promise<DétailsIndicateurTerritoire> {
-    const h = new Habilitation(habilitations);
-    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
-
-    const indicateur = await this.prisma.indicateur.findMany({
-      where: {
-        id,
-        territoire_code: { in: territoiresLecture },
-        chantier_id: { in: chantiersLecture },
-      },
-    });
-
-    if (!indicateur || indicateur.length === 0) {
-      throw new ErreurIndicateurNonTrouvé(id);
-    }
-
-    const territoires = await this.prisma.territoire.findMany();
-
-    return parseDétailsIndicateur(indicateur, territoires);
-  }
 
   private _mapDétailsToDomain(indicateurs: IndicateurPrisma[]): DétailsIndicateurs {
     const détailsIndicateurs: DétailsIndicateurs = {};
@@ -102,6 +70,38 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     }
 
     return détailsIndicateurs;
+  }
+  
+  async récupérerChantierIdAssocié(id: string): Promise<string> {
+    const indicateur = await this.prisma.indicateur.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    return indicateur!.chantier_id;
+  }
+
+  async récupérerDétailsParMailles(id: string, habilitations: Habilitations): Promise<DétailsIndicateurMailles> {
+    const h = new Habilitation(habilitations);
+    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+
+    const indicateur = await this.prisma.indicateur.findMany({
+      where: {
+        id,
+        territoire_code: { in: territoiresLecture },
+        chantier_id: { in: chantiersLecture },
+      },
+    });
+
+    if (!indicateur || indicateur.length === 0) {
+      throw new ErreurIndicateurNonTrouvé(id);
+    }
+
+    const territoires = await this.prisma.territoire.findMany();
+
+    return parseDétailsIndicateur(indicateur, territoires);
   }
 
   async récupérerGroupésParChantier(chantiersIds: Chantier['id'][], maille: Maille, codeInsee: CodeInsee): Promise<Record<string, Indicateur[]>> {

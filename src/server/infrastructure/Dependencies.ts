@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import ChantierSQLRepository from '@/server/infrastructure/accès_données/chantier/ChantierSQLRepository';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
-import IndicateurRepository from '@/server/domain/chantier/indicateur/IndicateurRepository.interface';
+import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import IndicateurSQLRepository from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLRepository';
 import MinistèreSQLRepository from '@/server/infrastructure/accès_données/ministère/MinistèreSQLRepository';
 import SynthèseDesRésultatsRepository
@@ -67,6 +67,7 @@ import SynthèseDesRésultatsProjetStructurantRepository
 import ObjectifSQLRepository from '@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository';
 import DécisionStratégiqueSQLRepository
   from '@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository';
+import IndicateurProjetStructurantRepository from '@/server/domain/indicateur/IndicateurProjetStructurantRepository.interface';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
@@ -75,6 +76,7 @@ import ObjectifProjetStructurantSQLRepository
 import CommentaireProjetStructurantSQLRepository
   from './accès_données/projetStructurant/commentaire/CommentaireProjetStructurantSQLRepository';
 import PérimètreMinistérielSQLRepository from './accès_données/périmètreMinistériel/PérimètreMinistérielSQLRepository';
+import IndicateurProjetStructurantSQLRepository from './accès_données/projetStructurant/indicateur/IndicateurSQLRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
@@ -117,9 +119,11 @@ class Dependencies {
 
   private readonly _périmètreMinistérielRepository: PérimètreMinistérielRepository;
 
-  private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
-
   private readonly _synthèseDesRésultatsProjetStructurantRepository: SynthèseDesRésultatsProjetStructurantRepository;
+
+  private readonly _indicateurProjetStructurantRepository: IndicateurProjetStructurantRepository;
+  
+  private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
 
   constructor() {
     logger.debug('Using database.');
@@ -143,6 +147,7 @@ class Dependencies {
     this._commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository(prisma);
     this._périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository(prisma);
     this._synthèseDesRésultatsProjetStructurantRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
+    this._indicateurProjetStructurantRepository = new IndicateurProjetStructurantSQLRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
@@ -240,6 +245,14 @@ class Dependencies {
     return this._périmètreMinistérielRepository;
   }
 
+  getSynthèseDesRésultatsProjetStructurantRepository(): SynthèseDesRésultatsProjetStructurantRepository {
+    return this._synthèseDesRésultatsProjetStructurantRepository;
+  }
+
+  getIndicateurProjetStructurantRepository() {
+    return this._indicateurProjetStructurantRepository;
+  }
+
   getUtilisateurIAMRepository(): UtilisateurIAMRepository {
     if (!this._utilisateurIAMRepository) {
       const keycloakUrl = process.env.IMPORT_KEYCLOAK_URL;
@@ -252,10 +265,6 @@ class Dependencies {
       this._utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
     }
     return this._utilisateurIAMRepository;
-  }
-
-  getSynthèseDesRésultatsProjetStructurantRepository(): SynthèseDesRésultatsProjetStructurantRepository {
-    return this._synthèseDesRésultatsProjetStructurantRepository;
   }
 }
 

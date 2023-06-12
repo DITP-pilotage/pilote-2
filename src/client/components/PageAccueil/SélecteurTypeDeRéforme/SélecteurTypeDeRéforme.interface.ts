@@ -1,4 +1,4 @@
-export type TypeDeRéforme = 'chantier' | 'projetStructurant';
+export type TypeDeRéforme = 'chantier' | 'projet structurant';
 
 export default interface SélecteurTypeDeRéformeProps {
   typeDeRéformeSélectionné: TypeDeRéforme

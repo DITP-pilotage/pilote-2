@@ -1,8 +1,8 @@
 import { render, screen, within } from '@testing-library/react';
 import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIndicateur';
 import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
-import Indicateur from '@/server/domain/chantier/indicateur/Indicateur.interface';
-import IndicateurBuilder from '@/server/domain/chantier/indicateur/Indicateur.builder';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import IndicateurBuilder from '@/server/domain/indicateur/Indicateur.builder';
 
 const CHANTIER_NOM = 'Offrir à chaque enfant une éducation culturelle et artistique';
 
@@ -14,7 +14,7 @@ jest.mock('@/components/_commons/Cartographie/Cartographie.tsx', () => function 
   );
 });
 // eslint-disable-next-line react/no-multi-comp
-jest.mock('@/components/PageChantier/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.tsx', () => function IndicateurChart() {
+jest.mock('@/components/_commons/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.tsx', () => function IndicateurChart() {
   return (
     <span>
       Indicateur Chart

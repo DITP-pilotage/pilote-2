@@ -1,18 +1,18 @@
-import { projet_structurant as ProjetStructurantPrisma } from '@prisma/client';
-import { faker } from '@faker-js/faker';
 import {
+  ProjetStructurantPrismaVersDomaine,
   ProjetStructurantVueDEnsemble,
 } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import ProjetStructurantRepository from '@/server/domain/projetStructurant/ProjetStructurantRepository.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import { générerPeutÊtreNull } from '@/server/infrastructure/test/builders/utils';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import SynthèseDesRésultatsProjetStructurantRepository from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
+import RécupérerIconesMinistèresGroupéesParProjets from './RécupérerIconesMinistèresGroupéesParProjets';
 
 export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
   constructor(
@@ -22,40 +22,43 @@ export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
   ) {}
 
   private construireListeProjetsStructurants(
-    projetsStructurantsPrisma: ProjetStructurantPrisma[],
+    projetsStructurants: ProjetStructurantPrismaVersDomaine[],
     territoires: Territoire[],
     météos: { projetStructurantId: string, météo: Météo }[],
-  ) {
-    return projetsStructurantsPrisma.map(projetStructurantPrisma => {
-      const territoire = territoires.find(t => t.code === projetStructurantPrisma.territoire_code);
+    iconesMinistères: Record<ProjetStructurantPrismaVersDomaine['id'], Ministère['icône'][]>,
+  ): ProjetStructurantVueDEnsemble[] {
+    return projetsStructurants.map(projetStructurant => {
+      const territoire = territoires.find(t => t.code === projetStructurant.territoireCode);
 
-      if (!territoire)
-        return null;
+      if (!territoire) return null;
 
       return {
-        id: projetStructurantPrisma.id,
-        nom: projetStructurantPrisma.nom,
-        // en attendant d'avoir les tables
-        avancement: générerPeutÊtreNull(0.1, faker.datatype.number({ min: 0, max: 120, precision: 0.01 })),
-        dateAvancement: faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString(),
-        météo: météos.find(météo => météo.projetStructurantId === projetStructurantPrisma.id)?.météo ?? 'NON_RENSEIGNEE',
+        id: projetStructurant.id,
+        nom: projetStructurant.nom,
+        avancement: projetStructurant.avancement,
+        dateAvancement: projetStructurant.dateAvancement,
+        météo: météos.find(météo => météo.projetStructurantId === projetStructurant.id)?.météo ?? 'NON_RENSEIGNEE',
         maille: territoire.maille as MailleInterne,
         codeInsee: territoire.codeInsee,
         territoireNomÀAfficher: territoire.nomAffiché,
-        périmètresIds: projetStructurantPrisma.perimetres_ids,
+        périmètresIds: projetStructurant.périmètresIds,
+        iconesMinistères: iconesMinistères[projetStructurant.id],
       };
     }).filter((ps): ps is ProjetStructurantVueDEnsemble => ps !== null);
   }
+  
 
   async run(habilitations: Habilitations): Promise<ProjetStructurantVueDEnsemble[]> {
+    
     const habilitation = new Habilitation(habilitations);
     const projetsStructurantsIdsAccessiblesEnLecture = habilitation.récupérerListeProjetsStructurantsIdsAccessiblesEnLecture();
     
     const projetsStructurants = await this.projetStructurantrepository.récupérerListe();
     const projetsStructurantsAccessibles = projetsStructurants.filter(ps => projetsStructurantsIdsAccessiblesEnLecture.includes(ps.id));
-    const territoires = await this.territoireRepository.récupérerListe(projetsStructurantsAccessibles.map(projet => projet.territoire_code));
+    const territoires = await this.territoireRepository.récupérerListe(projetsStructurantsAccessibles.map(projet => projet.territoireCode));
     const météos = await this.synthèseDesRésultatsRepository.récupérerToutesLesMétéosLesPlusRécentes();
+    const iconesGroupéesParProjets = await new RécupérerIconesMinistèresGroupéesParProjets().run(projetsStructurants);    
 
-    return this.construireListeProjetsStructurants(projetsStructurantsAccessibles, territoires, météos);
+    return this.construireListeProjetsStructurants(projetsStructurantsAccessibles, territoires, météos, iconesGroupéesParProjets);
   }
 }

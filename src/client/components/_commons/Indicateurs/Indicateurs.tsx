@@ -1,17 +1,10 @@
 import Titre from '@/components/_commons/Titre/Titre';
-import IndicateursProps, { ÉlémentPageIndicateursType } from '@/components/PageChantier/Indicateurs/Indicateurs.interface';
-import IndicateurBloc from '@/components/PageChantier/Indicateurs/Bloc/IndicateurBloc';
-import IndicateursStyled from '@/components/PageChantier/Indicateurs/Indicateurs.styled';
+import IndicateursProps from '@/components/_commons/Indicateurs/Indicateurs.interface';
+import IndicateurBloc from '@/components/_commons/Indicateurs/Bloc/IndicateurBloc';
+import IndicateursStyled from '@/components/_commons/Indicateurs/Indicateurs.styled';
 
-export const listeRubriquesIndicateurs: ÉlémentPageIndicateursType[] = [
-  { nom: 'Indicateurs d\'impact', ancre: 'impact', typeIndicateur: 'IMPACT' },
-  { nom: 'Indicateurs de déploiement', ancre: 'déploiement', typeIndicateur: 'DEPL' },
-  { nom: 'Indicateurs de qualité de service', ancre: 'perception', typeIndicateur: 'Q_SERV' },
-  { nom: 'Indicateurs de suivi des externalités et effets rebond', ancre: 'suivi', typeIndicateur: 'REBOND' },
-  { nom: 'Indicateurs de contexte', ancre: 'contexte', typeIndicateur: 'CONTEXTE' },
-];
 
-export default function Indicateurs({ indicateurs, détailsIndicateurs, estDisponibleALImport = false, estInteractif = true }: IndicateursProps) {
+export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRubriquesIndicateurs, typeDeRéforme, territoireProjetStructurant, estDisponibleALImport = false, estInteractif = true }: IndicateursProps) {
 
   if (indicateurs.length === 0) {
     return null;
@@ -20,7 +13,7 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, estDispo
   return (
     <IndicateursStyled>
       {
-        listeRubriquesIndicateurs.map((rubriqueIndicateur) => {
+        listeRubriquesIndicateurs.map(rubriqueIndicateur => {
           const indicateursDeCetteRubrique = indicateurs.filter(ind => ind.type === rubriqueIndicateur.typeIndicateur);
 
           if (indicateursDeCetteRubrique.length > 0) {
@@ -44,6 +37,8 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, estDispo
                       estInteractif={estInteractif}
                       indicateur={indicateur}
                       key={indicateur.id}
+                      territoireProjetStructurant={territoireProjetStructurant}
+                      typeDeRéforme={typeDeRéforme}
                     />
                   ))
                 }

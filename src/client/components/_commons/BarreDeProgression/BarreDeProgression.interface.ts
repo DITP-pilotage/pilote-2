@@ -1,5 +1,5 @@
 export type BarreDeProgressionTaille = 'xxs' | 'xs' | 'sm' | 'md' | 'lg';
-export type BarreDeProgressionVariante = 'primaire' | 'secondaire';
+export type BarreDeProgressionVariante = 'primaire' | 'secondaire' | 'rose';
 export type BarreDeProgressionFond = 'bleu' | 'blanc' | 'grisMoyen' | 'grisClair';
 export type BarreDeProgressionBordure = 'bleu' | 'grisMoyen' | null;
 export type BarreDeProgressionPositionTexte = 'côté' | 'dessus';

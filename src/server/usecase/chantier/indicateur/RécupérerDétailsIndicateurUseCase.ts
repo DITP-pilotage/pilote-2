@@ -1,5 +1,5 @@
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import IndicateurRepository from '@/server/domain/chantier/indicateur/IndicateurRepository.interface';
+import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
@@ -13,6 +13,6 @@ export default class RécupérerDétailsIndicateurUseCase {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnLecture(chantierId, null);
     
-    return this.indicateurRepository.getById(indicateurId, habilitations);
+    return this.indicateurRepository.récupérerDétailsParMailles(indicateurId, habilitations);
   }
 }
