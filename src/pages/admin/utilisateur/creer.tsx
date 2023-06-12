@@ -5,8 +5,9 @@ import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nexta
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import RécupérerChantiersUseCase from '@/server/usecase/chantier/RécupérerChantiersUseCase';
 import RécupérerPérimètresMinistérielsUseCase from '@/server/usecase/périmètreMinistériel/RécupérerPérimètresMinistérielsUseCase';
-import MultiSelect from '@/components/_commons/MultiSelect/MultiSelect';
-import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
+import PageUtilisateurFormulaire from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire';
+import RécupérerListeProfilUseCase from '@/server/usecase/profil/RécupérerListeProfilUseCase';
+import { Profil } from '@/server/domain/profil/Profil.interface';
 
 interface NextPageCréerUtilisateurProps {
   chantiers: Record<Chantier['id'], {
@@ -15,24 +16,17 @@ interface NextPageCréerUtilisateurProps {
     périmètreMinistérielId: Chantier['périmètreIds'][number] | null
   }>
   périmètresMinistériels: PérimètreMinistériel[]
+  profils: Profil[]
 }
 
-export default function NextPageCréerUtilisateur({ chantiers, périmètresMinistériels } : NextPageCréerUtilisateurProps) {
+export default function NextPageCréerUtilisateur({ chantiers, périmètresMinistériels, profils } : NextPageCréerUtilisateurProps) {
   return (
-    <div className='fr-container'>
-      <div className='fr-grid-row fr-m-5w'>
-        <div className='fr-col'>
-          <MultiSelectTerritoire />
-        </div>
-      </div>
-    </div>
+    <PageUtilisateurFormulaire
+      chantiers={chantiers}
+      profils={profils}
+      périmètresMinistériels={périmètresMinistériels}
+    />
   );
-  // return (
-  //   <NextPageCréerUtilisateur
-  //     chantiers={chantiers}
-  //     périmètresMinistériels={périmètresMinistériels}
-  //   />
-  // );
 }
 
 export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
@@ -57,6 +51,7 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
 
   const chantiersExistants = await new RécupérerChantiersUseCase().run();
 
+  const profils = await new RécupérerListeProfilUseCase().run();
   let chantiers: NextPageCréerUtilisateurProps['chantiers'] = {};
 
   chantiersExistants.forEach(chantier => {
@@ -73,6 +68,7 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
     props: {
       périmètresMinistériels,
       chantiers,
+      profils,
     },
   };
 }

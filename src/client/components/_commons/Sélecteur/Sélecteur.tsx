@@ -6,13 +6,14 @@ export default function Sélecteur<T extends string>({
   register,
   options,
   libellé,
+  erreur,
   texteFantôme,
   valeurModifiéeCallback,
   valeurSélectionnée,
 }: SélecteurProps<T>) {
 
   return (
-    <div className="fr-select-group">
+    <div className={`fr-select-group ${erreur !== undefined ? 'fr-select-group--error' : ''}`}>
       {
         !!libellé && (
           <label
@@ -24,7 +25,7 @@ export default function Sélecteur<T extends string>({
         )
       }
       <select
-        className="fr-select fr-mt-1w"
+        className={`fr-select fr-mt-1w ${erreur !== undefined ? 'fr-select--error' : ''}`}
         name={htmlName}
         onChange={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.value as T)}
         value={valeurSélectionnée || ''}
@@ -53,6 +54,14 @@ export default function Sélecteur<T extends string>({
           ))
         }
       </select>
+      {
+        erreur !== undefined &&
+          <p
+            className="fr-error-text"
+          >
+            {erreur.message}
+          </p>
+      }
     </div>
   );
 }
