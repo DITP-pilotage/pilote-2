@@ -27,6 +27,20 @@ SELECT
                     AND date_trunc('year', pivot_pour_cumuler_valeur_actuelle.date_releve) = date_trunc('year', pivot.date_releve)
                     AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
             )
+        WHEN parametrage.partitionne_vaca_par = 'from_previous_month' AND parametrage.vaca_operation = 'avg' THEN
+        (
+            SELECT AVG(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                OVER (
+                    PARTITION BY pivot_pour_cumuler_valeur_actuelle.indicateur_id, pivot_pour_cumuler_valeur_actuelle.zone_id
+                    ORDER BY pivot_pour_cumuler_valeur_actuelle.date_releve
+                    RANGE BETWEEN INTERVAL '70 days' PRECEDING AND CURRENT ROW
+                )
+            FROM {{ ref('pivot_faits_indicateur_avec_valeur_actuelle_decumulee')}} pivot_pour_cumuler_valeur_actuelle
+            WHERE pivot_pour_cumuler_valeur_actuelle.indicateur_id = pivot.indicateur_id
+                AND pivot_pour_cumuler_valeur_actuelle.zone_id = pivot.zone_id
+                AND pivot_pour_cumuler_valeur_actuelle.date_releve = pivot.date_releve
+                AND pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee IS NOT NULL
+        )
         ELSE valeur_actuelle_decumulee -- todo: mettre à nulle cette valeur afin de ne pas calculer de taux d'avancement annuel (et donc utiliser celui de dfakto pour le moment)
     END AS valeur_actuelle_comparable_annuelle,
     CASE
