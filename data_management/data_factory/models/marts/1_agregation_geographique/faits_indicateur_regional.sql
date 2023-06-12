@@ -13,10 +13,9 @@ WITH faits_indicateur__regions_user_input as (
     FROM {{ ref("faits_indicateur_deduplique") }} fi_deduplique
     LEFT JOIN {{ ref("stg_ppg_metadata__parametrage_indicateurs") }} parametrage_indicateurs
         ON fi_deduplique.indicateur_id = parametrage_indicateurs.indicateur_id
-    WHERE zone_type = 'REG'
-        AND (parametrage_indicateurs.vi_reg_from = 'user_input' AND fi_deduplique.type_mesure = 'vi')
-        OR (parametrage_indicateurs.va_reg_from = 'user_input' AND fi_deduplique.type_mesure = 'va')
-        OR (parametrage_indicateurs.vc_reg_from = 'user_input' AND fi_deduplique.type_mesure = 'vc')
+    WHERE (zone_type = 'REG' AND (parametrage_indicateurs.vi_reg_from = 'user_input' AND fi_deduplique.type_mesure = 'vi'))
+        OR (zone_type = 'REG' AND (parametrage_indicateurs.va_reg_from = 'user_input' AND fi_deduplique.type_mesure = 'va'))
+        OR (zone_type = 'REG' AND (parametrage_indicateurs.vc_reg_from = 'user_input' AND fi_deduplique.type_mesure = 'vc'))
 )
 
 SELECT
@@ -25,8 +24,8 @@ SELECT
     fi_dept.mois_releve,
     fi_dept.type_mesure,
     CASE
-        WHEN MAX(parametrage_indicateurs.vacg_operation) = 'sum' THEN SUM(fi_dept.valeur)
-        WHEN MAX(parametrage_indicateurs.vacg_operation) = 'avg' THEN AVG(fi_dept.valeur)
+        WHEN MAX(parametrage_indicateurs.vi_reg_op) = 'sum' THEN SUM(fi_dept.valeur)
+        WHEN MAX(parametrage_indicateurs.vi_reg_op) = 'avg' THEN AVG(fi_dept.valeur)
         ELSE NULL
     END AS valeur,
     MAX(fi_dept.zone_code_parent) as zone_code,
