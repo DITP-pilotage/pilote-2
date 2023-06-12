@@ -11,22 +11,21 @@ import SynthèseDesRésultatsProjetStructurantRepository from '@/server/domain/p
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import RécupérerIconesMinistèresGroupéesParProjets from './RécupérerIconesMinistèresGroupéesParProjets';
 
 export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
   constructor(
     private readonly projetStructurantrepository: ProjetStructurantRepository = dependencies.getProjetStructurantRepository(),
     private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
     private readonly synthèseDesRésultatsRepository: SynthèseDesRésultatsProjetStructurantRepository = dependencies.getSynthèseDesRésultatsProjetStructurantRepository(),
-    private readonly ministèreRepository: MinistèreRepository = dependencies.getMinistèreRepository(),
   ) {}
 
   private construireListeProjetsStructurants(
     projetsStructurants: ProjetStructurantPrismaVersDomaine[],
     territoires: Territoire[],
     météos: { projetStructurantId: string, météo: Météo }[],
-    icônesMinisterielsGroupéesParProjetStructurant: Record<ProjetStructurantVueDEnsemble['id'], Ministère['icône'][]>,
+    iconesMinistères: Record<ProjetStructurantPrismaVersDomaine['id'], Ministère['icône'][]>,
   ): ProjetStructurantVueDEnsemble[] {
     return projetsStructurants.map(projetStructurant => {
       const territoire = territoires.find(t => t.code === projetStructurant.territoireCode);
@@ -43,10 +42,11 @@ export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
         codeInsee: territoire.codeInsee,
         territoireNomÀAfficher: territoire.nomAffiché,
         périmètresIds: projetStructurant.périmètresIds,
-        iconesMinistères: icônesMinisterielsGroupéesParProjetStructurant[projetStructurant.id],
+        iconesMinistères: iconesMinistères[projetStructurant.id],
       };
     }).filter((ps): ps is ProjetStructurantVueDEnsemble => ps !== null);
   }
+  
 
   async run(habilitations: Habilitations): Promise<ProjetStructurantVueDEnsemble[]> {
     
@@ -57,14 +57,10 @@ export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
     const projetsStructurantsAccessibles = projetsStructurants.filter(ps => projetsStructurantsIdsAccessiblesEnLecture.includes(ps.id));
     const territoires = await this.territoireRepository.récupérerListe(projetsStructurantsAccessibles.map(projet => projet.territoireCode));
     const météos = await this.synthèseDesRésultatsRepository.récupérerToutesLesMétéosLesPlusRécentes();
+    const iconesGroupéesParProjets = await new RécupérerIconesMinistèresGroupéesParProjets().run(projetsStructurants);
+    // console.log(iconesGroupéesParProjets);
     
-    let icônesMinisterielsGroupéesParProjetStructurant: Record<ProjetStructurantVueDEnsemble['id'], string[]> = {}; 
-    
-    for (const ps of projetsStructurants) {
-      icônesMinisterielsGroupéesParProjetStructurant[ps.id] = await this.ministèreRepository.récupérerIconesÀPartirDePérimètres(ps.périmètresIds);
-    }
-  
 
-    return this.construireListeProjetsStructurants(projetsStructurantsAccessibles, territoires, météos, icônesMinisterielsGroupéesParProjetStructurant);
+    return this.construireListeProjetsStructurants(projetsStructurantsAccessibles, territoires, météos, iconesGroupéesParProjets);
   }
 }

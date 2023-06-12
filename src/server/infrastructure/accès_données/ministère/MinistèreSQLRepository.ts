@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient, Prisma, perimetre, ministere } from '@prisma/client';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
@@ -68,15 +68,12 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
     return queryResults.map(queryResult => this.parseMinistère(queryResult));
   }
 
-  async récupérerIconesÀPartirDePérimètres(périmètresIds: PérimètreMinistériel['id'][]): Promise<string[]> {
-    const queryResult: Record<'icone', Ministère['icône']>[] = await this.prisma.$queryRaw`
-    select m.icone
-    from perimetre p
-      left join ministere m on p.ministere_id = m.id
-      where p.id = ANY (${périmètresIds})
+  async récupérerToutesLesIconesAssociéesÀUnPérimètre(): Promise<{ perimetre_id: perimetre['id'], icone: ministere['icone'] }[]> {
+    return this.prisma.$queryRaw`
+      SELECT p.id AS perimetre_id, m.icone
+      FROM perimetre p
+      LEFT JOIN ministere m ON p.ministere_id = m.id
+      WHERE m.icone IS NOT NULL
 `;
-
-    const icônesMinistères = queryResult.map(i => i.icone as string).filter(icone => icone !== null);    
-    return [...new Set(icônesMinistères)];
   }
 }
