@@ -92,6 +92,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                   <Titre
                     baliseHtml="h2"
                     className="fr-text--lg"
+                    estInline
                   >
                     Répartition des météos renseignées
                   </Titre>
