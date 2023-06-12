@@ -75,7 +75,7 @@ const TableauProjetsStructurantsStyled = styled.section`
     }
   }
 
-  .icône {
+  .icônes {
       color: var(--blue-france-sun-113-625)
     }
 `;
