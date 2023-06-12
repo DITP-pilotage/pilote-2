@@ -48,7 +48,7 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
   async récupérerParProjetStructurant(projetStructurantId: string, projetStructurantCodeInsee: string): Promise<{ indicateurs: Indicateur[], détails: DétailsIndicateurs }> {
     const indicateurs: IndicateurProjetStructurantPrisma[] = await this.prisma.indicateur_projet_structurant.findMany({
       where: {
-        projet_structurant_code: projetStructurantId,
+        projet_structurant_id: projetStructurantId,
         NOT: {
           type_id: null,
         },

@@ -1,13 +1,15 @@
 import { indicateur_projet_structurant } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import { typesIndicateurProjetStructurant } from '@/server/domain/indicateur/Indicateur.interface';
-import ProjetStructurantBuilder from '@/server/domain/projetStructurant/ProjetStructurant.builder';
 import { générerPeutÊtreNull, générerUnIdentifiantUnique } from '@/server/infrastructure/test/builders/utils';
+import ProjetStructurantRowBuilder from './ProjetStructurantSQLRow.builder';
 
 export default class IndicateurProjetStructurantRowBuilder {
   private _id: indicateur_projet_structurant['id'];
 
   private _nom: indicateur_projet_structurant['nom'];
+
+  private _projetStructurantId: indicateur_projet_structurant['projet_structurant_id'];
 
   private _projetStructurantCode: indicateur_projet_structurant['projet_structurant_code'];
 
@@ -36,7 +38,7 @@ export default class IndicateurProjetStructurantRowBuilder {
   private _dateTauxAvancement: indicateur_projet_structurant['date_taux_avancement'];
 
   constructor() {
-    const projetStructantGénéré = new ProjetStructurantBuilder().build();
+    const projetStructantGénéré = new ProjetStructurantRowBuilder().build();
 
     this._id = générerUnIdentifiantUnique('IND');
     this._nom = `${this._id} ${faker.lorem.words()}`;
@@ -44,7 +46,8 @@ export default class IndicateurProjetStructurantRowBuilder {
     this._description = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._source = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._modeDeCalcul = générerPeutÊtreNull(0.2, faker.lorem.paragraph(5));
-    this._projetStructurantCode = projetStructantGénéré.id;
+    this._projetStructurantId = projetStructantGénéré.id;
+    this._projetStructurantCode = projetStructantGénéré.code;
     this._valeurInitiale = faker.datatype.number({ precision: 0.01 });
     this._valeurCible = faker.datatype.number({ min: this._valeurInitiale ?? 42, precision: 0.01 });  
     this._valeurActuelle = faker.datatype.number({ min: this._valeurInitiale, max: this._valeurCible, precision: 0.01 });
@@ -55,8 +58,8 @@ export default class IndicateurProjetStructurantRowBuilder {
     this._dateTauxAvancement = new Date('2023-06-01');
   }
 
-  avecProjetStructurantCode(projetStructurantCode: indicateur_projet_structurant['projet_structurant_code']): IndicateurProjetStructurantRowBuilder {
-    this._projetStructurantCode = projetStructurantCode;
+  avecProjetStructurantId(projetStructurantId: indicateur_projet_structurant['projet_structurant_id']): IndicateurProjetStructurantRowBuilder {
+    this._projetStructurantId = projetStructurantId;
     return this;
   }
 
@@ -65,6 +68,7 @@ export default class IndicateurProjetStructurantRowBuilder {
       id: this._id,
       nom: this._nom,
       projet_structurant_code: this._projetStructurantCode,
+      projet_structurant_id: this._projetStructurantId,
       type_id: this._typeId,
       description: this._description,
       source: this._source,

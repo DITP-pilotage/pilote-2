@@ -2,7 +2,6 @@ import { faker } from '@faker-js/faker/locale/fr';
 import {
   générerCaractèresSpéciaux,
   générerPeutÊtreNull,
-  générerUnIdentifiantUnique,
   générerUnLibellé,
   générerUnTableauVideAvecUneTailleDeZéroÀn,
 } from '@/server/infrastructure/test/builders/utils';
@@ -52,7 +51,7 @@ export default class ProjetStructurantBuilder {
     const chefferieDeProjet = générerUnTableauVideAvecUneTailleDeZéroÀn(2).map(() => faker.name.fullName());
     const coporteurs = générerUnTableauVideAvecUneTailleDeZéroÀn(2).map(() => faker.name.fullName());
 
-    this._id = générerUnIdentifiantUnique('PS');
+    this._id = faker.helpers.unique(faker.random.numeric, [7]);
     this._nom = `${générerUnLibellé(6, 14)} ${générerCaractèresSpéciaux(3)} ${this._id}`;
     this._périmètreIds = ministèrePorteur.périmètresMinistériels.map(périmètreMinistériel => périmètreMinistériel.id);
     this._codeTerritoire = territoireGénéré.code;

@@ -157,8 +157,8 @@ export class DatabaseSeeder {
     await this._créerObjectifsProjetsStructurants();
     console.log('  CommentairesProjetStructurant');
     await this._créerCommentairesProjetStructurant();
-    await this._créerIndicateursProjetsStructurants();
     console.log('  IndicateursProjetStructant');
+    await this._créerIndicateursProjetsStructurants();
     console.log('----------------- Fin ------------------');
   }
 
@@ -423,7 +423,7 @@ export class DatabaseSeeder {
     this._projetsStructurants.forEach(p => {
       répéter(0, 3, () => {
         this._indicateursProjetStructurant.push(new IndicateurProjetStructurantRowBuilder()
-          .avecProjetStructurantCode(p.id)
+          .avecProjetStructurantId(p.id)
           .build());
       });
     });
