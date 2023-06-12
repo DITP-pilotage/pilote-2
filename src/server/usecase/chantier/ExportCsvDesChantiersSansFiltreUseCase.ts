@@ -7,6 +7,8 @@ import { libellésTypesCommentaire } from '@/client/constants/libellésCommentai
 import { libellésTypesObjectif } from '@/client/constants/libellésObjectif';
 import { libellésTypesDécisionStratégique } from '@/client/constants/libellésDécisionStratégique';
 import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import configuration from '@/server/infrastructure/Configuration';
 
 export class ExportCsvDesChantiersSansFiltreUseCase {
   public static readonly NOMS_COLONNES = [
@@ -39,7 +41,19 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
   ) {}
 
   public async run(habilitations: Habilitations, profil: Profil): Promise<string[][]> {
-    const chantiersPourExports = await this.chantierRepository.récupérerPourExports(habilitations);
+    const h = new Habilitation(habilitations);
+    const chantierIdsLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoireCodesLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+
+    let chantiersPourExports: ChantierPourExport[] = [];
+    const chunkSize = configuration.exportCsvChantierIdChunkSize;
+    for (let i = 0; i < chantierIdsLecture.length; i += chunkSize) {
+      const partialChantierIds = chantierIdsLecture.slice(i, i + chunkSize);
+      const partialResult = await this.chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
+      // eslint-disable-next-line unicorn/prefer-spread
+      chantiersPourExports = chantiersPourExports.concat(partialResult);
+    }
+
     return chantiersPourExports
       .filter(c => !this.masquerChantierPourProfilDROM(profil, c))
       .map(c => this.transformer(c, profil));

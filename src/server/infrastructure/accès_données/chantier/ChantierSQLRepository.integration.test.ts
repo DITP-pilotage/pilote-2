@@ -20,7 +20,7 @@ describe('ChantierSQLRepository', () => {
       await prisma.chantier.create({
         data: new ChantierSQLRowBuilder().avecId(chantierId).avecMaille('NAT').build(),
       });
-      
+
       const habilitation = { lecture: {
 
         chantiers: ['CH-001', 'CH-002'],
@@ -69,10 +69,8 @@ describe('ChantierSQLRepository', () => {
       // Given
       const repository = new ChantierSQLRepository(prisma);
 
-      const habilitation = { lecture: {
-        chantiers: ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005'],
-        territoires: ['NAT-FR', 'DEPT-01', 'REG-84'],
-      } } as unknown as Utilisateur['habilitations'];
+      const chantierIdsLecture = ['CH-001', 'CH-002', 'CH-003', 'CH-004', 'CH-005'];
+      const territoireCodesLecture = ['NAT-FR', 'DEPT-01', 'REG-84'];
 
       const chantier001Builder = new ChantierSQLRowBuilder()
         .avecId('CH-001')
@@ -234,7 +232,7 @@ describe('ChantierSQLRepository', () => {
       ] });
 
       // When
-      const result = await repository.récupérerPourExports(habilitation);
+      const result = await repository.récupérerPourExports(chantierIdsLecture, territoireCodesLecture);
 
       // Then
       expect(result).toEqual([
@@ -294,10 +292,8 @@ describe('ChantierSQLRepository', () => {
 
       const repository = new ChantierSQLRepository(prisma);
 
-      const habilitation = { lecture: {
-        chantiers: ['CH-001'],
-        territoires: [territoireHabilité.code],
-      } } as unknown as Utilisateur['habilitations'];
+      const chantierIdsLecture = ['CH-001'];
+      const territoireCodesLecture = [territoireHabilité.code];
 
       const chantiersHabilités = [
         new ChantierSQLRowBuilder()
@@ -329,7 +325,7 @@ describe('ChantierSQLRepository', () => {
       ] });
 
       // When
-      const result = await repository.récupérerPourExports(habilitation);
+      const result = await repository.récupérerPourExports(chantierIdsLecture, territoireCodesLecture);
 
       // Then
       expect(result).toEqual([

@@ -126,15 +126,11 @@ export default class ChantierSQLRepository implements ChantierRepository {
     });
   }
 
-  async récupérerPourExports(habilitations: Habilitations): Promise<ChantierPourExport[]> {
-    const h = new Habilitation(habilitations);
-    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
-
+  async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<ChantierPourExport[]> {
     const rows = await this.prisma.$queryRaw<any[]>`
         with chantier_ids as (select distinct c.id
                               from chantier c
-                              where c.id in (${Prisma.join(chantiersLecture)})
+                              where c.id in (${Prisma.join(chantierIdsLecture)})
                                 and ministeres <> '{}'),
              derniers_commentaires as (select *
                                        from (select c.*,
@@ -181,7 +177,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
                s.meteo             meteo
 
         from chantier_ids cids
-                 inner join territoire t on t.code in (${Prisma.join(territoiresLecture)})
+                 inner join territoire t on t.code in (${Prisma.join(territoireCodesLecture)})
                  left outer join chantier c on c.id = cids.id and c.territoire_code = t.code
                  left outer join chantier c_n on c_n.id = cids.id and c_n.maille = 'NAT'
                  left outer join chantier c_r on (c_r.id = cids.id and c_r.maille = 'REG')

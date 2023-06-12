@@ -12,7 +12,6 @@ import SynthèseDesRésultatsRepository
 import {
   SynthèseDesRésultatsSQLRepository,
 } from '@/server/infrastructure/accès_données/chantier/synthèseDesRésultats/SynthèseDesRésultatsSQLRepository';
-import logger from '@/server/infrastructure/logger';
 import AxeRepository from '@/server/domain/axe/AxeRepository.interface';
 import AxeSQLRepository from '@/server/infrastructure/accès_données/axe/AxeSQLRepository';
 import PpgRepository from '@/server/domain/ppg/PpgRepository.interface';
@@ -126,7 +125,6 @@ class Dependencies {
   private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
 
   constructor() {
-    logger.debug('Using database.');
     const prisma = new PrismaClient();
     this._chantierRepository = new ChantierSQLRepository(prisma);
     this._axeRepository = new AxeSQLRepository(prisma);
