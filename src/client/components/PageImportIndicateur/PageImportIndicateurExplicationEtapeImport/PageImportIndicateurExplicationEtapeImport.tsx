@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import Titre from '@/components/_commons/Titre/Titre';
 import { wording } from '@/client/utils/i18n/i18n';
 import ExplicationEtapeIndicateur from './ExplicationEtapeIndicateur/ExplicationEtapeIndicateur';
@@ -24,6 +25,10 @@ const explicationsEtapeImport: ExplicationEtape[] = [
 ];
 
 export default function PageImportIndicateurExplicationEtapeImport() {
+  const { query } = useRouter();
+  const etapeCourante = query.etapeCourante ? Number(query.etapeCourante) : 1;
+
+
   return (
     <PageImportIndicateurExplicationEtapeImportStyled>
       <div className='fr-container fr-pt-2w fr-pb-3w'>
@@ -40,6 +45,7 @@ export default function PageImportIndicateurExplicationEtapeImport() {
               key={titre}
             >
               <ExplicationEtapeIndicateur
+                etapeCourante={etapeCourante}
                 numéro={index + 1}
                 texte={texte}
                 titre={titre}

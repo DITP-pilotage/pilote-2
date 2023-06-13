@@ -9,16 +9,9 @@ export default function IndicateurDEtapes({ étapes, étapeCourante }: Indicateu
     <div className="fr-stepper">
       <h2 className="fr-stepper__title">
         <span className="fr-stepper__state">
-          Étape 
-          {' '}
-          {étapeCourante}
-          {' '}
-          sur 
-          {' '}
-          {nombreDEtapes}
+          {`Étape ${étapeCourante} sur ${nombreDEtapes}`}
         </span>
-        {' '}
-        {étapes[indexEtape]}
+        {` ${étapes[indexEtape]}`}
       </h2>
       <div
         className="fr-stepper__steps"
