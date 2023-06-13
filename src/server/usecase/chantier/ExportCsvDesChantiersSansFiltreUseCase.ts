@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/dot-notation */
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 import { libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
@@ -40,10 +39,9 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
     private readonly chantierRepository = dependencies.getChantierRepository(),
   ) {}
 
-  public async* run(habilitations: Habilitations, profil: Profil): AsyncGenerator<string[][]> {
-    const h = new Habilitation(habilitations);
-    const chantierIdsLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const territoireCodesLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+  public async* run(habilitation: Habilitation, profil: Profil): AsyncGenerator<string[][]> {
+    const chantierIdsLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
     const chunkSize = configuration.exportCsvChantierIdChunkSize;
     for (let i = 0; i < chantierIdsLecture.length; i += chunkSize) {

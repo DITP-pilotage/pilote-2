@@ -4,6 +4,7 @@ import { stringify } from 'csv-stringify';
 import assert from 'node:assert/strict';
 import { ExportCsvDesChantiersSansFiltreUseCase } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
 
 export default async function handleExportDesChantiersSansFiltre(request: NextApiRequest, response: NextApiResponse): Promise<void> {
@@ -21,7 +22,8 @@ export default async function handleExportDesChantiersSansFiltre(request: NextAp
   stringifier.pipe(response);
 
   const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase();
-  for await (const partialResult of exportCsvDesChantiersSansFiltreUseCase.run(session.habilitations, session.profil)) {
+  const habilitation = new Habilitation(session.habilitations);
+  for await (const partialResult of exportCsvDesChantiersSansFiltreUseCase.run(habilitation, session.profil)) {
     for (const chantierPourExport of partialResult) {
       stringifier.write(chantierPourExport);
     }
