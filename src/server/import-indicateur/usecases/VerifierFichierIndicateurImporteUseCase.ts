@@ -8,12 +8,36 @@ import {
 import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
 
 import { RapportRepository } from '@/server/import-indicateur/domain/ports/RapportRepository';
+import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
+import { ACCEPTED_DATE_FORMAT } from '@/server/import-indicateur/domain/enum/ACCEPTED_DATE_FORMAT';
 
 interface Dependencies {
   fichierIndicateurValidationService: FichierIndicateurValidationService
   mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository
   rapportRepository: RapportRepository;
 }
+
+const correspondALIndicateurId = (mesureIndicateurTemporaire: MesureIndicateurTemporaire, indicateurId: string, listeErreursValidation: ErreurValidationFichier[], index: number) => {
+  if (mesureIndicateurTemporaire.indicId?.localeCompare(indicateurId)) {
+    listeErreursValidation.push(
+      ErreurValidationFichier.creerErreurValidationFichier({
+        cellule: mesureIndicateurTemporaire.indicId,
+        nom: 'Indicateur invalide',
+        message: `L'indicateur ${mesureIndicateurTemporaire.indicId} ne correpond pas à l'indicateur choisit (${indicateurId})`,
+        numeroDeLigne: index + 1,
+        positionDeLigne: index,
+        nomDuChamp: 'indic_id',
+        positionDuChamp: -1,
+      }),
+    );
+  }
+};
+
+const verifierFormatDateValeur = (mesureIndicateurTemporaire: MesureIndicateurTemporaire) => {
+  if (mesureIndicateurTemporaire.metricDate?.match('(0[0-9]|1[0-9]|2[0-9]|3[01])\/(0[0-9]|1[012])\/(20[0-9]{2})')) {
+    mesureIndicateurTemporaire.convertirDateProvenantDuFormat(ACCEPTED_DATE_FORMAT.DD_MM_YYYY);
+  }
+};
 
 export class VerifierFichierIndicateurImporteUseCase {
   private fichierIndicateurValidationService: FichierIndicateurValidationService;
@@ -23,7 +47,11 @@ export class VerifierFichierIndicateurImporteUseCase {
   private rapportRepository: RapportRepository;
 
 
-  constructor({ fichierIndicateurValidationService, mesureIndicateurTemporaireRepository, rapportRepository }: Dependencies) {
+  constructor({
+    fichierIndicateurValidationService,
+    mesureIndicateurTemporaireRepository,
+    rapportRepository,
+  }: Dependencies) {
     this.fichierIndicateurValidationService = fichierIndicateurValidationService;
     this.mesureIndicateurTemporaireRepository = mesureIndicateurTemporaireRepository;
     this.rapportRepository = rapportRepository;
@@ -53,19 +81,8 @@ export class VerifierFichierIndicateurImporteUseCase {
     const listeErreursValidation: ErreurValidationFichier[] = report.listeErreursValidation;
 
     report.listeMesuresIndicateurTemporaire.forEach((mesureIndicateurTemporaire, index) => {
-      if (mesureIndicateurTemporaire.indicId?.localeCompare(indicateurId)) {
-        listeErreursValidation.push(
-          ErreurValidationFichier.creerErreurValidationFichier({
-            cellule: mesureIndicateurTemporaire.indicId,
-            nom: 'Indicateur invalide',
-            message: `L'indicateur ${mesureIndicateurTemporaire.indicId} ne correpond pas à l'indicateur choisit (${indicateurId})`,
-            numeroDeLigne: index + 1,
-            positionDeLigne: index,
-            nomDuChamp: 'indic_id',
-            positionDuChamp: -1,
-          }),
-        );
-      }
+      correspondALIndicateurId(mesureIndicateurTemporaire, indicateurId, listeErreursValidation, index);
+      verifierFormatDateValeur(mesureIndicateurTemporaire);
     });
 
     if (listeErreursValidation.length > 0) {

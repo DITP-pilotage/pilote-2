@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
+import { ACCEPTED_DATE_FORMAT } from '@/server/import-indicateur/domain/enum/ACCEPTED_DATE_FORMAT';
+
 export class MesureIndicateurTemporaire {
   private readonly _id: string;
 
@@ -9,7 +11,7 @@ export class MesureIndicateurTemporaire {
 
   private readonly _zoneId: string | null;
 
-  private readonly _metricDate: string | null;
+  private _metricDate: string | null;
 
   private readonly _metricType: string | null;
 
@@ -96,5 +98,16 @@ export class MesureIndicateurTemporaire {
       metricType,
       metricValue,
     });
+  }
+
+  convertirDateProvenantDuFormat(acceptedDateFormat: ACCEPTED_DATE_FORMAT) {
+    if (!this._metricDate) return;
+    // eslint-disable-next-line sonarjs/no-small-switch
+    switch (acceptedDateFormat) {
+      case ACCEPTED_DATE_FORMAT.DD_MM_YYYY: {
+        this._metricDate = this._metricDate.split('/').reverse().join('-');
+        break;
+      }
+    }
   }
 }
