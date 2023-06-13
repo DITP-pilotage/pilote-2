@@ -75,11 +75,11 @@ const initialiserMapCodeErreurDITP: (taskError: ReportErrorTask) => Record<strin
 
   const cléPourCodeLigneDuplique = `the same as in the row at position ${taskError.rowNumber}`;
   const cléPourCodeLigneVide = 'cells composing the primary keys are all "None"';
-  mapCodeNote[cléPourCodeLigneDuplique] = `La ligne ${taskError.rowNumber} comporte la même zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux.`;
-  mapCodeNote[cléPourCodeLigneVide] = `Toute les celulles de la ligne ${taskError.rowPosition} sont vides`;
+  mapCodeNote[cléPourCodeLigneDuplique] = `La ligne ${taskError.rowNumber} comporte les mêmes zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux.`;
+  mapCodeNote[cléPourCodeLigneVide] = `Toutes les cellules de la ligne ${taskError.rowPosition} sont vides`;
 
   const cléPourCodeEnteteInvalide = 'Provided schema is not valid.';
-  mapCodeNoteEnteteInvalide[cléPourCodeEnteteInvalide] = 'Les entêtes du fichier sont invalide, les entêtes doivent être [identifiant_indic, zone_id, date_valeur, type_valeur, valeur]';
+  mapCodeNoteEnteteInvalide[cléPourCodeEnteteInvalide] = 'Les entêtes du fichier sont invalides, les entêtes doivent être [identifiant_indic, zone_id, date_valeur, type_valeur, valeur]';
 
   const cléPourCodeEnteteDoublon = 'Duplicate labels in header is not supported with "schema_sync"';
   mapCodeNoteEnteteDoublon[cléPourCodeEnteteDoublon] = 'Il existe des entêtes en doublon dans le fichier';

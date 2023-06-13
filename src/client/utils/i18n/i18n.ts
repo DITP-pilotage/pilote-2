@@ -1,6 +1,5 @@
 import { wordingFr } from '@/client/utils/i18n/wordingFr';
 
-
 const i18n: Record<Locale, typeof wordingFr> = {
   'fr': wordingFr,
 };

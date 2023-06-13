@@ -45,6 +45,17 @@ export function PageImportIndicateurSectionRessource() {
             </li>
             <li>
               <b>
+                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE.CHAMP}
+              </b>
+              <span>
+                {' '}
+                •
+                {' '}
+                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE.EXPLICATION}
+              </span>
+            </li>
+            <li>
+              <b>
                 {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.DATE_VALEUR.CHAMP}
               </b>
               <span>
@@ -90,6 +101,9 @@ export function PageImportIndicateurSectionRessource() {
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.ZONE_ID}
                 </th>
                 <th>
+                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.ZONE}
+                </th>
+                <th>
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.DATE_VALEUR}
                 </th>
                 <th>
@@ -110,6 +124,9 @@ export function PageImportIndicateurSectionRessource() {
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1.ZONE_ID}
                 </td>
                 <td>
+                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1.ZONE}
+                </td>
+                <td>
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1.DATE_VALEUR}
                 </td>
                 <td>
@@ -127,6 +144,9 @@ export function PageImportIndicateurSectionRessource() {
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2.ZONE_ID}
                 </td>
                 <td>
+                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2.ZONE}
+                </td>
+                <td>
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2.DATE_VALEUR}
                 </td>
                 <td>
@@ -142,6 +162,9 @@ export function PageImportIndicateurSectionRessource() {
                 </td>
                 <td>
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3.ZONE_ID}
+                </td>
+                <td>
+                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3.ZONE}
                 </td>
                 <td>
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3.DATE_VALEUR}

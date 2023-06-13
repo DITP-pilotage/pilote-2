@@ -49,6 +49,7 @@ export default function PageImportIndicateurSectionImport({
   const chantierId = query.id as string;
   const indicateurId = query.indicateurId as string;
   const rapportId = query.rapportId as string;
+  const [indicateurSelectionné, setIndicateurSelectionné] = useState<string>(optionsSélecteur[0]?.valeur || '');
 
   return (
     <PageImportIndicateurSectionImportStyled>
@@ -61,29 +62,39 @@ export default function PageImportIndicateurSectionImport({
             étapeCourante={etapeCourante}
             étapes={étapes}
           />
-          <form
-            className={`${etapeCourante != Etapes.SELECTION_INDICATEUR && 'fr-hidden'}`}
-            method='GET'
-          >
-            <Titre baliseHtml='h4'>
-              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.TITRE}
-            </Titre>
-            <input
-              name='etapeCourante'
-              type="hidden"
-              value={2}
-            />
-            <Sélecteur
-              htmlName="indicateurId"
-              libellé='Choix de l’indicateur'
-              options={optionsSélecteur}
-            />
-            <div className='fr-mt-4w'>
-              <SubmitBouton
-                label={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_PROCHAINE_ETAPE}
-              />
-            </div>
-          </form>
+          {
+            optionsSélecteur.length > 0 ?
+              <form
+                className={`${etapeCourante != Etapes.SELECTION_INDICATEUR && 'fr-hidden'}`}
+                method='GET'
+              >
+                <Titre baliseHtml='h4'>
+                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.TITRE}
+                </Titre>
+                <input
+                  name='etapeCourante'
+                  type="hidden"
+                  value={2}
+                />
+                <Sélecteur
+                  htmlName="indicateurId"
+                  libellé='Choix de l’indicateur'
+                  options={optionsSélecteur}
+                  valeurModifiéeCallback={setIndicateurSelectionné}
+                  valeurSélectionnée={indicateurSelectionné}
+                />
+                <div className='fr-mt-4w flex justify-end'>
+                  <SubmitBouton
+                    className='fr-btn--icon-right fr-icon-arrow-right-line'
+                    label={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_PROCHAINE_ETAPE}
+                  />
+                </div>
+              </form>
+              :
+              <div>
+                { wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.MESSAGE_ERREUR_AUCUN_INDICATEUR }
+              </div>
+          }
           <div
             className={`${etapeCourante != Etapes.VERIFIER_FICHIER && 'fr-hidden'}`}
           >
@@ -124,9 +135,12 @@ export default function PageImportIndicateurSectionImport({
                       type="hidden"
                       value={rapport?.id}
                     />
-                    <SubmitBouton
-                      label={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.LABEL_BOUTON_PROCHAINE_ETAPE}
-                    />
+                    <div className='fr-mt-4w flex justify-end'>
+                      <SubmitBouton
+                        className='fr-btn--icon-right fr-icon-arrow-right-line'
+                        label={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.LABEL_BOUTON_PROCHAINE_ETAPE}
+                      />
+                    </div>
                   </form>
                 </div>
                 : null

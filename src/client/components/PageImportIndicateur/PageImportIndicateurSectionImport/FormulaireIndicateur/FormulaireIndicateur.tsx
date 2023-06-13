@@ -25,6 +25,13 @@ export default function FormulaireIndicateur({ chantierId, indicateurId, setRapp
       <p>
         {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.EXPLICATION_TELECHARGEMENT_TEMPLATE}
       </p>
+      <p>
+        {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.EXPLICATION_INDICATEUR_ID}
+        {' '}
+        <b>
+          {indicateurId}
+        </b>
+      </p>
       <div className="flex">
         <div className="fr-download fr-mr-3w">
           <p>
