@@ -48,7 +48,7 @@ export default function UtilisateurFormulaire({ chantiers, périmètresMinistér
         register={register('profil')}
         texteAide={texteAideProfil}
         texteFantôme='Sélectionnez une option'
-        valeurModifiéeCallback={p => setProfilSélectionné(p)}
+        valeurModifiéeCallback={p => console.log(p)}
         valeurSélectionnée={profilSélectionné}
       />
       <input

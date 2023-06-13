@@ -11,7 +11,6 @@ export default function Sélecteur<T extends string>({
   valeurModifiéeCallback,
   valeurSélectionnée,
 }: SélecteurProps<T>) {
-
   return (
     <div className={`fr-select-group ${erreur !== undefined ? 'fr-select-group--error' : ''}`}>
       {
