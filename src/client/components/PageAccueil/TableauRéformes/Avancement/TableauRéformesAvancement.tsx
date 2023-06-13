@@ -1,7 +1,10 @@
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import TableauRéformesAvancementProps from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement.interface';
+import { typeDeRéformeSélectionnée } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 
 export default function TableauRéformesAvancement({ avancement }: TableauRéformesAvancementProps) {
+  const typeDeRéforme = typeDeRéformeSélectionnée();
+  
   return (
     avancement === null
       ? (
@@ -13,7 +16,7 @@ export default function TableauRéformesAvancement({ avancement }: TableauRéfor
           fond="blanc"
           taille="sm"
           valeur={avancement}
-          variante='primaire'
+          variante={typeDeRéforme === 'chantier' ? 'primaire' : 'rose'}
         />
       )
   );

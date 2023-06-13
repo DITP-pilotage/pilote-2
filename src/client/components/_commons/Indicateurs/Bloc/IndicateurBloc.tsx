@@ -11,10 +11,12 @@ import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailVali
 import ResultatValidationFichier from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { IndicateurPondération } from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPondération';
+import { typeDeRéformeSélectionnée } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
-export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, typeDeRéforme, territoireProjetStructurant, estDisponibleALImport = false }: IndicateurBlocProps) {
+export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, territoireProjetStructurant, estDisponibleALImport = false }: IndicateurBlocProps) {
+  const typeDeRéforme = typeDeRéformeSélectionnée();
   const router = useRouter();
   const réformeId = router.query.id as string;
   
