@@ -26,7 +26,7 @@ jest.mock('@/server/import-indicateur/infrastructure/adapters/FichierService.ts'
 }));
 
 
-const DONNEE_DATE_1 = '30/12/2023';
+const DONNEE_DATE_1 = '2023-12-30';
 const DONNEE_DATE_2 = '31/12/2023';
 const BASE_URL_VALIDATA = 'https://api.validata.etalab.studio';
 
@@ -134,7 +134,7 @@ describe('VerifierImportIndicateurHandler', () => {
 
       expect(listeDonneesFichier[1].indic_id).toEqual('IND-001');
       expect(listeDonneesFichier[1].zone_id).toEqual('D004');
-      expect(listeDonneesFichier[1].metric_date).toEqual(DONNEE_DATE_2);
+      expect(listeDonneesFichier[1].metric_date).toEqual('2023-12-31');
       expect(listeDonneesFichier[1].metric_type).toEqual('vc');
       expect(listeDonneesFichier[1].metric_value).toEqual('3');
     });
