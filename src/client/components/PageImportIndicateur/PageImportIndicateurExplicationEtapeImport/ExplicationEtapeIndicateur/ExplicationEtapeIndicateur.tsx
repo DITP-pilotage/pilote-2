@@ -2,9 +2,9 @@ import Titre from '@/components/_commons/Titre/Titre';
 import { ExplicationEtapeIndicateurProps } from './ExplicationEtapeIndicateur.interface';
 import ExplicationEtapeIndicateurStyled from './ExplicationEtapeIndicateur.styled';
 
-export default function ExplicationEtapeIndicateur({ titre, texte, numéro }: ExplicationEtapeIndicateurProps) {
+export default function ExplicationEtapeIndicateur({ titre, texte, numéro, etapeCourante }: ExplicationEtapeIndicateurProps) {
   return (
-    <ExplicationEtapeIndicateurStyled className="fr-p-3w">
+    <ExplicationEtapeIndicateurStyled className={`fr-p-3w${etapeCourante === numéro ? ' etape-courante' : '' }`}>
       <span className='explication-indicateur__numero fr-mb-1w fr-text--bold fr-h4'>
         {numéro}
       </span>

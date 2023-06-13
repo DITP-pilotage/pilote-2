@@ -26,10 +26,7 @@ export function PageImportIndicateurSectionRessource() {
                 {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.IDENTIFIANT_INDIC.CHAMP}
               </b>
               <span>
-                {' '}
-                •
-                {' '}
-                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.IDENTIFIANT_INDIC.EXPLICATION}
+                {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.IDENTIFIANT_INDIC.EXPLICATION}`}
               </span>
             </li>
             <li>
@@ -37,10 +34,7 @@ export function PageImportIndicateurSectionRessource() {
                 {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE_ID.CHAMP}
               </b>
               <span>
-                {' '}
-                •
-                {' '}
-                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE_ID.EXPLICATION}
+                {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE_ID.EXPLICATION}`}
               </span>
             </li>
             <li>
@@ -48,10 +42,7 @@ export function PageImportIndicateurSectionRessource() {
                 {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE.CHAMP}
               </b>
               <span>
-                {' '}
-                •
-                {' '}
-                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE.EXPLICATION}
+                {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE.EXPLICATION}`}
               </span>
             </li>
             <li>
@@ -59,10 +50,7 @@ export function PageImportIndicateurSectionRessource() {
                 {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.DATE_VALEUR.CHAMP}
               </b>
               <span>
-                {' '}
-                •
-                {' '}
-                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.DATE_VALEUR.EXPLICATION}
+                {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.DATE_VALEUR.EXPLICATION}`}
               </span>
             </li>
             <li>
@@ -70,10 +58,7 @@ export function PageImportIndicateurSectionRessource() {
                 {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.TYPE_VALEUR.CHAMP}
               </b>
               <span>
-                {' '}
-                •
-                {' '}
-                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.TYPE_VALEUR.EXPLICATION}
+                {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.TYPE_VALEUR.EXPLICATION}`}
               </span>
             </li>
             <li>
@@ -81,10 +66,7 @@ export function PageImportIndicateurSectionRessource() {
                 {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.VALEUR.CHAMP}
               </b>
               <span>
-                {' '}
-                •
-                {' '}
-                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.VALEUR.EXPLICATION}
+                {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.VALEUR.EXPLICATION}`}
               </span>
             </li>
           </ul>
@@ -113,7 +95,6 @@ export function PageImportIndicateurSectionRessource() {
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.VALEUR}
                 </th>
               </tr>
-
             </thead>
             <tbody>
               <tr>

@@ -1,0 +1,5 @@
+export enum EtapesImport {
+  SELECTION_INDICATEUR = 1,
+  VERIFIER_FICHIER = 2,
+  IMPORT_FICHIER = 3,
+}
