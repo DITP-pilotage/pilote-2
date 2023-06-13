@@ -23,7 +23,7 @@ const correspondALIndicateurId = (mesureIndicateurTemporaire: MesureIndicateurTe
       ErreurValidationFichier.creerErreurValidationFichier({
         cellule: mesureIndicateurTemporaire.indicId,
         nom: 'Indicateur invalide',
-        message: `L'indicateur ${mesureIndicateurTemporaire.indicId} ne correpond pas à l'indicateur choisit (${indicateurId})`,
+        message: `L'indicateur ${mesureIndicateurTemporaire.indicId} ne correpond pas à l'indicateur choisis (${indicateurId})`,
         numeroDeLigne: index + 1,
         positionDeLigne: index,
         nomDuChamp: 'indic_id',

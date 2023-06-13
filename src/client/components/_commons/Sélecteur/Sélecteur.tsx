@@ -24,7 +24,7 @@ export default function Sélecteur<T extends string>({
         )
       }
       <select
-        className="fr-select"
+        className="fr-select fr-mt-1w"
         name={htmlName}
         onChange={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.value as T)}
         value={valeurSélectionnée || ''}

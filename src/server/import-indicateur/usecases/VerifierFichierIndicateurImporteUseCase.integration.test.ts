@@ -294,7 +294,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
 
     expect(report.listeErreursValidation).toHaveLength(1);
     expect(report.listeErreursValidation[0].cellule).toEqual('IND-003');
-    expect(report.listeErreursValidation[0].message).toEqual("L'indicateur IND-003 ne correpond pas à l'indicateur choisit (IND-001)");
+    expect(report.listeErreursValidation[0].message).toEqual("L'indicateur IND-003 ne correpond pas à l'indicateur choisis (IND-001)");
     expect(report.listeErreursValidation[0].nomDuChamp).toEqual('indic_id');
     expect(report.listeErreursValidation[0].nom).toEqual('Indicateur invalide');
     expect(report.listeErreursValidation[0].positionDeLigne).toEqual(1);

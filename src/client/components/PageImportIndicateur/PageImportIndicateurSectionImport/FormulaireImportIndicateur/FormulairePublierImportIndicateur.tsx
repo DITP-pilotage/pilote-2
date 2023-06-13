@@ -13,7 +13,7 @@ export default function FormulairePublierImportIndicateur({
 
   return (
     <form
-      className='flex align-center'
+      className='flex justify-end'
       onSubmit={publierLeFichier}
     >
       <SubmitBouton

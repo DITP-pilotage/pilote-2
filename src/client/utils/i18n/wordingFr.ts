@@ -9,22 +9,24 @@ export const wordingFr = {
       },
       ETAPE_CHARGER_FICHIER: {
         TITRE: 'Charger le fichier',
-        SOUS_TITRE_SELECTEUR: 'Chargez votre fichier et vérifiez sa conformité',
+        SOUS_TITRE_SELECTEUR: 'Charger le fichier',
         TEXTE: 'Dès que votre fichier vous semble correct, vous pouvez le charger pour vérifier que les données sont au bon format. Un rapport d’erreurs vous renseignera sur les potentiels éléments à adapter.',
       },
       ETAPE_PUBLIER_FICHIER: {
         TITRE: 'Publier le fichier validé',
-        SOUS_TITRE_SELECTEUR: 'Vérifiez les valeurs saisies avant de publier vos données',
+        SOUS_TITRE_SELECTEUR: 'Publier le fichier validé',
         TEXTE: 'Prévisualisez vos données et validez la publication. Vous devrez ensuite attendre quelques jours pour que ces données soient prises en compte dans le calcul des taux d’avancement. Vous pouvez mettre à jour d’autres indicateurs.',
       },
     },
     SECTION_ETAPE_IMPORT: {
       TITRE: 'Importez vos données',
       ETAPE_SELECTION_INDICATEUR: {
-        TITRE: 'Pour quel indicateur souhaitez vous mettre à jour les données ?',
+        TITRE: 'Pour quel indicateur souhaitez-vous mettre à jour les données ?',
         LABEL_BOUTON_VERIFIER_FICHIER: 'Vérifier le fichier',
         LABEL_BOUTON_PROCHAINE_ETAPE: 'Suivant',
+        MESSAGE_ERREUR_AUCUN_INDICATEUR: 'Ce chantier ne possède aucun indicateur',
         EXPLICATION_TELECHARGEMENT_TEMPLATE: 'Si vous n’avez pas de fichier au bon format, téléchargez le modèle à remplir et consultez les règles et consignes de remplissage dans les ressources ci-dessous.',
+        EXPLICATION_INDICATEUR_ID: 'Le code de cet indicateur à renseigner dans la colonne identifiant_indic est : ',
         LABEL_BOUTON_TELECHARGER_MODELE_CSV: 'Télécharger le modèle csv',
         FORMAT_BOUTON_TELECHARGER_MODELE_CSV: '.csv',
         LABEL_BOUTON_TELECHARGER_MODELE_XLSX: 'Télécharger le modèle xlsx',
@@ -41,7 +43,7 @@ export const wordingFr = {
         MESSAGE_ALERT_ERREUR: 'Il contient des erreurs expliquées dans le rapport d’erreurs ci-dessous. Nous vous recommandons de consulter les ressources et/ou de remplir le modèle de fichier à remplir.',
         TABLEAU_ERREUR: {
           ENTETE: {
-            NOM: 'Nom',
+            NOM: "Type d'erreur",
             CELLULE: 'Cellule',
             MESSAGE: 'Message',
             NOM_DU_CHAMP: 'Nom du champ',
@@ -52,7 +54,7 @@ export const wordingFr = {
         },
       },
       ETAPE_PUBLIER_FICHIER: {
-        TITRE: 'Pour quel indicateur souhaitez vous mettre à jour les données ?',
+        TITRE: 'Pour quel indicateur souhaitez-vous mettre à jour les données ?',
         TABLEAU_PREVISUALISATION: {
           ENTETE: {
             IDENTIFIANT_INDIC: 'identifiant_indic',
@@ -82,6 +84,10 @@ export const wordingFr = {
             CHAMP: 'zone_id',
             EXPLICATION: 'Identifiant du territoire pour lequel la donnée est renseignée. Il provient des référentiels INSEE et est interopérable. Exemple : D34, D20... (voir le référentiel ci-dessous)',
           },
+          ZONE: {
+            CHAMP: 'zone',
+            EXPLICATION: 'Champ facultatif précisant les territoires auxquels correspondent les zone-id. Vous n’êtes pas obligé(e) d’inclure cette colonne.',
+          },
           DATE_VALEUR: {
             CHAMP: 'date_valeur',
             EXPLICATION: 'Date à laquelle se réfère la valeur numérique. La date doit être renseignée selon le modèle suivant année-mois-jour. Exemple : 2023-02-26, 2023-01-17...',
@@ -100,6 +106,7 @@ export const wordingFr = {
           ENTETE: {
             IDENTIFIANT_INDIC: 'identifiant_indic',
             ZONE_ID: 'zone_id',
+            ZONE: 'zone (facultatif)',
             DATE_VALEUR: 'date_valeur',
             TYPE_VALEUR: 'type_valeur',
             VALEUR: 'valeur',
@@ -107,6 +114,7 @@ export const wordingFr = {
           LIGNE_EXEMPLE_1: {
             IDENTIFIANT_INDIC: 'IND-009',
             ZONE_ID: 'D12',
+            ZONE: 'Aveyron',
             DATE_VALEUR: '2023-03-31',
             TYPE_VALEUR: 'va',
             VALEUR: '5',
@@ -114,6 +122,7 @@ export const wordingFr = {
           LIGNE_EXEMPLE_2: {
             IDENTIFIANT_INDIC: 'IND-009',
             ZONE_ID: 'D13',
+            ZONE: 'Bouches-du-Rhône',
             DATE_VALEUR: '2023-01-17',
             TYPE_VALEUR: 'va',
             VALEUR: '12',
@@ -121,6 +130,7 @@ export const wordingFr = {
           LIGNE_EXEMPLE_3: {
             IDENTIFIANT_INDIC: 'IND-009',
             ZONE_ID: 'D14',
+            ZONE: 'Calvados',
             DATE_VALEUR: '2023-02-26',
             TYPE_VALEUR: 'va',
             VALEUR: '20',
