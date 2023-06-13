@@ -16,15 +16,8 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   async run(utilisateurs: UtilisateurÀCréerOuMettreÀJour[]): Promise<void> {
     for (const utilisateur of utilisateurs) {
       const territoires = await this.territoireRepository.récupérerTous();
-      const profilsTerritoriaux = new Set(['REFERENT_REGION', 'PREFET_REGION', 'SERVICES_DECONCENTRES_REGION', 'REFERENT_DEPARTEMENT', 'PREFET_DEPARTEMENT', 'SERVICES_DECONCENTRES_DEPARTEMENT']);
 
       for (const habilitation of objectEntries(utilisateur.habilitations)) {
-        // IGNORER LES DROITS D'ECRITURE POUR UNE LISTE DE PROFILS TERRITORIAUX (TEMPORAIRE)
-        if ((habilitation[0] === 'saisie.commentaire' || habilitation[0] === 'saisie.indicateur') && profilsTerritoriaux.has(utilisateur.profil)) {
-          utilisateur.habilitations[habilitation[0]].chantiers = [];
-          utilisateur.habilitations[habilitation[0]].périmètres = [];
-          utilisateur.habilitations[habilitation[0]].territoires = [];
-        }
 
         // AJOUTER LE PERIMETRE OUTRE MER POUR LES PROFILS DROM
         if (utilisateur.profil === 'DROM' && !utilisateur.habilitations[habilitation[0]].périmètres.includes('PER-018')) {
