@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/dot-notation */
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 import { libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
 import { libellésTypesObjectif } from '@/client/constants/libellésObjectif';
 import { libellésTypesDécisionStratégique } from '@/client/constants/libellésDécisionStratégique';
 import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import configuration from '@/server/infrastructure/Configuration';
 
 export class ExportCsvDesChantiersSansFiltreUseCase {
   public static readonly NOMS_COLONNES = [
@@ -38,11 +39,18 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
     private readonly chantierRepository = dependencies.getChantierRepository(),
   ) {}
 
-  public async run(habilitations: Habilitations, profil: Profil): Promise<string[][]> {
-    const chantiersPourExports = await this.chantierRepository.récupérerPourExports(habilitations);
-    return chantiersPourExports
-      .filter(c => !this.masquerChantierPourProfilDROM(profil, c))
-      .map(c => this.transformer(c, profil));
+  public async* run(habilitation: Habilitation, profil: Profil): AsyncGenerator<string[][]> {
+    const chantierIdsLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
+
+    const chunkSize = configuration.exportCsvChantierIdChunkSize;
+    for (let i = 0; i < chantierIdsLecture.length; i += chunkSize) {
+      const partialChantierIds = chantierIdsLecture.slice(i, i + chunkSize);
+      const partialResult = await this.chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
+      yield partialResult
+        .filter(c => !this.masquerChantierPourProfilDROM(profil, c))
+        .map(c => this.transformer(c, profil));
+    }
   }
 
   private masquerPourProfilDROM(profil: Profil, périmètreIds : string[]) {

@@ -1,3 +1,5 @@
+import process from 'node:process';
+
 export class Configuration {
   public readonly env: string;
 
@@ -29,6 +31,8 @@ export class Configuration {
 
   public readonly devSessionMaxAge: number = 30 * 24 * 60 * 60; // 30 days
 
+  public readonly exportCsvChantierIdChunkSize: number;
+
   constructor() {
     this.logLevel = process.env.LOG_LEVEL || 'info';
 
@@ -56,6 +60,8 @@ export class Configuration {
     // En local, en faisant npm run dev, le NODE_ENV est à development
     // En test, le NODE_ENV est à test
     this.securedEnv = process.env.NODE_ENV === 'production';
+
+    this.exportCsvChantierIdChunkSize = Number.parseInt(process.env.EXPORT_CSV_CHANTIER_ID_CHUNK_SIZE || '5');
   }
 }
 
