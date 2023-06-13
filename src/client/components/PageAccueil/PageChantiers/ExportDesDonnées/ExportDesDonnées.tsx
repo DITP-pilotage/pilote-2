@@ -22,14 +22,21 @@ export const ID_HTML_MODALE_EXPORT = 'modale-exporter-les-données';
 
 export default function ExportDesDonnées() {
   const [ressourceÀExporter, setRessourceÀExporter] = useState<keyof typeof ressources | undefined>();
+  const [estDésactivé, setEstDésactivé] = useState(false);
 
   return (
     <Modale
       idHtml={ID_HTML_MODALE_EXPORT}
+      ouvertureCallback={() => {
+        setEstDésactivé(false);
+      }}
       titre="Exporter les données"
     >
       <form
         className="fr-mt-2w"
+        onChange={() => {
+          setEstDésactivé(false);
+        }}
         onSubmit={(événement) => {
           événement.preventDefault();
           if (!ressourceÀExporter)
@@ -37,6 +44,7 @@ export default function ExportDesDonnées() {
 
           const { url, baseDuNomDeFichier } = ressources[ressourceÀExporter];
           if (url) {
+            setEstDésactivé(true);
             const a = window.document.createElement('a');
             a.href = url;
             a.target = '_self';
@@ -93,7 +101,7 @@ export default function ExportDesDonnées() {
           <li>
             <button
               className="fr-btn fr-btn--icon-left fr-icon-download-line btn-radius"
-              disabled={ressourceÀExporter === undefined}
+              disabled={(ressourceÀExporter === undefined) || estDésactivé}
               type="submit"
             >
               Exporter les données
