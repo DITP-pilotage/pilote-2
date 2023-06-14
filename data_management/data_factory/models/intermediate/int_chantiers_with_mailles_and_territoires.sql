@@ -58,7 +58,7 @@ chantiers_non_territorialises as (
 		m_zones.nom AS territoire_nom,
 		m_zones.code_insee
 	FROM {{ ref('stg_ppg_metadata__chantiers') }} m_chantiers
-	JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_chantiers.est_territorialise IS NOT TRUE AND m_zones.maille IN ('NAT')
+	JOIN {{ ref('stg_ppg_metadata__zones') }} m_zones ON m_chantiers.est_territorialise IS NOT TRUE AND m_zones.maille IN ('DEPT', 'REG', 'NAT')
 
 )
 
