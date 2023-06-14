@@ -27,11 +27,12 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
   ];
 
   constructor(
+    private readonly chantierRepository = dependencies.getChantierRepository(),
     private readonly indicateurRepository = dependencies.getIndicateurRepository(),
   ) {}
 
   public async* run(habilitation: Habilitation, profil: Profil): AsyncGenerator<string[][]> {
-    const chantierIdsLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const chantierIdsLecture = await this.chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom(habilitation);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
     const chunkSize = configuration.exportCsvIndicateursChunkSize;
