@@ -5,12 +5,12 @@ import TypeDeRéformeStore from './useTypedeRéformeStore.interface';
 const useTypeDeRéformeStore = create<TypeDeRéformeStore>((set, get) => ({
   typeDeRéformeSélectionné: 'chantier',
   actions: {
-    modifierTypeDeRéformeSélectionné: () => {
+    modifierTypeDeRéformeSélectionné: () => {      
       if (get().typeDeRéformeSélectionné === 'chantier') {
         set({ typeDeRéformeSélectionné: 'projet structurant' });
       } else if (get().typeDeRéformeSélectionné === 'projet structurant') {
         set({ typeDeRéformeSélectionné: 'chantier' });
-      }
+      }      
     },
   },
 }));

@@ -14,12 +14,12 @@ import { IndicateurPondération } from '@/components/_commons/Indicateurs/Bloc/P
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
-export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, territoireProjetStructurant, estDisponibleALImport = false }: IndicateurBlocProps) {
+export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, territoireProjetStructurant, typeDeRéforme, estDisponibleALImport = false }: IndicateurBlocProps) {
   const router = useRouter();
   const réformeId = router.query.id as string;
   
   const mailleSélectionnée = territoireSélectionnéTerritoiresStore()?.maille ?? 'nationale';
-  const { indicateurDétailsParTerritoires, tableau, typeDeRéforme } = useIndicateurBloc(détailsIndicateur, territoireProjetStructurant);
+  const { indicateurDétailsParTerritoires, tableau } = useIndicateurBloc(détailsIndicateur, typeDeRéforme, territoireProjetStructurant );
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
   return (

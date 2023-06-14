@@ -12,6 +12,7 @@ import Indicateurs from '@/client/components/_commons/Indicateurs/Indicateurs';
 import TitreInfobulleConteneur from '@/client/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import Infobulle from '@/client/components/_commons/Infobulle/Infobulle';
+import BoutonSousLigné from '@/client/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import ResponsablesPageProjetStructurant from './Responsables/Responsables';
 import PageProjetStructurantProps from './PageProjetStructurant.interface';
 import PageProjetStructurantEnTête from './EnTête/EnTête';
@@ -32,16 +33,15 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
         <Sommaire rubriques={listeRubriquesProjetStructurant(indicateurs.map(i => i.type))} />
       </BarreLatérale>
       <main className='fr-pb-5w'>
-        <button
-          className="fr-sr-only-xl fr-btn fr-btn--secondary fr-mb-2w"
+        <BoutonSousLigné
+          classNameSupplémentaires="fr-link--icon-left fr-fi-arrow-right-line fr-sr-only-xl fr-m-2w"
           onClick={() => setEstOuverteBarreLatérale(true)}
-          title="Ouvrir le menu latéral"
           type="button"
         >
-          Menu latéral
-        </button>
+          Sommaire
+        </BoutonSousLigné>
         <PageProjetStructurantEnTête nomProjetStructurant={projetStructurant.nom} />
-        <div className='fr-p-4w'>
+        <div className='fr-container--fluid fr-py-2w fr-px-md-4w'>
           <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-my-0 fr-pb-4w">
             <section
               className='fr-col-12 fr-col-md-6 fr-py-0 rubrique'
@@ -146,6 +146,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
                   indicateurs={indicateurs}
                   listeRubriquesIndicateurs={listeRubriquesIndicateursProjetStructurant}
                   territoireProjetStructurant={projetStructurant.territoire}
+                  typeDeRéforme='projet structurant'
                 />
               </section>
           }

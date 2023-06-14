@@ -4,7 +4,7 @@ import IndicateurBloc from '@/components/_commons/Indicateurs/Bloc/IndicateurBlo
 import IndicateursStyled from '@/components/_commons/Indicateurs/Indicateurs.styled';
 
 
-export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRubriquesIndicateurs, territoireProjetStructurant, estDisponibleALImport = false, estInteractif = true }: IndicateursProps) {
+export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRubriquesIndicateurs, territoireProjetStructurant, typeDeRéforme, estDisponibleALImport = false, estInteractif = true }: IndicateursProps) {
 
   if (indicateurs.length === 0) {
     return null;
@@ -38,6 +38,7 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRub
                       indicateur={indicateur}
                       key={indicateur.id}
                       territoireProjetStructurant={territoireProjetStructurant}
+                      typeDeRéforme={typeDeRéforme}
                     />
                   ))
                 }

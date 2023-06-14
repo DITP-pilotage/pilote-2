@@ -15,7 +15,7 @@ import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobile
 import IndicateurBlocIndicateurTuile from '@/components/_commons/Indicateurs/Bloc/indicateurBlocIndicateurTuile';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
-import { typeDeRéformeSélectionnéeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
+import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import ValeurEtDate from './ValeurEtDate/ValeurEtDate';
 import { IndicateurDétailsParTerritoire } from './IndicateurBloc.interface';
 
@@ -36,12 +36,10 @@ const indicateurDétailsVide = {
 
 const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
 
-export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, territoireProjetStructurant?: ProjetStructurant['territoire']) {
+export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, typeDeRéforme: TypeDeRéforme, territoireProjetStructurant?: ProjetStructurant['territoire']) {
   const estVueMobile = estVueMobileStore();
   const territoiresComparés = territoiresComparésTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const typeDeRéforme = typeDeRéformeSélectionnéeStore();
-
 
   const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
 
@@ -66,14 +64,14 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       metÀJourDétailsParTerritoires();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [détailsIndicateur]);
+  }, [détailsIndicateur, typeDeRéforme]);
 
   useEffect(() => {
     if (territoiresComparés.length === 0 && typeDeRéforme == 'chantier') {
       setIndicateurDétailsParTerritoires([indicateurDétailsVide]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [territoiresComparés]);
+  }, [territoiresComparés]);  
     
   const colonnes = typeDeRéforme === 'chantier' ? [
     reactTableColonnesHelper.accessor( 'territoireNom', {
@@ -142,7 +140,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     }),
   ] : [
     reactTableColonnesHelper.accessor( 'territoireNom', {
-      header: 'Territoire)',
+      header: 'Territoire',
       id: 'territoire',
       enableSorting: false,
     }),
@@ -229,6 +227,5 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
   return {
     indicateurDétailsParTerritoires,
     tableau,
-    typeDeRéforme,
   };
 }

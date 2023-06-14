@@ -15,7 +15,9 @@ export default function IcônesMultiplesEtTexte({ icônesId, largeurDesIcônes =
           ))
         }
       </span>
-      { children }
+      <p>
+        { children }
+      </p>
     </IcônesMultiplesEtTexteStyled>
   );
 }

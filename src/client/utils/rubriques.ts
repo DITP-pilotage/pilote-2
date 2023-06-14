@@ -49,8 +49,8 @@ export const listeRubriquesChantier = (typesIndicateurs: TypeIndicateur[], maill
 
 export const listeRubriquesIndicateursProjetStructurant: ÉlémentPageIndicateursType[] = [
   { nom: 'Indicateurs d\'impact', ancre: 'impact', typeIndicateur: 'IMPACT' },
-  { nom: 'Indicateurs de réalisation', ancre: 'réalisation', typeIndicateur: 'REAL' },
-  { nom: 'Indicateurs financiers', ancre: 'financier', typeIndicateur: 'FINANCE' },
+  { nom: 'Indicateurs de déploiement', ancre: 'déploiement', typeIndicateur: 'DEPL' },
+  { nom: 'Indicateurs financiers', ancre: 'financier', typeIndicateur: 'FINANCIER' },
 ];
   
 export const listeRubriquesProjetStructurant = (typesIndicateurs: TypeIndicateur[]): Rubrique[] => {

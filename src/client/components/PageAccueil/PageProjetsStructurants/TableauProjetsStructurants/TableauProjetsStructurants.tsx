@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { estVueMobileStore } from '@/client/stores/useEstVueMobileStore/useEstVueMobileStore';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import TableauRéformesEnTête from '@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
@@ -10,8 +9,6 @@ import TableauProjetsStructurantsContenu from './Contenu/TableauProjetsStructura
 import TableauProjetsStructurantsStyled from './TableauProjetsStructurants.styled';
 
 export default function TableauProjetsStructurants({ données, setNombreProjetsStructurantsDansLeTableau }: TableauProjetsStructurantsProps) {
-  const estVueMobile = estVueMobileStore();
-
   const {
     tableau,
     changementDeLaRechercheCallback,
@@ -35,7 +32,7 @@ export default function TableauProjetsStructurants({ données, setNombreProjetsS
   return (
     <TableauProjetsStructurantsStyled className='fr-table fr-m-0 fr-p-0'>
       <div className='tableau-actions fr-mb-3v fr-mt-1w'>
-        <div className="tableau-actions-gauche">
+        <div className="tableau-actions-gauche fr-mb-2w fr-mb-md-0">
           <div className="barre-de-recherche">
             <BarreDeRecherche
               changementDeLaRechercheCallback={changementDeLaRechercheCallback}
@@ -65,12 +62,12 @@ export default function TableauProjetsStructurants({ données, setNombreProjetsS
             </div>
           </div>
         :
-          <>
+          <div className='tableau-conteneur'>
             <table className='tableau'>
               <caption className="fr-sr-only">
                 Liste des chantiers
               </caption>
-              { !estVueMobile && <TableauRéformesEnTête tableau={tableau} />}
+              <TableauRéformesEnTête tableau={tableau} />
               <TableauProjetsStructurantsContenu tableau={tableau} />
             </table>
             <TableauPagination
@@ -78,7 +75,7 @@ export default function TableauProjetsStructurants({ données, setNombreProjetsS
               nombreDePages={tableau.getPageCount()}
               numéroDePageInitiale={1}
             />
-          </>}
+          </div>}
     </TableauProjetsStructurantsStyled>
   );
 }

@@ -33,36 +33,44 @@ const TableauProjetsStructurantsStyled = styled.section`
     }
   }
 
-  table.tableau {
-    display: table;
+  .tableau-conteneur {
+    overflow-x: auto;
 
-    tbody {
-      tr {
-        height: 4.5rem;
-        
-        td > a {
-          display: flex;
-          align-items: center;
-          height: 100%;
-          text-decoration: none;
-          background: none;
+    table.tableau {
+      @media (max-width: 100em) {
+        white-space: nowrap;
+      }
+
+      display: table;
+      
+      tbody {
+        tr {
+          height: 4.5rem;
           
-          & > * {
-            width: 100%;
+          td > a {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            text-decoration: none;
+            background: none;
+            
+            & > * {
+              width: 100%;
+            }
           }
-        }
-        
-        .météo-picto {
-          height: 2rem;
-        }
-
-        &.ligne-chantier {
-          &:hover:nth-of-type(even) {
-            background-color: var(--background-contrast-grey-hover);
+          
+          .météo-picto {
+            height: 2rem;
           }
-
-          &:hover:nth-of-type(odd) {
-            background-color: var(--background-alt-grey-hover);
+          
+          &.ligne-chantier {
+            &:hover:nth-of-type(even) {
+              background-color: var(--background-contrast-grey-hover);
+            }
+            
+            &:hover:nth-of-type(odd) {
+              background-color: var(--background-alt-grey-hover);
+            }
           }
         }
       }
