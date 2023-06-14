@@ -6,8 +6,14 @@ const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
     return { message: "L'adresse électronique saisie n'est pas valide" };
   }
   if (issue.code === z.ZodIssueCode.too_small ) {
-    return { message: `Le champ est requis (${issue.minimum} caractère(s) minimum)` };
+    return issue.minimum > 1
+      ? { message: `Le champ est requis (${issue.minimum} caractère(s) minimum)` }
+      : { message: 'Le champ est requis' };
   }
+  if (issue.code === z.ZodIssueCode.too_big ) {
+    return { message: `La longueur maximale du champ est dépassée (${issue.maximum} caractères maximum)` };
+  }
+
   if (issue.code === z.ZodIssueCode.invalid_enum_value ) {
     return { message: 'Veuillez choisir une option' };
   }
@@ -15,11 +21,27 @@ const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
 };
 
 z.setErrorMap(customErrorMap);
-export const validationInfosBaseUtilisateur = z.object({
+export const validationInfosBaseUtilisateur = z.object( {
   email: z.string().email(),
-  nom: z.string().min(1 ),
-  prénom: z.string().min(1 ),
+  nom: z.string().min(1 ).max(100),
+  prénom: z.string().min(1 ).max(100),
   fonction: z.string(),
   profil: z.enum(profils),
 });
 
+export const validationInfosHabilitationsUtilisateur = z.object({
+  habilitations : z.object({
+    lecture: z.object({
+      chantiers: z.array(),
+      territoires: z.array(),
+    }),
+    'saisie.indicateur': z.object({
+      chantiers: z.array(),
+      territoires: z.array(),
+    }),
+    'saisie.commentaire': z.object({
+      chantiers: z.array(),
+      territoires: z.array(),
+    }),
+  }),
+});

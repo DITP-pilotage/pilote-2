@@ -19,6 +19,7 @@ export default function InputAvecLabel({ type = 'text', erreur, libellé, htmlNa
       </label>
       <input
         className={`fr-input ${erreur !== undefined ? 'fr-input-group--error' : ''}`}
+        id={htmlName}
         type={type}
         {...register}
       />

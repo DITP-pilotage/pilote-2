@@ -1,11 +1,22 @@
-import { useFormContext } from 'react-hook-form';
+import Bouton from '@/components/_commons/Bouton/Bouton';
+import useRécapitulatifUtilisateur
+  from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/useRécapitulatifUtilisateur';
+import FicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur';
 
 export default function RécapitulatifUtilisateur() {
-  const { getValues } = useFormContext();
-  const t = getValues();
+
+  const { utilisateur, envoyerFormulaireUtilisateur } = useRécapitulatifUtilisateur();
+
   return (
     <div>
-      {JSON.stringify(t)}
+      <FicheUtilisateur
+        chantiers={[]}
+        utilisateur={utilisateur}
+      />
+      <Bouton
+        label='Envoyer'
+        onClick={envoyerFormulaireUtilisateur}
+      />
     </div>
   );
 }

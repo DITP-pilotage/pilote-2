@@ -6,9 +6,9 @@ import SaisieDesInformationsUtilisateurProps
   from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur.interface';
 import useSaisieDesInformationsUtilisateur
   from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
-import Bouton from '@/components/_commons/Bouton/Bouton';
+import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 
-export default function SaisieDesInformationsUtilisateur({ profils, soumissionCallback }: SaisieDesInformationsUtilisateurProps) {
+export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesInformationsUtilisateurProps) {
   const { listeProfils } = useSaisieDesInformationsUtilisateur(profils);
   const { register, watch, formState: { errors: erreurs } } = useFormContext();
   
@@ -70,5 +70,6 @@ export default function SaisieDesInformationsUtilisateur({ profils, soumissionCa
         valeurSélectionnée={watch('profil')}
       />
       <SubmitBouton label="Suivant" />
+    </>
   );
 }

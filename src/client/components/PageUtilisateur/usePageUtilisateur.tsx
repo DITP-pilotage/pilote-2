@@ -26,18 +26,6 @@ export default function usePageUtilisateur(utilisateur: Utilisateur, chantiers: 
       chantiers: [],
       territoires: [],
     },
-    'utilisateurs.lecture': {
-      chantiers: [],
-      territoires: [],
-    },
-    'utilisateurs.modification': {
-      chantiers: [],
-      territoires: [],
-    },
-    'utilisateurs.suppression': {
-      chantiers: [],
-      territoires: [],
-    },
   };
   
   let chantiersTerritorialisésIds: string[] = objectEntries(chantiers).filter(([_, chantier]) => chantier.estTerritorialisé).map(c => c[0]);
