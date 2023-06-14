@@ -190,16 +190,13 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return this._mapDétailsToDomain(indicateurs);
   }
 
-  async récupérerPourExports(habilitations: Habilitations): Promise<IndicateurPourExport[]> {
-    const h = new Habilitation(habilitations);
-    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+  async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<IndicateurPourExport[]> {
 
     const rows = await this.prisma.$queryRaw<any[]>`
       with chantier_ids as (
               select distinct c.id
               from chantier c
-              where c.id in (${Prisma.join(chantiersLecture)})
+              where c.id in (${Prisma.join(chantierIdsLecture)})
                 and ministeres <> '{}'
           ),
           dernieres_syntheses as (
@@ -234,7 +231,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
              i.objectif_taux_avancement    taux_avancement
       
       from chantier_ids cids
-               inner join territoire t on t.code in (${Prisma.join(territoiresLecture)})
+               inner join territoire t on t.code in (${Prisma.join(territoireCodesLecture)})
                inner join indicateur i on i.chantier_id = cids.id and lower(i.maille) = cast(t.maille as text) and i.code_insee = t.code_insee and i.type_id is not null
                left outer join chantier c on c.id = cids.id and c.territoire_code = t.code
                left outer join chantier c_r on (c_r.id = cids.id and c_r.maille = 'REG')

@@ -31,7 +31,9 @@ export class Configuration {
 
   public readonly devSessionMaxAge: number = 30 * 24 * 60 * 60; // 30 days
 
-  public readonly exportCsvChantierIdChunkSize: number;
+  public readonly exportCsvChantiersChunkSize: number;
+
+  public readonly exportCsvIndicateursChunkSize: number;
 
   constructor() {
     this.logLevel = process.env.LOG_LEVEL || 'info';
@@ -61,7 +63,8 @@ export class Configuration {
     // En test, le NODE_ENV est à test
     this.securedEnv = process.env.NODE_ENV === 'production';
 
-    this.exportCsvChantierIdChunkSize = Number.parseInt(process.env.EXPORT_CSV_CHANTIER_ID_CHUNK_SIZE || '5');
+    this.exportCsvChantiersChunkSize = Number.parseInt(process.env.EXPORT_CSV_CHANTIERS_CHUNK_SIZE || '5');
+    this.exportCsvIndicateursChunkSize = Number.parseInt(process.env.EXPORT_CSV_INDICATEURS_CHUNK_SIZE || '5');
   }
 }
 

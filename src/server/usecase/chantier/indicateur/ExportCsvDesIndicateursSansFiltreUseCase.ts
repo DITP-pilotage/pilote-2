@@ -1,8 +1,9 @@
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { formaterDateHeure, formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { IndicateurPourExport } from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import configuration from '@/server/infrastructure/Configuration';
 
 export default class ExportCsvDesIndicateursSansFiltreUseCase {
 
@@ -29,11 +30,18 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     private readonly indicateurRepository = dependencies.getIndicateurRepository(),
   ) {}
 
-  public async run(habilitations: Habilitations, profil: Profil): Promise<string[][]> {
-    const indicateursPourExports = await this.indicateurRepository.récupérerPourExports(habilitations);
-    return indicateursPourExports
-      .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind))
-      .map(ind => this.transformer(ind));
+  public async* run(habilitation: Habilitation, profil: Profil): AsyncGenerator<string[][]> {
+    const chantierIdsLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
+
+    const chunkSize = configuration.exportCsvIndicateursChunkSize;
+    for (let i = 0; i < chantierIdsLecture.length; i += chunkSize) {
+      const partialChantierIds = chantierIdsLecture.slice(i, i + chunkSize);
+      const indicateursPourExports = await this.indicateurRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
+      yield indicateursPourExports
+        .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind))
+        .map(ind => this.transformer(ind));
+    }
   }
 
   private masquerIndicateurPourProfilDROM(profil: Profil, indicateur : IndicateurPourExport) {

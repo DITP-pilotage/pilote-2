@@ -43,7 +43,7 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
     const chantierIdsLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
-    const chunkSize = configuration.exportCsvChantierIdChunkSize;
+    const chunkSize = configuration.exportCsvChantiersChunkSize;
     for (let i = 0; i < chantierIdsLecture.length; i += chunkSize) {
       const partialChantierIds = chantierIdsLecture.slice(i, i + chunkSize);
       const partialResult = await this.chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
