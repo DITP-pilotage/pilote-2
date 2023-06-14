@@ -66,8 +66,7 @@
     },
     {
       "name": "zone_id",
-      "description": "Identifiant de la zone pour laquelle on importe une valeur.",
-      "example": "D46",
+      "description": "La zone renseignée n’est pas dans le référentiel.",
       "type": "string",
       "constraints": {
         "required": true,
@@ -94,7 +93,10 @@
         "enum": [
           "vi",
           "va",
-          "vc"
+          "vc",
+          "VI",
+          "VA",
+          "VC"
         ]
       }
     },

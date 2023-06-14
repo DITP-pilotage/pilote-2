@@ -217,12 +217,6 @@ export function PageImportIndicateurSectionRessource() {
             <li>
               {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_6}
             </li>
-            <li>
-              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_7}
-            </li>
-            <li>
-              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_8}
-            </li>
           </ul>
         </Bloc>
       </div>
