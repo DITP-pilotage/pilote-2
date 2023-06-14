@@ -18,5 +18,6 @@ export default interface ChantierRepository {
   modifierMétéo(chantierId: string, territoireCode: string, météo: Météo): Promise<void>;
 
   récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<ChantierPourExport[]>;
-  récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][]): Promise<Chantier['id'][]> 
+  récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][]): Promise<Chantier['id'][]>;
+  récupérerChantierIdsEnLectureOrdonnésParNom(habilitation: Habilitation): Promise<Chantier['id'][]>;
 }

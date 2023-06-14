@@ -72,6 +72,19 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiers.map(c => c.id);
   }
 
+  async récupérerChantierIdsEnLectureOrdonnésParNom(habilitation: Habilitation): Promise<Chantier['id'][]> {
+    const chantierIdsLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const chantiers = await this.prisma.chantier.findMany({
+      distinct: ['id'],
+      where: {
+        id: { in: chantierIdsLecture },
+      },
+      orderBy: [{ nom: 'asc' }],
+    });
+
+    return chantiers.map(c => c.id);
+  }
+
   async récupérerLesEntréesDeTousLesChantiersHabilités(habilitation: Habilitation): Promise<ChantierPrisma[]> {
     
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
