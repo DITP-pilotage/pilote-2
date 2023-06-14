@@ -347,7 +347,7 @@ describe('IndicateurSQLRepository', () => {
   });
 
   describe('récupérerPourExports', () => {
-    it('fonctionne', async () => {
+    it('deux indicateurs répartis sur deux chantiers', async () => {
       // GIVEN
       const repository = new IndicateurSQLRepository(prisma);
       await prisma.chantier.createMany({
