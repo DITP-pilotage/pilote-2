@@ -146,7 +146,6 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
                   indicateurs={indicateurs}
                   listeRubriquesIndicateurs={listeRubriquesIndicateursProjetStructurant}
                   territoireProjetStructurant={projetStructurant.territoire}
-                  typeDeRéforme='projet structurant'
                 />
               </section>
           }

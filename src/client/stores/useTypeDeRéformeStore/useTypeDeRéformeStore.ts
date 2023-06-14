@@ -3,17 +3,17 @@ import { create } from 'zustand';
 import TypeDeRéformeStore from './useTypedeRéformeStore.interface';
 
 const useTypeDeRéformeStore = create<TypeDeRéformeStore>((set, get) => ({
-  typeDeRéformeSélectionnée: 'chantier',
+  typeDeRéformeSélectionné: 'chantier',
   actions: {
-    modifierTypeDeRéformeSélectionnée: () => {
-      if (get().typeDeRéformeSélectionnée === 'chantier') {
-        set({ typeDeRéformeSélectionnée: 'projet structurant' });
-      } else if (get().typeDeRéformeSélectionnée === 'projet structurant') {
-        set({ typeDeRéformeSélectionnée: 'chantier' });
+    modifierTypeDeRéformeSélectionné: () => {
+      if (get().typeDeRéformeSélectionné === 'chantier') {
+        set({ typeDeRéformeSélectionné: 'projet structurant' });
+      } else if (get().typeDeRéformeSélectionné === 'projet structurant') {
+        set({ typeDeRéformeSélectionné: 'chantier' });
       }
     },
   },
 }));
 
-export const typeDeRéformeSélectionnée = () => useTypeDeRéformeStore(étatActuel => étatActuel.typeDeRéformeSélectionnée);
+export const typeDeRéformeSélectionnéeStore = () => useTypeDeRéformeStore(étatActuel => étatActuel.typeDeRéformeSélectionné);
 export const actionsTypeDeRéformeStore = () => useTypeDeRéformeStore(étatActuel => étatActuel.actions);

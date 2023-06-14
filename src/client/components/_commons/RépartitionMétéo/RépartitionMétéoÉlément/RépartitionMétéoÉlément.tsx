@@ -1,11 +1,11 @@
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
-import { typeDeRéformeSélectionnée } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
+import { typeDeRéformeSélectionnéeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 import RépartitionMétéoÉlémentProps from './RépartitionMétéoÉlément.interface';
 import RépartitionMétéoÉlémentStyled from './RépartitionMétéoÉlément.styled';
 
 export default function RépartitionMétéoÉlément({ météo, nombreDeChantiers }: RépartitionMétéoÉlémentProps) {
-  const typeDeRéforme = typeDeRéformeSélectionnée();
+  const typeDeRéforme = typeDeRéformeSélectionnéeStore();
   return (
     <RépartitionMétéoÉlémentStyled typeDeRéforme={typeDeRéforme}>
       <div className="fr-grid-row">

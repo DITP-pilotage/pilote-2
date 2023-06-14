@@ -15,8 +15,10 @@ import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobile
 import IndicateurBlocIndicateurTuile from '@/components/_commons/Indicateurs/Bloc/indicateurBlocIndicateurTuile';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+import { typeDeRéformeSélectionnéeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 import ValeurEtDate from './ValeurEtDate/ValeurEtDate';
 import { IndicateurDétailsParTerritoire } from './IndicateurBloc.interface';
+
 
 const indicateurDétailsVide = {
   territoireNom: '',
@@ -34,10 +36,12 @@ const indicateurDétailsVide = {
 
 const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
 
-export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, typeDeRéforme: TypeDeRéforme, territoireProjetStructurant?: ProjetStructurant['territoire']) {
+export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, territoireProjetStructurant?: ProjetStructurant['territoire']) {
   const estVueMobile = estVueMobileStore();
   const territoiresComparés = territoiresComparésTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  const typeDeRéforme = typeDeRéformeSélectionnéeStore();
+
 
   const [indicateurDétailsParTerritoires, setIndicateurDétailsParTerritoires] = useState<IndicateurDétailsParTerritoire[]>([indicateurDétailsVide]);
 
@@ -225,5 +229,6 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
   return {
     indicateurDétailsParTerritoires,
     tableau,
+    typeDeRéforme,
   };
 }

@@ -12,6 +12,7 @@ export const zodValidateurCSRF = z.object({
 });
 
 export const validationPublicationContexte = z.object({
+  typeDeRéforme: z.string(),
   réformeId: z.string(),
   territoireCode: z.string(),
 });

@@ -22,6 +22,7 @@ export default function usePublicationFormulaire(succèsCallback: PublicationFor
       territoireCode: data.territoireCode,
       réformeId: data.réformeId,
       csrf: récupérerUnCookie('csrf') ?? '',
+      typeDeRéforme: data.typeDeRéforme,
     });
 
     mutationCréerPublication.mutate(inputs);

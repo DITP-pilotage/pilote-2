@@ -137,7 +137,6 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                 estInteractif={false}
                 indicateurs={indicateurs}
                 listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
-                typeDeRéforme='chantier'
               />
             </section>
           </div>

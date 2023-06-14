@@ -22,6 +22,7 @@ export default function usePageChantier(chantierId: string) {
     {
       réformeId: chantierId,
       territoireCode: territoireSélectionné!.code,
+      typeDeRéforme: 'chantier',
     },
   );
 
@@ -30,6 +31,7 @@ export default function usePageChantier(chantierId: string) {
       réformeId: chantierId,
       territoireCode: territoireSélectionné!.code,
       entité: 'commentaires',
+      typeDeRéforme: 'chantier',
     },
   );
 
@@ -38,6 +40,7 @@ export default function usePageChantier(chantierId: string) {
       réformeId: chantierId,
       territoireCode: 'NAT-FR',
       entité: 'objectifs',
+      typeDeRéforme: 'chantier',
     },
   );
 
@@ -47,6 +50,7 @@ export default function usePageChantier(chantierId: string) {
       territoireCode: 'NAT-FR',
       entité: 'décisions stratégiques',
       type: 'suiviDesDécisionsStratégiques',
+      typeDeRéforme: 'chantier',
     },
   );
 

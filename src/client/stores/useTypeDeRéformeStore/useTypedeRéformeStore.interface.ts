@@ -1,8 +1,8 @@
 export type TypeDeRéforme = 'chantier' | 'projet structurant';
 
 export default interface TypeDeRéformeStore {
-  typeDeRéformeSélectionnée: TypeDeRéforme
+  typeDeRéformeSélectionné: TypeDeRéforme
   actions: {
-    modifierTypeDeRéformeSélectionnée: () => void
+    modifierTypeDeRéformeSélectionné: () => void
   }
 }

@@ -2,5 +2,5 @@ import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypede
 
 export default interface SélecteurTypeDeRéformeProps {
   typeDeRéformeSélectionné: TypeDeRéforme
-  modifierTypeDeRéformeSélectionné: (state: TypeDeRéforme) => void
+  modifierTypeDeRéformeSélectionné: () => void
 }

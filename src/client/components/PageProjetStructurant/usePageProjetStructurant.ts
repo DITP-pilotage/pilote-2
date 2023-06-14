@@ -11,6 +11,7 @@ export default function usePageProjetStructurant(projetStructurantId: ProjetStru
     {
       réformeId: projetStructurantId,
       territoireCode: territoireCode,
+      typeDeRéforme: 'projet structurant',
     },
   );
 
@@ -20,6 +21,8 @@ export default function usePageProjetStructurant(projetStructurantId: ProjetStru
       territoireCode: territoireCode,
       entité: 'objectifs',
       type: typeObjectifProjetStructurant,
+      typeDeRéforme: 'projet structurant',
+
     },
   );
 
@@ -28,6 +31,7 @@ export default function usePageProjetStructurant(projetStructurantId: ProjetStru
       réformeId: projetStructurantId,
       territoireCode: territoireCode,
       entité: 'commentaires',
+      typeDeRéforme: 'projet structurant',
     },
   );  
     

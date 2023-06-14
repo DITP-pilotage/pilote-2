@@ -193,7 +193,6 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                           détailsIndicateurs={détailsIndicateurs}
                           indicateurs={indicateurs}
                           listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
-                          typeDeRéforme='chantier'
                         />
                       </section>
                     </div>

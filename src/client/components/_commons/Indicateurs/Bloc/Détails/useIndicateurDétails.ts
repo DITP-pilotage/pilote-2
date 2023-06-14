@@ -8,7 +8,7 @@ import {
   DétailsIndicateurMailles,
 } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import api from '@/server/infrastructure/api/trpc/api';
-import { TypeDeRéforme } from '@/components/PageAccueil/SélecteurTypeDeRéforme/SélecteurTypeDeRéforme.interface';
+import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 
 export default function useIndicateurDétails(indicateurId: Indicateur['id'], futOuvert: boolean, typeDeRéforme: TypeDeRéforme) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
