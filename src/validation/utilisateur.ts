@@ -19,7 +19,7 @@ export const validationInfosBaseUtilisateur = z.object({
   email: z.string().email(),
   nom: z.string().min(1 ),
   prénom: z.string().min(1 ),
-  fonction: z.string().min(1 ),
+  fonction: z.string(),
   profil: z.enum(profils),
 });
 

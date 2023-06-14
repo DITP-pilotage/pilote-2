@@ -12,6 +12,7 @@ export default interface SélecteurProps<T> {
   options: SélecteurOption<T>[],
   valeurModifiéeCallback?: (valeur: T) => void,
   valeurSélectionnée?: T,
+  texteAide?: string,
   erreur?: FieldError
   libellé?: string,
   texteFantôme?: string,

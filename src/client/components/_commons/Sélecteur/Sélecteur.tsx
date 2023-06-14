@@ -8,6 +8,7 @@ export default function Sélecteur<T extends string>({
   libellé,
   erreur,
   texteFantôme,
+  texteAide,
   valeurModifiéeCallback,
   valeurSélectionnée,
 }: SélecteurProps<T>) {
@@ -22,6 +23,12 @@ export default function Sélecteur<T extends string>({
             { libellé }
           </label>
         )
+      }
+      {
+        !!texteAide &&
+          <span className="fr-hint-text">
+            {texteAide}
+          </span>
       }
       <select
         className={`fr-select fr-mt-1w ${erreur !== undefined ? 'fr-select--error' : ''}`}
