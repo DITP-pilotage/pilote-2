@@ -38,6 +38,9 @@ const verifierFormatDateValeur = (mesureIndicateurTemporaire: MesureIndicateurTe
     mesureIndicateurTemporaire.convertirDateProvenantDuFormat(ACCEPTED_DATE_FORMAT.DD_MM_YYYY);
   }
 };
+const verifierFormatTypeValeur = (mesureIndicateurTemporaire: MesureIndicateurTemporaire) => {
+  mesureIndicateurTemporaire.mettreTypeValeurEnMinuscule();
+};
 
 export class VerifierFichierIndicateurImporteUseCase {
   private fichierIndicateurValidationService: FichierIndicateurValidationService;
@@ -82,7 +85,8 @@ export class VerifierFichierIndicateurImporteUseCase {
 
     report.listeMesuresIndicateurTemporaire.forEach((mesureIndicateurTemporaire, index) => {
       correspondALIndicateurId(mesureIndicateurTemporaire, indicateurId, listeErreursValidation, index);
-      verifierFormatDateValeur(mesureIndicateurTemporaire);
+      verifierFormatDateValeur(mesureIndicateurTemporaire); // déplacer dans le service
+      verifierFormatTypeValeur(mesureIndicateurTemporaire); // déplacer dans le service
     });
 
     if (listeErreursValidation.length > 0) {

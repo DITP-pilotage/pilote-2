@@ -13,7 +13,7 @@ export class MesureIndicateurTemporaire {
 
   private _metricDate: string | null;
 
-  private readonly _metricType: string | null;
+  private _metricType: string | null;
 
   private readonly _metricValue: string | null;
 
@@ -109,5 +109,10 @@ export class MesureIndicateurTemporaire {
         break;
       }
     }
+  }
+
+  mettreTypeValeurEnMinuscule() {
+    if (!this._metricType) return;
+    this._metricType = this._metricType.toLowerCase();
   }
 }
