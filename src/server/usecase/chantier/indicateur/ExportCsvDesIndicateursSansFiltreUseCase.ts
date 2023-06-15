@@ -27,18 +27,19 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
   ];
 
   constructor(
-    private readonly chantierRepository = dependencies.getChantierRepository(),
-    private readonly indicateurRepository = dependencies.getIndicateurRepository(),
+    private readonly _chantierRepository = dependencies.getChantierRepository(),
+    private readonly _indicateurRepository = dependencies.getIndicateurRepository(),
+    private readonly _config = configuration,
   ) {}
 
   public async* run(habilitation: Habilitation, profil: Profil): AsyncGenerator<string[][]> {
-    const chantierIdsLecture = await this.chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom(habilitation);
+    const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom(habilitation);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
-    const chunkSize = configuration.exportCsvIndicateursChunkSize;
+    const chunkSize = this._config.exportCsvIndicateursChunkSize;
     for (let i = 0; i < chantierIdsLecture.length; i += chunkSize) {
       const partialChantierIds = chantierIdsLecture.slice(i, i + chunkSize);
-      const indicateursPourExports = await this.indicateurRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
+      const indicateursPourExports = await this._indicateurRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
       yield indicateursPourExports
         .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind))
         .map(ind => this.transformer(ind));

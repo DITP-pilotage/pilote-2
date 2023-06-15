@@ -1,18 +1,26 @@
 /* eslint-disable unicorn/prefer-spread */
-import {
-  ExportCsvDesChantiersSansFiltreUseCase,
-} from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { HabilitationBuilder } from '@/server/domain/utilisateur/habilitation/HabilitationBuilder';
 import { testDouble } from '@/server/utils/testUtils';
 import { Configuration } from '@/server/infrastructure/Configuration';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+import ExportCsvDesIndicateursSansFiltreUseCase
+  from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase';
+import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import {
+  IndicateurPourExport,
+} from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 
-function _fakeChantierPourExport(cid: Chantier['id']) {
-  return { nom: 'Chantier ' + cid };
+function _fakeIndicateurPourExport(cid: Indicateur['id']): IndicateurPourExport {
+  return {
+    nom: 'Indicateur ' + cid,
+    périmètreIds: ['PER-001'],
+    maille: 'NAT',
+  } as unknown as IndicateurPourExport;
 }
 
-describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
+describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
   it('Renvoie une liste vide si pas de chantiers', async () => {
     // GIVEN
     const chantierIds: Chantier['id'][] = [];
@@ -20,8 +28,9 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
       récupérerChantierIdsEnLectureOrdonnésParNom: jest.fn()
         .mockReturnValueOnce(Promise.resolve(chantierIds)),
     });
+    const indicateurRepository = testDouble<IndicateurRepository>();
 
-    const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
+    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DITP_ADMIN';
 
@@ -40,14 +49,17 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const chantierIds = ['CH-001'];
     const récupérerChantierIdsEnLectureOrdonnésParNom = jest.fn()
       .mockReturnValueOnce(Promise.resolve(chantierIds));
-    const récupérerPourExports = jest.fn()
-      .mockReturnValueOnce(Promise.resolve(chantierIds.map(_fakeChantierPourExport)));
     const chantierRepository = testDouble<ChantierRepository>({
       récupérerChantierIdsEnLectureOrdonnésParNom,
+    });
+    const indicateurIds = ['IND-001'];
+    const récupérerPourExports = jest.fn()
+      .mockReturnValueOnce(Promise.resolve(indicateurIds.map(_fakeIndicateurPourExport)));
+    const indicateurRepository = testDouble<IndicateurRepository>({
       récupérerPourExports,
     });
 
-    const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
+    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
     const territoireCodesLecture = ['NAT-FR'];
     const habilitation = new HabilitationBuilder()
       .avecTerritoireCodesLecture(territoireCodesLecture)
@@ -74,12 +86,15 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const chantierRepository = testDouble<ChantierRepository>({
       récupérerChantierIdsEnLectureOrdonnésParNom: jest.fn()
         .mockReturnValueOnce(Promise.resolve(chantierIds)),
+    });
+    const indicateurIds = ['IND-001', 'IND-002', 'IND-003'];
+    const indicateurRepository = testDouble<IndicateurRepository>({
       récupérerPourExports: jest.fn()
-        .mockReturnValueOnce(Promise.resolve(chantierIds.map(_fakeChantierPourExport))),
+        .mockReturnValueOnce(Promise.resolve(indicateurIds.map(_fakeIndicateurPourExport))),
     });
 
-    const config = testDouble<Configuration>({ exportCsvChantiersChunkSize: chunkSize });
-    const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository, config);
+    const config = testDouble<Configuration>({ exportCsvIndicateursChunkSize: chunkSize });
+    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository, config);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DITP_ADMIN';
 
@@ -91,9 +106,9 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
 
     // THEN
     expect(result).toEqual([
-      ['Chantier CH-001'],
-      ['Chantier CH-002'],
-      ['Chantier CH-003'],
+      ['Indicateur IND-001'],
+      ['Indicateur IND-002'],
+      ['Indicateur IND-003'],
     ].map(expect.arrayContaining));
   });
 
@@ -101,18 +116,21 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     // GIVEN
     const chantierIds = ['CH-001', 'CH-002', 'CH-003', 'CH-004'];
     const chunkSize = 3;
-    const firstChunk = chantierIds.slice(0, chunkSize);
-    const secondChunk = chantierIds.slice(chunkSize);
     const chantierRepository = testDouble<ChantierRepository>({
       récupérerChantierIdsEnLectureOrdonnésParNom: jest.fn()
         .mockReturnValueOnce(Promise.resolve(chantierIds)),
+    });
+    const indicateurIds = ['IND-001', 'IND-002', 'IND-003', 'IND-004'];
+    const firstChunk = indicateurIds.slice(0, chunkSize);
+    const secondChunk = indicateurIds.slice(chunkSize);
+    const indicateurRepository = testDouble<IndicateurRepository>({
       récupérerPourExports: jest.fn()
-        .mockReturnValueOnce(Promise.resolve(firstChunk.map(_fakeChantierPourExport)))
-        .mockReturnValueOnce(Promise.resolve(secondChunk.map(_fakeChantierPourExport))),
+        .mockReturnValueOnce(Promise.resolve(firstChunk.map(_fakeIndicateurPourExport)))
+        .mockReturnValueOnce(Promise.resolve(secondChunk.map(_fakeIndicateurPourExport))),
     });
 
-    const config = testDouble<Configuration>({ exportCsvChantiersChunkSize: chunkSize });
-    const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository, config);
+    const config = testDouble<Configuration>({ exportCsvIndicateursChunkSize: chunkSize });
+    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository, config);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DITP_ADMIN';
 
@@ -124,10 +142,10 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
 
     // THEN
     expect(result).toEqual([
-      ['Chantier CH-001'],
-      ['Chantier CH-002'],
-      ['Chantier CH-003'],
-      ['Chantier CH-004'],
+      ['Indicateur IND-001'],
+      ['Indicateur IND-002'],
+      ['Indicateur IND-003'],
+      ['Indicateur IND-004'],
     ].map(expect.arrayContaining));
   });
 });
