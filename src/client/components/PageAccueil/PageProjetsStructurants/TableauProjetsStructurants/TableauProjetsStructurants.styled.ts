@@ -37,7 +37,7 @@ const TableauProjetsStructurantsStyled = styled.section`
     overflow-x: auto;
 
     table.tableau {
-      @media (max-width: 100em) {
+      @media (max-width: 45em) {
         white-space: nowrap;
       }
 
