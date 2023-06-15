@@ -76,4 +76,4 @@ UNION
         LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id
         LEFT JOIN {{ ref('stg_ppg_metadata__axes') }} m_axes ON m_axes.id = m_ppgs.axe_id
         LEFT JOIN chantier_est_barometre on m_chantiers.id = chantier_est_barometre.chantier_id
-    WHERE m_chantiers.est_territorialise = True AND m_chantiers.maille IN ('DEPT', 'REG'))
+    WHERE m_chantiers.maille IN ('DEPT', 'REG'))
