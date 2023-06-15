@@ -16,9 +16,7 @@ export default function PremièrePageImpressionRapportDétaillé() {
                 <div className="fr-header__brand-top">
                   <div className="fr-header__logo">
                     <p className="fr-logo">
-                      République
-                      <br />
-                      Française
+                      Gouvernement
                     </p>
                   </div>
                 </div>
