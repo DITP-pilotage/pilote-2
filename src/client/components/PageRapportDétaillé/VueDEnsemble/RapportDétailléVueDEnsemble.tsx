@@ -38,24 +38,6 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
                 baliseHtml="h3"
                 className="fr-text--lg"
               >
-                Taux d’avancement des chantiers par territoire
-              </Titre>
-              <CartographieAvancement
-                auClicTerritoireCallback={() => {}}
-                données={donnéesCartographie}
-                options={{ estInteractif: false }}
-                élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
-              />
-            </section>
-          </Bloc>
-        </div>
-        <div className="fr-col-12 fr-col-lg-6">
-          <Bloc>
-            <section>
-              <Titre
-                baliseHtml="h3"
-                className="fr-text--lg"
-              >
                 Taux d’avancement moyen
               </Titre>
               <Avancements avancements={avancementsAgrégés} />
@@ -69,6 +51,24 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
                 Répartition des météos renseignées
               </Titre>
               <RépartitionMétéo météos={répartitionMétéos} />
+            </section>
+          </Bloc>
+        </div>
+        <div className="fr-col-12 fr-col-lg-6">
+          <Bloc>
+            <section>
+              <Titre
+                baliseHtml="h3"
+                className="fr-text--lg"
+              >
+                Taux d’avancement des chantiers par territoire
+              </Titre>
+              <CartographieAvancement
+                auClicTerritoireCallback={() => {}}
+                données={donnéesCartographie}
+                options={{ estInteractif: false }}
+                élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
+              />
             </section>
           </Bloc>
         </div>
