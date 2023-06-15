@@ -56,7 +56,7 @@ export async function getServerSideProps({ req, res, params }: GetServerSideProp
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params.id);
-  const chantier: Chantier = await new RécupérerChantierUseCase().run(params.id, session.habilitations);
+  const chantier: Chantier = await new RécupérerChantierUseCase().run(params.id, session.habilitations, session.profil);
 
   return {
     props: {

@@ -17,6 +17,8 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const { auClicTerritoireCallback } = useCartographie();
 
+
+
   const donnéesCartographieAvancement = objectEntries(chantierMailles[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
     valeur: territoire.avancement.global,
     codeInsee: codeInsee,

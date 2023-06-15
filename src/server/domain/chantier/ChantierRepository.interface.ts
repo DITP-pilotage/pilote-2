@@ -11,7 +11,7 @@ import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChanti
 import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export default interface ChantierRepository {
-  récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations): Promise<ChantierPrisma[]>;
+  récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: Profil): Promise<ChantierPrisma[]>;
   récupérerLesEntréesDeTousLesChantiersHabilités(habilitation: Habilitation, profil: Profil): Promise<ChantierPrisma[]>;
   récupérerTous(): Promise<ChantierPrisma[]>;
   getChantierStatistiques(habilitations: Habilitations, listeChantier: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques>;

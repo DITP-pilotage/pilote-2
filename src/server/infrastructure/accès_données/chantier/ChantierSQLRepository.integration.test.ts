@@ -27,9 +27,11 @@ describe('ChantierSQLRepository', () => {
         territoires: ['NAT-FR'],
       } } as unknown as Utilisateur['habilitations'];
 
+      const profil = 'DITP_ADMIN';
+
       // WHEN
       const request = async () => {
-        await repository.récupérerLesEntréesDUnChantier('CH-002', habilitation);
+        await repository.récupérerLesEntréesDUnChantier('CH-002', habilitation, profil);
       };
 
       // THEN
