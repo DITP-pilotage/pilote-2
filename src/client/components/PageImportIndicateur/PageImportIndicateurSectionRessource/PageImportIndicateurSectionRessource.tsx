@@ -4,7 +4,7 @@ import PageImportIndicateurSectionRessourceStyled
   from '@/components/PageImportIndicateur/PageImportIndicateurSectionRessource/PageImportIndicateurSectionRessource.styled';
 import { wording } from '@/client/utils/i18n/i18n';
 import '@gouvfr/dsfr/dist/component/download/download.min.css';
-
+import '@gouvfr/dsfr/dist/component/link/link.min.css';
 
 export function PageImportIndicateurSectionRessource() {
   return (
@@ -39,10 +39,10 @@ export function PageImportIndicateurSectionRessource() {
             </li>
             <li>
               <b>
-                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE.CHAMP}
+                {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE_NOM.CHAMP}
               </b>
               <span>
-                {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE.EXPLICATION}`}
+                {` • ${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.LISTE_CHAMPS.ZONE_NOM.EXPLICATION}`}
               </span>
             </li>
             <li>
@@ -83,7 +83,7 @@ export function PageImportIndicateurSectionRessource() {
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.ZONE_ID}
                 </th>
                 <th>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.ZONE}
+                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.ZONE_NOM}
                 </th>
                 <th>
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.ENTETE.DATE_VALEUR}
@@ -105,7 +105,7 @@ export function PageImportIndicateurSectionRessource() {
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1.ZONE_ID}
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1.ZONE}
+                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1.ZONE_NOM}
                 </td>
                 <td>
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_1.DATE_VALEUR}
@@ -125,7 +125,7 @@ export function PageImportIndicateurSectionRessource() {
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2.ZONE_ID}
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2.ZONE}
+                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2.ZONE_NOM}
                 </td>
                 <td>
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_2.DATE_VALEUR}
@@ -145,7 +145,7 @@ export function PageImportIndicateurSectionRessource() {
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3.ZONE_ID}
                 </td>
                 <td>
-                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3.ZONE}
+                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3.ZONE_NOM}
                 </td>
                 <td>
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_IMPORT.TABLEAU_CHAMPS.LIGNE_EXEMPLE_3.DATE_VALEUR}
@@ -218,6 +218,17 @@ export function PageImportIndicateurSectionRessource() {
               {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_EXPLICATION_FICHIER.EXPLICATION_FICHIER_6}
             </li>
           </ul>
+          <p>
+            <b>
+              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_CONTACT.MESSAGE_CONTACT}
+            </b>
+            <a
+              className='fr-link'
+              href={`mailto:${wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_CONTACT.ADRESSE_MAIL}`}
+            >
+              {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_CONTACT.ADRESSE_MAIL}
+            </a>
+          </p>
         </Bloc>
       </div>
     </PageImportIndicateurSectionRessourceStyled>

@@ -13,8 +13,8 @@ export const wordingFr = {
         TEXTE: 'Dès que votre fichier vous semble correct, vous pouvez le charger pour vérifier que les données sont au bon format. Un rapport d’erreurs vous renseignera sur les potentiels éléments à adapter.',
       },
       ETAPE_PUBLIER_FICHIER: {
-        TITRE: 'Publier le fichier validé',
-        SOUS_TITRE_SELECTEUR: 'Publier le fichier validé',
+        TITRE: 'Transmettre les données pour publication',
+        SOUS_TITRE_SELECTEUR: 'Transmettre les données pour publication',
         TEXTE: 'Prévisualisez vos données et validez la publication. Vous devrez ensuite attendre quelques jours pour que ces données soient prises en compte dans le calcul des taux d’avancement. Vous pouvez mettre à jour d’autres indicateurs.',
       },
     },
@@ -64,7 +64,7 @@ export const wordingFr = {
             VALEUR: 'valeur',
           },
         },
-        LABEL_BOUTON_PROCHAINE_ETAPE: 'Publier les données',
+        LABEL_BOUTON_PROCHAINE_ETAPE: 'Transmettre les données',
         TITRE_ALERT_SUCCES: (indicateurId: string) => `Les données ont été importées avec succès pour l’indicateur ${indicateurId}`,
         MESSAGE_ALERT_SUCCES: 'La mise à jour des taux d’avancement sera effective dans quelques jours. Vous pouvez, en attendant, mettre à jour d’autres indicateurs.',
         TITRE_ALERT_ERREUR: 'Le fichier à déjà été importé',
@@ -78,14 +78,14 @@ export const wordingFr = {
         LISTE_CHAMPS: {
           IDENTIFIANT_INDIC: {
             CHAMP: 'identifiant_indic',
-            EXPLICATION: 'Identifiant unique de l’indicateur. Exemple : IND-001, IND-002, IND-003...',
+            EXPLICATION: 'Identifiant unique de l’indicateur. Exemple : IND-001, IND-002, IND-003. (voir identifiant précisé plus haut sur la page)',
           },
           ZONE_ID: {
             CHAMP: 'zone_id',
             EXPLICATION: 'Identifiant du territoire pour lequel la donnée est renseignée. Il provient des référentiels INSEE et est interopérable. Exemple : D34, D20... (voir le référentiel ci-dessous)',
           },
-          ZONE: {
-            CHAMP: 'zone',
+          ZONE_NOM: {
+            CHAMP: 'zone_nom',
             EXPLICATION: 'Champ facultatif précisant les territoires auxquels correspondent les zone-id. Vous n’êtes pas obligé(e) d’inclure cette colonne.',
           },
           DATE_VALEUR: {
@@ -106,7 +106,7 @@ export const wordingFr = {
           ENTETE: {
             IDENTIFIANT_INDIC: 'identifiant_indic',
             ZONE_ID: 'zone_id',
-            ZONE: 'zone (facultatif)',
+            ZONE_NOM: 'zone_nom (facultatif)',
             DATE_VALEUR: 'date_valeur',
             TYPE_VALEUR: 'type_valeur',
             VALEUR: 'valeur',
@@ -114,7 +114,7 @@ export const wordingFr = {
           LIGNE_EXEMPLE_1: {
             IDENTIFIANT_INDIC: 'IND-009',
             ZONE_ID: 'D12',
-            ZONE: 'Aveyron',
+            ZONE_NOM: 'Aveyron',
             DATE_VALEUR: '2023-03-31',
             TYPE_VALEUR: 'va',
             VALEUR: '5',
@@ -122,7 +122,7 @@ export const wordingFr = {
           LIGNE_EXEMPLE_2: {
             IDENTIFIANT_INDIC: 'IND-009',
             ZONE_ID: 'D13',
-            ZONE: 'Bouches-du-Rhône',
+            ZONE_NOM: 'Bouches-du-Rhône',
             DATE_VALEUR: '2023-01-17',
             TYPE_VALEUR: 'va',
             VALEUR: '12',
@@ -130,7 +130,7 @@ export const wordingFr = {
           LIGNE_EXEMPLE_3: {
             IDENTIFIANT_INDIC: 'IND-009',
             ZONE_ID: 'D14',
-            ZONE: 'Calvados',
+            ZONE_NOM: 'Calvados',
             DATE_VALEUR: '2023-02-26',
             TYPE_VALEUR: 'va',
             VALEUR: '20',
@@ -139,7 +139,7 @@ export const wordingFr = {
       },
       SECTION_REFERENTIEL: {
         TITRE: 'Référentiels',
-        SOUS_TITRE: 'Consultez les référentiels pour retrouver l’identifiant de votre indicateur et les codes de tous les territoires (départements, régions, et national).',
+        SOUS_TITRE: 'Consultez les référentiels pour retrouver les codes de tous les territoires (départements, régions, et national). Vous pourrez copier dans ce référentiel les valeurs à indiquer pour les champs zone-id et zone dans le modèle d’import fourni',
         LABEL_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR: 'Télécharger le référentiel pour les indicateurs  ',
         FORMAT_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR: 'XLSX – 12 ko',
         LABEL_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE: 'Télécharger le référentiel des territoires  ',
@@ -153,6 +153,10 @@ export const wordingFr = {
         EXPLICATION_FICHIER_4: 'Si vous importez une cellule vide, la valeur précédente sera écrasée (si existante)',
         EXPLICATION_FICHIER_5: 'Toutes les zones du template d\'import ne sont pas nécessaires. Certaines lignes du fichier d\'import peuvent être supprimées. Il n’est ainsi pas nécessaire d’importer la totalité des départements pour chaque mise à jour.',
         EXPLICATION_FICHIER_6: 'Il n\'est pas possible d\'importer plusieurs valeurs pour la même zone, date, identifiant d\'indicateur et type de valeur. Cela générerait une erreur.',
+      }, 
+      SECTION_CONTACT: {
+        MESSAGE_CONTACT: 'Si vous rencontrez des difficultés lors de l’import de votre fichier, merci de nous contacter à l’adresse : ',
+        ADRESSE_MAIL: 'support.ditp@modernisation.gouv.fr',
       },
     },
   },
