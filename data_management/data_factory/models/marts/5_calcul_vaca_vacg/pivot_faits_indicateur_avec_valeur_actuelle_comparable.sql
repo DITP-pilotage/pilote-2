@@ -5,8 +5,8 @@ date_releve,
 AVG(valeur_actuelle_decumulee)
     OVER (
         PARTITION BY indicateur_id, zone_id
-        ORDER BY date_releve
-        RANGE BETWEEN INTERVAL '70 days' PRECEDING AND CURRENT ROW
+        ORDER BY date_trunc('month', date_releve)
+        RANGE BETWEEN INTERVAL '2 months' PRECEDING AND CURRENT ROW
     )
     FROM {{ ref('pivot_faits_indicateur_avec_valeur_actuelle_decumulee')}}
 ),
@@ -18,8 +18,8 @@ date_releve,
 AVG(valeur_actuelle_decumulee)
     OVER (
         PARTITION BY indicateur_id, zone_id
-        ORDER BY date_releve
-        RANGE BETWEEN INTERVAL '180 days' PRECEDING AND CURRENT ROW
+        ORDER BY date_trunc('month', date_releve)
+        RANGE BETWEEN INTERVAL '5 months' PRECEDING AND CURRENT ROW
     )
     FROM {{ ref('pivot_faits_indicateur_avec_valeur_actuelle_decumulee')}}
 )
