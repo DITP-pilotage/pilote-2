@@ -15,6 +15,7 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import { IndicateurPourExport } from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 import { parseDétailsIndicateur } from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import { Profil, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 class ErreurIndicateurNonTrouvé extends Error {
   constructor(idIndicateur: string) {
@@ -82,18 +83,24 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return indicateur!.chantier_id;
   }
 
-  async récupérerDétailsParMailles(id: string, habilitations: Habilitations): Promise<DétailsIndicateurMailles> {
+  async récupérerDétailsParMailles(id: string, habilitations: Habilitations, profil: Profil): Promise<DétailsIndicateurMailles> {
     const h = new Habilitation(habilitations);
     const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
-    const indicateur = await this.prisma.indicateur.findMany({
+    let paramètresRequête : Prisma.indicateurFindManyArgs = {
       where: {
         id,
-        territoire_code: { in: territoiresLecture },
         chantier_id: { in: chantiersLecture },
       },
-    });
+    } ;
+
+    if (!profilsTerritoriaux.includes(profil)) {
+      const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+
+      paramètresRequête.where!.territoire_code = { in: territoiresLecture };
+    }
+
+    const indicateur = await this.prisma.indicateur.findMany(paramètresRequête);
 
     if (!indicateur || indicateur.length === 0) {
       throw new ErreurIndicateurNonTrouvé(id);
