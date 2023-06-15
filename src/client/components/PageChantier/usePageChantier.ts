@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from 'react';
 import {
   actionsTerritoiresStore,
   mailleSélectionnéeTerritoiresStore, territoiresComparésTerritoiresStore,
@@ -9,6 +10,7 @@ import api from '@/server/infrastructure/api/trpc/api';
 import calculerChantierAvancements from '@/client/utils/chantier/avancement/calculerChantierAvancements';
 import { Commentaire } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import Objectif from '@/server/domain/chantier/objectif/Objectif.interface';
+import { actionsTypeDeRéformeStore, typeDeRéformeSélectionnéeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 
 export default function usePageChantier(chantierId: string) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -18,10 +20,19 @@ export default function usePageChantier(chantierId: string) {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const territoireParent = territoireSélectionné?.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent) : null;
 
+  const { modifierTypeDeRéformeSélectionné } = actionsTypeDeRéformeStore();
+  const typeDeRéformeSélectionné = typeDeRéformeSélectionnéeStore();
+
+  useEffect(() => {
+    if (typeDeRéformeSélectionné === 'projet structurant') modifierTypeDeRéformeSélectionné();
+  }, [modifierTypeDeRéformeSélectionné, typeDeRéformeSélectionné]);
+  
+
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {
       réformeId: chantierId,
       territoireCode: territoireSélectionné!.code,
+      typeDeRéforme: 'chantier',
     },
   );
 
@@ -30,6 +41,7 @@ export default function usePageChantier(chantierId: string) {
       réformeId: chantierId,
       territoireCode: territoireSélectionné!.code,
       entité: 'commentaires',
+      typeDeRéforme: 'chantier',
     },
   );
 
@@ -38,6 +50,7 @@ export default function usePageChantier(chantierId: string) {
       réformeId: chantierId,
       territoireCode: 'NAT-FR',
       entité: 'objectifs',
+      typeDeRéforme: 'chantier',
     },
   );
 
@@ -47,6 +60,7 @@ export default function usePageChantier(chantierId: string) {
       territoireCode: 'NAT-FR',
       entité: 'décisions stratégiques',
       type: 'suiviDesDécisionsStratégiques',
+      typeDeRéforme: 'chantier',
     },
   );
 

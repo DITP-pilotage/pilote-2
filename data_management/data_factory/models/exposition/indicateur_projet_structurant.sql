@@ -4,7 +4,7 @@ SELECT
     data_kpis.indicateur_nom as nom,
     data_kpis.projet_structurant_code::INTEGER,
     CASE
-        WHEN type_nom = 'RealisationHausse' OR type_nom = 'RealisationBaisse' THEN 'REALISATION'
+        WHEN type_nom = 'RealisationHausse' OR type_nom = 'RealisationBaisse' THEN 'DEPL'
         WHEN type_nom = 'FinancierHausse' OR type_nom = 'FinancierBaisse' THEN 'FINANCIER'
         ELSE 'IMPACT'
         END as type_id,

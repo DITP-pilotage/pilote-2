@@ -1,6 +1,6 @@
-export type TypeDeRéforme = 'chantier' | 'projet structurant';
+import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 
 export default interface SélecteurTypeDeRéformeProps {
   typeDeRéformeSélectionné: TypeDeRéforme
-  modifierTypeDeRéformeSélectionné: (state: TypeDeRéforme) => void
+  modifierTypeDeRéformeSélectionné: () => void
 }

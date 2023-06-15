@@ -4,12 +4,14 @@ import router from 'next/router';
 import { LIMITE_CARACTÈRES_PUBLICATION, validationPublicationFormulaire } from 'validation/publication';
 import CompteurCaractères from '@/components/_commons/CompteurCaractères/CompteurCaractères';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { typeDeRéformeSélectionnéeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 import PublicationFormulaireStyled from './PublicationFormulaire.styled';
 import PublicationFormulaireProps, { PublicationFormulaireInputs } from './PublicationFormulaire.interface';
 import usePublicationFormulaire from './usePublicationFormulaire';
 
 export default function PublicationFormulaire({ caractéristiques, contenuInitial, succèsCallback, erreurCallback, annulationCallback }: PublicationFormulaireProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  const typeDeRéforme = typeDeRéformeSélectionnéeStore();
   const { créerPublication } = usePublicationFormulaire(succèsCallback, erreurCallback);
   
   const { register, handleSubmit, formState: { errors, isValid }, watch } = useForm<PublicationFormulaireInputs>({
@@ -21,6 +23,7 @@ export default function PublicationFormulaire({ caractéristiques, contenuInitia
       entité: caractéristiques.entité,
       territoireCode: territoireSélectionné!.code,
       réformeId: router.query.id as string,
+      typeDeRéforme: typeDeRéforme,
     },
   });
 
@@ -53,6 +56,10 @@ export default function PublicationFormulaire({ caractéristiques, contenuInitia
         <input
           type="hidden"
           {...register('réformeId')}
+        />
+        <input
+          type="hidden"
+          {...register('typeDeRéforme')}
         />
         <div className="flex justify-between">
           <div>

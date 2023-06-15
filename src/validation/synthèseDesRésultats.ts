@@ -4,6 +4,7 @@ import { météosSaisissables } from '@/server/domain/météo/Météo.interface'
 export const LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS = 5000;
 
 export const validationSynthèseDesRésultatsContexte = z.object({
+  typeDeRéforme: z.string(),
   réformeId: z.string(),
   territoireCode: z.string(),
 });

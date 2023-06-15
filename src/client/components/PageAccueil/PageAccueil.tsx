@@ -8,13 +8,14 @@ import BarreLatérale from '@/client/components/_commons/BarreLatérale/BarreLat
 import BarreLatéraleEncart from '@/client/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import PageAccueilStyled from '@/components/PageAccueil/PageAccueil.styled';
+import { typeDeRéformeSélectionnéeStore, actionsTypeDeRéformeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 import PageAccueilProps from './PageAccueil.interface';
-import { TypeDeRéforme } from './SélecteurTypeDeRéforme/SélecteurTypeDeRéforme.interface';
 import SélecteurTypeDeRéforme from './SélecteurTypeDeRéforme/SélecteurTypeDeRéforme';
 
 export default function PageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs }: PageAccueilProps) {
-  const [typeDeRéformeSélectionné, setTypeDeRéformeSélectionné] = useState<TypeDeRéforme>('chantier');
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
+  const typeDeRéformeSélectionné = typeDeRéformeSélectionnéeStore();
+  const { modifierTypeDeRéformeSélectionné } = actionsTypeDeRéformeStore();
 
   return (
     <PageAccueilStyled className='flex'>
@@ -26,7 +27,7 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
           {
             process.env.NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS === 'true' &&
             <SélecteurTypeDeRéforme
-              modifierTypeDeRéformeSélectionné={setTypeDeRéformeSélectionné}
+              modifierTypeDeRéformeSélectionné={modifierTypeDeRéformeSélectionné}
               typeDeRéformeSélectionné={typeDeRéformeSélectionné}
             />
         }

@@ -98,8 +98,6 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       ).map(département => département.codeInsee);
     },
   },
-
-  
 }));
 
 export const actionsTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.actions);

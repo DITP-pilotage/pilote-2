@@ -23,7 +23,6 @@ import CréerUneDécisionStratégiqueUseCase from '@/server/usecase/chantier/dé
 import RécupérerHistoriqueDécisionStratégiqueUseCase from '@/server/usecase/chantier/décision/RécupérerHistoriqueDécisionStratégiqueUseCase';
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
 import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
-import { déterminerLeTypeDeRéforme } from '@/server/utils/réforme';
 import RécupérerObjectifProjetStructurantLePlusRécentUseCase from '@/server/usecase/projetStructurant/objectif/RécupérerObjectifLePlusRécentUseCase';
 import { TypeObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
 import RécupérerCommentaireProjetStructurantLePlusRécentUseCase from '@/server/usecase/projetStructurant/commentaire/RécupérerCommentaireLePlusRécentUseCase';
@@ -57,9 +56,8 @@ export const publicationRouter = créerRouteurTRPC({
   récupérerLaPlusRécente: procédureProtégée
     .input(validationPublicationContexte.and(zodValidateurEntitéType))
     .query(async ({ input, ctx }) => {
-      const typeDeRéforme = déterminerLeTypeDeRéforme(input.réformeId);
 
-      if (typeDeRéforme === 'chantier') {
+      if (input.typeDeRéforme === 'chantier') {
         if (input.entité === 'commentaires') {
           const récupérerCommentaireLePlusRécentUseCase = new RécupérerCommentaireLePlusRécentUseCase(dependencies.getCommentaireRepository());
           return récupérerCommentaireLePlusRécentUseCase.run(input.réformeId, input.territoireCode, input.type as TypeCommentaireChantier, ctx.session.habilitations);
@@ -74,7 +72,7 @@ export const publicationRouter = créerRouteurTRPC({
           const récupérerDésionStratégiqueLaPlusRécenteUseCase = new RécupérerDécisionStratégiqueLaPlusRécenteUseCase(dependencies.getDécisionStratégiqueRepository());
           return récupérerDésionStratégiqueLaPlusRécenteUseCase.run(input.réformeId, ctx.session.habilitations);
         }
-      } else if (typeDeRéforme === 'projet structurant') {
+      } else if (input.typeDeRéforme === 'projet structurant') {
         if (input.entité === 'commentaires') {
           const récupérerCommentaireLePlusRécentUseCase = new RécupérerCommentaireProjetStructurantLePlusRécentUseCase(dependencies.getCommentaireProjetStructurantRepository());
           return récupérerCommentaireLePlusRécentUseCase.run(input.réformeId, input.type as TypeCommentaireProjetStructurant, ctx.session.habilitations);
@@ -90,9 +88,8 @@ export const publicationRouter = créerRouteurTRPC({
   récupérerLesPlusRécentesParTypeGroupéesParRéformes: procédureProtégée
     .input(validationPublicationContexte.merge(zodValidateurEntité))
     .query(async ({ input, ctx }) => {
-      const typeDeRéforme = déterminerLeTypeDeRéforme(input.réformeId);
 
-      if (typeDeRéforme === 'chantier') {
+      if (input.typeDeRéforme === 'chantier') {
         if (input.entité === 'commentaires') {
           const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getCommentaireRepository());
           return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.réformeId], input.territoireCode, ctx.session.habilitations);
@@ -104,7 +101,7 @@ export const publicationRouter = créerRouteurTRPC({
         }
       }
       
-      if (typeDeRéforme === 'projet structurant' && input.entité === 'commentaires') {
+      if (input.typeDeRéforme === 'projet structurant' && input.entité === 'commentaires') {
         const récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase = new RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase(dependencies.getCommentaireProjetStructurantRepository());
         return récupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase.run([input.réformeId], ctx.session.habilitations);
       }

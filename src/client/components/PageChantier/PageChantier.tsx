@@ -67,7 +67,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
           onClick={() => setEstOuverteBarreLatérale(true)}
           type="button"
         >
-          Filtres
+          Sommaire
         </BoutonSousLigné>
         {
           chantier !== null ? (
@@ -154,7 +154,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     className="fr-col-12 rubrique"
                     id="objectifs"
                   >
-                    <TitreInfobulleConteneur>
+                    <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                       <Titre
                         baliseHtml='h2'
                         className='fr-h4'

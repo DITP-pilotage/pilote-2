@@ -41,7 +41,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
             baliseHtml="h1"
             className='fr-h4'
           >
-            {`${nombreDeProjets} ${nombreDeProjets ? 'projets' : 'projet'}`}
+            {`${nombreDeProjets} ${nombreDeProjets > 1 ? 'projets' : 'projet'}`}
           </Titre>
         </div>
         <div className="fr-grid-row fr-grid-row--gutters">

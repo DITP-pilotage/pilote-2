@@ -9,4 +9,4 @@ export default interface PublicationFormulaireProps {
   caractéristiques: PublicationCaractéristiques
 }
 
-export type PublicationFormulaireInputs = Pick<RouterInputs['publication']['créer'], 'contenu' | 'type' | 'entité' | 'territoireCode' | 'réformeId'>;
+export type PublicationFormulaireInputs = Pick<RouterInputs['publication']['créer'], 'contenu' | 'type' | 'entité' | 'territoireCode' | 'réformeId' | 'typeDeRéforme'>;

@@ -7,7 +7,8 @@ interface IcônesMultiplesEtTexteStyledProps {
 const IcônesMultiplesEtTexteStyled = styled.div<IcônesMultiplesEtTexteStyledProps>`
   display: grid;
   grid-template-columns: ${(props) => props.largeurDesIcônes} auto;
-  align-items: start;
+  align-items: center;
+
   
   .icônes {
     display: flex;

@@ -35,13 +35,7 @@ export function EtapePublierFichier({
           <div>
             {rapportImport?.listeMesuresIndicateurTemporaire.length ?
               <>
-                <FormulairePublierImportIndicateur
-                  chantierId={chantierId}
-                  indicateurId={indicateurId}
-                  rapportId={rapportId}
-                  setEstFichierPublie={setEstFichierPublie}
-                />
-                <table className='fr-table fr-my-3w fr-p-0 '>
+                <table className='fr-table fr-mb-3w fr-p-0 '>
                   <thead>
                     <tr>
                       <th>
