@@ -347,26 +347,28 @@ describe('IndicateurSQLRepository', () => {
   });
 
   describe('récupérerPourExports', () => {
-    it('deux indicateurs répartis sur deux chantiers', async () => {
+    it('deux indicateurs sont triés par noms de chantier en premier', async () => {
       // GIVEN
       const repository = new IndicateurSQLRepository(prisma);
+      const nomDeChantier1 = 'B Chantier 1'; // apparaît en deuxième par ordre alphabétique
+      const nomDeChantier2 = 'A Chantier 2'; // apparaît en premier par ordre alphabétique
       await prisma.chantier.createMany({
         data: [
           new ChantierSQLRowBuilder()
             .avecId('CH-001')
-            .avecNom('Chantier 1')
+            .avecNom(nomDeChantier1)
             .avecMaille('NAT')
             .avecCodeInsee('FR')
             .build(),
           new ChantierSQLRowBuilder()
             .avecId('CH-002')
-            .avecNom('Chantier 2')
+            .avecNom(nomDeChantier2)
             .avecMaille('NAT')
             .avecCodeInsee('FR')
             .build(),
           new ChantierSQLRowBuilder()
             .avecId('CH-003')
-            .avecNom('Chantier 3')
+            .avecNom('C Chantier 3')
             .avecMaille('NAT')
             .avecCodeInsee('FR')
             .build(),
@@ -410,8 +412,8 @@ describe('IndicateurSQLRepository', () => {
 
       // THEN
       expect(result).toEqual([
-        { nom: 'Indicateur 1 Chantier 1', chantierNom: 'Chantier 1', maille: 'NAT' },
-        { nom: 'Indicateur 2 Chantier 2', chantierNom: 'Chantier 2', maille: 'NAT' },
+        { nom: 'Indicateur 2 Chantier 2', chantierNom: 'A Chantier 2', maille: 'NAT' },
+        { nom: 'Indicateur 1 Chantier 1', chantierNom: 'B Chantier 1', maille: 'NAT' },
       ].map(expect.objectContaining));
     });
   });

@@ -243,6 +243,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
                                on s.chantier_id = c.id and s.maille = c.maille and s.code_insee = c.code_insee
       where c.id is not null
       order by
+          c.nom,
           i.nom,
           CASE i.maille
             WHEN 'NAT' THEN 1
