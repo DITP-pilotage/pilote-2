@@ -44,6 +44,7 @@ export default function MultiSelectTerritoire() {
   return (
     <MultiSelect
       changementValeursSélectionnéesCallback={(valeursSélectionnées) => setTerritoiresSélectionnés(valeursSélectionnées)}
+      libellé='Territoire(s)'
       optionsGroupées={optionsGroupées} 
       ouvertureCallback={(ouvert) => setEstOuvert(ouvert)}
     />

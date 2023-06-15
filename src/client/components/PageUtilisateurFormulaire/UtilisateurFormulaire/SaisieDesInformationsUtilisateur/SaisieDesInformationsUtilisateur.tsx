@@ -7,6 +7,9 @@ import SaisieDesInformationsUtilisateurProps
 import useSaisieDesInformationsUtilisateur
   from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
+import Titre from '@/components/_commons/Titre/Titre';
+import MultiSelect from '@/components/_commons/MultiSelect/MultiSelect';
+import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
 
 export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesInformationsUtilisateurProps) {
   const { listeProfils } = useSaisieDesInformationsUtilisateur(profils);
@@ -33,6 +36,15 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
           id="accordion-profils"
         />
       </section>
+      <Titre
+        baliseHtml='h2'
+        className="fr-text--md  fr-mb-2w"
+      >
+        Identification
+      </Titre>
+      <p className="fr-text--xs texte-gris fr-mb-4w">
+        Tous les champs sont obligatoires.
+      </p>
       <InputAvecLabel
         erreur={erreurs.email}
         htmlName="email"
@@ -69,7 +81,18 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
         texteFantôme='Sélectionner un profil'
         valeurSélectionnée={watch('profil')}
       />
+      <hr className='fr-hr' />
+      <Titre
+        baliseHtml='h2'
+        className="fr-text--md  fr-mb-2w"
+      >
+        Droits de lecture
+      </Titre>
+      <p className="fr-text--xs texte-gris fr-mb-4w">
+        Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
+      </p>
       <SubmitBouton label="Suivant" />
+      <MultiSelectTerritoire />
     </>
   );
 }

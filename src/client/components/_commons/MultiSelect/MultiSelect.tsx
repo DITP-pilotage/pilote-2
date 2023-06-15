@@ -110,7 +110,7 @@ function InputOption({
 
 
   
-export default function MultiSelect({ optionsGroupées, ouvertureCallback, changementValeursSélectionnéesCallback }: MultiSelectProps) {
+export default function MultiSelect({ libellé, optionsGroupées, ouvertureCallback, changementValeursSélectionnéesCallback }: MultiSelectProps) {
   const [estOuvert, setEstOuvert, estOuvertRef] = useStateRef<boolean>(false);
   const conteneurRef = useRef<HTMLDivElement | null>(null);
 
@@ -154,15 +154,23 @@ export default function MultiSelect({ optionsGroupées, ouvertureCallback, chang
   
   return (
     <MultiSelectStyled>
-      <div ref={conteneurRef}>
+      <div
+        className='fr-select-group'
+        ref={conteneurRef}
+      >
+        <label className='fr-label fr-mb-1w'>
+          {libellé}
+        </label>
         <Select
-          classNames={{ menu: () => 'multiselect-menu', valueContainer: () => 'multiselect-value-container' }}
+          classNames={{ menu: () => 'multiselect-menu ', valueContainer: () => 'multiselect-value-container fr-select', control: () => 'multiselect-control' }}
           closeMenuOnSelect={false}
           components={{
             ValueContainer: ValueContainerPersonnalisé, 
             MultiValue: () => null,
             MenuList: MenuListPersonnalisé,
             Option: InputOption,
+            IndicatorSeparator: () => null,
+            IndicatorsContainer: () => null,
           }}
           formatGroupLabel={formatGroupLabel}
           hideSelectedOptions={false}
