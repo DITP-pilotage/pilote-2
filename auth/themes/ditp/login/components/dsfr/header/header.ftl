@@ -7,9 +7,7 @@
             <div class="fr-header__brand-top">
               <div class="fr-header__logo">
                 <p class="fr-logo">
-                  République
-                  <br />
-                  Française
+                  Gouvernement
                 </p>
               </div>
             </div>
