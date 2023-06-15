@@ -25,7 +25,7 @@ export default function usePageProjetsStructurants(projetsStructurants: ProjetSt
 
     if (filtresActifs.périmètresMinistériels.length > 0) {
       résultat = résultat.filter(projet => (
-        filtresActifs.périmètresMinistériels.some(filtre => (projet.périmètresIds.includes(filtre.id)))
+        filtresActifs.périmètresMinistériels.some(filtre => (projet.périmètresIds[0] === filtre.id))
       ));
     }
     return résultat;
