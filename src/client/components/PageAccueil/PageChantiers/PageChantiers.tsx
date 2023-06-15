@@ -89,6 +89,23 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
           <div className="fr-col-12 fr-col-lg-6">
             <Bloc>
               <section>
+                <Titre
+                  baliseHtml="h2"
+                  className="fr-text--lg"
+                >
+                  Taux d’avancement des chantiers par territoire
+                </Titre>
+                <CartographieAvancement
+                  auClicTerritoireCallback={auClicTerritoireCallback}
+                  données={donnéesCartographieAvancement}
+                  élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
+                />
+              </section>
+            </Bloc>
+          </div>
+          <div className="fr-col-12 fr-col-lg-6">
+            <Bloc>
+              <section>
                 <TitreInfobulleConteneur>
                   <Titre
                     baliseHtml="h2"
@@ -118,23 +135,6 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                   </Infobulle>
                 </TitreInfobulleConteneur>
                 <RépartitionMétéo météos={répartitionMétéos} />
-              </section>
-            </Bloc>
-          </div>
-          <div className="fr-col-12 fr-col-lg-6">
-            <Bloc>
-              <section>
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg"
-                >
-                  Taux d’avancement des chantiers par territoire
-                </Titre>
-                <CartographieAvancement
-                  auClicTerritoireCallback={auClicTerritoireCallback}
-                  données={donnéesCartographieAvancement}
-                  élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
-                />
               </section>
             </Bloc>
           </div>

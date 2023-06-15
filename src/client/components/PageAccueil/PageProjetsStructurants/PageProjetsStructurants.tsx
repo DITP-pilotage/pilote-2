@@ -48,6 +48,23 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
           <div className="fr-col-12 fr-col-lg-6">
             <Bloc>
               <section>
+                <Titre
+                  baliseHtml="h2"
+                  className="fr-text--lg"
+                >
+                  Taux d’avancement des projets structurants par territoire
+                </Titre>
+                <CartographieAvancement
+                  auClicTerritoireCallback={auClicTerritoireCallback}
+                  données={donnéesCartographieAvancement}
+                  élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_PROJETS_STRUCTURANTS}
+                />
+              </section>
+            </Bloc>
+          </div>
+          <div className="fr-col-12 fr-col-lg-6">
+            <Bloc>
+              <section>
                 <TitreInfobulleConteneur>
                   <Titre
                     baliseHtml="h2"
@@ -84,23 +101,6 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                   </Infobulle>
                 </TitreInfobulleConteneur>
                 <RépartitionMétéo météos={répartitionMétéos} />
-              </section>
-            </Bloc>
-          </div>
-          <div className="fr-col-12 fr-col-lg-6">
-            <Bloc>
-              <section>
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg"
-                >
-                  Taux d’avancement des projets structurants par territoire
-                </Titre>
-                <CartographieAvancement
-                  auClicTerritoireCallback={auClicTerritoireCallback}
-                  données={donnéesCartographieAvancement}
-                  élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_PROJETS_STRUCTURANTS}
-                />
               </section>
             </Bloc>
           </div>
