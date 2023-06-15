@@ -148,4 +148,40 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
       ['Indicateur IND-004'],
     ].map(expect.arrayContaining));
   });
+
+  it('Masque certains indicateurs pour les proflis DROMs', async () => {
+    // GIVEN
+    const chantierIds = ['CH-001'];
+    const chantierRepository = testDouble<ChantierRepository>({
+      récupérerChantierIdsEnLectureOrdonnésParNom: jest.fn()
+        .mockReturnValueOnce(Promise.resolve(chantierIds)),
+    });
+    const indicateurIds = ['IND-001', 'IND-002', 'IND-003'];
+    const indicateursPourExport = indicateurIds.map(_fakeIndicateurPourExport);
+    indicateursPourExport[0].périmètreIds = ['PER-018']; // contient le périmètre 18 => on garde
+    indicateursPourExport[1].maille = 'DEPT'; // maille non nationale => on garde
+    const indicateurÀMasquer = indicateursPourExport[2];
+    indicateurÀMasquer.périmètreIds = ['PER-001']; // Il n'y a pas le périmètre 18
+    indicateurÀMasquer.maille = 'NAT'; // la maille est nationale
+    const indicateurRepository = testDouble<IndicateurRepository>({
+      récupérerPourExports: jest.fn()
+        .mockReturnValueOnce(Promise.resolve(indicateursPourExport)),
+    });
+
+    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
+    const habilitation = new HabilitationBuilder().build();
+    const profil = 'DROM';
+
+    // WHEN
+    let result: string[][] = [];
+    for await (const partialResult of usecase.run(habilitation, profil)) {
+      result = result.concat(partialResult);
+    }
+
+    // THEN
+    expect(result).toEqual([
+      ['Indicateur IND-001'],
+      ['Indicateur IND-002'],
+    ].map(expect.arrayContaining));
+  });
 });
