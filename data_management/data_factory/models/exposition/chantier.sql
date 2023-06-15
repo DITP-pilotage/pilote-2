@@ -20,7 +20,7 @@ chantier_est_barometre as (
     GROUP BY m_indicateurs.chantier_id
 )
 
-(SELECT m_chantiers.id,
+SELECT m_chantiers.id,
         m_chantiers.nom,
         m_chantiers.code_insee,
         d_chantiers.avancement_borne AS taux_avancement,
@@ -42,38 +42,7 @@ chantier_est_barometre as (
         LEFT JOIN dfakto_chantier d_chantiers
             ON m_chantiers.id = d_chantiers.code_chantier
                 AND m_chantiers.zone_id = d_chantiers.zone_id
-                AND d_chantiers.structure_nom='Chantier'
-        LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
+                AND d_chantiers.structure_nom IN ('Région', 'Département', 'Chantier')
         LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id
         LEFT JOIN {{ ref('stg_ppg_metadata__axes') }} m_axes ON m_axes.id = m_ppgs.axe_id
         LEFT JOIN chantier_est_barometre on m_chantiers.id = chantier_est_barometre.chantier_id
-    WHERE m_chantiers.maille = 'NAT')
-UNION
-    (SELECT m_chantiers.id,
-        m_chantiers.nom,
-        m_chantiers.code_insee,
-        d_chantiers.avancement_borne AS taux_avancement,
-        m_chantiers.nom AS territoire_nom,
-        m_chantiers.perimetre_ids,
-        m_chantiers.maille,
-        m_chantiers.directeurs_administration_centrale,
-        m_chantiers.ministeres,
-        m_chantiers.directions_administration_centrale,
-        m_chantiers.directeurs_projet,
-        NULL AS meteo, -- todo a supprimer de la table prisma
-        m_axes.nom AS axe,
-        m_ppgs.nom AS ppg,
-        m_chantiers.directeurs_projet_mails,
-        chantier_est_barometre.est_barometre,
-        m_chantiers.est_territorialise,
-        CONCAT(m_chantiers.maille, '-', m_chantiers.code_insee) as territoire_code
-    FROM {{ ref('int_chantiers_with_mailles_and_territoires') }} m_chantiers
-        LEFT JOIN dfakto_chantier d_chantiers
-            ON m_chantiers.id = d_chantiers.code_chantier
-                AND m_chantiers.zone_id = d_chantiers.zone_id
-                AND d_chantiers.structure_nom IN ('Région', 'Département')
-        LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} m_porteurs ON m_porteurs.id = ANY(m_chantiers.directeurs_administration_centrale_ids)
-        LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id
-        LEFT JOIN {{ ref('stg_ppg_metadata__axes') }} m_axes ON m_axes.id = m_ppgs.axe_id
-        LEFT JOIN chantier_est_barometre on m_chantiers.id = chantier_est_barometre.chantier_id
-    WHERE m_chantiers.maille IN ('DEPT', 'REG'))
