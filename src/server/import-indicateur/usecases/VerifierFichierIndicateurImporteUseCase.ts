@@ -34,12 +34,18 @@ const correspondALIndicateurId = (mesureIndicateurTemporaire: MesureIndicateurTe
 };
 
 const verifierFormatDateValeur = (mesureIndicateurTemporaire: MesureIndicateurTemporaire) => {
-  if (mesureIndicateurTemporaire.metricDate?.match('(0[0-9]|1[0-9]|2[0-9]|3[01])\/(0[0-9]|1[012])\/(20[0-9]{2})')) {
+  if (mesureIndicateurTemporaire.metricDate?.match('^(0[0-9]|1[0-9]|2[0-9]|3[01])\/(0[0-9]|1[012])\/(20[0-9]{2})$')) {
     mesureIndicateurTemporaire.convertirDateProvenantDuFormat(ACCEPTED_DATE_FORMAT.DD_MM_YYYY);
+  }
+  if (mesureIndicateurTemporaire.metricDate?.match('^(0[0-9]|1[012])-((0[0-9]|1[0-9]|2[0-9]|3[01])-[0-9]{2})$')) {
+    mesureIndicateurTemporaire.convertirDateProvenantDuFormat(ACCEPTED_DATE_FORMAT.MM_DD_YY);
   }
 };
 const verifierFormatTypeValeur = (mesureIndicateurTemporaire: MesureIndicateurTemporaire) => {
   mesureIndicateurTemporaire.mettreTypeValeurEnMinuscule();
+};
+const verifierFormatZoneId = (mesureIndicateurTemporaire: MesureIndicateurTemporaire) => {
+  mesureIndicateurTemporaire.mettreZoneIdEnMajuscule();
 };
 
 export class VerifierFichierIndicateurImporteUseCase {
@@ -87,6 +93,7 @@ export class VerifierFichierIndicateurImporteUseCase {
       correspondALIndicateurId(mesureIndicateurTemporaire, indicateurId, listeErreursValidation, index);
       verifierFormatDateValeur(mesureIndicateurTemporaire); // déplacer dans le service
       verifierFormatTypeValeur(mesureIndicateurTemporaire); // déplacer dans le service
+      verifierFormatZoneId(mesureIndicateurTemporaire); // déplacer dans le service
     });
 
     if (listeErreursValidation.length > 0) {
