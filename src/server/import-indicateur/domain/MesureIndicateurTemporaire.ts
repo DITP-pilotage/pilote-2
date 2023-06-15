@@ -9,7 +9,7 @@ export class MesureIndicateurTemporaire {
 
   private readonly _indicId: string | null;
 
-  private readonly _zoneId: string | null;
+  private _zoneId: string | null;
 
   private _metricDate: string | null;
 
@@ -108,11 +108,21 @@ export class MesureIndicateurTemporaire {
         this._metricDate = this._metricDate.split('/').reverse().join('-');
         break;
       }
+      case ACCEPTED_DATE_FORMAT.MM_DD_YY: {
+        const tmpDate = this._metricDate.split('-');
+        this._metricDate = `20${tmpDate[2]}-${tmpDate[0]}-${tmpDate[1]}`;
+        break;
+      }
     }
   }
 
   mettreTypeValeurEnMinuscule() {
     if (!this._metricType) return;
     this._metricType = this._metricType.toLowerCase();
+  }
+
+  mettreZoneIdEnMajuscule() {
+    if (!this._zoneId) return;
+    this._zoneId = this._zoneId.toUpperCase();
   }
 }
