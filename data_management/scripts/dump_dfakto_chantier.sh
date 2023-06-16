@@ -22,7 +22,7 @@ cmd_retrieve_files=$(cat <<EOF
 get dim_periods.csv input_data/temp/
 get dim_structures.csv input_data/temp/
 get dim_tree_nodes.csv input_data/temp/
-get fact_financials.csv input_data/temp/
+get fact_financials_lite.csv input_data/temp/
 get fact_progress.csv input_data/temp/
 get fact_progress_chantier.csv input_data/temp/
 EOF
