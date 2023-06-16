@@ -7,7 +7,13 @@ DISTINCT ON(projet_structurant_temporaire.id, dfakto_view.synthese_des_resultats
         ]
     ) }} as id,
     projet_structurant_temporaire.id as projet_structurant_id,
-    dfakto_view.meteo as meteo,
+    CASE
+        WHEN dfakto_view.meteo = 'Aucun obstacle' THEN 'SOLEIL'
+        WHEN dfakto_view.meteo = 'Obstacle modéré' THEN 'COUVERT'
+        WHEN dfakto_view.meteo = 'Obstacle important' THEN 'NUAGE'
+        WHEN dfakto_view.meteo = 'Projet bloqué' THEN 'ORAGE'
+        ELSE 'NON_RENSEIGNEE'
+    END as meteo,
     dfakto_view.meteo_date as date_meteo,
     dfakto_view.synthese_des_resultats as commentaire,
     dfakto_view.synthese_des_resultats_date as date_commentaire,
