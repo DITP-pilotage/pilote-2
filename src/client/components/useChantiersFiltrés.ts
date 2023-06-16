@@ -18,9 +18,10 @@ export default function useChantiersFiltrés(chantiers: Chantier[]) {
     }
 
     if (filtresActifs.périmètresMinistériels.length > 0) {
-      résultat = résultat.filter(chantier => (
-        filtresActifs.périmètresMinistériels.some(filtre => (chantier.périmètreIds.includes(filtre.id)))
-      ));
+      résultat = résultat.filter(chantier => {
+        const périmètrePorteur = chantier.responsables.porteur?.périmètresMinistériels.find(pm => chantier.périmètreIds.includes(pm.id));
+        return filtresActifs.périmètresMinistériels.some(filtre => périmètrePorteur?.id === filtre.id);
+      });
     }
     if (filtresActifs.axes.length > 0) {
       résultat = résultat.filter(chantier => (
