@@ -13,8 +13,7 @@ renamed as (
         period_id,
         state_id as type_valeur,
         effect_id,
-        financials_propilot_amount as valeur_cumulee,
-        financials_decumulated_amount as valeur
+        valeur
 
     from source
 
