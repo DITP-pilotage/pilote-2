@@ -53,7 +53,7 @@ SELECT
                     AND date_trunc('year', pivot_pour_cumuler_valeur_actuelle.date_releve) = date_trunc('year', pivot.date_releve)
                     AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
             )
-        WHEN parametrage.partitionne_vaca_par = 'from_previous_month' AND parametrage.partitionne_vaca_depuis = '1000-01-03' AND parametrage.vaca_operation = 'avg' THEN
+        WHEN parametrage.partitionne_vaca_par = 'from_previous_month' AND parametrage.partitionne_vaca_nombre_de_mois = 3 AND parametrage.vaca_operation = 'avg' THEN
         (
             SELECT vac_from_previous_month_3.avg
             FROM vac_from_previous_month_3
@@ -86,7 +86,7 @@ SELECT
                     AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
                     AND pivot_pour_cumuler_valeur_actuelle.date_releve >= parametrage.partitionne_vacg_depuis
             )
-        WHEN parametrage.partitionne_vacg_par = 'from_previous_month' AND parametrage.partitionne_vacg_depuis = '1000-01-06' AND parametrage.vacg_operation = 'avg' THEN
+        WHEN parametrage.partitionne_vacg_par = 'from_previous_month' AND parametrage.partitionne_vacg_nombre_de_mois = 6 AND parametrage.vacg_operation = 'avg' THEN
             (
                 SELECT vac_from_previous_month_6.avg
                 FROM vac_from_previous_month_6
