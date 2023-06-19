@@ -98,6 +98,26 @@ SELECT
     END AS valeur_actuelle_comparable_annuelle,
     CASE
         WHEN pivot.valeur_actuelle_decumulee IS NULL THEN NULL -- sinon on a un calcul de vacg alors que la valeur est nulle
+        WHEN parametrage.partitionne_vacg_par = 'from_year_start' AND parametrage.vacg_operation = 'sum' THEN
+            (
+                SELECT SUM(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                FROM {{ ref('pivot_faits_indicateur_avec_valeur_actuelle_decumulee')}} pivot_pour_cumuler_valeur_actuelle
+                WHERE pivot_pour_cumuler_valeur_actuelle.indicateur_id = pivot.indicateur_id
+                    AND pivot_pour_cumuler_valeur_actuelle.zone_id = pivot.zone_id
+                    AND pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee IS NOT NULL
+                    AND date_trunc('year', pivot_pour_cumuler_valeur_actuelle.date_releve) = date_trunc('year', pivot.date_releve)
+                    AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
+            )
+        WHEN parametrage.partitionne_vacg_par = 'from_year_start' AND parametrage.vacg_operation = 'avg' THEN
+            (
+                SELECT AVG(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                FROM {{ ref('pivot_faits_indicateur_avec_valeur_actuelle_decumulee')}} pivot_pour_cumuler_valeur_actuelle
+                WHERE pivot_pour_cumuler_valeur_actuelle.indicateur_id = pivot.indicateur_id
+                    AND pivot_pour_cumuler_valeur_actuelle.zone_id = pivot.zone_id
+                    AND pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee IS NOT NULL
+                    AND date_trunc('year', pivot_pour_cumuler_valeur_actuelle.date_releve) = date_trunc('year', pivot.date_releve)
+                    AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
+            )
         WHEN parametrage.partitionne_vacg_par = 'from_custom_date' AND parametrage.vacg_operation = 'sum' THEN
             (
                 SELECT SUM(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
