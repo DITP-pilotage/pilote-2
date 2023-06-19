@@ -1,2 +1,0 @@
-web: python -m http.server $PORT
-postdeploy: alembic upgrade head
