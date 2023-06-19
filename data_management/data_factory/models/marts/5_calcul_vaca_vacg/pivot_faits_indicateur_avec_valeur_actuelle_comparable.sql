@@ -71,6 +71,21 @@ SELECT
                     AND date_trunc('year', pivot_pour_cumuler_valeur_actuelle.date_releve) = date_trunc('year', pivot.date_releve)
                     AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
             )
+        WHEN parametrage.partitionne_vaca_par = 'from_custom_date' THEN
+            (
+                SELECT
+                CASE
+                    WHEN parametrage.vaca_operation = 'sum' THEN SUM(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                    WHEN parametrage.vaca_operation = 'avg' THEN AVG(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                    ELSE pivot.valeur_actuelle_decumulee
+                END as vac
+                FROM {{ ref('pivot_faits_indicateur_avec_valeur_actuelle_decumulee')}} pivot_pour_cumuler_valeur_actuelle
+                WHERE pivot_pour_cumuler_valeur_actuelle.indicateur_id = pivot.indicateur_id
+                    AND pivot_pour_cumuler_valeur_actuelle.zone_id = pivot.zone_id
+                    AND pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee IS NOT NULL
+                    AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
+                    AND pivot_pour_cumuler_valeur_actuelle.date_releve >= parametrage.partitionne_vaca_depuis
+            )
         WHEN parametrage.partitionne_vaca_par = 'from_previous_month' THEN
             (
                 SELECT
