@@ -5,7 +5,8 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 export default interface MinistèreRepository {
   getListe(): Promise<Ministère[]>;
   getListePourChantiers(chantiers: Chantier[]): Promise<Ministère[]>;
-  récupérerToutesLesIconesAssociéesÀUnPérimètre(): Promise<{ perimetre_id: perimetre['id'], icone: ministere['icone'] }[]>
+  récupérerToutesLesIconesAssociéesÀLeurPérimètre(): Promise<{ perimetre_id: perimetre['id'], icone: ministere['icone'] }[]>
+  récupérerLesNomsAssociésÀLeurPérimètre(périmètresIds: perimetre['id'][]): Promise<{ perimetre_id: perimetre['id'], nom: ministere['nom'] }[]>
 }
 
 
