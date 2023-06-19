@@ -1,6 +1,7 @@
 import { indicateur } from '@prisma/client';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { Maille } from '@/server/domain/maille/Maille.interface';
+import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
 import IndicateurSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/IndicateurSQLRow.builder';
 import IndicateurSQLRepository from './IndicateurSQLRepository';
 
@@ -342,6 +343,78 @@ describe('IndicateurSQLRepository', () => {
           },
         },
       );
+    });
+  });
+
+  describe('récupérerPourExports', () => {
+    it('deux indicateurs sont triés par noms de chantier en premier', async () => {
+      // GIVEN
+      const repository = new IndicateurSQLRepository(prisma);
+      const nomDeChantier1 = 'B Chantier 1'; // apparaît en deuxième par ordre alphabétique
+      const nomDeChantier2 = 'A Chantier 2'; // apparaît en premier par ordre alphabétique
+      await prisma.chantier.createMany({
+        data: [
+          new ChantierSQLRowBuilder()
+            .avecId('CH-001')
+            .avecNom(nomDeChantier1)
+            .avecMaille('NAT')
+            .avecCodeInsee('FR')
+            .build(),
+          new ChantierSQLRowBuilder()
+            .avecId('CH-002')
+            .avecNom(nomDeChantier2)
+            .avecMaille('NAT')
+            .avecCodeInsee('FR')
+            .build(),
+          new ChantierSQLRowBuilder()
+            .avecId('CH-003')
+            .avecNom('C Chantier 3')
+            .avecMaille('NAT')
+            .avecCodeInsee('FR')
+            .build(),
+        ],
+      });
+      await prisma.indicateur.createMany({
+        data:[
+          new IndicateurSQLRowBuilder()
+            .avecChantierId('CH-001')
+            .avecId('IND-001')
+            .avecNom('Indicateur 1 Chantier 1')
+            .avecMaille('NAT')
+            .avecCodeInsee('FR')
+            .build(),
+          new IndicateurSQLRowBuilder()
+            .avecChantierId('CH-001')
+            .avecId('IND-001')
+            .avecNom('Indicateur 1 Chantier 2')
+            .avecMaille('DEPT') // Ne doit pas être sélectionné
+            .avecCodeInsee('01')
+            .build(),
+          new IndicateurSQLRowBuilder()
+            .avecChantierId('CH-002')
+            .avecId('IND-002')
+            .avecNom('Indicateur 2 Chantier 2')
+            .avecMaille('NAT')
+            .avecCodeInsee('FR')
+            .build(),
+          new IndicateurSQLRowBuilder()
+            .avecChantierId('CH-003') // Ne doit pas être sélectionné
+            .avecId('IND-003')
+            .avecNom('Indicateur 3 Chantier 3')
+            .avecMaille('NAT')
+            .avecCodeInsee('FR')
+            .build(),
+        ],
+      });
+
+      // WHEN
+      const result = await repository.récupérerPourExports(['CH-001', 'CH-002'], ['NAT-FR']);
+
+      // THEN
+      expect(result).toEqual([
+        { nom: 'Indicateur 2 Chantier 2', chantierNom: 'A Chantier 2', maille: 'NAT' },
+        { nom: 'Indicateur 1 Chantier 1', chantierNom: 'B Chantier 1', maille: 'NAT' },
+      ].map(expect.objectContaining));
     });
   });
 });

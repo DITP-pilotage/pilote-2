@@ -21,8 +21,8 @@ export default async function handleExportDesChantiersSansFiltre(request: NextAp
   });
   stringifier.pipe(response);
 
-  const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase();
   const habilitation = new Habilitation(session.habilitations);
+  const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase();
   for await (const partialResult of exportCsvDesChantiersSansFiltreUseCase.run(habilitation, session.profil)) {
     for (const chantierPourExport of partialResult) {
       stringifier.write(chantierPourExport);

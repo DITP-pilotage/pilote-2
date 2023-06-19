@@ -36,17 +36,18 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
   ];
 
   constructor(
-    private readonly chantierRepository = dependencies.getChantierRepository(),
+    private readonly _chantierRepository = dependencies.getChantierRepository(),
+    private readonly _config = configuration,
   ) {}
 
   public async* run(habilitation: Habilitation, profil: Profil): AsyncGenerator<string[][]> {
-    const chantierIdsLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom(habilitation);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
-    const chunkSize = configuration.exportCsvChantierIdChunkSize;
+    const chunkSize = this._config.exportCsvChantiersChunkSize;
     for (let i = 0; i < chantierIdsLecture.length; i += chunkSize) {
       const partialChantierIds = chantierIdsLecture.slice(i, i + chunkSize);
-      const partialResult = await this.chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
+      const partialResult = await this._chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
       yield partialResult
         .filter(c => !this.masquerChantierPourProfilDROM(profil, c))
         .map(c => this.transformer(c, profil));
