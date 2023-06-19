@@ -1,10 +1,8 @@
-import Link from 'next/link';
-import FilAriane from '@/components/_commons/FilAriane/FilAriane';
-import Titre from '@/components/_commons/Titre/Titre';
-import Bloc from '@/components/_commons/Bloc/Bloc';
+
 import PageUtilisateurFormulaireStyled from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.styled';
 import PageUtilisateurFormulaireProps from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
 import UtilisateurFormulaire from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire';
+import FilAriane from '@/client/components/_commons/FilAriane/FilAriane';
 
 export default function PageUtilisateurFormulaire({ profils } :PageUtilisateurFormulaireProps) {
   const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];

@@ -3,9 +3,9 @@ import React, { ReactNode, useCallback, useEffect, useRef } from 'react';
 import Select, { components, MenuListProps, MultiValue, OptionProps, ValueContainerProps } from 'react-select';
 import useStateRef from '@/client/hooks/useStateRef';
 import MultiSelectStyled from './MultiSelect.styled';
-import MultiSelectProps, { MultiSelectOption } from './MultiSelect.interface';
+import MultiSelectProps, { MultiSelectOption, MultiSelectOptionGroupée } from './MultiSelect.interface';
 
-function ValueContainerPersonnalisé({ children, ...props }: ValueContainerProps<{ label: string, value: string }, true, { label: string; options: { label: string; value: string; }[]; }>) {
+function ValueContainerPersonnalisé({ children, ...props }: ValueContainerProps<MultiSelectOption, true, MultiSelectOptionGroupée>) {
   const valeursSélectionnées = props.getValue();
   const input = (children as [unknown, ReactNode])[1];
 
@@ -17,7 +17,7 @@ function ValueContainerPersonnalisé({ children, ...props }: ValueContainerProps
   );
 }
 
-function MenuListPersonnalisé({ selectProps, ...props }: MenuListProps<{ label: string, value: string }, true, { label: string; options: { label: string; value: string; }[]; }>) {
+function MenuListPersonnalisé({ selectProps, ...props }: MenuListProps<MultiSelectOption, true, MultiSelectOptionGroupée>) {
   const { onInputChange, inputValue  } = selectProps;
 
   const ariaAttributes: any = {
@@ -71,11 +71,10 @@ function InputOption({
   getStyles,
   isDisabled,
   isFocused,
-  isSelected,
   children,
   innerProps,
   ...rest
-}: OptionProps<{ label: string, value: string }, true, { label: string; options: { label: string; value: string; }[]; }>) {
+}: OptionProps<MultiSelectOption, true, MultiSelectOptionGroupée>) {
   const style = {
     alignItems: 'center',
     backgroundColor: isFocused ? '#eee' : 'transparent',
@@ -95,10 +94,10 @@ function InputOption({
       innerProps={props}
       isDisabled={isDisabled}
       isFocused={isFocused}
-      isSelected={isSelected}
+      isSelected={rest.data.estSélectionné}
     >
       <input
-        checked={isSelected}
+        checked={rest.data.estSélectionné}
         disabled={isDisabled}
         readOnly
         type="checkbox"
@@ -180,7 +179,7 @@ export default function MultiSelect({ libellé, optionsGroupées, ouvertureCallb
           isSearchable={false}
           menuIsOpen={estOuvert}
           noOptionsMessage={() => 'Aucun résultat'}
-          onChange={(valeurs :MultiValue<MultiSelectOption>) => changementValeursSélectionnéesCallback(valeurs.map(v => v.value))}
+          onChange={(valeurs: MultiValue<MultiSelectOption>) => changementValeursSélectionnéesCallback(valeurs)}
           options={optionsGroupées}
         />
       </div>

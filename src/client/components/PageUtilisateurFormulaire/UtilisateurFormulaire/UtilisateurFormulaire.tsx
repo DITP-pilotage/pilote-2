@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { DevTool } from '@hookform/devtools';
+import Link from 'next/link';
+import Titre from '@/components/_commons/Titre/Titre';
+import Bloc from '@/components/_commons/Bloc/Bloc';
 import IndicateurDEtapes from '@/components/_commons/IndicateurDEtapes/IndicateurDEtapes';
 import { UtilisateurFormInputs } from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
 import { validationInfosBaseUtilisateur } from '@/validation/utilisateur';
@@ -16,6 +20,13 @@ export default function UtilisateurFormulaire({ profils }: UtilisateurFormulaire
 
   const reactHookForm = useForm<UtilisateurFormInputs>({
     resolver: zodResolver(validationInfosBaseUtilisateur),
+    defaultValues: {
+      email: 't@t.fr',
+      nom: 'toto',
+      prénom: 'tata',
+      fonction: 'hello',
+      profil: 'DITP_ADMIN',
+    },
   });
 
   const passerAuRécapitulatif = async () => {
@@ -24,21 +35,50 @@ export default function UtilisateurFormulaire({ profils }: UtilisateurFormulaire
 
   return (
     <>
-      <IndicateurDEtapes
-        étapeCourante={etapeCourante}
-        étapes={étapes}
-      />
-      <FormProvider {...reactHookForm}>
-        <form onSubmit={reactHookForm.handleSubmit(passerAuRécapitulatif)}>
-          {
+      {
+        etapeCourante === 1 ?
+          <Link
+            aria-label="Retour à la liste des utilisateurs"
+            className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-text--sm bouton-retour"
+            href='/admin/utilisateurs'
+          >
+            Retour
+          </Link> 
+          : 
+          <button
+            className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-text--sm bouton-retour"
+            onClick={() => setEtapeCourante(1)}
+            type="button"
+          >
+            Retour
+          </button>
+      }
+      <Titre
+        baliseHtml='h1'
+        className='fr-h1 fr-mt-4w'
+      >
+        Créer un compte
+      </Titre>
+      <Bloc>
+        <div className='fr-px-10w fr-py-6w'>
+          <IndicateurDEtapes
+            étapeCourante={etapeCourante}
+            étapes={étapes}
+          />
+          <FormProvider {...reactHookForm}>
+            <form onSubmit={reactHookForm.handleSubmit(passerAuRécapitulatif)}>
+              {
             etapeCourante === 1 &&
               <SaisieDesInformationsUtilisateur
                 profils={profils}
               />
           }
-          {etapeCourante === 2 && <RécapitulatifUtilisateur />}
-        </form>
-      </FormProvider>
+              {etapeCourante === 2 && <RécapitulatifUtilisateur />}
+            </form>
+          </FormProvider>
+          <DevTool control={reactHookForm.control} /> 
+        </div>
+      </Bloc>
     </>
   );
 }

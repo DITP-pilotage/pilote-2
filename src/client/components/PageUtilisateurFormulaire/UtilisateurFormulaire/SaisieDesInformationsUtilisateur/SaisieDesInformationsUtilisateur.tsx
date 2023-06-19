@@ -1,5 +1,5 @@
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import InputAvecLabel from '@/components/_commons/InputAvecLabel/InputAvecLabel';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import SaisieDesInformationsUtilisateurProps
@@ -10,10 +10,11 @@ import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 import Titre from '@/components/_commons/Titre/Titre';
 
 import { UtilisateurFormInputs } from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
+import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
 
 export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesInformationsUtilisateurProps) {
   const { listeProfils } = useSaisieDesInformationsUtilisateur(profils);
-  const { register, watch, formState: { errors } } = useFormContext<UtilisateurFormInputs>();
+  const { register, watch, formState: { errors }, control } = useFormContext<UtilisateurFormInputs>();
   
   return (
     <>
@@ -65,7 +66,33 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
         texteFantôme='Sélectionner un profil'
         valeurSélectionnée={watch('profil')}
       />
-      <SubmitBouton label="Suivant" />
+      <hr className='fr-hr' />
+      <Titre
+        baliseHtml='h2'
+        className="fr-text--md  fr-mb-2w"
+      >
+        Droits de lecture
+      </Titre>
+      <p className="fr-text--xs texte-gris fr-mb-4w">
+        Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
+      </p>
+      <Controller
+        control={control}
+        name='habilitations.lecture.territoires'
+        render={({ field }) => (
+          <MultiSelectTerritoire
+            changementValeursSélectionnéesCallback={(valeursSélectionnées) => field.onChange(valeursSélectionnées)}
+            territoiresCodesSélectionnéesParDéfaut={watch('habilitations.lecture.territoires')}
+          />
+        )}
+        rules={{ required: true }}
+      />
+      <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
+        <SubmitBouton
+          className='fr-btn--icon-right fr-icon-arrow-right-line'
+          label="Suivant"
+        />
+      </div>
     </>
   );
 }

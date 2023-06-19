@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
 const ÉlémentStyled = styled.div`
-
-  .libellé{
+  p {
     color: var(--text-mention-grey);
+    margin-bottom: 0;
   }
 `;
 
