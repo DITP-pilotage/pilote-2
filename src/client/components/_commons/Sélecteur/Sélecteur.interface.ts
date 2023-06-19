@@ -1,4 +1,4 @@
-import { UseFormRegisterReturn } from 'react-hook-form';
+import { FieldError, UseFormRegisterReturn } from 'react-hook-form';
 
 type SélecteurOption<T> = {
   libellé: string,
@@ -12,6 +12,8 @@ export default interface SélecteurProps<T> {
   options: SélecteurOption<T>[],
   valeurModifiéeCallback?: (valeur: T) => void,
   valeurSélectionnée?: T,
+  texteAide?: string,
+  erreur?: FieldError
   libellé?: string,
   texteFantôme?: string,
   register?: UseFormRegisterReturn

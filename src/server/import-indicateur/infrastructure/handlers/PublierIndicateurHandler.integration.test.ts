@@ -13,7 +13,7 @@ describe('ImportIndicateurHandler', () => {
   it('doit transférer les mesures indicateurs temporaires vers la table permanente', async () => {
     // GIVEN
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur);
+    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
 
     const rapport = new DetailValidationFichierBuilder()
       .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')

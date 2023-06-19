@@ -29,6 +29,10 @@ export default class Habilitation {
       throw new TerritoireNonAutoriséErreur();
   }
 
+  peutCréerUnUtilisateur() {
+    return this._habilitations['utilisateurs.modification'].chantiers.length > 0 || this._habilitations['utilisateurs.modification'].territoires.length > 0;
+  }
+  
   peutConsulterLaListeDesUtilisateurs() {
     return this._habilitations['utilisateurs.lecture'].chantiers.length > 0;
   }

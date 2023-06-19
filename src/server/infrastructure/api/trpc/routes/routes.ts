@@ -1,4 +1,5 @@
 import { créerRouteurTRPC } from '@/server/infrastructure/api/trpc/trpc';
+import { utilisateurRouter } from '@/server/infrastructure/api/trpc/routes/utilisateur';
 import { chantierRouter } from './chantier';
 import { synthèseDesRésultatsRouter } from './synthèseDesRésultats';
 import { publicationRouter } from './publication';
@@ -11,4 +12,5 @@ export const appRouter = créerRouteurTRPC({
   publication: publicationRouter,
   indicateur: indicateurRouter,
   territoire: territoireRouter,
+  utilisateur: utilisateurRouter,
 });

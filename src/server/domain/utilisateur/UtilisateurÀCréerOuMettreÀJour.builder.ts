@@ -12,16 +12,17 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
 
   private _profil: UtilisateurÀCréerOuMettreÀJour['profil'];
 
-  private _auteurModification: UtilisateurÀCréerOuMettreÀJour['auteurModification'];
-
   private _habilitations: UtilisateurÀCréerOuMettreÀJour['habilitations'];
+
+  private _fonction: UtilisateurÀCréerOuMettreÀJour['fonction'];
+
 
   constructor() {
     this._nom = faker.name.lastName();
     this._prénom = faker.name.firstName();
     this._email = faker.internet.email();
     this._profil = faker.helpers.arrayElement(profils);
-    this._auteurModification = 'Seeder';
+    this._fonction = 'fonction';
     this._habilitations = {
       'lecture': this._créerHabilitation(),
       'saisie.commentaire': this._créerHabilitation(),
@@ -68,7 +69,7 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
       prénom: this._prénom,
       email: this._email,
       profil: this._profil,
-      auteurModification: this._auteurModification,
+      fonction: this._fonction,
       habilitations: this._habilitations,
     };
   }

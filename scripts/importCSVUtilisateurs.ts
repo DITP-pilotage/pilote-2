@@ -70,7 +70,7 @@ async function main() {
   assert(filename, 'Nom de fichier CSV manquant');
 
   const utilisateurs = new UtilisateurCSVParseur(filename).parse();
-  await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateurs);
+  await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateurs, 'Import CSV');
 }
 
 const isMain = eval('require.main === module');

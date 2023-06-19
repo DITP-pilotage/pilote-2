@@ -51,7 +51,7 @@ describe('VerifierImportIndicateurHandler', () => {
         ).build();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur);
+      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
@@ -106,7 +106,7 @@ describe('VerifierImportIndicateurHandler', () => {
         );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur);
+      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
 
       const formData = new FormData();
       const file = mock<File>();
@@ -162,7 +162,7 @@ describe('VerifierImportIndicateurHandler', () => {
         );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur);
+      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
 
       const formData = new FormData();
       const file = mock<File>();
@@ -225,7 +225,7 @@ describe('VerifierImportIndicateurHandler', () => {
       ).build();
 
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur);
+    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
 
     nock(BASE_URL_VALIDATA)
       .post('/validate').reply(200,

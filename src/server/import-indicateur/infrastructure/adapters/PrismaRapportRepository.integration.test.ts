@@ -27,7 +27,7 @@ describe('PrismaRapportRepository', () => {
       const now = new Date();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await utilisateurSQLRepository.créerOuMettreÀJour(utilisateur);
+      await utilisateurSQLRepository.créerOuMettreÀJour(utilisateur, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('f69bbd1f-de95-442a-9392-df644e1096f8')
@@ -52,7 +52,7 @@ describe('PrismaRapportRepository', () => {
       const now = new Date();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await utilisateurSQLRepository.créerOuMettreÀJour(utilisateur);
+      await utilisateurSQLRepository.créerOuMettreÀJour(utilisateur, 'test');
 
       const listeMesuresIndicateurTemporaire = [
         new MesureIndicateurTemporaireBuilder()

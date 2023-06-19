@@ -13,7 +13,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   ) {}
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
-  async run(utilisateurs: UtilisateurÀCréerOuMettreÀJour[]): Promise<void> {
+  async run(utilisateurs: UtilisateurÀCréerOuMettreÀJour[], auteurModification: string): Promise<void> {
     for (const utilisateur of utilisateurs) {
       const territoires = await this.territoireRepository.récupérerTous();
 
@@ -47,9 +47,8 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
         });
       }
     
-      await this.utilisateurRepository.créerOuMettreÀJour(utilisateur);
+      await this.utilisateurRepository.créerOuMettreÀJour(utilisateur, auteurModification);
     }
-
     const utilisateursPourIAM = utilisateurs.map(utilisateur => ({ nom:  utilisateur.nom, prénom: utilisateur.prénom, email: utilisateur.email }));
     await this.utilisateurIAMRepository.ajouteUtilisateurs(utilisateursPourIAM);
   }

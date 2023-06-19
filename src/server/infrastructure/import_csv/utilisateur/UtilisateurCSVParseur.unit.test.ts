@@ -29,17 +29,17 @@ describe('UtilisateurCSVParseur', () => {
     expect(result).toStrictEqual([
       {
         ...utilisateurÀImporter1,
-        auteurModification: 'Import CSV',
         nom: utilisateurÀImporter1.nom.toLowerCase(),
         prénom: utilisateurÀImporter1.prénom.toLowerCase(),
         email: utilisateurÀImporter1.email.toLowerCase(),
+        fonction: null,
       },
       {
         ...utilisateurÀImporter2,
-        auteurModification: 'Import CSV',
         nom: utilisateurÀImporter2.nom.toLowerCase(),
         prénom: utilisateurÀImporter2.prénom.toLowerCase(),
         email: utilisateurÀImporter2.email.toLowerCase(),
+        fonction: null,
       }]);
   });
 });

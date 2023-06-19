@@ -1,19 +1,15 @@
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import { actionsTerritoiresStore, territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import {
-  ScopeChantiers,
-  ScopeUtilisateurs,
-} from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { ScopeChantiers } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import PageUtilisateurProps from './PageUtilisateur.interface';
+import FicheUtilisateurProps from './FicheUtilisateur.interface';
 
-export default function usePageUtilisateur(utilisateur: Utilisateur, chantiers: PageUtilisateurProps['chantiers']) {
+export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['utilisateur'], chantiers: FicheUtilisateurProps['chantiers']) {
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const tousLesTerritoires = territoiresTerritoiresStore();
 
-  const scopes: { [key in (ScopeChantiers | ScopeUtilisateurs)]: { chantiers: Chantier['nom'][], territoires: Territoire['nomAffiché'][] } } = {
+  const scopes: { [key in (ScopeChantiers)]: { chantiers: Chantier['nom'][], territoires: Territoire['nomAffiché'][] } } = {
     lecture: {
       chantiers: [],
       territoires: [],
@@ -23,18 +19,6 @@ export default function usePageUtilisateur(utilisateur: Utilisateur, chantiers: 
       territoires: [],
     },
     'saisie.commentaire': {
-      chantiers: [],
-      territoires: [],
-    },
-    'utilisateurs.lecture': {
-      chantiers: [],
-      territoires: [],
-    },
-    'utilisateurs.modification': {
-      chantiers: [],
-      territoires: [],
-    },
-    'utilisateurs.suppression': {
       chantiers: [],
       territoires: [],
     },

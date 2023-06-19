@@ -1,22 +1,22 @@
 import { Habilitations, HabilitationsÀCréerOuMettreÀJour } from './habilitation/Habilitation.interface';
 
 export const profils = [
-  'DITP_ADMIN', 
-  'DITP_PILOTAGE', 
-  'PR', 
-  'PM_ET_CABINET', 
-  'CABINET_MTFP', 
-  'CABINET_MINISTERIEL', 
-  'DIR_ADMIN_CENTRALE', 
-  'SECRETARIAT_GENERAL', 
-  'EQUIPE_DIR_PROJET', 
-  'DIR_PROJET', 
-  'REFERENT_REGION', 
-  'PREFET_REGION', 
-  'SERVICES_DECONCENTRES_REGION', 
-  'REFERENT_DEPARTEMENT', 
-  'PREFET_DEPARTEMENT', 
-  'SERVICES_DECONCENTRES_DEPARTEMENT', 
+  'DITP_ADMIN',
+  'DITP_PILOTAGE',
+  'PR',
+  'PM_ET_CABINET',
+  'CABINET_MTFP',
+  'CABINET_MINISTERIEL',
+  'DIR_ADMIN_CENTRALE',
+  'SECRETARIAT_GENERAL',
+  'EQUIPE_DIR_PROJET',
+  'DIR_PROJET',
+  'REFERENT_REGION',
+  'PREFET_REGION',
+  'SERVICES_DECONCENTRES_REGION',
+  'REFERENT_DEPARTEMENT',
+  'PREFET_DEPARTEMENT',
+  'SERVICES_DECONCENTRES_DEPARTEMENT',
   'DROM',
 ] as const;
 export type Profil = typeof profils[number];
@@ -33,12 +33,12 @@ type Utilisateur = {
   habilitations: Habilitations
 };
 
-export type UtilisateurÀCréerOuMettreÀJour =  { 
+export type UtilisateurÀCréerOuMettreÀJour =  {
   nom: string
   prénom: string
   email: string
+  fonction: string | null
   profil: Profil
-  auteurModification: string
   habilitations: HabilitationsÀCréerOuMettreÀJour
 };
 
