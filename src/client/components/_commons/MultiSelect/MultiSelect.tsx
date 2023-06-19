@@ -129,16 +129,18 @@ export default function MultiSelect({ libellé, optionsGroupées, ouvertureCallb
   };
 
   const onDomClick = useCallback((e: MouseEvent) => 
-    conteneurRef.current!.contains(e.target as Node) && estOuvertRef.current === false ? setEstOuvert(true) : setEstOuvert(false)
+    conteneurRef.current!.contains(e.target as Node) && !estOuvertRef.current ? setEstOuvert(true) : setEstOuvert(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   , []);
 
   const onKeyup = useCallback((e: KeyboardEvent) => {
-    if (estOuvertRef.current === true && e.code === 'Escape') {
+    if (estOuvertRef.current && e.code === 'Escape') {
       setEstOuvert(false);
     }
-    if (estOuvertRef.current === false && e.code === 'Space') {
+    if (!estOuvertRef.current && e.code === 'Space') {
       setEstOuvert(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 

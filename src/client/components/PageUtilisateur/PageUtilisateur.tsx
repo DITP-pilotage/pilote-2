@@ -5,7 +5,7 @@ import FilAriane from '@/components/_commons/FilAriane/FilAriane';
 import PageUtilisateurStyled from '@/components/PageUtilisateur/PageUtilisateur.styled';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
-import FicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur';
+import FicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur';
 
 export default function PageUtilisateur({ utilisateur, chantiers }:PageUtilisateurProps) {
   const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];

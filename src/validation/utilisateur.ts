@@ -25,23 +25,26 @@ export const validationInfosBaseUtilisateur = z.object( {
   email: z.string().email(),
   nom: z.string().min(1 ).max(100),
   prénom: z.string().min(1 ).max(100),
-  fonction: z.string(),
+  fonction: z.string().nullable(),
   profil: z.enum(profils),
 });
 
 export const validationInfosHabilitationsUtilisateur = z.object({
   habilitations : z.object({
     lecture: z.object({
-      chantiers: z.array(),
-      territoires: z.array(),
+      chantiers: z.string().array(),
+      territoires: z.string().array(),
+      périmètres: z.string().array(),
     }),
     'saisie.indicateur': z.object({
-      chantiers: z.array(),
-      territoires: z.array(),
+      chantiers: z.string().array(),
+      territoires: z.string().array(),
+      périmètres: z.string().array(),
     }),
     'saisie.commentaire': z.object({
-      chantiers: z.array(),
-      territoires: z.array(),
+      chantiers: z.string().array(),
+      territoires: z.string().array(),
+      périmètres: z.string().array(),
     }),
   }),
 });

@@ -37,8 +37,8 @@ export type UtilisateurÀCréerOuMettreÀJour =  {
   nom: string
   prénom: string
   email: string
+  fonction: string | null
   profil: Profil
-  auteurModification: string
   habilitations: HabilitationsÀCréerOuMettreÀJour
 };
 

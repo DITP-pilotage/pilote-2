@@ -22,9 +22,12 @@ export default function TableauUtilisateur({ utilisateur }: TableauUtilisateurPr
             <th>
               Fonction
             </th>
-            <th>
-              Dernière modification
-            </th>
+            {
+              !!utilisateur.auteurModification &&
+              <th>
+                Dernière modification
+              </th>
+            }
           </tr>
         </thead>
         <tbody>
@@ -44,9 +47,12 @@ export default function TableauUtilisateur({ utilisateur }: TableauUtilisateurPr
             <td title={utilisateur.fonction ?? undefined}>
               {utilisateur.fonction}
             </td>
-            <td title={`${formaterDate(utilisateur.dateModification, 'jj/mm/aaaa')} par ${utilisateur.auteurModification}`}>
-              {`${formaterDate(utilisateur.dateModification, 'jj/mm/aaaa')} par ${utilisateur.auteurModification}`}
-            </td>
+            {
+              !!utilisateur.auteurModification &&
+              <td title={`${formaterDate(utilisateur.dateModification, 'jj/mm/aaaa')} par ${utilisateur.auteurModification}`}>
+                {`${formaterDate(utilisateur.dateModification, 'jj/mm/aaaa')} par ${utilisateur.auteurModification}`}
+              </td>
+            }
           </tr>
         </tbody>
       </table>

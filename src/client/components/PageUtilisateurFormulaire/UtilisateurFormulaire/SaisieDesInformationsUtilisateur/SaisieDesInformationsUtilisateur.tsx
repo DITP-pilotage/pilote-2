@@ -8,12 +8,13 @@ import useSaisieDesInformationsUtilisateur
   from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 import Titre from '@/components/_commons/Titre/Titre';
-import MultiSelect from '@/components/_commons/MultiSelect/MultiSelect';
+
 import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
+import { UtilisateurFormInputs } from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
 
 export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesInformationsUtilisateurProps) {
   const { listeProfils } = useSaisieDesInformationsUtilisateur(profils);
-  const { register, watch, formState: { errors: erreurs } } = useFormContext();
+  const { register, watch, formState: { errors } } = useFormContext<UtilisateurFormInputs>();
   
   return (
     <>
@@ -46,7 +47,7 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
         Tous les champs sont obligatoires.
       </p>
       <InputAvecLabel
-        erreur={erreurs.email}
+        erreur={errors.email}
         htmlName="email"
         libellé="Adresse électronique"
         register={register('email')}
@@ -54,25 +55,25 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
         type='email'
       />
       <InputAvecLabel
-        erreur={erreurs.nom}
+        erreur={errors.nom}
         htmlName="nom"
         libellé="Nom"
         register={register('nom')}
       />
       <InputAvecLabel
-        erreur={erreurs.prénom}
+        erreur={errors.prénom}
         htmlName="prénom"
         libellé="Prénom"
         register={register('prénom')}
       />
       <InputAvecLabel
-        erreur={erreurs.fonction}
+        erreur={errors.fonction}
         htmlName="fonction"
         libellé="Fonction"
         register={register('fonction')}
       />
       <Sélecteur
-        erreur={erreurs.profil}
+        erreur={errors.profil}
         htmlName='profil'
         libellé='Profil'
         options={listeProfils}

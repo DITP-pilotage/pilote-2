@@ -9,7 +9,7 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(validationInfosBaseUtilisateur.merge(zodValidateurCSRF).merge(validationInfosHabilitationsUtilisateur))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      await new CréerOuMettreÀJourUnUtilisateurUseCase().run([input]);
-    })
-  ,
+      const auteurModification = ctx.session.user.name ?? '';
+      await new CréerOuMettreÀJourUnUtilisateurUseCase().run([input], auteurModification);
+    }),
 });

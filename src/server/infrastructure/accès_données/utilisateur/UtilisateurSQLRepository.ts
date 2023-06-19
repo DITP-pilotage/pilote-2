@@ -141,14 +141,14 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     );
   }
 
-  async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJour): Promise<void> {
+  async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJour, auteurModification: string): Promise<void> {
     const utilisateurCrééOuMisÀJour = await this._prisma.utilisateur.upsert({
       create: {
         email: u.email.toLocaleLowerCase(),
         nom: u.nom,
         prenom: u.prénom,
         profilCode: u.profil,
-        auteur_modification: u.auteurModification,
+        auteur_modification: auteurModification,
       },
       update: {
         nom: u.nom,

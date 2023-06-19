@@ -6,7 +6,7 @@ import PageUtilisateurFormulaireStyled from '@/components/PageUtilisateurFormula
 import PageUtilisateurFormulaireProps from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
 import UtilisateurFormulaire from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire';
 
-export default function PageUtilisateurFormulaire({ chantiers, périmètresMinistériels, profils } :PageUtilisateurFormulaireProps) {
+export default function PageUtilisateurFormulaire({ profils } :PageUtilisateurFormulaireProps) {
   const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];
 
   return (

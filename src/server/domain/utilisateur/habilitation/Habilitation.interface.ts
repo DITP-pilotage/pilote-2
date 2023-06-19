@@ -18,7 +18,7 @@ export type TerritoiresFiltre =  {
   NAT: { maille: string, territoires: string[] }
 };
 
-type HabilitationChantiers = {
+export type HabilitationChantiers = {
   chantiers: Chantier['id'][]
   territoires: string[]
 };

@@ -365,7 +365,7 @@ export class DatabaseSeeder {
     ];
 
     for (const utilisateur of utilisateurs) {
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur);
+      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'Seeder');
     }
   }
 
