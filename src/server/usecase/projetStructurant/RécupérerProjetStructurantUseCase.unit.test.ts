@@ -2,18 +2,18 @@ import SynthèseDesRésultatsBuilder from '@/server/domain/chantier/synthèseDes
 import ProjetStructurantRepository from '@/server/domain/projetStructurant/ProjetStructurantRepository.interface';
 import SynthèseDesRésultatsProjetStructurantRepository from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import PérimètreMinistérielBuilder from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.builder';
-import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import TerritoireBuilder from '@/server/domain/territoire/Territoire.builder';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import ProjetStructurantRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ProjetStructurantSQLRow.builder';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ProjetStructurantNonAutoriséErreur } from '@/server/utils/errors';
+import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import RécupérerProjetStructurantUseCase from './RécupérerProjetStructurantUseCase';
 
 describe('Récupérer projet structurant', () => {
   let projetStructurantRepository: ProjetStructurantRepository;
   let territoireRepository: TerritoireRepository;
-  let périmètreMinistérielRepository: PérimètreMinistérielRepository;
+  let ministèreRepository: MinistèreRepository;
   let synthèseDesRésultatsRepository: SynthèseDesRésultatsProjetStructurantRepository;
   let récupérerProjetStructurantUseCase: RécupérerProjetStructurantUseCase;
   
@@ -26,9 +26,9 @@ describe('Récupérer projet structurant', () => {
       récupérer: jest.fn(),
     } as unknown as TerritoireRepository;
 
-    périmètreMinistérielRepository = {
-      récupérerListe: jest.fn(),
-    } as unknown as PérimètreMinistérielRepository;
+    ministèreRepository = {
+      récupérerLesNomsAssociésÀLeurPérimètre: jest.fn(),
+    } as unknown as MinistèreRepository;
   
     synthèseDesRésultatsRepository = {
       récupérerLaPlusRécente: jest.fn(),
@@ -37,7 +37,7 @@ describe('Récupérer projet structurant', () => {
     récupérerProjetStructurantUseCase = new RécupérerProjetStructurantUseCase(
       projetStructurantRepository,
       territoireRepository,
-      périmètreMinistérielRepository,
+      ministèreRepository,
       synthèseDesRésultatsRepository,
     );
   });
@@ -75,7 +75,11 @@ describe('Récupérer projet structurant', () => {
     beforeEach(() => {
       (projetStructurantRepository.récupérer as jest.Mock).mockResolvedValue(projetStructurantPrismaVersLeDomaine);
       (territoireRepository.récupérer as jest.Mock).mockResolvedValue(territoire);
-      (périmètreMinistérielRepository.récupérerListe as jest.Mock).mockResolvedValue([périmètre1, périmètre2, périmètre3]);
+      (ministèreRepository.récupérerLesNomsAssociésÀLeurPérimètre as jest.Mock).mockResolvedValue([
+        { perimetre_id: périmètre1.id, nom: périmètre1.ministèreNom },
+        { perimetre_id: périmètre2.id, nom: périmètre2.ministèreNom },
+        { perimetre_id: périmètre3.id, nom: périmètre3.ministèreNom },
+      ]);
       (synthèseDesRésultatsRepository.récupérerLaPlusRécente as jest.Mock).mockResolvedValue(synthèseDesRésultats);
     });
   
@@ -117,42 +121,6 @@ describe('Récupérer projet structurant', () => {
     });
   });
 
-  describe('Plusieurs périmètres appartiennent au même ministère', () => {
-    //GIVEN
-    const territoire = new TerritoireBuilder().build();
-    const périmètre1 = new PérimètreMinistérielBuilder().avecMinistèreNom('Agriculture et alimentation').build();
-    const périmètre2 = new PérimètreMinistérielBuilder().build();
-    const périmètre3 = new PérimètreMinistérielBuilder().avecMinistèreNom('Agriculture et alimentation').build();
-    const synthèseDesRésultats = new SynthèseDesRésultatsBuilder().nonNull().build();
-
-    const projetStructurantPrisma = new ProjetStructurantRowBuilder()
-      .avecPérimètresIds([périmètre1.id, périmètre2.id, périmètre3.id])
-      .avecTerritoireCode(territoire.code)
-      .build();
-
-    const habilitation = {
-      'projetsStructurants.lecture': {
-        projetsStructurants: [projetStructurantPrisma.id],
-      } } as unknown as Utilisateur['habilitations'];
-        
-    beforeEach(() => {
-      (projetStructurantRepository.récupérer as jest.Mock).mockResolvedValue(projetStructurantPrisma);
-      (territoireRepository.récupérer as jest.Mock).mockResolvedValue(territoire);
-      (périmètreMinistérielRepository.récupérerListe as jest.Mock).mockResolvedValue([périmètre1, périmètre2, périmètre3]);
-      (synthèseDesRésultatsRepository.récupérerLaPlusRécente as jest.Mock).mockResolvedValue(synthèseDesRésultats);
-    });
-
-    it('Retourne la liste des minisètes associés sans doublon', async () => {
-      //WHEN
-      const résultat = await récupérerProjetStructurantUseCase.run(projetStructurantPrisma.id, habilitation);
-
-      //THEN
-      expect(résultat.responsables.ministèrePorteur).toEqual(périmètre1.ministèreNom);
-      expect(résultat.responsables.ministèresCoporteurs).toEqual([périmètre2.ministèreNom]);
-
-    });
-  });
-
   describe("Il n'y a qu'un PM", () => {
     //GIVEN
     const territoire = new TerritoireBuilder().build();
@@ -164,16 +132,29 @@ describe('Récupérer projet structurant', () => {
       .avecTerritoireCode(territoire.code)
       .build();
 
+    const projetStructurantPrismaVersLeDomaine = {
+      id: projetStructurantPrisma.id,
+      nom: projetStructurantPrisma.nom,
+      territoireCode: projetStructurantPrisma.territoire_code,
+      périmètresIds: projetStructurantPrisma.perimetres_ids,
+      avancement: projetStructurantPrisma.taux_avancement,
+      dateAvancement: projetStructurantPrisma.date_taux_avancement ? projetStructurantPrisma.date_taux_avancement.toISOString() : null,
+      directionAdmininstration: projetStructurantPrisma.direction_administration,
+      chefferieDeProjet: projetStructurantPrisma.chefferie_de_projet,
+      coporteurs: projetStructurantPrisma.co_porteurs,
+    };
+
     const habilitation = {
       'projetsStructurants.lecture': {
         projetsStructurants: [projetStructurantPrisma.id],
       } } as unknown as Utilisateur['habilitations'];
         
     beforeEach(() => {
-      (projetStructurantRepository.récupérer as jest.Mock).mockResolvedValue(projetStructurantPrisma);
+      (projetStructurantRepository.récupérer as jest.Mock).mockResolvedValue(projetStructurantPrismaVersLeDomaine);
       (territoireRepository.récupérer as jest.Mock).mockResolvedValue(territoire);
-      (périmètreMinistérielRepository.récupérerListe as jest.Mock).mockResolvedValue([périmètre]);
-      (synthèseDesRésultatsRepository.récupérerLaPlusRécente as jest.Mock).mockResolvedValue(synthèseDesRésultats);
+      (ministèreRepository.récupérerLesNomsAssociésÀLeurPérimètre as jest.Mock).mockResolvedValue([
+        { perimetre_id: périmètre.id, nom: périmètre.ministèreNom },
+      ]);      (synthèseDesRésultatsRepository.récupérerLaPlusRécente as jest.Mock).mockResolvedValue(synthèseDesRésultats);
     });
 
     it('Retourne le nom du ministère poteur et une liste vide de ministères coporteurs', async () => {
@@ -196,15 +177,29 @@ describe('Récupérer projet structurant', () => {
       .avecTerritoireCode(territoire.code)
       .build();
 
+    const projetStructurantPrismaVersLeDomaine = {
+      id: projetStructurantPrisma.id,
+      nom: projetStructurantPrisma.nom,
+      territoireCode: projetStructurantPrisma.territoire_code,
+      périmètresIds: projetStructurantPrisma.perimetres_ids,
+      avancement: projetStructurantPrisma.taux_avancement,
+      dateAvancement: projetStructurantPrisma.date_taux_avancement ? projetStructurantPrisma.date_taux_avancement.toISOString() : null,
+      directionAdmininstration: projetStructurantPrisma.direction_administration,
+      chefferieDeProjet: projetStructurantPrisma.chefferie_de_projet,
+      coporteurs: projetStructurantPrisma.co_porteurs,
+    };
+
     const habilitation = {
       'projetsStructurants.lecture': {
         projetsStructurants: [projetStructurantPrisma.id],
       } } as unknown as Utilisateur['habilitations'];
         
     beforeEach(() => {
-      (projetStructurantRepository.récupérer as jest.Mock).mockResolvedValue(projetStructurantPrisma);
+      (projetStructurantRepository.récupérer as jest.Mock).mockResolvedValue(projetStructurantPrismaVersLeDomaine);
       (territoireRepository.récupérer as jest.Mock).mockResolvedValue(territoire);
-      (périmètreMinistérielRepository.récupérerListe as jest.Mock).mockResolvedValue([périmètre]);
+      (ministèreRepository.récupérerLesNomsAssociésÀLeurPérimètre as jest.Mock).mockResolvedValue([
+        { perimetre_id: périmètre.id, nom: périmètre.ministèreNom },
+      ]);    
     });
 
     it('Retourne une météo non renseignée', async () => {

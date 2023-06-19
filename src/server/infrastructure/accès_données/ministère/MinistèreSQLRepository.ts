@@ -68,12 +68,21 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
     return queryResults.map(queryResult => this.parseMinistère(queryResult));
   }
 
-  async récupérerToutesLesIconesAssociéesÀUnPérimètre(): Promise<{ perimetre_id: perimetre['id'], icone: ministere['icone'] }[]> {
+  async récupérerToutesLesIconesAssociéesÀLeurPérimètre(): Promise<{ perimetre_id: perimetre['id'], icone: ministere['icone'] }[]> {
     return this.prisma.$queryRaw`
       SELECT p.id AS perimetre_id, m.icone
       FROM perimetre p
       LEFT JOIN ministere m ON p.ministere_id = m.id
       WHERE m.icone IS NOT NULL
 `;
+  }
+
+  async récupérerLesNomsAssociésÀLeurPérimètre(périmètresIds: perimetre['id'][]): Promise<{ perimetre_id: perimetre['id'], nom: ministere['nom'] }[]> {
+    return this.prisma.$queryRaw`
+      SELECT p.id AS perimetre_id, m.nom
+      FROM perimetre p
+      LEFT JOIN ministere m ON p.ministere_id = m.id
+      WHERE p.id = ANY (${périmètresIds})
+  `;
   }
 }

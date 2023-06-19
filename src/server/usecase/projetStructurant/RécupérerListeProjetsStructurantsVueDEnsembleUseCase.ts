@@ -49,7 +49,6 @@ export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
   
 
   async run(habilitations: Habilitations): Promise<ProjetStructurantVueDEnsemble[]> {
-    
     const habilitation = new Habilitation(habilitations);
     const projetsStructurantsIdsAccessiblesEnLecture = habilitation.récupérerListeProjetsStructurantsIdsAccessiblesEnLecture();
     

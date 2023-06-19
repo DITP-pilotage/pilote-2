@@ -9,7 +9,7 @@ export default class RécupérerIconesMinistèresGroupéesParProjets {
   ) {}
 
   async run(projetsStructurants: ProjetStructurantPrismaVersDomaine[]): Promise<Record<ProjetStructurant['id'], Ministère['icône'][]>> {
-    const iconeParPérimètre = await this.ministèreRepository.récupérerToutesLesIconesAssociéesÀUnPérimètre();
+    const iconeParPérimètre = await this.ministèreRepository.récupérerToutesLesIconesAssociéesÀLeurPérimètre();
     const résultat: Record<ProjetStructurant['id'], Ministère['icône'][]> = {};
 
     projetsStructurants.forEach(projet => {
