@@ -56,9 +56,14 @@ SELECT
     pivot.valeur_actuelle_decumulee,
     CASE
         WHEN pivot.valeur_actuelle_decumulee IS NULL THEN NULL -- sinon on a un calcul de vaca alors que la valeur est nulle
-        WHEN parametrage.partitionne_vaca_par = 'from_year_start' AND parametrage.vaca_operation = 'sum' THEN
+        WHEN parametrage.partitionne_vaca_par = 'from_year_start' THEN
             (
-                SELECT SUM(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                SELECT
+                CASE
+                    WHEN parametrage.vaca_operation = 'sum' THEN SUM(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                    WHEN parametrage.vaca_operation = 'avg' THEN AVG(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                    ELSE pivot.valeur_actuelle_decumulee
+                END as vac
                 FROM {{ ref('pivot_faits_indicateur_avec_valeur_actuelle_decumulee')}} pivot_pour_cumuler_valeur_actuelle
                 WHERE pivot_pour_cumuler_valeur_actuelle.indicateur_id = pivot.indicateur_id
                     AND pivot_pour_cumuler_valeur_actuelle.zone_id = pivot.zone_id
@@ -66,41 +71,62 @@ SELECT
                     AND date_trunc('year', pivot_pour_cumuler_valeur_actuelle.date_releve) = date_trunc('year', pivot.date_releve)
                     AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
             )
-        WHEN parametrage.partitionne_vaca_par = 'from_year_start' AND parametrage.vaca_operation = 'avg' THEN
+        WHEN parametrage.partitionne_vaca_par = 'from_custom_date' THEN
             (
-                SELECT AVG(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                SELECT
+                CASE
+                    WHEN parametrage.vaca_operation = 'sum' THEN SUM(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                    WHEN parametrage.vaca_operation = 'avg' THEN AVG(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                    ELSE pivot.valeur_actuelle_decumulee
+                END as vac
                 FROM {{ ref('pivot_faits_indicateur_avec_valeur_actuelle_decumulee')}} pivot_pour_cumuler_valeur_actuelle
                 WHERE pivot_pour_cumuler_valeur_actuelle.indicateur_id = pivot.indicateur_id
                     AND pivot_pour_cumuler_valeur_actuelle.zone_id = pivot.zone_id
                     AND pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee IS NOT NULL
-                    AND date_trunc('year', pivot_pour_cumuler_valeur_actuelle.date_releve) = date_trunc('year', pivot.date_releve)
                     AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
+                    AND pivot_pour_cumuler_valeur_actuelle.date_releve >= parametrage.partitionne_vaca_depuis
             )
-        WHEN parametrage.partitionne_vaca_par = 'from_previous_month' and parametrage.vaca_operation = 'avg' THEN
+        WHEN parametrage.partitionne_vaca_par = 'from_previous_month' THEN
             (
-                SELECT vac_from_previous_month.vaca_moyenne
+                SELECT
+                CASE
+                    WHEN parametrage.vaca_operation = 'avg' THEN vac_from_previous_month.vaca_moyenne
+                    WHEN parametrage.vaca_operation = 'sum' THEN vac_from_previous_month.vaca_somme
+                    ELSE pivot.valeur_actuelle_decumulee
+                END as vac
                 FROM vac_from_previous_month
                 WHERE vac_from_previous_month.indicateur_id = pivot.indicateur_id
                     AND vac_from_previous_month.zone_id = pivot.zone_id
                     AND vac_from_previous_month.date_releve = pivot.date_releve
                     AND vac_from_previous_month.vaca_moyenne IS NOT NULL
             )
-        WHEN parametrage.partitionne_vaca_par = 'from_previous_month' and parametrage.vaca_operation = 'sum' THEN
-            (
-                SELECT vac_from_previous_month.vaca_somme
-                FROM vac_from_previous_month
-                WHERE vac_from_previous_month.indicateur_id = pivot.indicateur_id
-                    AND vac_from_previous_month.zone_id = pivot.zone_id
-                    AND vac_from_previous_month.date_releve = pivot.date_releve
-                    AND vac_from_previous_month.vaca_somme IS NOT NULL
-            )
         ELSE valeur_actuelle_decumulee -- todo: mettre à nulle cette valeur afin de ne pas calculer de taux d'avancement annuel (et donc utiliser celui de dfakto pour le moment)
     END AS valeur_actuelle_comparable_annuelle,
     CASE
         WHEN pivot.valeur_actuelle_decumulee IS NULL THEN NULL -- sinon on a un calcul de vacg alors que la valeur est nulle
-        WHEN parametrage.partitionne_vacg_par = 'from_custom_date' AND parametrage.vacg_operation = 'sum' THEN
+        WHEN parametrage.partitionne_vacg_par = 'from_year_start' THEN
             (
-                SELECT SUM(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                SELECT
+                CASE
+                    WHEN parametrage.vacg_operation = 'sum' THEN SUM(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                    WHEN parametrage.vacg_operation = 'avg' THEN AVG(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                    ELSE pivot.valeur_actuelle_decumulee
+                END as vac
+                FROM {{ ref('pivot_faits_indicateur_avec_valeur_actuelle_decumulee')}} pivot_pour_cumuler_valeur_actuelle
+                WHERE pivot_pour_cumuler_valeur_actuelle.indicateur_id = pivot.indicateur_id
+                    AND pivot_pour_cumuler_valeur_actuelle.zone_id = pivot.zone_id
+                    AND pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee IS NOT NULL
+                    AND date_trunc('year', pivot_pour_cumuler_valeur_actuelle.date_releve) = date_trunc('year', pivot.date_releve)
+                    AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
+            )
+        WHEN parametrage.partitionne_vacg_par = 'from_custom_date' THEN
+            (
+                SELECT
+                CASE
+                    WHEN parametrage.vacg_operation = 'sum' THEN SUM(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                    WHEN parametrage.vacg_operation = 'avg' THEN AVG(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
+                    ELSE pivot.valeur_actuelle_decumulee
+                END as vac
                 FROM {{ ref('pivot_faits_indicateur_avec_valeur_actuelle_decumulee')}} pivot_pour_cumuler_valeur_actuelle
                 WHERE pivot_pour_cumuler_valeur_actuelle.indicateur_id = pivot.indicateur_id
                     AND pivot_pour_cumuler_valeur_actuelle.zone_id = pivot.zone_id
@@ -108,33 +134,19 @@ SELECT
                     AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
                     AND pivot_pour_cumuler_valeur_actuelle.date_releve >= parametrage.partitionne_vacg_depuis
             )
-        WHEN parametrage.partitionne_vacg_par = 'from_custom_date' AND parametrage.vacg_operation = 'avg' THEN
+        WHEN parametrage.partitionne_vacg_par = 'from_previous_month' THEN
             (
-                SELECT AVG(pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee)
-                FROM {{ ref('pivot_faits_indicateur_avec_valeur_actuelle_decumulee')}} pivot_pour_cumuler_valeur_actuelle
-                WHERE pivot_pour_cumuler_valeur_actuelle.indicateur_id = pivot.indicateur_id
-                    AND pivot_pour_cumuler_valeur_actuelle.zone_id = pivot.zone_id
-                    AND pivot_pour_cumuler_valeur_actuelle.valeur_actuelle_decumulee IS NOT NULL
-                    AND pivot_pour_cumuler_valeur_actuelle.date_releve <= pivot.date_releve
-                    AND pivot_pour_cumuler_valeur_actuelle.date_releve >= parametrage.partitionne_vacg_depuis
-            )
-        WHEN parametrage.partitionne_vacg_par = 'from_previous_month' and parametrage.vacg_operation = 'avg' THEN
-            (
-                SELECT vac_from_previous_month.vacg_moyenne
+                SELECT
+                CASE
+                    WHEN parametrage.vacg_operation = 'avg' THEN vac_from_previous_month.vacg_moyenne
+                    WHEN parametrage.vacg_operation = 'sum' THEN vac_from_previous_month.vacg_somme
+                    ELSE pivot.valeur_actuelle_decumulee
+                END as vac
                 FROM vac_from_previous_month
                 WHERE vac_from_previous_month.indicateur_id = pivot.indicateur_id
                     AND vac_from_previous_month.zone_id = pivot.zone_id
                     AND vac_from_previous_month.date_releve = pivot.date_releve
                     AND vac_from_previous_month.vacg_moyenne IS NOT NULL
-            )
-        WHEN parametrage.partitionne_vacg_par = 'from_previous_month' and parametrage.vacg_operation = 'sum' THEN
-            (
-                SELECT vac_from_previous_month.vacg_somme
-                FROM vac_from_previous_month
-                WHERE vac_from_previous_month.indicateur_id = pivot.indicateur_id
-                    AND vac_from_previous_month.zone_id = pivot.zone_id
-                    AND vac_from_previous_month.date_releve = pivot.date_releve
-                    AND vac_from_previous_month.vacg_somme IS NOT NULL
             )
         ELSE valeur_actuelle_decumulee -- todo: mettre à nulle cette valeur afin de ne pas calculer de taux d'avancement global (et donc utiliser celui de dfakto pour le moment)
     END AS valeur_actuelle_comparable_globale,
