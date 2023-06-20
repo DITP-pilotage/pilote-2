@@ -23,7 +23,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
 
     const ministères = await this.ministèreRepository.getListe();
     const territoires = await this.territoireRepository.récupérerTous();
-    const chantiersRows = await this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(habilitation);
+    const chantiersRows = await this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(habilitation, profil);
     const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRows, chantier => chantier.id);
     let chantiers = objectEntries(chantiersGroupésParId).map(([_, chantier]) => parseChantier(chantier, territoires, ministères));
 

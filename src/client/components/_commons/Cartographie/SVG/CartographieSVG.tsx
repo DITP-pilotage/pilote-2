@@ -58,7 +58,7 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
                   key={`territoire-${territoire.codeInsee}`}
                   onClick={() => options.estInteractif && territoire.estInteractif && auClicTerritoireCallback(territoire.codeInsee, options.territoireSélectionnable)}
                   onMouseEnter={() => {
-                    if (options.estInteractif && territoire.estInteractif) {
+                    if (options.estInteractif) {
                       setInfoBulle({
                         libellé: territoire.libellé,
                         valeurAffichée: territoire.valeurAffichée,

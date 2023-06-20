@@ -11,6 +11,7 @@ import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilita
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
+import { Profil, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -31,12 +32,25 @@ export default class ChantierSQLRepository implements ChantierRepository {
     this.prisma = prisma;
   }
 
-  async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations): Promise<ChantierPrisma[]> {
+  async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: Profil): Promise<ChantierPrisma[]> {
     const h = new Habilitation(habilitations);
     const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
-    let territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
-    // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
-    territoiresLecture = [...territoiresLecture, 'NAT-FR'];
+
+    let paramètresRequête : Prisma.chantierFindManyArgs = {
+      where: {
+        id,
+      },
+      include: {
+        territoire: true,
+      },
+    };
+
+    if (!profilsTerritoriaux.includes(profil)) {
+      let territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+      // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
+      territoiresLecture = [...territoiresLecture, 'NAT-FR'];
+      paramètresRequête.where!.territoire_code = { in: territoiresLecture };
+    }
 
     const peutAccéderAuChantier = chantiersLecture.includes(id);
   
@@ -44,15 +58,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       throw new ErreurChantierPermission(id);
     }
     
-    const chantiers = await this.prisma.chantier.findMany({
-      where: { 
-        id,
-        territoire_code: { in: territoiresLecture },
-      },
-      include: {
-        territoire: true,
-      },
-    });
+    const chantiers = await this.prisma.chantier.findMany(paramètresRequête);
 
     if (!chantiers || chantiers.length === 0) {
       throw new ErreurChantierNonTrouvé(id);
@@ -85,20 +91,25 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiers.map(c => c.id);
   }
 
-  async récupérerLesEntréesDeTousLesChantiersHabilités(habilitation: Habilitation): Promise<ChantierPrisma[]> {
-    
-    const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
-    let territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
-    // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
-    territoiresLecture = [...territoiresLecture, 'NAT-FR'];
+  async récupérerLesEntréesDeTousLesChantiersHabilités(habilitation: Habilitation, profil: Profil): Promise<ChantierPrisma[]> {
 
-    return this.prisma.chantier.findMany({
+    const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+
+    let paramètresRequête : Prisma.chantierFindManyArgs = {
       where: {
         NOT: { ministeres: { isEmpty: true } },
         id: { in: chantiersLecture },
-        territoire_code: { in: territoiresLecture },
       },
-    });
+    };
+
+    if (!profilsTerritoriaux.includes(profil)) {
+      let territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
+      // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
+      territoiresLecture = [...territoiresLecture, 'NAT-FR'];
+      paramètresRequête.where!.territoire_code = { in: territoiresLecture };
+    }
+
+    return this.prisma.chantier.findMany(paramètresRequête);
   }
 
   async récupérerTous(): Promise<ChantierPrisma[]> {

@@ -9,6 +9,8 @@ import PérimètreMinistérielSQLRowBuilder
 
 describe('RécupérerChantierUseCase', () => {
 
+  const profil = 'DITP_ADMIN';
+
   test('Accède à un chantier par son id, vérification de quelques champs', async () => {
     // GIVEN
     await prisma.chantier.createMany({
@@ -34,8 +36,8 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result1 = await new RécupérerChantierUseCase().run('CH-001', habilitation);
-    const result2 = await new RécupérerChantierUseCase().run('CH-002', habilitation);
+    const result1 = await new RécupérerChantierUseCase().run('CH-001', habilitation, profil);
+    const result2 = await new RécupérerChantierUseCase().run('CH-002', habilitation, profil);
 
     // THEN
     expect(result1.nom).toEqual('Chantier 1');
@@ -68,7 +70,7 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation);
+    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation, profil);
 
     // THEN
     expect(result.mailles.nationale).toStrictEqual({
@@ -132,8 +134,8 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result1 = await new RécupérerChantierUseCase().run('CH-001', habilitation);
-    const result2 = await new RécupérerChantierUseCase().run('CH-002', habilitation);
+    const result1 = await new RécupérerChantierUseCase().run('CH-001', habilitation, profil);
+    const result2 = await new RécupérerChantierUseCase().run('CH-002', habilitation, profil);
 
     // THEN
     expect(result1.responsables.porteur).toBeDefined();
@@ -163,7 +165,7 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation);
+    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation, profil);
 
     // THEN
     expect(result.responsables.directeursProjet[0]).toStrictEqual({ nom: 'Jean Bon', email: null });
@@ -185,7 +187,7 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation);
+    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation, profil);
 
     // THEN
     expect(result.estBaromètre).toBe(true);
@@ -207,7 +209,7 @@ describe('RécupérerChantierUseCase', () => {
 
       // WHEN
       const request = async () => {
-        await new RécupérerChantierUseCase().run(chantierId, habilitation);
+        await new RécupérerChantierUseCase().run(chantierId, habilitation, profil);
       };
 
       // THEN

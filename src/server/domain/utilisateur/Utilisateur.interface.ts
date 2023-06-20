@@ -21,6 +21,16 @@ export const profils = [
 ] as const;
 export type Profil = typeof profils[number];
 
+export const profilsTerritoriaux = [
+  'REFERENT_REGION',
+  'PREFET_REGION',
+  'SERVICES_DECONCENTRES_REGION',
+  'REFERENT_DEPARTEMENT',
+  'PREFET_DEPARTEMENT',
+  'SERVICES_DECONCENTRES_DEPARTEMENT',
+  'DROM',
+] as const;
+
 type Utilisateur = {
   id: string
   nom: string
