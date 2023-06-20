@@ -39,6 +39,6 @@ ssh-keyscan -p 2022 -H $URL_INGEST_DFAKTO >> ~/.ssh/known_hosts
 
 echo -e "$cmd_retrieve_files" | sftp -oPort=2022 -i $TEMP_DIR/id_ed25519 "$USER_INGEST_CHANTIER_DFAKTO@$URL_INGEST_DFAKTO"
 
-dbt deps
-
-dbt run --project-dir data_factory/ --select raw.dfakto.chantier
+PROJECT_DIR=data_factory
+dbt deps --project-dir $PROJECT_DIR
+dbt run --project-dir $PROJECT_DIR --select raw.dfakto.chantier
