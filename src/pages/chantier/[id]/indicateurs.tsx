@@ -10,6 +10,7 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';
 import { presenterEnRapportContrat, RapportContrat } from '@/server/app/contrats/RapportContrat';
+import { estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
 
 interface NextPageImportIndicateurProps {
   chantierInformations: ChantierInformations
@@ -37,8 +38,8 @@ export async function getServerSideProps({
   }
 
   const session = await getServerSession(req, res, authOptions);
-  if (!session) {
-    throw new Error('Not connected?');
+  if (!session || !estAutoriséAImporterDesIndicateurs(session.profil)) {
+    throw new Error('Not connected or not authorized ?');
   }
 
   const chantier: Chantier = await new RécupérerChantierUseCase().run(params.id, session.habilitations);
