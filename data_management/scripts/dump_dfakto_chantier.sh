@@ -1,8 +1,8 @@
 #!/bin/env bash
 
-  set -o errexit   # abort on nonzero exitstatus
-  set -o nounset   # abort on unbound variable
-  set -o pipefail  # don't hide errors within pipes
+set -o errexit   # abort on nonzero exitstatus
+set -o nounset   # abort on unbound variable
+set -o pipefail  # don't hide errors within pipes
 
 # Uniquement sur du local
 if [[ -z $SSH_KEY_INGEST_DATA_DFAKTO ]] || [[ -z $URL_INGEST_DFAKTO ]] || [[ -z $PGHOST ]] || [[ -z $PGPORT ]] || [[ -z $PGUSER ]] || [[ -z $PGPASSWORD ]] || [[ -z $PGDATABASE ]];
@@ -26,17 +26,17 @@ echo "$SSH_KEY_INGEST_DATA_DFAKTO" > input_data/temp/id_ed25519
 chmod 600 input_data/temp/id_ed25519
 
 cmd_retrieve_files=$(cat <<EOF
-get dim_periods.csv "$TEMP_DIR"
-get dim_structures.csv "$TEMP_DIR"
-get dim_tree_nodes.csv "$TEMP_DIR"
-get fact_financials_lite.csv "$TEMP_DIR"
-get fact_progress.csv "$TEMP_DIR"
-get fact_progress_chantier.csv "$TEMP_DIR"
+get dim_periods.csv $TEMP_DIR
+get dim_structures.csv $TEMP_DIR
+get dim_tree_nodes.csv $TEMP_DIR
+get fact_financials_lite.csv $TEMP_DIR
+get fact_progress.csv $TEMP_DIR
+get fact_progress_chantier.csv $TEMP_DIR
 EOF
 )
 
 ssh-keyscan -p 2022 -H $URL_INGEST_DFAKTO >> ~/.ssh/known_hosts
 
-echo -e "$cmd_retrieve_files" | sftp -oPort=2022 -i input_data/temp/id_ed25519 "$USER_INGEST_CHANTIER_DFAKTO@$URL_INGEST_DFAKTO"
+echo -e "$cmd_retrieve_files" | sftp -oPort=2022 -i $TEMP_DIR/id_ed25519 "$USER_INGEST_CHANTIER_DFAKTO@$URL_INGEST_DFAKTO"
 
 dbt run --project-dir data_factory/ --select raw.dfakto.chantier
