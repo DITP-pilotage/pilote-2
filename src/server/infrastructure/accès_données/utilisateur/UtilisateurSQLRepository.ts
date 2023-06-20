@@ -227,14 +227,14 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
     if (accèsMêmePérimètresQueChantiers) {
       const périmètresIdsAccessiblesEnLecture = [...new Set(chantiersIdsAccessiblesEnLecture.flatMap(chantierId => this._chantiers.chantiersIdsPérimètresIds[chantierId]))];
-      const projetsStructurantsIdsIssusDesPérimètresAccessibles = [...new Set(périmètresIdsAccessiblesEnLecture.flatMap(perimètreId => this._projetsStructurants.périmètresIdsProjetsStructurantsIds[perimètreId]))];
+      const projetsStructurantsIdsIssusDesPérimètresAccessibles = [...new Set(périmètresIdsAccessiblesEnLecture.flatMap(perimètreId => this._projetsStructurants.périmètresIdsProjetsStructurantsIds[perimètreId] ?? []))];
 
       if (accèsTousTerritoires) {
         return projetsStructurantsIdsIssusDesPérimètresAccessibles;
       }
 
       if (accèsMêmeTerritoiresQueChantiers) {
-        return projetsStructurantsIdsIssusDesPérimètresAccessibles.filter(id => territoiresCodesAccessiblesEnLecture.includes(this._projetsStructurants.groupésParId[id].territoire_code));
+        return projetsStructurantsIdsIssusDesPérimètresAccessibles.filter(id => id && territoiresCodesAccessiblesEnLecture.includes(this._projetsStructurants.groupésParId[id].territoire_code));
       }
     }
 
