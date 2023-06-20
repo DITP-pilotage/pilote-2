@@ -1,21 +1,23 @@
 import styled from '@emotion/styled';
 
 const MultiSelectStyled = styled.div`
-  .multiselect-menu {
+  
+  position: relative;
+  
+  div[role='menu'] {
+    display: none;
+  }
+
+  div[role='menu'].visible {
+    display: block;
+    position: absolute;
+    width: 100%;
+    max-height: 20rem;
+    overflow: auto;
     z-index: 2;
-    
-    input[type='checkbox']{
-      margin-right: 0.5rem;
-    }
-  }
-  
-  .multiselect-value-container {
-    display: initial;
-    padding: .5rem 2.5rem .5rem 1rem;
-  }
-  
-  .multiselect-control{
-    border: 0;
+    background: white;
+    border: 1px solid grey;
+    padding: 1rem;
   }
 `;
 

@@ -25,7 +25,7 @@ export default function UtilisateurFormulaire({ profils }: UtilisateurFormulaire
       nom: 'toto',
       prénom: 'tata',
       fonction: 'hello',
-      profil: 'DITP_ADMIN',
+      profil: 'DITP_PILOTAGE',
     },
   });
 
@@ -68,11 +68,11 @@ export default function UtilisateurFormulaire({ profils }: UtilisateurFormulaire
           <FormProvider {...reactHookForm}>
             <form onSubmit={reactHookForm.handleSubmit(passerAuRécapitulatif)}>
               {
-            etapeCourante === 1 &&
-              <SaisieDesInformationsUtilisateur
-                profils={profils}
-              />
-          }
+                etapeCourante === 1 &&
+                  <SaisieDesInformationsUtilisateur
+                    profils={profils}
+                  />
+              }
               {etapeCourante === 2 && <RécapitulatifUtilisateur />}
             </form>
           </FormProvider>

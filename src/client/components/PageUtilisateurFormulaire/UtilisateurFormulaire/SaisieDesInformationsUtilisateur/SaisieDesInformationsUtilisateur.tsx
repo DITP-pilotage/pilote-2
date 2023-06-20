@@ -1,5 +1,6 @@
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 import { Controller, useFormContext } from 'react-hook-form';
+import { useCallback, useEffect, useState } from 'react';
 import InputAvecLabel from '@/components/_commons/InputAvecLabel/InputAvecLabel';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import SaisieDesInformationsUtilisateurProps
@@ -11,11 +12,42 @@ import Titre from '@/components/_commons/Titre/Titre';
 
 import { UtilisateurFormInputs } from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
 import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
+import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { HabilitationsÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesInformationsUtilisateurProps) {
   const { listeProfils } = useSaisieDesInformationsUtilisateur(profils);
-  const { register, watch, formState: { errors }, control } = useFormContext<UtilisateurFormInputs>();
-  
+  const { register, watch, formState: { errors }, control, setValue } = useFormContext<UtilisateurFormInputs>();
+  const [habilitationsParDéfaut, setHabilitationsParDéfaut] = useState<HabilitationsÀCréerOuMettreÀJour>({
+    lecture: {
+      chantiers: [],
+      territoires: [],
+      périmètres: [],
+    },
+    'saisie.commentaire': {
+      chantiers: [],
+      territoires: [],
+      périmètres: [],
+    },
+    'saisie.indicateur': {
+      chantiers: [],
+      territoires: [],
+      périmètres: [],
+    },
+  });
+
+  const watchProfil = watch('profil');
+
+  const déterminerLesTerritoiresSélectionnésParDéfaut = useCallback((profil: Profil) => {
+    if (profil === 'DITP_ADMIN') {
+      setHabilitationsParDéfaut(h => ({ ...h, lecture: { territoires: ['NAT-FR'], chantiers: [], périmètres: [] } }));
+    }
+  }, []);
+
+  useEffect(() => {
+    déterminerLesTerritoiresSélectionnésParDéfaut(watchProfil);
+  }, [déterminerLesTerritoiresSélectionnésParDéfaut, watchProfil]);
+
   return (
     <>
       <p>
@@ -78,11 +110,11 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
       </p>
       <Controller
         control={control}
-        name='habilitations.lecture.territoires'
-        render={({ field }) => (
+        name="habilitations.lecture.territoires"
+        render={() => (
           <MultiSelectTerritoire
-            changementValeursSélectionnéesCallback={(valeursSélectionnées) => field.onChange(valeursSélectionnées)}
-            territoiresCodesSélectionnéesParDéfaut={watch('habilitations.lecture.territoires')}
+            changementValeursSélectionnéesCallback={(valeursSélectionnées: string[]) => setValue('habilitations.lecture.territoires', valeursSélectionnées)}
+            territoiresCodesSélectionnésParDéfaut={habilitationsParDéfaut.lecture.territoires}
           />
         )}
         rules={{ required: true }}
