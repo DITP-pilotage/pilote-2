@@ -12,19 +12,22 @@ then
   fi
 fi
 
-mkdir -p input_data/temp
+
+TEMP_DIR=input_data/temp
+
+mkdir -p $TEMP_DIR
 mkdir -p ~/.ssh
 
 echo "$SSH_KEY_INGEST_DATA_DFAKTO" > input_data/temp/id_ed25519
 chmod 600 input_data/temp/id_ed25519
 
 cmd_retrieve_files=$(cat <<EOF
-get dim_periods.csv input_data/temp/
-get dim_structures.csv input_data/temp/
-get dim_tree_nodes.csv input_data/temp/
-get fact_financials_lite.csv input_data/temp/
-get fact_progress.csv input_data/temp/
-get fact_progress_chantier.csv input_data/temp/
+get dim_periods.csv "$TEMP_DIR"
+get dim_structures.csv "$TEMP_DIR"
+get dim_tree_nodes.csv "$TEMP_DIR"
+get fact_financials_lite.csv "$TEMP_DIR"
+get fact_progress.csv "$TEMP_DIR"
+get fact_progress_chantier.csv "$TEMP_DIR"
 EOF
 )
 
