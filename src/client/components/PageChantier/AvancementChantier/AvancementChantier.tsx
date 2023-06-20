@@ -3,32 +3,19 @@ import Avancements from '@/components/_commons/Avancements/Avancements';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import {
   actionsTerritoiresStore,
-  mailleSélectionnéeTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import api from '@/server/infrastructure/api/trpc/api';
 import AvancementChantierProps from './AvancementChantier.interface';
 import AvancementChantierStyled from './AvancementChantier.styled';
 
-export default function AvancementChantier({ avancements, chantierId }: AvancementChantierProps) {
+export default function AvancementChantier({ avancements }: AvancementChantierProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
-
-  const { data: avancementsAgrégés } = api.chantier.récupérerStatistiquesAvancements.useQuery(
-    {
-      chantiers: [chantierId],
-      maille: mailleSélectionnée,
-    },
-    { refetchOnWindowFocus: false, keepPreviousData: true },
-  );
-  if (avancementsAgrégés)
-    avancementsAgrégés.global.moyenne = avancements.nationale?.global.moyenne ?? null;
 
   return (
     <AvancementChantierStyled>
       {
-        !!avancements.départementale.moyenne &&
+        avancements.départementale.moyenne !== undefined &&
           <Bloc titre={territoireSélectionné?.nomAffiché}>
             <div className='fr-py-1w jauge'>
               <JaugeDeProgression
@@ -41,7 +28,7 @@ export default function AvancementChantier({ avancements, chantierId }: Avanceme
           </Bloc>
       }
       {
-        !!avancements.régionale.moyenne &&
+        avancements.régionale.moyenne !== undefined &&
           <Bloc titre={territoireSélectionné!.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné!.codeParent).nomAffiché : territoireSélectionné!.nomAffiché}>
             <div className='fr-py-1w jauge'>
               <JaugeDeProgression
@@ -56,7 +43,7 @@ export default function AvancementChantier({ avancements, chantierId }: Avanceme
       <div className='avancement-national'>
         <Bloc titre='National'>
           <div className='fr-py-1w'>
-            <Avancements avancements={avancementsAgrégés ?? null} />
+            <Avancements avancements={avancements.nationale ?? null} />
           </div>
         </Bloc>
       </div>

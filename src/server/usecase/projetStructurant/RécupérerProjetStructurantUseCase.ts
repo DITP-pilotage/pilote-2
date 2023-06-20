@@ -34,7 +34,7 @@ export default class RécupérerProjetStructurantUseCase {
         nomAffiché: territoire.nomAffiché,
       },
       responsables: {
-        ministèrePorteur: nomsMinistères.find(min => min.perimetre_id === périmètrePorteur)?.nom ?? '',
+        ministèrePorteur: nomsMinistères.find(min => min.perimetre_id === périmètrePorteur)?.nom ?? 'Non Renseigné',
         ministèresCoporteurs: nomsMinistères.filter(min => min.perimetre_id !== périmètrePorteur).map(min => min.nom) ?? [],
         directionAdmininstration: projetStructurant.directionAdmininstration,
         chefferieDeProjet: projetStructurant.chefferieDeProjet,

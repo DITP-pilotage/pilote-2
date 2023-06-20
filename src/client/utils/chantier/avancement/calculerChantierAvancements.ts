@@ -2,12 +2,14 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
+import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 
 export default function calculerChantierAvancements(
   chantier: Chantier,
   mailleSélectionnée: MailleInterne,
   territoireSélectionné: DétailTerritoire,
   territoireParent: DétailTerritoire | null,
+  avancementsAgrégés: AvancementsStatistiques,
 ) {
   
   const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire([chantier]).agréger();
@@ -29,9 +31,9 @@ export default function calculerChantierAvancements(
     nationale: {
       global: {
         moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.global.moyenne,
-        médiane: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.médiane,
-        minimum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.minimum,
-        maximum: donnéesTerritoiresAgrégées[mailleSélectionnée].répartition.avancements.global.maximum,
+        médiane: avancementsAgrégés?.global.médiane ?? null,
+        minimum: avancementsAgrégés?.global.minimum ?? null,
+        maximum: avancementsAgrégés?.global.maximum ?? null,
       },
       annuel: {
         moyenne: donnéesTerritoiresAgrégées.nationale.répartition.avancements.annuel.moyenne,
