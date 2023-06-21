@@ -4,16 +4,16 @@
       "command": "15 * * * * bash scripts/dump_dfakto_chantier.sh"
     },
     {
-      "command": "20 * * * * bash scripts/dump_dfakto_projet_structurant.sh"
+      "command": "25 * * * * bash scripts/dump_dfakto_projet_structurant.sh"
     },
     {
-      "command": "25 * * * * bash scripts/fill_tables_ppg_metadata.sh"
+      "command": "35 * * * * bash scripts/fill_tables_ppg_metadata.sh"
     },
     {
-      "command": "30 * * * * bash scripts/fill_tables_staging.sh"
+      "command": "45 * * * * bash scripts/fill_tables_staging.sh"
     },
     {
-      "command": "35 * * * * bash scripts/fill_tables_public.sh"
+      "command": "55 * * * * bash scripts/fill_tables_public.sh"
     }
   ]
 }
