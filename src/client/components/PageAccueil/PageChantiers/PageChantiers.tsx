@@ -21,6 +21,8 @@ import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/Répa
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
+import RemontéeAlerte from '@/components/_commons/RemontéeAlerte/RemontéeAlerte';
+import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import PageChantiersStyled from './PageChantiers.styled';
 import PageChantiersProps from './PageChantiers.interface';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
@@ -28,11 +30,9 @@ import usePageChantiers from './usePageChantiers';
 
 export default function PageChantiers({ chantiers }: PageChantiersProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-
-  const { auClicTerritoireCallback } = useCartographie();
-
   const [nombreChantiersDansLeTableau, setNombreChantiersDansLeTableau] = useState<number>();
-
+  
+  const { auClicTerritoireCallback } = useCartographie();
   const {
     nombreFiltresActifs,
     chantiersFiltrés,
@@ -40,6 +40,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
     répartitionMétéos,
     donnéesCartographieAvancement,
     donnéesTableauChantiers,
+    remontéesAlertes,
   } = usePageChantiers(chantiers);
 
   return (
@@ -137,6 +138,40 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                 <RépartitionMétéo météos={répartitionMétéos} />
               </section>
             </Bloc>
+          </div>
+        </div>
+        <div className="fr-pt-3w fr-px-2w fr-px-md-0 alertes">
+          <div className="fr-mb-2w">
+            <TitreInfobulleConteneur>
+              <BadgeIcône type="warning" />
+              <Titre
+                baliseHtml="h2"
+                className="fr-text--lg fr-mb-0 fr-ml-1w titre-remontée-alertes"
+                estInline
+              >
+                Chantiers signalés
+              </Titre>
+              <Infobulle idHtml="infobulle-chantiers-alertes">
+                { INFOBULLE_CONTENUS.chantiers.alertes }
+              </Infobulle>
+            </TitreInfobulleConteneur>
+          </div>
+          <div className="fr-grid-row fr-mx-n1v fr-mx-md-n1w">
+            {
+              remontéesAlertes.map(({ libellé, nombre, estActivée, auClic }) => (
+                <div
+                  className="fr-col fr-px-1v fr-px-md-1w"
+                  key={libellé}
+                >
+                  <RemontéeAlerte
+                    auClic={auClic}
+                    estActivée={estActivée}
+                    libellé={libellé}
+                    nombre={nombre}
+                  />
+                </div>
+              ))
+            }
           </div>
         </div>
         <div className="fr-grid-row fr-mt-7v">

@@ -8,13 +8,14 @@ const TableauChantiersTuileChantierStyled = styled.div`
   
   .tuile-chantier-corps {
     display: grid;
-    grid-template-columns: 2.1rem auto;
+    grid-template-columns: 2.5rem auto 1.5rem 2.75rem;
     column-gap: 1rem;
-    align-items: center;
+    align-items: baseline;
+    white-space: nowrap;
   
     .météo {
       display: flex;
-      align-items: center;
+      align-self: flex-start;
       
       .météo-picto {
         max-width: 100%;
@@ -24,6 +25,7 @@ const TableauChantiersTuileChantierStyled = styled.div`
     .avancement {
       flex-grow: 1;
       max-width: 12rem;
+      height: 2rem;
     }
   }
 `;

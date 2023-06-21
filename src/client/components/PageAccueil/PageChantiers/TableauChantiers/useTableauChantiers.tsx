@@ -18,10 +18,15 @@ import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéforme
 import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
-import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
-import TypologiesPictos from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
+import {
+  estLargeurDÉcranActuelleMoinsLargeQue,
+} from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import TypologiesPictos
+  from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import useTableauRéformes from '@/components/PageAccueil/TableauRéformes/useTableauRéformes';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
+import TableauChantiersTendance from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance';
+import TableauChantiersÉcart from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
 import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuileChantier';
 import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiersTuileMinistère';
@@ -74,13 +79,18 @@ const colonnesTableauChantiers = [
     cell: cellContext => <TypologiesPictos typologies={cellContext.getValue()} />,
     enableGrouping: false,
     meta: {
-      width: '8rem',
+      width: '6.5rem',
     },
   }),
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
     id: 'météo',
-    cell: cellContext => <TableauRéformesMétéo météo={cellContext.getValue()} />,
+    cell: cellContext => (
+      <TableauRéformesMétéo
+        dateDeMàjDonnéesQualitatives={cellContext.row.original.dateDeMàjDonnéesQualitatives}
+        météo={cellContext.getValue()}
+      />
+    ),
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => (
       a.getIsGrouped() || b.getIsGrouped()
@@ -89,13 +99,18 @@ const colonnesTableauChantiers = [
     ),
     enableGrouping: false,
     meta: {
-      width: '10rem',
+      width: '8rem',
     },
   }),
   reactTableColonnesHelper.accessor('avancement', {
     header: 'Avancement',
     id: 'avancement',
-    cell: cellContext => <TableauRéformesAvancement avancement={cellContext.getValue()} />,
+    cell: cellContext => (
+      <TableauRéformesAvancement
+        avancement={cellContext.getValue()}
+        dateDeMàjDonnéesQuantitatives={cellContext.row.original.dateDeMàjDonnéesQuantitatives}
+      />
+    ),
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerAvancementRéforme(a.getValue(columnId), b.getValue(columnId)),
     enableGrouping: false,
@@ -105,6 +120,31 @@ const colonnesTableauChantiers = [
     aggregatedCell: avancement => <TableauRéformesAvancement avancement={avancement.getValue() ?? null} />,
     meta: {
       width: '11rem',
+    },
+  }),
+  reactTableColonnesHelper.accessor('tendance', {
+    header: 'Tendance',
+    id: 'tendance',
+    enableSorting: false,
+    cell: cellContext => (
+      <TableauChantiersTendance tendance={cellContext.getValue()} />
+    ),
+    enableGrouping: false,
+    meta: {
+      width: '7.5rem',
+    },
+  }),
+  reactTableColonnesHelper.accessor('écart', {
+    header: 'Écart',
+    id: 'écart',
+    enableSorting: false,
+    cell: cellContext => (
+      <TableauChantiersÉcart écart={cellContext.getValue()} />
+    ),
+    enableGrouping: false,
+    aggregatedCell: () => null,
+    meta: {
+      width: '5.5rem',
     },
   }),
   reactTableColonnesHelper.display({
@@ -151,7 +191,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
   const [tri, setTri] = useState<SortingState>([]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
   const [regroupement, setRegroupement] = useState<GroupingState>([]);
-  const estVueMobile = estVueMobileStore();
+  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('md');
 
   useEffect(() => {
     setTri(précédentTri => (
@@ -183,12 +223,14 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       globalFilter: valeurDeLaRecherche,
       sorting: tri,
       grouping: regroupement,
-      columnVisibility: estVueMobile ? ({
+      columnVisibility: estVueTuile ? ({
         porteur: false,
         nom: false,
         météo: false,
         avancement: false,
         typologie: false,
+        tendance: false,
+        écart: false,
         'dérouler-groupe': false,
       }) : ({
         porteur: false,
@@ -224,5 +266,6 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
     changementSélectionColonneÀTrierCallback: setSélectionColonneÀTrier,
     directionDeTri: transformerEnDirectionDeTri(tri),
     changementDirectionDeTriCallback: (directionDeTri: DirectionDeTri) => setTri(transformerEnSortingState(sélectionColonneÀTrier, directionDeTri)),
+    estVueTuile,
   };
 }

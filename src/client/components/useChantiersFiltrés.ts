@@ -3,14 +3,14 @@ import { useSession } from 'next-auth/react';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
+import Alerte from '@/server/domain/alerte/Alerte';
 
 export default function useChantiersFiltrés(chantiers: Chantier[]) {
   const { data: session } = useSession();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const filtresActifs = filtresActifsStore();
 
-  // eslint-disable-next-line sonarjs/prefer-immediate-return
-  const chantiersFiltrés = useMemo(() => {
+  const chantiersFiltrésSansFiltreAlerte = useMemo(() => {
     let résultat: Chantier[] = chantiers;
 
     if (session?.profil === 'DROM' && territoireSélectionné?.code === 'NAT-FR') {
@@ -25,21 +25,40 @@ export default function useChantiersFiltrés(chantiers: Chantier[]) {
     }
     if (filtresActifs.axes.length > 0) {
       résultat = résultat.filter(chantier => (
-        filtresActifs.axes.some(filtre => (chantier.axe === filtre.nom))
+        filtresActifs.axes.some(filtre => chantier.axe === filtre.nom)
       ));
     }
     if (filtresActifs.ppg.length > 0) {
       résultat = résultat.filter(chantier => (
-        filtresActifs.ppg.some(filtre => (chantier.ppg === filtre.nom))
+        filtresActifs.ppg.some(filtre => chantier.ppg === filtre.nom)
       ));
     }
     if (filtresActifs.filtresTypologie.length > 0) {
       résultat = résultat.filter(chantier => (
-        filtresActifs.filtresTypologie.every(filtre => (chantier[filtre.attribut]))
+        filtresActifs.filtresTypologie.some(filtre => chantier[filtre.attribut])
       ));
     }
     return résultat;
   }, [chantiers, filtresActifs, session?.profil, territoireSélectionné]);
 
-  return chantiersFiltrés;
+  const chantiersFiltrés = useMemo(() => {
+    let résultat: Chantier[] = chantiersFiltrésSansFiltreAlerte;
+
+    if (filtresActifs.filtresAlerte.length > 0) {
+      résultat = résultat.filter(chantier => {
+        return filtresActifs.filtresAlerte.some(filtre => {
+          const chantierDonnéesTerritoires = chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee];
+          return (filtre.id === 'estEnAlerteÉcart' && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
+            || (filtre.id === 'estEnAlerteBaisseOuStagnation' && Alerte.estEnAlerteBaisseOuStagnation(chantierDonnéesTerritoires.avancementPrécédent.global, chantierDonnéesTerritoires.avancement.global))
+            || (filtre.id === 'estEnAlerteDonnéesNonMàj' && Alerte.estEnAlerteDonnéesNonMàj(chantierDonnéesTerritoires.dateDeMàjDonnéesQualitatives, chantierDonnéesTerritoires.dateDeMàjDonnéesQuantitatives));
+        });
+      });
+    }
+    return résultat;
+  }, [chantiersFiltrésSansFiltreAlerte, filtresActifs.filtresAlerte, territoireSélectionné]);
+
+  return {
+    chantiersFiltrésSansFiltreAlerte,
+    chantiersFiltrés,
+  };
 }

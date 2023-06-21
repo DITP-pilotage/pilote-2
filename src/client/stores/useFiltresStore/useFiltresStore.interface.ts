@@ -7,7 +7,9 @@ export type FiltreCatégorie = keyof FiltresActifs;
 
 export type FiltreTypologieType = { id: string, attribut: keyof Chantier, nom: string };
 
-export type Filtre = PérimètreMinistériel | FiltreTypologieType | Ppg | Axe;
+export type FiltreAlerte = { id: 'estEnAlerteÉcart' | 'estEnAlerteBaisseOuStagnation' | 'estEnAlerteDonnéesNonMàj', nom: string };
+
+export type Filtre = PérimètreMinistériel | FiltreTypologieType | Ppg | Axe | FiltreAlerte;
 
 export interface FiltreCatégorieTuple {
   catégorie: FiltreCatégorie,
@@ -19,6 +21,7 @@ export interface FiltresActifs {
   axes: Axe[],
   ppg: Ppg[],
   filtresTypologie: FiltreTypologieType[],
+  filtresAlerte: FiltreAlerte[]
 }
 
 export default interface FiltresStore {

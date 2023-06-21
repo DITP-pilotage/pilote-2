@@ -219,17 +219,22 @@ export class DatabaseSeeder {
 
       const chantiersDépartementaux = this._territoiresDept.map(terr => {
         const météo = new MétéoBuilder().build();
-        const avancement = faker.datatype.number({ min: 0, max: 100, precision: 0.01 });
+        const avancement = faker.helpers.arrayElement([null, faker.datatype.number({ min: 0, max: 100, precision: 0.01 })]);
+        const avancementPrécédent = faker.helpers.arrayElement([avancement, null, faker.datatype.number({ min: 0, max: 100, precision: 0.01 })]);
 
-        return c.avecTauxAvancement(avancement).avecMétéo(météo).avecMaille('DEPT')
-          .avecCodeInsee(terr.code_insee).avecTerritoireNom(terr.nom).build();
+        return c.avecTauxAvancement(avancement).avecTauxAvancementPrécédent(avancementPrécédent)
+          .avecMaille('DEPT').avecCodeInsee(terr.code_insee).avecTerritoireNom(terr.nom)
+          .avecMétéo(météo)
+          .build();
       });
 
       const chantiersRégionaux = this._territoiresReg.map(terr => {
         const météo = new MétéoBuilder().build();
-        const avancement = faker.datatype.number({ min: 0, max: 100, precision: 0.01 });
+        const avancement = faker.helpers.arrayElement([null, faker.datatype.number({ min: 0, max: 100, precision: 0.01 })]);
+        const avancementPrécédent = faker.helpers.arrayElement([avancement, null, faker.datatype.number({ min: 0, max: 100, precision: 0.01 })]);
 
-        return c.avecTauxAvancement(avancement).avecMétéo(météo).avecMaille('REG')
+        return c.avecTauxAvancement(avancement).avecTauxAvancementPrécédent(avancementPrécédent)
+          .avecMétéo(météo).avecMaille('REG')
           .avecCodeInsee(terr.code_insee).avecTerritoireNom(terr.nom).build();
       });
 

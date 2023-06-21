@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import InfobulleProps from '@/components/_commons/Infobulle/Infobulle.interface';
 import InfobulleStyled from '@/components/_commons/Infobulle/Infobulle.styled';
-import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
+import {
+  estLargeurDÉcranActuelleMoinsLargeQue,
+} from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 
 export default function Infobulle({ idHtml, children }: InfobulleProps) {
-  const estVueMobile = estVueMobileStore();
+  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const [estVisible, setEstVisible] = useState(false);
 
   return (
@@ -17,7 +19,7 @@ export default function Infobulle({ idHtml, children }: InfobulleProps) {
     >
       <button
         aria-describedby={idHtml}
-        className="fr-btn fr-btn--tertiary-no-outline fr-icon-information-fill bouton"
+        className="fr-btn fr-btn--tertiary-no-outline fr-icon-information-fill infobulle-bouton"
         onClick={() => estVueMobile && setEstVisible(!estVisible)}
         onKeyDown={(keyEvent) => keyEvent.key === 'Escape' && setEstVisible(false)}
         type='button'

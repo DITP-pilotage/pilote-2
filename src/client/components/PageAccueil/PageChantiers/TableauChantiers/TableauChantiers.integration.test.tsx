@@ -17,6 +17,10 @@ class TableauChantiersTest {
       avancement: 97,
       météo: 'COUVERT' as const,
       typologie: { estBaromètre: false, estTerritorialisé: true },
+      dateDeMàjDonnéesQuantitatives: new Date().toISOString(),
+      dateDeMàjDonnéesQualitatives: new Date().toISOString(),
+      écart: 0,
+      tendance: 'STAGNATION',
     },
     {
       porteur: new MinistèreBuilder().avecNom('Ministère 1').build(),
@@ -25,6 +29,10 @@ class TableauChantiersTest {
       avancement: 98,
       météo: 'COUVERT' as const,
       typologie: { estBaromètre: true, estTerritorialisé: true },
+      dateDeMàjDonnéesQuantitatives: new Date().toISOString(),
+      dateDeMàjDonnéesQualitatives: new Date().toISOString(),
+      écart: 0,
+      tendance: 'STAGNATION',
     },
     {
       porteur: new MinistèreBuilder().avecNom('Ministère 2').build(),
@@ -33,6 +41,10 @@ class TableauChantiersTest {
       avancement: 99,
       météo: 'SOLEIL' as const,
       typologie: { estBaromètre: false, estTerritorialisé: false },
+      dateDeMàjDonnéesQuantitatives: new Date().toISOString(),
+      dateDeMàjDonnéesQualitatives: new Date().toISOString(),
+      écart: 0,
+      tendance: 'STAGNATION',
     },
   ];
 

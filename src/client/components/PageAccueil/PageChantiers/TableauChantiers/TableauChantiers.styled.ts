@@ -50,10 +50,6 @@ const TableauChantiersStyled = styled.section`
             width: 100%;
           }
         }
-        
-        .météo-picto {
-          height: 2rem;
-        }
 
         &.ligne-chantier {
           &:hover:nth-of-type(even) {

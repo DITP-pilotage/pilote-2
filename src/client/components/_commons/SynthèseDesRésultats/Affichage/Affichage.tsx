@@ -13,7 +13,7 @@ export default function SynthèseDesRésultatsAffichage({ synthèseDesRésultats
   return (
     <>
       <p className="fr-text--xs texte-gris fr-mb-1w">
-        {`Mis à jour le ${formaterDate(synthèseDesRésultats.date, 'jj/mm/aaaa')}`}
+        {`Mis à jour le ${formaterDate(synthèseDesRésultats.date, 'DD/MM/YYYY')}`}
         {!!synthèseDesRésultats.auteur && ` | Par ${synthèseDesRésultats.auteur}`}
       </p>
       <p

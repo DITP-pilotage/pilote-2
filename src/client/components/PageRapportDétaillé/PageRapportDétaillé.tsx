@@ -26,7 +26,7 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
     modifierTerritoireSélectionné(récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee).code);
   }
 
-  const chantiersFiltrés = useChantiersFiltrés(chantiers);
+  const { chantiersFiltrés } = useChantiersFiltrés(chantiers);
   return (
     <PageRapportDétailléStyled>
       <main className="fr-py-4w">

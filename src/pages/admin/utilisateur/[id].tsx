@@ -42,7 +42,7 @@ export async function getServerSideProps({ req, res, params } :GetServerSideProp
   }
 
   let chantiers: NextPageAdminUtilisateurProps['chantiers'] = {};
-  const chantiersExistants = await new RécupérerChantiersUseCase().run();
+  const chantiersExistants = await new RécupérerChantiersUseCase().run(session.habilitations);
   chantiersExistants.forEach(chantier => {
     chantiers[chantier.id] = {
       nom: chantier.nom,

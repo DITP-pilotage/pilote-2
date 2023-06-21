@@ -6,14 +6,12 @@ import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRech
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import useTableauChantiers from '@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers';
 import TableauChantiersActionsDeTri from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
-import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
 import TableauRéformesEnTête from '@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête';
 import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersStyled from './TableauChantiers.styled';
 import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
 
 export default function TableauChantiers({ données, setNombreChantiersDansLeTableau }: TableauChantiersProps) {
-  const estVueMobile = estVueMobileStore();
   const {
     tableau,
     changementDeLaRechercheCallback,
@@ -23,6 +21,7 @@ export default function TableauChantiers({ données, setNombreChantiersDansLeTab
     changementSélectionColonneÀTrierCallback,
     directionDeTri,
     changementDirectionDeTriCallback,
+    estVueTuile,
   } = useTableauChantiers(données);
   
   useEffect(() => {
@@ -89,7 +88,7 @@ export default function TableauChantiers({ données, setNombreChantiersDansLeTab
                 Liste des chantiers
               </caption>
               {
-                !estVueMobile && <TableauRéformesEnTête tableau={tableau} />
+                !estVueTuile && <TableauRéformesEnTête tableau={tableau} />
               }
               <TableauChantiersContenu tableau={tableau} />
             </table>

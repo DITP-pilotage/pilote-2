@@ -49,8 +49,8 @@ export default function TableauUtilisateur({ utilisateur }: TableauUtilisateurPr
             </td>
             {
               !!utilisateur.auteurModification &&
-              <td title={`${formaterDate(utilisateur.dateModification, 'jj/mm/aaaa')} par ${utilisateur.auteurModification}`}>
-                {`${formaterDate(utilisateur.dateModification, 'jj/mm/aaaa')} par ${utilisateur.auteurModification}`}
+              <td title={`${formaterDate(utilisateur.dateModification, 'DD/MM/YYYY')} par ${utilisateur.auteurModification}`}>
+                {`${formaterDate(utilisateur.dateModification, 'DD/MM/YYYY')} par ${utilisateur.auteurModification}`}
               </td>
             }
           </tr>

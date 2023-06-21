@@ -5,13 +5,15 @@ import useChantiersFiltrés from '@/components/useChantiersFiltrés';
 
 export default function usePageChantiers(chantiers: Chantier[]) {
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
-  const chantiersFiltrés = useChantiersFiltrés(chantiers);
+  const { chantiersFiltrés, chantiersFiltrésSansFiltreAlerte } = useChantiersFiltrés(chantiers);
+
   const {
     avancementsAgrégés,
     répartitionMétéos,
     avancementsGlobauxTerritoriauxMoyens,
     chantiersVueDEnsemble,
-  } = useVueDEnsemble(chantiersFiltrés);
+    remontéesAlertes,
+  } = useVueDEnsemble(chantiersFiltrés, chantiersFiltrésSansFiltreAlerte);
 
   return {
     nombreFiltresActifs: récupérerNombreFiltresActifs(),
@@ -20,5 +22,6 @@ export default function usePageChantiers(chantiers: Chantier[]) {
     répartitionMétéos,
     donnéesCartographieAvancement: avancementsGlobauxTerritoriauxMoyens,
     donnéesTableauChantiers: chantiersVueDEnsemble,
+    remontéesAlertes,
   };
 }

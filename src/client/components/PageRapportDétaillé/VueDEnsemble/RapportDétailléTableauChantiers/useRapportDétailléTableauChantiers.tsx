@@ -10,6 +10,9 @@ import TypologiesPictos from '@/components/PageAccueil/PageChantiers/TableauChan
 import { DonnéesTableauChantiers } from '@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface';
 import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
+import TableauChantiersTendance
+  from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance';
+import TableauChantiersÉcart from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart';
 import RapportDétailléTableauChantiersProps from './RapportDétailléTableauChantiers.interface';
 
 const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
@@ -37,29 +40,61 @@ const colonnesTableauChantiers = [
     enableSorting: false,
     cell: cellContext => <TypologiesPictos typologies={cellContext.getValue()} />,
     meta: {
-      width: '8rem',
+      width: '6.5rem',
     },
   }),
 
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
     id: 'météo',
-    cell: cellContext => <TableauRéformesMétéo météo={cellContext.getValue()} />,
+    cell: cellContext => (
+      <TableauRéformesMétéo
+        dateDeMàjDonnéesQualitatives={cellContext.row.original.dateDeMàjDonnéesQualitatives}
+        météo={cellContext.getValue()}
+      />),
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
     meta: {
-      width: '10rem',
+      width: '8rem',
     },
   }),
 
   reactTableColonnesHelper.accessor('avancement', {
     header: 'Avancement',
     id: 'avancement',
-    cell: cellContext => <TableauRéformesAvancement avancement={cellContext.getValue()} />,
+    cell: cellContext => (
+      <TableauRéformesAvancement
+        avancement={cellContext.getValue()}
+        dateDeMàjDonnéesQuantitatives={cellContext.row.original.dateDeMàjDonnéesQuantitatives}
+      />),
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerAvancementRéforme(a.getValue(columnId), b.getValue(columnId)),
     meta: {
       width: '11rem',
+    },
+  }),
+  reactTableColonnesHelper.accessor('tendance', {
+    header: 'Tendance',
+    id: 'tendance',
+    enableSorting: false,
+    cell: cellContext => (
+      <TableauChantiersTendance tendance={cellContext.getValue()} />
+    ),
+    enableGrouping: false,
+    meta: {
+      width: '7.5rem',
+    },
+  }),
+  reactTableColonnesHelper.accessor('écart', {
+    header: 'Écart',
+    id: 'écart',
+    enableSorting: false,
+    cell: cellContext => (
+      <TableauChantiersÉcart écart={cellContext.getValue()} />
+    ),
+    enableGrouping: false,
+    meta: {
+      width: '5.5rem',
     },
   }),
 ];

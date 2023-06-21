@@ -25,6 +25,8 @@ export default interface Chantier {
   estTerritorialisé: boolean;
 }
 
+export type ChantierTendance = 'BAISSE' | 'HAUSSE' | 'STAGNATION';
+
 export type ChantierVueDEnsemble = {
   id: string;
   nom: string;
@@ -32,4 +34,13 @@ export type ChantierVueDEnsemble = {
   météo: Météo;
   typologie: { estBaromètre: boolean, estTerritorialisé: boolean };
   porteur: Ministère | null;
+  tendance: ChantierTendance | null,
+  écart: number | null,
+  dateDeMàjDonnéesQualitatives: string | null,
+  dateDeMàjDonnéesQuantitatives: string | null,
+};
+
+export type ChantierDatesDeMiseÀJour = {
+  dateDeMàjDonnéesQuantitatives: string | null;
+  dateDeMàjDonnéesQualitatives: string | null;
 };

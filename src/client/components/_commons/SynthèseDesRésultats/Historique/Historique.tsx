@@ -45,7 +45,9 @@ export default function SynthèseDesRésultatsHistorique({ réformeId }: Synthè
                   }
                   <div className="conteneur">
                     <div className="conteneur-météo fr-mb-3w fr-mb-md-0">
-                      <MétéoBadge météo={synthèse?.météo ?? 'NON_RENSEIGNEE'} />
+                      <div className="fr-mb-2w">
+                        <MétéoBadge météo={synthèse?.météo ?? 'NON_RENSEIGNEE'} />
+                      </div>
                       {
                         !!synthèse &&
                         <div>

@@ -13,7 +13,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Head from 'next/head';
 import { TRPCClientError } from '@trpc/client';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
-import useDétecterVueMobile from '@/client/hooks/useDétecterVueMobile';
+import useDétecterLargeurDÉcran from '@/client/hooks/useDétecterLargeurDÉcran';
 import api from '@/server/infrastructure/api/trpc/api';
 
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
@@ -32,7 +32,7 @@ const queryClient = new QueryClient({
 });
 
 function MonApplication({ Component, pageProps }: AppProps) {
-  useDétecterVueMobile();
+  useDétecterLargeurDÉcran();
   const [afficherLeLoader, setAfficherLeLoader] = useState(false);
   const [pageEnCoursDeChargement, setPageEnCoursDeChargement] = useState(false);
 

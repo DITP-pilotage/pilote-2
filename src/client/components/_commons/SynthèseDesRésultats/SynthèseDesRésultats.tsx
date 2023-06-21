@@ -44,7 +44,9 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
                 }
                 <div className="contenu">
                   <div className="fr-mx-1w fr-mb-2w fr-mb-md-0 météo-affichage">
-                    <MétéoBadge météo={synthèseDesRésultats?.météo ?? 'NON_RENSEIGNEE'} />
+                    <div className="fr-mb-2w">
+                      <MétéoBadge météo={synthèseDesRésultats?.météo ?? 'NON_RENSEIGNEE'} />
+                    </div>
                     {
                       !!synthèseDesRésultats &&
                       <div>

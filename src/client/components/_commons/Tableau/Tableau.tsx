@@ -1,7 +1,9 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import { useCallback, useEffect } from 'react';
-import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
+import {
+  estLargeurDÉcranActuelleMoinsLargeQue,
+} from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import TableauProps from './Tableau.interface';
 import TableauEnTête from './EnTête/TableauEnTête';
 import TableauContenu from './Contenu/TableauContenu';
@@ -9,7 +11,7 @@ import TableauPagination from './Pagination/TableauPagination';
 import TableauStyled from './Tableau.styled';
 
 export default function Tableau<T extends object>({ tableau, titre }: TableauProps<T>) {
-  const estVueMobile = estVueMobileStore();
+  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
 
   useEffect(() => {
     tableau.setPageSize(50);
@@ -38,7 +40,7 @@ export default function Tableau<T extends object>({ tableau, titre }: TableauPro
                 {titre}
               </caption>
               {
-                !estVueMobile && <TableauEnTête<T> tableau={tableau} />
+                !estVueTuile && <TableauEnTête<T> tableau={tableau} />
               }
               <TableauContenu<T> tableau={tableau} />
             </table>

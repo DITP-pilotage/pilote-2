@@ -15,7 +15,7 @@ export default function FiltresSélectionMultiple({
     (filtre: Filtre) => {
       changerÉtatDuFiltre(filtre, catégorieDeFiltre);
     },
-    [ catégorieDeFiltre, changerÉtatDuFiltre],
+    [catégorieDeFiltre, changerÉtatDuFiltre],
   );
 
   return (
