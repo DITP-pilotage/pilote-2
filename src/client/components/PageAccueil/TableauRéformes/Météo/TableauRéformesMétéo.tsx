@@ -1,15 +1,8 @@
-import styled from '@emotion/styled';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
 import TableauRéformesMétéoProps from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.interface';
 import { formaterDate } from '@/client/utils/date/date';
-
-const TableauRéformesMétéoStyled = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  font-size: 0.625rem;
-`;
+import TableauRéformesMétéoStyled from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.styled';
 
 export default function TableauRéformesMétéo({ météo, dateDeMàjDonnéesQualitatives }: TableauRéformesMétéoProps) {
   return (
