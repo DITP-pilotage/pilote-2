@@ -33,3 +33,8 @@ export type ChantierVueDEnsemble = {
   typologie: { estBaromètre: boolean, estTerritorialisé: boolean };
   porteur: Ministère | null;
 };
+
+export type ChantierDatesDeMiseÀJour = {
+  dateDonnéesQuantitatives: string | null;
+  dateDonnéesQualitatives: string | null;
+};

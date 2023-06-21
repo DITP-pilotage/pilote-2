@@ -1,4 +1,4 @@
-import { chantier } from '@prisma/client';
+import { chantier, commentaire } from '@prisma/client';
 import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
@@ -8,6 +8,7 @@ import SyntheseDesResultatsRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/SynthèseDesRésultatsSQLRow.builder';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
+import IndicateurRowBuilder from '@/server/infrastructure/test/builders/sqlRow/IndicateurSQLRow.builder';
 import ChantierSQLRepository from './ChantierSQLRepository';
 
 describe('ChantierSQLRepository', () => {
@@ -64,6 +65,490 @@ describe('ChantierSQLRepository', () => {
       // Then
       expect(result).toStrictEqual('ORAGE');
     });
+  });
+
+  describe('récupérerDatesDeMiseÀJour', () => {
+    describe('renvoie un objet vide quand les habilitations sont insuffisantes', () => {
+      test.each([
+        [[], []],
+        [['CH-001'], []],
+        [[], ['REG-01']],
+        [['CH-non-existant'], ['REG-01']],
+        [['CH-001'], ['DEPT-non-existant']],
+        [['CH-non-existant'], ['DEPT-non-existant']],
+      ])('habilitation: [chantierId: %s, territoireCode: %s]', async (chantierIdHabilité, territoireCodeHabilité) => {
+        // Given
+        const chantierId = 'CH-001';
+        const maille = 'régionale';
+        const codeInsee = '01';
+        const territoireCode = 'REG-01';
+        const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+        const chantiers: chantier[] = [
+          new ChantierSQLRowBuilder()
+            .avecId(chantierId)
+            .avecMaille(CODES_MAILLES[maille])
+            .avecCodeInsee(codeInsee)
+            .avecMétéo('ORAGE')
+            .build(),
+        ];
+
+        const commentaires = [
+          new CommentaireRowBuilder()
+            .avecChantierId(chantierId)
+            .avecDate(new Date('2023-01-01'))
+            .avecMaille(CODES_MAILLES[maille])
+            .avecCodeInsee(codeInsee)
+            .build(),
+        ];
+
+        const synthèses = [
+          new SyntheseDesResultatsRowBuilder()
+            .avecChantierId(chantierId)
+            .avecMaille(CODES_MAILLES[maille])
+            .avecCodeInsee(codeInsee)
+            .avecDateCommentaire(new Date('2023-01-01'))
+            .avecDateMétéo(new Date('2023-01-01'))
+            .build(),
+        ];
+
+        const indicateurs = [
+          new IndicateurRowBuilder()
+            .avecChantierId(chantierId)
+            .avecMaille(CODES_MAILLES[maille])
+            .avecCodeInsee(codeInsee)
+            .avecDateValeurActuelle(new Date('2023-01-01'))
+            .avecTerritoireCode(territoireCode)
+            .build(),
+        ];
+
+        const habilitation = { lecture: {
+          chantiers: chantierIdHabilité,
+          territoires: territoireCodeHabilité,
+        } } as unknown as Utilisateur['habilitations'];
+
+        await Promise.all([
+          prisma.chantier.createMany({ data: chantiers }),
+          prisma.commentaire.createMany({ data: commentaires }),
+          prisma.synthese_des_resultats.createMany({ data: synthèses }),
+          prisma.indicateur.createMany({ data: indicateurs }),
+        ]);
+
+        // When
+        const result = await repository.récupérerDatesDeMiseÀJour([chantierId], territoireCode, habilitation);
+
+        // Then
+        expect(result).toStrictEqual({});
+      });
+    });
+
+    test.each([
+      'commentaire', 'synthèseCommentaire', 'synthèseMétéo',
+    ])('avec au max: %s', async (entité) => {
+      // Given
+      const chantierId = 'CH-001';
+      const maille = 'régionale';
+      const codeInsee = '01';
+      const territoireCode = 'REG-01';
+      const dateAncienne = new Date('2023-01-01');
+      const dateRécente = new Date('2023-02-02');
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+      const chantiers: chantier[] = [
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecMétéo('ORAGE')
+          .build(),
+        new ChantierSQLRowBuilder()
+          .avecId('CH-000')
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecMétéo('ORAGE')
+          .build(),
+      ];
+      const commentaires = [
+        new CommentaireRowBuilder()
+          .avecChantierId(chantierId)
+          .avecDate(entité === 'commentaire' ? dateRécente : dateAncienne)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .build(),
+        new CommentaireRowBuilder()
+          .avecChantierId(chantierId)
+          .avecDate(dateAncienne)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .build(),
+      ];
+
+      const synthèses = [
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateCommentaire(entité === 'synthèseCommentaire' ? dateRécente : dateAncienne)
+          .avecDateMétéo(entité === 'synthèseMétéo' ? dateRécente : dateAncienne)
+          .build(),
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille('NAT')
+          .avecCodeInsee('FR')
+          .avecDateCommentaire(new Date('2028-06-10'))
+          .avecDateMétéo(new Date('2028-06-10'))
+          .build(),
+      ];
+
+      const indicateurs = [
+        new IndicateurRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateValeurActuelle(dateAncienne)
+          .avecTerritoireCode(territoireCode)
+          .build(),
+        new IndicateurRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateValeurActuelle(dateRécente)
+          .avecTerritoireCode(territoireCode)
+          .build(),
+      ];
+
+      const habilitation = { lecture: {
+        chantiers: [chantierId],
+        territoires: [territoireCode],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await Promise.all([
+        prisma.chantier.createMany({ data: chantiers }),
+        prisma.commentaire.createMany({ data: commentaires }),
+        prisma.synthese_des_resultats.createMany({ data: synthèses }),
+        prisma.indicateur.createMany({ data: indicateurs }),
+      ]);
+
+      // When
+      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], territoireCode, habilitation);
+
+      // Then
+      expect(result[chantierId].dateDonnéesQualitatives).toStrictEqual(new Date('2023-02-02'));
+      expect(result[chantierId].dateDonnéesQuantitatives).toStrictEqual(new Date('2023-02-02'));
+
+    });
+
+    test("renvoie date données quantitatives null, quand il n'y a pas de date valeur actuelle d'indicateur", async () => {
+      // Given
+      const chantierId = 'CH-001';
+      const maille = 'régionale';
+      const codeInsee = '01';
+      const territoireCode = 'REG-01';
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+      const chantiers: chantier[] = [
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecMétéo('ORAGE')
+          .build(),
+      ];
+      const commentaires = [
+        new CommentaireRowBuilder()
+          .avecChantierId(chantierId)
+          .avecDate(new Date('2023-02-02'))
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .build(),
+      ];
+
+      const synthèses = [
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateCommentaire(new Date('2023-01-01'))
+          .avecDateMétéo(new Date('2023-01-01'))
+          .build(),
+      ];
+
+      const indicateurs = [
+        new IndicateurRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateValeurActuelle(null)
+          .avecTerritoireCode(territoireCode)
+          .build(),
+      ];
+
+      const habilitation = { lecture: {
+        chantiers: [chantierId, 'CH-000'],
+        territoires: [territoireCode],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await Promise.all([
+        prisma.chantier.createMany({ data: chantiers }),
+        prisma.commentaire.createMany({ data: commentaires }),
+        prisma.synthese_des_resultats.createMany({ data: synthèses }),
+        prisma.indicateur.createMany({ data: indicateurs }),
+      ]);
+
+      // When
+      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], territoireCode, habilitation);
+
+      // Then
+      expect(result[chantierId].dateDonnéesQuantitatives).toBeNull();
+    });
+
+    test("renvoie date données qualitatives null, quand il n'y a pas de date pour une synthèse et pas de commentaire", async () => {
+      // Given
+      const chantierId = 'CH-001';
+      const maille = 'régionale';
+      const codeInsee = '01';
+      const territoireCode = 'REG-01';
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+      const chantiers: chantier[] = [
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecMétéo('ORAGE')
+          .build(),
+      ];
+
+      const synthèses = [new SyntheseDesResultatsRowBuilder()
+        .avecChantierId(chantierId)
+        .avecMaille(CODES_MAILLES[maille])
+        .avecCodeInsee(codeInsee)
+        .avecDateCommentaire(null)
+        .avecDateMétéo(null)
+        .build(),
+      ];
+
+      const indicateurs = [
+        new IndicateurRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateValeurActuelle(new Date('2023-02-02'))
+          .avecTerritoireCode(territoireCode)
+          .build(),
+      ];
+
+      const habilitation = { lecture: {
+        chantiers: [chantierId],
+        territoires: [territoireCode],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await Promise.all([
+        prisma.chantier.createMany({ data: chantiers }),
+        prisma.synthese_des_resultats.createMany({ data: synthèses }),
+        prisma.indicateur.createMany({ data: indicateurs }),
+      ]);
+
+      // When
+      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], territoireCode, habilitation);
+
+      // Then
+      expect(result[chantierId].dateDonnéesQualitatives).toBeNull();
+    });
+
+    test("renvoie date données qualitatives, même quand il n'y a pas de date pour une synthèse mais qu'il existe un commentaire daté", async () => {
+      // Given
+      const chantierId = 'CH-001';
+      const maille = 'régionale';
+      const codeInsee = '01';
+      const territoireCode = 'REG-01';
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+      const chantiers: chantier[] = [
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecMétéo('ORAGE')
+          .build(),
+      ];
+
+      const commentaires: commentaire[] = [
+        new CommentaireRowBuilder()
+          .avecChantierId(chantierId)
+          .avecDate(new Date('2023-02-02'))
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .build(),
+      ];
+
+      const synthèses = [new SyntheseDesResultatsRowBuilder()
+        .avecChantierId(chantierId)
+        .avecMaille(CODES_MAILLES[maille])
+        .avecCodeInsee(codeInsee)
+        .avecDateCommentaire(null)
+        .avecDateMétéo(null)
+        .build(),
+      ];
+
+      const indicateurs = [
+        new IndicateurRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateValeurActuelle(new Date('2023-02-02'))
+          .avecTerritoireCode(territoireCode)
+          .build(),
+      ];
+
+      const habilitation = { lecture: {
+        chantiers: [chantierId],
+        territoires: [territoireCode],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await Promise.all([
+        prisma.chantier.createMany({ data: chantiers }),
+        prisma.commentaire.createMany({ data: commentaires }),
+        prisma.synthese_des_resultats.createMany({ data: synthèses }),
+        prisma.indicateur.createMany({ data: indicateurs }),
+      ]);
+
+      // When
+      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], territoireCode, habilitation);
+
+      // Then
+      expect(result[chantierId].dateDonnéesQualitatives).toEqual(new Date('2023-02-02'));
+    });
+
+    test('renvoie date données qualitatives, quand il y a une date pour synthèseCommentaire mais pas de date pour synthèseMétéo', async () => {
+      // Given
+      const chantierId = 'CH-001';
+      const maille = 'régionale';
+      const codeInsee = '01';
+      const territoireCode = 'REG-01';
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+      const chantiers: chantier[] = [
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecMétéo('ORAGE')
+          .build(),
+      ];
+
+      const synthèses = [new SyntheseDesResultatsRowBuilder()
+        .avecChantierId(chantierId)
+        .avecMaille(CODES_MAILLES[maille])
+        .avecCodeInsee(codeInsee)
+        .avecDateCommentaire(new Date('2023-02-02'))
+        .avecDateMétéo(null)
+        .build(),
+      ];
+
+      const indicateurs = [
+        new IndicateurRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateValeurActuelle(new Date('2023-03-02'))
+          .avecTerritoireCode(territoireCode)
+          .build(),
+      ];
+
+      const habilitation = { lecture: {
+        chantiers: [chantierId],
+        territoires: [territoireCode],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await Promise.all([
+        prisma.chantier.createMany({ data: chantiers }),
+        prisma.synthese_des_resultats.createMany({ data: synthèses }),
+        prisma.indicateur.createMany({ data: indicateurs }),
+      ]);
+
+      // When
+      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], territoireCode, habilitation);
+
+      // Then
+      expect(result[chantierId].dateDonnéesQualitatives).toEqual(new Date('2023-02-02'));
+    });
+
+    test('renvoie date données qualitatives null, quand il n\'y a pas de synthèse et pas de commentaire', async () => {
+      // Given
+      const chantierId1 = 'CH-001';
+      const chantierId2 = 'CH-002';
+      const maille = 'régionale';
+      const codeInsee = '01';
+      const territoireCode = 'REG-01';
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+      const chantiers: chantier[] = [
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId1)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .build(),
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId2)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .build(),
+      ];
+
+      const synthèses = [new SyntheseDesResultatsRowBuilder()
+        .avecChantierId(chantierId1)
+        .avecMaille(CODES_MAILLES[maille])
+        .avecCodeInsee(codeInsee)
+        .avecDateCommentaire(new Date('2023-01-02'))
+        .avecDateMétéo(new Date('2023-01-02'))
+        .build(),
+      ];
+
+      const indicateurs = [
+        new IndicateurRowBuilder()
+          .avecChantierId(chantierId1)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateValeurActuelle(new Date('2023-02-02'))
+          .avecTerritoireCode(territoireCode)
+          .build(),
+        new IndicateurRowBuilder()
+          .avecChantierId(chantierId2)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateValeurActuelle(new Date('2023-03-02'))
+          .avecTerritoireCode(territoireCode)
+          .build(),
+      ];
+
+      const habilitation = { lecture: {
+        chantiers: [chantierId1, chantierId2],
+        territoires: [territoireCode],
+      } } as unknown as Utilisateur['habilitations'];
+
+      await Promise.all([
+        prisma.chantier.createMany({ data: chantiers }),
+        prisma.synthese_des_resultats.createMany({ data: synthèses }),
+        prisma.indicateur.createMany({ data: indicateurs }),
+      ]);
+
+      // When
+      const result = await repository.récupérerDatesDeMiseÀJour([chantierId1], territoireCode, habilitation);
+
+      // Then
+      expect(result).toStrictEqual({
+        [chantierId1]: {
+          dateDonnéesQualitatives: new Date('2023-01-02'),
+          dateDonnéesQuantitatives: new Date('2023-02-02'),
+        },
+        [chantierId2]: {
+          dateDonnéesQualitatives: null,
+          dateDonnéesQuantitatives: new Date('2023-03-02'),
+        },
+      });
+    });
+
   });
 
   describe('Données des chantiers pour l\'export CSV', () => {

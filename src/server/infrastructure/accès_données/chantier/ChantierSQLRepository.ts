@@ -1,4 +1,4 @@
-import { chantier as ChantierPrisma, Prisma, PrismaClient } from '@prisma/client';
+import { chantier as ChantierPrisma, Prisma, PrismaClient, Maille as MaillePrisma } from '@prisma/client';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -148,6 +148,88 @@ export default class ChantierSQLRepository implements ChantierRepository {
         },
       },
     });
+  }
+
+  async récupérerDatesDeMiseÀJour(chantierIds: string[], territoireCode: string, habilitations: Habilitations) {
+    type Retour = Array<{
+      date_donnees_quantitatives: string,
+      date_donnees_qualitatives: string,
+      chantier_id: string,
+    }>;
+    const h = new Habilitation(habilitations);
+    const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoiresLecture = h.récupérerListeTerritoireCodesAccessiblesEnLecture();
+
+    if (chantiersLecture.length === 0 || territoiresLecture.length === 0) {
+      return {};
+    }
+
+    const prismaJoinMailleCodeInsee = ({ maille, codeInsee }: { maille: MaillePrisma, codeInsee: CodeInsee }) => Prisma.join([maille, codeInsee]);
+    const séparateur = '),(';
+    const préfixe = '(';
+    const suffixe = ')';
+    const prismaJoinTerritoires = Prisma.join(territoiresLecture.map(t => prismaJoinMailleCodeInsee(territoireCodeVersMailleCodeInsee(t))), séparateur, préfixe, suffixe);
+
+    const datesMàj = await this.prisma.$queryRaw<Retour>`
+      with chantiers_temp as (
+        select id as chantier_id, maille, code_insee  from chantier
+        where id in (${Prisma.join(chantiersLecture)})
+          and (maille, code_insee) in (
+              values ${prismaJoinTerritoires}
+            )
+          ),
+          dates_qualitatives as (
+          (
+          select chantier_id, maille, code_insee, MAX(date) as date
+          from commentaire
+          where chantier_id in (${Prisma.join(chantiersLecture)})
+            and (maille, code_insee) in (
+                values ${prismaJoinTerritoires}
+              )
+          group by chantier_id, maille, code_insee
+          )
+          union
+          (
+          select chantier_id, maille, code_insee, MAX(GREATEST(date_meteo, date_commentaire)) as date
+          from synthese_des_resultats
+          where chantier_id in (${Prisma.join(chantiersLecture)})
+            and (maille, code_insee) in (
+                values ${prismaJoinTerritoires}
+              )
+          group by chantier_id, maille, code_insee)),
+          dates_quantitatives as (
+          select chantier_id, maille, code_insee, MAX(date_valeur_actuelle) as date
+          from indicateur
+          where chantier_id in (${Prisma.join(chantiersLecture)})
+            and (maille, code_insee) in (
+                values ${prismaJoinTerritoires}
+              )
+          group by chantier_id, maille, code_insee
+          )
+
+      select
+          chantiers_temp.chantier_id as chantier_id,
+          MAX(d_quali.date) as date_donnees_qualitatives,
+          MAX(d_quanti.date) as date_donnees_quantitatives
+      from chantiers_temp
+               left join dates_qualitatives as d_quali
+                         on chantiers_temp.chantier_id = d_quali.chantier_id
+               left join dates_quantitatives as d_quanti
+                         on chantiers_temp.chantier_id = d_quanti.chantier_id
+      group by chantiers_temp.chantier_id;
+    `;
+
+    return Object.fromEntries(
+      datesMàj.map(date => (
+        [
+          date.chantier_id,
+          {
+            dateDonnéesQualitatives: date.date_donnees_qualitatives,
+            dateDonnéesQuantitatives: date.date_donnees_quantitatives,
+          },
+        ]
+      )),
+    );
   }
 
   async récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<ChantierPourExport[]> {
