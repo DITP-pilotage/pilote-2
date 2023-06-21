@@ -1,15 +1,15 @@
 {
   "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
-  "name": "Indicateur Pilote sans contraintes",
-  "title": "Indicateur Pilote sans contraintes",
-  "description": "Spécification d'un fichier d'import d'indicateur Pilote sans contraintes",
+  "name": "Indicateur Pilote - Saisie régionale",
+  "title": "Indicateur Pilote - Saisie régionale",
+  "description": "Spécification d'un fichier d'import d'indicateur Pilote - Saisie régionale",
   "keywords": [
     "pilote",
     "ditp"
   ],
   "countryCode": "FR",
   "homepage": "https://github.com/DITP-pilotage/poc-imports",
-  "path": "https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/prod/sans-contraintes.json",
+  "path": "",
   "licenses": [
     {
       "title": "-",
@@ -17,27 +17,11 @@
       "path": "-"
     }
   ],
-  "resources": [
-    {
-      "title": "Fichier valide (CSV)",
-      "name": "exemple-valide-csv",
-      "path": "https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/prod/example/sans-contraintes-ok.csv"
-    },
-    {
-      "title": "Fichier invalide (CSV)",
-      "name": "exemple-invalide-csv",
-      "path": "https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/prod/example/sans-contraintes-ko.csv"
-    },
-    {
-      "title": "Ressource valide (XLSX)",
-      "name": "exemple-valide-xlsx",
-      "path": "https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/prod/example/sans-contraintes-ok.xlsx"
-    }
-  ],
+  "resources": [],
   "sources": [
   ],
-  "created": "2023-02-17",
-  "lastModified": "2023-02-17",
+  "created": "2023-06-21",
+  "lastModified": "2023-06-21",
   "version": "0.0.1",
   "contributors": [
     {
@@ -45,12 +29,6 @@
       "email": "colin.dugeai@modernisation.gouv.fr",
       "organisation": "DITP",
       "role": "author"
-    },
-    {
-      "title": "Geoffrey Aldebert",
-      "email": "geoffrey.aldebert@data.gouv.fr",
-      "organisation": "Etalab",
-      "role": "contributor"
     }
   ],
   "fields": [
@@ -71,7 +49,7 @@
       "type": "string",
       "constraints": {
         "required": true,
-        "pattern": "^(D([02][1-9]|2[AB]|[1345678][0-9]|9[012345]|97[12346])|(R(0[12346]|11|2[478]|32|44|5[23]|7[56]|84|9[34]))|FRANCE|France)$"
+        "pattern": "^R(0[12346]|11|2[478]|32|44|5[23]|7[56]|84|9[34])$"
       }
     },
     {
