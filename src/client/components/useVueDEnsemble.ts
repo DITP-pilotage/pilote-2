@@ -68,6 +68,8 @@ export default function useVueDEnsemble(chantiersFiltrés: Chantier[]) {
     météo: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].météo,
     typologie: { estBaromètre: chantier.estBaromètre, estTerritorialisé: chantier.estTerritorialisé },
     porteur: chantier.responsables.porteur,
+    tendance: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].tendance,
+    écart: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].écart,
   }));
 
   return {

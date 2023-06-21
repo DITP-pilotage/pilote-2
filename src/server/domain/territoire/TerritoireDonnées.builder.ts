@@ -26,7 +26,7 @@ export default class TerritoireDonnéesBuilder {
   constructor() {
     this._codeInsee = faker.helpers.arrayElement([...codesInseeDépartements, ...codesInseeRégions, codeInseeFrance]);
     this._avancement = new AvancementBuilder().build();
-    this._avancementPrécédent = new AvancementBuilder().build();
+    this._avancementPrécédent = faker.helpers.arrayElement([this._avancement, new AvancementBuilder().build()]);
     this._météo = new MétéoBuilder().build();
     this._écart = faker.datatype.number({ min: -20, max: 20, precision: 3 });
     this._tendance = faker.helpers.arrayElement(['BAISSE', 'HAUSSE', 'STAGNATION', null]);

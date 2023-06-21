@@ -97,7 +97,7 @@ export function parseChantier(
           avancement: { annuel: null, global: chantierMailleNationale.taux_avancement },
           avancementPrécédent: { annuel: null, global: chantierMailleNationale.taux_avancement_precedent ?? null },
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
-          écart: 0,
+          écart: null,
           tendance: tendance,
           dateDeMàjDonnéesQualitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQualitatives ?? null,
           dateDeMàjDonnéesQuantitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQuantitatives ?? null,

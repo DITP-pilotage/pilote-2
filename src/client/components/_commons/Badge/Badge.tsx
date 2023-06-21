@@ -11,7 +11,7 @@ const badgeÀPartirDuType: Record<BadgeType, string> = {
 
 export default function Badge({ children, type }: MétéoBadgeProps) {
   return (
-    <BadgeStyled className={`fr-badge fr-badge--no-icon ${badgeÀPartirDuType[type]} fr-mb-2w`}>
+    <BadgeStyled className={`fr-badge fr-badge--no-icon ${badgeÀPartirDuType[type]}`}>
       { children }
     </BadgeStyled>
   );

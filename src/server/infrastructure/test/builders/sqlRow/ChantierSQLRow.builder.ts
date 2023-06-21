@@ -52,7 +52,7 @@ export default class ChantierRowBuilder {
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
     const avancement = new AvancementBuilder().build();
-    const avancementPrécédent = new AvancementBuilder().build();
+    const avancementPrécédent = faker.helpers.arrayElement([avancement, new AvancementBuilder().build()]);
     const météo = new MétéoBuilder().build();
     const ministères = faker.helpers.arrayElement([[new MinistèreBuilder().build()], [new MinistèreBuilder().build(), new MinistèreBuilder().build()]]);
 

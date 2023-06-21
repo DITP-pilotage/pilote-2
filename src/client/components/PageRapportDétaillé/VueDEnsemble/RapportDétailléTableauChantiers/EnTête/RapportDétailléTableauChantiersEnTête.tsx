@@ -15,7 +15,7 @@ export default function RapportDétailléTableauChantiersEnTête({ tableau }: Ta
                   width: header.column.columnDef.meta?.width ?? undefined,
                 }}
               >
-                <p className="fr-mb-0 fr-mr-3v fr-text--sm">
+                <p className="fr-mb-0 fr-text--sm">
                   { flexRender(header.column.columnDef.header, header.getContext()) }
                 </p>
               </th>
