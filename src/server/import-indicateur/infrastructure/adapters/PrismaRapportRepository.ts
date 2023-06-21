@@ -14,6 +14,7 @@ function convertirEnModel(rapport: DetailValidationFichier): RapportModel {
     id: rapport.id,
     utilisateurEmail: rapport.utilisateurEmail,
     date_creation: rapport.dateCreation,
+    est_valide: rapport.estValide,
   };
 }
 

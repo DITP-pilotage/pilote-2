@@ -30,6 +30,7 @@ describe('PrismaRapportRepository', () => {
       await utilisateurSQLRepository.créerOuMettreÀJour(utilisateur, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
+        .avecEstValide(true)
         .avecId('f69bbd1f-de95-442a-9392-df644e1096f8')
         .avecUtilisateurEmail('ditp.admin@example.com')
         .avecDateCreation(now)
@@ -43,6 +44,7 @@ describe('PrismaRapportRepository', () => {
       expect(listeDesRapports[0].id).toEqual('f69bbd1f-de95-442a-9392-df644e1096f8');
       expect(new Date(listeDesRapports[0].date_creation).getTime()).toEqual(now.getTime());
       expect(listeDesRapports[0].utilisateurEmail).toEqual('ditp.admin@example.com');
+      expect(listeDesRapports[0].est_valide).toEqual(true);
     });
   });
 
