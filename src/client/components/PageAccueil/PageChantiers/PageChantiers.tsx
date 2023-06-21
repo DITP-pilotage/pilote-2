@@ -21,6 +21,7 @@ import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/Répa
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
+import RemontéeAlerte from '@/components/PageAccueil/PageChantiers/RemontéeAlerte/RemontéeAlerte';
 import PageChantiersStyled from './PageChantiers.styled';
 import PageChantiersProps from './PageChantiers.interface';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
@@ -41,6 +42,24 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
     donnéesCartographieAvancement,
     donnéesTableauChantiers,
   } = usePageChantiers(chantiers);
+
+  const alertes = [
+    {
+      libellé: 'Écart(s) supérieur(s) de 10 points à la moyenne nationale',
+      nombre: null,
+      estActivée: false,
+    },
+    {
+      libellé: 'Tendance(s) en baisse ou en stagnation',
+      nombre: 10,
+      estActivée: true,
+    },
+    {
+      libellé: 'Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour',
+      nombre: 15,
+      estActivée: false,
+    },
+  ];
 
   return (
     <PageChantiersStyled>
@@ -137,6 +156,35 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
                 <RépartitionMétéo météos={répartitionMétéos} />
               </section>
             </Bloc>
+          </div>
+        </div>
+        <div className="fr-pt-2w fr-px-2w fr-px-md-0">
+          <div>
+            <TitreInfobulleConteneur>
+              <Titre
+                baliseHtml="h2"
+                className="fr-text--lg fr-mb-0"
+                estInline
+              >
+                Chantiers signalés
+              </Titre>
+            </TitreInfobulleConteneur>
+          </div>
+          <div className="fr-grid-row fr-grid-row--gutters">
+            {
+              alertes.map(({ libellé, nombre, estActivée }) => (
+                <div
+                  className="fr-col"
+                  key={libellé}
+                >
+                  <RemontéeAlerte
+                    estActivée={estActivée}
+                    libellé={libellé}
+                    nombre={nombre}
+                  />
+                </div>
+              ))
+            }
           </div>
         </div>
         <div className="fr-grid-row fr-mt-7v">
