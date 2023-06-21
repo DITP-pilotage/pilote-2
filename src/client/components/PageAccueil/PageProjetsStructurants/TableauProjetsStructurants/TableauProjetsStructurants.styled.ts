@@ -59,10 +59,6 @@ const TableauProjetsStructurantsStyled = styled.section`
             }
           }
           
-          .météo-picto {
-            height: 2rem;
-          }
-          
           &.ligne-chantier {
             &:hover:nth-of-type(even) {
               background-color: var(--background-contrast-grey-hover);

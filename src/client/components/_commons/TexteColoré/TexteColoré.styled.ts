@@ -10,6 +10,7 @@ const couleurCSSÀPartirDeLaCouleur = {
 const TexteColoréStyled = styled.span<TexteColoréStyledProps>`;
   font-weight: ${({ estGras }) => estGras ? 'bold' : 'normal'};
   color: ${({ couleur }) => couleurCSSÀPartirDeLaCouleur[couleur]};
+  text-align: ${({ alignement }) => alignement === 'droite' ? 'right' : (alignement === 'centre' ? 'centre' : 'gauche')};
 `;
 
 export default TexteColoréStyled;

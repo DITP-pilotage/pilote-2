@@ -156,11 +156,11 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
               </Infobulle>
             </TitreInfobulleConteneur>
           </div>
-          <div className="fr-grid-row fr-grid-row--gutters">
+          <div className="fr-grid-row fr-mx-n1v fr-mx-md-n1w">
             {
               remontéesAlertes.map(({ libellé, nombre, estActivée, auClic }) => (
                 <div
-                  className="fr-col"
+                  className="fr-col fr-px-1v fr-px-md-1w"
                   key={libellé}
                 >
                   <RemontéeAlerte

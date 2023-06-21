@@ -4,17 +4,23 @@ import TableauRéformesMétéoProps from '@/components/PageAccueil/TableauRéfor
 import { formaterDate } from '@/client/utils/date/date';
 import TableauRéformesMétéoStyled from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.styled';
 
-export default function TableauRéformesMétéo({ météo, dateDeMàjDonnéesQualitatives }: TableauRéformesMétéoProps) {
+export default function TableauRéformesMétéo({ météo, dateDeMàjDonnéesQualitatives, taille = 'md' }: TableauRéformesMétéoProps) {
   return (
-    <TableauRéformesMétéoStyled>
+    <TableauRéformesMétéoStyled taille={taille}>
       {
         météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE'
           ?
             <MétéoPicto météo={météo} />
           : (
-            <span className="texte-gris fr-text--xs">
-              {libellésMétéos[météo]}
-            </span>
+            taille === 'sm' ? (
+              <span className="texte-gris texte-centre fr-text--xs">
+                –
+              </span>
+            ) : (
+              <span className="texte-gris fr-text--xs">
+                {libellésMétéos[météo]}
+              </span>
+            )
           )
       }
       {
