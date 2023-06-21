@@ -1,4 +1,4 @@
-import { chantier } from '@prisma/client';
+import { chantier as ChantierPrisma } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import { Territoire, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
@@ -11,17 +11,25 @@ class ErreurChantierSansMailleNationale extends Error {
   }
 }
 
-function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: chantier[]) {
+function calculÉcart(chantierNational: ChantierPrisma, chantier?: ChantierPrisma) {
+  if (!chantier || chantier.taux_avancement === null || chantierNational.taux_avancement === null) {
+    return null;
+  } 
+
+  return chantier.taux_avancement - chantierNational.taux_avancement;
+}
+
+function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: ChantierPrisma[], chantierNational: ChantierPrisma) {
   let donnéesTerritoires: TerritoiresDonnées = {};
 
-  territoires.forEach(t => {
+  territoires.forEach(t => {    
     const chantierRow = chantierRows.find(c => c.code_insee === t.codeInsee);
 
     donnéesTerritoires[t.codeInsee] = {
       codeInsee: t.codeInsee,
       avancement: { annuel: null, global: chantierRow?.taux_avancement ?? null },
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
-      écart: faker.datatype.number({ min: -20, max: 20, precision: 3 }),
+      écart: calculÉcart(chantierNational, chantierRow),
       estEnAlerteNonMaj: faker.datatype.boolean(),
       tendance: faker.helpers.arrayElement<'BAISSE' | 'HAUSSE' | 'STAGNATION'>(['BAISSE', 'HAUSSE', 'STAGNATION']),
     };
@@ -30,7 +38,7 @@ function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: chan
   return donnéesTerritoires;
 }
 
-export function parseChantier(chantierRows: chantier[], territoires: Territoire[], ministères: Ministère[]): Chantier {
+export function parseChantier(chantierRows: ChantierPrisma[], territoires: Territoire[], ministères: Ministère[]): Chantier {
 
   const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
   const chantierMailleDépartementale = chantierRows.filter(c => c.maille === 'DEPT');
@@ -57,8 +65,8 @@ export function parseChantier(chantierRows: chantier[], territoires: Territoire[
           tendance: faker.helpers.arrayElement<'BAISSE' | 'HAUSSE' | 'STAGNATION'>(['BAISSE', 'HAUSSE', 'STAGNATION']),
         },
       },
-      départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale),
-      régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'régionale'), chantierMailleRégionale),
+      départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, chantierMailleNationale),
+      régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'régionale'), chantierMailleRégionale, chantierMailleNationale),
     },
     responsables: {
       porteur: ministères.find(m => m.id === chantierMailleNationale.ministeres[0]) ?? null,
