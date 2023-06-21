@@ -1,0 +1,20 @@
+{
+    "messages": [
+        {
+            "schema": "sans-contrainte.json",
+            "message-aide": "Pas de contraintes spécifiques supplémentaires."
+        },
+        {
+            "schema": "restrict-100.json",
+            "message-aide": "Les données saisies doivent être comprises entre 0 et 100."
+        },
+        {
+            "schema": "restrict-dept.json",
+            "message-aide": "Seules des données départementales peuvent être saisies."
+        },
+        {
+            "schema": "restrict-reg.json",
+            "message-aide": "Seules des données régionales peuvent être saisies."
+        }
+    ]
+}
