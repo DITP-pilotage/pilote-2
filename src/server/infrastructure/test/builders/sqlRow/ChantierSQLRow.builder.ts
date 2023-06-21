@@ -29,6 +29,8 @@ export default class ChantierRowBuilder {
 
   private _tauxAvancement: chantier['taux_avancement'];
 
+  private _tauxAvancementPrécédent: chantier['taux_avancement_precedent'];
+
   private _ministères: chantier['ministeres'];
 
   private _météo: chantier['meteo'];
@@ -50,6 +52,7 @@ export default class ChantierRowBuilder {
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
     const avancement = new AvancementBuilder().build();
+    const avancementPrécédent = new AvancementBuilder().build();
     const météo = new MétéoBuilder().build();
     const ministères = faker.helpers.arrayElement([[new MinistèreBuilder().build()], [new MinistèreBuilder().build(), new MinistèreBuilder().build()]]);
 
@@ -65,6 +68,7 @@ export default class ChantierRowBuilder {
     this._territoireNom = générerPeutÊtreNull(0.2, faker.address.state());
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
     this._tauxAvancement = avancement.global;
+    this._tauxAvancementPrécédent = avancementPrécédent.global;
     this._ministères = ministères.map(ministère => ministère.id);
     this._météo = générerPeutÊtreNull(0.05, météo);
     this._directeursAdminCentrale = chantierGénéré.responsables.directeursAdminCentrale.map(directeur => directeur.nom);
@@ -127,6 +131,11 @@ export default class ChantierRowBuilder {
     return this;
   }
 
+  avecTauxAvancementPrécédent(tauxAvancementPrécédent: chantier['taux_avancement_precedent']): ChantierRowBuilder {
+    this._tauxAvancementPrécédent = tauxAvancementPrécédent;
+    return this;
+  }
+
   avecMinistères(ministères: chantier['ministeres']): ChantierRowBuilder {
     this._ministères = ministères;
     return this;
@@ -186,6 +195,7 @@ export default class ChantierRowBuilder {
       territoire_nom: this._territoireNom,
       code_insee: this._codeInsee,
       taux_avancement: this._tauxAvancement,
+      taux_avancement_precedent: this._tauxAvancementPrécédent,
       ministeres: this._ministères,
       meteo: this._météo,
       directeurs_administration_centrale: this._directeursAdminCentrale,

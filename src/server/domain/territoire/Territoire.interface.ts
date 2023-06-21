@@ -29,8 +29,7 @@ export type TerritoireDonnées = {
   avancement: Avancement,
   météo: Météo,
   écart: number | null,
-  tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION',
-  estEnAlerteNonMaj: boolean,
+  tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION' | null,
 };
 
 export type Territoire = {

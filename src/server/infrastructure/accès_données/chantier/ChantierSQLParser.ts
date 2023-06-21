@@ -19,6 +19,22 @@ function calculÉcart(chantierNational: ChantierPrisma, chantier?: ChantierPrism
   return chantier.taux_avancement - chantierNational.taux_avancement;
 }
 
+function calculerTendance(chantier?: ChantierPrisma) {
+  if (!chantier || chantier.taux_avancement === null || chantier.taux_avancement_precedent === null) {
+    return null;
+  }
+
+  const différence = chantier.taux_avancement - chantier.taux_avancement_precedent;
+
+  if (différence === 0) {
+    return 'STAGNATION';
+  } else if (différence > 0) {
+    return 'HAUSSE';
+  } else {
+    return 'BAISSE';
+  }
+}
+
 function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: ChantierPrisma[], chantierNational: ChantierPrisma) {
   let donnéesTerritoires: TerritoiresDonnées = {};
 
@@ -30,8 +46,7 @@ function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: Chan
       avancement: { annuel: null, global: chantierRow?.taux_avancement ?? null },
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
       écart: calculÉcart(chantierNational, chantierRow),
-      estEnAlerteNonMaj: faker.datatype.boolean(),
-      tendance: faker.helpers.arrayElement<'BAISSE' | 'HAUSSE' | 'STAGNATION'>(['BAISSE', 'HAUSSE', 'STAGNATION']),
+      tendance: calculerTendance(chantierRow),
     };
   });
 
@@ -61,8 +76,7 @@ export function parseChantier(chantierRows: ChantierPrisma[], territoires: Terri
           avancement: { annuel: null, global: chantierMailleNationale.taux_avancement },
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
           écart: faker.datatype.number({ min: -20, max: 20, precision: 3 }),
-          estEnAlerteNonMaj: faker.datatype.boolean(),
-          tendance: faker.helpers.arrayElement<'BAISSE' | 'HAUSSE' | 'STAGNATION'>(['BAISSE', 'HAUSSE', 'STAGNATION']),
+          tendance: calculerTendance(chantierMailleNationale),
         },
       },
       départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, chantierMailleNationale),
