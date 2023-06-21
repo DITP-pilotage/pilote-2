@@ -17,8 +17,6 @@ export default class TerritoireDonnéesBuilder {
 
   private _tendance: TerritoireDonnées['tendance'];
 
-  private _alertes: TerritoireDonnées['alertes'];
-
   private _dateDeMàjDonnéesQualitatives: TerritoireDonnées['dateDeMàjDonnéesQualitatives'];
 
   private _dateDeMàjDonnéesQuantitatives: TerritoireDonnées['dateDeMàjDonnéesQuantitatives'];
@@ -30,11 +28,6 @@ export default class TerritoireDonnéesBuilder {
     this._météo = new MétéoBuilder().build();
     this._écart = faker.datatype.number({ min: -20, max: 20, precision: 3 });
     this._tendance = faker.helpers.arrayElement(['BAISSE', 'HAUSSE', 'STAGNATION', null]);
-    this._alertes = {
-      estEnAlerteÉcart: this._écart < -10,
-      estEnAlerteBaisseOuStagnation: this._tendance !== 'HAUSSE',
-      estEnAlerteDonnéesNonMàj: faker.helpers.arrayElement([true, false]),
-    };
     this._dateDeMàjDonnéesQualitatives = générerPeutÊtreNull(0.2, faker.date.past().toISOString());
     this._dateDeMàjDonnéesQuantitatives = générerPeutÊtreNull(0.2, faker.date.past().toISOString());
   }
@@ -77,7 +70,6 @@ export default class TerritoireDonnéesBuilder {
       météo: this._météo,
       écart: this._écart,
       tendance: this._tendance,
-      alertes: this._alertes,
       dateDeMàjDonnéesQualitatives: this._dateDeMàjDonnéesQualitatives,
       dateDeMàjDonnéesQuantitatives: this._dateDeMàjDonnéesQuantitatives,
     };

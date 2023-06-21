@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
+import Alerte from '@/server/domain/alerte/Alerte';
 
 export default function useChantiersFiltrés(chantiers: Chantier[]) {
   const { data: session } = useSession();
@@ -44,10 +45,13 @@ export default function useChantiersFiltrés(chantiers: Chantier[]) {
     let résultat: Chantier[] = chantiersFiltrésSansFiltreAlerte;
 
     if (filtresActifs.filtresAlerte.length > 0) {
-      résultat = résultat.filter(chantier => {        
-        return filtresActifs.filtresAlerte.some(filtre => (
-          chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].alertes[filtre.id]),
-        );
+      résultat = résultat.filter(chantier => {
+        return filtresActifs.filtresAlerte.some(filtre => {
+          const chantierDonnéesTerritoires = chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee];
+          return (filtre.id === 'estEnAlerteÉcart' && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
+            || (filtre.id === 'estEnAlerteBaisseOuStagnation' && Alerte.estEnAlerteBaisseOuStagnation(chantierDonnéesTerritoires.avancementPrécédent.global, chantierDonnéesTerritoires.avancement.global))
+            || (filtre.id === 'estEnAlerteDonnéesNonMàj' && Alerte.estEnAlerteDonnéesNonMàj(chantierDonnéesTerritoires.dateDeMàjDonnéesQualitatives, chantierDonnéesTerritoires.dateDeMàjDonnéesQuantitatives));
+        });
       });
     }
     return résultat;

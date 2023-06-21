@@ -29,11 +29,12 @@ export default function TableauRéformesAvancement({ avancement, dateDeMàjDonn�
           />
         )}
       {
-        dateDeMàjDonnéesQuantitatives ? <span className='texte-gris'>
+        !!dateDeMàjDonnéesQuantitatives &&
+        <span className='texte-gris'>
           (
           { formaterDate(dateDeMàjDonnéesQuantitatives, 'MM/YYYY') }
           )
-                                        </span> : null
+        </span>
       }
     </TableauRéformesAvancementStyled>
   );

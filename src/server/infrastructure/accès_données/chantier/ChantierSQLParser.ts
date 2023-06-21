@@ -57,11 +57,6 @@ function créerDonnéesTerritoires(
       tendance: tendance,
       dateDeMàjDonnéesQualitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQualitatives ?? null : null,
       dateDeMàjDonnéesQuantitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQuantitatives ?? null : null,
-      alertes: {
-        estEnAlerteÉcart: Alerte.estEnAlerteÉcart(écart),
-        estEnAlerteBaisseOuStagnation: Alerte.estEnAlerteBaisseOuStagnation(chantierRow?.taux_avancement_precedent ?? null, chantierRow?.taux_avancement ?? null),
-        estEnAlerteDonnéesNonMàj: Alerte.estEnAlerteDonnéesNonMàj(chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQualitatives ?? null : null, chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQuantitatives ?? null : null),
-      },
     };
   });
 
@@ -101,11 +96,6 @@ export function parseChantier(
           tendance: tendance,
           dateDeMàjDonnéesQualitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQualitatives ?? null,
           dateDeMàjDonnéesQuantitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQuantitatives ?? null,
-          alertes: {
-            estEnAlerteÉcart: false,
-            estEnAlerteBaisseOuStagnation: Alerte.estEnAlerteBaisseOuStagnation(chantierMailleNationale?.taux_avancement_precedent ?? null, chantierMailleNationale?.taux_avancement ?? null),
-            estEnAlerteDonnéesNonMàj: Alerte.estEnAlerteDonnéesNonMàj(chantierMailleNationale ? chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.[chantierMailleNationale.territoire_code]?.dateDeMàjDonnéesQualitatives ?? null : null, chantierMailleNationale ? chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.[chantierMailleNationale.territoire_code]?.dateDeMàjDonnéesQuantitatives ?? null : null),
-          },
         },
       },
       départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, chantierMailleNationale, chantiersRowsDatesDeMàj),

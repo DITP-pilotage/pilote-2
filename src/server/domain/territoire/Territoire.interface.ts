@@ -33,11 +33,6 @@ export type TerritoireDonnées = {
   tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION' | null,
   dateDeMàjDonnéesQualitatives: string | null,
   dateDeMàjDonnéesQuantitatives: string | null,
-  alertes: {
-    estEnAlerteÉcart: boolean,
-    estEnAlerteBaisseOuStagnation: boolean,
-    estEnAlerteDonnéesNonMàj: boolean,
-  }
 };
 
 export type Territoire = {

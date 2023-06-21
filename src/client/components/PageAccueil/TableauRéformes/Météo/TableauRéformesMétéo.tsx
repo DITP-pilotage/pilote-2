@@ -24,11 +24,14 @@ export default function TableauRéformesMétéo({ météo, dateDeMàjDonnéesQua
             </span>
           )
       }
-      <span className='texte-gris'>
-        (
-        { formaterDate(dateDeMàjDonnéesQualitatives, 'MM/YYYY') }
-        )
-      </span>
+      {
+        !!dateDeMàjDonnéesQualitatives &&
+        <span className='texte-gris'>
+          (
+          { formaterDate(dateDeMàjDonnéesQualitatives, 'MM/YYYY') }
+          )
+        </span>
+      }
     </TableauRéformesMétéoStyled>
   );
 }
