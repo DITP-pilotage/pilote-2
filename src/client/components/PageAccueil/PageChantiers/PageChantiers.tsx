@@ -158,13 +158,14 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
           </div>
           <div className="fr-grid-row fr-grid-row--gutters">
             {
-              remontéesAlertes.map(({ libellé, nombre, idFiltre }) => (
+              remontéesAlertes.map(({ libellé, nombre, estActivée, auClic }) => (
                 <div
                   className="fr-col"
                   key={libellé}
                 >
                   <RemontéeAlerte
-                    idFiltre={idFiltre}
+                    auClic={auClic}
+                    estActivée={estActivée}
                     libellé={libellé}
                     nombre={nombre}
                   />

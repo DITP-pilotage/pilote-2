@@ -2,13 +2,12 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { TerritoireDonnées } from '@/server/domain/territoire/Territoire.interface';
 
 export type FiltreCatégorie = keyof FiltresActifs;
 
 export type FiltreTypologieType = { id: string, attribut: keyof Chantier, nom: string };
 
-export type FiltreAlerte = { id: keyof TerritoireDonnées['alertes'], nom: string };
+export type FiltreAlerte = { id: 'estEnAlerteÉcart' | 'estEnAlerteTendance' | 'estEnAlerteNonMaj', nom: string };
 
 export type Filtre = PérimètreMinistériel | FiltreTypologieType | Ppg | Axe | FiltreAlerte;
 
