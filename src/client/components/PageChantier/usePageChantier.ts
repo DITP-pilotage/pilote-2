@@ -78,6 +78,14 @@ export default function usePageChantier(chantierId: string) {
     },
   );
 
+  const { data: avancementsAgrégés } = api.chantier.récupérerStatistiquesAvancements.useQuery(
+    {
+      chantiers: [chantierId],
+      maille: mailleSélectionnée,
+    },
+    { refetchOnWindowFocus: false, keepPreviousData: true },
+  );
+
   const avancements = !chantier
     ? null
     : (
@@ -86,6 +94,7 @@ export default function usePageChantier(chantierId: string) {
         mailleSélectionnée,
         territoireSélectionné!,
         territoireParent,
+        avancementsAgrégés ?? null,
       )
     );
 
