@@ -1,6 +1,5 @@
 type Critère<T> = {
   nomCritère: string;
-  propriété: string;
   condition: (e: T) => boolean;
 };
 

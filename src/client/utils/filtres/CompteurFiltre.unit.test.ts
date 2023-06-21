@@ -32,7 +32,7 @@ describe('CompteurFiltre', () => {
 
     // When
     const filtresComptesCalculés = compteurFiltre.compter([{
-      nomCritère: 'population < 3000000', propriété: 'population', condition: (e) => e.population < 3_000_000,
+      nomCritère: 'population < 3000000', condition: (e) => e.population < 3_000_000,
     }]);
 
     // Then
@@ -50,9 +50,9 @@ describe('CompteurFiltre', () => {
 
     // When
     const filtresComptesCalculés = compteurFiltre.compter([
-      { nomCritère: 'population < 3000000', propriété: 'population', condition: (e) => e.population < 3_000_000 },
-      { nomCritère: 'population < 1000000', propriété: 'population', condition: (e) => e.population < 1_000_000 },
-      { nomCritère: 'est hémisphère sud', propriété: 'estHémisphèreNord', condition: (e) => !e.estHémisphèreNord },
+      { nomCritère: 'population < 3000000', condition: (e) => e.population < 3_000_000 },
+      { nomCritère: 'population < 1000000', condition: (e) => e.population < 1_000_000 },
+      { nomCritère: 'est hémisphère sud', condition: (e) => !e.estHémisphèreNord },
     ]);
 
     // Then
