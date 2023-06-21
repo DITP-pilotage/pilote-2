@@ -226,6 +226,8 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
         météo: false,
         avancement: false,
         typologie: false,
+        tendance: false,
+        écart: false,
         'dérouler-groupe': false,
       }) : ({
         porteur: false,

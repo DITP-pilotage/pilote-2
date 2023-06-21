@@ -2,24 +2,19 @@ import Badge from '@/components/_commons/Badge/Badge';
 import TableauChantiersÉcartProps
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart.interface';
 import TableauChantiersÉcartStyled from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart.styled';
+import { définirCouleurÉcartArrondi } from '@/client/utils/chantier/écart/écart';
 
 export default function TableauChantiersÉcart({ écart }: TableauChantiersÉcartProps) {
-  const écartArrondi = écart !== null ? Number(écart.toFixed(1)) : null;
+  const couleurÉcartArrondi = définirCouleurÉcartArrondi(écart);
 
-  if (écartArrondi === null) {
+  if (couleurÉcartArrondi === null) {
     return null;
   }
 
   return (
     <TableauChantiersÉcartStyled>
-      <Badge
-        type={
-        écartArrondi > 10
-          ? 'vert'
-          : (écartArrondi < -10 ? 'rouge' : 'bleu')
-      }
-      >
-        {écartArrondi === -0 ? '0.0' : écartArrondi.toFixed(1)}
+      <Badge type={couleurÉcartArrondi.couleur}>
+        {couleurÉcartArrondi.écartArrondi.toFixed(1)}
         %
       </Badge>
     </TableauChantiersÉcartStyled>

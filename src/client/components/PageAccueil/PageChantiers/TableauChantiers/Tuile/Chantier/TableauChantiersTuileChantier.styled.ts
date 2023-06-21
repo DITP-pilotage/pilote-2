@@ -8,9 +8,10 @@ const TableauChantiersTuileChantierStyled = styled.div`
   
   .tuile-chantier-corps {
     display: grid;
-    grid-template-columns: 2.1rem auto;
+    grid-template-columns: 2.1rem auto 1.5rem 2.75rem;
     column-gap: 1rem;
     align-items: center;
+    white-space: nowrap;
   
     .météo {
       display: flex;
