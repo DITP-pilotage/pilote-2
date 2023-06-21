@@ -7,5 +7,5 @@ SELECT
     perimetres_ppg_id,
     perimetre_ps_nom 
 FROM {{ ref('stg_ppg_metadata__perimetres_ps') }}
-    LEFT JOIN {{ ref('stg_ppg_metadata__perimetres') }} perimetres
+    LEFT JOIN {{ ref('stg_ppg_metadata__perimetres') }} perimetres ON stg_ppg_metadata__perimetres_ps.perimetres_ppg_id = perimetres.id
 ORDER BY perimetres_ppg_id
