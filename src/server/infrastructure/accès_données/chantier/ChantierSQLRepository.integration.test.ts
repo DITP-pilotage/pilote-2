@@ -225,8 +225,8 @@ describe('ChantierSQLRepository', () => {
       expect(result).toStrictEqual({
         [chantierIdsHabilités[0]]: {
           [territoireCodesHabilités[0]]: {
-            dateDeMàjDonnéesQualitatives: new Date('2023-03-02'),
-            dateDeMàjDonnéesQuantitatives: new Date('2023-03-02'),
+            dateDeMàjDonnéesQualitatives: new Date('2023-03-02').toISOString(),
+            dateDeMàjDonnéesQuantitatives: new Date('2023-03-02').toISOString(),
           },
         },
       });
@@ -318,8 +318,8 @@ describe('ChantierSQLRepository', () => {
       const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode], [chantierId], [territoireCode]);
 
       // Then
-      expect(result[chantierId][territoireCode].dateDeMàjDonnéesQualitatives).toStrictEqual(new Date('2023-02-02'));
-      expect(result[chantierId][territoireCode].dateDeMàjDonnéesQuantitatives).toStrictEqual(new Date('2023-02-02'));
+      expect(result[chantierId][territoireCode].dateDeMàjDonnéesQualitatives).toStrictEqual(new Date('2023-02-02').toISOString());
+      expect(result[chantierId][territoireCode].dateDeMàjDonnéesQuantitatives).toStrictEqual(new Date('2023-02-02').toISOString());
 
     });
 
@@ -490,7 +490,7 @@ describe('ChantierSQLRepository', () => {
       const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode], [chantierId], [territoireCode]);
 
       // Then
-      expect(result[chantierId][territoireCode].dateDeMàjDonnéesQualitatives).toStrictEqual(new Date('2023-02-02'));
+      expect(result[chantierId][territoireCode].dateDeMàjDonnéesQualitatives).toStrictEqual(new Date('2023-02-02').toISOString());
     });
 
     test('renvoie date données qualitatives, quand il y a une date pour synthèseCommentaire mais pas de date pour synthèseMétéo', async () => {
@@ -539,7 +539,7 @@ describe('ChantierSQLRepository', () => {
       const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode], [chantierId], [territoireCode]);
 
       // Then
-      expect(result[chantierId][territoireCode].dateDeMàjDonnéesQualitatives).toStrictEqual(new Date('2023-02-02'));
+      expect(result[chantierId][territoireCode].dateDeMàjDonnéesQualitatives).toStrictEqual(new Date('2023-02-02').toISOString());
     });
 
     test('renvoie date données qualitatives null, quand il n\'y a pas de synthèse et pas de commentaire', async () => {
@@ -606,14 +606,14 @@ describe('ChantierSQLRepository', () => {
       expect(result).toStrictEqual({
         [chantierId1]: {
           [territoireCode]: {
-            dateDeMàjDonnéesQualitatives: new Date('2023-01-02'),
-            dateDeMàjDonnéesQuantitatives: new Date('2023-02-02'),
+            dateDeMàjDonnéesQualitatives: new Date('2023-01-02').toISOString(),
+            dateDeMàjDonnéesQuantitatives: new Date('2023-02-02').toISOString(),
           },
         },
         [chantierId2]: {
           [territoireCode]: {
             dateDeMàjDonnéesQualitatives: null,
-            dateDeMàjDonnéesQuantitatives: new Date('2023-03-02'),
+            dateDeMàjDonnéesQuantitatives: new Date('2023-03-02').toISOString(),
           },
         },
       });
