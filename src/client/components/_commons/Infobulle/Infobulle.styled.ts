@@ -5,8 +5,8 @@ const InfobulleStyled = styled.div`
   color: var(--text-title-grey);
   vertical-align: -0.3em;
   
-  .bouton:hover,
-  .bouton:active {
+  .infobulle-bouton:hover,
+  .infobulle-bouton:active {
     background-color: initial;
   }
 

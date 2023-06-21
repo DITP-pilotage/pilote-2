@@ -1,4 +1,5 @@
 import { chantier } from '@prisma/client';
+import { faker } from '@faker-js/faker/locale/fr';
 import { Territoire, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
@@ -20,6 +21,9 @@ function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: chan
       codeInsee: t.codeInsee,
       avancement: { annuel: null, global: chantierRow?.taux_avancement ?? null },
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
+      écart: faker.datatype.number({ min: -20, max: 20, precision: 3 }),
+      estEnAlerteNonMaj: faker.datatype.boolean(),
+      tendance: faker.helpers.arrayElement<'BAISSE' | 'HAUSSE' | 'STAGNATION'>(['BAISSE', 'HAUSSE', 'STAGNATION']),
     };
   });
 
@@ -48,6 +52,9 @@ export function parseChantier(chantierRows: chantier[], territoires: Territoire[
           codeInsee: chantierMailleNationale.code_insee,
           avancement: { annuel: null, global: chantierMailleNationale.taux_avancement },
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
+          écart: faker.datatype.number({ min: -20, max: 20, precision: 3 }),
+          estEnAlerteNonMaj: faker.datatype.boolean(),
+          tendance: faker.helpers.arrayElement<'BAISSE' | 'HAUSSE' | 'STAGNATION'>(['BAISSE', 'HAUSSE', 'STAGNATION']),
         },
       },
       départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale),

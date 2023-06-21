@@ -1,11 +1,11 @@
 import RemontéeAlerteStyled from '@/components/PageAccueil/PageChantiers/RemontéeAlerte/RemontéeAlerte.styled';
-import { RemontéeAlerteProps } from '@/components/PageAccueil/PageChantiers/RemontéeAlerte/RemontéeAlerte.interface';
+import RemontéeAlerteProps from '@/components/PageAccueil/PageChantiers/RemontéeAlerte/RemontéeAlerte.interface';
 
 export default function RemontéeAlerte({ nombre, libellé, estActivée }: RemontéeAlerteProps) {
   return (
     <RemontéeAlerteStyled
       className={`fr-p-3v fr-p-md-3w ${estActivée ? 'est-activée' : ''}`}
-      disabled={!nombre}
+      disabled={nombre === null}
     >
       <span className="fr-h1 fr-mb-0 nombre">
         {nombre ?? '-'}

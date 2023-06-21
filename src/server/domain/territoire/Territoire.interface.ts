@@ -28,6 +28,9 @@ export type TerritoireDonnées = {
   codeInsee: CodeInsee,
   avancement: Avancement,
   météo: Météo,
+  écart: number,
+  tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION',
+  estEnAlerteNonMaj: boolean,
 };
 
 export type Territoire = {

@@ -4,6 +4,7 @@ const RemontéeAlerteStyled = styled.button`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 100%;
   height: 100%;
   background-color: white;
   border: 1px solid var(--border-default-grey);

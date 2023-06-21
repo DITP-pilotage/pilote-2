@@ -11,6 +11,17 @@ const PageChantiersStyled = styled.main`
       flex-wrap: wrap;
     }
   }
+  
+  .alertes {
+    .titre-remontée-alertes {
+      color: var(--text-default-warning);
+    }
+    
+    .infobulle-bouton {
+      color: var(--text-default-warning);
+    }
+  }
+
 `;
 
 export default PageChantiersStyled;

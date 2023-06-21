@@ -17,7 +17,7 @@ export default function Infobulle({ idHtml, children }: InfobulleProps) {
     >
       <button
         aria-describedby={idHtml}
-        className="fr-btn fr-btn--tertiary-no-outline fr-icon-information-fill bouton"
+        className="fr-btn fr-btn--tertiary-no-outline fr-icon-information-fill infobulle-bouton"
         onClick={() => estVueMobile && setEstVisible(!estVisible)}
         onKeyDown={(keyEvent) => keyEvent.key === 'Escape' && setEstVisible(false)}
         type='button'
