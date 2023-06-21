@@ -9,9 +9,8 @@ source as (
 renamed as (
 
     select
-        perimetres_ppg_id,
-        perimetres_ppg as perimetres_ppg_nom,
-        perimetre_projets_structurants as perimetre_ps_nom
+        perimetre_id as perimetres_ppg_id,
+        per_pst_nom as perimetre_ps_nom
 
     from source
 
