@@ -58,22 +58,34 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
         <div className="fr-col-12 fr-col-lg-6">
           <Bloc>
             <section>
-              <Titre
-                baliseHtml="h3"
-                className="fr-text--lg"
-              >
-                Taux d’avancement moyen
-              </Titre>
+              <TitreInfobulleConteneur>
+                <Titre
+                  baliseHtml="h2"
+                  className="fr-text--lg"
+                  estInline
+                >
+                  Taux d’avancement moyen
+                </Titre>
+                <Infobulle idHtml="infobulle-chantiers-jauges">
+                  { INFOBULLE_CONTENUS.chantiers.jauges }
+                </Infobulle>
+              </TitreInfobulleConteneur>
               <Avancements avancements={avancementsAgrégés} />
             </section>
             <hr className="fr-hr fr-my-3w fr-pb-1v" />
             <section>
-              <Titre
-                baliseHtml="h3"
-                className="fr-text--lg"
-              >
-                Répartition des météos renseignées
-              </Titre>
+              <TitreInfobulleConteneur>
+                <Titre
+                  baliseHtml="h2"
+                  className="fr-text--lg"
+                  estInline
+                >
+                  Répartition des météos renseignées
+                </Titre>
+                <Infobulle idHtml="infobulle-chantiers-météos">
+                  { INFOBULLE_CONTENUS.chantiers.météos }
+                </Infobulle>
+              </TitreInfobulleConteneur>
               <RépartitionMétéo météos={répartitionMétéos} />
             </section>
           </Bloc>
@@ -118,12 +130,18 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
       >
         <div className="fr-col">
           <Bloc>
-            <Titre
-              baliseHtml="h2"
-              className="fr-text--lg fr-mb-2w titre-liste-chantiers"
-            >
-              Liste des chantiers
-            </Titre>
+            <TitreInfobulleConteneur>
+              <Titre
+                baliseHtml="h2"
+                className="fr-text--lg fr-mb-0"
+                estInline
+              >
+                Liste des chantiers
+              </Titre>
+              <Infobulle idHtml="infobulle-chantiers-listeDesChantiers">
+                { INFOBULLE_CONTENUS.chantiers.listeDesChantiers }
+              </Infobulle>
+            </TitreInfobulleConteneur>
             <RapportDétailléTableauChantiers
               données={donnéesTableauChantiers}
             />
