@@ -45,6 +45,7 @@ function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: Chan
     donnéesTerritoires[t.codeInsee] = {
       codeInsee: t.codeInsee,
       avancement: { annuel: null, global: chantierRow?.taux_avancement ?? null },
+      avancementPrécédent: { annuel: null, global: chantierRow?.taux_avancement_precedent ?? null },
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
       écart: écart,
       tendance: tendance,
@@ -81,6 +82,7 @@ export function parseChantier(chantierRows: ChantierPrisma[], territoires: Terri
         FR: {
           codeInsee: chantierMailleNationale.code_insee,
           avancement: { annuel: null, global: chantierMailleNationale.taux_avancement },
+          avancementPrécédent: { annuel: null, global: chantierMailleNationale.taux_avancement_precedent ?? null },
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
           écart: 0,
           tendance: tendance,

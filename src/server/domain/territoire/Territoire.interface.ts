@@ -27,6 +27,7 @@ export type TerritoiresDonnées = Record<CodeInsee, TerritoireDonnées>;
 export type TerritoireDonnées = {
   codeInsee: CodeInsee,
   avancement: Avancement,
+  avancementPrécédent: Avancement,
   météo: Météo,
   écart: number | null,
   tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION' | null,

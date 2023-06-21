@@ -26,7 +26,7 @@ export function useRemontéesAlertes(chantiersFiltrés: Chantier[]) {
     condition: (chantier) => Alerte.estEnAlerteÉcart(chantier.mailles[maille]?.[codeInsee]?.écart),
   }, {
     nomCritère: 'estEnAlerteTendance',
-    condition: (chantier) => chantier.mailles[maille][codeInsee].tendance !== null ? ['BAISSE', 'STAGNATION'].includes(chantier.mailles[maille][codeInsee].tendance!) : false,
+    condition: (chantier) => Alerte.estEnAlerteBaisseOuStagnation(chantier.mailles[maille]?.[codeInsee]?.avancementPrécédent.global, chantier.mailles[maille]?.[codeInsee]?.avancement.global),
   }, {
     nomCritère: 'estEnAlerteNonMaj',
     condition: () => false,

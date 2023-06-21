@@ -8,6 +8,8 @@ export default class TerritoireDonnéesBuilder {
 
   private _avancement: TerritoireDonnées['avancement'];
 
+  private _avancementPrécédent: TerritoireDonnées['avancementPrécédent'];
+
   private _météo: TerritoireDonnées['météo'];
 
   private _écart: TerritoireDonnées['écart'];
@@ -19,6 +21,7 @@ export default class TerritoireDonnéesBuilder {
   constructor() {
     this._codeInsee = faker.helpers.arrayElement([...codesInseeDépartements, ...codesInseeRégions, codeInseeFrance]);
     this._avancement = new AvancementBuilder().build();
+    this._avancementPrécédent = new AvancementBuilder().build();
     this._météo = new MétéoBuilder().build();
     this._écart = faker.datatype.number({ min: -20, max: 20, precision: 3 });
     this._tendance = faker.helpers.arrayElement(['BAISSE', 'HAUSSE', 'STAGNATION', null]);
@@ -39,6 +42,11 @@ export default class TerritoireDonnéesBuilder {
     return this;
   }
 
+  avecAvancementPrécédent(avancementPrécédent: TerritoireDonnées['avancementPrécédent']): TerritoireDonnéesBuilder {
+    this._avancementPrécédent = avancementPrécédent;
+    return this;
+  }
+
   avecMétéo(météo: TerritoireDonnées['météo']): TerritoireDonnéesBuilder {
     this._météo = météo;
     return this;
@@ -48,6 +56,7 @@ export default class TerritoireDonnéesBuilder {
     return {
       codeInsee: this._codeInsee,
       avancement: this._avancement,
+      avancementPrécédent: this._avancementPrécédent,
       météo: this._météo,
       écart: this._écart,
       tendance: this._tendance,
