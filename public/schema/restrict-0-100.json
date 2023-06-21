@@ -1,0 +1,120 @@
+{
+  "$schema": "https://specs.frictionlessdata.io/schemas/table-schema.json",
+  "name": "Indicateur Pilote sans contraintes",
+  "title": "Indicateur Pilote sans contraintes",
+  "description": "Spécification d'un fichier d'import d'indicateur Pilote sans contraintes",
+  "keywords": [
+    "pilote",
+    "ditp"
+  ],
+  "countryCode": "FR",
+  "homepage": "https://github.com/DITP-pilotage/poc-imports",
+  "path": "https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/prod/sans-contraintes.json",
+  "licenses": [
+    {
+      "title": "-",
+      "name": "-",
+      "path": "-"
+    }
+  ],
+  "resources": [
+    {
+      "title": "Fichier valide (CSV)",
+      "name": "exemple-valide-csv",
+      "path": "https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/prod/example/sans-contraintes-ok.csv"
+    },
+    {
+      "title": "Fichier invalide (CSV)",
+      "name": "exemple-invalide-csv",
+      "path": "https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/prod/example/sans-contraintes-ko.csv"
+    },
+    {
+      "title": "Ressource valide (XLSX)",
+      "name": "exemple-valide-xlsx",
+      "path": "https://raw.githubusercontent.com/DITP-pilotage/poc-imports/master/schemas/prod/example/sans-contraintes-ok.xlsx"
+    }
+  ],
+  "sources": [
+  ],
+  "created": "2023-02-17",
+  "lastModified": "2023-02-17",
+  "version": "0.0.1",
+  "contributors": [
+    {
+      "title": "Colin Dugeai",
+      "email": "colin.dugeai@modernisation.gouv.fr",
+      "organisation": "DITP",
+      "role": "author"
+    },
+    {
+      "title": "Geoffrey Aldebert",
+      "email": "geoffrey.aldebert@data.gouv.fr",
+      "organisation": "Etalab",
+      "role": "contributor"
+    }
+  ],
+  "fields": [
+    {
+      "name": "identifiant_indic",
+      "description": "Identifiant de l'indicateur. Au format 'IND-XXX'",
+      "example": "IND-001",
+      "type": "string",
+      "constraints": {
+        "required": true,
+        "pattern": "^IND-[0-9]{3}$"
+      }
+    },
+    {
+      "name": "zone_id",
+      "description": "La zone renseignée n’est pas dans le référentiel.",
+      "example": "D46",
+      "type": "string",
+      "constraints": {
+        "required": true,
+        "pattern": "^(D([02][1-9]|2[AB]|[1345678][0-9]|9[012345]|97[12346])|(R(0[12346]|11|2[478]|32|44|5[23]|7[56]|84|9[34]))|FRANCE|France)$"
+      }
+    },
+    {
+      "name": "date_valeur",
+      "description": "Date à laquelle a été mesurée l'indicateur. Au format AAAA-MM-JJ ou JJ/MM/AAAA",
+      "example": "2023-01-31",
+      "type": "string",
+      "constraints": {
+        "required": true,
+        "pattern": "^(20[0-9]{2}-(0[0-9]|1[012])-(0[0-9]|1[0-9]|2[0-9]|3[01]))|((0[0-9]|1[0-9]|2[0-9]|3[01])\/(0[0-9]|1[012])\/20[0-9]{2})|(0[0-9]|1[012])-(0[0-9]|1[0-9]|2[0-9]|3[01])-([0-9]{2})$"
+      }
+    },
+    {
+      "name": "type_valeur",
+      "description": "Type de la donnée importée. vi/va/vc",
+      "example": "vi",
+      "type": "string",
+      "constraints": {
+        "required": true,
+        "enum": [
+          "vi",
+          "va",
+          "vc",
+          "VI",
+          "VA",
+          "VC"
+        ]
+      }
+    },
+    {
+      "name": "valeur",
+      "description": "Valeur de l'indicateur",
+      "example": "12.23",
+      "type": "number",
+      "constraints": {
+        "required": false
+      }
+    }
+  ],
+  "primaryKey": [
+    "identifiant_indic",
+    "zone_id",
+    "date_valeur",
+    "type_valeur"
+  ]
+}
