@@ -2,7 +2,7 @@ import { formaterDate } from '@/client/utils/date/date';
 import ValeurEtDateProps from './ValeuretDate.interface';
 
 export default function ValeurEtDate({ valeur, date }: ValeurEtDateProps) {
-  const dateFormatée = formaterDate(date, 'mm/aaaa');
+  const dateFormatée = formaterDate(date, 'MM/YYYY');
   return (
     <>
       <p className='indicateur-valeur'>

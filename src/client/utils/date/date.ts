@@ -5,12 +5,7 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-type FormatDeDate = 'mm/aaaa' | 'jj/mm/aaaa';
-
-const toLocaleDateStringOptions: Record<FormatDeDate, Intl.DateTimeFormatOptions> = {
-  'mm/aaaa': { year: 'numeric', month: 'numeric' },
-  'jj/mm/aaaa': { year: 'numeric', month: 'numeric', day: 'numeric' },
-};
+type FormatDeDate = 'MM/YYYY' | 'DD/MM/YYYY';
 
 export function formaterDate(dateISO: string | null | undefined, format: FormatDeDate) {
   if (!dateISO)
@@ -19,8 +14,7 @@ export function formaterDate(dateISO: string | null | undefined, format: FormatD
   if (Number.isNaN(Date.parse(dateISO)))
     return null;
 
-  const date = new Date(dateISO);
-  return date.toLocaleDateString('fr-FR', toLocaleDateStringOptions[format]);
+  return dayjs.tz(new Date(dateISO), dayjs.tz.guess()).format(format);
 }
 
 export function horodatage() {

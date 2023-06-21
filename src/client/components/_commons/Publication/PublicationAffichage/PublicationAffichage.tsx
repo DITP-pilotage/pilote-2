@@ -14,7 +14,7 @@ export default function PublicationAffichage({ publication }: PublicationAfficha
   return (
     <>
       <p className="fr-text--xs texte-gris fr-mb-1w">
-        {`Mis à jour le ${formaterDate(publication.date, 'jj/mm/aaaa')}`}
+        {`Mis à jour le ${formaterDate(publication.date, 'DD/MM/YYYY')}`}
         {
           !!publication.auteur && 
           ` | Par ${publication.auteur}`

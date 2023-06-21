@@ -83,7 +83,12 @@ const colonnesTableauChantiers = [
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
     id: 'météo',
-    cell: cellContext => <TableauRéformesMétéo météo={cellContext.getValue()} />,
+    cell: cellContext => (
+      <TableauRéformesMétéo
+        dateDeMàjDonnéesQualitatives={cellContext.row.original.dateDeMàjDonnéesQualitatives}
+        météo={cellContext.getValue()}
+      />
+    ),
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => (
       a.getIsGrouped() || b.getIsGrouped()
@@ -98,7 +103,12 @@ const colonnesTableauChantiers = [
   reactTableColonnesHelper.accessor('avancement', {
     header: 'Avancement',
     id: 'avancement',
-    cell: cellContext => <TableauRéformesAvancement avancement={cellContext.getValue()} />,
+    cell: cellContext => (
+      <TableauRéformesAvancement
+        avancement={cellContext.getValue()}
+        dateDeMàjDonnéesQuantitatives={cellContext.row.original.dateDeMàjDonnéesQuantitatives}
+      />
+    ),
     enableGlobalFilter: false,
     sortingFn: (a, b, columnId) => comparerAvancementRéforme(a.getValue(columnId), b.getValue(columnId)),
     enableGrouping: false,

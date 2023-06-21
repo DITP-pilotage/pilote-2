@@ -70,6 +70,8 @@ export default function useVueDEnsemble(chantiersFiltrés: Chantier[]) {
     porteur: chantier.responsables.porteur,
     tendance: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].tendance,
     écart: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].écart,
+    dateDeMàjDonnéesQualitatives: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].dateDeMàjDonnéesQualitatives,
+    dateDeMàjDonnéesQuantitatives: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].dateDeMàjDonnéesQuantitatives,
   }));
 
   return {

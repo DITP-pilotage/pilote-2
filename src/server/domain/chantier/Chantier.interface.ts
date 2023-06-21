@@ -36,6 +36,8 @@ export type ChantierVueDEnsemble = {
   porteur: Ministère | null;
   tendance: ChantierTendance,
   écart: number | null,
+  dateDeMàjDonnéesQualitatives: string | null,
+  dateDeMàjDonnéesQuantitatives: string | null,
 };
 
 export type ChantierDatesDeMiseÀJour = {

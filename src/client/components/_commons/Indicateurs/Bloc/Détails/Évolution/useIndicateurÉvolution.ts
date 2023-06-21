@@ -24,7 +24,7 @@ export default function useIndicateurÉvolution(indicateurDétailsParTerritoires
     },
   };
   
-  const libellés = indicateurDétailsPourUnTerritoire.données.dateValeurs.map(date => formaterDate(date, 'mm/aaaa'));
+  const libellés = indicateurDétailsPourUnTerritoire.données.dateValeurs.map(date => formaterDate(date, 'MM/YYYY'));
 
   const évolutions: ChartDataset<'line'>[] = indicateurDétailsParTerritoires.map((détailsParTerritoire, index) => ({
     label: détailsParTerritoire.territoireNom,
