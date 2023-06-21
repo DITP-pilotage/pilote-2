@@ -46,7 +46,7 @@ export default function EnTête() {
                     PILOTE
                   </p>
                 </Link>
-                <p className="fr-header__service-tagline fr-hidden fr-unhidden-sm">
+                <p className="fr-header__service-tagline fr-text--sm">
                   Piloter l’action publique par les résultats
                 </p>
               </div>
