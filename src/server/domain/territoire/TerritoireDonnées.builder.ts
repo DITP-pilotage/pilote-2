@@ -10,10 +10,23 @@ export default class TerritoireDonnéesBuilder {
 
   private _météo: TerritoireDonnées['météo'];
 
+  private _écart: TerritoireDonnées['écart'];
+
+  private _tendance: TerritoireDonnées['tendance'];
+
+  private _alertes: TerritoireDonnées['alertes'];
+
   constructor() {
     this._codeInsee = faker.helpers.arrayElement([...codesInseeDépartements, ...codesInseeRégions, codeInseeFrance]);
     this._avancement = new AvancementBuilder().build();
     this._météo = new MétéoBuilder().build();
+    this._écart = faker.datatype.number({ min: -20, max: 20, precision: 3 });
+    this._tendance = faker.helpers.arrayElement(['BAISSE', 'HAUSSE', 'STAGNATION', null]);
+    this._alertes = {
+      estEnAlerteÉcart: this._écart < -10,
+      estEnAlerteTendance: this._tendance !== 'HAUSSE',
+      estEnAlerteNonMaj: faker.helpers.arrayElement([true, false]),
+    };
   }
 
   avecCodeInsee(codeInsee: TerritoireDonnées['codeInsee']): TerritoireDonnéesBuilder {
@@ -36,6 +49,9 @@ export default class TerritoireDonnéesBuilder {
       codeInsee: this._codeInsee,
       avancement: this._avancement,
       météo: this._météo,
+      écart: this._écart,
+      tendance: this._tendance,
+      alertes: this._alertes,
     };
   }
 }

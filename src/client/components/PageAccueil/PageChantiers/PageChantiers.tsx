@@ -30,11 +30,9 @@ import usePageChantiers from './usePageChantiers';
 
 export default function PageChantiers({ chantiers }: PageChantiersProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-
-  const { auClicTerritoireCallback } = useCartographie();
-
   const [nombreChantiersDansLeTableau, setNombreChantiersDansLeTableau] = useState<number>();
-
+  
+  const { auClicTerritoireCallback } = useCartographie();
   const {
     nombreFiltresActifs,
     chantiersFiltrés,
@@ -160,13 +158,13 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
           </div>
           <div className="fr-grid-row fr-grid-row--gutters">
             {
-              remontéesAlertes.map(({ libellé, nombre, estActivée }) => (
+              remontéesAlertes.map(({ libellé, nombre, idFiltre }) => (
                 <div
                   className="fr-col"
                   key={libellé}
                 >
                   <RemontéeAlerte
-                    estActivée={estActivée}
+                    idFiltre={idFiltre}
                     libellé={libellé}
                     nombre={nombre}
                   />

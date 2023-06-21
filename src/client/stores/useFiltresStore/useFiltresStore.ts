@@ -8,6 +8,7 @@ const filtresActifsInitiaux: FiltresActifs = {
   axes: [],
   ppg: [],
   filtresTypologie: [],
+  filtresAlerte: [],
 };
 
 const useFiltresStore = create<FiltresStore>((set, get) => ({
@@ -65,7 +66,6 @@ const useFiltresStore = create<FiltresStore>((set, get) => ({
       ));
       return filtreEtCatégorie;
     },
-
   },
 }));
 

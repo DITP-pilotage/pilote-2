@@ -30,6 +30,11 @@ export type TerritoireDonnées = {
   météo: Météo,
   écart: number | null,
   tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION' | null,
+  alertes: {
+    estEnAlerteÉcart: boolean,
+    estEnAlerteTendance: boolean,
+    estEnAlerteNonMaj: boolean,
+  }
 };
 
 export type Territoire = {

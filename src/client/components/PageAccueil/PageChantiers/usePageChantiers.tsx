@@ -6,16 +6,16 @@ import { useRemontéesAlertes } from '@/components/PageAccueil/PageChantiers/use
 
 export default function usePageChantiers(chantiers: Chantier[]) {
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
-  const chantiersFiltrés = useChantiersFiltrés(chantiers);
+  const { chantiersFiltrés, chantiersFiltrésSansFiltreAlerte } = useChantiersFiltrés(chantiers);
 
-  const { remontéesAlertes, chantiersSélectionnésAlertes } = useRemontéesAlertes(chantiersFiltrés);
+  const { remontéesAlertes } = useRemontéesAlertes(chantiersFiltrésSansFiltreAlerte);
 
   const {
     avancementsAgrégés,
     répartitionMétéos,
     avancementsGlobauxTerritoriauxMoyens,
     chantiersVueDEnsemble,
-  } = useVueDEnsemble(chantiersSélectionnésAlertes);
+  } = useVueDEnsemble(chantiersFiltrés);
 
   return {
     nombreFiltresActifs: récupérerNombreFiltresActifs(),

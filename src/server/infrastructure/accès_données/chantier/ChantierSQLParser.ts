@@ -1,5 +1,4 @@
 import { chantier as ChantierPrisma } from '@prisma/client';
-import { faker } from '@faker-js/faker/locale/fr';
 import { Territoire, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
@@ -40,13 +39,20 @@ function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: Chan
 
   territoires.forEach(t => {    
     const chantierRow = chantierRows.find(c => c.code_insee === t.codeInsee);
+    const écart = calculÉcart(chantierNational, chantierRow);
+    const tendance = calculerTendance(chantierRow);
 
     donnéesTerritoires[t.codeInsee] = {
       codeInsee: t.codeInsee,
       avancement: { annuel: null, global: chantierRow?.taux_avancement ?? null },
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
-      écart: calculÉcart(chantierNational, chantierRow),
-      tendance: calculerTendance(chantierRow),
+      écart: écart,
+      tendance: tendance,
+      alertes: {
+        estEnAlerteÉcart: (écart && écart < -10) ? true : false,
+        estEnAlerteTendance: tendance !== 'HAUSSE',
+        estEnAlerteNonMaj: false,
+      },
     };
   });
 
@@ -54,7 +60,6 @@ function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: Chan
 }
 
 export function parseChantier(chantierRows: ChantierPrisma[], territoires: Territoire[], ministères: Ministère[]): Chantier {
-
   const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
   const chantierMailleDépartementale = chantierRows.filter(c => c.maille === 'DEPT');
   const chantierMailleRégionale = chantierRows.filter(c => c.maille === 'REG');
@@ -62,6 +67,8 @@ export function parseChantier(chantierRows: ChantierPrisma[], territoires: Terri
   if (!chantierMailleNationale) {
     throw new ErreurChantierSansMailleNationale(chantierRows[0].id);
   }
+
+  const tendance = calculerTendance(chantierMailleNationale);
 
   const result: Chantier = {
     id: chantierMailleNationale.id,
@@ -75,8 +82,13 @@ export function parseChantier(chantierRows: ChantierPrisma[], territoires: Terri
           codeInsee: chantierMailleNationale.code_insee,
           avancement: { annuel: null, global: chantierMailleNationale.taux_avancement },
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
-          écart: faker.datatype.number({ min: -20, max: 20, precision: 3 }),
-          tendance: calculerTendance(chantierMailleNationale),
+          écart: 0,
+          tendance: tendance,
+          alertes: {
+            estEnAlerteÉcart: false,
+            estEnAlerteTendance: tendance !== 'HAUSSE',
+            estEnAlerteNonMaj: false,
+          },
         },
       },
       départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, chantierMailleNationale),

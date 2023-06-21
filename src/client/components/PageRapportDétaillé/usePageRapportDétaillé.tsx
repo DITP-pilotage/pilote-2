@@ -3,7 +3,7 @@ import useVueDEnsemble from '@/components/useVueDEnsemble';
 import useChantiersFiltrés from '@/components/useChantiersFiltrés';
 
 export default function usePageRapportDétaillé(chantiers: Chantier[]) {
-  const chantiersFiltrés = useChantiersFiltrés(chantiers);
+  const { chantiersFiltrés } = useChantiersFiltrés(chantiers);
   const {
     avancementsAgrégés,
     répartitionMétéos,
