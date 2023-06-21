@@ -11,6 +11,15 @@ const Alerte = {
     }
     return tauxAvancement <= tauxAvancementPrécédent;
   },
+  estEnAlerteDonnéesNonMàj(dateDonnéesQualitatives: string | null, dateDonnéesQuantitatives: string | null) {
+    if (dateDonnéesQualitatives === null && dateDonnéesQuantitatives !== null) {
+      return true;
+    }
+    if (dateDonnéesQualitatives === null || dateDonnéesQuantitatives === null) {
+      return false;
+    }
+    return dateDonnéesQualitatives < dateDonnéesQuantitatives;
+  },
 };
 
 export default Alerte;

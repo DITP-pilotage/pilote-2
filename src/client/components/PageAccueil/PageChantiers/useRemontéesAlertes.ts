@@ -29,7 +29,7 @@ export function useRemontéesAlertes(chantiersFiltrés: Chantier[]) {
     condition: (chantier) => Alerte.estEnAlerteBaisseOuStagnation(chantier.mailles[maille]?.[codeInsee]?.avancementPrécédent.global, chantier.mailles[maille]?.[codeInsee]?.avancement.global),
   }, {
     nomCritère: 'estEnAlerteNonMaj',
-    condition: () => false,
+    condition: (chantier) => Alerte.estEnAlerteDonnéesNonMàj(null, null),
   }]);
 
   return {

@@ -151,7 +151,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
   }
 
   async récupérerDatesDeMiseÀJour(chantierIds: string[], territoireCode: string, habilitations: Habilitations) {
-    type Retour = Array<{
+    type ChantierDatesDeMàjDesDonnées = Array<{
       date_donnees_quantitatives: string,
       date_donnees_qualitatives: string,
       chantier_id: string,
@@ -170,7 +170,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     const suffixe = ')';
     const prismaJoinTerritoires = Prisma.join(territoiresLecture.map(t => prismaJoinMailleCodeInsee(territoireCodeVersMailleCodeInsee(t))), séparateur, préfixe, suffixe);
 
-    const datesMàj = await this.prisma.$queryRaw<Retour>`
+    const datesMàj = await this.prisma.$queryRaw<ChantierDatesDeMàjDesDonnées>`
       with chantiers_temp as (
         select id as chantier_id, maille, code_insee  from chantier
         where id in (${Prisma.join(chantiersLecture)})
