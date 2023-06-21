@@ -31,13 +31,15 @@ export default function PageAdminUtilisateurs({ utilisateurs } :PageAdminUtilisa
               </Titre>
             </div>
             <div className="fr-col-12 fr-col-md-3">
-              <button
-                className="fr-btn fr-btn--icon-left fr-icon-checkbox-circle-line"
-                onClick={() => router.push('/admin/utilisateur/creer')}
-                type='button'
-              >
-                Créer un compte
-              </button>
+              <div className='fr-grid-row fr-grid-row--right'>
+                <button
+                  className="fr-btn fr-btn--icon-left fr-icon-checkbox-circle-line"
+                  onClick={() => router.push('/admin/utilisateur/creer')}
+                  type='button'
+                >
+                  Créer un compte
+                </button>
+              </div>
             </div>
           </div>
           <Bloc>

@@ -20,22 +20,6 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
       <p>
         Il existe trois types de droits : les droits de lecture, les droits de saisie des données et les droits de saisie des commentaires. Des droits sont attribués par défaut selon le profil. Pour les profils n’ayant accès qu’à certains territoires, chantiers ou projets structurants, il faut spécifier lesquels dans la partie “périmètre”. Pour certains profils, les droits de saisie sont facultatifs et à préciser.
       </p>
-      <section className="fr-accordion fr-mb-6w">
-        <h3 className="fr-accordion__title">
-          <button
-            aria-controls="accordion-profils"
-            aria-expanded="false"
-            className="fr-accordion__btn"
-            type='button'
-          >
-            Voir la liste des profils et les droits associés
-          </button>
-        </h3>
-        <div
-          className="fr-collapse"
-          id="accordion-profils"
-        />
-      </section>
       <Titre
         baliseHtml='h2'
         className="fr-text--md  fr-mb-2w"
@@ -77,7 +61,7 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
         libellé='Profil'
         options={listeProfils}
         register={register('profil')}
-        texteAide='Les droits attribués dépendent du profil sélectionné. Vous pouvez consulter la correspondance entre profils et droits ci-dessus.\n'
+        texteAide='Les droits attribués dépendent du profil sélectionné.'
         texteFantôme='Sélectionner un profil'
         valeurSélectionnée={watch('profil')}
       />

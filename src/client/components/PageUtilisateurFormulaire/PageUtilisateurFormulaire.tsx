@@ -29,11 +29,13 @@ export default function PageUtilisateurFormulaire({ profils } :PageUtilisateurFo
         >
           Créer un compte
         </Titre>
-        <Bloc>
-          <div className='fr-px-10w fr-py-6w'>
-            <UtilisateurFormulaire profils={profils} />
-          </div>
-        </Bloc>
+        <div className='fr-pb-4w'>
+          <Bloc>
+            <div className='fr-px-10w fr-py-6w'>
+              <UtilisateurFormulaire profils={profils} />
+            </div>
+          </Bloc>
+        </div>
       </main>
     </PageUtilisateurFormulaireStyled>
   );

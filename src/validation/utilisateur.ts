@@ -22,10 +22,10 @@ const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
 
 z.setErrorMap(customErrorMap);
 export const validationInfosBaseUtilisateur = z.object( {
-  email: z.string().email(),
-  nom: z.string().min(1 ).max(100),
-  prénom: z.string().min(1 ).max(100),
-  fonction: z.string().nullable(),
+  email: z.string().email().min(1).max(100),
+  nom: z.string().min(1).max(100),
+  prénom: z.string().min(1).max(100),
+  fonction: z.string().max(100).nullable(),
   profil: z.enum(profils),
 });
 
