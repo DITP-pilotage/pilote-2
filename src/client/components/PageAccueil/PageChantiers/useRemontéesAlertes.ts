@@ -25,11 +25,11 @@ export function useRemontéesAlertes(chantiersFiltrés: Chantier[]) {
     nomCritère: 'estEnAlerteÉcart',
     condition: (chantier) => Alerte.estEnAlerteÉcart(chantier.mailles[maille]?.[codeInsee]?.écart),
   }, {
-    nomCritère: 'estEnAlerteTendance',
+    nomCritère: 'estEnAlerteBaisseOuStagnation',
     condition: (chantier) => Alerte.estEnAlerteBaisseOuStagnation(chantier.mailles[maille]?.[codeInsee]?.avancementPrécédent.global, chantier.mailles[maille]?.[codeInsee]?.avancement.global),
   }, {
-    nomCritère: 'estEnAlerteNonMaj',
-    condition: (chantier) => Alerte.estEnAlerteDonnéesNonMàj(null, null),
+    nomCritère: 'estEnAlerteDonnéesNonMàj',
+    condition: (chantier) => Alerte.estEnAlerteDonnéesNonMàj(chantier.mailles[maille]?.[codeInsee]?.dateDeMàjDonnéesQualitatives, chantier.mailles[maille]?.[codeInsee]?.dateDeMàjDonnéesQuantitatives),
   }]);
 
   return {
@@ -42,15 +42,15 @@ export function useRemontéesAlertes(chantiersFiltrés: Chantier[]) {
       },
       {
         libellé: 'Tendance(s) en baisse ou en stagnation',
-        nombre: filtresComptesCalculés.estEnAlerteTendance.nombre,
-        auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteTendance', nom: 'Tendance(s) en baisse ou en stagnation' }, 'filtresAlerte'),
-        estActivée: estActif('estEnAlerteTendance', 'filtresAlerte'),
+        nombre: filtresComptesCalculés.estEnAlerteBaisseOuStagnation.nombre,
+        auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteBaisseOuStagnation', nom: 'Tendance(s) en baisse ou en stagnation' }, 'filtresAlerte'),
+        estActivée: estActif('estEnAlerteBaisseOuStagnation', 'filtresAlerte'),
       },
       {
         libellé: 'Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour',
-        nombre: filtresComptesCalculés.estEnAlerteNonMaj.nombre,
-        auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteNonMaj', nom: 'Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour' }, 'filtresAlerte'),
-        estActivée: estActif('estEnAlerteNonMaj', 'filtresAlerte'),
+        nombre: filtresComptesCalculés.estEnAlerteDonnéesNonMàj.nombre,
+        auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteDonnéesNonMàj', nom: 'Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour' }, 'filtresAlerte'),
+        estActivée: estActif('estEnAlerteDonnéesNonMàj', 'filtresAlerte'),
       },
     ],
   };

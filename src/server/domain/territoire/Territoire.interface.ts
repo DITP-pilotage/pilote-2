@@ -35,8 +35,8 @@ export type TerritoireDonnées = {
   dateDeMàjDonnéesQuantitatives: string | null,
   alertes: {
     estEnAlerteÉcart: boolean,
-    estEnAlerteTendance: boolean,
-    estEnAlerteNonMaj: boolean,
+    estEnAlerteBaisseOuStagnation: boolean,
+    estEnAlerteDonnéesNonMàj: boolean,
   }
 };
 

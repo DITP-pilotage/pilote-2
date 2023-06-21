@@ -154,8 +154,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
     type RowsDatesDeMàjDesDonnées = Array<{
       chantier_id: string,
       territoire_code: string,
-      date_donnees_quantitatives: string,
-      date_donnees_qualitatives: string,
+      date_donnees_quantitatives: Date,
+      date_donnees_qualitatives: Date,
     }>;
 
     const chantierIdsÀRequêter = chantierIds.filter(c => chantierIdsLecture.includes(c));
@@ -228,8 +228,8 @@ export default class ChantierSQLRepository implements ChantierRepository {
         résultat[row.chantier_id] = {};
       }
       résultat[row.chantier_id][row.territoire_code] = {
-        dateDeMàjDonnéesQualitatives: row.date_donnees_qualitatives,
-        dateDeMàjDonnéesQuantitatives: row.date_donnees_quantitatives,
+        dateDeMàjDonnéesQualitatives: row.date_donnees_qualitatives?.toISOString() ?? null,
+        dateDeMàjDonnéesQuantitatives: row.date_donnees_quantitatives?.toISOString() ?? null,
       };
     }
 

@@ -7,7 +7,7 @@ export type FiltreCatégorie = keyof FiltresActifs;
 
 export type FiltreTypologieType = { id: string, attribut: keyof Chantier, nom: string };
 
-export type FiltreAlerte = { id: 'estEnAlerteÉcart' | 'estEnAlerteTendance' | 'estEnAlerteNonMaj', nom: string };
+export type FiltreAlerte = { id: 'estEnAlerteÉcart' | 'estEnAlerteBaisseOuStagnation' | 'estEnAlerteDonnéesNonMàj', nom: string };
 
 export type Filtre = PérimètreMinistériel | FiltreTypologieType | Ppg | Axe | FiltreAlerte;
 

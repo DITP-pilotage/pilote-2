@@ -18,10 +18,12 @@ export default class RécupérerChantierUseCase {
   async run(chantierId: string, habilitations: Habilitations, profil: Profil): Promise<Chantier> {
     const habilitation = new Habilitation(habilitations);
     habilitation.vérifierLesHabilitationsEnLecture(chantierId, null);
+    const territoireCodes = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
     
     const ministères = await this.ministèreRepository.getListe();
     const territoires = await this.territoireRepository.récupérerTous();
     const chantierRows = await this.chantierRepository.récupérerLesEntréesDUnChantier(chantierId, habilitations, profil);
-    return parseChantier(chantierRows, territoires, ministères);
+    const chantiersRowsDatesDeMàj = await this.chantierRepository.récupérerDatesDeMiseÀJour([chantierId], territoireCodes, [chantierId], territoireCodes);
+    return parseChantier(chantierRows, territoires, ministères, chantiersRowsDatesDeMàj);
   }
 }

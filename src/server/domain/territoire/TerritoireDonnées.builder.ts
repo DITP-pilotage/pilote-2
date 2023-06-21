@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker/locale/fr';
 import { codesInseeDépartements, codesInseeRégions, codeInseeFrance, TerritoireDonnées } from '@/server/domain/territoire/Territoire.interface';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import AvancementBuilder from '@/server/domain/chantier/avancement/Avancement.builder';
+import { générerPeutÊtreNull } from '@/server/infrastructure/test/builders/utils';
 
 export default class TerritoireDonnéesBuilder {
   private _codeInsee: TerritoireDonnées['codeInsee'];
@@ -18,6 +19,10 @@ export default class TerritoireDonnéesBuilder {
 
   private _alertes: TerritoireDonnées['alertes'];
 
+  private _dateDeMàjDonnéesQualitatives: TerritoireDonnées['dateDeMàjDonnéesQualitatives'];
+
+  private _dateDeMàjDonnéesQuantitatives: TerritoireDonnées['dateDeMàjDonnéesQuantitatives'];
+
   constructor() {
     this._codeInsee = faker.helpers.arrayElement([...codesInseeDépartements, ...codesInseeRégions, codeInseeFrance]);
     this._avancement = new AvancementBuilder().build();
@@ -27,9 +32,11 @@ export default class TerritoireDonnéesBuilder {
     this._tendance = faker.helpers.arrayElement(['BAISSE', 'HAUSSE', 'STAGNATION', null]);
     this._alertes = {
       estEnAlerteÉcart: this._écart < -10,
-      estEnAlerteTendance: this._tendance !== 'HAUSSE',
-      estEnAlerteNonMaj: faker.helpers.arrayElement([true, false]),
+      estEnAlerteBaisseOuStagnation: this._tendance !== 'HAUSSE',
+      estEnAlerteDonnéesNonMàj: faker.helpers.arrayElement([true, false]),
     };
+    this._dateDeMàjDonnéesQualitatives = générerPeutÊtreNull(0.2, faker.date.past().toISOString());
+    this._dateDeMàjDonnéesQuantitatives = générerPeutÊtreNull(0.2, faker.date.past().toISOString());
   }
 
   avecCodeInsee(codeInsee: TerritoireDonnées['codeInsee']): TerritoireDonnéesBuilder {
@@ -52,6 +59,16 @@ export default class TerritoireDonnéesBuilder {
     return this;
   }
 
+  avecDateDeMàjDonnéesQualitatives(dateDeMàjDonnéesQualitatives: TerritoireDonnées['dateDeMàjDonnéesQualitatives']): TerritoireDonnéesBuilder {
+    this._dateDeMàjDonnéesQualitatives = dateDeMàjDonnéesQualitatives;
+    return this;
+  }
+
+  avecDateDeMàjDonnéesQuantitatives(dateDeMàjDonnéesQuantitatives: TerritoireDonnées['dateDeMàjDonnéesQuantitatives']): TerritoireDonnéesBuilder {
+    this._dateDeMàjDonnéesQuantitatives = dateDeMàjDonnéesQuantitatives;
+    return this;
+  }
+
   build(): TerritoireDonnées {
     return {
       codeInsee: this._codeInsee,
@@ -61,6 +78,8 @@ export default class TerritoireDonnéesBuilder {
       écart: this._écart,
       tendance: this._tendance,
       alertes: this._alertes,
+      dateDeMàjDonnéesQualitatives: this._dateDeMàjDonnéesQualitatives,
+      dateDeMàjDonnéesQuantitatives: this._dateDeMàjDonnéesQuantitatives,
     };
   }
 }

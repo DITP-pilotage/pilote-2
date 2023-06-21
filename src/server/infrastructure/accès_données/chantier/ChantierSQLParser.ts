@@ -3,6 +3,7 @@ import { Territoire, TerritoiresDonnées } from '@/server/domain/territoire/Terr
 import Chantier, { ChantierDatesDeMiseÀJour } from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import Alerte from '@/server/domain/alerte/Alerte';
 
 class ErreurChantierSansMailleNationale extends Error {
   constructor(idChantier: string) {
@@ -34,7 +35,12 @@ function calculerTendance(chantier?: ChantierPrisma) {
   }
 }
 
-function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: ChantierPrisma[], chantierNational: ChantierPrisma) {
+function créerDonnéesTerritoires(
+  territoires: Territoire[],
+  chantierRows: ChantierPrisma[],
+  chantierNational: ChantierPrisma,
+  chantiersRowsDatesDeMàj: Record<Chantier['id'], Record<Territoire['code'], ChantierDatesDeMiseÀJour>>,
+) {
   let donnéesTerritoires: TerritoiresDonnées = {};
 
   territoires.forEach(t => {    
@@ -49,10 +55,12 @@ function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: Chan
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
       écart: écart,
       tendance: tendance,
+      dateDeMàjDonnéesQualitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQualitatives ?? null : null,
+      dateDeMàjDonnéesQuantitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQuantitatives ?? null : null,
       alertes: {
-        estEnAlerteÉcart: (écart && écart < -10) ? true : false,
-        estEnAlerteTendance: tendance !== 'HAUSSE',
-        estEnAlerteNonMaj: false,
+        estEnAlerteÉcart: Alerte.estEnAlerteÉcart(écart),
+        estEnAlerteBaisseOuStagnation: Alerte.estEnAlerteBaisseOuStagnation(chantierRow?.taux_avancement_precedent ?? null, chantierRow?.taux_avancement ?? null),
+        estEnAlerteDonnéesNonMàj: Alerte.estEnAlerteDonnéesNonMàj(chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQualitatives ?? null : null, chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQuantitatives ?? null : null),
       },
     };
   });
@@ -64,7 +72,7 @@ export function parseChantier(
   chantierRows: ChantierPrisma[],
   territoires: Territoire[],
   ministères: Ministère[],
-  chantiersRowsDatesDeMàj: Record<string, ChantierDatesDeMiseÀJour>,
+  chantiersRowsDatesDeMàj: Record<Chantier['id'], Record<Territoire['code'], ChantierDatesDeMiseÀJour>>,
 ): Chantier {
   const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
   const chantierMailleDépartementale = chantierRows.filter(c => c.maille === 'DEPT');
@@ -91,17 +99,17 @@ export function parseChantier(
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
           écart: 0,
           tendance: tendance,
-          dateDeMàjDonnéesQualitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id].dateDeMàjDonnéesQualitatives,
-          dateDeMàjDonnéesQuantitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id].dateDeMàjDonnéesQuantitatives,
+          dateDeMàjDonnéesQualitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQualitatives ?? null,
+          dateDeMàjDonnéesQuantitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQuantitatives ?? null,
           alertes: {
             estEnAlerteÉcart: false,
-            estEnAlerteTendance: tendance !== 'HAUSSE',
-            estEnAlerteNonMaj: false,
+            estEnAlerteBaisseOuStagnation: Alerte.estEnAlerteBaisseOuStagnation(chantierMailleNationale?.taux_avancement_precedent ?? null, chantierMailleNationale?.taux_avancement ?? null),
+            estEnAlerteDonnéesNonMàj: Alerte.estEnAlerteDonnéesNonMàj(chantierMailleNationale ? chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.[chantierMailleNationale.territoire_code]?.dateDeMàjDonnéesQualitatives ?? null : null, chantierMailleNationale ? chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.[chantierMailleNationale.territoire_code]?.dateDeMàjDonnéesQuantitatives ?? null : null),
           },
         },
       },
-      départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, chantierMailleNationale),
-      régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'régionale'), chantierMailleRégionale, chantierMailleNationale),
+      départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, chantierMailleNationale, chantiersRowsDatesDeMàj),
+      régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'régionale'), chantierMailleRégionale, chantierMailleNationale, chantiersRowsDatesDeMàj),
     },
     responsables: {
       porteur: ministères.find(m => m.id === chantierMailleNationale.ministeres[0]) ?? null,
