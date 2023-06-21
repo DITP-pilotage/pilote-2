@@ -18,7 +18,10 @@ import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéforme
 import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
-import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
+import {
+  estLargeurDÉcranActuelleMoinsLargeQue,
+  largeurDÉcranStore,
+} from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import TypologiesPictos
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import useTableauRéformes from '@/components/PageAccueil/TableauRéformes/useTableauRéformes';
@@ -189,7 +192,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
   const [tri, setTri] = useState<SortingState>([]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
   const [regroupement, setRegroupement] = useState<GroupingState>([]);
-  const estVueMobile = estVueMobileStore();
+  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('md');
 
   useEffect(() => {
     setTri(précédentTri => (
@@ -221,7 +224,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       globalFilter: valeurDeLaRecherche,
       sorting: tri,
       grouping: regroupement,
-      columnVisibility: estVueMobile ? ({
+      columnVisibility: estVueTuile ? ({
         porteur: false,
         nom: false,
         météo: false,
@@ -264,5 +267,6 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
     changementSélectionColonneÀTrierCallback: setSélectionColonneÀTrier,
     directionDeTri: transformerEnDirectionDeTri(tri),
     changementDirectionDeTriCallback: (directionDeTri: DirectionDeTri) => setTri(transformerEnSortingState(sélectionColonneÀTrier, directionDeTri)),
+    estVueTuile,
   };
 }

@@ -11,7 +11,10 @@ import {
   territoireSélectionnéTerritoiresStore,
 } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
+import {
+  estLargeurDÉcranActuelleMoinsLargeQue,
+  largeurDÉcranStore,
+} from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import IndicateurBlocIndicateurTuile from '@/components/_commons/Indicateurs/Bloc/indicateurBlocIndicateurTuile';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
@@ -37,7 +40,7 @@ const indicateurDétailsVide = {
 const reactTableColonnesHelper = createColumnHelper<IndicateurDétailsParTerritoire>();
 
 export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateurTerritoire, typeDeRéforme: TypeDeRéforme, territoireProjetStructurant?: ProjetStructurant['territoire']) {
-  const estVueMobile = estVueMobileStore();
+  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const territoiresComparés = territoiresComparésTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
@@ -209,7 +212,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     data: indicateurDétailsParTerritoires,
     columns: colonnes,
     state: {
-      columnVisibility: estVueMobile ? ({
+      columnVisibility: estVueTuile ? ({
         territoire: false,
         valeurInitiale: false,
         valeurActuelle: false,

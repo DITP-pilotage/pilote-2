@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import InfobulleProps from '@/components/_commons/Infobulle/Infobulle.interface';
 import InfobulleStyled from '@/components/_commons/Infobulle/Infobulle.styled';
-import { estVueMobileStore } from '@/stores/useEstVueMobileStore/useEstVueMobileStore';
+import {
+  estLargeurDÉcranActuelleMoinsLargeQue,
+} from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 
 export default function Infobulle({ idHtml, children }: InfobulleProps) {
-  const estVueMobile = estVueMobileStore();
+  const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const [estVisible, setEstVisible] = useState(false);
 
   return (
