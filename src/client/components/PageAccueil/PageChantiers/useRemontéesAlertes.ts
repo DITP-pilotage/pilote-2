@@ -4,6 +4,7 @@ import {
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
+import Alerte from '@/server/domain/alerte/Alerte';
 
 export function useRemontéesAlertes(chantiersFiltrés: Chantier[]) {
   const { changerÉtatDuFiltre, estActif } = actionsFiltresStore();
@@ -22,7 +23,7 @@ export function useRemontéesAlertes(chantiersFiltrés: Chantier[]) {
 
   const filtresComptesCalculés = compteurFiltre.compter([{
     nomCritère: 'estEnAlerteÉcart',
-    condition: (chantier) => chantier.mailles[maille]?.[codeInsee]?.écart !== null ? chantier.mailles[maille][codeInsee].écart! < -10 : false,
+    condition: (chantier) => Alerte.estEnAlerteÉcart(chantier.mailles[maille]?.[codeInsee]?.écart),
   }, {
     nomCritère: 'estEnAlerteTendance',
     condition: (chantier) => chantier.mailles[maille][codeInsee].tendance !== null ? ['BAISSE', 'STAGNATION'].includes(chantier.mailles[maille][codeInsee].tendance!) : false,
