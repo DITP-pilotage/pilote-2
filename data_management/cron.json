@@ -8,6 +8,12 @@
     },
     {
       "command": "25 * * * * bash scripts/fill_tables_ppg_metadata.sh"
+    },
+    {
+      "command": "30 * * * * bash scripts/fill_tables_staging.sh"
+    },
+    {
+      "command": "35 * * * * bash scripts/fill_tables_public.sh"
     }
   ]
 }
