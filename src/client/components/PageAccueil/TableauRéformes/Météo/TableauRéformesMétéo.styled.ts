@@ -12,6 +12,7 @@ const TableauRéformesMétéoStyled = styled.div<TableauRéformesMétéoStyledPr
   display: grid;
   grid-template-rows: 2rem 0.75rem;
   align-items: center;
+  width: 100%;
   font-size: 0.625rem;
   
   .météo-picto {

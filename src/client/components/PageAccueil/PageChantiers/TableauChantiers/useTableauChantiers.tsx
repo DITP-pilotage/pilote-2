@@ -140,6 +140,7 @@ const colonnesTableauChantiers = [
       <TableauChantiersÉcart écart={cellContext.getValue()} />
     ),
     enableGrouping: false,
+    aggregatedCell: () => null,
     meta: {
       width: '5.5rem',
     },
