@@ -8,8 +8,9 @@ import {
 import { objectEntries } from '@/client/utils/objects/objects';
 import api from '@/server/infrastructure/api/trpc/api';
 import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
+import { useRemontéesAlertes } from '@/components/PageAccueil/PageChantiers/useRemontéesAlertes';
 
-export default function useVueDEnsemble(chantiersFiltrés: Chantier[]) {
+export default function useVueDEnsemble(chantiersFiltrés: Chantier[], chantiersFiltrésSansFiltreAlerte: Chantier[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
@@ -74,10 +75,13 @@ export default function useVueDEnsemble(chantiersFiltrés: Chantier[]) {
     dateDeMàjDonnéesQuantitatives: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].dateDeMàjDonnéesQuantitatives,
   }));
 
+  const { remontéesAlertes } = useRemontéesAlertes(chantiersFiltrésSansFiltreAlerte);
+
   return {
     avancementsAgrégés: avancementsAgrégés ?? null,
     répartitionMétéos,
     avancementsGlobauxTerritoriauxMoyens,
     chantiersVueDEnsemble,
+    remontéesAlertes,
   };
 }

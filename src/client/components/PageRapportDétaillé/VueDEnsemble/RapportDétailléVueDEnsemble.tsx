@@ -10,6 +10,11 @@ import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import RapportDétailléVueDEnsembleStyled
   from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble.styled';
+import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
+import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
+import RemontéeAlerte from '@/components/PageAccueil/PageChantiers/RemontéeAlerte/RemontéeAlerte';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
 export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVueDEnsembleProps) {
@@ -18,6 +23,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
     répartitionMétéos,
     donnéesCartographie,
     donnéesTableauChantiers,
+    remontéesAlertes,
   } = usePageRapportDétaillé(chantiers);
   
   return (
@@ -71,6 +77,39 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
               <RépartitionMétéo météos={répartitionMétéos} />
             </section>
           </Bloc>
+        </div>
+      </div>
+      <div className="fr-pt-3w fr-px-2w fr-px-md-0 alertes">
+        <div className="fr-mb-2w">
+          <TitreInfobulleConteneur>
+            <BadgeIcône type="warning" />
+            <Titre
+              baliseHtml="h2"
+              className="fr-text--lg fr-mb-0 fr-ml-1w titre-remontée-alertes"
+              estInline
+            >
+              Chantiers signalés
+            </Titre>
+            <Infobulle idHtml="infobulle-chantiers-alertes">
+              { INFOBULLE_CONTENUS.chantiers.alertes }
+            </Infobulle>
+          </TitreInfobulleConteneur>
+        </div>
+        <div className="fr-grid-row fr-grid-row--gutters">
+          {
+            remontéesAlertes.map(({ libellé, nombre, estActivée }) => (
+              <div
+                className="fr-col"
+                key={libellé}
+              >
+                <RemontéeAlerte
+                  estActivée={estActivée}
+                  libellé={libellé}
+                  nombre={nombre}
+                />
+              </div>
+            ))
+          }
         </div>
       </div>
       <div

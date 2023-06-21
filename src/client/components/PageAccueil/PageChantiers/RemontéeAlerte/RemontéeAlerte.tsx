@@ -6,7 +6,7 @@ export default function RemontéeAlerte({ nombre, libellé, auClic, estActivée 
   return (
     <RemontéeAlerteStyled
       className={`fr-p-3v fr-p-md-3w ${estActivée ? 'est-activée' : ''}`}
-      disabled={nombre === null}
+      disabled={!auClic || nombre === null}
       onClick={auClic}
     >
       <span className="fr-h1 fr-mb-0 nombre">
