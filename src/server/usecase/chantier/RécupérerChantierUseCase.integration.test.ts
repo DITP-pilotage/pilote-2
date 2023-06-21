@@ -214,7 +214,7 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation);
+    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation, profil);
 
     // THEN
     expect(result.mailles.régionale['01'].écart).toEqual(5);
@@ -244,7 +244,7 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation);
+    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation, profil);
 
     // THEN
     expect(result.mailles.nationale.FR.tendance).toEqual('HAUSSE');

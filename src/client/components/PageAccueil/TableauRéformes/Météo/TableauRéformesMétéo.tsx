@@ -1,8 +1,19 @@
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
-import { libellésMétéos } from '@/server/domain/météo/Météo.interface';
+import { libellésMétéos, Météo } from '@/server/domain/météo/Météo.interface';
 import TableauRéformesMétéoProps from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.interface';
 import { formaterDate } from '@/client/utils/date/date';
 import TableauRéformesMétéoStyled from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo.styled';
+
+const libelléMétéosÀPartirDeLaTaille = {
+  'sm': {
+    className: 'texte-centre',
+    texte: (_: Météo) => '–',
+  },
+  'md': {
+    className: '',
+    texte: (météo: Météo) => libellésMétéos[météo],
+  },
+};
 
 export default function TableauRéformesMétéo({ météo, dateDeMàjDonnéesQualitatives, taille = 'md' }: TableauRéformesMétéoProps) {
   return (
@@ -12,23 +23,15 @@ export default function TableauRéformesMétéo({ météo, dateDeMàjDonnéesQua
           ?
             <MétéoPicto météo={météo} />
           : (
-            taille === 'sm' ? (
-              <span className="texte-gris texte-centre fr-text--xs">
-                –
-              </span>
-            ) : (
-              <span className="texte-gris fr-text--xs">
-                {libellésMétéos[météo]}
-              </span>
-            )
+            <span className={`fr-text--xs texte-gris ${libelléMétéosÀPartirDeLaTaille[taille].className}`}>
+              { libelléMétéosÀPartirDeLaTaille[taille].texte(météo) }
+            </span>
           )
       }
       {
         !!dateDeMàjDonnéesQualitatives &&
         <span className='texte-gris'>
-          (
-          { formaterDate(dateDeMàjDonnéesQualitatives, 'MM/YYYY') }
-          )
+          {`(${ formaterDate(dateDeMàjDonnéesQualitatives, 'MM/YYYY') })`}
         </span>
       }
     </TableauRéformesMétéoStyled>

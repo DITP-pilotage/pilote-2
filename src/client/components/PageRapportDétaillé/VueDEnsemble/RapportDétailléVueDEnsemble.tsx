@@ -14,7 +14,7 @@ import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleContene
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
-import RemontéeAlerte from '@/components/PageAccueil/PageChantiers/RemontéeAlerte/RemontéeAlerte';
+import RemontéeAlerte from '@/components/_commons/RemontéeAlerte/RemontéeAlerte';
 import RapportDétailléTableauChantiers from './RapportDétailléTableauChantiers/RapportDétailléTableauChantiers';
 
 export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVueDEnsembleProps) {

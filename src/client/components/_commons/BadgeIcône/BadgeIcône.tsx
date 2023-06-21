@@ -4,6 +4,6 @@ import BadgeIcôneStyled from '@/components/_commons/BadgeIcône/BadgeIcône.sty
 
 export default function BadgeIcône({ type }: BadgeIcôneProps) {
   return (
-    <BadgeIcôneStyled className={`fr-badge fr-badge--${type} fr-badge`} />
+    <BadgeIcôneStyled className={`fr-badge fr-badge--${type}`} />
   );
 }

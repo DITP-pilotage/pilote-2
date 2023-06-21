@@ -2,6 +2,7 @@ import { chantier as ChantierPrisma } from '@prisma/client';
 import { Territoire, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import Chantier, { ChantierDatesDeMiseÀJour } from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
 
 class ErreurChantierSansMailleNationale extends Error {
   constructor(idChantier: string) {

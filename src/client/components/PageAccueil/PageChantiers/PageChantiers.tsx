@@ -21,7 +21,7 @@ import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/Répa
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
-import RemontéeAlerte from '@/components/PageAccueil/PageChantiers/RemontéeAlerte/RemontéeAlerte';
+import RemontéeAlerte from '@/components/_commons/RemontéeAlerte/RemontéeAlerte';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import PageChantiersStyled from './PageChantiers.styled';
 import PageChantiersProps from './PageChantiers.interface';

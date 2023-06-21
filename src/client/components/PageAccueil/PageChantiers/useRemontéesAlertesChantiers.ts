@@ -6,7 +6,7 @@ import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFilt
 import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
 import Alerte from '@/server/domain/alerte/Alerte';
 
-export function useRemontéesAlertes(chantiersFiltrés: Chantier[]) {
+export function useRemontéesAlertesChantiers(chantiersFiltrés: Chantier[]) {
   const { changerÉtatDuFiltre, estActif } = actionsFiltresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
