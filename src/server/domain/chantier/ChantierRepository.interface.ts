@@ -1,7 +1,7 @@
 import { chantier as ChantierPrisma } from '@prisma/client';
 import Chantier, { ChantierDatesDeMiseÀJour } from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
+import { CodeInsee, Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
@@ -18,7 +18,7 @@ export default interface ChantierRepository {
   récupérerMétéoParChantierIdEtTerritoire(chantierId: string, maille: Maille, codeInsee: CodeInsee): Promise<Météo | null>
   modifierMétéo(chantierId: string, territoireCode: string, météo: Météo): Promise<void>;
   récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<ChantierPourExport[]>;
-  récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][]): Promise<Chantier['id'][]>;
   récupérerChantierIdsEnLectureOrdonnésParNom(habilitation: Habilitation): Promise<Chantier['id'][]>;
-  récupérerDatesDeMiseÀJour(chantierIds: string[], territoireCode: string, habilitations: Habilitations): Promise<Record<string, ChantierDatesDeMiseÀJour>>
+  récupérerDatesDeMiseÀJour(chantierIds: string[], territoireCodes: string[], chantierIdsAccessiblesEnLecture: string[], territoireCodesAccessiblesEnLecture: string[]): Promise<Record<Chantier['id'], Record<Territoire['code'], ChantierDatesDeMiseÀJour>>>
+  récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][]): Promise<Chantier['id'][]> ;
 }

@@ -20,12 +20,15 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
 
   async run(habilitations: Habilitations, profil: Profil): Promise<Chantier[]> {
     const habilitation = new Habilitation(habilitations);
+    const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
     const ministères = await this.ministèreRepository.getListe();
     const territoires = await this.territoireRepository.récupérerTous();
     const chantiersRows = await this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(habilitation, profil);
+    const chantiersRowsDatesDeMàj = await this.chantierRepository.récupérerDatesDeMiseÀJour(chantiersLecture, territoiresLecture, chantiersLecture, territoiresLecture);
     const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRows, chantier => chantier.id);
-    let chantiers = objectEntries(chantiersGroupésParId).map(([_, chantier]) => parseChantier(chantier, territoires, ministères));
+    let chantiers = objectEntries(chantiersGroupésParId).map(([_, chantier]) => parseChantier(chantier, territoires, ministères, chantiersRowsDatesDeMàj));
 
     if (profil === 'DROM') {
       chantiers = chantiers.map(chantier => {

@@ -1,6 +1,6 @@
 import { chantier as ChantierPrisma } from '@prisma/client';
 import { Territoire, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { ChantierDatesDeMiseÀJour } from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 
@@ -60,7 +60,12 @@ function créerDonnéesTerritoires(territoires: Territoire[], chantierRows: Chan
   return donnéesTerritoires;
 }
 
-export function parseChantier(chantierRows: ChantierPrisma[], territoires: Territoire[], ministères: Ministère[]): Chantier {
+export function parseChantier(
+  chantierRows: ChantierPrisma[],
+  territoires: Territoire[],
+  ministères: Ministère[],
+  chantiersRowsDatesDeMàj: Record<string, ChantierDatesDeMiseÀJour>,
+): Chantier {
   const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
   const chantierMailleDépartementale = chantierRows.filter(c => c.maille === 'DEPT');
   const chantierMailleRégionale = chantierRows.filter(c => c.maille === 'REG');
@@ -86,6 +91,8 @@ export function parseChantier(chantierRows: ChantierPrisma[], territoires: Terri
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
           écart: 0,
           tendance: tendance,
+          dateDeMàjDonnéesQualitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id].dateDeMàjDonnéesQualitatives,
+          dateDeMàjDonnéesQuantitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id].dateDeMàjDonnéesQuantitatives,
           alertes: {
             estEnAlerteÉcart: false,
             estEnAlerteTendance: tendance !== 'HAUSSE',

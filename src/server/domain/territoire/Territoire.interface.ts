@@ -31,6 +31,8 @@ export type TerritoireDonnées = {
   météo: Météo,
   écart: number | null,
   tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION' | null,
+  dateDeMàjDonnéesQualitatives: string | null,
+  dateDeMàjDonnéesQuantitatives: string | null,
   alertes: {
     estEnAlerteÉcart: boolean,
     estEnAlerteTendance: boolean,
