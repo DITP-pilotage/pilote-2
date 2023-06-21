@@ -173,39 +173,30 @@ export default class ChantierSQLRepository implements ChantierRepository {
 
     const rows = await this.prisma.$queryRaw<RowsDatesDeMàjDesDonnées>`
       with chantiers_temp as (
-        select id as chantier_id, maille, code_insee  from chantier
+        select id as chantier_id, maille, code_insee
+        from chantier
         where id in (${Prisma.join(chantierIdsÀRequêter)})
           and (maille, code_insee) in (
               values ${prismaJoinTerritoires}
             )
           ),
           dates_qualitatives as (
-          (
-          select chantier_id, maille, code_insee, MAX(date) as date
-          from commentaire
-          where chantier_id in (${Prisma.join(chantierIdsÀRequêter)})
-            and (maille, code_insee) in (
-                values ${prismaJoinTerritoires}
-              )
-          group by chantier_id, maille, code_insee
-          )
-          union
-          (
-          select chantier_id, maille, code_insee, MAX(GREATEST(date_meteo, date_commentaire)) as date
-          from synthese_des_resultats
-          where chantier_id in (${Prisma.join(chantierIdsÀRequêter)})
-            and (maille, code_insee) in (
-                values ${prismaJoinTerritoires}
-              )
-          group by chantier_id, maille, code_insee)),
+            (
+              select chantier_id, maille, code_insee, MAX(date) as date
+              from commentaire
+              group by chantier_id, maille, code_insee
+            )
+            union
+            (
+              select chantier_id, maille, code_insee, MAX(GREATEST(date_meteo, date_commentaire)) as date
+              from synthese_des_resultats
+              group by chantier_id, maille, code_insee
+            )
+          ),
           dates_quantitatives as (
-          select chantier_id, maille, code_insee, MAX(date_valeur_actuelle) as date
-          from indicateur
-          where chantier_id in (${Prisma.join(chantierIdsÀRequêter)})
-            and (maille, code_insee) in (
-                values ${prismaJoinTerritoires}
-              )
-          group by chantier_id, maille, code_insee
+            select chantier_id, maille, code_insee, MAX(date_valeur_actuelle) as date
+            from indicateur
+            group by chantier_id, maille, code_insee
           )
 
       select
@@ -214,10 +205,10 @@ export default class ChantierSQLRepository implements ChantierRepository {
           MAX(d_quali.date) as date_donnees_qualitatives,
           MAX(d_quanti.date) as date_donnees_quantitatives
       from chantiers_temp
-               left join dates_qualitatives as d_quali
-                         on chantiers_temp.chantier_id = d_quali.chantier_id
-               left join dates_quantitatives as d_quanti
-                         on chantiers_temp.chantier_id = d_quanti.chantier_id
+          left join dates_qualitatives as d_quali
+                    on chantiers_temp.chantier_id = d_quali.chantier_id and chantiers_temp.maille = d_quali.maille and chantiers_temp.code_insee = d_quali.code_insee
+          left join dates_quantitatives as d_quanti
+                    on chantiers_temp.chantier_id = d_quanti.chantier_id and chantiers_temp.maille = d_quanti.maille and chantiers_temp.code_insee = d_quanti.code_insee
       group by chantiers_temp.chantier_id, territoire_code;
     `;
 

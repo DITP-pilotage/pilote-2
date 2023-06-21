@@ -271,6 +271,12 @@ describe('ChantierSQLRepository', () => {
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
           .build(),
+        new CommentaireRowBuilder()
+          .avecChantierId('CH-000')
+          .avecDate(new Date('2028-12-31')) // ne doit pas être pris
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .build(),
       ];
 
       const synthèses = [
@@ -283,10 +289,17 @@ describe('ChantierSQLRepository', () => {
           .build(),
         new SyntheseDesResultatsRowBuilder()
           .avecChantierId(chantierId)
-          .avecMaille('NAT')
+          .avecMaille('NAT') // ne doit pas être pris
           .avecCodeInsee('FR')
           .avecDateCommentaire(new Date('2028-06-10'))
           .avecDateMétéo(new Date('2028-06-10'))
+          .build(),
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId('CH-000')
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateCommentaire(new Date('2028-12-31')) // ne doit pas être pris
+          .avecDateMétéo(new Date('2028-12-31'))
           .build(),
       ];
 
@@ -303,6 +316,20 @@ describe('ChantierSQLRepository', () => {
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
           .avecDateValeurActuelle(dateRécente)
+          .avecTerritoireCode(territoireCode)
+          .build(),
+        new IndicateurRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateValeurActuelle(dateRécente)
+          .avecTerritoireCode(territoireCode)
+          .build(),
+        new IndicateurRowBuilder()
+          .avecChantierId('CH-000') // ne doit pas être pris
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateValeurActuelle(new Date('2028-12-31'))
           .avecTerritoireCode(territoireCode)
           .build(),
       ];
