@@ -4,6 +4,13 @@ import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import Chantier, { ChantierDatesDeMiseÀJour } from '@/server/domain/chantier/Chantier.interface';
 import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
 
+type RowsDatesDeMàjDesDonnées = Array<{
+  chantier_id: string,
+  territoire_code: string,
+  date_donnees_quantitatives: Date,
+  date_donnees_qualitatives: Date,
+}>;
+
 export default class ChantierDatesDeMàjSQLRepository implements ChantierDatesDeMàjRepository {
   private prisma: PrismaClient;
 
@@ -12,24 +19,27 @@ export default class ChantierDatesDeMàjSQLRepository implements ChantierDatesDe
   }
   
   async récupérerDatesDeMiseÀJour(chantierIds: string[], territoireCodes: string[]) {
-    type RowsDatesDeMàjDesDonnées = Array<{
-      chantier_id: string,
-      territoire_code: string,
-      date_donnees_quantitatives: Date,
-      date_donnees_qualitatives: Date,
-    }>;
-
-    if (chantierIds.length === 0 || territoireCodes.length === 0) {
+    if (this.estRequêteVide(chantierIds, territoireCodes)) {
       return {};
     }
 
+    const rows = await this.requêterChantiersDatesDeMàj(chantierIds, territoireCodes);
+
+    return this.construireLaRéponse(rows);
+  }
+
+  private estRequêteVide(chantierIds: string[], territoireCodes: string[]) {
+    return chantierIds.length === 0 || territoireCodes.length === 0;
+  }
+
+  private async requêterChantiersDatesDeMàj(chantierIds: string[], territoireCodes: string[]) {
     const prismaJoinMailleCodeInsee = ({ maille, codeInsee }: { maille: MaillePrisma, codeInsee: CodeInsee }) => Prisma.join([maille, codeInsee]);
     const séparateur = '),(';
     const préfixe = '(';
     const suffixe = ')';
     const prismaJoinTerritoires = Prisma.join(territoireCodes.map(t => prismaJoinMailleCodeInsee(territoireCodeVersMailleCodeInsee(t))), séparateur, préfixe, suffixe);
 
-    const rows = await this.prisma.$queryRaw<RowsDatesDeMàjDesDonnées>`
+    return this.prisma.$queryRaw<RowsDatesDeMàjDesDonnées>`
       with chantiers_temp as (
         select id as chantier_id, maille, code_insee
         from chantier
@@ -69,11 +79,18 @@ export default class ChantierDatesDeMàjSQLRepository implements ChantierDatesDe
                     on chantiers_temp.chantier_id = d_quanti.chantier_id and chantiers_temp.maille = d_quanti.maille and chantiers_temp.code_insee = d_quanti.code_insee
       group by chantiers_temp.chantier_id, territoire_code;
     `;
+  }
 
+  private construireLaRéponse(rows: Array<{
+    chantier_id: string;
+    territoire_code: string;
+    date_donnees_quantitatives: Date;
+    date_donnees_qualitatives: Date
+  }>) {
     let résultat: Record<Chantier['id'], Record<Territoire['code'], ChantierDatesDeMiseÀJour>> = {};
 
     for (const row of rows) {
-      if (résultat[row.chantier_id] === undefined) {
+      if (!résultat[row.chantier_id]) {
         résultat[row.chantier_id] = {};
       }
       résultat[row.chantier_id][row.territoire_code] = {

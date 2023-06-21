@@ -13,7 +13,6 @@ import {
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import {
   estLargeurDÉcranActuelleMoinsLargeQue,
-  largeurDÉcranStore,
 } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import IndicateurBlocIndicateurTuile from '@/components/_commons/Indicateurs/Bloc/indicateurBlocIndicateurTuile';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
