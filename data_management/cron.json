@@ -2,6 +2,9 @@
   "jobs": [
     {
       "command": "*/30 * * * * bash scripts/dump_dfakto_chantier.sh"
+    },
+    {
+      "command": "*/30 * * * * bash scripts/dump_dfakto_projet_structurant.sh"
     }
   ]
 }
