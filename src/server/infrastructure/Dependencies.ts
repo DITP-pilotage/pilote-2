@@ -69,6 +69,9 @@ import DécisionStratégiqueSQLRepository
 import IndicateurProjetStructurantRepository from '@/server/domain/indicateur/IndicateurProjetStructurantRepository.interface';
 import ProfilSQLRepository from '@/server/infrastructure/accès_données/profil/ProfilSQLRepository';
 import ProfilRepository from '@/server/domain/profil/ProfilRepository';
+import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
+import ChantierDatesDeMàjSQLRepository
+  from '@/server/infrastructure/accès_données/chantier/ChantierDatesDeMàjSQLRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
@@ -81,6 +84,8 @@ import IndicateurProjetStructurantSQLRepository from './accès_données/projetSt
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
+
+  private readonly _chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository;
 
   private readonly _axeRepository: AxeRepository;
 
@@ -131,6 +136,7 @@ class Dependencies {
   constructor() {
     const prisma = new PrismaClient();
     this._chantierRepository = new ChantierSQLRepository(prisma);
+    this._chantierDatesDeMàjRepository = new ChantierDatesDeMàjSQLRepository(prisma);
     this._axeRepository = new AxeSQLRepository(prisma);
     this._ppgRepository = new PpgSQLRepository(prisma);
     this._ministèreRepository = new MinistèreSQLRepository(prisma);
@@ -170,6 +176,10 @@ class Dependencies {
 
   getChantierRepository(): ChantierRepository {
     return this._chantierRepository;
+  }
+
+  getChantierDatesDeMàjRepository(): ChantierDatesDeMàjRepository {
+    return this._chantierDatesDeMàjRepository;
   }
 
   getAxeRepository(): AxeRepository {
