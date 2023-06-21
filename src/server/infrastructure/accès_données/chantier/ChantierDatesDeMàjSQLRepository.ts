@@ -11,7 +11,7 @@ export default class ChantierDatesDeMàjSQLRepository implements ChantierDatesDe
     this.prisma = prisma;
   }
   
-  async récupérerDatesDeMiseÀJour(chantierIds: string[], territoireCodes: string[], chantierIdsLecture: string[], territoireCodesLecture: string[]) {
+  async récupérerDatesDeMiseÀJour(chantierIds: string[], territoireCodes: string[]) {
     type RowsDatesDeMàjDesDonnées = Array<{
       chantier_id: string,
       territoire_code: string,
@@ -19,10 +19,7 @@ export default class ChantierDatesDeMàjSQLRepository implements ChantierDatesDe
       date_donnees_qualitatives: Date,
     }>;
 
-    const chantierIdsÀRequêter = chantierIds.filter(c => chantierIdsLecture.includes(c));
-    const territoireCodesÀRequêter = territoireCodesLecture.filter(t => territoireCodesLecture.includes(t));
-
-    if (chantierIdsÀRequêter.length === 0 || territoireCodesÀRequêter.length === 0) {
+    if (chantierIds.length === 0 || territoireCodes.length === 0) {
       return {};
     }
 
@@ -30,13 +27,13 @@ export default class ChantierDatesDeMàjSQLRepository implements ChantierDatesDe
     const séparateur = '),(';
     const préfixe = '(';
     const suffixe = ')';
-    const prismaJoinTerritoires = Prisma.join(territoireCodesÀRequêter.map(t => prismaJoinMailleCodeInsee(territoireCodeVersMailleCodeInsee(t))), séparateur, préfixe, suffixe);
+    const prismaJoinTerritoires = Prisma.join(territoireCodes.map(t => prismaJoinMailleCodeInsee(territoireCodeVersMailleCodeInsee(t))), séparateur, préfixe, suffixe);
 
     const rows = await this.prisma.$queryRaw<RowsDatesDeMàjDesDonnées>`
       with chantiers_temp as (
         select id as chantier_id, maille, code_insee
         from chantier
-        where id in (${Prisma.join(chantierIdsÀRequêter)})
+        where id in (${Prisma.join(chantierIds)})
           and (maille, code_insee) in (
               values ${prismaJoinTerritoires}
             )

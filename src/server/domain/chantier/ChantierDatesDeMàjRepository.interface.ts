@@ -2,5 +2,5 @@ import Chantier, { ChantierDatesDeMiseÀJour } from '@/server/domain/chantier/Ch
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 
 export default interface ChantierDatesDeMàjRepository {
-  récupérerDatesDeMiseÀJour(chantierIds: string[], territoireCodes: string[], chantierIdsAccessiblesEnLecture: string[], territoireCodesAccessiblesEnLecture: string[]): Promise<Record<Chantier['id'], Record<Territoire['code'], ChantierDatesDeMiseÀJour>>>
+  récupérerDatesDeMiseÀJour(chantierIds: string[], territoireCodes: string[]): Promise<Record<Chantier['id'], Record<Territoire['code'], ChantierDatesDeMiseÀJour>>>
 }

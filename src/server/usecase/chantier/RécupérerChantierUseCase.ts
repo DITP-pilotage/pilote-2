@@ -25,7 +25,7 @@ export default class RécupérerChantierUseCase {
     const ministères = await this.ministèreRepository.getListe();
     const territoires = await this.territoireRepository.récupérerTous();
     const chantierRows = await this.chantierRepository.récupérerLesEntréesDUnChantier(chantierId, habilitations, profil);
-    const chantiersRowsDatesDeMàj = await this.chantierDatesDeMàjRepository.récupérerDatesDeMiseÀJour([chantierId], territoireCodes, [chantierId], territoireCodes);
+    const chantiersRowsDatesDeMàj = await this.chantierDatesDeMàjRepository.récupérerDatesDeMiseÀJour([chantierId], territoireCodes);
     return parseChantier(chantierRows, territoires, ministères, chantiersRowsDatesDeMàj);
   }
 }

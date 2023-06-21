@@ -13,169 +13,6 @@ import IndicateurRowBuilder from '@/server/infrastructure/test/builders/sqlRow/I
 describe('ChantierDatesDeMàjSQLRepository', () => {
 
   describe('récupérerDatesDeMiseÀJour', () => {
-    describe('renvoie un objet vide quand les habilitations sont insuffisantes', () => {
-      test.each([
-        [[], []],
-        [['CH-001'], []],
-        [[], ['REG-01']],
-        [['CH-non-existant'], ['REG-01']],
-        [['CH-001'], ['DEPT-non-existant']],
-        [['CH-non-existant'], ['DEPT-non-existant']],
-      ])('habilitation: [chantierId: %s, territoireCode: %s]', async (chantierIdsHabilités, territoireCodesHabilités) => {
-        // Given
-        const chantierId = 'CH-001';
-        const maille = 'régionale';
-        const codeInsee = '01';
-        const territoireCode = 'REG-01';
-        const repository: ChantierDatesDeMàjRepository = new ChantierDatesDeMàjSQLRepository(prisma);
-
-        const chantiers: chantier[] = [
-          new ChantierSQLRowBuilder()
-            .avecId(chantierId)
-            .avecMaille(CODES_MAILLES[maille])
-            .avecCodeInsee(codeInsee)
-            .avecMétéo('ORAGE')
-            .build(),
-        ];
-
-        const commentaires = [
-          new CommentaireRowBuilder()
-            .avecChantierId(chantierId)
-            .avecDate(new Date('2023-01-01'))
-            .avecMaille(CODES_MAILLES[maille])
-            .avecCodeInsee(codeInsee)
-            .build(),
-        ];
-
-        const synthèses = [
-          new SyntheseDesResultatsRowBuilder()
-            .avecChantierId(chantierId)
-            .avecMaille(CODES_MAILLES[maille])
-            .avecCodeInsee(codeInsee)
-            .avecDateCommentaire(new Date('2023-01-01'))
-            .avecDateMétéo(new Date('2023-01-01'))
-            .build(),
-        ];
-
-        const indicateurs = [
-          new IndicateurRowBuilder()
-            .avecChantierId(chantierId)
-            .avecMaille(CODES_MAILLES[maille])
-            .avecCodeInsee(codeInsee)
-            .avecDateValeurActuelle(new Date('2023-01-01'))
-            .avecTerritoireCode(territoireCode)
-            .build(),
-        ];
-
-        await Promise.all([
-          prisma.chantier.createMany({ data: chantiers }),
-          prisma.commentaire.createMany({ data: commentaires }),
-          prisma.synthese_des_resultats.createMany({ data: synthèses }),
-          prisma.indicateur.createMany({ data: indicateurs }),
-        ]);
-
-        // When
-        const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode], chantierIdsHabilités, territoireCodesHabilités);
-
-        // Then
-        expect(result).toStrictEqual({});
-      });
-    });
-
-    test('renvoie uniquement les chantiers et les territoires accessibles en lecture', async () => {
-      // Given
-      const chantierId1 = 'CH-001';
-      const chantierId2 = 'CH-002';
-      const repository: ChantierDatesDeMàjRepository = new ChantierDatesDeMàjSQLRepository(prisma);
-
-      const chantiers: chantier[] = [
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId1)
-          .avecMaille(CODES_MAILLES['régionale'])
-          .avecCodeInsee('01')
-          .build(),
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId2)
-          .avecMaille(CODES_MAILLES['régionale'])
-          .avecCodeInsee('01')
-          .build(),
-        new ChantierSQLRowBuilder()
-          .avecId(chantierId2)
-          .avecMaille('REG')
-          .avecCodeInsee('02')
-          .build(),
-      ];
-
-      const synthèses = [
-        new SyntheseDesResultatsRowBuilder()
-          .avecChantierId(chantierId1)
-          .avecMaille('REG')
-          .avecCodeInsee('01')
-          .avecDateCommentaire(new Date('2023-01-02'))
-          .avecDateMétéo(new Date('2023-01-02'))
-          .build(),
-        new SyntheseDesResultatsRowBuilder()
-          .avecChantierId(chantierId2)
-          .avecMaille('REG')
-          .avecCodeInsee('01')
-          .avecDateCommentaire(new Date('2023-03-02'))
-          .avecDateMétéo(new Date('2023-03-02'))
-          .build(),
-        new SyntheseDesResultatsRowBuilder()
-          .avecChantierId(chantierId2)
-          .avecMaille('REG')
-          .avecCodeInsee('02')
-          .avecDateCommentaire(new Date('2023-01-02'))
-          .avecDateMétéo(new Date('2023-01-02'))
-          .build(),
-      ];
-
-      const indicateurs = [
-        new IndicateurRowBuilder()
-          .avecChantierId(chantierId1)
-          .avecMaille('REG')
-          .avecCodeInsee('01')
-          .avecDateValeurActuelle(new Date('2023-02-02'))
-          .avecTerritoireCode('REG-01')
-          .build(),
-        new IndicateurRowBuilder()
-          .avecChantierId(chantierId2)
-          .avecMaille('REG')
-          .avecCodeInsee('01')
-          .avecDateValeurActuelle(new Date('2023-03-02'))
-          .avecTerritoireCode('REG-01')
-          .build(),
-        new IndicateurRowBuilder()
-          .avecChantierId(chantierId2)
-          .avecMaille('REG')
-          .avecCodeInsee('02')
-          .avecDateValeurActuelle(new Date('2023-04-02'))
-          .avecTerritoireCode('REG-01')
-          .build(),
-      ];
-
-      const chantierIdsHabilités = [chantierId2];
-      const territoireCodesHabilités = ['REG-01'];
-
-      await Promise.all([
-        prisma.chantier.createMany({ data: chantiers }),
-        prisma.synthese_des_resultats.createMany({ data: synthèses }),
-        prisma.indicateur.createMany({ data: indicateurs }),
-      ]);
-
-      // When
-      const result = await repository.récupérerDatesDeMiseÀJour([chantierId1, chantierId2], ['REG-01', 'REG-02'], chantierIdsHabilités, territoireCodesHabilités);
-
-      // Then
-      expect(result).toStrictEqual({
-        [chantierIdsHabilités[0]]: {
-          [territoireCodesHabilités[0]]: {
-            dateDeMàjDonnéesQualitatives: new Date('2023-03-02').toISOString(),
-            dateDeMàjDonnéesQuantitatives: new Date('2023-03-02').toISOString(),
-          },
-        },
-      });
-    });
 
     test.each([
       'commentaire', 'synthèseCommentaire', 'synthèseMétéo',
@@ -287,7 +124,7 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
       ]);
 
       // When
-      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode], [chantierId], [territoireCode]);
+      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode]);
 
       // Then
       expect(result[chantierId][territoireCode].dateDeMàjDonnéesQualitatives).toStrictEqual(new Date('2023-02-02').toISOString());
@@ -340,9 +177,6 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
           .build(),
       ];
 
-      const chantierIdsHabilités = [chantierId, 'CH-000'];
-      const territoireCodesHabilités = [territoireCode];
-
       await Promise.all([
         prisma.chantier.createMany({ data: chantiers }),
         prisma.commentaire.createMany({ data: commentaires }),
@@ -351,7 +185,7 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
       ]);
 
       // When
-      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode], chantierIdsHabilités, territoireCodesHabilités);
+      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode]);
 
       // Then
       expect(result[chantierId][territoireCode].dateDeMàjDonnéesQuantitatives).toBeNull();
@@ -374,13 +208,14 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
           .build(),
       ];
 
-      const synthèses = [new SyntheseDesResultatsRowBuilder()
-        .avecChantierId(chantierId)
-        .avecMaille(CODES_MAILLES[maille])
-        .avecCodeInsee(codeInsee)
-        .avecDateCommentaire(null)
-        .avecDateMétéo(null)
-        .build(),
+      const synthèses = [
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateCommentaire(null)
+          .avecDateMétéo(null)
+          .build(),
       ];
 
       const indicateurs = [
@@ -400,7 +235,7 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
       ]);
 
       // When
-      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode], [chantierId], [territoireCode]);
+      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode]);
 
       // Then
       expect(result[chantierId][territoireCode].dateDeMàjDonnéesQualitatives).toBeNull();
@@ -432,13 +267,14 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
           .build(),
       ];
 
-      const synthèses = [new SyntheseDesResultatsRowBuilder()
-        .avecChantierId(chantierId)
-        .avecMaille(CODES_MAILLES[maille])
-        .avecCodeInsee(codeInsee)
-        .avecDateCommentaire(null)
-        .avecDateMétéo(null)
-        .build(),
+      const synthèses = [
+        new SyntheseDesResultatsRowBuilder()
+          .avecChantierId(chantierId)
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecDateCommentaire(null)
+          .avecDateMétéo(null)
+          .build(),
       ];
 
       const indicateurs = [
@@ -459,7 +295,7 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
       ]);
 
       // When
-      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode], [chantierId], [territoireCode]);
+      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode]);
 
       // Then
       expect(result[chantierId][territoireCode].dateDeMàjDonnéesQualitatives).toStrictEqual(new Date('2023-02-02').toISOString());
@@ -508,7 +344,7 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
       ]);
 
       // When
-      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode], [chantierId], [territoireCode]);
+      const result = await repository.récupérerDatesDeMiseÀJour([chantierId], [territoireCode]);
 
       // Then
       expect(result[chantierId][territoireCode].dateDeMàjDonnéesQualitatives).toStrictEqual(new Date('2023-02-02').toISOString());
@@ -562,9 +398,6 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
           .build(),
       ];
 
-      const chantierIdsHabilités = [chantierId1, chantierId2];
-      const territoireCodesHabilités = [territoireCode];
-
       await Promise.all([
         prisma.chantier.createMany({ data: chantiers }),
         prisma.synthese_des_resultats.createMany({ data: synthèses }),
@@ -572,7 +405,7 @@ describe('ChantierDatesDeMàjSQLRepository', () => {
       ]);
 
       // When
-      const result = await repository.récupérerDatesDeMiseÀJour([chantierId1, chantierId2], [territoireCode], chantierIdsHabilités, territoireCodesHabilités);
+      const result = await repository.récupérerDatesDeMiseÀJour([chantierId1, chantierId2], [territoireCode]);
 
       // Then
       expect(result).toStrictEqual({
