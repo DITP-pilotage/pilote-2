@@ -13,4 +13,4 @@ python-dotenv = "==0.21"
 [dev-packages]
 
 [requires]
-python_full_version = "3.9.15"
+python_full_version = "3.9.16"
