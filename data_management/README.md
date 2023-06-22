@@ -19,7 +19,24 @@ Ce projet est décomposé de 2 parties :
 
 ### Pré-requis
 
-Il est nécessaire d'avoir [python 3.9.15](https://www.python.org/downloads/release/python-3915/) sur votre machine.
+#### Version de Python
+
+Il est nécessaire d'avoir la version de Python indiquée dans le Pipfile sur
+votre machine, voici les étapes à suivre.
+
+Installer pyenv :
+
+- <https://github.com/pyenv/pyenv#installation>
+
+Insaller la bonne version de Python (voir Pipfile, ligne `python_full_version`) :
+
+- <https://github.com/pyenv/pyenv#install-additional-python-versions>
+
+Installer pipenv :
+
+- <https://pipenv.pypa.io/en/latest/installation/>
+
+#### Webapp et SQL
 
 Il faut avoir configuré et initialisé votre base de données de Webapp comme précisé dans le README.md à la racine du projet.
 Pour la suite du projet, il faut s'assurer que la base de données soit démarrée.
@@ -53,7 +70,7 @@ data_management/input_data/private_data/
 
 #### Initialisation de l'environnement python
 
-Afin d'installer les dépendances liées au projet, il faut exécuter la commande suivante : 
+Afin d'installer les dépendances liées au projet, il faut exécuter la commande suivante :
 
 ```bash
 pipenv install
