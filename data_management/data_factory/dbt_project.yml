@@ -77,6 +77,28 @@ models:
     exposition:
       +schema: public
       +materialized: incremental
+      axe:
+        +unique_key:
+          - 'id'
+      ministere:
+        +unique_key:
+          - 'id'
+      perimetre:
+        +unique_key:
+          - 'id'
+      ppg:
+        +unique_key:
+          - 'id'
+      chantier:
+        +unique_key:
+          - 'id'
+          - 'maille'
+          - 'code_insee'
+      indicateur:
+        +unique_key:
+          - 'id'
+          - 'maille'
+          - 'code_insee'
       commentaire:
         +unique_key:
           - 'id'
@@ -90,5 +112,14 @@ models:
         +unique_key:
           - 'id'
       synthese_des_resultats_projet_structurant:
+        +unique_key:
+          - 'id'
+      perimetre_projet_structurant:
+        +unique_key:
+          - 'id'
+      commentaire_projet_structurant:
+        +unique_key:
+          - 'id'
+      indicateur_projet_structurant:
         +unique_key:
           - 'id'
