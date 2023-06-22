@@ -9,7 +9,7 @@ export default function SélecteurTypeDeRéforme({ modifierTypeDeRéformeSélect
       valeur: 'chantier',
     },
     {
-      label: 'Projets Structurants',
+      label: 'Projets structurants',
       valeur: 'projet structurant',
     },
   ];
