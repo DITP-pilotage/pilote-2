@@ -28,7 +28,7 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
   }));
 
   return (
-    <CartesStyled className="flex">
+    <CartesStyled>
       <div>
         <Bloc>
           <section>

@@ -13,6 +13,7 @@
   ],
   "rules": {
     "selector-class-pattern": "^([a-zà-ú][a-zà-ú0-9]*)([-_]+[a-zà-ú0-9]+)*$",
+    "selector-id-pattern": "^([a-zà-ú][a-zà-ú0-9]*)([-_]+[a-zà-ú0-9]+)*$",
     "value-keyword-case": null,
     "no-descending-specificity": null
   }

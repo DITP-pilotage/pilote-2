@@ -10,8 +10,6 @@ const MiseEnPageStyled = styled.div`
       margin: 1.5cm 1cm;
     }
     
-    zoom: 125%;
-    
     .fr-header, .fr-footer{
       display: none;
     }

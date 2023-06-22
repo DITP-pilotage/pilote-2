@@ -3,9 +3,45 @@ import styled from '@emotion/styled';
 const PageChantierStyled = styled.div`
   background: var(--background-contrast-grey);
 
+  .grid-template {
+    display: grid;
+    grid-template-areas:
+      "avancement"
+      "responsables"
+      "synthèse";
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .layout--nat {
+      grid-template-areas:
+        "avancement responsables"
+        "synthèse   synthèse";
+      grid-template-columns: auto minmax(22.5rem, 1fr);
+    }
+  
+    .layout--dept-reg {
+      grid-template-areas:
+        "avancement   avancement"
+        "responsables synthèse";
+    }
+  }
+
+  #avancement {
+    grid-area: avancement;
+  }
+
+  #responsables {
+    grid-area: responsables;
+  }
+
+  #synthèse {
+    grid-area: synthèse;
+  }
+  
   .rubrique {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto 1fr;
   }
 
   h2 {
@@ -26,10 +62,9 @@ const PageChantierStyled = styled.div`
   
   @media print {
     @page {
-      size: 1800px 2545px;
+      size: 280mm 396mm;
     }
 
-    zoom: 125%;
     
     .texte-impression {
       display: block;

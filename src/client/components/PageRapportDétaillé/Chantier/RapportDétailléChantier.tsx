@@ -43,11 +43,11 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         </Titre>
       </Encart>
       <div className='fr-mt-2w'>
-        <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+        <div className={`grid-template ${territoireSélectionné!.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}>
           {
             avancements !== null &&
             <>
-              <section className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-7' : 'fr-col-xl-12'} fr-col-12 rubrique avancement`}>
+              <section className="rubrique avancement">
                 <Titre
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -59,7 +59,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                   chantierId={chantier.id}
                 />
               </section>
-              <section className='fr-col-xl-5 fr-col-12 rubrique responsables'>
+              <section className='rubrique responsables'>
                 <Titre
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -70,7 +70,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
               </section>
             </>
           }
-          <section className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-7'} fr-col-12 rubrique synthèse`}>
+          <section className="rubrique synthèse">
             <Titre
               baliseHtml='h2'
               className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -86,9 +86,8 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
             />
           </section>
         </div>
-        <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-
-          <section className="fr-col-12 rubrique cartes">
+        <div className="fr-my-2w">
+          <section className="rubrique cartes">
             <Titre
               baliseHtml='h2'
               className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -103,8 +102,8 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         </div>
         {
           objectifs !== null &&
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <section className="fr-col-12 rubrique objectifs">
+          <div className="fr-my-2w">
+            <section className="rubrique objectifs">
               <Titre
                 baliseHtml='h2'
                 className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -124,8 +123,8 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         }
         {
           indicateurs.length > 0 &&
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <section className="fr-col-12 rubrique indicateurs">
+          <div className="fr-my-2w">
+            <section className="rubrique indicateurs">
               <Titre
                 baliseHtml='h2'
                 className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -145,8 +144,8 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         {
           décisionStratégique !== null
           && territoireSélectionné!.maille === 'nationale' &&
-          <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-            <section className="fr-col-12 rubrique décisions-stratégiques">
+          <div className="fr-my-2w">
+            <section className="rubrique décisions-stratégiques">
               <Titre
                 baliseHtml="h2"
                 className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
@@ -163,8 +162,8 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         }
         {
           commentaires !== null && (
-            <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
-              <section className="fr-col-12 rubrique commentaires">
+            <div className="fr-my-2w">
+              <section className="rubrique commentaires">
                 <Titre
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
