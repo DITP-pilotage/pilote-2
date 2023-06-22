@@ -1,10 +1,7 @@
-import { useState } from 'react';
 import SommaireProps from './Sommaire.interface';
 import SommaireStyled from './Sommaire.styled';
 
-export default function Sommaire({ rubriques }: SommaireProps) {
-  const [rubriqueCourante, setRubriqueCourante] = useState<SommaireProps['rubriques'][0]['ancre'] | null>(null);
-
+export default function Sommaire({ rubriques, auClic }: SommaireProps) {
   return (
     <SommaireStyled>
       <nav className='fr-pt-3w fr-pl-7v fr-pr-4w'>
@@ -15,13 +12,12 @@ export default function Sommaire({ rubriques }: SommaireProps) {
           {
             rubriques.map(rubrique => (
               <li
-                aria-current={rubriqueCourante === rubrique.ancre}
                 className='fr-pb-0'
                 key={rubrique.ancre}
               >
                 <a
                   href={`#${rubrique.ancre}`}
-                  onClick={() => setRubriqueCourante(rubrique.ancre)}
+                  onClick={auClic}
                 >
                   {rubrique.nom}
                 </a>
@@ -34,7 +30,10 @@ export default function Sommaire({ rubriques }: SommaireProps) {
                           className='fr-pb-0'
                           key={sousRubrique.nom}
                         >
-                          <a href={`#${sousRubrique.ancre}`}>
+                          <a
+                            href={`#${sousRubrique.ancre}`}
+                            onClick={auClic}
+                          >
                             {sousRubrique.nom}
                           </a>
                         </li>

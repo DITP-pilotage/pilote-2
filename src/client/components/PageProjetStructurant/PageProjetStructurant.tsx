@@ -30,7 +30,10 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
       >
-        <Sommaire rubriques={listeRubriquesProjetStructurant(indicateurs.map(i => i.type))} />
+        <Sommaire
+          auClic={() => setEstOuverteBarreLatérale(false)}
+          rubriques={listeRubriquesProjetStructurant(indicateurs.map(i => i.type))}
+        />
       </BarreLatérale>
       <main className='fr-pb-5w'>
         <BoutonSousLigné
