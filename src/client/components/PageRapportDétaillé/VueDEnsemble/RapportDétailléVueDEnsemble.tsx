@@ -40,24 +40,6 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
         <div className="fr-col-12 fr-col-lg-6">
           <Bloc>
             <section>
-              <Titre
-                baliseHtml="h3"
-                className="fr-text--lg"
-              >
-                Taux d’avancement des chantiers par territoire
-              </Titre>
-              <CartographieAvancement
-                auClicTerritoireCallback={() => {}}
-                données={donnéesCartographie}
-                options={{ estInteractif: false }}
-                élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
-              />
-            </section>
-          </Bloc>
-        </div>
-        <div className="fr-col-12 fr-col-lg-6">
-          <Bloc>
-            <section>
               <TitreInfobulleConteneur>
                 <Titre
                   baliseHtml="h2"
@@ -87,6 +69,24 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
                 </Infobulle>
               </TitreInfobulleConteneur>
               <RépartitionMétéo météos={répartitionMétéos} />
+            </section>
+          </Bloc>
+        </div>
+        <div className="fr-col-12 fr-col-lg-6">
+          <Bloc>
+            <section>
+              <Titre
+                baliseHtml="h3"
+                className="fr-text--lg"
+              >
+                Taux d’avancement des chantiers par territoire
+              </Titre>
+              <CartographieAvancement
+                auClicTerritoireCallback={() => {}}
+                données={donnéesCartographie}
+                options={{ estInteractif: false }}
+                élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
+              />
             </section>
           </Bloc>
         </div>
