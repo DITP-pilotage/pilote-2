@@ -62,7 +62,10 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
         <BarreLatéraleEncart>
           <SélecteursMaillesEtTerritoires />
         </BarreLatéraleEncart>
-        <Sommaire rubriques={listeRubriques} />
+        <Sommaire
+          auClic={() => setEstOuverteBarreLatérale(false)}
+          rubriques={listeRubriques}
+        />
       </BarreLatérale>
       <main className='fr-pb-5w'>
         <div className="texte-impression fr-mb-5w">

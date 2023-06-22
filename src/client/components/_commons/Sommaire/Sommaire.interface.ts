@@ -1,5 +1,6 @@
 import { Rubrique } from '@/client/utils/rubriques';
 
 export default interface SommaireProps {
-  rubriques: Rubrique[]
+  rubriques: Rubrique[];
+  auClic?: () => void;
 }

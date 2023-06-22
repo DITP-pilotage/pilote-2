@@ -84,7 +84,10 @@ export default function FiltresMinistères({ ministères }: FiltresMinistèresPr
                       </span>
                     </div>
                   </button>
-                  <ul className="fr-p-0 fr-m-0 fr-mb-1w périmètres-liste">
+                  <ul
+                    className="fr-p-0 fr-m-0 fr-mb-1w périmètres-liste"
+                    tabIndex={!estDéroulé(ministère) ? -1 : undefined}
+                  >
                     {
                       ministère.périmètresMinistériels.map(périmètre => (
                         <li
@@ -97,6 +100,7 @@ export default function FiltresMinistères({ ministères }: FiltresMinistèresPr
                               ${estActif(périmètre.id, catégorieDeFiltre) ? 'actif' : ''}
                             `}
                             onClick={() => auClicSurUnPérimètreCallback(périmètre)}
+                            tabIndex={!estDéroulé(ministère) ? -1 : undefined}
                             type="button"
                           >
                             {périmètre.nom}

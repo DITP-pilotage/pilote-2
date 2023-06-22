@@ -1,6 +1,11 @@
 import styled from '@emotion/styled';
 
 const FiltresMinistèresStyled = styled.div`
+
+  button:focus {
+    outline-offset: -2px;
+  }
+  
   button {
     width: 100%;
     text-align: left;
@@ -16,7 +21,7 @@ const FiltresMinistèresStyled = styled.div`
 
   ul.périmètres-liste {
     max-height: 0;
-    overflow: hidden;
+    overflow-y: hidden;
     transition: max-height 0.5s cubic-bezier(0, 1.05, 0, 1);
   }
 
@@ -45,6 +50,10 @@ const FiltresMinistèresStyled = styled.div`
 
     .icône {
       color: white;
+    }
+
+    :focus {
+      outline-color: var(--warning-425-625);
     }
   }
 
