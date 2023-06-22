@@ -11,10 +11,6 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
 
  @media print {
    display: block;
-
-    @page {
-      size: 1700px 2545px;
-    }
     
     main {
       background: var(--grey-1000-50);

@@ -8,12 +8,18 @@ import {
 import AvancementChantierProps from './AvancementChantier.interface';
 import AvancementChantierStyled from './AvancementChantier.styled';
 
+const classeÀPartirDeLaMaille = {
+  'nationale': '',
+  'départementale': 'layout--dept',
+  'régionale': 'layout--reg',
+};
+
 export default function AvancementChantier({ avancements }: AvancementChantierProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
 
   return (
-    <AvancementChantierStyled>
+    <AvancementChantierStyled className={classeÀPartirDeLaMaille[territoireSélectionné!.maille]}>
       {
         avancements.départementale.moyenne !== undefined &&
           <Bloc titre={territoireSélectionné?.nomAffiché}>

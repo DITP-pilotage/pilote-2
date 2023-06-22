@@ -18,7 +18,14 @@ const PageRapportDétailléStyled = styled.div`
   }
 
   @media print {
-    zoom: 125%;
+    @page {
+      size: 280mm 396mm;
+    }
+
+    .fr-container {
+      width: 100%;
+      max-width: none;
+    }
     
     .texte-impression {
       display: block;

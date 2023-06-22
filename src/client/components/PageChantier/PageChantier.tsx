@@ -89,12 +89,12 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 chantier={chantier}
               />
               <div className='fr-container--fluid fr-py-2w fr-px-md-4w'>
-                <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+                <div className={`grid-template ${territoireSélectionné!.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}>
                   {
                     avancements !== null &&
                       <>
                         <section
-                          className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-7' : 'fr-col-xl-12'} fr-col-12 rubrique`}
+                          className="rubrique"
                           id="avancement"
                         >
                           <Titre
@@ -109,7 +109,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                           />
                         </section>
                         <section
-                          className='fr-col-xl-5 fr-col-12 rubrique'
+                          className="rubrique"
                           id="responsables"
                         >
                           <Titre
@@ -123,7 +123,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       </>
                   }
                   <section
-                    className={`${territoireSélectionné!.maille === 'nationale' ? 'fr-col-xl-12' : 'fr-col-xl-7'} fr-col-12 rubrique`}
+                    className="rubrique"
                     id="synthèse"
                   >
                     <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
@@ -147,9 +147,9 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     />
                   </section>
                 </div>
-                <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+                <div className="fr-my-2w">
                   <section
-                    className="fr-col-12 rubrique"
+                    className="rubrique"
                     id="cartes"
                   >
                     <Titre
@@ -161,9 +161,9 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     <Cartes chantierMailles={chantier.mailles} />
                   </section>
                 </div>
-                <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+                <div className="fr-my-2w">
                   <section
-                    className="fr-col-12 rubrique"
+                    className="rubrique"
                     id="objectifs"
                   >
                     <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
@@ -190,9 +190,9 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 </div>
                 {
                   détailsIndicateurs !== null && indicateurs.length > 0 && (
-                    <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+                    <div className="fr-my-2w">
                       <section
-                        className="fr-col-12 rubrique"
+                        className="rubrique"
                         id="indicateurs"
                       >
                         <Titre
@@ -213,9 +213,9 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 }
                 {
                   territoireSélectionné!.maille === 'nationale' &&
-                    <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+                    <div className="fr-my-2w">
                       <section
-                        className="fr-col-12 rubrique"
+                        className="rubrique"
                         id="décisions-stratégiques"
                       >
                         <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
@@ -238,9 +238,9 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       </section>
                     </div>
                 }
-                <div className="fr-grid-row fr-grid-row--gutters fr-my-0 fr-pb-1w">
+                <div className="fr-my-2w">
                   <section
-                    className="fr-col-12 rubrique"
+                    className="rubrique"
                     id="commentaires"
                   >
                     <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
