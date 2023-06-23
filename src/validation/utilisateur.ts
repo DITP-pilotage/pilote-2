@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { profils } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { profilsCodes } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
   if (issue.code === z.ZodIssueCode.invalid_string && issue.validation === 'email') {
@@ -26,7 +26,7 @@ export const validationInfosBaseUtilisateur = z.object( {
   nom: z.string().min(1).max(100),
   prénom: z.string().min(1).max(100),
   fonction: z.string().max(100).nullable(),
-  profil: z.enum(profils),
+  profil: z.enum(profilsCodes),
 });
 
 export const validationInfosHabilitationsUtilisateur = z.object({

@@ -14,25 +14,8 @@ export default function PageUtilisateurFormulaire({ profils } :PageUtilisateurFo
           chemin={chemin}
           libelléPageCourante='Ajouter un compte'
         />
-        <Link
-          aria-label="Retour à la liste des utilisateurs"
-          className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-text--sm bouton-retour"
-          href='/admin/utilisateurs'
-        >
-          Retour
-        </Link>
-        <Titre
-          baliseHtml='h1'
-          className='fr-h1 fr-mt-4w'
-        >
-          Créer un compte
-        </Titre>
         <div className='fr-pb-4w'>
-          <Bloc>
-            <div className='fr-px-10w fr-py-6w'>
-              <UtilisateurFormulaire profils={profils} />
-            </div>
-          </Bloc>
+          <UtilisateurFormulaire profils={profils} />
         </div>
       </main>
     </PageUtilisateurFormulaireStyled>

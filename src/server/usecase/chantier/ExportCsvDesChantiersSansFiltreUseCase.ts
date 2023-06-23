@@ -5,7 +5,7 @@ import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChanti
 import { libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
 import { libellésTypesObjectif } from '@/client/constants/libellésObjectif';
 import { libellésTypesDécisionStratégique } from '@/client/constants/libellésDécisionStratégique';
-import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import configuration from '@/server/infrastructure/Configuration';
 
@@ -40,7 +40,7 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
     private readonly _config = configuration,
   ) {}
 
-  public async* run(habilitation: Habilitation, profil: Profil): AsyncGenerator<string[][]> {
+  public async* run(habilitation: Habilitation, profil: ProfilCode): AsyncGenerator<string[][]> {
     const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom(habilitation);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
@@ -54,16 +54,16 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
     }
   }
 
-  private masquerPourProfilDROM(profil: Profil, périmètreIds : string[]) {
+  private masquerPourProfilDROM(profil: ProfilCode, périmètreIds : string[]) {
     return profil == 'DROM' && !périmètreIds.includes('PER-018');
   }
 
-  private masquerChantierPourProfilDROM(profil: Profil, chantier : ChantierPourExport) {
+  private masquerChantierPourProfilDROM(profil: ProfilCode, chantier : ChantierPourExport) {
     return this.masquerPourProfilDROM(profil, chantier.périmètreIds) && chantier.maille === 'NAT';
   }
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
-  private transformer(chantierPourExport: ChantierPourExport, profil: Profil): string[] {
+  private transformer(chantierPourExport: ChantierPourExport, profil: ProfilCode): string[] {
     return [
       chantierPourExport.maille || NON_APPLICABLE,
       chantierPourExport.régionNom || NON_APPLICABLE,

@@ -18,7 +18,7 @@ export default function usePageProjetsStructurants(projetsStructurants: ProjetSt
   
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const codeInseeTerritoireSélectionné = territoireSélectionnéTerritoiresStore()!.codeInsee;
-  const { récupérerDépartementsAssociésÀLaRégion } = actionsTerritoiresStore();
+  const { récupérerCodesInseeDépartementsAssociésÀLaRégion } = actionsTerritoiresStore();
  
   const projetsStructurantsFiltrés = useMemo(() => {
     let résultat: ProjetStructurantVueDEnsemble[] = projetsStructurants;
@@ -43,9 +43,9 @@ export default function usePageProjetsStructurants(projetsStructurants: ProjetSt
       ? projetsDuTerritoire(codeInsee, maille)
       : [
         ...projetsDuTerritoire(codeInsee, maille),
-        ...projetsStructurantsFiltrés.filter(projet => projet.maille === 'départementale' && récupérerDépartementsAssociésÀLaRégion(codeInsee, maille).includes(projet.codeInsee)),
+        ...projetsStructurantsFiltrés.filter(projet => projet.maille === 'départementale' && récupérerCodesInseeDépartementsAssociésÀLaRégion(codeInsee, maille).includes(projet.codeInsee)),
       ];
-  }, [projetsDuTerritoire, projetsStructurantsFiltrés, récupérerDépartementsAssociésÀLaRégion]);
+  }, [projetsDuTerritoire, projetsStructurantsFiltrés, récupérerCodesInseeDépartementsAssociésÀLaRégion]);
   
   const avancementMoyenDuTerritoireSélectionné = (): number | null => {
     return calculerMoyenne(projetsDuTerritoireEtTerritoiresEnfants(codeInseeTerritoireSélectionné, mailleSélectionnée).map(projet => projet.avancement));

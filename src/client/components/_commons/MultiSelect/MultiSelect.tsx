@@ -3,7 +3,7 @@ import MultiSelectGroupe from '@/components/_commons/MultiSelect/MultiSelectGrou
 import MultiSelectStyled from './MultiSelect.styled';
 import useMultiSelect from './useMultiSelect';
 
-export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeursSélectionnéesParDéfaut, changementValeursSélectionnéesCallback } : MultiSelectProps) {
+export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeursSélectionnéesParDéfaut, changementValeursSélectionnéesCallback }: MultiSelectProps) {
   const {
     mettreÀJourLesValeursSélectionnées,
     recherche,
@@ -17,7 +17,7 @@ export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeurs
   } = useMultiSelect(optionsGroupées, suffixeLibellé, changementValeursSélectionnéesCallback, valeursSélectionnéesParDéfaut);
 
   return (
-    <MultiSelectStyled >
+    <MultiSelectStyled>
       <button
         className='fr-select'
         type="button"

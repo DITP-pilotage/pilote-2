@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker/locale/fr';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import { UtilisateurÀCréerOuMettreÀJour, profils } from './Utilisateur.interface';
+import { UtilisateurÀCréerOuMettreÀJour, profilsCodes } from './Utilisateur.interface';
 
 export default class UtilisateurÀCréerOuMettreÀJourBuilder {
   private _nom: UtilisateurÀCréerOuMettreÀJour['nom'];
@@ -21,7 +21,7 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     this._nom = faker.name.lastName();
     this._prénom = faker.name.firstName();
     this._email = faker.internet.email();
-    this._profil = faker.helpers.arrayElement(profils);
+    this._profil = faker.helpers.arrayElement(profilsCodes);
     this._fonction = 'fonction';
     this._habilitations = {
       'lecture': this._créerHabilitation(),

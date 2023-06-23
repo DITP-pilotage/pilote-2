@@ -91,11 +91,21 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       set({ territoiresComparés });
     },
 
-    récupérerDépartementsAssociésÀLaRégion: (codeInsee: CodeInsee, maille: MailleInterne) => {
+    récupérerCodesInseeDépartementsAssociésÀLaRégion: (codeInsee: CodeInsee, maille: MailleInterne) => {
       if (maille === 'départementale') return [];
       return get().départements.filter(département =>
         département.codeParent === (get().régions.find(région => région.codeInsee === codeInsee))?.code,
       ).map(département => département.codeInsee);
+    },
+
+    récupérerCodesDépartementsAssociésÀLaRégion: (code: string) => {
+      return get().départements.filter(département =>
+        département.codeParent === (get().régions.find(région => région.code === code))?.code,
+      ).map(département => département.code);
+    },
+    
+    récupérerTousLesCodesTerritoires: () => {
+      return [...get().départements.map(d => d.code), ...get().régions.map(r => r.code), 'NAT-FR'];
     },
   },
 }));

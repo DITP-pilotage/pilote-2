@@ -1,6 +1,6 @@
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { formaterDateHeure, formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
-import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { IndicateurPourExport } from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import configuration from '@/server/infrastructure/Configuration';
@@ -32,7 +32,7 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     private readonly _config = configuration,
   ) {}
 
-  public async* run(habilitation: Habilitation, profil: Profil): AsyncGenerator<string[][]> {
+  public async* run(habilitation: Habilitation, profil: ProfilCode): AsyncGenerator<string[][]> {
     const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom(habilitation);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
@@ -46,7 +46,7 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     }
   }
 
-  private masquerIndicateurPourProfilDROM(profil: Profil, indicateur : IndicateurPourExport) {
+  private masquerIndicateurPourProfilDROM(profil: ProfilCode, indicateur : IndicateurPourExport) {
     return profil == 'DROM' && !indicateur.périmètreIds.includes('PER-018') && indicateur.maille === 'NAT';
   }
 

@@ -1,6 +1,8 @@
+import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+
 export type Profil = {
   code: string
-  nom: string
+  nom: ProfilCode
   chantiers: {
     lecture: {
       tous: boolean

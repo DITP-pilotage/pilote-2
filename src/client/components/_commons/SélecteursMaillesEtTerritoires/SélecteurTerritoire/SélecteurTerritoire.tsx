@@ -2,9 +2,9 @@ import { useSession } from 'next-auth/react';
 import Sélecteur from '@/client/components/_commons/Sélecteur/Sélecteur';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, territoiresAccessiblesEnLectureStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 
-const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerritoire[], profil: Profil | undefined) => {
+const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerritoire[], profil: ProfilCode | undefined) => {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
 
   const territoiresDisponibles = territoiresAccessiblesEnLecture.filter(territoire => territoire.maille === mailleSélectionnée);

@@ -11,7 +11,7 @@ import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilita
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
-import { Profil, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -32,7 +32,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     this.prisma = prisma;
   }
 
-  async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: Profil): Promise<ChantierPrisma[]> {
+  async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<ChantierPrisma[]> {
     const h = new Habilitation(habilitations);
     const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
 
@@ -91,7 +91,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiers.map(c => c.id);
   }
 
-  async récupérerLesEntréesDeTousLesChantiersHabilités(habilitation: Habilitation, profil: Profil): Promise<ChantierPrisma[]> {
+  async récupérerLesEntréesDeTousLesChantiersHabilités(habilitation: Habilitation, profil: ProfilCode): Promise<ChantierPrisma[]> {
 
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
 

@@ -1,52 +1,37 @@
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 import { Controller, useFormContext } from 'react-hook-form';
-import { useCallback, useEffect, useState } from 'react';
 import InputAvecLabel from '@/components/_commons/InputAvecLabel/InputAvecLabel';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import SaisieDesInformationsUtilisateurProps
-  from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur.interface';
-import useSaisieDesInformationsUtilisateur
-  from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
+import SaisieDesInformationsUtilisateurProps from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur.interface';
+import useSaisieDesInformationsUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 import Titre from '@/components/_commons/Titre/Titre';
-
 import { UtilisateurFormInputs } from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
 import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
-import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
-import { HabilitationsÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
 export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesInformationsUtilisateurProps) {
-  const { listeProfils } = useSaisieDesInformationsUtilisateur(profils);
   const { register, watch, formState: { errors }, control, setValue } = useFormContext<UtilisateurFormInputs>();
-  const [habilitationsParDéfaut, setHabilitationsParDéfaut] = useState<HabilitationsÀCréerOuMettreÀJour>({
-    lecture: {
-      chantiers: [],
-      territoires: [],
-      périmètres: [],
-    },
-    'saisie.commentaire': {
-      chantiers: [],
-      territoires: [],
-      périmètres: [],
-    },
-    'saisie.indicateur': {
-      chantiers: [],
-      territoires: [],
-      périmètres: [],
-    },
-  });
-
   const watchProfil = watch('profil');
+  const { récupérerCodesDépartementsAssociésÀLaRégion } = actionsTerritoiresStore();
 
-  const déterminerLesTerritoiresSélectionnésParDéfaut = useCallback((profil: Profil) => {
-    if (profil === 'DITP_ADMIN') {
-      setHabilitationsParDéfaut(h => ({ ...h, lecture: { territoires: ['NAT-FR'], chantiers: [], périmètres: [] } }));
-    }
-  }, []);
+  const { 
+    listeProfils,
+    habilitationsParDéfaut,
+    accèsAuChampsLectureTerritoire,
+    maillesÀAfficher,
+  } = useSaisieDesInformationsUtilisateur(profils, watchProfil);
 
-  useEffect(() => {
-    déterminerLesTerritoiresSélectionnésParDéfaut(watchProfil);
-  }, [déterminerLesTerritoiresSélectionnésParDéfaut, watchProfil]);
+  const handleChangementValeursSélectionnées = (valeursSélectionnées: string[]) => {
+    let nouvellesValeurs = valeursSélectionnées;
+    valeursSélectionnées.forEach(codeTerritoireSélectionné => {
+      if (codeTerritoireSélectionné.startsWith('REG')) {
+        const départements = récupérerCodesDépartementsAssociésÀLaRégion(codeTerritoireSélectionné);
+        nouvellesValeurs = [...new Set([...nouvellesValeurs, ...départements])];
+      }
+    });
+    setValue('habilitations.lecture.territoires', nouvellesValeurs);
+  };
 
   return (
     <>
@@ -108,17 +93,20 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
       <p className="fr-text--xs texte-gris fr-mb-4w">
         Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
       </p>
-      <Controller
-        control={control}
-        name="habilitations.lecture.territoires"
-        render={() => (
-          <MultiSelectTerritoire
-            changementValeursSélectionnéesCallback={(valeursSélectionnées: string[]) => setValue('habilitations.lecture.territoires', valeursSélectionnées)}
-            territoiresCodesSélectionnésParDéfaut={habilitationsParDéfaut.lecture.territoires}
-          />
-        )}
-        rules={{ required: true }}
-      />
+      <div className={accèsAuChampsLectureTerritoire ? '' : 'fr-hidden'}>
+        <Controller
+          control={control}
+          name="habilitations.lecture.territoires"
+          render={() => (
+            <MultiSelectTerritoire
+              changementValeursSélectionnéesCallback={handleChangementValeursSélectionnées}
+              mailleÀAfficher={maillesÀAfficher}
+              territoiresCodesSélectionnésParDéfaut={habilitationsParDéfaut.lecture.territoires}
+            />
+          )}
+          rules={{ required: true }}
+        />
+      </div>
       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
         <SubmitBouton
           className='fr-btn--icon-right fr-icon-arrow-right-line'

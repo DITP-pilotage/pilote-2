@@ -3,7 +3,12 @@ import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import MultiSelectProps from './MultiSelect.interface';
 
-export default function useMultiSelect(optionsGroupées: MultiSelectProps['optionsGroupées'], suffixeLibellé: string, changementValeursSélectionnéesCallback: MultiSelectProps['changementValeursSélectionnéesCallback'], valeursSélectionnéesParDéfaut?: string[]) {
+export default function useMultiSelect(
+  optionsGroupées: MultiSelectProps['optionsGroupées'], 
+  suffixeLibellé: string, 
+  changementValeursSélectionnéesCallback: MultiSelectProps['changementValeursSélectionnéesCallback'], 
+  valeursSélectionnéesParDéfaut?: string[],
+) {
   const uniqueId = useId();
   const { buttonProps, isOpen } = useDropdownMenu(3);
   const [valeursSélectionnées, setValeursSélectionnées] = useState<Set<string>>(new Set(valeursSélectionnéesParDéfaut));
@@ -51,7 +56,7 @@ export default function useMultiSelect(optionsGroupées: MultiSelectProps['optio
 
   const determinerLibellé = () => {
     if (valeursSélectionnées.size === 0)
-      return 'Aucun';
+      return `Aucun ${suffixeLibellé}`;
     if (valeursSélectionnées.size === compterNombreDOptions())
       return 'Tous';
     return `${valeursSélectionnées.size} ${suffixeLibellé}`;
@@ -84,6 +89,11 @@ export default function useMultiSelect(optionsGroupées: MultiSelectProps['optio
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recherche]);
+
+  useEffect(() => {
+    trierLesOptions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [optionsGroupées]);
 
   return {
     mettreÀJourLesValeursSélectionnées,

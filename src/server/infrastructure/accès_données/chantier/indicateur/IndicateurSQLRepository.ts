@@ -15,7 +15,7 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import { IndicateurPourExport } from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 import { parseDétailsIndicateur } from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
-import { Profil, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 class ErreurIndicateurNonTrouvé extends Error {
   constructor(idIndicateur: string) {
@@ -83,7 +83,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return indicateur!.chantier_id;
   }
 
-  async récupérerDétailsParMailles(id: string, habilitations: Habilitations, profil: Profil): Promise<DétailsIndicateurMailles> {
+  async récupérerDétailsParMailles(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<DétailsIndicateurMailles> {
     const h = new Habilitation(habilitations);
     const chantiersLecture = h.récupérerListeChantiersIdsAccessiblesEnLecture();
 

@@ -1,7 +1,7 @@
 import { Options, parse } from 'csv-parse/sync';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
-import { Profil, UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode, UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ScopeChantiers } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { CsvRecord } from './UtilisateurCSVParseur.interface';
 
@@ -68,7 +68,7 @@ export default class UtilisateurCSVParseur {
       email: csvRecord[this._colonnes.email].toLowerCase(),
       nom: csvRecord[this._colonnes.nom].toLowerCase(),
       prénom: csvRecord[this._colonnes.prénom].toLowerCase(),
-      profil: csvRecord[this._colonnes.profil].toUpperCase() as Profil,
+      profil: csvRecord[this._colonnes.profil].toUpperCase() as ProfilCode,
       fonction: null,
       habilitations: {
         lecture: this._générerUneHabilitation(),

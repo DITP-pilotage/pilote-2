@@ -1,5 +1,5 @@
 import { PrismaClient, habilitation, profil, utilisateur, chantier, territoire, projet_structurant, perimetre } from '@prisma/client';
-import Utilisateur, { Profil, UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
+import Utilisateur, { ProfilCode, UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import {
@@ -300,7 +300,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       nom: utilisateurBrut.nom || 'Inconnu',
       prénom: utilisateurBrut.prenom || 'Inconnu',
       email: utilisateurBrut.email,
-      profil: utilisateurBrut.profilCode as Profil,
+      profil: utilisateurBrut.profilCode as ProfilCode,
       dateModification: utilisateurBrut.date_modification.toISOString(),
       auteurModification: utilisateurBrut.auteur_modification,
       fonction: utilisateurBrut.fonction,
