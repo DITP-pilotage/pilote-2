@@ -24,7 +24,16 @@ SELECT
         LIMIT 1
     )) AS valeur_initiale,
     pivot.valeur_actuelle,
-    valeurs_cibles_annuelles.valeur AS valeur_cible_annuelle,
+    COALESCE(valeur_cible,
+                (SELECT valeur_cible
+                 FROM marts.pivot_faits_indicateur_toutes_mailles AS pivot_premiere_prochaine_val_cible
+                 WHERE pivot_premiere_prochaine_val_cible.indicateur_id = pivot.indicateur_id
+                   AND pivot_premiere_prochaine_val_cible.zone_id = pivot.zone_id
+                   AND pivot_premiere_prochaine_val_cible.date_releve > pivot.date_releve
+                   AND pivot_premiere_prochaine_val_cible.valeur_cible IS NOT NULL
+                 ORDER BY pivot_premiere_prochaine_val_cible.date_releve
+                 LIMIT 1)
+               ) as valeur_cible_annuelle,
     (
         SELECT pivot_pour_derniere_valeur_cible_non_nulle.valeur_cible
         FROM {{ ref('pivot_faits_indicateur_toutes_mailles')}} pivot_pour_derniere_valeur_cible_non_nulle

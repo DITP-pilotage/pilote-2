@@ -35,7 +35,7 @@ join_valeur_initiale_valeur_actuelle as (
         COALESCE(pivot_valeur_initiale.zone_id, pivot_valeur_actuelle.zone_id) as zone_id,
         COALESCE(pivot_valeur_initiale.date_releve, pivot_valeur_actuelle.date_releve) as date_releve,
         pivot_valeur_initiale.valeur_initiale,
-        pivot_valeur_actuelle.valeur_actuelle as valeur_actuelle
+        pivot_valeur_actuelle.valeur_actuelle
     FROM pivot_valeur_initiale FULL JOIN pivot_valeur_actuelle
         ON pivot_valeur_initiale.indicateur_id = pivot_valeur_actuelle.indicateur_id
                AND pivot_valeur_initiale.zone_id = pivot_valeur_actuelle.zone_id
