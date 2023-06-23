@@ -71,3 +71,4 @@ const useFiltresStore = create<FiltresStore>((set, get) => ({
 
 export const actions = () => useFiltresStore(étatActuel => étatActuel.actions);
 export const filtresActifs = () => useFiltresStore(étatActuel => étatActuel.filtresActifs);
+export const désactiverUnFiltreFn = useFiltresStore.getState().actions.désactiverUnFiltre;
