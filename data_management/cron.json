@@ -1,19 +1,13 @@
 {
   "jobs": [
     {
-      "command": "15 * * * * bash scripts/dump_dfakto_chantier.sh"
+      "command": "15 */12 * * * bash scripts/dump_dfakto.sh && bash scripts/fill_tables_ppg_metadata.sh"
     },
     {
-      "command": "25 * * * * bash scripts/dump_dfakto_projet_structurant.sh"
+      "command": "25 */12 * * * bash scripts/fill_tables_staging.sh"
     },
     {
-      "command": "35 * * * * bash scripts/fill_tables_ppg_metadata.sh"
-    },
-    {
-      "command": "45 * * * * bash scripts/fill_tables_staging.sh"
-    },
-    {
-      "command": "55 * * * * bash scripts/fill_tables_public.sh"
+      "command": "35 */12 * * * bash scripts/fill_tables_public.sh"
     }
   ]
 }
