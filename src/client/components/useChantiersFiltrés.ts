@@ -1,8 +1,11 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
+import {
+  filtresActifs as filtresActifsStore,
+  désactiverUnFiltreFn,
+} from '@/stores/useFiltresStore/useFiltresStore';
 import Alerte from '@/server/domain/alerte/Alerte';
 
 export default function useChantiersFiltrés(chantiers: Chantier[]) {
@@ -56,6 +59,13 @@ export default function useChantiersFiltrés(chantiers: Chantier[]) {
     }
     return résultat;
   }, [chantiersFiltrésSansFiltreAlerte, filtresActifs.filtresAlerte, territoireSélectionné]);
+
+  useEffect(() => {
+    if (territoireSélectionné?.maille === 'nationale') {
+      désactiverUnFiltreFn('estEnAlerteÉcart', 'filtresAlerte');
+    }
+  }, [territoireSélectionné?.maille]);
+
 
   return {
     chantiersFiltrésSansFiltreAlerte,
