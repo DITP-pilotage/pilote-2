@@ -3,7 +3,7 @@ SELECT
     {{ dbt_utils.surrogate_key(['data_financials_ps.projet_structurant_code']) }} as id,
     data_financials_ps.projet_structurant_code as code,
     data_financials_ps.projet_structurant_nom as nom,
-    fact_progress_ps.avancement as taux_avancement,
+    COALESCE(fact_progress_ps.avancement_borne, fact_progress_ps.avancement) as taux_avancement,
     data_financials_ps.taux_avancement_date_de_mise_a_jour as date_taux_avancement,
     territoire.code as territoire_code,
     ARRAY(
