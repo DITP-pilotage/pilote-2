@@ -12,6 +12,7 @@ import { Météo } from '@/server/domain/météo/Météo.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
 import RécupérerIconesMinistèresGroupéesParProjets from './RécupérerIconesMinistèresGroupéesParProjets';
 
 export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
@@ -48,15 +49,19 @@ export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
   }
   
 
-  async run(habilitations: Habilitations): Promise<ProjetStructurantVueDEnsemble[]> {
+  async run(habilitations: Habilitations, profil: Profil): Promise<ProjetStructurantVueDEnsemble[]> {
     const habilitation = new Habilitation(habilitations);
     const projetsStructurantsIdsAccessiblesEnLecture = habilitation.récupérerListeProjetsStructurantsIdsAccessiblesEnLecture();
     
     const projetsStructurants = await this.projetStructurantrepository.récupérerListe();
-    const projetsStructurantsAccessibles = projetsStructurants.filter(ps => projetsStructurantsIdsAccessiblesEnLecture.includes(ps.id));
+    let projetsStructurantsAccessibles = projetsStructurants.filter(ps => projetsStructurantsIdsAccessiblesEnLecture.includes(ps.id));
     const territoires = await this.territoireRepository.récupérerListe(projetsStructurantsAccessibles.map(projet => projet.territoireCode));
     const météos = await this.synthèseDesRésultatsRepository.récupérerToutesLesMétéosLesPlusRécentes();
     const iconesGroupéesParProjets = await new RécupérerIconesMinistèresGroupéesParProjets().run(projetsStructurants);    
+
+    if (profil === 'DROM') {
+      projetsStructurantsAccessibles = projetsStructurantsAccessibles.filter(ps => ps.périmètresIds.includes('PER-018'));
+    }
 
     return this.construireListeProjetsStructurants(projetsStructurantsAccessibles, territoires, météos, iconesGroupéesParProjets);
   }

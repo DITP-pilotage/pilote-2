@@ -46,7 +46,7 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
     return { props: {} };
 
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase().run(session.habilitations, session.profil);
-  const projetsStructurants: ProjetStructurantVueDEnsemble[] = await new RécupérerListeProjetsStructurantsVueDEnsembleUseCase().run(session.habilitations);
+  const projetsStructurants: ProjetStructurantVueDEnsemble[] = await new RécupérerListeProjetsStructurantsVueDEnsembleUseCase().run(session.habilitations, session.profil);
 
   let axes: Axe[] = [];
   let ppgs: Ppg[] = [];
