@@ -53,7 +53,7 @@ const FiltresMinistèresStyled = styled.div`
     }
 
     :focus {
-      outline-color: var(--warning-425-625);
+      outline-color: white;
     }
   }
 
