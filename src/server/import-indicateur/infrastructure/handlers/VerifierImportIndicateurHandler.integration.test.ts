@@ -25,7 +25,6 @@ jest.mock('@/server/import-indicateur/infrastructure/adapters/FichierService.ts'
   supprimerLeFichier: () => 'fichierSupprimé',
 }));
 
-
 const DONNEE_DATE_1 = '2023-12-30';
 const DONNEE_DATE_2 = '31/12/2023';
 const BASE_URL_VALIDATA = 'https://api.validata.etalab.studio';
@@ -273,5 +272,85 @@ describe('VerifierImportIndicateurHandler', () => {
         },
       ],
     });
+  });
+
+  it('Quand le fichier envoyé est incorrect, doit sauvegarder les erreurs du fichier', async () => {
+    // GIVEN
+    const report = new ReportValidataBuilder()
+      .avecValid(false)
+      .avecTasks(
+        new ReportTaskBuilder()
+          .avecErrors(
+            new ReportErrorTaskBuilder()
+              .avecCell('cellule 1')
+              .avecName('nom 1')
+              .avecFieldName('nom du champ 1')
+              .avecFieldPosition(1)
+              .avecMessage('message 1')
+              .avecRowNumber(1)
+              .avecRowPosition(1)
+              .build(),
+            new ReportErrorTaskBuilder()
+              .avecCell('cellule 2')
+              .avecName('nom 2')
+              .avecFieldName('nom du champ 2')
+              .avecFieldPosition(2)
+              .avecMessage('message 2')
+              .avecRowNumber(2)
+              .avecRowPosition(2)
+              .build(),
+          ).avecResource(
+            new ReportResourceTaskBuilder()
+              .avecData([
+                ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur'],
+                ['IND-001', 'D001', '30/12/2023', 'vi', '9'],
+                ['IND-001', 'D004', '31/12/2023', 'vc', '3'],
+              ])
+              .build(),
+          )
+          .build(),
+      ).build();
+
+    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
+    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
+
+    nock(BASE_URL_VALIDATA)
+      .post('/validate').reply(200,
+        JSON.stringify({ report }),
+      );
+
+    // WHEN
+    const formData = new FormData();
+    const file = mock<File>();
+    formData.append('file', file);
+
+    const { req, res } = createMocks({
+      method: 'POST',
+      body: formData,
+      cookies: {
+        'next-auth.session-token': await getNextAuthSessionTokenPourUtilisateurEmail('ditp.admin@example.com'),
+      },
+      query: { indicateurId: 'IND-001' },
+    });
+    await handleVerifierFichierImportIndicateur(req, res);
+
+    // THEN
+    expect(res._getStatusCode()).toEqual(200);
+    const listeErreursValidationFichier = await prisma.erreur_validation_fichier.findMany();
+    expect(listeErreursValidationFichier[0].cellule).toEqual('cellule 1');
+    expect(listeErreursValidationFichier[0].nom).toEqual('nom 1');
+    expect(listeErreursValidationFichier[0].message).toEqual('message 1');
+    expect(listeErreursValidationFichier[0].numero_de_ligne).toEqual(1);
+    expect(listeErreursValidationFichier[0].position_de_ligne).toEqual(1);
+    expect(listeErreursValidationFichier[0].nom_du_champ).toEqual('nom du champ 1');
+    expect(listeErreursValidationFichier[0].position_du_champ).toEqual(1);
+
+    expect(listeErreursValidationFichier[1].cellule).toEqual('cellule 2');
+    expect(listeErreursValidationFichier[1].nom).toEqual('nom 2');
+    expect(listeErreursValidationFichier[1].message).toEqual('message 2');
+    expect(listeErreursValidationFichier[1].numero_de_ligne).toEqual(2);
+    expect(listeErreursValidationFichier[1].position_de_ligne).toEqual(2);
+    expect(listeErreursValidationFichier[1].nom_du_champ).toEqual('nom du champ 2');
+    expect(listeErreursValidationFichier[1].position_du_champ).toEqual(2);
   });
 });

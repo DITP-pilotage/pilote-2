@@ -1,6 +1,10 @@
 import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
 
 export class ErreurValidationFichierBuilder {
+  private id: string = '4c92c525-b64e-4a4c-9ae2-1b74fd55d38a';
+  
+  private rapportId: string = 'db08d46d-1231-4cdd-82ac-eeadce68df4d';
+
   private cellule: string = 'IND-12';
 
   private nom: string = 'Indicateur invalide';
@@ -14,6 +18,16 @@ export class ErreurValidationFichierBuilder {
   private nomDuChamp: string = 'indic_id';
 
   private positionDuChamp: number = 0;
+
+  avecId(id: string) {
+    this.id = id;
+    return this;
+  }
+
+  avecRapportId(rapportId: string) {
+    this.rapportId = rapportId;
+    return this;
+  }
 
   avecCellule(cellule: string) {
     this.cellule = cellule;
@@ -52,6 +66,8 @@ export class ErreurValidationFichierBuilder {
 
   build(): ErreurValidationFichier {
     return ErreurValidationFichier.creerErreurValidationFichier({
+      id: this.id,
+      rapportId: this.rapportId,
       cellule: this.cellule,
       nom: this.nom,
       message: this.message,

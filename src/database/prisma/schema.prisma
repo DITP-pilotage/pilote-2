@@ -183,6 +183,21 @@ model mesure_indicateur_temporaire {
   @@schema("public")
 }
 
+model erreur_validation_fichier {
+  id                String                           @id @db.Uuid
+  nom               String
+  cellule           String
+  message           String
+  nom_du_champ      String
+  numero_de_ligne   Int
+  position_de_ligne Int
+  position_du_champ Int
+  rapport_id        String                           @db.Uuid
+  rapport           rapport_import_mesure_indicateur @relation(fields: [rapport_id], references: [id])
+
+  @@schema("public")
+}
+
 model rapport_import_mesure_indicateur {
   id                           String                         @id @db.Uuid
   date_creation                DateTime                       @db.Timestamptz
@@ -190,6 +205,7 @@ model rapport_import_mesure_indicateur {
   est_valide                   Boolean                        @default(false)
   utilisateur                  utilisateur                    @relation(fields: [utilisateurEmail], references: [email])
   mesure_indicateur_temporaire mesure_indicateur_temporaire[]
+  erreur_validation_fichier    erreur_validation_fichier[]
   mesure_indicateur            mesure_indicateur[]
 
   @@schema("public")

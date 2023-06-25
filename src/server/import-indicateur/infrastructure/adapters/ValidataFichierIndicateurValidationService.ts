@@ -138,6 +138,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
       }));
     } else {
       listeErreursValidation = [ErreurValidationFichier.creerErreurValidationFichier({
+        rapportId: rapport.id,
         cellule: 'identifiant_indic',
         nom: 'identifiant_indic',
         message: "L'en-tête identifiant_indic n'est pas présente",
@@ -149,6 +150,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     }
 
     const listeErreursReport = report.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
+      rapportId: rapport.id,
       cellule: taskError.cell,
       nom: taskError.name,
       message: personnaliserValidataMessage(taskError),
