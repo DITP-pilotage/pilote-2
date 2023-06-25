@@ -34,7 +34,7 @@ export default async function handleVerifierFichierImportIndicateur(
 
   const fichier = <File>formData.file;
 
-  const schéma = 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/main/public/schema/sans-contraintes.json';
+  const baseSchemaUrl = 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/main/public/schema/';
   const sessionToken = await getToken({ req: request, secureCookie: configuration.securedEnv, secret: configuration.nextAuthSecret });
 
   assert(sessionToken?.user);
@@ -43,7 +43,7 @@ export default async function handleVerifierFichierImportIndicateur(
     {
       cheminCompletDuFichier: fichier.filepath,
       nomDuFichier: fichier.originalFilename as string,
-      schema: schéma,
+      baseSchemaUrl,
       indicateurId: request.query.indicateurId as string,
       utilisateurAuteurDeLimportEmail: (sessionToken.user as { email: string }).email,
     },
