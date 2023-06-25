@@ -5,7 +5,9 @@ import {
 import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import { ErreurValidationFichierBuilder } from '@/server/import-indicateur/app/builder/ErreurValidationFichier.builder';
-import { MesureIndicateurTemporaireBuilder } from '@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder';
+import {
+  MesureIndicateurTemporaireBuilder,
+} from '@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder';
 import {
   FichierIndicateurValidationService,
 } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
@@ -14,11 +16,16 @@ import { RapportRepository } from '@/server/import-indicateur/domain/ports/Rappo
 import {
   MesureIndicateurTemporaireRepository,
 } from '@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface';
+import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
+import {
+  ErreurValidationFichierRepository,
+} from '@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository';
 
 describe('VerifierFichierIndicateurImporteUseCase', () => {
   let fichierIndicateurValidationService: MockProxy<FichierIndicateurValidationService>;
   let verifierFichierIndicateurImporteUseCase: VerifierFichierIndicateurImporteUseCase;
   let mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
+  let erreurValidationFichierRepository: ErreurValidationFichierRepository;
   let rapportRepository: RapportRepository;
 
   const CHEMIN_COMPLET_DU_FICHIER = 'cheminCompletDuFichier';
@@ -30,10 +37,12 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
   beforeEach(() => {
     fichierIndicateurValidationService = mock<FichierIndicateurValidationService>();
     mesureIndicateurTemporaireRepository = mock<MesureIndicateurTemporaireRepository>();
+    erreurValidationFichierRepository = mock<ErreurValidationFichierRepository>();
     rapportRepository = mock<RapportRepository>();
     verifierFichierIndicateurImporteUseCase = new VerifierFichierIndicateurImporteUseCase({
       fichierIndicateurValidationService,
       mesureIndicateurTemporaireRepository,
+      erreurValidationFichierRepository,
       rapportRepository,
     });
   });
@@ -115,6 +124,75 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     expect(reportFichierData[1].metricDate).toEqual(METRIC_DATE_2);
     expect(reportFichierData[1].metricType).toEqual('vc');
     expect(reportFichierData[1].metricValue).toEqual('14');
+  });
+
+  it('quand le fichier est invalide, doit sauvegarder les erreurs du fichier contenu dans le rapport', async () => {
+    // GIVEN
+    const detailValidationFichier = new DetailValidationFichierBuilder()
+      .avecId('a0c086eb-21e2-4f00-9ca8-4b0fcce133ad')
+      .avecEstValide(false)
+      .avecListeErreursValidation(
+        new ErreurValidationFichierBuilder()
+          .avecRapportId('a0c086eb-21e2-4f00-9ca8-4b0fcce133ad')
+          .avecCellule('None')
+          .avecMessage("Un indicateur ne peut etre vide. C'est le cas à la ligne 2")
+          .avecNom('Cellule vide')
+          .avecNomDuChamp('indic_id')
+          .avecNumeroDeLigne(1)
+          .avecPositionDeLigne(1)
+          .avecPositionDuChamp(1)
+          .build(),
+        new ErreurValidationFichierBuilder()
+          .avecRapportId('a0c086eb-21e2-4f00-9ca8-4b0fcce133ad')
+          .avecCellule('IND-02')
+          .avecMessage('Indicateur invalide')
+          .avecNom('METRIC_INVALIDE')
+          .avecNomDuChamp('indic_id')
+          .avecNumeroDeLigne(2)
+          .avecPositionDeLigne(2)
+          .avecPositionDuChamp(2)
+          .build())
+      .build();
+    const payload = {
+      cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+      nomDuFichier: NOM_DU_FICHIER,
+      schema: SCHEMA,
+      indicateurId: 'IND-001',
+      utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
+    };
+
+    fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
+
+    const indicateurCaptor = captor<ErreurValidationFichier[]>();
+
+    // WHEN
+    await verifierFichierIndicateurImporteUseCase.execute(payload);
+
+    // THEN
+    expect(erreurValidationFichierRepository.sauvegarder).toHaveBeenNthCalledWith(1, indicateurCaptor);
+
+    const reportFichierData = indicateurCaptor.value;
+    expect(reportFichierData).toHaveLength(2);
+
+    expect(reportFichierData[0].id).toBeDefined();
+    expect(reportFichierData[0].rapportId).toEqual('a0c086eb-21e2-4f00-9ca8-4b0fcce133ad');
+    expect(reportFichierData[0].nom).toEqual('Cellule vide');
+    expect(reportFichierData[0].cellule).toEqual('None');
+    expect(reportFichierData[0].message).toEqual("Un indicateur ne peut etre vide. C'est le cas à la ligne 2");
+    expect(reportFichierData[0].nomDuChamp).toEqual('indic_id');
+    expect(reportFichierData[0].numeroDeLigne).toEqual(1);
+    expect(reportFichierData[0].positionDeLigne).toEqual(1);
+    expect(reportFichierData[0].positionDuChamp).toEqual(1);
+
+    expect(reportFichierData[1].id).toBeDefined();
+    expect(reportFichierData[1].rapportId).toEqual('a0c086eb-21e2-4f00-9ca8-4b0fcce133ad');
+    expect(reportFichierData[1].nom).toEqual('METRIC_INVALIDE');
+    expect(reportFichierData[1].cellule).toEqual('IND-02');
+    expect(reportFichierData[1].message).toEqual('Indicateur invalide');
+    expect(reportFichierData[1].nomDuChamp).toEqual('indic_id');
+    expect(reportFichierData[1].numeroDeLigne).toEqual(2);
+    expect(reportFichierData[1].positionDeLigne).toEqual(2);
+    expect(reportFichierData[1].positionDuChamp).toEqual(2);
   });
 
   describe('quand le fichier est invalide', () => {

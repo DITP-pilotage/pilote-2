@@ -66,12 +66,19 @@ import SynthèseDesRésultatsProjetStructurantRepository
 import ObjectifSQLRepository from '@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository';
 import DécisionStratégiqueSQLRepository
   from '@/server/infrastructure/accès_données/chantier/décisionStratégique/DécisionStratégiqueSQLRepository';
-import IndicateurProjetStructurantRepository from '@/server/domain/indicateur/IndicateurProjetStructurantRepository.interface';
+import IndicateurProjetStructurantRepository
+  from '@/server/domain/indicateur/IndicateurProjetStructurantRepository.interface';
 import ProfilSQLRepository from '@/server/infrastructure/accès_données/profil/ProfilSQLRepository';
 import ProfilRepository from '@/server/domain/profil/ProfilRepository';
 import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
 import ChantierDatesDeMàjSQLRepository
   from '@/server/infrastructure/accès_données/chantier/ChantierDatesDeMàjSQLRepository';
+import {
+  ErreurValidationFichierRepository,
+} from '@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository';
+import {
+  PrismaErreurValidationFichierRepository,
+} from '@/server/import-indicateur/infrastructure/adapters/PrismaErreurValidationFichierRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
@@ -80,7 +87,8 @@ import ObjectifProjetStructurantSQLRepository
 import CommentaireProjetStructurantSQLRepository
   from './accès_données/projetStructurant/commentaire/CommentaireProjetStructurantSQLRepository';
 import PérimètreMinistérielSQLRepository from './accès_données/périmètreMinistériel/PérimètreMinistérielSQLRepository';
-import IndicateurProjetStructurantSQLRepository from './accès_données/projetStructurant/indicateur/IndicateurSQLRepository';
+import IndicateurProjetStructurantSQLRepository
+  from './accès_données/projetStructurant/indicateur/IndicateurSQLRepository';
 
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
@@ -112,7 +120,7 @@ class Dependencies {
   private readonly _territoireRepository: TerritoireRepository;
 
   private readonly _projetStructurantRepository: ProjetStructurantRepository;
-  
+
   private readonly _profilRepository: ProfilRepository;
 
   private readonly _objectifProjetStructurantRepository: ObjectifProjetStructurantRepository;
@@ -120,6 +128,8 @@ class Dependencies {
   private readonly _rapportRepository: RapportRepository;
 
   private readonly _mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
+
+  private readonly _erreurValidationFichierRepository: ErreurValidationFichierRepository;
 
   private readonly _mesureIndicateurRepository: MesureIndicateurRepository;
 
@@ -130,7 +140,7 @@ class Dependencies {
   private readonly _synthèseDesRésultatsProjetStructurantRepository: SynthèseDesRésultatsProjetStructurantRepository;
 
   private readonly _indicateurProjetStructurantRepository: IndicateurProjetStructurantRepository;
-  
+
   private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
 
   constructor() {
@@ -152,6 +162,7 @@ class Dependencies {
     this._objectifProjetStructurantRepository = new ObjectifProjetStructurantSQLRepository(prisma);
     this._rapportRepository = new PrismaRapportRepository(prisma);
     this._mesureIndicateurTemporaireRepository = new PrismaMesureIndicateurTemporaireRepository(prisma);
+    this._erreurValidationFichierRepository = new PrismaErreurValidationFichierRepository(prisma);
     this._mesureIndicateurRepository = new PrismaMesureIndicateurRepository(prisma);
     this._commentaireProjetStructurantRepository = new CommentaireProjetStructurantSQLRepository(prisma);
     this._périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository(prisma);
@@ -171,6 +182,7 @@ class Dependencies {
       fichierIndicateurValidationService,
       rapportRepository: this._rapportRepository,
       mesureIndicateurTemporaireRepository: this._mesureIndicateurTemporaireRepository,
+      erreurValidationFichierRepository: this._erreurValidationFichierRepository,
     });
   }
 

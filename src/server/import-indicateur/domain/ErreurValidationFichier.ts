@@ -1,4 +1,10 @@
+import { randomUUID } from 'node:crypto';
+
 export class ErreurValidationFichier {
+  private readonly _id: string;
+
+  private readonly _rapportId: string;
+
   private readonly _cellule: string;
 
   private readonly _nom: string;
@@ -13,7 +19,19 @@ export class ErreurValidationFichier {
 
   private readonly _positionDuChamp: number;
 
-  private constructor({ cellule, nom, message, numeroDeLigne, positionDeLigne, nomDuChamp, positionDuChamp }: {
+  private constructor({
+    id,
+    rapportId,
+    cellule,
+    nom,
+    message,
+    numeroDeLigne,
+    positionDeLigne,
+    nomDuChamp,
+    positionDuChamp,
+  }: {
+    id: string,
+    rapportId: string,
     cellule: string,
     nom: string,
     message: string,
@@ -22,6 +40,8 @@ export class ErreurValidationFichier {
     nomDuChamp: string,
     positionDuChamp: number
   }) {
+    this._id = id;
+    this._rapportId = rapportId;
     this._cellule = cellule;
     this._nom = nom;
     this._message = message;
@@ -29,6 +49,14 @@ export class ErreurValidationFichier {
     this._positionDeLigne = positionDeLigne;
     this._nomDuChamp = nomDuChamp;
     this._positionDuChamp = positionDuChamp;
+  }
+
+  get id(): string {
+    return this._id;
+  }
+
+  get rapportId(): string {
+    return this._rapportId;
   }
 
   get cellule() {
@@ -60,6 +88,8 @@ export class ErreurValidationFichier {
   }
 
   static creerErreurValidationFichier({
+    id,
+    rapportId,
     cellule,
     nom,
     message,
@@ -68,6 +98,8 @@ export class ErreurValidationFichier {
     nomDuChamp,
     positionDuChamp,
   }: {
+    id?: string,
+    rapportId: string,
     cellule: string,
     nom: string,
     message: string,
@@ -77,6 +109,8 @@ export class ErreurValidationFichier {
     positionDuChamp: number
   }) {
     return new ErreurValidationFichier({
+      id: id || randomUUID(),
+      rapportId,
       cellule,
       nom,
       message,

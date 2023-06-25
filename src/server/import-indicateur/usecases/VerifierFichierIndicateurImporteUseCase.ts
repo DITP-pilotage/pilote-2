@@ -10,17 +10,22 @@ import { ErreurValidationFichier } from '@/server/import-indicateur/domain/Erreu
 import { RapportRepository } from '@/server/import-indicateur/domain/ports/RapportRepository';
 import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
 import { ACCEPTED_DATE_FORMAT } from '@/server/import-indicateur/domain/enum/ACCEPTED_DATE_FORMAT';
+import {
+  ErreurValidationFichierRepository,
+} from '@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository';
 
 interface Dependencies {
   fichierIndicateurValidationService: FichierIndicateurValidationService
   mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository
+  erreurValidationFichierRepository: ErreurValidationFichierRepository
   rapportRepository: RapportRepository;
 }
 
-const correspondALIndicateurId = (mesureIndicateurTemporaire: MesureIndicateurTemporaire, indicateurId: string, listeErreursValidation: ErreurValidationFichier[], index: number) => {
+const correspondALIndicateurId = (mesureIndicateurTemporaire: MesureIndicateurTemporaire, indicateurId: string, rapportId: string, listeErreursValidation: ErreurValidationFichier[], index: number) => {
   if (mesureIndicateurTemporaire.indicId?.localeCompare(indicateurId)) {
     listeErreursValidation.push(
       ErreurValidationFichier.creerErreurValidationFichier({
+        rapportId: rapportId,
         cellule: mesureIndicateurTemporaire.indicId,
         nom: 'Indicateur invalide',
         message: `L'indicateur ${mesureIndicateurTemporaire.indicId} ne correpond pas à l'indicateur choisis (${indicateurId})`,
@@ -53,16 +58,20 @@ export class VerifierFichierIndicateurImporteUseCase {
 
   private mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
 
+  private erreurValidationFichierRepository: ErreurValidationFichierRepository;
+
   private rapportRepository: RapportRepository;
 
 
   constructor({
     fichierIndicateurValidationService,
     mesureIndicateurTemporaireRepository,
+    erreurValidationFichierRepository,
     rapportRepository,
   }: Dependencies) {
     this.fichierIndicateurValidationService = fichierIndicateurValidationService;
     this.mesureIndicateurTemporaireRepository = mesureIndicateurTemporaireRepository;
+    this.erreurValidationFichierRepository = erreurValidationFichierRepository;
     this.rapportRepository = rapportRepository;
   }
 
@@ -90,25 +99,22 @@ export class VerifierFichierIndicateurImporteUseCase {
     const listeErreursValidation: ErreurValidationFichier[] = report.listeErreursValidation;
 
     report.listeMesuresIndicateurTemporaire.forEach((mesureIndicateurTemporaire, index) => {
-      correspondALIndicateurId(mesureIndicateurTemporaire, indicateurId, listeErreursValidation, index);
+      correspondALIndicateurId(mesureIndicateurTemporaire, indicateurId, report.id, listeErreursValidation, index);
       verifierFormatDateValeur(mesureIndicateurTemporaire); // déplacer dans le service
       verifierFormatTypeValeur(mesureIndicateurTemporaire); // déplacer dans le service
       verifierFormatZoneId(mesureIndicateurTemporaire); // déplacer dans le service
     });
 
-    if (listeErreursValidation.length > 0) {
+    if (report.estValide && report.listeErreursValidation.length === 0) {
+      await this.mesureIndicateurTemporaireRepository.sauvegarder(report.listeMesuresIndicateurTemporaire);
+      return report;
+    } else {
+      await this.erreurValidationFichierRepository.sauvegarder(report.listeErreursValidation);
       return DetailValidationFichier.creerDetailValidationFichier({
         estValide: false,
         listeErreursValidation,
         utilisateurEmail: utilisateurAuteurDeLimportEmail,
       });
     }
-
-    if (report.estValide) {
-      await this.mesureIndicateurTemporaireRepository.sauvegarder(report.listeMesuresIndicateurTemporaire);
-    }
-
-
-    return report;
   }
 }

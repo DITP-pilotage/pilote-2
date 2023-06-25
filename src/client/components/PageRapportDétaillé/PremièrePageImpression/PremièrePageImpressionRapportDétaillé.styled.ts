@@ -9,9 +9,9 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
     text-align: center;
   }
 
- @media print {
-   display: block;
-    
+  @media print {
+    display: block;
+
     main {
       background: var(--grey-1000-50);
 
@@ -19,12 +19,11 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
         max-width: 90em;
       }
     }
-    
+
     .fr-header {
       display: block;
       filter: none;
     }
-
 
 
     .date {
@@ -32,6 +31,6 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
       bottom: 0;
     }
   }
-  `;
+`;
 
 export default PremièrePageImpressionRapportDétailléStyled;
