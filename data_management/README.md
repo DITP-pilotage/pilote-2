@@ -103,6 +103,16 @@ pipenv shell
 dbt deps --project-dir data_factory
 ```
 
+
+
+## Hypothèses actuelles pour les transformations
+
+- Les données sources sont importées dans le schéma `raw_data` par l'étape précédente (job d'import) ;
+- Le schéma destination est le schéma utilisé par la Webapp. À date, ce schéma est le schéma par défaut (`public`) ;
+- DBT écrit et lit dans `raw_data`, le schéma d'import des données ;
+- DBT écrit et lit dans `marts`, le schéma de la data factory ;
+- DBT écrit dans `public`, le schéma de destination qui aliment l'application Pilote 2.
+
 ## Usage
 
 ### Import des données
@@ -166,27 +176,66 @@ Celle-ci va réaliser des vues sur les tables importés.
 bash scripts/fill_tables_staging.sh
 ```
 
-### Transformations
+### Data factory
 
-Les transformations sont effectuées par dbt, qui est déjà installé par le setup initial. 
-Les transformations sont décrites dans le répertoire
-`data_management/data_factory`
+WARNING : cette étape n'est pas encore automatisée en env de DEV et PROD car il n'existe pas encore d'écran associé dans pilote.
+Il manque également le paramétrage des indicateurs afin de pouvoir l'exécuter.
 
-Vérifiez que les valeurs de votre `data_management/.env` correspondent bien à la base que
-vous souhaitez modifier (voir les sections sur l'import pour un exemple en local et un exemple en live).
+Les transformations des mesures des indicateurs en taux d'avancement, ou datafactory, sont représentés par les étapes du dossier  
+`models/marts`.
 
-Depuis le répertoire data :
+```
+data_factory/models/
+└── marts
+    ├── 0_faits_indicateur_avec_hypotheses
+    ├── 1_agregation_geographique
+    ├── 2_pivot_faits_indicateur
+    ├── 3_fill_vi_vca_vcg
+    ├── 4_decumul_va
+    ├── 5_calcul_vaca_vacg
+    ├── 6_calcul_ta_indicateur
+    ├── 7_calcul_ta_chantier
+    └── 8_evolution_indicateur
+```
+
+#### Détail des étapes de calcul de la data factory
+
+*0_faits_indicateur_avec_hypotheses* : cette étape permet d'appliquer les hypothèses suivantes aux données des indicateurs :
+
+*1_agregation_geographique* : on commence par découper les calculs des agrégations de manière géographique (départementale, régionale et nationale).
+Cela permet, selon le paramétrage, de prendre les valeurs d'une maille donnée afin d'appliquer l'opération d'agrégation du paramétrage 
+ou bien de sélectionner les données rentrées par l'utilisateur.
+
+*2_pivot_faits_indicateur* : 
+
+*3_fill_vi_vca_vcg* : 
+
+*4_decumul_va* : 
+
+*5_calcul_vaca_vacg* : 
+
+*6_calcul_ta_indicateur* : 
+
+*7_calcul_ta_chantier* : 
+
+*8_evolution_indicateur* : 
+
+
+#### Execution des transformation de la data factory 
+
+Afin d'exécuter les jobs de la data factory il suffit de :
+
+```bash
+bash scripts/fill_tables_marts.sh
+```
+
+### Mise à disposition des données à Pilote 2
+
+Afin de remplir les tables du schéma `public` et ainsi alimenter l'application Pilote 2, il faut exécuter le script suivant en local:
 
 ```bash
 bash scripts/fill_tables_public.sh
 ```
-
-#### Hypothèses actuelles pour les transformations
-
-- Les données sources sont importées dans le schéma `raw_data` par l'étape précédente (job d'import) ;
-- Le schéma destination est le schéma utilisé par la Webapp. À date, ce schéma est le schéma par défaut (`public`) ;
-- DBT lit dans `raw_data`, le schéma d'import des données ;
-- DBT écrit dans `public`, le schéma de destination.
 
 # Schéma des flux de données
 
