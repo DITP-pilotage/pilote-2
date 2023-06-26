@@ -52,7 +52,7 @@ Le client Postgres `psql` est également nécessaire pour les scripts d'import :
 Les projets et pipelines s'appuient sur des métadonnées à récupérer en provenance de plusieurs sources.
 
 Clonez le répertoire PPG_metadata (demande d'accès à celui-ci à la DITP) dans le répertoire `data_management/input_data/private_data`.
-Ce projet est aussi récupérable par token (en le mettant en variable d'environnement) et en executant le script `scripts/fill_tables_ppg_metadata.sh`.
+Ce projet est aussi récupérable par token (en le mettant en variable d'environnement) et en executant le script `scripts/2_fill_tables_ppg_metadata.sh`.
 
 On se retrouve avec une arborescence qui ressemble à cela :
 
@@ -123,13 +123,13 @@ Toujours depuis le répertoire data,
 executer la commande suivante pour remplir les tables de dfakto :
 
 ```bash
-bash scripts/dump_dfakto.sh
+bash scripts/1_dump_dfakto.sh
 ```
 
 Puis pour remplir les tables de ppg_metadata :
 
 ```bash
-bash scripts/fill_tables_ppg_metadata.sh
+bash scripts/2_fill_tables_ppg_metadata.sh
 ```
 
 NB : en dev et en production, les données sont remplis automatiquement par des jobs 
@@ -140,7 +140,7 @@ il faut mettre les fichiers à importer dans le répertoire `input_data/private_
 Puis exécuter le script suivant :
 
 ```bash
-bash scripts/fill_tables_import_massif_commentaires.sh
+bash scripts/3_fill_tables_import_massif_commentaires.sh
 ```
 
 #### Import massif de commentaire vers la base live :
@@ -159,7 +159,7 @@ Modifier les variables de base PG de votre `.env` pour les faire pointer vers vo
 Toujours depuis le répertoire data :
 
 ```bash
-bash scripts/fill_tables_import_massif_commentaires.sh
+bash scripts/3_fill_tables_import_massif_commentaires.sh
 ```
 
 Si vous rencontrez un problème, pensez à supprimer le dossier target généré par DBT dans le dossier `data_factory`.
@@ -173,7 +173,7 @@ Afin d'avoir un nommage cohérent une étape de staging est ajoutée dans le sch
 Celle-ci va réaliser des vues sur les tables importés.
 
 ```bash
-bash scripts/fill_tables_staging.sh
+bash scripts/5_fill_tables_staging.sh
 ```
 
 ### Data factory
@@ -226,7 +226,7 @@ ou bien de sélectionner les données rentrées par l'utilisateur.
 Afin d'exécuter les jobs de la data factory il suffit de :
 
 ```bash
-bash scripts/fill_tables_marts.sh
+bash scripts/6_fill_tables_marts.sh
 ```
 
 ### Mise à disposition des données à Pilote 2
@@ -234,7 +234,7 @@ bash scripts/fill_tables_marts.sh
 Afin de remplir les tables du schéma `public` et ainsi alimenter l'application Pilote 2, il faut exécuter le script suivant en local:
 
 ```bash
-bash scripts/fill_tables_public.sh
+bash scripts/7_fill_tables_public.sh
 ```
 
 # Schéma des flux de données
@@ -245,15 +245,32 @@ L'évolution de ces flux se fera au fur et à mesure de la création et l'évolu
 
 ## Schéma macro des flux
 
+### Pour les chantiers 
 ``` mermaid
 graph LR
 PM(PPG_metadata) --> PG[(Base PG Pilote 2)]
 PT(ImportCommentaires) --> PG[(Base PG Pilote 2)]
-DFAK(Dump Dfakto) --> PG
+DFAK(Dump Dfakto Chantier) --> PG
+PG --> BE(Back-end) --> FE(Front-end)
+```
+
+### Pour les projets structurants 
+``` mermaid
+graph LR
+PM(PPG_metadata) --> PG[(Base PG Pilote 2)]
+DFAK(Dump Dfakto PS) --> PG
 PG --> BE(Back-end) --> FE(Front-end)
 ```
 
 ## Zoom sur la partie ingestion de données
+
+Afin de mieux visualiser le DAG à l'intérieur du projet, nous vous proposons de vous référer à la doc générée par DBT.
+Il est possible d'y avoir accès en executant la commande suivante : 
+
+```bash
+dbt docs generate --project-dir data_factory/  && dbt docs serve --project-dir data_factory/
+```
+
 ### Brique PPG_metdata vers Datawarehouse
 
 Aujourd'hui, le chargement des données se fait manuellement une seule fois
