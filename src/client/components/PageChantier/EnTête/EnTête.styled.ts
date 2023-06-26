@@ -6,10 +6,6 @@ const PageChantierEnTêteStyled = styled.header`
   h1 {
     color: var(--text-title-blue-france);
   }
-  
-  .bouton-impression{
-    border-radius: 4px;
-  }
 `;
 
 export default PageChantierEnTêteStyled;

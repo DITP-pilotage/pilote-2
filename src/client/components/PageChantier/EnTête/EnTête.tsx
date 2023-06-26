@@ -1,5 +1,6 @@
 import '@gouvfr/dsfr/dist/dsfr.min.css';
 import Link from 'next/link';
+import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpression';
 import Titre from '@/components/_commons/Titre/Titre';
 import PageChantierEnTêteProps from './EnTête.interface';
 import PageChantierEnTêteStyled from './EnTête.styled';
@@ -34,19 +35,7 @@ export default function PageChantierEnTête({
           </Link>
       }
       {
-        !!afficheLeBoutonImpression &&
-          <button
-            className='fr-btn fr-btn--secondary fr-mt-3w bouton-impression'
-            onClick={() => window.print()}
-            type='button'
-          >
-            <span
-              aria-hidden="true"
-              className="fr-icon-download-line"
-            />
-            {' '}
-            Imprimer
-          </button>
+        !!afficheLeBoutonImpression && <BoutonImpression />
       }
     </PageChantierEnTêteStyled>
   );
