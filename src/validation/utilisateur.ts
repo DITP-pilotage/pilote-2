@@ -20,7 +20,9 @@ const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
   return { message: ctx.defaultError };
 };
 
+
 z.setErrorMap(customErrorMap);
+
 export const validationInfosBaseUtilisateur = z.object( {
   email: z.string().email().min(1).max(100),
   nom: z.string().min(1).max(100),
@@ -48,3 +50,5 @@ export const validationInfosHabilitationsUtilisateur = z.object({
     }),
   }),
 });
+
+export const codesTerritoiresDROM = ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976'];

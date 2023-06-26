@@ -7,7 +7,7 @@ loadEnvConfig(projectDir);  // ⚠️ À appeler avant nos imports, because Conf
 
 import logger from '@/server/infrastructure/logger';
 import UtilisateurCSVParseur from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur';
-import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/usecase/utilisateur/CréerOuMettreÀJourUnUtilisateurUseCase';
+import CréerOuMettreÀJourDesUtilisateursUseCase from '@/server/usecase/utilisateur/CréerOuMettreÀJourDesUtilisateursUseCase';
 
 /**
  * Exemple de CSV :
@@ -70,7 +70,7 @@ async function main() {
   assert(filename, 'Nom de fichier CSV manquant');
 
   const utilisateurs = new UtilisateurCSVParseur(filename).parse();
-  await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateurs, 'Import CSV');
+  await new CréerOuMettreÀJourDesUtilisateursUseCase().run(utilisateurs, 'Import CSV');
 }
 
 const isMain = eval('require.main === module');

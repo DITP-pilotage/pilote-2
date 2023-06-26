@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 const PremièrePageImpressionRapportDétailléStyled = styled.div`
-  display: none;
+display: none;
   page-break-after: always;
 
   .titre-rapport-détaillé, .sous-titre-rapport-détaillé {

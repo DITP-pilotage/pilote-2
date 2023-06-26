@@ -9,15 +9,15 @@ const MultiSelectStyled = styled.div`
   }
 
   div[role='menu'].visible {
-    display: block;
     position: absolute;
+    z-index: 2;
+    display: block;
     width: 100%;
     max-height: 20rem;
+    padding: 1rem;
     overflow: auto;
-    z-index: 2;
     background: white;
     border: 1px solid grey;
-    padding: 1rem;
   }
 `;
 

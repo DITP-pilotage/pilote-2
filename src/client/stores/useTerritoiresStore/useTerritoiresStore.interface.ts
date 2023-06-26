@@ -7,6 +7,7 @@ export default interface TerritoiresStore {
   mailleSélectionnée: MailleInterne,
   territoireSélectionné: DétailTerritoire | null,
   territoires: DétailTerritoire[]
+  territoiresCodes: string[]
   territoiresAccessiblesEnLecture: DétailTerritoire[]
   territoiresComparés: DétailTerritoire[]
   maillesAccessiblesEnLecture: Maille[],
@@ -20,6 +21,5 @@ export default interface TerritoiresStore {
     modifierTerritoiresComparés: (territoireCode: DétailTerritoire['code']) => void
     récupérerCodesInseeDépartementsAssociésÀLaRégion: (codeInsee: CodeInsee, maille: MailleInterne) => CodeInsee[]
     récupérerCodesDépartementsAssociésÀLaRégion: (code: DétailTerritoire['code']) => DétailTerritoire['code'][]
-    récupérerTousLesCodesTerritoires: () => string[],
   },
 }

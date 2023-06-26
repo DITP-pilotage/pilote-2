@@ -13,6 +13,7 @@ import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerrito
 export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesInformationsUtilisateurProps) {
   const { register, watch, formState: { errors }, control, setValue } = useFormContext<UtilisateurFormInputs>();
   const watchProfil = watch('profil');
+  
   const { récupérerCodesDépartementsAssociésÀLaRégion } = actionsTerritoiresStore();
 
   const { 

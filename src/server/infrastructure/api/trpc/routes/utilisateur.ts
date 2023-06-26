@@ -10,6 +10,6 @@ export const utilisateurRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const auteurModification = ctx.session.user.name ?? '';
-      await new CréerOuMettreÀJourUnUtilisateurUseCase().run([input], auteurModification);
+      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(input, auteurModification);
     }),
 });
