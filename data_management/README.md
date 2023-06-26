@@ -262,7 +262,7 @@ DFAK(Dump Dfakto PS) --> PG
 PG --> BE(Back-end) --> FE(Front-end)
 ```
 
-## Zoom sur la partie ingestion de données
+## Visualisation de l'ensemble du flux
 
 Afin de mieux visualiser le DAG à l'intérieur du projet, nous vous proposons de vous référer à la doc générée par DBT.
 Il est possible d'y avoir accès en executant la commande suivante : 
@@ -270,6 +270,24 @@ Il est possible d'y avoir accès en executant la commande suivante :
 ```bash
 dbt docs generate --project-dir data_factory/  && dbt docs serve --project-dir data_factory/
 ```
+
+Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez intéragir. 
+Un petit icone bleu en bas à droite indique le DAG pour visualiser le flux.
+
+### Zoom sur une brique du flux
+
+Dans le lineage graph (ou DAG) affiché sur l'interface web généré par DBT, il est possible de sélectionner une partie du graphe.
+En bas dans la case `--select`, vous pouvez écrire par exemple `marts` afin de visualiser le flux à l'intérieur du répertoire `data_factory/models/marts`.
+Afin de voir les étapes qui précèdent et sont nécessaires à l'execution du `marts` il suffit d'écrire `+marts`.
+De même pour les étapes qui succèdent, on peut écrire `marts+`.
+
+Enfin si vous souhaiter comprendre comment une table d'exposition est construite, vous pouvez écrire `+ma_table`.
+Par exemple pour la table `objectif_projet_structurant`, on écrira simplement `+objectif_projet_structurant`.
+
+
+_____
+# La suite de la DOC est déprécié
+La doc auto générée par DBT peut suffire à la remplacer. 
 
 ### Brique PPG_metdata vers Datawarehouse
 
