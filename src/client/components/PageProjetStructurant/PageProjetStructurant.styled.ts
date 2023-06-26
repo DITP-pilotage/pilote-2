@@ -15,6 +15,25 @@ const PageProjetStructurantStyled = styled.div`
   tbody {
     background: none;
   }
+
+  @media print {
+    @page {
+      size: 280mm 396mm;
+    }
+    
+    .rubrique {
+      display: block;
+      break-inside: avoid;
+    }
+    
+    main {
+      background: #FFF !important;
+    }
+
+    .barre-latérale, .fr-btn, .fr-link, .fr-accordion {
+      display: none;
+    }
+  }
 `;
 
 export default PageProjetStructurantStyled;
