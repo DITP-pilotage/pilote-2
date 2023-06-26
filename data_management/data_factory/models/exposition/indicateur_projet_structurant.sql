@@ -14,7 +14,7 @@ SELECT
     fact_progress_kpis_ps.valeur_actuelle as valeur_actuelle,
     fact_progress_kpis_ps.valeur_initiale as valeur_initiale,
     fact_progress_kpis_ps.valeur_cible as valeur_cible,
-    fact_progress_kpis_ps.avancement as taux_avancement,
+    COALESCE(fact_progress_kpis_ps.avancement_borne, fact_progress_kpis_ps.avancement) as taux_avancement,
     fact_progress_kpis_ps.date_valeur_actuelle as date_valeur_actuelle,
     fact_progress_kpis_ps.date_valeur_initiale as date_valeur_initiale,
     fact_progress_kpis_ps.date_valeur_cible as date_valeur_cible,
