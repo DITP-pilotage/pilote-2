@@ -24,7 +24,18 @@ SELECT
         LIMIT 1
     )) AS valeur_initiale,
     pivot.valeur_actuelle,
-    valeurs_cibles_annuelles.valeur AS valeur_cible_annuelle,
+    COALESCE(valeur_cible,
+        (
+            SELECT valeur_cible
+            FROM {{ ref('pivot_faits_indicateur_toutes_mailles')}}  pivot_pour_premiere_valeur_cible_non_nulle
+            WHERE pivot_pour_premiere_valeur_cible_non_nulle.indicateur_id = pivot.indicateur_id
+                AND pivot_pour_premiere_valeur_cible_non_nulle.zone_id = pivot.zone_id
+                AND pivot_pour_premiere_valeur_cible_non_nulle.date_releve > pivot.date_releve
+                AND pivot_pour_premiere_valeur_cible_non_nulle.valeur_cible IS NOT NULL
+            ORDER BY pivot_pour_premiere_valeur_cible_non_nulle.date_releve
+            LIMIT 1
+        )
+    ) as valeur_cible_annuelle,
     (
         SELECT pivot_pour_derniere_valeur_cible_non_nulle.valeur_cible
         FROM {{ ref('pivot_faits_indicateur_toutes_mailles')}} pivot_pour_derniere_valeur_cible_non_nulle
@@ -35,9 +46,4 @@ SELECT
         LIMIT 1
     ) AS valeur_cible_globale
 FROM {{ ref('pivot_faits_indicateur_toutes_mailles')}} pivot
-LEFT JOIN valeurs_cibles_annuelles
-    ON pivot.indicateur_id = valeurs_cibles_annuelles.indicateur_id
-        AND pivot.zone_id = valeurs_cibles_annuelles.zone_id
-        AND date_trunc('year', pivot.date_releve) = valeurs_cibles_annuelles.annee_releve
-        AND valeurs_cibles_annuelles.row_id = 1
 ORDER BY pivot.indicateur_id, pivot.zone_id, pivot.date_releve
