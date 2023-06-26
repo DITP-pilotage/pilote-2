@@ -1,17 +1,15 @@
 # Data factory
 Ce répertoire administre les pipelines d'imports, de chargement et transformation des données de _Pilote V2_. 
-Il gère également les migrations de base pour les données brutes.
 
 ## Description
 
-Ce projet est décomposé de 2 parties : 
+Ce projet est décomposé en 2 parties : 
 1. Exploration des données issues de _Dfakto_ et du projet _PPG_metadata_ : 
    - Projet python pour explorer les données du projet.
    - Ces données se situent dans le dossier `input_data`. 
    On mettra les données privées dans le repertoire `private_data` et les données publiques dans `open_data`. 
-2. Pipelines d'imports, de chargement et transformation des données
-   - Les jobs d'imports et chargement des données seront exécutés via des commandes `psql` dans un script pour simuler les imports massifs en local.
-   - Les transformations seront faites avec DBT dans un environnement python et également exécutées par script.
+2. Pipelines d'imports, de chargement et transformation des données. L'ensemble de ces pipelines passeront par des scripts.
+   - Les jobs d'imports et de transformations seront réalisés avec DBT dans un environnement python.
    - Enfin les données sont exposées dans des tables dont le schéma est géré par Prisma et exposées à l'application Pilote.  
 
 
@@ -36,6 +34,10 @@ Installer pipenv :
 
 - <https://pipenv.pypa.io/en/latest/installation/>
 
+Avoir docker ou un outil de containerisation :
+
+- <https://www.docker.com/>
+
 #### Webapp et SQL
 
 Il faut avoir configuré et initialisé votre base de données de Webapp comme précisé dans le README.md à la racine du projet.
@@ -49,9 +51,8 @@ Le client Postgres `psql` est également nécessaire pour les scripts d'import :
 
 Les projets et pipelines s'appuient sur des métadonnées à récupérer en provenance de plusieurs sources.
 
-Récupérez le zip des métadonnées PPG, dont le nom commence par `PPG_metadata` (demandez à l'équipe). 
-Décompressez le répertoire `PPG_metadata` dans `data_management/input_data/private_data`.
-Ce projet est aussi récupérable de github.
+Clonez le répertoire PPG_metadata (demande d'accès à celui-ci à la DITP) dans le répertoire `data_management/input_data/private_data`.
+Ce projet est aussi récupérable par token (en le mettant en variable d'environnement) et en executant le script `scripts/fill_tables_ppg_metadata.sh`.
 
 On se retrouve avec une arborescence qui ressemble à cela :
 
@@ -61,12 +62,26 @@ data_management/input_data/private_data/
     ├── CONTRIBUTING.md
     ├── PPG_metadata.Rproj
     ├── README.md
+    ├── 1_roles_definition
+    ├── barometre_data
+    ├── config_calculs
+    ├── config_viz
     ├── docs
     ├── generators
     ├── ingestion
     ├── models
     └── views
 ```
+
+#### Ajout des variables d'environnement
+
+Copier le fichier `/.env.example` vers `/data_management/.env` :
+
+```bash
+cp ../.env.example .env
+```
+
+Pensez à mettre jour le fichier `.env` en demandant les variables à l'équipe.
 
 #### Initialisation de l'environnement python
 
@@ -82,14 +97,6 @@ Afin de démarrer l'environnement :
 pipenv shell
 ```
 
-#### Initialisation de la base de données
-
-Copier le fichier `/.env.example` vers `/data_management/.env` :
-
-```bash
-cp ../.env.example .env
-```
-
 #### Initialisation des dépendances de DBT
 
 ```bash
@@ -100,36 +107,63 @@ dbt deps --project-dir data_factory
 
 ### Import des données
 
-#### Import des données open data en local
+#### Import des données local
 
 Toujours depuis le répertoire data, 
-executer la commande suivante pour remplir la table `raw_data.mesure_indicateur` avec de fausses données 
-(à ajouter dans le dossier de la variable d'environnement `INPUT_DATA_INDICATEURS`) :
+executer la commande suivante pour remplir les tables de dfakto :
 
 ```bash
-bash scripts/create_and_fill_raw_data_mesures_indicateurs.sh
+bash scripts/dump_dfakto.sh
 ```
 
-Pour remplir l'ensemble des tables pour le schéma `raw_data` :
+Puis pour remplir les tables de ppg_metadata :
 
 ```bash
-bash scripts/fill_tables_raw_data.sh
+bash scripts/fill_tables_ppg_metadata.sh
 ```
 
-#### Import des données privées vers la base live :
+NB : en dev et en production, les données sont remplis automatiquement par des jobs 
+tournant toutes les 12 heures (X */12 * * *)
 
-Ouvrir un tunnel vers la base grâce au cli Scalingo :
+Enfin, afin de réaliser un import massif de commentaires, 
+il faut mettre les fichiers à importer dans le répertoire `input_data/private_data/import/commentaires/`. 
+Puis exécuter le script suivant :
 
 ```bash
-scalingo -a pilote-ppg db-tunnel SCALINGO_POSTGRESQL_URL
+bash scripts/fill_tables_import_massif_commentaires.sh
 ```
 
-Modifier les valeurs de votre `.env` pour les faire pointer vers votre tunnel
+#### Import massif de commentaire vers la base live :
 
-Depuis le répertoire data :
+WARNING : cette étape n'est pas encore automatisée en env de DEV et PROD car il n'existe pas encore d'écran associé dans pilote.
+Il est donc nécessaire d'exécuter le script manuellement sur ces environnement.
+
+Ouvrir un tunnel vers la base grâce au cli Scalingo (exemple avec la base de DEV) :
 
 ```bash
-bash scripts/fill_tables_raw_data.sh private_data
+scalingo --region osc-secnum-fr1 -a dev-pilote-ditp db-tunnel SCALINGO_POSTGRESQL_URL
+```
+
+Modifier les variables de base PG de votre `.env` pour les faire pointer vers votre tunnel.
+
+Toujours depuis le répertoire data :
+
+```bash
+bash scripts/fill_tables_import_massif_commentaires.sh
+```
+
+Si vous rencontrez un problème, pensez à supprimer le dossier target généré par DBT dans le dossier `data_factory`.
+
+NB: après avoir importer les données, coupez le tunnel et changer vos variables d'environnement.
+
+
+### Standardisation des données 
+
+Afin d'avoir un nommage cohérent une étape de staging est ajoutée dans le schéma `raw_data`. 
+Celle-ci va réaliser des vues sur les tables importés.
+
+```bash
+bash scripts/fill_tables_staging.sh
 ```
 
 ### Transformations
@@ -139,8 +173,7 @@ Les transformations sont décrites dans le répertoire
 `data_management/data_factory`
 
 Vérifiez que les valeurs de votre `data_management/.env` correspondent bien à la base que
-vous souhaitez modifier (voir les sections sur l'import pour un exemple en
-local et un exemple en live).
+vous souhaitez modifier (voir les sections sur l'import pour un exemple en local et un exemple en live).
 
 Depuis le répertoire data :
 
