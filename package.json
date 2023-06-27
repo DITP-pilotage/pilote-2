@@ -81,14 +81,15 @@
     "next-auth": "^4.20.1",
     "pino": "^8.11.0",
     "react": "^18.2.0",
+    "react-accessible-dropdown-menu-hook": "^4.0.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.9",
+    "react-select": "^5.7.3",
     "remixicon": "^3.2.0",
     "superjson": "^1.12.2",
     "zod": "^3.21.4",
-    "zustand": "^4.3.6",
-    "react-select": "^5.7.3"
+    "zustand": "^4.3.6"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.5.1",

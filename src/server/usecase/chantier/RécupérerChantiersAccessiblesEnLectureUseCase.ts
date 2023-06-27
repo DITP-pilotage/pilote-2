@@ -9,8 +9,8 @@ import { parseChantier } from '@/server/infrastructure/accès_données/chantier/
 import { groupBy } from '@/client/utils/arrays';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
 import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
+import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export default class RécupérerChantiersAccessiblesEnLectureUseCase {
   constructor(
@@ -20,7 +20,7 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
   ) {}
 
-  async run(habilitations: Habilitations, profil: Profil): Promise<Chantier[]> {
+  async run(habilitations: Habilitations, profil: ProfilCode): Promise<Chantier[]> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();

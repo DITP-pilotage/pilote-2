@@ -1,4 +1,4 @@
-import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ScopeChantiers, HabilitationChantiers } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { NextPageAdminUtilisateurProps } from 'pages/admin/utilisateur/[id]';
 
@@ -7,7 +7,7 @@ export default interface FicheUtilisateurProps {
     nom: string
     prénom: string
     email: string
-    profil: Profil
+    profil: ProfilCode
     dateModification?: string
     auteurModification?: string
     fonction: string | null

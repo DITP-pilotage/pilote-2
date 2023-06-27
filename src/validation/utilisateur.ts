@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { profils } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { profilsCodes } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
   if (issue.code === z.ZodIssueCode.invalid_string && issue.validation === 'email') {
@@ -20,13 +20,15 @@ const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
   return { message: ctx.defaultError };
 };
 
+
 z.setErrorMap(customErrorMap);
+
 export const validationInfosBaseUtilisateur = z.object( {
   email: z.string().email().min(1).max(100),
   nom: z.string().min(1).max(100),
   prénom: z.string().min(1).max(100),
   fonction: z.string().max(100).nullable(),
-  profil: z.enum(profils),
+  profil: z.enum(profilsCodes),
 });
 
 export const validationInfosHabilitationsUtilisateur = z.object({
@@ -48,3 +50,5 @@ export const validationInfosHabilitationsUtilisateur = z.object({
     }),
   }),
 });
+
+export const codesTerritoiresDROM = ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976'];

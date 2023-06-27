@@ -12,6 +12,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
   mailleSélectionnée: MAILLE_DÉPARTEMENTALE,
   territoireSélectionné: null,
   territoires: [],
+  territoiresCodes: [],
   territoiresAccessiblesEnLecture: [],
   territoiresComparés: [],
   maillesAccessiblesEnLecture: [],
@@ -26,6 +27,7 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
 
       set({
         territoires,
+        territoiresCodes: territoires.map(territoire => territoire.code),
         départements: territoires.filter(territoire => territoire.maille === 'départementale'),
         régions: territoires.filter(territoire => territoire.maille === 'régionale'),
         territoiresAccessiblesEnLecture: territoiresAccessiblesEnLecture,
@@ -91,12 +93,19 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       set({ territoiresComparés });
     },
 
-    récupérerDépartementsAssociésÀLaRégion: (codeInsee: CodeInsee, maille: MailleInterne) => {
+    récupérerCodesInseeDépartementsAssociésÀLaRégion: (codeInsee: CodeInsee, maille: MailleInterne) => {
       if (maille === 'départementale') return [];
       return get().départements.filter(département =>
         département.codeParent === (get().régions.find(région => région.codeInsee === codeInsee))?.code,
       ).map(département => département.codeInsee);
     },
+
+    récupérerCodesDépartementsAssociésÀLaRégion: (code: string) => {
+      return get().départements.filter(département =>
+        département.codeParent === (get().régions.find(région => région.code === code))?.code,
+      ).map(département => département.code);
+    },
+
   },
 }));
 
@@ -104,6 +113,7 @@ export const actionsTerritoiresStore = () => useTerritoiresStore(étatActuel => 
 export const départementsTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.départements);
 export const régionsTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.régions);
 export const territoiresTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoires);
+export const territoiresCodesTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoiresCodes);
 export const mailleSélectionnéeTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.mailleSélectionnée);
 export const territoireSélectionnéTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoireSélectionné);
 export const territoiresComparésTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoiresComparés);

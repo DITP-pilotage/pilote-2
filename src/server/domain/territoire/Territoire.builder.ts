@@ -46,6 +46,8 @@ const infosTerritoiresSansMailleNationale: { code: Territoire['code'], codeParen
   { code: 'REG-04', codeParent: null, nom: 'La Réunion' },
 ];
 
+export const fakeTerritoires = [...infosTerritoiresSansMailleNationale, { code: 'NAT-FR', codeParent: null, nom: 'France' }];
+
 export default class TerritoireBuilder {
 
   private _territoire: typeof infosTerritoiresSansMailleNationale[number];

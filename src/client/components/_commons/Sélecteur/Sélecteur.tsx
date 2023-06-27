@@ -65,7 +65,7 @@ export default function Sélecteur<T extends string>({
           <p
             className="fr-error-text"
           >
-            {erreur.message}
+            {erreur.message?.toString()}
           </p>
       }
     </div>

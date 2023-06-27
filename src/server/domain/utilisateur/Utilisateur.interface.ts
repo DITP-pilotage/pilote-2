@@ -1,6 +1,6 @@
 import { Habilitations, HabilitationsÀCréerOuMettreÀJour } from './habilitation/Habilitation.interface';
 
-export const profils = [
+export const profilsCodes = [
   'DITP_ADMIN',
   'DITP_PILOTAGE',
   'PR',
@@ -19,7 +19,8 @@ export const profils = [
   'SERVICES_DECONCENTRES_DEPARTEMENT',
   'DROM',
 ] as const;
-export type Profil = typeof profils[number];
+
+export type ProfilCode = typeof profilsCodes[number];
 
 export const profilsTerritoriaux = [
   'REFERENT_REGION',
@@ -31,12 +32,15 @@ export const profilsTerritoriaux = [
   'DROM',
 ] as const;
 
+export const profilsDépartementaux = ['PREFET_DEPARTEMENT', 'REFERENT_DEPARTEMENT', 'SERVICES_DECONCENTRES_DEPARTEMENT'] as const;
+export const profilsRégionaux = ['PREFET_REGION', 'REFERENT_REGION', 'SERVICES_DECONCENTRES_REGION'] as const;
+
 type Utilisateur = {
   id: string
   nom: string
   prénom: string
   email: string
-  profil: Profil
+  profil: ProfilCode
   dateModification: string
   auteurModification: string
   fonction: string | null
@@ -48,7 +52,7 @@ export type UtilisateurÀCréerOuMettreÀJour =  {
   prénom: string
   email: string
   fonction: string | null
-  profil: Profil
+  profil: ProfilCode
   habilitations: HabilitationsÀCréerOuMettreÀJour
 };
 

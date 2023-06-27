@@ -1,6 +1,7 @@
 import { PrismaClient, profil } from '@prisma/client';
 import ProfilRepository from '@/server/domain/profil/ProfilRepository';
 import { Profil } from '@/server/domain/profil/Profil.interface';
+import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export default class ProfilSQLRepository implements ProfilRepository {
   private prisma: PrismaClient;
@@ -17,7 +18,7 @@ export default class ProfilSQLRepository implements ProfilRepository {
   _mapperVersLeDomaine(p: profil): Profil {
     return {
       code: p.code,
-      nom: p.nom,
+      nom: p.nom as ProfilCode,
       chantiers: {
         lecture: {
           tous: p.a_acces_tous_chantiers,

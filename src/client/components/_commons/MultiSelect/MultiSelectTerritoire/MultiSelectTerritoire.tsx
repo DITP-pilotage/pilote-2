@@ -1,85 +1,61 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { départementsTerritoiresStore, régionsTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
+import MultiSelectTerritoireProps from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire.interface';
+import { MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
 
-export default function MultiSelectTerritoire() {
+const générerLesOptions = (nom: string, code: string) => ({
+  label: nom,
+  value: code,
+});
+
+export default function MultiSelectTerritoire({ territoiresCodesSélectionnésParDéfaut, changementValeursSélectionnéesCallback, groupesÀAfficher }: MultiSelectTerritoireProps) {
+  const [valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut] = useState(territoiresCodesSélectionnésParDéfaut);
   const départements = départementsTerritoiresStore();
   const régions = régionsTerritoiresStore();
-  const [estOuvert, setEstOuvert] = useState(false);
 
-  const [territoiresSélectionnés, setTerritoiresSélectionnés ] = useState<string[]>([]);
+  const optionFR = {
+    label: 'National',
+    options: [{
+      label: 'France',
+      value: 'NAT-FR',
+    }],
+  };
 
-  const départementsSélectionnés = useMemo(() => (
-    départements.filter(d =>
-      territoiresSélectionnés.includes(d.code),
-    ).sort((a, b) =>
-      a.nomAffiché.localeCompare(b.nomAffiché),
-    )
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [estOuvert]);
+  const optionsRégions = {
+    label: 'Régions',
+    options: régions.map(d => générerLesOptions(d.nomAffiché, d.code)),
+  };
 
-  const départementsNonSélectionnés = useMemo(() => (
-    départements.filter(d =>
-      !territoiresSélectionnés.includes(d.code),
-    ).sort((a, b) =>
-      a.nomAffiché.localeCompare(b.nomAffiché),
-    )
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [estOuvert]);
+  const optionsDépartements = {
+    label: 'Départements',
+    options: départements.map(d => générerLesOptions(d.nomAffiché, d.code)),
+  };
 
-  const régionsSélectionnées = useMemo(() => (
-    régions.filter(d =>
-      territoiresSélectionnés.includes(d.code),
-    ).sort((a, b) =>
-      a.nomAffiché.localeCompare(b.nomAffiché),
-    )
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [estOuvert]);
+  const optionsGroupées = [
+    groupesÀAfficher.nationale ? optionFR : null,
+    groupesÀAfficher.régionale ? optionsRégions : null,
+    groupesÀAfficher.départementale ? optionsDépartements : null,
+  ].filter(option => option !== null) as MultiSelectOptionsGroupées;
 
-  const régionsNonSélectionnées = useMemo(() => (
-    régions.filter(d =>
-      !territoiresSélectionnés.includes(d.code),
-    ).sort((a, b) =>
-      a.nomAffiché.localeCompare(b.nomAffiché),
-    )
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [estOuvert]);
-
-  const optionsGroupées = useMemo(() => (
-    [
-      {
-        label: 'Départements',
-        options: [...départementsSélectionnés, ...départementsNonSélectionnés]
-          .map(département => ({
-            label: département.nomAffiché,
-            value: département.code,
-          })),
-      },
-      {
-        label: 'Régions',
-        options: [...régionsSélectionnées, ...régionsNonSélectionnées]
-          .map(région => ({
-            label: région.nomAffiché,
-            value: région.code,
-          })),
-      },
-      {
-        label: 'National',
-        options: [{
-          label: 'France',
-          value: 'NAT-FR',
-        }],
-      },
-    ]
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [estOuvert]);
-
+  useEffect(() => {
+    setValeursSélectionnéesParDéfaut(territoiresCodesSélectionnésParDéfaut?.map(code => {
+      if (groupesÀAfficher.nationale && code.startsWith('NAT'))
+        return code;
+      if (groupesÀAfficher.régionale && code.startsWith('REG'))
+        return code;
+      if (groupesÀAfficher.départementale && code.startsWith('DEPT'))
+        return code;
+      return null;
+    }).filter((code): code is string => code !== null));
+  }, [territoiresCodesSélectionnésParDéfaut, groupesÀAfficher]);
+  
   return (
     <MultiSelect
-      changementValeursSélectionnéesCallback={(valeursSélectionnées) => setTerritoiresSélectionnés(valeursSélectionnées)}
-      libellé='Territoire(s)'
-      optionsGroupées={optionsGroupées} 
-      ouvertureCallback={(ouvert) => setEstOuvert(ouvert)}
+      changementValeursSélectionnéesCallback={(valeursSélectionnées: string[]) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
+      optionsGroupées={optionsGroupées}
+      suffixeLibellé='territoire(s) sélectionné(s)'
+      valeursSélectionnéesParDéfaut={valeursSélectionnéesParDéfaut}
     />
   );
 }

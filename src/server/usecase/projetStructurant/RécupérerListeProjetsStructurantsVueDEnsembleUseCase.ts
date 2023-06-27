@@ -12,7 +12,7 @@ import { Météo } from '@/server/domain/météo/Météo.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import { Profil } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import RécupérerIconesMinistèresGroupéesParProjets from './RécupérerIconesMinistèresGroupéesParProjets';
 
 export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
@@ -49,7 +49,7 @@ export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
   }
   
 
-  async run(habilitations: Habilitations, profil: Profil): Promise<ProjetStructurantVueDEnsemble[]> {
+  async run(habilitations: Habilitations, profil: ProfilCode): Promise<ProjetStructurantVueDEnsemble[]> {
     const habilitation = new Habilitation(habilitations);
     const projetsStructurantsIdsAccessiblesEnLecture = habilitation.récupérerListeProjetsStructurantsIdsAccessiblesEnLecture();
     

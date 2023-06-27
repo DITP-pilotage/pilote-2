@@ -1,20 +1,30 @@
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
-import { useFormContext } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import InputAvecLabel from '@/components/_commons/InputAvecLabel/InputAvecLabel';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import SaisieDesInformationsUtilisateurProps
-  from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur.interface';
-import useSaisieDesInformationsUtilisateur
-  from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
+import SaisieDesInformationsUtilisateurProps from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur.interface';
+import useSaisieDesInformationsUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 import Titre from '@/components/_commons/Titre/Titre';
-
-import { UtilisateurFormInputs } from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
+import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
+import useHabilitationsTerritoires from './useHabilitationsTerritoires';
 
 export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesInformationsUtilisateurProps) {
-  const { listeProfils } = useSaisieDesInformationsUtilisateur(profils);
-  const { register, watch, formState: { errors } } = useFormContext<UtilisateurFormInputs>();
-  
+  const { 
+    listeProfils,
+    habilitationsParDéfaut,
+    profilSélectionné,
+    handleChangementValeursSélectionnéesTerritoires,
+    register,
+    errors,
+    control,
+  } = useSaisieDesInformationsUtilisateur(profils);
+
+  const {    
+    masquerLeChampLectureTerritoire,
+    groupesÀAfficher,
+  } = useHabilitationsTerritoires(profilSélectionné);
+
   return (
     <>
       <p>
@@ -63,9 +73,38 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
         register={register('profil')}
         texteAide='Les droits attribués dépendent du profil sélectionné.'
         texteFantôme='Sélectionner un profil'
-        valeurSélectionnée={watch('profil')}
+        valeurSélectionnée={profilSélectionné?.code}
       />
-      <SubmitBouton label="Suivant" />
+      <hr className='fr-hr' />
+      <Titre
+        baliseHtml='h2'
+        className="fr-text--md  fr-mb-2w"
+      >
+        Droits de lecture
+      </Titre>
+      <p className="fr-text--xs texte-gris fr-mb-4w">
+        Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
+      </p>
+      <div className={masquerLeChampLectureTerritoire ? 'fr-hidden' : ''}>
+        <Controller
+          control={control}
+          name="habilitations.lecture.territoires"
+          render={() => (
+            <MultiSelectTerritoire
+              changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
+              groupesÀAfficher={groupesÀAfficher}
+              territoiresCodesSélectionnésParDéfaut={habilitationsParDéfaut.lecture.territoires}
+            />
+          )}
+          rules={{ required: true }}
+        />
+      </div>
+      <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
+        <SubmitBouton
+          className='fr-btn--icon-right fr-icon-arrow-right-line'
+          label="Suivant"
+        />
+      </div>
     </>
   );
 }

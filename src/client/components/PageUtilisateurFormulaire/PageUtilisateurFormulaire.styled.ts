@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 const PageUtilisateurFormulaireStyled = styled.div`
-  background: var(--background-alt-blue-france);
+background: var(--background-alt-blue-france);
 
   .bouton-retour {
     &::before {

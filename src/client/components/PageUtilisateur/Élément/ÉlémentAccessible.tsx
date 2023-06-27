@@ -8,9 +8,7 @@ export default function ÉlémentAccessible({ libellé }: { libellé : string })
         icônesId={['dsfr::check::line']}
         largeurDesIcônes='2rem'
       >
-        <span className='libellé'>
-          {libellé}
-        </span>
+        {libellé}
       </IcônesMultiplesEtTexte>
     </ÉlémentStyled>
   );

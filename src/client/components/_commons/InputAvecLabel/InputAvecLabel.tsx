@@ -28,7 +28,7 @@ export default function InputAvecLabel({ type = 'text', erreur, libellé, htmlNa
           <p
             className="fr-error-text"
           >
-            {erreur.message}
+            {erreur.message?.toString()}
           </p>
       }
     </div>
