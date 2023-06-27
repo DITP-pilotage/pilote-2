@@ -1,6 +1,6 @@
 import { chantier as ChantierPrisma, Prisma, PrismaClient } from '@prisma/client';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
@@ -30,6 +30,19 @@ export default class ChantierSQLRepository implements ChantierRepository {
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
+  }
+
+  async récupérerChantiersSynthétisés(): Promise<ChantierSynthétisé[]> {
+    const chantiers = await this.prisma.chantier.findMany({
+      distinct: ['id'],
+    });
+
+    return chantiers.map(c => ({
+      id: c.id,
+      nom: c.nom,
+      estTerritorialisé: Boolean(c.est_territorialise),
+      périmètreIds: c.perimetre_ids,
+    }));
   }
 
   async récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<ChantierPrisma[]> {

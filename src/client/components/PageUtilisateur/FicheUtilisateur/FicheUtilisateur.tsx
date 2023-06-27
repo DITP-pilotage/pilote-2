@@ -2,12 +2,12 @@ import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import Titre from '@/components/_commons/Titre/Titre';
 import DétailsDroitsUtilisateur from '@/components/PageUtilisateur/DétailsDroitsUtilisateur/DétailsDroitsUtilisateur';
 import TableauUtilisateur from '@/components/PageUtilisateur/TableauUtilisateur/TableauUtilisateur';
-import usePageUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur/useFicheUtilisateur';
+import useFicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur/useFicheUtilisateur';
 import FicheUtilisateurStyled from '@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur.styled';
 import FicheUtilisateurProps from './FicheUtilisateur.interface';
 
-export default function FicheUtilisateur({ utilisateur, chantiers }: FicheUtilisateurProps) {
-  const { scopes } = usePageUtilisateur(utilisateur, chantiers);
+export default function FicheUtilisateur({ utilisateur }: FicheUtilisateurProps) {
+  const { scopes } = useFicheUtilisateur(utilisateur);
 
   return (
     <FicheUtilisateurStyled>

@@ -9,6 +9,7 @@ import ÉlémentAccessible from '@/components/PageUtilisateur/Élément/Élémen
 
 export default function DétailsDroitsUtilisateur({ titre, territoires, chantiers }: DétailsDroitsUtilisateurProps) {
   const id = useId();
+
   return (
     <DétailsDroitsUtilisateurStyled>
       <Titre

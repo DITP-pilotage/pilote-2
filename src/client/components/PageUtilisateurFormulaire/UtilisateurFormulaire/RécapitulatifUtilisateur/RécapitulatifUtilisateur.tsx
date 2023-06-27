@@ -10,7 +10,6 @@ export default function RécapitulatifUtilisateur() {
   return (
     <div>
       <FicheUtilisateur
-        chantiers={{}}
         utilisateur={utilisateur}
       />
       {

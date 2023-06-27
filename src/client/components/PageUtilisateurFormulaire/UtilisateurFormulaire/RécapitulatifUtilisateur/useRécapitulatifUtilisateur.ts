@@ -10,10 +10,9 @@ export default function useRécapitulatifUtilisateur() {
   const données = getValues();
   const [alerte, setAlerte] = useState <AlerteProps | null>(null);
 
-
   const habilitationsDéfaut = {
     lecture: {
-      chantiers: [],
+      chantiers: données.habilitations.lecture.chantiers ?? [],
       territoires: données.habilitations.lecture.territoires ?? [],
       périmètres: [],
     },

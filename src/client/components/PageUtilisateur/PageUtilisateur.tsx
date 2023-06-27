@@ -7,7 +7,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import FicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur';
 
-export default function PageUtilisateur({ utilisateur, chantiers }:PageUtilisateurProps) {
+export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
   const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];
 
   return (
@@ -33,10 +33,7 @@ export default function PageUtilisateur({ utilisateur, chantiers }:PageUtilisate
           </Titre>
           <Bloc>
             <div className='fr-py-4w fr-px-10w'>
-              <FicheUtilisateur
-                chantiers={chantiers}
-                utilisateur={utilisateur}
-              />
+              <FicheUtilisateur utilisateur={utilisateur} />
             </div>
           </Bloc>
         </div>

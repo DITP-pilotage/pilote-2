@@ -4,6 +4,7 @@ import { Profil } from '@/server/domain/profil/Profil.interface';
 import { HabilitationsÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { UtilisateurFormInputs } from '@/client/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
 import useHabilitationsTerritoires from './useHabilitationsTerritoires';
+import useHabilitationsChantiers from './useHabilitationsChantiers';
 
 export default function useSaisieDesInformationsUtilisateur(profils: Profil[]) {
   const { register, watch, formState: { errors }, control, setValue, getValues } = useFormContext<UtilisateurFormInputs>();
@@ -15,6 +16,8 @@ export default function useSaisieDesInformationsUtilisateur(profils: Profil[]) {
     déterminerLesTerritoiresSélectionnésParDéfaut, 
     déterminerLesTerritoiresSélectionnés,
   } = useHabilitationsTerritoires(profilSélectionné);
+
+  const { déterminerLesChantiersSélectionnésParDéfaut } = useHabilitationsChantiers(profilSélectionné);
 
   const [habilitationsParDéfaut, setHabilitationsParDéfaut] = useState<HabilitationsÀCréerOuMettreÀJour>({
     lecture: {
@@ -44,19 +47,24 @@ export default function useSaisieDesInformationsUtilisateur(profils: Profil[]) {
     setValue('habilitations.lecture.territoires', territoiresSélectionnés);
   };
 
+  
+  const handleChangementValeursSélectionnéesChantiers = (valeursSélectionnées: string[]) => {    
+    setValue('habilitations.lecture.chantiers', valeursSélectionnées);
+  };
+
   useEffect(() => {
     if (ancienProfilCodeSélectionné !== profilCodeSélectionné) {
       setHabilitationsParDéfaut(h => ({ ...h, 
         lecture: { 
           territoires: déterminerLesTerritoiresSélectionnésParDéfaut(), 
-          chantiers: [], 
+          chantiers: déterminerLesChantiersSélectionnésParDéfaut(), 
           périmètres: [], 
         }, 
       }));
       setAncienProfilCodeSélectionné(profilCodeSélectionné);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [déterminerLesTerritoiresSélectionnésParDéfaut, profilCodeSélectionné]);
+  }, [déterminerLesTerritoiresSélectionnésParDéfaut, profilCodeSélectionné, déterminerLesChantiersSélectionnésParDéfaut]);
 
 
   return {
@@ -64,6 +72,7 @@ export default function useSaisieDesInformationsUtilisateur(profils: Profil[]) {
     habilitationsParDéfaut,
     profilSélectionné,
     handleChangementValeursSélectionnéesTerritoires,
+    handleChangementValeursSélectionnéesChantiers,
     register,
     errors,
     control,
