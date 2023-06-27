@@ -37,7 +37,8 @@ const PageProjetStructurantStyled = styled.div`
     }
     
     .rubrique {
-      display: block;
+      display: grid;
+      grid-template-rows: auto 1fr;
       break-inside: avoid;
     }
 

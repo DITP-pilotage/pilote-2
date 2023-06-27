@@ -43,7 +43,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
               <TitreInfobulleConteneur>
                 <Titre
                   baliseHtml="h2"
-                  className="fr-text--lg"
+                  className="fr-text--lg fr-mb-0 fr-py-1v"
                   estInline
                 >
                   Taux d’avancement moyen
@@ -59,7 +59,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
               <TitreInfobulleConteneur>
                 <Titre
                   baliseHtml="h2"
-                  className="fr-text--lg"
+                  className="fr-text--lg fr-mb-0 fr-py-1v"
                   estInline
                 >
                   Répartition des météos renseignées
@@ -77,7 +77,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
             <section>
               <Titre
                 baliseHtml="h3"
-                className="fr-text--lg"
+                className="fr-text--lg fr-mb-0 fr-py-1v"
               >
                 Taux d’avancement des chantiers par territoire
               </Titre>
@@ -97,7 +97,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
             <BadgeIcône type="warning" />
             <Titre
               baliseHtml="h2"
-              className="fr-text--lg fr-mb-0 fr-ml-1w titre-remontée-alertes"
+              className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes"
               estInline
             >
               Chantiers signalés
@@ -130,10 +130,10 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
       >
         <div className="fr-col">
           <Bloc>
-            <TitreInfobulleConteneur>
+            <TitreInfobulleConteneur className="fr-mb-1w">
               <Titre
                 baliseHtml="h2"
-                className="fr-text--lg fr-mb-0"
+                className="fr-text--lg fr-mb-0 fr-py-1v"
                 estInline
               >
                 Liste des chantiers

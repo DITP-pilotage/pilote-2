@@ -129,7 +129,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                       <Titre
                         baliseHtml='h2'
-                        className='fr-h4'
+                        className='fr-h4 fr-mb-0 fr-py-1v'
                         estInline
                       >
                         Météo et synthèse des résultats
@@ -169,7 +169,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                       <Titre
                         baliseHtml='h2'
-                        className='fr-h4'
+                        className='fr-h4 fr-mb-0 fr-py-1v'
                         estInline
                       >
                         Objectifs
@@ -246,7 +246,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                       <Titre
                         baliseHtml='h2'
-                        className='fr-h4'
+                        className='fr-h4 fr-mb-0 fr-py-1v'
                         estInline
                       >
                         Commentaires du chantier
