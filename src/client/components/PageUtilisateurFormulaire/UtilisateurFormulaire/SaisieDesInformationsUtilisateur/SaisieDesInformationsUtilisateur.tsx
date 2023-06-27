@@ -1,38 +1,29 @@
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import InputAvecLabel from '@/components/_commons/InputAvecLabel/InputAvecLabel';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import SaisieDesInformationsUtilisateurProps from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur.interface';
 import useSaisieDesInformationsUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 import Titre from '@/components/_commons/Titre/Titre';
-import { UtilisateurFormInputs } from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
 import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
-import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import useHabilitationsTerritoires from './useHabilitationsTerritoires';
 
 export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesInformationsUtilisateurProps) {
-  const { register, watch, formState: { errors }, control, setValue } = useFormContext<UtilisateurFormInputs>();
-  const watchProfil = watch('profil');
-  
-  const { récupérerCodesDépartementsAssociésÀLaRégion } = actionsTerritoiresStore();
-
   const { 
     listeProfils,
     habilitationsParDéfaut,
-    accèsAuChampsLectureTerritoire,
-    maillesÀAfficher,
-  } = useSaisieDesInformationsUtilisateur(profils, watchProfil);
+    profilSélectionné,
+    handleChangementValeursSélectionnéesTerritoires,
+    register,
+    errors,
+    control,
+  } = useSaisieDesInformationsUtilisateur(profils);
 
-  const handleChangementValeursSélectionnées = (valeursSélectionnées: string[]) => {
-    let nouvellesValeurs = valeursSélectionnées;
-    valeursSélectionnées.forEach(codeTerritoireSélectionné => {
-      if (codeTerritoireSélectionné.startsWith('REG')) {
-        const départements = récupérerCodesDépartementsAssociésÀLaRégion(codeTerritoireSélectionné);
-        nouvellesValeurs = [...new Set([...nouvellesValeurs, ...départements])];
-      }
-    });
-    setValue('habilitations.lecture.territoires', nouvellesValeurs);
-  };
+  const {    
+    masquerLeChampLectureTerritoire,
+    groupesÀAfficher,
+  } = useHabilitationsTerritoires(profilSélectionné);
 
   return (
     <>
@@ -82,7 +73,7 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
         register={register('profil')}
         texteAide='Les droits attribués dépendent du profil sélectionné.'
         texteFantôme='Sélectionner un profil'
-        valeurSélectionnée={watch('profil')}
+        valeurSélectionnée={profilSélectionné?.code}
       />
       <hr className='fr-hr' />
       <Titre
@@ -94,14 +85,14 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
       <p className="fr-text--xs texte-gris fr-mb-4w">
         Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
       </p>
-      <div className={accèsAuChampsLectureTerritoire ? '' : 'fr-hidden'}>
+      <div className={masquerLeChampLectureTerritoire ? 'fr-hidden' : ''}>
         <Controller
           control={control}
           name="habilitations.lecture.territoires"
           render={() => (
             <MultiSelectTerritoire
-              changementValeursSélectionnéesCallback={handleChangementValeursSélectionnées}
-              mailleÀAfficher={maillesÀAfficher}
+              changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
+              groupesÀAfficher={groupesÀAfficher}
               territoiresCodesSélectionnésParDéfaut={habilitationsParDéfaut.lecture.territoires}
             />
           )}

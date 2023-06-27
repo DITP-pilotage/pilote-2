@@ -1,17 +1,25 @@
-import { useCallback, useEffect, useState } from 'react';
-import { territoiresCodesTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { Profil } from '@/server/domain/profil/Profil.interface';
-import { ProfilCode, profilsDépartementaux, profilsRégionaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { HabilitationsÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { codesTerritoiresDROM } from '@/validation/utilisateur';
+import { UtilisateurFormInputs } from '@/client/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
+import useHabilitationsTerritoires from './useHabilitationsTerritoires';
 
-export default function useSaisieDesInformationsUtilisateur(profils: Profil[], profilSélectionné?: ProfilCode) {
-  const tousLesCodesTerritoires = territoiresCodesTerritoiresStore();
-  
+export default function useSaisieDesInformationsUtilisateur(profils: Profil[]) {
+  const { register, watch, formState: { errors }, control, setValue, getValues } = useFormContext<UtilisateurFormInputs>();
+  const [ancienProfilCodeSélectionné, setAncienProfilCodeSélectionné] = useState<string>(getValues('profil'));
+  const profilCodeSélectionné = watch('profil');
+  const profilSélectionné = profils.find(p => p.code === profilCodeSélectionné)!;
+
+  const { 
+    déterminerLesTerritoiresSélectionnésParDéfaut, 
+    déterminerLesTerritoiresSélectionnés,
+  } = useHabilitationsTerritoires(profilSélectionné);
+
   const [habilitationsParDéfaut, setHabilitationsParDéfaut] = useState<HabilitationsÀCréerOuMettreÀJour>({
     lecture: {
       chantiers: [],
-      territoires: [],
+      territoires: getValues('habilitations.lecture.territoires'),
       périmètres: [],
     },
     'saisie.commentaire': {
@@ -31,48 +39,34 @@ export default function useSaisieDesInformationsUtilisateur(profils: Profil[], p
     valeur: profil.code,
   }));
 
-  const accèsAuChampsLectureTerritoire = profilSélectionné ? profilsDépartementaux.includes(profilSélectionné) || profilsRégionaux.includes(profilSélectionné) : false;
-
-  const maillesÀAfficher = { 
-    nationale: false, 
-    régionale: profilSélectionné && profilsRégionaux.includes(profilSélectionné) ? true : false, 
-    départementale: profilSélectionné && profilsDépartementaux.includes(profilSélectionné) ? true : false, 
+  const handleChangementValeursSélectionnéesTerritoires = (valeursSélectionnées: string[]) => {    
+    const territoiresSélectionnés = déterminerLesTerritoiresSélectionnés(valeursSélectionnées);
+    setValue('habilitations.lecture.territoires', territoiresSélectionnés);
   };
 
-  const déterminerLesTerritoiresSélectionnésParDéfaut = useCallback((profil?: Profil) => {
-    if (!profil)
-      return [];
-      
-    if (profil.code === 'DROM') 
-      return codesTerritoiresDROM;
-
-    if (profil.chantiers.lecture.tousTerritoires)
-      return tousLesCodesTerritoires;
-    
-    return [];
-  }, [tousLesCodesTerritoires]);
-
-  const déterminerLesHabilitationsSélectionnéesParDéfaut = useCallback((profilCode?: ProfilCode) => {
-    const profil = profils.find(p => p.code === profilCode)!;
-    
-    
-    setHabilitationsParDéfaut(h => ({ ...h, 
-      lecture: { 
-        territoires: déterminerLesTerritoiresSélectionnésParDéfaut(profil), 
-        chantiers: [], 
-        périmètres: [], 
-      }, 
-    }));
-  }, [déterminerLesTerritoiresSélectionnésParDéfaut, profils]);
-
   useEffect(() => {
-    déterminerLesHabilitationsSélectionnéesParDéfaut(profilSélectionné);
-  }, [déterminerLesHabilitationsSélectionnéesParDéfaut, profilSélectionné]);
+    if (ancienProfilCodeSélectionné !== profilCodeSélectionné) {
+      setHabilitationsParDéfaut(h => ({ ...h, 
+        lecture: { 
+          territoires: déterminerLesTerritoiresSélectionnésParDéfaut(), 
+          chantiers: [], 
+          périmètres: [], 
+        }, 
+      }));
+      setAncienProfilCodeSélectionné(profilCodeSélectionné);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [déterminerLesTerritoiresSélectionnésParDéfaut, profilCodeSélectionné]);
+
 
   return {
     listeProfils,
     habilitationsParDéfaut,
-    accèsAuChampsLectureTerritoire,
-    maillesÀAfficher,
+    profilSélectionné,
+    handleChangementValeursSélectionnéesTerritoires,
+    register,
+    errors,
+    control,
+    getValues,
   };
 }

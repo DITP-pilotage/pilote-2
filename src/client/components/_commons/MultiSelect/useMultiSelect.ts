@@ -81,7 +81,7 @@ export default function useMultiSelect(
       trierLesOptions();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+  }, [isOpen, optionsGroupées]);
 
   useEffect(() => {
     if (recherche !== '') {
@@ -89,11 +89,6 @@ export default function useMultiSelect(
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recherche]);
-
-  useEffect(() => {
-    trierLesOptions();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [optionsGroupées]);
 
   return {
     mettreÀJourLesValeursSélectionnées,
