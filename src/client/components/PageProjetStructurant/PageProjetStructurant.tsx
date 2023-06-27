@@ -45,15 +45,15 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
         </BoutonSousLigné>
         <PageProjetStructurantEnTête nomProjetStructurant={projetStructurant.nom} />
         <div className='fr-container--fluid fr-py-2w fr-px-md-4w'>
-          <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-my-0 fr-pb-4w">
+          <div className="grid-template fr-pb-4w">
             <section
-              className='fr-col-12 fr-col-md-6 fr-py-0 rubrique'
+              className='rubrique'
               id='avancement'
             >
               <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                 <Titre
                   baliseHtml='h2'
-                  className='fr-h4'
+                  className='fr-h4 fr-mb-0 fr-py-1v'
                   estInline
                 >
                   Avancement du projet
@@ -68,7 +68,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
               />
             </section>
             <section
-              className='fr-col-12 fr-col-md-6 fr-py-0 rubrique'
+              className='rubrique'
               id="responsables"
             >
               <Titre
@@ -90,7 +90,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
             <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
               <Titre
                 baliseHtml='h2'
-                className='fr-h4'
+                className='fr-h4 fr-mb-0 fr-py-1v'
                 estInline
               >
                 Météo et synthèse des résultats
@@ -114,7 +114,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
             <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
               <Titre
                 baliseHtml='h2'
-                className='fr-h4'
+                className='fr-h4 fr-mb-0 fr-py-1v'
                 estInline
               >
                 Objectifs
@@ -160,7 +160,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
             <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
               <Titre
                 baliseHtml='h2'
-                className='fr-h4'
+                className='fr-h4 fr-mb-0 fr-py-1v'
                 estInline
               >
                 Commentaires du projet structurant

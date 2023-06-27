@@ -12,7 +12,7 @@ const PageChantierStyled = styled.div`
     gap: 1.5rem;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 48rem) {
     .layout--nat {
       grid-template-areas:
         "avancement responsables"
@@ -64,7 +64,19 @@ const PageChantierStyled = styled.div`
     @page {
       size: 280mm 396mm;
     }
+    
+    .layout--nat {
+      grid-template-areas:
+        "avancement responsables"
+        "synthèse   synthèse";
+      grid-template-columns: auto minmax(22.5rem, 1fr);
+    }
 
+    .layout--dept-reg {
+      grid-template-areas:
+        "avancement   avancement"
+        "responsables synthèse";
+    }
     
     .texte-impression {
       display: block;
@@ -73,12 +85,7 @@ const PageChantierStyled = styled.div`
     }
     
     .rubrique {
-      display: block;
       break-inside: avoid;
-    }
-    
-    main {
-      background: #FFF !important;
     }
 
     .barre-latérale, .fr-btn, .fr-link, .fr-accordion {

@@ -1,6 +1,7 @@
 import '@gouvfr/dsfr/dist/dsfr.min.css';
 import Link from 'next/link';
 import Titre from '@/components/_commons/Titre/Titre';
+import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpression';
 import PageProjetStructurantEnTêteProps from './EnTête.interface';
 import PageProjetStructurantEnTêteStyled from './EnTête.styled';
 
@@ -20,6 +21,7 @@ export default function PageProjetStructurantEnTête({ nomProjetStructurant }: P
       >
         { nomProjetStructurant }
       </Titre>
+      <BoutonImpression />
     </PageProjetStructurantEnTêteStyled>
   );
 }
