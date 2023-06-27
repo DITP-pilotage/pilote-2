@@ -22,7 +22,7 @@ const MiseEnPageStyled = styled.div`
     print-color-adjust: exact !important;
     
     main {
-      background: none !important;
+      background: #fff !important;
     }
   }
   

@@ -40,10 +40,6 @@ const PageProjetStructurantStyled = styled.div`
       display: block;
       break-inside: avoid;
     }
-    
-    main {
-      background: #FFF !important;
-    }
 
     .barre-latérale, .fr-btn, .fr-link, .fr-accordion {
       display: none;
