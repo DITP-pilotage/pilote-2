@@ -22,6 +22,7 @@ renamed as (
         metric_value::numeric as valeur,
         date_import
     from source
+    where metric_value <> 'null'
 
 )
 
