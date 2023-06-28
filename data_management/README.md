@@ -201,6 +201,10 @@ data_factory/models/
 #### Détails des étapes de calcul de la data factory
 
 *0_faits_indicateur_avec_hypotheses* : cette étape permet d'appliquer les hypothèses suivantes aux données des indicateurs :
+- Si plusieurs mesures d'indicateurs (vi, va, vc) sont rentrées à la même date de relevé, alors nous dé-dupliquerons la donnée en prenant la plus récente par date d'import.
+- De même, si dans un même mois, nous avons plusieurs mesures à des dates de relevé différentes (par exemple 01/01/2022 et 17/01/2022), seule la dernière date sera retenue.
+- Si pas de vi n'est renseignée, alors la première va deviendra la vi.
+- Si pas de va alors il n'y aura pas de taux d'avancement.
 
 *1_agregation_geographique* : on commence par découper les calculs des agrégations de manière géographique (départementale, régionale et nationale).
 Cela permet, selon le paramétrage, de prendre les valeurs d'une maille donnée afin d'appliquer l'opération d'agrégation du paramétrage (somme ou moyenne)
