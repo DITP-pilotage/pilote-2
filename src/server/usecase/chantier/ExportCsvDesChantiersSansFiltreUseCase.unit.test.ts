@@ -24,7 +24,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const chantierIds: Chantier['id'][] = [];
     const chantierRepository = mock<ChantierRepository>();
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
-      .mockReturnValueOnce(Promise.resolve(chantierIds));
+      .mockResolvedValueOnce(chantierIds);
 
     const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
     const habilitation = new HabilitationBuilder().build();
@@ -45,10 +45,9 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const chantierIds = ['CH-001'];
     const chantierRepository = mock<ChantierRepository>();
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
-      .mockReturnValueOnce(Promise.resolve(chantierIds));
+      .mockResolvedValueOnce(chantierIds);
     chantierRepository.récupérerPourExports
-      .mockReturnValueOnce(Promise.resolve(chantierIds.map(_fakeChantierPourExport)));
-
+      .mockResolvedValueOnce(chantierIds.map(_fakeChantierPourExport));
 
     const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
     const territoireCodesLecture = ['NAT-FR'];
@@ -64,10 +63,10 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     }
 
     // THEN
-    expect(chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom.mock.calls[0][0])
-      .toStrictEqual(habilitation);
-    expect(chantierRepository.récupérerPourExports.mock.calls[0][1])
-      .toStrictEqual(territoireCodesLecture);
+    expect(chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom)
+      .toHaveBeenCalledWith(habilitation);
+    expect(chantierRepository.récupérerPourExports)
+      .toHaveBeenCalledWith(chantierIds, territoireCodesLecture);
   });
 
   it('Renvoie 3 lignes pour 3 chantiers si configuré avec lots de 3', async () => {
@@ -76,9 +75,9 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const chunkSize = 3;
     const chantierRepository = mock<ChantierRepository>();
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
-      .mockReturnValueOnce(Promise.resolve(chantierIds));
+      .mockResolvedValueOnce(chantierIds);
     chantierRepository.récupérerPourExports
-      .mockReturnValueOnce(Promise.resolve(chantierIds.map(_fakeChantierPourExport)));
+      .mockResolvedValueOnce(chantierIds.map(_fakeChantierPourExport));
 
     const config = mock<Configuration>({ exportCsvChantiersChunkSize: chunkSize });
     const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository, config);
@@ -107,10 +106,10 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const secondChunk = chantierIds.slice(chunkSize);
     const chantierRepository = mock<ChantierRepository>();
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
-      .mockReturnValueOnce(Promise.resolve(chantierIds));
+      .mockResolvedValueOnce(chantierIds);
     chantierRepository.récupérerPourExports
-      .mockReturnValueOnce(Promise.resolve(firstChunk.map(_fakeChantierPourExport)))
-      .mockReturnValueOnce(Promise.resolve(secondChunk.map(_fakeChantierPourExport)));
+      .mockResolvedValueOnce(firstChunk.map(_fakeChantierPourExport))
+      .mockResolvedValueOnce(secondChunk.map(_fakeChantierPourExport));
 
     const config = mock<Configuration>({ exportCsvChantiersChunkSize: chunkSize });
     const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository, config);
