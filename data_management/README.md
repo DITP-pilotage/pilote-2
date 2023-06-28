@@ -1,5 +1,5 @@
 # Data factory
-Ce répertoire administre les pipelines d'imports, de chargement et transformation des données de _Pilote V2_. 
+Ce répertoire administre les pipelines d'import, de chargement et transformation des données de _Pilote V2_. 
 
 ## Description
 
@@ -7,10 +7,10 @@ Ce projet est décomposé en 2 parties :
 1. Exploration des données issues de _Dfakto_ et du projet _PPG_metadata_ : 
    - Projet python pour explorer les données du projet.
    - Ces données se situent dans le dossier `input_data`. 
-   On mettra les données privées dans le repertoire `private_data` et les données publiques dans `open_data`. 
-2. Pipelines d'imports, de chargement et transformation des données. L'ensemble de ces pipelines passeront par des scripts.
-   - Les jobs d'imports et de transformations seront réalisés avec DBT dans un environnement python.
-   - Enfin les données sont exposées dans des tables dont le schéma est géré par Prisma et exposées à l'application Pilote.  
+   On mettra les données privées dans le répertoire `private_data` et les données publiques dans `open_data`. 
+2. Pipelines d'import, de chargement et transformation des données. L'ensemble de ces pipelines passeront par des scripts.
+   - Les jobs d'imports et de transformations sont réalisés avec DBT dans un environnement Python.
+   - Enfin les données sont exposées dans des tables dont le schéma est géré par Prisma et exposées à l'application _Pilote 2_.  
 
 
 ## Avant de démarrer
@@ -26,7 +26,7 @@ Installer pyenv :
 
 - <https://github.com/pyenv/pyenv#installation>
 
-Insaller la bonne version de Python (voir Pipfile, ligne `python_full_version`) :
+Installer la bonne version de Python (voir Pipfile, ligne `python_full_version`) :
 
 - <https://github.com/pyenv/pyenv#install-additional-python-versions>
 
@@ -51,8 +51,8 @@ Le client Postgres `psql` est également nécessaire pour les scripts d'import :
 
 Les projets et pipelines s'appuient sur des métadonnées à récupérer en provenance de plusieurs sources.
 
-Clonez le répertoire PPG_metadata (demande d'accès à celui-ci à la DITP) dans le répertoire `data_management/input_data/private_data`.
-Ce projet est aussi récupérable par token (en le mettant en variable d'environnement) et en executant le script `scripts/2_fill_tables_ppg_metadata.sh`.
+Il faut cloner le répertoire _PPG_metadata_ (demande d'accès à celui-ci à la DITP) dans le répertoire `data_management/input_data/private_data`.
+Ce projet est aussi récupérable par token (en le mettant en variable d'environnement) et en exécutant le script `scripts/2_fill_tables_ppg_metadata.sh`.
 
 On se retrouve avec une arborescence qui ressemble à cela :
 
@@ -111,28 +111,28 @@ dbt deps --project-dir data_factory
 - Le schéma destination est le schéma utilisé par la Webapp. À date, ce schéma est le schéma par défaut (`public`) ;
 - DBT écrit et lit dans `raw_data`, le schéma d'import des données ;
 - DBT écrit et lit dans `marts`, le schéma de la data factory ;
-- DBT écrit dans `public`, le schéma de destination qui aliment l'application Pilote 2.
+- DBT écrit dans `public`, le schéma de destination qui alimente l'application _Pilote 2_.
 
 ## Usage
 
 ### Import des données
 
-#### Import des données local
+#### Import des données en local
 
 Toujours depuis le répertoire data, 
-executer la commande suivante pour remplir les tables de dfakto :
+exécuter la commande suivante pour remplir les tables de dfakto :
 
 ```bash
 bash scripts/1_dump_dfakto.sh
 ```
 
-Puis pour remplir les tables de ppg_metadata :
+Puis pour remplir les tables de _PPG_metadata_ :
 
 ```bash
 bash scripts/2_fill_tables_ppg_metadata.sh
 ```
 
-NB : en dev et en production, les données sont remplis automatiquement par des jobs 
+NB : en dev et en production, les données sont remplies automatiquement par des jobs 
 tournant toutes les 12 heures (X */12 * * *)
 
 Enfin, afin de réaliser un import massif de commentaires, 
@@ -145,8 +145,8 @@ bash scripts/3_fill_tables_import_massif_commentaires.sh
 
 #### Import massif de commentaire vers la base live :
 
-WARNING : cette étape n'est pas encore automatisée en env de DEV et PROD car il n'existe pas encore d'écran associé dans pilote.
-Il est donc nécessaire d'exécuter le script manuellement sur ces environnement.
+WARNING : cette étape n'est pas encore automatisée en environnement de DEV et PROD car il n'existe pas encore d'écran associé dans _Pilote 2_.
+Il est donc nécessaire d'exécuter le script manuellement sur ces environnements.
 
 Ouvrir un tunnel vers la base grâce au cli Scalingo (exemple avec la base de DEV) :
 
@@ -164,13 +164,13 @@ bash scripts/3_fill_tables_import_massif_commentaires.sh
 
 Si vous rencontrez un problème, pensez à supprimer le dossier target généré par DBT dans le dossier `data_factory`.
 
-NB: après avoir importer les données, coupez le tunnel et changer vos variables d'environnement.
+NB: après avoir importé les données, coupez le tunnel et changer vos variables d'environnement.
 
 
 ### Standardisation des données 
 
 Afin d'avoir un nommage cohérent une étape de staging est ajoutée dans le schéma `raw_data`. 
-Celle-ci va réaliser des vues sur les tables importés.
+Celle-ci va réaliser des vues sur les tables importées.
 
 ```bash
 bash scripts/5_fill_tables_staging.sh
@@ -178,7 +178,7 @@ bash scripts/5_fill_tables_staging.sh
 
 ### Data factory
 
-WARNING : cette étape n'est pas encore automatisée en env de DEV et PROD car il n'existe pas encore d'écran associé dans pilote.
+WARNING : cette étape n'est pas encore automatisée en environnement de DEV et PROD car il n'existe pas encore d'écran associé dans _Pilote 2_.
 Il manque également le paramétrage des indicateurs afin de pouvoir l'exécuter.
 
 Les transformations des mesures des indicateurs en taux d'avancement, ou datafactory, sont représentés par les étapes du dossier  
@@ -198,17 +198,20 @@ data_factory/models/
     └── 8_evolution_indicateur
 ```
 
-#### Détail des étapes de calcul de la data factory
+#### Détails des étapes de calcul de la data factory
 
 *0_faits_indicateur_avec_hypotheses* : cette étape permet d'appliquer les hypothèses suivantes aux données des indicateurs :
 
 *1_agregation_geographique* : on commence par découper les calculs des agrégations de manière géographique (départementale, régionale et nationale).
-Cela permet, selon le paramétrage, de prendre les valeurs d'une maille donnée afin d'appliquer l'opération d'agrégation du paramétrage 
+Cela permet, selon le paramétrage, de prendre les valeurs d'une maille donnée afin d'appliquer l'opération d'agrégation du paramétrage (somme ou moyenne)
 ou bien de sélectionner les données rentrées par l'utilisateur.
 
-*2_pivot_faits_indicateur* : 
+*2_pivot_faits_indicateur* : on réalise un pivot sur la table précédente afin d'obtenir 3 colonnes pour les valeurs : initiales, actuelles et cibles).
+La colonne metric_type est donc divisée en 3. 
 
-*3_fill_vi_vca_vcg* : 
+*3_fill_vi_vca_vcg* : dans cette étape, on réalise 3 actions : on fait descendre la valeur initiale la plus ancienne jusqu'à rencontrer une nouvelle valeur initiale,
+que l'on fait descendre à son tour. De telle sorte que toutes les lignes de la table aient une valeur initiale non nulle.
+Ensuite, on crée une colonne valeur cible annuelle dans laquelle on fait remonter sur les lignes précédente, la valeur cible qui est la plus proche de la date de relevé de la ligne. 
 
 *4_decumul_va* : 
 
@@ -221,17 +224,17 @@ ou bien de sélectionner les données rentrées par l'utilisateur.
 *8_evolution_indicateur* : 
 
 
-#### Execution des transformation de la data factory 
+#### Exécution des transformations de la data factory 
 
-Afin d'exécuter les jobs de la data factory il suffit de :
+Afin d'exécuter les jobs de la data factory, il suffit de :
 
 ```bash
 bash scripts/6_fill_tables_marts.sh
 ```
 
-### Mise à disposition des données à Pilote 2
+### Mise à disposition des données à _Pilote 2_
 
-Afin de remplir les tables du schéma `public` et ainsi alimenter l'application Pilote 2, il faut exécuter le script suivant en local:
+Afin de remplir les tables du schéma `public` et ainsi alimenter l'application _Pilote 2_, il faut exécuter le script suivant en local:
 
 ```bash
 bash scripts/7_fill_tables_public.sh
@@ -239,9 +242,9 @@ bash scripts/7_fill_tables_public.sh
 
 # Schéma des flux de données
 
-Ce document souhaite poser les bases des flux de données alimentant l'application Pilote 2.
+Ce document souhaite poser les bases des flux de données alimentant l'application _Pilote 2_.
 
-L'évolution de ces flux se fera au fur et à mesure de la création et l'évolution de Pilote 2.
+L'évolution de ces flux se fera au fur et à mesure de la création et l'évolution de _Pilote 2_.
 
 ## Schéma macro des flux
 
@@ -265,35 +268,35 @@ PG --> BE(Back-end) --> FE(Front-end)
 ## Visualisation de l'ensemble du flux
 
 Afin de mieux visualiser le DAG à l'intérieur du projet, nous vous proposons de vous référer à la doc générée par DBT.
-Il est possible d'y avoir accès en executant la commande suivante : 
+Il est possible d'y avoir accès en exécutant la commande suivante : 
 
 ```bash
 dbt docs generate --project-dir data_factory/  && dbt docs serve --project-dir data_factory/
 ```
 
-Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez intéragir. 
-Un petit icone bleu en bas à droite indique le DAG pour visualiser le flux.
+Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 
+Une petite icône bleue en bas à droite indique le DAG pour visualiser le flux.
 
 ### Zoom sur une brique du flux
 
-Dans le lineage graph (ou DAG) affiché sur l'interface web généré par DBT, il est possible de sélectionner une partie du graphe.
+Dans le lineage graph (ou DAG) affiché sur l'interface web générée par DBT, il est possible de sélectionner une partie du graphe.
 En bas dans la case `--select`, vous pouvez écrire par exemple `marts` afin de visualiser le flux à l'intérieur du répertoire `data_factory/models/marts`.
-Afin de voir les étapes qui précèdent et sont nécessaires à l'execution du `marts` il suffit d'écrire `+marts`.
-De même pour les étapes qui succèdent, on peut écrire `marts+`.
+Afin de voir les étapes qui précèdent et sont nécessaires à l'exécution du `marts` il suffit d'écrire `+marts`.
+De même, pour les étapes qui succèdent, on peut écrire `marts+`.
 
-Enfin si vous souhaiter comprendre comment une table d'exposition est construite, vous pouvez écrire `+ma_table`.
+Enfin si vous souhaitez comprendre comment une table d'exposition est construite, vous pouvez écrire `+ma_table`.
 Par exemple pour la table `objectif_projet_structurant`, on écrira simplement `+objectif_projet_structurant`.
 
 
 _____
-# La suite de la DOC est déprécié
+# La suite de la DOC est dépréciée
 La doc auto générée par DBT peut suffire à la remplacer. 
 
 ### Brique PPG_metdata vers Datawarehouse
 
 Aujourd'hui, le chargement des données se fait manuellement une seule fois
 en provenance du répertoire `PPG_metadata`.
-A terme, nous devons pouvoir charger les données du serveur SFTP.
+À terme, nous devons pouvoir charger les données du serveur SFTP.
 
 ``` mermaid
 graph LR
