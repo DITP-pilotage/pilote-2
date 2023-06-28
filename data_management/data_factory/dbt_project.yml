@@ -54,6 +54,8 @@ models:
       2_pivot_faits_indicateur:
         pivot_faits_indicateur_toutes_mailles:
           +materialized: table
+          +indexes:
+            - columns: [ 'indicateur_id' , 'zone_id' ]
       6_calcul_ta_indicateur:
         taux_avancement_indicateur:
           +materialized: table
