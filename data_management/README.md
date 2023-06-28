@@ -211,18 +211,31 @@ La colonne metric_type est donc divisée en 3.
 
 *3_fill_vi_vca_vcg* : dans cette étape, on réalise 3 actions : on fait descendre la valeur initiale la plus ancienne jusqu'à rencontrer une nouvelle valeur initiale,
 que l'on fait descendre à son tour. De telle sorte que toutes les lignes de la table aient une valeur initiale non nulle.
-Ensuite, on crée une colonne valeur cible annuelle dans laquelle on fait remonter sur les lignes précédente, la valeur cible qui est la plus proche de la date de relevé de la ligne. 
+Ensuite, on crée une colonne valeur cible annuelle dans laquelle on fait remonter sur les lignes précédentes, la valeur cible qui est la plus proche de la date de relevé de la ligne.
+On crée aussi une colonne valeur cible globale qui fait remonter la valeur cible la plus ancienne que l'on a sur toutes les lignes de cette colonne.
 
-*4_decumul_va* : 
+*4_decumul_va* : Certaines valeurs actuelles sont renseignées en cumuler (ex: on somme le nombre de kilomètres construits) ou bien en décumuler.
+Dans le paramétrage des indicateurs, on a un paramètre nécessaire, que l'on découpe en 2 dans le staging :
+- param_vaca_decumul_from est de la forme "condition_decumule::date". 
+
+On crée donc les colonnes decumul_va_par et decumul_va_depuis. Avec ces paramètres, on peut décumuler la va si nécessaire, à partir d'une date custom, d'un nombre de mois ou du début de l'année,...
+
 
 *5_calcul_vaca_vacg* : 
 
-*6_calcul_ta_indicateur* : 
+*6_calcul_ta_indicateur* : on applique la formule classique sur tous les indicateurs pour obtenir 
+- le taux d'avancement annuel : (vaca-vi)/(vca-vi)
+- le taux d'avancement global : (vacg-vi)/(vcg-vi)
 
-*7_calcul_ta_chantier* : 
+*7_calcul_ta_chantier* : pour obtenir les taux d'avancement annuel et global du chantier, on récupère les paramètres :
+- poids_pourcent_dept
+- poids_pourcent_reg
+- poids_pourcent_nat
 
-*8_evolution_indicateur* : 
+qui représente la pondération de l'indicateur pour le calcul du ta du chantier. Il est en pourcentage, compris en 0 et 100.
+Ainsi, pour obtenir le ta du chantier on récupère le ta de ses indicateurs qu'on multiplie par sa pondération.
 
+*8_evolution_indicateur* : cette 
 
 #### Exécution des transformations de la data factory 
 
