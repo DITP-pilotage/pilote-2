@@ -25,3 +25,40 @@ export type ChantierPourExport = {
   objÀFaire: string | null,
   synthèseDesRésultats: string | null,
 };
+
+export class ChantierPourExportBuilder  {
+  private _chantierPourExport: ChantierPourExport = {
+    nom: null,
+    maille: null,
+    régionNom: null,
+    départementNom: null,
+    ministèreNom: null,
+    périmètreIds: [],
+    tauxDAvancementNational: null,
+    tauxDAvancementRégional: null,
+    tauxDAvancementDépartemental: null,
+    météo: null,
+    estBaromètre: null,
+    estTerritorialisé: null,
+    commActionsÀVenir: null,
+    commActionsÀValoriser: null,
+    commFreinsÀLever: null,
+    commCommentairesSurLesDonnées: null,
+    commAutresRésultats: null,
+    commAutresRésultatsNonCorrélésAuxIndicateurs: null,
+    decStratSuiviDesDécisions: null,
+    objNotreAmbition: null,
+    objDéjàFait: null,
+    objÀFaire: null,
+    synthèseDesRésultats: null,
+  };
+
+  public avecNom(nom: string | null): ChantierPourExportBuilder {
+    this._chantierPourExport.nom = nom;
+    return this;
+  }
+
+  public build(): ChantierPourExport {
+    return this._chantierPourExport;
+  }
+}

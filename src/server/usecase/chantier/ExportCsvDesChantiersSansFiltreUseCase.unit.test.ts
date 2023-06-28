@@ -1,25 +1,30 @@
 /* eslint-disable unicorn/prefer-spread */
+import { mock } from 'jest-mock-extended';
 import {
   ExportCsvDesChantiersSansFiltreUseCase,
 } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { HabilitationBuilder } from '@/server/domain/utilisateur/habilitation/HabilitationBuilder';
-import { testDouble } from '@/server/utils/testUtils';
 import { Configuration } from '@/server/infrastructure/Configuration';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
+import {
+  ChantierPourExport,
+  ChantierPourExportBuilder,
+} from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 
-function _fakeChantierPourExport(cid: Chantier['id']) {
-  return { nom: 'Chantier ' + cid };
+function _fakeChantierPourExport(cid: Chantier['id']): ChantierPourExport {
+  return (new ChantierPourExportBuilder)
+    .avecNom('Chantier ' + cid)
+    .build();
 }
 
 describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
   it('Renvoie une liste vide si pas de chantiers', async () => {
     // GIVEN
     const chantierIds: Chantier['id'][] = [];
-    const chantierRepository = testDouble<ChantierRepository>({
-      récupérerChantierIdsEnLectureOrdonnésParNom: jest.fn()
-        .mockReturnValueOnce(Promise.resolve(chantierIds)),
-    });
+    const chantierRepository = mock<ChantierRepository>();
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+      .mockReturnValueOnce(Promise.resolve(chantierIds));
 
     const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
     const habilitation = new HabilitationBuilder().build();
@@ -38,14 +43,12 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
   it('Délègue l\'habilitation aux repositories', async () => {
     // GIVEN
     const chantierIds = ['CH-001'];
-    const récupérerChantierIdsEnLectureOrdonnésParNom = jest.fn()
+    const chantierRepository = mock<ChantierRepository>();
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
       .mockReturnValueOnce(Promise.resolve(chantierIds));
-    const récupérerPourExports = jest.fn()
+    chantierRepository.récupérerPourExports
       .mockReturnValueOnce(Promise.resolve(chantierIds.map(_fakeChantierPourExport)));
-    const chantierRepository = testDouble<ChantierRepository>({
-      récupérerChantierIdsEnLectureOrdonnésParNom,
-      récupérerPourExports,
-    });
+
 
     const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
     const territoireCodesLecture = ['NAT-FR'];
@@ -61,9 +64,9 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     }
 
     // THEN
-    expect(récupérerChantierIdsEnLectureOrdonnésParNom.mock.calls[0][0])
+    expect(chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom.mock.calls[0][0])
       .toStrictEqual(habilitation);
-    expect(récupérerPourExports.mock.calls[0][1])
+    expect(chantierRepository.récupérerPourExports.mock.calls[0][1])
       .toStrictEqual(territoireCodesLecture);
   });
 
@@ -71,14 +74,13 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     // GIVEN
     const chantierIds = ['CH-001', 'CH-002', 'CH-003'];
     const chunkSize = 3;
-    const chantierRepository = testDouble<ChantierRepository>({
-      récupérerChantierIdsEnLectureOrdonnésParNom: jest.fn()
-        .mockReturnValueOnce(Promise.resolve(chantierIds)),
-      récupérerPourExports: jest.fn()
-        .mockReturnValueOnce(Promise.resolve(chantierIds.map(_fakeChantierPourExport))),
-    });
+    const chantierRepository = mock<ChantierRepository>();
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+      .mockReturnValueOnce(Promise.resolve(chantierIds));
+    chantierRepository.récupérerPourExports
+      .mockReturnValueOnce(Promise.resolve(chantierIds.map(_fakeChantierPourExport)));
 
-    const config = testDouble<Configuration>({ exportCsvChantiersChunkSize: chunkSize });
+    const config = mock<Configuration>({ exportCsvChantiersChunkSize: chunkSize });
     const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository, config);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DITP_ADMIN';
@@ -103,15 +105,14 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const chunkSize = 3;
     const firstChunk = chantierIds.slice(0, chunkSize);
     const secondChunk = chantierIds.slice(chunkSize);
-    const chantierRepository = testDouble<ChantierRepository>({
-      récupérerChantierIdsEnLectureOrdonnésParNom: jest.fn()
-        .mockReturnValueOnce(Promise.resolve(chantierIds)),
-      récupérerPourExports: jest.fn()
-        .mockReturnValueOnce(Promise.resolve(firstChunk.map(_fakeChantierPourExport)))
-        .mockReturnValueOnce(Promise.resolve(secondChunk.map(_fakeChantierPourExport))),
-    });
+    const chantierRepository = mock<ChantierRepository>();
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+      .mockReturnValueOnce(Promise.resolve(chantierIds));
+    chantierRepository.récupérerPourExports
+      .mockReturnValueOnce(Promise.resolve(firstChunk.map(_fakeChantierPourExport)))
+      .mockReturnValueOnce(Promise.resolve(secondChunk.map(_fakeChantierPourExport)));
 
-    const config = testDouble<Configuration>({ exportCsvChantiersChunkSize: chunkSize });
+    const config = mock<Configuration>({ exportCsvChantiersChunkSize: chunkSize });
     const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository, config);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DITP_ADMIN';
