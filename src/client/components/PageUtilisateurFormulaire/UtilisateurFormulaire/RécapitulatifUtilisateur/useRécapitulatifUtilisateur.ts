@@ -59,8 +59,8 @@ export default function useRécapitulatifUtilisateur() {
   };
 
   return {
-    utilisateur: utilisateur,
-    envoyerFormulaireUtilisateur: envoyerFormulaireUtilisateur,
+    utilisateur,
+    envoyerFormulaireUtilisateur,
     alerte,
   };
 }

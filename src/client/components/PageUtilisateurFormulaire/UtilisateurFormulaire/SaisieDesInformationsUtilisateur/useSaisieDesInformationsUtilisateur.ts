@@ -21,7 +21,7 @@ export default function useSaisieDesInformationsUtilisateur(profils: Profil[]) {
 
   const [habilitationsParDéfaut, setHabilitationsParDéfaut] = useState<HabilitationsÀCréerOuMettreÀJour>({
     lecture: {
-      chantiers: [],
+      chantiers: getValues('habilitations.lecture.chantiers'),
       territoires: getValues('habilitations.lecture.territoires'),
       périmètres: [],
     },
