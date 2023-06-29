@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
 import api from '@/server/infrastructure/api/trpc/api';
-import { MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
+import { MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
+import { trierParOrdreAlphabétique } from '@/client/utils/arrays';
 import MultiSelectPérimètreMinistérielProps from './MultiSelectPérimètreMinistériel.interface';
 
 export default function MultiSelectPérimètreMinistériel({ périmètresMinistérielsIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback }: MultiSelectPérimètreMinistérielProps) {
@@ -12,10 +13,10 @@ export default function MultiSelectPérimètreMinistériel({ périmètresMinist�
     if (périmètresMinistériels) {
       setOptionsGroupées([{
         label: 'Périmètres Ministériels',
-        options: périmètresMinistériels.map(périmètreMinistériel => ({
+        options: trierParOrdreAlphabétique<MultiSelectOptions>(périmètresMinistériels.map(périmètreMinistériel => ({
           label: périmètreMinistériel.nom,
           value: périmètreMinistériel.id,
-        })),
+        })), 'label'),
       }]);
     }
   }, [périmètresMinistériels]);

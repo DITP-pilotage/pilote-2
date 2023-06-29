@@ -34,3 +34,7 @@ export function deuxTableauxSontIdentiques(tableau1: string[], tableau2: string[
 export function auMoinsUneValeurDuTableauEstContenueDansLAutreTableau(tableau1: (string | number | boolean | null)[], tableau2: (string | number | boolean | null)[]) {
   return tableau1.some(element => tableau2.includes(element));
 }
+
+export function trierParOrdreAlphabétique<T extends Record<string, any>[]>(tableau: T, propriétéDeTri: string) {
+  return tableau.sort((a, b) => a[propriétéDeTri].localeCompare(b[propriétéDeTri], 'fr'));
+}
