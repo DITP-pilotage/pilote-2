@@ -67,12 +67,6 @@ models:
       8_evolution_indicateur:
         evolution_indicateur:
           +materialized: table
-    metrics:
-      +schema: marts
-      taux_avancement_indicateur__departement:
-        +materialized: view
-      taux_avancement_indicateur__region:
-        +materialized: view
     intermediate:
       +schema: marts
       +materialized: view

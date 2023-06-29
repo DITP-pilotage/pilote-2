@@ -1,14 +1,3 @@
-WITH valeurs_cibles_annuelles AS (
-    SELECT
-        ROW_NUMBER() OVER (PARTITION BY indicateur_id, zone_id, date_trunc('year', date_releve) ORDER BY date_releve DESC) AS row_id,
-        indicateur_id,
-        zone_id,
-        date_trunc('year', date_releve) AS annee_releve,
-        valeur_cible AS valeur
-    FROM {{ ref('pivot_faits_indicateur_toutes_mailles')}}
-    WHERE valeur_cible is not NULL
-)
-
 SELECT
     pivot.indicateur_id,
     pivot.zone_id,

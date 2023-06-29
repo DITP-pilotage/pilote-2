@@ -1,13 +1,13 @@
 {
   "jobs": [
     {
-      "command": "15 */12 * * * bash scripts/dump_dfakto.sh && bash scripts/fill_tables_ppg_metadata.sh"
+      "command": "15 */12 * * * bash scripts/1_dump_dfakto.sh && bash scripts/2_fill_tables_ppg_metadata.sh"
     },
     {
-      "command": "25 */12 * * * bash scripts/fill_tables_staging.sh"
+      "command": "25 */12 * * * bash scripts/5_fill_tables_staging.sh"
     },
     {
-      "command": "35 */12 * * * bash scripts/fill_tables_public.sh"
+      "command": "35 */12 * * * bash scripts/7_fill_tables_public.sh"
     }
   ]
 }
