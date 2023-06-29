@@ -11,6 +11,7 @@ import { ChantierInformations } from '@/components/PageImportIndicateur/Chantier
 import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import ChoixTerritoire from '@/components/PageChantier/ChoixTerritoire/ChoixTerritoire';
+import { NonAutorisé } from '@/server/utils/errors';
 
 interface NextPageChantierProps {
   indicateurs: Indicateur[],
@@ -56,8 +57,16 @@ export async function getServerSideProps({ req, res, params }: GetServerSideProp
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params.id);
-  const chantier: Chantier = await new RécupérerChantierUseCase().run(params.id, session.habilitations, session.profil);
-
+  let chantier: Chantier;
+  try {
+    chantier = await new RécupérerChantierUseCase().run(params.id, session.habilitations, session.profil);
+  } catch (error) {
+    if (error instanceof NonAutorisé) {
+      return { notFound: true };
+    } else {
+      throw error;
+    }
+  }
   return {
     props: {
       indicateurs,
