@@ -91,39 +91,42 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
           </Bloc>
         </div>
       </div>
-      <div className="fr-pt-3w fr-px-2w fr-px-md-0 alertes">
-        <div className="fr-mb-2w">
-          <TitreInfobulleConteneur>
-            <BadgeIcône type="warning" />
-            <Titre
-              baliseHtml="h2"
-              className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes"
-              estInline
-            >
-              Chantiers signalés
-            </Titre>
-            <Infobulle idHtml="infobulle-chantiers-alertes">
-              { INFOBULLE_CONTENUS.chantiers.alertes }
-            </Infobulle>
-          </TitreInfobulleConteneur>
-        </div>
-        <div className="fr-grid-row fr-grid-row--gutters">
-          {
-            remontéesAlertes.map(({ libellé, nombre, estActivée }) => (
-              <div
-                className="fr-col"
-                key={libellé}
+      {
+        process.env.NEXT_PUBLIC_FF_ALERTES === 'true' &&
+        <div className="fr-pt-3w fr-px-2w fr-px-md-0 alertes">
+          <div className="fr-mb-2w">
+            <TitreInfobulleConteneur>
+              <BadgeIcône type="warning" />
+              <Titre
+                baliseHtml="h2"
+                className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes"
+                estInline
               >
-                <RemontéeAlerte
-                  estActivée={estActivée}
-                  libellé={libellé}
-                  nombre={nombre}
-                />
-              </div>
-            ))
-          }
+                Chantiers signalés
+              </Titre>
+              <Infobulle idHtml="infobulle-chantiers-alertes">
+                { INFOBULLE_CONTENUS.chantiers.alertes }
+              </Infobulle>
+            </TitreInfobulleConteneur>
+          </div>
+          <div className="fr-grid-row fr-grid-row--gutters">
+            {
+              remontéesAlertes.map(({ libellé, nombre, estActivée }) => (
+                <div
+                  className="fr-col"
+                  key={libellé}
+                >
+                  <RemontéeAlerte
+                    estActivée={estActivée}
+                    libellé={libellé}
+                    nombre={nombre}
+                  />
+                </div>
+              ))
+            }
+          </div>
         </div>
-      </div>
+      }
       <div
         className="fr-grid-row fr-mt-7v"
         id={htmlId.listeDesChantiers()}
