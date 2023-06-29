@@ -1,4 +1,5 @@
 export default interface MultiSelectChantierProps {
-  changementValeursSélectionnéesCallback: (territoiresCodesSélectionnés: string[]) => void
+  changementValeursSélectionnéesCallback: (chantiersIdsSélectionnés: string[]) => void
   chantiersIdsSélectionnésParDéfaut?: string[]
+  valeursDésactivées?: string[]
 }

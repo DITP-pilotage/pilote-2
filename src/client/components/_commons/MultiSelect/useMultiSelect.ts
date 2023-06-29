@@ -1,6 +1,7 @@
 import { MutableRefObject, useCallback, useEffect, useId, useState } from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
+import { deuxTableauxSontIdentiques } from '@/client/utils/arrays';
 import MultiSelectProps from './MultiSelect.interface';
 
 export default function useMultiSelect(
@@ -69,11 +70,17 @@ export default function useMultiSelect(
   }, [setIsOpen]);
 
   useEffect(() => {
-    setValeursSélectionnées(new Set(valeursSélectionnéesParDéfaut));
+    if (!valeursSélectionnéesParDéfaut || !deuxTableauxSontIdentiques([...valeursSélectionnées], valeursSélectionnéesParDéfaut)) 
+      setValeursSélectionnées(new Set(valeursSélectionnéesParDéfaut));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valeursSélectionnéesParDéfaut]);
 
   useEffect(() => {
     changementValeursSélectionnéesCallback([...valeursSélectionnées]);
+
+    if (isOpen === false) {
+      trierLesOptions();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valeursSélectionnées]);
 
@@ -88,12 +95,10 @@ export default function useMultiSelect(
   }, [isOpen, optionsGroupées]);
 
   useEffect(() => {
-    if (recherche !== '') {
+    if (recherche !== '') 
       filtrerLesOptions();
-    }
-    if (recherche === '') {
+    else 
       trierLesOptions();
-    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recherche]);
 

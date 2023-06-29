@@ -30,3 +30,7 @@ export function deuxTableauxSontIdentiques(tableau1: string[], tableau2: string[
 
   return true;
 }
+
+export function auMoinsUneValeurDuTableauEstContenueDansLAutreTableau(tableau1: (string | number | boolean | null)[], tableau2: (string | number | boolean | null)[]) {
+  return tableau1.some(element => tableau2.includes(element));
+}

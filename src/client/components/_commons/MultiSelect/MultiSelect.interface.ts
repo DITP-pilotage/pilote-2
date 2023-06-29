@@ -10,6 +10,7 @@ export default interface MultiSelectProps {
 export type MultiSelectOption = { 
   label: string 
   value: string,
+  disabled?: boolean
 };
 
 export type MultiSelectOptionGroupée = { 

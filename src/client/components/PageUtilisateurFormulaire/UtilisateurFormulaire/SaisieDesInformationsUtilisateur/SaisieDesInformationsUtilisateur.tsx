@@ -9,19 +9,23 @@ import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 import Titre from '@/components/_commons/Titre/Titre';
 import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
 import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier';
+import MultiSelectPérimètreMinistériel from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
 import useHabilitationsTerritoires from './useHabilitationsTerritoires';
 import useHabilitationsChantiers from './useHabilitationsChantiers';
+import useHabilitationsPérimètresMinistériels from './useHabilitationsPérimètresMinistériels';
 
 export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesInformationsUtilisateurProps) {
   const { 
     listeProfils,
-    habilitationsParDéfaut,
     profilSélectionné,
     handleChangementValeursSélectionnéesTerritoires,
     handleChangementValeursSélectionnéesChantiers,
+    handleChangementValeursSélectionnéesPérimètresMinistériels,
+    chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés,
     register,
     errors,
     control,
+    watch,
   } = useSaisieDesInformationsUtilisateur(profils);
 
   const {    
@@ -32,6 +36,11 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
   const {    
     masquerLeChampLectureChantiers,
   } = useHabilitationsChantiers(profilSélectionné);
+
+  const {
+    masquerLeChampLecturePérimètresMinistériels,
+  } = useHabilitationsPérimètresMinistériels(profilSélectionné);
+
 
   return (
     <>
@@ -102,7 +111,20 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
               <MultiSelectTerritoire
                 changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
                 groupesÀAfficher={groupesÀAfficher}
-                territoiresCodesSélectionnésParDéfaut={habilitationsParDéfaut.lecture.territoires}
+                territoiresCodesSélectionnésParDéfaut={watch('habilitations.lecture.territoires')}
+              />
+            )}
+            rules={{ required: true }}
+          />
+        </div>
+        <div className={masquerLeChampLecturePérimètresMinistériels ? 'fr-hidden' : 'fr-mb-4w'}>
+          <Controller
+            control={control}
+            name="habilitations.lecture.périmètres"
+            render={() => (
+              <MultiSelectPérimètreMinistériel
+                changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistériels} 
+                périmètresMinistérielsIdsSélectionnésParDéfaut={watch('habilitations.lecture.périmètres')}
               />
             )}
             rules={{ required: true }}
@@ -114,8 +136,9 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
             name="habilitations.lecture.chantiers"
             render={() => (
               <MultiSelectChantier 
-                changementValeursSélectionnéesCallback={(valeursSélectionnées) => handleChangementValeursSélectionnéesChantiers(valeursSélectionnées)} 
-                chantiersIdsSélectionnésParDéfaut={habilitationsParDéfaut.lecture.chantiers}
+                changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiers} 
+                chantiersIdsSélectionnésParDéfaut={watch('habilitations.lecture.chantiers')}
+                valeursDésactivées={chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés}
               />
             )}
             rules={{ required: true }}
