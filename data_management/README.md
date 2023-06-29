@@ -5,7 +5,7 @@ Ce répertoire administre les pipelines d'import, de chargement et transformatio
 
 Ce projet est décomposé en 2 parties : 
 1. Exploration des données issues de _Dfakto_ et du projet _PPG_metadata_ : 
-   - Projet python pour explorer les données du projet.
+   - Projet Python pour explorer les données du projet.
    - Ces données se situent dans le dossier `input_data`. 
    On mettra les données privées dans le répertoire `private_data` et les données publiques dans `open_data`. 
 2. Pipelines d'import, de chargement et transformation des données. L'ensemble de ces pipelines passeront par des scripts.
@@ -83,7 +83,7 @@ cp ../.env.example .env
 
 Pensez à mettre jour le fichier `.env` en demandant les variables à l'équipe.
 
-#### Initialisation de l'environnement python
+#### Initialisation de l'environnement Python
 
 Afin d'installer les dépendances liées au projet, il faut exécuter la commande suivante :
 
@@ -107,10 +107,10 @@ dbt deps --project-dir data_factory
 
 ## Hypothèses actuelles pour les transformations
 
-- Les données sources sont importées dans le schéma `raw_data` par l'étape précédente (job d'import) ;
-- Le schéma destination est le schéma utilisé par la Webapp. À date, ce schéma est le schéma par défaut (`public`) ;
-- DBT écrit et lit dans `raw_data`, le schéma d'import des données ;
-- DBT écrit et lit dans `marts`, le schéma de la data factory ;
+- Les données sources sont importées dans le schéma `raw_data` par l'étape précédente (job d'import);
+- Le schéma destination est le schéma utilisé par la Webapp. À date, ce schéma est le schéma par défaut (`public`);
+- DBT écrit et lit dans `raw_data`, le schéma d'import des données;
+- DBT écrit et lit dans `marts`, le schéma de la data factory;
 - DBT écrit dans `public`, le schéma de destination qui alimente l'application _Pilote 2_.
 
 ## Usage
@@ -132,8 +132,8 @@ Puis pour remplir les tables de _PPG_metadata_ :
 bash scripts/2_fill_tables_ppg_metadata.sh
 ```
 
-NB : en dev et en production, les données sont remplies automatiquement par des jobs 
-tournant toutes les 12 heures (X */12 * * *)
+NB: en dev et en production, les données sont remplies automatiquement par des jobs 
+tournant toutes les 12 heures (X */12 * * *).
 
 Enfin, afin de réaliser un import massif de commentaires, 
 il faut mettre les fichiers à importer dans le répertoire `input_data/private_data/import/commentaires/`. 
@@ -143,9 +143,9 @@ Puis exécuter le script suivant :
 bash scripts/3_fill_tables_import_massif_commentaires.sh
 ```
 
-#### Import massif de commentaire vers la base live :
+#### Import massif de commentaires vers la base live :
 
-WARNING : cette étape n'est pas encore automatisée en environnement de DEV et PROD car il n'existe pas encore d'écran associé dans _Pilote 2_.
+WARNING : cette étape n'est pas encore automatisée en environnement de DEV et de PROD car il n'existe pas encore d'écran associé dans _Pilote 2_.
 Il est donc nécessaire d'exécuter le script manuellement sur ces environnements.
 
 Ouvrir un tunnel vers la base grâce au cli Scalingo (exemple avec la base de DEV) :
@@ -156,7 +156,7 @@ scalingo --region osc-secnum-fr1 -a dev-pilote-ditp db-tunnel SCALINGO_POSTGRESQ
 
 Modifier les variables de base PG de votre `.env` pour les faire pointer vers votre tunnel.
 
-Toujours depuis le répertoire data :
+Toujours depuis le répertoire data_management :
 
 ```bash
 bash scripts/3_fill_tables_import_massif_commentaires.sh
@@ -164,7 +164,7 @@ bash scripts/3_fill_tables_import_massif_commentaires.sh
 
 Si vous rencontrez un problème, pensez à supprimer le dossier target généré par DBT dans le dossier `data_factory`.
 
-NB: après avoir importé les données, coupez le tunnel et changer vos variables d'environnement.
+NB: après avoir importé les données, coupez le tunnel et changez vos variables d'environnement.
 
 
 ### Standardisation des données 
@@ -178,10 +178,10 @@ bash scripts/5_fill_tables_staging.sh
 
 ### Data factory
 
-WARNING : cette étape n'est pas encore automatisée en environnement de DEV et PROD car il n'existe pas encore d'écran associé dans _Pilote 2_.
-Il manque également le paramétrage des indicateurs afin de pouvoir l'exécuter.
+WARNING : cette étape n'est pas encore automatisée en environnement de DEV et de PROD car il n'existe pas encore d'écran associé dans _Pilote 2_.
+Il manque également le paramétrage complet des indicateurs afin de pouvoir l'exécuter.
 
-Les transformations des mesures des indicateurs en taux d'avancement, ou datafactory, sont représentés par les étapes du dossier  
+Les transformations des mesures des indicateurs en taux d'avancement d'indicateurs et de chantiers, ou data factory, sont représentés par les étapes du dossier  
 `models/marts`.
 
 ```
@@ -239,8 +239,8 @@ l'agréger sur une durée donnée en paramètre. On a les paramètres :
 - poids_pourcent_reg
 - poids_pourcent_nat
 
-qui représente la pondération de l'indicateur pour le calcul du ta du chantier. Il est en pourcentage, compris en 0 et 100.
-Ainsi, pour obtenir le ta du chantier on récupère le ta de ses indicateurs qu'on multiplie par sa pondération.
+qui représente la pondération de l'indicateur pour le calcul du ta du chantier. Il est en pourcentage, compris entre 0 et 100.
+Ainsi, pour obtenir le ta du chantier, on récupère le ta de ses indicateurs qu'on multiplie par sa pondération.
 
 *8_evolution_indicateur* : cette étape consiste à transposer les va des indicateurs de x lignes pour x va en 1 ligne 
 avec une liste de va pour un indicateur donné sur un territoire donné.
@@ -256,7 +256,7 @@ bash scripts/6_fill_tables_marts.sh
 
 ### Mise à disposition des données à _Pilote 2_
 
-Afin de remplir les tables du schéma `public` et ainsi alimenter l'application _Pilote 2_, il faut exécuter le script suivant en local:
+Afin de remplir les tables du schéma `public` et ainsi alimenter l'application _Pilote 2_, il faut exécuter le script suivant en local :
 
 ```bash
 bash scripts/7_fill_tables_public.sh
@@ -266,7 +266,7 @@ bash scripts/7_fill_tables_public.sh
 
 Ce document souhaite poser les bases des flux de données alimentant l'application _Pilote 2_.
 
-L'évolution de ces flux se fera au fur et à mesure de la création et l'évolution de _Pilote 2_.
+L'évolution de ces flux se fera au fur et à mesure de la création et de l'évolution de _Pilote 2_.
 
 ## Schéma macro des flux
 
