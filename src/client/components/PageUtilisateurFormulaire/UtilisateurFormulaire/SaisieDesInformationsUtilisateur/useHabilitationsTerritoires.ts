@@ -27,22 +27,21 @@ export default function useHabilitationsTerritoires(profil: Profil) {
         nouvellesValeurs = [...new Set([...nouvellesValeurs, ...départements])];
       }
     });
-
     return nouvellesValeurs;
   };
 
-  const masquerLeChampLectureTerritoire = profil?.code === 'DROM' || profil?.chantiers.lecture.tousTerritoires;
+  const masquerLeChampLectureTerritoires = !profil || profil.code === 'DROM' || profil.chantiers.lecture.tousTerritoires;
 
   const groupesÀAfficher = {
-    nationale: masquerLeChampLectureTerritoire,
-    régionale: masquerLeChampLectureTerritoire || profilsRégionaux.includes(profil?.code),
-    départementale: masquerLeChampLectureTerritoire || profilsDépartementaux.includes(profil?.code),
+    nationale: masquerLeChampLectureTerritoires,
+    régionale: masquerLeChampLectureTerritoires || profilsRégionaux.includes(profil?.code),
+    départementale: masquerLeChampLectureTerritoires || profilsDépartementaux.includes(profil?.code),
   };
 
   return {
     déterminerLesTerritoiresSélectionnésParDéfaut,
     déterminerLesTerritoiresSélectionnés,
-    masquerLeChampLectureTerritoire,
+    masquerLeChampLectureTerritoire: masquerLeChampLectureTerritoires,
     groupesÀAfficher,
   };
 }

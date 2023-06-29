@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState } from 'react';
+import { MutableRefObject, useCallback, useEffect, useId, useState } from 'react';
 import useDropdownMenu from 'react-accessible-dropdown-menu-hook';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import MultiSelectProps from './MultiSelect.interface';
@@ -7,10 +7,11 @@ export default function useMultiSelect(
   optionsGroupées: MultiSelectProps['optionsGroupées'], 
   suffixeLibellé: string, 
   changementValeursSélectionnéesCallback: MultiSelectProps['changementValeursSélectionnéesCallback'], 
+  ref: MutableRefObject<HTMLDivElement | null>,
   valeursSélectionnéesParDéfaut?: string[],
 ) {
   const uniqueId = useId();
-  const { buttonProps, isOpen } = useDropdownMenu(3);
+  const { buttonProps, isOpen, setIsOpen } = useDropdownMenu(3);
   const [valeursSélectionnées, setValeursSélectionnées] = useState<Set<string>>(new Set(valeursSélectionnéesParDéfaut));
   const [optionsGroupéesFiltrées, setOptionsGroupéesFiltrées] = useState(optionsGroupées);
   const [recherche, setRecherche] = useState('');
@@ -62,16 +63,16 @@ export default function useMultiSelect(
     return `${valeursSélectionnées.size} ${suffixeLibellé}`;
   };
 
+  const fermerLeMenu = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape')
+      setIsOpen(false);
+  }, [setIsOpen]);
+
   useEffect(() => {
     setValeursSélectionnées(new Set(valeursSélectionnéesParDéfaut));
   }, [valeursSélectionnéesParDéfaut]);
 
   useEffect(() => {
-    if (recherche !== '') {
-      setRecherche('');
-      trierLesOptions();
-    }
-
     changementValeursSélectionnéesCallback([...valeursSélectionnées]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valeursSélectionnées]);
@@ -80,6 +81,9 @@ export default function useMultiSelect(
     if (isOpen === false) {
       trierLesOptions();
     }
+    if (ref.current) {
+      ref.current.scrollTop = 0;
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, optionsGroupées]);
 
@@ -87,8 +91,16 @@ export default function useMultiSelect(
     if (recherche !== '') {
       filtrerLesOptions();
     }
+    if (recherche === '') {
+      trierLesOptions();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recherche]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', fermerLeMenu);
+    return () => window.removeEventListener('keydown', fermerLeMenu);
+  }, [fermerLeMenu]);
 
   return {
     mettreÀJourLesValeursSélectionnées,

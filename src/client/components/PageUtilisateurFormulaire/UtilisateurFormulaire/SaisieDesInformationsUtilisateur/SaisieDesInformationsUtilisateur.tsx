@@ -1,5 +1,6 @@
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 import { Controller } from 'react-hook-form';
+//import { DevTool } from '@hookform/devtools';  
 import InputAvecLabel from '@/components/_commons/InputAvecLabel/InputAvecLabel';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import SaisieDesInformationsUtilisateurProps from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur.interface';
@@ -7,7 +8,9 @@ import useSaisieDesInformationsUtilisateur from '@/components/PageUtilisateurFor
 import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 import Titre from '@/components/_commons/Titre/Titre';
 import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
+import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier';
 import useHabilitationsTerritoires from './useHabilitationsTerritoires';
+import useHabilitationsChantiers from './useHabilitationsChantiers';
 
 export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesInformationsUtilisateurProps) {
   const { 
@@ -15,6 +18,7 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
     habilitationsParDéfaut,
     profilSélectionné,
     handleChangementValeursSélectionnéesTerritoires,
+    handleChangementValeursSélectionnéesChantiers,
     register,
     errors,
     control,
@@ -24,6 +28,10 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
     masquerLeChampLectureTerritoire,
     groupesÀAfficher,
   } = useHabilitationsTerritoires(profilSélectionné);
+
+  const {    
+    masquerLeChampLectureChantiers,
+  } = useHabilitationsChantiers(profilSélectionné);
 
   return (
     <>
@@ -75,29 +83,44 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
         texteFantôme='Sélectionner un profil'
         valeurSélectionnée={profilSélectionné?.code}
       />
-      <hr className='fr-hr' />
-      <Titre
-        baliseHtml='h2'
-        className="fr-text--md  fr-mb-2w"
-      >
-        Droits de lecture
-      </Titre>
-      <p className="fr-text--xs texte-gris fr-mb-4w">
-        Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
-      </p>
-      <div className={masquerLeChampLectureTerritoire ? 'fr-hidden' : ''}>
-        <Controller
-          control={control}
-          name="habilitations.lecture.territoires"
-          render={() => (
-            <MultiSelectTerritoire
-              changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
-              groupesÀAfficher={groupesÀAfficher}
-              territoiresCodesSélectionnésParDéfaut={habilitationsParDéfaut.lecture.territoires}
-            />
-          )}
-          rules={{ required: true }}
-        />
+      <div className={masquerLeChampLectureTerritoire && masquerLeChampLectureChantiers ? 'fr-hidden' : ''}>
+        <hr className='fr-hr' />
+        <Titre
+          baliseHtml='h2'
+          className="fr-text--md  fr-mb-2w"
+        >
+          Droits de lecture
+        </Titre>
+        <p className="fr-text--xs texte-gris fr-mb-4w">
+          Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
+        </p>
+        <div className={masquerLeChampLectureTerritoire ? 'fr-hidden' : 'fr-mb-4w'}>
+          <Controller
+            control={control}
+            name="habilitations.lecture.territoires"
+            render={() => (
+              <MultiSelectTerritoire
+                changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
+                groupesÀAfficher={groupesÀAfficher}
+                territoiresCodesSélectionnésParDéfaut={habilitationsParDéfaut.lecture.territoires}
+              />
+            )}
+            rules={{ required: true }}
+          />
+        </div>
+        <div className={masquerLeChampLectureChantiers ? 'fr-hidden' : 'fr-mb-4w'}>
+          <Controller
+            control={control}
+            name="habilitations.lecture.chantiers"
+            render={() => (
+              <MultiSelectChantier 
+                changementValeursSélectionnéesCallback={(valeursSélectionnées) => handleChangementValeursSélectionnéesChantiers(valeursSélectionnées)} 
+                chantiersIdsSélectionnésParDéfaut={habilitationsParDéfaut.lecture.chantiers}
+              />
+            )}
+            rules={{ required: true }}
+          />
+        </div>
       </div>
       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
         <SubmitBouton
@@ -105,6 +128,7 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
           label="Suivant"
         />
       </div>
+      {/* <DevTool control={control} /> */}
     </>
   );
 }

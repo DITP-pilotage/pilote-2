@@ -1,3 +1,4 @@
+import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
@@ -10,12 +11,14 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     private readonly utilisateurRepository: UtilisateurRepository = dependencies.getUtilisateurRepository(),
     private readonly utilisateurIAMRepository: UtilisateurIAMRepository = dependencies.getUtilisateurIAMRepository(),
     private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
+    private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
   ) {}
 
   async _validerLesHabilitations(utilisateur: UtilisateurÀCréerOuMettreÀJour) {
     const territoires = await this.territoireRepository.récupérerTous();
+    const chantiers = await this.chantierRepository.récupérerChantiersSynthétisés();
 
-    const validateurHabilitations = await créerValidateurHabilitations(territoires);
+    const validateurHabilitations = await créerValidateurHabilitations(territoires, chantiers);
     validateurHabilitations.parse(utilisateur);
   }
 

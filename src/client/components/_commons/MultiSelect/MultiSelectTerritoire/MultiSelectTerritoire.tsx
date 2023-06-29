@@ -53,6 +53,7 @@ export default function MultiSelectTerritoire({ territoiresCodesSélectionnésPa
   return (
     <MultiSelect
       changementValeursSélectionnéesCallback={(valeursSélectionnées: string[]) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
+      label='Territoire(s)'
       optionsGroupées={optionsGroupées}
       suffixeLibellé='territoire(s) sélectionné(s)'
       valeursSélectionnéesParDéfaut={valeursSélectionnéesParDéfaut}

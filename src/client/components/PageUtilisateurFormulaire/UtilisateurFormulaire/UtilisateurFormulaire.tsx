@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
@@ -22,6 +22,10 @@ export default function UtilisateurFormulaire({ profils }: UtilisateurFormulaire
   const passerAuRécapitulatif = async () => {
     setEtapeCourante(2);
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [etapeCourante]);
 
   return (
     <>

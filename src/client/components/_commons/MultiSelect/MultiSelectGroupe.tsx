@@ -10,8 +10,8 @@ export default function MultiSelectGroupe({ groupeOptions, changementÉtatCallba
     
   return (
     <>
-      <p>
-        {groupeOptions.label}
+      <p className='groupe-label fr-mb-1w fr-mt-2w'>
+        {groupeOptions.label.toUpperCase()}
       </p>
       {
         groupeOptions.options.map(option => (

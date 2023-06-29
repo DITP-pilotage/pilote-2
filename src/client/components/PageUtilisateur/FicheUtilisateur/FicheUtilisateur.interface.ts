@@ -1,6 +1,5 @@
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { ScopeChantiers, HabilitationChantiers } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { NextPageAdminUtilisateurProps } from 'pages/admin/utilisateur/[id]';
 
 export default interface FicheUtilisateurProps {
   utilisateur: {
@@ -13,5 +12,4 @@ export default interface FicheUtilisateurProps {
     fonction: string | null
     habilitations: Record<ScopeChantiers, HabilitationChantiers> 
   } 
-  chantiers: NextPageAdminUtilisateurProps['chantiers']
 }
