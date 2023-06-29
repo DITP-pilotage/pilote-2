@@ -44,9 +44,12 @@ export default function TableauChantiersTuileChantier({ chantier, afficherIcône
             dateDeMàjDonnéesQuantitatives={chantier.dateDeMàjDonnéesQuantitatives}
           />
         </div>
-        <PictoTendance tendance={chantier.tendance} />
         {
-          !!couleurÉcartArrondi &&
+          process.env.NEXT_PUBLIC_FF_ALERTES === 'true' &&
+          <PictoTendance tendance={chantier.tendance} />
+        }
+        {
+          process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && !!couleurÉcartArrondi &&
           <TexteColoré
             alignement="droite"
             couleur={couleurÉcartArrondi.couleur}

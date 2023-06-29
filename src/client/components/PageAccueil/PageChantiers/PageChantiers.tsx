@@ -140,40 +140,43 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
             </Bloc>
           </div>
         </div>
-        <div className="fr-pt-3w fr-px-2w fr-px-md-0 alertes">
-          <div className="fr-mb-2w">
-            <TitreInfobulleConteneur>
-              <BadgeIcône type="warning" />
-              <Titre
-                baliseHtml="h2"
-                className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes"
-                estInline
-              >
-                Chantiers signalés
-              </Titre>
-              <Infobulle idHtml="infobulle-chantiers-alertes">
-                { INFOBULLE_CONTENUS.chantiers.alertes }
-              </Infobulle>
-            </TitreInfobulleConteneur>
-          </div>
-          <div className="fr-grid-row fr-mx-n1v fr-mx-md-n1w">
-            {
-              remontéesAlertes.map(({ libellé, nombre, estActivée, auClic }) => (
-                <div
-                  className="fr-col fr-px-1v fr-px-md-1w"
-                  key={libellé}
+        {
+          process.env.NEXT_PUBLIC_FF_ALERTES === 'true' &&
+          <div className="fr-pt-3w fr-px-2w fr-px-md-0 alertes">
+            <div className="fr-mb-2w">
+              <TitreInfobulleConteneur>
+                <BadgeIcône type="warning" />
+                <Titre
+                  baliseHtml="h2"
+                  className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes"
+                  estInline
                 >
-                  <RemontéeAlerte
-                    auClic={auClic}
-                    estActivée={estActivée}
-                    libellé={libellé}
-                    nombre={nombre}
-                  />
-                </div>
-              ))
-            }
+                  Chantiers signalés
+                </Titre>
+                <Infobulle idHtml="infobulle-chantiers-alertes">
+                  { INFOBULLE_CONTENUS.chantiers.alertes }
+                </Infobulle>
+              </TitreInfobulleConteneur>
+            </div>
+            <div className="fr-grid-row fr-mx-n1v fr-mx-md-n1w">
+              {
+                remontéesAlertes.map(({ libellé, nombre, estActivée, auClic }) => (
+                  <div
+                    className="fr-col fr-px-1v fr-px-md-1w"
+                    key={libellé}
+                  >
+                    <RemontéeAlerte
+                      auClic={auClic}
+                      estActivée={estActivée}
+                      libellé={libellé}
+                      nombre={nombre}
+                    />
+                  </div>
+                ))
+              }
+            </div>
           </div>
-        </div>
+        }
         <div className="fr-grid-row fr-mt-7v">
           <div className="fr-col">
             <Bloc>

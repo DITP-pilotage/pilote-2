@@ -122,31 +122,33 @@ const colonnesTableauChantiers = [
       width: '11rem',
     },
   }),
-  reactTableColonnesHelper.accessor('tendance', {
-    header: 'Tendance',
-    id: 'tendance',
-    enableSorting: false,
-    cell: cellContext => (
-      <TableauChantiersTendance tendance={cellContext.getValue()} />
-    ),
-    enableGrouping: false,
-    meta: {
-      width: '7.5rem',
-    },
-  }),
-  reactTableColonnesHelper.accessor('écart', {
-    header: 'Écart',
-    id: 'écart',
-    enableSorting: false,
-    cell: cellContext => (
-      <TableauChantiersÉcart écart={cellContext.getValue()} />
-    ),
-    enableGrouping: false,
-    aggregatedCell: () => null,
-    meta: {
-      width: '5.5rem',
-    },
-  }),
+  ...(process.env.NEXT_PUBLIC_FF_ALERTES === 'true' ? [
+    reactTableColonnesHelper.accessor('tendance', {
+      header: 'Tendance',
+      id: 'tendance',
+      enableSorting: false,
+      cell: cellContext => (
+        <TableauChantiersTendance tendance={cellContext.getValue()} />
+      ),
+      enableGrouping: false,
+      meta: {
+        width: '7.5rem',
+      },
+    }),
+    reactTableColonnesHelper.accessor('écart', {
+      header: 'Écart',
+      id: 'écart',
+      enableSorting: false,
+      cell: cellContext => (
+        <TableauChantiersÉcart écart={cellContext.getValue()} />
+      ),
+      enableGrouping: false,
+      aggregatedCell: () => null,
+      meta: {
+        width: '5.5rem',
+      },
+    }),
+  ] : []),
   reactTableColonnesHelper.display({
     id: 'dérouler-groupe',
     aggregatedCell: (aggregatedCellContext => (
