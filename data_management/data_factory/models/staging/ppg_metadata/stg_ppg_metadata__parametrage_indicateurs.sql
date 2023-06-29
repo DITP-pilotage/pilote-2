@@ -56,7 +56,8 @@ renamed as (
         param_vacg_op as vacg_operation,
         poids_pourcent_dept,
         poids_pourcent_reg,
-        poids_pourcent_nat
+        poids_pourcent_nat,
+        tendance
 
     from source
 
