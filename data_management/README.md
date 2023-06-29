@@ -225,12 +225,14 @@ Dans le paramétrage des indicateurs, on a un paramètre nécessaire, que l'on d
 On crée donc les colonnes decumul_va_par et decumul_va_depuis. Avec ces paramètres, on peut décumuler la va si nécessaire, à partir d'une date custom, d'un nombre de mois ou du début de l'année,...
 
 *5_calcul_vaca_vacg* : cette étape permet de calculer la valeur actuelle comparable des indicateurs. 
-Pour cela, il est nécessaire de prendre la valeur va décumulée à l'étape précédente et de, selon la paramétrage, 
-l'agréger sur une durée donnée en paramètre (_partitionne_vacg_nombre_de_mois_).
+Pour cela, il est nécessaire de prendre la valeur va décumulée à l'étape précédente et de, selon le paramétrage, 
+l'agréger sur une durée donnée en paramètre. On a les paramètres :
+- param_vaca_partition_date : qui détermine depuis quand on agrège les va décumulées
+- param_vaca_op : qui donne l'opération à réaliser pour agréger les données (somme ou moyenne)
 
 *6_calcul_ta_indicateur* : on applique la formule classique sur tous les indicateurs pour obtenir 
-- le taux d'avancement annuel : (vaca-vi)/(vca-vi)
-- le taux d'avancement global : (vacg-vi)/(vcg-vi)
+- le taux d'avancement annuel : (vaca-vi) / (vca-vi)
+- le taux d'avancement global : (vacg-vi) / (vcg-vi)
 
 *7_calcul_ta_chantier* : pour obtenir les taux d'avancement annuel et global du chantier, on récupère les paramètres :
 - poids_pourcent_dept
@@ -242,7 +244,7 @@ Ainsi, pour obtenir le ta du chantier on récupère le ta de ses indicateurs qu'
 
 *8_evolution_indicateur* : cette étape consiste à transposer les va des indicateurs de x lignes pour x va en 1 ligne 
 avec une liste de va pour un indicateur donné sur un territoire donné.
-Ces données seront ensuite utilisées pour avoir l'historique des va des indicateurs dans le graphe concerné sur Pilote 2.
+Ces données seront ensuite utilisées pour avoir l'historique des va des indicateurs dans le graphe concerné sur _Pilote 2_.
 
 #### Exécution des transformations de la data factory 
 
