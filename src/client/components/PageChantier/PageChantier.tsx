@@ -78,7 +78,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
           onClick={() => setEstOuverteBarreLatérale(true)}
           type="button"
         >
-          Sommaire
+          Filtres
         </BoutonSousLigné>
         {
           chantier !== null ? (
