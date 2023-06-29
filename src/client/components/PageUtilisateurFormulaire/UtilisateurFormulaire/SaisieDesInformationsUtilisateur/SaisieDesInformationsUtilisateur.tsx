@@ -94,7 +94,7 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
         <p className="fr-text--xs texte-gris fr-mb-4w">
           Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
         </p>
-        <div className={masquerLeChampLectureTerritoire ? 'fr-hidden' : ''}>
+        <div className={masquerLeChampLectureTerritoire ? 'fr-hidden' : 'fr-mb-4w'}>
           <Controller
             control={control}
             name="habilitations.lecture.territoires"
@@ -108,7 +108,7 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
             rules={{ required: true }}
           />
         </div>
-        <div className={masquerLeChampLectureChantiers ? 'fr-hidden' : ''}>
+        <div className={masquerLeChampLectureChantiers ? 'fr-hidden' : 'fr-mb-4w'}>
           <Controller
             control={control}
             name="habilitations.lecture.chantiers"

@@ -1,9 +1,12 @@
+import { useId, useRef } from 'react';
 import MultiSelectProps from '@/components/_commons/MultiSelect/MultiSelect.interface';
 import MultiSelectGroupe from '@/components/_commons/MultiSelect/MultiSelectGroupe';
 import MultiSelectStyled from './MultiSelect.styled';
 import useMultiSelect from './useMultiSelect';
 
-export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeursSélectionnéesParDéfaut, changementValeursSélectionnéesCallback }: MultiSelectProps) {
+export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeursSélectionnéesParDéfaut, changementValeursSélectionnéesCallback, label }: MultiSelectProps) {
+  const id = useId();
+  const ref = useRef(null);
   const {
     mettreÀJourLesValeursSélectionnées,
     recherche,
@@ -14,12 +17,19 @@ export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeurs
     valeursSélectionnées,
     uniqueId,
     libellé,
-  } = useMultiSelect(optionsGroupées, suffixeLibellé, changementValeursSélectionnéesCallback, valeursSélectionnéesParDéfaut);
+  } = useMultiSelect(optionsGroupées, suffixeLibellé, changementValeursSélectionnéesCallback, ref, valeursSélectionnéesParDéfaut);
 
   return (
     <MultiSelectStyled>
+      <label
+        className='fr-label'
+        htmlFor={id}
+      >
+        {label}
+      </label>
       <button
         className='fr-select'
+        id={id}
         type="button"
         {...multiSelectBoutonProps}
       >
@@ -27,6 +37,7 @@ export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeurs
       </button>
       <div
         className={estOuvert ? 'visible' : ''}
+        ref={ref}
         role='menu'
       >
         <input

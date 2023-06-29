@@ -23,6 +23,7 @@ export default function MultiSelectChantier({ chantiersIdsSélectionnésParDéfa
   return (
     <MultiSelect
       changementValeursSélectionnéesCallback={(valeursSélectionnées: string[]) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
+      label='Chantier(s)'
       optionsGroupées={optionsGroupées}
       suffixeLibellé='chantier(s) sélectionné(s)'
       valeursSélectionnéesParDéfaut={chantiersIdsSélectionnésParDéfaut}

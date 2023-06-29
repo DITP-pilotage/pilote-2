@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
 const MultiSelectStyled = styled.div`
-  
   position: relative;
   
   div[role='menu'] {
@@ -18,6 +17,14 @@ const MultiSelectStyled = styled.div`
     overflow: auto;
     background: white;
     border: 1px solid grey;
+  }
+
+  button.fr-select {
+    text-align: left;
+  }
+
+  .groupe-label {
+    color: var(--text-mention-grey);
   }
 `;
 
