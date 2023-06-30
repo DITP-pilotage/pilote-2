@@ -67,7 +67,12 @@ export default function UtilisateurFormulaire({ profils }: UtilisateurFormulaire
                     profils={profils}
                   />
               }
-              {etapeCourante === 2 && <RécapitulatifUtilisateur />}
+              {
+                etapeCourante === 2 && 
+                  <RécapitulatifUtilisateur 
+                    auClicBoutonRetourCallback={() => setEtapeCourante(1)} 
+                  />
+              }
             </form>
           </FormProvider>
         </div>

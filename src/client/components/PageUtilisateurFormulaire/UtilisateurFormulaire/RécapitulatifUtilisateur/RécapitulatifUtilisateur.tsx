@@ -1,10 +1,12 @@
+import Link from 'next/link';
 import Bouton from '@/components/_commons/Bouton/Bouton';
 import useRécapitulatifUtilisateur
   from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/useRécapitulatifUtilisateur';
 import FicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur';
 import Alerte from '@/components/_commons/Alerte/Alerte';
+import RécapitulatifUtilisateurProps from './RécapitulatifUtilisateur.interface';
 
-export default function RécapitulatifUtilisateur() {
+export default function RécapitulatifUtilisateur({ auClicBoutonRetourCallback }: RécapitulatifUtilisateurProps) {
   const { utilisateur, envoyerFormulaireUtilisateur, alerte } = useRécapitulatifUtilisateur();
 
   return (
@@ -21,10 +23,24 @@ export default function RécapitulatifUtilisateur() {
             />
           </div>
       }
-      <Bouton
-        label='Envoyer'
-        onClick={envoyerFormulaireUtilisateur}
-      />
+      <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
+        <Bouton
+          className='fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line fr-mr-2w'
+          label="Retour"
+          onClick={auClicBoutonRetourCallback}
+        />
+        <Bouton
+          label="Confirmer"
+          onClick={envoyerFormulaireUtilisateur}
+        />
+      </div>
+      <div className="fr-grid-row fr-grid-row--right fr-mt-3w">
+        <Link 
+          href='/admin/utilisateurs'
+        >
+          Annuler
+        </Link>
+      </div>
     </div>
   );
 }

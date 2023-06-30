@@ -37,10 +37,7 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
     return redirigerVersPageAccueil;
   }
 
-
   const profils = await new RécupérerListeProfilUseCase().run();
-
-
 
   return {
     props: {
