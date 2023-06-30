@@ -67,6 +67,10 @@ export default async function créerValidateurHabilitations(territoires: Territo
     return chantiersIds.every(chantierId => tousLesChantiersTerritorialisésIds.has(chantierId));
   });
 
+  const validationPérimètresProfilDrom = z.string().array().refine(périmètresIds => {
+    return périmètresIds.length === 1 && périmètresIds[0] === 'PER-018';
+  });
+
   return z.union([
     z.object({
       profil: z.literal('DITP_ADMIN'),
@@ -394,7 +398,7 @@ export default async function créerValidateurHabilitations(territoires: Territo
         lecture: z.object({
           chantiers: validationChantiersTerritorialisés,
           territoires: validationTerritoiresProfilDrom,
-          périmètres: z.string().array(),
+          périmètres: validationPérimètresProfilDrom,
         }),
         'saisie.indicateur': z.object({
           chantiers: z.string().array(),

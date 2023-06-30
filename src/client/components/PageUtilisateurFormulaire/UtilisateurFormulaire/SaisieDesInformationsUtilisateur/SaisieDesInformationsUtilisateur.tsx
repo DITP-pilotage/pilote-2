@@ -35,6 +35,7 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
 
   const {    
     masquerLeChampLectureChantiers,
+    chantiersAccessiblesPourLeProfil,
   } = useHabilitationsChantiers(profilSélectionné);
 
   const {
@@ -137,6 +138,7 @@ export default function SaisieDesInformationsUtilisateur({ profils }: SaisieDesI
             render={() => (
               <MultiSelectChantier 
                 changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiers} 
+                chantiers={chantiersAccessiblesPourLeProfil}
                 chantiersIdsSélectionnésParDéfaut={watch('habilitations.lecture.chantiers')}
                 valeursDésactivées={chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés}
               />

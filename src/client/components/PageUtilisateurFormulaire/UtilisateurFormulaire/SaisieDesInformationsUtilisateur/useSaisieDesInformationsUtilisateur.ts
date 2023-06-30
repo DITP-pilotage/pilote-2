@@ -36,9 +36,15 @@ export default function useSaisieDesInformationsUtilisateur(profils: Profil[]) {
   };
 
   const handleChangementValeursSélectionnéesPérimètresMinistériels = useCallback((valeursSélectionnées: string[]) => {    
+    const périmètresIdsActuellementsSélectionnés = getValues('habilitations.lecture.périmètres') ?? [];
+    const périmètresIdsDécochés = périmètresIdsActuellementsSélectionnés.filter(périmètreId => !valeursSélectionnées.includes(périmètreId));
+    const chantiersIdsDesPérimètresDécochés = déterminerLesChantiersSélectionnés(périmètresIdsDécochés);
+    const chantiersIdsActuellementSélectionnés = getValues('habilitations.lecture.chantiers') ?? [];
+    const nouveauChantiersIds = chantiersIdsActuellementSélectionnés.filter(chantierId => !chantiersIdsDesPérimètresDécochés.includes(chantierId));
+    setValue('habilitations.lecture.chantiers', nouveauChantiersIds);
     setValue('habilitations.lecture.périmètres', valeursSélectionnées);
     setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés(déterminerLesChantiersSélectionnés(valeursSélectionnées));
-  }, [déterminerLesChantiersSélectionnés, setValue]);
+  }, [déterminerLesChantiersSélectionnés, getValues, setValue]);
 
   useEffect(() => {
     handleChangementValeursSélectionnéesChantiers([...getValues('habilitations.lecture.chantiers') ?? [], ...chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés]);
