@@ -21,6 +21,7 @@ export default function MultiSelectGroupe({ groupeOptions, changementÉtatCallba
                 <input
                   checked={valeursSélectionnées.has(option.value)}
                   className='fr-input'
+                  disabled={option.disabled}
                   id={`${option.value} ${id}`}
                   name={option.value}
                   onChange={() => changementÉtatCallback(option.value)}

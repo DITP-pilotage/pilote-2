@@ -1,4 +1,8 @@
+import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+
 export default interface MultiSelectChantierProps {
-  changementValeursSélectionnéesCallback: (territoiresCodesSélectionnés: string[]) => void
+  changementValeursSélectionnéesCallback: (chantiersIdsSélectionnés: string[]) => void
+  chantiers: ChantierSynthétisé[]
   chantiersIdsSélectionnésParDéfaut?: string[]
+  valeursDésactivées?: string[]
 }

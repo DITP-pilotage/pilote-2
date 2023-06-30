@@ -17,8 +17,8 @@ export default class ProfilSQLRepository implements ProfilRepository {
 
   _mapperVersLeDomaine(p: profil): Profil {
     return {
-      code: p.code,
-      nom: p.nom as ProfilCode,
+      code: p.code as ProfilCode,
+      nom: p.nom,
       chantiers: {
         lecture: {
           tous: p.a_acces_tous_chantiers,

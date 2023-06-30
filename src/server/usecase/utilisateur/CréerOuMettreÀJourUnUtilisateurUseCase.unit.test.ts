@@ -55,9 +55,9 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     process.env = oldEnv;
   });
 
-  async function testAccèsTerritoiresEnLectureCasPassant(profilCode: ProfilCode, territoiresCodes: string[], chantiersIds: string[]) {
+  async function testAccèsTerritoiresEnLectureCasPassant(profilCode: ProfilCode, territoiresCodes: string[], chantiersIds: string[], périmètresIds: string[] = []) {
     //GIVEN
-    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil(profilCode).avecHabilitationLecture(chantiersIds, territoiresCodes).build();
+    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil(profilCode).avecHabilitationLecture(chantiersIds, territoiresCodes, périmètresIds).build();
 
     //WHEN
     await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto');
@@ -67,9 +67,9 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     expect(stubUtilisateurIAMRepository.ajouteUtilisateurs).toHaveBeenCalledTimes(1);
   }
 
-  async function testAccèsTerritoiresEnLectureCasErreur(profilCode: ProfilCode, territoiresCodes: string[], chantiersIds: string[]) {
+  async function testAccèsTerritoiresEnLectureCasErreur(profilCode: ProfilCode, territoiresCodes: string[], chantiersIds: string[], périmètresIds: string[] = []) {
     // GIVEN
-    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil(profilCode).avecHabilitationLecture(chantiersIds, territoiresCodes).build();
+    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil(profilCode).avecHabilitationLecture(chantiersIds, territoiresCodes, périmètresIds).build();
 
     // THEN
     await expect(créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto')).rejects.toThrowError();
@@ -378,16 +378,20 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
   describe("L'utilisateur a un profil DROM", () => {
     describe("L'utilisateur doit avoir accès à tous les territoires DROM et le territoire France et tous les chantiers territorialisés en lecture", () => {
       it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('DROM', codesTerritoiresDROM, tousLesChantiersTerritorialisésIds);
+        await testAccèsTerritoiresEnLectureCasPassant('DROM', codesTerritoiresDROM, tousLesChantiersTerritorialisésIds, ['PER-018']);
       });
 
       it("renvoi une erreur si l'utilisateur a un territoire qui n'est pas un territoire DROM", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('DROM', ['DEPT-75'], tousLesChantiersTerritorialisésIds);
+        await testAccèsTerritoiresEnLectureCasErreur('DROM', ['DEPT-75'], tousLesChantiersTerritorialisésIds, ['PER-018']);
       }); 
 
       it("renvoi une erreur si l'utilisateur n'a pas tous les chantiers territorialisés", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('DROM', codesTerritoiresDROM, []);
-      }); 
+        await testAccèsTerritoiresEnLectureCasErreur('DROM', codesTerritoiresDROM, [], ['PER-018']);
+      });
+
+      it("renvoi une erreur si l'utilisateur n'a pas le périmètre 18", async () => {
+        await testAccèsTerritoiresEnLectureCasErreur('DROM', codesTerritoiresDROM, tousLesChantiersTerritorialisésIds);
+      });
     });
   });
 });
