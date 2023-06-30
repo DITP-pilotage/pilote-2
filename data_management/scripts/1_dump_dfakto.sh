@@ -44,6 +44,7 @@ get fact_progress_project.csv $TEMP_DIR
 get dim_tree_nodes.csv $TEMP_DIR/dim_tree_nodes_ps.csv
 get ps_view_data_kpis.csv $TEMP_DIR
 get ps_view_data_financials.csv $TEMP_DIR
+get fact_property_values.csv $TEMP_DIR
 EOF
 )
 

@@ -1,10 +1,16 @@
+WITH fact_property_value as (
+    SELECT *
+    FROM {{ ref('stg_dfakto__fact_property_values')}}
+    WHERE type = 'Taux avancement'
+)
+
 SELECT
     DISTINCT ON (data_financials_ps.projet_structurant_code)
     {{ dbt_utils.surrogate_key(['data_financials_ps.projet_structurant_code']) }} as id,
     data_financials_ps.projet_structurant_code as code,
     data_financials_ps.projet_structurant_nom as nom,
-    COALESCE(fact_progress_ps.avancement_borne, fact_progress_ps.avancement) as taux_avancement,
-    data_financials_ps.taux_avancement_date_de_mise_a_jour as date_taux_avancement,
+    COALESCE(fact_progress_ps.avancement_borne, fact_property_value.valeur::FLOAT) as taux_avancement,
+    COALESCE(data_financials_ps.taux_avancement_date_de_mise_a_jour, fact_property_value.date_de_mise_a_jour) as date_taux_avancement,
     territoire.code as territoire_code,
     ARRAY(
         SELECT perimetre_projet_structurant.perimetres_ppg_id
@@ -43,4 +49,5 @@ SELECT
         JOIN territoire ON data_financials_ps.zone_code = territoire.zone_id
         JOIN {{ ref('stg_dfakto__ps_dim_tree_nodes') }} dim_tree_nodes_ps ON data_financials_ps.projet_structurant_code = dim_tree_nodes_ps.code
         LEFT JOIN {{ ref('stg_dfakto__fact_progress_project') }} fact_progress_ps ON dim_tree_nodes_ps.id = fact_progress_ps.tree_node_id
+        LEFT JOIN fact_property_value ON dim_tree_nodes_ps.id = fact_property_value.tree_node_id
     ORDER BY data_financials_ps.projet_structurant_code
