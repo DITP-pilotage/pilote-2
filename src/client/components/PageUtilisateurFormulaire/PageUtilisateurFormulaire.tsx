@@ -1,10 +1,9 @@
 
 import PageUtilisateurFormulaireStyled from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.styled';
-import PageUtilisateurFormulaireProps from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
 import UtilisateurFormulaire from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire';
 import FilAriane from '@/client/components/_commons/FilAriane/FilAriane';
 
-export default function PageUtilisateurFormulaire({ profils } :PageUtilisateurFormulaireProps) {
+export default function PageUtilisateurFormulaire() {
   const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];
 
   return (
@@ -15,7 +14,7 @@ export default function PageUtilisateurFormulaire({ profils } :PageUtilisateurFo
           libelléPageCourante='Ajouter un compte'
         />
         <div className='fr-pb-4w'>
-          <UtilisateurFormulaire profils={profils} />
+          <UtilisateurFormulaire />
         </div>
       </main>
     </PageUtilisateurFormulaireStyled>

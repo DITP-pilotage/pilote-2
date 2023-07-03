@@ -5,13 +5,12 @@ import Link from 'next/link';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import IndicateurDEtapes from '@/components/_commons/IndicateurDEtapes/IndicateurDEtapes';
-import { UtilisateurFormInputs } from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
 import { validationInfosBaseUtilisateur } from '@/validation/utilisateur';
-import UtilisateurFormulaireProps from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
 import RécapitulatifUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/RécapitulatifUtilisateur';
 import SaisieDesInformationsUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur';
+import { UtilisateurFormInputs } from './UtilisateurFormulaire.interface';
 
-export default function UtilisateurFormulaire({ profils }: UtilisateurFormulaireProps) {
+export default function UtilisateurFormulaire() {
   const étapes = ['Identifier l\'utilisateur', 'Vérifier les droits attribués au compte'];
   const [etapeCourante, setEtapeCourante] = useState(1);
 
@@ -63,9 +62,7 @@ export default function UtilisateurFormulaire({ profils }: UtilisateurFormulaire
             <form onSubmit={reactHookForm.handleSubmit(passerAuRécapitulatif)}>
               {
                 etapeCourante === 1 &&
-                  <SaisieDesInformationsUtilisateur
-                    profils={profils}
-                  />
+                  <SaisieDesInformationsUtilisateur />
               }
               {
                 etapeCourante === 2 && 

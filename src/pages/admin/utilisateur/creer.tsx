@@ -2,18 +2,10 @@ import { GetServerSidePropsContext } from 'next';
 import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import PageUtilisateurFormulaire from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire';
-import RécupérerListeProfilUseCase from '@/server/usecase/profil/RécupérerListeProfilUseCase';
-import { Profil } from '@/server/domain/profil/Profil.interface';
 
-interface NextPageCréerUtilisateurProps {
-  profils: Profil[]
-}
-
-export default function NextPageCréerUtilisateur({  profils } : NextPageCréerUtilisateurProps) {
+export default function NextPageCréerUtilisateur() {
   return (
-    <PageUtilisateurFormulaire
-      profils={profils}
-    />
+    <PageUtilisateurFormulaire />
   );
 }
 
@@ -37,11 +29,8 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
     return redirigerVersPageAccueil;
   }
 
-  const profils = await new RécupérerListeProfilUseCase().run();
 
   return {
-    props: {
-      profils,
-    },
+    props: {},
   };
 }

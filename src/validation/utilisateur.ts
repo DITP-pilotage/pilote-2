@@ -34,21 +34,11 @@ export const validationInfosBaseUtilisateur = z.object( {
 export const validationInfosHabilitationsUtilisateur = z.object({
   habilitations : z.object({
     lecture: z.object({
-      chantiers: z.string().array(),
-      territoires: z.string().array(),
-      périmètres: z.string().array(),
+      chantiers: z.string().array().optional(),
+      territoires: z.string().array().optional(),
+      périmètres: z.string().array().optional(),
     }),
-    'saisie.indicateur': z.object({
-      chantiers: z.string().array(),
-      territoires: z.string().array(),
-      périmètres: z.string().array(),
-    }),
-    'saisie.commentaire': z.object({
-      chantiers: z.string().array(),
-      territoires: z.string().array(),
-      périmètres: z.string().array(),
-    }),
-  }),
+  }).optional(),
 });
 
 export const codesTerritoiresDROM = ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976'];

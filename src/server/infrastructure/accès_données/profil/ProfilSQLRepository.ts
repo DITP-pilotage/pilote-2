@@ -15,6 +15,16 @@ export default class ProfilSQLRepository implements ProfilRepository {
     return tousLesProfils.map(p => this._mapperVersLeDomaine(p));
   }
 
+  async récupérer(profilCode: ProfilCode): Promise<Profil | null> {
+    const p = await this.prisma.profil.findUnique({
+      where: {
+        code: profilCode,
+      },
+    });
+
+    return p ? this._mapperVersLeDomaine(p) : null;
+  }
+
   _mapperVersLeDomaine(p: profil): Profil {
     return {
       code: p.code as ProfilCode,
@@ -29,7 +39,7 @@ export default class ProfilSQLRepository implements ProfilRepository {
           tousTerritoires: p.a_acces_tous_les_territoires_saisie_commentaire,
         },
         saisieIndicateur: {
-          tousTerritoires: p.a_acces_tous_les_territoires_saisie_commentaire,
+          tousTerritoires: p.a_acces_tous_les_territoires_saisie_indicateur,
         },
       },
       projetsStructurants: {

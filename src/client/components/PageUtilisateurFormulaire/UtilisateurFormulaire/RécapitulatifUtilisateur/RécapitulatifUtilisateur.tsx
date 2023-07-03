@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import Bouton from '@/components/_commons/Bouton/Bouton';
-import useRécapitulatifUtilisateur
-  from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/useRécapitulatifUtilisateur';
+import useRécapitulatifUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/useRécapitulatifUtilisateur';
 import FicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import RécapitulatifUtilisateurProps from './RécapitulatifUtilisateur.interface';

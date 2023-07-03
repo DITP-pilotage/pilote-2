@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker/locale/fr';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { UtilisateurÀCréerOuMettreÀJour, profilsCodes } from './Utilisateur.interface';
 
 export default class UtilisateurÀCréerOuMettreÀJourBuilder {
@@ -23,19 +24,6 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     this._email = faker.internet.email();
     this._profil = faker.helpers.arrayElement(profilsCodes);
     this._fonction = 'fonction';
-    this._habilitations = {
-      'lecture': this._créerHabilitation(),
-      'saisie.commentaire': this._créerHabilitation(),
-      'saisie.indicateur': this._créerHabilitation(),
-    };
-  }
-
-  _créerHabilitation(chantierIds: Chantier['id'][] = [], territoireCodes: string[] = [], périmètreIds: PérimètreMinistériel['id'][] = []) {
-    return {
-      chantiers: chantierIds,
-      territoires: territoireCodes,
-      périmètres: périmètreIds,
-    };
   }
 
   avecEmail(email: UtilisateurÀCréerOuMettreÀJour['email']): UtilisateurÀCréerOuMettreÀJourBuilder {
@@ -48,20 +36,46 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     return this;
   }
 
-  avecHabilitationLecture(chantierIds: Chantier['id'][] = [], territoireCodes: string[] = [], périmètreIds: PérimètreMinistériel['id'][] = []): UtilisateurÀCréerOuMettreÀJourBuilder {
-    this._habilitations.lecture = this._créerHabilitation(chantierIds, territoireCodes, périmètreIds);
+  private _avecHabilitationLectureChantiers(chantierIds: Chantier['id'][]): UtilisateurÀCréerOuMettreÀJourBuilder {
+    if (!this._habilitations) {
+      this._habilitations = { lecture: {} };
+    }
+
+    this._habilitations.lecture!.chantiers = chantierIds;
     return this;
   }
 
-  avecHabilitationsaisieCommentaire(chantierIds: Chantier['id'][] = [], territoireCodes: string[] = [], périmètreIds: PérimètreMinistériel['id'][] = []): UtilisateurÀCréerOuMettreÀJourBuilder {
-    this._habilitations['saisie.commentaire'] = this._créerHabilitation(chantierIds, territoireCodes, périmètreIds);
+  private _avecHabilitationLectureTerritoires(terrioiresCodes: Territoire['code'][]): UtilisateurÀCréerOuMettreÀJourBuilder {
+    if (!this._habilitations) {
+      this._habilitations = { lecture: {} };
+    }
+
+    this._habilitations.lecture!.territoires = terrioiresCodes;
     return this;
   }
 
-  avecHabilitationsaisieIndicateur(chantierIds: Chantier['id'][] = [], territoireCodes: string[] = [], périmètreIds: PérimètreMinistériel['id'][] = []): UtilisateurÀCréerOuMettreÀJourBuilder {
-    this._habilitations['saisie.indicateur'] = this._créerHabilitation(chantierIds, territoireCodes, périmètreIds);
+  private _avecHabilitationLecturePérimètres(périmètresIds: PérimètreMinistériel['id'][]): UtilisateurÀCréerOuMettreÀJourBuilder {
+    if (!this._habilitations) {
+      this._habilitations = { lecture: {} };
+    }
+
+    this._habilitations.lecture!.périmètres = périmètresIds;
     return this;
   }
+
+  avecHabilitationsLecture(territoiresCodes?: Territoire['code'][], chantierIds?: Chantier['id'][], périmètresIds?: PérimètreMinistériel['id'][]) {
+    if (territoiresCodes)
+      this._avecHabilitationLectureTerritoires(territoiresCodes);
+
+    if (chantierIds)
+      this._avecHabilitationLectureChantiers(chantierIds);
+
+    if (périmètresIds)
+      this._avecHabilitationLecturePérimètres(périmètresIds);
+    
+    return this;
+  }
+
 
   build(): UtilisateurÀCréerOuMettreÀJour {
     return {
