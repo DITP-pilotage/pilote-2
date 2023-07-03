@@ -21,9 +21,9 @@ SELECT m_indicateurs.id,
     m_indicateurs.source,
     m_indicateurs.mode_de_calcul,
     CONCAT(chantiers_ayant_des_indicateurs.maille, '-', chantiers_ayant_des_indicateurs.code_insee) as territoire_code,
-    null as ponderation_dept,
-    null as ponderation_nat,
-    null as ponderation_reg
+    null::double precision as ponderation_dept,
+    null::double precision as ponderation_nat,
+    null::double precision as ponderation_reg
 FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
 	JOIN {{ ref('int_chantiers_with_mailles_and_territoires') }} chantiers_ayant_des_indicateurs ON m_indicateurs.chantier_id = chantiers_ayant_des_indicateurs.id
 	LEFT JOIN {{ ref('taux_avancement_indicateur') }} ON m_indicateurs.id = taux_avancement_indicateur.indicateur_id
