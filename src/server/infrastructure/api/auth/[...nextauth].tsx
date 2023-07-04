@@ -40,11 +40,16 @@ async function doFinalSignoutHandshake(token: JWT) {
         body: response?.body,
       }, 'Logout response');
 
-      const refreshedTokens = await response.json();
       if (response && !response.ok) {
-        logger.debug({ response, refreshedTokens }, 'Failed to logout');
+        try {
+          const json = await response.json();
+          logger.debug({ response, json }, 'Failed to logout');
+        } catch {
+          const text = await response.text();
+          logger.debug({ response, text }, 'Failed to logout');
+        }
         // noinspection ExceptionCaughtLocallyJS
-        throw refreshedTokens;
+        throw new Error('Failed to logout');
       }
 
       // The response body should contain a confirmation that the user has been logged out
