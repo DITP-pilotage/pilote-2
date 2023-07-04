@@ -151,13 +151,13 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
 
     const listeErreursReport = report.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
       rapportId: rapport.id,
-      cellule: taskError.cell,
+      cellule: taskError.cell || 'Cellule non définie',
       nom: taskError.name,
       message: personnaliserValidataMessage(taskError),
-      numeroDeLigne: taskError.rowNumber,
-      positionDeLigne: taskError.rowPosition,
+      numeroDeLigne: taskError.rowNumber || -1,
+      positionDeLigne: taskError.rowPosition || -1,
       nomDuChamp: taskError.fieldName || '',
-      positionDuChamp: taskError.fieldPosition,
+      positionDuChamp: taskError.fieldPosition || -1,
     }));
 
     listeErreursValidation = [...listeErreursValidation, ...listeErreursReport];
