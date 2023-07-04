@@ -85,6 +85,11 @@ export default class UtilisateurBuilder {
     return this;
   }
 
+  avecChantierCodesLecture(chantierCodes: string[]) {
+    this._habilitations.lecture.chantiers = chantierCodes;
+    return this;
+  }
+
   build(): Utilisateur {
     return {
       id: this._id,

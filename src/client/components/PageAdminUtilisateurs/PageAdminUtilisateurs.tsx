@@ -8,7 +8,8 @@ import AdminUtilisateursBarreLatérale from '@/components/PageAdminUtilisateurs/
 import api from '@/server/infrastructure/api/trpc/api';
 import { filtresUtilisateursActifs } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
 import Loader from '@/client/components/_commons/Loader/Loader';
-import '@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css';
+import '@gouvfr/dsfr/dist/component/select/select.min.css';
+import '@gouvfr/dsfr/dist/component/form/form.min.css';
 
 export default function PageAdminUtilisateurs() {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
@@ -16,7 +17,7 @@ export default function PageAdminUtilisateurs() {
   const filtresActifs = filtresUtilisateursActifs();
   
   const { data: utilisateurs, isLoading } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
-    filtres: filtresActifs.territoires,
+    filtres: filtresActifs,
   });
 
   return (
