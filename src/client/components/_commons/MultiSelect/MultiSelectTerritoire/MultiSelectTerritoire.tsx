@@ -3,7 +3,7 @@ import { départementsTerritoiresStore, régionsTerritoiresStore } from '@/clien
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
 import MultiSelectTerritoireProps from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire.interface';
 import { MultiSelectOptionGroupée, MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
-import { deuxTableauxSontIdentiques, trierParOrdreAlphabétique } from '@/client/utils/arrays';
+import { trierParOrdreAlphabétique } from '@/client/utils/arrays';
 
 const générerLesOptions = (nom: string, code: string) => ({
   label: nom,
@@ -40,17 +40,15 @@ export default function MultiSelectTerritoire({ territoiresCodesSélectionnésPa
   ].filter((option): option is MultiSelectOptionGroupée => option !== null);
 
   useEffect(() => {
-    if (!deuxTableauxSontIdentiques(territoiresCodesSélectionnésParDéfaut ?? [], valeursSélectionnéesParDéfaut ?? [])) {
-      setValeursSélectionnéesParDéfaut(territoiresCodesSélectionnésParDéfaut?.map(code => {
-        if (groupesÀAfficher.nationale && code.startsWith('NAT'))
-          return code;
-        if (groupesÀAfficher.régionale && code.startsWith('REG'))
-          return code;
-        if (groupesÀAfficher.départementale && code.startsWith('DEPT'))
-          return code;
-        return null;
-      }).filter((code): code is string => code !== null));
-    }
+    setValeursSélectionnéesParDéfaut(territoiresCodesSélectionnésParDéfaut?.map(code => {
+      if (groupesÀAfficher.nationale && code.startsWith('NAT'))
+        return code;
+      if (groupesÀAfficher.régionale && code.startsWith('REG'))
+        return code;
+      if (groupesÀAfficher.départementale && code.startsWith('DEPT'))
+        return code;
+      return null;
+    }).filter((code): code is string => code !== null));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [territoiresCodesSélectionnésParDéfaut, groupesÀAfficher]);
   

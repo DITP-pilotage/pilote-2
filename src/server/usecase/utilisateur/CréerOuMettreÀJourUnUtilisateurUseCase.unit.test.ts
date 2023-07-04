@@ -1,5 +1,4 @@
 import { mock } from 'jest-mock-extended';
-import { faker } from '@faker-js/faker/locale/fr';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
@@ -9,6 +8,7 @@ import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { codesTerritoiresDROM } from '@/validation/utilisateur';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import { HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import CréerOuMettreÀJourUnUtilisateurUseCase from './CréerOuMettreÀJourUnUtilisateurUseCase';
 
 describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
@@ -27,25 +27,39 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     },
   ];
 
+  const habilitationsVides =  {
+    lecture: {
+      chantiers: [],
+      périmètres: [],
+      territoires: [],
+    },
+    'saisie.commentaire': {
+      chantiers: [],
+      périmètres: [],
+      territoires: [],
+    },
+    'saisie.indicateur': {
+      chantiers: [],
+      périmètres: [],
+      territoires: [],
+    },
+  };
+
   const stubUtilisateurRepository = { créerOuMettreÀJour: jest.fn() } as unknown as UtilisateurRepository;
-  const stubUtilisateurIAMRepository = { ajouteUtilisateurs: jest.fn() } as unknown as UtilisateurIAMRepository;
+  const stubUtilisateurIAMRepository = mock<UtilisateurIAMRepository>();
   const stubTerritoireRepository = { récupérerTous: jest.fn().mockResolvedValue(fakeTerritoires) } as unknown as TerritoireRepository;
   const stubChantierRepository = mock<ChantierRepository>();
+
   stubChantierRepository.récupérerChantiersSynthétisés.mockResolvedValue(fakeChantiersSynthétisés);
 
-  const créerOuMettreÀJourUnUtilisateurUseCase = new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurRepository, stubUtilisateurIAMRepository, stubTerritoireRepository, stubChantierRepository);
-  const tousLesTerritoiresCodes = fakeTerritoires.map(territoire => territoire.code);
-  const tousLesChantiersIds = fakeChantiersSynthétisés.map(chantier => chantier.id);
-  const tousLesChantiersTerritorialisésIds = fakeChantiersSynthétisés.filter(c => c.estTerritorialisé).map(chantier => chantier.id);
-
-
+  const créerOuMettreÀJourUnUtilisateurUseCase = new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository, stubUtilisateurRepository, stubTerritoireRepository, stubChantierRepository);
 
   const oldEnv = process.env;
 
   beforeEach(() => {
     jest.resetModules();
     process.env = { ...oldEnv };
-    process.env.DEV_PASSWORD = undefined;
+    process.env.IMPORT_KEYCLOAK_URL = 'https://keycloak.net';
     (stubUtilisateurRepository.créerOuMettreÀJour as jest.Mock).mockClear();
     (stubUtilisateurIAMRepository.ajouteUtilisateurs as jest.Mock).mockClear();
     (stubChantierRepository.récupérerChantiersSynthétisés as jest.Mock).mockClear();
@@ -55,33 +69,31 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     process.env = oldEnv;
   });
 
-  async function testAccèsTerritoiresEnLectureCasPassant(profilCode: ProfilCode, territoiresCodes: string[], chantiersIds: string[], périmètresIds: string[] = []) {
+  async function testCasPassant(profilCode: ProfilCode, habilitationsAttendues: HabilitationsÀCréerOuMettreÀJourCalculées, territoiresCodes?: string[], chantiersIds?: string[], périmètresIds?: string[]) {
     //GIVEN
-    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil(profilCode).avecHabilitationLecture(chantiersIds, territoiresCodes, périmètresIds).build();
-
+    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil(profilCode).avecHabilitationsLecture(territoiresCodes, chantiersIds, périmètresIds).build();
+    
     //WHEN
     await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto');
-
+    
     //THEN
-    expect(stubUtilisateurRepository.créerOuMettreÀJour).toHaveBeenCalledTimes(1);
-    expect(stubUtilisateurIAMRepository.ajouteUtilisateurs).toHaveBeenCalledTimes(1);
+    expect(stubUtilisateurRepository.créerOuMettreÀJour).toHaveBeenNthCalledWith(1, { ...utilisateur, habilitations: habilitationsAttendues }, 'toto');
+    expect(stubUtilisateurIAMRepository.ajouteUtilisateurs).toHaveBeenNthCalledWith(1, [{ nom: utilisateur.nom, prénom: utilisateur.prénom, email: utilisateur.email }]);
   }
 
-  async function testAccèsTerritoiresEnLectureCasErreur(profilCode: ProfilCode, territoiresCodes: string[], chantiersIds: string[], périmètresIds: string[] = []) {
+  async function testCasErreur(profilCode: ProfilCode, territoiresCodes?: string[], chantiersIds?: string[], périmètresIds?: string[]) {
     // GIVEN
-    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil(profilCode).avecHabilitationLecture(chantiersIds, territoiresCodes, périmètresIds).build();
+    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil(profilCode).avecHabilitationsLecture(territoiresCodes, chantiersIds, périmètresIds).build();
 
     // THEN
     await expect(créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto')).rejects.toThrowError();
   }
 
-  
-
-  describe("Si la variable d'env DEV_PASSWORD est définie", () => {
-    it("ne créé par l'utilisateur sur Keycloak", async () => {
+  describe("Si la variable d'env IMPORT_KEYCLOAK_URL n'est pas définie", () => {
+    it("ne créé pas l'utilisateur sur Keycloak", async () => {
       // GIVEN 
-      process.env.DEV_PASSWORD = 'password';
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil('SERVICES_DECONCENTRES_REGION').build();
+      process.env.IMPORT_KEYCLOAK_URL = undefined;
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil('DITP_ADMIN').build();
 
       //WHEN
       await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto');
@@ -92,306 +104,405 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
   });
   
   describe("L'utilisateur a un profil DITP_ADMIN", () => {
-    describe("L'utilisateur doit avoir accès à tous les chantiers et tous les territoires en lecture", () => {
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('DITP_ADMIN', tousLesTerritoiresCodes, tousLesChantiersIds);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données sans lui ajouter d'habilitations", async () => {
+        await testCasPassant('DITP_ADMIN', habilitationsVides);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur n'a pas tous les territoires", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('DITP_ADMIN', [], tousLesChantiersIds);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on fourni des territoires personnalisés', async () => {
+        await testCasErreur('DITP_ADMIN', ['REG-006']);
       }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas tous les chantiers", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('DITP_ADMIN', tousLesTerritoiresCodes, []);
+      it('renvoi une erreur si on fourni des chantiers personnalisés', async () => {
+        await testCasErreur('DITP_ADMIN', undefined, ['123']);
+      });
+      it('renvoi une erreur si on fourni des périmètres personnalisés', async () => {
+        await testCasErreur('DITP_ADMIN', undefined, undefined, ['456']);
       }); 
     });
   });
 
   describe("L'utilisateur a un profil DITP_PILOTAGE", () => {
-    describe("L'utilisateur doit avoir accès à tous les chantiers et tous les territoires en lecture", () => {
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('DITP_PILOTAGE', tousLesTerritoiresCodes, tousLesChantiersIds);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données en lui ajoutant l'habilitation saisie commentaire pour la France", async () => {
+        const habilitationsAttendues =  { ...habilitationsVides, 'saisie.commentaire': { territoires: ['NAT-FR'], chantiers: [], périmètres: [] } };
+        await testCasPassant('DITP_PILOTAGE', habilitationsAttendues);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur n'a pas tous les territoires", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('DITP_PILOTAGE', [], tousLesChantiersIds);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on fourni des territoires personnalisés', async () => {
+        await testCasErreur('DITP_PILOTAGE', ['REG-006']);
       }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas tous les chantiers", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('DITP_PILOTAGE', tousLesTerritoiresCodes, []);
+      it('renvoi une erreur si on fourni des chantiers personnalisés', async () => {
+        await testCasErreur('DITP_PILOTAGE', undefined, ['123']);
+      });
+      it('renvoi une erreur si on fourni des périmètres personnalisés', async () => {
+        await testCasErreur('DITP_PILOTAGE', undefined, undefined, ['456']);
       }); 
     });
   });
 
   describe("L'utilisateur a un profil PR", () => {
-    describe("L'utilisateur doit avoir accès à tous les chantiers et tous les territoires en lecture", () => {
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('PR', tousLesTerritoiresCodes, tousLesChantiersIds);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données sans lui ajouter d'habilitations", async () => {
+        await testCasPassant('PR', habilitationsVides);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur n'a pas tous les territoires", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('PR', [], tousLesChantiersIds);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on fourni des territoires personnalisés', async () => {
+        await testCasErreur('PR', ['REG-006']);
       }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas tous les chantiers", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('PR', tousLesTerritoiresCodes, []);
+      it('renvoi une erreur si on fourni des chantiers personnalisés', async () => {
+        await testCasErreur('PR', undefined, ['123']);
+      });
+      it('renvoi une erreur si on fourni des périmètres personnalisés', async () => {
+        await testCasErreur('PR', undefined, undefined, ['456']);
       }); 
     });
   });
 
 
   describe("L'utilisateur a un profil PM_ET_CABINET", () => {
-    describe("L'utilisateur doit avoir accès à tous les chantiers et tous les territoires en lecture", () => {
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('PM_ET_CABINET', tousLesTerritoiresCodes, tousLesChantiersIds);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données sans lui ajouter d'habilitations", async () => {
+        await testCasPassant('PM_ET_CABINET', habilitationsVides);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur n'a pas tous les territoires", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('PM_ET_CABINET', [], tousLesChantiersIds);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on fourni des territoires personnalisés', async () => {
+        await testCasErreur('PM_ET_CABINET', ['REG-006']);
       }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas tous les chantiers", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('PM_ET_CABINET', tousLesTerritoiresCodes, []);
+      it('renvoi une erreur si on fourni des chantiers personnalisés', async () => {
+        await testCasErreur('PM_ET_CABINET', undefined, ['123']);
+      });
+      it('renvoi une erreur si on fourni des périmètres personnalisés', async () => {
+        await testCasErreur('PM_ET_CABINET', undefined, undefined, ['456']);
       }); 
     });
   });
 
   describe("L'utilisateur a un profil CABINET_MTFP", () => {
-    describe("L'utilisateur doit avoir accès à tous les chantiers et tous les territoires en lecture", () => {
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('CABINET_MTFP', tousLesTerritoiresCodes, tousLesChantiersIds);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données sans lui ajouter d'habilitations", async () => {
+        await testCasPassant('CABINET_MTFP', habilitationsVides);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur n'a pas tous les territoires", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('CABINET_MTFP', [], tousLesChantiersIds);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on fourni des territoires personnalisés', async () => {
+        await testCasErreur('CABINET_MTFP', ['REG-006']);
       }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas tous les chantiers", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('CABINET_MTFP', tousLesTerritoiresCodes, []);
+      it('renvoi une erreur si on fourni des chantiers personnalisés', async () => {
+        await testCasErreur('CABINET_MTFP', undefined, ['123']);
+      });
+      it('renvoi une erreur si on fourni des périmètres personnalisés', async () => {
+        await testCasErreur('CABINET_MTFP', undefined, undefined, ['456']);
       }); 
     });
   });
 
   describe("L'utilisateur a un profil CABINET_MINISTERIEL", () => {
-    describe("L'utilisateur doit avoir accès à certains chantiers parmi tous les chantier et à tous les territoires en lecture", () => {
-      const chantierIdsAléatoiresParmiTousLesChantiers = faker.helpers.arrayElements(tousLesChantiersIds, 3);
-
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('CABINET_MINISTERIEL', tousLesTerritoiresCodes, chantierIdsAléatoiresParmiTousLesChantiers);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données en prenant une liste de chantiers et une liste de périmètres en lecture", async () => {
+        const habilitationsAttendues =  { ...habilitationsVides, lecture: { chantiers: ['123'], territoires: [], périmètres: [] } };
+        await testCasPassant('CABINET_MINISTERIEL', habilitationsAttendues, undefined, ['123'], []);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur n'a pas tous les territoires", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('CABINET_MINISTERIEL', [], chantierIdsAléatoiresParmiTousLesChantiers);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on fourni des territoires personnalisés', async () => {
+        await testCasErreur('CABINET_MINISTERIEL', ['REG-006']);
       }); 
     });
   });
 
   describe("L'utilisateur a un profil DIR_ADMIN_CENTRALE", () => {
-    describe("L'utilisateur doit avoir accès à certains chantiers parmi tous les chantier et à tous les territoires en lecture", () => {
-      const chantierIdsAléatoiresParmiTousLesChantiers = faker.helpers.arrayElements(tousLesChantiersIds, 3);
-
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('DIR_ADMIN_CENTRALE', tousLesTerritoiresCodes, chantierIdsAléatoiresParmiTousLesChantiers);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données en prenant une liste de chantiers et une liste de périmètres en lecture", async () => {
+        const habilitationsAttendues =  { ...habilitationsVides, lecture: { chantiers: ['123'], territoires: [], périmètres: [] } };
+        await testCasPassant('DIR_ADMIN_CENTRALE', habilitationsAttendues, undefined, ['123'], []);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur n'a pas tous les territoires", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('DIR_ADMIN_CENTRALE', [], chantierIdsAléatoiresParmiTousLesChantiers);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on fourni des territoires personnalisés', async () => {
+        await testCasErreur('DIR_ADMIN_CENTRALE', ['REG-006']);
       }); 
     });
   });
 
   describe("L'utilisateur a un profil SECRETARIAT_GENERAL", () => {
-    describe("L'utilisateur doit avoir accès à certains chantiers parmi tous les chantier et à tous les territoires en lecture", () => {
-      const chantierIdsAléatoiresParmiTousLesChantiers = faker.helpers.arrayElements(tousLesChantiersIds, 3);
-
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('SECRETARIAT_GENERAL', tousLesTerritoiresCodes, chantierIdsAléatoiresParmiTousLesChantiers);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données en prenant une liste de chantiers et une liste de périmètres en lecture, et en lui ajoutant la saisie commentaires pour la France", async () => {
+        const habilitationsAttendues = {
+          ...habilitationsVides, 
+          lecture: { chantiers: ['123'], territoires: [], périmètres: [] }, 
+          'saisie.commentaire': { territoires: ['NAT-FR'], chantiers: [], périmètres: [] },
+        };
+        await testCasPassant('SECRETARIAT_GENERAL', habilitationsAttendues, undefined, ['123'], []);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur n'a pas tous les territoires", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('SECRETARIAT_GENERAL', [], chantierIdsAléatoiresParmiTousLesChantiers);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on fourni des territoires personnalisés', async () => {
+        await testCasErreur('SECRETARIAT_GENERAL', ['REG-006']);
       }); 
     });
   });
 
   describe("L'utilisateur a un profil EQUIPE_DIR_PROJET", () => {
-    describe("L'utilisateur doit avoir accès à certains chantiers parmi tous les chantier et à tous les territoires en lecture", () => {
-      const chantierIdsAléatoiresParmiTousLesChantiers = faker.helpers.arrayElements(tousLesChantiersIds, 3);
-
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('EQUIPE_DIR_PROJET', tousLesTerritoiresCodes, chantierIdsAléatoiresParmiTousLesChantiers);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données en prenant une liste de chantiers et une liste de périmètres en lecture, et en lui ajoutant la saisie commentaires pour la France", async () => {
+        const habilitationsAttendues = { 
+          ...habilitationsVides, 
+          lecture: { chantiers: ['123'], territoires: [], périmètres: [] }, 
+          'saisie.commentaire': { territoires: ['NAT-FR'], chantiers: [], périmètres: [] },
+        };
+        await testCasPassant('EQUIPE_DIR_PROJET', habilitationsAttendues, undefined, ['123'], []);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur n'a pas tous les territoires", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('EQUIPE_DIR_PROJET', [], chantierIdsAléatoiresParmiTousLesChantiers);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on fourni des territoires personnalisés', async () => {
+        await testCasErreur('EQUIPE_DIR_PROJET', ['REG-006']);
       }); 
     });
   });
 
   describe("L'utilisateur a un profil DIR_PROJET", () => {
-    describe("L'utilisateur doit avoir accès à certains chantiers parmi tous les chantier et à tous les territoires en lecture", () => {
-      const chantierIdsAléatoiresParmiTousLesChantiers = faker.helpers.arrayElements(tousLesChantiersIds, 3);
-
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('DIR_PROJET', tousLesTerritoiresCodes, chantierIdsAléatoiresParmiTousLesChantiers);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données en prenant une liste de chantiers et une liste de périmètres en lecture, et en lui ajoutant la saisie commentaires pour la France", async () => {
+        const habilitationsAttendues = { 
+          ...habilitationsVides, 
+          lecture: { chantiers: ['123'], territoires: [], périmètres: [] }, 
+          'saisie.commentaire': { territoires: ['NAT-FR'], chantiers: [], périmètres: [] },
+        };
+        await testCasPassant('DIR_PROJET', habilitationsAttendues, undefined, ['123'], []);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur n'a pas tous les territoires", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('DIR_PROJET', [], chantierIdsAléatoiresParmiTousLesChantiers);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on fourni des territoires personnalisés', async () => {
+        await testCasErreur('DIR_PROJET', ['REG-006']);
       }); 
     });
   });
 
   describe("L'utilisateur a un profil REFERENT_REGION", () => {
-    describe("L'utilisateur doit avoir accès à 0 ou plusieurs régions ainsi que leurs départements enfants et à tous les chantiers territorialisés", () => {
-      const codeRégionParente = 'REG-11';
-      const codesDépartementsEnfantsDeLaRégion = fakeTerritoires.filter(t => t.codeParent === codeRégionParente).map(t => t.code);
-        
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('REFERENT_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], tousLesChantiersTerritorialisésIds);
+    const codeRégionParente = 'REG-11';
+    const codesDépartementsEnfantsDeLaRégion = fakeTerritoires.filter(t => t.codeParent === codeRégionParente).map(t => t.code);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données en prenant une liste de territoires contenant des régions et leurs départements enfants en lecture", async () => {
+        const habilitationsAttendues = { 
+          ...habilitationsVides, 
+          lecture: { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] }, 
+          'saisie.commentaire':  { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] },
+        };
+        await testCasPassant('REFERENT_REGION', habilitationsAttendues, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion]);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur a un territoire qui n'est ni un département ni une région", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('REFERENT_REGION', ['NAT-FR'], tousLesChantiersTerritorialisésIds);
-      }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas tous les départements enfants d'une région", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('REFERENT_REGION', ['REG-11'], tousLesChantiersTerritorialisésIds);
-      }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas la région parente d'un département", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('REFERENT_REGION', ['DEPT-75'], tousLesChantiersTerritorialisésIds);
-      }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas tous les chantiers territorialisés", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('REFERENT_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], []);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on ne fournis pas de territoires', async () => {
+        await testCasErreur('REFERENT_REGION');
+      });
+      it("renvoi une erreur si on ne fournis pas l'intégralité des départements enfants de la région", async () => {
+        await testCasErreur('REFERENT_REGION', [codeRégionParente, codesDépartementsEnfantsDeLaRégion[0]]);
+      });
+      it('renvoi une erreur si on fournis uniquement des départements', async () => {
+        await testCasErreur('REFERENT_REGION', codesDépartementsEnfantsDeLaRégion);
+      });
+      it("renvoi une erreur si on fournis des département qui n'appartiennent pas aux régions choisies", async () => {
+        await testCasErreur('REFERENT_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion, 'DEPT-99']);
+      });
+      it('renvoi une erreur si on fourni des chantiers personnalisés', async () => {
+        await testCasErreur('REFERENT_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], ['123']);
+      });
+      it('renvoi une erreur si on fourni des périmètres personnalisés', async () => {
+        await testCasErreur('REFERENT_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], undefined, ['456']);
       }); 
     });
   });
 
   describe("L'utilisateur a un profil PREFET_REGION", () => {
-    describe("L'utilisateur doit avoir accès à 0 ou plusieurs régions ainsi que leurs départements enfants et à tous les chantiers territorialisés", () => {
-      const codeRégionParente = 'REG-11';
-      const codesDépartementsEnfantsDeLaRégion = fakeTerritoires.filter(t => t.codeParent === codeRégionParente).map(t => t.code);
-        
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('PREFET_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], tousLesChantiersTerritorialisésIds);
+    const codeRégionParente = 'REG-11';
+    const codesDépartementsEnfantsDeLaRégion = fakeTerritoires.filter(t => t.codeParent === codeRégionParente).map(t => t.code);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données en prenant une liste de territoires contenant des régions et leurs départements enfants en lecture", async () => {
+        const habilitationsAttendues = { 
+          ...habilitationsVides, 
+          lecture: { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] }, 
+          'saisie.commentaire':  { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] },
+        };
+        await testCasPassant('PREFET_REGION', habilitationsAttendues, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion]);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur a un territoire qui n'est ni un département ni une région", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('PREFET_REGION', ['NAT-FR'], tousLesChantiersTerritorialisésIds);
-      }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas tous les départements enfants d'une région", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('PREFET_REGION', ['REG-11'], tousLesChantiersTerritorialisésIds);
-      }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas la région parente d'un département", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('PREFET_REGION', ['DEPT-75'], tousLesChantiersTerritorialisésIds);
-      }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas tous les chantiers territorialisés", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('PREFET_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], []);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on ne fournis pas de territoires', async () => {
+        await testCasErreur('PREFET_REGION');
+      });
+      it("renvoi une erreur si on ne fournis pas l'intégralité des départements enfants de la région", async () => {
+        await testCasErreur('PREFET_REGION', [codeRégionParente, codesDépartementsEnfantsDeLaRégion[0]]);
+      });
+      it('renvoi une erreur si on fournis uniquement des départements', async () => {
+        await testCasErreur('PREFET_REGION', codesDépartementsEnfantsDeLaRégion);
+      });
+      it("renvoi une erreur si on fournis des département qui n'appartiennent pas aux régions choisies", async () => {
+        await testCasErreur('PREFET_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion, 'DEPT-99']);
+      });
+      it('renvoi une erreur si on fourni des chantiers personnalisés', async () => {
+        await testCasErreur('PREFET_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], ['123']);
+      });
+      it('renvoi une erreur si on fourni des périmètres personnalisés', async () => {
+        await testCasErreur('PREFET_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], undefined, ['456']);
       }); 
     });
   });
 
   describe("L'utilisateur a un profil SERVICES_DECONCENTRES_REGION", () => {
-    describe("L'utilisateur doit avoir accès à 0 ou plusieurs régions ainsi que leurs départements enfants et a 0 ou plusieurs chantiers parmi les chantiers territorialisés", () => {
-      const chantierIdsAléatoiresParmiTousLesChantiersTerritorialisés = faker.helpers.arrayElements(tousLesChantiersTerritorialisésIds, 3);
+    const codeRégionParente = 'REG-11';
+    const codesDépartementsEnfantsDeLaRégion = fakeTerritoires.filter(t => t.codeParent === codeRégionParente).map(t => t.code);
 
-      const codeRégionParente = 'REG-11';
-      const codesDépartementsEnfantsDeLaRégion = fakeTerritoires.filter(t => t.codeParent === codeRégionParente).map(t => t.code);
-
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('SERVICES_DECONCENTRES_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], chantierIdsAléatoiresParmiTousLesChantiersTerritorialisés);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données en prenant une liste de terrioires contenant des régions et leurs départements enfants en lecture et une liste de chantiers territorialisés et une liste de périmètres", async () => {
+        const habilitationsAttendues = { 
+          ...habilitationsVides, 
+          lecture: { chantiers: ['123'], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: ['456'] }, 
+          'saisie.commentaire':  { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] },
+        };
+        await testCasPassant('SERVICES_DECONCENTRES_REGION', habilitationsAttendues, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], ['123'], ['456']);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur a un territoire qui n'est ni un département ni une région", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('SERVICES_DECONCENTRES_REGION', ['NAT-FR'], chantierIdsAléatoiresParmiTousLesChantiersTerritorialisés);
-      }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas tous les départements enfants d'une région", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('SERVICES_DECONCENTRES_REGION', ['REG-11'], chantierIdsAléatoiresParmiTousLesChantiersTerritorialisés);
-      }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas la région parente d'un département", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('SERVICES_DECONCENTRES_REGION', ['DEPT-75'], chantierIdsAléatoiresParmiTousLesChantiersTerritorialisés);
-      }); 
-
-      it("renvoi une erreur si l'utilisateur a un chantier non territorialisé", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('SERVICES_DECONCENTRES_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], [fakeChantiersSynthétisés.find(c => c.estTerritorialisé === false)!.id]);
-      }); 
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on ne fournis pas de territoires', async () => {
+        await testCasErreur('SERVICES_DECONCENTRES_REGION');
+      });
+      it("renvoi une erreur si on ne fournis pas l'intégralité des départements enfants de la région", async () => {
+        await testCasErreur('SERVICES_DECONCENTRES_REGION', [codeRégionParente, codesDépartementsEnfantsDeLaRégion[0]]);
+      });
+      it('renvoi une erreur si on fournis uniquement des départements', async () => {
+        await testCasErreur('SERVICES_DECONCENTRES_REGION', codesDépartementsEnfantsDeLaRégion);
+      });
+      it("renvoi une erreur si on fournis des département qui n'appartiennent pas aux régions choisies", async () => {
+        await testCasErreur('SERVICES_DECONCENTRES_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion, 'DEPT-99']);
+      });
+      it('renvoi une erreur si on fournis un chantier non territorailisé', async () => {
+        testCasErreur('SERVICES_DECONCENTRES_REGION', [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], ['124'], []);
+      });
     });
   });
 
   describe("L'utilisateur a un profil REFERENT_DEPARTEMENT", () => {
-    describe("L'utilisateur doit avoir accès à 0 ou plusieurs départements et à tous les chantiers territorialisés en lecture", () => {
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('REFERENT_DEPARTEMENT', ['DEPT-75'], tousLesChantiersTerritorialisésIds);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données en prenant une liste de terrioires contenant des départements en lecture", async () => {
+        const habilitationsAttendues = { 
+          ...habilitationsVides, 
+          lecture: { chantiers: [], territoires: ['DEPT-75'], périmètres: [] }, 
+          'saisie.commentaire':  { chantiers: [], territoires: ['DEPT-75'], périmètres: [] },
+        };
+        await testCasPassant('REFERENT_DEPARTEMENT', habilitationsAttendues, ['DEPT-75']);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur a un territoire qui n'est pas un département", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('REFERENT_DEPARTEMENT', ['NAT-FR'], tousLesChantiersTerritorialisésIds);
-      }); 
 
-      it("renvoi une erreur si l'utilisateur n'a pas tous les chantiers territorialisés", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('REFERENT_DEPARTEMENT', ['DEPT-75'], []);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on ne fournis pas de territoires', async () => {
+        await testCasErreur('REFERENT_DEPARTEMENT');
+      });
+      it('renvoi une erreur si on fournis des territoires qui ne sont pas des départements', async () => {
+        await testCasErreur('REFERENT_DEPARTEMENT', ['REG-11']);
+      });
+      it('renvoi une erreur si on fourni des chantiers personnalisés', async () => {
+        await testCasErreur('REFERENT_DEPARTEMENT', ['DEPT-75'], ['123']);
+      });
+      it('renvoi une erreur si on fourni des périmètres personnalisés', async () => {
+        await testCasErreur('REFERENT_DEPARTEMENT', ['DEPT-75'], undefined, ['456']);
       }); 
     });
   });
 
   describe("L'utilisateur a un profil PREFET_DEPARTEMENT", () => {
-    describe("L'utilisateur doit avoir accès à 0 ou plusieurs départements et à tous les chantiers territorialisés en lecture", () => {
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('PREFET_DEPARTEMENT', ['DEPT-75'], tousLesChantiersTerritorialisésIds);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données en prenant une liste de terrioires contenant des départements en lecture", async () => {
+        const habilitationsAttendues = { 
+          ...habilitationsVides, 
+          lecture: { chantiers: [], territoires: ['DEPT-75'], périmètres: [] }, 
+          'saisie.commentaire':  { chantiers: [], territoires: ['DEPT-75'], périmètres: [] },
+        };
+        await testCasPassant('PREFET_DEPARTEMENT', habilitationsAttendues, ['DEPT-75']);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur a un territoire qui n'est pas un département", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('PREFET_DEPARTEMENT', ['NAT-FR'], tousLesChantiersTerritorialisésIds);
-      }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas tous les chantiers territorialisés", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('PREFET_DEPARTEMENT', ['DEPT-75'], []);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on ne fournis pas de territoires', async () => {
+        await testCasErreur('PREFET_DEPARTEMENT');
+      });
+      it('renvoi une erreur si on fournis des territoires qui ne sont pas des départements', async () => {
+        await testCasErreur('PREFET_DEPARTEMENT', ['REG-11']);
+      });
+      it('renvoi une erreur si on fourni des chantiers personnalisés', async () => {
+        await testCasErreur('PREFET_DEPARTEMENT', ['DEPT-75'], ['123']);
+      });
+      it('renvoi une erreur si on fourni des périmètres personnalisés', async () => {
+        await testCasErreur('PREFET_DEPARTEMENT', ['DEPT-75'], undefined, ['456']);
       }); 
     });
   });
 
   describe("L'utilisateur a un profil SERVICES_DECONCENTRES_DEPARTEMENT", () => {
-    describe("L'utilisateur doit avoir accès à 0 ou plusieurs départements et a 0 ou plusieurs chantiers parmi les chantiers territorialisés", () => {
-      const chantierIdsAléatoiresParmiTousLesChantiersTerritorialisés = faker.helpers.arrayElements(tousLesChantiersTerritorialisésIds, 3);
-
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('SERVICES_DECONCENTRES_DEPARTEMENT', ['DEPT-75'], chantierIdsAléatoiresParmiTousLesChantiersTerritorialisés);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données en prenant une liste de terrioires contenant des départements, une liste de chantiers et une liste de périmètres en lecture", async () => {
+        const habilitationsAttendues = {
+          ...habilitationsVides, 
+          lecture: { chantiers: ['123'], territoires: ['DEPT-75'], périmètres: [] }, 
+          'saisie.commentaire':  { chantiers: [], territoires: ['DEPT-75'], périmètres: [] },
+        };
+        await testCasPassant('SERVICES_DECONCENTRES_DEPARTEMENT', habilitationsAttendues, ['DEPT-75'], ['123'], []);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur a un territoire qui n'est pas un département", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('SERVICES_DECONCENTRES_DEPARTEMENT', ['NAT-FR'], chantierIdsAléatoiresParmiTousLesChantiersTerritorialisés);
-      }); 
 
-      it("renvoi une erreur si l'utilisateur a un chantier non territorialisé", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('SERVICES_DECONCENTRES_REGION', ['DEPT-75'], [fakeChantiersSynthétisés.find(c => c.estTerritorialisé === false)!.id]);
-      }); 
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on ne fournis pas de territoires', async () => {
+        await testCasErreur('SERVICES_DECONCENTRES_DEPARTEMENT');
+      });
+      it('renvoi une erreur si on fournis des territoires qui ne sont pas des départements', async () => {
+        await testCasErreur('SERVICES_DECONCENTRES_DEPARTEMENT', ['REG-11']);
+      });
+      it('renvoi une erreur si on fournis un chantier non territorailisé', async () => {
+        testCasErreur('SERVICES_DECONCENTRES_DEPARTEMENT', ['DEPT-75'], ['124'], []);
+      });
     });
   });
 
   describe("L'utilisateur a un profil DROM", () => {
-    describe("L'utilisateur doit avoir accès à tous les territoires DROM et le territoire France et tous les chantiers territorialisés en lecture", () => {
-      it("Crée l'utilisateur en base et sur keycloak", async () => {
-        await testAccèsTerritoiresEnLectureCasPassant('DROM', codesTerritoiresDROM, tousLesChantiersTerritorialisésIds, ['PER-018']);
+    describe('Les informations fournies sont correctes', () => {
+      it("Crée l'utilisateur en base de données en lui ajoutant les territoires DROM et le périmètre 18 en lecture, et la France en saisie commentaires", async () => {
+        const habilitationsAttendues = {
+          ...habilitationsVides, 
+          'saisie.commentaire':  { chantiers: [], territoires: ['NAT-FR'], périmètres: [] },
+          lecture: { chantiers: [], territoires: codesTerritoiresDROM, périmètres: ['PER-018'] },
+        };
+        await testCasPassant('DROM', habilitationsAttendues);
       });
+    });
 
-      it("renvoi une erreur si l'utilisateur a un territoire qui n'est pas un territoire DROM", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('DROM', ['DEPT-75'], tousLesChantiersTerritorialisésIds, ['PER-018']);
+    describe('Les informations fournies sont incorrectes', () => {
+      it('renvoi une erreur si on fourni des territoires personnalisés', async () => {
+        await testCasErreur('DROM', ['REG-006']);
       }); 
-
-      it("renvoi une erreur si l'utilisateur n'a pas tous les chantiers territorialisés", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('DROM', codesTerritoiresDROM, [], ['PER-018']);
+      it('renvoi une erreur si on fourni des chantiers personnalisés', async () => {
+        await testCasErreur('DROM', undefined, ['123']);
       });
-
-      it("renvoi une erreur si l'utilisateur n'a pas le périmètre 18", async () => {
-        await testAccèsTerritoiresEnLectureCasErreur('DROM', codesTerritoiresDROM, tousLesChantiersTerritorialisésIds);
-      });
+      it('renvoi une erreur si on fourni des périmètres personnalisés', async () => {
+        await testCasErreur('DROM', undefined, undefined, ['456']);
+      }); 
     });
   });
 });

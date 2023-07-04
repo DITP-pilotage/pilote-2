@@ -1,5 +1,7 @@
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
-import { ScopeChantiers, HabilitationChantiers } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 export default interface FicheUtilisateurProps {
   utilisateur: {
@@ -10,6 +12,12 @@ export default interface FicheUtilisateurProps {
     dateModification?: string
     auteurModification?: string
     fonction: string | null
-    habilitations: Record<ScopeChantiers, HabilitationChantiers> 
+    habilitations?: {
+      lecture?: {
+        chantiers?: Chantier['id'][]
+        territoires?: Territoire['code'][]
+        périmètres?: PérimètreMinistériel['id'][]
+      }
+    }
   } 
 }

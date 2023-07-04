@@ -1,31 +1,32 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { UtilisateurFormInputs } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
+import api from '@/server/infrastructure/api/trpc/api';
 import { Profil } from '@/server/domain/profil/Profil.interface';
-import { UtilisateurFormInputs } from '@/client/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.interface';
 import useHabilitationsTerritoires from './useHabilitationsTerritoires';
 import useHabilitationsChantiers from './useHabilitationsChantiers';
-import useHabilitationsPérimètresMinistériels from './useHabilitationsPérimètresMinistériels';
 
-export default function useSaisieDesInformationsUtilisateur(profils: Profil[]) {
-  const { register, watch, formState: { errors }, control, setValue, getValues } = useFormContext<UtilisateurFormInputs>();
+export default function useSaisieDesInformationsUtilisateur() {
+  const { data: profils } = api.profil.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
+
+  const { register, watch, formState: { errors }, control, setValue, getValues, unregister } = useFormContext<UtilisateurFormInputs>();
   const [ancienProfilCodeSélectionné, setAncienProfilCodeSélectionné] = useState<string>(getValues('profil'));
   const [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés] = useState<string[]>([]);
   const profilCodeSélectionné = watch('profil');
-  const profilSélectionné = profils.find(p => p.code === profilCodeSélectionné)!;
+  const [profilSélectionné, setProfilSélectionné] = useState<Profil | undefined>();
+  const [listeProfils, setListeProfils] = useState<{ libellé: string, valeur: string }[]>([]);
 
-  const { 
-    déterminerLesTerritoiresSélectionnésParDéfaut, 
-    déterminerLesTerritoiresSélectionnés,
-  } = useHabilitationsTerritoires(profilSélectionné);
+  useEffect(() => {
+    if (profils) {
+      const profilAssociéAuProfilCodeSélectionné = profils.find(p => p.code === profilCodeSélectionné)!;
+      setProfilSélectionné(profilAssociéAuProfilCodeSélectionné);
+      setListeProfils(profils.map(profil => ({ libellé: profil.nom, valeur: profil.code })));
+    }
+  }, [profils, profilCodeSélectionné]);
 
-  const { déterminerLesChantiersSélectionnésParDéfaut, déterminerLesChantiersSélectionnés } = useHabilitationsChantiers(profilSélectionné);
-  const { déterminerLesPérimètresMinistérielsSélectionnésParDéfaut } = useHabilitationsPérimètresMinistériels(profilSélectionné);
+  const { déterminerLesTerritoiresSélectionnés } = useHabilitationsTerritoires(profilSélectionné);
+  const { déterminerLesChantiersSélectionnés } = useHabilitationsChantiers(profilSélectionné);
   
-  const listeProfils = profils.map(profil => ({
-    libellé: profil.nom,
-    valeur: profil.code,
-  }));
-
   const handleChangementValeursSélectionnéesTerritoires = (valeursSélectionnées: string[]) => {    
     const territoiresSélectionnés = déterminerLesTerritoiresSélectionnés(valeursSélectionnées);
     setValue('habilitations.lecture.territoires', territoiresSélectionnés);
@@ -53,14 +54,14 @@ export default function useSaisieDesInformationsUtilisateur(profils: Profil[]) {
 
   useEffect(() => {
     if (ancienProfilCodeSélectionné !== profilCodeSélectionné) {
-      setValue('habilitations.lecture.territoires', déterminerLesTerritoiresSélectionnésParDéfaut());
-      setValue('habilitations.lecture.chantiers', déterminerLesChantiersSélectionnésParDéfaut());
-      setValue('habilitations.lecture.périmètres', déterminerLesPérimètresMinistérielsSélectionnésParDéfaut());
+      unregister('habilitations.lecture');
+      // setValue('habilitations.lecture.territoires', []);
+      // setValue('habilitations.lecture.chantiers', []);
+      // setValue('habilitations.lecture.périmètres', []);
       setAncienProfilCodeSélectionné(profilCodeSélectionné);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [déterminerLesTerritoiresSélectionnésParDéfaut, profilCodeSélectionné, déterminerLesChantiersSélectionnésParDéfaut, déterminerLesPérimètresMinistérielsSélectionnésParDéfaut]);
-
+  }, [profilCodeSélectionné]);
 
   return {
     listeProfils,

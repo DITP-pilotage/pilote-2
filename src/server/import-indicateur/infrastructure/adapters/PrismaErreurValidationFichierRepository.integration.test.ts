@@ -1,16 +1,17 @@
+import { mock } from 'jest-mock-extended';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
-import { dependencies } from '@/server/infrastructure/Dependencies';
-import {
-  PrismaErreurValidationFichierRepository,
-} from '@/server/import-indicateur/infrastructure/adapters/PrismaErreurValidationFichierRepository';
+import { PrismaErreurValidationFichierRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaErreurValidationFichierRepository';
 import { ErreurValidationFichierBuilder } from '@/server/import-indicateur/app/builder/ErreurValidationFichier.builder';
+import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/usecase/utilisateur/CréerOuMettreÀJourUnUtilisateurUseCase';
+import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 
 describe('PrismaErreurValidationFichierRepository', () => {
   let prismaRapportRepository: PrismaRapportRepository;
   let prismaErreurValidationFichierRepository: PrismaErreurValidationFichierRepository;
+  const stubUtilisateurIAMRepository = mock<UtilisateurIAMRepository>();
 
   beforeEach(() => {
     prismaRapportRepository = new PrismaRapportRepository(prisma);
@@ -21,7 +22,7 @@ describe('PrismaErreurValidationFichierRepository', () => {
     it('doit sauvegarder les données', async () => {
       // GIVEN
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('a0c086eb-21e2-4f00-9ca8-4b0fcce133ad')

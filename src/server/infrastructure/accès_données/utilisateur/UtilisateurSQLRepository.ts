@@ -3,6 +3,7 @@ import Utilisateur, { ProfilCode, UtilisateurÀCréerOuMettreÀJour } from '@/se
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import {
+  HabilitationsÀCréerOuMettreÀJourCalculées,
   ScopeChantiers,
   ScopeUtilisateurs,
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
@@ -141,19 +142,23 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     );
   }
 
-  async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJour, auteurModification: string): Promise<void> {
+  async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJour & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurModification: string): Promise<void> {
     const utilisateurCrééOuMisÀJour = await this._prisma.utilisateur.upsert({
       create: {
         email: u.email.toLocaleLowerCase(),
         nom: u.nom,
         prenom: u.prénom,
         profilCode: u.profil,
+        fonction: u.fonction,
         auteur_modification: auteurModification,
       },
       update: {
         nom: u.nom,
         prenom: u.prénom,
         profilCode: u.profil,
+        fonction: u.fonction,
+        auteur_modification: auteurModification,
+        date_modification: new Date(),
       },
       where: {
         email: u.email.toLowerCase(),

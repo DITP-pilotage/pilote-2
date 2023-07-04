@@ -9,30 +9,16 @@ export default function useHabilitationsChantiers(profil?: Profil) {
   const [chantiersAccessiblesPourLeProfil, setChantiersAccessiblesPourLeProfil] = useState<ChantierSynthétisé[]>([]);
 
   useEffect(() => {
-    if (!chantiers)
+    if (!chantiers || !profil)
       return; 
 
-    if (profil?.chantiers.lecture.tousTerritorialisés || profil?.code === 'SERVICES_DECONCENTRES_REGION' || profil?.code === 'SERVICES_DECONCENTRES_DEPARTEMENT') {
+    if (profil.code === 'SERVICES_DECONCENTRES_REGION' || profil.code === 'SERVICES_DECONCENTRES_DEPARTEMENT') {
       setChantiersAccessiblesPourLeProfil(chantiers.filter(chantier => chantier.estTerritorialisé));
       return;
     }
 
     setChantiersAccessiblesPourLeProfil(chantiers);
   }, [chantiers, profil]);
-  
-  const déterminerLesChantiersSélectionnésParDéfaut = useCallback(() => {    
-    if (!chantiers) return [];
-
-    const tousLesChantiersIds = chantiers?.map(chantier => chantier.id);
-
-    if (profil?.chantiers.lecture.tous)
-      return tousLesChantiersIds;
-
-    if (profil?.chantiers.lecture.tousTerritorialisés) 
-      return chantiers?.filter(chantier => chantier.estTerritorialisé).map(c => c.id);
-
-    return [];
-  }, [profil, chantiers]);
 
   const déterminerLesChantiersSélectionnés = useCallback((périmètresMinistérielsIdsSélectionnés: string[]) => {
     if (!chantiersAccessiblesPourLeProfil) return [];
@@ -42,11 +28,10 @@ export default function useHabilitationsChantiers(profil?: Profil) {
     return chantiersAppartenantsAuPérimètresMinistérielsSélectionnés.map(c => c.id);
   }, [chantiersAccessiblesPourLeProfil]);
 
-  const masquerLeChampLectureChantiers = !profil || profil.code === 'DROM' || profil?.chantiers.lecture.tous || profil?.chantiers.lecture.tousTerritorialisés;
+  const afficherChampLectureChantiers = !!profil && !profil.chantiers.lecture.tous && !profil.chantiers.lecture.tousTerritorialisés;
 
   return {
-    masquerLeChampLectureChantiers,
-    déterminerLesChantiersSélectionnésParDéfaut,
+    afficherChampLectureChantiers,
     déterminerLesChantiersSélectionnés,
     chantiersAccessiblesPourLeProfil,
   };

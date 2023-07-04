@@ -6,6 +6,7 @@ import { publicationRouter } from './publication';
 import { indicateurRouter } from './indicateur';
 import { territoireRouter } from './territoire';
 import { périmètreMinistérielRouter } from './périmètreMinistériel';
+import { profilRouter } from './profil';
 
 export const appRouter = créerRouteurTRPC({
   chantier: chantierRouter,
@@ -15,4 +16,5 @@ export const appRouter = créerRouteurTRPC({
   territoire: territoireRouter,
   utilisateur: utilisateurRouter,
   périmètreMinistériel: périmètreMinistérielRouter,
+  profil: profilRouter,
 });
