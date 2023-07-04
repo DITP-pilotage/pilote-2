@@ -83,6 +83,10 @@ cp ../.env.example .env
 
 Pensez à mettre jour le fichier `.env` en demandant les variables à l'équipe.
 
+:warning: **En cas de changement de nom ou d'emplacement des fichiers de ppg_metadata, 
+pensez à mettre à jour vos variable d'environnnement en local ainsi que sur scalingo 
+dans les environnements de dev (dev-datajobs-ditp) et de prod (prod-datajobs-ditp).**
+
 #### Initialisation de l'environnement Python
 
 Afin d'installer les dépendances liées au projet, il faut exécuter la commande suivante :
