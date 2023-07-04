@@ -1,11 +1,11 @@
 import { GetServerSidePropsContext } from 'next';
 import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import PageUtilisateurFormulaire from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire';
+import PageCréerUtilisateur from '@/components/PageUtilisateurFormulaire/PageCréerUtilisateur/PageCréerUtilisateur';
 
 export default function NextPageCréerUtilisateur() {
   return (
-    <PageUtilisateurFormulaire />
+    <PageCréerUtilisateur />
   );
 }
 
@@ -25,10 +25,9 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
 
   const habilitations = new Habilitation(session.habilitations);
 
-  if (!habilitations.peutCréerUnUtilisateur()) {
+  if (!habilitations.peutCréerEtModifierUnUtilisateur()) {
     return redirigerVersPageAccueil;
   }
-
 
   return {
     props: {},

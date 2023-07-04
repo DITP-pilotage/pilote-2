@@ -9,7 +9,7 @@ import useHabilitationsChantiers from './useHabilitationsChantiers';
 export default function useSaisieDesInformationsUtilisateur() {
   const { data: profils } = api.profil.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
 
-  const { register, watch, formState: { errors }, control, setValue, getValues, unregister } = useFormContext<UtilisateurFormInputs>();
+  const { register, watch, formState: { errors }, control, setValue, getValues, unregister, resetField } = useFormContext<UtilisateurFormInputs>();
   const [ancienProfilCodeSélectionné, setAncienProfilCodeSélectionné] = useState<string>(getValues('profil'));
   const [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés] = useState<string[]>([]);
   const profilCodeSélectionné = watch('profil');
@@ -24,7 +24,7 @@ export default function useSaisieDesInformationsUtilisateur() {
     }
   }, [profils, profilCodeSélectionné]);
 
-  const { déterminerLesTerritoiresSélectionnés } = useHabilitationsTerritoires(profilSélectionné);
+  const { déterminerLesTerritoiresSélectionnés, afficherChampLectureTerritoires } = useHabilitationsTerritoires(profilSélectionné);
   const { déterminerLesChantiersSélectionnés } = useHabilitationsChantiers(profilSélectionné);
   
   const handleChangementValeursSélectionnéesTerritoires = (valeursSélectionnées: string[]) => {    
@@ -48,6 +48,14 @@ export default function useSaisieDesInformationsUtilisateur() {
   }, [déterminerLesChantiersSélectionnés, getValues, setValue]);
 
   useEffect(() => {
+    if (!afficherChampLectureTerritoires) {
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      resetField('habilitations.lecture.territoires');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [afficherChampLectureTerritoires]);
+
+  useEffect(() => {
     handleChangementValeursSélectionnéesChantiers([...getValues('habilitations.lecture.chantiers') ?? [], ...chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés]);
@@ -55,9 +63,6 @@ export default function useSaisieDesInformationsUtilisateur() {
   useEffect(() => {
     if (ancienProfilCodeSélectionné !== profilCodeSélectionné) {
       unregister('habilitations.lecture');
-      // setValue('habilitations.lecture.territoires', []);
-      // setValue('habilitations.lecture.chantiers', []);
-      // setValue('habilitations.lecture.périmètres', []);
       setAncienProfilCodeSélectionné(profilCodeSélectionné);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

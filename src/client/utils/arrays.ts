@@ -31,6 +31,10 @@ export function deuxTableauxSontIdentiques(tableau1: string[], tableau2: string[
   return true;
 }
 
+export function toutesLesValeursDuTableauSontContenuesDansLAutreTableau(tableauContenu: (string | number | boolean | null)[], tableauContenant: (string | number | boolean | null)[]) {
+  return tableauContenu.every(element => tableauContenant.includes(element));
+}
+
 export function auMoinsUneValeurDuTableauEstContenueDansLAutreTableau(tableau1: (string | number | boolean | null)[], tableau2: (string | number | boolean | null)[]) {
   return tableau1.some(element => tableau2.includes(element));
 }

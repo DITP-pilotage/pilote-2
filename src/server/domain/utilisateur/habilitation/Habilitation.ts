@@ -1,8 +1,9 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee, Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { ChantierNonAutoriséErreur, ProjetStructurantNonAutoriséErreur, TerritoireNonAutoriséErreur } from '@/server/utils/errors';
+import { ChantierNonAutoriséErreur, ChantiersNonAutorisésCreationModificationUtilisateurErreur, ProjetStructurantNonAutoriséErreur, TerritoireNonAutoriséErreur, TerritoiresNonAutorisésCreationModificationUtilisateurErreur } from '@/server/utils/errors';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+import { toutesLesValeursDuTableauSontContenuesDansLAutreTableau } from '@/client/utils/arrays';
 import { Habilitations, TerritoiresFiltre } from './Habilitation.interface';
 
 export default class Habilitation {
@@ -29,10 +30,18 @@ export default class Habilitation {
       throw new TerritoireNonAutoriséErreur();
   }
 
-  peutCréerUnUtilisateur() {
+  vérifierLesHabilitationsEnCréationModificationUtilisateur(chantiersIds: Chantier['id'][], territoiresCodes: Territoire['code'][]) {
+    if (!toutesLesValeursDuTableauSontContenuesDansLAutreTableau(chantiersIds, this._habilitations['utilisateurs.modification'].chantiers))
+      throw new ChantiersNonAutorisésCreationModificationUtilisateurErreur();
+
+    if (!toutesLesValeursDuTableauSontContenuesDansLAutreTableau(territoiresCodes, this._habilitations['utilisateurs.modification'].territoires))
+      throw new TerritoiresNonAutorisésCreationModificationUtilisateurErreur();
+  }
+
+  peutCréerEtModifierUnUtilisateur() {
     return this._habilitations['utilisateurs.modification'].chantiers.length > 0 || this._habilitations['utilisateurs.modification'].territoires.length > 0;
   }
-  
+
   peutConsulterLaListeDesUtilisateurs() {
     return this._habilitations['utilisateurs.lecture'].chantiers.length > 0;
   }

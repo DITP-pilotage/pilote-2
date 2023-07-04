@@ -3,10 +3,11 @@ import TerritoireRepository from '@/server/domain/territoire/TerritoireRepositor
 import { UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
-import { HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { Habilitations, HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import créerValidateurHabilitations from '@/validation/habilitation';
 import { codesTerritoiresDROM } from '@/validation/utilisateur';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
 export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   constructor(
@@ -44,9 +45,24 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     };
   }
 
-  async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteurModification: string): Promise<void> {
+  async _vérifierExistenceUtilisateur(email: string, utilisateurExistant: boolean) {
+    const utilisateurExiste = await this.utilisateurRepository.récupérer(email);
+
+    if (utilisateurExistant && !utilisateurExiste) 
+      throw new Error("L'utilisateur a modifier n'existe pas");
+    
+    if (!utilisateurExistant && utilisateurExiste)
+      throw new Error("L'utilisateur existe déjà");
+  }
+
+  async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteurModification: string, utilisateurExistant: boolean, habilitations: Habilitations): Promise<void> {
     await this._validerLesHabilitations(utilisateur);
     const habilitationsFormatées = await this._définirLesHabilitations(utilisateur);
+
+    const habilitation = new Habilitation(habilitations);
+    habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(habilitationsFormatées.lecture.chantiers, habilitationsFormatées.lecture.territoires);
+
+    await this._vérifierExistenceUtilisateur(utilisateur.email, utilisateurExistant);
 
     await this.utilisateurRepository.créerOuMettreÀJour({ ...utilisateur, habilitations: habilitationsFormatées }, auteurModification);
 

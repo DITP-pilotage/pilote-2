@@ -5,7 +5,7 @@ import FicheUtilisateur from '@/components/PageUtilisateur/FicheUtilisateur/Fich
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import RécapitulatifUtilisateurProps from './RécapitulatifUtilisateur.interface';
 
-export default function RécapitulatifUtilisateur({ auClicBoutonRetourCallback }: RécapitulatifUtilisateurProps) {
+export default function RécapitulatifUtilisateur({ auClicBoutonRetourCallback, utilisateurExistant }: RécapitulatifUtilisateurProps) {
   const { utilisateur, envoyerFormulaireUtilisateur, alerte } = useRécapitulatifUtilisateur();
 
   return (
@@ -30,7 +30,7 @@ export default function RécapitulatifUtilisateur({ auClicBoutonRetourCallback }
         />
         <Bouton
           label="Confirmer"
-          onClick={envoyerFormulaireUtilisateur}
+          onClick={() => envoyerFormulaireUtilisateur(utilisateurExistant)}
         />
       </div>
       <div className="fr-grid-row fr-grid-row--right fr-mt-3w">
