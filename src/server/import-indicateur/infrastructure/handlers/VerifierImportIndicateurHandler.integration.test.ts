@@ -12,8 +12,8 @@ import {
 } from '@/server/import-indicateur/app/builder/ReportTask.builder';
 import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidata.builder';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import { getNextAuthSessionTokenPourUtilisateurEmail } from '@/server/infrastructure/test/NextAuthHelper';
+import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/usecase/utilisateur/CréerOuMettreÀJourUnUtilisateurUseCase';
 
 jest.mock('@/server/import-indicateur/infrastructure/handlers/ParseForm', () => ({
   parseForm: () => ({
@@ -50,7 +50,7 @@ describe('VerifierImportIndicateurHandler', () => {
         ).build();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
@@ -105,7 +105,7 @@ describe('VerifierImportIndicateurHandler', () => {
         );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
 
       const formData = new FormData();
       const file = mock<File>();
@@ -161,7 +161,7 @@ describe('VerifierImportIndicateurHandler', () => {
         );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
 
       const formData = new FormData();
       const file = mock<File>();
@@ -224,7 +224,7 @@ describe('VerifierImportIndicateurHandler', () => {
       ).build();
 
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
+    await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
 
     nock(BASE_URL_VALIDATA)
       .post('/validate').reply(200,
@@ -312,7 +312,7 @@ describe('VerifierImportIndicateurHandler', () => {
       ).build();
 
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
+    await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
 
     nock(BASE_URL_VALIDATA)
       .post('/validate').reply(200,

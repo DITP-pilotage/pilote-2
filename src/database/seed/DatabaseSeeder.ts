@@ -30,9 +30,6 @@ import IndicateurRowBuilder from '@/server/infrastructure/test/builders/sqlRow/I
 import ObjectifSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ObjectifSQLRow.builder';
 import DécisionStratégiqueSQLRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/DécisionStratégiqueSQLRow.builder';
-import { UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
-import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import {
   générerPeutÊtreNull,
   générerTableau,
@@ -147,8 +144,6 @@ export class DatabaseSeeder {
     await this._créerDécisionsStratégiques();
     console.log('  Indicateurs...');
     await this._créerIndicateurs();
-    console.log('  UtilisateursEtDroits...');
-    await this._créerUtilisateursEtDroits();
     console.log('  ProjetsStructurants...');
     await this._créerProjetsStructurants();
     console.log('  SynthèseDesRésultatsProjetsStructurants');
@@ -343,35 +338,6 @@ export class DatabaseSeeder {
       }
     }
     await this._prisma.indicateur.createMany({ data: this._indicateurs });
-  }
-
-  private async _créerUtilisateursEtDroits() {
-    const chantierIds = await this._getSomeChantierIds();
-
-    const utilisateurs: UtilisateurÀCréerOuMettreÀJour[] = [
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.pilotage@example.com').avecProfil('DITP_PILOTAGE').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('premiere.ministre@example.com').avecProfil('PM_ET_CABINET').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('presidence@example.com').avecProfil('PR').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('cabinet.mtfp@example.com').avecProfil('CABINET_MTFP').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('cabinet.ministeriel@example.com').avecProfil('CABINET_MINISTERIEL').avecHabilitationLecture(chantierIds).build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('direction.admin.centrale@example.com').avecProfil('DIR_ADMIN_CENTRALE').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('secretariat.general@example.com').avecProfil('SECRETARIAT_GENERAL').build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('directeur.projet@example.com').avecProfil('DIR_PROJET').avecHabilitationLecture(chantierIds).build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('equipe.dir.projet@example.com').avecProfil('EQUIPE_DIR_PROJET').avecHabilitationLecture(chantierIds).build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('referent.region@example.com').avecProfil('REFERENT_REGION').avecHabilitationLecture([], ['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22']).avecHabilitationsaisieCommentaire([], ['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22']).build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('prefet.region@example.com').avecProfil('PREFET_REGION').avecHabilitationLecture([], ['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22']).avecHabilitationsaisieCommentaire([], ['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22']).build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('services.deconcentres.region@example.com').avecProfil('SERVICES_DECONCENTRES_REGION').avecHabilitationLecture(chantierIds, ['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22']).avecHabilitationsaisieCommentaire(chantierIds, ['REG-53', 'DEPT-56', 'DEPT-29', 'DEPT-35', 'DEPT-22']).build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('referent.departement@example.com').avecProfil('REFERENT_DEPARTEMENT').avecHabilitationLecture([], ['DEPT-22']).avecHabilitationsaisieCommentaire(chantierIds, ['DEPT-22']).build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('prefet.departement@example.com').avecProfil('PREFET_DEPARTEMENT').avecHabilitationLecture([], ['DEPT-22']).avecHabilitationsaisieCommentaire(chantierIds, ['DEPT-22']).build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('services.deconcentres.departement@example.com').avecProfil('SERVICES_DECONCENTRES_DEPARTEMENT').avecHabilitationLecture(chantierIds, ['DEPT-22']).avecHabilitationsaisieCommentaire(chantierIds, ['DEPT-22']).build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('secretariat.general@example.com').avecProfil('SECRETARIAT_GENERAL').avecHabilitationLecture(chantierIds).build(),
-      new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('drom@example.com').avecProfil('DROM').avecHabilitationLecture(undefined, ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976']).avecHabilitationsaisieCommentaire(undefined, ['NAT-FR'], ['PER-018']).avecHabilitationsaisieIndicateur(undefined, ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976']).build(),
-    ];
-
-    for (const utilisateur of utilisateurs) {
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'Seeder');
-    }
   }
 
   private async _getSomeChantierIds() {

@@ -4,9 +4,9 @@ import {
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { IndicateurDataBuilder } from '@/server/import-indicateur/app/builder/IndicateurData.builder';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
+import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/usecase/utilisateur/CréerOuMettreÀJourUnUtilisateurUseCase';
 
 describe('PrismaMesureIndicateurRepository', () => {
   let prismaRapportRepository: PrismaRapportRepository;
@@ -21,7 +21,7 @@ describe('PrismaMesureIndicateurRepository', () => {
     it('doit sauvegarder les données', async () => {
       // GIVEN
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')

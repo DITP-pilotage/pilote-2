@@ -8,7 +8,7 @@ import {
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
-import { dependencies } from '@/server/infrastructure/Dependencies';
+import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/usecase/utilisateur/CréerOuMettreÀJourUnUtilisateurUseCase';
 
 describe('PrismaMesureIndicateurTemporaireRepository', () => {
   let prismaRapportRepository: PrismaRapportRepository;
@@ -23,7 +23,7 @@ describe('PrismaMesureIndicateurTemporaireRepository', () => {
     it('doit sauvegarder les données', async () => {
       // GIVEN
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')
@@ -82,7 +82,7 @@ describe('PrismaMesureIndicateurTemporaireRepository', () => {
     it('doit récupérer les mesures indicateurs temporaire liés au rapport id', async () => {
       // GIVEN
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')
@@ -139,7 +139,7 @@ describe('PrismaMesureIndicateurTemporaireRepository', () => {
     it('doit supprimer les mesures indicateurs temporaires liés à un rapport', async () => {
       // GIVEN
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')
