@@ -9,7 +9,7 @@ import {
   MesureIndicateurTemporaireBuilder,
 } from '@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder';
 import {
-  FichierIndicateurValidationService,
+  FichierIndicateurValidationService, ValiderFichierPayload,
 } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 import { RapportRepository } from '@/server/import-indicateur/domain/ports/RapportRepository';
@@ -20,17 +20,20 @@ import { ErreurValidationFichier } from '@/server/import-indicateur/domain/Erreu
 import {
   ErreurValidationFichierRepository,
 } from '@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository';
+import { InformationIndicateurBuilder } from '@/server/import-indicateur/app/builder/InformationIndicateurBuilder';
+import { IndicateurRepository } from '@/server/import-indicateur/domain/ports/IndicateurRepository';
 
 describe('VerifierFichierIndicateurImporteUseCase', () => {
   let fichierIndicateurValidationService: MockProxy<FichierIndicateurValidationService>;
   let verifierFichierIndicateurImporteUseCase: VerifierFichierIndicateurImporteUseCase;
   let mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
   let erreurValidationFichierRepository: ErreurValidationFichierRepository;
+  let indicateurRepository: MockProxy<IndicateurRepository>;
   let rapportRepository: RapportRepository;
 
   const CHEMIN_COMPLET_DU_FICHIER = 'cheminCompletDuFichier';
   const NOM_DU_FICHIER = 'nomDuFichier';
-  const SCHEMA = 'schema';
+  const SCHEMA = 'base/schema/url/';
   const METRIC_DATE_1 = '2022-06-12';
   const METRIC_DATE_2 = '2022-12-12';
 
@@ -38,11 +41,13 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     fichierIndicateurValidationService = mock<FichierIndicateurValidationService>();
     mesureIndicateurTemporaireRepository = mock<MesureIndicateurTemporaireRepository>();
     erreurValidationFichierRepository = mock<ErreurValidationFichierRepository>();
+    indicateurRepository = mock<IndicateurRepository>();
     rapportRepository = mock<RapportRepository>();
     verifierFichierIndicateurImporteUseCase = new VerifierFichierIndicateurImporteUseCase({
       fichierIndicateurValidationService,
       mesureIndicateurTemporaireRepository,
       erreurValidationFichierRepository,
+      indicateurRepository,
       rapportRepository,
     });
   });
@@ -56,7 +61,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     const payload = {
       cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
       nomDuFichier: NOM_DU_FICHIER,
-      schema: SCHEMA,
+      baseSchemaUrl: SCHEMA,
       indicateurId: 'IND-001',
       utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
     };
@@ -67,6 +72,67 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
 
     // THEN
     expect(result.estValide).toEqual(true);
+  });
+
+  it("quand l'indicateur possède des informations, doit concaténer le schema en metadata associé à l'indicateur", async () => {
+    // GIVEN
+    const detailValidationFichier = new DetailValidationFichierBuilder()
+      .avecEstValide(true)
+      .build();
+
+    const informationIndicateur = new InformationIndicateurBuilder()
+      .withIndicId('IND-001')
+      .withIndicSchema('schema.json')
+      .build();
+
+    const payload = {
+      cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+      nomDuFichier: NOM_DU_FICHIER,
+      baseSchemaUrl: SCHEMA,
+      indicateurId: 'IND-001',
+      utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
+    };
+
+    const payloadValiderFichierCaptor = captor<ValiderFichierPayload>();
+
+    indicateurRepository.recupererInformationIndicateurParId.mockResolvedValue(informationIndicateur);
+    fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
+
+    // WHEN
+    await verifierFichierIndicateurImporteUseCase.execute(payload);
+
+    // THEN
+    expect(fichierIndicateurValidationService.validerFichier).toHaveBeenNthCalledWith(1, payloadValiderFichierCaptor);
+    const payloadValiderFichier = payloadValiderFichierCaptor.value;
+    expect(payloadValiderFichier.schema).toEqual('base/schema/url/schema.json');
+  });
+
+  it("quand l'indicateur ne possède pas d'informations, doit concaténer le schema avec 'sans-contraintes.json'", async () => {
+    // GIVEN
+    const detailValidationFichier = new DetailValidationFichierBuilder()
+      .avecEstValide(true)
+      .build();
+
+    const payload = {
+      cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+      nomDuFichier: NOM_DU_FICHIER,
+      baseSchemaUrl: SCHEMA,
+      indicateurId: 'IND-001',
+      utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
+    };
+
+    const payloadValiderFichierCaptor = captor<ValiderFichierPayload>();
+
+    indicateurRepository.recupererInformationIndicateurParId.mockResolvedValue(null);
+    fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
+
+    // WHEN
+    await verifierFichierIndicateurImporteUseCase.execute(payload);
+
+    // THEN
+    expect(fichierIndicateurValidationService.validerFichier).toHaveBeenNthCalledWith(1, payloadValiderFichierCaptor);
+    const payloadValiderFichier = payloadValiderFichierCaptor.value;
+    expect(payloadValiderFichier.schema).toEqual('base/schema/url/sans-contraintes.json');
   });
 
   it('quand le fichier est valide, doit sauvegarder les données du fichier contenu dans le rapport', async () => {
@@ -93,7 +159,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     const payload = {
       cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
       nomDuFichier: NOM_DU_FICHIER,
-      schema: SCHEMA,
+      baseSchemaUrl: SCHEMA,
       indicateurId: 'IND-001',
       utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
     };
@@ -156,7 +222,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     const payload = {
       cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
       nomDuFichier: NOM_DU_FICHIER,
-      schema: SCHEMA,
+      baseSchemaUrl: SCHEMA,
       indicateurId: 'IND-001',
       utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
     };
@@ -204,7 +270,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        schema: SCHEMA,
+        baseSchemaUrl: SCHEMA,
         indicateurId: 'IND-001',
         utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
       };
@@ -262,7 +328,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        schema: SCHEMA,
+        baseSchemaUrl: SCHEMA,
         indicateurId: 'IND-001',
         utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
       };
@@ -314,7 +380,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
       const payload = {
         cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
         nomDuFichier: NOM_DU_FICHIER,
-        schema: SCHEMA,
+        baseSchemaUrl: SCHEMA,
         indicateurId: 'IND-001',
         utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
       };
@@ -356,7 +422,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     const payload = {
       cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
       nomDuFichier: NOM_DU_FICHIER,
-      schema: SCHEMA,
+      baseSchemaUrl: SCHEMA,
       indicateurId: 'IND-001',
       utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
     };
@@ -404,7 +470,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     const payload = {
       cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
       nomDuFichier: NOM_DU_FICHIER,
-      schema: SCHEMA,
+      baseSchemaUrl: SCHEMA,
       indicateurId: 'IND-001',
       utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
     };
@@ -461,7 +527,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     const payload = {
       cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
       nomDuFichier: NOM_DU_FICHIER,
-      schema: SCHEMA,
+      baseSchemaUrl: SCHEMA,
       indicateurId: 'IND-001',
       utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
     };
@@ -526,7 +592,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     const payload = {
       cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
       nomDuFichier: NOM_DU_FICHIER,
-      schema: SCHEMA,
+      baseSchemaUrl: SCHEMA,
       indicateurId: 'IND-001',
       utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
     };
@@ -591,7 +657,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     const payload = {
       cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
       nomDuFichier: NOM_DU_FICHIER,
-      schema: SCHEMA,
+      baseSchemaUrl: SCHEMA,
       indicateurId: 'IND-001',
       utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
     };
@@ -634,7 +700,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     const payload = {
       cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
       nomDuFichier: NOM_DU_FICHIER,
-      schema: SCHEMA,
+      baseSchemaUrl: SCHEMA,
       indicateurId: 'IND-001',
       utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
     };

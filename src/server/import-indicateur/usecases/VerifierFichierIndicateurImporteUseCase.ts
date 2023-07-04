@@ -13,11 +13,13 @@ import { ACCEPTED_DATE_FORMAT } from '@/server/import-indicateur/domain/enum/ACC
 import {
   ErreurValidationFichierRepository,
 } from '@/server/import-indicateur/domain/ports/ErreurValidationFichierRepository';
+import { IndicateurRepository } from '@/server/import-indicateur/domain/ports/IndicateurRepository';
 
 interface Dependencies {
   fichierIndicateurValidationService: FichierIndicateurValidationService
   mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository
   erreurValidationFichierRepository: ErreurValidationFichierRepository
+  indicateurRepository: IndicateurRepository
   rapportRepository: RapportRepository;
 }
 
@@ -53,6 +55,7 @@ const verifierFormatZoneId = (mesureIndicateurTemporaire: MesureIndicateurTempor
   mesureIndicateurTemporaire.mettreZoneIdEnMajuscule();
 };
 
+const DEFAULT_SCHEMA = 'sans-contraintes.json';
 export class VerifierFichierIndicateurImporteUseCase {
   private fichierIndicateurValidationService: FichierIndicateurValidationService;
 
@@ -60,38 +63,43 @@ export class VerifierFichierIndicateurImporteUseCase {
 
   private erreurValidationFichierRepository: ErreurValidationFichierRepository;
 
-  private rapportRepository: RapportRepository;
+  private indicateurRepository: IndicateurRepository;
 
+  private rapportRepository: RapportRepository;
 
   constructor({
     fichierIndicateurValidationService,
     mesureIndicateurTemporaireRepository,
     erreurValidationFichierRepository,
+    indicateurRepository,
     rapportRepository,
   }: Dependencies) {
     this.fichierIndicateurValidationService = fichierIndicateurValidationService;
     this.mesureIndicateurTemporaireRepository = mesureIndicateurTemporaireRepository;
     this.erreurValidationFichierRepository = erreurValidationFichierRepository;
+    this.indicateurRepository = indicateurRepository;
     this.rapportRepository = rapportRepository;
   }
 
   async execute({
     cheminCompletDuFichier,
     nomDuFichier,
-    schema,
+    baseSchemaUrl,
     indicateurId,
     utilisateurAuteurDeLimportEmail,
   }: {
     cheminCompletDuFichier: string
     nomDuFichier: string
-    schema: string
+    baseSchemaUrl: string
     indicateurId: string
     utilisateurAuteurDeLimportEmail: string
   }): Promise<DetailValidationFichier> {
+    const informationIndicateur = await this.indicateurRepository.recupererInformationIndicateurParId(indicateurId);
+
     const report = await this.fichierIndicateurValidationService.validerFichier({
       cheminCompletDuFichier,
       nomDuFichier,
-      schema,
+      schema: `${baseSchemaUrl}${informationIndicateur?.indicSchema || DEFAULT_SCHEMA}`,
       utilisateurEmail: utilisateurAuteurDeLimportEmail,
     });
     await this.rapportRepository.sauvegarder(report);

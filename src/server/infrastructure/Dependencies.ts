@@ -79,6 +79,12 @@ import {
 import {
   PrismaErreurValidationFichierRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaErreurValidationFichierRepository';
+import {
+  PrismaIndicateurRepository,
+} from '@/server/import-indicateur/infrastructure/adapters/PrismaIndicateurRepository';
+import {
+  IndicateurRepository as ImportIndicateurRepository,
+} from '@/server/import-indicateur/domain/ports/IndicateurRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
@@ -141,6 +147,8 @@ class Dependencies {
 
   private readonly _indicateurProjetStructurantRepository: IndicateurProjetStructurantRepository;
 
+  private readonly _importIndicateurRepository: ImportIndicateurRepository;
+
   private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
 
   constructor() {
@@ -168,6 +176,7 @@ class Dependencies {
     this._périmètreMinistérielRepository = new PérimètreMinistérielSQLRepository(prisma);
     this._synthèseDesRésultatsProjetStructurantRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
     this._indicateurProjetStructurantRepository = new IndicateurProjetStructurantSQLRepository(prisma);
+    this._importIndicateurRepository = new PrismaIndicateurRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
@@ -182,6 +191,7 @@ class Dependencies {
       fichierIndicateurValidationService,
       rapportRepository: this._rapportRepository,
       mesureIndicateurTemporaireRepository: this._mesureIndicateurTemporaireRepository,
+      indicateurRepository: this._importIndicateurRepository,
       erreurValidationFichierRepository: this._erreurValidationFichierRepository,
     });
   }

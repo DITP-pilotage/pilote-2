@@ -29,16 +29,16 @@ const convertirEnMesureIndicateurTemporaire = (mesureIndicateur: MesureIndicateu
 };
 
 export class PrismaMesureIndicateurTemporaireRepository implements MesureIndicateurTemporaireRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prismaClient: PrismaClient) {}
 
   async sauvegarder(listeMesuresIndicateurTemporaire: MesureIndicateurTemporaire[]): Promise<void> {
     const listeMesuresIndicateursModel = listeMesuresIndicateurTemporaire.map(convertirEnModel);
 
-    await this.prisma.mesure_indicateur_temporaire.createMany({ data: listeMesuresIndicateursModel });
+    await this.prismaClient.mesure_indicateur_temporaire.createMany({ data: listeMesuresIndicateursModel });
   }
 
   async recupererToutParRapportId(rapportId: string): Promise<MesureIndicateurTemporaire[]> {
-    const listeMesuresIndicateurTemporaireModel = await this.prisma.mesure_indicateur_temporaire.findMany({
+    const listeMesuresIndicateurTemporaireModel = await this.prismaClient.mesure_indicateur_temporaire.findMany({
       where: {
         rapport_id: rapportId,
       },
@@ -47,7 +47,7 @@ export class PrismaMesureIndicateurTemporaireRepository implements MesureIndicat
   }
 
   async supprimerToutParRapportId(rapportId: string): Promise<void> {
-    await this.prisma.mesure_indicateur_temporaire.deleteMany({
+    await this.prismaClient.mesure_indicateur_temporaire.deleteMany({
       where: {
         rapport_id: rapportId,
       },
