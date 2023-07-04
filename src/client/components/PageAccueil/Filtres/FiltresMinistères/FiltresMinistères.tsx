@@ -61,7 +61,7 @@ export default function FiltresMinistères({ ministères }: FiltresMinistèresPr
             ministères.map((ministère) => {
               return (
                 <li
-                  className="fr-checkbox-group"
+                  className=""
                   key={ministère.nom}
                 >
                   <button
