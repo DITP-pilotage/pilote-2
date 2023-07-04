@@ -20,6 +20,12 @@ RUN pipenv --venv
 # [log] Show versions of packages installed in env just created
 RUN pipenv run pip freeze
 
+
+# Install deps
+COPY data_factory data_factory/
+COPY profiles.yml .
+RUN pipenv run dbt deps --profiles-dir . --project-dir data_factory
+
 # Copy rest of the files
 COPY . .
 
