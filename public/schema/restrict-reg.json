@@ -45,7 +45,7 @@
     {
       "name": "zone_id",
       "description": "La zone renseignée n’est pas dans le référentiel.",
-      "example": "R46",
+      "example": "R84",
       "type": "string",
       "constraints": {
         "required": true,
