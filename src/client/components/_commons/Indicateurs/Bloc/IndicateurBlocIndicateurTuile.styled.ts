@@ -36,6 +36,15 @@ const IndicateurBlocIndicateurTuile = styled.div`
       }
     }
   }
+
+  .indicateur-bloc--avec-date {
+    display: flex;
+    gap: .25rem;
+
+    & span:last-child {
+      font-size: .625rem;
+    }
+  }
 `;
 
 export default IndicateurBlocIndicateurTuile;
