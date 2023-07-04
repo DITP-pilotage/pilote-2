@@ -20,4 +20,4 @@ volumes:
   db_dbt_pilote:
     driver: local
 
-# Start with "docker-compose up --force-recreate --build"
+# Start with "docker-compose up --force-recreate --build" or "docker-compose up"
