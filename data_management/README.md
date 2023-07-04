@@ -297,6 +297,7 @@ Afin de mieux visualiser le DAG à l'intérieur du projet, nous vous proposons d
 Il est possible d'y avoir accès en exécutant la commande suivante : 
 
 ```bash
+source .env
 dbt docs generate --project-dir data_factory/  && dbt docs serve --project-dir data_factory/
 ```
 
