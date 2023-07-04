@@ -2,40 +2,40 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import PageAdminUtilisateursProps from '@/components/PageAdminUtilisateurs/PageAdminUtilisateurs.interface';
 import Titre from '@/components/_commons/Titre/Titre';
-import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import TableauAdminUtilisateurs
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs';
-import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import { filtresUtilisateursActifs, actions as actionsFiltresUtilisateursStore } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
-import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import AdminUtilisateursBarreLatérale from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale';
+import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import { filtresUtilisateursActifs } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
+
+
+
+function usePageAdminUtilisateurs(utilisateurs: Utilisateur[]) {
+  const filtresActifs = filtresUtilisateursActifs();
+  function passeLesFiltres(utilisateur: Utilisateur) {
+    if (filtresActifs.territoires.length === 0) {
+      return true;
+    }
+    return utilisateur.habilitations.lecture.territoires.some((territoire) => filtresActifs.territoires.includes(territoire));
+  }
+
+  return {
+    utilisateursFiltrés: utilisateurs.filter(passeLesFiltres),
+  };
+}
 
 export default function PageAdminUtilisateurs({ utilisateurs } :PageAdminUtilisateursProps ) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const router = useRouter();
-  const filtresActifs = filtresUtilisateursActifs();
-  const { modifierÉtatDuFiltre } = actionsFiltresUtilisateursStore();
-  const territoires = territoiresTerritoiresStore();
-
+  const { utilisateursFiltrés } = usePageAdminUtilisateurs(utilisateurs);
 
   return (
     <div className='flex'>
-      <BarreLatérale
-        estOuvert={estOuverteBarreLatérale}
-        setEstOuvert={setEstOuverteBarreLatérale}
-      >
-        <Sélecteur
-          htmlName='territoire'
-          options={territoires.map(territoire => ({
-            libellé: territoire.nomAffiché,
-            valeur: territoire.code,
-          }))}
-          valeurModifiéeCallback={(territoire) => {
-            modifierÉtatDuFiltre([territoire], 'territoires');
-          }}
-          valeurSélectionnée={filtresActifs.territoires[0]}
-        />
-      </BarreLatérale>
+      <AdminUtilisateursBarreLatérale
+        estOuverteBarreLatérale={estOuverteBarreLatérale}
+        setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
+      />
       <main>
         <div className='fr-mt-4w fr-mx-4w fr-mb-3w'>
           <div className="fr-grid-row fr-grid-row--middle fr-mb-3w">
@@ -60,7 +60,7 @@ export default function PageAdminUtilisateurs({ utilisateurs } :PageAdminUtilisa
             </div>
           </div>
           <Bloc>
-            <TableauAdminUtilisateurs utilisateurs={utilisateurs} />
+            <TableauAdminUtilisateurs utilisateurs={utilisateursFiltrés} />
           </Bloc>
         </div>
       </main>

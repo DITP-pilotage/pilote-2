@@ -14,6 +14,7 @@ export type FiltresUtilisateursActifs = {
 export default interface FiltresUtilisateursStore {
   filtresActifs: FiltresUtilisateursActifs,
   actions: {
-    modifierÉtatDuFiltre: (filtres: Filtre[], catégorieDeFiltre: FiltreCatégorie) => void
+    modifierÉtatDuFiltre: (filtres: Filtre[], catégorieDeFiltre: FiltreCatégorie) => void,
+    réinitialiser: () => void,
   }
 }
