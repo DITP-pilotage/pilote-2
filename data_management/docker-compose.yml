@@ -1,0 +1,22 @@
+services:
+  dbt-pilote:
+    build: .
+    ports:
+      - "8088:8080"
+    volumes:
+      - "${PWD}/data_factory:/app/data_factory"
+      - "${PWD}/input_data:/app/input_data"
+  postgres:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db_dbt_pilote:/var/lib/postgresql/data
+
+volumes:
+  db_dbt_pilote:
+    driver: local
