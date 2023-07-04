@@ -4,6 +4,7 @@ services:
     ports:
       - "8088:8080"
     volumes:
+      - "${PWD}/.env:/app/.env:ro"
       - "${PWD}/data_factory:/app/data_factory"
       - "${PWD}/input_data:/app/input_data"
   postgres:
