@@ -23,7 +23,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     const chantiers = await this.chantierRepository.récupérerChantiersSynthétisés();
 
     const validateurHabilitations = créerValidateurHabilitations(territoires, chantiers);
-    validateurHabilitations.parse({ profil: utilisateur.profil, ...utilisateur.habilitations });
+    validateurHabilitations.parse({ profil: utilisateur.profil, habilitations: utilisateur.habilitations });
   }
 
   async _définirLesHabilitations(utilisateur: UtilisateurÀCréerOuMettreÀJour): Promise<HabilitationsÀCréerOuMettreÀJourCalculées> {

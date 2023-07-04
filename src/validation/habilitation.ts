@@ -51,18 +51,23 @@ export default function créerValidateurHabilitations(territoires: Territoire[],
   return z.discriminatedUnion('profil', [
     z.object({
       profil: z.literal('DITP_ADMIN'),
+      habilitations: z.undefined(),
     }).strict(),
     z.object({
       profil: z.literal('DITP_PILOTAGE'),
+      habilitations: z.undefined(),
     }).strict(),
     z.object({
       profil: z.literal('PR'),
+      habilitations: z.undefined(),
     }).strict(),
     z.object({
       profil: z.literal('PM_ET_CABINET'),
+      habilitations: z.undefined(),
     }).strict(),
     z.object({
       profil: z.literal('CABINET_MTFP'),
+      habilitations: z.undefined(),
     }).strict(),
     z.object({
       profil: z.literal('CABINET_MINISTERIEL'),
@@ -70,8 +75,8 @@ export default function créerValidateurHabilitations(territoires: Territoire[],
         lecture: z.object({
           chantiers: validationChantiersParmiTousLesChantiers,
           périmètres: z.string().array(),
-        }),
-      }), 
+        }).strict(),
+      }).strict(), 
     }).strict(),
     z.object({
       profil: z.literal('DIR_ADMIN_CENTRALE'),
@@ -79,8 +84,8 @@ export default function créerValidateurHabilitations(territoires: Territoire[],
         lecture: z.object({
           chantiers: validationChantiersParmiTousLesChantiers,
           périmètres: z.string().array(),
-        }),
-      }), 
+        }).strict(),
+      }).strict(), 
     }).strict(),
     z.object({
       profil: z.literal('SECRETARIAT_GENERAL'),
@@ -88,8 +93,8 @@ export default function créerValidateurHabilitations(territoires: Territoire[],
         lecture: z.object({
           chantiers: validationChantiersParmiTousLesChantiers,
           périmètres: z.string().array(),
-        }),
-      }), 
+        }).strict(),
+      }).strict(), 
     }).strict(),
     z.object({
       profil: z.literal('EQUIPE_DIR_PROJET'),
@@ -97,8 +102,8 @@ export default function créerValidateurHabilitations(territoires: Territoire[],
         lecture: z.object({
           chantiers: validationChantiersParmiTousLesChantiers,
           périmètres: z.string().array(),
-        }),
-      }), 
+        }).strict(),
+      }).strict(), 
     }).strict(),
     z.object({
       profil: z.literal('DIR_PROJET'),
@@ -106,24 +111,24 @@ export default function créerValidateurHabilitations(territoires: Territoire[],
         lecture: z.object({
           chantiers: validationChantiersParmiTousLesChantiers,
           périmètres: z.string().array(),
-        }),
-      }), 
+        }).strict(),
+      }).strict(), 
     }).strict(),    
     z.object({
       profil: z.literal('REFERENT_REGION'),
       habilitations: z.object({
         lecture: z.object({
           territoires: validationTerritoiresProfilsRégionaux,
-        }),
-      }), 
+        }).strict(),
+      }).strict(), 
     }).strict(),
     z.object({
       profil: z.literal('PREFET_REGION'),
       habilitations: z.object({
         lecture: z.object({
           territoires: validationTerritoiresProfilsRégionaux,
-        }),
-      }), 
+        }).strict(),
+      }).strict(), 
     }).strict(),
     z.object({
       profil: z.literal('SERVICES_DECONCENTRES_REGION'),
@@ -132,24 +137,24 @@ export default function créerValidateurHabilitations(territoires: Territoire[],
           chantiers: validationChantiersParmiTousLesChantiersTerritorialisés,
           territoires: validationTerritoiresProfilsRégionaux,
           périmètres: z.string().array(),
-        }),
-      }), 
+        }).strict(),
+      }).strict(), 
     }).strict(),
     z.object({
       profil: z.literal('REFERENT_DEPARTEMENT'),
       habilitations: z.object({
         lecture: z.object({
           territoires: validationTerritoiresProfilsDépartementaux,
-        }),
-      }), 
+        }).strict(),
+      }).strict(), 
     }).strict(),
     z.object({
       profil: z.literal('PREFET_DEPARTEMENT'),
       habilitations: z.object({
         lecture: z.object({
           territoires: validationTerritoiresProfilsDépartementaux,
-        }),
-      }), 
+        }).strict(),
+      }).strict(),
     }).strict(),
     z.object({
       profil: z.literal('SERVICES_DECONCENTRES_DEPARTEMENT'),
@@ -158,11 +163,12 @@ export default function créerValidateurHabilitations(territoires: Territoire[],
           chantiers: validationChantiersParmiTousLesChantiersTerritorialisés,
           territoires: validationTerritoiresProfilsDépartementaux,
           périmètres: z.string().array(),
-        }),
-      }), 
+        }).strict(),
+      }).strict(),
     }).strict(),
     z.object({
       profil: z.literal('DROM'),
+      habilitations: z.undefined(),
     }).strict(),
   ]);
 } 

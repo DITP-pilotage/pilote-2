@@ -1,6 +1,6 @@
 import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 import { Controller } from 'react-hook-form';
-import { DevTool } from '@hookform/devtools';  
+// import { DevTool } from '@hookform/devtools';  
 import InputAvecLabel from '@/components/_commons/InputAvecLabel/InputAvecLabel';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import useSaisieDesInformationsUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
@@ -164,7 +164,7 @@ export default function SaisieDesInformationsUtilisateur() {
           label="Suivant"
         />
       </div>
-      <DevTool control={control} />
+      {/* <DevTool control={control} /> */}
     </>
   );
 }
