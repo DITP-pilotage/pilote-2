@@ -72,12 +72,17 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
     if (['DITP_PILOTAGE', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM'].includes(profil?.code ?? ''))
       return ['France'];
     
+    if (['PR', 'PM_ET_CABINET', 'CABINET_MTFP', 'CABINET_MINISTERIEL', 'DIR_ADMIN_CENTRALE', 'SECRETARIAT_GENERAL'].includes(profil?.code ?? ''))
+      return [];
+
     return u.habilitations?.lecture?.territoires?.map(territoire => récupérerDétailsSurUnTerritoire(territoire).nomAffiché) ?? [];
   }, [profil, récupérerDétailsSurUnTerritoire]);
 
-  const déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire = useCallback((u: FicheUtilisateurProps['utilisateur']) => 
-    déterminerLesNomÀAfficherPourLesChantiersLecture(u)
-  , [déterminerLesNomÀAfficherPourLesChantiersLecture]);
+  const déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
+    if (déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire(u).length === 0) 
+      return [];
+    return déterminerLesNomÀAfficherPourLesChantiersLecture(u);
+  }, [déterminerLesNomÀAfficherPourLesChantiersLecture, déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire]);
 
   useEffect(() => {
     if (!chantiers || !profil)
