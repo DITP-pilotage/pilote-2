@@ -14,8 +14,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import TableauAdminUtilisateursContenu
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/Contenu/TableauAdminUtilisateursContenu';
 
-export default function TableauAdminUtilisateurs({ utilisateurs } :TableauAdminUtilisateursProps) {
-
+export default function TableauAdminUtilisateurs({ utilisateurs }: TableauAdminUtilisateursProps) {
   const { tableau, changementDePageCallback, changementDeLaRechercheCallback, valeurDeLaRecherche } = useTableauPageAdminUtilisateurs(utilisateurs);
 
   useEffect(() => {

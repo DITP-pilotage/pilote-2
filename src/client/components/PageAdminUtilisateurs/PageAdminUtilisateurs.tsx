@@ -1,34 +1,22 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import PageAdminUtilisateursProps from '@/components/PageAdminUtilisateurs/PageAdminUtilisateurs.interface';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import TableauAdminUtilisateurs
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs';
 import AdminUtilisateursBarreLatérale from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
-import { filtresUtilisateursActifs } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
+import api from '@/server/infrastructure/api/trpc/api';
+import { filtresUtilisateursActifs } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
+import Loader from '@/client/components/_commons/Loader/Loader';
 
-
-
-function usePageAdminUtilisateurs(utilisateurs: Utilisateur[]) {
-  const filtresActifs = filtresUtilisateursActifs();
-  function passeLesFiltres(utilisateur: Utilisateur) {
-    if (filtresActifs.territoires.length === 0) {
-      return true;
-    }
-    return utilisateur.habilitations.lecture.territoires.some((territoire) => filtresActifs.territoires.includes(territoire));
-  }
-
-  return {
-    utilisateursFiltrés: utilisateurs.filter(passeLesFiltres),
-  };
-}
-
-export default function PageAdminUtilisateurs({ utilisateurs } :PageAdminUtilisateursProps ) {
+export default function PageAdminUtilisateurs() {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const router = useRouter();
-  const { utilisateursFiltrés } = usePageAdminUtilisateurs(utilisateurs);
+  const filtresActifs = filtresUtilisateursActifs();
+  
+  const { data: utilisateurs, isLoading } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
+    filtres: filtresActifs.territoires,
+  });
 
   return (
     <div className='flex'>
@@ -59,9 +47,12 @@ export default function PageAdminUtilisateurs({ utilisateurs } :PageAdminUtilisa
               </div>
             </div>
           </div>
-          <Bloc>
-            <TableauAdminUtilisateurs utilisateurs={utilisateursFiltrés} />
-          </Bloc>
+          {
+            isLoading  ? <Loader /> :
+            <Bloc>
+              { !!utilisateurs && <TableauAdminUtilisateurs utilisateurs={utilisateurs} /> }
+            </Bloc>
+          }
         </div>
       </main>
     </div>
