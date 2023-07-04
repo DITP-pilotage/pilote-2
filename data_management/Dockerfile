@@ -1,32 +1,33 @@
 FROM python:3.9.16
 
 WORKDIR /app
+COPY .env .
 
-# Copy config files
-COPY Pipfile .
-# COPY Pipfile.lock . #1
 
-# Install pipenv (last version)
+RUN python --version
+
 RUN python -m pip install --no-cache pipenv
 
 
-# Install dependencies of Pipfile
-RUN pipenv lock #1
+COPY Pipfile .
+COPY Pipfile.lock .
+
+# dl pipenv dependencies
+#RUN touch Pipfile.lock
+RUN ls
+#RUN pipenv install --system --deploy --ignore-pipfile
+# https://stackoverflow.com/a/68787552/21676629 On transforme les dependances pipenv en requirements puis on installe avec pip
+#RUN python -m pip install --no-cache pipenv  \
+#    && pipenv requirements > requirements.txt \
+#    && pip install -r requirements.txt
+#RUN pipenv sync --system
 RUN pipenv sync
-# [log] Show path of env just created
-RUN pipenv --venv
-# [log] Show versions of packages installed in env just created
-RUN pipenv run pip freeze
+#RUN pipenv shell
+RUN python -m pip install --no-cache dbt-core
+RUN python --version
+#RUN dbt --version
 
 
-# Install deps
-COPY data_factory data_factory/
-COPY profiles.yml .
-RUN pipenv run dbt deps --profiles-dir . --project-dir data_factory
-
-# Copy rest of the files
 COPY . .
-
-# Start entrypoint.sh script
-ENTRYPOINT ["/bin/bash"]
-CMD ["serve_doc.sh"]
+#CMD ["deps", "--project-dir", "/data_factory"]
+ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
