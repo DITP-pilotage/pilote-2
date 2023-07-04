@@ -36,6 +36,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   private _chantiersTerritorialisésIds: string[] = [];
 
+  private _périmètresMinistériels: string[] = [];
+
   constructor(private _prisma: PrismaClient) {}
 
   async _récupérerTerritoires() {
@@ -81,6 +83,13 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
           this._chantiersTerritorialisésIds.push(c.id);
         }
       });
+    }
+  }
+
+  async _récupérerPérimètresMinistériels() {
+    if (this._périmètresMinistériels.length === 0) {
+      const tousLesPérimètresMinistériels = await this._prisma.perimetre.findMany();
+      this._périmètresMinistériels = tousLesPérimètresMinistériels.map(périmètre => périmètre.id);
     }
   }
 
@@ -209,6 +218,18 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     };
   }
 
+  private async _récupérerPérimètresMinistérielsParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, perimetre['id'][]>> {
+    return {
+      // on dit que ceux qui ont accès à tous les chantiers ont accès à tous les périmètres ministériels
+      'lecture': profilUtilisateur.a_acces_tous_chantiers ? this._périmètresMinistériels : [],
+      'saisie.commentaire': profilUtilisateur.a_acces_tous_chantiers ? this._périmètresMinistériels : [],
+      'saisie.indicateur': profilUtilisateur.a_acces_tous_chantiers ? this._périmètresMinistériels : [],
+      'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs ? this._périmètresMinistériels : [],
+      'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs ? this._périmètresMinistériels : [],
+      'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs ? this._périmètresMinistériels : [],
+    };
+  }
+
   private async _récupérerProjetsStructurantsUtilisateur(profilUtilisateur: profil, chantiersIdsAccessiblesEnLecture: string[], territoiresCodesAccessiblesEnLecture: string[]): Promise<string[]> {
     const accèsTousPérimètres = profilUtilisateur.projets_structurants_lecture_tous_perimetres;
     const accèsTousTerritoires = profilUtilisateur.projets_structurants_lecture_tous_territoires;
@@ -244,31 +265,38 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   private async _créerLesHabilitations(profilUtilisateur: profil, habilitations: habilitation[]) {
     const chantiersParDéfaut = await this._récupérerChantiersParDéfaut(profilUtilisateur);
     const territoiresParDéfaut = await this._récupérerTerritoiresParDéfaut(profilUtilisateur);
+    const périmètresMinistérielsParDéfaut = await this._récupérerPérimètresMinistérielsParDéfaut(profilUtilisateur);
 
     let habilitationsGénérées: Utilisateur['habilitations'] = {
       lecture: {
         chantiers: chantiersParDéfaut.lecture,
         territoires: territoiresParDéfaut.lecture,
+        périmètres: périmètresMinistérielsParDéfaut.lecture,
       },
       'saisie.commentaire': {
         chantiers: chantiersParDéfaut['saisie.commentaire'],
         territoires: territoiresParDéfaut['saisie.commentaire'],
+        périmètres: périmètresMinistérielsParDéfaut['saisie.commentaire'],
       },
       'saisie.indicateur': {
         chantiers: chantiersParDéfaut['saisie.indicateur'],
         territoires: territoiresParDéfaut['saisie.indicateur'],
+        périmètres: périmètresMinistérielsParDéfaut['saisie.indicateur'],
       },
       'utilisateurs.lecture': {
         chantiers: chantiersParDéfaut['utilisateurs.lecture'],
         territoires: territoiresParDéfaut['utilisateurs.lecture'],
+        périmètres: périmètresMinistérielsParDéfaut['utilisateurs.lecture'],
       },
       'utilisateurs.modification': {
         chantiers: chantiersParDéfaut['utilisateurs.modification'],
         territoires: territoiresParDéfaut['utilisateurs.modification'],
+        périmètres: périmètresMinistérielsParDéfaut['utilisateurs.modification'],
       },
       'utilisateurs.suppression': {
         chantiers: chantiersParDéfaut['utilisateurs.suppression'],
         territoires: territoiresParDéfaut['utilisateurs.suppression'],
+        périmètres: périmètresMinistérielsParDéfaut['utilisateurs.suppression'],
       },
       'projetsStructurants.lecture': {
         projetsStructurants: [],
@@ -282,6 +310,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
         const chantiersAssociésAuxPérimètresMinistériels = h.perimetres.length > 0 ? await dependencies.getChantierRepository().récupérerChantierIdsAssociésAuxPérimètresMinistèriels(h.perimetres) : [];
         habilitationsGénérées[scopeCode].chantiers = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...h.chantiers])];
         habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
+        habilitationsGénérées[scopeCode].périmètres = [... new Set([...habilitationsGénérées[scopeCode].périmètres, ...h.perimetres])];
       }
     }
 
@@ -294,6 +323,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     await this._récupérerTerritoires();
     await this._récupérerChantiers();
     await this._récupérerProjetsStructurants();
+    await this._récupérerPérimètresMinistériels();
 
     return {
       id: utilisateurBrut.id,
