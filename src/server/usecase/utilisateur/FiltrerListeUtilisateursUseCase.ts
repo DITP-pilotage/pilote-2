@@ -15,6 +15,14 @@ export default class FiltrerListeUtilisateursUseCase {
     return utilisateur.habilitations.lecture.territoires.some((territoire) => this.filtresActifs.territoires.includes(territoire));
   }
 
+  private utilisateurPasseLeFiltrePérimètreMinistériel(utilisateur: Utilisateur) {
+    if (this.filtresActifs.périmètresMinistériels.length === 0) {
+      return true;
+    }
+
+    return utilisateur.habilitations.lecture.périmètres.some((périmètre) => this.filtresActifs.périmètresMinistériels.includes(périmètre));
+  }
+
   private utilisateurPasseLeFiltreChantier(utilisateur: Utilisateur) {
     if (this.filtresActifs.chantiers.length === 0) {
       return true;
@@ -24,7 +32,9 @@ export default class FiltrerListeUtilisateursUseCase {
   }
 
   private utilisateurPasseLesFiltres(utilisateur: Utilisateur) {
-    return this.utilisateurPasseLeFiltreTerritoire(utilisateur) && this.utilisateurPasseLeFiltreChantier(utilisateur);
+    return this.utilisateurPasseLeFiltreTerritoire(utilisateur)
+      && this.utilisateurPasseLeFiltreChantier(utilisateur)
+      && this.utilisateurPasseLeFiltrePérimètreMinistériel(utilisateur);
   }
 
   run() {

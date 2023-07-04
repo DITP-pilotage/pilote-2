@@ -26,6 +26,20 @@ const useFiltresUtilisateursStore = create<FiltresUtilisateursStore>((set) => ({
         filtresActifs: { ...filtresActifsInitiaux },
       }));
     },
+    désactiverFiltre: (filtre, catégorieDeFiltre) => {
+      set(étatActuel => {
+        const filtres = [...étatActuel.filtresActifs[catégorieDeFiltre]];
+        const indexFiltreÀDésactiver = filtres.indexOf(filtre);
+        filtres.splice(indexFiltreÀDésactiver, 1);
+
+        return ({
+          filtresActifs: {
+            ...étatActuel.filtresActifs,
+            [catégorieDeFiltre]: filtres,
+          },
+        });
+      });
+    },
   },
 }));
 

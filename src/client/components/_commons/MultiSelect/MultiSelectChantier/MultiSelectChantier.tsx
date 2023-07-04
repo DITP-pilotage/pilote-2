@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import MultiSelect from '@/client/components/_commons/MultiSelect/MultiSelect';
 import { MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/components/_commons/MultiSelect/MultiSelect.interface';
-import { trierParOrdreAlphabétique } from '@/client/utils/arrays';
+import { deuxTableauxSontIdentiques, trierParOrdreAlphabétique } from '@/client/utils/arrays';
 import MultiSelectChantierProps from './MultiSelectChantier.interface';
 
 export default function MultiSelectChantier({ chantiersIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, valeursDésactivées, chantiers }: MultiSelectChantierProps) {
+  const [valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut] = useState(chantiersIdsSélectionnésParDéfaut);
   const [optionsGroupées, setOptionsGroupées] = useState<MultiSelectOptionsGroupées>([]);
 
   useEffect(() => {
@@ -20,13 +21,20 @@ export default function MultiSelectChantier({ chantiersIdsSélectionnésParDéfa
     }
   }, [chantiers, valeursDésactivées]);
 
+  useEffect(() => {
+    if (!deuxTableauxSontIdentiques(chantiersIdsSélectionnésParDéfaut ?? [], valeursSélectionnéesParDéfaut ?? [])) {
+      setValeursSélectionnéesParDéfaut(chantiersIdsSélectionnésParDéfaut);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chantiersIdsSélectionnésParDéfaut]);
+
   return (
     <MultiSelect
       changementValeursSélectionnéesCallback={(valeursSélectionnées: string[]) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
       label='Chantier(s)'
       optionsGroupées={optionsGroupées}
       suffixeLibellé='chantier(s) sélectionné(s)'
-      valeursSélectionnéesParDéfaut={chantiersIdsSélectionnésParDéfaut}
+      valeursSélectionnéesParDéfaut={valeursSélectionnéesParDéfaut}
     />
   );
 }

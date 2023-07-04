@@ -9,6 +9,7 @@ import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLat�
 import Titre from '@/components/_commons/Titre/Titre';
 import AdminUtilisateursBarreLatéraleProps from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale.interface';
 import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
+import MultiSelectPérimètreMinistériel from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
 import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier';
 import Tag from '@/components/_commons/Tag/Tag';
 import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
@@ -19,7 +20,8 @@ export default function AdminUtilisateursBarreLatérale({
   setEstOuverteBarreLatérale,
 }: AdminUtilisateursBarreLatéraleProps) {
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
-  const { modifierÉtatDuFiltre } = actionsFiltresUtilisateursStore();
+  const { data: périmètresMinistériels } = api.périmètreMinistériel.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
+  const { modifierÉtatDuFiltre, désactiverFiltre } = actionsFiltresUtilisateursStore();
   const territoires = territoiresTerritoiresStore();
   const filtresActifs = filtresUtilisateursActifsStore();
   const réinitialiserFiltres = réinitialiser();
@@ -43,11 +45,19 @@ export default function AdminUtilisateursBarreLatérale({
             territoiresCodesSélectionnésParDéfaut={filtresActifs.territoires}
           />
         </div>
+        <div className="fr-mb-2w">
+          <MultiSelectPérimètreMinistériel
+            changementValeursSélectionnéesCallback={(périmètreMinistériel) => {
+              modifierÉtatDuFiltre(périmètreMinistériel, 'périmètresMinistériels');
+            }}
+            périmètresMinistérielsIdsSélectionnésParDéfaut={filtresActifs.périmètresMinistériels}
+          />
+        </div>
         <MultiSelectChantier
           changementValeursSélectionnéesCallback={(chantier) => {
             modifierÉtatDuFiltre(chantier, 'chantiers');
           }}
-          chantiers={chantiers}
+          chantiers={chantiers ?? []}
           chantiersIdsSélectionnésParDéfaut={filtresActifs.chantiers}
         />
       </BarreLatéraleEncart>
@@ -84,7 +94,9 @@ export default function AdminUtilisateursBarreLatérale({
                 <Tag
                   key={territoireCode}
                   libellé={libellé}
-                  suppressionCallback={() => {}}
+                  suppressionCallback={() => {
+                    désactiverFiltre(territoireCode, 'territoires');
+                  }}
                 />
               );
             })
@@ -103,13 +115,18 @@ export default function AdminUtilisateursBarreLatérale({
           id="fr-sidemenu-item-périmètresMinistériels"
         >
           {
-            filtresActifs.périmètresMinistériels.map(périmètreMinistérielId => (
-              <Tag
-                key={périmètreMinistérielId}
-                libellé={périmètreMinistérielId}
-                suppressionCallback={() => {}}
-              />
-            ))
+            filtresActifs.périmètresMinistériels.map(périmètreMinistérielId => {
+              let libellé = périmètresMinistériels?.find(périmètre => périmètre.id === périmètreMinistérielId)?.nom ?? null;
+              return libellé === null ? null : (
+                <Tag
+                  key={périmètreMinistérielId}
+                  libellé={libellé}
+                  suppressionCallback={() => {
+                    désactiverFiltre(périmètreMinistérielId, 'périmètresMinistériels');
+                  }}
+                />
+              );
+            })
           }
         </div>
         <button
@@ -131,7 +148,9 @@ export default function AdminUtilisateursBarreLatérale({
                 <Tag
                   key={chantierId}
                   libellé={libellé}
-                  suppressionCallback={() => {}}
+                  suppressionCallback={() => {
+                    désactiverFiltre(chantierId, 'chantiers');
+                  }}
                 />
               );
             })
