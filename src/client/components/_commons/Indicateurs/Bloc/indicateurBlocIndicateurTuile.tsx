@@ -1,6 +1,7 @@
 import IndicateurBlocIndicateurTuileStyled
   from '@/components/_commons/Indicateurs/Bloc/IndicateurBlocIndicateurTuile.styled';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import { formaterDate } from '@/client/utils/date/date';
 import IndicateurDétailsParTerritoireProps from './indicateurDétailsParTerritoire.interface';
 
 export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTerritoire, typeDeRéforme }: IndicateurDétailsParTerritoireProps) {
@@ -22,16 +23,30 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
               Valeur initiale
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0">
-              { indicateurDétailsParTerritoire.données.valeurInitiale?.toLocaleString() }
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
+              <span>
+                { indicateurDétailsParTerritoire.données.valeurInitiale?.toLocaleString() }
+              </span>
+              <span className='texte-gris'>
+                (
+                { formaterDate(indicateurDétailsParTerritoire.données.dateValeurInitiale, 'MM/YYYY') }
+                )
+              </span>
             </td>
           </tr>
           <tr>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
               Valeur actuelle
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0">
-              { indicateurDétailsParTerritoire.données.valeurs.slice(-1)[0]?.toLocaleString() }
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
+              <span>
+                { indicateurDétailsParTerritoire.données.valeurs.slice(-1)[0]?.toLocaleString() }
+              </span>
+              <span className='texte-gris'>
+                (
+                { formaterDate(indicateurDétailsParTerritoire.données.dateValeurs[indicateurDétailsParTerritoire.données.dateValeurs.length - 1], 'MM/YYYY') }
+                )
+              </span>
             </td>
           </tr>
           <tr>
