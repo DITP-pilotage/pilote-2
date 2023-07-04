@@ -1,3 +1,4 @@
+import { mock } from 'jest-mock-extended';
 import {
   PrismaMesureIndicateurTemporaireRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurTemporaireRepository';
@@ -9,10 +10,12 @@ import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/b
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/usecase/utilisateur/CréerOuMettreÀJourUnUtilisateurUseCase';
+import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 
 describe('PrismaMesureIndicateurTemporaireRepository', () => {
   let prismaRapportRepository: PrismaRapportRepository;
   let prismaMesureIndicateurTemporaireRepository: PrismaMesureIndicateurTemporaireRepository;
+  const stubUtilisateurIAMRepository = mock<UtilisateurIAMRepository>();
 
   beforeEach(() => {
     prismaRapportRepository = new PrismaRapportRepository(prisma);
@@ -23,7 +26,7 @@ describe('PrismaMesureIndicateurTemporaireRepository', () => {
     it('doit sauvegarder les données', async () => {
       // GIVEN
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')
@@ -82,7 +85,7 @@ describe('PrismaMesureIndicateurTemporaireRepository', () => {
     it('doit récupérer les mesures indicateurs temporaire liés au rapport id', async () => {
       // GIVEN
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')
@@ -139,7 +142,7 @@ describe('PrismaMesureIndicateurTemporaireRepository', () => {
     it('doit supprimer les mesures indicateurs temporaires liés à un rapport', async () => {
       // GIVEN
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')

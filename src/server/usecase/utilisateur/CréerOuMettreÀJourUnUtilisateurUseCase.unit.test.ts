@@ -46,19 +46,20 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
   };
 
   const stubUtilisateurRepository = { créerOuMettreÀJour: jest.fn() } as unknown as UtilisateurRepository;
-  const stubUtilisateurIAMRepository = { ajouteUtilisateurs: jest.fn() } as unknown as UtilisateurIAMRepository;
+  const stubUtilisateurIAMRepository = mock<UtilisateurIAMRepository>();
   const stubTerritoireRepository = { récupérerTous: jest.fn().mockResolvedValue(fakeTerritoires) } as unknown as TerritoireRepository;
   const stubChantierRepository = mock<ChantierRepository>();
+
   stubChantierRepository.récupérerChantiersSynthétisés.mockResolvedValue(fakeChantiersSynthétisés);
 
-  const créerOuMettreÀJourUnUtilisateurUseCase = new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurRepository, stubUtilisateurIAMRepository, stubTerritoireRepository, stubChantierRepository);
+  const créerOuMettreÀJourUnUtilisateurUseCase = new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository, stubUtilisateurRepository, stubTerritoireRepository, stubChantierRepository);
 
   const oldEnv = process.env;
 
   beforeEach(() => {
     jest.resetModules();
     process.env = { ...oldEnv };
-    process.env.DEV_PASSWORD = undefined;
+    process.env.IMPORT_KEYCLOAK_URL = 'https://keycloak.net';
     (stubUtilisateurRepository.créerOuMettreÀJour as jest.Mock).mockClear();
     (stubUtilisateurIAMRepository.ajouteUtilisateurs as jest.Mock).mockClear();
     (stubChantierRepository.récupérerChantiersSynthétisés as jest.Mock).mockClear();
@@ -88,10 +89,10 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     await expect(créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto')).rejects.toThrowError();
   }
 
-  describe("Si la variable d'env DEV_PASSWORD est définie", () => {
-    it("ne créé par l'utilisateur sur Keycloak", async () => {
+  describe("Si la variable d'env IMPORT_KEYCLOAK_URL n'est pas définie", () => {
+    it("ne créé pas l'utilisateur sur Keycloak", async () => {
       // GIVEN 
-      process.env.DEV_PASSWORD = 'password';
+      process.env.IMPORT_KEYCLOAK_URL = undefined;
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil('DITP_ADMIN').build();
 
       //WHEN

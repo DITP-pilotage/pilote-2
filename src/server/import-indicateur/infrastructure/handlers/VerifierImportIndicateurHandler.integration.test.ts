@@ -14,6 +14,7 @@ import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/Re
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import { getNextAuthSessionTokenPourUtilisateurEmail } from '@/server/infrastructure/test/NextAuthHelper';
 import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/usecase/utilisateur/CréerOuMettreÀJourUnUtilisateurUseCase';
+import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 
 jest.mock('@/server/import-indicateur/infrastructure/handlers/ParseForm', () => ({
   parseForm: () => ({
@@ -30,6 +31,8 @@ const DONNEE_DATE_2 = '31/12/2023';
 const BASE_URL_VALIDATA = 'https://api.validata.etalab.studio';
 
 describe('VerifierImportIndicateurHandler', () => {
+  const stubUtilisateurIAMRepository = mock<UtilisateurIAMRepository>();
+
   describe('Quand le fichier envoyé est correct', () => {
     it('doit retourner que le fichier est valide', async () => {
       // GIVEN
@@ -50,7 +53,7 @@ describe('VerifierImportIndicateurHandler', () => {
         ).build();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
@@ -105,7 +108,7 @@ describe('VerifierImportIndicateurHandler', () => {
         );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
 
       const formData = new FormData();
       const file = mock<File>();
@@ -161,7 +164,7 @@ describe('VerifierImportIndicateurHandler', () => {
         );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
 
       const formData = new FormData();
       const file = mock<File>();
@@ -224,7 +227,7 @@ describe('VerifierImportIndicateurHandler', () => {
       ).build();
 
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-    await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
+    await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
 
     nock(BASE_URL_VALIDATA)
       .post('/validate').reply(200,
@@ -312,7 +315,7 @@ describe('VerifierImportIndicateurHandler', () => {
       ).build();
 
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-    await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
+    await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
 
     nock(BASE_URL_VALIDATA)
       .post('/validate').reply(200,

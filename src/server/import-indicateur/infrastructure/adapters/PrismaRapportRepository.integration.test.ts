@@ -1,3 +1,4 @@
+import { mock } from 'jest-mock-extended';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
@@ -7,10 +8,12 @@ import {
   PrismaMesureIndicateurTemporaireRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurTemporaireRepository';
 import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/usecase/utilisateur/CréerOuMettreÀJourUnUtilisateurUseCase';
+import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 
 describe('PrismaRapportRepository', () => {
   let prismaRapportRepository: PrismaRapportRepository;
   let prismaMesureIndicateurTemporaireRepository: PrismaMesureIndicateurTemporaireRepository;
+  const stubUtilisateurIAMRepository = mock<UtilisateurIAMRepository>();
 
   beforeEach(() => {
     prismaRapportRepository = new PrismaRapportRepository(prisma);
@@ -22,7 +25,7 @@ describe('PrismaRapportRepository', () => {
       const now = new Date();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecEstValide(true)
@@ -49,7 +52,7 @@ describe('PrismaRapportRepository', () => {
       const now = new Date();
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
 
       const listeMesuresIndicateurTemporaire = [
         new MesureIndicateurTemporaireBuilder()

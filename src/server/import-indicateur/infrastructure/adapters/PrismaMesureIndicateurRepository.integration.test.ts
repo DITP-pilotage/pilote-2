@@ -1,3 +1,4 @@
+import { mock } from 'jest-mock-extended';
 import {
   PrismaMesureIndicateurRepository,
 } from '@/server/import-indicateur/infrastructure/adapters/PrismaMesureIndicateurRepository';
@@ -7,10 +8,12 @@ import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateu
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/usecase/utilisateur/CréerOuMettreÀJourUnUtilisateurUseCase';
+import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 
 describe('PrismaMesureIndicateurRepository', () => {
   let prismaRapportRepository: PrismaRapportRepository;
   let prismaMesureIndicateurRepository: PrismaMesureIndicateurRepository;
+  const stubUtilisateurIAMRepository = mock<UtilisateurIAMRepository>();
 
   describe('#sauvegarder', () => {
 
@@ -21,7 +24,7 @@ describe('PrismaMesureIndicateurRepository', () => {
     it('doit sauvegarder les données', async () => {
       // GIVEN
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await new CréerOuMettreÀJourUnUtilisateurUseCase().run(utilisateur, 'test');
+      await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')
