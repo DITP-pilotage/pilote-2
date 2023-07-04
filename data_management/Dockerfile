@@ -15,11 +15,13 @@ RUN python -m pip install --no-cache dbt-core
 # Install dependencies of Pipfile
 RUN pipenv lock #1
 RUN pipenv sync
+# [log] Show path of env just created
 RUN pipenv --venv
+# [log] Show versions of packages installed in env just created
 RUN pipenv run pip freeze
 
 # Copy rest of the files
 COPY . .
 
-# Start entrupoint.sh script
+# Start entrypoint.sh script
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
