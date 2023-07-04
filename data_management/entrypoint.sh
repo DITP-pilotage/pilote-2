@@ -1,6 +1,5 @@
 echo "-- [log] Chargement des variables d'env depuis le .env"
 source .env
-# pipenv shell
 echo "-- [log.pipenv] Détails du virtualenv actuel"
 pipenv --venv
 echo "-- [log.pipenv] Packages installés dans le virtualenv"
