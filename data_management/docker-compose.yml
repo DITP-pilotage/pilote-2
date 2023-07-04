@@ -4,20 +4,19 @@ services:
     ports:
       - "8088:8080"
     volumes:
-      - "${PWD}/.env:/app/.env:ro"
       - "${PWD}/data_factory:/app/data_factory"
       - "${PWD}/input_data:/app/input_data"
   postgres:
     image: postgres:14.1-alpine
     restart: always
     environment:
-      - POSTGRES_USER=${PGUSER}
-      - POSTGRES_PASSWORD=${PGPASSWORD}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
     volumes: 
       - db_dbt_pilote:/var/lib/postgresql/data
 
 volumes:
   db_dbt_pilote:
     driver: local
-
-# Start with "docker-compose up --force-recreate --build" or "docker-compose up"
