@@ -96,6 +96,11 @@ import PérimètreMinistérielSQLRepository from './accès_données/périmètreM
 import IndicateurProjetStructurantSQLRepository
   from './accès_données/projetStructurant/indicateur/IndicateurSQLRepository';
 
+// https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined
+};
+
 class Dependencies {
   private readonly _chantierRepository: ChantierRepository;
 
@@ -152,7 +157,11 @@ class Dependencies {
   private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
 
   constructor() {
-    const prisma = new PrismaClient();
+    const prisma = globalForPrisma.prisma ?? new PrismaClient();
+    if (process.env.NODE_ENV !== 'production') {
+      globalForPrisma.prisma = prisma;
+    }
+
     this._chantierRepository = new ChantierSQLRepository(prisma);
     this._chantierDatesDeMàjRepository = new ChantierDatesDeMàjSQLRepository(prisma);
     this._axeRepository = new AxeSQLRepository(prisma);
