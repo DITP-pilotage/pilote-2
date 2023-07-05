@@ -41,7 +41,7 @@ const IndicateurBlocIndicateurTuile = styled.div`
     display: flex;
     gap: .25rem;
 
-    & span:last-child {
+    & span:nth-child(2) {
       font-size: .625rem;
     }
   }
