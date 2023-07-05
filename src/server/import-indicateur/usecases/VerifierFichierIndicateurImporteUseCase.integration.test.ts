@@ -446,6 +446,138 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     expect(report.listeErreursValidation[0].positionDuChamp).toEqual(-1);
   });
 
+  it('quand le fichier possède des dates invalides, doit remonter un rapport invalide', async () => {
+    // GIVEN
+    const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecMetricDate('2023-06-31')
+      .build();
+    const mesureIndicateurTemporaire2 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecMetricDate('2023-02-30')
+      .build();
+    const mesureIndicateurTemporaire3 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecMetricDate('2023-02-29')
+      .build();
+    const mesureIndicateurTemporaire4 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecMetricDate('2020-02-29')
+      .build();
+    const detailValidationFichier = new DetailValidationFichierBuilder()
+      .avecEstValide(true)
+      .avecListeMesuresIndicateurTemporaire(mesureIndicateurTemporaire1, mesureIndicateurTemporaire2, mesureIndicateurTemporaire3, mesureIndicateurTemporaire4)
+      .build();
+    const payload = {
+      cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+      nomDuFichier: NOM_DU_FICHIER,
+      baseSchemaUrl: SCHEMA,
+      indicateurId: 'IND-001',
+      utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
+    };
+
+    fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
+
+    // WHEN
+    const report = await verifierFichierIndicateurImporteUseCase.execute(payload);
+
+    // THEN
+    expect(report.estValide).toEqual(false);
+    expect(mesureIndicateurTemporaireRepository.sauvegarder).not.toBeCalled();
+
+    expect(report.listeErreursValidation).toHaveLength(3);
+
+    expect(report.listeErreursValidation[0].cellule).toEqual('2023-06-31');
+    expect(report.listeErreursValidation[0].message).toEqual("La date '2023-06-31' n'est pas une date valide");
+    expect(report.listeErreursValidation[0].nomDuChamp).toEqual('date_valeur');
+    expect(report.listeErreursValidation[0].nom).toEqual('Date invalide');
+    expect(report.listeErreursValidation[0].positionDeLigne).toEqual(0);
+    expect(report.listeErreursValidation[0].numeroDeLigne).toEqual(1);
+    expect(report.listeErreursValidation[0].positionDuChamp).toEqual(-1);
+
+    expect(report.listeErreursValidation[1].cellule).toEqual('2023-02-30');
+    expect(report.listeErreursValidation[1].message).toEqual("La date '2023-02-30' n'est pas une date valide");
+    expect(report.listeErreursValidation[1].nomDuChamp).toEqual('date_valeur');
+    expect(report.listeErreursValidation[1].nom).toEqual('Date invalide');
+    expect(report.listeErreursValidation[1].positionDeLigne).toEqual(1);
+    expect(report.listeErreursValidation[1].numeroDeLigne).toEqual(2);
+    expect(report.listeErreursValidation[1].positionDuChamp).toEqual(-1);
+
+    expect(report.listeErreursValidation[2].cellule).toEqual('2023-02-29');
+    expect(report.listeErreursValidation[2].message).toEqual("La date '2023-02-29' n'est pas une date valide");
+    expect(report.listeErreursValidation[2].nomDuChamp).toEqual('date_valeur');
+    expect(report.listeErreursValidation[2].nom).toEqual('Date invalide');
+    expect(report.listeErreursValidation[2].positionDeLigne).toEqual(2);
+    expect(report.listeErreursValidation[2].numeroDeLigne).toEqual(3);
+    expect(report.listeErreursValidation[2].positionDuChamp).toEqual(-1);
+  });
+
+  it('quand le fichier possède des dates invalides au format DD/MM/YYYY ou MM-DD-YY, doit remonter un rapport invalide', async () => {
+    // GIVEN
+    const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecMetricDate('31/06/2023')
+      .build();
+    const mesureIndicateurTemporaire2 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecMetricDate('02-30-23')
+      .build();
+    const mesureIndicateurTemporaire3 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecMetricDate('2023-02-29')
+      .build();
+    const mesureIndicateurTemporaire4 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecMetricDate('2020-02-29')
+      .build();
+    const detailValidationFichier = new DetailValidationFichierBuilder()
+      .avecEstValide(true)
+      .avecListeMesuresIndicateurTemporaire(mesureIndicateurTemporaire1, mesureIndicateurTemporaire2, mesureIndicateurTemporaire3, mesureIndicateurTemporaire4)
+      .build();
+    const payload = {
+      cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+      nomDuFichier: NOM_DU_FICHIER,
+      baseSchemaUrl: SCHEMA,
+      indicateurId: 'IND-001',
+      utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
+    };
+
+    fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
+
+    // WHEN
+    const report = await verifierFichierIndicateurImporteUseCase.execute(payload);
+
+    // THEN
+    expect(report.estValide).toEqual(false);
+    expect(mesureIndicateurTemporaireRepository.sauvegarder).not.toBeCalled();
+
+    expect(report.listeErreursValidation).toHaveLength(3);
+
+    expect(report.listeErreursValidation[0].cellule).toEqual('2023-06-31');
+    expect(report.listeErreursValidation[0].message).toEqual("La date '2023-06-31' n'est pas une date valide");
+    expect(report.listeErreursValidation[0].nomDuChamp).toEqual('date_valeur');
+    expect(report.listeErreursValidation[0].nom).toEqual('Date invalide');
+    expect(report.listeErreursValidation[0].positionDeLigne).toEqual(0);
+    expect(report.listeErreursValidation[0].numeroDeLigne).toEqual(1);
+    expect(report.listeErreursValidation[0].positionDuChamp).toEqual(-1);
+
+    expect(report.listeErreursValidation[1].cellule).toEqual('2023-02-30');
+    expect(report.listeErreursValidation[1].message).toEqual("La date '2023-02-30' n'est pas une date valide");
+    expect(report.listeErreursValidation[1].nomDuChamp).toEqual('date_valeur');
+    expect(report.listeErreursValidation[1].nom).toEqual('Date invalide');
+    expect(report.listeErreursValidation[1].positionDeLigne).toEqual(1);
+    expect(report.listeErreursValidation[1].numeroDeLigne).toEqual(2);
+    expect(report.listeErreursValidation[1].positionDuChamp).toEqual(-1);
+
+    expect(report.listeErreursValidation[2].cellule).toEqual('2023-02-29');
+    expect(report.listeErreursValidation[2].message).toEqual("La date '2023-02-29' n'est pas une date valide");
+    expect(report.listeErreursValidation[2].nomDuChamp).toEqual('date_valeur');
+    expect(report.listeErreursValidation[2].nom).toEqual('Date invalide');
+    expect(report.listeErreursValidation[2].positionDeLigne).toEqual(2);
+    expect(report.listeErreursValidation[2].numeroDeLigne).toEqual(3);
+    expect(report.listeErreursValidation[2].positionDuChamp).toEqual(-1);
+  });
+
   it('quand le fichier possède une date valeur au format DD/MM/YYYY, doit convertir la date au format YYYY-MM-DD', async () => {
     // GIVEN
     const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()

@@ -102,7 +102,6 @@ export class MesureIndicateurTemporaire {
 
   convertirDateProvenantDuFormat(acceptedDateFormat: ACCEPTED_DATE_FORMAT) {
     if (!this._metricDate) return;
-    // eslint-disable-next-line sonarjs/no-small-switch
     switch (acceptedDateFormat) {
       case ACCEPTED_DATE_FORMAT.DD_MM_YYYY: {
         this._metricDate = this._metricDate.split('/').reverse().join('-');
