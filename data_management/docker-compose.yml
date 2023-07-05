@@ -1,5 +1,6 @@
 services:
   dbt-pilote:
+    command: "serve_doc.sh"
     build: .
     env_file:
       - .env
