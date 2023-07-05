@@ -13,6 +13,19 @@ export const keycloak = KeycloakProvider({
   issuer: config.keycloakIssuer,
 });
 
+async function _assertResponseOk(response: Response, errorMessage: string): Promise<void> {
+  if (response && !response.ok) {
+    try {
+      const json = await response.json();
+      logger.error({ response, json }, errorMessage);
+    } catch {
+      const text = await response.text();
+      logger.error({ response, text }, errorMessage);
+    }
+    throw new Error(errorMessage);
+  }
+}
+
 /**
  * this performs the final handshake for the keycloak
  * provider, the way it's written could also potentially
@@ -26,6 +39,7 @@ async function doFinalSignoutHandshake(token: JWT) {
       const params = new URLSearchParams({ id_token_hint: idToken as string });
 
       logger.debug({ logoutUrl: config.logoutUrl, params });
+
       const response = await fetch(config.logoutUrl, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -39,18 +53,7 @@ async function doFinalSignoutHandshake(token: JWT) {
         statusText: response?.statusText,
         body: response?.body,
       }, 'Logout response');
-
-      if (response && !response.ok) {
-        try {
-          const json = await response.json();
-          logger.debug({ response, json }, 'Failed to logout');
-        } catch {
-          const text = await response.text();
-          logger.debug({ response, text }, 'Failed to logout');
-        }
-        // noinspection ExceptionCaughtLocallyJS
-        throw new Error('Failed to logout');
-      }
+      await _assertResponseOk(response, 'Failed to logout');
 
       // The response body should contain a confirmation that the user has been logged out
       logger.info('Completed post-logout handshake');
@@ -59,6 +62,15 @@ async function doFinalSignoutHandshake(token: JWT) {
     }
   }
 }
+
+// https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse
+type OpenIdTokenResponse = {
+  access_token: string,
+  token_type: string,
+  refresh_token: string,
+  expires_in: number,
+  id_token: string,
+};
 
 // https://next-auth.js.org/tutorials/refresh-token-rotation
 /**
@@ -90,24 +102,21 @@ async function refreshAccessToken(token: JWT) {
         method: 'POST',
         body: sendData,
       });
+      await _assertResponseOk(response, 'Failed to refresh token');
 
-      const refreshedTokens = await (response.json() as Promise<any>);
-
-      if (!response.ok) {
-        // noinspection ExceptionCaughtLocallyJS
-        throw refreshedTokens;
-      }
+      const openIdTokenResponse = (await response.json()) as OpenIdTokenResponse;
+      logger.debug({ openIdTokenResponse }, 'Parsed refresh token response');
 
       let res = {
         // to review
         ...token,
-        accessToken: refreshedTokens.access_token,
-        accessTokenExpires: Date.now() + refreshedTokens.expires_at * 1000,
-        refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
+        accessToken: openIdTokenResponse.access_token,
+        accessTokenExpires: Date.now() + openIdTokenResponse.expires_in * 1000,
+        refreshToken: openIdTokenResponse.refresh_token ?? token.refreshToken, // Fall back to old refresh token
       };
 
       logger.debug('*****************');
-      logger.debug(refreshedTokens);
+      logger.debug(openIdTokenResponse);
       logger.debug('*****************');
       logger.debug(res);
       return res;
