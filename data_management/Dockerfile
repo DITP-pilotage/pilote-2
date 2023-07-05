@@ -28,4 +28,5 @@ RUN pipenv run dbt deps --profiles-dir . --project-dir data_factory
 COPY . .
 
 # Start entrypoint.sh script
-ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
+ENTRYPOINT ["/bin/bash"]
+CMD ["serve_doc.sh"]
