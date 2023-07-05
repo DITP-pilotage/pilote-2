@@ -8,8 +8,6 @@ COPY Pipfile .
 
 # Install pipenv (last version)
 RUN python -m pip install --no-cache pipenv
-# Install dbt (last version)
-RUN python -m pip install --no-cache dbt-core
 
 
 # Install dependencies of Pipfile
