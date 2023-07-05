@@ -2,3 +2,7 @@ data_exploration
 geojson
 .env
 Pipfile.lock
+data_factory/target/
+data_factory/logs/
+data_factory/dbt_packages/
+input_data/temp/*
