@@ -40,6 +40,26 @@ const correspondALIndicateurId = (mesureIndicateurTemporaire: MesureIndicateurTe
   }
 };
 
+const verifierDateValide = (mesureIndicateurTemporaire: MesureIndicateurTemporaire, listeErreursValidation: ErreurValidationFichier[], reportId: string, index: number) => {
+  if (mesureIndicateurTemporaire.metricDate) {
+    const tmpDate = new Date(mesureIndicateurTemporaire.metricDate).toISOString().split('T')[0];
+    if (tmpDate !== mesureIndicateurTemporaire.metricDate) {
+      listeErreursValidation.push(
+        ErreurValidationFichier.creerErreurValidationFichier({
+          rapportId: reportId,
+          cellule: mesureIndicateurTemporaire.metricDate,
+          nom: 'Date invalide',
+          message: `La date '${mesureIndicateurTemporaire.metricDate}' n'est pas une date valide`,
+          numeroDeLigne: index + 1,
+          positionDeLigne: index,
+          nomDuChamp: 'date_valeur',
+          positionDuChamp: -1,
+        }),
+      );
+    }
+  }
+};
+
 const verifierFormatDateValeur = (mesureIndicateurTemporaire: MesureIndicateurTemporaire) => {
   if (mesureIndicateurTemporaire.metricDate?.match('^(0[0-9]|1[0-9]|2[0-9]|3[01])\/(0[0-9]|1[012])\/(20[0-9]{2})$')) {
     mesureIndicateurTemporaire.convertirDateProvenantDuFormat(ACCEPTED_DATE_FORMAT.DD_MM_YYYY);
@@ -56,6 +76,7 @@ const verifierFormatZoneId = (mesureIndicateurTemporaire: MesureIndicateurTempor
 };
 
 const DEFAULT_SCHEMA = 'sans-contraintes.json';
+
 export class VerifierFichierIndicateurImporteUseCase {
   private fichierIndicateurValidationService: FichierIndicateurValidationService;
 
@@ -104,13 +125,12 @@ export class VerifierFichierIndicateurImporteUseCase {
     });
     await this.rapportRepository.sauvegarder(report);
 
-    const listeErreursValidation: ErreurValidationFichier[] = report.listeErreursValidation;
-
     report.listeMesuresIndicateurTemporaire.forEach((mesureIndicateurTemporaire, index) => {
-      correspondALIndicateurId(mesureIndicateurTemporaire, indicateurId, report.id, listeErreursValidation, index);
-      verifierFormatDateValeur(mesureIndicateurTemporaire); // déplacer dans le service
-      verifierFormatTypeValeur(mesureIndicateurTemporaire); // déplacer dans le service
-      verifierFormatZoneId(mesureIndicateurTemporaire); // déplacer dans le service
+      correspondALIndicateurId(mesureIndicateurTemporaire, indicateurId, report.id, report.listeErreursValidation, index);
+      verifierFormatDateValeur(mesureIndicateurTemporaire);
+      verifierDateValide(mesureIndicateurTemporaire, report.listeErreursValidation, report.id, index);
+      verifierFormatTypeValeur(mesureIndicateurTemporaire);
+      verifierFormatZoneId(mesureIndicateurTemporaire);
     });
 
     if (report.estValide && report.listeErreursValidation.length === 0) {
@@ -120,7 +140,7 @@ export class VerifierFichierIndicateurImporteUseCase {
       await this.erreurValidationFichierRepository.sauvegarder(report.listeErreursValidation);
       return DetailValidationFichier.creerDetailValidationFichier({
         estValide: false,
-        listeErreursValidation,
+        listeErreursValidation: report.listeErreursValidation,
         utilisateurEmail: utilisateurAuteurDeLimportEmail,
       });
     }
