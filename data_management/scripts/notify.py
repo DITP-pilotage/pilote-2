@@ -2,6 +2,8 @@ import os
 import requests
 import time
 import json
+from markdown2 import Markdown
+
 
 """
 Voir :
@@ -24,7 +26,9 @@ def notify(error_message):
 
     r = requests.put(URL, data=json.dumps({
         'body': error_message,
-        'msgtype': 'm.text'
+        'msgtype': 'm.text',
+        'format': 'org.matrix.custom.html',
+        'formatted_body': Markdown().convert(error_message),
     }))
 
     print(r.content)

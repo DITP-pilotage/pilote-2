@@ -6,8 +6,11 @@ from notify import notify
 def if_error_print_it_and_exit(returncode):
     if returncode > 0:
         # notify
-        notify('Une erreur est survenue lors de l\'execution des datajobs... Veuillez regarder les logs pour en '
-               'savoir plus')
+        notify('## ⚠️  Erreur lors de l\'exécution des transformations de données\n'
+               'Veuillez regarder les logs pour en savoir plus :\n\n'
+               '- [Logs de DEV](https://dashboard.scalingo.com/apps/osc-secnum-fr1/dev-datajobs-ditp/logs) \n'
+               '- [Logs de PROD](https://dashboard.scalingo.com/apps/osc-secnum-fr1/prod-datajobs-ditp/logs)\n'
+               )
         sys.exit(returncode)
 
 
