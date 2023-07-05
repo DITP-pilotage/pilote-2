@@ -4,10 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+dbt-core = "==1.3"
 dbt-duckdb = "==1.2"
 dbt-fal = "==1.3"
 dbt-postgres = "==1.3"
 fal = "==0.7"
+markdown2 = "==2.4"
 python-dotenv = "==0.21"
 
 [dev-packages]
