@@ -9,11 +9,12 @@ import Titre from '@/components/_commons/Titre/Titre';
 import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
 import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier';
 import MultiSelectPérimètreMinistériel from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
+import { UtilisateurFormulaireProps } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
 import useHabilitationsTerritoires from './useHabilitationsTerritoires';
 import useHabilitationsChantiers from './useHabilitationsChantiers';
 import useHabilitationsPérimètresMinistériels from './useHabilitationsPérimètresMinistériels';
 
-export default function SaisieDesInformationsUtilisateur() {
+export default function SaisieDesInformationsUtilisateur({ utilisateur }: UtilisateurFormulaireProps) {
   const { 
     listeProfils,
     profilSélectionné,
@@ -25,7 +26,7 @@ export default function SaisieDesInformationsUtilisateur() {
     errors,
     control,
     watch,
-  } = useSaisieDesInformationsUtilisateur();
+  } = useSaisieDesInformationsUtilisateur(utilisateur);
 
   const {    
     afficherChampLectureTerritoires,
@@ -40,7 +41,6 @@ export default function SaisieDesInformationsUtilisateur() {
   const {
     afficherChampLecturePérimètresMinistériels,
   } = useHabilitationsPérimètresMinistériels(profilSélectionné);
-
 
   return (
     <>
@@ -60,7 +60,7 @@ export default function SaisieDesInformationsUtilisateur() {
         erreur={errors.email}
         htmlName="email"
         libellé="Adresse électronique"
-        register={register('email')}
+        register={register('email', { value: utilisateur?.email })}
         texteAide="Format attendu : nom@domaine.fr"
         type='email'
       />
@@ -68,26 +68,26 @@ export default function SaisieDesInformationsUtilisateur() {
         erreur={errors.nom}
         htmlName="nom"
         libellé="Nom"
-        register={register('nom')}
+        register={register('nom', { value: utilisateur?.nom })}
       />
       <InputAvecLabel
         erreur={errors.prénom}
         htmlName="prénom"
         libellé="Prénom"
-        register={register('prénom')}
+        register={register('prénom', { value: utilisateur?.prénom })}
       />
       <InputAvecLabel
         erreur={errors.fonction}
         htmlName="fonction"
         libellé="Fonction"
-        register={register('fonction')}
+        register={register('fonction', { value: utilisateur?.fonction })}
       />
       <Sélecteur
         erreur={errors.profil}
         htmlName='profil'
         libellé='Profil'
         options={listeProfils}
-        register={register('profil')}
+        register={register('profil', { value: utilisateur?.profil })}
         texteAide='Les droits attribués dépendent du profil sélectionné.'
         texteFantôme='Sélectionner un profil'
         valeurSélectionnée={profilSélectionné?.code}

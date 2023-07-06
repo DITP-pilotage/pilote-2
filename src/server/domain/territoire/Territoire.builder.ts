@@ -38,7 +38,7 @@ const infosTerritoiresSansMailleNationale: { code: Territoire['code'], codeParen
   { code: 'DEPT-88', codeParent: 'REG-44', nom: 'Vosges' },  { code: 'DEPT-89', codeParent: 'REG-27', nom: 'Yonne' },  { code: 'DEPT-91', codeParent: 'REG-11', nom: 'Essonne' },
   { code: 'DEPT-92', codeParent: 'REG-11', nom: 'Hauts-de-Seine' },  { code: 'DEPT-93', codeParent: 'REG-11', nom: 'Seine-Saint-Denis' },  { code: 'DEPT-94', codeParent: 'REG-11', nom: 'Val-de-Marne' },
   { code: 'DEPT-971', codeParent: 'REG-01', nom: 'Guadeloupe' }, { code: 'DEPT-972', codeParent: 'REG-02', nom: 'Martinique' }, { code: 'DEPT-973', codeParent: 'REG-03', nom: 'Guyane' },
-  { code: 'DEPT-974', codeParent: 'REG-04', nom: 'La Réunion' }, { code: 'REG-06', codeParent: null, nom: 'Mayotte' }, { code: 'REG-84', codeParent: null, nom: 'Auvergne-Rhône-Alpes' }, 
+  { code: 'DEPT-974', codeParent: 'REG-04', nom: 'La Réunion' }, { code: 'DEPT-976', codeParent: 'REG-06', nom: 'Mayotte' }, { code: 'REG-06', codeParent: null, nom: 'Mayotte' }, { code: 'REG-84', codeParent: null, nom: 'Auvergne-Rhône-Alpes' }, 
   { code: 'REG-32', codeParent: null, nom: 'Hauts-de-France' }, { code: 'REG-93', codeParent: null, nom: 'Provence - Alpes - Côte d\'Azur' }, { code: 'REG-44', codeParent: null, nom: 'Grand-Est' },
   { code: 'REG-76', codeParent: null, nom: 'Occitanie' }, { code: 'REG-28', codeParent: null, nom: 'Normandie' }, { code: 'REG-75', codeParent: null, nom: 'Nouvelle Aquitaine' }, { code: 'REG-24', codeParent: null, nom: 'Centre-Val de Loire' },
   { code: 'REG-27', codeParent: null, nom: 'Bourgogne-Franche-Comté' }, { code: 'REG-53', codeParent: null, nom: 'Bretagne' }, { code: 'REG-94', codeParent: null, nom: 'Corse' }, { code: 'REG-52', codeParent: null, nom: 'Pays de la Loire' }, 

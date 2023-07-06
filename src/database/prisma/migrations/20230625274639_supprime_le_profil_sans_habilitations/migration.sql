@@ -1,0 +1,1 @@
+DELETE FROM "public"."profil" WHERE "code" = 'SANS_HABILITATIONS';

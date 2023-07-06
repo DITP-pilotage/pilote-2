@@ -34,6 +34,14 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
           <Bloc>
             <div className='fr-py-4w fr-px-10w'>
               <FicheUtilisateur utilisateur={utilisateur} />
+              <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
+                <Link
+                  className='fr-btn fr-btn--secondary fr-mr-2w'
+                  href={`/admin/utilisateur/${utilisateur.id}/modifier`}
+                >
+                  Modifier
+                </Link>
+              </div>
             </div>
           </Bloc>
         </div>

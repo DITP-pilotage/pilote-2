@@ -1,13 +1,13 @@
 
-import PageUtilisateurFormulaireStyled from '@/components/PageUtilisateurFormulaire/PageUtilisateurFormulaire.styled';
 import UtilisateurFormulaire from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire';
 import FilAriane from '@/client/components/_commons/FilAriane/FilAriane';
+import PageCréerUtilisateurStyled from './PageCréerUtilisateur.styled';
 
-export default function PageUtilisateurFormulaire() {
+export default function PageCréerUtilisateur() {
   const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];
 
   return (
-    <PageUtilisateurFormulaireStyled className='fr-pt-2w' >
+    <PageCréerUtilisateurStyled className='fr-pt-2w' >
       <main className="fr-container">
         <FilAriane
           chemin={chemin}
@@ -17,6 +17,6 @@ export default function PageUtilisateurFormulaire() {
           <UtilisateurFormulaire />
         </div>
       </main>
-    </PageUtilisateurFormulaireStyled>
+    </PageCréerUtilisateurStyled>
   );
 }

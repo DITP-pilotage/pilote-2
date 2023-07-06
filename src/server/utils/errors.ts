@@ -42,3 +42,11 @@ export class ProjetStructurantNonAutoriséErreur extends NonAutorisé {
 export class MailleNonAutoriséeErreur extends NonAutorisé {
   constructor() { super('Maille non autorisée'); }
 }
+
+export class ChantiersNonAutorisésCreationModificationUtilisateurErreur extends NonAutorisé {
+  constructor() { super("Au moins un des chantiers n'est pas autorisé pour la création ou modification de l'utilisateur"); }
+}
+
+export class TerritoiresNonAutorisésCreationModificationUtilisateurErreur extends NonAutorisé {
+  constructor() { super("Au moins un des territoires n'est pas autorisé pour la création ou modification de l'utilisateur"); }
+}

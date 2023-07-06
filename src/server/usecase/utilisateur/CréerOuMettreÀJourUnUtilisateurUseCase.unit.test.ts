@@ -8,7 +8,7 @@ import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { codesTerritoiresDROM } from '@/validation/utilisateur';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
-import { HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { Habilitations, HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import CréerOuMettreÀJourUnUtilisateurUseCase from './CréerOuMettreÀJourUnUtilisateurUseCase';
 
 describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
@@ -45,7 +45,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     },
   };
 
-  const stubUtilisateurRepository = { créerOuMettreÀJour: jest.fn() } as unknown as UtilisateurRepository;
+  const stubUtilisateurRepository = mock<UtilisateurRepository>();
   const stubUtilisateurIAMRepository = mock<UtilisateurIAMRepository>();
   const stubTerritoireRepository = { récupérerTous: jest.fn().mockResolvedValue(fakeTerritoires) } as unknown as TerritoireRepository;
   const stubChantierRepository = mock<ChantierRepository>();
@@ -55,6 +55,13 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
   const créerOuMettreÀJourUnUtilisateurUseCase = new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository, stubUtilisateurRepository, stubTerritoireRepository, stubChantierRepository);
 
   const oldEnv = process.env;
+
+  const habilitations = { 
+    'utilisateurs.modification': { 
+      chantiers: fakeChantiersSynthétisés.map(c => c.id), 
+      territoires: fakeTerritoires.map(t => t.code), 
+    }, 
+  } as Habilitations;
 
   beforeEach(() => {
     jest.resetModules();
@@ -74,7 +81,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil(profilCode).avecHabilitationsLecture(territoiresCodes, chantiersIds, périmètresIds).build();
     
     //WHEN
-    await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto');
+    await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', false, habilitations);
     
     //THEN
     expect(stubUtilisateurRepository.créerOuMettreÀJour).toHaveBeenNthCalledWith(1, { ...utilisateur, habilitations: habilitationsAttendues }, 'toto');
@@ -86,7 +93,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil(profilCode).avecHabilitationsLecture(territoiresCodes, chantiersIds, périmètresIds).build();
 
     // THEN
-    await expect(créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto')).rejects.toThrowError();
+    await expect(créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', false, habilitations)).rejects.toThrowError();
   }
 
   describe("Si la variable d'env IMPORT_KEYCLOAK_URL n'est pas définie", () => {
@@ -96,7 +103,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil('DITP_ADMIN').build();
 
       //WHEN
-      await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto');
+      await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', false, habilitations);
         
       //THEN
       expect(stubUtilisateurIAMRepository.ajouteUtilisateurs).toHaveBeenCalledTimes(0);

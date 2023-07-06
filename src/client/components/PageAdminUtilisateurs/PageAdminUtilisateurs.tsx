@@ -25,11 +25,25 @@ export default function PageAdminUtilisateurs() {
   });
 
   useEffect(() => {
-    if (router.query['comptecréé']) {
+    if (router.query['compteCréé']) {
       setAlerte({
-        titre: 'Bravo le compte a bien été créé.',
+        titre: 'Bravo, le compte a bien été créé !',
         type: 'succès',
         message: 'Un mail lui a été envoyé pour définir son mot de passe.',
+      });
+    }
+
+    if (router.query['compteModifié']) {
+      setAlerte({
+        titre: 'Bravo, le compte a bien été modifié !',
+        type: 'succès',
+      });
+    }
+
+    if (router.query['compteSupprimé']) {
+      setAlerte({
+        titre: 'Le compte a bien été supprimé.',
+        type: 'erreur',
       });
     }
   }, [router]);

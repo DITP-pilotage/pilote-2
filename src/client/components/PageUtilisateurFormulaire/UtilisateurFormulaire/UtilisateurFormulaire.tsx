@@ -8,9 +8,9 @@ import IndicateurDEtapes from '@/components/_commons/IndicateurDEtapes/Indicateu
 import { validationInfosBaseUtilisateur } from '@/validation/utilisateur';
 import RécapitulatifUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/RécapitulatifUtilisateur';
 import SaisieDesInformationsUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur';
-import { UtilisateurFormInputs } from './UtilisateurFormulaire.interface';
+import { UtilisateurFormInputs, UtilisateurFormulaireProps } from './UtilisateurFormulaire.interface';
 
-export default function UtilisateurFormulaire() {
+export default function UtilisateurFormulaire({ utilisateur }: UtilisateurFormulaireProps) {
   const étapes = ['Identifier l\'utilisateur', 'Vérifier les droits attribués au compte'];
   const [etapeCourante, setEtapeCourante] = useState(1);
 
@@ -50,7 +50,7 @@ export default function UtilisateurFormulaire() {
         baliseHtml='h1'
         className='fr-h1 fr-mt-4w'
       >
-        Créer un compte
+        { utilisateur ? 'Modifier un compte' : 'Créer un compte' }
       </Titre>
       <Bloc>
         <div className='fr-px-10w fr-py-6w'>
@@ -62,12 +62,13 @@ export default function UtilisateurFormulaire() {
             <form onSubmit={reactHookForm.handleSubmit(passerAuRécapitulatif)}>
               {
                 etapeCourante === 1 &&
-                  <SaisieDesInformationsUtilisateur />
+                  <SaisieDesInformationsUtilisateur utilisateur={utilisateur} />
               }
               {
                 etapeCourante === 2 && 
                   <RécapitulatifUtilisateur 
                     auClicBoutonRetourCallback={() => setEtapeCourante(1)} 
+                    utilisateurExistant={Boolean(utilisateur)}
                   />
               }
             </form>

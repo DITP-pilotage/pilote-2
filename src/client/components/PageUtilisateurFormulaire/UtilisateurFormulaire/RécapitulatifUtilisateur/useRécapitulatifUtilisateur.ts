@@ -14,7 +14,7 @@ export default function useRécapitulatifUtilisateur() {
 
   const mutationCréerUtilisateur = api.utilisateur.créer.useMutation({
     onSuccess: () => {
-      router.push('/admin/utilisateurs?comptecréé=true');
+      router.push('/admin/utilisateurs?compteCréé=true');
     },
     onError: (error) => {
       if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
@@ -26,8 +26,25 @@ export default function useRécapitulatifUtilisateur() {
     },
   });
 
-  const envoyerFormulaireUtilisateur = () => {
-    mutationCréerUtilisateur.mutate({ ...utilisateur, 'csrf': récupérerUnCookie('csrf') ?? '' });
+  const mutationModifierUtilisateur = api.utilisateur.modifier.useMutation({
+    onSuccess: () => {
+      router.push('/admin/utilisateurs?compteModifié=true');
+    },
+    onError: (error) => {
+      if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
+        setAlerte({
+          type: 'erreur',
+          titre :'Une erreur est survenue, veuillez réessayer ultérieurement.',
+        });
+      }
+    },
+  });
+
+  const envoyerFormulaireUtilisateur = (utilisateurExistant: boolean) => {
+    if (utilisateurExistant) 
+      mutationModifierUtilisateur.mutate({ ...utilisateur, 'csrf': récupérerUnCookie('csrf') ?? '' });
+    else
+      mutationCréerUtilisateur.mutate({ ...utilisateur, 'csrf': récupérerUnCookie('csrf') ?? '' });
   };
 
   return {
