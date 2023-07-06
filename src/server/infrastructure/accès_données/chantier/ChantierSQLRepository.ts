@@ -42,6 +42,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       nom: c.nom,
       estTerritorialisé: Boolean(c.est_territorialise),
       périmètreIds: c.perimetre_ids,
+      ate: c.ate,
     }));
   }
 
