@@ -10,9 +10,6 @@ import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelect
 import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier';
 import MultiSelectPérimètreMinistériel from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
 import { UtilisateurFormulaireProps } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
-import useHabilitationsTerritoires from './useHabilitationsTerritoires';
-import useHabilitationsChantiers from './useHabilitationsChantiers';
-import useHabilitationsPérimètresMinistériels from './useHabilitationsPérimètresMinistériels';
 
 export default function SaisieDesInformationsUtilisateur({ utilisateur }: UtilisateurFormulaireProps) {
   const { 
@@ -25,22 +22,15 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
     register,
     errors,
     control,
-    watch,
-  } = useSaisieDesInformationsUtilisateur(utilisateur);
-
-  const {    
     afficherChampLectureTerritoires,
-    groupesÀAfficher,
-  } = useHabilitationsTerritoires(profilSélectionné);
-
-  const {    
     afficherChampLectureChantiers,
+    afficherChampLecturePérimètres,
+    territoiresSélectionnés,
+    chantiersSélectionnés,
+    périmètresMinistérielsSélectionnés,
+    groupesTerritoiresÀAfficher,
     chantiersAccessiblesPourLeProfil,
-  } = useHabilitationsChantiers(profilSélectionné);
-
-  const {
-    afficherChampLecturePérimètresMinistériels,
-  } = useHabilitationsPérimètresMinistériels(profilSélectionné);
+  } = useSaisieDesInformationsUtilisateur(utilisateur);
 
   return (
     <>
@@ -92,21 +82,18 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         texteFantôme='Sélectionner un profil'
         valeurSélectionnée={profilSélectionné?.code}
       />
-      {
-        (!!afficherChampLectureTerritoires || !!afficherChampLecturePérimètresMinistériels || !!afficherChampLectureChantiers) &&
-        <>
-          <hr className='fr-hr' />
-          <Titre
-            baliseHtml='h2'
-            className="fr-text--md  fr-mb-2w"
-          >
-            Droits de lecture
-          </Titre>
-          <p className="fr-text--xs texte-gris fr-mb-4w">
-            Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
-          </p>
-          {
-          !!afficherChampLectureTerritoires && 
+      <div className={`${(!!afficherChampLectureTerritoires || !!afficherChampLecturePérimètres || !!afficherChampLectureChantiers)  ? '' : 'fr-hidden'}`}>
+        <hr className='fr-hr' />
+        <Titre
+          baliseHtml='h2'
+          className="fr-text--md  fr-mb-2w"
+        >
+          Droits de lecture
+        </Titre>
+        <p className="fr-text--xs texte-gris fr-mb-4w">
+          Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
+        </p>
+        <div className={`${!!afficherChampLectureTerritoires ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
@@ -114,16 +101,15 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
               render={() => (
                 <MultiSelectTerritoire
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
-                  groupesÀAfficher={groupesÀAfficher}
-                  territoiresCodesSélectionnésParDéfaut={watch('habilitations.lecture.territoires')}
+                  groupesÀAfficher={groupesTerritoiresÀAfficher}
+                  territoiresCodesSélectionnésParDéfaut={territoiresSélectionnés}
                 />
               )}
               rules={{ required: true }}
             />
           </div>
-        }
-          {
-          !!afficherChampLecturePérimètresMinistériels && 
+        </div>
+        <div className={`${!!afficherChampLecturePérimètres ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
@@ -131,15 +117,14 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
               render={() => (
                 <MultiSelectPérimètreMinistériel
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistériels} 
-                  périmètresMinistérielsIdsSélectionnésParDéfaut={watch('habilitations.lecture.périmètres')}
+                  périmètresMinistérielsIdsSélectionnésParDéfaut={périmètresMinistérielsSélectionnés}
                 />
               )}
               rules={{ required: true }}
             />
           </div>
-        }
-          {
-          !!afficherChampLectureChantiers && 
+        </div>
+        <div className={`${!!afficherChampLecturePérimètres ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
@@ -148,16 +133,15 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
                 <MultiSelectChantier 
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiers} 
                   chantiers={chantiersAccessiblesPourLeProfil}
-                  chantiersIdsSélectionnésParDéfaut={watch('habilitations.lecture.chantiers')}
+                  chantiersIdsSélectionnésParDéfaut={chantiersSélectionnés}
                   valeursDésactivées={chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés}
                 />
               )}
               rules={{ required: true }}
             />
           </div>
-        }
-        </>
-      }
+        </div>
+      </div>
       <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
         <SubmitBouton
           className='fr-btn--icon-right fr-icon-arrow-right-line'

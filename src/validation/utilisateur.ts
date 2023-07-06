@@ -34,11 +34,11 @@ export const validationInfosBaseUtilisateur = z.object( {
 export const validationInfosHabilitationsUtilisateur = z.object({
   habilitations : z.object({
     lecture: z.object({
-      chantiers: z.string().array().optional(),
-      territoires: z.string().array().optional(),
-      périmètres: z.string().array().optional(),
+      chantiers: z.string().array(),
+      territoires: z.string().array(),
+      périmètres: z.string().array(),
     }),
-  }).optional(),
+  }),
 });
 
 export const validationFiltresPourListeUtilisateur = z.object({

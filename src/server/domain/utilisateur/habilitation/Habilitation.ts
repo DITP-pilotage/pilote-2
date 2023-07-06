@@ -47,8 +47,11 @@ export default class Habilitation {
   }
 
   peutConsulterUnUtilisateur(chantiersIds: Chantier['id'][], territoireCodes: Territoire['code'][]) {
-    return (chantiersIds.some(id => this._habilitations['utilisateurs.lecture'].chantiers.includes(id))
-    && territoireCodes.some(code => this._habilitations['utilisateurs.lecture'].territoires.includes(code)));
+    return (
+      (chantiersIds.length === 0 || chantiersIds.some(id => this._habilitations['utilisateurs.lecture'].chantiers.includes(id)))
+      && 
+      (territoireCodes.length === 0 || territoireCodes.some(code => this._habilitations['utilisateurs.lecture'].territoires.includes(code)))
+    );
   }
 
   peutAccéderAuProjetStructurant(projetStructurantId: ProjetStructurant['id']): boolean {

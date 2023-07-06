@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
-import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore, départementsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { ScopeChantiers } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import api from '@/server/infrastructure/api/trpc/api';
+import { profilsRégionaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import FicheUtilisateurProps from './FicheUtilisateur.interface';
 
 export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['utilisateur']) {
+  const départements = départementsTerritoiresStore();
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: profil } = api.profil.récupérer.useQuery({ profilCode: utilisateur.profil }, { staleTime: Number.POSITIVE_INFINITY });
@@ -33,8 +35,15 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
     if (profil?.chantiers.lecture.tousTerritoires)
       return ['Tous les territoires']; 
 
+    if (profil && profilsRégionaux.includes(profil.code)) {
+      const régionsSaisies = u?.habilitations?.lecture?.territoires?.filter(territoireCode => territoireCode.startsWith('REG')) ?? [];
+      const départementsEnfantsDesRégionsSaisies = régionsSaisies.flatMap(régionCode => départements.filter(d => d.codeParent === régionCode).map(d => d.nomAffiché));
+  
+      return [...régionsSaisies.map(code => récupérerDétailsSurUnTerritoire(code).nomAffiché), ...départementsEnfantsDesRégionsSaisies];
+    }
+
     return u.habilitations?.lecture?.territoires?.map(territoire => récupérerDétailsSurUnTerritoire(territoire).nomAffiché) ?? [];
-  }, [profil, récupérerDétailsSurUnTerritoire]);
+  }, [départements, profil, récupérerDétailsSurUnTerritoire]);
 
   const déterminerLesNomÀAfficherPourLesChantiersLecture = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
     if (profil?.code === 'DROM')
@@ -75,8 +84,15 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
     if (['PR', 'PM_ET_CABINET', 'CABINET_MTFP', 'CABINET_MINISTERIEL', 'DIR_ADMIN_CENTRALE', 'SECRETARIAT_GENERAL'].includes(profil?.code ?? ''))
       return [];
 
+    if (profil && profilsRégionaux.includes(profil.code)) {
+      const régionsSaisies = u?.habilitations?.lecture?.territoires?.filter(territoireCode => territoireCode.startsWith('REG')) ?? [];
+      const départementsEnfantsDesRégionsSaisies = régionsSaisies.flatMap(régionCode => départements.filter(d => d.codeParent === régionCode).map(d => d.nomAffiché));
+    
+      return [...régionsSaisies.map(code => récupérerDétailsSurUnTerritoire(code).nomAffiché), ...départementsEnfantsDesRégionsSaisies];
+    }
+
     return u.habilitations?.lecture?.territoires?.map(territoire => récupérerDétailsSurUnTerritoire(territoire).nomAffiché) ?? [];
-  }, [profil, récupérerDétailsSurUnTerritoire]);
+  }, [départements, profil, récupérerDétailsSurUnTerritoire]);
 
   const déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
     if (déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire(u).length === 0) 
