@@ -1,19 +1,28 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import PageAdminUtilisateursProps from '@/components/PageAdminUtilisateurs/PageAdminUtilisateurs.interface';
 import Titre from '@/components/_commons/Titre/Titre';
-import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import TableauAdminUtilisateurs
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs';
 import Alerte from '@/client/components/_commons/Alerte/Alerte';
 import AlerteProps from '@/client/components/_commons/Alerte/Alerte.interface';
+import AdminUtilisateursBarreLatérale from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale';
+import api from '@/server/infrastructure/api/trpc/api';
+import { filtresUtilisateursActifsStore } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
+import Loader from '@/client/components/_commons/Loader/Loader';
+import '@gouvfr/dsfr/dist/component/select/select.min.css';
+import '@gouvfr/dsfr/dist/component/form/form.min.css';
 
-export default function PageAdminUtilisateurs({ utilisateurs } :PageAdminUtilisateursProps ) {
+export default function PageAdminUtilisateurs() {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const router = useRouter();
+  const filtresActifs = filtresUtilisateursActifsStore();
+  
+  const { data: utilisateurs, isLoading } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
+    filtres: filtresActifs,
+  });
 
   useEffect(() => {
     if (router.query['comptecréé']) {
@@ -27,12 +36,10 @@ export default function PageAdminUtilisateurs({ utilisateurs } :PageAdminUtilisa
 
   return (
     <div className='flex'>
-      <BarreLatérale
-        estOuvert={estOuverteBarreLatérale}
-        setEstOuvert={setEstOuverteBarreLatérale}
-      >
-        Filtres
-      </BarreLatérale>
+      <AdminUtilisateursBarreLatérale
+        estOuverteBarreLatérale={estOuverteBarreLatérale}
+        setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
+      />
       <main>
         <div className='fr-mt-4w fr-mx-4w fr-mb-3w'>
           {
@@ -65,9 +72,12 @@ export default function PageAdminUtilisateurs({ utilisateurs } :PageAdminUtilisa
               </div>
             </div>
           </div>
-          <Bloc>
-            <TableauAdminUtilisateurs utilisateurs={utilisateurs} />
-          </Bloc>
+          {
+            isLoading  ? <Loader /> :
+            <Bloc>
+              { !!utilisateurs && <TableauAdminUtilisateurs utilisateurs={utilisateurs} /> }
+            </Bloc>
+          }
         </div>
       </main>
     </div>
