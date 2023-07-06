@@ -68,6 +68,7 @@ export const wordingFr = {
         TITRE_ALERT_SUCCES: (indicateurId: string) => `Les données ont été importées avec succès pour l’indicateur ${indicateurId}`,
         MESSAGE_ALERT_SUCCES: 'La mise à jour des taux d’avancement sera effective dans quelques jours. Vous pouvez, en attendant, mettre à jour d’autres indicateurs.',
         TITRE_ALERT_ERREUR: 'Le fichier à déjà été importé',
+        MESSAGE_BOUTON_RETOUR: 'Importer de nouvelles données',
       },
     },
     SECTION_RESSOURCE: {
