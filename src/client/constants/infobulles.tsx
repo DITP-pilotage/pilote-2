@@ -1,5 +1,7 @@
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import PictoTerritorialisé from '@/components/_commons/PictoTerritorialisé/PictoTerritorialisé';
+import { IndicateurPondération } from '@/components/PageChantier/PageChantier.interface';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 
 const INFOBULLE_CONTENUS = {
   chantiers: {
@@ -67,6 +69,40 @@ const INFOBULLE_CONTENUS = {
     ),
   },
   chantier: {
+    avancement: {
+      aucunIndicateur: (maille: Maille) => (
+        <p className="fr-text--sm">
+          {`À la maille ${maille}, `}
+          aucun indicateur de ce chantier n’est pris en compte dans le calcul du taux d’avancement global.
+        </p>
+      ),
+      unSeulIndicateur: (maille: Maille, indicateurPondération: IndicateurPondération) => (
+        <p className="fr-text--sm">
+          {`À la maille ${maille}, `}
+          le taux d’avancement global correspond au taux d’avancement 2026 de l’indicateur&nbsp;:
+          {` ${indicateurPondération.nom}`}
+        </p>
+      ),
+      plusieursIndicateurs: (maille: Maille, indicateurPondérations: IndicateurPondération[]) => (
+        <>
+          <p className="fr-text--sm">
+            {`À la maille ${maille}, `}
+            le taux d’avancement global correspond à la somme des taux d’avancement 2026 des indicateurs, pondérés de la façon suivante&nbsp;:
+          </p>
+          <ul className="fr-text--sm fr-mb-0">
+            {
+              indicateurPondérations.map(({ pondération, nom }) => (
+                <li key={nom}>
+                  {pondération}
+                  % du taux d’avancement 2026 de l’indicateur&nbsp;:
+                  {` ${nom}`}
+                </li>
+              ))
+            }
+          </ul>
+        </>
+      ),
+    },
     météoEtSynthèseDesRésultats: (
       <>
         <p className="fr-text--sm">
@@ -79,7 +115,7 @@ const INFOBULLE_CONTENUS = {
     ),
     répartitionGéographiqueTauxAvancement: (
       <p className="fr-text--sm">
-        Territorialisation du taux d’avancement du chantier 
+        Territorialisation du taux d’avancement du chantier
       </p>
     ),
     répartitionGéographiqueNiveauDeConfiance: (
@@ -94,7 +130,7 @@ const INFOBULLE_CONTENUS = {
     ),
     décisionsStratégiques: (
       <p className="fr-text--sm">
-        Décisions prises lors des réunions Elysée ↔ Matignon (AKAR) et suivi des actions prises pour répondre à ces décisions. 
+        Décisions prises lors des réunions Elysée ↔ Matignon (AKAR) et suivi des actions prises pour répondre à ces décisions.
       </p>
     ),
     commentaires: {

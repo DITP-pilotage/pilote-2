@@ -18,7 +18,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
   const router = useRouter();
   const réformeId = router.query.id as string;
   
-  const mailleSélectionnée = territoireSélectionnéTerritoiresStore()?.maille ?? 'nationale';
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const { indicateurDétailsParTerritoires, tableau } = useIndicateurBloc(détailsIndicateur, typeDeRéforme, territoireProjetStructurant );
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
@@ -52,10 +52,10 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
                   </span>
                 </p>
                 {
-                !!indicateur.pondération && 
+                !!indicateur.pondération && !!territoireSélectionné &&
                   <IndicateurPondération
                     indicateurPondération={indicateur.pondération}
-                    mailleSélectionnée={mailleSélectionnée}
+                    mailleSélectionnée={territoireSélectionné.maille}
                   />
                 }
               </div>
