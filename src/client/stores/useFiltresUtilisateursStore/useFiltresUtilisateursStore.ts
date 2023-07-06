@@ -21,8 +21,14 @@ const useFiltresUtilisateursStore = create<FiltresUtilisateursStore>((set) => ({
         },
       }));
     },
+    réinitialiser: () => {
+      set(() => ({
+        filtresActifs: { ...filtresActifsInitiaux },
+      }));
+    },
   },
 }));
 
 export const actions = () => useFiltresUtilisateursStore(étatActuel => étatActuel.actions);
 export const filtresUtilisateursActifs = () => useFiltresUtilisateursStore(étatActuel => étatActuel.filtresActifs);
+export const réinitialiser = () => useFiltresUtilisateursStore.getState().actions.réinitialiser;

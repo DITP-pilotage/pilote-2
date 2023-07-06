@@ -2,7 +2,7 @@ import {
   createColumnHelper,
   getCoreRowModel, getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel, Row,
+  getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 import { ChangeEvent, useCallback, useState } from 'react';
@@ -10,8 +10,6 @@ import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { formaterDate } from '@/client/utils/date/date';
-import { filtresUtilisateursActifs as filtresUtilisateursActifsStore } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
-import { FiltresUtilisateursActifs } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore.interface';
 
 const reactTableColonnesHelper = createColumnHelper<Utilisateur>();
 const colonnes = [
@@ -55,16 +53,8 @@ const colonnes = [
   }),
 ];
 
-function passeLesFiltres(utilisateur: Utilisateur, filtresActifs: FiltresUtilisateursActifs) {
-  if (filtresActifs.territoires.length === 0) {
-    return true;
-  }
-  return utilisateur.habilitations.lecture.territoires.some((territoire) => filtresActifs.territoires.includes(territoire));
-}
-
 export default function useTableauPageAdminUtilisateurs(utilisateurs :Utilisateur[]) {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
-  const filtresUtilisateursActifs = filtresUtilisateursActifsStore();
 
   const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setValeurDeLaRecherche(event.target.value);
@@ -74,16 +64,11 @@ export default function useTableauPageAdminUtilisateurs(utilisateurs :Utilisateu
     data : utilisateurs,
     columns: colonnes,
 
-    globalFilterFn: (ligne, colonneId, globalFilterValue) => {
-      const { rechercheTextuelle, filtresActifs } = globalFilterValue;
-      return passeLesFiltres(ligne.original, filtresActifs)
-       && rechercheUnTexteContenuDansUnContenant(rechercheTextuelle, ligne.getValue<ProjetStructurant>(colonneId).toString());
+    globalFilterFn: (ligne, colonneId, texteRecherché) => {
+      return rechercheUnTexteContenuDansUnContenant(texteRecherché, ligne.getValue<ProjetStructurant>(colonneId).toString());
     },
     state: {
-      globalFilter: {
-        rechercheTextuelle: valeurDeLaRecherche,
-        filtresActifs: filtresUtilisateursActifs,
-      },
+      globalFilter: valeurDeLaRecherche,
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
