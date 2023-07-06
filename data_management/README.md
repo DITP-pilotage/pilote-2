@@ -17,6 +17,13 @@ Ce projet est décomposé en 2 parties :
 
 ### Pré-requis
 
+#### :warning: Disclaimer windows
+
+Si vous êtes sur windows, nous vous conseillons de passer exclusivement sur un terminal UNIX.
+Vous pouvez à la documentation suivante pour l'installation de l'invit de commande Ubuntu pour windows:
+
+- <https://pub.towardsai.net/how-to-install-ubuntu-terminal-on-windows-10-716b6a64ad82>
+
 #### Version de Python
 
 Il est nécessaire d'avoir la version de Python indiquée dans le Pipfile sur
@@ -43,9 +50,7 @@ Avoir docker ou un outil de containerisation :
 Il faut avoir configuré et initialisé votre base de données de Webapp comme précisé dans le README.md à la racine du projet.
 Pour la suite du projet, il faut s'assurer que la base de données soit démarrée.
 
-Le client Postgres `psql` est également nécessaire pour les scripts d'import :
-
-- <https://www.postgresql.org/download/>
+Le client Postgres `psql` (le cli) est également nécessaire pour les scripts d'import.
 
 ### Installation
 

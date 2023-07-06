@@ -15,21 +15,15 @@ def if_error_print_it_and_exit(returncode):
 
 
 def main() -> int:
-    shellscript = subprocess.Popen(['scripts/1_dump_dfakto.sh'], stdin=subprocess.PIPE)
-    returncode = shellscript.wait()
-    if_error_print_it_and_exit(returncode)
-
-    shellscript = subprocess.Popen(['scripts/2_fill_tables_ppg_metadata.sh'], stdin=subprocess.PIPE)
-    returncode = shellscript.wait()
-    if_error_print_it_and_exit(returncode)
-
-    shellscript = subprocess.Popen(['scripts/5_fill_tables_staging.sh'], stdin=subprocess.PIPE)
-    returncode = shellscript.wait()
-    if_error_print_it_and_exit(returncode)
-
-    shellscript = subprocess.Popen(['scripts/7_fill_tables_public.sh'], stdin=subprocess.PIPE)
-    returncode = shellscript.wait()
-    if_error_print_it_and_exit(returncode)
+    for file in [
+        'scripts/1_dump_dfakto.sh',
+        'scripts/2_fill_tables_ppg_metadata.sh',
+        'scripts/5_fill_tables_staging.sh',
+        'scripts/7_fill_tables_public.sh'
+    ]:
+        shellscript = subprocess.Popen([file], stdin=subprocess.PIPE)
+        returncode = shellscript.wait()
+        if_error_print_it_and_exit(returncode)
 
     return returncode
 
