@@ -19,7 +19,7 @@ describe('PrismaErreurValidationFichierRepository', () => {
     it('doit sauvegarder les données', async () => {
       // GIVEN
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
-      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
+      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur as any, 'test');
 
       const rapport = new DetailValidationFichierBuilder()
         .avecId('a0c086eb-21e2-4f00-9ca8-4b0fcce133ad')
