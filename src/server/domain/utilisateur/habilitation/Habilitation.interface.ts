@@ -22,11 +22,13 @@ export type TerritoiresFiltre =  {
 export type HabilitationChantiers = {
   chantiers: Chantier['id'][]
   territoires: string[]
+  périmètres: PérimètreMinistériel['id'][]
 };
 
 type HabilitationUtilisateurs = {
   chantiers: Chantier['id'][]
   territoires: string[]
+  périmètres: PérimètreMinistériel['id'][]
 };
 
 type HabilitationProjetsStructurants = { projetsStructurants: ProjetStructurant['id'][] };
