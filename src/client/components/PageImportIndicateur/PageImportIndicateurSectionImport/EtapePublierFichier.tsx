@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
+import Link from 'next/link';
 import { RapportContrat } from '@/server/app/contrats/RapportContrat';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import { wording } from '@/client/utils/i18n/i18n';
@@ -30,6 +31,17 @@ export function EtapePublierFichier({
               titre={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TITRE_ALERT_SUCCES(indicateurId)}
               type='succès'
             />
+            <div className="fr-mt-3w flex justify-end">
+              <Link
+                className='fr-btn'
+                href={`/chantier/${chantierId}/indicateurs`}
+                title="Importer de nouvelles données"
+              >
+                <span>
+                  {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.MESSAGE_BOUTON_RETOUR}
+                </span>
+              </Link>
+            </div>
           </div>
           :
           <div>
