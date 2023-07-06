@@ -1,5 +1,4 @@
 import { createMocks } from 'node-mocks-http';
-import { mock } from 'jest-mock-extended';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import { DetailValidationFichierBuilder } from '@/server/import-indicateur/app/builder/DetailValidationFichier.builder';
@@ -9,16 +8,12 @@ import {
 import handlePublierFichierImportIndicateur
   from '@/server/import-indicateur/infrastructure/handlers/PublierIndicateurHandler';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/usecase/utilisateur/CréerOuMettreÀJourUnUtilisateurUseCase';
-import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 
 describe('ImportIndicateurHandler', () => {
-  const stubUtilisateurIAMRepository = mock<UtilisateurIAMRepository>();
-
   it('doit transférer les mesures indicateurs temporaires vers la table permanente', async () => {
     // GIVEN
-    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-    await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
+    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
     
     const rapport = new DetailValidationFichierBuilder()
       .avecId('6cba829c-def8-4f21-9bb0-07bd5a36bd02')

@@ -50,19 +50,29 @@ export default function useMultiSelect(
     setOptionsGroupéesFiltrées(optionsGroupéesQuiCorrespondentÀLaRecherche);
   }, [optionsGroupées, recherche]);
 
-  const compterNombreDOptions = () => {
+  const compterNombreDOptions = useCallback(() => {
     let nombreDOptions = 0;
     optionsGroupées.forEach(groupe => nombreDOptions += groupe.options.length);
     return nombreDOptions;
-  };
+  }, [optionsGroupées]);
 
-  const determinerLibellé = () => {
-    if (valeursSélectionnées.size === 0)
+  const determinerLibellé =  useCallback(() => {
+    let nombreÉlémentSélectionnés = 0;
+    
+    optionsGroupées.forEach(groupe => {
+      groupe.options.forEach(option => {
+        if (valeursSélectionnées.has(option.value)) 
+          nombreÉlémentSélectionnés++;
+      });
+    });
+
+    if (nombreÉlémentSélectionnés === 0)
       return `Aucun ${suffixeLibellé}`;
-    if (valeursSélectionnées.size === compterNombreDOptions())
+    if (nombreÉlémentSélectionnés === compterNombreDOptions())
       return 'Tous';
-    return `${valeursSélectionnées.size} ${suffixeLibellé}`;
-  };
+    
+    return `${nombreÉlémentSélectionnés} ${suffixeLibellé}`;
+  }, [compterNombreDOptions, optionsGroupées, suffixeLibellé, valeursSélectionnées]);
 
   const fermerLeMenu = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape')

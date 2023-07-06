@@ -14,7 +14,7 @@ export default function useRécapitulatifUtilisateur() {
 
   const mutationCréerUtilisateur = api.utilisateur.créer.useMutation({
     onSuccess: () => {
-      router.push('/admin/utilisateurs?comptecréé=true');
+      router.push('/admin/utilisateurs?compteCréé=true');
     },
     onError: (error) => {
       if (error.data?.code === 'INTERNAL_SERVER_ERROR') {

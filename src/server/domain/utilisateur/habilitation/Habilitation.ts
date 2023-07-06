@@ -31,10 +31,10 @@ export default class Habilitation {
   }
 
   vérifierLesHabilitationsEnCréationModificationUtilisateur(chantiersIds: Chantier['id'][], territoiresCodes: Territoire['code'][]) {
-    if (!toutesLesValeursDuTableauSontContenuesDansLAutreTableau(chantiersIds, this._habilitations['utilisateurs.modification'].chantiers))
+    if (!toutesLesValeursDuTableauSontContenuesDansLAutreTableau(chantiersIds, this._habilitations['utilisateurs.modification'].chantiers)) 
       throw new ChantiersNonAutorisésCreationModificationUtilisateurErreur();
 
-    if (!toutesLesValeursDuTableauSontContenuesDansLAutreTableau(territoiresCodes, this._habilitations['utilisateurs.modification'].territoires))
+    if (!toutesLesValeursDuTableauSontContenuesDansLAutreTableau(territoiresCodes, this._habilitations['utilisateurs.modification'].territoires))  
       throw new TerritoiresNonAutorisésCreationModificationUtilisateurErreur();
   }
 

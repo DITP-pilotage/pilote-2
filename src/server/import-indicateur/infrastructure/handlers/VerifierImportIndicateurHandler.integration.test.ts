@@ -13,8 +13,7 @@ import {
 import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidata.builder';
 import UtilisateurÀCréerOuMettreÀJourBuilder from '@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder';
 import { getNextAuthSessionTokenPourUtilisateurEmail } from '@/server/infrastructure/test/NextAuthHelper';
-import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/usecase/utilisateur/CréerOuMettreÀJourUnUtilisateurUseCase';
-import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 jest.mock('@/server/import-indicateur/infrastructure/handlers/ParseForm', () => ({
   parseForm: () => ({
@@ -31,8 +30,6 @@ const DONNEE_DATE_2 = '31/12/2023';
 const BASE_URL_VALIDATA = 'https://api.validata.etalab.studio';
 
 describe('VerifierImportIndicateurHandler', () => {
-  const stubUtilisateurIAMRepository = mock<UtilisateurIAMRepository>();
-
   describe('Quand le fichier envoyé est correct', () => {
     it('doit retourner que le fichier est valide', async () => {
       // GIVEN
@@ -52,8 +49,8 @@ describe('VerifierImportIndicateurHandler', () => {
             .build(),
         ).build();
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
 
       nock(BASE_URL_VALIDATA)
         .post('/validate').reply(200,
@@ -107,8 +104,8 @@ describe('VerifierImportIndicateurHandler', () => {
           JSON.stringify({ report }),
         );
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
 
       const formData = new FormData();
       const file = mock<File>();
@@ -163,8 +160,8 @@ describe('VerifierImportIndicateurHandler', () => {
           JSON.stringify({ report }),
         );
 
-      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-      await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
+      const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+      await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
 
       const formData = new FormData();
       const file = mock<File>();
@@ -226,8 +223,8 @@ describe('VerifierImportIndicateurHandler', () => {
           .build(),
       ).build();
 
-    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-    await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
+    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
 
     nock(BASE_URL_VALIDATA)
       .post('/validate').reply(200,
@@ -314,8 +311,8 @@ describe('VerifierImportIndicateurHandler', () => {
           .build(),
       ).build();
 
-    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').build();
-    await new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository).run(utilisateur, 'test');
+    const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecEmail('ditp.admin@example.com').avecProfil('DITP_ADMIN').avecHabilitationsLecture([], [], []).build();
+    await dependencies.getUtilisateurRepository().créerOuMettreÀJour(utilisateur, 'test');
 
     nock(BASE_URL_VALIDATA)
       .post('/validate').reply(200,
