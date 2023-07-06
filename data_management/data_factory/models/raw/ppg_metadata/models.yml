@@ -1,0 +1,5 @@
+version: 2
+
+models:
+  - name: metadata_axes
+    description: "Fichier `view_meta_axes.csv` du repo *PPG_metadata* ([views/axe/view_meta_axe.csv](https://github.com/DITP-pilotage/PPG_metadata/blob/dev/views/axe/view_meta_axe.csv))"
