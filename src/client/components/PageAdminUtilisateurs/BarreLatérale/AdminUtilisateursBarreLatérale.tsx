@@ -1,22 +1,19 @@
 import {
   actions as actionsFiltresUtilisateursStore,
-  filtresUtilisateursActifs, réinitialiser,
+  réinitialiser,
 } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
-import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
-import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import Titre from '@/components/_commons/Titre/Titre';
 import AdminUtilisateursBarreLatéraleProps from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale.interface';
+import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
 
 export default function AdminUtilisateursBarreLatérale({
   estOuverteBarreLatérale,
   setEstOuverteBarreLatérale,
 }: AdminUtilisateursBarreLatéraleProps) {
-  const filtresActifs = filtresUtilisateursActifs();
   const { modifierÉtatDuFiltre } = actionsFiltresUtilisateursStore();
   const réinitialiserFiltres = réinitialiser();
-  const territoires = territoiresTerritoiresStore();
 
   return (
     <BarreLatérale
@@ -24,17 +21,15 @@ export default function AdminUtilisateursBarreLatérale({
       setEstOuvert={setEstOuverteBarreLatérale}
     >
       <BarreLatéraleEncart>
-        <Sélecteur
-          htmlName='territoire'
-          libellé="Périmètre géographique"
-          options={territoires.map(territoire => ({
-            libellé: territoire.nomAffiché,
-            valeur: territoire.code,
-          }))}
-          valeurModifiéeCallback={(territoire) => {
-            modifierÉtatDuFiltre([territoire], 'territoires');
+        <MultiSelectTerritoire
+          changementValeursSélectionnéesCallback={(territoire) => {
+            modifierÉtatDuFiltre(territoire, 'territoires');
           }}
-          valeurSélectionnée={filtresActifs.territoires[0]}
+          groupesÀAfficher={{
+            nationale: true,
+            régionale: true,
+            départementale: true,
+          }}
         />
       </BarreLatéraleEncart>
       <div className="fr-px-3w fr-py-2w">
@@ -46,7 +41,7 @@ export default function AdminUtilisateursBarreLatérale({
         </Titre>
         <button
           className='fr-btn fr-btn--secondary'
-          onClick={() => modifierÉtatDuFiltre([], 'territoires')}
+          onClick={réinitialiserFiltres}
           type="button"
         >
           Réinitialiser les filtres
