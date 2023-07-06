@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: chantier
+    description: This table contains clickstream events from the marketing website
+
+    columns:
+      - name: id
+        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
+      - name: nom
+        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
+      - name: code_insee
+        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
+      - name: taux_avancement
+        description: "source de données à date du 06/07/2023 : dfakto.fact_progress_chantier"
+      - name: territoire_nom
+        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_zone"
+      - name: perimetre_ids
+        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
+      - name: maille
+        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_zone"
+      - name: directeurs_administration_centrale
+        description: "source de données à date du 06/07/2023 : ppg_metadata.m_porteurs"
+      - name: ministeres
+        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
+      - name: directions_administration_centrale
+        description: "source de données à date du 06/07/2023 : ppg_metadata.m_porteurs"
+      - name: directeurs_projet
+        description: "source de données à date du 06/07/2023 : ppg_metadata.m_porteurs"
+      - name: meteo
+        description: "source de données à date du 06/07/2023 : champs déprécié"
+      - name: axe
+        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_axe"
+      - name: ppg
+        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_ppg"
+      - name: directeurs_projet_mails
+        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
+      - name: est_barometre
+        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_indicateur"
+      - name: est_territorialise
+        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
+      - name: territoire_code
+        description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_zone"
+      - name: taux_avancement_precedent
+        description: "source de données à date du 06/07/2023 : données non encore existante"
