@@ -1,22 +1,26 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import PageAdminUtilisateursProps from '@/components/PageAdminUtilisateurs/PageAdminUtilisateurs.interface';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import TableauAdminUtilisateurs
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs';
 import Alerte from '@/client/components/_commons/Alerte/Alerte';
 import AlerteProps from '@/client/components/_commons/Alerte/Alerte.interface';
-import AdminUtilisateursBarreLatérale
-  from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale';
-import { usePageAdminUtilisateurs } from '@/components/PageAdminUtilisateurs/usePageAdminUtilisateurs';
+import AdminUtilisateursBarreLatérale from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale';
+import api from '@/server/infrastructure/api/trpc/api';
+import { filtresUtilisateursActifs } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
+import Loader from '@/client/components/_commons/Loader/Loader';
 
-export default function PageAdminUtilisateurs({ utilisateurs }: PageAdminUtilisateursProps ) {
+export default function PageAdminUtilisateurs() {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const router = useRouter();
-  const { utilisateursFiltrés } = usePageAdminUtilisateurs(utilisateurs);
+  const filtresActifs = filtresUtilisateursActifs();
+  
+  const { data: utilisateurs, isLoading } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
+    filtres: filtresActifs.territoires,
+  });
 
   useEffect(() => {
     if (router.query['comptecréé']) {
@@ -66,9 +70,12 @@ export default function PageAdminUtilisateurs({ utilisateurs }: PageAdminUtilisa
               </div>
             </div>
           </div>
-          <Bloc>
-            <TableauAdminUtilisateurs utilisateurs={utilisateursFiltrés} />
-          </Bloc>
+          {
+            isLoading  ? <Loader /> :
+            <Bloc>
+              { !!utilisateurs && <TableauAdminUtilisateurs utilisateurs={utilisateurs} /> }
+            </Bloc>
+          }
         </div>
       </main>
     </div>
