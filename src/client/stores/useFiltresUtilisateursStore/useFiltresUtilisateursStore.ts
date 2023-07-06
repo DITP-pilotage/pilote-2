@@ -30,5 +30,5 @@ const useFiltresUtilisateursStore = create<FiltresUtilisateursStore>((set) => ({
 }));
 
 export const actions = () => useFiltresUtilisateursStore(étatActuel => étatActuel.actions);
-export const filtresUtilisateursActifs = () => useFiltresUtilisateursStore(étatActuel => étatActuel.filtresActifs);
+export const filtresUtilisateursActifsStore = () => useFiltresUtilisateursStore(étatActuel => étatActuel.filtresActifs);
 export const réinitialiser = () => useFiltresUtilisateursStore.getState().actions.réinitialiser;

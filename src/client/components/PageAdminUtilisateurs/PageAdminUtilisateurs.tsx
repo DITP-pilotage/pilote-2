@@ -9,7 +9,7 @@ import Alerte from '@/client/components/_commons/Alerte/Alerte';
 import AlerteProps from '@/client/components/_commons/Alerte/Alerte.interface';
 import AdminUtilisateursBarreLatérale from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale';
 import api from '@/server/infrastructure/api/trpc/api';
-import { filtresUtilisateursActifs } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
+import { filtresUtilisateursActifsStore } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
 import Loader from '@/client/components/_commons/Loader/Loader';
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
@@ -18,7 +18,7 @@ export default function PageAdminUtilisateurs() {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const router = useRouter();
-  const filtresActifs = filtresUtilisateursActifs();
+  const filtresActifs = filtresUtilisateursActifsStore();
   
   const { data: utilisateurs, isLoading } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
     filtres: filtresActifs,
