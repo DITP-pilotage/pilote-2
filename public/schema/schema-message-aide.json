@@ -10,11 +10,11 @@
         },
         {
             "schema": "restrict-dept.json",
-            "message-aide": "Seules des données départementales peuvent être saisies."
+            "message-aide": "Seules des données départementales peuvent être saisies. Les mailles supérieures sont calculées automatiquement par agrégation des valeurs départementales."
         },
         {
             "schema": "restrict-reg.json",
-            "message-aide": "Seules des données régionales peuvent être saisies."
+            "message-aide": "Seules des données régionales peuvent être saisies. La maille nationale est calculée automatiquement par agrégation des valeurs régionales."
         }
     ]
 }
