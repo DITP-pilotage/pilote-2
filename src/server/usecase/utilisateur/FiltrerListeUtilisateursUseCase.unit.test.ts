@@ -2,7 +2,7 @@ import UtilisateurBuilder from '@/server/domain/utilisateur/Utilisateur.builder'
 import FiltrerListeUtilisateursUseCase from './FiltrerListeUtilisateursUseCase';
 
 describe('FiltrerListeUtilisateursUseCase', () => {
-  it("quand aucun filtre n'est appliqé retourne tous les utilisateurs", () => {
+  it("quand aucun filtre n'est appliqué retourne tous les utilisateurs", () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder().build(),
@@ -11,13 +11,20 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     ];
 
     //WHEN
-    const utilisateursFiltrés = new FiltrerListeUtilisateursUseCase(utilisateurs, []).run();
+    const utilisateursFiltrés = new FiltrerListeUtilisateursUseCase(
+      utilisateurs,
+      {
+        territoires: [],
+        chantiers: [],
+        périmètresMinistériels: [],
+      },
+    ).run();
 
     //THEN
     expect(utilisateursFiltrés).toHaveLength(utilisateurs.length);
   });
 
-  it('quand le filtre territoire est appliqé retourne tous les utilisateurs ayant ce territoire', () => {
+  it('quand le filtre territoire est appliqué retourne tous les utilisateurs ayant ce territoire', () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
@@ -39,9 +46,30 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     ];
 
     //WHEN
-    const utilisateursFiltrésUnique = new FiltrerListeUtilisateursUseCase(utilisateurs, ['DEPT-01']).run();
-    const utilisateursFiltrésMultiple = new FiltrerListeUtilisateursUseCase(utilisateurs, ['DEPT-02']).run();
-    const utilisateursFiltrésUnion = new FiltrerListeUtilisateursUseCase(utilisateurs, ['DEPT-02', 'DEPT-04']).run();
+    const utilisateursFiltrésUnique = new FiltrerListeUtilisateursUseCase(
+      utilisateurs, 
+      {
+        territoires: ['DEPT-01'],
+        chantiers: [],
+        périmètresMinistériels: [],
+      },
+    ).run();
+    const utilisateursFiltrésMultiple = new FiltrerListeUtilisateursUseCase(
+      utilisateurs,
+      {
+        territoires: ['DEPT-02'],
+        chantiers: [],
+        périmètresMinistériels: [],
+      },
+    ).run();
+    const utilisateursFiltrésUnion = new FiltrerListeUtilisateursUseCase(
+      utilisateurs,
+      {
+        territoires: ['DEPT-02', 'DEPT-04'],
+        chantiers: [],
+        périmètresMinistériels: [],
+      },
+    ).run();
 
     //THEN
     expect(utilisateursFiltrésUnique).toHaveLength(1);
@@ -55,5 +83,101 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrésUnion[0].id).toStrictEqual('ID-USER-001');
     expect(utilisateursFiltrésUnion[1].id).toStrictEqual('ID-USER-002');
     expect(utilisateursFiltrésUnion[2].id).toStrictEqual('ID-USER-003');
+  });
+
+  it('quand le filtre chantier est appliqué retourne tous les utilisateurs ayant ce chantier', () => {
+    //GIVEN
+    const utilisateurs = [
+      new UtilisateurBuilder()
+        .avecId('ID-USER-123')
+        .avecChantierCodesLecture(['CH-01'])
+        .build(),
+      new UtilisateurBuilder()
+        .avecId('ID-USER-001')
+        .avecChantierCodesLecture(['CH-02', 'CH-03'])
+        .build(),
+      new UtilisateurBuilder()
+        .avecId('ID-USER-002')
+        .avecChantierCodesLecture(['CH-02'])
+        .build(),
+      new UtilisateurBuilder()
+        .avecId('ID-USER-003')
+        .avecChantierCodesLecture(['CH-04'])
+        .build(),
+    ];
+
+    //WHEN
+    const utilisateursFiltrésUnique = new FiltrerListeUtilisateursUseCase(
+      utilisateurs, 
+      {
+        territoires: [],
+        chantiers: ['CH-01'],
+        périmètresMinistériels: [],
+      },
+    ).run();
+    const utilisateursFiltrésMultiple = new FiltrerListeUtilisateursUseCase(
+      utilisateurs,
+      {
+        territoires: [],
+        chantiers: ['CH-02'],
+        périmètresMinistériels: [],
+      },
+    ).run();
+    const utilisateursFiltrésUnion = new FiltrerListeUtilisateursUseCase(
+      utilisateurs,
+      {
+        territoires: [],
+        chantiers: ['CH-02', 'CH-04'],
+        périmètresMinistériels: [],
+      },
+    ).run();
+
+    //THEN
+    expect(utilisateursFiltrésUnique).toHaveLength(1);
+    expect(utilisateursFiltrésUnique[0].id).toStrictEqual('ID-USER-123');
+
+    expect(utilisateursFiltrésMultiple).toHaveLength(2);
+    expect(utilisateursFiltrésMultiple[0].id).toStrictEqual('ID-USER-001');
+    expect(utilisateursFiltrésMultiple[1].id).toStrictEqual('ID-USER-002');
+
+    expect(utilisateursFiltrésUnion).toHaveLength(3);
+    expect(utilisateursFiltrésUnion[0].id).toStrictEqual('ID-USER-001');
+    expect(utilisateursFiltrésUnion[1].id).toStrictEqual('ID-USER-002');
+    expect(utilisateursFiltrésUnion[2].id).toStrictEqual('ID-USER-003');
+  });
+
+  it("quand les filtres chantier et territoire sont appliqués retourne tous les utilisateurs ayant l'intersection entre ce chantier et ce territoire", () => {
+    //GIVEN
+    const utilisateurs = [
+      new UtilisateurBuilder()
+        .avecId('ID-USER-123')
+        .avecChantierCodesLecture(['CH-01'])
+        .avecTerritoireCodesLecture(['DEPT-01'])
+        .build(),
+      new UtilisateurBuilder()
+        .avecId('ID-USER-001')
+        .avecChantierCodesLecture(['CH-02', 'CH-03'])
+        .avecTerritoireCodesLecture(['DEPT-02'])
+        .build(),
+      new UtilisateurBuilder()
+        .avecId('ID-USER-002')
+        .avecChantierCodesLecture(['CH-02'])
+        .avecTerritoireCodesLecture(['DEPT-01', 'DEPT-03'])
+        .build(),
+    ];
+
+    //WHEN
+    const utilisateursFiltrés = new FiltrerListeUtilisateursUseCase(
+      utilisateurs, 
+      {
+        territoires: ['DEPT-01'],
+        chantiers: ['CH-02'],
+        périmètresMinistériels: [],
+      },
+    ).run();
+
+    //THEN
+    expect(utilisateursFiltrés).toHaveLength(1);
+    expect(utilisateursFiltrés[0].id).toStrictEqual('ID-USER-002');
   });
 });

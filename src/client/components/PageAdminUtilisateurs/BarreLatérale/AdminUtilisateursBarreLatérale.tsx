@@ -7,6 +7,7 @@ import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLat�
 import Titre from '@/components/_commons/Titre/Titre';
 import AdminUtilisateursBarreLatéraleProps from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale.interface';
 import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelectTerritoire/MultiSelectTerritoire';
+import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier';
 
 export default function AdminUtilisateursBarreLatérale({
   estOuverteBarreLatérale,
@@ -21,15 +22,21 @@ export default function AdminUtilisateursBarreLatérale({
       setEstOuvert={setEstOuverteBarreLatérale}
     >
       <BarreLatéraleEncart>
-        <MultiSelectTerritoire
-          changementValeursSélectionnéesCallback={(territoire) => {
-            modifierÉtatDuFiltre(territoire, 'territoires');
-          }}
-          groupesÀAfficher={{
-            nationale: true,
-            régionale: true,
-            départementale: true,
-          }}
+        <div className="fr-mb-2w">
+          <MultiSelectTerritoire
+            changementValeursSélectionnéesCallback={(territoire) => {
+              modifierÉtatDuFiltre(territoire, 'territoires');
+            }}
+            groupesÀAfficher={{
+              nationale: true,
+              régionale: true,
+              départementale: true,
+            }}
+          />
+        </div>
+        <MultiSelectChantier changementValeursSélectionnéesCallback={(chantier) => {
+          modifierÉtatDuFiltre(chantier, 'chantiers');
+        }}
         />
       </BarreLatéraleEncart>
       <div className="fr-px-3w fr-py-2w">
