@@ -328,6 +328,11 @@ dbt docs generate --project-dir data_factory/  && dbt docs serve --project-dir d
 Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 
 Une petite icône bleue en bas à droite indique le DAG pour visualiser le flux.
 
+Ou via Docker, puis à l'adresse `localhost:8088`:
+```bash
+docker-compose up --build
+```
+
 ### Zoom sur une brique du flux
 
 Dans le lineage graph (ou DAG) affiché sur l'interface web générée par DBT, il est possible de sélectionner une partie du graphe.
