@@ -9,11 +9,18 @@ import TableauAdminUtilisateurs
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/TableauAdminUtilisateurs';
 import Alerte from '@/client/components/_commons/Alerte/Alerte';
 import AlerteProps from '@/client/components/_commons/Alerte/Alerte.interface';
+import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
+import { filtresUtilisateursActifs, actions as actionsFiltresUtilisateursStore } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
+import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 
 export default function PageAdminUtilisateurs({ utilisateurs } :PageAdminUtilisateursProps ) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const router = useRouter();
+  const filtresActifs = filtresUtilisateursActifs();
+  const { modifierÉtatDuFiltre } = actionsFiltresUtilisateursStore();
+  const territoires = territoiresTerritoiresStore();
+
 
   useEffect(() => {
     if (router.query['comptecréé']) {
@@ -31,7 +38,17 @@ export default function PageAdminUtilisateurs({ utilisateurs } :PageAdminUtilisa
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
       >
-        Filtres
+        <Sélecteur
+          htmlName='territoire'
+          options={territoires.map(territoire => ({
+            libellé: territoire.nomAffiché,
+            valeur: territoire.code,
+          }))}
+          valeurModifiéeCallback={(territoire) => {
+            modifierÉtatDuFiltre([territoire], 'territoires');
+          }}
+          valeurSélectionnée={filtresActifs.territoires[0]}
+        />
       </BarreLatérale>
       <main>
         <div className='fr-mt-4w fr-mx-4w fr-mb-3w'>
