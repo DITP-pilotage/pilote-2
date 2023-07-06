@@ -28,8 +28,9 @@ export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeurs
         {label}
       </label>
       <button
-        className='fr-select'
+        className='fr-select fr-ellipsis'
         id={id}
+        title={libellé}
         type="button"
         {...multiSelectBoutonProps}
       >
