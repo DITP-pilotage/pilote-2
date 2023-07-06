@@ -46,7 +46,8 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
     avancements,
     territoireSélectionné,
     territoires,
-  } = usePageChantier(chantierId);
+    indicateurPondérations,
+  } = usePageChantier(chantierId, indicateurs);
 
   const modeÉcritureObjectifs = territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication === true);
   const listeRubriques = listeRubriquesChantier(indicateurs.map(i => i.type), territoireSélectionné!.maille);
@@ -97,12 +98,37 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                           className="rubrique"
                           id="avancement"
                         >
-                          <Titre
-                            baliseHtml='h2'
-                            className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                          >
-                            Avancement du chantier
-                          </Titre>
+                          <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+                            <Titre
+                              baliseHtml='h2'
+                              className='fr-h4 fr-mb-0 fr-py-1v'
+                              estInline
+                            >
+                              Avancement du chantier
+                            </Titre>
+                            {
+                              !!territoireSélectionné && (
+                                indicateurPondérations.length === 0
+                                  ? (
+                                    <Infobulle idHtml="infobulle-chantier-météoEtSynthèseDesRésultats">
+                                      {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(territoireSélectionné.maille)}
+                                    </Infobulle>
+                                  ) : (
+                                    indicateurPondérations.length === 1
+                                      ? (
+                                        <Infobulle idHtml="infobulle-chantier-météoEtSynthèseDesRésultats">
+                                          {INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(territoireSélectionné.maille, indicateurPondérations[0])}
+                                        </Infobulle>
+                                      )
+                                      : (
+                                        <Infobulle idHtml="infobulle-chantier-météoEtSynthèseDesRésultats">
+                                          {INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(territoireSélectionné.maille, indicateurPondérations)}
+                                        </Infobulle>
+                                      )
+                                  )
+                              )
+                            }
+                          </TitreInfobulleConteneur>
                           <AvancementChantier
                             avancements={avancements}
                             chantierId={chantierId}

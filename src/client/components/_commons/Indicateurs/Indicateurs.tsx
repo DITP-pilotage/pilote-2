@@ -2,6 +2,7 @@ import Titre from '@/components/_commons/Titre/Titre';
 import IndicateursProps from '@/components/_commons/Indicateurs/Indicateurs.interface';
 import IndicateurBloc from '@/components/_commons/Indicateurs/Bloc/IndicateurBloc';
 import IndicateursStyled from '@/components/_commons/Indicateurs/Indicateurs.styled';
+import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 
 
 export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRubriquesIndicateurs, territoireProjetStructurant, typeDeRéforme, estDisponibleALImport = false, estInteractif = true }: IndicateursProps) {
@@ -30,7 +31,7 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRub
                   {rubriqueIndicateur.nom}
                 </Titre>
                 {
-                  indicateursDeCetteRubrique.map(indicateur => (
+                  indicateursDeCetteRubrique.sort(comparerIndicateur).map(indicateur => (
                     <IndicateurBloc
                       détailsIndicateur={détailsIndicateurs[indicateur.id]}
                       estDisponibleALImport={estDisponibleALImport}

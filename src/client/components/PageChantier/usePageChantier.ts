@@ -2,7 +2,8 @@
 import { useEffect } from 'react';
 import {
   actionsTerritoiresStore,
-  mailleSélectionnéeTerritoiresStore, territoiresComparésTerritoiresStore,
+  mailleSélectionnéeTerritoiresStore,
+  territoiresComparésTerritoiresStore,
   territoiresTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
@@ -10,9 +11,15 @@ import api from '@/server/infrastructure/api/trpc/api';
 import calculerChantierAvancements from '@/client/utils/chantier/avancement/calculerChantierAvancements';
 import { Commentaire } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import Objectif from '@/server/domain/chantier/objectif/Objectif.interface';
-import { actionsTypeDeRéformeStore, typeDeRéformeSélectionnéeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
+import {
+  actionsTypeDeRéformeStore,
+  typeDeRéformeSélectionnéeStore,
+} from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
+import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
+import { IndicateurPondération } from '@/components/PageChantier/PageChantier.interface';
+import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 
-export default function usePageChantier(chantierId: string) {
+export default function usePageChantier(chantierId: string, indicateurs: Indicateur[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const territoiresComparés = territoiresComparésTerritoiresStore();
@@ -98,6 +105,18 @@ export default function usePageChantier(chantierId: string) {
       )
     );
 
+  const indicateurPondérations = !territoireSélectionné
+    ? []
+    : (
+      indicateurs
+        .sort(comparerIndicateur)
+        .map(indicateur => ({
+          pondération: indicateur.pondération?.[territoireSélectionné.maille]?.toFixed(0) ?? null,
+          nom: indicateur.nom,
+        }))
+        .filter((indPond): indPond is IndicateurPondération => indPond.pondération !== null && indPond.pondération !== '0')
+    );
+
   return {
     détailsIndicateurs: détailsIndicateurs ?? null,
     commentaires: commentaires ? commentaires[chantierId] as Commentaire[] : null,
@@ -109,5 +128,6 @@ export default function usePageChantier(chantierId: string) {
     territoireSélectionné,
     territoires,
     avancements,
+    indicateurPondérations,
   };
 }
