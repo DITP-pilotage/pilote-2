@@ -90,19 +90,19 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     const utilisateurs = [
       new UtilisateurBuilder()
         .avecId('ID-USER-123')
-        .avecChantierCodesLecture(['CH-01'])
+        .avecChantierIdsLecture(['CH-01'])
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-001')
-        .avecChantierCodesLecture(['CH-02', 'CH-03'])
+        .avecChantierIdsLecture(['CH-02', 'CH-03'])
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-002')
-        .avecChantierCodesLecture(['CH-02'])
+        .avecChantierIdsLecture(['CH-02'])
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-003')
-        .avecChantierCodesLecture(['CH-04'])
+        .avecChantierIdsLecture(['CH-04'])
         .build(),
     ];
 
@@ -146,33 +146,97 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrésUnion[2].id).toStrictEqual('ID-USER-003');
   });
 
-  it("quand les filtres chantier et territoire sont appliqués retourne tous les utilisateurs ayant l'intersection entre ce chantier et ce territoire", () => {
+  it('quand le filtre périmètre est appliqué retourne tous les utilisateurs ayant ce périmètre', () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
         .avecId('ID-USER-123')
-        .avecChantierCodesLecture(['CH-01'])
-        .avecTerritoireCodesLecture(['DEPT-01'])
+        .avecPérimètreIdsLecture(['PER-001'])
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-001')
-        .avecChantierCodesLecture(['CH-02', 'CH-03'])
-        .avecTerritoireCodesLecture(['DEPT-02'])
+        .avecPérimètreIdsLecture(['PER-002', 'PER-003'])
         .build(),
       new UtilisateurBuilder()
         .avecId('ID-USER-002')
-        .avecChantierCodesLecture(['CH-02'])
+        .avecPérimètreIdsLecture(['PER-002'])
+        .build(),
+      new UtilisateurBuilder()
+        .avecId('ID-USER-003')
+        .avecPérimètreIdsLecture(['PER-004'])
+        .build(),
+    ];
+
+    //WHEN
+    const utilisateursFiltrésUnique = new FiltrerListeUtilisateursUseCase(
+      utilisateurs,
+      {
+        territoires: [],
+        chantiers: [],
+        périmètresMinistériels: ['PER-001'],
+      },
+    ).run();
+    const utilisateursFiltrésMultiple = new FiltrerListeUtilisateursUseCase(
+      utilisateurs,
+      {
+        territoires: [],
+        chantiers: [],
+        périmètresMinistériels: ['PER-002'],
+      },
+    ).run();
+    const utilisateursFiltrésUnion = new FiltrerListeUtilisateursUseCase(
+      utilisateurs,
+      {
+        territoires: [],
+        chantiers: [],
+        périmètresMinistériels: ['PER-002', 'PER-004'],
+      },
+    ).run();
+
+    //THEN
+    expect(utilisateursFiltrésUnique).toHaveLength(1);
+    expect(utilisateursFiltrésUnique[0].id).toStrictEqual('ID-USER-123');
+
+    expect(utilisateursFiltrésMultiple).toHaveLength(2);
+    expect(utilisateursFiltrésMultiple[0].id).toStrictEqual('ID-USER-001');
+    expect(utilisateursFiltrésMultiple[1].id).toStrictEqual('ID-USER-002');
+
+    expect(utilisateursFiltrésUnion).toHaveLength(3);
+    expect(utilisateursFiltrésUnion[0].id).toStrictEqual('ID-USER-001');
+    expect(utilisateursFiltrésUnion[1].id).toStrictEqual('ID-USER-002');
+    expect(utilisateursFiltrésUnion[2].id).toStrictEqual('ID-USER-003');
+  });
+
+  it("quand les filtres chantier, territoire et périmètre sont appliqués retourne tous les utilisateurs ayant l'intersection entre ce chantier, ce territoire et ce périmètre", () => {
+    //GIVEN
+    const utilisateurs = [
+      new UtilisateurBuilder()
+        .avecId('ID-USER-123')
+        .avecChantierIdsLecture(['CH-01'])
+        .avecTerritoireCodesLecture(['DEPT-01'])
+        .avecPérimètreIdsLecture(['PER-001'])
+        .build(),
+      new UtilisateurBuilder()
+        .avecId('ID-USER-001')
+        .avecChantierIdsLecture(['CH-02', 'CH-03'])
+        .avecTerritoireCodesLecture(['DEPT-02'])
+        .avecPérimètreIdsLecture(['PER-002'])
+        .build(),
+      new UtilisateurBuilder()
+        .avecId('ID-USER-002')
+        .avecChantierIdsLecture(['CH-02'])
         .avecTerritoireCodesLecture(['DEPT-01', 'DEPT-03'])
+        .avecPérimètreIdsLecture(['PER-001'])
         .build(),
     ];
 
     //WHEN
     const utilisateursFiltrés = new FiltrerListeUtilisateursUseCase(
-      utilisateurs, 
+      utilisateurs,
       {
         territoires: ['DEPT-01'],
         chantiers: ['CH-02'],
-        périmètresMinistériels: [],
+        périmètresMinistériels: ['PER-001'],
       },
     ).run();
 

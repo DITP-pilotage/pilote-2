@@ -30,12 +30,12 @@ export default class UtilisateurBuilder {
     this._auteurModification = faker.name.firstName();
     this._fonction = faker.helpers.arrayElement([faker.lorem.words(6), null]);
     this._habilitations = {
-      lecture: { chantiers: [], territoires: [] },
-      'saisie.commentaire': { chantiers: [], territoires: [] },
-      'saisie.indicateur': { chantiers: [], territoires: [] },
-      'utilisateurs.lecture': { chantiers: [], territoires:[] },
-      'utilisateurs.modification': { chantiers: [], territoires: [] },
-      'utilisateurs.suppression': { chantiers: [], territoires: [] },
+      lecture: { chantiers: [], territoires: [], périmètres: [] },
+      'saisie.commentaire': { chantiers: [], territoires: [], périmètres: [] },
+      'saisie.indicateur': { chantiers: [], territoires: [], périmètres: [] },
+      'utilisateurs.lecture': { chantiers: [], territoires:[], périmètres: [] },
+      'utilisateurs.modification': { chantiers: [], territoires: [], périmètres: [] },
+      'utilisateurs.suppression': { chantiers: [], territoires: [], périmètres: [] },
       'projetsStructurants.lecture': { projetsStructurants: [] },
     };
   }
@@ -85,8 +85,13 @@ export default class UtilisateurBuilder {
     return this;
   }
 
-  avecChantierCodesLecture(chantierCodes: string[]) {
-    this._habilitations.lecture.chantiers = chantierCodes;
+  avecChantierIdsLecture(chantierIds: string[]) {
+    this._habilitations.lecture.chantiers = chantierIds;
+    return this;
+  }
+
+  avecPérimètreIdsLecture(périmètresIds: string[]) {
+    this._habilitations.lecture.périmètres = périmètresIds;
     return this;
   }
 
