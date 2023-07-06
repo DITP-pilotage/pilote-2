@@ -227,8 +227,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return {
       // on dit que ceux qui ont accès à tous les chantiers ont accès à tous les périmètres ministériels
       'lecture': profilUtilisateur.a_acces_tous_chantiers ? this._périmètresMinistériels : [],
-      'saisie.commentaire': profilUtilisateur.a_acces_tous_chantiers ? this._périmètresMinistériels : [],
-      'saisie.indicateur': profilUtilisateur.a_acces_tous_chantiers ? this._périmètresMinistériels : [],
+      'saisie.commentaire': [],
+      'saisie.indicateur': [],
       'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs ? this._périmètresMinistériels : [],
       'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs ? this._périmètresMinistériels : [],
       'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs ? this._périmètresMinistériels : [],
