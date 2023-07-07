@@ -20,7 +20,15 @@ const PageRapportDétailléStyled = styled.div`
     }
     
     margin: 12mm;
+    
+    main {
+      padding: 0 !important;
+    }
 
+    .interrupteur-chantiers {
+      display: none;
+    }
+    
     table {
       overflow: hidden;
       

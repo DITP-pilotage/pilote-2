@@ -4,6 +4,7 @@ import '@gouvfr/dsfr/dist/component/badge/badge.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import Link from 'next/link';
+import { useState } from 'react';
 import PageRapportDétailléStyled from '@/components/PageRapportDétaillé/PageRapportDétaillé.styled';
 import Titre from '@/components/_commons/Titre/Titre';
 import PageRapportDétailléProps from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
@@ -14,6 +15,7 @@ import { actionsTerritoiresStore, territoireSélectionnéTerritoiresStore } from
 import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PremièrePageImpressionRapportDétaillé
   from '@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
+import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
 import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
 
 export const htmlId = {
@@ -32,6 +34,7 @@ export default function PageRapportDétaillé({ chantiers, périmètresMinistér
   const { chantiersFiltrés } = useChantiersFiltrés(chantiers);
   const filtresActifs = filtresActifsStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
 
   return (
     <>
@@ -71,23 +74,34 @@ export default function PageRapportDétaillé({ chantiers, périmètresMinistér
               filtresActifs={filtresActifs}
               territoireSélectionné={territoireSélectionné}
             />
-            <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
-            <div className="chantiers">
-              {
-                chantiersFiltrés.map((chantier) => (
-                  <RapportDétailléChantier
-                    chantier={chantier}
-                    commentaires={publicationsGroupéesParChantier.commentaires[chantier.id] ?? []}
-                    décisionStratégique={publicationsGroupéesParChantier.décisionStratégique[chantier.id] ?? null}
-                    détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id] ?? []}
-                    indicateurs={indicateursGroupésParChantier[chantier.id] ?? []}
-                    key={chantier.id}
-                    objectifs={publicationsGroupéesParChantier.objectifs[chantier.id] ?? []}
-                    synthèseDesRésultats={publicationsGroupéesParChantier.synthèsesDesRésultats[chantier.id] ?? null}
-                  />
-                ))
-              }
+            <div className="fr-mb-3w interrupteur-chantiers">
+              <Interrupteur
+                auChangement={setAfficherLesChantiers}
+                checked={afficherLesChantiers}
+                id="afficher-chantiers"
+                libellé="Afficher le détails des chantiers"
+              />
             </div>
+            <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
+            {
+              !!afficherLesChantiers &&
+              <div className="chantiers">
+                {
+                  chantiersFiltrés.map((chantier) => (
+                    <RapportDétailléChantier
+                      chantier={chantier}
+                      commentaires={publicationsGroupéesParChantier.commentaires[chantier.id] ?? []}
+                      décisionStratégique={publicationsGroupéesParChantier.décisionStratégique[chantier.id] ?? null}
+                      détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id] ?? []}
+                      indicateurs={indicateursGroupésParChantier[chantier.id] ?? []}
+                      key={chantier.id}
+                      objectifs={publicationsGroupéesParChantier.objectifs[chantier.id] ?? []}
+                      synthèseDesRésultats={publicationsGroupéesParChantier.synthèsesDesRésultats[chantier.id] ?? null}
+                    />
+                  ))
+                }
+              </div>
+            }
           </div>
         </main>
       </PageRapportDétailléStyled>
