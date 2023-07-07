@@ -37,59 +37,55 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
         </Titre>
       </Encart>
       <div className="fr-mt-3w avancements-météos-carto">
-        <div>
-          <Bloc>
-            <section>
-              <TitreInfobulleConteneur>
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg fr-mb-2w fr-py-1v"
-                  estInline
-                >
-                  Taux d’avancement moyen
-                </Titre>
-                <Infobulle idHtml="infobulle-chantiers-jauges">
-                  { INFOBULLE_CONTENUS.chantiers.jauges }
-                </Infobulle>
-              </TitreInfobulleConteneur>
-              <Avancements avancements={avancementsAgrégés} />
-            </section>
-            <hr className="fr-hr fr-my-3w fr-pb-1v" />
-            <section>
-              <TitreInfobulleConteneur>
-                <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg fr-mb-0 fr-py-1v"
-                  estInline
-                >
-                  Répartition des météos renseignées
-                </Titre>
-                <Infobulle idHtml="infobulle-chantiers-météos">
-                  { INFOBULLE_CONTENUS.chantiers.météos }
-                </Infobulle>
-              </TitreInfobulleConteneur>
-              <RépartitionMétéo météos={répartitionMétéos} />
-            </section>
-          </Bloc>
-        </div>
-        <div>
-          <Bloc>
-            <section>
+        <Bloc>
+          <section>
+            <TitreInfobulleConteneur>
               <Titre
-                baliseHtml="h3"
-                className="fr-text--lg fr-mb-0 fr-py-1v"
+                baliseHtml="h2"
+                className="fr-text--lg fr-mb-2w fr-py-1v"
+                estInline
               >
-                Taux d’avancement des chantiers par territoire
+                Taux d’avancement moyen
               </Titre>
-              <CartographieAvancement
-                auClicTerritoireCallback={() => {}}
-                données={donnéesCartographie}
-                options={{ estInteractif: false }}
-                élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
-              />
-            </section>
-          </Bloc>
-        </div>
+              <Infobulle idHtml="infobulle-chantiers-jauges">
+                { INFOBULLE_CONTENUS.chantiers.jauges }
+              </Infobulle>
+            </TitreInfobulleConteneur>
+            <Avancements avancements={avancementsAgrégés} />
+          </section>
+          <hr className="fr-hr fr-my-3w fr-pb-1v" />
+          <section>
+            <TitreInfobulleConteneur>
+              <Titre
+                baliseHtml="h2"
+                className="fr-text--lg fr-mb-0 fr-py-1v"
+                estInline
+              >
+                Répartition des météos renseignées
+              </Titre>
+              <Infobulle idHtml="infobulle-chantiers-météos">
+                { INFOBULLE_CONTENUS.chantiers.météos }
+              </Infobulle>
+            </TitreInfobulleConteneur>
+            <RépartitionMétéo météos={répartitionMétéos} />
+          </section>
+        </Bloc>
+        <Bloc>
+          <section>
+            <Titre
+              baliseHtml="h3"
+              className="fr-text--lg fr-mb-0 fr-py-1v"
+            >
+              Taux d’avancement des chantiers par territoire
+            </Titre>
+            <CartographieAvancement
+              auClicTerritoireCallback={() => {}}
+              données={donnéesCartographie}
+              options={{ estInteractif: false }}
+              élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
+            />
+          </section>
+        </Bloc>
       </div>
       {
         process.env.NEXT_PUBLIC_FF_ALERTES === 'true' &&
@@ -133,7 +129,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
       >
         <div className="fr-col">
           <Bloc>
-            <TitreInfobulleConteneur className="fr-mb-1w titre-liste-chantiers">
+            <TitreInfobulleConteneur className="fr-mb-1w">
               <Titre
                 baliseHtml="h2"
                 className="fr-text--lg fr-mb-0 fr-py-1v"

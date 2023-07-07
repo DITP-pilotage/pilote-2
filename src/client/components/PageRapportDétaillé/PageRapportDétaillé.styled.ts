@@ -2,6 +2,8 @@ import styled from '@emotion/styled';
 
 const PageRapportDétailléStyled = styled.div`
   main {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
     overflow-x: hidden;
   }
   
@@ -15,14 +17,14 @@ const PageRapportDétailléStyled = styled.div`
 
   @media print {
     @page {
-      margin: 12mm 0;
+      margin: 12mm 0; /* marges pour configuration de l'imprimante */
       size: 280mm 396mm;
     }
-    
+
     margin: 12mm;
     
     main {
-      padding: 0 !important;
+      padding: 0;
     }
 
     .interrupteur-chantiers {

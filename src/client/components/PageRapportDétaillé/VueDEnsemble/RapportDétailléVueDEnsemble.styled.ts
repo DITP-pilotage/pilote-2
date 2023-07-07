@@ -33,10 +33,6 @@ const RapportDétailléVueDEnsembleStyled = styled.section`
     .avancements-météos-carto {
       grid-template-columns: 1fr 1fr;
     }
-    
-    .titre-liste-chantiers {
-      display: none;
-    }
   }
 `;
 

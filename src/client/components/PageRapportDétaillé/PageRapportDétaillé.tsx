@@ -44,7 +44,7 @@ export default function PageRapportDétaillé({ chantiers, ministères, indicate
         territoireSélectionné={territoireSélectionné}
       />
       <PageRapportDétailléStyled>
-        <main className="fr-py-4w">
+        <main>
           <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
             <div className="fr-px-2w fr-px-md-0 flex justify-between entête-rapport-détaillé">
               <Titre
