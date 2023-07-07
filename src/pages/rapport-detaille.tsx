@@ -18,9 +18,11 @@ import DécisionStratégique from '@/server/domain/chantier/décisionStratégiqu
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
 import RécupérerChantiersAccessiblesEnLectureUseCase from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 
 interface NextPageRapportDétailléProps {
   chantiers: Chantier[]
+  périmètresMinistériels: PérimètreMinistériel[]
   indicateursGroupésParChantier: Record<string, Indicateur[]>
   détailsIndicateursGroupésParChantier: Record<Chantier['id'], DétailsIndicateurs>
   publicationsGroupéesParChantier: PublicationsGroupéesParChantier
@@ -30,6 +32,7 @@ interface NextPageRapportDétailléProps {
 
 export default function NextPageRapportDétaillé({
   chantiers,
+  périmètresMinistériels,
   indicateursGroupésParChantier,
   détailsIndicateursGroupésParChantier,
   publicationsGroupéesParChantier,
@@ -54,6 +57,7 @@ export default function NextPageRapportDétaillé({
         indicateursGroupésParChantier={indicateursGroupésParChantier}
         maille={maille}
         publicationsGroupéesParChantier={publicationsGroupéesParChantier}
+        périmètresMinistériels={périmètresMinistériels}
       />
     </>
   );
@@ -84,6 +88,9 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase().run(session.habilitations, session.profil);
   const chantiersIds = chantiers.map(chantier => chantier.id);
 
+  const périmètreMinistérielRepository = dependencies.getPérimètreMinistérielRepository();
+  const périmètresMinistériels = await périmètreMinistérielRepository.récupérerTous();
+
   const indicateursRepository = dependencies.getIndicateurRepository();
   const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(chantiersIds, maille, codeInsee);
   const détailsIndicateursGroupésParChantier = await indicateursRepository.récupérerDétailsGroupésParChantierEtParIndicateur(chantiersIds, maille, codeInsee);
@@ -104,6 +111,7 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
   return {
     props: {
       chantiers,
+      périmètresMinistériels,
       indicateursGroupésParChantier,
       détailsIndicateursGroupésParChantier,
       maille,

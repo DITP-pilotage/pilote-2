@@ -1,34 +1,51 @@
 import styled from '@emotion/styled';
 
 const PremièrePageImpressionRapportDétailléStyled = styled.div`
-display: none;
+  display: none;
   page-break-after: always;
-
-  .titre-rapport-détaillé, .sous-titre-rapport-détaillé {
-    color: var(--background-action-high-blue-france);
-    text-align: center;
-  }
 
   @media print {
     display: block;
+  }
 
-    main {
-      background: var(--grey-1000-50);
+  main {
+    background: var(--grey-1000-50);
+  }
+  
+  .fond-bleu-clair {
+    background-color: var(--blue-france-975-75);
+  }
 
-      .fr-container {
-        max-width: 90em;
-      }
+  .fr-logo {
+    font-size: .7875rem;
+  }
+
+  .filtres-actifs {
+    font-size: 1.5rem;
+    font-weight: bold;
+    list-style-type: none;
+   
+    & > li > ul {
+      margin-block-start: 0.5rem;
+      margin-block-end: 0;
+      margin-bottom: 1.5rem;
+      font-size: 1.2rem;
+      line-height: 1.75rem;
     }
-
-    .fr-header {
-      display: block;
-      filter: none;
+    
+    li {
+      padding-bottom: 0;
     }
-
-    .date {
-      position: absolute;
-      bottom: 0;
+    
+    ul {
+      padding-left: 1.5rem;
     }
+  }
+
+  .date {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
   }
 `;
 

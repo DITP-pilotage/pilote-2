@@ -15,9 +15,11 @@ const PageRapportDétailléStyled = styled.div`
 
   @media print {
     @page {
-      margin: 12mm;
+      margin: 12mm 0;
       size: 280mm 396mm;
     }
+    
+    margin: 12mm;
 
     table {
       overflow: hidden;

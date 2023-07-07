@@ -2,6 +2,6 @@ import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interfa
 import { FiltresActifs } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
 
 export interface FiltresSélectionnésProps {
-  territoiresSélectionnés: DétailTerritoire | null;
+  territoireSélectionné: DétailTerritoire | null;
   filtresActifs: FiltresActifs;
 }

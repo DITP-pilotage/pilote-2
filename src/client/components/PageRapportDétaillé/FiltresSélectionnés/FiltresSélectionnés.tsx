@@ -3,9 +3,9 @@ import FiltresSélectionnésStyled from './FiltresSélectionnés.styled';
 import FiltresSélectionnésCatégorie from './Catégorie/FiltresSélectionnésCatégorie';
 import { FiltresSélectionnésProps } from './FiltresSélectionnés.interface';
 
-export default function FiltresSélectionnés({ territoiresSélectionnés, filtresActifs }: FiltresSélectionnésProps) {
+export default function FiltresSélectionnés({ territoireSélectionné, filtresActifs }: FiltresSélectionnésProps) {
   const filtresCatégories = [
-    { nom: 'Territoire', filtres: [territoiresSélectionnés!.nomAffiché] },
+    { nom: 'Territoire', filtres: [territoireSélectionné!.nomAffiché] },
     { nom: 'Périmètres ministériels', filtres: filtresActifs.périmètresMinistériels.map(({ nom }) => nom) },
     { nom: 'Axes', filtres: filtresActifs.axes.map(({ nom }) => nom) },
     { nom: 'PPG', filtres: filtresActifs.ppg.map(({ nom }) => nom) },

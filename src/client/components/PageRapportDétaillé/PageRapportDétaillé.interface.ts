@@ -7,6 +7,7 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Commentaire } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import Objectif from '@/server/domain/chantier/objectif/Objectif.interface';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 
 export type PublicationsGroupéesParChantier = {
   commentaires: Record<Chantier['id'], Commentaire[]>
@@ -17,6 +18,7 @@ export type PublicationsGroupéesParChantier = {
 
 export default interface PageRapportDétailléProps {
   chantiers: Chantier[]
+  périmètresMinistériels: PérimètreMinistériel[]
   indicateursGroupésParChantier: Record<string, Indicateur[]>
   détailsIndicateursGroupésParChantier: Record<Chantier['id'], DétailsIndicateurs>
   publicationsGroupéesParChantier: PublicationsGroupéesParChantier

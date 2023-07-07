@@ -21,7 +21,7 @@ export const htmlId = {
   chantier: (chantierId: string) => `chantier-${chantierId}`,
 };
 
-export default function PageRapportDétaillé({ chantiers, indicateursGroupésParChantier, détailsIndicateursGroupésParChantier, publicationsGroupéesParChantier, maille, codeInsee }: PageRapportDétailléProps) {
+export default function PageRapportDétaillé({ chantiers, périmètresMinistériels, indicateursGroupésParChantier, détailsIndicateursGroupésParChantier, publicationsGroupéesParChantier, maille, codeInsee }: PageRapportDétailléProps) {
   const { modifierMailleSélectionnée, modifierTerritoireSélectionné, récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
   if (maille !== 'nationale') {
@@ -31,11 +31,15 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
 
   const { chantiersFiltrés } = useChantiersFiltrés(chantiers);
   const filtresActifs = filtresActifsStore();
-  const territoiresSélectionnés = territoireSélectionnéTerritoiresStore();
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
   return (
     <>
-      <PremièrePageImpressionRapportDétaillé />
+      <PremièrePageImpressionRapportDétaillé
+        filtresActifs={filtresActifs}
+        périmètresMinistériels={périmètresMinistériels}
+        territoireSélectionné={territoireSélectionné}
+      />
       <PageRapportDétailléStyled>
         <main className="fr-py-4w">
           <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
@@ -65,7 +69,7 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
             </div>
             <FiltresSélectionnés
               filtresActifs={filtresActifs}
-              territoiresSélectionnés={territoiresSélectionnés}
+              territoireSélectionné={territoireSélectionné}
             />
             <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
             <div className="chantiers">
