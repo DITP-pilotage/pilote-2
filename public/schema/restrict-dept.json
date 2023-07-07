@@ -44,7 +44,7 @@
     },
     {
       "name": "zone_id",
-      "description": "La zone renseignée n’est pas dans le référentiel.",
+      "description": "La zone renseignée n’est pas dans le référentiel. L'indicateur ne peut être renseigné qu'à la maille départementale.",
       "example": "D46",
       "type": "string",
       "constraints": {
