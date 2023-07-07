@@ -31,19 +31,24 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
           </p>
         </div>
       </header>
-      <div className="fr-py-16w fond-bleu-clair">
-        <div className="titre-rapport-détaillé fr-display--md texte-centre" >
+      <div className="fr-pt-14w fr-pb-4w fond-bleu-clair">
+        <div className="fr-mb-10w fr-display--md texte-centre titre-rapport-détaillé" >
           État des lieux de l’avancement
           <br />
           des politiques prioritaires
           <br />
           du Gouvernement
         </div>
+        <div className='fr-px-12w'>
+          {`Rapport détaillé généré le ${formaterDate(new Date().toISOString(), 'DD/MM/YYYY [à] H[h]mm')}`}
+        </div>
       </div>
-      <div className="fr-px-12w fr-py-4w">
+      <div className="fr-px-12w fr-py-4w filtres-actifs-conteneur">
         <ul className="fr-pl-0 filtres-actifs">
           <li>
-            Territoire(s) sélectionné(s)
+            <span className="fr-text--bold">
+              Territoire(s) sélectionné(s)
+            </span>
             <ul>
               <li>
                 { territoireSélectionné?.nomAffiché }
@@ -53,12 +58,16 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
           {
             ministèresÀAfficher.length > 0 &&
             <li>
-              Ministère(s) ou périmètre(s) ministériel(s) sélectionné(s)
+              <span className="fr-text--bold">
+                Ministère(s) ou périmètre(s) ministériel(s) sélectionné(s)
+              </span>
               <ul>
                 {
                   ministèresÀAfficher.map(ministère => (
                     <li key={ministère.nom}>
-                      {ministère.nom}
+                      <span className="fr-text--bold">
+                        {ministère.nom}
+                      </span>
                       <ul>
                         {ministère.périmètresMinistériels.map(périmètre => (
                           <li key={périmètre.id}>
@@ -75,7 +84,9 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
           {
             filtresActifs.filtresTypologie.length > 0 &&
             <li>
-              Type(s) de chantier(s) sélectionné(s)
+              <span className="fr-text--bold">
+                Type(s) de chantier(s) sélectionné(s)
+              </span>
               <ul>
                 {
                   filtresActifs.filtresTypologie.map(typologie => (
@@ -90,7 +101,9 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
           {
             process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && filtresActifs.filtresAlerte.length > 0 &&
             <li>
-              Alerte(s) sélectionnée(s)
+              <span className="fr-text--bold">
+                Alerte(s) sélectionnée(s)
+              </span>
               <ul>
                 {
                   filtresActifs.filtresAlerte.map(alerte => (
@@ -103,9 +116,6 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
             </li>
           }
         </ul>
-      </div>
-      <div className='fr-px-12w date'>
-        {`Rapport détaillé généré le ${formaterDate(new Date().toISOString(), 'DD/MM/YYYY [à] H[h]mm')}`}
       </div>
     </PremièrePageImpressionRapportDétailléStyled>
   );

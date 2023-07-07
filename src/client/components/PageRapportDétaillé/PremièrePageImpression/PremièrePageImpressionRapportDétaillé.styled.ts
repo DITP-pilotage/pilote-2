@@ -19,18 +19,27 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
   .fr-logo {
     font-size: .7875rem;
   }
+  
+  .filtres-actifs-conteneur {
+    max-height: 20cm;
+  }
 
   .filtres-actifs {
-    font-size: 1.5rem;
-    font-weight: bold;
+    columns: auto 3;
+    column-gap: 2rem;
+    column-fill: auto;
     list-style-type: none;
+    
+    & > li > span {
+      font-size: 1.3rem;
+      line-height: 1.75rem;
+    }
    
     & > li > ul {
+      padding-left: 0.75rem;
       margin-block-start: 0.25rem;
       margin-block-end: 0;
-      margin-bottom: 1.5rem;
-      font-size: 1.1rem;
-      line-height: 1.5rem;
+      margin-bottom: 1.4rem;
     }
     
     li {
@@ -38,16 +47,10 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
     }
     
     ul {
+      padding-left: 1.25rem;
       margin-block-start: 0;
       margin-block-end: 0.25rem;
-      padding-left: 1.5rem;
     }
-  }
-
-  .date {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
   }
 `;
 
