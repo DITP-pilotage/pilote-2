@@ -74,64 +74,24 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
             {
               ministères.length === 0 ? (
                 <p className="fr-text--regular fr-text--xl fr-mt-1w">
-                  Tous
+                  Tous ceux auxquels l&apos;utilisateur est habilité
                 </p>
               ) : (
                 <ul>
                   {
-                ministères.map(ministère => (
-                  <li key={ministère.nom}>
-                    {ministère.nom}
-                    {
-                      !ministère.possèdeTousLesPérimètres &&
-                      <ul>
-                        {ministère.périmètres.map(périmètre => (
-                          <li key={périmètre.id}>
-                            {périmètre.nom}
-                          </li>
-                        ))}
-                      </ul>
-                    }
-                  </li>
-                ))
-              }
-                </ul>
-              )
-            }
-          </li>
-          <li>
-            Typologie(s) de chantier sélectionné(s)
-            {
-              typologies.length === 0 ? (
-                <p className="fr-text--regular fr-text--xl fr-mt-1w">
-                  Toutes
-                </p>
-              ) : (
-                <ul>
-                  {
-                typologies.map(typologie => (
-                  <li key={typologie.id}>
-                    {typologie.nom}
-                  </li>
-                ))
-              }
-                </ul>
-              )
-            }
-          </li>
-          <li>
-            Alerte(s) sélectionnée(s)
-            {
-              alertes.length === 0 ? (
-                <p className="fr-text--regular fr-text--xl fr-mt-1w">
-                  Toutes
-                </p>
-              ) : (
-                <ul>
-                  {
-                    alertes.map(alerte => (
-                      <li key={alerte.id}>
-                        {alerte.nom}
+                    ministères.map(ministère => (
+                      <li key={ministère.nom}>
+                        {ministère.nom}
+                        {
+                          !ministère.possèdeTousLesPérimètres &&
+                          <ul>
+                            {ministère.périmètres.map(périmètre => (
+                              <li key={périmètre.id}>
+                                {périmètre.nom}
+                              </li>
+                            ))}
+                          </ul>
+                        }
                       </li>
                     ))
                   }
@@ -139,6 +99,36 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
               )
             }
           </li>
+          {
+            typologies.length > 0 &&
+            <li>
+              Typologie(s) de chantier sélectionné(s)
+              <ul>
+                {
+                  typologies.map(typologie => (
+                    <li key={typologie.id}>
+                      {typologie.nom}
+                    </li>
+                  ))
+                }
+              </ul>
+            </li>
+          }
+          {
+            process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && alertes.length > 0 &&
+            <li>
+              Alerte(s) sélectionnée(s)
+              <ul>
+                {
+                  alertes.map(alerte => (
+                    <li key={alerte.id}>
+                      {alerte.nom}
+                    </li>
+                  ))
+                }
+              </ul>
+            </li>
+          }
         </ul>
       </div>
       <div className='fr-px-12w date'>
