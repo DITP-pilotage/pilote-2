@@ -157,26 +157,28 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
             className="rubrique fr-pb-4w"
             id="commentaires"
           >
-            <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
-              <Titre
-                baliseHtml='h2'
-                className='fr-h4 fr-mb-0 fr-py-1v'
-                estInline
-              >
-                Commentaires du projet structurant
-              </Titre>
-              <Infobulle idHtml="infobulle-projetStructurant-commentaires">
-                {INFOBULLE_CONTENUS.projetStructurant.commentaires}
-              </Infobulle>
-            </TitreInfobulleConteneur>
-            <Commentaires
-              commentaires={commentaires}
-              estInteractif={false}
-              maille={projetStructurant.territoire.maille}
-              nomTerritoire={projetStructurant.territoire.nomAffiché}
-              réformeId={projetStructurant.id}
-              typesCommentaire={typesCommentaireProjetStructurant}
-            />
+            <div>
+              <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+                <Titre
+                  baliseHtml='h2'
+                  className='fr-h4 fr-mb-0 fr-py-1v'
+                  estInline
+                >
+                  Commentaires du projet structurant
+                </Titre>
+                <Infobulle idHtml="infobulle-projetStructurant-commentaires">
+                  {INFOBULLE_CONTENUS.projetStructurant.commentaires}
+                </Infobulle>
+              </TitreInfobulleConteneur>
+              <Commentaires
+                commentaires={commentaires}
+                estInteractif={false}
+                maille={projetStructurant.territoire.maille}
+                nomTerritoire={projetStructurant.territoire.nomAffiché}
+                réformeId={projetStructurant.id}
+                typesCommentaire={typesCommentaireProjetStructurant}
+              />
+            </div>
           </section>
         </div>
       </main>
