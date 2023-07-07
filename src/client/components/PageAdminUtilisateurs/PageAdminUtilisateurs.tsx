@@ -9,7 +9,7 @@ import Alerte from '@/client/components/_commons/Alerte/Alerte';
 import AlerteProps from '@/client/components/_commons/Alerte/Alerte.interface';
 import AdminUtilisateursBarreLatérale from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale';
 import api from '@/server/infrastructure/api/trpc/api';
-import { filtresUtilisateursActifsStore } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
+import { filtresUtilisateursActifsStore, réinitialiser } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
 import Loader from '@/client/components/_commons/Loader/Loader';
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
@@ -19,6 +19,7 @@ export default function PageAdminUtilisateurs() {
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const router = useRouter();
   const filtresActifs = filtresUtilisateursActifsStore();
+  const réinitialiserFiltres = réinitialiser();
   
   const { data: utilisateurs, isLoading } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
     filtres: filtresActifs,
@@ -47,6 +48,10 @@ export default function PageAdminUtilisateurs() {
       });
     }
   }, [router]);
+  
+  useEffect(() => {
+    réinitialiserFiltres();
+  }, [réinitialiserFiltres]);
 
   return (
     <div className='flex'>
