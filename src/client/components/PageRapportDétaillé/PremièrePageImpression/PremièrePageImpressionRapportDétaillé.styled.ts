@@ -25,7 +25,7 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
   }
 
   .filtres-actifs {
-    columns: auto 3;
+    columns: auto 2;
     column-gap: 2rem;
     column-fill: auto;
     list-style-type: none;
@@ -36,10 +36,10 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
     }
    
     & > li > ul {
-      padding-left: 0.75rem;
+      padding-left: 1rem;
       margin-block-start: 0.25rem;
       margin-block-end: 0;
-      margin-bottom: 1.4rem;
+      margin-bottom: 1rem;
     }
     
     li {

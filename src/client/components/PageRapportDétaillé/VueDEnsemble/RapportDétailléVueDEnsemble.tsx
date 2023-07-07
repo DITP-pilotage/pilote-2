@@ -133,7 +133,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
       >
         <div className="fr-col">
           <Bloc>
-            <TitreInfobulleConteneur className="fr-mb-1w">
+            <TitreInfobulleConteneur className="fr-mb-1w titre-liste-chantiers">
               <Titre
                 baliseHtml="h2"
                 className="fr-text--lg fr-mb-0 fr-py-1v"

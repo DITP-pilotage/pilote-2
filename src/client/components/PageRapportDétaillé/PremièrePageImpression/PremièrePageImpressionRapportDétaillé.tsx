@@ -31,8 +31,8 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
           </p>
         </div>
       </header>
-      <div className="fr-pt-14w fr-pb-4w fond-bleu-clair">
-        <div className="fr-mb-10w fr-display--md texte-centre titre-rapport-détaillé" >
+      <div className="fr-pt-6w fr-pb-3w fond-bleu-clair">
+        <div className="fr-mb-6w fr-display--md texte-centre titre-rapport-détaillé" >
           État des lieux de l’avancement
           <br />
           des politiques prioritaires
@@ -47,7 +47,7 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
         <ul className="fr-pl-0 filtres-actifs">
           <li>
             <span className="fr-text--bold">
-              Territoire(s) sélectionné(s)
+              Territoire sélectionné
             </span>
             <ul>
               <li>
@@ -85,7 +85,7 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
             filtresActifs.filtresTypologie.length > 0 &&
             <li>
               <span className="fr-text--bold">
-                Type(s) de chantier(s) sélectionné(s)
+                Type(s) de chantier sélectionné(s)
               </span>
               <ul>
                 {
