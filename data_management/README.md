@@ -17,6 +17,13 @@ Ce projet est décomposé en 2 parties :
 
 ### Pré-requis
 
+#### :warning: Disclaimer windows
+
+Si vous êtes sur windows, nous vous conseillons de passer exclusivement sur un terminal UNIX.
+Vous pouvez à la documentation suivante pour l'installation de l'invit de commande Ubuntu pour windows:
+
+- <https://pub.towardsai.net/how-to-install-ubuntu-terminal-on-windows-10-716b6a64ad82>
+
 #### Version de Python
 
 Il est nécessaire d'avoir la version de Python indiquée dans le Pipfile sur
@@ -43,9 +50,7 @@ Avoir docker ou un outil de containerisation :
 Il faut avoir configuré et initialisé votre base de données de Webapp comme précisé dans le README.md à la racine du projet.
 Pour la suite du projet, il faut s'assurer que la base de données soit démarrée.
 
-Le client Postgres `psql` est également nécessaire pour les scripts d'import :
-
-- <https://www.postgresql.org/download/>
+Le client Postgres `psql` (le cli) est également nécessaire pour les scripts d'import.
 
 ### Installation
 
@@ -278,7 +283,7 @@ L'évolution de ces flux se fera au fur et à mesure de la création et de l'év
 ``` mermaid
 graph LR
 PM(PPG_metadata) --> PG[(Base PG Pilote 2)]
-PT(ImportCommentaires) --> PG[(Base PG Pilote 2)]
+IC(ImportCommentaires) --> PG[(Base PG Pilote 2)]
 DFAK(Dump Dfakto Chantier) --> PG
 PG --> BE(Back-end) --> FE(Front-end)
 ```
@@ -289,6 +294,20 @@ graph LR
 PM(PPG_metadata) --> PG[(Base PG Pilote 2)]
 DFAK(Dump Dfakto PS) --> PG
 PG --> BE(Back-end) --> FE(Front-end)
+```
+
+### Zoom moyenne maille dans la base PG Pilote
+``` mermaid
+graph LR
+PM(PPG_metadata) --> RAW(Données brutes)
+IC(Import massif de commentaires) --> RAW
+MI(Import massif de mesures d'indicateurs) --> RAW
+DFAK(Dump Dfakto PS) --> RAW
+RAW --> STG(Staging / standardisation)
+STG --> MARTS(Marts / data factory)
+STG --> INTER(Intermediate / filtre sur les sources)
+INTER --> PUBLIC(Exposition à Pilote 2)
+STG --> PUBLIC
 ```
 
 ## Visualisation de l'ensemble du flux

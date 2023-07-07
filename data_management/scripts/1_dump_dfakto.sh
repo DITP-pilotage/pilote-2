@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/bin/bash
 
 set -o errexit   # abort on nonzero exitstatus
 set -o pipefail  # don't hide errors within pipes
