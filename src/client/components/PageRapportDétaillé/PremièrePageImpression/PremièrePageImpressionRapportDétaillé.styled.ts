@@ -26,11 +26,11 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
     list-style-type: none;
    
     & > li > ul {
-      margin-block-start: 0.5rem;
+      margin-block-start: 0.25rem;
       margin-block-end: 0;
       margin-bottom: 1.5rem;
-      font-size: 1.2rem;
-      line-height: 1.75rem;
+      font-size: 1.1rem;
+      line-height: 1.5rem;
     }
     
     li {
@@ -38,6 +38,8 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
     }
     
     ul {
+      margin-block-start: 0;
+      margin-block-end: 0.25rem;
       padding-left: 1.5rem;
     }
   }

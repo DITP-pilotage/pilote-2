@@ -1,36 +1,17 @@
 import { formaterDate } from '@/client/utils/date/date';
 import PremièrePageImpressionRapportDétailléProps
   from '@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé.interface';
-import { FiltresActifs } from '@/stores/useFiltresStore/useFiltresStore.interface';
 import { groupBy } from '@/client/utils/arrays';
-import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import PremièrePageImpressionRapportDétailléStyled from './PremièrePageImpressionRapportDétaillé.styled';
 
-function usePremièrePageImpressionRapportDétaillé(filtresActifs: FiltresActifs, territoireSélectionné: DétailTerritoire | null, périmètresMinistériels: PérimètreMinistériel[]) {
-  const tousLesPérimètresGroupés = groupBy(périmètresMinistériels, (p) => p.ministèreNom);
+export default function PremièrePageImpressionRapportDétaillé({ filtresActifs, territoireSélectionné, ministères }: PremièrePageImpressionRapportDétailléProps) {
   const filtresPérimètresGroupés = groupBy(filtresActifs.périmètresMinistériels, (p) => p.ministèreNom);
-  const ministères = Object.entries(filtresPérimètresGroupés).map(([ministère, filtresPérimètres]) => ({
+  const filtresActifsMinistères = Object.entries(filtresPérimètresGroupés).map(([ministère, filtresPérimètres]) => ({
     nom: ministère,
-    périmètres: filtresPérimètres,
-    possèdeTousLesPérimètres: filtresPérimètres.length === tousLesPérimètresGroupés[ministère].length,
+    périmètresMinistériels: filtresPérimètres,
   }));
 
-  return {
-    territoire: territoireSélectionné,
-    ministères,
-    alertes: filtresActifs.filtresAlerte,
-    typologies: filtresActifs.filtresTypologie,
-  };
-}
-
-export default function PremièrePageImpressionRapportDétaillé({ filtresActifs, territoireSélectionné, périmètresMinistériels }: PremièrePageImpressionRapportDétailléProps) {
-  const {
-    territoire,
-    ministères,
-    alertes,
-    typologies,
-  } = usePremièrePageImpressionRapportDétaillé(filtresActifs, territoireSélectionné, périmètresMinistériels);
+  const ministèresÀAfficher = filtresActifsMinistères.length > 0 ? filtresActifsMinistères : ministères;
 
   return (
     <PremièrePageImpressionRapportDétailléStyled>
@@ -59,53 +40,45 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
           du Gouvernement
         </div>
       </div>
-      <div className="fr-px-12w fr-pt-4w">
+      <div className="fr-px-12w fr-py-4w">
         <ul className="fr-pl-0 filtres-actifs">
           <li>
             Territoire(s) sélectionné(s)
             <ul>
               <li>
-                { territoire?.nomAffiché }
+                { territoireSélectionné?.nomAffiché }
               </li>
             </ul>
           </li>
-          <li>
-            Ministère(s) ou périmètre(s) ministériel(s) sélectionné(s)
-            {
-              ministères.length === 0 ? (
-                <p className="fr-text--regular fr-text--xl fr-mt-1w">
-                  Tous ceux auxquels l&apos;utilisateur est habilité
-                </p>
-              ) : (
-                <ul>
-                  {
-                    ministères.map(ministère => (
-                      <li key={ministère.nom}>
-                        {ministère.nom}
-                        {
-                          !ministère.possèdeTousLesPérimètres &&
-                          <ul>
-                            {ministère.périmètres.map(périmètre => (
-                              <li key={périmètre.id}>
-                                {périmètre.nom}
-                              </li>
-                            ))}
-                          </ul>
-                        }
-                      </li>
-                    ))
-                  }
-                </ul>
-              )
-            }
-          </li>
           {
-            typologies.length > 0 &&
+            ministèresÀAfficher.length > 0 &&
             <li>
-              Typologie(s) de chantier sélectionné(s)
+              Ministère(s) ou périmètre(s) ministériel(s) sélectionné(s)
               <ul>
                 {
-                  typologies.map(typologie => (
+                  ministèresÀAfficher.map(ministère => (
+                    <li key={ministère.nom}>
+                      {ministère.nom}
+                      <ul>
+                        {ministère.périmètresMinistériels.map(périmètre => (
+                          <li key={périmètre.id}>
+                            {périmètre.nom}
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))
+                }
+              </ul>
+            </li>
+          }
+          {
+            filtresActifs.filtresTypologie.length > 0 &&
+            <li>
+              Type(s) de chantier(s) sélectionné(s)
+              <ul>
+                {
+                  filtresActifs.filtresTypologie.map(typologie => (
                     <li key={typologie.id}>
                       {typologie.nom}
                     </li>
@@ -115,12 +88,12 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
             </li>
           }
           {
-            process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && alertes.length > 0 &&
+            process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && filtresActifs.filtresAlerte.length > 0 &&
             <li>
               Alerte(s) sélectionnée(s)
               <ul>
                 {
-                  alertes.map(alerte => (
+                  filtresActifs.filtresAlerte.map(alerte => (
                     <li key={alerte.id}>
                       {alerte.nom}
                     </li>

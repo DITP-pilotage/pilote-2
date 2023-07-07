@@ -23,7 +23,7 @@ export const htmlId = {
   chantier: (chantierId: string) => `chantier-${chantierId}`,
 };
 
-export default function PageRapportDétaillé({ chantiers, périmètresMinistériels, indicateursGroupésParChantier, détailsIndicateursGroupésParChantier, publicationsGroupéesParChantier, maille, codeInsee }: PageRapportDétailléProps) {
+export default function PageRapportDétaillé({ chantiers, ministères, indicateursGroupésParChantier, détailsIndicateursGroupésParChantier, publicationsGroupéesParChantier, maille, codeInsee }: PageRapportDétailléProps) {
   const { modifierMailleSélectionnée, modifierTerritoireSélectionné, récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
   if (maille !== 'nationale') {
@@ -40,7 +40,7 @@ export default function PageRapportDétaillé({ chantiers, périmètresMinistér
     <>
       <PremièrePageImpressionRapportDétaillé
         filtresActifs={filtresActifs}
-        périmètresMinistériels={périmètresMinistériels}
+        ministères={ministères}
         territoireSélectionné={territoireSélectionné}
       />
       <PageRapportDétailléStyled>
