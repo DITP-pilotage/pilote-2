@@ -17,7 +17,6 @@ const BlocStyled = styled.div`
     
     .titre {
       border-radius: 8px 8px 0 0;
-      break-after: avoid;
     }
   }
 `;

@@ -12,9 +12,8 @@ import useChantiersFiltrés from '@/components/useChantiersFiltrés';
 import RapportDétailléChantier from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier';
 import { actionsTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
-import PageImprimableConteneur from '@/components/_commons/PageImprimableConteneur/PageImprimableConteneur';
-import { formaterDate } from '@/client/utils/date/date';
-import PremièrePageImpressionRapportDétaillé from './PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
+import PremièrePageImpressionRapportDétaillé
+  from '@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
 import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
 
 export const htmlId = {
@@ -35,11 +34,8 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
   const territoiresSélectionnés = territoireSélectionnéTerritoiresStore();
 
   return (
-    <PageImprimableConteneur
-      entête={`Pilote  •  Rapport détaillé généré le ${formaterDate(new Date().toISOString(), 'DD/MM/YYYY [à] H[h]mm')}`}
-      pageDeGarde={<PremièrePageImpressionRapportDétaillé />}
-      piedDePage="www.pilote.modernisation.gouv.fr"
-    >
+    <>
+      <PremièrePageImpressionRapportDétaillé />
       <PageRapportDétailléStyled>
         <main className="fr-py-4w">
           <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
@@ -91,6 +87,6 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
           </div>
         </main>
       </PageRapportDétailléStyled>
-    </PageImprimableConteneur>
+    </>
   );
 }

@@ -73,9 +73,15 @@ const PageChantierStyled = styled.div`
         "avancement   avancement"
         "responsables synthèse";
     }
-    
-    .rubrique {
+
+    #avancement,
+    #responsables
+    {
       break-inside: avoid;
+    }
+
+    .rubrique {
+      display: block; /* pour que break-inside fasse effet */
     }
 
     .fr-accordion {

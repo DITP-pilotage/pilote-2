@@ -24,8 +24,6 @@ import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleContene
 import Indicateurs from '@/client/components/_commons/Indicateurs/Indicateurs';
 import { listeRubriquesChantier, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
 import { estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
-import PageImprimableConteneur from '@/components/_commons/PageImprimableConteneur/PageImprimableConteneur';
-import { formaterDate } from '@/client/utils/date/date';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierProps from './PageChantier.interface';
 import ResponsablesPageChantier from './Responsables/Responsables';
@@ -57,32 +55,28 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
   const { data: session } = useSession();
 
   return (
-    <PageImprimableConteneur
-      entête={`Pilote  •  Extrait de la page chantier généré le ${formaterDate(new Date().toISOString(), 'DD/MM/YYYY [à] H[h]mm')}`}
-      piedDePage="www.pilote.modernisation.gouv.fr"
-    >
-      <PageChantierStyled className="flex">
-        <BarreLatérale
-          estOuvert={estOuverteBarreLatérale}
-          setEstOuvert={setEstOuverteBarreLatérale}
+    <PageChantierStyled className="flex">
+      <BarreLatérale
+        estOuvert={estOuverteBarreLatérale}
+        setEstOuvert={setEstOuverteBarreLatérale}
+      >
+        <BarreLatéraleEncart>
+          <SélecteursMaillesEtTerritoires />
+        </BarreLatéraleEncart>
+        <Sommaire
+          auClic={() => setEstOuverteBarreLatérale(false)}
+          rubriques={listeRubriques}
+        />
+      </BarreLatérale>
+      <main className='fr-pb-5w'>
+        <BoutonSousLigné
+          classNameSupplémentaires="fr-link--icon-left fr-fi-arrow-right-line fr-sr-only-xl fr-m-2w"
+          onClick={() => setEstOuverteBarreLatérale(true)}
+          type="button"
         >
-          <BarreLatéraleEncart>
-            <SélecteursMaillesEtTerritoires />
-          </BarreLatéraleEncart>
-          <Sommaire
-            auClic={() => setEstOuverteBarreLatérale(false)}
-            rubriques={listeRubriques}
-          />
-        </BarreLatérale>
-        <main className='fr-pb-5w'>
-          <BoutonSousLigné
-            classNameSupplémentaires="fr-link--icon-left fr-fi-arrow-right-line fr-sr-only-xl fr-m-2w"
-            onClick={() => setEstOuverteBarreLatérale(true)}
-            type="button"
-          >
-            Filtres
-          </BoutonSousLigné>
-          {
+          Filtres
+        </BoutonSousLigné>
+        {
           chantier !== null ? (
             <>
               <PageChantierEnTête
@@ -304,8 +298,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
             </div>
           )
         }
-        </main>
-      </PageChantierStyled>
-    </PageImprimableConteneur>
+      </main>
+    </PageChantierStyled>
   );
 }
