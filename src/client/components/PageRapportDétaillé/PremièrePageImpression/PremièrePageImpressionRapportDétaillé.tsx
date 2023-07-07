@@ -1,3 +1,4 @@
+import { formaterDate } from '@/client/utils/date/date';
 import PremièrePageImpressionRapportDétailléStyled from './PremièrePageImpressionRapportDétaillé.styled';
 
 const date = new Date();
@@ -41,7 +42,7 @@ export default function PremièrePageImpressionRapportDétaillé() {
         Rapport détaillé
       </div>
       <p className='date'>
-        {`Rapport détaillé généré le ${date.toLocaleDateString()} à ${date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} `}
+        {`Rapport détaillé généré le ${formaterDate(new Date().toISOString(), 'DD/MM/YYYY [à] H[h]mm')}`}
       </p>
     </PremièrePageImpressionRapportDétailléStyled>
   );

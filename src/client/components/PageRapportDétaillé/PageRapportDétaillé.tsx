@@ -12,6 +12,8 @@ import useChantiersFiltrés from '@/components/useChantiersFiltrés';
 import RapportDétailléChantier from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier';
 import { actionsTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
+import PageImprimableConteneur from '@/components/_commons/PageImprimableConteneur/PageImprimableConteneur';
+import { formaterDate } from '@/client/utils/date/date';
 import PremièrePageImpressionRapportDétaillé from './PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
 import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
 
@@ -33,62 +35,72 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
   const territoiresSélectionnés = territoireSélectionnéTerritoiresStore();
 
   return (
-    <PageRapportDétailléStyled>
-      <main className="fr-py-4w">
+    <PageImprimableConteneur
+      entête={
         <div className="texte-impression fr-mb-5w">
           Pilote  •  Rapport détaillé généré le
           {' '}
-          {new Date().toLocaleString('FR-fr')}
+          {formaterDate(new Date().toISOString(), 'DD/MM/YYYY [à] H[h]mm')}
         </div>
-        <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
-          <PremièrePageImpressionRapportDétaillé />
-          <div className="fr-px-2w fr-px-md-0 flex justify-between entête-rapport-détaillé">
-            <Titre
-              baliseHtml="h1"
-              className="fr-h2"
-            >
-              {`Rapport détaillé : ${chantiersFiltrés.length} ${chantiersFiltrés.length > 1 ? 'chantiers' : 'chantier'}`}
-            </Titre>
-            <div>
-              <Link
-                className="fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-go-back-fill fr-btn--icon-left fr-text--sm"
-                href="/"
-                title="Revenir à l'accueil"
+      }
+      pageDeGarde={<PremièrePageImpressionRapportDétaillé />}
+      piedDePage={
+        <p>
+          www.pilote.modernisation.gouv.fr
+        </p>
+      }
+    >
+      <PageRapportDétailléStyled>
+        <main className="fr-py-4w">
+          <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
+            <div className="fr-px-2w fr-px-md-0 flex justify-between entête-rapport-détaillé">
+              <Titre
+                baliseHtml="h1"
+                className="fr-h2"
               >
-                Revenir à l&apos;accueil
-              </Link>
-              <button
-                className="fr-btn fr-btn--tertiary-no-outline fr-icon-printer-line fr-btn--icon-left fr-text--sm"
-                onClick={() => window.print()}
-                type="button"
-              >
-                Imprimer
-              </button>
+                {`Rapport détaillé : ${chantiersFiltrés.length} ${chantiersFiltrés.length > 1 ? 'chantiers' : 'chantier'}`}
+              </Titre>
+              <div>
+                <Link
+                  className="fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-go-back-fill fr-btn--icon-left fr-text--sm"
+                  href="/"
+                  title="Revenir à l'accueil"
+                >
+                  Revenir à l&apos;accueil
+                </Link>
+                <button
+                  className="fr-btn fr-btn--tertiary-no-outline fr-icon-printer-line fr-btn--icon-left fr-text--sm"
+                  onClick={() => window.print()}
+                  type="button"
+                >
+                  Imprimer
+                </button>
+              </div>
+            </div>
+            <FiltresSélectionnés
+              filtresActifs={filtresActifs}
+              territoiresSélectionnés={territoiresSélectionnés}
+            />
+            <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
+            <div className="chantiers">
+              {
+                chantiersFiltrés.map((chantier) => (
+                  <RapportDétailléChantier
+                    chantier={chantier}
+                    commentaires={publicationsGroupéesParChantier.commentaires[chantier.id] ?? []}
+                    décisionStratégique={publicationsGroupéesParChantier.décisionStratégique[chantier.id] ?? null}
+                    détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id] ?? []}
+                    indicateurs={indicateursGroupésParChantier[chantier.id] ?? []}
+                    key={chantier.id}
+                    objectifs={publicationsGroupéesParChantier.objectifs[chantier.id] ?? []}
+                    synthèseDesRésultats={publicationsGroupéesParChantier.synthèsesDesRésultats[chantier.id] ?? null}
+                  />
+                ))
+              }
             </div>
           </div>
-          <FiltresSélectionnés
-            filtresActifs={filtresActifs}
-            territoiresSélectionnés={territoiresSélectionnés}
-          />
-          <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
-          <div className="chantiers">
-            {
-              chantiersFiltrés.map((chantier) => (
-                <RapportDétailléChantier
-                  chantier={chantier}
-                  commentaires={publicationsGroupéesParChantier.commentaires[chantier.id] ?? []}
-                  décisionStratégique={publicationsGroupéesParChantier.décisionStratégique[chantier.id] ?? null}
-                  détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id] ?? []}
-                  indicateurs={indicateursGroupésParChantier[chantier.id] ?? []}
-                  key={chantier.id}
-                  objectifs={publicationsGroupéesParChantier.objectifs[chantier.id] ?? []}
-                  synthèseDesRésultats={publicationsGroupéesParChantier.synthèsesDesRésultats[chantier.id] ?? null}
-                />
-              ))
-            }
-          </div>
-        </div>
-      </main>
-    </PageRapportDétailléStyled>
+        </main>
+      </PageRapportDétailléStyled>
+    </PageImprimableConteneur>
   );
 }

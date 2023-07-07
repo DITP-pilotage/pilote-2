@@ -16,6 +16,10 @@ const FiltresSélectionnésStyled = styled.div`
     display: inline-block;
     width: 100%;
   }
+  
+  @media print {
+    display: none;
+  }
 `;
 
 export default FiltresSélectionnésStyled;
