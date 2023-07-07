@@ -10,6 +10,10 @@ const CartesStyled = styled.div`
   
   @media print {
     grid-template-columns: 1fr 1fr;
+    
+    .carte {
+      break-inside: avoid;
+    }
   }
 `;
 

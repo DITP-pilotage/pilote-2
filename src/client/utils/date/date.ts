@@ -5,7 +5,7 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-type FormatDeDate = 'MM/YYYY' | 'DD/MM/YYYY';
+type FormatDeDate = 'MM/YYYY' | 'DD/MM/YYYY' | 'DD/MM/YYYY [à] H[h]mm';
 
 export function formaterDate(dateISO: string | null | undefined, format: FormatDeDate) {
   if (!dateISO)

@@ -69,11 +69,6 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
         />
       </BarreLatérale>
       <main className='fr-pb-5w'>
-        <div className="texte-impression fr-mb-5w">
-          Pilote • Extrait de la page chantier généré le
-          {' '}
-          {new Date().toLocaleString('FR-fr')}
-        </div>
         <BoutonSousLigné
           classNameSupplémentaires="fr-link--icon-left fr-fi-arrow-right-line fr-sr-only-xl fr-m-2w"
           onClick={() => setEstOuverteBarreLatérale(true)}

@@ -125,19 +125,21 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           indicateurs.length > 0 &&
           <div className="fr-my-2w">
             <section className="rubrique indicateurs">
-              <Titre
-                baliseHtml='h2'
-                className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-              >
-                Indicateurs
-              </Titre>
-              <Indicateurs
-                détailsIndicateurs={détailsIndicateurs}
-                estInteractif={false}
-                indicateurs={indicateurs}
-                listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
-                typeDeRéforme='chantier'
-              />
+              <div>
+                <Titre
+                  baliseHtml='h2'
+                  className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                >
+                  Indicateurs
+                </Titre>
+                <Indicateurs
+                  détailsIndicateurs={détailsIndicateurs}
+                  estInteractif={false}
+                  indicateurs={indicateurs}
+                  listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}
+                  typeDeRéforme='chantier'
+                />
+              </div>
             </section>
           </div>
         }
@@ -146,17 +148,19 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           && territoireSélectionné!.maille === 'nationale' &&
           <div className="fr-my-2w">
             <section className="rubrique décisions-stratégiques">
-              <Titre
-                baliseHtml="h2"
-                className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
-              >
-                Décisions stratégiques
-              </Titre>
-              <DécisionsStratégiques
-                chantierId={chantier.id}
-                décisionStratégique={décisionStratégique}
-                estInteractif={false}
-              />
+              <div>
+                <Titre
+                  baliseHtml="h2"
+                  className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
+                >
+                  Décisions stratégiques
+                </Titre>
+                <DécisionsStratégiques
+                  chantierId={chantier.id}
+                  décisionStratégique={décisionStratégique}
+                  estInteractif={false}
+                />
+              </div>
             </section>
           </div>
         }
@@ -164,20 +168,22 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           commentaires !== null && (
             <div className="fr-my-2w">
               <section className="rubrique commentaires">
-                <Titre
-                  baliseHtml='h2'
-                  className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                >
-                  Commentaires du chantier
-                </Titre>
-                <Commentaires
-                  commentaires={commentaires}
-                  estInteractif={false}
-                  maille={territoireSélectionné!.maille}
-                  nomTerritoire={territoireSélectionné!.nomAffiché}
-                  réformeId={chantier.id}
-                  typesCommentaire={territoireSélectionné!.maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale}
-                />
+                <div>
+                  <Titre
+                    baliseHtml='h2'
+                    className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                  >
+                    Commentaires du chantier
+                  </Titre>
+                  <Commentaires
+                    commentaires={commentaires}
+                    estInteractif={false}
+                    maille={territoireSélectionné!.maille}
+                    nomTerritoire={territoireSélectionné!.nomAffiché}
+                    réformeId={chantier.id}
+                    typesCommentaire={territoireSélectionné!.maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale}
+                  />
+                </div>
               </section>
             </div>
           )

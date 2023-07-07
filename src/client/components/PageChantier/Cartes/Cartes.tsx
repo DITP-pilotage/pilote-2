@@ -29,7 +29,7 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
 
   return (
     <CartesStyled>
-      <div>
+      <div className='carte'>
         <Bloc>
           <section>
             <TitreInfobulleConteneur>
@@ -53,7 +53,7 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
           </section>
         </Bloc>
       </div>
-      <div>
+      <div className='carte'>
         <Bloc>
           <section>
             <TitreInfobulleConteneur>

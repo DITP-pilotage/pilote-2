@@ -1,13 +1,7 @@
 import styled from '@emotion/styled';
 
 const PublicationStyled = styled.section`
-  display: flex;
-  flex-direction: column;
-
-  form {
-    display: flex;
-    flex-direction: column;
-  }
+  break-inside: avoid;
 
   .actions {
     display: flex;
@@ -17,6 +11,6 @@ const PublicationStyled = styled.section`
   .bouton-modifier {
     border-radius: 4px
   }
-`;
+  `;
 
 export default PublicationStyled;

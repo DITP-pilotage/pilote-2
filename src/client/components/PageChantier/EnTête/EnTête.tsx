@@ -11,24 +11,24 @@ export default function PageChantierEnTête({
   afficheLeBoutonMiseAJourDonnee = false,
 }: PageChantierEnTêteProps) {
   return (
-    <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-4w fr-py-4w'>
+    <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-4w fr-py-2w'>
       <Link
         aria-label="Retour à l'accueil"
-        className="fr-link fr-fi-arrow-left-line fr-link--icon-left"
+        className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-mb-3w fr-mt-2w btn-retour"
         href='/'
       >
         Retour
       </Link>
       <Titre
         baliseHtml='h1'
-        className='fr-h2 fr-mb-1w  fr-mt-3w'
+        className='fr-h2 fr-mb-0'
       >
         {chantier.nom}
       </Titre>
       {
         !!afficheLeBoutonMiseAJourDonnee &&
           <Link
-            className='fr-btn fr-btn--primary fr-mr-2w'
+            className='fr-btn fr-btn--primary fr-mr-2w fr-mb-2w'
             href={`${chantier.id}/indicateurs`}
           >
             Mettre à jour les données

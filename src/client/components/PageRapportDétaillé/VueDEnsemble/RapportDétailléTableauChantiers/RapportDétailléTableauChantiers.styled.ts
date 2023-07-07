@@ -1,20 +1,15 @@
 import styled from '@emotion/styled';
 
 const RapportDétailléTableauChantiersStyled = styled.section`
-  display: grid;
   overflow-x: auto;
 
   table.tableau {
     display: table;
 
     tbody {
-      tr {
-        height: 4.7rem;
-
-        a {
-          text-decoration: none;
-          background: none;
-        }
+      a {
+        text-decoration: none;
+        background: none;
       }
 
       .ligne-chantier {

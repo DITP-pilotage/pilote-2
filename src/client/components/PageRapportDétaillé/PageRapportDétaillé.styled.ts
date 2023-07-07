@@ -2,6 +2,8 @@ import styled from '@emotion/styled';
 
 const PageRapportDétailléStyled = styled.div`
   main {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
     overflow-x: hidden;
   }
   
@@ -13,26 +15,22 @@ const PageRapportDétailléStyled = styled.div`
     display: flex;
   }
 
-  .texte-impression {
-    display: none;
-  }
-
   @media print {
     @page {
+      margin: 12mm 0; /* marges pour configuration de l'imprimante */
       size: 280mm 396mm;
     }
 
-    .fr-container {
-      width: 100%;
-      max-width: none;
-    }
+    margin: 12mm;
     
-    .texte-impression {
-      display: block;
-      width: 100%;
-      text-align: center
+    main {
+      padding: 0;
     }
 
+    .interrupteur-chantiers {
+      display: none;
+    }
+    
     table {
       overflow: hidden;
       
@@ -43,10 +41,6 @@ const PageRapportDétailléStyled = styled.div`
 
     .chantiers section {
       break-inside: avoid;
-    }
-
-    .barre-latérale, .fr-btn, .fr-link {
-      display: none;
     }
 
     .entête-rapport-détaillé {

@@ -52,10 +52,6 @@ const PageChantierStyled = styled.div`
     background: none;
   }
   
-  .texte-impression {
-    display: none;
-  }
-  
   .loader {
     height: 100vh;
   }
@@ -77,18 +73,18 @@ const PageChantierStyled = styled.div`
         "avancement   avancement"
         "responsables synthèse";
     }
-    
-    .texte-impression {
-      display: block;
-      width: 100%;
-      text-align: center
-    }
-    
-    .rubrique {
+
+    #avancement,
+    #responsables,
+    #cartes {
       break-inside: avoid;
     }
 
-    .barre-latérale, .fr-btn, .fr-link, .fr-accordion {
+    .rubrique {
+      display: block; /* pour que break-inside fasse effet */
+    }
+
+    .fr-accordion {
       display: none;
     }
   }

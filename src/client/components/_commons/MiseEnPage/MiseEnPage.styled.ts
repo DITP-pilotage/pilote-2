@@ -10,8 +10,8 @@ const MiseEnPageStyled = styled.div`
       margin: 1.5cm 1cm;
     }
     
-    .fr-header, .fr-footer{
-      display: none;
+    .barre-latérale, .fr-btn, .fr-link, .fr-header, .fr-footer {
+      display: none !important;
     }
     
     *::-webkit-scrollbar {
