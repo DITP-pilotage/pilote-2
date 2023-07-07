@@ -15,7 +15,6 @@ import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/us
 import PremièrePageImpressionRapportDétaillé from './PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
 import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
 
-
 export const htmlId = {
   listeDesChantiers: () => 'liste-des-chantiers',
   chantier: (chantierId: string) => `chantier-${chantierId}`,

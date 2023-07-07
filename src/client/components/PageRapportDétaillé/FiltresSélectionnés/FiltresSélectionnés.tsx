@@ -4,6 +4,15 @@ import FiltresSélectionnésCatégorie from './Catégorie/FiltresSélectionnésC
 import { FiltresSélectionnésProps } from './FiltresSélectionnés.interface';
 
 export default function FiltresSélectionnés({ territoiresSélectionnés, filtresActifs }: FiltresSélectionnésProps) {
+  const filtresCatégories = [
+    { nom: 'Territoire', filtres: [territoiresSélectionnés!.nom] },
+    { nom: 'Périmètres ministériels', filtres: filtresActifs.périmètresMinistériels.map(({ nom }) => nom) },
+    { nom: 'Axes', filtres: filtresActifs.axes.map(({ nom }) => nom) },
+    { nom: 'PPG', filtres: filtresActifs.ppg.map(({ nom }) => nom) },
+    { nom: 'Autres critères', filtres: filtresActifs.filtresTypologie.map(({ nom }) => nom) },
+    { nom: 'Alertes', filtres: filtresActifs.filtresAlerte.map(({ nom }) => nom) },
+  ];
+
   return (
     <FiltresSélectionnésStyled className='fr-mb-6w'>
       <Titre
@@ -13,30 +22,13 @@ export default function FiltresSélectionnés({ territoiresSélectionnés, filtr
         Contenu du rapport détaillé
       </Titre>
       <div className='filtres-sélectionnés__conteneur'>
-        <FiltresSélectionnésCatégorie
-          filtres={[territoiresSélectionnés!.nom]}
-          titre='Territoire'
-        />
-        <FiltresSélectionnésCatégorie
-          filtres={filtresActifs.périmètresMinistériels.map(({ nom }) => nom)}
-          titre='Périmètres ministériels'
-        />
-        <FiltresSélectionnésCatégorie
-          filtres={filtresActifs.axes.map(({ nom }) => nom)}
-          titre='Axes'
-        />
-        <FiltresSélectionnésCatégorie
-          filtres={filtresActifs.ppg.map(({ nom }) => nom)}
-          titre='PPG'
-        />
-        <FiltresSélectionnésCatégorie
-          filtres={filtresActifs.filtresTypologie.map(({ nom }) => nom)}
-          titre='Autres critères'
-        />
-        <FiltresSélectionnésCatégorie
-          filtres={filtresActifs.filtresAlerte.map(({ nom }) => nom)}
-          titre='Alertes'
-        />
+        { filtresCatégories.map(({ nom, filtres }) => (
+          <FiltresSélectionnésCatégorie
+            filtres={filtres}
+            key={nom}
+            titre={nom}
+          />
+        )) }
       </div>
     </FiltresSélectionnésStyled>
   );
