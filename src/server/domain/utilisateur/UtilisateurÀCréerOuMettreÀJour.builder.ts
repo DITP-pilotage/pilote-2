@@ -24,6 +24,13 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     this._email = faker.internet.email();
     this._profil = faker.helpers.arrayElement(profilsCodes);
     this._fonction = 'fonction';
+    this._habilitations = {
+      lecture: {
+        chantiers: [],
+        périmètres: [],
+        territoires: [],
+      },
+    };
   }
 
   avecEmail(email: UtilisateurÀCréerOuMettreÀJour['email']): UtilisateurÀCréerOuMettreÀJourBuilder {
@@ -37,29 +44,17 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
   }
 
   private _avecHabilitationLectureChantiers(chantierIds: Chantier['id'][]): UtilisateurÀCréerOuMettreÀJourBuilder {
-    if (!this._habilitations) {
-      this._habilitations = { lecture: {} };
-    }
-
-    this._habilitations.lecture!.chantiers = chantierIds;
+    this._habilitations.lecture.chantiers = chantierIds;
     return this;
   }
 
   private _avecHabilitationLectureTerritoires(terrioiresCodes: Territoire['code'][]): UtilisateurÀCréerOuMettreÀJourBuilder {
-    if (!this._habilitations) {
-      this._habilitations = { lecture: {} };
-    }
-
-    this._habilitations.lecture!.territoires = terrioiresCodes;
+    this._habilitations.lecture.territoires = terrioiresCodes;
     return this;
   }
 
   private _avecHabilitationLecturePérimètres(périmètresIds: PérimètreMinistériel['id'][]): UtilisateurÀCréerOuMettreÀJourBuilder {
-    if (!this._habilitations) {
-      this._habilitations = { lecture: {} };
-    }
-
-    this._habilitations.lecture!.périmètres = périmètresIds;
+    this._habilitations.lecture.périmètres = périmètresIds;
     return this;
   }
 

@@ -21,7 +21,7 @@ export default function PageAdminUtilisateurs() {
   const filtresActifs = filtresUtilisateursActifsStore();
   const réinitialiserFiltres = réinitialiser();
   
-  const { data: utilisateurs, isLoading } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
+  const { data: utilisateurs, isFetching } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
     filtres: filtresActifs,
   });
 
@@ -92,7 +92,7 @@ export default function PageAdminUtilisateurs() {
             </div>
           </div>
           {
-            isLoading  ? <Loader /> :
+            isFetching ? <Loader /> :
             <Bloc>
               { !!utilisateurs && <TableauAdminUtilisateurs utilisateurs={utilisateurs} /> }
             </Bloc>

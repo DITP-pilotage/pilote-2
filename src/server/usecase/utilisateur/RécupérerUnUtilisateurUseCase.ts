@@ -16,7 +16,7 @@ export default class RécupérerUnUtilisateurUseCase {
     if (!utilisateur) {
       return null;
     }
-    
+
     const peutConsulterLUtilisateur = habilitation.peutConsulterUnUtilisateur(
       utilisateur.habilitations.lecture.chantiers,
       utilisateur.habilitations.lecture.territoires);

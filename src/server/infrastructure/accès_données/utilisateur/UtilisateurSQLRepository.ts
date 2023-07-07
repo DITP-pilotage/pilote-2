@@ -135,7 +135,11 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
           profil: true,
           habilitation: true,
         },
+        orderBy: {
+          date_modification: 'desc',
+        },
       },
+      
     );
 
     for (const u of utilisateurs) {

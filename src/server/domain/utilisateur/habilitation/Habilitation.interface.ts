@@ -38,10 +38,10 @@ export type Habilitations = Record<ScopeUtilisateurs, HabilitationUtilisateurs>
 & Record<ScopeProjetsStructurants, HabilitationProjetsStructurants>;
 
 export type HabilitationsÀCréerOuMettreÀJour = {
-  lecture?: {
-    chantiers?: Chantier['id'][]
-    territoires?: Territoire['code'][]
-    périmètres?: PérimètreMinistériel['id'][]
+  lecture: {
+    chantiers: Chantier['id'][]
+    territoires: Territoire['code'][]
+    périmètres: PérimètreMinistériel['id'][]
   }
 };
 

@@ -1,13 +1,16 @@
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
-import { UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { UtilisateurÀCréerOuMettreÀJour, profilsDépartementaux, profilsRégionaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import { Habilitations, HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import créerValidateurHabilitations from '@/validation/habilitation';
 import { codesTerritoiresDROM } from '@/validation/utilisateur';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
+import { Territoire } from '@/server/domain/territoire/Territoire.interface';
+import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 
 export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   constructor(
@@ -15,32 +18,115 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     private readonly utilisateurRepository: UtilisateurRepository = dependencies.getUtilisateurRepository(),
     private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
     private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
+    private readonly périmètreMinistérielRepository: PérimètreMinistérielRepository = dependencies.getPérimètreMinistérielRepository(),
   ) {}
 
-  async _validerLesHabilitations(utilisateur: UtilisateurÀCréerOuMettreÀJour) {
-    const territoires = await this.territoireRepository.récupérerTous();
-    const chantiers = await this.chantierRepository.récupérerChantiersSynthétisés();
+  _déterminerChantiersAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
+    const touslesChantiersIds = new Set(chantiers.map(chantier => chantier.id));
+    const touslesChantiersTerritorialisésIds = new Set(chantiers.filter(chantier => chantier.estTerritorialisé).map(chantier => chantier.id));
 
-    const validateurHabilitations = créerValidateurHabilitations(territoires, chantiers);
-    validateurHabilitations.parse({ profil: utilisateur.profil, habilitations: utilisateur.habilitations });
+    const chantiersPasEnDoublonsAvecLesPérimètres = utilisateur.habilitations.lecture.chantiers.filter(chantierId => {
+      const chantier = chantiers.find(c => c.id === chantierId);
+      return utilisateur.habilitations.lecture.périmètres.every(p => !chantier?.périmètreIds.includes(p));
+    });
+
+    if (['SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(utilisateur.profil)) {
+      return chantiersPasEnDoublonsAvecLesPérimètres.filter(chantierId => touslesChantiersTerritorialisésIds.has(chantierId));
+    }
+
+    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET'].includes(utilisateur.profil))
+      return chantiersPasEnDoublonsAvecLesPérimètres.filter(chantierId => touslesChantiersIds.has(chantierId));
+
+    return chantiersPasEnDoublonsAvecLesPérimètres;
+  }
+
+  _déterminerChantiersAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
+    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM'].includes(utilisateur.profil))
+      return this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
+
+    return [];
+  }
+
+  _déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
+    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(utilisateur.profil))
+      return this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
+    
+    return [];
+  }
+
+  _déterminerTerritoiresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
+    if (utilisateur.profil === 'DROM') 
+      return codesTerritoiresDROM;
+
+    if (profilsRégionaux.includes(utilisateur.profil)) {
+      const régionsSaisies = utilisateur.habilitations.lecture.territoires.filter(territoireCode => territoireCode.startsWith('REG'));
+      const départementsEnfantsDesRégionsSaisies = régionsSaisies.flatMap(régionCode => territoires.filter(t => t.codeParent === régionCode).map(d => d.code));
+
+      return [...régionsSaisies, ...départementsEnfantsDesRégionsSaisies];
+    }
+
+    if (profilsDépartementaux.includes(utilisateur.profil))
+      return utilisateur.habilitations.lecture.territoires.filter(territoireCode => territoireCode.startsWith('DEPT'));
+
+    return [];
+  }
+
+  _déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
+    if (['DITP_PILOTAGE', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM'].includes(utilisateur.profil))
+      return ['NAT-FR'];
+
+    if (profilsRégionaux.includes(utilisateur.profil) || profilsDépartementaux.includes(utilisateur.profil))
+      return this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires);
+    
+    return [];
+  }
+
+  _déterminerPérimètresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+    const tousLesPérimètresIds = new Set(périmètres.map(p => p.id));
+
+    if (utilisateur.profil === 'DROM') 
+      return ['PER-018'];
+    
+    if (['CABINET_MINISTERIEL', 'DIR_ADMIN_CENTRALE', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'DROM'].includes(utilisateur.profil))
+      return utilisateur.habilitations.lecture.périmètres.filter(p => tousLesPérimètresIds.has(p));
+
+    return [];
+  }
+
+  _déterminerPérimètresAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM'].includes(utilisateur.profil))
+      return this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres);
+    
+    return [];
+  }
+
+  _déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'DROM'].includes(utilisateur.profil))
+      return this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres);
+      
+    return [];
   }
 
   async _définirLesHabilitations(utilisateur: UtilisateurÀCréerOuMettreÀJour): Promise<HabilitationsÀCréerOuMettreÀJourCalculées> {
+    const chantiers = await this.chantierRepository.récupérerChantiersSynthétisés();
+    const territoires = await this.territoireRepository.récupérerTous();
+    const périmètres = await this.périmètreMinistérielRepository.récupérerTous();
+      
     return {
       lecture: {
-        chantiers: utilisateur.habilitations?.lecture?.chantiers ?? [],
-        territoires: utilisateur.profil === 'DROM' ? codesTerritoiresDROM : utilisateur.habilitations?.lecture?.territoires ?? [],
-        périmètres:  utilisateur.profil === 'DROM' ? ['PER-018'] : utilisateur.habilitations?.lecture?.périmètres ?? [],
+        chantiers: this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers),
+        territoires: this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires),
+        périmètres: this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres),
       },
       'saisie.indicateur': {
-        chantiers: [],
+        chantiers: this._déterminerChantiersAccessiblesEnSaisieIndicateur(utilisateur, chantiers),
         territoires: [],
-        périmètres: [],
+        périmètres: this._déterminerPérimètresAccessiblesEnSaisieIndicateur(utilisateur, périmètres),
       },
       'saisie.commentaire': {
-        chantiers: [],
-        territoires: ['DITP_PILOTAGE', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM'].includes(utilisateur.profil) ? ['NAT-FR'] : utilisateur.habilitations?.lecture?.territoires ?? [],
-        périmètres: [],
+        chantiers: this._déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur, chantiers),
+        territoires: this._déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur, territoires),
+        périmètres: this._déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur, périmètres),
       },
     };
   }
@@ -56,7 +142,6 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   }
 
   async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteurModification: string, utilisateurExistant: boolean, habilitations: Habilitations): Promise<void> {
-    await this._validerLesHabilitations(utilisateur);
     const habilitationsFormatées = await this._définirLesHabilitations(utilisateur);
 
     const habilitation = new Habilitation(habilitations);
@@ -66,7 +151,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
 
     await this.utilisateurRepository.créerOuMettreÀJour({ ...utilisateur, habilitations: habilitationsFormatées }, auteurModification);
 
-    if (process.env.IMPORT_KEYCLOAK_URL) {
+    if (process.env.IMPORT_KEYCLOAK_URL && !utilisateurExistant) {
       const utilisateursPourIAM = [{ nom: utilisateur.nom, prénom: utilisateur.prénom, email: utilisateur.email }];
       await this.utilisateurIAMRepository.ajouteUtilisateurs(utilisateursPourIAM);
     }

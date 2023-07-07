@@ -20,7 +20,7 @@ export default function useRécapitulatifUtilisateur() {
       if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
         setAlerte({
           type: 'erreur',
-          titre :'Une erreur est survenue, veuillez réessayer ultérieurement.',
+          titre : error.message,
         });
       }
     },
@@ -34,7 +34,7 @@ export default function useRécapitulatifUtilisateur() {
       if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
         setAlerte({
           type: 'erreur',
-          titre :'Une erreur est survenue, veuillez réessayer ultérieurement.',
+          titre : error.message,
         });
       }
     },

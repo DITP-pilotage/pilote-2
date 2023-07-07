@@ -53,7 +53,7 @@ export type UtilisateurÀCréerOuMettreÀJour =  {
   email: string
   fonction: string | null
   profil: ProfilCode
-  habilitations?: HabilitationsÀCréerOuMettreÀJour
+  habilitations: HabilitationsÀCréerOuMettreÀJour
 };
 
 export default Utilisateur;
