@@ -10,8 +10,11 @@ import PageRapportDétailléProps from '@/components/PageRapportDétaillé/PageR
 import { RapportDétailléVueDEnsemble } from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble';
 import useChantiersFiltrés from '@/components/useChantiersFiltrés';
 import RapportDétailléChantier from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier';
-import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { actionsTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PremièrePageImpressionRapportDétaillé from './PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
+import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
+
 
 export const htmlId = {
   listeDesChantiers: () => 'liste-des-chantiers',
@@ -27,6 +30,9 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
   }
 
   const { chantiersFiltrés } = useChantiersFiltrés(chantiers);
+  const filtresActifs = filtresActifsStore();
+  const territoiresSélectionnés = territoireSélectionnéTerritoiresStore();
+
   return (
     <PageRapportDétailléStyled>
       <main className="fr-py-4w">
@@ -61,6 +67,10 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
               </button>
             </div>
           </div>
+          <FiltresSélectionnés
+            filtresActifs={filtresActifs}
+            territoiresSélectionnés={territoiresSélectionnés}
+          />
           <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
           <div className="chantiers">
             {
