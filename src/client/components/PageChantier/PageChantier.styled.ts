@@ -52,10 +52,6 @@ const PageChantierStyled = styled.div`
     background: none;
   }
   
-  .texte-impression {
-    display: none;
-  }
-  
   .loader {
     height: 100vh;
   }
@@ -78,17 +74,11 @@ const PageChantierStyled = styled.div`
         "responsables synthèse";
     }
     
-    .texte-impression {
-      display: block;
-      width: 100%;
-      text-align: center
-    }
-    
     .rubrique {
       break-inside: avoid;
     }
 
-    .barre-latérale, .fr-btn, .fr-link, .fr-accordion {
+    .fr-accordion {
       display: none;
     }
   }

@@ -36,19 +36,9 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
 
   return (
     <PageImprimableConteneur
-      entête={
-        <div className="texte-impression fr-mb-5w">
-          Pilote  •  Rapport détaillé généré le
-          {' '}
-          {formaterDate(new Date().toISOString(), 'DD/MM/YYYY [à] H[h]mm')}
-        </div>
-      }
+      entête={`Pilote  •  Rapport détaillé généré le ${formaterDate(new Date().toISOString(), 'DD/MM/YYYY [à] H[h]mm')}`}
       pageDeGarde={<PremièrePageImpressionRapportDétaillé />}
-      piedDePage={
-        <p>
-          www.pilote.modernisation.gouv.fr
-        </p>
-      }
+      piedDePage="www.pilote.modernisation.gouv.fr"
     >
       <PageRapportDétailléStyled>
         <main className="fr-py-4w">

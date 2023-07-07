@@ -13,25 +13,10 @@ const PageRapportDétailléStyled = styled.div`
     display: flex;
   }
 
-  .texte-impression {
-    display: none;
-  }
-
   @media print {
     @page {
       margin: 12mm;
       size: 280mm 396mm;
-    }
-
-    .fr-container {
-      width: 100%;
-      max-width: none;
-    }
-    
-    .texte-impression {
-      display: block;
-      width: 100%;
-      text-align: center
     }
 
     table {
@@ -44,10 +29,6 @@ const PageRapportDétailléStyled = styled.div`
 
     .chantiers section {
       break-inside: avoid;
-    }
-
-    .barre-latérale, .fr-btn, .fr-link {
-      display: none;
     }
 
     .entête-rapport-détaillé {

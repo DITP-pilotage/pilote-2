@@ -42,7 +42,7 @@ const PageProjetStructurantStyled = styled.div`
       break-inside: avoid;
     }
 
-    .barre-latérale, .fr-btn, .fr-link, .fr-accordion {
+    .fr-accordion {
       display: none;
     }
   }
