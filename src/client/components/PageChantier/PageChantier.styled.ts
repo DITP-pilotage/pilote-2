@@ -75,8 +75,8 @@ const PageChantierStyled = styled.div`
     }
 
     #avancement,
-    #responsables
-    {
+    #responsables,
+    #cartes {
       break-inside: avoid;
     }
 

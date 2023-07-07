@@ -36,14 +36,14 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
           Vue d&apos;ensemble
         </Titre>
       </Encart>
-      <div className="fr-grid-row fr-grid-row--gutters fr-mt-2w">
-        <div className="fr-col-12 fr-col-lg-6">
+      <div className="fr-mt-3w avancements-météos-carto">
+        <div>
           <Bloc>
             <section>
               <TitreInfobulleConteneur>
                 <Titre
                   baliseHtml="h2"
-                  className="fr-text--lg fr-mb-0 fr-py-1v"
+                  className="fr-text--lg fr-mb-2w fr-py-1v"
                   estInline
                 >
                   Taux d’avancement moyen
@@ -72,7 +72,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
             </section>
           </Bloc>
         </div>
-        <div className="fr-col-12 fr-col-lg-6">
+        <div>
           <Bloc>
             <section>
               <Titre
