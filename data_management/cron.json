@@ -4,7 +4,7 @@
       "command": "0 7-19/2 * * * [ \"$SHOULD_RUN_DATA_JOBS\" = \"true\" ] && python3 scripts/__main__.py False"
     },
     {
-      "command": "0 1 * * * [ \"$SHOULD_RUN_DATA_JOBS\" = \"true\" ] && python3 scripts/__main__.py True"
+      "command": "0 10/12 * * * [ \"$SHOULD_RUN_DATA_JOBS\" = \"true\" ] && python3 scripts/__main__.py True"
     }
   ]
 }

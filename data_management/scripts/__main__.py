@@ -15,7 +15,7 @@ def if_error_print_it_and_exit(returncode):
 
 
 def main(night) -> int:
-    night = False
+    night = sys.argv[1]
     if night == False :
         for file in [
             'scripts/1_dump_dfakto.sh',
