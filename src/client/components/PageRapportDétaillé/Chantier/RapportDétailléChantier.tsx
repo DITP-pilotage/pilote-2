@@ -24,7 +24,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
 
   return (
     <RapportDétailléChantierStyled
-      className="fr-mt-4w"
+      className="fr-mt-4w fr-pb-4w"
       id={htmlId.chantier(chantier.id)}
     >
       <Link
