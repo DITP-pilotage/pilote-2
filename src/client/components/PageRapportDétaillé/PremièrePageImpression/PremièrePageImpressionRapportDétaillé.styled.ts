@@ -25,7 +25,6 @@ display: none;
       filter: none;
     }
 
-
     .date {
       position: absolute;
       bottom: 0;

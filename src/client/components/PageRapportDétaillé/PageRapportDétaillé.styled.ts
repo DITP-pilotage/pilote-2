@@ -19,6 +19,7 @@ const PageRapportDétailléStyled = styled.div`
 
   @media print {
     @page {
+      margin: 12mm;
       size: 280mm 396mm;
     }
 

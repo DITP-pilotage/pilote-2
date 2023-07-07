@@ -47,7 +47,7 @@ export default function PageRapportDétaillé({ chantiers, indicateursGroupésPa
               baliseHtml="h1"
               className="fr-h2"
             >
-              {`Rapport détaillé : ${chantiersFiltrés.length} chantiers`}
+              {`Rapport détaillé : ${chantiersFiltrés.length} ${chantiersFiltrés.length > 1 ? 'chantiers' : 'chantier'}`}
             </Titre>
             <div>
               <Link

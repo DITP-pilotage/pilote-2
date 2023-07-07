@@ -16,7 +16,10 @@ export default function FiltresSélectionnésCatégorie({ titre, filtres }: Filt
       { !estVide &&
         <ul>
           {filtres.map(filtre => (
-            <li key={filtre}>
+            <li
+              className='fr-text--sm fr-mb-1v texte-gris'
+              key={filtre}
+            >
               <span
                 aria-hidden="true"
                 className='fr-icon-check-line'

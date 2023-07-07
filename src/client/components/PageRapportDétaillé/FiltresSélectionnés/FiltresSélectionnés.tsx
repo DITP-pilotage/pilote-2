@@ -5,7 +5,7 @@ import { FiltresSélectionnésProps } from './FiltresSélectionnés.interface';
 
 export default function FiltresSélectionnés({ territoiresSélectionnés, filtresActifs }: FiltresSélectionnésProps) {
   const filtresCatégories = [
-    { nom: 'Territoire', filtres: [territoiresSélectionnés!.nom] },
+    { nom: 'Territoire', filtres: [territoiresSélectionnés!.nomAffiché] },
     { nom: 'Périmètres ministériels', filtres: filtresActifs.périmètresMinistériels.map(({ nom }) => nom) },
     { nom: 'Axes', filtres: filtresActifs.axes.map(({ nom }) => nom) },
     { nom: 'PPG', filtres: filtresActifs.ppg.map(({ nom }) => nom) },
