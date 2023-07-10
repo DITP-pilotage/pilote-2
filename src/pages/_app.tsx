@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import '@gouvfr/dsfr/dist/core/core.min.css';
+import '@gouvfr/dsfr/dist/component/link/link.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-design/icons-design.min.css';

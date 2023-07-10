@@ -49,4 +49,8 @@ export const validationFiltresPourListeUtilisateur = z.object({
   }),
 });
 
+export const validationSupprimerUtilisateur = z.object({
+  email: z.string().email(),
+});
+
 export const codesTerritoiresDROM = ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976'];
