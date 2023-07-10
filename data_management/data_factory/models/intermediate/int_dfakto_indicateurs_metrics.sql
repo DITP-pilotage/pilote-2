@@ -31,7 +31,7 @@ historique_valeur_actuelle_transpose_par_indicateur_et_maille AS (
 SELECT fact_progress_indicateurs.tree_node_id,
     fact_progress_indicateurs.avancement_borne AS objectif_taux_avancement,
     fact_progress_indicateurs.valeur_cible_globale AS objectif_valeur_cible,
-    to_char(extract(year FROM fact_progress_indicateurs.date_valeur_cible_globale), '9999') AS objectif_date_valeur_cible,
+    fact_progress_indicateurs.date_valeur_cible_globale AS objectif_date_valeur_cible,
     fact_progress_indicateurs.date_valeur_actuelle,
     fact_progress_indicateurs.date_valeur_initiale,
     fact_progress_indicateurs.valeur_actuelle,

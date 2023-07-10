@@ -76,7 +76,7 @@ export default class IndicateurRowBuilder {
     this._chantierId = chantierGénéré.id;
     this._valeurCible = détailsIndicateurGénéré.valeurCible;
     this._tauxAvancementCible = détailsIndicateurGénéré.avancement.global;
-    this._dateValeurCible = détailsIndicateurGénéré.dateValeurCible;
+    this._dateValeurCible = détailsIndicateurGénéré.dateValeurCible !== null ? new Date(détailsIndicateurGénéré.dateValeurCible) : null;
     this._typeId = indicateurGénéré.type;
     this._typeNom = `nom ${indicateurGénéré.type}`;
     this._estBaromètre = générerPeutÊtreNull(0.2, faker.datatype.boolean());
