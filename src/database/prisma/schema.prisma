@@ -88,6 +88,7 @@ model indicateur {
   objectif_valeur_cible          Float?
   objectif_taux_avancement       Float?
   objectif_date_valeur_cible     String?
+  objectif_date_valeur_cible_2   DateTime?  @db.Date
   type_id                        String?
   type_nom                       String?
   est_barometre                  Boolean?
