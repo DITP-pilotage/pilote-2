@@ -22,7 +22,7 @@ export default function RécapitulatifUtilisateur({ auClicBoutonRetourCallback, 
             />
           </div>
       }
-      <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
+      <div className="fr-grid-row fr-mt-4w">
         <Bouton
           className='fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line fr-mr-2w'
           label="Retour"
@@ -33,7 +33,7 @@ export default function RécapitulatifUtilisateur({ auClicBoutonRetourCallback, 
           onClick={() => envoyerFormulaireUtilisateur(utilisateurExistant)}
         />
       </div>
-      <div className="fr-grid-row fr-grid-row--right fr-mt-3w">
+      <div className="fr-grid-row fr-mt-3w">
         <Link 
           href='/admin/utilisateurs'
         >

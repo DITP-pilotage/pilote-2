@@ -94,9 +94,18 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     }
   }
 
+  async supprimer(email: string): Promise<void> {
+    await this._prisma.utilisateur.delete({ 
+      where: { email: email.toLowerCase() }, 
+      include: { 
+        habilitation: true, 
+      },
+    });
+  }
+
   async récupérer(email: string): Promise<Utilisateur | null> {
     const row = await this._prisma.utilisateur.findUnique({ 
-      where: { email }, 
+      where: { email: email.toLowerCase() }, 
       include: { 
         profil: true, 
         habilitation: true, 

@@ -1,5 +1,4 @@
 /* eslint-disable react/jsx-max-depth */
-import '@gouvfr/dsfr/dist/component/link/link.min.css';
 import '@gouvfr/dsfr/dist/component/badge/badge.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-business/icons-business.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';

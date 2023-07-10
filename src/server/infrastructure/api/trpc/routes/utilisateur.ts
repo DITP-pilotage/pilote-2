@@ -1,10 +1,11 @@
 import { créerRouteurTRPC, procédureProtégée, vérifierSiLeCSRFEstValide } from '@/server/infrastructure/api/trpc/trpc';
-import { validationFiltresPourListeUtilisateur, validationInfosBaseUtilisateur, validationInfosHabilitationsUtilisateur } from '@/validation/utilisateur';
+import { validationFiltresPourListeUtilisateur, validationInfosBaseUtilisateur, validationInfosHabilitationsUtilisateur, validationSupprimerUtilisateur } from '@/validation/utilisateur';
 import { zodValidateurCSRF } from '@/validation/publication';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import RécupérerListeUtilisateursUseCase from '@/server/usecase/utilisateur/RécupérerListeUtilisateursUseCase';
 import FiltrerListeUtilisateursUseCase from '@/server/usecase/utilisateur/FiltrerListeUtilisateursUseCase';
 import CréerOuMettreÀJourUnUtilisateurUseCase from '@/server/usecase/utilisateur/CréerOuMettreÀJourUnUtilisateurUseCase';
+import SupprimerUnUtilisateurUseCase from '@/server/usecase/utilisateur/SupprimerUnUtilisateurUseCase';
 
 export const utilisateurRouter = créerRouteurTRPC({
   'créer': procédureProtégée
@@ -21,7 +22,12 @@ export const utilisateurRouter = créerRouteurTRPC({
       const auteurModification = ctx.session.user.name ?? '';
       await new CréerOuMettreÀJourUnUtilisateurUseCase().run(input, auteurModification, true, ctx.session.habilitations);
     }),
-
+  supprimer: procédureProtégée
+    .input(validationSupprimerUtilisateur.merge(zodValidateurCSRF))
+    .mutation(async ({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      await new SupprimerUnUtilisateurUseCase().run(input.email, ctx.session.profil);
+    }),
   récupérerUtilisateursFiltrés: procédureProtégée
     .input(validationFiltresPourListeUtilisateur)
     .query(async ({ ctx, input }): Promise<Utilisateur[]> => {

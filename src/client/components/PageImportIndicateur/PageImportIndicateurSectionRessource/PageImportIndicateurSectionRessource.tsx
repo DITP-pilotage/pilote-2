@@ -4,7 +4,6 @@ import PageImportIndicateurSectionRessourceStyled
   from '@/components/PageImportIndicateur/PageImportIndicateurSectionRessource/PageImportIndicateurSectionRessource.styled';
 import { wording } from '@/client/utils/i18n/i18n';
 import '@gouvfr/dsfr/dist/component/download/download.min.css';
-import '@gouvfr/dsfr/dist/component/link/link.min.css';
 
 export function PageImportIndicateurSectionRessource() {
   return (

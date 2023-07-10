@@ -46,6 +46,7 @@ export default function PageAdminUtilisateurs() {
         titre: 'Le compte a bien été supprimé.',
         type: 'erreur',
       });
+      window.scroll(0, 0);
     }
   }, [router]);
   

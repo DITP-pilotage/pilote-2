@@ -23,6 +23,23 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
     assert(this.clientSecret);
   }
 
+  async supprime(email: string): Promise<void> {
+    await this.loginKcAdminClient();
+
+    const utilisateur = await this.kcAdminClient.users.findOne({
+      realm: KEYCLOAK_REALM,
+      email: email,
+    }); 
+
+    if (utilisateur.length > 0) {
+      await this.kcAdminClient.users.del({
+        realm: KEYCLOAK_REALM,
+        id: utilisateur[0].id,
+      }); 
+      logger.info(`Utilisateur ${email} supprimé.`);
+    }
+  }
+
   async ajouteUtilisateurs(utilisateurs: UtilisateurPourIAM[]): Promise<void> {
     await this.loginKcAdminClient();
     for (const record of utilisateurs) {
