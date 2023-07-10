@@ -14,10 +14,11 @@ def if_error_print_it_and_exit(returncode):
         sys.exit(returncode)
 
 
-def main(night) -> int:
+def main() -> int:
     night = sys.argv[1]
-    if night == False :
+    if night == False:
         for file in [
+            'scripts/0_install_dbt_deps.sh',
             'scripts/1_dump_dfakto.sh',
             'scripts/2_fill_tables_ppg_metadata.sh',
             'scripts/5_fill_tables_staging.sh',
@@ -28,19 +29,19 @@ def main(night) -> int:
             if_error_print_it_and_exit(returncode)
 
         return returncode
-    else :
+    else:
         for file in [
+            'scripts/0_install_dbt_deps.sh',
             'scripts/1_dump_dfakto.sh',
             'scripts/2_fill_tables_ppg_metadata.sh',
             'scripts/5_fill_tables_staging.sh',
-            'scripts/8_fill_tables_public_with_truncate.sh'
+            'scripts/7_fill_tables_public_with_truncate.sh'
         ]:
             shellscript = subprocess.Popen([file], stdin=subprocess.PIPE)
             returncode = shellscript.wait()
             if_error_print_it_and_exit(returncode)
 
         return returncode
-
 
 
 if __name__ == '__main__':

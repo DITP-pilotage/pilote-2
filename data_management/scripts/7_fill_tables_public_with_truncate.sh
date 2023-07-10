@@ -15,9 +15,6 @@ then
   fi
 fi
 
-PROJECT_DIR=data_factory
-dbt deps --project-dir $PROJECT_DIR
-
 psql "$DATABASE_URL" -c "TRUNCATE TABLE public.axe"
 psql "$DATABASE_URL" -c "TRUNCATE TABLE public.perimetre"
 psql "$DATABASE_URL" -c "TRUNCATE TABLE public.ppg"
@@ -30,4 +27,5 @@ psql "$DATABASE_URL" -c "TRUNCATE TABLE public.objectif_projet_structurant"
 psql "$DATABASE_URL" -c "TRUNCATE TABLE public.commentaire_projet_structurant"
 psql "$DATABASE_URL" -c "TRUNCATE TABLE public.perimetre_projet_structurant"
 
+PROJECT_DIR=data_factory
 dbt run --project-dir $PROJECT_DIR --select intermediate exposition
