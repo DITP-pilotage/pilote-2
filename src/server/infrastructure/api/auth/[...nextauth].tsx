@@ -181,6 +181,7 @@ if (config.isUsingDevCredentials) {
 
 export const authOptions: AuthOptions = {
   providers,
+  debug: config.nextAuthDebug,
   session: sessionOptions,
   callbacks: {
     async jwt({ token, account, user, profile, isNewUser }: any) {
