@@ -3,7 +3,6 @@ SELECT m_indicateurs.id,
     m_indicateurs.chantier_id,
     d_indicateurs.objectif_valeur_cible as objectif_valeur_cible,
     d_indicateurs.objectif_taux_avancement as objectif_taux_avancement,
-    d_indicateurs.objectif_date_valeur_cible as objectif_date_valeur_cible,
     m_indicateurs.indicateur_type_id as type_id,
     indicateur_types.nom AS type_nom,
     m_indicateurs.est_barometre,
@@ -23,7 +22,8 @@ SELECT m_indicateurs.id,
     CONCAT(chantiers_ayant_des_indicateurs.maille, '-', chantiers_ayant_des_indicateurs.code_insee) as territoire_code,
     parametrage_indicateurs.poids_pourcent_dept as ponderation_dept,
     parametrage_indicateurs.poids_pourcent_nat as ponderation_nat,
-    parametrage_indicateurs.poids_pourcent_reg as ponderation_reg
+    parametrage_indicateurs.poids_pourcent_reg as ponderation_reg,
+    d_indicateurs.objectif_date_valeur_cible as objectif_date_valeur_cible
 FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
 	JOIN {{ ref('int_chantiers_with_mailles_and_territoires') }} chantiers_ayant_des_indicateurs ON m_indicateurs.chantier_id = chantiers_ayant_des_indicateurs.id
     LEFT JOIN {{ ref('stg_ppg_metadata__indicateur_types') }} indicateur_types ON indicateur_types.id = m_indicateurs.indicateur_type_id
