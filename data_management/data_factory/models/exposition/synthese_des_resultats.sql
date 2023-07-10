@@ -3,8 +3,8 @@ SELECT
                  ['chantier_id',
                  'maille',
                  'code_insee',
-                 'date'] --TODO date_meteo a ajouter lorsqu'elle sera présente dans l'import massif
-             ) }} as id,
+                 'date']
+             ) }} as id, --TODO date_meteo a ajouter lorsqu'elle sera présente dans l'import massif
     chantier_id,
     COALESCE(maille, 'NAT') as maille, --TODO supprimer le coalesce car la maille est sensé etre renseignée
     COALESCE(code_insee, 'FR') as code_insee, --TODO supprimer le coalesce car le code_insee est sensé etre renseigné
