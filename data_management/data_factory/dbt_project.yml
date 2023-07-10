@@ -107,6 +107,9 @@ models:
       objectif_projet_structurant:
         +unique_key:
           - 'id'
+      synthese_des_resultats:
+        +unique_key:
+          - 'id'
       synthese_des_resultats_projet_structurant:
         +unique_key:
           - 'id'
