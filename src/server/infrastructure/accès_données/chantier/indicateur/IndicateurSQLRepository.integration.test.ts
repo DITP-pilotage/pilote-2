@@ -102,7 +102,7 @@ describe('IndicateurSQLRepository', () => {
           .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1001)
           .avecValeurCible(1790)
-          .avecDateValeurCible('2026-05-01')
+          .avecDateValeurCible(new Date('2026-05-01'))
           .avecTauxAvancementCible(40)
           .build(),
 
@@ -116,7 +116,7 @@ describe('IndicateurSQLRepository', () => {
           .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1001)
           .avecValeurCible(1790)
-          .avecDateValeurCible('2026-05-01')
+          .avecDateValeurCible(new Date('2026-05-01'))
           .avecTauxAvancementCible(40)
           .build(),
       ];
@@ -137,7 +137,7 @@ describe('IndicateurSQLRepository', () => {
               valeurs: [1, 4, 6],
               dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
               valeurCible: 1790,
-              dateValeurCible: '2026-05-01',
+              dateValeurCible: '2026-05-01T00:00:00.000Z',
               avancement: {
                 global: 40,
                 annuel: null,
@@ -150,7 +150,7 @@ describe('IndicateurSQLRepository', () => {
               valeurs: [1, 4, 6],
               dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
               valeurCible: 1790,
-              dateValeurCible: '2026-05-01',
+              dateValeurCible: '2026-05-01T00:00:00.000Z',
               avancement: {
                 global: 40,
                 annuel: null,
@@ -189,7 +189,7 @@ describe('IndicateurSQLRepository', () => {
           .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1000)
           .avecValeurCible(1789)
-          .avecDateValeurCible('2026-05-01')
+          .avecDateValeurCible(new Date('2026-05-01'))
           .avecTauxAvancementCible(20)
           .build(),
 
@@ -203,7 +203,7 @@ describe('IndicateurSQLRepository', () => {
           .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1001)
           .avecValeurCible(1790)
-          .avecDateValeurCible('2026-05-01')
+          .avecDateValeurCible(new Date('2026-05-01'))
           .avecTauxAvancementCible(40)
           .build(),
 
@@ -217,7 +217,7 @@ describe('IndicateurSQLRepository', () => {
           .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1001)
           .avecValeurCible(1790)
-          .avecDateValeurCible('2026-05-01')
+          .avecDateValeurCible(new Date('2026-05-01'))
           .avecTauxAvancementCible(40)
           .build(),
       ];
@@ -238,7 +238,7 @@ describe('IndicateurSQLRepository', () => {
               valeurs: [1, 2, 3],
               dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
               valeurCible: 1789,
-              dateValeurCible: '2026-05-01',
+              dateValeurCible: '2026-05-01T00:00:00.000Z',
               avancement: {
                 global: 20,
                 annuel: null,
@@ -253,7 +253,7 @@ describe('IndicateurSQLRepository', () => {
               valeurs: [1, 4, 6],
               dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
               valeurCible: 1790,
-              dateValeurCible: '2026-05-01',
+              dateValeurCible: '2026-05-01T00:00:00.000Z',
               avancement: {
                 global: 40,
                 annuel: null,
@@ -266,7 +266,7 @@ describe('IndicateurSQLRepository', () => {
               valeurs: [1, 4, 6],
               dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
               valeurCible: 1790,
-              dateValeurCible: '2026-05-01',
+              dateValeurCible: '2026-05-01T00:00:00.000Z',
               avancement: {
                 global: 40,
                 annuel: null,
@@ -299,7 +299,7 @@ describe('IndicateurSQLRepository', () => {
           .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1001)
           .avecValeurCible(1790)
-          .avecDateValeurCible('2026-05-01')
+          .avecDateValeurCible(new Date('2026-05-01'))
           .avecTauxAvancementCible(40)
           .build(),
 
@@ -313,7 +313,7 @@ describe('IndicateurSQLRepository', () => {
           .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
           .avecValeurInitiale(1001)
           .avecValeurCible(1790)
-          .avecDateValeurCible('2026-05-01')
+          .avecDateValeurCible(new Date('2026-05-01'))
           .avecTauxAvancementCible(30)
           .build(),
       ];
@@ -334,7 +334,7 @@ describe('IndicateurSQLRepository', () => {
               valeurs: [1, 4, 6],
               dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
               valeurCible: 1790,
-              dateValeurCible: '2026-05-01',
+              dateValeurCible: '2026-05-01T00:00:00.000Z',
               avancement: {
                 global: 30,
                 annuel: null,

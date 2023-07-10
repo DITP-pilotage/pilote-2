@@ -12,8 +12,8 @@ function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: in
 
     donnéesTerritoires[t.code_insee] = {
       codeInsee: t.code_insee,
-      dateValeurCible:  indicateurRow?.objectif_date_valeur_cible ?? null,
-      dateValeurInitiale:  indicateurRow?.date_valeur_actuelle ? indicateurRow?.date_valeur_actuelle.toLocaleString() : null,
+      dateValeurCible: indicateurRow?.objectif_date_valeur_cible?.toLocaleString() ?? null,
+      dateValeurInitiale: indicateurRow?.date_valeur_actuelle?.toLocaleString() ?? null,
       dateValeurs: indicateurRow?.evolution_date_valeur_actuelle ? indicateurRow?.evolution_date_valeur_actuelle.map(date => ( date.toLocaleString())) : [],
       valeurs: indicateurRow?.evolution_valeur_actuelle ?? [],
       valeurCible: indicateurRow?.objectif_valeur_cible ?? null,
