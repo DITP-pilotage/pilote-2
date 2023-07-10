@@ -8,4 +8,5 @@ export default interface InputAvecLabelProps {
   texteAide?: string,
   erreur?:  FieldError | Merge<FieldError, FieldErrorsImpl<any>>
   register: UseFormRegisterReturn
+  disabled?: boolean
 }

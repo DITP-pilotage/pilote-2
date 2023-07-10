@@ -47,6 +47,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         Tous les champs sont obligatoires.
       </p>
       <InputAvecLabel
+        disabled={Boolean(utilisateur?.email)}
         erreur={errors.email}
         htmlName="email"
         libellé="Adresse électronique"

@@ -2,7 +2,7 @@ import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/input/input.min.css';
 import InputAvecLabelProps from '@/components/_commons/InputAvecLabel/InputAvecLabel.interface';
 
-export default function InputAvecLabel({ type = 'text', erreur, libellé, htmlName, texteAide, register }: InputAvecLabelProps) {
+export default function InputAvecLabel({ type = 'text', erreur, libellé, htmlName, texteAide, register, disabled }: InputAvecLabelProps) {
   return (
     <div className={`fr-input-group ${erreur !== undefined ? 'fr-input-group--error' : ''}`}>
       <label
@@ -19,6 +19,7 @@ export default function InputAvecLabel({ type = 'text', erreur, libellé, htmlNa
       </label>
       <input
         className={`fr-input ${erreur !== undefined ? 'fr-input-group--error' : ''}`}
+        disabled={disabled}
         id={htmlName}
         type={type}
         {...register}

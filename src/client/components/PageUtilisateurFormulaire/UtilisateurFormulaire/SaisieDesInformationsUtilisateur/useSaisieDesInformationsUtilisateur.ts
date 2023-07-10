@@ -80,11 +80,8 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   }, [profils, profilCodeSélectionné]);
 
 
-
   // GESTION CHANTIERS ET PERIMETRES MINISTERIELS 
   const déterminerChantiersSélectionnésÀPartirDesPérimètresMinistériels = useCallback((périmètresMinistérielsIdsSélectionnés: string[]) => {
-    if (!chantiersAccessiblesPourLeProfil) return [];
-    
     const chantiersAppartenantsAuPérimètresMinistérielsSélectionnés = chantiersAccessiblesPourLeProfil.filter(chantier => auMoinsUneValeurDuTableauEstContenueDansLAutreTableau(chantier.périmètreIds, périmètresMinistérielsIdsSélectionnés));
 
     return chantiersAppartenantsAuPérimètresMinistérielsSélectionnés.map(c => c.id);
@@ -110,6 +107,10 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   }, [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, getValues, handleChangementValeursSélectionnéesChantiers]);
 
 
+  useEffect(() => {
+    handleChangementValeursSélectionnéesPérimètresMinistériels(getValues('habilitations.lecture.périmètres'));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chantiersAccessiblesPourLeProfil]);
 
   // GESTION DES TERRITOIRES
   useEffect(() => {

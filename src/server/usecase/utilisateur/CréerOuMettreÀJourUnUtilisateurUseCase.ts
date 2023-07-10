@@ -135,10 +135,10 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     const utilisateurExiste = await this.utilisateurRepository.récupérer(email);
 
     if (utilisateurExistant && !utilisateurExiste) 
-      throw new Error("L'utilisateur a modifier n'existe pas");
+      throw new Error('Le compte à modifier n’existe pas.');
     
     if (!utilisateurExistant && utilisateurExiste)
-      throw new Error("L'utilisateur existe déjà");
+      throw new Error('Un compte a déjà été créé avec cette adresse électronique.');
   }
 
   async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteurModification: string, utilisateurExistant: boolean, habilitations: Habilitations): Promise<void> {
