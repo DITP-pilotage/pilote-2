@@ -87,8 +87,7 @@ model indicateur {
   chantier_id                    String
   objectif_valeur_cible          Float?
   objectif_taux_avancement       Float?
-  objectif_date_valeur_cible     String?
-  objectif_date_valeur_cible_2   DateTime?  @db.Date
+  objectif_date_valeur_cible     DateTime?  @db.Date
   type_id                        String?
   type_nom                       String?
   est_barometre                  Boolean?
