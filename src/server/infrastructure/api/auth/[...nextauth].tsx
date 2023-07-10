@@ -1,4 +1,4 @@
-import NextAuth, { AuthOptions, getServerSession, SessionOptions, User } from 'next-auth';
+import NextAuth, { AuthOptions, getServerSession, User } from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import type { JWT } from 'next-auth/jwt';
@@ -170,19 +170,14 @@ const credentialsProvider = CredentialsProvider({
   },
 });
 
-const providers = [];
-const sessionOptions: Partial<SessionOptions> = {};
-if (config.isUsingDevCredentials) {
-  providers.push(credentialsProvider);
-  sessionOptions.maxAge = config.devSessionMaxAge;
-} else {
-  providers.push(keycloak);
-}
-
 export const authOptions: AuthOptions = {
-  providers,
+  providers: config.isUsingDevCredentials
+    ? [credentialsProvider]
+    : [keycloak],
   debug: config.nextAuthDebug,
-  session: sessionOptions,
+  session: {
+    maxAge: config.nextAuthSessionMaxAge,
+  },
   callbacks: {
     async jwt({ token, account, user, profile, isNewUser }: any) {
       // Persist the OAuth access_token to the token right after signin

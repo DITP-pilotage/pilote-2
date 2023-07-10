@@ -1,5 +1,7 @@
 import process from 'node:process';
 
+const THIRTY_DAYS_IN_SECONDS_STR = '2592000';
+
 export class Configuration {
   public readonly env: string;
 
@@ -17,6 +19,8 @@ export class Configuration {
 
   public readonly nextAuthDebug: boolean;
 
+  public readonly nextAuthSessionMaxAge: number;
+
   public readonly authUrl: string;
 
   public readonly logoutUrl: string;
@@ -31,8 +35,6 @@ export class Configuration {
 
   public readonly isUsingDevCredentials: boolean;
 
-  public readonly devSessionMaxAge: number = 30 * 24 * 60 * 60; // 30 days
-
   public readonly exportCsvChantiersChunkSize: number;
 
   public readonly exportCsvIndicateursChunkSize: number;
@@ -42,16 +44,15 @@ export class Configuration {
 
     this.devPassword = process.env.DEV_PASSWORD;
     this.isUsingDevCredentials = Boolean(this.devPassword);
-    if (process.env.DEV_SESSION_MAX_AGE_IN_SECONDS) {
-      this.devSessionMaxAge = Number.parseInt(process.env.DEV_SESSION_MAX_AGE_IN_SECONDS);
-    }
 
     this.keycloakClientId = process.env.KEYCLOAK_CLIENT_ID || 'N/A';
     this.keycloakClientSecret = process.env.KEYCLOAK_CLIENT_SECRET || 'N/A';
     this.keycloakIssuer = process.env.KEYCLOAK_ISSUER || 'N/A';
 
     this.nextAuthSecret = process.env.NEXTAUTH_SECRET || 'next_auth_secret';
-    this.nextAuthDebug = Boolean('true' == (process.env.NEXTAUTH_DEBUG || 'false'));
+    this.nextAuthDebug = 'true' == process.env.NEXTAUTH_DEBUG;
+    this.nextAuthSessionMaxAge = Number.parseInt(process.env.NEXTAUTH_SESSION_MAX_AGE_IN_SECONDS
+        ?? THIRTY_DAYS_IN_SECONDS_STR);
 
     this.tokenUrl = this.keycloakIssuer + '/protocol/openid-connect/token';
     this.authUrl = this.keycloakIssuer + '/protocol/openid-connect/auth'; // '/api/auth/signin/keycloak';
