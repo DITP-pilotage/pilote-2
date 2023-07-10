@@ -23,5 +23,4 @@ then
 fi
 
 PROJECT_DIR=data_factory
-dbt deps --project-dir $PROJECT_DIR
 dbt run --project-dir $PROJECT_DIR --select raw.ppg_metadata
