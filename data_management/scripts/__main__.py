@@ -4,6 +4,13 @@ import subprocess
 from notify import notify
 
 
+"""
+Exemple d'utilisation :
+
+$  python3 scripts/__main__.py False
+"""
+
+
 def if_error_print_it_and_exit(returncode):
     if returncode > 0:
         notify(f"""## ⚠️  Erreur lors de l\'exécution des transformations de données\n"""
@@ -14,7 +21,6 @@ def if_error_print_it_and_exit(returncode):
 
 
 def main() -> int:
-    if_error_print_it_and_exit(1)
     truncate_public_tables = sys.argv[1]
     if truncate_public_tables == 'False':
         print("Execution des datajobs SANS truncate les tables public")
