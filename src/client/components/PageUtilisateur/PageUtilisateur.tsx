@@ -66,6 +66,7 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
                     {' '}
                     <span className='nom'>
                       {utilisateur.nom}
+                      .
                     </span>
                   </div>
                   <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
