@@ -39,7 +39,7 @@ SELECT m_chantiers.id,
         m_chantiers.est_territorialise,
         CONCAT(m_chantiers.maille, '-', m_chantiers.code_insee) as territoire_code,
         CAST(NULL as double precision) as taux_avancement_precedent,
-	    LOWER(m_chantiers.ate) as ate
+	    LOWER(m_chantiers.ate)::type_ate as ate
     FROM {{ ref('int_chantiers_with_mailles_and_territoires') }} m_chantiers
         LEFT JOIN dfakto_chantier d_chantiers
             ON m_chantiers.id = d_chantiers.code_chantier
