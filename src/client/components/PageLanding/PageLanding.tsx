@@ -23,7 +23,7 @@ export default function PageLanding() {
         <section className='bloc-hero'>
           <div className='fr-container'>
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12 fr-col-lg-6 fr-pt-8w">
+              <div className="fr-col-12 fr-col-lg-6 fr-py-8w">
                 <Titre
                   baliseHtml='h1'
                 >
@@ -60,7 +60,7 @@ export default function PageLanding() {
                   baliseHtml='h2'
                   className='fr-h3'
                 >
-                  A qui s’adresse PILOTE ?
+                  À qui s’adresse PILOTE ?
                 </Titre>
                 <p className="fr-text--lg" >
                   PILOTE mobilise l’ensemble des responsables de la mise en œuvre des politiques prioritaires du Gouvernement à tous les niveaux de l’organisation administrative.
@@ -69,63 +69,69 @@ export default function PageLanding() {
             </div>
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
               <div className="fr-col-12 fr-col-md-4">
-                <div className="conteneur-pictogramme">
-                  <Image 
-                    alt=""
-                    fill
-                    src={carteFranceSvg}
-                  />
-                </div>
-                <div className='fr-p-4w'>
-                  <Titre
-                    baliseHtml='h3'
-                    className='fr-h5'
-                  >
-                    Pour les administrations centrales
-                  </Titre>
-                  <p className="fr-text--lg fr-mb-0" >
-                    PILOTE permet de fixer les objectifs aux services déconcentrés, de suivre l’avancement des chantiers et d’en rendre compte. Il permet d’identifier les freins et blocages pour apporter l’appui aux équipes opérationnelles sur le terrain ou susciter des arbitrages ministériels ou interministériels pour les lever.
-                  </p>
-                </div>
-              </div>
-              <div className="fr-col-12 fr-col-md-4">
-                <div className="conteneur-pictogramme">
-                  <Image 
-                    alt=""
-                    fill
-                    src={visualisationDonnéesSvg}
-                  />
-                </div>
-                <div className='fr-p-4w'>
-                  <Titre
-                    baliseHtml='h3'
-                    className='fr-h5'
-                  >
-                    Pour les préfets
-                  </Titre>
-                  <p className="fr-text--lg fr-mb-0">
-                    PILOTE offre aux préfets une vision transversale des objectifs et résultats de la feuille de route du Gouvernement dans le territoire pour lequel ils sont chargés d’en superviser la mise en œuvre. Dans une logique de « management par exception », il leur permet d’identifier les chantiers sur lesquels un appui est nécessaire.
-                  </p>
+                <div className='fr-card'>
+                  <div className="conteneur-pictogramme">
+                    <Image 
+                      alt=""
+                      fill
+                      src={carteFranceSvg}
+                    />
+                  </div>
+                  <div className='fr-p-4w'>
+                    <Titre
+                      baliseHtml='h3'
+                      className='fr-h5'
+                    >
+                      Pour les administrations centrales
+                    </Titre>
+                    <p className="fr-text--lg fr-mb-0" >
+                      PILOTE permet de fixer les objectifs aux services déconcentrés, de suivre l’avancement des chantiers et d’en rendre compte. Il permet d’identifier les freins et blocages pour apporter l’appui aux équipes opérationnelles sur le terrain ou susciter des arbitrages ministériels ou interministériels pour les lever.
+                    </p>
+                  </div>
                 </div>
               </div>
               <div className="fr-col-12 fr-col-md-4">
-                <div className="conteneur-pictogramme">
-                  <Image 
-                    alt=""
-                    fill
-                    src={téléchargementFichierSvg}
-                  />
+                <div className='fr-card'>
+                  <div className="conteneur-pictogramme">
+                    <Image 
+                      alt=""
+                      fill
+                      src={visualisationDonnéesSvg}
+                    />
+                  </div>
+                  <div className='fr-p-4w'>
+                    <Titre
+                      baliseHtml='h3'
+                      className='fr-h5'
+                    >
+                      Pour les préfets
+                    </Titre>
+                    <p className="fr-text--lg fr-mb-0">
+                      PILOTE offre aux préfets une vision transversale des objectifs et résultats de la feuille de route du Gouvernement dans le territoire pour lequel ils sont chargés d’en superviser la mise en œuvre. Dans une logique de « management par exception », il leur permet d’identifier les chantiers sur lesquels un appui est nécessaire.
+                    </p>
+                  </div>
                 </div>
-                <div className='fr-p-4w'>
-                  <Titre
-                    baliseHtml='h3'
-                    className='fr-h5'
-                  >
-                    Pour les services déconcentrés
-                  </Titre>
-                  <p className="fr-text--lg fr-mb-0">
-                    PILOTE permet de s’entendre avec l’administration centrale sur les objectifs de chaque chantier prioritaire et de rendre compte des résultats obtenus. Il permet aussi d’alerter sur les obstacles rencontrés afin de demander des arbitrages, des ressources ou un appui du préfet, des équipes régionales ou des administrations centrales.
-                  </p>
+              </div>
+              <div className="fr-col-12 fr-col-md-4">
+                <div className='fr-card'>
+                  <div className="conteneur-pictogramme">
+                    <Image 
+                      alt=""
+                      fill
+                      src={téléchargementFichierSvg}
+                    />
+                  </div>
+                  <div className='fr-p-4w'>
+                    <Titre
+                      baliseHtml='h3'
+                      className='fr-h5'
+                    >
+                      Pour les services déconcentrés
+                    </Titre>
+                    <p className="fr-text--lg fr-mb-0">
+                      PILOTE permet de s’entendre avec l’administration centrale sur les objectifs de chaque chantier prioritaire et de rendre compte des résultats obtenus. Il permet aussi d’alerter sur les obstacles rencontrés afin de demander des arbitrages, des ressources ou un appui du préfet, des équipes régionales ou des administrations centrales.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -195,7 +201,7 @@ export default function PageLanding() {
         </section>
         <section className='bloc-questions'>
           <div className='fr-container'>
-            <div className="fr-grid-row fr-py-8w">
+            <div className="fr-grid-row fr-py-8w conteneur-contact">
               <Titre
                 baliseHtml='h2'
                 className='fr-h3 fr-m-0'
@@ -203,7 +209,7 @@ export default function PageLanding() {
                 Vous avez des questions ?
               </Titre>
               <Link
-                className='fr-btn fr-ml-6w'
+                className='fr-btn'
                 href="mailto:support.ditp@modernisation.gouv.fr"
                 target="_blank"
               >
