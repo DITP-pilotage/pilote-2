@@ -20,7 +20,7 @@ export default function NextPageProjetStructurant({ projetStructurant, indicateu
     <>
       <Head>
         <title>
-          {`Projet structurant ${projetStructurant.id.replace('PS-', '')} - ${projetStructurant.nom} - PILOTE`}
+          {`Projet structurant - ${projetStructurant.nom} - PILOTE`}
         </title>
       </Head>
       <PageProjetStructurant

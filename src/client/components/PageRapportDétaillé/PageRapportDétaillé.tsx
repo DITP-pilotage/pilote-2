@@ -87,7 +87,7 @@ export default function PageRapportDétaillé({ chantiers, ministères, indicate
               !!afficherLesChantiers &&
               <div className="chantiers">
                 {
-                  chantiersFiltrés.slice(0, 4).map((chantier) => (
+                  chantiersFiltrés.map((chantier) => (
                     <RapportDétailléChantier
                       chantier={chantier}
                       commentaires={publicationsGroupéesParChantier.commentaires[chantier.id] ?? []}
