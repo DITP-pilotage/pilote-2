@@ -26,9 +26,9 @@ export default function TableauChantiersTuileMinistère({ ministère, estDéroul
           />
         </div>
       </div>
-      <span
-        aria-hidden="true"
+      <button
         className={`${estDéroulé ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'} chevron-accordéon`}
+        type="button"
       />
     </TableauChantiersTuileMinistèreStyled>
   );

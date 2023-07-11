@@ -21,7 +21,10 @@ export default function TableauRéformesMétéo({ météo, dateDeMàjDonnéesQua
       {
         météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE'
           ?
-            <MétéoPicto météo={météo} />
+            <MétéoPicto
+              estVisibleParLecteurDÉcran
+              météo={météo}
+            />
           : (
             <span className={`fr-text--xs texte-gris ${libelléMétéosÀPartirDeLaTaille[taille].className}`}>
               { libelléMétéosÀPartirDeLaTaille[taille].texte(météo) }

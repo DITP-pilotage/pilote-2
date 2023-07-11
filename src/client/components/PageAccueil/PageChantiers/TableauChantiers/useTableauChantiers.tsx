@@ -47,6 +47,7 @@ const colonnesTableauChantiers = [
     aggregatedCell: aggregatedCellContext => (
       <IcônesMultiplesEtTexte
         icônesId={aggregatedCellContext.row.original.porteur?.icône ? [aggregatedCellContext.row.original.porteur.icône] : []}
+        texteAlternatifPourIcônes={aggregatedCellContext.row.original.porteur?.nom ?? undefined}
       >
         {aggregatedCellContext.row.original.porteur?.nom ?? ''}
       </IcônesMultiplesEtTexte>
@@ -61,6 +62,7 @@ const colonnesTableauChantiers = [
       ) : (
         <IcônesMultiplesEtTexte
           icônesId={cellContext.row.original.porteur?.icône ? [cellContext.row.original.porteur.icône] : []}
+          texteAlternatifPourIcônes={cellContext.row.original.porteur?.nom ?? undefined}
         >
           {cellContext.getValue()}
         </IcônesMultiplesEtTexte>
@@ -80,6 +82,7 @@ const colonnesTableauChantiers = [
     enableGrouping: false,
     meta: {
       width: '6.5rem',
+      tabIndex: -1,
     },
   }),
   reactTableColonnesHelper.accessor('météo', {
@@ -100,6 +103,7 @@ const colonnesTableauChantiers = [
     enableGrouping: false,
     meta: {
       width: '8rem',
+      tabIndex: -1,
     },
   }),
   reactTableColonnesHelper.accessor('avancement', {
@@ -120,6 +124,7 @@ const colonnesTableauChantiers = [
     aggregatedCell: avancement => <TableauRéformesAvancement avancement={avancement.getValue() ?? null} />,
     meta: {
       width: '11rem',
+      tabIndex: -1,
     },
   }),
   ...(process.env.NEXT_PUBLIC_FF_ALERTES === 'true' ? [
@@ -133,6 +138,7 @@ const colonnesTableauChantiers = [
       enableGrouping: false,
       meta: {
         width: '7.5rem',
+        tabIndex: -1,
       },
     }),
     reactTableColonnesHelper.accessor('écart', {
@@ -146,19 +152,21 @@ const colonnesTableauChantiers = [
       aggregatedCell: () => null,
       meta: {
         width: '5.5rem',
+        tabIndex: -1,
       },
     }),
   ] : []),
   reactTableColonnesHelper.display({
     id: 'dérouler-groupe',
     aggregatedCell: (aggregatedCellContext => (
-      <span
-        aria-hidden="true"
+      <button
         className={`${aggregatedCellContext.row.getIsExpanded() ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'} chevron-accordéon`}
+        type="button"
       />
     )),
     meta: {
       width: '3.5rem',
+      tabIndex: -1,
     },
   }),
   reactTableColonnesHelper.display({

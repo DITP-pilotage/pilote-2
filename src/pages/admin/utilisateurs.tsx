@@ -1,11 +1,19 @@
 import { GetServerSidePropsContext } from 'next';
+import Head from 'next/head';
 import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import PageAdminUtilisateurs from '@/components/PageAdminUtilisateurs/PageAdminUtilisateurs';
 
 export default function NextPageUtilisateurs() {
   return (
-    <PageAdminUtilisateurs />
+    <>
+      <Head>
+        <title>
+          Gestion des comptes - PILOTE
+        </title>
+      </Head>
+      <PageAdminUtilisateurs />
+    </>
   );
 }
 

@@ -1,9 +1,11 @@
 import { GetServerSidePropsContext } from 'next';
+import Head from 'next/head';
 import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import RécupérerUnUtilisateurUseCase from '@/server/usecase/utilisateur/RécupérerUnUtilisateurUseCase';
 import PageModifierUtilisateur from '@/components/PageUtilisateurFormulaire/PageModifierUtilisateur/PageModifierUtilisateur';
+import { commenceParUneVoyelle } from '@/client/utils/strings';
 
 export interface NextPageModifierUtilisateurProps {
   utilisateur: Utilisateur
@@ -11,7 +13,21 @@ export interface NextPageModifierUtilisateurProps {
 
 export default function NextPageModifierUtilisateur({ utilisateur }: NextPageModifierUtilisateurProps) {
   return (
-    <PageModifierUtilisateur utilisateur={utilisateur} />
+    <>
+      <Head>
+        <title>
+          Modifier le compte
+          {' '}
+          {commenceParUneVoyelle(utilisateur.prénom) ? "d'" : 'de '}
+          {utilisateur.prénom}
+          {' '}
+          {utilisateur.nom.toUpperCase()}
+          {' '}
+          - PILOTE
+        </title>
+      </Head>
+      <PageModifierUtilisateur utilisateur={utilisateur} />
+    </>
   );
 }
 

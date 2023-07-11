@@ -12,3 +12,11 @@ export function nettoyerUneChaîneDeCaractèresPourAffichageHTML(chaîneDeCaract
   const chaîneDeCaractèresAvecBr = chaîneDeCaractères.replaceAll('\n', '<br/>');
   return DOMPurify.sanitize(chaîneDeCaractèresAvecBr);
 }
+
+
+export function commenceParUneVoyelle(chaîneDeCaractères: string) {
+  const VOYELLES = ['a', 'e', 'i', 'o', 'u', 'y'];
+  return VOYELLES.includes(
+    normaliserChaîneDeCaractères(chaîneDeCaractères).charAt(0),
+  );
+}

@@ -2,9 +2,13 @@ import PictoTerritorialiséstyled from '@/components/_commons/PictoTerritorialis
 
 export default function PictoTerritorialisé() {
   return (
-    <PictoTerritorialiséstyled
-      aria-label='picto-chantier-territorialisé'
-      className="fr-icon-map-pin-2-line"
-    />
+    <>
+      <PictoTerritorialiséstyled
+        className="fr-icon-map-pin-2-line"
+      />
+      <span className="fr-sr-only">
+        chantier territorialisé
+      </span>
+    </>
   );
 }

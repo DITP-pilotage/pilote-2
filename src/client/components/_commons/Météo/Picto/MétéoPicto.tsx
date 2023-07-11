@@ -15,10 +15,11 @@ export const météosPictos: Record<Météo, any> = {
   'NON_NECESSAIRE': null,
 };
 
-export default function MétéoPicto({ météo }: MétéoPictoProps) {
+export default function MétéoPicto({ météo, estVisibleParLecteurDÉcran = false }: MétéoPictoProps) {
   return météosPictos[météo] !== null ? (
     <Image
-      alt={libellésMétéos[météo]}
+      alt={estVisibleParLecteurDÉcran ? libellésMétéos[météo] : ''}
+      aria-hidden={estVisibleParLecteurDÉcran ? undefined : 'true'}
       className="météo-picto"
       src={météosPictos[météo]}
     />

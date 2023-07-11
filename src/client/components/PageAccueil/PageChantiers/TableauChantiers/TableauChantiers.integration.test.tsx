@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { getAllByRole, queryByLabelText, render, screen, waitFor } from '@testing-library/react';
+import { getAllByRole, queryByText, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 import TableauChantiers from './TableauChantiers';
@@ -147,8 +147,8 @@ describe('Les bons pictogrammes de typologie apparaissent dans la colonnes typol
   test('Quand le chantier est territorialisé et du baromètre', () => {
     // GIVEN 
     const ligneDUnChantierTerritorialisé = tableau.récupérerUneLigneParLeNomDuChantier('Lutter contre la fraude fiscale');
-    const pictoTerritorialisé = queryByLabelText(ligneDUnChantierTerritorialisé, 'picto-chantier-territorialisé');
-    const pictoBaromère = queryByLabelText(ligneDUnChantierTerritorialisé, 'picto-baromètre');
+    const pictoTerritorialisé = queryByText(ligneDUnChantierTerritorialisé, 'chantier territorialisé');
+    const pictoBaromère = queryByText(ligneDUnChantierTerritorialisé, 'élément du baromètre');
     
     // THEN
     expect(pictoTerritorialisé).toBeInTheDocument();
@@ -158,8 +158,8 @@ describe('Les bons pictogrammes de typologie apparaissent dans la colonnes typol
   test("Quand le chantier est territorialisé et n'est pas du baromètre", () => {
     // GIVEN 
     const ligneDUnChantierTerritorialisé = tableau.récupérerUneLigneParLeNomDuChantier('Déployer le programme FR');
-    const pictoTerritorialisé = queryByLabelText(ligneDUnChantierTerritorialisé, 'picto-chantier-territorialisé');
-    const pictoBaromère = queryByLabelText(ligneDUnChantierTerritorialisé, 'picto-baromètre');
+    const pictoTerritorialisé = queryByText(ligneDUnChantierTerritorialisé, 'chantier territorialisé');
+    const pictoBaromère = queryByText(ligneDUnChantierTerritorialisé, 'élément du baromètre');
     
     // THEN
     expect(pictoTerritorialisé).toBeInTheDocument();
@@ -169,8 +169,8 @@ describe('Les bons pictogrammes de typologie apparaissent dans la colonnes typol
   test("Quand le chantier n'est ni territorialisé et ni du baromètre", () => {
     // GIVEN 
     const ligneDUnChantierTerritorialisé = tableau.récupérerUneLigneParLeNomDuChantier('Elections du maire');
-    const pictoTerritorialisé = queryByLabelText(ligneDUnChantierTerritorialisé, 'picto-chantier-territorialisé');
-    const pictoBaromère = queryByLabelText(ligneDUnChantierTerritorialisé, 'picto-baromètre');
+    const pictoTerritorialisé = queryByText(ligneDUnChantierTerritorialisé, 'chantier territorialisé');
+    const pictoBaromère = queryByText(ligneDUnChantierTerritorialisé, 'élément du baromètre');
     
     // THEN
     expect(pictoTerritorialisé).not.toBeInTheDocument();
