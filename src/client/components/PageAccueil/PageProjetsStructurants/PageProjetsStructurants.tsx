@@ -51,7 +51,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                 <TitreInfobulleConteneur>
                   <Titre
                     baliseHtml="h2"
-                    className="fr-text--lg"
+                    className="fr-text--lg fr-mb-0 fr-py-1v"
                     estInline
                   >
                     Taux d’avancement moyen
@@ -74,7 +74,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
                 <TitreInfobulleConteneur>
                   <Titre
                     baliseHtml="h2"
-                    className="fr-text--lg"
+                    className="fr-text--lg fr-mb-0 fr-py-1v"
                     estInline
                   >
                     Répartition des météos renseignées
@@ -111,7 +111,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
               <TitreInfobulleConteneur>
                 <Titre
                   baliseHtml="h2"
-                  className="fr-text--lg"
+                  className="fr-text--lg fr-mb-0 fr-py-1v"
                   estInline
                 >
                   Liste des projets structurants (
