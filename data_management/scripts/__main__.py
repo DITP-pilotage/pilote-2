@@ -1,15 +1,21 @@
 import sys
+import os
 import subprocess
 from notify import notify
 
 
+"""
+Exemple d'utilisation :
+
+$  python3 scripts/__main__.py False
+"""
+
+
 def if_error_print_it_and_exit(returncode):
     if returncode > 0:
-        # notify
-        notify('## ⚠️  Erreur lors de l\'exécution des transformations de données\n'
-               'Veuillez regarder les logs pour en savoir plus :\n\n'
-               '- [Logs de DEV](https://dashboard.scalingo.com/apps/osc-secnum-fr1/dev-datajobs-ditp/logs) \n'
-               '- [Logs de PROD](https://dashboard.scalingo.com/apps/osc-secnum-fr1/prod-datajobs-ditp/logs)\n'
+        notify(f"""## ⚠️  Erreur lors de l\'exécution des transformations de données\n"""
+               f"""Veuillez regarder les logs pour en savoir plus :\n\n"""
+               f"""- [Logs de {os.environ.get('ENVIRONMENT')}]({os.environ.get('SCALINGO_LOGS')}) \n"""
                )
         sys.exit(returncode)
 
