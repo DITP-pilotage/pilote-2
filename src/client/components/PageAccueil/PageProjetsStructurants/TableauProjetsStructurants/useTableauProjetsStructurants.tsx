@@ -34,6 +34,9 @@ const colonnesTableauProjetsStructurants = [
     header: 'Territoire',
     id: 'territoire',
     enableSorting: false,
+    meta: {
+      tabIndex: -1,
+    },
   }),
   reactTableColonnesHelper.accessor('météo', {
     header: 'Météo',
@@ -43,6 +46,7 @@ const colonnesTableauProjetsStructurants = [
     sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
     meta: {
       width: '10rem',
+      tabIndex: -1,
     },
   }),
   reactTableColonnesHelper.accessor('avancement', {
@@ -53,6 +57,7 @@ const colonnesTableauProjetsStructurants = [
     sortingFn: (a, b, columnId) => comparerAvancementRéforme(a.getValue(columnId), b.getValue(columnId)),
     meta: {
       width: '11rem',
+      tabIndex: -1,
     },
   }),
 ];
