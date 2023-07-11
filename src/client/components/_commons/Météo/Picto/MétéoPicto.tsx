@@ -15,10 +15,10 @@ export const météosPictos: Record<Météo, any> = {
   'NON_NECESSAIRE': null,
 };
 
-export default function MétéoPicto({ météo }: MétéoPictoProps) {
+export default function MétéoPicto({ météo, avecAlt = false }: MétéoPictoProps) {
   return météosPictos[météo] !== null ? (
     <Image
-      alt={libellésMétéos[météo]}
+      alt={avecAlt ? libellésMétéos[météo] : ''}
       className="météo-picto"
       src={météosPictos[météo]}
     />
