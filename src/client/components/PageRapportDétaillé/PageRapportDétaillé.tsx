@@ -78,10 +78,11 @@ export default function PageRapportDétaillé({ chantiers, ministères, indicate
                 auChangement={setAfficherLesChantiers}
                 checked={afficherLesChantiers}
                 id="afficher-chantiers"
-                libellé="Afficher le détails des chantiers"
+                libellé="Afficher le détail des chantiers"
               />
             </div>
             <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
+            <div className='force-break-page' />
             {
               !!afficherLesChantiers &&
               <div className="chantiers">

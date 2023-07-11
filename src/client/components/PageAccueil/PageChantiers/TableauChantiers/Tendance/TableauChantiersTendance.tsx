@@ -3,7 +3,6 @@ import { BadgeType } from '@/components/_commons/Badge/Badge.interface';
 import Badge from '@/components/_commons/Badge/Badge';
 import TableauChantiersTendanceProps
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance.interface';
-import TableauChantiersTendanceStyled from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance.styled';
 
 export default function TableauChantiersTendance({ tendance }: TableauChantiersTendanceProps) {
   const badgeTypeÀPartirDeLaTendance: Record<NonNullable<ChantierTendance>, BadgeType> = {
@@ -22,10 +21,8 @@ export default function TableauChantiersTendance({ tendance }: TableauChantiersT
   }
 
   return (
-    <TableauChantiersTendanceStyled>
-      <Badge type={badgeTypeÀPartirDeLaTendance[tendance]}>
-        {libelléÀPartirDeLaTendance[tendance]}
-      </Badge>
-    </TableauChantiersTendanceStyled>
+    <Badge type={badgeTypeÀPartirDeLaTendance[tendance]}>
+      {libelléÀPartirDeLaTendance[tendance]}
+    </Badge>
   );
 }

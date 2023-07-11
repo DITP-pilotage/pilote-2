@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
 
 const BadgeStyled = styled.p`
+  width: auto !important;
+  font-size: .75rem;
+
   &.badge-gris {
     color: var(--text-mention-grey);
     background-color: var(--background-contrast-grey);

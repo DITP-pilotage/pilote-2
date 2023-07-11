@@ -31,6 +31,10 @@ const PageLandingStyled = styled.main`
   .fr-enlarge-link:hover {
     background-color: white;
   }
+
+  .conteneur-contact {
+    gap: 1rem;
+  }
 `;
 
 export default PageLandingStyled;

@@ -12,8 +12,13 @@ const SynthèseDesRésultatsHistoriqueStyled = styled.div`
   
   .conteneur {
     display: grid;
-    grid-template-columns: 1fr 4fr;
-    grid-column-gap: 1rem;
+  }
+  
+  @media (min-width: 48rem) {
+    .conteneur {
+      grid-template-columns: 1fr 4fr;
+      grid-column-gap: 1rem;
+    }
   }
 `;
 
