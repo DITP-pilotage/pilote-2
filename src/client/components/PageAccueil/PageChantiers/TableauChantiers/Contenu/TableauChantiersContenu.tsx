@@ -51,6 +51,7 @@ export default function TableauChantiersContenu({ tableau }: TableauChantiersCon
                     <Link
                       className="fr-p-2w"
                       href={`/chantier/${row.original.id}`}
+                      tabIndex={cell.column.columnDef.meta?.tabIndex}
                     >
                       { afficherContenuDeLaCellule(cell) }
                     </Link>

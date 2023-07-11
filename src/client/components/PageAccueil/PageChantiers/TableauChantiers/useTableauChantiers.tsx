@@ -80,6 +80,7 @@ const colonnesTableauChantiers = [
     enableGrouping: false,
     meta: {
       width: '6.5rem',
+      tabIndex: -1,
     },
   }),
   reactTableColonnesHelper.accessor('météo', {
@@ -100,6 +101,7 @@ const colonnesTableauChantiers = [
     enableGrouping: false,
     meta: {
       width: '8rem',
+      tabIndex: -1,
     },
   }),
   reactTableColonnesHelper.accessor('avancement', {
@@ -120,6 +122,7 @@ const colonnesTableauChantiers = [
     aggregatedCell: avancement => <TableauRéformesAvancement avancement={avancement.getValue() ?? null} />,
     meta: {
       width: '11rem',
+      tabIndex: -1,
     },
   }),
   ...(process.env.NEXT_PUBLIC_FF_ALERTES === 'true' ? [
@@ -133,6 +136,7 @@ const colonnesTableauChantiers = [
       enableGrouping: false,
       meta: {
         width: '7.5rem',
+        tabIndex: -1,
       },
     }),
     reactTableColonnesHelper.accessor('écart', {
@@ -146,6 +150,7 @@ const colonnesTableauChantiers = [
       aggregatedCell: () => null,
       meta: {
         width: '5.5rem',
+        tabIndex: -1,
       },
     }),
   ] : []),
@@ -159,6 +164,7 @@ const colonnesTableauChantiers = [
     )),
     meta: {
       width: '3.5rem',
+      tabIndex: -1,
     },
   }),
   reactTableColonnesHelper.display({
