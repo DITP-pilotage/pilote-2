@@ -18,7 +18,18 @@ chantier_est_barometre as (
         bool_or(m_indicateurs.est_barometre) as est_barometre
     FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
     GROUP BY m_indicateurs.chantier_id
+),
+
+synthese_triee_par_date as (
+    SELECT ROW_NUMBER() OVER (PARTITION BY chantier_id, code_insee, maille ORDER BY date_meteo DESC) AS row_id_by_date_meteo_desc,
+        chantier_id,
+        code_insee,
+        maille,
+        meteo,
+        date_meteo
+    FROM {{ ref('synthese_des_resultats') }}
 )
+
 
 SELECT m_chantiers.id,
         m_chantiers.nom,
@@ -31,7 +42,7 @@ SELECT m_chantiers.id,
         m_chantiers.ministeres,
         m_chantiers.directions_administration_centrale,
         m_chantiers.directeurs_projet,
-        synthese.meteo AS meteo,
+        synthese_triee_par_date.meteo AS meteo,
         m_axes.nom AS axe,
         m_ppgs.nom AS ppg,
         m_chantiers.directeurs_projet_mails,
@@ -48,7 +59,8 @@ SELECT m_chantiers.id,
         LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id
         LEFT JOIN {{ ref('stg_ppg_metadata__axes') }} m_axes ON m_axes.id = m_ppgs.axe_id
         LEFT JOIN chantier_est_barometre on m_chantiers.id = chantier_est_barometre.chantier_id
-        LEFT JOIN {{ ref('synthese_des_resultats') }} synthese
-            ON synthese.chantier_id = m_chantiers.id
-                AND synthese.maille = m_chantiers.maille
-                AND synthese.code_insee = m_chantiers.code_insee
+        LEFT JOIN synthese_triee_par_date
+            ON synthese_triee_par_date.chantier_id = m_chantiers.id
+                AND synthese_triee_par_date.maille = m_chantiers.maille
+                AND synthese_triee_par_date.code_insee = m_chantiers.code_insee
+    WHERE synthese_triee_par_date.row_id_by_date_meteo_desc = 1
