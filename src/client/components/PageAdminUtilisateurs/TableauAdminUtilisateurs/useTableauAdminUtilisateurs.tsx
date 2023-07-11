@@ -73,7 +73,8 @@ export default function useTableauPageAdminUtilisateurs() {
     columns: colonnes,
 
     globalFilterFn: (ligne, colonneId, texteRecherché) => {
-      return rechercheUnTexteContenuDansUnContenant(texteRecherché, ligne.getValue<ProjetStructurant>(colonneId).toString());
+      const valeurCellule = ligne.getValue<ProjetStructurant>(colonneId);
+      return valeurCellule !== null && rechercheUnTexteContenuDansUnContenant(texteRecherché, valeurCellule.toString());
     },
     state: {
       globalFilter: valeurDeLaRecherche,
