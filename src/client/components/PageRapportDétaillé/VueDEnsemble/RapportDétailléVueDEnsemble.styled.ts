@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 const RapportDétailléVueDEnsembleStyled = styled.section`
-  page-break-after: always;
+  break-after: always;
   
   .avancements-météos-carto {
     display: grid;
@@ -33,6 +33,8 @@ const RapportDétailléVueDEnsembleStyled = styled.section`
     .avancements-météos-carto {
       grid-template-columns: 1fr 1fr;
     }
+    
+    .force-break-page { height: 500px; }
   }
 `;
 

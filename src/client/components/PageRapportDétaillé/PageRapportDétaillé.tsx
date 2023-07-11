@@ -82,11 +82,12 @@ export default function PageRapportDétaillé({ chantiers, ministères, indicate
               />
             </div>
             <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
+            <div className='force-break-page' />
             {
               !!afficherLesChantiers &&
               <div className="chantiers">
                 {
-                  chantiersFiltrés.map((chantier) => (
+                  chantiersFiltrés.slice(0, 4).map((chantier) => (
                     <RapportDétailléChantier
                       chantier={chantier}
                       commentaires={publicationsGroupéesParChantier.commentaires[chantier.id] ?? []}
