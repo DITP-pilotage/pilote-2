@@ -21,6 +21,7 @@ export default function TableauProjetsStructurantsContenu({ tableau }: TableauPr
                   <Link
                     className="fr-p-2w"
                     href={`/projet-structurant/${row.original.id}`}
+                    tabIndex={cell.column.columnDef.meta?.tabIndex}
                   >
                     { flexRender(cell.column.columnDef.cell, cell.getContext()) }
                   </Link>
