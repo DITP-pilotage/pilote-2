@@ -32,6 +32,10 @@ clean-targets:         # directories to be removed by `dbt clean`
 # as tables. These settings can be overridden in the individual model files
 # using the `{{ config(...) }}` macro.
 models:
+  ## elementary models will be created in the schema '<your_schema>_elementary'
+  ## for details, see docs: https://docs.elementary-data.com/ 
+  elementary:
+    +schema: 'elementary'
   ditp_ppg_dbt:
     raw:
       +schema: raw_data
