@@ -1,8 +1,10 @@
 import { GetServerSidePropsContext } from 'next/types';
+import Head from 'next/head';
 import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import PageUtilisateur from '@/components/PageUtilisateur/PageUtilisateur';
 import RécupérerUnUtilisateurUseCase from '@/server/usecase/utilisateur/RécupérerUnUtilisateurUseCase';
+import { commenceParUneVoyelle } from '@/client/utils/strings';
 
 export interface NextPageAdminUtilisateurProps {
   utilisateur: Utilisateur
@@ -10,9 +12,23 @@ export interface NextPageAdminUtilisateurProps {
 
 export default function NextPageAdminUtilisateur({ utilisateur } : NextPageAdminUtilisateurProps) {
   return (
-    <PageUtilisateur
-      utilisateur={utilisateur}
-    />
+    <>
+      <Head>
+        <title>
+          Compte 
+          {' '}
+          {commenceParUneVoyelle(utilisateur.prénom) ? "d'" : 'de '}
+          {utilisateur.prénom}
+          {' '}
+          {utilisateur.nom.toUpperCase()}
+          {' '}
+          - PILOTE
+        </title>
+      </Head>
+      <PageUtilisateur
+        utilisateur={utilisateur}
+      />
+    </>
   );
 }
 
