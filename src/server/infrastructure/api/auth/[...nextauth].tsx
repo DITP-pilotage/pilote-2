@@ -1,4 +1,4 @@
-import NextAuth, { AuthOptions, getServerSession, User } from 'next-auth';
+import NextAuth, { Account, AuthOptions, getServerSession, User } from 'next-auth';
 import KeycloakProvider from 'next-auth/providers/keycloak';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import type { JWT } from 'next-auth/jwt';
@@ -31,7 +31,9 @@ async function _assertResponseOk(response: Response, errorMessage: string): Prom
  * provider, the way it's written could also potentially
  * perform the action for other providers as well
  */
-async function doFinalSignoutHandshake(token: JWT) {
+async function doFinalSignoutHandshake(token: PiloteJWTPayload) {
+  logger.info({ userId: token.user.id }, 'Logout');
+  logger.debug({ token });
   const { provider, idToken } = token;
   if (provider == keycloak.id) {
     try {
@@ -55,7 +57,6 @@ async function doFinalSignoutHandshake(token: JWT) {
       }, 'Logout response');
       await _assertResponseOk(response, 'Failed to logout');
 
-      // The response body should contain a confirmation that the user has been logged out
       logger.info('Completed post-logout handshake');
     } catch (error: any) {
       logger.error(error, 'Unable to perform post-logout handshake');
@@ -72,17 +73,24 @@ type OpenIdTokenResponse = {
   id_token: string,
 };
 
+type PiloteJWTPayload = {
+  accessToken: string,
+  accessTokenExpires: number,
+  refreshToken: string,
+  idToken: string,
+  provider: string,
+  user: User,
+  error?: string
+};
+
 // https://next-auth.js.org/tutorials/refresh-token-rotation
 /**
  * Takes a token, and returns a new token with updated
  * `accessToken` and `accessTokenExpires`. If an error occurs,
  * returns the old token and an error property
  */
-/**
- * TODO: Actualiser les habilitations !!
- * @param  {JWT} token
- */
-async function refreshAccessToken(token: JWT) {
+async function refreshAccessToken(token: PiloteJWTPayload): Promise<PiloteJWTPayload> {
+  logger.info({ userId: token.user.id }, 'Refreshing access token...');
   const { provider, refreshToken } = token as JWT & { refreshToken: string };
 
   if (provider == keycloak.id) {
@@ -105,30 +113,30 @@ async function refreshAccessToken(token: JWT) {
       await _assertResponseOk(response, 'Failed to refresh token');
 
       const openIdTokenResponse = (await response.json()) as OpenIdTokenResponse;
-      logger.debug({ openIdTokenResponse }, 'Parsed refresh token response');
+      logger.debug({ openIdTokenResponse }, 'openid-connect/token response');
 
-      let res = {
-        // to review
+      const result = {
         ...token,
         accessToken: openIdTokenResponse.access_token,
         accessTokenExpires: Date.now() + openIdTokenResponse.expires_in * 1000,
         refreshToken: openIdTokenResponse.refresh_token ?? token.refreshToken, // Fall back to old refresh token
       };
 
-      logger.debug('*****************');
-      logger.debug(openIdTokenResponse);
-      logger.debug('*****************');
-      logger.debug(res);
-      return res;
+      logger.debug({ result }, 'Refresh token result');
+      return result;
     } catch (error) {
-      logger.error(error, 'Bad in refresh_token');
+      const errorMessage = 'Bad in refresh_token';
+      logger.error({ error }, errorMessage);
+      logger.debug({ token }, errorMessage);
       return {
         ...token,
         error: 'RefreshAccessTokenError',
       };
     }
   } else {
-    logger.info("Provider: Not Supported '" + provider + "'");
+    const errorMessage = 'Provider: Not Supported';
+    logger.error({ provider }, errorMessage);
+    logger.debug({ token }, errorMessage);
     return {
       ...token,
       error: 'RefreshAccessTokenError',
@@ -170,6 +178,18 @@ const credentialsProvider = CredentialsProvider({
   },
 });
 
+function _isLogingIn(account: Account, user: User): Boolean {
+  return Boolean(account && user);
+}
+
+function _hasExpired(token: PiloteJWTPayload): Boolean {
+  if (token.provider == 'credentials') {
+    return false;
+  }
+  const now = Date.now();
+  return now >= token.accessTokenExpires;
+}
+
 export const authOptions: AuthOptions = {
   providers: config.isUsingDevCredentials
     ? [credentialsProvider]
@@ -179,42 +199,36 @@ export const authOptions: AuthOptions = {
     maxAge: config.nextAuthSessionMaxAge,
   },
   callbacks: {
-    async jwt({ token, account, user, profile, isNewUser }: any) {
-      // Persist the OAuth access_token to the token right after signin
-
-      const currentDate = Date.now();
-
-      // account is defined when recieved token from server (ie Keycloak)
-      // Initial log in
-      if (account && user) {
-        logger.debug({ token, user, account, profile, isNewUser, currentDate }, '------> JWT fnt');
+    async jwt({ token, account, user, profile, isNewUser }: any & { token: JWT | PiloteJWTPayload, account: Account }): Promise<PiloteJWTPayload> {
+      if (_isLogingIn(account, user)) {
+        logger.info({ userId: user.id }, 'NextAuth JWT callback called from login');
+        logger.debug({ token, user, account, profile, isNewUser });
 
         return {
           accessToken: account.access_token,
-          accessTokenExpires: currentDate + (account.expires_at - 10) * 1000,
-          //accessTokenExpires: Date.now() + 5 * 1000,
+          accessTokenExpires: (account.expires_at - 10) * 1000,
           refreshToken: account.refresh_token,
           idToken: account.id_token,
           provider: account.provider,
           user,
         };
       }
-      //logger.warn('******')
-      //logger.debug({ token, user, account, profile }, 'Token')
 
-      if (token.provider == 'credentials' || currentDate < token.accessTokenExpires) {
+      if (!_hasExpired(token)) {
         return token;
       }
 
-      logger.debug('Token has expired, refreshing.');
+      logger.info('NextAuth JWT callback triggers refreshing (Access Token has expired)');
       return refreshAccessToken(token);
     },
 
-    async session({ session, token }: any) {
+    async session({ session, token }: any & { token: PiloteJWTPayload }): Promise<any> {
+      logger.debug({ userId: token.user.id }, 'Session callback, adding habilitations to session');
+
       const utilisateurRepository = dependencies.getUtilisateurRepository();
       const utilisateur = await utilisateurRepository.récupérer(token.user.email);
 
-      // Send properties to the client, like an access_token from a provider.
+      // Send properties to the client
       session.user = token.user;
       session.accessToken = token.accessToken;
       session.error = token.error;
