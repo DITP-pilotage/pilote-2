@@ -8,6 +8,9 @@ import { Météo } from '@/server/domain/météo/Météo.interface';
 export type DirecteurAdministrationCentrale = { nom: string, direction: string };
 export type DirecteurProjet = { nom: string, email: string | null };
 
+export const typesAte = ['ate', 'hors_ate_centralise', 'hors_ate_deconcentre'] as const;
+export type TypeAte = typeof typesAte[number] | null;
+
 export default interface Chantier {
   id: string;
   nom: string;
@@ -45,4 +48,4 @@ export type ChantierDatesDeMiseÀJour = {
   dateDeMàjDonnéesQualitatives: string | null;
 };
 
-export type ChantierSynthétisé = Pick<Chantier, 'id' | 'nom' | 'estTerritorialisé' | 'périmètreIds'>;
+export type ChantierSynthétisé = Pick<Chantier, 'id' | 'nom' | 'estTerritorialisé' | 'périmètreIds'> & { ate: TypeAte };

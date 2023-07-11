@@ -9,6 +9,7 @@ import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 import AvancementBuilder from '@/server/domain/chantier/avancement/Avancement.builder';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
+import { TypeAte, typesAte } from '@/server/domain/chantier/Chantier.interface';
 
 export default class ChantierRowBuilder {
   private _id: chantier['id'];
@@ -49,6 +50,8 @@ export default class ChantierRowBuilder {
 
   private _territoireCode: chantier['territoire_code'];
 
+  private _ate: chantier['ate'];
+
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
     const avancement = new AvancementBuilder().build();
@@ -78,6 +81,7 @@ export default class ChantierRowBuilder {
     this._estBaromètre = générerPeutÊtreNull(0.2, chantierGénéré.estBaromètre);
     this._estTerritorialisé = générerPeutÊtreNull(0.2, chantierGénéré.estTerritorialisé);
     this._territoireCode = `${this._maille}-${this._codeInsee}`;
+    this._ate = faker.helpers.arrayElement(typesAte);
   }
 
   avecId(id: chantier['id']): ChantierRowBuilder {
@@ -176,6 +180,11 @@ export default class ChantierRowBuilder {
     return this;
   }
 
+  avecAte(typeAte: TypeAte): ChantierRowBuilder {
+    this._ate = typeAte;
+    return this;
+  }
+
   shallowCopy(): ChantierRowBuilder {
     const result = new ChantierRowBuilder() as any;
     for (const attribut in this) {
@@ -205,6 +214,7 @@ export default class ChantierRowBuilder {
       est_barometre: this._estBaromètre,
       est_territorialise: this._estTerritorialisé,
       territoire_code: this._territoireCode,
+      ate: this._ate,
     };
   }
 }

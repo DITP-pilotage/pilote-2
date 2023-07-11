@@ -36,6 +36,14 @@ model territoire {
   @@schema("public")
 }
 
+enum type_ate {
+  ate
+  hors_ate_deconcentre
+  hors_ate_centralise
+
+  @@schema("public")
+}
+
 model chantier {
   id                                 String
   nom                                String
@@ -57,6 +65,7 @@ model chantier {
   est_territorialise                 Boolean?
   territoire                         territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
   territoire_code                    String
+  ate                                type_ate?
 
   @@id([id, code_insee, maille])
   @@schema("public")
