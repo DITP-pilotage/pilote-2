@@ -98,11 +98,15 @@ export default function useMultiSelect(
     if (isOpen === false) {
       trierLesOptions();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, optionsGroupées]);
+
+  useEffect(() => {
     if (ref.current) {
       ref.current.scrollTop = 0;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, optionsGroupées]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   useEffect(() => {
     if (recherche !== '') 
