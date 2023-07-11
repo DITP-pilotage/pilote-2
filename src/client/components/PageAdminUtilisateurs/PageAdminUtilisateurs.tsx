@@ -8,9 +8,7 @@ import TableauAdminUtilisateurs
 import Alerte from '@/client/components/_commons/Alerte/Alerte';
 import AlerteProps from '@/client/components/_commons/Alerte/Alerte.interface';
 import AdminUtilisateursBarreLatérale from '@/components/PageAdminUtilisateurs/BarreLatérale/AdminUtilisateursBarreLatérale';
-import api from '@/server/infrastructure/api/trpc/api';
-import { filtresUtilisateursActifsStore, réinitialiser } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
-import Loader from '@/client/components/_commons/Loader/Loader';
+import { réinitialiser } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 
@@ -18,13 +16,8 @@ export default function PageAdminUtilisateurs() {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const router = useRouter();
-  const filtresActifs = filtresUtilisateursActifsStore();
   const réinitialiserFiltres = réinitialiser();
   
-  const { data: utilisateurs, isFetching } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
-    filtres: filtresActifs,
-  });
-
   useEffect(() => {
     if (router.query['compteCréé']) {
       setAlerte({
@@ -92,12 +85,9 @@ export default function PageAdminUtilisateurs() {
               </div>
             </div>
           </div>
-          {
-            isFetching ? <Loader /> :
-            <Bloc>
-              { !!utilisateurs && <TableauAdminUtilisateurs utilisateurs={utilisateurs} /> }
-            </Bloc>
-          }
+          <Bloc>
+            <TableauAdminUtilisateurs />
+          </Bloc>
         </div>
       </main>
     </div>
