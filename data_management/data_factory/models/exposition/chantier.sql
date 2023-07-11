@@ -31,7 +31,7 @@ SELECT m_chantiers.id,
         m_chantiers.ministeres,
         m_chantiers.directions_administration_centrale,
         m_chantiers.directeurs_projet,
-        NULL AS meteo, -- todo a supprimer de la table prisma
+        synthese.meteo AS meteo,
         m_axes.nom AS axe,
         m_ppgs.nom AS ppg,
         m_chantiers.directeurs_projet_mails,
@@ -48,3 +48,7 @@ SELECT m_chantiers.id,
         LEFT JOIN {{ ref('stg_ppg_metadata__ppgs') }} m_ppgs ON m_ppgs.id = m_chantiers.ppg_id
         LEFT JOIN {{ ref('stg_ppg_metadata__axes') }} m_axes ON m_axes.id = m_ppgs.axe_id
         LEFT JOIN chantier_est_barometre on m_chantiers.id = chantier_est_barometre.chantier_id
+        LEFT JOIN {{ ref('synthese_des_resultats') }} synthese
+            ON synthese.chantier_id = m_chantiers.id
+                AND synthese.maille = m_chantiers.maille
+                AND synthese.code_insee = m_chantiers.code_insee
