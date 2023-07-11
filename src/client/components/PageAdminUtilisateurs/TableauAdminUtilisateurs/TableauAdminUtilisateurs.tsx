@@ -11,17 +11,10 @@ import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRech
 import Titre from '@/components/_commons/Titre/Titre';
 import TableauAdminUtilisateursContenu
   from '@/components/PageAdminUtilisateurs/TableauAdminUtilisateurs/Contenu/TableauAdminUtilisateursContenu';
-import { filtresUtilisateursActifsStore } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
-import api from '@/server/infrastructure/api/trpc/api';
 import Loader from '@/components/_commons/Loader/Loader';
 
 export default function TableauAdminUtilisateurs() {
-  const filtresActifs = filtresUtilisateursActifsStore();
-  const { data: utilisateurs = [], isLoading } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
-    filtres: filtresActifs,
-  });
-
-  const { tableau, changementDePageCallback, changementDeLaRechercheCallback, valeurDeLaRecherche } = useTableauPageAdminUtilisateurs(utilisateurs);
+  const { tableau, estEnChargement, changementDePageCallback, changementDeLaRechercheCallback, valeurDeLaRecherche } = useTableauPageAdminUtilisateurs();
 
   useEffect(() => {
     tableau.setPageSize(20);
@@ -36,7 +29,7 @@ export default function TableauAdminUtilisateurs() {
         />
       </div>
       {
-        isLoading  ? <Loader /> :
+        estEnChargement  ? <Loader /> :
         <>
           <Titre
             baliseHtml='h2'

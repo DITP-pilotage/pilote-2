@@ -34,7 +34,9 @@ const RapportDétailléVueDEnsembleStyled = styled.section`
       grid-template-columns: 1fr 1fr;
     }
     
-    .force-break-page { height: 500px; }
+    .force-break-page {
+      height: 500px;
+    }
   }
 `;
 

@@ -10,6 +10,8 @@ import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { formaterDate } from '@/client/utils/date/date';
+import api from '@/server/infrastructure/api/trpc/api';
+import { filtresUtilisateursActifsStore } from '@/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore';
 
 const reactTableColonnesHelper = createColumnHelper<Utilisateur>();
 const colonnes = [
@@ -53,8 +55,14 @@ const colonnes = [
   }),
 ];
 
-export default function useTableauPageAdminUtilisateurs(utilisateurs :Utilisateur[]) {
+export default function useTableauPageAdminUtilisateurs() {
+  const filtresActifs = filtresUtilisateursActifsStore();
+  
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
+
+  const { data: utilisateurs = [], isLoading: estEnChargement } = api.utilisateur.récupérerUtilisateursFiltrés.useQuery({
+    filtres: filtresActifs,
+  });
 
   const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setValeurDeLaRecherche(event.target.value);
@@ -82,6 +90,7 @@ export default function useTableauPageAdminUtilisateurs(utilisateurs :Utilisateu
 
   return {
     tableau,
+    estEnChargement,
     changementDePageCallback,
     valeurDeLaRecherche,
     changementDeLaRechercheCallback,

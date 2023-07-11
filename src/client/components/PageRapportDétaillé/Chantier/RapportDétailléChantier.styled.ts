@@ -41,7 +41,9 @@ const RapportDétailléChantierStyled = styled.section`
     display: grid;
     grid-template-rows: auto 1fr;
 
-    & .rubrique__conteneur > div { height: auto; }
+    & .rubrique__conteneur > div {
+      height: auto;
+    }
   }
   
   @media print {
