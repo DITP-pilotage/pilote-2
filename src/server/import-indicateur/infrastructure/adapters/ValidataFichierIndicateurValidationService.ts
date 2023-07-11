@@ -73,9 +73,9 @@ const initialiserMapCodeErreurDITP: (taskError: ReportErrorTask) => Record<strin
   const mapCodeNoteEnteteInvalide: Record<string, string> = {};
   const mapCodeNoteEnteteDoublon: Record<string, string> = {};
 
-  const cléPourCodeLigneDuplique = `the same as in the row at position ${taskError.rowNumber}`;
+  const cléPourCodeLigneDuplique = 'Values in the primary key fields should be unique for every row';
   const cléPourCodeLigneVide = 'cells composing the primary keys are all "None"';
-  mapCodeNote[cléPourCodeLigneDuplique] = `La ligne ${taskError.rowNumber} comporte les mêmes zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez en supprimer une des deux.`;
+  mapCodeNote[cléPourCodeLigneDuplique] = `La ligne ${taskError.rowNumber} est vide ou comporte les mêmes zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez la modifier ou la supprimer.`;
   mapCodeNote[cléPourCodeLigneVide] = `Toutes les cellules de la ligne ${taskError.rowPosition} sont vides`;
 
   const cléPourCodeEnteteInvalide = 'Provided schema is not valid.';
