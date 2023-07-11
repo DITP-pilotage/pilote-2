@@ -22,7 +22,7 @@ export default function TableauRéformesMétéo({ météo, dateDeMàjDonnéesQua
         météo !== 'NON_NECESSAIRE' && météo !== 'NON_RENSEIGNEE'
           ?
             <MétéoPicto
-              avecAlt
+              estVisibleParLecteurDÉcran
               météo={météo}
             />
           : (

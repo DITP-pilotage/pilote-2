@@ -2,9 +2,13 @@ import PictoBaromètreStyled from '@/components/_commons/PictoBaromètre/PictoBa
 
 export default function PictoBaromètre() {
   return (
-    <PictoBaromètreStyled
-      aria-label='picto-baromètre'
-      className="fr-icon-dashboard-3-line"
-    />
+    <>
+      <PictoBaromètreStyled
+        className="fr-icon-dashboard-3-line"
+      />
+      <span className="fr-sr-only">
+        élément du baromètre
+      </span>
+    </>
   );
 }

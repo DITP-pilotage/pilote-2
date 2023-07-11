@@ -47,6 +47,7 @@ const colonnesTableauChantiers = [
     aggregatedCell: aggregatedCellContext => (
       <IcônesMultiplesEtTexte
         icônesId={aggregatedCellContext.row.original.porteur?.icône ? [aggregatedCellContext.row.original.porteur.icône] : []}
+        texteAlternatifPourIcônes={aggregatedCellContext.row.original.porteur?.nom ?? undefined}
       >
         {aggregatedCellContext.row.original.porteur?.nom ?? ''}
       </IcônesMultiplesEtTexte>
@@ -61,6 +62,7 @@ const colonnesTableauChantiers = [
       ) : (
         <IcônesMultiplesEtTexte
           icônesId={cellContext.row.original.porteur?.icône ? [cellContext.row.original.porteur.icône] : []}
+          texteAlternatifPourIcônes={cellContext.row.original.porteur?.nom ?? undefined}
         >
           {cellContext.getValue()}
         </IcônesMultiplesEtTexte>

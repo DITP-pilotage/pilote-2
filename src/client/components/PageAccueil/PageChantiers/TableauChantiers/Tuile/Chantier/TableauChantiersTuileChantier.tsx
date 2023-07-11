@@ -20,6 +20,7 @@ export default function TableauChantiersTuileChantier({ chantier, afficherIcône
           <IcônesMultiplesEtTexte
             icônesId={afficherIcône && chantier.porteur?.icône ? [chantier.porteur.icône] : []}
             largeurDesIcônes='1.75rem'
+            texteAlternatifPourIcônes={chantier.porteur?.nom ?? undefined}
           >
             <span className='fr-text--sm'>
               {chantier.nom}
