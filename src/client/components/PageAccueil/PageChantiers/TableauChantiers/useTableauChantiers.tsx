@@ -157,9 +157,9 @@ const colonnesTableauChantiers = [
   reactTableColonnesHelper.display({
     id: 'dérouler-groupe',
     aggregatedCell: (aggregatedCellContext => (
-      <span
-        aria-hidden="true"
+      <button
         className={`${aggregatedCellContext.row.getIsExpanded() ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'} chevron-accordéon`}
+        type="button"
       />
     )),
     meta: {
