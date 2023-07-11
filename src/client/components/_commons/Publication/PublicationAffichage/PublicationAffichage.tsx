@@ -1,13 +1,14 @@
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
+import Badge from '@/client/components/_commons/Badge/Badge';
 import PublicationAffichageProps from './PublicationAffichage.interface';
 
 export default function PublicationAffichage({ publication }: PublicationAffichageProps) {
   if (!publication) {
     return (
-      <p className="fr-mt-1v fr-badge fr-badge--no-icon">
+      <Badge type='gris'>
         Non renseigné
-      </p>
+      </Badge>
     );
   }
 
