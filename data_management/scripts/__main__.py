@@ -15,8 +15,9 @@ def if_error_print_it_and_exit(returncode):
 
 
 def main() -> int:
-    night = sys.argv[1]
-    if night == False:
+    truncate_public_tables = sys.argv[1]
+    if truncate_public_tables == 'False':
+        print("Execution des datajobs SANS truncate les tables public")
         for file in [
             'scripts/0_install_dbt_deps.sh',
             'scripts/1_dump_dfakto.sh',
@@ -30,6 +31,7 @@ def main() -> int:
 
         return returncode
     else:
+        print("Execution des datajobs AVEC truncate les tables public")
         for file in [
             'scripts/0_install_dbt_deps.sh',
             'scripts/1_dump_dfakto.sh',
