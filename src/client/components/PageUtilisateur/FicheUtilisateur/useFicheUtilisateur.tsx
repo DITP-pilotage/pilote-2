@@ -97,8 +97,22 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
   const déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
     if (déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire(u).length === 0) 
       return [];
+
+    if (profil && ['REFERENT_REGION', 'PREFET_REGION', 'REFERENT_DEPARTEMENT', 'PREFET_DEPARTEMENT'].includes(profil.code)) {
+      return ['Tous les chantiers ATE territorialisés'];
+    }
+
+    if (profil && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(profil.code)) {
+      return u.habilitations?.lecture?.chantiers
+        ?.map(chantierId => chantiers
+          ?.filter(c => c.ate === 'hors_ate_deconcentre')
+          .find(c => c.id === chantierId)?.nom)
+        .filter((c): c is string => c !== undefined) 
+        ?? [];
+    }
+
     return déterminerLesNomÀAfficherPourLesChantiersLecture(u);
-  }, [déterminerLesNomÀAfficherPourLesChantiersLecture, déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire]);
+  }, [chantiers, déterminerLesNomÀAfficherPourLesChantiersLecture, déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire, profil]);
 
   useEffect(() => {
     if (!chantiers || !profil)

@@ -21,7 +21,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     private readonly périmètreMinistérielRepository: PérimètreMinistérielRepository = dependencies.getPérimètreMinistérielRepository(),
   ) {}
 
-  _déterminerChantiersAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
+  private _déterminerChantiersAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
     const touslesChantiersIds = new Set(chantiers.map(chantier => chantier.id));
     const touslesChantiersTerritorialisésIds = new Set(chantiers.filter(chantier => chantier.estTerritorialisé).map(chantier => chantier.id));
 
@@ -40,21 +40,28 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return chantiersPasEnDoublonsAvecLesPérimètres;
   }
 
-  _déterminerChantiersAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
+  private _déterminerChantiersAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
     if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM'].includes(utilisateur.profil))
       return this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
 
     return [];
   }
 
-  _déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
-    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(utilisateur.profil))
-      return this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
+  private _déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
+    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(utilisateur.profil)) {
+      const chantiersIdsAccessiblesEnLecture = this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
+
+      if (['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(utilisateur.profil)) {
+        return chantiers.filter(c => c.ate === 'hors_ate_deconcentre' && chantiersIdsAccessiblesEnLecture.includes(c.id)).map(c => c.id);
+      }
+
+      return chantiersIdsAccessiblesEnLecture;
+    }
     
     return [];
   }
 
-  _déterminerTerritoiresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
+  private _déterminerTerritoiresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
     if (utilisateur.profil === 'DROM') 
       return codesTerritoiresDROM;
 
@@ -71,7 +78,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
-  _déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
+  private _déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
     if (['DITP_PILOTAGE', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM'].includes(utilisateur.profil))
       return ['NAT-FR'];
 
@@ -81,7 +88,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
-  _déterminerPérimètresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+  private _déterminerPérimètresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
     const tousLesPérimètresIds = new Set(périmètres.map(p => p.id));
 
     if (utilisateur.profil === 'DROM') 
@@ -93,21 +100,21 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
-  _déterminerPérimètresAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+  private _déterminerPérimètresAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
     if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM'].includes(utilisateur.profil))
       return this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres);
     
     return [];
   }
 
-  _déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+  private _déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
     if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'DROM'].includes(utilisateur.profil))
       return this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres);
       
     return [];
   }
 
-  async _définirLesHabilitations(utilisateur: UtilisateurÀCréerOuMettreÀJour): Promise<HabilitationsÀCréerOuMettreÀJourCalculées> {
+  private async _définirLesHabilitations(utilisateur: UtilisateurÀCréerOuMettreÀJour): Promise<HabilitationsÀCréerOuMettreÀJourCalculées> {
     const chantiers = await this.chantierRepository.récupérerChantiersSynthétisés();
     const territoires = await this.territoireRepository.récupérerTous();
     const périmètres = await this.périmètreMinistérielRepository.récupérerTous();
@@ -131,7 +138,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     };
   }
 
-  async _vérifierExistenceUtilisateur(email: string, utilisateurExistant: boolean) {
+  private async _vérifierExistenceUtilisateur(email: string, utilisateurExistant: boolean) {
     const utilisateurExiste = await this.utilisateurRepository.récupérer(email);
 
     if (utilisateurExistant && !utilisateurExiste) 

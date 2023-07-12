@@ -21,7 +21,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
       nom: 'Salut',
       estTerritorialisé: true,
       périmètreIds: ['PER-12'],
-      ate: null,
+      ate: 'hors_ate_deconcentre',
     },
     {
       id: '124',
