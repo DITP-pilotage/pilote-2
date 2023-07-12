@@ -1,7 +1,8 @@
 services:
   dbt-pilote:
-    command: "scripts/serve_doc.sh"
     build: .
+    networks:
+      - db_dbt_pilote_net
     env_file:
       - .env
     ports:
@@ -13,14 +14,23 @@ services:
   postgres:
     image: postgres:14.1-alpine
     restart: always
+    ports:
+      - "5444:5432"
+    networks:
+      - db_dbt_pilote_net
     environment:
       - POSTGRES_USER=${PGUSER}
       - POSTGRES_PASSWORD=${PGPASSWORD}
     volumes: 
       - db_dbt_pilote:/var/lib/postgresql/data
 
+
+
 volumes:
   db_dbt_pilote:
     driver: local
-
-# Start with "docker-compose up --force-recreate --build" or "docker-compose up"
+networks:
+  db_dbt_pilote_net:
+    name: db_dbt_pilote_net
+    external: true
+# Start with "docker-compose up"
