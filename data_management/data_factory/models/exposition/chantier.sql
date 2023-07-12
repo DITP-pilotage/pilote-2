@@ -64,3 +64,4 @@ SELECT m_chantiers.id,
                 AND synthese_triee_par_date.maille = m_chantiers.maille
                 AND synthese_triee_par_date.code_insee = m_chantiers.code_insee
     WHERE synthese_triee_par_date.row_id_by_date_meteo_desc = 1
+        OR synthese_triee_par_date.row_id_by_date_meteo_desc IS NULL
