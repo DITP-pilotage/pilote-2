@@ -29,4 +29,4 @@ COPY . .
 
 # Start entrypoint.sh script
 ENTRYPOINT ["/bin/bash"]
-CMD ["scripts/serve_doc.sh"]
+#CMD ["scripts/serve_doc.sh"]
