@@ -1,7 +1,6 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
 import SélecteursMaillesEtTerritoires
   from '@/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
@@ -44,15 +43,15 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
     chantier,
     rechargerChantier,
     avancements,
+    modeÉcriture,
+    modeÉcritureObjectifs,
+    profil,
     territoireSélectionné,
-    territoires,
     indicateurPondérations,
   } = usePageChantier(chantierId, indicateurs);
 
-  const modeÉcritureObjectifs = territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication === true);
   const listeRubriques = listeRubriquesChantier(indicateurs.map(i => i.type), territoireSélectionné!.maille);
 
-  const { data: session } = useSession();
 
   return (
     <PageChantierStyled className="flex">
@@ -81,7 +80,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
             <>
               <PageChantierEnTête
                 afficheLeBoutonImpression
-                afficheLeBoutonMiseAJourDonnee={estAutoriséAImporterDesIndicateurs(session!.profil)}
+                afficheLeBoutonMiseAJourDonnee={estAutoriséAImporterDesIndicateurs(profil)}
                 chantier={chantier}
               />
               <div className='fr-container--fluid fr-py-2w fr-px-md-4w'>
@@ -160,7 +159,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       </Infobulle>
                     </TitreInfobulleConteneur>
                     <SynthèseDesRésultats
-                      modeÉcriture={territoireSélectionné!.accèsSaisiePublication}
+                      modeÉcriture={modeÉcriture}
                       nomTerritoire={territoireSélectionné!.nomAffiché}
                       rechargerRéforme={rechargerChantier}
                       réformeId={chantier.id}
@@ -254,7 +253,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                         <DécisionsStratégiques
                           chantierId={chantier.id}
                           décisionStratégique={décisionStratégique}
-                          modeÉcriture={territoireSélectionné?.accèsSaisiePublication}
+                          modeÉcriture={modeÉcriture}
                         />
                       </section>
                     </div>
@@ -283,7 +282,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     <Commentaires
                       commentaires={commentaires}
                       maille={territoireSélectionné!.maille}
-                      modeÉcriture={territoireSélectionné!.accèsSaisiePublication}
+                      modeÉcriture={modeÉcriture}
                       nomTerritoire={territoireSélectionné!.nomAffiché}
                       réformeId={chantier.id}
                       typesCommentaire={territoireSélectionné!.maille === 'nationale' ? typesCommentaireMailleNationale : typesCommentaireMailleRégionaleOuDépartementale}

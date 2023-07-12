@@ -1,5 +1,7 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import {
   actionsTerritoiresStore,
   mailleSélectionnéeTerritoiresStore,
@@ -26,6 +28,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
   const territoires = territoiresTerritoiresStore();
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const territoireParent = territoireSélectionné?.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent) : null;
+  const { data: session } = useSession();
 
   const { modifierTypeDeRéformeSélectionné } = actionsTypeDeRéformeStore();
   const typeDeRéformeSélectionné = typeDeRéformeSélectionnéeStore();
@@ -34,6 +37,8 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     if (typeDeRéformeSélectionné === 'projet structurant') modifierTypeDeRéformeSélectionné();
   }, [modifierTypeDeRéformeSélectionné, typeDeRéformeSélectionné]);
   
+  const modeÉcriture = !!territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisie.commentaire'].chantiers.includes(chantierId);
+  const modeÉcritureObjectifs = territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication === true);
 
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {
@@ -126,7 +131,9 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     chantier: chantier ?? null,
     rechargerChantier,
     territoireSélectionné,
-    territoires,
+    modeÉcriture,
+    modeÉcritureObjectifs,
+    profil: session!.profil,
     avancements,
     indicateurPondérations,
   };
