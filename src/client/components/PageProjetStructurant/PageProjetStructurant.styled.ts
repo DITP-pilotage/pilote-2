@@ -29,7 +29,15 @@ const PageProjetStructurantStyled = styled.div`
 
   @media print {
     @page {
+      margin: 12mm 0;
       size: 280mm 396mm;
+    }
+    
+    background: #fff;
+
+    main {
+      padding-right: 12mm;
+      padding-left: 12mm;
     }
 
     .grid-template {
