@@ -56,7 +56,7 @@ export default function TableauChantiers({ données, setNombreChantiersDansLeTab
               className="fr-toggle__label fr-pl-1w"
               htmlFor="interrupteur-grouper-par-ministères"
             >
-              Grouper par ministères
+              Grouper par ministère
             </label>
           </div>
         </div>
