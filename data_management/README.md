@@ -11,7 +11,11 @@ Ce projet est décomposé en 2 parties :
 2. Pipelines d'import, de chargement et transformation des données. L'ensemble de ces pipelines passeront par des scripts.
    - Les jobs d'imports et de transformations sont réalisés avec DBT dans un environnement Python.
    - Enfin les données sont exposées dans des tables dont le schéma est géré par Prisma et exposées à l'application _Pilote 2_.  
-
+3. Planification des jobs. Le flux de données tourne tous les jours selon les règles suivantes :
+   - A 8h 10h 12h 15h 17h 19h et 21h avec seulement une mise à jour des tables en mode ajout de données ou modification (UPSERT).  
+   - A 1h et 13h, en plus de la mise à jour des données, une suppression des lignes est réalisée en amont 
+   permettant de supprimer des données qui doivent l'être. 
+   Attention cette étape rend les données indisponibles sur l'application pendant environ 1 minute. 
 
 ## Avant de démarrer
 
@@ -332,107 +336,3 @@ De même, pour les étapes qui succèdent, on peut écrire `marts+`.
 
 Enfin si vous souhaitez comprendre comment une table d'exposition est construite, vous pouvez écrire `+ma_table`.
 Par exemple pour la table `objectif_projet_structurant`, on écrira simplement `+objectif_projet_structurant`.
-
-
-_____
-# La suite de la DOC est dépréciée
-La doc auto générée par DBT peut suffire à la remplacer. 
-
-### Brique PPG_metdata vers Datawarehouse
-
-Aujourd'hui, le chargement des données se fait manuellement une seule fois
-en provenance du répertoire `PPG_metadata`.
-À terme, nous devons pouvoir charger les données du serveur SFTP.
-
-``` mermaid
-graph LR
-PPG(PPG_metdata) --> |view_meta_chantier.csv| PG[(Base PG Pilote 2)]
-PPG --> |view_meta_perimetre.csv| PG
-PPG --> |view_meta_indicateur.csv| PG
-PPG --> |view_meta_zone.csv| PG
-PPG --> |view_meta_porteur.csv| PG
-PPG --> |ref_indic_type.csv| PG
-PPG --> |ref_chantier_meteo.csv| PG
-PPG --> |view_meta_axe.csv| PG
-PPG --> |view_meta_ppg.csv| PG
-```
-
-Légende :
-- Est appelé `PPG_metdata` le répertoire éponyme qui se propose en interface 
-du _dump Dfakto_ avec des données plus facilement exploitables et déjà enrichies.
-
-_NB_ :
-- Les données du csv `ref_indic_type` sont importées dans la table `indicateur_type`.
-
-### Brique Dfakto vers Datawarehouse
-
-Pour le moment aucun pipeline de données n'a été implémentée. On peut imaginer des flux suivants :
-
-``` mermaid
-graph LR
-DFAK(Dump Dfakto) --> |fact_progress.csv| PG[(Base PG Pilote 2)]
-DFAK --> |fact_progress_reform.csv| PG
-DFAK --> |fact_financials_enr.csv| PG
-DFAK --> |dim_tree_nodes.csv| PG
-DFAK --> |dim_structures.csv| PG
-DFAK --> |dim_periods.csv| PG
-DFAK --> |rp_view_data_properties.csv| PG
-```
-
-_NB_ : 
-- Les données du csv `fact_progress_reform` sont importées dans la table `fact_progress_chantier`.
-- Les données du csv `fact_progress` sont importées dans la table `fact_progress_indicateur`.
-
-## Zoom sur la partie transformation de données
-
-Dans cette brique datawarehouse, deux schémas de données se distinguent :
-- Les données brutes ou `raw_data` qui sont situées dans le schéma `raw_data`.
-- Les données transformées et agrégées ou 'ready to use data' qui sont situées dans le schéma `public`.
-
-Il faudrait également mener une réflexion sur la pertinence d'avoir un schéma de données pour les données nettoyées et
-pré-processées.
-
-``` mermaid
-graph LR
-subgraph Base PG Pilote 2
-   subgraph raw_data
-      M_CHA[metadata_chantier]
-      M_PER[metadata_perimetre]
-      M_IND[metadata_indicateur]
-      M_ZON[metadata_zone]
-      D_FPI[fact_progress_indicateur]
-      D_FPC[fact_progress_chantier]
-      D_DTN[dim_tree_nodes]
-      D_DS[dim_structures]
-      M_TYPE[indicateur_type]
-      M_PORT[metadata_porteur]
-      D_FPE[fact_progress_enr]
-      D_VDP[view_data_properties]
-   end
-   subgraph public
-      M_PER --> PER[perimetre]
-      D_FPC --> CHA
-      M_PORT --> CHA
-      M_CHA --> CHA[chantier]
-      M_ZON --> CHA
-      D_DTN --> CHA
-      D_DS  --> CHA
-      M_CHA --> SDR
-      M_ZON --> SDR
-      D_VDP --> SDR[synthese_des_resultats]
-      M_ZON --> IND
-      D_DTN --> IND
-      D_DS  --> IND
-      D_FPI --> IND
-      M_TYPE --> IND
-      M_IND --> IND[indicateur]
-      D_FPE --> IND
-      linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 stroke:red;
-   end
-end
-```
-
-*NB* : 
-- L'action de `select` correspond à la sélection de colonnes.
-- En rouge, les flèches utilisant DBT pour les transformations.
-- En blanc, les flèches utilisant PSQL pour la/les transformations.
