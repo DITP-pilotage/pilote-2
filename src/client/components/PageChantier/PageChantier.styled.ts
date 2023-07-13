@@ -58,7 +58,15 @@ const PageChantierStyled = styled.div`
   
   @media print {
     @page {
+      margin: 12mm 0;
       size: 280mm 396mm;
+    }
+    
+    background: #fff;
+    
+    main {
+      margin-right: 12mm;
+      margin-left: 12mm;
     }
     
     .layout--nat {
