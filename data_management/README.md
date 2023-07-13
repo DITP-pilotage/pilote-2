@@ -218,6 +218,7 @@ data_factory/models/
 - De même, si dans un même mois, nous avons plusieurs mesures à des dates de relevé différentes (par exemple 01/01/2022 et 17/01/2022), seule la dernière date sera retenue.
 - Si pas de vi n'est renseignée, alors la première va deviendra la vi.
 - Si pas de va alors il n'y aura pas de taux d'avancement.
+- Si des valeurs sont nulles ou undefined, on les laisse circuler dans la suite des calculs de la datafactory.
 
 *1_agregation_geographique* : on commence par découper les calculs des agrégations de manière géographique (départementale, régionale et nationale).
 Cela permet, selon le paramétrage, de prendre les valeurs d'une maille donnée afin d'appliquer l'opération d'agrégation du paramétrage (somme ou moyenne)
