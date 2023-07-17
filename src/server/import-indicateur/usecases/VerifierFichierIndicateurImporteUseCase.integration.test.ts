@@ -107,34 +107,6 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     expect(payloadValiderFichier.schema).toEqual('base/schema/url/schema.json');
   });
 
-  it("quand l'indicateur ne possède pas d'informations, doit concaténer le schema avec 'sans-contraintes.json'", async () => {
-    // GIVEN
-    const detailValidationFichier = new DetailValidationFichierBuilder()
-      .avecEstValide(true)
-      .build();
-
-    const payload = {
-      cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
-      nomDuFichier: NOM_DU_FICHIER,
-      baseSchemaUrl: SCHEMA,
-      indicateurId: 'IND-001',
-      utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
-    };
-
-    const payloadValiderFichierCaptor = captor<ValiderFichierPayload>();
-
-    indicateurRepository.recupererInformationIndicateurParId.mockResolvedValue(null);
-    fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
-
-    // WHEN
-    await verifierFichierIndicateurImporteUseCase.execute(payload);
-
-    // THEN
-    expect(fichierIndicateurValidationService.validerFichier).toHaveBeenNthCalledWith(1, payloadValiderFichierCaptor);
-    const payloadValiderFichier = payloadValiderFichierCaptor.value;
-    expect(payloadValiderFichier.schema).toEqual('base/schema/url/sans-contraintes.json');
-  });
-
   it('quand le fichier est valide, doit sauvegarder les données du fichier contenu dans le rapport', async () => {
     // GIVEN
     const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()

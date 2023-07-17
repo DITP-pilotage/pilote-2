@@ -245,6 +245,10 @@ class Dependencies {
     return this._indicateurRepository;
   }
 
+  getImportIndicateurRepository(): ImportIndicateurRepository {
+    return this._importIndicateurRepository;
+  }
+
   getRapportRepository(): RapportRepository {
     return this._rapportRepository;
   }
