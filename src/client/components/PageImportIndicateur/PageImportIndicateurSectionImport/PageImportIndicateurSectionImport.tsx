@@ -27,6 +27,7 @@ const étapes = [
 
 export default function PageImportIndicateurSectionImport({
   indicateurs,
+  informationsIndicateur,
   rapport: rapportImport,
 }: PageImportIndicateurSectionImportProps) {
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
@@ -60,6 +61,7 @@ export default function PageImportIndicateurSectionImport({
           />
           <div className={`${etapeCourante != EtapesImport.SELECTION_INDICATEUR && 'fr-hidden'}`}>
             <EtapeSelectionIndicateur
+              informationsIndicateur={informationsIndicateur}
               options={optionsSélecteur}
               valeurModifiéeCallback={setIndicateurSelectionné}
               valeurSélectionnée={indicateurSelectionné}

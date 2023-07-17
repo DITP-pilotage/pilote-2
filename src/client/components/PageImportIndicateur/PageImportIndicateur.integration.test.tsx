@@ -39,6 +39,7 @@ describe('PageImportIndicateur', () => {
         <PageImportIndicateur
           chantierInformations={chantierInformations}
           indicateurs={[]}
+          informationsIndicateur={[]}
           rapport={null}
         />,
       );
@@ -62,6 +63,7 @@ describe('PageImportIndicateur', () => {
         <PageImportIndicateur
           chantierInformations={chantierInformation}
           indicateurs={[]}
+          informationsIndicateur={[]}
           rapport={null}
         />,
       );
@@ -91,6 +93,7 @@ describe('PageImportIndicateur', () => {
         <PageImportIndicateur
           chantierInformations={chantierInformation}
           indicateurs={[]}
+          informationsIndicateur={[]}
           rapport={null}
         />,
       );
@@ -118,6 +121,7 @@ describe('PageImportIndicateur', () => {
         <PageImportIndicateur
           chantierInformations={chantierInformation}
           indicateurs={indicateurs}
+          informationsIndicateur={[]}
           rapport={null}
         />,
       );

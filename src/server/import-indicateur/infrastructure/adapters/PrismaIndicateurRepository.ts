@@ -24,19 +24,25 @@ function convertirEnInformationIndicateur(rawInformationIndicateur: RawInformati
 export class PrismaIndicateurRepository implements IndicateurRepository {
   constructor(private prismaClient: PrismaClient) {}
 
-  async recupererInformationIndicateurParId(indicId: string): Promise<InformationIndicateur | null> {
+  async recupererInformationIndicateurParId(indicId: string): Promise<InformationIndicateur> {
     try {
       const rawInformationIndicateur = await this.prismaClient.$queryRaw<RawInformationIndicateurModel[]>`SELECT indic_id, indic_schema
-                                                                                                        FROM raw_data.metadata_indicateurs
-                                                                                                        WHERE indic_id = ${indicId}`;
+                                                                                                          FROM raw_data.metadata_indicateurs
+                                                                                                          WHERE indic_id = ${indicId}`;
       if (!rawInformationIndicateur) {
-        return null;
+        return convertirEnInformationIndicateur({
+          indic_id: indicId,
+          indic_schema: 'sans-contraintes.json',
+        });
       }
 
       return convertirEnInformationIndicateur(rawInformationIndicateur[0]);
     } catch (error: unknown) {
       Logger.error(error);
-      return null;
+      return convertirEnInformationIndicateur({
+        indic_id: indicId,
+        indic_schema: 'sans-contraintes.json',
+      });
     }
   }
 }

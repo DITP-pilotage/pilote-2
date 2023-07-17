@@ -11,11 +11,16 @@ import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';
 import { presenterEnRapportContrat, RapportContrat } from '@/server/app/contrats/RapportContrat';
 import { estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
+import {
+  InformationIndicateurContrat,
+  presenterEnInformationIndicateurContrat,
+} from '@/server/app/contrats/InformationIndicateurContrat';
 
 interface NextPageImportIndicateurProps {
   chantierInformations: ChantierInformations
   indicateurs: Indicateur[],
   rapport: RapportContrat | null,
+  informationsIndicateur: InformationIndicateurContrat[],
 }
 
 type GetServerSideProps = GetServerSidePropsResult<NextPageImportIndicateurProps>;
@@ -53,9 +58,14 @@ export async function getServerSideProps({
     rapport = presenterEnRapportContrat(await dependencies.getRapportRepository().récupérerRapportParId(query.rapportId as string));
   }
 
+  const informationsIndicateur = await Promise.all<(InformationIndicateurContrat)>(
+    indicateurs.map(indicateur => dependencies.getImportIndicateurRepository().recupererInformationIndicateurParId(indicateur.id).then(result => presenterEnInformationIndicateurContrat(result))),
+  );
+
   return {
     props: {
       indicateurs,
+      informationsIndicateur,
       rapport,
       chantierInformations: {
         id: chantier.id,
@@ -68,6 +78,7 @@ export async function getServerSideProps({
 export default function NextPageImportIndicateur({
   chantierInformations,
   indicateurs,
+  informationsIndicateur,
   rapport,
 }: NextPageImportIndicateurProps) {
 
@@ -81,6 +92,7 @@ export default function NextPageImportIndicateur({
       <PageImportIndicateur
         chantierInformations={chantierInformations}
         indicateurs={indicateurs}
+        informationsIndicateur={informationsIndicateur}
         rapport={rapport}
       />
     </>
