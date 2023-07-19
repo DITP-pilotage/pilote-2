@@ -1,32 +1,65 @@
 FROM python:3.9.16
 
+# [setup.root-dir]
 WORKDIR /app
 
-# Copy config files
-COPY Pipfile .
-# COPY Pipfile.lock . #1
+# [install.postgres]
+RUN apt-get update && apt-get install -y \
+    postgresql \
+ && rm -rf /var/lib/apt/lists/*
 
-# Install pipenv (last version)
+# [install.node] Install nvm with node and npm. See https://stackoverflow.com/a/28390848/21676629
+ENV NVM_DIR /root/.nvm 
+ENV NODE_VERSION 18.12.0
+
+RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
+    && . $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default
+
+ENV NODE_PATH $NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+RUN node --version
+RUN npx --version
+RUN npm --version
+RUN which npx
+## [install.prisma]
+RUN npm install prisma --save-dev
+
+
+# [setup.data.copy-files] Setup directory "data_management/"
+ARG DATA_DIR=data_management/
+WORKDIR /app/$DATA_DIR
+COPY $DATA_DIR/Pipfile .
+## COPY Pipfile.lock . #1
+
+## [install.pipenv] (last version)
 RUN python -m pip install --no-cache pipenv
-
-
-# Install dependencies of Pipfile
+## [install.pipenv-deps]
 RUN pipenv lock #1
 RUN pipenv sync
-# [log] Show path of env just created
+## [log] Show path of env just created
 RUN pipenv --venv
-# [log] Show versions of packages installed in env just created
+## [log] Show versions of packages installed in env just created
 RUN pipenv run pip freeze
 
 
-# Install deps
-COPY data_factory data_factory/
-COPY profiles.yml .
-RUN pipenv run dbt deps --profiles-dir . --project-dir data_factory
+# [setup.dbt] Install dbt deps
+COPY $DATA_DIR/data_factory data_factory/
+COPY $DATA_DIR/profiles.yml .
+#RUN pipenv run dbt deps --profiles-dir . --project-dir data_factory
+COPY $DATA_DIR/. .
 
-# Copy rest of the files
-COPY . .
+
+# [setup.prisma]
+ARG PRISMA_DIR=src/database/prisma
+WORKDIR /app/$PRISMA_DIR
+## Copy schema and migrations
+COPY src/database/prisma/ .
+
+WORKDIR /app/$DATA_DIR
 
 # Start entrypoint.sh script
-ENTRYPOINT ["/bin/bash"]
-#CMD ["scripts/serve_doc.sh"]
+ENTRYPOINT ["pipenv run", "/bin/bash"]
+CMD ["scripts/serve_doc.sh"]
