@@ -1,0 +1,1 @@
+npx prisma migrate dev --schema ../src/database/prisma/schema.prisma
