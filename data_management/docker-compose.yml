@@ -1,36 +1,44 @@
 services:
   dbt-pilote:
-    build: .
-    networks:
-      - db_dbt_pilote_net
+    command: "scripts/serve_doc.sh"
+    build: 
+      dockerfile: data_management/Dockerfile-data
+      context: ..
     env_file:
       - .env
     ports:
       - "8088:8080"
     volumes:
-      - "${PWD}/.env:/app/.env:ro"
-      - "${PWD}/data_factory:/app/data_factory"
-      - "${PWD}/input_data:/app/input_data"
+      - "${PWD}/.env:/app/data_management/.env:ro"
+      #- "${PWD}/:/app/data_management/:ro"
+      #- "${PWD}/../src/database/prisma:/app/src/database/prisma"
+      #- "${PWD}/input_data:/app/data_management/input_data"
+    networks:
+      - dbt_pilote_net
+    depends_on:
+      - postgres
   postgres:
+    #container_name: postgres
     image: postgres:14.1-alpine
     restart: always
     ports:
-      - "5444:5432"
-    networks:
-      - db_dbt_pilote_net
+      - "5432:5432"
     environment:
       - POSTGRES_USER=${PGUSER}
       - POSTGRES_PASSWORD=${PGPASSWORD}
     volumes: 
       - db_dbt_pilote:/var/lib/postgresql/data
-
-
+    networks:
+      - dbt_pilote_net
 
 volumes:
   db_dbt_pilote:
     driver: local
 networks:
-  db_dbt_pilote_net:
-    name: db_dbt_pilote_net
-    external: true
-# Start with "docker-compose up"
+  dbt_pilote_net:
+    external: false
+
+# Start with : 
+# - "docker-compose build"
+# - "docker-compose run postgres" if need a database
+# - "docker-compose run --entrypoint /bin/bash dbt-pilote" to launch container
