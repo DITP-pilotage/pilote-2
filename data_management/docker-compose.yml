@@ -26,8 +26,8 @@ services:
     environment:
       - POSTGRES_USER=${PGUSER}
       - POSTGRES_PASSWORD=${PGPASSWORD}
-    volumes: 
-      - db_dbt_pilote:/var/lib/postgresql/data
+    #volumes: 
+    #  - db_dbt_pilote:/var/lib/postgresql/data
     networks:
       - dbt_pilote_net
 
