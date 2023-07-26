@@ -61,5 +61,5 @@ COPY src/database/prisma/ .
 WORKDIR /app/$DATA_DIR
 
 # Start entrypoint.sh script
-ENTRYPOINT ["pipenv run", "/bin/bash"]
-CMD ["scripts/serve_doc.sh"]
+ENTRYPOINT ["pipenv", "run", "/bin/bash"]
+#CMD ["scripts/serve_doc.sh"]
