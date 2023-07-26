@@ -1,6 +1,6 @@
 services:
   dbt-pilote:
-    command: "scripts/serve_doc.sh"
+    #command: "scripts/serve_doc.sh"
     build: 
       dockerfile: data_management/Dockerfile-data
       context: ..
@@ -15,10 +15,8 @@ services:
       #- "${PWD}/input_data:/app/data_management/input_data"
     networks:
       - dbt_pilote_net
-    depends_on:
-      - postgres
   postgres:
-    #container_name: postgres
+    hostname: postgres
     image: postgres:14.1-alpine
     ports:
       - "5432:5432"
@@ -40,4 +38,5 @@ networks:
 # Start with : 
 # - "docker-compose build"
 # - "docker-compose run --service-ports postgres" if need a database -- See https://stackoverflow.com/a/36321237/21676629
-# - "docker-compose run --entrypoint /bin/bash dbt-pilote" to launch container
+# - "docker-compose run --service-ports dbt-pilote" to enter container OR
+# - "docker-compose run --service-ports dbt-pilote scripts/<name-of-the-script>.sh" to directly run a script
