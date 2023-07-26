@@ -39,5 +39,5 @@ networks:
 
 # Start with : 
 # - "docker-compose build"
-# - "docker-compose run postgres" if need a database
+# - "docker-compose run --service-ports postgres" if need a database -- See https://stackoverflow.com/a/36321237/21676629
 # - "docker-compose run --entrypoint /bin/bash dbt-pilote" to launch container
