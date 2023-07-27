@@ -11,7 +11,7 @@ export default function DécisionsStratégiques({ décisionStratégique, chantie
           type: 'suiviDesDécisionsStratégiques',
           libelléType: libellésTypesDécisionStratégique.suiviDesDécisionsStratégiques,
           entité: 'décisions stratégiques',
-          consigneDÉcriture: 'Notez les décisions prises lors des réunions Elysée <> Matignon (AKAR) et indiquez les actions envisagées et/ou réalisées pour mettre en œuvre ou répondre à ces décisions.',
+          consigneDÉcriture: 'Notez les décisions prises lors des réunions Elysée <> Matignon et indiquez les actions envisagées et/ou réalisées pour mettre en œuvre ou répondre à ces décisions.',
         }}
         estInteractif={estInteractif}
         maille="nationale"
