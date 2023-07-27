@@ -130,14 +130,14 @@ const INFOBULLE_CONTENUS = {
     ),
     décisionsStratégiques: (
       <p className="fr-text--sm">
-        Décisions prises lors des réunions Elysée ↔ Matignon (AKAR) et suivi des actions prises pour répondre à ces décisions.
+        Décisions prises lors des réunions Elysée ↔ Matignon et suivi des actions prises pour répondre à ces décisions.
       </p>
     ),
     commentaires: {
       territoireNational: (
         <>
           <p className="fr-text--sm">
-            Diagnostic du directeur de projet repris pour les supports de présentation des réunions Elysée ↔ Matignon (AKAR).
+            Diagnostic du directeur de projet repris pour les supports de présentation des réunions Elysée ↔ Matignon.
           </p>
           <ul className="fr-text--sm fr-mb-0">
             <li>
