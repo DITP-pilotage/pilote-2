@@ -116,7 +116,7 @@ pipenv shell
 dbt deps --project-dir data_factory
 ```
 
-#### Ou via environnement Docker
+### [docker-conf] Installation
 
 La partie des jobs data a été conteneurisé avec Docker. Pour l'utiliser, il faut se place dans le dossier `data_management/` qui contient un fichier `docker-compose.yml`. Ce fichier contient une [instruction `build`](https://github.com/DITP-pilotage/pilote-2/blob/4b1607af5915ba1b218ae3462434869990565462/data_management/docker-compose.yml#L6-L8) qui va construire une image à partir des instructions du fichier [`Dockerfile-data`](https://github.com/DITP-pilotage/pilote-2/blob/265377fa7be1dc6300d86ced624804348e414609/data_management/Dockerfile-data) dans ce même dossier. Il faut donc:
 
