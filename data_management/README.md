@@ -107,6 +107,21 @@ pipenv shell
 dbt deps --project-dir data_factory
 ```
 
+#### Ou via environnement Docker
+
+La partie des jobs data a été conteneurisé avec Docker. Pour l'utiliser, il faut se place dans le dossier `data_management/` qui contient un fichier `docker-compose.yml`. Ce fichier contient une [instruction `build`](https://github.com/DITP-pilotage/pilote-2/blob/4b1607af5915ba1b218ae3462434869990565462/data_management/docker-compose.yml#L6-L8) qui va construire une image à partir des instructions du fichier [`Dockerfile-data`](https://github.com/DITP-pilotage/pilote-2/blob/265377fa7be1dc6300d86ced624804348e414609/data_management/Dockerfile-data) dans ce même dossier. Il faut donc:
+
+1. `docker-compose build` pour construire l'image Docker
+2. `docker-compose run --service-ports postgres` pour lancer une base de données (si besoin)
+3. `docker-compose run --service-ports dbt-pilote scripts/<name-of-the-script>.sh` pour lancer un script du dossier [scripts/](scripts/)
+
+Par exemple, pour servir la documentation (cf section [Visualisation de l'ensemble du flux](visualisation-de-lensemble-du-flux)), exécuter la commande:
+
+```bash
+
+docker-compose run --service-ports dbt-pilote scripts/serve_doc.sh
+
+```
 
 
 ## Hypothèses actuelles pour les transformations
@@ -304,9 +319,9 @@ dbt docs generate --project-dir data_factory/  && dbt docs serve --project-dir d
 Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 
 Une petite icône bleue en bas à droite indique le DAG pour visualiser le flux.
 
-Ou via Docker, puis à l'adresse `localhost:8088`:
+Ou via Docker, puis à l'adresse `localhost:8088` (voir la section [Installation](installation)):
 ```bash
-docker-compose up --build
+docker-compose run --service-ports dbt-pilote scripts/serve_doc.sh
 ```
 
 ### Zoom sur une brique du flux
