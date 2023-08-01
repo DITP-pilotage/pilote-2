@@ -5,7 +5,7 @@ import {
   estLargeurDÉcranActuelleMoinsLargeQue,
 } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 
-export default function Infobulle({ idHtml, children}: InfobulleProps) {
+export default function Infobulle({ idHtml, children }: InfobulleProps) {
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const [estVisible, setEstVisible] = useState(false);
 

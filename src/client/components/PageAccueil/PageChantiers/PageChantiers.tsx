@@ -46,7 +46,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
     <PageChantiersStyled>
       {
         nombreFiltresActifs > 0 &&
-        <FiltresActifs ministères={ministères}></FiltresActifs>
+        <FiltresActifs ministères={ministères} />
       }
       <div className="fr-py-2w fr-px-md-4w fr-container--fluid">
         <div className="fr-mb-2w titre">

@@ -14,7 +14,7 @@ import usePageProjetsStructurants from './usePageProjetsStructurants';
 import PageProjetsStructurantsProps from './PageProjetsStructurants.interface';
 import TableauProjetsStructurants from './TableauProjetsStructurants/TableauProjetsStructurants';
 
-export default function PageProjetsStructurants({ projetsStructurants }: PageProjetsStructurantsProps) {
+export default function PageProjetsStructurants({ projetsStructurants, ministères }: PageProjetsStructurantsProps) {
   const {
     projetsDuTerritoireSélectionnéEtTerritoiresEnfants,
     nombreFiltresActifs,
@@ -32,7 +32,7 @@ export default function PageProjetsStructurants({ projetsStructurants }: PagePro
     <main>
       {
         nombreFiltresActifs > 0 &&
-        <FiltresActifs />
+        <FiltresActifs ministères={ministères} />
       }
       <div className="fr-py-2w fr-px-md-4w fr-container--fluid">
         <div className="fr-px-2w fr-px-md-0 flex justify-between">

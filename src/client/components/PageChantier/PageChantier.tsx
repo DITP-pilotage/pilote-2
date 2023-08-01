@@ -105,7 +105,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                                 indicateurPondérations.length === 0
                                   ? (
                                     <Infobulle
-                                      idHtml={"infobulle-chantier-météoEtSynthèseDesRésultats"} 
+                                      idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'
                                     >
                                       {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(territoireSélectionné.maille)}
                                     </Infobulle>

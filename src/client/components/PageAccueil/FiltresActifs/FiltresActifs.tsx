@@ -13,9 +13,11 @@ export default function FiltresActifs({ ministères } : FiltresActifsProps) {
 
   const nombreFiltresActifs = récupérerNombreFiltresActifs();
 
-  const ministèresAvecUnSeulPérimètre = ministères
-  .filter((ministère) => ministère.périmètresMinistériels.length === 1)
-  .map((ministère) => ministère.id);
+  const ministèresAvecUnSeulPérimètre = new Set(
+    ministères
+      .filter((ministère) => ministère.périmètresMinistériels.length === 1)
+      .map((ministère) => ministère.id),
+  );
 
   return (
     <FiltresActifsStyled
@@ -40,7 +42,7 @@ export default function FiltresActifs({ ministères } : FiltresActifsProps) {
                 key={`tag-${filtre.id}`}
               >
                 <Tag
-                  libellé={'ministèreId' in filtre? (ministèresAvecUnSeulPérimètre.includes(filtre.ministèreId) ? filtre.ministèreNom : filtre.nom): filtre.nom}
+                  libellé={'ministèreId' in filtre ? (ministèresAvecUnSeulPérimètre.has(filtre.ministèreId) ? filtre.ministèreNom : filtre.nom) : filtre.nom}
                   suppressionCallback={() => désactiverUnFiltre(filtre.id, catégorie)}
                 />
               </li>

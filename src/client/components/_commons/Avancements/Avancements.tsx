@@ -49,7 +49,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
             variante="secondaire"
           />
           <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-            Moyenne de l'année en cours
+            Moyenne de l&apos;année en cours
           </p>
         </div>
       </div>
