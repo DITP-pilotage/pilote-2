@@ -5,7 +5,7 @@ import {
   estLargeurDÉcranActuelleMoinsLargeQue,
 } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 
-export default function Infobulle({ idHtml, children, estActive = true}: InfobulleProps) {
+export default function Infobulle({ idHtml, children}: InfobulleProps) {
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
   const [estVisible, setEstVisible] = useState(false);
 
@@ -25,7 +25,7 @@ export default function Infobulle({ idHtml, children, estActive = true}: Infobul
         type='button'
       />
       {
-        !!estVisible && estActive &&
+        !!estVisible &&
         <div
           className="fr-p-1w fr-p-md-3v infobulle-texte"
           id={idHtml}

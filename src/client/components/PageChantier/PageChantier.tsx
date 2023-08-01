@@ -101,12 +101,11 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                               Avancement du chantier
                             </Titre>
                             {
-                              !!territoireSélectionné && (
+                              !!territoireSélectionné && process.env.NEXT_PUBLIC_FF_INFOBULLE_PONDERATION === 'true' && (
                                 indicateurPondérations.length === 0
                                   ? (
                                     <Infobulle
                                       idHtml={"infobulle-chantier-météoEtSynthèseDesRésultats"} 
-                                      estActive={process.env.NEXT_PUBLIC_FF_INFOBULLE_PONDERATION === 'true'}
                                     >
                                       {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(territoireSélectionné.maille)}
                                     </Infobulle>
@@ -115,7 +114,6 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                                       ? (
                                         <Infobulle 
                                           idHtml="infobulle-chantier-météoEtSynthèseDesRésultats" 
-                                          estActive={process.env.NEXT_PUBLIC_FF_INFOBULLE_PONDERATION === 'true'}
                                         >
                                           {INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(territoireSélectionné.maille, indicateurPondérations[0])}
                                         </Infobulle>
@@ -123,7 +121,6 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                                       : (
                                         <Infobulle 
                                           idHtml="infobulle-chantier-météoEtSynthèseDesRésultats" 
-                                          estActive={process.env.NEXT_PUBLIC_FF_INFOBULLE_PONDERATION === 'true'}
                                         >
                                           {INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(territoireSélectionné.maille, indicateurPondérations)}
                                         </Infobulle>
