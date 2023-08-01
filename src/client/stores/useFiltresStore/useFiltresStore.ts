@@ -64,6 +64,7 @@ const useFiltresStore = create<FiltresStore>((set, get) => ({
           });
         })
       ));
+      console.log(filtreEtCatégorie);
       return filtreEtCatégorie;
     },
   },
