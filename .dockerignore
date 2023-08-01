@@ -1,2 +1,8 @@
 data_management/input_data/*
+data_management/data_exploration
+data_management/geojson
+data_management/Pipfile.lock
+data_management/data_factory/target/
+data_management/data_factory/logs/
+data_management/data_factory/dbt_packages/
 
