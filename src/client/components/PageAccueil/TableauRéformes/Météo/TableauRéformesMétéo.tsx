@@ -32,7 +32,7 @@ export default function TableauRéformesMétéo({ météo, dateDeMàjDonnéesQua
           )
       }
       {
-        !!dateDeMàjDonnéesQualitatives &&
+        !!dateDeMàjDonnéesQualitatives && process.env.NEXT_PUBLIC_FF_DATE_METEO === 'true' &&
         <span className='texte-gris'>
           {`(${ formaterDate(dateDeMàjDonnéesQualitatives, 'MM/YYYY') })`}
         </span>

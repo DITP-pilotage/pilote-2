@@ -58,9 +58,16 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
         </BoutonSousLigné>
         {
           typeDeRéformeSélectionné === 'chantier' ?
-            <PageChantiers chantiers={chantiers} />
+            <PageChantiers 
+              chantiers={chantiers} 
+              ministères={ministères}
+            />
             :
-            process.env.NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS === 'true' && <PageProjetsStructurants projetsStructurants={projetsStructurants} />
+            process.env.NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS === 'true' && 
+            <PageProjetsStructurants 
+              ministères={ministères}
+              projetsStructurants={projetsStructurants}
+            />
         }
       </div>
     </PageAccueilStyled>

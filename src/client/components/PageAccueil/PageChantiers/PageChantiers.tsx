@@ -27,7 +27,7 @@ import PageChantiersProps from './PageChantiers.interface';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
 
-export default function PageChantiers({ chantiers }: PageChantiersProps) {
+export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const [nombreChantiersDansLeTableau, setNombreChantiersDansLeTableau] = useState<number>();
   
@@ -46,7 +46,7 @@ export default function PageChantiers({ chantiers }: PageChantiersProps) {
     <PageChantiersStyled>
       {
         nombreFiltresActifs > 0 &&
-        <FiltresActifs />
+        <FiltresActifs ministères={ministères} />
       }
       <div className="fr-py-2w fr-px-md-4w fr-container--fluid">
         <div className="fr-mb-2w titre">

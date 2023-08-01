@@ -1,8 +1,9 @@
 import Tag from '@/components/_commons/Tag/Tag';
 import { actions as actionsFiltreStore } from '@/stores/useFiltresStore/useFiltresStore';
 import FiltresActifsStyled from './FiltresActifs.styled';
+import FiltresActifsProps from './FiltresActifs.interface';
 
-export default function FiltresActifs() {
+export default function FiltresActifs({ ministères } : FiltresActifsProps) {
   const {
     récupérerFiltresActifsAvecLeursCatégories,
     désactiverUnFiltre,
@@ -11,6 +12,12 @@ export default function FiltresActifs() {
   } = actionsFiltreStore();
 
   const nombreFiltresActifs = récupérerNombreFiltresActifs();
+
+  const ministèresAvecUnSeulPérimètre = new Set(
+    ministères
+      .filter((ministère) => ministère.périmètresMinistériels.length === 1)
+      .map((ministère) => ministère.id),
+  );
 
   return (
     <FiltresActifsStyled
@@ -35,7 +42,7 @@ export default function FiltresActifs() {
                 key={`tag-${filtre.id}`}
               >
                 <Tag
-                  libellé={filtre.nom}
+                  libellé={'ministèreId' in filtre ? (ministèresAvecUnSeulPérimètre.has(filtre.ministèreId) ? filtre.ministèreNom : filtre.nom) : filtre.nom}
                   suppressionCallback={() => désactiverUnFiltre(filtre.id, catégorie)}
                 />
               </li>

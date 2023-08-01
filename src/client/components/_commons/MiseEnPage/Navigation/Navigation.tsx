@@ -21,21 +21,25 @@ export default function Navigation() {
       nom: 'Accueil',
       lien: '/',
       accessible: true,
+      target: '_self',
     },
     {
       nom: 'Gestion des comptes',
       lien: '/admin/utilisateurs',
       accessible: session?.profil === 'DITP_ADMIN',
+      target: '_self',
     },
     {
       nom: 'Nouveautés',
       lien: '/nouveautes',
       accessible: true,
+      target: '_self',
     },
     {
       nom: 'Centre d\'aide',
-      lien: '/aide',
+      lien: 'https://centre-aide-pilote-ditp.osc-fr1.scalingo.io/',
       accessible: true,
+      target: '_blank',
     },
   ];
 
@@ -76,6 +80,7 @@ export default function Navigation() {
                     className="fr-nav__link"
                     href={page.lien}
                     onClick={fermerLaModaleDuMenu}
+                    target={page.target}
                   >
                     {page.nom}
                   </Link>
