@@ -1,8 +1,6 @@
 ##
 # PPG méta données et dfakto
-input_data/private_data/*
 input_data/temp/*
-!input_data/private_data/.gitkeep
 
 ##
 # dbt

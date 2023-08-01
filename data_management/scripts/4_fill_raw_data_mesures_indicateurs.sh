@@ -31,10 +31,10 @@ psql "$DATABASE_URL" -c "TRUNCATE TABLE raw_data.mesure_indicateur CASCADE"
 #psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/indicateur_cumule_et_decumule.csv
 #sleep 2
 #psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/indicateur_cumule_et_decumule_doublon.csv
-psql "$DATABASE_URL" -c "copy utilisateur (id ,email, nom, prenom, profil_code, auteur_modification, date_modification, fonction) from STDIN with csv delimiter ',' header;" < input_data/private_data/PPG_metadata/config_calculs/sample-1/utilisateur_uuid.csv
-psql "$DATABASE_URL" -c "copy rapport_import_mesure_indicateur (id, date_creation, utilisateur_email) from STDIN with csv delimiter ',' header;" < input_data/private_data/PPG_metadata/config_calculs/sample-1/rapport_import_mesure_indicateur_uuid.csv
-psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value, id, rapport_id) from STDIN with csv delimiter ',' header;" < input_data/private_data/PPG_metadata/config_calculs/sample-1/valeurs-sample-uuid.csv
-#psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, metric_date, metric_type, metric_value, zone_id, id, rapport_id) from STDIN with csv delimiter ',' header;" < input_data/private_data/PPG_metadata/config_calculs/sample-1/mesure_indicateur_202306271030.csv
+psql "$DATABASE_URL" -c "copy utilisateur (id ,email, nom, prenom, profil_code, auteur_modification, date_modification, fonction) from STDIN with csv delimiter ',' header;" < input_data/private_data/private_seeds/utilisateur_uuid.csv
+psql "$DATABASE_URL" -c "copy rapport_import_mesure_indicateur (id, date_creation, utilisateur_email, est_valide) from STDIN with csv delimiter ',' header;" < input_data/private_data/private_seeds/rapport_import_mesure_indicateur_uuid.csv
+psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (date_import, indic_id,  metric_date, metric_type, metric_value, zone_id, id, rapport_id) from STDIN with csv delimiter ',' header;" < input_data/private_data/private_seeds/valeurs-sample-uuid.csv
+#psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, metric_date, metric_type, metric_value, zone_id, id, rapport_id) from STDIN with csv delimiter ',' header;" < input_data/private_data/private_seeds/mesure_indicateur_202306271030.csv
 
 #  Quelques fichiers de prod
 #psql "$DATABASE_URL" -c "copy raw_data.mesure_indicateur (indic_id, zone_id, metric_date, metric_type, metric_value) from STDIN with csv delimiter ',' header;" < "$INPUT_DATA_INDICATEURS"/data_import1_IND-228.csv

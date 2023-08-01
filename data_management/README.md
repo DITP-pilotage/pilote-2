@@ -116,7 +116,38 @@ pipenv shell
 dbt deps --project-dir data_factory
 ```
 
+### [docker-conf] Installation
 
+La partie des jobs data a été conteneurisé avec Docker. Pour l'utiliser, il faut se place dans le dossier `data_management/` qui contient un fichier `docker-compose.yml`. Ce fichier contient une [instruction `build`](https://github.com/DITP-pilotage/pilote-2/blob/4b1607af5915ba1b218ae3462434869990565462/data_management/docker-compose.yml#L6-L8) qui va construire une image à partir des instructions du fichier [`Dockerfile-data`](https://github.com/DITP-pilotage/pilote-2/blob/265377fa7be1dc6300d86ced624804348e414609/data_management/Dockerfile-data) dans ce même dossier. Il faut donc:
+
+1. `docker-compose build` pour construire l'image Docker
+2. *optionnel* `docker-compose run --service-ports postgres` pour lancer une base de données (si besoin)
+3. `docker-compose run --service-ports dbt-pilote scripts/<name-of-the-script>.sh` pour lancer un script du dossier [scripts/](scripts/)
+4. *OU* `docker-compose run --service-ports dbt-pilote` pour entrer dans le container. Vous pouvez ensuite lancer un script depuis ce container comme vous le feriez à l'extérieur, c'est à dire avec `/bin/bash scripts/<name-of-the-script>.sh`
+
+Par exemple, pour servir la documentation (cf section [Visualisation de l'ensemble du flux](visualisation-de-lensemble-du-flux)), exécuter la commande:
+
+```sh
+
+docker-compose run --service-ports dbt-pilote scripts/serve_doc.sh
+
+```
+
+Un exemple complet d'utilisation de docker pour cette partie data pourrait être:
+
+```sh
+# Build the image
+docker-compose build
+# Start a database
+docker-compose run --service-ports postgres
+# Run script to install dbt
+docker-compose run --service-ports dbt-pilote scripts/0_install_dbt_deps.sh
+# Run prisma migrations
+docker-compose run --service-ports dbt-pilote scripts/0_prisma_migrate.sh
+# Run script 1
+docker-compose run --service-ports dbt-pilote scripts/1_dump_dfakto.sh
+# and so on for all the scripts
+```
 
 ## Hypothèses actuelles pour les transformations
 
@@ -327,6 +358,11 @@ dbt docs generate --project-dir data_factory/  && dbt docs serve --project-dir d
 
 Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 
 Une petite icône bleue en bas à droite indique le DAG pour visualiser le flux.
+
+Ou via Docker, puis à l'adresse `localhost:8088` (voir la section [Installation](installation)):
+```bash
+docker-compose run --service-ports dbt-pilote scripts/serve_doc.sh
+```
 
 ### Zoom sur une brique du flux
 

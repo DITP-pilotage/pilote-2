@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  dbt-pilote:
+    #command: "scripts/serve_doc.sh"
+    build: 
+      dockerfile: data_management/Dockerfile-data
+      context: ..
+    env_file:
+      - .env
+    ports:
+      - "8088:8080"
+    volumes:
+      - "${PWD}/.env:/app/data_management/.env:ro"
+      #- "${PWD}/:/app/data_management/:ro"
+      #- "${PWD}/../src/database/prisma:/app/src/database/prisma"
+      - "${PWD}/input_data:/app/data_management/input_data"
+    networks:
+      - dbt_pilote_net
+  postgres:
+    hostname: postgres
+    image: postgres:14.1-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+    #volumes: 
+    #  - db_dbt_pilote:/var/lib/postgresql/data
+    networks:
+      - dbt_pilote_net
+
+volumes:
+  db_dbt_pilote:
+    driver: local
+networks:
+  dbt_pilote_net:
+    external: false
+
+# Start with : 
+# - "docker-compose build"
+# - "docker-compose run --service-ports postgres" if need a database -- See https://stackoverflow.com/a/36321237/21676629
+# - "docker-compose run --service-ports dbt-pilote" to enter container OR
+# - "docker-compose run --service-ports dbt-pilote scripts/<name-of-the-script>.sh" to directly run a script
