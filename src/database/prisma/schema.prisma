@@ -151,6 +151,9 @@ model ppg {
   @@schema("public")
 }
 
+
+// TODO: Ajouter ici un modèle pour raw_data.commentaires. See https://trello.com/c/9x0TMU1f/635
+
 model commentaire {
   id          String   @id
   chantier_id String
