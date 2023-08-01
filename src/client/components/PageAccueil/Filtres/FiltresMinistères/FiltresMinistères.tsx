@@ -84,31 +84,34 @@ export default function FiltresMinistères({ ministères }: FiltresMinistèresPr
                       </span>
                     </div>
                   </button>
-                  <ul
-                    className="fr-p-0 fr-m-0 fr-mb-1w périmètres-liste"
-                    tabIndex={!estDéroulé(ministère) ? -1 : undefined}
-                  >
-                    {
-                      ministère.périmètresMinistériels.map(périmètre => (
-                        <li
-                          className="fr-p-0 fr-my-1w fr-mr-0 fr-ml-4w"
-                          key={périmètre.id}
-                        >
-                          <button
-                            className={`
-                              fr-m-0 fr-p-1w fr-text--md tuile
-                              ${estActif(périmètre.id, catégorieDeFiltre) ? 'actif' : ''}
-                            `}
-                            onClick={() => auClicSurUnPérimètreCallback(périmètre)}
-                            tabIndex={!estDéroulé(ministère) ? -1 : undefined}
-                            type="button"
+                  {
+                    ministère.périmètresMinistériels.length > 1 &&
+                    <ul
+                      className="fr-p-0 fr-m-0 fr-mb-1w périmètres-liste"
+                      tabIndex={!estDéroulé(ministère) ? -1 : undefined}
+                    >
+                      {
+                        ministère.périmètresMinistériels.map(périmètre => (
+                          <li
+                            className="fr-p-0 fr-my-1w fr-mr-0 fr-ml-4w"
+                            key={périmètre.id}
                           >
-                            {périmètre.nom}
-                          </button>
-                        </li>
-                      ))
-                    }
-                  </ul>
+                            <button
+                              className={`
+                                fr-m-0 fr-p-1w fr-text--md tuile
+                                ${estActif(périmètre.id, catégorieDeFiltre) ? 'actif' : ''}
+                              `}
+                              onClick={() => auClicSurUnPérimètreCallback(périmètre)}
+                              tabIndex={!estDéroulé(ministère) ? -1 : undefined}
+                              type="button"
+                            >
+                              {périmètre.nom}
+                            </button>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  }
                 </li>
               );
             })
