@@ -131,9 +131,11 @@ models:
 
 
 tests:
-  chantier_no_comments:
-    enabled: true
-    store_failures: true
-    severity: error
-    tags: ["data_quality"]
-    limit: 100
+  ditp_ppg_dbt:
+    public:
+      chantier_no_comments:
+        enabled: true
+        store_failures: true
+        severity: error
+        tags: ["data_quality"]
+        limit: 100
