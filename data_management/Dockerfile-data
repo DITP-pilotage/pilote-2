@@ -49,7 +49,7 @@ RUN pipenv run pip freeze
 #COPY $DATA_DIR/data_factory data_factory/
 #COPY $DATA_DIR/profiles.yml .
 #RUN pipenv run dbt deps --profiles-dir . --project-dir data_factory
-COPY $DATA_DIR/. .
+#COPY $DATA_DIR/. .
 
 
 # [setup.prisma]
