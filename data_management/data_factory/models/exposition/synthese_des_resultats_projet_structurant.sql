@@ -1,6 +1,6 @@
 SELECT
 DISTINCT ON(projet_structurant_temporaire.id, dfakto_view.synthese_des_resultats_date, dfakto_view.meteo_date)
-    {{ dbt_utils.generate_surrogate_key(
+    {{ dbt_utils.surrogate_key(
         ['projet_structurant_temporaire.id',
         'dfakto_view.synthese_des_resultats_date',
         'dfakto_view.meteo_date',

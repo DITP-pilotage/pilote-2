@@ -1,5 +1,5 @@
 SELECT
-    {{ dbt_utils.generate_surrogate_key(
+    {{ dbt_utils.surrogate_key(
                  ['chantier_id',
                  'type',
                  'date']
