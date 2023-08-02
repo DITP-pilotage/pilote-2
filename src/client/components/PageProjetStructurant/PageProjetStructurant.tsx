@@ -22,7 +22,7 @@ import usePageProjetStructurant from './usePageProjetStructurant';
 
 export default function PageProjetStructurant({ projetStructurant, indicateurs, détailsIndicateurs }: PageProjetStructurantProps) {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);  
-  const { synthèseDesRésultats, objectif, commentaires } = usePageProjetStructurant(projetStructurant.id, projetStructurant.territoire.code);
+  const { synthèseDesRésultats, objectif, commentaires, modeÉcriture } = usePageProjetStructurant(projetStructurant.id, projetStructurant.territoire.code);
 
   return (
     <PageProjetStructurantStyled className='flex'>
@@ -172,8 +172,8 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
               </TitreInfobulleConteneur>
               <Commentaires
                 commentaires={commentaires}
-                estInteractif={false}
                 maille={projetStructurant.territoire.maille}
+                modeÉcriture={modeÉcriture}
                 nomTerritoire={projetStructurant.territoire.nomAffiché}
                 réformeId={projetStructurant.id}
                 typesCommentaire={typesCommentaireProjetStructurant}

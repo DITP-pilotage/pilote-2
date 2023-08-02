@@ -37,20 +37,26 @@ export const publicationRouter = créerRouteurTRPC({
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const auteur = ctx.session.user.name ?? '';   
       
-      if (input.entité === 'commentaires') {
-        const créerUnCommentaireUseCase = new CréerUnCommentaireUseCase(dependencies.getCommentaireRepository());
-        return créerUnCommentaireUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur, input.type as TypeCommentaireChantier, ctx.session.habilitations);
-      }
-        
-      if (input.entité === 'objectifs') {
-        const créerUnObjectifUseCase = new CréerUnObjectifUseCase(dependencies.getObjectifRepository());
-        return créerUnObjectifUseCase.run(input.réformeId, input.contenu, auteur, input.type as TypeObjectif, ctx.session.habilitations);
-      }
-        
-      if (input.entité === 'décisions stratégiques') {
-        const créerUneDécisionStratégiqueUseCase = new CréerUneDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
-        return créerUneDécisionStratégiqueUseCase.run(input.réformeId, input.contenu, auteur, ctx.session.habilitations);
-      }
+      if (input.typeDeRéforme === 'chantier') {
+        if (input.entité === 'commentaires') {
+          const créerUnCommentaireUseCase = new CréerUnCommentaireUseCase(dependencies.getCommentaireRepository());
+          return créerUnCommentaireUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur, input.type as TypeCommentaireChantier, ctx.session.habilitations);
+        }
+          
+        if (input.entité === 'objectifs') {
+          const créerUnObjectifUseCase = new CréerUnObjectifUseCase(dependencies.getObjectifRepository());
+          return créerUnObjectifUseCase.run(input.réformeId, input.contenu, auteur, input.type as TypeObjectif, ctx.session.habilitations);
+        }
+          
+        if (input.entité === 'décisions stratégiques') {
+          const créerUneDécisionStratégiqueUseCase = new CréerUneDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
+          return créerUneDécisionStratégiqueUseCase.run(input.réformeId, input.contenu, auteur, ctx.session.habilitations);
+        }
+      } else if (input.typeDeRéforme === 'projet structurant') {
+        if (input.entité === 'commentaires') {
+          console.log('hello'); // Implémenter ici l'appel au UseCase
+        }
+      } 
     }),
     
   récupérerLaPlusRécente: procédureProtégée

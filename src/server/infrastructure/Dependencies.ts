@@ -289,7 +289,7 @@ class Dependencies {
     return this._objectifProjetStructurantRepository;
   }
 
-  getCommentaireProjetStructurantRepository() {
+  getCommentaireProjetStructurantRepository(): CommentaireProjetStructurantRepository {
     return this._commentaireProjetStructurantRepository;
   }
 

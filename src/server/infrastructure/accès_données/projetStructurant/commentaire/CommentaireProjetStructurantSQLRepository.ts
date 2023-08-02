@@ -79,4 +79,19 @@ export default class CommentaireProjetStructurantSQLRepository implements Commen
       (c: CommentaireProjetStructurantPrisma) => this.mapperVersDomaine(c),
     );
   }
+
+  async créer(projetStructurantId: string, id: string, contenu: string, auteur: string, type: TypeCommentaireProjetStructurant, date: Date): Promise<CommentaireProjetStructurant> {
+
+    const commentaireCréé =  await this.prisma.commentaire_projet_structurant.create({
+      data: {
+        id: id,
+        projet_structurant_id: projetStructurantId,
+        contenu: contenu,
+        type: CODES_TYPES_COMMENTAIRES[type],
+        date: date,
+        auteur: auteur,
+      } });
+
+    return this.mapperVersDomaine(commentaireCréé);
+  }
 }
