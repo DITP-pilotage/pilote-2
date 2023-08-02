@@ -1,6 +1,6 @@
 SELECT
     DISTINCT ON (indicateur_nom)
-    {{ dbt_utils.surrogate_key(['indicateur_nom']) }} as id,
+    {{ dbt_utils.generate_surrogate_key(['indicateur_nom']) }} as id,
     data_kpis.indicateur_nom as nom,
     data_kpis.projet_structurant_code,
     CASE

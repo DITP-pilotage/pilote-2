@@ -6,7 +6,7 @@ WITH fact_property_value as (
 
 SELECT
     DISTINCT ON (data_financials_ps.projet_structurant_code)
-    {{ dbt_utils.surrogate_key(['data_financials_ps.projet_structurant_code']) }} as id,
+    {{ dbt_utils.generate_surrogate_key(['data_financials_ps.projet_structurant_code']) }} as id,
     data_financials_ps.projet_structurant_code as code,
     data_financials_ps.projet_structurant_nom as nom,
     COALESCE(fact_progress_ps.avancement_borne, fact_property_value.valeur::FLOAT) as taux_avancement,
