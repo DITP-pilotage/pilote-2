@@ -122,20 +122,3 @@ models:
       indicateur_projet_structurant:
         +unique_key:
           - 'id'
-tests:
-  ditp_ppg_dbt:
-    public:
-      chantier_no_comments:
-        enabled: true
-        store_failures: true
-        severity: error
-        tags: ["data_quality"]
-        limit: 100
-  cnt_rows_ta_indic_zone:
-    public:
-      chantier_no_comments:
-        enabled: true
-        store_failures: true
-        severity: error
-        tags: ["data_quality"]
-        limit: 100
