@@ -128,3 +128,12 @@ models:
     +schema: "elementary"
     ## To disable elementary for dev, uncomment this:
     # enabled: "{{ target.name in ['prod','analytics'] }}"
+
+
+tests:
+  chantier_no_comments:
+    enabled: true
+    store_failures: true
+    severity: error
+    tags: ["data_quality"]
+    limit: 100
