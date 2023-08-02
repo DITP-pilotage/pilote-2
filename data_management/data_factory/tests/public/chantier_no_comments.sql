@@ -1,4 +1,3 @@
-{{ config(severity = 'warn') }}
 
 --select tree_node_id from {{ref('dim_tree_nodes')}} where tree_node_id = '2210412fb0db40a19f8b2cf8d39ea4e2'
 
