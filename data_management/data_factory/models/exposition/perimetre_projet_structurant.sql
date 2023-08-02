@@ -1,5 +1,5 @@
 SELECT
-    {{ dbt_utils.surrogate_key(
+    {{ dbt_utils.generate_surrogate_key(
         ['perimetres_ppg_id',
         'perimetre_ps_nom']
     ) }} as id,
