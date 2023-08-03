@@ -5,7 +5,7 @@ import { typesDécisionStratégique } from '@/server/domain/chantier/décisionSt
 import { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
 import { typesCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 
-export const LIMITE_CARACTÈRES_PUBLICATION = 5000;
+export const LIMITE_CARACTÈRES_PUBLICATION = Number.parseInt(process.env.NEXT_PUBLIC_LIMITE_CARACTERES_PUBLICATION || '5000');
 
 export const zodValidateurCSRF = z.object({
   csrf: z.string(),
