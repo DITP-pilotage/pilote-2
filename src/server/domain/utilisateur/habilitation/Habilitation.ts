@@ -30,6 +30,12 @@ export default class Habilitation {
       throw new TerritoireNonAutoriséErreur();
   }
 
+  vérifierLesHabilitationsEnSaisieDesPublicationsProjetsStructurants(territoireCode: string): Error | void {
+    // Vérifications des habilitations à compléter
+    if (!this._habilitations['saisie.commentaire'].territoires.includes(territoireCode))
+      throw new TerritoireNonAutoriséErreur();
+  }
+
   vérifierLesHabilitationsEnCréationModificationUtilisateur(chantiersIds: Chantier['id'][], territoiresCodes: Territoire['code'][]) {
     if (!toutesLesValeursDuTableauSontContenuesDansLAutreTableau(chantiersIds, this._habilitations['utilisateurs.modification'].chantiers)) 
       throw new ChantiersNonAutorisésCreationModificationUtilisateurErreur();

@@ -56,7 +56,7 @@ export const publicationRouter = créerRouteurTRPC({
         }
       } else if (input.typeDeRéforme === 'projet structurant' && input.entité === 'commentaires') {
         const créerUnCommentaireProjetStructurantUseCase = new CréerUnCommentaireProjetStructurantUseCase(dependencies.getCommentaireProjetStructurantRepository());
-        return créerUnCommentaireProjetStructurantUseCase.run(input.réformeId, input.contenu, auteur, input.type as TypeCommentaireProjetStructurant);        
+        return créerUnCommentaireProjetStructurantUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur, input.type as TypeCommentaireProjetStructurant, ctx.session.habilitations);        
       } 
     }),
     
@@ -134,7 +134,7 @@ export const publicationRouter = créerRouteurTRPC({
         }
       } else if (input.typeDeRéforme === 'projet structurant' && input.entité === 'commentaires') {
         const récupérerHistoriqueCommentaireProjetStructurantUseCase = new RécupérerHistoriqueCommentaireProjetStructurantUseCase(dependencies.getCommentaireProjetStructurantRepository());
-        return récupérerHistoriqueCommentaireProjetStructurantUseCase.run(input.réformeId, input.type as TypeCommentaireProjetStructurant);        
+        return récupérerHistoriqueCommentaireProjetStructurantUseCase.run(input.réformeId, input.type as TypeCommentaireProjetStructurant, ctx.session.habilitations);        
       }
     }),
 });
