@@ -80,6 +80,19 @@ export default class CommentaireProjetStructurantSQLRepository implements Commen
     );
   }
 
+  async récupérerHistorique(projetStructurantId: string, type: TypeCommentaireProjetStructurant): Promise<CommentaireProjetStructurant[]> {
+
+    const commentairesProjetStructurant: CommentaireProjetStructurantPrisma[] = await this.prisma.commentaire_projet_structurant.findMany({
+      where: {
+        projet_structurant_id: projetStructurantId,
+        type: CODES_TYPES_COMMENTAIRES[type],
+      },
+      orderBy: { date: 'desc' },
+    });
+
+    return commentairesProjetStructurant.map(commentaireDeLHistorique => this.mapperVersDomaine(commentaireDeLHistorique));
+  }
+
   async créer(projetStructurantId: string, id: string, contenu: string, auteur: string, type: TypeCommentaireProjetStructurant, date: Date): Promise<CommentaireProjetStructurant> {
 
     const commentaireCréé =  await this.prisma.commentaire_projet_structurant.create({
