@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import CommentaireProjetStructurant from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 import ObjectifProjetStructurant, { typeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
@@ -10,10 +11,14 @@ import { actionsTypeDeRéformeStore, typeDeRéformeSélectionnéeStore } from '@
 export default function usePageProjetStructurant(projetStructurantId: ProjetStructurant['id'], territoireCode: ProjetStructurant['territoire']['code']) {
   const { modifierTypeDeRéformeSélectionné } = actionsTypeDeRéformeStore();
   const typeDeRéformeSélectionné = typeDeRéformeSélectionnéeStore();
+  const { data: session } = useSession();
+
 
   useEffect(() => {
     if (typeDeRéformeSélectionné === 'chantier') modifierTypeDeRéformeSélectionné();
   }, [modifierTypeDeRéformeSélectionné, typeDeRéformeSélectionné]);  
+
+  const modeÉcriture = !!session?.habilitations['saisie.commentaire'].territoires.includes(territoireCode);
   
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {
@@ -47,5 +52,6 @@ export default function usePageProjetStructurant(projetStructurantId: ProjetStru
     synthèseDesRésultats: synthèseDesRésultats ? synthèseDesRésultats as SynthèseDesRésultatsProjetStructurant : null,
     objectif: objectif ? objectif as ObjectifProjetStructurant : null,
     commentaires: commentaires ? commentaires[projetStructurantId] as CommentaireProjetStructurant[] : null,
+    modeÉcriture,
   };
 }

@@ -29,6 +29,8 @@ import RécupérerCommentaireProjetStructurantLePlusRécentUseCase from '@/serve
 import { TypeCommentaireChantier } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import { TypeCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase from '@/server/usecase/projetStructurant/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase';
+import CréerUnCommentaireProjetStructurantUseCase from '@/server/usecase/projetStructurant/commentaire/CréerUnCommentaireProjetStructurantUseCase';
+import RécupérerHistoriqueCommentaireProjetStructurantUseCase from '@/server/usecase/projetStructurant/commentaire/RécupérerHistoriqueCommentaireProjetStructurantUseCase';
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
@@ -37,20 +39,25 @@ export const publicationRouter = créerRouteurTRPC({
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const auteur = ctx.session.user.name ?? '';   
       
-      if (input.entité === 'commentaires') {
-        const créerUnCommentaireUseCase = new CréerUnCommentaireUseCase(dependencies.getCommentaireRepository());
-        return créerUnCommentaireUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur, input.type as TypeCommentaireChantier, ctx.session.habilitations);
-      }
-        
-      if (input.entité === 'objectifs') {
-        const créerUnObjectifUseCase = new CréerUnObjectifUseCase(dependencies.getObjectifRepository());
-        return créerUnObjectifUseCase.run(input.réformeId, input.contenu, auteur, input.type as TypeObjectif, ctx.session.habilitations);
-      }
-        
-      if (input.entité === 'décisions stratégiques') {
-        const créerUneDécisionStratégiqueUseCase = new CréerUneDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
-        return créerUneDécisionStratégiqueUseCase.run(input.réformeId, input.contenu, auteur, ctx.session.habilitations);
-      }
+      if (input.typeDeRéforme === 'chantier') {
+        if (input.entité === 'commentaires') {
+          const créerUnCommentaireUseCase = new CréerUnCommentaireUseCase(dependencies.getCommentaireRepository());
+          return créerUnCommentaireUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur, input.type as TypeCommentaireChantier, ctx.session.habilitations);
+        }
+          
+        if (input.entité === 'objectifs') {
+          const créerUnObjectifUseCase = new CréerUnObjectifUseCase(dependencies.getObjectifRepository());
+          return créerUnObjectifUseCase.run(input.réformeId, input.contenu, auteur, input.type as TypeObjectif, ctx.session.habilitations);
+        }
+          
+        if (input.entité === 'décisions stratégiques') {
+          const créerUneDécisionStratégiqueUseCase = new CréerUneDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
+          return créerUneDécisionStratégiqueUseCase.run(input.réformeId, input.contenu, auteur, ctx.session.habilitations);
+        }
+      } else if (input.typeDeRéforme === 'projet structurant' && input.entité === 'commentaires') {
+        const créerUnCommentaireProjetStructurantUseCase = new CréerUnCommentaireProjetStructurantUseCase(dependencies.getCommentaireProjetStructurantRepository());
+        return créerUnCommentaireProjetStructurantUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur, input.type as TypeCommentaireProjetStructurant, ctx.session.habilitations);        
+      } 
     }),
     
   récupérerLaPlusRécente: procédureProtégée
@@ -110,19 +117,24 @@ export const publicationRouter = créerRouteurTRPC({
   récupérerHistorique: procédureProtégée
     .input(validationPublicationContexte.and(zodValidateurEntitéType))
     .query(async ({ input, ctx }) => {
-      if (input.entité === 'commentaires') {
-        const récupérerHistoriqueCommentaireUseCase = new RécupérerHistoriqueCommentaireUseCase(dependencies.getCommentaireRepository());
-        return récupérerHistoriqueCommentaireUseCase.run(input.réformeId, input.territoireCode, input.type as TypeCommentaireChantier, ctx.session.habilitations);
-      } 
-  
-      if (input.entité === 'objectifs') {
-        const récupérerHistoriqueObjectifUseCase = new RécupérerHistoriqueObjectifUseCase(dependencies.getObjectifRepository());
-        return récupérerHistoriqueObjectifUseCase.run(input.réformeId, input.type as TypeObjectif, ctx.session.habilitations);
-      }
-  
-      if (input.entité === 'décisions stratégiques') {
-        const récupérerHistoriqueDésionStratégiqueUseCase = new RécupérerHistoriqueDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
-        return récupérerHistoriqueDésionStratégiqueUseCase.run(input.réformeId, ctx.session.habilitations);
+      if (input.typeDeRéforme === 'chantier') {
+        if (input.entité === 'commentaires') {
+          const récupérerHistoriqueCommentaireUseCase = new RécupérerHistoriqueCommentaireUseCase(dependencies.getCommentaireRepository());
+          return récupérerHistoriqueCommentaireUseCase.run(input.réformeId, input.territoireCode, input.type as TypeCommentaireChantier, ctx.session.habilitations);
+        } 
+    
+        if (input.entité === 'objectifs') {
+          const récupérerHistoriqueObjectifUseCase = new RécupérerHistoriqueObjectifUseCase(dependencies.getObjectifRepository());
+          return récupérerHistoriqueObjectifUseCase.run(input.réformeId, input.type as TypeObjectif, ctx.session.habilitations);
+        }
+    
+        if (input.entité === 'décisions stratégiques') {
+          const récupérerHistoriqueDésionStratégiqueUseCase = new RécupérerHistoriqueDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
+          return récupérerHistoriqueDésionStratégiqueUseCase.run(input.réformeId, ctx.session.habilitations);
+        }
+      } else if (input.typeDeRéforme === 'projet structurant' && input.entité === 'commentaires') {
+        const récupérerHistoriqueCommentaireProjetStructurantUseCase = new RécupérerHistoriqueCommentaireProjetStructurantUseCase(dependencies.getCommentaireProjetStructurantRepository());
+        return récupérerHistoriqueCommentaireProjetStructurantUseCase.run(input.réformeId, input.type as TypeCommentaireProjetStructurant, ctx.session.habilitations);        
       }
     }),
 });
