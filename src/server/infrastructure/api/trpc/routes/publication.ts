@@ -29,6 +29,7 @@ import RécupérerCommentaireProjetStructurantLePlusRécentUseCase from '@/serve
 import { TypeCommentaireChantier } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import { TypeCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase from '@/server/usecase/projetStructurant/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase';
+import CréerUnCommentaireProjetStructurantUseCase from '@/server/usecase/projetStructurant/commentaire/CréerUnCommentaireProjetStructurantUseCase';
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
@@ -52,10 +53,9 @@ export const publicationRouter = créerRouteurTRPC({
           const créerUneDécisionStratégiqueUseCase = new CréerUneDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
           return créerUneDécisionStratégiqueUseCase.run(input.réformeId, input.contenu, auteur, ctx.session.habilitations);
         }
-      } else if (input.typeDeRéforme === 'projet structurant') {
-        if (input.entité === 'commentaires') {
-          console.log('hello'); // Implémenter ici l'appel au UseCase
-        }
+      } else if (input.typeDeRéforme === 'projet structurant' && input.entité === 'commentaires') {
+        const créerUnCommentaireProjetStructurantUseCase = new CréerUnCommentaireProjetStructurantUseCase(dependencies.getCommentaireProjetStructurantRepository());
+        return créerUnCommentaireProjetStructurantUseCase.run(input.réformeId, input.contenu, auteur, input.type as TypeCommentaireProjetStructurant);        
       } 
     }),
     
