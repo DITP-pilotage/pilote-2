@@ -1,19 +1,18 @@
-import TableauChantiersTuileChantierStyled
-  from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tuile/Chantier/TableauChantiersTuileChantier.styled';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement';
 import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
+import TableauProjetsStructurantsTuileProjetStructurantStyled from './TableauProjetsStructurantsTuileProjetStructurant.styled';
 import TableauProjetsStructurantsTuileProjetStructurantProps from './TableauProjetsStructurantsTuileProjetStructurant.interface';
 
 export default function TableauProjetsStructurantsTuileProjetStructurant({ projetStructurant, afficherIcône }: TableauProjetsStructurantsTuileProjetStructurantProps) {
 
   return (
-    <TableauChantiersTuileChantierStyled>
+    <TableauProjetsStructurantsTuileProjetStructurantStyled>
       <div className="tuile-chantier-entête">
         <p className="fr-mb-0 fr-ml-n1w">
           <IcônesMultiplesEtTexte
             icônesId={afficherIcône && projetStructurant.iconesMinistères ? projetStructurant.iconesMinistères : []}
-            largeurDesIcônes='1.75rem'
+            largeurDesIcônes='3.5rem'
             texteAlternatifPourIcônes={undefined}
           >
             <span className='fr-text--sm'>
@@ -37,6 +36,6 @@ export default function TableauProjetsStructurantsTuileProjetStructurant({ proje
           />
         </div>
       </div>
-    </TableauChantiersTuileChantierStyled>
+    </TableauProjetsStructurantsTuileProjetStructurantStyled>
   );
 }
