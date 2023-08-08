@@ -11,6 +11,8 @@ import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTe
 import useTableauRéformes from '@/client/components/PageAccueil/TableauRéformes/useTableauRéformes';
 import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
+import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import TableauProjetsStructurantsTuileProjetStructurant from './Tuile/TableauProjetsStructurantsTuileProjetStructurant';
 
 const reactTableColonnesHelper = createColumnHelper<ProjetStructurantVueDEnsemble>();
 
@@ -60,12 +62,24 @@ const colonnesTableauProjetsStructurants = [
       tabIndex: -1,
     },
   }),
+  reactTableColonnesHelper.display({
+    id: 'projet-structurant-tuile',
+    cell: projetStructuranCellContext => (
+      <TableauProjetsStructurantsTuileProjetStructurant
+        afficherIcône={projetStructuranCellContext.row.original.iconesMinistères.length > 0}
+        projetStructurant={projetStructuranCellContext.row.original}
+      />    
+    ),
+    enableSorting: false,
+    enableGrouping: false,
+  }),
 ];
 
 export default function useTableauProjetsStructurants(projetsStructurants: ProjetStructurantVueDEnsemble[]) {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
   const [tri, setTri] = useState<SortingState>([]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
+  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('md');
 
   const tableau = useReactTable({
     data: projetsStructurants,
@@ -76,6 +90,15 @@ export default function useTableauProjetsStructurants(projetsStructurants: Proje
     state: {
       globalFilter: valeurDeLaRecherche,
       sorting: tri,
+      columnVisibility: estVueTuile ? ({
+        'nom': false,
+        'météo': false,
+        'territoire': false,
+        'avancement': false,
+        'projet-structurant-tuile': true,
+      }) : ({
+        'projet-structurant-tuile': false,
+      }),
     },
     onSortingChange: setTri,
     getCoreRowModel: getCoreRowModel(),
@@ -103,5 +126,6 @@ export default function useTableauProjetsStructurants(projetsStructurants: Proje
     changementSélectionColonneÀTrierCallback: setSélectionColonneÀTrier,
     directionDeTri: transformerEnDirectionDeTri(tri),
     changementDirectionDeTriCallback: (directionDeTri: DirectionDeTri) => setTri(transformerEnSortingState(sélectionColonneÀTrier, directionDeTri)),
+    estVueTuile,
   };
 }

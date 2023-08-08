@@ -7,3 +7,6 @@ export default interface TableauProjetsStructurantsProps {
   données: ProjetStructurantVueDEnsemble[]
   setNombreProjetsStructurantsDansLeTableau: Dispatch<SetStateAction<number | undefined>>
 }
+
+export type DonnéesTableauProjetsStructurants = ProjetStructurantVueDEnsemble;
+
