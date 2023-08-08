@@ -18,6 +18,7 @@ export default function TableauProjetsStructurants({ données, setNombreProjetsS
     changementSélectionColonneÀTrierCallback,
     directionDeTri,
     changementDirectionDeTriCallback,
+    estVueTuile,
   } = useTableauProjetsStructurants(données);
 
   useEffect(() => {
@@ -62,12 +63,14 @@ export default function TableauProjetsStructurants({ données, setNombreProjetsS
             </div>
           </div>
         :
-          <div className='tableau-conteneur'>
+          <>
             <table className='tableau'>
               <caption className="fr-sr-only">
                 Liste des chantiers
               </caption>
-              <TableauRéformesEnTête tableau={tableau} />
+              {
+                !estVueTuile && <TableauRéformesEnTête tableau={tableau} />
+              }
               <TableauProjetsStructurantsContenu tableau={tableau} />
             </table>
             <TableauPagination
@@ -75,7 +78,7 @@ export default function TableauProjetsStructurants({ données, setNombreProjetsS
               nombreDePages={tableau.getPageCount()}
               numéroDePageInitiale={1}
             />
-          </div>}
+          </>}
     </TableauProjetsStructurantsStyled>
   );
 }

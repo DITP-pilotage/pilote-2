@@ -1,87 +1,97 @@
 import styled from '@emotion/styled';
 
 const TableauProjetsStructurantsStyled = styled.section`
-  display: grid;
-  overflow-x: auto;
-  color: var(--text-title-grey);
+color: var(--text-title-grey);
   
-  .tableau-actions {
+.tableau-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+
+  .tableau-actions-gauche {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    width: 100%;
+    column-gap: 2rem;
+    align-items: center;
 
-    .tableau-actions-gauche {
-      display: flex;
-      flex-wrap: wrap;
-      column-gap: 2rem;
-      align-items: center;
-
-      & > * {
-        flex-basis: content;
-      }
-      
-      .barre-de-recherche {
-        width: 100%;
-        max-width: 22rem;
-      }
+    & > * {
+      flex-basis: content;
     }
-
-    .tableau-actions-droite {
+    
+    .barre-de-recherche {
       width: 100%;
       max-width: 22rem;
     }
   }
 
-  .tableau-conteneur {
-    overflow-x: auto;
+  .tableau-actions-droite {
+    width: 100%;
+    max-width: 22rem;
+  }
+}
 
-    table.tableau {
-      @media (max-width: 45em) {
-        white-space: nowrap;
+table.tableau {
+  display: table;
+
+  tbody {
+    tr {
+      height: 4.5rem;
+      
+      td > a {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        text-decoration: none;
+        background: none;
+        
+        & > * {
+          width: 100%;
+        }
       }
 
-      display: table;
-      
-      tbody {
-        tr {
-          height: 4.5rem;
-          
-          td > a {
-            display: flex;
-            align-items: center;
-            height: 100%;
-            text-decoration: none;
-            background: none;
-            
-            & > * {
-              width: 100%;
-            }
-          }
-          
-          &.ligne-chantier {
-            &:hover:nth-of-type(even) {
-              background-color: var(--background-contrast-grey-hover);
-            }
-            
-            &:hover:nth-of-type(odd) {
-              background-color: var(--background-alt-grey-hover);
-            }
+      &.ligne-chantier {
+        &:hover:nth-of-type(even) {
+          background-color: var(--background-contrast-grey-hover);
+        }
+
+        &:hover:nth-of-type(odd) {
+          background-color: var(--background-alt-grey-hover);
+        }
+      }
+
+      &.ligne-ministère,
+      &.ligne-ministère:nth-of-type(2n) {
+        cursor: pointer;
+        background-color: var(--background-default-grey);
+        background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
+        background-repeat: no-repeat;
+        background-position: bottom;
+        background-size: 100% 1px;
+
+        @media (hover: hover) {
+          &:hover {
+            background-color: var(--background-default-grey-hover);
           }
         }
       }
     }
-  }
 
-  nav {
-    button {
-      border-radius: 4px;
+    .chevron-accordéon::before {
+      background-color: var(--blue-france-sun-113-625);
     }
   }
+}
 
-  .icônes {
-      color: var(--blue-france-sun-113-625)
-    }
+nav {
+  button {
+    border-radius: 4px;
+  }
+}
+
+.icônes {
+  color: var(--background-active-blue-france)
+}
 `;
 
 export default TableauProjetsStructurantsStyled;
