@@ -4,6 +4,7 @@ dfakto_chantier as (
 
     SELECT fact_progress_chantier.tree_node_id,
         fact_progress_chantier.avancement_borne,
+        fact_progress_chantier.avancement_precedent,
         dim_tree_nodes.code_chantier,
         dim_tree_nodes.zone_code as zone_id,
         dim_structures.nom as structure_nom
@@ -35,6 +36,7 @@ SELECT m_chantiers.id,
         m_chantiers.nom,
         m_chantiers.code_insee,
         d_chantiers.avancement_borne AS taux_avancement,
+        d_chantiers.avancement_precedent AS taux_avancement_precedent,
         m_chantiers.nom AS territoire_nom,
         m_chantiers.perimetre_ids,
         m_chantiers.maille,
@@ -49,7 +51,6 @@ SELECT m_chantiers.id,
         chantier_est_barometre.est_barometre,
         m_chantiers.est_territorialise,
         CONCAT(m_chantiers.maille, '-', m_chantiers.code_insee) as territoire_code,
-        CAST(NULL as double precision) as taux_avancement_precedent,
 	    LOWER(m_chantiers.ate)::type_ate as ate
     FROM {{ ref('int_chantiers_with_mailles_and_territoires') }} m_chantiers
         LEFT JOIN dfakto_chantier d_chantiers
