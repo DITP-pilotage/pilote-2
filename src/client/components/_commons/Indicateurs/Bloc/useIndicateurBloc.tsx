@@ -30,6 +30,8 @@ const indicateurDétailsVide = {
     dateValeurInitiale: null,
     valeurs: [],
     dateValeurs: [],
+    valeurActuelle: null,
+    dateValeurActuelle: null,
     valeurCible: null,
     dateValeurCible: null,
     avancement: { annuel: null, global: null },
@@ -92,13 +94,13 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       ),
       enableSorting: false,
     }),
-    reactTableColonnesHelper.accessor('données.valeurs', {
+    reactTableColonnesHelper.accessor('données.valeurActuelle', {
       header: 'Valeur actuelle',
       id: 'valeurActuelle',
-      cell: valeurs => (
+      cell: valeurActuelle => (
         <ValeurEtDate
-          date={valeurs.row.original.données.dateValeurs[valeurs.getValue().length - 1]}
-          valeur={valeurs.getValue()[valeurs.getValue().length - 1]}
+          date={valeurActuelle.row.original.données.dateValeurActuelle}
+          valeur={valeurActuelle.getValue()}
         />
       ),
       enableSorting: false,
@@ -157,13 +159,13 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       ),
       enableSorting: false,
     }),
-    reactTableColonnesHelper.accessor('données.valeurs', {
+    reactTableColonnesHelper.accessor('données.valeurActuelle', {
       header: 'Valeur actuelle',
       id: 'valeurActuelle',
-      cell: valeurs => (
+      cell: valeurActuelle => (
         <ValeurEtDate
-          date={valeurs.row.original.données.dateValeurs[valeurs.getValue().length - 1]}
-          valeur={valeurs.getValue()[valeurs.getValue().length - 1]}
+          date={valeurActuelle.row.original.données.dateValeurActuelle}
+          valeur={valeurActuelle.getValue()}
         />
       ),
       enableSorting: false,
