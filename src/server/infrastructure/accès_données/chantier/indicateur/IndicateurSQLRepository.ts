@@ -61,6 +61,8 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         dateValeurInitiale: indic.date_valeur_initiale !== null ? indic.date_valeur_initiale.toISOString() : null,
         valeurs: indic.evolution_valeur_actuelle ?? [],
         dateValeurs: indic.evolution_date_valeur_actuelle.map((date) => date.toISOString()) ?? [],
+        valeurActuelle: indic.valeur_actuelle,
+        dateValeurActuelle: indic.date_valeur_actuelle !== null ? indic.date_valeur_actuelle.toISOString() : null,
         valeurCible: indic.objectif_valeur_cible,
         dateValeurCible: indic.objectif_date_valeur_cible !== null ? indic.objectif_date_valeur_cible.toISOString() : null,
         avancement: {

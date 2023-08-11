@@ -34,6 +34,8 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
         codeInsee: codeInsee,
         valeurInitiale: indicateur.valeur_initiale,
         dateValeurInitiale: indicateur.date_valeur_initiale?.toISOString() ?? null,
+        valeurActuelle: indicateur.valeur_actuelle,
+        dateValeurActuelle: indicateur.date_valeur_actuelle?.toISOString() ?? null,
         valeurs: indicateur.valeur_actuelle ? [indicateur.valeur_actuelle] : [],
         dateValeurs: indicateur.date_valeur_actuelle ? [indicateur.date_valeur_actuelle.toISOString()] : [],
         valeurCible: indicateur.valeur_cible,

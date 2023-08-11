@@ -19,6 +19,10 @@ export default class DétailsIndicateurBuilder {
 
   private _dateValeurCible: DétailsIndicateur['dateValeurCible'];
 
+  private _valeurActuelle: DétailsIndicateur['valeurActuelle'];
+
+  private _dateValeurActuelle: DétailsIndicateur['dateValeurActuelle'];
+
   private _avancement: DétailsIndicateur['avancement'];
 
   constructor() {
@@ -28,7 +32,9 @@ export default class DétailsIndicateurBuilder {
     this._valeurInitiale = faker.datatype.number({ precision: 0.01 });
     this._dateValeurInitiale = new Date('2020-06-01T00:00:00.000Z').toISOString();
     this._valeurCible = faker.datatype.number({ min: this._valeurInitiale ?? 42, precision: 0.01 });
+    this._valeurActuelle = faker.datatype.number({ min: this._valeurInitiale ?? 30, precision: 0.01 });
     this._dateValeurCible = faker.date.future(3, '2024-06-01T00:00:00.000Z').toISOString();
+    this._dateValeurActuelle = new Date('2023-03-01T00:00:00.000Z').toISOString();
 
     const valeursEtDates = this.générerValeursEtDates(nombreDeValeurs, this._valeurInitiale, this._valeurCible);
 
@@ -72,6 +78,16 @@ export default class DétailsIndicateurBuilder {
     return this;
   }
 
+  avecValeurActuelle(valeurActuelle: DétailsIndicateur['valeurActuelle']): DétailsIndicateurBuilder {
+    this._valeurActuelle = valeurActuelle;
+    return this;
+  }
+
+  avecDateValeurActuelle(dateValeurActuelle: DétailsIndicateur['dateValeurActuelle']): DétailsIndicateurBuilder {
+    this._dateValeurActuelle = dateValeurActuelle;
+    return this;
+  }
+
   avecAvancement(avancement: DétailsIndicateur['avancement']): DétailsIndicateurBuilder {
     this._avancement = avancement;
     return this;
@@ -86,6 +102,8 @@ export default class DétailsIndicateurBuilder {
       dateValeurs: this._dateValeurs,
       valeurCible: this._valeurCible,
       dateValeurCible: this._dateValeurCible,
+      valeurActuelle: this._valeurActuelle,
+      dateValeurActuelle: this._dateValeurActuelle,
       avancement: this._avancement,
     };
   }

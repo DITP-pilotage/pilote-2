@@ -13,6 +13,8 @@ export type DétailsIndicateur = {
   dateValeurInitiale: string | null,
   valeurs: number[],
   dateValeurs: string[],
+  valeurActuelle: number | null,
+  dateValeurActuelle: string | null,
   valeurCible: number | null,
   dateValeurCible: string | null,
   avancement: Avancement,

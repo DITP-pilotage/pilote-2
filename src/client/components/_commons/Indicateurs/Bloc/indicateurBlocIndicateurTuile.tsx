@@ -5,7 +5,7 @@ import { formaterDate } from '@/client/utils/date/date';
 import IndicateurDétailsParTerritoireProps from './indicateurDétailsParTerritoire.interface';
 
 export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTerritoire, typeDeRéforme }: IndicateurDétailsParTerritoireProps) {
-  const { dateValeurInitiale, valeurInitiale, valeurCible, dateValeurCible, valeurs, dateValeurs, avancement } = indicateurDétailsParTerritoire.données;
+  const { dateValeurInitiale, valeurInitiale, valeurActuelle, valeurCible, dateValeurCible, dateValeurActuelle, avancement } = indicateurDétailsParTerritoire.données;
 
   return (
     <IndicateurBlocIndicateurTuileStyled>
@@ -45,13 +45,13 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
               <span>
-                { valeurs.slice(-1)[0]?.toLocaleString() }
+                { valeurActuelle?.toLocaleString() }
               </span>
               {
-                dateValeurs.length > 0 &&
+                dateValeurActuelle !== null &&
                 <span className='texte-gris'>
                   (
-                  { formaterDate(dateValeurs[dateValeurs.length - 1], 'MM/YYYY') }
+                  { formaterDate(dateValeurActuelle, 'MM/YYYY') }
                   )
                 </span>
               }
