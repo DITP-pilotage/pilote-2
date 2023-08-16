@@ -238,6 +238,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                           Indicateurs
                         </Titre>
                         <Indicateurs
+                          chantierEstTerritorialisé={chantier.estTerritorialisé}
                           détailsIndicateurs={détailsIndicateurs}
                           indicateurs={indicateurs}
                           listeRubriquesIndicateurs={listeRubriquesIndicateursChantier}

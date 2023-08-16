@@ -88,7 +88,9 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           </section>
         </div>
         {
-          (true) && (
+          (!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSélectionnée] ||
+            !!chantier.météoDonnéeTerritorialisée[mailleSélectionnée] ||
+            !!chantier.estTerritorialisé) && (
             <div className="fr-my-2w">
               <section className="rubrique cartes">
                 <Titre
@@ -142,6 +144,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                   Indicateurs
                 </Titre>
                 <Indicateurs
+                  chantierEstTerritorialisé={chantier.estTerritorialisé}
                   détailsIndicateurs={détailsIndicateurs}
                   estInteractif={false}
                   indicateurs={indicateurs}

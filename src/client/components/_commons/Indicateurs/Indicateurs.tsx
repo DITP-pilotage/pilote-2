@@ -5,7 +5,7 @@ import IndicateursStyled from '@/components/_commons/Indicateurs/Indicateurs.sty
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
 
 
-export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRubriquesIndicateurs, territoireProjetStructurant, typeDeRéforme, estDisponibleALImport = false, estInteractif = true }: IndicateursProps) {
+export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRubriquesIndicateurs, territoireProjetStructurant, typeDeRéforme, chantierEstTerritorialisé, estDisponibleALImport = false, estInteractif = true }: IndicateursProps) {
 
   if (indicateurs.length === 0) {
     return null;
@@ -33,6 +33,7 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRub
                 {
                   indicateursDeCetteRubrique.sort(comparerIndicateur).map(indicateur => (
                     <IndicateurBloc
+                      chantierEstTerritorialisé={chantierEstTerritorialisé}
                       détailsIndicateur={détailsIndicateurs[indicateur.id]}
                       estDisponibleALImport={estDisponibleALImport}
                       estInteractif={estInteractif}

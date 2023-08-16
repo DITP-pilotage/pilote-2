@@ -8,7 +8,8 @@ export default interface RubriquesIndicateursProps {
   indicateurs: Indicateur[];
   détailsIndicateurs: DétailsIndicateurs
   listeRubriquesIndicateurs: ÉlémentPageIndicateursType[]
-  typeDeRéforme: TypeDeRéforme
+  typeDeRéforme: TypeDeRéforme,
+  chantierEstTerritorialisé: boolean,
   territoireProjetStructurant?: ProjetStructurant['territoire']
   estDisponibleALImport?: boolean
   estInteractif?: boolean
