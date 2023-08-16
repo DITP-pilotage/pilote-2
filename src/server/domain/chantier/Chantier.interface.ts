@@ -1,4 +1,4 @@
-import { Maille } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
@@ -26,6 +26,8 @@ export default interface Chantier {
   }
   estBaromètre: boolean;
   estTerritorialisé: boolean;
+  tauxAvancementDonnéeTerritorialisée: Record<MailleInterne, Boolean>;
+  météoDonnéeTerritorialisée: Record<MailleInterne, Boolean>;
 }
 
 export type ChantierTendance = 'BAISSE' | 'HAUSSE' | 'STAGNATION';

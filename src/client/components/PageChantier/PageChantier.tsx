@@ -23,6 +23,7 @@ import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleContene
 import Indicateurs from '@/client/components/_commons/Indicateurs/Indicateurs';
 import { listeRubriquesChantier, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
 import { estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
+import { mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierProps from './PageChantier.interface';
 import ResponsablesPageChantier from './Responsables/Responsables';
@@ -33,6 +34,7 @@ import usePageChantier from './usePageChantier';
 import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStratégiques';
 
 export default function PageChantier({ indicateurs, chantierId }: PageChantierProps) {
+  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const {
     détailsIndicateurs,
@@ -51,8 +53,6 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
   } = usePageChantier(chantierId, indicateurs);
 
   const listeRubriques = listeRubriquesChantier(indicateurs.map(i => i.type), territoireSélectionné!.maille);
-
-
   return (
     <PageChantierStyled className="flex">
       <BarreLatérale
@@ -173,20 +173,30 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     />
                   </section>
                 </div>
-                <div className="fr-my-2w">
-                  <section
-                    className="rubrique"
-                    id="cartes"
-                  >
-                    <Titre
-                      baliseHtml='h2'
-                      className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-                    >
-                      Répartition géographique
-                    </Titre>
-                    <Cartes chantierMailles={chantier.mailles} />
-                  </section>
-                </div>
+                {
+                  (!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSélectionnée] ||
+                    !!chantier.météoDonnéeTerritorialisée[mailleSélectionnée] ||
+                    !!chantier.estTerritorialisé) && (
+                    <div className="fr-my-2w">
+                      <section
+                        className="rubrique"
+                        id="cartes"
+                      >
+                        <Titre
+                          baliseHtml='h2'
+                          className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                        >
+                          Répartition géographique
+                        </Titre>
+                        <Cartes 
+                          afficheCarteAvancement={!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSélectionnée] || !!chantier.estTerritorialisé}  
+                          afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSélectionnée] || !!chantier.estTerritorialisé}  
+                          chantierMailles={chantier.mailles}
+                        />
+                      </section>
+                    </div>                   
+                  )
+                }
                 <div className="fr-my-2w">
                   <section
                     className="rubrique"

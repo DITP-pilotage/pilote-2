@@ -13,7 +13,7 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import CartesProps from './Cartes.interface';
 
-export default function Cartes({ chantierMailles, estInteractif = true }: CartesProps) {
+export default function Cartes({ chantierMailles, afficheCarteAvancement, afficheCarteMétéo, estInteractif = true }: CartesProps) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const { auClicTerritoireCallback } = useCartographie();
 
@@ -29,54 +29,62 @@ export default function Cartes({ chantierMailles, estInteractif = true }: Cartes
 
   return (
     <CartesStyled>
-      <div className='carte'>
-        <Bloc>
-          <section>
-            <TitreInfobulleConteneur>
-              <Titre
-                baliseHtml='h3'
-                className='fr-text--lg fr-mb-0 fr-py-1v'
-                estInline
-              >
-                Taux d&apos;avancement
-              </Titre>
-              <Infobulle idHtml="infobulle-chantier-répartitionGéographiqueTauxAvancement">
-                { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueTauxAvancement }
-              </Infobulle>
-            </TitreInfobulleConteneur>
-            <CartographieAvancement
-              auClicTerritoireCallback={auClicTerritoireCallback}
-              données={donnéesCartographieAvancement}
-              options={{ estInteractif: estInteractif }}
-              élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
-            />
-          </section>
-        </Bloc>
-      </div>
-      <div className='carte'>
-        <Bloc>
-          <section>
-            <TitreInfobulleConteneur>
-              <Titre
-                baliseHtml='h3'
-                className='fr-text--lg fr-mb-0 fr-py-1v'
-                estInline
-              >
-                Niveau de confiance
-              </Titre>
-              <Infobulle idHtml="infobulle-chantier-répartitionGéographiqueNiveauDeConfiance">
-                { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueNiveauDeConfiance }
-              </Infobulle>
-            </TitreInfobulleConteneur>
-            <CartographieMétéo
-              auClicTerritoireCallback={auClicTerritoireCallback}
-              données={donnéesCartographieMétéo}
-              options={{ estInteractif: estInteractif }}
-              élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
-            />
-          </section>
-        </Bloc>
-      </div>
+      {
+        !!afficheCarteAvancement && (
+          <div className='carte'>
+            <Bloc>
+              <section>
+                <TitreInfobulleConteneur>
+                  <Titre
+                    baliseHtml='h3'
+                    className='fr-text--lg fr-mb-0 fr-py-1v'
+                    estInline
+                  >
+                    Taux d&apos;avancement
+                  </Titre>
+                  <Infobulle idHtml="infobulle-chantier-répartitionGéographiqueTauxAvancement">
+                    { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueTauxAvancement }
+                  </Infobulle>
+                </TitreInfobulleConteneur>
+                <CartographieAvancement
+                  auClicTerritoireCallback={auClicTerritoireCallback}
+                  données={donnéesCartographieAvancement}
+                  options={{ estInteractif: estInteractif }}
+                  élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
+                />
+              </section>
+            </Bloc>
+          </div>
+        )
+      }
+      {
+        !!afficheCarteMétéo && (
+          <div className='carte'>
+            <Bloc>
+              <section>
+                <TitreInfobulleConteneur>
+                  <Titre
+                    baliseHtml='h3'
+                    className='fr-text--lg fr-mb-0 fr-py-1v'
+                    estInline
+                  >
+                    Niveau de confiance
+                  </Titre>
+                  <Infobulle idHtml="infobulle-chantier-répartitionGéographiqueNiveauDeConfiance">
+                    { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueNiveauDeConfiance }
+                  </Infobulle>
+                </TitreInfobulleConteneur>
+                <CartographieMétéo
+                  auClicTerritoireCallback={auClicTerritoireCallback}
+                  données={donnéesCartographieMétéo}
+                  options={{ estInteractif: estInteractif }}
+                  élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
+                />
+              </section>
+            </Bloc>
+          </div>
+        )
+      }
     </CartesStyled>
   );
 }

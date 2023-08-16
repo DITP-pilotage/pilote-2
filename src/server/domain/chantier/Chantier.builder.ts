@@ -38,6 +38,10 @@ export default class ChantierBuilder {
 
   private _estTerritorialisé: Chantier['estTerritorialisé'];
 
+  private _tauxAvancementDonnéeTerritorialisée: Chantier['tauxAvancementDonnéeTerritorialisée'];
+
+  private _météoDonnéeTerritorialisée: Chantier['météoDonnéeTerritorialisée'];
+
   constructor() {
     const axe = new AxeBuilder().build();
     const ppg = new PpgBuilder().build();
@@ -62,6 +66,14 @@ export default class ChantierBuilder {
     this._directeursProjet = directeursProjet;
     this._estBaromètre = faker.datatype.boolean();
     this._estTerritorialisé = faker.datatype.boolean();
+    this._tauxAvancementDonnéeTerritorialisée = {
+      'départementale': faker.datatype.boolean(),
+      'régionale': faker.datatype.boolean(),
+    };
+    this._météoDonnéeTerritorialisée = {
+      'départementale': faker.datatype.boolean(),
+      'régionale': faker.datatype.boolean(),
+    };
   }
 
   private _générerTerritoires(codesInsee: readonly CodeInsee[]) {
@@ -140,6 +152,16 @@ export default class ChantierBuilder {
     return this;
   }
 
+  avecTauxAvancementDonnéeTerritorialisée(tauxAvancementDonnéeTerritorialisée: Chantier['tauxAvancementDonnéeTerritorialisée']): ChantierBuilder {
+    this._tauxAvancementDonnéeTerritorialisée = tauxAvancementDonnéeTerritorialisée;
+    return this;
+  }
+
+  avecMétéoDonnéeTerritorialisée(météoDonnéeTerritorialisée: Chantier['météoDonnéeTerritorialisée']): ChantierBuilder {
+    this._météoDonnéeTerritorialisée = météoDonnéeTerritorialisée;
+    return this;
+  }
+
   build(): Chantier {
     return {
       id: this._id,
@@ -156,6 +178,8 @@ export default class ChantierBuilder {
       },
       estBaromètre: this._estBaromètre,
       estTerritorialisé: this._estTerritorialisé,
+      tauxAvancementDonnéeTerritorialisée: this._tauxAvancementDonnéeTerritorialisée,
+      météoDonnéeTerritorialisée: this._météoDonnéeTerritorialisée,
     };
   }
 }
