@@ -62,24 +62,6 @@ function créerDonnéesTerritoires(
   return donnéesTerritoires;
 }
 
-function aDeLaDonnéeTerritoriale(
-  territoires: Territoire[],
-  chantierRows: ChantierPrisma[],
-  nomColonne: 'taux_avancement' | 'meteo',
-) {
-  let donnéesColonne = [];
-
-  territoires.forEach(t => {
-    const chantierRow = chantierRows.find(c => c.code_insee === t.codeInsee);
-    if (chantierRow?.[nomColonne] !== undefined && chantierRow?.[nomColonne] !== null) {
-      donnéesColonne.push(chantierRow?.[nomColonne]);
-    }
-  });
-
-  return donnéesColonne.length > 0;
-}
-
-
 export function parseChantier(
   chantierRows: ChantierPrisma[],
   territoires: Territoire[],
@@ -131,12 +113,12 @@ export function parseChantier(
     estBaromètre: Boolean(chantierMailleNationale.est_barometre),
     estTerritorialisé: Boolean(chantierMailleNationale.est_territorialise),
     tauxAvancementDonnéeTerritorialisée: {
-      'départementale': aDeLaDonnéeTerritoriale(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, 'taux_avancement'),
-      'régionale': aDeLaDonnéeTerritoriale(territoires.filter(t => t.maille === 'régionale'), chantierMailleRégionale, 'taux_avancement'),
+      'départementale': !!chantierMailleNationale.a_taux_avancement_departemental,
+      'régionale': !!chantierMailleNationale.a_taux_avancement_regional,
     },
     météoDonnéeTerritorialisée: {
-      'départementale': aDeLaDonnéeTerritoriale(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, 'meteo'),
-      'régionale': aDeLaDonnéeTerritoriale(territoires.filter(t => t.maille === 'régionale'), chantierMailleRégionale, 'meteo'),
+      'départementale': !!chantierMailleNationale.a_meteo_departemental,
+      'régionale': !!chantierMailleNationale.a_meteo_regional,
     },
   };
 

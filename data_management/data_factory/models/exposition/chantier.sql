@@ -29,8 +29,45 @@ synthese_triee_par_date as (
         meteo,
         date_meteo
     FROM {{ ref('synthese_des_resultats') }}
-)
+),
 
+chantier_taux_avancement_departemental as (
+    SELECT d_chantier.code_chantier,
+            count(*) > 0 as a_taux_avancement_departemental
+    FROM dfakto_chantier d_chantier
+        LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} ppg_zones ON d_chantier.zone_id = ppg_zones.id
+    WHERE avancement_borne is not NULL
+    AND ppg_zones.maille = 'DEPT'
+    GROUP BY d_chantier.code_chantier
+),
+
+chantier_taux_avancement_regional as (
+    SELECT d_chantier.code_chantier,
+            count(*) > 0 as a_taux_avancement_regional
+    FROM dfakto_chantier d_chantier
+        LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} ppg_zones ON d_chantier.zone_id = ppg_zones.id
+    WHERE avancement_borne is not NULL
+    AND ppg_zones.maille = 'REG'
+    GROUP BY d_chantier.code_chantier
+),
+
+chantier_meteo_departemental as (
+    SELECT chantier_id,
+            count(*) > 0 as a_meteo_departemental
+    FROM synthese_triee_par_date
+    WHERE meteo is not NULL
+    AND maille = 'DEPT'
+    GROUP BY chantier_id
+),
+
+chantier_meteo_regional as (
+    SELECT chantier_id,
+            count(*) > 0 as a_meteo_regional
+    FROM synthese_triee_par_date
+    WHERE meteo is not NULL
+    AND maille = 'REG'
+    GROUP BY chantier_id
+)
 
 SELECT m_chantiers.id,
         m_chantiers.nom,
@@ -51,7 +88,11 @@ SELECT m_chantiers.id,
         chantier_est_barometre.est_barometre,
         m_chantiers.est_territorialise,
         CONCAT(m_chantiers.maille, '-', m_chantiers.code_insee) as territoire_code,
-	    LOWER(m_chantiers.ate)::type_ate as ate
+	    LOWER(m_chantiers.ate)::type_ate as ate,
+        chantier_ta_dep.a_taux_avancement_departemental,
+        chantier_ta_reg.a_taux_avancement_regional,
+        chantier_meteo_dep.a_meteo_departemental,
+        chantier_meteo_reg.a_meteo_regional
     FROM {{ ref('int_chantiers_with_mailles_and_territoires') }} m_chantiers
         LEFT JOIN dfakto_chantier d_chantiers
             ON m_chantiers.id = d_chantiers.code_chantier
@@ -64,5 +105,9 @@ SELECT m_chantiers.id,
             ON synthese_triee_par_date.chantier_id = m_chantiers.id
                 AND synthese_triee_par_date.maille = m_chantiers.maille
                 AND synthese_triee_par_date.code_insee = m_chantiers.code_insee
+        LEFT JOIN chantier_taux_avancement_departemental chantier_ta_dep ON m_chantiers.id = chantier_ta_dep.code_chantier
+        LEFT JOIN chantier_taux_avancement_regional chantier_ta_reg ON m_chantiers.id = chantier_ta_reg.code_chantier
+        LEFT JOIN chantier_meteo_departemental chantier_meteo_dep ON m_chantiers.id = chantier_meteo_dep.chantier_id
+        LEFT JOIN chantier_meteo_regional chantier_meteo_reg ON m_chantiers.id = chantier_meteo_reg.chantier_id
     WHERE synthese_triee_par_date.row_id_by_date_meteo_desc = 1
         OR synthese_triee_par_date.row_id_by_date_meteo_desc IS NULL

@@ -66,6 +66,10 @@ model chantier {
   territoire                         territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
   territoire_code                    String
   ate                                type_ate?
+  a_taux_avancement_departemental    Boolean?
+  a_taux_avancement_regional         Boolean?
+  a_meteo_departemental              Boolean?
+  a_meteo_regional                   Boolean?
 
   @@id([id, code_insee, maille])
   @@schema("public")
