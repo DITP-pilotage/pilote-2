@@ -145,6 +145,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
                   Indicateurs
                 </Titre>
                 <Indicateurs
+                  chantierEstTerritorialisé={false}
                   détailsIndicateurs={détailsIndicateurs}
                   indicateurs={indicateurs}
                   listeRubriquesIndicateurs={listeRubriquesIndicateursProjetStructurant}

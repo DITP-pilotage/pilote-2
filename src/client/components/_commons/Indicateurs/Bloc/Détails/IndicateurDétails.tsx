@@ -9,10 +9,10 @@ import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/lé
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 import useIndicateurDétails from './useIndicateurDétails';
 
-export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme }: IndicateurDétailsProps) {
+export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme, chantierEstTerritorialisé }: IndicateurDétailsProps) {
   const [futOuvert, setFutOuvert] = useState(false);
   const { auClicTerritoireMultiSélectionCallback } = useCartographie();
-  const { donnéesCartographieAvancement, donnéesCartographieValeurActuelle } = useIndicateurDétails(indicateur.id, futOuvert, typeDeRéforme);
+  const { donnéesCartographieAvancement, donnéesCartographieValeurActuelle, donnéesCartographieAvancementTerritorialisées, donnéesCartographieValeurActuelleTerritorialisées } = useIndicateurDétails(indicateur.id, futOuvert, typeDeRéforme);
 
   return (
     <div className="fr-accordion">
@@ -51,33 +51,42 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
                   source={indicateur.source}
                 />
               </div>
-              <section className="fr-col-12 fr-col-xl-6">
-                <Titre
-                  baliseHtml='h5'
-                  className='fr-text--lg'
-                >
-                  Répartition géographique de l&apos;avancement
-                </Titre>
-                <CartographieAvancement
-                  auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
-                  données={donnéesCartographieAvancement}
-                  options={{ multiséléction: true }}
-                  élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
-                />
-              </section>
-              <section className="fr-col-12 fr-col-xl-6">
-                <Titre
-                  baliseHtml='h5'
-                  className='fr-text--lg'
-                >
-                  Répartition géographique de la valeur actuelle de l&apos;indicateur
-                </Titre>
-                <CartographieValeurActuelle
-                  auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
-                  données={donnéesCartographieValeurActuelle}
-                  options={{ multiséléction: true }}
-                />
-              </section>
+              {
+                (!!donnéesCartographieAvancementTerritorialisées || !!chantierEstTerritorialisé) && (
+                  <section className="fr-col-12 fr-col-xl-6">
+                    <Titre
+                      baliseHtml='h5'
+                      className='fr-text--lg'
+                    >
+                      Répartition géographique de l&apos;avancement
+                    </Titre>
+                    <CartographieAvancement
+                      auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
+                      données={donnéesCartographieAvancement}
+                      options={{ multiséléction: true }}
+                      élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
+                    />
+                  </section>
+                )
+              }
+              {
+                (!!donnéesCartographieValeurActuelleTerritorialisées || !!chantierEstTerritorialisé) && (
+                  <section className="fr-col-12 fr-col-xl-6">
+                    <Titre
+                      baliseHtml='h5'
+                      className='fr-text--lg'
+                    >
+                      Répartition géographique de la valeur actuelle de l&apos;indicateur
+                    </Titre>
+                    <CartographieValeurActuelle
+                      auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
+                      données={donnéesCartographieValeurActuelle}
+                      options={{ multiséléction: true }}
+                    />
+                  </section>
+                )
+              }
+              
             </div>
             <hr className='fr-hr' />
             <IndicateurÉvolution indicateurDétailsParTerritoires={indicateurDétailsParTerritoires} />

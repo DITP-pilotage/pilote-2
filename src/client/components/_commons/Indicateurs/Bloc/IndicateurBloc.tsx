@@ -14,7 +14,7 @@ import { IndicateurPondération } from '@/components/_commons/Indicateurs/Bloc/P
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
-export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, territoireProjetStructurant, typeDeRéforme, estDisponibleALImport = false }: IndicateurBlocProps) {
+export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, territoireProjetStructurant, typeDeRéforme, chantierEstTerritorialisé, estDisponibleALImport = false }: IndicateurBlocProps) {
   const router = useRouter();
   const réformeId = router.query.id as string;
   
@@ -81,6 +81,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
           {
             !!estInteractif &&
               <IndicateurDétails
+                chantierEstTerritorialisé={chantierEstTerritorialisé}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
                 typeDeRéforme={typeDeRéforme}

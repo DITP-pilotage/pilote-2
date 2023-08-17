@@ -10,7 +10,7 @@ import Cartes from '@/components/PageChantier/Cartes/Cartes';
 import Indicateurs from '@/components/_commons/Indicateurs/Indicateurs';
 import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
-import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Titre from '@/components/_commons/Titre/Titre';
 import ObjectifsPageChantier from '@/components/_commons/Objectifs/Objectifs';
 import { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
@@ -20,6 +20,7 @@ import RapportDétailléChantierStyled from './RapportDétailléChantier.styled'
 
 export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats, commentaires, objectifs, décisionStratégique }: RapportDétailléChantierProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const { avancements } = useRapportDétailléChantier(chantier);
 
   return (
@@ -86,20 +87,28 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
             />
           </section>
         </div>
-        <div className="fr-my-2w">
-          <section className="rubrique cartes">
-            <Titre
-              baliseHtml='h2'
-              className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
-            >
-              Répartition géographique
-            </Titre>
-            <Cartes
-              chantierMailles={chantier.mailles}
-              estInteractif={false}
-            />
-          </section>
-        </div>
+        {
+          (!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSélectionnée] ||
+            !!chantier.météoDonnéeTerritorialisée[mailleSélectionnée] ||
+            !!chantier.estTerritorialisé) && (
+            <div className="fr-my-2w">
+              <section className="rubrique cartes">
+                <Titre
+                  baliseHtml='h2'
+                  className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
+                >
+                  Répartition géographique
+                </Titre>
+                <Cartes
+                  afficheCarteAvancement={!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSélectionnée] || !!chantier.estTerritorialisé}  
+                  afficheCarteMétéo={!!chantier.météoDonnéeTerritorialisée[mailleSélectionnée] || !!chantier.estTerritorialisé}  
+                  chantierMailles={chantier.mailles}
+                  estInteractif={false}
+                />
+              </section>
+            </div>
+          )
+        }
         {
           objectifs !== null &&
           <div className="fr-my-2w">
@@ -135,6 +144,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                   Indicateurs
                 </Titre>
                 <Indicateurs
+                  chantierEstTerritorialisé={chantier.estTerritorialisé}
                   détailsIndicateurs={détailsIndicateurs}
                   estInteractif={false}
                   indicateurs={indicateurs}

@@ -13,5 +13,6 @@ export default interface IndicateurBlocProps {
   territoireProjetStructurant?: ProjetStructurant['territoire']
   estDisponibleALImport: boolean
   estInteractif: boolean
-  typeDeRéforme: TypeDeRéforme
+  typeDeRéforme: TypeDeRéforme,
+  chantierEstTerritorialisé: boolean,
 }

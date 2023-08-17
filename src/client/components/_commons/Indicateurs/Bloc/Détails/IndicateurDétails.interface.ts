@@ -5,5 +5,6 @@ import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypede
 export default interface IndicateurDétailsProps {
   indicateur: Indicateur
   indicateurDétailsParTerritoires: IndicateurDétailsParTerritoire[]
-  typeDeRéforme: TypeDeRéforme
+  typeDeRéforme: TypeDeRéforme,
+  chantierEstTerritorialisé: boolean,
 }

@@ -15,7 +15,21 @@ export default function useIndicateurDétails(indicateurId: Indicateur['id'], fu
 
   const [donnéesCartographieAvancement, setDonnéesCartographieAvancement] = useState<CartographieDonnéesAvancement | null>(null);
   const [donnéesCartographieValeurActuelle, setDonnéesCartographieValeurActuelle] = useState<CartographieDonnéesValeurActuelle | null>(null);
+  const [donnéesCartographieAvancementTerritorialisées, setDonnéesCartographieAvancementTerritorialisées] = useState<boolean>(false);
+  const [donnéesCartographieValeurActuelleTerritorialisées, setDonnéesCartographieValeurActuelleTerritorialisées] = useState<boolean>(false);
+
+  function aDeLaDonnéeTerritoriale(donnéesCartographie: CartographieDonnéesAvancement | CartographieDonnéesValeurActuelle | null): boolean {
+    if (donnéesCartographie) {
+      for (const d of donnéesCartographie) {
+        if (d.valeur !== null) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
   
+
   const { refetch: fetchDétailsIndicateur  } = api.indicateur.récupererDétailsIndicateur.useQuery(
     { indicateurId },
     {
@@ -38,8 +52,18 @@ export default function useIndicateurDétails(indicateurId: Indicateur['id'], fu
     }
   }, [fetchDétailsIndicateur, futOuvert, indicateurId, mailleSélectionnée, typeDeRéforme]);
 
+  useEffect(() => {
+    setDonnéesCartographieAvancementTerritorialisées(aDeLaDonnéeTerritoriale(donnéesCartographieAvancement));
+  }, [donnéesCartographieAvancement]);
+
+  useEffect(() => {
+    setDonnéesCartographieValeurActuelleTerritorialisées(aDeLaDonnéeTerritoriale(donnéesCartographieValeurActuelle));
+  }, [donnéesCartographieValeurActuelle]);
+
   return {
     donnéesCartographieAvancement,
     donnéesCartographieValeurActuelle,
+    donnéesCartographieAvancementTerritorialisées,
+    donnéesCartographieValeurActuelleTerritorialisées,
   };
 }
