@@ -95,33 +95,36 @@ model perimetre {
 }
 
 model indicateur {
-  id                             String
-  nom                            String
-  chantier_id                    String
-  objectif_valeur_cible          Float?
-  objectif_taux_avancement       Float?
-  objectif_date_valeur_cible     DateTime?  @db.Date
-  type_id                        String?
-  type_nom                       String?
-  est_barometre                  Boolean?
-  est_phare                      Boolean?
-  valeur_initiale                Float?
-  date_valeur_initiale           DateTime?  @db.Date
-  valeur_actuelle                Float?
-  date_valeur_actuelle           DateTime?  @db.Date
-  territoire_nom                 String?
-  code_insee                     String
-  maille                         String
-  evolution_valeur_actuelle      Float[]
-  evolution_date_valeur_actuelle DateTime[] @db.Date
-  description                    String?
-  source                         String?
-  mode_de_calcul                 String?
-  territoire                     territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  territoire_code                String
-  ponderation_dept               Float?
-  ponderation_reg                Float?
-  ponderation_nat                Float?
+  id                                        String
+  nom                                       String
+  chantier_id                               String
+  objectif_valeur_cible                     Float?
+  objectif_taux_avancement                  Float?
+  objectif_date_valeur_cible                DateTime?  @db.Date
+  type_id                                   String?
+  type_nom                                  String?
+  est_barometre                             Boolean?
+  est_phare                                 Boolean?
+  valeur_initiale                           Float?
+  date_valeur_initiale                      DateTime?  @db.Date
+  valeur_actuelle                           Float?
+  date_valeur_actuelle                      DateTime?  @db.Date
+  territoire_nom                            String?
+  code_insee                                String
+  maille                                    String
+  evolution_valeur_actuelle                 Float[]
+  evolution_date_valeur_actuelle            DateTime[] @db.Date
+  description                               String?
+  source                                    String?
+  mode_de_calcul                            String?
+  territoire                                territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  territoire_code                           String
+  ponderation_dept                          Float?
+  ponderation_reg                           Float?
+  ponderation_nat                           Float?
+  objectif_valeur_cible_intermediaire       Float?
+  objectif_taux_avancement_intermediaire    Float?
+  objectif_date_valeur_cible_intermediaire  DateTime?  @db.Date
 
   @@id([id, code_insee, maille])
   @@schema("public")
