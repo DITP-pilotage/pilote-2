@@ -143,6 +143,8 @@ describe('IndicateurSQLRepository', () => {
               valeurCible: 1790,
               dateValeurCible: '2026-05-01T00:00:00.000Z',
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
+              valeurCibleAnnuelle: null,
+              dateValeurCibleAnnuelle: null,
               valeurActuelle: 1500,
               avancement: {
                 global: 40,
@@ -158,6 +160,8 @@ describe('IndicateurSQLRepository', () => {
               valeurCible: 1790,
               dateValeurCible: '2026-05-01T00:00:00.000Z',
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
+              valeurCibleAnnuelle: null,
+              dateValeurCibleAnnuelle: null,
               valeurActuelle: 1503,
               avancement: {
                 global: 40,
@@ -254,6 +258,8 @@ describe('IndicateurSQLRepository', () => {
               valeurCible: 1789,
               dateValeurCible: '2026-05-01T00:00:00.000Z',
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
+              valeurCibleAnnuelle: null,
+              dateValeurCibleAnnuelle: null,
               valeurActuelle: 1500,           
               avancement: {
                 global: 20,
@@ -270,6 +276,8 @@ describe('IndicateurSQLRepository', () => {
               dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
               valeurCible: 1790,
               dateValeurCible: '2026-05-01T00:00:00.000Z',
+              valeurCibleAnnuelle: null,
+              dateValeurCibleAnnuelle: null,
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
               valeurActuelle: 1501,       
               avancement: {
@@ -285,6 +293,8 @@ describe('IndicateurSQLRepository', () => {
               dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
               valeurCible: 1790,
               dateValeurCible: '2026-05-01T00:00:00.000Z',
+              valeurCibleAnnuelle: null,
+              dateValeurCibleAnnuelle: null,
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
               valeurActuelle: 1502,       
               avancement: {
@@ -359,6 +369,8 @@ describe('IndicateurSQLRepository', () => {
               dateValeurCible: '2026-05-01T00:00:00.000Z',
               valeurActuelle: 1500,
               dateValeurActuelle: '2023-03-01T00:00:00.000Z',
+              valeurCibleAnnuelle: null,
+              dateValeurCibleAnnuelle: null,
               avancement: {
                 global: 30,
                 annuel: null,
@@ -439,6 +451,119 @@ describe('IndicateurSQLRepository', () => {
         { nom: 'Indicateur 2 Chantier 2', chantierNom: 'A Chantier 2', maille: 'NAT' },
         { nom: 'Indicateur 1 Chantier 1', chantierNom: 'B Chantier 1', maille: 'NAT' },
       ].map(expect.objectContaining));
+    });
+  });
+
+  describe('Récupérer la bonne valeur cible annuelle', () => {
+    test("Récupère la valeur cible annuelle si valeur cible annuelle est sur l'année en cours", async () => {
+      // GIVEN
+      const repository = new IndicateurSQLRepository(prisma);
+
+      const indicateurs: indicateur[] = [
+        new IndicateurSQLRowBuilder()
+          .avecId('IND-001')
+          .avecChantierId('CH-001')
+          .avecMaille('DEPT')
+          .avecCodeInsee('01')
+          .avecÉvolutionValeurActuelle( [1, 2, 3])
+          .avecDateValeurInitiale(new Date('2021-01-01'))
+          .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
+          .avecValeurInitiale(1000)
+          .avecValeurCible(1789)
+          .avecDateValeurActuelle(new Date('2023-03-01'))
+          .avecValeurActuelle(1500)
+          .avecDateValeurCible(new Date('2026-05-01'))
+          .avecTauxAvancementCible(20)
+          .avecValeurCibleIntermediaire(1000)
+          .avecDateValeurCibleIntermediaire(new Date(new Date().getFullYear().toString() + '-12-31'))
+          .avecTauxAvancementCibleIntermedaire(70)
+          .build(),
+      ];
+
+      await prisma.indicateur.createMany({ data: indicateurs });
+
+      // WHEN
+      const result = await repository.récupererDétailsParChantierIdEtTerritoire('CH-001', ['DEPT-01', 'DEPT-02', 'DEPT-03']);
+
+      // THEN
+      expect(result).toStrictEqual(
+        {
+          'IND-001': {
+            '01': {
+              codeInsee: '01',
+              valeurInitiale: 1000,
+              dateValeurInitiale: '2021-01-01T00:00:00.000Z',
+              valeurs: [1, 2, 3],
+              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
+              valeurCible: 1789,
+              dateValeurCible: '2026-05-01T00:00:00.000Z',
+              dateValeurActuelle: '2023-03-01T00:00:00.000Z',
+              valeurCibleAnnuelle: 1000,
+              dateValeurCibleAnnuelle: (new Date().getFullYear()).toString() + '-12-31T00:00:00.000Z',
+              valeurActuelle: 1500,           
+              avancement: {
+                global: 20,
+                annuel: 70,
+              },
+            },
+          },
+        },
+      );
+    });
+    test("Récupère la valeur cible annuelle si valeur cible annuelle n'est pas sur l'année en cours", async () => {
+      // GIVEN
+      const repository = new IndicateurSQLRepository(prisma);
+
+      const indicateurs: indicateur[] = [
+        new IndicateurSQLRowBuilder()
+          .avecId('IND-001')
+          .avecChantierId('CH-001')
+          .avecMaille('DEPT')
+          .avecCodeInsee('01')
+          .avecÉvolutionValeurActuelle( [1, 2, 3])
+          .avecDateValeurInitiale(new Date('2021-01-01'))
+          .avecÉvolutionDateValeurActuelle([new Date('2021-01-01'), new Date('2021-02-01'), new Date('2021-03-01')])
+          .avecValeurInitiale(1000)
+          .avecValeurCible(1789)
+          .avecDateValeurActuelle(new Date('2023-03-01'))
+          .avecValeurActuelle(1500)
+          .avecDateValeurCible(new Date('2026-05-01'))
+          .avecTauxAvancementCible(20)
+          .avecValeurCibleIntermediaire(1000)
+          .avecDateValeurCibleIntermediaire(new Date((new Date().getFullYear() + 1).toString() + '-12-31'))
+          .avecTauxAvancementCibleIntermedaire(70)
+          .build(),
+      ];
+
+      await prisma.indicateur.createMany({ data: indicateurs });
+
+      // WHEN
+      const result = await repository.récupererDétailsParChantierIdEtTerritoire('CH-001', ['DEPT-01', 'DEPT-02', 'DEPT-03']);
+
+      // THEN
+      expect(result).toStrictEqual(
+        {
+          'IND-001': {
+            '01': {
+              codeInsee: '01',
+              valeurInitiale: 1000,
+              dateValeurInitiale: '2021-01-01T00:00:00.000Z',
+              valeurs: [1, 2, 3],
+              dateValeurs: ['2021-01-01T00:00:00.000Z', '2021-02-01T00:00:00.000Z', '2021-03-01T00:00:00.000Z'],
+              valeurCible: 1789,
+              dateValeurCible: '2026-05-01T00:00:00.000Z',
+              dateValeurActuelle: '2023-03-01T00:00:00.000Z',
+              valeurCibleAnnuelle: null,
+              dateValeurCibleAnnuelle: null,
+              valeurActuelle: 1500,           
+              avancement: {
+                global: 20,
+                annuel: null,
+              },
+            },
+          },
+        },
+      );
     });
   });
 });

@@ -40,6 +40,8 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
         dateValeurs: indicateur.date_valeur_actuelle ? [indicateur.date_valeur_actuelle.toISOString()] : [],
         valeurCible: indicateur.valeur_cible,
         dateValeurCible: indicateur.date_valeur_cible?.toISOString() ?? null,
+        dateValeurCibleAnnuelle: null,
+        valeurCibleAnnuelle: null,
         avancement: { annuel: null, global: indicateur.taux_avancement },
       };
     }

@@ -13,15 +13,15 @@ renamed as (
         effect_id,
         valeur_initiale as valeur_initiale,
         valeur_actuelle as valeur_actuelle,
-        valeur_cible_intermediaire as valeur_cible_annuel,
+        valeur_cible_intermediaire as valeur_cible_intermediaire,
         valeur_cible_globale as valeur_cible_globale,
         progress_intermediaire as avancement_annuel,
-        bounded_progress_intermediaire as avancement_borne_annuel,
+        bounded_progress_intermediaire as avancement_borne_intermediaire,
         progress_globale as avancement, -- TODO A RENOMMER pour global
         bounded_progress_globale as avancement_borne, -- TODO A RENOMMER pour global
         date_valeur_initiale::DATE,
         date_valeur_actuelle::DATE,
-        date_valeur_cible_intermediaire::DATE as date_valeur_cible_annuel,
+        date_valeur_cible_intermediaire::DATE as date_valeur_cible_intermediaire,
         date_valeur_cible_globale::DATE,
         completude_intermediaire,
         completude_globale,

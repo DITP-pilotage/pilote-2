@@ -52,6 +52,14 @@ export default class ChantierRowBuilder {
 
   private _ate: chantier['ate'];
 
+  private _a_meteo_departemental: chantier['a_meteo_departemental'];
+
+  private _a_meteo_regional: chantier['a_meteo_regional'];
+
+  private _a_taux_avancement_departemental: chantier['a_taux_avancement_departemental'];
+
+  private _a_taux_avancement_regional: chantier['a_taux_avancement_regional'];
+
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
     const avancement = new AvancementBuilder().build();
@@ -82,6 +90,10 @@ export default class ChantierRowBuilder {
     this._estTerritorialisé = générerPeutÊtreNull(0.2, chantierGénéré.estTerritorialisé);
     this._territoireCode = `${this._maille}-${this._codeInsee}`;
     this._ate = faker.helpers.arrayElement(typesAte);
+    this._a_meteo_departemental = faker.datatype.boolean();
+    this._a_meteo_regional = faker.datatype.boolean();
+    this._a_taux_avancement_departemental = faker.datatype.boolean();
+    this._a_taux_avancement_regional = faker.datatype.boolean();
   }
 
   avecId(id: chantier['id']): ChantierRowBuilder {
@@ -185,6 +197,26 @@ export default class ChantierRowBuilder {
     return this;
   }
 
+  avecAMeteoDepartemental(aMeteo: chantier['a_meteo_departemental']): ChantierRowBuilder {
+    this._a_meteo_departemental = aMeteo;
+    return this;
+  }
+
+  avecAMeteoRegional(aMeteo: chantier['a_meteo_regional']): ChantierRowBuilder {
+    this._a_meteo_regional = aMeteo;
+    return this;
+  }
+
+  avecTauxAvancementDepartemental(aTauxAvancement: chantier['a_taux_avancement_departemental']): ChantierRowBuilder {
+    this._a_taux_avancement_departemental = aTauxAvancement;
+    return this;
+  }
+
+  avecTauxAvancementRegional(aTauxAvancement: chantier['a_taux_avancement_regional']): ChantierRowBuilder {
+    this._a_taux_avancement_regional = aTauxAvancement;
+    return this;
+  }
+
   shallowCopy(): ChantierRowBuilder {
     const result = new ChantierRowBuilder() as any;
     for (const attribut in this) {
@@ -215,6 +247,10 @@ export default class ChantierRowBuilder {
       est_territorialise: this._estTerritorialisé,
       territoire_code: this._territoireCode,
       ate: this._ate,
+      a_meteo_departemental: this._a_meteo_departemental,
+      a_meteo_regional: this._a_meteo_regional,
+      a_taux_avancement_departemental: this._a_taux_avancement_departemental,
+      a_taux_avancement_regional: this._a_taux_avancement_regional,
     };
   }
 }

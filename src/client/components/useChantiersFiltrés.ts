@@ -7,6 +7,7 @@ import {
   désactiverUnFiltreFn,
 } from '@/stores/useFiltresStore/useFiltresStore';
 import Alerte from '@/server/domain/alerte/Alerte';
+import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 
 export default function useChantiersFiltrés(chantiers: Chantier[]) {
   const { data: session } = useSession();
@@ -18,6 +19,13 @@ export default function useChantiersFiltrés(chantiers: Chantier[]) {
 
     if (session?.profil === 'DROM' && territoireSélectionné?.code === 'NAT-FR') {
       résultat = résultat.filter(chantier => chantier.périmètreIds.includes('PER-018'));
+    }
+
+    if (territoireSélectionné?.code !== 'NAT-FR') {
+      const maille = territoireSélectionné?.maille as MailleInterne;
+      résultat = résultat.filter(chantier => {
+        return chantier.estTerritorialisé || chantier.tauxAvancementDonnéeTerritorialisée[maille] || chantier.météoDonnéeTerritorialisée[maille]; 
+      });
     }
 
     if (filtresActifs.périmètresMinistériels.length > 0) {

@@ -62,6 +62,12 @@ export default class IndicateurRowBuilder {
 
   private _ponderation_nat: indicateur['ponderation_nat'];
 
+  private _dateValeurCibleIntermediaire: indicateur['objectif_date_valeur_cible_intermediaire'];
+
+  private _valeurCibleIntermediaire: indicateur['objectif_valeur_cible_intermediaire'];
+
+  private _tauxAvancementCibleIntermediaire: indicateur['objectif_taux_avancement_intermediaire'];
+
 
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
@@ -77,6 +83,9 @@ export default class IndicateurRowBuilder {
     this._valeurCible = détailsIndicateurGénéré.valeurCible;
     this._tauxAvancementCible = détailsIndicateurGénéré.avancement.global;
     this._dateValeurCible = détailsIndicateurGénéré.dateValeurCible !== null ? new Date(détailsIndicateurGénéré.dateValeurCible) : null;
+    this._valeurCibleIntermediaire = détailsIndicateurGénéré.valeurCible;
+    this._tauxAvancementCibleIntermediaire = détailsIndicateurGénéré.avancement.global;
+    this._dateValeurCibleIntermediaire = détailsIndicateurGénéré.dateValeurCible !== null ? new Date(détailsIndicateurGénéré.dateValeurCible) : null;
     this._typeId = indicateurGénéré.type;
     this._typeNom = `nom ${indicateurGénéré.type}`;
     this._estBaromètre = générerPeutÊtreNull(0.2, faker.datatype.boolean());
@@ -126,6 +135,21 @@ export default class IndicateurRowBuilder {
 
   avecDateValeurCible(dateValeurCible: indicateur['objectif_date_valeur_cible']): IndicateurRowBuilder {
     this._dateValeurCible = dateValeurCible;
+    return this;
+  }
+
+  avecValeurCibleIntermediaire(valeurCibleIntermediaire: indicateur['objectif_valeur_cible_intermediaire']): IndicateurRowBuilder {
+    this._valeurCibleIntermediaire = valeurCibleIntermediaire;
+    return this;
+  }
+
+  avecTauxAvancementCibleIntermedaire(tauxAvancementCibleIntermediaire: indicateur['objectif_taux_avancement_intermediaire']): IndicateurRowBuilder {
+    this._tauxAvancementCibleIntermediaire = tauxAvancementCibleIntermediaire;
+    return this;
+  }
+
+  avecDateValeurCibleIntermediaire(dateValeurCibleIntermediaire: indicateur['objectif_date_valeur_cible_intermediaire']): IndicateurRowBuilder {
+    this._dateValeurCibleIntermediaire = dateValeurCibleIntermediaire;
     return this;
   }
 
@@ -262,6 +286,9 @@ export default class IndicateurRowBuilder {
       ponderation_dept: this._ponderation_dept,
       ponderation_reg: this._ponderation_reg,
       ponderation_nat: this._ponderation_nat,
+      objectif_date_valeur_cible_intermediaire: this._dateValeurCibleIntermediaire,
+      objectif_valeur_cible_intermediaire: this._valeurCibleIntermediaire,
+      objectif_taux_avancement_intermediaire: this._tauxAvancementCibleIntermediaire,
     };
   }
 }

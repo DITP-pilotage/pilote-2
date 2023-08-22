@@ -23,6 +23,10 @@ class ErreurIndicateurNonTrouvé extends Error {
   }
 }
 
+function formatDate(date: Date | null): string | null {
+  return date !== null ? date.toISOString() : null;
+}
+
 export default class IndicateurSQLRepository implements IndicateurRepository {
   private prisma: PrismaClient;
 
@@ -50,7 +54,10 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
   private _mapDétailsToDomain(indicateurs: IndicateurPrisma[]): DétailsIndicateurs {
     const détailsIndicateurs: DétailsIndicateurs = {};
 
+    let IntermediaireEstAnnéeEnCours: boolean;
     for (const indic of indicateurs) {
+      IntermediaireEstAnnéeEnCours = indic.objectif_date_valeur_cible_intermediaire?.getFullYear() === new Date().getFullYear();
+
       if (!détailsIndicateurs[indic.id]) {
         détailsIndicateurs[indic.id] = {};
       }
@@ -58,16 +65,18 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       détailsIndicateurs[indic.id][indic.code_insee] = {
         codeInsee: indic.code_insee,
         valeurInitiale: indic.valeur_initiale,
-        dateValeurInitiale: indic.date_valeur_initiale !== null ? indic.date_valeur_initiale.toISOString() : null,
+        dateValeurInitiale: formatDate(indic.date_valeur_initiale),
         valeurs: indic.evolution_valeur_actuelle ?? [],
         dateValeurs: indic.evolution_date_valeur_actuelle.map((date) => date.toISOString()) ?? [],
         valeurActuelle: indic.valeur_actuelle,
-        dateValeurActuelle: indic.date_valeur_actuelle !== null ? indic.date_valeur_actuelle.toISOString() : null,
+        dateValeurActuelle: formatDate(indic.date_valeur_actuelle),
         valeurCible: indic.objectif_valeur_cible,
-        dateValeurCible: indic.objectif_date_valeur_cible !== null ? indic.objectif_date_valeur_cible.toISOString() : null,
+        dateValeurCible: formatDate(indic.objectif_date_valeur_cible),
+        valeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ? indic.objectif_valeur_cible_intermediaire : null,
+        dateValeurCibleAnnuelle: IntermediaireEstAnnéeEnCours ? formatDate(indic.objectif_date_valeur_cible_intermediaire) : null,
         avancement: {
           global: indic.objectif_taux_avancement,
-          annuel: null,
+          annuel: IntermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire : null,
         },
       };
     }
