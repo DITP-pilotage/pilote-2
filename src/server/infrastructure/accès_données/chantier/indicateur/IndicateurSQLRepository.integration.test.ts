@@ -475,7 +475,7 @@ describe('IndicateurSQLRepository', () => {
           .avecDateValeurCible(new Date('2026-05-01'))
           .avecTauxAvancementCible(20)
           .avecValeurCibleIntermediaire(1000)
-          .avecDateValeurCibleIntermediaire(new Date (new Date().getFullYear().toString() + '-12-31'))
+          .avecDateValeurCibleIntermediaire(new Date(new Date().getFullYear().toString() + '-12-31'))
           .avecTauxAvancementCibleIntermedaire(70)
           .build(),
       ];
@@ -530,7 +530,7 @@ describe('IndicateurSQLRepository', () => {
           .avecDateValeurCible(new Date('2026-05-01'))
           .avecTauxAvancementCible(20)
           .avecValeurCibleIntermediaire(1000)
-          .avecDateValeurCibleIntermediaire(new Date ((new Date().getFullYear() + 1).toString() + '-12-31'))
+          .avecDateValeurCibleIntermediaire(new Date((new Date().getFullYear() + 1).toString() + '-12-31'))
           .avecTauxAvancementCibleIntermedaire(70)
           .build(),
       ];
