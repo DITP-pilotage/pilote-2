@@ -25,6 +25,10 @@ export default class DétailsIndicateurBuilder {
 
   private _avancement: DétailsIndicateur['avancement'];
 
+  private _valeurCibleAnnuelle: DétailsIndicateur['valeurCibleAnnuelle'];
+
+  private _dateValeurCibleAnnuelle: DétailsIndicateur['dateValeurCibleAnnuelle'];
+
   constructor() {
     const nombreDeValeurs = faker.datatype.number({ min: 28, max: 35 });
 
@@ -35,6 +39,9 @@ export default class DétailsIndicateurBuilder {
     this._valeurActuelle = faker.datatype.number({ min: this._valeurInitiale ?? 30, precision: 0.01 });
     this._dateValeurCible = faker.date.future(3, '2024-06-01T00:00:00.000Z').toISOString();
     this._dateValeurActuelle = new Date('2023-03-01T00:00:00.000Z').toISOString();
+    this._dateValeurCibleAnnuelle = faker.date.future(1, '2023-03-01T00:00:00.000Z').toISOString();
+    this._valeurCibleAnnuelle = faker.datatype.number({ min: this._valeurInitiale ?? 42, max: this._valeurCible ?? 39, precision: 0.01 });
+
 
     const valeursEtDates = this.générerValeursEtDates(nombreDeValeurs, this._valeurInitiale, this._valeurCible);
 
@@ -93,6 +100,16 @@ export default class DétailsIndicateurBuilder {
     return this;
   }
 
+  avecValeurCibleAnnuelle(valeurCibleAnnuelle: DétailsIndicateur['valeurCibleAnnuelle']): DétailsIndicateurBuilder {
+    this._valeurCibleAnnuelle = valeurCibleAnnuelle;
+    return this;
+  }
+
+  avecDateValeurCibleAnnuelle(dateValeurCibleAnnuelle: DétailsIndicateur['dateValeurCibleAnnuelle']): DétailsIndicateurBuilder {
+    this._dateValeurCibleAnnuelle = dateValeurCibleAnnuelle;
+    return this;
+  }
+
   build(): DétailsIndicateur {
     return {
       codeInsee: this._codeInsee,
@@ -104,6 +121,8 @@ export default class DétailsIndicateurBuilder {
       dateValeurCible: this._dateValeurCible,
       valeurActuelle: this._valeurActuelle,
       dateValeurActuelle: this._dateValeurActuelle,
+      dateValeurCibleAnnuelle: this._dateValeurCibleAnnuelle,
+      valeurCibleAnnuelle: this._valeurCibleAnnuelle,
       avancement: this._avancement,
     };
   }

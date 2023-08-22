@@ -17,5 +17,7 @@ export type DétailsIndicateur = {
   dateValeurActuelle: string | null,
   valeurCible: number | null,
   dateValeurCible: string | null,
+  valeurCibleAnnuelle: number | null,
+  dateValeurCibleAnnuelle: string | null,
   avancement: Avancement,
 };

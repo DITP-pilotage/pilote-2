@@ -34,7 +34,9 @@ const indicateurDétailsVide = {
     dateValeurActuelle: null,
     valeurCible: null,
     dateValeurCible: null,
-    avancement: { annuel: null, global: null },
+    valeurCibleAnnuelle: null,
+    dateValeurCibleAnnuelle: null,
+    avancement: { global: null, annuel: null },
   },
 };
 
@@ -101,6 +103,32 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
         <ValeurEtDate
           date={valeurActuelle.row.original.données.dateValeurActuelle}
           valeur={valeurActuelle.getValue()}
+        />
+      ),
+      enableSorting: false,
+    }),
+    reactTableColonnesHelper.accessor('données.valeurCibleAnnuelle', {
+      header: 'Cible ' + new Date().getFullYear().toString(),
+      id: 'cibleAnnuelle',
+      cell: valeurCibleAnnuelle => (
+        <ValeurEtDate
+          date={valeurCibleAnnuelle.row.original.données.dateValeurCibleAnnuelle}
+          valeur={valeurCibleAnnuelle.getValue()}
+        />
+      ),
+      enableSorting: false,
+    }),
+    reactTableColonnesHelper.accessor('données.avancement.annuel', {
+      header: 'Avancement ' + new Date().getFullYear().toString(),
+      id: 'avancementAnnuel',
+      cell: avancementAnnuel => (
+        <BarreDeProgression
+          afficherTexte
+          fond='grisClair'
+          positionTexte='dessus'
+          taille='md'
+          valeur={avancementAnnuel.getValue()}
+          variante='secondaire'
         />
       ),
       enableSorting: false,
@@ -217,6 +245,8 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
         territoire: false,
         valeurInitiale: false,
         valeurActuelle: false,
+        cibleAnnuelle: false,
+        avancementAnnuel: false,
         cible: false,
         avancement: false,
       }) : ({
