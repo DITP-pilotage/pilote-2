@@ -55,7 +55,7 @@ export default function TableauChantiersTuileChantier({ chantier, afficherIcône
             alignement="droite"
             couleur={couleurÉcartArrondi.couleur}
             estGras
-            texte={`${couleurÉcartArrondi.écartArrondi.toFixed(1)}%`}
+            texte={`${couleurÉcartArrondi.écartArrondi.toFixed(1)}`}
           />
         }
       </div>

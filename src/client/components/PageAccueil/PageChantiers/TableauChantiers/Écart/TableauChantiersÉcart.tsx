@@ -12,7 +12,6 @@ export default function TableauChantiersÉcart({ écart }: TableauChantiersÉcar
   return (
     <Badge type={couleurÉcartArrondi.couleur}>
       {couleurÉcartArrondi.écartArrondi.toFixed(1)}
-      %
     </Badge>
   );
 }
