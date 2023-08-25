@@ -223,10 +223,6 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       chantiersAccessiblesEnSaisieCommentaire = objectEntries(this._chantiers.groupésParId)
         .filter(([_, c]) => c.est_territorialise && c.ate === 'ate')
         .map(([_, c]) => c.id);
-    } else if (['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(profilUtilisateur.code)) {
-      chantiersAccessiblesEnSaisieCommentaire = objectEntries(this._chantiers.groupésParId)
-        .filter(([_, c]) => c.est_territorialise && c.ate === 'hors_ate_deconcentre')
-        .map(([_, c]) => c.id);
     } else {
       chantiersAccessiblesEnSaisieCommentaire = chantiersAccessibles;
     }
@@ -339,14 +335,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
     for await (const h of habilitations) {
       const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
-      const chantiersAssociésAuxPérimètresMinistériels = h.perimetres.length > 0 ? await dependencies.getChantierRepository().récupérerChantierIdsAssociésAuxPérimètresMinistèriels(h.perimetres) : [];
-
-      if (scopeCode === 'saisie.commentaire') {
-        const chantierSaisiePérimètre = h.perimetres.length > 0 ? habilitationsGénérées[scopeCode].chantiers.filter(c => chantiersAssociésAuxPérimètresMinistériels.includes(c)) : habilitationsGénérées[scopeCode].chantiers;
-        habilitationsGénérées[scopeCode].chantiers = [... new Set([...chantierSaisiePérimètre, ...h.chantiers])];
-        habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
-        habilitationsGénérées[scopeCode].périmètres = [... new Set([...habilitationsGénérées[scopeCode].périmètres, ...h.perimetres])];
-      } else if (scopeCode !== 'projetsStructurants.lecture') {
+      if (scopeCode !== 'projetsStructurants.lecture') {
+        const chantiersAssociésAuxPérimètresMinistériels = h.perimetres.length > 0 ? await dependencies.getChantierRepository().récupérerChantierIdsAssociésAuxPérimètresMinistèriels(h.perimetres, scopeCode, profilUtilisateur.code) : [];
         habilitationsGénérées[scopeCode].chantiers = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...h.chantiers])];
         habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
         habilitationsGénérées[scopeCode].périmètres = [... new Set([...habilitationsGénérées[scopeCode].périmètres, ...h.perimetres])];

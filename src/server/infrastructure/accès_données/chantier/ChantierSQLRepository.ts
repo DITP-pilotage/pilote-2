@@ -7,7 +7,7 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { Habilitations, Scope } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
@@ -81,13 +81,17 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return chantiers;
   }
 
-  async récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][]): Promise<Chantier['id'][]> {
-    const chantiers = await this.prisma.chantier.findMany({
+  async récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][], scope: Scope, profilUtilisateur: string): Promise<Chantier['id'][]> {
+    let chantiers = await this.prisma.chantier.findMany({
       distinct: ['id'],
       where: {
         perimetre_ids: { hasSome: périmètreIds },
       },
     });
+
+    if (scope == 'saisie.commentaire' && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(profilUtilisateur)) {
+      chantiers = chantiers.filter(c => c.ate === 'hors_ate_deconcentre');
+    }
 
     return chantiers.map(c => c.id);
   }
