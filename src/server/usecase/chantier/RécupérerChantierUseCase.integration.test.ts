@@ -249,7 +249,7 @@ describe('RécupérerChantierUseCase', () => {
     // THEN
     expect(result.mailles.nationale.FR.tendance).toEqual('HAUSSE');
     expect(result.mailles.départementale['01'].tendance).toEqual('BAISSE');
-    expect(result.mailles.départementale['02'].tendance).toBeNull();
+    expect(result.mailles.départementale['02'].tendance).toEqual('STAGNATION');
     expect(result.mailles.départementale['03'].tendance).toEqual('STAGNATION');
   });
 
