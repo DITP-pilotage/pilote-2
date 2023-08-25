@@ -54,7 +54,6 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
       if (['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(utilisateur.profil)) {
         return chantiers.filter(c => c.ate === 'hors_ate_deconcentre' && chantiersIdsAccessiblesEnLecture.includes(c.id)).map(c => c.id);
       }
-
       return chantiersIdsAccessiblesEnLecture;
     }
     
