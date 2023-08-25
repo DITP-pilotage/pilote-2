@@ -342,7 +342,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       const chantiersAssociésAuxPérimètresMinistériels = h.perimetres.length > 0 ? await dependencies.getChantierRepository().récupérerChantierIdsAssociésAuxPérimètresMinistèriels(h.perimetres) : [];
 
       if (scopeCode === 'saisie.commentaire') {
-        const chantierSaisiePérimètre = habilitationsGénérées[scopeCode].chantiers.filter(c => chantiersAssociésAuxPérimètresMinistériels.includes(c));
+        const chantierSaisiePérimètre = h.perimetres.length > 0 ? habilitationsGénérées[scopeCode].chantiers.filter(c => chantiersAssociésAuxPérimètresMinistériels.includes(c)) : habilitationsGénérées[scopeCode].chantiers;
         habilitationsGénérées[scopeCode].chantiers = [... new Set([...chantierSaisiePérimètre, ...h.chantiers])];
         habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
         habilitationsGénérées[scopeCode].périmètres = [... new Set([...habilitationsGénérées[scopeCode].périmètres, ...h.perimetres])];
