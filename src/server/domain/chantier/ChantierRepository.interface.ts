@@ -21,4 +21,5 @@ export default interface ChantierRepository {
   récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<ChantierPourExport[]>;
   récupérerChantierIdsEnLectureOrdonnésParNom(habilitation: Habilitation): Promise<Chantier['id'][]>;
   récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][], scope: Scope, profilUtilisateur: string): Promise<Chantier['id'][]> ;
+  récupérerChantierIdsPourSaisieCommentaireServiceDeconcentré(chantierIds: Chantier['id'][]): Promise<Chantier['id'][]>;
 }
