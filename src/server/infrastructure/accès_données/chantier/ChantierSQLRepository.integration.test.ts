@@ -65,6 +65,43 @@ describe('ChantierSQLRepository', () => {
       expect(result).toStrictEqual('ORAGE');
     });
   });
+  describe('récupérerChantierIdsPourSaisieCommentaireServiceDeconcentré', function () {
+    test('renvoie la météo pour un chantier et territoire donné', async () => {
+      // Given
+      const maille = 'départementale';
+      const codeInsee = '75';
+      const repository: ChantierRepository = new ChantierSQLRepository(prisma);
+
+      const chantiers: chantier[] = [
+        new ChantierSQLRowBuilder()
+          .avecId('CH-001')
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecAte('ate')
+          .build(),
+        new ChantierSQLRowBuilder()
+          .avecId('CH-002')
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecAte('hors_ate_centralise')
+          .build(),
+        new ChantierSQLRowBuilder()
+          .avecId('CH-003')
+          .avecMaille(CODES_MAILLES[maille])
+          .avecCodeInsee(codeInsee)
+          .avecAte('hors_ate_deconcentre')
+          .build(),
+      ];
+
+      await prisma.chantier.createMany({ data: chantiers });
+
+      // When
+      const result = await repository.récupérerChantierIdsPourSaisieCommentaireServiceDeconcentré(['CH-001', 'CH-002', 'CH-003']);
+
+      // Then
+      expect(result).toStrictEqual(['CH-001', 'CH-003']);
+    });
+  });
 
   describe('Données des chantiers pour l\'export CSV', () => {
     it('renvoie les bonnes données dans les bons attributs', async () => {

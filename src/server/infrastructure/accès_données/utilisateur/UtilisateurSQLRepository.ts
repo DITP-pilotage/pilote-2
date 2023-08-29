@@ -336,8 +336,12 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     for await (const h of habilitations) {
       const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
       if (scopeCode !== 'projetsStructurants.lecture') {
+        const chantiersSupplémentaires = (scopeCode == 'saisie.commentaire' && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(profilUtilisateur.code) && h.chantiers.length > 0)
+          ? await dependencies.getChantierRepository().récupérerChantierIdsPourSaisieCommentaireServiceDeconcentré(h.chantiers) 
+          : h.chantiers;
+        
         const chantiersAssociésAuxPérimètresMinistériels = h.perimetres.length > 0 ? await dependencies.getChantierRepository().récupérerChantierIdsAssociésAuxPérimètresMinistèriels(h.perimetres, scopeCode, profilUtilisateur.code) : [];
-        habilitationsGénérées[scopeCode].chantiers = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...h.chantiers])];
+        habilitationsGénérées[scopeCode].chantiers = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...chantiersSupplémentaires])];
         habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
         habilitationsGénérées[scopeCode].périmètres = [... new Set([...habilitationsGénérées[scopeCode].périmètres, ...h.perimetres])];
       }
