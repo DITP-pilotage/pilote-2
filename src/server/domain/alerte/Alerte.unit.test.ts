@@ -52,7 +52,7 @@ describe('Alerte', () => {
       const estEnAlerteBaisseOuStagnation = Alerte.estEnAlerteBaisseOuStagnation(tauxAvancementPrécédent, tauxAvancement);
 
       // Then
-      expect(estEnAlerteBaisseOuStagnation).toBeFalsy();
+      expect(estEnAlerteBaisseOuStagnation).toBeTruthy();
     });
 
     test("le chantier n'est pas en alerte si le taux d'avancement actuel est inconnu", () => {
