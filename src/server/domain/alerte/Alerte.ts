@@ -6,9 +6,14 @@ const Alerte = {
     return écart < -10;
   },
   estEnAlerteBaisseOuStagnation: (tauxAvancementPrécédent: number | null, tauxAvancement: number | null) => {
-    if (tauxAvancementPrécédent === null || tauxAvancement === null) {
+    if (tauxAvancement === null) {
       return false;
+    } else if (tauxAvancementPrécédent === null) {
+      return true
     }
+
+
+    
     return tauxAvancement <= tauxAvancementPrécédent;
   },
   estEnAlerteDonnéesNonMàj(dateDonnéesQualitatives: string | null, dateDonnéesQuantitatives: string | null) {
