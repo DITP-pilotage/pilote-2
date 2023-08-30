@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import configuration from '@/server/infrastructure/Configuration';
+// import configuration from '@/server/infrastructure/Configuration';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 import logger from '@/server/infrastructure/logger';
 import UtilisateurPourIAM from '@/server/domain/utilisateur/UtilisateurIAM.interface';
@@ -10,7 +10,7 @@ const KEYCLOAK_REALM = 'DITP';
 // eslint-disable-next-line @typescript-eslint/no-implied-eval
 const _dynamicImport = new Function('specifier', 'return import(specifier)');
 
-const DAY_IN_SECONDS = 3600 * 24;
+// const DAY_IN_SECONDS = 3600 * 24;
 export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepository {
   private kcAdminClient: any;
 
@@ -78,19 +78,19 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
         emailVerified: true,
         requiredActions: ['UPDATE_PASSWORD'],
       });
-      logger.info(`Utilisateur ${email} créé.`);
+      logger.info(`Utilisateur ${email} créé.`, utilisateurIAM.id);
 
       // Note : pour que la redirectUri fonctionne, il faut ajouter le clientId et configurer les Valid redirect URIs
       // pour le client en question (du script d'import donc).
-      await this.kcAdminClient.users.executeActionsEmail({
-        realm: KEYCLOAK_REALM,
-        clientId: this.clientId,
-        redirectUri: configuration.webappBaseUrl,
-        id: utilisateurIAM.id,
-        lifespan: 7 * DAY_IN_SECONDS,
-        actions: ['UPDATE_PASSWORD'],
-      });
-      logger.info('Email envoyé à l\'utilisateur.');
+      // await this.kcAdminClient.users.executeActionsEmail({
+      //   realm: KEYCLOAK_REALM,
+      //   clientId: this.clientId,
+      //   redirectUri: configuration.webappBaseUrl,
+      //   id: utilisateurIAM.id,
+      //   lifespan: 7 * DAY_IN_SECONDS,
+      //   actions: ['UPDATE_PASSWORD'],
+      // });
+      // logger.info('Email envoyé à l\'utilisateur.');
 
     } catch (error: any) {
       if (error.message == 'Request failed with status code 409') {
