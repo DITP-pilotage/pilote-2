@@ -9,10 +9,8 @@ const Alerte = {
     if (tauxAvancement === null) {
       return false;
     } else if (tauxAvancementPrécédent === null) {
-      return true
+      return true;
     }
-
-
     
     return tauxAvancement <= tauxAvancementPrécédent;
   },
