@@ -1,4 +1,4 @@
-export const typeObjectifProjetStructurant = 'objectifs' as const;
+export const typeObjectifProjetStructurant = 'SuiviDesObjectifs' as const;
 export type TypeObjectifProjetStructurant = typeof typeObjectifProjetStructurant;
 
 type ObjectifProjetStructurant = {

@@ -7,7 +7,7 @@ DISTINCT ON(projet_structurant_temporaire.id, dfakto_view.objectif, dfakto_view.
         ]
     ) }} as id,
     projet_structurant_temporaire.id as projet_structurant_id,
-    'suivi_des_objectifs' as type,
+    'suivi_des_objectifs'::type_objectif_projet_structurant as type,
     dfakto_view.objectif as contenu,
     dfakto_view.objectif_date as date,
     NULL as auteur
