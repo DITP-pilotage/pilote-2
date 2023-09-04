@@ -43,4 +43,5 @@ export default class ProjetStructurantSQLRepository implements ProjetStructurant
     const projetsStructurants = await this.prisma.projet_structurant.findMany();
     return projetsStructurants.map(p => this._mapperVersDomaine(p));   
   }
+
 }
