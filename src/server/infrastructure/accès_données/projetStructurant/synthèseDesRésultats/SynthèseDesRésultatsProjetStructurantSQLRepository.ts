@@ -10,6 +10,21 @@ export class SynthèseDesRésultatsProjetStructurantSQLRepository implements Syn
     this.prisma = prisma;
   }
 
+  async créer(projetStructurantId: string, id: string, contenu: string, auteur: string, météo: Météo, date: Date): Promise<SynthèseDesRésultatsProjetStructurant> {
+
+    const synthèseDesRésultats =  await this.prisma.synthese_des_resultats_projet_structurant.create({
+      data: {
+        id: id,
+        projet_structurant_id: projetStructurantId,
+        commentaire: contenu,
+        meteo: météo,
+        date_commentaire: date,
+        date_meteo: date,
+        auteur: auteur,
+      } });
+    return this.mapperVersDomaine(synthèseDesRésultats);
+  }
+
   private mapperVersDomaine(synthèse: SynthèseDesRésultatsProjetStructurantPrisma | null): SynthèseDesRésultatsProjetStructurant {
     if (synthèse === null || synthèse.commentaire === null || synthèse.date_commentaire === null)
       return null;
@@ -21,6 +36,20 @@ export class SynthèseDesRésultatsProjetStructurantSQLRepository implements Syn
       auteur: synthèse.auteur ?? '',
       météo: synthèse.meteo as Météo ?? 'NON_RENSEIGNEE',
     };
+  }
+
+  async récupérerHistorique(projetStructurantId: string): Promise<SynthèseDesRésultatsProjetStructurant[]> {
+    
+    const synthèsesDesRésultats = await this.prisma.synthese_des_resultats_projet_structurant.findMany({
+      where: {
+        projet_structurant_id: projetStructurantId,
+      },
+      orderBy: { date_commentaire: 'desc' },
+    });
+
+    return synthèsesDesRésultats
+      .map((synthèse: SynthèseDesRésultatsProjetStructurantPrisma | null) => this.mapperVersDomaine(synthèse))
+      .filter((synthèse: SynthèseDesRésultatsProjetStructurant) => synthèse !== null);
   }
   
   async récupérerLaPlusRécente(projetStructurantId: string): Promise<SynthèseDesRésultatsProjetStructurant> {

@@ -7,7 +7,7 @@ export default class ObjectifProjetStructurantSQLRowBuilder {
 
   private _auteur: ObjectifProjetStructurantPrisma['auteur'] = '';
 
-  private _type: ObjectifProjetStructurantPrisma['type'] = '';
+  private _type: ObjectifProjetStructurantPrisma['type'];
 
   private _contenu: ObjectifProjetStructurantPrisma['contenu'] = '';
 
@@ -20,7 +20,7 @@ export default class ObjectifProjetStructurantSQLRowBuilder {
 
     this._id = faker.datatype.uuid();
     this._auteur = faker.name.fullName();
-    this._type = 'objectifs';
+    this._type = 'suivi_des_objectifs';
     this._contenu = faker.lorem.paragraph();
     this._date = faker.date.recent(60, '2023-05-01T00:00:00.000Z');
     this._projetStructurantId = projetStructurantGénéré.id; 

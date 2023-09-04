@@ -1,7 +1,6 @@
 import router from 'next/router';
 import { useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
-import SynthèseDesRésultats from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 import api from '@/server/infrastructure/api/trpc/api';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
@@ -16,7 +15,7 @@ export default function useSynthèseDesRésultatsFormulaire(synthèseDesRésulta
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   
   const mutationCréerSynthèseDesRésultats = api.synthèseDesRésultats.créer.useMutation({
-    onSuccess: (synthèseDesRésultatsCréée: SynthèseDesRésultats) => synthèseDesRésultatsCrééeCallback?.(synthèseDesRésultatsCréée),
+    onSuccess: (synthèseDesRésultatsCréée) => synthèseDesRésultatsCréée && synthèseDesRésultatsCrééeCallback?.(synthèseDesRésultatsCréée),
     onError: (error) => {
       if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
         setAlerte({

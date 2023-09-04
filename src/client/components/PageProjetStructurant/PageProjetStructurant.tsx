@@ -100,7 +100,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
               </Infobulle>
             </TitreInfobulleConteneur>
             <SynthèseDesRésultats
-              estInteractif={false}
+              modeÉcriture={modeÉcriture}
               nomTerritoire={projetStructurant.territoire.nomAffiché}
               rechargerRéforme={() => {}}
               réformeId={projetStructurant.id}
@@ -124,8 +124,8 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
               </Infobulle>
             </TitreInfobulleConteneur>
             <Objectifs
-              estInteractif={false}
               maille={projetStructurant.territoire.maille}
+              modeÉcriture={modeÉcriture}
               nomTerritoire={projetStructurant.territoire.nomAffiché}
               objectifs={[objectif]}
               réformeId={projetStructurant.id}

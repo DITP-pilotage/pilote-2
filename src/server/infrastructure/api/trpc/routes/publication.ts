@@ -31,6 +31,9 @@ import { TypeCommentaireProjetStructurant } from '@/server/domain/projetStructur
 import RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase from '@/server/usecase/projetStructurant/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParProjetStructurantsUseCase';
 import CréerUnCommentaireProjetStructurantUseCase from '@/server/usecase/projetStructurant/commentaire/CréerUnCommentaireProjetStructurantUseCase';
 import RécupérerHistoriqueCommentaireProjetStructurantUseCase from '@/server/usecase/projetStructurant/commentaire/RécupérerHistoriqueCommentaireProjetStructurantUseCase';
+import CréerUnObjectifProjetStructurantUseCase from '@/server/usecase/projetStructurant/objectif/CréerUnObjectifProjetStructurantUseCase';
+import { TypeObjectifProjetStructurant } from '@/server/domain/projetStructurant/objectif/Objectif.interface';
+import RécupérerHistoriqueObjectifProjetStructurantUseCase from '@/server/usecase/projetStructurant/objectif/RécupérerHistoriqueObjectifProjetStructurantUseCase';
 
 export const publicationRouter = créerRouteurTRPC({
   créer: procédureProtégée
@@ -54,9 +57,16 @@ export const publicationRouter = créerRouteurTRPC({
           const créerUneDécisionStratégiqueUseCase = new CréerUneDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
           return créerUneDécisionStratégiqueUseCase.run(input.réformeId, input.contenu, auteur, ctx.session.habilitations);
         }
-      } else if (input.typeDeRéforme === 'projet structurant' && input.entité === 'commentaires') {
-        const créerUnCommentaireProjetStructurantUseCase = new CréerUnCommentaireProjetStructurantUseCase(dependencies.getCommentaireProjetStructurantRepository());
-        return créerUnCommentaireProjetStructurantUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur, input.type as TypeCommentaireProjetStructurant, ctx.session.habilitations);        
+      } else if (input.typeDeRéforme === 'projet structurant') {
+        if (input.entité === 'commentaires') {
+          const créerUnCommentaireProjetStructurantUseCase = new CréerUnCommentaireProjetStructurantUseCase(dependencies.getCommentaireProjetStructurantRepository());
+          return créerUnCommentaireProjetStructurantUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur, input.type as TypeCommentaireProjetStructurant, ctx.session.habilitations); 
+        }
+        
+        if (input.entité === 'objectifs') {
+          const créerUnObjectiProjetStructurantfUseCase = new CréerUnObjectifProjetStructurantUseCase(dependencies.getObjectifProjetStructurantRepository());
+          return créerUnObjectiProjetStructurantfUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur, input.type as TypeObjectifProjetStructurant, ctx.session.habilitations);
+        }
       } 
     }),
     
@@ -132,9 +142,15 @@ export const publicationRouter = créerRouteurTRPC({
           const récupérerHistoriqueDésionStratégiqueUseCase = new RécupérerHistoriqueDécisionStratégiqueUseCase(dependencies.getDécisionStratégiqueRepository());
           return récupérerHistoriqueDésionStratégiqueUseCase.run(input.réformeId, ctx.session.habilitations);
         }
-      } else if (input.typeDeRéforme === 'projet structurant' && input.entité === 'commentaires') {
-        const récupérerHistoriqueCommentaireProjetStructurantUseCase = new RécupérerHistoriqueCommentaireProjetStructurantUseCase(dependencies.getCommentaireProjetStructurantRepository());
-        return récupérerHistoriqueCommentaireProjetStructurantUseCase.run(input.réformeId, input.type as TypeCommentaireProjetStructurant, ctx.session.habilitations);        
+      } else if (input.typeDeRéforme === 'projet structurant') {
+        if (input.entité === 'commentaires') {
+          const récupérerHistoriqueCommentaireProjetStructurantUseCase = new RécupérerHistoriqueCommentaireProjetStructurantUseCase(dependencies.getCommentaireProjetStructurantRepository());
+          return récupérerHistoriqueCommentaireProjetStructurantUseCase.run(input.réformeId, input.type as TypeCommentaireProjetStructurant, ctx.session.habilitations);
+        }
+        if (input.entité === 'objectifs') {
+          const récupérerHistoriqueObjectifProjetStructurantUseCase = new RécupérerHistoriqueObjectifProjetStructurantUseCase(dependencies.getObjectifProjetStructurantRepository());
+          return récupérerHistoriqueObjectifProjetStructurantUseCase.run(input.réformeId, input.type as TypeObjectifProjetStructurant, ctx.session.habilitations);
+        }
       }
     }),
 });

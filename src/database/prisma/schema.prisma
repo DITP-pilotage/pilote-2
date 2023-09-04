@@ -300,10 +300,16 @@ model indicateur_projet_structurant {
   @@schema("public")
 }
 
+enum type_objectif_projet_structurant {
+  suivi_des_objectifs
+
+  @@schema("public")
+}
+
 model objectif_projet_structurant {
   id                    String   @id
   projet_structurant_id String
-  type                  String
+  type                  type_objectif_projet_structurant
   contenu               String
   date                  DateTime @db.Timestamp
   auteur                String?
