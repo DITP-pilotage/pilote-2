@@ -107,7 +107,7 @@ const colonnesTableauChantiers = [
     },
   }),
   reactTableColonnesHelper.accessor('avancement', {
-    header: 'Avancement',
+    header: 'Avancement 2026',
     id: 'avancement',
     cell: cellContext => (
       <TableauRéformesAvancement

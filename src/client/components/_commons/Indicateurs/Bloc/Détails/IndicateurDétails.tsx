@@ -58,7 +58,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
                       baliseHtml='h5'
                       className='fr-text--lg'
                     >
-                      Répartition géographique de l&apos;avancement
+                      Répartition géographique de l&apos;avancement 2026
                     </Titre>
                     <CartographieAvancement
                       auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
