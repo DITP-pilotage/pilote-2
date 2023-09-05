@@ -19,8 +19,7 @@ function déterminerRemplissage(valeur: number | null, élémentsDeLégende: Car
 
   const valeurArrondie = Number(valeur.toFixed(0));
 
-  if (valeurArrondie === 0) return élémentsDeLégende['=0'].remplissage;
-  else if (valeurArrondie > 0 && valeurArrondie < 10) return élémentsDeLégende['0-10'].remplissage;
+  if (valeurArrondie >= 0 && valeurArrondie < 10) return élémentsDeLégende['0-10'].remplissage;
   else if (valeurArrondie >= 10 && valeurArrondie < 20) return élémentsDeLégende['10-20'].remplissage;
   else if (valeurArrondie >= 20 && valeurArrondie < 30) return élémentsDeLégende['20-30'].remplissage;
   else if (valeurArrondie >= 30 && valeurArrondie < 40) return élémentsDeLégende['30-40'].remplissage;
@@ -31,6 +30,7 @@ function déterminerRemplissage(valeur: number | null, élémentsDeLégende: Car
   else if (valeurArrondie >= 80 && valeurArrondie < 90) return élémentsDeLégende['80-90'].remplissage;
   else if (valeurArrondie >= 90) return élémentsDeLégende['90-100'].remplissage;
   else return élémentsDeLégende.DÉFAUT.remplissage;
+  // Rajouter le cas NON_APPLICABLE : élémentsDeLégende['NON_APPLICABLE']
 }
 
 export default function useCartographieAvancement(données: CartographieDonnéesAvancement, élémentsDeLégende: CartographieÉlémentsDeLégende) {
