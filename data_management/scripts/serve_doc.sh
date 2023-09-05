@@ -1,6 +1,3 @@
-PROJECT_DIR=data_factory
-echo "-- [log] Installation des deps"
-dbt deps --project-dir $PROJECT_DIR
 echo "-- [log] Chargement des variables d'env depuis le .env"
 source .env
 echo "-- [dbt.docs] Génération de la doc"
