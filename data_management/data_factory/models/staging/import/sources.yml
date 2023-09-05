@@ -2,7 +2,27 @@ version: 2
 
 sources:
   - name: import_from_files
+    description: "Cette base de données correspond à la base Pilote de production."
     database: "{{ env_var('PGDATABASE') }}"
     schema: raw_data
     tables:
       - name: mesure_indicateur
+        description: "Cette table contient les données importées par les utilisateurs sur Pilote, via l'interface d'import."
+        columns:
+          - name: date_import
+            description: "Date d'import de la donnée sur Pilote."
+          - name: indic_id
+            description: "Identifiant de l'indicateur."
+          - name: metric_date
+            description: "Date d'effet de la donnée"
+          - name: metric_type
+            description: "Type de la donnée (VI, VA, VC)."
+          - name: metric_value
+            description: "Valeur"
+          - name: zone_id
+            description: "Zone concernée par la donnée"
+          - name: id
+            description: "ID unqiue de la données ?"
+          - name: rapport_id
+            description: "ID unique du rapport associé à l'import de cette donnée."
+
