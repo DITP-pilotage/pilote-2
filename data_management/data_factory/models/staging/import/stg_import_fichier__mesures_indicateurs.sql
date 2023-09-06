@@ -20,8 +20,10 @@ renamed as (
             END AS date_releve,
         metric_type as type_mesure,
         CASE
-            WHEN metric_value = 'null' OR metric_value = 'undefined'
-                THEN NULL ELSE cast(metric_value AS numeric)
+            WHEN metric_value = 'null' THEN NULL 
+            WHEN metric_value = 'undefined' THEN NULL 
+            WHEN metric_value = '' THEN NULL 
+            ELSE cast(metric_value AS numeric)
         END as valeur,
         date_import
     from source
