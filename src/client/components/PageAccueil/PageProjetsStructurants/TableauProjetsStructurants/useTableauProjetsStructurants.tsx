@@ -77,7 +77,7 @@ const colonnesTableauProjetsStructurants = [
 
 export default function useTableauProjetsStructurants(projetsStructurants: ProjetStructurantVueDEnsemble[]) {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
-  const [tri, setTri] = useState<SortingState>([]);
+  const [tri, setTri] = useState<SortingState>([{id: 'avancement', desc: true}]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('md');
 
