@@ -9,7 +9,8 @@ commentaire_difficultes_rencontrees_et_risques_anticipes as (
         'difficultes_rencontrees_et_risques_anticipes' as type,
         dfakto_view.difficultes_rencontrees_et_risques_anticipes as contenu,
         dfakto_view.difficultes_rencontrees_et_risques_anticipes_date as date,
-        NULL as auteur
+        NULL as auteur,
+        false AS a_supprimer
     FROM {{ ref('stg_dfakto__ps_view_data_financials') }} dfakto_view
     JOIN {{ ref('projet_structurant_temporaire') }} projet_structurant_temporaire
         ON dfakto_view.projet_structurant_code = projet_structurant_temporaire.code
@@ -27,7 +28,8 @@ commentaire_dernieres_realisation_et_suivi_des_decisions as (
         'dernieres_realisation_et_suivi_des_decisions' as type,
         dfakto_view.dernieres_realisation_et_suivi_des_decisions as contenu,
         dfakto_view.dernieres_realisation_et_suivi_des_decisions_date as date,
-        NULL as auteur
+        NULL as auteur,
+        false AS a_supprimer
     FROM {{ ref('stg_dfakto__ps_view_data_financials') }} dfakto_view
     JOIN {{ ref('projet_structurant_temporaire') }} projet_structurant_temporaire
         ON dfakto_view.projet_structurant_code = projet_structurant_temporaire.code
@@ -45,7 +47,8 @@ commentaire_solutions_proposees_et_prochaines_etapes as (
         'solutions_proposees_et_prochaines_etapes' as type,
         dfakto_view.solutions_proposees_et_prochaines_etapes as contenu,
         dfakto_view.solutions_proposees_et_prochaines_etapes_date as date,
-        NULL as auteur
+        NULL as auteur,
+        false AS a_supprimer
     FROM {{ ref('stg_dfakto__ps_view_data_financials') }} dfakto_view
     JOIN {{ ref('projet_structurant_temporaire') }} projet_structurant_temporaire
         ON dfakto_view.projet_structurant_code = projet_structurant_temporaire.code
@@ -63,7 +66,8 @@ commentaire_partenariats_et_moyens_mobilises as (
         'partenariats_et_moyens_mobilises' as type,
         dfakto_view.partenariats_et_moyens_mobilises as contenu,
         dfakto_view.partenariats_et_moyens_mobilises_date as date,
-        NULL as auteur
+        NULL as auteur,
+        false AS a_supprimer
     FROM {{ ref('stg_dfakto__ps_view_data_financials') }} dfakto_view
     JOIN {{ ref('projet_structurant_temporaire') }} projet_structurant_temporaire
         ON dfakto_view.projet_structurant_code = projet_structurant_temporaire.code

@@ -70,6 +70,7 @@ model chantier {
   a_taux_avancement_regional         Boolean?
   a_meteo_departemental              Boolean?
   a_meteo_regional                   Boolean?
+  a_supprimer Boolean @default(true)
 
   @@id([id, code_insee, maille])
   @@schema("public")
@@ -80,6 +81,7 @@ model ministere {
   nom       String
   perimetre perimetre[]
   icone     String?
+  a_supprimer Boolean @default(true)
 
   @@schema("public")
 }
@@ -90,6 +92,7 @@ model perimetre {
   ministere       String?
   ministere_table ministere? @relation(fields: [ministere_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   ministere_id    String?
+  a_supprimer Boolean @default(true)
 
   @@schema("public")
 }
@@ -125,6 +128,7 @@ model indicateur {
   objectif_valeur_cible_intermediaire       Float?
   objectif_taux_avancement_intermediaire    Float?
   objectif_date_valeur_cible_intermediaire  DateTime?  @db.Date
+  a_supprimer Boolean @default(true)
 
   @@id([id, code_insee, maille])
   @@schema("public")
@@ -147,6 +151,7 @@ model synthese_des_resultats {
 model axe {
   id  String @id
   nom String
+  a_supprimer Boolean @default(true)
 
   @@schema("public")
 }
@@ -154,6 +159,7 @@ model axe {
 model ppg {
   id  String @id
   nom String
+  a_supprimer Boolean @default(true)
 
   @@schema("public")
 }
@@ -275,6 +281,7 @@ model projet_structurant {
   taux_avancement          Float?
   date_taux_avancement     DateTime? @db.Timestamp
   date_donnees_qualitative DateTime? @db.Timestamp
+  a_supprimer Boolean @default(true)
 
   @@schema("public")
 }
@@ -296,6 +303,7 @@ model indicateur_projet_structurant {
   date_valeur_cible       DateTime? @db.Timestamp
   date_taux_avancement    DateTime? @db.Timestamp
   projet_structurant_id   String
+  a_supprimer Boolean @default(true)
 
   @@schema("public")
 }
@@ -345,6 +353,7 @@ model perimetre_projet_structurant {
   perimetres_ppg_nom String
   perimetres_ppg_id  String
   perimetre_ps_nom   String
+  a_supprimer Boolean @default(true)
 
   @@schema("public")
 }

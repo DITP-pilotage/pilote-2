@@ -122,3 +122,6 @@ models:
       indicateur_projet_structurant:
         +unique_key:
           - 'id'
+      projet_structurant:
+        +unique_key:
+          - 'id'

@@ -30,6 +30,7 @@ max_date as (
 
 SELECT
     projet_structurant_temporaire.*,
-    max_date.max_date as date_donnees_qualitative
+    max_date.max_date as date_donnees_qualitative,
+    false as a_supprimer
     FROM {{ ref('projet_structurant_temporaire') }} projet_structurant_temporaire
     LEFT JOIN max_date ON projet_structurant_temporaire.id = max_date.id
