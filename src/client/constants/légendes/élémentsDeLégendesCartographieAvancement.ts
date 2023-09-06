@@ -3,10 +3,6 @@ import { CartographieÉlémentsDeLégende } from '@/components/_commons/Cartogra
 const REMPLISSAGE_PAR_DÉFAUT = '#bababa';
 
 export const ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS: CartographieÉlémentsDeLégende = {
-  '=0': {
-    libellé: '0%',
-    remplissage: 'url(#hachures-gris-blanc)',
-  },
   '0-10': {
     libellé: '0-10%',
     remplissage: '#e6e6f4',
@@ -48,9 +44,13 @@ export const ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS: CartographieÉlémentsDeL
     remplissage: '#000091',
   },
   'DÉFAUT': {
-    libellé: 'Territoire pour lequel la donnée n’est pas disponible',
+    libellé: 'Territoire pour lequel la donnée n’est pas renseignée/disponible',
     remplissage: REMPLISSAGE_PAR_DÉFAUT,
   },
+  // 'NON_APPLICABLE': {
+  //   libellé: 'Territoire où le chantier prioritaire ne s’applique pas',
+  //   remplissage: 'url(#hachures-gris-blanc)',
+  // },
 };
 
 export const ÉLÉMENTS_LÉGENDE_AVANCEMENT_PROJETS_STRUCTURANTS: CartographieÉlémentsDeLégende = {
