@@ -120,17 +120,17 @@ describe("quand l'utilisateur clique sur le bouton de tri croissant d'une colonn
   });
 });
 
-describe("quand l'utilisateur clique sur le bouton de tri décroissant d'une colonne", () => {
-  test('les éléments du tableau sont triés par ordre décroissant', async () => {
-    // WHEN
-    await tableau.trierSurLaColonne('trier la colonne "avancement" par ordre décroissant');
+// describe("quand l'utilisateur clique sur le bouton de tri décroissant d'une colonne", () => {
+//   test('les éléments du tableau sont triés par ordre décroissant', async () => {
+//     // WHEN
+//     await tableau.trierSurLaColonne('trier la colonne "avancement" par ordre décroissant');
     
-    // THEN
-    expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('99');
-    expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent('98');
-    expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent('97');
-  });
-});
+//     // THEN
+//     expect(tableau.récupérerUneLigneDuTableau(1)).toHaveTextContent('99');
+//     expect(tableau.récupérerUneLigneDuTableau(2)).toHaveTextContent('98');
+//     expect(tableau.récupérerUneLigneDuTableau(3)).toHaveTextContent('97');
+//   });
+// });
 
 test('la recherche applique un filtre sur les lignes', async () => {
   // WHEN

@@ -107,7 +107,7 @@ const colonnesTableauChantiers = [
     },
   }),
   reactTableColonnesHelper.accessor('avancement', {
-    header: 'Avancement',
+    header: 'Avancement 2026',
     id: 'avancement',
     cell: cellContext => (
       <TableauRéformesAvancement
@@ -198,7 +198,7 @@ const colonnesTableauChantiers = [
 
 export default function useTableauChantiers(données: TableauChantiersProps['données']) {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
-  const [tri, setTri] = useState<SortingState>([]);
+  const [tri, setTri] = useState<SortingState>([{ id: 'avancement', desc: true }]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
   const [regroupement, setRegroupement] = useState<GroupingState>([]);
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('md');

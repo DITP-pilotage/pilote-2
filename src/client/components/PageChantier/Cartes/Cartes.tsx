@@ -40,7 +40,7 @@ export default function Cartes({ chantierMailles, afficheCarteAvancement, affich
                     className='fr-text--lg fr-mb-0 fr-py-1v'
                     estInline
                   >
-                    Taux d&apos;avancement
+                    Taux d&apos;avancement 2026
                   </Titre>
                   <Infobulle idHtml="infobulle-chantier-répartitionGéographiqueTauxAvancement">
                     { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueTauxAvancement }
