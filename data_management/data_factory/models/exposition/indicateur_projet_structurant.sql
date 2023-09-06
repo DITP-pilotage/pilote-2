@@ -19,7 +19,8 @@ SELECT
     fact_progress_kpis_ps.date_valeur_initiale as date_valeur_initiale,
     fact_progress_kpis_ps.date_valeur_cible as date_valeur_cible,
     data_kpis.valeur_actuelle_date as date_taux_avancement,
-    projet_structurant_temporaire.id as projet_structurant_id
+    projet_structurant_temporaire.id as projet_structurant_id,
+    false AS a_supprimer
     FROM {{ ref('stg_dfakto__ps_view_data_kpis') }} data_kpis
         LEFT JOIN {{ ref('stg_dfakto__fact_progress_kpis') }} fact_progress_kpis_ps
             ON data_kpis.indicateur_nom = fact_progress_kpis_ps.kpi_nom

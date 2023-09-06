@@ -68,6 +68,8 @@ export default class IndicateurRowBuilder {
 
   private _tauxAvancementCibleIntermediaire: indicateur['objectif_taux_avancement_intermediaire'];
 
+  private _a_supprimer: indicateur['a_supprimer'];
+
 
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
@@ -106,6 +108,7 @@ export default class IndicateurRowBuilder {
     this._ponderation_dept = indicateurGénéré.pondération?.nationale ?? null;
     this._ponderation_reg = indicateurGénéré.pondération?.régionale ?? null;
     this._ponderation_nat = indicateurGénéré.pondération?.départementale ?? null;
+    this._a_supprimer = false;
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {
@@ -289,6 +292,7 @@ export default class IndicateurRowBuilder {
       objectif_date_valeur_cible_intermediaire: this._dateValeurCibleIntermediaire,
       objectif_valeur_cible_intermediaire: this._valeurCibleIntermediaire,
       objectif_taux_avancement_intermediaire: this._tauxAvancementCibleIntermediaire,
+      a_supprimer: this._a_supprimer,
     };
   }
 }

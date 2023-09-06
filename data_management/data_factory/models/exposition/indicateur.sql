@@ -26,7 +26,8 @@ SELECT m_indicateurs.id,
     d_indicateurs.objectif_date_valeur_cible as objectif_date_valeur_cible,
     d_indicateurs.objectif_valeur_cible_intermediaire,
     d_indicateurs.objectif_taux_avancement_intermediaire,
-    d_indicateurs.objectif_date_valeur_cible_intermediaire
+    d_indicateurs.objectif_date_valeur_cible_intermediaire,
+    false AS a_supprimer
 FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
 	JOIN {{ ref('int_chantiers_with_mailles_and_territoires') }} chantiers_ayant_des_indicateurs ON m_indicateurs.chantier_id = chantiers_ayant_des_indicateurs.id
     LEFT JOIN {{ ref('stg_ppg_metadata__indicateur_types') }} indicateur_types ON indicateur_types.id = m_indicateurs.indicateur_type_id

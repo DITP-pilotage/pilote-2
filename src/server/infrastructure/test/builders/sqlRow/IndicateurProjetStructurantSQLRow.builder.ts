@@ -37,6 +37,8 @@ export default class IndicateurProjetStructurantRowBuilder {
 
   private _dateTauxAvancement: indicateur_projet_structurant['date_taux_avancement'];
 
+  private _a_supprimer: indicateur_projet_structurant['a_supprimer'];
+
   constructor() {
     const projetStructantGénéré = new ProjetStructurantRowBuilder().build();
 
@@ -56,6 +58,7 @@ export default class IndicateurProjetStructurantRowBuilder {
     this._dateValeurActuelle = new Date('2023-06-01');
     this._dateValeurCible = new Date('2024-06-01');
     this._dateTauxAvancement = new Date('2023-06-01');
+    this._a_supprimer = false;
   }
 
   avecProjetStructurantId(projetStructurantId: indicateur_projet_structurant['projet_structurant_id']): IndicateurProjetStructurantRowBuilder {
@@ -81,6 +84,7 @@ export default class IndicateurProjetStructurantRowBuilder {
       date_valeur_actuelle: this._dateValeurActuelle,
       date_valeur_cible: this._dateValeurCible,
       date_taux_avancement: this._dateTauxAvancement,
+      a_supprimer: this._a_supprimer,
     };
   }
 

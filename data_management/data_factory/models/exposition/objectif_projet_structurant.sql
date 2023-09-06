@@ -10,7 +10,8 @@ DISTINCT ON(projet_structurant_temporaire.id, dfakto_view.objectif, dfakto_view.
     'suivi_des_objectifs'::type_objectif_projet_structurant as type,
     dfakto_view.objectif as contenu,
     dfakto_view.objectif_date as date,
-    NULL as auteur
+    NULL as auteur,
+    false AS a_supprimer
 FROM {{ ref('stg_dfakto__ps_view_data_financials') }} dfakto_view
     JOIN {{ ref('projet_structurant_temporaire') }} projet_structurant_temporaire 
     ON dfakto_view.projet_structurant_code = projet_structurant_temporaire.code

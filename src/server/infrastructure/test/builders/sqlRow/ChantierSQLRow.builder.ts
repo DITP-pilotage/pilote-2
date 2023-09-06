@@ -60,6 +60,8 @@ export default class ChantierRowBuilder {
 
   private _a_taux_avancement_regional: chantier['a_taux_avancement_regional'];
 
+  private _a_supprimer: chantier['a_supprimer'];
+
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
     const avancement = new AvancementBuilder().build();
@@ -94,6 +96,7 @@ export default class ChantierRowBuilder {
     this._a_meteo_regional = faker.datatype.boolean();
     this._a_taux_avancement_departemental = faker.datatype.boolean();
     this._a_taux_avancement_regional = faker.datatype.boolean();
+    this._a_supprimer = false;
   }
 
   avecId(id: chantier['id']): ChantierRowBuilder {
@@ -251,6 +254,7 @@ export default class ChantierRowBuilder {
       a_meteo_regional: this._a_meteo_regional,
       a_taux_avancement_departemental: this._a_taux_avancement_departemental,
       a_taux_avancement_regional: this._a_taux_avancement_regional,
+      a_supprimer: this._a_supprimer,
     };
   }
 }

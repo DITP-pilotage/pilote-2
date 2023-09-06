@@ -5,7 +5,8 @@ SELECT
     ) }} as id,
     perimetres.nom as perimetres_ppg_nom,
     perimetres_ppg_id,
-    perimetre_ps_nom 
+    perimetre_ps_nom,
+    false AS a_supprimer 
 FROM {{ ref('stg_ppg_metadata__perimetres_ps') }}
     LEFT JOIN {{ ref('stg_ppg_metadata__perimetres') }} perimetres ON stg_ppg_metadata__perimetres_ps.perimetres_ppg_id = perimetres.id
 ORDER BY perimetres_ppg_id

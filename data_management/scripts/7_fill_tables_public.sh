@@ -15,8 +15,30 @@ then
   fi
 fi
 
-psql "$DATABASE_URL" -c "TRUNCATE TABLE public.projet_structurant"
-psql "$DATABASE_URL" -c "TRUNCATE TABLE public.commentaire_projet_structurant"
+psql "$DATABASE_URL" -c "UPDATE public.axe SET a_supprimer = TRUE"
+psql "$DATABASE_URL" -c "UPDATE public.perimetre SET a_supprimer = TRUE"
+psql "$DATABASE_URL" -c "UPDATE public.ppg SET a_supprimer = TRUE"
+psql "$DATABASE_URL" -c "UPDATE public.chantier SET a_supprimer = TRUE"
+psql "$DATABASE_URL" -c "UPDATE public.indicateur SET a_supprimer = TRUE"
+psql "$DATABASE_URL" -c "UPDATE public.ministere SET a_supprimer = TRUE"
+psql "$DATABASE_URL" -c "UPDATE public.projet_structurant SET a_supprimer = TRUE"
+psql "$DATABASE_URL" -c "UPDATE public.indicateur_projet_structurant SET a_supprimer = TRUE"
+psql "$DATABASE_URL" -c "UPDATE public.perimetre_projet_structurant SET a_supprimer = TRUE"
 
 PROJECT_DIR=data_factory
 dbt run --project-dir $PROJECT_DIR --select intermediate exposition
+
+if [ $? -eq 0 ]; then
+  psql "$DATABASE_URL" -c "DELETE FROM public.axe WHERE a_supprimer = TRUE"
+  psql "$DATABASE_URL" -c "DELETE FROM public.perimetre WHERE a_supprimer = TRUE"
+  psql "$DATABASE_URL" -c "DELETE FROM public.ppg WHERE a_supprimer = TRUE"
+  psql "$DATABASE_URL" -c "DELETE FROM public.chantier WHERE a_supprimer = TRUE"
+  psql "$DATABASE_URL" -c "DELETE FROM public.indicateur WHERE a_supprimer = TRUE"
+  psql "$DATABASE_URL" -c "DELETE FROM public.ministere WHERE a_supprimer = TRUE"
+  psql "$DATABASE_URL" -c "DELETE FROM public.projet_structurant WHERE a_supprimer = TRUE"
+  psql "$DATABASE_URL" -c "DELETE FROM public.indicateur_projet_structurant WHERE a_supprimer = TRUE"
+  psql "$DATABASE_URL" -c "DELETE FROM public.perimetre_projet_structurant WHERE a_supprimer = TRUE"
+  # Add similar delete queries for other tables if needed
+else
+  echo "dbt job failed. Skipping delete queries."
+fi

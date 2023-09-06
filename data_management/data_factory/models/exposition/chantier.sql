@@ -92,7 +92,8 @@ SELECT m_chantiers.id,
         chantier_ta_dep.a_taux_avancement_departemental,
         chantier_ta_reg.a_taux_avancement_regional,
         chantier_meteo_dep.a_meteo_departemental,
-        chantier_meteo_reg.a_meteo_regional
+        chantier_meteo_reg.a_meteo_regional,
+        false AS a_supprimer
     FROM {{ ref('int_chantiers_with_mailles_and_territoires') }} m_chantiers
         LEFT JOIN dfakto_chantier d_chantiers
             ON m_chantiers.id = d_chantiers.code_chantier
