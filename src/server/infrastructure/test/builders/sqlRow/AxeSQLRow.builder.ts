@@ -6,11 +6,14 @@ export default class AxeRowBuilder {
 
   private _nom: axe['nom'];
 
+  private _a_supprimer: axe['a_supprimer'];
+
   constructor() {
     const axeGénéré = new AxeBuilder().build();
     
     this._id = axeGénéré.id;
     this._nom = axeGénéré.nom;
+    this._a_supprimer = false;
   }
 
   avecId(id: axe['id']): AxeRowBuilder {
@@ -27,6 +30,7 @@ export default class AxeRowBuilder {
     return {
       id: this._id,
       nom: this._nom,
+      a_supprimer: this._a_supprimer,
     };
   }
 }

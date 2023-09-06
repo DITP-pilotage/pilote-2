@@ -6,11 +6,14 @@ export default class PpgRowBuilder {
 
   private _nom: ppg['nom'];
 
+  private _a_supprimer: ppg['a_supprimer'];
+
   constructor() {
     const ppgGénérée = new PpgBuilder().build();
     
     this._id = ppgGénérée.id;
     this._nom = ppgGénérée.nom;
+    this._a_supprimer = false;
   }
 
   avecId(id: ppg['id']): PpgRowBuilder {
@@ -27,6 +30,7 @@ export default class PpgRowBuilder {
     return {
       id: this._id,
       nom: this._nom,
+      a_supprimer: this._a_supprimer,
     };
   }
 }

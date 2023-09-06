@@ -13,6 +13,8 @@ export default class PérimètreMinistérielSQLRowBuilder {
 
   private _ministère_id: perimetre['ministere_id'];
 
+  private _a_supprimer: perimetre['a_supprimer'];
+
   constructor() {
     const périmètreMinistérielGénéré = new PérimètreMinistérielBuilder().build();
     
@@ -20,6 +22,7 @@ export default class PérimètreMinistérielSQLRowBuilder {
     this._nom = périmètreMinistérielGénéré.nom;
     this._ministère = générerPeutÊtreNull(0.2, `${générerUnLibellé(1, 3)} ministère`);
     this._ministère_id = this._ministère ? `MIN-${faker.datatype.number()}` : null;
+    this._a_supprimer = false;
   }
 
   avecId(id: perimetre['id']): PérimètreMinistérielSQLRowBuilder {
@@ -44,6 +47,7 @@ export default class PérimètreMinistérielSQLRowBuilder {
       nom: this._nom,
       ministere: this._ministère,
       ministere_id: this._ministère_id,
+      a_supprimer: this._a_supprimer,
     };
   }
 }

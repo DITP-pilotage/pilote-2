@@ -10,6 +10,8 @@ export default class MinistèreSQLRowBuilder {
   private _nom: string;
 
   private _icone: string | null;
+
+  private _a_supprimer: boolean;
   
   constructor() {
     const ministèreGénéré = new MinistèreBuilder().build();
@@ -17,6 +19,7 @@ export default class MinistèreSQLRowBuilder {
     this._id = générerUnIdentifiantUnique('MIN');
     this._nom = ministèreGénéré.nom;
     this._icone = ministèreGénéré.icône;
+    this._a_supprimer = false;
   }
 
   avecId(id: ministere['id']): MinistèreSQLRowBuilder {
@@ -39,6 +42,7 @@ export default class MinistèreSQLRowBuilder {
       id: this._id,
       nom: this._nom,
       icone: this._icone,
+      a_supprimer: this._a_supprimer,
     };
   }
 }

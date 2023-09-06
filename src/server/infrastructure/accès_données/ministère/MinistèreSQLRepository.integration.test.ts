@@ -7,12 +7,12 @@ describe('MinistèreSQLRepository', () => {
   test('Accède à un ministère', async () => {
     // GIVEN
     const repository: MinistèreRepository = new MinistèreSQLRepository(prisma);
-    const ministere1: ministere = { id: '1', nom: 'Agriculture', icone: 'remix::icon-1' };
-    const ministere2: ministere = { id: '2', nom: 'Justice', icone: 'remix::icon-2' };
+    const ministere1: ministere = { id: '1', nom: 'Agriculture', icone: 'remix::icon-1', a_supprimer: false };
+    const ministere2: ministere = { id: '2', nom: 'Justice', icone: 'remix::icon-2', a_supprimer: false };
     await prisma.ministere.createMany({ data: [ministere1, ministere2] });
-    const périmètre1: perimetre = { id: 'PER-001', nom: 'Périmètre 1', ministere: 'déprécié', ministere_id: '2' };
-    const périmètre2: perimetre = { id: 'PER-002', nom: 'Périmètre 2', ministere: 'déprécié', ministere_id: '2' };
-    const périmètre3: perimetre = { id: 'PER-003', nom: 'Périmètre 3', ministere: 'déprécié', ministere_id: '1' };
+    const périmètre1: perimetre = { id: 'PER-001', nom: 'Périmètre 1', ministere: 'déprécié', ministere_id: '2', a_supprimer: false };
+    const périmètre2: perimetre = { id: 'PER-002', nom: 'Périmètre 2', ministere: 'déprécié', ministere_id: '2', a_supprimer: false };
+    const périmètre3: perimetre = { id: 'PER-003', nom: 'Périmètre 3', ministere: 'déprécié', ministere_id: '1', a_supprimer: false };
     await prisma.perimetre.createMany({ data: [périmètre1, périmètre2, périmètre3] });
 
     // WHEN

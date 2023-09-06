@@ -28,6 +28,8 @@ export default class ProjetStructurantRowBuilder {
 
   private _dateDonneesQualitative: ProjetStructurantPrisma['date_donnees_qualitative'] = null;
 
+  private _a_supprimer: ProjetStructurantPrisma['a_supprimer'];
+
   constructor() {
     const projetGénéré =  new ProjetStructurantBuilder().build();
     const ministèrePorteur = new MinistèreBuilder().build();
@@ -46,6 +48,8 @@ export default class ProjetStructurantRowBuilder {
     this._coporteurs = projetGénéré.responsables.coporteurs;
     this._tauxAvancement = projetGénéré.avancement;
     this._dateTauxAvancement = projetGénéré.dateAvancement ? new Date(projetGénéré.dateAvancement) : null;
+    this._a_supprimer = false;
+
   }
 
   avecId(id: ProjetStructurantPrisma['id']): ProjetStructurantRowBuilder {
@@ -105,6 +109,7 @@ export default class ProjetStructurantRowBuilder {
       taux_avancement: this._tauxAvancement,
       date_taux_avancement: this._dateTauxAvancement,
       date_donnees_qualitative: this._dateDonneesQualitative,
+      a_supprimer: this._a_supprimer,
     };
   }
 }
