@@ -296,8 +296,19 @@ Ces données seront ensuite utilisées pour avoir l'historique des va des indica
 Afin d'exécuter les jobs de la data factory, il suffit de :
 
 ```bash
-bash scripts/6_fill_tables_marts.sh
+/bin/bash scripts/6_fill_tables_marts.sh
 ```
+
+### Tests sur les données
+
+Des tests sur les données ont été implémentés. Ils sont situés dans le dossier [data_factory/tests](./data_factory/tests). Pour les exécuter, utiliser le script `scripts/test_data.sh` ou via Docker: 
+
+```sh
+docker-compose run dbt-pilote scripts/test_data.sh
+```
+
+*Note:* Vous pouvez également exécuter uniquement certains tests (en se basant sur le dossier ou les tags associés) comme détaillé dans la [documentation dbt](https://docs.getdbt.com/reference/node-selection/test-selection-examples).
+
 
 ### Mise à disposition des données à _Pilote 2_
 
