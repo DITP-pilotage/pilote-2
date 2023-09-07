@@ -129,9 +129,12 @@ Par exemple, pour servir la documentation (cf section [Visualisation de l'ensemb
 
 ```sh
 
-docker-compose run --service-ports dbt-pilote scripts/serve_doc.sh
+docker-compose run --service-ports dbt-pilote scripts/doc.sh
 
 ```
+
+*Note:* Avec cette dernière commande (voir le [fichier source](./data_factory/scripts/doc.sh)), `prisma studio` est également lancée en plus de la doc *dbt*. Voir la [documentation prisma](https://www.prisma.io/docs/reference/api-reference/command-reference#studio) pour plus de détails.
+
 
 Un exemple complet d'utilisation de docker pour cette partie data pourrait être:
 
@@ -141,11 +144,11 @@ docker-compose build
 # Start a database
 docker-compose run --service-ports postgres
 # Run script to install dbt
-docker-compose run --service-ports dbt-pilote scripts/0_install_dbt_deps.sh
+docker-compose run dbt-pilote scripts/0_install_dbt_deps.sh
 # Run prisma migrations
-docker-compose run --service-ports dbt-pilote scripts/0_prisma_migrate.sh
+docker-compose run dbt-pilote scripts/0_prisma_migrate.sh
 # Run script 1
-docker-compose run --service-ports dbt-pilote scripts/1_dump_dfakto.sh
+docker-compose run dbt-pilote scripts/1_dump_dfakto.sh
 # and so on for all the scripts
 ```
 
@@ -372,7 +375,7 @@ Une petite icône bleue en bas à droite indique le DAG pour visualiser le flux.
 
 Ou via Docker, puis à l'adresse `localhost:8088` (voir la section [Installation](installation)):
 ```bash
-docker-compose run --service-ports dbt-pilote scripts/serve_doc.sh
+docker-compose run --service-ports dbt-pilote scripts/doc.sh
 ```
 
 ### Zoom sur une brique du flux
