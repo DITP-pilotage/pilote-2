@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: db_prod
+    description: "Cette base de données correspond à la base Pilote de production."
+    database: "{{ env_var('PGDATABASE') }}"
+    schema: public
+    tables:
+      - name: commentaire_projet_structurant
+        description: "Table contenant les commentaires historiques des PST, ainsi que ceux ajoutés via l'interface de Pilote."
+        
