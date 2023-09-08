@@ -1,3 +1,5 @@
+{{ config(tags="scope_pst") }}
+
 SELECT
     {{ dbt_utils.surrogate_key(
         ['perimetres_ppg_id',

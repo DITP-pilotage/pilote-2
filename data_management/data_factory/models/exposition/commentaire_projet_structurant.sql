@@ -1,3 +1,5 @@
+{{ config(tags="scope_pst") }}
+
 WITH
 
 commentaire_difficultes_rencontrees_et_risques_anticipes as (

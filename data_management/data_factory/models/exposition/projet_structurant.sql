@@ -1,3 +1,5 @@
+{{ config(tags="scope_pst") }}
+
 WITH toutes_les_dates as (
     (SELECT
             commentaire_projet_structurant.projet_structurant_id as id,
