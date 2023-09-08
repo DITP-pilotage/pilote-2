@@ -1,3 +1,5 @@
+{{ config(tags="scope_pst") }}
+
 SELECT
 DISTINCT ON(projet_structurant_temporaire.id, dfakto_view.objectif, dfakto_view.objectif_date)
     {{ dbt_utils.surrogate_key(
