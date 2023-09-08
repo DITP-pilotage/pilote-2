@@ -5,6 +5,8 @@ models:
     description: "Table des indicateur construite par la datafactory dbt."
     config:
       materialized: table
+      docs:
+        node_color: "#cd7f32"
       schema: public
       tags: ["df2"]
       enabled: true
