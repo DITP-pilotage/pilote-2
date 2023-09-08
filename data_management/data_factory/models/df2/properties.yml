@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: df2_indicateur
-    description: "Table des indicateur construite par la datafactory dbt."
+    description: "Table des indicateurs construite par la datafactory dbt."
     config:
       materialized: table
       docs:
