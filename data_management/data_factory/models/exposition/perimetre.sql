@@ -1,7 +1,3 @@
-WITH temp as (
-    select 1 from {{ ref('ministere') }}
-)
-
 SELECT
     id,
     nom,
