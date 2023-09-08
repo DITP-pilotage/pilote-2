@@ -19,3 +19,48 @@ models:
       schema: public
       tags: ["df2"]
       enabled: true
+  - name: df2_commentaire_projet_structurant
+    description: "Table des commentaires des pst construite par la datafactory dbt."
+    config:
+      materialized: table
+      docs:
+        node_color: "#cd7f32"
+      schema: public
+      tags: ["df2"]
+      enabled: true
+  - name: df2_indicateur_projet_structurant
+    description: "Table des indicateurs des pst construite par la datafactory dbt."
+    config:
+      materialized: table
+      docs:
+        node_color: "#cd7f32"
+      schema: public
+      tags: ["df2"]
+      enabled: true
+  - name: df2_objectif_projet_structurant
+    description: "Table des objectifs des pst construite par la datafactory dbt."
+    config:
+      materialized: table
+      docs:
+        node_color: "#cd7f32"
+      schema: public
+      tags: ["df2"]
+      enabled: true
+  - name: df2_projet_structurant_temporaire
+    description: "Table des chantiers construite par la datafactory dbt."
+    config:
+      materialized: view
+      docs:
+        node_color: "#cd7f32"
+      schema: public
+      tags: ["df2"]
+      enabled: true
+  - name: df2_synthese_des_resultats_projet_structurant
+    description: "Table des résultats des pst construite par la datafactory dbt."
+    config:
+      materialized: table
+      docs:
+        node_color: "#cd7f32"
+      schema: public
+      tags: ["df2"]
+      enabled: true
