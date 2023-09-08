@@ -1,3 +1,5 @@
+{{ config(tags="scope_pst") }}
+
 SELECT
     DISTINCT ON (indicateur_nom)
     {{ dbt_utils.surrogate_key(['indicateur_nom']) }} as id,
