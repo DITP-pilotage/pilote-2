@@ -24,9 +24,10 @@ SELECT
     a.indicateur_id AS effect_id,
     b.evolution_valeur_actuelle  AS evolution_valeur_actuelle,
     b.evolution_date_valeur_actuelle  AS evolution_date_valeur_actuelle,
-    'todo' AS code_chantier
+    f.indic_parent_ch AS code_chantier 
     FROM {{ ref('taux_avancement_indicateur') }}  a
 LEFT JOIN {{ ref('evolution_indicateur') }} b ON a.indicateur_id = b.indicateur_id AND a.zone_id = b.zone_id 
 left join {{ ref('last_vc_annuel') }} c on a.indicateur_id =c.indicateur_id and a.zone_id =c.zone_id and extract(year from a.date_releve)=c.yyear
 left join {{ ref('last_vc_global') }} d on a.indicateur_id =d.indicateur_id and a.zone_id =d.zone_id
 left join {{ ref('metadata_zones') }} e on a.zone_id =e.zone_id
+left join {{ ref('metadata_indicateurs') }} f on a.indicateur_id =f.indic_id 
