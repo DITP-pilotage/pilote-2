@@ -7,3 +7,8 @@ models:
     description: "Vue intermédiaire pour récupérer les métriques (type TA) des indicateurs en provenance de dfakto"
   - name: projet_structurant_temporaire
     description: "Vue intermédiaire afin de créer une table projet_structurant avec un id unique qui sera réutilisée pour toutes les tables en ayant besoin (de l'id unique)"
+  - name: last_vc_annuel
+    description: |
+      Vue qui donne la dernière VC annuelle pour chaque {zone_id, indicateur_id, année}. 
+      
+      Il s'agira de la VC **la plus tardive** dans l'année. Ainsi, si une valeur est saisie pour *décembre 2025*, si une valeur est saisie pour *septembre 2025*, cette dernière ne sera donc **pas prise en compte**.
