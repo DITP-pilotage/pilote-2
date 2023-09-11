@@ -1,6 +1,6 @@
 {{ config(
     enabled=true,
-    tags="df2",
+    tags=["df2", "scope_chantier"],
     severity = "error",
     store_failures = false,
     limit = 100,
