@@ -10,10 +10,11 @@ SELECT
     'todo' AS date_valeur_initiale,
     valeur_actuelle,
     valeur_initiale,
-    zone_id AS zone_code,
+    a.zone_id AS zone_code,
     'todo' AS nom_structure,
-    indicateur_id AS effect_id,
-    'todo' AS evolution_valeur_actuelle,
-    'todo' AS evolution_date_valeur_actuelle,
+    a.indicateur_id AS effect_id,
+    b.evolution_valeur_actuelle  AS evolution_valeur_actuelle,
+    b.evolution_date_valeur_actuelle  AS evolution_date_valeur_actuelle,
     'todo' AS code_chantier
-FROM {{ ref('taux_avancement_indicateur') }}
+FROM {{ ref('taux_avancement_indicateur') }} a
+LEFT JOIN {{ ref('evolution_indicateur') }} b ON a.indicateur_id = b.indicateur_id AND a.zone_id = b.zone_id 
