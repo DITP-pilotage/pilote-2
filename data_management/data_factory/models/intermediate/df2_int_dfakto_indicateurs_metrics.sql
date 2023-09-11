@@ -15,7 +15,12 @@ SELECT
     valeur_actuelle,
     valeur_initiale,
     a.zone_id AS zone_code,
-    'todo' AS nom_structure,
+    case
+		when e.zone_type = 'DEPT' then 'Département'
+		when e.zone_type = 'REG' then 'Région'
+		when e.zone_type = 'NAT' then 'Chantier'
+		else null
+	end AS nom_structure,
     a.indicateur_id AS effect_id,
     b.evolution_valeur_actuelle  AS evolution_valeur_actuelle,
     b.evolution_date_valeur_actuelle  AS evolution_date_valeur_actuelle,
@@ -24,3 +29,4 @@ SELECT
 LEFT JOIN {{ ref('evolution_indicateur') }} b ON a.indicateur_id = b.indicateur_id AND a.zone_id = b.zone_id 
 left join {{ ref('last_vc_annuel') }} c on a.indicateur_id =c.indicateur_id and a.zone_id =c.zone_id and extract(year from a.date_releve)=c.yyear
 left join {{ ref('last_vc_global') }} d on a.indicateur_id =d.indicateur_id and a.zone_id =d.zone_id
+left join {{ ref('metadata_zones') }} e on a.zone_id =e.zone_id
