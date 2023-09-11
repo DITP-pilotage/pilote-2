@@ -17,3 +17,8 @@ models:
       Vue qui donne la dernière VC globale pour chaque {zone_id, indicateur_id}. 
 
       Il s'agira de la VC **la plus tardive** saisie. Ainsi, si l'on a une valeur pour *dec-24* et *sept-25*, c'est celle de *sept-25* qui sera prise en compte.
+  - name: first_vi_global
+    description: |
+      Vue qui donne la première VI pour chaque {zone_id, indicateur_id}. 
+
+      Il s'agira de la VI **la plus lointaine** dans le passé. Ainsi, si l'on a une valeur pour *jan-23* et *sept-21*, c'est celle de *sept-21* qui sera prise en compte.
