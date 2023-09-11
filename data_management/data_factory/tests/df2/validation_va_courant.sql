@@ -2,7 +2,7 @@
     enabled=true,
     tags=["df2", "scope_chantier", "df2_validation"],
     severity = "error",
-    store_failures = true
+    store_failures = false
 ) }}
 
 -- Retourne les VA qui ne sont pas correctes par rapport à l'attendu
