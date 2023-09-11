@@ -11,9 +11,10 @@ SELECT
     c.valeur_cible as objectif_valeur_cible_intermediaire_colin,
     c.date_releve  AS objectif_date_valeur_cible_intermediaire,
     a.date_releve AS date_valeur_actuelle,
-    'todo' AS date_valeur_initiale,
+    g.date_releve AS date_valeur_initiale,
     valeur_actuelle,
-    valeur_initiale,
+    a.valeur_initiale,
+    g.valeur_initiale as valeur_initiale_colin,
     a.zone_id AS zone_code,
     case
 		when e.zone_type = 'DEPT' then 'Département'
@@ -31,3 +32,4 @@ left join {{ ref('last_vc_annuel') }} c on a.indicateur_id =c.indicateur_id and 
 left join {{ ref('last_vc_global') }} d on a.indicateur_id =d.indicateur_id and a.zone_id =d.zone_id
 left join {{ ref('metadata_zones') }} e on a.zone_id =e.zone_id
 left join {{ ref('metadata_indicateurs') }} f on a.indicateur_id =f.indic_id 
+left join {{ ref('first_vi_global') }} g on a.indicateur_id =g.indicateur_id and a.zone_id =g.zone_id 
