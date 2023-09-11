@@ -5,8 +5,10 @@ SELECT
     'todo' AS objectif_date_valeur_cible,
     taux_avancement_annuel_borne  AS objectif_taux_avancement_intermediaire,
     valeur_cible_annuelle  AS objectif_valeur_cible_intermediaire,
-    'todo' AS objectif_date_valeur_cible_intermediaire,
-    date_releve AS date_valeur_actuelle,
+    -- Dans cette colonne, on sélectionne la VC de l'année la plus tardive, et non la dernière VC saisie par un utilisateur.
+    c.valeur_cible as objectif_valeur_cible_intermediaire_colin,
+    c.date_releve  AS objectif_date_valeur_cible_intermediaire,
+    a.date_releve AS date_valeur_actuelle,
     'todo' AS date_valeur_initiale,
     valeur_actuelle,
     valeur_initiale,
@@ -16,5 +18,6 @@ SELECT
     b.evolution_valeur_actuelle  AS evolution_valeur_actuelle,
     b.evolution_date_valeur_actuelle  AS evolution_date_valeur_actuelle,
     'todo' AS code_chantier
-FROM {{ ref('taux_avancement_indicateur') }} a
+    FROM {{ ref('taux_avancement_indicateur') }}  a
 LEFT JOIN {{ ref('evolution_indicateur') }} b ON a.indicateur_id = b.indicateur_id AND a.zone_id = b.zone_id 
+left join {{ ref('last_vc_annuel') }} c on a.indicateur_id =c.indicateur_id and a.zone_id =c.zone_id and extract(year from a.date_releve)=c.yyear
