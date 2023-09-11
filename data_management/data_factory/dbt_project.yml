@@ -39,6 +39,10 @@ models:
       dfakto:
         +docs:
           node_color: "#f55b5b"
+        chantier:
+          +tags: "scope_chantier"
+        projet_structurant:
+          +tags: "scope_pst"
       ppg_metadata:
         +docs:
           node_color: "#553df2"

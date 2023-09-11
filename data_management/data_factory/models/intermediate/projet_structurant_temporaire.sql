@@ -1,3 +1,5 @@
+{{ config(tags="scope_pst") }}
+
 WITH fact_property_value as (
     SELECT *
     FROM {{ ref('stg_dfakto__fact_property_values')}}

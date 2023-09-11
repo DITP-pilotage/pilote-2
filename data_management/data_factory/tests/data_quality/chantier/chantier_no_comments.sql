@@ -1,6 +1,6 @@
 {{ config(
     enabled=true,
-    tags="data_quality",
+    tags=["data_quality", "scope_chantier"],
     severity = "warn",
     store_failures = true,
     limit = 100,
