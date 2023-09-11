@@ -2,7 +2,9 @@ SELECT
     'ignored' AS tree_node_id, 
     taux_avancement_globale_borne AS objectif_taux_avancement,
     valeur_cible_globale AS objectif_valeur_cible,
-    'todo' AS objectif_date_valeur_cible,
+    -- Dans cette colonne, on sélectionne la dernière VC saisie, peu importe l'année visée.
+    d.valeur_cible AS objectif_valeur_cible_colin,
+    d.date_releve AS objectif_date_valeur_cible,
     taux_avancement_annuel_borne  AS objectif_taux_avancement_intermediaire,
     valeur_cible_annuelle  AS objectif_valeur_cible_intermediaire,
     -- Dans cette colonne, on sélectionne la VC de l'année la plus tardive, et non la dernière VC saisie par un utilisateur.
@@ -21,3 +23,4 @@ SELECT
     FROM {{ ref('taux_avancement_indicateur') }}  a
 LEFT JOIN {{ ref('evolution_indicateur') }} b ON a.indicateur_id = b.indicateur_id AND a.zone_id = b.zone_id 
 left join {{ ref('last_vc_annuel') }} c on a.indicateur_id =c.indicateur_id and a.zone_id =c.zone_id and extract(year from a.date_releve)=c.yyear
+left join {{ ref('last_vc_global') }} d on a.indicateur_id =d.indicateur_id and a.zone_id =d.zone_id
