@@ -3,10 +3,11 @@ import IndicateursProps from '@/components/_commons/Indicateurs/Indicateurs.inte
 import IndicateurBloc from '@/components/_commons/Indicateurs/Bloc/IndicateurBloc';
 import IndicateursStyled from '@/components/_commons/Indicateurs/Indicateurs.styled';
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
+import { mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 
 
 export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRubriquesIndicateurs, territoireProjetStructurant, typeDeRéforme, chantierEstTerritorialisé, estDisponibleALImport = false, estInteractif = true }: IndicateursProps) {
-
+  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   if (indicateurs.length === 0) {
     return null;
   }
@@ -31,7 +32,7 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRub
                   {rubriqueIndicateur.nom}
                 </Titre>
                 {
-                  indicateursDeCetteRubrique.sort(comparerIndicateur).map(indicateur => (
+                  indicateursDeCetteRubrique.sort((a, b) => comparerIndicateur(a, b, mailleSélectionnée)).map(indicateur => (
                     <IndicateurBloc
                       chantierEstTerritorialisé={chantierEstTerritorialisé}
                       détailsIndicateur={détailsIndicateurs[indicateur.id]}
