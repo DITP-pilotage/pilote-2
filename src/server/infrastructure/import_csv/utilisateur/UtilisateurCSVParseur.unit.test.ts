@@ -18,7 +18,7 @@ describe('UtilisateurCSVParseur', () => {
 
     jest.spyOn(fs, 'readFileSync').mockReturnValueOnce(contenuFichierCSV);
 
-    const result = new UtilisateurCSVParseur('monfichier.csv').parse();
+    const result = new UtilisateurCSVParseur('monfichier.csv').parse().parsedCsvRecords;
     expect(result).toStrictEqual([
       {
         nom: utilisateurÀImporter1.nom.toLowerCase(),

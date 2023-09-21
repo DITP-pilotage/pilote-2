@@ -68,6 +68,7 @@
     "chroma-js": "^2.4.2",
     "csv-parse": "^5.3.6",
     "csv-stringify": "^6.3.0",
+    "csv-writer": "^1.6.0",
     "d3-selection": "^3.0.0",
     "d3-zoom": "^3.0.0",
     "dayjs": "^1.11.7",
