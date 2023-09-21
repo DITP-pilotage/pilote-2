@@ -169,6 +169,19 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return utilisateursMappés;
   }
 
+  async récupérerExistants(utilisateurs: (UtilisateurÀCréerOuMettreÀJour & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[]): Promise<Utilisateur['email'][]> {
+
+    const utilisateursExistants = await this._prisma.utilisateur.findMany({
+      where: {
+        email: {
+          in: utilisateurs.map(u => u.email),
+        },
+      },
+    });
+
+    return utilisateursExistants.map(u => u.email);
+  }
+
   async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJour & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurModification: string): Promise<void> {
     const utilisateurCrééOuMisÀJour = await this._prisma.utilisateur.upsert({
       create: {

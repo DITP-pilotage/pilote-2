@@ -8,6 +8,7 @@ loadEnvConfig(projectDir);  // ⚠️ À appeler avant nos imports, because Conf
 import logger from '@/server/infrastructure/logger';
 import UtilisateurCSVParseur from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur';
 import ImporterDesUtilisateursUseCase from '@/server/usecase/utilisateur/ImporterDesUtilisateursUseCase';
+import RécupérerListeUtilisateursExistantsUseCase from '@/server/usecase/utilisateur/RécupérerListeUtilisateursExistantsUseCase';
 
 /**
  - Format CSV attendu:
@@ -30,6 +31,10 @@ import ImporterDesUtilisateursUseCase from '@/server/usecase/utilisateur/Importe
       vim /tmp/import.csv
       copier le contenu du CSV local dans ce fichier et sauvegarder
       npx ts-node scripts/importCSVUtilisateurs.ts /tmp/import.csv | npx pino-pretty | tee -a /tmp/import.log
+
+  - Comment faire l'import sur uniquement les nouveaux comptes :
+      * En local : npx ts-node scripts/importCSVUtilisateurs.ts /chemin/fichier/local/import.csv true | npx pino-pretty
+      * En production : npx ts-node scripts/importCSVUtilisateurs.ts /tmp/import.csv true | npx pino-pretty
 
   - Remarques :
       Le CSV doit être encodé en utf8, et nous n'avons testé que sans BOM.
@@ -55,9 +60,18 @@ import ImporterDesUtilisateursUseCase from '@/server/usecase/utilisateur/Importe
 
 async function main() {
   const filename = process.argv[2];
+  const importNouveauCompteUniquement = process.argv[3] === 'true';
   assert(filename, 'Nom de fichier CSV manquant');
 
-  const utilisateurs = new UtilisateurCSVParseur(filename).parse();
+  let utilisateurs = new UtilisateurCSVParseur(filename).parse();
+  if (importNouveauCompteUniquement) {
+    const utilisateursExistants = await new RécupérerListeUtilisateursExistantsUseCase().run(utilisateurs);
+    utilisateurs = utilisateurs.filter(utilisateur => !utilisateursExistants.includes(utilisateur.email));
+    if (utilisateursExistants.length != 0) {
+      logger.info(`Les comptes suivants existent déjà et ne seront pas importés : ${utilisateursExistants}`);
+    }
+  }
+
   await new ImporterDesUtilisateursUseCase().run(utilisateurs, 'Import CSV');
 }
 
