@@ -24,3 +24,4 @@ fi
 
 PROJECT_DIR=data_factory
 dbt run --project-dir $PROJECT_DIR --select raw.ppg_metadata
+dbt test --project-dir $PROJECT_DIR --select raw.ppg_metadata --select tag:data_integrity

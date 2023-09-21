@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: metadata_porteurs
+    columns:
+      - name: porteur_directeur
+        description: "DAC ou  directeur du porteur de manière générale"
+        tests:
+          - not_null:
+              tags: ['data_integrity']
