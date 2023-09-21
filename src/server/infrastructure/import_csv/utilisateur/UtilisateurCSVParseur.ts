@@ -25,11 +25,12 @@ export default class UtilisateurCSVParseur {
 
   constructor(private _filename: string) {}
 
-  parse(): (UtilisateurÀCréerOuMettreÀJour & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[] {
+  parse(): { csvRecords: CsvRecord[], parsedCsvRecords: (UtilisateurÀCréerOuMettreÀJour & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[] } {
     const contents = fs.readFileSync(this._filename, 'utf8');
     const csvRecords: CsvRecord[] = parse(contents, this._CSV_PARSE_OPTIONS);
 
-    return this._parseCsvRecords(csvRecords);
+    const parsedCsvRecords = this._parseCsvRecords(csvRecords);
+    return { csvRecords, parsedCsvRecords };
   }
 
   _parseCsvRecords(csvRecords: CsvRecord[]): (UtilisateurÀCréerOuMettreÀJour & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[] {
