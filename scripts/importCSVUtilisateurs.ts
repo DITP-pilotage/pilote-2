@@ -9,6 +9,9 @@ import logger from '@/server/infrastructure/logger';
 import UtilisateurCSVParseur from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur';
 import ImporterDesUtilisateursUseCase from '@/server/usecase/utilisateur/ImporterDesUtilisateursUseCase';
 import RécupérerListeUtilisateursExistantsUseCase from '@/server/usecase/utilisateur/RécupérerListeUtilisateursExistantsUseCase';
+import { createObjectCsvWriter } from 'csv-writer';
+import { CsvRecord } from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur.interface';
+
 
 /**
  - Format CSV attendu:
@@ -58,17 +61,48 @@ import RécupérerListeUtilisateursExistantsUseCase from '@/server/usecase/utili
       Utiliser ces valeurs pour renseigner les variables d'env IMPORT_KEYCLOAK_URL - IMPORT_CLIENT_ID - IMPORT_CLIENT_SECRET
 */
 
+function ecrireCsvUtilisateurs(outputName: string, utilisateurFormatCsv: CsvRecord[]) {
+  const csvWriter = createObjectCsvWriter({
+    path: outputName,
+    header: [
+      { id: 'nom', title: 'nom' },
+      { id: 'prénom', title: 'prénom' },
+      { id: 'email', title: 'email' },
+      { id: 'profil', title: 'profil' },
+      { id: 'scope:', title: 'scope:' },
+      { id: 'territoires', title: 'territoires' },
+      { id: 'périmètreIds', title: 'périmètreIds' },
+      { id: 'chantierIds', title: 'chantierIds' },
+    ],
+  });
+  
+  csvWriter.writeRecords(utilisateurFormatCsv)
+    .then(() => {
+      console.log('Écriture CSV terminée');
+    })
+    .catch((error) => {
+      console.error('Erreur lors de l\'écriture CSV', error);
+    });
+}
+
 async function main() {
   const filename = process.argv[2];
   const importNouveauCompteUniquement = process.argv[3] === 'true';
+  const outputName = process.argv[4]
   assert(filename, 'Nom de fichier CSV manquant');
 
-  let utilisateurs = new UtilisateurCSVParseur(filename).parse();
+  const contenuParsé = new UtilisateurCSVParseur(filename).parse();
+  let utilisateursFormatCsv = contenuParsé.csvRecords
+  let utilisateurs = contenuParsé.parsedCsvRecords
+
   if (importNouveauCompteUniquement) {
+    assert(outputName, 'Nom du fichier de sortie manquant')
     const utilisateursExistants = await new RécupérerListeUtilisateursExistantsUseCase().run(utilisateurs);
     utilisateurs = utilisateurs.filter(utilisateur => !utilisateursExistants.includes(utilisateur.email));
+    utilisateursFormatCsv = utilisateursFormatCsv.filter(utilisateur => utilisateursExistants.includes(utilisateur.email))
     if (utilisateursExistants.length != 0) {
       logger.info(`Les comptes suivants existent déjà et ne seront pas importés : ${utilisateursExistants}`);
+      ecrireCsvUtilisateurs(outputName, utilisateursFormatCsv)
     }
   }
 

@@ -35,7 +35,7 @@ async function main() {
   const filename = process.argv[2];
   assert(filename, 'Nom de fichier CSV manquant');
 
-  const utilisateurs = new UtilisateurCSVParseur(filename).parse();
+  const utilisateurs = new UtilisateurCSVParseur(filename).parse().parsedCsvRecords;
   console.log(await new RécupérerListeUtilisateursExistantsUseCase().run(utilisateurs));
 }
 
