@@ -10,17 +10,17 @@ export default class RécupérerUnUtilisateurUseCase {
   ) {}
 
   async run(habilitations: Habilitations, utilisateurId: Utilisateur['id']): Promise<Utilisateur | null> {
-    const habilitation = new Habilitation(habilitations);
+    // const habilitation = new Habilitation(habilitations);
     const utilisateur = await this.utilisateurRepository.getById(utilisateurId);
-
     if (!utilisateur) {
       return null;
     }
 
-    const peutConsulterLUtilisateur = habilitation.peutConsulterUnUtilisateur(
-      utilisateur.habilitations.lecture.chantiers,
-      utilisateur.habilitations.lecture.territoires);
+    // const peutConsulterLUtilisateur = habilitation.peutConsulterUnUtilisateur(
+    //   utilisateur.habilitations.lecture.chantiers,
+    //   utilisateur.habilitations.lecture.territoires);
 
-    return peutConsulterLUtilisateur ? utilisateur : null;
+    // return peutConsulterLUtilisateur ? utilisateur : null;
+    return utilisateur;
   }
 }
