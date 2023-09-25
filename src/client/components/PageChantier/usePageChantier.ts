@@ -114,7 +114,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     ? []
     : (
       indicateurs
-        .sort(comparerIndicateur)
+        .sort((a, b) => comparerIndicateur(a, b, mailleSélectionnée))
         .map(indicateur => ({
           pondération: indicateur.pondération?.[territoireSélectionné.maille]?.toFixed(0) ?? null,
           nom: indicateur.nom,

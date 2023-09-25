@@ -29,6 +29,7 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    "sonarjs/cognitive-complexity": "off",
     "no-relative-import-paths/no-relative-import-paths": [
       "warn",
       {
