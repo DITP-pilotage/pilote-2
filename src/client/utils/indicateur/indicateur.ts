@@ -9,12 +9,17 @@ export function estAutoriséAImporterDesIndicateurs(profil: string): boolean {
 }
 
 export function comparerIndicateur(a: Indicateur, b: Indicateur, mailleSélectionnée: Maille) {
-
+  const pondérationA = a.pondération?.[mailleSélectionnée] ?? null;
+  const pondérationB = b.pondération?.[mailleSélectionnée] ?? null;
   if (a.type === b.type) {
-    if (a.pondération?.[mailleSélectionnée] === null) {
-      return b.pondération?.[mailleSélectionnée] === null ? a.nom.localeCompare(b.nom) : 1;
+    if (pondérationA === null) {
+      return pondérationB === null ? a.nom.localeCompare(b.nom) : 1;
     } else {
-      return b.pondération?.[mailleSélectionnée] === null ? -1 : a.nom.localeCompare(b.nom);
+      if (pondérationB === null) {
+        return -1;
+      } else {
+        return pondérationA !== pondérationB ? (pondérationA < pondérationB ? 1 : -1) : a.nom.localeCompare(b.nom);
+      }
     }
   } else {
     return ORDRE_DES_TYPES_INDICATEUR.indexOf(a.type) < ORDRE_DES_TYPES_INDICATEUR.indexOf(b.type) ? - 1 : 1;

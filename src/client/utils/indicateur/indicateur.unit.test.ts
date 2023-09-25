@@ -6,15 +6,15 @@ describe('comparerIndicateur', () => {
   it('renvoie 0 si le type et le nom sont strictement identiques', () => {
     // given
     const a = new IndicateurBuilder()
-    .avecNom('Indicateur 1')
-    .avecType('CONTEXTE')
-    .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
-    .build();
+      .avecNom('Indicateur 1')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
+      .build();
     const b = new IndicateurBuilder()
-    .avecNom('Indicateur 1')
-    .avecType('CONTEXTE')
-    .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
-    .build();
+      .avecNom('Indicateur 1')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
+      .build();
     // when
     const résultat = comparerIndicateur(a, b, maille);
 
@@ -25,15 +25,15 @@ describe('comparerIndicateur', () => {
   it("renvoie -1 si le type est identique mais que le nom de A est avant le nom de B dans l'ordre alphabétique", () => {
     // given
     const a = new IndicateurBuilder()
-    .avecNom('Indicateur A')
-    .avecType('CONTEXTE')
-    .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
-    .build();
+      .avecNom('Indicateur A')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
+      .build();
     const b = new IndicateurBuilder()
-    .avecNom('Indicateur B')
-    .avecType('CONTEXTE')
-    .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
-    .build();
+      .avecNom('Indicateur B')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
+      .build();
 
     // when
     const résultat = comparerIndicateur(a, b, maille);
@@ -45,15 +45,15 @@ describe('comparerIndicateur', () => {
   it("renvoie 1 si le type est identique mais que le nom de A est après le nom de B dans l'ordre alphabétique", () => {
     // given
     const a = new IndicateurBuilder()
-    .avecNom('Indicateur Z28')
-    .avecType('CONTEXTE')
-    .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
-    .build();
+      .avecNom('Indicateur Z28')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
+      .build();
     const b = new IndicateurBuilder()
-    .avecNom('Indicateur R01')
-    .avecType('CONTEXTE')
-    .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
-    .build();
+      .avecNom('Indicateur R01')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
+      .build();
 
     // when
     const résultat = comparerIndicateur(a, b, maille);
