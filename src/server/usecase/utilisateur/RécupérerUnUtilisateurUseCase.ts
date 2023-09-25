@@ -2,7 +2,7 @@ import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurReposi
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+// import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
 export default class RécupérerUnUtilisateurUseCase {
   constructor(
