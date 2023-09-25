@@ -94,4 +94,125 @@ describe('comparerIndicateur', () => {
     // then
     expect(résultat).toStrictEqual(1);
   });
+
+  it('renvoie 1 si la pondération de A est null et la pondération de B est non null', () => {
+    // given
+    const a = new IndicateurBuilder()
+      .avecNom('Indicateur A')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
+      .build();
+    const b = new IndicateurBuilder()
+      .avecNom('Indicateur B')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: 12, 'régionale': null, 'départementale': null })
+      .build();
+
+    // when
+    const résultat = comparerIndicateur(a, b, maille);
+
+    // then
+    expect(résultat).toStrictEqual(1);
+  });
+
+  it('renvoie -1 si la pondération de A est non et la pondération de B est null', () => {
+    // given
+    const a = new IndicateurBuilder()
+      .avecNom('Indicateur A')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: 12, 'régionale': null, 'départementale': null })
+      .build();
+    const b = new IndicateurBuilder()
+      .avecNom('Indicateur B')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: null, 'régionale': null, 'départementale': null })
+      .build();
+
+    // when
+    const résultat = comparerIndicateur(a, b, maille);
+
+    // then
+    expect(résultat).toStrictEqual(-1);
+  });
+
+  it('renvoie -1 si la pondération de A est supérieure à la pondération de B', () => {
+    // given
+    const a = new IndicateurBuilder()
+      .avecNom('Indicateur A')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: 12, 'régionale': null, 'départementale': null })
+      .build();
+    const b = new IndicateurBuilder()
+      .avecNom('Indicateur B')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: 10, 'régionale': null, 'départementale': null })
+      .build();
+
+    // when
+    const résultat = comparerIndicateur(a, b, maille);
+
+    // then
+    expect(résultat).toStrictEqual(-1);
+  });
+
+  it('renvoie 1 si la pondération de A est inférieure à la pondération de B', () => {
+    // given
+    const a = new IndicateurBuilder()
+      .avecNom('Indicateur A')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: 8, 'régionale': null, 'départementale': null })
+      .build();
+    const b = new IndicateurBuilder()
+      .avecNom('Indicateur B')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: 10, 'régionale': null, 'départementale': null })
+      .build();
+
+    // when
+    const résultat = comparerIndicateur(a, b, maille);
+
+    // then
+    expect(résultat).toStrictEqual(1);
+  });
+
+  it("renvoie -1 si la pondération de A est égale à la pondération de B et que le nom de A est avant le nom de B dans l'ordre alphabétique", () => {
+    // given
+    const a = new IndicateurBuilder()
+      .avecNom('Indicateur A')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: 10, 'régionale': null, 'départementale': null })
+      .build();
+    const b = new IndicateurBuilder()
+      .avecNom('Indicateur B')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: 10, 'régionale': null, 'départementale': null })
+      .build();
+
+    // when
+    const résultat = comparerIndicateur(a, b, maille);
+
+    // then
+    expect(résultat).toStrictEqual(-1);
+  });
+
+  it("renvoie 1 si la pondération de A est égale à la pondération de B et que le nom de A est après le nom de B dans l'ordre alphabétique", () => {
+    // given
+    const a = new IndicateurBuilder()
+      .avecNom('Indicateur ZA')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: 10, 'régionale': null, 'départementale': null })
+      .build();
+    const b = new IndicateurBuilder()
+      .avecNom('Indicateur B')
+      .avecType('CONTEXTE')
+      .avecPondération({ nationale: 10, 'régionale': null, 'départementale': null })
+      .build();
+
+    // when
+    const résultat = comparerIndicateur(a, b, maille);
+
+    // then
+    expect(résultat).toStrictEqual(1);
+  });
+
 });
