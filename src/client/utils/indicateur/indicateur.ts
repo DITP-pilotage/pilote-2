@@ -13,12 +13,12 @@ export function comparerIndicateur(a: Indicateur, b: Indicateur, mailleSélectio
   const pondérationB = b.pondération?.[mailleSélectionnée] ?? null;
   if (a.type === b.type) {
     if (pondérationA === null) {
-      return pondérationB === null ? a.nom.localeCompare(b.nom) : 1;
+      return pondérationB === null ? a.nom.localeCompare(b.nom, 'fr', { ignorePunctuation: true }) : 1;
     } else {
       if (pondérationB === null) {
         return -1;
       } else {
-        return pondérationA !== pondérationB ? (pondérationA < pondérationB ? 1 : -1) : a.nom.localeCompare(b.nom);
+        return pondérationA !== pondérationB ? (pondérationA < pondérationB ? 1 : -1) : a.nom.localeCompare(b.nom, 'fr', { ignorePunctuation: true });
       }
     }
   } else {
