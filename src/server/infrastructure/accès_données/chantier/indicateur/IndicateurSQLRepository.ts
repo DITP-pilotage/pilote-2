@@ -48,6 +48,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         régionale: indicateur.ponderation_reg,
         départementale: indicateur.ponderation_dept,
       },
+      unité: indicateur.unite_mesure,
     });
   }
 

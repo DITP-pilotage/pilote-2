@@ -21,14 +21,14 @@ function déterminerRemplissage(valeur: number | null, valeurMin: number | null,
   return interpolerCouleurs(COULEUR_DÉPART, COULEUR_ARRIVÉE, pourcentageInterpolation);
 }
 
-export default function useCartographieValeurActuelle(données: CartographieDonnéesValeurActuelle) {
+export default function useCartographieValeurActuelle(données: CartographieDonnéesValeurActuelle, unité?: string | null) {
   const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
   const valeurMin = useMemo(() => valeurMinimum(données.map(donnée => donnée.valeur)), [données]);
   const valeurMax = useMemo(() => valeurMaximum(données.map(donnée => donnée.valeur)), [données]);
 
   const légende = useMemo(() => ({
-    libellé: '',
+    libellé: unité === null || unité == undefined ? '' : `En ${unité.toLocaleLowerCase()}` ,
     valeurMin: valeurMin !== null ? valeurMin.toLocaleString() : '-',
     valeurMax: valeurMax !== null ? valeurMax.toLocaleString() : '-',
     couleurMin: COULEUR_DÉPART,
