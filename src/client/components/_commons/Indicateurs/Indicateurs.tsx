@@ -3,11 +3,11 @@ import IndicateursProps from '@/components/_commons/Indicateurs/Indicateurs.inte
 import IndicateurBloc from '@/components/_commons/Indicateurs/Bloc/IndicateurBloc';
 import IndicateursStyled from '@/components/_commons/Indicateurs/Indicateurs.styled';
 import { comparerIndicateur } from '@/client/utils/indicateur/indicateur';
-import { mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
+import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 
 
 export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRubriquesIndicateurs, territoireProjetStructurant, typeDeRéforme, chantierEstTerritorialisé, estDisponibleALImport = false, estInteractif = true }: IndicateursProps) {
-  const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
+  const mailleSélectionnée = territoireSélectionnéTerritoiresStore()?.maille ?? 'nationale';
   if (indicateurs.length === 0) {
     return null;
   }
