@@ -48,6 +48,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         régionale: indicateur.ponderation_reg,
         départementale: indicateur.ponderation_dept,
       },
+      unité: indicateur.unite_mesure,
     });
   }
 
@@ -78,6 +79,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
           global: indic.objectif_taux_avancement,
           annuel: IntermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire : null,
         },
+        unité: indic.unite_mesure,
       };
     }
 

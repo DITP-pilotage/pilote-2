@@ -82,6 +82,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
                       auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
                       données={donnéesCartographieValeurActuelle}
                       options={{ multiséléction: true }}
+                      unité={indicateur.unité}
                     />
                   </section>
                 )

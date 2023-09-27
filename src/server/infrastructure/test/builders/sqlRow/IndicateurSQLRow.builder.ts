@@ -70,6 +70,8 @@ export default class IndicateurRowBuilder {
 
   private _a_supprimer: indicateur['a_supprimer'];
 
+  private _unite_mesure: indicateur['unite_mesure'];
+
 
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
@@ -109,6 +111,7 @@ export default class IndicateurRowBuilder {
     this._ponderation_reg = indicateurGénéré.pondération?.régionale ?? null;
     this._ponderation_nat = indicateurGénéré.pondération?.départementale ?? null;
     this._a_supprimer = false;
+    this._unite_mesure = indicateurGénéré.unité;
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {
@@ -261,6 +264,11 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  avecUnité(unité: indicateur['unite_mesure']): IndicateurRowBuilder {
+    this._unite_mesure = unité;
+    return this;
+  }
+
   build(): indicateur {
     return {
       id: this._id,
@@ -293,6 +301,7 @@ export default class IndicateurRowBuilder {
       objectif_valeur_cible_intermediaire: this._valeurCibleIntermediaire,
       objectif_taux_avancement_intermediaire: this._tauxAvancementCibleIntermediaire,
       a_supprimer: this._a_supprimer,
+      unite_mesure: this._unite_mesure,
     };
   }
 }

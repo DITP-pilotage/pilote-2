@@ -20,4 +20,5 @@ export type DétailsIndicateur = {
   valeurCibleAnnuelle: number | null,
   dateValeurCibleAnnuelle: string | null,
   avancement: Avancement,
+  unité: string | null,
 };

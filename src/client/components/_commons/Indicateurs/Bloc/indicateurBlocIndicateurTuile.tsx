@@ -4,9 +4,9 @@ import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDe
 import { formaterDate } from '@/client/utils/date/date';
 import IndicateurDétailsParTerritoireProps from './indicateurDétailsParTerritoire.interface';
 
-export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTerritoire, typeDeRéforme }: IndicateurDétailsParTerritoireProps) {
+export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTerritoire, typeDeRéforme, unité }: IndicateurDétailsParTerritoireProps) {
   const { dateValeurInitiale, valeurInitiale, valeurActuelle, valeurCible, dateValeurCible, dateValeurActuelle, avancement, dateValeurCibleAnnuelle, valeurCibleAnnuelle } = indicateurDétailsParTerritoire.données;
-
+  const unitéAffichée = unité?.toLocaleLowerCase() === 'pourcentage' ? ' %' : '';
   return (
     <IndicateurBlocIndicateurTuileStyled>
       <table className='fr-p-0 fr-pb-2w'>
@@ -27,7 +27,7 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
               <span>
-                { valeurInitiale?.toLocaleString() }
+                { valeurInitiale?.toLocaleString() + unitéAffichée }
               </span>
               {
                 dateValeurInitiale !== null &&
@@ -45,7 +45,7 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
               <span>
-                { valeurActuelle?.toLocaleString() }
+                { valeurActuelle?.toLocaleString() + unitéAffichée }
               </span>
               {
                 dateValeurActuelle !== null &&
@@ -63,7 +63,7 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
               <span>
-                { valeurCibleAnnuelle?.toLocaleString() }
+                { valeurCibleAnnuelle?.toLocaleString() + unitéAffichée }
               </span>
               {
                 dateValeurCible !== null &&
@@ -96,7 +96,7 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
               <span>
-                { valeurCible?.toLocaleString() }
+                { valeurCible?.toLocaleString() + unitéAffichée }
               </span>
               {
                 dateValeurCible !== null &&

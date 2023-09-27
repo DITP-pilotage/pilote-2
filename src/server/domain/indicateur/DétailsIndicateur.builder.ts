@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker/locale/fr';
 import { DétailsIndicateur } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { codesInseeDépartements, codesInseeRégions, codeInseeFrance } from '@/server/domain/territoire/Territoire.interface';
 import AvancementBuilder from '@/server/domain/chantier/avancement/Avancement.builder';
-import { générerTableau } from '@/server/infrastructure/test/builders/utils';
+import { générerPeutÊtreNull, générerTableau } from '@/server/infrastructure/test/builders/utils';
 
 export default class DétailsIndicateurBuilder {
   private _codeInsee: DétailsIndicateur['codeInsee'];
@@ -29,6 +29,8 @@ export default class DétailsIndicateurBuilder {
 
   private _dateValeurCibleAnnuelle: DétailsIndicateur['dateValeurCibleAnnuelle'];
 
+  private _unité: DétailsIndicateur['unité'];
+
   constructor() {
     const nombreDeValeurs = faker.datatype.number({ min: 28, max: 35 });
 
@@ -41,7 +43,7 @@ export default class DétailsIndicateurBuilder {
     this._dateValeurActuelle = new Date('2023-03-01T00:00:00.000Z').toISOString();
     this._dateValeurCibleAnnuelle = faker.date.future(1, '2023-03-01T00:00:00.000Z').toISOString();
     this._valeurCibleAnnuelle = faker.datatype.number({ min: this._valeurInitiale ?? 42, max: this._valeurCible ?? 39, precision: 0.01 });
-
+    this._unité = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
 
     const valeursEtDates = this.générerValeursEtDates(nombreDeValeurs, this._valeurInitiale, this._valeurCible);
 
@@ -124,6 +126,7 @@ export default class DétailsIndicateurBuilder {
       dateValeurCibleAnnuelle: this._dateValeurCibleAnnuelle,
       valeurCibleAnnuelle: this._valeurCibleAnnuelle,
       avancement: this._avancement,
+      unité: this._unité,
     };
   }
 

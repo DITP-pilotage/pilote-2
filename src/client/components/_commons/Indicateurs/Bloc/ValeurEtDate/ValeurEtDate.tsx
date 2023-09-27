@@ -1,12 +1,12 @@
 import { formaterDate } from '@/client/utils/date/date';
 import ValeurEtDateProps from './ValeuretDate.interface';
 
-export default function ValeurEtDate({ valeur, date }: ValeurEtDateProps) {
+export default function ValeurEtDate({ valeur, date, unité }: ValeurEtDateProps) {
   const dateFormatée = formaterDate(date, 'MM/YYYY');
   return (
     <>
       <p className='indicateur-valeur'>
-        {valeur?.toLocaleString()}
+        {valeur?.toLocaleString() + (unité?.toLocaleLowerCase() === 'pourcentage' ? ' %' : '')}
       </p>
       {
           !!dateFormatée && (

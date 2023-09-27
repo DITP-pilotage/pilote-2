@@ -3,8 +3,8 @@ import CartographieValeurActuelleProps from '@/components/_commons/Cartographie/
 import CartographieLégendeDégradé from '@/components/_commons/Cartographie/Légende/Dégradé/CartographieLégendeDégradé';
 import useCartographieValeurActuelle from './useCartographieValeurActuelle';
 
-export default function CartographieValeurActuelle({ données, options, auClicTerritoireCallback }: CartographieValeurActuelleProps) {
-  const { donnéesCartographie, légende } = useCartographieValeurActuelle(données);
+export default function CartographieValeurActuelle({ données, options, unité, auClicTerritoireCallback }: CartographieValeurActuelleProps) {
+  const { donnéesCartographie, légende } = useCartographieValeurActuelle(données, unité);
 
   return (
     <Cartographie

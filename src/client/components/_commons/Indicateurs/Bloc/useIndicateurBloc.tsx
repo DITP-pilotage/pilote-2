@@ -37,6 +37,7 @@ const indicateurDétailsVide = {
     valeurCibleAnnuelle: null,
     dateValeurCibleAnnuelle: null,
     avancement: { global: null, annuel: null },
+    unité: null,
   },
 };
 
@@ -91,6 +92,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       cell: valeurInitiale => (
         <ValeurEtDate
           date={valeurInitiale.row.original.données.dateValeurInitiale}
+          unité={valeurInitiale.row.original.données.unité}
           valeur={valeurInitiale.getValue()}
         />
       ),
@@ -102,6 +104,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       cell: valeurActuelle => (
         <ValeurEtDate
           date={valeurActuelle.row.original.données.dateValeurActuelle}
+          unité={valeurActuelle.row.original.données.unité}
           valeur={valeurActuelle.getValue()}
         />
       ),
@@ -113,6 +116,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       cell: valeurCibleAnnuelle => (
         <ValeurEtDate
           date={valeurCibleAnnuelle.row.original.données.dateValeurCibleAnnuelle}
+          unité={valeurCibleAnnuelle.row.original.données.unité}
           valeur={valeurCibleAnnuelle.getValue()}
         />
       ),
@@ -139,6 +143,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       cell: valeurCible => (
         <ValeurEtDate
           date={valeurCible.row.original.données.dateValeurCible}
+          unité={valeurCible.row.original.données.unité}
           valeur={valeurCible.getValue()}
         />
       ),
@@ -165,6 +170,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
         <IndicateurBlocIndicateurTuile
           indicateurDétailsParTerritoire={indicateurCellContext.row.original}
           typeDeRéforme='chantier'
+          unité={indicateurCellContext.row.original.données.unité}
         />
       ),
       enableSorting: false,
@@ -182,6 +188,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       cell: valeurInitiale => (
         <ValeurEtDate
           date={valeurInitiale.row.original.données.dateValeurInitiale}
+          unité={valeurInitiale.row.original.données.unité}
           valeur={valeurInitiale.getValue()}
         />
       ),
@@ -193,6 +200,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       cell: valeurActuelle => (
         <ValeurEtDate
           date={valeurActuelle.row.original.données.dateValeurActuelle}
+          unité={valeurActuelle.row.original.données.unité}
           valeur={valeurActuelle.getValue()}
         />
       ),
@@ -204,6 +212,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       cell: valeurCible => (
         <ValeurEtDate
           date={valeurCible.row.original.données.dateValeurCible}
+          unité={valeurCible.row.original.données.unité}
           valeur={valeurCible.getValue()}
         />
       ),
@@ -230,6 +239,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
         <IndicateurBlocIndicateurTuile
           indicateurDétailsParTerritoire={indicateurCellContext.row.original}
           typeDeRéforme='projet structurant'
+          unité={indicateurCellContext.row.original.données.unité}
         />
       ),
       enableSorting: false,

@@ -120,6 +120,7 @@ model indicateur {
   description                               String?
   source                                    String?
   mode_de_calcul                            String?
+  unite_mesure                              String?
   territoire                                territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
   territoire_code                           String
   ponderation_dept                          Float?
