@@ -41,7 +41,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
                     <PictoBaromètre />
                   </span>
                 }
-                {indicateur.nom + (indicateur === null ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
+                {indicateur.nom + (indicateur.unité === null ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
               </Titre>
               <div className="fr-ml-2w fr-mb-3w">
                 <p className="fr-mb-0 fr-text--xs texte-gris">
