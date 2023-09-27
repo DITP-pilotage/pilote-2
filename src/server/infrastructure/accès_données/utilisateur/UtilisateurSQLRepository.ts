@@ -353,7 +353,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     for await (const h of habilitations) {
       const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
       if (scopeCode !== 'projetsStructurants.lecture') {
-        const chantiersSupplémentaires = (scopeCode == 'saisie.commentaire' && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(profilUtilisateur.code) && h.chantiers.length > 0)
+        const chantiersSupplémentaires = (scopeCode == 'saisie.commentaire' && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(profilUtilisateur.code) && h.chantiers.length > 0)
           ? await dependencies.getChantierRepository().récupérerChantierIdsPourSaisieCommentaireServiceDeconcentré(h.chantiers) 
           : h.chantiers;
         

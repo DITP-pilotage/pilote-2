@@ -102,7 +102,7 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
       return ['Tous les chantiers ATE territorialisés'];
     }
 
-    if (profil && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(profil.code)) {
+    if (profil && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(profil.code)) {
       return u.habilitations?.lecture?.chantiers
         ?.map(chantierId => chantiers
           ?.filter(c => c.ate === 'hors_ate_deconcentre')

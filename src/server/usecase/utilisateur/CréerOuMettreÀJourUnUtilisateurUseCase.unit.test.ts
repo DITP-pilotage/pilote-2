@@ -241,6 +241,20 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     });
   });
 
+  describe("L'utilisateur a un profil RESPONSABLE_REGION", () => {
+    it("Crée l'utilisateur en base de données en prenant une liste de terrioires contenant des régions et leurs départements enfants en lecture et une liste de chantiers territorialisés et une liste de périmètres", async () => {
+      const codeRégionParente = 'REG-11';
+      const codesDépartementsEnfantsDeLaRégion = fakeTerritoires.filter(t => t.codeParent === codeRégionParente).map(t => t.code);
+
+      const habilitationsAttendues = { 
+        ...habilitationsVides, 
+        lecture: { chantiers: ['123'], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: ['PER-13'] }, 
+        'saisie.commentaire':  { chantiers: ['123'], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: ['PER-13'] },
+      };
+      await testCasPassant('RESPONSABLE_REGION', habilitationsAttendues, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], ['123'], ['PER-13']);
+    });
+  });
+
   describe("L'utilisateur a un profil REFERENT_DEPARTEMENT", () => {
     it("Crée l'utilisateur en base de données en prenant une liste de terrioires contenant des départements en lecture", async () => {
       const habilitationsAttendues = { 
@@ -272,6 +286,17 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         'saisie.commentaire':  { chantiers: ['123'], territoires: ['DEPT-75'], périmètres: [] },
       };
       await testCasPassant('SERVICES_DECONCENTRES_DEPARTEMENT', habilitationsAttendues, ['DEPT-75'], ['123'], []);
+    });
+  });
+
+  describe("L'utilisateur a un profil RESPONSABLE_DEPARTEMENT", () => {
+    it("Crée l'utilisateur en base de données en prenant une liste de territoires contenant des départements, une liste de chantiers et une liste de périmètres en lecture", async () => {
+      const habilitationsAttendues = {
+        ...habilitationsVides, 
+        lecture: { chantiers: ['123'], territoires: ['DEPT-75'], périmètres: [] }, 
+        'saisie.commentaire':  { chantiers: ['123'], territoires: ['DEPT-75'], périmètres: [] },
+      };
+      await testCasPassant('RESPONSABLE_DEPARTEMENT', habilitationsAttendues, ['DEPT-75'], ['123'], []);
     });
   });
 

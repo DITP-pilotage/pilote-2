@@ -30,7 +30,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
       return utilisateur.habilitations.lecture.périmètres.every(p => !chantier?.périmètreIds.includes(p));
     });
 
-    if (['SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(utilisateur.profil)) {
+    if (['SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(utilisateur.profil)) {
       return chantiersPasEnDoublonsAvecLesPérimètres.filter(chantierId => touslesChantiersTerritorialisésIds.has(chantierId));
     }
 
@@ -48,10 +48,10 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   }
 
   private _déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
-    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(utilisateur.profil)) {
+    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(utilisateur.profil)) {
       const chantiersIdsAccessiblesEnLecture = this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
 
-      if (['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(utilisateur.profil)) {
+      if (['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(utilisateur.profil)) {
         return chantiers.filter(c => c.ate === 'hors_ate_deconcentre' && chantiersIdsAccessiblesEnLecture.includes(c.id)).map(c => c.id);
       }
       return chantiersIdsAccessiblesEnLecture;
@@ -93,7 +93,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     if (utilisateur.profil === 'DROM') 
       return ['PER-018'];
     
-    if (['CABINET_MINISTERIEL', 'DIR_ADMIN_CENTRALE', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'DROM'].includes(utilisateur.profil))
+    if (['CABINET_MINISTERIEL', 'DIR_ADMIN_CENTRALE', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'DROM', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(utilisateur.profil))
       return utilisateur.habilitations.lecture.périmètres.filter(p => tousLesPérimètresIds.has(p));
 
     return [];
@@ -107,7 +107,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   }
 
   private _déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
-    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'DROM'].includes(utilisateur.profil))
+    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'DROM', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(utilisateur.profil))
       return this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres);
       
     return [];
