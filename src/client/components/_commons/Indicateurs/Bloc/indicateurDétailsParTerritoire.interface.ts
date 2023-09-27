@@ -4,4 +4,5 @@ import { IndicateurDétailsParTerritoire } from '@/components/_commons/Indicateu
 export default interface IndicateurDétailsParTerritoireProps {
   indicateurDétailsParTerritoire: IndicateurDétailsParTerritoire
   typeDeRéforme: TypeDeRéforme
+  unité?: string | null
 }

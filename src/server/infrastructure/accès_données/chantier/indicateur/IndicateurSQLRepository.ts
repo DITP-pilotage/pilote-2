@@ -79,6 +79,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
           global: indic.objectif_taux_avancement,
           annuel: IntermediaireEstAnnéeEnCours ? indic.objectif_taux_avancement_intermediaire : null,
         },
+        unité: indic.unite_mesure,
       };
     }
 

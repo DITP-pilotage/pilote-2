@@ -26,6 +26,7 @@ function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: in
       avancement: { 
         annuel: IntermediaireEstAnnéeEnCours ? indicateurRow?.objectif_taux_avancement_intermediaire ?? null : null, 
         global: indicateurRow?.objectif_taux_avancement ?? null },
+      unité: indicateurRow?.unite_mesure ?? null,
     };
   });
 

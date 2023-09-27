@@ -264,6 +264,11 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  avecUnité(unité: indicateur['unite_mesure']): IndicateurRowBuilder {
+    this._unite_mesure = unité;
+    return this;
+  }
+
   build(): indicateur {
     return {
       id: this._id,

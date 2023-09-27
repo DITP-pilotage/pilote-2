@@ -106,6 +106,7 @@ describe('IndicateurSQLRepository', () => {
           .avecDateValeurActuelle(new Date('2023-03-01'))
           .avecDateValeurCible(new Date('2026-05-01'))
           .avecTauxAvancementCible(40)
+          .avecUnité('cm')
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -122,6 +123,7 @@ describe('IndicateurSQLRepository', () => {
           .avecValeurCible(1790)
           .avecDateValeurCible(new Date('2026-05-01'))
           .avecTauxAvancementCible(40)
+          .avecUnité('cm')
           .build(),
       ];
 
@@ -150,6 +152,7 @@ describe('IndicateurSQLRepository', () => {
                 global: 40,
                 annuel: null,
               },
+              unité: 'cm',
             },
             '03': {
               codeInsee: '03',
@@ -167,6 +170,7 @@ describe('IndicateurSQLRepository', () => {
                 global: 40,
                 annuel: null,
               },
+              unité: 'cm',
             },
           },
         },
@@ -205,6 +209,7 @@ describe('IndicateurSQLRepository', () => {
           .avecValeurActuelle(1500)
           .avecDateValeurCible(new Date('2026-05-01'))
           .avecTauxAvancementCible(20)
+          .avecUnité('cm')
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -221,6 +226,7 @@ describe('IndicateurSQLRepository', () => {
           .avecDateValeurActuelle(new Date('2023-03-01'))
           .avecValeurActuelle(1501)
           .avecTauxAvancementCible(40)
+          .avecUnité('cm')
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -237,6 +243,7 @@ describe('IndicateurSQLRepository', () => {
           .avecDateValeurActuelle(new Date('2023-03-01'))
           .avecValeurActuelle(1502)
           .avecTauxAvancementCible(40)
+          .avecUnité('cm')
           .build(),
       ];
 
@@ -265,6 +272,7 @@ describe('IndicateurSQLRepository', () => {
                 global: 20,
                 annuel: null,
               },
+              unité: 'cm',
             },
           },
           'IND-002': {
@@ -284,6 +292,7 @@ describe('IndicateurSQLRepository', () => {
                 global: 40,
                 annuel: null,
               },
+              unité: 'cm',
             },
             '03': {
               codeInsee: '03',
@@ -301,6 +310,7 @@ describe('IndicateurSQLRepository', () => {
                 global: 40,
                 annuel: null,
               },
+              unité: 'cm',
             },
           },
         },
@@ -317,6 +327,7 @@ describe('IndicateurSQLRepository', () => {
           .avecChantierId('CH-001')
           .avecMaille('DEPT')
           .avecCodeInsee('01')
+          .avecUnité('cm')
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -331,6 +342,7 @@ describe('IndicateurSQLRepository', () => {
           .avecValeurCible(1790)
           .avecDateValeurCible(new Date('2026-05-01'))
           .avecTauxAvancementCible(40)
+          .avecUnité('cm')
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -347,6 +359,7 @@ describe('IndicateurSQLRepository', () => {
           .avecValeurActuelle(1500)
           .avecDateValeurActuelle(new Date('2023-03-01'))
           .avecTauxAvancementCible(30)
+          .avecUnité('cm')
           .build(),
       ];
 
@@ -375,6 +388,7 @@ describe('IndicateurSQLRepository', () => {
                 global: 30,
                 annuel: null,
               },
+              unité: 'cm',
             },
           },
         },
@@ -477,6 +491,7 @@ describe('IndicateurSQLRepository', () => {
           .avecValeurCibleIntermediaire(1000)
           .avecDateValeurCibleIntermediaire(new Date(new Date().getFullYear().toString() + '-12-31'))
           .avecTauxAvancementCibleIntermedaire(70)
+          .avecUnité('cm')
           .build(),
       ];
 
@@ -505,6 +520,7 @@ describe('IndicateurSQLRepository', () => {
                 global: 20,
                 annuel: 70,
               },
+              unité: 'cm',
             },
           },
         },
@@ -532,6 +548,7 @@ describe('IndicateurSQLRepository', () => {
           .avecValeurCibleIntermediaire(1000)
           .avecDateValeurCibleIntermediaire(new Date((new Date().getFullYear() + 1).toString() + '-12-31'))
           .avecTauxAvancementCibleIntermedaire(70)
+          .avecUnité('cm')
           .build(),
       ];
 
@@ -560,6 +577,7 @@ describe('IndicateurSQLRepository', () => {
                 global: 20,
                 annuel: null,
               },
+              unité: 'cm',
             },
           },
         },
