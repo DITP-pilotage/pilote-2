@@ -27,7 +27,7 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
               <span>
-                { valeurInitiale?.toLocaleString() + unitéAffichée }
+                { (valeurInitiale?.toLocaleString() ?? '') + unitéAffichée }
               </span>
               {
                 dateValeurInitiale !== null &&
@@ -45,7 +45,7 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
               <span>
-                { valeurActuelle?.toLocaleString() + unitéAffichée }
+                { (valeurActuelle?.toLocaleString() ?? '') + unitéAffichée }
               </span>
               {
                 dateValeurActuelle !== null &&
@@ -63,7 +63,7 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
               <span>
-                { valeurCibleAnnuelle?.toLocaleString() + unitéAffichée }
+                { (valeurCibleAnnuelle?.toLocaleString() ?? '') + unitéAffichée }
               </span>
               {
                 dateValeurCible !== null &&
@@ -96,7 +96,7 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
               <span>
-                { valeurCible?.toLocaleString() + unitéAffichée }
+                { (valeurCible?.toLocaleString() ?? '') + unitéAffichée }
               </span>
               {
                 dateValeurCible !== null &&
