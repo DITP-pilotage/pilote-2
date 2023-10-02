@@ -16,6 +16,6 @@ same_length_t AS (
     SELECT e2, a.*, b.cnt_df2 , cnt_original=cnt_df2 AS va_same_length FROM original a FULL JOIN df2 b ON a.id=b.id AND a.territoire_code=b.territoire_code
 )
 
-SELECT id from same_length_t where not va_same_length
+SELECT id, cnt_original, cnt_df2 from same_length_t where not va_same_length
 
 
