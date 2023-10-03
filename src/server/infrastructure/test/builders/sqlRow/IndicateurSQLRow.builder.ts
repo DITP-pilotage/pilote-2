@@ -272,6 +272,11 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  avecEstApplicable(est_applicable: indicateur['est_applicable']): IndicateurRowBuilder {
+    this._est_applicable = est_applicable;
+    return this;
+  }
+
   build(): indicateur {
     return {
       id: this._id,
