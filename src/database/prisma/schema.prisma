@@ -129,7 +129,8 @@ model indicateur {
   objectif_valeur_cible_intermediaire       Float?
   objectif_taux_avancement_intermediaire    Float?
   objectif_date_valeur_cible_intermediaire  DateTime?  @db.Date
-  a_supprimer Boolean @default(true)
+  est_applicable                            Boolean?
+  a_supprimer                               Boolean @default(true)
 
   @@id([id, code_insee, maille])
   @@schema("public")
