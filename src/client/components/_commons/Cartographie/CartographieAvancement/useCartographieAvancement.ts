@@ -5,17 +5,25 @@ import { CartographieÉlémentsDeLégende } from '@/client/components/_commons/C
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 
 
-function déterminerValeurAffichée(valeur: number | null): string {
+function déterminerValeurAffichée(valeur: number | null, estApplicable: boolean | null): string {
   if (valeur === null)
     return 'Non renseigné';
+
+  if (estApplicable === false) {
+    return 'Non applicable';
+  }
 
   return valeur.toFixed(0) + '%';
 }
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-function déterminerRemplissage(valeur: number | null, élémentsDeLégende: CartographieÉlémentsDeLégende) {
+function déterminerRemplissage(valeur: number | null, élémentsDeLégende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) {
   if (valeur === null)
     return élémentsDeLégende.DÉFAUT.remplissage;
+
+  if (estApplicable === false) {
+    return élémentsDeLégende.NON_APPLICABLE.remplissage;
+  }
 
   const valeurArrondie = Number(valeur.toFixed(0));
 
@@ -30,7 +38,6 @@ function déterminerRemplissage(valeur: number | null, élémentsDeLégende: Car
   else if (valeurArrondie >= 80 && valeurArrondie < 90) return élémentsDeLégende['80-90'].remplissage;
   else if (valeurArrondie >= 90) return élémentsDeLégende['90-100'].remplissage;
   else return élémentsDeLégende.DÉFAUT.remplissage;
-  // Rajouter le cas NON_APPLICABLE : élémentsDeLégende['NON_APPLICABLE']
 }
 
 export default function useCartographieAvancement(données: CartographieDonnéesAvancement, élémentsDeLégende: CartographieÉlémentsDeLégende) {
@@ -46,12 +53,12 @@ export default function useCartographieAvancement(données: CartographieDonnées
   const donnéesCartographie = useMemo(() => {
     const donnéesFormatées: CartographieDonnées = {};
 
-    données.forEach(({ valeur, codeInsee }) => {
+    données.forEach(({ valeur, codeInsee, estApplicable }) => {
       const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
 
       donnéesFormatées[codeInsee] = {
-        valeurAffichée: déterminerValeurAffichée(valeur),
-        remplissage: déterminerRemplissage(valeur, élémentsDeLégende),
+        valeurAffichée: déterminerValeurAffichée(valeur, estApplicable),
+        remplissage: déterminerRemplissage(valeur, élémentsDeLégende, estApplicable),
         libellé: territoireGéographique.nomAffiché,
       };
     });

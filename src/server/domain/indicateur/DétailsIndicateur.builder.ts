@@ -30,6 +30,8 @@ export default class DétailsIndicateurBuilder {
   private _dateValeurCibleAnnuelle: DétailsIndicateur['dateValeurCibleAnnuelle'];
 
   private _unité: DétailsIndicateur['unité'];
+  
+  private _est_applicable: DétailsIndicateur['est_applicable'];
 
   constructor() {
     const nombreDeValeurs = faker.datatype.number({ min: 28, max: 35 });
@@ -44,6 +46,7 @@ export default class DétailsIndicateurBuilder {
     this._dateValeurCibleAnnuelle = faker.date.future(1, '2023-03-01T00:00:00.000Z').toISOString();
     this._valeurCibleAnnuelle = faker.datatype.number({ min: this._valeurInitiale ?? 42, max: this._valeurCible ?? 39, precision: 0.01 });
     this._unité = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
+    this._est_applicable = générerPeutÊtreNull(0.2, faker.datatype.boolean());
 
     const valeursEtDates = this.générerValeursEtDates(nombreDeValeurs, this._valeurInitiale, this._valeurCible);
 
@@ -112,6 +115,11 @@ export default class DétailsIndicateurBuilder {
     return this;
   }
 
+  avecEstApplicable(est_applicable: DétailsIndicateur['est_applicable']): DétailsIndicateurBuilder {
+    this._est_applicable = est_applicable;
+    return this;
+  }
+
   build(): DétailsIndicateur {
     return {
       codeInsee: this._codeInsee,
@@ -127,6 +135,7 @@ export default class DétailsIndicateurBuilder {
       valeurCibleAnnuelle: this._valeurCibleAnnuelle,
       avancement: this._avancement,
       unité: this._unité,
+      est_applicable: this._est_applicable,
     };
   }
 

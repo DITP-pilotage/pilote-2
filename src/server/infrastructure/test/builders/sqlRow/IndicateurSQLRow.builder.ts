@@ -72,6 +72,8 @@ export default class IndicateurRowBuilder {
 
   private _unite_mesure: indicateur['unite_mesure'];
 
+  private _est_applicable: indicateur['est_applicable'];
+
 
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
@@ -112,6 +114,7 @@ export default class IndicateurRowBuilder {
     this._ponderation_nat = indicateurGénéré.pondération?.départementale ?? null;
     this._a_supprimer = false;
     this._unite_mesure = indicateurGénéré.unité;
+    this._est_applicable = détailsIndicateurGénéré.est_applicable;
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {
@@ -302,6 +305,7 @@ export default class IndicateurRowBuilder {
       objectif_taux_avancement_intermediaire: this._tauxAvancementCibleIntermediaire,
       a_supprimer: this._a_supprimer,
       unite_mesure: this._unite_mesure,
+      est_applicable: this._est_applicable,
     };
   }
 }
