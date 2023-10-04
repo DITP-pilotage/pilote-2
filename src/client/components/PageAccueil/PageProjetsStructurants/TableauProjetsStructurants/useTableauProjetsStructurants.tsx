@@ -79,7 +79,7 @@ export default function useTableauProjetsStructurants(projetsStructurants: Proje
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
   const [tri, setTri] = useState<SortingState>([{ id: 'avancement', desc: true }]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
-  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('md');
+  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('lg');
 
   const tableau = useReactTable({
     data: projetsStructurants,
