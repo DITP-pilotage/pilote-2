@@ -34,6 +34,7 @@ export type TerritoireDonnées = {
   tendance: ChantierTendance | null,
   dateDeMàjDonnéesQualitatives: string | null,
   dateDeMàjDonnéesQuantitatives: string | null,
+  estApplicable: boolean | null,
 };
 
 export type Territoire = {

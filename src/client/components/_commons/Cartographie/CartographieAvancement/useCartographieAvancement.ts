@@ -6,24 +6,25 @@ import { CartographieDonnéesAvancement } from './CartographieAvancement.interfa
 
 
 function déterminerValeurAffichée(valeur: number | null, estApplicable: boolean | null): string {
-  if (valeur === null)
-    return 'Non renseigné';
-
   if (estApplicable === false) {
     return 'Non applicable';
   }
+  
+  if (valeur === null)
+    return 'Non renseigné';
 
   return valeur.toFixed(0) + '%';
 }
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
 function déterminerRemplissage(valeur: number | null, élémentsDeLégende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) {
-  if (valeur === null)
-    return élémentsDeLégende.DÉFAUT.remplissage;
 
   if (estApplicable === false) {
     return élémentsDeLégende.NON_APPLICABLE.remplissage;
   }
+  
+  if (valeur === null)
+    return élémentsDeLégende.DÉFAUT.remplissage;
 
   const valeurArrondie = Number(valeur.toFixed(0));
 

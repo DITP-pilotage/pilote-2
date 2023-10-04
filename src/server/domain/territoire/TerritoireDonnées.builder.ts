@@ -21,6 +21,8 @@ export default class TerritoireDonnéesBuilder {
 
   private _dateDeMàjDonnéesQuantitatives: TerritoireDonnées['dateDeMàjDonnéesQuantitatives'];
 
+  private _estApplicable: TerritoireDonnées['estApplicable'];
+
   constructor() {
     this._codeInsee = faker.helpers.arrayElement([...codesInseeDépartements, ...codesInseeRégions, codeInseeFrance]);
     this._avancement = new AvancementBuilder().build();
@@ -30,6 +32,7 @@ export default class TerritoireDonnéesBuilder {
     this._tendance = faker.helpers.arrayElement(['BAISSE', 'HAUSSE', 'STAGNATION', null]);
     this._dateDeMàjDonnéesQualitatives = générerPeutÊtreNull(0.2, faker.date.past().toISOString());
     this._dateDeMàjDonnéesQuantitatives = générerPeutÊtreNull(0.2, faker.date.past().toISOString());
+    this._estApplicable = générerPeutÊtreNull(0.2, faker.datatype.boolean());
   }
 
   avecCodeInsee(codeInsee: TerritoireDonnées['codeInsee']): TerritoireDonnéesBuilder {
@@ -72,6 +75,7 @@ export default class TerritoireDonnéesBuilder {
       tendance: this._tendance,
       dateDeMàjDonnéesQualitatives: this._dateDeMàjDonnéesQualitatives,
       dateDeMàjDonnéesQuantitatives: this._dateDeMàjDonnéesQuantitatives,
+      estApplicable: this._estApplicable,
     };
   }
 }
