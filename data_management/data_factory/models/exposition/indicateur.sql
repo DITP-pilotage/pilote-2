@@ -1,32 +1,3 @@
-WITH
-
-indicateurs_zone_applicables AS (
-    SELECT DISTINCT 
-        id AS indic_id,
-        child_zone_id AS zone_id,
-        true AS est_applicable
-    FROM {{ ref('stg_ppg_metadata__indicateurs') }} mi 
-    LEFT JOIN {{ ref('stg_ppg_metadata__zonegroup_unnest') }} zu ON mi.zone_groupe_applicable = zu.zone_group_id 
-    WHERE zone_groupe_applicable is not null
-),
-indicateurs_za_toutes_zone AS (
-    SELECT DISTINCT
-        indic_id,
-        spmz.id AS zone_id
-    FROM indicateurs_zone_applicables
-    CROSS JOIN {{ ref('stg_ppg_metadata__zones') }} spmz
-),
-indicateurs_zone_applicable_final AS (
-    SELECT
-        indicateurs_za_toutes_zone.indic_id,
-        indicateurs_za_toutes_zone.zone_id,
-        COALESCE (indicateurs_zone_applicables.est_applicable, false) AS est_applicable
-    FROM indicateurs_za_toutes_zone 
-    LEFT JOIN indicateurs_zone_applicables 
-    ON indicateurs_zone_applicables.indic_id = indicateurs_za_toutes_zone.indic_id 
-    AND indicateurs_zone_applicables.zone_id = indicateurs_za_toutes_zone.zone_id
-)
-
 SELECT m_indicateurs.id,
     m_indicateurs.nom,
     m_indicateurs.chantier_id,
@@ -57,7 +28,7 @@ SELECT m_indicateurs.id,
     d_indicateurs.objectif_valeur_cible_intermediaire,
     d_indicateurs.objectif_taux_avancement_intermediaire,
     d_indicateurs.objectif_date_valeur_cible_intermediaire,
-    COALESCE(indicateurs_zone_applicable_final.est_applicable, true) AS est_applicable,
+    COALESCE(indicateur_zone.est_applicable, true) AS est_applicable,
     false AS a_supprimer
 FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
 	JOIN {{ ref('int_chantiers_with_mailles_and_territoires') }} chantiers_ayant_des_indicateurs ON m_indicateurs.chantier_id = chantiers_ayant_des_indicateurs.id
@@ -68,5 +39,5 @@ FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
 	    AND chantiers_ayant_des_indicateurs.zone_id = d_indicateurs.zone_code
 	    AND d_indicateurs.nom_structure IN ('Département', 'Région', 'Chantier')
 	LEFT JOIN {{ ref('stg_ppg_metadata__parametrage_indicateurs') }} parametrage_indicateurs ON parametrage_indicateurs.indicateur_id = m_indicateurs.id
-    LEFT JOIN indicateurs_zone_applicable_final ON indicateurs_zone_applicable_final.indic_id = m_indicateurs.id AND indicateurs_zone_applicable_final.zone_id = chantiers_ayant_des_indicateurs.zone_id
+    LEFT JOIN {{ ref('int_indicateurs_zones_applicables')}} indicateur_zone ON indicateur_zone.indic_id = m_indicateurs.id AND indicateur_zone.zone_id = chantiers_ayant_des_indicateurs.zone_id
 ORDER BY m_indicateurs.nom, chantiers_ayant_des_indicateurs.maille, chantiers_ayant_des_indicateurs.code_insee, d_indicateurs.date_valeur_actuelle DESC

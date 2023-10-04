@@ -70,7 +70,8 @@ model chantier {
   a_taux_avancement_regional         Boolean?
   a_meteo_departemental              Boolean?
   a_meteo_regional                   Boolean?
-  a_supprimer Boolean @default(true)
+  est_applicable                     Boolean?
+  a_supprimer Boolean                @default(true)
 
   @@id([id, code_insee, maille])
   @@schema("public")
