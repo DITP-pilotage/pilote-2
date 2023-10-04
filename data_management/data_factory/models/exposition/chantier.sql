@@ -67,6 +67,37 @@ chantier_meteo_regional as (
     WHERE meteo is not NULL
     AND maille = 'REG'
     GROUP BY chantier_id
+),
+
+indicateurs_zones AS (
+	SELECT DISTINCT
+        spmi.id as indic_id,
+        chantier_id, 
+        zones.id as zone_id 
+    FROM {{ ref('stg_ppg_metadata__indicateurs') }} spmi
+	CROSS JOIN (
+        SELECT DISTINCT
+            id
+        FROM {{ ref('stg_ppg_metadata__zones') }}
+        ) as zones 
+),
+indicateurs_zones_applicables AS (
+	SELECT DISTINCT
+        iz.indic_id,
+        iz.chantier_id,
+        iz.zone_id,
+        COALESCE(iiza.est_applicable, TRUE) AS est_applicable 
+    FROM indicateurs_zones iz
+	LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} iiza 
+    ON iz.indic_id = iiza.indic_id AND iz.zone_id = iiza.zone_id
+),
+chantiers_zones_applicables AS (
+    SELECT 
+        chantier_id,
+        zone_id,
+        bool_or(est_applicable) as est_applicable
+    FROM indicateurs_zones_applicables 
+    GROUP BY chantier_id, zone_id
 )
 
 SELECT m_chantiers.id,
@@ -93,6 +124,7 @@ SELECT m_chantiers.id,
         chantier_ta_reg.a_taux_avancement_regional,
         chantier_meteo_dep.a_meteo_departemental,
         chantier_meteo_reg.a_meteo_regional,
+        chantier_za.est_applicable,
         false AS a_supprimer
     FROM {{ ref('int_chantiers_with_mailles_and_territoires') }} m_chantiers
         LEFT JOIN dfakto_chantier d_chantiers
@@ -110,5 +142,6 @@ SELECT m_chantiers.id,
         LEFT JOIN chantier_taux_avancement_regional chantier_ta_reg ON m_chantiers.id = chantier_ta_reg.code_chantier
         LEFT JOIN chantier_meteo_departemental chantier_meteo_dep ON m_chantiers.id = chantier_meteo_dep.chantier_id
         LEFT JOIN chantier_meteo_regional chantier_meteo_reg ON m_chantiers.id = chantier_meteo_reg.chantier_id
+        LEFT JOIN chantiers_zones_applicables chantier_za ON chantier_za.chantier_id = m_chantiers.id AND chantier_za.zone_id = m_chantiers.zone_id
     WHERE synthese_triee_par_date.row_id_by_date_meteo_desc = 1
         OR synthese_triee_par_date.row_id_by_date_meteo_desc IS NULL

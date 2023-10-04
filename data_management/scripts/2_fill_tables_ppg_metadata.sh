@@ -15,11 +15,10 @@ then
   fi
 fi
 
-
 if [[ ! -d "$PPG_METADATA_DIRECTORY" ]]
 then
   mkdir "$PPG_METADATA_DIRECTORY"
-  git clone "https://$PPG_METADATA_GITHUB_TOKEN@github.com/DITP-pilotage/PPG_metadata.git" "$PPG_METADATA_DIRECTORY" -b prod --depth 1
+  git clone "https://$PPG_METADATA_GITHUB_TOKEN@github.com/DITP-pilotage/PPG_metadata.git" "$PPG_METADATA_DIRECTORY" -b $PPG_METADATA_GITHUB_BRANCH --depth 1
 fi
 
 PROJECT_DIR=data_factory

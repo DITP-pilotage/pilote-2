@@ -29,4 +29,8 @@ export const ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS: CartographieÉlémentsDeLég
     libellé: 'Territoire pour lequel la météo n’est pas renseignée',
     remplissage: REMPLISSAGE_PAR_DÉFAUT,
   },
+  'NON_APPLICABLE': {
+    libellé: 'Territoire où le chantier prioritaire ne s’applique pas',
+    remplissage: 'url(#hachures-gris-blanc)',
+  },
 };

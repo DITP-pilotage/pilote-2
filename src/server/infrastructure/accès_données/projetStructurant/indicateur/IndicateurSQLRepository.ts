@@ -45,6 +45,7 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
         valeurCibleAnnuelle: null,
         avancement: { annuel: null, global: indicateur.taux_avancement },
         unité: null,
+        est_applicable: null,
       };
     }
 

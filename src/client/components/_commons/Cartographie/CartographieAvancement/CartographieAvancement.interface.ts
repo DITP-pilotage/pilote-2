@@ -2,7 +2,7 @@ import { CartographieOptions } from '@/components/_commons/Cartographie/useCarto
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { CartographieÉlémentsDeLégende } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 
-export type CartographieDonnéesAvancement = { valeur: number | null, codeInsee: CodeInsee }[];
+export type CartographieDonnéesAvancement = { valeur: number | null, codeInsee: CodeInsee, estApplicable: boolean | null }[];
 
 export default interface CartographieAvancementProps {
   données: CartographieDonnéesAvancement,

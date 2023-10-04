@@ -62,6 +62,8 @@ export default class ChantierRowBuilder {
 
   private _a_supprimer: chantier['a_supprimer'];
 
+  private _est_applicable: chantier['est_applicable'];
+
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
     const avancement = new AvancementBuilder().build();
@@ -96,6 +98,7 @@ export default class ChantierRowBuilder {
     this._a_meteo_regional = faker.datatype.boolean();
     this._a_taux_avancement_departemental = faker.datatype.boolean();
     this._a_taux_avancement_regional = faker.datatype.boolean();
+    this._est_applicable = faker.datatype.boolean();
     this._a_supprimer = false;
   }
 
@@ -220,6 +223,11 @@ export default class ChantierRowBuilder {
     return this;
   }
 
+  avecEstApplicable(est_applicable: chantier['est_applicable']): ChantierRowBuilder {
+    this._est_applicable = est_applicable;
+    return this;
+  }
+
   shallowCopy(): ChantierRowBuilder {
     const result = new ChantierRowBuilder() as any;
     for (const attribut in this) {
@@ -255,6 +263,7 @@ export default class ChantierRowBuilder {
       a_taux_avancement_departemental: this._a_taux_avancement_departemental,
       a_taux_avancement_regional: this._a_taux_avancement_regional,
       a_supprimer: this._a_supprimer,
+      est_applicable: this._est_applicable,
     };
   }
 }
