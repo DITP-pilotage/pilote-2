@@ -201,7 +201,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
   const [tri, setTri] = useState<SortingState>([{ id: 'avancement', desc: true }]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
   const [regroupement, setRegroupement] = useState<GroupingState>([]);
-  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('md');
+  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('lg');
 
   useEffect(() => {
     setTri(précédentTri => (

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { breakpointXL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
+import { breakpointL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
 import { BarreLatéraleStyledProps } from './BarreLatérale.interface';
 
 const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
@@ -15,7 +15,7 @@ const BarreLatéraleStyled = styled.div<BarreLatéraleStyledProps>`
     border-right: 1px solid var(--border-disabled-grey);
   }
 
-  @media screen and (max-width: ${breakpointXL}) {
+  @media screen and (max-width: ${breakpointL}) {
     .barre-latérale {
       position: fixed;
       left: 0;
