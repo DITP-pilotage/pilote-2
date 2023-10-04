@@ -15,8 +15,6 @@ then
   fi
 fi
 
-echo $PPG_METADATA_GITHUB_BRANCH
-
 if [[ ! -d "$PPG_METADATA_DIRECTORY" ]]
 then
   mkdir "$PPG_METADATA_DIRECTORY"
