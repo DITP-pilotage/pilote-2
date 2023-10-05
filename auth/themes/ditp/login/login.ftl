@@ -113,7 +113,7 @@
                                       <#list social.providers as p>
                                           <li class="${properties.kcFormSocialAccountListLinkClass!}">
                                             <a href="${p.loginUrl}" id="zocial-${p.alias}">
-                                              <button  class="fr-mt-2v fr-btn zocial ${p.providerId}">
+                                              <button  href="${p.loginUrl}" type="button" class="fr-mt-2v fr-btn zocial ${p.providerId}">
                                                 ${p.displayName}
                                               </button>
                                             </a>
