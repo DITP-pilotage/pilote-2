@@ -106,7 +106,7 @@
                               </li>
                             </ul>
                           </div>
-                          <div classname = "fr-my-2w">
+                          <div classname = "fr-my-2w fr-text"  style = "text-align:center;margin:auto;">
                             Ou se connecter avec
                           </div>
                           <#if realm.password && social.providers??>
