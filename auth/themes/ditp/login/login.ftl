@@ -106,22 +106,22 @@
                               </li>
                             </ul>
                           </div>
-                          </div>
                           <#if realm.password && social.providers??>
-                              <div id="kc-social-providers" class="fr-fieldset__element ${properties.kcFormSocialAccountContentClass!} ${properties.kcFormSocialAccountClass!}">
-                                  <ul class="fr-btns-group ${properties.kcFormSocialAccountListClass!} <#if social.providers?size gt 4>${properties.kcFormSocialAccountDoubleListClass!}</#if>">
-                                      <#list social.providers as p>
-                                          <li class="${properties.kcFormSocialAccountListLinkClass!}">
-                                              <button  href="${p.loginUrl}" type="button" class="fr-mt-2v fr-btn fr-btn--secondary zocial ${p.providerId}">
-                                                <a href="${p.loginUrl}" id="zocial-${p.alias}">
-                                                  ${p.displayName}
-                                                </a>
-                                              </button>
-                                          </li>
-                                      </#list>
-                                  </ul>
-                              </div>
+                          <div id="kc-social-providers" class="fr-fieldset__element ${properties.kcFormSocialAccountContentClass!} ${properties.kcFormSocialAccountClass!}">
+                              <ul class="fr-btns-group ${properties.kcFormSocialAccountListClass!} <#if social.providers?size gt 4>${properties.kcFormSocialAccountDoubleListClass!}</#if>">
+                                  <#list social.providers as p>
+                                      <li class="${properties.kcFormSocialAccountListLinkClass!}">
+                                          <button  href="${p.loginUrl}" type="button" class="fr-mt-2v fr-btn fr-btn--secondary zocial ${p.providerId}">
+                                            <a href="${p.loginUrl}" id="zocial-${p.alias}">
+                                              ${p.displayName}
+                                            </a>
+                                          </button>
+                                      </li>
+                                  </#list>
+                              </ul>
+                          </div>
                           </#if>
+                          </div>
                           </div>
                           <div class="fr-messages-group" id="login-1760-fieldset-messages" aria-live="assertive">
                           </div>
