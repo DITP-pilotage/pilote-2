@@ -106,6 +106,9 @@
                               </li>
                             </ul>
                           </div>
+                          <div classname = "fr-my-2w">
+                            Ou se connecter avec
+                          </div>
                           <#if realm.password && social.providers??>
                           <div id="kc-social-providers" class="fr-fieldset__element ${properties.kcFormSocialAccountContentClass!} ${properties.kcFormSocialAccountClass!}">
                               <ul class="fr-btns-group ${properties.kcFormSocialAccountListClass!} <#if social.providers?size gt 4>${properties.kcFormSocialAccountDoubleListClass!}</#if>">
