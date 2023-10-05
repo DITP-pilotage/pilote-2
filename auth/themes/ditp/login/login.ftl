@@ -108,13 +108,15 @@
                           </div>
                           </div>
                           <#if realm.password && social.providers??>
-                              <div id="kc-social-providers" class="${properties.kcFormSocialAccountContentClass!} ${properties.kcFormSocialAccountClass!}">
-                                  <ul class="${properties.kcFormSocialAccountListClass!} <#if social.providers?size gt 4>${properties.kcFormSocialAccountDoubleListClass!}</#if>">
+                              <div id="kc-social-providers" class="fr-fieldset__element ${properties.kcFormSocialAccountContentClass!} ${properties.kcFormSocialAccountClass!}">
+                                  <ul class="fr-btns-group ${properties.kcFormSocialAccountListClass!} <#if social.providers?size gt 4>${properties.kcFormSocialAccountDoubleListClass!}</#if>">
                                       <#list social.providers as p>
                                           <li class="${properties.kcFormSocialAccountListLinkClass!}">
-                                            <button href="${p.loginUrl}" id="zocial-${p.alias}" class="fr-mt-2v fr-btn">
-                                              ${p.displayName}
-                                            </button>
+                                            <a href="${p.loginUrl}" id="zocial-${p.alias}">
+                                              <button  class="fr-mt-2v fr-btn zocial ${p.providerId}">
+                                                ${p.displayName}
+                                              </button>
+                                            </a>
                                           </li>
                                       </#list>
                                   </ul>
