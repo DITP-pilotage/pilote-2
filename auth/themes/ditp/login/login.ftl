@@ -112,8 +112,10 @@
                                   <ul class="fr-btns-group ${properties.kcFormSocialAccountListClass!} <#if social.providers?size gt 4>${properties.kcFormSocialAccountDoubleListClass!}</#if>">
                                       <#list social.providers as p>
                                           <li class="${properties.kcFormSocialAccountListLinkClass!}">
-                                              <button  href="${p.loginUrl}" id="zocial-${p.alias}" type="button" class="fr-mt-2v fr-btn zocial ${p.providerId}">
-                                                ${p.displayName}
+                                              <button  href="${p.loginUrl}" type="button" class="fr-mt-2v fr-btn fr-btn--secondary zocial ${p.providerId}">
+                                                <a href="${p.loginUrl}" id="zocial-${p.alias}">
+                                                  ${p.displayName}
+                                                </a>
                                               </button>
                                           </li>
                                       </#list>
