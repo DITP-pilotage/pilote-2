@@ -68,7 +68,7 @@ const colonnesTableauChantiers = [
         dateDeMàjDonnéesQuantitatives={cellContext.row.original.dateDeMàjDonnéesQuantitatives}
       />),
     enableGlobalFilter: false,
-    sortingFn: (a, b, columnId) => comparerAvancementRéforme(a.getValue(columnId), b.getValue(columnId)),
+    sortingFn: (a, b, columnId) => comparerAvancementRéforme(a.getValue(columnId), b.getValue(columnId), null),
     meta: {
       width: '11rem',
     },
