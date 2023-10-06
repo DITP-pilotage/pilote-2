@@ -14,6 +14,7 @@ def model(dbt, session):
         'date_valeur_actuelle': 'datetime64',
         'date_valeur_cible_intermediaire': 'datetime64',
         'date_valeur_cible_globale': 'datetime64',
+        'date_valeur_initiale_visualisation': 'datetime64',
         'snapshot_date': 'datetime64',
     }
 
