@@ -29,6 +29,7 @@ get dim_structures.csv $TEMP_DIR
 get dim_tree_nodes.csv $TEMP_DIR
 get fact_financials_lite.csv $TEMP_DIR
 get fact_progress.csv $TEMP_DIR
+get fact_progress_precedent.csv $TEMP_DIR
 get fact_progress_chantier.csv $TEMP_DIR
 EOF
 )
