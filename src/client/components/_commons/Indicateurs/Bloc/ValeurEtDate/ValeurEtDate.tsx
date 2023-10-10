@@ -6,7 +6,7 @@ export default function ValeurEtDate({ valeur, date, unité }: ValeurEtDateProps
   return (
     <>
       <p className='indicateur-valeur'>
-        { Boolean(valeur) ? valeur?.toLocaleString() + (unité?.toLocaleLowerCase() === 'pourcentage' ? ' %' : '') : '' }
+        { valeur !== null && valeur !== undefined ? valeur?.toLocaleString() + (unité?.toLocaleLowerCase() === 'pourcentage' ? ' %' : '') : '' }
       </p>
       {
           !!dateFormatée && (
