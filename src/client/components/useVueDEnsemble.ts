@@ -59,6 +59,7 @@ export default function useVueDEnsemble(chantiersFiltrés: Chantier[], chantiers
     return objectEntries(donnéesTerritoiresAgrégées[mailleSélectionnée].territoires).map(([codeInsee, territoire]) => ({
       valeur: territoire.répartition.avancements.global.moyenne,
       codeInsee: codeInsee,
+      estApplicable: null,
     }));
   }, [donnéesTerritoiresAgrégées, mailleSélectionnée]);
 

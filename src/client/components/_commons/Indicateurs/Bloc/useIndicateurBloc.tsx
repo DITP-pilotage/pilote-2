@@ -38,6 +38,7 @@ const indicateurDétailsVide = {
     dateValeurCibleAnnuelle: null,
     avancement: { global: null, annuel: null },
     unité: null,
+    est_applicable: false,
   },
 };
 

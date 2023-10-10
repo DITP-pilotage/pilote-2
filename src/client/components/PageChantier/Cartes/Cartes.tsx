@@ -20,11 +20,13 @@ export default function Cartes({ chantierMailles, afficheCarteAvancement, affich
   const donnéesCartographieAvancement = objectEntries(chantierMailles[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
     valeur: territoire.avancement.global,
     codeInsee: codeInsee,
+    estApplicable: territoire.estApplicable,
   }));
 
   const donnéesCartographieMétéo = objectEntries(chantierMailles[mailleSélectionnée]).map(([codeInsee, territoire]) => ({
     valeur: territoire.météo,
     codeInsee: codeInsee,
+    estApplicable: territoire.estApplicable,
   }));
 
   return (

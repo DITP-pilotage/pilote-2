@@ -5,7 +5,11 @@ import { CartographieÉlémentsDeLégende } from '@/client/components/_commons/C
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 
 
-function déterminerValeurAffichée(valeur: number | null): string {
+function déterminerValeurAffichée(valeur: number | null, estApplicable: boolean | null): string {
+  if (estApplicable === false) {
+    return 'Non applicable';
+  }
+  
   if (valeur === null)
     return 'Non renseigné';
 
@@ -13,7 +17,12 @@ function déterminerValeurAffichée(valeur: number | null): string {
 }
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-function déterminerRemplissage(valeur: number | null, élémentsDeLégende: CartographieÉlémentsDeLégende) {
+function déterminerRemplissage(valeur: number | null, élémentsDeLégende: CartographieÉlémentsDeLégende, estApplicable: boolean | null) {
+
+  if (estApplicable === false) {
+    return élémentsDeLégende.NON_APPLICABLE.remplissage;
+  }
+  
   if (valeur === null)
     return élémentsDeLégende.DÉFAUT.remplissage;
 
@@ -30,28 +39,45 @@ function déterminerRemplissage(valeur: number | null, élémentsDeLégende: Car
   else if (valeurArrondie >= 80 && valeurArrondie < 90) return élémentsDeLégende['80-90'].remplissage;
   else if (valeurArrondie >= 90) return élémentsDeLégende['90-100'].remplissage;
   else return élémentsDeLégende.DÉFAUT.remplissage;
-  // Rajouter le cas NON_APPLICABLE : élémentsDeLégende['NON_APPLICABLE']
 }
 
 export default function useCartographieAvancement(données: CartographieDonnéesAvancement, élémentsDeLégende: CartographieÉlémentsDeLégende) {
   const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
-  const légende = useMemo(() => (
-    Object.values(élémentsDeLégende).map(({ remplissage, libellé }) => ({
+  const légende = useMemo(() => {
+    
+    const tousApplicables: Boolean = données.map(d => d.estApplicable).every(el => el === true);
+    const tousNonNull: Boolean = données.map(d => d.valeur !== null).every(el => el === true);
+
+    let légendeAffichée = Object.values(élémentsDeLégende);
+    if (tousApplicables) {
+      légendeAffichée = légendeAffichée
+        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
+    }
+
+    if (tousNonNull) {
+      légendeAffichée = légendeAffichée
+        .filter(el => el.libellé !== 'Territoire pour lequel la donnée n’est pas renseignée/disponible');
+    }
+    
+    légendeAffichée = légendeAffichée.map(({ remplissage, libellé }) => ({
       libellé,
       remplissage,
-    }))
-  ), [élémentsDeLégende]);
+    }));
+
+    return légendeAffichée;
+
+  }, [élémentsDeLégende, données]);
 
   const donnéesCartographie = useMemo(() => {
     const donnéesFormatées: CartographieDonnées = {};
 
-    données.forEach(({ valeur, codeInsee }) => {
+    données.forEach(({ valeur, codeInsee, estApplicable }) => {
       const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
 
       donnéesFormatées[codeInsee] = {
-        valeurAffichée: déterminerValeurAffichée(valeur),
-        remplissage: déterminerRemplissage(valeur, élémentsDeLégende),
+        valeurAffichée: déterminerValeurAffichée(valeur, estApplicable),
+        remplissage: déterminerRemplissage(valeur, élémentsDeLégende, estApplicable),
         libellé: territoireGéographique.nomAffiché,
       };
     });

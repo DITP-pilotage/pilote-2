@@ -22,8 +22,8 @@ renamed as (
         indic_source_url as source_url,
         indic_methode_calcul as mode_de_calcul,
         indic_unite as unite,
-        indic_hidden_pilote as est_cache_dans_pilote
-
+        indic_hidden_pilote as est_cache_dans_pilote,
+        zg_applicable as zone_groupe_applicable
     from source
 
 )
