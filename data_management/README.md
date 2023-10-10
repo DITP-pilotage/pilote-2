@@ -135,7 +135,7 @@ Le *reverse-proxy* [Traefik](https://traefik.io/traefik/) est utilisé pour déf
 
 Cette technologie permet de n'exposer qu'un seul port, et d'utiliser des routes simples à mémoriser.
 
-**Attention:** Si vous utilisez cette méthode, il faut modifier la variable d'environnement du fichier [/.env](#todo): 
+**Attention:** Si vous utilisez cette méthode, il faut modifier la variable d'environnement du fichier [/.env](https://github.com/DITP-pilotage/pilote-2/blob/afab0f538e140b30055335ebf161555b18de3334/.env.example#L24): 
 ```sh
 # Sans Traefik
 NEXTAUTH_URL=http://localhost:3000
