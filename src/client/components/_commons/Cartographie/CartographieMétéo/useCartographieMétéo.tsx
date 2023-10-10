@@ -22,17 +22,26 @@ export default function useCartographieMétéo(données: CartographieDonnéesMé
 
   const légende = useMemo(() => {
     const tousApplicables: Boolean = données.map(d => d.estApplicable).every(el => el === true);
-    return tousApplicables 
-      ? Object.values(élémentsDeLégende)
-        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas')
-        .map(({ remplissage, libellé }) => ({
-          libellé,
-          remplissage,
-        }))
-      : Object.values(élémentsDeLégende).map(({ remplissage, libellé }) => ({
-        libellé,
-        remplissage,
-      }));
+    const tousNonNull: Boolean = données.map(d => d.valeur !== 'NON_RENSEIGNEE').every(el => el === true);
+
+    let légendeAffichée = Object.values(élémentsDeLégende);
+    if (tousApplicables) {
+      légendeAffichée = légendeAffichée
+        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
+    }
+
+    if (tousNonNull) {
+      légendeAffichée = légendeAffichée
+        .filter(el => el.libellé !== 'Territoire pour lequel la météo n’est pas renseignée');
+    }
+    
+    légendeAffichée = légendeAffichée.map(({ remplissage, libellé }) => ({
+      libellé,
+      remplissage,
+    }));
+    
+    return légendeAffichée;
+
   }, [élémentsDeLégende, données]);
 
   const donnéesCartographie = useMemo(() => {
