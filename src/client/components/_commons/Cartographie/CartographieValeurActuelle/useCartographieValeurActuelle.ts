@@ -4,17 +4,27 @@ import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartogr
 import { CartographieDonnéesValeurActuelle } from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle.interface';
 import { valeurMaximum, valeurMinimum } from '@/client/utils/statistiques/statistiques';
 import { interpolerCouleurs } from '@/client/utils/couleur/couleur';
+import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 
 const COULEUR_DÉPART = '#8bcdb1';
 const COULEUR_ARRIVÉE = '#083a25';
-const REMPLISSAGE_PAR_DÉFAUT = '#bababa';
+const REMPLISSAGE_PAR_DÉFAUT = ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.DÉFAUT.remplissage;
 
-function déterminerValeurAffichée(valeur: number | null, unité?: string | null) {
+
+function déterminerValeurAffichée(valeur: number | null, estApplicable: boolean | null, unité?: string | null) {
   const unitéAffichée = unité?.toLocaleLowerCase() === 'pourcentage' ? '%' : ''; 
+  if (estApplicable === false) {
+    return 'Non applicable';
+  }
   return valeur === null ? 'Non renseigné' : valeur.toLocaleString() + unitéAffichée;
 }
 
-function déterminerRemplissage(valeur: number | null, valeurMin: number | null, valeurMax: number | null) {
+function déterminerRemplissage(valeur: number | null, valeurMin: number | null, valeurMax: number | null, estApplicable: boolean | null) {
+
+  if (estApplicable === false) {
+    return ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.NON_APPLICABLE.remplissage
+  }
+
   if (valeur === null || valeurMin === null || valeurMax === null)
     return REMPLISSAGE_PAR_DÉFAUT;
 
@@ -39,11 +49,11 @@ export default function useCartographieValeurActuelle(données: CartographieDonn
   const donnéesCartographie = useMemo(() => {
     let donnéesFormatées: CartographieDonnées = {};
     
-    données.forEach(({ valeur, codeInsee }) => {
+    données.forEach(({ valeur, codeInsee, estApplicable }) => {
       const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
       donnéesFormatées[codeInsee] = {
-        valeurAffichée: déterminerValeurAffichée(valeur, unité),
-        remplissage: déterminerRemplissage(valeur, valeurMin, valeurMax),
+        valeurAffichée: déterminerValeurAffichée(valeur, estApplicable, unité),
+        remplissage: déterminerRemplissage(valeur, valeurMin, valeurMax, estApplicable),
         libellé: territoireGéographique.nomAffiché,
       };
     });
