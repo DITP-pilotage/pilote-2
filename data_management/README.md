@@ -118,22 +118,39 @@ dbt deps --project-dir data_factory
 
 ### [docker-conf] Installation
 
-La partie des jobs data a été conteneurisé avec Docker. Pour l'utiliser, il faut se place dans le dossier `data_management/` qui contient un fichier `docker-compose.yml`. Ce fichier contient une [instruction `build`](https://github.com/DITP-pilotage/pilote-2/blob/4b1607af5915ba1b218ae3462434869990565462/data_management/docker-compose.yml#L6-L8) qui va construire une image à partir des instructions du fichier [`Dockerfile-data`](https://github.com/DITP-pilotage/pilote-2/blob/265377fa7be1dc6300d86ced624804348e414609/data_management/Dockerfile-data) dans ce même dossier. Il faut donc:
+L'application complète a été conteneurisées (partie webapp et data). Pour l'utiliser, il faut se place dans le dossier `data_management/` qui contient un fichier `docker-compose.yml`.
 
-1. `docker-compose build` pour construire l'image Docker
-2. *optionnel* `docker-compose run --service-ports postgres` pour lancer une base de données (si besoin)
-3. `docker-compose run --service-ports dbt-pilote scripts/<name-of-the-script>.sh` pour lancer un script du dossier [scripts/](scripts/)
-4. *OU* `docker-compose run --service-ports dbt-pilote` pour entrer dans le container. Vous pouvez ensuite lancer un script depuis ce container comme vous le feriez à l'extérieur, c'est à dire avec `/bin/bash scripts/<name-of-the-script>.sh`
+Pour l'utiliser:
 
-Par exemple, pour servir la documentation (cf section [Visualisation de l'ensemble du flux](visualisation-de-lensemble-du-flux)), exécuter la commande:
+- *optionnel* `docker-compose build` pour construire les images Docker nécessaires
+- `docker-compose up` pour lancer la base de données, la documentation interactive (dbt et prisma), et la webapp
+- *optionnel* `docker-compose run pilote_scripts` pour entrer dans le container et lancer les scripts dbt via `/bin/bash scripts/<name-of-the-script>.sh`
+- *optionnel* OU `docker-compose run pilote_scripts scripts/<name-of-the-script>.sh` pour lancer le script dbt `<name-of-the-script>.sh`
+- *optionnel* `docker container exec -it pilote_webapp /bin/sh` pour entrer dans le container webapp et éventuellement entrer des commandes (ex: npm, yarn, ...)
 
+Le *reverse-proxy* [Traefik](https://traefik.io/traefik/) est utilisé pour définir les différentes routes. Ainsi, on a:
+- `pilote.localhost` : webapp
+- `pilote-dbt.localhost` : documentation interactive dbt
+- `pilote-prisma.localhost` : prisma studio pour naviguer dans les données
+
+Cette technologie permet de n'exposer qu'un seul port, et d'utiliser des routes simples à mémoriser.
+
+**Attention:** Si vous utilisez cette méthode, il faut modifier la variable d'environnement du fichier [/.env](#todo): 
 ```sh
-
-docker-compose run --service-ports dbt-pilote scripts/doc.sh
-
+# Sans Traefik
+NEXTAUTH_URL=http://localhost:3000
+# Avec Traefik
+NEXTAUTH_URL=http://pilote.localhost
 ```
 
-*Note:* Avec cette dernière commande (voir le [fichier source](./data_factory/scripts/doc.sh)), `prisma studio` est également lancée en plus de la doc *dbt*. Voir la [documentation prisma](https://www.prisma.io/docs/reference/api-reference/command-reference#studio) pour plus de détails.
+*Note*: Les containers créés sont:
+- `pilote_traefik`: reverse proxy
+- `pilote_postgres`: base de données
+- `pilote_dbt`: documentation interactive dbt
+- `pilote_prisma`: prisma studio
+- `pilote_webapp`: webapp
+
+
 
 
 Un exemple complet d'utilisation de docker pour cette partie data pourrait être:
@@ -141,14 +158,12 @@ Un exemple complet d'utilisation de docker pour cette partie data pourrait être
 ```sh
 # Build the image
 docker-compose build
-# Start a database
-docker-compose run --service-ports postgres
-# Run script to install dbt
-docker-compose run dbt-pilote scripts/0_install_dbt_deps.sh
+# Lancement de la base de données, documentation, et webapp
+docker-compose up
 # Run prisma migrations
-docker-compose run dbt-pilote scripts/0_prisma_migrate.sh
+docker-compose run pilote_scripts scripts/0_prisma_migrate.sh
 # Run script 1
-docker-compose run dbt-pilote scripts/1_dump_dfakto.sh
+docker-compose run pilote_scripts scripts/1_dump_dfakto.sh
 # and so on for all the scripts
 ```
 
@@ -307,7 +322,7 @@ Afin d'exécuter les jobs de la data factory, il suffit de :
 Des tests sur les données ont été implémentés. Ils sont situés dans le dossier [data_factory/tests](./data_factory/tests). Pour les exécuter, utiliser le script `scripts/test_data.sh` ou via Docker: 
 
 ```sh
-docker-compose run dbt-pilote scripts/test_data.sh
+docker-compose run pilote_scripts scripts/test_data.sh
 ```
 
 *Note:* Vous pouvez également exécuter uniquement certains tests (en se basant sur le dossier ou les tags associés) comme détaillé dans la [documentation dbt](https://docs.getdbt.com/reference/node-selection/test-selection-examples).
@@ -319,6 +334,8 @@ Afin de remplir les tables du schéma `public` et ainsi alimenter l'application 
 
 ```bash
 bash scripts/7_fill_tables_public.sh
+# ou via docker
+docker-compose run pilote_scripts scripts/7_fill_tables_public.sh
 ```
 
 # Schéma des flux de données
@@ -373,10 +390,7 @@ dbt docs generate --project-dir data_factory/  && dbt docs serve --project-dir d
 Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 
 Une petite icône bleue en bas à droite indique le DAG pour visualiser le flux.
 
-Ou via Docker, puis à l'adresse `localhost:8088` (voir la section [Installation](installation)):
-```bash
-docker-compose run --service-ports dbt-pilote scripts/doc.sh
-```
+Ou via Docker, puis à l'adresse `pilote-dbt.localhost` (voir la section [Installation](installation)) lors de l'exécution de `docker-compose up`.
 
 ### Zoom sur une brique du flux
 
