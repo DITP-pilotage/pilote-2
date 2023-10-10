@@ -20,13 +20,20 @@ function déterminerRemplissage(valeur: Météo | null, élémentsDeLégende: Ca
 export default function useCartographieMétéo(données: CartographieDonnéesMétéo, élémentsDeLégende: CartographieÉlémentsDeLégende) {
   const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
-  const légende = useMemo(() => (
-    Object.values(élémentsDeLégende).map(({ remplissage, libellé, picto }) => ({
-      libellé,
-      remplissage,
-      picto,
-    }))
-  ), [élémentsDeLégende]);
+  const légende = useMemo(() => {
+    const tousApplicables: Boolean = données.map(d => d.estApplicable).every(el => el === true);
+    return tousApplicables 
+      ? Object.values(élémentsDeLégende)
+        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas')
+        .map(({ remplissage, libellé }) => ({
+          libellé,
+          remplissage,
+        }))
+      : Object.values(élémentsDeLégende).map(({ remplissage, libellé }) => ({
+        libellé,
+        remplissage,
+      }));
+  }, [élémentsDeLégende, données]);
 
   const donnéesCartographie = useMemo(() => {
     let donnéesFormatées: CartographieDonnées = {};

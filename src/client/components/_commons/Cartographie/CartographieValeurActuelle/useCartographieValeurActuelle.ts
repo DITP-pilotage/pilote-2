@@ -22,7 +22,7 @@ function déterminerValeurAffichée(valeur: number | null, estApplicable: boolea
 function déterminerRemplissage(valeur: number | null, valeurMin: number | null, valeurMax: number | null, estApplicable: boolean | null) {
 
   if (estApplicable === false) {
-    return ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.NON_APPLICABLE.remplissage
+    return ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS.NON_APPLICABLE.remplissage;
   }
 
   if (valeur === null || valeurMin === null || valeurMax === null)
