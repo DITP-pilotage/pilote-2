@@ -1,5 +1,6 @@
-
--- taux_avancement_indicateur_last_va: Keep 1 row per {indicateur_id, zone_id}: the one with latest date_releve
+-- On cherche à obtenir la dernière VA pour chaque {indicateur_id, zone_id}
+--  Pour cela, on va grouper {{ ref('taux_avancement_indicateur') }} par indicateur_id, zone_id
+--  puis la trier par date_releve desc
 WITH taux_avancement_indicateur_rank AS (
     select 
     'ignored' AS tree_node_id, 
@@ -9,12 +10,14 @@ WITH taux_avancement_indicateur_rank AS (
     valeur_cible_annuelle,
     valeur_actuelle,
     date_releve, valeur_initiale, zone_id, indicateur_id,
-    rank() over (partition by indicateur_id, zone_id order by date_releve) as r
+    rank() over (partition by indicateur_id, zone_id order by date_releve desc) as r
     FROM {{ ref('taux_avancement_indicateur') }}  a
 ), 
+-- On ne garde que la 1e ligne de chaque groupe (last_va)
 taux_avancement_indicateur_last_va as (select * from taux_avancement_indicateur_rank where r=1)
 
 
+-- Ici, on va reconstruire la nouvelle version de int_dfakto_indicateurs_metrics
 SELECT 
     tree_node_id, 
     a.taux_avancement_globale_borne AS objectif_taux_avancement,

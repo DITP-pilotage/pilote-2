@@ -5,6 +5,8 @@ models:
     description: "Vue intermédiaire afin de décliner les chantiers pour tous leurs territoires (maille + code insee)"
   - name: int_dfakto_indicateurs_metrics
     description: "Vue intermédiaire pour récupérer les métriques (type TA) des indicateurs en provenance de dfakto"
+  - name: df2_int_dfakto_indicateurs_metrics
+    description: "Reproduction de la table int_dfakto_indicateurs_metrics sans les dépendances"
   - name: projet_structurant_temporaire
     description: "Vue intermédiaire afin de créer une table projet_structurant avec un id unique qui sera réutilisée pour toutes les tables en ayant besoin (de l'id unique)"
   - name: last_vc_annuel
