@@ -48,7 +48,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
         nombreFiltresActifs > 0 &&
         <FiltresActifs ministères={ministères} />
       }
-      <div className="fr-py-2w fr-px-md-4w fr-container--fluid">
+      <div className="fr-py-2w fr-px-md-2w fr-container--fluid">
         <div className="fr-mb-2w titre">
           <Titre
             baliseHtml="h1"

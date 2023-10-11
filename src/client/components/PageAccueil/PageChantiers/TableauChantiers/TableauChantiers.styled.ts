@@ -37,7 +37,6 @@ const TableauChantiersStyled = styled.section`
     tbody {
       tr {
         height: 4.5rem;
-        
         td > a {
           display: flex;
           align-items: center;

@@ -11,8 +11,14 @@ const couleurs = {
 };
 
 const largeurs = {
-  sm: '3.75rem',
-  lg: '10.5rem',
+  sm: {
+    'max': '3.75rem',
+    'min': '3.75rem',
+  },
+  lg: {
+    'max': '10.5rem',
+    'min': '8.25rem',
+  },
 };
 
 const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`
@@ -20,7 +26,7 @@ const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`
 
   .jauge-tracé {
     position: relative;
-    width: ${(props) => largeurs[props.taille]};
+    width: ${(props) => largeurs[props.taille].max};
     margin: 0 auto;
 
     .jauge-valeur {
@@ -42,6 +48,12 @@ const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`
 
     .jauge-barre-valeur {
       fill: ${(props) => couleurs[props.couleur]};
+    }
+  }
+
+  @media screen and (max-width: 80rem) {
+    .jauge-tracé {
+      width: ${(props) => largeurs[props.taille].min};
     }
   }
 `;
