@@ -12,7 +12,7 @@ dbt run --select df2
 
 ## Documentation
 
-Pour mettre en évidence les dépendances dans la documentation, des couleurs ont été ajoutées à la doc dbt. Si vous lancez la doc dbt sur le port *8088*, ce shema est accessible à l'adresse `http://localhost:8088/#!/model/model.ditp_ppg_dbt.df2_indicateur?g_v=1&g_i=%2Bexposition%2B%20%2Bdf2%2B`.
+Pour mettre en évidence les dépendances dans la documentation, des couleurs ont été ajoutées à la doc dbt. Si la doc dbt est lancée (`docker-compose up` la rend accessible sur `pilote-dbt.localhost`), ce shema est accessible à l'adresse `http://pilote-dbt.localhost/#!/model/model.ditp_ppg_dbt.df2_indicateur?g_v=1&g_i=%2Bexposition%2B%20%2Bdf2%2B`.
 
 Ajout de tags `scope_pst` pour identifier rapidement les modèles qui concernent les projets structurants, avec `dbt <command> --select tag:scope_pst`.
 
