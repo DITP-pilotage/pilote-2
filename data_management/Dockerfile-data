@@ -52,14 +52,9 @@ RUN pipenv run dbt deps --profiles-dir . --project-dir data_factory
 #COPY $DATA_DIR/. .
 
 
-# [setup.prisma]
-ARG PRISMA_DIR=src/database/prisma
-WORKDIR /app/$PRISMA_DIR
-## Copy schema and migrations
-COPY src/database/prisma/ .
-
 WORKDIR /app/$DATA_DIR
 
+ENV PIPENV_PIPFILE /app/$DATA_DIR/Pipfile
 # Start entrypoint.sh script
 ENTRYPOINT ["pipenv", "run", "/bin/bash"]
 #CMD ["scripts/serve_doc.sh"]

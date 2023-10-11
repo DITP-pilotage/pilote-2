@@ -36,9 +36,25 @@ models:
     raw:
       +schema: raw_data
       +materialized: table
+      dfakto:
+        +docs:
+          node_color: "#f55b5b"
+        chantier:
+          +tags: "scope_chantier"
+        projet_structurant:
+          +tags: "scope_pst"
+      ppg_metadata:
+        +docs:
+          node_color: "#553df2"
     staging:
       +schema: raw_data
       +materialized: view
+      dfakto:
+        +docs:
+          node_color: "#f55b5b"
+      ppg_metadata:
+        +docs:
+          node_color: "#553df2"
     marts:
       +schema: marts
       faits_indicateur:
@@ -73,6 +89,8 @@ models:
     exposition:
       +schema: public
       +materialized: incremental
+      +docs:
+        node_color: "#09ad40"
       axe:
         +unique_key:
           - 'id'

@@ -1,16 +1,36 @@
 version: "3.8"
 
 services:
-  dbt-pilote:
-    #command: "scripts/serve_doc.sh"
+  pilote_webapp:
+    image: node:lts-alpine
+    container_name: "pilote_webapp"
+    command: sh -c "cd /app && npm install && npm run dev"
+    depends_on:
+      - postgres
+      - pilote_dbt
+      - pilote_prisma
+    #ports: [ "3000:3000" ]
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    env_file:
+      - ./.env
+      - ../.env
+    volumes:
+      - ../:/app
+    tty: true
+    labels:
+      - "traefik.http.routers.pilote_webapp.rule=Host(`pilote.localhost`)"
+      - "traefik.http.services.pilote_webapp.loadbalancer.server.port=3000"
+  
+
+  pilote_scripts:
     build: 
       dockerfile: data_management/Dockerfile-data
       context: ..
+    depends_on:
+      - postgres
     env_file:
       - .env
-    ports:
-      - "8088:8080"
-      - "5555:5555"
     volumes:
       - "${PWD}/.env:/app/data_management/.env:ro"
       - "${PWD}/data_factory/macros:/app/data_management/data_factory/macros:ro"
@@ -20,34 +40,88 @@ services:
       - "${PWD}/data_factory/packages.yml:/app/data_management/data_factory/packages.yml:ro"
       - "${PWD}/profiles.yml:/app/data_management/profiles.yml:ro"
       - "${PWD}/setup.py:/app/data_management/setup.py:ro"
-      #- "${PWD}/:/app/data_management/:ro"
-      #- "${PWD}/../src/database/prisma:/app/src/database/prisma"
       - "${PWD}/input_data:/app/data_management/input_data"
       - "${PWD}/scripts:/app/data_management/scripts"
-    networks:
-      - dbt_pilote_net
+      - "${PWD}/../src/database/:/app/src/database:ro"
+  
+  pilote_dbt:
+    command: "scripts/doc_dbt.sh"
+    container_name: pilote_dbt
+    depends_on:
+      - postgres
+    build: 
+      dockerfile: data_management/Dockerfile-data
+      context: ..
+    #ports: [ "8080:8080" ]
+    env_file:
+      - .env
+    volumes:
+      - "${PWD}/.env:/app/data_management/.env:ro"
+      - "${PWD}/data_factory/macros:/app/data_management/data_factory/macros:ro"
+      - "${PWD}/data_factory/models:/app/data_management/data_factory/models:ro"
+      - "${PWD}/data_factory/tests:/app/data_management/data_factory/tests:ro"
+      - "${PWD}/data_factory/seeds:/app/data_management/data_factory/seeds:ro"
+      - "${PWD}/data_factory/dbt_project.yml:/app/data_management/data_factory/dbt_project.yml:ro"
+      - "${PWD}/data_factory/packages.yml:/app/data_management/data_factory/packages.yml:ro"
+      - "${PWD}/profiles.yml:/app/data_management/profiles.yml:ro"
+      - "${PWD}/setup.py:/app/data_management/setup.py:ro"
+      - "${PWD}/scripts:/app/data_management/scripts"
+    labels:
+      - "traefik.http.routers.pilote_dbt.rule=Host(`pilote-dbt.localhost`)"
+      - "traefik.http.services.pilote_dbt.loadbalancer.server.port=8080"
+
+
+  pilote_prisma:
+    command: "scripts/doc_prisma.sh"
+    container_name: pilote_prisma
+    depends_on:
+      - postgres
+    build: 
+      dockerfile: data_management/Dockerfile-data
+      context: ..
+    env_file:
+      - .env
+    volumes:
+      - "${PWD}/.env:/app/data_management/.env:ro"
+      - "${PWD}/scripts:/app/data_management/scripts"
+      - "${PWD}/../src/database/:/app/src/database:ro"
+    labels:
+      - "traefik.http.routers.pilote_prisma.rule=Host(`pilote-prisma.localhost`)"
+      - "traefik.http.services.pilote_prisma.loadbalancer.server.port=5555"
+  
+  
   postgres:
     hostname: postgres
+    container_name: pilote_postgres
+    depends_on:
+      - pilote_traefik
     image: postgres:14.1-alpine
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=${PGUSER}
       - POSTGRES_PASSWORD=${PGPASSWORD}
-    #volumes: 
-    #  - db_dbt_pilote:/var/lib/postgresql/data
-    networks:
-      - dbt_pilote_net
+    volumes: 
+      - db_dbt_pilote:/var/lib/postgresql/data
+
+  pilote_traefik:
+    container_name: pilote_traefik
+    image: traefik:v2.10
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      #- "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
 
 volumes:
   db_dbt_pilote:
     driver: local
-networks:
-  dbt_pilote_net:
-    external: false
 
-# Start with : 
-# - "docker-compose build"
-# - "docker-compose run --service-ports postgres" if need a database -- See https://stackoverflow.com/a/36321237/21676629
-# - "docker-compose run --service-ports dbt-pilote" to enter container OR
-# - "docker-compose run --service-ports dbt-pilote scripts/<name-of-the-script>.sh" to directly run a script
+# Usage :
+# - (optionnel) "docker-compose build" pour construire les images
+# - "docker-compose up" pour lancer la db, la doc, et la webapp
+# - (optionnel) "docker-compose run pilote_scripts" pour entrer dans le container et lancer les scripts dbt via "/bin/bash scripts/<name-of-the-script>.sh"
+# - (optionnel) OU "docker-compose run pilote_scripts scripts/<name-of-the-script>.sh" pour lancer le script dbt <name-of-the-script>.sh
+# - (optionnel) "docker container exec -it pilote_webapp /bin/sh" pour entrer dans le container webapp et éventuellement entrer des commandes (ex: npm, yarn, ...)
