@@ -42,6 +42,7 @@ services:
       - "${PWD}/setup.py:/app/data_management/setup.py:ro"
       - "${PWD}/input_data:/app/data_management/input_data"
       - "${PWD}/scripts:/app/data_management/scripts"
+      - "${PWD}/../src/database/:/app/src/database:ro"
   
   pilote_dbt:
     command: "scripts/doc_dbt.sh"
@@ -83,6 +84,7 @@ services:
     volumes:
       - "${PWD}/.env:/app/data_management/.env:ro"
       - "${PWD}/scripts:/app/data_management/scripts"
+      - "${PWD}/../src/database/:/app/src/database:ro"
     labels:
       - "traefik.http.routers.pilote_prisma.rule=Host(`pilote-prisma.localhost`)"
       - "traefik.http.services.pilote_prisma.loadbalancer.server.port=5555"
