@@ -13,8 +13,8 @@ const RépartitionMétéoStyled = styled.ul`
     }
 
     div {
+      padding-right: .25rem;
       padding-left: .25rem;
-      padding-right: .25rem
     }
 
     .label {
