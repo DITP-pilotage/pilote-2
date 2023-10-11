@@ -14,7 +14,7 @@ renamed as (
         zone_id,
         CASE
             WHEN metric_date = '2023-06-31'
-                THEN TO_DATE(metric_date,'2023-06-30')
+                THEN TO_DATE('2023-06-30','YYYY-MM-DD')
             WHEN metric_date LIKE '%/%/%'
                 THEN TO_DATE(metric_date,'DD/MM/YYYY')
             WHEN metric_date LIKE '%-%-%'
