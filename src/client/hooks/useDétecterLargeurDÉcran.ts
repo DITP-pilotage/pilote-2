@@ -4,7 +4,7 @@ import { actionsLargeurDÉcranStore } from '@/stores/useLargeurDÉcranStore/useL
 const POINT_RUPTURE_LARGEUR_XS = 576;
 const POINT_RUPTURE_LARGEUR_SM = 768;
 const POINT_RUPTURE_LARGEUR_MD = 992;
-const POINT_RUPTURE_LARGEUR_LG = 1247;
+const POINT_RUPTURE_LARGEUR_LG = 1440;
 const DURÉE_DEBOUNCE_MS = 300;
 
 export default function useDétecterLargeurDÉcran() {

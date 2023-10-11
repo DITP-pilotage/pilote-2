@@ -44,12 +44,30 @@ function déterminerRemplissage(valeur: number | null, élémentsDeLégende: Car
 export default function useCartographieAvancement(données: CartographieDonnéesAvancement, élémentsDeLégende: CartographieÉlémentsDeLégende) {
   const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
-  const légende = useMemo(() => (
-    Object.values(élémentsDeLégende).map(({ remplissage, libellé }) => ({
+  const légende = useMemo(() => {
+    
+    const tousApplicables: Boolean = données.map(d => d.estApplicable).every(el => el === true);
+    const tousNonNull: Boolean = données.map(d => d.valeur !== null).every(el => el === true);
+
+    let légendeAffichée = Object.values(élémentsDeLégende);
+    if (tousApplicables) {
+      légendeAffichée = légendeAffichée
+        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
+    }
+
+    if (tousNonNull) {
+      légendeAffichée = légendeAffichée
+        .filter(el => el.libellé !== 'Territoire pour lequel la donnée n’est pas renseignée/disponible');
+    }
+    
+    légendeAffichée = légendeAffichée.map(({ remplissage, libellé }) => ({
       libellé,
       remplissage,
-    }))
-  ), [élémentsDeLégende]);
+    }));
+
+    return légendeAffichée;
+
+  }, [élémentsDeLégende, données]);
 
   const donnéesCartographie = useMemo(() => {
     const donnéesFormatées: CartographieDonnées = {};

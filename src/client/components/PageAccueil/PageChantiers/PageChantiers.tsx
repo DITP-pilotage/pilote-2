@@ -86,7 +86,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
           </div>
         </div>
         <div className="fr-grid-row fr-grid-row--gutters">
-          <div className="fr-col-12 fr-col-xl-6">
+          <div className="fr-col-12 fr-col-lg-6">
             <Bloc>
               <section>
                 <TitreInfobulleConteneur>
@@ -121,7 +121,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
               </section>
             </Bloc>
           </div>
-          <div className="fr-col-12 fr-col-xl-6">
+          <div className="fr-col-12 fr-col-lg-6">
             <Bloc>
               <section>
                 <Titre

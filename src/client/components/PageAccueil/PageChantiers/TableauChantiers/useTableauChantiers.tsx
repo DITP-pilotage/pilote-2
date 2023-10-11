@@ -38,7 +38,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
   const [tri, setTri] = useState<SortingState>([{ id: 'avancement', desc: false }]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
   const [regroupement, setRegroupement] = useState<GroupingState>([]);
-  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('lg');
+  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('md');
 
   const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
 

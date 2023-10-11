@@ -106,6 +106,24 @@
                               </li>
                             </ul>
                           </div>
+                          <div classname = "fr-my-2w fr-text"  style = "text-align:center;margin:auto;">
+                            Ou se connecter avec
+                          </div>
+                          <#if realm.password && social.providers??>
+                          <div id="kc-social-providers" class="fr-fieldset__element ${properties.kcFormSocialAccountContentClass!} ${properties.kcFormSocialAccountClass!}">
+                              <ul class="fr-btns-group ${properties.kcFormSocialAccountListClass!} <#if social.providers?size gt 4>${properties.kcFormSocialAccountDoubleListClass!}</#if>">
+                                  <#list social.providers as p>
+                                      <li class="${properties.kcFormSocialAccountListLinkClass!}">
+                                          <a  href="${p.loginUrl}" id="zocial-${p.alias}" type="button" class="fr-mt-2v fr-btn fr-btn--secondary zocial ${p.providerId}">
+                                            ${p.displayName}
+                                          </a>
+                                      </li>
+                                  </#list>
+                              </ul>
+                          </div>
+                          </#if>
+                          </div>
+                          </div>
                           <div class="fr-messages-group" id="login-1760-fieldset-messages" aria-live="assertive">
                           </div>
                         </fieldset>

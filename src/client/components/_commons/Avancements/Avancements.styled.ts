@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { breakpointL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
+import { breakpointXL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
 
 const AvancementsStyled = styled.div`
   display: flex;
@@ -11,7 +11,7 @@ const AvancementsStyled = styled.div`
     column-gap: 1rem;
   }
 
-  @media (width < ${breakpointL}) {
+  @media (width < ${breakpointXL}) {
     flex-basis: 100%;
     flex-wrap: wrap;
   }
@@ -20,7 +20,7 @@ const AvancementsStyled = styled.div`
     display: flex;
     column-gap: 1.5rem;
     
-    @media (width > ${breakpointL}) and (width < 84rem) {
+    @media (width > ${breakpointXL}) and (width < 84rem) {
       column-gap: 0.5rem;
     }
   }

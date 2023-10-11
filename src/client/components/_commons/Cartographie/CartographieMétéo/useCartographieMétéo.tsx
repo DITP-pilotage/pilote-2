@@ -20,13 +20,29 @@ function déterminerRemplissage(valeur: Météo | null, élémentsDeLégende: Ca
 export default function useCartographieMétéo(données: CartographieDonnéesMétéo, élémentsDeLégende: CartographieÉlémentsDeLégende) {
   const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
-  const légende = useMemo(() => (
-    Object.values(élémentsDeLégende).map(({ remplissage, libellé, picto }) => ({
+  const légende = useMemo(() => {
+    const tousApplicables: Boolean = données.map(d => d.estApplicable).every(el => el === true);
+    const tousNonNull: Boolean = données.map(d => d.valeur !== 'NON_RENSEIGNEE').every(el => el === true);
+
+    let légendeAffichée = Object.values(élémentsDeLégende);
+    if (tousApplicables) {
+      légendeAffichée = légendeAffichée
+        .filter(el => el.libellé !== 'Territoire où le chantier prioritaire ne s’applique pas');
+    }
+
+    if (tousNonNull) {
+      légendeAffichée = légendeAffichée
+        .filter(el => el.libellé !== 'Territoire pour lequel la météo n’est pas renseignée');
+    }
+    
+    légendeAffichée = légendeAffichée.map(({ remplissage, libellé }) => ({
       libellé,
       remplissage,
-      picto,
-    }))
-  ), [élémentsDeLégende]);
+    }));
+    
+    return légendeAffichée;
+
+  }, [élémentsDeLégende, données]);
 
   const donnéesCartographie = useMemo(() => {
     let donnéesFormatées: CartographieDonnées = {};

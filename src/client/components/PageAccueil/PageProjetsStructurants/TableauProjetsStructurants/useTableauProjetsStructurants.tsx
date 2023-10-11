@@ -18,7 +18,7 @@ export default function useTableauProjetsStructurants(projetsStructurants: Proje
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
   const [tri, setTri] = useState<SortingState>([{ id: 'avancement', desc: false }]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
-  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('lg');
+  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('md');
 
   const reactTableColonnesHelper = createColumnHelper<ProjetStructurantVueDEnsemble>();
 
