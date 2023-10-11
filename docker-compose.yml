@@ -13,10 +13,10 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
     env_file:
-      - ./.env
-      - ../.env
+      - .env
+      - data_management/.env
     volumes:
-      - ../:/app
+      - ./:/app
     tty: true
     labels:
       - "traefik.http.routers.pilote_webapp.rule=Host(`pilote.localhost`)"
@@ -26,63 +26,63 @@ services:
   pilote_scripts:
     build: 
       dockerfile: data_management/Dockerfile-data
-      context: ..
+      context: .
     depends_on:
       - postgres
     env_file:
-      - .env
+      - data_management/.env
     volumes:
-      - "${PWD}/.env:/app/data_management/.env:ro"
-      - "${PWD}/data_factory/macros:/app/data_management/data_factory/macros:ro"
-      - "${PWD}/data_factory/models:/app/data_management/data_factory/models:ro"
-      - "${PWD}/data_factory/tests:/app/data_management/data_factory/tests:ro"
-      - "${PWD}/data_factory/dbt_project.yml:/app/data_management/data_factory/dbt_project.yml:ro"
-      - "${PWD}/data_factory/packages.yml:/app/data_management/data_factory/packages.yml:ro"
-      - "${PWD}/profiles.yml:/app/data_management/profiles.yml:ro"
-      - "${PWD}/setup.py:/app/data_management/setup.py:ro"
-      - "${PWD}/input_data:/app/data_management/input_data"
-      - "${PWD}/scripts:/app/data_management/scripts"
+      - "${PWD}/data_management/.env:/app/data_management/.env:ro"
+      - "${PWD}/data_management/data_factory/macros:/app/data_management/data_factory/macros:ro"
+      - "${PWD}/data_management/data_factory/models:/app/data_management/data_factory/models:ro"
+      - "${PWD}/data_management/data_factory/tests:/app/data_management/data_factory/tests:ro"
+      - "${PWD}/data_management/data_factory/dbt_project.yml:/app/data_management/data_factory/dbt_project.yml:ro"
+      - "${PWD}/data_management/data_factory/packages.yml:/app/data_management/data_factory/packages.yml:ro"
+      - "${PWD}/data_management/profiles.yml:/app/data_management/profiles.yml:ro"
+      - "${PWD}/data_management/setup.py:/app/data_management/setup.py:ro"
+      - "${PWD}/data_management/input_data:/app/data_management/input_data"
+      - "${PWD}/data_management/scripts:/app/data_management/scripts"
   
   pilote_dbt:
-    command: "scripts/doc_dbt.sh"
+    command: "data_management/scripts/doc_dbt.sh"
     container_name: pilote_dbt
     depends_on:
       - postgres
     build: 
       dockerfile: data_management/Dockerfile-data
-      context: ..
+      context: .
     #ports: [ "8080:8080" ]
     env_file:
-      - .env
+      - data_management/.env
     volumes:
-      - "${PWD}/.env:/app/data_management/.env:ro"
-      - "${PWD}/data_factory/macros:/app/data_management/data_factory/macros:ro"
-      - "${PWD}/data_factory/models:/app/data_management/data_factory/models:ro"
-      - "${PWD}/data_factory/tests:/app/data_management/data_factory/tests:ro"
-      - "${PWD}/data_factory/seeds:/app/data_management/data_factory/seeds:ro"
-      - "${PWD}/data_factory/dbt_project.yml:/app/data_management/data_factory/dbt_project.yml:ro"
-      - "${PWD}/data_factory/packages.yml:/app/data_management/data_factory/packages.yml:ro"
-      - "${PWD}/profiles.yml:/app/data_management/profiles.yml:ro"
-      - "${PWD}/setup.py:/app/data_management/setup.py:ro"
-      - "${PWD}/scripts:/app/data_management/scripts"
+      - "${PWD}/data_management/.env:/app/data_management/.env:ro"
+      - "${PWD}/data_management/data_factory/macros:/app/data_management/data_factory/macros:ro"
+      - "${PWD}/data_management/data_factory/models:/app/data_management/data_factory/models:ro"
+      - "${PWD}/data_management/data_factory/tests:/app/data_management/data_factory/tests:ro"
+      - "${PWD}/data_management/data_factory/seeds:/app/data_management/data_factory/seeds:ro"
+      - "${PWD}/data_management/data_factory/dbt_project.yml:/app/data_management/data_factory/dbt_project.yml:ro"
+      - "${PWD}/data_management/data_factory/packages.yml:/app/data_management/data_factory/packages.yml:ro"
+      - "${PWD}/data_management/profiles.yml:/app/data_management/profiles.yml:ro"
+      - "${PWD}/data_management/setup.py:/app/data_management/setup.py:ro"
+      - "${PWD}/data_management/scripts:/app/data_management/scripts"
     labels:
       - "traefik.http.routers.pilote_dbt.rule=Host(`pilote-dbt.localhost`)"
       - "traefik.http.services.pilote_dbt.loadbalancer.server.port=8080"
 
 
   pilote_prisma:
-    command: "scripts/doc_prisma.sh"
+    command: "data_management/scripts/doc_prisma.sh"
     container_name: pilote_prisma
     depends_on:
       - postgres
     build: 
       dockerfile: data_management/Dockerfile-data
-      context: ..
+      context: .
     env_file:
-      - .env
+      - data_management/.env
     volumes:
-      - "${PWD}/.env:/app/data_management/.env:ro"
-      - "${PWD}/scripts:/app/data_management/scripts"
+      - "${PWD}/data_management/.env:/app/data_management/.env:ro"
+      - "${PWD}/data_management/scripts:/app/data_management/scripts"
     labels:
       - "traefik.http.routers.pilote_prisma.rule=Host(`pilote-prisma.localhost`)"
       - "traefik.http.services.pilote_prisma.loadbalancer.server.port=5555"

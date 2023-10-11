@@ -58,9 +58,9 @@ WORKDIR /app/$PRISMA_DIR
 ## Copy schema and migrations
 COPY src/database/prisma/ .
 
-WORKDIR /app/$DATA_DIR
+WORKDIR /app
 
 ENV PIPENV_PIPFILE /app/$DATA_DIR/Pipfile
 # Start entrypoint.sh script
 ENTRYPOINT ["pipenv", "run", "/bin/bash"]
-#CMD ["scripts/serve_doc.sh"]
+#CMD ["data_management/scripts/serve_doc.sh"]
