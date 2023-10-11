@@ -79,7 +79,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       enableSorting: false,
       enableGrouping: false,
       meta: {
-        width: 'auto',
+        width: '20rem',
       },
     }),
     reactTableColonnesHelper.accessor('typologie', {
@@ -131,7 +131,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       },
       aggregatedCell: avancement => <TableauRéformesAvancement avancement={avancement.getValue() ?? null} />,
       meta: {
-        width: '11rem',
+        width: '8rem',
         tabIndex: -1,
       },
     }),
@@ -159,7 +159,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
         enableGrouping: false,
         aggregatedCell: () => null,
         meta: {
-          width: '5.5rem',
+          width: '4.5rem',
           tabIndex: -1,
         },
       }),

@@ -7,7 +7,7 @@ const météosÀAfficher = ['ORAGE', 'NUAGE', 'COUVERT', 'SOLEIL'] as const;
 
 export default function RépartitionMétéo({ météos }: RépartitionMétéoProps) {
   return (
-    <RépartitionMétéoStyled className='fr-grid-row fr-mx-n1w'>
+    <RépartitionMétéoStyled className='fr-grid-row fr-mx-n3v'>
       {
         météosÀAfficher.map(météo => (
           <li

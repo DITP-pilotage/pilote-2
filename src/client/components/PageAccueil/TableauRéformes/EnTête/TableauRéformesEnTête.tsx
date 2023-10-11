@@ -22,13 +22,14 @@ export default function TableauRéformesEnTête({ tableau }: TableauRéformesEnT
           <tr key={headerGroup.id}>
             {headerGroup.headers.map(header => (
               <th
+                className='fr-px-1w'
                 aria-sort={renseignerAttributAriaSort(header.column.getIsSorted())}
                 key={header.id}
                 style={{
                   width: header.column.columnDef.meta?.width ?? undefined,
                 }}
               >
-                <p className="fr-mb-0 fr-text--sm">
+                <p className="fr-mb-0 fr-text--xs">
                   { flexRender(header.column.columnDef.header, header.getContext()) }
                 </p>
               </th>

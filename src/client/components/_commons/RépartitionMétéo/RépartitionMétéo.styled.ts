@@ -7,13 +7,14 @@ const RépartitionMétéoStyled = styled.ul`
     padding: .5rem;
   }
 
-  @media screen and (max-width: 48rem) {
+  @media screen and (max-width: 80rem) {
     .fr-col-3 {
-      padding: .125rem;
+      padding: 0.125rem;
     }
 
     div {
-      padding: 1rem .25rem;
+      padding-left: .25rem;
+      padding-right: .25rem
     }
 
     .label {

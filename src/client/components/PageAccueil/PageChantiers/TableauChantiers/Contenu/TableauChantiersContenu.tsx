@@ -49,7 +49,7 @@ export default function TableauChantiersContenu({ tableau }: TableauChantiersCon
                     key={cell.id}
                   >
                     <Link
-                      className="fr-p-2w"
+                      className="fr-p-1w"
                       href={`/chantier/${row.original.id}`}
                       tabIndex={cell.column.columnDef.meta?.tabIndex}
                     >
