@@ -22,8 +22,8 @@ export default function TableauRéformesEnTête({ tableau }: TableauRéformesEnT
           <tr key={headerGroup.id}>
             {headerGroup.headers.map(header => (
               <th
-                className='fr-px-1w'
                 aria-sort={renseignerAttributAriaSort(header.column.getIsSorted())}
+                className='fr-px-1w'
                 key={header.id}
                 style={{
                   width: header.column.columnDef.meta?.width ?? undefined,
