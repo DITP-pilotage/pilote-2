@@ -69,7 +69,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
       </BarreLatérale>
       <main className='fr-pb-5w'>
         <BoutonSousLigné
-          classNameSupplémentaires="fr-link--icon-left fr-fi-arrow-right-line fr-hidden-xl fr-m-2w"
+          classNameSupplémentaires="fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w"
           onClick={() => setEstOuverteBarreLatérale(true)}
           type="button"
         >
