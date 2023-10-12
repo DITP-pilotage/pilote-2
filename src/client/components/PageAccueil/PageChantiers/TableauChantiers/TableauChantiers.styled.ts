@@ -29,15 +29,19 @@ const TableauChantiersStyled = styled.section`
       width: 100%;
       max-width: 22rem;
     }
+    
     @media screen and (max-width: 78rem) {
       .label {
         font-size: 0.875rem !important;
       }
+      
       .tableau-actions-droite {
         max-width: 17rem;
       }
+      
       .tableau-actions-gauche {
         column-gap: 1rem;
+        
         .barre-de-recherche {
           max-width: 13rem;
         }

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+// postcss-styled-components-disable-next-line
 const TableauEnTêteStyled = styled.thead`
     background-color: var(--background-action-low-blue-france) !important;
     border: 1px solid var(--border-disabled-grey);
@@ -13,6 +14,7 @@ const TableauEnTêteStyled = styled.thead`
         border-radius: 0 8px 0 0;
       }
     }
+
     @media screen and (max-width: 49rem) {
       .label {
         font-size: 0.75rem !important;

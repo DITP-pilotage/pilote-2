@@ -85,7 +85,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     reactTableColonnesHelper.accessor( 'territoireNom', {
       header: 'Territoire(s)',
       id: 'territoire',
-      enableSorting: false
+      enableSorting: false,
     }),
     reactTableColonnesHelper.accessor('données.valeurInitiale', {
       header: 'Valeur initiale',
