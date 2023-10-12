@@ -7,3 +7,31 @@ models:
     description: "Vue intermédiaire pour récupérer les métriques (type TA) des indicateurs en provenance de dfakto"
   - name: projet_structurant_temporaire
     description: "Vue intermédiaire afin de créer une table projet_structurant avec un id unique qui sera réutilisée pour toutes les tables en ayant besoin (de l'id unique)"
+  - name: last_update_indic_zone
+    description: |
+      Pour chaque couple {indicateur-zone}, on indique le **rapport** et la **date** de ce rapport qui modifie cet indicateur sur cette zone.
+
+      Etant donné que l'on part de la table `raw_data.mesure_indicateur`, si une valeur qui est renvoyée à la webapp est issue d'une aggrégation, il n'existe **pas d'import correspondant** donc **aucune ligne** ne sera renvoyée pour ce couple {indicateur-zone}.
+    columns:
+      - name: indic_id
+        description: "Identifiant de l'indicateur"
+      - name: zone_id
+        description: "Identifiant de la zone"
+      - name: territoire_code
+        description: "Code du territoire. Utilisé par le front, équivalent à `zone_id`"
+      - name: dernier_import_rapport_id
+        description: "UUID du dernier rapport pour cet {indicateur-zone}"
+      - name: dernier_import_date
+        description: "Date du dernier rapport (`dernier_import_rapport_id`)"
+  - name: last_update_indic
+    description: |
+      Pour chaque {indicateur}, on indique le **rapport** et la **date** de ce rapport qui modifie cet indicateur sur **n'importe quelle zone**.
+
+      Cela permet par exemple d'avoir une date à afficher pour une **valeur issue d'une aggrégation**. En effet, dans ce cas, une valeur aggrégée issue de calculs peut être renvoyée vers le front mais n'est présente dans aucun rapport. 
+    columns:
+      - name: indic_id
+        description: "Identifiant de l'indicateur"
+      - name: dernier_import_rapport_id_indic
+        description: "UUID du dernier rapport pour cet {indicateur} (sur n'importe quelle zone)"
+      - name: dernier_import_date_indic
+        description: "Date du dernier rapport (`dernier_import_rapport_id_indic`)"
