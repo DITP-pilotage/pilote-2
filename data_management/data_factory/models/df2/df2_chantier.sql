@@ -2,15 +2,21 @@ with
 
 dfakto_chantier as (
 
-    SELECT fact_progress_chantier.tree_node_id,
-        fact_progress_chantier.avancement_borne,
-        fact_progress_chantier.avancement_precedent,
-        dim_tree_nodes.code_chantier,
-        dim_tree_nodes.zone_code as zone_id,
-        dim_structures.nom as structure_nom
-    FROM {{ ref('stg_dfakto__fact_progress_chantiers') }} fact_progress_chantier
-        JOIN {{ ref('stg_dfakto__dim_tree_nodes') }} dim_tree_nodes ON fact_progress_chantier.tree_node_id = dim_tree_nodes.id
-        JOIN {{ ref('stg_dfakto__dim_structures') }} dim_structures ON dim_tree_nodes.structure_id = dim_structures.id
+    SELECT 
+        'ignored' as tree_node_id,
+        -1.0 as avancement_borne,
+        -1.0 as avancement_precedent,
+        chantier_id as code_chantier,
+        a.zone_id,
+        CASE
+            WHEN b.zone_type='DEPT' THEN 'Département'
+            WHEN b.zone_type='REG' THEN 'Région'
+            WHEN b.zone_type='NAT' THEN 'Chantier'
+            ELSE 'error_maille'
+        END as structure_nom
+    FROM {{ ref('taux_avancement_chantier') }} a
+    LEFT JOIN {{ ref('metadata_zones') }} b
+    ON a.zone_id=b.zone_id
 
 ),
 
