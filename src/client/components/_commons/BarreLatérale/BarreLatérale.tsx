@@ -8,7 +8,7 @@ export default function BarreLatérale({ estOuvert, setEstOuvert, children }: Ba
         <div className="fr-grid-row fr-grid-row--right">
           <button
             aria-label="Fermer les filtres"
-            className="bold fr-hidden-xl fr-text--sm fr-mb-0 fr-p-1w fr-col-4"
+            className="bold fr-hidden-lg fr-text--sm fr-mb-0 fr-p-1w fr-col-4"
             onClick={() => setEstOuvert(false)}
             type="button"
           >
