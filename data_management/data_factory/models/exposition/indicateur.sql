@@ -29,6 +29,10 @@ SELECT m_indicateurs.id,
     d_indicateurs.objectif_taux_avancement_intermediaire,
     d_indicateurs.objectif_date_valeur_cible_intermediaire,
     COALESCE(indicateur_zone.est_applicable, true) AS est_applicable,
+    last_update_indic_zone.dernier_import_date,
+    last_update_indic_zone.dernier_import_rapport_id,
+    last_update_indic.dernier_import_date_indic,
+    last_update_indic.dernier_import_rapport_id_indic,
     false AS a_supprimer
 FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
 	JOIN {{ ref('int_chantiers_with_mailles_and_territoires') }} chantiers_ayant_des_indicateurs ON m_indicateurs.chantier_id = chantiers_ayant_des_indicateurs.id
@@ -40,4 +44,6 @@ FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
 	    AND d_indicateurs.nom_structure IN ('Département', 'Région', 'Chantier')
 	LEFT JOIN {{ ref('stg_ppg_metadata__parametrage_indicateurs') }} parametrage_indicateurs ON parametrage_indicateurs.indicateur_id = m_indicateurs.id
     LEFT JOIN {{ ref('int_indicateurs_zones_applicables')}} indicateur_zone ON indicateur_zone.indic_id = m_indicateurs.id AND indicateur_zone.zone_id = chantiers_ayant_des_indicateurs.zone_id
+    LEFT JOIN {{ ref('last_update_indic_zone') }} last_update_indic_zone ON m_indicateurs.id=last_update_indic_zone.indic_id AND CONCAT(chantiers_ayant_des_indicateurs.maille, '-', chantiers_ayant_des_indicateurs.code_insee) =last_update_indic_zone.territoire_code 
+    LEFT JOIN {{ ref('last_update_indic') }} last_update_indic ON m_indicateurs.id=last_update_indic.indic_id 
 ORDER BY m_indicateurs.nom, chantiers_ayant_des_indicateurs.maille, chantiers_ayant_des_indicateurs.code_insee, d_indicateurs.date_valeur_actuelle DESC
