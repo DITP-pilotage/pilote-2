@@ -13,6 +13,10 @@ const TableauEnTêteStyled = styled.thead`
         border-radius: 0 8px 0 0;
       }
     }
+    @media screen and (max-width: 49rem) {
+      .label {
+        font-size: 0.75rem !important;
+    }
 `;
 
 export default TableauEnTêteStyled;

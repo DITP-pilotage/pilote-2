@@ -23,7 +23,7 @@ export default function TableauChantiersActionsDeTri({
     <TableauChantiersActionsDeTriStyled>
       <div className="fr-select-group sélecteur-colonne-à-trier">
         <label
-          className="fr-label"
+          className="fr-label label"
           htmlFor="tri-tableau-chantiers"
         >
           Trier par
@@ -47,7 +47,7 @@ export default function TableauChantiersActionsDeTri({
           }
         </select>
       </div>
-      <div className="fr-mb-4w fr-ml-2w">
+      <div className="fr-mb-4w fr-ml-1w">
         <BoutonsDeTri
           changementDirectionDeTriCallback={changementDirectionDeTriCallback}
           directionDeTri={directionDeTri}

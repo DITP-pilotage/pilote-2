@@ -7,7 +7,7 @@ export default function BoutonsDeTri({ nomColonneÀTrier, directionDeTri, change
     <BoutonsDeTriStyled>
       <button
         aria-label={`trier la colonne "${nomColonneÀTrier}" par ordre croissant`}
-        className={`${directionDeTri === 'asc' ? 'actif' : ''} bouton-de-tri fr-mr-1w`}
+        className={`${directionDeTri === 'asc' ? 'actif' : ''} bouton-de-tri fr-mr-1v`}
         onClick={() => directionDeTri === 'asc' ? changementDirectionDeTriCallback(false) : changementDirectionDeTriCallback('asc')}
         type='button'
       >
