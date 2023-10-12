@@ -49,8 +49,6 @@ export default function useCartographieAvancement(données: CartographieDonnées
     const tousApplicables: Boolean = données.map(d => d.estApplicable).every(el => el !== false);
     const tousNonNull: Boolean = données.map(d => d.valeur !== null).every(el => el === true);
 
-    console.log(données.map(d => d.estApplicable))
-
     let légendeAffichée = Object.values(élémentsDeLégende);
     if (tousApplicables) {
       légendeAffichée = légendeAffichée
