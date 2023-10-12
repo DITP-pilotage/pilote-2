@@ -34,7 +34,7 @@ export default function PageProjetsStructurants({ projetsStructurants, ministèr
         nombreFiltresActifs > 0 &&
         <FiltresActifs ministères={ministères} />
       }
-      <div className="fr-py-2w fr-px-md-4w fr-container--fluid">
+      <div className="fr-py-2w fr-px-md-2w fr-container--fluid">
         <div className="fr-px-2w fr-px-md-0 flex justify-between">
 
           <Titre

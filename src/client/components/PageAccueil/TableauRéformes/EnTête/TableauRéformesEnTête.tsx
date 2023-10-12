@@ -29,7 +29,7 @@ export default function TableauRéformesEnTête({ tableau }: TableauRéformesEnT
                   width: header.column.columnDef.meta?.width ?? undefined,
                 }}
               >
-                <p className="fr-mb-0 fr-text--xs">
+                <p className="fr-mb-0 fr-text fr-text--sm title">
                   { flexRender(header.column.columnDef.header, header.getContext()) }
                 </p>
               </th>

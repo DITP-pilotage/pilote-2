@@ -10,7 +10,7 @@ export default function TableauContenu<T>({ tableau }: TableauContenuProps<T>) {
             {
               row.getVisibleCells().map(cell => (
                 <td
-                  className="fr-p-0 fr-py-md-1w fr-px-md-2w"
+                  className="fr-py-0 fr-py-md-1w fr-px-1v fr-px-lg-2w"
                   key={cell.id}
                 >
                   {

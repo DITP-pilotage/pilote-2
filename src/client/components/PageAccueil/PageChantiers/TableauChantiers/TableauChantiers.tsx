@@ -53,7 +53,7 @@ export default function TableauChantiers({ données, setNombreChantiersDansLeTab
               type="checkbox"
             />
             <label
-              className="fr-toggle__label fr-pl-1w"
+              className="fr-toggle__label fr-pl-1w label"
               htmlFor="interrupteur-grouper-par-ministères"
             >
               Grouper par ministère

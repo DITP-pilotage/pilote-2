@@ -17,6 +17,13 @@ const TableauRéformesEnTêteStyled = styled.thead`
       display: inline-block;
     }
   }
+
+  @media screen and (max-width: 78rem) {
+    .title {
+      font-size: .75rem !important;
+    }
+  }
+
 `;
 
 export default TableauRéformesEnTêteStyled;

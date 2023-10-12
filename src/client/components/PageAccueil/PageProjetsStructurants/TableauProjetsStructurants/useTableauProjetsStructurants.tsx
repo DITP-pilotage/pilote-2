@@ -43,6 +43,7 @@ export default function useTableauProjetsStructurants(projetsStructurants: Proje
       id: 'territoire',
       enableSorting: false,
       meta: {
+        width: 'auto',
         tabIndex: -1,
       },
     }),
@@ -53,7 +54,7 @@ export default function useTableauProjetsStructurants(projetsStructurants: Proje
       enableGlobalFilter: false,
       sortingFn: (a, b, columnId) => comparerMétéo(a.getValue(columnId), b.getValue(columnId)),
       meta: {
-        width: '10rem',
+        width: '8rem',
         tabIndex: -1,
       },
     }),
@@ -64,7 +65,7 @@ export default function useTableauProjetsStructurants(projetsStructurants: Proje
       enableGlobalFilter: false,
       sortingFn: (a, b, columnId) => comparerAvancementRéforme(a.getValue(columnId), b.getValue(columnId), tri),
       meta: {
-        width: '11rem',
+        width: '9rem',
         tabIndex: -1,
       },
     }),
