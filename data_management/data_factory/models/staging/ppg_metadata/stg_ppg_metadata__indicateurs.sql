@@ -23,7 +23,7 @@ renamed as (
         indic_methode_calcul as mode_de_calcul,
         indic_unite as unite,
         indic_hidden_pilote as est_cache_dans_pilote,
-        zg_applicable as zone_groupe_applicable
+        CAST(zg_applicable as TEXT) as zone_groupe_applicable
     from source
 
 )
