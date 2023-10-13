@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: mesure_select_last
+  - name: mesure_last
     description: |
         Pour chaque {indic_id, metric_type, metric_date, zone_id}, on retourne la valeur la plus récente. Règles:
 
