@@ -9,14 +9,14 @@ mesure_last_params_reg as (
     select 
         a.indic_id , metric_date, metric_type, metric_value , zone_id,
         b.vi_reg_from , b.vi_reg_op , b.va_reg_from, b.va_reg_op, b.vc_reg_from , b.vc_reg_op 
-    from "postgres"."df2"."mesure_select_last" a
-    left join "postgres"."raw_data"."metadata_parametrage_indicateurs" b 
+    from {{ ref('mesure_last') }} a
+    left join {{ ref('metadata_parametrage_indicateurs') }} b 
     ON a.indic_id = b.indic_id
 ), 
 -- Valeurs REG saisies directement par l'utilisateur
 mesure_last_params_reg_user as (
     select a.*, b.zone_type from mesure_last_params_reg a
-    left join raw_data.metadata_zones b on a.zone_id=b.zone_id
+    left join {{ ref('metadata_zones') }} b on a.zone_id=b.zone_id
     where 
         ((metric_type='vi' and vi_reg_from='user_input') OR
         (metric_type='va' and va_reg_from='user_input') OR
@@ -28,7 +28,7 @@ mesure_last_params_reg_user as (
 -- Liste des indicateurs qui ont un paramétrage d'aggrégation pour les valeurs REG
 indic_agg_from_dept as (
 	select b.indic_id, b.vi_reg_from , b.vi_reg_op, b.va_reg_from , b.va_reg_op, b.vc_reg_from , b.vc_reg_op 
-	from "postgres"."raw_data"."metadata_parametrage_indicateurs" b
+	from {{ ref('metadata_parametrage_indicateurs') }} b
 	where 
 		b.vi_reg_from not in ('_', 'user_input') OR
 		b.va_reg_from not in ('_', 'user_input') OR
@@ -43,7 +43,7 @@ mesure_last_params_reg_from_dept as (
 	select a.indic_id as indic_id1 , metric_date , metric_type , metric_value, a.zone_id,
 	b.zone_type, b.zone_parent , b.zone_parent_type ,
 	c.*
-	from "postgres"."df2"."mesure_select_last" a
+	from {{ ref('mesure_last') }} a
 	inner join df2.zone_parent b on a.zone_id = b.zone_id 
 	right join indic_agg_from_dept c on a.indic_id =c.indic_id
 	where zone_type='DEPT' and zone_parent_type='REG'
