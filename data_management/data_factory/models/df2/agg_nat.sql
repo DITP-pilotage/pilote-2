@@ -43,7 +43,7 @@ mesure_last_params_nat_from_reg as (
 	select a.indic_id as indic_id1 , metric_date , metric_type , metric_value, a.zone_id,
 	b.zone_type, b.zone_parent , b.zone_parent_type ,
 	c.*
-	from "postgres"."df2"."mesure_last" a
+	from "postgres"."df2"."agg_reg" a
 	inner join df2.zone_parent b on a.zone_id = b.zone_id 
 	right join indic_agg_from_reg c on a.indic_id =c.indic_id
 	where zone_type='REG' and zone_parent_type='NAT'
