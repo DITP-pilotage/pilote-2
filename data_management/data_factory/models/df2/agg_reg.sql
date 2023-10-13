@@ -39,14 +39,19 @@ indic_agg_from_dept as (
 --  on lui associe sa zone parente
 --  on lui associe ses paramètres d'aggrégation
 --  et on sélectionne que les valeurs qui sont DEPT avec un parent REG
+-- Ce sont ces données que la DF va aggréger
 mesure_last_params_reg_from_dept as (
-	select a.indic_id as indic_id1 , metric_date , metric_type , metric_value, a.zone_id,
+	select a.indic_id as indic_id1 , metric_date , metric_type , metric_value::float, a.zone_id,
 	b.zone_type, b.zone_parent , b.zone_parent_type ,
 	c.*
 	from {{ ref('mesure_last') }} a
 	inner join df2.zone_parent b on a.zone_id = b.zone_id 
 	right join indic_agg_from_dept c on a.indic_id =c.indic_id
-	where zone_type='DEPT' and zone_parent_type='REG'
+	where 
+		-- uniquement des données REG avec parent NAT
+		zone_type='DEPT' and zone_parent_type='REG' and
+		-- et pour lesquels l'agg NAT doit bien se faire depuis les données REG
+		( (metric_type='vi' and vi_reg_from='DEPT') or (metric_type='va' and va_reg_from='DEPT') or (metric_type='vc' and vc_reg_from='DEPT'))
 ),
 
 -- Ici on calcule une aggrégation en somme ET en moyenne des DEPT vers REG
