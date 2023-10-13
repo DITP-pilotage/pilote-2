@@ -65,3 +65,13 @@ models:
         - Pour chaque [indicateur, zone] il s'agit de la VI ayant la `metric_date` la plus lointaine dans le passé.
         - Si aucune VI n'est détectée, on prend la première VA. Cette première VA doit également satisfaire le critère suivant sur la *date_minimale*
         - **Attention**, il existe une **date minimale** dans le projet dbt, et qui assure qu'aucune VIG ne sera antérieure celle-ci. Sa valeur est **{{ var('vig_min_date') }}**
+  - name: compute_vaca
+    description: |
+        Calcule les VACA (*Valeur Actuelle comparable annuelle*) pour chaque mesure. Cette valeur est celle qui sera comparée à la VC pour le calcul du TA. Règles:
+
+        - Avant d'effectuer le calcul de la VACA, on peut **décumuler les valeurs de VA** depuis le début de l'année `from_year_start` ou depuis une date arbitraire `X` avec `from_custom_date::X`
+        - Le calcul de la VACA se fait avec:
+          - les opérations `sum`, `moy` ou `current_value` pour la *somme*, la *moyenne* ou utiliser simplement la valeur actuelle
+          - depuis un nombre de mois donné `from_previous_month::X`, avec `X` dans `{3,6,12,48}` mois
+          - depuis le début de l'année `from_year_start`
+          - depuis le une date arbitraire  `X` avec `from_custom_date::X`
