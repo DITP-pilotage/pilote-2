@@ -1,3 +1,4 @@
+{{ config(materialized='table') }}
 
 -- Union de toutes les tables d'aggrégation (DEPT, REG, NAT)
 select indic_id, zone_id, metric_date, metric_type, metric_value::float from {{ ref('agg_dept') }} 
