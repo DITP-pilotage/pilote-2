@@ -63,4 +63,5 @@ models:
         Réalise les calculs pour déterminer la *VIG* (ie *Valeur Initiale globale*). Règles:
 
         - Pour chaque [indicateur, zone] il s'agit de la VI ayant la `metric_date` la plus lointaine dans le passé.
+        - Si aucune VI n'est détectée, on prend la première VA. Cette première VA doit également satisfaire le critère suivant sur la *date_minimale*
         - **Attention**, il existe une **date minimale** dans le projet dbt, et qui assure qu'aucune VIG ne sera antérieure celle-ci. Sa valeur est **{{ var('vig_min_date') }}**
