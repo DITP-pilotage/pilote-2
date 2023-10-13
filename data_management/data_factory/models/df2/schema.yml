@@ -45,3 +45,6 @@ models:
         - si l'opération n'est pas supportée, on aura la valeur `-1.212121` qui sera retournée comme résultat de l'aggrégation
   - name: agg_all
     description: "Combinaision des tables d'aggrégation aux trois mailles (DEPT, REG, NAT)"
+  - name: pivot_mesures
+    description: "La table des mesures aggrégées (`agg_all`) est pivotée."
+    
