@@ -6,3 +6,4 @@ union
 select * from {{ ref('agg_reg') }}
 union
 select * from {{ ref('agg_nat') }}
+order by indic_id, zone_id, metric_date
