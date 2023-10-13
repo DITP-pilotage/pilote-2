@@ -8,4 +8,9 @@ models:
         - Si 2 valeurs pour le meme {indic_id, metric_type, metric_date, zone_id}, on retourne celle avec la date d'import la plus récente
         - Si 2 valeurs dans le même mois, à des jours différents, on garde **les deux**
         - Transformation de `'null'` et `''` vers un `NULL`
-        
+  - name: agg_dept
+    description: |
+        Sélection des valeurs et calculs des aggrégation pour le niveau DEPT en fonction des paramètres. Règles:
+
+        - on ne garde les valeurs saisies, que si elles comportent `user_input` dans leur paramètrage (`vi_dept_from`, `va_dept_from`, `vc_dept_from`)
+        - aucun calcul d'aggrégation n'est fait à ce niveau car le DEPT est la maille la plus basse
