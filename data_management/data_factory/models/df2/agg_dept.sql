@@ -15,11 +15,13 @@ mesure_last_params_dept as (
 ), 
 -- Valeurs DEPT saisies directement par l'utilisateur
 mesure_last_params_dept_user as (
-    select * from mesure_last_params_dept
+    select a.*, b.zone_type from mesure_last_params_dept a
+    left join raw_data.metadata_zones b on a.zone_id=b.zone_id
     where 
-        (metric_type='vi' and vi_dept_from='user_input') OR
+        ((metric_type='vi' and vi_dept_from='user_input') OR
         (metric_type='va' and va_dept_from='user_input') OR
-        (metric_type='vc' and va_dept_from='user_input')
+        (metric_type='vc' and va_dept_from='user_input')) and
+		zone_type='DEPT'
 )
 
 -- Valeurs DEPT aggrégées: Aucune, car pas de niveau inférieur
