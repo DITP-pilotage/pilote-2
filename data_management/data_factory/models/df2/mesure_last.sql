@@ -14,7 +14,12 @@ rank_mesures_1 as (
 -- Nettoyage des valeurs 'null' et '' vers NULL
 rank_mesures_1_cleaned as (
     select 
-        date_import, indic_id, metric_date, metric_type,
+        date_import, indic_id, 
+        CASE 
+            WHEN metric_date='2023-06-31' THEN '2023-06-30'
+            ELSE metric_date
+        END as metric_date,
+        metric_type,
         case 
             WHEN metric_value IN ('', 'null', 'undefined') THEN null
             else metric_value
