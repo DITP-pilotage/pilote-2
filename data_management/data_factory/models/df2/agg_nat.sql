@@ -26,7 +26,7 @@ mesure_last_params_nat_user as (
 
 
 -- Liste des indicateurs qui ont un paramétrage d'aggrégation pour les valeurs NAT
-indic_agg_from_reg as (
+indic_agg_to_nat as (
 	select b.indic_id, b.vi_nat_from , b.vi_nat_op, b.va_nat_from , b.va_nat_op, b.vc_nat_from , b.vc_nat_op 
 	from "postgres"."raw_data"."metadata_parametrage_indicateurs" b
 	where 
@@ -39,15 +39,46 @@ indic_agg_from_reg as (
 --  on lui associe sa zone parente
 --  on lui associe ses paramètres d'aggrégation
 --  et on sélectionne que les valeurs qui sont REG avec un parent NAT
+-- Ce sont ces données que la DF va aggréger
 mesure_last_params_nat_from_reg as (
-	select a.indic_id as indic_id1 , metric_date , metric_type , metric_value, a.zone_id,
+	select a.indic_id as indic_id1 , metric_date , metric_type , metric_value::float, a.zone_id,
 	b.zone_type, b.zone_parent , b.zone_parent_type ,
 	c.*
 	from "postgres"."df2"."agg_reg" a
 	inner join df2.zone_parent b on a.zone_id = b.zone_id 
-	right join indic_agg_from_reg c on a.indic_id =c.indic_id
-	where zone_type='REG' and zone_parent_type='NAT'
+	right join indic_agg_to_nat c on a.indic_id =c.indic_id
+	where 
+		-- uniquement des données REG avec parent NAT
+		zone_type='REG' and zone_parent_type='NAT' and
+		-- et pour lesquels l'agg NAT doit bien se faire depuis les données REG
+		( (metric_type='vi' and vi_nat_from='REG') or (metric_type='va' and va_nat_from='REG') or (metric_type='vc' and vc_nat_from='REG'))
 ),
+
+-- On prend chaque mesure
+--  on lui associe sa zone parente
+--  on lui associe ses paramètres d'aggrégation
+--  et on sélectionne que les valeurs qui sont DEPT avec un parent NAT
+mesure_last_params_nat_from_dept as (
+	select a.indic_id as indic_id1 , metric_date , metric_type , metric_value::float, a.zone_id,
+	b.zone_type, b.zone_parent_parent as zone_parent , b.zone_parent_parent_type as zone_parent_type ,
+	c.*
+	from "postgres"."df2"."agg_dept" a
+	inner join df2.zone_parent_parent b on a.zone_id = b.zone_id 
+	right join indic_agg_to_nat c on a.indic_id =c.indic_id
+	where 
+		-- uniquement des données DEPT avec parent NAT
+		b.zone_type='DEPT' and zone_parent_parent_type='NAT' and
+		-- et pour lesquels l'agg NAT doit bien se faire depuis les données REG
+		( (metric_type='vi' and vi_nat_from='DEPT') or (metric_type='va' and va_nat_from='DEPT') or (metric_type='vc' and vc_nat_from='DEPT'))
+),
+
+-- Union des valeurs aggrégées depuis DEPT et REG
+mesure_last_params_nat_from_dept_or_reg as (
+	select * from mesure_last_params_nat_from_dept
+	union
+	select * from mesure_last_params_nat_from_reg
+),
+
 
 -- Ici on calcule une aggrégation en somme ET en moyenne des REG vers NAT
 --	La sélection de la valeur correcte se fera ensuite en fonction des paramètres
@@ -56,7 +87,7 @@ compute_op_sum_avg as (
 		zone_parent, indic_id as indic_id1, metric_date, metric_type, 
 		sum(metric_value::float) as op_sum,
 		avg(metric_value::float) as op_avg
-	from mesure_last_params_nat_from_reg
+	from mesure_last_params_nat_from_dept_or_reg
 	group by zone_parent, indic_id, metric_date, metric_type
 ),
 
@@ -73,7 +104,7 @@ compute_op_selected as (
         -- Si opération non supportée, ie hors de [sum, avg]
 		else -1.212121
 	end as op_selected
-	from indic_agg_from_reg a
+	from indic_agg_to_nat a
 	right join compute_op_sum_avg b on a.indic_id=b.indic_id1
 ),
 
