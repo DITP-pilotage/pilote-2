@@ -24,3 +24,12 @@ models:
         Pour chaque zone, on indique ses zones parents sur 2 niveaux.
 
         Par exemple, pour les DEPT, on a leur REG de rattachement et leur NAT de rattachement. Cette table est utile pour les aggrégations géographiques.
+  - name: agg_reg
+    description: |
+        Sélection des valeurs et calculs des aggrégation pour le niveau REG en fonction des paramètres. Règles:
+
+        - on ne garde les valeurs saisies, que si elles comportent `user_input` dans leur paramètrage (`vi_reg_from`, `va_reg_from`, `vc_reg_from`)
+        - pour l'aggrégation, on ne prend en compte que les opérations `sum` et `avg`
+        - les aggrégations se font de DEPT vers REG, lorsque l'on a `DEPT` dans `vi_reg_from`, `va_reg_from` ou `vc_reg_from`
+        - les aggrégations se font par `metric_date` exact (pas arrondi au mois). Ex: si on a `{D75,2023-08-31,10}` et `{D91,2023-08-15,25}`, on aura `{R11,2023-08-31,10}` et `{D11,2023-08-15,25}`
+        - si l'opération n'est pas supportée, on aura la valeur `-1.212121` qui sera retournée comme résultat de l'aggrégation
