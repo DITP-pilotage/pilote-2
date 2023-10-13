@@ -40,5 +40,6 @@ models:
         - on ne garde les valeurs saisies, que si elles comportent `user_input` dans leur paramètrage (`vi_nat_from`, `va_nat_from`, `vc_nat_from`)
         - pour l'aggrégation, on ne prend en compte que les opérations `sum` et `avg`
         - les aggrégations se font de REG vers NAT, lorsque l'on a `REG` dans `vi_nat_from`, `va_nat_from` ou `vc_nat_from`
+        - on se base sur la table d'aggrégation de DEPT vers REG (`agg_reg`) pour déterminer les valeurs au NAT. En effet, il est possible que des valeurs DEPT soient nécessaire pour le calcul des valeurs au REG, **et** que ces valeurs calculées au REG soient nécessaires pour le calcul des valeurs NAT. Il ne faut donc pas repartir de la table des valeurs importées, mais bien de la table de résultat de l'aggrégation REG.
         - les aggrégations se font par `metric_date` exact (pas arrondi au mois). Ex: si on a `{R01,2023-08-31,10}` et `{R02,2023-08-15,25}`, on aura `{FRANCE,2023-08-31,10}` et `{FRANCE,2023-08-15,25}`
         - si l'opération n'est pas supportée, on aura la valeur `-1.212121` qui sera retournée comme résultat de l'aggrégation
