@@ -80,3 +80,5 @@ models:
         Calcule les VACG (*Valeur Actuelle comparable globale*) pour chaque mesure. Cette valeur est celle qui sera comparée à la VC pour le calcul du TA. Règles:
 
         - Les règles sont identiques à celles de `compute_vacg` mais en prenant en compte les paramètres globaux et non annuels
+  - name: merge_computed_values
+    description: Jointure des VACA, VACG, VCA, VCG, VIG dans une table unqie avant de calculer les TA.
