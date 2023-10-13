@@ -16,10 +16,7 @@ rank_mesures_1_cleaned as (
     select 
         date_import, indic_id, metric_date, metric_type,
         case 
-            -- 'null'   -> NULL
-            when metric_value='null' then null
-            -- ''       -> NULL
-            when metric_value='' then null
+            WHEN metric_value IN ('', 'null', 'undefined') THEN null
             else metric_value
         end as metric_value,
         zone_id, id, rapport_id
