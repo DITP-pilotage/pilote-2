@@ -82,3 +82,12 @@ models:
         - Les règles sont identiques à celles de `compute_vacg` mais en prenant en compte les paramètres globaux et non annuels
   - name: merge_computed_values
     description: Jointure des VACA, VACG, VCA, VCG, VIG dans une table unqie avant de calculer les TA.
+  - name: compute_ta_indic
+    description: |
+        Calcule les *TAA* et *TAG* (*Taux d'avancement annuels et globaux*) indicateur pour chaque mesure. Règles:
+
+        - Les formules utilisées sont `(vacg-vig)/(vcg-vig)` pour le TAG et `100*(vaca-vig)/(vca-vig)` pour le TAA
+        - Si `vig=vca` alors le TAA vaut `NULL`
+        - Si `vig=vcg` alors le TAG vaut `NULL`
+        - Les TA sont paramétrés pour renvoyer **{{ var('ta_decimales') }} décimales** (paramètres global dbt `ta_decimales`)
+  
