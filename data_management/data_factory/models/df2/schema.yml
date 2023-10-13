@@ -47,4 +47,20 @@ models:
     description: "Combinaision des tables d'aggrégation aux trois mailles (DEPT, REG, NAT)"
   - name: pivot_mesures
     description: "La table des mesures aggrégées (`agg_all`) est pivotée."
-    
+  - name: get_vca
+    description: |
+        Réalise les calculs pour déterminer la *VCA* (ie *Valeur Cible annuelle*). Règles:
+
+        - Pour chaque [indicateur, zone, année] il s'agit de la VC ayant la `metric_date` la plus tardive dans l'année.
+  - name: get_vcg
+    description: |
+        Réalise les calculs pour déterminer la *VCG* (ie *Valeur Cible globale*). Règles:
+
+        - Pour chaque [indicateur, zone] il s'agit de la VC ayant la `metric_date` la plus tardive saisie
+        - **Attention**, il existe une **date maximum** dans le projet dbt, et qui assure qu'aucune VCG ne sera plus tardive que celle-ci. Sa valeur est **{{ var('vcg_max_date') }}**
+  - name: get_vig
+    description: |
+        Réalise les calculs pour déterminer la *VIG* (ie *Valeur Initiale globale*). Règles:
+
+        - Pour chaque [indicateur, zone] il s'agit de la VI ayant la `metric_date` la plus lointaine dans le passé.
+        - **Attention**, il existe une **date minimale** dans le projet dbt, et qui assure qu'aucune VIG ne sera antérieure celle-ci. Sa valeur est **{{ var('vig_min_date') }}**
