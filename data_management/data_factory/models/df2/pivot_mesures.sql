@@ -26,4 +26,5 @@ select
     a.vi, b.va, c.vc
 from pivot_vi a
     full join pivot_va b on a.indic_id=b.indic_id and a.zone_id=b.zone_id and a.metric_date=b.metric_date
-    full join pivot_vc c on a.indic_id=c.indic_id and a.zone_id=c.zone_id and a.metric_date=c.metric_date 
+    full join pivot_vc c on a.indic_id=c.indic_id and a.zone_id=c.zone_id and a.metric_date=c.metric_date
+ORDER BY indic_id, zone_id, metric_date ASC
