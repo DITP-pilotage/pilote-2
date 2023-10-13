@@ -9,14 +9,14 @@ mesure_last_params_nat as (
     select 
         a.indic_id , metric_date, metric_type, metric_value , zone_id,
         b.vi_nat_from , b.vi_nat_op , b.va_nat_from, b.va_nat_op, b.vc_nat_from , b.vc_nat_op 
-    from "postgres"."df2"."mesure_last" a
-    left join "postgres"."raw_data"."metadata_parametrage_indicateurs" b 
+    from {{ ref('mesure_last') }} a
+    left join {{ ref('metadata_parametrage_indicateurs') }} b 
     ON a.indic_id = b.indic_id
 ), 
 -- Valeurs NAT saisies directement par l'utilisateur
 mesure_last_params_nat_user as (
     select a.*, b.zone_type from mesure_last_params_nat a
-    left join raw_data.metadata_zones b on a.zone_id=b.zone_id
+    left join {{ ref('metadata_zones') }} b on a.zone_id=b.zone_id
     where 
         ((metric_type='vi' and vi_nat_from='user_input') OR
         (metric_type='va' and va_nat_from='user_input') OR
@@ -28,7 +28,7 @@ mesure_last_params_nat_user as (
 -- Liste des indicateurs qui ont un paramétrage d'aggrégation pour les valeurs NAT
 indic_agg_to_nat as (
 	select b.indic_id, b.vi_nat_from , b.vi_nat_op, b.va_nat_from , b.va_nat_op, b.vc_nat_from , b.vc_nat_op 
-	from "postgres"."raw_data"."metadata_parametrage_indicateurs" b
+	from {{ ref('metadata_parametrage_indicateurs') }} b
 	where 
 		b.vi_nat_from not in ('_', 'user_input') OR
 		b.va_nat_from not in ('_', 'user_input') OR
@@ -44,8 +44,8 @@ mesure_last_params_nat_from_reg as (
 	select a.indic_id as indic_id1 , metric_date , metric_type , metric_value::float, a.zone_id,
 	b.zone_type, b.zone_parent , b.zone_parent_type ,
 	c.*
-	from "postgres"."df2"."agg_reg" a
-	inner join df2.zone_parent b on a.zone_id = b.zone_id 
+	from {{ ref('agg_reg') }} a
+	inner join {{ ref('zone_parent') }} b on a.zone_id = b.zone_id 
 	right join indic_agg_to_nat c on a.indic_id =c.indic_id
 	where 
 		-- uniquement des données REG avec parent NAT
@@ -62,8 +62,8 @@ mesure_last_params_nat_from_dept as (
 	select a.indic_id as indic_id1 , metric_date , metric_type , metric_value::float, a.zone_id,
 	b.zone_type, b.zone_parent_parent as zone_parent , b.zone_parent_parent_type as zone_parent_type ,
 	c.*
-	from "postgres"."df2"."agg_dept" a
-	inner join df2.zone_parent_parent b on a.zone_id = b.zone_id 
+	from {{ ref('agg_dept') }} a
+	inner join {{ ref('zone_parent_parent') }} b on a.zone_id = b.zone_id 
 	right join indic_agg_to_nat c on a.indic_id =c.indic_id
 	where 
 		-- uniquement des données DEPT avec parent NAT
