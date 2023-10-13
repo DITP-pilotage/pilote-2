@@ -12,8 +12,15 @@ zones_parent_parent_type as (
     select a.*, b.zone_type  as zone_parent_parent_type, b.zone_parent as zone_parent_parent_parent 
     from zones_unnest_parent_parent a 
     left join {{ ref('metadata_zones') }} b 
-    ON a.zone_parent_parent = b.zone_id )
+    ON a.zone_parent_parent = b.zone_id ),
 
-select * from zones_parent_parent_type
+-- on supprime les doublons de parent_parent
+-- Ainsi, si X a comme parent_parent Y, il n'y aura qu'une ligne pour le spécifier
+zone_parent_parent_dedup as (
+    select distinct 
+        zone_id,
+        zone_type,
+        zone_parent_parent , zone_parent_parent_type , zone_parent_parent_parent 
+    from zones_parent_parent_type)
 
-
+select * from zone_parent_parent_dedup
