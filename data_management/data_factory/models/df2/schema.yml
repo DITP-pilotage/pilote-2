@@ -14,3 +14,8 @@ models:
 
         - on ne garde les valeurs saisies, que si elles comportent `user_input` dans leur paramètrage (`vi_dept_from`, `va_dept_from`, `vc_dept_from`)
         - aucun calcul d'aggrégation n'est fait à ce niveau car le DEPT est la maille la plus basse
+  - name: zone_parent_parent
+    description: |
+        Pour chaque zone, on indique ses zones parents sur 2 niveaux.
+
+        Par exemple, pour les DEPT, on a leur REG de rattachement et leur NAT de rattachement. Cette table est utile pour les aggrégations géographiques.
