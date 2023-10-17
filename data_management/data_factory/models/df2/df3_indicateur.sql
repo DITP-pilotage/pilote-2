@@ -12,7 +12,7 @@ list_indic_terr as (
 	t.code as territoire_code, 
 	t.zone_id
 	from public.territoire t 
-	cross join {{ ref('metadata_indicateurs') }} mi
+	cross join raw_data.metadata_indicateurs mi
 -- Pour prendre en compte le bool indic_hidden_pilote et ne pas retourner ces indicateurs:
 --	where not coalesce (mi.indic_hidden_pilote, false)
 ),
@@ -33,11 +33,14 @@ sort_mesures_va as (
 	select *,
 	rank() over (partition by indic_id, zone_id order by metric_date desc) as r
 	from df2.compute_ta_indic
-	where va is not null)
+	where va is not null),
+sort_mesures_va_last as (
+	select * from sort_mesures_va where r=1
+)
 
 -- Jointure avec les tables référentielles	
 	select 
-	a.indic_id as id,
+	mi.indic_id as id,
 	mi.indic_nom as nom,
 	mi.indic_parent_ch as chantier_id,
 	vcg as objectif_valeur_cible,
@@ -69,14 +72,17 @@ sort_mesures_va as (
     COALESCE(z_appl.est_applicable, true) AS est_applicable,
     -- todo
     null as a_supprimer
-	from sort_mesures_va a
-	left join get_evol_va b on a.indic_id=b.indic_id and a.zone_id=b.zone_id
-	left join {{ ref('metadata_indicateurs') }} mi on a.indic_id = mi.indic_id 
-	left join {{ ref('metadata_indicateur_types') }} mit on mit.indic_type_id = mi.indic_type 
-	left join {{ ref('metadata_parametrage_indicateurs') }} mpi on a.indic_id = mpi.indic_id 
-	left join public.territoire terr on a.zone_id = terr.zone_id 
-	LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} z_appl ON z_appl.indic_id = a.indic_id AND z_appl.zone_id = a.zone_id
-	right join list_indic_terr lit on a.indic_id=lit.indic_id and terr.code=lit.territoire_code
-	where r=1
-	order by a.indic_id, terr.code
-	
+	from public.territoire t 
+	cross join raw_data.metadata_indicateurs mi
+	left join sort_mesures_va_last a on a.indic_id=mi.indic_id and a.zone_id=t.zone_id
+	-- donc la liste des terr X liste des indic vont ressortir ici.
+	-- list_indic_terr list_indic left join sort_mesures_va a on t.indic_id = list_indic.indic_id and t.zone_id = list_indic.zone_id
+	left join get_evol_va b on mi.indic_id=b.indic_id and t.zone_id=b.zone_id
+	--left join raw_data.metadata_indicateurs mi on mi1.indic_id = mi.indic_id 
+	left join raw_data.metadata_indicateur_types mit on mit.indic_type_id = mi.indic_type 
+	left join raw_data.metadata_parametrage_indicateurs mpi on mi.indic_id = mpi.indic_id 
+	left join public.territoire terr on t.zone_id = terr.zone_id 
+	LEFT JOIN marts.int_indicateurs_zones_applicables z_appl ON z_appl.indic_id = mi.indic_id AND z_appl.zone_id = t.zone_id
+	right join list_indic_terr lit on mi.indic_id=lit.indic_id and terr.code=lit.territoire_code
+	--where a.r=1
+	order by mi.indic_id, terr.code
