@@ -56,6 +56,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
     territoiresSélectionnésSaisieCommentaire,
     chantiersSélectionnésSaisieCommentaire,
     périmètresMinistérielsSélectionnésSaisieCommentaire,
+    chantiersAccessiblesPourLeProfilSaisieCommentaire,
   } = useSaisieDesInformationsUtilisateurSaisieCommentaire(profilSélectionné, chantiersSynthétisésSélectionnés, utilisateur);
 
   return (
@@ -266,7 +267,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
               render={() => (
                 <MultiSelectChantier
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiersSaisieCommentaire}
-                  chantiers={chantiersSynthétisésSélectionnés}
+                  chantiers={chantiersAccessiblesPourLeProfilSaisieCommentaire}
                   chantiersIdsSélectionnésParDéfaut={chantiersSélectionnésSaisieCommentaire}
                   valeursDésactivées={chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieCommentaire} 
                 />

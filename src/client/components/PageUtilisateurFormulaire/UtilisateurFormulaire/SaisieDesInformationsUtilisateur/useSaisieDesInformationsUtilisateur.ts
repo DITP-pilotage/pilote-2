@@ -45,7 +45,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   useEffect(() => {
     if (!chantiers || !profilSélectionné) return;
     
-    if (profilSélectionné.code === 'SERVICES_DECONCENTRES_REGION' || profilSélectionné.code === 'SERVICES_DECONCENTRES_DEPARTEMENT') {
+    if (['RESPONSABLE_DEPARTEMENT', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(profilSélectionné.code)) {
       setChantiersAccessiblesPourLeProfil(chantiers.filter(chantier => chantier.estTerritorialisé));
     } else {
       setChantiersAccessiblesPourLeProfil(chantiers);
@@ -114,11 +114,13 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   }, [chantiersAccessiblesPourLeProfil]);
 
   useEffect(() => {
-    const chantiersSynthétisésListe = chantiers?.filter(chantier => chantiersSélectionnés.includes(chantier.id)) ?? [];
-    const périmètresListe = chantiersSynthétisésListe.flatMap(c => c.périmètreIds); 
-
-    setChantiersSynthétisésSélectionnés(chantiersSynthétisésListe);
-    setPérimètresIdSélectionnablesSaisie(périmètresListe);
+    if (chantiersSélectionnés) {
+      const chantiersSynthétisésListe = chantiers?.filter(chantier => chantiersSélectionnés.includes(chantier.id)) ?? [];
+      const périmètresListe = chantiersSynthétisésListe.flatMap(c => c.périmètreIds); 
+  
+      setChantiersSynthétisésSélectionnés(chantiersSynthétisésListe);
+      setPérimètresIdSélectionnablesSaisie(périmètresListe);
+    }
   }, [chantiers, setChantiersSynthétisésSélectionnés, chantiersSélectionnés]);
 
   // GESTION DES TERRITOIRES

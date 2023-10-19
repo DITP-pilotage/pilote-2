@@ -25,8 +25,8 @@ export default function useSaisieDesInformationsUtilisateurSaisieIndicateurs(
 
   // GESTION CHANGEMENT DE PROFIL
   useEffect(() => {
-    setAfficherChampSaisieIndicateursChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires);
-    setAfficherChampSaisieIndicateursPérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires);
+    setAfficherChampSaisieIndicateursChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires && profilSélectionné.code !== 'DROM');
+    setAfficherChampSaisieIndicateursPérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires && profilSélectionné.code !== 'DROM');
   }, [profilSélectionné]);
 
 

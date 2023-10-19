@@ -6,10 +6,11 @@ import { Profil } from '@/server/domain/profil/Profil.interface';
 import { profilsDépartementaux, profilsRégionaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { auMoinsUneValeurDuTableauEstContenueDansLAutreTableau } from '@/client/utils/arrays';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import api from '@/server/infrastructure/api/trpc/api';
 
 export default function useSaisieDesInformationsUtilisateur(
   profilSélectionné: Profil | undefined,
-  chantiersSélectionnables: ChantierSynthétisé[],
+  chantiersLecture: ChantierSynthétisé[],
   utilisateur?: UtilisateurFormulaireProps['utilisateur'],
 ) {
   const { watch, setValue, getValues, resetField, unregister } = useFormContext<UtilisateurFormInputs>();
@@ -24,23 +25,30 @@ export default function useSaisieDesInformationsUtilisateur(
   const [afficherChampSaisieCommentaireTerritoires, setAfficherChampSaisieCommentaireTerritoires] = useState(false);
   const [afficherChampSaisieCommentaireChantiers, setAfficherChampSaisieCommentaireChantiers] = useState(false);
   const [afficherChampSaisieCommentairePérimètres, setAfficherChampSaisieCommentairePérimètres] = useState(false);
+  const [chantiersAccessiblesPourLeProfilSaisieCommentaire, setchantiersAccessiblesPourLeProfilSaisieCommentaire] = useState<ChantierSynthétisé[]>([]);
+
+  const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
 
   // GESTION CHANGEMENT DE PROFIL
   useEffect(() => {
-    setAfficherChampSaisieCommentaireTerritoires(!!profilSélectionné && (profilsDépartementaux.includes(profilSélectionné.code) || profilsRégionaux.includes(profilSélectionné.code)));
-    setAfficherChampSaisieCommentaireChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
-    setAfficherChampSaisieCommentairePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
+    setAfficherChampSaisieCommentaireTerritoires(!!profilSélectionné && profilSélectionné.chantiers.saisieCommentaire.saisiePossible && (profilsDépartementaux.includes(profilSélectionné.code) || profilsRégionaux.includes(profilSélectionné.code)));
+    setAfficherChampSaisieCommentaireChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous  && profilSélectionné.chantiers.saisieCommentaire.saisiePossible);
+    setAfficherChampSaisieCommentairePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieCommentaire.saisiePossible);
   }, [profilSélectionné]);
 
-  // useEffect(() => {
-  //   if (!chantiersSélectionnables || !profilSélectionné) return;
+  useEffect(() => {
+    if (!chantiers || !profilSélectionné) return;
     
-  //   if (profilSélectionné.code === 'SERVICES_DECONCENTRES_REGION' || profilSélectionné.code === 'SERVICES_DECONCENTRES_DEPARTEMENT') {
-  //     setChantiersAccessiblesPourLeProfil(chantiersSélectionnables.filter(chantiersSélectionnables => chantiersSélectionnables.estTerritorialisé));
-  //   } else {
-  //     setChantiersAccessiblesPourLeProfil(chantiersSélectionnables);
-  //   }
-  // }, [chantiersSélectionnables, profilSélectionné]);
+    if (['RESPONSABLE_DEPARTEMENT', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(profilSélectionné.code)) {
+      console.log(chantiersLecture);
+      console.log(chantiersLecture.filter(chantier => chantier.estTerritorialisé && chantier.ate === 'hors_ate_deconcentre'));
+      setchantiersAccessiblesPourLeProfilSaisieCommentaire(chantiersLecture.filter(chantier => chantier.estTerritorialisé && chantier.ate === 'hors_ate_deconcentre'));
+    } else if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION', 'PREFET_DEPARTEMENT', 'PREFET_REGION'].includes(profilSélectionné.code)) {
+      setchantiersAccessiblesPourLeProfilSaisieCommentaire(chantiers.filter(chantier => chantier.estTerritorialisé && chantier.ate === 'ate'));
+    } else {
+      setchantiersAccessiblesPourLeProfilSaisieCommentaire(chantiersLecture);
+    }
+  }, [chantiers, profilSélectionné, chantiersLecture]);
 
   useEffect(() => {
     if (ancienProfilCodeSélectionné !== profilCodeSélectionné) {
@@ -66,10 +74,10 @@ export default function useSaisieDesInformationsUtilisateur(
 
   // GESTION CHANTIERS ET PERIMETRES MINISTERIELS 
   const déterminerChantiersSélectionnésÀPartirDesPérimètresMinistériels = useCallback((périmètresMinistérielsIdsSélectionnés: string[]) => {
-    const chantiersAppartenantsAuPérimètresMinistérielsSélectionnés = chantiersSélectionnables.filter(chantier => auMoinsUneValeurDuTableauEstContenueDansLAutreTableau(chantier.périmètreIds, périmètresMinistérielsIdsSélectionnés));
+    const chantiersAppartenantsAuPérimètresMinistérielsSélectionnés = chantiersAccessiblesPourLeProfilSaisieCommentaire.filter(chantier => auMoinsUneValeurDuTableauEstContenueDansLAutreTableau(chantier.périmètreIds, périmètresMinistérielsIdsSélectionnés));
 
     return chantiersAppartenantsAuPérimètresMinistérielsSélectionnés.map(c => c.id);
-  }, [chantiersSélectionnables]);
+  }, [chantiersAccessiblesPourLeProfilSaisieCommentaire]);
 
   const handleChangementValeursSélectionnéesChantiersSaisieCommentaire = useCallback((valeursSélectionnées: string[]) => {    
     setValue('habilitations.saisie.commentaire.chantiers', valeursSélectionnées);
@@ -93,7 +101,7 @@ export default function useSaisieDesInformationsUtilisateur(
   useEffect(() => {
     handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieCommentaire(getValues('habilitations.saisie.commentaire.périmètres'));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chantiersSélectionnables]);
+  }, [chantiersAccessiblesPourLeProfilSaisieCommentaire]);
 
   const handleChangementValeursSélectionnéesTerritoiresSaisieCommentaire = useCallback((valeursSélectionnées: string[]) => {
     setValue('habilitations.saisie.commentaire.territoires', valeursSélectionnées);
@@ -111,5 +119,6 @@ export default function useSaisieDesInformationsUtilisateur(
     territoiresSélectionnésSaisieCommentaire,
     chantiersSélectionnésSaisieCommentaire,
     périmètresMinistérielsSélectionnésSaisieCommentaire,
+    chantiersAccessiblesPourLeProfilSaisieCommentaire, 
   };
 }
