@@ -1,3 +1,5 @@
+{{ config(materialized='table') }}
+
 -- Reonstruction de la table indicateur
 
 
@@ -61,7 +63,7 @@ sort_mesures_va_last as (
 	mi.indic_source as "source",
 	mi.indic_methode_calcul as mode_de_calcul,
 	mi.indic_unite as unite_mesure,
-	terr.code,
+	terr.code as territoire_code,
 	mpi.poids_pourcent_dept as ponderation_dept,
 	mpi.poids_pourcent_nat as ponderation_nat,
 	mpi.poids_pourcent_reg as ponderation_reg,
@@ -71,7 +73,7 @@ sort_mesures_va_last as (
 	vca_date as objectif_date_valeur_cible_intermediaire,
     COALESCE(z_appl.est_applicable, true) AS est_applicable,
     -- todo
-    null as a_supprimer
+    null::bool as a_supprimer
 	from public.territoire t 
 	cross join raw_data.metadata_indicateurs mi
 	left join sort_mesures_va_last a on a.indic_id=mi.indic_id and a.zone_id=t.zone_id
