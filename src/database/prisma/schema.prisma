@@ -392,6 +392,7 @@ model profil {
   peut_consulter_les_utilisateurs                             Boolean       @default(false)
   peut_modifier_les_utilisateurs                              Boolean       @default(false)
   peut_supprimer_les_utilisateurs                             Boolean       @default(false)
+  peut_saisir_des_commentaires                                Boolean       @default(false)
   utilisateur                                                 utilisateur[]
 
   @@schema("public")

@@ -5,5 +5,6 @@ export default interface MultiSelectTerritoireProps {
     nationale: boolean
     régionale: boolean
     départementale: boolean
-  }
+  },
+  territoiresSélectionnables?: string[]
 }

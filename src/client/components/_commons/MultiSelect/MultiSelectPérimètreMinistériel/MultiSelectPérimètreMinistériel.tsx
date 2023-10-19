@@ -5,21 +5,23 @@ import { MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/compon
 import { trierParOrdreAlphabétique } from '@/client/utils/arrays';
 import MultiSelectPérimètreMinistérielProps from './MultiSelectPérimètreMinistériel.interface';
 
-export default function MultiSelectPérimètreMinistériel({ périmètresMinistérielsIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback }: MultiSelectPérimètreMinistérielProps) {
+export default function MultiSelectPérimètreMinistériel({ périmètresMinistérielsIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, périmètresId }: MultiSelectPérimètreMinistérielProps) {
   const { data: périmètresMinistériels } = api.périmètreMinistériel.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
+  
   const [optionsGroupées, setOptionsGroupées] = useState<MultiSelectOptionsGroupées>([]);
 
   useEffect(() => {
-    if (périmètresMinistériels) {
+    const périmètresSélectionnables = !!périmètresId ? périmètresMinistériels?.filter(p => périmètresId.includes(p.id)) : périmètresMinistériels;
+    if (périmètresSélectionnables) {
       setOptionsGroupées([{
         label: 'Périmètres Ministériels',
-        options: trierParOrdreAlphabétique<MultiSelectOptions>(périmètresMinistériels.map(périmètreMinistériel => ({
+        options: trierParOrdreAlphabétique<MultiSelectOptions>(périmètresSélectionnables.map(périmètreMinistériel => ({
           label: périmètreMinistériel.nom,
           value: périmètreMinistériel.id,
         })), 'label'),
       }]);
     }
-  }, [périmètresMinistériels]);
+  }, [périmètresMinistériels, périmètresId]);
 
   return (
     <MultiSelect

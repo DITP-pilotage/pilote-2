@@ -37,6 +37,7 @@ export default class ProfilSQLRepository implements ProfilRepository {
         },
         saisieCommentaire: {
           tousTerritoires: p.a_acces_tous_les_territoires_saisie_commentaire,
+          saisiePossible: p.peut_saisir_des_commentaires,
         },
         saisieIndicateur: {
           tousTerritoires: p.a_acces_tous_les_territoires_saisie_indicateur,

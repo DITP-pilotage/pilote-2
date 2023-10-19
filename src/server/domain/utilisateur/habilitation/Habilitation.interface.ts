@@ -42,7 +42,7 @@ export type HabilitationsÀCréerOuMettreÀJour = {
     chantiers: Chantier['id'][]
     territoires: Territoire['code'][]
     périmètres: PérimètreMinistériel['id'][]
-  }
+  }, 
 };
 
 export type HabilitationsÀCréerOuMettreÀJourCalculées = Record<ScopeChantiers, HabilitationChantiers & { périmètres: PérimètreMinistériel['id'][] }>;
