@@ -16,7 +16,6 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   const périmètresMinistérielsSélectionnés = watch('habilitations.lecture.périmètres');
 
   const [chantiersSynthétisésSélectionnés, setChantiersSynthétisésSélectionnés] = useState<ChantierSynthétisé[]>([]);
-  const [périmètresIdSélectionnablesSaisie, setPérimètresIdSélectionnablesSaisie] = useState<string[]>([]);
 
   const [ancienProfilCodeSélectionné, setAncienProfilCodeSélectionné] = useState<string>(getValues('profil'));
   const [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés] = useState<string[]>([]);
@@ -115,11 +114,8 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
 
   useEffect(() => {
     if (chantiersSélectionnés) {
-      const chantiersSynthétisésListe = chantiers?.filter(chantier => chantiersSélectionnés.includes(chantier.id)) ?? [];
-      const périmètresListe = chantiersSynthétisésListe.flatMap(c => c.périmètreIds); 
-  
+      const chantiersSynthétisésListe = chantiers?.filter(chantier => chantiersSélectionnés.includes(chantier.id)) ?? [];  
       setChantiersSynthétisésSélectionnés(chantiersSynthétisésListe);
-      setPérimètresIdSélectionnablesSaisie(périmètresListe);
     }
   }, [chantiers, setChantiersSynthétisésSélectionnés, chantiersSélectionnés]);
 
@@ -159,6 +155,5 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     groupesTerritoiresÀAfficher,
     chantiersAccessiblesPourLeProfil,
     chantiersSynthétisésSélectionnés,
-    périmètresIdSélectionnablesSaisie,
   };
 }

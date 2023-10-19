@@ -32,7 +32,6 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
     groupesTerritoiresÀAfficher, 
     chantiersAccessiblesPourLeProfil,
     chantiersSynthétisésSélectionnés,
-    périmètresIdSélectionnablesSaisie,
   } = useSaisieDesInformationsUtilisateur(utilisateur);
 
   const {
@@ -46,17 +45,15 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
   } = useSaisieDesInformationsUtilisateurSaisieIndicateurs(profilSélectionné, chantiersSynthétisésSélectionnés, utilisateur);
 
   const {
-    handleChangementValeursSélectionnéesTerritoiresSaisieCommentaire,
     handleChangementValeursSélectionnéesChantiersSaisieCommentaire,
     handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieCommentaire,
     chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieCommentaire,
-    afficherChampSaisieCommentaireTerritoires,
     afficherChampSaisieCommentaireChantiers,
     afficherChampSaisieCommentairePérimètres,
-    territoiresSélectionnésSaisieCommentaire,
     chantiersSélectionnésSaisieCommentaire,
     périmètresMinistérielsSélectionnésSaisieCommentaire,
     chantiersAccessiblesPourLeProfilSaisieCommentaire,
+    périmètresIdSélectionnablesSaisie,
   } = useSaisieDesInformationsUtilisateurSaisieCommentaire(profilSélectionné, chantiersSynthétisésSélectionnés, utilisateur);
 
   return (
@@ -215,7 +212,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           </div>
         </div>
       </div>
-      <div className={`${(!!afficherChampSaisieCommentaireTerritoires || !!afficherChampSaisieCommentairePérimètres || !!afficherChampSaisieCommentaireChantiers) ? '' : 'fr-hidden'}`}>
+      <div className={`${(!!afficherChampSaisieCommentairePérimètres || !!afficherChampSaisieCommentaireChantiers) ? '' : 'fr-hidden'}`}>
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
@@ -223,26 +220,6 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         >
           Droits de saisie des commentaires
         </Titre>
-        <p className="fr-text--xs texte-gris fr-mb-4w">
-          Précisez les droits de saisie rattachés au compte. Les options disponibles dépendent du profil et des droits de lecture précédemment indiqués.         
-        </p>
-        <div className={`${!!afficherChampSaisieCommentaireTerritoires ? '' : 'fr-hidden'}`}>
-          <div className='fr-mb-4w'>
-            <Controller
-              control={control}
-              name="habilitations.saisie.commentaire.territoires"
-              render={() => (
-                <MultiSelectTerritoire
-                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoiresSaisieCommentaire}
-                  groupesÀAfficher={groupesTerritoiresÀAfficher}
-                  territoiresCodesSélectionnésParDéfaut={territoiresSélectionnésSaisieCommentaire}
-                  territoiresSélectionnables={territoiresSélectionnés}
-                />
-              )}
-              rules={{ required: true }} 
-            />
-          </div>
-        </div>
         <div className={`${!!afficherChampSaisieCommentairePérimètres ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
