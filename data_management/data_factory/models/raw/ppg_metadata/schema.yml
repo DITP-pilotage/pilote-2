@@ -10,6 +10,7 @@ models:
             pilote_show: true
             pilote_alias: indic_id
             pilote_edit_isEditable: false
+            pilote_edit_boxType: text
       - name: indic_parent_indic
         data_type: text
         description: "Indicateur parent"
@@ -19,6 +20,7 @@ models:
             pilote_edit_isEditable: true
             pilote_edit_regex: "IND-\\d\\d\\d"
             pilote_edit_regexViolationMessage: "Le code de l'indicateur parent doit être au format 'IND-XXX'"
+            pilote_edit_boxType: text
       - name: indic_parent_ch
         data_type: text
         description: "Chantier contenant cet indicateur"
@@ -28,6 +30,7 @@ models:
             pilote_edit_isEditable: true
             pilote_edit_regex: "CH-\\d\\d\\d"
             pilote_edit_regexViolationMessage: "Le code du chantier parent doit être au format 'CH-XXX'"
+            pilote_edit_boxType: text
       - name: indic_nom
         data_type: text
         description: "Nom complet de l'indicateur"
@@ -37,11 +40,13 @@ models:
             pilote_edit_isEditable: true
             pilote_edit_regex: ".*"
             pilote_edit_regexViolationMessage: null
+            pilote_edit_boxType: text
       - name: indic_nom_baro
         data_type: text
         description: "Nom de cet indicateur dans le baromètre"
         meta:
             pilote_show: false
+            pilote_edit_boxType: text
       - name: indic_descr
         data_type: text
         description: "Description de l'indicateur"
@@ -51,11 +56,13 @@ models:
             pilote_edit_isEditable: true
             pilote_edit_regex: ".*"
             pilote_edit_regexViolationMessage: null
+            pilote_edit_boxType: textarea
       - name: indic_descr_baro
         data_type: text
         description: "Description de l'indicateur dans le baromètre"
         meta:
             pilote_show: false
+            pilote_edit_boxType: textarea
       - name: indic_is_perseverant
         data_type: boolean
         description: "Indique si l'indicateur est perseverant"
@@ -78,7 +85,7 @@ models:
             pilote_alias: "Baromètre"
             pilote_edit_isEditable: false
       - name: indic_type
-        data_type: boolean
+        data_type: text
         description: |
             Typologie de l'indicateur.
 
@@ -98,6 +105,7 @@ models:
             pilote_show: true
             pilote_alias: "Source"
             pilote_edit_isEditable: false
+            pilote_edit_boxType: text
       - name: indic_source_url
         data_type: text
         description: "URL de la source de donnée déclarée (si accessible publiquement)"
@@ -105,6 +113,7 @@ models:
             pilote_show: true
             pilote_alias: "Source (URL)"
             pilote_edit_isEditable: false
+            pilote_edit_boxType: text
       - name: indic_methode_calcul
         data_type: text
         description: "Méthode de calcul pour l'obtention des données."
@@ -112,6 +121,7 @@ models:
             pilote_show: true
             pilote_alias: "Méthode de calcul"
             pilote_edit_isEditable: false
+            pilote_edit_boxType: textarea
       - name: indic_unite
         data_type: text
         description: "Unité de l'indicateur"
@@ -121,6 +131,7 @@ models:
             pilote_edit_isEditable: true
             pilote_edit_regex: ".*"
             pilote_edit_regexViolationMessage: null
+            pilote_edit_boxType: text
       - name: indic_hidden_pilote
         data_type: boolean
         description: "Indique si l'indicateur est affiché dans Pilote. **Ne fonctionne pas**"
@@ -129,10 +140,14 @@ models:
       - name: indic_schema
         data_type: text
         description: "Nom du schema associé. Cela permet la restriction de la saisie de données."
+        tests:
+          - accepted_values:
+              values: ['sans-contraintes.json', 'restrict-dept.json', 'restrict-0-100.json']
         meta:
             pilote_show: true
             pilote_alias: "Contraintes"
             pilote_edit_isEditable: false
+            pilote_edit_boxType: text
       - name: zg_applicable
         data_type: text
         description: "*Zone-group* applicable à cet indicateur. Voir `metadata_zonegroup`"
@@ -142,4 +157,5 @@ models:
             pilote_edit_isEditable: true
             pilote_edit_regex: "ZG-\\d\\d\\d"
             pilote_edit_regexViolationMessage: "Le code de la ZG doit être au format 'ZG-XXX'"
+            pilote_edit_boxType: text
 
