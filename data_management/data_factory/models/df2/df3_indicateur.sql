@@ -73,7 +73,7 @@ sort_mesures_va_last as (
 	vca_date as objectif_date_valeur_cible_intermediaire,
     COALESCE(z_appl.est_applicable, true) AS est_applicable,
     -- todo
-    null::bool as a_supprimer
+    FALSE as a_supprimer
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi
 	left join sort_mesures_va_last a on a.indic_id=mi.indic_id and a.zone_id=t.zone_id
