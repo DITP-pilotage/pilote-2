@@ -45,7 +45,7 @@ mesure_last_params_reg_from_dept as (
 	b.zone_type, b.zone_parent , b.zone_parent_type ,
 	c.*
 	from {{ ref('mesure_last') }} a
-	inner join df2.zone_parent b on a.zone_id = b.zone_id 
+	inner join {{ ref('zone_parent') }} b on a.zone_id = b.zone_id 
 	right join indic_agg_from_dept c on a.indic_id =c.indic_id
 	where 
 		-- uniquement des données REG avec parent NAT
