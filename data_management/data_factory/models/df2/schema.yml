@@ -90,24 +90,24 @@ models:
         - Si `vig=vca` alors le TAA vaut `NULL`
         - Si `vig=vcg` alors le TAG vaut `NULL`
         - Les TA sont paramétrés pour renvoyer **{{ var('ta_decimales') }} décimales** (paramètres global dbt `ta_decimales`)
-    - name: df2_indicateur
-      description: "Table des indicateurs construite par la datafactory dbt."
-      config:
-        docs:
-          node_color: "#cd7f32"
-        schema: public
-        tags: ["df2"]
-    - name: df2_chantier
-      description: "Table des chantiers construite par la datafactory dbt."
-      config:
-        docs:
-          node_color: "#cd7f32"
-        schema: public
-        tags: ["df2"]
-    - name: df3_indicateur
-      description: "Table des indicateurs construite par la datafactory dbt. Version reconstruite de zero."
-      config:
-        docs:
-          node_color: "#cd7f32"
-        schema: public
-        tags: ["df2"]
+  - name: df2_indicateur
+    description: "Table des indicateurs construite par la datafactory dbt."
+    config:
+      docs:
+        node_color: "#cd7f32"
+      schema: public
+      tags: ["df2"]
+  - name: df2_chantier
+    description: "Table des chantiers construite par la datafactory dbt."
+    config:
+      docs:
+        node_color: "#cd7f32"
+      schema: public
+      tags: ["df2"]
+  - name: df3_indicateur
+    description: "Table des indicateurs construite par la datafactory dbt. Version reconstruite de zero."
+    config:
+      docs:
+        node_color: "#cd7f32"
+      schema: public
+      tags: ["df2"]
