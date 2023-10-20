@@ -1,4 +1,4 @@
-{% macro df3_not_equal(colname, tolerance=-1)%}
+{% macro df3_not_equal(colname, tolerance=0)%}
 
 {{ config(
     tags=["df3","df3_validation"],
@@ -13,7 +13,6 @@ with jjoin as (select
     a.{{colname}} as computed_value,
     b.{{colname}} as target_value,
     case
-        when {{tolerance}}<0 then null
 		when a.{{colname}}=0 then null
 		when b.{{colname}}=0 then null
 		else abs(a.{{colname}}-b.{{colname}})/b.{{colname}}
@@ -28,6 +27,6 @@ select * from jjoin
 where 
 	(computed_value is not null and target_value is not null)
     AND (computed_value <> target_value)
-    AND (ratio is null or ratio > 0.01)
+    AND (ratio is null or ratio > {{tolerance}})
 
 {% endmacro %}
