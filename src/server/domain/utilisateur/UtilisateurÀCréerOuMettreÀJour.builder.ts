@@ -30,6 +30,16 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
         périmètres: [],
         territoires: [],
       },
+      saisie: {
+        commentaire: {
+          chantiers: [],
+          périmètres: [],
+        },
+        indicateur: {
+          chantiers: [],
+          périmètres: [],
+        },
+      },
     };
   }
 

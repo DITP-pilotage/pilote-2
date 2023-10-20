@@ -1,7 +1,7 @@
 import { Options, parse } from 'csv-parse/sync';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
-import { ProfilCode, UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode, UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { HabilitationsÀCréerOuMettreÀJourCalculées, ScopeChantiers } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { CsvRecord } from './UtilisateurCSVParseur.interface';
 
@@ -25,7 +25,7 @@ export default class UtilisateurCSVParseur {
 
   constructor(private _filename: string) {}
 
-  parse(): { csvRecords: CsvRecord[], parsedCsvRecords: (UtilisateurÀCréerOuMettreÀJour & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[] } {
+  parse(): { csvRecords: CsvRecord[], parsedCsvRecords: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[] } {
     const contents = fs.readFileSync(this._filename, 'utf8');
     const csvRecords: CsvRecord[] = parse(contents, this._CSV_PARSE_OPTIONS);
 
@@ -33,10 +33,10 @@ export default class UtilisateurCSVParseur {
     return { csvRecords, parsedCsvRecords };
   }
 
-  _parseCsvRecords(csvRecords: CsvRecord[]): (UtilisateurÀCréerOuMettreÀJour & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[] {
+  _parseCsvRecords(csvRecords: CsvRecord[]): (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[] {
     assert(csvRecords, 'Erreur de parsing CSV. Pas de lignes ?');
   
-    let utilisateurs: Record<string, (UtilisateurÀCréerOuMettreÀJour & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })> = {};
+    let utilisateurs: Record<string, (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })> = {};
 
     for (const csvRecord of csvRecords) {
       const email = csvRecord[this._colonnes.email].toLowerCase();
@@ -64,7 +64,7 @@ export default class UtilisateurCSVParseur {
     };
   }
   
-  _générerUtilisateurÀCréerOuMettreÀJour(csvRecord: CsvRecord): (UtilisateurÀCréerOuMettreÀJour & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }) {
+  _générerUtilisateurÀCréerOuMettreÀJour(csvRecord: CsvRecord): (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }) {
     return {
       email: csvRecord[this._colonnes.email].toLowerCase(),
       nom: csvRecord[this._colonnes.nom].toLowerCase(),

@@ -1,6 +1,6 @@
 import { PrismaClient, habilitation, profil, utilisateur, chantier, territoire, projet_structurant, perimetre } from '@prisma/client';
 import { objectEntries } from '@/client/utils/objects/objects';
-import Utilisateur, { ProfilCode, UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
+import Utilisateur, { ProfilCode, UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import {
@@ -169,7 +169,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return utilisateursMappés;
   }
 
-  async récupérerExistants(utilisateurs: (UtilisateurÀCréerOuMettreÀJour & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[]): Promise<Utilisateur['email'][]> {
+  async récupérerExistants(utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[]): Promise<Utilisateur['email'][]> {
 
     const utilisateursExistants = await this._prisma.utilisateur.findMany({
       where: {
@@ -182,7 +182,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return utilisateursExistants.map(u => u.email);
   }
 
-  async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJour & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurModification: string): Promise<void> {
+  async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurModification: string): Promise<void> {
     const utilisateurCrééOuMisÀJour = await this._prisma.utilisateur.upsert({
       create: {
         email: u.email.toLocaleLowerCase(),
