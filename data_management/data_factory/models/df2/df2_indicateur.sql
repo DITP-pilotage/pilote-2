@@ -1,3 +1,5 @@
+{{ config(materialized='table') }}
+
 SELECT m_indicateurs.id,
     m_indicateurs.nom,
     m_indicateurs.chantier_id,
