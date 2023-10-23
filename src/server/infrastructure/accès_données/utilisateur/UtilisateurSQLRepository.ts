@@ -1,5 +1,4 @@
 import { PrismaClient, habilitation, profil, utilisateur, chantier, territoire, projet_structurant, perimetre } from '@prisma/client';
-import { objectEntries } from '@/client/utils/objects/objects';
 import Utilisateur, { ProfilCode, UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -226,8 +225,6 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   private async _récupérerChantiersParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, chantier['id'][]>> {
     let chantiersAccessibles: chantier['id'][] = [];
-    let chantiersAccessiblesEnSaisieCommentaire: chantier['id'][] = [];
-
 
     if (profilUtilisateur.a_acces_tous_chantiers) {
       chantiersAccessibles = this._chantiers.ids;
@@ -235,19 +232,10 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       chantiersAccessibles = this._chantiersTerritorialisésIds;
     }
 
-    // eslint-disable-next-line unicorn/prefer-ternary
-    if (['REFERENT_REGION', 'PREFET_REGION', 'REFERENT_DEPARTEMENT', 'PREFET_DEPARTEMENT'].includes(profilUtilisateur.code)) {
-      chantiersAccessiblesEnSaisieCommentaire = objectEntries(this._chantiers.groupésParId)
-        .filter(([_, c]) => c.est_territorialise && c.ate === 'ate')
-        .map(([_, c]) => c.id);
-    } else {
-      chantiersAccessiblesEnSaisieCommentaire = chantiersAccessibles;
-    }
-
     return {
       'lecture': chantiersAccessibles,
-      'saisie.commentaire': chantiersAccessiblesEnSaisieCommentaire,
-      'saisie.indicateur': chantiersAccessibles,
+      'saisie.commentaire': ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profilUtilisateur.code) ? chantiersAccessibles : [],
+      'saisie.indicateur': profilUtilisateur.code === 'DITP_ADMIN' ? chantiersAccessibles : [],
       'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs ? chantiersAccessibles : [],
       'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs ? chantiersAccessibles : [],
       'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs ? chantiersAccessibles : [],
@@ -365,7 +353,6 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     }
 
     habilitationsGénérées['projetsStructurants.lecture'].projetsStructurants = await this._récupérerProjetsStructurantsUtilisateur(profilUtilisateur, habilitationsGénérées.lecture.chantiers, habilitationsGénérées.lecture.territoires);
-    
     return habilitationsGénérées;
   }
 

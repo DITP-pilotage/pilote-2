@@ -60,10 +60,10 @@ export default function useSaisieDesInformationsUtilisateur(
 
       if (ancienProfilCodeSélectionné === undefined) {
         if (utilisateur?.habilitations?.lecture.chantiers) 
-          setValue('habilitations.saisie.commentaire.chantiers', utilisateur?.habilitations?.lecture.chantiers);
+          setValue('habilitations.saisie.commentaire.chantiers', utilisateur?.habilitations?.['saisie.commentaire'].chantiers);
       
         if (utilisateur?.habilitations?.lecture.périmètres) 
-          setValue('habilitations.saisie.commentaire.périmètres', utilisateur?.habilitations?.lecture.périmètres);
+          setValue('habilitations.saisie.commentaire.périmètres', utilisateur?.habilitations?.['saisie.commentaire'].périmètres);
       }
 
       setAncienProfilCodeSélectionné(profilCodeSélectionné);

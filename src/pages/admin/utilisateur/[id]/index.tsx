@@ -47,13 +47,32 @@ export async function getServerSideProps({ req, res, params } :GetServerSideProp
   }
 
   const utilisateurDemandé = await new RécupérerUnUtilisateurUseCase().run(session.habilitations, params.id);
+
   if (!utilisateurDemandé) {
     return redirigerVersPageAccueil;
   }
 
+  const { id, nom, prénom, email, profil, dateModification, auteurModification, habilitations } = { ...utilisateurDemandé };
+  const user = {
+    id,
+    nom,
+    prénom,
+    email,
+    profil,
+    dateModification,
+    auteurModification,
+    habilitations: {
+      lecture: habilitations.lecture,
+      saisie: {
+        indicateur: habilitations['saisie.indicateur'],
+        commentaire: habilitations['saisie.commentaire'],
+      },
+    },
+  };
+
   return {
     props: {
-      utilisateur: utilisateurDemandé,
+      utilisateur: user,
     },
   };
 }

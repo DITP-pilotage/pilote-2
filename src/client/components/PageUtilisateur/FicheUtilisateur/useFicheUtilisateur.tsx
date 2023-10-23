@@ -104,12 +104,12 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
     if (déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire(u).length === 0) 
       return [];
 
-    if(['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profil?.code ?? ''))
+    if (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profil?.code ?? '')) 
       return ['Tous les chantiers'];
 
     return u.habilitations?.saisie?.commentaire?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
 
-  }, [chantiers, déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire]);
+  }, [chantiers, déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire, profil]);
 
   useEffect(() => {
     if (!chantiers || !profil)
