@@ -12,6 +12,8 @@ models:
             pilote_edit_isEditable: false
             pilote_edit_boxType: text
             pilote_disp_dispDesc: false
+            pilote_create_mandatory: true
+            pilote_create_defaultValue: null
       - name: indic_parent_indic
         data_type: text
         description: "Indicateur parent"
@@ -23,6 +25,8 @@ models:
             pilote_edit_regexViolationMessage: "Le code de l'indicateur parent doit être au format 'IND-XXX'"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: false
+            pilote_create_mandatory: false
+            pilote_create_defaultValue: null
       - name: indic_parent_ch
         data_type: text
         description: "Code du chantier associé à cet indicateur, au format CH-XXX."
@@ -34,6 +38,8 @@ models:
             pilote_edit_regexViolationMessage: "Le code du chantier parent doit être au format 'CH-XXX'"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
+            pilote_create_mandatory: true
+            pilote_create_defaultValue: null
       - name: indic_nom
         data_type: text
         description: "Nom complet de l'indicateur"
@@ -45,6 +51,8 @@ models:
             pilote_edit_regexViolationMessage: null
             pilote_edit_boxType: text
             pilote_disp_dispDesc: false
+            pilote_create_mandatory: true
+            pilote_create_defaultValue: null
       - name: indic_nom_baro
         data_type: text
         description: "Nom de cet indicateur dans le baromètre des résultats de l'action publique."
@@ -53,6 +61,8 @@ models:
             pilote_alias: "Nom baromètre"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
+            pilote_create_mandatory: false
+            pilote_create_defaultValue: null"
       - name: indic_descr
         data_type: text
         description: "Description de l'indicateur"
@@ -64,6 +74,8 @@ models:
             pilote_edit_regexViolationMessage: null
             pilote_edit_boxType: textarea
             pilote_disp_dispDesc: true
+            pilote_create_mandatory: true
+            pilote_create_defaultValue: null
       - name: indic_descr_baro
         data_type: text
         description: "Description de l'indicateur dans le baromètre de l'action publique"
@@ -72,6 +84,8 @@ models:
             pilote_alias: "Description baromètre"
             pilote_edit_boxType: textarea
             pilote_disp_dispDesc: true
+            pilote_create_mandatory: false
+            pilote_create_defaultValue: null
       - name: indic_is_perseverant
         data_type: boolean
         description: "Indique si l'indicateur est perseverant"
@@ -79,6 +93,8 @@ models:
             pilote_show: true
             pilote_alias: "Persévérant"
             pilote_edit_isEditable: false
+            pilote_create_mandatory: true
+            pilote_create_defaultValue: false
       - name: indic_is_phare
         data_type: boolean
         description: "Indique si l'indicateur est phare"
@@ -86,6 +102,8 @@ models:
             pilote_show: true
             pilote_alias: "Phare"
             pilote_edit_isEditable: true
+            pilote_create_mandatory: true
+            pilote_create_defaultValue: false
       - name: indic_is_baro
         description: "Indicateur présent dans le baromètre des résultats de l'action publique"
         data_type: boolean
@@ -93,6 +111,8 @@ models:
             pilote_show: true
             pilote_alias: "Baromètre"
             pilote_edit_isEditable: false
+            pilote_create_mandatory: true
+            pilote_create_defaultValue: false
       - name: indic_type
         data_type: text
         description: |
@@ -107,6 +127,8 @@ models:
             pilote_edit_acceptedValues: >
               [{"order_id": 1, "value": "IMPACT", "name": "Impact", "desc": "Indicateur d'impact"}, {"order_id": 2, "value": "DEPL", "name": "Déploiement", "desc": "Indicateur de déploiement"}, {"order_id": 3, "value": "CONTEXTE", "name": "De contexte", "desc": "Indicateur de contexte"}, {"order_id": 4, "value": "Q_SERV", "name": "De qualité de service", "desc": "Mesure la qualité du service rendu."}, {"order_id": 5, "value": "REBOND", "name": "Effets rebonds", "desc": "Effets rebonds engendrés par la mise en place du chantier"}]   
             pilote_disp_dispDesc: true
+            pilote_create_mandatory: true
+            pilote_create_defaultValue: "IMPACT"
       - name: indic_source
         description: "Source déclarée des données de l'indicateur"
         data_type: text
@@ -116,6 +138,8 @@ models:
             pilote_edit_isEditable: false
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
+            pilote_create_mandatory: false
+            pilote_create_defaultValue: "Pas de source renseignée"
       - name: indic_source_url
         data_type: text
         description: "URL de la source de donnée déclarée (si accessible publiquement)"
@@ -124,6 +148,8 @@ models:
             pilote_alias: "Source (URL)"
             pilote_edit_isEditable: false
             pilote_edit_boxType: text
+            pilote_create_mandatory: false
+            pilote_create_defaultValue: null
       - name: indic_methode_calcul
         data_type: text
         description: "Méthode de calcul pour l'obtention des données."
@@ -133,6 +159,8 @@ models:
             pilote_edit_isEditable: false
             pilote_edit_boxType: textarea
             pilote_disp_dispDesc: true
+            pilote_create_mandatory: false
+            pilote_create_defaultValue: null
       - name: indic_unite
         data_type: text
         description: "Unité de l'indicateur"
@@ -143,6 +171,8 @@ models:
             pilote_edit_regex: ".*"
             pilote_edit_regexViolationMessage: null
             pilote_edit_boxType: text
+            pilote_create_mandatory: true
+            pilote_create_defaultValue: null
       - name: indic_hidden_pilote
         data_type: boolean
         description: "Indique si l'indicateur est affiché dans Pilote. **Ne fonctionne pas**"
@@ -150,6 +180,8 @@ models:
             pilote_show: true
             pilote_alias: "Masqué"
             pilote_disp_dispDesc: true
+            pilote_create_mandatory: true
+            pilote_create_defaultValue: false
       - name: indic_schema
         data_type: text
         description: "Nom du schema associé. Cela permet la restriction de la saisie de données."
@@ -160,7 +192,9 @@ models:
             pilote_edit_boxType: text
             pilote_edit_acceptedValuesViolationMessage: "Veuillez choisir des contraintes de saisie parmi: "      
             pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "sans-contraintes.json", "name": "-", "desc": "Pas de contraintes particulières"}, {"order_id": 2, "value": "restrict-dept.json", "name": "Saisie départementale", "desc": "Saisie restreinte au niveau départemental"}, {"order_id": 3, "value": "restrict-0-100.json", "name": "Dans [0,100]", "desc": "Saisie entre 0 et 100."}]   
+              [{"order_id": 1, "value": "sans-contraintes.json", "name": "-", "desc": "Pas de contraintes particulières"}, {"order_id": 2, "value": "restrict-dept.json", "name": "Saisie départementale", "desc": "Saisie restreinte au niveau départemental"}, {"order_id": 3, "value": "restrict-0-100.json", "name": "Dans [0,100]", "desc": "Saisie entre 0 et 100."}]
+            pilote_create_mandatory: true
+            pilote_create_defaultValue: "sans-contraintes.json"
       - name: zg_applicable
         data_type: text
         description: "*Zone-group* applicable à cet indicateur. Voir `metadata_zonegroup`"
@@ -172,3 +206,5 @@ models:
             pilote_edit_regexViolationMessage: "Le code de la ZG doit être au format 'ZG-XXX'"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
+            pilote_create_mandatory: false
+            pilote_create_defaultValue: null
