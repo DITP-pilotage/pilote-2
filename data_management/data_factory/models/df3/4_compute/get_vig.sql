@@ -37,21 +37,21 @@ from vi_non_null_sorted
 where r=1
 )
 
--- On sélectionne la première VI si existe, et is_from_vi=TRUE
---  sinon, la première VA, et is_from_vi=FALSE
+-- DELETED: On sélectionne la première VI si existe, et is_from_vi=TRUE sinon, la première VA, et is_from_vi=FALSE
+-- EN COURS: On prend toujours la VI de get_vig, et JAMAIS la 1e VA
 select 
-    coalesce(a.indic_id, b.indic_id) as indic_id,
-    coalesce(a.zone_id, b.zone_id) as zone_id,
+    coalesce(a.indic_id, NULL) as indic_id,
+    coalesce(a.zone_id, NULL) as zone_id,
     -- selection de la valeur
-    coalesce(a.vig, b.va_earliest) as vig,
-    -- selection de la date
+    coalesce(a.vig, NULL) as vig,
+    -- selection de la date - on prend TOUJOURS vig_date
     case
-        when a.vig is not null then a.vig_date
-        else b.va_earliest_date
+        when TRUE then a.vig_date
+        --else b.va_earliest_date
     end as vig_date,
     -- is_from_vi: VRAI si la valeur est issue d'une VI, FAUX si elle est issue d'une VA
-    (a.vig is not null) as is_from_vi
+    TRUE as is_from_vi
 from get_vig a
-full join get_va_early b
-on a.indic_id=b.indic_id and a.zone_id=b.zone_id
+--full join get_va_early b
+--on a.indic_id=b.indic_id and a.zone_id=b.zone_id
 
