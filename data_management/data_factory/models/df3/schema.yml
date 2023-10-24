@@ -66,7 +66,7 @@ models:
         - **Attention**, il existe une **date minimale** dans le projet dbt, et qui assure qu'aucune VIG ne sera antérieure celle-ci. Sa valeur est **{{ var('vig_min_date') }}**
 
         Règles **supprimées**:
-        - Si aucune VI n'est détectée, on prend la première VA. Cette première VA doit également satisfaire le critère suivant sur la *date_minimale*
+        - Si aucune VI n'est détectée, on prend la première VA. Cette première VA doit également satisfaire le critère suivant sur la *date_minimale* (cf `commit/a864d5eb18acdb478488a5aded4cb5c0ff942266`)
   - name: compute_vaca
     description: |
         Calcule les VACA (*Valeur Actuelle comparable annuelle*) pour chaque mesure. Cette valeur est celle qui sera comparée à la VC pour le calcul du TA. Règles:
