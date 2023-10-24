@@ -90,14 +90,13 @@ models:
             Typologie de l'indicateur.
 
             Il peut s'agir d'indicaeur d'impact (`IMPACT`), de déploiement (`DEPL`), de contexte (`CONTEXTE`), de qualité de service (`Q_SERV`) ou de rebond (`REBOND`).
-        tests:
-          - accepted_values:
-              values: ['IMPACT', 'DEPL', 'CONTEXTE', 'Q_SERV', 'REBOND']
         meta:
             pilote_show: true
             pilote_alias: "Typologie"
             pilote_edit_isEditable: true
-            pilote_edit_acceptedValuesViolationMessage: "Veuillez choisir une typologie d'indicateur valide parmi: "      
+            pilote_edit_acceptedValuesViolationMessage: "Veuillez choisir une typologie d'indicateur valide parmi: "   
+            pilote_edit_acceptedValues: >
+              [{"order_id": 1, "value": "IMPACT", "name": "Impact", "desc": "Indicateur d'impact"}, {"order_id": 2, "value": "DEPL", "name": "Déploiement", "desc": "Indicateur de déploiement"}, {"order_id": 3, "value": "CONTEXTE", "name": "De contexte", "desc": "Indicateur de contexte"}, {"order_id": 4, "value": "Q_SERV", "name": "De qualité de service", "desc": "Mesure la qualité du service rendu."}, {"order_id": 5, "value": "REBOND", "name": "Effets rebonds", "desc": "Effets rebonds engendrés par la mise en place du chantier"}]   
       - name: indic_source
         description: "Source déclarée des données de l'indicateur"
         data_type: text
@@ -140,14 +139,14 @@ models:
       - name: indic_schema
         data_type: text
         description: "Nom du schema associé. Cela permet la restriction de la saisie de données."
-        tests:
-          - accepted_values:
-              values: ['sans-contraintes.json', 'restrict-dept.json', 'restrict-0-100.json']
         meta:
             pilote_show: true
             pilote_alias: "Contraintes"
             pilote_edit_isEditable: false
             pilote_edit_boxType: text
+            pilote_edit_acceptedValuesViolationMessage: "Veuillez choisir des contraintes de saisie parmi: "      
+            pilote_edit_acceptedValues: >
+              [{"order_id": 1, "value": "sans-contraintes.json", "name": "-", "desc": "Pas de contraintes particulières"}, {"order_id": 2, "value": "restrict-dept.json", "name": "Saisie départementale", "desc": "Saisie restreinte au niveau départemental"}, {"order_id": 3, "value": "restrict-0-100.json", "name": "Dans [0,100]", "desc": "Saisie entre 0 et 100."}]   
       - name: zg_applicable
         data_type: text
         description: "*Zone-group* applicable à cet indicateur. Voir `metadata_zonegroup`"
