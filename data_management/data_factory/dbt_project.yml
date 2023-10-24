@@ -36,6 +36,9 @@ models:
     df2:
       +schema: df2
       +materialized: view
+    df3:
+      +schema: df3
+      +materialized: view
     raw:
       +schema: raw_data
       +materialized: table
