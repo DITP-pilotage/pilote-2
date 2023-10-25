@@ -1,1 +1,1 @@
-select * from {{ ref('metadata_indicateur_hidden') }} where not indic_hidden_pilote
+select * from {{ ref('metadata_indicateurs_hidden') }} where not coalesce(indic_hidden_pilote, false)
