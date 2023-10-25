@@ -52,9 +52,6 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
     if (profil?.chantiers.lecture.tous)
       return ['Tous les chantiers']; 
 
-    if (profil?.chantiers.lecture.tousTerritorialisés)
-      return ['Tous les chantiers territorialisés'];
-
     return u.habilitations?.lecture?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
   }, [profil, chantiers]);
 

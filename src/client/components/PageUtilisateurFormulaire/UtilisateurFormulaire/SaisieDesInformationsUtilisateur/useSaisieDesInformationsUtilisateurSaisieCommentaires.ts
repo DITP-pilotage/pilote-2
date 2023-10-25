@@ -28,6 +28,10 @@ export default function useSaisieDesInformationsUtilisateur(
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
 
   // GESTION CHANGEMENT DE PROFIL
+  const handleChangementValeursSélectionnéesChantiersSaisieCommentaire = useCallback((valeursSélectionnées: string[]) => {    
+    setValue('habilitations.saisie.commentaire.chantiers', valeursSélectionnées);
+  }, [setValue]);
+
   useEffect(() => {
     setAfficherChampSaisieCommentaireChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous  && profilSélectionné.chantiers.saisieCommentaire.saisiePossible);
     setAfficherChampSaisieCommentairePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieCommentaire.saisiePossible);
@@ -39,7 +43,7 @@ export default function useSaisieDesInformationsUtilisateur(
     if (['RESPONSABLE_DEPARTEMENT', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(profilSélectionné.code)) {
       setChantiersAccessiblesPourLeProfilSaisieCommentaire(chantiersLecture.filter(chantier => chantier.estTerritorialisé && chantier.ate === 'hors_ate_deconcentre'));
     } else if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION', 'PREFET_DEPARTEMENT', 'PREFET_REGION'].includes(profilSélectionné.code)) {
-      setChantiersAccessiblesPourLeProfilSaisieCommentaire(chantiers.filter(chantier => chantier.estTerritorialisé && chantier.ate === 'ate'));
+      setChantiersAccessiblesPourLeProfilSaisieCommentaire(chantiersLecture.filter(chantier => chantier.estTerritorialisé && chantier.ate === 'ate'));
     } else {
       setChantiersAccessiblesPourLeProfilSaisieCommentaire(chantiersLecture);
     }
@@ -47,11 +51,12 @@ export default function useSaisieDesInformationsUtilisateur(
 
   useEffect(() => {
     if (chantiersAccessiblesPourLeProfilSaisieCommentaire) {
+      handleChangementValeursSélectionnéesChantiersSaisieCommentaire(chantiersAccessiblesPourLeProfilSaisieCommentaire.map(c => c.id));
+
       const périmètresListe = chantiersAccessiblesPourLeProfilSaisieCommentaire.flatMap(c => c.périmètreIds); 
-  
-      setPérimètresIdSélectionnablesSaisie(périmètresListe);
+      setPérimètresIdSélectionnablesSaisie([...new Set(périmètresListe)]);
     }
-  }, [chantiers, chantiersAccessiblesPourLeProfilSaisieCommentaire]);
+  }, [chantiers, chantiersAccessiblesPourLeProfilSaisieCommentaire, handleChangementValeursSélectionnéesChantiersSaisieCommentaire]);
 
   useEffect(() => {
     if (ancienProfilCodeSélectionné !== profilCodeSélectionné) {
@@ -68,7 +73,8 @@ export default function useSaisieDesInformationsUtilisateur(
 
       setAncienProfilCodeSélectionné(profilCodeSélectionné);
     }
-  }, [ancienProfilCodeSélectionné, profilCodeSélectionné, resetField, setValue, unregister, utilisateur]);
+
+  }, [ancienProfilCodeSélectionné, profilCodeSélectionné, resetField, setValue, unregister, utilisateur, chantiersAccessiblesPourLeProfilSaisieCommentaire]);
 
 
   // GESTION CHANTIERS ET PERIMETRES MINISTERIELS 
@@ -77,10 +83,6 @@ export default function useSaisieDesInformationsUtilisateur(
 
     return chantiersAppartenantsAuPérimètresMinistérielsSélectionnés.map(c => c.id);
   }, [chantiersAccessiblesPourLeProfilSaisieCommentaire]);
-
-  const handleChangementValeursSélectionnéesChantiersSaisieCommentaire = useCallback((valeursSélectionnées: string[]) => {    
-    setValue('habilitations.saisie.commentaire.chantiers', valeursSélectionnées);
-  }, [setValue]);
 
   const handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieCommentaire = useCallback((valeursSélectionnées: string[]) => {  
     const périmètresIdsActuellementsSélectionnés = getValues('habilitations.saisie.commentaire.périmètres') ?? [];
