@@ -107,7 +107,11 @@ models:
       schema: public
       tags: ["df2"]
   - name: df3_indicateur
-    description: "Table des indicateurs construite par la datafactory dbt. Version reconstruite de zero."
+    description: |
+      Table des indicateurs construite par la datafactory dbt. Version reconstruite de zero. Règles:
+
+      - La liste des **indicateurs** provient de ref('metadata_indicateurs') 
+      - La liste des **zones** provient de `public.territoire`. Donc si l'on veut renvoyer des données pour d'autres zones (académies, façades maritimes, monde, ...), il faut leur créer un territoire correspondant.
     config:
       docs:
         node_color: "#cd7f32"
