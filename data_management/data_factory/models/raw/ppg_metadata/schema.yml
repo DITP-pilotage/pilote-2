@@ -118,7 +118,7 @@ models:
         description: |
             Typologie de l'indicateur.
 
-            Il peut s'agir d'indicaeur d'impact (`IMPACT`), de déploiement (`DEPL`), de contexte (`CONTEXTE`), de qualité de service (`Q_SERV`) ou de rebond (`REBOND`).
+            Il peut s'agir d'indicateur d'impact (`IMPACT`), de déploiement (`DEPL`), de contexte (`CONTEXTE`), de qualité de service (`Q_SERV`) ou de rebond (`REBOND`).
         meta:
             pilote_show: true
             pilote_alias: "Typologie"
