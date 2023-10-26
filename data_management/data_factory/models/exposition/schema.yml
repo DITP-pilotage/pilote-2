@@ -83,7 +83,10 @@ models:
         description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
       - name: date
         description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
+  - name: indicateur_hidden
+    description: "Table qui contient les données des indicateurs **masqués ET non masqués**."
   - name: indicateur
+    description: "Vue sur les indicateurs qui ne sont **pas masqués**."
     columns:
       - name: id
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_indicateur"
