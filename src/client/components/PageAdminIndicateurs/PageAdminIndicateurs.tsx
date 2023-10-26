@@ -18,7 +18,7 @@ function PageAdminIndicateurs() {
         setEstOuverteBarreLatérale={setEstOuverteBarreLatérale}
       />
       <main>
-        <div className='fr-mt-4w fr-mx-4w fr-mb-3w' >
+        <div className='fr-mt-4w fr-mx-4w fr-mb-3w'>
           <div className="fr-grid-row fr-grid-row--middle fr-mb-3w">
             <div className="fr-col-12 fr-col-md-9">
               <Titre

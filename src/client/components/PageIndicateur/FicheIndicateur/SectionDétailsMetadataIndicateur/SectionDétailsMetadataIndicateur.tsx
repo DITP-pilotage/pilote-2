@@ -8,6 +8,7 @@ import useDetailMetadataIndicateurForm
 import TextArea from '@/components/_commons/TextArea/TextArea';
 import Input from '@/components/_commons/Input/Input';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
+import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 
 export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCoursDeModification, mapInformationMetadataIndicateur }: SectionDétailsMetadataIndicateurProps) {
   const { register, getValues, errors } = useDetailMetadataIndicateurForm();
@@ -17,7 +18,7 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
         baliseHtml='h2'
         className='fr-h5'
       >
-        Détail de l&apos;indicateur 
+        Détail de l&apos;indicateur
       </Titre>
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
@@ -41,6 +42,11 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
         <div className="fr-col-12 fr-col-md-6 fr-pl-2w">
           <p className='fr-text--md bold fr-mb-1v'>
             {mapInformationMetadataIndicateur.indic_descr.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml="indicDescr">
+                {mapInformationMetadataIndicateur.indic_descr.description}
+              </Infobulle>
+            ) : null}
           </p>
           {estEnCoursDeModification
             ? <TextArea
@@ -79,6 +85,11 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
         <div className="fr-col-12 fr-col-md-6 fr-pl-2w">
           <p className='fr-text--md bold fr-mb-1v'>
             {mapInformationMetadataIndicateur.indic_parent_ch.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml="indicParentCh">
+                {mapInformationMetadataIndicateur.indic_parent_ch.description}
+              </Infobulle>
+            ) : null}
           </p>
           {estEnCoursDeModification
             ? <Input
@@ -141,6 +152,11 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
         <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
           <p className='fr-text--md bold fr-mb-1v'>
             {mapInformationMetadataIndicateur.indic_source.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml="indicSource">
+                {mapInformationMetadataIndicateur.indic_source.description}
+              </Infobulle>
+            ) : null}
           </p>
           {estEnCoursDeModification
             ? <Input
@@ -199,6 +215,11 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
         <div className="fr-col-12 fr-col-md-6 fr-pl-2w">
           <p className='fr-text--md bold fr-mb-1v'>
             {mapInformationMetadataIndicateur.indic_type.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml="indicType">
+                {mapInformationMetadataIndicateur.indic_type.description}
+              </Infobulle>
+            ) : null}
           </p>
           {estEnCoursDeModification
             ? <Sélecteur
@@ -220,6 +241,11 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
         <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
           <p className='fr-text--md bold fr-mb-1v'>
             {mapInformationMetadataIndicateur.indic_methode_calcul.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml="indicMethodeCalcul">
+                {mapInformationMetadataIndicateur.indic_methode_calcul.description}
+              </Infobulle>
+            ) : null}
           </p>
           {estEnCoursDeModification
             ? <TextArea

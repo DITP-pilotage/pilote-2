@@ -29,12 +29,12 @@ export default function Navigation() {
       accessible: session?.profil === 'DITP_ADMIN',
       target: '_self',
     },
-    {
-      nom: 'Gestion des indicateurs',
-      lien: '/admin/indicateurs',
-      accessible: session?.profil === 'DITP_ADMIN',
-      target: '_self',
-    },
+    /* {
+                      nom: 'Gestion des indicateurs',
+                      lien: '/admin/indicateurs',
+                      accessible: session?.profil === 'DITP_ADMIN',
+                      target: '_self',
+                    }, */
     {
       nom: 'Nouveautés',
       lien: '/nouveautes',
@@ -75,23 +75,23 @@ export default function Navigation() {
         >
           <ul className="fr-nav__list">
             {
-              pages.map(page => (
-                page.accessible &&
-                <li
-                  className="fr-nav__item"
-                  key={page.lien}
-                >
-                  <Link
-                    aria-current={page.lien === urlActuelle ? 'true' : undefined}
-                    className="fr-nav__link"
-                    href={page.lien}
-                    onClick={fermerLaModaleDuMenu}
-                    target={page.target}
-                  >
-                    {page.nom}
-                  </Link>
-                </li>
-              ))
+                pages.map(page => (
+                  page.accessible &&
+                    <li
+                      className="fr-nav__item"
+                      key={page.lien}
+                    >
+                      <Link
+                        aria-current={page.lien === urlActuelle ? 'true' : undefined}
+                        className="fr-nav__link"
+                        href={page.lien}
+                        onClick={fermerLaModaleDuMenu}
+                        target={page.target}
+                      >
+                        {page.nom}
+                      </Link>
+                    </li>
+                ))
             }
           </ul>
         </nav>

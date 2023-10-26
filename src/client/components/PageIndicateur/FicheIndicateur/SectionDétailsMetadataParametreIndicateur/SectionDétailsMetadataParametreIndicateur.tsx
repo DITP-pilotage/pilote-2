@@ -28,7 +28,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vi_dept_from.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="viDeptFrom">
                 {mapInformationMetadataIndicateur.vi_dept_from.description}
@@ -55,7 +54,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.va_dept_from.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="vaDeptFrom">
                 {mapInformationMetadataIndicateur.va_dept_from.description}
@@ -82,7 +80,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vc_dept_from.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="vcDeptFrom">
                 {mapInformationMetadataIndicateur.vc_dept_from.description}
@@ -111,7 +108,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vi_dept_op.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="viDeptOp">
                 {mapInformationMetadataIndicateur.vi_dept_op.description}
@@ -138,7 +134,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pr-2w fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.va_dept_op.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="vaDeptOp">
                 {mapInformationMetadataIndicateur.va_dept_op.description}
@@ -165,7 +160,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vc_dept_op.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="vcDeptOp">
                 {mapInformationMetadataIndicateur.vc_dept_op.description}
@@ -194,7 +188,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vi_reg_from.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="viRegFrom">
                 {mapInformationMetadataIndicateur.vi_reg_from.description}
@@ -221,7 +214,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.va_reg_from.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="vaRegFrom">
                 {mapInformationMetadataIndicateur.va_reg_from.description}
@@ -248,7 +240,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vc_reg_from.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="vcRegFrom">
                 {mapInformationMetadataIndicateur.vc_reg_from.description}
@@ -277,7 +268,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vi_reg_op.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="viRegOp">
                 {mapInformationMetadataIndicateur.vi_reg_op.description}
@@ -304,7 +294,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.va_reg_op.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="vaRegOp">
                 {mapInformationMetadataIndicateur.va_reg_op.description}
@@ -331,7 +320,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vc_reg_op.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="vcRegOp">
                 {mapInformationMetadataIndicateur.vc_reg_op.description}
@@ -361,7 +349,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vi_nat_from.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="viNatFrom">
                 {mapInformationMetadataIndicateur.vi_nat_from.description}
@@ -388,7 +375,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vi_nat_op.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="viNatOp">
                 {mapInformationMetadataIndicateur.vi_nat_op.description}
@@ -415,7 +401,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.va_nat_from.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="vaNatFrom">
                 {mapInformationMetadataIndicateur.va_nat_from.description}
@@ -444,7 +429,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.va_nat_op.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="vaNatOp">
                 {mapInformationMetadataIndicateur.va_nat_op.description}
@@ -471,7 +455,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vc_nat_from.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="vcNatFrom">
                 {mapInformationMetadataIndicateur.vc_nat_from.description}
@@ -498,7 +481,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vc_nat_op.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="vcNatOp">
                 {mapInformationMetadataIndicateur.vc_nat_op.description}
@@ -527,7 +509,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.param_vaca_decumul_from.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="paramVacaDecumulFrom">
                 {mapInformationMetadataIndicateur.param_vaca_decumul_from.description}
@@ -552,7 +533,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pr-2w fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.param_vaca_partition_date.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="paramVacaPartitionDate">
                 {mapInformationMetadataIndicateur.param_vaca_partition_date.description}
@@ -576,7 +556,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.param_vaca_op.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="paramVacaOp">
                 {mapInformationMetadataIndicateur.param_vaca_op.description}
@@ -605,7 +584,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.param_vacg_decumul_from.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="paramVacgDecumulFrom">
                 {mapInformationMetadataIndicateur.param_vacg_decumul_from.description}
@@ -629,7 +607,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.param_vacg_partition_date.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="paramVacgPartitionDate">
                 {mapInformationMetadataIndicateur.param_vacg_partition_date.description}
@@ -653,7 +630,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.param_vacg_op.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="paramVacgOp">
                 {mapInformationMetadataIndicateur.param_vacg_op.description}
@@ -682,7 +658,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.poids_pourcent_dept.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="poidsPourcentDept">
                 {mapInformationMetadataIndicateur.poids_pourcent_dept.description}
@@ -707,7 +682,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.poids_pourcent_reg.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="poidsPourcentReg">
                 {mapInformationMetadataIndicateur.poids_pourcent_reg.description}
@@ -732,7 +706,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.poids_pourcent_nat.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="poidsPourcentNat">
                 {mapInformationMetadataIndicateur.poids_pourcent_nat.description}
@@ -759,7 +732,6 @@ export default function SectionDétailsMetadataParametreIndicateur({
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.tendance.metaPiloteAlias}
-            {' '}
             {estEnCoursDeModification ? (
               <Infobulle idHtml="tendance">
                 {mapInformationMetadataIndicateur.tendance.description}
