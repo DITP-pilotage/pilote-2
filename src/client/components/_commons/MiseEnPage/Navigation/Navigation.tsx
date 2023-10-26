@@ -30,6 +30,12 @@ export default function Navigation() {
       target: '_self',
     },
     {
+      nom: 'Gestion des indicateurs',
+      lien: '/admin/indicateurs',
+      accessible: session?.profil === 'DITP_ADMIN',
+      target: '_self',
+    },
+    {
       nom: 'Nouveautés',
       lien: '/nouveautes',
       accessible: true,
