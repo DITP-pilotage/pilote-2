@@ -24,7 +24,7 @@ list_indic_terr as (
 get_evol_va as (
 	select 
 	indic_id, zone_id,
-	array_agg(metric_date)as evolution_date_valeur_actuelle,
+	array_agg(metric_date::timestamp)as evolution_date_valeur_actuelle,
 	array_agg(va) as evolution_valeur_actuelle
 	from {{ ref('compute_ta_indic') }}
 	where va is not null
@@ -56,7 +56,7 @@ sort_mesures_va_last as (
 	va as valeur_actuelle,
 	vig as valeur_initiale,
 	terr.code_insee,
-	terr."maille",
+	mz.zone_type as maille,
 	terr.nom as territoire_nom,
 	b.evolution_valeur_actuelle, b.evolution_date_valeur_actuelle,
 	mi.indic_descr as description,
@@ -67,10 +67,10 @@ sort_mesures_va_last as (
 	mpi.poids_pourcent_dept as ponderation_dept,
 	mpi.poids_pourcent_nat as ponderation_nat,
 	mpi.poids_pourcent_reg as ponderation_reg,
-	vcg_date as objectif_date_valeur_cible,
+	vcg_date::date as objectif_date_valeur_cible,
 	vca as objectif_valeur_cible_intermediaire,
 	taa as objectif_taux_avancement_intermediaire,
-	vca_date as objectif_date_valeur_cible_intermediaire,
+	vca_date::date as objectif_date_valeur_cible_intermediaire,
     COALESCE(z_appl.est_applicable, true) AS est_applicable,
     -- todo
     FALSE as a_supprimer
@@ -84,6 +84,7 @@ sort_mesures_va_last as (
 	left join {{ ref('metadata_indicateur_types') }} mit on mit.indic_type_id = mi.indic_type 
 	left join {{ ref('metadata_parametrage_indicateurs') }} mpi on mi.indic_id = mpi.indic_id 
 	left join public.territoire terr on t.zone_id = terr.zone_id 
+	left join {{ ref('metadata_zones') }} mz on mz.zone_id = terr.zone_id 
 	LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} z_appl ON z_appl.indic_id = mi.indic_id AND z_appl.zone_id = t.zone_id
 	right join list_indic_terr lit on mi.indic_id=lit.indic_id and terr.code=lit.territoire_code
 	--where a.r=1
