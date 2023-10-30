@@ -35,9 +35,9 @@ import { CsvRecord } from '@/server/infrastructure/import_csv/utilisateur/Utilis
       copier le contenu du CSV local dans ce fichier et sauvegarder
       npx ts-node scripts/importCSVUtilisateurs.ts /tmp/import.csv | npx pino-pretty | tee -a /tmp/import.log
 
-  - Comment faire l'import sur uniquement les nouveaux comptes :
-      * En local : npx ts-node scripts/importCSVUtilisateurs.ts /chemin/fichier/local/import.csv true | npx pino-pretty
-      * En production : npx ts-node scripts/importCSVUtilisateurs.ts /tmp/import.csv true | npx pino-pretty
+  - Comment faire l'import sur uniquement les nouveaux comptes et récupérer les doublons :
+      * En local : npx ts-node scripts/importCSVUtilisateurs.ts /chemin/fichier/local/import.csv true /chemin/fichier/local/output.csv | npx pino-pretty
+      * En production : npx ts-node scripts/importCSVUtilisateurs.ts /tmp/import.csv true /chemin/fichier/local/output.csv | npx pino-pretty | tee -a /tmp/import.log
 
   - Remarques :
       Le CSV doit être encodé en utf8, et nous n'avons testé que sans BOM.
