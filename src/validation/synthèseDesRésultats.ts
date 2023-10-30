@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { météosSaisissables } from '@/server/domain/météo/Météo.interface';
 
-export const LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS = Number.parseInt(process.env.NEXT_PUBLIC_LIMITE_CARACTERES_PUBLICATION || '5000');
+export const LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS = 5000;
 
 export const validationSynthèseDesRésultatsContexte = z.object({
   typeDeRéforme: z.string(),
