@@ -14,13 +14,19 @@ import {
   MapInformationMetadataIndicateurContrat,
   presenterEnMapInformationMetadataIndicateurContrat,
 } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
+import InitialiserNouvelIndicateurUseCase
+  from '@/server/parametrage-indicateur/usecases/InitialiserNouvelIndicateurUseCase';
+import RécupérerChantiersSynthétisésUseCase from '@/server/usecase/chantier/RécupérerChantiersSynthétisésUseCase';
+import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 
 export interface NextPageAdminUtilisateurProps {
   indicateur: MetadataParametrageIndicateurContrat,
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
+  estUneCréation: boolean
+  chantiers: ChantierSynthétisé[]
 }
 
-export default function NextPageAdminIndicateur({ indicateur, mapInformationMetadataIndicateur } : NextPageAdminUtilisateurProps) {
+export default function NextPageAdminIndicateur({ indicateur, mapInformationMetadataIndicateur, estUneCréation, chantiers } : NextPageAdminUtilisateurProps) {
   return (
     <>
       <Head>
@@ -32,6 +38,8 @@ export default function NextPageAdminIndicateur({ indicateur, mapInformationMeta
         </title>
       </Head>
       <PageIndicateur
+        chantiers={chantiers}
+        estUneCréation={estUneCréation}
         indicateur={indicateur}
         mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
       />
@@ -39,7 +47,8 @@ export default function NextPageAdminIndicateur({ indicateur, mapInformationMeta
   );
 }
 
-export async function getServerSideProps({ req, res, params } :GetServerSidePropsContext<{ id: Utilisateur['id'] }>) {
+export async function getServerSideProps({ req, res, params, query } :GetServerSidePropsContext<{ id: Utilisateur['id'], _action?: string }>) {
+
   const redirigerVersPageAccueil = {
     redirect: {
       destination: '/',
@@ -53,10 +62,19 @@ export async function getServerSideProps({ req, res, params } :GetServerSideProp
     return redirigerVersPageAccueil;
   }
 
-  const indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new RécupérerUnIndicateurUseCase().run(params.id));
-  if (!indicateurDemandé) {
-    return redirigerVersPageAccueil;
+  let indicateurDemandé: MetadataParametrageIndicateurContrat;
+  let estUneCréation = query._action === 'creer-indicateur';
+  if (estUneCréation) {
+    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new InitialiserNouvelIndicateurUseCase().run(params.id));
+  } else {
+    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new RécupérerUnIndicateurUseCase().run(params.id));
+    if (!indicateurDemandé) {
+      return redirigerVersPageAccueil;
+    }
   }
+
+  const récupérerChantiersSynthétisésUseCase = new RécupérerChantiersSynthétisésUseCase();
+  const chantiers = await récupérerChantiersSynthétisésUseCase.run(session.habilitations);
 
   const mapInformationMetadataIndicateur = await new RécupérerInformationMetadataIndicateurUseCase().run().then(result => presenterEnMapInformationMetadataIndicateurContrat(result));
 
@@ -64,6 +82,8 @@ export async function getServerSideProps({ req, res, params } :GetServerSideProp
     props: {
       indicateur: indicateurDemandé,
       mapInformationMetadataIndicateur,
+      chantiers,
+      estUneCréation,
     },
   };
 }

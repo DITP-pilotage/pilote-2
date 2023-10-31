@@ -10,10 +10,10 @@ import FicheIndicateur from '@/components/PageIndicateur/FicheIndicateur/FicheIn
 import { usePageIndicateur } from '@/components/PageIndicateur/usePageIndicateur';
 import Alerte from '@/components/_commons/Alerte/Alerte';
 
-export default function PageIndicateur({ indicateur, mapInformationMetadataIndicateur }: PageIndicateurProps) {
+export default function PageIndicateur({ indicateur, mapInformationMetadataIndicateur, estUneCréation, chantiers }: PageIndicateurProps) {
   const chemin = [{ nom:'Gestion des indicateurs', lien:'/admin/indicateurs' }];
 
-  const { reactHookForm, modifierIndicateur, estEnCoursDeModification, setEstEnCoursDeModification, alerte } = usePageIndicateur(indicateur);
+  const { reactHookForm, modifierIndicateur, creerIndicateur, estEnCoursDeModification, setEstEnCoursDeModification, alerte } = usePageIndicateur(indicateur);
 
   return (
     <PageIndicateurStyled className='fr-pt-2w'>
@@ -27,7 +27,14 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
           <FormProvider {...reactHookForm}>
             <form
               method="post"
-              onSubmit={reactHookForm.handleSubmit((data) => modifierIndicateur({ ...data, indicId: indicateur.indicId }))}
+              onSubmit={reactHookForm.handleSubmit((data) => {
+                if (estUneCréation) {
+                  creerIndicateur({ ...data, indicId: indicateur.indicId });
+
+                } else {
+                  modifierIndicateur({ ...data, indicId: indicateur.indicId });
+                }
+              })}
             >
               <Link
                 aria-label="Retour à la liste des indicateurs"
@@ -43,8 +50,17 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                 Fiche de l&apos;indicateur 
                 {' '}
                 { indicateur.indicId }
-                {estEnCoursDeModification ? (
-                  <div className="fr-grid-row fr-mt-4w">
+                <div className="fr-grid-row fr-mt-4w">
+                  {
+                  estUneCréation ? (
+                    <button
+                      className='fr-btn fr-mr-2w'
+                      key="submit-indicateur"
+                      type="submit"
+                    >
+                      Créer l&apos;indicateur
+                    </button>
+                  ) : (estEnCoursDeModification ? (
                     <button
                       className='fr-btn fr-mr-2w'
                       key="submit-indicateur"
@@ -52,10 +68,8 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                     >
                       Confirmer les changements
                     </button>
-                  </div>
 
-                ) : (
-                  <div className="fr-grid-row fr-mt-4w">
+                  ) : (
                     <button
                       className='fr-btn fr-mr-2w'
                       key="passer-en-modification"
@@ -64,13 +78,16 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                     >
                       Modifier
                     </button>
-                  </div>
-                )}
+                  ))
+                }
+                </div>
+
               </Titre>
               <Bloc>
                 <div className='fr-py-4w fr-px-10w'>
                   <FicheIndicateur
-                    estEnCoursDeModification={estEnCoursDeModification}
+                    chantiers={chantiers}
+                    estEnCoursDeModification={estUneCréation || estEnCoursDeModification}
                     indicateur={indicateur}
                     mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
                   />

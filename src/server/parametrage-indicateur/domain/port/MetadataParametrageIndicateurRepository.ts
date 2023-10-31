@@ -9,4 +9,6 @@ export interface MetadataParametrageIndicateurRepository {
   recupererMetadataParametrageIndicateurParIndicId(indicId: string): Promise<MetadataParametrageIndicateur>;
 
   modifier(inputs: MetadataParametrageIndicateurForm): Promise<MetadataParametrageIndicateur>;
+  
+  creer(inputs: MetadataParametrageIndicateurForm): Promise<MetadataParametrageIndicateur>;
 }

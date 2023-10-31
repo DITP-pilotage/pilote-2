@@ -123,16 +123,16 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
 
   async recupererListeMetadataParametrageIndicateurParChantierIds(chantierIds: string[]): Promise<MetadataParametrageIndicateur[]> {
     try {
-      let query = 'SELECT mpi.*, mi.*, mc.ch_nom FROM raw_data.metadata_parametrage_indicateurs mpi ' +
-          'LEFT JOIN raw_data.metadata_indicateurs mi ON mpi.indic_id = mi.indic_id ' +
-          'LEFT JOIN raw_data.metadata_chantiers mc on mi.indic_parent_ch = mc.chantier_id';
+      let query = 'SELECT mi.*, mpi.*, mc.ch_nom FROM raw_data.metadata_parametrage_indicateurs mpi ' +
+                'LEFT JOIN raw_data.metadata_indicateurs mi ON mpi.indic_id = mi.indic_id ' +
+                'LEFT JOIN raw_data.metadata_chantiers mc on mi.indic_parent_ch = mc.chantier_id';
       if (chantierIds.length > 0) {
         const listeStringChantierId = chantierIds.map(i => `'${i}'`).join(',');
         query = `${query} WHERE mi.indic_parent_ch IN (${listeStringChantierId})`;
       }
       const listeRawMetadataParametrageIndicateur = await this.prismaClient.$queryRaw<RawMetadataParametrageIndicateurModel[]>`${Prisma.raw(query)}`;
 
-      if (!listeRawMetadataParametrageIndicateur) {
+      if (listeRawMetadataParametrageIndicateur.length === 0) {
         return [];
       }
 
@@ -145,14 +145,15 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
 
   async recupererMetadataParametrageIndicateurParIndicId(indicId: string): Promise<MetadataParametrageIndicateur> {
     try {
-      let query = `SELECT * FROM raw_data.metadata_parametrage_indicateurs mpi
-                   LEFT JOIN raw_data.metadata_indicateurs mi ON mpi.indic_id = mi.indic_id
-                   LEFT JOIN raw_data.metadata_chantiers mc ON mi.indic_parent_ch = mc.chantier_id
-                   WHERE mpi.indic_id LIKE '${indicId}'
-      `;
+      let query = `SELECT *
+                         FROM raw_data.metadata_parametrage_indicateurs mpi
+                                  LEFT JOIN raw_data.metadata_indicateurs mi ON mpi.indic_id = mi.indic_id
+                                  LEFT JOIN raw_data.metadata_chantiers mc ON mi.indic_parent_ch = mc.chantier_id
+                         WHERE mpi.indic_id LIKE '${indicId}'
+            `;
       const listeRawMetadataParametrageIndicateur = await this.prismaClient.$queryRaw<RawMetadataParametrageIndicateurModel[]>`${Prisma.raw(query)}`;
 
-      if (!listeRawMetadataParametrageIndicateur) {
+      if (listeRawMetadataParametrageIndicateur.length === 0) {
         throw new Error('invalid indic_id');
       }
 
@@ -166,51 +167,158 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
 
   async modifier(inputs: MetadataParametrageIndicateurForm): Promise<MetadataParametrageIndicateur> {
 
-    const queryIndicateur = `UPDATE raw_data.metadata_indicateurs SET indic_parent_indic = '${inputs.indicParentIndic}',
-      indic_nom = '${makeStrSafer(inputs.indicNom)}',
-      indic_nom_baro = '${makeStrSafer(inputs.indicNomBaro)}',
-      indic_descr = '${makeStrSafer(inputs.indicDescr)}',
-      indic_descr_baro = '${makeStrSafer(inputs.indicDescrBaro)}',
-      indic_is_perseverant = ${inputs.indicIsPerseverant},
-      indic_is_phare = ${inputs.indicIsPhare},
-      indic_is_baro = ${inputs.indicIsBaro},
-      indic_type = '${makeStrSafer(inputs.indicType)}',
-      indic_source = '${makeStrSafer(inputs.indicSource)}',
-      indic_source_url = '${makeStrSafer(inputs.indicSourceUrl)}',
-      indic_methode_calcul = '${makeStrSafer(inputs.indicMethodeCalcul)}',
-      indic_unite = '${makeStrSafer(inputs.indicUnite)}',
-      indic_hidden_pilote = ${inputs.indicHiddenPilote},
-      indic_schema = '${makeStrSafer(inputs.indicSchema)}'
-      WHERE indic_id = '${inputs.indicId}'`;
-    const queryMetadataIndicateur = `UPDATE raw_data.metadata_parametrage_indicateurs SET vi_dept_from = '${makeStrSafer(inputs.viDeptFrom)}',
-      vi_dept_op = '${makeStrSafer(inputs.viDeptOp)}',
-      va_dept_from = '${makeStrSafer(inputs.vaDeptFrom)}',
-      va_dept_op = '${makeStrSafer(inputs.vaDeptOp)}',
-      vc_dept_from = '${makeStrSafer(inputs.vcDeptFrom)}',
-      vc_dept_op = '${makeStrSafer(inputs.vcDeptOp)}',
-      vi_reg_from = '${makeStrSafer(inputs.viRegFrom)}',
-      vi_reg_op = '${makeStrSafer(inputs.viRegOp)}',
-      va_reg_from = '${makeStrSafer(inputs.vaRegFrom)}',
-      va_reg_op = '${makeStrSafer(inputs.vaRegOp)}',
-      vc_reg_from = '${makeStrSafer(inputs.vcRegFrom)}',
-      vc_reg_op = '${makeStrSafer(inputs.vcRegOp)}',
-      vi_nat_from = '${makeStrSafer(inputs.viNatFrom)}',
-      vi_nat_op = '${makeStrSafer(inputs.viNatOp)}',
-      va_nat_from = '${makeStrSafer(inputs.vaNatFrom)}',
-      va_nat_op = '${makeStrSafer(inputs.vaNatOp)}',
-      vc_nat_from = '${makeStrSafer(inputs.vcNatFrom)}',
-      vc_nat_op = '${makeStrSafer(inputs.vcNatOp)}',
-      param_vaca_decumul_from = '${makeStrSafer(inputs.paramVacaDecumulFrom)}',
-      param_vaca_partition_date = '${makeStrSafer(inputs.paramVacaPartitionDate)}',
-      param_vaca_op = '${makeStrSafer(inputs.paramVacaOp)}',
-      param_vacg_decumul_from = '${makeStrSafer(inputs.paramVacgDecumulFrom)}',
-      param_vacg_partition_date = '${makeStrSafer(inputs.paramVacgPartitionDate)}',
-      param_vacg_op = '${makeStrSafer(inputs.paramVacgOp)}',
-      poids_pourcent_dept = '${inputs.poidsPourcentDept}',
-      poids_pourcent_reg = '${inputs.poidsPourcentReg}',
-      poids_pourcent_nat = '${inputs.poidsPourcentNat}',
-      tendance = '${makeStrSafer(inputs.tendance)}'
-      WHERE indic_id = '${inputs.indicId}'`;
+    const queryIndicateur = `UPDATE raw_data.metadata_indicateurs
+                                 SET indic_parent_indic   = '${inputs.indicParentIndic}',
+                                     indic_parent_ch   = '${inputs.indicParentCh}',
+                                     indic_nom            = '${makeStrSafer(inputs.indicNom)}',
+                                     indic_nom_baro       = '${makeStrSafer(inputs.indicNomBaro)}',
+                                     indic_descr          = '${makeStrSafer(inputs.indicDescr)}',
+                                     indic_descr_baro     = '${makeStrSafer(inputs.indicDescrBaro)}',
+                                     indic_is_perseverant = ${inputs.indicIsPerseverant},
+                                     indic_is_phare       = ${inputs.indicIsPhare},
+                                     indic_is_baro        = ${inputs.indicIsBaro},
+                                     indic_type           = '${makeStrSafer(inputs.indicType)}',
+                                     indic_source         = '${makeStrSafer(inputs.indicSource)}',
+                                     indic_source_url     = '${makeStrSafer(inputs.indicSourceUrl)}',
+                                     indic_methode_calcul = '${makeStrSafer(inputs.indicMethodeCalcul)}',
+                                     indic_unite          = '${makeStrSafer(inputs.indicUnite)}',
+                                     indic_hidden_pilote  = ${inputs.indicHiddenPilote},
+                                     indic_schema         = '${makeStrSafer(inputs.indicSchema)}'
+                                 WHERE indic_id = '${inputs.indicId}'`;
+    const queryMetadataIndicateur = `UPDATE raw_data.metadata_parametrage_indicateurs
+                                         SET vi_dept_from              = '${makeStrSafer(inputs.viDeptFrom)}',
+                                             vi_dept_op                = '${makeStrSafer(inputs.viDeptOp)}',
+                                             va_dept_from              = '${makeStrSafer(inputs.vaDeptFrom)}',
+                                             va_dept_op                = '${makeStrSafer(inputs.vaDeptOp)}',
+                                             vc_dept_from              = '${makeStrSafer(inputs.vcDeptFrom)}',
+                                             vc_dept_op                = '${makeStrSafer(inputs.vcDeptOp)}',
+                                             vi_reg_from               = '${makeStrSafer(inputs.viRegFrom)}',
+                                             vi_reg_op                 = '${makeStrSafer(inputs.viRegOp)}',
+                                             va_reg_from               = '${makeStrSafer(inputs.vaRegFrom)}',
+                                             va_reg_op                 = '${makeStrSafer(inputs.vaRegOp)}',
+                                             vc_reg_from               = '${makeStrSafer(inputs.vcRegFrom)}',
+                                             vc_reg_op                 = '${makeStrSafer(inputs.vcRegOp)}',
+                                             vi_nat_from               = '${makeStrSafer(inputs.viNatFrom)}',
+                                             vi_nat_op                 = '${makeStrSafer(inputs.viNatOp)}',
+                                             va_nat_from               = '${makeStrSafer(inputs.vaNatFrom)}',
+                                             va_nat_op                 = '${makeStrSafer(inputs.vaNatOp)}',
+                                             vc_nat_from               = '${makeStrSafer(inputs.vcNatFrom)}',
+                                             vc_nat_op                 = '${makeStrSafer(inputs.vcNatOp)}',
+                                             param_vaca_decumul_from   = '${makeStrSafer(inputs.paramVacaDecumulFrom)}',
+                                             param_vaca_partition_date = '${makeStrSafer(inputs.paramVacaPartitionDate)}',
+                                             param_vaca_op             = '${makeStrSafer(inputs.paramVacaOp)}',
+                                             param_vacg_decumul_from   = '${makeStrSafer(inputs.paramVacgDecumulFrom)}',
+                                             param_vacg_partition_date = '${makeStrSafer(inputs.paramVacgPartitionDate)}',
+                                             param_vacg_op             = '${makeStrSafer(inputs.paramVacgOp)}',
+                                             poids_pourcent_dept       = '${inputs.poidsPourcentDept}',
+                                             poids_pourcent_reg        = '${inputs.poidsPourcentReg}',
+                                             poids_pourcent_nat        = '${inputs.poidsPourcentNat}',
+                                             tendance                  = '${makeStrSafer(inputs.tendance)}'
+                                         WHERE indic_id = '${inputs.indicId}'`;
+
+
+    await this.prismaClient.$transaction([
+      this.prismaClient.$queryRaw`${Prisma.raw(queryIndicateur)}`,
+      this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateur)}`,
+    ]);
+
+    return this.recupererMetadataParametrageIndicateurParIndicId(inputs.indicId);
+  }
+
+  async creer(inputs: MetadataParametrageIndicateurForm): Promise<MetadataParametrageIndicateur> {
+
+    const queryIndicateur = `INSERT INTO raw_data.metadata_indicateurs (indic_id,
+                                                                            indic_parent_indic,
+                                                                            indic_parent_ch,
+                                                                            indic_nom,
+                                                                            indic_nom_baro,
+                                                                            indic_descr,
+                                                                            indic_descr_baro,
+                                                                            indic_is_perseverant,
+                                                                            indic_is_phare,
+                                                                            indic_is_baro,
+                                                                            indic_type,
+                                                                            indic_source,
+                                                                            indic_source_url,
+                                                                            indic_methode_calcul,
+                                                                            indic_unite,
+                                                                            indic_hidden_pilote,
+                                                                            indic_schema)
+                                 VALUES ('${inputs.indicId}',
+                                         '${inputs.indicParentIndic}',
+                                         '${inputs.indicParentCh}',
+                                         '${makeStrSafer(inputs.indicNom)}',
+                                         '${makeStrSafer(inputs.indicNomBaro)}',
+                                         '${makeStrSafer(inputs.indicDescr)}',
+                                         '${makeStrSafer(inputs.indicDescrBaro)}',
+                                         ${inputs.indicIsPerseverant},
+                                         ${inputs.indicIsPhare},
+                                         ${inputs.indicIsBaro},
+                                         '${makeStrSafer(inputs.indicType)}',
+                                         '${makeStrSafer(inputs.indicSource)}',
+                                         '${makeStrSafer(inputs.indicSourceUrl)}',
+                                         '${makeStrSafer(inputs.indicMethodeCalcul)}',
+                                         '${makeStrSafer(inputs.indicUnite)}',
+                                         ${inputs.indicHiddenPilote},
+                                         '${makeStrSafer(inputs.indicSchema)}')`;
+    const queryMetadataIndicateur = `INSERT INTO raw_data.metadata_parametrage_indicateurs (indic_id,
+                                                                                                vi_dept_from,
+                                                                                                vi_dept_op,
+                                                                                                va_dept_from,
+                                                                                                va_dept_op,
+                                                                                                vc_dept_from,
+                                                                                                vc_dept_op,
+                                                                                                vi_reg_from,
+                                                                                                vi_reg_op,
+                                                                                                va_reg_from,
+                                                                                                va_reg_op,
+                                                                                                vc_reg_from,
+                                                                                                vc_reg_op,
+                                                                                                vi_nat_from,
+                                                                                                vi_nat_op,
+                                                                                                va_nat_from,
+                                                                                                va_nat_op,
+                                                                                                vc_nat_from,
+                                                                                                vc_nat_op,
+                                                                                                param_vaca_decumul_from,
+                                                                                                param_vaca_partition_date,
+                                                                                                param_vaca_op,
+                                                                                                param_vacg_decumul_from,
+                                                                                                param_vacg_partition_date,
+                                                                                                param_vacg_op,
+                                                                                                poids_pourcent_dept,
+                                                                                                poids_pourcent_reg,
+                                                                                                poids_pourcent_nat,
+                                                                                                tendance)
+                                         VALUES ('${inputs.indicId}',
+                                                 '${makeStrSafer(inputs.viDeptFrom)}', 
+                                                 '${makeStrSafer(inputs.viDeptOp)}', 
+                                                 '${makeStrSafer(inputs.vaDeptFrom)}',
+                                                 '${makeStrSafer(inputs.vaDeptOp)}', 
+                                                 '${makeStrSafer(inputs.vcDeptFrom)}', 
+                                                 '${makeStrSafer(inputs.vcDeptOp)}',
+                                                 '${makeStrSafer(inputs.viRegFrom)}', 
+                                                 '${makeStrSafer(inputs.viRegOp)}',
+                                                 '${makeStrSafer(inputs.vaRegFrom)}', 
+                                                 '${makeStrSafer(inputs.vaRegOp)}',
+                                                 '${makeStrSafer(inputs.vcRegFrom)}', 
+                                                 '${makeStrSafer(inputs.vcRegOp)}',
+                                                 '${makeStrSafer(inputs.viNatFrom)}', 
+                                                 '${makeStrSafer(inputs.viNatOp)}',
+                                                 '${makeStrSafer(inputs.vaNatFrom)}', 
+                                                 '${makeStrSafer(inputs.vaNatOp)}',
+                                                 '${makeStrSafer(inputs.vcNatFrom)}', 
+                                                 '${makeStrSafer(inputs.vcNatOp)}',
+                                                 '${makeStrSafer(inputs.paramVacaDecumulFrom)}',
+                                                 '${makeStrSafer(inputs.paramVacaPartitionDate)}',
+                                                 '${makeStrSafer(inputs.paramVacaOp)}',
+                                                 '${makeStrSafer(inputs.paramVacgDecumulFrom)}',
+                                                 '${makeStrSafer(inputs.paramVacgPartitionDate)}',
+                                                 '${makeStrSafer(inputs.paramVacgOp)}', 
+                                                 '${inputs.poidsPourcentDept}',
+                                                 '${inputs.poidsPourcentReg}', 
+                                                 '${inputs.poidsPourcentNat}',
+                                                 '${makeStrSafer(inputs.tendance)}')`;
 
 
     await this.prismaClient.$transaction([

@@ -1,6 +1,7 @@
 export interface MetadataParametrageIndicateurForm {
   indicId: string;
   indicParentIndic: string;
+  indicParentCh: string;
   indicNom: string;
   indicNomBaro: string;
   indicDescr: string;

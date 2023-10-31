@@ -62,7 +62,7 @@ models:
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
             pilote_create_mandatory: false
-            pilote_create_defaultValue: null"
+            pilote_create_defaultValue: null
       - name: indic_descr
         data_type: text
         description: "Description de l'indicateur"

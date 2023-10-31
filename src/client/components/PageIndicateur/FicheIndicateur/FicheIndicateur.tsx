@@ -1,7 +1,9 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import FicheIndicateurStyled from '@/components/PageIndicateur/FicheIndicateur/FicheIndicateur.styled';
-import SectionTableauIndicateur from '@/components/PageIndicateur/FicheIndicateur/SectionTableauIndicateur/SectionTableauIndicateur';
-import SectionDétailsMetadataIndicateur from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur/SectionDétailsMetadataIndicateur';
+import SectionTableauIndicateur
+  from '@/components/PageIndicateur/FicheIndicateur/SectionTableauIndicateur/SectionTableauIndicateur';
+import SectionDétailsMetadataIndicateur
+  from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur/SectionDétailsMetadataIndicateur';
 import SectionDétailsMetadataParametreIndicateur
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateur/SectionDétailsMetadataParametreIndicateur';
 import SectionSelectionIndicateur
@@ -10,7 +12,7 @@ import SectionDétailsMetadataAutresIndicateur
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataAutresIndicateur/SectionDétailsMetadataAutresIndicateur';
 import FicheIndicateurProps from './FicheIndicateur.interface';
 
-export default function FicheIndicateur({ indicateur, estEnCoursDeModification, mapInformationMetadataIndicateur }: FicheIndicateurProps) {
+export default function FicheIndicateur({ indicateur, estEnCoursDeModification, mapInformationMetadataIndicateur, chantiers }: FicheIndicateurProps) {
   return (
     <FicheIndicateurStyled>
       <SectionSelectionIndicateur
@@ -18,6 +20,7 @@ export default function FicheIndicateur({ indicateur, estEnCoursDeModification, 
       />
       <SectionTableauIndicateur indicateur={indicateur} />
       <SectionDétailsMetadataIndicateur
+        chantiers={chantiers}
         estEnCoursDeModification={estEnCoursDeModification}
         indicateur={indicateur}
         mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}

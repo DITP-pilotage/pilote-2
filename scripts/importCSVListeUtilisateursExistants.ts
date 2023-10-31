@@ -1,13 +1,11 @@
 import { loadEnvConfig } from '@next/env';
 import process from 'node:process';
 import assert from 'node:assert/strict';
+import logger from '@/server/infrastructure/logger';
+import UtilisateurCSVParseur from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur';
 
 const projectDir = process.cwd();
 loadEnvConfig(projectDir);  // ⚠️ À appeler avant nos imports, because Configuration.ts est aussi chargée côté front
-
-import logger from '@/server/infrastructure/logger';
-import UtilisateurCSVParseur from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur';
-import RécupérerListeUtilisateursExistantsUseCase from '@/server/usecase/utilisateur/RécupérerListeUtilisateursExistantsUseCase';
 
 /**
  - Format CSV attendu:
@@ -36,7 +34,6 @@ async function main() {
   assert(filename, 'Nom de fichier CSV manquant');
 
   const utilisateurs = new UtilisateurCSVParseur(filename).parse().parsedCsvRecords;
-  console.log(await new RécupérerListeUtilisateursExistantsUseCase().run(utilisateurs));
 }
 
 const isMain = eval('require.main === module');

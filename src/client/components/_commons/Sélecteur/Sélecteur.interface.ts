@@ -1,6 +1,6 @@
 import { FieldError, FieldErrorsImpl, Merge, UseFormRegisterReturn } from 'react-hook-form';
 
-type SélecteurOption<T> = {
+export type SélecteurOption<T> = {
   libellé: string,
   valeur: T,
   désactivée?: boolean,
