@@ -51,13 +51,20 @@ export default function useSaisieDesInformationsUtilisateurSaisieIndicateurs(
   // GESTION CHANTIERS ET PERIMETRES MINISTERIELS 
   const déterminerChantiersSélectionnésÀPartirDesPérimètresMinistériels = useCallback((périmètresMinistérielsIdsSélectionnés: string[]) => {
     const chantiersAppartenantsAuPérimètresMinistérielsSélectionnés = chantiersSélectionnables.filter(chantier => auMoinsUneValeurDuTableauEstContenueDansLAutreTableau(chantier.périmètreIds, périmètresMinistérielsIdsSélectionnés));
-
+  
     return chantiersAppartenantsAuPérimètresMinistérielsSélectionnés.map(c => c.id);
   }, [chantiersSélectionnables]);
 
   const handleChangementValeursSélectionnéesChantiersSaisieIndicateurs = useCallback((valeursSélectionnées: string[]) => {    
     setValue('habilitations.saisie.indicateur.chantiers', valeursSélectionnées);
   }, [setValue]);
+
+  useEffect(() => {
+    if (chantiersSélectionnables) {
+      handleChangementValeursSélectionnéesChantiersSaisieIndicateurs(chantiersSélectionnables.map(c => c.id));
+    }
+  }, [chantiersSélectionnables, handleChangementValeursSélectionnéesChantiersSaisieIndicateurs]);
+
 
   const handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieIndicateurs = useCallback((valeursSélectionnées: string[]) => {  
     const périmètresIdsActuellementsSélectionnés = getValues('habilitations.saisie.indicateur.périmètres') ?? [];
