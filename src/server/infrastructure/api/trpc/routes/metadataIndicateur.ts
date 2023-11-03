@@ -74,9 +74,9 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
         paramVacgDecumulFrom: input.paramVacgDecumulFrom,
         paramVacgPartitionDate: input.paramVacgPartitionDate,
         paramVacgOp: input.paramVacgOp,
-        poidsPourcentDept: input.poidsPourcentDept,
-        poidsPourcentReg: input.poidsPourcentReg,
-        poidsPourcentNat: input.poidsPourcentNat,
+        poidsPourcentDept: (!Number.isNaN(input.poidsPourcentDept) && +input.poidsPourcentDept) || 0,
+        poidsPourcentReg: (!Number.isNaN(input.poidsPourcentReg) && +input.poidsPourcentReg) || 0,
+        poidsPourcentNat: (!Number.isNaN(input.poidsPourcentNat) && +input.poidsPourcentNat) || 0,
         tendance: input.tendance,
 
       });
@@ -126,11 +126,10 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
         paramVacgDecumulFrom: input.paramVacgDecumulFrom,
         paramVacgPartitionDate: input.paramVacgPartitionDate,
         paramVacgOp: input.paramVacgOp,
-        poidsPourcentDept: input.poidsPourcentDept,
-        poidsPourcentReg: input.poidsPourcentReg,
-        poidsPourcentNat: input.poidsPourcentNat,
+        poidsPourcentDept: (!Number.isNaN(input.poidsPourcentDept) && +input.poidsPourcentDept) || 0,
+        poidsPourcentReg: (!Number.isNaN(input.poidsPourcentReg) && +input.poidsPourcentReg) || 0,
+        poidsPourcentNat: (!Number.isNaN(input.poidsPourcentNat) && +input.poidsPourcentNat) || 0,
         tendance: input.tendance,
-
       });
     }),
 });

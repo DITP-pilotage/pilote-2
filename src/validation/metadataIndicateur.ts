@@ -6,14 +6,13 @@ export const validationFiltresPourListeMetadataIndicateur = z.object({
   }),
 });
 
-
 export const validationMetadataIndicateurFormulaire = z.object({
   indicParentIndic: z
     .string()
     .nullable(),
   indicParentCh: z
     .string()
-    .refine((value) => /^CH-\d{3}$/.test(value), 'Veuillez séléctionner un chantier.'),
+    .refine((value) => /^CH-\d{3}$/.test(value), 'Veuillez sélectionner un chantier.'),
   indicNom: z
     .string()
     .max(500, 'La limite maximale de 500 caractères a été dépassée')
@@ -122,11 +121,14 @@ export const validationMetadataIndicateurFormulaire = z.object({
   paramVacgOp: z
     .string(),
   poidsPourcentDept: z
-    .number(),
+    .string()
+    .refine((value) => /^\d+$/.test(value), 'Veuillez saisir un nombre.'),
   poidsPourcentReg: z
-    .number(),
+    .string()
+    .refine((value) => /^\d+$/.test(value), 'Veuillez saisir un nombre.'),
   poidsPourcentNat: z
-    .number(),
+    .string()
+    .refine((value) => /^\d+$/.test(value), 'Veuillez saisir un nombre.'),
   tendance: z
     .string(),
 });

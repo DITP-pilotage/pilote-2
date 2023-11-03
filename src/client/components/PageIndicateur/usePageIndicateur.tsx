@@ -9,8 +9,8 @@ import api from '@/server/infrastructure/api/trpc/api';
 import { récupérerUnCookie } from '@/client/utils/cookies';
 import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 import {
-  MetadataParametrageParametreIndicateurForm,
-} from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateur/useDetailMetadataParametreIndicateurForm';
+  MetadataParametrageParametreCalculIndicateurForm,
+} from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreCalculIndicateur/useDétailsMetadataParametreCalculIndicateurForm';
 import {
   MetadataParametrageAutresIndicateurForm,
 } from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataAutresIndicateur/useDétailsMetadataAutresIndicateurForm';
@@ -19,9 +19,29 @@ import {
 } from '@/components/PageIndicateur/FicheIndicateur/SectionSelectionIndicateur/useSelectionIndicateurForm';
 import { validationMetadataIndicateurFormulaire } from '@/validation/metadataIndicateur';
 import AlerteProps from '@/components/_commons/Alerte/Alerte.interface';
+import {
+  MetadataParametrageParametreIndicateurDepartementaleForm,
+} from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurDepartementale/useDétailsMetadataParametreIndicateurDepartementaleForm';
+import {
+  MetadataParametrageParametreIndicateurRegionaleForm,
+} from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurRegionale/useDétailsMetadataParametreIndicateurRegionaleForm';
+import {
+  MetadataParametrageParametreIndicateurNationaleForm,
+} from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/useDétailsMetadataParametreIndicateurNationaleForm';
+import {
+  MetadataParametrageParametrePonderationIndicateurForm,
+} from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/useDétailsMetadataParametrePonderationndicateurForm';
 
 
-type MetadataIndicateurForm = MetadataParametrageIndicateurForm & MetadataParametrageParametreIndicateurForm & MetadataParametrageAutresIndicateurForm & MetadataSelectionIndicateurForm;
+type MetadataIndicateurForm = MetadataParametrageIndicateurForm
+& MetadataParametrageParametreCalculIndicateurForm
+& MetadataParametrageParametreIndicateurDepartementaleForm
+& MetadataParametrageParametreIndicateurRegionaleForm
+& MetadataParametrageParametreIndicateurNationaleForm
+& MetadataParametrageAutresIndicateurForm
+& MetadataSelectionIndicateurForm
+& MetadataParametrageParametrePonderationIndicateurForm;
+
 export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContrat) => {
   const router = useRouter();
   const [alerte, setAlerte] = useState <AlerteProps | null>(null);
@@ -35,6 +55,9 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
         indicIsBaro: indicateur.indicIsBaro ? 'true' : 'false',
         indicIsPhare: indicateur.indicIsPhare ? 'true' : 'false',
         indicHiddenPilote: indicateur.indicHiddenPilote ? 'true' : 'false',
+        poidsPourcentNat: `${indicateur.poidsPourcentNat}`,
+        poidsPourcentReg: `${indicateur.poidsPourcentReg}`,
+        poidsPourcentDept: `${indicateur.poidsPourcentDept}`,
         indicParentIndic: indicateur.indicParentIndic === null ? 'Aucun indicateur selectionné' : indicateur.indicParentIndic,
       },
     },
@@ -73,9 +96,6 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
     const inputs = {
       csrf: récupérerUnCookie('csrf') ?? '',
       ...data,
-      poidsPourcentDept: (!Number.isNaN(data.poidsPourcentDept) && +data.poidsPourcentDept) || 0,
-      poidsPourcentReg: (!Number.isNaN(data.poidsPourcentReg) && +data.poidsPourcentReg) || 0,
-      poidsPourcentNat: (!Number.isNaN(data.poidsPourcentNat) && +data.poidsPourcentNat) || 0,
       indicParentIndic: data.indicParentIndic === 'Aucun indicateur selectionné' ? null : data.indicParentIndic,
     };
 
@@ -86,9 +106,6 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
     const inputs = {
       csrf: récupérerUnCookie('csrf') ?? '',
       ...data,
-      poidsPourcentDept: (!Number.isNaN(data.poidsPourcentDept) && +data.poidsPourcentDept) || 0,
-      poidsPourcentReg: (!Number.isNaN(data.poidsPourcentReg) && +data.poidsPourcentReg) || 0,
-      poidsPourcentNat: (!Number.isNaN(data.poidsPourcentNat) && +data.poidsPourcentNat) || 0,
       indicParentIndic: data.indicParentIndic === 'Aucun indicateur selectionné' ? null : data.indicParentIndic,
     };
 

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const SectionDétailsMetadataParametreIndicateurStyled = styled.div`
+const SectionDétailsMetadataParametreIndicateurDepartementaleStyled = styled.div`
   .fr-icon-close-line{
     color: var(--text-default-warning);
   }
@@ -11,4 +11,4 @@ const SectionDétailsMetadataParametreIndicateurStyled = styled.div`
   
 `;
 
-export default SectionDétailsMetadataParametreIndicateurStyled;
+export default SectionDétailsMetadataParametreIndicateurDepartementaleStyled;

@@ -91,8 +91,16 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                     indicateur={indicateur}
                     mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
                   />
-                  {estEnCoursDeModification ? (
-                    <div className="fr-grid-row fr-mt-4w">
+                  {
+                    estUneCréation ? (
+                      <button
+                        className='fr-btn fr-mr-2w'
+                        key="submit-indicateur"
+                        type="submit"
+                      >
+                        Créer l&apos;indicateur
+                      </button>
+                    ) : (estEnCoursDeModification ? (
                       <button
                         className='fr-btn fr-mr-2w'
                         key="submit-indicateur"
@@ -100,10 +108,8 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                       >
                         Confirmer les changements
                       </button>
-                    </div>
 
-                  ) : (
-                    <div className="fr-grid-row fr-mt-4w">
+                    ) : (
                       <button
                         className='fr-btn fr-mr-2w'
                         key="passer-en-modification"
@@ -112,8 +118,8 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                       >
                         Modifier
                       </button>
-                    </div>
-                  )}
+                    ))
+                  }
                 </div>
               </Bloc>
             </form>
