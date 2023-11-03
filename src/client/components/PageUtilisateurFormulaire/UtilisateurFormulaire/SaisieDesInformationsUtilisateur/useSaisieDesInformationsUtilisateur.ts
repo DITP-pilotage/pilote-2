@@ -48,7 +48,9 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   useEffect(() => {
     if (!chantiers || !profilSélectionné) return;
     
-    if (profilsTerritoriaux.includes(profilSélectionné.code)) {
+    if (profilSélectionné.code === 'DROM') {
+      setChantiersAccessiblesPourLeProfil(chantiers.filter(chantier => chantier.estTerritorialisé || chantier.périmètreIds.includes('PER-018')));
+    } else if (profilsTerritoriaux.includes(profilSélectionné.code)) {
       setChantiersAccessiblesPourLeProfil(chantiers.filter(chantier => chantier.estTerritorialisé));
     } else {
       setChantiersAccessiblesPourLeProfil(chantiers);
@@ -75,7 +77,11 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
           const profilAssociéAuProfilCodeSélectionné = profils.find(p => p.code === profilCodeSélectionné);
           if (profilAssociéAuProfilCodeSélectionné?.chantiers.lecture.tousTerritorialisés) {
             if (chantiersAccessiblesPourLeProfil.length === 0 && chantiers) {
-              handleChangementValeursSélectionnéesChantiers(chantiers.filter(chantier => chantier.estTerritorialisé).map(c => c.id));
+              if (profilCodeSélectionné === 'DROM') {
+                handleChangementValeursSélectionnéesChantiers(chantiers.filter(chantier => chantier.estTerritorialisé || chantier.périmètreIds.includes('PER-018')).map(c => c.id))
+              } else {
+                handleChangementValeursSélectionnéesChantiers(chantiers.filter(chantier => chantier.estTerritorialisé).map(c => c.id));
+              }
             } else {
               handleChangementValeursSélectionnéesChantiers(chantiersAccessiblesPourLeProfil.map(c => c.id));
             }            

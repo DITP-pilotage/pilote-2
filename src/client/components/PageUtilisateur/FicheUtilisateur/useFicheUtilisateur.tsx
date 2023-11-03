@@ -46,9 +46,6 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
   }, [départements, profil, récupérerDétailsSurUnTerritoire]);
 
   const déterminerLesNomÀAfficherPourLesChantiersLecture = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
-    if (profil?.code === 'DROM')
-      return ['Tous les chantiers territorialisés', 'Tous les chantiers DROM'];
-
     if (profil?.chantiers.lecture.tous)
       return ['Tous les chantiers']; 
 
@@ -63,8 +60,6 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
   }, [profil]);
 
   const déterminerLesNomÀAfficherPourLesChantiersSaisieIndicateur = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
-    if (profil?.code === 'DROM')
-      return ['Tous les chantiers territorialisés', 'Tous les chantiers DROM'];
 
     if (profil?.code === 'DITP_ADMIN')
       return ['Tous les chantiers']; 
