@@ -60,10 +60,10 @@ export default function useSaisieDesInformationsUtilisateurSaisieIndicateurs(
   }, [setValue]);
 
   useEffect(() => {
-    if (chantiersSélectionnables) {
+    if (!!!utilisateur && chantiersSélectionnables) {
       handleChangementValeursSélectionnéesChantiersSaisieIndicateurs(chantiersSélectionnables.map(c => c.id));
     }
-  }, [chantiersSélectionnables, handleChangementValeursSélectionnéesChantiersSaisieIndicateurs]);
+  }, [chantiersSélectionnables, handleChangementValeursSélectionnéesChantiersSaisieIndicateurs, utilisateur]);
 
 
   const handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieIndicateurs = useCallback((valeursSélectionnées: string[]) => {  

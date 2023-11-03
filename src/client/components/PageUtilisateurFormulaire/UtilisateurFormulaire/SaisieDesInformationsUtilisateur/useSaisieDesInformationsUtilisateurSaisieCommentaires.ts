@@ -50,13 +50,13 @@ export default function useSaisieDesInformationsUtilisateur(
   }, [chantiers, profilSélectionné, chantiersLecture]);
 
   useEffect(() => {
-    if (chantiersAccessiblesPourLeProfilSaisieCommentaire) {
+    if (!!!utilisateur && chantiersAccessiblesPourLeProfilSaisieCommentaire) {
       handleChangementValeursSélectionnéesChantiersSaisieCommentaire(chantiersAccessiblesPourLeProfilSaisieCommentaire.map(c => c.id));
-
+  
       const périmètresListe = chantiersAccessiblesPourLeProfilSaisieCommentaire.flatMap(c => c.périmètreIds); 
       setPérimètresIdSélectionnablesSaisie([...new Set(périmètresListe)]);
     }
-  }, [chantiers, chantiersAccessiblesPourLeProfilSaisieCommentaire, handleChangementValeursSélectionnéesChantiersSaisieCommentaire]);
+  }, [chantiers, chantiersAccessiblesPourLeProfilSaisieCommentaire, handleChangementValeursSélectionnéesChantiersSaisieCommentaire, utilisateur]);
 
   useEffect(() => {
     if (ancienProfilCodeSélectionné !== profilCodeSélectionné) {

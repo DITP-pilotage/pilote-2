@@ -22,7 +22,6 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import Indicateurs from '@/client/components/_commons/Indicateurs/Indicateurs';
 import { listeRubriquesChantier, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
-import { estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
 import { mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierProps from './PageChantier.interface';
@@ -47,9 +46,9 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
     avancements,
     modeÉcriture,
     modeÉcritureObjectifs,
-    profil,
     territoireSélectionné,
     indicateurPondérations,
+    saisieIndicateurAutorisée,
   } = usePageChantier(chantierId, indicateurs);
 
   const listeRubriques = listeRubriquesChantier(indicateurs.map(i => i.type), territoireSélectionné!.maille);
@@ -80,7 +79,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
             <>
               <PageChantierEnTête
                 afficheLeBoutonImpression
-                afficheLeBoutonMiseAJourDonnee={estAutoriséAImporterDesIndicateurs(profil)}
+                afficheLeBoutonMiseAJourDonnee={saisieIndicateurAutorisée}
                 chantier={chantier}
               />
               <div className='fr-container--fluid fr-py-2w fr-px-md-4w'>

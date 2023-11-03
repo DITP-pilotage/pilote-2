@@ -228,9 +228,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
     if (profilUtilisateur.a_acces_tous_chantiers) {
       chantiersAccessibles = this._chantiers.ids;
-    } else if (profilUtilisateur.a_acces_tous_chantiers_territorialises) {
-      chantiersAccessibles = this._chantiersTerritorialisésIds;
-    }
+    } 
 
     return {
       'lecture': chantiersAccessibles,
