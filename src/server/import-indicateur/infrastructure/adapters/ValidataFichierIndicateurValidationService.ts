@@ -1,10 +1,6 @@
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
-import {
-  ReportErrorTask,
-  ReportResourceTaskData,
-  ReportTask,
-} from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
+import { ReportErrorTask, ReportTask } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
 import {
   FichierIndicateurValidationService,
   ValiderFichierPayload,
@@ -37,22 +33,14 @@ interface PositionEnTeteDuFichier {
   metricValue: number
 }
 
-const recupererLesPositionsDesEnTetes = (donnees: ReportResourceTaskData): PositionEnTeteDuFichier => {
-  const enTetes = donnees[0];
+const recupererLesPositionsDesEnTetes = (rawEntete: string[]): PositionEnTeteDuFichier => {
   return {
-    indicId: enTetes.indexOf(EnTeteFichierEnum.INDIC_ID),
-    zoneId: enTetes.indexOf(EnTeteFichierEnum.ZONE_ID),
-    metricDate: enTetes.indexOf(EnTeteFichierEnum.METRIC_DATE),
-    metricType: enTetes.indexOf(EnTeteFichierEnum.METRIC_TYPE),
-    metricValue: enTetes.indexOf(EnTeteFichierEnum.METRIC_VALUE),
+    indicId: rawEntete.indexOf(EnTeteFichierEnum.INDIC_ID),
+    zoneId: rawEntete.indexOf(EnTeteFichierEnum.ZONE_ID),
+    metricDate: rawEntete.indexOf(EnTeteFichierEnum.METRIC_DATE),
+    metricType: rawEntete.indexOf(EnTeteFichierEnum.METRIC_TYPE),
+    metricValue: rawEntete.indexOf(EnTeteFichierEnum.METRIC_VALUE),
   };
-};
-
-const extraireLeContenuDuFichier = (tasks: ReportTask[]) => {
-  const enTetes = recupererLesPositionsDesEnTetes(tasks[0].resource.data);
-  const donnees = tasks.map(extraireLesDonnees);
-
-  return { enTetes, donnees };
 };
 
 const initialiserMapFieldNameErreurDITP: (taskError: ReportErrorTask) => Record<EnTeteFichierEnum.INDIC_ID | EnTeteFichierEnum.METRIC_TYPE | EnTeteFichierEnum.ZONE_ID | string, Record<string, string>> = (taskError) => ({
@@ -79,7 +67,7 @@ const initialiserMapCodeErreurDITP: (taskError: ReportErrorTask) => Record<strin
   mapCodeNote[cléPourCodeLigneVide] = `Toutes les cellules de la ligne ${taskError.rowPosition} sont vides`;
 
   const cléPourCodeEnteteInvalide = 'Provided schema is not valid.';
-  mapCodeNoteEnteteInvalide[cléPourCodeEnteteInvalide] = 'Les entêtes du fichier sont invalides, les entêtes doivent être [identifiant_indic, zone_id, date_valeur, type_valeur, valeur]';
+  mapCodeNoteEnteteInvalide[cléPourCodeEnteteInvalide] = 'Les en-têtes du fichier sont invalides, les en-têtes doivent être [identifiant_indic, zone_id, date_valeur, type_valeur, valeur]';
 
   const cléPourCodeEnteteDoublon = 'Duplicate labels in header is not supported with "schema_sync"';
   mapCodeNoteEnteteDoublon[cléPourCodeEnteteDoublon] = 'Il existe des entêtes en doublon dans le fichier';
@@ -125,9 +113,39 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
 
     const rapport = DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, utilisateurEmail });
 
-    if (report.tasks[0].resource.data[0].includes('identifiant_indic')) {
-      const { enTetes, donnees } = extraireLeContenuDuFichier(report.tasks);
+    const rawEnTete = report.tasks[0].resource.data[0];
 
+    rawEnTete.forEach(enTetes => {
+      if (enTetes.trim() !== enTetes) {
+        listeErreursValidation.push(ErreurValidationFichier.creerErreurValidationFichier({
+          rapportId: rapport.id,
+          cellule: enTetes,
+          nom: 'En-tête incorrect',
+          message: `Le champ de l'en-tête '${enTetes.trim()}' comporte des espaces, veuillez les supprimer`,
+          numeroDeLigne: 0,
+          positionDeLigne: 0,
+          nomDuChamp: enTetes.trim(),
+          positionDuChamp: 0,
+        }));
+      }
+      if (enTetes.toLowerCase() !== enTetes) {
+        listeErreursValidation.push(ErreurValidationFichier.creerErreurValidationFichier({
+          rapportId: rapport.id,
+          cellule: enTetes,
+          nom: 'En-tête incorrect',
+          message: `Le champ de l'en-tête '${enTetes.toLowerCase()}' comporte des majuscules, veuillez les mettre en minuscule`,
+          numeroDeLigne: 0,
+          positionDeLigne: 0,
+          nomDuChamp: enTetes.toLowerCase(),
+          positionDuChamp: 0,
+        }));
+      }
+    });
+
+    const enTetes = recupererLesPositionsDesEnTetes(rawEnTete);
+    const donnees = report.tasks.map(extraireLesDonnees);
+
+    if ((report.tasks[0].resource.data[0]).includes('identifiant_indic')) {
       listeIndicateursData = donnees.flat().map(donnee => MesureIndicateurTemporaire.createMesureIndicateurTemporaire({
         rapportId: rapport.id,
         indicId: donnee[enTetes.indicId],
@@ -137,7 +155,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
         metricValue: `${donnee[enTetes.metricValue]}`,
       }));
     } else {
-      listeErreursValidation = [ErreurValidationFichier.creerErreurValidationFichier({
+      listeErreursValidation.push(ErreurValidationFichier.creerErreurValidationFichier({
         rapportId: rapport.id,
         cellule: 'identifiant_indic',
         nom: 'identifiant_indic',
@@ -146,7 +164,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
         positionDeLigne: 0,
         nomDuChamp: 'identifiant_indic',
         positionDuChamp: 0,
-      })];
+      }));
     }
 
     const listeErreursReport = report.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
