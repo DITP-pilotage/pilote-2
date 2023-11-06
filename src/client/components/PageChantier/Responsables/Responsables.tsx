@@ -36,6 +36,16 @@ export default function ResponsablesPageChantier({ responsables }: ResponsablesP
           contenu={responsables.directeursProjet.map(directeur => (mailTo(directeur.nom, directeur.email)))}
           libellé="Directeur(s) / directrice(s) du projet"
         />
+        <hr className='fr-hr fr-py-1w' />
+        <ResponsablesLigne
+          contenu={[]}
+          libellé="Responsable local"
+        />
+        <hr className='fr-hr fr-py-1w' />
+        <ResponsablesLigne
+          contenu={[]}
+          libellé="Référent pilote du territoire"
+        />
       </Bloc>
     </ResponsablesPageChantierStyled>
   );
