@@ -6,18 +6,17 @@ export const validationFiltresPourListeMetadataIndicateur = z.object({
   }),
 });
 
-
 export const validationMetadataIndicateurFormulaire = z.object({
   indicParentIndic: z
     .string()
-    .max(500, 'La limite maximale de 500 caractères a été dépassée')
-    .min(0, 'Ce champ ne peut pas être vide')
     .nullable(),
+  indicParentCh: z
+    .string()
+    .refine((value) => /^CH-\d{3}$/.test(value), 'Veuillez sélectionner un chantier.'),
   indicNom: z
     .string()
     .max(500, 'La limite maximale de 500 caractères a été dépassée')
-    .min(0, 'Ce champ ne peut pas être vide')
-    .nullable(),
+    .min(1, 'Ce champ ne peut pas être vide'),
   indicNomBaro: z
     .string()
     .max(500, 'La limite maximale de 500 caractères a été dépassée')
@@ -26,8 +25,7 @@ export const validationMetadataIndicateurFormulaire = z.object({
   indicDescr: z
     .string()
     .max(500, 'La limite maximale de 500 caractères a été dépassée')
-    .min(0, 'Ce champ ne peut pas être vide')
-    .nullable(),
+    .min(1, 'Ce champ ne peut pas être vide'),
   indicDescrBaro: z
     .string()
     .max(500, 'La limite maximale de 500 caractères a été dépassée')
@@ -62,8 +60,7 @@ export const validationMetadataIndicateurFormulaire = z.object({
   indicUnite: z
     .string()
     .max(500, 'La limite maximale de 500 caractères a été dépassée')
-    .min(0, 'Ce champ ne peut pas être vide')
-    .nullable(),
+    .min(1, 'Ce champ ne peut pas être vide'),
   indicHiddenPilote: z
     .string(),
   indicSchema: z
@@ -124,11 +121,14 @@ export const validationMetadataIndicateurFormulaire = z.object({
   paramVacgOp: z
     .string(),
   poidsPourcentDept: z
-    .number(),
+    .string()
+    .refine((value) => /^\d+$/.test(value), 'Veuillez saisir un nombre.'),
   poidsPourcentReg: z
-    .number(),
+    .string()
+    .refine((value) => /^\d+$/.test(value), 'Veuillez saisir un nombre.'),
   poidsPourcentNat: z
-    .number(),
+    .string()
+    .refine((value) => /^\d+$/.test(value), 'Veuillez saisir un nombre.'),
   tendance: z
     .string(),
 });

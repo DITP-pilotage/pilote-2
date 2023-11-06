@@ -26,6 +26,8 @@ export interface InformationMetadataIndicateurContrat {
 
   metaPiloteEditBoxType: 'text' | 'textarea' | 'boolean';
 
+  metaPiloteDefaultValue: string | number | null | boolean;
+
   acceptedValues: AcceptedValueContrat[];
 }
 
@@ -91,6 +93,7 @@ export const presenterEnInformationMetadataIndicateurContrat = (informationMetad
     metaPiloteEditRegex: informationMetadataIndicateur.metaPiloteEditRegex  || '',
     metaPiloteEditRegexViolationMessage: informationMetadataIndicateur.metaPiloteEditRegexViolationMessage  || '',
     metaPiloteEditBoxType: informationMetadataIndicateur.metaPiloteEditBoxType  || '',
+    metaPiloteDefaultValue: informationMetadataIndicateur.metaPiloteDefaultValue,
     acceptedValues: informationMetadataIndicateur.acceptedValues.map(acceptedValue => ({
       ordre: acceptedValue.orderId,
       libellé: acceptedValue.name,
