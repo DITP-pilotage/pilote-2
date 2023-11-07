@@ -12,7 +12,7 @@ const globalConf = {
     "@/hooks/(.*)": "<rootDir>/src/hooks/$1",
     "@/server/(.*)": "<rootDir>/src/server/$1",
     "@/stores/(.*)": "<rootDir>/src/client/stores/$1",
-    "@/validation/(.*)": "<rootDir>/src/client/validation/$1",
+    "@/validation/(.*)": "<rootDir>/src/validation/$1",
   },
 };
 
@@ -31,6 +31,14 @@ module.exports = async () => {
         roots: ['<rootDir>/src/server'],
         testMatch: ['**/*.integration.test.*', '**/__tests__/**/*.test.ts'],
         maxWorkers: 1,
+        transform: {
+          "\\.yml$": "jest-transform-yaml",
+          '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
+        },
+        transformIgnorePatterns: [
+          '/node_modules/',
+          '^.+\\.module\\.(css|sass|scss)$',
+        ],
       },
       {
         ...nextJSGlobalConf,
@@ -38,6 +46,14 @@ module.exports = async () => {
         testEnvironment: 'node',
         roots: ['<rootDir>/src/server', '<rootDir>/scripts'],
         testMatch: ['**/*.unit.test.*'],
+        transform: {
+          "\\.yml$": "jest-transform-yaml",
+          '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
+        },
+        transformIgnorePatterns: [
+          '/node_modules/',
+          '^.+\\.module\\.(css|sass|scss)$',
+        ],
       },
       {
         ...nextJSGlobalConf,

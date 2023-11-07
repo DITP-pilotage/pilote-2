@@ -37,13 +37,17 @@
       ],
       "@/validation/*": [
         "validation/*"
+      ],
+      "@/ppg_metadata/*": [
+        "/data_management/data_factory/models/raw/ppg_metadata/"
       ]
     }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "/data_management/data_factory/models/raw/ppg_metadata/schema.yml"
   ],
   "exclude": [
     "node_modules"

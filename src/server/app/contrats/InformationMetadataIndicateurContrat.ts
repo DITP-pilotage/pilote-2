@@ -22,7 +22,7 @@ export interface InformationMetadataIndicateurContrat {
 
   metaPiloteEditRegex: string;
 
-  metaPiloteEditRegexViolationMessage: string | null;
+  metaPiloteEditRegexViolationMessage: string;
 
   metaPiloteEditBoxType: 'text' | 'textarea' | 'boolean';
 

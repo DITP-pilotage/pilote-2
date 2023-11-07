@@ -9,7 +9,7 @@ export default class RécupérerInformationMetadataIndicateurUseCase {
     private readonly informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository = dependencies.getInformationMetadataIndicateurRepository(),
   ) {}
     
-  async run(): Promise<InformationMetadataIndicateur[]> {
+  run(): InformationMetadataIndicateur[] {
     return this.informationMetadataIndicateurRepository.récupererInformationMetadataIndicateur();
   }
 }

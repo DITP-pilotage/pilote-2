@@ -454,7 +454,7 @@ models:
             pilote_alias: "VACA: Décumul des VA depuis"
             pilote_edit_isEditable: true
             pilote_edit_boxType: text
-            pilote_edit_regex: "from_year_start|from_custom_date::20\\d\\d-\\d\\d-\\d\\d"
+            pilote_edit_regex: "_|from_year_start|from_custom_date::20\\d\\d-\\d\\d-\\d\\d"
             pilote_edit_regexViolationMessage: "Veuillez saisir une date de début correcte."
             pilote_disp_dispDesc: true
             pilote_create_mandatory: true

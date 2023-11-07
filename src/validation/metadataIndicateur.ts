@@ -1,10 +1,18 @@
 import { z } from 'zod';
+import {
+  presenterEnMapInformationMetadataIndicateurContrat,
+} from '@/server/app/contrats/InformationMetadataIndicateurContrat';
+import {
+  YamlInformationMetadataIndicateurRepository,
+} from '@/server/parametrage-indicateur/infrastructure/adapters/YamlInformationMetadataIndicateurRepository';
 
 export const validationFiltresPourListeMetadataIndicateur = z.object({
   filtres: z.object({
     chantiers: z.string().array(),
   }),
 });
+
+const metadata = presenterEnMapInformationMetadataIndicateurContrat(new YamlInformationMetadataIndicateurRepository().récupererInformationMetadataIndicateur());
 
 export const validationMetadataIndicateurFormulaire = z.object({
   indicParentIndic: z
@@ -106,18 +114,18 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .string(),
   paramVacaDecumulFrom: z
     .string()
-    .refine((value) => /^from_year_start|from_custom_date::20\\d\\d-\\d\\d-\\d\\d$/.test(value), 'Veuillez saisir une date de début correcte.'),
+    .refine((value) => new RegExp(metadata.param_vaca_decumul_from.metaPiloteEditRegex).test(value), metadata.param_vaca_decumul_from.metaPiloteEditRegexViolationMessage),
   paramVacaPartitionDate: z
     .string()
-    .refine((value) => /^_|from_year_start|from_custom_date::20\\d\\d-\\d\\d-\\d\\d|from_month::\\d\\d$/.test(value), 'Veuillez saisir une date de début correcte.'),
+    .refine((value) => new RegExp(metadata.param_vaca_partition_date.metaPiloteEditRegex).test(value), metadata.param_vaca_partition_date.metaPiloteEditRegexViolationMessage),
   paramVacaOp: z
     .string(),
   paramVacgDecumulFrom: z
     .string()
-    .refine((value) => /^_|from_year_start|from_custom_date::20\\d\\d-\\d\\d-\\d\\d$/.test(value), 'Veuillez saisir une date de début correcte.'),
+    .refine((value) => new RegExp(metadata.param_vacg_decumul_from.metaPiloteEditRegex).test(value), metadata.param_vacg_decumul_from.metaPiloteEditRegexViolationMessage),
   paramVacgPartitionDate: z
     .string()
-    .refine((value) => /^_|from_year_start|from_custom_date::20\\d\\d-\\d\\d-\\d\\d|from_month::\\d\\d$/.test(value), 'Veuillez saisir une date de début correcte.'),
+    .refine((value) => new RegExp(metadata.param_vacg_partition_date.metaPiloteEditRegex).test(value), metadata.param_vacg_partition_date.metaPiloteEditRegexViolationMessage),
   paramVacgOp: z
     .string(),
   poidsPourcentDept: z
