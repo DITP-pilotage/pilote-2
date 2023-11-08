@@ -76,7 +76,7 @@ export async function getServerSideProps({ req, res, params, query } :GetServerS
   const récupérerChantiersSynthétisésUseCase = new RécupérerChantiersSynthétisésUseCase();
   const chantiers = await récupérerChantiersSynthétisésUseCase.run(session.habilitations);
 
-  const mapInformationMetadataIndicateur = await new RécupérerInformationMetadataIndicateurUseCase().run().then(result => presenterEnMapInformationMetadataIndicateurContrat(result));
+  const mapInformationMetadataIndicateur = presenterEnMapInformationMetadataIndicateurContrat(new RécupérerInformationMetadataIndicateurUseCase().run());
 
   return {
     props: {

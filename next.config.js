@@ -5,6 +5,15 @@ const nextConfig = {
   compiler: {
     emotion: true,
   },
+  webpack: function (config) {
+    config.module.rules.push(
+        {
+          test: /\.ya?ml$/,
+          use: 'js-yaml-loader',
+        },
+    )
+    return config
+  },
   async headers() {
     return [
       {

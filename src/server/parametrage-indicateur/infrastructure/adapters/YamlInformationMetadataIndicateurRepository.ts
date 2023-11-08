@@ -1,14 +1,12 @@
-import { parse } from 'yaml';
-import fs from 'node:fs';
-import * as path from 'node:path';
-import * as url from 'node:url';
 import {
   InformationMetadataIndicateurRepository,
 } from '@/server/parametrage-indicateur/domain/ports/InformationMetadataIndicateurRepository';
 import { InformationMetadataIndicateur } from '@/server/parametrage-indicateur/domain/InformationMetadataIndicateur';
 import { AcceptedValue } from '@/server/parametrage-indicateur/domain/AcceptedValue';
+import data from '../../../../../data_management/data_factory/models/raw/ppg_metadata/schema.yml';
 
 interface YamlAcceptedValue {
+
   order_id: number,
   value: string,
   name: string,
@@ -35,7 +33,7 @@ interface YamlModel {
   columns: YamlColumn[]
 }
 
-interface YamlResult {
+export interface YamlResult {
   models: YamlModel[]
 }
 const convertirEnInformationMetadataIndicateur = (yamlColumn: YamlColumn): InformationMetadataIndicateur   => {
@@ -61,10 +59,8 @@ const convertirEnInformationMetadataIndicateur = (yamlColumn: YamlColumn): Infor
 };
 
 export class YamlInformationMetadataIndicateurRepository implements InformationMetadataIndicateurRepository {
-  récupererInformationMetadataIndicateur(): Promise<InformationMetadataIndicateur[]> {
-    const pathToYamlInformationMetadataIndicateur = `${path.dirname(url.fileURLToPath(import.meta.url))}/../../../../../data_management/data_factory/models/raw/ppg_metadata/schema.yml`;
-    const file = fs.readFileSync(pathToYamlInformationMetadataIndicateur, 'utf8');
-    const result: YamlResult = parse(file);
-    return Promise.resolve([...result.models[0].columns, ...result.models[1].columns].map(convertirEnInformationMetadataIndicateur));
+  récupererInformationMetadataIndicateur(): InformationMetadataIndicateur[] {
+    const result: YamlResult = data as YamlResult;
+    return result.models.flatMap(model => model.columns).map(convertirEnInformationMetadataIndicateur);
   }
 }
