@@ -23,16 +23,16 @@ export default class Habilitation {
   }
 
   vérifierLesHabilitationsEnSaisieDesPublications(chantierId: Chantier['id'], territoireCode: string): Error | void {
-    if (!this._habilitations['saisie.commentaire'].chantiers.includes(chantierId))
+    if (!this._habilitations['saisieCommentaire'].chantiers.includes(chantierId))
       throw new ChantierNonAutoriséErreur();
 
-    if (!this._habilitations['saisie.commentaire'].territoires.includes(territoireCode))
+    if (!this._habilitations['saisieCommentaire'].territoires.includes(territoireCode))
       throw new TerritoireNonAutoriséErreur();
   }
 
   vérifierLesHabilitationsEnSaisieDesPublicationsProjetsStructurants(territoireCode: string): Error | void {
     // Vérifications des habilitations à compléter
-    if (!this._habilitations['saisie.commentaire'].territoires.includes(territoireCode))
+    if (!this._habilitations['saisieCommentaire'].territoires.includes(territoireCode))
       throw new TerritoireNonAutoriséErreur();
   }
 
@@ -69,11 +69,11 @@ export default class Habilitation {
   }
 
   peutModifierLeChantier(chantierId: Chantier['id'], territoireCode: string): boolean {
-    return this._habilitations['saisie.commentaire'].chantiers.includes(chantierId) && this._habilitations['saisie.commentaire'].territoires.includes(territoireCode) ? true : false;
+    return this._habilitations['saisieCommentaire'].chantiers.includes(chantierId) && this._habilitations['saisieCommentaire'].territoires.includes(territoireCode) ? true : false;
   }
 
   peutSaisirLesIndicateursDuChantier(chantierId: Chantier['id'], territoireCode: string): boolean {
-    return this._habilitations['saisie.indicateur'].chantiers.includes(chantierId) && this._habilitations['saisie.indicateur'].territoires.includes(territoireCode) ? true : false;
+    return this._habilitations['saisieIndicateur'].chantiers.includes(chantierId) && this._habilitations['saisieIndicateur'].territoires.includes(territoireCode) ? true : false;
   }
 
   peutAccéderAuTerritoire(territoireCode: string): boolean {
@@ -81,11 +81,11 @@ export default class Habilitation {
   }
 
   peutSaisirDesPublicationsPourUnTerritoire(territoireCode: string): boolean {
-    return this._habilitations['saisie.commentaire'].territoires.includes(territoireCode) ? true : false;
+    return this._habilitations['saisieCommentaire'].territoires.includes(territoireCode) ? true : false;
   }
 
   peutSaisirDesIndicateursPourUnTerritoire(territoireCode: string): boolean {
-    return this._habilitations['saisie.indicateur'].territoires.includes(territoireCode) ? true : false;
+    return this._habilitations['saisieIndicateur'].territoires.includes(territoireCode) ? true : false;
   }
 
   récupérerListeChantiersIdsAccessiblesEnLecture(): Chantier['id'][] {

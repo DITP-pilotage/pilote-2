@@ -182,7 +182,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.saisie.indicateur.périmètres"
+              name="habilitations.saisieIndicateur.périmètres"
               render={() => (
                 <MultiSelectPérimètreMinistériel
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieIndicateurs}
@@ -198,7 +198,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.saisie.indicateur.chantiers"
+              name="habilitations.saisieIndicateur.chantiers"
               render={() => (
                 <MultiSelectChantier
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiersSaisieIndicateurs}
@@ -220,11 +220,14 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         >
           Droits de saisie des commentaires
         </Titre>
+        <p className="fr-text--xs texte-gris fr-mb-4w">
+          Précisez les droits de saisie rattachés au compte. Les options disponibles dépendent du profil et des droits de lecture précédemment indiqués.<br/>Les périmètres ministériels et/ou les chantiers affichés dans le menu déroulant dépendent du profil.<br/>Par exemple, un préfet aura par défaut des droits de saisie pour la transition énergétique mais pas pour la Justice (ATE / hors ATE).
+        </p>
         <div className={`${!!afficherChampSaisieCommentairePérimètres ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.saisie.commentaire.périmètres"
+              name="habilitations.saisieCommentaire.périmètres"
               render={() => (
                 <MultiSelectPérimètreMinistériel
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieCommentaire}
@@ -240,7 +243,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.saisie.commentaire.chantiers"
+              name="habilitations.saisieCommentaire.chantiers"
               render={() => (
                 <MultiSelectChantier
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiersSaisieCommentaire}

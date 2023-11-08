@@ -22,7 +22,7 @@ describe('CréerUnObjectifUseCase', () => {
     const stubObjectifRepository = { créer: jest.fn() } as unknown as ObjectifProjetStructurantRepository;
     const créerUnObjectif = new CréerUnObjectifProjetStructurantUseCase(stubObjectifRepository);
 
-    const habilitation = { 'saisie.commentaire': {
+    const habilitation = { 'saisieCommentaire': {
       chantiers: [],
       territoires: [territoireCode],
     } } as unknown as Utilisateur['habilitations'];
@@ -51,7 +51,7 @@ describe('CréerUnObjectifUseCase', () => {
     }) } as unknown as ObjectifProjetStructurantRepository;
     const créerUnObjectif = new CréerUnObjectifProjetStructurantUseCase(stubObjectifRepository);
 
-    const habilitation = { 'saisie.commentaire': {
+    const habilitation = { 'saisieCommentaire': {
       chantiers: [],
       territoires: [territoireCode],
     } } as unknown as Utilisateur['habilitations'];

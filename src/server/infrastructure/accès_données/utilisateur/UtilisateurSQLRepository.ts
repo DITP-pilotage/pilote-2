@@ -232,8 +232,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
     return {
       'lecture': chantiersAccessibles,
-      'saisie.commentaire': ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profilUtilisateur.code) ? chantiersAccessibles : [],
-      'saisie.indicateur': profilUtilisateur.code === 'DITP_ADMIN' ? chantiersAccessibles : [],
+      'saisieCommentaire': ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profilUtilisateur.code) ? chantiersAccessibles : [],
+      'saisieIndicateur': profilUtilisateur.code === 'DITP_ADMIN' ? chantiersAccessibles : [],
       'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs ? chantiersAccessibles : [],
       'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs ? chantiersAccessibles : [],
       'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs ? chantiersAccessibles : [],
@@ -243,8 +243,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   private async _récupérerTerritoiresParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, territoire['code'][]>> {
     return {
       'lecture': profilUtilisateur.a_acces_tous_les_territoires_lecture ? this._territoires : [],
-      'saisie.commentaire': profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire ? this._territoires : [],
-      'saisie.indicateur': profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur ? this._territoires : [],
+      'saisieCommentaire': profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire ? this._territoires : [],
+      'saisieIndicateur': profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur ? this._territoires : [],
       'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs ? this._territoires : [],
       'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs ? this._territoires : [],
       'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs ? this._territoires : [],
@@ -255,8 +255,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return {
       // on dit que ceux qui ont accès à tous les chantiers ont accès à tous les périmètres ministériels
       'lecture': profilUtilisateur.a_acces_tous_chantiers ? this._périmètresMinistériels : [],
-      'saisie.commentaire': [],
-      'saisie.indicateur': [],
+      'saisieCommentaire': [],
+      'saisieIndicateur': [],
       'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs ? this._périmètresMinistériels : [],
       'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs ? this._périmètresMinistériels : [],
       'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs ? this._périmètresMinistériels : [],
@@ -306,15 +306,15 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
         territoires: territoiresParDéfaut.lecture,
         périmètres: périmètresMinistérielsParDéfaut.lecture,
       },
-      'saisie.commentaire': {
-        chantiers: chantiersParDéfaut['saisie.commentaire'],
-        territoires: territoiresParDéfaut['saisie.commentaire'],
-        périmètres: périmètresMinistérielsParDéfaut['saisie.commentaire'],
+      'saisieCommentaire': {
+        chantiers: chantiersParDéfaut['saisieCommentaire'],
+        territoires: territoiresParDéfaut['saisieCommentaire'],
+        périmètres: périmètresMinistérielsParDéfaut['saisieCommentaire'],
       },
-      'saisie.indicateur': {
-        chantiers: chantiersParDéfaut['saisie.indicateur'],
-        territoires: territoiresParDéfaut['saisie.indicateur'],
-        périmètres: périmètresMinistérielsParDéfaut['saisie.indicateur'],
+      'saisieIndicateur': {
+        chantiers: chantiersParDéfaut['saisieIndicateur'],
+        territoires: territoiresParDéfaut['saisieIndicateur'],
+        périmètres: périmètresMinistérielsParDéfaut['saisieIndicateur'],
       },
       'utilisateurs.lecture': {
         chantiers: chantiersParDéfaut['utilisateurs.lecture'],
@@ -339,7 +339,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     for await (const h of habilitations) {
       const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
       if (scopeCode !== 'projetsStructurants.lecture') {
-        const chantiersSupplémentaires = (scopeCode == 'saisie.commentaire' && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(profilUtilisateur.code) && h.chantiers.length > 0)
+        const chantiersSupplémentaires = (scopeCode == 'saisieCommentaire' && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(profilUtilisateur.code) && h.chantiers.length > 0)
           ? await dependencies.getChantierRepository().récupérerChantierIdsPourSaisieCommentaireServiceDeconcentré(h.chantiers) 
           : h.chantiers;
         

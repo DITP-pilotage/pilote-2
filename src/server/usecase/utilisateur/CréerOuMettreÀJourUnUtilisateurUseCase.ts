@@ -53,8 +53,8 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
 
     if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM'].includes(utilisateur.profil)) {
       const chantiersPasEnDoublonsAvecLesPérimètres = this._déterminerChantiersPasEnDoublonsAvecLesPérimètres(
-        utilisateur.habilitations.saisie.indicateur.chantiers,
-        utilisateur.habilitations.saisie.indicateur.périmètres,
+        utilisateur.habilitations.saisieIndicateur.chantiers,
+        utilisateur.habilitations.saisieIndicateur.périmètres,
         chantiers,
       );
       return chantiersPasEnDoublonsAvecLesPérimètres.filter(chantierId => touslesChantiersIds.has(chantierId));
@@ -67,8 +67,8 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     const touslesChantiersIds = new Set(chantiers.map(chantier => chantier.id));
     if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET'].includes(utilisateur.profil) || profilsTerritoriaux.includes(utilisateur.profil)) {
       const chantiersPasEnDoublonsAvecLesPérimètres = this._déterminerChantiersPasEnDoublonsAvecLesPérimètres(
-        utilisateur.habilitations.saisie.commentaire.chantiers,
-        utilisateur.habilitations.saisie.commentaire.périmètres,
+        utilisateur.habilitations.saisieCommentaire.chantiers,
+        utilisateur.habilitations.saisieCommentaire.périmètres,
         chantiers,
       );
       return chantiersPasEnDoublonsAvecLesPérimètres.filter(chantierId => touslesChantiersIds.has(chantierId));
@@ -123,7 +123,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     //   return ['PER-018'];
     
     if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM'].includes(utilisateur.profil))
-      return utilisateur.habilitations.saisie.indicateur.périmètres.filter(p => tousLesPérimètresIds.has(p));
+      return utilisateur.habilitations.saisieIndicateur.périmètres.filter(p => tousLesPérimètresIds.has(p));
     
     return [];
   }
@@ -134,7 +134,7 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     //   return ['PER-018'];
     
     if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET'].includes(utilisateur.profil) || profilsTerritoriaux.includes(utilisateur.profil))
-      return utilisateur.habilitations.saisie.commentaire.périmètres.filter(p => tousLesPérimètresIds.has(p));
+      return utilisateur.habilitations.saisieCommentaire.périmètres.filter(p => tousLesPérimètresIds.has(p));
 
     return [];
   }
@@ -150,12 +150,12 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
         territoires: this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires),
         périmètres: this._déterminerPérimètresAccessiblesEnLecture(utilisateur, périmètres),
       },
-      'saisie.indicateur': {
+      'saisieIndicateur': {
         chantiers: this._déterminerChantiersAccessiblesEnSaisieIndicateur(utilisateur, chantiers),
         territoires: [],
         périmètres: this._déterminerPérimètresAccessiblesEnSaisieIndicateur(utilisateur, périmètres),
       },
-      'saisie.commentaire': {
+      'saisieCommentaire': {
         chantiers: this._déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur, chantiers),
         territoires: this._déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur, territoires),
         périmètres: this._déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur, périmètres),

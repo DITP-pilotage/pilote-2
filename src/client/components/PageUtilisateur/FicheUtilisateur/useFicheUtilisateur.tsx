@@ -18,11 +18,11 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
       chantiers: [],
       territoires: [],
     },
-    'saisie.indicateur': {
+    saisieIndicateur: {
       chantiers: [],
       territoires: [],
     },
-    'saisie.commentaire': {
+    saisieCommentaire: {
       chantiers: [],
       territoires: [],
     },
@@ -65,7 +65,7 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
       return ['Tous les chantiers']; 
 
     if (profil?.chantiers.saisieIndicateur.tousTerritoires) 
-      return u.habilitations?.saisie?.indicateur?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
+      return u.habilitations?.saisieIndicateur?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
     
     return [];
 
@@ -99,7 +99,7 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
     if (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profil?.code ?? '')) 
       return ['Tous les chantiers'];
 
-    return u.habilitations?.saisie?.commentaire?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
+    return u.habilitations?.saisieCommentaire?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
 
   }, [chantiers, déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire, profil]);
 
@@ -112,11 +112,11 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
         chantiers: déterminerLesNomÀAfficherPourLesChantiersLecture(utilisateur),
         territoires: déterminerLesNomÀAfficherPourLesTerritoiresLecture(utilisateur),
       },
-      'saisie.indicateur': {
+      saisieIndicateur: {
         chantiers: déterminerLesNomÀAfficherPourLesChantiersSaisieIndicateur(utilisateur),
         territoires: déterminerLesNomÀAfficherPourLesTerritoiresSaisieIndicateur(),
       },
-      'saisie.commentaire': {
+      saisieCommentaire: {
         chantiers: déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire(utilisateur),
         territoires: déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire(utilisateur),
       },

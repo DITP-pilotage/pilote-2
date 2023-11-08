@@ -78,7 +78,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
           if (profilAssociéAuProfilCodeSélectionné?.chantiers.lecture.tousTerritorialisés) {
             if (chantiersAccessiblesPourLeProfil.length === 0 && chantiers) {
               if (profilCodeSélectionné === 'DROM') {
-                handleChangementValeursSélectionnéesChantiers(chantiers.filter(chantier => chantier.estTerritorialisé || chantier.périmètreIds.includes('PER-018')).map(c => c.id))
+                handleChangementValeursSélectionnéesChantiers(chantiers.filter(chantier => chantier.estTerritorialisé || chantier.périmètreIds.includes('PER-018')).map(c => c.id));
               } else {
                 handleChangementValeursSélectionnéesChantiers(chantiers.filter(chantier => chantier.estTerritorialisé).map(c => c.id));
               }

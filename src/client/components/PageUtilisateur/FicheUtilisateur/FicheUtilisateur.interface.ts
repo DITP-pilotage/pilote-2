@@ -18,15 +18,13 @@ export default interface FicheUtilisateurProps {
         territoires?: Territoire['code'][]
         périmètres?: PérimètreMinistériel['id'][]
       },
-      saisie?: {
-        indicateur?: {
-          chantiers?: Chantier['id'][]
-          périmètres?: PérimètreMinistériel['id'][]          
-        },
-        commentaire?: {
-          chantiers?: Chantier['id'][]
-          périmètres?: PérimètreMinistériel['id'][]          
-        }
+      saisieIndicateur?: {
+        chantiers?: Chantier['id'][]
+        périmètres?: PérimètreMinistériel['id'][]          
+      },
+      saisieCommentaire?: {
+        chantiers?: Chantier['id'][]
+        périmètres?: PérimètreMinistériel['id'][]          
       }
     }
   } 

@@ -52,27 +52,9 @@ export async function getServerSideProps({ req, res, params } :GetServerSideProp
     return redirigerVersPageAccueil;
   }
 
-  const { id, nom, prénom, email, profil, dateModification, auteurModification, habilitations } = { ...utilisateurDemandé };
-  const user = {
-    id,
-    nom,
-    prénom,
-    email,
-    profil,
-    dateModification,
-    auteurModification,
-    habilitations: {
-      lecture: habilitations.lecture,
-      saisie: {
-        indicateur: habilitations['saisie.indicateur'],
-        commentaire: habilitations['saisie.commentaire'],
-      },
-    },
-  };
-
   return {
     props: {
-      utilisateur: user,
+      utilisateur: utilisateurDemandé,
     },
   };
 }

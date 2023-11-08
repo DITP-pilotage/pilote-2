@@ -36,7 +36,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     if (typeDeRéformeSélectionné === 'projet structurant') modifierTypeDeRéformeSélectionné();
   }, [modifierTypeDeRéformeSélectionné, typeDeRéformeSélectionné]);
   
-  const saisieIndicateurAutorisée = estAutoriséAImporterDesIndicateurs(session!.profil) && !!session?.habilitations['saisie.indicateur'].chantiers.includes(chantierId);
+  const saisieIndicateurAutorisée = estAutoriséAImporterDesIndicateurs(session!.profil) && !!session?.habilitations['saisieIndicateur'].chantiers.includes(chantierId);
 
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {
@@ -120,11 +120,11 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
         .filter((indPond): indPond is IndicateurPondération => indPond.pondération !== null && indPond.pondération !== '0')
     );
 
-  let modeÉcriture = !!territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisie.commentaire'].chantiers.includes(chantierId);
+  let modeÉcriture = !!territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);
   if (['DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL'].includes(session?.profil) && territoireSélectionné?.maille != 'nationale') {
     modeÉcriture = modeÉcriture && chantier?.ate === 'hors_ate_centralise';
   }
-  const modeÉcritureObjectifs = modeÉcriture; //territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication === true) && !!session?.habilitations['saisie.commentaire'].chantiers.includes(chantierId);    
+  const modeÉcritureObjectifs = modeÉcriture; //territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication === true) && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);    
 
   return {
     détailsIndicateurs: détailsIndicateurs ?? null,

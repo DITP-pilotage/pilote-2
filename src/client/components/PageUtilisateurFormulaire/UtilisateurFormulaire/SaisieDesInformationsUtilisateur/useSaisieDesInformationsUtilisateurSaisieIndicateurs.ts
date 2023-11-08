@@ -14,8 +14,8 @@ export default function useSaisieDesInformationsUtilisateurSaisieIndicateurs(
   const { watch, setValue, getValues, resetField, unregister } = useFormContext<UtilisateurFormInputs>();
 
   const profilCodeSélectionné = watch('profil');
-  const chantiersSaisieIndicateursSélectionnés = watch('habilitations.saisie.indicateur.chantiers');
-  const périmètresMinistérielsSaisieIndicateursSélectionnés = watch('habilitations.saisie.indicateur.périmètres');
+  const chantiersSaisieIndicateursSélectionnés = watch('habilitations.saisieIndicateur.chantiers');
+  const périmètresMinistérielsSaisieIndicateursSélectionnés = watch('habilitations.saisieIndicateur.périmètres');
 
   const [ancienProfilCodeSélectionné, setAncienProfilCodeSélectionné] = useState<string>(getValues('profil'));
   const [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieIndicateurs, setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieIndicateurs] = useState<string[]>([]);
@@ -32,15 +32,15 @@ export default function useSaisieDesInformationsUtilisateurSaisieIndicateurs(
 
   useEffect(() => {
     if (ancienProfilCodeSélectionné !== profilCodeSélectionné) {
-      resetField('habilitations.saisie.indicateur.chantiers', { defaultValue: [] });
-      resetField('habilitations.saisie.indicateur.périmètres', { defaultValue: [] });
+      resetField('habilitations.saisieIndicateur.chantiers', { defaultValue: [] });
+      resetField('habilitations.saisieIndicateur.périmètres', { defaultValue: [] });
 
       if (ancienProfilCodeSélectionné === undefined) {
-        if (utilisateur?.habilitations?.['saisie.indicateur'].chantiers) 
-          setValue('habilitations.saisie.indicateur.chantiers', utilisateur?.habilitations?.['saisie.indicateur'].chantiers);
+        if (utilisateur?.habilitations?.['saisieIndicateur'].chantiers) 
+          setValue('habilitations.saisieIndicateur.chantiers', utilisateur?.habilitations?.['saisieIndicateur'].chantiers);
       
-        if (utilisateur?.habilitations?.['saisie.indicateur'].périmètres) 
-          setValue('habilitations.lecture.périmètres', utilisateur?.habilitations?.['saisie.indicateur'].périmètres);
+        if (utilisateur?.habilitations?.['saisieIndicateur'].périmètres) 
+          setValue('habilitations.lecture.périmètres', utilisateur?.habilitations?.['saisieIndicateur'].périmètres);
       }
 
       setAncienProfilCodeSélectionné(profilCodeSélectionné);
@@ -56,7 +56,7 @@ export default function useSaisieDesInformationsUtilisateurSaisieIndicateurs(
   }, [chantiersSélectionnables]);
 
   const handleChangementValeursSélectionnéesChantiersSaisieIndicateurs = useCallback((valeursSélectionnées: string[]) => {    
-    setValue('habilitations.saisie.indicateur.chantiers', valeursSélectionnées);
+    setValue('habilitations.saisieIndicateur.chantiers', valeursSélectionnées);
   }, [setValue]);
 
   useEffect(() => {
@@ -67,23 +67,23 @@ export default function useSaisieDesInformationsUtilisateurSaisieIndicateurs(
 
 
   const handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieIndicateurs = useCallback((valeursSélectionnées: string[]) => {  
-    const périmètresIdsActuellementsSélectionnés = getValues('habilitations.saisie.indicateur.périmètres') ?? [];
+    const périmètresIdsActuellementsSélectionnés = getValues('habilitations.saisieIndicateur.périmètres') ?? [];
     const périmètresIdsDécochés = périmètresIdsActuellementsSélectionnés.filter(périmètreId => !valeursSélectionnées.includes(périmètreId));
     const chantiersIdsDesPérimètresDécochés = déterminerChantiersSélectionnésÀPartirDesPérimètresMinistériels(périmètresIdsDécochés);
-    const chantiersIdsActuellementSélectionnés = getValues('habilitations.saisie.indicateur.chantiers') ?? [];
+    const chantiersIdsActuellementSélectionnés = getValues('habilitations.saisieIndicateur.chantiers') ?? [];
     const nouveauChantiersIds = chantiersIdsActuellementSélectionnés.filter(chantierId => !chantiersIdsDesPérimètresDécochés.includes(chantierId));
-    setValue('habilitations.saisie.indicateur.chantiers', nouveauChantiersIds);
-    setValue('habilitations.saisie.indicateur.périmètres', valeursSélectionnées);
+    setValue('habilitations.saisieIndicateur.chantiers', nouveauChantiersIds);
+    setValue('habilitations.saisieIndicateur.périmètres', valeursSélectionnées);
     setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieIndicateurs(déterminerChantiersSélectionnésÀPartirDesPérimètresMinistériels(valeursSélectionnées));
   }, [déterminerChantiersSélectionnésÀPartirDesPérimètresMinistériels, getValues, setValue]);
 
   useEffect(() => {
-    handleChangementValeursSélectionnéesChantiersSaisieIndicateurs([...getValues('habilitations.saisie.indicateur.chantiers') ?? [], ...chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieIndicateurs]);
+    handleChangementValeursSélectionnéesChantiersSaisieIndicateurs([...getValues('habilitations.saisieIndicateur.chantiers') ?? [], ...chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieIndicateurs]);
   }, [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieIndicateurs, getValues, handleChangementValeursSélectionnéesChantiersSaisieIndicateurs]);
 
 
   useEffect(() => {
-    handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieIndicateurs(getValues('habilitations.saisie.indicateur.périmètres'));
+    handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieIndicateurs(getValues('habilitations.saisieIndicateur.périmètres'));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chantiersSélectionnables]);
 

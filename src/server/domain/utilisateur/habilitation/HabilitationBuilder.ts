@@ -9,8 +9,8 @@ export class HabilitationBuilder {
   constructor() {
     this._habilitations = {
       lecture: { chantiers: [], territoires: [], périmètres: [] },
-      'saisie.commentaire': { chantiers: [], territoires: [], périmètres: [] },
-      'saisie.indicateur': { chantiers: [], territoires: [], périmètres: [] },
+      'saisieCommentaire': { chantiers: [], territoires: [], périmètres: [] },
+      'saisieIndicateur': { chantiers: [], territoires: [], périmètres: [] },
       'utilisateurs.lecture': { chantiers: [], territoires:[], périmètres: [] },
       'utilisateurs.modification': { chantiers: [], territoires: [], périmètres: [] },
       'utilisateurs.suppression': { chantiers: [], territoires: [], périmètres: [] },

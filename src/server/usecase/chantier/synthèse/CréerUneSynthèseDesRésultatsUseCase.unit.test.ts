@@ -29,7 +29,7 @@ describe('CréerUneSynthèseDesRésultatsUseCase', () => {
 
     const territoireCode = `${CODES_MAILLES[maille]}-${codeInsee}`;
 
-    const habilitation = { 'saisie.commentaire': {
+    const habilitation = { 'saisieCommentaire': {
       chantiers: [chantierId],
       territoires: [territoireCode],
     } } as unknown as Utilisateur['habilitations'];
@@ -63,7 +63,7 @@ describe('CréerUneSynthèseDesRésultatsUseCase', () => {
 
     const territoireCode = `${CODES_MAILLES[maille]}-${codeInsee}`;
 
-    const habilitation = { 'saisie.commentaire': {
+    const habilitation = { 'saisieCommentaire': {
       chantiers: [chantierId],
       territoires: [territoireCode],
     } } as unknown as Utilisateur['habilitations'];

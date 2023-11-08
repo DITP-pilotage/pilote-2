@@ -73,8 +73,8 @@ export default class UtilisateurCSVParseur {
       fonction: null,
       habilitations: {
         lecture: this._générerUneHabilitation(),
-        'saisie.commentaire': this._générerUneHabilitation(),
-        'saisie.indicateur': this._générerUneHabilitation(),
+        'saisieCommentaire': this._générerUneHabilitation(),
+        'saisieIndicateur': this._générerUneHabilitation(),
       },
     };
   }

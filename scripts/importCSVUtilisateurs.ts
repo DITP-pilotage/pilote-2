@@ -17,11 +17,11 @@ import { CsvRecord } from '@/server/infrastructure/import_csv/utilisateur/Utilis
  - Format CSV attendu:
       nom,prénom,email,profil,scope,territoires,périmètreIds,chantierIds
       Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,lecture,REG-12,,
-      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,saisie.commentaire,REG-12,,
-      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,saisie.indicateur,REG-12,,
+      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,saisieCommentaire,REG-12,,
+      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,saisieIndicateur,REG-12,,
       Durand,Pierre,dp.dir@example.com,DIR_PROJET,lecture,TOUS,,CH-001|CH-002
-      Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisie.commentaire,NAT-FR,,CH-001
-      Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisie.indicateur,TOUS,,
+      Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisieCommentaire,NAT-FR,,CH-001
+      Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisieIndicateur,TOUS,,
 
  - Comment tester l'import d'un fichier CSV en local : 
       S'assurer d'avoir les variables d'env IMPORT_CLIENT_ID - IMPORT_CLIENT_SECRET - IMPORT_KEYCLOAK_URL configurées

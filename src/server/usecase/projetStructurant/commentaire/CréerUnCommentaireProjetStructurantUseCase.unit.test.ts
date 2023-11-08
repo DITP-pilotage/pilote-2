@@ -26,7 +26,7 @@ describe('CréerUnCommentaireProjetStructurantUseCase', () => {
 
     const territoireCode = `${CODES_MAILLES[maille]}-${codeInsee}`;
     
-    const habilitation = { 'saisie.commentaire': {
+    const habilitation = { 'saisieCommentaire': {
       chantiers: [],
       territoires: [territoireCode],
     } } as unknown as Utilisateur['habilitations'];
@@ -57,7 +57,7 @@ describe('CréerUnCommentaireProjetStructurantUseCase', () => {
 
     const territoireCode = `${CODES_MAILLES[maille]}-${codeInsee}`;
     
-    const habilitation = { 'saisie.commentaire': {
+    const habilitation = { 'saisieCommentaire': {
       chantiers: [],
       territoires: [territoireCode],
 
