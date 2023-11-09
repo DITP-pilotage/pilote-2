@@ -32,12 +32,12 @@ describe('UtilisateurCSVParseur', () => {
             territoires: ['REG-12', 'DEPT-13'],
             périmètres:  ['PER-15'],
           },
-          'saisieIndicateur': {
+          saisieIndicateur: {
             chantiers: [],
             territoires: [],
             périmètres: [],
           },
-          'saisieCommentaire': {
+          saisieCommentaire: {
             chantiers: ['CH-001', 'CH-002'],
             territoires: ['DEPT-13'],
             périmètres: [],
@@ -57,12 +57,12 @@ describe('UtilisateurCSVParseur', () => {
             territoires: [],
             périmètres:  ['PER-25'],
           },
-          'saisieIndicateur': {
+          saisieIndicateur: {
             chantiers: [],
             territoires: [],
             périmètres: ['PER-25'],
           },
-          'saisieCommentaire': {
+          saisieCommentaire: {
             chantiers: ['CH-004'],
             territoires: [],
             périmètres: [],

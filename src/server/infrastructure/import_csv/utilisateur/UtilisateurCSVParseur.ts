@@ -40,7 +40,7 @@ export default class UtilisateurCSVParseur {
 
     for (const csvRecord of csvRecords) {
       const email = csvRecord[this._colonnes.email].toLowerCase();
-      const scope = csvRecord[this._colonnes.scope].toLowerCase() as ScopeChantiers;
+      const scope = csvRecord[this._colonnes.scope] as ScopeChantiers;
 
       if (utilisateurs[email] === undefined) {
         utilisateurs[email] = this._générerUtilisateurÀCréerOuMettreÀJour(csvRecord);
@@ -73,8 +73,8 @@ export default class UtilisateurCSVParseur {
       fonction: null,
       habilitations: {
         lecture: this._générerUneHabilitation(),
-        'saisieCommentaire': this._générerUneHabilitation(),
-        'saisieIndicateur': this._générerUneHabilitation(),
+        saisieCommentaire: this._générerUneHabilitation(),
+        saisieIndicateur: this._générerUneHabilitation(),
       },
     };
   }
