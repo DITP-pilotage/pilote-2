@@ -1,11 +1,25 @@
 -- Objectif: retourner uniquement la valeur importée le plus récemment 
 --  pour chaque {indic_id, metric_type, metric_date, zone_id}
 
-with rank_mesures as (
+with 
+-- Cette table intermédiaire créé la colonne metric_date_fixed
+--  qui contient les valeurs de metric_date SAUF 
+--  pour 2023-06-31 qui est transformé en 2023-06-30
+--  (erreur de saisie au début de vie de l'appli)
+fix_mesure_indicateur_06_31 as (
+    select * ,
+    CASE
+        WHEN metric_date='2023-06-31' THEN '2023-06-30'
+        ELSE metric_date
+    END as metric_date_fixed
+    from {{ source('import_from_files', 'mesure_indicateur') }}
+),
+
+rank_mesures as (
 select *,
--- On trie, pour chaque {indic_id, metric_type, metric_date, zone_id}, les valeurs par date d'import la plus récente
-row_number() over (partition by indic_id, metric_type, metric_date, zone_id order by date_import desc) as r
-from {{ source('import_from_files', 'mesure_indicateur') }}
+-- On trie, pour chaque {indic_id, metric_type, metric_date_fixed, zone_id}, les valeurs par date d'import la plus récente
+row_number() over (partition by indic_id, metric_type, metric_date_fixed, zone_id order by date_import desc) as r
+from fix_mesure_indicateur_06_31
 ),
 -- et on garde pour chacun de ces groupes la plus récente
 rank_mesures_1 as (
@@ -15,10 +29,7 @@ rank_mesures_1 as (
 rank_mesures_1_cleaned as (
     select 
         date_import, indic_id, 
-        CASE 
-            WHEN metric_date='2023-06-31' THEN '2023-06-30'
-            ELSE metric_date
-        END as metric_date,
+        metric_date_fixed as metric_date,
         metric_type,
         case 
             WHEN metric_value IN ('', 'null', 'undefined') THEN null
