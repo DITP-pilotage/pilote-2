@@ -42,103 +42,104 @@ interface InputMetadataParametrageIndicateur {
   indicSourceUrl: string;
   indicMethodeCalcul: string;
   indicUnite: string;
-  indicHiddenPilote: string;
+  indicHiddenPilote: boolean;
   indicSchema: string;
   chantierNom: string;
 }
 
 export class MetadataParametrageIndicateur {
-  private _indicId: string;
+  private readonly _indicId: string;
 
-  private _viDeptFrom: string;
+  private readonly _viDeptFrom: string;
 
-  private _viDeptOp: string;
+  private readonly _viDeptOp: string;
 
-  private _vaDeptFrom: string;
+  private readonly _vaDeptFrom: string;
 
-  private _vaDeptOp: string;
+  private readonly _vaDeptOp: string;
 
-  private _vcDeptFrom: string;
+  private readonly _vcDeptFrom: string;
 
-  private _vcDeptOp: string;
+  private readonly _vcDeptOp: string;
 
-  private _viRegFrom: string;
+  private readonly _viRegFrom: string;
 
-  private _viRegOp: string;
+  private readonly _viRegOp: string;
 
-  private _vaRegFrom: string;
+  private readonly _vaRegFrom: string;
 
-  private _vaRegOp: string;
+  private readonly _vaRegOp: string;
 
-  private _vcRegFrom: string;
+  private readonly _vcRegFrom: string;
 
-  private _vcRegOp: string;
+  private readonly _vcRegOp: string;
 
-  private _viNatFrom: string;
+  private readonly _viNatFrom: string;
 
-  private _viNatOp: string;
+  private readonly _viNatOp: string;
 
-  private _vaNatFrom: string;
+  private readonly _vaNatFrom: string;
 
-  private _vaNatOp: string;
+  private readonly _vaNatOp: string;
 
-  private _vcNatFrom: string;
+  private readonly _vcNatFrom: string;
 
-  private _vcNatOp: string;
+  private readonly _vcNatOp: string;
 
-  private _paramVacaDecumulFrom: string;
+  private readonly _paramVacaDecumulFrom: string;
 
-  private _paramVacaPartitionDate: string;
+  private readonly _paramVacaPartitionDate: string;
 
-  private _paramVacaOp: string;
+  private readonly _paramVacaOp: string;
 
-  private _paramVacgDecumulFrom: string;
+  private readonly _paramVacgDecumulFrom: string;
 
-  private _paramVacgPartitionDate: string;
+  private readonly _paramVacgPartitionDate: string;
 
-  private _paramVacgOp: string;
+  private readonly _paramVacgOp: string;
 
-  private _poidsPourcentDept: number;
+  private readonly _poidsPourcentDept: number;
 
-  private _poidsPourcentReg: number;
+  private readonly _poidsPourcentReg: number;
 
-  private _poidsPourcentNat: number;
+  private readonly _poidsPourcentNat: number;
 
-  private _tendance: string;
+  private readonly _tendance: string;
 
-  private _indicParentIndic: string;
+  private readonly _indicParentIndic: string;
 
-  private _indicParentCh: string;
+  private readonly _indicParentCh: string;
 
-  private _indicNom: string;
+  private readonly _indicNom: string;
 
-  private _indicNomBaro: string;
+  private readonly _indicNomBaro: string;
 
-  private _indicDescr: string;
+  private readonly _indicDescr: string;
 
-  private _indicDescrBaro: string;
+  private readonly _indicDescrBaro: string;
 
-  private _indicIsPerseverant: boolean;
+  private readonly _indicIsPerseverant: boolean;
 
-  private _indicIsPhare: boolean;
+  private readonly _indicIsPhare: boolean;
 
-  private _indicIsBaro: boolean;
+  private readonly _indicIsBaro: boolean;
 
-  private _indicType: string;
+  private readonly _indicType: string;
 
-  private _indicSource: string;
+  private readonly _indicSource: string;
 
-  private _indicSourceUrl: string;
+  private readonly _indicSourceUrl: string;
 
-  private _indicMethodeCalcul: string;
+  private readonly _indicMethodeCalcul: string;
 
-  private _indicUnite: string;
+  private readonly _indicUnite: string;
 
-  private _indicHiddenPilote: string;
+  private readonly _indicHiddenPilote: boolean;
 
-  private _indicSchema: string;
+  private readonly _indicSchema: string;
 
-  private _chantierNom: string;
+  private readonly _chantierNom: string;
+
 
   private constructor({
     indicId,
@@ -235,7 +236,6 @@ export class MetadataParametrageIndicateur {
     this._indicSchema = indicSchema;
     this._chantierNom = chantierNom;
   }
-
 
   get indicId(): string {
     return this._indicId;
@@ -409,7 +409,7 @@ export class MetadataParametrageIndicateur {
     return this._indicUnite;
   }
 
-  get indicHiddenPilote(): string {
+  get indicHiddenPilote(): boolean {
     return this._indicHiddenPilote;
   }
 
