@@ -9,7 +9,7 @@ models:
         - Si 2 valeurs dans le même mois, à des jours différents, on garde **les deux**
         - Transformation de `'null'` et `''` vers un `NULL`
 
-        *Note:* Avant de charger la table des données importées (`{{ source('import_from_files', 'mesure_indicateur') }}`), on remplace les valeurs `metric_date='2023-06-31'` par `metric_date='2023-06-30'`. C'est la table intermédiaire `fix_mesure_indicateur_06_31`.
+        *Note:* Avant de charger la table des données importées (`source('import_from_files', 'mesure_indicateur')`), on remplace les valeurs `metric_date='2023-06-31'` par `metric_date='2023-06-30'`. C'est la table intermédiaire `fix_mesure_indicateur_06_31`.
   - name: agg_dept
     description: |
         Sélection des valeurs et calculs des aggrégation pour le niveau DEPT en fonction des paramètres. Règles:
