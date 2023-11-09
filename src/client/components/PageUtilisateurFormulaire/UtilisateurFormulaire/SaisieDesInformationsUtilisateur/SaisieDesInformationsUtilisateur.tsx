@@ -221,7 +221,11 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           Droits de saisie des commentaires
         </Titre>
         <p className="fr-text--xs texte-gris fr-mb-4w">
-          Précisez les droits de saisie rattachés au compte. Les options disponibles dépendent du profil et des droits de lecture précédemment indiqués.<br/>Les périmètres ministériels et/ou les chantiers affichés dans le menu déroulant dépendent du profil.<br/>Par exemple, un préfet aura par défaut des droits de saisie pour la transition énergétique mais pas pour la Justice (ATE / hors ATE).
+          Précisez les droits de saisie rattachés au compte. Les options disponibles dépendent du profil et des droits de lecture précédemment indiqués.
+          <br />
+          Les périmètres ministériels et/ou les chantiers affichés dans le menu déroulant dépendent du profil.
+          <br />
+          Par exemple, un préfet aura par défaut des droits de saisie pour la transition énergétique mais pas pour la Justice (ATE / hors ATE).
         </p>
         <div className={`${!!afficherChampSaisieCommentairePérimètres ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
