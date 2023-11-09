@@ -30,6 +30,7 @@
   },
   "rules": {
     "sonarjs/cognitive-complexity": "off",
+    "@typescript-eslint/dot-notation": "off",
     "no-relative-import-paths/no-relative-import-paths": [
       "warn",
       {

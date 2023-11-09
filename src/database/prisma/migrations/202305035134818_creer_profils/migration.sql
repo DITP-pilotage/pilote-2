@@ -77,7 +77,7 @@ VALUES (
         false,
         false,
         true,
-        false,
+        true,
         true
     ),
     (
@@ -86,7 +86,7 @@ VALUES (
         false,
         false,
         true,
-        false,
+        true,
         true
     ),
     (
@@ -95,7 +95,7 @@ VALUES (
         false,
         false,
         true,
-        false,
+        true,
         true
     ),
     (

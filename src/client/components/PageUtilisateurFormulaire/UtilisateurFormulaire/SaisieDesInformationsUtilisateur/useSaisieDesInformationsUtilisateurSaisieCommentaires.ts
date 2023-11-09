@@ -14,8 +14,8 @@ export default function useSaisieDesInformationsUtilisateur(
 ) {
   const { watch, setValue, getValues, resetField, unregister } = useFormContext<UtilisateurFormInputs>();
   const profilCodeSélectionné = watch('profil');
-  const chantiersSélectionnésSaisieCommentaire = watch('habilitations.saisie.commentaire.chantiers');
-  const périmètresMinistérielsSélectionnésSaisieCommentaire = watch('habilitations.saisie.commentaire.périmètres');
+  const chantiersSélectionnésSaisieCommentaire = watch('habilitations.saisieCommentaire.chantiers');
+  const périmètresMinistérielsSélectionnésSaisieCommentaire = watch('habilitations.saisieCommentaire.périmètres');
 
   const [ancienProfilCodeSélectionné, setAncienProfilCodeSélectionné] = useState<string>(getValues('profil'));
   const [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieCommentaire, setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieCommentaire] = useState<string[]>([]);
@@ -28,6 +28,10 @@ export default function useSaisieDesInformationsUtilisateur(
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
 
   // GESTION CHANGEMENT DE PROFIL
+  const handleChangementValeursSélectionnéesChantiersSaisieCommentaire = useCallback((valeursSélectionnées: string[]) => {    
+    setValue('habilitations.saisieCommentaire.chantiers', valeursSélectionnées);
+  }, [setValue]);
+
   useEffect(() => {
     setAfficherChampSaisieCommentaireChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous  && profilSélectionné.chantiers.saisieCommentaire.saisiePossible);
     setAfficherChampSaisieCommentairePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieCommentaire.saisiePossible);
@@ -39,36 +43,38 @@ export default function useSaisieDesInformationsUtilisateur(
     if (['RESPONSABLE_DEPARTEMENT', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(profilSélectionné.code)) {
       setChantiersAccessiblesPourLeProfilSaisieCommentaire(chantiersLecture.filter(chantier => chantier.estTerritorialisé && chantier.ate === 'hors_ate_deconcentre'));
     } else if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION', 'PREFET_DEPARTEMENT', 'PREFET_REGION'].includes(profilSélectionné.code)) {
-      setChantiersAccessiblesPourLeProfilSaisieCommentaire(chantiers.filter(chantier => chantier.estTerritorialisé && chantier.ate === 'ate'));
+      setChantiersAccessiblesPourLeProfilSaisieCommentaire(chantiersLecture.filter(chantier => chantier.estTerritorialisé && chantier.ate === 'ate'));
     } else {
       setChantiersAccessiblesPourLeProfilSaisieCommentaire(chantiersLecture);
     }
   }, [chantiers, profilSélectionné, chantiersLecture]);
 
   useEffect(() => {
-    if (chantiersAccessiblesPourLeProfilSaisieCommentaire) {
-      const périmètresListe = chantiersAccessiblesPourLeProfilSaisieCommentaire.flatMap(c => c.périmètreIds); 
+    if (!!!utilisateur && chantiersAccessiblesPourLeProfilSaisieCommentaire) {
+      handleChangementValeursSélectionnéesChantiersSaisieCommentaire(chantiersAccessiblesPourLeProfilSaisieCommentaire.map(c => c.id));
   
-      setPérimètresIdSélectionnablesSaisie(périmètresListe);
+      const périmètresListe = chantiersAccessiblesPourLeProfilSaisieCommentaire.flatMap(c => c.périmètreIds); 
+      setPérimètresIdSélectionnablesSaisie([...new Set(périmètresListe)]);
     }
-  }, [chantiers, chantiersAccessiblesPourLeProfilSaisieCommentaire]);
+  }, [chantiers, chantiersAccessiblesPourLeProfilSaisieCommentaire, handleChangementValeursSélectionnéesChantiersSaisieCommentaire, utilisateur]);
 
   useEffect(() => {
     if (ancienProfilCodeSélectionné !== profilCodeSélectionné) {
-      resetField('habilitations.saisie.commentaire.chantiers', { defaultValue: [] });
-      resetField('habilitations.saisie.commentaire.périmètres', { defaultValue: [] });
+      resetField('habilitations.saisieCommentaire.chantiers', { defaultValue: [] });
+      resetField('habilitations.saisieCommentaire.périmètres', { defaultValue: [] });
 
       if (ancienProfilCodeSélectionné === undefined) {
         if (utilisateur?.habilitations?.lecture.chantiers) 
-          setValue('habilitations.saisie.commentaire.chantiers', utilisateur?.habilitations?.lecture.chantiers);
+          setValue('habilitations.saisieCommentaire.chantiers', utilisateur?.habilitations?.['saisieCommentaire'].chantiers);
       
         if (utilisateur?.habilitations?.lecture.périmètres) 
-          setValue('habilitations.saisie.commentaire.périmètres', utilisateur?.habilitations?.lecture.périmètres);
+          setValue('habilitations.saisieCommentaire.périmètres', utilisateur?.habilitations?.['saisieCommentaire'].périmètres);
       }
 
       setAncienProfilCodeSélectionné(profilCodeSélectionné);
     }
-  }, [ancienProfilCodeSélectionné, profilCodeSélectionné, resetField, setValue, unregister, utilisateur]);
+
+  }, [ancienProfilCodeSélectionné, profilCodeSélectionné, resetField, setValue, unregister, utilisateur, chantiersAccessiblesPourLeProfilSaisieCommentaire]);
 
 
   // GESTION CHANTIERS ET PERIMETRES MINISTERIELS 
@@ -78,27 +84,23 @@ export default function useSaisieDesInformationsUtilisateur(
     return chantiersAppartenantsAuPérimètresMinistérielsSélectionnés.map(c => c.id);
   }, [chantiersAccessiblesPourLeProfilSaisieCommentaire]);
 
-  const handleChangementValeursSélectionnéesChantiersSaisieCommentaire = useCallback((valeursSélectionnées: string[]) => {    
-    setValue('habilitations.saisie.commentaire.chantiers', valeursSélectionnées);
-  }, [setValue]);
-
   const handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieCommentaire = useCallback((valeursSélectionnées: string[]) => {  
-    const périmètresIdsActuellementsSélectionnés = getValues('habilitations.saisie.commentaire.périmètres') ?? [];
+    const périmètresIdsActuellementsSélectionnés = getValues('habilitations.saisieCommentaire.périmètres') ?? [];
     const périmètresIdsDécochés = périmètresIdsActuellementsSélectionnés.filter(périmètreId => !valeursSélectionnées.includes(périmètreId));
     const chantiersIdsDesPérimètresDécochés = déterminerChantiersSélectionnésÀPartirDesPérimètresMinistériels(périmètresIdsDécochés);
-    const chantiersIdsActuellementSélectionnés = getValues('habilitations.saisie.commentaire.chantiers') ?? [];
+    const chantiersIdsActuellementSélectionnés = getValues('habilitations.saisieCommentaire.chantiers') ?? [];
     const nouveauChantiersIds = chantiersIdsActuellementSélectionnés.filter(chantierId => !chantiersIdsDesPérimètresDécochés.includes(chantierId));
-    setValue('habilitations.saisie.commentaire.chantiers', nouveauChantiersIds);
-    setValue('habilitations.saisie.commentaire.périmètres', valeursSélectionnées);
+    setValue('habilitations.saisieCommentaire.chantiers', nouveauChantiersIds);
+    setValue('habilitations.saisieCommentaire.périmètres', valeursSélectionnées);
     setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieCommentaire(déterminerChantiersSélectionnésÀPartirDesPérimètresMinistériels(valeursSélectionnées));
   }, [déterminerChantiersSélectionnésÀPartirDesPérimètresMinistériels, getValues, setValue]);
 
   useEffect(() => {
-    handleChangementValeursSélectionnéesChantiersSaisieCommentaire([...getValues('habilitations.saisie.commentaire.chantiers') ?? [], ...chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieCommentaire]);
+    handleChangementValeursSélectionnéesChantiersSaisieCommentaire([...getValues('habilitations.saisieCommentaire.chantiers') ?? [], ...chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieCommentaire]);
   }, [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieCommentaire, getValues, handleChangementValeursSélectionnéesChantiersSaisieCommentaire]); 
 
   useEffect(() => {
-    handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieCommentaire(getValues('habilitations.saisie.commentaire.périmètres'));
+    handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieCommentaire(getValues('habilitations.saisieCommentaire.périmètres'));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chantiersAccessiblesPourLeProfilSaisieCommentaire]);
 

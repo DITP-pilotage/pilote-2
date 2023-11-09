@@ -11,11 +11,11 @@ loadEnvConfig(projectDir);  // ⚠️ À appeler avant nos imports, because Conf
  - Format CSV attendu:
       nom,prénom,email,profil,scope,territoires,périmètreIds,chantierIds
       Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,lecture,REG-12,,
-      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,saisie.commentaire,REG-12,,
-      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,saisie.indicateur,REG-12,,
+      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,saisieCommentaire,REG-12,,
+      Dupont,Jean,reg.sgar002@example.com,PREFET_REGION,saisieIndicateur,REG-12,,
       Durand,Pierre,dp.dir@example.com,DIR_PROJET,lecture,TOUS,,CH-001|CH-002
-      Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisie.commentaire,NAT-FR,,CH-001
-      Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisie.indicateur,TOUS,,
+      Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisieCommentaire,NAT-FR,,CH-001
+      Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisieIndicateur,TOUS,,
 
  - Comment exécuter le script en local : 
       npx ts-node scripts/importCSVListeUtilisateursExistants.ts /chemin/fichier/local/import.csv | npx pino-pretty

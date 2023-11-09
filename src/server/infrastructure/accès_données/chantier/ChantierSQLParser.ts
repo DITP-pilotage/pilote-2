@@ -87,6 +87,7 @@ export function parseChantier(
     axe: chantierMailleNationale.axe,
     ppg: chantierMailleNationale.ppg,
     périmètreIds: chantierMailleNationale.perimetre_ids,
+    ate: chantierMailleNationale.ate,
     mailles: {
       nationale: {
         FR: {

@@ -4,7 +4,7 @@ import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructura
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 
 export const scopesUtilisateurs = ['utilisateurs.lecture', 'utilisateurs.modification', 'utilisateurs.suppression'] as const;
-export const scopesChantiers = ['lecture', 'saisie.commentaire', 'saisie.indicateur'] as const;
+export const scopesChantiers = ['lecture', 'saisieCommentaire', 'saisieIndicateur'] as const;
 export const scopesProjetsStructurants = ['projetsStructurants.lecture'] as const;
 export const scopes = [...scopesChantiers, ...scopesProjetsStructurants, ...scopesUtilisateurs] as const;
 
@@ -43,6 +43,14 @@ export type HabilitationsÀCréerOuMettreÀJour = {
     territoires: Territoire['code'][]
     périmètres: PérimètreMinistériel['id'][]
   }, 
+  saisieCommentaire: {
+    chantiers: Chantier['id'][]
+    périmètres: PérimètreMinistériel['id'][]
+  },
+  saisieIndicateur: {
+    chantiers: Chantier['id'][]
+    périmètres: PérimètreMinistériel['id'][]
+  }
 };
 
 export type HabilitationsÀCréerOuMettreÀJourCalculées = Record<ScopeChantiers, HabilitationChantiers & { périmètres: PérimètreMinistériel['id'][] }>;

@@ -2,10 +2,10 @@
 INSERT INTO scope (code, nom)
 VALUES ('lecture', 'Lecture'),
     (
-        'saisie.commentaire',
+        'saisieCommentaire',
         'Saisie de commentaire'
     ),
     (
-        'saisie.indicateur',
+        'saisieIndicateur',
         'Saisie des indicateurs'
     ) ON CONFLICT (code) DO NOTHING;

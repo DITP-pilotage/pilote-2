@@ -60,4 +60,12 @@ export type UtilisateurÀCréerOuMettreÀJour =  {
   habilitations: HabilitationsÀCréerOuMettreÀJour
 };
 
+export type UtilisateurÀCréerOuMettreÀJourSansHabilitation =  {
+  nom: string
+  prénom: string
+  email: string
+  fonction: string | null
+  profil: ProfilCode
+};
+
 export default Utilisateur;

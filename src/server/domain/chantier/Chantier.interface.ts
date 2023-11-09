@@ -28,6 +28,7 @@ export default interface Chantier {
   estTerritorialisé: boolean;
   tauxAvancementDonnéeTerritorialisée: Record<MailleInterne, Boolean>;
   météoDonnéeTerritorialisée: Record<MailleInterne, Boolean>;
+  ate: TypeAte;
 }
 
 export type ChantierTendance = 'BAISSE' | 'HAUSSE' | 'STAGNATION';

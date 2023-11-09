@@ -1,6 +1,6 @@
 import { objectEntries } from '@/client/utils/objects/objects';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
-import { UtilisateurÀCréerOuMettreÀJour } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import { HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
@@ -14,7 +14,7 @@ export default class ImporterDesUtilisateursUseCase {
   ) {}
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
-  async run(utilisateurs: (UtilisateurÀCréerOuMettreÀJour & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[], auteurModification: string): Promise<void> {
+  async run(utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[], auteurModification: string): Promise<void> {
     for (const utilisateur of utilisateurs) {
       const territoires = await this.territoireRepository.récupérerTous();
 

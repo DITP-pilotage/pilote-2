@@ -42,6 +42,8 @@ export default class ChantierBuilder {
 
   private _météoDonnéeTerritorialisée: Chantier['météoDonnéeTerritorialisée'];
 
+  private _ate: Chantier['ate'];
+
   constructor() {
     const axe = new AxeBuilder().build();
     const ppg = new PpgBuilder().build();
@@ -54,6 +56,7 @@ export default class ChantierBuilder {
     this._nom = `${générerUnLibellé(6, 14)} ${générerCaractèresSpéciaux(3)} ${this._id}`;
     this._axe = axe.nom;
     this._ppg = ppg.nom;
+    this._ate = null;
     this._périmètreIds = ministèrePorteur.périmètresMinistériels.map(périmètreMinistériel => périmètreMinistériel.id);
     this._mailles = {
       nationale: this._générerTerritoires([codeInseeFrance]),
@@ -169,6 +172,7 @@ export default class ChantierBuilder {
       axe: this._axe,
       ppg: this._ppg,
       périmètreIds: this._périmètreIds,
+      ate: this._ate,
       mailles: this._mailles,
       responsables: {
         porteur: this._porteur,
