@@ -2,9 +2,6 @@ version: 2
 
 models:
   - name: metadata_indicateurs
-    description: "Cette **vue** contient les indicateurs Pilote qui ne sont **pas masqués**. Pour avoir l'ensemble des indicateurs **non masqués**, voir la table `metadata_indicateurs_hidden`."
-  - name: metadata_indicateurs_hidden
-    description: "Cette **table** contient les indicateurs Pilote **masqués et non masqués**. Pour voir seulement les indicateurs **non masqués**, voir la **vue** `metadata_indicateurs`."
     columns:
       - name: indic_id
         data_type: text
