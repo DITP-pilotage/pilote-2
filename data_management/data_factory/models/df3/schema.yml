@@ -7,10 +7,14 @@ models:
 
         - Si 2 valeurs pour le meme {indic_id, metric_type, metric_date, zone_id}, on retourne celle avec la date d'import la plus récente. On dit que c'est la valeur **valable**. Ex: `[{date_import1, 12-dec-25, va, 10}, {date_import2, 12-dec-25, va, 15}] => [{date_import2, 12-dec-25, va, 15}]`
         - Si 2 valeurs dans le même mois, à des jours différents, on garde **les deux**. Ces deux valeurs sont des *valeurs valables*.
-        - Si un `NULL` est *valable*, on supprime toutes les autres valeurs *valables* de ce mois. Ex: `[{12-dec-25, va, 10}, {17-dec-25, va, 15}, {23-dec-25, va, NULL}] => [{23-dec-25, va, NULL}]`
         - Transformation de `'null'` et `''` vers un `NULL`
 
         *Note:* Avant de charger la table des données importées (`source('import_from_files', 'mesure_indicateur')`), on remplace les valeurs `metric_date='2023-06-31'` par `metric_date='2023-06-30'`. C'est la table intermédiaire `fix_mesure_indicateur_06_31`.
+  - name: mesure_last_null_erase
+    description: |
+        On modifie la table précédente `mesure_last`. Si un `NULL` existe, on enlève toutes les autres valeurs du mois. Règles:
+
+        - Si un `NULL` est *valable*, on supprime toutes les autres valeurs *valables* de ce mois. Ex: `[{12-dec-25, va, 10}, {17-dec-25, va, 15}, {23-dec-25, va, NULL}] => [{23-dec-25, va, NULL}]`
   - name: agg_dept
     description: |
         Sélection des valeurs et calculs des aggrégation pour le niveau DEPT en fonction des paramètres. Règles:
