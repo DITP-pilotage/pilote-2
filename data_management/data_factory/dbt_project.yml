@@ -33,6 +33,9 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 models:
   ditp_ppg_dbt:
+    df3:
+      +schema: df3
+      +materialized: view
     raw:
       +schema: raw_data
       +materialized: table
@@ -55,34 +58,6 @@ models:
       ppg_metadata:
         +docs:
           node_color: "#553df2"
-    marts:
-      +schema: marts
-      faits_indicateur:
-        +materialized: incremental
-        +unique_key:
-          - 'indicateur_id'
-          - 'zone_id'
-          - 'metric_date'
-          - 'metric_type'
-          - 'import_date'
-      pivot_faits_indicateur:
-        +materialized: table
-      2_pivot_faits_indicateur:
-        pivot_faits_indicateur_toutes_mailles:
-          +materialized: table
-          +indexes:
-            - columns: [ 'indicateur_id' , 'zone_id' ]
-      6_calcul_ta_indicateur:
-        taux_avancement_indicateur:
-          +materialized: table
-      7_calcul_ta_chantier:
-        taux_avancement_chantier_historique:
-          +materialized: view
-        taux_avancement_chantier:
-          +materialized: table
-      8_evolution_indicateur:
-        evolution_indicateur:
-          +materialized: table
     intermediate:
       +schema: marts
       +materialized: view
@@ -143,3 +118,12 @@ models:
       projet_structurant:
         +unique_key:
           - 'id'
+
+vars:
+  ditp_ppg_dbt:
+    # Les dates plus tardives ne seront pas considérées pour déterminer les VCG
+    vcg_max_date: '2028-01-01'
+    # Les dates antérieures ne seront pas considérées pour déterminer les VIG
+    vig_min_date: '2020-01-01'
+    # Nombre de décimales renvoyées par le calcul des TAA et TAG
+    ta_decimales: 2

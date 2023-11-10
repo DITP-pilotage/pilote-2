@@ -5,22 +5,5 @@ models:
     description: "Vue intermédiaire afin de décliner les chantiers pour tous leurs territoires (maille + code insee)"
   - name: int_dfakto_indicateurs_metrics
     description: "Vue intermédiaire pour récupérer les métriques (type TA) des indicateurs en provenance de dfakto"
-  - name: df2_int_dfakto_indicateurs_metrics
-    description: "Reproduction de la table int_dfakto_indicateurs_metrics sans les dépendances"
   - name: projet_structurant_temporaire
     description: "Vue intermédiaire afin de créer une table projet_structurant avec un id unique qui sera réutilisée pour toutes les tables en ayant besoin (de l'id unique)"
-  - name: last_vc_annuel
-    description: |
-      Vue qui donne la dernière VC annuelle pour chaque {zone_id, indicateur_id, année}. 
-      
-      Il s'agira de la VC **la plus tardive** dans l'année. Ainsi, si une valeur est saisie pour *décembre 2025*, si une valeur est saisie pour *septembre 2025*, cette dernière ne sera donc **pas prise en compte**.
-  - name: last_vc_global
-    description: |
-      Vue qui donne la dernière VC globale pour chaque {zone_id, indicateur_id}. 
-
-      Il s'agira de la VC **la plus tardive** saisie. Ainsi, si l'on a une valeur pour *dec-24* et *sept-25*, c'est celle de *sept-25* qui sera prise en compte.
-  - name: first_vi_global
-    description: |
-      Vue qui donne la première VI pour chaque {zone_id, indicateur_id}. 
-
-      Il s'agira de la VI **la plus lointaine** dans le passé. Ainsi, si l'on a une valeur pour *jan-23* et *sept-21*, c'est celle de *sept-21* qui sera prise en compte.

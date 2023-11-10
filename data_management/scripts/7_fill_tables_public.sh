@@ -26,7 +26,7 @@ psql "$DATABASE_URL" -c "UPDATE public.indicateur_projet_structurant SET a_suppr
 psql "$DATABASE_URL" -c "UPDATE public.perimetre_projet_structurant SET a_supprimer = TRUE"
 
 PROJECT_DIR=data_factory
-dbt run --project-dir $PROJECT_DIR --select intermediate exposition
+dbt run --project-dir $PROJECT_DIR --select intermediate exposition df3
 
 if [ $? -eq 0 ]; then
   psql "$DATABASE_URL" -c "DELETE FROM public.axe WHERE a_supprimer = TRUE"
