@@ -9,7 +9,7 @@ mesure_last_params_reg as (
     select 
         a.indic_id , metric_date, metric_type, metric_value , zone_id,
         b.vi_reg_from , b.vi_reg_op , b.va_reg_from, b.va_reg_op, b.vc_reg_from , b.vc_reg_op 
-    from {{ ref('mesure_last_null_erase') }} a
+    from {{ ref('mesure_last_null_erase_keep_lastvalmonth') }} a
     left join {{ ref('metadata_parametrage_indicateurs') }} b 
     ON a.indic_id = b.indic_id
 ), 
@@ -44,7 +44,7 @@ mesure_last_params_reg_from_dept as (
 	select a.indic_id as indic_id1 , metric_date , metric_type , metric_value::float, a.zone_id,
 	b.zone_type, b.zone_parent , b.zone_parent_type ,
 	c.*
-	from {{ ref('mesure_last_null_erase') }} a
+	from {{ ref('mesure_last_null_erase_keep_lastvalmonth') }} a
 	inner join {{ ref('zone_parent') }} b on a.zone_id = b.zone_id 
 	right join indic_agg_from_dept c on a.indic_id =c.indic_id
 	where 
