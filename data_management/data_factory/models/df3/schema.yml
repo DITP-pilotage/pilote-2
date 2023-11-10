@@ -15,6 +15,11 @@ models:
         On modifie la table précédente `mesure_last`. Si un `NULL` existe, on enlève toutes les autres valeurs du mois. Règles:
 
         - Si un `NULL` est *valable*, on supprime toutes les autres valeurs *valables* de ce mois. Ex: `[{12-dec-25, va, 10}, {17-dec-25, va, 15}, {23-dec-25, va, NULL}] => [{23-dec-25, va, NULL}]`
+  - name: mesure_last_null_erase_keep_lastvalmonth
+    description: |
+        On modifie la table précédente `mesure_last_null_erase`. Règles:
+
+        - Si plusieurs valeurs sont valables pour un même mois, on garde la dernière ainsi que sa date. Ex: `[{12-dec-25, va, 10}, {17-dec-25, va, 15}, {23-dec-25, va, 11}] => [{23-dec-25, va, 11}]`
   - name: agg_dept
     description: |
         Sélection des valeurs et calculs des aggrégation pour le niveau DEPT en fonction des paramètres. Règles:
