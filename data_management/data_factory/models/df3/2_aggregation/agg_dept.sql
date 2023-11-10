@@ -20,7 +20,7 @@ mesure_last_params_dept_user as (
     where 
         ((metric_type='vi' and vi_dept_from='user_input') OR
         (metric_type='va' and va_dept_from='user_input') OR
-        (metric_type='vc' and va_dept_from='user_input')) and
+        (metric_type='vc' and vc_dept_from='user_input')) and
 		zone_type='DEPT'
 )
 

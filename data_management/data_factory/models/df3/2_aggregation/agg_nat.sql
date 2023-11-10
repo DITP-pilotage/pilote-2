@@ -20,7 +20,7 @@ mesure_last_params_nat_user as (
     where 
         ((metric_type='vi' and vi_nat_from='user_input') OR
         (metric_type='va' and va_nat_from='user_input') OR
-        (metric_type='vc' and va_nat_from='user_input')) and
+        (metric_type='vc' and vc_nat_from='user_input')) and
 		zone_type='NAT'
 ),
 

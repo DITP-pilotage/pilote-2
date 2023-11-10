@@ -20,7 +20,7 @@ mesure_last_params_reg_user as (
     where 
         ((metric_type='vi' and vi_reg_from='user_input') OR
         (metric_type='va' and va_reg_from='user_input') OR
-        (metric_type='vc' and va_reg_from='user_input')) and
+        (metric_type='vc' and vc_reg_from='user_input')) and
 		zone_type='REG'
 ),
 
