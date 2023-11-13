@@ -3,8 +3,7 @@ import { breakpointL } from '@/components/_commons/MiseEnPage/MiseEnPage.styled'
 
 const AvancementsStyled = styled.div`
   display: flex;
-  row-gap: 1.5rem;
-  column-gap: 2.5rem;
+  gap: 1.5rem 2.5rem;
   justify-content: center;
 
   @media (width < 84rem) {

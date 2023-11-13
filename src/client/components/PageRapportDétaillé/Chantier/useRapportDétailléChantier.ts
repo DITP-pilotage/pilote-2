@@ -30,7 +30,13 @@ export function useRapportDétailléChantier(chantier: Chantier) {
     avancementsAgrégés ?? null,
   );
 
+  const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
+  const responsableLocal = chantierTerritoireSélectionné?.responsableLocal.filter(r => r.habilitations.lecture.chantiers.includes(chantier.id)) ?? [];
+  const referentTerritorial = chantierTerritoireSélectionné?.référentTerritorial.filter(r => r.habilitations.lecture.chantiers.includes(chantier.id)) ?? [];
+
   return {
     avancements,
+    responsableLocal,
+    referentTerritorial,
   };
 }

@@ -1,7 +1,6 @@
 import { PrismaClient, habilitation, profil, utilisateur, chantier, territoire, projet_structurant, perimetre } from '@prisma/client';
 import Utilisateur, { ProfilCode, UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import {
   HabilitationsÀCréerOuMettreÀJourCalculées,
   ScopeChantiers,
@@ -104,6 +103,11 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   }
 
   async récupérer(email: string): Promise<Utilisateur | null> {
+    await this._récupérerTerritoires();
+    await this._récupérerChantiers();
+    await this._récupérerProjetsStructurants();
+    await this._récupérerPérimètresMinistériels();
+
     const row = await this._prisma.utilisateur.findUnique({ 
       where: { email: email.toLowerCase() }, 
       include: { 
@@ -120,6 +124,11 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   }
 
   async getById(id: string): Promise<Utilisateur | null> {
+    await this._récupérerTerritoires();
+    await this._récupérerChantiers();
+    await this._récupérerProjetsStructurants();
+    await this._récupérerPérimètresMinistériels();
+
     const row = await this._prisma.utilisateur.findUnique({
       where: { id },
       include: {
@@ -137,6 +146,10 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   async récupérerTous(chantierIds: string[], territoireCodes: string[], filtrer: boolean = true): Promise<Utilisateur[]> {
     let utilisateursMappés:Utilisateur[] = [];
+    await this._récupérerTerritoires();
+    await this._récupérerChantiers();
+    await this._récupérerProjetsStructurants();
+    await this._récupérerPérimètresMinistériels();
 
     const utilisateurs = await this._prisma.utilisateur.findMany(
       {
@@ -299,7 +312,6 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     const chantiersParDéfaut = await this._récupérerChantiersParDéfaut(profilUtilisateur);
     const territoiresParDéfaut = await this._récupérerTerritoiresParDéfaut(profilUtilisateur);
     const périmètresMinistérielsParDéfaut = await this._récupérerPérimètresMinistérielsParDéfaut(profilUtilisateur);
-
     let habilitationsGénérées: Utilisateur['habilitations'] = {
       lecture: {
         chantiers: chantiersParDéfaut.lecture,
@@ -339,11 +351,23 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     for await (const h of habilitations) {
       const scopeCode = h.scopeCode as keyof Utilisateur['habilitations'];
       if (scopeCode !== 'projetsStructurants.lecture') {
-        const chantiersSupplémentaires = (scopeCode == 'saisieCommentaire' && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(profilUtilisateur.code) && h.chantiers.length > 0)
-          ? await dependencies.getChantierRepository().récupérerChantierIdsPourSaisieCommentaireServiceDeconcentré(h.chantiers) 
-          : h.chantiers;
-        
-        const chantiersAssociésAuxPérimètresMinistériels = h.perimetres.length > 0 ? await dependencies.getChantierRepository().récupérerChantierIdsAssociésAuxPérimètresMinistèriels(h.perimetres, scopeCode, profilUtilisateur.code) : [];
+        const listeChantier = 
+          scopeCode == 'saisieCommentaire' && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(profilUtilisateur.code) ?
+            this._chantiers.donnéesBrutes.filter(c => c.ate !== 'hors_ate_centralise') :
+            this._chantiers.donnéesBrutes;
+
+        const chantiersSupplémentaires = 
+          h.chantiers.length > 0 ? 
+            listeChantier.filter(c => h.chantiers.includes(c.id)).map(c => c.id) :
+            h.chantiers;
+
+        const chantiersAssociésAuxPérimètresMinistériels = 
+          h.perimetres.length > 0 ? 
+            listeChantier
+              .filter(c => c.perimetre_ids.some(p => h.perimetres.includes(p)))
+              .map(c => c.id) :
+            [] ;
+
         habilitationsGénérées[scopeCode].chantiers = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...chantiersSupplémentaires])];
         habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
         habilitationsGénérées[scopeCode].périmètres = [... new Set([...habilitationsGénérées[scopeCode].périmètres, ...h.perimetres])];
@@ -355,11 +379,6 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   }
 
   private async _mapperVersDomaine(utilisateurBrut: utilisateur & { profil: profil; habilitation: habilitation[]; }): Promise<Utilisateur> {
-    await this._récupérerTerritoires();
-    await this._récupérerChantiers();
-    await this._récupérerProjetsStructurants();
-    await this._récupérerPérimètresMinistériels();
-
     return {
       id: utilisateurBrut.id,
       nom: utilisateurBrut.nom || 'Inconnu',
