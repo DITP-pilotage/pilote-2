@@ -1,6 +1,7 @@
 import {
   createColumnHelper,
-  getCoreRowModel, getFilteredRowModel,
+  getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -12,9 +13,7 @@ import api from '@/server/infrastructure/api/trpc/api';
 import {
   filtresModifierIndicateursActifsStore,
 } from '@/stores/useFiltresModifierIndicateursStore/useFiltresModifierIndicateursStore';
-import {
-  MetadataParametrageIndicateurContrat,
-} from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
+import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 
 const reactTableColonnesHelper = createColumnHelper<MetadataParametrageIndicateurContrat>();
 const colonnes = [
@@ -28,11 +27,32 @@ const colonnes = [
   }),
   reactTableColonnesHelper.accessor('indicId', {
     header: 'Identifiant indicateur',
+    sortingFn: 'alphanumericCaseSensitive',
     cell: props => props.getValue(),
   }),
   reactTableColonnesHelper.accessor('indicNom', {
     header: 'Nom de l\'indicateur',
+    sortingFn: 'auto',
     cell: props => props.getValue(),
+  }),
+  reactTableColonnesHelper.accessor('indicHiddenPilote', {
+    header: 'Actif / Inactif',
+    sortingFn: 'auto',
+    cell: props => props.getValue() ? (
+      <div className="flex justify-center">
+        <span
+          aria-hidden="true"
+          className='fr-icon-close-circle-fill fr-icon-red'
+        />
+      </div>
+    ) : (
+      <div className="flex justify-center">
+        <span
+          aria-hidden="true"
+          className='fr-icon-checkbox-circle-fill fr-icon-green'
+        />
+      </div>
+    ),
   }),
 ];
 

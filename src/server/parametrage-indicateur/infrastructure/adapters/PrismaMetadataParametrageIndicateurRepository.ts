@@ -130,6 +130,8 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
         const listeStringChantierId = chantierIds.map(i => `'${i}'`).join(',');
         query = `${query} WHERE mi.indic_parent_ch IN (${listeStringChantierId})`;
       }
+      query = `${query} ORDER BY mi.indic_id`;
+
       const listeRawMetadataParametrageIndicateur = await this.prismaClient.$queryRaw<RawMetadataParametrageIndicateurModel[]>`${Prisma.raw(query)}`;
 
       if (listeRawMetadataParametrageIndicateur.length === 0) {

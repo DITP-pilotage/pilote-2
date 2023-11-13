@@ -10,6 +10,14 @@ const TableauAdminIndicateursStyled = styled.section`
   .titre-tableau{
     color: var(--text-title-blue-france);
   }
+  
+  .fr-icon-red {
+    color: red;
+  }
+  
+  .fr-icon-green {
+    color: green;
+  }
 
   table.tableau {
     display: table;
