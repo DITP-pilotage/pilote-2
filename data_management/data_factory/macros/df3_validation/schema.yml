@@ -10,6 +10,9 @@ macros:
       - name: colname_date
         type: string
         description: Nom de la colonne de `df2.df3_indicateur` et `public.indicateur` contenant une date à vérifier.
+      - name: ignore_day
+        type: boolean
+        description: Indique si on doit ignorer le jour du mois. Ie, si le mois est identique, on considère les dates identiques.
   - name: df3_date_late
     description: |
       Macro de test de la `df2.df3_indicateur` par rapport à `public.indicateur`. 
@@ -19,6 +22,9 @@ macros:
       - name: colname_date
         type: string
         description: Nom de la colonne de `df2.df3_indicateur` et `public.indicateur` contenant une date à vérifier.
+      - name: ignore_day
+        type: boolean
+        description: Indique si on doit ignorer le jour du mois. Ie, si le mois est identique, on considère les dates identiques.
   - name: df3_not_equal_bool
     description: |
       Macro de test de la `df2.df3_indicateur` par rapport à `public.indicateur`. 

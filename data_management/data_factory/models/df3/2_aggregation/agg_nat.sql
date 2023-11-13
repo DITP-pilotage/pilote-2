@@ -9,7 +9,7 @@ mesure_last_params_nat as (
     select 
         a.indic_id , metric_date, metric_type, metric_value , zone_id,
         b.vi_nat_from , b.vi_nat_op , b.va_nat_from, b.va_nat_op, b.vc_nat_from , b.vc_nat_op 
-    from {{ ref('mesure_last') }} a
+    from {{ ref('mesure_last_null_erase_keep_lastvalmonth') }} a
     left join {{ ref('metadata_parametrage_indicateurs') }} b 
     ON a.indic_id = b.indic_id
 ), 
@@ -20,7 +20,7 @@ mesure_last_params_nat_user as (
     where 
         ((metric_type='vi' and vi_nat_from='user_input') OR
         (metric_type='va' and va_nat_from='user_input') OR
-        (metric_type='vc' and va_nat_from='user_input')) and
+        (metric_type='vc' and vc_nat_from='user_input')) and
 		zone_type='NAT'
 ),
 
