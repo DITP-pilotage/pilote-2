@@ -43,4 +43,3 @@ const useFiltresModifierIndicateursStore = create<FiltresModifierIndicateursStor
 
 export const actions = () => useFiltresModifierIndicateursStore(étatActuel => étatActuel.actions);
 export const filtresModifierIndicateursActifsStore = () => useFiltresModifierIndicateursStore(étatActuel => étatActuel.filtresActifs);
-export const réinitialiser = () => useFiltresModifierIndicateursStore.getState().actions.réinitialiser;

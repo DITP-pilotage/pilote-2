@@ -54,7 +54,7 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
         indicIsPerseverant: indicateur.indicIsPerseverant ? 'true' : 'false',
         indicIsBaro: indicateur.indicIsBaro ? 'true' : 'false',
         indicIsPhare: indicateur.indicIsPhare ? 'true' : 'false',
-        indicHiddenPilote: indicateur.indicHiddenPilote ? 'true' : 'false',
+        indicHiddenPilote: indicateur.indicHiddenPilote ? 'false' : 'true',
         poidsPourcentNat: `${indicateur.poidsPourcentNat}`,
         poidsPourcentReg: `${indicateur.poidsPourcentReg}`,
         poidsPourcentDept: `${indicateur.poidsPourcentDept}`,

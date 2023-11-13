@@ -10,7 +10,6 @@ interface SectionSelectionIndicateurProps {
 export default function SectionSelectionIndicateur({ estEnCoursDeModification }: SectionSelectionIndicateurProps) {
   const { setValue, getValues } = useSelectionIndicateurForm();
 
-
   return (
     <SélecteurIndicateurActif
       estEnCoursDeModification={estEnCoursDeModification}

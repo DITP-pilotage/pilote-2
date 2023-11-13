@@ -44,7 +44,7 @@ export interface MetadataParametrageIndicateurContrat {
   indicSourceUrl: string;
   indicMethodeCalcul: string;
   indicUnite: string;
-  indicHiddenPilote: string;
+  indicHiddenPilote: boolean;
   indicSchema: string;
   chantierNom: string;
 }

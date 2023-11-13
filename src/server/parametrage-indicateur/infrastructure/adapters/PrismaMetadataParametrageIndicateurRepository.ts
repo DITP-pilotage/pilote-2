@@ -58,7 +58,7 @@ interface RawMetadataParametrageIndicateurModel {
   indic_source_url: string,
   indic_methode_calcul: string,
   indic_unite: string,
-  indic_hidden_pilote: string,
+  indic_hidden_pilote: boolean | null,
   indic_schema: string,
   ch_nom: string,
 }
@@ -112,7 +112,7 @@ function convertirEnMetadataParametrageIndicateur(rawMetadataParametrageIndicate
     indicSourceUrl: rawMetadataParametrageIndicateur.indic_source_url,
     indicMethodeCalcul: rawMetadataParametrageIndicateur.indic_methode_calcul,
     indicUnite: rawMetadataParametrageIndicateur.indic_unite,
-    indicHiddenPilote: rawMetadataParametrageIndicateur.indic_hidden_pilote,
+    indicHiddenPilote: rawMetadataParametrageIndicateur.indic_hidden_pilote === true,
     indicSchema: rawMetadataParametrageIndicateur.indic_schema,
     chantierNom: rawMetadataParametrageIndicateur.ch_nom,
   });
@@ -123,13 +123,15 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
 
   async recupererListeMetadataParametrageIndicateurParChantierIds(chantierIds: string[]): Promise<MetadataParametrageIndicateur[]> {
     try {
-      let query = 'SELECT mi.*, mpi.*, mc.ch_nom FROM raw_data.metadata_parametrage_indicateurs mpi ' +
-                'LEFT JOIN raw_data.metadata_indicateurs mi ON mpi.indic_id = mi.indic_id ' +
+      let query = 'SELECT mi.*, mpi.*, mc.ch_nom FROM raw_data.metadata_indicateurs_hidden mi ' +
+                'INNER JOIN raw_data.metadata_parametrage_indicateurs mpi ON mpi.indic_id = mi.indic_id ' +
                 'LEFT JOIN raw_data.metadata_chantiers mc on mi.indic_parent_ch = mc.chantier_id';
       if (chantierIds.length > 0) {
         const listeStringChantierId = chantierIds.map(i => `'${i}'`).join(',');
         query = `${query} WHERE mi.indic_parent_ch IN (${listeStringChantierId})`;
       }
+      query = `${query} ORDER BY mi.indic_id`;
+
       const listeRawMetadataParametrageIndicateur = await this.prismaClient.$queryRaw<RawMetadataParametrageIndicateurModel[]>`${Prisma.raw(query)}`;
 
       if (listeRawMetadataParametrageIndicateur.length === 0) {
@@ -146,8 +148,8 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
   async recupererMetadataParametrageIndicateurParIndicId(indicId: string): Promise<MetadataParametrageIndicateur> {
     try {
       let query = `SELECT *
-                         FROM raw_data.metadata_parametrage_indicateurs mpi
-                                  LEFT JOIN raw_data.metadata_indicateurs mi ON mpi.indic_id = mi.indic_id
+                         FROM raw_data.metadata_indicateurs_hidden mi
+                                  INNER JOIN raw_data.metadata_parametrage_indicateurs mpi ON mpi.indic_id = mi.indic_id
                                   LEFT JOIN raw_data.metadata_chantiers mc ON mi.indic_parent_ch = mc.chantier_id
                          WHERE mpi.indic_id LIKE '${indicId}'
             `;
@@ -166,8 +168,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
 
 
   async modifier(inputs: MetadataParametrageIndicateurForm): Promise<MetadataParametrageIndicateur> {
-
-    const queryIndicateur = `UPDATE raw_data.metadata_indicateurs
+    const queryIndicateur = `UPDATE raw_data.metadata_indicateurs_hidden
                                  SET indic_parent_indic   = '${inputs.indicParentIndic}',
                                      indic_parent_ch   = '${inputs.indicParentCh}',
                                      indic_nom            = '${makeStrSafer(inputs.indicNom)}',
@@ -227,7 +228,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
 
   async creer(inputs: MetadataParametrageIndicateurForm): Promise<MetadataParametrageIndicateur> {
 
-    const queryIndicateur = `INSERT INTO raw_data.metadata_indicateurs (indic_id,
+    const queryIndicateur = `INSERT INTO raw_data.metadata_indicateurs_hidden (indic_id,
                                                                             indic_parent_indic,
                                                                             indic_parent_ch,
                                                                             indic_nom,

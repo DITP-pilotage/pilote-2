@@ -59,7 +59,7 @@ export default class InitialiserNouvelIndicateurUseCase {
       indicSourceUrl: listeInformation.indic_source_url.metaPiloteDefaultValue as string,
       indicMethodeCalcul: listeInformation.indic_methode_calcul.metaPiloteDefaultValue as string,
       indicUnite: listeInformation.indic_unite.metaPiloteDefaultValue as string,
-      indicHiddenPilote: listeInformation.indic_hidden_pilote.metaPiloteDefaultValue as string,
+      indicHiddenPilote: listeInformation.indic_hidden_pilote.metaPiloteDefaultValue as boolean,
       indicSchema: listeInformation.indic_schema.metaPiloteDefaultValue as string,
       chantierNom: '',
     });

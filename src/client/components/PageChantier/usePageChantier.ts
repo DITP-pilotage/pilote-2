@@ -121,7 +121,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     );
 
   let modeÉcriture = !!territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);
-  if (['DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL'].includes(session?.profil) && territoireSélectionné?.maille != 'nationale') {
+  if (session && ['DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL'].includes(session.profil) && territoireSélectionné?.maille != 'nationale') {
     modeÉcriture = modeÉcriture && chantier?.ate === 'hors_ate_centralise';
   }
   const modeÉcritureObjectifs = modeÉcriture; //territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication === true) && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);    

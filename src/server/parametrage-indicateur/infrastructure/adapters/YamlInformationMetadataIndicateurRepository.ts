@@ -61,6 +61,6 @@ const convertirEnInformationMetadataIndicateur = (yamlColumn: YamlColumn): Infor
 export class YamlInformationMetadataIndicateurRepository implements InformationMetadataIndicateurRepository {
   récupererInformationMetadataIndicateur(): InformationMetadataIndicateur[] {
     const result: YamlResult = data as YamlResult;
-    return result.models.flatMap(model => model.columns).map(convertirEnInformationMetadataIndicateur);
+    return result.models.flatMap(model => model.columns).filter(Boolean).map(convertirEnInformationMetadataIndicateur);
   }
 }
