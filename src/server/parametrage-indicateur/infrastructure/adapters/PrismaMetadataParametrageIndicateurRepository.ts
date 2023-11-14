@@ -14,7 +14,7 @@ import {
   MetadataParametrageIndicateurForm,
 } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm';
 
-interface RawMetadataParametrageIndicateurModel {
+export interface RawMetadataParametrageIndicateurModel {
   indic_id: string,
   vi_dept_from: string,
   vi_dept_op: string,
@@ -116,6 +116,56 @@ function convertirEnMetadataParametrageIndicateur(rawMetadataParametrageIndicate
     indicSchema: rawMetadataParametrageIndicateur.indic_schema,
     chantierNom: rawMetadataParametrageIndicateur.ch_nom,
   });
+}
+export function convertirModel(metadataParametrageIndicateur: MetadataParametrageIndicateur): RawMetadataParametrageIndicateurModel {
+  return {
+    indic_id: metadataParametrageIndicateur.indicId,
+    vi_dept_from: metadataParametrageIndicateur.viDeptFrom,
+    vi_dept_op: metadataParametrageIndicateur.viDeptOp,
+    va_dept_from: metadataParametrageIndicateur.vaDeptFrom,
+    va_dept_op: metadataParametrageIndicateur.vaDeptOp,
+    vc_dept_from: metadataParametrageIndicateur.vcDeptFrom,
+    vc_dept_op: metadataParametrageIndicateur.vcDeptOp,
+    vi_reg_from: metadataParametrageIndicateur.viRegFrom,
+    vi_reg_op: metadataParametrageIndicateur.viRegOp,
+    va_reg_from: metadataParametrageIndicateur.vaRegFrom,
+    va_reg_op: metadataParametrageIndicateur.vaRegOp,
+    vc_reg_from: metadataParametrageIndicateur.vcRegFrom,
+    vc_reg_op: metadataParametrageIndicateur.vcRegOp,
+    vi_nat_from: metadataParametrageIndicateur.viNatFrom,
+    vi_nat_op: metadataParametrageIndicateur.viNatOp,
+    va_nat_from: metadataParametrageIndicateur.vaNatFrom,
+    va_nat_op: metadataParametrageIndicateur.vaNatOp,
+    vc_nat_from: metadataParametrageIndicateur.vcNatFrom,
+    vc_nat_op: metadataParametrageIndicateur.vcNatOp,
+    param_vaca_decumul_from: metadataParametrageIndicateur.paramVacaDecumulFrom,
+    param_vaca_partition_date: metadataParametrageIndicateur.paramVacaPartitionDate,
+    param_vaca_op: metadataParametrageIndicateur.paramVacaOp,
+    param_vacg_decumul_from: metadataParametrageIndicateur.paramVacgDecumulFrom,
+    param_vacg_partition_date: metadataParametrageIndicateur.paramVacgPartitionDate,
+    param_vacg_op: metadataParametrageIndicateur.paramVacgOp,
+    poids_pourcent_dept: metadataParametrageIndicateur.poidsPourcentDept,
+    poids_pourcent_reg: metadataParametrageIndicateur.poidsPourcentReg,
+    poids_pourcent_nat: metadataParametrageIndicateur.poidsPourcentNat,
+    tendance: metadataParametrageIndicateur.tendance,
+    indic_parent_indic: metadataParametrageIndicateur.indicParentIndic,
+    indic_parent_ch: metadataParametrageIndicateur.indicParentCh,
+    indic_nom: metadataParametrageIndicateur.indicNom,
+    indic_nom_baro: metadataParametrageIndicateur.indicNomBaro,
+    indic_descr: metadataParametrageIndicateur.indicDescr,
+    indic_descr_baro: metadataParametrageIndicateur.indicDescrBaro,
+    indic_is_perseverant: metadataParametrageIndicateur.indicIsPerseverant,
+    indic_is_phare: metadataParametrageIndicateur.indicIsPhare,
+    indic_is_baro: metadataParametrageIndicateur.indicIsBaro,
+    indic_type: metadataParametrageIndicateur.indicType,
+    indic_source: metadataParametrageIndicateur.indicSource,
+    indic_source_url: metadataParametrageIndicateur.indicSourceUrl,
+    indic_methode_calcul: metadataParametrageIndicateur.indicMethodeCalcul,
+    indic_unite: metadataParametrageIndicateur.indicUnite,
+    indic_hidden_pilote: metadataParametrageIndicateur.indicHiddenPilote,
+    indic_schema: metadataParametrageIndicateur.indicSchema,
+    ch_nom: metadataParametrageIndicateur.chantierNom,
+  };
 }
 
 export class PrismaMetadataParametrageIndicateurRepository implements MetadataParametrageIndicateurRepository {

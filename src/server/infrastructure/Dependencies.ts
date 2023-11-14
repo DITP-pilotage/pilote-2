@@ -97,6 +97,12 @@ import {
 import {
   InformationMetadataIndicateurRepository,
 } from '@/server/parametrage-indicateur/domain/ports/InformationMetadataIndicateurRepository';
+import {
+  HistorisationModificationSQLRepository,
+} from '@/server/infrastructure/accès_données/historisationModification/HistorisationModificationSQLRepository';
+import {
+  HistorisationModificationRepository,
+} from '@/server/domain/historisationModification/HistorisationModificationRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
@@ -106,7 +112,7 @@ import CommentaireProjetStructurantSQLRepository
   from './accès_données/projetStructurant/commentaire/CommentaireProjetStructurantSQLRepository';
 import PérimètreMinistérielSQLRepository from './accès_données/périmètreMinistériel/PérimètreMinistérielSQLRepository';
 import IndicateurProjetStructurantSQLRepository
-  from './accès_données/projetStructurant/indicateur/IndicateurSQLRepository';
+  from './accès_données/projetStructurant/indicateur/IndicateurSQLRepository'; // https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
 
 // https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
 const globalForPrisma = globalThis as unknown as {
@@ -172,6 +178,8 @@ class Dependencies {
 
   private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
 
+  private readonly _historisationModification: HistorisationModificationRepository;
+
   constructor() {
     const prisma = globalForPrisma.prisma ?? new PrismaClient();
     if (process.env.NODE_ENV !== 'production') {
@@ -204,6 +212,7 @@ class Dependencies {
     this._importIndicateurRepository = new PrismaIndicateurRepository(prisma);
     this._metadataParametrageIndicateurRepository = new PrismaMetadataParametrageIndicateurRepository(prisma);
     this._informationMetadataIndicateurRepository = new YamlInformationMetadataIndicateurRepository();
+    this._historisationModification = new HistorisationModificationSQLRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
@@ -221,6 +230,10 @@ class Dependencies {
       indicateurRepository: this._importIndicateurRepository,
       erreurValidationFichierRepository: this._erreurValidationFichierRepository,
     });
+  }
+
+  getHistorisationModificationRepository(): HistorisationModificationRepository {
+    return this._historisationModification;
   }
 
   getChantierRepository(): ChantierRepository {
