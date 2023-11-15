@@ -1,12 +1,12 @@
 -- Pour chaque rapport, on lui associe l'indic_id de l'indicateur qui est modifié
 with indic_rapport as (
 	select rapport_id, indic_id, zone_id, count(rapport_id) as n
-	from  raw_data.mesure_indicateur mi
+	from  {{ source('import_from_files', 'mesure_indicateur') }} mi
 	group by rapport_id, indic_id, zone_id
 ),
 -- On associe la date à ce rapport
 indic_rapport_date as (
-	select a.*, b.date_creation from indic_rapport a left join public.rapport_import_mesure_indicateur b
+	select a.*, b.date_creation from indic_rapport a left join {{ source('db_schema_public', 'rapport_import_mesure_indicateur') }} b
 	on a.rapport_id = b.id
 	order by indic_id, zone_id
 ),
@@ -18,7 +18,7 @@ select *, rank() over (partition by indic_id, zone_id order by date_creation des
 -- On ajoute le territoire_code
 sort_import_terr as (
 	select a.*, b.code as territoire_code
-	from sort_import a left join public.territoire b 
+	from sort_import a left join {{ source('db_schema_public', 'territoire') }} b 
 	on a.zone_id=b.zone_id
 ),
 -- Pour chaque {indicateur-zone}, on garde le dernier import
