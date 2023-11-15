@@ -54,24 +54,5 @@ dernier_import_indic as (
 )
 
 
---select *, rank() over (partition by indic_id order by dernier_import_date desc) as r
---from indic_zone_last_import_terr
-
--- Attention: le nom des tables et schemas "raw_data.mesure_indicateur" et "public.rapport_import_mesure_indicateur"
--- sont codés en dur dans ce modèle car ce ne sont pas des modèles dbt mais des tables pré-existantes
--- créées par prisma (cf schema.prisma). 
--- Donc pas de certitude sur leur existence au runtime
 
 select * from indic_zone_last_import
-
-{# 
-select a.*, b.dernier_import_rapport_id_indic, b.dernier_import_date_indic
-from 
--- table indicateur X date des dernier import de chaque indic-zone
-(select id, nom, chantier_id, maille, a.territoire_code, date_valeur_actuelle, valeur_actuelle , dernier_import_date, dernier_import_rapport_id 
-from public.indicateur a left join indic_zone_last_import b on a.id=b.indic_id and a.territoire_code =b.territoire_code where id='IND-207') a --where dernier_import_date is null and valeur_actuelle  is not null
--- X date du dernier import de l'INDICATEUR (pas nécessairement sur cette zone)
-left join dernier_import_indic b
-on a.id=b.indic_id
-
-order by id, maille #}
