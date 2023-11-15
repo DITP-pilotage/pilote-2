@@ -127,8 +127,8 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
   const modeÉcritureObjectifs = modeÉcriture; //territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication === true) && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);    
 
   const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
-  const responsableLocal = chantierTerritoireSélectionné?.responsableLocal.filter(r => r.habilitations.lecture.chantiers.includes(chantierId)) ?? [];
-  const referentTerritorial = chantierTerritoireSélectionné?.référentTerritorial.filter(r => r.habilitations.lecture.chantiers.includes(chantierId)) ?? [];
+  const responsableLocal = chantierTerritoireSélectionné?.responsableLocal ?? [];
+  const referentTerritorial = chantierTerritoireSélectionné?.référentTerritorial ?? [];
 
   return {
     détailsIndicateurs: détailsIndicateurs ?? null,

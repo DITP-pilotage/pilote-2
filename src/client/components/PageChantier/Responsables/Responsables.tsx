@@ -50,7 +50,7 @@ export default function ResponsablesPageChantier({ responsables, responsablesLoc
             />
             <hr className='fr-hr fr-py-1w' />
             <ResponsablesLigne
-              contenu={referentTerritorial?.map(referent => mailTo(`${referent.prénom} ${referent.nom}`, referent.email))}
+              contenu={referentTerritorial?.map(referent => mailTo(`${normaliseNom(referent.prénom)} ${normaliseNom(referent.nom)}`, referent.email))}
               libellé="Référent pilote du territoire"
             />
           </>

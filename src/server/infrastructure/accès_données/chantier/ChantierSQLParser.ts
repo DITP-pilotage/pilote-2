@@ -51,6 +51,7 @@ function créerDonnéesTerritoires(
     const chantierRow = chantierRows.find(c => c.code_insee === t.codeInsee);
     const écart = calculÉcart(chantierNational, chantierRow);
     const tendance = calculerTendance(chantierRow);
+    const chantierId = chantierRow?.id ?? '';
 
     donnéesTerritoires[t.codeInsee] = {
       codeInsee: t.codeInsee,
@@ -62,7 +63,7 @@ function créerDonnéesTerritoires(
       tendance: tendance,
       dateDeMàjDonnéesQualitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQualitatives ?? null : null,
       dateDeMàjDonnéesQuantitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQuantitatives ?? null : null,
-      responsableLocal: responsables.filter(r => r.habilitations.lecture.territoires.includes(t.code)),
+      responsableLocal: responsables.filter(r => r.habilitations.lecture.territoires.includes(t.code) && r.habilitations.lecture.chantiers.includes(chantierId)),
       référentTerritorial: référents.filter(r => r.habilitations.lecture.territoires.includes(t.code)),
     };
   });

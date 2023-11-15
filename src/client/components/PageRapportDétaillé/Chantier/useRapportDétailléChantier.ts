@@ -31,9 +31,9 @@ export function useRapportDétailléChantier(chantier: Chantier) {
   );
 
   const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
-  const responsableLocal = chantierTerritoireSélectionné?.responsableLocal.filter(r => r.habilitations.lecture.chantiers.includes(chantier.id)) ?? [];
-  const referentTerritorial = chantierTerritoireSélectionné?.référentTerritorial.filter(r => r.habilitations.lecture.chantiers.includes(chantier.id)) ?? [];
-
+  const responsableLocal = chantierTerritoireSélectionné?.responsableLocal ?? [];
+  const referentTerritorial = chantierTerritoireSélectionné?.référentTerritorial ?? [];
+  
   return {
     avancements,
     responsableLocal,
