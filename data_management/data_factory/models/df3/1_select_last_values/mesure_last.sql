@@ -7,12 +7,15 @@ with
 --  pour 2023-06-31 qui est transformé en 2023-06-30
 --  (erreur de saisie au début de vie de l'appli)
 fix_mesure_indicateur_06_31 as (
-    select * ,
+    select a.* ,
     CASE
         WHEN metric_date='2023-06-31' THEN '2023-06-30'
         ELSE metric_date
     END as metric_date_fixed
-    from {{ source('import_from_files', 'mesure_indicateur') }}
+    from {{ source('import_from_files', 'mesure_indicateur') }} a
+    -- On ne garde que les indics qui ne sont pas cachés
+	INNER JOIN {{ ref('metadata_indicateurs') }} b on a.indic_id=b.indic_id 
+    WHERE NOT coalesce(b.indic_hidden_pilote::text::bool, false)
 ),
 
 rank_mesures as (
