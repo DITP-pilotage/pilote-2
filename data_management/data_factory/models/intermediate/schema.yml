@@ -23,6 +23,8 @@ models:
         description: "UUID du dernier rapport pour cet {indicateur-zone}"
       - name: dernier_import_date
         description: "Date du dernier rapport (`dernier_import_rapport_id`)"
+      - name: dernier_import_auteur
+        description: "Auteur du dernier rapport qui modifie cet indicateur sur cette zone"
   - name: last_update_indic
     description: |
       Pour chaque {indicateur}, on indique le **rapport** et la **date** de ce rapport qui modifie cet indicateur sur **n'importe quelle zone**.
@@ -35,3 +37,5 @@ models:
         description: "UUID du dernier rapport pour cet {indicateur} (sur n'importe quelle zone)"
       - name: dernier_import_date_indic
         description: "Date du dernier rapport (`dernier_import_rapport_id_indic`)"
+      - name: dernier_import_auteur_indic
+        description: "Auteur du dernier rapport pour cet {indicateur} (sur n'importe quelle zone)"

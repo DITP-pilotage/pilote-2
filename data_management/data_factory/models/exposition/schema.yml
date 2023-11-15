@@ -145,6 +145,10 @@ models:
         description: "Date dernier import de données pour cet {indicateur}"
       - name: dernier_import_rapport_id_indic
         description: "UUID du dernier rapport d'import de données pour cet {indicateur}"
+      - name: dernier_import_auteur
+        description: "Auteur du dernier rapport qui modifie cet indicateur sur cette zone"
+      - name: dernier_import_auteur_indic
+        description: "Auteur du dernier rapport pour cet {indicateur} (sur n'importe quelle zone)"
   - name: decision_strategique
     columns:
       - name: id

@@ -31,8 +31,10 @@ SELECT m_indicateurs.id,
     COALESCE(indicateur_zone.est_applicable, true) AS est_applicable,
     last_update_indic_zone.dernier_import_date,
     last_update_indic_zone.dernier_import_rapport_id,
+    last_update_indic_zone.dernier_import_auteur,
     last_update_indic.dernier_import_date_indic,
     last_update_indic.dernier_import_rapport_id_indic,
+    last_update_indic.dernier_import_auteur_indic,
     false AS a_supprimer
 FROM {{ ref('stg_ppg_metadata__indicateurs') }} m_indicateurs
 	JOIN {{ ref('int_chantiers_with_mailles_and_territoires') }} chantiers_ayant_des_indicateurs ON m_indicateurs.chantier_id = chantiers_ayant_des_indicateurs.id

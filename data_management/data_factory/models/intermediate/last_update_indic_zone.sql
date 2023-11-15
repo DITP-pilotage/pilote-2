@@ -28,8 +28,12 @@ indic_zone_last_import as (
 		zone_id,
 		territoire_code,
 		rapport_id as dernier_import_rapport_id,
-		date_creation as dernier_import_date	
-	from sort_import_terr where r=1
+		a.date_creation as dernier_import_date,
+		concat(UPPER(LEFT(u.prenom,1)),LOWER(SUBSTRING(u.prenom,2,LENgth(u.prenom))) , ' ', UPPER(LEFT(u.nom,1)),LOWER(SUBSTRING(u.nom,2,LENgth(u.nom)))) as dernier_import_auteur
+	from sort_import_terr a
+	left join rapport_import_mesure_indicateur b on a.rapport_id=b.id
+	left join utilisateur u on b.utilisateur_email=u.email
+	where r=1
 	order by indic_id, zone_id
 )
 
