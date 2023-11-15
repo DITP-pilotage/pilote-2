@@ -126,6 +126,10 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
   }
   const modeÉcritureObjectifs = modeÉcriture; //territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication === true) && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);    
 
+  const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
+  const responsableLocal = chantierTerritoireSélectionné?.responsableLocal ?? [];
+  const referentTerritorial = chantierTerritoireSélectionné?.référentTerritorial ?? [];
+
   return {
     détailsIndicateurs: détailsIndicateurs ?? null,
     commentaires: commentaires ? commentaires[chantierId] as Commentaire[] : null,
@@ -141,5 +145,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     avancements,
     indicateurPondérations,
     saisieIndicateurAutorisée,
+    responsableLocal,
+    referentTerritorial,
   };
 }

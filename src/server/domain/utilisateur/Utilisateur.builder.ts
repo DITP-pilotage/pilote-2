@@ -21,7 +21,7 @@ export default class UtilisateurBuilder {
   private _habilitations: Utilisateur['habilitations'];
 
   constructor() {
-    this._id = faker.helpers.unique(faker.random.numeric, [4]);
+    this._id = faker.helpers.unique(faker.random.numeric, [10]);
     this._nom = faker.name.lastName();
     this._prénom = faker.name.firstName();
     this._email = faker.internet.email();

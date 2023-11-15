@@ -37,8 +37,7 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
    
     & > li > ul {
       padding-left: 1rem;
-      margin-block-start: 0.25rem;
-      margin-block-end: 0;
+      margin-block: 0.25rem 0;
       margin-bottom: 1rem;
     }
     
@@ -48,8 +47,7 @@ const PremièrePageImpressionRapportDétailléStyled = styled.div`
     
     ul {
       padding-left: 1.25rem;
-      margin-block-start: 0;
-      margin-block-end: 0.25rem;
+      margin-block: 0 0.25rem;
     }
   }
 `;

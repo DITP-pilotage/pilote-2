@@ -49,6 +49,8 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
     territoireSélectionné,
     indicateurPondérations,
     saisieIndicateurAutorisée,
+    responsableLocal,
+    referentTerritorial,
   } = usePageChantier(chantierId, indicateurs);
 
   const listeRubriques = listeRubriquesChantier(indicateurs.map(i => i.type), territoireSélectionné!.maille);
@@ -143,7 +145,12 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                           >
                             Responsables
                           </Titre>
-                          <ResponsablesPageChantier responsables={chantier.responsables} />
+                          <ResponsablesPageChantier 
+                            afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
+                            referentTerritorial={referentTerritorial}
+                            responsables={chantier.responsables}
+                            responsablesLocal={responsableLocal}
+                          />
                         </section>
                       </>
                   }

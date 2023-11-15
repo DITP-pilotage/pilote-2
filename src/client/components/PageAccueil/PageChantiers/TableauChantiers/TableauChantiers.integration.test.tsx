@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { getAllByRole, queryByText, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { userEvent } from '@testing-library/user-event';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 import TableauChantiers from './TableauChantiers';
 import { DonnéesTableauChantiers } from './TableauChantiers.interface';

@@ -1,6 +1,7 @@
 
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import ResponsablesLigne from '@/client/components/_commons/ResponsablesLigne/ResponsablesLigne';
+import { normaliseNom } from '@/client/utils/strings';
 import ResponsablesPageChantierStyled from './Responsables.styled';
 import ResponsablesPageChantierProps from './Responsables.interface';
 
@@ -12,7 +13,7 @@ const mailTo = (label: string, mail: string | null) => (
     : label
 );
 
-export default function ResponsablesPageChantier({ responsables }: ResponsablesPageChantierProps) {
+export default function ResponsablesPageChantier({ responsables, responsablesLocal, referentTerritorial, afficheResponsablesLocaux }: ResponsablesPageChantierProps) {
    
   return (
     <ResponsablesPageChantierStyled>
@@ -36,6 +37,24 @@ export default function ResponsablesPageChantier({ responsables }: ResponsablesP
           contenu={responsables.directeursProjet.map(directeur => (mailTo(directeur.nom, directeur.email)))}
           libellé="Directeur(s) / directrice(s) du projet"
         />
+        {
+          !!afficheResponsablesLocaux && 
+          <>
+            <hr className='fr-hr fr-py-1w' />
+            <ResponsablesLigne
+              contenu={
+                responsablesLocal?.map(responsable => 
+                  mailTo(`${normaliseNom(responsable.prénom)} ${normaliseNom(responsable.nom)}`, responsable.email))
+              }
+              libellé="Responsable local"
+            />
+            <hr className='fr-hr fr-py-1w' />
+            <ResponsablesLigne
+              contenu={referentTerritorial?.map(referent => mailTo(`${normaliseNom(referent.prénom)} ${normaliseNom(referent.nom)}`, referent.email))}
+              libellé="Référent pilote du territoire"
+            />
+          </>
+        }
       </Bloc>
     </ResponsablesPageChantierStyled>
   );
