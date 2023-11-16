@@ -10,7 +10,7 @@ import { ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE } from '@/client/constants/légende
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 import useIndicateurDétails from './useIndicateurDétails';
 
-export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme, chantierEstTerritorialisé }: IndicateurDétailsProps) {
+export default function IndicateurDétails({ indicateur, indicateurDétailsParTerritoires, typeDeRéforme, chantierEstTerritorialisé, dateDeMiseAJourIndicateur }: IndicateurDétailsProps) {
   const [futOuvert, setFutOuvert] = useState(false);
   const { auClicTerritoireMultiSélectionCallback } = useCartographie();
   const { donnéesCartographieAvancement, donnéesCartographieValeurActuelle, donnéesCartographieAvancementTerritorialisées, donnéesCartographieValeurActuelleTerritorialisées } = useIndicateurDétails(indicateur.id, futOuvert, typeDeRéforme);
@@ -92,7 +92,10 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
               
             </div>
             <hr className='fr-hr' />
-            <IndicateurÉvolution indicateurDétailsParTerritoires={indicateurDétailsParTerritoires} />
+            <IndicateurÉvolution 
+              dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
+              indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
+            />
           </>
         }
         </div>

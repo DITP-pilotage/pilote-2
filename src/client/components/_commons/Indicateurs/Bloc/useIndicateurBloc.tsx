@@ -18,9 +18,9 @@ import IndicateurBlocIndicateurTuile from '@/components/_commons/Indicateurs/Blo
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
+import { formaterDate } from '@/client/utils/date/date';
 import ValeurEtDate from './ValeurEtDate/ValeurEtDate';
 import { IndicateurDétailsParTerritoire } from './IndicateurBloc.interface';
-
 
 const indicateurDétailsVide = {
   territoireNom: '',
@@ -39,6 +39,7 @@ const indicateurDétailsVide = {
     avancement: { global: null, annuel: null },
     unité: null,
     est_applicable: false,
+    dateImport: null,
   },
 };
 
@@ -269,8 +270,13 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  const dateDeMiseAJourIndicateur = territoireSélectionné 
+    ? formaterDate(détailsIndicateur[territoireSélectionné.codeInsee]?.dateImport, 'DD/MM/YYYY') ?? 'Non renseigné'
+    : 'Non renseigné';
+
   return {
     indicateurDétailsParTerritoires,
     tableau,
+    dateDeMiseAJourIndicateur,
   };
 }

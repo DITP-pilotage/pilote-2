@@ -19,7 +19,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
   const réformeId = router.query.id as string;
   
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const { indicateurDétailsParTerritoires, tableau } = useIndicateurBloc(détailsIndicateur, typeDeRéforme, territoireProjetStructurant );
+  const { indicateurDétailsParTerritoires, tableau, dateDeMiseAJourIndicateur } = useIndicateurBloc(détailsIndicateur, typeDeRéforme, territoireProjetStructurant );
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
   return (
@@ -48,7 +48,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
                   Dernière mise à jour :
                   {' '}
                   <span className="fr-text--bold">
-                    Non renseigné
+                    {dateDeMiseAJourIndicateur}
                   </span>
                 </p>
                 {
@@ -82,6 +82,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
             !!estInteractif &&
               <IndicateurDétails
                 chantierEstTerritorialisé={chantierEstTerritorialisé}
+                dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
                 indicateur={indicateur}
                 indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
                 typeDeRéforme={typeDeRéforme}

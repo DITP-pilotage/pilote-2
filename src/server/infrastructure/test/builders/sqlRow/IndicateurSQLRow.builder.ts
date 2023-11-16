@@ -74,6 +74,17 @@ export default class IndicateurRowBuilder {
 
   private _est_applicable: indicateur['est_applicable'];
 
+  private _dernier_import_date: indicateur['dernier_import_date'];
+
+  private _dernier_import_rapport_id: indicateur['dernier_import_rapport_id'];
+
+  private _dernier_import_auteur: indicateur['dernier_import_auteur'];
+
+  private _dernier_import_auteur_indic: indicateur['dernier_import_auteur_indic'];
+
+  private _dernier_import_date_indic: indicateur['dernier_import_date_indic'];
+
+  private _dernier_import_rapport_id_indic: indicateur['dernier_import_rapport_id_indic'];
 
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
@@ -115,6 +126,12 @@ export default class IndicateurRowBuilder {
     this._a_supprimer = false;
     this._unite_mesure = indicateurGénéré.unité;
     this._est_applicable = détailsIndicateurGénéré.est_applicable;
+    this._dernier_import_date = détailsIndicateurGénéré.dateImport !== null ? new Date(détailsIndicateurGénéré.dateImport) : null;
+    this._dernier_import_auteur = faker.name.fullName();
+    this._dernier_import_rapport_id = faker.datatype.uuid();
+    this._dernier_import_date_indic = détailsIndicateurGénéré.dateImport !== null ? new Date(détailsIndicateurGénéré.dateImport) : null;
+    this._dernier_import_auteur_indic = faker.name.fullName();
+    this._dernier_import_rapport_id_indic = faker.datatype.uuid();
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {
@@ -277,6 +294,36 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  avecDernierImportDate(dernier_import_date: indicateur['dernier_import_date']): IndicateurRowBuilder {
+    this._dernier_import_date = dernier_import_date;
+    return this;
+  }
+
+  avecDernierImportRapportId(dernier_import_rapport_id: indicateur['dernier_import_rapport_id']): IndicateurRowBuilder {
+    this._dernier_import_rapport_id = dernier_import_rapport_id;
+    return this;
+  }
+
+  avecDernierImportAuteur(dernier_import_auteur: indicateur['dernier_import_auteur']): IndicateurRowBuilder {
+    this._dernier_import_auteur = dernier_import_auteur;
+    return this;
+  }
+
+  avecDernierImportDateIndic(dernier_import_date_indic: indicateur['dernier_import_date_indic']): IndicateurRowBuilder {
+    this._dernier_import_date_indic = dernier_import_date_indic;
+    return this;
+  }
+
+  avecDernierImportRapportIdIndic(dernier_import_rapport_id_indic: indicateur['dernier_import_rapport_id_indic']): IndicateurRowBuilder {
+    this._dernier_import_rapport_id_indic = dernier_import_rapport_id_indic;
+    return this;
+  }
+
+  avecDernierImportAuteurIndic(dernier_import_auteur_indic: indicateur['dernier_import_auteur_indic']): IndicateurRowBuilder {
+    this._dernier_import_auteur_indic = dernier_import_auteur_indic;
+    return this;
+  }
+
   build(): indicateur {
     return {
       id: this._id,
@@ -311,6 +358,12 @@ export default class IndicateurRowBuilder {
       a_supprimer: this._a_supprimer,
       unite_mesure: this._unite_mesure,
       est_applicable: this._est_applicable,
+      dernier_import_date: this._dernier_import_date,
+      dernier_import_rapport_id: this._dernier_import_rapport_id,
+      dernier_import_auteur: this._dernier_import_auteur,
+      dernier_import_auteur_indic: this._dernier_import_auteur_indic,
+      dernier_import_date_indic: this._dernier_import_date_indic,
+      dernier_import_rapport_id_indic: this._dernier_import_rapport_id_indic,
     };
   }
 }

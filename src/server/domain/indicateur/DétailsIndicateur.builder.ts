@@ -33,6 +33,8 @@ export default class DétailsIndicateurBuilder {
   
   private _est_applicable: DétailsIndicateur['est_applicable'];
 
+  private _dateImport: DétailsIndicateur['dateImport'];
+
   constructor() {
     const nombreDeValeurs = faker.datatype.number({ min: 28, max: 35 });
 
@@ -47,6 +49,7 @@ export default class DétailsIndicateurBuilder {
     this._valeurCibleAnnuelle = faker.datatype.number({ min: this._valeurInitiale ?? 42, max: this._valeurCible ?? 39, precision: 0.01 });
     this._unité = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._est_applicable = générerPeutÊtreNull(0.2, faker.datatype.boolean());
+    this._dateImport = new Date('2023-05-01T00:00:00.000Z').toISOString();
 
     const valeursEtDates = this.générerValeursEtDates(nombreDeValeurs, this._valeurInitiale, this._valeurCible);
 
@@ -120,6 +123,11 @@ export default class DétailsIndicateurBuilder {
     return this;
   }
 
+  avecDateImport(dateImport: DétailsIndicateur['dateImport']): DétailsIndicateurBuilder {
+    this._dateImport = dateImport;
+    return this;
+  }
+
   build(): DétailsIndicateur {
     return {
       codeInsee: this._codeInsee,
@@ -136,6 +144,7 @@ export default class DétailsIndicateurBuilder {
       avancement: this._avancement,
       unité: this._unité,
       est_applicable: this._est_applicable,
+      dateImport: this._dateImport,
     };
   }
 
