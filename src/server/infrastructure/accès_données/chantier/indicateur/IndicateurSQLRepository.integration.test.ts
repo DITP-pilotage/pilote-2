@@ -111,6 +111,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(40)
           .avecUnité('cm')
           .avecEstApplicable(false)
+          .avecDernierImportDate(new Date('2023-03-01'))
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -129,6 +130,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(40)
           .avecUnité('cm')
           .avecEstApplicable(false)
+          .avecDernierImportDate(new Date('2023-03-01'))
           .build(),
       ];
 
@@ -159,6 +161,7 @@ describe('IndicateurSQLRepository', () => {
               },
               unité: 'cm',
               est_applicable: false,
+              dateImport: '2023-03-01T00:00:00.000Z',
             },
             '03': {
               codeInsee: '03',
@@ -178,6 +181,7 @@ describe('IndicateurSQLRepository', () => {
               },
               unité: 'cm',
               est_applicable: false,
+              dateImport: '2023-03-01T00:00:00.000Z',
             },
           },
         },
@@ -218,6 +222,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(20)
           .avecUnité('cm')
           .avecEstApplicable(false)
+          .avecDernierImportDate(new Date('2023-03-01'))
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -236,6 +241,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(40)
           .avecUnité('cm')
           .avecEstApplicable(false)
+          .avecDernierImportDate(new Date('2023-03-01'))
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -254,6 +260,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(40)
           .avecUnité('cm')
           .avecEstApplicable(false)
+          .avecDernierImportDate(new Date('2023-03-01'))
           .build(),
       ];
 
@@ -284,6 +291,7 @@ describe('IndicateurSQLRepository', () => {
               },
               unité: 'cm',
               est_applicable: false,
+              dateImport: '2023-03-01T00:00:00.000Z',
             },
           },
           'IND-002': {
@@ -305,6 +313,7 @@ describe('IndicateurSQLRepository', () => {
               },
               unité: 'cm',
               est_applicable: false,
+              dateImport: '2023-03-01T00:00:00.000Z',
             },
             '03': {
               codeInsee: '03',
@@ -324,6 +333,7 @@ describe('IndicateurSQLRepository', () => {
               },
               unité: 'cm',
               est_applicable: false,
+              dateImport: '2023-03-01T00:00:00.000Z',
             },
           },
         },
@@ -358,6 +368,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(40)
           .avecUnité('cm')
           .avecEstApplicable(false)
+          .avecDernierImportDate(new Date('2023-03-01'))
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -376,6 +387,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(30)
           .avecUnité('cm')
           .avecEstApplicable(false)
+          .avecDernierImportDate(new Date('2023-03-01'))
           .build(),
       ];
 
@@ -406,6 +418,7 @@ describe('IndicateurSQLRepository', () => {
               },
               unité: 'cm',
               est_applicable: false,
+              dateImport: '2023-03-01T00:00:00.000Z',
             },
           },
         },
@@ -514,6 +527,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCibleIntermedaire(70)
           .avecUnité('cm')
           .avecEstApplicable(false)
+          .avecDernierImportDate(new Date('2023-03-01'))
           .build(),
       ];
 
@@ -544,6 +558,7 @@ describe('IndicateurSQLRepository', () => {
               },
               unité: 'cm',
               est_applicable: false,
+              dateImport: '2023-03-01T00:00:00.000Z',
             },
           },
         },
@@ -573,6 +588,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCibleIntermedaire(70)
           .avecUnité('cm')
           .avecEstApplicable(false)
+          .avecDernierImportDate(new Date('2023-03-01'))
           .build(),
       ];
 
@@ -603,6 +619,7 @@ describe('IndicateurSQLRepository', () => {
               },
               unité: 'cm',
               est_applicable: false,
+              dateImport: '2023-03-01T00:00:00.000Z',
             },
           },
         },

@@ -137,6 +137,18 @@ models:
         description: "source de données à date du 07/07/2023 : ppg_metadata.calculs_params"
       - name: ponderation_reg
         description: "source de données à date du 07/07/2023 : ppg_metadata.calculs_params"
+      - name: dernier_import_date
+        description: "Date dernier import de données pour cet {indicateur-zone}"
+      - name: dernier_import_rapport_id
+        description: "UUID du dernier rapport d'import de données pour cet {indicateur-zone}"
+      - name: dernier_import_date_indic
+        description: "Date dernier import de données pour cet {indicateur}"
+      - name: dernier_import_rapport_id_indic
+        description: "UUID du dernier rapport d'import de données pour cet {indicateur}"
+      - name: dernier_import_auteur
+        description: "Auteur du dernier rapport qui modifie cet indicateur sur cette zone"
+      - name: dernier_import_auteur_indic
+        description: "Auteur du dernier rapport pour cet {indicateur} (sur n'importe quelle zone)"
   - name: decision_strategique
     columns:
       - name: id

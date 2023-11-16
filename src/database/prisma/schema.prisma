@@ -132,6 +132,12 @@ model indicateur {
   objectif_date_valeur_cible_intermediaire  DateTime?  @db.Date
   est_applicable                            Boolean?
   a_supprimer                               Boolean @default(true)
+  dernier_import_date                       DateTime?  @db.Date
+  dernier_import_rapport_id                 String? @db.Uuid
+  dernier_import_auteur                     String?
+  dernier_import_date_indic                 DateTime?  @db.Date
+  dernier_import_rapport_id_indic           String? @db.Uuid
+  dernier_import_auteur_indic               String?
 
   @@id([id, code_insee, maille])
   @@schema("public")
