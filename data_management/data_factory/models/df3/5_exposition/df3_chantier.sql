@@ -24,4 +24,4 @@ select
     'todo' as a_taux_avancement_regional,
     false as a_supprimer,
     'todo' as est_applicable
-from raw_data.metadata_chantiers mc 
+from {{ ref('metadata_chantiers') }} mc 
