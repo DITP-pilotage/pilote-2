@@ -44,7 +44,34 @@ chantiers_zones_applicables AS (
         bool_or(est_applicable) as est_applicable
     FROM indicateurs_zones_applicables 
     GROUP BY chantier_id, zone_id
-)
+),
+ 
+ch_maille_has_ta as (
+select 
+chantier_id, z.zone_type,
+bool_or(tag_ch is not null) as has_ta
+ from df3.compute_ta_ch ctc
+ left join territoire t on ctc.territoire_code=t.code
+ left join raw_data.metadata_zones z on t.zone_id=z.zone_id
+ group by chantier_id, zone_type
+ order by chantier_id 
+ ),
+ ch_maille_has_ta_pivot as ( 
+select chantier_id,
+	case when zone_type='DEPT' then has_ta else null end as has_ta_dept,
+	case when zone_type='REG' then has_ta else null end as has_ta_reg,
+	case when zone_type='NAT' then has_ta else null end as has_ta_nat
+from ch_maille_has_ta),
+ch_maille_has_ta_pivot_clean as (
+	select chantier_id,
+		bool_or(has_ta_dept) as has_ta_dept, 
+		bool_or(has_ta_reg) as has_ta_reg, 
+		bool_or(has_ta_nat) as has_ta_nat
+	from ch_maille_has_ta_pivot
+	group by chantier_id)
+	
+
+
 
 select 
     mc.chantier_id as id,
@@ -66,10 +93,10 @@ select
     mc.ch_territo as est_territorialise,
     'todo' as taux_avancement_precedent,
 	LOWER(mc.ch_saisie_ate)::type_ate as ate,
-    'todo' as a_taux_avancement_departemental,
+    has_ta.has_ta_dept as a_taux_avancement_departemental,
     'todo' as a_meteo_departemental,
     'todo' as a_meteo_regional,
-    'todo' as a_taux_avancement_regional,
+    has_ta.has_ta_reg as a_taux_avancement_regional,
     false as a_supprimer,
     chantier_za.est_applicable as est_applicable
 from raw_data.metadata_chantiers mc
@@ -85,6 +112,7 @@ left join raw_data.metadata_ppgs ppg on mc.ch_ppg =ppg.ppg_id
 left join raw_data.metadata_axes ax on ppg.ppg_axe =ax.axe_id
 LEFT JOIN chantier_est_barometre on mc.chantier_id = chantier_est_barometre.chantier_id
 LEFT JOIN chantiers_zones_applicables chantier_za ON chantier_za.chantier_id = mc.chantier_id AND chantier_za.zone_id = z.zone_id
+left join ch_maille_has_ta_pivot_clean as has_ta on has_ta.chantier_id=mc.chantier_id 
 order by mc.chantier_id, t.zone_id
 
 
