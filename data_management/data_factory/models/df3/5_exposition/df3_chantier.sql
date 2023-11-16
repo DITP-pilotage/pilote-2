@@ -45,30 +45,16 @@ chantiers_zones_applicables AS (
     FROM indicateurs_zones_applicables 
     GROUP BY chantier_id, zone_id
 ),
- 
-ch_maille_has_ta as (
-select 
-chantier_id, z.zone_type,
-bool_or(tag_ch is not null) as has_ta
- from df3.compute_ta_ch ctc
- left join territoire t on ctc.territoire_code=t.code
- left join raw_data.metadata_zones z on t.zone_id=z.zone_id
- group by chantier_id, zone_type
- order by chantier_id 
- ),
- ch_maille_has_ta_pivot as ( 
-select chantier_id,
-	case when zone_type='DEPT' then has_ta else null end as has_ta_dept,
-	case when zone_type='REG' then has_ta else null end as has_ta_reg,
-	case when zone_type='NAT' then has_ta else null end as has_ta_nat
-from ch_maille_has_ta),
 ch_maille_has_ta_pivot_clean as (
-	select chantier_id,
-		bool_or(has_ta_dept) as has_ta_dept, 
-		bool_or(has_ta_reg) as has_ta_reg, 
-		bool_or(has_ta_nat) as has_ta_nat
-	from ch_maille_has_ta_pivot
-	group by chantier_id)
+select a.chantier_id,
+	bool_or(tag_ch is not null) filter (where z.zone_type='DEPT') as has_ta_dept,
+	bool_or(tag_ch is not null) filter (where z.zone_type='REG') as has_ta_reg,
+	bool_or(tag_ch is not null) filter (where z.zone_type='NAT') as has_ta_nat
+from df3.compute_ta_ch a
+left join territoire t on a.territoire_code =t.code
+left join raw_data.metadata_zones z on t.zone_id=z.zone_id
+group by chantier_id 
+	)
 	
 
 
