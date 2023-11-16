@@ -1,11 +1,11 @@
 select 
     chantier_id as id,
     ch_nom as nom,
-    'todo' as code_insee,
+    t.code_insee as code_insee,
     -1 as taux_avancement,
-    'todo' as territoire_nom,
+    t.nom as territoire_nom,
     string_to_array(ch_per, ' | ') as perimetre_ids, 
-    'todo' as "maille",
+    z.zone_type as "maille",
     'todo' as directeurs_administration_centrale,
     string_to_array("porteur_ids_noDAC" , ' | ') as ministeres, 
     string_to_array("porteur_shorts_DAC" , ' | ') as directions_administration_centrale, 
@@ -25,3 +25,9 @@ select
     false as a_supprimer,
     'todo' as est_applicable
 from {{ ref('metadata_chantiers') }} mc 
+-- On dupplique les lignes chantier pour chaque territoire
+cross join territoire t
+left join raw_data.metadata_zones z on z.zone_id=t.zone_id
+order by chantier_id, t.zone_id
+
+
