@@ -4,7 +4,10 @@
 --  {indic_id, zone_id , metric_type, mois}, on garde la plus tardive
 
 with rank_values_month as (
-    select *,
+    select 
+    date_import, indic_id,
+    to_char(date_trunc('month', metric_date::date),'YYYY-MM-DD') as metric_date, 
+    metric_type, metric_value, zone_id, id, rapport_id,
     rank() over (partition by 
         indic_id,
         zone_id,
