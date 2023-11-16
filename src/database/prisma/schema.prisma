@@ -426,12 +426,14 @@ model scope {
 }
 
 model historisation_modification {
-  id                 String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  typeDeModification String
-  dateDeModification String
-  tableModifieId     String
-  ancienneValeur     Json?
-  nouvelleValeur     Json?
+  id                   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_objet_modifie     String
+  utilisateur_nom      String
+  type_de_modification String
+  date_de_modification String
+  table_modifie_id     String
+  ancienne_valeur      Json?
+  nouvelle_valeur      Json?
 
   @@schema("public")
 }

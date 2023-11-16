@@ -4,5 +4,5 @@ import {
 } from '@/server/infrastructure/accès_données/historisationModification/HistorisationModificationDisponible';
 
 export interface HistorisationModificationRepository {
-  sauvegarderModificationCreation<K extends keyof HistorisationModificationDisponible>(historisationModification: HistorisationModification<K>): Promise<void>;
+  sauvegarderModificationHistorisation<K extends keyof HistorisationModificationDisponible>(historisationModification: HistorisationModification<K>): Promise<void>;
 }

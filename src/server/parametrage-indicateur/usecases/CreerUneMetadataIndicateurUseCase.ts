@@ -9,6 +9,7 @@ import {
   HistorisationModificationRepository,
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
 import { HistorisationModification } from '@/server/domain/historisationModification/HistorisationModification';
+import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
 
 export default class CreerUneMetadataIndicateurUseCase {
   constructor(
@@ -16,13 +17,25 @@ export default class CreerUneMetadataIndicateurUseCase {
     private readonly historisationModificationRepository: HistorisationModificationRepository = dependencies.getHistorisationModificationRepository(),
   ) {}
 
-  async run(inputs: MetadataParametrageIndicateurForm) {
-    const result = await this.metadataParametrageIndicateurRepository.creer(inputs);
-    const historisationModification = HistorisationModification.creerHistorisationModificationCreation({
+  async run(utilisateurNom: string, inputs: MetadataParametrageIndicateurForm) {
+    const metadataParametrageIndicateurNouveau = MetadataParametrageIndicateur.creerMetadataParametrageIndicateur({
+      ...inputs,
+      chantierNom: 'Non défini en création',
+    });
+
+    const result = await this.metadataParametrageIndicateurRepository.creer(metadataParametrageIndicateurNouveau);
+    const historisationModification = HistorisationModification.creerHistorisationCreation({
+      utilisateurNom,
       tableModifieId: 'metadata_indicateurs',
       nouvelleValeur: result,
     });
-    await this.historisationModificationRepository.sauvegarderModificationCreation(historisationModification);
+    const historisationParametrageModification = HistorisationModification.creerHistorisationCreation({
+      utilisateurNom,
+      tableModifieId: 'metadata_parametrages_indicateurs',
+      nouvelleValeur: result,
+    });
+    await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationModification);
+    await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationParametrageModification);
     return result;
   }
 }

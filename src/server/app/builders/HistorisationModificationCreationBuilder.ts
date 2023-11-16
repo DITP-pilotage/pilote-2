@@ -10,10 +10,17 @@ export class HistorisationModificationCreationBuilder {
   private tableModifieId: keyof HistorisationModificationDisponible = 'metadata_indicateurs';
 
   private nouvelleValeur: object = {};
+  
+  private utilisateurNom: string = 'utilisateurNom';
 
 
   withId(id: string) {
     this.id = id;
+    return this;
+  }
+
+  withUtilisateurNom(utilisateurNom: string) {
+    this.utilisateurNom = utilisateurNom;
     return this;
   }
 
@@ -28,8 +35,9 @@ export class HistorisationModificationCreationBuilder {
   }
 
   build<K extends keyof HistorisationModificationDisponible>(): HistorisationModification<K> {
-    return HistorisationModification.creerHistorisationModificationCreation<K>({
+    return HistorisationModification.creerHistorisationCreation<K>({
       id: this.id,
+      utilisateurNom: this.utilisateurNom,
       tableModifieId: this.tableModifieId as K,
       nouvelleValeur: this.nouvelleValeur as HistorisationModificationDisponible[K],
     });

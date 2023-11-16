@@ -112,7 +112,7 @@ import CommentaireProjetStructurantSQLRepository
   from './accès_données/projetStructurant/commentaire/CommentaireProjetStructurantSQLRepository';
 import PérimètreMinistérielSQLRepository from './accès_données/périmètreMinistériel/PérimètreMinistérielSQLRepository';
 import IndicateurProjetStructurantSQLRepository
-  from './accès_données/projetStructurant/indicateur/IndicateurSQLRepository'; // https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
+  from './accès_données/projetStructurant/indicateur/IndicateurSQLRepository';
 
 // https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
 const globalForPrisma = globalThis as unknown as {
