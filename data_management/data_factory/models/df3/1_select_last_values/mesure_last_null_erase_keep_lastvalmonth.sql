@@ -6,7 +6,7 @@
 with rank_values_month as (
     select 
     date_import, indic_id,
-    metric_date, 
+    to_char(date_trunc('month', metric_date::date),'YYYY-MM-DD') as metric_date, 
     metric_type, metric_value, zone_id, id, rapport_id,
     rank() over (partition by 
         indic_id,
