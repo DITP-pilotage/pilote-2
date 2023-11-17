@@ -84,4 +84,5 @@ ta_ch as (
 	group by indic_parent_ch, zone_id, valid_on
 )
 
-select * from ta_ch
+select a.*, t.code as territoire_code from ta_ch a
+left join territoire t on t.zone_id=a.zone_id
