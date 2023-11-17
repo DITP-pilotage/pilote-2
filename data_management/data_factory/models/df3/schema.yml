@@ -115,3 +115,28 @@ models:
         node_color: "#cd7f32"
       schema: public
       tags: ["df3"]
+  - name: compute_ta_ch
+    description: |
+      Pour chaque zone et chaque chantier, donne le **TA** en vigueur actuellement et le **TA précédent**. Règles:
+
+      - on se base sur la table `compute_ta_indic`
+      - pour le calcul du *TA actuel*: on utilise la *valeur la plus récente de l'indicateur*, peu importe sa date. Ex: on est en 11-23, on pourra utiliser des données de *11-23* ou antérieures.
+      - pour le calcul du *TA précédent*: on utilise la *valeur la plus récente **mais antérieure au mois actuel** de l'indicateur*, peu importe sa date. Ex: on est en 11-23, on ne pourra utiliser que des données de *10-23* ou antérieures.
+      - le *TA chantier* est la somme des TA pondérés de chaque indicateur contenus dans ce chantier
+    columns:
+      - name: tag_ch
+        description: "**Principal**: TA chantier *global*. C'est cette valeur qui est remontée comme TA du chantier"
+      - name: taa_ch
+        description: "TA chantier *annuel*"
+      - name: valid_on
+        description: "Prend les valeurs `[prev_month, today]` pour indiquer s'il s'agit du TA actuel ou du mois précédent."
+  - name: df3_chantier
+    description: |
+      Table des chantiers construite par la datafactory dbt. Version reconstruite de zero. Règles:
+
+      - certaines tables sont directement reprises du travail des prestataires: `synthese_triee_par_date`,`chantier_est_barometre`,`indicateurs_zones`,`indicateurs_zones_applicables`,`chantiers_zones_applicables`,
+    config:
+      docs:
+        node_color: "#cd7f32"
+      schema: public
+      tags: ["df3"]

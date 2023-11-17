@@ -35,3 +35,5 @@ sources:
         description: "Rapport des données importées par les utilisateurs"
       - name: territoire
         description: "Liste des territoires, lien vers la zone, et shape SVG."
+      - name: synthese_des_resultats
+        description: "Metéo et commentaires associés"
