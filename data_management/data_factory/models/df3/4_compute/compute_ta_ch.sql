@@ -1,20 +1,19 @@
 {{ config(materialized='table') }}
 
+with 
 -- TA de chaque {indic-zone} à chaque date
-with ta_zone_indic as (
-
-select 
- b.indic_parent_ch, a.zone_id, z.zone_type as "maille", metric_date,a.indic_id,
- vaca, vig, vca, vcg,
- taa, tag
-from {{ ref('compute_ta_indic') }} a
-left join {{ ref('metadata_indicateurs') }} b on a.indic_id =b.indic_id
-left join {{ ref('metadata_zones') }} z on a.zone_id=z.zone_id 
---where indic_parent_ch='CH-013' and a.zone_id='D05'
---where indic_parent_ch='CH-137' and a.zone_id='D01'
-order by indic_parent_ch, zone_id, metric_date, indic_id
+ta_zone_indic as (
+	select 
+	b.indic_parent_ch, a.zone_id, z.zone_type as "maille", metric_date,a.indic_id,
+	vaca, vig, vca, vcg,
+	taa, tag
+	from {{ ref('compute_ta_indic') }} a
+	left join {{ ref('metadata_indicateurs') }} b on a.indic_id =b.indic_id
+	left join {{ ref('metadata_zones') }} z on a.zone_id=z.zone_id 
+	order by indic_parent_ch, zone_id, metric_date, indic_id
 ),
 -- Calcul du TA pondéré
+--	On va pondérer chaque TA par sa pondération à cette maille
 ta_zone_indic_pond as (
 select a.*, b.poids_pourcent_dept, b.poids_pourcent_reg, b.poids_pourcent_nat,
 	case 
@@ -30,37 +29,31 @@ select a.*, b.poids_pourcent_dept, b.poids_pourcent_reg, b.poids_pourcent_nat,
 from ta_zone_indic a
 left join {{ ref('metadata_parametrage_indicateurs') }} b on a.indic_id=b.indic_id 
 order by indic_parent_ch, zone_id, metric_date, indic_id
-
 ),
-ta_zone_indic_lastmonth as (
-select * from ta_zone_indic where date_trunc('month', metric_date::date)<date_trunc('month', now()) 
-),
-
-compute_ta_pond_today as (
+-- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente
+ta_zone_indic_pond_today as (
 select * from (
 	select *, rank() over (partition by zone_id, indic_id order by metric_date desc) as r,
 	'today' as valid_on
 	from ta_zone_indic_pond 
-	-- pour ne pas sélectionner les VC
 	where vaca is not null) a
 where a.r=1
---and date_trunc('month', metric_date::date)<date_trunc('month', now()) 
 ),
-compute_ta_pond_prev_month as (
+-- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente
+--	MAIS en excluant les valeurs du mois courant. Ainsi, on aura le TA en vigeur au mois précédent.
+ta_zone_indic_pond_prev_month as (
 select * from (
 	select *, rank() over (partition by zone_id, indic_id order by metric_date desc) as r,
 	'prev_month' as valid_on
 	from ta_zone_indic_pond 
-	-- pour ne pas sélectionner les VC
 	where vaca is not null
 	and date_trunc('month', metric_date::date)<date_trunc('month', now()) 
 	) a
 where a.r=1
 ),
-
+-- Calcul du TA chantier
 ta_ch as (
 	select indic_parent_ch as chantier_id, zone_id, valid_on,
-	--date_trunc('month', metric_date::date) as mmonth,
 	array_agg(indic_id) as indic_ids,
 	array_agg(poids_pourcent_dept) as p_dept,
 	array_agg(poids_pourcent_reg) as p_reg,
@@ -77,10 +70,9 @@ ta_ch as (
 	sum(tag_pond) as tag_ch
 	from 
 	(
-	select * from compute_ta_pond_today union
-	select * from compute_ta_pond_prev_month
+	select * from ta_zone_indic_pond_today union
+	select * from ta_zone_indic_pond_prev_month
 	) a
-	--group by indic_parent_ch, zone_id, date_trunc('month', metric_date::date)
 	group by indic_parent_ch, zone_id, valid_on
 )
 
