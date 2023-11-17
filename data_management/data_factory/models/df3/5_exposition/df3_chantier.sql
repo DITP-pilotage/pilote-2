@@ -54,9 +54,17 @@ from df3.compute_ta_ch a
 left join territoire t on a.territoire_code =t.code
 left join raw_data.metadata_zones z on t.zone_id=z.zone_id
 group by chantier_id 
-	)
-	
+),
 
+-- Indique si il existe au moins une météo pour chaque chantier à chaque maille
+ch_has_meteo as (
+select a.chantier_id,
+	bool_or(meteo is not null) filter (where a.maille='DEPT') as has_meteo_dept,
+	bool_or(meteo is not null) filter (where a.maille='REG') as has_meteo_reg,
+	bool_or(meteo is not null) filter (where a.maille='NAT') as has_meteo_nat
+from synthese_triee_par_date a
+group by chantier_id 
+)
 
 
 select 
@@ -80,8 +88,8 @@ select
     'todo' as taux_avancement_precedent,
 	LOWER(mc.ch_saisie_ate)::type_ate as ate,
     has_ta.has_ta_dept as a_taux_avancement_departemental,
-    'todo' as a_meteo_departemental,
-    'todo' as a_meteo_regional,
+    ch_has_meteo.has_meteo_dept as a_meteo_departemental,
+    ch_has_meteo.has_meteo_reg as a_meteo_regional,
     has_ta.has_ta_reg as a_taux_avancement_regional,
     false as a_supprimer,
     chantier_za.est_applicable as est_applicable
@@ -98,7 +106,8 @@ left join raw_data.metadata_ppgs ppg on mc.ch_ppg =ppg.ppg_id
 left join raw_data.metadata_axes ax on ppg.ppg_axe =ax.axe_id
 LEFT JOIN chantier_est_barometre on mc.chantier_id = chantier_est_barometre.chantier_id
 LEFT JOIN chantiers_zones_applicables chantier_za ON chantier_za.chantier_id = mc.chantier_id AND chantier_za.zone_id = z.zone_id
-left join ch_maille_has_ta_pivot_clean as has_ta on has_ta.chantier_id=mc.chantier_id 
+left join ch_maille_has_ta_pivot_clean as has_ta on has_ta.chantier_id=mc.chantier_id
+left join ch_has_meteo on ch_has_meteo.chantier_id=mc.chantier_id 
 order by mc.chantier_id, t.zone_id
 
 
