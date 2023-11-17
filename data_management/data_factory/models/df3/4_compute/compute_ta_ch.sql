@@ -7,9 +7,9 @@ select
  b.indic_parent_ch, a.zone_id, z.zone_type as "maille", metric_date,a.indic_id,
  vaca, vig, vca, vcg,
  taa, tag
-from df3.compute_ta_indic a
-left join raw_data.metadata_indicateurs b on a.indic_id =b.indic_id
-left join raw_data.metadata_zones z on a.zone_id=z.zone_id 
+from {{ ref('compute_ta_indic') }} a
+left join {{ ref('metadata_indicateurs') }} b on a.indic_id =b.indic_id
+left join {{ ref('metadata_zones') }} z on a.zone_id=z.zone_id 
 --where indic_parent_ch='CH-013' and a.zone_id='D05'
 --where indic_parent_ch='CH-137' and a.zone_id='D01'
 order by indic_parent_ch, zone_id, metric_date, indic_id
@@ -28,7 +28,7 @@ select a.*, b.poids_pourcent_dept, b.poids_pourcent_reg, b.poids_pourcent_nat,
 		when maille='NAT' then tag*0.01*poids_pourcent_nat
 	end as tag_pond
 from ta_zone_indic a
-left join raw_data.metadata_parametrage_indicateurs b on a.indic_id=b.indic_id 
+left join {{ ref('metadata_parametrage_indicateurs') }} b on a.indic_id=b.indic_id 
 order by indic_parent_ch, zone_id, metric_date, indic_id
 
 ),
