@@ -85,4 +85,4 @@ ta_ch as (
 )
 
 select a.*, t.code as territoire_code from ta_ch a
-left join territoire t on t.zone_id=a.zone_id
+left join {{ source('db_schema_public', 'territoire') }} t on t.zone_id=a.zone_id

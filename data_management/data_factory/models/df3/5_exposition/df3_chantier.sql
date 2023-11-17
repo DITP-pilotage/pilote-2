@@ -9,7 +9,7 @@ synthese_triee_par_date as (
         maille,
         meteo,
         date_meteo
-    FROM public.synthese_des_resultats
+    FROM {{ source('db_schema_public', 'synthese_des_resultats') }}
 ),
 chantier_est_barometre as (
     SELECT m_indicateurs.chantier_id,
@@ -53,7 +53,7 @@ select a.chantier_id,
 	bool_or(tag_ch is not null) filter (where z.zone_type='REG') as has_ta_reg,
 	bool_or(tag_ch is not null) filter (where z.zone_type='NAT') as has_ta_nat
 from {{ ref('compute_ta_ch') }} a
-left join territoire t on a.territoire_code =t.code
+left join {{ source('db_schema_public', 'territoire') }} t on a.territoire_code =t.code
 left join {{ ref('metadata_zones') }} z on t.zone_id=z.zone_id
 group by chantier_id 
 ),
@@ -97,7 +97,7 @@ select
     chantier_za.est_applicable as est_applicable
 from {{ ref('metadata_chantiers') }} mc
 -- On dupplique les lignes chantier pour chaque territoire
-cross join territoire t
+cross join {{ source('db_schema_public', 'territoire') }} t
 left join {{ ref('metadata_zones') }} z on z.zone_id=t.zone_id
 left join {{ ref('metadata_porteurs') }} po on mc."porteur_ids_DAC"=po.porteur_id
 left join 
