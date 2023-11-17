@@ -47,6 +47,7 @@ chantiers_zones_applicables AS (
     FROM indicateurs_zones_applicables 
     GROUP BY chantier_id, zone_id
 ),
+-- Indique pour chaque chantier s'il existe un TA à chaque maille
 ch_maille_has_ta_pivot_clean as (
 select a.chantier_id,
 	bool_or(tag_ch is not null) filter (where z.zone_type='DEPT') as has_ta_dept,
@@ -57,8 +58,7 @@ left join {{ source('db_schema_public', 'territoire') }} t on a.territoire_code 
 left join {{ ref('metadata_zones') }} z on t.zone_id=z.zone_id
 group by chantier_id 
 ),
-
--- Indique si il existe au moins une météo pour chaque chantier à chaque maille
+-- Indique pour chaque chantier s'il existe une météo à chaque maille
 ch_has_meteo as (
 select a.chantier_id,
 	bool_or(meteo is not null) filter (where a.maille='DEPT') as has_meteo_dept,
