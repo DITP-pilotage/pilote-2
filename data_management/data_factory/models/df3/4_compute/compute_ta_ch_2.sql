@@ -60,7 +60,8 @@ select * from ta_zone_indic where date_trunc('month', metric_date::date)<date_tr
 
 compute_ta_pond_today as (
 select * from (
-	select *, rank() over (partition by zone_id, indic_id order by metric_date desc) as r
+	select *, rank() over (partition by zone_id, indic_id order by metric_date desc) as r,
+	'today' as valid_on
 	from compute_ta_pond 
 	-- pour ne pas sélectionner les VC
 	where vaca is not null) a
@@ -69,7 +70,8 @@ where a.r=1
 ),
 compute_ta_pond_prev_month as (
 select * from (
-	select *, rank() over (partition by zone_id, indic_id order by metric_date desc) as r
+	select *, rank() over (partition by zone_id, indic_id order by metric_date desc) as r,
+	'prev_month' as valid_on
 	from compute_ta_pond 
 	-- pour ne pas sélectionner les VC
 	where vaca is not null
@@ -78,8 +80,8 @@ select * from (
 where a.r=1
 ),
 
-ta_ch_today as (
-select indic_parent_ch, zone_id, 
+ta_ch as (
+select indic_parent_ch, zone_id, valid_on,
 --date_trunc('month', metric_date::date) as mmonth,
 array_agg(indic_id) as indic_ids,
 array_agg(poids_pourcent_dept) as p_dept,
@@ -95,30 +97,13 @@ array_agg(tag) as tag_agg,
 array_agg(tag_pond) as tag_pond_agg,
 sum(taa_pond) as taa_ch,
 sum(tag_pond) as tag_ch
-from compute_ta_pond_today
+from 
+(
+select * from compute_ta_pond_today union
+select * from compute_ta_pond_prev_month
+) a
 --group by indic_parent_ch, zone_id, date_trunc('month', metric_date::date)
-group by indic_parent_ch, zone_id
-),
-ta_ch_prev_month as (
-select indic_parent_ch, zone_id, 
---date_trunc('month', metric_date::date) as mmonth,
-array_agg(indic_id) as indic_ids,
-array_agg(poids_pourcent_dept) as p_dept,
-array_agg(poids_pourcent_reg) as p_reg,
-array_agg(poids_pourcent_nat) as p_nat,
-array_agg(vaca) as vaca_agg, 
-array_agg(vig) as vig_agg, 
-array_agg(vca) as vca_agg, 
-array_agg(vcg) as vcg_agg, 
-array_agg(taa) as taa_agg, 
-array_agg(taa_pond) as taa_pond_agg, 
-array_agg(tag) as tag_agg,
-array_agg(tag_pond) as tag_pond_agg,
-sum(taa_pond) as taa_ch,
-sum(tag_pond) as tag_ch
-from compute_ta_pond_prev_month
---group by indic_parent_ch, zone_id, date_trunc('month', metric_date::date)
-group by indic_parent_ch, zone_id
+group by indic_parent_ch, zone_id, valid_on
 )
 
-select * from ta_ch_prev_month
+select * from ta_ch
