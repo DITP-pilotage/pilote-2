@@ -1,3 +1,5 @@
+{{ config(materialized='table') }}
+
 with 
 -- Table des synthèses triée par date
 synthese_triee_par_date as (
