@@ -72,7 +72,12 @@ sort_mesures_va_last as (
 	taa as objectif_taux_avancement_intermediaire,
 	vca_date::date as objectif_date_valeur_cible_intermediaire,
     COALESCE(z_appl.est_applicable, true) AS est_applicable,
-    -- todo
+	last_update_indic_zone.dernier_import_date,
+    last_update_indic_zone.dernier_import_rapport_id,
+    last_update_indic_zone.dernier_import_auteur,
+    last_update_indic.dernier_import_date_indic,
+    last_update_indic.dernier_import_rapport_id_indic,
+    last_update_indic.dernier_import_auteur_indic,
     FALSE as a_supprimer
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi
@@ -86,6 +91,9 @@ sort_mesures_va_last as (
 	left join public.territoire terr on t.zone_id = terr.zone_id 
 	left join {{ ref('metadata_zones') }} mz on mz.zone_id = terr.zone_id 
 	LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} z_appl ON z_appl.indic_id = mi.indic_id AND z_appl.zone_id = t.zone_id
+	-- pour avoir le bon nombre de lignes, une par territoire
 	right join list_indic_terr lit on mi.indic_id=lit.indic_id and terr.code=lit.territoire_code
+	LEFT JOIN {{ ref('last_update_indic_zone') }} last_update_indic_zone ON mi.indic_id=last_update_indic_zone.indic_id AND t.code =last_update_indic_zone.territoire_code 
+    LEFT JOIN {{ ref('last_update_indic') }} last_update_indic ON mi.indic_id=last_update_indic.indic_id
 	--where a.r=1
 	order by mi.indic_id, terr.code
