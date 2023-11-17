@@ -73,7 +73,7 @@ select
     mc.chantier_id as id,
     ch_nom as nom,
     t.code_insee as code_insee,
-    -1 as taux_avancement,
+    ta_ch_today.tag_ch as taux_avancement,
     t.nom as territoire_nom,
     string_to_array(ch_per, ' | ') as perimetre_ids, 
     z.zone_type as "maille",
@@ -87,7 +87,7 @@ select
     string_to_array("ch_dp_mail" , ' | ') as directeurs_projet_mails,
     chantier_est_barometre.est_barometre,
     mc.ch_territo as est_territorialise,
-    'todo' as taux_avancement_precedent,
+    ta_ch_prev_month.tag_ch as taux_avancement_precedent,
 	LOWER(mc.ch_saisie_ate)::type_ate as ate,
     has_ta.has_ta_dept as a_taux_avancement_departemental,
     ch_has_meteo.has_meteo_dept as a_meteo_departemental,
@@ -110,6 +110,10 @@ LEFT JOIN chantier_est_barometre on mc.chantier_id = chantier_est_barometre.chan
 LEFT JOIN chantiers_zones_applicables chantier_za ON chantier_za.chantier_id = mc.chantier_id AND chantier_za.zone_id = z.zone_id
 left join ch_maille_has_ta_pivot_clean as has_ta on has_ta.chantier_id=mc.chantier_id
 left join ch_has_meteo on ch_has_meteo.chantier_id=mc.chantier_id 
+left join 
+	(select * from df3.compute_ta_ch_2 where valid_on='today') as ta_ch_today on ta_ch_today.chantier_id=mc.chantier_id and ta_ch_today.zone_id=z.zone_id 
+left join 
+	(select * from df3.compute_ta_ch_2 where valid_on='prev_month') as ta_ch_prev_month on ta_ch_prev_month.chantier_id=mc.chantier_id and ta_ch_prev_month.zone_id=z.zone_id
 order by mc.chantier_id, t.zone_id
 
 
