@@ -82,7 +82,7 @@ where a.r=1
 ),
 
 ta_ch as (
-select indic_parent_ch, zone_id, valid_on,
+select indic_parent_ch as chantier_id, zone_id, valid_on,
 --date_trunc('month', metric_date::date) as mmonth,
 array_agg(indic_id) as indic_ids,
 array_agg(poids_pourcent_dept) as p_dept,
