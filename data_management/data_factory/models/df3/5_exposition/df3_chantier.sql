@@ -100,7 +100,7 @@ from raw_data.metadata_chantiers mc
 cross join territoire t
 left join raw_data.metadata_zones z on z.zone_id=t.zone_id
 left join raw_data.metadata_porteurs po on mc."porteur_ids_DAC"=po.porteur_id
-left join synthese_triee_par_date sr ON 
+left join (select * from synthese_triee_par_date where row_id_by_date_meteo_desc=1) sr ON 
 	sr.chantier_id =mc.chantier_id AND
 	sr.maille = z.zone_type AND
 	sr.code_insee = t.code_insee
