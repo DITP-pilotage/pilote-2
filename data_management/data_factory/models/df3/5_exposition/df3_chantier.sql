@@ -112,9 +112,9 @@ LEFT JOIN chantiers_zones_applicables chantier_za ON chantier_za.chantier_id = m
 left join ch_maille_has_ta_pivot_clean as has_ta on has_ta.chantier_id=mc.chantier_id
 left join ch_has_meteo on ch_has_meteo.chantier_id=mc.chantier_id 
 left join 
-	(select * from df3.compute_ta_ch_2 where valid_on='today') as ta_ch_today on ta_ch_today.chantier_id=mc.chantier_id and ta_ch_today.zone_id=z.zone_id 
+	(select * from df3.compute_ta_ch where valid_on='today') as ta_ch_today on ta_ch_today.chantier_id=mc.chantier_id and ta_ch_today.zone_id=z.zone_id 
 left join 
-	(select * from df3.compute_ta_ch_2 where valid_on='prev_month') as ta_ch_prev_month on ta_ch_prev_month.chantier_id=mc.chantier_id and ta_ch_prev_month.zone_id=z.zone_id
+	(select * from df3.compute_ta_ch where valid_on='prev_month') as ta_ch_prev_month on ta_ch_prev_month.chantier_id=mc.chantier_id and ta_ch_prev_month.zone_id=z.zone_id
 order by mc.chantier_id, t.zone_id
 
 
