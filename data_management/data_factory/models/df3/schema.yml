@@ -115,3 +115,13 @@ models:
         node_color: "#cd7f32"
       schema: public
       tags: ["df3"]
+  - name: df3_chantier
+    description: |
+      Table des chantiers construite par la datafactory dbt. Version reconstruite de zero. Règles:
+
+      - TODO
+    config:
+      docs:
+        node_color: "#cd7f32"
+      schema: public
+      tags: ["df3"]
