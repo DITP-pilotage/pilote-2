@@ -1,3 +1,4 @@
+{{ config(materialized='table') }}
 
 -- TA de chaque {indic-zone} à chaque date
 with ta_zone_indic as (
@@ -10,7 +11,7 @@ from df3.compute_ta_indic a
 left join raw_data.metadata_indicateurs b on a.indic_id =b.indic_id
 left join raw_data.metadata_zones z on a.zone_id=z.zone_id 
 --where indic_parent_ch='CH-013' and a.zone_id='D05'
-where indic_parent_ch='CH-137' and a.zone_id='D01'
+--where indic_parent_ch='CH-137' and a.zone_id='D01'
 order by indic_parent_ch, zone_id, metric_date, indic_id
 ),
 -- Calcul du TA pondéré
