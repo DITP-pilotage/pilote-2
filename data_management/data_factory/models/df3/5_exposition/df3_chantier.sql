@@ -74,7 +74,6 @@ select
     ch_nom as nom,
     t.code_insee as code_insee,
     ta_ch_today.tag_ch as taux_avancement,
-    ta_ch_prev_month.tag_ch as taux_avancement_precedent,
     t.nom as territoire_nom,
     string_to_array(ch_per, ' | ') as perimetre_ids, 
     z.zone_type as "maille",
@@ -88,14 +87,14 @@ select
     string_to_array("ch_dp_mail" , ' | ') as directeurs_projet_mails,
     chantier_est_barometre.est_barometre,
     mc.ch_territo as est_territorialise,
-    t.code as territoire_code,
+    ta_ch_prev_month.tag_ch as taux_avancement_precedent,
 	LOWER(mc.ch_saisie_ate)::type_ate as ate,
     has_ta.has_ta_dept as a_taux_avancement_departemental,
-    has_ta.has_ta_reg as a_taux_avancement_regional,
     ch_has_meteo.has_meteo_dept as a_meteo_departemental,
     ch_has_meteo.has_meteo_reg as a_meteo_regional,
-    chantier_za.est_applicable as est_applicable,
-    false as a_supprimer
+    has_ta.has_ta_reg as a_taux_avancement_regional,
+    false as a_supprimer,
+    chantier_za.est_applicable as est_applicable
 from {{ ref('metadata_chantiers') }} mc
 -- On dupplique les lignes chantier pour chaque territoire
 cross join {{ source('db_schema_public', 'territoire') }} t
