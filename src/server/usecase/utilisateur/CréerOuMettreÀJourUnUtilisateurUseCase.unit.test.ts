@@ -9,9 +9,16 @@ import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { codesTerritoiresDROM } from '@/validation/utilisateur';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
-import { Habilitations, HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
+import {
+  Habilitations,
+  HabilitationsÀCréerOuMettreÀJourCalculées,
+} from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import PérimètreMinistérielRepository
+  from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
+import {
+  HistorisationModificationRepository,
+} from '@/server/domain/historisationModification/HistorisationModificationRepository';
 import CréerOuMettreÀJourUnUtilisateurUseCase from './CréerOuMettreÀJourUnUtilisateurUseCase';
 
 describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
@@ -68,12 +75,13 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
   const stubTerritoireRepository =  mock<TerritoireRepository>();
   const stubChantierRepository = mock<ChantierRepository>();
   const stubPérimètreMinistérielRepository = mock<PérimètreMinistérielRepository>();
+  const stubHistorisationModificationRepository = mock<HistorisationModificationRepository>();
 
   stubTerritoireRepository.récupérerTous.mockResolvedValue(fakeTerritoires as Territoire[]);
   stubChantierRepository.récupérerChantiersSynthétisés.mockResolvedValue(fakeChantiersSynthétisés);
   stubPérimètreMinistérielRepository.récupérerTous.mockResolvedValue(fakePérimètres);
 
-  const créerOuMettreÀJourUnUtilisateurUseCase = new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository, stubUtilisateurRepository, stubTerritoireRepository, stubChantierRepository, stubPérimètreMinistérielRepository);
+  const créerOuMettreÀJourUnUtilisateurUseCase = new CréerOuMettreÀJourUnUtilisateurUseCase(stubUtilisateurIAMRepository, stubUtilisateurRepository, stubTerritoireRepository, stubChantierRepository, stubPérimètreMinistérielRepository, stubHistorisationModificationRepository);
 
   const oldEnv = process.env;
 

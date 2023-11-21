@@ -71,18 +71,18 @@ model chantier {
   a_meteo_departemental              Boolean?
   a_meteo_regional                   Boolean?
   est_applicable                     Boolean?
-  a_supprimer Boolean                @default(true)
+  a_supprimer                        Boolean    @default(true)
 
   @@id([id, code_insee, maille])
   @@schema("public")
 }
 
 model ministere {
-  id        String      @id
-  nom       String
-  perimetre perimetre[]
-  icone     String?
-  a_supprimer Boolean @default(true)
+  id          String      @id
+  nom         String
+  perimetre   perimetre[]
+  icone       String?
+  a_supprimer Boolean     @default(true)
 
   @@schema("public")
 }
@@ -93,51 +93,51 @@ model perimetre {
   ministere       String?
   ministere_table ministere? @relation(fields: [ministere_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   ministere_id    String?
-  a_supprimer Boolean @default(true)
+  a_supprimer     Boolean    @default(true)
 
   @@schema("public")
 }
 
 model indicateur {
-  id                                        String
-  nom                                       String
-  chantier_id                               String
-  objectif_valeur_cible                     Float?
-  objectif_taux_avancement                  Float?
-  objectif_date_valeur_cible                DateTime?  @db.Date
-  type_id                                   String?
-  type_nom                                  String?
-  est_barometre                             Boolean?
-  est_phare                                 Boolean?
-  valeur_initiale                           Float?
-  date_valeur_initiale                      DateTime?  @db.Date
-  valeur_actuelle                           Float?
-  date_valeur_actuelle                      DateTime?  @db.Date
-  territoire_nom                            String?
-  code_insee                                String
-  maille                                    String
-  evolution_valeur_actuelle                 Float[]
-  evolution_date_valeur_actuelle            DateTime[] @db.Date
-  description                               String?
-  source                                    String?
-  mode_de_calcul                            String?
-  unite_mesure                              String?
-  territoire                                territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
-  territoire_code                           String
-  ponderation_dept                          Float?
-  ponderation_reg                           Float?
-  ponderation_nat                           Float?
-  objectif_valeur_cible_intermediaire       Float?
-  objectif_taux_avancement_intermediaire    Float?
-  objectif_date_valeur_cible_intermediaire  DateTime?  @db.Date
-  est_applicable                            Boolean?
-  a_supprimer                               Boolean @default(true)
-  dernier_import_date                       DateTime?  @db.Date
-  dernier_import_rapport_id                 String? @db.Uuid
-  dernier_import_auteur                     String?
-  dernier_import_date_indic                 DateTime?  @db.Date
-  dernier_import_rapport_id_indic           String? @db.Uuid
-  dernier_import_auteur_indic               String?
+  id                                       String
+  nom                                      String
+  chantier_id                              String
+  objectif_valeur_cible                    Float?
+  objectif_taux_avancement                 Float?
+  objectif_date_valeur_cible               DateTime?  @db.Date
+  type_id                                  String?
+  type_nom                                 String?
+  est_barometre                            Boolean?
+  est_phare                                Boolean?
+  valeur_initiale                          Float?
+  date_valeur_initiale                     DateTime?  @db.Date
+  valeur_actuelle                          Float?
+  date_valeur_actuelle                     DateTime?  @db.Date
+  territoire_nom                           String?
+  code_insee                               String
+  maille                                   String
+  evolution_valeur_actuelle                Float[]
+  evolution_date_valeur_actuelle           DateTime[] @db.Date
+  description                              String?
+  source                                   String?
+  mode_de_calcul                           String?
+  unite_mesure                             String?
+  territoire                               territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
+  territoire_code                          String
+  ponderation_dept                         Float?
+  ponderation_reg                          Float?
+  ponderation_nat                          Float?
+  objectif_valeur_cible_intermediaire      Float?
+  objectif_taux_avancement_intermediaire   Float?
+  objectif_date_valeur_cible_intermediaire DateTime?  @db.Date
+  est_applicable                           Boolean?
+  a_supprimer                              Boolean    @default(true)
+  dernier_import_date                      DateTime?  @db.Date
+  dernier_import_rapport_id                String?    @db.Uuid
+  dernier_import_auteur                    String?
+  dernier_import_date_indic                DateTime?  @db.Date
+  dernier_import_rapport_id_indic          String?    @db.Uuid
+  dernier_import_auteur_indic              String?
 
   @@id([id, code_insee, maille])
   @@schema("public")
@@ -158,16 +158,16 @@ model synthese_des_resultats {
 }
 
 model axe {
-  id  String @id
-  nom String
+  id          String  @id
+  nom         String
   a_supprimer Boolean @default(true)
 
   @@schema("public")
 }
 
 model ppg {
-  id  String @id
-  nom String
+  id          String  @id
+  nom         String
   a_supprimer Boolean @default(true)
 
   @@schema("public")
@@ -290,7 +290,7 @@ model projet_structurant {
   taux_avancement          Float?
   date_taux_avancement     DateTime? @db.Timestamp
   date_donnees_qualitative DateTime? @db.Timestamp
-  a_supprimer Boolean @default(true)
+  a_supprimer              Boolean   @default(true)
 
   @@schema("public")
 }
@@ -312,7 +312,7 @@ model indicateur_projet_structurant {
   date_valeur_cible       DateTime? @db.Timestamp
   date_taux_avancement    DateTime? @db.Timestamp
   projet_structurant_id   String
-  a_supprimer Boolean @default(true)
+  a_supprimer             Boolean   @default(true)
 
   @@schema("public")
 }
@@ -324,11 +324,11 @@ enum type_objectif_projet_structurant {
 }
 
 model objectif_projet_structurant {
-  id                    String   @id
+  id                    String                           @id
   projet_structurant_id String
   type                  type_objectif_projet_structurant
   contenu               String
-  date                  DateTime @db.Timestamp
+  date                  DateTime                         @db.Timestamp
   auteur                String?
 
   @@schema("public")
@@ -358,11 +358,11 @@ model commentaire_projet_structurant {
 }
 
 model perimetre_projet_structurant {
-  id                 String @id
+  id                 String  @id
   perimetres_ppg_nom String
   perimetres_ppg_id  String
   perimetre_ps_nom   String
-  a_supprimer Boolean @default(true)
+  a_supprimer        Boolean @default(true)
 
   @@schema("public")
 }
@@ -421,6 +421,19 @@ model scope {
   code         String         @id
   nom          String
   habilitation habilitation[]
+
+  @@schema("public")
+}
+
+model historisation_modification {
+  id                   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_objet_modifie     String
+  utilisateur_nom      String
+  type_de_modification String
+  date_de_modification String
+  table_modifie_id     String
+  ancienne_valeur      Json?
+  nouvelle_valeur      Json?
 
   @@schema("public")
 }

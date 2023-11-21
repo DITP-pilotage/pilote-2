@@ -1,11 +1,43 @@
-import { PrismaClient, habilitation, profil, utilisateur, chantier, territoire, projet_structurant, perimetre } from '@prisma/client';
-import Utilisateur, { ProfilCode, UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/domain/utilisateur/Utilisateur.interface';
+import {
+  chantier,
+  habilitation,
+  perimetre,
+  PrismaClient,
+  profil,
+  projet_structurant,
+  territoire,
+  utilisateur,
+} from '@prisma/client';
+import Utilisateur, {
+  ProfilCode,
+  UtilisateurÀCréerOuMettreÀJourSansHabilitation,
+} from '@/server/domain/utilisateur/Utilisateur.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import {
   HabilitationsÀCréerOuMettreÀJourCalculées,
   ScopeChantiers,
   ScopeUtilisateurs,
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+
+export const convertirEnModel = (utilisateurAConvertir: {
+  email: string
+  nom: string
+  prenom: string
+  profilCode: string
+  fonction: string | null
+  auteurModification: string
+  dateModification: Date
+}): Omit<utilisateur, 'id'> => {
+  return {
+    email: utilisateurAConvertir.email,
+    nom: utilisateurAConvertir.nom,
+    prenom: utilisateurAConvertir.prenom,
+    profilCode: utilisateurAConvertir.profilCode,
+    fonction: utilisateurAConvertir.fonction,
+    auteur_modification: utilisateurAConvertir.auteurModification,
+    date_modification: new Date(),
+  };
+};
 
 export class UtilisateurSQLRepository implements UtilisateurRepository {
   private _territoires: string[] = [];
@@ -196,22 +228,24 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurModification: string): Promise<void> {
     const utilisateurCrééOuMisÀJour = await this._prisma.utilisateur.upsert({
-      create: {
+      create: convertirEnModel({
         email: u.email.toLocaleLowerCase(),
         nom: u.nom,
         prenom: u.prénom,
         profilCode: u.profil,
         fonction: u.fonction,
-        auteur_modification: auteurModification,
-      },
-      update: {
+        auteurModification: auteurModification,
+        dateModification: new Date(),
+      }),
+      update: convertirEnModel({
+        email: u.email,
         nom: u.nom,
         prenom: u.prénom,
         profilCode: u.profil,
         fonction: u.fonction,
-        auteur_modification: auteurModification,
-        date_modification: new Date(),
-      },
+        auteurModification: auteurModification,
+        dateModification: new Date(),
+      }),
       where: {
         email: u.email.toLowerCase(),
       },

@@ -32,7 +32,8 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
   modifier: procédureProtégée.input(zodValidateurCSRF.merge(validationMetadataIndicateurFormulaire).and(validationMetadataIndicateurContexte))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      return new ModifierUneMetadataIndicateurUseCase().run({
+      
+      return new ModifierUneMetadataIndicateurUseCase().run(ctx.session.user.name as string, {
         indicId: input.indicId,
         indicParentIndic: input.indicParentIndic || '',
         indicParentCh: input.indicParentCh,
@@ -84,7 +85,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
   creer: procédureProtégée.input(zodValidateurCSRF.merge(validationMetadataIndicateurFormulaire).and(validationMetadataIndicateurContexte))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      return new CreerUneMetadataIndicateurUseCase().run({
+      return new CreerUneMetadataIndicateurUseCase().run(ctx.session.user.name as string, {
         indicId: input.indicId,
         indicParentIndic: input.indicParentIndic || '',
         indicParentCh: input.indicParentCh,

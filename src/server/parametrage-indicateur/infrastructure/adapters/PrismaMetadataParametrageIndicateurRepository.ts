@@ -10,11 +10,8 @@ import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/d
 import {
   MetadataParametrageIndicateurRepository,
 } from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
-import {
-  MetadataParametrageIndicateurForm,
-} from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm';
 
-interface RawMetadataParametrageIndicateurModel {
+export interface RawMetadataParametrageIndicateurModel {
   indic_id: string,
   vi_dept_from: string,
   vi_dept_op: string,
@@ -117,7 +114,6 @@ function convertirEnMetadataParametrageIndicateur(rawMetadataParametrageIndicate
     chantierNom: rawMetadataParametrageIndicateur.ch_nom,
   });
 }
-
 export class PrismaMetadataParametrageIndicateurRepository implements MetadataParametrageIndicateurRepository {
   constructor(private prismaClient: PrismaClient) {}
 
@@ -167,7 +163,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
   }
 
 
-  async modifier(inputs: MetadataParametrageIndicateurForm): Promise<MetadataParametrageIndicateur> {
+  async modifier(inputs: MetadataParametrageIndicateur): Promise<MetadataParametrageIndicateur> {
     const queryIndicateur = `UPDATE raw_data.metadata_indicateurs_hidden
                                  SET indic_parent_indic   = '${inputs.indicParentIndic}',
                                      indic_parent_ch   = '${inputs.indicParentCh}',
@@ -226,7 +222,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
     return this.recupererMetadataParametrageIndicateurParIndicId(inputs.indicId);
   }
 
-  async creer(inputs: MetadataParametrageIndicateurForm): Promise<MetadataParametrageIndicateur> {
+  async creer(inputs: MetadataParametrageIndicateur): Promise<MetadataParametrageIndicateur> {
 
     const queryIndicateur = `INSERT INTO raw_data.metadata_indicateurs_hidden (indic_id,
                                                                             indic_parent_indic,

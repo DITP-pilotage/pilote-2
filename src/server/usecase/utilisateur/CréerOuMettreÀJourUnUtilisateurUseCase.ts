@@ -1,16 +1,29 @@
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
-import { UtilisateurÀCréerOuMettreÀJour, profilsDépartementaux, profilsRégionaux, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
+import Utilisateur, {
+  profilsDépartementaux,
+  profilsRégionaux,
+  profilsTerritoriaux,
+  UtilisateurÀCréerOuMettreÀJour,
+} from '@/server/domain/utilisateur/Utilisateur.interface';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
-import { Habilitations, HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import {
+  Habilitations,
+  HabilitationsÀCréerOuMettreÀJourCalculées,
+} from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { codesTerritoiresDROM } from '@/validation/utilisateur';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import PérimètreMinistérielRepository from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
+import PérimètreMinistérielRepository
+  from '@/server/domain/périmètreMinistériel/PérimètreMinistérielRepository.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import {
+  HistorisationModificationRepository,
+} from '@/server/domain/historisationModification/HistorisationModificationRepository';
+import { HistorisationModification } from '@/server/domain/historisationModification/HistorisationModification';
 
 export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   constructor(
@@ -19,7 +32,44 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
     private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
     private readonly périmètreMinistérielRepository: PérimètreMinistérielRepository = dependencies.getPérimètreMinistérielRepository(),
+    private readonly historisationModification: HistorisationModificationRepository = dependencies.getHistorisationModificationRepository(),
   ) {}
+
+  async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteurModification: string, utilisateurExistant: boolean, habilitations: Habilitations): Promise<void> {
+    const habilitationsFormatées = await this._définirLesHabilitations(utilisateur);
+    let utilisateurAvantModification: Utilisateur | null = null;
+
+    const habilitation = new Habilitation(habilitations);
+    habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(habilitationsFormatées.lecture.chantiers, habilitationsFormatées.lecture.territoires);
+
+    await this._vérifierExistenceUtilisateur(utilisateur.email, utilisateurExistant);
+
+    if (utilisateurExistant) {
+      utilisateurAvantModification = await this.utilisateurRepository.récupérer(utilisateur.email) as Utilisateur;
+    }
+
+    await this.utilisateurRepository.créerOuMettreÀJour({ ...utilisateur, habilitations: habilitationsFormatées }, auteurModification);
+
+    const utilisateurApresExecution = await this.utilisateurRepository.récupérer(utilisateur.email) as Utilisateur;
+
+    const historisationModification = utilisateurExistant ? HistorisationModification.creerHistorisationModification({
+      utilisateurNom: auteurModification,
+      tableModifieId: 'utilisateur',
+      ancienneValeur: utilisateurAvantModification as Utilisateur,
+      nouvelleValeur: utilisateurApresExecution,
+    }) : HistorisationModification.creerHistorisationCreation({
+      utilisateurNom: auteurModification,
+      tableModifieId: 'utilisateur',
+      nouvelleValeur: utilisateurApresExecution,
+    });
+
+    await this.historisationModification.sauvegarderModificationHistorisation(historisationModification);
+
+    if (process.env.IMPORT_KEYCLOAK_URL && !utilisateurExistant) {
+      const utilisateursPourIAM = [{ nom: utilisateur.nom, prénom: utilisateur.prénom, email: utilisateur.email }];
+      await this.utilisateurIAMRepository.ajouteUtilisateurs(utilisateursPourIAM);
+    }
+  }
 
   private _déterminerChantiersPasEnDoublonsAvecLesPérimètres(chantiersSélectionnés: string[], périmètreSélectionnés: string[], chantiers: ChantierSynthétisé[]): string[] {
     return chantiersSélectionnés.filter(chantierId => {
@@ -166,26 +216,12 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   private async _vérifierExistenceUtilisateur(email: string, utilisateurExistant: boolean) {
     const utilisateurExiste = await this.utilisateurRepository.récupérer(email);
 
-    if (utilisateurExistant && !utilisateurExiste) 
+    if (utilisateurExistant && !utilisateurExiste)  {
       throw new Error('Le compte à modifier n’existe pas.');
-    
-    if (!utilisateurExistant && utilisateurExiste)
+    }
+
+    if (!utilisateurExistant && utilisateurExiste) {
       throw new Error('Un compte a déjà été créé avec cette adresse électronique.');
-  }
-
-  async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteurModification: string, utilisateurExistant: boolean, habilitations: Habilitations): Promise<void> {
-    const habilitationsFormatées = await this._définirLesHabilitations(utilisateur);
-
-    const habilitation = new Habilitation(habilitations);
-    habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(habilitationsFormatées.lecture.chantiers, habilitationsFormatées.lecture.territoires);
-
-    await this._vérifierExistenceUtilisateur(utilisateur.email, utilisateurExistant);
-
-    await this.utilisateurRepository.créerOuMettreÀJour({ ...utilisateur, habilitations: habilitationsFormatées }, auteurModification);
-
-    if (process.env.IMPORT_KEYCLOAK_URL && !utilisateurExistant) {
-      const utilisateursPourIAM = [{ nom: utilisateur.nom, prénom: utilisateur.prénom, email: utilisateur.email }];
-      await this.utilisateurIAMRepository.ajouteUtilisateurs(utilisateursPourIAM);
     }
   }
 }

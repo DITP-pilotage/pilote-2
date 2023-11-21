@@ -5,13 +5,37 @@ import {
 import {
   MetadataParametrageIndicateurForm,
 } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateurInputForm';
+import {
+  HistorisationModificationRepository,
+} from '@/server/domain/historisationModification/HistorisationModificationRepository';
+import { HistorisationModification } from '@/server/domain/historisationModification/HistorisationModification';
+import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
 
 export default class CreerUneMetadataIndicateurUseCase {
   constructor(
     private readonly metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository = dependencies.getMetadataParametrageIndicateurRepository(),
+    private readonly historisationModificationRepository: HistorisationModificationRepository = dependencies.getHistorisationModificationRepository(),
   ) {}
 
-  async run(inputs: MetadataParametrageIndicateurForm) {
-    return this.metadataParametrageIndicateurRepository.creer(inputs);
+  async run(utilisateurNom: string, inputs: MetadataParametrageIndicateurForm) {
+    const metadataParametrageIndicateurNouveau = MetadataParametrageIndicateur.creerMetadataParametrageIndicateur({
+      ...inputs,
+      chantierNom: 'Non défini en création',
+    });
+
+    const result = await this.metadataParametrageIndicateurRepository.creer(metadataParametrageIndicateurNouveau);
+    const historisationModification = HistorisationModification.creerHistorisationCreation({
+      utilisateurNom,
+      tableModifieId: 'metadata_indicateurs',
+      nouvelleValeur: result,
+    });
+    const historisationParametrageModification = HistorisationModification.creerHistorisationCreation({
+      utilisateurNom,
+      tableModifieId: 'metadata_parametrages_indicateurs',
+      nouvelleValeur: result,
+    });
+    await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationModification);
+    await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationParametrageModification);
+    return result;
   }
 }
