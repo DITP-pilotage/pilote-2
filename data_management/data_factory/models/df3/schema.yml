@@ -55,7 +55,6 @@ models:
         - on se base sur la table d'aggrégation de DEPT vers REG (`agg_reg`) pour déterminer les valeurs au NAT. En effet, il est possible que des valeurs DEPT soient nécessaire pour le calcul des valeurs au REG, **et** que ces valeurs calculées au REG soient nécessaires pour le calcul des valeurs NAT. Il ne faut donc pas repartir de la table des valeurs importées, mais bien de la table de résultat de l'aggrégation REG.
         - les aggrégations se font par `metric_date` exact (pas arrondi au mois). Ex: si on a `{R01,2023-08-31,10}` et `{R02,2023-08-15,25}`, on aura `{FRANCE,2023-08-31,10}` et `{FRANCE,2023-08-15,25}`
         - si l'opération n'est pas supportée, on aura la valeur `-1.212121` qui sera retournée comme résultat de l'aggrégation
-        - *Aggrégation vide des VC NAT:* Si la VC NAT est calculée **mais** que le résultat du calcul est `NULL`, alors **on sélectionne la valeur saisie à la place**
   - name: agg_all
     description: "Combinaision des tables d'aggrégation aux trois mailles (DEPT, REG, NAT)"
   - name: pivot_mesures
