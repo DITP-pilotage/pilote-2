@@ -111,18 +111,11 @@ compute_op_selected as (
 -- On sélectionne qq colonne puis tri
 mesure_last_params_nat_aggregated as (
     select 
-        val_computed.indic_id,
-        val_computed.zone_parent as zone_id,
-        val_computed.metric_date, val_computed.metric_type,
-        -- Si le résultat de l'opération n'est pas NULL, on prend cette valeur
-        --		Sinon, on prend la valeur saisie 
-        coalesce(val_computed.op_selected, val_saisies.metric_value::float) as metric_value
-		--, (val_computed.op_selected is null) as is_op_selected_skipped
-    from compute_op_selected val_computed
-    left join 
-	    -- Jointure avec la table des VC saisies
-    	(select * from mesure_last_params_nat_user where zone_id='FRANCE' and metric_type='vc') val_saisies
-    	on val_computed.indic_id=val_saisies.indic_id and val_computed.zone_parent=val_saisies.zone_id
+        indic_id,
+        zone_parent as zone_id,
+        metric_date, metric_type,
+        op_selected as metric_value
+    from compute_op_selected
     order by indic_id, zone_id, metric_date, metric_type
 )
 
