@@ -5,6 +5,7 @@ models:
     description: |
         Pour chaque {indic_id, metric_type, metric_date, zone_id}, on retourne la valeur la plus récente. Règles:
 
+        - On ne garde que les mesures sur les **zones applicables** (voir `view_meta_indicateur` colonne `zg_applicable` et ref `int_indicateurs_zones_applicables` pour les détails)
         - Si 2 valeurs pour le meme {indic_id, metric_type, metric_date, zone_id}, on retourne celle avec la date d'import la plus récente. On dit que c'est la valeur **valable**. Ex: `[{date_import1, 12-dec-25, va, 10}, {date_import2, 12-dec-25, va, 15}] => [{date_import2, 12-dec-25, va, 15}]`
         - Si 2 valeurs dans le même mois, à des jours différents, on garde **les deux**. Ces deux valeurs sont des *valeurs valables*.
         - Transformation de `'null'` et `''` vers un `NULL`
