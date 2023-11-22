@@ -55,6 +55,14 @@ models:
         - on se base sur la table d'aggrégation de DEPT vers REG (`agg_reg`) pour déterminer les valeurs au NAT. En effet, il est possible que des valeurs DEPT soient nécessaire pour le calcul des valeurs au REG, **et** que ces valeurs calculées au REG soient nécessaires pour le calcul des valeurs NAT. Il ne faut donc pas repartir de la table des valeurs importées, mais bien de la table de résultat de l'aggrégation REG.
         - les aggrégations se font par `metric_date` exact (pas arrondi au mois). Ex: si on a `{R01,2023-08-31,10}` et `{R02,2023-08-15,25}`, on aura `{FRANCE,2023-08-31,10}` et `{FRANCE,2023-08-15,25}`
         - si l'opération n'est pas supportée, on aura la valeur `-1.212121` qui sera retournée comme résultat de l'aggrégation
+  - name: agg_nat_rule544
+    description: |
+        Application de la *règle 544* sur les VC NAT. Règles:
+
+        - Si la VC NAT est normalement cumulée (is `vc_nat_from<>user_input`)
+        - Si le calcul du cumul retourne `NULL`
+        - Alors, **on retourne la valeur saisie *illégalement* au national**. En théorie, cette valeur devrait être ignorée, mais dans cette règle, on l'utilise pour combler le vide.
+        - *Exemple:* une VC 2026 est indiquée au NAT mais pas encore territorialisée: on va l'afficher en attendant la territorialisation. Une fois que les VC DEPT seront renseignées, c'est bien la somme des VC DEPT qui va s'afficher en tant que VC 26
   - name: agg_all
     description: "Combinaision des tables d'aggrégation aux trois mailles (DEPT, REG, NAT)"
   - name: pivot_mesures
