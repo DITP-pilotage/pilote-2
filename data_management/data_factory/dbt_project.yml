@@ -124,6 +124,6 @@ vars:
     # Les dates plus tardives ne seront pas considérées pour déterminer les VCG
     vcg_max_date: '2028-01-01'
     # Les dates antérieures ne seront pas considérées pour déterminer les VIG
-    vig_min_date: '2020-01-01'
+    vig_min_date: '2018-01-01'
     # Nombre de décimales renvoyées par le calcul des TAA et TAG
     ta_decimales: 2
