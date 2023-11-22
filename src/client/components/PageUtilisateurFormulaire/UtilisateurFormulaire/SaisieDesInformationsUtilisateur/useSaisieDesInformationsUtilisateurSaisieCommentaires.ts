@@ -33,8 +33,8 @@ export default function useSaisieDesInformationsUtilisateur(
   }, [setValue]);
 
   useEffect(() => {
-    setAfficherChampSaisieCommentaireChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous  && profilSélectionné.chantiers.saisieCommentaire.saisiePossible);
-    setAfficherChampSaisieCommentairePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieCommentaire.saisiePossible);
+    setAfficherChampSaisieCommentaireChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous  && !profilSélectionné.chantiers.lecture.tousTerritorialisés && profilSélectionné.chantiers.saisieCommentaire.saisiePossible);
+    setAfficherChampSaisieCommentairePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés && profilSélectionné.chantiers.saisieCommentaire.saisiePossible);
   }, [profilSélectionné]);
 
   useEffect(() => {
@@ -50,9 +50,7 @@ export default function useSaisieDesInformationsUtilisateur(
   }, [chantiers, profilSélectionné, chantiersLecture]);
 
   useEffect(() => {
-    if (!!!utilisateur && chantiersAccessiblesPourLeProfilSaisieCommentaire) {
-      handleChangementValeursSélectionnéesChantiersSaisieCommentaire(chantiersAccessiblesPourLeProfilSaisieCommentaire.map(c => c.id));
-  
+    if (!!!utilisateur && chantiersAccessiblesPourLeProfilSaisieCommentaire) {  
       const périmètresListe = chantiersAccessiblesPourLeProfilSaisieCommentaire.flatMap(c => c.périmètreIds); 
       setPérimètresIdSélectionnablesSaisie([...new Set(périmètresListe)]);
     }

@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import { UtilisateurFormInputs, UtilisateurFormulaireProps } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
 import api from '@/server/infrastructure/api/trpc/api';
 import { Profil } from '@/server/domain/profil/Profil.interface';
-import { profilsDépartementaux, profilsRégionaux, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { profilsDépartementaux, profilsRégionaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { auMoinsUneValeurDuTableauEstContenueDansLAutreTableau } from '@/client/utils/arrays';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 
@@ -41,16 +41,14 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
 
   useEffect(() => {
     setAfficherChampLectureTerritoires(!!profilSélectionné && (profilsDépartementaux.includes(profilSélectionné.code) || profilsRégionaux.includes(profilSélectionné.code)));
-    setAfficherChampLectureChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous);
-    setAfficherChampLecturePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous);
+    setAfficherChampLectureChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
+    setAfficherChampLecturePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
   }, [profilSélectionné]);
 
   useEffect(() => {
     if (!chantiers || !profilSélectionné) return;
     
-    if (profilSélectionné.code === 'DROM') {
-      setChantiersAccessiblesPourLeProfil(chantiers.filter(chantier => chantier.estTerritorialisé || chantier.périmètreIds.includes('PER-018')));
-    } else if (profilsTerritoriaux.includes(profilSélectionné.code)) {
+    if (['RESPONSABLE_DEPARTEMENT', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(profilSélectionné.code)) {
       setChantiersAccessiblesPourLeProfil(chantiers.filter(chantier => chantier.estTerritorialisé));
     } else {
       setChantiersAccessiblesPourLeProfil(chantiers);
@@ -72,21 +70,6 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
 
         if (utilisateur.habilitations?.lecture.périmètres) 
           setValue('habilitations.lecture.périmètres', utilisateur.habilitations?.lecture.périmètres);
-      } else {
-        if (profils) {
-          const profilAssociéAuProfilCodeSélectionné = profils.find(p => p.code === profilCodeSélectionné);
-          if (profilAssociéAuProfilCodeSélectionné?.chantiers.lecture.tousTerritorialisés) {
-            if (chantiersAccessiblesPourLeProfil.length === 0 && chantiers) {
-              if (profilCodeSélectionné === 'DROM') {
-                handleChangementValeursSélectionnéesChantiers(chantiers.filter(chantier => chantier.estTerritorialisé || chantier.périmètreIds.includes('PER-018')).map(c => c.id));
-              } else {
-                handleChangementValeursSélectionnéesChantiers(chantiers.filter(chantier => chantier.estTerritorialisé).map(c => c.id));
-              }
-            } else {
-              handleChangementValeursSélectionnéesChantiers(chantiersAccessiblesPourLeProfil.map(c => c.id));
-            }            
-          }
-        }
       }
 
       setAncienProfilCodeSélectionné(profilCodeSélectionné);

@@ -25,8 +25,8 @@ export default function useSaisieDesInformationsUtilisateurSaisieIndicateurs(
 
   // GESTION CHANGEMENT DE PROFIL
   useEffect(() => {
-    setAfficherChampSaisieIndicateursChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires);
-    setAfficherChampSaisieIndicateursPérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires);
+    setAfficherChampSaisieIndicateursChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires && profilSélectionné.code !== 'DROM');
+    setAfficherChampSaisieIndicateursPérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires && profilSélectionné.code !== 'DROM');
   }, [profilSélectionné]);
 
 
@@ -40,7 +40,7 @@ export default function useSaisieDesInformationsUtilisateurSaisieIndicateurs(
           setValue('habilitations.saisieIndicateur.chantiers', utilisateur?.habilitations?.['saisieIndicateur'].chantiers);
       
         if (utilisateur?.habilitations?.['saisieIndicateur'].périmètres) 
-          setValue('habilitations.lecture.périmètres', utilisateur?.habilitations?.['saisieIndicateur'].périmètres);
+          setValue('habilitations.saisieIndicateur.périmètres', utilisateur?.habilitations?.['saisieIndicateur'].périmètres);
       }
 
       setAncienProfilCodeSélectionné(profilCodeSélectionné);
@@ -59,11 +59,11 @@ export default function useSaisieDesInformationsUtilisateurSaisieIndicateurs(
     setValue('habilitations.saisieIndicateur.chantiers', valeursSélectionnées);
   }, [setValue]);
 
-  useEffect(() => {
-    if (!!!utilisateur && chantiersSélectionnables) {
-      handleChangementValeursSélectionnéesChantiersSaisieIndicateurs(chantiersSélectionnables.map(c => c.id));
-    }
-  }, [chantiersSélectionnables, handleChangementValeursSélectionnéesChantiersSaisieIndicateurs, utilisateur]);
+  // useEffect(() => {
+  //   if (!!!utilisateur && chantiersSélectionnables) {
+  //     handleChangementValeursSélectionnéesChantiersSaisieIndicateurs(chantiersSélectionnables.map(c => c.id));
+  //   }
+  // }, [chantiersSélectionnables, handleChangementValeursSélectionnéesChantiersSaisieIndicateurs, utilisateur]);
 
 
   const handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieIndicateurs = useCallback((valeursSélectionnées: string[]) => {  
