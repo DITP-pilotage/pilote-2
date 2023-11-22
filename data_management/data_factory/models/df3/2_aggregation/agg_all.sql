@@ -5,5 +5,5 @@ select indic_id, zone_id, metric_date, metric_type, metric_value::float from {{ 
 union
 select * from {{ ref('agg_reg') }}
 union
-select * from {{ ref('agg_nat') }}
+select * from {{ ref('agg_nat_rule544') }}
 order by indic_id, zone_id, metric_date
