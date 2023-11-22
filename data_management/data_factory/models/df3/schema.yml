@@ -58,12 +58,12 @@ models:
         - si l'opération n'est pas supportée, on aura la valeur `-1.212121` qui sera retournée comme résultat de l'aggrégation
   - name: agg_nat_rule544
     description: |
-        Application de la *règle 544* sur les VC NAT. Règles:
+        Application de la *règle 544* sur les **VC et VI NAT**. Règles:
 
         - Si la VC NAT est normalement cumulée (is `vc_nat_from<>user_input`)
         - Si le calcul du cumul retourne `NULL`
         - Alors, **on retourne la valeur saisie *illégalement* au national**. En théorie, cette valeur devrait être ignorée, mais dans cette règle, on l'utilise pour combler le vide.
-        - *Exemple:* une VC 2026 est indiquée au NAT mais pas encore territorialisée: on va l'afficher en attendant la territorialisation. Une fois que les VC DEPT seront renseignées, c'est bien la somme des VC DEPT qui va s'afficher en tant que VC 26
+        - *Exemple:* une VC 2026 est indiquée au NAT mais pas encore territorialisée: on va l'afficher en attendant la territorialisation. Une fois que les VC DEPT seront renseignées, c'est bien la somme des VC DEPT qui va s'afficher en tant que VC 26. Même logique pour la VI.
   - name: agg_all
     description: "Combinaision des tables d'aggrégation aux trois mailles (DEPT, REG, NAT)"
   - name: pivot_mesures
