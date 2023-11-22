@@ -101,7 +101,11 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   private _déterminerChantiersAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
     const touslesChantiersIds = new Set(chantiers.map(chantier => chantier.id));
 
-    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM'].includes(utilisateur.profil)) {
+    if (utilisateur.profil === 'DROM') {
+      return this._déterminerChantiersAccessiblesEnLecture(utilisateur, chantiers);
+    }
+
+    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET'].includes(utilisateur.profil)) {
       const chantiersPasEnDoublonsAvecLesPérimètres = this._déterminerChantiersPasEnDoublonsAvecLesPérimètres(
         utilisateur.habilitations.saisieIndicateur.chantiers,
         utilisateur.habilitations.saisieIndicateur.périmètres,
@@ -169,10 +173,10 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   private _déterminerPérimètresAccessiblesEnSaisieIndicateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
     const tousLesPérimètresIds = new Set(périmètres.map(p => p.id));
 
-    // if (utilisateur.profil === 'DROM') 
-    //   return ['PER-018'];
+    if (utilisateur.profil === 'DROM') 
+      return ['PER-018'];
     
-    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM'].includes(utilisateur.profil))
+    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET'].includes(utilisateur.profil))
       return utilisateur.habilitations.saisieIndicateur.périmètres.filter(p => tousLesPérimètresIds.has(p));
     
     return [];
@@ -180,8 +184,8 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
 
   private _déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
     const tousLesPérimètresIds = new Set(périmètres.map(p => p.id));
-    // if (utilisateur.profil === 'DROM') 
-    //   return ['PER-018'];
+    if (utilisateur.profil === 'DROM') 
+      return ['PER-018'];
     
     if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET'].includes(utilisateur.profil) || profilsTerritoriaux.includes(utilisateur.profil))
       return utilisateur.habilitations.saisieCommentaire.périmètres.filter(p => tousLesPérimètresIds.has(p));

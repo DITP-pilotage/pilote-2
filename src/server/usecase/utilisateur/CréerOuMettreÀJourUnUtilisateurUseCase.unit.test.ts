@@ -313,8 +313,8 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
       const habilitationsAttendues = {
         ...habilitationsVides, 
         lecture: { chantiers: [], territoires: codesTerritoiresDROM, périmètres: ['PER-018'] },
-        'saisieCommentaire':  { chantiers: [], territoires: ['NAT-FR'], périmètres: [] },
-        'saisieIndicateur':  { chantiers: [], territoires: [], périmètres: [] },
+        'saisieCommentaire':  { chantiers: [], territoires: ['NAT-FR'], périmètres: ['PER-018'] },
+        'saisieIndicateur':  { chantiers: [], territoires: [], périmètres: ['PER-018'] },
       };
       await testCasPassant('DROM', habilitationsAttendues);
     });
