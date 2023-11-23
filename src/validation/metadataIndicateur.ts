@@ -76,6 +76,10 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .max(500, 'La limite maximale de 500 caractères a été dépassée')
     .min(0, 'Ce champ ne peut pas être vide')
     .nullable(),
+  zgApplicable: z
+    .string()
+    .nullable()
+    .refine((value) => value === null || value === '' || new RegExp(metadata.zg_applicable.metaPiloteEditRegex).test(value), metadata.zg_applicable.metaPiloteEditRegexViolationMessage),
   viDeptFrom: z
     .string(),
   viDeptOp: z

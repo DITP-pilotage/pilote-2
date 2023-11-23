@@ -13,7 +13,7 @@ export default class InitialiserNouvelIndicateurUseCase {
   ) {}
 
   async run(indicId: string): Promise<MetadataParametrageIndicateur> {
-    const listeInformation = presenterEnMapInformationMetadataIndicateurContrat(await this.informationMetadataIndicateurRepository.récupererInformationMetadataIndicateur());
+    const listeInformation = presenterEnMapInformationMetadataIndicateurContrat(this.informationMetadataIndicateurRepository.récupererInformationMetadataIndicateur());
 
     return MetadataParametrageIndicateur.creerMetadataParametrageIndicateur({
       indicId,
@@ -61,6 +61,7 @@ export default class InitialiserNouvelIndicateurUseCase {
       indicUnite: listeInformation.indic_unite.metaPiloteDefaultValue as string,
       indicHiddenPilote: listeInformation.indic_hidden_pilote.metaPiloteDefaultValue as boolean,
       indicSchema: listeInformation.indic_schema.metaPiloteDefaultValue as string,
+      zgApplicable: listeInformation.zg_applicable.metaPiloteDefaultValue as string,
       chantierNom: '',
     });
   }

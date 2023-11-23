@@ -10,6 +10,7 @@ export interface MetadataParametrageIndicateurForm {
   indicType: string;
   indicUnite: string;
   indicSchema: string;
+  zgApplicable: string;
 }
 
 function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageIndicateurForm>) {

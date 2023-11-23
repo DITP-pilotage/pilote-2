@@ -57,6 +57,7 @@ export interface RawMetadataParametrageIndicateurModel {
   indic_unite: string,
   indic_hidden_pilote: boolean | null,
   indic_schema: string,
+  zg_applicable: string,
   ch_nom: string,
 }
 
@@ -111,6 +112,7 @@ function convertirEnMetadataParametrageIndicateur(rawMetadataParametrageIndicate
     indicUnite: rawMetadataParametrageIndicateur.indic_unite,
     indicHiddenPilote: rawMetadataParametrageIndicateur.indic_hidden_pilote === true,
     indicSchema: rawMetadataParametrageIndicateur.indic_schema,
+    zgApplicable: rawMetadataParametrageIndicateur.zg_applicable,
     chantierNom: rawMetadataParametrageIndicateur.ch_nom,
   });
 }
@@ -180,7 +182,8 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                      indic_methode_calcul = '${makeStrSafer(inputs.indicMethodeCalcul)}',
                                      indic_unite          = '${makeStrSafer(inputs.indicUnite)}',
                                      indic_hidden_pilote  = ${inputs.indicHiddenPilote},
-                                     indic_schema         = '${makeStrSafer(inputs.indicSchema)}'
+                                     indic_schema         = '${makeStrSafer(inputs.indicSchema)}',
+                                     zg_applicable         = '${makeStrSafer(inputs.zgApplicable)}'
                                  WHERE indic_id = '${inputs.indicId}'`;
     const queryMetadataIndicateur = `UPDATE raw_data.metadata_parametrage_indicateurs
                                          SET vi_dept_from              = '${makeStrSafer(inputs.viDeptFrom)}',
@@ -240,7 +243,9 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                                             indic_methode_calcul,
                                                                             indic_unite,
                                                                             indic_hidden_pilote,
-                                                                            indic_schema)
+                                                                            indic_schema,
+                                                                            zg_applicable
+                                                  )
                                  VALUES ('${inputs.indicId}',
                                          '${inputs.indicParentIndic}',
                                          '${inputs.indicParentCh}',
@@ -257,7 +262,8 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                          '${makeStrSafer(inputs.indicMethodeCalcul)}',
                                          '${makeStrSafer(inputs.indicUnite)}',
                                          ${inputs.indicHiddenPilote},
-                                         '${makeStrSafer(inputs.indicSchema)}')`;
+                                         '${makeStrSafer(inputs.indicSchema)}',
+                                         '${makeStrSafer(inputs.zgApplicable)}')`;
     const queryMetadataIndicateur = `INSERT INTO raw_data.metadata_parametrage_indicateurs (indic_id,
                                                                                                 vi_dept_from,
                                                                                                 vi_dept_op,

@@ -46,6 +46,7 @@ export interface MetadataParametrageIndicateurContrat {
   indicUnite: string;
   indicHiddenPilote: boolean;
   indicSchema: string;
+  zgApplicable: string;
   chantierNom: string;
 }
 
@@ -95,5 +96,6 @@ export const presenterEnMetadataParametrageIndicateurContrat = (metadataParametr
   indicUnite: metadataParametrageIndicateur.indicUnite,
   indicHiddenPilote: metadataParametrageIndicateur.indicHiddenPilote,
   indicSchema: metadataParametrageIndicateur.indicSchema,
+  zgApplicable: metadataParametrageIndicateur.zgApplicable,
   chantierNom: metadataParametrageIndicateur.chantierNom,
 });

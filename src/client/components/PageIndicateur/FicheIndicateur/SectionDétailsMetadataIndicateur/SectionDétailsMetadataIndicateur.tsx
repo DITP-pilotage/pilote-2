@@ -178,6 +178,24 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
               </span>
             )}
         </div>
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+          <p className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.zg_applicable.metaPiloteAlias}
+          </p>
+          {estEnCoursDeModification 
+            ? <Input
+                erreur={errors.zgApplicable}
+                htmlName='zgApplicable'
+                libellé='zgApplicable'
+                register={register('zgApplicable', { value: indicateur?.zgApplicable })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.zgApplicable || 'Non renseigné'}
+              </span>
+            )}
+        </div>
       </div>
       <hr className='fr-hr fr-mt-3w' />
     </SectionDétailsMetadataIndicateurStyled>
