@@ -42,9 +42,9 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
                     />
                   </div>
                 }
-                <div className="contenu">
-                  <div className="fr-mx-1w fr-mb-2w fr-mb-md-0 météo-affichage">
-                    <div className="fr-mb-2w">
+                <div className='contenu'>
+                  <div className='fr-mx-1w fr-mb-2w fr-mb-md-0 météo-affichage'>
+                    <div className='fr-mb-2w'>
                       <MétéoBadge météo={synthèseDesRésultats?.météo ?? 'NON_RENSEIGNEE'} />
                     </div>
                     {
@@ -54,7 +54,7 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
                       </div>
                     }
                   </div>
-                  <div className="synthèse-affichage">
+                  <div className='synthèse-affichage'>
                     <SynthèseDesRésultatsAffichage synthèseDesRésultats={synthèseDesRésultats} />
                   </div>
                 </div>
@@ -72,8 +72,8 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
                         type='button'
                       >
                         <span
-                          aria-hidden="true"
-                          className="fr-icon-edit-line fr-mr-1w"
+                          aria-hidden='true'
+                          className='fr-icon-edit-line fr-mr-1w'
                         />
                         {}
                         Modifier

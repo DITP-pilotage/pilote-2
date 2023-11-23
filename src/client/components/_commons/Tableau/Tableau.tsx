@@ -23,10 +23,10 @@ export default function Tableau<T extends object>({ tableau, titre }: TableauPro
     <TableauStyled className='fr-table fr-m-0 fr-p-0'>
       {tableau.getRowModel().rows.length === 0
         ?
-          <div className="fr-notice fr-notice--info">
-            <div className="fr-container">
-              <div className="fr-notice__body">
-                <p className="fr-notice__title">
+          <div className='fr-notice fr-notice--info'>
+            <div className='fr-container'>
+              <div className='fr-notice__body'>
+                <p className='fr-notice__title'>
                   Aucun élément à afficher
                 </p>
                 Vous pouvez modifier vos filtres pour élargir votre recherche.
@@ -36,7 +36,7 @@ export default function Tableau<T extends object>({ tableau, titre }: TableauPro
         :
           <>
             <table className='tableau'>
-              <caption className="fr-sr-only">
+              <caption className='fr-sr-only'>
                 {titre}
               </caption>
               {

@@ -44,26 +44,26 @@ export default function PageRapportDétaillé({ chantiers, ministères, indicate
       />
       <PageRapportDétailléStyled>
         <main>
-          <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
-            <div className="fr-px-2w fr-px-md-0 flex justify-between entête-rapport-détaillé">
+          <div className='fr-container fr-mb-0 fr-px-0 fr-px-md-2w'>
+            <div className='fr-px-2w fr-px-md-0 flex justify-between entête-rapport-détaillé'>
               <Titre
-                baliseHtml="h1"
-                className="fr-h2"
+                baliseHtml='h1'
+                className='fr-h2'
               >
                 {`Rapport détaillé : ${chantiersFiltrés.length} ${chantiersFiltrés.length > 1 ? 'chantiers' : 'chantier'}`}
               </Titre>
               <div>
                 <Link
-                  className="fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-go-back-fill fr-btn--icon-left fr-text--sm"
-                  href="/"
+                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-go-back-fill fr-btn--icon-left fr-text--sm'
+                  href='/'
                   title="Revenir à l'accueil"
                 >
                   Revenir à l&apos;accueil
                 </Link>
                 <button
-                  className="fr-btn fr-btn--tertiary-no-outline fr-icon-printer-line fr-btn--icon-left fr-text--sm"
+                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-printer-line fr-btn--icon-left fr-text--sm'
                   onClick={() => window.print()}
-                  type="button"
+                  type='button'
                 >
                   Imprimer
                 </button>
@@ -73,19 +73,19 @@ export default function PageRapportDétaillé({ chantiers, ministères, indicate
               filtresActifs={filtresActifs}
               territoireSélectionné={territoireSélectionné}
             />
-            <div className="fr-mb-3w interrupteur-chantiers">
+            <div className='fr-mb-3w interrupteur-chantiers'>
               <Interrupteur
                 auChangement={setAfficherLesChantiers}
                 checked={afficherLesChantiers}
-                id="afficher-chantiers"
-                libellé="Afficher le détail des chantiers"
+                id='afficher-chantiers'
+                libellé='Afficher le détail des chantiers'
               />
             </div>
             <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
             <div className='force-break-page' />
             {
               !!afficherLesChantiers &&
-              <div className="chantiers">
+              <div className='chantiers'>
                 {
                   chantiersFiltrés.map((chantier) => (
                     <RapportDétailléChantier

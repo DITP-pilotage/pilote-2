@@ -29,7 +29,7 @@ export default function PublicationFormulaire({ caractéristiques, contenuInitia
 
   return (
     <PublicationFormulaireStyled
-      method="post"
+      method='post'
       onSubmit={handleSubmit(créerPublication)}
     >
       <p className='fr-text--xs fr-mb-1w texte-gris'>
@@ -37,35 +37,35 @@ export default function PublicationFormulaire({ caractéristiques, contenuInitia
       </p>
       <div className={`fr-mb-0 fr-input-group ${errors.contenu && 'fr-input-group--error'}`}>
         <textarea
-          className="fr-input fr-text--sm fr-mb-0"
+          className='fr-input fr-text--sm fr-mb-0'
           rows={6}
           {...register('contenu')}
         />
         <input
-          type="hidden"
+          type='hidden'
           {...register('type')}
         />
         <input
-          type="hidden"
+          type='hidden'
           {...register('entité')}
         />
         <input
-          type="hidden"
+          type='hidden'
           {...register('territoireCode')}
         />
         <input
-          type="hidden"
+          type='hidden'
           {...register('réformeId')}
         />
         <input
-          type="hidden"
+          type='hidden'
           {...register('typeDeRéforme')}
         />
-        <div className="flex justify-between">
+        <div className='flex justify-between'>
           <div>
             {
               !!errors.contenu &&
-                <p className="fr-error-text fr-mt-0 fr-mr-2w">
+                <p className='fr-error-text fr-mt-0 fr-mr-2w'>
                   {errors.contenu.message}
                 </p>
             }
@@ -76,7 +76,7 @@ export default function PublicationFormulaire({ caractéristiques, contenuInitia
           />
         </div>
       </div>
-      <div className="fr-mt-1v flex partie-basse">
+      <div className='fr-mt-1v flex partie-basse'>
         <div className='actions'>
           <button
             className='fr-btn fr-mr-3w'

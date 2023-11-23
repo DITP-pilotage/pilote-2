@@ -25,17 +25,17 @@ export function EtapePublierFichier({
     <div>
       {
         estFichierPublie ?
-          <div className="fr-mt-4w">
+          <div className='fr-mt-4w'>
             <Alerte
               message={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.MESSAGE_ALERT_SUCCES}
               titre={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.TITRE_ALERT_SUCCES(indicateurId)}
               type='succès'
             />
-            <div className="fr-mt-3w flex justify-end">
+            <div className='fr-mt-3w flex justify-end'>
               <Link
                 className='fr-btn'
                 href={`/chantier/${chantierId}/indicateurs`}
-                title="Importer de nouvelles données"
+                title='Importer de nouvelles données'
               >
                 <span>
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_PUBLIER_FICHIER.MESSAGE_BOUTON_RETOUR}

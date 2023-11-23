@@ -26,7 +26,7 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
 
           <FormProvider {...reactHookForm}>
             <form
-              method="post"
+              method='post'
               onSubmit={reactHookForm.handleSubmit((data) => {
                 if (estUneCréation) {
                   creerIndicateur({ ...data, indicId: indicateur.indicId });
@@ -37,8 +37,8 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
               })}
             >
               <Link
-                aria-label="Retour à la liste des indicateurs"
-                className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-text--sm bouton-retour"
+                aria-label='Retour à la liste des indicateurs'
+                className='fr-link fr-fi-arrow-left-line fr-link--icon-left fr-text--sm bouton-retour'
                 href='/admin/indicateurs'
               >
                 Retour
@@ -50,21 +50,21 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                 Fiche de l&apos;indicateur 
                 {' '}
                 { indicateur.indicId }
-                <div className="fr-grid-row fr-mt-4w">
+                <div className='fr-grid-row fr-mt-4w'>
                   {
                   estUneCréation ? (
                     <button
                       className='fr-btn fr-mr-2w'
-                      key="submit-indicateur"
-                      type="submit"
+                      key='submit-indicateur'
+                      type='submit'
                     >
                       Créer l&apos;indicateur
                     </button>
                   ) : (estEnCoursDeModification ? (
                     <button
                       className='fr-btn fr-mr-2w'
-                      key="submit-indicateur"
-                      type="submit"
+                      key='submit-indicateur'
+                      type='submit'
                     >
                       Confirmer les changements
                     </button>
@@ -72,9 +72,9 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                   ) : (
                     <button
                       className='fr-btn fr-mr-2w'
-                      key="passer-en-modification"
+                      key='passer-en-modification'
                       onClick={() => setEstEnCoursDeModification(!estEnCoursDeModification)}
-                      type="button"
+                      type='button'
                     >
                       Modifier
                     </button>
@@ -95,16 +95,16 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                     estUneCréation ? (
                       <button
                         className='fr-btn fr-mr-2w'
-                        key="submit-indicateur"
-                        type="submit"
+                        key='submit-indicateur'
+                        type='submit'
                       >
                         Créer l&apos;indicateur
                       </button>
                     ) : (estEnCoursDeModification ? (
                       <button
                         className='fr-btn fr-mr-2w'
-                        key="submit-indicateur"
-                        type="submit"
+                        key='submit-indicateur'
+                        type='submit'
                       >
                         Confirmer les changements
                       </button>
@@ -112,9 +112,9 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                     ) : (
                       <button
                         className='fr-btn fr-mr-2w'
-                        key="passer-en-modification"
+                        key='passer-en-modification'
                         onClick={() => setEstEnCoursDeModification(!estEnCoursDeModification)}
-                        type="button"
+                        type='button'
                       >
                         Modifier
                       </button>
@@ -128,7 +128,7 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
         </div>
         {
             !!alerte && (
-            <div className="fr-mt-2w">
+            <div className='fr-mt-2w'>
               <Alerte
                 titre={alerte.titre}
                 type={alerte.type}

@@ -4,18 +4,18 @@ import PictoTendanceProps from '@/components/_commons/PictoTendance/PictoTendanc
 export default function PictoTendance({ tendance }: PictoTendanceProps) {
   if (tendance === null) {
     return (
-      <span aria-hidden="true" />
+      <span aria-hidden='true' />
     );
   }
   return (
     tendance === 'STAGNATION' ? (
       <PictoTendanceStyled
-        aria-hidden="true"
-        className="fr-icon-subtract-line picto-tendance--stagnation"
+        aria-hidden='true'
+        className='fr-icon-subtract-line picto-tendance--stagnation'
       />
     ) : (
       <PictoTendanceStyled
-        aria-hidden="true"
+        aria-hidden='true'
         className={`fr-icon-arrow-right-up-line ${tendance === 'BAISSE' ? 'picto-tendance--baisse' : 'picto-tendance--hausse'}`}
       />
     )

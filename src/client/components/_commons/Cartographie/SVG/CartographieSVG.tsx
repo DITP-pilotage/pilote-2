@@ -28,23 +28,23 @@ function CartographieSVG({ options, territoires, frontières, setInfoBulle, auCl
         svgRef={svgRef}
         viewbox={viewbox}
       />}
-      <div className="carte">
+      <div className='carte'>
         <svg
           ref={svgRef}
-          version="1.2"
+          version='1.2'
           viewBox={`
           ${viewbox.x}
           ${viewbox.y}
           ${viewbox.width}
           ${viewbox.height}
         `}
-          xmlns="http://www.w3.org/2000/svg"
+          xmlns='http://www.w3.org/2000/svg'
         >
           <defs>
             { hachuresGrisBlanc.patternSVG }
           </defs>
           <g
-            className="canvas"
+            className='canvas'
             onMouseLeave={() => {
               setInfoBulle(null);
             }}

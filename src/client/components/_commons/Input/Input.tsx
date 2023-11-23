@@ -17,7 +17,7 @@ export default function Input({ children, type = 'text', erreur, htmlName, regis
       {
         erreur !== undefined &&
           <p
-            className="fr-error-text"
+            className='fr-error-text'
           >
             {erreur.message?.toString()}
           </p>

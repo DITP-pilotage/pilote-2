@@ -39,16 +39,16 @@ const colonnes = [
     header: 'Actif / Inactif',
     sortingFn: 'auto',
     cell: props => props.getValue() ? (
-      <div className="flex justify-center">
+      <div className='flex justify-center'>
         <span
-          aria-hidden="true"
+          aria-hidden='true'
           className='fr-icon-close-circle-fill fr-icon-red'
         />
       </div>
     ) : (
-      <div className="flex justify-center">
+      <div className='flex justify-center'>
         <span
-          aria-hidden="true"
+          aria-hidden='true'
           className='fr-icon-checkbox-circle-fill fr-icon-green'
         />
       </div>

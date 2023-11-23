@@ -16,10 +16,10 @@ export default function RapportDétailléTableauChantiers({ données }: RapportD
       {
         tableau.getRowModel().rows.length === 0
           ?
-            <div className="fr-notice fr-notice--info">
-              <div className="fr-container">
-                <div className="fr-notice__body">
-                  <p className="fr-notice__title">
+            <div className='fr-notice fr-notice--info'>
+              <div className='fr-container'>
+                <div className='fr-notice__body'>
+                  <p className='fr-notice__title'>
                     Aucun chantier à afficher.
                   </p>
                 </div>
@@ -27,7 +27,7 @@ export default function RapportDétailléTableauChantiers({ données }: RapportD
             </div>
           :
             <table className='tableau'>
-              <caption className="fr-sr-only">
+              <caption className='fr-sr-only'>
                 Liste des chantiers
               </caption>
               <RapportDétailléTableauChantiersEnTête tableau={tableau} />

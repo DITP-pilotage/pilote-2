@@ -21,7 +21,7 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRub
           if (indicateursDeCetteRubrique.length > 0) {
             return (
               <section
-                className="fr-mb-3w sous-rubrique-indicateur"
+                className='fr-mb-3w sous-rubrique-indicateur'
                 id={rubriqueIndicateur.ancre}
                 key={rubriqueIndicateur.ancre}
               >

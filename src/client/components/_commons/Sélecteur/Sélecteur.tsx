@@ -17,7 +17,7 @@ export default function Sélecteur<T extends string>({
       {
         !!libellé && (
           <label
-            className="fr-label"
+            className='fr-label'
             htmlFor={htmlName}
           >
             { libellé }
@@ -26,7 +26,7 @@ export default function Sélecteur<T extends string>({
       }
       {
         !!texteAide &&
-          <span className="fr-hint-text">
+          <span className='fr-hint-text'>
             {texteAide}
           </span>
       }
@@ -63,7 +63,7 @@ export default function Sélecteur<T extends string>({
       {
         erreur !== undefined &&
           <p
-            className="fr-error-text"
+            className='fr-error-text'
           >
             {erreur.message?.toString()}
           </p>

@@ -20,7 +20,7 @@ export default function MétéoPicto({ météo, estVisibleParLecteurDÉcran = fa
     <Image
       alt={estVisibleParLecteurDÉcran ? libellésMétéos[météo] : ''}
       aria-hidden={estVisibleParLecteurDÉcran ? undefined : 'true'}
-      className="météo-picto"
+      className='météo-picto'
       src={météosPictos[météo]}
     />
   ) : null;

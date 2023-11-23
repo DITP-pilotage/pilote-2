@@ -31,6 +31,10 @@
   "rules": {
     "sonarjs/cognitive-complexity": "off",
     "@typescript-eslint/dot-notation": "off",
+    "quotes": ["error", "single", {
+      "avoidEscape": true
+    }],
+    "jsx-quotes": ["error", "prefer-single"],
     "no-relative-import-paths/no-relative-import-paths": [
       "warn",
       {

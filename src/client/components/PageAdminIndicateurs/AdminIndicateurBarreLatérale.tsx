@@ -29,7 +29,7 @@ export function AdminIndicateurBarreLatérale({
       setEstOuvert={setEstOuverteBarreLatérale}
     >
       <BarreLatéraleEncart>
-        <div className="fr-mb-2w">
+        <div className='fr-mb-2w'>
           <MultiSelectChantier
             changementValeursSélectionnéesCallback={(chantier) => {
               modifierÉtatDuFiltre(chantier, 'chantiers');

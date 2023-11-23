@@ -28,7 +28,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vi_nat_from.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="viNatFrom">
+              <Infobulle idHtml='viNatFrom'>
                 {mapInformationMetadataIndicateur.vi_nat_from.description}
               </Infobulle>
             ) : null}
@@ -50,11 +50,11 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vi_nat_op.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="viNatOp">
+              <Infobulle idHtml='viNatOp'>
                 {mapInformationMetadataIndicateur.vi_nat_op.description}
               </Infobulle>
             ) : null}
@@ -76,11 +76,11 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.va_nat_from.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="vaNatFrom">
+              <Infobulle idHtml='vaNatFrom'>
                 {mapInformationMetadataIndicateur.va_nat_from.description}
               </Infobulle>
             ) : null}
@@ -108,7 +108,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.va_nat_op.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="vaNatOp">
+              <Infobulle idHtml='vaNatOp'>
                 {mapInformationMetadataIndicateur.va_nat_op.description}
               </Infobulle>
             ) : null}
@@ -130,11 +130,11 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vc_nat_from.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="vcNatFrom">
+              <Infobulle idHtml='vcNatFrom'>
                 {mapInformationMetadataIndicateur.vc_nat_from.description}
               </Infobulle>
             ) : null}
@@ -156,11 +156,11 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vc_nat_op.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="vcNatOp">
+              <Infobulle idHtml='vcNatOp'>
                 {mapInformationMetadataIndicateur.vc_nat_op.description}
               </Infobulle>
             ) : null}

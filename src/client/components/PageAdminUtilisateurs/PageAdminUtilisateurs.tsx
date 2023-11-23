@@ -65,19 +65,19 @@ export default function PageAdminUtilisateurs() {
                 />
               </div>
           }
-          <div className="fr-grid-row fr-grid-row--middle fr-mb-3w">
-            <div className="fr-col-12 fr-col-md-9">
+          <div className='fr-grid-row fr-grid-row--middle fr-mb-3w'>
+            <div className='fr-col-12 fr-col-md-9'>
               <Titre
-                baliseHtml="h1"
-                className="fr-h1 fr-mb-0"
+                baliseHtml='h1'
+                className='fr-h1 fr-mb-0'
               >
                 Gestion des comptes
               </Titre>
             </div>
-            <div className="fr-col-12 fr-col-md-3">
+            <div className='fr-col-12 fr-col-md-3'>
               <div className='fr-grid-row fr-grid-row--right'>
                 <Link
-                  className="fr-btn fr-btn--icon-left fr-icon-checkbox-circle-line"
+                  className='fr-btn fr-btn--icon-left fr-icon-checkbox-circle-line'
                   href='/admin/utilisateur/creer'
                 >
                   Créer un compte

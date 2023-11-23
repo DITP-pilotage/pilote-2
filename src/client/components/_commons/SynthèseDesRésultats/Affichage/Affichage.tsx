@@ -12,12 +12,12 @@ export default function SynthèseDesRésultatsAffichage({ synthèseDesRésultats
   }
   return (
     <>
-      <p className="fr-text--xs texte-gris fr-mb-1w">
+      <p className='fr-text--xs texte-gris fr-mb-1w'>
         {`Mis à jour le ${formaterDate(synthèseDesRésultats.date, 'DD/MM/YYYY')}`}
         {!!synthèseDesRésultats.auteur && ` | Par ${synthèseDesRésultats.auteur}`}
       </p>
       <p
-        className="fr-text--sm fr-mb-0"
+        className='fr-text--sm fr-mb-0'
     // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(synthèseDesRésultats.contenu),

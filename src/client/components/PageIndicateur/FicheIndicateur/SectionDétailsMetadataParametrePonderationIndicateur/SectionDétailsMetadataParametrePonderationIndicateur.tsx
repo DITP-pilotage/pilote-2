@@ -28,7 +28,7 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.poids_pourcent_dept.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="poidsPourcentDept">
+              <Infobulle idHtml='poidsPourcentDept'>
                 {mapInformationMetadataIndicateur.poids_pourcent_dept.description}
               </Infobulle>
             ) : null}
@@ -36,11 +36,11 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
           {estEnCoursDeModification
             ? <Input
                 erreur={errors.poidsPourcentDept}
-                htmlName="poidsPourcentDept"
-                key="poidsPourcentDept"
-                libellé="poidsPourcentDept"
+                htmlName='poidsPourcentDept'
+                key='poidsPourcentDept'
+                libellé='poidsPourcentDept'
                 register={register('poidsPourcentDept', { value: `${indicateur?.poidsPourcentDept}` })}
-                type="number"
+                type='number'
               />
             : (
               <span>
@@ -48,11 +48,11 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.poids_pourcent_reg.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="poidsPourcentReg">
+              <Infobulle idHtml='poidsPourcentReg'>
                 {mapInformationMetadataIndicateur.poids_pourcent_reg.description}
               </Infobulle>
             ) : null}
@@ -60,11 +60,11 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
           {estEnCoursDeModification
             ? <Input
                 erreur={errors.poidsPourcentReg}
-                htmlName="poidsPourcentReg"
-                key="poidsPourcentReg"
-                libellé="poidsPourcentReg"
+                htmlName='poidsPourcentReg'
+                key='poidsPourcentReg'
+                libellé='poidsPourcentReg'
                 register={register('poidsPourcentReg', { value: `${indicateur?.poidsPourcentReg}` })}
-                type="number"
+                type='number'
               />
             : (
               <span>
@@ -72,11 +72,11 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.poids_pourcent_nat.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="poidsPourcentNat">
+              <Infobulle idHtml='poidsPourcentNat'>
                 {mapInformationMetadataIndicateur.poids_pourcent_nat.description}
               </Infobulle>
             ) : null}
@@ -84,11 +84,11 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
           {estEnCoursDeModification
             ? <Input
                 erreur={errors.poidsPourcentNat}
-                htmlName="poidsPourcentNat"
-                key="poidsPourcentNat"
-                libellé="poidsPourcentNat"
+                htmlName='poidsPourcentNat'
+                key='poidsPourcentNat'
+                libellé='poidsPourcentNat'
                 register={register('poidsPourcentNat', { value: `${indicateur?.poidsPourcentNat}` })}
-                type="number"
+                type='number'
               />
             : (
               <span>

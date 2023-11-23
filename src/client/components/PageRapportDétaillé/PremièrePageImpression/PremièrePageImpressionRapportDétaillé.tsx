@@ -16,23 +16,23 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
   return (
     <PremièrePageImpressionRapportDétailléStyled>
       <header
-        className="flex fr-px-12w fr-mb-6w"
-        role="banner"
+        className='flex fr-px-12w fr-mb-6w'
+        role='banner'
       >
-        <p className="fr-logo">
+        <p className='fr-logo'>
           Gouvernement
         </p>
-        <div className="fr-pt-1w fr-ml-5w">
-          <p className="fr-text--xl fr-text--bold fr-mb-0">
+        <div className='fr-pt-1w fr-ml-5w'>
+          <p className='fr-text--xl fr-text--bold fr-mb-0'>
             PILOTE
           </p>
-          <p className="fr-text--sm fr-mb-0">
+          <p className='fr-text--sm fr-mb-0'>
             Piloter l’action publique par les résultats
           </p>
         </div>
       </header>
-      <div className="fr-pt-6w fr-pb-3w fond-bleu-clair">
-        <div className="fr-mb-6w fr-display--md texte-centre titre-rapport-détaillé" >
+      <div className='fr-pt-6w fr-pb-3w fond-bleu-clair'>
+        <div className='fr-mb-6w fr-display--md texte-centre titre-rapport-détaillé' >
           État des lieux de l’avancement
           <br />
           des politiques prioritaires
@@ -43,10 +43,10 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
           {`Rapport détaillé généré le ${formaterDate(new Date().toISOString(), 'DD/MM/YYYY [à] H[h]mm')}`}
         </div>
       </div>
-      <div className="fr-px-12w fr-py-4w filtres-actifs-conteneur">
-        <ul className="fr-pl-0 filtres-actifs">
+      <div className='fr-px-12w fr-py-4w filtres-actifs-conteneur'>
+        <ul className='fr-pl-0 filtres-actifs'>
           <li>
-            <span className="fr-text--bold">
+            <span className='fr-text--bold'>
               Territoire sélectionné
             </span>
             <ul>
@@ -58,14 +58,14 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
           {
             ministèresÀAfficher.length > 0 &&
             <li>
-              <span className="fr-text--bold">
+              <span className='fr-text--bold'>
                 Ministère(s) ou périmètre(s) ministériel(s) sélectionné(s)
               </span>
               <ul>
                 {
                   ministèresÀAfficher.map(ministère => (
                     <li key={ministère.nom}>
-                      <span className="fr-text--bold">
+                      <span className='fr-text--bold'>
                         {ministère.nom}
                       </span>
                       <ul>
@@ -84,7 +84,7 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
           {
             filtresActifs.filtresTypologie.length > 0 &&
             <li>
-              <span className="fr-text--bold">
+              <span className='fr-text--bold'>
                 Type(s) de chantier sélectionné(s)
               </span>
               <ul>
@@ -101,7 +101,7 @@ export default function PremièrePageImpressionRapportDétaillé({ filtresActifs
           {
             process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && filtresActifs.filtresAlerte.length > 0 &&
             <li>
-              <span className="fr-text--bold">
+              <span className='fr-text--bold'>
                 Alerte(s) sélectionnée(s)
               </span>
               <ul>

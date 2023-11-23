@@ -7,7 +7,7 @@ export default function TableauChantiersTuileMinistère({ ministère, estDéroul
   return (
     <TableauChantiersTuileMinistèreStyled>
       <div>
-        <p className="fr-mb-0 fr-ml-n1w">
+        <p className='fr-mb-0 fr-ml-n1w'>
           <IcônesMultiplesEtTexte
             icônesId={ministère.icône ? [ministère.icône] : []}
             largeurDesIcônes='1.75rem'
@@ -17,10 +17,10 @@ export default function TableauChantiersTuileMinistère({ ministère, estDéroul
             </span>
           </IcônesMultiplesEtTexte>
         </p>
-        <div className="fr-mx-3w fr-mt-1v avancement">
+        <div className='fr-mx-3w fr-mt-1v avancement'>
           <BarreDeProgression
-            fond="blanc"
-            taille="sm"
+            fond='blanc'
+            taille='sm'
             valeur={ministère.avancement}
             variante='primaire'
           />
@@ -28,7 +28,7 @@ export default function TableauChantiersTuileMinistère({ ministère, estDéroul
       </div>
       <button
         className={`${estDéroulé ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'} chevron-accordéon`}
-        type="button"
+        type='button'
       />
     </TableauChantiersTuileMinistèreStyled>
   );

@@ -25,13 +25,13 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
 
   return (
     <RapportDétailléChantierStyled
-      className="fr-mt-4w fr-pb-4w"
+      className='fr-mt-4w fr-pb-4w'
       id={htmlId.chantier(chantier.id)}
     >
       <Link
-        className="fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-up-line fr-btn--icon-left fr-text--sm"
+        className='fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-up-line fr-btn--icon-left fr-text--sm'
         href={`#${htmlId.listeDesChantiers()}`}
-        title="Revenir à la liste des chantiers"
+        title='Revenir à la liste des chantiers'
       >
         Haut de page
       </Link>
@@ -48,7 +48,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           {
             avancements !== null &&
             <>
-              <section className="rubrique avancement">
+              <section className='rubrique avancement'>
                 <Titre
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -76,7 +76,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
               </section>
             </>
           }
-          <section className="rubrique synthèse">
+          <section className='rubrique synthèse'>
             <Titre
               baliseHtml='h2'
               className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -96,8 +96,8 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
           (!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSélectionnée] ||
             !!chantier.météoDonnéeTerritorialisée[mailleSélectionnée] ||
             !!chantier.estTerritorialisé) && (
-            <div className="fr-my-2w">
-              <section className="rubrique cartes">
+            <div className='fr-my-2w'>
+              <section className='rubrique cartes'>
                 <Titre
                   baliseHtml='h2'
                   className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
@@ -116,8 +116,8 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         }
         {
           objectifs !== null &&
-          <div className="fr-my-2w">
-            <section className="rubrique objectifs">
+          <div className='fr-my-2w'>
+            <section className='rubrique objectifs'>
               <div className='rubrique__conteneur'>
                 <Titre
                   baliseHtml='h2'
@@ -139,8 +139,8 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         }
         {
           indicateurs.length > 0 &&
-          <div className="fr-my-2w">
-            <section className="rubrique indicateurs">
+          <div className='fr-my-2w'>
+            <section className='rubrique indicateurs'>
               <div className='rubrique__conteneur'>
                 <Titre
                   baliseHtml='h2'
@@ -163,12 +163,12 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         {
           décisionStratégique !== null
           && territoireSélectionné!.maille === 'nationale' &&
-          <div className="fr-my-2w">
-            <section className="rubrique décisions-stratégiques">
+          <div className='fr-my-2w'>
+            <section className='rubrique décisions-stratégiques'>
               <div className='rubrique__conteneur'>
                 <Titre
-                  baliseHtml="h2"
-                  className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
+                  baliseHtml='h2'
+                  className='fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'
                 >
                   Décisions stratégiques
                 </Titre>
@@ -183,8 +183,8 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
         }
         {
           commentaires !== null && (
-            <div className="fr-my-2w">
-              <section className="rubrique commentaires">
+            <div className='fr-my-2w'>
+              <section className='rubrique commentaires'>
                 <div className='rubrique__conteneur'>
                   <Titre
                     baliseHtml='h2'

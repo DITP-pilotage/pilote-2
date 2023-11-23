@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 const PublicationStyled = styled.section`
-  break-inside: avoid;
+break-inside: avoid;
 
   .actions {
     display: flex;

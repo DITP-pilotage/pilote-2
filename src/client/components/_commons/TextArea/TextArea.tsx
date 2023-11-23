@@ -16,7 +16,7 @@ export default function TextArea({ children, erreur, htmlName, register, disable
       {
         erreur !== undefined &&
           <p
-            className="fr-error-text"
+            className='fr-error-text'
           >
             {erreur.message?.toString()}
           </p>
