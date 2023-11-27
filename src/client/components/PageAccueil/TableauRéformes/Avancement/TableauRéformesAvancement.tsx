@@ -13,13 +13,13 @@ export default function TableauRéformesAvancement({ avancement, dateDeMàjDonn�
       {
         avancement === null
           ? (
-            <span className="texte-gris fr-text--xs">
+            <span className='texte-gris fr-text--xs'>
               Non renseigné
             </span>
           ) : (
             <BarreDeProgression
-              fond="blanc"
-              taille="sm"
+              fond='blanc'
+              taille='sm'
               valeur={avancement}
               variante={typeDeRéforme === 'chantier' ? 'primaire' : 'rose'}
             />

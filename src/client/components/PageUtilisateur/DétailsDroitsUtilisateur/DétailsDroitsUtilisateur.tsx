@@ -37,7 +37,7 @@ export default function DétailsDroitsUtilisateur({ titre, territoires, chantier
               )
           }
         </div>
-        <div className="fr-col-12 fr-col-md-6">
+        <div className='fr-col-12 fr-col-md-6'>
           <p className='fr-text--md bold fr-mb-1v'>
             Droits ouverts pour les chantiers
           </p>

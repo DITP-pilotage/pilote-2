@@ -9,17 +9,17 @@ export default function TableauProjetsStructurantsContenu({ tableau }: TableauPr
       {
         tableau.getRowModel().rows.map(row => (
           <tr
-            className="ligne-projet-structurant"
+            className='ligne-projet-structurant'
             key={row.id}
           >
             {
               row.getVisibleCells().map(cell => (
                 <td
-                  className="fr-p-0"
+                  className='fr-p-0'
                   key={cell.id}
                 >
                   <Link
-                    className="fr-p-1w"
+                    className='fr-p-1w'
                     href={`/projet-structurant/${row.original.id}`}
                     tabIndex={cell.column.columnDef.meta?.tabIndex}
                   >

@@ -30,40 +30,40 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
     <RapportDétailléVueDEnsembleStyled>
       <Encart>
         <Titre
-          baliseHtml="h2"
-          className="fr-h2 fr-mb-0"
+          baliseHtml='h2'
+          className='fr-h2 fr-mb-0'
         >
           Vue d&apos;ensemble
         </Titre>
       </Encart>
-      <div className="fr-mt-3w avancements-météos-carto">
+      <div className='fr-mt-3w avancements-météos-carto'>
         <Bloc>
           <section>
             <TitreInfobulleConteneur>
               <Titre
-                baliseHtml="h2"
-                className="fr-text--lg fr-mb-2w fr-py-1v"
+                baliseHtml='h2'
+                className='fr-text--lg fr-mb-2w fr-py-1v'
                 estInline
               >
                 Taux d’avancement moyen
               </Titre>
-              <Infobulle idHtml="infobulle-chantiers-jauges">
+              <Infobulle idHtml='infobulle-chantiers-jauges'>
                 { INFOBULLE_CONTENUS.chantiers.jauges }
               </Infobulle>
             </TitreInfobulleConteneur>
             <Avancements avancements={avancementsAgrégés} />
           </section>
-          <hr className="fr-hr fr-my-3w fr-pb-1v" />
+          <hr className='fr-hr fr-my-3w fr-pb-1v' />
           <section>
             <TitreInfobulleConteneur>
               <Titre
-                baliseHtml="h2"
-                className="fr-text--lg fr-mb-0 fr-py-1v"
+                baliseHtml='h2'
+                className='fr-text--lg fr-mb-0 fr-py-1v'
                 estInline
               >
                 Répartition des météos renseignées
               </Titre>
-              <Infobulle idHtml="infobulle-chantiers-météos">
+              <Infobulle idHtml='infobulle-chantiers-météos'>
                 { INFOBULLE_CONTENUS.chantiers.météos }
               </Infobulle>
             </TitreInfobulleConteneur>
@@ -73,8 +73,8 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
         <Bloc>
           <section>
             <Titre
-              baliseHtml="h3"
-              className="fr-text--lg fr-mb-0 fr-py-1v"
+              baliseHtml='h3'
+              className='fr-text--lg fr-mb-0 fr-py-1v'
             >
               Taux d’avancement des chantiers par territoire
             </Titre>
@@ -89,27 +89,27 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
       </div>
       {
         process.env.NEXT_PUBLIC_FF_ALERTES === 'true' &&
-        <div className="fr-pt-3w fr-px-2w fr-px-md-0 alertes">
-          <div className="fr-mb-2w">
+        <div className='fr-pt-3w fr-px-2w fr-px-md-0 alertes'>
+          <div className='fr-mb-2w'>
             <TitreInfobulleConteneur>
-              <BadgeIcône type="warning" />
+              <BadgeIcône type='warning' />
               <Titre
-                baliseHtml="h2"
-                className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes"
+                baliseHtml='h2'
+                className='fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes'
                 estInline
               >
                 Chantiers signalés
               </Titre>
-              <Infobulle idHtml="infobulle-chantiers-alertes">
+              <Infobulle idHtml='infobulle-chantiers-alertes'>
                 { INFOBULLE_CONTENUS.chantiers.alertes }
               </Infobulle>
             </TitreInfobulleConteneur>
           </div>
-          <div className="fr-grid-row fr-grid-row--gutters">
+          <div className='fr-grid-row fr-grid-row--gutters'>
             {
               remontéesAlertes.map(({ libellé, nombre, estActivée }) => (
                 <div
-                  className="fr-col"
+                  className='fr-col'
                   key={libellé}
                 >
                   <RemontéeAlerte
@@ -124,20 +124,20 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
         </div>
       }
       <div
-        className="fr-grid-row fr-mt-7v"
+        className='fr-grid-row fr-mt-7v'
         id={htmlId.listeDesChantiers()}
       >
-        <div className="fr-col">
+        <div className='fr-col'>
           <Bloc>
-            <TitreInfobulleConteneur className="fr-mb-1w">
+            <TitreInfobulleConteneur className='fr-mb-1w'>
               <Titre
-                baliseHtml="h2"
-                className="fr-text--lg fr-mb-0 fr-py-1v"
+                baliseHtml='h2'
+                className='fr-text--lg fr-mb-0 fr-py-1v'
                 estInline
               >
                 Liste des chantiers
               </Titre>
-              <Infobulle idHtml="infobulle-chantiers-listeDesChantiers">
+              <Infobulle idHtml='infobulle-chantiers-listeDesChantiers'>
                 { INFOBULLE_CONTENUS.chantiers.listeDesChantiers }
               </Infobulle>
             </TitreInfobulleConteneur>

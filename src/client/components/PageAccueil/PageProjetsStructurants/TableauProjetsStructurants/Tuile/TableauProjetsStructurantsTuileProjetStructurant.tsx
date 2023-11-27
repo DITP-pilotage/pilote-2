@@ -8,8 +8,8 @@ export default function TableauProjetsStructurantsTuileProjetStructurant({ proje
 
   return (
     <TableauProjetsStructurantsTuileProjetStructurantStyled>
-      <div className="tuile-chantier-entête">
-        <p className="fr-mb-0 fr-ml-n1w">
+      <div className='tuile-chantier-entête'>
+        <p className='fr-mb-0 fr-ml-n1w'>
           <IcônesMultiplesEtTexte
             icônesId={afficherIcône && projetStructurant.iconesMinistères ? projetStructurant.iconesMinistères : []}
             largeurDesIcônes='3.5rem'
@@ -22,11 +22,11 @@ export default function TableauProjetsStructurantsTuileProjetStructurant({ proje
         </p>
       </div>
       <div className='fr-mt-1w fr-ml-5v tuile-chantier-corps'>
-        <div className="météo">
+        <div className='météo'>
           <TableauRéformesMétéo
             dateDeMàjDonnéesQualitatives={undefined}
             météo={projetStructurant.météo}
-            taille="sm"
+            taille='sm'
           />
         </div>
         <div className='avancement'>

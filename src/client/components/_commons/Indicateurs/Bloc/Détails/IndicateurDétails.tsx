@@ -16,23 +16,23 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
   const { donnéesCartographieAvancement, donnéesCartographieValeurActuelle, donnéesCartographieAvancementTerritorialisées, donnéesCartographieValeurActuelleTerritorialisées } = useIndicateurDétails(indicateur.id, futOuvert, typeDeRéforme);
 
   return (
-    <div className="fr-accordion">
-      <div className="fr-accordion__title">
+    <div className='fr-accordion'>
+      <div className='fr-accordion__title'>
         <button
           aria-controls={`détails-${indicateur.id}`}
-          aria-expanded="false"
-          className="fr-accordion__btn"
+          aria-expanded='false'
+          className='fr-accordion__btn'
           onClick={() => setFutOuvert(true)}
-          type="button"
+          type='button'
         >
           Détails
         </button>
       </div>
       <div
-        className="fr-collapse"
+        className='fr-collapse'
         id={`détails-${indicateur.id}`}
       >
-        <div className="fr-container">
+        <div className='fr-container'>
           {
           typeDeRéforme === 'projet structurant' &&
             <IndicateurSpécifications
@@ -44,8 +44,8 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
           {
           typeDeRéforme === 'chantier' && !!futOuvert && !!donnéesCartographieAvancement && !!donnéesCartographieValeurActuelle &&
           <>
-            <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
-              <div className="fr-col-12">
+            <div className='fr-grid-row fr-grid-row--gutters fr-mb-1w'>
+              <div className='fr-col-12'>
                 <IndicateurSpécifications
                   description={indicateur.description}
                   modeDeCalcul={indicateur.modeDeCalcul}
@@ -54,7 +54,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
               </div>
               {
                 (!!donnéesCartographieAvancementTerritorialisées || !!chantierEstTerritorialisé) && (
-                  <section className="fr-col-12 fr-col-xl-6">
+                  <section className='fr-col-12 fr-col-xl-6'>
                     <Titre
                       baliseHtml='h5'
                       className='fr-text--lg'
@@ -72,7 +72,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
               }
               {
                 (!!donnéesCartographieValeurActuelleTerritorialisées || !!chantierEstTerritorialisé) && (
-                  <section className="fr-col-12 fr-col-xl-6">
+                  <section className='fr-col-12 fr-col-xl-6'>
                     <Titre
                       baliseHtml='h5'
                       className='fr-text--lg'

@@ -15,9 +15,9 @@ export default function Utilisateur() {
         {
           session?.user?.email ?
             <button
-              className="fr-text--sm fr-p-0"
+              className='fr-text--sm fr-p-0'
               onClick={() => setEstDéplié(!estDéplié)}
-              type="button"
+              type='button'
             >
               <i className='fr-icon-account-line fr-mr-1v' />
               {session?.user?.email}
@@ -26,7 +26,7 @@ export default function Utilisateur() {
             :
             <button
               onClick={() => signIn('keycloak')}
-              type="button"
+              type='button'
             >
               <i className='fr-icon-account-line fr-mr-1v' />
               {' '}
@@ -40,7 +40,7 @@ export default function Utilisateur() {
           <button
             className='fr-p-0'
             onClick={() => signOut()}
-            type="button"
+            type='button'
           >
             Déconnexion
           </button>

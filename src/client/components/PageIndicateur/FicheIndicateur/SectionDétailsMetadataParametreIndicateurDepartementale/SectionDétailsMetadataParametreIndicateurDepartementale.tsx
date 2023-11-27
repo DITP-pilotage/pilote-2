@@ -28,7 +28,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vi_dept_from.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="viDeptFrom">
+              <Infobulle idHtml='viDeptFrom'>
                 {mapInformationMetadataIndicateur.vi_dept_from.description}
               </Infobulle>
             ) : null}
@@ -50,11 +50,11 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.va_dept_from.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="vaDeptFrom">
+              <Infobulle idHtml='vaDeptFrom'>
                 {mapInformationMetadataIndicateur.va_dept_from.description}
               </Infobulle>
             ) : null}
@@ -76,11 +76,11 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vc_dept_from.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="vcDeptFrom">
+              <Infobulle idHtml='vcDeptFrom'>
                 {mapInformationMetadataIndicateur.vc_dept_from.description}
               </Infobulle>
             ) : null}
@@ -108,7 +108,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vi_dept_op.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="viDeptOp">
+              <Infobulle idHtml='viDeptOp'>
                 {mapInformationMetadataIndicateur.vi_dept_op.description}
               </Infobulle>
             ) : null}
@@ -130,11 +130,11 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pr-2w fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pr-2w fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.va_dept_op.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="vaDeptOp">
+              <Infobulle idHtml='vaDeptOp'>
                 {mapInformationMetadataIndicateur.va_dept_op.description}
               </Infobulle>
             ) : null}
@@ -156,11 +156,11 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vc_dept_op.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="vcDeptOp">
+              <Infobulle idHtml='vcDeptOp'>
                 {mapInformationMetadataIndicateur.vc_dept_op.description}
               </Infobulle>
             ) : null}

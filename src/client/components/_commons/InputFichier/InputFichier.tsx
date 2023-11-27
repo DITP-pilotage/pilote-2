@@ -7,14 +7,14 @@ interface InputFichierProps {
 
 export default function InputFichier({ onChange }: InputFichierProps) {
   return (
-    <div className="fr-upload-group">
+    <div className='fr-upload-group'>
       <input
         accept='.csv, .xls, .xlsx'
-        className="fr-upload"
-        id="file-upload"
-        name="file-upload"
+        className='fr-upload'
+        id='file-upload'
+        name='file-upload'
         onChange={onChange}
-        type="file"
+        type='file'
       />
     </div>
   );

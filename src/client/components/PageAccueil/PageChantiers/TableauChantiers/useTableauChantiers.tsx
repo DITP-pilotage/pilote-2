@@ -169,7 +169,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       aggregatedCell: (aggregatedCellContext => (
         <button
           className={`${aggregatedCellContext.row.getIsExpanded() ? 'fr-icon-arrow-up-s-line' : 'fr-icon-arrow-down-s-line'} chevron-accordéon`}
-          type="button"
+          type='button'
         />
       )),
       meta: {

@@ -21,7 +21,7 @@ export default function FiltresSélectionnésCatégorie({ titre, filtres }: Filt
               key={filtre}
             >
               <span
-                aria-hidden="true"
+                aria-hidden='true'
                 className='fr-icon-check-line'
               />
               {filtre}

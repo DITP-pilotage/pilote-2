@@ -72,32 +72,32 @@ function MonApplication({ Component, pageProps }: AppProps) {
   return (
     <>
       <Script
-        src="/js/dsfr/dsfr.module.min.js"
+        src='/js/dsfr/dsfr.module.min.js'
         type='module'
       />
       <Script
         noModule
-        src="/js/dsfr/dsfr.nomodule.min.js"
+        src='/js/dsfr/dsfr.nomodule.min.js'
       />
       <Head>
         <link
-          href="/favicon/apple-touch-icon.png"
-          rel="apple-touch-icon"
+          href='/favicon/apple-touch-icon.png'
+          rel='apple-touch-icon'
         />
         <link
-          href="/favicon/favicon.svg"
-          rel="icon"
-          type="image/svg+xml"
+          href='/favicon/favicon.svg'
+          rel='icon'
+          type='image/svg+xml'
         />
         <link
-          href="/favicon/favicon.ico"
-          rel="shortcut icon"
-          type="image/x-icon"
+          href='/favicon/favicon.ico'
+          rel='shortcut icon'
+          type='image/x-icon'
         />
         <link
-          crossOrigin="use-credentials"
-          href="/favicon/manifest.webmanifest"
-          rel="manifest"
+          crossOrigin='use-credentials'
+          href='/favicon/manifest.webmanifest'
+          rel='manifest'
         />
       </Head>
       <QueryClientProvider client={queryClient}>

@@ -12,7 +12,7 @@ export default function Objectifs({ objectifs, réformeId, maille, nomTerritoire
             <Fragment key={type}>
               {
                 i !== 0 && (
-                  <hr className="fr-hr fr-mx-n2w" />
+                  <hr className='fr-hr fr-mx-n2w' />
                 )
               }
               <Publication

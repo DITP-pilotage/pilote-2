@@ -36,16 +36,16 @@ export default function CartographieZoomEtDéplacement({ svgRef, viewbox }: Cart
       <button
         className='zoom-plus fr-btn'
         onClick={() => zoomer(MULTIPLICATEUR_AU_ZOOM)}
-        type="button"
+        type='button'
       >
-        <span className="fr-icon-add-line" />
+        <span className='fr-icon-add-line' />
       </button>
       <button
         className='zoom-moins fr-btn'
         onClick={() => zoomer(1 / MULTIPLICATEUR_AU_ZOOM)}
-        type="button"
+        type='button'
       >
-        <span className="fr-icon-subtract-line" />
+        <span className='fr-icon-subtract-line' />
       </button>
     </CartographieZoomEtDéplacementStyled>
   );

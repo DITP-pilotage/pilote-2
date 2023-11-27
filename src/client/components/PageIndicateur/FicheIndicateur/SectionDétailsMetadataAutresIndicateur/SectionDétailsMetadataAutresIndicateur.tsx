@@ -26,7 +26,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
             {mapInformationMetadataIndicateur.indic_nom_baro.metaPiloteAlias}
             {' '}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="indicNomBaro">
+              <Infobulle idHtml='indicNomBaro'>
                 {mapInformationMetadataIndicateur.indic_nom_baro.description}
               </Infobulle>
             ) : null}
@@ -34,10 +34,10 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
           {estEnCoursDeModification
             ? <Input
                 erreur={errors.indicNomBaro}
-                htmlName="indicNomBaro"
-                libellé="indicNomBaro"
+                htmlName='indicNomBaro'
+                libellé='indicNomBaro'
                 register={register('indicNomBaro', { value: indicateur?.indicNomBaro })}
-                type="text"
+                type='text'
               />
             : (
               <span>
@@ -46,20 +46,20 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
             )}
 
         </div>
-        <div className="fr-col-12 fr-col-md-6 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_descr_baro.metaPiloteAlias}
             {' '}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="indicDescrBaro">
+              <Infobulle idHtml='indicDescrBaro'>
                 {mapInformationMetadataIndicateur.indic_descr_baro.description}
               </Infobulle>
             ) : null}
           </div>
           {estEnCoursDeModification
             ? <TextArea
-                htmlName="indicDescrBaro"
-                libellé="indicDescrBaro"
+                htmlName='indicDescrBaro'
+                libellé='indicDescrBaro'
                 register={register('indicDescrBaro', { value: indicateur?.indicDescrBaro })}
               />
             : (
@@ -76,7 +76,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
             {mapInformationMetadataIndicateur.indic_is_baro.metaPiloteAlias}
             {' '}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="indicIsBaro">
+              <Infobulle idHtml='indicIsBaro'>
                 {mapInformationMetadataIndicateur.indic_is_baro.description}
               </Infobulle>
             ) : null}
@@ -118,7 +118,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
             )}
 
         </div>
-        <div className="fr-col-12 fr-col-md-6 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
           <p className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_is_phare.metaPiloteAlias}
           </p>
@@ -144,7 +144,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_source.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="indicSource">
+              <Infobulle idHtml='indicSource'>
                 {mapInformationMetadataIndicateur.indic_source.description}
               </Infobulle>
             ) : null}
@@ -152,10 +152,10 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
           {estEnCoursDeModification
             ? <Input
                 erreur={errors.indicSource}
-                htmlName="indicSource"
-                libellé="indicSource"
+                htmlName='indicSource'
+                libellé='indicSource'
                 register={register('indicSource', { value: indicateur?.indicSource })}
-                type="text"
+                type='text'
               />
             : (
               <span>
@@ -164,17 +164,17 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
             )}
 
         </div>
-        <div className="fr-col-12 fr-col-md-6 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
           <p className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_source_url.metaPiloteAlias}
           </p>
           {estEnCoursDeModification
             ? <Input
                 erreur={errors.indicSourceUrl}
-                htmlName="indicSourceUrl"
-                libellé="indicSourceUrl"
+                htmlName='indicSourceUrl'
+                libellé='indicSourceUrl'
                 register={register('indicSourceUrl', { value: indicateur?.indicSourceUrl })}
-                type="text"
+                type='text'
               />
             : (
               <span>
@@ -188,7 +188,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
         <div className='fr-text--md bold fr-mb-1v relative'>
           {mapInformationMetadataIndicateur.indic_methode_calcul.metaPiloteAlias}
           {estEnCoursDeModification ? (
-            <Infobulle idHtml="indicMethodeCalcul">
+            <Infobulle idHtml='indicMethodeCalcul'>
               {mapInformationMetadataIndicateur.indic_methode_calcul.description}
             </Infobulle>
           ) : null}
@@ -196,8 +196,8 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
         {estEnCoursDeModification
           ? <TextArea
               erreur={errors.indicMethodeCalcul}
-              htmlName="indicMethodeCalcul"
-              libellé="indicMethodeCalcul"
+              htmlName='indicMethodeCalcul'
+              libellé='indicMethodeCalcul'
               register={register('indicMethodeCalcul', { value: indicateur?.indicMethodeCalcul })}
             />
           : (

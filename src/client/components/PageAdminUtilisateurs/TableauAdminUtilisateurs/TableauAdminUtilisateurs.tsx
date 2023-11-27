@@ -22,7 +22,7 @@ export default function TableauAdminUtilisateurs() {
 
   return (
     <TableauAdminUtilisateursStyled className='fr-px-1w'>
-      <div className="barre-de-recherche fr-mt-2w">
+      <div className='barre-de-recherche fr-mt-2w'>
         <BarreDeRecherche
           changementDeLaRechercheCallback={changementDeLaRechercheCallback}
           valeur={valeurDeLaRecherche}
@@ -39,9 +39,9 @@ export default function TableauAdminUtilisateurs() {
             {' '}
             {tableau.getFilteredRowModel().rows.length > 1 ? 'comptes' : 'compte'}
           </Titre>
-          <div className="fr-table">
+          <div className='fr-table'>
             <table className='tableau fr-m-0 fr-p-0'>
-              <caption className="fr-sr-only">
+              <caption className='fr-sr-only'>
                 Tableau des utilisateurs
               </caption>
               <TableauEnTête<Utilisateur> tableau={tableau} />

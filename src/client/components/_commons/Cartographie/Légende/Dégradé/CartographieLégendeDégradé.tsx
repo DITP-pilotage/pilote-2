@@ -8,15 +8,15 @@ export default function CartographieLégendeDégradé({ contenu }: CartographieL
       couleurMax={contenu.couleurMax}
       couleurMin={contenu.couleurMin}
     >
-      <p className="fr-text--xs texte-gris fr-mb-0">
+      <p className='fr-text--xs texte-gris fr-mb-0'>
         { contenu.libellé }
       </p>
-      <div className="dégradé-de-surface" />
-      <div className="flex justify-between">
-        <p className="fr-text--xs texte-gris fr-mb-0">
+      <div className='dégradé-de-surface' />
+      <div className='flex justify-between'>
+        <p className='fr-text--xs texte-gris fr-mb-0'>
           { contenu.valeurMin }
         </p>
-        <p className="fr-text--xs texte-gris fr-mb-0">
+        <p className='fr-text--xs texte-gris fr-mb-0'>
           { contenu.valeurMax }
         </p>
       </div>

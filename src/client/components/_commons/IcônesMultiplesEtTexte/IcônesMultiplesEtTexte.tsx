@@ -5,7 +5,7 @@ import IcônesMultiplesEtTexteProps from '@/components/_commons/IcônesMultiples
 export default function IcônesMultiplesEtTexte({ icônesId, largeurDesIcônes = '3.5rem', texteAlternatifPourIcônes, children }: IcônesMultiplesEtTexteProps) {
   return (
     <IcônesMultiplesEtTexteStyled largeurDesIcônes={largeurDesIcônes}>
-      <span className="icônes fr-pr-1w">
+      <span className='icônes fr-pr-1w'>
         {
           icônesId.map(icôneId => (
             <Icône
@@ -16,12 +16,12 @@ export default function IcônesMultiplesEtTexte({ icônesId, largeurDesIcônes =
         }
         {
           !!texteAlternatifPourIcônes &&
-          <span className="fr-sr-only">
+          <span className='fr-sr-only'>
             { texteAlternatifPourIcônes }
           </span>
         }
       </span>
-      <p className="fr-text--sm">
+      <p className='fr-text--sm'>
         { children }
       </p>
     </IcônesMultiplesEtTexteStyled>

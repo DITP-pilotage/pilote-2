@@ -31,7 +31,7 @@ export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeurs
         className='fr-select fr-ellipsis'
         id={id}
         title={libellé}
-        type="button"
+        type='button'
         {...multiSelectBoutonProps}
       >
         {libellé}
@@ -45,7 +45,7 @@ export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeurs
           className='fr-input'
           onChange={(e) => setRecherche(e.target.value)}
           placeholder='Rechercher...'
-          type="text"
+          type='text'
           value={recherche}
         />
         {

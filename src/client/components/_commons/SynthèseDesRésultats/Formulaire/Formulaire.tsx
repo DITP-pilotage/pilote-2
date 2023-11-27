@@ -25,7 +25,7 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
 
   return (
     <SynthèseDesRésultatsFormulaireStyled
-      method="post"
+      method='post'
       onSubmit={handleSubmit(créerSynthèseDesRésultats)}
     >
       <Titre
@@ -39,15 +39,15 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
       </p>
       <div className={`fr-mb-0 fr-input-group ${errors.contenu && 'fr-input-group--error'}`}>
         <textarea
-          className="fr-input fr-text--sm fr-mb-0"
+          className='fr-input fr-text--sm fr-mb-0'
           rows={6}
           {...register('contenu')}
         />
-        <div className="flex justify-between">
+        <div className='flex justify-between'>
           <div>
             {
               !!errors.contenu &&
-                <p className="fr-error-text fr-mt-0 fr-mr-2w">
+                <p className='fr-error-text fr-mt-0 fr-mr-2w'>
                   {errors.contenu.message}
                 </p>
             }
@@ -58,16 +58,16 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
           />
         </div>
       </div>
-      <div className="fr-mt-1v flex partie-basse">
+      <div className='fr-mt-1v flex partie-basse'>
         <Sélecteur<MétéoSaisissable>
           htmlName='météo'
-          libellé="Météo"
+          libellé='Météo'
           options={météosSaisissables.map(optionMétéo => ({ libellé: libellésMétéos[optionMétéo], valeur: optionMétéo }))}
           register={{ ...register('météo') }}
-          texteFantôme="Météo à renseigner"
+          texteFantôme='Météo à renseigner'
           valeurSélectionnée={getValues('météo')}
         />
-        <div className="fr-mx-3w météo-picto-conteneur">
+        <div className='fr-mx-3w météo-picto-conteneur'>
           {
             !!watch('météo') &&
             <MétéoPicto météo={watch('météo')!} />
@@ -92,7 +92,7 @@ export default function SynthèseDesRésultatsFormulaire({ contenuInitial, mét�
       </div>
       {
         !!alerte && (
-        <div className="fr-mt-2w">
+        <div className='fr-mt-2w'>
           <Alerte
             titre={alerte.titre}
             type={alerte.type}

@@ -10,7 +10,7 @@ export default function PageProjetStructurantEnTête({ nomProjetStructurant }: P
     <PageProjetStructurantEnTêteStyled className='fr-p-4w'>
       <Link
         aria-label="Retour à l'accueil"
-        className="fr-link fr-fi-arrow-left-line fr-link--icon-left"
+        className='fr-link fr-fi-arrow-left-line fr-link--icon-left'
         href='/'
       >
         Retour

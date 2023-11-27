@@ -25,10 +25,10 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
           <Bloc titre={territoireSélectionné?.nomAffiché}>
             <div className='fr-py-1w jauge'>
               <JaugeDeProgression
-                couleur="bleuClair"
+                couleur='bleuClair'
                 libellé={territoireSélectionné!.nom}
                 pourcentage={avancements.départementale.moyenne}
-                taille="lg"
+                taille='lg'
               />
             </div>
           </Bloc>
@@ -38,10 +38,10 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
           <Bloc titre={territoireSélectionné!.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné!.codeParent).nomAffiché : territoireSélectionné!.nomAffiché}>
             <div className='fr-py-1w jauge'>
               <JaugeDeProgression
-                couleur="bleuClair"
+                couleur='bleuClair'
                 libellé={territoireSélectionné!.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné!.codeParent).nomAffiché : territoireSélectionné!.nomAffiché}
                 pourcentage={avancements.régionale.moyenne}
-                taille="lg"
+                taille='lg'
               />
             </div>
           </Bloc>

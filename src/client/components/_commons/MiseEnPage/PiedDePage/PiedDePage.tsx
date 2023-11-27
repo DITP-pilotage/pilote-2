@@ -4,32 +4,32 @@ import Link from 'next/link';
 export default function PiedDePage() {
   return (
     <footer
-      className="fr-footer"
-      id="footer"
-      role="contentinfo"
+      className='fr-footer'
+      id='footer'
+      role='contentinfo'
     >
-      <div className="fr-container">
-        <div className="fr-footer__body">
-          <div className="fr-footer__brand fr-enlarge-link">
+      <div className='fr-container'>
+        <div className='fr-footer__body'>
+          <div className='fr-footer__brand fr-enlarge-link'>
             <Link
-              href="/"
-              title="Retour à l’accueil du site"
+              href='/'
+              title='Retour à l’accueil du site'
             >
-              <p className="fr-logo">
+              <p className='fr-logo'>
                 Gouvernement
               </p>
             </Link>
           </div>
-          <div className="fr-footer__content">
-            <p className="fr-footer__content-desc">
+          <div className='fr-footer__content'>
+            <p className='fr-footer__content-desc'>
               PILOTE est le dispositif de suivi des politiques prioritaires du gouvernement. Il permet d’évaluer les résultats des politiques publiques dans les territoires. 
             </p>
           </div>
         </div>
-        <div className="fr-footer__bottom">
-          <ul className="fr-footer__bottom-list">
-            <li className="fr-footer__bottom-item">
-              <p className="fr-footer__bottom-link fr-mb-0">
+        <div className='fr-footer__bottom'>
+          <ul className='fr-footer__bottom-list'>
+            <li className='fr-footer__bottom-item'>
+              <p className='fr-footer__bottom-link fr-mb-0'>
                 Accessibilité : non conforme
               </p>
             </li>

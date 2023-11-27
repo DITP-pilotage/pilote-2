@@ -29,8 +29,8 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
           {estEnCoursDeModification
             ? <TextArea
                 erreur={errors.indicNom}
-                htmlName="indicNom"
-                libellé="indicNom"
+                htmlName='indicNom'
+                libellé='indicNom'
                 register={register('indicNom', { value: indicateur?.indicNom })}
               />
             : (
@@ -40,11 +40,11 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
             )}
 
         </div>
-        <div className="fr-col-12 fr-col-md-6 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_descr.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="indicDescr">
+              <Infobulle idHtml='indicDescr'>
                 {mapInformationMetadataIndicateur.indic_descr.description}
               </Infobulle>
             ) : null}
@@ -52,8 +52,8 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
           {estEnCoursDeModification
             ? <TextArea
                 erreur={errors.indicDescr}
-                htmlName="indicDescr"
-                libellé="indicDescr"
+                htmlName='indicDescr'
+                libellé='indicDescr'
                 register={register('indicDescr', { value: indicateur?.indicDescr })}
               />
             : (
@@ -69,7 +69,7 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_parent_ch.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="indicParentCh">
+              <Infobulle idHtml='indicParentCh'>
                 {mapInformationMetadataIndicateur.indic_parent_ch.description}
               </Infobulle>
             ) : null}
@@ -91,7 +91,7 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-6 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
           <p className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_parent_indic.metaPiloteAlias}
           </p>
@@ -116,7 +116,7 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
         </div>
       </div>
       <div className='fr-grid-row fr-mb-2w'>
-        <div className="fr-col-12 fr-col-md-6 fr-pr-2w">
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
           <p className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_schema.metaPiloteAlias}
           </p>
@@ -134,11 +134,11 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-6 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_type.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="indicType">
+              <Infobulle idHtml='indicType'>
                 {mapInformationMetadataIndicateur.indic_type.description}
               </Infobulle>
             ) : null}
@@ -160,17 +160,17 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
         </div>
       </div>
       <div className='fr-grid-row fr-mb-2w'>
-        <div className="fr-col-12 fr-col-md-6 fr-pr-2w">
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
           <p className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_unite.metaPiloteAlias}
           </p>
           {estEnCoursDeModification
             ? <Input
                 erreur={errors.indicUnite}
-                htmlName="indicUnite"
-                libellé="indicUnite"
+                htmlName='indicUnite'
+                libellé='indicUnite'
                 register={register('indicUnite', { value: indicateur?.indicUnite })}
-                type="text"
+                type='text'
               />
             : (
               <span>
