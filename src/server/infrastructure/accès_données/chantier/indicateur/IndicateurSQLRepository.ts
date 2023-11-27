@@ -81,7 +81,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         },
         unité: indic.unite_mesure,
         est_applicable: indic.est_applicable,
-        dateImport: formatDate(indic.dernier_import_date),
+        dateImport: formatDate(indic.dernier_import_date_indic),
       };
     }
 

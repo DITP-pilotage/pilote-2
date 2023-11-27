@@ -111,7 +111,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(40)
           .avecUnité('cm')
           .avecEstApplicable(false)
-          .avecDernierImportDate(new Date('2023-03-01'))
+          .avecDernierImportDateIndic(new Date('2023-03-01'))
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -130,7 +130,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(40)
           .avecUnité('cm')
           .avecEstApplicable(false)
-          .avecDernierImportDate(new Date('2023-03-01'))
+          .avecDernierImportDateIndic(new Date('2023-03-01'))
           .build(),
       ];
 
@@ -222,7 +222,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(20)
           .avecUnité('cm')
           .avecEstApplicable(false)
-          .avecDernierImportDate(new Date('2023-03-01'))
+          .avecDernierImportDateIndic(new Date('2023-03-01'))
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -241,7 +241,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(40)
           .avecUnité('cm')
           .avecEstApplicable(false)
-          .avecDernierImportDate(new Date('2023-03-01'))
+          .avecDernierImportDateIndic(new Date('2023-03-01'))
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -260,7 +260,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(40)
           .avecUnité('cm')
           .avecEstApplicable(false)
-          .avecDernierImportDate(new Date('2023-03-01'))
+          .avecDernierImportDateIndic(new Date('2023-03-01'))
           .build(),
       ];
 
@@ -368,7 +368,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(40)
           .avecUnité('cm')
           .avecEstApplicable(false)
-          .avecDernierImportDate(new Date('2023-03-01'))
+          .avecDernierImportDateIndic(new Date('2023-03-01'))
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -387,7 +387,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCible(30)
           .avecUnité('cm')
           .avecEstApplicable(false)
-          .avecDernierImportDate(new Date('2023-03-01'))
+          .avecDernierImportDateIndic(new Date('2023-03-01'))
           .build(),
       ];
 
@@ -527,7 +527,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCibleIntermedaire(70)
           .avecUnité('cm')
           .avecEstApplicable(false)
-          .avecDernierImportDate(new Date('2023-03-01'))
+          .avecDernierImportDateIndic(new Date('2023-03-01'))
           .build(),
       ];
 
@@ -588,7 +588,7 @@ describe('IndicateurSQLRepository', () => {
           .avecTauxAvancementCibleIntermedaire(70)
           .avecUnité('cm')
           .avecEstApplicable(false)
-          .avecDernierImportDate(new Date('2023-03-01'))
+          .avecDernierImportDateIndic(new Date('2023-03-01'))
           .build(),
       ];
 
