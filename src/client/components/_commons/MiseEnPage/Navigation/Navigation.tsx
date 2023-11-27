@@ -12,9 +12,15 @@ const fermerLaModaleDuMenu = () => {
   }
 };
 
+const vérifierBandeauEstActif = () => {
+  return process.env.NEXT_PUBLIC_FF_BANDEAU_INDISPONIBILITE === 'true';
+};
+
 export default function Navigation() {
   const { data: session } = useSession();
   const urlActuelle = useRouter().pathname;
+
+  const isBandeauActif = vérifierBandeauEstActif();
 
   const pages = [
     {
@@ -50,31 +56,32 @@ export default function Navigation() {
   ];
 
   return (
-    <div
-      aria-labelledby='bouton-menu-principal'
-      className='fr-header__menu fr-modal'
-      id='modale-menu-principal'
-    >
-      <div className='fr-container'>
-        <button
-          aria-controls='modale-menu-principal'
-          className='fr-btn--close fr-btn'
-          title='Fermer'
-          type='button'
-        >
-          Fermer
-        </button>
-        <div className='fr-header__menu-links'>
-          <Utilisateur />
-        </div>
-        <nav
-          aria-label='Menu principal'
-          className='fr-nav'
-          id='navigation-menu-principal'
-          role='navigation'
-        >
-          <ul className='fr-nav__list'>
-            {
+    <>
+      <div
+        aria-labelledby='bouton-menu-principal'
+        className='fr-header__menu fr-modal'
+        id='modale-menu-principal'
+      >
+        <div className='fr-container'>
+          <button
+            aria-controls='modale-menu-principal'
+            className='fr-btn--close fr-btn'
+            title='Fermer'
+            type='button'
+          >
+            Fermer
+          </button>
+          <div className='fr-header__menu-links'>
+            <Utilisateur />
+          </div>
+          <nav
+            aria-label='Menu principal'
+            className='fr-nav'
+            id='navigation-menu-principal'
+            role='navigation'
+          >
+            <ul className='fr-nav__list'>
+              {
                 pages.map(page => (
                   page.accessible &&
                     <li
@@ -93,9 +100,38 @@ export default function Navigation() {
                     </li>
                 ))
             }
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        </div>
       </div>
-    </div>
+      {
+        isBandeauActif ? (
+          <div className='fr-notice fr-notice--info'>
+            <div className='fr-container'>
+              <div className='fr-notice__body'>
+                <p className='fr-notice__title'>
+                  En raison d’une opération de maintenance, PILOTE sera totalement indisponible le mercredi 6 décembre de 9h à 12h. L&apos;import de données restera indisponible jusqu’au vendredi 8 décembre inclus. En cas de difficulté :
+                  {' '}
+                  <a href='mailto:support.ditp@modernisation.gouv.fr'>
+                    support.ditp@modernisation.gouv.fr
+                  </a>
+                </p>
+                <button
+                  className='fr-btn--close fr-btn'
+                  onClick={(event) => {
+                    const notice = event.currentTarget?.parentNode?.parentNode?.parentNode;
+                    notice?.parentNode?.removeChild(notice);
+                  }}
+                  title='Masquer le message'
+                  type='button'
+                >
+                  Masquer le message
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null
+      }
+    </>
   );
 }
