@@ -14,6 +14,7 @@ import {
   filtresModifierIndicateursActifsStore,
 } from '@/stores/useFiltresModifierIndicateursStore/useFiltresModifierIndicateursStore';
 import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
+import { horodatage } from '@/client/utils/date/date';
 
 const reactTableColonnesHelper = createColumnHelper<MetadataParametrageIndicateurContrat>();
 const colonnes = [
@@ -65,6 +66,21 @@ export default function useTableauPageAdminIndicateurs() {
     filtres: filtresActifs,
   });
 
+  const exporterLesIndicateurs = () => {
+    let queryParam = '';
+    if (filtresActifs.chantiers.length > 0) {
+      queryParam = '?' + filtresActifs.chantiers.map(chantier => (`chantierIds=${chantier}`)).join('&');
+    }
+    const url = `/api/export/metadata-indicateurs${queryParam}`;
+    const a = window.document.createElement('a');
+    a.href = url;
+    a.target = '_self';
+    a.download = `metadata-indicateurs-${horodatage()}.csv`;
+    document.body.append(a);
+    a.click();
+    a.remove();
+  };
+
 
   const changementDeLaRechercheCallback = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setValeurDeLaRecherche(event.target.value);
@@ -96,6 +112,7 @@ export default function useTableauPageAdminIndicateurs() {
     estEnChargement,
     changementDePageCallback,
     valeurDeLaRecherche,
+    exporterLesIndicateurs,
     changementDeLaRechercheCallback,
   };
 }
