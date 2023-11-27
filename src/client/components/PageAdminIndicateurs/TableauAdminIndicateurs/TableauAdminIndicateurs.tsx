@@ -1,3 +1,4 @@
+import { ChangeEventHandler, FormEventHandler, useState } from 'react';
 import useTableauPageAdminIndicateurs
   from '@/components/PageAdminIndicateurs/TableauAdminIndicateurs/useTableauAdminIndicateurs';
 import TableauAdminIndicateursStyled
@@ -10,6 +11,8 @@ import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/Meta
 import TableauAdminIndicateursContenu
   from '@/components/PageAdminIndicateurs/TableauAdminIndicateurs/Contenu/TableauAdminIndicateursContenu';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
+import InputFichier from '@/components/_commons/InputFichier/InputFichier';
+import SubmitBouton from '@/components/_commons/SubmitBouton/SubmitBouton';
 
 export function TableauAdminIndicateurs() {
   const {
@@ -20,6 +23,37 @@ export function TableauAdminIndicateurs() {
     valeurDeLaRecherche,
     exporterLesIndicateurs,
   } = useTableauPageAdminIndicateurs();
+
+  const [file, setFile] = useState<File | null>(null);
+
+  const définirLeFichier: ChangeEventHandler<HTMLInputElement> = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      setFile(event.target.files[0]);
+    }
+  };
+
+  type UploadFichierFormulaireElement = { 'file-upload': HTMLInputElement } & HTMLFormElement;
+
+  const verifierLeFichier: FormEventHandler<UploadFichierFormulaireElement> = async (event) => {
+    event.preventDefault();
+
+    if (!file) {
+      return;
+    }
+
+    event.currentTarget['file-upload'].value = '';
+
+    const body = new FormData();
+
+    body.append('file', file);
+
+    const result = await fetch('/api/import/metadata-indicateurs', {
+      method: 'POST',
+      body,
+    });
+  };
+
+
 
   return (
     <TableauAdminIndicateursStyled>
@@ -41,6 +75,19 @@ export function TableauAdminIndicateurs() {
                 {' '}
                 {tableau.getFilteredRowModel().rows.length > 1 ? 'indicateurs' : 'indicateur'}
               </Titre>
+              <form
+                className='flex align-center fr-mb-3w'
+                onSubmit={verifierLeFichier}
+              >
+                <InputFichier
+                  accept='.csv'
+                  onChange={définirLeFichier}
+                />
+                <SubmitBouton
+                  disabled={!file}
+                  label='Soumettre'
+                />
+              </form>
               <div>
                 <button
                   className='fr-btn fr-text'

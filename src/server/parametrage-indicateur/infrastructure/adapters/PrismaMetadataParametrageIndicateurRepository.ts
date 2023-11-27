@@ -10,6 +10,7 @@ import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/d
 import {
   MetadataParametrageIndicateurRepository,
 } from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
+import { ImportMetadataIndicateur } from '@/server/parametrage-indicateur/domain/ImportMetadataIndicateur';
 
 export interface RawMetadataParametrageIndicateurModel {
   indic_id: string,
@@ -428,4 +429,161 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
 
     return this.recupererMetadataParametrageIndicateurParIndicId(inputs.indicId);
   }
+
+  async importerEnMasseLesMetadataIndicateurs(listeMetadataIndicateur: ImportMetadataIndicateur[]): Promise<void> {
+
+    const queryIndicateurFn = (indicateur: ImportMetadataIndicateur) => {
+      return `INSERT INTO raw_data.metadata_indicateurs_hidden (indic_id,
+                                                                            indic_parent_indic,
+                                                                            indic_parent_ch,
+                                                                            indic_nom,
+                                                                            indic_nom_baro,
+                                                                            indic_descr,
+                                                                            indic_descr_baro,
+                                                                            indic_is_perseverant,
+                                                                            indic_is_phare,
+                                                                            indic_is_baro,
+                                                                            indic_type,
+                                                                            indic_source,
+                                                                            indic_source_url,
+                                                                            indic_methode_calcul,
+                                                                            indic_unite,
+                                                                            indic_hidden_pilote,
+                                                                            indic_schema
+                                                  )
+                                 VALUES ('${indicateur.indicId}',
+                                         '${indicateur.indicParentIndic}',
+                                         '${indicateur.indicParentCh}',
+                                         '${makeStrSafer(indicateur.indicNom)}',
+                                         '${makeStrSafer(indicateur.indicNomBaro)}',
+                                         '${makeStrSafer(indicateur.indicDescr)}',
+                                         '${makeStrSafer(indicateur.indicDescrBaro)}',
+                                         ${indicateur.indicIsPerseverant},
+                                         ${indicateur.indicIsPhare},
+                                         ${indicateur.indicIsBaro},
+                                         '${makeStrSafer(indicateur.indicType)}',
+                                         '${makeStrSafer(indicateur.indicSource)}',
+                                         '${makeStrSafer(indicateur.indicSourceUrl)}',
+                                         '${makeStrSafer(indicateur.indicMethodeCalcul)}',
+                                         '${makeStrSafer(indicateur.indicUnite)}',
+                                         ${indicateur.indicHiddenPilote},
+                                         '${makeStrSafer(indicateur.indicSchema)}')
+                                   ON CONFLICT ON CONSTRAINT metadata_indicateurs_hidden_pk DO UPDATE
+                                    SET indic_parent_indic = '${indicateur.indicParentIndic}',
+                                       indic_parent_ch = '${indicateur.indicParentCh}',
+                                       indic_nom = '${makeStrSafer(indicateur.indicNom)}',
+                                       indic_nom_baro = '${makeStrSafer(indicateur.indicNomBaro)}',
+                                       indic_descr = '${makeStrSafer(indicateur.indicDescr)}',
+                                       indic_descr_baro = '${makeStrSafer(indicateur.indicDescrBaro)}',
+                                       indic_is_perseverant = ${indicateur.indicIsPerseverant},
+                                       indic_is_phare = ${indicateur.indicIsPhare},
+                                       indic_is_baro = ${indicateur.indicIsBaro},
+                                       indic_type = '${makeStrSafer(indicateur.indicType)}',
+                                       indic_source = '${makeStrSafer(indicateur.indicSource)}',
+                                       indic_source_url = '${makeStrSafer(indicateur.indicSourceUrl)}',
+                                       indic_methode_calcul = '${makeStrSafer(indicateur.indicMethodeCalcul)}',
+                                       indic_unite = '${makeStrSafer(indicateur.indicUnite)}',
+                                       indic_hidden_pilote = ${indicateur.indicHiddenPilote},
+                                       indic_schema = '${makeStrSafer(indicateur.indicSchema)}';`;
+
+    };
+    const queryMetadataIndicateurFn = (indicateur: ImportMetadataIndicateur) => {
+      return `INSERT INTO raw_data.metadata_parametrage_indicateurs (indic_id,
+                                                                                                vi_dept_from,
+                                                                                                vi_dept_op,
+                                                                                                va_dept_from,
+                                                                                                va_dept_op,
+                                                                                                vc_dept_from,
+                                                                                                vc_dept_op,
+                                                                                                vi_reg_from,
+                                                                                                vi_reg_op,
+                                                                                                va_reg_from,
+                                                                                                va_reg_op,
+                                                                                                vc_reg_from,
+                                                                                                vc_reg_op,
+                                                                                                vi_nat_from,
+                                                                                                vi_nat_op,
+                                                                                                va_nat_from,
+                                                                                                va_nat_op,
+                                                                                                vc_nat_from,
+                                                                                                vc_nat_op,
+                                                                                                param_vaca_decumul_from,
+                                                                                                param_vaca_partition_date,
+                                                                                                param_vaca_op,
+                                                                                                param_vacg_decumul_from,
+                                                                                                param_vacg_partition_date,
+                                                                                                param_vacg_op,
+                                                                                                poids_pourcent_dept,
+                                                                                                poids_pourcent_reg,
+                                                                                                poids_pourcent_nat,
+                                                                                                tendance)
+                                         VALUES ('${indicateur.indicId}',
+                                                 '${makeStrSafer(indicateur.viDeptFrom)}', 
+                                                 '${makeStrSafer(indicateur.viDeptOp)}', 
+                                                 '${makeStrSafer(indicateur.vaDeptFrom)}',
+                                                 '${makeStrSafer(indicateur.vaDeptOp)}', 
+                                                 '${makeStrSafer(indicateur.vcDeptFrom)}', 
+                                                 '${makeStrSafer(indicateur.vcDeptOp)}',
+                                                 '${makeStrSafer(indicateur.viRegFrom)}', 
+                                                 '${makeStrSafer(indicateur.viRegOp)}',
+                                                 '${makeStrSafer(indicateur.vaRegFrom)}', 
+                                                 '${makeStrSafer(indicateur.vaRegOp)}',
+                                                 '${makeStrSafer(indicateur.vcRegFrom)}', 
+                                                 '${makeStrSafer(indicateur.vcRegOp)}',
+                                                 '${makeStrSafer(indicateur.viNatFrom)}', 
+                                                 '${makeStrSafer(indicateur.viNatOp)}',
+                                                 '${makeStrSafer(indicateur.vaNatFrom)}', 
+                                                 '${makeStrSafer(indicateur.vaNatOp)}',
+                                                 '${makeStrSafer(indicateur.vcNatFrom)}', 
+                                                 '${makeStrSafer(indicateur.vcNatOp)}',
+                                                 '${makeStrSafer(indicateur.paramVacaDecumulFrom)}',
+                                                 '${makeStrSafer(indicateur.paramVacaPartitionDate)}',
+                                                 '${makeStrSafer(indicateur.paramVacaOp)}',
+                                                 '${makeStrSafer(indicateur.paramVacgDecumulFrom)}',
+                                                 '${makeStrSafer(indicateur.paramVacgPartitionDate)}',
+                                                 '${makeStrSafer(indicateur.paramVacgOp)}', 
+                                                 '${indicateur.poidsPourcentDept}',
+                                                 '${indicateur.poidsPourcentReg}', 
+                                                 '${indicateur.poidsPourcentNat}',
+                                                 '${makeStrSafer(indicateur.tendance)}')
+
+                                           ON CONFLICT ON CONSTRAINT metadata_parametrage_indicateurs_pk DO UPDATE
+                                                 SET vi_dept_from = '${makeStrSafer(indicateur.viDeptFrom)}',
+                                                     vi_dept_op = '${makeStrSafer(indicateur.viDeptOp)}',
+                                                     va_dept_from = '${makeStrSafer(indicateur.vaDeptFrom)}',
+                                                     va_dept_op = '${makeStrSafer(indicateur.vaDeptOp)}',
+                                                     vc_dept_from = '${makeStrSafer(indicateur.vcDeptFrom)}',
+                                                     vc_dept_op = '${makeStrSafer(indicateur.vcDeptOp)}',
+                                                     vi_reg_from = '${makeStrSafer(indicateur.viRegFrom)}',
+                                                     vi_reg_op = '${makeStrSafer(indicateur.viRegOp)}',
+                                                     va_reg_from = '${makeStrSafer(indicateur.vaRegFrom)}',
+                                                     va_reg_op = '${makeStrSafer(indicateur.vaRegOp)}',
+                                                     vc_reg_from = '${makeStrSafer(indicateur.vcRegFrom)}',
+                                                     vc_reg_op = '${makeStrSafer(indicateur.vcRegOp)}',
+                                                     vi_nat_from = '${makeStrSafer(indicateur.viNatFrom)}',
+                                                     vi_nat_op = '${makeStrSafer(indicateur.viNatOp)}',
+                                                     va_nat_from = '${makeStrSafer(indicateur.vaNatFrom)}',
+                                                     va_nat_op = '${makeStrSafer(indicateur.vaNatOp)}',
+                                                     vc_nat_from = '${makeStrSafer(indicateur.vcNatFrom)}',
+                                                     vc_nat_op = '${makeStrSafer(indicateur.vcNatOp)}',
+                                                     param_vaca_decumul_from = '${makeStrSafer(indicateur.paramVacaDecumulFrom)}',
+                                                     param_vaca_partition_date = '${makeStrSafer(indicateur.paramVacaPartitionDate)}',
+                                                     param_vaca_op = '${makeStrSafer(indicateur.paramVacaOp)}',
+                                                     param_vacg_decumul_from = '${makeStrSafer(indicateur.paramVacgDecumulFrom)}',
+                                                     param_vacg_partition_date = '${makeStrSafer(indicateur.paramVacgPartitionDate)}',
+                                                     param_vacg_op = '${makeStrSafer(indicateur.paramVacgOp)}',
+                                                     poids_pourcent_dept = '${indicateur.poidsPourcentDept}',
+                                                     poids_pourcent_reg = '${indicateur.poidsPourcentReg}',
+                                                     poids_pourcent_nat = '${indicateur.poidsPourcentNat}',
+                                                     tendance = '${makeStrSafer(indicateur.tendance)}';`;
+    } ;
+
+
+    const listePromise = listeMetadataIndicateur.flatMap(indicateur => {
+      return [this.prismaClient.$queryRaw`${Prisma.raw(queryIndicateurFn(indicateur))}`, this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateurFn(indicateur))}`];
+    });
+    await this.prismaClient.$transaction(listePromise);
+
+  }
+
 }
