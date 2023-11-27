@@ -1,9 +1,11 @@
 import '@gouvfr/dsfr/dist/component/navigation/navigation.min.css';
 import '@gouvfr/dsfr/dist/component/button/button.min.css';
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css';
+import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
 
 const fermerLaModaleDuMenu = () => {
@@ -11,16 +13,22 @@ const fermerLaModaleDuMenu = () => {
     window.dsfr(document.querySelector<HTMLElement>('#modale-menu-principal'))?.modal?.conceal();
   }
 };
-
-const vérifierBandeauEstActif = () => {
-  return process.env.NEXT_PUBLIC_FF_BANDEAU_INDISPONIBILITE === 'true';
+const vérifierValeurApplicationEstIndisponible = () => {
+  return process.env.NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE === 'true';
 };
+
+const estAutoriséAParcourirSiIndisponible = (session: Session | null) => session?.profil === 'DITP_ADMIN';
+
 
 export default function Navigation() {
   const { data: session } = useSession();
-  const urlActuelle = useRouter().pathname;
+  const router = useRouter();
+  const urlActuelle = router.pathname;
 
-  const isBandeauActif = vérifierBandeauEstActif();
+
+  if (vérifierValeurApplicationEstIndisponible() && !estAutoriséAParcourirSiIndisponible(session) && urlActuelle !== '/503') {
+    router.push('/503');
+  }
 
   const pages = [
     {
@@ -56,82 +64,56 @@ export default function Navigation() {
   ];
 
   return (
-    <>
-      <div
-        aria-labelledby='bouton-menu-principal'
-        className='fr-header__menu fr-modal'
-        id='modale-menu-principal'
-      >
-        <div className='fr-container'>
-          <button
-            aria-controls='modale-menu-principal'
-            className='fr-btn--close fr-btn'
-            title='Fermer'
-            type='button'
-          >
-            Fermer
-          </button>
-          <div className='fr-header__menu-links'>
-            <Utilisateur />
-          </div>
-          <nav
-            aria-label='Menu principal'
-            className='fr-nav'
-            id='navigation-menu-principal'
-            role='navigation'
-          >
-            <ul className='fr-nav__list'>
-              {
-                pages.map(page => (
-                  page.accessible &&
-                    <li
-                      className='fr-nav__item'
-                      key={page.lien}
-                    >
-                      <Link
-                        aria-current={page.lien === urlActuelle ? 'true' : undefined}
-                        className='fr-nav__link'
-                        href={page.lien}
-                        onClick={fermerLaModaleDuMenu}
-                        target={page.target}
-                      >
-                        {page.nom}
-                      </Link>
-                    </li>
-                ))
-            }
-            </ul>
-          </nav>
+    <div
+      aria-labelledby='bouton-menu-principal'
+      className='fr-header__menu fr-modal'
+      id='modale-menu-principal'
+    >
+      <div className='fr-container'>
+        <button
+          aria-controls='modale-menu-principal'
+          className='fr-btn--close fr-btn'
+          title='Fermer'
+          type='button'
+        >
+          Fermer
+        </button>
+        <div className='fr-header__menu-links'>
+          <Utilisateur />
         </div>
+        <nav
+          aria-label='Menu principal'
+          className='fr-nav'
+          id='navigation-menu-principal'
+          role='navigation'
+        >
+          {
+            !vérifierValeurApplicationEstIndisponible() || (vérifierValeurApplicationEstIndisponible() && estAutoriséAParcourirSiIndisponible(session)) ? (
+              <ul className='fr-nav__list'>
+                {
+                      pages.map(page => (
+                        page.accessible &&
+                          <li
+                            className='fr-nav__item'
+                            key={page.lien}
+                          >
+                            <Link
+                              aria-current={page.lien === urlActuelle ? 'true' : undefined}
+                              className='fr-nav__link'
+                              href={page.lien}
+                              onClick={fermerLaModaleDuMenu}
+                              target={page.target}
+                            >
+                              {page.nom}
+                            </Link>
+                          </li>
+                      ))
+                    }
+              </ul>
+            ) : null
+            }
+        </nav>
       </div>
-      {
-        isBandeauActif ? (
-          <div className='fr-notice fr-notice--info'>
-            <div className='fr-container'>
-              <div className='fr-notice__body'>
-                <p className='fr-notice__title'>
-                  En raison d’une opération de maintenance, PILOTE sera totalement indisponible le mercredi 6 décembre de 9h à 12h. L&apos;import de données restera indisponible jusqu’au vendredi 8 décembre inclus. En cas de difficulté :
-                  {' '}
-                  <a href='mailto:support.ditp@modernisation.gouv.fr'>
-                    support.ditp@modernisation.gouv.fr
-                  </a>
-                </p>
-                <button
-                  className='fr-btn--close fr-btn'
-                  onClick={(event) => {
-                    const notice = event.currentTarget?.parentNode?.parentNode?.parentNode;
-                    notice?.parentNode?.removeChild(notice);
-                  }}
-                  title='Masquer le message'
-                  type='button'
-                >
-                  Masquer le message
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : null
-      }
-    </>
+    </div>
   );
 }
