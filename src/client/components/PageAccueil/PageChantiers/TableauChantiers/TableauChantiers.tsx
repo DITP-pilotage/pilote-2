@@ -38,29 +38,29 @@ export default function TableauChantiers({ données, setNombreChantiersDansLeTab
   return (
     <TableauChantiersStyled className='fr-table fr-m-0 fr-p-0'>
       <div className='tableau-actions fr-mb-3v'>
-        <div className="tableau-actions-gauche">
-          <div className="barre-de-recherche">
+        <div className='tableau-actions-gauche'>
+          <div className='barre-de-recherche'>
             <BarreDeRecherche
               changementDeLaRechercheCallback={changementDeLaRechercheCallback}
               valeur={valeurDeLaRecherche}
             />
           </div>
-          <div className="fr-toggle">
+          <div className='fr-toggle'>
             <input
-              className="fr-toggle__input"
-              id="interrupteur-grouper-par-ministères"
+              className='fr-toggle__input'
+              id='interrupteur-grouper-par-ministères'
               onChange={tableau.getColumn('porteur')?.getToggleGroupingHandler() ?? undefined}
-              type="checkbox"
+              type='checkbox'
             />
             <label
-              className="fr-toggle__label fr-pl-1w label"
-              htmlFor="interrupteur-grouper-par-ministères"
+              className='fr-toggle__label fr-pl-1w label'
+              htmlFor='interrupteur-grouper-par-ministères'
             >
               Grouper par ministère
             </label>
           </div>
         </div>
-        <div className="tableau-actions-droite">
+        <div className='tableau-actions-droite'>
           <TableauChantiersActionsDeTri
             changementColonneÀTrierCallback={changementSélectionColonneÀTrierCallback}
             changementDirectionDeTriCallback={changementDirectionDeTriCallback}
@@ -71,10 +71,10 @@ export default function TableauChantiers({ données, setNombreChantiersDansLeTab
       </div>
       {tableau.getRowModel().rows.length === 0
         ?
-          <div className="fr-notice fr-notice--info">
-            <div className="fr-container">
-              <div className="fr-notice__body">
-                <p className="fr-notice__title">
+          <div className='fr-notice fr-notice--info'>
+            <div className='fr-container'>
+              <div className='fr-notice__body'>
+                <p className='fr-notice__title'>
                   Aucun chantier ne correspond à votre recherche !
                 </p>
                 Vous pouvez modifier vos filtres pour élargir votre recherche.
@@ -84,7 +84,7 @@ export default function TableauChantiers({ données, setNombreChantiersDansLeTab
         :
           <>
             <table className='tableau'>
-              <caption className="fr-sr-only">
+              <caption className='fr-sr-only'>
                 Liste des chantiers
               </caption>
               {

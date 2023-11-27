@@ -6,8 +6,8 @@ describe('Jauge de progression', () => {
   test('la jauge contient le texte représentant son pourcentage', () => {
     render(
       <JaugeDeProgression
-        couleur="bleu"
-        libellé="test"
+        couleur='bleu'
+        libellé='test'
         pourcentage={24}
         taille='lg'
       />,
@@ -18,8 +18,8 @@ describe('Jauge de progression', () => {
   test('la jauge contient "- %" si son pourcentage est null', () => {
     render(
       <JaugeDeProgression
-        couleur="vert"
-        libellé="test"
+        couleur='vert'
+        libellé='test'
         pourcentage={null}
         taille='sm'
       />,
@@ -30,7 +30,7 @@ describe('Jauge de progression', () => {
   test("le libellé correspondant à la jauge s'affiche", () => {
     render(
       <JaugeDeProgression
-        couleur="orange"
+        couleur='orange'
         libellé="C'est un libellé de taille moyenne"
         pourcentage={null}
         taille='lg'

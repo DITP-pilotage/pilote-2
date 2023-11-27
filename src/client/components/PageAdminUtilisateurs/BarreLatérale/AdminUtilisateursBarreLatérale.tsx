@@ -32,7 +32,7 @@ export default function AdminUtilisateursBarreLatérale({
       setEstOuvert={setEstOuverteBarreLatérale}
     >
       <BarreLatéraleEncart>
-        <div className="fr-mb-2w">
+        <div className='fr-mb-2w'>
           <MultiSelectTerritoire
             changementValeursSélectionnéesCallback={(territoire) => {
               modifierÉtatDuFiltre(territoire, 'territoires');
@@ -45,7 +45,7 @@ export default function AdminUtilisateursBarreLatérale({
             territoiresCodesSélectionnésParDéfaut={filtresActifs.territoires}
           />
         </div>
-        <div className="fr-mb-2w">
+        <div className='fr-mb-2w'>
           <MultiSelectPérimètreMinistériel
             changementValeursSélectionnéesCallback={(périmètreMinistériel) => {
               modifierÉtatDuFiltre(périmètreMinistériel, 'périmètresMinistériels');
@@ -61,7 +61,7 @@ export default function AdminUtilisateursBarreLatérale({
           chantiersIdsSélectionnésParDéfaut={filtresActifs.chantiers}
         />
       </BarreLatéraleEncart>
-      <div className="fr-px-3w fr-py-2w">
+      <div className='fr-px-3w fr-py-2w'>
         <Titre
           baliseHtml='h2'
           className='fr-h4'
@@ -71,21 +71,21 @@ export default function AdminUtilisateursBarreLatérale({
         <button
           className='fr-btn fr-btn--secondary'
           onClick={réinitialiserFiltres}
-          type="button"
+          type='button'
         >
           Réinitialiser les filtres
         </button>
         <button
-          aria-controls="fr-sidemenu-item-territoires"
-          aria-expanded="true"
-          className="fr-sidemenu__btn fr-m-0"
+          aria-controls='fr-sidemenu-item-territoires'
+          aria-expanded='true'
+          className='fr-sidemenu__btn fr-m-0'
           type='button'
         >
           Périmètre(s) géographique(s)
         </button>
         <div
-          className="fr-collapse"
-          id="fr-sidemenu-item-territoires"
+          className='fr-collapse'
+          id='fr-sidemenu-item-territoires'
         >
           {
             filtresActifs.territoires.map(territoireCode => {
@@ -103,16 +103,16 @@ export default function AdminUtilisateursBarreLatérale({
           }
         </div>
         <button
-          aria-controls="fr-sidemenu-item-périmètresMinistériels"
-          aria-expanded="true"
-          className="fr-sidemenu__btn fr-m-0"
+          aria-controls='fr-sidemenu-item-périmètresMinistériels'
+          aria-expanded='true'
+          className='fr-sidemenu__btn fr-m-0'
           type='button'
         >
           Périmètre(s) ministériel(s)
         </button>
         <div
-          className="fr-collapse"
-          id="fr-sidemenu-item-périmètresMinistériels"
+          className='fr-collapse'
+          id='fr-sidemenu-item-périmètresMinistériels'
         >
           {
             filtresActifs.périmètresMinistériels.map(périmètreMinistérielId => {
@@ -130,16 +130,16 @@ export default function AdminUtilisateursBarreLatérale({
           }
         </div>
         <button
-          aria-controls="fr-sidemenu-item-chantiers"
-          aria-expanded="true"
-          className="fr-sidemenu__btn fr-m-0"
+          aria-controls='fr-sidemenu-item-chantiers'
+          aria-expanded='true'
+          className='fr-sidemenu__btn fr-m-0'
           type='button'
         >
           Chantier(s)
         </button>
         <div
-          className="fr-collapse"
-          id="fr-sidemenu-item-chantiers"
+          className='fr-collapse'
+          id='fr-sidemenu-item-chantiers'
         >
           {
             filtresActifs.chantiers.map(chantierId => {

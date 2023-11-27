@@ -33,15 +33,15 @@ export default function TableauProjetsStructurants({ données, setNombreProjetsS
   return (
     <TableauProjetsStructurantsStyled className='fr-table fr-m-0 fr-p-0'>
       <div className='tableau-actions fr-mb-3v fr-mt-1w'>
-        <div className="tableau-actions-gauche fr-mb-2w fr-mb-md-0">
-          <div className="barre-de-recherche">
+        <div className='tableau-actions-gauche fr-mb-2w fr-mb-md-0'>
+          <div className='barre-de-recherche'>
             <BarreDeRecherche
               changementDeLaRechercheCallback={changementDeLaRechercheCallback}
               valeur={valeurDeLaRecherche}
             />
           </div>
         </div>
-        <div className="tableau-actions-droite">
+        <div className='tableau-actions-droite'>
           <TableauChantiersActionsDeTri
             changementColonneÀTrierCallback={changementSélectionColonneÀTrierCallback}
             changementDirectionDeTriCallback={changementDirectionDeTriCallback}
@@ -52,10 +52,10 @@ export default function TableauProjetsStructurants({ données, setNombreProjetsS
       </div>
       {tableau.getRowModel().rows.length === 0
         ?
-          <div className="fr-notice fr-notice--info">
-            <div className="fr-container">
-              <div className="fr-notice__body">
-                <p className="fr-notice__title">
+          <div className='fr-notice fr-notice--info'>
+            <div className='fr-container'>
+              <div className='fr-notice__body'>
+                <p className='fr-notice__title'>
                   Aucun projet ne correspond à votre recherche !
                 </p>
                 Vous pouvez modifier vos filtres pour élargir votre recherche.
@@ -65,7 +65,7 @@ export default function TableauProjetsStructurants({ données, setNombreProjetsS
         :
           <>
             <table className='tableau'>
-              <caption className="fr-sr-only">
+              <caption className='fr-sr-only'>
                 Liste des chantiers
               </caption>
               {

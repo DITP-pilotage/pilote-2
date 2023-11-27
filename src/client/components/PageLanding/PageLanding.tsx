@@ -22,8 +22,8 @@ export default function PageLanding() {
       <PageLandingStyled>
         <section className='bloc-hero'>
           <div className='fr-container'>
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12 fr-col-lg-6 fr-py-8w">
+            <div className='fr-grid-row fr-grid-row--gutters fr-grid-row--center'>
+              <div className='fr-col-12 fr-col-lg-6 fr-py-8w'>
                 <Titre
                   baliseHtml='h1'
                 >
@@ -43,9 +43,9 @@ export default function PageLanding() {
                   Se connecter
                 </button>
               </div>
-              <div className="fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg conteneur-capture-pilote">
+              <div className='fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg conteneur-capture-pilote'>
                 <Image
-                  alt=""
+                  alt=''
                   src={captureÉcranPilote}
                 />
               </div>
@@ -54,25 +54,25 @@ export default function PageLanding() {
         </section>
         <section className='bloc-pour-qui'>
           <div className='fr-container fr-py-8w'>
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12">
+            <div className='fr-grid-row fr-grid-row--gutters fr-grid-row--center'>
+              <div className='fr-col-12'>
                 <Titre
                   baliseHtml='h2'
                   className='fr-h3'
                 >
                   À qui s’adresse PILOTE ?
                 </Titre>
-                <p className="fr-text--lg" >
+                <p className='fr-text--lg' >
                   PILOTE mobilise l’ensemble des responsables de la mise en œuvre des politiques prioritaires du Gouvernement à tous les niveaux de l’organisation administrative.
                 </p>
               </div>
             </div>
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12 fr-col-md-4">
+            <div className='fr-grid-row fr-grid-row--gutters fr-grid-row--center'>
+              <div className='fr-col-12 fr-col-md-4'>
                 <div className='fr-card'>
-                  <div className="conteneur-pictogramme">
+                  <div className='conteneur-pictogramme'>
                     <Image 
-                      alt=""
+                      alt=''
                       fill
                       src={carteFranceSvg}
                     />
@@ -84,17 +84,17 @@ export default function PageLanding() {
                     >
                       Pour les administrations centrales
                     </Titre>
-                    <p className="fr-text--lg fr-mb-0" >
+                    <p className='fr-text--lg fr-mb-0' >
                       PILOTE permet de fixer les objectifs aux services déconcentrés, de suivre l’avancement des chantiers et d’en rendre compte. Il permet d’identifier les freins et blocages pour apporter l’appui aux équipes opérationnelles sur le terrain ou susciter des arbitrages ministériels ou interministériels pour les lever.
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="fr-col-12 fr-col-md-4">
+              <div className='fr-col-12 fr-col-md-4'>
                 <div className='fr-card'>
-                  <div className="conteneur-pictogramme">
+                  <div className='conteneur-pictogramme'>
                     <Image 
-                      alt=""
+                      alt=''
                       fill
                       src={visualisationDonnéesSvg}
                     />
@@ -106,17 +106,17 @@ export default function PageLanding() {
                     >
                       Pour les préfets
                     </Titre>
-                    <p className="fr-text--lg fr-mb-0">
+                    <p className='fr-text--lg fr-mb-0'>
                       PILOTE offre aux préfets une vision transversale des objectifs et résultats de la feuille de route du Gouvernement dans le territoire pour lequel ils sont chargés d’en superviser la mise en œuvre. Dans une logique de « management par exception », il leur permet d’identifier les chantiers sur lesquels un appui est nécessaire.
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="fr-col-12 fr-col-md-4">
+              <div className='fr-col-12 fr-col-md-4'>
                 <div className='fr-card'>
-                  <div className="conteneur-pictogramme">
+                  <div className='conteneur-pictogramme'>
                     <Image 
-                      alt=""
+                      alt=''
                       fill
                       src={téléchargementFichierSvg}
                     />
@@ -128,7 +128,7 @@ export default function PageLanding() {
                     >
                       Pour les services déconcentrés
                     </Titre>
-                    <p className="fr-text--lg fr-mb-0">
+                    <p className='fr-text--lg fr-mb-0'>
                       PILOTE permet de s’entendre avec l’administration centrale sur les objectifs de chaque chantier prioritaire et de rendre compte des résultats obtenus. Il permet aussi d’alerter sur les obstacles rencontrés afin de demander des arbitrages, des ressources ou un appui du préfet, des équipes régionales ou des administrations centrales.
                     </p>
                   </div>
@@ -139,8 +139,8 @@ export default function PageLanding() {
         </section>
         <section className='bloc-pilotage-ppg'>
           <div className='fr-container fr-py-8w'>
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-              <div className="fr-col-12 fr-col-lg-8 fr-pr-md-4w">
+            <div className='fr-grid-row fr-grid-row--gutters fr-grid-row--center'>
+              <div className='fr-col-12 fr-col-lg-8 fr-pr-md-4w'>
                 <Titre
                   baliseHtml='h2'
                   className='fr-h3'
@@ -158,38 +158,38 @@ export default function PageLanding() {
                 </p>
                 <Link
                   className='fr-btn fr-btn--secondary fr-mt-3w'
-                  href="https://www.modernisation.gouv.fr/transformer-laction-publique/assurer-la-mise-en-oeuvre-des-politiques-prioritaires-du-gouvernement"
-                  target="_blank"
+                  href='https://www.modernisation.gouv.fr/transformer-laction-publique/assurer-la-mise-en-oeuvre-des-politiques-prioritaires-du-gouvernement'
+                  target='_blank'
                 >
                   En savoir plus
                 </Link>
               </div>
-              <div className="fr-col-12 fr-col-lg-4">
-                <div className="fr-card fr-enlarge-link">
-                  <div className="fr-card__body">
-                    <div className="fr-card__content">
+              <div className='fr-col-12 fr-col-lg-4'>
+                <div className='fr-card fr-enlarge-link'>
+                  <div className='fr-card__body'>
+                    <div className='fr-card__content'>
                       <Titre
                         baliseHtml='h2'
                         className='fr-h3'
                       >
                         {/* eslint-disable-next-line react/jsx-max-depth */}
                         <Link
-                          href="https://www.gouvernement.fr/les-actions-du-gouvernement"
-                          target="_blank"
+                          href='https://www.gouvernement.fr/les-actions-du-gouvernement'
+                          target='_blank'
                         >
                           Le baromètre des résultats de l’action publique
                         </Link>
                       </Titre>
-                      <p className="fr-card__desc">
+                      <p className='fr-card__desc'>
                         Le baromètre des résultats de l’action publique reprend les données de PILOTE pour rendre compte de l’avancement des politiques publiques aux citoyens.
                       </p>
                     </div>
                   </div>
-                  <div className="fr-card__header">
-                    <div className="fr-card__img">
+                  <div className='fr-card__header'>
+                    <div className='fr-card__img'>
                       <Image
-                        alt=""
-                        className="fr-responsive-img"
+                        alt=''
+                        className='fr-responsive-img'
                         src={baromètreCarteSvg}
                       />
                     </div>
@@ -201,7 +201,7 @@ export default function PageLanding() {
         </section>
         <section className='bloc-questions'>
           <div className='fr-container'>
-            <div className="fr-grid-row fr-py-8w conteneur-contact">
+            <div className='fr-grid-row fr-py-8w conteneur-contact'>
               <Titre
                 baliseHtml='h2'
                 className='fr-h3 fr-m-0'
@@ -210,8 +210,8 @@ export default function PageLanding() {
               </Titre>
               <Link
                 className='fr-btn'
-                href="mailto:support.ditp@modernisation.gouv.fr"
-                target="_blank"
+                href='mailto:support.ditp@modernisation.gouv.fr'
+                target='_blank'
               >
                 Contacter l&apos;équipe
               </Link>

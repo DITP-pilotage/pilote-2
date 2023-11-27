@@ -14,7 +14,7 @@ export default function Filtres({ ministères, axes, ppgs, afficherToutLesFiltre
 
   return (
     <>
-      <section className="fr-px-3w">
+      <section className='fr-px-3w'>
         <FiltresMinistères ministères={ministères} />
       </section>
       {!!afficherToutLesFiltres &&
@@ -23,12 +23,12 @@ export default function Filtres({ ministères, axes, ppgs, afficherToutLesFiltre
             <FiltresSélectionMultiple
               catégorieDeFiltre='axes'
               filtres={axes}
-              libellé="Axes"
+              libellé='Axes'
             />
             <FiltresSélectionMultiple
               catégorieDeFiltre='ppg'
               filtres={ppgs}
-              libellé="PPG"
+              libellé='PPG'
             />
           </FiltresGroupe>
           <hr className='fr-hr fr-mt-3w fr-pb-2w' />

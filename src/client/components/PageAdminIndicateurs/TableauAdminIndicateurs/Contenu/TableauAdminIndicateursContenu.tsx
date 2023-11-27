@@ -22,7 +22,7 @@ export default function TableauAdminIndicateursContenu({ tableau }: TableauAdmin
           {
             row.getVisibleCells().map(cell => (
               <td
-                className="fr-py-1w"
+                className='fr-py-1w'
                 key={cell.id}
                 title={cell.row.getValue(cell.column.id)}
               >

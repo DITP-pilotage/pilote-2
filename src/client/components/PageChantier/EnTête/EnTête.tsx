@@ -14,7 +14,7 @@ export default function PageChantierEnTête({
     <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-4w fr-py-2w'>
       <Link
         aria-label="Retour à l'accueil"
-        className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-mb-3w fr-mt-2w btn-retour"
+        className='fr-link fr-fi-arrow-left-line fr-link--icon-left fr-mb-3w fr-mt-2w btn-retour'
         href='/'
       >
         Retour

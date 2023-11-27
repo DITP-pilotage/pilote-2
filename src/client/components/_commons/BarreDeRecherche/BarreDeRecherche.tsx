@@ -7,19 +7,19 @@ export default function BarreDeRecherche({ changementDeLaRechercheCallback, vale
   return (
     <BarreDeRechercheStyled
       className='fr-search-bar'
-      role="search"
+      role='search'
     >
       <input
-        className="fr-input"
+        className='fr-input'
         onChange={changementDeLaRechercheCallback}
-        placeholder="Rechercher"
-        type="search"
+        placeholder='Rechercher'
+        type='search'
         value={valeur}
       />
       <div
         aria-hidden
-        className="fr-btn"
-        title="Rechercher"
+        className='fr-btn'
+        title='Rechercher'
       >
         Rechercher
       </div>

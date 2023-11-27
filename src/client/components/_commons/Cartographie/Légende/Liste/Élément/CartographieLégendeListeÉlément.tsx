@@ -11,10 +11,10 @@ export default function CartographieLégendeListeÉlément({ children, remplissa
       className='fr-pr-3v fr-pb-1v texte-gris'
     >
       <svg
-        className="fr-mr-1v fr-mt-1v remplissage"
-        version="1.2"
+        className='fr-mr-1v fr-mt-1v remplissage'
+        version='1.2'
         viewBox={`0 0 ${miseÀLÉchelle} ${miseÀLÉchelle}`}
-        xmlns="http://www.w3.org/2000/svg"
+        xmlns='http://www.w3.org/2000/svg'
       >
         <defs>
           { estHachure(remplissage) && hachuresGrisBlanc.patternSVG }

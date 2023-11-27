@@ -35,10 +35,10 @@ export default function PublicationHistorique({ type, entité, réformeId, maill
                 <Fragment key={publication.id}>
                   {
                     i !== 0 && (
-                      <hr className="fr-mt-4w" />
+                      <hr className='fr-mt-4w' />
                     )
                   }
-                  <div className="fr-mx-2w">
+                  <div className='fr-mx-2w'>
                     <PublicationAffichage publication={publication} />
                   </div>
                 </Fragment>

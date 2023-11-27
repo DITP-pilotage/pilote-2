@@ -9,7 +9,7 @@ const adjectifÀPartirDeLaMaille: Record<Maille, string> = {
 
 export function IndicateurPondération({ indicateurPondération, mailleSélectionnée }: IndicateurPondérationProps) {
   return (
-    <p className="fr-text--xs texte-gris">
+    <p className='fr-text--xs texte-gris'>
       {
           indicateurPondération[mailleSélectionnée] === null
             ? `La pondération n'est pas disponible pour le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleSélectionnée]}.`
@@ -20,7 +20,7 @@ export function IndicateurPondération({ indicateurPondération, mailleSélectio
                   <>
                     Cet indicateur représente
                     {' '}
-                    <span className="fr-text--bold">
+                    <span className='fr-text--bold'>
                       {indicateurPondération[mailleSélectionnée]?.toFixed(0)}
                       %
                     </span>

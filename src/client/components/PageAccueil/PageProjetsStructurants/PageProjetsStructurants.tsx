@@ -34,29 +34,29 @@ export default function PageProjetsStructurants({ projetsStructurants, ministèr
         nombreFiltresActifs > 0 &&
         <FiltresActifs ministères={ministères} />
       }
-      <div className="fr-py-2w fr-px-md-2w fr-container--fluid">
-        <div className="fr-px-2w fr-px-md-0 flex justify-between">
+      <div className='fr-py-2w fr-px-md-2w fr-container--fluid'>
+        <div className='fr-px-2w fr-px-md-0 flex justify-between'>
 
           <Titre
-            baliseHtml="h1"
+            baliseHtml='h1'
             className='fr-h4'
           >
             {`${nombreDeProjets} ${nombreDeProjets > 1 ? 'projets' : 'projet'}`}
           </Titre>
         </div>
-        <div className="fr-grid-row fr-grid-row--gutters">
-          <div className="fr-col-12 fr-col-lg-6">
+        <div className='fr-grid-row fr-grid-row--gutters'>
+          <div className='fr-col-12 fr-col-lg-6'>
             <Bloc>
               <section>
                 <TitreInfobulleConteneur>
                   <Titre
-                    baliseHtml="h2"
-                    className="fr-text--lg fr-mb-0 fr-py-1v"
+                    baliseHtml='h2'
+                    className='fr-text--lg fr-mb-0 fr-py-1v'
                     estInline
                   >
                     Taux d’avancement moyen
                   </Titre>
-                  <Infobulle idHtml="infobulle-projetsStructurants-avancements">
+                  <Infobulle idHtml='infobulle-projetsStructurants-avancements'>
                     {INFOBULLE_CONTENUS.projetsStructurants.jauges}
                   </Infobulle>
                 </TitreInfobulleConteneur>
@@ -69,17 +69,17 @@ export default function PageProjetsStructurants({ projetsStructurants, ministèr
                   />
                 </div>
               </section>
-              <hr className="fr-hr fr-my-3w fr-pb-1v" />
+              <hr className='fr-hr fr-my-3w fr-pb-1v' />
               <section>
                 <TitreInfobulleConteneur>
                   <Titre
-                    baliseHtml="h2"
-                    className="fr-text--lg fr-mb-0 fr-py-1v"
+                    baliseHtml='h2'
+                    className='fr-text--lg fr-mb-0 fr-py-1v'
                     estInline
                   >
                     Répartition des météos renseignées
                   </Titre>
-                  <Infobulle idHtml="infobulle-projetsStructurants-météos">
+                  <Infobulle idHtml='infobulle-projetsStructurants-météos'>
                     {INFOBULLE_CONTENUS.projetsStructurants.météos}
                   </Infobulle>
                 </TitreInfobulleConteneur>
@@ -87,12 +87,12 @@ export default function PageProjetsStructurants({ projetsStructurants, ministèr
               </section>
             </Bloc>
           </div>
-          <div className="fr-col-12 fr-col-lg-6">
+          <div className='fr-col-12 fr-col-lg-6'>
             <Bloc>
               <section>
                 <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg"
+                  baliseHtml='h2'
+                  className='fr-text--lg'
                 >
                   Taux d’avancement des projets structurants par territoire
                 </Titre>
@@ -105,20 +105,20 @@ export default function PageProjetsStructurants({ projetsStructurants, ministèr
             </Bloc>
           </div>
         </div>
-        <div className="fr-grid-row fr-mt-7v">
-          <div className="fr-col">
+        <div className='fr-grid-row fr-mt-7v'>
+          <div className='fr-col'>
             <Bloc>
               <TitreInfobulleConteneur>
                 <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg fr-mb-0 fr-py-1v"
+                  baliseHtml='h2'
+                  className='fr-text--lg fr-mb-0 fr-py-1v'
                   estInline
                 >
                   Liste des projets structurants (
                   {nombreProjetsStructurantsDansLeTableau}
                   )
                 </Titre>
-                <Infobulle idHtml="infobulle-projetsStructurants-liste">
+                <Infobulle idHtml='infobulle-projetsStructurants-liste'>
                   {INFOBULLE_CONTENUS.projetsStructurants.listeDesProjetsStructurants}
                 </Infobulle>
               </TitreInfobulleConteneur>

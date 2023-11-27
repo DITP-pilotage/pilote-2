@@ -30,10 +30,10 @@ export default function ExportDesDonnées() {
       ouvertureCallback={() => {
         setEstDésactivé(false);
       }}
-      titre="Exporter les données"
+      titre='Exporter les données'
     >
       <form
-        className="fr-mt-2w"
+        className='fr-mt-2w'
         onChange={() => {
           setEstDésactivé(false);
         }}
@@ -56,36 +56,36 @@ export default function ExportDesDonnées() {
         }}
       >
         <fieldset
-          aria-labelledby="légende-ressource-à-exporter"
-          className="fr-fieldset"
-          id="ressource-à-exporter"
+          aria-labelledby='légende-ressource-à-exporter'
+          className='fr-fieldset'
+          id='ressource-à-exporter'
         >
           <legend
-            className="fr-fieldset__legend--regular fr-fieldset__legend"
-            id="légende-ressource-à-exporter"
+            className='fr-fieldset__legend--regular fr-fieldset__legend'
+            id='légende-ressource-à-exporter'
           >
             Sélectionnez les données à exporter&nbsp;:
             {' '}
-            <span className="fr-hint-text">
+            <span className='fr-hint-text'>
               Les données exportées seront téléchargées au format .csv
             </span>
           </legend>
           {
             Object.values(ressources).map((ressource) => (
               <div
-                className="fr-fieldset__element"
+                className='fr-fieldset__element'
                 key={ressource.id}
               >
-                <div className="fr-radio-group">
+                <div className='fr-radio-group'>
                   <input
                     checked={ressourceÀExporter === ressource.id}
                     id={ressource.id}
-                    name="ressource-à-exporter"
+                    name='ressource-à-exporter'
                     onChange={() => setRessourceÀExporter(ressource.id)}
-                    type="radio"
+                    type='radio'
                   />
                   <label
-                    className="fr-label"
+                    className='fr-label'
                     htmlFor={ressource.id}
                   >
                     { ressource.libellé }
@@ -96,13 +96,13 @@ export default function ExportDesDonnées() {
           }
         </fieldset>
         <ul
-          className="fr-btns-group fr-btns-group--left fr-btns-group--inline-sm fr-btns-group--icon-left"
+          className='fr-btns-group fr-btns-group--left fr-btns-group--inline-sm fr-btns-group--icon-left'
         >
           <li>
             <button
-              className="fr-btn fr-btn--icon-left fr-icon-download-line btn-radius"
+              className='fr-btn fr-btn--icon-left fr-icon-download-line btn-radius'
               disabled={(ressourceÀExporter === undefined) || estDésactivé}
-              type="submit"
+              type='submit'
             >
               Exporter les données
             </button>
@@ -110,8 +110,8 @@ export default function ExportDesDonnées() {
           <li>
             <button
               aria-controls={ID_HTML_MODALE_EXPORT}
-              className="fr-btn fr-btn--secondary btn-radius"
-              type="button"
+              className='fr-btn fr-btn--secondary btn-radius'
+              type='button'
             >
               Annuler
             </button>

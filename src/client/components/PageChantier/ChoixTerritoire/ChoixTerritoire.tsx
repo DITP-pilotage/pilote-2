@@ -18,7 +18,7 @@ export default function ChoixTerritoire({ chantierId }: ChoixTerritoireProps) {
   const { auClicTerritoireCallback } = useCartographie();
 
   return (
-    <div className="flex">
+    <div className='flex'>
       <BarreLatérale
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
@@ -29,9 +29,9 @@ export default function ChoixTerritoire({ chantierId }: ChoixTerritoireProps) {
       </BarreLatérale>
       <main className='fr-pb-5w'>
         <BoutonSousLigné
-          classNameSupplémentaires="fr-link--icon-left fr-fi-arrow-right-line fr-hidden-xl fr-m-2w"
+          classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-xl fr-m-2w'
           onClick={() => setEstOuverteBarreLatérale(true)}
-          type="button"
+          type='button'
         >
           Filtres
         </BoutonSousLigné>
@@ -39,8 +39,8 @@ export default function ChoixTerritoire({ chantierId }: ChoixTerritoireProps) {
           chantier !== null ? (
             <>
               <PageChantierEnTête chantier={chantier} />
-              <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mt-5w fr-mx-1w">
-                <div className="fr-col-12 fr-col-xl-6">
+              <div className='fr-grid-row fr-grid-row--gutters fr-grid-row--center fr-mt-5w fr-mx-1w'>
+                <div className='fr-col-12 fr-col-xl-6'>
                   <Bloc>
                     <section>
                       <Titre

@@ -28,7 +28,7 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vi_reg_from.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="viRegFrom">
+              <Infobulle idHtml='viRegFrom'>
                 {mapInformationMetadataIndicateur.vi_reg_from.description}
               </Infobulle>
             ) : null}
@@ -50,11 +50,11 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.va_reg_from.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="vaRegFrom">
+              <Infobulle idHtml='vaRegFrom'>
                 {mapInformationMetadataIndicateur.va_reg_from.description}
               </Infobulle>
             ) : null}
@@ -76,11 +76,11 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vc_reg_from.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="vcRegFrom">
+              <Infobulle idHtml='vcRegFrom'>
                 {mapInformationMetadataIndicateur.vc_reg_from.description}
               </Infobulle>
             ) : null}
@@ -108,7 +108,7 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vi_reg_op.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="viRegOp">
+              <Infobulle idHtml='viRegOp'>
                 {mapInformationMetadataIndicateur.vi_reg_op.description}
               </Infobulle>
             ) : null}
@@ -130,11 +130,11 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.va_reg_op.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="vaRegOp">
+              <Infobulle idHtml='vaRegOp'>
                 {mapInformationMetadataIndicateur.va_reg_op.description}
               </Infobulle>
             ) : null}
@@ -156,11 +156,11 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vc_reg_op.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="vcRegOp">
+              <Infobulle idHtml='vcRegOp'>
                 {mapInformationMetadataIndicateur.vc_reg_op.description}
               </Infobulle>
             ) : null}

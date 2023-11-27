@@ -15,8 +15,8 @@ export default function TableauChantiersTuileChantier({ chantier, afficherIcône
 
   return (
     <TableauChantiersTuileChantierStyled>
-      <div className="tuile-chantier-entête">
-        <p className="fr-mb-0 fr-ml-n1w">
+      <div className='tuile-chantier-entête'>
+        <p className='fr-mb-0 fr-ml-n1w'>
           <IcônesMultiplesEtTexte
             icônesId={afficherIcône && chantier.porteur?.icône ? [chantier.porteur.icône] : []}
             largeurDesIcônes='1.75rem'
@@ -32,11 +32,11 @@ export default function TableauChantiersTuileChantier({ chantier, afficherIcône
         </div>
       </div>
       <div className='fr-mt-1w fr-ml-5v tuile-chantier-corps'>
-        <div className="météo">
+        <div className='météo'>
           <TableauRéformesMétéo
             dateDeMàjDonnéesQualitatives={chantier.dateDeMàjDonnéesQualitatives}
             météo={chantier.météo}
-            taille="sm"
+            taille='sm'
           />
         </div>
         <div className='avancement'>
@@ -52,7 +52,7 @@ export default function TableauChantiersTuileChantier({ chantier, afficherIcône
         {
           process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && !!couleurÉcartArrondi &&
           <TexteColoré
-            alignement="droite"
+            alignement='droite'
             couleur={couleurÉcartArrondi.couleur}
             estGras
             texte={`${couleurÉcartArrondi.écartArrondi.toFixed(1)}`}

@@ -22,17 +22,17 @@ export default function FiltresActifs({ ministères } : FiltresActifsProps) {
   return (
     <FiltresActifsStyled
       className='fr-px-4w fr-py-2w'
-      id="filtres-actifs"
+      id='filtres-actifs'
     >
-      <p className="fr-text--xs fr-mb-1w">
-        <span className="bold">
+      <p className='fr-text--xs fr-mb-1w'>
+        <span className='bold'>
           {nombreFiltresActifs}
         </span>
         {' '}
         {nombreFiltresActifs > 1 ? 'filtres actifs sur cette page' : 'filtre actif sur cette page'}
       </p>
       <ul
-        aria-label="liste des tags des filtres actifs"
+        aria-label='liste des tags des filtres actifs'
         className='conteneur-tags'
       >
         {
@@ -54,7 +54,7 @@ export default function FiltresActifs({ ministères } : FiltresActifsProps) {
       <button
         className='boutons fr-btn fr-btn--tertiary fr-mt-1w'
         onClick={désactiverTousLesFiltres}
-        type="button"
+        type='button'
       >
         Réinitialiser les filtres
       </button>

@@ -9,8 +9,8 @@ export default function TypologiesPictos({ typologies }: TypologiesPictosProps) 
   }
 
   return (
-    <TypologiesPictosStyled className="flex fr-m-0 fr-p-0">
-      <li className="fr-mr-1v">
+    <TypologiesPictosStyled className='flex fr-m-0 fr-p-0'>
+      <li className='fr-mr-1v'>
         {
           !!typologies.estBaromètre &&
           <PictoBaromètre />

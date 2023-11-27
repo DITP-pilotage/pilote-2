@@ -11,7 +11,7 @@ export default function SubmitBouton({ label, disabled, className }: SubmitBouto
     <button
       className={`fr-btn${className ? ' ' + className : ''}`}
       disabled={disabled}
-      type="submit"
+      type='submit'
     >
       {label}
     </button>

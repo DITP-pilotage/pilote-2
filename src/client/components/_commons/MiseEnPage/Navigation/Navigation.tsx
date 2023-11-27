@@ -51,39 +51,39 @@ export default function Navigation() {
 
   return (
     <div
-      aria-labelledby="bouton-menu-principal"
-      className="fr-header__menu fr-modal"
-      id="modale-menu-principal"
+      aria-labelledby='bouton-menu-principal'
+      className='fr-header__menu fr-modal'
+      id='modale-menu-principal'
     >
-      <div className="fr-container">
+      <div className='fr-container'>
         <button
-          aria-controls="modale-menu-principal"
-          className="fr-btn--close fr-btn"
-          title="Fermer"
-          type="button"
+          aria-controls='modale-menu-principal'
+          className='fr-btn--close fr-btn'
+          title='Fermer'
+          type='button'
         >
           Fermer
         </button>
-        <div className="fr-header__menu-links">
+        <div className='fr-header__menu-links'>
           <Utilisateur />
         </div>
         <nav
-          aria-label="Menu principal"
-          className="fr-nav"
-          id="navigation-menu-principal"
-          role="navigation"
+          aria-label='Menu principal'
+          className='fr-nav'
+          id='navigation-menu-principal'
+          role='navigation'
         >
-          <ul className="fr-nav__list">
+          <ul className='fr-nav__list'>
             {
                 pages.map(page => (
                   page.accessible &&
                     <li
-                      className="fr-nav__item"
+                      className='fr-nav__item'
                       key={page.lien}
                     >
                       <Link
                         aria-current={page.lien === urlActuelle ? 'true' : undefined}
-                        className="fr-nav__link"
+                        className='fr-nav__link'
                         href={page.lien}
                         onClick={fermerLaModaleDuMenu}
                         target={page.target}

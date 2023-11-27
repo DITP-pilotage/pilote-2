@@ -14,7 +14,7 @@ export default function PublicationAffichage({ publication }: PublicationAfficha
 
   return (
     <>
-      <p className="fr-text--xs texte-gris fr-mb-1w">
+      <p className='fr-text--xs texte-gris fr-mb-1w'>
         {`Mis à jour le ${formaterDate(publication.date, 'DD/MM/YYYY')}`}
         {
           !!publication.auteur && 
@@ -22,7 +22,7 @@ export default function PublicationAffichage({ publication }: PublicationAfficha
         }
       </p>
       <p
-        className="fr-text--sm fr-mb-0"
+        className='fr-text--sm fr-mb-0'
       // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(publication.contenu),

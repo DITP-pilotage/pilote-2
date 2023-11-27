@@ -8,8 +8,8 @@ export default function BoutonImpression() {
       type='button'
     >
       <span
-        aria-hidden="true"
-        className="fr-icon-download-line"
+        aria-hidden='true'
+        className='fr-icon-download-line'
       />
       {' '}
       Imprimer

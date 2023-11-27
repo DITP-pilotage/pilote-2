@@ -40,28 +40,28 @@ export default function FiltresMinistères({ ministères }: FiltresMinistèresPr
   );
 
   return (
-    <FiltresMinistèresStyled className="fr-form-group">
+    <FiltresMinistèresStyled className='fr-form-group'>
       <button
         aria-controls={`fr-sidemenu-item-${catégorieDeFiltre}`}
-        aria-expanded="true"
-        className="fr-sidemenu__btn fr-m-0"
+        aria-expanded='true'
+        className='fr-sidemenu__btn fr-m-0'
         type='button'
       >
         Ministères
       </button>
       <div
-        className="fr-collapse"
+        className='fr-collapse'
         id={`fr-sidemenu-item-${catégorieDeFiltre}`}
       >
         <ul
-          aria-label="Liste des filtres ministères"
+          aria-label='Liste des filtres ministères'
           className='fr-p-0 fr-m-0 ministères-liste'
         >
           {
             ministères.map((ministère) => {
               return (
                 <li
-                  className=""
+                  className=''
                   key={ministère.nom}
                 >
                   <button
@@ -70,10 +70,10 @@ export default function FiltresMinistères({ ministères }: FiltresMinistèresPr
                         ${estDéroulé(ministère) ? 'ministère-déroulé actif' : ''}
                       `}
                     onClick={() => auClicSurUnMinistèreCallback(ministère)}
-                    type="button"
+                    type='button'
                   >
-                    <div className="tuile-ministère-contenu">
-                      <span className="icône">
+                    <div className='tuile-ministère-contenu'>
+                      <span className='icône'>
                         {
                           !!ministère.icône &&
                           <Icône id={ministère.icône} />
@@ -87,13 +87,13 @@ export default function FiltresMinistères({ ministères }: FiltresMinistèresPr
                   {
                     ministère.périmètresMinistériels.length > 1 &&
                     <ul
-                      className="fr-p-0 fr-m-0 fr-mb-1w périmètres-liste"
+                      className='fr-p-0 fr-m-0 fr-mb-1w périmètres-liste'
                       tabIndex={!estDéroulé(ministère) ? -1 : undefined}
                     >
                       {
                         ministère.périmètresMinistériels.map(périmètre => (
                           <li
-                            className="fr-p-0 fr-my-1w fr-mr-0 fr-ml-4w"
+                            className='fr-p-0 fr-my-1w fr-mr-0 fr-ml-4w'
                             key={périmètre.id}
                           >
                             <button
@@ -103,7 +103,7 @@ export default function FiltresMinistères({ ministères }: FiltresMinistèresPr
                               `}
                               onClick={() => auClicSurUnPérimètreCallback(périmètre)}
                               tabIndex={!estDéroulé(ministère) ? -1 : undefined}
-                              type="button"
+                              type='button'
                             >
                               {périmètre.nom}
                             </button>

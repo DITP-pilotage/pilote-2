@@ -22,7 +22,7 @@ export function TableauAdminIndicateurs() {
 
   return (
     <TableauAdminIndicateursStyled>
-      <div className="barre-de-recherche fr-mt-2w">
+      <div className='barre-de-recherche fr-mt-2w'>
         <BarreDeRecherche
           changementDeLaRechercheCallback={changementDeLaRechercheCallback}
           valeur={valeurDeLaRecherche}
@@ -39,9 +39,9 @@ export function TableauAdminIndicateurs() {
               {' '}
               {tableau.getFilteredRowModel().rows.length > 1 ? 'indicateurs' : 'indicateur'}
             </Titre>
-            <div className="fr-table">
+            <div className='fr-table'>
               <table className='tableau fr-m-0 fr-p-0'>
-                <caption className="fr-sr-only">
+                <caption className='fr-sr-only'>
                   Tableau des indicateurs
                 </caption>
                 <TableauEnTête<MetadataParametrageIndicateurContrat> tableau={tableau} />

@@ -34,8 +34,8 @@ export default function SélecteurTerritoire() {
   
   return (
     <Sélecteur
-      htmlName="périmètre-géographique"
-      libellé="Périmètre géographique"
+      htmlName='périmètre-géographique'
+      libellé='Périmètre géographique'
       options={construireLaListeDOptions(territoiresAccessiblesEnLecture, session?.profil)}
       valeurModifiéeCallback={territoireCode => modifierTerritoireSélectionné(territoireCode)}
       valeurSélectionnée={territoireSélectionné?.code}

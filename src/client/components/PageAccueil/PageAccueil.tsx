@@ -35,8 +35,8 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
         </BarreLatéraleEncart>
         <section>
           <Titre
-            baliseHtml="h1"
-            className="fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8"
+            baliseHtml='h1'
+            className='fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8'
           >
             Filtres
           </Titre>
@@ -50,9 +50,9 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
       </BarreLatérale>
       <div className='contenu-principal'>
         <BoutonSousLigné
-          classNameSupplémentaires="fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w"
+          classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w'
           onClick={() => setEstOuverteBarreLatérale(true)}
-          type="button"
+          type='button'
         >
           Filtres
         </BoutonSousLigné>

@@ -24,7 +24,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
 
   return (
     <IndicateurBlocStyled
-      className="fr-mb-2w"
+      className='fr-mb-2w'
       key={indicateur.id}
     >
       <Bloc>
@@ -32,8 +32,8 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
           <div className='flex justify-between'>
             <div>
               <Titre
-                baliseHtml="h4"
-                className="fr-text--xl fr-mb-1w"
+                baliseHtml='h4'
+                className='fr-text--xl fr-mb-1w'
               >
                 {
                   !!indicateur.estIndicateurDuBaromètre &&
@@ -43,11 +43,11 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
                 }
                 {indicateur.nom + (indicateur.unité === null ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
               </Titre>
-              <div className="fr-ml-2w fr-mb-3w">
-                <p className="fr-mb-0 fr-text--xs texte-gris">
+              <div className='fr-ml-2w fr-mb-3w'>
+                <p className='fr-mb-0 fr-text--xs texte-gris'>
                   Dernière mise à jour des données (de l&apos;indicateur) :
                   {' '}
-                  <span className="fr-text--bold">
+                  <span className='fr-text--bold'>
                     {dateDeMiseAJourIndicateur}
                   </span>
                 </p>

@@ -29,7 +29,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.param_vaca_decumul_from.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="paramVacaDecumulFrom">
+              <Infobulle idHtml='paramVacaDecumulFrom'>
                 {mapInformationMetadataIndicateur.param_vaca_decumul_from.description}
               </Infobulle>
             ) : null}
@@ -37,10 +37,10 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
           {estEnCoursDeModification
             ? <Input
                 erreur={errors.paramVacaDecumulFrom}
-                htmlName="paramVacaDecumulFrom"
-                libellé="paramVacaDecumulFrom"
+                htmlName='paramVacaDecumulFrom'
+                libellé='paramVacaDecumulFrom'
                 register={register('paramVacaDecumulFrom', { value: indicateur?.paramVacaDecumulFrom })}
-                type="text"
+                type='text'
               />
             : (
               <span>
@@ -49,11 +49,11 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
             )}
 
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pr-2w fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pr-2w fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.param_vaca_partition_date.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="paramVacaPartitionDate">
+              <Infobulle idHtml='paramVacaPartitionDate'>
                 {mapInformationMetadataIndicateur.param_vaca_partition_date.description}
               </Infobulle>
             ) : null}
@@ -61,10 +61,10 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
           {estEnCoursDeModification
             ? <Input
                 erreur={errors.paramVacaPartitionDate}
-                htmlName="paramVacaPartitionDate"
-                libellé="paramVacaPartitionDate"
+                htmlName='paramVacaPartitionDate'
+                libellé='paramVacaPartitionDate'
                 register={register('paramVacaPartitionDate', { value: indicateur?.paramVacaPartitionDate })}
-                type="text"
+                type='text'
               />
             : (
               <span>
@@ -72,11 +72,11 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.param_vaca_op.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="paramVacaOp">
+              <Infobulle idHtml='paramVacaOp'>
                 {mapInformationMetadataIndicateur.param_vaca_op.description}
               </Infobulle>
             ) : null}
@@ -104,7 +104,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.param_vacg_decumul_from.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="paramVacgDecumulFrom">
+              <Infobulle idHtml='paramVacgDecumulFrom'>
                 {mapInformationMetadataIndicateur.param_vacg_decumul_from.description}
               </Infobulle>
             ) : null}
@@ -112,10 +112,10 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
           {estEnCoursDeModification
             ? <Input
                 erreur={errors.paramVacgDecumulFrom}
-                htmlName="paramVacgDecumulFrom"
-                libellé="paramVacgDecumulFrom"
+                htmlName='paramVacgDecumulFrom'
+                libellé='paramVacgDecumulFrom'
                 register={register('paramVacgDecumulFrom', { value: indicateur?.paramVacgDecumulFrom })}
-                type="text"
+                type='text'
               />
             : (
               <span>
@@ -123,11 +123,11 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.param_vacg_partition_date.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="paramVacgPartitionDate">
+              <Infobulle idHtml='paramVacgPartitionDate'>
                 {mapInformationMetadataIndicateur.param_vacg_partition_date.description}
               </Infobulle>
             ) : null}
@@ -135,10 +135,10 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
           {estEnCoursDeModification
             ? <Input
                 erreur={errors.paramVacgPartitionDate}
-                htmlName="paramVacgPartitionDate"
-                libellé="paramVacgPartitionDate"
+                htmlName='paramVacgPartitionDate'
+                libellé='paramVacgPartitionDate'
                 register={register('paramVacgPartitionDate', { value: indicateur?.paramVacgPartitionDate })}
-                type="text"
+                type='text'
               />
             : (
               <span>
@@ -146,11 +146,11 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
               </span>
             )}
         </div>
-        <div className="fr-col-12 fr-col-md-4 fr-pl-2w">
+        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.param_vacg_op.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="paramVacgOp">
+              <Infobulle idHtml='paramVacgOp'>
                 {mapInformationMetadataIndicateur.param_vacg_op.description}
               </Infobulle>
             ) : null}
@@ -178,7 +178,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.tendance.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml="tendance">
+              <Infobulle idHtml='tendance'>
                 {mapInformationMetadataIndicateur.tendance.description}
               </Infobulle>
             ) : null}

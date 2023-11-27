@@ -6,13 +6,13 @@ export default function TextAreaAvecLabel({ erreur, libellé, htmlName, texteAid
   return (
     <div className={`fr-input-group ${erreur !== undefined ? 'fr-input-group--error' : ''}`}>
       <label
-        className="fr-label"
+        className='fr-label'
         htmlFor={htmlName}
       >
         {libellé}
         {
           !!texteAide &&
-            <span className="fr-hint-text">
+            <span className='fr-hint-text'>
               {texteAide}
             </span>
         }
@@ -26,7 +26,7 @@ export default function TextAreaAvecLabel({ erreur, libellé, htmlName, texteAid
       {
         erreur !== undefined &&
           <p
-            className="fr-error-text"
+            className='fr-error-text'
           >
             {erreur.message?.toString()}
           </p>

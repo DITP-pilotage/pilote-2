@@ -21,11 +21,11 @@ function PageAdminIndicateurs() {
       />
       <main>
         <div className='fr-mt-4w fr-mx-4w fr-mb-3w'>
-          <div className="fr-grid-row fr-grid-row--middle fr-mb-3w">
-            <div className="flex justify-between w-full">
+          <div className='fr-grid-row fr-grid-row--middle fr-mb-3w'>
+            <div className='flex justify-between w-full'>
               <Titre
-                baliseHtml="h1"
-                className="fr-h1 fr-mb-0"
+                baliseHtml='h1'
+                className='fr-h1 fr-mb-0'
               >
                 Gestion des paramètres des indicateurs
               </Titre>
@@ -34,7 +34,7 @@ function PageAdminIndicateurs() {
                 className='fr-btn fr-text'
                 data-fr-opened={false}
                 onClick={naviguerVersCreationIndicateur}
-                type="button"
+                type='button'
               >
                 Créer un nouvel indicateur
               </button>

@@ -63,38 +63,38 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
       </p>
       <Titre
         baliseHtml='h2'
-        className="fr-text--md  fr-mb-2w"
+        className='fr-text--md  fr-mb-2w'
       >
         Identification
       </Titre>
-      <p className="fr-text--xs texte-gris fr-mb-4w">
+      <p className='fr-text--xs texte-gris fr-mb-4w'>
         Tous les champs sont obligatoires.
       </p>
       <InputAvecLabel
         disabled={Boolean(utilisateur?.email)}
         erreur={errors.email}
-        htmlName="email"
-        libellé="Adresse électronique"
+        htmlName='email'
+        libellé='Adresse électronique'
         register={register('email', { value: utilisateur?.email })}
-        texteAide="Format attendu : nom@domaine.fr"
+        texteAide='Format attendu : nom@domaine.fr'
         type='email' 
       />
       <InputAvecLabel
         erreur={errors.nom}
-        htmlName="nom"
-        libellé="Nom"
+        htmlName='nom'
+        libellé='Nom'
         register={register('nom', { value: utilisateur?.nom })} 
       />
       <InputAvecLabel
         erreur={errors.prénom}
-        htmlName="prénom"
-        libellé="Prénom"
+        htmlName='prénom'
+        libellé='Prénom'
         register={register('prénom', { value: utilisateur?.prénom })} 
       />
       <InputAvecLabel
         erreur={errors.fonction}
-        htmlName="fonction"
-        libellé="Fonction"
+        htmlName='fonction'
+        libellé='Fonction'
         register={register('fonction', { value: utilisateur?.fonction })} 
       />
       <Sélecteur
@@ -111,18 +111,18 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
-          className="fr-text--md  fr-mb-2w"
+          className='fr-text--md  fr-mb-2w'
         >
           Droits de lecture
         </Titre>
-        <p className="fr-text--xs texte-gris fr-mb-4w">
+        <p className='fr-text--xs texte-gris fr-mb-4w'>
           Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
         </p>
         <div className={`${!!afficherChampLectureTerritoires ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.lecture.territoires"
+              name='habilitations.lecture.territoires'
               render={() => (
                 <MultiSelectTerritoire
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
@@ -138,7 +138,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.lecture.périmètres"
+              name='habilitations.lecture.périmètres'
               render={() => (
                 <MultiSelectPérimètreMinistériel
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistériels}
@@ -153,7 +153,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.lecture.chantiers"
+              name='habilitations.lecture.chantiers'
               render={() => (
                 <MultiSelectChantier
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiers}
@@ -171,18 +171,18 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
-          className="fr-text--md  fr-mb-2w"
+          className='fr-text--md  fr-mb-2w'
         >
           Droits de saisie des données quantitatives
         </Titre>
-        <p className="fr-text--xs texte-gris fr-mb-4w">
+        <p className='fr-text--xs texte-gris fr-mb-4w'>
           Précisez les droits de saisie rattachés au compte. Les options disponibles dépendent du profil et des droits de lecture précédemment indiqués.
         </p>
         <div className={`${!!afficherChampSaisieIndicateursPérimètres ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.saisieIndicateur.périmètres"
+              name='habilitations.saisieIndicateur.périmètres'
               render={() => (
                 <MultiSelectPérimètreMinistériel
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieIndicateurs}
@@ -198,7 +198,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.saisieIndicateur.chantiers"
+              name='habilitations.saisieIndicateur.chantiers'
               render={() => (
                 <MultiSelectChantier
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiersSaisieIndicateurs}
@@ -216,11 +216,11 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
-          className="fr-text--md  fr-mb-2w"
+          className='fr-text--md  fr-mb-2w'
         >
           Droits de saisie des commentaires
         </Titre>
-        <p className="fr-text--xs texte-gris fr-mb-4w">
+        <p className='fr-text--xs texte-gris fr-mb-4w'>
           Précisez les droits de saisie rattachés au compte. Les options disponibles dépendent du profil et des droits de lecture précédemment indiqués.
           <br />
           Les périmètres ministériels et/ou les chantiers affichés dans le menu déroulant dépendent du profil.
@@ -231,7 +231,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.saisieCommentaire.périmètres"
+              name='habilitations.saisieCommentaire.périmètres'
               render={() => (
                 <MultiSelectPérimètreMinistériel
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieCommentaire}
@@ -247,7 +247,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.saisieCommentaire.chantiers"
+              name='habilitations.saisieCommentaire.chantiers'
               render={() => (
                 <MultiSelectChantier
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiersSaisieCommentaire}
@@ -261,10 +261,10 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           </div>
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
+      <div className='fr-grid-row fr-grid-row--right fr-mt-4w'>
         <SubmitBouton
           className='fr-btn--icon-right fr-icon-arrow-right-line'
-          label="Suivant" 
+          label='Suivant' 
         />
       </div>
       {/* <DevTool control={control} /> */}

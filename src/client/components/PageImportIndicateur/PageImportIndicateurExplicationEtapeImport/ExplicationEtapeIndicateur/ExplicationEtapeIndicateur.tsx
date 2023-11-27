@@ -9,7 +9,7 @@ export default function ExplicationEtapeIndicateur({ titre, texte, numéro, etap
         {numéro}
       </span>
       <Titre
-        baliseHtml="h3"
+        baliseHtml='h3'
         className='fr-h6 fr-mb-1w'
       >
         {titre}
