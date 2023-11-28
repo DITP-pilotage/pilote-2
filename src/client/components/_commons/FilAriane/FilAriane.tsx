@@ -9,14 +9,14 @@ export default function FilAriane({ chemin, libelléPageCourante }: FilArianePro
 
   return (
     <nav
-      aria-label="vous êtes ici :"
-      className="fr-breadcrumb fr-mb-3w"
-      role="navigation"
+      aria-label='vous êtes ici :'
+      className='fr-breadcrumb fr-mb-3w'
+      role='navigation'
     >
       <button
         aria-controls={`breadcrumb-${id}`}
-        aria-expanded="false"
-        className="fr-breadcrumb__button"
+        aria-expanded='false'
+        className='fr-breadcrumb__button'
         onClick={() => setEstOuvert(!estOuvert)}
         type='button'
       >
@@ -26,11 +26,11 @@ export default function FilAriane({ chemin, libelléPageCourante }: FilArianePro
         className={estOuvert ? 'fr-collapse--expanded' : 'fr-collapse'}
         id={`breadcrumb-${id}`}
       >
-        <ol className="fr-breadcrumb__list">
+        <ol className='fr-breadcrumb__list'>
           <li>
             <Link
-              className="fr-breadcrumb__link"
-              href="/"
+              className='fr-breadcrumb__link'
+              href='/'
             >
               Accueil
             </Link>
@@ -39,7 +39,7 @@ export default function FilAriane({ chemin, libelléPageCourante }: FilArianePro
             chemin.map(page => (
               <li key={page.nom}>
                 <Link
-                  className="fr-breadcrumb__link"
+                  className='fr-breadcrumb__link'
                   href={page.lien}
                 >
                   {page.nom}
@@ -49,8 +49,8 @@ export default function FilAriane({ chemin, libelléPageCourante }: FilArianePro
             : null }
           <li>
             <span
-              aria-current="page"
-              className="fr-breadcrumb__link"
+              aria-current='page'
+              className='fr-breadcrumb__link'
             >
               {libelléPageCourante}
             </span>

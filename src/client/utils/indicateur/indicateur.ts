@@ -1,11 +1,15 @@
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 
-const AUTHORIZED_PROFIL  = new Set(['DITP_ADMIN', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM']);
+const PROFIL_AUTORISE_A_IMPORTER  = new Set(['DITP_ADMIN', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM']);
+const PROFIL_AUTORISE_A_MODIFIER  = new Set(['DITP_ADMIN']);
 const ORDRE_DES_TYPES_INDICATEUR: TypeIndicateur[] = ['IMPACT', 'DEPL', 'Q_SERV', 'REBOND', 'CONTEXTE'];
 
 export function estAutoriséAImporterDesIndicateurs(profil: string): boolean {
-  return AUTHORIZED_PROFIL.has(profil);
+  return PROFIL_AUTORISE_A_IMPORTER.has(profil);
+}
+export function estAutoriséAModifierDesIndicateurs(profil: string): boolean {
+  return PROFIL_AUTORISE_A_MODIFIER.has(profil);
 }
 
 export function comparerIndicateur(a: Indicateur, b: Indicateur, mailleSélectionnée: Maille) {

@@ -31,7 +31,7 @@ export default function SynthèseDesRésultatsHistorique({ réformeId }: Synthè
         idHtml={ID_HTML}
         ouvertureCallback={récupérerHistoriqueSynthèseDesRésultats}
         sousTitre={territoireSélectionné!.nomAffiché}
-        titre="Historique - Synthèse des résultats"
+        titre='Historique - Synthèse des résultats'
       >
         <SynthèseDesRésultatsHistoriqueStyled>
           {
@@ -40,12 +40,12 @@ export default function SynthèseDesRésultatsHistorique({ réformeId }: Synthè
                 <Fragment key={synthèse?.date ?? 'MANQUANT'}>
                   {
                     i !== 0 && (
-                      <hr className="fr-mt-4w" />
+                      <hr className='fr-mt-4w' />
                     )
                   }
-                  <div className="conteneur">
-                    <div className="conteneur-météo fr-mb-3w fr-mb-md-0">
-                      <div className="fr-mb-2w">
+                  <div className='conteneur'>
+                    <div className='conteneur-météo fr-mb-3w fr-mb-md-0'>
+                      <div className='fr-mb-2w'>
                         <MétéoBadge météo={synthèse?.météo ?? 'NON_RENSEIGNEE'} />
                       </div>
                       {
@@ -55,7 +55,7 @@ export default function SynthèseDesRésultatsHistorique({ réformeId }: Synthè
                         </div>
                       }
                     </div>
-                    <div className="fr-pl-md-3w">
+                    <div className='fr-pl-md-3w'>
                       <SynthèseDesRésultatsAffichage synthèseDesRésultats={synthèse} />
                     </div>
                   </div>

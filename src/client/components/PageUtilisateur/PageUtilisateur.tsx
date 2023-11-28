@@ -23,8 +23,8 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
         />
         <div className='fiche-utilisateur fr-pt-1w fr-pb-13w'>
           <Link
-            aria-label="Retour à la liste des utilisateurs"
-            className="fr-link fr-fi-arrow-left-line fr-link--icon-left fr-text--sm bouton-retour"
+            aria-label='Retour à la liste des utilisateurs'
+            className='fr-link fr-fi-arrow-left-line fr-link--icon-left fr-text--sm bouton-retour'
             href='/admin/utilisateurs'
           >
             Retour
@@ -38,7 +38,7 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
           <Bloc>
             <div className='fr-py-4w fr-px-10w'>
               <FicheUtilisateur utilisateur={utilisateur} />
-              <div className="fr-grid-row fr-mt-4w">
+              <div className='fr-grid-row fr-mt-4w'>
                 <Link
                   className='fr-btn fr-mr-2w'
                   href={`/admin/utilisateur/${utilisateur.id}/modifier`}
@@ -49,13 +49,13 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
                   aria-controls='supprimer-compte'
                   className='fr-text supprimer'
                   data-fr-opened={false}
-                  type="button"
+                  type='button'
                 >
                   Supprimer le compte
                 </button>
                 <Modale
                   idHtml='supprimer-compte'
-                  titre="Suppression de compte"
+                  titre='Suppression de compte'
                 >
                   <div>
                     Vous êtes sur le point de supprimer le compte de 
@@ -69,14 +69,14 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
                       .
                     </span>
                   </div>
-                  <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
+                  <div className='fr-grid-row fr-grid-row--right fr-mt-4w'>
                     <Bouton
                       className='fr-btn--secondary fr-mr-2w'
-                      label="Annuler"
+                      label='Annuler'
                       onClick={fermerLaModaleDeSuppressionUtilisateur}
                     />
                     <Bouton
-                      label="Confirmer la suppression"
+                      label='Confirmer la suppression'
                       onClick={supprimerUtilisateur}
                     />
                   </div>

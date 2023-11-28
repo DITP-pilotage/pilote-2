@@ -10,27 +10,27 @@ export default function ResponsablesPageProjetStructurant({ responsables, nomTer
       <Bloc titre={nomTerritoire}>
         <ResponsablesLigne
           contenu={[responsables.ministèrePorteur]}
-          libellé="Ministère porteur"
+          libellé='Ministère porteur'
         />
         <hr className='fr-hr fr-py-1w' />
         <ResponsablesLigne
           contenu={responsables.ministèresCoporteurs}
-          libellé="Autres ministères co-porteurs"
+          libellé='Autres ministères co-porteurs'
         />
         <hr className='fr-hr fr-py-1w' />
         <ResponsablesLigne
           contenu={responsables.directionAdmininstration}
-          libellé="Direction de l’administration porteuse du projet"
+          libellé='Direction de l’administration porteuse du projet'
         />
         <hr className='fr-hr fr-py-1w' />
         <ResponsablesLigne
           contenu={responsables.chefferieDeProjet}
-          libellé="Chefferie de projet"
+          libellé='Chefferie de projet'
         />
         <hr className='fr-hr fr-py-1w' />
         <ResponsablesLigne
           contenu={responsables.coporteurs}
-          libellé="Co-porteur(s) du projet"
+          libellé='Co-porteur(s) du projet'
         />
       </Bloc>
     </ResponsablesPageProjetStructurantStyled>

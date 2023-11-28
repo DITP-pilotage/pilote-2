@@ -26,7 +26,7 @@ export default function MultiSelectChantier({ chantiersIdsSélectionnésParDéfa
       setValeursSélectionnéesParDéfaut(chantiersIdsSélectionnésParDéfaut);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chantiersIdsSélectionnésParDéfaut]);
+  }, [chantiersIdsSélectionnésParDéfaut, valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut]);
 
   return (
     <MultiSelect

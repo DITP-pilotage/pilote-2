@@ -18,11 +18,11 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
       chantiers: [],
       territoires: [],
     },
-    'saisie.indicateur': {
+    saisieIndicateur: {
       chantiers: [],
       territoires: [],
     },
-    'saisie.commentaire': {
+    saisieCommentaire: {
       chantiers: [],
       territoires: [],
     },
@@ -46,9 +46,10 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
   }, [départements, profil, récupérerDétailsSurUnTerritoire]);
 
   const déterminerLesNomÀAfficherPourLesChantiersLecture = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
+    
     if (profil?.code === 'DROM')
-      return ['Tous les chantiers territorialisés', 'Tous les chantiers DROM'];
-
+      return ['Tous les chantiers territorialisés', 'Tous les chantiers DROM'];  
+  
     if (profil?.chantiers.lecture.tous)
       return ['Tous les chantiers']; 
 
@@ -66,23 +67,30 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
   }, [profil]);
 
   const déterminerLesNomÀAfficherPourLesChantiersSaisieIndicateur = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
-    const chantiersAccessiblesEnLecture = déterminerLesNomÀAfficherPourLesChantiersLecture(u);
+    
+    if (profil?.code === 'DROM')
+      return ['Tous les chantiers territorialisés', 'Tous les chantiers DROM'];
 
-    if (chantiersAccessiblesEnLecture && profil?.chantiers.saisieIndicateur.tousTerritoires) 
-      return chantiersAccessiblesEnLecture;
+    if (profil?.code === 'DITP_ADMIN')
+      return ['Tous les chantiers']; 
+
+    if (profil?.chantiers.saisieIndicateur.tousTerritoires) 
+      return u.habilitations?.saisieIndicateur?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
     
     return [];
-  }, [déterminerLesNomÀAfficherPourLesChantiersLecture, profil]);
+
+  }, [profil, chantiers]);
 
   const déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
+
+    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET'].includes(profil?.code ?? ''))
+      return ['France', 'Régions (les chantiers hors ATE centralisé)', 'Départements (les chantiers hors ATE centralisé)'];
+
     if (profil?.chantiers.saisieCommentaire.tousTerritoires)
       return ['Tous les territoires']; 
 
-    if (['DITP_PILOTAGE', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM'].includes(profil?.code ?? ''))
+    if (['DITP_PILOTAGE', 'DROM'].includes(profil?.code ?? ''))
       return ['France'];
-    
-    if (['PR', 'PM_ET_CABINET', 'CABINET_MTFP', 'CABINET_MINISTERIEL', 'DIR_ADMIN_CENTRALE', 'SECRETARIAT_GENERAL'].includes(profil?.code ?? ''))
-      return [];
 
     if (profil && profilsRégionaux.includes(profil.code)) {
       const régionsSaisies = u?.habilitations?.lecture?.territoires?.filter(territoireCode => territoireCode.startsWith('REG')) ?? [];
@@ -98,21 +106,18 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
     if (déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire(u).length === 0) 
       return [];
 
-    if (profil && ['REFERENT_REGION', 'PREFET_REGION', 'REFERENT_DEPARTEMENT', 'PREFET_DEPARTEMENT'].includes(profil.code)) {
+    if (profil?.code === 'DROM')
+      return ['Tous les chantiers territorialisés', 'Tous les chantiers DROM'];
+
+    if (['REFERENT_REGION', 'PREFET_REGION', 'REFERENT_DEPARTEMENT', 'PREFET_DEPARTEMENT'].includes(profil?.code ?? ''))
       return ['Tous les chantiers ATE territorialisés'];
-    }
 
-    if (profil && ['SERVICES_DECONCENTRES_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT'].includes(profil.code)) {
-      return u.habilitations?.lecture?.chantiers
-        ?.map(chantierId => chantiers
-          ?.filter(c => c.ate === 'hors_ate_deconcentre')
-          .find(c => c.id === chantierId)?.nom)
-        .filter((c): c is string => c !== undefined) 
-        ?? [];
-    }
+    if (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profil?.code ?? '')) 
+      return ['Tous les chantiers'];
 
-    return déterminerLesNomÀAfficherPourLesChantiersLecture(u);
-  }, [chantiers, déterminerLesNomÀAfficherPourLesChantiersLecture, déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire, profil]);
+    return u.habilitations?.saisieCommentaire?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
+
+  }, [chantiers, déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire, profil]);
 
   useEffect(() => {
     if (!chantiers || !profil)
@@ -123,11 +128,11 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
         chantiers: déterminerLesNomÀAfficherPourLesChantiersLecture(utilisateur),
         territoires: déterminerLesNomÀAfficherPourLesTerritoiresLecture(utilisateur),
       },
-      'saisie.indicateur': {
+      saisieIndicateur: {
         chantiers: déterminerLesNomÀAfficherPourLesChantiersSaisieIndicateur(utilisateur),
         territoires: déterminerLesNomÀAfficherPourLesTerritoiresSaisieIndicateur(),
       },
-      'saisie.commentaire': {
+      saisieCommentaire: {
         chantiers: déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire(utilisateur),
         territoires: déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire(utilisateur),
       },

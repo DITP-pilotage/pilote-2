@@ -85,6 +85,24 @@ import {
 import {
   IndicateurRepository as ImportIndicateurRepository,
 } from '@/server/import-indicateur/domain/ports/IndicateurRepository';
+import {
+  PrismaMetadataParametrageIndicateurRepository,
+} from '@/server/parametrage-indicateur/infrastructure/adapters/PrismaMetadataParametrageIndicateurRepository';
+import {
+  MetadataParametrageIndicateurRepository,
+} from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
+import {
+  YamlInformationMetadataIndicateurRepository,
+} from '@/server/parametrage-indicateur/infrastructure/adapters/YamlInformationMetadataIndicateurRepository';
+import {
+  InformationMetadataIndicateurRepository,
+} from '@/server/parametrage-indicateur/domain/ports/InformationMetadataIndicateurRepository';
+import {
+  HistorisationModificationSQLRepository,
+} from '@/server/infrastructure/accès_données/historisationModification/HistorisationModificationSQLRepository';
+import {
+  HistorisationModificationRepository,
+} from '@/server/domain/historisationModification/HistorisationModificationRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
@@ -154,7 +172,13 @@ class Dependencies {
 
   private readonly _importIndicateurRepository: ImportIndicateurRepository;
 
+  private readonly _metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository;
+
+  private readonly _informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository;
+
   private _utilisateurIAMRepository: UtilisateurIAMRepository | undefined;
+
+  private readonly _historisationModification: HistorisationModificationRepository;
 
   constructor() {
     const prisma = globalForPrisma.prisma ?? new PrismaClient();
@@ -186,6 +210,9 @@ class Dependencies {
     this._synthèseDesRésultatsProjetStructurantRepository = new SynthèseDesRésultatsProjetStructurantSQLRepository(prisma);
     this._indicateurProjetStructurantRepository = new IndicateurProjetStructurantSQLRepository(prisma);
     this._importIndicateurRepository = new PrismaIndicateurRepository(prisma);
+    this._metadataParametrageIndicateurRepository = new PrismaMetadataParametrageIndicateurRepository(prisma);
+    this._informationMetadataIndicateurRepository = new YamlInformationMetadataIndicateurRepository();
+    this._historisationModification = new HistorisationModificationSQLRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
@@ -203,6 +230,10 @@ class Dependencies {
       indicateurRepository: this._importIndicateurRepository,
       erreurValidationFichierRepository: this._erreurValidationFichierRepository,
     });
+  }
+
+  getHistorisationModificationRepository(): HistorisationModificationRepository {
+    return this._historisationModification;
   }
 
   getChantierRepository(): ChantierRepository {
@@ -249,6 +280,10 @@ class Dependencies {
     return this._importIndicateurRepository;
   }
 
+  getMetadataParametrageIndicateurRepository(): MetadataParametrageIndicateurRepository {
+    return this._metadataParametrageIndicateurRepository;
+  }
+
   getRapportRepository(): RapportRepository {
     return this._rapportRepository;
   }
@@ -259,6 +294,10 @@ class Dependencies {
 
   getMesureIndicateurRepository(): MesureIndicateurRepository {
     return this._mesureIndicateurRepository;
+  }
+
+  getInformationMetadataIndicateurRepository(): InformationMetadataIndicateurRepository {
+    return this._informationMetadataIndicateurRepository;
   }
 
   getPublierFichierIndicateurImporteUseCase(): PublierFichierIndicateurImporteUseCase {

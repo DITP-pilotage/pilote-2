@@ -21,9 +21,9 @@ export default function BarreDeProgression({
       taille={taille}
       variante={variante}
     >
-      <div className="barre">
+      <div className='barre'>
         <progress
-          max="100"
+          max='100'
           value={valeur ?? 0}
         >
           {pourcentageAffiché}

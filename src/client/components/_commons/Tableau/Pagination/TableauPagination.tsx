@@ -23,27 +23,27 @@ export default function TableauPagination({ nombreDePages, changementDePageCallb
   
   return (
     <nav
-      aria-label="Pagination"
-      className="fr-pagination fr-grid-row fr-grid-row--center fr-mt-11v fr-mb-10w"
-      role="navigation"
+      aria-label='Pagination'
+      className='fr-pagination fr-grid-row fr-grid-row--center fr-mt-11v fr-mb-10w'
+      role='navigation'
     >
-      <ul className="fr-pagination__list">
+      <ul className='fr-pagination__list'>
         <li className='fr-unhidden-sm fr-hidden'>
           <button
-            className="fr-pagination__link fr-pagination__link--first"
+            className='fr-pagination__link fr-pagination__link--first'
             disabled={numéroDePageCourante === 1}
             onClick={() => changerPage(1)}
-            type="button"
+            type='button'
           >
             Première page
           </button>
         </li>
         <li className='fr-unhidden-sm fr-hidden'>
           <button
-            className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+            className='fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label'
             disabled={numéroDePageCourante === 1}
             onClick={() => changerPage(numéroPagePrécédente)}
-            type="button"
+            type='button'
           >
             Page précédente
           </button>
@@ -91,7 +91,7 @@ export default function TableauPagination({ nombreDePages, changementDePageCallb
               }
               {
                 aLaPremièreTroncature() &&
-                <li className="fr-pagination__link">
+                <li className='fr-pagination__link'>
                   ...
                 </li>
               }
@@ -117,7 +117,7 @@ export default function TableauPagination({ nombreDePages, changementDePageCallb
               }
               {
                 aLaDeuxièmeTroncature() &&
-                <li className="fr-pagination__link">
+                <li className='fr-pagination__link'>
                   ...
                 </li>
               }
@@ -154,20 +154,20 @@ export default function TableauPagination({ nombreDePages, changementDePageCallb
           }
         <li className='fr-unhidden-sm fr-hidden'>
           <button
-            className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+            className='fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label'
             disabled={numéroDePageCourante === numéroDernièrePage}
             onClick={() => changerPage(numéroPageSuivante)}
-            type="button"
+            type='button'
           >
             Page suivante
           </button>
         </li>
         <li className='fr-unhidden-sm fr-hidden'>
           <button
-            className="fr-pagination__link fr-pagination__link--last"
+            className='fr-pagination__link fr-pagination__link--last'
             disabled={numéroDePageCourante === numéroDernièrePage}
             onClick={() => changerPage(numéroDernièrePage)}
-            type="button"
+            type='button'
           >
             Dernière page
           </button>

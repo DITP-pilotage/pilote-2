@@ -5,22 +5,37 @@ models:
     description: "Vue intermédiaire afin de décliner les chantiers pour tous leurs territoires (maille + code insee)"
   - name: int_dfakto_indicateurs_metrics
     description: "Vue intermédiaire pour récupérer les métriques (type TA) des indicateurs en provenance de dfakto"
-  - name: df2_int_dfakto_indicateurs_metrics
-    description: "Reproduction de la table int_dfakto_indicateurs_metrics sans les dépendances"
   - name: projet_structurant_temporaire
     description: "Vue intermédiaire afin de créer une table projet_structurant avec un id unique qui sera réutilisée pour toutes les tables en ayant besoin (de l'id unique)"
-  - name: last_vc_annuel
+  - name: last_update_indic_zone
     description: |
-      Vue qui donne la dernière VC annuelle pour chaque {zone_id, indicateur_id, année}. 
-      
-      Il s'agira de la VC **la plus tardive** dans l'année. Ainsi, si une valeur est saisie pour *décembre 2025*, si une valeur est saisie pour *septembre 2025*, cette dernière ne sera donc **pas prise en compte**.
-  - name: last_vc_global
-    description: |
-      Vue qui donne la dernière VC globale pour chaque {zone_id, indicateur_id}. 
+      Pour chaque couple {indicateur-zone}, on indique le **rapport** et la **date** de ce rapport qui modifie cet indicateur sur cette zone.
 
-      Il s'agira de la VC **la plus tardive** saisie. Ainsi, si l'on a une valeur pour *dec-24* et *sept-25*, c'est celle de *sept-25* qui sera prise en compte.
-  - name: first_vi_global
+      Etant donné que l'on part de la table `raw_data.mesure_indicateur`, si une valeur qui est renvoyée à la webapp est issue d'une aggrégation, il n'existe **pas d'import correspondant** donc **aucune ligne** ne sera renvoyée pour ce couple {indicateur-zone}.
+    columns:
+      - name: indic_id
+        description: "Identifiant de l'indicateur"
+      - name: zone_id
+        description: "Identifiant de la zone"
+      - name: territoire_code
+        description: "Code du territoire. Utilisé par le front, équivalent à `zone_id`"
+      - name: dernier_import_rapport_id
+        description: "UUID du dernier rapport pour cet {indicateur-zone}"
+      - name: dernier_import_date
+        description: "Date du dernier rapport (`dernier_import_rapport_id`)"
+      - name: dernier_import_auteur
+        description: "Auteur du dernier rapport qui modifie cet indicateur sur cette zone"
+  - name: last_update_indic
     description: |
-      Vue qui donne la première VI pour chaque {zone_id, indicateur_id}. 
+      Pour chaque {indicateur}, on indique le **rapport** et la **date** de ce rapport qui modifie cet indicateur sur **n'importe quelle zone**.
 
-      Il s'agira de la VI **la plus lointaine** dans le passé. Ainsi, si l'on a une valeur pour *jan-23* et *sept-21*, c'est celle de *sept-21* qui sera prise en compte.
+      Cela permet par exemple d'avoir une date à afficher pour une **valeur issue d'une aggrégation**. En effet, dans ce cas, une valeur aggrégée issue de calculs peut être renvoyée vers le front mais n'est présente dans aucun rapport. 
+    columns:
+      - name: indic_id
+        description: "Identifiant de l'indicateur"
+      - name: dernier_import_rapport_id_indic
+        description: "UUID du dernier rapport pour cet {indicateur} (sur n'importe quelle zone)"
+      - name: dernier_import_date_indic
+        description: "Date du dernier rapport (`dernier_import_rapport_id_indic`)"
+      - name: dernier_import_auteur_indic
+        description: "Auteur du dernier rapport pour cet {indicateur} (sur n'importe quelle zone)"

@@ -30,6 +30,11 @@
   },
   "rules": {
     "sonarjs/cognitive-complexity": "off",
+    "@typescript-eslint/dot-notation": "off",
+    "quotes": ["error", "single", {
+      "avoidEscape": true
+    }],
+    "jsx-quotes": ["error", "prefer-single"],
     "no-relative-import-paths/no-relative-import-paths": [
       "warn",
       {
@@ -98,6 +103,7 @@
     "react/jsx-no-literals": "off",
     "react/forbid-component-props": "off",
     "react/jsx-props-no-spreading": "off",
+    "react/prefer-read-only-props": "off",
     "eol-last": [
       "error",
       "always"

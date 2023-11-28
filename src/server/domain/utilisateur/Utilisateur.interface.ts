@@ -28,6 +28,7 @@ export const profilsTerritoriaux = [
   'REFERENT_REGION',
   'PREFET_REGION',
   'SERVICES_DECONCENTRES_REGION',
+  'RESPONSABLE_REGION',
   'REFERENT_DEPARTEMENT',
   'PREFET_DEPARTEMENT',
   'SERVICES_DECONCENTRES_DEPARTEMENT',
@@ -57,6 +58,14 @@ export type UtilisateurÀCréerOuMettreÀJour =  {
   fonction: string | null
   profil: ProfilCode
   habilitations: HabilitationsÀCréerOuMettreÀJour
+};
+
+export type UtilisateurÀCréerOuMettreÀJourSansHabilitation =  {
+  nom: string
+  prénom: string
+  email: string
+  fonction: string | null
+  profil: ProfilCode
 };
 
 export default Utilisateur;

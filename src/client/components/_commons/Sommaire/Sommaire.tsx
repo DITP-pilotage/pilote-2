@@ -5,10 +5,10 @@ export default function Sommaire({ rubriques, auClic }: SommaireProps) {
   return (
     <SommaireStyled>
       <nav className='fr-pt-3w fr-pl-7v fr-pr-4w'>
-        <p className="bold fr-text--lg fr-mb-1w">
+        <p className='bold fr-text--lg fr-mb-1w'>
           Sommaire
         </p>
-        <ul className="fr-text--sm fr-pl-3w">
+        <ul className='fr-text--sm fr-pl-3w'>
           {
             rubriques.map(rubrique => (
               <li

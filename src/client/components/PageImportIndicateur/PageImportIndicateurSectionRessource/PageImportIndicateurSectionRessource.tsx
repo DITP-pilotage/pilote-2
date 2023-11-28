@@ -164,30 +164,30 @@ export function PageImportIndicateurSectionRessource() {
           <p>
             {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.SOUS_TITRE}
           </p>
-          <div className="flex">
-            <div className="fr-download fr-mr-3w fr-hidden">
+          <div className='flex'>
+            <div className='fr-download fr-mr-3w fr-hidden'>
               <p>
                 <a
-                  className="fr-download__link"
+                  className='fr-download__link'
                   download
-                  href="/referentiel/referentiel_territoires.xlsx"
+                  href='/referentiel/referentiel_territoires.xlsx'
                 >
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.LABEL_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR}
-                  <span className="fr-download__detail">
+                  <span className='fr-download__detail'>
                     {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.FORMAT_BOUTON_TELECHARGER_REFERENTIEL_INDICATEUR}
                   </span>
                 </a>
               </p>
             </div>
-            <div className="fr-download">
+            <div className='fr-download'>
               <p>
                 <a
-                  className="fr-download__link"
+                  className='fr-download__link'
                   download
-                  href="/referentiel/referentiel_territoires.xlsx"
+                  href='/referentiel/referentiel_territoires.xlsx'
                 >
                   {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.LABEL_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE}
-                  <span className="fr-download__detail">
+                  <span className='fr-download__detail'>
                     {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.SECTION_REFERENTIEL.FORMAT_BOUTON_TELECHARGER_REFERENTIEL_TERRITOIRE}
                   </span>
                 </a>

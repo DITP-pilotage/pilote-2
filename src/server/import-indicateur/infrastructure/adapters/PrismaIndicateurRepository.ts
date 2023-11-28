@@ -27,7 +27,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
   async recupererInformationIndicateurParId(indicId: string): Promise<InformationIndicateur> {
     try {
       const rawInformationIndicateur = await this.prismaClient.$queryRaw<RawInformationIndicateurModel[]>`SELECT indic_id, indic_schema
-                                                                                                          FROM raw_data.metadata_indicateurs
+                                                                                                          FROM raw_data.metadata_indicateurs_hidden
                                                                                                           WHERE indic_id = ${indicId}`;
       if (!rawInformationIndicateur) {
         return convertirEnInformationIndicateur({

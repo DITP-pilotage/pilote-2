@@ -3,6 +3,7 @@ import { codesInseeDépartements, codesInseeRégions, codeInseeFrance, Territoir
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import AvancementBuilder from '@/server/domain/chantier/avancement/Avancement.builder';
 import { générerPeutÊtreNull } from '@/server/infrastructure/test/builders/utils';
+import UtilisateurBuilder from '@/server/domain/utilisateur/Utilisateur.builder';
 
 export default class TerritoireDonnéesBuilder {
   private _codeInsee: TerritoireDonnées['codeInsee'];
@@ -23,7 +24,17 @@ export default class TerritoireDonnéesBuilder {
 
   private _estApplicable: TerritoireDonnées['estApplicable'];
 
+  private _responsableLocal: TerritoireDonnées['responsableLocal'];
+
+  private _referentTerritorial: TerritoireDonnées['référentTerritorial'];
+
   constructor() {
+    const utilisateurs = [
+      new UtilisateurBuilder().build(),
+      new UtilisateurBuilder().build(),
+      new UtilisateurBuilder().build(),
+    ];
+
     this._codeInsee = faker.helpers.arrayElement([...codesInseeDépartements, ...codesInseeRégions, codeInseeFrance]);
     this._avancement = new AvancementBuilder().build();
     this._avancementPrécédent = faker.helpers.arrayElement([this._avancement, new AvancementBuilder().build()]);
@@ -33,6 +44,8 @@ export default class TerritoireDonnéesBuilder {
     this._dateDeMàjDonnéesQualitatives = générerPeutÊtreNull(0.2, faker.date.past().toISOString());
     this._dateDeMàjDonnéesQuantitatives = générerPeutÊtreNull(0.2, faker.date.past().toISOString());
     this._estApplicable = générerPeutÊtreNull(0.2, faker.datatype.boolean());
+    this._referentTerritorial = faker.helpers.arrayElements(utilisateurs);
+    this._responsableLocal = faker.helpers.arrayElements(utilisateurs);
   }
 
   avecCodeInsee(codeInsee: TerritoireDonnées['codeInsee']): TerritoireDonnéesBuilder {
@@ -76,6 +89,8 @@ export default class TerritoireDonnéesBuilder {
       dateDeMàjDonnéesQualitatives: this._dateDeMàjDonnéesQualitatives,
       dateDeMàjDonnéesQuantitatives: this._dateDeMàjDonnéesQuantitatives,
       estApplicable: this._estApplicable,
+      responsableLocal: this._responsableLocal,
+      référentTerritorial: this._referentTerritorial,
     };
   }
 }

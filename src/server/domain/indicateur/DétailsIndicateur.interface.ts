@@ -22,4 +22,5 @@ export type DétailsIndicateur = {
   avancement: Avancement,
   unité: string | null,
   est_applicable: boolean | null,
+  dateImport: string | null
 };

@@ -23,7 +23,7 @@ describe('CréerUneSynthèseDesRésultatsUseCase', () => {
     const stubSynthèseDesRésultatsRepository = { créer: jest.fn() } as unknown as SynthèseDesRésultatsProjetStructurantRepository;
     const créerUneSynthèseDesRésultats = new CréerUneSynthèseDesRésultatsProjetStructurantUseCase(stubSynthèseDesRésultatsRepository);
 
-    const habilitation = { 'saisie.commentaire': {
+    const habilitation = { 'saisieCommentaire': {
       chantiers: [],
       territoires: [territoireCode],
     } } as unknown as Utilisateur['habilitations'];
@@ -53,7 +53,7 @@ describe('CréerUneSynthèseDesRésultatsUseCase', () => {
     }) } as unknown as SynthèseDesRésultatsProjetStructurantRepository;
     const créerUneSynthèseDesRésultats = new CréerUneSynthèseDesRésultatsProjetStructurantUseCase(stubSynthèseDesRésultatsRepository);
 
-    const habilitation = { 'saisie.commentaire': {
+    const habilitation = { 'saisieCommentaire': {
       pro: [],
       territoires: [territoireCode],
     } } as unknown as Utilisateur['habilitations'];

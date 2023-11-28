@@ -8,7 +8,7 @@ export default function PageCréerUtilisateur() {
 
   return (
     <PageCréerUtilisateurStyled className='fr-pt-2w' >
-      <main className="fr-container">
+      <main className='fr-container'>
         <FilAriane
           chemin={chemin}
           libelléPageCourante='Ajouter un compte'

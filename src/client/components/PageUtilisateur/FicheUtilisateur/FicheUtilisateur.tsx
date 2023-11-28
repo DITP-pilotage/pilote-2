@@ -24,13 +24,13 @@ export default function FicheUtilisateur({ utilisateur }: FicheUtilisateurProps)
         titre='Droits de visualisation'
       />
       <DétailsDroitsUtilisateur
-        chantiers={scopes['saisie.indicateur'].chantiers}
-        territoires={scopes['saisie.indicateur'].territoires}
+        chantiers={scopes['saisieIndicateur'].chantiers}
+        territoires={scopes['saisieIndicateur'].territoires}
         titre='Droits de saisie des données quantitatives'
       />
       <DétailsDroitsUtilisateur
-        chantiers={scopes['saisie.commentaire'].chantiers}
-        territoires={scopes['saisie.commentaire'].territoires}
+        chantiers={scopes['saisieCommentaire'].chantiers}
+        territoires={scopes['saisieCommentaire'].territoires}
         titre='Droits de saisie des commentaires'
       />
     </FicheUtilisateurStyled>

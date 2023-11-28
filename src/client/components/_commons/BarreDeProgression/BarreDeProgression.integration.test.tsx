@@ -33,7 +33,7 @@ describe('Barre de progression', () => {
   test('le pourcentage est placé au dessus de la barre de progression', () => {
     render(
       <BarreDeProgression
-        positionTexte="dessus"
+        positionTexte='dessus'
         taille='sm'
         valeur={20}
         variante='primaire'
@@ -47,7 +47,7 @@ describe('Barre de progression', () => {
   test('le pourcentage est placé à côté de la barre de progression', () => {
     render(
       <BarreDeProgression
-        positionTexte="côté"
+        positionTexte='côté'
         taille='sm'
         valeur={20}
         variante='primaire'

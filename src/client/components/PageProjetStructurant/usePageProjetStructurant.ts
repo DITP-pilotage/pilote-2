@@ -18,7 +18,7 @@ export default function usePageProjetStructurant(projetStructurantId: ProjetStru
     if (typeDeRéformeSélectionné === 'chantier') modifierTypeDeRéformeSélectionné();
   }, [modifierTypeDeRéformeSélectionné, typeDeRéformeSélectionné]);  
 
-  const modeÉcriture = !!session?.habilitations['saisie.commentaire'].territoires.includes(territoireCode);
+  const modeÉcriture = !!session?.habilitations['saisieCommentaire'].territoires.includes(territoireCode);
   
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {

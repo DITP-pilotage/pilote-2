@@ -4,9 +4,9 @@ export default function PictoTerritorialisé() {
   return (
     <>
       <PictoTerritorialiséstyled
-        className="fr-icon-map-pin-2-line"
+        className='fr-icon-map-pin-2-line'
       />
-      <span className="fr-sr-only">
+      <span className='fr-sr-only'>
         chantier territorialisé
       </span>
     </>

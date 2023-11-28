@@ -1,6 +1,4 @@
-import '@gouvfr/dsfr/dist/component/accordion/accordion.min.css';
 import { Controller } from 'react-hook-form';
-// import { DevTool } from '@hookform/devtools';  
 import InputAvecLabel from '@/components/_commons/InputAvecLabel/InputAvecLabel';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import useSaisieDesInformationsUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
@@ -10,27 +8,53 @@ import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelect
 import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier';
 import MultiSelectPérimètreMinistériel from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
 import { UtilisateurFormulaireProps } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
+import useSaisieDesInformationsUtilisateurSaisieIndicateurs from './useSaisieDesInformationsUtilisateurSaisieIndicateurs';
+import useSaisieDesInformationsUtilisateurSaisieCommentaire from './useSaisieDesInformationsUtilisateurSaisieCommentaires';
+
 
 export default function SaisieDesInformationsUtilisateur({ utilisateur }: UtilisateurFormulaireProps) {
-  const { 
-    listeProfils,
+  const {
+    listeProfils, 
     profilSélectionné,
-    handleChangementValeursSélectionnéesTerritoires,
-    handleChangementValeursSélectionnéesChantiers,
-    handleChangementValeursSélectionnéesPérimètresMinistériels,
-    chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés,
-    register,
-    errors,
-    control,
-    afficherChampLectureTerritoires,
-    afficherChampLectureChantiers,
-    afficherChampLecturePérimètres,
-    territoiresSélectionnés,
-    chantiersSélectionnés,
-    périmètresMinistérielsSélectionnés,
-    groupesTerritoiresÀAfficher,
+    handleChangementValeursSélectionnéesTerritoires, 
+    handleChangementValeursSélectionnéesChantiers, 
+    handleChangementValeursSélectionnéesPérimètresMinistériels, 
+    chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, 
+    register, 
+    errors, 
+    control, 
+    afficherChampLectureTerritoires, 
+    afficherChampLectureChantiers, 
+    afficherChampLecturePérimètres, 
+    territoiresSélectionnés, 
+    chantiersSélectionnés, 
+    périmètresMinistérielsSélectionnés, 
+    groupesTerritoiresÀAfficher, 
     chantiersAccessiblesPourLeProfil,
+    chantiersSynthétisésSélectionnés,
   } = useSaisieDesInformationsUtilisateur(utilisateur);
+
+  const {
+    handleChangementValeursSélectionnéesChantiersSaisieIndicateurs,
+    handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieIndicateurs,
+    chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieIndicateurs,
+    afficherChampSaisieIndicateursChantiers,
+    afficherChampSaisieIndicateursPérimètres,
+    chantiersSaisieIndicateursSélectionnés,
+    périmètresMinistérielsSaisieIndicateursSélectionnés,    
+  } = useSaisieDesInformationsUtilisateurSaisieIndicateurs(profilSélectionné, chantiersSynthétisésSélectionnés, utilisateur);
+
+  const {
+    handleChangementValeursSélectionnéesChantiersSaisieCommentaire,
+    handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieCommentaire,
+    chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieCommentaire,
+    afficherChampSaisieCommentaireChantiers,
+    afficherChampSaisieCommentairePérimètres,
+    chantiersSélectionnésSaisieCommentaire,
+    périmètresMinistérielsSélectionnésSaisieCommentaire,
+    chantiersAccessiblesPourLeProfilSaisieCommentaire,
+    périmètresIdSélectionnablesSaisie,
+  } = useSaisieDesInformationsUtilisateurSaisieCommentaire(profilSélectionné, chantiersSynthétisésSélectionnés, utilisateur);
 
   return (
     <>
@@ -39,39 +63,39 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
       </p>
       <Titre
         baliseHtml='h2'
-        className="fr-text--md  fr-mb-2w"
+        className='fr-text--md  fr-mb-2w'
       >
         Identification
       </Titre>
-      <p className="fr-text--xs texte-gris fr-mb-4w">
+      <p className='fr-text--xs texte-gris fr-mb-4w'>
         Tous les champs sont obligatoires.
       </p>
       <InputAvecLabel
         disabled={Boolean(utilisateur?.email)}
         erreur={errors.email}
-        htmlName="email"
-        libellé="Adresse électronique"
+        htmlName='email'
+        libellé='Adresse électronique'
         register={register('email', { value: utilisateur?.email })}
-        texteAide="Format attendu : nom@domaine.fr"
-        type='email'
+        texteAide='Format attendu : nom@domaine.fr'
+        type='email' 
       />
       <InputAvecLabel
         erreur={errors.nom}
-        htmlName="nom"
-        libellé="Nom"
-        register={register('nom', { value: utilisateur?.nom })}
+        htmlName='nom'
+        libellé='Nom'
+        register={register('nom', { value: utilisateur?.nom })} 
       />
       <InputAvecLabel
         erreur={errors.prénom}
-        htmlName="prénom"
-        libellé="Prénom"
-        register={register('prénom', { value: utilisateur?.prénom })}
+        htmlName='prénom'
+        libellé='Prénom'
+        register={register('prénom', { value: utilisateur?.prénom })} 
       />
       <InputAvecLabel
         erreur={errors.fonction}
-        htmlName="fonction"
-        libellé="Fonction"
-        register={register('fonction', { value: utilisateur?.fonction })}
+        htmlName='fonction'
+        libellé='Fonction'
+        register={register('fonction', { value: utilisateur?.fonction })} 
       />
       <Sélecteur
         erreur={errors.profil}
@@ -81,24 +105,24 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         register={register('profil', { value: utilisateur?.profil })}
         texteAide='Les droits attribués dépendent du profil sélectionné.'
         texteFantôme='Sélectionner un profil'
-        valeurSélectionnée={profilSélectionné?.code}
+        valeurSélectionnée={profilSélectionné?.code} 
       />
-      <div className={`${(!!afficherChampLectureTerritoires || !!afficherChampLecturePérimètres || !!afficherChampLectureChantiers)  ? '' : 'fr-hidden'}`}>
+      <div className={`${(!!afficherChampLectureTerritoires || !!afficherChampLecturePérimètres || !!afficherChampLectureChantiers) ? '' : 'fr-hidden'}`}>
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
-          className="fr-text--md  fr-mb-2w"
+          className='fr-text--md  fr-mb-2w'
         >
           Droits de lecture
         </Titre>
-        <p className="fr-text--xs texte-gris fr-mb-4w">
+        <p className='fr-text--xs texte-gris fr-mb-4w'>
           Afin de paramétrer l’espace Pilote, merci de préciser le périmètre auquel se rattache le compte. Les options disponibles dépendent du profil indiqué.
         </p>
         <div className={`${!!afficherChampLectureTerritoires ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.lecture.territoires"
+              name='habilitations.lecture.territoires'
               render={() => (
                 <MultiSelectTerritoire
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
@@ -106,7 +130,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
                   territoiresCodesSélectionnésParDéfaut={territoiresSélectionnés}
                 />
               )}
-              rules={{ required: true }}
+              rules={{ required: true }} 
             />
           </div>
         </div>
@@ -114,14 +138,14 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.lecture.périmètres"
+              name='habilitations.lecture.périmètres'
               render={() => (
                 <MultiSelectPérimètreMinistériel
-                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistériels} 
-                  périmètresMinistérielsIdsSélectionnésParDéfaut={périmètresMinistérielsSélectionnés}
+                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistériels}
+                  périmètresMinistérielsIdsSélectionnésParDéfaut={périmètresMinistérielsSélectionnés} 
                 />
               )}
-              rules={{ required: true }}
+              rules={{ required: true }} 
             />
           </div>
         </div>
@@ -129,13 +153,13 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           <div className='fr-mb-4w'>
             <Controller
               control={control}
-              name="habilitations.lecture.chantiers"
+              name='habilitations.lecture.chantiers'
               render={() => (
-                <MultiSelectChantier 
-                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiers} 
+                <MultiSelectChantier
+                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiers}
                   chantiers={chantiersAccessiblesPourLeProfil}
                   chantiersIdsSélectionnésParDéfaut={chantiersSélectionnés}
-                  valeursDésactivées={chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés}
+                  valeursDésactivées={chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés} 
                 />
               )}
               rules={{ required: true }}
@@ -143,10 +167,104 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           </div>
         </div>
       </div>
-      <div className="fr-grid-row fr-grid-row--right fr-mt-4w">
+      <div className={`${(!!afficherChampSaisieIndicateursChantiers || !!afficherChampSaisieIndicateursPérimètres) ? '' : 'fr-hidden'}`}>
+        <hr className='fr-hr' />
+        <Titre
+          baliseHtml='h2'
+          className='fr-text--md  fr-mb-2w'
+        >
+          Droits de saisie des données quantitatives
+        </Titre>
+        <p className='fr-text--xs texte-gris fr-mb-4w'>
+          Précisez les droits de saisie rattachés au compte. Les options disponibles dépendent du profil et des droits de lecture précédemment indiqués.
+        </p>
+        <div className={`${!!afficherChampSaisieIndicateursPérimètres ? '' : 'fr-hidden'}`}>
+          <div className='fr-mb-4w'>
+            <Controller
+              control={control}
+              name='habilitations.saisieIndicateur.périmètres'
+              render={() => (
+                <MultiSelectPérimètreMinistériel
+                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieIndicateurs}
+                  périmètresId={périmètresIdSélectionnablesSaisie}
+                  périmètresMinistérielsIdsSélectionnésParDéfaut={périmètresMinistérielsSaisieIndicateursSélectionnés}
+                />
+              )}
+              rules={{ required: true }} 
+            />
+          </div>
+        </div>
+        <div className={`${!!afficherChampSaisieIndicateursChantiers ? '' : 'fr-hidden'}`}>
+          <div className='fr-mb-4w'>
+            <Controller
+              control={control}
+              name='habilitations.saisieIndicateur.chantiers'
+              render={() => (
+                <MultiSelectChantier
+                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiersSaisieIndicateurs}
+                  chantiers={chantiersSynthétisésSélectionnés}
+                  chantiersIdsSélectionnésParDéfaut={chantiersSaisieIndicateursSélectionnés}
+                  valeursDésactivées={chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieIndicateurs} 
+                />
+              )}
+              rules={{ required: true }} 
+            />
+          </div>
+        </div>
+      </div>
+      <div className={`${(!!afficherChampSaisieCommentairePérimètres || !!afficherChampSaisieCommentaireChantiers) ? '' : 'fr-hidden'}`}>
+        <hr className='fr-hr' />
+        <Titre
+          baliseHtml='h2'
+          className='fr-text--md  fr-mb-2w'
+        >
+          Droits de saisie des commentaires
+        </Titre>
+        <p className='fr-text--xs texte-gris fr-mb-4w'>
+          Précisez les droits de saisie rattachés au compte. Les options disponibles dépendent du profil et des droits de lecture précédemment indiqués.
+          <br />
+          Les périmètres ministériels et/ou les chantiers affichés dans le menu déroulant dépendent du profil.
+          <br />
+          Par exemple, un préfet aura par défaut des droits de saisie pour la transition énergétique mais pas pour la Justice (ATE / hors ATE).
+        </p>
+        <div className={`${!!afficherChampSaisieCommentairePérimètres ? '' : 'fr-hidden'}`}>
+          <div className='fr-mb-4w'>
+            <Controller
+              control={control}
+              name='habilitations.saisieCommentaire.périmètres'
+              render={() => (
+                <MultiSelectPérimètreMinistériel
+                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieCommentaire}
+                  périmètresId={périmètresIdSélectionnablesSaisie}
+                  périmètresMinistérielsIdsSélectionnésParDéfaut={périmètresMinistérielsSélectionnésSaisieCommentaire} 
+                />
+              )}
+              rules={{ required: true }} 
+            />
+          </div>
+        </div>
+        <div className={`${!!afficherChampSaisieCommentairePérimètres ? '' : 'fr-hidden'}`}>
+          <div className='fr-mb-4w'>
+            <Controller
+              control={control}
+              name='habilitations.saisieCommentaire.chantiers'
+              render={() => (
+                <MultiSelectChantier
+                  changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiersSaisieCommentaire}
+                  chantiers={chantiersAccessiblesPourLeProfilSaisieCommentaire}
+                  chantiersIdsSélectionnésParDéfaut={chantiersSélectionnésSaisieCommentaire}
+                  valeursDésactivées={chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieCommentaire} 
+                />
+              )}
+              rules={{ required: true }}
+            />
+          </div>
+        </div>
+      </div>
+      <div className='fr-grid-row fr-grid-row--right fr-mt-4w'>
         <SubmitBouton
           className='fr-btn--icon-right fr-icon-arrow-right-line'
-          label="Suivant"
+          label='Suivant' 
         />
       </div>
       {/* <DevTool control={control} /> */}

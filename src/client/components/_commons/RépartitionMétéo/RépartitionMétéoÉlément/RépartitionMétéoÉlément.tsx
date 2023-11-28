@@ -8,7 +8,7 @@ export default function RépartitionMétéoÉlément({ météo, nombreDeChantier
   const typeDeRéforme = typeDeRéformeSélectionnéeStore();
   return (
     <RépartitionMétéoÉlémentStyled typeDeRéforme={typeDeRéforme}>
-      <div className="fr-grid-row">
+      <div className='fr-grid-row'>
         <MétéoPicto
           météo={météo}
         />

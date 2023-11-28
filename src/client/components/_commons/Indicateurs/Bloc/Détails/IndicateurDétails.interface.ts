@@ -7,4 +7,5 @@ export default interface IndicateurDétailsProps {
   indicateurDétailsParTerritoires: IndicateurDétailsParTerritoire[]
   typeDeRéforme: TypeDeRéforme,
   chantierEstTerritorialisé: boolean,
+  dateDeMiseAJourIndicateur: string
 }

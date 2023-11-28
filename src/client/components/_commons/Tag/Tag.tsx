@@ -8,7 +8,7 @@ export default function Tag({ libellé, suppressionCallback } : TagProps) {
       {libellé}
       <button
         aria-label={`Retirer le tag ${libellé}`}
-        className="fr-icon--sm fr-icon-close-line fr-ml-1v"
+        className='fr-icon--sm fr-icon-close-line fr-ml-1v'
         onClick={suppressionCallback}
         type='button'
       />

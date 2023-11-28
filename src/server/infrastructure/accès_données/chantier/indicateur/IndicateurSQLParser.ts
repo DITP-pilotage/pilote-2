@@ -28,6 +28,7 @@ function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: in
         global: indicateurRow?.objectif_taux_avancement ?? null },
       unité: indicateurRow?.unite_mesure ?? null,
       est_applicable: indicateurRow?.est_applicable ?? null,
+      dateImport: indicateurRow?.dernier_import_date_indic?.toLocaleString() ?? null,
     };
   });
 

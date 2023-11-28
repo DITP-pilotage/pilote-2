@@ -14,7 +14,7 @@ export default function DécisionsStratégiques({ décisionStratégique, chantie
           consigneDÉcriture: 'Notez les décisions prises lors des réunions Elysée <> Matignon et indiquez les actions envisagées et/ou réalisées pour mettre en œuvre ou répondre à ces décisions.',
         }}
         estInteractif={estInteractif}
-        maille="nationale"
+        maille='nationale'
         modeÉcriture={modeÉcriture}
         publicationInitiale={décisionStratégique}
         réformeId={chantierId}

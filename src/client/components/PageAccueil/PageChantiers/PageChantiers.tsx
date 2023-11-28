@@ -48,22 +48,22 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
         nombreFiltresActifs > 0 &&
         <FiltresActifs ministères={ministères} />
       }
-      <div className="fr-py-2w fr-px-md-2w fr-container--fluid">
-        <div className="fr-mb-2w titre">
+      <div className='fr-py-2w fr-px-md-2w fr-container--fluid'>
+        <div className='fr-mb-2w titre'>
           <Titre
-            baliseHtml="h1"
-            className="fr-h4 fr-px-2w fr-px-md-0 fr-mb-1w"
+            baliseHtml='h1'
+            className='fr-h4 fr-px-2w fr-px-md-0 fr-mb-1w'
           >
             {`${chantiersFiltrés.length} ${chantiersFiltrés.length >= 2 ? 'chantiers' : 'chantier'}`}
           </Titre>
-          <div className="titre-liens">
+          <div className='titre-liens'>
             {
               process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
               <div>
                 <Link
-                  className="fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm"
+                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm'
                   href={`/rapport-detaille?territoireCode=${territoireSélectionné!.code}`}
-                  title="Voir le rapport détaillé"
+                  title='Voir le rapport détaillé'
                 >
                   Voir le rapport détaillé
                 </Link>
@@ -74,9 +74,9 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
               <div>
                 <button
                   aria-controls={ID_HTML_MODALE_EXPORT}
-                  className="fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm"
-                  data-fr-opened="false"
-                  type="button"
+                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm'
+                  data-fr-opened='false'
+                  type='button'
                 >
                   Exporter les données
                 </button>
@@ -85,35 +85,35 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
             }
           </div>
         </div>
-        <div className="fr-grid-row fr-grid-row--gutters">
-          <div className="fr-col-12 fr-col-lg-6">
+        <div className='fr-grid-row fr-grid-row--gutters'>
+          <div className='fr-col-12 fr-col-lg-6'>
             <Bloc>
               <section>
                 <TitreInfobulleConteneur>
                   <Titre
-                    baliseHtml="h2"
-                    className="fr-text--lg fr-mb-0 fr-py-1v"
+                    baliseHtml='h2'
+                    className='fr-text--lg fr-mb-0 fr-py-1v'
                     estInline
                   >
                     Taux d’avancement moyen
                   </Titre>
-                  <Infobulle idHtml="infobulle-chantiers-jauges">
+                  <Infobulle idHtml='infobulle-chantiers-jauges'>
                     { INFOBULLE_CONTENUS.chantiers.jauges }
                   </Infobulle>
                 </TitreInfobulleConteneur>
                 <Avancements avancements={avancementsAgrégés} />
               </section>
-              <hr className="fr-hr fr-mt-3w fr-mb-3v fr-pb-1v" />
+              <hr className='fr-hr fr-mt-3w fr-mb-3v fr-pb-1v' />
               <section>
                 <TitreInfobulleConteneur>
                   <Titre
-                    baliseHtml="h2"
-                    className="fr-text--lg fr-mb-0 fr-py-1v"
+                    baliseHtml='h2'
+                    className='fr-text--lg fr-mb-0 fr-py-1v'
                     estInline
                   >
                     Répartition des météos renseignées
                   </Titre>
-                  <Infobulle idHtml="infobulle-chantiers-météos">
+                  <Infobulle idHtml='infobulle-chantiers-météos'>
                     { INFOBULLE_CONTENUS.chantiers.météos }
                   </Infobulle>
                 </TitreInfobulleConteneur>
@@ -121,12 +121,12 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
               </section>
             </Bloc>
           </div>
-          <div className="fr-col-12 fr-col-lg-6">
+          <div className='fr-col-12 fr-col-lg-6'>
             <Bloc>
               <section>
                 <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg"
+                  baliseHtml='h2'
+                  className='fr-text--lg'
                 >
                   Taux d’avancement des chantiers par territoire
                 </Titre>
@@ -141,27 +141,27 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
         </div>
         {
           process.env.NEXT_PUBLIC_FF_ALERTES === 'true' &&
-          <div className="fr-pt-3w fr-px-2w fr-px-md-0 alertes">
-            <div className="fr-mb-2w">
+          <div className='fr-pt-3w fr-px-2w fr-px-md-0 alertes'>
+            <div className='fr-mb-2w'>
               <TitreInfobulleConteneur>
-                <BadgeIcône type="warning" />
+                <BadgeIcône type='warning' />
                 <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes"
+                  baliseHtml='h2'
+                  className='fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes'
                   estInline
                 >
                   Chantiers signalés
                 </Titre>
-                <Infobulle idHtml="infobulle-chantiers-alertes">
+                <Infobulle idHtml='infobulle-chantiers-alertes'>
                   { INFOBULLE_CONTENUS.chantiers.alertes }
                 </Infobulle>
               </TitreInfobulleConteneur>
             </div>
-            <div className="fr-grid-row fr-mx-n1v fr-mx-md-n1w">
+            <div className='fr-grid-row fr-mx-n1v fr-mx-md-n1w'>
               {
                 remontéesAlertes.map(({ libellé, nombre, estActivée, auClic }) => (
                   <div
-                    className="fr-col fr-px-1v fr-px-md-1w"
+                    className='fr-col fr-px-1v fr-px-md-1w'
                     key={libellé}
                   >
                     <RemontéeAlerte
@@ -176,20 +176,20 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
             </div>
           </div>
         }
-        <div className="fr-grid-row fr-mt-7v">
-          <div className="fr-col">
+        <div className='fr-grid-row fr-mt-7v'>
+          <div className='fr-col'>
             <Bloc>
               <TitreInfobulleConteneur>
                 <Titre
-                  baliseHtml="h2"
-                  className="fr-text--lg fr-mb-0 fr-py-1v"
+                  baliseHtml='h2'
+                  className='fr-text--lg fr-mb-0 fr-py-1v'
                   estInline
                 >
                   Liste des chantiers (
                   { nombreChantiersDansLeTableau }
                   )
                 </Titre>
-                <Infobulle idHtml="infobulle-chantiers-listeDesChantiers">
+                <Infobulle idHtml='infobulle-chantiers-listeDesChantiers'>
                   { INFOBULLE_CONTENUS.chantiers.listeDesChantiers }
                 </Infobulle>
               </TitreInfobulleConteneur>

@@ -47,6 +47,7 @@ export async function getServerSideProps({ req, res, params } :GetServerSideProp
   }
 
   const utilisateurDemandé = await new RécupérerUnUtilisateurUseCase().run(session.habilitations, params.id);
+
   if (!utilisateurDemandé) {
     return redirigerVersPageAccueil;
   }

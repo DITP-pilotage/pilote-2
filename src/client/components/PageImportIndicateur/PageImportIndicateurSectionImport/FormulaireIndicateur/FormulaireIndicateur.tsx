@@ -32,30 +32,30 @@ export default function FormulaireIndicateur({ chantierId, indicateurId, setRapp
           {indicateurId}
         </b>
       </p>
-      <div className="flex">
-        <div className="fr-download fr-mr-3w">
+      <div className='flex'>
+        <div className='fr-download fr-mr-3w'>
           <p>
             <a
-              className="fr-download__link"
+              className='fr-download__link'
               download
-              href="/model/template_import_PILOTE.csv"
+              href='/model/template_import_PILOTE.csv'
             >
               {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_TELECHARGER_MODELE_CSV}
-              <span className="fr-download__detail">
+              <span className='fr-download__detail'>
                 {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.FORMAT_BOUTON_TELECHARGER_MODELE_CSV}
               </span>
             </a>
           </p>
         </div>
-        <div className="fr-download">
+        <div className='fr-download'>
           <p>
             <a
-              className="fr-download__link"
+              className='fr-download__link'
               download
-              href="/model/template_import_PILOTE.xlsx"
+              href='/model/template_import_PILOTE.xlsx'
             >
               {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_TELECHARGER_MODELE_XLSX}
-              <span className="fr-download__detail">
+              <span className='fr-download__detail'>
                 {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.FORMAT_BOUTON_TELECHARGER_MODELE_XLSX}
               </span>
             </a>

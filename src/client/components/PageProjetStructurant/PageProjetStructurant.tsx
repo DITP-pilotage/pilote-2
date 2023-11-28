@@ -37,15 +37,15 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
       </BarreLatérale>
       <main className='fr-pb-5w'>
         <BoutonSousLigné
-          classNameSupplémentaires="fr-link--icon-left fr-fi-arrow-right-line fr-hidden-xl fr-m-2w"
+          classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-xl fr-m-2w'
           onClick={() => setEstOuverteBarreLatérale(true)}
-          type="button"
+          type='button'
         >
           Sommaire
         </BoutonSousLigné>
         <PageProjetStructurantEnTête nomProjetStructurant={projetStructurant.nom} />
         <div className='fr-container--fluid fr-py-2w fr-px-md-4w'>
-          <div className="grid-template fr-pb-4w">
+          <div className='grid-template fr-pb-4w'>
             <section
               className='rubrique'
               id='avancement'
@@ -58,7 +58,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
                 >
                   Avancement du projet
                 </Titre>
-                <Infobulle idHtml="infobulle-projetStructurant-avancement">
+                <Infobulle idHtml='infobulle-projetStructurant-avancement'>
                   { INFOBULLE_CONTENUS.projetStructurant.avancements }
                 </Infobulle>
               </TitreInfobulleConteneur>
@@ -69,7 +69,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
             </section>
             <section
               className='rubrique'
-              id="responsables"
+              id='responsables'
             >
               <Titre
                 baliseHtml='h2'
@@ -95,7 +95,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
               >
                 Météo et synthèse des résultats
               </Titre>
-              <Infobulle idHtml="infobulle-projetStructurant-météoEtSynthèse">
+              <Infobulle idHtml='infobulle-projetStructurant-météoEtSynthèse'>
                 {INFOBULLE_CONTENUS.projetStructurant.météoEtSynthèseDesRésultats}
               </Infobulle>
             </TitreInfobulleConteneur>
@@ -108,8 +108,8 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
             />
           </section>
           <section
-            className="rubrique fr-pb-4w"
-            id="objectifs"
+            className='rubrique fr-pb-4w'
+            id='objectifs'
           >
             <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
               <Titre
@@ -119,7 +119,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
               >
                 Objectifs
               </Titre>
-              <Infobulle idHtml="infobulle-projetStructurant-objectifs">
+              <Infobulle idHtml='infobulle-projetStructurant-objectifs'>
                 {INFOBULLE_CONTENUS.projetStructurant.objectifs}
               </Infobulle>
             </TitreInfobulleConteneur>
@@ -135,8 +135,8 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
           {
             !!détailsIndicateurs && indicateurs.length > 0 &&
               <section
-                className="rubrique fr-pb-4w"
-                id="indicateurs"
+                className='rubrique fr-pb-4w'
+                id='indicateurs'
               >
                 <Titre
                   baliseHtml='h2'
@@ -155,8 +155,8 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
               </section>
           }
           <section
-            className="rubrique fr-pb-4w"
-            id="commentaires"
+            className='rubrique fr-pb-4w'
+            id='commentaires'
           >
             <div>
               <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
@@ -167,7 +167,7 @@ export default function PageProjetStructurant({ projetStructurant, indicateurs, 
                 >
                   Commentaires du projet structurant
                 </Titre>
-                <Infobulle idHtml="infobulle-projetStructurant-commentaires">
+                <Infobulle idHtml='infobulle-projetStructurant-commentaires'>
                   {INFOBULLE_CONTENUS.projetStructurant.commentaires}
                 </Infobulle>
               </TitreInfobulleConteneur>

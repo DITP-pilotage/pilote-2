@@ -21,17 +21,17 @@ export default function TableauChantiersActionsDeTri({
 }: TableauChantiersActionsDeTriProps) {
   return (
     <TableauChantiersActionsDeTriStyled>
-      <div className="fr-select-group sélecteur-colonne-à-trier">
+      <div className='fr-select-group sélecteur-colonne-à-trier'>
         <label
-          className="fr-label label"
-          htmlFor="tri-tableau-chantiers"
+          className='fr-label label'
+          htmlFor='tri-tableau-chantiers'
         >
           Trier par
         </label>
         <select
-          className="fr-select"
-          id="tri-tableau-chantiers"
-          name="tri-tableau-chantiers"
+          className='fr-select'
+          id='tri-tableau-chantiers'
+          name='tri-tableau-chantiers'
           onChange={(événement) => changementColonneÀTrierCallback(événement.currentTarget.value)}
           value={colonneÀTrier}
         >
@@ -47,7 +47,7 @@ export default function TableauChantiersActionsDeTri({
           }
         </select>
       </div>
-      <div className="fr-mb-4w fr-ml-1w">
+      <div className='fr-mb-4w fr-ml-1w'>
         <BoutonsDeTri
           changementDirectionDeTriCallback={changementDirectionDeTriCallback}
           directionDeTri={directionDeTri}

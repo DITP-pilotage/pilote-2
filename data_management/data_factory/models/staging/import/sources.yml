@@ -26,3 +26,12 @@ sources:
           - name: rapport_id
             description: "ID unique du rapport associé à l'import de cette donnée."
 
+  - name: db_schema_public
+    description: "Cette base de données correspond à la base Pilote de production."
+    database: "{{ env_var('PGDATABASE') }}"
+    schema: public
+    tables:
+      - name: rapport_import_mesure_indicateur
+        description: "Rapport des données importées par les utilisateurs"
+      - name: territoire
+        description: "Liste des territoires, lien vers la zone, et shape SVG."

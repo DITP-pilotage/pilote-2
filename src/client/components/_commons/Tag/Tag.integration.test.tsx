@@ -1,6 +1,6 @@
 import { screen, render } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import userEvent from '@testing-library/user-event';
+import { userEvent } from '@testing-library/user-event';
 import Tag from '@/components/_commons/Tag/Tag';
 
 test('le tag comporte le texte précisé', () =>{

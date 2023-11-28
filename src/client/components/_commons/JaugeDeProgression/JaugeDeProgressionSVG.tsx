@@ -51,13 +51,13 @@ function JaugeDeProgressionSVG({ pourcentage, taille }: JaugeDeProgressionSVGPro
   return (
     <svg
       viewBox={`0 0 ${TAILLE_VIEWBOX} ${TAILLE_VIEWBOX}`}
-      xmlns="http://www.w3.org/2000/svg"
+      xmlns='http://www.w3.org/2000/svg'
     >
       <g
         clipPath={`url(#masque-${id})`}
       >
         <rect
-          className="jauge-barre-fond"
+          className='jauge-barre-fond'
           height={TAILLE_VIEWBOX}
           width={TAILLE_VIEWBOX}
         />
@@ -65,7 +65,7 @@ function JaugeDeProgressionSVG({ pourcentage, taille }: JaugeDeProgressionSVGPro
         pourcentage
           ?
             <path
-              className="jauge-barre-valeur"
+              className='jauge-barre-valeur'
               d={tracerValeurJauge(pourcentage, taille)}
               transform={`rotate(${TRACÉS[taille].angleDépart} ${CENTRE_VIEWBOX.x} ${CENTRE_VIEWBOX.y})`}
             />

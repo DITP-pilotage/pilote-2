@@ -44,7 +44,7 @@ export default function Cartes({ chantierMailles, afficheCarteAvancement, affich
                   >
                     Taux d&apos;avancement 2026
                   </Titre>
-                  <Infobulle idHtml="infobulle-chantier-répartitionGéographiqueTauxAvancement">
+                  <Infobulle idHtml='infobulle-chantier-répartitionGéographiqueTauxAvancement'>
                     { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueTauxAvancement }
                   </Infobulle>
                 </TitreInfobulleConteneur>
@@ -72,7 +72,7 @@ export default function Cartes({ chantierMailles, afficheCarteAvancement, affich
                   >
                     Niveau de confiance
                   </Titre>
-                  <Infobulle idHtml="infobulle-chantier-répartitionGéographiqueNiveauDeConfiance">
+                  <Infobulle idHtml='infobulle-chantier-répartitionGéographiqueNiveauDeConfiance'>
                     { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueNiveauDeConfiance }
                   </Infobulle>
                 </TitreInfobulleConteneur>

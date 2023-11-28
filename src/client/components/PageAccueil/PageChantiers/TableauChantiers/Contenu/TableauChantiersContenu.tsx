@@ -25,7 +25,7 @@ export default function TableauChantiersContenu({ tableau }: TableauChantiersCon
         tableau.getRowModel().rows.map(row => (
           row.getIsGrouped() ? (
             <tr
-              className="ligne-ministère"
+              className='ligne-ministère'
               key={row.id}
               onClick={() => row.getToggleExpandedHandler()()}
             >
@@ -39,17 +39,17 @@ export default function TableauChantiersContenu({ tableau }: TableauChantiersCon
             </tr>
           ) : (
             <tr
-              className="ligne-chantier"
+              className='ligne-chantier'
               key={row.id}
             >
               {
                 row.getVisibleCells().map(cell => (
                   <td
-                    className="fr-p-0"
+                    className='fr-p-0'
                     key={cell.id}
                   >
                     <Link
-                      className="fr-p-1w"
+                      className='fr-p-1w'
                       href={`/chantier/${row.original.id}`}
                       tabIndex={cell.column.columnDef.meta?.tabIndex}
                     >

@@ -38,6 +38,14 @@ export const validationInfosHabilitationsUtilisateur = z.object({
       territoires: z.string().array(),
       périmètres: z.string().array(),
     }),
+    saisieIndicateur: z.object({
+      chantiers: z.string().array(),
+      périmètres: z.string().array(),
+    }),
+    saisieCommentaire : z.object({
+      chantiers: z.string().array(),
+      périmètres: z.string().array(),
+    }),
   }),
 });
 

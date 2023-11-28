@@ -11,6 +11,7 @@ export type Profil = {
     },
     saisieCommentaire: {
       tousTerritoires: boolean
+      saisiePossible: boolean
     },
     saisieIndicateur: {
       tousTerritoires: boolean

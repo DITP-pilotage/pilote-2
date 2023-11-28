@@ -22,7 +22,7 @@ export default function Publication({ caractéristiques, publicationInitiale, r�
     <PublicationStyled className='fr-px-0 fr-px-md-1w fr-py-2w'>
       <Titre
         baliseHtml='h3'
-        className="fr-h5 fr-mb-1w"
+        className='fr-h5 fr-mb-1w'
       >
         { modeÉdition ? `Modifier : ${caractéristiques.libelléType}` : caractéristiques.libelléType }
       </Titre>
@@ -68,8 +68,8 @@ export default function Publication({ caractéristiques, publicationInitiale, r�
                           type='button'
                         >
                           <span
-                            aria-hidden="true"
-                            className="fr-icon-edit-line fr-mr-1w"
+                            aria-hidden='true'
+                            className='fr-icon-edit-line fr-mr-1w'
                           />
                           {}
                           Modifier

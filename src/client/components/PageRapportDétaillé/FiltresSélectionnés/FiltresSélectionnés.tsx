@@ -16,7 +16,7 @@ export default function FiltresSélectionnés({ territoireSélectionné, filtres
   return (
     <FiltresSélectionnésStyled className='fr-mb-2w'>
       <Titre
-        baliseHtml="h2"
+        baliseHtml='h2'
         className='fr-text--lg filtres-sélectionnés__titre'
       >
         Contenu du rapport détaillé

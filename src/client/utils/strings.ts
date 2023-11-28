@@ -20,3 +20,7 @@ export function commenceParUneVoyelle(chaîneDeCaractères: string) {
     normaliserChaîneDeCaractères(chaîneDeCaractères).charAt(0),
   );
 }
+
+export function normaliseNom(nom: string) {
+  return nom.charAt(0).toUpperCase() + nom.slice(1);
+}

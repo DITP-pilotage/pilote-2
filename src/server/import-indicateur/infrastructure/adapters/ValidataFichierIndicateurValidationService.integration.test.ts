@@ -1,9 +1,13 @@
 import { mock, MockProxy } from 'jest-mock-extended';
-import { ValidataFichierIndicateurValidationService } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
+import {
+  ValidataFichierIndicateurValidationService,
+} from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
 import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTask.builder';
-import { ReportTaskBuilder, ReportResourceTaskBuilder } from '@/server/import-indicateur/app/builder/ReportTask.builder';
+import { ReportResourceTaskBuilder, ReportTaskBuilder } from '@/server/import-indicateur/app/builder/ReportTask.builder';
 import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidata.builder';
-import { ValiderFichierPayload } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
+import {
+  ValiderFichierPayload,
+} from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
 import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient.interface';
 
 describe('ValidataFichierIndicateurValidationService', () => {
@@ -225,7 +229,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
         [null, 'primary-key-error', 'Values in the primary key fields should be unique for every row', 'the same as in the row at position 1', 2, 3, "La ligne 2 est vide ou comporte les mêmes zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez la modifier ou la supprimer."],
         [null, 'primary-key-error', 'Values in the primary key fields should be unique for every row', 'the same as in the row at position 1', 3, 4, "La ligne 3 est vide ou comporte les mêmes zone, date, identifiant d'indicateur et type de valeur qu'une autre ligne. Veuillez la modifier ou la supprimer."],
         [null, 'primary-key-error', 'Values in the primary key fields should be unique for every row', 'cells composing the primary keys are all "None"', 3, 4, 'La ligne 3 est vide ou comporte les mêmes zone, date, identifiant d\'indicateur et type de valeur qu\'une autre ligne. Veuillez la modifier ou la supprimer.'],
-        [null, 'schema-error', 'Provided schema is not valid.', 'primary key "[\'identifiant_indic\', \'zone_id\', \'date_valeur\', \'type_valeur\']" does not match the fields "[\'identifiant_indic\', \'ZONE_id\', \'zone_nom\', \'date_valeur\', \'TYPE\', \'valeur\']"', 3, 4, 'Les entêtes du fichier sont invalides, les entêtes doivent être [identifiant_indic, zone_id, date_valeur, type_valeur, valeur]'],
+        [null, 'schema-error', 'Provided schema is not valid.', 'primary key "[\'identifiant_indic\', \'zone_id\', \'date_valeur\', \'type_valeur\']" does not match the fields "[\'identifiant_indic\', \'ZONE_id\', \'zone_nom\', \'date_valeur\', \'TYPE\', \'valeur\']"', 3, 4, 'Les en-têtes du fichier sont invalides, les en-têtes doivent être [identifiant_indic, zone_id, date_valeur, type_valeur, valeur]'],
         [null, 'general-error', 'There is an error.', 'Duplicate labels in header is not supported with "schema_sync"', 3, 4, 'Il existe des entêtes en doublon dans le fichier'],
       ])('pour le champ %s, le code %s, la description %s et la note %s à la ligne %i', async (
         fieldName,
@@ -320,6 +324,110 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
         expect(result.listeErreursValidation.at(0)?.nom).toEqual('identifiant_indic');
         expect(result.listeErreursValidation.at(0)?.message).toEqual("L'en-tête identifiant_indic n'est pas présente");
+
+        expect(result.listeErreursValidation.at(1)?.cellule).toEqual('cellule 1');
+        expect(result.listeErreursValidation.at(1)?.nom).toEqual('nom 1');
+        expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual('nom du champ 1');
+      });
+    });
+    
+    describe('quand une entête possède un espace', () => {
+      it("doit identifier que l'en-tête est incorrect", async () => {
+        // GIVEN
+        const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
+        const report = new ReportValidataBuilder()
+          .avecValid(false)
+          .avecTasks(
+            new ReportTaskBuilder()
+              .avecErrors(
+                new ReportErrorTaskBuilder()
+                  .avecCell('cellule 1')
+                  .avecName('nom 1')
+                  .avecFieldName('nom du champ 1')
+                  .avecFieldPosition(1)
+                  .avecMessage('message 1')
+                  .avecRowNumber(1)
+                  .avecRowPosition(1)
+                  .build(),
+              )
+              .avecResource(
+                new ReportResourceTaskBuilder()
+                  .avecData([
+                    ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'valeur   '],
+                    ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+                    ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
+                  ])
+                  .build(),
+              )
+              .build(),
+          )
+          .build();
+
+        httpClient.post.mockResolvedValue(report);
+
+        // WHEN
+        const result = await validataFichierIndicateurValidationService.validerFichier(body);
+
+        // THEN
+        expect(result.estValide).toEqual(false);
+        expect(result.listeErreursValidation).toHaveLength(2);
+        expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
+
+        expect(result.listeErreursValidation.at(0)?.nom).toEqual('En-tête incorrect');
+        expect(result.listeErreursValidation.at(0)?.message).toEqual("Le champ de l'en-tête 'valeur' comporte des espaces, veuillez les supprimer");
+        expect(result.listeErreursValidation.at(0)?.nomDuChamp).toEqual('valeur');
+
+        expect(result.listeErreursValidation.at(1)?.cellule).toEqual('cellule 1');
+        expect(result.listeErreursValidation.at(1)?.nom).toEqual('nom 1');
+        expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual('nom du champ 1');
+      });
+    });
+
+    describe('quand une entête possède des majuscules', () => {
+      it("doit identifier que l'en-tête est incorrect", async () => {
+        // GIVEN
+        const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };
+        const report = new ReportValidataBuilder()
+          .avecValid(false)
+          .avecTasks(
+            new ReportTaskBuilder()
+              .avecErrors(
+                new ReportErrorTaskBuilder()
+                  .avecCell('cellule 1')
+                  .avecName('nom 1')
+                  .avecFieldName('nom du champ 1')
+                  .avecFieldPosition(1)
+                  .avecMessage('message 1')
+                  .avecRowNumber(1)
+                  .avecRowPosition(1)
+                  .build(),
+              )
+              .avecResource(
+                new ReportResourceTaskBuilder()
+                  .avecData([
+                    ['identifiant_indic', 'zone_id', 'date_valeur', 'type_valeur', 'Valeur'],
+                    ['IND-001', 'D001', metricDateValue1, 'vi', '9'],
+                    ['IND-001', 'D004', metricDateValue2, 'vc', '3'],
+                  ])
+                  .build(),
+              )
+              .build(),
+          )
+          .build();
+
+        httpClient.post.mockResolvedValue(report);
+
+        // WHEN
+        const result = await validataFichierIndicateurValidationService.validerFichier(body);
+
+        // THEN
+        expect(result.estValide).toEqual(false);
+        expect(result.listeErreursValidation).toHaveLength(2);
+        expect(result.listeMesuresIndicateurTemporaire).toHaveLength(2);
+
+        expect(result.listeErreursValidation.at(0)?.nom).toEqual('En-tête incorrect');
+        expect(result.listeErreursValidation.at(0)?.message).toEqual("Le champ de l'en-tête 'valeur' comporte des majuscules, veuillez les mettre en minuscule");
+        expect(result.listeErreursValidation.at(0)?.nomDuChamp).toEqual('valeur');
 
         expect(result.listeErreursValidation.at(1)?.cellule).toEqual('cellule 1');
         expect(result.listeErreursValidation.at(1)?.nom).toEqual('nom 1');

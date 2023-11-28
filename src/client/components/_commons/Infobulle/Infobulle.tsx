@@ -15,11 +15,11 @@ export default function Infobulle({ idHtml, children }: InfobulleProps) {
       onFocus={() => !estVueMobile && setEstVisible(true)}
       onMouseEnter={() => setEstVisible(true)}
       onMouseLeave={() => setEstVisible(false)}
-      role="tooltip"
+      role='tooltip'
     >
       <button
         aria-describedby={idHtml}
-        className="fr-btn fr-btn--tertiary-no-outline fr-icon-information-fill infobulle-bouton"
+        className='fr-btn fr-btn--tertiary-no-outline fr-icon-information-fill infobulle-bouton'
         onClick={() => estVueMobile && setEstVisible(!estVisible)}
         onKeyDown={(keyEvent) => keyEvent.key === 'Escape' && setEstVisible(false)}
         type='button'
@@ -27,7 +27,7 @@ export default function Infobulle({ idHtml, children }: InfobulleProps) {
       {
         !!estVisible &&
         <div
-          className="fr-p-1w fr-p-md-3v infobulle-texte"
+          className='fr-p-1w fr-p-md-3v infobulle-texte'
           id={idHtml}
         >
           {children}

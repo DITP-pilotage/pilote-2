@@ -22,7 +22,6 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import Indicateurs from '@/client/components/_commons/Indicateurs/Indicateurs';
 import { listeRubriquesChantier, listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
-import { estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
 import { mailleSélectionnéeTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import AvancementChantier from './AvancementChantier/AvancementChantier';
 import PageChantierProps from './PageChantier.interface';
@@ -47,14 +46,16 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
     avancements,
     modeÉcriture,
     modeÉcritureObjectifs,
-    profil,
     territoireSélectionné,
     indicateurPondérations,
+    saisieIndicateurAutorisée,
+    responsableLocal,
+    referentTerritorial,
   } = usePageChantier(chantierId, indicateurs);
 
   const listeRubriques = listeRubriquesChantier(indicateurs.map(i => i.type), territoireSélectionné!.maille);
   return (
-    <PageChantierStyled className="flex">
+    <PageChantierStyled className='flex'>
       <BarreLatérale
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
@@ -69,9 +70,9 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
       </BarreLatérale>
       <main className='fr-pb-5w'>
         <BoutonSousLigné
-          classNameSupplémentaires="fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w"
+          classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w'
           onClick={() => setEstOuverteBarreLatérale(true)}
-          type="button"
+          type='button'
         >
           Filtres
         </BoutonSousLigné>
@@ -80,7 +81,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
             <>
               <PageChantierEnTête
                 afficheLeBoutonImpression
-                afficheLeBoutonMiseAJourDonnee={estAutoriséAImporterDesIndicateurs(profil)}
+                afficheLeBoutonMiseAJourDonnee={saisieIndicateurAutorisée}
                 chantier={chantier}
               />
               <div className='fr-container--fluid fr-py-2w fr-px-md-4w'>
@@ -89,8 +90,8 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     avancements !== null &&
                       <>
                         <section
-                          className="rubrique"
-                          id="avancement"
+                          className='rubrique'
+                          id='avancement'
                         >
                           <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                             <Titre
@@ -113,14 +114,14 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                                     indicateurPondérations.length === 1
                                       ? (
                                         <Infobulle 
-                                          idHtml="infobulle-chantier-météoEtSynthèseDesRésultats" 
+                                          idHtml='infobulle-chantier-météoEtSynthèseDesRésultats' 
                                         >
                                           {INFOBULLE_CONTENUS.chantier.avancement.unSeulIndicateur(territoireSélectionné.maille, indicateurPondérations[0])}
                                         </Infobulle>
                                       )
                                       : (
                                         <Infobulle 
-                                          idHtml="infobulle-chantier-météoEtSynthèseDesRésultats" 
+                                          idHtml='infobulle-chantier-météoEtSynthèseDesRésultats' 
                                         >
                                           {INFOBULLE_CONTENUS.chantier.avancement.plusieursIndicateurs(territoireSélectionné.maille, indicateurPondérations)}
                                         </Infobulle>
@@ -135,8 +136,8 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                           />
                         </section>
                         <section
-                          className="rubrique"
-                          id="responsables"
+                          className='rubrique'
+                          id='responsables'
                         >
                           <Titre
                             baliseHtml='h2'
@@ -144,13 +145,18 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                           >
                             Responsables
                           </Titre>
-                          <ResponsablesPageChantier responsables={chantier.responsables} />
+                          <ResponsablesPageChantier 
+                            afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
+                            referentTerritorial={referentTerritorial}
+                            responsables={chantier.responsables}
+                            responsablesLocal={responsableLocal}
+                          />
                         </section>
                       </>
                   }
                   <section
-                    className="rubrique"
-                    id="synthèse"
+                    className='rubrique'
+                    id='synthèse'
                   >
                     <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                       <Titre
@@ -160,7 +166,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       >
                         Météo et synthèse des résultats
                       </Titre>
-                      <Infobulle idHtml="infobulle-chantier-météoEtSynthèseDesRésultats">
+                      <Infobulle idHtml='infobulle-chantier-météoEtSynthèseDesRésultats'>
                         {INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats}
                       </Infobulle>
                     </TitreInfobulleConteneur>
@@ -177,10 +183,10 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                   (!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSélectionnée] ||
                     !!chantier.météoDonnéeTerritorialisée[mailleSélectionnée] ||
                     !!chantier.estTerritorialisé) && (
-                    <div className="fr-my-2w">
+                    <div className='fr-my-2w'>
                       <section
-                        className="rubrique"
-                        id="cartes"
+                        className='rubrique'
+                        id='cartes'
                       >
                         <Titre
                           baliseHtml='h2'
@@ -197,10 +203,10 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     </div>                   
                   )
                 }
-                <div className="fr-my-2w">
+                <div className='fr-my-2w'>
                   <section
-                    className="rubrique"
-                    id="objectifs"
+                    className='rubrique'
+                    id='objectifs'
                   >
                     <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                       <Titre
@@ -210,7 +216,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       >
                         Objectifs
                       </Titre>
-                      <Infobulle idHtml="infobulle-chantier-objectifs">
+                      <Infobulle idHtml='infobulle-chantier-objectifs'>
                         {INFOBULLE_CONTENUS.chantier.objectifs}
                       </Infobulle>
                     </TitreInfobulleConteneur>
@@ -226,10 +232,10 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 </div>
                 {
                   détailsIndicateurs !== null && indicateurs.length > 0 && (
-                    <div className="fr-my-2w">
+                    <div className='fr-my-2w'>
                       <section
-                        className="rubrique"
-                        id="indicateurs"
+                        className='rubrique'
+                        id='indicateurs'
                       >
                         <Titre
                           baliseHtml='h2'
@@ -250,20 +256,20 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 }
                 {
                   territoireSélectionné!.maille === 'nationale' &&
-                    <div className="fr-my-2w">
+                    <div className='fr-my-2w'>
                       <section
-                        className="rubrique"
-                        id="décisions-stratégiques"
+                        className='rubrique'
+                        id='décisions-stratégiques'
                       >
                         <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                           <Titre
-                            baliseHtml="h2"
-                            className="fr-h4"
+                            baliseHtml='h2'
+                            className='fr-h4'
                             estInline
                           >
                             Décisions stratégiques
                           </Titre>
-                          <Infobulle idHtml="infobulle-chantier-décisionsStratégiques">
+                          <Infobulle idHtml='infobulle-chantier-décisionsStratégiques'>
                             {INFOBULLE_CONTENUS.chantier.décisionsStratégiques}
                           </Infobulle>
                         </TitreInfobulleConteneur>
@@ -275,10 +281,10 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       </section>
                     </div>
                 }
-                <div className="fr-my-2w">
+                <div className='fr-my-2w'>
                   <section
-                    className="rubrique"
-                    id="commentaires"
+                    className='rubrique'
+                    id='commentaires'
                   >
                     <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                       <Titre
@@ -288,7 +294,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                       >
                         Commentaires du chantier
                       </Titre>
-                      <Infobulle idHtml="infobulle-chantier-décisionsStratégiques">
+                      <Infobulle idHtml='infobulle-chantier-décisionsStratégiques'>
                         {
                           territoireSélectionné!.maille === 'nationale'
                             ? INFOBULLE_CONTENUS.chantier.commentaires.territoireNational

@@ -8,22 +8,22 @@ export const ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS: CartographieÉlémentsDeLég
   'ORAGE': {
     libellé: libellésMétéos.ORAGE,
     remplissage: '#B34000',
-    picto: <MétéoPicto météo="ORAGE" />,
+    picto: <MétéoPicto météo='ORAGE' />,
   },
   'COUVERT': {
     libellé: libellésMétéos.COUVERT,
     remplissage: '#95E257',
-    picto: <MétéoPicto météo="COUVERT" />,
+    picto: <MétéoPicto météo='COUVERT' />,
   },
   'NUAGE': {
     libellé: libellésMétéos.NUAGE,
     remplissage: '#EFCB3A',
-    picto: <MétéoPicto météo="NUAGE" />,
+    picto: <MétéoPicto météo='NUAGE' />,
   },
   'SOLEIL': {
     libellé: libellésMétéos.SOLEIL,
     remplissage: '#27A658',
-    picto: <MétéoPicto météo="SOLEIL" />,
+    picto: <MétéoPicto météo='SOLEIL' />,
   },
   'DÉFAUT': {
     libellé: 'Territoire pour lequel la météo n’est pas renseignée',

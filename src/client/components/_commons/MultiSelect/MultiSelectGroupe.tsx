@@ -16,8 +16,8 @@ export default function MultiSelectGroupe({ groupeOptions, changementÉtatCallba
       {
         groupeOptions.options.map(option => (
           <Fragment key={`${option.value} ${id}`}>
-            <div className="fr-fieldset__element">
-              <div className="fr-checkbox-group">
+            <div className='fr-fieldset__element'>
+              <div className='fr-checkbox-group'>
                 <input
                   checked={valeursSélectionnées.has(option.value)}
                   className='fr-input'

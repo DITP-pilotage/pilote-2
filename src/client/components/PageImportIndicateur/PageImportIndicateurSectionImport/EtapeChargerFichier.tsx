@@ -17,7 +17,7 @@ export function EtapeChargerFichier({ indicateur, indicateurId, setRapport, rapp
 }) {
   return (
     <>
-      <Titre baliseHtml="h4">
+      <Titre baliseHtml='h4'>
         {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.TITRE}
       </Titre>
       <p>
@@ -37,26 +37,26 @@ export function EtapeChargerFichier({ indicateur, indicateurId, setRapport, rapp
       }
       {
         rapport?.estValide ?
-          <div className="fr-mt-4w">
-            <form method="GET">
+          <div className='fr-mt-4w'>
+            <form method='GET'>
               <input
-                name="etapeCourante"
-                type="hidden"
+                name='etapeCourante'
+                type='hidden'
                 value={3}
               />
               <input
-                name="indicateurId"
-                type="hidden"
+                name='indicateurId'
+                type='hidden'
                 value={indicateur?.id}
               />
               <input
-                name="rapportId"
-                type="hidden"
+                name='rapportId'
+                type='hidden'
                 value={rapport?.id}
               />
-              <div className="fr-mt-4w flex justify-end">
+              <div className='fr-mt-4w flex justify-end'>
                 <SubmitBouton
-                  className="fr-btn--icon-right fr-icon-arrow-right-line"
+                  className='fr-btn--icon-right fr-icon-arrow-right-line'
                   label={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.LABEL_BOUTON_PROCHAINE_ETAPE}
                 />
               </div>

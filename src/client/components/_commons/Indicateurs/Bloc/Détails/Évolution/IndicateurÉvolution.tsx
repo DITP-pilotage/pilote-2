@@ -14,7 +14,7 @@ ChartJS.register(
   Legend,
 );
 
-export default function IndicateurÉvolution({ indicateurDétailsParTerritoires }: IndicateurÉvolutionProps) {
+export default function IndicateurÉvolution({ indicateurDétailsParTerritoires, dateDeMiseAJourIndicateur }: IndicateurÉvolutionProps) {
   const { options, donnéesParTerritoire } = useIndicateurÉvolution(indicateurDétailsParTerritoires);
 
   return (
@@ -25,13 +25,13 @@ export default function IndicateurÉvolution({ indicateurDétailsParTerritoires 
       >
         Évolution de l&apos;indicateur
       </Titre>
-      <p className="fr-text--xs texte-gris">
-        Mis à jour le : Non renseigné | Source : Non renseigné
+      <p className='fr-text--xs texte-gris'>
+        {`Mis à jour le : ${dateDeMiseAJourIndicateur} | Source : Non renseigné`}
       </p>
       {
         donnéesParTerritoire.datasets.some(dataset => dataset.data.length > 0) ? (
-          <div className="graphique-bloc">
-            <div className="graphique-conteneur">
+          <div className='graphique-bloc'>
+            <div className='graphique-conteneur'>
               <Line
                 data={donnéesParTerritoire}
                 options={options}
@@ -39,7 +39,7 @@ export default function IndicateurÉvolution({ indicateurDétailsParTerritoires 
             </div>
           </div>
         ) : (
-          <p className="fr-badge fr-badge--no-icon">
+          <p className='fr-badge fr-badge--no-icon'>
             NON RENSEIGNÉ
           </p>
         )

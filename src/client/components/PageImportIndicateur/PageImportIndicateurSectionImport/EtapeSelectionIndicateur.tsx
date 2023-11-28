@@ -43,32 +43,32 @@ export function EtapeSelectionIndicateur({
       {
         options.length > 0 ?
           <form
-            method="GET"
+            method='GET'
           >
-            <Titre baliseHtml="h4">
+            <Titre baliseHtml='h4'>
               {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.TITRE}
             </Titre>
             <input
-              name="etapeCourante"
-              type="hidden"
+              name='etapeCourante'
+              type='hidden'
               value={2}
             />
             <Sélecteur
-              htmlName="indicateurId"
-              libellé="Choix de l’indicateur"
+              htmlName='indicateurId'
+              libellé='Choix de l’indicateur'
               options={options}
               valeurModifiéeCallback={valeurModifiéeCallback}
               valeurSélectionnée={valeurSélectionnée}
             />
-            <p className="fr-mt-3w">
+            <p className='fr-mt-3w'>
               <b>
                 {`Contraintes de saisie spécifiques à l'indicateur ${valeurSélectionnée} : `}
               </b>
               {presenterEnFonctionDuSchema(informationsIndicateur, valeurSélectionnée)}
             </p>
-            <div className="fr-mt-4w flex justify-end">
+            <div className='fr-mt-4w flex justify-end'>
               <SubmitBouton
-                className="fr-btn--icon-right fr-icon-arrow-right-line"
+                className='fr-btn--icon-right fr-icon-arrow-right-line'
                 label={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_SELECTION_INDICATEUR.LABEL_BOUTON_PROCHAINE_ETAPE}
               />
             </div>

@@ -21,7 +21,7 @@ export default class UtilisateurBuilder {
   private _habilitations: Utilisateur['habilitations'];
 
   constructor() {
-    this._id = faker.helpers.unique(faker.random.numeric, [4]);
+    this._id = faker.helpers.unique(faker.random.numeric, [10]);
     this._nom = faker.name.lastName();
     this._prénom = faker.name.firstName();
     this._email = faker.internet.email();
@@ -31,8 +31,8 @@ export default class UtilisateurBuilder {
     this._fonction = faker.helpers.arrayElement([faker.lorem.words(6), null]);
     this._habilitations = {
       lecture: { chantiers: [], territoires: [], périmètres: [] },
-      'saisie.commentaire': { chantiers: [], territoires: [], périmètres: [] },
-      'saisie.indicateur': { chantiers: [], territoires: [], périmètres: [] },
+      'saisieCommentaire': { chantiers: [], territoires: [], périmètres: [] },
+      'saisieIndicateur': { chantiers: [], territoires: [], périmètres: [] },
       'utilisateurs.lecture': { chantiers: [], territoires:[], périmètres: [] },
       'utilisateurs.modification': { chantiers: [], territoires: [], périmètres: [] },
       'utilisateurs.suppression': { chantiers: [], territoires: [], périmètres: [] },

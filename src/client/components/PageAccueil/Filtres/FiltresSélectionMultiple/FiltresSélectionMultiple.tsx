@@ -22,20 +22,20 @@ export default function FiltresSélectionMultiple({
     <FiltresSélectionMultipleStyled>
       <button
         aria-controls={`fr-sidemenu-item-${catégorieDeFiltre}`}
-        aria-expanded="false"
-        className="fr-sidemenu__btn fr-m-0"
+        aria-expanded='false'
+        className='fr-sidemenu__btn fr-m-0'
         type='button'
       >
         {libellé}
       </button>
       <div
-        className="fr-collapse"
+        className='fr-collapse'
         id={`fr-sidemenu-item-${catégorieDeFiltre}`}
       >
-        <ul className="fr-p-0 fr-m-0 fr-mb-1w">
+        <ul className='fr-p-0 fr-m-0 fr-mb-1w'>
           {filtres.map(filtre => (
             <li
-              className="fr-p-0 fr-my-1w fr-mr-0"
+              className='fr-p-0 fr-my-1w fr-mr-0'
               key={filtre.id}
             >
               <button
@@ -44,7 +44,7 @@ export default function FiltresSélectionMultiple({
                   ${estActif(filtre.id, catégorieDeFiltre) ? 'actif' : ''}
                 `}
                 onClick={() => auClicSurUnFiltreCallback(filtre)}
-                type="button"
+                type='button'
               >
                 {filtre.nom}
               </button>
