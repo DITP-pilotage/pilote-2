@@ -6,6 +6,7 @@ import {
   actionsTerritoiresStore,
   mailleSélectionnéeTerritoiresStore,
   territoiresComparésTerritoiresStore,
+  territoiresTerritoiresStore,
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import api from '@/server/infrastructure/api/trpc/api';
@@ -24,7 +25,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const territoiresComparés = territoiresComparésTerritoiresStore();
-  // const territoires = territoiresTerritoiresStore();
+  const territoires = territoiresTerritoiresStore();
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();
   const territoireParent = territoireSélectionné?.codeParent ? récupérerDétailsSurUnTerritoire(territoireSélectionné.codeParent) : null;
   const { data: session } = useSession();
@@ -124,7 +125,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
   if (session && ['DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL'].includes(session.profil) && territoireSélectionné?.maille != 'nationale') {
     modeÉcriture = modeÉcriture && chantier?.ate === 'hors_ate_centralise';
   }
-  const modeÉcritureObjectifs = modeÉcriture; //territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication === true) && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);    
+  const modeÉcritureObjectifs = territoires.some(t => t.maille === 'nationale' && t.accèsSaisiePublication === true) && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);    
 
   const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
   const responsableLocal = chantierTerritoireSélectionné?.responsableLocal ?? [];
