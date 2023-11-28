@@ -113,6 +113,7 @@ models:
         - Si `vig=vca` alors le TAA vaut `NULL`
         - Si `vig=vcg` alors le TAG vaut `NULL`
         - Les TA sont paramétrés pour renvoyer **{{ var('ta_decimales') }} décimales** (paramètres global dbt `ta_decimales`)
+        - *Règle 620:* La **VCA** (VC annuelle) est la **VC de l'année courante** et non pas la VC de l'année de la dernière VA. Exemple: Si VC22 est la dernière dispo, alors la VCA sera VC23 et non pas VC22 car on est en 2023.
   - name: df3_indicateur
     description: |
       Table des indicateurs construite par la datafactory dbt. Version reconstruite de zero. Règles:
