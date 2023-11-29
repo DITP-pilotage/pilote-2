@@ -11,6 +11,10 @@ import ImporterDesUtilisateursUseCase from '@/server/usecase/utilisateur/Importe
 import RécupérerListeUtilisateursExistantsUseCase from '@/server/usecase/utilisateur/RécupérerListeUtilisateursExistantsUseCase';
 import { createObjectCsvWriter } from 'csv-writer';
 import { CsvRecord } from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur.interface';
+import { UtilisateurSQLRepository } from '@/server/infrastructure/accès_données/utilisateur/UtilisateurSQLRepository';
+import UtilisateurIAMKeycloakRepository from '@/server/infrastructure/accès_données/utilisateur/UtilisateurIAMKeycloakRepository';
+import { PrismaClient } from '@prisma/client';
+import { TerritoireSQLRepository } from '@/server/infrastructure/accès_données/territoire/TerritoireSQLRepository';
 
 
 /**
@@ -91,13 +95,23 @@ async function main() {
   const outputName = process.argv[4]
   assert(filename, 'Nom de fichier CSV manquant');
 
+  const prisma = new PrismaClient();
+
+  const keycloakUrl = process.env.IMPORT_KEYCLOAK_URL as string;
+  const clientId = process.env.IMPORT_CLIENT_ID as string;
+  const clientSecret = process.env.IMPORT_CLIENT_SECRET as string;
+
+  const utilisateurIAMRepository = new UtilisateurIAMKeycloakRepository(keycloakUrl, clientId, clientSecret);
+  const utilisateurRepository = new UtilisateurSQLRepository(prisma);
+  const territoireRepository = new TerritoireSQLRepository(prisma);
+
   const contenuParsé = new UtilisateurCSVParseur(filename).parse();
   let utilisateursFormatCsv = contenuParsé.csvRecords
   let utilisateurs = contenuParsé.parsedCsvRecords
 
   if (importNouveauCompteUniquement) {
     assert(outputName, 'Nom du fichier de sortie manquant')
-    const utilisateursExistants = await new RécupérerListeUtilisateursExistantsUseCase().run(utilisateurs);
+    const utilisateursExistants = await new RécupérerListeUtilisateursExistantsUseCase(utilisateurRepository).run(utilisateurs);
     utilisateurs = utilisateurs.filter(utilisateur => !utilisateursExistants.includes(utilisateur.email));
     utilisateursFormatCsv = utilisateursFormatCsv.filter(utilisateur => utilisateursExistants.includes(utilisateur.email))
     if (utilisateursExistants.length != 0) {
@@ -106,7 +120,7 @@ async function main() {
     }
   }
 
-  await new ImporterDesUtilisateursUseCase().run(utilisateurs, 'Import CSV');
+  await new ImporterDesUtilisateursUseCase(utilisateurRepository, utilisateurIAMRepository, territoireRepository).run(utilisateurs, 'Import CSV');
 }
 
 const isMain = eval('require.main === module');

@@ -4,13 +4,12 @@ import { UtilisateurÀCréerOuMettreÀJourSansHabilitation } from '@/server/doma
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import { HabilitationsÀCréerOuMettreÀJourCalculées } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export default class ImporterDesUtilisateursUseCase {
   constructor(
-    private readonly utilisateurRepository: UtilisateurRepository = dependencies.getUtilisateurRepository(),
-    private readonly utilisateurIAMRepository: UtilisateurIAMRepository = dependencies.getUtilisateurIAMRepository(),
-    private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
+    private readonly utilisateurRepository: UtilisateurRepository,
+    private readonly utilisateurIAMRepository: UtilisateurIAMRepository,
+    private readonly territoireRepository: TerritoireRepository,
   ) {}
 
   // eslint-disable-next-line sonarjs/cognitive-complexity

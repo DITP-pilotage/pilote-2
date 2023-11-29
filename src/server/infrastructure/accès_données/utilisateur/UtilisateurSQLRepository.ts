@@ -228,6 +228,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   }
 
   async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurModification: string): Promise<void> {
+   
     const utilisateurCrééOuMisÀJour = await this._prisma.utilisateur.upsert({
       create: convertirEnModel({
         email: u.email.toLocaleLowerCase(),
@@ -239,7 +240,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
         dateModification: new Date(),
       }),
       update: convertirEnModel({
-        email: u.email,
+        email: u.email.toLocaleLowerCase(),
         nom: u.nom,
         prenom: u.prénom,
         profilCode: u.profil,
