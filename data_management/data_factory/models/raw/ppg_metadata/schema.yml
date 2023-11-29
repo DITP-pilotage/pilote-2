@@ -227,383 +227,595 @@ models:
             pilote_create_defaultValue: null
       - name: vi_dept_from
         data_type: text
-        description: "Source des VI départementales: saisie attendue on interdite."
+        description: "Source des valeurs initiales départementales (import, agrégation géographique, agrégation d'indicateurs...)"
         meta:
-            pilote_show: true
-            pilote_alias: "VI DEPT: source"
-            pilote_edit_isEditable: true
-            pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}]
-            pilote_create_mandatory: true
-            pilote_create_defaultValue: "_"
+          pilote_alias: "Valeur initiale - Origine"
+          pilote_edit_boxType: text
+          pilote_disp_dispDesc: true
+          pilote_create_defaultValue: "_"
+          pilote_disp_blocId: 2
+          pilote_edit_acceptedValues: >
+              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]   
       - name: vi_dept_op
         data_type: text
-        description: "Opération d'aggrégation des VI départementales depuis une maille inférieure."
+        description: >
+              "Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote"
         meta:
-            pilote_show: true
-            pilote_alias: "VI DEPT: aggrégation"
-            pilote_edit_isEditable: true
-            pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}]
-            pilote_create_mandatory: true
-            pilote_create_defaultValue: "_"
+          pilote_alias: "Méthode d'agrégation - VI"
+          pilote_edit_boxType: text
+          pilote_disp_dispDesc: true
+          pilote_create_defaultValue: "_"
+          pilote_disp_blocId: 2
+          pilote_edit_acceptedValues: >
+              [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs des sous-indicateurs"}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs des sous-indicateurs"}]
+
       - name: va_dept_from
         data_type: text
-        description: "Source des VA départementales"
+        description: >
+              "Source des valeurs actuelles départementales (import, agrégation géographique, agrégation d'indicateurs...)"
         meta:
-            pilote_show: true
-            pilote_alias: "VA DEPT: source"
-            pilote_edit_isEditable: true
-            pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}]
-            pilote_create_mandatory: true
-            pilote_create_defaultValue: "_"
+          pilote_alias: "Valeur actuelle - Origine"
+          pilote_edit_boxType: text
+          pilote_disp_dispDesc: true
+          pilote_create_defaultValue: "_"
+          pilote_disp_blocId: 2
+          pilote_edit_acceptedValues: >
+              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]   
 
       - name: va_dept_op
         data_type: text
-        description: "Opération d'aggrégation des VA départementales depuis une maille inférieure."
+        description: >
+            "Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote"
         meta:
-            pilote_show: true
-            pilote_alias: "VA DEPT: aggrégation"
-            pilote_edit_isEditable: true
-            pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}]
-            pilote_create_mandatory: true
-            pilote_create_defaultValue: "_"
+          pilote_alias: "Méthode d'agrégation - VA"
+          pilote_edit_boxType: text
+          pilote_disp_dispDesc: true
+          pilote_create_defaultValue: "_"
+          pilote_disp_blocId: 2
+          pilote_edit_acceptedValues: >
+              [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs des sous-indicateurs"}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs des sous-indicateurs"}]
 
       - name: vc_dept_from
         data_type: text
-        description: "Source des VC départementales"
+        description: >
+            "Source des valeurs cibles départementales (import, agrégation géographique, agrégation d'indicateurs...)"
         meta:
-            pilote_show: true
-            pilote_alias: "VC DEPT: source"
-            pilote_edit_isEditable: true
+            pilote_alias: "Valeur cible - Origine"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
-
+            pilote_disp_blocId: 2
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]   
       - name: vc_dept_op
         data_type: text
-        description: "Opération d'aggrégation des VC départementales depuis une maille inférieure."
+        description: >
+            "Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote"
         meta:
-            pilote_show: true
-            pilote_alias: "VC DEPT: aggrégation"
-            pilote_edit_isEditable: true
+            pilote_alias: "Méthode d'agrégation - VC"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
+            pilote_disp_blocId: 2
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs des sous-indicateurs"}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs des sous-indicateurs"}]
       - name: vi_reg_from
         data_type: text
-        description: "Source des VI régionales: saisie attendue, saisie interdite, ou aggrégation depuis les VI départementales."
+        description: >
+            "Source des valeurs initiales régionales (import, agrégation géographique, agrégation d'indicateurs...)"
         meta:
-            pilote_show: true
-            pilote_alias: "VI REG: source"
-            pilote_edit_isEditable: true
+            pilote_alias: "Valeur initiale - Origine"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
+            pilote_disp_blocID: 3        
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]
       - name: vi_reg_op
         data_type: text
-        description: "Opération d'aggrégation des VI régionales depuis une maille inférieure."
+        description: >
+            "Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote"
         meta:
-            pilote_show: true
-            pilote_alias: "VI REG: aggrégation"
-            pilote_edit_isEditable: true
+            pilote_alias: "Méthode d'agrégation - VI"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
+            pilote_disp_blocID: 3
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
       - name: va_reg_from
         data_type: text
-        description: "Source des VA régionales: saisie attendue, saisie interdite, ou aggrégation depuis les VA départementales."
+        description: >
+            Source des valeurs actuelles régionales (import, agrégation géographique, agrégation d'indicateurs...)
         meta:
-            pilote_show: true
-            pilote_alias: "VA REG: source"
-            pilote_edit_isEditable: true
+            pilote_alias: "Valeur actuelle - Origine"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
+            pilote_disp_blocID: 3
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]
       - name: va_reg_op
         data_type: text
-        description: "Opération d'aggrégation des VA régionales depuis une maille inférieure."
+        description: >
+            Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote
         meta:
-            pilote_show: true
-            pilote_alias: "VA REG: aggrégation"
-            pilote_edit_isEditable: true
+            pilote_alias: "Méthode d'agrégation - VA"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
+            pilote_disp_blocID: 3
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
       - name: vc_reg_from
         data_type: text
-        description: "Source des VC régionales: saisie attendue, saisie interdite, ou aggrégation depuis les VC départementales."
+        description: >
+            Source des valeurs cibles régionales (import, agrégation géographique, agrégation d'indicateurs...)
         meta:
-            pilote_show: true
-            pilote_alias: "VC REG: source"
-            pilote_edit_isEditable: true
+            pilote_alias: "Valeur cible - Origine"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
+            pilote_disp_blocID: 3
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]
       - name: vc_reg_op
         data_type: text
-        description: "Opération d'aggrégation des VC régionales depuis une maille inférieure."
+        description: >
+            Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote
         meta:
-            pilote_show: true
-            pilote_alias: "VC REG: aggrégation"
-            pilote_edit_isEditable: true
+            pilote_alias: "Méthode d'agrégation - VC"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
+            pilote_disp_blocID: 3
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
       - name: vi_nat_from
         data_type: text
-        description: "Source des VI nationales: saisie attendue, saisie interdite, ou aggrégation depuis les VI départementales ou régionales."
+        description: >
+            Source de la valeur initiale nationale (import, agrégation géographique, agrégation d'indicateurs...)
         meta:
-            pilote_show: true
-            pilote_alias: "VI NAT: source"
-            pilote_edit_isEditable: true
+            pilote_alias: "Valeur initiale - Origine"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
+            pilote_disp_blocID: 4        
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"},  {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."},{"order_id": 5, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]
       - name: vi_nat_op
         data_type: text
-        description: "Opération d'aggrégation des VI nationales depuis une maille inférieure."
+        description: >
+            Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote
         meta:
-            pilote_show: true
-            pilote_alias: "VI NAT: aggrégation"
-            pilote_edit_isEditable: true
+            pilote_alias: "Méthode d'agrégation - VI"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
+            pilote_disp_blocID: 4
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
       - name: va_nat_from
         data_type: text
-        description: "Source des VA nationales: saisie attendue, saisie interdite, ou aggrégation depuis les VA départementales ou régionales."
+        description: >
+            Source de la valeur actuelle nationale (import, agrégation géographique, agrégation d'indicateurs...)
         meta:
-            pilote_show: true
-            pilote_alias: "VA NAT: source"
-            pilote_edit_isEditable: true
+            pilote_alias: "Valeur actuelle - Origine"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
+            pilote_disp_blocID: 4
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"},  {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."},{"order_id": 5, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]
       - name: va_nat_op
         data_type: text
-        description: "Opération d'aggrégation des VA nationales depuis une maille inférieure."
+        description: >
+            Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote
         meta:
-            pilote_show: true
-            pilote_alias: "VA NAT: aggrégation"
-            pilote_edit_isEditable: true
+            pilote_alias: "Méthode d'agrégation - VA"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
+            pilote_disp_blocID: 4
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
       - name: vc_nat_from
         data_type: text
-        description: "Source des VC nationales: saisie attendue, saisie interdite, ou aggrégation depuis les VC départementales ou régionales."
+        description: >
+            Source de la valeur cible nationale (import, agrégation géographique, agrégation d'indicateurs...)
         meta:
-            pilote_show: true
-            pilote_alias: "VC NAT: source"
-            pilote_edit_isEditable: true
+            pilote_alias: "Valeur cible - Origine"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
+            pilote_disp_blocID: 4
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"},  {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."},{"order_id": 5, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]
       - name: vc_nat_op
         data_type: text
-        description: "Opération d'aggrégation des VC nationales depuis une maille inférieure."
+        description: >
+            Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote
         meta:
-            pilote_show: true
-            pilote_alias: "VC NAT: aggrégation"
-            pilote_edit_isEditable: true
+            pilote_alias: "Méthode d'agrégation - VC"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
+            pilote_disp_blocID: 4
+            pilote_edit_acceptedValues: >
+                [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs de la maille inférieure."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs de la maille inférieure."}]
       - name: param_vaca_decumul_from
         data_type: text
-        description: |
-          Indique la date à partir de laquelle les VA doivent être décumulées avant d'effectuer le calcul des VACA (*Valeur Actuelle Comparable Annuelle*). Valeurs autorisées:
-
-          - `_`: pas de décumul des valeurs
-          - `from_year_start`: décumul depuis le début de l'année
-          - `from_custom_date:yyyy-mm-dd`: décumul depuis la date spécifiée
+        description: >
+            Dans le cas où les valeurs sont agrégeables et doivent être décumulées pour calcul de la VAC dans le TA annuel.
         meta:
-            pilote_show: true
-            pilote_alias: "VACA: Décumul des VA depuis"
-            pilote_edit_isEditable: true
+            pilote_alias: "Décumul des valeurs saisies (TA annuel)"
             pilote_edit_boxType: text
-            pilote_edit_regex: "_|from_year_start|from_custom_date::20\\d\\d-\\d\\d-\\d\\d"
-            pilote_edit_regexViolationMessage: "Veuillez saisir une date de début correcte."
             pilote_disp_dispDesc: true
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
-      - name: param_vacg_decumul_from
-        data_type: text
-        description: |
-          Indique la date à partir de laquelle les VA doivent être décumulées avant d'effectuer le calcul des VACG (*Valeur Actuelle Comparable Globale*). Valeurs autorisées:
-
-          - `_`: pas de décumul des valeurs
-          - `from_year_start`: décumul depuis le début de l'année
-          - `from_custom_date:yyyy-mm-dd`: décumul depuis la date spécifiée
-        meta:
-            pilote_show: true
-            pilote_alias: "VACG: Décumul des VA depuis"
-            pilote_edit_isEditable: true
-            pilote_edit_boxType: text
-            pilote_edit_regex: "_|from_year_start|from_custom_date::20\\d\\d-\\d\\d-\\d\\d"
-            pilote_edit_regexViolationMessage: "Veuillez saisir une date de début correcte."
-            pilote_disp_dispDesc: true
-            pilote_create_mandatory: true
-            pilote_create_defaultValue: "_"
+            pilote_disp_blocId: 5
+            pilote_edit_acceptedValues: >
+              [{"order_id": 1, "value": "_", "name": "Non", "desc": "Pas de décumul nécessaire"}, {"order_id": 2, "value": "from_year_start", "name": "Oui, saisie en cumul annuel", "desc": "Les valeurs sont saisies cumulées depuis le débur d'année"}, {"order_id": 3, "value": "from_custom_date::2019-01-01", "name": "Oui, saisie en cumul depuis le début", "desc": "Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif."}]
       - name: param_vaca_partition_date
         data_type: text
-        description: |
-          Indique l'horizon de temps sur lequel se fera le calcul de la VACA (*Valeur Actuelle Comparable Annuelle*). Valeurs autorisées:
-
-          - `_`: Pas de date de début. Utile quand l'opération est `current_value`
-          - `from_year_start`: Calcul sur les valeurs de l'année en cours
-          - `from_custom_date:yyyy-mm-dd`: Calcul depuis la date spécifiée
-          - `from_month:mm`: Calcul depuis le dernier mois de `mm`. Exemple: `09` pour calculer depuis le dernier mois de septembre
+        description: >
+            Les valeurs sont saisies décumulées ou sont décumulées (Décumul des valeurs saisies = Oui). Un traitement doit-il être appliqué sur ces valeurs ?
         meta:
-            pilote_show: true
-            pilote_alias: "VACA: Calcul sur l'horizon:"
-            pilote_edit_isEditable: true
+            pilote_alias: "Cumul des valeurs (TA annuel)"
             pilote_edit_boxType: text
-            pilote_edit_regex: "_|from_year_start|from_custom_date::20\\d\\d-\\d\\d-\\d\\d|from_month::\\d\\d"
-            pilote_edit_regexViolationMessage: "Veuillez saisir une date de début correcte."
             pilote_disp_dispDesc: true
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "_"
-      - name: param_vacg_partition_date
-        data_type: text
-        description: |
-          Indique l'horizon de temps sur lequel se fera le calcul de la VACG (*Valeur Actuelle Comparable Globale*). Valeurs autorisées:
-
-          - `_`: Pas de date de début. Utile quand l'opération est `current_value`
-          - `from_year_start`: Calcul sur les valeurs de l'année en cours
-          - `from_custom_date:yyyy-mm-dd`: Calcul depuis la date spécifiée
-          - `from_month:mm`: Calcul depuis le dernier mois de `mm`. Exemple: `09` pour calculer depuis le dernier mois de septembre
-        meta:
-            pilote_show: true
-            pilote_alias: "VACG: Calcul sur l'horizon:"
-            pilote_edit_isEditable: true
-            pilote_edit_boxType: text
-            pilote_edit_regex: "_|from_year_start|from_custom_date::20\\d\\d-\\d\\d-\\d\\d|from_month::\\d\\d"
-            pilote_edit_regexViolationMessage: "Veuillez saisir une date de début correcte."
-            pilote_disp_dispDesc: true
-            pilote_create_mandatory: true
-            pilote_create_defaultValue: "_"
+            pilote_disp_blocId: 5
+            pilote_edit_acceptedValues: >
+              [{"order_id": 1, "value": "_", "name": "Non", "desc": "Valeurs déjà cumulées ou non cumulables."}, {"order_id": 2, "value": "from_year_start", "name": "Oui, cumul annuel", "desc": "Cumul des VA depuis janvier (01) de l'année en cours."}, {"order_id": 3, "value": "from_custom_date::2019-01-01", "name": "Oui, cumul global", "desc": "Cumul de toutes les VA."}]
       - name: param_vaca_op
         data_type: text
-        description: |
-          Indique l'opération de calcul de la VACA (*Valeur Actuelle Comparable Annuelle*) à partir des VA. Valeurs autorisées:
-
-          - `current_value`: Pas d'opération sur la VA. La valeur courante de la VA sera la VACA
-          - `sum`: Somme des VA sur l'horizon de temps défini
-          - `moy`: Moyenne des VA sur l'horizon de temps défini
+        description: >
+            Indiquer s'il faut faire une somme ou une moyenne des VA. Si la VA doit être utilisée telle que saisie, indiquer "Valeur saisie".
         meta:
-            pilote_show: true
-            pilote_alias: "VACA: Opération"
-            pilote_edit_isEditable: true
+            pilote_alias: "Opération (TA annuel)"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_create_mandatory: true
+            pilote_create_defaultValue: "_"
+            pilote_disp_blocId: 5
             pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "current_value", "name": "Pas d'opération", "desc": "Pas d'opération sur la VA. La valeur courante de la VA sera la VACA"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs sur l'horizon défini."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs sur l'horizon défini."}]
-            pilote_create_defaultValue: "current_value"
+              [{"order_id": 1, "value": "current_value", "name": "Valeur saisie", "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)"}, {"order_id": 2, "value": "sum", "name": "Somme des VA"}, {"order_id": 3, "value": "moy", "name": "Moyenne"}]
+      - name: param_vacg_decumul_from
+        data_type: text
+        description: >
+            Dans le cas où les valeurs sont agrégeables et doivent être décumulées pour calcul de la VAC dans le TA global. Par défaut, saisir le même paramétrage que pour le TA annuel.
+        meta:
+            pilote_alias: "Décumul des valeurs saisies (TA global)"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: "_"
+            pilote_disp_blocId: 5
+            pilote_edit_acceptedValues: >
+              [{"order_id": 1, "value": "_", "name": "Non", "desc": "Pas de décumul nécessaire"}, {"order_id": 2, "value": "from_year_start", "name": "Oui, saisie en cumul annuel", "desc": "Les valeurs sont saisies cumulées depuis le débur d'année"}, {"order_id": 3, "value": "from_custom_date::2019-01-01", "name": "Oui, saisie en cumul depuis le début", "desc": "Les valeurs ont saisies cumulées depuis une date éloignée, date de VI ou début du dispositif."}]
+      - name: param_vacg_partition_date
+        data_type: text
+        description: >
+            Les valeurs sont saisies décumulées ou sont décumulées (Décumul des valeurs saisies = Oui). Un traitement doit-il être appliqué sur ces valeurs ?
+        meta:
+            pilote_alias: "Cumul des valeurs (TA global)"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: "_"
+            pilote_disp_blocId: 5
+            pilote_edit_acceptedValues: >
+              [{"order_id": 1, "value": "_", "name": "Non", "desc": "Valeurs déjà cumulées ou non cumulables."}, {"order_id": 2, "value": "from_year_start", "name": "Oui, cumul annuel", "desc": "Cumul des VA depuis janvier (01) de l'année en cours."}, {"order_id": 3, "value": "from_custom_date::2019-01-01", "name": "Oui, cumul global", "desc": "Cumul de toutes les VA."}]
       - name: param_vacg_op
         data_type: text
-        description: |
-          Indique l'opération de calcul de la VACG (*Valeur Actuelle Comparable Globale*) à partir des VA. Valeurs autorisées:
-
-          - `current_value`: Pas d'opération sur la VA. La valeur courante de la VA sera la VACG
-          - `sum`: Somme des VA sur l'horizon de temps défini
-          - `moy`: Moyenne des VA sur l'horizon de temps défini
+        description: >
+            Indiquer s'il faut faire une somme ou une moyenne des VA. Si la VA doit être utilisée telle que saisie, indiquer "Valeur saisie".
         meta:
-            pilote_show: true
-            pilote_alias: "VACG: Opération"
-            pilote_edit_isEditable: true
+            pilote_alias: "Opération (TA global)"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_create_mandatory: true
+            pilote_create_defaultValue: "_"
+            pilote_disp_blocId: 5
             pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "current_value", "name": "Pas d'opération", "desc": "Pas d'opération sur la VA. La valeur courante de la VA sera la VACG"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs sur l'horizon défini."}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs sur l'horizon défini."}]
-            pilote_create_defaultValue: "current_value"
-      - name: poids_pourcent_dept
-        data_type: number
-        description: |
-          Pondération du TA départemental de cet indicateur dans le TA départemental du chantier.
-
-          Cette valeur doit être dans `[0,100]` et l'ensemble des pondérations départementales des indicateurs d'un chantier **doivent se sommer à 100**.
-        meta:
-            pilote_show: true
-            pilote_alias: "Pondération départementale"
-            pilote_edit_isEditable: true
-            pilote_disp_dispDesc: true
-            pilote_create_mandatory: true
-            pilote_create_defaultValue: 0
-      
-      - name: poids_pourcent_reg
-        data_type: number
-        description: |
-          Pondération du TA régional de cet indicateur dans le TA régional du chantier.
-
-          Cette valeur doit être dans `[0,100]` et l'ensemble des pondérations régionales des indicateurs d'un chantier **doivent se sommer à 100**.
-        meta:
-            pilote_show: true
-            pilote_alias: "Pondération régionale"
-            pilote_edit_isEditable: true
-            pilote_disp_dispDesc: true
-            pilote_create_mandatory: true
-            pilote_create_defaultValue: 0
-      - name: poids_pourcent_nat
-        data_type: number
-        description: |
-          Pondération du TA national de cet indicateur dans le TA national du chantier.
-
-          Cette valeur doit être dans `[0,100]` et l'ensemble des pondérations nationales des indicateurs d'un chantier **doivent se sommer à 100**.
-        meta:
-            pilote_show: true
-            pilote_alias: "Pondération nationale"
-            pilote_edit_isEditable: true
-            pilote_disp_dispDesc: true
-            pilote_create_mandatory: true
-            pilote_create_defaultValue: 0
-
+              [{"order_id": 1, "value": "current_value", "name": "Valeur saisie", "desc": "VA saisie : non cumulable (%) ou déjà cumulée (valeur à date)"}, {"order_id": 2, "value": "sum", "name": "Somme des VA"}, {"order_id": 3, "value": "moy", "name": "Moyenne"}]
       - name: tendance
         data_type: text
-        description: "Tendance attendue de l'évolution de l'indicateur. Hausse, baisse ou stable"
+        description: >
+            Evolution attendue de l'indicateur. Si l'évolution attendue est stable, l'option "hausse" sera sélectionnée.
         meta:
-            pilote_show: true
-            pilote_alias: "Tendance"
-            pilote_edit_isEditable: true
+            pilote_alias: "Tendance de l'indicateur"
+            pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "HAUSSE", "name": "Hausse", "desc": "Tendance en hausse"}, {"order_id": 2, "value": "BAISSE", "name": "Baisse", "desc": "Tendance en baisse"}, {"order_id": 3, "value": "STABLE", "name": "Stable", "desc": "Tendance stable"}]
-            pilote_create_mandatory: true
             pilote_create_defaultValue: "HAUSSE"
+            pilote_disp_blocId: 5
+            pilote_edit_acceptedValues: >
+              [{"order_id": 1, "value": "HAUSSE", "name": "Hausse", "desc": "Tendance en hausse"}, {"order_id": 2, "value": "BAISSE", "name": "Baisse", "desc": "Tendance en baisse"}]
+
+      - name: poids_pourcent_nat
+        data_type: number
+        description: >
+            Poids de l'indicateur dans le calcul du taux d'avancement global aux différentes mailles
+        meta:
+            pilote_alias: "Maille nationale"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: 0
+            ### Possible d'ajouter une règle pour nombre entre 0 et 100 ??
+            pilote_disp_blocId: 6
+
+      - name: poids_pourcent_reg
+        data_type: number
+        description: >
+            Poids de l'indicateur dans le calcul du taux d'avancement global à la maille régionale si territorialisé à cette maille.
+        meta:
+            pilote_alias: "Maille régionale"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: false
+            pilote_create_defaultValue: 0
+            ### Possible d'ajouter une règle pour nombre entre 0 et 100 ??
+            pilote_disp_blocId: 6
+
+      - name: poids_pourcent_dept
+        data_type: number
+        description: >
+            Poids de l'indicateur dans le calcul du taux d'avancement global à la maille départementale si territorialisé à cette maille.
+        meta:
+            pilote_alias: "Maille départementale"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: false
+            pilote_create_defaultValue: 0
+            ### Possible d'ajouter une règle pour nombre entre 0 et 100 ??
+            pilote_disp_blocId: 6
+
+  - name: metadata_indicateurs_complementaire
+    description: "Table contenant des informations complémentaires sur les indicateurs"
+    columns:
+      - name: reforme_prioritaire
+        data_type: text
+        description: |
+            Réforme prioritaire dont est issu l'indicateur persévérant.
+        meta:
+            pilote_alias: "Réforme prioritaire"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+            #pilote_edit_acceptedValues: > // Valeurs acceptées - récupérer la liste des valeurs possibles du formulaire DS
+
+      - name: projet_annuel_perf
+        data_type: boolean
+        description: |
+            Utilisation de l'indicateur dans le cadre d'un projet annuel de performance (PAP) annexé à un projet de loi de finances.
+        meta:
+            pilote_alias: "Projet annuel de performance"
+            pilote_edit_boxType: null
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: False
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+            
+      - name: detail_projet_annuel_perf
+        data_type: text
+        description: |
+            Détail du projet annuel de performance dans le cadre duquel l'indicateur est utilisé. 
+        meta:
+            pilote_alias: "Détail projet annuel de performance"
+            pilote_edit_boxType: textarea
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+            
+      - name: periodicite
+        data_type: text
+        description: |
+            Rythme de production des données de l'indicateur.
+            A exprimer en nombre + unité (jour(s), mois, an(s)).
+        meta:
+            pilote_alias: "Périodicité"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+            
+      - name: delai_disponibilite
+        data_type: text
+        description: |
+            Délai prévisionnel moyen entre la fin de la période couverte par la donnée et la disponibilité de l'indicateur dans PILOTE.
+            A exprimer en nombre + unité (jour(s), mois, an(s)).
+        meta:
+            pilote_alias: "Délai de disponibilité"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+            
+      - name: indic_territorialise
+        data_type: boolean
+        description: |
+            Déclinaison de l'indicateur et de ses cibles aux mailles départementale et/ou régionale.
+        meta:
+            pilote_alias: "Territorialisation"
+            pilote_edit_boxType: null
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: False
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+                
+      - name: frequence_territoriale
+        data_type: text
+        description: |
+            Fréquence d'actualisation des données territoriales, si différente de la fréquence nationale.
+            A exprimer en nombre + unité (jour(s), mois, an(s)).
+        meta:
+            pilote_alias: "Fréquence d'actualisation territoriale"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+
+      - name: mailles
+        data_type: text
+        description: |
+          Mailles géographiques pour lesquelles les données peuvent être fournies
+        meta:
+            pilote_alias: "Mailles géographiques"
+            pilote_edit_boxType: multi-select
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+            pilote_edit_acceptedValues: |
+                [{"order_id": 1, "value": "NAT", "name": "Nationale", "desc": "Maille nationale"}, 
+                {"order_id": 2, "value": "REG", "name": "Régions", "desc": "Maille régionale"}, 
+                {"order_id": 3, "value": "DEPT", "name": "Départements", "desc": "Maille départementale"}, 
+                {"order_id": 4, "value": "COM", "name": "Communes", "desc": "Maille communale"}, 
+                {"order_id": 5, "value": "FAC_M", "name": "Façades maritimes", "desc": "Façades maritimes"},
+                {"order_id": 6, "value": "EPCI", "name": "EPCI", "desc": "Etablissement Public de Coopération Intercommunale"}, 
+                {"order_id": 7, "value": "AGGLO", "name": "Agglomérations", "desc": "Agglomérations de plus de 150 000 habitants en France métropolitaine"}, 
+                {"order_id": 8, "value": "DISP", "name": "DISP", "desc": "Directions inter-régionales des services pénitentiaires"}, 
+                {"order_id": 9, "value": "COUR", "name": "Cours d'appel", "desc": "Cours d'appel"}, 
+                {"order_id": 10, "value": "DIRPJJ", "name": "DIRPJJ", "desc": "Directions inter-régionales de la protection judiciaire de la jeunesse"},
+                {"order_id": 11, "value": "ACA", "name": "Académies", "desc": "Académies"}, 
+                {"order_id": 12, "value": "PORT", "name": "Grands ports maritimes", "desc": "Grands ports maritimes"}, 
+                {"order_id": 13, "value": "MEAE", "name": "Zones MEAE", "desc": "Zones géographiques regroupant plusieurs pays"}]   
+
+      - name: admin_source
+        data_type: text
+        description: >
+          Administration responsable de la diffusion et publication des données
+        meta:
+            pilote_alias: "Administration source"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+
+      - name: methode_collecte
+        data_type: text
+        description: >
+          Méthode de collecte de la donnée
+        meta:
+            pilote_alias: "Collecte"
+            pilote_edit_boxType: textarea
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+          
+      - name: si_source
+        data_type: text
+        description: |
+          Système d'information source.
+        meta:
+            pilote_alias: "SI source"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+          
+      - name: donnee_ouverte
+        data_type: boolean
+        description: |
+          Accessibilité des données au public.
+        meta:
+            pilote_alias: "Donnée ouverte"
+            pilote_edit_boxType: null
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+      
+      - name: modalites_donnee_ouverte
+        data_type: text
+        description: |
+          Modalités d'accès à la donnée si donnée ouverte.
+        meta:
+            pilote_alias: "Modalités"
+            pilote_edit_boxType: textarea
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+
+      - name: resp_donnees
+        data_type: text
+        description: |
+          Prénom et nom du responsable données auprès du directeur de projet.
+        meta:
+            pilote_alias: "Responsable données"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+          
+      - name: resp_donnees_email
+        data_type: text
+        description: |
+          Adresse email du responsable données auprès du directeur de projet.
+        meta:
+            pilote_alias: "Email responsable données"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+          
+      - name: contact_technique
+        data_type: text
+        description: |
+          Prénom et nom du contact technique au sein de l'unité de diffusion et de publication de la donnée
+        meta:
+            pilote_alias: "Contact technique"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex:
+            pilote_edit_regexViolationMessage: null
+          
+      - name: contact_technique_email
+        data_type: text
+        description: |
+          Adresse email du contact technique au sein de l'unité de diffusion et de publication de la donnée
+        meta:
+            pilote_alias: "Email contact technique"
+            pilote_edit_boxType: text
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: 
+            pilote_edit_regexViolationMessage: null
+
+      - name: commentaire
+        data_type: text
+        description: |
+          Champ de commentaire libre
+        meta:
+            pilote_alias: "Commentaire"
+            pilote_edit_boxType: textarea
+            pilote_disp_dispDesc: true
+            pilote_create_defaultValue: null
+            pilote_disp_blocId: 7
+            pilote_edit_regex: null
+            pilote_edit_regexViolationMessage: null
+          
