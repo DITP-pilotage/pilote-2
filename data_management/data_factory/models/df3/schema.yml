@@ -128,6 +128,7 @@ models:
       - La liste des **indicateurs** provient de ref('metadata_indicateurs') 
       - La liste des **zones** provient de `public.territoire`. Donc si l'on veut renvoyer des données pour d'autres zones (académies, façades maritimes, monde, ...), il faut leur créer un territoire correspondant.
       - *redmine::621*: on récupère les `vig,vca,vcg` des tables `get_vig,get_vca,get_vcg` et non pas de `compute_ta_indic` (comme c'était le cas précédemment). En effet, sinon ces valeurs ne remontaient pas lorsque pas de VA.
+      - On retourne les **VACA** et non plus les **VA**
     config:
       docs:
         node_color: "#cd7f32"
