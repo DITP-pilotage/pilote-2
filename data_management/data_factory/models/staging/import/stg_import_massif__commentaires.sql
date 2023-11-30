@@ -15,7 +15,9 @@ renamed as (
         TO_DATE(date,'DD/MM/YYYY') as date,
         auteur,
         maille,
-        code_insee
+        CAST(code_insee as VARCHAR) as code_insee,
+        TO_DATE(date_meteo,'DD/MM/YYYY') as date_meteo,
+        meteo
 
     from source
 
