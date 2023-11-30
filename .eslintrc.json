@@ -30,6 +30,7 @@
   },
   "rules": {
     "sonarjs/cognitive-complexity": "off",
+    "sonarjs/no-nested-template-literals": "off",
     "@typescript-eslint/dot-notation": "off",
     "quotes": ["error", "single", {
       "avoidEscape": true

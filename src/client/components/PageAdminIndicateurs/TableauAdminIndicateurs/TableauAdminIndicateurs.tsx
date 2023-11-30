@@ -18,6 +18,7 @@ export function TableauAdminIndicateurs() {
     changementDePageCallback,
     changementDeLaRechercheCallback,
     valeurDeLaRecherche,
+    exporterLesIndicateurs,
   } = useTableauPageAdminIndicateurs();
 
   return (
@@ -31,14 +32,28 @@ export function TableauAdminIndicateurs() {
       {
           estEnChargement ? <Loader /> :
           <>
-            <Titre
-              baliseHtml='h2'
-              className='fr-h4 fr-mt-3w  fr-mb-0 titre-tableau'
-            >
-              {tableau.getFilteredRowModel().rows.length}
-              {' '}
-              {tableau.getFilteredRowModel().rows.length > 1 ? 'indicateurs' : 'indicateur'}
-            </Titre>
+            <div className='flex justify-between'>
+              <Titre
+                baliseHtml='h2'
+                className='fr-h4 fr-mt-3w fr-mb-0 titre-tableau'
+              >
+                {tableau.getFilteredRowModel().rows.length}
+                {' '}
+                {tableau.getFilteredRowModel().rows.length > 1 ? 'indicateurs' : 'indicateur'}
+              </Titre>
+              <div>
+                <button
+                  className='fr-btn fr-text'
+                  disabled={tableau.getFilteredRowModel().rows.length === 0}
+                  onClick={exporterLesIndicateurs}
+                  type='button'
+                >
+                  Exporter
+                  {' '}
+                  {`${tableau.getFilteredRowModel().rows.length === 1 ? "l'indicateur" : `les ${tableau.getFilteredRowModel().rows.length} indicateurs` }`}
+                </button>
+              </div>
+            </div>
             <div className='fr-table'>
               <table className='tableau fr-m-0 fr-p-0'>
                 <caption className='fr-sr-only'>
