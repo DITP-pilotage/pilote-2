@@ -11,19 +11,14 @@ const BandeauInformationStyled = styled.section`
   }
 `;
 
-export function BandeauInformation() {
+export function BandeauInformation({ children }: { children: React.ReactNode }) {
   return (
     <BandeauInformationStyled>
       <div className='fr-notice fr-notice--info'>
         <div className='fr-container'>
           <div className='fr-notice__body flex'>
-            <p className='fr-notice__title'>
-              En raison d’une opération de maintenance, PILOTE sera totalement indisponible le mercredi 6 décembre de 9h à
-              12h. L&apos;import de données restera indisponible jusqu’au vendredi 8 décembre inclus. En cas de difficulté :
-              {' '}
-              <a href='mailto:support.ditp@modernisation.gouv.fr'>
-                support.ditp@modernisation.gouv.fr
-              </a>
+            <p className='fr-notice__title'>              
+              {children}
             </p>
             <button
               className='fr-btn--close fr-btn'
