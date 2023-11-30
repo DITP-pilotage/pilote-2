@@ -44,6 +44,7 @@ interface InputMetadataParametrageIndicateur {
   indicUnite: string;
   indicHiddenPilote: boolean;
   indicSchema: string;
+  zgApplicable: string;
   chantierNom: string;
 }
 
@@ -138,6 +139,8 @@ export class MetadataParametrageIndicateur {
 
   private readonly _indicSchema: string;
 
+  private readonly _zgApplicable: string;
+
   private readonly _chantierNom: string;
 
 
@@ -187,6 +190,7 @@ export class MetadataParametrageIndicateur {
     indicUnite,
     indicHiddenPilote,
     indicSchema,
+    zgApplicable,
     chantierNom,
   }: InputMetadataParametrageIndicateur) {
     this._indicId = indicId;
@@ -234,6 +238,7 @@ export class MetadataParametrageIndicateur {
     this._indicUnite = indicUnite;
     this._indicHiddenPilote = indicHiddenPilote;
     this._indicSchema = indicSchema;
+    this._zgApplicable = zgApplicable;
     this._chantierNom = chantierNom;
   }
 
@@ -417,6 +422,10 @@ export class MetadataParametrageIndicateur {
     return this._indicSchema;
   }
 
+  get zgApplicable(): string {
+    return this._zgApplicable;
+  }
+
   get chantierNom(): string {
     return this._chantierNom;
   }
@@ -467,6 +476,7 @@ export class MetadataParametrageIndicateur {
     indicUnite,
     indicHiddenPilote,
     indicSchema,
+    zgApplicable,
     chantierNom,
   }: InputMetadataParametrageIndicateur): MetadataParametrageIndicateur {
     return new MetadataParametrageIndicateur({
@@ -515,6 +525,7 @@ export class MetadataParametrageIndicateur {
       indicUnite,
       indicHiddenPilote,
       indicSchema,
+      zgApplicable,
       chantierNom,
     });
   }

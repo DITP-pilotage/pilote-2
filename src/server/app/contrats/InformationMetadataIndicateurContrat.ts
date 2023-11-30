@@ -98,7 +98,7 @@ export const presenterEnInformationMetadataIndicateurContrat = (informationMetad
       ordre: acceptedValue.orderId,
       libellé: acceptedValue.name,
       valeur: acceptedValue.value,
-      description: acceptedValue.desc,
+      description: acceptedValue.desc || '',
     })),
   };
 };

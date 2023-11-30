@@ -16,6 +16,7 @@ export interface MetadataParametrageIndicateurForm {
   indicUnite: string;
   indicHiddenPilote: boolean;
   indicSchema: string;
+  zgApplicable: string;
   viDeptFrom: string;
   viDeptOp: string;
   vaDeptFrom: string;
