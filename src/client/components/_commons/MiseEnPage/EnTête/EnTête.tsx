@@ -4,9 +4,16 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import Navigation from '@/components/_commons/MiseEnPage/Navigation/Navigation';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
+import { BandeauInformation } from '@/components/_commons/BandeauInformation';
+ 
+const vérifierValeurBandeauEstActif = () => {
+  return process.env.NEXT_PUBLIC_FF_BANDEAU_INDISPONIBILITE === 'true';
+};
 
 export default function EnTête() {
   const { data: session } = useSession();
+
+  const isBandeauActif = vérifierValeurBandeauEstActif();
 
   return (
     <header
@@ -67,6 +74,11 @@ export default function EnTête() {
         </div>
       </div>
       {session?.user ? <Navigation /> : null}
+      {
+        isBandeauActif ? (
+          <BandeauInformation />
+        ) : null
+      }
     </header>
   );
 }
