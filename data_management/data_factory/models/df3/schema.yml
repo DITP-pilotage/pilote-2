@@ -151,13 +151,3 @@ models:
         node_color: "#cd7f32"
       schema: public
       tags: ["df3"]
-  - name: df3_chantier
-    description: |
-      Table des chantiers construite par la datafactory dbt. Version reconstruite de zero. Règles:
-
-      - certaines tables sont directement reprises du travail des prestataires: `synthese_triee_par_date`,`chantier_est_barometre`,`indicateurs_zones`,`indicateurs_zones_applicables`,`chantiers_zones_applicables`,
-    config:
-      docs:
-        node_color: "#cd7f32"
-      schema: public
-      tags: ["df3"]
