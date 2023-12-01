@@ -9,8 +9,8 @@ SELECT
     COALESCE(maille, 'NAT') as maille, --TODO supprimer le coalesce car la maille est sensé etre renseignée
     COALESCE(code_insee, 'FR') as code_insee, --TODO supprimer le coalesce car le code_insee est sensé etre renseigné
     auteur,
-    COALESCE(meteo, 'NON_RENSEIGNEE') as meteo, --TODO meteo a ajouter dans le fichier d'import action @ditp
-    date_meteo, --TODO date_meteo a ajouter dans le fichier d'import action @ditp
+    null as meteo, --TODO meteo a ajouter dans le fichier d'import action @ditp
+    null::date as date_meteo, --TODO date_meteo a ajouter dans le fichier d'import action @ditp
     contenu as commentaire,
     date as date_commentaire
 FROM {{ ref('stg_import_massif__commentaires') }}
