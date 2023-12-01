@@ -66,6 +66,22 @@ select a.chantier_id,
 	bool_or(meteo is not null) filter (where a.maille='NAT') as has_meteo_nat
 from synthese_triee_par_date a
 group by chantier_id 
+),
+
+-- On récupère les directeurs des directions porteuses de chaque chantier
+ch_unnest_porteurs_dac as (
+select chantier_id, unnest(string_to_array("porteur_ids_DAC", ' | ')) as pi from raw_data.metadata_chantiers mc 
+), ch_unnest_porteurs_dac_pnames as (
+select a.*, mp.porteur_directeur  from ch_unnest_porteurs_dac a
+left join raw_data.metadata_porteurs mp on a.pi=mp.porteur_id 
+),
+ch_unnest_porteurs_dac_pnames_agg as (
+select 
+	chantier_id, 
+	array_agg(pi) p_id, 
+	array_agg(porteur_directeur) p_directeurs 
+	from ch_unnest_porteurs_dac_pnames
+group by chantier_id
 )
 
 
@@ -78,7 +94,7 @@ select
     t.nom as territoire_nom,
     string_to_array(ch_per, ' | ') as perimetre_ids, 
     z.zone_type as "maille",
-    string_to_array("porteur_directeur" , ' | ') as directeurs_administration_centrale, 
+    p_names.p_directeurs as directeurs_administration_centrale, 
     string_to_array("porteur_ids_noDAC" , ' | ') as ministeres, 
     string_to_array("porteur_shorts_DAC" , ' | ') as directions_administration_centrale, 
     string_to_array("ch_dp" , ' | ') as directeurs_projet,
@@ -101,6 +117,7 @@ from {{ ref('metadata_chantiers') }} mc
 cross join {{ source('db_schema_public', 'territoire') }} t
 left join {{ ref('metadata_zones') }} z on z.zone_id=t.zone_id
 left join {{ ref('metadata_porteurs') }} po on mc."porteur_ids_DAC"=po.porteur_id
+left join ch_unnest_porteurs_dac_pnames_agg p_names on mc.chantier_id=p_names.chantier_id
 left join 
     (select * from synthese_triee_par_date where row_id_by_date_meteo_desc=1) sr
 	    ON sr.chantier_id =mc.chantier_id AND
