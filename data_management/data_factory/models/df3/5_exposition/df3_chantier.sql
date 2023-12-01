@@ -94,9 +94,11 @@ select
     t.nom as territoire_nom,
     string_to_array(ch_per, ' | ') as perimetre_ids, 
     z.zone_type as "maille",
-    p_names.p_directeurs as directeurs_administration_centrale, 
+    -- coalesce with empty array
+    coalesce(p_names.p_directeurs, string_to_array('','')) as directeurs_administration_centrale, 
     string_to_array("porteur_ids_noDAC" , ' | ') as ministeres, 
-    string_to_array("porteur_shorts_DAC" , ' | ') as directions_administration_centrale, 
+    -- coalesce with empty array
+    coalesce(string_to_array("porteur_shorts_DAC" , ' | '), string_to_array('','')) as directions_administration_centrale, 
     string_to_array("ch_dp" , ' | ') as directeurs_projet,
     sr.meteo as meteo,
     ax.axe_name as axe,
