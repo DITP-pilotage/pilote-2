@@ -15,7 +15,7 @@ with jjoin as (select
     null::numeric as ratio
 
     from {{ ref('df3_indicateur') }} a
-    full join  {{ ref('indicateur') }} b
+    full join  {{ ref('df1_indicateur') }} b
     on a.territoire_code=b.territoire_code and a.id=b.id
 )
 
