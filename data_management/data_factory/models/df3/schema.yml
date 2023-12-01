@@ -5,6 +5,7 @@ models:
     description: |
         Pour chaque {indic_id, metric_type, metric_date, zone_id}, on retourne la valeur la plus récente. Règles:
 
+        - On ne garde que les mesures sur les **zones applicables** (voir `view_meta_indicateur` colonne `zg_applicable` et ref `int_indicateurs_zones_applicables` pour les détails)
         - Si 2 valeurs pour le meme {indic_id, metric_type, metric_date, zone_id}, on retourne celle avec la date d'import la plus récente. On dit que c'est la valeur **valable**. Ex: `[{date_import1, 12-dec-25, va, 10}, {date_import2, 12-dec-25, va, 15}] => [{date_import2, 12-dec-25, va, 15}]`
         - Si 2 valeurs dans le même mois, à des jours différents, on garde **les deux**. Ces deux valeurs sont des *valeurs valables*.
         - Transformation de `'null'` et `''` vers un `NULL`
@@ -55,6 +56,14 @@ models:
         - on se base sur la table d'aggrégation de DEPT vers REG (`agg_reg`) pour déterminer les valeurs au NAT. En effet, il est possible que des valeurs DEPT soient nécessaire pour le calcul des valeurs au REG, **et** que ces valeurs calculées au REG soient nécessaires pour le calcul des valeurs NAT. Il ne faut donc pas repartir de la table des valeurs importées, mais bien de la table de résultat de l'aggrégation REG.
         - les aggrégations se font par `metric_date` exact (pas arrondi au mois). Ex: si on a `{R01,2023-08-31,10}` et `{R02,2023-08-15,25}`, on aura `{FRANCE,2023-08-31,10}` et `{FRANCE,2023-08-15,25}`
         - si l'opération n'est pas supportée, on aura la valeur `-1.212121` qui sera retournée comme résultat de l'aggrégation
+  - name: agg_nat_rule544
+    description: |
+        Application de la *règle 544* sur les **VC et VI NAT**. Règles:
+
+        - Si la VC NAT est normalement cumulée (is `vc_nat_from<>user_input`)
+        - Si le calcul du cumul retourne `NULL`
+        - Alors, **on retourne la valeur saisie *illégalement* au national**. En théorie, cette valeur devrait être ignorée, mais dans cette règle, on l'utilise pour combler le vide.
+        - *Exemple:* une VC 2026 est indiquée au NAT mais pas encore territorialisée: on va l'afficher en attendant la territorialisation. Une fois que les VC DEPT seront renseignées, c'est bien la somme des VC DEPT qui va s'afficher en tant que VC 26. Même logique pour la VI.
   - name: agg_all
     description: "Combinaision des tables d'aggrégation aux trois mailles (DEPT, REG, NAT)"
   - name: pivot_mesures
@@ -104,12 +113,39 @@ models:
         - Si `vig=vca` alors le TAA vaut `NULL`
         - Si `vig=vcg` alors le TAG vaut `NULL`
         - Les TA sont paramétrés pour renvoyer **{{ var('ta_decimales') }} décimales** (paramètres global dbt `ta_decimales`)
+        - *Règle 620:* La **VCA** (VC annuelle) est la **VC de l'année courante** et non pas la VC de l'année de la dernière VA. Exemple: Si VC22 est la dernière dispo, alors la VCA sera VC23 et non pas VC22 car on est en 2023.
   - name: df3_indicateur
     description: |
       Table des indicateurs construite par la datafactory dbt. Version reconstruite de zero. Règles:
 
       - La liste des **indicateurs** provient de ref('metadata_indicateurs') 
       - La liste des **zones** provient de `public.territoire`. Donc si l'on veut renvoyer des données pour d'autres zones (académies, façades maritimes, monde, ...), il faut leur créer un territoire correspondant.
+      - *redmine::621*: on récupère les `vig,vca,vcg` des tables `get_vig,get_vca,get_vcg` et non pas de `compute_ta_indic` (comme c'était le cas précédemment). En effet, sinon ces valeurs ne remontaient pas lorsque pas de VA.
+    config:
+      docs:
+        node_color: "#cd7f32"
+      schema: public
+      tags: ["df3"]
+  - name: compute_ta_ch
+    description: |
+      Pour chaque zone et chaque chantier, donne le **TA** en vigueur actuellement et le **TA précédent**. Règles:
+
+      - on se base sur la table `compute_ta_indic`
+      - pour le calcul du *TA actuel*: on utilise la *valeur la plus récente de l'indicateur*, peu importe sa date. Ex: on est en 11-23, on pourra utiliser des données de *11-23* ou antérieures.
+      - pour le calcul du *TA précédent*: on utilise la *valeur la plus récente **mais antérieure au mois actuel** de l'indicateur*, peu importe sa date. Ex: on est en 11-23, on ne pourra utiliser que des données de *10-23* ou antérieures.
+      - le *TA chantier* est la somme des TA pondérés de chaque indicateur contenus dans ce chantier
+    columns:
+      - name: tag_ch
+        description: "**Principal**: TA chantier *global*. C'est cette valeur qui est remontée comme TA du chantier"
+      - name: taa_ch
+        description: "TA chantier *annuel*"
+      - name: valid_on
+        description: "Prend les valeurs `[prev_month, today]` pour indiquer s'il s'agit du TA actuel ou du mois précédent."
+  - name: df3_chantier
+    description: |
+      Table des chantiers construite par la datafactory dbt. Version reconstruite de zero. Règles:
+
+      - certaines tables sont directement reprises du travail des prestataires: `synthese_triee_par_date`,`chantier_est_barometre`,`indicateurs_zones`,`indicateurs_zones_applicables`,`chantiers_zones_applicables`,
     config:
       docs:
         node_color: "#cd7f32"
