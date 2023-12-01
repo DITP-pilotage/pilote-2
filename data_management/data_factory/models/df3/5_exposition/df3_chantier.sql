@@ -70,16 +70,17 @@ group by chantier_id
 
 -- On récupère les directeurs des directions porteuses de chaque chantier
 ch_unnest_porteurs_dac as (
-select chantier_id, unnest(string_to_array("porteur_ids_DAC", ' | ')) as pi from raw_data.metadata_chantiers mc 
+select chantier_id, unnest(string_to_array("porteur_ids_DAC", ' | ')) as pi from {{ ref('metadata_chantiers') }} mc 
 ), ch_unnest_porteurs_dac_pnames as (
-select a.*, mp.porteur_directeur  from ch_unnest_porteurs_dac a
-left join raw_data.metadata_porteurs mp on a.pi=mp.porteur_id 
+select a.*, mp.porteur_directeur, mp.porteur_short from ch_unnest_porteurs_dac a
+left join {{ ref('metadata_porteurs') }} mp on a.pi=mp.porteur_id 
 ),
 ch_unnest_porteurs_dac_pnames_agg as (
 select 
 	chantier_id, 
 	array_agg(pi) p_id, 
-	array_agg(porteur_directeur) p_directeurs 
+	array_agg(porteur_directeur) p_directeurs,
+	array_agg(porteur_short) p_shorts 
 	from ch_unnest_porteurs_dac_pnames
 group by chantier_id
 )
@@ -94,9 +95,11 @@ select
     t.nom as territoire_nom,
     string_to_array(ch_per, ' | ') as perimetre_ids, 
     z.zone_type as "maille",
-    p_names.p_directeurs as directeurs_administration_centrale, 
+    -- coalesce with empty array
+    coalesce(p_names.p_directeurs, string_to_array('','')) as directeurs_administration_centrale, 
     string_to_array("porteur_ids_noDAC" , ' | ') as ministeres, 
-    string_to_array("porteur_shorts_DAC" , ' | ') as directions_administration_centrale, 
+    -- coalesce with empty array
+    coalesce(p_names.p_shorts, string_to_array('','')) as directions_administration_centrale, 
     string_to_array("ch_dp" , ' | ') as directeurs_projet,
     sr.meteo as meteo,
     ax.axe_name as axe,
