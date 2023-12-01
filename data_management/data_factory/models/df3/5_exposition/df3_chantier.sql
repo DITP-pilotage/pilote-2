@@ -72,14 +72,15 @@ group by chantier_id
 ch_unnest_porteurs_dac as (
 select chantier_id, unnest(string_to_array("porteur_ids_DAC", ' | ')) as pi from raw_data.metadata_chantiers mc 
 ), ch_unnest_porteurs_dac_pnames as (
-select a.*, mp.porteur_directeur  from ch_unnest_porteurs_dac a
+select a.*, mp.porteur_directeur, mp.porteur_short from ch_unnest_porteurs_dac a
 left join raw_data.metadata_porteurs mp on a.pi=mp.porteur_id 
 ),
 ch_unnest_porteurs_dac_pnames_agg as (
 select 
 	chantier_id, 
 	array_agg(pi) p_id, 
-	array_agg(porteur_directeur) p_directeurs 
+	array_agg(porteur_directeur) p_directeurs,
+	array_agg(porteur_short) p_shorts 
 	from ch_unnest_porteurs_dac_pnames
 group by chantier_id
 )
@@ -98,7 +99,7 @@ select
     coalesce(p_names.p_directeurs, string_to_array('','')) as directeurs_administration_centrale, 
     string_to_array("porteur_ids_noDAC" , ' | ') as ministeres, 
     -- coalesce with empty array
-    coalesce(string_to_array("porteur_shorts_DAC" , ' | '), string_to_array('','')) as directions_administration_centrale, 
+    coalesce(p_names.p_shorts, string_to_array('','')) as directions_administration_centrale, 
     string_to_array("ch_dp" , ' | ') as directeurs_projet,
     sr.meteo as meteo,
     ax.axe_name as axe,
