@@ -70,10 +70,10 @@ group by chantier_id
 
 -- On récupère les directeurs des directions porteuses de chaque chantier
 ch_unnest_porteurs_dac as (
-select chantier_id, unnest(string_to_array("porteur_ids_DAC", ' | ')) as pi from raw_data.metadata_chantiers mc 
+select chantier_id, unnest(string_to_array("porteur_ids_DAC", ' | ')) as pi from {{ ref('metadata_chantiers') }} mc 
 ), ch_unnest_porteurs_dac_pnames as (
 select a.*, mp.porteur_directeur, mp.porteur_short from ch_unnest_porteurs_dac a
-left join raw_data.metadata_porteurs mp on a.pi=mp.porteur_id 
+left join {{ ref('metadata_porteurs') }} mp on a.pi=mp.porteur_id 
 ),
 ch_unnest_porteurs_dac_pnames_agg as (
 select 
