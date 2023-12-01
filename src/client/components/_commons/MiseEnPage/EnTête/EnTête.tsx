@@ -11,7 +11,7 @@ const vérifierValeurBandeauEstActif = () => {
 };
 
 const récupererTextBandeauActif = () => {
-  return process.env.NEXT_PUBLIC_FF_BANDEAU_INDISPONIBILITE_TEXTE || 'En raison d’une opération de maintenance, PILOTE sera totalement indisponible. En cas de difficultés : support.ditp@modernisation.gouv.fr';
+  return process.env.NEXT_PUBLIC_FF_BANDEAU_INDISPONIBILITE_TEXTE || 'Des opérations de maintenance sont en cours et peuvent perturber le fonctionnement normal de PILOTE. En cas de difficultés : support.ditp@modernisation.gouv.fr';
 };
 
 export default function EnTête() {
