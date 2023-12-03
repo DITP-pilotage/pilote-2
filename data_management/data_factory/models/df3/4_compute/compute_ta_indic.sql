@@ -1,12 +1,23 @@
 -- Compute unbounded TA
 with get_unbounded_ta as
 (
-	select *,
+	select a.*,
 	-- TAA: Si la VI=VC -> TA = NULL
-	case when vig=vca then null else round((100*(vaca-vig)/(vca-vig))::numeric, {{ var('ta_decimales') }}) end as unbounded_taa,
+	case 
+		when vig=vca then null 
+		when b.tendance='HAUSSE' and vaca>=vca then 100 
+		when b.tendance='BAISSE' and vaca<=vca then 100
+		else round((100*(vaca-vig)/(vca-vig))::numeric, {{ var('ta_decimales') }}) 
+	end as unbounded_taa,
 	-- TAG: Si la VI=VC-> TA = NULL
-	case when vig=vcg then null else round((100*(vacg-vig)/(vcg-vig))::numeric, {{ var('ta_decimales') }}) end as unbounded_tag
-	from {{ ref('merge_computed_values') }}
+	case 
+		when vig=vcg then null 
+		when b.tendance='HAUSSE' and vacg>=vcg then 100 
+		when b.tendance='BAISSE' and vacg<=vcg then 100
+		else round((100*(vacg-vig)/(vcg-vig))::numeric, {{ var('ta_decimales') }}) 
+	end as unbounded_tag
+	from {{ ref('merge_computed_values') }} a
+	left join {{ ref('metadata_parametrage_indicateurs') }} b on a.indic_id=b.indic_id
 ),
 -- Compute bounded TA
 get_bounded_ta as (
