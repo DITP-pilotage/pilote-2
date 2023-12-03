@@ -13,7 +13,7 @@ case
 	when (ta is null) or (nouveau_ta is null) then null
 	when ta=0 and nouveau_ta=0 then 0
 	when ta=0 and nouveau_ta<>0 then null
-	when nouveau_ta-ta>0 then (nouveau_ta-ta)/ta
+	when nouveau_ta-ta>=0 then (nouveau_ta-ta)/ta
 	when nouveau_ta-ta<0 then (ta-nouveau_ta)/ta
 	else 100000
 end as ratio
