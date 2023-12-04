@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('df1_indicateur') }}
 {{ config(enabled=true, tags=["scope_indicateur", "metric_vaunnest"]) }}
 
     -- TOLERANCE de 1 pourcent (cf fin du test)

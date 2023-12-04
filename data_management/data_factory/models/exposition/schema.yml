@@ -2,6 +2,7 @@ version: 2
 
 models:
   - name: chantier
+    description: "Une vue sur `df1_chantier` ou `df3_chantier`"
     columns:
       - name: id
         description: "source de données à date du 06/07/2023 : ppg_metadata.view_meta_chantier"
@@ -84,6 +85,7 @@ models:
       - name: date
         description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
   - name: indicateur
+    description: "Une vue sur `df1_indicateur` ou `df3_indicateur`"
     columns:
       - name: id
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_indicateur"
@@ -293,3 +295,7 @@ models:
         description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
       - name: auteur
         description: "source de données à date du 07/07/2023 : toujours null"
+  - name: df1_indicateur
+    description: "Table des indicateurs générée par la datafactory v1"
+  - name: df1_chantier
+    description: "Table des chantiers générée par la datafactory v1"
