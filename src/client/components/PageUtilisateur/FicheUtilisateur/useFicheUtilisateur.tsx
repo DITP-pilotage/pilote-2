@@ -122,7 +122,7 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
   useEffect(() => {
     if (!chantiers || !profil)
       return;
-
+    
     const nouveauScopes = {
       lecture: {
         chantiers: déterminerLesNomÀAfficherPourLesChantiersLecture(utilisateur),
