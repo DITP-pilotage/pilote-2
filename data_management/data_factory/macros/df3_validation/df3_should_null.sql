@@ -13,7 +13,7 @@ with jjoin as (select
     a.{{colname}} as computed_value,
     b.{{colname}} as target_value
     from {{ ref('df3_indicateur') }} a
-    full join  {{ ref('indicateur') }} b
+    full join  {{ ref('df1_indicateur') }} b
     on a.territoire_code=b.territoire_code and a.id=b.id
 )
 

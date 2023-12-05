@@ -1,12 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { File } from 'formidable';
 import { getToken } from 'next-auth/jwt';
+import { getServerSession } from 'next-auth/next';
 import assert from 'node:assert/strict';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
 import { parseForm } from '@/server/import-indicateur/infrastructure/handlers/ParseForm';
 import configuration from '@/server/infrastructure/Configuration';
+import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 
 const présenterEnContrat = (report: DetailValidationFichier): DetailValidationFichierContrat => {
   return {
@@ -36,6 +38,7 @@ export default async function handleVerifierFichierImportIndicateur(
 
   const baseSchemaUrl = 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/main/public/schema/';
   const sessionToken = await getToken({ req: request, secureCookie: configuration.securedEnv, secret: configuration.nextAuthSecret });
+  const session = await getServerSession(request, response, authOptions);
 
   assert(sessionToken?.user);
 
@@ -46,6 +49,7 @@ export default async function handleVerifierFichierImportIndicateur(
       baseSchemaUrl,
       indicateurId: request.query.indicateurId as string,
       utilisateurAuteurDeLimportEmail: (sessionToken.user as { email: string }).email,
+      isAdmin: session?.profil === 'DITP_ADMIN',
     },
   );
 

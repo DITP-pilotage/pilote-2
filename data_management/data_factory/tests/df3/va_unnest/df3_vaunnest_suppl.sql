@@ -1,3 +1,4 @@
+-- depends_on: {{ ref('df1_indicateur') }}
 {{ config(enabled=true, tags=["scope_indicateur", "metric_vaunnest"]) }}
 
 -- Ce test va vérifier si des VA sont assignées à des dates
