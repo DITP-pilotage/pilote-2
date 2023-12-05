@@ -29,6 +29,8 @@ export const validationInfosBaseUtilisateur = z.object( {
   prénom: z.string().min(1).max(100),
   fonction: z.string().max(100).nullable(),
   profil: z.enum(profilsCodes),
+  saisieIndicateur: z.boolean(),
+  saisieCommentaire: z.boolean(),
 });
 
 export const validationInfosHabilitationsUtilisateur = z.object({
@@ -37,15 +39,7 @@ export const validationInfosHabilitationsUtilisateur = z.object({
       chantiers: z.string().array(),
       territoires: z.string().array(),
       périmètres: z.string().array(),
-    }),
-    saisieIndicateur: z.object({
-      chantiers: z.string().array(),
-      périmètres: z.string().array(),
-    }),
-    saisieCommentaire : z.object({
-      chantiers: z.string().array(),
-      périmètres: z.string().array(),
-    }),
+    })
   }),
 });
 

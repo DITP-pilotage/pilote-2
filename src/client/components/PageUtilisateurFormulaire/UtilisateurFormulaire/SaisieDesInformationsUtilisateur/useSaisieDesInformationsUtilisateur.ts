@@ -25,6 +25,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   const [afficherChampLectureChantiers, setAfficherChampLectureChantiers] = useState(false);
   const [afficherChampLecturePérimètres, setAfficherChampLecturePérimètres] = useState(false);
   const [chantiersAccessiblesPourLeProfil, setChantiersAccessiblesPourLeProfil] = useState<ChantierSynthétisé[]>([]);
+
   const [groupesTerritoiresÀAfficher, setGroupesTerritoiresÀAfficher] = useState<{ nationale: boolean, régionale: boolean, départementale: boolean }>({
     nationale: false, 
     régionale: false, 
@@ -43,6 +44,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     setAfficherChampLectureTerritoires(!!profilSélectionné && (profilsDépartementaux.includes(profilSélectionné.code) || profilsRégionaux.includes(profilSélectionné.code)));
     setAfficherChampLectureChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
     setAfficherChampLecturePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
+
   }, [profilSélectionné]);
 
   useEffect(() => {
@@ -133,7 +135,6 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   const handleChangementValeursSélectionnéesTerritoires = useCallback((valeursSélectionnées: string[]) => {
     setValue('habilitations.lecture.territoires', valeursSélectionnées);
   }, [setValue]);
-
 
   return {
     listeProfils,
