@@ -20,24 +20,24 @@ list_indic_terr as (
 ),
 -- Reformattage (pour chaque indicateur-zone):
 --	- format source: 1 ligne pour chaque VA 
---	- format cible: 1 seule ligne, contenant une liste des VA evolution_valeur_actuelle
-get_evol_va as (
+--	- format cible: 1 seule ligne, contenant une liste des VACA evolution_valeur_actuelle
+get_evol_vaca as (
 	select 
 	indic_id, zone_id,
 	array_agg(metric_date::timestamp)as evolution_date_valeur_actuelle,
-	array_agg(va) as evolution_valeur_actuelle
+	array_agg(vaca) as evolution_valeur_actuelle
 	from {{ ref('compute_ta_indic') }}
-	where va is not null
+	where vaca is not null
 	group by indic_id, zone_id
 ),
--- Pour chaque indicateur-zone, on choisit la ligne de la dernière VA
-sort_mesures_va as (
+-- Pour chaque indicateur-zone, on choisit la ligne de la dernière VACA
+sort_mesures_vaca as (
 	select *,
 	rank() over (partition by indic_id, zone_id order by metric_date desc) as r
 	from {{ ref('compute_ta_indic') }}
-	where va is not null),
-sort_mesures_va_last as (
-	select * from sort_mesures_va where r=1
+	where vaca is not null),
+sort_mesures_vaca_last as (
+	select * from sort_mesures_vaca where r=1
 )
 
 -- Jointure avec les tables référentielles	
@@ -53,7 +53,7 @@ sort_mesures_va_last as (
 	mi.indic_is_phare as est_phare,
 	metric_date::date as date_valeur_actuelle,
 	gvig.vig_date::date as date_valeur_initiale,
-	va as valeur_actuelle,
+	vaca as valeur_actuelle,
 	gvig.vig as valeur_initiale,
 	terr.code_insee,
 	mz.zone_type as maille,
@@ -81,10 +81,10 @@ sort_mesures_va_last as (
     FALSE as a_supprimer
 	from public.territoire t 
 	cross join {{ ref('metadata_indicateurs') }} mi
-	left join sort_mesures_va_last a on a.indic_id=mi.indic_id and a.zone_id=t.zone_id
+	left join sort_mesures_vaca_last a on a.indic_id=mi.indic_id and a.zone_id=t.zone_id
 	-- donc la liste des terr X liste des indic vont ressortir ici.
 	-- list_indic_terr list_indic left join sort_mesures_va a on t.indic_id = list_indic.indic_id and t.zone_id = list_indic.zone_id
-	left join get_evol_va b on mi.indic_id=b.indic_id and t.zone_id=b.zone_id
+	left join get_evol_vaca b on mi.indic_id=b.indic_id and t.zone_id=b.zone_id
 	--left join raw_data.metadata_indicateurs mi on mi1.indic_id = mi.indic_id 
 	-- Récupération VIG, VCG, et VCA (redmine::621)
 	left join {{ ref('get_vig') }} gvig on mi.indic_id=gvig.indic_id and t.zone_id=gvig.zone_id
