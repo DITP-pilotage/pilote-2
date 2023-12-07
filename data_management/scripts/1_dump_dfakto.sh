@@ -49,8 +49,8 @@ get fact_property_values.csv $TEMP_DIR
 EOF
 )
 
-echo "Recupération des données des projets structurants"
-echo -e "$cmd_retrieve_files_projets_structurants" | sftp -oPort=2022 -i $TEMP_DIR/id_ed25519 "$USER_INGEST_PROJET_DFAKTO@$URL_INGEST_DFAKTO"
+echo "[disabled] Recupération des données des projets structurants"
+#echo -e "$cmd_retrieve_files_projets_structurants" | sftp -oPort=2022 -i $TEMP_DIR/id_ed25519 "$USER_INGEST_PROJET_DFAKTO@$URL_INGEST_DFAKTO"
 
 PROJECT_DIR=data_factory
-dbt run --project-dir $PROJECT_DIR --select raw.dfakto
+dbt run --project-dir $PROJECT_DIR --select raw.dfakto --exclude raw.dfakto.projet_structurant+
