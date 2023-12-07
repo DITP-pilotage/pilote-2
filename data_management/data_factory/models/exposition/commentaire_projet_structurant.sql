@@ -6,8 +6,6 @@ commentaire_difficultes_rencontrees_et_risques_anticipes as (
 
     SELECT
         DISTINCT ON(dfakto_view.difficultes_rencontrees_et_risques_anticipes_date, projet_structurant_temporaire.id)
-        -- WARN: This id is generated. As it is a dbt incremental model, at every dbt run, data will be inserted again beacause the id is new
-        --  should try using: {{ dbt_utils.surrogate_key(['projet_structurant_temporaire.id','difficultes_rencontrees_et_risques_anticipes','dfakto_view.difficultes_rencontrees_et_risques_anticipes_date']) }} as id
         gen_random_uuid () as id,
         projet_structurant_temporaire.id as projet_structurant_id,
         'difficultes_rencontrees_et_risques_anticipes' as type,
