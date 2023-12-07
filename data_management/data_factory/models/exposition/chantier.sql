@@ -1,1 +1,1 @@
-SELECT * from {{ ref('df1_chantier') }}
+SELECT * from {{ ref(var('source_chantier')) }}
