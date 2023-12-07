@@ -6,7 +6,8 @@ commentaire_difficultes_rencontrees_et_risques_anticipes as (
 
     SELECT
         DISTINCT ON(dfakto_view.difficultes_rencontrees_et_risques_anticipes_date, projet_structurant_temporaire.id)
-        gen_random_uuid () as id,
+        -- WARN: This id is generated. As it is a dbt incremental model, at every dbt run, data will be inserted again beacause the id is new
+        --  should try using: {{ dbt_utils.surrogate_key(['projet_structurant_temporaire.id','difficultes_rencontrees_et_risques_anticipes','dfakto_view.difficultes_rencontrees_et_risques_anticipes_date']) }} as id
         projet_structurant_temporaire.id as projet_structurant_id,
         'difficultes_rencontrees_et_risques_anticipes' as type,
         dfakto_view.difficultes_rencontrees_et_risques_anticipes as contenu,
@@ -25,7 +26,6 @@ commentaire_dernieres_realisation_et_suivi_des_decisions as (
 
     SELECT
         DISTINCT ON(dfakto_view.dernieres_realisation_et_suivi_des_decisions_date, projet_structurant_temporaire.id)
-        gen_random_uuid () as id,
         projet_structurant_temporaire.id as projet_structurant_id,
         'dernieres_realisation_et_suivi_des_decisions' as type,
         dfakto_view.dernieres_realisation_et_suivi_des_decisions as contenu,
@@ -44,7 +44,6 @@ commentaire_solutions_proposees_et_prochaines_etapes as (
 
     SELECT
         DISTINCT ON(dfakto_view.solutions_proposees_et_prochaines_etapes_date, projet_structurant_temporaire.id)
-        gen_random_uuid () as id,
         projet_structurant_temporaire.id as projet_structurant_id,
         'solutions_proposees_et_prochaines_etapes' as type,
         dfakto_view.solutions_proposees_et_prochaines_etapes as contenu,
@@ -63,7 +62,6 @@ commentaire_partenariats_et_moyens_mobilises as (
 
     SELECT
         DISTINCT ON(dfakto_view.partenariats_et_moyens_mobilises_date, projet_structurant_temporaire.id)
-        gen_random_uuid () as id,
         projet_structurant_temporaire.id as projet_structurant_id,
         'partenariats_et_moyens_mobilises' as type,
         dfakto_view.partenariats_et_moyens_mobilises as contenu,
@@ -78,10 +76,10 @@ commentaire_partenariats_et_moyens_mobilises as (
 
 )
 
-SELECT * FROM commentaire_difficultes_rencontrees_et_risques_anticipes
+SELECT *, {{ dbt_utils.surrogate_key(['projet_structurant_id','type','date']) }} as id FROM commentaire_difficultes_rencontrees_et_risques_anticipes
 UNION ALL
-SELECT * FROM commentaire_dernieres_realisation_et_suivi_des_decisions
+SELECT *, {{ dbt_utils.surrogate_key(['projet_structurant_id','type','date']) }} as id FROM commentaire_dernieres_realisation_et_suivi_des_decisions
 UNION ALL
-SELECT * FROM commentaire_solutions_proposees_et_prochaines_etapes
+SELECT *, {{ dbt_utils.surrogate_key(['projet_structurant_id','type','date']) }} as id FROM commentaire_solutions_proposees_et_prochaines_etapes
 UNION ALL
-SELECT * FROM commentaire_partenariats_et_moyens_mobilises
+SELECT *, {{ dbt_utils.surrogate_key(['projet_structurant_id','type','date']) }} as id FROM commentaire_partenariats_et_moyens_mobilises
