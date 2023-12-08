@@ -1,1 +1,1 @@
-SELECT * from {{ ref('df3_indicateur') }}
+SELECT * from {{ ref(var('source_indic')) }}
