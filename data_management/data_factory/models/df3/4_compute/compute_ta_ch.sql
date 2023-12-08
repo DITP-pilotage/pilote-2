@@ -66,9 +66,8 @@ ta_ch as (
 	array_agg(taa_pond) as taa_pond_agg, 
 	array_agg(tag) as tag_agg,
 	array_agg(tag_pond) as tag_pond_agg,
-	-- Calcul du TA par somme des TA pondérés et bornage dans [0,100]
-	greatest(least(sum(taa_pond), 100), 0)::numeric as taa_ch,
-	greatest(least(sum(tag_pond), 100), 0)::numeric as tag_ch
+	sum(taa_pond) as taa_ch,
+	sum(tag_pond) as tag_ch
 	from 
 	(
 	select * from ta_zone_indic_pond_today union
