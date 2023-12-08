@@ -142,7 +142,6 @@ models:
       - pour le calcul du *TA actuel*: on utilise la *valeur la plus récente de l'indicateur*, peu importe sa date. Ex: on est en 11-23, on pourra utiliser des données de *11-23* ou antérieures.
       - pour le calcul du *TA précédent*: on utilise la *valeur la plus récente **mais antérieure au mois actuel** de l'indicateur*, peu importe sa date. Ex: on est en 11-23, on ne pourra utiliser que des données de *10-23* ou antérieures.
       - le *TA chantier* est la somme des TA pondérés de chaque indicateur contenus dans ce chantier
-      - le TA chantier est borné entre 0 et 100 dans cette table
     columns:
       - name: tag_ch
         description: "**Principal**: TA chantier *global*. C'est cette valeur qui est remontée comme TA du chantier"
