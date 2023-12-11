@@ -2,8 +2,6 @@ import { GetServerSidePropsResult } from 'next';
 import { GetServerSidePropsContext } from 'next/types';
 import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
 import PageImportIndicateur from '@/components/PageImportIndicateur/PageImportIndicateur';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ChantierInformations } from '@/components/PageImportIndicateur/ChantierInformation.interface';
@@ -12,10 +10,7 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import RécupérerChantierUseCase from '@/server/usecase/chantier/RécupérerChantierUseCase';
 import { presenterEnRapportContrat, RapportContrat } from '@/server/app/contrats/RapportContrat';
-import {
-  estAutoriséAImporterDesIndicateurs,
-  estAutoriséAModifierDesIndicateurs,
-} from '@/client/utils/indicateur/indicateur';
+import { estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
 import {
   InformationIndicateurContrat,
   presenterEnInformationIndicateurContrat,
@@ -86,17 +81,6 @@ export default function NextPageImportIndicateur({
   informationsIndicateur,
   rapport,
 }: NextPageImportIndicateurProps) {
-
-  // TODO(JOTA): Supprimer quand on réactive les imports !
-
-  const { data: session } = useSession();
-  const router = useRouter();
-
-  if (session && !estAutoriséAModifierDesIndicateurs(session.profil)) {
-    router.push('/503');
-  }
-  // fin TODO(JOTA): Supprimer quand on réactive les imports !
-
   return (
     <>
       <Head>
