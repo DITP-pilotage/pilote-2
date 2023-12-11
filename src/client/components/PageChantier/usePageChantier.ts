@@ -19,7 +19,7 @@ import {
 } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { IndicateurPondération } from '@/components/PageChantier/PageChantier.interface';
-import { comparerIndicateur, estAutoriséAModifierDesIndicateurs } from '@/client/utils/indicateur/indicateur';
+import { comparerIndicateur, estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
 
 export default function usePageChantier(chantierId: string, indicateurs: Indicateur[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -37,9 +37,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     if (typeDeRéformeSélectionné === 'projet structurant') modifierTypeDeRéformeSélectionné();
   }, [modifierTypeDeRéformeSélectionné, typeDeRéformeSélectionné]);
   
-  // TODO(JOTA): Supprimer quand on réactive les imports !
-  // const saisieIndicateurAutorisée = estAutoriséAImporterDesIndicateurs(session!.profil) && !!session?.habilitations['saisieIndicateur'].chantiers.includes(chantierId);
-  const saisieIndicateurAutorisée = estAutoriséAModifierDesIndicateurs(session!.profil) && !!session?.habilitations['saisieIndicateur'].chantiers.includes(chantierId);
+  const saisieIndicateurAutorisée = estAutoriséAImporterDesIndicateurs(session!.profil) && !!session?.habilitations['saisieIndicateur'].chantiers.includes(chantierId);
 
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {
