@@ -17,6 +17,10 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
 
   private _fonction: UtilisateurÀCréerOuMettreÀJour['fonction'];
 
+  private _saisieIndicateur: UtilisateurÀCréerOuMettreÀJour['saisieIndicateur'];
+
+  private _saisieCommentaire: UtilisateurÀCréerOuMettreÀJour['saisieCommentaire'];
+
 
   constructor() {
     this._nom = faker.name.lastName();
@@ -24,19 +28,13 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     this._email = faker.internet.email();
     this._profil = faker.helpers.arrayElement(profilsCodes);
     this._fonction = 'fonction';
+    this._saisieIndicateur = faker.datatype.boolean();
+    this._saisieCommentaire = faker.datatype.boolean();
     this._habilitations = {
       lecture: {
         chantiers: [],
         périmètres: [],
         territoires: [],
-      },
-      saisieCommentaire: {
-        chantiers: [],
-        périmètres: [],
-      },
-      saisieIndicateur: {
-        chantiers: [],
-        périmètres: [],
       },
     };
   }
@@ -48,6 +46,16 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
 
   avecProfil(profil: UtilisateurÀCréerOuMettreÀJour['profil']): UtilisateurÀCréerOuMettreÀJourBuilder {
     this._profil = profil;
+    return this;
+  }
+
+  avecSaisieIndicateur(saisieIndicateur: UtilisateurÀCréerOuMettreÀJour['saisieIndicateur']): UtilisateurÀCréerOuMettreÀJourBuilder {
+    this._saisieIndicateur = saisieIndicateur;
+    return this;
+  }
+
+  avecSaisieCommentaire(saisieCommentaire: UtilisateurÀCréerOuMettreÀJour['saisieCommentaire']): UtilisateurÀCréerOuMettreÀJourBuilder {
+    this._saisieCommentaire = saisieCommentaire;
     return this;
   }
 
@@ -87,6 +95,8 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
       email: this._email,
       profil: this._profil,
       fonction: this._fonction,
+      saisieIndicateur: this._saisieIndicateur,
+      saisieCommentaire: this._saisieCommentaire,
       habilitations: this._habilitations,
     };
   }

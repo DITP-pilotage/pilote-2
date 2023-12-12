@@ -5,7 +5,7 @@ import { MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/compon
 import { trierParOrdreAlphabétique } from '@/client/utils/arrays';
 import MultiSelectPérimètreMinistérielProps from './MultiSelectPérimètreMinistériel.interface';
 
-export default function MultiSelectPérimètreMinistériel({ périmètresMinistérielsIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, périmètresId }: MultiSelectPérimètreMinistérielProps) {
+export default function MultiSelectPérimètreMinistériel({ périmètresMinistérielsIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, périmètresId, afficherBoutonsSélection }: MultiSelectPérimètreMinistérielProps) {
   const { data: périmètresMinistériels } = api.périmètreMinistériel.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   
   const [optionsGroupées, setOptionsGroupées] = useState<MultiSelectOptionsGroupées>([]);
@@ -25,6 +25,7 @@ export default function MultiSelectPérimètreMinistériel({ périmètresMinist�
 
   return (
     <MultiSelect
+      afficherBoutonsSélection={afficherBoutonsSélection}
       changementValeursSélectionnéesCallback={(valeursSélectionnées: string[]) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
       label='Périmètre(s) ministériel(s)'
       optionsGroupées={optionsGroupées}

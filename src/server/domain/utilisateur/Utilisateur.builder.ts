@@ -20,6 +20,10 @@ export default class UtilisateurBuilder {
 
   private _habilitations: Utilisateur['habilitations'];
 
+  private _saisieCommentaire: Utilisateur['saisieCommentaire'];
+
+  private _saisieIndicateur: Utilisateur['saisieIndicateur'];
+
   constructor() {
     this._id = faker.helpers.unique(faker.random.numeric, [10]);
     this._nom = faker.name.lastName();
@@ -29,6 +33,8 @@ export default class UtilisateurBuilder {
     this._dateModification = faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString();
     this._auteurModification = faker.name.firstName();
     this._fonction = faker.helpers.arrayElement([faker.lorem.words(6), null]);
+    this._saisieCommentaire = faker.datatype.boolean();
+    this._saisieIndicateur = faker.datatype.boolean();
     this._habilitations = {
       lecture: { chantiers: [], territoires: [], périmètres: [] },
       'saisieCommentaire': { chantiers: [], territoires: [], périmètres: [] },
@@ -95,6 +101,14 @@ export default class UtilisateurBuilder {
     return this;
   }
 
+  avecSaisieIndicateur(saisieIndicateur: boolean) {
+    this._saisieIndicateur = saisieIndicateur;
+  }
+
+  avecSaisieCommentaire(saisieCommentaire: boolean) {
+    this._saisieCommentaire = saisieCommentaire;
+  }
+
   build(): Utilisateur {
     return {
       id: this._id,
@@ -105,6 +119,8 @@ export default class UtilisateurBuilder {
       dateModification: this._dateModification,
       auteurModification: this._auteurModification,
       fonction: this._fonction,
+      saisieCommentaire: this._saisieCommentaire,
+      saisieIndicateur: this._saisieIndicateur,
       habilitations: this._habilitations,
     };
   }

@@ -5,7 +5,7 @@ import UtilisateurCSVParseur from './UtilisateurCSVParseur';
 
 describe('UtilisateurCSVParseur', () => {
   it("lit un fichier CSV et retourne un tableau d'utilisateur à créer ou mettre à jour", () => {
-    const utilisateurÀImporter1 = new UtilisateurÀCréerOuMettreÀJourBuilder().build();
+    const utilisateurÀImporter1 = new UtilisateurÀCréerOuMettreÀJourBuilder().avecSaisieCommentaire(true).avecSaisieIndicateur(true).build();
 
     const utilisateurÀImporter2 = new UtilisateurÀCréerOuMettreÀJourBuilder().build();
 
@@ -26,6 +26,8 @@ describe('UtilisateurCSVParseur', () => {
         email: utilisateurÀImporter1.email.toLowerCase(),
         profil: utilisateurÀImporter1.profil,
         fonction: null,
+        saisieCommentaire: true,
+        saisieIndicateur: true,
         habilitations: {
           lecture: {
             chantiers: ['CH-001', 'CH-002', 'CH-003'],
@@ -51,6 +53,8 @@ describe('UtilisateurCSVParseur', () => {
         email: utilisateurÀImporter2.email.toLowerCase(),
         profil: utilisateurÀImporter2.profil,
         fonction: null,
+        saisieCommentaire: true,
+        saisieIndicateur: true,
         habilitations: {
           lecture: {
             chantiers: ['CH-004', 'CH-008', 'CH-012'],

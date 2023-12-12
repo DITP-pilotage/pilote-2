@@ -1,10 +1,12 @@
 import { useId, useRef } from 'react';
 import MultiSelectProps from '@/components/_commons/MultiSelect/MultiSelect.interface';
 import MultiSelectGroupe from '@/components/_commons/MultiSelect/MultiSelectGroupe';
+import BoutonToutSélectionner from '@/components/_commons/BoutonsToutSélectionner/BoutonsToutSélectionner';
 import MultiSelectStyled from './MultiSelect.styled';
 import useMultiSelect from './useMultiSelect';
 
-export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeursSélectionnéesParDéfaut, changementValeursSélectionnéesCallback, label }: MultiSelectProps) {
+
+export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeursSélectionnéesParDéfaut, changementValeursSélectionnéesCallback, label, afficherBoutonsSélection }: MultiSelectProps) {
   const id = useId();
   const ref = useRef(null);
   const {
@@ -26,7 +28,16 @@ export default function MultiSelect({ suffixeLibellé, optionsGroupées, valeurs
         htmlFor={id}
       >
         {label}
-      </label>
+      </label> 
+      {
+        !!afficherBoutonsSélection && (
+          <BoutonToutSélectionner
+            className='fr-mt-2w'
+            onClickToutDésélectionner={() => changementValeursSélectionnéesCallback([])}
+            onClickToutSélectionner={() => changementValeursSélectionnéesCallback(optionsGroupéesFiltrées.flatMap(groupe => groupe.options.map(option => option.value)))}
+          />
+        )
+      }
       <button
         className='fr-select fr-ellipsis'
         id={id}

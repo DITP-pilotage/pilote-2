@@ -4,6 +4,7 @@ import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import api from '@/server/infrastructure/api/trpc/api';
 
 export default function usePageUtilisateur(utilisateur: Utilisateur) {
+
   const router = useRouter();
 
   const mutationSupprimerUtilisateur = api.utilisateur.supprimer.useMutation({

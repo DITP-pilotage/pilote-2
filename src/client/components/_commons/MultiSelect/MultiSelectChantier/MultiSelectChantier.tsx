@@ -4,7 +4,7 @@ import { MultiSelectOptions, MultiSelectOptionsGroupées } from '@/client/compon
 import { deuxTableauxSontIdentiques, trierParOrdreAlphabétique } from '@/client/utils/arrays';
 import MultiSelectChantierProps from './MultiSelectChantier.interface';
 
-export default function MultiSelectChantier({ chantiersIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, valeursDésactivées, chantiers }: MultiSelectChantierProps) {
+export default function MultiSelectChantier({ chantiersIdsSélectionnésParDéfaut, changementValeursSélectionnéesCallback, valeursDésactivées, chantiers, afficherBoutonsSélection }: MultiSelectChantierProps) {
   const [valeursSélectionnéesParDéfaut, setValeursSélectionnéesParDéfaut] = useState(chantiersIdsSélectionnésParDéfaut);
   const [optionsGroupées, setOptionsGroupées] = useState<MultiSelectOptionsGroupées>([]);
 
@@ -30,6 +30,7 @@ export default function MultiSelectChantier({ chantiersIdsSélectionnésParDéfa
 
   return (
     <MultiSelect
+      afficherBoutonsSélection={afficherBoutonsSélection}
       changementValeursSélectionnéesCallback={(valeursSélectionnées: string[]) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
       label='Chantier(s)'
       optionsGroupées={optionsGroupées}

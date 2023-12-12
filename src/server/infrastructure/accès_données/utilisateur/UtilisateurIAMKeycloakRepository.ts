@@ -93,7 +93,7 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
       // logger.info('Email envoyé à l\'utilisateur.');
 
     } catch (error: any) {
-      if (error.message == 'Request failed with status code 409') {
+      if (error.message == 'Request failed with status code 409' || error?.responseData?.errorMessage === 'User exists with same username') {
         logger.warn(`L'email ${email} existe déjà.`);
       } else {
         logger.error(error);

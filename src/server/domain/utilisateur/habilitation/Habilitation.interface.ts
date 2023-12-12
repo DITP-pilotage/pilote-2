@@ -42,14 +42,6 @@ export type HabilitationsÀCréerOuMettreÀJour = {
     chantiers: Chantier['id'][]
     territoires: Territoire['code'][]
     périmètres: PérimètreMinistériel['id'][]
-  }, 
-  saisieCommentaire: {
-    chantiers: Chantier['id'][]
-    périmètres: PérimètreMinistériel['id'][]
-  },
-  saisieIndicateur: {
-    chantiers: Chantier['id'][]
-    périmètres: PérimètreMinistériel['id'][]
   }
 };
 

@@ -10,7 +10,7 @@ const générerLesOptions = (nom: string, code: string) => ({
   value: code,
 });
 
-export default function MultiSelectTerritoire({ territoiresCodesSélectionnésParDéfaut, changementValeursSélectionnéesCallback, groupesÀAfficher, territoiresSélectionnables }: MultiSelectTerritoireProps) {
+export default function MultiSelectTerritoire({ territoiresCodesSélectionnésParDéfaut, changementValeursSélectionnéesCallback, groupesÀAfficher, territoiresSélectionnables, afficherBoutonsSélection }: MultiSelectTerritoireProps) {
   const [optionsGroupées, setOptionsGroupées] = useState<MultiSelectOptionsGroupées>([]);
 
   const départements = départementsTerritoiresStore();
@@ -49,6 +49,7 @@ export default function MultiSelectTerritoire({ territoiresCodesSélectionnésPa
 
   return (
     <MultiSelect
+      afficherBoutonsSélection={afficherBoutonsSélection}
       changementValeursSélectionnéesCallback={(valeursSélectionnées: string[]) => changementValeursSélectionnéesCallback(valeursSélectionnées)}
       label='Territoire(s)'
       optionsGroupées={optionsGroupées}

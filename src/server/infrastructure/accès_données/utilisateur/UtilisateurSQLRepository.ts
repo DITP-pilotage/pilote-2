@@ -14,6 +14,7 @@ import Utilisateur, {
 } from '@/server/domain/utilisateur/Utilisateur.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import {
+  Habilitations,
   HabilitationsÀCréerOuMettreÀJourCalculées,
   ScopeChantiers,
   ScopeUtilisateurs,
@@ -360,6 +361,28 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return [];
   }
 
+  private _aDesDroitsdeSaisieCommentaire(habilitations: Habilitations, profilUtilisateur: profil) {
+    if (profilUtilisateur.a_acces_tous_chantiers) {
+      return profilUtilisateur.peut_saisir_des_commentaires;
+    } else {
+      const habilitationSaisieCommentaire = habilitations['saisieCommentaire'];
+      return profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire
+        ? habilitationSaisieCommentaire.périmètres.length > 0 || habilitationSaisieCommentaire.chantiers.length > 0
+        : habilitationSaisieCommentaire.territoires.length > 0;
+    }
+  }
+
+  private _aDesDroitsdeSaisieIndicateur(habilitations: Habilitations, profilUtilisateur: profil) {
+    if (profilUtilisateur.a_acces_tous_chantiers && profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur) {
+      return true;
+    } else {
+      const habilitationSaisieIndicateur = habilitations['saisieIndicateur'];
+      return profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur
+        ? habilitationSaisieIndicateur.périmètres.length > 0 || habilitationSaisieIndicateur.chantiers.length > 0
+        : habilitationSaisieIndicateur.territoires.length > 0;
+    }
+  }
+
   private async _créerLesHabilitations(profilUtilisateur: profil, habilitations: habilitation[]) {
     const chantiersParDéfaut = await this._récupérerChantiersParDéfaut(profilUtilisateur);
     const territoiresParDéfaut = await this._récupérerTerritoiresParDéfaut(profilUtilisateur);
@@ -431,6 +454,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   }
 
   private async _mapperVersDomaine(utilisateurBrut: utilisateur & { profil: profil; habilitation: habilitation[]; }): Promise<Utilisateur> {
+    const habilitations = await this._créerLesHabilitations(utilisateurBrut.profil, utilisateurBrut.habilitation);
+    
     return {
       id: utilisateurBrut.id,
       nom: utilisateurBrut.nom || 'Inconnu',
@@ -440,7 +465,9 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       dateModification: utilisateurBrut.date_modification.toISOString(),
       auteurModification: utilisateurBrut.auteur_modification,
       fonction: utilisateurBrut.fonction,
-      habilitations: await this._créerLesHabilitations(utilisateurBrut.profil, utilisateurBrut.habilitation),
+      saisieCommentaire: this._aDesDroitsdeSaisieCommentaire(habilitations, utilisateurBrut.profil),
+      saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(habilitations, utilisateurBrut.profil),
+      habilitations: habilitations,
     };
   }
 }
