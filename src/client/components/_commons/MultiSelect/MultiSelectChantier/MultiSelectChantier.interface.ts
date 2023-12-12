@@ -5,4 +5,5 @@ export default interface MultiSelectChantierProps {
   chantiers: ChantierSynthétisé[]
   chantiersIdsSélectionnésParDéfaut?: string[]
   valeursDésactivées?: string[]
+  afficherBoutonsSélection?: boolean
 }

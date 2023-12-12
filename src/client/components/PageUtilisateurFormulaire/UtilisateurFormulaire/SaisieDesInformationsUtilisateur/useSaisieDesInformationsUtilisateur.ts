@@ -15,8 +15,6 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   const chantiersSélectionnés = watch('habilitations.lecture.chantiers');
   const périmètresMinistérielsSélectionnés = watch('habilitations.lecture.périmètres');
 
-  const [chantiersSynthétisésSélectionnés, setChantiersSynthétisésSélectionnés] = useState<ChantierSynthétisé[]>([]);
-
   const [ancienProfilCodeSélectionné, setAncienProfilCodeSélectionné] = useState<string | undefined>(undefined);
   const [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés] = useState<string[]>([]);
   const [profilSélectionné, setProfilSélectionné] = useState<Profil | undefined>();
@@ -24,6 +22,9 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   const [afficherChampLectureTerritoires, setAfficherChampLectureTerritoires] = useState(false);
   const [afficherChampLectureChantiers, setAfficherChampLectureChantiers] = useState(false);
   const [afficherChampLecturePérimètres, setAfficherChampLecturePérimètres] = useState(false);
+  const [afficherChampSaisieCommentaire, setAfficherChampSaisieCommentaire] = useState(false);
+  const [afficherChampSaisieIndicateur, setAfficherChampSaisieIndicateur] = useState(false);
+
   const [chantiersAccessiblesPourLeProfil, setChantiersAccessiblesPourLeProfil] = useState<ChantierSynthétisé[]>([]);
 
   const [groupesTerritoiresÀAfficher, setGroupesTerritoiresÀAfficher] = useState<{ nationale: boolean, régionale: boolean, départementale: boolean }>({
@@ -41,11 +42,38 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   }, [setValue]);
 
   useEffect(() => {
+
+    // Lecture
     setAfficherChampLectureTerritoires(!!profilSélectionné && (profilsDépartementaux.includes(profilSélectionné.code) || profilsRégionaux.includes(profilSélectionné.code)));
     setAfficherChampLectureChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
     setAfficherChampLecturePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
 
-  }, [profilSélectionné]);
+    const afficherChoixCommentaire = !!profilSélectionné && !profilSélectionné.chantiers.lecture.tous;
+    setAfficherChampSaisieCommentaire(afficherChoixCommentaire);
+
+    const afficherChoixIndicateur = !!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires;
+    setAfficherChampSaisieIndicateur(afficherChoixIndicateur);
+
+    // Saisie Commentaire
+    if (!!!utilisateur) {
+      const valeurParDéfautCaseCommentaire = 
+        afficherChoixCommentaire
+          ? false
+          : (profilSélectionné?.chantiers.saisieCommentaire.saisiePossible ? true : false);
+      setValue('saisieCommentaire', valeurParDéfautCaseCommentaire);
+  
+      // Saisie Indicateur
+      const valeurParDéfautCaseIndicateur = 
+      afficherChoixIndicateur
+        ? false
+        : (profilSélectionné?.chantiers.saisieIndicateur.tousTerritoires ? true : false);
+      setValue('saisieIndicateur', valeurParDéfautCaseIndicateur);
+    } else {
+      setValue('saisieCommentaire', utilisateur.saisieCommentaire);
+      setValue('saisieIndicateur', utilisateur.saisieIndicateur);
+    }
+
+  }, [profilSélectionné, setValue, utilisateur]);
 
   useEffect(() => {
     if (!chantiers || !profilSélectionné) return;
@@ -114,13 +142,6 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chantiersAccessiblesPourLeProfil]);
 
-  useEffect(() => {
-    if (chantiersSélectionnés) {
-      const chantiersSynthétisésListe = chantiers?.filter(chantier => chantiersSélectionnés.includes(chantier.id)) ?? [];  
-      setChantiersSynthétisésSélectionnés(chantiersSynthétisésListe);
-    }
-  }, [chantiers, setChantiersSynthétisésSélectionnés, chantiersSélectionnés]);
-
   // GESTION DES TERRITOIRES
   useEffect(() => {
     if (!profilSélectionné) return;
@@ -155,6 +176,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     périmètresMinistérielsSélectionnés,
     groupesTerritoiresÀAfficher,
     chantiersAccessiblesPourLeProfil,
-    chantiersSynthétisésSélectionnés,
+    afficherChampSaisieCommentaire,
+    afficherChampSaisieIndicateur,
   };
 }

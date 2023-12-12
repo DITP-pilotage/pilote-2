@@ -8,11 +8,8 @@ import MultiSelectTerritoire from '@/components/_commons/MultiSelect/MultiSelect
 import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectChantier/MultiSelectChantier';
 import MultiSelectPérimètreMinistériel from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
 import { UtilisateurFormulaireProps } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
-import useSaisieDesInformationsUtilisateurSaisieIndicateurs from './useSaisieDesInformationsUtilisateurSaisieIndicateurs';
-import useSaisieDesInformationsUtilisateurSaisieCommentaire from './useSaisieDesInformationsUtilisateurSaisieCommentaires';
 import CaseACocher from '@/components/_commons/CaseACocher/CaseACocher';
-import { useEffect, useState } from 'react';
-import { DevTool } from "@hookform/devtools";
+// import { DevTool } from '@hookform/devtools';
 
 
 export default function SaisieDesInformationsUtilisateur({ utilisateur }: UtilisateurFormulaireProps) {
@@ -34,30 +31,9 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
     périmètresMinistérielsSélectionnés, 
     groupesTerritoiresÀAfficher, 
     chantiersAccessiblesPourLeProfil,
-    chantiersSynthétisésSélectionnés,
+    afficherChampSaisieCommentaire,
+    afficherChampSaisieIndicateur,
   } = useSaisieDesInformationsUtilisateur(utilisateur);
-
-  // const {
-  //   handleChangementValeursSélectionnéesChantiersSaisieIndicateurs,
-  //   handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieIndicateurs,
-  //   chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieIndicateurs,
-  //   afficherChampSaisieIndicateursChantiers,
-  //   afficherChampSaisieIndicateursPérimètres,
-  //   chantiersSaisieIndicateursSélectionnés,
-  //   périmètresMinistérielsSaisieIndicateursSélectionnés,    
-  // } = useSaisieDesInformationsUtilisateurSaisieIndicateurs(profilSélectionné, chantiersSynthétisésSélectionnés, utilisateur);
-
-  // const {
-  //   handleChangementValeursSélectionnéesChantiersSaisieCommentaire,
-  //   handleChangementValeursSélectionnéesPérimètresMinistérielsSaisieCommentaire,
-  //   chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnésSaisieCommentaire,
-  //   afficherChampSaisieCommentaireChantiers,
-  //   afficherChampSaisieCommentairePérimètres,
-  //   chantiersSélectionnésSaisieCommentaire,
-  //   périmètresMinistérielsSélectionnésSaisieCommentaire,
-  //   chantiersAccessiblesPourLeProfilSaisieCommentaire,
-  //   périmètresIdSélectionnablesSaisie,
-  // } = useSaisieDesInformationsUtilisateurSaisieCommentaire(profilSélectionné, chantiersSynthétisésSélectionnés, utilisateur);
 
   return (
     <>
@@ -128,6 +104,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
               name='habilitations.lecture.territoires'
               render={() => (
                 <MultiSelectTerritoire
+                  afficherBoutonsSélection
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
                   groupesÀAfficher={groupesTerritoiresÀAfficher}
                   territoiresCodesSélectionnésParDéfaut={territoiresSélectionnés}
@@ -144,6 +121,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
               name='habilitations.lecture.périmètres'
               render={() => (
                 <MultiSelectPérimètreMinistériel
+                  afficherBoutonsSélection
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesPérimètresMinistériels}
                   périmètresMinistérielsIdsSélectionnésParDéfaut={périmètresMinistérielsSélectionnés} 
                 />
@@ -159,10 +137,11 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
               name='habilitations.lecture.chantiers'
               render={() => (
                 <MultiSelectChantier
+                  afficherBoutonsSélection
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesChantiers}
                   chantiers={chantiersAccessiblesPourLeProfil}
                   chantiersIdsSélectionnésParDéfaut={chantiersSélectionnés}
-                  valeursDésactivées={chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés} 
+                  valeursDésactivées={chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés}
                 />
               )}
               rules={{ required: true }}
@@ -170,7 +149,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           </div>
         </div>
       </div>
-      <div>
+      <div className={`${!!afficherChampSaisieIndicateur ? '' : 'fr-hidden'}`}>
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
@@ -179,11 +158,11 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           Droits de saisie des données quantitatives
         </Titre>
         <CaseACocher 
-          libellé='Donner les droits de saisie des données quantitatives'
-          register={register('saisieIndicateur', { value: false })}
+          libellé='Accorder les droits de saisie des données quantitatives'
+          register={register('saisieIndicateur')}
         />
       </div>
-      <div>
+      <div className={`${!!afficherChampSaisieCommentaire ? '' : 'fr-hidden'}`}>
         <hr className='fr-hr' />
         <Titre
           baliseHtml='h2'
@@ -192,8 +171,8 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           Droits de saisie des commentaires
         </Titre>
         <CaseACocher 
-          libellé='Donner les droits de saisie des commentaires'
-          register={register('saisieCommentaire', { value: false })}
+          libellé='Accorder les droits de saisie des commentaires'
+          register={register('saisieCommentaire')}
         />
       </div>
       <div className='fr-grid-row fr-grid-row--right fr-mt-4w'>
@@ -202,7 +181,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           label='Suivant' 
         />
       </div>
-      <DevTool control={control} />
+      {/* <DevTool control={control} /> */}
     </>
   );
 }

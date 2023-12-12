@@ -54,7 +54,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
 
   private _mapDétailsToDomain(indicateurs: IndicateurPrisma[]): DétailsIndicateurs {
     const détailsIndicateurs: DétailsIndicateurs = {};
-    console.log(indicateurs)
 
     let IntermediaireEstAnnéeEnCours: boolean;
     for (const indic of indicateurs) {

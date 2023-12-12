@@ -48,6 +48,8 @@ type Utilisateur = {
   dateModification: string
   auteurModification: string
   fonction: string | null
+  saisieIndicateur: boolean
+  saisieCommentaire: boolean
   habilitations: Habilitations
 };
 
@@ -57,6 +59,8 @@ export type UtilisateurÀCréerOuMettreÀJour =  {
   email: string
   fonction: string | null
   profil: ProfilCode
+  saisieIndicateur: boolean
+  saisieCommentaire: boolean
   habilitations: HabilitationsÀCréerOuMettreÀJour
 };
 
@@ -65,7 +69,9 @@ export type UtilisateurÀCréerOuMettreÀJourSansHabilitation =  {
   prénom: string
   email: string
   fonction: string | null
-  profil: ProfilCode
+  profil: ProfilCode,
+  saisieIndicateur: boolean
+  saisieCommentaire: boolean
 };
 
 export default Utilisateur;

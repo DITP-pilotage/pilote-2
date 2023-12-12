@@ -4,7 +4,8 @@ export default interface MultiSelectProps {
   optionsGroupées: MultiSelectOptionsGroupées
   valeursSélectionnéesParDéfaut?: string[];
   changementValeursSélectionnéesCallback: (valeursSélectionnées: string[]) => void
-  label: string
+  label: string,
+  afficherBoutonsSélection?: boolean
 }
 
 export type MultiSelectOption = { 
