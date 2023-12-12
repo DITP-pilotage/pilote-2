@@ -71,6 +71,8 @@ export default class UtilisateurCSVParseur {
       prénom: csvRecord[this._colonnes.prénom].toLowerCase(),
       profil: csvRecord[this._colonnes.profil].toUpperCase() as ProfilCode,
       fonction: null,
+      saisieCommentaire: true,
+      saisieIndicateur: true,
       habilitations: {
         lecture: this._générerUneHabilitation(),
         saisieCommentaire: this._générerUneHabilitation(),

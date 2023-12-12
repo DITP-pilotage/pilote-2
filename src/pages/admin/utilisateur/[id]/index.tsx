@@ -7,7 +7,7 @@ import RécupérerUnUtilisateurUseCase from '@/server/usecase/utilisateur/Récup
 import { commenceParUneVoyelle } from '@/client/utils/strings';
 
 export interface NextPageAdminUtilisateurProps {
-  utilisateur: Utilisateur
+  utilisateur: Utilisateur,
 }
 
 export default function NextPageAdminUtilisateur({ utilisateur } : NextPageAdminUtilisateurProps) {

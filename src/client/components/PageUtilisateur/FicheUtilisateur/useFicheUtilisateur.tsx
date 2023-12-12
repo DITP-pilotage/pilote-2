@@ -59,70 +59,58 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
     return u.habilitations?.lecture?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
   }, [profil, chantiers]);
 
-  const déterminerLesNomÀAfficherPourLesTerritoiresSaisieIndicateur = useCallback(() => {
-    if (profil?.chantiers.saisieIndicateur.tousTerritoires)
-      return ['Tous les territoires']; 
+  const déterminerLesNomÀAfficherPourLesTerritoiresSaisieIndicateur = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
+    
+    return u.saisieIndicateur ? déterminerLesNomÀAfficherPourLesTerritoiresLecture(u) : [];
 
-    return [];
-  }, [profil]);
+  }, [déterminerLesNomÀAfficherPourLesTerritoiresLecture]);
 
   const déterminerLesNomÀAfficherPourLesChantiersSaisieIndicateur = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
     
-    if (profil?.code === 'DROM')
-      return ['Tous les chantiers territorialisés', 'Tous les chantiers DROM'];
+    return u.saisieIndicateur ? déterminerLesNomÀAfficherPourLesChantiersLecture(u) : [];
 
-    if (profil?.code === 'DITP_ADMIN')
-      return ['Tous les chantiers']; 
-
-    if (profil?.chantiers.saisieIndicateur.tousTerritoires) 
-      return u.habilitations?.saisieIndicateur?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
-    
-    return [];
-
-  }, [profil, chantiers]);
+  }, [déterminerLesNomÀAfficherPourLesChantiersLecture]);
 
   const déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
+    if (u.saisieCommentaire) {
+      if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET'].includes(profil?.code ?? ''))
+        return ['France', 'Régions (uniquement les chantiers hors ate centralisés)', 'Départements (uniquement les chantiers hors ate centralisés)'];
 
-    if (['SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET'].includes(profil?.code ?? ''))
-      return ['France', 'Régions (les chantiers hors ATE centralisé)', 'Départements (les chantiers hors ATE centralisé)'];
+      if (['DITP_PILOTAGE', 'DROM'].includes(profil?.code ?? ''))
+        return ['France'];
 
-    if (profil?.chantiers.saisieCommentaire.tousTerritoires)
-      return ['Tous les territoires']; 
-
-    if (['DITP_PILOTAGE', 'DROM'].includes(profil?.code ?? ''))
-      return ['France'];
-
-    if (profil && profilsRégionaux.includes(profil.code)) {
-      const régionsSaisies = u?.habilitations?.lecture?.territoires?.filter(territoireCode => territoireCode.startsWith('REG')) ?? [];
-      const départementsEnfantsDesRégionsSaisies = régionsSaisies.flatMap(régionCode => départements.filter(d => d.codeParent === régionCode).map(d => d.nomAffiché));
-    
-      return [...régionsSaisies.map(code => récupérerDétailsSurUnTerritoire(code).nomAffiché), ...départementsEnfantsDesRégionsSaisies];
+      return déterminerLesNomÀAfficherPourLesTerritoiresLecture(u);
+    } else {
+      return [];
     }
-
-    return u.habilitations?.lecture?.territoires?.map(territoire => récupérerDétailsSurUnTerritoire(territoire).nomAffiché) ?? [];
-  }, [départements, profil, récupérerDétailsSurUnTerritoire]);
+    
+  }, [déterminerLesNomÀAfficherPourLesTerritoiresLecture, profil]);
 
   const déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
-    if (déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire(u).length === 0) 
+    if (u.saisieCommentaire) {
+
+      if (['REFERENT_REGION', 'PREFET_REGION', 'REFERENT_DEPARTEMENT', 'PREFET_DEPARTEMENT'].includes(profil?.code ?? ''))
+        return ['Tous les chantiers ATE territorialisés']; 
+
+      if (['RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_REGION', 'RESPONSABLE_DEPARTEMENT', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(profil?.code ?? '')) {
+        const chantiersFiltrés = chantiers
+          ?.filter(c => u.habilitations?.lecture?.chantiers?.includes(c.id) && c.ate !== 'hors_ate_centralise')
+          .map(chantier => chantier.nom); 
+
+        return chantiersFiltrés ?? [];
+      }
+
+      return déterminerLesNomÀAfficherPourLesChantiersLecture(u);
+    } else {
       return [];
+    }
 
-    if (profil?.code === 'DROM')
-      return ['Tous les chantiers territorialisés', 'Tous les chantiers DROM'];
-
-    if (['REFERENT_REGION', 'PREFET_REGION', 'REFERENT_DEPARTEMENT', 'PREFET_DEPARTEMENT'].includes(profil?.code ?? ''))
-      return ['Tous les chantiers ATE territorialisés'];
-
-    if (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profil?.code ?? '')) 
-      return ['Tous les chantiers'];
-
-    return u.habilitations?.saisieCommentaire?.chantiers?.map(chantierId => chantiers?.find(c => c.id === chantierId)?.nom ?? '') ?? [];
-
-  }, [chantiers, déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire, profil]);
+  }, [déterminerLesNomÀAfficherPourLesChantiersLecture, chantiers, profil]);
 
   useEffect(() => {
     if (!chantiers || !profil)
       return;
-
+    
     const nouveauScopes = {
       lecture: {
         chantiers: déterminerLesNomÀAfficherPourLesChantiersLecture(utilisateur),
@@ -130,7 +118,7 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
       },
       saisieIndicateur: {
         chantiers: déterminerLesNomÀAfficherPourLesChantiersSaisieIndicateur(utilisateur),
-        territoires: déterminerLesNomÀAfficherPourLesTerritoiresSaisieIndicateur(),
+        territoires: déterminerLesNomÀAfficherPourLesTerritoiresSaisieIndicateur(utilisateur),
       },
       saisieCommentaire: {
         chantiers: déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire(utilisateur),
