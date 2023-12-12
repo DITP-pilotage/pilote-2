@@ -207,6 +207,18 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     });
   });
 
+  describe("L'utilisateur a un profil DIR_PROJET", () => {
+    it("Crée l'utilisateur en base de données en prenant une liste de chantiers et une liste de périmètres en lecture et en n'accordant pas les droits de saisie indicateurs et commentaires", async () => {
+      const habilitationsAttendues = { 
+        ...habilitationsVides, 
+        lecture: { chantiers: ['123'], territoires: [], périmètres: [] }, 
+        'saisieCommentaire': { territoires: [], chantiers: [], périmètres: [] },
+        'saisieIndicateur': { territoires: [], chantiers: [], périmètres: [] },
+      };
+      await testCasPassant('DIR_PROJET', habilitationsAttendues, false, false, undefined, ['123'], []);
+    });
+  });
+
   describe("L'utilisateur a un profil REFERENT_REGION", () => {
     it("Crée l'utilisateur en base de données en prenant une liste de territoires contenant des régions et leurs départements enfants en lecture et en accordant les droits de saisie commentaires", async () => {
       const codeRégionParente = 'REG-11';
