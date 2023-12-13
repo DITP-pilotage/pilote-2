@@ -20,7 +20,7 @@ models:
     description: |
         On modifie la table précédente `mesure_last_null_erase`. Règles:
 
-        - Si plusieurs valeurs sont valables pour un même mois, on garde la dernière ainsi que sa date. Ex: `[{12-dec-25, va, 10}, {17-dec-25, va, 15}, {23-dec-25, va, 11}] => [{23-dec-25, va, 11}]`
+        - Si plusieurs valeurs sont valables pour un même mois, on garde la valeur importée le plus récemment et on arrondit sa date au premier jour du mois.
   - name: agg_dept
     description: |
         Sélection des valeurs et calculs des aggrégation pour le niveau DEPT en fonction des paramètres. Règles:
