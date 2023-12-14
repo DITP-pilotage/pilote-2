@@ -97,6 +97,12 @@ export default function useTableauPageAdminIndicateurs() {
     state: {
       globalFilter: valeurDeLaRecherche,
     },
+    initialState: {
+      pagination: {
+        pageIndex: 0,
+        pageSize: 20,
+      },
+    },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
