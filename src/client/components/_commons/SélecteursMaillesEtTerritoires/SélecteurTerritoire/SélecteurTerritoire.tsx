@@ -3,6 +3,7 @@ import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interfa
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, territoiresAccessiblesEnLectureStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
+import SélecteurAvecRecherche from '../../SélecteurAvecRecherche/SélecteurAvecRecherche';
 
 
 
@@ -35,7 +36,7 @@ export default function SélecteurTerritoire() {
   const territoiresAccessiblesEnLecture = territoiresAccessiblesEnLectureStore();
   
   return (
-    <Sélecteur
+    <SélecteurAvecRecherche
       htmlName='périmètre-géographique'
       libellé='Périmètre géographique'
       options={construireLaListeDOptions(territoiresAccessiblesEnLecture, session?.profil)}

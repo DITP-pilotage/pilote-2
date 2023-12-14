@@ -49,24 +49,12 @@ export default function SélecteurAvecRecherche<T extends string>({ htmlName, li
         {
           optionsFiltrées?.map(option => (
             <Fragment key={`${option.valeur}`}>
-              <div className='fr-fieldset__element'>
-                <div className='fr-radio-group'>
-                  <input
-                    checked={valeurSélectionnée === option.valeur}
-                    className='fr-input'
-                    disabled={option.désactivée}
-                    id={option.valeur}
-                    name={option.valeur}
-                    onChange={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.name as T)}
-                    type='radio'
-                  />
-                  <label
-                    className='fr-label'
-                    htmlFor={option.valeur}
-                  >
-                    {option.libellé}
-                  </label>
-                </div>
+              <div 
+                className='fr-option'
+                id={option.valeur}
+                onClick={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.id as T)}
+              >
+                {option.libellé}
               </div>
             </Fragment>
           ))

@@ -26,6 +26,16 @@ const SélecteurAvecRechercheStyled = styled.div`
   .groupe-label {
     color: var(--text-mention-grey);
   }
+
+  .fr-option {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  .fr-option:hover {
+    background-color: #1967D2;
+    color: white;
+  }
 `;
 
 export default SélecteurAvecRechercheStyled;
