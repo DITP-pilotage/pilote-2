@@ -18,9 +18,17 @@ const SélecteurIndicateurActif = styled.div`
     &.sélectionné {
       color: var(--text-inverted-grey);
       background-color: var(--background-active-blue-france);
+        
+      &:disabled {
+        background-color: var(--text-disabled-grey);
+      }
       
       &.inactif {
         background-color: var(--background-active-red-marianne);
+          
+          &:disabled {
+              background-color: var(--text-disabled-grey);
+          }
       }
     }
   }
