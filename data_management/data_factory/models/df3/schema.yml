@@ -141,7 +141,7 @@ models:
       - on se base sur la table `compute_ta_indic`
       - pour le calcul du *TA actuel*: on utilise la *valeur la plus récente de l'indicateur*, peu importe sa date. Ex: on est en 11-23, on pourra utiliser des données de *11-23* ou antérieures.
       - pour le calcul du *TA précédent*: on utilise la *valeur la plus récente **mais antérieure au mois actuel** de l'indicateur*, peu importe sa date. Ex: on est en 11-23, on ne pourra utiliser que des données de *10-23* ou antérieures.
-      - le *TA chantier* est la somme des TA pondérés de chaque indicateur contenus dans ce chantier
+      - le *TA chantier* est la somme des TA pondérés de chaque indicateur du chantier **DONT la pondération est > 0** (`redmine::721`). On fait cela car si un TA pondéré d'indicateur de valeur `NULL` était pris en compte dans le calcul du TA chantier, le **résultat vaudrait toujours `NULL`**. Or si un indicateur est pondéré à 0, ce ne doit pas être un problème d'avoir un TA qui vaut `NULL`.
     columns:
       - name: tag_ch
         description: "**Principal**: TA chantier *global*. C'est cette valeur qui est remontée comme TA du chantier"
