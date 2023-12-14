@@ -23,10 +23,12 @@ export interface NextPageAdminUtilisateurProps {
   indicateur: MetadataParametrageIndicateurContrat,
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
   estUneCréation: boolean
+  modificationReussie: boolean
+  creationReussie: boolean
   chantiers: ChantierSynthétisé[]
 }
 
-export default function NextPageAdminIndicateur({ indicateur, mapInformationMetadataIndicateur, estUneCréation, chantiers } : NextPageAdminUtilisateurProps) {
+export default function NextPageAdminIndicateur({ indicateur, mapInformationMetadataIndicateur, estUneCréation, modificationReussie, creationReussie, chantiers } : NextPageAdminUtilisateurProps) {
   return (
     <>
       <Head>
@@ -39,9 +41,11 @@ export default function NextPageAdminIndicateur({ indicateur, mapInformationMeta
       </Head>
       <PageIndicateur
         chantiers={chantiers}
+        creationReussie={creationReussie}
         estUneCréation={estUneCréation}
         indicateur={indicateur}
         mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
+        modificationReussie={modificationReussie}
       />
     </>
   );
@@ -63,6 +67,8 @@ export async function getServerSideProps({ req, res, params, query } :GetServerS
   }
 
   let indicateurDemandé: MetadataParametrageIndicateurContrat;
+  let creationReussie = query._action === 'creation-reussie';
+  let modificationReussie = query._action === 'modification-reussie';
   let estUneCréation = query._action === 'creer-indicateur';
   if (estUneCréation) {
     indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new InitialiserNouvelIndicateurUseCase().run(params.id));
@@ -84,6 +90,8 @@ export async function getServerSideProps({ req, res, params, query } :GetServerS
       mapInformationMetadataIndicateur,
       chantiers,
       estUneCréation,
+      creationReussie,
+      modificationReussie,
     },
   };
 }

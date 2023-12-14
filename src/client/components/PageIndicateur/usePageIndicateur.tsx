@@ -67,7 +67,7 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
 
   const mutationModifierMetadataIndicateur = api.metadataIndicateur.modifier.useMutation({
     onSuccess: () => {
-      router.reload();
+      router.push(`/admin/indicateurs/${indicateur.indicId}?_action=modification-reussie`);
     },
     onError: error => {
       if (error.data?.code === 'INTERNAL_SERVER_ERROR') {
@@ -80,7 +80,7 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
   });
   const mutationCreerMetadataIndicateur = api.metadataIndicateur.creer.useMutation({
     onSuccess: () => {
-      router.push(`${indicateur.indicId}`);
+      router.push(`/admin/indicateurs/${indicateur.indicId}?_action=creation-reussie`);
     },
     onError: error => {
       if (error.data?.code === 'INTERNAL_SERVER_ERROR') {

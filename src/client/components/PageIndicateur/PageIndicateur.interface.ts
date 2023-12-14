@@ -6,5 +6,7 @@ export default interface PageIndicateurProps {
   indicateur: MetadataParametrageIndicateurContrat,
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
   estUneCréation: boolean
+  modificationReussie: boolean
+  creationReussie: boolean
   chantiers: ChantierSynthétisé[]
 }
