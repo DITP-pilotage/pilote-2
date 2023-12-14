@@ -2,7 +2,8 @@ import { useSession } from 'next-auth/react';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import { actionsTerritoiresStore, mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore, territoiresAccessiblesEnLectureStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
-import SélecteurAvecRecherche from '@/components/_commons/SélecteurAvecRecherche/SélecteurAvecRecherche';
+import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
+
 
 
 const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerritoire[], profil: ProfilCode | undefined) => {
@@ -34,7 +35,7 @@ export default function SélecteurTerritoire() {
   const territoiresAccessiblesEnLecture = territoiresAccessiblesEnLectureStore();
   
   return (
-    <SélecteurAvecRecherche
+    <Sélecteur
       htmlName='périmètre-géographique'
       libellé='Périmètre géographique'
       options={construireLaListeDOptions(territoiresAccessiblesEnLecture, session?.profil)}
