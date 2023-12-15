@@ -16,6 +16,12 @@ ta_zone_indic as (
 --	On va pondérer chaque TA par sa pondération à cette maille
 ta_zone_indic_pond as (
 select a.*, b.poids_pourcent_dept, b.poids_pourcent_reg, b.poids_pourcent_nat,
+	-- Pondération de la zone en question
+	case 
+		when maille='DEPT' then poids_pourcent_dept
+		when maille='REG' then poids_pourcent_reg
+		when maille='NAT' then poids_pourcent_nat
+	end as poids_pourcent_zone,
 	case 
 		when maille='DEPT' then taa*0.01*poids_pourcent_dept
 		when maille='REG' then taa*0.01*poids_pourcent_reg
@@ -79,8 +85,10 @@ ta_ch as (
 	end as tag_ch
 	from 
 	(
-	select * from ta_zone_indic_pond_today union
-	select * from ta_zone_indic_pond_prev_month
+	-- On ne considère que les TA dont les indicateurs ont une pondération > 0
+	select * from ta_zone_indic_pond_today where poids_pourcent_zone > 0 
+	union
+	select * from ta_zone_indic_pond_prev_month where poids_pourcent_zone > 0
 	) a
 	group by indic_parent_ch, zone_id, valid_on
 )
