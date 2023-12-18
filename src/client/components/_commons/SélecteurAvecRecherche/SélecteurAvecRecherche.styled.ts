@@ -33,8 +33,8 @@ const SélecteurAvecRechercheStyled = styled.div`
   }
 
   .fr-option:hover {
-    background-color: #1967D2;
     color: white;
+    background-color: #1967D2;
   }
 `;
 

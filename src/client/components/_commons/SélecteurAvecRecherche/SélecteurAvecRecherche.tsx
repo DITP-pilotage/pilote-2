@@ -53,6 +53,13 @@ export default function SélecteurAvecRecherche<T extends string>({ htmlName, li
                 className='fr-option'
                 id={option.valeur}
                 onClick={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.id as T)}
+                onKeyDown={(événement) => {
+                  if ((événement.key === 'Enter' || événement.key === ' ') && !!valeurModifiéeCallback) {
+                    valeurModifiéeCallback(événement.currentTarget.id as T);
+                  }
+                }}
+                role='button'
+                tabIndex={0}
               >
                 {option.libellé}
               </div>
