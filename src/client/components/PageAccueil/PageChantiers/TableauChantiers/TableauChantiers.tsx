@@ -11,7 +11,7 @@ import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersStyled from './TableauChantiers.styled';
 import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
 
-export default function TableauChantiers({ données, setNombreChantiersDansLeTableau }: TableauChantiersProps) {
+export default function TableauChantiers({ données, ministèresDisponibles, setNombreChantiersDansLeTableau }: TableauChantiersProps) {
   const {
     tableau,
     changementDeLaRechercheCallback,
@@ -22,7 +22,7 @@ export default function TableauChantiers({ données, setNombreChantiersDansLeTab
     directionDeTri,
     changementDirectionDeTriCallback,
     estVueTuile,
-  } = useTableauChantiers(données);
+  } = useTableauChantiers(données, ministèresDisponibles);
   
   useEffect(() => {
     tableau.setPageSize(50);
@@ -48,6 +48,7 @@ export default function TableauChantiers({ données, setNombreChantiersDansLeTab
           <div className='fr-toggle'>
             <input
               className='fr-toggle__input'
+              defaultChecked={ministèresDisponibles.length > 1}
               id='interrupteur-grouper-par-ministères'
               onChange={tableau.getColumn('porteur')?.getToggleGroupingHandler() ?? undefined}
               type='checkbox'

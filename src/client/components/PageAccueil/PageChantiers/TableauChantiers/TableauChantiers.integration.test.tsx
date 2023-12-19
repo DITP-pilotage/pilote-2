@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import { getAllByRole, queryByText, render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
 import TableauChantiers from './TableauChantiers';
 import { DonnéesTableauChantiers } from './TableauChantiers.interface';
 
@@ -9,9 +10,13 @@ import { DonnéesTableauChantiers } from './TableauChantiers.interface';
 jest.mock('next/router', () => require('next-router-mock'));
 
 class TableauChantiersTest {
+  private ministèresDisponibles: Ministère[] = [
+    new MinistèreBuilder().avecNom('Ministère 1').build(),
+  ];
+  
   private données: DonnéesTableauChantiers[] = [
     {
-      porteur: new MinistèreBuilder().avecNom('Ministère 1').build(),
+      porteur: this.ministèresDisponibles[0],
       nom: 'Déployer le programme FR',
       id: '1',
       avancement: 97,
@@ -23,7 +28,7 @@ class TableauChantiersTest {
       tendance: 'STAGNATION',
     },
     {
-      porteur: new MinistèreBuilder().avecNom('Ministère 1').build(),
+      porteur: this.ministèresDisponibles[0],
       nom: 'Lutter contre la fraude fiscale',
       id: '2',
       avancement: 98,
@@ -35,7 +40,7 @@ class TableauChantiersTest {
       tendance: 'STAGNATION',
     },
     {
-      porteur: new MinistèreBuilder().avecNom('Ministère 2').build(),
+      porteur: this.ministèresDisponibles[0],
       nom: 'Elections du maire',
       id: '3',
       avancement: 99,
@@ -81,6 +86,7 @@ class TableauChantiersTest {
     waitFor(() => render(
       <TableauChantiers
         données={this.données}
+        ministèresDisponibles={this.ministèresDisponibles}
       />,
     ));
   }
