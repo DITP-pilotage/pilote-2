@@ -31,10 +31,19 @@ export default class FiltrerListeUtilisateursUseCase {
     return utilisateur.habilitations.lecture.chantiers.some((chantier) => this.filtresActifs.chantiers.includes(chantier));
   }
 
+  private utilisateurPasseLeFiltreProfil(utilisateur: Utilisateur) {
+    if (this.filtresActifs.profils.length === 0) {
+      return true;
+    }
+
+    return this.filtresActifs.profils.includes(utilisateur.profil);
+  }
+
   private utilisateurPasseLesFiltres(utilisateur: Utilisateur) {
     return this.utilisateurPasseLeFiltreTerritoire(utilisateur)
       && this.utilisateurPasseLeFiltreChantier(utilisateur)
-      && this.utilisateurPasseLeFiltrePérimètreMinistériel(utilisateur);
+      && this.utilisateurPasseLeFiltrePérimètreMinistériel(utilisateur)
+      && this.utilisateurPasseLeFiltreProfil(utilisateur);
   }
 
   run() {

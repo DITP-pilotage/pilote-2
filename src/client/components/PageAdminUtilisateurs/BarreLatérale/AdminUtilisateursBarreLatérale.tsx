@@ -14,6 +14,7 @@ import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectCh
 import Tag from '@/components/_commons/Tag/Tag';
 import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import api from '@/server/infrastructure/api/trpc/api';
+import MultiSelectProfil from '@/components/_commons/MultiSelect/MultiSelectProfil/MultiSelectProfil';
 
 export default function AdminUtilisateursBarreLatérale({
   estOuverteBarreLatérale,
@@ -21,6 +22,7 @@ export default function AdminUtilisateursBarreLatérale({
 }: AdminUtilisateursBarreLatéraleProps) {
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: périmètresMinistériels } = api.périmètreMinistériel.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
+  const { data: profils } = api.profil.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { modifierÉtatDuFiltre, désactiverFiltre } = actionsFiltresUtilisateursStore();
   const territoires = territoiresTerritoiresStore();
   const filtresActifs = filtresUtilisateursActifsStore();
@@ -53,12 +55,21 @@ export default function AdminUtilisateursBarreLatérale({
             périmètresMinistérielsIdsSélectionnésParDéfaut={filtresActifs.périmètresMinistériels}
           />
         </div>
-        <MultiSelectChantier
-          changementValeursSélectionnéesCallback={(chantier) => {
-            modifierÉtatDuFiltre(chantier, 'chantiers');
+        <div className='fr-mb-2w'>
+          <MultiSelectChantier
+            changementValeursSélectionnéesCallback={(chantier) => {
+              modifierÉtatDuFiltre(chantier, 'chantiers');
+            }}
+            chantiers={chantiers ?? []}
+            chantiersIdsSélectionnésParDéfaut={filtresActifs.chantiers}
+          />
+        </div>
+        <MultiSelectProfil
+          changementValeursSélectionnéesCallback={(profil) => {
+            modifierÉtatDuFiltre(profil, 'profils');
           }}
-          chantiers={chantiers ?? []}
-          chantiersIdsSélectionnésParDéfaut={filtresActifs.chantiers}
+          profils={profils ?? []}
+          profilsIdsSélectionnésParDéfaut={filtresActifs.profils}
         />
       </BarreLatéraleEncart>
       <div className='fr-px-3w fr-py-2w'>
@@ -150,6 +161,33 @@ export default function AdminUtilisateursBarreLatérale({
                   libellé={libellé}
                   suppressionCallback={() => {
                     désactiverFiltre(chantierId, 'chantiers');
+                  }}
+                />
+              );
+            })
+          }
+        </div>
+        <button
+          aria-controls='fr-sidemenu-item-profils'
+          aria-expanded='true'
+          className='fr-sidemenu__btn fr-m-0'
+          type='button'
+        >
+          Profil(s)
+        </button>
+        <div
+          className='fr-collapse'
+          id='fr-sidemenu-item-profils'
+        >
+          {
+            filtresActifs.profils.map(profilCode => {
+              let libellé = profils?.find(c => c.code === profilCode)?.nom ?? null;
+              return libellé === null ? null : (
+                <Tag
+                  key={profilCode}
+                  libellé={libellé}
+                  suppressionCallback={() => {
+                    désactiverFiltre(profilCode, 'profils');
                   }}
                 />
               );

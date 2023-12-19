@@ -8,6 +8,7 @@ const filtresActifsInitiaux: FiltresUtilisateursActifs = {
   territoires: [],
   périmètresMinistériels: [],
   chantiers: [],
+  profils: [],
 };
 
 const useFiltresUtilisateursStore = create<FiltresUtilisateursStore>((set) => ({
