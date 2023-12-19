@@ -195,6 +195,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
               </TitreInfobulleConteneur>
               <TableauChantiers
                 données={donnéesTableauChantiers}
+                ministèresDisponibles={ministères}
                 setNombreChantiersDansLeTableau={setNombreChantiersDansLeTableau}
               />
             </Bloc>

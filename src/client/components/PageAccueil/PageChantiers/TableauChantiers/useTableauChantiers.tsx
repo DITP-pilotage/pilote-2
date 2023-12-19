@@ -27,17 +27,18 @@ import useTableauRéformes from '@/components/PageAccueil/TableauRéformes/useTa
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
 import TableauChantiersTendance from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance';
 import TableauChantiersÉcart from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
 import TableauChantiersTuileChantier from './Tuile/Chantier/TableauChantiersTuileChantier';
 import TableauChantiersTuileMinistère from './Tuile/Ministère/TableauChantiersTuileMinistère';
 import TableauChantiersTuileMinistèreProps from './Tuile/Ministère/TableauChantiersTuileMinistère.interface';
 
 
-export default function useTableauChantiers(données: TableauChantiersProps['données']) {
+export default function useTableauChantiers(données: TableauChantiersProps['données'], ministèresDisponibles: Ministère[]) {
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
   const [tri, setTri] = useState<SortingState>([{ id: 'avancement', desc: false }]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
-  const [regroupement, setRegroupement] = useState<GroupingState>([]);
+  const [regroupement, setRegroupement] = useState<GroupingState>(ministèresDisponibles.length > 1 ? ['porteur'] : []);
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('md');
 
   const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
@@ -48,6 +49,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       id: 'porteur',
       cell: cellContext => cellContext.getValue(),
       enableGrouping: true,
+
     }),
     reactTableColonnesHelper.accessor('nom', {
       header: 'Chantiers',
