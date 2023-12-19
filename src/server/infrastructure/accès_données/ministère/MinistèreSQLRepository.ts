@@ -63,7 +63,7 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
                  JOIN perimetres_visibles pv ON pv.perimetre_id = p.id
                  left join ministere m on p.ministere_id = m.id
         group by m.nom, p.ministere_id, m.icone
-        order by m.nom, p.ministere_id;
+        order by CASE WHEN p.ministere_id = '1009' THEN 0 ELSE 1 END, m.nom, p.ministere_id;
     `;
     return queryResults.map(queryResult => this.parseMinistère(queryResult));
   }
