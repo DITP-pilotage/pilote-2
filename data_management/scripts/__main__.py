@@ -25,7 +25,6 @@ def main() -> int:
     print("Execution des datajobs des tables public")
     for file in [
         'scripts/0_install_dbt_deps.sh',
-        'scripts/1_dump_dfakto.sh',
         'scripts/2_fill_tables_ppg_metadata.sh',
         'scripts/5_fill_tables_staging.sh',
         'scripts/7_fill_tables_public.sh'
