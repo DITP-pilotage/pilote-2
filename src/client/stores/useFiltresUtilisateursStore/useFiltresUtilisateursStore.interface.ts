@@ -1,5 +1,5 @@
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { Profil } from '@/server/domain/profil/Profil.interface';
 
@@ -9,6 +9,7 @@ type FiltreCatégorie = 'territoires' | 'périmètresMinistériels' | 'chantiers
 export type FiltresUtilisateursActifs = {
   territoires: Array<Territoire['code']>,
   périmètresMinistériels: Array<PérimètreMinistériel['id']>,
+  chantiersAssociésAuxPérimètres: Array<Chantier['id']>,
   chantiers: Array<Chantier['id']>,
   profils: Array<Profil['code']>,
 };
@@ -16,7 +17,7 @@ export type FiltresUtilisateursActifs = {
 export default interface FiltresUtilisateursStore {
   filtresActifs: FiltresUtilisateursActifs,
   actions: {
-    modifierÉtatDuFiltre: (filtres: Filtre[], catégorieDeFiltre: FiltreCatégorie) => void,
+    modifierÉtatDuFiltre: (filtres: Filtre[], catégorieDeFiltre: FiltreCatégorie, chantiersSynthétisés?: ChantierSynthétisé[]) => void,
     réinitialiser: () => void,
     désactiverFiltre: (filtre: Filtre, catégorieDeFiltre: FiltreCatégorie) => void,
   }

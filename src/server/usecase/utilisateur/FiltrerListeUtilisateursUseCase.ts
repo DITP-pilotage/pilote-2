@@ -20,7 +20,8 @@ export default class FiltrerListeUtilisateursUseCase {
       return true;
     }
 
-    return utilisateur.habilitations.lecture.périmètres.some((périmètre) => this.filtresActifs.périmètresMinistériels.includes(périmètre));
+    return utilisateur.habilitations.lecture.périmètres.some((périmètre) => this.filtresActifs.périmètresMinistériels.includes(périmètre)) || 
+      utilisateur.habilitations.lecture.chantiers.some((chantier) => this.filtresActifs.chantiersAssociésAuxPérimètres.includes(chantier));
   }
 
   private utilisateurPasseLeFiltreChantier(utilisateur: Utilisateur) {

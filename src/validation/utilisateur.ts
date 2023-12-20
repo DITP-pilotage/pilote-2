@@ -48,6 +48,7 @@ export const validationFiltresPourListeUtilisateur = z.object({
     chantiers: z.string().array(),
     territoires: z.string().array(),
     périmètresMinistériels: z.string().array(),
+    chantiersAssociésAuxPérimètres: z.string().array(),
     profils: z.enum(profilsCodes).array(),
   }),
 });

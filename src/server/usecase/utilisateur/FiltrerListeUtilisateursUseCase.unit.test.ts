@@ -17,6 +17,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         territoires: [],
         chantiers: [],
         périmètresMinistériels: [],
+        chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
     ).run();
@@ -53,6 +54,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         territoires: ['DEPT-01'],
         chantiers: [],
         périmètresMinistériels: [],
+        chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
     ).run();
@@ -62,6 +64,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         territoires: ['DEPT-02'],
         chantiers: [],
         périmètresMinistériels: [],
+        chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
     ).run();
@@ -71,6 +74,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         territoires: ['DEPT-02', 'DEPT-04'],
         chantiers: [],
         périmètresMinistériels: [],
+        chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
     ).run();
@@ -117,6 +121,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         territoires: [],
         chantiers: ['CH-01'],
         périmètresMinistériels: [],
+        chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
     ).run();
@@ -126,6 +131,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         territoires: [],
         chantiers: ['CH-02'],
         périmètresMinistériels: [],
+        chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
     ).run();
@@ -135,6 +141,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         territoires: [],
         chantiers: ['CH-02', 'CH-04'],
         périmètresMinistériels: [],
+        chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
     ).run();
@@ -181,6 +188,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         territoires: [],
         chantiers: [],
         périmètresMinistériels: ['PER-001'],
+        chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
     ).run();
@@ -190,6 +198,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         territoires: [],
         chantiers: [],
         périmètresMinistériels: ['PER-002'],
+        chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
     ).run();
@@ -199,6 +208,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         territoires: [],
         chantiers: [],
         périmètresMinistériels: ['PER-002', 'PER-004'],
+        chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
     ).run();
@@ -245,6 +255,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         territoires: [],
         chantiers: [],
         périmètresMinistériels: [],
+        chantiersAssociésAuxPérimètres: [],
         profils: ['PR'],
       },
     ).run();
@@ -254,6 +265,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         territoires: [],
         chantiers: [],
         périmètresMinistériels: [],
+        chantiersAssociésAuxPérimètres: [],
         profils: ['DITP_ADMIN', 'DIR_PROJET'],
       },
     ).run();
@@ -267,6 +279,44 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrésMultiple[1].id).toStrictEqual('ID-USER-001');
     expect(utilisateursFiltrésMultiple[2].id).toStrictEqual('ID-USER-002');
 
+  });
+
+  it('quand le filtre périmètre est appliqué retourne tous les utilisateurs ayant ce périmètre ou un chantier associé à ce périmètre', () => {
+    //GIVEN
+    const utilisateurs = [
+      new UtilisateurBuilder()
+        .avecId('ID-USER-123')
+        .avecChantierIdsLecture(['CH-01'])
+        .avecPérimètreIdsLecture(['PER-001'])
+        .build(),
+      new UtilisateurBuilder()
+        .avecId('ID-USER-001')
+        .avecChantierIdsLecture(['CH-02', 'CH-03'])
+        .avecPérimètreIdsLecture(['PER-002'])
+        .build(),
+      new UtilisateurBuilder()
+        .avecId('ID-USER-002')
+        .avecChantierIdsLecture(['CH-02'])
+        .avecPérimètreIdsLecture([])
+        .build(),
+    ];
+
+    //WHEN
+    const utilisateursFiltrés = new FiltrerListeUtilisateursUseCase(
+      utilisateurs,
+      {
+        territoires: [],
+        chantiers: [],
+        périmètresMinistériels: ['PER-001'],
+        chantiersAssociésAuxPérimètres: ['CH-03'],
+        profils: [],
+      },
+    ).run();
+
+    //THEN
+    expect(utilisateursFiltrés).toHaveLength(2);
+    expect(utilisateursFiltrés[0].id).toStrictEqual('ID-USER-123');
+    expect(utilisateursFiltrés[1].id).toStrictEqual('ID-USER-001');
   });
 
   it("quand les filtres chantier, territoire, périmètre et profils sont appliqués retourne tous les utilisateurs ayant l'intersection entre ce chantier, ce territoire et ce périmètre", () => {
@@ -302,6 +352,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         territoires: ['DEPT-01'],
         chantiers: ['CH-02'],
         périmètresMinistériels: ['PER-001'],
+        chantiersAssociésAuxPérimètres: [],
         profils: ['PR'],
       },
     ).run();

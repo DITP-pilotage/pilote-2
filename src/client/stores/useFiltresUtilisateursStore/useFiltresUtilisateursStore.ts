@@ -7,6 +7,7 @@ import FiltresUtilisateursStore, {
 const filtresActifsInitiaux: FiltresUtilisateursActifs = {
   territoires: [],
   périmètresMinistériels: [],
+  chantiersAssociésAuxPérimètres: [],
   chantiers: [],
   profils: [],
 };
@@ -14,13 +15,25 @@ const filtresActifsInitiaux: FiltresUtilisateursActifs = {
 const useFiltresUtilisateursStore = create<FiltresUtilisateursStore>((set) => ({
   filtresActifs: filtresActifsInitiaux,
   actions: {
-    modifierÉtatDuFiltre: (filtres, catégorieDeFiltre) => {
-      set(étatActuel => ({
-        filtresActifs: {
-          ...étatActuel.filtresActifs,
-          [catégorieDeFiltre]: filtres,
-        },
-      }));
+    modifierÉtatDuFiltre: (filtres, catégorieDeFiltre, chantiersSynthétisés) => {
+      
+      if (catégorieDeFiltre === 'périmètresMinistériels') {
+        const filtresChantiersSupplémentaires = chantiersSynthétisés?.filter(chantier => chantier.périmètreIds.some(périmètreId => filtres.includes(périmètreId)));
+        set(étatActuel => ({
+          filtresActifs: {
+            ...étatActuel.filtresActifs,
+            [catégorieDeFiltre]: filtres,
+            ['chantiersAssociésAuxPérimètres']: filtresChantiersSupplémentaires?.map(c => c.id) ?? [],
+          },
+        }));
+      } else {
+        set(étatActuel => ({
+          filtresActifs: {
+            ...étatActuel.filtresActifs,
+            [catégorieDeFiltre]: filtres,
+          },
+        }));
+      }
     },
     réinitialiser: () => {
       set(() => ({

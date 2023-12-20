@@ -50,7 +50,7 @@ export default function AdminUtilisateursBarreLatérale({
         <div className='fr-mb-2w'>
           <MultiSelectPérimètreMinistériel
             changementValeursSélectionnéesCallback={(périmètreMinistériel) => {
-              modifierÉtatDuFiltre(périmètreMinistériel, 'périmètresMinistériels');
+              modifierÉtatDuFiltre(périmètreMinistériel, 'périmètresMinistériels', chantiers);
             }}
             périmètresMinistérielsIdsSélectionnésParDéfaut={filtresActifs.périmètresMinistériels}
           />
