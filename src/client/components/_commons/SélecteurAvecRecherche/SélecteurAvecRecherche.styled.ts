@@ -34,7 +34,7 @@ const SélecteurAvecRechercheStyled = styled.div`
 
   .fr-option:hover {
     color: white;
-    background-color: #1967D2;
+    background-color: var(--background-active-blue-france);
   }
 `;
 
