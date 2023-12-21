@@ -1,1 +1,1 @@
-SELECT * from {{ ref('df1_indicateur') }}
+SELECT * from {{ ref('df3_indicateur') }}
