@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  app:
+    command: "/bin/bash descente_de_prod.sh"
+    container_name: scalingo_dump
+    build: 
+      dockerfile: Dockerfile
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - "./.env:/app/.env:ro"
+      - "./descente_de_prod.sh:/app/descente_de_prod.sh"
+      - "./out:/app/out"
