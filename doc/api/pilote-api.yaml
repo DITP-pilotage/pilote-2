@@ -6,6 +6,9 @@ info:
   version: '1.0'
   summary: Cette API permet d'interagir avec Pilote.
   description: 'Via cette API, il est possible de récupérer les données de Pilote et d''importer des données dans la limite des autorisations fixées par votre compte.'
+  contact:
+    name: Colin DUGEAI
+    email: colin.dugeaiATmodernisation.gouv.fr
 servers:
   - url: 'http://localhost:3000'
     description: Local
