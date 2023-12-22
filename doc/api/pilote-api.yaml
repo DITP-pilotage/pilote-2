@@ -198,8 +198,9 @@ components:
       x-stoplight:
         id: zli1xhb85ytzu
   securitySchemes:
-    X-API-KEY:
-      name: clé api
+    abc-123:
+      name: X-API-KEY
       type: apiKey
       in: header
-      description: ''
+      description: Cette clé d'API vous permet de vous authentifier et d'aacéder uniquement aux resources autorisées.
+x-internal: false
