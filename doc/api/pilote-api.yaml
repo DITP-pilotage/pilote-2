@@ -12,7 +12,7 @@ info:
 servers:
   - url: 'http://localhost:3000'
     description: Local
-  - url: 'http://172.0.0.17:3000'
+  - url: 'http://172.17.0.1:3000'
     description: Docker local
 paths:
   '/users/{userId}':
@@ -198,8 +198,8 @@ components:
       x-stoplight:
         id: zli1xhb85ytzu
   securitySchemes:
-    API Key - 1:
-      name: API Key
+    X-API-KEY:
+      name: clé api
       type: apiKey
-      in: query
+      in: header
       description: ''
