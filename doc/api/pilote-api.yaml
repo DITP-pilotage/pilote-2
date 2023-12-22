@@ -192,6 +192,8 @@ components:
         - lastName
         - email
         - emailVerified
+      x-stoplight:
+        id: zli1xhb85ytzu
   securitySchemes:
     API Key - 1:
       name: API Key
