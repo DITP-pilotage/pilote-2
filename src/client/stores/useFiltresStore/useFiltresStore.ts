@@ -9,6 +9,7 @@ const filtresActifsInitiaux: FiltresActifs = {
   ppg: [],
   filtresTypologie: [],
   filtresAlerte: [],
+  filtresStatut: [],
 };
 
 const useFiltresStore = create<FiltresStore>((set, get) => ({

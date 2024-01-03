@@ -21,7 +21,7 @@ class TableauChantiersTest {
       id: '1',
       avancement: 97,
       météo: 'COUVERT' as const,
-      typologie: { estBaromètre: false, estTerritorialisé: true },
+      typologie: { estBaromètre: false, estTerritorialisé: true, estBrouillon: false },
       dateDeMàjDonnéesQuantitatives: new Date().toISOString(),
       dateDeMàjDonnéesQualitatives: new Date().toISOString(),
       écart: 0,
@@ -33,7 +33,7 @@ class TableauChantiersTest {
       id: '2',
       avancement: 98,
       météo: 'COUVERT' as const,
-      typologie: { estBaromètre: true, estTerritorialisé: true },
+      typologie: { estBaromètre: true, estTerritorialisé: true, estBrouillon: true },
       dateDeMàjDonnéesQuantitatives: new Date().toISOString(),
       dateDeMàjDonnéesQualitatives: new Date().toISOString(),
       écart: 0,
@@ -45,7 +45,7 @@ class TableauChantiersTest {
       id: '3',
       avancement: 99,
       météo: 'SOLEIL' as const,
-      typologie: { estBaromètre: false, estTerritorialisé: false },
+      typologie: { estBaromètre: false, estTerritorialisé: false, estBrouillon: false },
       dateDeMàjDonnéesQuantitatives: new Date().toISOString(),
       dateDeMàjDonnéesQualitatives: new Date().toISOString(),
       écart: 0,
@@ -155,31 +155,39 @@ describe('Les bons pictogrammes de typologie apparaissent dans la colonnes typol
     const ligneDUnChantierTerritorialisé = tableau.récupérerUneLigneParLeNomDuChantier('Lutter contre la fraude fiscale');
     const pictoTerritorialisé = queryByText(ligneDUnChantierTerritorialisé, 'chantier territorialisé');
     const pictoBaromère = queryByText(ligneDUnChantierTerritorialisé, 'élément du baromètre');
+    const pictoBrouillon = queryByText(ligneDUnChantierTerritorialisé, 'chantier brouillon');
+
     
     // THEN
     expect(pictoTerritorialisé).toBeInTheDocument();
     expect(pictoBaromère).toBeInTheDocument();
+    expect(pictoBrouillon).toBeInTheDocument();
   });
 
-  test("Quand le chantier est territorialisé et n'est pas du baromètre", () => {
+  test("Quand le chantier est territorialisé et n'est pas du baromètre ni un chantier brouillon", () => {
     // GIVEN 
     const ligneDUnChantierTerritorialisé = tableau.récupérerUneLigneParLeNomDuChantier('Déployer le programme FR');
     const pictoTerritorialisé = queryByText(ligneDUnChantierTerritorialisé, 'chantier territorialisé');
     const pictoBaromère = queryByText(ligneDUnChantierTerritorialisé, 'élément du baromètre');
+    const pictoBrouillon = queryByText(ligneDUnChantierTerritorialisé, 'chantier brouillon');
     
     // THEN
     expect(pictoTerritorialisé).toBeInTheDocument();
     expect(pictoBaromère).not.toBeInTheDocument();
+    expect(pictoBrouillon).not.toBeInTheDocument();
+
   });
 
-  test("Quand le chantier n'est ni territorialisé et ni du baromètre", () => {
+  test("Quand le chantier n'est ni territorialisé, ni du baromètre, ni un chantier brouillon", () => {
     // GIVEN 
     const ligneDUnChantierTerritorialisé = tableau.récupérerUneLigneParLeNomDuChantier('Elections du maire');
     const pictoTerritorialisé = queryByText(ligneDUnChantierTerritorialisé, 'chantier territorialisé');
     const pictoBaromère = queryByText(ligneDUnChantierTerritorialisé, 'élément du baromètre');
+    const pictoBrouillon = queryByText(ligneDUnChantierTerritorialisé, 'chantier brouillon');
     
     // THEN
     expect(pictoTerritorialisé).not.toBeInTheDocument();
     expect(pictoBaromère).not.toBeInTheDocument();
+    expect(pictoBrouillon).not.toBeInTheDocument();
   });
 });

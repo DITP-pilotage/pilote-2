@@ -9,7 +9,7 @@ import ChantierBuilder from '@/server/domain/chantier/Chantier.builder';
 import AvancementBuilder from '@/server/domain/chantier/avancement/Avancement.builder';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
-import { TypeAte, typesAte } from '@/server/domain/chantier/Chantier.interface';
+import { TypeAte, typesAte, typesStatut } from '@/server/domain/chantier/Chantier.interface';
 
 export default class ChantierRowBuilder {
   private _id: chantier['id'];
@@ -64,6 +64,8 @@ export default class ChantierRowBuilder {
 
   private _est_applicable: chantier['est_applicable'];
 
+  private _statut: chantier['statut'];
+
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
     const avancement = new AvancementBuilder().build();
@@ -94,6 +96,7 @@ export default class ChantierRowBuilder {
     this._estTerritorialisé = générerPeutÊtreNull(0.2, chantierGénéré.estTerritorialisé);
     this._territoireCode = `${this._maille}-${this._codeInsee}`;
     this._ate = faker.helpers.arrayElement(typesAte);
+    this._statut = faker.helpers.arrayElement(typesStatut);
     this._a_meteo_departemental = faker.datatype.boolean();
     this._a_meteo_regional = faker.datatype.boolean();
     this._a_taux_avancement_departemental = faker.datatype.boolean();
@@ -228,6 +231,11 @@ export default class ChantierRowBuilder {
     return this;
   }
 
+  avecStatut(statut: chantier['statut']): ChantierRowBuilder {
+    this._statut = statut;
+    return this;
+  }
+
   shallowCopy(): ChantierRowBuilder {
     const result = new ChantierRowBuilder() as any;
     for (const attribut in this) {
@@ -264,6 +272,7 @@ export default class ChantierRowBuilder {
       a_taux_avancement_regional: this._a_taux_avancement_regional,
       a_supprimer: this._a_supprimer,
       est_applicable: this._est_applicable,
+      statut: this._statut,
     };
   }
 }

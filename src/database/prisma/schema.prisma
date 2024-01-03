@@ -44,6 +44,14 @@ enum type_ate {
   @@schema("public")
 }
 
+enum type_statut {
+  BROUILLON
+  PUBLIE
+  NON_PUBLIE
+
+  @@schema("public")
+}
+
 model chantier {
   id                                 String
   nom                                String
@@ -71,6 +79,7 @@ model chantier {
   a_meteo_departemental              Boolean?
   a_meteo_regional                   Boolean?
   est_applicable                     Boolean?
+  statut                             type_statut
   a_supprimer                        Boolean    @default(true)
 
   @@id([id, code_insee, maille])
@@ -399,6 +408,7 @@ model profil {
   peut_modifier_les_utilisateurs                              Boolean       @default(false)
   peut_supprimer_les_utilisateurs                             Boolean       @default(false)
   peut_saisir_des_commentaires                                Boolean       @default(false)
+  a_access_aux_chantiers_brouillons                           Boolean       @default(false)
   utilisateur                                                 utilisateur[]
 
   @@schema("public")

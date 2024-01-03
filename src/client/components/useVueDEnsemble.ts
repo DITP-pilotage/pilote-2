@@ -68,7 +68,7 @@ export default function useVueDEnsemble(chantiersFiltrés: Chantier[], chantiers
     nom: chantier.nom,
     avancement: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].avancement.global,
     météo: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].météo,
-    typologie: { estBaromètre: chantier.estBaromètre, estTerritorialisé: chantier.estTerritorialisé },
+    typologie: { estBaromètre: chantier.estBaromètre, estTerritorialisé: chantier.estTerritorialisé, estBrouillon: chantier.statut === 'BROUILLON' },
     porteur: chantier.responsables.porteur,
     tendance: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].tendance,
     écart: chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee].écart,

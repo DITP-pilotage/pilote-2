@@ -49,6 +49,14 @@ export default function useChantiersFiltrés(chantiers: Chantier[]) {
         filtresActifs.filtresTypologie.some(filtre => chantier[filtre.attribut])
       ));
     }
+    // eslint-disable-next-line unicorn/prefer-ternary
+    if (filtresActifs.filtresStatut.length > 0) {
+      résultat = résultat.filter(chantier => (
+        filtresActifs.filtresStatut.some(filtre => chantier.statut === filtre.id)
+      ));
+    } else {
+      résultat = résultat.filter(chantier => chantier.statut === 'PUBLIE');
+    }
     return résultat;
   }, [chantiers, filtresActifs, session?.profil, territoireSélectionné]);
 

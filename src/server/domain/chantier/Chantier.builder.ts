@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker/locale/fr';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { typesStatut } from '@/server/domain/chantier/Chantier.interface';
 import { CodeInsee, codeInseeFrance, codesInseeDépartements, codesInseeRégions, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import {
   générerCaractèresSpéciaux, générerTableau,
@@ -44,6 +44,8 @@ export default class ChantierBuilder {
 
   private _ate: Chantier['ate'];
 
+  private _statut: Chantier['statut'];
+
   constructor() {
     const axe = new AxeBuilder().build();
     const ppg = new PpgBuilder().build();
@@ -57,6 +59,7 @@ export default class ChantierBuilder {
     this._axe = axe.nom;
     this._ppg = ppg.nom;
     this._ate = null;
+    this._statut = faker.helpers.arrayElement(typesStatut);
     this._périmètreIds = ministèrePorteur.périmètresMinistériels.map(périmètreMinistériel => périmètreMinistériel.id);
     this._mailles = {
       nationale: this._générerTerritoires([codeInseeFrance]),
@@ -165,6 +168,11 @@ export default class ChantierBuilder {
     return this;
   }
 
+  avecSatut(statut: Chantier['statut']): ChantierBuilder {
+    this._statut = statut;
+    return this;
+  }
+
   build(): Chantier {
     return {
       id: this._id,
@@ -173,6 +181,7 @@ export default class ChantierBuilder {
       ppg: this._ppg,
       périmètreIds: this._périmètreIds,
       ate: this._ate,
+      statut: this._statut,
       mailles: this._mailles,
       responsables: {
         porteur: this._porteur,

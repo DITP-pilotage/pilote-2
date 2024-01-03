@@ -43,9 +43,9 @@ export default class DétailsIndicateurBuilder {
     this._dateValeurInitiale = new Date('2020-06-01T00:00:00.000Z').toISOString();
     this._valeurCible = faker.datatype.number({ min: this._valeurInitiale ?? 42, precision: 0.01 });
     this._valeurActuelle = faker.datatype.number({ min: this._valeurInitiale ?? 30, precision: 0.01 });
-    this._dateValeurCible = faker.date.future(3, '2024-06-01T00:00:00.000Z').toISOString();
+    this._dateValeurCible = faker.date.future(3, '2025-01-01T00:00:00.000Z').toISOString();
     this._dateValeurActuelle = new Date('2023-03-01T00:00:00.000Z').toISOString();
-    this._dateValeurCibleAnnuelle = faker.date.future(1, '2023-03-01T00:00:00.000Z').toISOString();
+    this._dateValeurCibleAnnuelle = faker.date.future(2, '2025-03-01T00:00:00.000Z').toISOString();
     this._valeurCibleAnnuelle = faker.datatype.number({ min: this._valeurInitiale ?? 42, max: this._valeurCible ?? 39, precision: 0.01 });
     this._unité = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._est_applicable = générerPeutÊtreNull(0.2, faker.datatype.boolean());

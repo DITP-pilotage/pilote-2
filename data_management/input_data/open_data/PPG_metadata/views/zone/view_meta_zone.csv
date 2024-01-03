@@ -1,8 +1,0 @@
-zone_id,nom,zone_code,zone_type,zone_parent
-A70,Normandie,70,ACAD,
-D11,Aude,11,DEPT,
-D12,Aveyron1,12,DEPT,A70 | R11
-D971,,971,DEPT,R1
-FRANCE,National,FR,NAT,NULL
-R11,Ile de France,11,REG,FRANCE
-R84,Auvergne-Rhône-Alpes,84,REG,FRANCE

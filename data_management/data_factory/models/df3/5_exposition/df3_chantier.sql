@@ -109,6 +109,7 @@ select
     mc.ch_territo as est_territorialise,
     t.code as territoire_code,
 	LOWER(mc.ch_saisie_ate)::type_ate as ate,
+    COALESCE(ch_state::type_statut, 'PUBLIE') as statut,
     has_ta.has_ta_dept as a_taux_avancement_departemental,
     has_ta.has_ta_reg as a_taux_avancement_regional,
     ch_has_meteo.has_meteo_dept as a_meteo_departemental,

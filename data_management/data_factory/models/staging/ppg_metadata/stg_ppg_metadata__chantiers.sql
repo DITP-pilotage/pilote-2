@@ -25,7 +25,8 @@ renamed as (
         ch_territo as est_territorialise,
         engagement_short as nom_engagement,
         ch_hidden_pilote as est_cache_dans_pilote,
-        ch_saisie_ate as ate
+        ch_saisie_ate as ate,
+        ch_state as statut
 
     from source
 
