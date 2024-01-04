@@ -6,6 +6,7 @@ import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
 import FiltresProps from './Filtres.interface';
 import FiltreTypologie from './FiltreTypologie/FiltreTypologie';
 import FiltreStatut from './FiltreStatut/FiltreStatut';
+import { useSession } from 'next-auth/react';
 
 const filtreBaromètre: FiltreTypologieType = { id: 'filtreBaromètre', attribut: 'estBaromètre', nom: 'Chantiers du baromètre' };
 const filtreTerritorialisé: FiltreTypologieType = { id: 'filtreTerritorialisé', attribut: 'estTerritorialisé', nom: 'Chantiers territorialisés' };
@@ -13,6 +14,8 @@ const filtreStatut: FiltreStatutType = { id : 'BROUILLON', nom: 'Chantiers broui
 
 export default function Filtres({ ministères, axes, ppgs, afficherToutLesFiltres }: FiltresProps) {
   filtresActifs();
+
+  const { data: session } = useSession();
 
   return (
     <>
@@ -37,7 +40,11 @@ export default function Filtres({ ministères, axes, ppgs, afficherToutLesFiltre
           <FiltresGroupe libellé='Autres critères'>
             <FiltreTypologie filtre={filtreTerritorialisé} /> 
             <FiltreTypologie filtre={filtreBaromètre} /> 
-            <FiltreStatut filtre={filtreStatut} />
+            {
+              session?.profilAAccèsAuxChantiersBrouillons &&
+                <FiltreStatut filtre={filtreStatut} />              
+            }
+
           </FiltresGroupe>
         </>}
     </>

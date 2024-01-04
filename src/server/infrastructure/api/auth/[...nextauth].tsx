@@ -228,12 +228,16 @@ export const authOptions: AuthOptions = {
       const utilisateurRepository = dependencies.getUtilisateurRepository();
       const utilisateur = await utilisateurRepository.récupérer(token.user.email);
 
+      const profilRepository = dependencies.getProfilRepository();
+      const profil = await profilRepository.récupérer(utilisateur!.profil);
+
       // Send properties to the client
       session.user = token.user;
       session.accessToken = token.accessToken;
       session.error = token.error;
       session.profil = utilisateur?.profil;
       session.habilitations = utilisateur!.habilitations;
+      session.profilAAccèsAuxChantiersBrouillons = profil?.chantiers.lecture.brouillons
 
       return session;
     },

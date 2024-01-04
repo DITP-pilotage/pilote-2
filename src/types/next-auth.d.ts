@@ -11,5 +11,6 @@ declare module 'next-auth' {
     error: any
     habilitations: Habilitations
     profil: ProfilCode
+    profilAAccèsAuxChantiersBrouillons: boolean
   }
 }

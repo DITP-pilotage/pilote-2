@@ -34,6 +34,7 @@ export default class ProfilSQLRepository implements ProfilRepository {
           tous: p.a_acces_tous_chantiers,
           tousTerritorialisés: p.a_acces_tous_chantiers_territorialises,
           tousTerritoires: p.a_acces_tous_les_territoires_lecture,
+          brouillons: p.a_access_aux_chantiers_brouillons,
         },
         saisieCommentaire: {
           tousTerritoires: p.a_acces_tous_les_territoires_saisie_commentaire,
