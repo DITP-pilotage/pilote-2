@@ -79,8 +79,8 @@ model chantier {
   a_meteo_departemental              Boolean?
   a_meteo_regional                   Boolean?
   est_applicable                     Boolean?
-  statut                             type_statut
-  a_supprimer                        Boolean    @default(true)
+  statut                             type_statut @default(PUBLIE)
+  a_supprimer                        Boolean     @default(true)
 
   @@id([id, code_insee, maille])
   @@schema("public")
