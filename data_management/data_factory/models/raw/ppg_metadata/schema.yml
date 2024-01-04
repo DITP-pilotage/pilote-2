@@ -121,7 +121,7 @@ models:
         description: |
             Typologie de l'indicateur.
 
-            Il peut s'agir d'indicateur d'impact (`IMPACT`), de déploiement (`DEPL`), de contexte (`CONTEXTE`), de qualité de service (`Q_SERV`) ou de rebond (`REBOND`).
+            Il peut s'agir d'indicateur d'impact ('IMPACT'), de déploiement ('DEPL'), de contexte ('CONTEXTE'), de qualité de service ('Q_SERV') ou de rebond ('REBOND').
         meta:
             pilote_show: true
             pilote_alias: "Typologie"
@@ -174,7 +174,7 @@ models:
             pilote_edit_regex: ".*"
             pilote_edit_regexViolationMessage: null
             pilote_edit_boxType: text
-            pilote_create_mandatory: true
+            pilote_create_mandatory: false
             pilote_create_defaultValue: null
       - name: indic_hidden_pilote
         data_type: boolean
@@ -203,7 +203,7 @@ models:
         description: "*Zone-group* applicable à cet indicateur. Voir `metadata_zonegroup`"
         meta:
             pilote_show: true
-            pilote_alias: "ZG"
+            pilote_alias: "Zone-group"
             pilote_edit_isEditable: true
             pilote_edit_regex: "ZG-\\d\\d\\d"
             pilote_edit_regexViolationMessage: "Le code de la ZG doit être au format 'ZG-XXX'"
@@ -235,7 +235,7 @@ models:
           pilote_create_defaultValue: "_"
           pilote_disp_blocId: 2
           pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]   
+              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]   
       - name: vi_dept_op
         data_type: text
         description: >
@@ -260,7 +260,7 @@ models:
           pilote_create_defaultValue: "_"
           pilote_disp_blocId: 2
           pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]   
+              [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]   
 
       - name: va_dept_op
         data_type: text
@@ -286,7 +286,7 @@ models:
             pilote_create_defaultValue: "_"
             pilote_disp_blocId: 2
             pilote_edit_acceptedValues: >
-                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]   
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]   
       - name: vc_dept_op
         data_type: text
         description: >
@@ -310,7 +310,7 @@ models:
             pilote_create_defaultValue: "_"
             pilote_disp_blocID: 3        
             pilote_edit_acceptedValues: >
-                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
       - name: vi_reg_op
         data_type: text
         description: >
@@ -334,7 +334,7 @@ models:
             pilote_create_defaultValue: "_"
             pilote_disp_blocID: 3
             pilote_edit_acceptedValues: >
-                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
       - name: va_reg_op
         data_type: text
         description: >
@@ -358,7 +358,7 @@ models:
             pilote_create_defaultValue: "_"
             pilote_disp_blocID: 3
             pilote_edit_acceptedValues: >
-                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
       - name: vc_reg_op
         data_type: text
         description: >
@@ -382,7 +382,7 @@ models:
             pilote_create_defaultValue: "_"
             pilote_disp_blocID: 4        
             pilote_edit_acceptedValues: >
-                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"},  {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."},{"order_id": 5, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"},  {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."},{"order_id": 5, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
       - name: vi_nat_op
         data_type: text
         description: >
@@ -406,7 +406,7 @@ models:
             pilote_create_defaultValue: "_"
             pilote_disp_blocID: 4
             pilote_edit_acceptedValues: >
-                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"},  {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."},{"order_id": 5, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"},  {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."},{"order_id": 5, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
       - name: va_nat_op
         data_type: text
         description: >
@@ -430,7 +430,7 @@ models:
             pilote_create_defaultValue: "_"
             pilote_disp_blocID: 4
             pilote_edit_acceptedValues: >
-                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"},  {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."},{"order_id": 5, "value": "sub_indic", "name": "sous-indicateur", "desc": ""}]
+                [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"},  {"order_id": 4, "value": "REG", "name": "Depuis les REG", "desc": "Cette valeur sera aggrégée depuis les valeurs régionales."},{"order_id": 5, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
       - name: vc_nat_op
         data_type: text
         description: >
@@ -579,7 +579,6 @@ models:
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
-            #pilote_edit_acceptedValues: > // Valeurs acceptées - récupérer la liste des valeurs possibles du formulaire DS
 
       - name: projet_annuel_perf
         data_type: boolean
@@ -589,7 +588,7 @@ models:
             pilote_alias: "Projet annuel de performance"
             pilote_edit_boxType: null
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: False
+            pilote_create_defaultValue: false
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -644,7 +643,7 @@ models:
             pilote_edit_boxType: null
             pilote_disp_dispDesc: true
             pilote_create_defaultValue: False
-            pilote_disp_blocId: 7
+            pilote_disp_blocId: 1
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
                 
