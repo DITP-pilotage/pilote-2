@@ -11,6 +11,9 @@ export type DirecteurProjet = { nom: string, email: string | null };
 export const typesAte = ['ate', 'hors_ate_centralise', 'hors_ate_deconcentre'] as const;
 export type TypeAte = typeof typesAte[number] | null;
 
+export const typesStatut = ['BROUILLON', 'PUBLIE', 'NON_PUBLIE'] as const;
+export type TypeStatut = typeof typesStatut[number];
+
 export default interface Chantier {
   id: string;
   nom: string;
@@ -29,6 +32,7 @@ export default interface Chantier {
   tauxAvancementDonnéeTerritorialisée: Record<MailleInterne, Boolean>;
   météoDonnéeTerritorialisée: Record<MailleInterne, Boolean>;
   ate: TypeAte;
+  statut: TypeStatut;
 }
 
 export type ChantierTendance = 'BAISSE' | 'HAUSSE' | 'STAGNATION';
@@ -38,7 +42,7 @@ export type ChantierVueDEnsemble = {
   nom: string;
   avancement: number | null;
   météo: Météo;
-  typologie: { estBaromètre: boolean, estTerritorialisé: boolean };
+  typologie: { estBaromètre: boolean, estTerritorialisé: boolean, estBrouillon: boolean };
   porteur: Ministère | null;
   tendance: ChantierTendance | null,
   écart: number | null,
@@ -51,4 +55,4 @@ export type ChantierDatesDeMiseÀJour = {
   dateDeMàjDonnéesQualitatives: string | null;
 };
 
-export type ChantierSynthétisé = Pick<Chantier, 'id' | 'nom' | 'estTerritorialisé' | 'périmètreIds'> & { ate: TypeAte };
+export type ChantierSynthétisé = Pick<Chantier, 'id' | 'nom' | 'estTerritorialisé' | 'périmètreIds' | 'statut'> & { ate: TypeAte };

@@ -7,7 +7,8 @@ export type Profil = {
     lecture: {
       tous: boolean
       tousTerritorialisés: boolean
-      tousTerritoires: boolean
+      tousTerritoires: boolean,
+      brouillons: boolean,
     },
     saisieCommentaire: {
       tousTerritoires: boolean

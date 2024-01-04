@@ -1,10 +1,11 @@
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import PictoTerritorialisé from '@/components/_commons/PictoTerritorialisé/PictoTerritorialisé';
 import TypologiesPictosStyled from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos.styled';
+import PictoChantierBrouillon from '@/components/_commons/PictoChantierBrouillon/PictoChantierBrouillon';
 import TypologiesPictosProps from './TypologiesPictos.interface';
 
 export default function TypologiesPictos({ typologies }: TypologiesPictosProps) {
-  if (!typologies.estBaromètre && !typologies.estTerritorialisé) {
+  if (!typologies.estBaromètre && !typologies.estTerritorialisé && !typologies.estBrouillon) {
     return null;
   }
 
@@ -20,6 +21,12 @@ export default function TypologiesPictos({ typologies }: TypologiesPictosProps) 
         {
           !!typologies.estTerritorialisé &&
           <PictoTerritorialisé />
+        }
+      </li>
+      <li>
+        {
+          !!typologies.estBrouillon &&
+          <PictoChantierBrouillon />
         }
       </li>
     </TypologiesPictosStyled>

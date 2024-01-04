@@ -9,7 +9,9 @@ export type FiltreTypologieType = { id: string, attribut: keyof Chantier, nom: s
 
 export type FiltreAlerte = { id: 'estEnAlerteÉcart' | 'estEnAlerteBaisseOuStagnation' | 'estEnAlerteDonnéesNonMàj', nom: string };
 
-export type Filtre = PérimètreMinistériel | FiltreTypologieType | Ppg | Axe | FiltreAlerte;
+export type FiltreStatutType = { id: 'BROUILLON' | 'PUBLIE' | 'NON_PUBLIE', nom: string };
+
+export type Filtre = PérimètreMinistériel | FiltreTypologieType | Ppg | Axe | FiltreAlerte | FiltreStatutType;
 
 export interface FiltreCatégorieTuple {
   catégorie: FiltreCatégorie,
@@ -21,7 +23,8 @@ export interface FiltresActifs {
   axes: Axe[],
   ppg: Ppg[],
   filtresTypologie: FiltreTypologieType[],
-  filtresAlerte: FiltreAlerte[]
+  filtresAlerte: FiltreAlerte[],
+  filtresStatut: FiltreStatutType[],
 }
 
 export default interface FiltresStore {

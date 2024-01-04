@@ -70,6 +70,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
   private _chantiersTerritorialisésIds: string[] = [];
 
+  private _chantiersBrouillonsIds: string [] = [];
+
   private _périmètresMinistériels: string[] = [];
 
   constructor(private _prisma: PrismaClient) {}
@@ -115,6 +117,10 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
         if (c.est_territorialise === true) {
           this._chantiersTerritorialisésIds.push(c.id);
+        }
+
+        if (c.statut === 'BROUILLON') {
+          this._chantiersBrouillonsIds.push(c.id);
         }
       });
     }
@@ -442,8 +448,10 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
               .filter(c => c.perimetre_ids.some(p => h.perimetres.includes(p)))
               .map(c => c.id) :
             [] ;
+        
+        const habilitationsChantier = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...chantiersSupplémentaires])];
 
-        habilitationsGénérées[scopeCode].chantiers = [... new Set([...habilitationsGénérées[scopeCode].chantiers, ...chantiersAssociésAuxPérimètresMinistériels, ...chantiersSupplémentaires])];
+        habilitationsGénérées[scopeCode].chantiers = profilUtilisateur.a_access_aux_chantiers_brouillons ? habilitationsChantier : habilitationsChantier.filter(c => !this._chantiersBrouillonsIds.includes(c));
         habilitationsGénérées[scopeCode].territoires = [... new Set([...habilitationsGénérées[scopeCode].territoires, ...h.territoires])];
         habilitationsGénérées[scopeCode].périmètres = [... new Set([...habilitationsGénérées[scopeCode].périmètres, ...h.perimetres])];
       }

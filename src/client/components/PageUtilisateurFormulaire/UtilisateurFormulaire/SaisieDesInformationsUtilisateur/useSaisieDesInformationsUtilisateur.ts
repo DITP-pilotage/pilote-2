@@ -78,11 +78,18 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   useEffect(() => {
     if (!chantiers || !profilSélectionné) return;
     
+    let chantiersAccessibles = chantiers;
+
     if (['RESPONSABLE_DEPARTEMENT', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(profilSélectionné.code)) {
-      setChantiersAccessiblesPourLeProfil(chantiers.filter(chantier => chantier.estTerritorialisé));
-    } else {
-      setChantiersAccessiblesPourLeProfil(chantiers);
+      chantiersAccessibles = chantiersAccessibles.filter(chantier => chantier.estTerritorialisé);
+    } 
+
+    if (!profilSélectionné.chantiers.lecture.brouillons) {
+      chantiersAccessibles = chantiersAccessibles.filter(chantier => chantier.statut !== 'BROUILLON');
     }
+
+    setChantiersAccessiblesPourLeProfil(chantiersAccessibles);
+
   }, [chantiers, profilSélectionné]);
 
   useEffect(() => {
