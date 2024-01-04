@@ -1,3 +1,4 @@
+import { useSession } from 'next-auth/react';
 import FiltresSélectionMultiple from '@/components/PageAccueil/Filtres/FiltresSélectionMultiple/FiltresSélectionMultiple';
 import { FiltreStatutType, FiltreTypologieType } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
 import { filtresActifs } from '@/client/stores/useFiltresStore/useFiltresStore';
@@ -6,7 +7,6 @@ import FiltresMinistères from './FiltresMinistères/FiltresMinistères';
 import FiltresProps from './Filtres.interface';
 import FiltreTypologie from './FiltreTypologie/FiltreTypologie';
 import FiltreStatut from './FiltreStatut/FiltreStatut';
-import { useSession } from 'next-auth/react';
 
 const filtreBaromètre: FiltreTypologieType = { id: 'filtreBaromètre', attribut: 'estBaromètre', nom: 'Chantiers du baromètre' };
 const filtreTerritorialisé: FiltreTypologieType = { id: 'filtreTerritorialisé', attribut: 'estTerritorialisé', nom: 'Chantiers territorialisés' };
@@ -41,7 +41,7 @@ export default function Filtres({ ministères, axes, ppgs, afficherToutLesFiltre
             <FiltreTypologie filtre={filtreTerritorialisé} /> 
             <FiltreTypologie filtre={filtreBaromètre} /> 
             {
-              session?.profilAAccèsAuxChantiersBrouillons &&
+              !!session?.profilAAccèsAuxChantiersBrouillons &&
                 <FiltreStatut filtre={filtreStatut} />              
             }
 

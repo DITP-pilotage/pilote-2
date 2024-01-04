@@ -55,4 +55,4 @@ export type ChantierDatesDeMiseÀJour = {
   dateDeMàjDonnéesQualitatives: string | null;
 };
 
-export type ChantierSynthétisé = Pick<Chantier, 'id' | 'nom' | 'estTerritorialisé' | 'périmètreIds'> & { ate: TypeAte };
+export type ChantierSynthétisé = Pick<Chantier, 'id' | 'nom' | 'estTerritorialisé' | 'périmètreIds' | 'statut'> & { ate: TypeAte };

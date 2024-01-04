@@ -237,7 +237,7 @@ export const authOptions: AuthOptions = {
       session.error = token.error;
       session.profil = utilisateur?.profil;
       session.habilitations = utilisateur!.habilitations;
-      session.profilAAccèsAuxChantiersBrouillons = profil?.chantiers.lecture.brouillons
+      session.profilAAccèsAuxChantiersBrouillons = profil?.chantiers.lecture.brouillons;
 
       return session;
     },
