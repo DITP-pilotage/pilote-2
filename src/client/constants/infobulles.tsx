@@ -1,4 +1,5 @@
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
+import PictoChantierBrouillon from '@/components/_commons/PictoChantierBrouillon/PictoChantierBrouillon';
 import PictoTerritorialisé from '@/components/_commons/PictoTerritorialisé/PictoTerritorialisé';
 import { IndicateurPondération } from '@/components/PageChantier/PageChantier.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -52,6 +53,11 @@ const INFOBULLE_CONTENUS = {
           <PictoTerritorialisé />
           {' '}
           : Chantier dont le pilotage est territorialisé.
+        </p>
+        <p className='fr-text--sm'>
+          <PictoChantierBrouillon />
+          {' '}
+          : Chantier non publié.
         </p>
         <p className='fr-text--sm'>
           La date affichée sous la météo correspond à la date de la dernière modification de la météo, de la synthèse ou d’un commentaire.
