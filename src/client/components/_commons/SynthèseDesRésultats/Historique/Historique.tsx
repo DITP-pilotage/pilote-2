@@ -21,7 +21,7 @@ export default function SynthèseDesRésultatsHistorique({ réformeId }: Synthè
     <>
       <BoutonSousLigné
         ariaControls={ID_HTML}
-        classNameSupplémentaires='fr-mt-1w'
+        classNameSupplémentaires='fr-mt-1w fr-ml-3w'
         dataFrOpened={false}
         type='button'
       >
