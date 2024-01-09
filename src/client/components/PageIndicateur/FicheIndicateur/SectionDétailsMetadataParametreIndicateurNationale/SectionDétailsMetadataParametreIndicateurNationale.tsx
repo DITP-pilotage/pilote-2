@@ -50,33 +50,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
               </span>
             )}
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.vi_nat_op.metaPiloteAlias}
-            {estEnCoursDeModification ? (
-              <Infobulle idHtml='viNatOp'>
-                {mapInformationMetadataIndicateur.vi_nat_op.description}
-              </Infobulle>
-            ) : null}
-          </div>
-          {estEnCoursDeModification
-            ? <Sélecteur
-                erreur={errors.viNatOp}
-                htmlName='viNatOp'
-                options={mapInformationMetadataIndicateur.vi_nat_op.acceptedValues.map(acceptedValue => ({
-                  valeur: acceptedValue.valeur,
-                  libellé: acceptedValue.libellé,
-                }))}
-                register={register('viNatOp')}
-                valeurSélectionnée={`${getValues('viNatOp')}`}
-              />
-            : (
-              <span>
-                {indicateur.viNatOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
-              </span>
-            )}
-        </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4 fr-pl-2w fr-pr-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.va_nat_from.metaPiloteAlias}
             {estEnCoursDeModification ? (
@@ -102,35 +76,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
               </span>
             )}
         </div>
-      </div>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.va_nat_op.metaPiloteAlias}
-            {estEnCoursDeModification ? (
-              <Infobulle idHtml='vaNatOp'>
-                {mapInformationMetadataIndicateur.va_nat_op.description}
-              </Infobulle>
-            ) : null}
-          </div>
-          {estEnCoursDeModification
-            ? <Sélecteur
-                erreur={errors.vaNatOp}
-                htmlName='vaNatOp'
-                options={mapInformationMetadataIndicateur.va_nat_op.acceptedValues.map(acceptedValue => ({
-                  valeur: acceptedValue.valeur,
-                  libellé: acceptedValue.libellé,
-                }))}
-                register={register('vaNatOp')}
-                valeurSélectionnée={`${getValues('vaNatOp')}`}
-              />
-            : (
-              <span>
-                {indicateur.vaNatOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
-              </span>
-            )}
-        </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.vc_nat_from.metaPiloteAlias}
             {estEnCoursDeModification ? (
@@ -153,6 +99,60 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
             : (
               <span>
                 {indicateur.vcNatFrom === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+              </span>
+            )}
+        </div>
+      </div>
+      <div className='fr-grid-row fr-mb-2w'>
+        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.vi_nat_op.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='viNatOp'>
+                {mapInformationMetadataIndicateur.vi_nat_op.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Sélecteur
+                erreur={errors.viNatOp}
+                htmlName='viNatOp'
+                options={mapInformationMetadataIndicateur.vi_nat_op.acceptedValues.map(acceptedValue => ({
+                  valeur: acceptedValue.valeur,
+                  libellé: acceptedValue.libellé,
+                }))}
+                register={register('viNatOp')}
+                valeurSélectionnée={`${getValues('viNatOp')}`}
+              />
+            : (
+              <span>
+                {indicateur.viNatOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+              </span>
+            )}
+        </div>
+        <div className='fr-col-12 fr-col-md-4 fr-pl-2w fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.va_nat_op.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='vaNatOp'>
+                {mapInformationMetadataIndicateur.va_nat_op.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Sélecteur
+                erreur={errors.vaNatOp}
+                htmlName='vaNatOp'
+                options={mapInformationMetadataIndicateur.va_nat_op.acceptedValues.map(acceptedValue => ({
+                  valeur: acceptedValue.valeur,
+                  libellé: acceptedValue.libellé,
+                }))}
+                register={register('vaNatOp')}
+                valeurSélectionnée={`${getValues('vaNatOp')}`}
+              />
+            : (
+              <span>
+                {indicateur.vaNatOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
               </span>
             )}
         </div>
