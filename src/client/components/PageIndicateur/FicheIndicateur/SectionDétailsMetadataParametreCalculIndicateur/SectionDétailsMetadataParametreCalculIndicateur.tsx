@@ -22,7 +22,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
         baliseHtml='h2'
         className='fr-h5'
       >
-        Parametragres - Calcul de la valeur actuelle
+        Paramétrages - Calcul de la valeur actuelle
       </Titre>
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
