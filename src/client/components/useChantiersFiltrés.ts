@@ -8,11 +8,13 @@ import {
 } from '@/stores/useFiltresStore/useFiltresStore';
 import Alerte from '@/server/domain/alerte/Alerte';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
+import { statutsSélectionnésStore } from '@/stores/useStatutsStore/useStatutsStore';
 
 export default function useChantiersFiltrés(chantiers: Chantier[]) {
   const { data: session } = useSession();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const filtresActifs = filtresActifsStore();
+  const statutsSélectionnés = statutsSélectionnésStore();
 
   const chantiersFiltrésSansFiltreAlerte = useMemo(() => {
     let résultat: Chantier[] = chantiers;
@@ -49,16 +51,14 @@ export default function useChantiersFiltrés(chantiers: Chantier[]) {
         filtresActifs.filtresTypologie.some(filtre => chantier[filtre.attribut])
       ));
     }
-    // eslint-disable-next-line unicorn/prefer-ternary
-    if (filtresActifs.filtresStatut.length > 0) {
+
+    if (statutsSélectionnés.length > 0) {
       résultat = résultat.filter(chantier => (
-        filtresActifs.filtresStatut.some(filtre => chantier.statut === filtre.id)
-      ));
-    } else {
-      résultat = résultat.filter(chantier => chantier.statut === 'PUBLIE');
+        statutsSélectionnés.includes(chantier.statut)
+      ));      
     }
     return résultat;
-  }, [chantiers, filtresActifs, session?.profil, territoireSélectionné]);
+  }, [chantiers, filtresActifs, session?.profil, territoireSélectionné, statutsSélectionnés]);
 
   const chantiersFiltrés = useMemo(() => {
     let résultat: Chantier[] = chantiersFiltrésSansFiltreAlerte;

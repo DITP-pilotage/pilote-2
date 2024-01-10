@@ -2,16 +2,20 @@ import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
 import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import useTableauChantiers from '@/components/PageAccueil/PageChantiers/TableauChantiers/useTableauChantiers';
 import TableauChantiersActionsDeTri from '@/components/PageAccueil/PageChantiers/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
 import TableauRéformesEnTête from '@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête';
+import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatuts/SélecteurVueStatuts';
 import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersStyled from './TableauChantiers.styled';
 import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
 
 export default function TableauChantiers({ données, ministèresDisponibles, setNombreChantiersDansLeTableau }: TableauChantiersProps) {
+  const { data: session } = useSession();
+  
   const {
     tableau,
     changementDeLaRechercheCallback,
@@ -37,6 +41,12 @@ export default function TableauChantiers({ données, ministèresDisponibles, set
 
   return (
     <TableauChantiersStyled className='fr-table fr-m-0 fr-p-0'>
+      {
+        !!session?.profilAAccèsAuxChantiersBrouillons && 
+        <div className='fr-grid-row fr-mt-2w'>
+          <SélecteurVueStatuts />
+        </div>
+      }
       <div className='tableau-actions fr-mb-3v'>
         <div className='tableau-actions-gauche'>
           <div className='barre-de-recherche'>

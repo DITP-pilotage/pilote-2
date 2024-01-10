@@ -52,7 +52,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@faker-js/faker": "^7.6.0",
-    "@gouvfr/dsfr": "^1.9.0",
+    "@gouvfr/dsfr": "^1.11.0",
     "@hookform/resolvers": "^3.0.1",
     "@keycloak/keycloak-admin-client": "^21.0.2",
     "@next/env": "^13.3.4",
