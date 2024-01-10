@@ -3,6 +3,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import Avancements from '@/components/_commons/Avancements/Avancements';
@@ -22,12 +23,15 @@ import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
 import RemontéeAlerte from '@/components/_commons/RemontéeAlerte/RemontéeAlerte';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
+import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatuts/SélecteurVueStatuts';
 import PageChantiersStyled from './PageChantiers.styled';
 import PageChantiersProps from './PageChantiers.interface';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
 
 export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {
+  const { data: session } = useSession();
+
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const [nombreChantiersDansLeTableau, setNombreChantiersDansLeTableau] = useState<number>();
   
@@ -193,6 +197,12 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                   { INFOBULLE_CONTENUS.chantiers.listeDesChantiers }
                 </Infobulle>
               </TitreInfobulleConteneur>
+              {
+                !!session?.profilAAccèsAuxChantiersBrouillons && 
+                <div className='fr-grid-row fr-mt-2w'>
+                  <SélecteurVueStatuts />
+                </div>
+              }
               <TableauChantiers
                 données={donnéesTableauChantiers}
                 ministèresDisponibles={ministères}

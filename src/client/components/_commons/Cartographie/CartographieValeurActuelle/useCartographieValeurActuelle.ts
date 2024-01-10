@@ -29,6 +29,9 @@ function déterminerRemplissage(valeur: number | null, valeurMin: number | null,
   if (valeur === null || valeurMin === null || valeurMax === null)
     return REMPLISSAGE_PAR_DÉFAUT;
 
+  if (valeurMin === valeurMax)
+    return COULEUR_DÉPART;
+
   const pourcentageInterpolation = 100 * (valeur - valeurMin) / (valeurMax - valeurMin);
   return interpolerCouleurs(COULEUR_DÉPART, COULEUR_ARRIVÉE, pourcentageInterpolation);
 }
