@@ -8,7 +8,6 @@ import useSynthèseDesRésultats from '@/components/_commons/SynthèseDesRésult
 import Alerte from '@/components/_commons/Alerte/Alerte';
 import SynthèseDesRésultatsAffichage from '@/components/_commons/SynthèseDesRésultats/Affichage/Affichage';
 import SynthèseDesRésultatsFormulaire from './Formulaire/Formulaire';
-import BoutonsAffichage from './BoutonsAffichage/BoutonsAffichage';
 
 export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale, rechargerRéforme, réformeId, nomTerritoire, modeÉcriture = false, estInteractif = true }: SynthèseDesRésultatsProps) {  
   const {
@@ -18,10 +17,6 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
     synthèseDesRésultatsCréée,
     activerLeModeÉdition,
     désactiverLeModeÉdition,
-    déplierLeContenu,
-    replierLeContenu,
-    afficherContenuComplet,
-    afficherBoutonsAffichage,
   } = useSynthèseDesRésultats(synthèseDesRésultatsInitiale, rechargerRéforme);
 
   return (
@@ -61,7 +56,6 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
                   </div>
                   <div className='synthèse-affichage'>
                     <SynthèseDesRésultatsAffichage 
-                      afficherContenuComplet={afficherContenuComplet}
                       synthèseDesRésultats={synthèseDesRésultats} 
                     />
                   </div>
@@ -69,15 +63,6 @@ export default function SynthèseDesRésultats({ synthèseDesRésultatsInitiale,
                 {!!estInteractif && 
                 <div className='fr-grid-row fr-grid-row--right'>
                   <div className='fr-col-12 actions fr-mt-1w'>
-                    {
-                      (!!afficherBoutonsAffichage) && 
-                      <BoutonsAffichage 
-                        afficherVoirMoins={afficherContenuComplet}
-                        afficherVoirPlus={!afficherContenuComplet}
-                        déplierLeContenu={déplierLeContenu}
-                        replierLeContenu={replierLeContenu}
-                      />
-                    }
                     {
                       !!synthèseDesRésultats && <SynthèseDesRésultatsHistorique réformeId={réformeId} />
                       }

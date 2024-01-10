@@ -1,12 +1,21 @@
 import { formaterDate } from '@/client/utils/date/date';
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from '@/client/utils/strings';
-import { LIMITE_CARACTÈRES_AFFICHAGE_SYNTHÈSE_DES_RÉSULTATS } from '@/validation/synthèseDesRésultats';
+import BoutonsAffichage from '@/components/_commons/SynthèseDesRésultats/BoutonsAffichage/BoutonsAffichage';
 import SynthèseDesRésultatsAffichageProps from './Affichage.interface';
+import useAffichage from './useAffichage';
 
 export default function SynthèseDesRésultatsAffichage({ 
   synthèseDesRésultats, 
-  afficherContenuComplet = true,
 }: SynthèseDesRésultatsAffichageProps) {
+
+  const {
+    contenuAAfficher, 
+    afficherBoutonsAffichage,
+    afficherContenuComplet,
+    déplierLeContenu,
+    replierLeContenu,    
+  } = useAffichage(synthèseDesRésultats);
+
   if (!synthèseDesRésultats) {
     return (
       <p className='fr-text--sm texte-gris'>
@@ -14,11 +23,6 @@ export default function SynthèseDesRésultatsAffichage({
       </p>
     );
   }
-
-  const contenuAAfficher = 
-    afficherContenuComplet || synthèseDesRésultats.contenu.length <= LIMITE_CARACTÈRES_AFFICHAGE_SYNTHÈSE_DES_RÉSULTATS 
-      ? synthèseDesRésultats.contenu 
-      : synthèseDesRésultats.contenu.slice(0, LIMITE_CARACTÈRES_AFFICHAGE_SYNTHÈSE_DES_RÉSULTATS) + '...';
 
   return (
     <>
@@ -33,6 +37,15 @@ export default function SynthèseDesRésultatsAffichage({
           __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(contenuAAfficher),
         }}
       />
+      {
+        (!!afficherBoutonsAffichage) && 
+        <BoutonsAffichage 
+          afficherVoirMoins={afficherContenuComplet}
+          afficherVoirPlus={!afficherContenuComplet}
+          déplierLeContenu={déplierLeContenu}
+          replierLeContenu={replierLeContenu}
+        />
+      }
     </>
 
   );
