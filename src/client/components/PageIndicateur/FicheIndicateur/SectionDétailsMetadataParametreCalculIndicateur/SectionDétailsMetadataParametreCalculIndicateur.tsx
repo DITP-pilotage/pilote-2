@@ -26,8 +26,10 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
       </Titre>
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.param_vaca_decumul_from.metaPiloteAlias}
+          <div className='fr-text--md bold fr-mb-1v relative flex items-center'>
+            <p className='titre-input-metadata overflow-ellipsis'>
+              {mapInformationMetadataIndicateur.param_vaca_decumul_from.metaPiloteAlias}
+            </p>
             {estEnCoursDeModification ? (
               <Infobulle idHtml='paramVacaDecumulFrom'>
                 {mapInformationMetadataIndicateur.param_vaca_decumul_from.description}

@@ -22,7 +22,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
       </Titre>
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
+          <div className='fr-text--md bold fr-mb-1v relative overflow-ellipsis'>
             {mapInformationMetadataIndicateur.indic_nom_baro.metaPiloteAlias}
             {' '}
             {estEnCoursDeModification ? (

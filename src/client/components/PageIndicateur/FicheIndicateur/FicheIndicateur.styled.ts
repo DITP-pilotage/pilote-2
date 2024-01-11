@@ -1,9 +1,13 @@
 import styled from '@emotion/styled';
 
 const FicheIndicateurStyled = styled.div`
-    h1, h2{
+    h1, h2 {
       color: var(--text-title-blue-france);
     }
+  
+   .titre-input-metadata {
+     max-width: 8rem
+   }
 
     .bouton-retour{
       &::before{

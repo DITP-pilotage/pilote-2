@@ -49,3 +49,9 @@
 .btn-radius {
   border-radius: 0.25rem;
 }
+
+.overflow-ellipsis {
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+  white-space: nowrap;
+}
