@@ -52,8 +52,10 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
 
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w fr-pl-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.param_vaca_partition_date.metaPiloteAlias}
+          <div className='fr-text--md bold fr-mb-1v relative flex items-center'>
+            <p className='titre-input-metadata overflow-ellipsis'>
+              {mapInformationMetadataIndicateur.param_vaca_partition_date.metaPiloteAlias}
+            </p>
             {estEnCoursDeModification ? (
               <Infobulle idHtml='paramVacaPartitionDate'>
                 {mapInformationMetadataIndicateur.param_vaca_partition_date.description}
@@ -75,8 +77,10 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
             )}
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.param_vaca_op.metaPiloteAlias}
+          <div className='fr-text--md bold fr-mb-1v relative flex items-center'>
+            <p className='titre-input-metadata overflow-ellipsis'>
+              {mapInformationMetadataIndicateur.param_vaca_op.metaPiloteAlias}
+            </p>
             {estEnCoursDeModification ? (
               <Infobulle idHtml='paramVacaOp'>
                 {mapInformationMetadataIndicateur.param_vaca_op.description}
@@ -103,8 +107,10 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
       </div>
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.param_vacg_decumul_from.metaPiloteAlias}
+          <div className='fr-text--md bold fr-mb-1v relative flex items-center'>
+            <p className='titre-input-metadata overflow-ellipsis'>
+              {mapInformationMetadataIndicateur.param_vacg_decumul_from.metaPiloteAlias}
+            </p>
             {estEnCoursDeModification ? (
               <Infobulle idHtml='paramVacgDecumulFrom'>
                 {mapInformationMetadataIndicateur.param_vacg_decumul_from.description}
@@ -126,8 +132,10 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
             )}
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.param_vacg_partition_date.metaPiloteAlias}
+          <div className='fr-text--md bold fr-mb-1v relative flex items-center'>
+            <p className='titre-input-metadata overflow-ellipsis'>
+              {mapInformationMetadataIndicateur.param_vacg_partition_date.metaPiloteAlias}
+            </p>
             {estEnCoursDeModification ? (
               <Infobulle idHtml='paramVacgPartitionDate'>
                 {mapInformationMetadataIndicateur.param_vacg_partition_date.description}
@@ -149,8 +157,10 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
             )}
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.param_vacg_op.metaPiloteAlias}
+          <div className='fr-text--md bold fr-mb-1v relative flex items-center'>
+            <p className='titre-input-metadata overflow-ellipsis'>
+              {mapInformationMetadataIndicateur.param_vacg_op.metaPiloteAlias}
+            </p>
             {estEnCoursDeModification ? (
               <Infobulle idHtml='paramVacgOp'>
                 {mapInformationMetadataIndicateur.param_vacg_op.description}
@@ -177,8 +187,10 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
       </div>
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.tendance.metaPiloteAlias}
+          <div className='fr-text--md bold fr-mb-1v relative flex items-center'>
+            <p className='titre-input-metadata overflow-ellipsis'>
+              {mapInformationMetadataIndicateur.tendance.metaPiloteAlias}
+            </p>
             {estEnCoursDeModification ? (
               <Infobulle idHtml='tendance'>
                 {mapInformationMetadataIndicateur.tendance.description}

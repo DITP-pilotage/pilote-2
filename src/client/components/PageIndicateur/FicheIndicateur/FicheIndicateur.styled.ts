@@ -6,8 +6,17 @@ const FicheIndicateurStyled = styled.div`
     }
   
    .titre-input-metadata {
-     max-width: 8rem
+     margin: 0;
    }
+
+  .infobulle-bouton {
+    min-height: 0;
+    padding: 0;
+    
+    &::before {
+      min-height: 0;
+    }
+  }
 
     .bouton-retour{
       &::before{
