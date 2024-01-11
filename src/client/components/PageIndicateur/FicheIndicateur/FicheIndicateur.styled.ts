@@ -1,9 +1,22 @@
 import styled from '@emotion/styled';
 
 const FicheIndicateurStyled = styled.div`
-    h1, h2{
+    h1, h2 {
       color: var(--text-title-blue-france);
     }
+  
+   .titre-input-metadata {
+     margin: 0;
+   }
+
+  .infobulle-bouton {
+    min-height: 0;
+    padding: 0;
+    
+    &::before {
+      min-height: 0;
+    }
+  }
 
     .bouton-retour{
       &::before{
