@@ -67,8 +67,7 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .nullable(),
   indicUnite: z
     .string()
-    .max(500, 'La limite maximale de 500 caractères a été dépassée')
-    .min(1, 'Ce champ ne peut pas être vide'),
+    .max(500, 'La limite maximale de 500 caractères a été dépassée'),
   indicHiddenPilote: z
     .string(),
   indicSchema: z
