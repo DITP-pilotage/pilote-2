@@ -95,6 +95,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
             <IndicateurÉvolution 
               dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
               indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
+              source={indicateur.source}
             />
           </>
         }
