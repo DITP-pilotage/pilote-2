@@ -23,7 +23,7 @@
                                     <strong>Votre identifiant ou votre mot de passe est erroné</strong>
                                   </li>
                                   <li>
-                                    <strong>Vous compte n’existe pas</strong> : faites-en la demande en cliquant sur le bouton “Demander à créer mon compte”
+                                    <strong>Vous compte n’existe pas</strong> : faites-en la demande en envoyant un courrier électronique à l’adresse <a href="mailto:support.ditp@modernisation.gouv.fr">support.ditp@modernisation.gouv.fr</a>
                                   </li>
                                   <li>
                                     <strong>Votre demande de compte est encore en attente de validation</strong> : attendez qu’elle soit validée par votre référent, et vous recevrez un courriel intitulé “création de compte Pilote” de confirmation vous invitant à créer votre mot de passe
