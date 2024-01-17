@@ -154,6 +154,7 @@ models:
       Table des chantiers construite par la datafactory dbt. Version reconstruite de zero. Règles:
 
       - certaines tables sont directement reprises du travail des prestataires: `synthese_triee_par_date`,`chantier_est_barometre`,`indicateurs_zones`,`indicateurs_zones_applicables`,`chantiers_zones_applicables`,
+      - un chantier C est applicable sur une zone Z si *au moins un indicateur* du chantier C est applicable sur la zone Z
     config:
       docs:
         node_color: "#cd7f32"
