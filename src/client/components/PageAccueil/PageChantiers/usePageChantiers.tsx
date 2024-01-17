@@ -7,6 +7,10 @@ export default function usePageChantiers(chantiers: Chantier[]) {
   const { récupérerNombreFiltresActifs } = actionsFiltresStore();
   const { chantiersFiltrés, chantiersFiltrésSansFiltreAlerte } = useChantiersFiltrés(chantiers);
 
+  const aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon = (chantierIds: string[]) => {
+    return chantiers.some(c => c.statut === 'BROUILLON' && chantierIds.includes(c.id));
+  };
+
   const {
     avancementsAgrégés,
     répartitionMétéos,
@@ -23,5 +27,6 @@ export default function usePageChantiers(chantiers: Chantier[]) {
     donnéesCartographieAvancement: avancementsGlobauxTerritoriauxMoyens,
     donnéesTableauChantiers: chantiersVueDEnsemble,
     remontéesAlertes,
+    aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon,
   };
 }

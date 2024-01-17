@@ -44,6 +44,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
     donnéesCartographieAvancement,
     donnéesTableauChantiers,
     remontéesAlertes,
+    aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon,
   } = usePageChantiers(chantiers);
 
   return (
@@ -198,7 +199,10 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                 </Infobulle>
               </TitreInfobulleConteneur>
               {
-                !!session?.profilAAccèsAuxChantiersBrouillons && 
+                (
+                  !!session?.profilAAccèsAuxChantiersBrouillons && 
+                  aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon(session.habilitations.lecture.chantiers)
+                ) &&
                 <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
                   <SélecteurVueStatuts />
                 </div>
