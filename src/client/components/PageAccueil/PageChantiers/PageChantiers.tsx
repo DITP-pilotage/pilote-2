@@ -199,7 +199,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
               </TitreInfobulleConteneur>
               {
                 !!session?.profilAAccèsAuxChantiersBrouillons && 
-                <div className='fr-grid-row fr-mt-2w'>
+                <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
                   <SélecteurVueStatuts />
                 </div>
               }
