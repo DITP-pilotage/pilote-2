@@ -11,6 +11,7 @@ const SélecteurRTypeDeéformeStyled = styled.div`
 
   button {
     width: 50%;
+    font-size: 0.9rem;
     border-radius: 0.25rem;
 
     &.sélectionné {

@@ -12,6 +12,7 @@ const SélecteurMailleStyled = styled.div`
   button {
     width: 50%;
     min-height: 2.625rem;
+    font-size: 0.9rem;
     border-radius: 0.25rem;
 
     &.sélectionné {
