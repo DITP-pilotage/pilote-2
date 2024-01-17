@@ -11,8 +11,8 @@ const SélecteurRTypeDeéformeStyled = styled.div`
 
   button {
     width: 50%;
-    border-radius: 0.25rem;
     font-size: 0.9rem;
+    border-radius: 0.25rem;
 
     &.sélectionné {
       color: var(--text-inverted-grey);

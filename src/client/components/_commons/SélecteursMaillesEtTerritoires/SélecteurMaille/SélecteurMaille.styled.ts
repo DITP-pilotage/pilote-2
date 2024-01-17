@@ -12,8 +12,8 @@ const SélecteurMailleStyled = styled.div`
   button {
     width: 50%;
     min-height: 2.625rem;
-    border-radius: 0.25rem;
     font-size: 0.9rem;
+    border-radius: 0.25rem;
 
     &.sélectionné {
       color: var(--text-inverted-grey);
