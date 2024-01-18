@@ -61,12 +61,12 @@ export default function Navigation() {
       accessible: true,
       target: '_blank',
     },
-    {
-      nom: 'Gestion des contenus',
-      lien: '/admin/gestion-contenus',
-      accessible: session?.profil === 'DITP_ADMIN',
-      target: '_self',
-    },
+    // {
+    //   nom: 'Gestion des contenus',
+    //   lien: '/admin/gestion-contenus',
+    //   accessible: session?.profil === 'DITP_ADMIN',
+    //   target: '_self',
+    // },
   ];
 
   return (
