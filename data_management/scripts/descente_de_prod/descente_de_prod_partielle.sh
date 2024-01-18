@@ -2,6 +2,7 @@ DUMP_DEST=out/dump_prod_partielle.dump
 
 export $(cat .env | xargs)
 
+psql -h 127.0.0.1 -p 10000 -U prod_pilote_7712 prod_pilote_7712
 # [export]
 ## [export.dump] pg_dump data of specific tables
 echo ">> Dumping data..."
@@ -14,8 +15,10 @@ time pg_dump -d $CONN_STR_PROD --verbose \
     --table public.synthese_des_resultats \
     --table public.utilisateur \
     --table raw_data.mesure_indicateur \
+    --table raw_data.commentaires \
     --table public.mesure_indicateur_temporaire \
     --table public.erreur_validation_fichier \
+    --table public.objectif \
     --file=$DUMP_DEST
 
 # [import]
@@ -30,7 +33,9 @@ TRUNCATE TABLE
     public.synthese_des_resultats, 
     public.utilisateur, 
     raw_data.mesure_indicateur, 
+    raw_data.commentaires, 
     public.mesure_indicateur_temporaire, 
+    public.objectif, 
     public.erreur_validation_fichier;"
 
 echo ">> pg_restore dumped file..."
