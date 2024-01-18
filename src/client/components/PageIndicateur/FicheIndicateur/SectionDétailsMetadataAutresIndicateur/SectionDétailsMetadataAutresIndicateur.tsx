@@ -338,25 +338,24 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
         </div>
         <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
           <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.indic_territorialise.metaPiloteAlias}
+            {mapInformationMetadataIndicateur.commentaire.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml='indicTerritorialise'>
-                {mapInformationMetadataIndicateur.indic_territorialise.description}
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.commentaire.description}
               </Infobulle>
             ) : null}
           </div>
           {estEnCoursDeModification
-            ? <Sélecteur
-                erreur={errors.indicTerritorialise}
-                htmlName='indicTerritorialise'
-                options={[{ libellé: 'Oui', valeur: 'true' }, { libellé: 'Non', valeur: 'false' }]}
-                register={register('indicTerritorialise')}
-                texteFantôme='Sélectionner un profil'
-                valeurSélectionnée={`${getValues('indicTerritorialise')}`}
+            ? <Input
+                erreur={errors.commentaire}
+                htmlName='commentaire'
+                libellé='commentaire'
+                register={register('commentaire', { value: indicateur?.commentaire })}
+                type='text'
               />
             : (
               <span>
-                {indicateur.indicTerritorialise ? 'Oui' : 'Non'}
+                {indicateur.commentaire || 'Non renseigné'}
               </span>
             )}
 
@@ -633,30 +632,6 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
             : (
               <span>
                 {indicateur.contactTechniqueEmail || 'Non renseigné'}
-              </span>
-            )}
-
-        </div>
-        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.commentaire.metaPiloteAlias}
-            {estEnCoursDeModification ? (
-              <Infobulle idHtml='reformePrioritaire'>
-                {mapInformationMetadataIndicateur.commentaire.description}
-              </Infobulle>
-            ) : null}
-          </div>
-          {estEnCoursDeModification
-            ? <Input
-                erreur={errors.commentaire}
-                htmlName='commentaire'
-                libellé='commentaire'
-                register={register('commentaire', { value: indicateur?.commentaire })}
-                type='text'
-              />
-            : (
-              <span>
-                {indicateur.commentaire || 'Non renseigné'}
               </span>
             )}
 

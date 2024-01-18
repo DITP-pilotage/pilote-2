@@ -197,6 +197,33 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
             )}
         </div>
       </div>
+      <div className='fr-grid-row fr-mb-2w'>
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.indic_territorialise.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='indicTerritorialise'>
+                {mapInformationMetadataIndicateur.indic_territorialise.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Sélecteur
+                erreur={errors.indicTerritorialise}
+                htmlName='indicTerritorialise'
+                options={[{ libellé: 'Oui', valeur: 'true' }, { libellé: 'Non', valeur: 'false' }]}
+                register={register('indicTerritorialise')}
+                texteFantôme='Sélectionner un profil'
+                valeurSélectionnée={`${getValues('indicTerritorialise')}`}
+              />
+            : (
+              <span>
+                {indicateur.indicTerritorialise ? 'Oui' : 'Non'}
+              </span>
+            )}
+
+        </div>
+      </div>
       <hr className='fr-hr fr-mt-3w' />
     </SectionDétailsMetadataIndicateurStyled>
   );

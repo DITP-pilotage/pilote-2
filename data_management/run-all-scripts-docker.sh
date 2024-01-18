@@ -1,3 +1,5 @@
+rm -rf input_data/private_data/PPG_metadata
+
 docker-compose run pilote_scripts scripts/0_install_dbt_deps.sh
 docker-compose run pilote_scripts scripts/0_prisma_migrate.sh
 docker-compose run pilote_scripts scripts/1_dump_dfakto.sh
