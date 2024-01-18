@@ -59,6 +59,24 @@ export interface RawMetadataParametrageIndicateurModel {
   indic_schema: string,
   zg_applicable: string,
   ch_nom: string,
+  reforme_prioritaire: string,
+  projet_annuel_perf: string,
+  detail_projet_annuel_perf: string,
+  periodicite: string,
+  delai_disponibilite: number,
+  indic_territorialise: string,
+  frequence_territoriale: string,
+  mailles: string,
+  admin_source: string,
+  methode_collecte: string,
+  si_source: string,
+  donnee_ouverte: string,
+  modalites_donnee_ouverte: string,
+  resp_donnees: string,
+  resp_donnees_email: string,
+  contact_technique: string,
+  contact_technique_email: string,
+  commentaires: string,
 }
 
 const makeStrSafer = (str: string): string => {
@@ -114,6 +132,24 @@ function convertirEnMetadataParametrageIndicateur(rawMetadataParametrageIndicate
     indicSchema: rawMetadataParametrageIndicateur.indic_schema,
     zgApplicable: rawMetadataParametrageIndicateur.zg_applicable,
     chantierNom: rawMetadataParametrageIndicateur.ch_nom,
+    reformePrioritaire: rawMetadataParametrageIndicateur.reforme_prioritaire,
+    projetAnnuelPerf: rawMetadataParametrageIndicateur.projet_annuel_perf,
+    detailProjetAnnuelPerf: rawMetadataParametrageIndicateur.detail_projet_annuel_perf,
+    periodicite: rawMetadataParametrageIndicateur.periodicite,
+    delaiDisponibilite: rawMetadataParametrageIndicateur.delai_disponibilite,
+    indicTerritorialise: rawMetadataParametrageIndicateur.indic_territorialise,
+    frequenceTerritoriale: rawMetadataParametrageIndicateur.frequence_territoriale,
+    mailles: rawMetadataParametrageIndicateur.mailles,
+    adminSource: rawMetadataParametrageIndicateur.admin_source,
+    methodeCollecte: rawMetadataParametrageIndicateur.methode_collecte,
+    siSource: rawMetadataParametrageIndicateur.si_source,
+    donneeOuverte: rawMetadataParametrageIndicateur.donnee_ouverte,
+    modalitesDonneeOuverte: rawMetadataParametrageIndicateur.modalites_donnee_ouverte,
+    respDonnees: rawMetadataParametrageIndicateur.resp_donnees,
+    respDonneesEmail: rawMetadataParametrageIndicateur.resp_donnees_email,
+    contactTechnique: rawMetadataParametrageIndicateur.contact_technique,
+    contactTechniqueEmail: rawMetadataParametrageIndicateur.contact_technique_email,
+    commentaires: rawMetadataParametrageIndicateur.commentaires,
   });
 }
 export class PrismaMetadataParametrageIndicateurRepository implements MetadataParametrageIndicateurRepository {
@@ -123,6 +159,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
     try {
       let query = 'SELECT mi.*, mpi.*, mc.ch_nom FROM raw_data.metadata_indicateurs_hidden mi ' +
                 'INNER JOIN raw_data.metadata_parametrage_indicateurs mpi ON mpi.indic_id = mi.indic_id ' +
+                'INNER JOIN raw_data.metadata_indicateurs_complementaire mic ON mic.indic_id = mi.indic_id ' +
                 'LEFT JOIN raw_data.metadata_chantiers mc on mi.indic_parent_ch = mc.chantier_id';
       if (chantierIds.length > 0) {
         const listeStringChantierId = chantierIds.map(i => `'${i}'`).join(',');
@@ -148,6 +185,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
       let query = `SELECT *
                          FROM raw_data.metadata_indicateurs_hidden mi
                                   INNER JOIN raw_data.metadata_parametrage_indicateurs mpi ON mpi.indic_id = mi.indic_id
+                                  INNER JOIN raw_data.metadata_indicateurs_complementaire mic ON mic.indic_id = mi.indic_id
                                   LEFT JOIN raw_data.metadata_chantiers mc ON mi.indic_parent_ch = mc.chantier_id
                          WHERE mpi.indic_id LIKE '${indicId}'
             `;
@@ -216,10 +254,31 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                              tendance                  = '${makeStrSafer(inputs.tendance)}'
                                          WHERE indic_id = '${inputs.indicId}'`;
 
+    const queryMetadataIndicateurComplementaire = `UPDATE raw_data.metadata_parametrage_indicateurs
+                                         SET reformePrioritaire              = '${makeStrSafer(inputs.reformePrioritaire)}',
+                                             projetAnnuelPerf                = '${makeStrSafer(inputs.projetAnnuelPerf)}',
+                                             detailProjetAnnuelPerf              = '${makeStrSafer(inputs.detailProjetAnnuelPerf)}',
+                                             periodicite                = '${makeStrSafer(inputs.periodicite)}',
+                                             delaiDisponibilite              = '${inputs.delaiDisponibilite}',
+                                             indicTerritorialise                = '${makeStrSafer(inputs.indicTerritorialise)}',
+                                             frequenceTerritoriale               = '${makeStrSafer(inputs.frequenceTerritoriale)}',
+                                             mailles                 = '${makeStrSafer(inputs.mailles)}',
+                                             adminSource               = '${makeStrSafer(inputs.adminSource)}',
+                                             methodeCollecte                 = '${makeStrSafer(inputs.methodeCollecte)}',
+                                             siSource               = '${makeStrSafer(inputs.siSource)}',
+                                             donneeOuverte                 = '${makeStrSafer(inputs.donneeOuverte)}',
+                                             modalitesDonneeOuverte               = '${makeStrSafer(inputs.modalitesDonneeOuverte)}',
+                                             respDonnees                 = '${makeStrSafer(inputs.respDonnees)}',
+                                             respDonneesEmail               = '${makeStrSafer(inputs.respDonneesEmail)}',
+                                             contactTechnique                 = '${makeStrSafer(inputs.contactTechnique)}',
+                                             contactTechniqueEmail               = '${makeStrSafer(inputs.contactTechniqueEmail)}',
+                                             commentaires                 = '${makeStrSafer(inputs.commentaires)}'
+                                         WHERE indic_id = '${inputs.indicId}'`;
 
     await this.prismaClient.$transaction([
       this.prismaClient.$queryRaw`${Prisma.raw(queryIndicateur)}`,
       this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateur)}`,
+      this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaire)}`,
     ]);
 
     return this.recupererMetadataParametrageIndicateurParIndicId(inputs.indicId);
@@ -322,11 +381,49 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  '${inputs.poidsPourcentReg}', 
                                                  '${inputs.poidsPourcentNat}',
                                                  '${makeStrSafer(inputs.tendance)}')`;
+    const queryMetadataIndicateurComplementaire = `INSERT INTO raw_data.metadata_parametrage_indicateurs (reformePrioritaire,
+                                                                                                projetAnnuelPerf,
+                                                                                                detailProjetAnnuelPerf,
+                                                                                                periodicite,
+                                                                                                delaiDisponibilite,
+                                                                                                indicTerritorialise,
+                                                                                                frequenceTerritoriale,
+                                                                                                mailles,
+                                                                                                adminSource,
+                                                                                                methodeCollecte,
+                                                                                                siSource,
+                                                                                                donneeOuverte,
+                                                                                                modalitesDonneeOuverte,
+                                                                                                respDonnees,
+                                                                                                respDonneesEmail,
+                                                                                                contactTechnique,
+                                                                                                contactTechniqueEmail,
+                                                                                                commentaires)
+                                         VALUES ('${inputs.indicId}',
+                                                 '${makeStrSafer(inputs.reformePrioritaire)}', 
+                                                 '${makeStrSafer(inputs.projetAnnuelPerf)}', 
+                                                 '${makeStrSafer(inputs.detailProjetAnnuelPerf)}',
+                                                 '${makeStrSafer(inputs.periodicite)}', 
+                                                 '${inputs.delaiDisponibilite}', 
+                                                 '${makeStrSafer(inputs.indicTerritorialise)}',
+                                                 '${makeStrSafer(inputs.frequenceTerritoriale)}', 
+                                                 '${makeStrSafer(inputs.mailles)}',
+                                                 '${makeStrSafer(inputs.adminSource)}', 
+                                                 '${makeStrSafer(inputs.methodeCollecte)}',
+                                                 '${makeStrSafer(inputs.siSource)}', 
+                                                 '${makeStrSafer(inputs.donneeOuverte)}',
+                                                 '${makeStrSafer(inputs.modalitesDonneeOuverte)}', 
+                                                 '${makeStrSafer(inputs.respDonnees)}',
+                                                 '${makeStrSafer(inputs.respDonneesEmail)}', 
+                                                 '${makeStrSafer(inputs.contactTechnique)}',
+                                                 '${makeStrSafer(inputs.contactTechniqueEmail)}', 
+                                                 '${makeStrSafer(inputs.commentaires)}')`;
 
 
     await this.prismaClient.$transaction([
       this.prismaClient.$queryRaw`${Prisma.raw(queryIndicateur)}`,
       this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateur)}`,
+      this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaire)}`,
     ]);
 
     return this.recupererMetadataParametrageIndicateurParIndicId(inputs.indicId);

@@ -142,6 +142,42 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .refine((value) => /^\d+$/.test(value), 'Veuillez saisir un nombre.'),
   tendance: z
     .string(),
+  reformePrioritaire: z
+    .string(),
+  projetAnnuelPerf: z
+    .string(),
+  detailProjetAnnuelPerf: z
+    .string(),
+  periodicite: z
+    .string(),
+  delaiDisponibilite: z
+    .string(),
+  indicTerritorialise: z
+    .string(),
+  frequenceTerritoriale: z
+    .string(),
+  mailles: z
+    .string(),
+  adminSource: z
+    .string(),
+  methodeCollecte: z
+    .string(),
+  siSource: z
+    .string(),
+  donneeOuverte: z
+    .string(),
+  modalitesDonneeOuverte: z
+    .string(),
+  respDonnees: z
+    .string(),
+  respDonneesEmail: z
+    .string(),
+  contactTechnique: z
+    .string(),
+  contactTechniqueEmail: z
+    .string(),
+  commentaires: z
+    .string(),
 });
 
 export const validationMetadataIndicateurContexte = z.object({

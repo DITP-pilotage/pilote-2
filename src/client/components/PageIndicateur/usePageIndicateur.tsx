@@ -58,6 +58,7 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
         poidsPourcentNat: `${indicateur.poidsPourcentNat}`,
         poidsPourcentReg: `${indicateur.poidsPourcentReg}`,
         poidsPourcentDept: `${indicateur.poidsPourcentDept}`,
+        delaiDisponibilite: `${indicateur.delaiDisponibilite}`,
         indicParentIndic: indicateur.indicParentIndic === null ? 'Aucun indicateur selectionné' : indicateur.indicParentIndic,
       },
     },

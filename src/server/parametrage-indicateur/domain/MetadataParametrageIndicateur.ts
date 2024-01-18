@@ -46,6 +46,24 @@ interface InputMetadataParametrageIndicateur {
   indicSchema: string;
   zgApplicable: string;
   chantierNom: string;
+  reformePrioritaire: string;
+  projetAnnuelPerf: string;
+  detailProjetAnnuelPerf: string;
+  periodicite: string;
+  delaiDisponibilite: number;
+  indicTerritorialise: string;
+  frequenceTerritoriale: string;
+  mailles: string;
+  adminSource: string;
+  methodeCollecte: string;
+  siSource: string;
+  donneeOuverte: string;
+  modalitesDonneeOuverte: string;
+  respDonnees: string;
+  respDonneesEmail: string;
+  contactTechnique: string;
+  contactTechniqueEmail: string;
+  commentaires: string;
 }
 
 export class MetadataParametrageIndicateur {
@@ -143,6 +161,41 @@ export class MetadataParametrageIndicateur {
 
   private readonly _chantierNom: string;
 
+  private readonly _reformePrioritaire: string;
+
+  private readonly _projetAnnuelPerf: string;
+
+  private readonly _detailProjetAnnuelPerf: string;
+
+  private readonly _periodicite: string;
+
+  private readonly _delaiDisponibilite: number;
+
+  private readonly _indicTerritorialise: string;
+
+  private readonly _frequenceTerritoriale: string;
+
+  private readonly _mailles: string;
+
+  private readonly _adminSource: string;
+
+  private readonly _methodeCollecte: string;
+
+  private readonly _siSource: string;
+
+  private readonly _donneeOuverte: string;
+
+  private readonly _modalitesDonneeOuverte: string;
+
+  private readonly _respDonnees: string;
+
+  private readonly _respDonneesEmail: string;
+
+  private readonly _contactTechnique: string;
+
+  private readonly _contactTechniqueEmail: string;
+
+  private readonly _commentaires: string;
 
   private constructor({
     indicId,
@@ -192,6 +245,24 @@ export class MetadataParametrageIndicateur {
     indicSchema,
     zgApplicable,
     chantierNom,
+    reformePrioritaire,
+    projetAnnuelPerf,
+    detailProjetAnnuelPerf,
+    periodicite,
+    delaiDisponibilite,
+    indicTerritorialise,
+    frequenceTerritoriale,
+    mailles,
+    adminSource,
+    methodeCollecte,
+    siSource,
+    donneeOuverte,
+    modalitesDonneeOuverte,
+    respDonnees,
+    respDonneesEmail,
+    contactTechnique,
+    contactTechniqueEmail,
+    commentaires,
   }: InputMetadataParametrageIndicateur) {
     this._indicId = indicId;
     this._viDeptFrom = viDeptFrom;
@@ -240,6 +311,24 @@ export class MetadataParametrageIndicateur {
     this._indicSchema = indicSchema;
     this._zgApplicable = zgApplicable;
     this._chantierNom = chantierNom;
+    this._reformePrioritaire = reformePrioritaire;
+    this._projetAnnuelPerf = projetAnnuelPerf;
+    this._detailProjetAnnuelPerf = detailProjetAnnuelPerf;
+    this._periodicite = periodicite;
+    this._delaiDisponibilite = delaiDisponibilite;
+    this._indicTerritorialise = indicTerritorialise;
+    this._frequenceTerritoriale = frequenceTerritoriale;
+    this._mailles = mailles;
+    this._adminSource = adminSource;
+    this._methodeCollecte = methodeCollecte;
+    this._siSource = siSource;
+    this._donneeOuverte = donneeOuverte;
+    this._modalitesDonneeOuverte = modalitesDonneeOuverte;
+    this._respDonnees = respDonnees;
+    this._respDonneesEmail = respDonneesEmail;
+    this._contactTechnique = contactTechnique;
+    this._contactTechniqueEmail = contactTechniqueEmail;
+    this._commentaires = commentaires;
   }
 
   get indicId(): string {
@@ -430,6 +519,78 @@ export class MetadataParametrageIndicateur {
     return this._chantierNom;
   }
 
+  get reformePrioritaire(): string {
+    return this._reformePrioritaire;
+  }
+
+  get projetAnnuelPerf(): string {
+    return this._projetAnnuelPerf;
+  }
+
+  get detailProjetAnnuelPerf(): string {
+    return this._detailProjetAnnuelPerf;
+  }
+
+  get periodicite(): string {
+    return this._periodicite;
+  }
+
+  get delaiDisponibilite(): number {
+    return this._delaiDisponibilite;
+  }
+
+  get indicTerritorialise(): string {
+    return this._indicTerritorialise;
+  }
+
+  get frequenceTerritoriale(): string {
+    return this._frequenceTerritoriale;
+  }
+
+  get mailles(): string {
+    return this._mailles;
+  }
+
+  get adminSource(): string {
+    return this._adminSource;
+  }
+
+  get methodeCollecte(): string {
+    return this._methodeCollecte;
+  }
+
+  get siSource(): string {
+    return this._siSource;
+  }
+
+  get donneeOuverte(): string {
+    return this._donneeOuverte;
+  }
+
+  get modalitesDonneeOuverte(): string {
+    return this._modalitesDonneeOuverte;
+  }
+
+  get respDonnees(): string {
+    return this._respDonnees;
+  }
+
+  get respDonneesEmail(): string {
+    return this._respDonneesEmail;
+  }
+
+  get contactTechnique(): string {
+    return this._contactTechnique;
+  }
+
+  get contactTechniqueEmail(): string {
+    return this._contactTechniqueEmail;
+  }
+
+  get commentaires(): string {
+    return this._commentaires;
+  }
+
   static creerMetadataParametrageIndicateur({
     indicId,
     viDeptFrom,
@@ -478,6 +639,24 @@ export class MetadataParametrageIndicateur {
     indicSchema,
     zgApplicable,
     chantierNom,
+    reformePrioritaire,
+    projetAnnuelPerf,
+    detailProjetAnnuelPerf,
+    periodicite,
+    delaiDisponibilite,
+    indicTerritorialise,
+    frequenceTerritoriale,
+    mailles,
+    adminSource,
+    methodeCollecte,
+    siSource,
+    donneeOuverte,
+    modalitesDonneeOuverte,
+    respDonnees,
+    respDonneesEmail,
+    contactTechnique,
+    contactTechniqueEmail,
+    commentaires,
   }: InputMetadataParametrageIndicateur): MetadataParametrageIndicateur {
     return new MetadataParametrageIndicateur({
       indicId,
@@ -527,6 +706,24 @@ export class MetadataParametrageIndicateur {
       indicSchema,
       zgApplicable,
       chantierNom,
+      reformePrioritaire,
+      projetAnnuelPerf,
+      detailProjetAnnuelPerf,
+      periodicite,
+      delaiDisponibilite,
+      indicTerritorialise,
+      frequenceTerritoriale,
+      mailles,
+      adminSource,
+      methodeCollecte,
+      siSource,
+      donneeOuverte,
+      modalitesDonneeOuverte,
+      respDonnees,
+      respDonneesEmail,
+      contactTechnique,
+      contactTechniqueEmail,
+      commentaires,
     });
   }
 }

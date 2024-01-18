@@ -48,6 +48,23 @@ export interface MetadataParametrageIndicateurContrat {
   indicSchema: string;
   zgApplicable: string;
   chantierNom: string;
+  reformePrioritaire: string;
+  projetAnnuelPerf: string;
+  detailProjetAnnuelPerf: string;
+  periodicite: string;
+  delaiDisponibilite: number;
+  indicTerritorialise: string;
+  frequenceTerritoriale: string;
+  mailles: string;
+  adminSource: string;
+  methodeCollecte: string;
+  siSource: string;
+  donneeOuverte: string;
+  modalitesDonneeOuverte: string;
+  respDonnees: string;
+  respDonneesEmail: string;
+  contactTechnique: string;
+  contactTechniqueEmail: string;
 }
 
 export const presenterEnMetadataParametrageIndicateurContrat = (metadataParametrageIndicateur: MetadataParametrageIndicateur): MetadataParametrageIndicateurContrat => ({
@@ -98,4 +115,21 @@ export const presenterEnMetadataParametrageIndicateurContrat = (metadataParametr
   indicSchema: metadataParametrageIndicateur.indicSchema,
   zgApplicable: metadataParametrageIndicateur.zgApplicable,
   chantierNom: metadataParametrageIndicateur.chantierNom,
+  reformePrioritaire: metadataParametrageIndicateur.reformePrioritaire,
+  projetAnnuelPerf: metadataParametrageIndicateur.projetAnnuelPerf,
+  detailProjetAnnuelPerf: metadataParametrageIndicateur.detailProjetAnnuelPerf,
+  periodicite: metadataParametrageIndicateur.periodicite,
+  delaiDisponibilite: metadataParametrageIndicateur.delaiDisponibilite,
+  indicTerritorialise: metadataParametrageIndicateur.indicTerritorialise,
+  frequenceTerritoriale: metadataParametrageIndicateur.frequenceTerritoriale,
+  mailles: metadataParametrageIndicateur.mailles,
+  adminSource: metadataParametrageIndicateur.adminSource,
+  methodeCollecte: metadataParametrageIndicateur.methodeCollecte,
+  siSource: metadataParametrageIndicateur.siSource,
+  donneeOuverte: metadataParametrageIndicateur.donneeOuverte,
+  modalitesDonneeOuverte: metadataParametrageIndicateur.modalitesDonneeOuverte,
+  respDonnees: metadataParametrageIndicateur.respDonnees,
+  respDonneesEmail: metadataParametrageIndicateur.respDonneesEmail,
+  contactTechnique: metadataParametrageIndicateur.contactTechnique,
+  contactTechniqueEmail: metadataParametrageIndicateur.contactTechniqueEmail,
 });

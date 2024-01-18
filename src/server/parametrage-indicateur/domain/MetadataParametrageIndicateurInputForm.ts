@@ -45,4 +45,22 @@ export interface MetadataParametrageIndicateurForm {
   poidsPourcentReg: number;
   poidsPourcentNat: number;
   tendance: string;
+  reformePrioritaire: string;
+  projetAnnuelPerf: string;
+  detailProjetAnnuelPerf: string;
+  periodicite: string;
+  delaiDisponibilite: number;
+  indicTerritorialise: string;
+  frequenceTerritoriale: string;
+  mailles: string;
+  adminSource: string;
+  methodeCollecte: string;
+  siSource: string;
+  donneeOuverte: string;
+  modalitesDonneeOuverte: string;
+  respDonnees: string;
+  respDonneesEmail: string;
+  contactTechnique: string;
+  contactTechniqueEmail: string;
+  commentaires: string;
 }

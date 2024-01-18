@@ -91,7 +91,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.indicIsBaro ? 'Oui' : 'Non' }
+                {indicateur.indicIsBaro ? 'Oui' : 'Non'}
               </span>
             )}
 
@@ -104,16 +104,16 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
             {mapInformationMetadataIndicateur.indic_is_perseverant.metaPiloteAlias}
           </p>
           {estEnCoursDeModification
-            ?  <Sélecteur
+            ? <Sélecteur
                 erreur={errors.indicIsPerseverant}
                 htmlName='indicIsPerseverant'
                 options={[{ libellé: 'Oui', valeur: 'true' }, { libellé: 'Non', valeur: 'false' }]}
                 register={register('indicIsPerseverant')}
                 valeurSélectionnée={`${getValues('indicIsPerseverant')}`}
-               />
+              />
             : (
               <span>
-                {indicateur.indicIsPerseverant ? 'Oui' : 'Non' }
+                {indicateur.indicIsPerseverant ? 'Oui' : 'Non'}
               </span>
             )}
 
@@ -133,7 +133,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.indicIsPhare ? 'Oui' : 'Non' }
+                {indicateur.indicIsPhare ? 'Oui' : 'Non'}
               </span>
             )}
 
@@ -184,28 +184,456 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
 
         </div>
       </div>
-      <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
-        <div className='fr-text--md bold fr-mb-1v relative'>
-          {mapInformationMetadataIndicateur.indic_methode_calcul.metaPiloteAlias}
-          {estEnCoursDeModification ? (
-            <Infobulle idHtml='indicMethodeCalcul'>
-              {mapInformationMetadataIndicateur.indic_methode_calcul.description}
-            </Infobulle>
-          ) : null}
-        </div>
-        {estEnCoursDeModification
-          ? <TextArea
-              erreur={errors.indicMethodeCalcul}
-              htmlName='indicMethodeCalcul'
-              libellé='indicMethodeCalcul'
-              register={register('indicMethodeCalcul', { value: indicateur?.indicMethodeCalcul })}
-            />
-          : (
-            <span>
-              {indicateur.indicMethodeCalcul || 'Non renseigné'}
-            </span>
-          )}
+      <div className='fr-grid-row fr-mb-2w'>
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.indic_methode_calcul.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='indicMethodeCalcul'>
+                {mapInformationMetadataIndicateur.indic_methode_calcul.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <TextArea
+                erreur={errors.indicMethodeCalcul}
+                htmlName='indicMethodeCalcul'
+                libellé='indicMethodeCalcul'
+                register={register('indicMethodeCalcul', { value: indicateur?.indicMethodeCalcul })}
+              />
+            : (
+              <span>
+                {indicateur.indicMethodeCalcul || 'Non renseigné'}
+              </span>
+            )}
 
+        </div>
+      </div>
+      <div className='fr-grid-row fr-mb-2w'>
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.reforme_prioritaire.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.reforme_prioritaire.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.reformePrioritaire}
+                htmlName='reformePrioritaire'
+                libellé='reformePrioritaire'
+                register={register('reformePrioritaire', { value: indicateur?.reformePrioritaire })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.reformePrioritaire || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.projet_annuel_perf.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.projet_annuel_perf.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.projetAnnuelPerf}
+                htmlName='projetAnnuelPerf'
+                libellé='projetAnnuelPerf'
+                register={register('projetAnnuelPerf', { value: indicateur?.projetAnnuelPerf })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.projetAnnuelPerf || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+      </div>
+      <div className='fr-grid-row fr-mb-2w'>
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.detail_projet_annuel_perf.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.detail_projet_annuel_perf.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.reformePrioritaire}
+                htmlName='detailProjetAnnuelPerf'
+                libellé='detailProjetAnnuelPerf'
+                register={register('detailProjetAnnuelPerf', { value: indicateur?.detailProjetAnnuelPerf })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.detailProjetAnnuelPerf || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.periodicite.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.periodicite.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.periodicite}
+                htmlName='periodicite'
+                libellé='periodicite'
+                register={register('periodicite', { value: indicateur?.periodicite })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.periodicite || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+      </div>
+      <div className='fr-grid-row fr-mb-2w'>
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.delai_disponibilite.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.delai_disponibilite.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.delaiDisponibilite}
+                htmlName='delaiDisponibilite'
+                libellé='delaiDisponibilite'
+                register={register('delaiDisponibilite', { value: `${indicateur?.delaiDisponibilite}` })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.delaiDisponibilite || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.indic_territorialise.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.indic_territorialise.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.indicTerritorialise}
+                htmlName='indicTerritorialise'
+                libellé='indicTerritorialise'
+                register={register('indicTerritorialise', { value: indicateur?.indicTerritorialise })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.indicTerritorialise || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+      </div>
+      <div className='fr-grid-row fr-mb-2w'>
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.frequence_territoriale.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.frequence_territoriale.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.frequenceTerritoriale}
+                htmlName='frequenceTerritoriale'
+                libellé='frequenceTerritoriale'
+                register={register('frequenceTerritoriale', { value: indicateur?.frequenceTerritoriale })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.frequenceTerritoriale || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.mailles.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.mailles.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.mailles}
+                htmlName='mailles'
+                libellé='mailles'
+                register={register('mailles', { value: indicateur?.mailles })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.mailles || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+      </div>
+      <div className='fr-grid-row fr-mb-2w'>
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.admin_source.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.admin_source.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.adminSource}
+                htmlName='adminSource'
+                libellé='adminSource'
+                register={register('adminSource', { value: indicateur?.adminSource })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.adminSource || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.methode_collecte.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.methode_collecte.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.methodeCollecte}
+                htmlName='methodeCollecte'
+                libellé='methodeCollecte'
+                register={register('methodeCollecte', { value: indicateur?.methodeCollecte })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.methodeCollecte || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+      </div>
+      <div className='fr-grid-row fr-mb-2w'>
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.si_source.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.si_source.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.siSource}
+                htmlName='siSource'
+                libellé='siSource'
+                register={register('siSource', { value: indicateur?.siSource })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.siSource || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.donnee_ouverte.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.donnee_ouverte.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.donneeOuverte}
+                htmlName='donneeOuverte'
+                libellé='donneeOuverte'
+                register={register('donneeOuverte', { value: indicateur?.donneeOuverte })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.donneeOuverte || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+      </div>
+      <div className='fr-grid-row fr-mb-2w'>
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.modalites_donnee_ouverte.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.modalites_donnee_ouverte.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.modalitesDonneeOuverte}
+                htmlName='modalitesDonneeOuverte'
+                libellé='modalitesDonneeOuverte'
+                register={register('modalitesDonneeOuverte', { value: indicateur?.modalitesDonneeOuverte })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.modalitesDonneeOuverte || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.resp_donnees.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.resp_donnees.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.respDonnees}
+                htmlName='respDonnees'
+                libellé='respDonnees'
+                register={register('respDonnees', { value: indicateur?.respDonnees })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.respDonnees || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+      </div>
+      <div className='fr-grid-row fr-mb-2w'>
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.resp_donnees_email.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.resp_donnees_email.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.respDonneesEmail}
+                htmlName='respDonneesEmail'
+                libellé='respDonneesEmail'
+                register={register('respDonneesEmail', { value: indicateur?.respDonneesEmail })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.respDonneesEmail || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.contact_technique.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.contact_technique.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.contactTechnique}
+                htmlName='contactTechnique'
+                libellé='contactTechnique'
+                register={register('contactTechnique', { value: indicateur?.contactTechnique })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.contactTechnique || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+      </div>
+      <div className='fr-grid-row fr-mb-2w'>
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.contact_technique_email.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.contact_technique_email.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.contactTechniqueEmail}
+                htmlName='contactTechniqueEmail'
+                libellé='contactTechniqueEmail'
+                register={register('contactTechniqueEmail', { value: indicateur?.contactTechniqueEmail })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.contactTechniqueEmail || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
       </div>
       <hr className='fr-hr fr-mt-3w' />
     </SectionDétailsMetadataAutresIndicateurStyled>

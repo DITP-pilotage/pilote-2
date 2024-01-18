@@ -76,7 +76,25 @@ type AvailableInformationMetadataIndicateur = 'indic_id'
 | 'poids_pourcent_dept'
 | 'poids_pourcent_reg'
 | 'poids_pourcent_nat'
-| 'tendance';
+| 'tendance'
+| 'reforme_prioritaire'
+| 'projet_annuel_perf'
+| 'detail_projet_annuel_perf'
+| 'periodicite'
+| 'delai_disponibilite'
+| 'indic_territorialise'
+| 'frequence_territoriale'
+| 'mailles'
+| 'admin_source'
+| 'methode_collecte'
+| 'si_source'
+| 'donnee_ouverte'
+| 'modalites_donnee_ouverte'
+| 'resp_donnees'
+| 'resp_donnees_email'
+| 'contact_technique'
+| 'contact_technique_email'
+| 'commentaires';
 
 export type MapInformationMetadataIndicateurContrat = {
   [key in AvailableInformationMetadataIndicateur]: InformationMetadataIndicateurContrat;
