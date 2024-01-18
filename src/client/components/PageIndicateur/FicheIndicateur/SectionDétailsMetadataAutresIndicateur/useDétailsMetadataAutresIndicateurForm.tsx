@@ -26,13 +26,16 @@ export interface MetadataParametrageAutresIndicateurForm {
   respDonneesEmail: string;
   contactTechnique: string;
   contactTechniqueEmail: string;
-  commentaires: string;
+  commentaire: string;
 }
 
 function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageAutresIndicateurForm>) {
   watch('indicIsBaro');
   watch('indicIsPerseverant');
   watch('indicIsPhare');
+  watch('projetAnnuelPerf');
+  watch('indicTerritorialise');
+  watch('donneeOuverte');
 }
 
 export default function useSectionDétailsMetadataAutresIndicateurForm() {

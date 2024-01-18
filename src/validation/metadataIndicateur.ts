@@ -147,7 +147,8 @@ export const validationMetadataIndicateurFormulaire = z.object({
   projetAnnuelPerf: z
     .string(),
   detailProjetAnnuelPerf: z
-    .string(),
+    .string()
+    .nullable(),
   periodicite: z
     .string(),
   delaiDisponibilite: z
@@ -155,9 +156,11 @@ export const validationMetadataIndicateurFormulaire = z.object({
   indicTerritorialise: z
     .string(),
   frequenceTerritoriale: z
-    .string(),
+    .string()
+    .nullable(),
   mailles: z
-    .string(),
+    .string()
+    .nullable(),
   adminSource: z
     .string(),
   methodeCollecte: z
@@ -165,19 +168,24 @@ export const validationMetadataIndicateurFormulaire = z.object({
   siSource: z
     .string(),
   donneeOuverte: z
-    .string(),
+    .string()
+    .nullable(),
   modalitesDonneeOuverte: z
-    .string(),
+    .string()
+    .nullable(),
   respDonnees: z
     .string(),
   respDonneesEmail: z
     .string(),
   contactTechnique: z
-    .string(),
+    .string()
+    .nullable(),
   contactTechniqueEmail: z
-    .string(),
-  commentaires: z
-    .string(),
+    .string()
+    .nullable(),
+  commentaire: z
+    .string()
+    .nullable(),
 });
 
 export const validationMetadataIndicateurContexte = z.object({

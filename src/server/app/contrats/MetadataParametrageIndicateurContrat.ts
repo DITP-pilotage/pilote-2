@@ -49,22 +49,23 @@ export interface MetadataParametrageIndicateurContrat {
   zgApplicable: string;
   chantierNom: string;
   reformePrioritaire: string;
-  projetAnnuelPerf: string;
+  projetAnnuelPerf: boolean;
   detailProjetAnnuelPerf: string;
   periodicite: string;
   delaiDisponibilite: number;
-  indicTerritorialise: string;
+  indicTerritorialise: boolean;
   frequenceTerritoriale: string;
   mailles: string;
   adminSource: string;
   methodeCollecte: string;
   siSource: string;
-  donneeOuverte: string;
+  donneeOuverte: boolean;
   modalitesDonneeOuverte: string;
   respDonnees: string;
   respDonneesEmail: string;
   contactTechnique: string;
   contactTechniqueEmail: string;
+  commentaire: string;
 }
 
 export const presenterEnMetadataParametrageIndicateurContrat = (metadataParametrageIndicateur: MetadataParametrageIndicateur): MetadataParametrageIndicateurContrat => ({
@@ -132,4 +133,5 @@ export const presenterEnMetadataParametrageIndicateurContrat = (metadataParametr
   respDonneesEmail: metadataParametrageIndicateur.respDonneesEmail,
   contactTechnique: metadataParametrageIndicateur.contactTechnique,
   contactTechniqueEmail: metadataParametrageIndicateur.contactTechniqueEmail,
+  commentaire: metadataParametrageIndicateur.commentaire,
 });

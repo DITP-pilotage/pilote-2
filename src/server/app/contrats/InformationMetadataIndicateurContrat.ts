@@ -94,7 +94,7 @@ type AvailableInformationMetadataIndicateur = 'indic_id'
 | 'resp_donnees_email'
 | 'contact_technique'
 | 'contact_technique_email'
-| 'commentaires';
+| 'commentaire';
 
 export type MapInformationMetadataIndicateurContrat = {
   [key in AvailableInformationMetadataIndicateur]: InformationMetadataIndicateurContrat;

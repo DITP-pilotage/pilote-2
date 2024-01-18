@@ -46,21 +46,21 @@ export interface MetadataParametrageIndicateurForm {
   poidsPourcentNat: number;
   tendance: string;
   reformePrioritaire: string;
-  projetAnnuelPerf: string;
+  projetAnnuelPerf: boolean;
   detailProjetAnnuelPerf: string;
   periodicite: string;
   delaiDisponibilite: number;
-  indicTerritorialise: string;
+  indicTerritorialise: boolean;
   frequenceTerritoriale: string;
   mailles: string;
   adminSource: string;
   methodeCollecte: string;
   siSource: string;
-  donneeOuverte: string;
+  donneeOuverte: boolean;
   modalitesDonneeOuverte: string;
   respDonnees: string;
   respDonneesEmail: string;
   contactTechnique: string;
   contactTechniqueEmail: string;
-  commentaires: string;
+  commentaire: string;
 }

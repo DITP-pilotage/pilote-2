@@ -47,23 +47,23 @@ interface InputMetadataParametrageIndicateur {
   zgApplicable: string;
   chantierNom: string;
   reformePrioritaire: string;
-  projetAnnuelPerf: string;
+  projetAnnuelPerf: boolean;
   detailProjetAnnuelPerf: string;
   periodicite: string;
   delaiDisponibilite: number;
-  indicTerritorialise: string;
+  indicTerritorialise: boolean;
   frequenceTerritoriale: string;
   mailles: string;
   adminSource: string;
   methodeCollecte: string;
   siSource: string;
-  donneeOuverte: string;
+  donneeOuverte: boolean;
   modalitesDonneeOuverte: string;
   respDonnees: string;
   respDonneesEmail: string;
   contactTechnique: string;
   contactTechniqueEmail: string;
-  commentaires: string;
+  commentaire: string;
 }
 
 export class MetadataParametrageIndicateur {
@@ -163,7 +163,7 @@ export class MetadataParametrageIndicateur {
 
   private readonly _reformePrioritaire: string;
 
-  private readonly _projetAnnuelPerf: string;
+  private readonly _projetAnnuelPerf: boolean;
 
   private readonly _detailProjetAnnuelPerf: string;
 
@@ -171,7 +171,7 @@ export class MetadataParametrageIndicateur {
 
   private readonly _delaiDisponibilite: number;
 
-  private readonly _indicTerritorialise: string;
+  private readonly _indicTerritorialise: boolean;
 
   private readonly _frequenceTerritoriale: string;
 
@@ -183,7 +183,7 @@ export class MetadataParametrageIndicateur {
 
   private readonly _siSource: string;
 
-  private readonly _donneeOuverte: string;
+  private readonly _donneeOuverte: boolean;
 
   private readonly _modalitesDonneeOuverte: string;
 
@@ -195,7 +195,7 @@ export class MetadataParametrageIndicateur {
 
   private readonly _contactTechniqueEmail: string;
 
-  private readonly _commentaires: string;
+  private readonly _commentaire: string;
 
   private constructor({
     indicId,
@@ -262,7 +262,7 @@ export class MetadataParametrageIndicateur {
     respDonneesEmail,
     contactTechnique,
     contactTechniqueEmail,
-    commentaires,
+    commentaire,
   }: InputMetadataParametrageIndicateur) {
     this._indicId = indicId;
     this._viDeptFrom = viDeptFrom;
@@ -328,7 +328,7 @@ export class MetadataParametrageIndicateur {
     this._respDonneesEmail = respDonneesEmail;
     this._contactTechnique = contactTechnique;
     this._contactTechniqueEmail = contactTechniqueEmail;
-    this._commentaires = commentaires;
+    this._commentaire = commentaire;
   }
 
   get indicId(): string {
@@ -523,7 +523,7 @@ export class MetadataParametrageIndicateur {
     return this._reformePrioritaire;
   }
 
-  get projetAnnuelPerf(): string {
+  get projetAnnuelPerf(): boolean {
     return this._projetAnnuelPerf;
   }
 
@@ -539,7 +539,7 @@ export class MetadataParametrageIndicateur {
     return this._delaiDisponibilite;
   }
 
-  get indicTerritorialise(): string {
+  get indicTerritorialise(): boolean {
     return this._indicTerritorialise;
   }
 
@@ -563,7 +563,7 @@ export class MetadataParametrageIndicateur {
     return this._siSource;
   }
 
-  get donneeOuverte(): string {
+  get donneeOuverte(): boolean {
     return this._donneeOuverte;
   }
 
@@ -587,8 +587,8 @@ export class MetadataParametrageIndicateur {
     return this._contactTechniqueEmail;
   }
 
-  get commentaires(): string {
-    return this._commentaires;
+  get commentaire(): string {
+    return this._commentaire;
   }
 
   static creerMetadataParametrageIndicateur({
@@ -656,7 +656,7 @@ export class MetadataParametrageIndicateur {
     respDonneesEmail,
     contactTechnique,
     contactTechniqueEmail,
-    commentaires,
+    commentaire,
   }: InputMetadataParametrageIndicateur): MetadataParametrageIndicateur {
     return new MetadataParametrageIndicateur({
       indicId,
@@ -723,7 +723,7 @@ export class MetadataParametrageIndicateur {
       respDonneesEmail,
       contactTechnique,
       contactTechniqueEmail,
-      commentaires,
+      commentaire,
     });
   }
 }

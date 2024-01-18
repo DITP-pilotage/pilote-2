@@ -18,7 +18,9 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
         baliseHtml='h2'
         className='fr-h5'
       >
-        Autres informations
+        Autres informations 
+        {' '}
+
       </Titre>
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
@@ -244,16 +246,16 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
             ) : null}
           </div>
           {estEnCoursDeModification
-            ? <Input
-                erreur={errors.projetAnnuelPerf}
+            ? <Sélecteur
                 htmlName='projetAnnuelPerf'
-                libellé='projetAnnuelPerf'
-                register={register('projetAnnuelPerf', { value: indicateur?.projetAnnuelPerf })}
-                type='text'
+                options={[{ libellé: 'Oui', valeur: 'true' }, { libellé: 'Non', valeur: 'false' }]}
+                register={register('projetAnnuelPerf')}
+                texteFantôme='Sélectionner un profil'
+                valeurSélectionnée={`${getValues('projetAnnuelPerf')}`}
               />
             : (
               <span>
-                {indicateur.projetAnnuelPerf || 'Non renseigné'}
+                {indicateur.projetAnnuelPerf ? 'Oui' : 'Non'}
               </span>
             )}
 
@@ -271,7 +273,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
           </div>
           {estEnCoursDeModification
             ? <Input
-                erreur={errors.reformePrioritaire}
+                erreur={errors.detailProjetAnnuelPerf}
                 htmlName='detailProjetAnnuelPerf'
                 libellé='detailProjetAnnuelPerf'
                 register={register('detailProjetAnnuelPerf', { value: indicateur?.detailProjetAnnuelPerf })}
@@ -338,22 +340,23 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_territorialise.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml='reformePrioritaire'>
+              <Infobulle idHtml='indicTerritorialise'>
                 {mapInformationMetadataIndicateur.indic_territorialise.description}
               </Infobulle>
             ) : null}
           </div>
           {estEnCoursDeModification
-            ? <Input
+            ? <Sélecteur
                 erreur={errors.indicTerritorialise}
                 htmlName='indicTerritorialise'
-                libellé='indicTerritorialise'
-                register={register('indicTerritorialise', { value: indicateur?.indicTerritorialise })}
-                type='text'
+                options={[{ libellé: 'Oui', valeur: 'true' }, { libellé: 'Non', valeur: 'false' }]}
+                register={register('indicTerritorialise')}
+                texteFantôme='Sélectionner un profil'
+                valeurSélectionnée={`${getValues('indicTerritorialise')}`}
               />
             : (
               <span>
-                {indicateur.indicTerritorialise || 'Non renseigné'}
+                {indicateur.indicTerritorialise ? 'Oui' : 'Non'}
               </span>
             )}
 
@@ -494,16 +497,16 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
             ) : null}
           </div>
           {estEnCoursDeModification
-            ? <Input
-                erreur={errors.donneeOuverte}
+            ? <Sélecteur
                 htmlName='donneeOuverte'
-                libellé='donneeOuverte'
-                register={register('donneeOuverte', { value: indicateur?.donneeOuverte })}
-                type='text'
+                options={[{ libellé: 'Oui', valeur: 'true' }, { libellé: 'Non', valeur: 'false' }]}
+                register={register('donneeOuverte')}
+                texteFantôme='Sélectionner un profil'
+                valeurSélectionnée={`${getValues('donneeOuverte')}`}
               />
             : (
               <span>
-                {indicateur.donneeOuverte || 'Non renseigné'}
+                {indicateur.donneeOuverte ? 'Oui' : 'Non'}
               </span>
             )}
 
@@ -630,6 +633,30 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
             : (
               <span>
                 {indicateur.contactTechniqueEmail || 'Non renseigné'}
+              </span>
+            )}
+
+        </div>
+        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.commentaire.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='reformePrioritaire'>
+                {mapInformationMetadataIndicateur.commentaire.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Input
+                erreur={errors.commentaire}
+                htmlName='commentaire'
+                libellé='commentaire'
+                register={register('commentaire', { value: indicateur?.commentaire })}
+                type='text'
+              />
+            : (
+              <span>
+                {indicateur.commentaire || 'Non renseigné'}
               </span>
             )}
 
