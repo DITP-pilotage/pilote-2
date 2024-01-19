@@ -103,6 +103,7 @@
     "react/jsx-no-bind": "off",
     "react/jsx-no-literals": "off",
     "react/forbid-component-props": "off",
+    "react/function-component-definition": "off",
     "react/jsx-props-no-spreading": "off",
     "react/prefer-read-only-props": "off",
     "eol-last": [

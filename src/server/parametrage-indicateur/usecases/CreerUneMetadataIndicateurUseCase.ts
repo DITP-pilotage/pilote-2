@@ -34,8 +34,14 @@ export default class CreerUneMetadataIndicateurUseCase {
       tableModifieId: 'metadata_parametrages_indicateurs',
       nouvelleValeur: result,
     });
+    const historisationComplementaireModification = HistorisationModification.creerHistorisationCreation({
+      utilisateurNom,
+      tableModifieId: 'metadata_indicateurs_complementaire',
+      nouvelleValeur: result,
+    });
     await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationModification);
     await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationParametrageModification);
+    await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationComplementaireModification);
     return result;
   }
 }

@@ -37,12 +37,21 @@ export default class ModifierUneMetadataIndicateurUseCase {
       ancienneValeur: metadataParametrageIndicateurAncien,
       nouvelleValeur: metadataParametrageIndicateurNouveau,
     });
+    const historisationIndicateurComplementaireModification = HistorisationModification.creerHistorisationModification({
+      utilisateurNom,
+      tableModifieId: 'metadata_indicateurs_complementaire',
+      ancienneValeur: metadataParametrageIndicateurAncien,
+      nouvelleValeur: metadataParametrageIndicateurNouveau,
+    });
 
     if (historisationModification.nouvelleValeur && Object.values(historisationModification.nouvelleValeur).some(Boolean)) {
       await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationModification);
     }
     if (historisationParametrageModification.nouvelleValeur && Object.values(historisationParametrageModification.nouvelleValeur).some(Boolean)) {
       await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationParametrageModification);
+    }
+    if (historisationIndicateurComplementaireModification.nouvelleValeur && Object.values(historisationIndicateurComplementaireModification.nouvelleValeur).some(Boolean)) {
+      await this.historisationModificationRepository.sauvegarderModificationHistorisation(historisationIndicateurComplementaireModification);
     }
 
     return this.metadataParametrageIndicateurRepository.modifier(metadataParametrageIndicateurNouveau);
