@@ -16,7 +16,7 @@ models:
             pilote_edit_boxType: text
             pilote_disp_dispDesc: false
             pilote_create_mandatory: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
       - name: indic_parent_indic
         data_type: text
         description: "Indicateur parent"
@@ -29,7 +29,7 @@ models:
             pilote_edit_boxType: text
             pilote_disp_dispDesc: false
             pilote_create_mandatory: false
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
       - name: indic_parent_ch
         data_type: text
         description: "Code du chantier associé à cet indicateur, au format CH-XXX."
@@ -42,7 +42,7 @@ models:
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
             pilote_create_mandatory: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
       - name: indic_nom
         data_type: text
         description: "Nom complet de l'indicateur"
@@ -55,7 +55,7 @@ models:
             pilote_edit_boxType: text
             pilote_disp_dispDesc: false
             pilote_create_mandatory: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
       - name: indic_nom_baro
         data_type: text
         description: "Nom de cet indicateur dans le baromètre des résultats de l'action publique."
@@ -65,7 +65,7 @@ models:
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
             pilote_create_mandatory: false
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
       - name: indic_descr
         data_type: text
         description: "Description de l'indicateur"
@@ -78,7 +78,7 @@ models:
             pilote_edit_boxType: textarea
             pilote_disp_dispDesc: true
             pilote_create_mandatory: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
       - name: indic_descr_baro
         data_type: text
         description: "Description de l'indicateur dans le baromètre de l'action publique"
@@ -88,7 +88,7 @@ models:
             pilote_edit_boxType: textarea
             pilote_disp_dispDesc: true
             pilote_create_mandatory: false
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
       - name: indic_is_perseverant
         data_type: boolean
         description: "Indique si l'indicateur est perseverant"
@@ -152,7 +152,7 @@ models:
             pilote_edit_isEditable: false
             pilote_edit_boxType: text
             pilote_create_mandatory: false
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
       - name: indic_methode_calcul
         data_type: text
         description: "Méthode de calcul pour l'obtention des données."
@@ -163,7 +163,7 @@ models:
             pilote_edit_boxType: textarea
             pilote_disp_dispDesc: true
             pilote_create_mandatory: false
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
       - name: indic_unite
         data_type: text
         description: "Unité de l'indicateur"
@@ -175,7 +175,7 @@ models:
             pilote_edit_regexViolationMessage: null
             pilote_edit_boxType: text
             pilote_create_mandatory: false
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
       - name: indic_hidden_pilote
         data_type: boolean
         description: "Indique si l'indicateur est affiché dans Pilote. **Ne fonctionne pas**"
@@ -210,7 +210,7 @@ models:
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
             pilote_create_mandatory: false
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
   - name: metadata_parametrage_indicateurs
     description: "Cette table contient l'ensemble des paramètres nécessaires au calcul du TA pour chaque indicateur."
     columns:
@@ -224,7 +224,7 @@ models:
             pilote_edit_boxType: text
             pilote_disp_dispDesc: false
             pilote_create_mandatory: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
       - name: vi_dept_from
         data_type: text
         description: "Source des valeurs initiales départementales (import, agrégation géographique, agrégation d'indicateurs...)"
@@ -575,7 +575,7 @@ models:
             pilote_alias: "Réforme prioritaire"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -601,7 +601,7 @@ models:
             pilote_alias: "Détail projet annuel de performance"
             pilote_edit_boxType: textarea
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -615,7 +615,7 @@ models:
             pilote_alias: "Périodicité"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -629,7 +629,7 @@ models:
             pilote_alias: "Délai de disponibilité"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -656,7 +656,7 @@ models:
             pilote_alias: "Fréquence d'actualisation territoriale"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -669,7 +669,7 @@ models:
             pilote_alias: "Mailles géographiques"
             pilote_edit_boxType: multi-select
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -696,7 +696,7 @@ models:
             pilote_alias: "Administration source"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -709,7 +709,7 @@ models:
             pilote_alias: "Collecte"
             pilote_edit_boxType: textarea
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -722,7 +722,7 @@ models:
             pilote_alias: "SI source"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -735,7 +735,7 @@ models:
             pilote_alias: "Donnée ouverte"
             pilote_edit_boxType: null
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -748,7 +748,7 @@ models:
             pilote_alias: "Modalités"
             pilote_edit_boxType: textarea
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -761,7 +761,7 @@ models:
             pilote_alias: "Responsable données"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -774,7 +774,7 @@ models:
             pilote_alias: "Email responsable données"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null
@@ -787,7 +787,7 @@ models:
             pilote_alias: "Contact technique"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex:
             pilote_edit_regexViolationMessage: null
@@ -800,7 +800,7 @@ models:
             pilote_alias: "Email contact technique"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: 
             pilote_edit_regexViolationMessage: null
@@ -813,7 +813,7 @@ models:
             pilote_alias: "Commentaire"
             pilote_edit_boxType: textarea
             pilote_disp_dispDesc: true
-            pilote_create_defaultValue: null
+            pilote_create_defaultValue: ""
             pilote_disp_blocId: 7
             pilote_edit_regex: null
             pilote_edit_regexViolationMessage: null

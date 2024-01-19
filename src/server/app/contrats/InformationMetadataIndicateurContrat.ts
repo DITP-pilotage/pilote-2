@@ -28,6 +28,8 @@ export interface InformationMetadataIndicateurContrat {
 
   metaPiloteDefaultValue: string | number | null | boolean;
 
+  metaPiloteMandatory: boolean;
+
   acceptedValues: AcceptedValueContrat[];
 }
 
@@ -76,7 +78,25 @@ type AvailableInformationMetadataIndicateur = 'indic_id'
 | 'poids_pourcent_dept'
 | 'poids_pourcent_reg'
 | 'poids_pourcent_nat'
-| 'tendance';
+| 'tendance'
+| 'reforme_prioritaire'
+| 'projet_annuel_perf'
+| 'detail_projet_annuel_perf'
+| 'periodicite'
+| 'delai_disponibilite'
+| 'indic_territorialise'
+| 'frequence_territoriale'
+| 'mailles'
+| 'admin_source'
+| 'methode_collecte'
+| 'si_source'
+| 'donnee_ouverte'
+| 'modalites_donnee_ouverte'
+| 'resp_donnees'
+| 'resp_donnees_email'
+| 'contact_technique'
+| 'contact_technique_email'
+| 'commentaire';
 
 export type MapInformationMetadataIndicateurContrat = {
   [key in AvailableInformationMetadataIndicateur]: InformationMetadataIndicateurContrat;
@@ -94,6 +114,7 @@ export const presenterEnInformationMetadataIndicateurContrat = (informationMetad
     metaPiloteEditRegexViolationMessage: informationMetadataIndicateur.metaPiloteEditRegexViolationMessage  || '',
     metaPiloteEditBoxType: informationMetadataIndicateur.metaPiloteEditBoxType  || '',
     metaPiloteDefaultValue: informationMetadataIndicateur.metaPiloteDefaultValue,
+    metaPiloteMandatory: informationMetadataIndicateur.metaPiloteMandatory,
     acceptedValues: informationMetadataIndicateur.acceptedValues.map(acceptedValue => ({
       ordre: acceptedValue.orderId,
       libellé: acceptedValue.name,

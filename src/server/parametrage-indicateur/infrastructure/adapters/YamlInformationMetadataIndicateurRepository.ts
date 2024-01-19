@@ -26,6 +26,7 @@ interface YamlColumn {
     pilote_edit_boxType: 'text' | 'textarea' | 'boolean'
     pilote_edit_acceptedValues: string
     pilote_create_defaultValue: string | number | null | boolean
+    pilote_create_mandatory: boolean
   }
 }
 
@@ -49,6 +50,7 @@ const convertirEnInformationMetadataIndicateur = (yamlColumn: YamlColumn): Infor
     metaPiloteEditRegexViolationMessage: yamlColumn.meta.pilote_edit_regexViolationMessage,
     metaPiloteEditBoxType: yamlColumn.meta.pilote_edit_boxType,
     metaPiloteDefaultValue: yamlColumn.meta.pilote_create_defaultValue,
+    metaPiloteMandatory: yamlColumn.meta.pilote_create_mandatory || false,
     acceptedValues: acceptedValues.map(acceptedValue => (AcceptedValue.créerAcceptedValue({
       orderId: acceptedValue.order_id,
       value: acceptedValue.value,

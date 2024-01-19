@@ -11,6 +11,7 @@ export interface MetadataParametrageIndicateurForm {
   indicUnite: string;
   indicSchema: string;
   zgApplicable: string;
+  indicTerritorialise: string;
 }
 
 function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageIndicateurForm>) {
@@ -18,6 +19,7 @@ function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageIndicat
   watch('indicSchema');
   watch('indicParentCh');
   watch('indicParentIndic');
+  watch('indicTerritorialise');
 }
 
 export default function useDetailMetadataIndicateurForm() {

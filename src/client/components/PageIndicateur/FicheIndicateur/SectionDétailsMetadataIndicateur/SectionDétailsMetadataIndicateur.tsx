@@ -9,8 +9,14 @@ import TextArea from '@/components/_commons/TextArea/TextArea';
 import Input from '@/components/_commons/Input/Input';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import { ChampObligatoire } from '@/components/PageIndicateur/ChampObligatoire';
 
-export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCoursDeModification, mapInformationMetadataIndicateur, chantiers }: SectionDétailsMetadataIndicateurProps) {
+export default function SectionDétailsMetadataIndicateur({
+  indicateur,
+  estEnCoursDeModification,
+  mapInformationMetadataIndicateur,
+  chantiers,
+}: SectionDétailsMetadataIndicateurProps) {
   const { register, getValues, errors, metadataIndicateurs, optionsIndicateurParent } = useDetailMetadataIndicateurForm();
 
   return (
@@ -23,9 +29,12 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
       </Titre>
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
-          <p className='fr-text--md bold fr-mb-1v relative'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_nom.metaPiloteAlias}
-          </p>
+            {estEnCoursDeModification && mapInformationMetadataIndicateur.indic_nom.metaPiloteMandatory ? (
+              <ChampObligatoire />
+            ) : null}
+          </div>
           {estEnCoursDeModification
             ? <TextArea
                 erreur={errors.indicNom}
@@ -35,7 +44,7 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
               />
             : (
               <span>
-                { indicateur.indicNom || 'Non renseigné'}
+                {indicateur.indicNom || 'Non renseigné'}
               </span>
             )}
 
@@ -44,9 +53,17 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_descr.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml='indicDescr'>
-                {mapInformationMetadataIndicateur.indic_descr.description}
-              </Infobulle>
+              <>
+                {
+                  mapInformationMetadataIndicateur.indic_descr.metaPiloteMandatory
+                    ? (
+                      <ChampObligatoire />
+                    ) : null
+                }
+                <Infobulle idHtml='indicParentCh'>
+                  {mapInformationMetadataIndicateur.indic_descr.description}
+                </Infobulle>
+              </>
             ) : null}
           </div>
           {estEnCoursDeModification
@@ -69,9 +86,17 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
           <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_parent_ch.metaPiloteAlias}
             {estEnCoursDeModification ? (
-              <Infobulle idHtml='indicParentCh'>
-                {mapInformationMetadataIndicateur.indic_parent_ch.description}
-              </Infobulle>
+              <>
+                {
+                  mapInformationMetadataIndicateur.indic_parent_ch.metaPiloteMandatory
+                    ? (
+                      <ChampObligatoire />
+                    ) : null
+                }
+                <Infobulle idHtml='indicParentCh'>
+                  {mapInformationMetadataIndicateur.indic_parent_ch.description}
+                </Infobulle>
+              </>
             ) : null}
           </div>
           {estEnCoursDeModification
@@ -92,9 +117,12 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
             )}
         </div>
         <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
-          <p className='fr-text--md bold fr-mb-1v relative'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.indic_parent_indic.metaPiloteAlias}
-          </p>
+            {estEnCoursDeModification && mapInformationMetadataIndicateur.indic_parent_indic.metaPiloteMandatory ? (
+              <ChampObligatoire />
+            ) : null}
+          </div>
           {estEnCoursDeModification
             ? <Sélecteur
                 erreur={errors.indicParentIndic}
@@ -124,13 +152,16 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
             ? <Sélecteur
                 erreur={errors.indicSchema}
                 htmlName='indicSchema'
-                options={mapInformationMetadataIndicateur.indic_schema.acceptedValues.map(acceptedValue => ({ valeur: acceptedValue.valeur, libellé: acceptedValue.libellé }))}
+                options={mapInformationMetadataIndicateur.indic_schema.acceptedValues.map(acceptedValue => ({
+                  valeur: acceptedValue.valeur,
+                  libellé: acceptedValue.libellé,
+                }))}
                 register={register('indicSchema')}
                 valeurSélectionnée={`${getValues('indicSchema')}`}
               />
             : (
               <span>
-                { mapInformationMetadataIndicateur.indic_schema.acceptedValues.find(acceptedValue => acceptedValue.valeur === indicateur.indicSchema)?.libellé || 'Non renseigné'}
+                {mapInformationMetadataIndicateur.indic_schema.acceptedValues.find(acceptedValue => acceptedValue.valeur === indicateur.indicSchema)?.libellé || 'Non renseigné'}
               </span>
             )}
         </div>
@@ -147,13 +178,16 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
             ? <Sélecteur
                 erreur={errors.indicType}
                 htmlName='indicType'
-                options={mapInformationMetadataIndicateur.indic_type.acceptedValues.map(acceptedValue => ({ valeur: acceptedValue.valeur, libellé: acceptedValue.libellé }))}
+                options={mapInformationMetadataIndicateur.indic_type.acceptedValues.map(acceptedValue => ({
+                  valeur: acceptedValue.valeur,
+                  libellé: acceptedValue.libellé,
+                }))}
                 register={register('indicType')}
                 valeurSélectionnée={`${getValues('indicType')}`}
               />
             : (
               <span>
-                { mapInformationMetadataIndicateur.indic_type.acceptedValues.find(acceptedValue => acceptedValue.valeur === indicateur.indicType)?.libellé || 'Non renseigné'}
+                {mapInformationMetadataIndicateur.indic_type.acceptedValues.find(acceptedValue => acceptedValue.valeur === indicateur.indicType)?.libellé || 'Non renseigné'}
               </span>
             )}
 
@@ -182,7 +216,7 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
           <p className='fr-text--md bold fr-mb-1v relative'>
             {mapInformationMetadataIndicateur.zg_applicable.metaPiloteAlias}
           </p>
-          {estEnCoursDeModification 
+          {estEnCoursDeModification
             ? <Input
                 erreur={errors.zgApplicable}
                 htmlName='zgApplicable'
@@ -195,6 +229,33 @@ export default function SectionDétailsMetadataIndicateur({ indicateur, estEnCou
                 {indicateur.zgApplicable || 'Non renseigné'}
               </span>
             )}
+        </div>
+      </div>
+      <div className='fr-grid-row fr-mb-2w'>
+        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+          <div className='fr-text--md bold fr-mb-1v relative'>
+            {mapInformationMetadataIndicateur.indic_territorialise.metaPiloteAlias}
+            {estEnCoursDeModification ? (
+              <Infobulle idHtml='indicTerritorialise'>
+                {mapInformationMetadataIndicateur.indic_territorialise.description}
+              </Infobulle>
+            ) : null}
+          </div>
+          {estEnCoursDeModification
+            ? <Sélecteur
+                erreur={errors.indicTerritorialise}
+                htmlName='indicTerritorialise'
+                options={[{ libellé: 'Oui', valeur: 'true' }, { libellé: 'Non', valeur: 'false' }]}
+                register={register('indicTerritorialise')}
+                texteFantôme='Sélectionner un profil'
+                valeurSélectionnée={`${getValues('indicTerritorialise')}`}
+              />
+            : (
+              <span>
+                {indicateur.indicTerritorialise ? 'Oui' : 'Non'}
+              </span>
+            )}
+
         </div>
       </div>
       <hr className='fr-hr fr-mt-3w' />
