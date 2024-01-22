@@ -1,5 +1,7 @@
 {{ config(schema = 'public') }}
 
+-- depends_on: {{ ref('utilisateur') }}
+
 select 
     "id"::uuid,
     "date_creation"::timestamptz,
