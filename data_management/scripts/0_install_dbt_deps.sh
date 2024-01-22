@@ -15,5 +15,4 @@ then
   fi
 fi
 
-PROJECT_DIR=data_factory
-dbt deps --project-dir $PROJECT_DIR
+dbt deps --project-dir data_factory

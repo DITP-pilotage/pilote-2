@@ -12,4 +12,4 @@ then
   fi
 fi
 
-dbt run --project-dir data_factory/ --select raw.import_commentaires
+dbt run --project-dir data_factory --select raw.import_commentaires
