@@ -12,4 +12,5 @@ then
   fi
 fi
 
+echo ">> Seeding database"
 dbt run --project-dir data_factory --select seeds_
