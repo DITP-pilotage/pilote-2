@@ -15,11 +15,8 @@ then
   fi
 fi
 
-if [[ ! -d "$PPG_METADATA_DIRECTORY" ]]
-then
-  mkdir "$PPG_METADATA_DIRECTORY"
-  git clone "https://$PPG_METADATA_GITHUB_TOKEN@github.com/DITP-pilotage/PPG_metadata.git" "$PPG_METADATA_DIRECTORY" -b $PPG_METADATA_GITHUB_BRANCH --depth 1
-fi
+rm -rf "$PPG_METADATA_DIRECTORY"
+mkdir "$PPG_METADATA_DIRECTORY"
+git clone "https://$PPG_METADATA_GITHUB_TOKEN@github.com/DITP-pilotage/PPG_metadata.git" "$PPG_METADATA_DIRECTORY" -b $PPG_METADATA_GITHUB_BRANCH --depth 1
 
-PROJECT_DIR=data_factory
-dbt run --project-dir $PROJECT_DIR --select raw.ppg_metadata
+dbt run --project-dir data_factory --select raw.ppg_metadata
