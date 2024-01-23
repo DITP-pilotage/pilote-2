@@ -209,6 +209,87 @@ model mesure_indicateur {
   @@schema("raw_data")
 }
 
+model metadata_indicateurs {
+	indic_id              String @id
+	indic_parent_indic    String?
+	indic_parent_ch       String
+	indic_nom             String
+	indic_nom_baro        String?
+	indic_descr           String?
+	indic_descr_baro      String?
+	indic_is_perseverant  Boolean?
+	indic_is_phare        Boolean?
+	indic_is_baro         Boolean?
+	indic_type            String?
+	indic_source          String?
+	indic_source_url      String?
+	indic_methode_calcul  String?
+	indic_unite           String?
+	indic_hidden_pilote   Boolean?
+	indic_schema          String?
+	zg_applicable         String?
+
+  @@schema("raw_data")
+}
+
+model metadata_parametrage_indicateurs {
+	indic_id                  String @id
+	vi_dept_from              String?
+	vi_dept_op                String?
+	va_dept_from              String?
+	va_dept_op                String?
+	vc_dept_from              String?
+	vc_dept_op                String?
+	vi_reg_from               String?
+	vi_reg_op                 String?
+	va_reg_from               String?
+	va_reg_op                 String?
+	vc_reg_from               String?
+	vc_reg_op                 String?
+	vi_nat_from               String?
+	vi_nat_op                 String?
+	va_nat_from               String?
+	va_nat_op                 String?
+	vc_nat_from               String?
+	vc_nat_op                 String?
+	param_vaca_decumul_from   String?
+	param_vaca_partition_date String?
+	param_vaca_op             String?
+	param_vacg_decumul_from   String?
+	param_vacg_partition_date String?
+	param_vacg_op             String?
+	poids_pourcent_dept       Int?
+	poids_pourcent_reg        Int?
+	poids_pourcent_nat        Int?
+	tendance                  String?
+
+  @@schema("raw_data")
+}
+
+model metadata_indicateurs_complementaire {
+	indic_id                  String @id
+	reforme_prioritaire       String?
+	projet_annuel_perf        Boolean?
+	detail_projet_annuel_perf String?
+	periodicite               String?
+	delai_disponibilite       Int?
+	indic_territorialise      Boolean?
+	frequence_territoriale    String?
+	mailles                   String?
+	admin_source              String?
+	methode_collecte          String?
+	si_source                 String?
+	donnee_ouverte            Boolean?
+	modalites_donnee_ouverte  String?
+	resp_donnees              String?
+	resp_donnees_email        String?
+	contact_technique         String?
+	contact_technique_email   String?
+	commentaire               String?
+
+  @@schema("raw_data")
+}
+
 model mesure_indicateur_temporaire {
   id           String                           @id @db.Uuid
   indic_id     String?
