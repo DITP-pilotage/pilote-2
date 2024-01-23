@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  import_commentaires:
+    build: .
+    env_file: [.env]
+    volumes:
+      - "${PWD}/import.sh/:/app/import.sh"
+      - "${PWD}/import_commentaires.csv/:/app/import_commentaires.csv"
+  
