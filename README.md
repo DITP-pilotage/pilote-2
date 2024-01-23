@@ -48,6 +48,14 @@ npm run test
 npm run lint
 ```
 
+### Via Docker
+
+- `cp .env.test.example .env.test` : copier le `.env.test.example` vers `.env.test`
+- `docker-compose -f docker-compose.tests.yml run recreate_db` pour créer une db de test. Cette db sera créée dans la `$DATABASE_URL` courante, avec le nom `$TEST_DB` du fichier `.env.test`
+- `docker-compose -f docker-compose.tests.yml run pilote_tests` lancer les tests sans créer de base de données
+- *(optionnel)* `docker-compose -f docker-compose.tests.yml up` pour créer une db de test et lancer les tests
+
+
 ### Complément d'informations
 - Il existe de nombreuses sous commandes permettant de lancer les tests de manière isolés (unitaire, intégration, client, server). Se référer au package.json pour plus d'informations.
 - Afin de lancer les tests en mode watch, vous pouvez ajouter cette option `-- --watch` à la tâche npm :
