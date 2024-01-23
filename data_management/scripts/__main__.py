@@ -30,13 +30,18 @@ JOBS_TO_RUN['PRODUCTION'] = [
 JOBS_TO_RUN['PREPROD'] = JOBS_TO_RUN['PRODUCTION']
 JOBS_TO_RUN['DEV'] = [
         'scripts/0_dbt_deps.sh',
+        'scripts/2_seed_ppg_metadata.sh',
+        'scripts/5_staging.sh',
+        'scripts/7_exposition.sh'
+    ]
+JOBS_TO_RUN['LOCAL'] = [
+        'scripts/0_dbt_deps.sh',
         'scripts/0_prisma_migrate.sh',
         'scripts/2_seed_ppg_metadata.sh',
         'scripts/4_seed_private.sh',
         'scripts/5_staging.sh',
         'scripts/7_exposition.sh'
     ]
-JOBS_TO_RUN['LOCAL'] = JOBS_TO_RUN['DEV']
 
 
 def run_datajobs() -> int:
