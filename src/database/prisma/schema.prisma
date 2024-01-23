@@ -232,6 +232,29 @@ model metadata_indicateurs {
   @@schema("raw_data")
 }
 
+model metadata_indicateurs_hidden {
+	indic_id              String @id
+	indic_parent_indic    String?
+	indic_parent_ch       String
+	indic_nom             String
+	indic_nom_baro        String?
+	indic_descr           String?
+	indic_descr_baro      String?
+	indic_is_perseverant  Boolean?
+	indic_is_phare        Boolean?
+	indic_is_baro         Boolean?
+	indic_type            String?
+	indic_source          String?
+	indic_source_url      String?
+	indic_methode_calcul  String?
+	indic_unite           String?
+	indic_hidden_pilote   Boolean?
+	indic_schema          String?
+	zg_applicable         String?
+
+  @@schema("raw_data")
+}
+
 model metadata_parametrage_indicateurs {
 	indic_id                  String @id
 	vi_dept_from              String?
