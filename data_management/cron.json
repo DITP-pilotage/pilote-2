@@ -1,7 +1,7 @@
 {
   "jobs": [
     {
-      "command": "0 * * * * [ \"$SHOULD_RUN_DATA_JOBS\" = \"true\" ] && python3 scripts/__main__.py"
+      "command": "0 * * * * /bin/bash scripts/run_datajobs.sh"
     }
   ]
 }
