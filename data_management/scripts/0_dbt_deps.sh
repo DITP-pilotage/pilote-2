@@ -15,5 +15,5 @@ then
   fi
 fi
 
-PROJECT_DIR=data_factory
-dbt deps --project-dir $PROJECT_DIR
+echo ">> Run dbt deps"
+dbt deps --project-dir data_factory

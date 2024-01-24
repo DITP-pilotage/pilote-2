@@ -167,6 +167,14 @@ docker-compose run pilote_scripts scripts/1_dump_dfakto.sh
 # and so on for all the scripts
 ```
 
+Pour exécuter les datajobs via Docker, voir [run_datajobs_docker.sh](./run_datajobs_docker.sh). Il est aussi possible de n'exécuter que les datajobs de production avec la variable d'environnement :
+
+```sh
+# Force to run datajobs as in specific env. Leave "" to ignore
+FORCE_ENVIRONMENT_DATAJOBS="" # PRODUCTION, DEV, PREPROD
+```
+
+
 ## Hypothèses actuelles pour les transformations
 
 - Les données sources sont importées dans le schéma `raw_data` par l'étape précédente (job d'import);

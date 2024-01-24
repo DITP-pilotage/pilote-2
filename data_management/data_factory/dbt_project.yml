@@ -77,6 +77,25 @@ models:
     intermediate:
       +schema: marts
       +materialized: view
+    seeds_:
+      python_load:
+        +schema: tmp
+        +materialized: table
+      sql_incremental:
+        +materialized: incremental
+        utilisateur:
+          +unique_key:
+            - 'email'
+        rapport_import_mesure_indicateur:
+          +unique_key:
+            - 'id'
+        mesure_indicateur:
+          +unique_key:
+            - 'id'
+        commentaires:
+          +unique_key:
+            - 'id'
+            - 'type'
     exposition:
       +schema: public
       +materialized: incremental
