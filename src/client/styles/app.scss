@@ -54,6 +54,9 @@
   border-radius: 0.25rem;
 }
 
+.no-wrap {
+  white-space: nowrap;
+}
 .overflow-ellipsis {
   text-overflow: ellipsis;
   overflow-x: hidden;
