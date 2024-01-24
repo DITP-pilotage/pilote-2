@@ -8,3 +8,10 @@ Prérequis:
 - Etablir les connections en tunnel ssh si besoin. *Note:* Un autre script, plus complet, réalise l'établissement de ces tunnels, mais ce n'est pas le cas ici.
 - Lancer le script en local via `/bin/bash descente_de_prod_partielle.sh` ou via `docker-compose up` (ne fonctionne pas actuellement pour les connexions avec tunnel ssh)
 - Le fichier `.dump` généré par le dump et chargé dans la base de destination sera disponible dans `out/`
+
+### Exécuter sur Scalingo
+
+Etapes à réaliser sur Scalingo:
+
+- se connecter à un one-off de l'environnement souhaité
+- `cd /app/scripts/descente_de_prod` puis `/bin/bash descente_de_prod_partielle.sh`
