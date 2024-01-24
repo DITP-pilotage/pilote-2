@@ -5,6 +5,6 @@ services:
     build: .
     env_file: [.env]
     volumes:
-      - "${PWD}/import.sh/:/app/import.sh"
-      - "${PWD}/import_commentaires.csv/:/app/import_commentaires.csv"
+      - "./import.sh/:/app/import.sh"
+      - "./import_commentaires.csv/:/app/import_commentaires.csv"
   

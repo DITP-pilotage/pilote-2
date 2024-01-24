@@ -10,6 +10,8 @@ Etapes de préparation de la copie des données de `import_commentaires.csv`:
 
 ## Via Docker (recommandé)
 
+Cette solution fonctionne actuellement uniquement sur une base locale. Il faut utiliser `172.17.0.1` comme hote, et non `localhost`. L'accès aux bases scalingo via tunnel est pour l'instant impossible depuis un conteneur. 
+
 Solution recommandée car on utilise l'image Docker `postgres:16.1` qui est compatible avec le serveur postgres de l'app Scalingo. On peut faire évoluer cela si besoin. Donc il n'est pas nécessaire d'installer la version précise de psql sur sa machine.
 
 - `docker-compose up` pour lancer la copie
