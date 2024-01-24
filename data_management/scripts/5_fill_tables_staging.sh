@@ -16,4 +16,4 @@ then
 fi
 
 PROJECT_DIR=data_factory
-dbt run --project-dir $PROJECT_DIR --select staging --exclude raw.dfakto.projet_structurant+
+dbt run --project-dir $PROJECT_DIR --select staging --exclude raw.dfakto+

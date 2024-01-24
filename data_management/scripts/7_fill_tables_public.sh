@@ -23,7 +23,7 @@ psql "$DATABASE_URL" -c "UPDATE public.indicateur SET a_supprimer = TRUE"
 psql "$DATABASE_URL" -c "UPDATE public.ministere SET a_supprimer = TRUE"
 
 PROJECT_DIR=data_factory
-dbt run --project-dir $PROJECT_DIR --select intermediate exposition df3 --exclude raw.dfakto.projet_structurant+
+dbt run --project-dir $PROJECT_DIR --select intermediate exposition df3 --exclude raw.dfakto+
 
 if [ $? -eq 0 ]; then
   psql "$DATABASE_URL" -c "DELETE FROM public.axe WHERE a_supprimer = TRUE"
