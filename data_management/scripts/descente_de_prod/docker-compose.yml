@@ -11,6 +11,5 @@ services:
       - .env
     volumes:
       - "./.env:/app/.env:ro"
-      - "./descente_de_prod.sh:/app/descente_de_prod.sh"
       - "./descente_de_prod_partielle.sh:/app/descente_de_prod_partielle.sh"
       - "./out:/app/out"
