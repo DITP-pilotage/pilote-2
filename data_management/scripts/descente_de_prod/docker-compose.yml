@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   app:
-    command: "/bin/bash descente_de_prod.sh"
+    command: "/bin/bash descente_de_prod_partielle.sh"
     container_name: scalingo_dump
     build: 
       dockerfile: Dockerfile
@@ -11,5 +11,5 @@ services:
       - .env
     volumes:
       - "./.env:/app/.env:ro"
-      - "./descente_de_prod.sh:/app/descente_de_prod.sh"
+      - "./descente_de_prod_partielle.sh:/app/descente_de_prod_partielle.sh"
       - "./out:/app/out"
