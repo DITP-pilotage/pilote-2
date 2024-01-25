@@ -29,15 +29,17 @@ function PageAdminIndicateurs() {
               >
                 Gestion des paramètres des indicateurs
               </Titre>
-              <button
-                aria-controls='créer-nouvel-indicateur'
-                className='fr-btn fr-text'
-                data-fr-opened={false}
-                onClick={naviguerVersCreationIndicateur}
-                type='button'
-              >
-                Créer un nouvel indicateur
-              </button>
+              <div className='flex align-center'>
+                <button
+                  aria-controls='créer-nouvel-indicateur'
+                  className='fr-btn fr-text no-wrap'
+                  data-fr-opened={false}
+                  onClick={naviguerVersCreationIndicateur}
+                  type='button'
+                >
+                  Créer un nouvel indicateur
+                </button>
+              </div>
             </div>
           </div>
           <Bloc>
