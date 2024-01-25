@@ -9,7 +9,6 @@ import useDétailsMetadataParametreIndicateurDepartementaleForm
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurDepartementale/useDétailsMetadataParametreIndicateurDepartementaleForm';
 
 export default function SectionDétailsMetadataParametreIndicateurDepartementale({
-  indicateur,
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }: SectionDétailsMetadataParametreIndicateurDepartementaleProps) {
@@ -46,7 +45,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
               />
             : (
               <span>
-                {indicateur.viDeptFrom === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.vi_dept_from.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('viDeptFrom'))?.libellé}
               </span>
             )}
         </div>
@@ -72,7 +71,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
               />
             : (
               <span>
-                {indicateur.vaDeptFrom === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.va_dept_from.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vaDeptFrom'))?.libellé}
               </span>
             )}
         </div>
@@ -98,7 +97,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
               />
             : (
               <span>
-                {indicateur.vcDeptFrom === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.vc_dept_from.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vcDeptFrom'))?.libellé}
               </span>
             )}
         </div>
@@ -126,7 +125,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
               />
             : (
               <span>
-                {indicateur.viDeptOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.vi_dept_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('viDeptOp'))?.libellé}
               </span>
             )}
         </div>
@@ -152,7 +151,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
               />
             : (
               <span>
-                {indicateur.vaDeptOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.va_dept_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vaDeptOp'))?.libellé}
               </span>
             )}
         </div>
@@ -178,7 +177,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
               />
             : (
               <span>
-                {indicateur.vcDeptOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.vc_dept_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vcDeptOp'))?.libellé}
               </span>
             )}
         </div>

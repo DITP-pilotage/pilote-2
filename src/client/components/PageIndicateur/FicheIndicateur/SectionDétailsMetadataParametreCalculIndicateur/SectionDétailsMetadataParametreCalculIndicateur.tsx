@@ -46,7 +46,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
               />
             : (
               <span>
-                {indicateur.paramVacaDecumulFrom || 'Non renseigné'}
+                {indicateur.paramVacaDecumulFrom || '_'}
               </span>
             )}
 
@@ -72,7 +72,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
               />
             : (
               <span>
-                {indicateur.paramVacaPartitionDate || 'Non renseigné'}
+                {indicateur.paramVacaPartitionDate || '_'}
               </span>
             )}
         </div>
@@ -100,7 +100,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
               />
             : (
               <span>
-                {indicateur.paramVacaOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.param_vaca_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('paramVacaOp'))?.libellé}
               </span>
             )}
         </div>
@@ -127,7 +127,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
               />
             : (
               <span>
-                {indicateur.paramVacgDecumulFrom || 'Non renseigné'}
+                {indicateur.paramVacgDecumulFrom || '_'}
               </span>
             )}
         </div>
@@ -152,7 +152,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
               />
             : (
               <span>
-                {indicateur.paramVacgPartitionDate || 'Non renseigné'}
+                {indicateur.paramVacgPartitionDate || '_'}
               </span>
             )}
         </div>
@@ -180,7 +180,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
               />
             : (
               <span>
-                {indicateur.paramVacgOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.param_vacg_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('paramVacgOp'))?.libellé}
               </span>
             )}
         </div>
