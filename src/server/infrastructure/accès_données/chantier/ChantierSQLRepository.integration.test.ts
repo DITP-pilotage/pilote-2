@@ -117,7 +117,7 @@ describe('ChantierSQLRepository', () => {
         .avecMaille('DEPT')
         .avecCodeInsee('01')
         .avecTauxAvancement(30)
-        .avecMinistères(['MIN a', 'MIN b'])
+        .avecMinistèresAcronyme(['MINA', 'MINB'])
         .avecEstBaromètre(true)
         .avecEstTerritorialisé(false);
 
@@ -294,7 +294,7 @@ describe('ChantierSQLRepository', () => {
           maille: 'DEPT',
           régionNom: 'Auvergne-Rhône-Alpes',
           départementNom: 'Ain',
-          ministèreNom: 'MIN a',
+          ministèreNom: 'MINA',
           estBaromètre: true,
           estTerritorialisé: false,
           tauxDAvancementNational: 10,

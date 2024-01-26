@@ -624,13 +624,13 @@ describe('IndicateurSQLRepository', () => {
           nom: 'Indicateur 2 Chantier 2',
           chantierNom: 'A Chantier 2',
           maille: 'NAT',
-          chantierMinistèreNom: 'BBBB'
+          chantierMinistèreNom: 'BBBB',
         },
         { 
           nom: 'Indicateur 1 Chantier 1',
           chantierNom: 'B Chantier 1',
           maille: 'NAT', 
-          chantierMinistèreNom: 'AAAA'
+          chantierMinistèreNom: 'AAAA',
         },
       ].map(expect.objectContaining));
     });
