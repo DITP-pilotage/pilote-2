@@ -2,6 +2,7 @@ import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/Pé
 
 export default interface Ministère {
   id: string;
+  acronyme: string;
   nom: string;
   périmètresMinistériels: PérimètreMinistériel[];
   icône: string | null;

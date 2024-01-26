@@ -30,6 +30,8 @@ const ÉCHANTILLONS_ICÔNES = [
 export default class MinistèreBuilder {
   private _id: Ministère['id'];
 
+  private _acronyme: Ministère['acronyme'];
+
   private _nom: Ministère['nom'];
 
   private _périmètresMinistériels: Ministère['périmètresMinistériels'];
@@ -38,6 +40,7 @@ export default class MinistèreBuilder {
 
   constructor() {
     this._id = générerUnIdentifiantUnique('MIN');
+    this._acronyme = faker.datatype.string(4).toUpperCase();
     this._nom = `${générerUnLibellé(1, 3)} ministère`;
     this._périmètresMinistériels = [new PérimètreMinistérielBuilder().build()];
     this._icône = générerPeutÊtreNull(0.2, faker.helpers.arrayElement(ÉCHANTILLONS_ICÔNES));
@@ -66,6 +69,7 @@ export default class MinistèreBuilder {
   build(): Ministère {
     return {
       id: this._id,
+      acronyme: this._acronyme,
       nom: this._nom,
       périmètresMinistériels: this._périmètresMinistériels,
       icône: this._icône,

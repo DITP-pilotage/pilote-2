@@ -4,7 +4,7 @@ import MinistèreRepository from '@/server/domain/ministère/MinistèreRepositor
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 
-type MinistèreQueryResult = { nom: string, id: string, icone: string, perimetre_ids: string[], perimetre_noms: string[] };
+type MinistèreQueryResult = { nom: string, id: string, acronyme: string, icone: string, perimetre_ids: string[], perimetre_noms: string[] };
 
 export default class MinistèreSQLRepository implements MinistèreRepository {
   private prisma: PrismaClient;
@@ -17,12 +17,13 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
     const queryResults: MinistèreQueryResult[] = await this.prisma.$queryRaw`
         select p.ministere_id as id,
                m.nom,
+               m.acronyme,
                m.icone,
                array_agg(p.id order by p.nom) as perimetre_ids,
                array_agg(p.nom order by p.nom) as perimetre_noms
         from perimetre p
                  left join ministere m on p.ministere_id = m.id
-        group by m.nom, p.ministere_id, m.icone
+        group by m.nom, p.ministere_id, m.icone, m.acronyme
         order by m.nom, p.ministere_id;
     `;
     return queryResults.map(queryResult => this.parseMinistère(queryResult));
@@ -42,6 +43,7 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
 
     return {
       id: ministèreQueryResult.id,
+      acronyme: ministèreQueryResult.acronyme,
       nom: ministèreQueryResult.nom,
       périmètresMinistériels: périmètres,
       icône: ministèreQueryResult.icone ?? null,
@@ -56,13 +58,14 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
         )
         select p.ministere_id as id,
                m.nom,
+               m.acronyme,
                m.icone,
                array_agg(p.id order by p.nom) as perimetre_ids,
                array_agg(p.nom order by p.nom) as perimetre_noms
         from perimetre p
                  JOIN perimetres_visibles pv ON pv.perimetre_id = p.id
                  left join ministere m on p.ministere_id = m.id
-        group by m.nom, p.ministere_id, m.icone
+        group by m.nom, p.ministere_id, m.icone, m.acronyme
         order by CASE WHEN p.ministere_id = '1009' THEN 0 ELSE 1 END, m.nom, p.ministere_id;
     `;
     return queryResults.map(queryResult => this.parseMinistère(queryResult));

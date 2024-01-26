@@ -34,6 +34,8 @@ export default class ChantierRowBuilder {
 
   private _ministères: chantier['ministeres'];
 
+  private _ministères_acronymes: chantier['ministeres_acronymes'];
+
   private _météo: chantier['meteo'];
 
   private _directeursAdminCentrale: chantier['directeurs_administration_centrale'];
@@ -87,6 +89,7 @@ export default class ChantierRowBuilder {
     this._tauxAvancement = avancement.global;
     this._tauxAvancementPrécédent = avancementPrécédent.global;
     this._ministères = ministères.map(ministère => ministère.id);
+    this._ministères_acronymes = ministères.map(ministère => ministère.acronyme);
     this._météo = générerPeutÊtreNull(0.05, météo);
     this._directeursAdminCentrale = chantierGénéré.responsables.directeursAdminCentrale.map(directeur => directeur.nom);
     this._directionsAdminCentrale = chantierGénéré.responsables.directeursAdminCentrale.map(directeur => directeur.direction);
@@ -163,6 +166,11 @@ export default class ChantierRowBuilder {
 
   avecMinistères(ministères: chantier['ministeres']): ChantierRowBuilder {
     this._ministères = ministères;
+    return this;
+  }
+
+  avecMinistèresAcronyme(acronyme: chantier['ministeres_acronymes']): ChantierRowBuilder {
+    this._ministères_acronymes = acronyme;
     return this;
   }
 
@@ -257,6 +265,7 @@ export default class ChantierRowBuilder {
       taux_avancement: this._tauxAvancement,
       taux_avancement_precedent: this._tauxAvancementPrécédent,
       ministeres: this._ministères,
+      ministeres_acronymes: this._ministères_acronymes,
       meteo: this._météo,
       directeurs_administration_centrale: this._directeursAdminCentrale,
       directions_administration_centrale: this._directionsAdminCentrale,

@@ -64,6 +64,7 @@ model chantier {
   directeurs_administration_centrale String[]
   directeurs_projet                  String[]
   ministeres                         String[]
+  ministeres_acronymes               String[]
   directions_administration_centrale String[]
   meteo                              String?    @default("NON_RENSEIGNEE")
   axe                                String     @default("non renseignée")
@@ -88,6 +89,7 @@ model chantier {
 
 model ministere {
   id          String      @id
+  acronyme    String
   nom         String
   perimetre   perimetre[]
   icone       String?
