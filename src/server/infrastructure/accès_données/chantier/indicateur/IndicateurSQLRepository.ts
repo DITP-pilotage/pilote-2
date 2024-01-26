@@ -234,23 +234,26 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
               where sr.r = 1
           )
       
-      select i.maille                      maille,
-             t_r.nom                       region_nom,
-             t_d.nom                       departement_nom,
-             c.ministeres                  chantier_ministeres,
-             c.nom                         chantier_nom,
-             c.est_barometre               chantier_est_barometre,
-             c.taux_avancement             chantier_taux_avancement,
-             c.perimetre_ids               perimetre_ids,
-             s.meteo                       meteo,
-             i.nom                         nom,
-             i.valeur_initiale             valeur_initiale,
-             i.date_valeur_initiale        date_valeur_initiale,
-             i.valeur_actuelle             valeur_actuelle,
-             i.date_valeur_actuelle        date_valeur_actuelle,
-             i.objectif_valeur_cible       valeur_cible,
-             i.objectif_date_valeur_cible  date_valeur_cible,
-             i.objectif_taux_avancement    taux_avancement
+      select i.maille                                   maille,
+             t_r.nom                                    region_nom,
+             t_d.nom                                    departement_nom,
+             c.ministeres                               chantier_ministeres,
+             c.nom                                      chantier_nom,
+             c.est_barometre                            chantier_est_barometre,
+             c.taux_avancement                          chantier_taux_avancement,
+             c.perimetre_ids                            perimetre_ids,
+             s.meteo                                    meteo,
+             i.nom                                      nom,
+             i.valeur_initiale                          valeur_initiale,
+             i.date_valeur_initiale                     date_valeur_initiale,
+             i.valeur_actuelle                          valeur_actuelle,
+             i.date_valeur_actuelle                     date_valeur_actuelle,
+             i.objectif_valeur_cible_intermediaire      valeur_cible_annuelle,
+             i.objectif_date_valeur_cible_intermediaire date_valeur_cible_annuelle,
+             i.objectif_taux_avancement_intermediaire   taux_avancement_annuel,
+             i.objectif_valeur_cible                    valeur_cible,
+             i.objectif_date_valeur_cible               date_valeur_cible,
+             i.objectif_taux_avancement                 taux_avancement
       
       from chantier_ids cids
                inner join territoire t on t.code in (${Prisma.join(territoireCodesLecture)})
@@ -292,6 +295,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       dateValeurInitiale: it.date_valeur_initiale,
       valeurActuelle: it.valeur_actuelle,
       dateValeurActuelle: it.date_valeur_actuelle,
+      valeurCibleAnnuelle: it.valeur_cible_annuelle,
+      dateValeurCibleAnnuelle: it.date_valeur_cible_annuelle,
+      avancementAnnuel: it.taux_avancement_annuel,
       valeurCible: it.valeur_cible,
       dateValeurCible: it.date_valeur_cible,
       avancementGlobal: it.taux_avancement,
