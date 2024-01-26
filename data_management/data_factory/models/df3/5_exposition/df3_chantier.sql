@@ -97,7 +97,8 @@ select
     z.zone_type as "maille",
     -- coalesce with empty array
     coalesce(p_names.p_directeurs, string_to_array('','')) as directeurs_administration_centrale, 
-    string_to_array("porteur_ids_noDAC" , ' | ') as ministeres, 
+    string_to_array("porteur_ids_noDAC" , ' | ') as ministeres,
+    string_to_array("porteur_shorts_noDAC" , ' | ') as ministeres_acronymes,
     -- coalesce with empty array
     coalesce(p_names.p_shorts, string_to_array('','')) as directions_administration_centrale, 
     string_to_array("ch_dp" , ' | ') as directeurs_projet,
