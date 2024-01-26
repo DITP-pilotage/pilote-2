@@ -571,6 +571,69 @@ describe('IndicateurSQLRepository', () => {
         },
       ].map(expect.objectContaining));
     });
+    it('Récupère l acronyme du ministère', async () => {
+      // GIVEN
+      const repository = new IndicateurSQLRepository(prisma);
+      const nomDeChantier1 = 'B Chantier 1';
+      const nomDeChantier2 = 'A Chantier 2';
+      await prisma.chantier.createMany({
+        data: [
+          new ChantierSQLRowBuilder()
+            .avecId('CH-001')
+            .avecNom(nomDeChantier1)
+            .avecMinistèresAcronyme(['AAAA'])
+            .avecMaille('NAT')
+            .avecCodeInsee('FR')
+            .build(),
+          new ChantierSQLRowBuilder()
+            .avecId('CH-002')
+            .avecNom(nomDeChantier2)
+            .avecMinistèresAcronyme(['BBBB'])
+            .avecMaille('NAT')
+            .avecCodeInsee('FR')
+            .build(),
+        ],
+      });
+      await prisma.indicateur.createMany({
+        data:[
+          new IndicateurSQLRowBuilder()
+            .avecChantierId('CH-001')
+            .avecId('IND-001')
+            .avecNom('Indicateur 1 Chantier 1')
+            .avecMaille('NAT')
+            .avecCodeInsee('FR')
+            .avecEstApplicable(false)
+            .build(),
+          new IndicateurSQLRowBuilder()
+            .avecChantierId('CH-002')
+            .avecId('IND-002')
+            .avecNom('Indicateur 2 Chantier 2')
+            .avecMaille('NAT')
+            .avecCodeInsee('FR')
+            .avecEstApplicable(false)
+            .build(),
+        ],
+      });
+
+      // WHEN
+      const result = await repository.récupérerPourExports(['CH-001', 'CH-002'], ['NAT-FR']);
+
+      // THEN
+      expect(result).toEqual([
+        { 
+          nom: 'Indicateur 2 Chantier 2',
+          chantierNom: 'A Chantier 2',
+          maille: 'NAT',
+          chantierMinistèreNom: 'BBBB'
+        },
+        { 
+          nom: 'Indicateur 1 Chantier 1',
+          chantierNom: 'B Chantier 1',
+          maille: 'NAT', 
+          chantierMinistèreNom: 'AAAA'
+        },
+      ].map(expect.objectContaining));
+    });
   });
 
   describe('Récupérer la bonne valeur cible annuelle', () => {

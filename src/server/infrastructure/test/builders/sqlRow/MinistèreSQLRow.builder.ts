@@ -7,6 +7,8 @@ import MinistèreBuilder from '@/server/domain/ministère/Ministère.builder';
 export default class MinistèreSQLRowBuilder {
   private _id: ministere['id'];
 
+  private _acronyme: ministere['acronyme'];
+
   private _nom: string;
 
   private _icone: string | null;
@@ -17,6 +19,7 @@ export default class MinistèreSQLRowBuilder {
     const ministèreGénéré = new MinistèreBuilder().build();
     
     this._id = générerUnIdentifiantUnique('MIN');
+    this._acronyme = ministèreGénéré.acronyme;
     this._nom = ministèreGénéré.nom;
     this._icone = ministèreGénéré.icône;
     this._a_supprimer = false;
@@ -37,9 +40,15 @@ export default class MinistèreSQLRowBuilder {
     return this;
   }
 
+  avecAcronyme(acronyme: ministere['acronyme']): MinistèreSQLRowBuilder {
+    this._acronyme = acronyme;
+    return this;
+  }
+
   build(): ministere {
     return {
       id: this._id,
+      acronyme: this._acronyme,
       nom: this._nom,
       icone: this._icone,
       a_supprimer: this._a_supprimer,
