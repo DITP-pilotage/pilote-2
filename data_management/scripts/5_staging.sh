@@ -15,4 +15,4 @@ then
   fi
 fi
 
-dbt run --project-dir data_factory --select staging --exclude raw.dfakto+
+dbt run --project-dir data_factory --select staging

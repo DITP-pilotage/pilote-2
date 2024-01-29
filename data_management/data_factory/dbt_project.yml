@@ -39,13 +39,6 @@ models:
     raw:
       +schema: raw_data
       +materialized: table
-      dfakto:
-        +docs:
-          node_color: "#f55b5b"
-        chantier:
-          +tags: "scope_chantier"
-        projet_structurant:
-          +tags: "scope_pst"
       ppg_metadata:
         +docs:
           node_color: "#553df2"
@@ -68,9 +61,6 @@ models:
     staging:
       +schema: raw_data
       +materialized: view
-      dfakto:
-        +docs:
-          node_color: "#f55b5b"
       ppg_metadata:
         +docs:
           node_color: "#553df2"
@@ -132,25 +122,7 @@ models:
       decision_strategique:
         +unique_key:
           - 'id'
-      objectif_projet_structurant:
-        +unique_key:
-          - 'id'
       synthese_des_resultats:
-        +unique_key:
-          - 'id'
-      synthese_des_resultats_projet_structurant:
-        +unique_key:
-          - 'id'
-      perimetre_projet_structurant:
-        +unique_key:
-          - 'id'
-      commentaire_projet_structurant:
-        +unique_key:
-          - 'id'
-      indicateur_projet_structurant:
-        +unique_key:
-          - 'id'
-      projet_structurant:
         +unique_key:
           - 'id'
 
