@@ -9,6 +9,20 @@ Prérequis:
 - Lancer le script en local via `/bin/bash descente_de_prod_partielle.sh` ou via `docker-compose up` (ne fonctionne pas actuellement pour les connexions avec tunnel ssh)
 - Le fichier `.dump` généré par le dump et chargé dans la base de destination sera disponible dans `out/`
 
+### Via Docker
+
+Pour utiliser Docker, renseigner les variables d'environement suivantes:
+
+```sh
+# for docker use
+API_TOKEN_SCALINGO=TBD
+SCALINGO_REGION=TBD
+SCALINGO_APP=TBD
+SCALINGO_PORT_BIND=TBD
+```
+
+et ajouter une clé ssh autorisée par Scalingo dans `ssh_key_scalingo`.
+
 ### Exécuter sur Scalingo
 
 Etapes à réaliser sur Scalingo:
