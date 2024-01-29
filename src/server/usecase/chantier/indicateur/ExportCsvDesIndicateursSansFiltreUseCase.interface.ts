@@ -11,6 +11,7 @@ export type IndicateurPourExport = {
   départementNom: string | null,
   chantierMinistèreNom: Ministère['nom'] | null,
   chantierNom: Chantier['nom'] | null,
+  chantierId: Chantier['id'] | null,
   chantierEstBaromètre: Chantier['estBaromètre'] | null,
   chantierAvancementGlobal: Avancement['global'] | null,
   périmètreIds: string[],

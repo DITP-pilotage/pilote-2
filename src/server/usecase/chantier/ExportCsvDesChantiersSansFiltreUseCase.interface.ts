@@ -2,6 +2,7 @@ import { Météo } from '@/server/domain/météo/Météo.interface';
 
 export type ChantierPourExport = {
   nom: string | null,
+  id: string | null,
   maille: string | null,
   régionNom: string | null,
   départementNom: string | null,
@@ -29,6 +30,7 @@ export type ChantierPourExport = {
 export class ChantierPourExportBuilder  {
   private _chantierPourExport: ChantierPourExport = {
     nom: null,
+    id: null,
     maille: null,
     régionNom: null,
     départementNom: null,
