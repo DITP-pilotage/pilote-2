@@ -162,7 +162,3 @@ vars:
     vig_min_date: '2018-01-01'
     # Nombre de décimales renvoyées par le calcul des TAA et TAG
     ta_decimales: 2
-    # Table à utiliser pour la table d'exposition indicateur
-    source_indic: "{{ env_var('SOURCE_INDIC', 'df3_indicateur') }}"
-    # Table à utiliser pour la table d'exposition chantier
-    source_chantier: "{{ env_var('SOURCE_CHANTIER', 'df3_chantier') }}"
