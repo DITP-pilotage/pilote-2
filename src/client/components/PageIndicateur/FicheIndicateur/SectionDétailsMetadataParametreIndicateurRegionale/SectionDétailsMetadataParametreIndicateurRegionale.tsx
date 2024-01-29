@@ -9,7 +9,6 @@ import SectionDétailsMetadataParametreIndicateurRegionaleProps
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurRegionale/SectionDétailsMetadataParametreIndicateurRegionale.interface';
 
 export default function SectionDétailsMetadataParametreIndicateurRegionale({
-  indicateur,
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }: SectionDétailsMetadataParametreIndicateurRegionaleProps) {
@@ -46,7 +45,7 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
               />
             : (
               <span>
-                {indicateur.viRegFrom === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.vi_reg_from.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('viRegFrom'))?.libellé}
               </span>
             )}
         </div>
@@ -72,7 +71,7 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
               />
             : (
               <span>
-                {indicateur.vaRegFrom === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.va_reg_from.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vaRegFrom'))?.libellé}
               </span>
             )}
         </div>
@@ -98,7 +97,7 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
               />
             : (
               <span>
-                {indicateur.vcRegFrom === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.vc_reg_from.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vcRegFrom'))?.libellé}
               </span>
             )}
         </div>
@@ -126,7 +125,7 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
               />
             : (
               <span>
-                {indicateur.viRegOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.vi_reg_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('viRegOp'))?.libellé}
               </span>
             )}
         </div>
@@ -152,7 +151,7 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
               />
             : (
               <span>
-                {indicateur.vaRegOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.va_reg_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vaRegOp'))?.libellé}
               </span>
             )}
         </div>
@@ -179,7 +178,7 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
               />
             : (
               <span>
-                {indicateur.vcRegOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.vc_reg_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vcRegOp'))?.libellé}
               </span>
             )}
         </div>

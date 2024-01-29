@@ -9,7 +9,6 @@ import SectionDétailsMetadataParametreIndicateurNationaleStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/SectionDétailsMetadataParametreIndicateurNationale.styled';
 
 export default function SectionDétailsMetadataParametreIndicateurNationale({
-  indicateur,
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }: SectionDétailsMetadataParametreIndicateurNationaleProps) {
@@ -46,7 +45,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
               />
             : (
               <span>
-                {indicateur.viNatFrom === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.vi_nat_from.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('viNatFrom'))?.libellé}
               </span>
             )}
         </div>
@@ -72,7 +71,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
               />
             : (
               <span>
-                {indicateur.vaNatFrom === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.va_nat_from.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vaNatFrom'))?.libellé}
               </span>
             )}
         </div>
@@ -98,7 +97,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
               />
             : (
               <span>
-                {indicateur.vcNatFrom === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.vc_nat_from.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vcNatFrom'))?.libellé}
               </span>
             )}
         </div>
@@ -126,7 +125,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
               />
             : (
               <span>
-                {indicateur.viNatOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.vi_nat_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('viNatOp'))?.libellé}
               </span>
             )}
         </div>
@@ -152,7 +151,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
               />
             : (
               <span>
-                {indicateur.vaNatOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.va_nat_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vaNatOp'))?.libellé}
               </span>
             )}
         </div>
@@ -178,7 +177,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
               />
             : (
               <span>
-                {indicateur.vcNatOp === '_' ? 'Aucune saisie' : 'Saisie utilisateur'}
+                {mapInformationMetadataIndicateur.vc_nat_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vcNatOp'))?.libellé}
               </span>
             )}
         </div>

@@ -43,7 +43,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.indicNomBaro || 'Non renseigné'}
+                {indicateur.indicNomBaro || '_'}
               </span>
             )}
 
@@ -66,7 +66,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.indicDescrBaro || 'Non renseigné'}
+                {indicateur.indicDescrBaro || '_'}
               </span>
             )}
 
@@ -161,7 +161,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.indicSource || 'Non renseigné'}
+                {indicateur.indicSource || '_'}
               </span>
             )}
 
@@ -180,7 +180,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.indicSourceUrl || 'Non renseigné'}
+                {indicateur.indicSourceUrl || '_'}
               </span>
             )}
 
@@ -205,7 +205,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.indicMethodeCalcul || 'Non renseigné'}
+                {indicateur.indicMethodeCalcul || '_'}
               </span>
             )}
 
@@ -231,7 +231,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.reformePrioritaire || 'Non renseigné'}
+                {indicateur.reformePrioritaire || '_'}
               </span>
             )}
 
@@ -281,7 +281,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.detailProjetAnnuelPerf || 'Non renseigné'}
+                {indicateur.detailProjetAnnuelPerf || '_'}
               </span>
             )}
 
@@ -305,7 +305,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.periodicite || 'Non renseigné'}
+                {indicateur.periodicite || '_'}
               </span>
             )}
 
@@ -331,7 +331,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.delaiDisponibilite || 'Non renseigné'}
+                {indicateur.delaiDisponibilite || '_'}
               </span>
             )}
 
@@ -355,7 +355,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.commentaire || 'Non renseigné'}
+                {indicateur.commentaire || '_'}
               </span>
             )}
 
@@ -381,7 +381,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.frequenceTerritoriale || 'Non renseigné'}
+                {indicateur.frequenceTerritoriale || '_'}
               </span>
             )}
 
@@ -405,7 +405,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.mailles || 'Non renseigné'}
+                {indicateur.mailles || '_'}
               </span>
             )}
 
@@ -431,7 +431,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.adminSource || 'Non renseigné'}
+                {indicateur.adminSource || '_'}
               </span>
             )}
 
@@ -455,7 +455,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.methodeCollecte || 'Non renseigné'}
+                {indicateur.methodeCollecte || '_'}
               </span>
             )}
 
@@ -481,7 +481,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.siSource || 'Non renseigné'}
+                {indicateur.siSource || '_'}
               </span>
             )}
 
@@ -531,7 +531,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.modalitesDonneeOuverte || 'Non renseigné'}
+                {indicateur.modalitesDonneeOuverte || '_'}
               </span>
             )}
 
@@ -555,7 +555,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.respDonnees || 'Non renseigné'}
+                {indicateur.respDonnees || '_'}
               </span>
             )}
 
@@ -581,7 +581,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.respDonneesEmail || 'Non renseigné'}
+                {indicateur.respDonneesEmail || '_'}
               </span>
             )}
 
@@ -605,7 +605,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.contactTechnique || 'Non renseigné'}
+                {indicateur.contactTechnique || '_'}
               </span>
             )}
 
@@ -631,7 +631,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
               />
             : (
               <span>
-                {indicateur.contactTechniqueEmail || 'Non renseigné'}
+                {indicateur.contactTechniqueEmail || '_'}
               </span>
             )}
 

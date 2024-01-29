@@ -44,7 +44,7 @@ export default function SectionDétailsMetadataIndicateur({
               />
             : (
               <span>
-                {indicateur.indicNom || 'Non renseigné'}
+                {indicateur.indicNom || '_'}
               </span>
             )}
 
@@ -75,7 +75,7 @@ export default function SectionDétailsMetadataIndicateur({
               />
             : (
               <span>
-                {indicateur.indicDescr || 'Non renseigné'}
+                {indicateur.indicDescr || '_'}
               </span>
             )}
 
@@ -161,7 +161,7 @@ export default function SectionDétailsMetadataIndicateur({
               />
             : (
               <span>
-                {mapInformationMetadataIndicateur.indic_schema.acceptedValues.find(acceptedValue => acceptedValue.valeur === indicateur.indicSchema)?.libellé || 'Non renseigné'}
+                {mapInformationMetadataIndicateur.indic_schema.acceptedValues.find(acceptedValue => acceptedValue.valeur === indicateur.indicSchema)?.libellé || '_'}
               </span>
             )}
         </div>
@@ -187,7 +187,7 @@ export default function SectionDétailsMetadataIndicateur({
               />
             : (
               <span>
-                {mapInformationMetadataIndicateur.indic_type.acceptedValues.find(acceptedValue => acceptedValue.valeur === indicateur.indicType)?.libellé || 'Non renseigné'}
+                {mapInformationMetadataIndicateur.indic_type.acceptedValues.find(acceptedValue => acceptedValue.valeur === indicateur.indicType)?.libellé || '_'}
               </span>
             )}
 
@@ -208,7 +208,7 @@ export default function SectionDétailsMetadataIndicateur({
               />
             : (
               <span>
-                {indicateur.indicUnite || 'Non renseigné'}
+                {indicateur.indicUnite || '_'}
               </span>
             )}
         </div>
@@ -226,7 +226,7 @@ export default function SectionDétailsMetadataIndicateur({
               />
             : (
               <span>
-                {indicateur.zgApplicable || 'Non renseigné'}
+                {indicateur.zgApplicable || '_'}
               </span>
             )}
         </div>

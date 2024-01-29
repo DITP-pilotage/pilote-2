@@ -45,6 +45,7 @@ type MetadataIndicateurForm = MetadataParametrageIndicateurForm
 export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContrat) => {
   const router = useRouter();
   const [alerte, setAlerte] = useState <AlerteProps | null>(null);
+  const [estEnCoursDeModification, setEstEnCoursDeModification] = useState<boolean>(false);
 
   const reactHookForm = useForm<MetadataIndicateurForm>(
     {
@@ -67,10 +68,10 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
     },
   );
 
-  const [estEnCoursDeModification, setEstEnCoursDeModification] = useState<boolean>(false);
 
   const mutationModifierMetadataIndicateur = api.metadataIndicateur.modifier.useMutation({
     onSuccess: () => {
+      setEstEnCoursDeModification(false);
       router.push(`/admin/indicateurs/${indicateur.indicId}?_action=modification-reussie`);
     },
     onError: error => {
@@ -84,6 +85,7 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
   });
   const mutationCreerMetadataIndicateur = api.metadataIndicateur.creer.useMutation({
     onSuccess: () => {
+      setEstEnCoursDeModification(false);
       router.push(`/admin/indicateurs/${indicateur.indicId}?_action=creation-reussie`);
     },
     onError: error => {
