@@ -292,6 +292,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
     `;
     return rows.map(it => ({
       nom: it.nom,
+      id: it.id,
       maille: it.maille,
       régionNom: it.region_nom,
       départementNom: it.departement_nom,

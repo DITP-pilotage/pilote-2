@@ -291,6 +291,7 @@ describe('ChantierSQLRepository', () => {
         expect.objectContaining({ nom: 'chantier 1', maille: 'REG' }),
         expect.objectContaining({
           nom: 'chantier 1',
+          id: 'CH-001',
           maille: 'DEPT',
           régionNom: 'Auvergne-Rhône-Alpes',
           départementNom: 'Ain',

@@ -556,6 +556,7 @@ describe('IndicateurSQLRepository', () => {
         { 
           nom: 'Indicateur 2 Chantier 2',
           chantierNom: 'A Chantier 2',
+          chantierId: 'CH-002',
           maille: 'NAT',
           dateValeurCibleAnnuelle : new Date('2024-12-01'),
           valeurCibleAnnuelle: 23,
@@ -564,6 +565,7 @@ describe('IndicateurSQLRepository', () => {
         { 
           nom: 'Indicateur 1 Chantier 1',
           chantierNom: 'B Chantier 1',
+          chantierId: 'CH-001',
           maille: 'NAT', 
           dateValeurCibleAnnuelle : new Date('2024-12-01'),
           valeurCibleAnnuelle: 22,
