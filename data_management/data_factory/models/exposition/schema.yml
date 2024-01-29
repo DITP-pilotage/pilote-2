@@ -72,20 +72,8 @@ models:
         description: "source de données à date du 07/07/2023 : import massif des commentaires"
       - name: code_insee
         description: "source de données à date du 07/07/2023 : import massif des commentaires"
-  - name: commentaire_projet_structurant
-    columns:
-      - name: id
-        description: "source de données à date du 07/07/2023 : identifiant unique"
-      - name: projet_structurant_id
-        description: "source de données à date du 07/07/2023 : identifiant unique du projet structurant"
-      - name: type
-        description: "source de données à date du 07/07/2023 : champs custom pour le front"
-      - name: contenu
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: date
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
   - name: indicateur
-    description: "Une vue sur `df1_indicateur` ou `df3_indicateur`"
+    description: "Une vue sur `df3_indicateur`"
     columns:
       - name: id
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_indicateur"
@@ -165,40 +153,6 @@ models:
         description: "source de données à date du 07/07/2023 : import massif des commentaires"
       - name: chantier_id
         description: "source de données à date du 07/07/2023 : import massif des commentaires"
-  - name: indicateur_projet_structurant
-    columns:
-      - name: id
-        description: "source de données à date du 07/07/2023 : indentifiant unique"
-      - name: nom
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_kpis"
-      - name: projet_structurant_code
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_kpis"
-      - name: type_id
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_kpis"
-      - name: description
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_kpis"
-      - name: source
-        description: "source de données à date du 07/07/2023 : toujours null"
-      - name: mode_de_calcul
-        description: "source de données à date du 07/07/2023 : toujours null"
-      - name: valeur_actuelle
-        description: "source de données à date du 07/07/2023 : dfakto.fact_progress_kpis"
-      - name: valeur_initiale
-        description: "source de données à date du 07/07/2023 : dfakto.fact_progress_kpis"
-      - name: valeur_cible
-        description: "source de données à date du 07/07/2023 : dfakto.fact_progress_kpis"
-      - name: taux_avancement
-        description: "source de données à date du 07/07/2023 : dfakto.fact_progress_kpis"
-      - name: date_valeur_actuelle
-        description: "source de données à date du 07/07/2023 : dfakto.fact_progress_kpis"
-      - name: date_valeur_initiale
-        description: "source de données à date du 07/07/2023 : dfakto.fact_progress_kpis"
-      - name: date_valeur_cible
-        description: "source de données à date du 07/07/2023 : dfakto.fact_progress_kpis"
-      - name: date_taux_avancement
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_kpis"
-      - name: projet_structurant_id
-        description: "source de données à date du 07/07/2023 : indentifiant unique du projet structurant"
   - name: ministere
     columns:
       - name: id
@@ -221,20 +175,6 @@ models:
         description: "source de données à date du 07/07/2023 : import massif des commentaires"
       - name: chantier_id
         description: "source de données à date du 07/07/2023 : import massif des commentaires"
-  - name: objectif_projet_structurant
-    columns:
-      - name: id
-        description: "source de données à date du 07/07/2023 : identifiant unique"
-      - name: projet_structurant_id
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: type
-        description: "source de données à date du 07/07/2023 : type custom pour le front"
-      - name: contenu
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: date
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: auteur
-        description: "source de données à date du 07/07/2023 : toujours null"
   - name: perimetre
     columns:
       - name: id
@@ -245,57 +185,3 @@ models:
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_perimetre"
       - name: ministere_id
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_perimetre"
-  - name: perimetre_projet_structurant
-    columns:
-      - name: id
-        description: "source de données à date du 07/07/2023 : identifiant unique"
-      - name: perimetres_ppg_nom
-        description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_perimetre"
-      - name: perimetres_ppg_id
-        description: "source de données à date du 07/07/2023 : ppg_metadata.mapping_per_pst"
-      - name: perimetre_ps_nom
-        description: "source de données à date du 07/07/2023 : ppg_metadata.mapping_per_pst"
-  - name: projet_structurant
-    columns:
-      - name: id
-        description: "source de données à date du 07/07/2023 : identifiant unique"
-      - name: code
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: nom
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: taux_avancement
-        description: "source de données à date du 07/07/2023 : dfakto.fact_progress_project ou dfakto.fact_property_values"
-      - name: date_taux_avancement
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: territoire_code
-        description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_zone"
-      - name: perimetres_ids
-        description: "source de données à date du 07/07/2023 : ppg_metadata.mapping_per_pst"
-      - name: direction_administration
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: chefferie_de_projet
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: co_porteurs
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: date_donnees_qualitative
-        description: "source de données à date du 07/07/2023 : date de mise à jour d'un champ du projet stucturant"
-  - name: synthese_des_resultats_projet_structurant
-    columns:
-      - name: id
-        description: "source de données à date du 07/07/2023 : identifiant unique"
-      - name: projet_structurant_id
-        description: "source de données à date du 07/07/2023 : indentifiant unique du projet structurant"
-      - name: meteo
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: date_meteo
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: commentaire
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: date_commentaire
-        description: "source de données à date du 07/07/2023 : dfakto.ps_view_data_financials"
-      - name: auteur
-        description: "source de données à date du 07/07/2023 : toujours null"
-  - name: df1_indicateur
-    description: "Table des indicateurs générée par la datafactory v1"
-  - name: df1_chantier
-    description: "Table des chantiers générée par la datafactory v1"

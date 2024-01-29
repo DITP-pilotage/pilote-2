@@ -45,6 +45,9 @@ JOBS_TO_RUN['LOCAL'] = [
 
 
 def run_datajobs() -> int:
+    notify(ERROR_MSG)
+    print("Message sent")
+    sys.exit(1)
     if os.environ.get('FORCE_ENVIRONMENT_DATAJOBS'): print("> ATTENTION: Environnement forcé sur", os.environ.get('FORCE_ENVIRONMENT_DATAJOBS'))
     print('> Environnement détecté:', SELECTED_ENV)
     print("> Exécution des datajobs suivants:", JOBS_TO_RUN[SELECTED_ENV])
