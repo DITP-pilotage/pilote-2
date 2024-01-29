@@ -89,7 +89,7 @@ model chantier {
 
 model ministere {
   id          String      @id
-  acronyme    String?
+  acronyme    String
   nom         String
   perimetre   perimetre[]
   icone       String?
