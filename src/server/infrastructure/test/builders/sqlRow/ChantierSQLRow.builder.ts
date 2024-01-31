@@ -2,6 +2,7 @@ import { chantier } from '@prisma/client';
 import { faker } from '@faker-js/faker/locale/fr';
 import {
   générerCaractèresSpéciaux, générerPeutÊtreNull,
+  générerTableau,
   générerUneMailleAléatoire, générerUnLibellé,
   retourneUneListeDeCodeInseeCohérentePourUneMaille,
 } from '@/server/infrastructure/test/builders/utils';
@@ -45,6 +46,14 @@ export default class ChantierRowBuilder {
   private _directeursProjet: chantier['directeurs_projet'];
 
   private _directeursProjetMails: chantier['directeurs_projet_mails'];
+
+  private _responsables_locaux: chantier['responsables_locaux'];
+
+  private _responsables_locaux_mails: chantier['responsables_locaux_mails'];
+
+  private _referents_territoriaux: chantier['referents_territoriaux'];
+
+  private _referents_territoriaux_mails: chantier['referents_territoriaux_mails'];
 
   private _estBaromètre: chantier['est_barometre'];
 
@@ -95,6 +104,10 @@ export default class ChantierRowBuilder {
     this._directionsAdminCentrale = chantierGénéré.responsables.directeursAdminCentrale.map(directeur => directeur.direction);
     this._directeursProjet = chantierGénéré.responsables.directeursProjet.map(directeur => directeur.nom);
     this._directeursProjetMails = chantierGénéré.responsables.directeursProjet.map(directeur => directeur.email ?? 'example@example.te');
+    this._responsables_locaux = générerTableau(1, 3, () => (faker.name.fullName()));
+    this._responsables_locaux_mails = générerTableau(1, 3, () => (faker.internet.email()));
+    this._referents_territoriaux = générerTableau(1, 3, () => (faker.name.fullName()));
+    this._referents_territoriaux_mails = générerTableau(1, 3, () => (faker.internet.email()));
     this._estBaromètre = générerPeutÊtreNull(0.2, chantierGénéré.estBaromètre);
     this._estTerritorialisé = générerPeutÊtreNull(0.2, chantierGénéré.estTerritorialisé);
     this._territoireCode = `${this._maille}-${this._codeInsee}`;
@@ -271,6 +284,10 @@ export default class ChantierRowBuilder {
       directions_administration_centrale: this._directionsAdminCentrale,
       directeurs_projet: this._directeursProjet,
       directeurs_projet_mails: this._directeursProjetMails,
+      responsables_locaux: this._responsables_locaux,
+      responsables_locaux_mails: this._responsables_locaux_mails,
+      referents_territoriaux: this._referents_territoriaux,
+      referents_territoriaux_mails: this._referents_territoriaux_mails,
       est_barometre: this._estBaromètre,
       est_territorialise: this._estTerritorialisé,
       territoire_code: this._territoireCode,

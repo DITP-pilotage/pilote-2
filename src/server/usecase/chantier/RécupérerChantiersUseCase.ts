@@ -10,7 +10,6 @@ import { objectEntries } from '@/client/utils/objects/objects';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 
 export default class RécupérerChantiersUseCase {
   constructor(
@@ -18,7 +17,6 @@ export default class RécupérerChantiersUseCase {
     private readonly chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository = dependencies.getChantierDatesDeMàjRepository(),
     private readonly ministèreRepository: MinistèreRepository = dependencies.getMinistèreRepository(),
     private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
-    private readonly utilisateurRepository: UtilisateurRepository = dependencies.getUtilisateurRepository(),
   ) {}
 
   async run(habilitations: Habilitations): Promise<Chantier[]> {
@@ -31,9 +29,8 @@ export default class RécupérerChantiersUseCase {
     const chantiersRows = await this.chantierRepository.récupérerTous();
 
     const chantiersRowsDatesDeMàj = await this.chantierDatesDeMàjRepository.récupérerDatesDeMiseÀJour(chantiersLecture, territoiresLecture);
-    const utilisateurs = await this.utilisateurRepository.récupérerTous([], [], false);
 
     const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRows, chantier => chantier.id);
-    return objectEntries(chantiersGroupésParId).map(([_, chantier]) => parseChantier(chantier, territoires, ministères, chantiersRowsDatesDeMàj, utilisateurs));
+    return objectEntries(chantiersGroupésParId).map(([_, chantier]) => parseChantier(chantier, territoires, ministères, chantiersRowsDatesDeMàj));
   }
 }
