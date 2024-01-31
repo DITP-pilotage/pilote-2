@@ -33,13 +33,13 @@ export const MessageInformationForm = () => {
           erreur={errors.bandeauTexte}
           htmlName='bandeauTexte'
           libellé='bandeauTexte'
-          register={register('bandeauTexte', { value: 'test' })}
+          register={register('bandeauTexte')}
         />
       </div>
       <div className='flex fr-pb-2w'>
         <Interrupteur
           checked={getValues('isBandeauActif')}
-          id='test'
+          id='isBandeauActif'
           libellé='Activer la bannière'
           messageSecondaire='Activer la bannière pour la rendre visible à tous les utilisateurs de PILOTE'
           register={register('isBandeauActif')}
