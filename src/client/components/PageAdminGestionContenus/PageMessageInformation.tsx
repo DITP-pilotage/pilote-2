@@ -5,9 +5,11 @@ import { useMessageInformation } from '@/components/PageAdminGestionContenus/use
 import {
   MessageInformationForm,
 } from '@/components/PageAdminGestionContenus/MessageInformationForm/MessageInformationForm';
+import { MessageInformationContrat } from '@/server/app/contrats/MessageInformationContrat';
+import Alerte from '@/components/_commons/Alerte/Alerte';
 
-export function PageMessageInformation() {
-  const { reactHookForm, modifierIndicateur } = useMessageInformation();
+export function PageMessageInformation({ messageInformation, modificationReussie }: { messageInformation: MessageInformationContrat, modificationReussie: boolean } ) {
+  const { reactHookForm, modifierIndicateur } = useMessageInformation({ messageInformation, modificationReussie });
 
   return (
     <div className='flex'>
@@ -21,6 +23,16 @@ export function PageMessageInformation() {
               Message d'information
             </Titre>
             <Bloc>
+              {
+                modificationReussie ? (
+                  <div className='fr-my-2w'>
+                    <Alerte
+                      titre='Modification réussie'
+                      type='succès'
+                    />
+                  </div>
+                ) : null
+              }
               <FormProvider {...reactHookForm}>
                 <form
                   method='put'

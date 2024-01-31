@@ -103,6 +103,10 @@ import {
 import {
   HistorisationModificationRepository,
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
+import { GestionContenuRepository } from '@/server/gestion-contenu/domain/ports/GestionContenuRepository';
+import {
+  PrismaGestionContenuRepository,
+} from '@/server/gestion-contenu/infrastructure/adapters/PrismaGestionContenuRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
@@ -180,6 +184,8 @@ class Dependencies {
 
   private readonly _historisationModification: HistorisationModificationRepository;
 
+  private readonly _gestionContenuRepository: GestionContenuRepository;
+
   constructor() {
     const prisma = globalForPrisma.prisma ?? new PrismaClient();
     if (process.env.NODE_ENV !== 'production') {
@@ -213,6 +219,7 @@ class Dependencies {
     this._metadataParametrageIndicateurRepository = new PrismaMetadataParametrageIndicateurRepository(prisma);
     this._informationMetadataIndicateurRepository = new YamlInformationMetadataIndicateurRepository();
     this._historisationModification = new HistorisationModificationSQLRepository(prisma);
+    this._gestionContenuRepository = new PrismaGestionContenuRepository(prisma);
 
     const httpClient = new FetchHttpClient();
     const fichierIndicateurValidationService = new ValidataFichierIndicateurValidationService({ httpClient });
@@ -230,6 +237,10 @@ class Dependencies {
       indicateurRepository: this._importIndicateurRepository,
       erreurValidationFichierRepository: this._erreurValidationFichierRepository,
     });
+  }
+
+  getGestionContenuRepository(): GestionContenuRepository {
+    return this._gestionContenuRepository;
   }
 
   getHistorisationModificationRepository(): HistorisationModificationRepository {

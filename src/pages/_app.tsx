@@ -9,7 +9,7 @@ import type { AppProps } from 'next/app';
 import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
 import { Router } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Head from 'next/head';
 import { TRPCClientError } from '@trpc/client';

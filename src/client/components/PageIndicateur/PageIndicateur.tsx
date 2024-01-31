@@ -23,6 +23,16 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
           libelléPageCourante='Indicateur'
         />
         <div className='fiche-indicateur fr-pt-1w fr-pb-13w'>
+          {
+            !!alerte && (
+              <div className='fr-mt-2w'>
+                <Alerte
+                  titre={alerte.titre}
+                  type={alerte.type}
+                />
+              </div>
+            )
+          }
           <FormProvider {...reactHookForm}>
             <form
               method='post'
@@ -145,16 +155,6 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
           </FormProvider>
           
         </div>
-        {
-            !!alerte && (
-            <div className='fr-mt-2w'>
-              <Alerte
-                titre={alerte.titre}
-                type={alerte.type}
-              />
-            </div>
-            )
-        }
       </main>
     </PageIndicateurStyled>
   );

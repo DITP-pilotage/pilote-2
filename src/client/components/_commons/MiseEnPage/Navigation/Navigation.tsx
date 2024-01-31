@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
-import { FunctionComponent } from 'react';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
+import { MenuItemGestionContenu } from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === 'function') {
@@ -19,75 +19,6 @@ const vérifierValeurApplicationEstIndisponible = () => {
 };
 
 const estAutoriséAParcourirSiIndisponible = (session: Session | null) => session?.profil === 'DITP_ADMIN';
-
-interface PageGestionContenu {
-  nom: string
-  lien: string
-}
-
-const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> = ({ urlActuelle }) => {
-  const pagesGestionContenu: PageGestionContenu[] = [
-    {
-      nom: 'Message d\'information',
-      lien: '/admin/message-information',
-    }, {
-      nom: 'Nouveautés',
-      lien: '/admin/nouveautes',
-    }, {
-      nom: 'Textes des infobulles',
-      lien: '/admin/infobulles',
-    }, {
-      nom: 'Chantiers',
-      lien: '/admin/chantiers',
-    }, {
-      nom: 'Indicateurs des chantiers',
-      lien: '/admin/indicateurs',
-    }, {
-      nom: 'Projets structurants',
-      lien: '/admin/projets-structurants',
-    }, {
-      nom: 'Indicateurs des projets structurants',
-      lien: '/admin/indicateurs-projets-structurants',
-    },
-  ];
-  return (
-    <li className='fr-nav__item'>
-      <button
-        aria-controls='menu-776'
-        aria-current={pagesGestionContenu.map(page => page.nom).includes(urlActuelle)}
-        aria-expanded='false'
-        className='fr-nav__btn'
-        type='button'
-      >
-        Gestion des contenus
-      </button>
-      <div
-        className='fr-collapse fr-menu'
-        id='menu-776'
-      >
-        <ul className='fr-menu__list'>
-          {
-            pagesGestionContenu.map(page => {
-              return (
-                <li key={page.lien}>
-                  <Link
-                    aria-current={page.lien === urlActuelle ? 'true' : undefined}
-                    className='fr-nav__link'
-                    href={page.lien}
-                    target='_self'
-                  >
-                    { page.nom}
-                  </Link>
-                </li>
-              );
-            })
-          }
-        </ul>
-      </div>
-    </li>
-  );
-};
-
 
 export default function Navigation() {
   const { data: session } = useSession();

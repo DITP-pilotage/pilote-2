@@ -125,7 +125,6 @@ export const presenterEnInformationMetadataIndicateurContrat = (informationMetad
 };
 
 export const presenterEnMapInformationMetadataIndicateurContrat = (listeInformationMetadataIndicateur: InformationMetadataIndicateur[]): MapInformationMetadataIndicateurContrat => {
-  // eslint-disable-next-line unicorn/no-array-reduce
   return listeInformationMetadataIndicateur.reduce((obj, valeur) => {
     obj[valeur.name as AvailableInformationMetadataIndicateur] = presenterEnInformationMetadataIndicateurContrat(valeur);
     return obj;

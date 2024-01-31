@@ -5,19 +5,21 @@ import { useSession } from 'next-auth/react';
 import Navigation from '@/components/_commons/MiseEnPage/Navigation/Navigation';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
 import { BandeauInformation } from '@/components/_commons/BandeauInformation';
+import api from '@/server/infrastructure/api/trpc/api';
 
-const vérifierValeurBandeauEstActif = () => {
-  return process.env.NEXT_PUBLIC_FF_BANDEAU_INDISPONIBILITE === 'true';
-};
-
-const récupererTextBandeauActif = () => {
-  return process.env.NEXT_PUBLIC_FF_BANDEAU_INDISPONIBILITE_TEXTE || 'Des opérations de maintenance sont en cours et peuvent perturber le fonctionnement normal de PILOTE. En cas de difficultés : support.ditp@modernisation.gouv.fr';
+const useEntete = () => {
+  const { data: messageInformation } = api.gestionContenu.récupérerMessageInformation.useQuery();
+  return {
+    messageInformation,
+  };
 };
 
 export default function EnTête() {
   const { data: session } = useSession();
+  const { messageInformation } = useEntete();
 
-  const isBandeauActif = vérifierValeurBandeauEstActif();
+  const isBandeauActif = messageInformation?.isBandeauActif || false;
+  const bandeauTexte = messageInformation?.bandeauTexte || 'Des opérations de maintenance sont en cours et peuvent perturber le fonctionnement normal de PILOTE. En cas de difficultés : support.ditp@modernisation.gouv.fr';
 
   return (
     <header
@@ -81,7 +83,7 @@ export default function EnTête() {
       {
         isBandeauActif ? (
           <BandeauInformation>
-            { récupererTextBandeauActif() }
+            { bandeauTexte }
           </BandeauInformation>
         ) : null
       }
