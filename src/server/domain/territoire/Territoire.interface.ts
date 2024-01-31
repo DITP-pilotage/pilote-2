@@ -2,7 +2,6 @@ import Avancement from '@/server/domain/chantier/avancement/Avancement.interface
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { ChantierTendance } from '@/server/domain/chantier/Chantier.interface';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export const codesInseeDépartements = [
   '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13',
@@ -23,6 +22,8 @@ export const codesInseeRégions = [
 export const codeInseeFrance = 'FR';
 
 export type CodeInsee = string;
+export type responsableLocal = { nom: string, email: string };
+export type référentTerritorial = { nom: string, email: string };
 
 export type TerritoiresDonnées = Record<CodeInsee, TerritoireDonnées>;
 
@@ -36,8 +37,8 @@ export type TerritoireDonnées = {
   dateDeMàjDonnéesQualitatives: string | null,
   dateDeMàjDonnéesQuantitatives: string | null,
   estApplicable: boolean | null,
-  responsableLocal: Utilisateur[],
-  référentTerritorial: Utilisateur[],
+  responsableLocal: responsableLocal[],
+  référentTerritorial: référentTerritorial[],
 };
 
 export type Territoire = {
