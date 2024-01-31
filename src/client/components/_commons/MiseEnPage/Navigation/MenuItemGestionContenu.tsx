@@ -40,7 +40,7 @@ export const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> 
     },
   ];
   return (
-    <li className='fr-nav__item'>
+    <li className='fr-nav__item relative'>
       <button
         aria-controls='menu-776'
         aria-current={pagesGestionContenu.map(page => page.nom).includes(urlActuelle)}
@@ -61,7 +61,7 @@ export const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> 
                 <li key={page.lien}>
                   <Link
                     aria-current={page.lien === urlActuelle ? 'true' : undefined}
-                    className='fr-nav__link relative'
+                    className='fr-nav__link'
                     href={page.lien}
                     target='_self'
                   >
