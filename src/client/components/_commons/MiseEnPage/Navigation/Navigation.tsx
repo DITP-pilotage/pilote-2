@@ -115,7 +115,9 @@ export default function Navigation() {
                     </li>
                   ))
                 }
-                <MenuItemGestionContenu urlActuelle={urlActuelle} />
+                { session?.profil === 'DITP_ADMIN' ? (
+                  <MenuItemGestionContenu urlActuelle={urlActuelle} />
+                ) : null }
               </ul>
             ) : null
           }

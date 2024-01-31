@@ -4,6 +4,7 @@ import Link from 'next/link';
 interface PageGestionContenu {
   nom: string
   lien: string
+  accessible: boolean
 }
 
 export const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> = ({ urlActuelle }) => {
@@ -11,24 +12,31 @@ export const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> 
     {
       nom: 'Message d\'information',
       lien: '/admin/message-information',
+      accessible: true,
     }, {
       nom: 'Nouveautés',
       lien: '/admin/nouveautes',
+      accessible: false,
     }, {
       nom: 'Textes des infobulles',
       lien: '/admin/infobulles',
+      accessible: false,
     }, {
       nom: 'Chantiers',
       lien: '/admin/chantiers',
+      accessible: false,
     }, {
       nom: 'Indicateurs des chantiers',
       lien: '/admin/indicateurs',
+      accessible: true,
     }, {
       nom: 'Projets structurants',
       lien: '/admin/projets-structurants',
+      accessible: false,
     }, {
       nom: 'Indicateurs des projets structurants',
       lien: '/admin/indicateurs-projets-structurants',
+      accessible: false,
     },
   ];
   return (
@@ -49,18 +57,18 @@ export const MenuItemGestionContenu: FunctionComponent<{ urlActuelle: string }> 
         <ul className='fr-menu__list'>
           {
             pagesGestionContenu.map(page => {
-              return (
+              return page.accessible ? (
                 <li key={page.lien}>
                   <Link
                     aria-current={page.lien === urlActuelle ? 'true' : undefined}
-                    className='fr-nav__link'
+                    className='fr-nav__link relative'
                     href={page.lien}
                     target='_self'
                   >
                     {page.nom}
                   </Link>
                 </li>
-              );
+              ) : null;
             })
           }
         </ul>
