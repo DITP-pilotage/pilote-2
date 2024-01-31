@@ -21,5 +21,5 @@ export function formaterDateHeure(date: string | null) {
   if (date === null) {
     return NON_APPLICABLE;
   }
-  return dayjs.tz(date, 'CET').format('YYYY-MM-DD HH:mm:ss');
+  return dayjs.tz(date, 'CET').format('DD-MM-YYYY');
 }
