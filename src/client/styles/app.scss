@@ -10,6 +10,10 @@
   display: flex;
 }
 
+.relative {
+  position: relative;
+}
+
 .justify-end {
   justify-content: end;
 }
@@ -28,6 +32,14 @@
 
 .align-center {
   align-items: center;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.justify-end {
+  justify-content: flex-end
 }
 
 .texte-gris {

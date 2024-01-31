@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
+import { MenuItemGestionContenu } from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === 'function') {
@@ -18,7 +19,6 @@ const vérifierValeurApplicationEstIndisponible = () => {
 };
 
 const estAutoriséAParcourirSiIndisponible = (session: Session | null) => session?.profil === 'DITP_ADMIN';
-
 
 export default function Navigation() {
   const { data: session } = useSession();
@@ -97,27 +97,30 @@ export default function Navigation() {
             !vérifierValeurApplicationEstIndisponible() || (vérifierValeurApplicationEstIndisponible() && estAutoriséAParcourirSiIndisponible(session)) ? (
               <ul className='fr-nav__list'>
                 {
-                      pages.map(page => (
-                        page.accessible &&
-                          <li
-                            className='fr-nav__item'
-                            key={page.lien}
-                          >
-                            <Link
-                              aria-current={page.lien === urlActuelle ? 'true' : undefined}
-                              className='fr-nav__link'
-                              href={page.lien}
-                              onClick={fermerLaModaleDuMenu}
-                              target={page.target}
-                            >
-                              {page.nom}
-                            </Link>
-                          </li>
-                      ))
-                    }
+                  pages.map(page => (
+                    page.accessible &&
+                    <li
+                      className='fr-nav__item'
+                      key={page.lien}
+                    >
+                      <Link
+                        aria-current={page.lien === urlActuelle ? 'true' : undefined}
+                        className='fr-nav__link'
+                        href={page.lien}
+                        onClick={fermerLaModaleDuMenu}
+                        target={page.target}
+                      >
+                        {page.nom}
+                      </Link>
+                    </li>
+                  ))
+                }
+                { session?.profil === 'DITP_ADMIN' ? (
+                  <MenuItemGestionContenu urlActuelle={urlActuelle} />
+                ) : null }
               </ul>
             ) : null
-            }
+          }
         </nav>
       </div>
     </div>

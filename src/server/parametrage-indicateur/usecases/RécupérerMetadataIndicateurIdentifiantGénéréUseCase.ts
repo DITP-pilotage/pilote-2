@@ -12,7 +12,6 @@ export default class RécupérerMetadataIndicateurIdentifiantGénéréUseCase {
   async run(): Promise<string> {
     const listeMetadataParametrageIndicateur: MetadataParametrageIndicateur[] = await this.metadataParametrageIndicateurRepository.recupererListeMetadataParametrageIndicateurParChantierIds([]);
     const sortedListeMetadataParametrageIndicateur = listeMetadataParametrageIndicateur.sort((metadataParametrageIndicateur1, metadataParametrageIndicateur2) => metadataParametrageIndicateur1.indicId.localeCompare(metadataParametrageIndicateur2.indicId));
-    // eslint-disable-next-line unicorn/no-array-reduce
     const identifiants = new Set(sortedListeMetadataParametrageIndicateur.map(li => Number(li.indicId.split('-')[1])));
     let currentId = 0;
     while (identifiants.has(currentId)) {

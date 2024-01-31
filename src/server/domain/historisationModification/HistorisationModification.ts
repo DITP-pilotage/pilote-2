@@ -114,7 +114,6 @@ export class HistorisationModification<K extends keyof HistorisationModification
     nouvelleValeur: HistorisationModificationDisponible[K]
   }) {
 
-    // eslint-disable-next-line unicorn/no-array-reduce
     const [diffAncienneValeur, diffNouvelleValeur] = Object.keys(ancienneValeur).reduce((acc, valeur) => {
       const key = (valeur[0] === '_' ? valeur.slice(1) : valeur) as keyof HistorisationModificationDisponible[K];
       if (ancienneValeur[key] !== nouvelleValeur[key]) {

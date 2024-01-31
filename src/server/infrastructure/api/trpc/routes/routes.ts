@@ -1,6 +1,7 @@
 import { créerRouteurTRPC } from '@/server/infrastructure/api/trpc/trpc';
 import { utilisateurRouter } from '@/server/infrastructure/api/trpc/routes/utilisateur';
 import { metadataIndicateurRouter } from '@/server/infrastructure/api/trpc/routes/metadataIndicateur';
+import { gestionContenuRouter } from '@/server/infrastructure/api/trpc/routes/gestionContenu';
 import { chantierRouter } from './chantier';
 import { synthèseDesRésultatsRouter } from './synthèseDesRésultats';
 import { publicationRouter } from './publication';
@@ -17,6 +18,7 @@ export const appRouter = créerRouteurTRPC({
   territoire: territoireRouter,
   utilisateur: utilisateurRouter,
   metadataIndicateur: metadataIndicateurRouter,
+  gestionContenu: gestionContenuRouter,
   périmètreMinistériel: périmètreMinistérielRouter,
   profil: profilRouter,
 });
