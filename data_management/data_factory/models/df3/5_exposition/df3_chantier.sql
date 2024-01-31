@@ -101,11 +101,11 @@ select
     string_to_array("porteur_shorts_noDAC" , ' | ') as ministeres_acronymes,
     -- coalesce with empty array
     coalesce(p_names.p_shorts, string_to_array('','')) as directions_administration_centrale, 
-    string_to_array("ch_dp" , ' | ') as directeurs_projet,
+    dir_projets.nom as directeurs_projet,
     sr.meteo as meteo,
     ax.axe_name as axe,
     ppg.ppg_nom as ppg,
-    string_to_array("ch_dp_mail" , ' | ') as directeurs_projet_mails,
+    dir_projets.email as directeurs_projet_mails,
     chantier_est_barometre.est_barometre,
     mc.ch_territo as est_territorialise,
     t.code as territoire_code,
@@ -120,6 +120,7 @@ select
 from {{ ref('metadata_chantiers') }} mc
 -- On dupplique les lignes chantier pour chaque territoire
 cross join {{ source('db_schema_public', 'territoire') }} t
+left join {{ ref('int_directeurs_projets')}} dir_projets on dir_projets.chantier_id = mc.chantier_id
 left join {{ ref('metadata_zones') }} z on z.zone_id=t.zone_id
 left join {{ ref('metadata_porteurs') }} po on mc."porteur_ids_DAC"=po.porteur_id
 left join ch_unnest_porteurs_dac_pnames_agg p_names on mc.chantier_id=p_names.chantier_id
