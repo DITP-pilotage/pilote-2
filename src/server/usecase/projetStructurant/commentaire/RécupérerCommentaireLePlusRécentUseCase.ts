@@ -1,12 +1,14 @@
-import CommentaireProjetStructurant, { TypeCommentaireProjetStructurant } from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
-import CommentaireProjetStructurantRepository from '@/server/domain/projetStructurant/commentaire/CommentaireRepository.interface';
+import CommentaireProjetStructurant, {
+  TypeCommentaireProjetStructurant,
+} from '@/server/domain/projetStructurant/commentaire/Commentaire.interface';
+import CommentaireProjetStructurantRepository
+  from '@/server/domain/projetStructurant/commentaire/CommentaireRepository.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export default class RécupérerCommentaireProjetStructurantLePlusRécentUseCase {
   constructor(
-    private readonly commentaireRepository: CommentaireProjetStructurantRepository = dependencies.getCommentaireProjetStructurantRepository(),
+    private readonly commentaireRepository: CommentaireProjetStructurantRepository,
   ) {}
 
   async run(projetStructurantId: string, type: TypeCommentaireProjetStructurant, habilitations: Habilitations): Promise<CommentaireProjetStructurant> {

@@ -5,6 +5,7 @@ import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import PageUtilisateur from '@/components/PageUtilisateur/PageUtilisateur';
 import RécupérerUnUtilisateurUseCase from '@/server/usecase/utilisateur/RécupérerUnUtilisateurUseCase';
 import { commenceParUneVoyelle } from '@/client/utils/strings';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export interface NextPageAdminUtilisateurProps {
   utilisateur: Utilisateur,
@@ -46,7 +47,7 @@ export async function getServerSideProps({ req, res, params } :GetServerSideProp
     return redirigerVersPageAccueil;
   }
 
-  const utilisateurDemandé = await new RécupérerUnUtilisateurUseCase().run(session.habilitations, params.id);
+  const utilisateurDemandé = await new RécupérerUnUtilisateurUseCase(dependencies.getUtilisateurRepository()).run(params.id);
 
   if (!utilisateurDemandé) {
     return redirigerVersPageAccueil;

@@ -1,12 +1,11 @@
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import Utilisateur, { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 
 export default class SupprimerUnUtilisateurUseCase {
   constructor(
-    private readonly utilisateurRepository: UtilisateurRepository = dependencies.getUtilisateurRepository(),
-    private readonly utilisateurIAMRepository: UtilisateurIAMRepository = dependencies.getUtilisateurIAMRepository(),
+    private readonly utilisateurRepository: UtilisateurRepository,
+    private readonly utilisateurIAMRepository: UtilisateurIAMRepository,
   ) {}
 
   async run(email: Utilisateur['email'], profil: ProfilCode): Promise<void> {
