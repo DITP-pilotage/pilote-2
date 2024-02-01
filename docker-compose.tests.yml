@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  pilote_tests:
+    # Exécuter les tests de la webapp
+    command: "/bin/sh /app/scripts/run_tests.sh"
+    image: node:lts-alpine
+    env_file:
+      - .env
+      - .env.test
+    environment:
+      - NPM_PREFIX=/app
+    volumes:
+      - ./:/app/

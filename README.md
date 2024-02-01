@@ -48,6 +48,18 @@ npm run test
 npm run lint
 ```
 
+### Via Docker
+
+Une base de données de test identique à la base de développement est créée dans le [data_management/docker-compose.yml](./data_management/docker-compose.yml), il s'agit de `testing` dans le container `postgres_tests`, exposée sur `localhost:5433`.
+
+Pour lancer les tests qui vont s'exécuter sur cette base:
+
+- `cp .env.test.example .env.test` : copier le `.env.test.example` vers `.env.test`
+- [docker] `docker-compose -f docker-compose.tests.yml up` pour lancer les tests via Docker. 
+- [local] OU `/bin/bash scripts/run_tests.sh` pour lancer les tests en local
+- pour recréer une base de données vide, supprimer
+*Remarque:* En utilisant le script `scripts/run_tests.sh`, les variables dans `.env.test` vont remplacer celles dans `.env` si des variables sont définies dans les deux fichiers. C'est utile pour `$DATABSE_URL` entre autres, mais vous pouvez changer la valeur d'autres variables également.
+
 ### Complément d'informations
 - Il existe de nombreuses sous commandes permettant de lancer les tests de manière isolés (unitaire, intégration, client, server). Se référer au package.json pour plus d'informations.
 - Afin de lancer les tests en mode watch, vous pouvez ajouter cette option `-- --watch` à la tâche npm :
