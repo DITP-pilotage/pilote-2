@@ -23,12 +23,12 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
   récupérerMetadataIndicateurFiltrés: procédureProtégée
     .input(validationFiltresPourListeMetadataIndicateur)
     .query(async ({ input }): Promise<MetadataParametrageIndicateurContrat[]> => {
-      const listeMetadataIndicateur = await new RécupérerListeMetadataIndicateurUseCase().run(input.filtres.chantiers);
+      const listeMetadataIndicateur = await new RécupérerListeMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run(input.filtres.chantiers);
       return listeMetadataIndicateur.map(presenterEnMetadataParametrageIndicateurContrat);
     }),
   récupérerMetadataIndicateurIdentifiantGénéré: procédureProtégée
     .query(async ({}): Promise<string> => {
-      return new RécupérerMetadataIndicateurIdentifiantGénéréUseCase().run();
+      return new RécupérerMetadataIndicateurIdentifiantGénéréUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run();
     }),
   modifier: procédureProtégée.input(zodValidateurCSRF.merge(validationMetadataIndicateurFormulaire).and(validationMetadataIndicateurContexte))
     .mutation(async ({ input, ctx }) => {

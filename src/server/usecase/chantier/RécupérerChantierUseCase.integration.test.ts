@@ -6,8 +6,30 @@ import { objectEntries } from '@/client/utils/objects/objects';
 import MinistèreSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/MinistèreSQLRow.builder';
 import PérimètreMinistérielSQLRowBuilder
   from '@/server/infrastructure/test/builders/sqlRow/PérimètreMinistérielSQLRow.builder';
+import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
+import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
+import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
+import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 describe('RécupérerChantierUseCase', () => {
+  let récupérerChantierUseCase: RécupérerChantierUseCase;
+  let chantierRepository: ChantierRepository;
+  let chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository;
+  let ministèreRepository: MinistèreRepository;
+  let territoireRepository: TerritoireRepository;
+  let utilisateurRepository: UtilisateurRepository;
+
+  beforeEach(() => {
+    chantierRepository = dependencies.getChantierRepository();
+    chantierDatesDeMàjRepository = dependencies.getChantierDatesDeMàjRepository();
+    ministèreRepository = dependencies.getMinistèreRepository();
+    territoireRepository = dependencies.getTerritoireRepository();
+    utilisateurRepository = dependencies.getUtilisateurRepository();
+    récupérerChantierUseCase = new RécupérerChantierUseCase(chantierRepository, chantierDatesDeMàjRepository, ministèreRepository, territoireRepository, utilisateurRepository);
+  });
+
 
   const profil = 'DITP_ADMIN';
 
@@ -36,8 +58,8 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result1 = await new RécupérerChantierUseCase().run('CH-001', habilitation, profil);
-    const result2 = await new RécupérerChantierUseCase().run('CH-002', habilitation, profil);
+    const result1 = await récupérerChantierUseCase.run('CH-001', habilitation, profil);
+    const result2 = await récupérerChantierUseCase.run('CH-002', habilitation, profil);
 
     // THEN
     expect(result1.nom).toEqual('Chantier 1');
@@ -70,7 +92,7 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation, profil);
+    const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
 
     // THEN
     expect(result.mailles.nationale).toMatchObject({
@@ -134,8 +156,8 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result1 = await new RécupérerChantierUseCase().run('CH-001', habilitation, profil);
-    const result2 = await new RécupérerChantierUseCase().run('CH-002', habilitation, profil);
+    const result1 = await récupérerChantierUseCase.run('CH-001', habilitation, profil);
+    const result2 = await récupérerChantierUseCase.run('CH-002', habilitation, profil);
 
     // THEN
     expect(result1.responsables.porteur).toBeDefined();
@@ -165,7 +187,7 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation, profil);
+    const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
 
     // THEN
     expect(result.responsables.directeursProjet[0]).toStrictEqual({ nom: 'Jean Bon', email: null });
@@ -187,7 +209,7 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation, profil);
+    const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
 
     // THEN
     expect(result.estBaromètre).toBe(true);
@@ -214,7 +236,7 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation, profil);
+    const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
 
     // THEN
     expect(result.mailles.régionale['01'].écart).toEqual(5);
@@ -244,7 +266,7 @@ describe('RécupérerChantierUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const result = await new RécupérerChantierUseCase().run(chantierId, habilitation, profil);
+    const result = await récupérerChantierUseCase.run(chantierId, habilitation, profil);
 
     // THEN
     expect(result.mailles.nationale.FR.tendance).toEqual('HAUSSE');
@@ -269,7 +291,7 @@ describe('RécupérerChantierUseCase', () => {
 
       // WHEN
       const request = async () => {
-        await new RécupérerChantierUseCase().run(chantierId, habilitation, profil);
+        await récupérerChantierUseCase.run(chantierId, habilitation, profil);
       };
 
       // THEN

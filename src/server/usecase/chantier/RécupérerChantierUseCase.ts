@@ -2,7 +2,6 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import { parseChantier } from '@/server/infrastructure/accès_données/chantier/ChantierSQLParser';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
@@ -12,11 +11,11 @@ import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurReposi
 
 export default class RécupérerChantierUseCase {
   constructor(
-    private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
-    private readonly chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository = dependencies.getChantierDatesDeMàjRepository(),
-    private readonly ministèreRepository: MinistèreRepository = dependencies.getMinistèreRepository(),
-    private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
-    private readonly utilisateurRepository: UtilisateurRepository = dependencies.getUtilisateurRepository(),
+    private readonly chantierRepository: ChantierRepository,
+    private readonly chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository,
+    private readonly ministèreRepository: MinistèreRepository,
+    private readonly territoireRepository: TerritoireRepository,
+    private readonly utilisateurRepository: UtilisateurRepository,
   ) {}
 
   async run(chantierId: string, habilitations: Habilitations, profil: ProfilCode): Promise<Chantier> {

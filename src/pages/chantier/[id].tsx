@@ -59,7 +59,13 @@ export async function getServerSideProps({ req, res, params }: GetServerSideProp
   const indicateurs: Indicateur[] = await indicateurRepository.récupérerParChantierId(params.id);
   let chantier: Chantier;
   try {
-    chantier = await new RécupérerChantierUseCase().run(params.id, session.habilitations, session.profil);
+    chantier = await new RécupérerChantierUseCase(
+      dependencies.getChantierRepository(),
+      dependencies.getChantierDatesDeMàjRepository(),
+      dependencies.getMinistèreRepository(),
+      dependencies.getTerritoireRepository(),
+      dependencies.getUtilisateurRepository(),
+    ).run(params.id, session.habilitations, session.profil);
   } catch (error) {
     if (error instanceof NonAutorisé) {
       return { notFound: true };
