@@ -23,6 +23,8 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
     'Taux d\'avancement régional',
     'Taux d\'avancement national',
     'Météo',
+    'Directeur projet',
+    'Contact directeur projet',
     'Responsable local',
     'Contact responsable local',
     'Synthèse des résultats',
@@ -82,6 +84,8 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
         ?  NON_APPLICABLE
         : chantierPourExport.tauxDAvancementNational?.toString() || NON_APPLICABLE,
       formaterMétéo(chantierPourExport.météo),
+      chantierPourExport.directeursProjet?.join(' ') || NON_APPLICABLE,
+      chantierPourExport.directeursProjetMails?.join(' ') || NON_APPLICABLE,      
       chantierPourExport.responsablesLocaux?.join(' ') || NON_APPLICABLE,
       chantierPourExport.responsablesLocauxMails?.join(' ') || NON_APPLICABLE,
       chantierPourExport.synthèseDesRésultats || NON_APPLICABLE,
