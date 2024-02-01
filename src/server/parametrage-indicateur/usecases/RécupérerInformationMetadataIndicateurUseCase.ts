@@ -1,4 +1,3 @@
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import { InformationMetadataIndicateur } from '@/server/parametrage-indicateur/domain/InformationMetadataIndicateur';
 import {
   InformationMetadataIndicateurRepository,
@@ -6,7 +5,7 @@ import {
 
 export default class RécupérerInformationMetadataIndicateurUseCase {
   constructor(
-    private readonly informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository = dependencies.getInformationMetadataIndicateurRepository(),
+    private readonly informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository,
   ) {}
     
   run(): InformationMetadataIndicateur[] {

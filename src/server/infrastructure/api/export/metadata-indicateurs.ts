@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { stringify } from 'csv-stringify';
 import RécupérerListeMetadataIndicateurUseCase
   from '@/server/parametrage-indicateur/usecases/RécupérerListeMetadataIndicateurUseCase';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 const EXPORT_METADATA_INDICATEURS_COLUMN = [
   'indic_id',
@@ -62,7 +63,7 @@ export async function handleExportMetadataIndicateurs(request: NextApiRequest, r
   });
   stringifier.pipe(response);
 
-  const listeMetadataIndicateur = await new RécupérerListeMetadataIndicateurUseCase().run((request.query?.chantierIds as string[]) || []);
+  const listeMetadataIndicateur = await new RécupérerListeMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run((request.query?.chantierIds as string[]) || []);
   listeMetadataIndicateur.forEach((metadataIndicateur) => {
     stringifier.write([
       metadataIndicateur.indicId,

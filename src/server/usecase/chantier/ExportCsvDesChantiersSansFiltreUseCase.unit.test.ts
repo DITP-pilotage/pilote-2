@@ -5,7 +5,7 @@ import {
 } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { HabilitationBuilder } from '@/server/domain/utilisateur/habilitation/HabilitationBuilder';
-import { Configuration } from '@/server/infrastructure/Configuration';
+import configuration, { Configuration } from '@/server/infrastructure/Configuration';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import {
   ChantierPourExport,
@@ -26,7 +26,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
       .mockResolvedValueOnce(chantierIds);
 
-    const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
+    const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository, configuration);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DITP_ADMIN';
 
@@ -49,7 +49,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     chantierRepository.récupérerPourExports
       .mockResolvedValueOnce(chantierIds.map(_fakeChantierPourExport));
 
-    const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
+    const usecase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository, configuration);
     const territoireCodesLecture = ['NAT-FR'];
     const habilitation = new HabilitationBuilder()
       .avecTerritoireCodesLecture(territoireCodesLecture)

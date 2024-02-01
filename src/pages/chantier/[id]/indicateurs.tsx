@@ -47,7 +47,13 @@ export async function getServerSideProps({
     throw new Error('Not connected or not authorized ?');
   }
 
-  const chantier: Chantier = await new RécupérerChantierUseCase().run(params.id, session.habilitations, session.profil);
+  const chantier: Chantier = await new RécupérerChantierUseCase(
+    dependencies.getChantierRepository(),
+    dependencies.getChantierDatesDeMàjRepository(),
+    dependencies.getMinistèreRepository(),
+    dependencies.getTerritoireRepository(),
+    dependencies.getUtilisateurRepository(),
+  ).run(params.id, session.habilitations, session.profil);
 
   const indicateurRepository = dependencies.getIndicateurRepository();
   const indicateurs = await indicateurRepository.récupérerParChantierId(params.id);

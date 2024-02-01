@@ -18,6 +18,7 @@ import InitialiserNouvelIndicateurUseCase
   from '@/server/parametrage-indicateur/usecases/InitialiserNouvelIndicateurUseCase';
 import RécupérerChantiersSynthétisésUseCase from '@/server/usecase/chantier/RécupérerChantiersSynthétisésUseCase';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export interface NextPageAdminUtilisateurProps {
   indicateur: MetadataParametrageIndicateurContrat,
@@ -71,9 +72,9 @@ export async function getServerSideProps({ req, res, params, query } :GetServerS
   let modificationReussie = query._action === 'modification-reussie';
   let estUneCréation = query._action === 'creer-indicateur';
   if (estUneCréation) {
-    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new InitialiserNouvelIndicateurUseCase().run(params.id));
+    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new InitialiserNouvelIndicateurUseCase(dependencies.getInformationMetadataIndicateurRepository()).run(params.id));
   } else {
-    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new RécupérerUnIndicateurUseCase().run(params.id));
+    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new RécupérerUnIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run(params.id));
     if (!indicateurDemandé) {
       return redirigerVersPageAccueil;
     }
@@ -82,7 +83,7 @@ export async function getServerSideProps({ req, res, params, query } :GetServerS
   const récupérerChantiersSynthétisésUseCase = new RécupérerChantiersSynthétisésUseCase();
   const chantiers = await récupérerChantiersSynthétisésUseCase.run(session.habilitations);
 
-  const mapInformationMetadataIndicateur = presenterEnMapInformationMetadataIndicateurContrat(new RécupérerInformationMetadataIndicateurUseCase().run());
+  const mapInformationMetadataIndicateur = presenterEnMapInformationMetadataIndicateurContrat(new RécupérerInformationMetadataIndicateurUseCase(dependencies.getInformationMetadataIndicateurRepository()).run());
 
   return {
     props: {

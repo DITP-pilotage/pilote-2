@@ -1,4 +1,3 @@
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
 import {
   InformationMetadataIndicateurRepository,
@@ -9,7 +8,7 @@ import {
 
 export default class InitialiserNouvelIndicateurUseCase {
   constructor(
-    private readonly informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository = dependencies.getInformationMetadataIndicateurRepository(),
+    private readonly informationMetadataIndicateurRepository: InformationMetadataIndicateurRepository,
   ) {}
 
   async run(indicId: string): Promise<MetadataParametrageIndicateur> {

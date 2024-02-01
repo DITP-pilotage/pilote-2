@@ -1,4 +1,3 @@
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import {
   MetadataParametrageIndicateurRepository,
 } from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
@@ -13,8 +12,8 @@ import {
 
 export default class ModifierUneMetadataIndicateurUseCase {
   constructor(
-    private readonly metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository = dependencies.getMetadataParametrageIndicateurRepository(),
-    private readonly historisationModificationRepository: HistorisationModificationRepository = dependencies.getHistorisationModificationRepository(),
+    private readonly metadataParametrageIndicateurRepository: MetadataParametrageIndicateurRepository,
+    private readonly historisationModificationRepository: HistorisationModificationRepository,
   ) {}
 
   async run(utilisateurNom: string, inputs: MetadataParametrageIndicateurForm) {

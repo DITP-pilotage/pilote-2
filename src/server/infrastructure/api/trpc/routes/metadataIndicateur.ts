@@ -17,23 +17,24 @@ import RécupérerMetadataIndicateurIdentifiantGénéréUseCase
   from '@/server/parametrage-indicateur/usecases/RécupérerMetadataIndicateurIdentifiantGénéréUseCase';
 import CreerUneMetadataIndicateurUseCase
   from '@/server/parametrage-indicateur/usecases/CreerUneMetadataIndicateurUseCase';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export const metadataIndicateurRouter = créerRouteurTRPC({
   récupérerMetadataIndicateurFiltrés: procédureProtégée
     .input(validationFiltresPourListeMetadataIndicateur)
     .query(async ({ input }): Promise<MetadataParametrageIndicateurContrat[]> => {
-      const listeMetadataIndicateur = await new RécupérerListeMetadataIndicateurUseCase().run(input.filtres.chantiers);
+      const listeMetadataIndicateur = await new RécupérerListeMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run(input.filtres.chantiers);
       return listeMetadataIndicateur.map(presenterEnMetadataParametrageIndicateurContrat);
     }),
   récupérerMetadataIndicateurIdentifiantGénéré: procédureProtégée
     .query(async ({}): Promise<string> => {
-      return new RécupérerMetadataIndicateurIdentifiantGénéréUseCase().run();
+      return new RécupérerMetadataIndicateurIdentifiantGénéréUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run();
     }),
   modifier: procédureProtégée.input(zodValidateurCSRF.merge(validationMetadataIndicateurFormulaire).and(validationMetadataIndicateurContexte))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      
-      return new ModifierUneMetadataIndicateurUseCase().run(ctx.session.user.name as string, {
+
+      return new ModifierUneMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository(), dependencies.getHistorisationModificationRepository()).run(ctx.session.user.name as string, {
         indicId: input.indicId,
         indicParentIndic: input.indicParentIndic || '',
         indicParentCh: input.indicParentCh,
@@ -103,7 +104,7 @@ export const metadataIndicateurRouter = créerRouteurTRPC({
   creer: procédureProtégée.input(zodValidateurCSRF.merge(validationMetadataIndicateurFormulaire).and(validationMetadataIndicateurContexte))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      return new CreerUneMetadataIndicateurUseCase().run(ctx.session.user.name as string, {
+      return new CreerUneMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository(), dependencies.getHistorisationModificationRepository()).run(ctx.session.user.name as string, {
         indicId: input.indicId,
         indicParentIndic: input.indicParentIndic || '',
         indicParentCh: input.indicParentCh,
