@@ -25,7 +25,7 @@ export default function SynthèseDesRésultatsHistorique({ réformeId }: Synthè
         dataFrOpened={false}
         type='button'
       >
-        Voir l&apos;historique
+        Voir l'historique
       </BoutonSousLigné>
       <Modale
         idHtml={ID_HTML}
@@ -63,7 +63,7 @@ export default function SynthèseDesRésultatsHistorique({ réformeId }: Synthè
               ))
               :
               <p>
-                Chargement de l&apos;historique...
+                Chargement de l'historique...
               </p>
           }
         </SynthèseDesRésultatsHistoriqueStyled>

@@ -5,7 +5,9 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
 import Titre from '@/components/_commons/Titre/Titre';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
-import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
+import {
+  ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
+} from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieMétéo';
 import CartesStyled from '@/components/PageChantier/Cartes/Cartes.styled';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
@@ -42,7 +44,7 @@ export default function Cartes({ chantierMailles, afficheCarteAvancement, affich
                     className='fr-text--lg fr-mb-0 fr-py-1v'
                     estInline
                   >
-                    Taux d&apos;avancement 2026
+                    Taux d'avancement 2026
                   </Titre>
                   <Infobulle idHtml='infobulle-chantier-répartitionGéographiqueTauxAvancement'>
                     { INFOBULLE_CONTENUS.chantier.répartitionGéographiqueTauxAvancement }

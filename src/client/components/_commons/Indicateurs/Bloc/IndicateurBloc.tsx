@@ -5,10 +5,14 @@ import Titre from '@/components/_commons/Titre/Titre';
 import Tableau from '@/components/_commons/Tableau/Tableau';
 import PictoBaromètre from '@/components/_commons/PictoBaromètre/PictoBaromètre';
 import IndicateurDétails from '@/components/_commons/Indicateurs/Bloc/Détails/IndicateurDétails';
-import IndicateurBlocProps, { IndicateurDétailsParTerritoire } from '@/components/_commons/Indicateurs/Bloc/IndicateurBloc.interface';
-import FormulaireIndicateur from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur';
+import IndicateurBlocProps, {
+  IndicateurDétailsParTerritoire,
+} from '@/components/_commons/Indicateurs/Bloc/IndicateurBloc.interface';
+import FormulaireIndicateur
+  from '@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireIndicateur/FormulaireIndicateur';
 import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailValidationFichierContrat.interface';
-import ResultatValidationFichier from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
+import ResultatValidationFichier
+  from '@/components/PageImportIndicateur/ResultatValidationFichier/ResultatValidationFichier';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import { IndicateurPondération } from '@/components/_commons/Indicateurs/Bloc/Pondération/IndicateurPondération';
 import IndicateurBlocStyled from './IndicateurBloc.styled';
@@ -45,7 +49,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
               </Titre>
               <div className='fr-ml-2w fr-mb-3w'>
                 <p className='fr-mb-0 fr-text--xs texte-gris'>
-                  Dernière mise à jour des données (de l&apos;indicateur) :
+                  Dernière mise à jour des données (de l'indicateur) :
                   {' '}
                   <span className='fr-text--bold'>
                     {dateDeMiseAJourIndicateur}

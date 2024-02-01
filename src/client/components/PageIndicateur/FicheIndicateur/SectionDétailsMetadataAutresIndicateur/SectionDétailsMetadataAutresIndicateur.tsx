@@ -2,15 +2,19 @@ import Titre from '@/components/_commons/Titre/Titre';
 import TextArea from '@/components/_commons/TextArea/TextArea';
 import Input from '@/components/_commons/Input/Input';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import SectionDétailsMetadataAutresIndicateurProps
-  from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataAutresIndicateur/SectionDétailsMetadataAutresIndicateur.interface';
 import SectionDétailsMetadataAutresIndicateurStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataAutresIndicateur/SectionDétailsMetadataAutresIndicateur.styled';
 import useSectionDétailsMetadataAutresIndicateurForm
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataAutresIndicateur/useDétailsMetadataAutresIndicateurForm';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
+import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
+import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 
-export default function SectionDétailsMetadataAutresIndicateur({ indicateur, estEnCoursDeModification, mapInformationMetadataIndicateur }: SectionDétailsMetadataAutresIndicateurProps) {
+export default function SectionDétailsMetadataAutresIndicateur({ indicateur, estEnCoursDeModification, mapInformationMetadataIndicateur }: {
+  indicateur: MetadataParametrageIndicateurContrat
+  estEnCoursDeModification: boolean
+  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
+}) {
   const { register, getValues, errors } = useSectionDétailsMetadataAutresIndicateurForm();
   return (
     <SectionDétailsMetadataAutresIndicateurStyled>

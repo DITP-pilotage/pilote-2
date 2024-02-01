@@ -2,11 +2,17 @@ import { useState } from 'react';
 import IndicateurÉvolution from '@/components/_commons/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
-import CartographieValeurActuelle from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle';
+import CartographieValeurActuelle
+  from '@/components/_commons/Cartographie/CartographieValeurActuelle/CartographieValeurActuelle';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
-import IndicateurSpécifications from '@/components/_commons/Indicateurs/Bloc/Détails/Spécifications/IndicateurSpécifications';
-import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
-import { ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE } from '@/client/constants/légendes/élémentsDeLégendesCartographieValeurActuelle';
+import IndicateurSpécifications
+  from '@/components/_commons/Indicateurs/Bloc/Détails/Spécifications/IndicateurSpécifications';
+import {
+  ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
+} from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
+import {
+  ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE,
+} from '@/client/constants/légendes/élémentsDeLégendesCartographieValeurActuelle';
 import IndicateurDétailsProps from './IndicateurDétails.interface';
 import useIndicateurDétails from './useIndicateurDétails';
 
@@ -59,7 +65,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
                       baliseHtml='h5'
                       className='fr-text--lg'
                     >
-                      Répartition géographique de l&apos;avancement 2026
+                      Répartition géographique de l'avancement 2026
                     </Titre>
                     <CartographieAvancement
                       auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}
@@ -77,7 +83,7 @@ export default function IndicateurDétails({ indicateur, indicateurDétailsParTe
                       baliseHtml='h5'
                       className='fr-text--lg'
                     >
-                      Répartition géographique de la valeur actuelle de l&apos;indicateur
+                      Répartition géographique de la valeur actuelle de l'indicateur
                     </Titre>
                     <CartographieValeurActuelle
                       auClicTerritoireCallback={auClicTerritoireMultiSélectionCallback}

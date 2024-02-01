@@ -10,7 +10,10 @@ import PageRapportDétailléProps from '@/components/PageRapportDétaillé/PageR
 import { RapportDétailléVueDEnsemble } from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble';
 import useChantiersFiltrés from '@/components/useChantiersFiltrés';
 import RapportDétailléChantier from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier';
-import { actionsTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import {
+  actionsTerritoiresStore,
+  territoireSélectionnéTerritoiresStore,
+} from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
 import PremièrePageImpressionRapportDétaillé
   from '@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
@@ -58,7 +61,7 @@ export default function PageRapportDétaillé({ chantiers, ministères, indicate
                   href='/'
                   title="Revenir à l'accueil"
                 >
-                  Revenir à l&apos;accueil
+                  Revenir à l'accueil
                 </Link>
                 <button
                   className='fr-btn fr-btn--tertiary-no-outline fr-icon-printer-line fr-btn--icon-left fr-text--sm'

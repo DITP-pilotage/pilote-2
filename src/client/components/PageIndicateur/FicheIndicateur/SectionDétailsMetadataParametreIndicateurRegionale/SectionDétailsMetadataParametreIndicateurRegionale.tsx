@@ -5,13 +5,17 @@ import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import useDétailsMetadataParametreIndicateurRegionaleForm
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurRegionale/useDétailsMetadataParametreIndicateurRegionaleForm';
-import SectionDétailsMetadataParametreIndicateurRegionaleProps
-  from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurRegionale/SectionDétailsMetadataParametreIndicateurRegionale.interface';
+import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
+import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 
 export default function SectionDétailsMetadataParametreIndicateurRegionale({
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
-}: SectionDétailsMetadataParametreIndicateurRegionaleProps) {
+}: {
+  indicateur: MetadataParametrageIndicateurContrat
+  estEnCoursDeModification: boolean
+  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
+}) {
   const { register, getValues, errors } = useDétailsMetadataParametreIndicateurRegionaleForm();
 
   return (

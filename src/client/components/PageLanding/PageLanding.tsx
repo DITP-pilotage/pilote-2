@@ -148,7 +148,7 @@ export default function PageLanding() {
                   Le pilotage des politiques prioritaires
                 </Titre>
                 <p className='fr-text--lg'>
-                  Les politiques prioritaires du Gouvernement font l&apos;objet d&apos;un suivi régulier à haut niveau dans chaque ministère mais aussi au niveau interministériel. Chaque trimestre, les ministères présentent leurs résultats dans des réunions présidées par le secrétaire général de la Présidence de la République et le directeur du cabinet de la Première ministre.
+                  Les politiques prioritaires du Gouvernement font l'objet d'un suivi régulier à haut niveau dans chaque ministère mais aussi au niveau interministériel. Chaque trimestre, les ministères présentent leurs résultats dans des réunions présidées par le secrétaire général de la Présidence de la République et le directeur du cabinet de la Première ministre.
                 </p>
                 <p className='fr-text--lg bold'>
                   Objectif : veiller en continu à la cohérence des objectifs et des décisions, au rythme de mise en œuvre des chantiers et rendre les arbitrages pour lever les freins rencontrés.
@@ -213,7 +213,7 @@ export default function PageLanding() {
                 href='mailto:support.ditp@modernisation.gouv.fr'
                 target='_blank'
               >
-                Contacter l&apos;équipe
+                Contacter l'équipe
               </Link>
             </div>
           </div>

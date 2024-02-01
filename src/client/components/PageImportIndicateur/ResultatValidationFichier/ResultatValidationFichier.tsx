@@ -22,7 +22,7 @@ export default function ResultatValidationFichier({ rapport }: ResultatValidatio
                 type='erreur'
               />
               <h5 className='fr-mt-3w'>
-                Rapport d&apos;erreur de la validation du fichier
+                Rapport d'erreur de la validation du fichier
               </h5>
               <table className='fr-table fr-m-0 fr-p-0'>
                 <thead>

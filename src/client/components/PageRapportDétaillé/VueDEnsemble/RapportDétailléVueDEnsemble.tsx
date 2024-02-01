@@ -4,10 +4,13 @@ import Bloc from '@/components/_commons/Bloc/Bloc';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import Avancements from '@/components/_commons/Avancements/Avancements';
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
-import RapportDétailléVueDEnsembleProps from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble.interface';
+import RapportDétailléVueDEnsembleProps
+  from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble.interface';
 import usePageRapportDétaillé from '@/components/PageRapportDétaillé/usePageRapportDétaillé';
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
-import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
+import {
+  ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
+} from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
 import RapportDétailléVueDEnsembleStyled
   from '@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble.styled';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
@@ -33,7 +36,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
           baliseHtml='h2'
           className='fr-h2 fr-mb-0'
         >
-          Vue d&apos;ensemble
+          Vue d'ensemble
         </Titre>
       </Encart>
       <div className='fr-mt-3w avancements-météos-carto'>

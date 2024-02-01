@@ -1,4 +1,5 @@
-import IndicateurSpécificationsProps from '@/components/_commons/Indicateurs/Bloc/Détails/Spécifications/IndicateurSpécifications.interface';
+import IndicateurSpécificationsProps
+  from '@/components/_commons/Indicateurs/Bloc/Détails/Spécifications/IndicateurSpécifications.interface';
 import IndicateurSpécificationsStyled from './IndicateurSpécifications.styled';
 
 export default function IndicateurSpécifications({ description,  modeDeCalcul, source } : IndicateurSpécificationsProps) {
@@ -11,7 +12,7 @@ export default function IndicateurSpécifications({ description,  modeDeCalcul, 
         className='fr-icon-information-fill fr-ml-n4w fr-mr-1w icone-information'
       />
       <p className='fr-text--md sous-titre'>
-        Description de l&apos;indicateur
+        Description de l'indicateur
       </p>
       <p className='fr-text--xs'>
         { description ?? libelléValeurNull }

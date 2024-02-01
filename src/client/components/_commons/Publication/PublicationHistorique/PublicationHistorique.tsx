@@ -18,7 +18,7 @@ export default function PublicationHistorique({ type, entité, réformeId, maill
         dataFrOpened={false}
         type='button'
       >
-        Voir l&apos;historique
+        Voir l'historique
       </BoutonSousLigné>
       <Modale
         idHtml={ID_HTML}
@@ -45,7 +45,7 @@ export default function PublicationHistorique({ type, entité, réformeId, maill
               ))
               :
               <p>
-                Chargement de l&apos;historique...
+                Chargement de l'historique...
               </p>
           }
         </div>
