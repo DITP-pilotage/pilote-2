@@ -1,9 +1,12 @@
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import { formaterDateHeure, formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
-import { IndicateurPourExport } from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
+import {
+  IndicateurPourExport,
+} from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import configuration from '@/server/infrastructure/Configuration';
+import { Configuration } from '@/server/infrastructure/Configuration';
+import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
+import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 
 export default class ExportCsvDesIndicateursSansFiltreUseCase {
 
@@ -31,9 +34,9 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
   ];
 
   constructor(
-    private readonly _chantierRepository = dependencies.getChantierRepository(),
-    private readonly _indicateurRepository = dependencies.getIndicateurRepository(),
-    private readonly _config = configuration,
+    private readonly _chantierRepository: ChantierRepository,
+    private readonly _indicateurRepository: IndicateurRepository,
+    private readonly _config: Configuration,
   ) {}
 
   public async* run(habilitation: Habilitation, profil: ProfilCode): AsyncGenerator<string[][]> {

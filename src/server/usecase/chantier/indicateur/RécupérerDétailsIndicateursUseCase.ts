@@ -1,11 +1,10 @@
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
 export default class RécupérerDétailsIndicateursUseCase {
   constructor(
-    private readonly indicateurRepository: IndicateurRepository = dependencies.getIndicateurRepository(),
+    private readonly indicateurRepository: IndicateurRepository,
   ) {}
 
   async run(chantierId: string, territoireCodes: string[], habilitations: Habilitations) {

@@ -44,7 +44,12 @@ export async function getServerSideProps({ req, res, params }: GetServerSideProp
   if (!session || !session.habilitations)
     return { props: {} };
   
-  const projetStructurant: ProjetStructurant = await new RécupérerProjetStructurantUseCase().run(params.id, session.habilitations);
+  const projetStructurant: ProjetStructurant = await new RécupérerProjetStructurantUseCase(
+    dependencies.getProjetStructurantRepository(),
+    dependencies.getTerritoireRepository(),
+    dependencies.getMinistèreRepository(),
+    dependencies.getSynthèseDesRésultatsProjetStructurantRepository(),
+  ).run(params.id, session.habilitations);
   const indicateurRepository = dependencies.getIndicateurProjetStructurantRepository();
   const { indicateurs, détails } = await indicateurRepository.récupérerParProjetStructurant(projetStructurant.id, projetStructurant.territoire.codeInsee);
 

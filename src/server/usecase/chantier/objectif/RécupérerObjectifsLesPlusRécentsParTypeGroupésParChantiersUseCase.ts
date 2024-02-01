@@ -1,11 +1,10 @@
 import ObjectifRepository from '@/server/domain/chantier/objectif/ObjectifRepository.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export default class RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase {
   constructor(
-    private readonly objectifRepository: ObjectifRepository = dependencies.getObjectifRepository(),
+    private readonly objectifRepository: ObjectifRepository,
   ) {}
 
   async run(chantierIds: string[], habilitations: Habilitations) {

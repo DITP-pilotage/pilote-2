@@ -7,21 +7,39 @@ import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
-import SynthèseDesRésultatsProjetStructurantRepository from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
+import SynthèseDesRésultatsProjetStructurantRepository
+  from '@/server/domain/projetStructurant/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
-import RécupérerIconesMinistèresGroupéesParProjets from './RécupérerIconesMinistèresGroupéesParProjets';
+import RécupérerIconesMinistèresGroupéesParProjetsUseCase from './RécupérerIconesMinistèresGroupéesParProjetsUseCase';
 
 export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
   constructor(
-    private readonly projetStructurantrepository: ProjetStructurantRepository = dependencies.getProjetStructurantRepository(),
-    private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
-    private readonly synthèseDesRésultatsRepository: SynthèseDesRésultatsProjetStructurantRepository = dependencies.getSynthèseDesRésultatsProjetStructurantRepository(),
+    private readonly projetStructurantrepository: ProjetStructurantRepository,
+    private readonly territoireRepository: TerritoireRepository,
+    private readonly synthèseDesRésultatsRepository: SynthèseDesRésultatsProjetStructurantRepository,
   ) {}
 
+  async run(habilitations: Habilitations, profil: ProfilCode): Promise<ProjetStructurantVueDEnsemble[]> {
+    const habilitation = new Habilitation(habilitations);
+    const projetsStructurantsIdsAccessiblesEnLecture = habilitation.récupérerListeProjetsStructurantsIdsAccessiblesEnLecture();
+    
+    const projetsStructurants = await this.projetStructurantrepository.récupérerListe();
+    let projetsStructurantsAccessibles = projetsStructurants.filter(ps => projetsStructurantsIdsAccessiblesEnLecture.includes(ps.id));
+    const territoires = await this.territoireRepository.récupérerListe(projetsStructurantsAccessibles.map(projet => projet.territoireCode));
+    const météos = await this.synthèseDesRésultatsRepository.récupérerToutesLesMétéosLesPlusRécentes();
+    const iconesGroupéesParProjets = await new RécupérerIconesMinistèresGroupéesParProjetsUseCase(dependencies.getMinistèreRepository()).run(projetsStructurants);
+
+    if (profil === 'DROM') {
+      projetsStructurantsAccessibles = projetsStructurantsAccessibles.filter(ps => ps.périmètresIds.includes('PER-018'));
+    }
+
+    return this.construireListeProjetsStructurants(projetsStructurantsAccessibles, territoires, météos, iconesGroupéesParProjets);
+  }
+  
   private construireListeProjetsStructurants(
     projetsStructurants: ProjetStructurantPrismaVersDomaine[],
     territoires: Territoire[],
@@ -46,23 +64,5 @@ export default class RécupérerListeProjetsStructurantsVueDEnsembleUseCase {
         iconesMinistères: iconesMinistères[projetStructurant.id],
       };
     }).filter((ps): ps is ProjetStructurantVueDEnsemble => ps !== null);
-  }
-  
-
-  async run(habilitations: Habilitations, profil: ProfilCode): Promise<ProjetStructurantVueDEnsemble[]> {
-    const habilitation = new Habilitation(habilitations);
-    const projetsStructurantsIdsAccessiblesEnLecture = habilitation.récupérerListeProjetsStructurantsIdsAccessiblesEnLecture();
-    
-    const projetsStructurants = await this.projetStructurantrepository.récupérerListe();
-    let projetsStructurantsAccessibles = projetsStructurants.filter(ps => projetsStructurantsIdsAccessiblesEnLecture.includes(ps.id));
-    const territoires = await this.territoireRepository.récupérerListe(projetsStructurantsAccessibles.map(projet => projet.territoireCode));
-    const météos = await this.synthèseDesRésultatsRepository.récupérerToutesLesMétéosLesPlusRécentes();
-    const iconesGroupéesParProjets = await new RécupérerIconesMinistèresGroupéesParProjets().run(projetsStructurants);    
-
-    if (profil === 'DROM') {
-      projetsStructurantsAccessibles = projetsStructurantsAccessibles.filter(ps => ps.périmètresIds.includes('PER-018'));
-    }
-
-    return this.construireListeProjetsStructurants(projetsStructurantsAccessibles, territoires, météos, iconesGroupéesParProjets);
   }
 }

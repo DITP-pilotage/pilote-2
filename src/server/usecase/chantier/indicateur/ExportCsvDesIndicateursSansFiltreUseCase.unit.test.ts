@@ -1,8 +1,7 @@
-/* eslint-disable unicorn/prefer-spread */
 import { mock } from 'jest-mock-extended';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { HabilitationBuilder } from '@/server/domain/utilisateur/habilitation/HabilitationBuilder';
-import { Configuration } from '@/server/infrastructure/Configuration';
+import configuration, { Configuration } from '@/server/infrastructure/Configuration';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ExportCsvDesIndicateursSansFiltreUseCase
   from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase';
@@ -29,14 +28,14 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
       .mockResolvedValueOnce(chantierIds);
     const indicateurRepository = mock<IndicateurRepository>();
 
-    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
+    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository, configuration);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DITP_ADMIN';
 
     // WHEN
     let result: string[][] = [];
     for await (const partialResult of usecase.run(habilitation, profil)) {
-      result = result.concat(partialResult);
+      result = [...result, ...partialResult];
     }
 
     // THEN
@@ -55,7 +54,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     indicateurRepository.récupérerPourExports
       .mockResolvedValueOnce(indicateurIds.map(_fakeIndicateurPourExport));
 
-    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
+    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository, configuration);
     const territoireCodesLecture = ['NAT-FR'];
     const habilitation = new HabilitationBuilder()
       .avecTerritoireCodesLecture(territoireCodesLecture)
@@ -65,7 +64,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     // WHEN
     let result: string[][] = [];
     for await (const partialResult of usecase.run(habilitation, profil)) {
-      result = result.concat(partialResult);
+      result = [...result, ...partialResult];
     }
 
     // THEN
@@ -96,7 +95,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     // WHEN
     let result: string[][] = [];
     for await (const partialResult of usecase.run(habilitation, profil)) {
-      result = result.concat(partialResult);
+      result = [...result, ...partialResult];
     }
 
     // THEN
@@ -131,7 +130,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     // WHEN
     let result: string[][] = [];
     for await (const partialResult of usecase.run(habilitation, profil)) {
-      result = result.concat(partialResult);
+      result = [...result, ...partialResult];
     }
 
     // THEN
@@ -161,14 +160,14 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     indicateurRepository.récupérerPourExports
       .mockResolvedValueOnce(indicateursPourExport);
 
-    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
+    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository, configuration);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DROM';
 
     // WHEN
     let result: string[][] = [];
     for await (const partialResult of usecase.run(habilitation, profil)) {
-      result = result.concat(partialResult);
+      result = [...result, ...partialResult];
     }
 
     // THEN

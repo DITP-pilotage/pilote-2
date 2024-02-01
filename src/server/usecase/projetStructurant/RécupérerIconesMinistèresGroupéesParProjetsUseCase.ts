@@ -1,11 +1,12 @@
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
-import ProjetStructurant, { ProjetStructurantPrismaVersDomaine } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
+import ProjetStructurant, {
+  ProjetStructurantPrismaVersDomaine,
+} from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 
-export default class RécupérerIconesMinistèresGroupéesParProjets {
+export default class RécupérerIconesMinistèresGroupéesParProjetsUseCase {
   constructor(
-    private readonly ministèreRepository: MinistèreRepository = dependencies.getMinistèreRepository(),
+    private readonly ministèreRepository: MinistèreRepository,
   ) {}
 
   async run(projetsStructurants: ProjetStructurantPrismaVersDomaine[]): Promise<Record<ProjetStructurant['id'], Ministère['icône'][]>> {

@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import { dependencies } from '@/server/infrastructure/Dependencies';
-import SynthèseDesRésultatsRepository from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
+import SynthèseDesRésultatsRepository
+  from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultatsRepository.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import SynthèseDesRésultats from '@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
@@ -9,8 +9,8 @@ import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilita
 
 export default class CréerUneSynthèseDesRésultatsUseCase {
   constructor(
-    private readonly synthèsesDesRésultatsRepository: SynthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository(),
-    private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
+    private readonly synthèsesDesRésultatsRepository: SynthèseDesRésultatsRepository,
+    private readonly chantierRepository: ChantierRepository,
   ) {}
 
   async run(chantierId: string, territoireCode: string, contenu: string, auteur: string, météo: Météo, habilitations: Habilitations): Promise<SynthèseDesRésultats> {

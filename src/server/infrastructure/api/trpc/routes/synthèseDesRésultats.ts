@@ -1,17 +1,22 @@
 import { z } from 'zod';
-import {
-  créerRouteurTRPC,
-  procédureProtégée,
-  vérifierSiLeCSRFEstValide,
-} from '@/server/infrastructure/api/trpc/trpc';
-import CréerUneSynthèseDesRésultatsUseCase from '@/server/usecase/chantier/synthèse/CréerUneSynthèseDesRésultatsUseCase';
+import { créerRouteurTRPC, procédureProtégée, vérifierSiLeCSRFEstValide } from '@/server/infrastructure/api/trpc/trpc';
+import CréerUneSynthèseDesRésultatsUseCase
+  from '@/server/usecase/chantier/synthèse/CréerUneSynthèseDesRésultatsUseCase';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase from '@/server/usecase/chantier/synthèse/RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase';
-import { validationSynthèseDesRésultatsContexte, validationSynthèseDesRésultatsFormulaire } from 'validation/synthèseDesRésultats';
-import RécupérerHistoriqueSynthèseDesRésultatsUseCase from '@/server/usecase/chantier/synthèse/RécupérerHistoriqueSynthèseDesRésultatsUseCase';
-import RécupérerSynthèseDesRésultatsLaPlusRécenteProjetStructurantUseCase from '@/server/usecase/projetStructurant/synthèse/RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase';
-import CréerUneSynthèseDesRésultatsProjetStructurantUseCase from '@/server/usecase/projetStructurant/synthèse/CréerUneSynthèseDesRésultatsUseCase';
-import RécupérerHistoriqueSynthèseDesRésultatsProjetStructurantUseCase from '@/server/usecase/projetStructurant/synthèse/RécupérerHistoriqueSynthèseDesRésultatsUseCase';
+import RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase
+  from '@/server/usecase/chantier/synthèse/RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase';
+import {
+  validationSynthèseDesRésultatsContexte,
+  validationSynthèseDesRésultatsFormulaire,
+} from 'validation/synthèseDesRésultats';
+import RécupérerHistoriqueSynthèseDesRésultatsUseCase
+  from '@/server/usecase/chantier/synthèse/RécupérerHistoriqueSynthèseDesRésultatsUseCase';
+import RécupérerSynthèseDesRésultatsLaPlusRécenteProjetStructurantUseCase
+  from '@/server/usecase/projetStructurant/synthèse/RécupérerSynthèseDesRésultatsLaPlusRécenteUseCase';
+import CréerUneSynthèseDesRésultatsProjetStructurantUseCase
+  from '@/server/usecase/projetStructurant/synthèse/CréerUneSynthèseDesRésultatsUseCase';
+import RécupérerHistoriqueSynthèseDesRésultatsProjetStructurantUseCase
+  from '@/server/usecase/projetStructurant/synthèse/RécupérerHistoriqueSynthèseDesRésultatsUseCase';
 
 const zodValidateurCSRF = z.object({
   csrf: z.string(),
@@ -25,7 +30,7 @@ export const synthèseDesRésultatsRouter = créerRouteurTRPC({
       const auteur = ctx.session.user.name ?? '';
 
       if (input.typeDeRéforme === 'chantier') {
-        const créerUneSynthèseDesRésultatsUseCase = new CréerUneSynthèseDesRésultatsUseCase(dependencies.getSynthèseDesRésultatsRepository());
+        const créerUneSynthèseDesRésultatsUseCase = new CréerUneSynthèseDesRésultatsUseCase(dependencies.getSynthèseDesRésultatsRepository(), dependencies.getChantierRepository());
         return créerUneSynthèseDesRésultatsUseCase.run(input.réformeId, input.territoireCode, input.contenu, auteur, input.météo, ctx.session.habilitations);
       }
 
