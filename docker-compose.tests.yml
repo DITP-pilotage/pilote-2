@@ -1,26 +1,14 @@
 version: "3.8"
 
 services:
-  recreate_db:
-    # Créer une db de test
-    command: "/app/scripts/recreate_db_tests.sh"
-    build: 
-      dockerfile: data_management/Dockerfile-data
-      context: .
-    env_file:
-      - .env.test
-      - .env
-    volumes:
-      - ./:/app/
-
   pilote_tests:
     # Exécuter les tests de la webapp
     command: "/bin/sh /app/scripts/run_tests.sh"
     image: node:lts-alpine
-    depends_on:
-      - recreate_db
     env_file:
       - .env
       - .env.test
+    environment:
+      - NPM_PREFIX=/app
     volumes:
       - ./:/app/

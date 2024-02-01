@@ -104,6 +104,16 @@ services:
     volumes: 
       - db_dbt_pilote:/var/lib/postgresql/data
 
+  postgres_tests:
+    hostname: postgres_tests
+    container_name: pilote_postgres_tests
+    image: postgres:14.1-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+
   pilote_traefik:
     container_name: pilote_traefik
     image: traefik:v2.10
