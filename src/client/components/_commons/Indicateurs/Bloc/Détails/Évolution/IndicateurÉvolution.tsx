@@ -1,7 +1,8 @@
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend } from 'chart.js';
+import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Tooltip } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import Titre from '@/components/_commons/Titre/Titre';
-import IndicateurÉvolutionProps from '@/components/_commons/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.interface';
+import IndicateurÉvolutionProps
+  from '@/components/_commons/Indicateurs/Bloc/Détails/Évolution/IndicateurÉvolution.interface';
 import IndicateurÉvolutionStyled from './IndicateurÉvolution.styled';
 import useIndicateurÉvolution from './useIndicateurÉvolution';
 
@@ -23,7 +24,7 @@ export default function IndicateurÉvolution({ indicateurDétailsParTerritoires,
         baliseHtml='h5'
         className='fr-text--lg fr-mb-0'
       >
-        Évolution de l&apos;indicateur
+        Évolution de l'indicateur
       </Titre>
       <p className='fr-text--xs texte-gris'>
         {`Mis à jour le : ${dateDeMiseAJourIndicateur} | Source : ${!!!source ? 'Non renseigné' : source}`}

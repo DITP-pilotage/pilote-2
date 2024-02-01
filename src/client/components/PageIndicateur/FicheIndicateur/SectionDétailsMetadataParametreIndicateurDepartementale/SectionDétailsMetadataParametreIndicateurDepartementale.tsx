@@ -3,15 +3,17 @@ import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import SectionDétailsMetadataParametreIndicateurDepartementaleStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurDepartementale/SectionDétailsMetadataParametreIndicateurDepartementale.styled';
-import SectionDétailsMetadataParametreIndicateurDepartementaleProps
-  from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurDepartementale/SectionDétailsMetadataParametreIndicateurDepartementale.interface';
 import useDétailsMetadataParametreIndicateurDepartementaleForm
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurDepartementale/useDétailsMetadataParametreIndicateurDepartementaleForm';
+import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 
 export default function SectionDétailsMetadataParametreIndicateurDepartementale({
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
-}: SectionDétailsMetadataParametreIndicateurDepartementaleProps) {
+}: {
+  estEnCoursDeModification: boolean
+  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
+}) {
   const { register, getValues, errors } = useDétailsMetadataParametreIndicateurDepartementaleForm();
 
   return (

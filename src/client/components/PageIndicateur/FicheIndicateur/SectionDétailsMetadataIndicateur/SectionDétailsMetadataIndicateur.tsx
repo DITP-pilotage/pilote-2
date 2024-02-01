@@ -1,6 +1,4 @@
 import Titre from '@/components/_commons/Titre/Titre';
-import SectionDétailsMetadataIndicateurProps
-  from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur/SectionDétailsMetadataIndicateur.interface';
 import SectionDétailsMetadataIndicateurStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur/SectionDétailsMetadataIndicateur.styled';
 import useDetailMetadataIndicateurForm
@@ -10,13 +8,21 @@ import Input from '@/components/_commons/Input/Input';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import { ChampObligatoire } from '@/components/PageIndicateur/ChampObligatoire';
+import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
+import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
+import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 
 export default function SectionDétailsMetadataIndicateur({
   indicateur,
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
   chantiers,
-}: SectionDétailsMetadataIndicateurProps) {
+}: {
+  indicateur: MetadataParametrageIndicateurContrat
+  estEnCoursDeModification: boolean
+  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
+  chantiers: ChantierSynthétisé[]
+}) {
   const { register, getValues, errors, metadataIndicateurs, optionsIndicateurParent } = useDetailMetadataIndicateurForm();
 
   return (
@@ -137,7 +143,7 @@ export default function SectionDétailsMetadataIndicateur({
               </span>
             ) : (
               <span>
-                Pas d&apos;indicateur parent
+                Pas d'indicateur parent
               </span>
             )
             )}

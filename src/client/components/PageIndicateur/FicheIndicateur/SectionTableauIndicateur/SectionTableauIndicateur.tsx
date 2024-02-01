@@ -1,7 +1,10 @@
-import SectionTableauIndicateurProps from '@/components/PageIndicateur/FicheIndicateur/SectionTableauIndicateur/SectionTableauIndicateur.interface';
-import SectionTableauIndicateurStyled from '@/components/PageIndicateur/FicheIndicateur/SectionTableauIndicateur/SectionTableauIndicateur.styled';
+import SectionTableauIndicateurStyled
+  from '@/components/PageIndicateur/FicheIndicateur/SectionTableauIndicateur/SectionTableauIndicateur.styled';
+import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 
-export default function SectionTableauIndicateur({ indicateur }: SectionTableauIndicateurProps) {
+export default function SectionTableauIndicateur({ indicateur }: {
+  indicateur: MetadataParametrageIndicateurContrat
+}) {
   return (
     <SectionTableauIndicateurStyled>
       <div className='fr-table'>
@@ -18,7 +21,7 @@ export default function SectionTableauIndicateur({ indicateur }: SectionTableauI
                 Identifiant indicateur
               </th>
               <th>
-                Nom de l&apos;indicateur
+                Nom de l'indicateur
               </th>
             </tr>
           </thead>

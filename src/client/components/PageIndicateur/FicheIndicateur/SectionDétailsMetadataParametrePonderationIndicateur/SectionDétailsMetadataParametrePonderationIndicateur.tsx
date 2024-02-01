@@ -1,18 +1,22 @@
 import Titre from '@/components/_commons/Titre/Titre';
 import SectionDétailsMetadataParametrePonderationIndicateurStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/SectionDétailsMetadataParametrePonderationIndicateur.styled';
-import DétailsMetadataParametrePonderationIndicateurProps
-  from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/SectionDétailsMetadataParametrePonderationIndicateur.interface';
 import Input from '@/components/_commons/Input/Input';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import useDétailsMetadataParametrePonderationIndicateurForm
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametrePonderationIndicateur/useDétailsMetadataParametrePonderationndicateurForm';
+import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
+import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 
 export default function SectionDétailsMetadataParametrePonderationIndicateur({
   indicateur,
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
-}: DétailsMetadataParametrePonderationIndicateurProps) {
+}: {
+  indicateur: MetadataParametrageIndicateurContrat
+  estEnCoursDeModification: boolean
+  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
+}) {
   const { register, errors } = useDétailsMetadataParametrePonderationIndicateurForm();
 
   return (
@@ -21,7 +25,7 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
         baliseHtml='h2'
         className='fr-h5'
       >
-        Paramétrages - Pondération de l&apos;indicateur dans le calcul du taux d&apos;avancement global
+        Paramétrages - Pondération de l'indicateur dans le calcul du taux d'avancement global
       </Titre>
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>

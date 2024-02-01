@@ -1,17 +1,19 @@
 import Titre from '@/components/_commons/Titre/Titre';
 import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
-import SectionDétailsMetadataParametreIndicateurNationaleProps
-  from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/SectionDétailsMetadataParametreIndicateurNationale.interface';
 import useDétailsMetadataParametreIndicateurNationaleForm
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/useDétailsMetadataParametreIndicateurNationaleForm';
 import SectionDétailsMetadataParametreIndicateurNationaleStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurNationale/SectionDétailsMetadataParametreIndicateurNationale.styled';
+import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 
 export default function SectionDétailsMetadataParametreIndicateurNationale({
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
-}: SectionDétailsMetadataParametreIndicateurNationaleProps) {
+}: {
+  estEnCoursDeModification: boolean
+  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
+}) {
   const { register, getValues, errors } = useDétailsMetadataParametreIndicateurNationaleForm();
 
   return (

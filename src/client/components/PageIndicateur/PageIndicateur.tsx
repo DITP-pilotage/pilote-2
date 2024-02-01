@@ -76,7 +76,7 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                 baliseHtml='h1'
                 className='fr-h1 fr-mt-4w'
               >
-                Fiche de l&apos;indicateur 
+                Fiche de l'indicateur 
                 {' '}
                 { indicateur.indicId }
                 <div className='fr-grid-row fr-mt-4w'>
@@ -87,7 +87,7 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                       key='submit-indicateur'
                       type='submit'
                     >
-                      Créer l&apos;indicateur
+                      Créer l'indicateur
                     </button>
                   ) : (estEnCoursDeModification ? (
                     <button
@@ -127,7 +127,7 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                         key='submit-indicateur'
                         type='submit'
                       >
-                        Créer l&apos;indicateur
+                        Créer l'indicateur
                       </button>
                     ) : (estEnCoursDeModification ? (
                       <button
