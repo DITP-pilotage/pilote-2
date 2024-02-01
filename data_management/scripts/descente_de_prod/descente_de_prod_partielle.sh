@@ -18,6 +18,12 @@ time pg_dump -d $CONN_STR_PROD --verbose \
     --table public.mesure_indicateur_temporaire \
     --table public.erreur_validation_fichier \
     --table public.objectif \
+    --table public.commentaire_projet_structurant \
+    --table public.indicateur_projet_structurant \
+    --table public.objectif_projet_structurant \
+    --table public.perimetre_projet_structurant \
+    --table public.projet_structurant \
+    --table public.synthese_des_resultats_projet_structurant \
     --file=$DUMP_DEST
 
 # [import]
@@ -34,6 +40,12 @@ TRUNCATE TABLE
     raw_data.commentaires, 
     public.mesure_indicateur_temporaire, 
     public.objectif, 
+    public.commentaire_projet_structurant, 
+    public.indicateur_projet_structurant, 
+    public.objectif_projet_structurant, 
+    public.perimetre_projet_structurant, 
+    public.projet_structurant, 
+    public.synthese_des_resultats_projet_structurant, 
     public.erreur_validation_fichier;"
 
 echo ">> pg_restore dumped file..."
