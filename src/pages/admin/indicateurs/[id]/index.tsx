@@ -74,7 +74,7 @@ export async function getServerSideProps({ req, res, params, query } :GetServerS
   if (estUneCréation) {
     indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new InitialiserNouvelIndicateurUseCase(dependencies.getInformationMetadataIndicateurRepository()).run(params.id));
   } else {
-    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new RécupérerUnIndicateurUseCase().run(params.id));
+    indicateurDemandé = presenterEnMetadataParametrageIndicateurContrat(await new RécupérerUnIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run(params.id));
     if (!indicateurDemandé) {
       return redirigerVersPageAccueil;
     }
