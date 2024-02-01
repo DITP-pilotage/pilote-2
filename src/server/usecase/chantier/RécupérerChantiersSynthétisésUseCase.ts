@@ -1,12 +1,11 @@
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 
 export default class RécupérerChantiersSynthétisésUseCase {
   constructor(
-    private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
+    private readonly chantierRepository: ChantierRepository,
   ) {}
 
   async run(habilitations: Habilitations): Promise<ChantierSynthétisé[]> {

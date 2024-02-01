@@ -1,7 +1,6 @@
 import { chantier as chantierPrisma } from '@prisma/client';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
@@ -11,15 +10,13 @@ import { objectEntries } from '@/client/utils/objects/objects';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
 import Utilisateur, { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 
 export default class RécupérerChantiersAccessiblesEnLectureUseCase {
   constructor(
-    private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
-    private readonly chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository = dependencies.getChantierDatesDeMàjRepository(),
-    private readonly ministèreRepository: MinistèreRepository = dependencies.getMinistèreRepository(),
-    private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
-    private readonly utilisateurRepository: UtilisateurRepository = dependencies.getUtilisateurRepository(),
+    private readonly chantierRepository: ChantierRepository,
+    private readonly chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository,
+    private readonly ministèreRepository: MinistèreRepository,
+    private readonly territoireRepository: TerritoireRepository,
   ) {}
 
   async run(habilitations: Habilitations, profil: ProfilCode): Promise<Chantier[]> {
