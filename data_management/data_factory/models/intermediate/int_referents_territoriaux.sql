@@ -14,10 +14,12 @@ WITH ref_locaux AS (
 )
 
 SELECT 
-	nom,
+	a.nom,
 	email,
-	territoire_code 
-FROM ref_locaux 
+	territoire_code,
+    t.zone_id
+FROM ref_locaux a
+left join {{ source('db_schema_public', 'territoire') }} t on a.territoire_code=t.code
 WHERE 
     (profil_code = 'REFERENT_REGION' AND territoire_code LIKE 'REG-%')
     OR 

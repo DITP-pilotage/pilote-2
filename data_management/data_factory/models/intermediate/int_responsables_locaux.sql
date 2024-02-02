@@ -59,13 +59,16 @@ resp_locaux_complet as (
 )
 
 SELECT 
-	ARRAY_AGG(nom) as nom,
+	ARRAY_AGG(a.nom) as nom,
 	ARRAY_AGG(email) as email,
     chantier_id,
-	territoire_code
-FROM resp_locaux_complet
+	a.territoire_code,
+    t.zone_id
+FROM resp_locaux_complet a
+LEFT JOIN {{ source('db_schema_public', 'territoire') }} t ON a.territoire_code=t.code
+LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} z ON t.zone_id=z.id
 WHERE 
-    (profil_code = 'RESPONSABLE_REGION' AND territoire_code LIKE 'REG-%')
+    (profil_code = 'RESPONSABLE_REGION' AND z.maille='REG')
     OR 
-    (profil_code = 'RESPONSABLE_DEPARTEMENT' AND territoire_code LIKE 'DEPT-%')
-GROUP BY chantier_id, territoire_code
+    (profil_code = 'RESPONSABLE_DEPARTEMENT' AND z.maille='DEPT')
+GROUP BY chantier_id, territoire_code, zone_id
