@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   app:
-    command: "/bin/bash descente_de_prod_partielle.sh"
+    command: "/bin/bash docker_entrypoint.sh"
     container_name: scalingo_dump
     build: 
       dockerfile: Dockerfile
@@ -12,4 +12,6 @@ services:
     volumes:
       - "./.env:/app/.env:ro"
       - "./descente_de_prod_partielle.sh:/app/descente_de_prod_partielle.sh"
+      - "./docker_entrypoint.sh:/app/docker_entrypoint.sh"
       - "./out:/app/out"
+      - "./ssh_key_scalingo:/root/.ssh/id_rsa"
