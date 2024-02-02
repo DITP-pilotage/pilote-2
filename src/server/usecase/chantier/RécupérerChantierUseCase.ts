@@ -7,7 +7,6 @@ import { parseChantier } from '@/server/infrastructure/accès_données/chantier/
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 
 export default class RécupérerChantierUseCase {
   constructor(
@@ -15,7 +14,6 @@ export default class RécupérerChantierUseCase {
     private readonly chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository,
     private readonly ministèreRepository: MinistèreRepository,
     private readonly territoireRepository: TerritoireRepository,
-    private readonly utilisateurRepository: UtilisateurRepository,
   ) {}
 
   async run(chantierId: string, habilitations: Habilitations, profil: ProfilCode): Promise<Chantier> {
@@ -25,9 +23,8 @@ export default class RécupérerChantierUseCase {
     
     const ministères = await this.ministèreRepository.getListe();
     const territoires = await this.territoireRepository.récupérerTous();
-    const utilisateurs = await this.utilisateurRepository.récupérerTous([], [], false);
     const chantierRows = await this.chantierRepository.récupérerLesEntréesDUnChantier(chantierId, habilitations, profil);
     const chantiersRowsDatesDeMàj = await this.chantierDatesDeMàjRepository.récupérerDatesDeMiseÀJour([chantierId], territoireCodes);
-    return parseChantier(chantierRows, territoires, ministères, chantiersRowsDatesDeMàj, utilisateurs);
+    return parseChantier(chantierRows, territoires, ministères, chantiersRowsDatesDeMàj);
   }
 }

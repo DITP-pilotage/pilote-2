@@ -3,7 +3,6 @@ import { Territoire, TerritoiresDonnées } from '@/server/domain/territoire/Terr
 import Chantier, { ChantierDatesDeMiseÀJour } from '@/server/domain/chantier/Chantier.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 
 class ErreurChantierSansMailleNationale extends Error {
   constructor(idChantier: string) {
@@ -42,8 +41,6 @@ function créerDonnéesTerritoires(
   chantierRows: ChantierPrisma[],
   chantierNational: ChantierPrisma,
   chantiersRowsDatesDeMàj: Record<Chantier['id'], Record<Territoire['code'], ChantierDatesDeMiseÀJour>>,
-  responsables: Utilisateur[],
-  référents: Utilisateur[],
 ) {
   let donnéesTerritoires: TerritoiresDonnées = {};
 
@@ -51,7 +48,6 @@ function créerDonnéesTerritoires(
     const chantierRow = chantierRows.find(c => c.code_insee === t.codeInsee);
     const écart = calculÉcart(chantierNational, chantierRow);
     const tendance = calculerTendance(chantierRow);
-    const chantierId = chantierRow?.id ?? '';
 
     donnéesTerritoires[t.codeInsee] = {
       codeInsee: t.codeInsee,
@@ -63,9 +59,23 @@ function créerDonnéesTerritoires(
       tendance: tendance,
       dateDeMàjDonnéesQualitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQualitatives ?? null : null,
       dateDeMàjDonnéesQuantitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQuantitatives ?? null : null,
-      responsableLocal: responsables.filter(r => r.habilitations.lecture.territoires.includes(t.code) && r.habilitations.lecture.chantiers.includes(chantierId)),
-      référentTerritorial: référents.filter(r => r.habilitations.lecture.territoires.includes(t.code)),
+      responsableLocal: [],
+      référentTerritorial: [],
     };
+
+    if (!!chantierRow) {
+      const responsables = chantierRow.responsables_locaux;
+      const responsablesEmails = chantierRow.responsables_locaux_mails;
+      for (const [i, responsable] of responsables.entries()) {
+        donnéesTerritoires[t.codeInsee].responsableLocal.push({ nom: responsable, email: responsablesEmails[i] });
+      }
+
+      const referents = chantierRow.referents_territoriaux;
+      const referentsEmails = chantierRow.referents_territoriaux_mails;
+      for (const [i, referent] of referents.entries()) {
+        donnéesTerritoires[t.codeInsee].référentTerritorial.push({ nom: referent, email: referentsEmails[i] });
+      }
+    }
   });
 
   return donnéesTerritoires;
@@ -76,16 +86,10 @@ export function parseChantier(
   territoires: Territoire[],
   ministères: Ministère[],
   chantiersRowsDatesDeMàj: Record<Chantier['id'], Record<Territoire['code'], ChantierDatesDeMiseÀJour>>,
-  utilisateurs: Utilisateur[],
 ): Chantier {
   const chantierMailleNationale = chantierRows.find(c => c.maille === 'NAT');
   const chantierMailleDépartementale = chantierRows.filter(c => c.maille === 'DEPT');
   const chantierMailleRégionale = chantierRows.filter(c => c.maille === 'REG');
-  const responsablesDépartements = utilisateurs.filter(u => u.profil === 'RESPONSABLE_DEPARTEMENT');
-  const responsablesRégions = utilisateurs.filter(u => u.profil === 'RESPONSABLE_REGION');
-  const référentsDépartements = utilisateurs.filter(u => u.profil === 'REFERENT_DEPARTEMENT');
-  const référentsRégions = utilisateurs.filter(u => u.profil === 'REFERENT_REGION');
-
 
   if (!chantierMailleNationale) {
     throw new ErreurChantierSansMailleNationale(chantierRows[0].id);
@@ -117,8 +121,8 @@ export function parseChantier(
           référentTerritorial: [],
         },
       },
-      départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, chantierMailleNationale, chantiersRowsDatesDeMàj, responsablesDépartements, référentsDépartements),
-      régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'régionale'), chantierMailleRégionale, chantierMailleNationale, chantiersRowsDatesDeMàj, responsablesRégions, référentsRégions),
+      départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, chantierMailleNationale, chantiersRowsDatesDeMàj),
+      régionale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'régionale'), chantierMailleRégionale, chantierMailleNationale, chantiersRowsDatesDeMàj),
     },
     responsables: {
       porteur: ministères.find(m => m.id === chantierMailleNationale.ministeres[0]) ?? null,
