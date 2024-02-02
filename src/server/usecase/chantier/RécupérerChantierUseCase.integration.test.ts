@@ -10,7 +10,6 @@ import ChantierRepository from '@/server/domain/chantier/ChantierRepository.inte
 import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 
 describe('RécupérerChantierUseCase', () => {
@@ -19,15 +18,13 @@ describe('RécupérerChantierUseCase', () => {
   let chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository;
   let ministèreRepository: MinistèreRepository;
   let territoireRepository: TerritoireRepository;
-  let utilisateurRepository: UtilisateurRepository;
 
   beforeEach(() => {
     chantierRepository = dependencies.getChantierRepository();
     chantierDatesDeMàjRepository = dependencies.getChantierDatesDeMàjRepository();
     ministèreRepository = dependencies.getMinistèreRepository();
     territoireRepository = dependencies.getTerritoireRepository();
-    utilisateurRepository = dependencies.getUtilisateurRepository();
-    récupérerChantierUseCase = new RécupérerChantierUseCase(chantierRepository, chantierDatesDeMàjRepository, ministèreRepository, territoireRepository, utilisateurRepository);
+    récupérerChantierUseCase = new RécupérerChantierUseCase(chantierRepository, chantierDatesDeMàjRepository, ministèreRepository, territoireRepository);
   });
 
 
