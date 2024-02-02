@@ -4,8 +4,8 @@ WITH dir_projets_chantiers AS (
         u.email AS email, 
         UNNEST(h.chantiers) AS chantier_id
     FROM 
-        public.habilitation h 
-        LEFT JOIN public.utilisateur u ON h.utilisateur_id = u.id 
+        {{ source('db_schema_public', 'habilitation') }} h 
+        LEFT JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id 
     WHERE 
         u.profil_code = 'DIR_PROJET' 
         AND h.scope_code = 'lecture'
@@ -17,8 +17,8 @@ dir_projets_perimetres AS (
         INITCAP(u.prenom) || ' ' || INITCAP(u.nom) AS nom, 
         u.email AS email
     FROM 
-        public.habilitation h 
-        LEFT JOIN public.utilisateur u ON h.utilisateur_id = u.id 
+        {{ source('db_schema_public', 'habilitation') }} h 
+        LEFT JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id 
     WHERE 
         u.profil_code = 'DIR_PROJET' 
         AND h.scope_code = 'lecture'

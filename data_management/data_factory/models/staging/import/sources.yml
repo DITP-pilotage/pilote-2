@@ -37,3 +37,7 @@ sources:
         description: "Liste des territoires, lien vers la zone, et shape SVG."
       - name: synthese_des_resultats
         description: "Metéo et commentaires associés"
+      - name: habilitation
+        description: "Habilitations des utilisateurs"
+      - name: utilisateur
+        description: "Table des utilisateurs de la webapp"
