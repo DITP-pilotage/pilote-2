@@ -9,8 +9,10 @@ import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import PageAccueil from '@/components/PageAccueil/PageAccueil';
 import { ProjetStructurantVueDEnsemble } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
-import RécupérerListeProjetsStructurantsVueDEnsembleUseCase from '@/server/usecase/projetStructurant/RécupérerListeProjetsStructurantsVueDEnsembleUseCase';
-import RécupérerChantiersAccessiblesEnLectureUseCase from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
+import RécupérerListeProjetsStructurantsVueDEnsembleUseCase
+  from '@/server/usecase/projetStructurant/RécupérerListeProjetsStructurantsVueDEnsembleUseCase';
+import RécupérerChantiersAccessiblesEnLectureUseCase
+  from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
@@ -45,8 +47,17 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
   if (!session || !session.habilitations)
     return { props: {} };
 
-  const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase().run(session.habilitations, session.profil);
-  const projetsStructurants: ProjetStructurantVueDEnsemble[] = await new RécupérerListeProjetsStructurantsVueDEnsembleUseCase().run(session.habilitations, session.profil);
+  const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
+    dependencies.getChantierRepository(),
+    dependencies.getChantierDatesDeMàjRepository(),
+    dependencies.getMinistèreRepository(),
+    dependencies.getTerritoireRepository(),
+  ).run(session.habilitations, session.profil);
+  const projetsStructurants: ProjetStructurantVueDEnsemble[] = await new RécupérerListeProjetsStructurantsVueDEnsembleUseCase(
+    dependencies.getProjetStructurantRepository(),
+    dependencies.getTerritoireRepository(),
+    dependencies.getSynthèseDesRésultatsProjetStructurantRepository(),
+  ).run(session.habilitations, session.profil);
 
   let axes: Axe[] = [];
   let ppgs: Ppg[] = [];

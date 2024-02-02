@@ -1,9 +1,28 @@
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
 import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
 import ChantierSQLRowBuilder from '@/server/infrastructure/test/builders/sqlRow/ChantierSQLRow.builder';
-import RécupérerChantiersAccessiblesEnLectureUseCase from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
+import RécupérerChantiersAccessiblesEnLectureUseCase
+  from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
+import { dependencies } from '@/server/infrastructure/Dependencies';
+import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
+import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
+import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 
 describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
+
+  let récupérerChantiersAccessiblesEnLectureUseCase: RécupérerChantiersAccessiblesEnLectureUseCase;
+  let chantierRepository: ChantierRepository;
+  let chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository;
+  let ministèreRepository: MinistèreRepository;
+  let territoireRepository: TerritoireRepository;
+  beforeEach(() => {
+    chantierRepository = dependencies.getChantierRepository();
+    chantierDatesDeMàjRepository = dependencies.getChantierDatesDeMàjRepository();
+    ministèreRepository = dependencies.getMinistèreRepository();
+    territoireRepository = dependencies.getTerritoireRepository();
+    récupérerChantiersAccessiblesEnLectureUseCase = new RécupérerChantiersAccessiblesEnLectureUseCase( chantierRepository, chantierDatesDeMàjRepository, ministèreRepository, territoireRepository);
+  });
 
   test('un chantier sans ministères est exclu du résultat', async () => {
     // GIVEN
@@ -21,7 +40,7 @@ describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
     });
 
     // WHEN
-    const result = await new RécupérerChantiersAccessiblesEnLectureUseCase().run(habilitation, 'DITP_ADMIN');
+    const result = await récupérerChantiersAccessiblesEnLectureUseCase.run(habilitation, 'DITP_ADMIN');
 
     // THEN
     expect(result).toStrictEqual([]);
@@ -46,7 +65,7 @@ describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase().run(habilitation, 'DITP_ADMIN');
+    const chantiers = await récupérerChantiersAccessiblesEnLectureUseCase.run(habilitation, 'DITP_ADMIN');
 
     // THEN
     const ids = chantiers.map(ch => ch.id);
@@ -71,7 +90,7 @@ describe('RécupérerChantiersAccessiblesEnLectureUseCase', () => {
     } } as unknown as Utilisateur['habilitations'];
 
     // WHEN
-    const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase().run(habilitation, 'DITP_ADMIN');
+    const chantiers = await récupérerChantiersAccessiblesEnLectureUseCase.run(habilitation, 'DITP_ADMIN');
 
     // THEN
     expect(chantiers[0].mailles.départementale['974']).toBeDefined();

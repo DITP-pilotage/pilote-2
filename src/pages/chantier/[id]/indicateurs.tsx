@@ -52,7 +52,6 @@ export async function getServerSideProps({
     dependencies.getChantierDatesDeMàjRepository(),
     dependencies.getMinistèreRepository(),
     dependencies.getTerritoireRepository(),
-    dependencies.getUtilisateurRepository(),
   ).run(params.id, session.habilitations, session.profil);
 
   const indicateurRepository = dependencies.getIndicateurRepository();

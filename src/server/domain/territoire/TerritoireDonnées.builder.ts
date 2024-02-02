@@ -2,8 +2,7 @@ import { faker } from '@faker-js/faker/locale/fr';
 import { codesInseeDépartements, codesInseeRégions, codeInseeFrance, TerritoireDonnées } from '@/server/domain/territoire/Territoire.interface';
 import MétéoBuilder from '@/server/domain/météo/Météo.builder';
 import AvancementBuilder from '@/server/domain/chantier/avancement/Avancement.builder';
-import { générerPeutÊtreNull } from '@/server/infrastructure/test/builders/utils';
-import UtilisateurBuilder from '@/server/domain/utilisateur/Utilisateur.builder';
+import { générerPeutÊtreNull, générerTableau } from '@/server/infrastructure/test/builders/utils';
 
 export default class TerritoireDonnéesBuilder {
   private _codeInsee: TerritoireDonnées['codeInsee'];
@@ -29,11 +28,6 @@ export default class TerritoireDonnéesBuilder {
   private _referentTerritorial: TerritoireDonnées['référentTerritorial'];
 
   constructor() {
-    const utilisateurs = [
-      new UtilisateurBuilder().build(),
-      new UtilisateurBuilder().build(),
-      new UtilisateurBuilder().build(),
-    ];
 
     this._codeInsee = faker.helpers.arrayElement([...codesInseeDépartements, ...codesInseeRégions, codeInseeFrance]);
     this._avancement = new AvancementBuilder().build();
@@ -44,8 +38,8 @@ export default class TerritoireDonnéesBuilder {
     this._dateDeMàjDonnéesQualitatives = générerPeutÊtreNull(0.2, faker.date.past().toISOString());
     this._dateDeMàjDonnéesQuantitatives = générerPeutÊtreNull(0.2, faker.date.past().toISOString());
     this._estApplicable = générerPeutÊtreNull(0.2, faker.datatype.boolean());
-    this._referentTerritorial = faker.helpers.arrayElements(utilisateurs);
-    this._responsableLocal = faker.helpers.arrayElements(utilisateurs);
+    this._referentTerritorial = générerTableau(1, 3, () => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
+    this._responsableLocal = générerTableau(1, 3, () => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
   }
 
   avecCodeInsee(codeInsee: TerritoireDonnées['codeInsee']): TerritoireDonnéesBuilder {

@@ -1,4 +1,3 @@
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import CommentaireRepository from '@/server/domain/chantier/commentaire/CommentaireRepository.interface';
 import { Commentaire, TypeCommentaireChantier } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
@@ -6,7 +5,7 @@ import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilita
 
 export default class RécupérerHistoriqueCommentaireUseCase {
   constructor(
-    private readonly commentaireRepository: CommentaireRepository = dependencies.getCommentaireRepository(),
+    private readonly commentaireRepository: CommentaireRepository,
   ) {}
 
   async run(chantierId: string, territoireCode: string, type: TypeCommentaireChantier, habilitations: Habilitations): Promise<Commentaire[]> {

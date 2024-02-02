@@ -1,5 +1,4 @@
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
@@ -9,7 +8,7 @@ import { MailleNonAutoriséeErreur } from '@/server/utils/errors';
 
 export default class RécupérerStatistiquesAvancementChantiersUseCase {
   constructor(
-    private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
+    private readonly chantierRepository: ChantierRepository,
   ) {}
 
   async run(chantiers: Chantier['id'][], maille: Maille, habilitations: Habilitations): Promise<AvancementsStatistiques> {

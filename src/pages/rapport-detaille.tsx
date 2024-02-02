@@ -11,13 +11,16 @@ import { DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicate
 import { PublicationsGroupéesParChantier } from '@/components/PageRapportDétaillé/PageRapportDétaillé.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
-import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
-import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase from '@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
+import RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase
+  from '@/server/usecase/chantier/commentaire/RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase';
+import RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase
+  from '@/server/usecase/chantier/objectif/RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import DécisionStratégique from '@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import RécupérerChantiersAccessiblesEnLectureUseCase from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
+import RécupérerChantiersAccessiblesEnLectureUseCase
+  from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 
 interface NextPageRapportDétailléProps {
@@ -85,7 +88,12 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
 
   const habilitation = new Habilitation(session.habilitations);
 
-  const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase().run(session.habilitations, session.profil);
+  const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
+    dependencies.getChantierRepository(),
+    dependencies.getChantierDatesDeMàjRepository(),
+    dependencies.getMinistèreRepository(),
+    dependencies.getTerritoireRepository(),
+  ).run(session.habilitations, session.profil);
   const chantiersIds = chantiers.map(chantier => chantier.id);
 
   const ministèreRepository = dependencies.getMinistèreRepository();
@@ -104,9 +112,9 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
     décisionStratégiquesGroupéesParChantier = await décisionStratégiqueRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds);
   }
 
-  const commentairesGroupésParChantier = await new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase().run(chantiersIds, territoireCode, session.habilitations);
+  const commentairesGroupésParChantier = await new RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getCommentaireRepository()).run(chantiersIds, territoireCode, session.habilitations);
 
-  const objectifsGroupésParChantier = await new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase().run(chantiersIds, session.habilitations);
+  const objectifsGroupésParChantier = await new RécupérerObjectifsLesPlusRécentsParTypeGroupésParChantiersUseCase(dependencies.getObjectifRepository()).run(chantiersIds, session.habilitations);
 
   return {
     props: {

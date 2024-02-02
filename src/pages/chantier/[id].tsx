@@ -64,7 +64,6 @@ export async function getServerSideProps({ req, res, params }: GetServerSideProp
       dependencies.getChantierDatesDeMàjRepository(),
       dependencies.getMinistèreRepository(),
       dependencies.getTerritoireRepository(),
-      dependencies.getUtilisateurRepository(),
     ).run(params.id, session.habilitations, session.profil);
   } catch (error) {
     if (error instanceof NonAutorisé) {

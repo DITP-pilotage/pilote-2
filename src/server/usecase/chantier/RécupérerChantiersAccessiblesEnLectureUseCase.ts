@@ -1,7 +1,6 @@
 import { chantier as chantierPrisma } from '@prisma/client';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
@@ -10,16 +9,14 @@ import { groupBy } from '@/client/utils/arrays';
 import { objectEntries } from '@/client/utils/objects/objects';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
-import Utilisateur, { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
-import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
+import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export default class RécupérerChantiersAccessiblesEnLectureUseCase {
   constructor(
-    private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
-    private readonly chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository = dependencies.getChantierDatesDeMàjRepository(),
-    private readonly ministèreRepository: MinistèreRepository = dependencies.getMinistèreRepository(),
-    private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
-    private readonly utilisateurRepository: UtilisateurRepository = dependencies.getUtilisateurRepository(),
+    private readonly chantierRepository: ChantierRepository,
+    private readonly chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository,
+    private readonly ministèreRepository: MinistèreRepository,
+    private readonly territoireRepository: TerritoireRepository,
   ) {}
 
   async run(habilitations: Habilitations, profil: ProfilCode): Promise<Chantier[]> {
@@ -31,9 +28,8 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     const territoires = await this.territoireRepository.récupérerTous();
     const chantiersRows = await this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilités(habilitation, profil);
     const chantiersRowsDatesDeMàj = await this.chantierDatesDeMàjRepository.récupérerDatesDeMiseÀJour(chantiersLecture, territoiresLecture);
-    const utilisateurs = [] as Utilisateur[];
     const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRows, chantier => chantier.id);
-    let chantiers = objectEntries(chantiersGroupésParId).map(([_, chantier]) => parseChantier(chantier, territoires, ministères, chantiersRowsDatesDeMàj, utilisateurs));
+    let chantiers = objectEntries(chantiersGroupésParId).map(([_, chantier]) => parseChantier(chantier, territoires, ministères, chantiersRowsDatesDeMàj));
 
     if (profil === 'DROM') {
       chantiers = chantiers.map(chantier => {

@@ -1,7 +1,6 @@
 
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import ResponsablesLigne from '@/client/components/_commons/ResponsablesLigne/ResponsablesLigne';
-import { normaliseNom } from '@/client/utils/strings';
 import ResponsablesPageChantierStyled from './Responsables.styled';
 import ResponsablesPageChantierProps from './Responsables.interface';
 
@@ -44,13 +43,13 @@ export default function ResponsablesPageChantier({ responsables, responsablesLoc
             <ResponsablesLigne
               contenu={
                 responsablesLocal?.map(responsable => 
-                  mailTo(`${normaliseNom(responsable.prénom)} ${normaliseNom(responsable.nom)}`, responsable.email))
+                  mailTo(responsable.nom, responsable.email))
               }
               libellé='Responsable local'
             />
             <hr className='fr-hr fr-py-1w' />
             <ResponsablesLigne
-              contenu={referentTerritorial?.map(referent => mailTo(`${normaliseNom(referent.prénom)} ${normaliseNom(referent.nom)}`, referent.email))}
+              contenu={referentTerritorial?.map(referent => mailTo(referent.nom, referent.email))}
               libellé='Référent PILOTE du territoire'
             />
           </>

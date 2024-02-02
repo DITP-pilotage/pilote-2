@@ -35,3 +35,36 @@ models:
         description: "Date du dernier rapport (`dernier_import_rapport_id_indic`)"
       - name: dernier_import_auteur_indic
         description: "Auteur du dernier rapport pour cet {indicateur} (sur n'importe quelle zone)"
+  - name: int_directeurs_projets
+    description: "Une ligne pour chaque chantier qui indique son/ses DP (Directeur de Projet)."
+    columns:
+      - name: nom
+        description: "Liste des noms des DP"
+      - name: email
+        description: "Liste des emails des DP"
+      - name: chantier_id
+        description: "Chantier concerné"
+  - name: int_referents_territoriaux
+    description: "Une ligne pour chaque zone qui indique son/ses référents territoriaux (ou référents Pilote)"
+    columns:
+      - name: nom
+        description: "Liste des noms des référents"
+      - name: email
+        description: "Liste des emails des référents"
+      - name: territoire_code
+        description: "Code du territoire concerné"
+      - name: zone_id
+        description: "ID de la zone concernée"
+  - name: int_responsables_locaux
+    description: "Une ligne pour chaque zone et chaque chantier qui indique son/ses responsables locaux"
+    columns:
+      - name: nom
+        description: "Liste des noms des responsables"
+      - name: email
+        description: "Liste des emails des responsables"
+      - name: chantier_id
+        description: "Chantier concerné"
+      - name: territoire_code
+        description: "Code du territoire concerné"
+      - name: zone_id
+        description: "ID de la zone concernée"

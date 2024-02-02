@@ -16,21 +16,20 @@ export const chantierRouter = créerRouteurTRPC({
         dependencies.getChantierDatesDeMàjRepository(),
         dependencies.getMinistèreRepository(),
         dependencies.getTerritoireRepository(),
-        dependencies.getUtilisateurRepository(),
       );
       return récupérerChantierUseCase.run(input.chantierId, ctx.session.habilitations, ctx.session.profil);
     }),
 
   récupérerTousSynthétisésAccessiblesEnLecture: procédureProtégée
     .query(({ ctx }) => {
-      const récupérerChantiersSynthétisésUseCase = new RécupérerChantiersSynthétisésUseCase();
+      const récupérerChantiersSynthétisésUseCase = new RécupérerChantiersSynthétisésUseCase(dependencies.getChantierRepository());
       return récupérerChantiersSynthétisésUseCase.run(ctx.session.habilitations);
     }),
 
   récupérerStatistiquesAvancements: procédureProtégée
     .input(validationChantiersContexte)
     .query(({ input, ctx }) =>{
-      const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase();
+      const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
       return récupérerStatistiquesChantiersUseCase.run(input.chantiers, input.maille as Maille, ctx.session.habilitations);
     }),
 });
