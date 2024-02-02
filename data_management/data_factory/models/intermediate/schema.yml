@@ -57,6 +57,8 @@ models:
         description: "Liste des emails des référents"
       - name: territoire_code
         description: "Code du territoire concerné"
+      - name: zone_id
+        description: "ID de la zone concernée"
   - name: int_responsables_locaux
     description: "Une ligne pour chaque zone et chaque chantier qui indique son/ses responsables locaux"
     columns:
@@ -68,3 +70,5 @@ models:
         description: "Chantier concerné"
       - name: territoire_code
         description: "Code du territoire concerné"
+      - name: zone_id
+        description: "ID de la zone concernée"
