@@ -11,7 +11,6 @@ import {
   Habilitations,
   HabilitationsÀCréerOuMettreÀJourCalculées,
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import { codesTerritoiresDROM } from '@/validation/utilisateur';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import PérimètreMinistérielRepository
@@ -26,12 +25,12 @@ import { HistorisationModification } from '@/server/domain/historisationModifica
 
 export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   constructor(
-    private readonly utilisateurIAMRepository: UtilisateurIAMRepository = dependencies.getUtilisateurIAMRepository(),
-    private readonly utilisateurRepository: UtilisateurRepository = dependencies.getUtilisateurRepository(),
-    private readonly territoireRepository: TerritoireRepository = dependencies.getTerritoireRepository(),
-    private readonly chantierRepository: ChantierRepository = dependencies.getChantierRepository(),
-    private readonly périmètreMinistérielRepository: PérimètreMinistérielRepository = dependencies.getPérimètreMinistérielRepository(),
-    private readonly historisationModification: HistorisationModificationRepository = dependencies.getHistorisationModificationRepository(),
+    private readonly utilisateurIAMRepository: UtilisateurIAMRepository,
+    private readonly utilisateurRepository: UtilisateurRepository,
+    private readonly territoireRepository: TerritoireRepository,
+    private readonly chantierRepository: ChantierRepository,
+    private readonly périmètreMinistérielRepository: PérimètreMinistérielRepository,
+    private readonly historisationModification: HistorisationModificationRepository,
   ) {}
 
   async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteurModification: string, utilisateurExistant: boolean, habilitations: Habilitations): Promise<void> {
