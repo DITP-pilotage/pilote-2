@@ -20,7 +20,8 @@ SELECT
     t.zone_id
 FROM ref_locaux a
 left join {{ source('db_schema_public', 'territoire') }} t on a.territoire_code=t.code
+LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} z ON t.zone_id=z.id
 WHERE 
-    (profil_code = 'REFERENT_REGION' AND territoire_code LIKE 'REG-%')
+    (profil_code = 'REFERENT_REGION' AND z.maille='REG')
     OR 
-    (profil_code = 'REFERENT_DEPARTEMENT' AND territoire_code LIKE 'DEPT-%')
+    (profil_code = 'REFERENT_DEPARTEMENT' AND z.maille='DEPT')
