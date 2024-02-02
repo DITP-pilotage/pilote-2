@@ -5,8 +5,8 @@ WITH ref_locaux AS (
         profil_code,
         UNNEST(h.territoires) AS territoire_code
     FROM 
-        public.habilitation h 
-        LEFT JOIN public.utilisateur u ON h.utilisateur_id = u.id 
+        {{ source('db_schema_public', 'habilitation') }} h 
+        LEFT JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id 
     WHERE 
         (u.profil_code = 'REFERENT_REGION' OR u.profil_code = 'REFERENT_DEPARTEMENT') 
         AND h.scope_code = 'lecture'

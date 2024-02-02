@@ -7,8 +7,8 @@ WITH resp_locaux_chantiers AS (
         UNNEST(h.territoires) AS territoire_code,
         UNNEST(h.chantiers) AS chantier_id
     FROM 
-        public.habilitation h 
-        LEFT JOIN public.utilisateur u ON h.utilisateur_id = u.id 
+        {{ source('db_schema_public', 'habilitation') }} h 
+        LEFT JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id 
     WHERE 
         u.profil_code in ('RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT') 
         AND h.scope_code = 'lecture'
@@ -23,8 +23,8 @@ resp_locaux_perimetres AS (
         UNNEST(h.territoires) AS territoire_code,
         UNNEST(h.perimetres) AS perimetre_id
     FROM 
-        public.habilitation h 
-        LEFT JOIN public.utilisateur u ON h.utilisateur_id = u.id 
+        {{ source('db_schema_public', 'habilitation') }} h 
+        LEFT JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id 
     WHERE 
         u.profil_code IN ('RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT') 
         AND h.scope_code = 'lecture'
