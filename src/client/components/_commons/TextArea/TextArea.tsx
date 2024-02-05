@@ -1,14 +1,25 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/input/input.min.css';
 import { PropsWithChildren } from 'react';
-import TextAreaProps from '@/components/_commons/TextArea/TextArea.interface';
+import { FieldError, FieldErrorsImpl, Merge, UseFormRegisterReturn } from 'react-hook-form';
 
-export default function TextArea({ children, erreur, htmlName, register, disabled }: PropsWithChildren<TextAreaProps>) {
+export default function TextArea({ children, erreur, htmlName, register, disabled = false, className = '' }: PropsWithChildren<{
+  libellé: string,
+  htmlName: string,
+  // ==> A corriger
+  // eslint-disable-next-line react/require-default-props
+  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>
+  register: UseFormRegisterReturn
+  // eslint-disable-next-line react/require-default-props
+  disabled?: boolean,
+  // eslint-disable-next-line react/require-default-props
+  className?: string
+}>) {
   return (
     <div className={`fr-input-group ${erreur !== undefined ? 'fr-input-group--error' : ''}`}>
       {children}
       <textarea
-        className={`fr-input ${erreur !== undefined ? 'fr-input-group--error' : ''}`}
+        className={`fr-input ${erreur !== undefined ? 'fr-input-group--error' : ''} ${className !== undefined ? className : ''}`}
         disabled={disabled}
         id={htmlName}
         {...register}

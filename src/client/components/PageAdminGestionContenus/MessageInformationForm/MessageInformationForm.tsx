@@ -30,6 +30,7 @@ export const MessageInformationForm = () => {
           Rédigez le message
         </p>
         <TextArea
+          className='h-40'
           erreur={errors.bandeauTexte}
           htmlName='bandeauTexte'
           libellé='bandeauTexte'
