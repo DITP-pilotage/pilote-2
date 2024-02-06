@@ -82,7 +82,7 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
       chantierPourExport.directeursProjetMails?.join(' ') || NON_APPLICABLE,      
       chantierPourExport.responsablesLocaux?.join(' ') || NON_APPLICABLE,
       chantierPourExport.responsablesLocauxMails?.join(' ') || NON_APPLICABLE,
-      chantierPourExport.tauxDAvancementDépartemental?.toLocaleString('fr-FR', { style: 'decimal' })|| NON_APPLICABLE,
+      chantierPourExport.tauxDAvancementDépartemental?.toLocaleString('fr-FR', { style: 'decimal' }) || NON_APPLICABLE,
       chantierPourExport.tauxDAvancementRégional?.toLocaleString('fr-FR', { style: 'decimal' }) || NON_APPLICABLE,
       this.masquerPourProfilDROM(profil, chantierPourExport.périmètreIds)
         ?  NON_APPLICABLE
