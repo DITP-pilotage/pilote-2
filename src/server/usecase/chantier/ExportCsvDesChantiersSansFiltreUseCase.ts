@@ -82,11 +82,11 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
       chantierPourExport.directeursProjetMails?.join(' ') || NON_APPLICABLE,      
       chantierPourExport.responsablesLocaux?.join(' ') || NON_APPLICABLE,
       chantierPourExport.responsablesLocauxMails?.join(' ') || NON_APPLICABLE,
-      chantierPourExport.tauxDAvancementDépartemental?.toString() || NON_APPLICABLE,
-      chantierPourExport.tauxDAvancementRégional?.toString() || NON_APPLICABLE,
+      chantierPourExport.tauxDAvancementDépartemental?.toLocaleString('fr-FR', { style: 'decimal' }) || NON_APPLICABLE,
+      chantierPourExport.tauxDAvancementRégional?.toLocaleString('fr-FR', { style: 'decimal' }) || NON_APPLICABLE,
       this.masquerPourProfilDROM(profil, chantierPourExport.périmètreIds)
         ?  NON_APPLICABLE
-        : chantierPourExport.tauxDAvancementNational?.toString() || NON_APPLICABLE,
+        : chantierPourExport.tauxDAvancementNational?.toLocaleString('fr-FR', { style: 'decimal' }) || NON_APPLICABLE,
       formaterMétéo(chantierPourExport.météo),
       chantierPourExport.synthèseDesRésultats || NON_APPLICABLE,
       chantierPourExport.objNotreAmbition || NON_APPLICABLE,
