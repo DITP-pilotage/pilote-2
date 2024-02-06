@@ -7,10 +7,10 @@
 
 -- on va supprimer les lignes dans metadata_indicateurs
 DELETE FROM {{ table_ }} 
-WHERE indic_id IN (
-	SELECT indic_id FROM {{ ref('metadata_indicateurs_hidden') }}
+WHERE 
   -- si indic_hidden_pilote est à supprimer
-	WHERE indic_hidden_pilote = TRUE
-)
+  indic_id IN (SELECT indic_id FROM {{ ref('metadata_indicateurs_hidden') }} WHERE indic_hidden_pilote = TRUE) OR
+  -- OU si l'indic_id n'est pas dans metadata_indicateurs_hidden
+  indic_id NOT IN (SELECT indic_id FROM {{ ref('metadata_indicateurs_hidden') }})
 
 {% endmacro %}
