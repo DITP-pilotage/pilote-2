@@ -15,7 +15,7 @@ export default async function handleImportMasseMetadataIndicateur(
   // @ts-expect-error
   const fichier = <File>formData.file[0];
 
-  await importMasseMetadataIndicateurUseCase.run({
+  return importMasseMetadataIndicateurUseCase.run({
     nomDuFichier: fichier.filepath,
   });
 }

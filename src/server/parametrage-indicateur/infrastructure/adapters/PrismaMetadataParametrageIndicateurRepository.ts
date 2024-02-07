@@ -158,12 +158,12 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
 
   async recupererListeMetadataParametrageIndicateurParChantierIds(chantierIds: string[]): Promise<MetadataParametrageIndicateur[]> {
     try {
-      let query = 'SELECT mi.*, mpi.*, mc.ch_nom FROM raw_data.metadata_indicateurs_hidden mi ' +
+      let query = 'SELECT mi.*, mpi.*, mic.*, mc.ch_nom FROM raw_data.metadata_indicateurs_hidden mi ' +
                 'INNER JOIN raw_data.metadata_parametrage_indicateurs mpi ON mpi.indic_id = mi.indic_id ' +
                 'INNER JOIN raw_data.metadata_indicateurs_complementaire mic ON mic.indic_id = mi.indic_id ' +
                 'LEFT JOIN raw_data.metadata_chantiers mc on mi.indic_parent_ch = mc.chantier_id';
       if (chantierIds.length > 0) {
-        const listeStringChantierId = chantierIds.map(i => `'${i}'`).join(',');
+        const listeStringChantierId = (Array.isArray(chantierIds) ? chantierIds : [chantierIds]).map(i => `'${i}'`).join(',');
         query = `${query} WHERE mi.indic_parent_ch IN (${listeStringChantierId})`;
       }
       query = `${query} ORDER BY mi.indic_id`;
@@ -468,7 +468,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                          '${makeStrSafer(indicateur.indicUnite)}',
                                          ${indicateur.indicHiddenPilote},
                                          '${makeStrSafer(indicateur.indicSchema)}')
-                                   ON CONFLICT ON CONSTRAINT metadata_indicateurs_hidden_pk DO UPDATE
+                                   ON CONFLICT ON CONSTRAINT metadata_indicateurs_hidden_pkey DO UPDATE
                                     SET indic_parent_indic = '${indicateur.indicParentIndic}',
                                        indic_parent_ch = '${indicateur.indicParentCh}',
                                        indic_nom = '${makeStrSafer(indicateur.indicNom)}',
@@ -547,7 +547,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  '${indicateur.poidsPourcentNat}',
                                                  '${makeStrSafer(indicateur.tendance)}')
 
-                                           ON CONFLICT ON CONSTRAINT metadata_parametrage_indicateurs_pk DO UPDATE
+                                           ON CONFLICT ON CONSTRAINT metadata_parametrage_indicateurs_pkey DO UPDATE
                                                  SET vi_dept_from = '${makeStrSafer(indicateur.viDeptFrom)}',
                                                      vi_dept_op = '${makeStrSafer(indicateur.viDeptOp)}',
                                                      va_dept_from = '${makeStrSafer(indicateur.vaDeptFrom)}',
@@ -577,13 +577,78 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                      poids_pourcent_nat = '${indicateur.poidsPourcentNat}',
                                                      tendance = '${makeStrSafer(indicateur.tendance)}';`;
     } ;
+    const queryMetadataIndicateurComplementaireFn = (indicateur: ImportMetadataIndicateur) => {
+      return `INSERT INTO raw_data.metadata_indicateurs_complementaire (indic_id,
+                                                                        reforme_prioritaire,
+                                                                        projet_annuel_perf,
+                                                                        detail_projet_annuel_perf,
+                                                                        periodicite,
+                                                                        delai_disponibilite,
+                                                                        indic_territorialise,
+                                                                        frequence_territoriale,
+                                                                        mailles,
+                                                                        admin_source,
+                                                                        methode_collecte,
+                                                                        si_source,
+                                                                        donnee_ouverte,
+                                                                        modalites_donnee_ouverte,
+                                                                        resp_donnees,
+                                                                        resp_donnees_email,
+                                                                        contact_technique,
+                                                                        contact_technique_email,
+                                                                        commentaire)
+                                         VALUES ('${indicateur.indicId}',
+                                                 '${makeStrSafer(indicateur.reformePrioritaire)}', 
+                                                 '${indicateur.projetAnnuelPerf}', 
+                                                 '${makeStrSafer(indicateur.detailProjetAnnuelPerf)}',
+                                                 '${makeStrSafer(indicateur.periodicite)}', 
+                                                 '${indicateur.delaiDisponibilite}', 
+                                                 '${indicateur.indicTerritorialise}',
+                                                 '${makeStrSafer(indicateur.frequenceTerritoriale)}', 
+                                                 '${makeStrSafer(indicateur.mailles)}',
+                                                 '${makeStrSafer(indicateur.adminSource)}', 
+                                                 '${makeStrSafer(indicateur.methodeCollecte)}',
+                                                 '${makeStrSafer(indicateur.siSource)}', 
+                                                 '${indicateur.donneeOuverte}',
+                                                 '${makeStrSafer(indicateur.modalitesDonneeOuverte)}', 
+                                                 '${makeStrSafer(indicateur.respDonnees)}',
+                                                 '${makeStrSafer(indicateur.respDonneesEmail)}', 
+                                                 '${makeStrSafer(indicateur.contactTechnique)}',
+                                                 '${makeStrSafer(indicateur.contactTechniqueEmail)}', 
+                                                 '${makeStrSafer(indicateur.commentaire)}')
+
+                                           ON CONFLICT ON CONSTRAINT metadata_indicateurs_complementaire_pkey DO UPDATE
+                                                 SET reforme_prioritaire = '${makeStrSafer(indicateur.reformePrioritaire)}', 
+                                                 projet_annuel_perf = '${indicateur.projetAnnuelPerf}', 
+                                                 detail_projet_annuel_perf = '${makeStrSafer(indicateur.detailProjetAnnuelPerf)}',
+                                                 periodicite = '${makeStrSafer(indicateur.periodicite)}', 
+                                                 delai_disponibilite = '${indicateur.delaiDisponibilite}', 
+                                                 indic_territorialise = '${indicateur.indicTerritorialise}',
+                                                 frequence_territoriale = '${makeStrSafer(indicateur.frequenceTerritoriale)}', 
+                                                 mailles = '${makeStrSafer(indicateur.mailles)}',
+                                                 admin_source = '${makeStrSafer(indicateur.adminSource)}', 
+                                                 methode_collecte = '${makeStrSafer(indicateur.methodeCollecte)}',
+                                                 si_source = '${makeStrSafer(indicateur.siSource)}', 
+                                                 donnee_ouverte = '${indicateur.donneeOuverte}',
+                                                 modalites_donnee_ouverte = '${makeStrSafer(indicateur.modalitesDonneeOuverte)}', 
+                                                 resp_donnees = '${makeStrSafer(indicateur.respDonnees)}',
+                                                 resp_donnees_email = '${makeStrSafer(indicateur.respDonneesEmail)}', 
+                                                 contact_technique = '${makeStrSafer(indicateur.contactTechnique)}',
+                                                 contact_technique_email = '${makeStrSafer(indicateur.contactTechniqueEmail)}', 
+                                                 commentaire = '${makeStrSafer(indicateur.commentaire)}';`;
+    } ;
+
+
 
 
     const listePromise = listeMetadataIndicateur.flatMap(indicateur => {
-      return [this.prismaClient.$queryRaw`${Prisma.raw(queryIndicateurFn(indicateur))}`, this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateurFn(indicateur))}`];
+      return [
+        this.prismaClient.$queryRaw`${Prisma.raw(queryIndicateurFn(indicateur))}`,
+        this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateurFn(indicateur))}`,
+        this.prismaClient.$queryRaw`${Prisma.raw(queryMetadataIndicateurComplementaireFn(indicateur))}`,
+      ];
     });
     await this.prismaClient.$transaction(listePromise);
-
   }
 
 }

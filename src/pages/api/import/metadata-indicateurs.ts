@@ -10,5 +10,7 @@ export const config = {
 };
 
 export default async function handle(request: NextApiRequest, response: NextApiResponse) {
-  return handleImportMasseMetadataIndicateur(request, response);
+  await handleImportMasseMetadataIndicateur(request, response);
+
+  response.status(200).json({});
 }

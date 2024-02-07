@@ -44,4 +44,22 @@ export interface ImportMetadataIndicateur {
   poidsPourcentReg: string
   poidsPourcentNat: string
   tendance: string
+  reformePrioritaire: string
+  projetAnnuelPerf: boolean
+  detailProjetAnnuelPerf: string
+  periodicite: string
+  delaiDisponibilite: number
+  indicTerritorialise: boolean
+  frequenceTerritoriale: string
+  mailles: string
+  adminSource: string
+  methodeCollecte: string
+  siSource: string
+  donneeOuverte: boolean
+  modalitesDonneeOuverte: string
+  respDonnees: string
+  respDonneesEmail: string
+  contactTechnique: string
+  contactTechniqueEmail: string
+  commentaire: string
 }
