@@ -1,15 +1,13 @@
-import { ChangeEventHandler } from 'react';
+import { InputHTMLAttributes } from 'react';
 import '@gouvfr/dsfr/dist/component/upload/upload.min.css';
 
-interface InputFichierProps {
-  onChange: ChangeEventHandler<HTMLInputElement>
-} 
+type InputFichierProps = InputHTMLAttributes<HTMLInputElement>;
 
-export default function InputFichier({ onChange }: InputFichierProps) {
+export default function InputFichier({ onChange, accept = '.csv, .xls, .xlsx' }: InputFichierProps) {
   return (
     <div className='fr-upload-group'>
       <input
-        accept='.csv, .xls, .xlsx'
+        accept={accept}
         className='fr-upload'
         id='file-upload'
         name='file-upload'

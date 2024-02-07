@@ -6,13 +6,9 @@ import { FieldError, FieldErrorsImpl, Merge, UseFormRegisterReturn } from 'react
 export default function TextArea({ children, erreur, htmlName, register, disabled = false, className = '' }: PropsWithChildren<{
   libellé: string,
   htmlName: string,
-  // ==> A corriger
-  // eslint-disable-next-line react/require-default-props
   erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>
   register: UseFormRegisterReturn
-  // eslint-disable-next-line react/require-default-props
   disabled?: boolean,
-  // eslint-disable-next-line react/require-default-props
   className?: string
 }>) {
   return (
