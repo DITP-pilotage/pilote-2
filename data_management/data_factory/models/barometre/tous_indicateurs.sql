@@ -1,7 +1,7 @@
 WITH 
 -- Liste des indicateurs du baromètre
 indic_baro AS 
-( SELECT id FROM raw_data.stg_ppg_metadata__indicateurs WHERE est_barometre ),
+( SELECT id FROM {{ ref('stg_ppg_metadata__indicateurs') }} WHERE est_barometre ),
 -- Données des indicateurs du baromètre
 donnees AS 
 (
@@ -10,13 +10,13 @@ donnees AS
     t.zone_id,
     z.zone_type 
   FROM
-    public.indicateur i 
+    {{ ref('indicateur') }} i 
 	-- On ne garde que les indicateurs au baromètres
     RIGHT JOIN indic_baro b ON i.id = b.id 
     -- pour: Ajout de la zone_id
-	LEFT JOIN public.territoire t ON i.territoire_code = t.code 
+	LEFT JOIN {{ source('db_schema_public', 'territoire') }} t ON i.territoire_code = t.code 
     -- pour: Ajout de la zone_type (maille)
-    LEFT JOIN raw_data.metadata_zones z ON t.zone_id = z.zone_id LIMIT 10 
+    LEFT JOIN {{ ref('metadata_zones') }} z ON t.zone_id = z.zone_id LIMIT 10 
 ),
 
 -- Données VA
