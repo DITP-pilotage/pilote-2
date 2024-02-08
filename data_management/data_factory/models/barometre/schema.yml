@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: tous_indicateurs
+    description: |
+        Cette table contient les données des indicateurs au format pour le *Baromètre des résultats de l'action publique*.
+
+        Ce format ne sert que pour cet usage.
+    columns:
+        - name: indic_id
+          description: Identifiant de l'indicateur
+        - name: enforce_zone_id
+          description: Identifiant de la zone (`zone_id`)
+        - name: maille
+          description: Maille de la zone (`zone_type`)
+        - name: metric_enforce_date
+          description: Date de la valeur
+        - name: indic_va
+          description: Valeur actuelle (VA) de l'indicateur à cette date et pour cette zone
+        - name: indic_vi
+          description: Valeur initiale (VI) de l'indicateur à cette date et pour cette zone
+        - name: indic_vc
+          description: Valeur cible (VC) de l'indicateur à cette date et pour cette zone
+        - name: indic_ta
+          description: Taux d'avancement (TA) de l'indicateur à cette date et pour cette zone
