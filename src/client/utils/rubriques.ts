@@ -28,8 +28,8 @@ export const listeRubriquesChantier = (typesIndicateurs: TypeIndicateur[], maill
     { nom: 'Météo et synthèse des résultats', ancre: 'synthèse' },
     { nom: 'Répartition géographique', ancre: 'cartes' },
     { nom: 'Objectifs', ancre: 'objectifs' },
-    { nom: 'Décisions stratégiques', ancre: 'décisions-stratégiques' },
     { nom: 'Indicateurs', ancre: 'indicateurs', sousRubriques: rubriquesIndicateursNonVides },
+    { nom: 'Décisions stratégiques', ancre: 'décisions-stratégiques' },
     { nom: 'Commentaires', ancre: 'commentaires' },
   ] : [
     { nom: 'Avancement du chantier', ancre: 'avancement' },
