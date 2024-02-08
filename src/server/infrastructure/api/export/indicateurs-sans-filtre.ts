@@ -20,6 +20,7 @@ export default async function handleExportDesIndicateursSansFiltre(request: Next
     columns: ExportCsvDesIndicateursSansFiltreUseCase.NOMS_COLONNES,
     delimiter: ';',
     bom: true,
+    quoted_string: true,
   });
   stringifier.pipe(response);
 

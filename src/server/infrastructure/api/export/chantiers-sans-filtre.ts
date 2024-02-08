@@ -20,6 +20,7 @@ export default async function handleExportDesChantiersSansFiltre(request: NextAp
     columns: ExportCsvDesChantiersSansFiltreUseCase.NOMS_COLONNES,
     delimiter: ';',
     bom: true,
+    quoted_string: true,
   });
   stringifier.pipe(response);
 
