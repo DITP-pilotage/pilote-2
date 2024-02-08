@@ -16,7 +16,7 @@ donnees AS
     -- pour: Ajout de la zone_id
 	LEFT JOIN {{ source('db_schema_public', 'territoire') }} t ON i.territoire_code = t.code 
     -- pour: Ajout de la zone_type (maille)
-    LEFT JOIN {{ ref('metadata_zones') }} z ON t.zone_id = z.zone_id LIMIT 10 
+    LEFT JOIN {{ ref('metadata_zones') }} z ON t.zone_id = z.zone_id
 ),
 
 -- Données VA
