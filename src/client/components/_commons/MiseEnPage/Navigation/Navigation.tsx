@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { MenuItemGestionContenu } from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
 
 const fermerLaModaleDuMenu = () => {
@@ -22,6 +23,14 @@ const estAutoriséAParcourirSiIndisponible = (session: Session | null) => sessio
 
 function estAdministrateur(session: Session | null) {
   return session?.profil === 'DITP_ADMIN';
+}
+
+const estAutoriséAAccéderALaGestionDesComptes = (session: Session | null) => {
+  if (!!!session) {
+    return false;
+  }
+  const habilitations = new Habilitation(session.habilitations)
+  return habilitations.peutCréerEtModifierUnUtilisateur();
 }
 
 export default function Navigation() {
@@ -44,7 +53,7 @@ export default function Navigation() {
     {
       nom: 'Gestion des comptes',
       lien: '/admin/utilisateurs',
-      accessible: estAdministrateur(session),
+      accessible: estAutoriséAAccéderALaGestionDesComptes(session),
       target: '_self',
     },
     {
