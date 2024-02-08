@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
-import { MenuItemGestionContenu } from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
+// import { MenuItemGestionContenu } from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === 'function') {
@@ -115,9 +115,11 @@ export default function Navigation() {
                     </li>
                   ))
                 }
-                { session?.profil === 'DITP_ADMIN' ? (
-                  <MenuItemGestionContenu urlActuelle={urlActuelle} />
-                ) : null }
+                { 
+                  // session?.profil === 'DITP_ADMIN' ? (
+                  //   <MenuItemGestionContenu urlActuelle={urlActuelle} />
+                  // ) : null 
+                }
               </ul>
             ) : null
           }

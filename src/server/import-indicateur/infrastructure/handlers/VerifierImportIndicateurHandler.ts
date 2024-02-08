@@ -34,7 +34,7 @@ export default async function handleVerifierFichierImportIndicateur(
 
   const formData = await parseForm(request);
 
-  const fichier = <File>formData.file;
+  const fichier = <File>formData.file![0];
 
   const baseSchemaUrl = 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/main/public/schema/';
   const sessionToken = await getToken({ req: request, secureCookie: configuration.securedEnv, secret: configuration.nextAuthSecret });

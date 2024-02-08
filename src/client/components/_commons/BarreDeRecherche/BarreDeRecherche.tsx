@@ -1,9 +1,12 @@
 import '@gouvfr/dsfr/dist/component/search/search.min.css';
 import '@gouvfr/dsfr/dist/component/input/input.min.css';
-import BarreDeRechercheProps from './BarreDeRecherche.interface';
+import { ChangeEventHandler } from 'react';
 import BarreDeRechercheStyled from './BarreDeRecherche.styled';
 
-export default function BarreDeRecherche({ changementDeLaRechercheCallback, valeur = '' }: BarreDeRechercheProps) {
+export default function BarreDeRecherche({ changementDeLaRechercheCallback, valeur = '' }: {
+  changementDeLaRechercheCallback: ChangeEventHandler<HTMLInputElement>,
+  valeur?: string
+}) {
   return (
     <BarreDeRechercheStyled
       className='fr-search-bar'

@@ -5,4 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE "public"."ministere" ALTER COLUMN "acronyme" SET NOT NULL;
+ALTER TABLE "public"."ministere" ALTER COLUMN "acronyme" SET NOT NULL ;
+
+-- AlterTable
+ALTER TABLE "public"."ministere" ALTER COLUMN "acronyme" DROP DEFAULT;

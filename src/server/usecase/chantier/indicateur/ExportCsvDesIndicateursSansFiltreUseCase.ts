@@ -1,4 +1,4 @@
-import { formaterDateHeure, formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
+import { formaterDateHeure, formaterMétéo, formaterNumérique, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import {
   IndicateurPourExport,
@@ -66,19 +66,19 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
       indicateurPourExport.chantierNom || NON_APPLICABLE,
       indicateurPourExport.chantierId || NON_APPLICABLE,
       indicateurPourExport.chantierEstBaromètre ? OUI : NON,
-      indicateurPourExport.chantierAvancementGlobal?.toString() || NON_APPLICABLE,
+      formaterNumérique(indicateurPourExport.chantierAvancementGlobal),
       formaterMétéo(indicateurPourExport.météo),
       indicateurPourExport.nom || NON_APPLICABLE,
-      indicateurPourExport.valeurInitiale?.toString() || NON_APPLICABLE,
+      formaterNumérique(indicateurPourExport.valeurInitiale),
       formaterDateHeure(indicateurPourExport.dateValeurInitiale),
-      indicateurPourExport.valeurActuelle?.toString() || NON_APPLICABLE,
+      formaterNumérique(indicateurPourExport.valeurActuelle),
       formaterDateHeure(indicateurPourExport.dateValeurActuelle),
-      indicateurPourExport.valeurCibleAnnuelle?.toString() || NON_APPLICABLE,
+      formaterNumérique(indicateurPourExport.valeurCibleAnnuelle),
       formaterDateHeure(indicateurPourExport.dateValeurCibleAnnuelle),
-      indicateurPourExport.avancementAnnuel?.toString() || NON_APPLICABLE,
-      indicateurPourExport.valeurCible?.toString() || NON_APPLICABLE,
+      formaterNumérique(indicateurPourExport.avancementAnnuel),
+      formaterNumérique(indicateurPourExport.valeurCible),
       formaterDateHeure(indicateurPourExport.dateValeurCible),
-      indicateurPourExport.avancementGlobal?.toString() || NON_APPLICABLE,
+      formaterNumérique(indicateurPourExport.avancementGlobal),
     ];
   }
 }
