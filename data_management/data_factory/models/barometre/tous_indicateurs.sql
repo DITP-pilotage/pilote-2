@@ -86,10 +86,10 @@ merge_exports AS
   SELECT
     COALESCE(a.indic_id, b.indic_id, c.indic_id, d.indic_id) AS indic_id,
     COALESCE(a.enforce_zone_id, b.enforce_zone_id, c.enforce_zone_id, d.enforce_zone_id) AS enforce_zone_id,
-    COALESCE(a.maille, b.maille, c.maille, d.maille) AS maille,
     COALESCE(a.metric_enforce_date, b.metric_enforce_date, c.metric_enforce_date, d.metric_enforce_date) AS metric_enforce_date,
-    a.indic_va,
+    COALESCE(a.maille, b.maille, c.maille, d.maille) AS maille,
     b.indic_vi,
+    a.indic_va,
     c.indic_vc,
     d.indic_ta 
   FROM
