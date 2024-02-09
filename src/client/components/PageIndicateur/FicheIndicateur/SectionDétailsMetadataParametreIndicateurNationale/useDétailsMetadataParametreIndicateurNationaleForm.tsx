@@ -1,13 +1,13 @@
 import { useFormContext, UseFormWatch } from 'react-hook-form';
 
-export interface MetadataParametrageParametreIndicateurNationaleForm {
+export type MetadataParametrageParametreIndicateurNationaleForm = {
   viNatFrom: string;
   viNatOp: string;
   vaNatFrom: string;
   vaNatOp: string;
   vcNatFrom: string;
   vcNatOp: string;
-}
+};
 
 function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageParametreIndicateurNationaleForm>) {
   watch('viNatFrom');

@@ -1,37 +1,38 @@
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 import SélecteurProps from '@/components/_commons/Sélecteur/Sélecteur.interface';
 
-export default function Sélecteur<T extends string>({
+const Sélecteur = <T extends string>({
   htmlName,
   register,
   options,
   libellé,
   erreur,
+  errorMessage,
   texteFantôme,
   texteAide,
   valeurModifiéeCallback,
   valeurSélectionnée,
-}: SélecteurProps<T>) {
+}: SélecteurProps<T>) => {
   return (
-    <div className={`fr-select-group ${erreur !== undefined ? 'fr-select-group--error' : ''}`}>
+    <div className={`fr-select-group ${erreur !== undefined || errorMessage ? 'fr-select-group--error' : ''}`}>
       {
         !!libellé && (
           <label
             className='fr-label'
             htmlFor={htmlName}
           >
-            { libellé }
+            {libellé}
           </label>
         )
       }
       {
         !!texteAide &&
-          <span className='fr-hint-text'>
+        <span className='fr-hint-text'>
             {texteAide}
-          </span>
+        </span>
       }
       <select
-        className={`fr-select fr-mt-1w ${erreur !== undefined ? 'fr-select--error' : ''}`}
+        className={`fr-select fr-mt-1w ${erreur !== undefined || errorMessage ? 'fr-select--error' : ''}`}
         name={htmlName}
         onChange={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.value as T)}
         value={valeurSélectionnée || ''}
@@ -44,7 +45,7 @@ export default function Sélecteur<T extends string>({
             hidden
             value=''
           >
-            { texteFantôme }
+            {texteFantôme}
           </option>
         }
         {
@@ -55,19 +56,21 @@ export default function Sélecteur<T extends string>({
               key={option.valeur}
               value={option.valeur}
             >
-              { option.libellé }
+              {option.libellé}
             </option>
           ))
         }
       </select>
       {
         erreur !== undefined &&
-          <p
-            className='fr-error-text'
-          >
-            {erreur.message?.toString()}
-          </p>
+        <p
+          className='fr-error-text'
+        >
+          {errorMessage || erreur.message?.toString()}
+        </p>
       }
     </div>
   );
-}
+};
+
+export default Sélecteur;

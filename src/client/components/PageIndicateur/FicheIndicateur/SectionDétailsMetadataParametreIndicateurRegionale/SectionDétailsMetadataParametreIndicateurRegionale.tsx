@@ -1,16 +1,24 @@
 import Titre from '@/components/_commons/Titre/Titre';
 import SectionDétailsMetadataParametreCalculIndicateurStyled
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreCalculIndicateur/SectionDétailsMetadataParametreCalculIndicateur.styled';
-import Sélecteur from '@/components/_commons/Sélecteur/Sélecteur';
-import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import useDétailsMetadataParametreIndicateurRegionaleForm
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreIndicateurRegionale/useDétailsMetadataParametreIndicateurRegionaleForm';
 import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
+import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
+import {
+  MetadataIndicateurSelecteur,
+} from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur';
+import {
+  mappingAcceptedValues,
+  mappingDisplayAcceptedValues,
+} from '@/components/PageIndicateur/FicheIndicateur/commons/utils';
 
 export default function SectionDétailsMetadataParametreIndicateurRegionale({
+  indicateur,
   estEnCoursDeModification,
   mapInformationMetadataIndicateur,
 }: {
+  indicateur: MetadataParametrageIndicateurContrat
   estEnCoursDeModification: boolean
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
 }) {
@@ -26,163 +34,72 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
       </Titre>
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.vi_reg_from.metaPiloteAlias}
-            {estEnCoursDeModification ? (
-              <Infobulle idHtml='viRegFrom'>
-                {mapInformationMetadataIndicateur.vi_reg_from.description}
-              </Infobulle>
-            ) : null}
-          </div>
-          {estEnCoursDeModification
-            ? <Sélecteur
-                erreur={errors.viRegFrom}
-                htmlName='viRegFrom'
-                options={mapInformationMetadataIndicateur.vi_reg_from.acceptedValues.map(acceptedValue => ({
-                  valeur: acceptedValue.valeur,
-                  libellé: acceptedValue.libellé,
-                }))}
-                register={register('viRegFrom')}
-                valeurSélectionnée={`${getValues('viRegFrom')}`}
-              />
-            : (
-              <span>
-                {mapInformationMetadataIndicateur.vi_reg_from.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('viRegFrom'))?.libellé}
-              </span>
-            )}
+          <MetadataIndicateurSelecteur
+            errorMessage={errors.viRegFrom?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_reg_from}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_reg_from')}
+            register={register('viRegFrom')}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_reg_from', 'viRegFrom')}
+            values={getValues('viRegFrom')}
+          />
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.va_reg_from.metaPiloteAlias}
-            {estEnCoursDeModification ? (
-              <Infobulle idHtml='vaRegFrom'>
-                {mapInformationMetadataIndicateur.va_reg_from.description}
-              </Infobulle>
-            ) : null}
-          </div>
-          {estEnCoursDeModification
-            ? <Sélecteur
-                erreur={errors.vaRegFrom}
-                htmlName='vaRegFrom'
-                options={mapInformationMetadataIndicateur.va_reg_from.acceptedValues.map(acceptedValue => ({
-                  valeur: acceptedValue.valeur,
-                  libellé: acceptedValue.libellé,
-                }))}
-                register={register('vaRegFrom')}
-                valeurSélectionnée={`${getValues('vaRegFrom')}`}
-              />
-            : (
-              <span>
-                {mapInformationMetadataIndicateur.va_reg_from.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vaRegFrom'))?.libellé}
-              </span>
-            )}
+          <MetadataIndicateurSelecteur
+            errorMessage={errors.vaRegFrom?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.va_reg_from}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_reg_from')}
+            register={register('vaRegFrom')}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_reg_from', 'vaRegFrom')}
+            values={getValues('vaRegFrom')}
+          />
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.vc_reg_from.metaPiloteAlias}
-            {estEnCoursDeModification ? (
-              <Infobulle idHtml='vcRegFrom'>
-                {mapInformationMetadataIndicateur.vc_reg_from.description}
-              </Infobulle>
-            ) : null}
-          </div>
-          {estEnCoursDeModification
-            ? <Sélecteur
-                erreur={errors.vcRegFrom}
-                htmlName='vcRegFrom'
-                options={mapInformationMetadataIndicateur.vc_reg_from.acceptedValues.map(acceptedValue => ({
-                  valeur: acceptedValue.valeur,
-                  libellé: acceptedValue.libellé,
-                }))}
-                register={register('vcRegFrom')}
-                valeurSélectionnée={`${getValues('vcRegFrom')}`}
-              />
-            : (
-              <span>
-                {mapInformationMetadataIndicateur.vc_reg_from.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vcRegFrom'))?.libellé}
-              </span>
-            )}
+          <MetadataIndicateurSelecteur
+            errorMessage={errors.vcRegFrom?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_reg_from}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_reg_from')}
+            register={register('vcRegFrom')}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_reg_from', 'vcRegFrom')}
+            values={getValues('vcRegFrom')}
+          />
         </div>
       </div>
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.vi_reg_op.metaPiloteAlias}
-            {estEnCoursDeModification ? (
-              <Infobulle idHtml='viRegOp'>
-                {mapInformationMetadataIndicateur.vi_reg_op.description}
-              </Infobulle>
-            ) : null}
-          </div>
-          {estEnCoursDeModification
-            ? <Sélecteur
-                erreur={errors.viRegOp}
-                htmlName='viRegOp'
-                options={mapInformationMetadataIndicateur.vi_reg_op.acceptedValues.map(acceptedValue => ({
-                  valeur: acceptedValue.valeur,
-                  libellé: acceptedValue.libellé,
-                }))}
-                register={register('viRegOp')}
-                valeurSélectionnée={`${getValues('viRegOp')}`}
-              />
-            : (
-              <span>
-                {mapInformationMetadataIndicateur.vi_reg_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('viRegOp'))?.libellé}
-              </span>
-            )}
+          <MetadataIndicateurSelecteur
+            errorMessage={errors.viRegOp?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_reg_op}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_reg_op')}
+            register={register('viRegOp')}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_reg_op', 'viRegOp')}
+            values={getValues('viRegOp')}
+          />
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.va_reg_op.metaPiloteAlias}
-            {estEnCoursDeModification ? (
-              <Infobulle idHtml='vaRegOp'>
-                {mapInformationMetadataIndicateur.va_reg_op.description}
-              </Infobulle>
-            ) : null}
-          </div>
-          {estEnCoursDeModification
-            ? <Sélecteur
-                erreur={errors.vaRegOp}
-                htmlName='vaRegOp'
-                options={mapInformationMetadataIndicateur.va_reg_op.acceptedValues.map(acceptedValue => ({
-                  valeur: acceptedValue.valeur,
-                  libellé: acceptedValue.libellé,
-                }))}
-                register={register('vaRegOp')}
-                valeurSélectionnée={`${getValues('vaRegOp')}`}
-              />
-            : (
-              <span>
-                {mapInformationMetadataIndicateur.va_reg_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vaRegOp'))?.libellé}
-              </span>
-            )}
+          <MetadataIndicateurSelecteur
+            errorMessage={errors.vaRegOp?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.va_reg_op}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_reg_op')}
+            register={register('vaRegOp')}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_reg_op', 'vaRegOp')}
+            values={getValues('vaRegOp')}
+          />
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
-          <div className='fr-text--md bold fr-mb-1v relative'>
-            {mapInformationMetadataIndicateur.vc_reg_op.metaPiloteAlias}
-            {estEnCoursDeModification ? (
-              <Infobulle idHtml='vcRegOp'>
-                {mapInformationMetadataIndicateur.vc_reg_op.description}
-              </Infobulle>
-            ) : null}
-
-          </div>
-          {estEnCoursDeModification
-            ? <Sélecteur
-                erreur={errors.vcRegOp}
-                htmlName='vcRegOp'
-                options={mapInformationMetadataIndicateur.vc_reg_op.acceptedValues.map(acceptedValue => ({
-                  valeur: acceptedValue.valeur,
-                  libellé: acceptedValue.libellé,
-                }))}
-                register={register('vcRegOp')}
-                valeurSélectionnée={`${getValues('vcRegOp')}`}
-              />
-            : (
-              <span>
-                {mapInformationMetadataIndicateur.vc_reg_op.acceptedValues.find(acceptedValue => acceptedValue.valeur === getValues('vcRegOp'))?.libellé}
-              </span>
-            )}
+          <MetadataIndicateurSelecteur
+            errorMessage={errors.vcRegOp?.message}
+            estEnCoursDeModification={estEnCoursDeModification}
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_reg_op}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_reg_op')}
+            register={register('vcRegOp')}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_reg_op', 'vcRegOp')}
+            values={getValues('vcRegOp')}
+          />
         </div>
       </div>
       <hr className='fr-hr fr-mt-3w' />

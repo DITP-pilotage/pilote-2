@@ -38,10 +38,10 @@ type MetadataIndicateurForm = MetadataParametrageIndicateurForm
 & MetadataParametrageParametreIndicateurDepartementaleForm
 & MetadataParametrageParametreIndicateurRegionaleForm
 & MetadataParametrageParametreIndicateurNationaleForm
-& MetadataParametrageAutresIndicateurForm
 & MetadataSelectionIndicateurForm
-& MetadataParametrageParametrePonderationIndicateurForm;
-
+& MetadataParametrageParametrePonderationIndicateurForm
+& MetadataParametrageAutresIndicateurForm;
+ 
 export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContrat) => {
   const router = useRouter();
   const [alerte, setAlerte] = useState <AlerteProps | null>(null);
@@ -52,17 +52,11 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
       resolver: zodResolver(validationMetadataIndicateurFormulaire),
       defaultValues: {
         ...indicateur,
-        indicIsPerseverant: indicateur.indicIsPerseverant ? 'true' : 'false',
-        indicIsBaro: indicateur.indicIsBaro ? 'true' : 'false',
-        indicIsPhare: indicateur.indicIsPhare ? 'true' : 'false',
         indicHiddenPilote: indicateur.indicHiddenPilote ? 'false' : 'true',
-        indicTerritorialise: indicateur.indicTerritorialise ? 'true' : 'false',
-        donneeOuverte: indicateur.donneeOuverte ? 'true' : 'false',
         poidsPourcentNat: `${indicateur.poidsPourcentNat}`,
         poidsPourcentReg: `${indicateur.poidsPourcentReg}`,
         poidsPourcentDept: `${indicateur.poidsPourcentDept}`,
         delaiDisponibilite: indicateur.delaiDisponibilite ? `${indicateur.delaiDisponibilite}` : '',
-        projetAnnuelPerf: `${indicateur.projetAnnuelPerf}`,
         indicParentIndic: indicateur.indicParentIndic === null ? 'Aucun indicateur selectionné' : indicateur.indicParentIndic,
       },
     },

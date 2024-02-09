@@ -2,7 +2,7 @@ import { useFormContext, UseFormWatch } from 'react-hook-form';
 import api from '@/server/infrastructure/api/trpc/api';
 import { SélecteurOption } from '@/components/_commons/Sélecteur/Sélecteur.interface';
 
-export interface MetadataParametrageIndicateurForm {
+export type MetadataParametrageIndicateurForm = {
   indicParentCh: string;
   indicParentIndic: string;
   indicNom: string;
@@ -11,8 +11,8 @@ export interface MetadataParametrageIndicateurForm {
   indicUnite: string;
   indicSchema: string;
   zgApplicable: string;
-  indicTerritorialise: string;
-}
+  indicTerritorialise: boolean;
+};
 
 function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageIndicateurForm>) {
   watch('indicType');
