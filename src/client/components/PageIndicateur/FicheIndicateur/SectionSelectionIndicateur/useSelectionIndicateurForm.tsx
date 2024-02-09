@@ -1,7 +1,8 @@
 import { useFormContext, UseFormWatch } from 'react-hook-form';
-export interface MetadataSelectionIndicateurForm {
+
+export type MetadataSelectionIndicateurForm = {
   indicHiddenPilote: string;
-}
+};
 
 function activerWatchSurSelecteur(watch: UseFormWatch<MetadataSelectionIndicateurForm>) {
   watch('indicHiddenPilote');

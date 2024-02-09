@@ -1,14 +1,24 @@
 import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/component/input/input.min.css';
-import { PropsWithChildren } from 'react';
-import InputProps from '@/components/_commons/Input/Input.interface';
+import { HTMLInputTypeAttribute, PropsWithChildren } from 'react';
+import { FieldError, FieldErrorsImpl, Merge, UseFormRegisterReturn } from 'react-hook-form';
 
-export default function Input({ children, type = 'text', erreur, htmlName, register, disabled }: PropsWithChildren<InputProps>) {
+interface InputProps {
+  type?: HTMLInputTypeAttribute,
+  htmlName: string,
+  texteAide?: string,
+  erreur?:  FieldError | Merge<FieldError, FieldErrorsImpl<any>>
+  erreurMessage?: string,
+  register: UseFormRegisterReturn
+  disabled?: boolean
+}
+
+export default function Input({ children, type = 'text', erreur, erreurMessage, htmlName, register, disabled }: PropsWithChildren<InputProps>) {
   return (
-    <div className={`fr-input-group ${erreur !== undefined ? 'fr-input-group--error' : ''}`}>
+    <div className={`fr-input-group ${erreur !== undefined || erreurMessage ? 'fr-input-group--error' : ''}`}>
       {children}
       <input
-        className={`fr-input ${erreur !== undefined ? 'fr-input-group--error' : ''}`}
+        className={`fr-input ${erreur !== undefined || erreurMessage ? 'fr-input-group--error' : ''}`}
         disabled={disabled}
         id={htmlName}
         type={type}
@@ -19,7 +29,7 @@ export default function Input({ children, type = 'text', erreur, htmlName, regis
           <p
             className='fr-error-text'
           >
-            {erreur.message?.toString()}
+            {erreurMessage}
           </p>
       }
     </div>

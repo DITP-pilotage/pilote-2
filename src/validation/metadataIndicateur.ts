@@ -40,11 +40,11 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .min(0, 'Ce champ ne peut pas être vide')
     .nullable(),
   indicIsPerseverant: z
-    .string(),
+    .boolean(),
   indicIsPhare: z
-    .string(),
+    .boolean(),
   indicIsBaro: z
-    .string(),
+    .boolean(),
   indicType: z
     .string()
     .max(500, 'La limite maximale de 500 caractères a été dépassée')
@@ -145,7 +145,7 @@ export const validationMetadataIndicateurFormulaire = z.object({
   reformePrioritaire: z
     .string(),
   projetAnnuelPerf: z
-    .string(),
+    .boolean(),
   detailProjetAnnuelPerf: z
     .string()
     .nullable(),
@@ -154,7 +154,7 @@ export const validationMetadataIndicateurFormulaire = z.object({
   delaiDisponibilite: z
     .string(),
   indicTerritorialise: z
-    .string(),
+    .boolean(),
   frequenceTerritoriale: z
     .string()
     .nullable(),
@@ -168,8 +168,7 @@ export const validationMetadataIndicateurFormulaire = z.object({
   siSource: z
     .string(),
   donneeOuverte: z
-    .string()
-    .nullable(),
+    .boolean(),
   modalitesDonneeOuverte: z
     .string()
     .nullable(),

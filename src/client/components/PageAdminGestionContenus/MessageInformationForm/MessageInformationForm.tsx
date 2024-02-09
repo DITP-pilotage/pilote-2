@@ -33,7 +33,6 @@ export const MessageInformationForm = () => {
           className='h-40'
           erreur={errors.bandeauTexte}
           htmlName='bandeauTexte'
-          libellé='bandeauTexte'
           register={register('bandeauTexte')}
         />
       </div>

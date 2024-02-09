@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { stringify } from 'csv-stringify';
+import { Options } from 'csv-stringify/lib/sync';
 import assert from 'node:assert/strict';
 import { ExportCsvDesChantiersSansFiltreUseCase } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
@@ -21,7 +22,7 @@ export default async function handleExportDesChantiersSansFiltre(request: NextAp
     delimiter: ';',
     bom: true,
     quoted_string: true,
-  });
+  } satisfies Options);
   stringifier.pipe(response);
 
   const habilitation = new Habilitation(session.habilitations);

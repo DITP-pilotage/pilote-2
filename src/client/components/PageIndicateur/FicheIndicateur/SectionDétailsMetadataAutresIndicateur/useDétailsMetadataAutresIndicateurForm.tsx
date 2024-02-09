@@ -1,33 +1,33 @@
 import { useFormContext, UseFormWatch } from 'react-hook-form';
 
-export interface MetadataParametrageAutresIndicateurForm {
+export type MetadataParametrageAutresIndicateurForm = {
   indicNomBaro: string;
   indicDescrBaro: string;
-  indicIsBaro: string;
-  indicIsPerseverant: string;
-  indicIsPhare: string;
+  indicIsBaro: boolean;
+  indicIsPerseverant: boolean;
+  indicIsPhare: boolean;
   indicSource: string;
   indicSourceUrl: string;
   indicMethodeCalcul: string;
   reformePrioritaire: string;
-  projetAnnuelPerf: string;
+  projetAnnuelPerf: boolean; 
   detailProjetAnnuelPerf: string;
   periodicite: string;
   delaiDisponibilite: string;
-  indicTerritorialise: string;
+  indicTerritorialise: boolean;
   frequenceTerritoriale: string;
   mailles: string;
   adminSource: string;
   methodeCollecte: string;
   siSource: string;
-  donneeOuverte: string;
+  donneeOuverte: boolean;
   modalitesDonneeOuverte: string;
   respDonnees: string;
   respDonneesEmail: string;
   contactTechnique: string;
   contactTechniqueEmail: string;
   commentaire: string;
-}
+};
 
 function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageAutresIndicateurForm>) {
   watch('indicIsBaro');
