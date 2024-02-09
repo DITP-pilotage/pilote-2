@@ -20,6 +20,10 @@ const vérifierValeurApplicationEstIndisponible = () => {
 
 const estAutoriséAParcourirSiIndisponible = (session: Session | null) => session?.profil === 'DITP_ADMIN';
 
+function estAdministrateur(session: Session | null) {
+  return session?.profil === 'DITP_ADMIN';
+}
+
 export default function Navigation() {
   const { data: session } = useSession();
   const router = useRouter();
@@ -40,7 +44,7 @@ export default function Navigation() {
     {
       nom: 'Gestion des comptes',
       lien: '/admin/utilisateurs',
-      accessible: session?.profil === 'DITP_ADMIN',
+      accessible: estAdministrateur(session),
       target: '_self',
     },
     {
@@ -104,7 +108,7 @@ export default function Navigation() {
                   ))
                 }
                 { 
-                  session?.profil === 'DITP_ADMIN' ? (
+                  false ? (
                     <MenuItemGestionContenu urlActuelle={urlActuelle} />
                   ) : null
                 }
