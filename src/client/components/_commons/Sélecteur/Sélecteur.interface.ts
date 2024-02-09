@@ -13,7 +13,9 @@ export default interface SélecteurProps<T> {
   valeurModifiéeCallback?: (valeur: T) => void,
   valeurSélectionnée?: T,
   texteAide?: string,
-  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>
+  erreur?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>,
+  hasErrors?: boolean,
+  errorMessage?: string
   libellé?: string,
   texteFantôme?: string,
   register?: UseFormRegisterReturn

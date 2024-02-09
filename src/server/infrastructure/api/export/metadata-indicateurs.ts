@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { stringify } from 'csv-stringify';
+import { Options } from 'csv-stringify/sync';
 import RécupérerListeMetadataIndicateurUseCase
   from '@/server/parametrage-indicateur/usecases/RécupérerListeMetadataIndicateurUseCase';
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -78,7 +79,7 @@ export async function handleExportMetadataIndicateurs(request: NextApiRequest, r
     columns: EXPORT_METADATA_INDICATEURS_COLUMN,
     delimiter: ';',
     bom: true,
-  });
+  } satisfies Options);
   stringifier.pipe(response);
 
   const listeMetadataIndicateur = await new RécupérerListeMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run((request.query?.chantierIds as string[]) || []);

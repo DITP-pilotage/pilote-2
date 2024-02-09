@@ -1,22 +1,22 @@
 import { UseFormRegisterReturn } from 'react-hook-form';
 import { InformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
 import { MetadataIndicateurChamp } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp';
-import Input from '@/components/_commons/Input/Input';
+import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
 
-export const MetadataIndicateurInput = ({
-  erreurMessage,
-  register,
-  htmlName,
+export const MetadataIndicateurInterrupteur = ({
   informationMetadataIndicateur,
   estEnCoursDeModification,
+  htmlName,
+  register,
+  isChecked,
   valeurAffiché,
 }: {
-  erreurMessage?: string,
-  register: UseFormRegisterReturn<string>,
-  htmlName: string,
   informationMetadataIndicateur: InformationMetadataIndicateurContrat,
   estEnCoursDeModification: boolean,
-  valeurAffiché: string
+  htmlName: string,
+  register: UseFormRegisterReturn<string>,
+  isChecked: boolean,
+  valeurAffiché: string,
 }) => {
   return (
     <MetadataIndicateurChamp
@@ -24,11 +24,11 @@ export const MetadataIndicateurInput = ({
       informationMetadataIndicateur={informationMetadataIndicateur}
       valeurAffiché={valeurAffiché}
     >
-      <Input
-        erreurMessage={erreurMessage}
-        htmlName={htmlName}
+      <Interrupteur
+        checked={isChecked}
+        id={htmlName}
+        libellé=''
         register={register}
-        type='text'
       />
     </MetadataIndicateurChamp>
   );

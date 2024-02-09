@@ -1,6 +1,6 @@
 import { useFormContext, UseFormWatch } from 'react-hook-form';
 
-export interface MetadataParametrageParametreCalculIndicateurForm {
+export type MetadataParametrageParametreCalculIndicateurForm = {
   paramVacaDecumulFrom: string;
   paramVacaPartitionDate: string;
   paramVacaOp: string;
@@ -8,7 +8,7 @@ export interface MetadataParametrageParametreCalculIndicateurForm {
   paramVacgPartitionDate: string;
   paramVacgOp: string;
   tendance: string;
-}
+};
 
 function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageParametreCalculIndicateurForm>) {
   watch('paramVacaDecumulFrom');
