@@ -20,7 +20,9 @@ models:
     description: |
         On modifie la table précédente `mesure_last_null_erase`. Règles:
 
-        - Si plusieurs valeurs sont valables pour un même mois, on garde la valeur importée le plus récemment et on arrondit sa date au premier jour du mois.
+        - 1. Si plusieurs valeurs sont valables pour un même mois, on garde la valeur importée le plus récemment et on arrondit sa date au premier jour du mois.
+
+        *Bug corrigé [PIL-88](https://data-ditp.atlassian.net/browse/PIL-88):* Ce bug est survenu car avant ce correctif, pour déterminer la "valeur importée le plus récemment" (dans *1.*), on triait les *dates d'import* et non les *timestamp complets*. Donc si deux valeurs étaient importées le même jour, elles apparaissaient toutes deux au *rang=1* donc impossible de les départager.
   - name: agg_dept
     description: |
         Sélection des valeurs et calculs des aggrégation pour le niveau DEPT en fonction des paramètres. Règles:
