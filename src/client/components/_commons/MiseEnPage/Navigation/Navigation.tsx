@@ -21,17 +21,13 @@ const vérifierValeurApplicationEstIndisponible = () => {
 
 const estAutoriséAParcourirSiIndisponible = (session: Session | null) => session?.profil === 'DITP_ADMIN';
 
-function estAdministrateur(session: Session | null) {
-  return session?.profil === 'DITP_ADMIN';
-}
-
 const estAutoriséAAccéderALaGestionDesComptes = (session: Session | null) => {
   if (!!!session) {
     return false;
   }
-  const habilitations = new Habilitation(session.habilitations)
+  const habilitations = new Habilitation(session.habilitations);
   return habilitations.peutCréerEtModifierUnUtilisateur();
-}
+};
 
 export default function Navigation() {
   const { data: session } = useSession();
