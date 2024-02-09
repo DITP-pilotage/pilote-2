@@ -53,6 +53,12 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
       defaultValues: {
         ...indicateur,
         indicHiddenPilote: indicateur.indicHiddenPilote ? 'false' : 'true',
+        indicIsBaro: !!indicateur.indicIsBaro,
+        indicIsPhare: !!indicateur.indicIsPhare,
+        indicIsPerseverant: !!indicateur.indicIsPerseverant,
+        indicTerritorialise: !!indicateur.indicTerritorialise,
+        donneeOuverte: !!indicateur.donneeOuverte,
+        projetAnnuelPerf: !!indicateur.projetAnnuelPerf,
         poidsPourcentNat: `${indicateur.poidsPourcentNat}`,
         poidsPourcentReg: `${indicateur.poidsPourcentReg}`,
         poidsPourcentDept: `${indicateur.poidsPourcentDept}`,
