@@ -27,7 +27,7 @@ export const MetadataIndicateurInterrupteur = ({
       <Interrupteur
         checked={isChecked}
         id={htmlName}
-        libellé=''
+        libellé={isChecked ? 'Oui' : 'Non'}
         register={register}
       />
     </MetadataIndicateurChamp>
