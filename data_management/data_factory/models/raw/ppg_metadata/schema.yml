@@ -58,7 +58,7 @@ models:
             pilote_create_defaultValue: ""
       - name: indic_nom_baro
         data_type: text
-        description: "Nom de cet indicateur dans le baromètre des résultats de l'action publique."
+        description: "Nom de cet indicateur dans le baromètre (si différent de l'intitulé Pilote)"
         meta:
             pilote_show: true
             pilote_alias: "Nom baromètre"
