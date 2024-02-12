@@ -8,7 +8,7 @@ a.*,
 b.vaca,
 c.vacg,
 -- VCA pour l'année COURANTE (rule::620)
-d2.vca, d2.vca_date,
+d2.vca as vca_courant, d2.vca_date as vca_date_courant,
 -- VCA pour l'année de la a.metric_date (pas utilisé, mais valeur avant rule::620)
 d.vca as vca_a_date, d.vca_date as vca_date_a_date,
 e.vig, e.vig_date,

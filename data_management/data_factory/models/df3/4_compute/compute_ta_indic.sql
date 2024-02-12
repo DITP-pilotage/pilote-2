@@ -3,7 +3,7 @@ with
 get_unbounded_ta_hausse as
 (
 	select a.*,
-	{{ compute_ta_hausse_macro('vig', 'vca', 'vaca') }} as unbounded_taa,
+	{{ compute_ta_hausse_macro('vig', 'vca_courant', 'vaca') }} as unbounded_taa_courant,
 	{{ compute_ta_hausse_macro('vig', 'vca_a_date', 'vaca') }} as unbounded_taa_adate,
 	{{ compute_ta_hausse_macro('vig', 'vcg', 'vacg') }} as unbounded_tag
 	from {{ ref('merge_computed_values') }} a
@@ -12,7 +12,7 @@ get_unbounded_ta_hausse as
 get_unbounded_ta_baisse as
 (
 	select a.*,
-	{{ compute_ta_baisse_macro('vig', 'vca', 'vaca') }} as unbounded_taa,
+	{{ compute_ta_baisse_macro('vig', 'vca_courant', 'vaca') }} as unbounded_taa_courant,
 	{{ compute_ta_hausse_macro('vig', 'vca_a_date', 'vaca') }} as unbounded_taa_adate,
 	{{ compute_ta_baisse_macro('vig', 'vcg', 'vacg') }} as unbounded_tag
 	from {{ ref('merge_computed_values') }} a
@@ -24,7 +24,7 @@ get_unbounded_ta as (
 -- Compute bounded TA
 get_bounded_ta as (
 	select *,
-    case when unbounded_taa is null then null else greatest(least(unbounded_taa, 100), 0)::numeric end as taa,
+    case when unbounded_taa_courant is null then null else greatest(least(unbounded_taa_courant, 100), 0)::numeric end as taa_courant,
     case when unbounded_taa_adate is null then null else greatest(least(unbounded_taa_adate, 100), 0)::numeric end as taa_adate,
     case when unbounded_tag is null then null else greatest(least(unbounded_tag, 100), 0)::numeric end as tag
 	from get_unbounded_ta
