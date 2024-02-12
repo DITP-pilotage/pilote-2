@@ -19,12 +19,18 @@ paths:
     parameters:
       - schema:
           type: string
+          example: CH-005
+          pattern: '^CH-[0-9][0-9][0-9]$'
+          minLength: 6
+          maxLength: 6
         name: chantier_id
         in: path
         required: true
+        description: Identifiant du chantier
     get:
       summary: Informations chantier
-      tags: []
+      tags:
+        - Chantier
       responses:
         '200':
           description: OK
@@ -54,7 +60,10 @@ paths:
       responses:
         '200':
           description: OK
-      description: Obtenir les informations sur un chantier
+      description: Modifier les informations sur un chantier
+      tags:
+        - WIP
+      x-internal: true
 components:
   schemas:
     Chantier:
@@ -207,4 +216,9 @@ components:
         pattern: bla
       description: Identifiant de chantier
       required: true
+tags:
+  - name: Chantier
+    description: Opérations sur les chantiers prioritaires
+  - name: WIP
+    description: Développements en cours
 x-internal: false
