@@ -585,7 +585,7 @@ models:
         description: |
             Utilisation de l'indicateur dans le cadre d'un projet annuel de performance (PAP) annexé à un projet de loi de finances.
         meta:
-            pilote_alias: "Projet annuel de performance"
+            pilote_alias: "Projet annuel de performance (PAP)"
             pilote_edit_boxType: null
             pilote_disp_dispDesc: true
             pilote_create_defaultValue: false
