@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Encart from '@/components/PageRapportDétaillé/Encart/Encart';
+import Encart from '@/components/_commons/Encart/Encart';
 import { htmlId } from '@/components/PageRapportDétaillé/PageRapportDétaillé';
 import RapportDétailléChantierProps from '@/components/PageRapportDétaillé/Chantier/RapportDétailléChantier.interface';
 import { useRapportDétailléChantier } from '@/components/PageRapportDétaillé/Chantier/useRapportDétailléChantier';
@@ -10,11 +10,17 @@ import Cartes from '@/components/PageChantier/Cartes/Cartes';
 import Indicateurs from '@/components/_commons/Indicateurs/Indicateurs';
 import DécisionsStratégiques from '@/components/PageChantier/DécisionsStratégiques/DécisionsStratégiques';
 import Commentaires from '@/components/_commons/Commentaires/Commentaires';
-import { mailleSélectionnéeTerritoiresStore, territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import {
+  mailleSélectionnéeTerritoiresStore,
+  territoireSélectionnéTerritoiresStore,
+} from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Titre from '@/components/_commons/Titre/Titre';
 import ObjectifsPageChantier from '@/components/_commons/Objectifs/Objectifs';
 import { typesObjectif } from '@/server/domain/chantier/objectif/Objectif.interface';
-import { typesCommentaireMailleNationale, typesCommentaireMailleRégionaleOuDépartementale } from '@/server/domain/chantier/commentaire/Commentaire.interface';
+import {
+  typesCommentaireMailleNationale,
+  typesCommentaireMailleRégionaleOuDépartementale,
+} from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import { listeRubriquesIndicateursChantier } from '@/client/utils/rubriques';
 import RapportDétailléChantierStyled from './RapportDétailléChantier.styled';
 

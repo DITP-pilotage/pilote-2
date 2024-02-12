@@ -30,12 +30,13 @@ import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
 
 export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {
-  const { data: session } = useSession();
 
+  const { data: session } = useSession();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
   const [nombreChantiersDansLeTableau, setNombreChantiersDansLeTableau] = useState<number>();
-  
   const { auClicTerritoireCallback } = useCartographie();
+
   const {
     nombreFiltresActifs,
     chantiersFiltrés,
@@ -54,19 +55,32 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
         <FiltresActifs ministères={ministères} />
       }
       <div className='fr-py-2w fr-px-md-2w fr-container--fluid'>
-        <div className='fr-mb-2w titre'>
+        <div className='fr-mb-2w titre flex align-center'>
           <Titre
             baliseHtml='h1'
-            className='fr-h4 fr-px-2w fr-px-md-0 fr-mb-1w'
+            className='fr-h4 fr-px-2w fr-px-md-0 fr-mb-0'
           >
             {`${chantiersFiltrés.length} ${chantiersFiltrés.length >= 2 ? 'chantiers' : 'chantier'}`}
           </Titre>
           <div className='titre-liens'>
             {
+              process.env.NEXT_PUBLIC_FF_FICHE_TERRITORIALE === 'true' && (
+                <div>
+                  <Link
+                    className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
+                    href={`/fiche-territoriale?territoireCode=${territoireSélectionné!.code}`}
+                    title='Voir la fiche territoriale'
+                  >
+                    Fiche territoriale
+                  </Link>
+                </div>
+              )
+            }
+            {
               process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE === 'true' &&
               <div>
                 <Link
-                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm'
+                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
                   href={`/rapport-detaille?territoireCode=${territoireSélectionné!.code}`}
                   title='Voir le rapport détaillé'
                 >
@@ -79,7 +93,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
               <div>
                 <button
                   aria-controls={ID_HTML_MODALE_EXPORT}
-                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm'
+                  className='fr-btn fr-btn--tertiary-no-outline fr-icon-download-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
                   data-fr-opened='false'
                   type='button'
                 >
