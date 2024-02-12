@@ -134,7 +134,7 @@ models:
             pilote_create_defaultValue: "IMPACT"
       - name: indic_source
         description: "Source déclarée des données de l'indicateur"
-        data_type: text
+        data_type: textarea
         meta:
             pilote_show: true
             pilote_alias: "Source"
