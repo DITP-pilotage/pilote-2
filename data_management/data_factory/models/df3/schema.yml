@@ -20,7 +20,11 @@ models:
     description: |
         On modifie la table précédente `mesure_last_null_erase`. Règles:
 
-        - Si plusieurs valeurs sont valables pour un même mois, on garde la valeur importée le plus récemment et on arrondit sa date au premier jour du mois.
+        - 1. Si plusieurs valeurs sont valables pour un même mois, on garde la valeur importée le plus récemment et on arrondit sa date au premier jour du mois.
+        - **Cas particulier:** si on ne peut pas déterminer la valeur *importée le plus récemment* (règle précédente inefficace), càd que 2 valeurs sont importées au même mois lors du même import, on sélectionne la valeur avec la `metric_date` la plus tardive dans le mois
+        - **Cas particulier:** si on ne peut pas déterminer la *`metric_date` la plus tardive* (règle précédente inefficace), càd que 2 valeurs sont importées lorsque 2 valeurs sont importées au même mois lors du même import, **avec la `metric_date`** -> C'est **impossible**, car le schema validata d'import des données empêche cela ([cf schema validata](https://github.com/DITP-pilotage/pilote-2/blob/43832f300e3b1ef97a35cc197388c23b49928333/public/schema/sans-contraintes.json#L114-L119))
+
+        *Bug corrigé [PIL-88](https://data-ditp.atlassian.net/browse/PIL-88):* Ce bug est survenu car avant ce correctif, pour déterminer la "valeur importée le plus récemment" (dans *1.*), on triait les *dates d'import* et non les *timestamp complets*. Donc si deux valeurs étaient importées le même jour, elles apparaissaient toutes deux au *rang=1* donc impossible de les départager.
   - name: agg_dept
     description: |
         Sélection des valeurs et calculs des aggrégation pour le niveau DEPT en fonction des paramètres. Règles:
