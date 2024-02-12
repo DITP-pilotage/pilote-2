@@ -15,6 +15,40 @@ servers:
   - url: 'http://172.17.0.1:3000'
     description: Docker local
 paths:
+  '/ppg/{ppg_id}':
+    parameters:
+      - schema:
+          type: string
+          example: PPG-003
+          pattern: '^PPG-[0-9][0-9][0-9]$'
+          minLength: 7
+          maxLength: 7
+        name: ppg_id
+        in: path
+        required: true
+        description: Identifiant de la PPG
+    get:
+      summary: Informations PPG
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PPG'
+              examples:
+                PPG d'exemple:
+                  value:
+                    id: PPG-014
+                    nom: Première PPG
+                    description: Description de la PPG
+                    axe_id:
+                      id: EMPLOI
+      operationId: get-ppg-id
+      description: Obtenir les informations sur une PPG
+      parameters: []
+      tags:
+        - PPG
   '/chantier/{chantier_id}':
     parameters:
       - schema:
@@ -192,6 +226,7 @@ components:
       required:
         - id
         - nom
+      description: Politique Prioritaire du Gouvernement
     Axe:
       title: Axe
       x-stoplight:
@@ -219,6 +254,8 @@ components:
 tags:
   - name: Chantier
     description: Opérations sur les chantiers prioritaires
+  - name: PPG
+    description: Opérations sur les PPG (Politiques Prioritaires du Gouvernement)
   - name: WIP
     description: Développements en cours
 x-internal: false
