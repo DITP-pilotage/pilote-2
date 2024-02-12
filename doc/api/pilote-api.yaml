@@ -153,6 +153,46 @@ paths:
                   dateOfBirth: '1996-08-24'
         description: Post the necessary fields for the API to create a new user.
       description: Create a new user.
+  '/chantier/{chantier_id}':
+    parameters:
+      - schema:
+          type: string
+        name: chantier_id
+        in: path
+        required: true
+    get:
+      summary: Informations chantier
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chantier'
+              examples:
+                Example 1:
+                  value:
+                    id: CH-001
+                    description: Description textuelle du premier chantier
+                    nom: Premier chantier prioritaire
+                    directeur_projet: Jean Dupont
+                    ppg_id: PPG-123
+                    porteurs: MEFSIN | MSAPH
+                    perimetre_id: PER-019
+                    territorialise: true
+                    engagement: EMPLOI
+                    etat: PUBLIE
+      operationId: get-chantier-id
+      description: Obtenir les informations sur un chantier
+      parameters: []
+    post:
+      summary: Modifier un chantier
+      operationId: post-chantier-id
+      responses:
+        '200':
+          description: OK
+      description: Obtenir les informations sur un chantier
 components:
   schemas:
     User:
@@ -202,6 +242,18 @@ components:
       x-stoplight:
         id: p5jtbeh5h8v1h
       type: object
+      description: Description complète d'un chantier prioritaire.
+      examples:
+        - id: CH-001
+          description: Description textuelle du premier chantier
+          nom: Premier chantier prioritaire
+          directeur_projet: Jean Dupont
+          ppg_id: PPG-123
+          porteurs: MEFSIN | MSAPH
+          perimetre_id: PER-019
+          territorialise: true
+          engagement: EMPLOI
+          etat: PUBLIE
       properties:
         id:
           type: string
@@ -223,11 +275,12 @@ components:
             id: r49po0dyvgn0n
           description: Nom du directeur de projet
         ppg_id:
-          type: string
           x-stoplight:
             id: ztoyprmidlw0v
           description: Identifiant de la PPG
+          type: string
           pattern: '^PPG-[0-9][0-9][0-9]$'
+          example: PPG-001
         porteurs:
           type: string
           x-stoplight:
@@ -275,22 +328,63 @@ components:
         - perimetre_id
         - territorialise
         - etat
-      description: Description complète d'un chantier prioritaire.
+      x-tags:
+        - Chantier
+    PPG:
+      title: PPG
+      x-stoplight:
+        id: y5p9457oy9ahb
+      type: object
       examples:
-        - id: CH-001
-          description: Description textuelle du premier chantier
-          nom: Premier chantier prioritaire
-          directeur_projet: Jean Dupont
-          ppg_id: PPG-123
-          porteurs: MEFSIN | MSAPH
-          perimetre_id: PER-019
-          territorialise: true
-          engagement: EMPLOI
-          etat: PUBLIE
+        - id: PPG-014
+          nom: Première PPG
+          description: Description de la PPG
+          axe_id:
+            id: EMPLOI
+      properties:
+        id:
+          type: string
+          description: Identifiant de la PPG
+          pattern: '^PPG-[0-9][0-9][0-9]$'
+          example: PPG-014
+        nom:
+          type: string
+          x-stoplight:
+            id: 38z6p01nyhsyz
+          example: Mieux vivre de son travail
+        description:
+          type: string
+          x-stoplight:
+            id: q86g1ouyl59k9
+        axe_id:
+          $ref: '#/components/schemas/Axe'
+          x-stoplight:
+            id: 4tdqltir7n7y4
+      required:
+        - id
+        - nom
+    Axe:
+      title: Axe
+      x-stoplight:
+        id: pkmunivqndbww
+      type: object
+      properties:
+        id:
+          type: string
+          example: EMPLOI
   securitySchemes:
     abc-123:
       name: X-API-KEY
       type: apiKey
       in: header
       description: Cette clé d'API vous permet de vous authentifier et d'aacéder uniquement aux resources autorisées.
+  parameters:
+    chantier_id:
+      name: chantier_id
+      in: query
+      schema:
+        type: string
+        pattern: bla
+      description: Identifiant de chantier
+      required: true
 x-internal: false
