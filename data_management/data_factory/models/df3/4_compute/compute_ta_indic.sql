@@ -4,7 +4,7 @@ get_unbounded_ta_hausse as
 (
 	select a.*,
 	{{ compute_ta_hausse_macro('vig', 'vca_courant', 'vaca') }} as unbounded_taa_courant,
-	{{ compute_ta_hausse_macro('vig', 'vca_a_date', 'vaca') }} as unbounded_taa_adate,
+	{{ compute_ta_hausse_macro('vig', 'vca_adate', 'vaca') }} as unbounded_taa_adate,
 	{{ compute_ta_hausse_macro('vig', 'vcg', 'vacg') }} as unbounded_tag
 	from {{ ref('merge_computed_values') }} a
 	right join (select * from {{ ref('metadata_parametrage_indicateurs') }} where tendance in ('HAUSSE', 'STABLE')) b on a.indic_id=b.indic_id
@@ -13,7 +13,7 @@ get_unbounded_ta_baisse as
 (
 	select a.*,
 	{{ compute_ta_baisse_macro('vig', 'vca_courant', 'vaca') }} as unbounded_taa_courant,
-	{{ compute_ta_hausse_macro('vig', 'vca_a_date', 'vaca') }} as unbounded_taa_adate,
+	{{ compute_ta_hausse_macro('vig', 'vca_adate', 'vaca') }} as unbounded_taa_adate,
 	{{ compute_ta_baisse_macro('vig', 'vcg', 'vacg') }} as unbounded_tag
 	from {{ ref('merge_computed_values') }} a
 	right join (select * from {{ ref('metadata_parametrage_indicateurs') }} where tendance in ('BAISSE')) b on a.indic_id=b.indic_id
