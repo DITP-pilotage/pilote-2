@@ -13,8 +13,8 @@ with rank_values_month as (
         zone_id,
         metric_type,
         date_trunc('month', metric_date::date)
-        order by 
-            date_import::timestamp desc, 
+        order by
+            date_import::timestamp desc,
             metric_date::timestamp desc
     ) as r
 from {{ ref('mesure_last_null_erase') }} )
