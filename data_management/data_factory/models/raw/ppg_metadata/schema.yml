@@ -203,7 +203,7 @@ models:
         description: "*Zone-group* applicable à cet indicateur. Voir `metadata_zonegroup`"
         meta:
             pilote_show: true
-            pilote_alias: "Zone-group"
+            pilote_alias: "Restriction géographique"
             pilote_edit_isEditable: true
             pilote_edit_regex: "ZG-\\d\\d\\d"
             pilote_edit_regexViolationMessage: "Le code de la ZG doit être au format 'ZG-XXX'"
