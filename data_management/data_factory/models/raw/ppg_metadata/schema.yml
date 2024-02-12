@@ -166,7 +166,7 @@ models:
             pilote_create_defaultValue: ""
       - name: indic_unite
         data_type: text
-        description: "Unité de l'indicateur"
+        description: "Visible dans Pilote - A renseigner uniquement si pourcentage, heures, mois, milliers, millions, milliards …"
         meta:
             pilote_show: true
             pilote_alias: "Unité"
