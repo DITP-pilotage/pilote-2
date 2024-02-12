@@ -134,12 +134,12 @@ models:
             pilote_create_defaultValue: "IMPACT"
       - name: indic_source
         description: "Source déclarée des données de l'indicateur"
-        data_type: textarea
+        data_type: text
         meta:
             pilote_show: true
             pilote_alias: "Source"
             pilote_edit_isEditable: false
-            pilote_edit_boxType: text
+            pilote_edit_boxType: textarea
             pilote_disp_dispDesc: true
             pilote_create_mandatory: false
             pilote_create_defaultValue: "Pas de source renseignée"
