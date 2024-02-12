@@ -251,8 +251,7 @@ models:
 
       - name: va_dept_from
         data_type: text
-        description: >
-              "Source des valeurs actuelles départementales (import, agrégation géographique, agrégation d'indicateurs...)"
+        description: Source des valeurs actuelles départementales (import, agrégation géographique, agrégation d'indicateurs...)
         meta:
           pilote_alias: "Valeur actuelle - Origine"
           pilote_edit_boxType: text
@@ -264,8 +263,7 @@ models:
 
       - name: va_dept_op
         data_type: text
-        description: >
-            "Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote"
+        description: Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote
         meta:
           pilote_alias: "Méthode d'agrégation - VA"
           pilote_edit_boxType: text
@@ -277,8 +275,7 @@ models:
 
       - name: vc_dept_from
         data_type: text
-        description: >
-            "Source des valeurs cibles départementales (import, agrégation géographique, agrégation d'indicateurs...)"
+        description: Source des valeurs cibles départementales (import, agrégation géographique, agrégation d'indicateurs...)
         meta:
             pilote_alias: "Valeur cible - Origine"
             pilote_edit_boxType: text
@@ -289,8 +286,7 @@ models:
                 [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]   
       - name: vc_dept_op
         data_type: text
-        description: >
-            "Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote"
+        description: Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote
         meta:
             pilote_alias: "Méthode d'agrégation - VC"
             pilote_edit_boxType: text
@@ -301,8 +297,7 @@ models:
                 [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs des sous-indicateurs"}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs des sous-indicateurs"}]
       - name: vi_reg_from
         data_type: text
-        description: >
-            "Source des valeurs initiales régionales (import, agrégation géographique, agrégation d'indicateurs...)"
+        description: Source des valeurs initiales régionales (import, agrégation géographique, agrégation d'indicateurs...)
         meta:
             pilote_alias: "Valeur initiale - Origine"
             pilote_edit_boxType: text
@@ -313,8 +308,7 @@ models:
                 [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
       - name: vi_reg_op
         data_type: text
-        description: >
-            "Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote"
+        description: Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote
         meta:
             pilote_alias: "Méthode d'agrégation - VI"
             pilote_edit_boxType: text
