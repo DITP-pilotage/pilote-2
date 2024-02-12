@@ -195,7 +195,7 @@ models:
             pilote_edit_boxType: text
             pilote_edit_acceptedValuesViolationMessage: "Veuillez choisir des contraintes de saisie parmi: "      
             pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "sans-contraintes.json", "name": "-", "desc": "Pas de contraintes particulières"}, {"order_id": 2, "value": "restrict-dept.json", "name": "Saisie départementale", "desc": "Saisie restreinte au niveau départemental"}, {"order_id": 3, "value": "restrict-0-100.json", "name": "Dans [0,100]", "desc": "Saisie entre 0 et 100."}]
+              [{"order_id": 1, "value": "sans-contraintes.json", "name": "-", "desc": "Pas de contraintes particulières"}, {"order_id": 2, "value": "restrict-dept.json", "name": "Saisie départementale", "desc": "Saisie restreinte au niveau départemental"}, {"order_id": 3, "value": "restrict-reg.json", "name": "Saisie régionale", "desc": "Saisie restreinte au niveau régional"},{"order_id": 4, "value": "restrict-0-100.json", "name": "Dans [0,100]", "desc": "Saisie entre 0 et 100."}]
             pilote_create_mandatory: true
             pilote_create_defaultValue: "sans-contraintes.json"
       - name: zg_applicable
