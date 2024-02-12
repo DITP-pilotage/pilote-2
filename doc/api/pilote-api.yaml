@@ -197,6 +197,96 @@ components:
         - emailVerified
       x-stoplight:
         id: zli1xhb85ytzu
+    Chantier:
+      title: Chantier
+      x-stoplight:
+        id: p5jtbeh5h8v1h
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifiant du chantier
+          pattern: '^CH-[0-9][0-9][0-9]$'
+        description:
+          type: string
+          x-stoplight:
+            id: zdi3an2y785p5
+          description: Description du chantier
+        nom:
+          type: string
+          x-stoplight:
+            id: cyz7ea8cxcy1a
+          description: Nom du chantier
+        directeur_projet:
+          type: string
+          x-stoplight:
+            id: r49po0dyvgn0n
+          description: Nom du directeur de projet
+        ppg_id:
+          type: string
+          x-stoplight:
+            id: ztoyprmidlw0v
+          description: Identifiant de la PPG
+          pattern: '^PPG-[0-9][0-9][0-9]$'
+        porteurs:
+          type: string
+          x-stoplight:
+            id: zyifvj48w8g4s
+          description: Liste des porteurs du chantier (séparés par " | ").
+          example: MEFSIN | MSAPH
+        perimetre_id:
+          type: string
+          x-stoplight:
+            id: q2f4thq23mxe4
+          example: PER-019
+          pattern: '^PER-[0-9][0-9][0-9]$'
+          description: Identifiant du périmètre du chantier
+        territorialise:
+          type: boolean
+          x-stoplight:
+            id: osknraxgj0nzn
+          description: Etat de territorialisation du chantier (Oui/non)
+        engagement:
+          type: string
+          x-stoplight:
+            id: tx1xg9r1jx1e3
+          enum:
+            - EMPLOI
+            - PROGRES
+            - TE
+            - ENGAG
+          example: EMPLOI
+          description: Engagement auquel appartient le chantier
+        etat:
+          type: string
+          x-stoplight:
+            id: r5xhoq4owsiaw
+          enum:
+            - PUBLIE
+            - BROUILLON
+            - NON_PUBLIE
+          example: PUBLIE
+          description: Etat de publication du chantier
+      required:
+        - id
+        - description
+        - nom
+        - ppg_id
+        - perimetre_id
+        - territorialise
+        - etat
+      description: Description complète d'un chantier prioritaire.
+      examples:
+        - id: CH-001
+          description: Description textuelle du premier chantier
+          nom: Premier chantier prioritaire
+          directeur_projet: Jean Dupont
+          ppg_id: PPG-123
+          porteurs: MEFSIN | MSAPH
+          perimetre_id: PER-019
+          territorialise: true
+          engagement: EMPLOI
+          etat: PUBLIE
   securitySchemes:
     abc-123:
       name: X-API-KEY
