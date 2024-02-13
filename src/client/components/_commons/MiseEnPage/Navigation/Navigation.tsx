@@ -21,6 +21,10 @@ const vérifierValeurApplicationEstIndisponible = () => {
 
 const estAutoriséAParcourirSiIndisponible = (session: Session | null) => session?.profil === 'DITP_ADMIN';
 
+function estAdministrateur(session: Session | null) {
+  return session?.profil === 'DITP_ADMIN';
+}
+
 const estAutoriséAAccéderALaGestionDesComptes = (session: Session | null) => {
   if (!!!session) {
     return false;
@@ -113,7 +117,7 @@ export default function Navigation() {
                   ))
                 }
                 { 
-                  false ? (
+                  estAdministrateur(session) ? (
                     <MenuItemGestionContenu urlActuelle={urlActuelle} />
                   ) : null
                 }
