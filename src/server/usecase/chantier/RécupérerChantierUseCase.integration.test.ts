@@ -77,9 +77,9 @@ describe('RécupérerChantierUseCase', () => {
     await prisma.chantier.createMany({
       data: [
         new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('NAT').avecMétéo('SOLEIL').avecTauxAvancement(18).build(),
+          .avecId(chantierId).avecMaille('NAT').avecMétéo('SOLEIL').avecTauxAvancement(18).avecTauxAvancementAnnuel(20).build(),
         new ChantierSQLRowBuilder()
-          .avecId(chantierId).avecMaille('DEPT').avecMétéo('SOLEIL').avecCodeInsee('13').avecTauxAvancement(45).build(),
+          .avecId(chantierId).avecMaille('DEPT').avecMétéo('SOLEIL').avecCodeInsee('13').avecTauxAvancement(45).avecTauxAvancementAnnuel(51).build(),
       ],
     });
 
@@ -95,14 +95,14 @@ describe('RécupérerChantierUseCase', () => {
     expect(result.mailles.nationale).toMatchObject({
       FR: {
         codeInsee: 'FR',
-        avancement: { annuel: null, global: 18 },
+        avancement: { annuel: 20, global: 18 },
         météo: 'SOLEIL',
       },
     });
 
     expect(result.mailles.départementale[13]).toMatchObject({
       codeInsee: '13',
-      avancement: { annuel: null, global: 45 },
+      avancement: { annuel: 51, global: 45 },
       météo: 'SOLEIL',
     });
 

@@ -25,8 +25,10 @@ export default function useVueDEnsemble(chantiersFiltrés: Chantier[], chantiers
     },
     { keepPreviousData: true },
   );
-  if (avancementsAgrégés)
+  if (avancementsAgrégés) {
     avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[territoireSélectionné!.maille].territoires[territoireSélectionné!.codeInsee].répartition.avancements.global.moyenne;
+    avancementsAgrégés.annuel.moyenne = donnéesTerritoiresAgrégées[territoireSélectionné!.maille].territoires[territoireSélectionné!.codeInsee].répartition.avancements.annuel.moyenne;
+  }
 
   const compteurFiltre = new CompteurFiltre(chantiersFiltrés);
 
