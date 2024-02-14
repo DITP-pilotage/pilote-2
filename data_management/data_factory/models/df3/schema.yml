@@ -175,8 +175,8 @@ models:
     columns:
       - name: tag_ch
         description: "**Principal**: TA chantier *global*. C'est cette valeur qui est remontée comme TA du chantier"
-      - name: taa_ch
-        description: "TA chantier *annuel*"
+      - name: taa_courant_ch
+        description: "TA chantier *annuel* courant"
       - name: valid_on
         description: "Prend les valeurs `[prev_month, today]` pour indiquer s'il s'agit du TA actuel ou du mois précédent."
   - name: df3_chantier
