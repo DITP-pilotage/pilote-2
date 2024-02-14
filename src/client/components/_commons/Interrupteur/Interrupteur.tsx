@@ -14,7 +14,7 @@ export default function Interrupteur({ checked, id, libellé, auChangement, regi
         {...register}
       />
       <label
-        className='fr-toggle__label no-wrap'
+        className='fr-toggle__label'
         htmlFor={`interrupteur-${id}`}
       >
         {libellé}

@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { stringify } from 'csv-stringify';
+import { Options } from 'csv-stringify/lib/sync';
 import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import ExportCsvDesIndicateursSansFiltreUseCase
@@ -20,7 +21,8 @@ export default async function handleExportDesIndicateursSansFiltre(request: Next
     columns: ExportCsvDesIndicateursSansFiltreUseCase.NOMS_COLONNES,
     delimiter: ';',
     bom: true,
-  });
+    quoted_string: true,
+  } satisfies Options);
   stringifier.pipe(response);
 
   const habilitation = new Habilitation(session.habilitations);

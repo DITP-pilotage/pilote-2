@@ -1,10 +1,10 @@
 import { useFormContext } from 'react-hook-form';
 
-export interface MetadataParametrageParametrePonderationIndicateurForm {
+export type MetadataParametrageParametrePonderationIndicateurForm = {
   poidsPourcentDept: string;
   poidsPourcentReg: string;
   poidsPourcentNat: string;
-}
+};
 
 export default function useDétailsMetadataParametrePonderationIndicateurForm() {
   const { register, getValues, formState: { errors } } = useFormContext<MetadataParametrageParametrePonderationIndicateurForm>();

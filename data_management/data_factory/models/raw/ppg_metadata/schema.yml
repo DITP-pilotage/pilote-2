@@ -58,7 +58,7 @@ models:
             pilote_create_defaultValue: ""
       - name: indic_nom_baro
         data_type: text
-        description: "Nom de cet indicateur dans le baromètre des résultats de l'action publique."
+        description: "Nom de cet indicateur dans le baromètre (si différent de l'intitulé Pilote)"
         meta:
             pilote_show: true
             pilote_alias: "Nom baromètre"
@@ -81,7 +81,7 @@ models:
             pilote_create_defaultValue: ""
       - name: indic_descr_baro
         data_type: text
-        description: "Description de l'indicateur dans le baromètre de l'action publique"
+        description: "Description de l'indicateur dans le baromètre (si différent de la description Pilote)"
         meta:
             pilote_show: true
             pilote_alias: "Description baromètre"
@@ -139,7 +139,7 @@ models:
             pilote_show: true
             pilote_alias: "Source"
             pilote_edit_isEditable: false
-            pilote_edit_boxType: text
+            pilote_edit_boxType: textarea
             pilote_disp_dispDesc: true
             pilote_create_mandatory: false
             pilote_create_defaultValue: "Pas de source renseignée"
@@ -166,7 +166,7 @@ models:
             pilote_create_defaultValue: ""
       - name: indic_unite
         data_type: text
-        description: "Unité de l'indicateur"
+        description: "Visible dans Pilote - A renseigner uniquement si pourcentage, heures, mois, milliers, millions, milliards …"
         meta:
             pilote_show: true
             pilote_alias: "Unité"
@@ -195,7 +195,7 @@ models:
             pilote_edit_boxType: text
             pilote_edit_acceptedValuesViolationMessage: "Veuillez choisir des contraintes de saisie parmi: "      
             pilote_edit_acceptedValues: >
-              [{"order_id": 1, "value": "sans-contraintes.json", "name": "-", "desc": "Pas de contraintes particulières"}, {"order_id": 2, "value": "restrict-dept.json", "name": "Saisie départementale", "desc": "Saisie restreinte au niveau départemental"}, {"order_id": 3, "value": "restrict-0-100.json", "name": "Dans [0,100]", "desc": "Saisie entre 0 et 100."}]
+              [{"order_id": 1, "value": "sans-contraintes.json", "name": "-", "desc": "Pas de contraintes particulières"}, {"order_id": 2, "value": "restrict-dept.json", "name": "Saisie départementale", "desc": "Saisie restreinte au niveau départemental"}, {"order_id": 3, "value": "restrict-reg.json", "name": "Saisie régionale", "desc": "Saisie restreinte au niveau régional"},{"order_id": 4, "value": "restrict-0-100.json", "name": "Dans [0,100]", "desc": "Saisie entre 0 et 100."}]
             pilote_create_mandatory: true
             pilote_create_defaultValue: "sans-contraintes.json"
       - name: zg_applicable
@@ -203,7 +203,7 @@ models:
         description: "*Zone-group* applicable à cet indicateur. Voir `metadata_zonegroup`"
         meta:
             pilote_show: true
-            pilote_alias: "Zone-group"
+            pilote_alias: "Restriction géographique"
             pilote_edit_isEditable: true
             pilote_edit_regex: "ZG-\\d\\d\\d"
             pilote_edit_regexViolationMessage: "Le code de la ZG doit être au format 'ZG-XXX'"
@@ -251,8 +251,7 @@ models:
 
       - name: va_dept_from
         data_type: text
-        description: >
-              "Source des valeurs actuelles départementales (import, agrégation géographique, agrégation d'indicateurs...)"
+        description: Source des valeurs actuelles départementales (import, agrégation géographique, agrégation d'indicateurs...)
         meta:
           pilote_alias: "Valeur actuelle - Origine"
           pilote_edit_boxType: text
@@ -264,8 +263,7 @@ models:
 
       - name: va_dept_op
         data_type: text
-        description: >
-            "Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote"
+        description: Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote
         meta:
           pilote_alias: "Méthode d'agrégation - VA"
           pilote_edit_boxType: text
@@ -277,8 +275,7 @@ models:
 
       - name: vc_dept_from
         data_type: text
-        description: >
-            "Source des valeurs cibles départementales (import, agrégation géographique, agrégation d'indicateurs...)"
+        description: Source des valeurs cibles départementales (import, agrégation géographique, agrégation d'indicateurs...)
         meta:
             pilote_alias: "Valeur cible - Origine"
             pilote_edit_boxType: text
@@ -289,8 +286,7 @@ models:
                 [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]   
       - name: vc_dept_op
         data_type: text
-        description: >
-            "Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote"
+        description: Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote
         meta:
             pilote_alias: "Méthode d'agrégation - VC"
             pilote_edit_boxType: text
@@ -301,8 +297,7 @@ models:
                 [{"order_id": 1, "value": "_", "name": "Aucune", "desc": "Pas d'opération d'aggrégation"}, {"order_id": 2, "value": "sum", "name": "Somme", "desc": "Somme des valeurs des sous-indicateurs"}, {"order_id": 3, "value": "moy", "name": "Moyenne", "desc": "Moyenne des valeurs des sous-indicateurs"}]
       - name: vi_reg_from
         data_type: text
-        description: >
-            "Source des valeurs initiales régionales (import, agrégation géographique, agrégation d'indicateurs...)"
+        description: Source des valeurs initiales régionales (import, agrégation géographique, agrégation d'indicateurs...)
         meta:
             pilote_alias: "Valeur initiale - Origine"
             pilote_edit_boxType: text
@@ -313,8 +308,7 @@ models:
                 [{"order_id": 1, "value": "_", "name": "Pas de saisie", "desc": "Pas de saisie attendue à cette maille"}, {"order_id": 2, "value": "user_input", "name": "Saisie utilisateur", "desc": "On attend que cette valeur soit saisie par l'utilisateur"}, {"order_id": 3, "value": "DEPT", "name": "Depuis les DEPT", "desc": "Cette valeur sera aggrégée depuis les valeurs départementales"}, {"order_id": 4, "value": "sub_indic", "name": "Sous-indicateur", "desc": ""}]
       - name: vi_reg_op
         data_type: text
-        description: >
-            "Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote"
+        description: Opération effectuée sur la source de la valeur pour obtenir la valeur affichée dans Pilote
         meta:
             pilote_alias: "Méthode d'agrégation - VI"
             pilote_edit_boxType: text
@@ -585,7 +579,7 @@ models:
         description: |
             Utilisation de l'indicateur dans le cadre d'un projet annuel de performance (PAP) annexé à un projet de loi de finances.
         meta:
-            pilote_alias: "Projet annuel de performance"
+            pilote_alias: "Projet annuel de performance (PAP)"
             pilote_edit_boxType: null
             pilote_disp_dispDesc: true
             pilote_create_defaultValue: false

@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { stringify } from 'csv-stringify';
+import { Options } from 'csv-stringify/sync';
 import RécupérerListeMetadataIndicateurUseCase
   from '@/server/parametrage-indicateur/usecases/RécupérerListeMetadataIndicateurUseCase';
 import { dependencies } from '@/server/infrastructure/Dependencies';
@@ -50,6 +51,24 @@ const EXPORT_METADATA_INDICATEURS_COLUMN = [
   'poids_pourcent_reg',
   'poids_pourcent_nat',
   'tendance',
+  'reforme_prioritaire',
+  'projet_annuel_perf',
+  'detail_projet_annuel_perf',
+  'periodicite',
+  'delai_disponibilite',
+  'indic_territorialise',
+  'frequence_territoriale',
+  'mailles',
+  'admin_source',
+  'methode_collecte',
+  'si_source',
+  'donnee_ouverte',
+  'modalites_donnee_ouverte',
+  'resp_donnees',
+  'resp_donnees_email',
+  'contact_technique',
+  'contact_technique_email',
+  'commentaire',
 ];
 
 export async function handleExportMetadataIndicateurs(request: NextApiRequest, response: NextApiResponse) {
@@ -60,7 +79,7 @@ export async function handleExportMetadataIndicateurs(request: NextApiRequest, r
     columns: EXPORT_METADATA_INDICATEURS_COLUMN,
     delimiter: ';',
     bom: true,
-  });
+  } satisfies Options);
   stringifier.pipe(response);
 
   const listeMetadataIndicateur = await new RécupérerListeMetadataIndicateurUseCase(dependencies.getMetadataParametrageIndicateurRepository()).run((request.query?.chantierIds as string[]) || []);
@@ -111,6 +130,24 @@ export async function handleExportMetadataIndicateurs(request: NextApiRequest, r
       metadataIndicateur.poidsPourcentReg,
       metadataIndicateur.poidsPourcentNat,
       metadataIndicateur.tendance,
+      metadataIndicateur.reformePrioritaire,
+      metadataIndicateur.projetAnnuelPerf ? 'true' : 'false',
+      metadataIndicateur.detailProjetAnnuelPerf,
+      metadataIndicateur.periodicite,
+      metadataIndicateur.delaiDisponibilite,
+      metadataIndicateur.indicTerritorialise ? 'true' : 'false',
+      metadataIndicateur.frequenceTerritoriale,
+      metadataIndicateur.mailles,
+      metadataIndicateur.adminSource,
+      metadataIndicateur.methodeCollecte,
+      metadataIndicateur.siSource,
+      metadataIndicateur.donneeOuverte ? 'true' : 'false',
+      metadataIndicateur.modalitesDonneeOuverte,
+      metadataIndicateur.respDonnees,
+      metadataIndicateur.respDonneesEmail,
+      metadataIndicateur.contactTechnique,
+      metadataIndicateur.contactTechniqueEmail,
+      metadataIndicateur.commentaire,
     ]);
   });
 

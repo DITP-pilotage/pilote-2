@@ -22,7 +22,7 @@ psql "$DATABASE_URL" -c "UPDATE public.chantier SET a_supprimer = TRUE"
 psql "$DATABASE_URL" -c "UPDATE public.indicateur SET a_supprimer = TRUE"
 psql "$DATABASE_URL" -c "UPDATE public.ministere SET a_supprimer = TRUE"
 
-dbt run --project-dir data_factory --select intermediate exposition df3
+dbt run --project-dir data_factory --select intermediate exposition df3 barometre
 
 if [ $? -eq 0 ]; then
   psql "$DATABASE_URL" -c "DELETE FROM public.axe WHERE a_supprimer = TRUE"

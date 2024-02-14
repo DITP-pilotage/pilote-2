@@ -34,15 +34,18 @@ export default function FicheIndicateur({ indicateur, estEnCoursDeModification, 
         mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
       />
       <SectionDétailsMetadataParametreIndicateurDepartementale
-        estEnCoursDeModification={estEnCoursDeModification}         
+        estEnCoursDeModification={estEnCoursDeModification}
+        indicateur={indicateur}
         mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
       />
       <SectionDétailsMetadataParametreIndicateurRegionale
         estEnCoursDeModification={estEnCoursDeModification}
+        indicateur={indicateur}
         mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
       />
       <SectionDétailsMetadataParametreIndicateurNationale
         estEnCoursDeModification={estEnCoursDeModification}
+        indicateur={indicateur}
         mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
       />
       <SectionDétailsMetadataParametreCalculIndicateur

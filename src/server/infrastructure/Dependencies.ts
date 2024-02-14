@@ -103,6 +103,8 @@ import {
 import {
   HistorisationModificationRepository,
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
+import ImportMasseMetadataIndicateurUseCase
+  from '@/server/parametrage-indicateur/usecases/ImportMasseMetadataIndicateurUseCase';
 import { GestionContenuRepository } from '@/server/gestion-contenu/domain/ports/GestionContenuRepository';
 import {
   PrismaGestionContenuRepository,
@@ -186,6 +188,8 @@ class Dependencies {
 
   private readonly _gestionContenuRepository: GestionContenuRepository;
 
+  private readonly _importMasseMetadataIndicateurUseCase: ImportMasseMetadataIndicateurUseCase;
+
   constructor() {
     const prisma = globalForPrisma.prisma ?? new PrismaClient();
     if (process.env.NODE_ENV !== 'production') {
@@ -237,6 +241,15 @@ class Dependencies {
       indicateurRepository: this._importIndicateurRepository,
       erreurValidationFichierRepository: this._erreurValidationFichierRepository,
     });
+
+    this._importMasseMetadataIndicateurUseCase = new ImportMasseMetadataIndicateurUseCase({
+      metadataParametrageIndicateurRepository: this._metadataParametrageIndicateurRepository,
+    });
+  }
+
+
+  getImportMasseMetadataIndicateurUseCase(): ImportMasseMetadataIndicateurUseCase {
+    return this._importMasseMetadataIndicateurUseCase;
   }
 
   getGestionContenuRepository(): GestionContenuRepository {

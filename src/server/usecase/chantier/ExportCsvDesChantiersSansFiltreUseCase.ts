@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/dot-notation */
-import { formaterMétéo, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
+import { formaterMétéo, formaterNumérique, NON, NON_APPLICABLE, OUI } from '@/server/infrastructure/export_csv/valeurs';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 import { libellésTypesCommentaire } from '@/client/constants/libellésCommentaire';
 import { libellésTypesObjectif } from '@/client/constants/libellésObjectif';
@@ -82,11 +82,11 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
       chantierPourExport.directeursProjetMails?.join(' ') || NON_APPLICABLE,      
       chantierPourExport.responsablesLocaux?.join(' ') || NON_APPLICABLE,
       chantierPourExport.responsablesLocauxMails?.join(' ') || NON_APPLICABLE,
-      chantierPourExport.tauxDAvancementDépartemental?.toString() || NON_APPLICABLE,
-      chantierPourExport.tauxDAvancementRégional?.toString() || NON_APPLICABLE,
+      formaterNumérique(chantierPourExport.tauxDAvancementDépartemental),
+      formaterNumérique(chantierPourExport.tauxDAvancementRégional),
       this.masquerPourProfilDROM(profil, chantierPourExport.périmètreIds)
         ?  NON_APPLICABLE
-        : chantierPourExport.tauxDAvancementNational?.toString() || NON_APPLICABLE,
+        : formaterNumérique(chantierPourExport.tauxDAvancementNational),
       formaterMétéo(chantierPourExport.météo),
       chantierPourExport.synthèseDesRésultats || NON_APPLICABLE,
       chantierPourExport.objNotreAmbition || NON_APPLICABLE,

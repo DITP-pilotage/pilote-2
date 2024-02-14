@@ -27,6 +27,7 @@ interface YamlColumn {
     pilote_edit_acceptedValues: string
     pilote_create_defaultValue: string | number | null | boolean
     pilote_create_mandatory: boolean
+    pilote_disp_dispDesc: boolean
   }
 }
 
@@ -51,6 +52,7 @@ const convertirEnInformationMetadataIndicateur = (yamlColumn: YamlColumn): Infor
     metaPiloteEditBoxType: yamlColumn.meta.pilote_edit_boxType,
     metaPiloteDefaultValue: yamlColumn.meta.pilote_create_defaultValue,
     metaPiloteMandatory: yamlColumn.meta.pilote_create_mandatory || false,
+    metaPiloteDispDispDesc: yamlColumn.meta.pilote_disp_dispDesc || false,
     acceptedValues: acceptedValues.map(acceptedValue => (AcceptedValue.créerAcceptedValue({
       orderId: acceptedValue.order_id,
       value: acceptedValue.value,

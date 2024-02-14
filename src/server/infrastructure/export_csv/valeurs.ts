@@ -23,3 +23,10 @@ export function formaterDateHeure(date: string | null) {
   }
   return dayjs.tz(date, 'CET').format('DD-MM-YYYY');
 }
+
+export function formaterNumérique(numerique: Number | null) {
+  if (!!!numerique) {
+    return NON_APPLICABLE;
+  }
+  return numerique.toLocaleString('fr-FR', { style: 'decimal' }).replace(/\s/g, '');
+}
