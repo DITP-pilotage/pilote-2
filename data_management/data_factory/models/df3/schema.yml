@@ -108,6 +108,15 @@ models:
 
         - Les règles sont identiques à celles de `compute_vacg` mais en prenant en compte les paramètres globaux et non annuels
   - name: merge_computed_values
+    columns:
+      - name: vca_courant
+        description: Valeur Cible Annuelle (VCA) **courante**. C'est la VC annuelle dont l'année correspond à **l'année de la VA**
+      - name: vca_courant_date
+        description: "Date de la **VCA courante**"
+      - name: vca_adate
+        description: Valeur Cible Annuelle (VCA) **à date**. C'est la VC annuelle dont l'année correspond à **l'année en cours**
+      - name: vca_adate_date
+        description: "Date de la **VCA à date**"
     description: Jointure des VACA, VACG, VCA, VCG, VIG dans une table unqie avant de calculer les TA.
   - name: compute_ta_indic
     description: |
@@ -124,7 +133,24 @@ models:
           - *Hausse* sinon `TA = (va - vi) / (vc - vi)`
           - *Baisse* si `vi <= vc` et `va <= vc` alors `TA = 100%`
           - *Baisse* si `vi <= vc` et `va > vc` alors `TA = 0%`
-          - *Baisse* sinon `TA = (va - vi) / (vc - vi)`
+          - *Baisse* sinon `TA = (va - vi) / (vc - vi)` columns: todo doc
+    columns:
+      - name: taa_courant
+        description: |
+          (Ex colonne `taa`) Il s'agit du Taux d'Avancement Annuel (TAA) **courant** de l'indicateur à cette date. 
+          
+          La VC prise en compte pour ce calcul est la `vca_courant`. 
+
+          *Exemple d'utilisation:* Utile pour calculer la TAA actuellement. Si on est en sept-2024 et la dernière VA est de aou-24, on utilise ce TAA (TAA *courant*). De même, si l'on est en jan-2024 et la dernière VA est de déc-23, on utilise également cela.
+      - name: taa_adate
+        description: |
+          Il s'agit du Taux d'Avancement Annuel (TAA) **courant** de l'indicateur à cette date. 
+          
+          La VC prise en compte pour ce calcul est la `vca_courant`. 
+
+          *Exemple d'utilisation:* Utile lorsque l'on veut mettre à jour le calcul de TA retrospectivement. Par exemple, nous sommes en 2024, et une VA de déc-2023 est mise à jour. Pour connaitre le TAA tel qu'il aurait été en déc-23, il faut regarder ce TAA (TAA *à date*).
+      - name: tag
+        description: Taux d'Avancement Global (TAG). Indique l'avancement sur la période compète, utilise la VCG (déterminée dans `get_vcg`).
   - name: df3_indicateur
     description: |
       Table des indicateurs construite par la datafactory dbt. Version reconstruite de zero. Règles:
@@ -149,8 +175,8 @@ models:
     columns:
       - name: tag_ch
         description: "**Principal**: TA chantier *global*. C'est cette valeur qui est remontée comme TA du chantier"
-      - name: taa_ch
-        description: "TA chantier *annuel*"
+      - name: taa_courant_ch
+        description: "TA chantier *annuel* courant"
       - name: valid_on
         description: "Prend les valeurs `[prev_month, today]` pour indiquer s'il s'agit du TA actuel ou du mois précédent."
   - name: df3_chantier
