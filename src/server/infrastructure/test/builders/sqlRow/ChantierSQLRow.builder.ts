@@ -33,6 +33,8 @@ export default class ChantierRowBuilder {
 
   private _tauxAvancementPrécédent: chantier['taux_avancement_precedent'];
 
+  private _tauxAvancementAnnuel: chantier['taux_avancement_annuel'];
+
   private _ministères: chantier['ministeres'];
 
   private _ministères_acronymes: chantier['ministeres_acronymes'];
@@ -96,6 +98,7 @@ export default class ChantierRowBuilder {
     this._territoireNom = générerPeutÊtreNull(0.2, faker.address.state());
     this._codeInsee = faker.helpers.arrayElement(codesInsee);
     this._tauxAvancement = avancement.global;
+    this._tauxAvancementAnnuel = avancement.annuel;
     this._tauxAvancementPrécédent = avancementPrécédent.global;
     this._ministères = ministères.map(ministère => ministère.id);
     this._ministères_acronymes = ministères.map(ministère => ministère.acronyme);
@@ -174,6 +177,11 @@ export default class ChantierRowBuilder {
 
   avecTauxAvancementPrécédent(tauxAvancementPrécédent: chantier['taux_avancement_precedent']): ChantierRowBuilder {
     this._tauxAvancementPrécédent = tauxAvancementPrécédent;
+    return this;
+  }
+
+  avecTauxAvancementAnnuel(tauxAvancementAnnuel: chantier['taux_avancement_annuel']): ChantierRowBuilder {
+    this._tauxAvancementAnnuel = tauxAvancementAnnuel;
     return this;
   }
 
@@ -277,6 +285,7 @@ export default class ChantierRowBuilder {
       code_insee: this._codeInsee,
       taux_avancement: this._tauxAvancement,
       taux_avancement_precedent: this._tauxAvancementPrécédent,
+      taux_avancement_annuel: this._tauxAvancementAnnuel,
       ministeres: this._ministères,
       ministeres_acronymes: this._ministères_acronymes,
       meteo: this._météo,
