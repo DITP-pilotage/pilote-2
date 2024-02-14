@@ -25,8 +25,7 @@ get_evol_vaca as (
 	select 
 	indic_id, zone_id,
 	array_agg(metric_date::timestamp)as evolution_date_valeur_actuelle,
-	array_agg(vaca) as evolution_valeur_actuelle,
-	array_agg(taa_adate) as evolution_taa_adate
+	array_agg(vaca) as evolution_valeur_actuelle
 	from {{ ref('compute_ta_indic') }}
 	where vaca is not null
 	group by indic_id, zone_id
@@ -59,7 +58,7 @@ sort_mesures_vaca_last as (
 	terr.code_insee,
 	mz.zone_type as maille,
 	terr.nom as territoire_nom,
-	b.evolution_valeur_actuelle, b.evolution_date_valeur_actuelle, b.evolution_taa_adate,
+	b.evolution_valeur_actuelle, b.evolution_date_valeur_actuelle,
 	mi.indic_descr as description,
 	mi.indic_source as "source",
 	mi.indic_methode_calcul as mode_de_calcul,
