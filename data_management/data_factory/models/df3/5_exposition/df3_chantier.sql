@@ -91,6 +91,7 @@ select
     ch_nom as nom,
     t.code_insee as code_insee,
     ta_ch_today.tag_ch as taux_avancement,
+    ta_ch_today.taa_ch as taux_avancement_annuel,
     ta_ch_prev_month.tag_ch as taux_avancement_precedent,
     t.nom as territoire_nom,
     string_to_array(ch_per, ' | ') as perimetre_ids, 

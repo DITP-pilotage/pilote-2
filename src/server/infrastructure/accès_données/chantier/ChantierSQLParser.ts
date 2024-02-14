@@ -51,7 +51,7 @@ function créerDonnéesTerritoires(
 
     donnéesTerritoires[t.codeInsee] = {
       codeInsee: t.codeInsee,
-      avancement: { annuel: null, global: chantierRow?.taux_avancement ?? null },
+      avancement: { annuel: chantierRow?.taux_avancement_annuel ?? null, global: chantierRow?.taux_avancement ?? null },
       avancementPrécédent: { annuel: null, global: chantierRow?.taux_avancement_precedent ?? null },
       estApplicable: chantierRow?.est_applicable ?? null,
       météo: chantierRow?.meteo as Météo ?? 'NON_RENSEIGNEE',
@@ -109,7 +109,7 @@ export function parseChantier(
       nationale: {
         FR: {
           codeInsee: chantierMailleNationale.code_insee,
-          avancement: { annuel: null, global: chantierMailleNationale.taux_avancement },
+          avancement: { annuel: chantierMailleNationale.taux_avancement_annuel, global: chantierMailleNationale.taux_avancement },
           avancementPrécédent: { annuel: null, global: chantierMailleNationale.taux_avancement_precedent ?? null },
           météo: chantierMailleNationale?.meteo as Météo ?? 'NON_RENSEIGNEE',
           écart: null,
