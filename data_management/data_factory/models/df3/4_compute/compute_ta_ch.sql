@@ -5,8 +5,8 @@ with
 ta_zone_indic as (
 	select 
 	b.indic_parent_ch, a.zone_id, z.zone_type as "maille", metric_date,a.indic_id,
-	vaca, vig, vca, vcg,
-	taa, tag
+	vaca, vig, vca_courant, vcg,
+	taa_courant, tag
 	from {{ ref('compute_ta_indic') }} a
 	left join {{ ref('metadata_indicateurs') }} b on a.indic_id =b.indic_id
 	left join {{ ref('metadata_zones') }} z on a.zone_id=z.zone_id 
@@ -23,10 +23,10 @@ select a.*, b.poids_pourcent_dept, b.poids_pourcent_reg, b.poids_pourcent_nat,
 		when maille='NAT' then poids_pourcent_nat
 	end as poids_pourcent_zone,
 	case 
-		when maille='DEPT' then taa*0.01*poids_pourcent_dept
-		when maille='REG' then taa*0.01*poids_pourcent_reg
-		when maille='NAT' then taa*0.01*poids_pourcent_nat
-	end as taa_pond,
+		when maille='DEPT' then taa_courant*0.01*poids_pourcent_dept
+		when maille='REG' then taa_courant*0.01*poids_pourcent_reg
+		when maille='NAT' then taa_courant*0.01*poids_pourcent_nat
+	end as taa_courant_pond,
 	case 
 		when maille='DEPT' then tag*0.01*poids_pourcent_dept
 		when maille='REG' then tag*0.01*poids_pourcent_reg
@@ -66,18 +66,18 @@ ta_ch as (
 	array_agg(poids_pourcent_nat) as p_nat,
 	array_agg(vaca) as vaca_agg, 
 	array_agg(vig) as vig_agg, 
-	array_agg(vca) as vca_agg, 
+	array_agg(vca_courant) as vca_courant_agg, 
 	array_agg(vcg) as vcg_agg, 
-	array_agg(taa) as taa_agg, 
-	array_agg(taa_pond) as taa_pond_agg, 
+	array_agg(taa_courant) as taa_courant_agg, 
+	array_agg(taa_courant_pond) as taa_courant_pond_agg, 
 	array_agg(tag) as tag_agg,
 	array_agg(tag_pond) as tag_pond_agg,
 	-- Calcul du TA par somme des TA pondérés et bornage dans [0,100] (+handle null)
 	case 
-		when sum(taa_pond) > 100 then 100
-		when sum(taa_pond) < 0 then 0
-		else sum(taa_pond)
-	end as taa_ch,
+		when sum(taa_courant_pond) > 100 then 100
+		when sum(taa_courant_pond) < 0 then 0
+		else sum(taa_courant_pond)
+	end as taa_courant_ch,
 	case 
 		when sum(tag_pond) > 100 then 100
 		when sum(tag_pond) < 0 then 0
