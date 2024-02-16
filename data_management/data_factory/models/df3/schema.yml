@@ -190,3 +190,15 @@ models:
         node_color: "#cd7f32"
       schema: public
       tags: ["df3"]
+  - name: get_max_date_taa_ch
+    description: |
+      Pour chaque {chantier, zone}, on retourne 2 dates qui indiquent les dates maximales que l'on peut prendre en compte pour les VA indicateur pour calculer le `taux_avancement_ch` et surtout le `taux_avancement_precedent_ch`.
+      Cela permet d'avoir 2 TA de chantier distincts, pour les comparer et en déduire une évolution du TA chantier.
+
+      En effet, pour calculer le TA du chantier actuellement, on prend les dernières valeurs dispos des indicateurs. En revanche, pour calculer le taux d'avancement précédent, ce n'est pas trivial car les indicateurs peuvent avoir des dates de màj différentes. Pour déterminer la date max pour calculer le TA précédent, il faut sélectionner la **date max de màj d'un indicateur du chantier qui est inférieure à la date la plus récente**. C'est le but de ce modèle.
+    columns:
+      - name: max_date_taa_courant_today
+        description: la date max que l'on peut prendre en compte pour calculer le taa_courant du chantier aujourd'hui
+      - name: max_date_taa_courant_previous
+        description: la date max que l'on peut prendre en compte pour calculer le taa_courant du chantier précédemment
+    

@@ -36,24 +36,27 @@ from ta_zone_indic a
 left join {{ ref('metadata_parametrage_indicateurs') }} b on a.indic_id=b.indic_id 
 order by indic_parent_ch, zone_id, metric_date, indic_id
 ),
--- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente
+-- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_today
 ta_zone_indic_pond_today as (
 select * from (
-	select *, rank() over (partition by zone_id, indic_id order by metric_date desc) as r,
+	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_taa_courant_today as max_date,
 	'today' as valid_on
-	from ta_zone_indic_pond 
-	where vaca is not null) a
+	from ta_zone_indic_pond a
+	left join {{ ref('get_max_date_taa_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
+	where vaca is not null
+	and metric_date::date<=max_date_taa_courant_today::date
+	) a
 where a.r=1
 ),
--- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente
---	MAIS en excluant les valeurs du mois courant. Ainsi, on aura le TA en vigeur au mois précédent.
+-- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_previous
 ta_zone_indic_pond_prev_month as (
 select * from (
-	select *, rank() over (partition by zone_id, indic_id order by metric_date desc) as r,
+	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_taa_courant_previous as max_date,
 	'prev_month' as valid_on
-	from ta_zone_indic_pond 
+	from ta_zone_indic_pond a
+	left join {{ ref('get_max_date_taa_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
 	where vaca is not null
-	and date_trunc('month', metric_date::date)<date_trunc('month', now()) 
+	and metric_date::date<=max_date_taa_courant_previous::date
 	) a
 where a.r=1
 ),
