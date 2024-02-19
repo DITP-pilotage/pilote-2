@@ -13,100 +13,12 @@ import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
 import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
-import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import '@gouvfr/dsfr/dist/utility/colors/colors.css';
-import Icône from '@/components/_commons/Icône/Icône';
 import {
   ChantierFicheTerritorialeContrat,
 } from '@/server/fiche-territoriale/app/contrats/ChantierFicheTerritorialeContrat';
+import { TableauFicheTerritoriale } from '@/components/PageFicheTerritoriale/TableauFicheTerritoriale';
 import PageFicheTerritorialeStyled from './PageFicheTerritoriale.styled';
-
-const TableauFicheTerritoriale: FunctionComponent<{ chantiersFicheTerritoriale: ChantierFicheTerritorialeContrat[] }> = ({ chantiersFicheTerritoriale }) => {
-
-  return (
-    <div className='fiche-territoriale--tableau fr-container--fluid fr-mt-2w'>
-      <div
-        className='fr-grid-row fr-p-2w fr-background-action-low--blue-france fiche-territoriale--entete'
-      >
-        <div
-          className='fr-col-8 fr-text--bold fr-px-4w'
-        >
-          Chantiers publiés au baromètre de l’action publique et leurs indicateurs
-        </div>
-        <div
-          className='fr-col-2 fr-text--bold'
-        >
-          Météo
-        </div>
-        <div
-          className='fr-col-2 fr-text--bold'
-        >
-          Avancement global
-        </div>
-      </div>
-      {
-        chantiersFicheTerritoriale.map((chantierFicheTerritoriale, index) => {
-          return (
-            <div
-              className='fr-grid-row fr-px-2w fr-py-1w fr-background-alt--grey'
-              key={`chantier-fiche-territoriale-${index}`}
-            >
-              <div
-                className='fr-col-8 fr-text--bold flex align-center fr-p-2w'
-              >
-                <div className='fr-pr-1w fr-text-title--blue-france'>
-                  <Icône
-                    id={chantierFicheTerritoriale.ministereIcone}
-                    key='une-icone'
-                  />
-                </div>
-                <span className='fiche-territoriale--contenu'>
-                  { chantierFicheTerritoriale.nom }
-                </span>
-              </div>
-              <div
-                className='fr-col-2 flex flex-column justify-end'
-              >
-                {
-                  chantierFicheTerritoriale.meteo !== 'NON_RENSEIGNEE' ? (
-                    <MétéoPicto
-                      météo={chantierFicheTerritoriale.meteo}
-                    />
-                  ) : (
-                    <span className='fr-text--sm fr-m-0 fr-text-mention--grey'>
-                      Non renseignée
-                    </span>
-                  )
-                }
-                <span className='fr-text--sm fr-m-0 fr-text-mention--grey'>
-                  {chantierFicheTerritoriale.dateQualitative}
-                </span>
-              </div>
-              <div
-                className='fr-col-2 flex flex-column justify-end'
-              >
-                {
-                  chantierFicheTerritoriale.tauxAvancement ? (
-                    <p className='fr-text--bold fr-text--xl fr-text-title--blue-france fr-my-0 fr-mt-2v'>
-                      {`${chantierFicheTerritoriale.tauxAvancement.toFixed(0)}%`}
-                    </p>
-                  ) : (
-                    <span className='fr-text--sm fr-m-0 fr-text-mention--grey'>
-                      Non renseignée
-                    </span>
-                  )
-                }
-                <span className='fr-text--sm fr-m-0 fr-text-mention--grey'>
-                  {chantierFicheTerritoriale.dateQuantitative}
-                </span>
-              </div>
-            </div>
-          );
-        })
-      }
-    </div>
-  );
-};
 
 export const PageFicheTerritoriale: FunctionComponent<{
   territoire: TerritoireContrat,
