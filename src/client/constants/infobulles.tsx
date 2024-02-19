@@ -30,17 +30,27 @@ const INFOBULLE_CONTENUS = {
       </>
     ),
     alertes: (
-      <ul className='fr-text--sm fr-mb-0'>
-        <li>
-          La première alerte signale les chantiers pour lesquels le territoire sélectionné a un recul significatif vis-à-vis du taux d’avancement global national.
-        </li>
-        <li>
-          La seconde alerte signale les chantiers pour lesquels le taux d’avancement a reculé ou n’a pas avancé lors de la dernière mise à jour des données quantitatives.
-        </li>
-        <li>
-          La dernière alerte signale les chantiers pour lesquels la date de mise à jour des données quantitatives est plus récente que celle des données qualitatives (météo, synthèse, commentaire). Les données qualitatives doivent donc être lues avec précaution.
-        </li>
-      </ul>
+      process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' ? 
+        <ul className='fr-text--sm fr-mb-0'>
+          <li>
+            La première alerte signale les chantiers pour lesquels le territoire sélectionné a un recul significatif vis-à-vis du taux d’avancement global national. Pour qu’un résultat apparaisse sur cette alerte, il faut sélectionner une région ou un département.
+          </li>
+          <li>
+            La seconde alerte signale les chantiers pour lesquels le taux d’avancement a reculé ou n’a pas avancé lors de la dernière mise à jour des données quantitatives.
+          </li>
+          <li>
+            La dernière alerte signale les chantiers pour lesquels la date de mise à jour des données quantitatives est plus récente que celle des données qualitatives (météo, synthèse, commentaire). Les données qualitatives doivent donc être lues avec précaution et peuvent potentiellement être susceptibles de mises à jour.
+          </li>
+        </ul>
+        :
+        <ul className='fr-text--sm fr-mb-0'>
+          <li>
+            La première alerte signale les chantiers pour lesquels le territoire sélectionné a un recul significatif vis-à-vis du taux d’avancement global national. Pour qu’un résultat apparaisse sur cette alerte, il faut sélectionner une région ou un département.
+          </li>
+          <li>
+            La seconde alerte signale les chantiers pour lesquels la date de mise à jour des données quantitatives est plus récente que celle des données qualitatives (météo, synthèse, commentaire). Les données qualitatives doivent donc être lues avec précaution et peuvent potentiellement être susceptibles de mises à jour.
+          </li>
+        </ul>
     ),
     listeDesChantiers: (
       <>
