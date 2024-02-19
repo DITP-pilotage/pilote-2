@@ -34,6 +34,7 @@ describe('PrismaTerritoireRepository', () => {
 
       // Then
       expect(result.nomAffiché).toStrictEqual('34 - Hérault');
+      expect(result.codeInsee).toStrictEqual('34');
     });
   });
 });

@@ -1,14 +1,28 @@
 import { Territoire } from '@/server/fiche-territoriale/domain/Territoire';
 
 export class TerritoireBuilder {
-  private _nomAffiché: string = 'Un territoire';
+  private nomAffiché: string = 'Un territoire';
+
+  private maille: 'DEPT' | 'REG' | 'NAT' = 'DEPT';
+
+  private codeInsee: string = '34';
 
   public withNomAffiché(nomAffiché: string): TerritoireBuilder {
-    this._nomAffiché = nomAffiché;
+    this.nomAffiché = nomAffiché;
+    return this;
+  }
+
+  public withMaille(maille: 'DEPT' | 'REG' | 'NAT'): TerritoireBuilder {
+    this.maille = maille;
+    return this;
+  }
+
+  withCodeInsee(codeInsee: string) {
+    this.codeInsee = codeInsee;
     return this;
   }
 
   public build(): Territoire {
-    return Territoire.creerTerritoire({ nomAffiché: this._nomAffiché });
+    return Territoire.creerTerritoire({ nomAffiché: this.nomAffiché, maille: this.maille, codeInsee: this.codeInsee });
   }
 }

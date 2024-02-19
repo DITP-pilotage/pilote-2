@@ -6,11 +6,6 @@ const HeaderFicheTerritorialeStyled = styled.div`
   @media print {
     display: block;
   }
-
-  @page {
-    size: auto;   /* auto is the initial value */
-    margin: 1rem;  /* this affects the margin in the printer settings */
-  }
 `;
 
 export default HeaderFicheTerritorialeStyled;

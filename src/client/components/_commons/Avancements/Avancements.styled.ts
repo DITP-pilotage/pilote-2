@@ -14,11 +14,11 @@ const AvancementsStyled = styled.div`
     flex-basis: 100%;
     flex-wrap: wrap;
   }
-  
+
   .jauges-statistiques {
     display: flex;
     column-gap: 1.5rem;
-    
+
     @media (width > ${breakpointL}) and (width < 84rem) {
       column-gap: 0.5rem;
     }

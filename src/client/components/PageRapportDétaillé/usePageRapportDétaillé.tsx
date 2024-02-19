@@ -4,6 +4,7 @@ import useChantiersFiltrés from '@/components/useChantiersFiltrés';
 
 export default function usePageRapportDétaillé(chantiers: Chantier[]) {
   const { chantiersFiltrés, chantiersFiltrésSansFiltreAlerte } = useChantiersFiltrés(chantiers);
+
   const {
     avancementsAgrégés,
     répartitionMétéos,

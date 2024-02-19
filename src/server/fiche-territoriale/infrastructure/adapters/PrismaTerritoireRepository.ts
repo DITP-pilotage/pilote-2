@@ -3,7 +3,7 @@ import { TerritoireRepository } from '@/server/fiche-territoriale/domain/ports/T
 import { Territoire } from '@/server/fiche-territoriale/domain/Territoire';
 
 const convertirEnTerritoire = (territoireModel: TerritoireModel): Territoire => {
-  return Territoire.creerTerritoire({ nomAffiché: territoireModel.nom_affiche });
+  return Territoire.creerTerritoire({ nomAffiché: territoireModel.nom_affiche, maille: territoireModel.maille, codeInsee: territoireModel.code_insee });
 };
 
 export class PrismaTerritoireRepository implements TerritoireRepository {
@@ -21,7 +21,5 @@ export class PrismaTerritoireRepository implements TerritoireRepository {
     }
 
     return convertirEnTerritoire(territoireModel);
-
-
   }
 }

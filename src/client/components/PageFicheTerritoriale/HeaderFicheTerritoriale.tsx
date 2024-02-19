@@ -5,7 +5,7 @@ const HeaderFicheTerritoriale: FunctionComponent<{}> = () => {
   return (
     <HeaderFicheTerritorialeStyled>
       <header
-        className='flex fr-px-12w fr-mb-6w'
+        className='flex fr-px-4w fr-mb-6w'
         role='banner'
       >
         <p className='fr-logo'>

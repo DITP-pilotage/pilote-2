@@ -45,7 +45,7 @@ export default function NextPageRapportDétaillé({
   if (process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE !== 'true') {
     return;
   }
-  
+
   return (
     <>
       <Head>
@@ -94,6 +94,7 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
     dependencies.getMinistèreRepository(),
     dependencies.getTerritoireRepository(),
   ).run(session.habilitations, session.profil);
+
   const chantiersIds = chantiers.map(chantier => chantier.id);
 
   const ministèreRepository = dependencies.getMinistèreRepository();

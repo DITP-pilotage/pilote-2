@@ -28,7 +28,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
     donnéesTableauChantiers,
     remontéesAlertes,
   } = usePageRapportDétaillé(chantiers);
-  
+
   return (
     <RapportDétailléVueDEnsembleStyled>
       <Encart>

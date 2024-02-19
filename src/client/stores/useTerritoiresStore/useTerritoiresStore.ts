@@ -60,8 +60,6 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
     },
 
     modifierTerritoireSélectionné: territoireCode => {
-
-      console.log('ici');
       const territoire = get().territoiresAccessiblesEnLecture.find(t => t.code === territoireCode)!;
 
       set({
