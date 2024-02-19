@@ -35,18 +35,21 @@ export function useRemontéesAlertesChantiers(chantiersFiltrés: Chantier[]) {
   return {
     remontéesAlertes: [
       {
-        libellé: 'Écart(s) supérieur(s) de 10 points à la moyenne nationale',
+        nomCritère: 'estEnAlerteÉcart',
+        libellé: 'Retard supérieur de 10 points par rapport à la moyenne nationale',
         nombre: maille === 'nationale' ? null : filtresComptesCalculés.estEnAlerteÉcart.nombre,
         auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteÉcart', nom: 'Écart(s) supérieur(s) de 10 points à la moyenne nationale' }, 'filtresAlerte'),
         estActivée: estActif('estEnAlerteÉcart', 'filtresAlerte'),
       },
       {
+        nomCritère: 'estEnAlerteBaisseOuStagnation',
         libellé: 'Tendance(s) en baisse ou en stagnation',
         nombre: filtresComptesCalculés.estEnAlerteBaisseOuStagnation.nombre,
         auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteBaisseOuStagnation', nom: 'Tendance(s) en baisse ou en stagnation' }, 'filtresAlerte'),
         estActivée: estActif('estEnAlerteBaisseOuStagnation', 'filtresAlerte'),
       },
       {
+        nomCritère: 'estEnAlerteDonnéesNonMàj',
         libellé: 'Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour',
         nombre: filtresComptesCalculés.estEnAlerteDonnéesNonMàj.nombre,
         auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteDonnéesNonMàj', nom: 'Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour' }, 'filtresAlerte'),
