@@ -4,32 +4,34 @@ WITH resp_locaux_chantiers AS (
         INITCAP(u.prenom) || ' ' || INITCAP(u.nom) AS nom, 
         u.email AS email,
         u.profil_code,
-        UNNEST(h.territoires) AS territoire_code,
-        UNNEST(h.chantiers) AS chantier_id
+        t.territoire_code,
+        c.chantier_id
     FROM 
         {{ source('db_schema_public', 'habilitation') }} h 
-        LEFT JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id 
+        JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id AND h.scope_code = 'lecture'
+        LEFT JOIN UNNEST(h.territoires) AS t(territoire_code) ON true
+        LEFT JOIN UNNEST(h.chantiers) AS c(chantier_id) ON true
     WHERE 
-        u.profil_code in ('RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT') 
-        AND h.scope_code = 'lecture'
+        u.profil_code in ('RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT')
 ),
 
--- Directeurs de projets avec des habilitations sur les périmètres
+-- responsables locaux avec des habilitations sur les périmètres
 resp_locaux_perimetres AS (
     SELECT 
         INITCAP(u.prenom) || ' ' || INITCAP(u.nom) AS nom, 
         u.email AS email, 
         u.profil_code,
-        UNNEST(h.territoires) AS territoire_code,
-        UNNEST(h.perimetres) AS perimetre_id
+        t.territoire_code,
+        p.perimetre_id
     FROM 
-        {{ source('db_schema_public', 'habilitation') }} h 
-        LEFT JOIN {{ source('db_schema_public', 'utilisateur') }} u ON h.utilisateur_id = u.id 
+        {{ source('db_schema_public', 'utilisateur') }} u
+        JOIN {{ source('db_schema_public', 'habilitation') }} h ON h.utilisateur_id = u.id AND h.scope_code = 'lecture'
+        LEFT JOIN UNNEST(h.territoires) AS t(territoire_code) ON true
+        LEFT JOIN UNNEST(h.perimetres) AS p(perimetre_id) ON true
     WHERE 
         u.profil_code IN ('RESPONSABLE_REGION', 'RESPONSABLE_DEPARTEMENT') 
-        AND h.scope_code = 'lecture'
-        and h.perimetres <> '{}'
-        and h.territoires <> '{}'	
+        AND t.territoire_code IS NOT NULL
+        AND p.perimetre_id IS NOT null
 ),
 
 corresp_perimetres AS (
