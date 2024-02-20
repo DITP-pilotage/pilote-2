@@ -26,7 +26,9 @@ renamed as (
         engagement_short as nom_engagement,
         ch_hidden_pilote as est_cache_dans_pilote,
         ch_saisie_ate as ate,
-        ch_state as statut
+        ch_state as statut,
+        CAST(zg_applicable as TEXT) as zone_groupe_applicable,
+        string_to_array(maille_applicable, ' | ') as maille_applicable
 
     from source
 

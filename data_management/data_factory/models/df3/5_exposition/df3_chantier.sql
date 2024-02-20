@@ -83,6 +83,14 @@ select
 	array_agg(porteur_short) p_shorts 
 	from ch_unnest_porteurs_dac_pnames
 group by chantier_id
+),
+mailles_applicables as (
+    SELECT 
+        id AS chantier_id, 
+        unnest(coalesce(maille_applicable, '{NAT,DEPT,REG}')) AS maille_applicable,
+        true AS maille_est_applicable
+    FROM 
+        raw_data.stg_ppg_metadata__chantiers mc 
 )
 
 
@@ -120,7 +128,7 @@ select
     has_ta.has_ta_reg as a_taux_avancement_regional,
     ch_has_meteo.has_meteo_dept as a_meteo_departemental,
     ch_has_meteo.has_meteo_reg as a_meteo_regional,
-    chantier_za.est_applicable as est_applicable,
+    COALESCE (chantier_za.zone_est_applicable, true) AND COALESCE (mailles_applicables.maille_est_applicable, false) AS est_applicable,
     false as a_supprimer
 from {{ ref('metadata_chantiers') }} mc
 -- On dupplique les lignes chantier pour chaque territoire
@@ -139,13 +147,14 @@ left join
 left join {{ ref('metadata_ppgs') }} ppg on mc.ch_ppg =ppg.ppg_id
 left join {{ ref('metadata_axes') }} ax on ppg.ppg_axe =ax.axe_id
 LEFT JOIN chantier_est_barometre on mc.chantier_id = chantier_est_barometre.chantier_id
-LEFT JOIN chantiers_zones_applicables chantier_za ON chantier_za.chantier_id = mc.chantier_id AND chantier_za.zone_id = z.zone_id
 left join ch_maille_has_ta_pivot_clean as has_ta on has_ta.chantier_id=mc.chantier_id
 left join ch_has_meteo on ch_has_meteo.chantier_id=mc.chantier_id 
 left join 
 	(select * from {{ ref('compute_ta_ch') }} where valid_on='today') as ta_ch_today on ta_ch_today.chantier_id=mc.chantier_id and ta_ch_today.zone_id=z.zone_id 
 left join 
 	(select * from {{ ref('compute_ta_ch') }} where valid_on='prev_month') as ta_ch_prev_month on ta_ch_prev_month.chantier_id=mc.chantier_id and ta_ch_prev_month.zone_id=z.zone_id
+LEFT JOIN mailles_applicables ON mailles_applicables.chantier_id = mc.chantier_id AND mailles_applicables.maille_applicable = z.zone_type
+LEFT JOIN {{ ref('int_chantiers_zone_applicables')}} chantier_za ON chantier_za.chantier_id = mc.chantier_id AND chantier_za.zone_id = z.zone_id
 order by mc.chantier_id, t.zone_id
 
 
