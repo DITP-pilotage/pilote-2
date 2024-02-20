@@ -6,6 +6,7 @@ import { SyntheseDesResultatsRepository } from '@/server/fiche-territoriale/doma
 import { IndicateurRepository } from '@/server/fiche-territoriale/domain/ports/IndicateurRepository';
 import { MinistereRepository } from '@/server/fiche-territoriale/domain/ports/MinistereRepository';
 import { Ministere } from '@/server/fiche-territoriale/domain/Ministere';
+import { IndicateurFicheTerritoriale } from '@/server/fiche-territoriale/domain/IndicateurFicheTerritoriale';
 
 interface Dependencies {
   chantierRepository: ChantierRepository,
@@ -61,7 +62,10 @@ export class RécupérerListeChantierFicheTerritorialeUseCase {
         this.ministereRepository.recupererMapMinistereParListeCodeMinistere({ listeCodeMinistere: listeCodeMinisterePorteur }),
       ],
     );
-    
+
+    const listeIndicateurId = [...mapIndicateurs.values()].flat().map(indicateur => indicateur.id);
+    const mapIndicateursNationale = await this.indicateurRepository.recupererMapIndicateursNationalParListeIndicateurId({ listeIndicateurId });
+
     return chantiers.map(chantier => ChantierFicheTerritoriale.creerChantierFicheTerritoriale({
       nom: chantier.nom,
       meteo: chantier.meteo,
@@ -69,6 +73,16 @@ export class RécupérerListeChantierFicheTerritorialeUseCase {
       ministerePorteur: Ministere.creerMinistere({ icone: mapMinistere.get(chantier.codeMinisterePorteur)?.icone || '', code: chantier.codeMinisterePorteur }),
       dateQualitative: ChantierFicheTerritoriale.calculerDateQualitative(mapSyntheseDesResultats.get(chantier.id) || []),
       dateQuantitative: ChantierFicheTerritoriale.calculerDateQuantitative(mapIndicateurs.get(chantier.id) || []),
+      indicateurs: mapIndicateurs.get(chantier.id)?.map(indicateur => {
+        return IndicateurFicheTerritoriale.creerIndicateurFicheTerritoriale({
+          valeurActuelle: indicateur.valeurActuelle,
+          nom: indicateur.nom,
+          uniteMesure: indicateur.uniteMesure,
+          tauxAvancement: indicateur.objectifTauxAvancement,
+          valeurCible: indicateur.valeurCible,
+          tauxAvancementNational: mapIndicateursNationale.get(indicateur.id)?.objectifTauxAvancement || null,
+        });
+      }) || [],
     }));
   }
 }

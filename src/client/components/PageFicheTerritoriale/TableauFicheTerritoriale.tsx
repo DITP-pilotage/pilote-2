@@ -89,7 +89,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                 </div>
               </div>
               <div
-                className='fr-grid-row fr-px-2w fr-pt-1w indicateur-fiche-territoriale--entete'
+                className='fr-grid-row fr-pt-1w indicateur-fiche-territoriale--entete fr-px-2w'
                 key={`indicateur-fiche-territoriale-${index}`}
               >
                 <div
@@ -98,11 +98,11 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                 <div
                   className='fr-col-1 flex flex-column justify-end fr-p-0'
                 >
-                  <span className='fiche-territoriale--contenu--xs fr-m-0 fr-p-0 fr-text-mention--grey'>
+                  <span className='fiche-territoriale--contenu--xs fr-text-mention--grey'>
                     Dernière valeur
                   </span>
-                  <span className='fiche-territoriale--contenu--xs fr-m-0 fr-p-0 fr-text-mention--grey'>
-                    (10/2021)
+                  <span className='fiche-territoriale--contenu--xs fr-text-mention--grey'>
+                    {chantierFicheTerritoriale.dateQualitative }
                   </span>
                 </div>
                 <div
@@ -132,7 +132,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                   return (
 
                     <div
-                      className='fr-grid-row fr-px-2w fr-pb-1w'
+                      className='fr-grid-row fiche-territoriale--contenu--row fr-px-2w fr-pb-1w'
                       key={`indicateur-fiche-territoriale-${index}-${indexFicheTerritoriale}`}
                     >
                       <div
@@ -143,24 +143,64 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                         </span>
                       </div>
                       <div
-                        className='fr-col-1 fr-text--xs flex flex-column justify-center'
+                        className='fr-col-1 flex flex-column justify-center'
                       >
-                        {`${indicateur.valeurActuelle.toFixed(0)}%`}
+                        {
+                          indicateur.valeurActuelle ? (
+                            <span className='fr-text--xs fr-m-0'>
+                              {`${indicateur.valeurActuelle.toFixed(0)}${indicateur.uniteMesure?.toLocaleLowerCase() === 'pourcentage' ? '%' : ''}`}
+                            </span>
+                          ) : (
+                            <span className='fiche-territoriale--contenu--xs'>
+                              Non renseignée
+                            </span>
+                          )
+                        }
                       </div>
                       <div
-                        className='fr-col-1 fr-text--xs flex flex-column justify-center'
+                        className='fr-col-1 flex flex-column justify-center'
                       >
-                        {`${indicateur.valeurCible.toFixed(0)}%`}
+                        {
+                          indicateur.valeurCible ? (
+                            <span className='fr-text--xs fr-m-0'>
+                              {`${indicateur.valeurCible.toFixed(0)}${indicateur.uniteMesure?.toLocaleLowerCase() === 'pourcentage' ? '%' : ''}`}
+                            </span>
+                          ) : (
+                            <span className='fiche-territoriale--contenu--xs'>
+                              Non renseignée
+                            </span>
+                          )
+                        }
                       </div>
                       <div
-                        className='fr-col-2 fr-text--xs flex flex-column justify-center'
+                        className='fr-col-2 flex flex-column justify-center'
                       >
-                        {`${indicateur.tauxAvancement.toFixed(0)}%`}
+                        {
+                          indicateur.tauxAvancement ? (
+                            <span className='fr-text--xs fr-m-0'>
+                              {`${indicateur.tauxAvancement.toFixed(0)}%`}
+                            </span>
+                          ) : (
+                            <span className='fiche-territoriale--contenu--xs'>
+                              Non renseignée
+                            </span>
+                          )
+                        }
                       </div>
                       <div
-                        className='fr-col-2 fr-text--xs flex flex-column justify-center'
+                        className='fr-col-2 flex flex-column justify-center'
                       >
-                        {`${indicateur.tauxAvancementNational.toFixed(0)}%`}
+                        {
+                          indicateur.tauxAvancementNational ? (
+                            <span className='fr-text--xs fr-m-0'>
+                              {`${indicateur.tauxAvancementNational.toFixed(0)}%`}
+                            </span>
+                          ) : (
+                            <span className='fiche-territoriale--contenu--xs'>
+                              Non renseignée
+                            </span>
+                          )
+                        }
                       </div>
                     </div>
                   );

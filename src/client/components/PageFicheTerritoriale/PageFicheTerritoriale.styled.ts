@@ -1,6 +1,21 @@
 import styled from '@emotion/styled';
 
 const PageFicheTerritorialeStyled = styled.div`
+  .fiche-territoriale__avancement {
+    height: 100%;
+  }
+  .fiche-territoriale__avancement--meteo {
+    width: 3rem;
+  }
+  
+  .pourcentage {
+    p {
+      font-size: 2rem!important;
+      padding-bottom: 1rem;
+    }
+    text-align: center;
+  }
+  
   .fiche-territoriale--tableau {
     div.fr-grid-row:first-of-type {
       border-top-left-radius: 8px;
@@ -12,8 +27,12 @@ const PageFicheTerritorialeStyled = styled.div`
       width: 28px;
       height: 28px;
     }
+    
     .fiche-territoriale--contenu--xs {
       font-size: 0.6rem !important;
+    }    
+    .fiche-territoriale--contenu--row:not(:first-of-type) {
+      border-top: 1px solid var(--grey-975-75);    
     }
   }
   
@@ -23,7 +42,8 @@ const PageFicheTerritorialeStyled = styled.div`
       max-height: 1rem;
     }
     .indicateur-fiche-territoriale--entete {
-      padding: 0!important;
+      padding-top: 0!important;
+      padding-bottom: 0!important;
       margin: 0!important;
     }
     .chantier-fiche-territoriale--contenu {
@@ -51,15 +71,12 @@ const PageFicheTerritorialeStyled = styled.div`
         font-size: 0.4rem !important;
       }
     }
-    
     div.fr-grid-row {
       font-size: 0.7rem !important;
     }
   }
-  
   @page {
-    size: auto;   /* auto is the initial value */
-    margin: 1rem;  /* this affects the margin in the printer settings */
+    margin: 1.5cm 0.5cm;
   }
 `;
 

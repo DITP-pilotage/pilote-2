@@ -36,10 +36,44 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
 
     return result.reduce((acc, val) => {
       const indicateur = Indicateur.creerIndicateur({
+        id: val.id,
+        nom: val.nom,
         dateValeurActuelle: val.date_valeur_actuelle?.toISOString() || '',
+        objectifTauxAvancement: val.objectif_taux_avancement,
+        valeurActuelle: val.valeur_actuelle,
+        valeurCible: val.objectif_valeur_cible,
+        uniteMesure: val.unite_mesure,
       });
       acc.set(val.chantier_id, [...(acc.get(val.chantier_id) || []), indicateur]);
       return acc;
-    }, new Map<string, Indicateur[]>);
+    }, new Map<string, Indicateur[]>());
+  }
+
+  async recupererMapIndicateursNationalParListeIndicateurId({ listeIndicateurId }: {
+    listeIndicateurId: string[]
+  }): Promise<Map<string, Indicateur>> {
+    const result = await this.prismaClient.indicateur.findMany({
+      where: {
+        id: {
+          in: listeIndicateurId,
+        },
+        maille: 'NAT',
+        code_insee: 'FR',
+      },
+    });
+
+    return result.reduce((acc, val) => {
+      const indicateur = Indicateur.creerIndicateur({
+        id: val.id,
+        nom: val.nom,
+        dateValeurActuelle: val.date_valeur_actuelle?.toISOString() || '',
+        objectifTauxAvancement: val.objectif_taux_avancement,
+        valeurActuelle: val.valeur_actuelle,
+        valeurCible: val.objectif_valeur_cible,
+        uniteMesure: val.unite_mesure,
+      });
+      acc.set(val.id, indicateur);
+      return acc;
+    }, new Map<string, Indicateur>()); 
   }
 }

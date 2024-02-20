@@ -6,4 +6,8 @@ export interface IndicateurRepository {
     maille: string
     codeInsee: string
   }) => Promise<Map<string, Indicateur[]>>
+
+  recupererMapIndicateursNationalParListeIndicateurId: ({ listeIndicateurId }: {
+    listeIndicateurId: string[]
+  }) => Promise<Map<string, Indicateur>>
 }

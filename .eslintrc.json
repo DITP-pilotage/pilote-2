@@ -105,6 +105,7 @@
     "react/jsx-no-literals": "off",
     "react/forbid-component-props": "off",
     "react/require-default-props": "off",
+    "react/jsx-max-depth": "off",
     "react/function-component-definition": "off",
     "react/no-unescaped-entities": "off",
     "react/jsx-props-no-spreading": "off",
@@ -127,12 +128,6 @@
     "react/jsx-indent-props": [
       2,
       2
-    ],
-    "react/jsx-max-depth": [
-      2,
-      {
-        "max": 9
-      }
     ],
     "react/jsx-newline": [
       2,

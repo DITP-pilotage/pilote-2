@@ -18,6 +18,8 @@ import {
   ChantierFicheTerritorialeContrat,
 } from '@/server/fiche-territoriale/app/contrats/ChantierFicheTerritorialeContrat';
 import { TableauFicheTerritoriale } from '@/components/PageFicheTerritoriale/TableauFicheTerritoriale';
+import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
+import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import PageFicheTerritorialeStyled from './PageFicheTerritoriale.styled';
 
 export const PageFicheTerritoriale: FunctionComponent<{
@@ -37,7 +39,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
             <div className='flex justify-between'>
               <Titre
                 baliseHtml='h2'
-                className='fr-h2 fr-mb-0 fr-text-title--blue-france'
+                className='fr-h4 fr-mb-0 fr-text-title--blue-france'
               >
                 {`Fiche territoriale de synthèse ${territoire.nomAffiché}`}
               </Titre>
@@ -53,30 +55,62 @@ export const PageFicheTerritoriale: FunctionComponent<{
           </p>
           <Titre
             baliseHtml='h1'
-            className='fr-h2 fr-mt-2w fr-px-2w'
+            className='fr-h3 fr-mt-0 fr-px-2w'
           >
             Vue générale
           </Titre>
-          <div className='fr-px-2w'>
-            <Bloc>
-              <div className='fr-grid-row'>
-                <section className='fr-col-4 fr-px-2w'>
-                  <TitreInfobulleConteneur>
-                    <Titre
-                      baliseHtml='h2'
-                      className='fr-text--lg fr-mb-2w fr-py-1v'
-                      estInline
-                    >
-                      Taux d’avancement moyen
-                    </Titre>
-                    <Infobulle idHtml='infobulle-chantiers-jauges'>
-                      {INFOBULLE_CONTENUS.chantiers.jauges}
-                    </Infobulle>
-                  </TitreInfobulleConteneur>
-                  <AvancementsFicheTerritoriale avancementGlobalTerritoire={avancementGlobalTerritoire} />
-                </section>
-                <hr className='fr-hr fr-my-3w fr-pb-1v' />
-                <section className='fr-col-8'>
+          <div className='fr-grid-row fr-px-2w'>
+            <div className='fr-col-4 fr-pr-1v fiche-territoriale__avancement'>
+              <div className='fiche-territoriale__avancement--moyen fr-mb-1w'>
+                <Bloc>
+                  <div className='flex flex-column align-center'>
+                    <TitreInfobulleConteneur>
+                      <Titre
+                        baliseHtml='h2'
+                        className='fr-text--lg fr-mb-2w fr-py-1v'
+                        estInline
+                      >
+                        Taux d’avancement moyen
+                      </Titre>
+                      <Infobulle idHtml='infobulle-chantiers-jauges'>
+                        {INFOBULLE_CONTENUS.chantiers.jauges}
+                      </Infobulle>
+                    </TitreInfobulleConteneur>
+                    <AvancementsFicheTerritoriale avancementGlobalTerritoire={avancementGlobalTerritoire} />
+                  </div>
+                </Bloc>
+              </div>
+              <div className='fiche-territoriale__avancement--annuel'>
+                <Bloc>
+                  <div className='flex flex-column align-center'>
+                    <TitreInfobulleConteneur>
+                      <Titre
+                        baliseHtml='h2'
+                        className='fr-text--lg fr-mb-2w fr-py-1v'
+                        estInline
+                      >
+                        Taux d’avancement de l’année en cours
+                      </Titre>
+                    </TitreInfobulleConteneur>
+                    <div className='w-half-full'>
+                      <BarreDeProgression
+                        afficherTexte
+                        bordure={null}
+                        fond='bleu'
+                        positionTexte='dessus'
+                        taille='md'
+                        valeur={27}
+                        variante='primaire'
+                      />
+                    </div>
+                  </div>
+                </Bloc>
+              </div>
+            </div>
+            <div className='fr-col-8 fr-pl-1v'>
+
+              <Bloc>
+                <div className='fr-grid-row'>
                   <TitreInfobulleConteneur>
                     <Titre
                       baliseHtml='h2'
@@ -89,10 +123,62 @@ export const PageFicheTerritoriale: FunctionComponent<{
                       {INFOBULLE_CONTENUS.chantiers.météos}
                     </Infobulle>
                   </TitreInfobulleConteneur>
+                  <ul className='fr-raw-list'>
+                    <li className='fr-mb-1w'>
+                      <div className='flex'>
+                        <div className='fiche-territoriale__avancement--meteo'>
+                          <MétéoPicto
+                            météo='ORAGE'
+                          />
+                        </div>
+                        <span className='fr-pl-1w'>
+                          Le déploiement du chantier prioritaire rencontrent des difficultés importantes qui empêche la réalisation des objectifs fixée.
+                        </span>
+                      </div>
+                    </li>
+                    <li className='fr-mb-1w'>
+                      <div className='flex'>
+                        <div className='fiche-territoriale__avancement--meteo'>
+                          <MétéoPicto
+                            météo='NUAGE'
+                          />
+                        </div>
+                        <span className='fr-pl-1w'>
+                          Le déploiement du chantier prioritaire rencontre des obstacles importants. Une intervention
+                          directe du directeur de projet est nécessaire afin de résoudre les difficultés.
+                        </span>
+                      </div>
+                    </li>
+                    <li className='fr-mb-1w'>
+                      <div className='flex'>
+                        <div className='fiche-territoriale__avancement--meteo'>
+                          <MétéoPicto
+                            météo='COUVERT'
+                          />
+                        </div>
+                        <span className='fr-pl-1w'>
+                          Le déploiement du chantier prioritaire ne rencontre pas de difficultés majeures. Les possibles
+                          difficultés sont résolues directement sur le terrain.
+                        </span>
+                      </div>
+                    </li>
+                    <li className='fr-mb-1w'>
+                      <div className='flex'>
+                        <div className='fiche-territoriale__avancement--meteo'>
+                          <MétéoPicto
+                            météo='SOLEIL'
+                          />
+                        </div>
+                        <span className='fr-pl-1w'>
+                          Le chantier prioritaire se déploie sans difficultés. Aucun appui nécessaire.
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
                   <RépartitionMétéo météos={répartitionMétéos} />
-                </section>
-              </div>
-            </Bloc>
+                </div>
+              </Bloc>
+            </div>
           </div>
           <div className='fr-px-2w fr-mt-2w'>
             <Bloc>
@@ -109,6 +195,5 @@ export const PageFicheTerritoriale: FunctionComponent<{
         </div>
       </main>
     </PageFicheTerritorialeStyled>
-  )
-  ;
+  );
 };

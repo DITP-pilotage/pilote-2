@@ -1,12 +1,14 @@
 import { ChantierFicheTerritoriale } from '@/server/fiche-territoriale/domain/ChantierFicheTerritoriale';
 import { formaterDate } from '@/client/utils/date/date';
+import { IndicateurFicheTerritoriale } from '@/server/fiche-territoriale/domain/IndicateurFicheTerritoriale';
 
 interface IndicateurFicheTerritorialeContrat {
-  tauxAvancementNational: number;
-  tauxAvancement: number;
-  valeurActuelle: number;
-  valeurCible: number;
+  tauxAvancementNational: number | null;
+  tauxAvancement: number | null;
+  valeurActuelle: number | null;
+  valeurCible: number | null;
   nom: string
+  uniteMesure: string | null
 }
 
 export interface ChantierFicheTerritorialeContrat {
@@ -19,6 +21,15 @@ export interface ChantierFicheTerritorialeContrat {
   indicateurs: IndicateurFicheTerritorialeContrat[];
 }
 
+const presenterEnIndicateurFicheTerritorialeContrat = (indicateur: IndicateurFicheTerritoriale): IndicateurFicheTerritorialeContrat => ({
+  nom: indicateur.nom,
+  valeurActuelle: indicateur.valeurActuelle,
+  valeurCible: indicateur.valeurCible,
+  tauxAvancement: indicateur.tauxAvancement,
+  tauxAvancementNational: indicateur.tauxAvancementNational,
+  uniteMesure: indicateur.uniteMesure,
+});
+
 export const presenterEnChantierFicheTerritorialeContrat = (chantier: ChantierFicheTerritoriale): ChantierFicheTerritorialeContrat => (
   {
     nom: chantier.nom,
@@ -27,20 +38,6 @@ export const presenterEnChantierFicheTerritorialeContrat = (chantier: ChantierFi
     dateQualitative: chantier.dateQualitative ? `(${formaterDate(chantier.dateQualitative, 'MM/YYYY')})` : '',
     dateQuantitative: chantier.dateQuantitative ? `(${formaterDate(chantier.dateQuantitative, 'MM/YYYY')})` : '',
     ministereIcone: chantier.ministerePorteur.icone,
-    indicateurs: [
-      {
-        nom: 'Nombre de places d\'hébergement et en logement adapté dédiées aux femmes victimes de violences',
-        valeurActuelle: 10.03,
-        valeurCible: 21.18,
-        tauxAvancement: 40.53,
-        tauxAvancementNational: 50.12,
-      }, {
-        nom: 'Nombre de zones couvertes par les pylônes 4G du New Deal Mobile mis en service',
-        valeurActuelle: 32.03,
-        valeurCible: 53.18,
-        tauxAvancement: 12.53,
-        tauxAvancementNational: 34.12,
-      },
-    ],
+    indicateurs: chantier.indicateurs.map(presenterEnIndicateurFicheTerritorialeContrat),
   }
 );
