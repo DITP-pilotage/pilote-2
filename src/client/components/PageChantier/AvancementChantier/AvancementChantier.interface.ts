@@ -5,7 +5,21 @@ export default interface AvancementChantierProps {
   chantierId: Chantier['id']
   avancements: {
     nationale: AvancementsStatistiques
-    départementale: { moyenne: number | null | undefined }
-    régionale: { moyenne: number | null | undefined }
+    départementale: { 
+      global: {
+        moyenne: number | null | undefined
+      },
+      annuel: {
+        moyenne: number | null | undefined
+      },
+    }
+    régionale: { 
+      global: {
+        moyenne: number | null | undefined
+      },
+      annuel: {
+        moyenne: number | null | undefined
+      },
+    }
   } 
 }
