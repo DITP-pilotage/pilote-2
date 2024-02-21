@@ -24,6 +24,7 @@ import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleContene
 import RemontéeAlerte from '@/components/_commons/RemontéeAlerte/RemontéeAlerte';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatuts/SélecteurVueStatuts';
+import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import PageChantiersStyled from './PageChantiers.styled';
 import PageChantiersProps from './PageChantiers.interface';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
@@ -64,7 +65,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
           </Titre>
           <div className='titre-liens'>
             {
-              process.env.NEXT_PUBLIC_FF_FICHE_TERRITORIALE === 'true' && (
+              process.env.NEXT_PUBLIC_FF_FICHE_TERRITORIALE === 'true' && estAutoriséAConsulterLaFicheTerritoriale(session?.profil || '') && (
                 <div>
                   <Link
                     className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'

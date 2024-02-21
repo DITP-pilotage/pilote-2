@@ -125,13 +125,13 @@ export const PageFicheTerritoriale: FunctionComponent<{
                   </TitreInfobulleConteneur>
                   <ul className='fr-raw-list'>
                     <li className='fr-mb-1w'>
-                      <div className='flex'>
+                      <div className='flex align-center'>
                         <div className='fiche-territoriale__avancement--meteo'>
                           <MétéoPicto
                             météo='ORAGE'
                           />
                         </div>
-                        <span className='fr-pl-1w'>
+                        <span className='fr-pl-1w fr-text--sm fr-m-0'>
                           Le déploiement du chantier prioritaire rencontrent des difficultés importantes qui empêche la réalisation des objectifs fixée.
                         </span>
                       </div>
@@ -143,20 +143,20 @@ export const PageFicheTerritoriale: FunctionComponent<{
                             météo='NUAGE'
                           />
                         </div>
-                        <span className='fr-pl-1w'>
+                        <span className='fr-pl-1w fr-text--sm fr-m-0'>
                           Le déploiement du chantier prioritaire rencontre des obstacles importants. Une intervention
                           directe du directeur de projet est nécessaire afin de résoudre les difficultés.
                         </span>
                       </div>
                     </li>
-                    <li className='fr-mb-1w'>
+                    <li className='fr-mb-1w fr-text--sm'>
                       <div className='flex'>
                         <div className='fiche-territoriale__avancement--meteo'>
                           <MétéoPicto
                             météo='COUVERT'
                           />
                         </div>
-                        <span className='fr-pl-1w'>
+                        <span className='fr-pl-1w fr-text--sm fr-m-0'>
                           Le déploiement du chantier prioritaire ne rencontre pas de difficultés majeures. Les possibles
                           difficultés sont résolues directement sur le terrain.
                         </span>
@@ -169,7 +169,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
                             météo='SOLEIL'
                           />
                         </div>
-                        <span className='fr-pl-1w'>
+                        <span className='fr-pl-1w fr-text--sm fr-m-0'>
                           Le chantier prioritaire se déploie sans difficultés. Aucun appui nécessaire.
                         </span>
                       </div>

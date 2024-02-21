@@ -7,7 +7,6 @@ import {
   TerritoireContrat,
 } from '@/server/fiche-territoriale/app/contrats/TerritoireContrat';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
-import { estAutoriséAModifierDesIndicateurs } from '@/client/utils/indicateur/indicateur';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import {
   RécupérerTerritoireParCodeUseCase,
@@ -28,14 +27,18 @@ import {
 import {
   RécupérerListeChantierFicheTerritorialeUseCase,
 } from '@/server/fiche-territoriale/usecases/RécupérerListeChantierFicheTerritorialeUseCase';
+import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 
 
 export async function getServerSideProps({ req, res, query }: GetServerSidePropsContext) {
   const session = await getServerSession(req, res, authOptions);
 
-  // Définir les autorisations
-  if (!session || !estAutoriséAModifierDesIndicateurs(session.profil)) {
+  if (!session || !estAutoriséAConsulterLaFicheTerritoriale(session.profil)) {
     throw new Error('Not connected or not authorized ?');
+  }
+
+  if (query.territoireCode === 'NAT-FR') {
+    throw new Error('Veuillez choisir un département ou une région');
   }
 
   const territoire = presenterEnTerritoireContrat(await new RécupérerTerritoireParCodeUseCase({ territoireRepository: dependencies.getFicheTerritorialeTerritoireRepository() }).run({ territoireCode: query.territoireCode as string }));

@@ -5,7 +5,15 @@ const PageFicheTerritorialeStyled = styled.div`
     height: 100%;
   }
   .fiche-territoriale__avancement--meteo {
-    width: 3rem;
+    min-width: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    img {
+      height: 30px;
+      width: 30px;
+    }
   }
   
   .pourcentage {
@@ -73,6 +81,9 @@ const PageFicheTerritorialeStyled = styled.div`
     }
     div.fr-grid-row {
       font-size: 0.7rem !important;
+    }
+    .bloc__contenu {
+      padding-top: 0.5rem!important;
     }
   }
   @page {
