@@ -6,7 +6,7 @@ import SélecteurAvecRecherche from '@/components/_commons/SélecteurAvecRecherc
 
 const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerritoire[], profil: ProfilCode | undefined) => {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
-
+  console.log('helllo')
   const territoiresDisponibles = territoiresAccessiblesEnLecture.filter(territoire => territoire.maille === mailleSélectionnée);
   
   let options = [];

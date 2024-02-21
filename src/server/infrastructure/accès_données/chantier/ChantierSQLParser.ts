@@ -116,7 +116,7 @@ export function parseChantier(
           tendance: tendance,
           dateDeMàjDonnéesQualitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQualitatives ?? null,
           dateDeMàjDonnéesQuantitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQuantitatives ?? null,
-          estApplicable: true,
+          estApplicable: chantierMailleNationale.est_applicable,
           responsableLocal: [],
           référentTerritorial: [],
         },
