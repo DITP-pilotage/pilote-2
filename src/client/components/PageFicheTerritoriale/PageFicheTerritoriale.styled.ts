@@ -76,8 +76,12 @@ const PageFicheTerritorialeStyled = styled.div`
       padding-top: 0!important;
       padding-bottom: 0!important;
     }
-    .fiche-territoriale--entete > div, .fiche-territoriale--contenu {
-      font-size: 0.6rem !important;
+    .fiche-territoriale--entete {
+      padding-top: 0.5rem!important;
+      padding-bottom: 0.5rem!important;
+      > div, .fiche-territoriale--contenu {
+        font-size: 0.6rem !important;
+      }
     }
     .fr-text--xl {
       font-size: 0.8rem !important;
