@@ -93,7 +93,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
                         Taux d’avancement de l’année en cours
                       </Titre>
                     </TitreInfobulleConteneur>
-                    <div className='w-half-full'>
+                    <div className='fiche-territoriale__avancement--barre-progression'>
                       <BarreDeProgression
                         afficherTexte
                         bordure={null}
@@ -106,7 +106,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
                     </div>
                     <div className='w-full flex justify-center fr-mt-2w'>
                       <span>
-                        Année en cours
+                        { `Année en cours : ${new Date().getFullYear()}` }
                       </span>
                     </div>
                   </div>

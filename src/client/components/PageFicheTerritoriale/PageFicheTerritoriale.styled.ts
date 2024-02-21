@@ -32,6 +32,10 @@ const PageFicheTerritorialeStyled = styled.div`
     text-align: center;
   }
   
+  .fiche-territoriale__avancement--barre-progression {
+    width: 75%;
+  }
+  
   .fiche-territoriale--tableau {
     div.fr-grid-row:first-of-type {
       border-top-left-radius: 8px;
@@ -45,7 +49,8 @@ const PageFicheTerritorialeStyled = styled.div`
     }
     
     .fiche-territoriale--contenu--xs {
-      font-size: 0.6rem !important;
+      font-size: 0.8rem !important;
+      white-space: nowrap;
     }    
     .fiche-territoriale--contenu--row:not(:first-of-type) {
       border-top: 1px solid var(--grey-975-75);    
@@ -89,12 +94,12 @@ const PageFicheTerritorialeStyled = styled.div`
       line-height: 1rem !important;
     }
     .fr-text--xs {
-      font-size: 0.5rem !important;
-      line-height: 1.2rem !important;
+      font-size: 0.6rem !important;
+      line-height: 1rem !important;
     }
     .fiche-territoriale--tableau {
       .fiche-territoriale--contenu--xs {
-        font-size: 0.4rem !important;
+        font-size: 0.6rem !important;
       }
     }
     div.fr-grid-row {

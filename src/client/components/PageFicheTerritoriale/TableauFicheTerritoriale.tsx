@@ -4,6 +4,14 @@ import {
 } from '@/server/fiche-territoriale/app/contrats/ChantierFicheTerritorialeContrat';
 import Icône from '@/components/_commons/Icône/Icône';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
+import '@gouvfr/dsfr/dist/component/badge/badge.min.css';
+
+const classBadge = (tauxAvancement: number, tauxAvancementNational: number | null) => {
+  return !tauxAvancementNational ? ''
+    : (tauxAvancement >= tauxAvancementNational ? 'fr-badge--success'
+      : tauxAvancement >= tauxAvancementNational - 10 ? 'fr-badge--warning'
+        : 'fr-badge--error') ;
+};
 
 export const TableauFicheTerritoriale: FunctionComponent<{
   chantiersFicheTerritoriale: ChantierFicheTerritorialeContrat[]
@@ -73,19 +81,16 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                   className='fr-col-2 flex fiche-territoriale--contenu--xs flex-column justify-center'
                 >
                   {
-                    chantierFicheTerritoriale.tauxAvancement ? (
+                    chantierFicheTerritoriale.tauxAvancement !== null ? (
                       <p className='fr-text--bold fr-text--xl fr-text-title--blue-france fr-my-0'>
                         {`${chantierFicheTerritoriale.tauxAvancement.toFixed(0)}%`}
                       </p>
                     ) : (
                       <span className='fr-m-0 fr-text-mention--grey'>
-                        Non renseignée
+                        Paramètres incomplets
                       </span>
                     )
                   }
-                  <span className='fr-m-0 fr-text-mention--grey'>
-                    {chantierFicheTerritoriale.dateQuantitative}
-                  </span>
                 </div>
               </div>
               <div
@@ -93,34 +98,34 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                 key={`indicateur-fiche-territoriale-${index}`}
               >
                 <div
-                  className='fr-col-6 flex align-center fr-p-0 fr-m-0'
+                  className='fr-col-4 flex align-center fr-p-0 fr-m-0'
                 />
                 <div
-                  className='fr-col-1 flex flex-column justify-end fr-p-0'
+                  className='fr-col-2 flex flex-column fr-p-0'
                 >
                   <span className='fiche-territoriale--contenu--xs fr-text-mention--grey'>
                     Dernière valeur
                   </span>
                   <span className='fiche-territoriale--contenu--xs fr-text-mention--grey'>
-                    {chantierFicheTerritoriale.dateQualitative }
+                    {chantierFicheTerritoriale.dateQuantitative }
                   </span>
                 </div>
                 <div
-                  className='fr-col-1 fr-text--bold flex flex-column justify-end  fr-p-0 fr-m-0'
+                  className='fr-col-2 fr-text--bold flex flex-column  fr-p-0 fr-m-0'
                 >
                   <span className='fiche-territoriale--contenu--xs fr-m-0 fr-text-mention--grey'>
                     Cible 2026
                   </span>
                 </div>
                 <div
-                  className='fr-col-2 fr-text--bold flex flex-column justify-end fr-p-0 fr-m-0'
+                  className='fr-col-2 fr-text--bold flex flex-column fr-p-0 fr-m-0'
                 >
                   <span className='fiche-territoriale--contenu--xs fr-m-0 fr-text-mention--grey'>
                     Avancement d'ici 2026
                   </span>
                 </div>
                 <div
-                  className='fr-col-2 fr-text--bold flex flex-column justify-end fr-p-0 fr-m-0'
+                  className='fr-col-2 fr-text--bold flex flex-column fr-p-0 fr-m-0'
                 >
                   <span className='fiche-territoriale--contenu--xs fr-m-0 fr-text-mention--grey'>
                     Avancement national
@@ -132,36 +137,36 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                   return (
 
                     <div
-                      className='fr-grid-row fiche-territoriale--contenu--row fr-px-2w fr-pb-1w'
+                      className='fr-grid-row fiche-territoriale--contenu--row fr-px-2w fr-py-1w'
                       key={`indicateur-fiche-territoriale-${index}-${indexFicheTerritoriale}`}
                     >
                       <div
-                        className='fr-col-6 flex align-center fr-px-2w'
+                        className='fr-col-4 flex align-center fr-pr-1v'
                       >
-                        <span className='fiche-territoriale--contenu fr-text--xs fr-m-0'>
+                        <span className='fr-text--xs fr-m-0'>
                           {indicateur.nom}
                         </span>
                       </div>
                       <div
-                        className='fr-col-1 flex flex-column justify-center'
+                        className='fr-col-2 flex flex-column justify-center'
                       >
                         {
-                          indicateur.valeurActuelle ? (
+                          indicateur.valeurActuelle !== null ? (
                             <span className='fr-text--xs fr-m-0'>
                               {`${indicateur.valeurActuelle.toFixed(0)}${indicateur.uniteMesure?.toLocaleLowerCase() === 'pourcentage' ? '%' : ''}`}
                             </span>
                           ) : (
                             <span className='fiche-territoriale--contenu--xs'>
-                              Non renseignée
+                              Absence de valeur
                             </span>
                           )
                         }
                       </div>
                       <div
-                        className='fr-col-1 flex flex-column justify-center'
+                        className='fr-col-2 flex flex-column justify-center'
                       >
                         {
-                          indicateur.valeurCible ? (
+                          indicateur.valeurCible !== null ? (
                             <span className='fr-text--xs fr-m-0'>
                               {`${indicateur.valeurCible.toFixed(0)}${indicateur.uniteMesure?.toLocaleLowerCase() === 'pourcentage' ? '%' : ''}`}
                             </span>
@@ -176,8 +181,8 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                         className='fr-col-2 flex flex-column justify-center'
                       >
                         {
-                          indicateur.tauxAvancement ? (
-                            <span className='fr-text--xs fr-m-0'>
+                          indicateur.tauxAvancement !== null ? (
+                            <span className={`fr-text--xs fr-m-0 fr-badge fr-badge--no-icon ${classBadge(indicateur.tauxAvancement, indicateur.tauxAvancementNational)}`}>
                               {`${indicateur.tauxAvancement.toFixed(0)}%`}
                             </span>
                           ) : (
@@ -191,7 +196,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                         className='fr-col-2 flex flex-column justify-center'
                       >
                         {
-                          indicateur.tauxAvancementNational ? (
+                          indicateur.tauxAvancementNational !== null ? (
                             <span className='fr-text--xs fr-m-0'>
                               {`${indicateur.tauxAvancementNational.toFixed(0)}%`}
                             </span>

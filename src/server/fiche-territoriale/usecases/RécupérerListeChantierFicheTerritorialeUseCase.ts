@@ -80,7 +80,7 @@ export class RécupérerListeChantierFicheTerritorialeUseCase {
           uniteMesure: indicateur.uniteMesure,
           tauxAvancement: indicateur.objectifTauxAvancement,
           valeurCible: indicateur.valeurCible,
-          tauxAvancementNational: mapIndicateursNationale.get(indicateur.id)?.objectifTauxAvancement || null,
+          tauxAvancementNational: !Number.isNaN(mapIndicateursNationale.get(indicateur.id)?.objectifTauxAvancement) ? mapIndicateursNationale.get(indicateur.id)!.objectifTauxAvancement : null,
         });
       }) || [],
     }));

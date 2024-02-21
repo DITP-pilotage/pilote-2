@@ -7,33 +7,20 @@ export class PrismaChantierRepository implements ChantierRepository {
   constructor(private prismaClient: PrismaClient) {}
 
   async listerParTerritoireCodePourUnDepartement({ territoireCode }: { territoireCode: string }): Promise<Chantier[]> {
-    const result = await this.prismaClient.chantier.findMany({
-      where: {
-        territoire_code: territoireCode,
-        maille: 'DEPT',
-        est_barometre: true,
-        OR: [
-          { a_taux_avancement_departemental: true },
-          { a_meteo_departemental: true },
-          { est_territorialise: true },
-        ],
-      },
-    });
-
-    return result.map(this.convertirEnChantier);
+    return this.listerParTerritoireCodePourEtMaille({ territoireCode, maille: 'DEPT' });
   }
 
   async listerParTerritoireCodePourUneRegion({ territoireCode }: { territoireCode: string }): Promise<Chantier[]> {
+    return this.listerParTerritoireCodePourEtMaille({ territoireCode, maille: 'REG' });
+  }
+
+  async listerParTerritoireCodePourEtMaille({ territoireCode, maille }: { territoireCode: string, maille: string }): Promise<Chantier[]> {
     const result = await this.prismaClient.chantier.findMany({
       where: {
         territoire_code: territoireCode,
-        maille: 'REG',
+        maille,
         est_barometre: true,
-        OR: [
-          { a_taux_avancement_regional: true },
-          { a_meteo_regional: true },
-          { est_territorialise: true },
-        ],
+        est_territorialise: true,
       },
     });
 
