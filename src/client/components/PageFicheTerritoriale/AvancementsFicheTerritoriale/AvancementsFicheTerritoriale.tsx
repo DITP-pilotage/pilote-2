@@ -4,7 +4,7 @@ import {
   AvancementsFicheTerritorialeStyled,
 } from '@/components/PageFicheTerritoriale/AvancementsFicheTerritoriale/AvancementsFicheTerritoriale.styled';
 
-export type AvancementsStatistiques = number;
+export type AvancementsStatistiques = number | null;
 
 export default interface AvancementsProps {
   avancementGlobalTerritoire: AvancementsStatistiques

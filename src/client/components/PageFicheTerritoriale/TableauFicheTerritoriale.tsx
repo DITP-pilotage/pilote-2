@@ -52,7 +52,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                   </span>
                 </div>
                 <div
-                  className='fr-col-2 flex fiche-territoriale--contenu--xs flex-column justify-center'
+                  className='fr-col-2 flex fiche-territoriale--contenu--xs fiche-territoriale__contenu--meteo flex-column justify-center'
                 >
                   {
                     chantierFicheTerritoriale.meteo !== 'NON_RENSEIGNEE' ? (

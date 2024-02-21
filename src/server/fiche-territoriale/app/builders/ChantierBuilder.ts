@@ -6,6 +6,8 @@ export class ChantierBuilder {
 
   private tauxAvancement: number | null = 0;
 
+  private tauxAvancementAnnuel: number | null = 0;
+
   private meteo: MeteoDisponible | null = null;
 
   private nom: string = 'Un nom de chantier';
@@ -19,6 +21,11 @@ export class ChantierBuilder {
 
   withTauxAvancement(tauxAvancement: number | null): ChantierBuilder {
     this.tauxAvancement = tauxAvancement;
+    return this;
+  }
+
+  withTauxAvancementAnnuel(tauxAvancementAnnuel: number | null): ChantierBuilder {
+    this.tauxAvancementAnnuel = tauxAvancementAnnuel;
     return this;
   }
 
@@ -41,6 +48,7 @@ export class ChantierBuilder {
     return Chantier.creerChantier({
       id: this.id,
       tauxAvancement: this.tauxAvancement,
+      tauxAvancementAnnuel: this.tauxAvancementAnnuel,
       meteo: this.meteo,
       nom: this.nom,
       codeMinisterePorteur: this.codeMinisterePorteur,

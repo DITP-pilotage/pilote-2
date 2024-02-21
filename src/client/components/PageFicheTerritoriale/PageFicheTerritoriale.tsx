@@ -24,10 +24,11 @@ import PageFicheTerritorialeStyled from './PageFicheTerritoriale.styled';
 
 export const PageFicheTerritoriale: FunctionComponent<{
   territoire: TerritoireContrat,
-  avancementGlobalTerritoire: number,
+  avancementGlobalTerritoire: number | null,
+  avancementAnnuelTerritoire: number | null,
   répartitionMétéos: RepartitionMeteoContrat,
   chantiersFicheTerritoriale: ChantierFicheTerritorialeContrat[]
-}> = ({ territoire, avancementGlobalTerritoire, répartitionMétéos, chantiersFicheTerritoriale }) => {
+}> = ({ territoire, avancementGlobalTerritoire, avancementAnnuelTerritoire, répartitionMétéos, chantiersFicheTerritoriale }) => {
   const now = new Date();
 
   return (
@@ -99,7 +100,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
                         fond='bleu'
                         positionTexte='dessus'
                         taille='md'
-                        valeur={27}
+                        valeur={avancementAnnuelTerritoire}
                         variante='primaire'
                       />
                     </div>
@@ -175,7 +176,9 @@ export const PageFicheTerritoriale: FunctionComponent<{
                       </div>
                     </li>
                   </ul>
-                  <RépartitionMétéo météos={répartitionMétéos} />
+                  <div className='fiche-territoriale__contenu--meteo'>
+                    <RépartitionMétéo météos={répartitionMétéos} />
+                  </div>
                 </div>
               </Bloc>
             </div>

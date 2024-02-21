@@ -4,12 +4,20 @@ const PageFicheTerritorialeStyled = styled.div`
   .fiche-territoriale__avancement {
     height: 100%;
   }
+  
   .fiche-territoriale__avancement--meteo {
     min-width: 3rem;
     display: flex;
     justify-content: center;
     align-items: center;
     
+    img {
+      height: 30px;
+      width: 30px;
+    }
+  }
+  
+  .fiche-territoriale__contenu--meteo {
     img {
       height: 30px;
       width: 30px;
@@ -87,7 +95,7 @@ const PageFicheTerritorialeStyled = styled.div`
     }
   }
   @page {
-    margin: 1.5cm 0.5cm;
+    margin: 1.5cm 0;
   }
 `;
 

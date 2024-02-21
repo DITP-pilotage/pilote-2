@@ -28,6 +28,12 @@ import {
   RécupérerListeChantierFicheTerritorialeUseCase,
 } from '@/server/fiche-territoriale/usecases/RécupérerListeChantierFicheTerritorialeUseCase';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
+import {
+  RécupérerTauxAvancementAnnuelTerritoireUseCase,
+} from '@/server/fiche-territoriale/usecases/RécupérerTauxAvancementAnnuelTerritoireUseCase';
+import {
+  presenterEnTauxAvancementAnnuelTerritoireContrat,
+} from '@/server/fiche-territoriale/app/contrats/TauxAvancementAnnuelTerritoireContrat';
 
 
 export async function getServerSideProps({ req, res, query }: GetServerSidePropsContext) {
@@ -45,6 +51,8 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
 
   const avancementGlobalTerritoire = presenterEnTauxAvancementGlobalTerritoireContrat(await new RécupérerTauxAvancementGlobalTerritoireUseCase({ chantierRepository: dependencies.getFicheTerritorialeChantierRepository(), territoireRepository: dependencies.getFicheTerritorialeTerritoireRepository() }).run({ territoireCode: query.territoireCode as string }));
 
+  const avancementAnnuelTerritoire = presenterEnTauxAvancementAnnuelTerritoireContrat(await new RécupérerTauxAvancementAnnuelTerritoireUseCase({ chantierRepository: dependencies.getFicheTerritorialeChantierRepository(), territoireRepository: dependencies.getFicheTerritorialeTerritoireRepository() }).run({ territoireCode: query.territoireCode as string }));
+
   const répartitionMétéos = presenterEnRépartitionsMétéosContrat(await new RécupérerRépartitionMétéoUseCase({ chantierRepository: dependencies.getFicheTerritorialeChantierRepository(), territoireRepository: dependencies.getFicheTerritorialeTerritoireRepository() }).run({ territoireCode: query.territoireCode as string }));
 
   const chantiersFicheTerritoriale = await new RécupérerListeChantierFicheTerritorialeUseCase({
@@ -60,15 +68,17 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
     props: {
       territoire,
       avancementGlobalTerritoire,
+      avancementAnnuelTerritoire,
       répartitionMétéos,
       chantiersFicheTerritoriale,
     },
   };
 }
 
-const FicheTerritoriale: FunctionComponent<{ territoire: TerritoireContrat, avancementGlobalTerritoire: number, répartitionMétéos: RépartitionMétéos, chantiersFicheTerritoriale: ChantierFicheTerritorialeContrat[] }> = ({ territoire, avancementGlobalTerritoire, répartitionMétéos, chantiersFicheTerritoriale }) => {
+const FicheTerritoriale: FunctionComponent<{ territoire: TerritoireContrat, avancementGlobalTerritoire: number, avancementAnnuelTerritoire: number, répartitionMétéos: RépartitionMétéos, chantiersFicheTerritoriale: ChantierFicheTerritorialeContrat[] }> = ({ territoire, avancementGlobalTerritoire, avancementAnnuelTerritoire, répartitionMétéos, chantiersFicheTerritoriale }) => {
   return (
     <PageFicheTerritoriale
+      avancementAnnuelTerritoire={avancementAnnuelTerritoire}
       avancementGlobalTerritoire={avancementGlobalTerritoire}
       chantiersFicheTerritoriale={chantiersFicheTerritoriale}
       répartitionMétéos={répartitionMétéos}

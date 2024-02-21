@@ -44,6 +44,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     return Chantier.creerChantier({
       id: chantierModel.id,
       tauxAvancement: chantierModel.taux_avancement,
+      tauxAvancementAnnuel: chantierModel.taux_avancement_annuel,
       meteo: chantierModel.meteo as MeteoDisponible | null,
       nom: chantierModel.nom,
       codeMinisterePorteur: chantierModel.ministeres.at(0),
