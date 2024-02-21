@@ -54,6 +54,11 @@ const PageFicheTerritorialeStyled = styled.div`
   
   
   @media print {
+    .fiche-territoriale__meteo {
+      > div {
+        height: 100%;
+      }
+    }
     .indicateur-fiche-territoriale--entete span {
       max-height: 1rem;
     }
@@ -75,8 +80,13 @@ const PageFicheTerritorialeStyled = styled.div`
     .fr-text--lg {
       font-size: 0.9rem !important;
     }
+    .fr-text--md {
+      font-size: 0.8rem !important;
+      line-height: 1.1rem !important;
+    }
     .fr-text--sm {
       font-size: 0.6rem !important;
+      line-height: 1rem !important;
     }
     .fr-text--xs {
       font-size: 0.5rem !important;

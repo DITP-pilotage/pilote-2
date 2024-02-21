@@ -56,7 +56,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
           </p>
           <Titre
             baliseHtml='h1'
-            className='fr-h3 fr-mt-0 fr-px-2w'
+            className='fr-h3 fr-mt-0 fr-mb-1w fr-px-2w'
           >
             Vue générale
           </Titre>
@@ -68,7 +68,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
                     <TitreInfobulleConteneur>
                       <Titre
                         baliseHtml='h2'
-                        className='fr-text--lg fr-mb-2w fr-py-1v'
+                        className='fr-text--md fr-mb-2w fr-py-1v'
                         estInline
                       >
                         Taux d’avancement moyen
@@ -87,7 +87,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
                     <TitreInfobulleConteneur>
                       <Titre
                         baliseHtml='h2'
-                        className='fr-text--lg fr-mb-2w fr-py-1v'
+                        className='fr-text--md fr-mb-2w fr-py-1v'
                         estInline
                       >
                         Taux d’avancement de l’année en cours
@@ -104,18 +104,22 @@ export const PageFicheTerritoriale: FunctionComponent<{
                         variante='primaire'
                       />
                     </div>
+                    <div className='w-full flex justify-center fr-mt-2w'>
+                      <span>
+                        Année en cours
+                      </span>
+                    </div>
                   </div>
                 </Bloc>
               </div>
             </div>
-            <div className='fr-col-8 fr-pl-1v'>
-
+            <div className='fr-col-8 fr-pl-1v fiche-territoriale__meteo'>
               <Bloc>
                 <div className='fr-grid-row'>
                   <TitreInfobulleConteneur>
                     <Titre
                       baliseHtml='h2'
-                      className='fr-text--lg fr-mb-0 fr-py-1v'
+                      className='fr-text--md fr-mb-0 fr-py-1v'
                       estInline
                     >
                       Répartition des météos renseignées
@@ -138,7 +142,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
                       </div>
                     </li>
                     <li className='fr-mb-1w'>
-                      <div className='flex'>
+                      <div className='flex align-center'>
                         <div className='fiche-territoriale__avancement--meteo'>
                           <MétéoPicto
                             météo='NUAGE'
@@ -151,7 +155,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
                       </div>
                     </li>
                     <li className='fr-mb-1w fr-text--sm'>
-                      <div className='flex'>
+                      <div className='flex align-center'>
                         <div className='fiche-territoriale__avancement--meteo'>
                           <MétéoPicto
                             météo='COUVERT'
@@ -164,7 +168,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
                       </div>
                     </li>
                     <li className='fr-mb-1w'>
-                      <div className='flex'>
+                      <div className='flex align-center'>
                         <div className='fiche-territoriale__avancement--meteo'>
                           <MétéoPicto
                             météo='SOLEIL'
@@ -176,7 +180,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
                       </div>
                     </li>
                   </ul>
-                  <div className='fiche-territoriale__contenu--meteo'>
+                  <div className='fiche-territoriale__contenu--meteo w-full fr-px-2w'>
                     <RépartitionMétéo météos={répartitionMétéos} />
                   </div>
                 </div>
