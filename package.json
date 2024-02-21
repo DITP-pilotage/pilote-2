@@ -133,7 +133,6 @@
     "jest-mock-extended": "3.0.4",
     "jest-transform-yaml": "^1.1.2",
     "next-router-mock": "^0.9.3",
-    "nextra": "^2.13.3",
     "nock": "^13.3.0",
     "node-mocks-http": "^1.12.2",
     "pino-pretty": "^10.0.0",
