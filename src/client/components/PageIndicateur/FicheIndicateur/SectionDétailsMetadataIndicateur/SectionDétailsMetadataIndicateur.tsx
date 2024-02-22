@@ -76,7 +76,7 @@ export default function SectionDétailsMetadataIndicateur({
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.indicParentCh?.message}
+            erreurMessage={errors.indicParentCh?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_parent_ch}
             listeValeur={optionsParentCh}
@@ -87,7 +87,7 @@ export default function SectionDétailsMetadataIndicateur({
         </div>
         <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.indicParentIndic?.message}
+            erreurMessage={errors.indicParentIndic?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_parent_indic}
             listeValeur={optionsIndicateurParent}
@@ -100,7 +100,7 @@ export default function SectionDétailsMetadataIndicateur({
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.indicSchema?.message}
+            erreurMessage={errors.indicSchema?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_schema}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'indic_schema')}
@@ -111,7 +111,7 @@ export default function SectionDétailsMetadataIndicateur({
         </div>
         <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.indicType?.message}
+            erreurMessage={errors.indicType?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_type}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'indic_type')}

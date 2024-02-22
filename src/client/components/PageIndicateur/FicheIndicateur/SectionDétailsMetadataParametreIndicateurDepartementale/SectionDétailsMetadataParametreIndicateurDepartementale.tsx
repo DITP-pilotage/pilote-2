@@ -35,7 +35,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.viDeptFrom?.message}
+            erreurMessage={errors.viDeptFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_dept_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_dept_from')}
@@ -46,7 +46,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.vaDeptFrom?.message}
+            erreurMessage={errors.vaDeptFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_dept_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_dept_from')}
@@ -57,7 +57,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.vcDeptFrom?.message}
+            erreurMessage={errors.vcDeptFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_dept_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_dept_from')}
@@ -70,7 +70,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.viDeptOp?.message}
+            erreurMessage={errors.viDeptOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_dept_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_dept_op')}
@@ -81,7 +81,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w fr-pl-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.vaDeptOp?.message}
+            erreurMessage={errors.vaDeptOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_dept_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_dept_op')}
@@ -92,7 +92,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.vcDeptOp?.message}
+            erreurMessage={errors.vcDeptOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_dept_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_dept_op')}

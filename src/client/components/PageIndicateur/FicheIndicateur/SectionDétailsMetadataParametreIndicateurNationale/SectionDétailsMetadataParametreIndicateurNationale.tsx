@@ -35,7 +35,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.viNatFrom?.message}
+            erreurMessage={errors.viNatFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_nat_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_nat_from')}
@@ -46,7 +46,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pl-2w fr-pr-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.vaNatFrom?.message}
+            erreurMessage={errors.vaNatFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_nat_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_nat_from')}
@@ -57,7 +57,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.vcNatFrom?.message}
+            erreurMessage={errors.vcNatFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_nat_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_nat_from')}
@@ -70,7 +70,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
       <div className='fr-grid-row fr-mb-2w'>
         <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.viNatOp?.message}
+            erreurMessage={errors.viNatOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_nat_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_nat_op')}
@@ -81,7 +81,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pl-2w fr-pr-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.vaNatOp?.message}
+            erreurMessage={errors.vaNatOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_nat_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_nat_op')}
@@ -92,7 +92,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
         </div>
         <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.vcNatOp?.message}
+            erreurMessage={errors.vcNatOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_nat_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_nat_op')}
