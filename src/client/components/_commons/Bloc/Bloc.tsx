@@ -10,7 +10,7 @@ export default function Bloc({ children, titre }: BlocProps) {
           {titre}
         </div>
       }
-      <div className='fr-p-2w'>
+      <div className='fr-p-2w bloc__contenu'>
         {children}
       </div>
     </BlocStyled>

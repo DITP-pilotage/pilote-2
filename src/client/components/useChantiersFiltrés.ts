@@ -2,10 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
-import {
-  filtresActifs as filtresActifsStore,
-  désactiverUnFiltreFn,
-} from '@/stores/useFiltresStore/useFiltresStore';
+import { désactiverUnFiltreFn, filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
 import Alerte from '@/server/domain/alerte/Alerte';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { statutsSélectionnésStore } from '@/stores/useStatutsStore/useStatutsStore';
@@ -20,13 +17,14 @@ export default function useChantiersFiltrés(chantiers: Chantier[]) {
     let résultat: Chantier[] = chantiers;
 
     if (session?.profil === 'DROM' && territoireSélectionné?.code === 'NAT-FR') {
+
       résultat = résultat.filter(chantier => chantier.périmètreIds.includes('PER-018'));
     }
-
     if (territoireSélectionné?.code !== 'NAT-FR') {
+
       const maille = territoireSélectionné?.maille as MailleInterne;
       résultat = résultat.filter(chantier => {
-        return chantier.estTerritorialisé || chantier.tauxAvancementDonnéeTerritorialisée[maille] || chantier.météoDonnéeTerritorialisée[maille]; 
+        return chantier.estTerritorialisé || chantier.tauxAvancementDonnéeTerritorialisée[maille] || chantier.météoDonnéeTerritorialisée[maille];
       });
     }
 

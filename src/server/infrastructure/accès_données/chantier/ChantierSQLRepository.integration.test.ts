@@ -65,6 +65,7 @@ describe('ChantierSQLRepository', () => {
       expect(result).toStrictEqual('ORAGE');
     });
   });
+  
   describe('récupérerChantierIdsPourSaisieCommentaireServiceDeconcentré', function () {
     test('renvoie la météo pour un chantier et territoire donné', async () => {
       // Given

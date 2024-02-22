@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import EncartStyled from '@/components/PageRapportDétaillé/Encart/Encart.styled';
+import EncartStyled from '@/components/_commons/Encart/Encart.styled';
 
 interface EncartProps {
   children: ReactNode;

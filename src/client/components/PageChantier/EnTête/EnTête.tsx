@@ -25,18 +25,20 @@ export default function PageChantierEnTête({
       >
         {chantier.nom}
       </Titre>
-      {
-        !!afficheLeBoutonMiseAJourDonnee &&
-          <Link
-            className='fr-btn fr-btn--primary fr-mr-2w fr-mb-2w'
-            href={`${chantier.id}/indicateurs`}
-          >
-            Mettre à jour les données
-          </Link>
-      }
-      {
-        !!afficheLeBoutonImpression && <BoutonImpression />
-      }
+      <div className='flex align-center fr-mt-2w'>
+        {
+          !!afficheLeBoutonMiseAJourDonnee &&
+            <Link
+              className='fr-btn fr-btn--primary fr-mr-2w'
+              href={`${chantier.id}/indicateurs`}
+            >
+              Mettre à jour les données
+            </Link>
+        }
+        {
+          !!afficheLeBoutonImpression && <BoutonImpression />
+        }
+      </div>
     </PageChantierEnTêteStyled>
   );
 }
