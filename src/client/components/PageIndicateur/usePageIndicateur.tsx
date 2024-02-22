@@ -118,6 +118,11 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
     mutationModifierMetadataIndicateur.mutate(inputs);
   };
 
+  const reinitialiserIndicateur = () => {
+    reactHookForm.reset();
+    setEstEnCoursDeModification(false);
+  };
+
   return {
     estEnCoursDeModification,
     setEstEnCoursDeModification,
@@ -125,5 +130,6 @@ export const usePageIndicateur = (indicateur: MetadataParametrageIndicateurContr
     creerIndicateur,
     reactHookForm,
     alerte,
+    reinitialiserIndicateur,
   };
 };
