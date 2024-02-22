@@ -37,7 +37,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
         </div>
         <div className='fr-mt-2w'>
           <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
-            { `${avancements?.annuel.moyenne?.toFixed(0) ?? '- '}%` }
+            { `${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%` }
           </p>
           <BarreDeProgression
             afficherTexte={false}
@@ -45,7 +45,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
             fond='grisClair'
             positionTexte='dessus'
             taille='xxs'
-            valeur={!!avancements ? avancements.annuel.moyenne : null}
+            valeur={!!avancements && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.annuel.moyenne : null}
             variante='secondaire'
           />
           <p className='fr-text--xs fr-mb-0 fr-mt-1v'>

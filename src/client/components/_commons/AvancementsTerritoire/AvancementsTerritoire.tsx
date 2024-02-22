@@ -11,23 +11,27 @@ export default function AvancementsTerritoire({ territoireNom, avancementGlobal,
         pourcentage={avancementGlobal}
         taille='lg'
       />
-      <div className='fr-mt-2w'>
-        <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
-          { `${avancementAnnuel?.toFixed(0) ?? '- '}%` }
-        </p>
-        <BarreDeProgression
-          afficherTexte={false}
-          bordure={null}
-          fond='grisClair'
-          positionTexte='dessus'
-          taille='xxs'
-          valeur={avancementAnnuel}
-          variante='secondaire'
-        />
-        <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
-          Moyenne de l'année en cours
-        </p>
-      </div>
+      {
+        process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' &&
+          <div className='fr-mt-2w'>
+            <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
+              { `${avancementAnnuel?.toFixed(0) ?? '- '}%` }
+            </p>
+            <BarreDeProgression
+              afficherTexte={false}
+              bordure={null}
+              fond='grisClair'
+              positionTexte='dessus'
+              taille='xxs'
+              valeur={avancementAnnuel}
+              variante='secondaire'
+            />
+            <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
+              Moyenne de l'année en cours
+            </p>
+          </div>
+      }
+
     </>
   );
 }
