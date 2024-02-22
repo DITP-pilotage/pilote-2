@@ -194,7 +194,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
                 className='fr-text--lg fr-mb-2w fr-py-1v'
                 estInline
               >
-                {`Liste des chantiers (${59 + 1})`}
+                {`Liste des chantiers (${chantiersFicheTerritoriale.length})`}
               </Titre>
               <TableauFicheTerritoriale chantiersFicheTerritoriale={chantiersFicheTerritoriale} />
             </Bloc>

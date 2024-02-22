@@ -7,7 +7,7 @@ import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
 import '@gouvfr/dsfr/dist/component/badge/badge.min.css';
 
 const classBadge = (tauxAvancement: number, tauxAvancementNational: number | null) => {
-  return !tauxAvancementNational ? ''
+  return tauxAvancementNational === null ? ''
     : (tauxAvancement >= tauxAvancementNational ? 'fr-badge--success'
       : tauxAvancement >= tauxAvancementNational - 10 ? 'fr-badge--warning'
         : 'fr-badge--error') ;
