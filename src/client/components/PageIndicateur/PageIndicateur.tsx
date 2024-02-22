@@ -13,7 +13,7 @@ import Alerte from '@/components/_commons/Alerte/Alerte';
 export default function PageIndicateur({ indicateur, mapInformationMetadataIndicateur, estUneCréation, modificationReussie, creationReussie, chantiers }: PageIndicateurProps) {
   const chemin = [{ nom:'Gestion des indicateurs', lien:'/admin/indicateurs' }];
 
-  const { reactHookForm, modifierIndicateur, creerIndicateur, estEnCoursDeModification, setEstEnCoursDeModification, alerte } = usePageIndicateur(indicateur);
+  const { reactHookForm, modifierIndicateur, creerIndicateur, estEnCoursDeModification, setEstEnCoursDeModification, alerte, reinitialiserIndicateur } = usePageIndicateur(indicateur);
 
   return (
     <PageIndicateurStyled className='fr-pt-2w'>
@@ -90,14 +90,23 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                       Créer l'indicateur
                     </button>
                   ) : (estEnCoursDeModification ? (
-                    <button
-                      className='fr-btn fr-mr-2w'
-                      key='submit-indicateur'
-                      type='submit'
-                    >
-                      Confirmer les changements
-                    </button>
-
+                    <>
+                      <button
+                        className='fr-btn fr-mr-2w'
+                        key='submit-indicateur'
+                        type='submit'
+                      >
+                        Confirmer les changements
+                      </button>
+                      <button
+                        className='fr-btn fr-mr-2w'
+                        key='submit-indicateur'
+                        onClick={reinitialiserIndicateur}
+                        type='button'
+                      >
+                        Annuler
+                      </button>
+                    </>
                   ) : (
                     <button
                       className='fr-btn fr-mr-2w'
@@ -130,14 +139,23 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                         Créer l'indicateur
                       </button>
                     ) : (estEnCoursDeModification ? (
-                      <button
-                        className='fr-btn fr-mr-2w'
-                        key='submit-indicateur'
-                        type='submit'
-                      >
-                        Confirmer les changements
-                      </button>
-
+                      <>
+                        <button
+                          className='fr-btn fr-mr-2w'
+                          key='submit-indicateur'
+                          type='submit'
+                        >
+                          Confirmer les changements
+                        </button>
+                        <button
+                          className='fr-btn fr-mr-2w'
+                          key='submit-indicateur'
+                          onClick={reinitialiserIndicateur}
+                          type='button'
+                        >
+                          Annuler
+                        </button>
+                      </>
                     ) : (
                       <button
                         className='fr-btn fr-mr-2w'
