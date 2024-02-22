@@ -4,6 +4,7 @@ import {
   MetadataParametrageIndicateurRepository,
 } from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
 import { ImportMetadataIndicateur } from '@/server/parametrage-indicateur/domain/ImportMetadataIndicateur';
+import logger from '@/server/infrastructure/logger';
 
 type RecordCSVImport = Record<typeof AvailableHeaderCSVImport[number], string>;
 
@@ -153,7 +154,6 @@ export default class ImportMasseMetadataIndicateurUseCase {
 
   async run({ nomDuFichier }: { nomDuFichier: string }) {
 
-    // Deplacer ca dans un service
     const csvParserOptions = {
       columns: true,
       skipEmptyLines: true,
@@ -165,7 +165,9 @@ export default class ImportMasseMetadataIndicateurUseCase {
     };
     const contents = fs.readFileSync(nomDuFichier as string, 'utf8');
     const listeRecordCsvImport: RecordCSVImport[] = parse(contents, csvParserOptions);
-    // Fin deplacement
+    
+    logger.info(`Import de masse ${nomDuFichier}`);
+    logger.info(listeRecordCsvImport);
 
     if (listeRecordCsvImport.length > 0) {
       if (Object.keys(listeRecordCsvImport[0]).sort().toString() === Object.values(AvailableHeaderCSVImport).sort().toString()) {
