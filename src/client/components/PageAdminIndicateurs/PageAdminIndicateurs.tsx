@@ -37,7 +37,7 @@ function PageAdminIndicateurs() {
                   onClick={naviguerVersCreationIndicateur}
                   type='button'
                 >
-                  Créer un nouvel indicateur
+                  Créer un indicateur
                 </button>
               </div>
             </div>
