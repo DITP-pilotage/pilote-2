@@ -166,8 +166,7 @@ export default class ImportMasseMetadataIndicateurUseCase {
     const contents = fs.readFileSync(nomDuFichier as string, 'utf8');
     const listeRecordCsvImport: RecordCSVImport[] = parse(contents, csvParserOptions);
     
-    logger.info(`Import de masse ${nomDuFichier}`);
-    logger.info(listeRecordCsvImport);
+    logger.info('Import de masse en cours');
 
     if (listeRecordCsvImport.length > 0) {
       if (Object.keys(listeRecordCsvImport[0]).sort().toString() === Object.values(AvailableHeaderCSVImport).sort().toString()) {
