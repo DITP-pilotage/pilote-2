@@ -51,8 +51,8 @@ export default function SectionDétailsMetadataIndicateur({
       >
         Identité indicateur
       </Titre>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurTextArea
             erreurMessage={errors.indicNom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -62,7 +62,7 @@ export default function SectionDétailsMetadataIndicateur({
             valeurAffiché={indicateur.indicNom || '_'}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurTextArea
             erreurMessage={errors.indicDescr?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -73,10 +73,10 @@ export default function SectionDétailsMetadataIndicateur({
           />
         </div>
       </div>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.indicParentCh?.message}
+            erreurMessage={errors.indicParentCh?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_parent_ch}
             listeValeur={optionsParentCh}
@@ -85,9 +85,9 @@ export default function SectionDétailsMetadataIndicateur({
             values={getValues('indicParentCh')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.indicParentIndic?.message}
+            erreurMessage={errors.indicParentIndic?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_parent_indic}
             listeValeur={optionsIndicateurParent}
@@ -97,10 +97,10 @@ export default function SectionDétailsMetadataIndicateur({
           />
         </div>
       </div>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.indicSchema?.message}
+            erreurMessage={errors.indicSchema?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_schema}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'indic_schema')}
@@ -109,9 +109,9 @@ export default function SectionDétailsMetadataIndicateur({
             values={getValues('indicSchema')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.indicType?.message}
+            erreurMessage={errors.indicType?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_type}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'indic_type')}
@@ -121,8 +121,8 @@ export default function SectionDétailsMetadataIndicateur({
           />
         </div>
       </div>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurInput
             erreurMessage={errors.indicUnite?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -132,7 +132,7 @@ export default function SectionDétailsMetadataIndicateur({
             valeurAffiché={indicateur.indicUnite || '_'}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-6 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurInput
             erreurMessage={errors.zgApplicable?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -143,8 +143,8 @@ export default function SectionDétailsMetadataIndicateur({
           />
         </div>
       </div>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-6 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-6'>
           <MetadataIndicateurInterrupteur
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName='indicTerritorialise'
@@ -152,6 +152,16 @@ export default function SectionDétailsMetadataIndicateur({
             isChecked={getValues('indicTerritorialise')}
             register={register('indicTerritorialise')}
             valeurAffiché={indicateur.indicTerritorialise ? 'Oui' : 'Non'}
+          />
+        </div>
+        <div className='fr-col-12 fr-col-md-6'>
+          <MetadataIndicateurInterrupteur
+            estEnCoursDeModification={estEnCoursDeModification}
+            htmlName='indicIsBaro'
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.indic_is_baro}
+            isChecked={getValues('indicIsBaro')}
+            register={register('indicIsBaro')}
+            valeurAffiché={indicateur.indicIsBaro ? 'Oui' : 'Non'}
           />
         </div>
       </div>

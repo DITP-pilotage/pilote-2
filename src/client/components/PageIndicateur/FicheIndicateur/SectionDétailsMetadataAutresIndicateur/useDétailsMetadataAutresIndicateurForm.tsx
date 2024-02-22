@@ -3,7 +3,6 @@ import { useFormContext, UseFormWatch } from 'react-hook-form';
 export type MetadataParametrageAutresIndicateurForm = {
   indicNomBaro: string;
   indicDescrBaro: string;
-  indicIsBaro: boolean;
   indicIsPerseverant: boolean;
   indicIsPhare: boolean;
   indicSource: string;
@@ -30,7 +29,6 @@ export type MetadataParametrageAutresIndicateurForm = {
 };
 
 function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageAutresIndicateurForm>) {
-  watch('indicIsBaro');
   watch('indicIsPerseverant');
   watch('indicIsPhare');
   watch('projetAnnuelPerf');
