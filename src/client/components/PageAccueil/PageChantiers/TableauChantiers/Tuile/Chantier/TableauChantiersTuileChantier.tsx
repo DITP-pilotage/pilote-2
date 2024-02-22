@@ -46,11 +46,11 @@ export default function TableauChantiersTuileChantier({ chantier, afficherIcône
           />
         </div>
         {
-          process.env.NEXT_PUBLIC_FF_ALERTES === 'true' &&
+          (process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true') &&
           <PictoTendance tendance={chantier.tendance} />
         }
         {
-          process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && !!couleurÉcartArrondi &&
+          (process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true') && !!couleurÉcartArrondi &&
           <TexteColoré
             alignement='droite'
             couleur={couleurÉcartArrondi.couleur}

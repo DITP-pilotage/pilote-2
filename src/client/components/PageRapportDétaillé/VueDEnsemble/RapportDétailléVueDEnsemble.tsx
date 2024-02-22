@@ -110,17 +110,18 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
           </div>
           <div className='fr-grid-row fr-grid-row--gutters'>
             {
-              remontéesAlertes.map(({ libellé, nombre, estActivée }) => (
-                <div
-                  className='fr-col'
-                  key={libellé}
-                >
-                  <RemontéeAlerte
-                    estActivée={estActivée}
-                    libellé={libellé}
-                    nombre={nombre}
-                  />
-                </div>
+              remontéesAlertes.map(({ nomCritère, libellé, nombre, estActivée }) => (
+                (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' || nomCritère !== 'estEnAlerteBaisseOuStagnation') &&
+                  <div
+                    className='fr-col'
+                    key={libellé}
+                  >
+                    <RemontéeAlerte
+                      estActivée={estActivée}
+                      libellé={libellé}
+                      nombre={nombre}
+                    />
+                  </div>
               ))
             }
           </div>

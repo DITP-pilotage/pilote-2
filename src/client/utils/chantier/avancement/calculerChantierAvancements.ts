@@ -14,17 +14,17 @@ export default function calculerChantierAvancements(
   
   const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire([chantier]).agréger();
 
-  const avancementRégional = () => {
+  const avancementRégional = ( typeTauxAvancement: 'global' | 'annuel' ) => {
     if (territoireSélectionné.maille === 'régionale')
-      return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne;
+      return donnéesTerritoiresAgrégées.régionale.territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement].moyenne;
 
     if (territoireSélectionné.maille === 'départementale' && territoireParent)
-      return donnéesTerritoiresAgrégées.régionale.territoires[territoireParent.codeInsee].répartition.avancements.global.moyenne;
+      return donnéesTerritoiresAgrégées.régionale.territoires[territoireParent.codeInsee].répartition.avancements[typeTauxAvancement].moyenne;
   };
 
-  const avancementDépartemental = () => {
+  const avancementDépartemental = ( typeTauxAvancement: 'global' | 'annuel' ) => {
     if (territoireSélectionné.maille === 'départementale')
-      return donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireSélectionné.codeInsee].répartition.avancements.global.moyenne;
+      return donnéesTerritoiresAgrégées[mailleSélectionnée].territoires[territoireSélectionné.codeInsee].répartition.avancements[typeTauxAvancement].moyenne;
   };
 
   return {
@@ -40,10 +40,20 @@ export default function calculerChantierAvancements(
       },
     },
     départementale: {
-      moyenne: avancementDépartemental(),
+      global: {
+        moyenne: avancementDépartemental('global'),
+      },
+      annuel: {
+        moyenne: avancementDépartemental('annuel'),
+      },
     },
     régionale: {
-      moyenne: avancementRégional(),
+      global: {
+        moyenne: avancementRégional('global'),
+      },
+      annuel: {
+        moyenne: avancementRégional('annuel'),
+      },
     },
   };
 }

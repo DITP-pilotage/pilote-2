@@ -73,7 +73,7 @@ const colonnesTableauChantiers = [
       width: '11rem',
     },
   }),
-  ...(process.env.NEXT_PUBLIC_FF_ALERTES === 'true' ? [
+  ...(process.env.NEXT_PUBLIC_FF_ALERTES === 'true' && process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' ? [
     reactTableColonnesHelper.accessor('tendance', {
       header: 'Tendance',
       id: 'tendance',
