@@ -32,8 +32,8 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
       >
         Paramétrages - Maille départementale
       </Titre>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.viDeptFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -44,7 +44,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
             values={getValues('viDeptFrom')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vaDeptFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -55,7 +55,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
             values={getValues('vaDeptFrom')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vcDeptFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -67,8 +67,8 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
           />
         </div>
       </div>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.viDeptOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -79,7 +79,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
             values={getValues('viDeptOp')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vaDeptOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -90,7 +90,7 @@ export default function SectionDétailsMetadataParametreIndicateurDepartementale
             values={getValues('vaDeptOp')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vcDeptOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}

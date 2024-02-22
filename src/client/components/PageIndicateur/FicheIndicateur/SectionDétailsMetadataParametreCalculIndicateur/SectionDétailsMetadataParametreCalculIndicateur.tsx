@@ -32,8 +32,8 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
       >
         Paramétrages - Calcul de la valeur actuelle
       </Titre>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.paramVacaDecumulFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -44,7 +44,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
             values={getValues('paramVacaDecumulFrom')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.paramVacaPartitionDate?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -55,7 +55,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
             values={getValues('paramVacaPartitionDate')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.paramVacaOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -67,8 +67,8 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
           />
         </div>
       </div>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.paramVacgDecumulFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -79,7 +79,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
             values={getValues('paramVacgDecumulFrom')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.paramVacgPartitionDate?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -90,7 +90,7 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
             values={getValues('paramVacgPartitionDate')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.paramVacgOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -102,8 +102,8 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
           />
         </div>
       </div>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
 
           <MetadataIndicateurSelecteur
             erreurMessage={errors.tendance?.message}

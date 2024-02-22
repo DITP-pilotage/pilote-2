@@ -26,8 +26,8 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
       >
         Paramétrages - Pondération de l'indicateur dans le calcul du taux d'avancement global
       </Titre>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurInput
             erreurMessage={errors.poidsPourcentDept?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -37,7 +37,7 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
             valeurAffiché={`${indicateur.poidsPourcentDept}`}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurInput
             erreurMessage={errors.poidsPourcentReg?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -47,7 +47,7 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
             valeurAffiché={`${indicateur.poidsPourcentReg}`}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurInput
             erreurMessage={errors.poidsPourcentNat?.message}
             estEnCoursDeModification={estEnCoursDeModification}

@@ -32,8 +32,8 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
       >
         Paramétrages - Maille nationale
       </Titre>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.viNatFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -44,7 +44,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
             values={getValues('viNatFrom')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w fr-pr-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vaNatFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -55,7 +55,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
             values={getValues('vaNatFrom')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vcNatFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -67,8 +67,8 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
           />
         </div>
       </div>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.viNatOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -79,7 +79,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
             values={getValues('viNatOp')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w fr-pr-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vaNatOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -90,7 +90,7 @@ export default function SectionDétailsMetadataParametreIndicateurNationale({
             values={getValues('vaNatOp')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vcNatOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}

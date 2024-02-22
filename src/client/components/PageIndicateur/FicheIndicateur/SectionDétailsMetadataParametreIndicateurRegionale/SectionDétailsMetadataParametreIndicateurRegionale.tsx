@@ -32,8 +32,8 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
       >
         Paramétrages - Maille régionale
       </Titre>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.viRegFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -44,7 +44,7 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
             values={getValues('viRegFrom')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vaRegFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -55,7 +55,7 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
             values={getValues('vaRegFrom')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vcRegFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -67,8 +67,8 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
           />
         </div>
       </div>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.viRegOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -79,7 +79,7 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
             values={getValues('viRegOp')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vaRegOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
@@ -90,7 +90,7 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
             values={getValues('vaRegOp')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
             erreurMessage={errors.vcRegOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
