@@ -5,6 +5,7 @@ import {
 } from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
 import { ImportMetadataIndicateur } from '@/server/parametrage-indicateur/domain/ImportMetadataIndicateur';
 import logger from '@/server/infrastructure/logger';
+import { supprimerLeFichier } from '@/server/import-indicateur/infrastructure/adapters/FichierService';
 
 type RecordCSVImport = Record<typeof AvailableHeaderCSVImport[number], string>;
 
@@ -165,6 +166,7 @@ export default class ImportMasseMetadataIndicateurUseCase {
     };
     const contents = fs.readFileSync(nomDuFichier as string, 'utf8');
     const listeRecordCsvImport: RecordCSVImport[] = parse(contents, csvParserOptions);
+    supprimerLeFichier(nomDuFichier);
     
     logger.info('Import de masse en cours');
 

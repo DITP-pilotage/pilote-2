@@ -51,7 +51,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
       </div>
       <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurInput
+          <MetadataIndicateurTextArea
             erreurMessage={errors.indicSource?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName='indicSource'
@@ -283,7 +283,7 @@ export default function SectionDétailsMetadataAutresIndicateur({ indicateur, es
       </div>
       <div className='fr-grid-row fr-grid-row--gutters'>
         <div className='fr-col-12 fr-col-md-6'>
-          <MetadataIndicateurInput
+          <MetadataIndicateurTextArea
             erreurMessage={errors.commentaire?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName='commentaire'
