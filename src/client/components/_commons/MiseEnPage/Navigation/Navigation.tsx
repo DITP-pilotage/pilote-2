@@ -64,9 +64,8 @@ export default function Navigation() {
     },
     {
       nom: 'Centre d\'aide',
-      lien: 'https://centre-aide-pilote-ditp.osc-fr1.scalingo.io/',
-      accessible: true,
-      target: '_blank',
+      lien: 'abcd/index.html',
+      accessible: true
     },
   ];
 
