@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import InfobulleProps from '@/components/_commons/Infobulle/Infobulle.interface';
 import InfobulleStyled from '@/components/_commons/Infobulle/Infobulle.styled';
-import {
-  estLargeurDÉcranActuelleMoinsLargeQue,
-} from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 
 export default function Infobulle({ idHtml, children }: InfobulleProps) {
   const estVueMobile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
@@ -11,6 +9,7 @@ export default function Infobulle({ idHtml, children }: InfobulleProps) {
 
   return (
     <InfobulleStyled
+      className='infobulle'
       onBlur={() => setEstVisible(false)}
       onFocus={() => !estVueMobile && setEstVisible(true)}
       onMouseEnter={() => setEstVisible(true)}
