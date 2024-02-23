@@ -170,6 +170,7 @@ models:
         meta:
             pilote_show: true
             pilote_alias: "Unité"
+            pilote_disp_dispDesc: true
             pilote_edit_isEditable: true
             pilote_edit_regex: ".*"
             pilote_edit_regexViolationMessage: null
@@ -191,6 +192,7 @@ models:
         meta:
             pilote_show: true
             pilote_alias: "Contraintes"
+            pilote_disp_dispDesc: true
             pilote_edit_isEditable: false
             pilote_edit_boxType: text
             pilote_edit_acceptedValuesViolationMessage: "Veuillez choisir des contraintes de saisie parmi: "      
