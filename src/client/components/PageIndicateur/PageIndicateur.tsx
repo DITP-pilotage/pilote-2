@@ -99,7 +99,7 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                         Confirmer les changements
                       </button>
                       <button
-                        className='fr-btn fr-mr-2w'
+                        className='fr-btn fr-btn--secondary fr-mr-2w'
                         key='submit-indicateur'
                         onClick={reinitialiserIndicateur}
                         type='button'
