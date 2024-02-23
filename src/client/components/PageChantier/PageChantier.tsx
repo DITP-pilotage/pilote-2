@@ -61,7 +61,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
         setEstOuvert={setEstOuverteBarreLatérale}
       >
         <BarreLatéraleEncart>
-          <SélecteursMaillesEtTerritoires />
+          <SélecteursMaillesEtTerritoires chantierMailles={chantier?.mailles} />
         </BarreLatéraleEncart>
         <Sommaire
           auClic={() => setEstOuverteBarreLatérale(false)}

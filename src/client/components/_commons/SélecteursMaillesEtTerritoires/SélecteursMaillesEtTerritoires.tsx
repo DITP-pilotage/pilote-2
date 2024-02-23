@@ -1,11 +1,18 @@
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import SélecteurMaille from './SélecteurMaille/SélecteurMaille';
 import SélecteurTerritoire from './SélecteurTerritoire/SélecteurTerritoire';
 
-export default function SélecteursMaillesEtTerritoires() {
+interface SélecteursMaillesEtTerritoiresProps {
+  chantierMailles?: Chantier['mailles'];
+}
+
+export default function SélecteursMaillesEtTerritoires({ chantierMailles }: SélecteursMaillesEtTerritoiresProps) {
   return (
     <>
       <SélecteurMaille />
-      <SélecteurTerritoire />
+      <SélecteurTerritoire 
+        chantierMailles={chantierMailles}
+      />
     </>
   );
 }
