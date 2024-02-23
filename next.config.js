@@ -34,11 +34,11 @@ const nextConfig = {
         destination: '/centreaide/static/custom.css',
       },
       {
-        source: '/abcd/:slug1/:slug2',
+        source: '/abcd/:slug1/:slug2/index.html',
         destination: '/centreaide/:slug1/:slug2/index.html',
       },
       {
-        source: '/abcd/:slug1/:slug2/:slug3',
+        source: '/abcd/:slug1/:slug2/:slug3/index.html',
         destination: '/centreaide/:slug1/:slug2/:slug3/index.html',
       }
     ]
@@ -66,7 +66,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: `default-src 'self' data: 'unsafe-inline'; connect-src https://api.validata.etalab.studio/ 'self' data: 'unsafe-inline' ws:; script-src 'self' ${process.env.NODE_ENV !== 'production' && "'unsafe-eval'"};`,
+            value: `default-src 'self' data: 'unsafe-inline'; frame-src https://video.finances.gouv.fr/; connect-src https://api.validata.etalab.studio/ 'self' data: 'unsafe-inline' ws:; script-src 'self' ${process.env.NODE_ENV !== 'production' && "'unsafe-eval'"};`,
           },
           {
             key: 'X-Frame-Options',
