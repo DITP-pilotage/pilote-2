@@ -305,7 +305,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return {
       'lecture': chantiersAccessibles,
       'saisieCommentaire': chantiersAccessiblesEnSaisieCommentaire,
-      'saisieIndicateur': profilUtilisateur.code === 'DITP_ADMIN' ? chantiersAccessibles : [],
+      'saisieIndicateur': ['DITP_PILOTAGE', 'DITP_ADMIN'].includes(profilUtilisateur.code) ? chantiersAccessibles : [],
       'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs ? chantiersAccessibles : [],
       'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs ? chantiersAccessibles : [],
       'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs ? chantiersAccessibles : [],
