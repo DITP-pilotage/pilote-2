@@ -15,9 +15,8 @@ export default function useChantiersFiltrés(chantiers: Chantier[]) {
 
   const chantiersFiltrésSansFiltreAlerte = useMemo(() => {
     let résultat: Chantier[] = chantiers;
-    console.log(territoireSélectionné);
     if (territoireSélectionné) {
-      résultat = résultat.filter(chantier => !!chantier.mailles[territoireSélectionné.maille][territoireSélectionné.codeInsee].estApplicable)
+      résultat = résultat.filter(chantier => !!chantier.mailles[territoireSélectionné.maille][territoireSélectionné.codeInsee].estApplicable);
     }
 
     if (session?.profil === 'DROM' && territoireSélectionné?.code === 'NAT-FR') {

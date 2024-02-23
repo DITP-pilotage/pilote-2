@@ -44,6 +44,7 @@ export default function NextPageChantier({ indicateurs, chantierInformations }: 
 }
 
 export async function getServerSideProps({ req, res, params }: GetServerSidePropsContext<{ id: Chantier['id'] }>) {
+
   if (!params?.id) {
     return {
       notFound: true,
@@ -72,6 +73,7 @@ export async function getServerSideProps({ req, res, params }: GetServerSideProp
       throw error;
     }
   }
+
   return {
     props: {
       indicateurs,
