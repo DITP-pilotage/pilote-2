@@ -43,6 +43,9 @@ export class Configuration {
     this.logLevel = process.env.LOG_LEVEL || 'info';
 
     this.devPassword = process.env.DEV_PASSWORD;
+
+    // eslint-disable-next-line no-console
+    console.log(process.env.DATABASE_URL);
     this.isUsingDevCredentials = Boolean(this.devPassword);
 
     this.keycloakClientId = process.env.KEYCLOAK_CLIENT_ID || 'N/A';
