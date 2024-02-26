@@ -1,3 +1,5 @@
+import { ChantierTendance } from '@/server/domain/chantier/Chantier.interface';
+
 const Alerte = {
   estEnAlerteÉcart(écart: number | null) {
     if (écart === null) {
@@ -5,14 +7,11 @@ const Alerte = {
     }
     return écart < -10;
   },
-  estEnAlerteBaisseOuStagnation: (tauxAvancementPrécédent: number | null, tauxAvancement: number | null) => {
-    if (tauxAvancement === null) {
+  estEnAlerteBaisseOuStagnation: (tendance: ChantierTendance | null) => {
+    if (!!!tendance) 
       return false;
-    } else if (tauxAvancementPrécédent === null) {
-      return true;
-    }
-    
-    return tauxAvancement <= tauxAvancementPrécédent;
+
+    return ['BAISSE', 'STAGNATION'].includes(tendance);
   },
   estEnAlerteDonnéesNonMàj(dateDonnéesQualitatives: string | null, dateDonnéesQuantitatives: string | null) {
     if (dateDonnéesQualitatives === null && dateDonnéesQuantitatives !== null) {
