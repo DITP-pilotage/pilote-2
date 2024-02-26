@@ -39,7 +39,6 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
               onSubmit={reactHookForm.handleSubmit((data) => {
                 if (estUneCréation) {
                   creerIndicateur({ ...data, indicId: indicateur.indicId });
-
                 } else {
                   modifierIndicateur({ ...data, indicId: indicateur.indicId });
                 }
@@ -81,45 +80,44 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                 { indicateur.indicId }
                 <div className='fr-grid-row fr-mt-4w'>
                   {
-                  estUneCréation ? (
-                    <button
-                      className='fr-btn fr-mr-2w'
-                      key='submit-indicateur'
-                      type='submit'
-                    >
-                      Créer l'indicateur
-                    </button>
-                  ) : (estEnCoursDeModification ? (
-                    <>
+                    estUneCréation ? (
                       <button
                         className='fr-btn fr-mr-2w'
-                        key='submit-indicateur'
+                        key='submit-creer-indicateur-top'
                         type='submit'
                       >
-                        Confirmer les changements
+                        Créer l'indicateur
                       </button>
+                    ) : (estEnCoursDeModification ? (
+                      <>
+                        <button
+                          className='fr-btn fr-mr-2w'
+                          key='submit-modifier-indicateur-top'
+                          type='submit'
+                        >
+                          Confirmer les changements
+                        </button>
+                        <button
+                          className='fr-btn fr-btn--secondary fr-mr-2w'
+                          key='submit-reinitialiser-indicateur-top'
+                          onClick={reinitialiserIndicateur}
+                          type='button'
+                        >
+                          Annuler
+                        </button>
+                      </>
+                    ) : (
                       <button
-                        className='fr-btn fr-btn--secondary fr-mr-2w'
-                        key='submit-indicateur'
-                        onClick={reinitialiserIndicateur}
+                        className='fr-btn fr-mr-2w'
+                        key='passer-en-modification'
+                        onClick={() => setEstEnCoursDeModification(!estEnCoursDeModification)}
                         type='button'
                       >
-                        Annuler
+                        Modifier
                       </button>
-                    </>
-                  ) : (
-                    <button
-                      className='fr-btn fr-mr-2w'
-                      key='passer-en-modification'
-                      onClick={() => setEstEnCoursDeModification(!estEnCoursDeModification)}
-                      type='button'
-                    >
-                      Modifier
-                    </button>
-                  ))
-                }
+                    ))
+                  }
                 </div>
-
               </Titre>
               <Bloc>
                 <div className='fr-py-4w fr-px-10w'>
@@ -133,7 +131,7 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                     estUneCréation ? (
                       <button
                         className='fr-btn fr-mr-2w'
-                        key='submit-indicateur'
+                        key='submit-creer-indicateur-top'
                         type='submit'
                       >
                         Créer l'indicateur
@@ -142,14 +140,14 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                       <>
                         <button
                           className='fr-btn fr-mr-2w'
-                          key='submit-indicateur'
+                          key='submit-modifier-indicateur-top'
                           type='submit'
                         >
                           Confirmer les changements
                         </button>
                         <button
                           className='fr-btn fr-btn--secondary fr-mr-2w'
-                          key='submit-indicateur'
+                          key='submit-reinitialiser-indicateur-top'
                           onClick={reinitialiserIndicateur}
                           type='button'
                         >

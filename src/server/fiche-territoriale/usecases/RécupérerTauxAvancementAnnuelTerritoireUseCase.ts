@@ -7,6 +7,8 @@ interface Dependencies {
   territoireRepository: TerritoireRepository
 }
 
+const CHANTIER_EXCLUS = new Set(['CH-162', 'CH-173', 'CH-054', 'CH-006', 'CH-057', 'CH-086', 'CH-107', 'CH-141', 'CH-130', 'CH-131']);
+
 export class RécupérerTauxAvancementAnnuelTerritoireUseCase {
   private chantierRepository: ChantierRepository;
 
@@ -19,12 +21,12 @@ export class RécupérerTauxAvancementAnnuelTerritoireUseCase {
 
   async run({ territoireCode }: { territoireCode: string }): Promise<(number | null)[]> {
     const territoire = await this.territoireRepository.recupererTerritoireParCode({ territoireCode });
-    let chantiers: Chantier[] = [];
+    let chantiers: Chantier[];
 
     if (territoire.maille === 'DEPT') {
-      chantiers = await this.chantierRepository.listerParTerritoireCodePourUnDepartement({ territoireCode });
+      chantiers = await this.chantierRepository.listerParTerritoireCodePourUnDepartement({ territoireCode }).then(chantiersResult => chantiersResult.filter(chantier => !CHANTIER_EXCLUS.has(chantier.id)));
     } else if (territoire.maille === 'REG') {
-      chantiers = await this.chantierRepository.listerParTerritoireCodePourUneRegion({ territoireCode });
+      chantiers = await this.chantierRepository.listerParTerritoireCodePourUneRegion({ territoireCode }).then(chantiersResult => chantiersResult.filter(chantier => !CHANTIER_EXCLUS.has(chantier.id)));
     } else {
       chantiers = [];
     }
