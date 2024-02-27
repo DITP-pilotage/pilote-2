@@ -67,13 +67,26 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
             {
               process.env.NEXT_PUBLIC_FF_FICHE_TERRITORIALE === 'true' && estAutoriséAConsulterLaFicheTerritoriale(session?.profil || '') && (
                 <div>
-                  <Link
-                    className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
-                    href={`/fiche-territoriale?territoireCode=${territoireSélectionné!.code}`}
-                    title='Voir la fiche territoriale'
-                  >
-                    Fiche territoriale
-                  </Link>
+                  {
+                    territoireSélectionné!.code === 'NAT-FR' ? (
+                      <button
+                        className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm'
+                        disabled
+                        title='Veuillez séléctionner un territoire pour accéder à sa fiche territoriale'
+                        type='button'
+                      >
+                        Fiche territoriale
+                      </button>
+                    ) : (
+                      <Link
+                        className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
+                        href={`/fiche-territoriale?territoireCode=${territoireSélectionné!.code}`}
+                        title='Voir la fiche territoriale'
+                      >
+                        Fiche territoriale
+                      </Link>
+                    )
+                  }
                 </div>
               )
             }

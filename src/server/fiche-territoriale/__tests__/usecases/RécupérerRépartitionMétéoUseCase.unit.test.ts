@@ -28,14 +28,14 @@ describe('RécupérerRépartitionMétéoUseCase', () => {
     const chantier3 = new ChantierBuilder().withMeteo('COUVERT').build();
     const chantier4 = new ChantierBuilder().withMeteo('SOLEIL').build();
 
-    chantierRepository.listerParTerritoireCodePourUnDepartement.mockResolvedValue([chantier1, chantier2, chantier3, chantier4]);
+    chantierRepository.listerParTerritoireCodePourEtMaille.mockResolvedValue([chantier1, chantier2, chantier3, chantier4]);
 
     // When
     const result = await récupérerRépartitionMétéoUseCase.run({ territoireCode });
 
     // Then
     expect(territoireRepository.recupererTerritoireParCode).toHaveBeenNthCalledWith(1, { territoireCode });
-    expect(chantierRepository.listerParTerritoireCodePourUnDepartement).toHaveBeenNthCalledWith(1, { territoireCode });
+    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'DEPT' });
 
     expect(result.nombreOrage).toEqual(2);
     expect(result.nombreCouvert).toEqual(1);
@@ -55,14 +55,14 @@ describe('RécupérerRépartitionMétéoUseCase', () => {
     const chantier3 = new ChantierBuilder().withMeteo(null).build();
     const chantier4 = new ChantierBuilder().withMeteo('SOLEIL').build();
 
-    chantierRepository.listerParTerritoireCodePourUnDepartement.mockResolvedValue([chantier1, chantier2, chantier3, chantier4]);
+    chantierRepository.listerParTerritoireCodePourEtMaille.mockResolvedValue([chantier1, chantier2, chantier3, chantier4]);
 
     // When
     const result = await récupérerRépartitionMétéoUseCase.run({ territoireCode });
 
     // Then
     expect(territoireRepository.recupererTerritoireParCode).toHaveBeenNthCalledWith(1, { territoireCode });
-    expect(chantierRepository.listerParTerritoireCodePourUnDepartement).toHaveBeenNthCalledWith(1, { territoireCode });
+    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'DEPT' });
 
     expect(result.nombreOrage).toEqual(2);
     expect(result.nombreCouvert).toEqual(0);
@@ -82,14 +82,14 @@ describe('RécupérerRépartitionMétéoUseCase', () => {
     const chantier3 = new ChantierBuilder().withMeteo('COUVERT').build();
     const chantier4 = new ChantierBuilder().withMeteo('SOLEIL').build();
 
-    chantierRepository.listerParTerritoireCodePourUneRegion.mockResolvedValue([chantier1, chantier2, chantier3, chantier4]);
+    chantierRepository.listerParTerritoireCodePourEtMaille.mockResolvedValue([chantier1, chantier2, chantier3, chantier4]);
 
     // When
     const result = await récupérerRépartitionMétéoUseCase.run({ territoireCode });
 
     // Then
     expect(territoireRepository.recupererTerritoireParCode).toHaveBeenNthCalledWith(1, { territoireCode });
-    expect(chantierRepository.listerParTerritoireCodePourUneRegion).toHaveBeenNthCalledWith(1, { territoireCode });
+    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'REG' });
 
     expect(result.nombreOrage).toEqual(2);
     expect(result.nombreCouvert).toEqual(1);

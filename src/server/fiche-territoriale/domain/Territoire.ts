@@ -19,7 +19,7 @@ export class Territoire {
     return this._nomAffiché;
   }
 
-  get maille(): string {
+  get maille(): 'DEPT' | 'REG' | 'NAT' {
     return this._maille;
   }
 

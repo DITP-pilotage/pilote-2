@@ -27,14 +27,14 @@ describe('RécupérerTauxAvancementAnnuelTerritoireUseCase', () => {
     const chantier3 = new ChantierBuilder().withTauxAvancementAnnuel(4).build();
 
     territoireRepository.recupererTerritoireParCode.mockResolvedValue(territoire);
-    chantierRepository.listerParTerritoireCodePourUnDepartement.mockResolvedValue([chantier1, chantier2, chantier3]);
+    chantierRepository.listerParTerritoireCodePourEtMaille.mockResolvedValue([chantier1, chantier2, chantier3]);
 
     // When
     const result = await récupérerTauxAvancementAnnuelTerritoireUseCase.run({ territoireCode });
 
     // Then
     expect(territoireRepository.recupererTerritoireParCode).toHaveBeenNthCalledWith(1, { territoireCode });
-    expect(chantierRepository.listerParTerritoireCodePourUnDepartement).toHaveBeenNthCalledWith(1, { territoireCode });
+    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'DEPT' });
     expect(result).toHaveLength(3);
     expect(result).toStrictEqual([null, 3, 4]);
   });
@@ -49,14 +49,14 @@ describe('RécupérerTauxAvancementAnnuelTerritoireUseCase', () => {
     const chantier3 = new ChantierBuilder().withTauxAvancementAnnuel(6).build();
 
     territoireRepository.recupererTerritoireParCode.mockResolvedValue(territoire);
-    chantierRepository.listerParTerritoireCodePourUneRegion.mockResolvedValue([chantier1, chantier2, chantier3]);
+    chantierRepository.listerParTerritoireCodePourEtMaille.mockResolvedValue([chantier1, chantier2, chantier3]);
 
     // When
     const result = await récupérerTauxAvancementAnnuelTerritoireUseCase.run({ territoireCode });
 
     // Then
     expect(territoireRepository.recupererTerritoireParCode).toHaveBeenNthCalledWith(1, { territoireCode });
-    expect(chantierRepository.listerParTerritoireCodePourUneRegion).toHaveBeenNthCalledWith(1, { territoireCode });
+    expect(chantierRepository.listerParTerritoireCodePourEtMaille).toHaveBeenNthCalledWith(1, { territoireCode, maille: 'REG' });
     expect(result).toHaveLength(3);
     expect(result).toStrictEqual([null, 5, 6]);
   });

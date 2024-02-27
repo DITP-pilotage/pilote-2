@@ -1,13 +1,11 @@
 import { TerritoireRepository } from '@/server/fiche-territoriale/domain/ports/TerritoireRepository';
 import { ChantierRepository } from '@/server/fiche-territoriale/domain/ports/ChantierRepository';
-import { Chantier } from '@/server/fiche-territoriale/domain/Chantier';
+import { CHANTIER_EXCLUS } from '@/server/fiche-territoriale/domain/CHANTIER_EXCLUS';
 
 interface Dependencies {
   chantierRepository: ChantierRepository
   territoireRepository: TerritoireRepository
 }
-
-const CHANTIER_EXCLUS = new Set(['CH-162', 'CH-173', 'CH-054', 'CH-006', 'CH-057', 'CH-086', 'CH-107', 'CH-141', 'CH-130', 'CH-131']);
 
 export class RécupérerTauxAvancementGlobalTerritoireUseCase {
   private chantierRepository: ChantierRepository;
@@ -20,17 +18,10 @@ export class RécupérerTauxAvancementGlobalTerritoireUseCase {
   }
 
   async run({ territoireCode }: { territoireCode: string }): Promise<(number | null)[]> {
-    let chantiers: Chantier[];
-
     const territoire = await this.territoireRepository.recupererTerritoireParCode({ territoireCode });
 
-    if (territoire.maille === 'DEPT') {
-      chantiers = await this.chantierRepository.listerParTerritoireCodePourUnDepartement({ territoireCode }).then(chantiersResult => chantiersResult.filter(chantier => !CHANTIER_EXCLUS.has(chantier.id)));
-    } else if (territoire.maille === 'REG') {
-      chantiers = await this.chantierRepository.listerParTerritoireCodePourUneRegion({ territoireCode }).then(chantiersResult => chantiersResult.filter(chantier => !CHANTIER_EXCLUS.has(chantier.id)));
-    } else {
-      chantiers = [];
-    }
+    let chantiers = territoire.maille !== 'NAT' ? (await this.chantierRepository.listerParTerritoireCodePourEtMaille({ territoireCode, maille: territoire.maille }).then(chantiersResult => chantiersResult.filter(chantier => !CHANTIER_EXCLUS[territoire.maille].has(chantier.id)))) : [];
+
     return chantiers.map(chantier => chantier.tauxAvancement);
   }
 }

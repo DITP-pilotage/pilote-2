@@ -189,13 +189,33 @@ export const PageFicheTerritoriale: FunctionComponent<{
           </div>
           <div className='fr-px-2w fr-mt-2w'>
             <Bloc>
-              <Titre
-                baliseHtml='h2'
-                className='fr-text--lg fr-mb-2w fr-py-1v'
-                estInline
-              >
-                {`Liste des chantiers (${chantiersFicheTerritoriale.length})`}
-              </Titre>
+              <div className='flex w-full justify-between'>
+                <Titre
+                  baliseHtml='h2'
+                  className='fr-text--lg fr-mb-0 fr-py-1v'
+                  estInline
+                >
+                  {`Liste des chantiers (${chantiersFicheTerritoriale.length})`}
+                </Titre>
+                <div className='flex align-center'>
+                  <div />
+                  <span
+                    className='fr-text--xs fr-m-0 fr-ml-2w fr-badge fr-badge--no-icon fr-badge--success'
+                  >
+                    Avancement positif
+                  </span>
+                  <span
+                    className='fr-text--xs fr-m-0 fr-ml-2w fr-badge fr-badge--no-icon fr-badge--warning'
+                  >
+                    Léger retard
+                  </span>
+                  <span
+                    className='fr-text--xs fr-m-0 fr-ml-2w fr-badge fr-badge--no-icon fr-badge--error'
+                  >
+                    Gros retard
+                  </span>
+                </div>
+              </div>
               <TableauFicheTerritoriale chantiersFicheTerritoriale={chantiersFicheTerritoriale} />
             </Bloc>
           </div>
