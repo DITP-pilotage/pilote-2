@@ -137,3 +137,8 @@ vars:
     vig_min_date: '2018-01-01'
     # Nombre de décimales renvoyées par le calcul des TAA et TAG
     ta_decimales: 2
+
+quoting:
+  database: true
+  schema: true
+  identifier: true
