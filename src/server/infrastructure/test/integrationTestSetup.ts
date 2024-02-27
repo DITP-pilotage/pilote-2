@@ -8,6 +8,8 @@ beforeEach(async () => {
                                                                           FROM pg_tables
                                                                           WHERE schemaname = 'public'`;
 
+  console.log('hey');
+
   const tables = tablenames
     .map(({ tablename }) => tablename)
     .filter((name) => ['_prisma_migrations', 'territoire', 'profil', 'profil_habilitation', 'habilitation_scope', 'scope'].includes(name) === false)

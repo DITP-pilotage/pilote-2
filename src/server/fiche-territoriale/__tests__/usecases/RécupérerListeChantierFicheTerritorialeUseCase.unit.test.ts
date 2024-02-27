@@ -167,7 +167,7 @@ describe('RécupérerListeChantierFicheTerritorialeUseCase', () => {
     expect(result.at(0)?.meteo).toEqual('SOLEIL');
     expect(result.at(0)?.dateQualitative).toEqual('2024-01-02T00:00:00.000Z');
     expect(result.at(0)?.tauxAvancement).toEqual(40);
-    expect(result.at(0)?.dateQuantitative).toEqual('2023-02-02T00:00:00.000Z');
+    expect(result.at(0)?.dateQuantitative).toEqual('2024-01-02T00:00:00.000Z');
     expect(result.at(0)?.indicateurs).toHaveLength(2);
     expect(result.at(0)?.indicateurs.at(0)?.nom).toEqual('Un nom indicateur 1 chantier 1');
     expect(result.at(0)?.indicateurs.at(0)?.tauxAvancement).toEqual(10.1);
@@ -188,7 +188,7 @@ describe('RécupérerListeChantierFicheTerritorialeUseCase', () => {
     expect(result.at(1)?.meteo).toEqual('ORAGE');
     expect(result.at(1)?.dateQualitative).toEqual('2023-08-02T00:00:00.000Z');
     expect(result.at(1)?.tauxAvancement).toEqual(25);
-    expect(result.at(1)?.dateQuantitative).toEqual('2020-08-01T00:00:00.000Z');
+    expect(result.at(1)?.dateQuantitative).toEqual('2021-01-02T00:00:00.000Z');
     expect(result.at(1)?.indicateurs).toHaveLength(2);
     expect(result.at(1)?.indicateurs.at(0)?.nom).toEqual('Un nom indicateur 1 chantier 2');
     expect(result.at(1)?.indicateurs.at(0)?.tauxAvancement).toEqual(30.1);
@@ -246,12 +246,42 @@ describe('RécupérerListeChantierFicheTerritorialeUseCase', () => {
     mapSyntheseDesResultats.set('CH-002', [syntheseDesResultats1CH2, syntheseDesResultats2CH2]);
 
     const mapIndicateurs = new Map<string, Indicateur[]>();
-    const indicateur1CH1 = new IndicateurBuilder().withDateValeurActuelle('2023-02-02T00:00:00.000Z').build();
-    const indicateur2CH1 = new IndicateurBuilder().withDateValeurActuelle('2023-01-01T00:00:00.000Z').build();
-    const indicateur1CH2 = new IndicateurBuilder().withDateValeurActuelle('2019-02-02T00:00:00.000Z').build();
-    const indicateur2CH2 = new IndicateurBuilder().withDateValeurActuelle('2020-08-01T00:00:00.000Z').build();
+    const indicateur1CH1 = new IndicateurBuilder()
+      .withDateValeurActuelle('2023-02-02T00:00:00.000Z')
+      .build();
+    const indicateur2CH1 = new IndicateurBuilder()
+      .withDateValeurActuelle('2023-01-01T00:00:00.000Z')
+      .build();
+    const indicateur1CH2 = new IndicateurBuilder()
+      .withDateValeurActuelle('2019-02-02T00:00:00.000Z')
+      .build();
+    const indicateur2CH2 = new IndicateurBuilder()
+      .withDateValeurActuelle('2020-08-01T00:00:00.000Z')
+      .build();
     mapIndicateurs.set('CH-001', [indicateur1CH1, indicateur2CH1]);
     mapIndicateurs.set('CH-002', [indicateur1CH2, indicateur2CH2]);
+
+    const mapIndicateursNational = new Map<string, Indicateur>();
+    const indicateurNational1CH1 = new IndicateurBuilder()
+      .withId('IND-001')
+      .withObjectifTauxAvancement(10.1)
+      .build();
+    const indicateurNational2CH1 = new IndicateurBuilder()
+      .withId('IND-002')
+      .withObjectifTauxAvancement(20.1)
+      .build();
+    const indicateurNational1CH2 = new IndicateurBuilder()
+      .withId('IND-003')
+      .withObjectifTauxAvancement(30.1)
+      .build();
+    const indicateurNational2CH2 = new IndicateurBuilder()
+      .withId('IND-004')
+      .withObjectifTauxAvancement(40.1)
+      .build();
+    mapIndicateursNational.set('IND-001', indicateurNational1CH1);
+    mapIndicateursNational.set('IND-002', indicateurNational2CH1);
+    mapIndicateursNational.set('IND-003', indicateurNational1CH2);
+    mapIndicateursNational.set('IND-004', indicateurNational2CH2);
 
     const mapMinistere = new Map<string, Ministere>();
     const ministere1 = new MinistereBuilder().withCode('1009').withIcone('remix::football::fill').build();
@@ -263,6 +293,7 @@ describe('RécupérerListeChantierFicheTerritorialeUseCase', () => {
     chantierRepository.listerParTerritoireCodePourUneRegion.mockResolvedValue([chantier1, chantier2]);
     syntheseDesResultatsRepository.recupererMapSyntheseDesResultatsParListeChantierIdEtTerritoire.mockResolvedValue(mapSyntheseDesResultats);
     indicateurRepository.recupererMapIndicateursParListeChantierIdEtTerritoire.mockResolvedValue(mapIndicateurs);
+    indicateurRepository.recupererMapIndicateursNationalParListeIndicateurId.mockResolvedValue(mapIndicateursNational);
     ministereRepository.recupererMapMinistereParListeCodeMinistere.mockResolvedValue(mapMinistere);
 
     // When
