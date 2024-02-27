@@ -47,3 +47,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Dossiers de build scalingo
+.scalingo/
+.profile.d/

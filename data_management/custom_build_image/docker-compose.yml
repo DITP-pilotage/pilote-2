@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+
+  init-container:
+    env_file:
+      - ../.env.review
+    depends_on:
+      - pg_pilote_review
+    build: 
+      dockerfile: Dockerfile
+      context: .
+    ports: [ "8080:3000" ]
+    volumes:
+      - ../../:/app
+      - ./entrypoint.sh:/entrypoint.sh
+      #- ../.env.review:/env/.env
+      #- /app/node_modules
+      - ./.env.review:/.env.review
+
+  pg_pilote_review:
+    image: postgres:14.1-alpine
+    ports:
+      - "5456:5432"
+    environment:
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+      - POSTGRES_DB=postgres
+  

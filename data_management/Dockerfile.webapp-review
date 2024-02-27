@@ -1,0 +1,4 @@
+FROM node:lts-alpine
+
+RUN apk add git
+ENV DATABASE_URL=None

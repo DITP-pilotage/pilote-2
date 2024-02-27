@@ -1,0 +1,84 @@
+version: "3.8"
+
+services:
+  pilote_webapp_review:
+    build: 
+      dockerfile: Dockerfile.webapp-review
+      context: .
+    command: sh -c "cd /app/pilote-2 && npm install && npm run dev"
+    #command: sh -c "git clone --depth 1 https://github.com/DITP-pilotage/pilote-2.git --branch dev --single-branch && cd /pilote-2 && git checkout prod && git status"
+    #depends_on:
+    #  - postgres
+    #ports: [ "3000:3000" ]
+    environment:
+      DATABASE_URL: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/review-${BRANCH_TO_REVIEW}
+      NEXTAUTH_URL: http://pilote-${BRANCH_TO_REVIEW}.localhost
+      PGDATABASE: review-${BRANCH_TO_REVIEW}
+    volumes:
+      - ./review-app-content:/app
+    env_file:
+      - ./.env.review
+    #  - ../.env
+    #volumes:
+    #  - ../:/app
+    tty: true
+    labels:
+      - "traefik.http.routers.pilote_webapp.rule=Host(`pilote-${BRANCH_TO_REVIEW}.localhost`)"
+      - "traefik.http.services.pilote_webapp.loadbalancer.server.port=3000"
+    depends_on:
+        init-container:
+            condition: service_completed_successfully
+  init-container:
+    entrypoint: ""
+    #command: sh -c "rm -rf /app/pilote-2 && git clone --depth 1 https://github.com/DITP-pilotage/pilote-2.git --branch ${BRANCH_TO_REVIEW} --single-branch /app/pilote-2 && cd /app/pilote-2 && git status"
+    command: sh -c "psql -U postgres -d postgres -c 'DROP DATABASE IF EXISTS \"review-${BRANCH_TO_REVIEW}\"' && psql -U postgres -d postgres -c 'CREATE DATABASE \"review-${BRANCH_TO_REVIEW}\"' && rm -rf /app/pilote-2 && git clone --depth 1 https://github.com/DITP-pilotage/pilote-2.git --branch ${BRANCH_TO_REVIEW} --single-branch /app/pilote-2 && cd /app/pilote-2 && git status && echo $DATABASE_URL && cd /app/pilote-2/data_management && cp /.env.review .env && echo $PIPENV_PIPFILE && pipenv lock && pipenv sync && rm -rf data_factory/target && pipenv run /bin/bash scripts/run_datajobs.sh"
+    #command: sh -c "psql -U postgres -tc 'SELECT 1 FROM pg_database WHERE datname = \"review2-${BRANCH_TO_REVIEW}\"' | grep -q 1 || psql -U postgres -c 'CREATE DATABASE \"review2-${BRANCH_TO_REVIEW}\"'"
+    #command: sh -c ""
+    depends_on:
+      - pg_pilote_review
+    env_file:
+      - .env.review
+    environment:
+      - PGDATABASE=review-${BRANCH_TO_REVIEW}
+      - PIPENV_PIPFILE=/app/pilote-2/data_management/Pipfile
+    build: 
+      dockerfile: data_management/Dockerfile-data
+      context: ..
+    #ports: [ "8080:8080" ]
+    volumes:
+      - ./review-app-content:/app
+      - ./.env.review:/.env.review
+
+  pilote_traefik:
+    image: traefik:v2.10
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      - "8087:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  pg_pilote_review:
+    hostname: pg_pilote_review
+    depends_on:
+      - pilote_traefik
+    image: postgres:14.1-alpine
+    ports:
+      - "5456:5432"
+    environment:
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+      - POSTGRES_DB=postgres
+    #volumes: 
+    #  - db_dbt_pilote:/var/lib/postgresql/data
+
+#volumes:
+#  review-app-content:
+#    driver: local 
+
+# Usage :
+# - (optionnel) "docker-compose build" pour construire les images
+# - "docker-compose up" pour lancer la db, la doc, et la webapp
+# - (optionnel) "docker-compose run pilote_scripts" pour entrer dans le container et lancer les scripts dbt via "/bin/bash scripts/<name-of-the-script>.sh"
+# - (optionnel) OU "docker-compose run pilote_scripts scripts/<name-of-the-script>.sh" pour lancer le script dbt <name-of-the-script>.sh
+# - (optionnel) "docker container exec -it pilote_webapp /bin/sh" pour entrer dans le container webapp et éventuellement entrer des commandes (ex: npm, yarn, ...)

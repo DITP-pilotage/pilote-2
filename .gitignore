@@ -44,3 +44,7 @@ yarn-error.log*
 /uploads
 
 .env.test
+
+# Dossiers de build scalingo
+.scalingo/
+.profile.d/
