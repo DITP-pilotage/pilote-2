@@ -22,6 +22,9 @@ const Alerte = {
     }
     return dateDonnéesQualitatives < dateDonnéesQuantitatives;
   },
+  estEnAlerteTauxAvancementNonCalculé(tauxAvancement: number | null) {
+    return tauxAvancement === null;
+  },
 };
 
 export default Alerte;

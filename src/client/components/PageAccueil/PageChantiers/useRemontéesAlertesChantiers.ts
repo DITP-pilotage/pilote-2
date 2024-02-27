@@ -30,17 +30,28 @@ export function useRemontéesAlertesChantiers(chantiersFiltrés: Chantier[]) {
   }, {
     nomCritère: 'estEnAlerteDonnéesNonMàj',
     condition: (chantier) => Alerte.estEnAlerteDonnéesNonMàj(chantier.mailles[maille]?.[codeInsee]?.dateDeMàjDonnéesQualitatives, chantier.mailles[maille]?.[codeInsee]?.dateDeMàjDonnéesQuantitatives),
+  }, {
+    nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
+    condition: (chantier) => Alerte.estEnAlerteTauxAvancementNonCalculé(chantier.mailles[maille]?.[codeInsee]?.avancement.global),
   }]);
 
   return {
     remontéesAlertes: [
-      {
-        nomCritère: 'estEnAlerteÉcart',
-        libellé: 'Retard supérieur de 10 points par rapport à la moyenne nationale',
-        nombre: maille === 'nationale' ? null : filtresComptesCalculés.estEnAlerteÉcart.nombre,
-        auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteÉcart', nom: 'Écart(s) supérieur(s) de 10 points à la moyenne nationale' }, 'filtresAlerte'),
-        estActivée: estActif('estEnAlerteÉcart', 'filtresAlerte'),
-      },
+      maille === 'nationale' 
+        ? {
+          nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
+          libellé: 'Taux d’avancement non calculé en raison d’indicateurs non renseignés',
+          nombre: filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé.nombre,
+          auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteTauxAvancementNonCalculé', nom: 'Taux d’avancement non calculé en raison d’indicateurs non renseignés' }, 'filtresAlerte'),
+          estActivée: estActif('estEnAlerteTauxAvancementNonCalculé', 'filtresAlerte'),
+        } 
+        : {
+          nomCritère: 'estEnAlerteÉcart',
+          libellé: 'Retard supérieur de 10 points par rapport à la moyenne nationale',
+          nombre: filtresComptesCalculés.estEnAlerteÉcart.nombre,
+          auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteÉcart', nom: 'Retard supérieur de 10 points par rapport à la moyenne nationale' }, 'filtresAlerte'),
+          estActivée: estActif('estEnAlerteÉcart', 'filtresAlerte'),       
+        },
       {
         nomCritère: 'estEnAlerteBaisseOuStagnation',
         libellé: 'Tendance(s) en baisse ou en stagnation',
