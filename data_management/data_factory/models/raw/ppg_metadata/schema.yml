@@ -533,7 +533,7 @@ models:
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
             pilote_edit_regex: "(^\\d{1,2}$)|(^\\d{1,2}\\.\\d{1,2}$)|(^100$)"
-            pilote_edit_regexViolationMessage: "Veuillez saisir un nombre."
+            pilote_edit_regexViolationMessage: "Pondération comprise entre 0 et 100."
             pilote_create_defaultValue: 0
             pilote_disp_blocId: 6
 
@@ -546,7 +546,7 @@ models:
             pilote_edit_boxType: text
             pilote_disp_dispDesc: false
             pilote_edit_regex: "(^\\d{1,2}$)|(^\\d{1,2}\\.\\d{1,2}$)|(^100$)"
-            pilote_edit_regexViolationMessage: "Veuillez saisir un nombre."
+            pilote_edit_regexViolationMessage: "Pondération comprise entre 0 et 100."
             pilote_create_defaultValue: 0
             pilote_disp_blocId: 6
 
@@ -559,7 +559,7 @@ models:
             pilote_edit_boxType: text
             pilote_disp_dispDesc: false
             pilote_edit_regex: "(^\\d{1,2}$)|(^\\d{1,2}\\.\\d{1,2}$)|(^100$)"
-            pilote_edit_regexViolationMessage: "Veuillez saisir un nombre."
+            pilote_edit_regexViolationMessage: "Pondération comprise entre 0 et 100."
             pilote_create_defaultValue: 0
             pilote_disp_blocId: 6
 
