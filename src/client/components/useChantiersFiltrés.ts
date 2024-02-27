@@ -70,7 +70,8 @@ export default function useChantiersFiltrés(chantiers: Chantier[]) {
           const chantierDonnéesTerritoires = chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee];
           return (filtre.id === 'estEnAlerteÉcart' && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
             || (filtre.id === 'estEnAlerteBaisseOuStagnation' && Alerte.estEnAlerteBaisseOuStagnation(chantierDonnéesTerritoires.tendance))
-            || (filtre.id === 'estEnAlerteDonnéesNonMàj' && Alerte.estEnAlerteDonnéesNonMàj(chantierDonnéesTerritoires.dateDeMàjDonnéesQualitatives, chantierDonnéesTerritoires.dateDeMàjDonnéesQuantitatives));
+            || (filtre.id === 'estEnAlerteDonnéesNonMàj' && Alerte.estEnAlerteDonnéesNonMàj(chantierDonnéesTerritoires.dateDeMàjDonnéesQualitatives, chantierDonnéesTerritoires.dateDeMàjDonnéesQuantitatives))
+            || (filtre.id === 'estEnAlerteTauxAvancementNonCalculé' && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global));
         });
       });
     }
@@ -80,6 +81,8 @@ export default function useChantiersFiltrés(chantiers: Chantier[]) {
   useEffect(() => {
     if (territoireSélectionné?.maille === 'nationale') {
       désactiverUnFiltreFn('estEnAlerteÉcart', 'filtresAlerte');
+    } else {
+      désactiverUnFiltreFn('estEnAlerteTauxAvancementNonCalculé', 'filtresAlerte');
     }
   }, [territoireSélectionné?.maille]);
 
