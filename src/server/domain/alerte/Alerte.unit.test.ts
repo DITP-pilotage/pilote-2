@@ -161,4 +161,28 @@ describe('Alerte', () => {
       expect(estEnAlerteDonnéesNonMàj).toBeFalsy();
     });
   });
+
+  describe('estEnAlerteTauxAvancementNonCalculé', () => {
+    test("le chantier est en alerte si le taux d'avancement est null", () => {
+      // Given
+      const tauxAvancement = null;
+
+      // When
+      const estEnAlerteTauxAvancementNonCalculé = Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement);
+
+      // Then
+      expect(estEnAlerteTauxAvancementNonCalculé).toBeTruthy();
+    });
+
+    test("le chantier n'est pas en alerte si le taux d'avancement est non null", () => {
+      // Given
+      const tauxAvancement = 55;
+
+      // When
+      const estEnAlerteTauxAvancementNonCalculé = Alerte.estEnAlerteTauxAvancementNonCalculé(tauxAvancement);
+
+      // Then
+      expect(estEnAlerteTauxAvancementNonCalculé).toBeFalsy();
+    });
+  });
 });
