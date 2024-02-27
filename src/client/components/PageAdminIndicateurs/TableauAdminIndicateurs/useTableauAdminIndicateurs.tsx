@@ -139,15 +139,25 @@ export default function useTableauPageAdminIndicateurs() {
 
     body.append('file', file);
 
-    await fetch('/api/import/metadata-indicateurs', {
+    const result = await fetch('/api/import/metadata-indicateurs', {
       method: 'POST',
       body,
     });
 
-    setAlerte({
-      type: 'succès',
-      titre : 'Import de masse réussie',
-    });
+    if (result.status === 200) {
+      setAlerte({
+        type: 'succès',
+        titre : 'Import de masse réussie',
+      });
+    } else {
+      const errorResponse = await result.json() as { message: string };
+      setAlerte({
+        type: 'erreur',
+        titre : 'Une erreur est survenue',
+        message: `Une erreur interne est survenu : ${(errorResponse.message)}`,
+      });
+    }
+
   };
 
   return {
