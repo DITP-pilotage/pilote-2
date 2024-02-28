@@ -40,7 +40,7 @@ export function useRemontéesAlertesChantiers(chantiersFiltrés: Chantier[]) {
       maille === 'nationale' 
         ? {
           nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
-          libellé: 'Taux d’avancement non calculé en raison d’indicateurs non renseignés',
+          libellé: 'Taux d’avancement non calculé(s) en raison d’indicateurs non renseignés',
           nombre: filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé.nombre,
           auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteTauxAvancementNonCalculé', nom: 'Taux d’avancement non calculé en raison d’indicateurs non renseignés' }, 'filtresAlerte'),
           estActivée: estActif('estEnAlerteTauxAvancementNonCalculé', 'filtresAlerte'),
