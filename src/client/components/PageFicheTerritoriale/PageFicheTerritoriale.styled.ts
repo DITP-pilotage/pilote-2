@@ -5,6 +5,10 @@ const PageFicheTerritorialeStyled = styled.div`
     height: 100%;
   }
   
+  .fiche-territoriale__container {
+    padding-top: 1rem;
+  }
+  
   .fiche-territoriale__avancement--meteo {
     display: flex;
     align-items: center;
@@ -61,6 +65,25 @@ const PageFicheTerritorialeStyled = styled.div`
   
   
   @media print {
+    .fiche-territoriale__container {
+      padding-top: 0;
+    }
+    
+    .fr-logo {
+      font-size: 0.8rem;
+      
+      &::after {
+        background-position: 0 calc(100% + 0.875rem)!important;
+        background-size: 4.25rem 2.75rem;
+      }
+      
+      &::before {
+        margin-bottom: 0;
+        background-position: 0 -0.0469rem,0 0,0 0;
+        background-size: 2.0625rem 0.8438rem,2.0625rem 0.75rem,0;
+      }
+    }
+    
     .fiche-territoriale__meteo {
       > div {
         height: 100%;
@@ -130,7 +153,7 @@ const PageFicheTerritorialeStyled = styled.div`
   }
   
   @page {
-    margin: 1.5cm 0;
+    margin: 0.5cm 0 1.5cm;
   }
 `;
 

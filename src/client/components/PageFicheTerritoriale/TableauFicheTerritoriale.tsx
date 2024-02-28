@@ -18,7 +18,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
 }> = ({ chantiersFicheTerritoriale }) => {
 
   return (
-    <div className='fiche-territoriale--tableau fr-container--fluid fr-mt-2w'>
+    <div className='fiche-territoriale--tableau fr-container--fluid fr-mt-2v'>
       <div
         className='fr-grid-row fr-p-2w fr-background-action-low--blue-france fiche-territoriale--entete'
       >
