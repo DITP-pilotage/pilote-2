@@ -40,7 +40,6 @@ const InfobulleStyled = styled.div`
 
   .liste-niveau2 {
     list-style-type: square;
-    margin-bottom: 0;
   }
 `;
 
