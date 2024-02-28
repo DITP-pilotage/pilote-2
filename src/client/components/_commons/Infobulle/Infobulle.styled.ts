@@ -37,6 +37,11 @@ const InfobulleStyled = styled.div`
       left: 1rem;
     }
   }
+
+  .liste-niveau2 {
+    list-style-type: square;
+    margin-bottom: 0;
+  }
 `;
 
 export default InfobulleStyled;
