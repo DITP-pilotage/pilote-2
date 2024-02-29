@@ -55,7 +55,7 @@ const PageFicheTerritorialeStyled = styled.div`
     
     .fiche-territoriale--contenu--xs {
       font-size: 0.8rem !important;
-      white-space: nowrap;
+      line-height: 1rem;
     }  
     
     .fiche-territoriale--contenu--row:not(:first-of-type) {
