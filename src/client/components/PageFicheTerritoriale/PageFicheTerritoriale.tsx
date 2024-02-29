@@ -35,7 +35,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
     <PageFicheTerritorialeStyled>
       <HeaderFicheTerritoriale />
       <main>
-        <div className='fr-container fr-py-2w'>
+        <div className='fr-container fr-pb-2w fiche-territoriale__container'>
           <Encart>
             <div className='flex justify-between'>
               <Titre
@@ -180,9 +180,12 @@ export const PageFicheTerritoriale: FunctionComponent<{
                       </div>
                     </li>
                   </ul>
-                  <div className='fiche-territoriale__contenu--meteo w-full fr-px-2w'>
+                  <div className='fiche-territoriale__contenu--meteo w-full fr-px-2w fr-mb-1w'>
                     <RépartitionMétéo météos={répartitionMétéos} />
                   </div>
+                  <span className='fr-mb-0 fr-text--sm'>
+                    Les météos sont saisies plusieurs fois par an par un responsable local sous la responsabilité des préfectures
+                  </span>
                 </div>
               </Bloc>
             </div>

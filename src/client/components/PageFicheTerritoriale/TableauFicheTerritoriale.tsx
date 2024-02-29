@@ -18,7 +18,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
 }> = ({ chantiersFicheTerritoriale }) => {
 
   return (
-    <div className='fiche-territoriale--tableau fr-container--fluid fr-mt-2w'>
+    <div className='fiche-territoriale--tableau fr-container--fluid fr-mt-2v'>
       <div
         className='fr-grid-row fr-p-2w fr-background-action-low--blue-france fiche-territoriale--entete'
       >
@@ -87,7 +87,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                       </p>
                     ) : (
                       <span className='fr-m-0 fr-text-mention--grey'>
-                        Paramètres incomplets
+                        Paramètre(s) de calcul manquant(s)
                       </span>
                     )
                   }
@@ -157,7 +157,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                             </span>
                           ) : (
                             <span className='fiche-territoriale--contenu--xs'>
-                              Absence de valeur
+                              Aucune valeur saisie
                             </span>
                           )
                         }
@@ -172,7 +172,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                             </span>
                           ) : (
                             <span className='fiche-territoriale--contenu--xs'>
-                              Non renseignée
+                              Aucune cible définie
                             </span>
                           )
                         }
@@ -187,7 +187,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                             </span>
                           ) : (
                             <span className='fiche-territoriale--contenu--xs'>
-                              Non renseignée
+                              Paramètre(s) de calcul manquant(s)
                             </span>
                           )
                         }
