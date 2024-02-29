@@ -5,42 +5,9 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/abcd/index.html',
-        destination: '/centreaide/index.html',
+        source: '/centreaide/:slug*',
+        destination: '/centreaide/:slug*/index.html', 
       },
-
-      // {
-      //   source: '/centreaide/:slug',
-      //   destination: '/centreaide/index.html',
-      // },
-      {
-        source: '/abcd/resources/:lang/:slug',
-        destination: '/centreaide/resources/:lang/:slug',
-      },
-      {
-        source: '/abcd/static/:slug',
-        destination: '/centreaide/static/:slug',
-      },
-      {
-        source: '/static/:slug',
-        destination: '/centreaide/static/:slug',
-      },
-      {
-        source: '/resources/:lang/:slug',
-        destination: '/centreaide/resources/:lang/:slug',
-      },
-      {
-        source: '/static/custom.css',
-        destination: '/centreaide/static/custom.css',
-      },
-      {
-        source: '/abcd/:slug1/:slug2/index.html',
-        destination: '/centreaide/:slug1/:slug2/index.html',
-      },
-      {
-        source: '/abcd/:slug1/:slug2/:slug3/index.html',
-        destination: '/centreaide/:slug1/:slug2/:slug3/index.html',
-      }
     ]
   },
   compiler: {
