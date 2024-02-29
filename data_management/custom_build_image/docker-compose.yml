@@ -6,6 +6,6 @@ services:
     env_file:
       - ../.env.review
     build: 
-      dockerfile: data_management/custom_build_image/Dockerfile
+      dockerfile: Dockerfile
       context: .
     ports: [ "3000:3000" ]
