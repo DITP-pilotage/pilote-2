@@ -215,7 +215,7 @@ export const PageFicheTerritoriale: FunctionComponent<{
                   <span
                     className='fr-text--xs fr-m-0 fr-ml-2w fr-badge fr-badge--no-icon fr-badge--error'
                   >
-                    Gros retard
+                    Retard important
                   </span>
                 </div>
               </div>

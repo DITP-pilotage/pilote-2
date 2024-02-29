@@ -202,7 +202,7 @@ export const TableauFicheTerritoriale: FunctionComponent<{
                             </span>
                           ) : (
                             <span className='fiche-territoriale--contenu--xs'>
-                              Non renseignée
+                              Paramètre(s) de calcul manquant(s)
                             </span>
                           )
                         }
