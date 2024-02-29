@@ -1,4 +1,4 @@
-import { VARIABLE_CONTENU_DISPONIBLE } from '@/server/gestion-contenu/domain/VARIABLE_CONTENU_DISPONIBLE';
+import { VARIABLE_CONTENU_DISPONIBLE } from '@/server/gestion-contenu/domain/VariableContenuDisponible';
 
 export class VariableContenu {
   private readonly _nomVariableContenu: keyof VARIABLE_CONTENU_DISPONIBLE;
