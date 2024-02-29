@@ -41,6 +41,8 @@ export const wordingFr = {
         MESSAGE_ALERT_SUCCES: 'Passez à l’étape suivante pour prévisualiser les données et confirmer leur publication.',
         TITRE_ALERT_ERREUR: 'Le fichier ne peut pas être importé',
         MESSAGE_ALERT_ERREUR: 'Il contient des erreurs expliquées dans le rapport d’erreurs ci-dessous. Nous vous recommandons de consulter les ressources et/ou de remplir le modèle de fichier à remplir.',
+        TITRE_ALERT_ERREUR_SUPPORT: 'Le fichier ne peut pas être importé',
+        MESSAGE_ALERT_ERREUR_SUPPORT: 'Il contient des erreurs non identifiées. Nous vous recommandons de consulter les ressources, de remplir le modèle de fichier à remplir ou de contacter le support de la DITP: support.ditp@modernisation.gouv.fr.',
         TABLEAU_ERREUR: {
           ENTETE: {
             NOM: "Type d'erreur",

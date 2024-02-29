@@ -9,6 +9,9 @@ export class PrismaMinistereRepository implements MinistereRepository {
     listeCodeMinistere: string[]
   }): Promise<Map<string, Ministere>> {
     const result = await this.prismaClient.ministere.findMany({
+      orderBy: {
+        id: 'asc',
+      },
       where: {
         id: {
           in: listeCodeMinistere,

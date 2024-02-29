@@ -32,6 +32,10 @@ export class FetchHttpClient implements HttpClient {
       throw error;
     }).finally(() => supprimerLeFichier(body.cheminCompletDuFichier));
 
+    if (!report) {
+      throw new Error("Une erreur est survenue lors de l'envoie à la vérification Validata");
+    }
+
     logger.info('Validation du fichier par validata');
 
     return report;
