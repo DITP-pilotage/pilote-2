@@ -1,18 +1,33 @@
 import { useState } from 'react';
 import PageChantiers from '@/components/PageAccueil/PageChantiers/PageChantiers';
 import PageProjetsStructurants from '@/components/PageAccueil/PageProjetsStructurants/PageProjetsStructurants';
-import SélecteursMaillesEtTerritoires from '@/client/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
+import SélecteursMaillesEtTerritoires
+  from '@/client/components/_commons/SélecteursMaillesEtTerritoires/SélecteursMaillesEtTerritoires';
 import Titre from '@/client/components/_commons/Titre/Titre';
 import Filtres from '@/components/PageAccueil/Filtres/Filtres';
 import BarreLatérale from '@/client/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/client/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import PageAccueilStyled from '@/components/PageAccueil/PageAccueil.styled';
-import { typeDeRéformeSélectionnéeStore, actionsTypeDeRéformeStore } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
+import {
+  actionsTypeDeRéformeStore,
+  typeDeRéformeSélectionnéeStore,
+} from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
+import api from '@/server/infrastructure/api/trpc/api';
 import PageAccueilProps from './PageAccueil.interface';
 import SélecteurTypeDeRéforme from './SélecteurTypeDeRéforme/SélecteurTypeDeRéforme';
 
+const usePageAccueil = () => {
+  const { data: projetsStructurantsEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS' });
+
+  return {
+    verifierProjetsStructurants: projetsStructurantsEstDisponible,
+  };
+};
+
 export default function PageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs }: PageAccueilProps) {
+  const { verifierProjetsStructurants } = usePageAccueil();
+
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const typeDeRéformeSélectionné = typeDeRéformeSélectionnéeStore();
   const { modifierTypeDeRéformeSélectionné } = actionsTypeDeRéformeStore();
@@ -25,11 +40,12 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
       >
         <BarreLatéraleEncart>
           {
-            process.env.NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS === 'true' &&
-            <SélecteurTypeDeRéforme
-              modifierTypeDeRéformeSélectionné={modifierTypeDeRéformeSélectionné}
-              typeDeRéformeSélectionné={typeDeRéformeSélectionné}
-            />
+            verifierProjetsStructurants ? (
+              <SélecteurTypeDeRéforme
+                modifierTypeDeRéformeSélectionné={modifierTypeDeRéformeSélectionné}
+                typeDeRéformeSélectionné={typeDeRéformeSélectionné}
+              />
+            ) : null
         }
           <SélecteursMaillesEtTerritoires />
         </BarreLatéraleEncart>
