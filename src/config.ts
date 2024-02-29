@@ -36,6 +36,16 @@ const config = convict({
     default: 'password',
     env: 'DEV_PASSWORD',
   },
+  exportCsvChantiersChunkSize: {
+    format: Number,
+    default: 5,
+    env: 'EXPORT_CSV_CHANTIERS_CHUNK_SIZE',
+  },
+  exportCsvIndicateursChunkSize: {
+    format: Number,
+    default: 5,
+    env: 'EXPORT_CSV_INDICATEURS_CHUNK_SIZE',
+  },
   nextAuthSecret: {
     format: String,
     default: 'ToBeDefined',

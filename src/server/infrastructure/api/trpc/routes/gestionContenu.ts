@@ -26,8 +26,8 @@ export const gestionContenuRouter = créerRouteurTRPC({
     }),
   récupérerVariableContenu: procédureProtégée
     .input(validationVariableContenu)
-    .query<number | boolean>(({ input }) => {
-    const récupérerVariableContenuUseCase = new RécupérerVariableContenuUseCase();
-    return récupérerVariableContenuUseCase.run({ nomVariableContenu: input.nomVariableContenu });
-  }),
+    .query(({ input }) => {
+      const récupérerVariableContenuUseCase = new RécupérerVariableContenuUseCase();
+      return récupérerVariableContenuUseCase.run({ nomVariableContenu: input.nomVariableContenu });
+    }),
 });

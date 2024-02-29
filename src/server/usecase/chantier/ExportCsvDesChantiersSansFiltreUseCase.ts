@@ -6,7 +6,6 @@ import { libellésTypesObjectif } from '@/client/constants/libellésObjectif';
 import { libellésTypesDécisionStratégique } from '@/client/constants/libellésDécisionStratégique';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { Configuration } from '@/server/infrastructure/Configuration';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 
 export class ExportCsvDesChantiersSansFiltreUseCase {
@@ -42,16 +41,14 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
 
   constructor(
     private readonly _chantierRepository: ChantierRepository,
-    private readonly _config: Configuration,
   ) {}
 
-  public async* run(habilitation: Habilitation, profil: ProfilCode): AsyncGenerator<string[][]> {
+  public async* run({ habilitation, profil, chantierChunkSize }: { habilitation: Habilitation, profil: ProfilCode, chantierChunkSize: number }): AsyncGenerator<string[][]> {
     const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom(habilitation);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
-    const chunkSize = this._config.exportCsvChantiersChunkSize;
-    for (let i = 0; i < chantierIdsLecture.length; i += chunkSize) {
-      const partialChantierIds = chantierIdsLecture.slice(i, i + chunkSize);
+    for (let i = 0; i < chantierIdsLecture.length; i += chantierChunkSize) {
+      const partialChantierIds = chantierIdsLecture.slice(i, i + chantierChunkSize);
       const partialResult = await this._chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
       yield partialResult
         .filter(c => !this.masquerChantierPourProfilDROM(profil, c))

@@ -8,7 +8,7 @@ import ExportCsvDesIndicateursSansFiltreUseCase
   from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import configuration from '@/server/infrastructure/Configuration';
+import config from '@/config';
 
 export default async function handleExportDesIndicateursSansFiltre(request: NextApiRequest, response: NextApiResponse): Promise<void> {
   const session = await getServerSession(request, response, authOptions);
@@ -26,8 +26,12 @@ export default async function handleExportDesIndicateursSansFiltre(request: Next
   stringifier.pipe(response);
 
   const habilitation = new Habilitation(session.habilitations);
-  const exportCsvDesIndicateursSansFiltreUseCase = new ExportCsvDesIndicateursSansFiltreUseCase(dependencies.getChantierRepository(), dependencies.getIndicateurRepository(), configuration);
-  for await (const partialResult of exportCsvDesIndicateursSansFiltreUseCase.run(habilitation, session.profil)) {
+  const exportCsvDesIndicateursSansFiltreUseCase = new ExportCsvDesIndicateursSansFiltreUseCase(dependencies.getChantierRepository(), dependencies.getIndicateurRepository());
+  for await (const partialResult of exportCsvDesIndicateursSansFiltreUseCase.run({
+    habilitation,
+    profil: session.profil,
+    indicateurChunkSize: config.exportCsvIndicateursChunkSize,
+  })) {
     for (const indicateurPourExport of partialResult) {
       stringifier.write(indicateurPourExport);
     }
