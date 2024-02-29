@@ -1,15 +1,16 @@
 import pino from 'pino';
-import config from '@/server/infrastructure/Configuration';
+import configuration from '@/server/infrastructure/Configuration';
+import config from '@/config';
 
 const logger = pino({
-  level: config.logLevel,
+  level: configuration.logLevel,
 });
 
 logger.info({
-  logLevel: config.logLevel,
+  logLevel: configuration.logLevel,
   env: config.env,
-  securedEnv: config.securedEnv,
-  isUsingDevCredentials: config.isUsingDevCredentials,
+  securedEnv: config.env === 'production',
+  isUsingDevCredentials: configuration.isUsingDevCredentials,
 });
 
 export default logger;

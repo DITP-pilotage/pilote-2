@@ -48,7 +48,7 @@ const config = convict({
   },
   nextAuthSecret: {
     format: String,
-    default: 'ToBeDefined',
+    default: 'next_auth_secret',
     env: 'NEXTAUTH_SECRET',
   },
   nextAuthUrl: {
@@ -85,6 +85,11 @@ const config = convict({
     format: String,
     default: 'ToBeDefined',
     env: 'IMPORT_CLIENT_SECRET',
+  },
+  webappBaseUrl: {
+    format: String,
+    default: null,
+    env: 'WEBAPP_BASE_URL',
   },
   nextPublicFfRapportDetaille: {
     format: Boolean,
