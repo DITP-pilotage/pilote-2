@@ -3,10 +3,6 @@ import process from 'node:process';
 const THIRTY_DAYS_IN_SECONDS_STR = '2592000';
 
 export class Configuration {
-  public readonly env: string;
-
-  public readonly securedEnv: boolean;
-
   public readonly logLevel: string;
 
   public readonly keycloakClientSecret: string;
@@ -29,13 +25,9 @@ export class Configuration {
 
   public readonly webappBaseUrl: string;
 
-  public readonly redirectUri: string;
-
   public readonly devPassword: string | undefined;
 
   public readonly isUsingDevCredentials: boolean;
-
-  public readonly exportCsvChantiersChunkSize: number;
 
   constructor() {
     this.logLevel = process.env.LOG_LEVEL || 'info';
@@ -57,15 +49,6 @@ export class Configuration {
     this.logoutUrl = this.keycloakIssuer + '/protocol/openid-connect/logout';
 
     this.webappBaseUrl = process.env.WEBAPP_BASE_URL || process.env.NEXTAUTH_URL || 'http://localhost:3000';
-    this.redirectUri = this.webappBaseUrl + '/api/auth/callback/keycloak';
-
-    this.env = process.env.NODE_ENV;
-    // Pour les environnements de dev, stagging et production, on build le projet donc NODE_ENV est à production
-    // En local, en faisant npm run dev, le NODE_ENV est à development
-    // En test, le NODE_ENV est à test
-    this.securedEnv = process.env.NODE_ENV === 'production';
-
-    this.exportCsvChantiersChunkSize = Number.parseInt(process.env.EXPORT_CSV_CHANTIERS_CHUNK_SIZE || '5');
   }
 }
 

@@ -9,6 +9,7 @@ import { DetailValidationFichierContrat } from '@/server/app/contrats/DetailVali
 import { parseForm } from '@/server/import-indicateur/infrastructure/handlers/ParseForm';
 import configuration from '@/server/infrastructure/Configuration';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
+import config from '@/config';
 
 const présenterEnContrat = (report: DetailValidationFichier): DetailValidationFichierContrat => {
   return {
@@ -31,13 +32,14 @@ export default async function handleVerifierFichierImportIndicateur(
   response: NextApiResponse,
   verifierFichierIndicateurImporteUseCase = dependencies.getVerifierFichierIndicateurImporteUseCase(),
 ) {
+  const estSecuredEnv = config.env === 'production';
 
   const formData = await parseForm(request);
 
   const fichier = <File>formData.file![0];
 
   const baseSchemaUrl = 'https://raw.githubusercontent.com/DITP-pilotage/pilote-2/main/public/schema/';
-  const sessionToken = await getToken({ req: request, secureCookie: configuration.securedEnv, secret: configuration.nextAuthSecret });
+  const sessionToken = await getToken({ req: request, secureCookie: estSecuredEnv, secret: configuration.nextAuthSecret });
   const session = await getServerSession(request, response, authOptions);
 
   assert(sessionToken?.user);
