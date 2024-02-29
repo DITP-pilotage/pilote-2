@@ -3,8 +3,8 @@ version: "3.8"
 services:
 
   init-container:
-    volumes:
-      - ../.env.review:/app/data_management/.env
+    #volumes:
+    #  - ../.env.review:/app/data_management/.env
     build: 
       dockerfile: Dockerfile
       context: .
