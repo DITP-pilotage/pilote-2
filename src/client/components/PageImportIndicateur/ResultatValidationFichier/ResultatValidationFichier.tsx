@@ -4,6 +4,8 @@ import { ResultatValidationFichierProps } from './ResultatValidationFichier.inte
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 
 export default function ResultatValidationFichier({ rapport }: ResultatValidationFichierProps) {
+  const contientDesErreursNonIdentifies = rapport.listeErreursValidation.some(erreur => erreur.nom === 'Erreur non identifié');
+
   return (
     <section className='fr-my-2w'>
       {
@@ -16,11 +18,21 @@ export default function ResultatValidationFichier({ rapport }: ResultatValidatio
             />
           :
             <div>
-              <Alerte
-                message={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.MESSAGE_ALERT_ERREUR}
-                titre={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.TITRE_ALERT_ERREUR}
-                type='erreur'
-              />
+              {
+                contientDesErreursNonIdentifies ? (
+                  <Alerte
+                    message={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.MESSAGE_ALERT_ERREUR_SUPPORT}
+                    titre={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.TITRE_ALERT_ERREUR_SUPPORT}
+                    type='erreur'
+                  />
+                ) : (
+                  <Alerte
+                    message={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.MESSAGE_ALERT_ERREUR}
+                    titre={wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.ETAPE_CHARGER_FICHIER.TITRE_ALERT_ERREUR}
+                    type='erreur'
+                  />
+                )
+              }
               <h5 className='fr-mt-3w'>
                 Rapport d'erreur de la validation du fichier
               </h5>

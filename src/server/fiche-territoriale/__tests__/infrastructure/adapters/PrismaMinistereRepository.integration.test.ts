@@ -41,7 +41,7 @@ describe('PrismaMinistereRepository', () => {
       const result = await prismaMinistereRepository.recupererMapMinistereParListeCodeMinistere({ listeCodeMinistere });
 
       // Then
-      expect([...result.keys()]).toEqual(['1009', '10']);
+      expect([...result.keys()]).toEqual(['10', '1009']);
       expect(result.get('1009')?.icone).toEqual('remix::football::fill');
       expect(result.get('10')?.icone).toEqual('remix::basket::fill');
     });
