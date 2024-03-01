@@ -27,7 +27,7 @@ export default function IndicateurÉvolution({ indicateurDétailsParTerritoires,
         Évolution de l'indicateur
       </Titre>
       <p className='fr-text--xs texte-gris'>
-        {`Mis à jour le : ${dateDeMiseAJourIndicateur} | Source : ${!!!source ? 'Non renseigné' : source}`}
+        {`Mis à jour le : ${dateDeMiseAJourIndicateur} | Source : ${source ?? 'Non renseigné'}`}
       </p>
       {
         donnéesParTerritoire.datasets.some(dataset => dataset.data.length > 0) ? (

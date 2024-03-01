@@ -3,7 +3,7 @@ import { createObjectCsvWriter } from 'csv-writer';
 import { PrismaClient } from '@prisma/client';
 import process from 'node:process';
 import assert from 'node:assert/strict';
-import logger from '@/server/infrastructure/logger';
+import logger from '@/server/infrastructure/Logger';
 import UtilisateurCSVParseur from '@/server/infrastructure/import_csv/utilisateur/UtilisateurCSVParseur';
 import ImporterDesUtilisateursUseCase from '@/server/usecase/utilisateur/ImporterDesUtilisateursUseCase';
 import RécupérerListeUtilisateursExistantsUseCase

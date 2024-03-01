@@ -8,7 +8,7 @@ const Alerte = {
     return écart < -10;
   },
   estEnAlerteBaisseOuStagnation: (tendance: ChantierTendance | null) => {
-    if (!!!tendance) 
+    if (!tendance)
       return false;
 
     return ['BAISSE', 'STAGNATION'].includes(tendance);

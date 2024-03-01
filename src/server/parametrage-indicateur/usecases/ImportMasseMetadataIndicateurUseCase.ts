@@ -4,7 +4,7 @@ import {
   MetadataParametrageIndicateurRepository,
 } from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
 import { ImportMetadataIndicateur } from '@/server/parametrage-indicateur/domain/ImportMetadataIndicateur';
-import logger from '@/server/infrastructure/logger';
+import logger from '@/server/infrastructure/Logger';
 import { supprimerLeFichier } from '@/server/import-indicateur/infrastructure/adapters/FichierService';
 
 type RecordCSVImport = Record<typeof AvailableHeaderCSVImport[number], string>;

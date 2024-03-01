@@ -5,7 +5,7 @@ On ne peut donc pas utiliser la creation de table par migration prisma
 
 
 import { Prisma, PrismaClient } from '@prisma/client';
-import Logger from '@/server/infrastructure/logger';
+import Logger from '@/server/infrastructure/Logger';
 import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/domain/MetadataParametrageIndicateur';
 import {
   MetadataParametrageIndicateurRepository,
