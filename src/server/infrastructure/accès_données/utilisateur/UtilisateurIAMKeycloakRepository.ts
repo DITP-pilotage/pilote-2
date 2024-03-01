@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
-import configuration from '@/server/infrastructure/Configuration';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
 import logger from '@/server/infrastructure/logger';
 import UtilisateurPourIAM from '@/server/domain/utilisateur/UtilisateurIAM.interface';
+import { configuration } from '@/config';
 
 const KEYCLOAK_REALM = 'DITP';
 
@@ -85,7 +85,7 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
       await this.kcAdminClient.users.executeActionsEmail({
         realm: KEYCLOAK_REALM,
         clientId: this.clientId,
-        redirectUri: configuration.webappBaseUrl,
+        redirectUri: configuration.nextAuth.url,
         id: utilisateurIAM.id,
         lifespan: 7 * DAY_IN_SECONDS,
         actions: ['UPDATE_PASSWORD'],

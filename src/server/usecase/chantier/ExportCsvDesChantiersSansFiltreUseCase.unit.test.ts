@@ -133,7 +133,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
       profil,
       chantierChunkSize,
     })) {
-      result = result.concat(partialResult);
+      result = [...result, ...partialResult];
     }
 
     // THEN
