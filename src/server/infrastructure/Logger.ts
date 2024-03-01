@@ -8,6 +8,7 @@ class AppLogger {
     this._logger = pino({
       level: configuration.logLevel,
     });
+    this._logger.info(process.env);
     this._logger.info({
       logLevel: configuration.logLevel,
       env: configuration.env,
