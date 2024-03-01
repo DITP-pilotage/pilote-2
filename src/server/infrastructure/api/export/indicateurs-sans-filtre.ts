@@ -8,7 +8,7 @@ import ExportCsvDesIndicateursSansFiltreUseCase
   from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import config from '@/config';
+import { configuration } from '@/config';
 
 export default async function handleExportDesIndicateursSansFiltre(request: NextApiRequest, response: NextApiResponse): Promise<void> {
   const session = await getServerSession(request, response, authOptions);
@@ -30,7 +30,7 @@ export default async function handleExportDesIndicateursSansFiltre(request: Next
   for await (const partialResult of exportCsvDesIndicateursSansFiltreUseCase.run({
     habilitation,
     profil: session.profil,
-    indicateurChunkSize: config.exportCsvIndicateursChunkSize,
+    indicateurChunkSize: configuration.export.csvIndicateursChunkSize,
   })) {
     for (const indicateurPourExport of partialResult) {
       stringifier.write(indicateurPourExport);

@@ -7,7 +7,7 @@ import { ExportCsvDesChantiersSansFiltreUseCase } from '@/server/usecase/chantie
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import config from '@/config';
+import { configuration } from '@/config';
 
 
 export default async function handleExportDesChantiersSansFiltre(request: NextApiRequest, response: NextApiResponse): Promise<void> {
@@ -30,7 +30,7 @@ export default async function handleExportDesChantiersSansFiltre(request: NextAp
   for await (const partialResult of exportCsvDesChantiersSansFiltreUseCase.run({
     habilitation,
     profil: session.profil,
-    chantierChunkSize: config.exportCsvChantiersChunkSize,
+    chantierChunkSize: configuration.export.csvChantiersChunkSize,
   })) {
     for (const chantierPourExport of partialResult) {
       stringifier.write(chantierPourExport);
