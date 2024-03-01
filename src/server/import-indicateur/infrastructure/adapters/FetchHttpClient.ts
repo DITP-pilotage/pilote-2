@@ -1,7 +1,7 @@
 import FormData from 'form-data';
 import { ReportValidata } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
 import { recupererFichier, supprimerLeFichier } from '@/server/import-indicateur/infrastructure/adapters/FichierService';
-import logger from '@/server/infrastructure/logger';
+import logger from '@/server/infrastructure/Logger';
 import {
   HttpClient,
   ValidataValidationFichierPayload,

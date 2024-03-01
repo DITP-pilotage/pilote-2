@@ -1,7 +1,9 @@
-/* eslint-disable unicorn/no-useless-undefined */
 import { useCallback, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { UtilisateurFormInputs, UtilisateurFormulaireProps } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
+import {
+  UtilisateurFormInputs,
+  UtilisateurFormulaireProps,
+} from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
 import api from '@/server/infrastructure/api/trpc/api';
 import { Profil } from '@/server/domain/profil/Profil.interface';
 import { profilsDépartementaux, profilsRégionaux } from '@/server/domain/utilisateur/Utilisateur.interface';
@@ -15,7 +17,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   const chantiersSélectionnés = watch('habilitations.lecture.chantiers');
   const périmètresMinistérielsSélectionnés = watch('habilitations.lecture.périmètres');
 
-  const [ancienProfilCodeSélectionné, setAncienProfilCodeSélectionné] = useState<string | undefined>(undefined);
+  const [ancienProfilCodeSélectionné, setAncienProfilCodeSélectionné] = useState<string | undefined>();
   const [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés] = useState<string[]>([]);
   const [profilSélectionné, setProfilSélectionné] = useState<Profil | undefined>();
   const [listeProfils, setListeProfils] = useState<{ libellé: string, valeur: string }[]>([]);
@@ -55,7 +57,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     setAfficherChampSaisieIndicateur(afficherChoixIndicateur);
 
     // Saisie Commentaire
-    if (!!!utilisateur) {
+    if (!utilisateur) {
       const valeurParDéfautCaseCommentaire = 
         afficherChoixCommentaire
           ? false

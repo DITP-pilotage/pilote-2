@@ -3,7 +3,7 @@ import KeycloakProvider from 'next-auth/providers/keycloak';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import type { JWT } from 'next-auth/jwt';
 import { GetServerSidePropsContext } from 'next';
-import logger from '@/server/infrastructure/logger';
+import logger from '@/server/infrastructure/Logger';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import { configuration } from '@/config';
 

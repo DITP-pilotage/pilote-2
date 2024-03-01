@@ -7,7 +7,7 @@ On ne peut donc pas utiliser la creation de table par migration prisma
 import { PrismaClient } from '@prisma/client';
 import { IndicateurRepository } from '@/server/import-indicateur/domain/ports/IndicateurRepository';
 import { InformationIndicateur } from '@/server/import-indicateur/domain/InformationIndicateur';
-import Logger from '@/server/infrastructure/logger';
+import Logger from '@/server/infrastructure/Logger';
 
 interface RawInformationIndicateurModel {
   indic_id: string,

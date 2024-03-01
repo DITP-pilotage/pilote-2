@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { UtilisateurIAMRepository } from '@/server/domain/utilisateur/UtilisateurIAMRepository';
-import logger from '@/server/infrastructure/logger';
+import logger from '@/server/infrastructure/Logger';
 import UtilisateurPourIAM from '@/server/domain/utilisateur/UtilisateurIAM.interface';
 import { configuration } from '@/config';
 
