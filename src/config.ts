@@ -29,7 +29,7 @@ const config = convict({
   },
   devPassword: {
     format: String,
-    default: null,
+    default: '',
     env: 'DEV_PASSWORD',
   },
   nextAuth: {
