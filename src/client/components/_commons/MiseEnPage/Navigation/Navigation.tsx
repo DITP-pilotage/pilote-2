@@ -65,7 +65,7 @@ export default function Navigation() {
     {
       nom: 'Centre d\'aide',
       lien: '/centreaide',
-      accessible: true
+      accessible: true,
     },
   ];
 
