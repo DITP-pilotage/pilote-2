@@ -10,9 +10,8 @@ then
   fi
 fi
 
-git clone --depth 1 --branch retype-deploy --single-branch --filter=blob:none --sparse https://$GITHUB_TOKEN@github.com/DITP-pilotage/centre-aide-pilote.git public/centreaide
+git clone --depth 1 --branch retype-deploy --single-branch https://$GITHUB_TOKEN@github.com/DITP-pilotage/centre-aide-pilote.git public/centreaide
 cd public/centreaide
-git sparse-checkout init --cone
-git sparse-checkout set "$GITHUB_FOLDER"
+find -mindepth 1 -maxdepth 1 -type d -not -name "$GITHUB_FOLDER" -exec rm -rf {} \;
 mv "$GITHUB_FOLDER"/* .
 rm -r "$GITHUB_FOLDER"
