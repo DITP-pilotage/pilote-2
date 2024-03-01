@@ -33,7 +33,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: `default-src 'self' data: 'unsafe-inline'; frame-src https://video.finances.gouv.fr/; connect-src https://api.validata.etalab.studio/ 'self' data: 'unsafe-inline' ws:; script-src 'self' ${process.env.NODE_ENV !== 'production' ? "'unsafe-eval'" : ''};`,
+            value: `default-src 'self' data: 'unsafe-inline'; frame-src https://video.finances.gouv.fr/; connect-src https://api.validata.etalab.studio/ 'self' data: 'unsafe-inline' ws:; script-src 'self' 'unsafe-eval';`,
           },
           {
             key: 'X-Frame-Options',
