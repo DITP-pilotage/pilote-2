@@ -32,10 +32,10 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
       >
         Paramétrages - Maille régionale
       </Titre>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.viRegFrom?.message}
+            erreurMessage={errors.viRegFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_reg_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_reg_from')}
@@ -44,9 +44,9 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
             values={getValues('viRegFrom')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.vaRegFrom?.message}
+            erreurMessage={errors.vaRegFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_reg_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_reg_from')}
@@ -55,9 +55,9 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
             values={getValues('vaRegFrom')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.vcRegFrom?.message}
+            erreurMessage={errors.vcRegFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_reg_from}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_reg_from')}
@@ -67,10 +67,10 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
           />
         </div>
       </div>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.viRegOp?.message}
+            erreurMessage={errors.viRegOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vi_reg_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vi_reg_op')}
@@ -79,9 +79,9 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
             values={getValues('viRegOp')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.vaRegOp?.message}
+            erreurMessage={errors.vaRegOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.va_reg_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'va_reg_op')}
@@ -90,9 +90,9 @@ export default function SectionDétailsMetadataParametreIndicateurRegionale({
             values={getValues('vaRegOp')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.vcRegOp?.message}
+            erreurMessage={errors.vcRegOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.vc_reg_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'vc_reg_op')}

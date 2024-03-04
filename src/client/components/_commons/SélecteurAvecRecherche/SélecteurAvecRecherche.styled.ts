@@ -32,6 +32,12 @@ const SélecteurAvecRechercheStyled = styled.div`
     line-height: 1.5rem;
   }
 
+  .fr-option-disabled {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    color: var(--text-mention-grey);
+  }
+
   .fr-option:hover {
     color: white;
     background-color: var(--background-active-blue-france);

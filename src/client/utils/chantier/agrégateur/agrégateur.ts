@@ -1,5 +1,5 @@
 import { objectEntries } from '@/client/utils/objects/objects';
-import { valeurMinimum, valeurMaximum, calculerMoyenne, calculerMédiane } from '@/client/utils/statistiques/statistiques';
+import { calculerMoyenne, calculerMédiane, valeurMaximum, valeurMinimum } from '@/client/utils/statistiques/statistiques';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import départements from '@/client/constants/départements.json';
 import régions from '@/client/constants/régions.json';

@@ -29,7 +29,7 @@ module.exports = async () => {
         testEnvironment: 'node',
         setupFilesAfterEnv: ['<rootDir>/src/server/infrastructure/test/integrationTestSetup.ts'],
         roots: ['<rootDir>/src/server'],
-        testMatch: ['**/*.integration.test.*', '**/__tests__/**/*.test.ts'],
+        testMatch: ['**/*.integration.test.*', '**/__tests__/**/*.integration.test.ts'],
         maxWorkers: 1,
         transform: {
           "\\.yml$": "jest-transform-yaml",

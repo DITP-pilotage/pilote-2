@@ -1,4 +1,4 @@
-import Encart from '@/components/PageRapportDétaillé/Encart/Encart';
+import Encart from '@/components/_commons/Encart/Encart';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
@@ -28,7 +28,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
     donnéesTableauChantiers,
     remontéesAlertes,
   } = usePageRapportDétaillé(chantiers);
-  
+
   return (
     <RapportDétailléVueDEnsembleStyled>
       <Encart>

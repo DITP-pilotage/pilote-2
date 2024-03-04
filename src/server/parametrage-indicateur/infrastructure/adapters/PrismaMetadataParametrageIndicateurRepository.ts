@@ -468,7 +468,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                          '${makeStrSafer(indicateur.indicUnite)}',
                                          ${indicateur.indicHiddenPilote},
                                          '${makeStrSafer(indicateur.indicSchema)}')
-                                   ON CONFLICT ON CONSTRAINT metadata_indicateurs_hidden_pkey DO UPDATE
+                                   ON CONFLICT (indic_id) DO UPDATE
                                     SET indic_parent_indic = '${indicateur.indicParentIndic}',
                                        indic_parent_ch = '${indicateur.indicParentCh}',
                                        indic_nom = '${makeStrSafer(indicateur.indicNom)}',
@@ -547,7 +547,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  '${indicateur.poidsPourcentNat}',
                                                  '${makeStrSafer(indicateur.tendance)}')
 
-                                           ON CONFLICT ON CONSTRAINT metadata_parametrage_indicateurs_pkey DO UPDATE
+                                           ON CONFLICT (indic_id) DO UPDATE
                                                  SET vi_dept_from = '${makeStrSafer(indicateur.viDeptFrom)}',
                                                      vi_dept_op = '${makeStrSafer(indicateur.viDeptOp)}',
                                                      va_dept_from = '${makeStrSafer(indicateur.vaDeptFrom)}',
@@ -617,7 +617,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  '${makeStrSafer(indicateur.contactTechniqueEmail)}', 
                                                  '${makeStrSafer(indicateur.commentaire)}')
 
-                                           ON CONFLICT ON CONSTRAINT metadata_indicateurs_complementaire_pkey DO UPDATE
+                                           ON CONFLICT (indic_id) DO UPDATE
                                                  SET reforme_prioritaire = '${makeStrSafer(indicateur.reformePrioritaire)}', 
                                                  projet_annuel_perf = '${indicateur.projetAnnuelPerf}', 
                                                  detail_projet_annuel_perf = '${makeStrSafer(indicateur.detailProjetAnnuelPerf)}',

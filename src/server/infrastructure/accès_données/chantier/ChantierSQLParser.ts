@@ -19,10 +19,8 @@ function calculÉcart(chantierNational: ChantierPrisma, chantier?: ChantierPrism
 }
 
 function calculerTendance(chantier?: ChantierPrisma) {
-  if (!chantier || chantier.taux_avancement === null) {
+  if (!chantier || chantier.taux_avancement === null || chantier.taux_avancement_precedent === null) {
     return null;
-  } else if (chantier.taux_avancement_precedent === null) {
-    return 'STAGNATION';
   }
 
   const différence = chantier.taux_avancement - chantier.taux_avancement_precedent;
@@ -116,7 +114,7 @@ export function parseChantier(
           tendance: tendance,
           dateDeMàjDonnéesQualitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQualitatives ?? null,
           dateDeMàjDonnéesQuantitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQuantitatives ?? null,
-          estApplicable: true,
+          estApplicable: chantierMailleNationale.est_applicable,
           responsableLocal: [],
           référentTerritorial: [],
         },

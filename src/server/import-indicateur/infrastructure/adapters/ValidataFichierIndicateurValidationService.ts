@@ -1,6 +1,10 @@
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 import { MesureIndicateurTemporaire } from '@/server/import-indicateur/domain/MesureIndicateurTemporaire';
-import { ReportErrorTask, ReportTask } from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
+import {
+  ReportErrorTask,
+  ReportTask,
+  ReportValidata,
+} from '@/server/import-indicateur/infrastructure/ReportValidata.interface';
 import {
   FichierIndicateurValidationService,
   ValiderFichierPayload,
@@ -107,13 +111,33 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     schema,
     utilisateurEmail,
   }: ValiderFichierPayload): Promise<DetailValidationFichier> {
-    const report = await this.httpClient.post({ cheminCompletDuFichier, nomDuFichier, schema });
-    let listeIndicateursData: MesureIndicateurTemporaire[] = [];
+    let rapportValidata: ReportValidata;
+    let rapport: DetailValidationFichier;
+
     let listeErreursValidation: ErreurValidationFichier[] = [];
+    let listeIndicateursData: MesureIndicateurTemporaire[] = [];
 
-    const rapport = DetailValidationFichier.creerDetailValidationFichier({ estValide: report.valid, utilisateurEmail });
+    try {
+      rapportValidata = await this.httpClient.post({ cheminCompletDuFichier, nomDuFichier, schema });
+      rapport = DetailValidationFichier.creerDetailValidationFichier({ estValide: rapportValidata.valid, utilisateurEmail });
+    } catch {
+      rapport = DetailValidationFichier.creerDetailValidationFichier({ estValide: false, utilisateurEmail });
+      listeErreursValidation.push(ErreurValidationFichier.creerErreurValidationFichier({
+        rapportId: rapport.id,
+        cellule: 'Cellule non définie',
+        nom: 'Erreur non identifié',
+        message: 'Une erreur est survenue lors de la validation du fichier',
+        numeroDeLigne: 0,
+        positionDeLigne: 0,
+        nomDuChamp: '',
+        positionDuChamp: 0,
+      }));
+      rapport.affecterListeErreursValidation(listeErreursValidation);
 
-    const rawEnTete = report.tasks[0].resource.data[0];
+      return rapport;
+    }
+
+    const rawEnTete = rapportValidata.tasks[0].resource.data[0];
 
     rawEnTete.forEach(enTetes => {
       if (enTetes.trim() !== enTetes) {
@@ -143,9 +167,9 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     });
 
     const enTetes = recupererLesPositionsDesEnTetes(rawEnTete);
-    const donnees = report.tasks.map(extraireLesDonnees);
+    const donnees = rapportValidata.tasks.map(extraireLesDonnees);
 
-    if ((report.tasks[0].resource.data[0]).includes('identifiant_indic')) {
+    if ((rapportValidata.tasks[0].resource.data[0]).includes('identifiant_indic')) {
       listeIndicateursData = donnees.flat().map(donnee => MesureIndicateurTemporaire.createMesureIndicateurTemporaire({
         rapportId: rapport.id,
         indicId: donnee[enTetes.indicId],
@@ -167,7 +191,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
       }));
     }
 
-    const listeErreursReport = report.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
+    const listeErreursReport = rapportValidata.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
       rapportId: rapport.id,
       cellule: taskError.cell || 'Cellule non définie',
       nom: taskError.name,

@@ -62,11 +62,11 @@ const Sélecteur = <T extends string>({
         }
       </select>
       {
-        erreur !== undefined &&
+        (errorMessage !== undefined || erreur !== undefined) &&
         <p
           className='fr-error-text'
         >
-          {errorMessage || erreur.message?.toString()}
+          {errorMessage || erreur?.message?.toString()}
         </p>
       }
     </div>

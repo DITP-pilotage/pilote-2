@@ -7,6 +7,15 @@ const FicheIndicateurStyled = styled.div`
   
    .titre-input-metadata {
      margin: 0;
+
+   }
+  
+   .infobulle {
+     line-height: 0;
+     
+     .infobulle-texte {
+       line-height: 1.5rem;
+     }
    }
 
   .infobulle-bouton {

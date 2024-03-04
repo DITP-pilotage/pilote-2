@@ -12,6 +12,7 @@ export type MetadataParametrageIndicateurForm = {
   indicSchema: string;
   zgApplicable: string;
   indicTerritorialise: boolean;
+  indicIsBaro: boolean;
 };
 
 function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageIndicateurForm>) {
@@ -20,6 +21,7 @@ function activerWatchSurSelecteur(watch: UseFormWatch<MetadataParametrageIndicat
   watch('indicParentCh');
   watch('indicParentIndic');
   watch('indicTerritorialise');
+  watch('indicIsBaro');
 }
 
 export default function useDetailMetadataIndicateurForm() {

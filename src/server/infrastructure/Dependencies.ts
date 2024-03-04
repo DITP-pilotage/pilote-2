@@ -34,6 +34,21 @@ import DécisionStratégiqueRepository
   from '@/server/domain/chantier/décisionStratégique/DécisionStratégiqueRepository.interface';
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
+import {
+  TerritoireRepository as FicheTerritorialeTerritoireRepository,
+} from '@/server/fiche-territoriale/domain/ports/TerritoireRepository';
+import {
+  ChantierRepository as FicheTerritorialeChantierRepository,
+} from '@/server/fiche-territoriale/domain/ports/ChantierRepository';
+import {
+  IndicateurRepository as FicheTerritorialeIndicateurRepository,
+} from '@/server/fiche-territoriale/domain/ports/IndicateurRepository';
+import {
+  SyntheseDesResultatsRepository as FicheTerritorialeSyntheseDesResultatsRepository,
+} from '@/server/fiche-territoriale/domain/ports/SyntheseDesResultatsRepository';
+import {
+  MinistereRepository as FicheTerritorialeMinistereRepository,
+} from '@/server/fiche-territoriale/domain/ports/MinistereRepository';
 import { PrismaRapportRepository } from '@/server/import-indicateur/infrastructure/adapters/PrismaRapportRepository';
 import ObjectifProjetStructurantRepository
   from '@/server/domain/projetStructurant/objectif/ObjectifRepository.interface';
@@ -109,6 +124,17 @@ import { GestionContenuRepository } from '@/server/gestion-contenu/domain/ports/
 import {
   PrismaGestionContenuRepository,
 } from '@/server/gestion-contenu/infrastructure/adapters/PrismaGestionContenuRepository';
+import {
+  PrismaTerritoireRepository,
+} from '@/server/fiche-territoriale/infrastructure/adapters/PrismaTerritoireRepository';
+import { PrismaChantierRepository } from '@/server/fiche-territoriale/infrastructure/adapters/PrismaChantierRepository';
+import {
+  PrismaSyntheseDesResultatsRepository,
+} from '@/server/fiche-territoriale/infrastructure/adapters/PrismaSyntheseDesResultatsRepository';
+import {
+  PrismaIndicateurRepository as PrismaFicheTerritorialeIndicateurRepository,
+} from '@/server/fiche-territoriale/infrastructure/adapters/PrismaIndicateurRepository';
+import { PrismaMinistereRepository } from '@/server/fiche-territoriale/infrastructure/adapters/PrismaMinistereRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
@@ -153,6 +179,16 @@ class Dependencies {
   private readonly _utilisateurRepository: UtilisateurRepository;
 
   private readonly _territoireRepository: TerritoireRepository;
+
+  private readonly _ficheTerritorialeTerritoireRepository: FicheTerritorialeTerritoireRepository;
+
+  private readonly _ficheTerritorialeChantierRepository: FicheTerritorialeChantierRepository;
+
+  private readonly _ficheTerritorialeIndicateurRepository: FicheTerritorialeIndicateurRepository;
+
+  private readonly _ficheTerritorialeSyntheseDesResultatsRepository: FicheTerritorialeSyntheseDesResultatsRepository;
+
+  private readonly _ficheTerritorialeMinistereRepository: FicheTerritorialeMinistereRepository;
 
   private readonly _projetStructurantRepository: ProjetStructurantRepository;
 
@@ -208,6 +244,11 @@ class Dependencies {
     this._décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
     this._utilisateurRepository = new UtilisateurSQLRepository(prisma);
     this._territoireRepository = new TerritoireSQLRepository(prisma);
+    this._ficheTerritorialeTerritoireRepository = new PrismaTerritoireRepository(prisma);
+    this._ficheTerritorialeChantierRepository = new PrismaChantierRepository(prisma);
+    this._ficheTerritorialeIndicateurRepository = new PrismaFicheTerritorialeIndicateurRepository(prisma);
+    this._ficheTerritorialeSyntheseDesResultatsRepository = new PrismaSyntheseDesResultatsRepository(prisma);
+    this._ficheTerritorialeMinistereRepository = new PrismaMinistereRepository(prisma);
     this._projetStructurantRepository = new ProjetStructurantSQLRepository(prisma);
     this._profilRepository = new ProfilSQLRepository(prisma);
     this._objectifProjetStructurantRepository = new ObjectifProjetStructurantSQLRepository(prisma);
@@ -338,6 +379,26 @@ class Dependencies {
 
   getTerritoireRepository() {
     return this._territoireRepository;
+  }
+
+  getFicheTerritorialeTerritoireRepository() {
+    return this._ficheTerritorialeTerritoireRepository;
+  }
+
+  getFicheTerritorialeChantierRepository() {
+    return this._ficheTerritorialeChantierRepository;
+  }
+
+  getFicheTerritorialeIndicateurRepository() {
+    return this._ficheTerritorialeIndicateurRepository;
+  }
+
+  getFicheTerritorialeSyntheseDesResultatsRepository() {
+    return this._ficheTerritorialeSyntheseDesResultatsRepository;
+  }
+
+  getFicheTerritorialeMinistereRepository() {
+    return this._ficheTerritorialeMinistereRepository;
   }
 
   getProjetStructurantRepository() {

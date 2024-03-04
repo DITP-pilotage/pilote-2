@@ -170,6 +170,7 @@ models:
         meta:
             pilote_show: true
             pilote_alias: "Unité"
+            pilote_disp_dispDesc: true
             pilote_edit_isEditable: true
             pilote_edit_regex: ".*"
             pilote_edit_regexViolationMessage: null
@@ -191,6 +192,7 @@ models:
         meta:
             pilote_show: true
             pilote_alias: "Contraintes"
+            pilote_disp_dispDesc: true
             pilote_edit_isEditable: false
             pilote_edit_boxType: text
             pilote_edit_acceptedValuesViolationMessage: "Veuillez choisir des contraintes de saisie parmi: "      
@@ -530,8 +532,9 @@ models:
             pilote_alias: "Maille nationale"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: true
+            pilote_edit_regex: "(^\\d{1,2}$)|(^\\d{1,2}\\.\\d{1,2}$)|(^100$)"
+            pilote_edit_regexViolationMessage: "Pondération comprise entre 0 et 100."
             pilote_create_defaultValue: 0
-            ### Possible d'ajouter une règle pour nombre entre 0 et 100 ??
             pilote_disp_blocId: 6
 
       - name: poids_pourcent_reg
@@ -542,8 +545,9 @@ models:
             pilote_alias: "Maille régionale"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: false
+            pilote_edit_regex: "(^\\d{1,2}$)|(^\\d{1,2}\\.\\d{1,2}$)|(^100$)"
+            pilote_edit_regexViolationMessage: "Pondération comprise entre 0 et 100."
             pilote_create_defaultValue: 0
-            ### Possible d'ajouter une règle pour nombre entre 0 et 100 ??
             pilote_disp_blocId: 6
 
       - name: poids_pourcent_dept
@@ -554,8 +558,9 @@ models:
             pilote_alias: "Maille départementale"
             pilote_edit_boxType: text
             pilote_disp_dispDesc: false
+            pilote_edit_regex: "(^\\d{1,2}$)|(^\\d{1,2}\\.\\d{1,2}$)|(^100$)"
+            pilote_edit_regexViolationMessage: "Pondération comprise entre 0 et 100."
             pilote_create_defaultValue: 0
-            ### Possible d'ajouter une règle pour nombre entre 0 et 100 ??
             pilote_disp_blocId: 6
 
   - name: metadata_indicateurs_complementaire

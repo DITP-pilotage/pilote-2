@@ -8,7 +8,7 @@ export const optionsBooleanSelecteur = [{ libellé: 'Oui', valeur: 'true' }, { l
 export const MetadataIndicateurSelecteur = ({
   informationMetadataIndicateur,
   estEnCoursDeModification,
-  errorMessage,
+  erreurMessage,
   listeValeur,
   register,
   values,
@@ -16,7 +16,7 @@ export const MetadataIndicateurSelecteur = ({
 }: {
   informationMetadataIndicateur: InformationMetadataIndicateurContrat,
   estEnCoursDeModification: boolean,
-  errorMessage?: string,
+  erreurMessage?: string,
   listeValeur: { valeur: string; libellé: string }[],
   register: UseFormRegisterReturn<string>,
   values: string | boolean,
@@ -29,7 +29,7 @@ export const MetadataIndicateurSelecteur = ({
       valeurAffiché={valeurAffiché}
     >
       <Sélecteur
-        errorMessage={errorMessage}
+        errorMessage={erreurMessage}
         htmlName='indicParentCh'
         options={listeValeur}
         register={register}

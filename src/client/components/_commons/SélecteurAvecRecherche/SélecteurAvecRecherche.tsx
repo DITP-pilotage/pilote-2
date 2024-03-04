@@ -49,20 +49,31 @@ export default function SélecteurAvecRecherche<T extends string>({ htmlName, li
         {
           optionsFiltrées?.map(option => (
             <Fragment key={`${option.valeur}`}>
-              <div 
-                className='fr-option'
-                id={option.valeur}
-                onClick={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.id as T)}
-                onKeyDown={(événement) => {
-                  if ((événement.key === 'Enter' || événement.key === ' ') && !!valeurModifiéeCallback) {
-                    valeurModifiéeCallback(événement.currentTarget.id as T);
-                  }
-                }}
-                role='button'
-                tabIndex={0}
-              >
-                {option.libellé}
-              </div>
+              {
+                !!!option.désactivée ?
+                  <div 
+                    className='fr-option'
+                    id={option.valeur}
+                    onClick={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.id as T)}
+                    onKeyDown={(événement) => {
+                      if ((événement.key === 'Enter' || événement.key === ' ') && !!valeurModifiéeCallback) {
+                        valeurModifiéeCallback(événement.currentTarget.id as T);
+                      }
+                    }}
+                    role='button'
+                    tabIndex={0}
+                  >
+                    {option.libellé}
+                  </div>
+                  :
+                  <div 
+                    className='fr-option-disabled'
+                    id={option.valeur}
+                  >
+                    {option.libellé}
+                  </div>                  
+                }
+
             </Fragment>
           ))
         }

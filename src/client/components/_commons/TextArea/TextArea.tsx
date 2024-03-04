@@ -21,7 +21,7 @@ const TextArea = ({ children, erreur, erreurMessage, htmlName, register, disable
         {...register}
       />
       {
-        erreur !== undefined &&
+        (erreurMessage !== undefined || erreur !== undefined) &&
           <p
             className='fr-error-text'
           >

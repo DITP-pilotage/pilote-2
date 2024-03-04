@@ -34,6 +34,7 @@ export function TableauAdminIndicateurs() {
         !!alerte && (
           <div className='fr-mt-2w'>
             <Alerte
+              message={alerte.message}
               titre={alerte.titre}
               type={alerte.type}
             />

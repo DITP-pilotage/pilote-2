@@ -5,7 +5,6 @@ import useDétailsMetadataParametreCalculIndicateurForm
   from '@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreCalculIndicateur/useDétailsMetadataParametreCalculIndicateurForm';
 import { MetadataParametrageIndicateurContrat } from '@/server/app/contrats/MetadataParametrageIndicateurContrat';
 import { MapInformationMetadataIndicateurContrat } from '@/server/app/contrats/InformationMetadataIndicateurContrat';
-import { MetadataIndicateurInput } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInput';
 import {
   MetadataIndicateurSelecteur,
 } from '@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur';
@@ -33,30 +32,32 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
       >
         Paramétrages - Calcul de la valeur actuelle
       </Titre>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
-          <MetadataIndicateurInput
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
+          <MetadataIndicateurSelecteur
             erreurMessage={errors.paramVacaDecumulFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='paramVacaDecumulFrom'
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vaca_decumul_from}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vaca_decumul_from')}
             register={register('paramVacaDecumulFrom', { value: indicateur?.paramVacaDecumulFrom })}
-            valeurAffiché={indicateur.paramVacaDecumulFrom || '_'}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vaca_decumul_from', 'paramVacaDecumulFrom')}
+            values={getValues('paramVacaDecumulFrom')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w fr-pl-2w'>
-          <MetadataIndicateurInput
+        <div className='fr-col-12 fr-col-md-4'>
+          <MetadataIndicateurSelecteur
             erreurMessage={errors.paramVacaPartitionDate?.message}
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='paramVacaPartitionDate'
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vaca_partition_date}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vaca_partition_date')}
             register={register('paramVacaPartitionDate', { value: indicateur?.paramVacaPartitionDate })}
-            valeurAffiché={indicateur.paramVacaPartitionDate || '_'}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vaca_partition_date', 'paramVacaPartitionDate')}
+            values={getValues('paramVacaPartitionDate')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.paramVacaOp?.message}
+            erreurMessage={errors.paramVacaOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vaca_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vaca_op')}
@@ -66,30 +67,32 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
           />
         </div>
       </div>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
-          <MetadataIndicateurInput
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
+          <MetadataIndicateurSelecteur
             erreurMessage={errors.paramVacgDecumulFrom?.message}
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='paramVacgDecumulFrom'
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vacg_decumul_from}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_decumul_from')}
             register={register('paramVacgDecumulFrom', { value: indicateur?.paramVacgDecumulFrom })}
-            valeurAffiché={indicateur.paramVacgDecumulFrom || '_'}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_decumul_from', 'paramVacgDecumulFrom')}
+            values={getValues('paramVacgDecumulFrom')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w  fr-pl-2w'>
-          <MetadataIndicateurInput
+        <div className='fr-col-12 fr-col-md-4'>
+          <MetadataIndicateurSelecteur
             erreurMessage={errors.paramVacgPartitionDate?.message}
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName='paramVacgPartitionDate'
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vacg_partition_date}
+            listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_partition_date')}
             register={register('paramVacgPartitionDate', { value: indicateur?.paramVacgPartitionDate })}
-            valeurAffiché={indicateur.paramVacgPartitionDate || '_'}
+            valeurAffiché={mappingDisplayAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_partition_date', 'paramVacgPartitionDate')}
+            values={getValues('paramVacgPartitionDate')}
           />
         </div>
-        <div className='fr-col-12 fr-col-md-4 fr-pl-2w'>
+        <div className='fr-col-12 fr-col-md-4'>
           <MetadataIndicateurSelecteur
-            errorMessage={errors.paramVacgOp?.message}
+            erreurMessage={errors.paramVacgOp?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.param_vacg_op}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'param_vacg_op')}
@@ -99,11 +102,11 @@ export default function SectionDétailsMetadataParametreCalculIndicateur({
           />
         </div>
       </div>
-      <div className='fr-grid-row fr-mb-2w'>
-        <div className='fr-col-12 fr-col-md-4 fr-pr-2w'>
+      <div className='fr-grid-row fr-grid-row--gutters'>
+        <div className='fr-col-12 fr-col-md-4'>
 
           <MetadataIndicateurSelecteur
-            errorMessage={errors.tendance?.message}
+            erreurMessage={errors.tendance?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             informationMetadataIndicateur={mapInformationMetadataIndicateur.tendance}
             listeValeur={mappingAcceptedValues(mapInformationMetadataIndicateur, indicateur, 'tendance')}

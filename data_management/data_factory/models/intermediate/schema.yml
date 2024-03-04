@@ -68,3 +68,16 @@ models:
         description: "Code du territoire concerné"
       - name: zone_id
         description: "ID de la zone concernée"
+  - name: int_chantiers_zone_applicables
+    description: "Une ligne pour chaque chantier et chaque territoire pour les chantiers uniquement applicable sur une zone groupe. Indique si le chantier est applicable sur le territoire"
+    columns:
+      - name: chantier_id
+        description: "ID du chantier"
+      - name: zone_id
+        description: "ID du territoire"
+      - name: zone_est_applicable
+        description: "Si le chantier est applicable sur le territoire"
+      - name: maille
+        description: "Maille du territoire"
+      - name: zone_id
+        description: "ID de la zone concernée"

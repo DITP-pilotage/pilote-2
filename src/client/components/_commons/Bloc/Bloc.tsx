@@ -1,7 +1,7 @@
 import BlocStyled from '@/components/_commons/Bloc/Bloc.styled';
 import BlocProps from './Bloc.interface';
 
-export default function Bloc({ children, titre }: BlocProps) {
+export default function Bloc({ children, contenuClassesSupplémentaires = 'fr-p-2w', titre }: BlocProps) {
   return (
     <BlocStyled>
       {
@@ -10,7 +10,7 @@ export default function Bloc({ children, titre }: BlocProps) {
           {titre}
         </div>
       }
-      <div className='fr-p-2w'>
+      <div className={`${contenuClassesSupplémentaires} bloc__contenu`}>
         {children}
       </div>
     </BlocStyled>

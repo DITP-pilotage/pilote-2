@@ -13,7 +13,7 @@ import Alerte from '@/components/_commons/Alerte/Alerte';
 export default function PageIndicateur({ indicateur, mapInformationMetadataIndicateur, estUneCréation, modificationReussie, creationReussie, chantiers }: PageIndicateurProps) {
   const chemin = [{ nom:'Gestion des indicateurs', lien:'/admin/indicateurs' }];
 
-  const { reactHookForm, modifierIndicateur, creerIndicateur, estEnCoursDeModification, setEstEnCoursDeModification, alerte } = usePageIndicateur(indicateur);
+  const { reactHookForm, modifierIndicateur, creerIndicateur, estEnCoursDeModification, setEstEnCoursDeModification, alerte, reinitialiserIndicateur } = usePageIndicateur(indicateur);
 
   return (
     <PageIndicateurStyled className='fr-pt-2w'>
@@ -39,7 +39,6 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
               onSubmit={reactHookForm.handleSubmit((data) => {
                 if (estUneCréation) {
                   creerIndicateur({ ...data, indicId: indicateur.indicId });
-
                 } else {
                   modifierIndicateur({ ...data, indicId: indicateur.indicId });
                 }
@@ -81,36 +80,44 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                 { indicateur.indicId }
                 <div className='fr-grid-row fr-mt-4w'>
                   {
-                  estUneCréation ? (
-                    <button
-                      className='fr-btn fr-mr-2w'
-                      key='submit-indicateur'
-                      type='submit'
-                    >
-                      Créer l'indicateur
-                    </button>
-                  ) : (estEnCoursDeModification ? (
-                    <button
-                      className='fr-btn fr-mr-2w'
-                      key='submit-indicateur'
-                      type='submit'
-                    >
-                      Confirmer les changements
-                    </button>
-
-                  ) : (
-                    <button
-                      className='fr-btn fr-mr-2w'
-                      key='passer-en-modification'
-                      onClick={() => setEstEnCoursDeModification(!estEnCoursDeModification)}
-                      type='button'
-                    >
-                      Modifier
-                    </button>
-                  ))
-                }
+                    estUneCréation ? (
+                      <button
+                        className='fr-btn fr-mr-2w'
+                        key='submit-creer-indicateur-top'
+                        type='submit'
+                      >
+                        Créer l'indicateur
+                      </button>
+                    ) : (estEnCoursDeModification ? (
+                      <>
+                        <button
+                          className='fr-btn fr-mr-2w'
+                          key='submit-modifier-indicateur-top'
+                          type='submit'
+                        >
+                          Confirmer les changements
+                        </button>
+                        <button
+                          className='fr-btn fr-btn--secondary fr-mr-2w'
+                          key='submit-reinitialiser-indicateur-top'
+                          onClick={reinitialiserIndicateur}
+                          type='button'
+                        >
+                          Annuler
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        className='fr-btn fr-mr-2w'
+                        key='passer-en-modification'
+                        onClick={() => setEstEnCoursDeModification(!estEnCoursDeModification)}
+                        type='button'
+                      >
+                        Modifier
+                      </button>
+                    ))
+                  }
                 </div>
-
               </Titre>
               <Bloc>
                 <div className='fr-py-4w fr-px-10w'>
@@ -124,20 +131,29 @@ export default function PageIndicateur({ indicateur, mapInformationMetadataIndic
                     estUneCréation ? (
                       <button
                         className='fr-btn fr-mr-2w'
-                        key='submit-indicateur'
+                        key='submit-creer-indicateur-top'
                         type='submit'
                       >
                         Créer l'indicateur
                       </button>
                     ) : (estEnCoursDeModification ? (
-                      <button
-                        className='fr-btn fr-mr-2w'
-                        key='submit-indicateur'
-                        type='submit'
-                      >
-                        Confirmer les changements
-                      </button>
-
+                      <>
+                        <button
+                          className='fr-btn fr-mr-2w'
+                          key='submit-modifier-indicateur-top'
+                          type='submit'
+                        >
+                          Confirmer les changements
+                        </button>
+                        <button
+                          className='fr-btn fr-btn--secondary fr-mr-2w'
+                          key='submit-reinitialiser-indicateur-top'
+                          onClick={reinitialiserIndicateur}
+                          type='button'
+                        >
+                          Annuler
+                        </button>
+                      </>
                     ) : (
                       <button
                         className='fr-btn fr-mr-2w'

@@ -288,9 +288,9 @@ model metadata_parametrage_indicateurs {
   param_vacg_decumul_from   String?
   param_vacg_partition_date String?
   param_vacg_op             String?
-  poids_pourcent_dept       Int?
-  poids_pourcent_reg        Int?
-  poids_pourcent_nat        Int?
+  poids_pourcent_dept       Float?
+  poids_pourcent_reg        Float?
+  poids_pourcent_nat        Float?
   tendance                  String?
 
   @@schema("raw_data")

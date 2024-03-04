@@ -100,7 +100,7 @@ export async function handleExportMetadataIndicateurs(request: NextApiRequest, r
       metadataIndicateur.indicSourceUrl,
       metadataIndicateur.indicMethodeCalcul,
       metadataIndicateur.indicUnite,
-      metadataIndicateur.indicHiddenPilote,
+      metadataIndicateur.indicHiddenPilote ? 'true' : 'false',
       metadataIndicateur.indicSchema,
       metadataIndicateur.viDeptFrom,
       metadataIndicateur.viDeptOp,

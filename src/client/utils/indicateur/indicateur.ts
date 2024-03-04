@@ -1,7 +1,7 @@
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 
-const PROFIL_AUTORISE_A_IMPORTER  = new Set(['DITP_ADMIN', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM']);
+const PROFIL_AUTORISE_A_IMPORTER  = new Set(['DITP_ADMIN', 'DITP_PILOTAGE', 'SECRETARIAT_GENERAL', 'EQUIPE_DIR_PROJET', 'DIR_PROJET', 'DROM']);
 const PROFIL_AUTORISE_A_MODIFIER  = new Set(['DITP_ADMIN']);
 const ORDRE_DES_TYPES_INDICATEUR: TypeIndicateur[] = ['IMPACT', 'DEPL', 'Q_SERV', 'REBOND', 'CONTEXTE'];
 

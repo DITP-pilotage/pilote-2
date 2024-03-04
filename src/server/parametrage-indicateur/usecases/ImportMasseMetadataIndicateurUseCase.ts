@@ -4,6 +4,8 @@ import {
   MetadataParametrageIndicateurRepository,
 } from '@/server/parametrage-indicateur/domain/port/MetadataParametrageIndicateurRepository';
 import { ImportMetadataIndicateur } from '@/server/parametrage-indicateur/domain/ImportMetadataIndicateur';
+import logger from '@/server/infrastructure/logger';
+import { supprimerLeFichier } from '@/server/import-indicateur/infrastructure/adapters/FichierService';
 
 type RecordCSVImport = Record<typeof AvailableHeaderCSVImport[number], string>;
 
@@ -15,15 +17,15 @@ const convertirEnImportMetadataIndicateur = (record: RecordCSVImport): ImportMet
   indicNomBaro: record.indic_nom_baro,
   indicDescr: record.indic_descr,
   indicDescrBaro: record.indic_descr_baro,
-  indicIsPerseverant: record.indic_is_perseverant === 'true' ? true : false,
-  indicIsPhare: record.indic_is_phare === 'true' ? true : false,
-  indicIsBaro: record.indic_is_baro === 'true' ? true : false,
+  indicIsPerseverant: record.indic_is_perseverant === 'true' || record.indic_is_perseverant === 'True',
+  indicIsPhare: record.indic_is_phare === 'true' || record.indic_is_phare === 'True',
+  indicIsBaro: record.indic_is_baro === 'true' || record.indic_is_baro === 'True',
   indicType: record.indic_type,
   indicSource: record.indic_source,
   indicSourceUrl: record.indic_source_url,
   indicMethodeCalcul: record.indic_methode_calcul,
   indicUnite: record.indic_unite,
-  indicHiddenPilote: record.indic_hidden_pilote === 'true' ? true : false,
+  indicHiddenPilote: record.indic_hidden_pilote === 'true' || record.indic_hidden_pilote === 'True',
   indicSchema: record.indic_schema,
   viDeptFrom: record.vi_dept_from,
   viDeptOp: record.vi_dept_op,
@@ -49,9 +51,9 @@ const convertirEnImportMetadataIndicateur = (record: RecordCSVImport): ImportMet
   paramVacgDecumulFrom: record.param_vacg_decumul_from,
   paramVacgPartitionDate: record.param_vacg_partition_date,
   paramVacgOp: record.param_vacg_op,
-  poidsPourcentDept: record.poids_pourcent_dept,
-  poidsPourcentReg: record.poids_pourcent_reg,
-  poidsPourcentNat: record.poids_pourcent_nat,
+  poidsPourcentDept: record.poids_pourcent_dept || '0',
+  poidsPourcentReg: record.poids_pourcent_reg || '0',
+  poidsPourcentNat: record.poids_pourcent_nat || '0',
   tendance: record.tendance,
   reformePrioritaire: record.reforme_prioritaire,
   projetAnnuelPerf: record.projet_annuel_perf === 'true' || record.projet_annuel_perf === 'True',
@@ -153,7 +155,6 @@ export default class ImportMasseMetadataIndicateurUseCase {
 
   async run({ nomDuFichier }: { nomDuFichier: string }) {
 
-    // Deplacer ca dans un service
     const csvParserOptions = {
       columns: true,
       skipEmptyLines: true,
@@ -165,7 +166,9 @@ export default class ImportMasseMetadataIndicateurUseCase {
     };
     const contents = fs.readFileSync(nomDuFichier as string, 'utf8');
     const listeRecordCsvImport: RecordCSVImport[] = parse(contents, csvParserOptions);
-    // Fin deplacement
+    supprimerLeFichier(nomDuFichier);
+    
+    logger.info('Import de masse en cours');
 
     if (listeRecordCsvImport.length > 0) {
       if (Object.keys(listeRecordCsvImport[0]).sort().toString() === Object.values(AvailableHeaderCSVImport).sort().toString()) {

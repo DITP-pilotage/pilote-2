@@ -9,7 +9,12 @@ export const config = {
 };
 
 export default async function handle(request: NextApiRequest, response: NextApiResponse) {
-  await handleImportMasseMetadataIndicateur(request, response);
 
-  response.status(200).json({});
+  await handleImportMasseMetadataIndicateur(request, response).then(() => {
+    response.status(200).json({});
+  }).catch(error => {
+    response.status(500).json({
+      message: error.message,
+    });
+  });
 }

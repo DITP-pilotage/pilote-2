@@ -25,7 +25,7 @@ export default function Input({ children, type = 'text', erreur, erreurMessage, 
         {...register}
       />
       {
-        erreur !== undefined &&
+        (erreurMessage !== undefined || erreur !== undefined) &&
           <p
             className='fr-error-text'
           >

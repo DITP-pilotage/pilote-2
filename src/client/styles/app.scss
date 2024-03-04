@@ -29,6 +29,9 @@
 .w-full {
   width: 100%;
 }
+.w-half-full {
+  width: 50%;
+}
 
 .align-center {
   align-items: center;
@@ -78,4 +81,8 @@
   text-overflow: ellipsis;
   overflow-x: hidden;
   white-space: nowrap;
+}
+
+.fr-text-title--blue-france {
+  color: var(--text-title-blue-france);
 }
