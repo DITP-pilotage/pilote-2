@@ -8,6 +8,7 @@ export default function InputFichier({ onChange, accept = '.csv, .xls, .xlsx' }:
     <div className='fr-upload-group'>
       <input
         accept={accept}
+        aria-label='Choisir un fichier'
         className='fr-upload'
         id='file-upload'
         name='file-upload'

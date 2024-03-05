@@ -11,7 +11,7 @@ import {
 } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
 import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient.interface';
 import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
-import logger from '@/server/infrastructure/logger';
+import logger from '@/server/infrastructure/Logger';
 
 interface Dependencies {
   httpClient: HttpClient
