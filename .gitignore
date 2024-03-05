@@ -44,5 +44,9 @@ yarn-error.log*
 /uploads
 
 .env.test
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 
 public/centreaide/
