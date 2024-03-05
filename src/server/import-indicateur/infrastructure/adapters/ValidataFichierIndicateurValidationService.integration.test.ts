@@ -3,7 +3,10 @@ import {
   ValidataFichierIndicateurValidationService,
 } from '@/server/import-indicateur/infrastructure/adapters/ValidataFichierIndicateurValidationService';
 import { ReportErrorTaskBuilder } from '@/server/import-indicateur/app/builder/ReportErrorTask.builder';
-import { ReportResourceTaskBuilder, ReportTaskBuilder } from '@/server/import-indicateur/app/builder/ReportTask.builder';
+import {
+  ReportResourceTaskBuilder,
+  ReportTaskBuilder,
+} from '@/server/import-indicateur/app/builder/ReportTask.builder';
 import { ReportValidataBuilder } from '@/server/import-indicateur/app/builder/ReportValidata.builder';
 import {
   ValiderFichierPayload,
@@ -343,7 +346,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
         expect(result.listeErreursValidation.at(1)?.nomDuChamp).toEqual('nom du champ 1');
       });
     });
-    
+
     describe('quand une entête possède un espace', () => {
       it("doit identifier que l'en-tête est incorrect", async () => {
         // GIVEN

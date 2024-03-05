@@ -11,6 +11,7 @@ import {
 } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
 import { HttpClient } from '@/server/import-indicateur/domain/ports/HttpClient.interface';
 import { ErreurValidationFichier } from '@/server/import-indicateur/domain/ErreurValidationFichier';
+import logger from '@/server/infrastructure/logger';
 
 interface Dependencies {
   httpClient: HttpClient
@@ -120,7 +121,80 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
     try {
       rapportValidata = await this.httpClient.post({ cheminCompletDuFichier, nomDuFichier, schema });
       rapport = DetailValidationFichier.creerDetailValidationFichier({ estValide: rapportValidata.valid, utilisateurEmail });
-    } catch {
+
+
+      const rawEnTete = rapportValidata.tasks[0].resource.data[0];
+
+      rawEnTete.forEach(enTetes => {
+        if (enTetes.trim() !== enTetes) {
+          listeErreursValidation.push(ErreurValidationFichier.creerErreurValidationFichier({
+            rapportId: rapport.id,
+            cellule: enTetes,
+            nom: 'En-tête incorrect',
+            message: `Le champ de l'en-tête '${enTetes.trim()}' comporte des espaces, veuillez les supprimer`,
+            numeroDeLigne: 0,
+            positionDeLigne: 0,
+            nomDuChamp: enTetes.trim(),
+            positionDuChamp: 0,
+          }));
+        }
+        if (enTetes.toLowerCase() !== enTetes) {
+          listeErreursValidation.push(ErreurValidationFichier.creerErreurValidationFichier({
+            rapportId: rapport.id,
+            cellule: enTetes,
+            nom: 'En-tête incorrect',
+            message: `Le champ de l'en-tête '${enTetes.toLowerCase()}' comporte des majuscules, veuillez les mettre en minuscule`,
+            numeroDeLigne: 0,
+            positionDeLigne: 0,
+            nomDuChamp: enTetes.toLowerCase(),
+            positionDuChamp: 0,
+          }));
+        }
+      });
+
+      const enTetes = recupererLesPositionsDesEnTetes(rawEnTete);
+      const donnees = rapportValidata.tasks.map(extraireLesDonnees);
+
+      if ((rapportValidata.tasks[0].resource.data[0]).includes('identifiant_indic')) {
+        listeIndicateursData = donnees.flat().map(donnee => MesureIndicateurTemporaire.createMesureIndicateurTemporaire({
+          rapportId: rapport.id,
+          indicId: donnee[enTetes.indicId],
+          zoneId: donnee[enTetes.zoneId],
+          metricDate: donnee[enTetes.metricDate],
+          metricType: donnee[enTetes.metricType],
+          metricValue: `${donnee[enTetes.metricValue]}`,
+        }));
+      } else {
+        listeErreursValidation.push(ErreurValidationFichier.creerErreurValidationFichier({
+          rapportId: rapport.id,
+          cellule: 'identifiant_indic',
+          nom: 'identifiant_indic',
+          message: "L'en-tête identifiant_indic n'est pas présente",
+          numeroDeLigne: 0,
+          positionDeLigne: 0,
+          nomDuChamp: 'identifiant_indic',
+          positionDuChamp: 0,
+        }));
+      }
+
+      const listeErreursReport = rapportValidata.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
+        rapportId: rapport.id,
+        cellule: taskError.cell || 'Cellule non définie',
+        nom: taskError.name,
+        message: personnaliserValidataMessage(taskError),
+        numeroDeLigne: taskError.rowNumber || -1,
+        positionDeLigne: taskError.rowPosition || -1,
+        nomDuChamp: taskError.fieldName || '',
+        positionDuChamp: taskError.fieldPosition || -1,
+      }));
+
+      listeErreursValidation = [...listeErreursValidation, ...listeErreursReport];
+
+      rapport.affecterListeMesuresIndicateurTemporaire(listeIndicateursData);
+      rapport.affecterListeErreursValidation(listeErreursValidation);
+
+      return rapport;
+    } catch (error) {
       rapport = DetailValidationFichier.creerDetailValidationFichier({ estValide: false, utilisateurEmail });
       listeErreursValidation.push(ErreurValidationFichier.creerErreurValidationFichier({
         rapportId: rapport.id,
@@ -133,80 +207,9 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
         positionDuChamp: 0,
       }));
       rapport.affecterListeErreursValidation(listeErreursValidation);
+      logger.error((error as Error).message);
 
       return rapport;
     }
-
-    const rawEnTete = rapportValidata.tasks[0].resource.data[0];
-
-    rawEnTete.forEach(enTetes => {
-      if (enTetes.trim() !== enTetes) {
-        listeErreursValidation.push(ErreurValidationFichier.creerErreurValidationFichier({
-          rapportId: rapport.id,
-          cellule: enTetes,
-          nom: 'En-tête incorrect',
-          message: `Le champ de l'en-tête '${enTetes.trim()}' comporte des espaces, veuillez les supprimer`,
-          numeroDeLigne: 0,
-          positionDeLigne: 0,
-          nomDuChamp: enTetes.trim(),
-          positionDuChamp: 0,
-        }));
-      }
-      if (enTetes.toLowerCase() !== enTetes) {
-        listeErreursValidation.push(ErreurValidationFichier.creerErreurValidationFichier({
-          rapportId: rapport.id,
-          cellule: enTetes,
-          nom: 'En-tête incorrect',
-          message: `Le champ de l'en-tête '${enTetes.toLowerCase()}' comporte des majuscules, veuillez les mettre en minuscule`,
-          numeroDeLigne: 0,
-          positionDeLigne: 0,
-          nomDuChamp: enTetes.toLowerCase(),
-          positionDuChamp: 0,
-        }));
-      }
-    });
-
-    const enTetes = recupererLesPositionsDesEnTetes(rawEnTete);
-    const donnees = rapportValidata.tasks.map(extraireLesDonnees);
-
-    if ((rapportValidata.tasks[0].resource.data[0]).includes('identifiant_indic')) {
-      listeIndicateursData = donnees.flat().map(donnee => MesureIndicateurTemporaire.createMesureIndicateurTemporaire({
-        rapportId: rapport.id,
-        indicId: donnee[enTetes.indicId],
-        zoneId: donnee[enTetes.zoneId],
-        metricDate: donnee[enTetes.metricDate],
-        metricType: donnee[enTetes.metricType],
-        metricValue: `${donnee[enTetes.metricValue]}`,
-      }));
-    } else {
-      listeErreursValidation.push(ErreurValidationFichier.creerErreurValidationFichier({
-        rapportId: rapport.id,
-        cellule: 'identifiant_indic',
-        nom: 'identifiant_indic',
-        message: "L'en-tête identifiant_indic n'est pas présente",
-        numeroDeLigne: 0,
-        positionDeLigne: 0,
-        nomDuChamp: 'identifiant_indic',
-        positionDuChamp: 0,
-      }));
-    }
-
-    const listeErreursReport = rapportValidata.tasks.flatMap(task => task.errors).map(taskError => ErreurValidationFichier.creerErreurValidationFichier({
-      rapportId: rapport.id,
-      cellule: taskError.cell || 'Cellule non définie',
-      nom: taskError.name,
-      message: personnaliserValidataMessage(taskError),
-      numeroDeLigne: taskError.rowNumber || -1,
-      positionDeLigne: taskError.rowPosition || -1,
-      nomDuChamp: taskError.fieldName || '',
-      positionDuChamp: taskError.fieldPosition || -1,
-    }));
-
-    listeErreursValidation = [...listeErreursValidation, ...listeErreursReport];
-
-    rapport.affecterListeMesuresIndicateurTemporaire(listeIndicateursData);
-    rapport.affecterListeErreursValidation(listeErreursValidation);
-
-    return rapport;
   }
 }
