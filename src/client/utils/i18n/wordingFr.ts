@@ -1,5 +1,5 @@
 export const wordingFr = {
-  PAGE_IMPORT_MESURE_INDICATEUR: {m
+  PAGE_IMPORT_MESURE_INDICATEUR: {
     SECTION_EXPLICATION_ETAPE_IMPORT : {
       TITRE: '3 étapes pour mettre à jour vos données',
       ETAPE_SELECTION_INDICATEUR: {
