@@ -117,6 +117,18 @@ const config = convict({
     default: '',
     env: 'WEBAPP_BASE_URL',
   },
+  centreaide: {
+    githubFolder: {
+      format: String,
+      default: 'integration-pilote',
+      env: 'CENTREAIDE_GITHUB_FOLDER',
+    },
+    githubToken: {
+      format: String,
+      default: 'ToBeDefined',
+      env: 'CENTREAIDE_GITHUB_TOKEN',
+    },
+  },
   featureFlip: {
     rapportDetaille: {
       format: Boolean,
