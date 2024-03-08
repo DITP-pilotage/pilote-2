@@ -16,7 +16,7 @@ export const MessageInformationForm = () => {
         <div className='flex'>
           <Sélecteur
             htmlName='bandeauType'
-            options={[{ valeur: 'WARNING', libellé: 'Alerte (fond rouge)' }].map(acceptedValue => ({
+            options={[{ valeur: 'WARNING', libellé: 'Alerte (fond rouge)' }, { valeur: 'INFO', libellé: 'Information (fond bleu)' }].map(acceptedValue => ({
               valeur: acceptedValue.valeur,
               libellé: acceptedValue.libellé,
             }))}

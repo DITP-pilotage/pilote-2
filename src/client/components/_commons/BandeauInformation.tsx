@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
+import { FunctionComponent, PropsWithChildren } from 'react';
 
 const BandeauInformationStyled = styled.section`
-  .fr-notice--info {
+  .fr-notice--info.fr-notice--warning {
     background-color: var(--background-contrast-warning);
 
     --idle: transparent;
@@ -11,10 +12,24 @@ const BandeauInformationStyled = styled.section`
   }
 `;
 
-export function BandeauInformation({ children }: { children: React.ReactNode }) {
+const getBandeauTypeClass = (bandeauType: string) => {
+  switch (bandeauType) {
+    case 'INFO': {
+      return 'fr-notice--info';
+    }
+    case 'WARNING': {
+      return 'fr-notice--info fr-notice--warning';
+    }
+    default:  {
+      return 'fr-notice--info fr-notice--warning';
+    }
+  }
+};
+
+export const BandeauInformation: FunctionComponent<PropsWithChildren<{ bandeauType: string }>> = ({ children, bandeauType }) => {
   return (
     <BandeauInformationStyled>
-      <div className='fr-notice fr-notice--info'>
+      <div className={`fr-notice ${getBandeauTypeClass(bandeauType)}`}>
         <div className='fr-container'>
           <div className='fr-notice__body flex'>
             <p className='fr-notice__title'>              
@@ -36,4 +51,4 @@ export function BandeauInformation({ children }: { children: React.ReactNode }) 
       </div>
     </BandeauInformationStyled>
   );
-}
+};
