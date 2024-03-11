@@ -1,5 +1,5 @@
 # Uniquement sur du local
-if [ -z $GITHUB_FOLDER ] || [ -z $GITHUB_TOKEN ];
+if [ -z $CENTREAIDE_GITHUB_FOLDER ] || [ -z $CENTREAIDE_GITHUB_TOKEN ];
 then
   if [ -f .env ];
   then
@@ -10,8 +10,7 @@ then
   fi
 fi
 
-git clone --depth 1 --branch retype-deploy --single-branch https://$GITHUB_TOKEN@github.com/DITP-pilotage/centre-aide-pilote.git public/centreaide
-cd public/centreaide
-find -mindepth 1 -maxdepth 1 -type d -not -name "$GITHUB_FOLDER" -exec rm -rf {} \;
-mv "$GITHUB_FOLDER"/* .
-rm -r "$GITHUB_FOLDER"
+rm -rf /tmp/centreaide public/centreaide
+git clone --depth 1 --branch retype-deploy --single-branch https://$CENTREAIDE_GITHUB_TOKEN@github.com/DITP-pilotage/centre-aide-pilote.git /tmp/centreaide
+mkdir public/centreaide
+cp -r /tmp/centreaide/$CENTREAIDE_GITHUB_FOLDER/* public/centreaide

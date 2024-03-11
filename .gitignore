@@ -44,3 +44,5 @@ yarn-error.log*
 /uploads
 
 .env.test
+
+public/centreaide/

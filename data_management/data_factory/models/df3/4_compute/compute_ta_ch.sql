@@ -77,11 +77,13 @@ ta_ch as (
 	array_agg(tag_pond) as tag_pond_agg,
 	-- Calcul du TA par somme des TA pondérés et bornage dans [0,100] (+handle null)
 	case 
+		when bool_or(taa_courant_pond is null) then null
 		when sum(taa_courant_pond) > 100 then 100
 		when sum(taa_courant_pond) < 0 then 0
 		else sum(taa_courant_pond)
 	end as taa_courant_ch,
 	case 
+		when bool_or(tag_pond is null) then null
 		when sum(tag_pond) > 100 then 100
 		when sum(tag_pond) < 0 then 0
 		else sum(tag_pond)

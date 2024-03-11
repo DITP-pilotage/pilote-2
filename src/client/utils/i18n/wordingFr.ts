@@ -150,7 +150,7 @@ export const wordingFr = {
       },
       SECTION_EXPLICATION_FICHIER: {
         TITRE: 'Comment bien remplir le fichier d’import ?',
-        EXPLICATION_FICHIER_1: 'Si vous choisissez le format CSV pour importer les données, veuillez utiliser la virgule (,) pour délimiter les colonnes et les guillemets (") pour délimiter les chaines de caractères',
+        EXPLICATION_FICHIER_1: 'Si vous choisissez le format CSV pour importer les données, veuillez utiliser le point-virgule (;) pour délimiter les colonnes et les guillemets (") pour délimiter les chaines de caractères',
         EXPLICATION_FICHIER_2: 'Si vous saisissez un taux, la valeur saisie doit se trouver entre 1 et 100. Par exemple, pour 78%, renseignez la valeur 78.',
         EXPLICATION_FICHIER_3: 'L\'encodage du fichier doit être en UTF-8',
         EXPLICATION_FICHIER_4: 'Si vous importez une cellule vide, la valeur précédente sera écrasée (si existante)',
