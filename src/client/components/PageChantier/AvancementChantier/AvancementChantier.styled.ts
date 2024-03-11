@@ -38,6 +38,10 @@ const AvancementChantierStyled = styled.div`
     margin: auto;
   }
   
+  .text-bottom-jauge-progression {
+    max-width: 17rem;
+  }
+  
   @media print {
     &.layout--dept {
       grid-template-areas: "dept reg nat";

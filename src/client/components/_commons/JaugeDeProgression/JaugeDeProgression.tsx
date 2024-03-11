@@ -24,11 +24,11 @@ export default function JaugeDeProgression({ couleur, libellé, pourcentage, tai
           pourcentage={pourcentage}
           taille={taille}
         />
-        <p className={`jauge-valeur ${classesÀPartirDeTaille[taille].valeur}`}>
+        <p className={`jauge-valeur texte-centre ${classesÀPartirDeTaille[taille].valeur}`}>
           { `${pourcentage?.toFixed(0) ?? '- '}%` }
         </p>
       </div>
-      <p className={`fr-text--xs fr-mb-0 ${classesÀPartirDeTaille[taille].libellé}`}>
+      <p className={`fr-text--xs fr-mb-0 texte-centre ${classesÀPartirDeTaille[taille].libellé}`}>
         {libellé}
       </p>
     </JaugeDeProgressionStyled>

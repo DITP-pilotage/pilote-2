@@ -13,6 +13,7 @@ const globalConf = {
     "@/server/(.*)": "<rootDir>/src/server/$1",
     "@/stores/(.*)": "<rootDir>/src/client/stores/$1",
     "@/validation/(.*)": "<rootDir>/src/validation/$1",
+    "@/config": "<rootDir>/src/config.ts",
   },
 };
 

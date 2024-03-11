@@ -50,7 +50,7 @@ export default function SélecteurAvecRecherche<T extends string>({ htmlName, li
           optionsFiltrées?.map(option => (
             <Fragment key={`${option.valeur}`}>
               {
-                !!!option.désactivée ?
+                !option.désactivée ?
                   <div 
                     className='fr-option'
                     id={option.valeur}

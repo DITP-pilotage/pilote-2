@@ -20,6 +20,7 @@ export default function EnTête() {
 
   const isBandeauActif = messageInformation?.isBandeauActif || false;
   const bandeauTexte = messageInformation?.bandeauTexte || 'Des opérations de maintenance sont en cours et peuvent perturber le fonctionnement normal de PILOTE. En cas de difficultés : support.ditp@modernisation.gouv.fr';
+  const bandeauType = messageInformation?.bandeauType || 'WARNING';
 
   return (
     <header
@@ -82,7 +83,7 @@ export default function EnTête() {
       {session?.user ? <Navigation /> : null}
       {
         isBandeauActif ? (
-          <BandeauInformation>
+          <BandeauInformation bandeauType={bandeauType}>
             { bandeauTexte }
           </BandeauInformation>
         ) : null

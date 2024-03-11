@@ -40,6 +40,9 @@
       ],
       "@/ppg_metadata/*": [
         "/data_management/data_factory/models/raw/ppg_metadata/"
+      ],
+      "@/config": [
+        "config.ts"
       ]
     }
   },

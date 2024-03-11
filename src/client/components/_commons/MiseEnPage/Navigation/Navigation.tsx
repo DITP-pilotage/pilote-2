@@ -9,16 +9,13 @@ import { Session } from 'next-auth';
 import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Utilisateur';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { MenuItemGestionContenu } from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
+import api from '@/server/infrastructure/api/trpc/api';
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === 'function') {
     window.dsfr(document.querySelector<HTMLElement>('#modale-menu-principal'))?.modal?.conceal();
   }
 };
-const vérifierValeurApplicationEstIndisponible = () => {
-  return process.env.NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE === 'true';
-};
-
 const estAutoriséAParcourirSiIndisponible = (session: Session | null) => session?.profil === 'DITP_ADMIN';
 
 function estAdministrateur(session: Session | null) {
@@ -26,11 +23,19 @@ function estAdministrateur(session: Session | null) {
 }
 
 const estAutoriséAAccéderALaGestionDesComptes = (session: Session | null) => {
-  if (!!!session) {
+  if (!session) {
     return false;
   }
   const habilitations = new Habilitation(session.habilitations);
   return habilitations.peutCréerEtModifierUnUtilisateur();
+};
+
+const useNavigation = () => {
+  const { data: applicationEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_APPLICATION_INDISPONIBLE' });
+
+  return {
+    vérifierValeurApplicationEstIndisponible: applicationEstDisponible,
+  };
 };
 
 export default function Navigation() {
@@ -38,8 +43,9 @@ export default function Navigation() {
   const router = useRouter();
   const urlActuelle = router.pathname;
 
+  const { vérifierValeurApplicationEstIndisponible } = useNavigation();
 
-  if (vérifierValeurApplicationEstIndisponible() && !estAutoriséAParcourirSiIndisponible(session) && urlActuelle !== '/503') {
+  if (vérifierValeurApplicationEstIndisponible && !estAutoriséAParcourirSiIndisponible(session) && urlActuelle !== '/503') {
     router.push('/503');
   }
 
@@ -95,7 +101,7 @@ export default function Navigation() {
           role='navigation'
         >
           {
-            !vérifierValeurApplicationEstIndisponible() || (vérifierValeurApplicationEstIndisponible() && estAutoriséAParcourirSiIndisponible(session)) ? (
+            !vérifierValeurApplicationEstIndisponible || (vérifierValeurApplicationEstIndisponible && estAutoriséAParcourirSiIndisponible(session)) ? (
               <ul className='fr-nav__list'>
                 {
                   pages.map(page => (

@@ -56,6 +56,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
     // THEN
     expect(httpClient.post).toHaveBeenNthCalledWith(1, { cheminCompletDuFichier, nomDuFichier, schema });
   });
+
   it('quand le httpClient remonte une erreur, doit remonter une erreur', async () => {
     // GIVEN
     const body: ValiderFichierPayload = { cheminCompletDuFichier, nomDuFichier, schema, utilisateurEmail };

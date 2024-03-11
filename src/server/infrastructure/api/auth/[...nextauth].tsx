@@ -3,14 +3,14 @@ import KeycloakProvider from 'next-auth/providers/keycloak';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import type { JWT } from 'next-auth/jwt';
 import { GetServerSidePropsContext } from 'next';
-import config from '@/server/infrastructure/Configuration';
-import logger from '@/server/infrastructure/logger';
+import logger from '@/server/infrastructure/Logger';
 import { dependencies } from '@/server/infrastructure/Dependencies';
+import { configuration } from '@/config';
 
 export const keycloak = KeycloakProvider({
-  clientId: config.keycloakClientId,
-  clientSecret: config.keycloakClientSecret,
-  issuer: config.keycloakIssuer,
+  clientId: configuration.keycloak.clientId,
+  clientSecret: configuration.keycloak.clientSecret,
+  issuer: configuration.keycloak.issuer,
 });
 
 async function _assertResponseOk(response: Response, errorMessage: string): Promise<void> {
@@ -40,9 +40,9 @@ async function doFinalSignoutHandshake(token: PiloteJWTPayload) {
       // Add the id_token_hint to the query string
       const params = new URLSearchParams({ id_token_hint: idToken as string });
 
-      logger.debug({ logoutUrl: config.logoutUrl, params });
+      logger.debug({ logoutUrl: configuration.keycloak.logoutUrl, params });
 
-      const response = await fetch(config.logoutUrl, {
+      const response = await fetch(configuration.keycloak.logoutUrl, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
@@ -96,14 +96,14 @@ async function refreshAccessToken(token: PiloteJWTPayload): Promise<PiloteJWTPay
   if (provider == keycloak.id) {
     try {
       const fields = {
-        client_id: config.keycloakClientId,
-        client_secret: config.keycloakClientSecret,
+        client_id: configuration.keycloak.clientId,
+        client_secret: configuration.keycloak.clientSecret,
         grant_type: 'refresh_token',
         refresh_token: refreshToken,
       };
       const sendData = new URLSearchParams(fields);
 
-      const response = await fetch(config.tokenUrl, {
+      const response = await fetch(configuration.keycloak.tokenUrl, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
@@ -159,7 +159,7 @@ const credentialsProvider = CredentialsProvider({
   async authorize(credentials, _req): Promise<User | null> {
     const password = credentials?.password;
     const username = credentials?.username;
-    if (!username || password != config.devPassword) {
+    if (!username || password != configuration.devPassword) {
       return null;
 
     }
@@ -191,12 +191,12 @@ function _hasExpired(token: PiloteJWTPayload): Boolean {
 }
 
 export const authOptions: AuthOptions = {
-  providers: config.isUsingDevCredentials
+  providers: !!configuration.devPassword
     ? [credentialsProvider]
     : [keycloak],
-  debug: config.nextAuthDebug,
+  debug: configuration.nextAuth.debug,
   session: {
-    maxAge: config.nextAuthSessionMaxAge,
+    maxAge: configuration.nextAuth.sessionMaxAge,
   },
   callbacks: {
     async jwt({ token, account, user, profile, isNewUser }: any & { token: JWT | PiloteJWTPayload, account: Account }): Promise<PiloteJWTPayload> {

@@ -93,7 +93,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                           className='rubrique'
                           id='avancement'
                         >
-                          <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+                          <TitreInfobulleConteneur className='fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                             <Titre
                               baliseHtml='h2'
                               className='fr-h4 fr-mb-0 fr-py-1v'
@@ -158,7 +158,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                     className='rubrique'
                     id='synthèse'
                   >
-                    <TitreInfobulleConteneur className='fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
+                    <TitreInfobulleConteneur className='fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0'>
                       <Titre
                         baliseHtml='h2'
                         className='fr-h4 fr-mb-0 fr-py-1v'

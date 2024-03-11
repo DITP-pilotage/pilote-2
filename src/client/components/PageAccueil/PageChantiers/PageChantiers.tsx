@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
-import Avancements from '@/components/_commons/Avancements/Avancements';
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
@@ -25,6 +24,8 @@ import RemontéeAlerte from '@/components/_commons/RemontéeAlerte/RemontéeAler
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatuts/SélecteurVueStatuts';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
+import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
+import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import PageChantiersStyled from './PageChantiers.styled';
 import PageChantiersProps from './PageChantiers.interface';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
@@ -122,19 +123,87 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
           <div className='fr-col-12 fr-col-lg-6'>
             <Bloc>
               <section>
-                <TitreInfobulleConteneur>
-                  <Titre
-                    baliseHtml='h2'
-                    className='fr-text--lg fr-mb-0 fr-py-1v'
-                    estInline
-                  >
-                    Taux d’avancement moyen
-                  </Titre>
-                  <Infobulle idHtml='infobulle-chantiers-jauges'>
-                    { INFOBULLE_CONTENUS.chantiers.jauges }
-                  </Infobulle>
-                </TitreInfobulleConteneur>
-                <Avancements avancements={avancementsAgrégés} />
+                <div className='fr-container fr-p-0'>
+                  <div className='fr-grid-row fr-mb-2w'>
+                    <div className='fr-col-6 flex flex-column border-r'>
+                      <TitreInfobulleConteneur>
+                        <Titre
+                          baliseHtml='h2'
+                          className='fr-text--md fr-mb-0 fr-py-1v'
+                          estInline
+                        >
+                          Taux d’avancement moyen
+                        </Titre>
+                        <Infobulle idHtml='infobulle-chantiers-jauges'>
+                          { INFOBULLE_CONTENUS.chantiers.jauges }
+                        </Infobulle>
+                      </TitreInfobulleConteneur>
+                      <div className='flex w-full justify-center fr-px-1w'>
+                        <JaugeDeProgression
+                          couleur='bleu'
+                          libellé="Taux d'avancement global"
+                          pourcentage={avancementsAgrégés?.global.moyenne || null}
+                          taille='lg'
+                        />
+                      </div>
+                    </div>
+                    <div className='fr-col-6'>
+                      <div className='fr-container fr-px-1w'>
+                        <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
+                          Répartition des territoires
+                        </div>
+                        <div className='fr-grid-row fr-grid-row-md--gutters fr-px-3v'>
+                          <div className='fr-col-4'>
+                            <JaugeDeProgression
+                              couleur='orange'
+                              libellé='Minimum'
+                              pourcentage={avancementsAgrégés?.global.minimum || null}
+                              taille='sm'
+                            />
+                          </div>
+                          <div className='fr-col-4'>
+                            <JaugeDeProgression
+                              couleur='violet'
+                              libellé='Médiane'
+                              pourcentage={avancementsAgrégés?.global.médiane || null}
+                              taille='sm'
+                            />
+                          </div>
+                          <div className='fr-col-4'>
+                            <JaugeDeProgression
+                              couleur='vert'
+                              libellé='Maximum'
+                              pourcentage={avancementsAgrégés?.global.maximum || null}
+                              taille='sm'
+                            />
+                          </div>
+                        </div>
+                        <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
+                          Répartition des taux d’avancement moyen des territoires
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='fr-grid-row border-t'>
+                    <div className='fr-mt-2w w-full'>
+                      <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
+                        { `${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%` }
+                      </p>
+                      <BarreDeProgression
+                        afficherTexte={false}
+                        bordure={null}
+                        fond='grisClair'
+                        positionTexte='dessus'
+                        taille='xxs'
+                        valeur={!!avancementsAgrégés && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés.annuel.moyenne : null}
+                        variante='secondaire'
+                      />
+                      <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
+                        Moyenne de l'année en cours
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </section>
               <hr className='fr-hr fr-mt-3w fr-mb-3v fr-pb-1v' />
               <section>

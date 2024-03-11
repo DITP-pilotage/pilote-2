@@ -1,4 +1,4 @@
-import { signOut, useSession, signIn } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import { useState } from 'react';
 import UtilisateurStyled from './Utilisateur.styled';
 
@@ -16,6 +16,7 @@ export default function Utilisateur() {
           session?.user?.email ?
             <button
               className='fr-text--sm fr-p-0'
+              name='Utilisateur connecté'
               onClick={() => setEstDéplié(!estDéplié)}
               type='button'
             >

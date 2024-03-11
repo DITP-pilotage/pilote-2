@@ -23,12 +23,14 @@ const largeurs = {
 
 const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   .jauge-tracé {
     position: relative;
     width: ${(props) => largeurs[props.taille].max};
-    margin: 0 auto;
-
+    
     .jauge-valeur {
       margin-bottom: 0;
       color: ${(props) => couleurs[props.couleur]};

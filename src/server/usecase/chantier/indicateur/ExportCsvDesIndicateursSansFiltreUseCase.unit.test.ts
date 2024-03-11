@@ -1,7 +1,6 @@
 import { mock } from 'jest-mock-extended';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { HabilitationBuilder } from '@/server/domain/utilisateur/habilitation/HabilitationBuilder';
-import configuration, { Configuration } from '@/server/infrastructure/Configuration';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ExportCsvDesIndicateursSansFiltreUseCase
   from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase';
@@ -22,19 +21,20 @@ function _fakeIndicateurPourExport(cid: Indicateur['id']): IndicateurPourExport 
 describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
   it('Renvoie une liste vide si pas de chantiers', async () => {
     // GIVEN
+    const indicateurChunkSize = 5;
     const chantierIds: Chantier['id'][] = [];
     const chantierRepository = mock<ChantierRepository>();
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
       .mockResolvedValueOnce(chantierIds);
     const indicateurRepository = mock<IndicateurRepository>();
 
-    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository, configuration);
+    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DITP_ADMIN';
 
     // WHEN
     let result: string[][] = [];
-    for await (const partialResult of usecase.run(habilitation, profil)) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize })) {
       result = [...result, ...partialResult];
     }
 
@@ -44,6 +44,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
 
   it('Délègue l\'habilitation aux repositories', async () => {
     // GIVEN
+    const indicateurChunkSize = 5;
     const chantierIds = ['CH-001'];
     const chantierRepository = mock<ChantierRepository>();
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
@@ -54,7 +55,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     indicateurRepository.récupérerPourExports
       .mockResolvedValueOnce(indicateurIds.map(_fakeIndicateurPourExport));
 
-    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository, configuration);
+    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
     const territoireCodesLecture = ['NAT-FR'];
     const habilitation = new HabilitationBuilder()
       .avecTerritoireCodesLecture(territoireCodesLecture)
@@ -63,7 +64,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
 
     // WHEN
     let result: string[][] = [];
-    for await (const partialResult of usecase.run(habilitation, profil)) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize })) {
       result = [...result, ...partialResult];
     }
 
@@ -77,7 +78,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
   it('Renvoie 3 lignes pour 3 chantiers si configuré avec lots de 3', async () => {
     // GIVEN
     const chantierIds = ['CH-001', 'CH-002', 'CH-003'];
-    const chunkSize = 3;
+    const indicateurChunkSize = 3;
     const chantierRepository = mock<ChantierRepository>();
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
       .mockResolvedValueOnce(chantierIds);
@@ -87,14 +88,13 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     indicateurRepository.récupérerPourExports
       .mockResolvedValueOnce(indicateurIds.map(_fakeIndicateurPourExport));
 
-    const config = mock<Configuration>({ exportCsvIndicateursChunkSize: chunkSize });
-    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository, config);
+    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DITP_ADMIN';
 
     // WHEN
     let result: string[][] = [];
-    for await (const partialResult of usecase.run(habilitation, profil)) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize })) {
       result = [...result, ...partialResult];
     }
 
@@ -109,27 +109,26 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
   it('Renvoie 4 lignes pour 4 chantiers si configuré avec lots de 3', async () => {
     // GIVEN
     const chantierIds = ['CH-001', 'CH-002', 'CH-003', 'CH-004'];
-    const chunkSize = 3;
+    const indicateurChunkSize = 3;
     const chantierRepository = mock<ChantierRepository>();
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
       .mockResolvedValueOnce(chantierIds);
 
     const indicateurIds = ['IND-001', 'IND-002', 'IND-003', 'IND-004'];
-    const firstChunk = indicateurIds.slice(0, chunkSize);
-    const secondChunk = indicateurIds.slice(chunkSize);
+    const firstChunk = indicateurIds.slice(0, indicateurChunkSize);
+    const secondChunk = indicateurIds.slice(indicateurChunkSize);
     const indicateurRepository = mock<IndicateurRepository>();
     indicateurRepository.récupérerPourExports
       .mockResolvedValueOnce(firstChunk.map(_fakeIndicateurPourExport))
       .mockResolvedValueOnce(secondChunk.map(_fakeIndicateurPourExport));
 
-    const config = mock<Configuration>({ exportCsvIndicateursChunkSize: chunkSize });
-    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository, config);
+    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DITP_ADMIN';
 
     // WHEN
     let result: string[][] = [];
-    for await (const partialResult of usecase.run(habilitation, profil)) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize })) {
       result = [...result, ...partialResult];
     }
 
@@ -144,6 +143,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
 
   it('Masque certains indicateurs pour les proflis DROMs', async () => {
     // GIVEN
+    const indicateurChunkSize = 5;
     const chantierIds = ['CH-001'];
     const chantierRepository = mock<ChantierRepository>();
     chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
@@ -160,13 +160,13 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     indicateurRepository.récupérerPourExports
       .mockResolvedValueOnce(indicateursPourExport);
 
-    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository, configuration);
+    const usecase = new ExportCsvDesIndicateursSansFiltreUseCase(chantierRepository, indicateurRepository);
     const habilitation = new HabilitationBuilder().build();
     const profil = 'DROM';
 
     // WHEN
     let result: string[][] = [];
-    for await (const partialResult of usecase.run(habilitation, profil)) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize })) {
       result = [...result, ...partialResult];
     }
 
