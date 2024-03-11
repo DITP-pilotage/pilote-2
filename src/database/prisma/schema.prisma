@@ -497,8 +497,10 @@ model utilisateur {
   profilCode                       String                             @map("profil_code")
   habilitation                     habilitation[]
   rapport_import_mesure_indicateur rapport_import_mesure_indicateur[]
-  date_modification                DateTime                           @default(now())
-  auteur_modification              String
+  date_modification                DateTime?
+  auteur_modification              String?
+  date_creation                    DateTime                           @default(now())
+  auteur_creation                  String?
 
   @@schema("public")
 }

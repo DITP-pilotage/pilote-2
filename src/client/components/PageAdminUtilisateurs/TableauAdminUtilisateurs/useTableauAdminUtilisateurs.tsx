@@ -39,8 +39,12 @@ const colonnes = [
     header: 'Dernière modification',
     cell: props => props.getValue(),
     sortingFn: (a, b) => {
-      const dateA = new Date(a.original.dateModification);
-      const dateB = new Date(b.original.dateModification);
+      const dateA = a.original.dateModification ? new Date(a.original.dateModification) : null;
+      const dateB = b.original.dateModification ? new Date(b.original.dateModification) : null;
+
+      if ( dateA === null || dateB === null) {
+        return dateA === null ? (dateB === null ? 0 : -1) : (dateB === null ? 0 : 1);
+      }
 
       if ( dateA.getTime() > dateB.getTime()) {
         return 1;

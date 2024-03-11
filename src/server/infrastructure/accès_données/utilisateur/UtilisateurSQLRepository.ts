@@ -27,8 +27,10 @@ export const convertirEnModel = (utilisateurAConvertir: {
   prenom: string
   profilCode: string
   fonction: string | null
-  auteurModification: string
-  dateModification: Date
+  auteurModification: string | null
+  dateModification: Date | null
+  auteurCreation: string | null
+  dateCreation: Date
 }): Omit<utilisateur, 'id'> => {
   return {
     email: utilisateurAConvertir.email,
@@ -37,7 +39,49 @@ export const convertirEnModel = (utilisateurAConvertir: {
     profilCode: utilisateurAConvertir.profilCode,
     fonction: utilisateurAConvertir.fonction,
     auteur_modification: utilisateurAConvertir.auteurModification,
-    date_modification: new Date(),
+    date_modification: utilisateurAConvertir.dateModification,
+    auteur_creation: utilisateurAConvertir.auteurCreation,
+    date_creation: utilisateurAConvertir.dateCreation,
+  };
+};
+
+export const convertirEnModelCreation = (utilisateurAConvertir: {
+  email: string
+  nom: string
+  prenom: string
+  profilCode: string
+  fonction: string | null
+  auteurCreation: string | null
+  dateCreation: Date
+}): Omit<utilisateur, 'id' | 'auteur_modification' | 'date_modification'> => {
+  return {
+    email: utilisateurAConvertir.email,
+    nom: utilisateurAConvertir.nom,
+    prenom: utilisateurAConvertir.prenom,
+    profilCode: utilisateurAConvertir.profilCode,
+    fonction: utilisateurAConvertir.fonction,
+    auteur_creation: utilisateurAConvertir.auteurCreation,
+    date_creation: utilisateurAConvertir.dateCreation,
+  };
+};
+
+export const convertirEnModelModification = (utilisateurAConvertir: {
+  email: string
+  nom: string
+  prenom: string
+  profilCode: string
+  fonction: string | null
+  auteurModification: string | null
+  dateModification: Date
+}): Omit<utilisateur, 'id' | 'auteur_creation' | 'date_creation'> => {
+  return {
+    email: utilisateurAConvertir.email,
+    nom: utilisateurAConvertir.nom,
+    prenom: utilisateurAConvertir.prenom,
+    profilCode: utilisateurAConvertir.profilCode,
+    fonction: utilisateurAConvertir.fonction,
+    auteur_modification: utilisateurAConvertir.auteurModification,
+    date_modification: utilisateurAConvertir.dateModification,
   };
 };
 
@@ -237,16 +281,16 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurModification: string): Promise<void> {
    
     const utilisateurCrééOuMisÀJour = await this._prisma.utilisateur.upsert({
-      create: convertirEnModel({
+      create: convertirEnModelCreation({
         email: u.email.toLocaleLowerCase(),
         nom: u.nom,
         prenom: u.prénom,
         profilCode: u.profil,
         fonction: u.fonction,
-        auteurModification: auteurModification,
-        dateModification: new Date(),
+        auteurCreation: auteurModification,
+        dateCreation: new Date(),
       }),
-      update: convertirEnModel({
+      update: convertirEnModelModification({
         email: u.email.toLocaleLowerCase(),
         nom: u.nom,
         prenom: u.prénom,
@@ -470,7 +514,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       prénom: utilisateurBrut.prenom || 'Inconnu',
       email: utilisateurBrut.email,
       profil: utilisateurBrut.profilCode as ProfilCode,
-      dateModification: utilisateurBrut.date_modification.toISOString(),
+      dateModification: utilisateurBrut.date_modification?.toISOString() || null,
       auteurModification: utilisateurBrut.auteur_modification,
       fonction: utilisateurBrut.fonction,
       saisieCommentaire: this._aDesDroitsdeSaisieCommentaire(habilitations, utilisateurBrut.profil),
