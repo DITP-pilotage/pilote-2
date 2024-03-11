@@ -86,3 +86,27 @@
 .fr-text-title--blue-france {
   color: var(--text-title-blue-france);
 }
+
+.border-t {
+  border-top-width: 1px;
+  border-top-color: var(--border-default-grey);
+  border-top-style: solid;
+}
+
+.border-r {
+  border-right-width: 1px;
+  border-right-color: var(--border-default-grey);
+  border-right-style: solid;
+}
+
+.border-b {
+  border-bottom-width: 1px;
+  border-bottom-color: var(--border-default-grey);
+  border-bottom-style: solid;
+}
+
+.border-l {
+  border-left-width: 1px;
+  border-left-color: var(--border-default-grey);
+  border-left-style: solid;
+}

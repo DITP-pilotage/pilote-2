@@ -172,7 +172,7 @@ const config = convict({
     },
     ficheTerritoriale: {
       format: Boolean,
-      default: false,
+      default: true,
       env: 'NEXT_PUBLIC_FF_FICHE_TERRITORIALE',
     },
     taAnnuel: {
