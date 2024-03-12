@@ -35,7 +35,11 @@ const colonnes = [
     header: 'Fonction',
     cell: props => props.getValue(),
   }),
-  reactTableColonnesHelper.accessor(row =>  `${formaterDate(row.dateModification, 'DD/MM/YYYY')} par ${row.auteurModification}`, {
+  reactTableColonnesHelper.accessor(row =>  `${formaterDate(row.dateCreation, 'DD/MM/YYYY')} par ${row.auteurCreation}`, {
+    header: 'Création',
+    cell: props => props.getValue(),
+  }),
+  reactTableColonnesHelper.accessor(row =>  row.dateModification ? `${formaterDate(row.dateModification, 'DD/MM/YYYY')} par ${row.auteurModification}` : '', {
     header: 'Dernière modification',
     cell: props => props.getValue(),
     sortingFn: (a, b) => {

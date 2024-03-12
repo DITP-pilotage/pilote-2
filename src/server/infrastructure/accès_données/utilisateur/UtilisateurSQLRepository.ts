@@ -516,6 +516,8 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       profil: utilisateurBrut.profilCode as ProfilCode,
       dateModification: utilisateurBrut.date_modification?.toISOString() || null,
       auteurModification: utilisateurBrut.auteur_modification,
+      dateCreation: utilisateurBrut.date_creation?.toISOString() || null,
+      auteurCreation: utilisateurBrut.auteur_creation,
       fonction: utilisateurBrut.fonction,
       saisieCommentaire: this._aDesDroitsdeSaisieCommentaire(habilitations, utilisateurBrut.profil),
       saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(habilitations, utilisateurBrut.profil),

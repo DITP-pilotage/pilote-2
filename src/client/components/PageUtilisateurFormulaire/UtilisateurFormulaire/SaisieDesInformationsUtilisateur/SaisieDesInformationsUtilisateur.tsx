@@ -33,6 +33,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
     chantiersAccessiblesPourLeProfil,
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
+    session,
   } = useSaisieDesInformationsUtilisateur(utilisateur);
 
   return (
@@ -108,6 +109,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
                   groupesÀAfficher={groupesTerritoiresÀAfficher}
                   territoiresCodesSélectionnésParDéfaut={territoiresSélectionnés}
+                  territoiresSélectionnables={session?.habilitations.saisieCommentaire.territoires}
                 />
               )}
               rules={{ required: true }} 
