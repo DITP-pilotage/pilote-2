@@ -37,7 +37,7 @@ left join {{ ref('metadata_parametrage_indicateurs') }} b on a.indic_id=b.indic_
 order by indic_parent_ch, zone_id, metric_date, indic_id
 ),
 -- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_today
-ta_zone_indic_pond_today as (
+taa_zone_indic_pond_today as (
 select * from (
 	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_taa_courant_today as max_date,
 	'today' as valid_on
@@ -48,8 +48,20 @@ select * from (
 	) a
 where a.r=1
 ),
+-- De meme les TAG
+tag_zone_indic_pond_today as (
+select * from (
+	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_tag_today as max_date,
+	'today' as valid_on
+	from ta_zone_indic_pond a
+	left join {{ ref('get_max_date_tag_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
+	where vaca is not null
+	and metric_date::date<=max_date_tag_today::date
+	) a
+where a.r=1
+),
 -- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_previous
-ta_zone_indic_pond_prev_month as (
+taa_zone_indic_pond_prev_month as (
 select * from (
 	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_taa_courant_previous as max_date,
 	'prev_month' as valid_on
@@ -59,6 +71,28 @@ select * from (
 	and metric_date::date<=max_date_taa_courant_previous::date
 	) a
 where a.r=1
+),
+-- De meme les TAG
+tag_zone_indic_pond_prev_month as (
+select * from (
+	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_tag_previous as max_date,
+	'prev_month' as valid_on
+	from ta_zone_indic_pond a
+	left join {{ ref('get_max_date_tag_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
+	where vaca is not null
+	and metric_date::date<=max_date_tag_previous::date
+	) a
+where a.r=1
+),
+-- TODO: faire la jointure des derniers TAA et TAG today
+ta_zone_indic_pond_today as (
+	select * from taa_zone_indic_pond_today
+	-- join tag_zone_indic_pond_today
+),
+-- TODO: de même pour les derniers TAA et TAG prev_month
+ta_zone_indic_pond_prev_month as (
+	select * from taa_zone_indic_pond_prev_month
+	-- join tag_zone_indic_pond_prev_month
 ),
 -- Calcul du TA chantier
 ta_ch as (
