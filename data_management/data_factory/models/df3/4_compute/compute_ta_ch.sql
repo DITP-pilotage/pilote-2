@@ -39,7 +39,13 @@ order by indic_parent_ch, zone_id, metric_date, indic_id
 -- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_today
 taa_zone_indic_pond_today as (
 select * from (
-	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_taa_courant_today as max_date,
+	select 
+	a.indic_parent_ch, a.zone_id, a."maille", a.metric_date, a.indic_id,
+	a.vaca, a.vig, a.vca_courant, a.vcg,
+	a.taa_courant, a.tag,
+	a.poids_pourcent_dept, a.poids_pourcent_reg, a.poids_pourcent_nat,
+	a.poids_pourcent_zone, a.taa_courant_pond, null::float as tag_pond,
+	rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_taa_courant_today as max_date,
 	'today' as valid_on
 	from ta_zone_indic_pond a
 	left join {{ ref('get_max_date_taa_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
@@ -51,7 +57,13 @@ where a.r=1
 -- De meme les TAG
 tag_zone_indic_pond_today as (
 select * from (
-	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_tag_today as max_date,
+	select 
+	a.indic_parent_ch, a.zone_id, a."maille", a.metric_date, a.indic_id,
+	a.vaca, a.vig, a.vca_courant, a.vcg,
+	a.taa_courant, a.tag,
+	a.poids_pourcent_dept, a.poids_pourcent_reg, a.poids_pourcent_nat,
+	a.poids_pourcent_zone, null::float as taa_courant_pond, a.tag_pond,
+	rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_tag_today as max_date,
 	'today' as valid_on
 	from ta_zone_indic_pond a
 	left join {{ ref('get_max_date_tag_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
@@ -63,7 +75,13 @@ where a.r=1
 -- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_previous
 taa_zone_indic_pond_prev_month as (
 select * from (
-	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_taa_courant_previous as max_date,
+	select 
+	a.indic_parent_ch, a.zone_id, a."maille", a.metric_date, a.indic_id,
+	a.vaca, a.vig, a.vca_courant, a.vcg,
+	a.taa_courant, a.tag,
+	a.poids_pourcent_dept, a.poids_pourcent_reg, a.poids_pourcent_nat,
+	a.poids_pourcent_zone, a.taa_courant_pond, null::float as tag_pond,
+	rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_taa_courant_previous as max_date,
 	'prev_month' as valid_on
 	from ta_zone_indic_pond a
 	left join {{ ref('get_max_date_taa_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
@@ -75,7 +93,13 @@ where a.r=1
 -- De meme les TAG
 tag_zone_indic_pond_prev_month as (
 select * from (
-	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_tag_previous as max_date,
+	select 
+	a.indic_parent_ch, a.zone_id, a."maille", a.metric_date, a.indic_id,
+	a.vaca, a.vig, a.vca_courant, a.vcg,
+	a.taa_courant, a.tag,
+	a.poids_pourcent_dept, a.poids_pourcent_reg, a.poids_pourcent_nat,
+	a.poids_pourcent_zone, null::float as taa_courant_pond, a.tag_pond,
+	rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_tag_previous as max_date,
 	'prev_month' as valid_on
 	from ta_zone_indic_pond a
 	left join {{ ref('get_max_date_tag_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
@@ -87,7 +111,7 @@ where a.r=1
 -- TODO: faire la jointure des derniers TAA et TAG today
 ta_zone_indic_pond_today as (
 	select * from taa_zone_indic_pond_today
-	-- join tag_zone_indic_pond_today
+	union select * from tag_zone_indic_pond_today
 ),
 -- TODO: de même pour les derniers TAA et TAG prev_month
 ta_zone_indic_pond_prev_month as (
