@@ -10,7 +10,7 @@ ta_zone_indic as (
 	from "df3"."compute_ta_indic" a
 	left join "raw_data"."metadata_indicateurs" b on a.indic_id =b.indic_id
 	left join "raw_data"."metadata_zones" z on a.zone_id=z.zone_id 
-	where b.indic_parent_ch like'CH-006' and a.zone_id ='FRANCE' --and a.indic_id ='IND-334'
+	where b.indic_parent_ch like'CH-138' and a.zone_id ='FRANCE' --and a.indic_id ='IND-334'
 	order by indic_parent_ch, zone_id, metric_date, indic_id
 )
 
@@ -40,8 +40,8 @@ from ta_zone_indic a
 left join "raw_data"."metadata_parametrage_indicateurs" b on a.indic_id=b.indic_id 
 order by indic_parent_ch, zone_id, metric_date, indic_id
 ),
+-- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_today
 
--- table qui contient les valeurs qui ne varient pas
 base1 as (
 select a.indic_parent_ch, a.zone_id, a."maille", a.metric_date, a.indic_id,
 	a.vaca, a.vig, a.vca_courant, a.vcg,
@@ -50,8 +50,8 @@ select a.indic_parent_ch, a.zone_id, a."maille", a.metric_date, a.indic_id,
 	a.poids_pourcent_zone, a.taa_courant_pond, a.tag_pond
 		from ta_zone_indic_pond a
 
-),
--- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_today
+)
+,
 taa_zone_indic_pond_today as (
 select * from (
 	select 
@@ -72,7 +72,6 @@ select * from (
 	) a
 where a.r=1
 )
-
 
 
 ,
@@ -97,7 +96,7 @@ select * from (
 	) a
 where a.r=1
 )
---select * from taa_zone_indic_pond_today
+--select * from tag_zone_indic_pond_today
 
 
 ,
@@ -145,24 +144,31 @@ select * from (
 	and metric_date::date<=max_date_tag_previous::date
 	) a
 where a.r=1
-),
+)
+
+
 -- TODO: faire la jointure des derniers TAA et TAG today
-ta_zone_indic_pond_today as (
+,ta_zone_indic_pond_today as (
 -- Test: must be 1 row/indic-zone mais possible multiple si metric_date du taa et tag est différente
 	select a.*, b.max_date as max_date_taa, c.max_date as max_date_tag, 'today' as valid_on from 
 	base1 a 
-	right join taa_zone_indic_pond_today b on a.indic_parent_ch=b.indic_parent_ch and a.zone_id=b.zone_id and a.metric_date=b.metric_date
-	right join tag_zone_indic_pond_today c on a.indic_parent_ch=c.indic_parent_ch and a.zone_id=c.zone_id and a.metric_date=c.metric_date
+	left join taa_zone_indic_pond_today b on a.indic_parent_ch=b.indic_parent_ch and a.zone_id=b.zone_id and a.metric_date=b.metric_date
+	left join tag_zone_indic_pond_today c on a.indic_parent_ch=c.indic_parent_ch and a.zone_id=c.zone_id and a.metric_date=c.metric_date
+	where b.max_date is not null or c.max_date is not null
 
 )
+
+
 --select * from ta_zone_indic_pond_today where poids_pourcent_zone > 0 
 ,
 -- TODO: de même pour les derniers TAA et TAG prev_month
 ta_zone_indic_pond_prev_month as (
 	select a.*, b.max_date as max_date_taa, c.max_date as max_date_tag, 'prev_month' as valid_on from 
 	base1 a 
-	right join taa_zone_indic_pond_prev_month b on a.indic_parent_ch=b.indic_parent_ch and a.zone_id=b.zone_id and a.metric_date=b.metric_date
-	right join tag_zone_indic_pond_prev_month c on a.indic_parent_ch=c.indic_parent_ch and a.zone_id=c.zone_id and a.metric_date=c.metric_date
+	left join taa_zone_indic_pond_prev_month b on a.indic_parent_ch=b.indic_parent_ch and a.zone_id=b.zone_id and a.metric_date=b.metric_date
+	left join tag_zone_indic_pond_prev_month c on a.indic_parent_ch=c.indic_parent_ch and a.zone_id=c.zone_id and a.metric_date=c.metric_date
+		where b.max_date is not null or c.max_date is not null
+
 )
 --select * from ta_zone_indic_pond_prev_month
 
