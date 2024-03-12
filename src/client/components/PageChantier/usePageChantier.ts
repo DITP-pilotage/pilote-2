@@ -20,6 +20,7 @@ import {
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { IndicateurPondération } from '@/components/PageChantier/PageChantier.interface';
 import { comparerIndicateur, estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
+import { estAutoriséAConsulterLaFicheConducteur } from '@/client/utils/fiche-conducteur/fiche-conducteur';
 
 export default function usePageChantier(chantierId: string, indicateurs: Indicateur[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -38,6 +39,9 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
   }, [modifierTypeDeRéformeSélectionné, typeDeRéformeSélectionné]);
   
   const saisieIndicateurAutorisée = estAutoriséAImporterDesIndicateurs(session!.profil) && !!session?.habilitations['saisieIndicateur'].chantiers.includes(chantierId);
+  const { data: variableContenuFFFicheConducteur } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_FICHE_CONDUCTEUR' });
+
+  const afficheLeBoutonFicheConducteur = (variableContenuFFFicheConducteur as boolean) && estAutoriséAConsulterLaFicheConducteur(session!.profil);
 
   const { data: synthèseDesRésultats } = api.synthèseDesRésultats.récupérerLaPlusRécente.useQuery(
     {
@@ -146,6 +150,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     avancements,
     indicateurPondérations,
     saisieIndicateurAutorisée,
+    afficheLeBoutonFicheConducteur: afficheLeBoutonFicheConducteur as boolean,
     responsableLocal,
     referentTerritorial,
   };

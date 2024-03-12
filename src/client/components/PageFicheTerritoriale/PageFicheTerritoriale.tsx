@@ -1,6 +1,5 @@
 import { FunctionComponent } from 'react';
 import HeaderFicheTerritoriale from '@/components/PageFicheTerritoriale/HeaderFicheTerritoriale';
-import { TerritoireContrat } from '@/server/fiche-territoriale/app/contrats/TerritoireContrat';
 import Encart from '@/components/_commons/Encart/Encart';
 import Titre from '@/components/_commons/Titre/Titre';
 import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpression';
@@ -12,23 +11,14 @@ import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleContene
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
-import { RepartitionMeteoContrat } from '@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat';
 import '@gouvfr/dsfr/dist/utility/colors/colors.css';
-import {
-  ChantierFicheTerritorialeContrat,
-} from '@/server/fiche-territoriale/app/contrats/ChantierFicheTerritorialeContrat';
 import { TableauFicheTerritoriale } from '@/components/PageFicheTerritoriale/TableauFicheTerritoriale';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';
+import { FicheTerritorialeContrat } from '@/server/fiche-territoriale/app/contrats/FicheTerritorialeContrat';
 import PageFicheTerritorialeStyled from './PageFicheTerritoriale.styled';
 
-export const PageFicheTerritoriale: FunctionComponent<{
-  territoire: TerritoireContrat,
-  avancementGlobalTerritoire: number | null,
-  avancementAnnuelTerritoire: number | null,
-  répartitionMétéos: RepartitionMeteoContrat,
-  chantiersFicheTerritoriale: ChantierFicheTerritorialeContrat[]
-}> = ({ territoire, avancementGlobalTerritoire, avancementAnnuelTerritoire, répartitionMétéos, chantiersFicheTerritoriale }) => {
+export const PageFicheTerritoriale: FunctionComponent<FicheTerritorialeContrat> = ({ territoire, avancementGlobalTerritoire, avancementAnnuelTerritoire, répartitionMétéos, chantiersFicheTerritoriale }) => {
   const now = new Date();
 
   return (

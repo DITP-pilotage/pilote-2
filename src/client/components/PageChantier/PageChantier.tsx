@@ -35,6 +35,7 @@ import DécisionsStratégiques from './DécisionsStratégiques/DécisionsStraté
 export default function PageChantier({ indicateurs, chantierId }: PageChantierProps) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
+  // TODO Mettre dans getServerSideProps !
   const {
     détailsIndicateurs,
     commentaires,
@@ -49,9 +50,11 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
     territoireSélectionné,
     indicateurPondérations,
     saisieIndicateurAutorisée,
+    afficheLeBoutonFicheConducteur,
     responsableLocal,
     referentTerritorial,
   } = usePageChantier(chantierId, indicateurs);
+  // TODO Mettre dans getServerSideProps !
 
   const listeRubriques = listeRubriquesChantier(indicateurs.map(i => i.type), territoireSélectionné!.maille);
   return (
@@ -80,6 +83,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
           chantier !== null ? (
             <>
               <PageChantierEnTête
+                afficheLeBoutonFicheConducteur={afficheLeBoutonFicheConducteur}
                 afficheLeBoutonImpression
                 afficheLeBoutonMiseAJourDonnee={saisieIndicateurAutorisée}
                 chantier={chantier}

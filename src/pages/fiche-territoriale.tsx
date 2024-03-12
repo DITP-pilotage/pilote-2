@@ -19,7 +19,6 @@ export const getServerSideProps: GetServerSideProps<{ ficheTerritoriale: FicheTe
     throw new Error('Veuillez choisir un département ou une région');
   }
 
-
   const ficheTerritoriale = await ficheTerritorialeHandler().recupererFicheTerritoriale(query.territoireCode as string);
 
   return {

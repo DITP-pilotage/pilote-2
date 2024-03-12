@@ -18,31 +18,6 @@ interface NextPageChantierProps {
   chantierInformations: ChantierInformations,
 }
 
-export default function NextPageChantier({ indicateurs, chantierInformations }: NextPageChantierProps) {
-  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-
-  const { data: session } = useSession();
-  
-  return (
-    <>
-      <Head>
-        <title>
-          {`Chantier ${chantierInformations.id.replace('CH-', '')} - ${chantierInformations.nom} - PILOTE`}
-        </title>
-      </Head>
-      {
-        territoireSélectionné!.code === 'NAT-FR' && session?.profil === 'DROM' && !chantierInformations.estUnChantierDROM ?
-          <ChoixTerritoire chantierId={chantierInformations.id} />
-          :
-          <PageChantier
-            chantierId={chantierInformations.id}
-            indicateurs={indicateurs}
-          />
-      }
-    </>
-  );
-}
-
 export async function getServerSideProps({ req, res, params }: GetServerSidePropsContext<{ id: Chantier['id'] }>) {
 
   if (!params?.id) {
@@ -84,4 +59,29 @@ export async function getServerSideProps({ req, res, params }: GetServerSideProp
       },
     },
   };
+}
+
+export default function NextPageChantier({ indicateurs, chantierInformations }: NextPageChantierProps) {
+  const territoireSélectionné = territoireSélectionnéTerritoiresStore();
+
+  const { data: session } = useSession();
+
+  return (
+    <>
+      <Head>
+        <title>
+          {`Chantier ${chantierInformations.id.replace('CH-', '')} - ${chantierInformations.nom} - PILOTE`}
+        </title>
+      </Head>
+      {
+        territoireSélectionné!.code === 'NAT-FR' && session?.profil === 'DROM' && !chantierInformations.estUnChantierDROM ?
+          <ChoixTerritoire chantierId={chantierInformations.id} />
+          :
+          <PageChantier
+            chantierId={chantierInformations.id}
+            indicateurs={indicateurs}
+          />
+      }
+    </>
+  );
 }

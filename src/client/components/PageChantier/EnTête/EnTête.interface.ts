@@ -4,4 +4,5 @@ export default interface PageChantierEnTêteProps {
   chantier: Chantier
   afficheLeBoutonImpression?: boolean
   afficheLeBoutonMiseAJourDonnee?: boolean
+  afficheLeBoutonFicheConducteur?: boolean
 }
