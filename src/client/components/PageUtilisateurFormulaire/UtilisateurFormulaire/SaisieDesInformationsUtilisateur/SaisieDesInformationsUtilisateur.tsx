@@ -34,7 +34,8 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
     session,
-  } = useSaisieDesInformationsUtilisateur(utilisateur);
+    erreurEmailReferents,
+  } = useSaisieDesInformationsUtilisateur(utilisateur);  
 
   return (
     <>
@@ -52,7 +53,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
       </p>
       <InputAvecLabel
         disabled={Boolean(utilisateur?.email)}
-        erreur={errors.email}
+        erreur={errors.email ?? erreurEmailReferents}
         htmlName='email'
         libellé='Adresse électronique'
         register={register('email', { value: utilisateur?.email })}
