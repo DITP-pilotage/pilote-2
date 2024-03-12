@@ -36,12 +36,22 @@ select
 from ch_count_ta_par_date
 )
 
-select chantier_id, zone_id, ta_type,
-    -- on prend la date où r==1
-    MAX(metric_date) FILTER (WHERE r=1) AS max_date_ta_today,
-    -- on prend la date où r==2
-    MAX(metric_date) FILTER (WHERE r=2) AS max_date_ta_previous
-from rank_dates_ta_ch_dispo
-group by chantier_id, zone_id, ta_type
+, inter as (select *,
+case 
+	when r=1 then 'today'
+	when r=2 then 'prev_month'
+end as valid_on,
+case when ta_type='taa_courant' then metric_date else null end as max_date_taa_courant,
+case When ta_type='tag' then metric_date else null end as max_date_tag
+from rank_dates_ta_ch_dispo)
+
+--select * from inter
+
+select
+	chantier_id, zone_id, valid_on, 
+	max(max_date_taa_courant) as max_date_taa_courant,
+	max(max_date_tag) as max_date_tag
+from inter where valid_on in ('today', 'prev_month')
+group by chantier_id, zone_id, valid_on
 
 
