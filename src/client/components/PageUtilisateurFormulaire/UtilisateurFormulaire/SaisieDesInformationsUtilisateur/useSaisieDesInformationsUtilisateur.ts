@@ -39,7 +39,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   const périmètresMinistérielsSélectionnés = watch('habilitations.lecture.périmètres');
   const emailRenseigne = watch('email');
 
-  const [erreurEmailReferents, setErreurEmailReferents] = useState<FieldError | undefined>(undefined);
+  const [erreurEmailReferents, setErreurEmailReferents] = useState<FieldError | undefined>();
   const [ancienProfilCodeSélectionné, setAncienProfilCodeSélectionné] = useState<string | undefined>();
   const [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés] = useState<string[]>([]);
   const [profilSélectionné, setProfilSélectionné] = useState<Profil | undefined>();
@@ -64,7 +64,8 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   // GESTION DE L'ERREUR DE L'ADRESSE MAIL
   useEffect(() => { 
     if (!isSubmitted || emailRenseigne?.endsWith('.gouv.fr') || ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session?.profil)) {
-      setErreurEmailReferents(undefined);
+      const erreur = undefined;
+      setErreurEmailReferents(erreur);
     } else {
       setErreurEmailReferents({
         type: 'value',

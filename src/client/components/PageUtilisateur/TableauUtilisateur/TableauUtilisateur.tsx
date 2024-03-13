@@ -23,6 +23,12 @@ export default function TableauUtilisateur({ utilisateur }: TableauUtilisateurPr
               Fonction
             </th>
             {
+              !!utilisateur.auteurCreation &&
+              <th>
+                Création du compte
+              </th>
+            }
+            {
               !!utilisateur.auteurModification &&
               <th>
                 Dernière modification
@@ -47,6 +53,12 @@ export default function TableauUtilisateur({ utilisateur }: TableauUtilisateurPr
             <td title={utilisateur.fonction ?? undefined}>
               {utilisateur.fonction}
             </td>
+            {
+              !!utilisateur.auteurCreation &&
+              <td title={`${formaterDate(utilisateur.dateCreation, 'DD/MM/YYYY')} par ${utilisateur.auteurCreation}`}>
+                {`${formaterDate(utilisateur.dateCreation, 'DD/MM/YYYY')} par ${utilisateur.auteurCreation}`}
+              </td>
+            }
             {
               !!utilisateur.auteurModification &&
               <td title={`${formaterDate(utilisateur.dateModification, 'DD/MM/YYYY')} par ${utilisateur.auteurModification}`}>

@@ -6,8 +6,10 @@ export default interface TableauUtilisateurProps {
     prénom: string
     email: string
     profil: ProfilCode
-    dateModification?: string | null
-    auteurModification?: string | null
+    dateModification?: string
+    auteurModification?: string
+    dateCreation?: string
+    auteurCreation?: string
     fonction: string | null
   } 
 }

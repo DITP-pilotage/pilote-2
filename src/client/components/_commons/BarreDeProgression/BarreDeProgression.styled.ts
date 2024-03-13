@@ -63,14 +63,14 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
       }
 
       &:not([value])::-moz-progress-bar {
-        background-color: ${props => couleurDeFond[props.fond]};
+        background-color: ${props => couleurDeFond[props.fond]}0;
       }
     }
   }
   
   .pourcentage {
     p {
-      color: ${props => couleurDeBarreEtTexte[props.variante]}    
+      color: ${props => couleurDeFond[props.fond]}1    
     }
   }
   
@@ -84,7 +84,7 @@ const BarreDeProgressionStyled = styled.div<BarreDeProgressionStyledProps>`
 
     .pourcentage {
       p {
-        width: ${props => dimensions[props.taille].largeurTexte};        
+        width: ${props => couleurDeFond[props.fond]}2;        
         padding-left: 0.5em;
         text-align: right;
         white-space: nowrap;
