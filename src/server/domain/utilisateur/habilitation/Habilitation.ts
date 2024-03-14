@@ -80,6 +80,15 @@ export default class Habilitation {
     return this._habilitations.lecture.territoires.includes(territoireCode) ? true : false;
   }
 
+  peutAccéderAuxTerritoires(territoiresCodes: string[]): boolean {
+    for (const territoiresCode of territoiresCodes) {
+      if (!this.peutAccéderAuTerritoire(territoiresCode)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   peutSaisirDesPublicationsPourUnTerritoire(territoireCode: string): boolean {
     return this._habilitations['saisieCommentaire'].territoires.includes(territoireCode) ? true : false;
   }

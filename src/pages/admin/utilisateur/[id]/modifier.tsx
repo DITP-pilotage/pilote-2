@@ -58,6 +58,10 @@ export async function getServerSideProps({ req, res, params } :GetServerSideProp
     return redirigerVersPageAccueil;
   }
 
+  if (!habilitations.peutAccéderAuxTerritoires(utilisateurDemandé.habilitations.lecture.territoires)) {
+    return redirigerVersPageAccueil;
+  }
+
   return {
     props: {
       utilisateur: utilisateurDemandé,

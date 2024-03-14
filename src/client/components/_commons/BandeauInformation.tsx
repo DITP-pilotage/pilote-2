@@ -26,7 +26,7 @@ const getBandeauTypeClass = (bandeauType: string) => {
   }
 };
 
-export const BandeauInformation: FunctionComponent<PropsWithChildren<{ bandeauType: string }>> = ({ children, bandeauType }) => {
+export const BandeauInformation: FunctionComponent<PropsWithChildren<{ bandeauType: string, fermable?: boolean }>> = ({ children, bandeauType, fermable = true }) => {
   return (
     <BandeauInformationStyled>
       <div className={`fr-notice ${getBandeauTypeClass(bandeauType)}`}>
@@ -35,17 +35,20 @@ export const BandeauInformation: FunctionComponent<PropsWithChildren<{ bandeauTy
             <p className='fr-notice__title'>              
               {children}
             </p>
-            <button
-              className='fr-btn--close fr-btn'
-              onClick={(event) => {
-                const notice = event.currentTarget?.parentNode?.parentNode?.parentNode;
-                notice?.parentNode?.removeChild(notice);
-              }}
-              title='Masquer le message'
-              type='button'
-            >
-              Masquer le message
-            </button>
+            {
+              !!fermable &&
+              <button
+                className='fr-btn--close fr-btn'
+                onClick={(event) => {
+                  const notice = event.currentTarget?.parentNode?.parentNode?.parentNode;
+                  notice?.parentNode?.removeChild(notice);
+                }}
+                title='Masquer le message'
+                type='button'
+              >
+                Masquer le message
+              </button>
+            }
           </div>
         </div>
       </div>
