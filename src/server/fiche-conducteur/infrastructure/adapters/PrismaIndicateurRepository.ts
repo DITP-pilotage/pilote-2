@@ -24,10 +24,15 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       where: {
         chantier_id: chantierId,
         territoire_code: 'NAT-FR',
-        ponderation_nat: {
-          gt: 0,
-        },
-        type_id: 'IMPACT',
+        OR: [
+          {
+            ponderation_nat: {
+              gt: 0,
+            },
+          }, {
+            type_id: 'IMPACT',
+          },
+        ],
       },
     });
 

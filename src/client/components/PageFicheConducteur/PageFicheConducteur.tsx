@@ -4,8 +4,6 @@ import { FunctionComponent } from 'react';
 import { FicheConducteurContrat } from '@/server/fiche-conducteur/app/contrats/FicheConducteurContrat';
 import PageFicheConducteurStyled from '@/components/PageFicheConducteur/PageFicheConducteur.styled';
 import Titre from '@/components/_commons/Titre/Titre';
-import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpression';
-import Encart from '@/components/_commons/Encart/Encart';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import MétéoBadge from '@/components/_commons/Météo/Badge/MétéoBadge';
@@ -16,29 +14,20 @@ import {
 import CartographieAvancement from '@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement';
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieMétéo';
 import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
+import { EnteteFicheConducteur } from '@/components/PageFicheConducteur/EnteteFicheConducteur';
 
 const PageFicheConducteur: FunctionComponent<
 FicheConducteurContrat
-> = ({  chantier, avancement, synthèseDesRésultats, donnéesCartographie }) => {
+> = ({ chantier, avancement, synthèseDesRésultats, donnéesCartographie, objectifs }) => {
   const commentaire = (synthèseDesRésultats.commentaire?.length || 0) > 1000 ? synthèseDesRésultats.commentaire?.slice(0, 930) + '... [commentaire coupé car dépassant les 1000 caractères]' : synthèseDesRésultats.commentaire;
 
   return (
     <PageFicheConducteurStyled>
-      <main className='fr-py-2w'>
+      <main className='fr-pb-2w'>
         <div className='fr-container fr-pb-1w fiche-conducteur__container'>
-          <Encart>
-            <div className='flex justify-between'>
-              <Titre
-                baliseHtml='h2'
-                className='fr-h5 fr-mb-0 fr-text-title--blue-france'
-              >
-                {`Nationale - ${chantier.nom}`}
-              </Titre>
-              <div className='flex align-center'>
-                <BoutonImpression />
-              </div>
-            </div>
-          </Encart>
+          <EnteteFicheConducteur>
+            {`Nationale - ${chantier.nom} - Principaux résultats 1/2`}
+          </EnteteFicheConducteur>
         </div>
         <div className='fr-container'>
           <div className='fr-grid-row fr-grid-row--gutters'>
@@ -132,7 +121,7 @@ FicheConducteurContrat
                         </p>
                       ))
                     ) : (
-                      <p>
+                      <p className='fr-text--xs'>
                         Aucune synthèse des résultats
                       </p>
                     )
@@ -145,7 +134,7 @@ FicheConducteurContrat
         </div>
         <div className='fr-container fr-mt-2w'>
           <Bloc contenuClassesSupplémentaires='fr-px-1w fr-py-1v'>
-            <div className='fiche-conducteur--tableau fr-container--fluid fr-text--xs fr-m-0'>
+            <div className='fiche-conducteur--tableau fr-container fr-text--xs fr-m-0'>
               <div
                 className='fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b'
               >
@@ -237,6 +226,11 @@ FicheConducteurContrat
           </Bloc>
         </div>
         <div className='page-break fr-mb-2w' />
+        <div className='fr-container fr-pb-1w fiche-conducteur__container only-print'>
+          <EnteteFicheConducteur>
+            {`Nationale - ${chantier.nom} - Principaux résultats 2/2`}
+          </EnteteFicheConducteur>
+        </div>
         <div className='fr-container'>
           <div className='fr-grid-row fr-grid-row--gutters'>
             <div className='fr-col-6'>
@@ -246,14 +240,16 @@ FicheConducteurContrat
               >
                 Taux d'avancement 2026
               </Titre>
-              <Bloc>
-                <CartographieAvancement
-                  auClicTerritoireCallback={() => {}}
-                  données={donnéesCartographie.tauxAvancement}
-                  options={{ estInteractif: false, territoireSélectionnable: false }}
-                  élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
-                />
-              </Bloc>
+              <div>
+                <Bloc>
+                  <CartographieAvancement
+                    auClicTerritoireCallback={() => {}}
+                    données={donnéesCartographie.tauxAvancement}
+                    options={{ estInteractif: false, territoireSélectionnable: false }}
+                    élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
+                  />
+                </Bloc>
+              </div>
             </div>
             <div className='fr-col-6'>
               <Titre
@@ -262,20 +258,69 @@ FicheConducteurContrat
               >
                 Niveau de confiance
               </Titre>
-              <Bloc>
-                <CartographieMétéo
-                  auClicTerritoireCallback={() => {}}
-                  données={donnéesCartographie.meteo}
-                  options={{ estInteractif: false, territoireSélectionnable: false }}
-                  élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
-                />
-              </Bloc>
+              <div>
+                <Bloc>
+                  <CartographieMétéo
+                    auClicTerritoireCallback={() => {}}
+                    données={donnéesCartographie.meteo}
+                    options={{ estInteractif: false, territoireSélectionnable: false }}
+                    élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
+                  />
+                </Bloc>
+              </div>
             </div>
           </div>
         </div>
         <div className='page-break fr-mb-2w' />
+        <div className='fr-container fr-pb-1w fiche-conducteur__container only-print'>
+          <EnteteFicheConducteur>
+            {`Nationale - ${chantier.nom} - Point d'avancement`}
+          </EnteteFicheConducteur>
+        </div>
         <div className='fr-container'>
-          Objectif
+          <Titre
+            baliseHtml='h2'
+            className='fr-h5 fr-mb-1w fr-text-title--blue-france'
+          >
+            Objectifs
+          </Titre>
+          <Bloc contenuClassesSupplémentaires='fr-px-1w fr-py-1v'>
+            <div className='fiche-conducteur--tableau fr-container fr-text--xs fr-m-0'>
+              <div
+                className='fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b'
+              >
+                <div
+                  className='fr-col-2 fr-text--bold'
+                >
+                  Catégorie
+                </div>
+                <div
+                  className='fr-col-10 fr-text--bold'
+                >
+                  Détail
+                </div>
+              </div>
+              {
+                objectifs.map((objectif, index) => (
+                  <div
+                    className='fr-grid-row fr-px-1w fr-py-1w border-t'
+                    key={`object-${index}`}
+                  >
+                    <div
+                      className='fr-col-2 fr-text--bold flex align-center'
+                    >
+                      {objectif.libellé}
+                    </div>
+                    <div
+                      className='fr-col-10'
+                    >
+                      {objectif.valeur}
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </Bloc>
         </div>
       </main>
     </PageFicheConducteurStyled>

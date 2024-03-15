@@ -38,6 +38,9 @@ import {
   ChantierRepository as FicheConducteurChantierRepository,
 } from '@/server/fiche-conducteur/domain/ports/ChantierRepository';
 import {
+  ObjectifRepository as FicheConducteurObjectifRepository,
+} from '@/server/fiche-conducteur/domain/ports/ObjectifRepository';
+import {
   IndicateurRepository as FicheConducteurIndicateurRepository,
 } from '@/server/fiche-conducteur/domain/ports/IndicateurRepository';
 import {
@@ -150,6 +153,9 @@ import {
   PrismaChantierRepository as PrismaFicheConducteurChantierRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaChantierRepository';
 import {
+  PrismaObjectifRepository as PrismaFicheConducteurObjectifRepository,
+} from '@/server/fiche-conducteur/infrastructure/adapters/PrismaObjectifRepository';
+import {
   PrismaIndicateurRepository as PrismaFicheConducteurIndicateurRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaIndicateurRepository';
 import {
@@ -201,6 +207,8 @@ class Dependencies {
   private readonly _territoireRepository: TerritoireRepository;
 
   private readonly _ficheConducteurChantierRepository: FicheConducteurChantierRepository;
+
+  private readonly _ficheConducteurObjectifRepository: FicheConducteurObjectifRepository;
 
   private readonly _ficheConducteurIndicateurRepository: FicheConducteurIndicateurRepository;
 
@@ -271,6 +279,7 @@ class Dependencies {
     this._utilisateurRepository = new UtilisateurSQLRepository(prisma);
     this._territoireRepository = new TerritoireSQLRepository(prisma);
     this._ficheConducteurChantierRepository = new PrismaFicheConducteurChantierRepository(prisma);
+    this._ficheConducteurObjectifRepository = new PrismaFicheConducteurObjectifRepository(prisma);
     this._ficheConducteurIndicateurRepository = new PrismaFicheConducteurIndicateurRepository(prisma);
     this._ficheConducteurSynthèseDesRésultatsRepository = new PrismaFicheConducteurSynthèseDesRésultatsRepository(prisma);
     this._ficheTerritorialeTerritoireRepository = new PrismaTerritoireRepository(prisma);
@@ -412,6 +421,10 @@ class Dependencies {
 
   getFicheConducteurChantierRepository() {
     return this._ficheConducteurChantierRepository;
+  }
+
+  getFicheConducteurObjectifRepository() {
+    return this._ficheConducteurObjectifRepository;
   }
 
   getFicheConducteurIndicateurRepository() {

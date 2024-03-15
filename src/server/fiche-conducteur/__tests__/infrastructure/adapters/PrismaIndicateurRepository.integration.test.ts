@@ -10,7 +10,7 @@ describe('PrismaIndicateurRepository', () => {
     prismaIndicateurRepository = new PrismaIndicateurRepository(prisma);
   });
   describe('#récupérerIndicImpactParChantierId', () => {
-    it("doit récupérer les indicateurs d'impact du chantier associé", async () => {
+    it("doit récupérer les indicateurs d'impact ou avec une pondération national supérieur à 0 du chantier associé", async () => {
       // Given
       await prisma.chantier.create({
         data: {
@@ -62,7 +62,7 @@ describe('PrismaIndicateurRepository', () => {
       await prisma.indicateur.create({
         data: {
           id: 'IND-004',
-          nom: 'Indicateur KO type_id',
+          nom: 'Indicateur OK type_id',
           chantier_id: 'CH-168',
           code_insee: 'FR',
           maille: 'NAT',
@@ -74,7 +74,7 @@ describe('PrismaIndicateurRepository', () => {
       await prisma.indicateur.create({
         data: {
           id: 'IND-005',
-          nom: 'Indicateur KO pondération',
+          nom: 'Indicateur OK pondération',
           chantier_id: 'CH-168',
           code_insee: 'FR',
           maille: 'NAT',
@@ -83,10 +83,22 @@ describe('PrismaIndicateurRepository', () => {
           ponderation_nat: 0,
         },
       });
+      await prisma.indicateur.create({
+        data: {
+          id: 'IND-006',
+          nom: 'Indicateur KO ni pondérantion ni IMPACT',
+          chantier_id: 'CH-168',
+          code_insee: 'FR',
+          maille: 'NAT',
+          territoire_code: 'NAT-FR',
+          type_id: 'Q_SERV',
+          ponderation_nat: 0,
+        },
+      });
       // When
       const listeIndicateursResult = await prismaIndicateurRepository.récupérerIndicImpactParChantierId('CH-168');
       // Then
-      expect(listeIndicateursResult.map(indicateur => indicateur.nom)).toIncludeSameMembers(['Indicateur OK', 'Indicateur OK autre ID']);
+      expect(listeIndicateursResult.map(indicateur => indicateur.nom)).toIncludeSameMembers(['Indicateur OK', 'Indicateur OK autre ID', 'Indicateur OK type_id', 'Indicateur OK pondération']);
     });
   });
 });

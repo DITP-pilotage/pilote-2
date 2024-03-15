@@ -2,7 +2,7 @@ import {
   AvancementFicheConducteurContrat,
   ChantierFicheConducteurContrat,
   DonnéesCartographieContrat,
-  FicheConducteurContrat,
+  FicheConducteurContrat, ObjectifContrat,
   SyntheseDesResultatsContrat,
 } from '@/server/fiche-conducteur/app/contrats/FicheConducteurContrat';
 import {
@@ -21,6 +21,8 @@ import {
   RécupérerDonnéesCartographieUseCase,
 } from '@/server/fiche-conducteur/usecases/RécupérerDonnéesCartographieUseCase';
 import { DonnéeCartographie } from '@/server/fiche-conducteur/domain/DonnéeCartographie';
+import { RécupérerObjectifsUseCase } from '@/server/fiche-conducteur/usecases/RécupérerObjectifsUseCase';
+import { ObjectifType } from '@/server/fiche-conducteur/domain/ObjectifType';
 
 
 const numberWithSpaces = (nombreATransformer: number) => {
@@ -63,6 +65,27 @@ const presenterEnSynthèseDesResultatsContrat = (synthèseDesRésultats: Synthes
   };
 };
 
+const presenterEnObjectifsContrat = (objectif: Map<ObjectifType, string>): ObjectifContrat[] => {
+  return [
+    {
+      libellé: 'Ce qui à été fait',
+      valeur: objectif.get('deja_fait') || '-',
+    }, {
+      libellé: 'Ce qui reste à faire',
+      valeur: objectif.get('a_faire') || '-',
+    }, {
+      libellé: 'Suivi des décisions',
+      valeur: objectif.get('suivi_decision') || '-',
+    }, {
+      libellé: 'Risques et freins à lever',
+      valeur: objectif.get('risque_freins') || '-',
+    }, {
+      libellé: 'Notre ambition',
+      valeur: objectif.get('notre_ambition') || '-',
+    },
+  ];
+};
+
 const presenterEnDonnéesCartographieContrat = (donnéesCartographie: DonnéeCartographie[]): DonnéesCartographieContrat => {
   return donnéesCartographie.reduce((acc, val) => {
     acc.tauxAvancement.push({ codeInsee: val.codeInsee, valeur: val.tauxAvancement, estApplicable: true });
@@ -99,11 +122,18 @@ export const ficheConducteurHandler = () => {
       .run({ chantierId })
       .then(presenterEnDonnéesCartographieContrat);
 
+    const objectifs = await new RécupérerObjectifsUseCase({
+      objectifRepository: dependencies.getFicheConducteurObjectifRepository(),
+    })
+      .run({ chantierId })
+      .then(presenterEnObjectifsContrat);
+
     return {
       chantier,
       avancement,
       synthèseDesRésultats,
       donnéesCartographie,
+      objectifs,
     };
   };
   

@@ -16,7 +16,7 @@ export class RécupérerAvancementUseCase {
     const listeChantiers = await this.chantierRepository.récupérerMailleNatEtDeptParId(chantierId);
 
     const chantierNational = listeChantiers.find(chantier => chantier.maille === 'NAT')!;
-    const listeAscChantiersDepartementTauxAvancement = listeChantiers.filter(chantier => chantier.maille === 'DEPT').map(chantier => chantier.tauxAvancement).filter(Boolean).sort();
+    const listeAscChantiersDepartementTauxAvancement = listeChantiers.filter(chantier => chantier.maille === 'DEPT').map(chantier => chantier.tauxAvancement).filter(Boolean).sort((a, b) => a - b);
 
     let mediane: number;
     const indexMilieu = Math.floor(listeAscChantiersDepartementTauxAvancement.length / 2);

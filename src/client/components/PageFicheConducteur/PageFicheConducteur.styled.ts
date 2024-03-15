@@ -7,6 +7,10 @@ const PageFicheConducteurStyled = styled.div`
     }
   }
   
+  .only-print {
+    display: none;
+  }
+  
   @media print {
     .fr-badge, .fr-text--xs {
       font-size: .625rem!important;
@@ -16,6 +20,10 @@ const PageFicheConducteurStyled = styled.div`
     .fr-text--sm {
       font-size: .625rem!important;
       line-height: 1rem !important;
+    }
+
+    .only-print {
+      display: block;
     }
   }
   

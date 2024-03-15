@@ -14,7 +14,7 @@ export const getServerSideProps: GetServerSideProps<FicheConducteurContrat> = as
     throw new Error('Not connected or not authorized ?');
   }
 
-  const { chantier, avancement, synthèseDesRésultats, donnéesCartographie } = await ficheConducteurHandler().recupererFicheConducteur(query.id as string, 'NAT-FR');
+  const { chantier, avancement, synthèseDesRésultats, donnéesCartographie, objectifs } = await ficheConducteurHandler().recupererFicheConducteur(query.id as string, 'NAT-FR');
 
   return {
     props: {
@@ -22,16 +22,18 @@ export const getServerSideProps: GetServerSideProps<FicheConducteurContrat> = as
       avancement,
       synthèseDesRésultats,
       donnéesCartographie,
+      objectifs,
     },
   };
 };
 
-const FicheConducteur: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ chantier, avancement, synthèseDesRésultats, donnéesCartographie }) => {
+const FicheConducteur: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ chantier, avancement, synthèseDesRésultats, donnéesCartographie, objectifs }) => {
   return (
     <PageFicheConducteur
       avancement={avancement}
       chantier={chantier}
       donnéesCartographie={donnéesCartographie}
+      objectifs={objectifs}
       synthèseDesRésultats={synthèseDesRésultats}
     />
   );

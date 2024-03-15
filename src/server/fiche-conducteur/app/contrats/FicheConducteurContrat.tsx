@@ -40,10 +40,16 @@ export interface DonnéesCartographieContrat {
   meteo: CartographieDonnéesMétéo
 }
 
+export interface ObjectifContrat {
+  libellé: string
+  valeur: string
+}
+
 
 export interface FicheConducteurContrat {
   chantier: ChantierFicheConducteurContrat
   avancement: AvancementFicheConducteurContrat
   synthèseDesRésultats: SyntheseDesResultatsContrat
   donnéesCartographie: DonnéesCartographieContrat
+  objectifs: ObjectifContrat[]
 }
