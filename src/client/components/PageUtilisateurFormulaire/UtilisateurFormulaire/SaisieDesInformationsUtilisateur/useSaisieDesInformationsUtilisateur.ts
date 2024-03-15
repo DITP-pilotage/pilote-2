@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { FieldError, useFormContext } from 'react-hook-form';
+import { useSession } from 'next-auth/react';
 import {
   UtilisateurFormInputs,
   UtilisateurFormulaireProps,
@@ -10,13 +11,32 @@ import { profilsDépartementaux, profilsRégionaux } from '@/server/domain/utili
 import { auMoinsUneValeurDuTableauEstContenueDansLAutreTableau } from '@/client/utils/arrays';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 
+export const PROFILS_POSSIBLES_REFERENTS = {
+  REFERENT_REGION: [
+    'PREFET_REGION',
+    'PREFET_DEPARTEMENT',
+    'SERVICES_DECONCENTRES_REGION',
+    'SERVICES_DECONCENTRES_DEPARTEMENT',
+    'RESPONSABLE_REGION',
+    'RESPONSABLE_DEPARTEMENT',
+  ],
+  REFERENT_DEPARTEMENT: [
+    'PREFET_DEPARTEMENT',
+    'SERVICES_DECONCENTRES_DEPARTEMENT',
+    'RESPONSABLE_DEPARTEMENT',
+  ],
+};
+
 export default function useSaisieDesInformationsUtilisateur(utilisateur?: UtilisateurFormulaireProps['utilisateur']) {
-  const { register, watch, formState: { errors }, control, setValue, getValues, resetField, unregister } = useFormContext<UtilisateurFormInputs>();
+  const { data: session } = useSession();
+  const { register, watch, formState: { isSubmitted, errors }, control, setValue, getValues, resetField, unregister } = useFormContext<UtilisateurFormInputs>();
   const profilCodeSélectionné = watch('profil');
   const territoiresSélectionnés = watch('habilitations.lecture.territoires');
   const chantiersSélectionnés = watch('habilitations.lecture.chantiers');
   const périmètresMinistérielsSélectionnés = watch('habilitations.lecture.périmètres');
+  const emailRenseigne = watch('email');
 
+  const [erreurEmailReferents, setErreurEmailReferents] = useState<FieldError | undefined>();
   const [ancienProfilCodeSélectionné, setAncienProfilCodeSélectionné] = useState<string | undefined>();
   const [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés] = useState<string[]>([]);
   const [profilSélectionné, setProfilSélectionné] = useState<Profil | undefined>();
@@ -37,6 +57,19 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
 
   const { data: profils } = api.profil.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
+
+  // GESTION DE L'ERREUR DE L'ADRESSE MAIL
+  useEffect(() => { 
+    if (!isSubmitted || emailRenseigne?.endsWith('.gouv.fr') || ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session?.profil)) {
+      const erreur = undefined;
+      setErreurEmailReferents(erreur);
+    } else {
+      setErreurEmailReferents({
+        type: 'value',
+        message: 'Vous essayez de créer un compte pour une adresse ne relevant pas du périmètre de l’Etat. Veuillez contacter support.ditp@modernisation.gouv.fr pour plus d’informations.',
+      });
+    }
+  }, [emailRenseigne, session, isSubmitted]);
 
   // GESTION CHANGEMENT DE PROFIL
   const handleChangementValeursSélectionnéesChantiers = useCallback((valeursSélectionnées: string[]) => {    
@@ -82,6 +115,10 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     
     let chantiersAccessibles = chantiers;
 
+    if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION'].includes(session?.profil)) {
+      chantiersAccessibles = chantiersAccessibles.filter(chantier => session?.habilitations.saisieCommentaire.chantiers.includes(chantier.id));
+    }
+
     if (['RESPONSABLE_DEPARTEMENT', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(profilSélectionné.code)) {
       chantiersAccessibles = chantiersAccessibles.filter(chantier => chantier.estTerritorialisé);
     } 
@@ -92,7 +129,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
 
     setChantiersAccessiblesPourLeProfil(chantiersAccessibles);
 
-  }, [chantiers, profilSélectionné]);
+  }, [chantiers, profilSélectionné, session]);
 
   useEffect(() => {
     if (ancienProfilCodeSélectionné !== profilCodeSélectionné) {
@@ -119,9 +156,13 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     if (profils) {
       const profilAssociéAuProfilCodeSélectionné = profils.find(p => p.code === profilCodeSélectionné)!;
       setProfilSélectionné(profilAssociéAuProfilCodeSélectionné);
-      setListeProfils(profils.map(profil => ({ libellé: profil.nom, valeur: profil.code })));
+      let profilsFiltrés = profils;
+      if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION'].includes(session?.profil)) {
+        profilsFiltrés = profilsFiltrés.filter(profil => PROFILS_POSSIBLES_REFERENTS[session?.profil as keyof typeof PROFILS_POSSIBLES_REFERENTS].includes(profil.code));
+      }
+      setListeProfils(profilsFiltrés.map(profil => ({ libellé: profil.nom, valeur: profil.code })));
     }
-  }, [profils, profilCodeSélectionné]);
+  }, [profils, profilCodeSélectionné, session]);
 
 
   // GESTION CHANTIERS ET PERIMETRES MINISTERIELS 
@@ -187,5 +228,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     chantiersAccessiblesPourLeProfil,
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
+    session,
+    erreurEmailReferents,
   };
 }

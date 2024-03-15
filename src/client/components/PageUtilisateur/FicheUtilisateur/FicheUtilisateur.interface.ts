@@ -10,7 +10,7 @@ export default interface FicheUtilisateurProps {
     email: string
     profil: ProfilCode
     dateModification?: string
-    auteurModification?: string
+    auteurModification?: string 
     fonction: string | null
     saisieIndicateur?: boolean
     saisieCommentaire?: boolean

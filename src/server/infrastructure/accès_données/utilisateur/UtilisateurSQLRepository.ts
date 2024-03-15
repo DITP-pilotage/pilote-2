@@ -29,6 +29,8 @@ export const convertirEnModel = (utilisateurAConvertir: {
   fonction: string | null
   auteurModification: string
   dateModification: Date
+  auteurCreation: string | null
+  dateCreation: Date
 }): Omit<utilisateur, 'id'> => {
   return {
     email: utilisateurAConvertir.email,
@@ -37,7 +39,30 @@ export const convertirEnModel = (utilisateurAConvertir: {
     profilCode: utilisateurAConvertir.profilCode,
     fonction: utilisateurAConvertir.fonction,
     auteur_modification: utilisateurAConvertir.auteurModification,
-    date_modification: new Date(),
+    date_modification: utilisateurAConvertir.dateModification,
+    auteur_creation: utilisateurAConvertir.auteurCreation,
+    date_creation: utilisateurAConvertir.dateCreation,
+  };
+};
+
+
+export const convertirEnModelModification = (utilisateurAConvertir: {
+  email: string
+  nom: string
+  prenom: string
+  profilCode: string
+  fonction: string | null
+  auteurModification: string
+  dateModification: Date
+}): Omit<utilisateur, 'id' | 'auteur_creation' | 'date_creation'> => {
+  return {
+    email: utilisateurAConvertir.email,
+    nom: utilisateurAConvertir.nom,
+    prenom: utilisateurAConvertir.prenom,
+    profilCode: utilisateurAConvertir.profilCode,
+    fonction: utilisateurAConvertir.fonction,
+    auteur_modification: utilisateurAConvertir.auteurModification,
+    date_modification: utilisateurAConvertir.dateModification,
   };
 };
 
@@ -234,7 +259,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return utilisateursExistants.map(u => u.email);
   }
 
-  async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteurModification: string): Promise<void> {
+  async créerOuMettreÀJour(u: UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées }, auteur: string): Promise<void> {
    
     const utilisateurCrééOuMisÀJour = await this._prisma.utilisateur.upsert({
       create: convertirEnModel({
@@ -243,16 +268,18 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
         prenom: u.prénom,
         profilCode: u.profil,
         fonction: u.fonction,
-        auteurModification: auteurModification,
+        auteurCreation: auteur,
+        dateCreation: new Date(),
+        auteurModification: auteur,
         dateModification: new Date(),
       }),
-      update: convertirEnModel({
+      update: convertirEnModelModification({
         email: u.email.toLocaleLowerCase(),
         nom: u.nom,
         prenom: u.prénom,
         profilCode: u.profil,
         fonction: u.fonction,
-        auteurModification: auteurModification,
+        auteurModification: auteur,
         dateModification: new Date(),
       }),
       where: {
@@ -470,8 +497,10 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       prénom: utilisateurBrut.prenom || 'Inconnu',
       email: utilisateurBrut.email,
       profil: utilisateurBrut.profilCode as ProfilCode,
-      dateModification: utilisateurBrut.date_modification.toISOString(),
+      dateModification: utilisateurBrut.date_modification?.toISOString(),
       auteurModification: utilisateurBrut.auteur_modification,
+      dateCreation: utilisateurBrut.date_creation?.toISOString() || null,
+      auteurCreation: utilisateurBrut.auteur_creation,
       fonction: utilisateurBrut.fonction,
       saisieCommentaire: this._aDesDroitsdeSaisieCommentaire(habilitations, utilisateurBrut.profil),
       saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(habilitations, utilisateurBrut.profil),

@@ -47,6 +47,8 @@ type Utilisateur = {
   profil: ProfilCode
   dateModification: string
   auteurModification: string
+  dateCreation: string | null
+  auteurCreation: string | null
   fonction: string | null
   saisieIndicateur: boolean
   saisieCommentaire: boolean

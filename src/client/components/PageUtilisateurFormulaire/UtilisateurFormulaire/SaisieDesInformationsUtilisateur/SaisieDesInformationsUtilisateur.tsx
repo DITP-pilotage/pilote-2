@@ -33,7 +33,9 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
     chantiersAccessiblesPourLeProfil,
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
-  } = useSaisieDesInformationsUtilisateur(utilisateur);
+    session,
+    erreurEmailReferents,
+  } = useSaisieDesInformationsUtilisateur(utilisateur);  
 
   return (
     <>
@@ -51,7 +53,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
       </p>
       <InputAvecLabel
         disabled={Boolean(utilisateur?.email)}
-        erreur={errors.email}
+        erreur={errors.email ?? erreurEmailReferents}
         htmlName='email'
         libellé='Adresse électronique'
         register={register('email', { value: utilisateur?.email })}
@@ -108,6 +110,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
                   groupesÀAfficher={groupesTerritoiresÀAfficher}
                   territoiresCodesSélectionnésParDéfaut={territoiresSélectionnés}
+                  territoiresSélectionnables={session?.habilitations.saisieCommentaire.territoires}
                 />
               )}
               rules={{ required: true }} 

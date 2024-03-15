@@ -1,10 +1,14 @@
 import { FiltresUtilisateursActifs } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore.interface';
-import Utilisateur from '@/server/domain/utilisateur/Utilisateur.interface';
+import { PROFILS_POSSIBLES_REFERENTS } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
+import Utilisateur, { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
 export default class FiltrerListeUtilisateursUseCase {
   constructor(
     private readonly utilisateurs: Utilisateur[],
     private readonly filtresActifs: FiltresUtilisateursActifs,
+    private readonly profil: ProfilCode,
+    private readonly habilitation: Habilitation,
   ) {}
 
   private utilisateurPasseLeFiltreTerritoire(utilisateur: Utilisateur) {
@@ -47,7 +51,22 @@ export default class FiltrerListeUtilisateursUseCase {
       && this.utilisateurPasseLeFiltreProfil(utilisateur);
   }
 
+  private profilEstAutorisé(utilisateur: Utilisateur) {
+    return PROFILS_POSSIBLES_REFERENTS[this.profil as keyof typeof PROFILS_POSSIBLES_REFERENTS].includes(utilisateur.profil);
+  }
+
+  private territoireEstAutorisé(utilisateur: Utilisateur) {
+    return utilisateur.habilitations.lecture.territoires.some(territoire => this.habilitation.peutAccéderAuTerritoire(territoire));
+  }
+
+  private utilisateurEstAutorisé(utilisateur: Utilisateur) {
+    if (!Object.keys(PROFILS_POSSIBLES_REFERENTS).includes(this.profil))
+      return true;
+    
+    return this.profilEstAutorisé(utilisateur) && this.territoireEstAutorisé(utilisateur);
+  }
+
   run() {
-    return this.utilisateurs.filter(utilisateur => this.utilisateurPasseLesFiltres(utilisateur));
+    return this.utilisateurs.filter(utilisateur => this.utilisateurPasseLesFiltres(utilisateur) && this.utilisateurEstAutorisé(utilisateur));
   }
 }

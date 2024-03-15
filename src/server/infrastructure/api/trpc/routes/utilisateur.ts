@@ -13,6 +13,7 @@ import CréerOuMettreÀJourUnUtilisateurUseCase
   from '@/server/usecase/utilisateur/CréerOuMettreÀJourUnUtilisateurUseCase';
 import SupprimerUnUtilisateurUseCase from '@/server/usecase/utilisateur/SupprimerUnUtilisateurUseCase';
 import { dependencies } from '@/server/infrastructure/Dependencies';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
 export const utilisateurRouter = créerRouteurTRPC({
   'créer': procédureProtégée
@@ -56,7 +57,7 @@ export const utilisateurRouter = créerRouteurTRPC({
     .input(validationFiltresPourListeUtilisateur)
     .query(async ({ ctx, input }): Promise<Utilisateur[]> => {
       const tousLesUtilisateurs = await new RécupérerListeUtilisateursUseCase(dependencies.getUtilisateurRepository()).run(ctx.session.habilitations);
-
-      return new FiltrerListeUtilisateursUseCase(tousLesUtilisateurs, input.filtres).run();
+      const habilitation = new Habilitation(ctx.session.habilitations);
+      return new FiltrerListeUtilisateursUseCase(tousLesUtilisateurs, input.filtres, ctx.session.profil, habilitation).run();
     }),
 });

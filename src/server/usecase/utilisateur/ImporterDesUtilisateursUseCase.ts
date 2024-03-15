@@ -13,7 +13,7 @@ export default class ImporterDesUtilisateursUseCase {
   ) {}
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
-  async run(utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[], auteurModification: string): Promise<void> {
+  async run(utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[], auteur: string): Promise<void> {
     for (const utilisateur of utilisateurs) {
       const territoires = await this.territoireRepository.récupérerTous();
 
@@ -50,7 +50,7 @@ export default class ImporterDesUtilisateursUseCase {
         });
       }
     
-      await this.utilisateurRepository.créerOuMettreÀJour(utilisateur, auteurModification);
+      await this.utilisateurRepository.créerOuMettreÀJour(utilisateur, auteur);
     }
     const utilisateursPourIAM = utilisateurs.map(utilisateur => ({ nom:  utilisateur.nom, prénom: utilisateur.prénom, email: utilisateur.email }));
     await this.utilisateurIAMRepository.ajouteUtilisateurs(utilisateursPourIAM);

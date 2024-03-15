@@ -16,6 +16,10 @@ export default class UtilisateurBuilder {
 
   private _auteurModification: Utilisateur['auteurModification'];
 
+  private _dateCreation: Utilisateur['dateCreation'];
+
+  private _auteurCreation: Utilisateur['auteurCreation'];
+
   private _fonction: Utilisateur['fonction'];
 
   private _habilitations: Utilisateur['habilitations'];
@@ -32,6 +36,8 @@ export default class UtilisateurBuilder {
     this._profil = faker.helpers.arrayElement(profilsCodes);
     this._dateModification = faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString();
     this._auteurModification = faker.name.firstName();
+    this._dateCreation = faker.date.recent(60, '2023-05-01T00:00:00.000Z').toISOString();
+    this._auteurCreation = faker.name.firstName();
     this._fonction = faker.helpers.arrayElement([faker.lorem.words(6), null]);
     this._saisieCommentaire = faker.datatype.boolean();
     this._saisieIndicateur = faker.datatype.boolean();
@@ -81,6 +87,16 @@ export default class UtilisateurBuilder {
     return this;
   }
 
+  avecDateCreation(dateCreation: Utilisateur['dateCreation']) {
+    this._dateCreation = dateCreation;
+    return this;
+  }
+
+  avecAuteurCreation(auteurCreation: Utilisateur['auteurCreation']) {
+    this._auteurCreation = auteurCreation;
+    return this;
+  }
+
   avecFonction(fonction: Utilisateur['fonction']) {
     this._fonction = fonction;
     return this;
@@ -118,6 +134,8 @@ export default class UtilisateurBuilder {
       profil: this._profil,
       dateModification: this._dateModification,
       auteurModification: this._auteurModification,
+      dateCreation: this._dateCreation,
+      auteurCreation: this._auteurCreation,
       fonction: this._fonction,
       saisieCommentaire: this._saisieCommentaire,
       saisieIndicateur: this._saisieIndicateur,
