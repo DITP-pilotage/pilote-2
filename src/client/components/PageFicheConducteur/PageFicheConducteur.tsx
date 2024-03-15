@@ -278,12 +278,6 @@ FicheConducteurContrat
           </EnteteFicheConducteur>
         </div>
         <div className='fr-container'>
-          <Titre
-            baliseHtml='h2'
-            className='fr-h5 fr-mb-1w fr-text-title--blue-france'
-          >
-            Objectifs
-          </Titre>
           <Bloc contenuClassesSupplémentaires='fr-px-1w fr-py-1v'>
             <div className='fiche-conducteur--tableau fr-container fr-text--xs fr-m-0'>
               <div

@@ -5,10 +5,12 @@ export class Objectif {
 
   private readonly _contenu: string;
 
-  private constructor({ type, contenu }: { type: ObjectifType, contenu: string }) {
-    this._type = type;
+  private readonly _date: string;
 
+  private constructor({ type, contenu, date }: { type: ObjectifType, contenu: string, date: string }) {
+    this._type = type;
     this._contenu = contenu;
+    this._date = date;
   }
 
   get type(): ObjectifType {
@@ -19,7 +21,11 @@ export class Objectif {
     return this._contenu;
   }
 
-  static creerObjectif({ type, contenu }: { type: ObjectifType, contenu: string }) {
-    return new Objectif({ type, contenu });
+  get date(): string {
+    return this._date;
+  }
+
+  static creerObjectif({ type, contenu, date }: { type: ObjectifType, contenu: string, date: string }) {
+    return new Objectif({ type, contenu, date });
   }
 }

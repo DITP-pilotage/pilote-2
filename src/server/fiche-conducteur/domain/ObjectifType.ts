@@ -1,1 +1,1 @@
-export type ObjectifType = 'notre_ambition' | 'deja_fait' | 'a_faire' | 'suivi_decision' | 'risque_freins';
+export type ObjectifType = 'notre_ambition' | 'deja_fait' | 'a_faire' | 'decision_strategique' | 'risque_freins';

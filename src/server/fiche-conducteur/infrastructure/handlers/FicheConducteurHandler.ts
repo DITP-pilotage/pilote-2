@@ -23,6 +23,7 @@ import {
 import { DonnéeCartographie } from '@/server/fiche-conducteur/domain/DonnéeCartographie';
 import { RécupérerObjectifsUseCase } from '@/server/fiche-conducteur/usecases/RécupérerObjectifsUseCase';
 import { ObjectifType } from '@/server/fiche-conducteur/domain/ObjectifType';
+import { DecisionStrategiqueType } from '@/server/fiche-conducteur/domain/DecisionStrategiqueType';
 
 
 const numberWithSpaces = (nombreATransformer: number) => {
@@ -69,11 +70,11 @@ const presenterEnSynthèseDesResultatsContrat = (synthèseDesRésultats: Synthes
   };
 };
 
-const presenterEnObjectifsContrat = (objectif: Map<ObjectifType, string>): ObjectifContrat[] => {
+const presenterEnObjectifsContrat = (objectif: Map<ObjectifType | DecisionStrategiqueType, string>): ObjectifContrat[] => {
   return [
     {
       libellé: 'Suivi des décisions',
-      valeur: objectif.get('suivi_decision') || '-',
+      valeur: objectif.get('suivi_des_decisions') || '-',
     }, {
       libellé: 'Ce qui à été fait',
       valeur: objectif.get('deja_fait') || '-',
@@ -128,6 +129,7 @@ export const ficheConducteurHandler = () => {
 
     const objectifs = await new RécupérerObjectifsUseCase({
       objectifRepository: dependencies.getFicheConducteurObjectifRepository(),
+      decisionStrategiqueRepository: dependencies.getFicheConducteurDecisionStrategiqueRepository(),
     })
       .run({ chantierId })
       .then(presenterEnObjectifsContrat);

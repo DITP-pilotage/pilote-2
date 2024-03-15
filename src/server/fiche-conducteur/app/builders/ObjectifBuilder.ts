@@ -6,6 +6,8 @@ export class ObjectifBuilder {
 
   private contenu: string = 'un contenu pour un objectif';
 
+  private date: string = '2022-05-01T00:00:00.000Z';
+
   withType(type: ObjectifType): ObjectifBuilder {
     this.type = type;
     return this;
@@ -16,8 +18,15 @@ export class ObjectifBuilder {
     return this;
   }
 
+  withDate(date: string) {
+    this.date = date;
+    return this;
+
+  }
+
   build(): Objectif {
     return Objectif.creerObjectif({
+      date: this.date,
       type: this.type,
       contenu: this.contenu,
     });

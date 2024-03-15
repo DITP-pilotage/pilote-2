@@ -5,6 +5,7 @@ import { ObjectifRepository } from '@/server/fiche-conducteur/domain/ports/Objec
 const convertifEnObjectif = (objectifModel: ObjectifModel): Objectif => (Objectif.creerObjectif({
   type: objectifModel.type,
   contenu: objectifModel.contenu,
+  date: objectifModel.date.toISOString(),
 })
 );
 
