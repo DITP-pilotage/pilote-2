@@ -41,6 +41,7 @@ const presenterEnChantierFicheConducteurContrat = (chantierFicheConducteur: Chan
     derniereValeurInitiale: derniereValeurInitiale ? `(${formaterDate(derniereValeurInitiale, 'MM/YY')})` : '',
     indicateurs: chantierFicheConducteur.indicateurs.map(indicateurFicheConducteur => ({
       nom: indicateurFicheConducteur.nom,
+      type: indicateurFicheConducteur.type,
       dateValeurActuelle: indicateurFicheConducteur.dateValeurActuelle ? `(${formaterDate(indicateurFicheConducteur.dateValeurActuelle, 'MM/YY')})` : '',
       valeurInitiale: indicateurFicheConducteur.valeurInitiale ? numberWithSpaces(indicateurFicheConducteur.valeurInitiale) : '-',
       valeurActuelle: indicateurFicheConducteur.valeurActuelle ? numberWithSpaces(indicateurFicheConducteur.valeurActuelle) : '-',
@@ -71,14 +72,14 @@ const presenterEnSynthèseDesResultatsContrat = (synthèseDesRésultats: Synthes
 const presenterEnObjectifsContrat = (objectif: Map<ObjectifType, string>): ObjectifContrat[] => {
   return [
     {
+      libellé: 'Suivi des décisions',
+      valeur: objectif.get('suivi_decision') || '-',
+    }, {
       libellé: 'Ce qui à été fait',
       valeur: objectif.get('deja_fait') || '-',
     }, {
       libellé: 'Ce qui reste à faire',
       valeur: objectif.get('a_faire') || '-',
-    }, {
-      libellé: 'Suivi des décisions',
-      valeur: objectif.get('suivi_decision') || '-',
     }, {
       libellé: 'Risques et freins à lever',
       valeur: objectif.get('risque_freins') || '-',

@@ -5,6 +5,7 @@ import { Indicateur } from '@/server/fiche-conducteur/domain/Indicateur';
 const convertirEnIndicateur = (indicateurModel: IndicateurModel): Indicateur => {
   return Indicateur.creerIndicateur({
     nom: indicateurModel.nom,
+    type: indicateurModel.type_id,
     valeurInitiale: indicateurModel.valeur_initiale,
     dateValeurInitiale: indicateurModel.date_valeur_initiale ? indicateurModel.date_valeur_initiale.toISOString() : null,
     valeurActuelle: indicateurModel.valeur_actuelle,

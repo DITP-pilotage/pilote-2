@@ -1,6 +1,8 @@
 export class IndicateurFicheConducteur {
   private readonly _nom: string;
 
+  private readonly _type: string | null;
+
   private readonly _valeurInitiale: number | null;
 
   private readonly _dateValeurInitiale: string | null;
@@ -19,6 +21,7 @@ export class IndicateurFicheConducteur {
 
   private constructor({
     nom,
+    type,
     valeurInitiale,
     valeurActuelle,
     dateValeurActuelle,
@@ -29,6 +32,7 @@ export class IndicateurFicheConducteur {
     objectifTauxAvancement,
   }: {
     nom: string
+    type: string | null
     valeurInitiale: number | null
     valeurActuelle: number | null
     dateValeurActuelle: string | null
@@ -39,6 +43,7 @@ export class IndicateurFicheConducteur {
     objectifTauxAvancement: number | null
   }) {
     this._nom = nom;
+    this._type = type;
     this._valeurInitiale = valeurInitiale;
     this._valeurActuelle = valeurActuelle;
     this._dateValeurActuelle = dateValeurActuelle;
@@ -51,6 +56,10 @@ export class IndicateurFicheConducteur {
 
   get nom(): string {
     return this._nom;
+  }
+
+  get type(): string | null {
+    return this._type;
   }
 
   get valeurInitiale(): number | null {
@@ -87,6 +96,7 @@ export class IndicateurFicheConducteur {
 
   static creerIndicateurFicheConducteur({
     nom,
+    type,
     valeurInitiale,
     valeurActuelle,
     dateValeurActuelle,
@@ -97,6 +107,7 @@ export class IndicateurFicheConducteur {
     objectifTauxAvancement,
   }: {
     nom: string
+    type: string | null
     valeurInitiale: number | null
     valeurActuelle: number | null
     dateValeurActuelle: string | null
@@ -108,6 +119,7 @@ export class IndicateurFicheConducteur {
   }) {
     return new IndicateurFicheConducteur({
       nom,
+      type,
       valeurInitiale,
       valeurActuelle,
       dateValeurActuelle,

@@ -3,6 +3,8 @@ import { Indicateur } from '@/server/fiche-conducteur/domain/Indicateur';
 export class IndicateurBuilder {
   private nom: string = 'Un nom';
 
+  private type: string | null = 'IMPACT';
+
   private valeurInitiale: number = 12.2;
 
   private dateValeurInitiale: string = '2021-01-01T00:00:00.000Z';
@@ -21,6 +23,11 @@ export class IndicateurBuilder {
 
   withNom(nom: string): IndicateurBuilder {
     this.nom = nom;
+    return this;
+  }
+
+  withType(type: string | null): IndicateurBuilder {
+    this.type = type;
     return this;
   }
 
@@ -67,6 +74,7 @@ export class IndicateurBuilder {
   build(): Indicateur {
     return Indicateur.creerIndicateur({
       nom: this.nom,
+      type: this.type,
       valeurInitiale: this.valeurInitiale,
       dateValeurInitiale: this.dateValeurInitiale,
       valeurActuelle: this.valeurActuelle,

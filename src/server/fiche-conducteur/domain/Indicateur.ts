@@ -1,6 +1,8 @@
 export class Indicateur {
   private readonly _nom: string;
 
+  private readonly _type: string | null;
+
   private readonly _valeurInitiale: number | null;
 
   private readonly _dateValeurInitiale: string | null;
@@ -19,6 +21,7 @@ export class Indicateur {
 
   private constructor({
     nom,
+    type,
     valeurInitiale,
     dateValeurInitiale,
     valeurActuelle,
@@ -29,6 +32,7 @@ export class Indicateur {
     objectifTauxAvancement,
   }: {
     nom: string
+    type: string | null
     valeurInitiale: number | null
     dateValeurInitiale: string | null
     valeurActuelle: number | null
@@ -39,6 +43,7 @@ export class Indicateur {
     objectifTauxAvancement: number | null
   }) {
     this._nom = nom;
+    this._type = type;
     this._valeurInitiale = valeurInitiale;
     this._dateValeurInitiale = dateValeurInitiale;
     this._valeurActuelle = valeurActuelle;
@@ -49,9 +54,12 @@ export class Indicateur {
     this._objectifTauxAvancement = objectifTauxAvancement;
   }
 
-
   get nom(): string {
     return this._nom;
+  }
+
+  get type(): string | null {
+    return this._type;
   }
 
   get valeurInitiale(): number | null {
@@ -88,6 +96,7 @@ export class Indicateur {
 
   static creerIndicateur({
     nom,
+    type,
     valeurInitiale,
     dateValeurInitiale,
     valeurActuelle,
@@ -98,6 +107,7 @@ export class Indicateur {
     objectifTauxAvancement,
   }: {
     nom: string
+    type: string | null
     valeurInitiale: number | null
     dateValeurInitiale: string | null
     valeurActuelle: number | null
@@ -109,6 +119,7 @@ export class Indicateur {
   }) {
     return new Indicateur({
       nom,
+      type,
       valeurInitiale,
       dateValeurInitiale,
       valeurActuelle,

@@ -99,6 +99,7 @@ describe('PrismaIndicateurRepository', () => {
       const listeIndicateursResult = await prismaIndicateurRepository.récupérerIndicImpactParChantierId('CH-168');
       // Then
       expect(listeIndicateursResult.map(indicateur => indicateur.nom)).toIncludeSameMembers(['Indicateur OK', 'Indicateur OK autre ID', 'Indicateur OK type_id', 'Indicateur OK pondération']);
+      expect(listeIndicateursResult.map(indicateur => indicateur.type)).toIncludeSameMembers(['IMPACT', 'IMPACT', 'Q_SERV', 'IMPACT']);
     });
   });
 });

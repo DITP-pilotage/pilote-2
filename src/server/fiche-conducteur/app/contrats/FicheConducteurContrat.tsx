@@ -7,6 +7,7 @@ import {
 
 interface IndicateurFicheConducteurContrat {
   nom: string
+  type: string | null
   valeurInitiale: string
   valeurActuelle: string
   dateValeurActuelle: string

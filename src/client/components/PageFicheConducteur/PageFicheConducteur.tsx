@@ -31,7 +31,7 @@ FicheConducteurContrat
         </div>
         <div className='fr-container'>
           <div className='fr-grid-row fr-grid-row--gutters'>
-            <div className='fr-col-4 flex flex-column fiche-conducteur__bloc'>
+            <div className='fr-col-4 flex flex-column fiche-conducteur__bloc fr-pr-1v'>
               <Titre
                 baliseHtml='h2'
                 className='fr-h5 fr-mb-1w fr-text-title--blue-france'
@@ -93,7 +93,7 @@ FicheConducteurContrat
                 </div>
               </Bloc>
             </div>
-            <div className='fr-col-8 flex flex-column fiche-conducteur__bloc'>
+            <div className='fr-col-8 flex flex-column fiche-conducteur__bloc  fr-pl-1v'>
               <Titre
                 baliseHtml='h2'
                 className='fr-h5 fr-mb-1w fr-text-title--blue-france'
@@ -132,9 +132,9 @@ FicheConducteurContrat
             </div>
           </div>
         </div>
-        <div className='fr-container fr-mt-2w'>
-          <Bloc contenuClassesSupplémentaires='fr-px-1w fr-py-1v'>
-            <div className='fiche-conducteur--tableau fr-container fr-text--xs fr-m-0'>
+        <div className='fr-container fr-mt-1w'>
+          <Bloc contenuClassesSupplémentaires='fr-px-0 fr-py-1v'>
+            <div className='fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-1w'>
               <div
                 className='fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b'
               >
@@ -183,7 +183,7 @@ FicheConducteurContrat
                     key={`indicateur-${index}`}
                   >
                     <div
-                      className='fr-col-5 fr-pr-1w'
+                      className={`fr-col-5 fr-pr-1w${indicateur.type === 'IMPACT' ? ' fr-text--bold' : ''}`}
                     >
                       {indicateur.nom}
                     </div>

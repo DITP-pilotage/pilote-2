@@ -57,14 +57,16 @@ describe('RécupererChantierFicheConducteurUseCase', () => {
       .build();
     chantierRepository.récupérerParIdEtParTerritoireCode.mockResolvedValue( chantier);
 
-    const indicateur1 = new IndicateurBuilder().withNom('Indicateur 1').build();
-    const indicateur2 = new IndicateurBuilder().withNom('Indicateur 2').build();
-    const indicateur3 = new IndicateurBuilder().withNom('Indicateur 3').build();
+    const indicateur1 = new IndicateurBuilder().withNom('Indicateur 1').withType('IMPACT').build();
+    const indicateur2 = new IndicateurBuilder().withNom('Indicateur 2').withType('IMPACT').build();
+    const indicateur3 = new IndicateurBuilder().withNom('Indicateur 3').withType('Q_SERV').build();
     indicateurRepository.récupérerIndicImpactParChantierId.mockResolvedValue([indicateur1, indicateur2, indicateur3]);
     // When
     const chantierResult = await récupererChantierFicheConducteurUseCase.run({ chantierId: id, territoireCode });
     // Then
     expect(indicateurRepository.récupérerIndicImpactParChantierId).toHaveBeenNthCalledWith(1, 'CH-168');
     expect(chantierResult.indicateurs).toHaveLength(3);
+    expect(chantierResult.indicateurs.map(indic => indic.nom)).toIncludeSameMembers(['Indicateur 1', 'Indicateur 2', 'Indicateur 3']);
+    expect(chantierResult.indicateurs.map(indic => indic.type)).toIncludeSameMembers(['IMPACT', 'IMPACT', 'Q_SERV']);
   });
 });
