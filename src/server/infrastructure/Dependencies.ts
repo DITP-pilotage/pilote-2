@@ -35,6 +35,15 @@ import DécisionStratégiqueRepository
 import UtilisateurRepository from '@/server/domain/utilisateur/UtilisateurRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import {
+  ChantierRepository as FicheConducteurChantierRepository,
+} from '@/server/fiche-conducteur/domain/ports/ChantierRepository';
+import {
+  IndicateurRepository as FicheConducteurIndicateurRepository,
+} from '@/server/fiche-conducteur/domain/ports/IndicateurRepository';
+import {
+  SynthèseDesRésultatsRepository as FicheConducteurSynthèseDesRésultatsRepository,
+} from '@/server/fiche-conducteur/domain/ports/SynthèseDesRésultatsRepository';
+import {
   TerritoireRepository as FicheTerritorialeTerritoireRepository,
 } from '@/server/fiche-territoriale/domain/ports/TerritoireRepository';
 import {
@@ -134,7 +143,18 @@ import {
 import {
   PrismaIndicateurRepository as PrismaFicheTerritorialeIndicateurRepository,
 } from '@/server/fiche-territoriale/infrastructure/adapters/PrismaIndicateurRepository';
-import { PrismaMinistereRepository } from '@/server/fiche-territoriale/infrastructure/adapters/PrismaMinistereRepository';
+import {
+  PrismaMinistereRepository,
+} from '@/server/fiche-territoriale/infrastructure/adapters/PrismaMinistereRepository';
+import {
+  PrismaChantierRepository as PrismaFicheConducteurChantierRepository,
+} from '@/server/fiche-conducteur/infrastructure/adapters/PrismaChantierRepository';
+import {
+  PrismaIndicateurRepository as PrismaFicheConducteurIndicateurRepository,
+} from '@/server/fiche-conducteur/infrastructure/adapters/PrismaIndicateurRepository';
+import {
+  PrismaSynthèseDesRésultatsRepository as PrismaFicheConducteurSynthèseDesRésultatsRepository,
+} from '@/server/fiche-conducteur/infrastructure/adapters/PrismaSynthèseDesRésultatsRepository';
 import { UtilisateurSQLRepository } from './accès_données/utilisateur/UtilisateurSQLRepository';
 import { TerritoireSQLRepository } from './accès_données/territoire/TerritoireSQLRepository';
 import ProjetStructurantSQLRepository from './accès_données/projetStructurant/ProjetStructurantSQLRepository';
@@ -179,6 +199,12 @@ class Dependencies {
   private readonly _utilisateurRepository: UtilisateurRepository;
 
   private readonly _territoireRepository: TerritoireRepository;
+
+  private readonly _ficheConducteurChantierRepository: FicheConducteurChantierRepository;
+
+  private readonly _ficheConducteurIndicateurRepository: FicheConducteurIndicateurRepository;
+
+  private readonly _ficheConducteurSynthèseDesRésultatsRepository: FicheConducteurSynthèseDesRésultatsRepository;
 
   private readonly _ficheTerritorialeTerritoireRepository: FicheTerritorialeTerritoireRepository;
 
@@ -244,6 +270,9 @@ class Dependencies {
     this._décisionStratégiqueRepository = new DécisionStratégiqueSQLRepository(prisma);
     this._utilisateurRepository = new UtilisateurSQLRepository(prisma);
     this._territoireRepository = new TerritoireSQLRepository(prisma);
+    this._ficheConducteurChantierRepository = new PrismaFicheConducteurChantierRepository(prisma);
+    this._ficheConducteurIndicateurRepository = new PrismaFicheConducteurIndicateurRepository(prisma);
+    this._ficheConducteurSynthèseDesRésultatsRepository = new PrismaFicheConducteurSynthèseDesRésultatsRepository(prisma);
     this._ficheTerritorialeTerritoireRepository = new PrismaTerritoireRepository(prisma);
     this._ficheTerritorialeChantierRepository = new PrismaChantierRepository(prisma);
     this._ficheTerritorialeIndicateurRepository = new PrismaFicheTerritorialeIndicateurRepository(prisma);
@@ -379,6 +408,18 @@ class Dependencies {
 
   getTerritoireRepository() {
     return this._territoireRepository;
+  }
+
+  getFicheConducteurChantierRepository() {
+    return this._ficheConducteurChantierRepository;
+  }
+
+  getFicheConducteurIndicateurRepository() {
+    return this._ficheConducteurIndicateurRepository;
+  }
+
+  getFicheConducteurSynthèseDesRésultatsRepository() {
+    return this._ficheConducteurSynthèseDesRésultatsRepository;
   }
 
   getFicheTerritorialeTerritoireRepository() {

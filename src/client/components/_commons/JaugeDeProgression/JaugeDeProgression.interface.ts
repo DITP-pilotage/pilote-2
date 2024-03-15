@@ -1,5 +1,5 @@
 type JaugeDeProgressionCouleur = 'bleu' | 'bleuClair' | 'violet' | 'orange' | 'vert' | 'rose';
-export type JaugeDeProgressionTaille = 'sm' | 'lg';
+export type JaugeDeProgressionTaille = 'sm' | 'md' | 'lg';
 
 export interface JaugeDeProgressionProps {
   couleur: JaugeDeProgressionCouleur,

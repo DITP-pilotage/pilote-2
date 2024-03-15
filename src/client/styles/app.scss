@@ -10,6 +10,10 @@
   display: flex;
 }
 
+.flex-grow {
+  flex-grow: 1;
+}
+
 .relative {
   position: relative !important;
 }
@@ -35,6 +39,10 @@
 
 .align-center {
   align-items: center;
+}
+
+.align-end {
+  align-items: end;
 }
 
 .flex-column {
@@ -84,7 +92,7 @@
 }
 
 .fr-text-title--blue-france {
-  color: var(--text-title-blue-france);
+  color: var(--text-title-blue-france) !important;
 }
 
 .border-t {
@@ -109,4 +117,8 @@
   border-left-width: 1px;
   border-left-color: var(--border-default-grey);
   border-left-style: solid;
+}
+
+.page-break {
+  page-break-after: always;
 }

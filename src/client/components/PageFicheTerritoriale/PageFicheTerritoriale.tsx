@@ -1,3 +1,5 @@
+import '@gouvfr/dsfr/dist/utility/colors/colors.css';
+
 import { FunctionComponent } from 'react';
 import HeaderFicheTerritoriale from '@/components/PageFicheTerritoriale/HeaderFicheTerritoriale';
 import Encart from '@/components/_commons/Encart/Encart';
@@ -11,7 +13,6 @@ import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleContene
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
-import '@gouvfr/dsfr/dist/utility/colors/colors.css';
 import { TableauFicheTerritoriale } from '@/components/PageFicheTerritoriale/TableauFicheTerritoriale';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import MétéoPicto from '@/components/_commons/Météo/Picto/MétéoPicto';

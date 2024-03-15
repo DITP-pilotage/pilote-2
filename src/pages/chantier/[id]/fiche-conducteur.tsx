@@ -7,25 +7,33 @@ import { ficheConducteurHandler } from '@/server/fiche-conducteur/infrastructure
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import { PageFicheConducteur } from '@/components/PageFicheConducteur/PageFicheConducteur';
 
-export const getServerSideProps: GetServerSideProps<{ ficheConducteur: FicheConducteurContrat }> = async ({ req, res, query }) => {
+export const getServerSideProps: GetServerSideProps<FicheConducteurContrat> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
 
   if (!session || !estAutoriséAConsulterLaFicheTerritoriale(session.profil)) {
     throw new Error('Not connected or not authorized ?');
   }
 
-  const ficheConducteur = await ficheConducteurHandler().recupererFicheConducteur(query.territoireCode as string);
+  const { chantier, avancement, synthèseDesRésultats, donnéesCartographie } = await ficheConducteurHandler().recupererFicheConducteur(query.id as string, 'NAT-FR');
 
   return {
     props: {
-      ficheConducteur,
+      chantier,
+      avancement,
+      synthèseDesRésultats,
+      donnéesCartographie,
     },
   };
 };
 
-const FicheConducteur: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ ficheConducteur }) => {
+const FicheConducteur: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ chantier, avancement, synthèseDesRésultats, donnéesCartographie }) => {
   return (
-    <PageFicheConducteur ficheConducteur={ficheConducteur} />
+    <PageFicheConducteur
+      avancement={avancement}
+      chantier={chantier}
+      donnéesCartographie={donnéesCartographie}
+      synthèseDesRésultats={synthèseDesRésultats}
+    />
   );
 };
 

@@ -63,5 +63,6 @@
       "tsconfig-paths/register"
     ],
     "transpileOnly": true
-  }
+  },
+  "files": ["src/server/infrastructure/test/global.d.ts"]
 }

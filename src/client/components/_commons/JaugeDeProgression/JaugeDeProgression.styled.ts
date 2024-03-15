@@ -15,6 +15,10 @@ const largeurs = {
     'max': '3.75rem',
     'min': '3.75rem',
   },
+  md: {
+    'max': '5.5rem',
+    'min': '4rem',
+  },
   lg: {
     'max': '10.5rem',
     'min': '8.25rem',
