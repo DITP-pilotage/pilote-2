@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import TableauAdminUtilisateurs
@@ -16,7 +17,16 @@ export default function PageAdminUtilisateurs() {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const router = useRouter();
+  const { data: session } = useSession();
   const réinitialiserFiltres = réinitialiser();
+
+  const donneLaRedirection = () => {
+    if (!session) {
+      return '/';
+    }
+    
+    return ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session.profil) ? '/admin/utilisateur/creer' : '/admin/utilisateur/creer/aide';
+  };
   
   useEffect(() => {
     if (router.query['compteCréé']) {
@@ -78,7 +88,7 @@ export default function PageAdminUtilisateurs() {
               <div className='fr-grid-row fr-grid-row--right'>
                 <Link
                   className='fr-btn fr-btn--icon-left fr-icon-checkbox-circle-line'
-                  href='/admin/utilisateur/creer'
+                  href={donneLaRedirection()}
                 >
                   Créer un compte
                 </Link>
