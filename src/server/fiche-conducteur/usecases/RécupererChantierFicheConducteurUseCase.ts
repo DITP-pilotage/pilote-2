@@ -29,6 +29,7 @@ export class RécupererChantierFicheConducteurUseCase {
       indicateurs: indicateurs.map(indicateur => IndicateurFicheConducteur.creerIndicateurFicheConducteur({
         nom: indicateur.nom,
         valeurInitiale: indicateur.valeurInitiale,
+        dateValeurInitiale: indicateur.dateValeurInitiale,
         valeurActuelle: indicateur.valeurActuelle,
         dateValeurActuelle: indicateur.dateValeurActuelle,
         objectifValeurCibleIntermediaire: indicateur.objectifValeurCibleIntermediaire,

@@ -20,6 +20,7 @@ export interface ChantierFicheConducteurContrat {
   nom: string
   directeursAdministrationCentrale: string
   directeursProjet: string
+  derniereValeurInitiale: string | null
   indicateurs: IndicateurFicheConducteurContrat[]
 }
 

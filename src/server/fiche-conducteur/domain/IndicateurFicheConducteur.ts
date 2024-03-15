@@ -3,6 +3,8 @@ export class IndicateurFicheConducteur {
 
   private readonly _valeurInitiale: number | null;
 
+  private readonly _dateValeurInitiale: string | null;
+
   private readonly _valeurActuelle: number | null;
 
   private readonly _dateValeurActuelle: string | null;
@@ -20,6 +22,7 @@ export class IndicateurFicheConducteur {
     valeurInitiale,
     valeurActuelle,
     dateValeurActuelle,
+    dateValeurInitiale,
     objectifValeurCibleIntermediaire,
     objectifTauxAvancementIntermediaire,
     objectifValeurCible,
@@ -29,6 +32,7 @@ export class IndicateurFicheConducteur {
     valeurInitiale: number | null
     valeurActuelle: number | null
     dateValeurActuelle: string | null
+    dateValeurInitiale: string | null
     objectifValeurCibleIntermediaire: number | null
     objectifTauxAvancementIntermediaire: number | null
     objectifValeurCible: number | null
@@ -38,6 +42,7 @@ export class IndicateurFicheConducteur {
     this._valeurInitiale = valeurInitiale;
     this._valeurActuelle = valeurActuelle;
     this._dateValeurActuelle = dateValeurActuelle;
+    this._dateValeurInitiale = dateValeurInitiale;
     this._objectifValeurCibleIntermediaire = objectifValeurCibleIntermediaire;
     this._objectifTauxAvancementIntermediaire = objectifTauxAvancementIntermediaire;
     this._objectifValeurCible = objectifValeurCible;
@@ -58,6 +63,10 @@ export class IndicateurFicheConducteur {
 
   get dateValeurActuelle(): string | null {
     return this._dateValeurActuelle;
+  }
+
+  get dateValeurInitiale(): string | null {
+    return this._dateValeurInitiale;
   }
 
   get objectifValeurCibleIntermediaire(): number | null {
@@ -81,6 +90,7 @@ export class IndicateurFicheConducteur {
     valeurInitiale,
     valeurActuelle,
     dateValeurActuelle,
+    dateValeurInitiale,
     objectifValeurCibleIntermediaire,
     objectifTauxAvancementIntermediaire,
     objectifValeurCible,
@@ -90,6 +100,7 @@ export class IndicateurFicheConducteur {
     valeurInitiale: number | null
     valeurActuelle: number | null
     dateValeurActuelle: string | null
+    dateValeurInitiale: string | null
     objectifValeurCibleIntermediaire: number | null
     objectifTauxAvancementIntermediaire: number | null
     objectifValeurCible: number | null
@@ -100,6 +111,7 @@ export class IndicateurFicheConducteur {
       valeurInitiale,
       valeurActuelle,
       dateValeurActuelle,
+      dateValeurInitiale,
       objectifValeurCibleIntermediaire,
       objectifTauxAvancementIntermediaire,
       objectifValeurCible,

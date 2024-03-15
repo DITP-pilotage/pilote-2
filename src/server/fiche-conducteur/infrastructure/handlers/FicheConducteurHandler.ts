@@ -32,10 +32,13 @@ const numberWithSpaces = (nombreATransformer: number) => {
 };
 
 const presenterEnChantierFicheConducteurContrat = (chantierFicheConducteur: ChantierFicheConducteur): ChantierFicheConducteurContrat=> {
+  const derniereValeurInitiale = chantierFicheConducteur.indicateurs.map(indicateur => indicateur.dateValeurInitiale).sort().reverse()[0] || null;
+
   return {
     nom: chantierFicheConducteur.nom,
     directeursAdministrationCentrale: chantierFicheConducteur.listeDirecteursAdministrationCentrale.join(', '),
     directeursProjet: chantierFicheConducteur.listeDirecteursProjet.join(', '),
+    derniereValeurInitiale: derniereValeurInitiale ? `(${formaterDate(derniereValeurInitiale, 'MM/YY')})` : '',
     indicateurs: chantierFicheConducteur.indicateurs.map(indicateurFicheConducteur => ({
       nom: indicateurFicheConducteur.nom,
       dateValeurActuelle: indicateurFicheConducteur.dateValeurActuelle ? `(${formaterDate(indicateurFicheConducteur.dateValeurActuelle, 'MM/YY')})` : '',

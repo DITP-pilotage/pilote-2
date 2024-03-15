@@ -147,7 +147,7 @@ FicheConducteurContrat
                   <div
                     className='fr-col-2 fr-text--bold flex align-center no-wrap'
                   >
-                    V. Initiale (12/22)
+                    {`V.Initiale ${chantier.derniereValeurInitiale}`}
                   </div>
                   <div
                     className='fr-col-2 fr-text--bold flex align-center'
@@ -183,7 +183,7 @@ FicheConducteurContrat
                     key={`indicateur-${index}`}
                   >
                     <div
-                      className='fr-col-5'
+                      className='fr-col-5 fr-pr-1w'
                     >
                       {indicateur.nom}
                     </div>

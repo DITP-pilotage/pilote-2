@@ -29,7 +29,7 @@ const PageFicheConducteurStyled = styled.div`
   
   
   @page {
-    margin: 0.5cm 0 1.5cm;
+    margin: 0;
     size: landscape!important;
   }
 `;
