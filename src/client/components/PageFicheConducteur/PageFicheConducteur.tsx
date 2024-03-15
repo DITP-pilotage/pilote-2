@@ -18,7 +18,7 @@ import { EnteteFicheConducteur } from '@/components/PageFicheConducteur/EnteteFi
 
 const PageFicheConducteur: FunctionComponent<
 FicheConducteurContrat
-> = ({ chantier, avancement, synthèseDesRésultats, donnéesCartographie, objectifs }) => {
+> = ({ chantier, avancement, synthèseDesRésultats, donnéesCartographie, publications }) => {
   const commentaire = (synthèseDesRésultats.commentaire?.length || 0) > 1000 ? synthèseDesRésultats.commentaire?.slice(0, 930) + '... [commentaire coupé car dépassant les 1000 caractères]' : synthèseDesRésultats.commentaire;
 
   return (
@@ -278,6 +278,12 @@ FicheConducteurContrat
           </EnteteFicheConducteur>
         </div>
         <div className='fr-container'>
+          <Titre
+            baliseHtml='h2'
+            className='fr-h5 fr-mb-1w fr-text-title--blue-france'
+          >
+            Publications
+          </Titre>
           <Bloc contenuClassesSupplémentaires='fr-px-1w fr-py-1v'>
             <div className='fiche-conducteur--tableau fr-container fr-text--xs fr-m-0'>
               <div
@@ -295,20 +301,20 @@ FicheConducteurContrat
                 </div>
               </div>
               {
-                objectifs.map((objectif, index) => (
+                publications.map((publication, index) => (
                   <div
                     className='fr-grid-row fr-px-1w fr-py-1w border-t'
-                    key={`object-${index}`}
+                    key={`publication-${index}`}
                   >
                     <div
                       className='fr-col-2 fr-text--bold flex align-center'
                     >
-                      {objectif.libellé}
+                      {publication.libellé}
                     </div>
                     <div
                       className='fr-col-10'
                     >
-                      {objectif.valeur}
+                      {publication.valeur}
                     </div>
                   </div>
                 ))

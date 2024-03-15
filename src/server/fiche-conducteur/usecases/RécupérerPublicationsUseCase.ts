@@ -8,7 +8,7 @@ interface Dependencies {
   decisionStrategiqueRepository: DecisionStrategiqueRepository
 }
 
-export class RécupérerObjectifsUseCase {
+export class RécupérerPublicationsUseCase {
   private objectifRepository: ObjectifRepository;
 
   private decisionStrategiqueRepository: DecisionStrategiqueRepository;

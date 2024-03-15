@@ -2,7 +2,7 @@ import {
   AvancementFicheConducteurContrat,
   ChantierFicheConducteurContrat,
   DonnéesCartographieContrat,
-  FicheConducteurContrat, ObjectifContrat,
+  FicheConducteurContrat, PublicationContrat,
   SyntheseDesResultatsContrat,
 } from '@/server/fiche-conducteur/app/contrats/FicheConducteurContrat';
 import {
@@ -21,7 +21,7 @@ import {
   RécupérerDonnéesCartographieUseCase,
 } from '@/server/fiche-conducteur/usecases/RécupérerDonnéesCartographieUseCase';
 import { DonnéeCartographie } from '@/server/fiche-conducteur/domain/DonnéeCartographie';
-import { RécupérerObjectifsUseCase } from '@/server/fiche-conducteur/usecases/RécupérerObjectifsUseCase';
+import { RécupérerPublicationsUseCase } from '@/server/fiche-conducteur/usecases/RécupérerPublicationsUseCase';
 import { ObjectifType } from '@/server/fiche-conducteur/domain/ObjectifType';
 import { DecisionStrategiqueType } from '@/server/fiche-conducteur/domain/DecisionStrategiqueType';
 
@@ -70,7 +70,7 @@ const presenterEnSynthèseDesResultatsContrat = (synthèseDesRésultats: Synthes
   };
 };
 
-const presenterEnObjectifsContrat = (objectif: Map<ObjectifType | DecisionStrategiqueType, string>): ObjectifContrat[] => {
+const presenterEnObjectifsContrat = (objectif: Map<ObjectifType | DecisionStrategiqueType, string>): PublicationContrat[] => {
   return [
     {
       libellé: 'Suivi des décisions',
@@ -127,7 +127,7 @@ export const ficheConducteurHandler = () => {
       .run({ chantierId })
       .then(presenterEnDonnéesCartographieContrat);
 
-    const objectifs = await new RécupérerObjectifsUseCase({
+    const publications = await new RécupérerPublicationsUseCase({
       objectifRepository: dependencies.getFicheConducteurObjectifRepository(),
       decisionStrategiqueRepository: dependencies.getFicheConducteurDecisionStrategiqueRepository(),
     })
@@ -139,7 +139,7 @@ export const ficheConducteurHandler = () => {
       avancement,
       synthèseDesRésultats,
       donnéesCartographie,
-      objectifs,
+      publications,
     };
   };
   
