@@ -9,7 +9,7 @@ const PageChantierStyled = styled.div`
       "avancement"
       "responsables"
       "synthèse";
-    gap: 1.5rem;
+    gap: 0.7rem;
   }
 
   @media (min-width: 48rem) {
@@ -17,13 +17,18 @@ const PageChantierStyled = styled.div`
       grid-template-areas:
         "avancement responsables"
         "synthèse   synthèse";
-      grid-template-columns: auto minmax(22.5rem, 1fr);
+      grid-template-columns: auto minmax(16.5rem, 1fr);
     }
   
     .layout--dept-reg {
       grid-template-areas:
         "avancement   avancement"
         "responsables synthèse";
+    }
+  }  
+  @media (min-width: 78rem) {
+    .layout--nat {
+      grid-template-columns: auto minmax(22.5rem, 1fr);
     }
   }
 

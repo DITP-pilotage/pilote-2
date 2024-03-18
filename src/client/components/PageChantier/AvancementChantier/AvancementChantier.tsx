@@ -47,14 +47,17 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
           </Bloc>
       }
       <div className='avancement-national'>
-        <Bloc titre='National'>
+        <Bloc
+          contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'
+          titre='National'
+        >
           <section className='fr-py-1w'>
             <div className='fr-container fr-p-0'>
               <div className='fr-grid-row fr-mb-2w'>
-                <div className='fr-col-6 flex flex-column border-r'>
+                <div className='fr-col-12 fr-col-md-5 fr-col-lg-12 fr-col-xl-6 flex flex-column border-md-r fr-pr-1w'>
                   <Titre
                     baliseHtml='h3'
-                    className='fr-text--md fr-mb-0 fr-py-1v texte-centre'
+                    className='fr-text--md fr-mb-0 fr-py-1v texte-centre break-keep'
                     estInline
                   >
                     Taux d’avancement national
@@ -68,8 +71,8 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                     />
                   </div>
                 </div>
-                <div className='fr-col-6'>
-                  <div className='fr-container'>
+                <div className='fr-col-12 fr-col-md-7 fr-col-lg-12 fr-col-xl-6'>
+                  <div className='fr-container fr-px-md-1w fr-px-lg-2w'>
                     <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
                       Répartition des territoires
                     </div>
@@ -78,6 +81,7 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                         <JaugeDeProgression
                           couleur='orange'
                           libellé='Minimum'
+                          noWrap
                           pourcentage={avancements.nationale?.global.minimum || null}
                           taille='sm'
                         />
@@ -86,6 +90,7 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                         <JaugeDeProgression
                           couleur='violet'
                           libellé='Médiane'
+                          noWrap
                           pourcentage={avancements.nationale?.global.médiane || null}
                           taille='sm'
                         />
@@ -94,13 +99,16 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                         <JaugeDeProgression
                           couleur='vert'
                           libellé='Maximum'
+                          noWrap
                           pourcentage={avancements.nationale?.global.maximum || null}
                           taille='sm'
                         />
                       </div>
                     </div>
-                    <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm text-bottom-jauge-progression'>
-                      Répartition des taux d’avancement moyen des territoires
+                    <div className='fr-grid-row fr-grid-row--center w-full texte-centre fr-py-1w'>
+                      <p className='fr-text--sm text-bottom-jauge-progression fr-m-0'>
+                        Répartition des taux d’avancement moyen des territoires
+                      </p>
                     </div>
                   </div>
                 </div>
