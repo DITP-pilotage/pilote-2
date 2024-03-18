@@ -5,7 +5,7 @@ indic_taa_courant_dispo as (
 	select b.chantier_id, indic_id, zone_id, metric_date, taa_courant
 	from {{ ref('compute_ta_indic') }} a
 	left join {{ ref('stg_ppg_metadata__indicateurs') }} b on a.indic_id=b.id
-	where taa_courant is not null
+	where vaca is not null
 )
 , ch_count_taa_courant_par_date as (
 select 
