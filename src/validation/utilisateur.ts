@@ -1,5 +1,7 @@
 import { z } from 'zod';
-import { profilsCodes } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { ProfilCode, profilsCodes } from '@/server/domain/utilisateur/Utilisateur.interface';
+
+const customErrorMail = 'Vous essayez de créer un compte pour une adresse ne relevant pas du périmètre de l’Etat. Veuillez contacter support.ditp@modernisation.gouv.fr pour plus d’informations';
 
 const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
   if (issue.code === z.ZodIssueCode.invalid_string && issue.validation === 'email') {
@@ -33,6 +35,16 @@ export const validationInfosBaseUtilisateur = z.object( {
   saisieCommentaire: z.boolean(),
 });
 
+export const validationInfosBaseUtilisateurRéférents = z.object( {
+  email: z.string().email().min(1).max(100).refine((value) => value.endsWith('.gouv.fr'), { message : customErrorMail }),
+  nom: z.string().min(1).max(100),
+  prénom: z.string().min(1).max(100),
+  fonction: z.string().max(100).nullable(),
+  profil: z.enum(profilsCodes),
+  saisieIndicateur: z.boolean(),
+  saisieCommentaire: z.boolean(),
+});
+
 export const validationInfosHabilitationsUtilisateur = z.object({
   habilitations : z.object({
     lecture: z.object({
@@ -58,3 +70,7 @@ export const validationSupprimerUtilisateur = z.object({
 });
 
 export const codesTerritoiresDROM = ['NAT-FR', 'REG-01', 'REG-02', 'REG-03', 'REG-04', 'REG-06', 'DEPT-971', 'DEPT-972', 'DEPT-973', 'DEPT-974', 'DEPT-976'];
+
+export const donneValidationInfosBaseUtilisateur = (profil: ProfilCode) => {
+  return ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profil) ? validationInfosBaseUtilisateur : validationInfosBaseUtilisateurRéférents;
+};
