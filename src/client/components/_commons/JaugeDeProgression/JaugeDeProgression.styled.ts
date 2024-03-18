@@ -1,43 +1,53 @@
 import styled from '@emotion/styled';
-import { JaugeDeProgressionStyledProps } from './JaugeDeProgression.interface';
 
-const couleurs = {
-  bleu: 'var(--background-active-blue-france)',
-  bleuClair: 'var(--background-flat-info)', 
-  violet: '#8585F6',
-  orange: '#FC5D00',
-  vert: '#27A658',
-  rose: 'var(--background-action-high-pink-tuile)',
-};
-
-const largeurs = {
-  sm: {
-    'max': '3.75rem',
-    'min': '3.75rem',
-  },
-  md: {
-    'max': '5.5rem',
-    'min': '4rem',
-  },
-  lg: {
-    'max': '10.5rem',
-    'min': '8.25rem',
-  },
-};
-
-const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`
+const JaugeDeProgressionStyled = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
 
+
+  .jauge-tracé--sm {
+    width: 3.75rem;
+  }
+
+  .jauge-tracé--md {
+    width: 5.5rem;
+  }
+
+  .jauge-tracé--lg {
+    width: 10.5rem;
+  }
+
   .jauge-tracé {
     position: relative;
-    width: ${(props) => largeurs[props.taille].max};
-    
+
     .jauge-valeur {
+      &.jauge-valeur--bleu {
+        color: var(--background-active-blue-france);
+      }
+
+      &.jauge-valeur--bleu-clair {
+        color: var(--background-flat-info);
+      }
+
+      &.jauge-valeur--violet {
+        color: #8585F6;
+      }
+
+      &.jauge-valeur--orange {
+        color: #FC5D00;
+      }
+
+      &.jauge-valeur--vert {
+        color: #27A658;
+      }
+
+      &.jauge-valeur--rose {
+        color: var(--background-action-high-pink-tuile);
+      }
+
       margin-bottom: 0;
-      color: ${(props) => couleurs[props.couleur]};
       word-break: normal;
 
       &.jauge-valeur-au-centre {
@@ -52,14 +62,42 @@ const JaugeDeProgressionStyled = styled.div<JaugeDeProgressionStyledProps>`
       fill: #d9d9d9;
     }
 
-    .jauge-barre-valeur {
-      fill: ${(props) => couleurs[props.couleur]};
+    .jauge-barre-valeur--bleu {
+      fill: var(--background-active-blue-france);
+    }
+
+    .jauge-barre-valeur--bleu-clair {
+      fill: var(--background-flat-info);
+    }
+
+    .jauge-barre-valeur--violet {
+      fill: #8585F6;
+    }
+
+    .jauge-barre-valeur--orange {
+      fill: #FC5D00;
+    }
+
+    .jauge-barre-valeur--vert {
+      fill: #27A658;
+    }
+
+    .jauge-barre-valeur--rose {
+      fill: var(--background-action-high-pink-tuile);
     }
   }
 
   @media screen and (max-width: 80rem) {
-    .jauge-tracé {
-      width: ${(props) => largeurs[props.taille].min};
+    .jauge-tracé--sm {
+      width: 3.75rem;
+    }
+
+    .jauge-tracé--md {
+      width: 4rem;
+    }
+
+    .jauge-tracé--lg {
+      width: 8.25rem;
     }
   }
 `;

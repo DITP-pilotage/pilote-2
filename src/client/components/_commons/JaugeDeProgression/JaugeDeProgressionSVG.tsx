@@ -51,7 +51,7 @@ function tracerValeurJauge(pourcentage: number, taille: JaugeDeProgressionTaille
   ].join(' ');
 }
 
-function JaugeDeProgressionSVG({ pourcentage, taille }: JaugeDeProgressionSVGProps) {
+function JaugeDeProgressionSVG({ pourcentage, taille, couleur }: JaugeDeProgressionSVGProps) {
   const id = useId();
   return (
     <svg
@@ -62,7 +62,7 @@ function JaugeDeProgressionSVG({ pourcentage, taille }: JaugeDeProgressionSVGPro
         clipPath={`url(#masque-${id})`}
       >
         <rect
-          className='jauge-barre-fond'
+          className={`jauge-barre-fond jauge-barre-valeur-${couleur}`}
           height={TAILLE_VIEWBOX}
           width={TAILLE_VIEWBOX}
         />
@@ -70,7 +70,7 @@ function JaugeDeProgressionSVG({ pourcentage, taille }: JaugeDeProgressionSVGPro
         pourcentage
           ?
             <path
-              className='jauge-barre-valeur'
+              className={`jauge-barre-valeur jauge-barre-valeur--${couleur}`}
               d={tracerValeurJauge(pourcentage, taille || 'lg')}
               transform={`rotate(${TRACÉS[taille || 'lg'].angleDépart} ${CENTRE_VIEWBOX.x} ${CENTRE_VIEWBOX.y})`}
             />

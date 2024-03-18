@@ -42,7 +42,7 @@ export default function Avancements({ avancements }: AvancementsProps) {
           <BarreDeProgression
             afficherTexte={false}
             bordure={null}
-            fond='grisClair'
+            fond='gris-clair'
             positionTexte='dessus'
             taille='xxs'
             valeur={!!avancements && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.annuel.moyenne : null}

@@ -83,7 +83,7 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
             <td className='fr-pt-1w fr-pb-0 fr-pr-0'>
               <BarreDeProgression
                 afficherTexte
-                fond='grisClair'
+                fond='gris-clair'
                 positionTexte='côté'
                 taille='md'
                 valeur={avancement.annuel}
@@ -116,7 +116,7 @@ export default function IndicateurBlocIndicateurTuile({ indicateurDétailsParTer
             <td className='fr-pt-1w fr-pb-0 fr-pr-0'>
               <BarreDeProgression
                 afficherTexte
-                fond='grisClair'
+                fond='gris-clair'
                 positionTexte='côté'
                 taille='md'
                 valeur={avancement.global}
