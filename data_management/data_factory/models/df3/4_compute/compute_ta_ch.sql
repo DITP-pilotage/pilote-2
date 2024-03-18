@@ -42,7 +42,7 @@ select * from (
 	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_taa_courant_today as max_date,
 	'today' as valid_on
 	from ta_zone_indic_pond a
-	left join {{ ref('get_max_date_taa_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
+	left join {{ ref('get_max_date_vaca_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
 	where vaca is not null
 	and metric_date::date<=max_date_taa_courant_today::date
 	) a
@@ -54,7 +54,7 @@ select * from (
 	select a.*, rank() over (partition by a.zone_id, a.indic_id order by a.metric_date desc) as r, b.max_date_taa_courant_previous as max_date,
 	'prev_month' as valid_on
 	from ta_zone_indic_pond a
-	left join {{ ref('get_max_date_taa_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
+	left join {{ ref('get_max_date_vaca_ch') }} b on a.indic_parent_ch=b.chantier_id and a.zone_id=b.zone_id
 	where vaca is not null
 	and metric_date::date<=max_date_taa_courant_previous::date
 	) a
