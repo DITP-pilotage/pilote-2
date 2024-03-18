@@ -6,11 +6,14 @@ import { FicheConducteurContrat } from '@/server/fiche-conducteur/app/contrats/F
 import { ficheConducteurHandler } from '@/server/fiche-conducteur/infrastructure/handlers/FicheConducteurHandler';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import { PageFicheConducteur } from '@/components/PageFicheConducteur/PageFicheConducteur';
+import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 
 export const getServerSideProps: GetServerSideProps<FicheConducteurContrat> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
 
-  if (!session || !estAutoriséAConsulterLaFicheTerritoriale(session.profil)) {
+  const estFicheConducteurDisponible = await new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_FICHE_CONDUCTEUR' });
+
+  if (!estFicheConducteurDisponible || !session || !estAutoriséAConsulterLaFicheTerritoriale(session.profil)) {
     throw new Error('Not connected or not authorized ?');
   }
 
