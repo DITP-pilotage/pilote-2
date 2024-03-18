@@ -100,7 +100,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     
     let chantiersAccessibles = chantiers;
 
-    if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION'].includes(session?.profil)) {
+    if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION'].includes(session!.profil)) {
       chantiersAccessibles = chantiersAccessibles.filter(chantier => session?.habilitations.saisieCommentaire.chantiers.includes(chantier.id));
     }
 
@@ -142,7 +142,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
       const profilAssociéAuProfilCodeSélectionné = profils.find(p => p.code === profilCodeSélectionné)!;
       setProfilSélectionné(profilAssociéAuProfilCodeSélectionné);
       let profilsFiltrés = profils;
-      if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION'].includes(session?.profil)) {
+      if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION'].includes(session!.profil)) {
         profilsFiltrés = profilsFiltrés.filter(profil => PROFILS_POSSIBLES_REFERENTS[session?.profil as keyof typeof PROFILS_POSSIBLES_REFERENTS].includes(profil.code));
       }
       setListeProfils(profilsFiltrés.map(profil => ({ libellé: profil.nom, valeur: profil.code })));

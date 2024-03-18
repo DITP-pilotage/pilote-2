@@ -119,13 +119,13 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
             }
           </div>
         </div>
-        <div className='fr-grid-row fr-grid-row--gutters'>
-          <div className='fr-col-12 fr-col-lg-6'>
-            <Bloc>
+        <div className='fr-grid-row'>
+          <div className='fr-col-12 fr-col-lg-7 fr-col-xl-6 fr-pr-1w'>
+            <Bloc contenuClassesSupplémentaires='fr-p-1w fr-p-lg-2w'>
               <section>
                 <div className='fr-container fr-p-0'>
                   <div className='fr-grid-row fr-mb-2w'>
-                    <div className='fr-col-6 flex flex-column border-r'>
+                    <div className='fr-col-12 fr-col-md-5 flex flex-column border-lg-r'>
                       <TitreInfobulleConteneur>
                         <Titre
                           baliseHtml='h2'
@@ -147,7 +147,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                         />
                       </div>
                     </div>
-                    <div className='fr-col-6'>
+                    <div className='fr-col-12 fr-col-md-7'>
                       <div className='fr-container fr-px-1w'>
                         <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
                           Répartition des territoires
@@ -157,6 +157,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                             <JaugeDeProgression
                               couleur='orange'
                               libellé='Minimum'
+                              noWrap
                               pourcentage={avancementsAgrégés?.global.minimum || null}
                               taille='sm'
                             />
@@ -165,6 +166,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                             <JaugeDeProgression
                               couleur='violet'
                               libellé='Médiane'
+                              noWrap
                               pourcentage={avancementsAgrégés?.global.médiane || null}
                               taille='sm'
                             />
@@ -173,6 +175,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                             <JaugeDeProgression
                               couleur='vert'
                               libellé='Maximum'
+                              noWrap
                               pourcentage={avancementsAgrégés?.global.maximum || null}
                               taille='sm'
                             />
@@ -223,12 +226,12 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
               </section>
             </Bloc>
           </div>
-          <div className='fr-col-12 fr-col-lg-6'>
+          <div className='fr-col-12 fr-col-lg-5 fr-col-xl-6 fr-pl-1w'>
             <Bloc>
               <section>
                 <Titre
                   baliseHtml='h2'
-                  className='fr-text--lg'
+                  className='fr-text--lg break-keep'
                 >
                   Taux d’avancement des chantiers par territoire
                 </Titre>

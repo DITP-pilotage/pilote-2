@@ -33,6 +33,7 @@
 .w-full {
   width: 100%;
 }
+
 .w-half-full {
   width: 50%;
 }
@@ -81,6 +82,10 @@
   white-space: nowrap;
 }
 
+.break-keep {
+  word-break: keep-all;
+}
+
 .h-40 {
   height: 10rem;
 }
@@ -117,6 +122,22 @@
   border-left-width: 1px;
   border-left-color: var(--border-default-grey);
   border-left-style: solid;
+}
+
+@media screen and (min-width: 48rem) {
+  .border-md-r {
+    border-right-width: 1px;
+    border-right-color: var(--border-default-grey);
+    border-right-style: solid;
+  }
+}
+
+@media screen and (min-width: 62rem) {
+  .border-lg-r {
+    border-right-width: 1px;
+    border-right-color: var(--border-default-grey);
+    border-right-style: solid;
+  }
 }
 
 .page-break {

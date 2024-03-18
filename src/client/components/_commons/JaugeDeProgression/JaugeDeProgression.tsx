@@ -17,7 +17,7 @@ const classesÀPartirDeTaille = {
   },
 };
 
-export default function JaugeDeProgression({ couleur, libellé, pourcentage, taille }: JaugeDeProgressionProps ) {
+export default function JaugeDeProgression({ couleur, libellé, pourcentage, taille, noWrap = false }: JaugeDeProgressionProps ) {
   return (
     <JaugeDeProgressionStyled
       couleur={couleur}
@@ -32,7 +32,7 @@ export default function JaugeDeProgression({ couleur, libellé, pourcentage, tai
           { `${pourcentage?.toFixed(0) ?? '- '}%` }
         </p>
       </div>
-      <p className={`fr-text--xs fr-mb-0 texte-centre ${classesÀPartirDeTaille[taille].libellé}`}>
+      <p className={`fr-text--xs fr-mb-0 texte-centre ${classesÀPartirDeTaille[taille].libellé}${noWrap ? 'no-wrap' : ''}`}>
         {libellé}
       </p>
     </JaugeDeProgressionStyled>

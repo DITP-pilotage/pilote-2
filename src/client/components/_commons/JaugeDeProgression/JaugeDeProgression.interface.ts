@@ -6,6 +6,7 @@ export interface JaugeDeProgressionProps {
   libellé: string,
   pourcentage: number | null,
   taille: JaugeDeProgressionTaille,
+  noWrap?: boolean,
 }
 
 export interface JaugeDeProgressionStyledProps {

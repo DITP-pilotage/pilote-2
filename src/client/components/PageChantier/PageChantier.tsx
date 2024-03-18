@@ -88,7 +88,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                 afficheLeBoutonMiseAJourDonnee={saisieIndicateurAutorisée}
                 chantier={chantier}
               />
-              <div className='fr-container--fluid fr-py-2w fr-px-md-4w'>
+              <div className='fr-container--fluid fr-py-2w fr-px-md-2w'>
                 <div className={`grid-template ${territoireSélectionné!.maille === 'nationale' ? 'layout--nat' : 'layout--dept-reg'}`}>
                   {
                     avancements !== null &&

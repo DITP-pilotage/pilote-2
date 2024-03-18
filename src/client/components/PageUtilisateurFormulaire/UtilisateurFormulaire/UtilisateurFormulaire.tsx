@@ -2,14 +2,16 @@ import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+
 import Titre from '@/components/_commons/Titre/Titre';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import IndicateurDEtapes from '@/components/_commons/IndicateurDEtapes/IndicateurDEtapes';
 import { donneValidationInfosBaseUtilisateur } from '@/validation/utilisateur';
-import RécapitulatifUtilisateur from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/RécapitulatifUtilisateur';
+import RécapitulatifUtilisateur
+  from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/RécapitulatifUtilisateur/RécapitulatifUtilisateur';
 import SaisieDesInformationsUtilisateur from './SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur';
 import { UtilisateurFormInputs, UtilisateurFormulaireProps } from './UtilisateurFormulaire.interface';
-import { useSession } from 'next-auth/react';
 
 export default function UtilisateurFormulaire({ utilisateur }: UtilisateurFormulaireProps) {
   const étapes = ['Identifier l\'utilisateur', 'Vérifier les droits attribués au compte'];
@@ -17,7 +19,7 @@ export default function UtilisateurFormulaire({ utilisateur }: UtilisateurFormul
   const { data: session } = useSession();
 
   const reactHookForm = useForm<UtilisateurFormInputs>({
-    resolver: zodResolver(donneValidationInfosBaseUtilisateur(session?.profil)),
+    resolver: zodResolver(donneValidationInfosBaseUtilisateur(session!.profil)),
   });
 
   const passerAuRécapitulatif = async () => {

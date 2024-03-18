@@ -3,17 +3,17 @@ import styled from '@emotion/styled';
 const AvancementChantierStyled = styled.div`
   display: grid;
   grid-template-areas: "nat";
-  gap: 1.5rem;
+  gap: 0.7rem;
 
   &.layout--dept {
     @media (min-width: 992px) {
       grid-template-areas: "dept reg nat";
-      grid-template-columns: 1fr 1fr 2fr;
+      grid-template-columns: 1fr 1fr 4fr;
     }
 
     @media (min-width: 768px) and (max-width: 991px) {
       grid-template-areas: "dept reg" "nat nat";
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 2fr;
     }
 
     grid-template-areas: "dept" "reg" "nat";
