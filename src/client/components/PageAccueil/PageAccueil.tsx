@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import PageChantiers from '@/components/PageAccueil/PageChantiers/PageChantiers';
 import PageProjetsStructurants from '@/components/PageAccueil/PageProjetsStructurants/PageProjetsStructurants';
 import SélecteursMaillesEtTerritoires
@@ -13,21 +13,21 @@ import {
   actionsTypeDeRéformeStore,
   typeDeRéformeSélectionnéeStore,
 } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
-import api from '@/server/infrastructure/api/trpc/api';
-import PageAccueilProps from './PageAccueil.interface';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import { ProjetStructurantVueDEnsemble } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
+import Axe from '@/server/domain/axe/Axe.interface';
+import Ppg from '@/server/domain/ppg/Ppg.interface';
 import SélecteurTypeDeRéforme from './SélecteurTypeDeRéforme/SélecteurTypeDeRéforme';
 
-const usePageAccueil = () => {
-  const { data: projetsStructurantsEstDisponible } = api.gestionContenu.récupérerVariableContenu.useQuery({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS' });
-
-  return {
-    verifierProjetsStructurants: projetsStructurantsEstDisponible,
-  };
-};
-
-export default function PageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs }: PageAccueilProps) {
-  const { verifierProjetsStructurants } = usePageAccueil();
-
+const PageAccueil: FunctionComponent<{
+  chantiers: Chantier[]
+  projetsStructurants: ProjetStructurantVueDEnsemble[]
+  ministères: Ministère[]
+  axes: Axe[],
+  ppgs: Ppg[],
+  estProjetStructurantDisponible: boolean,
+}> = ({ chantiers, projetsStructurants, ministères, axes, ppgs, estProjetStructurantDisponible }) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const typeDeRéformeSélectionné = typeDeRéformeSélectionnéeStore();
   const { modifierTypeDeRéformeSélectionné } = actionsTypeDeRéformeStore();
@@ -40,7 +40,7 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
       >
         <BarreLatéraleEncart>
           {
-            verifierProjetsStructurants ? (
+            estProjetStructurantDisponible ? (
               <SélecteurTypeDeRéforme
                 modifierTypeDeRéformeSélectionné={modifierTypeDeRéformeSélectionné}
                 typeDeRéformeSélectionné={typeDeRéformeSélectionné}
@@ -79,13 +79,16 @@ export default function PageAccueil({ chantiers, projetsStructurants, ministère
               ministères={ministères}
             />
             :
-            process.env.NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS === 'true' && 
-            <PageProjetsStructurants 
-              ministères={ministères}
-              projetsStructurants={projetsStructurants}
-            />
+            estProjetStructurantDisponible ? (
+              <PageProjetsStructurants
+                ministères={ministères}
+                projetsStructurants={projetsStructurants}
+              />
+            ) : null
         }
       </div>
     </PageAccueilStyled>
   );
-}
+};
+
+export default PageAccueil;

@@ -1,6 +1,8 @@
 import { getServerSession } from 'next-auth/next';
-import { GetServerSidePropsContext } from 'next/types';
 import Head from 'next/head';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { FunctionComponent } from 'react';
+import { redirect } from 'next/navigation';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
@@ -13,6 +15,7 @@ import RécupérerListeProjetsStructurantsVueDEnsembleUseCase
   from '@/server/usecase/projetStructurant/RécupérerListeProjetsStructurantsVueDEnsembleUseCase';
 import RécupérerChantiersAccessiblesEnLectureUseCase
   from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
+import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 
 interface NextPageAccueilProps {
   chantiers: Chantier[]
@@ -20,32 +23,15 @@ interface NextPageAccueilProps {
   ministères: Ministère[]
   axes: Axe[],
   ppgs: Ppg[],
+  estProjetStructurantDisponible: boolean,
 }
 
-export default function NextPageAccueil({ chantiers, projetsStructurants, ministères, axes, ppgs }: NextPageAccueilProps) {
-  return (
-    <>
-      <Head>
-        <title>
-          PILOTE - Piloter l’action publique par les résultats
-        </title>
-      </Head>
-      <PageAccueil
-        axes={axes}
-        chantiers={chantiers}
-        ministères={ministères}
-        ppgs={ppgs}
-        projetsStructurants={projetsStructurants}
-      />
-    </>
-  );
-}
-
-export async function getServerSideProps({ req, res }: GetServerSidePropsContext) {
+export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
 
-  if (!session || !session.habilitations)
-    return { props: {} };
+  if (!session || !session.habilitations) {
+    redirect('/403');
+  }
 
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
     dependencies.getChantierRepository(),
@@ -74,6 +60,8 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
     ppgs = await ppgRepository.getListePourChantiers(chantiers);
   }
 
+  const estProjetStructurantDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS' });
+
   return {
     props: {
       chantiers,
@@ -81,6 +69,29 @@ export async function getServerSideProps({ req, res }: GetServerSidePropsContext
       ministères,
       axes,
       ppgs,
+      estProjetStructurantDisponible: !!estProjetStructurantDisponible,
     },
   };
-}
+};
+
+const NextPageAccueil : FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ chantiers, projetsStructurants, ministères, axes, ppgs, estProjetStructurantDisponible }) => {
+  return (
+    <>
+      <Head>
+        <title>
+          PILOTE - Piloter l’action publique par les résultats
+        </title>
+      </Head>
+      <PageAccueil
+        axes={axes}
+        chantiers={chantiers}
+        estProjetStructurantDisponible={estProjetStructurantDisponible}
+        ministères={ministères}
+        ppgs={ppgs}
+        projetsStructurants={projetsStructurants}
+      />
+    </>
+  );
+};
+
+export default NextPageAccueil;

@@ -32,6 +32,9 @@ export class RécupérerVariableContenuUseCase {
       case 'NEXT_PUBLIC_FF_FICHE_TERRITORIALE': {
         return configuration.featureFlip.ficheTerritoriale as VariableContenuDisponibleEnv[T];
       }
+      case 'NEXT_PUBLIC_FF_FICHE_CONDUCTEUR': {
+        return configuration.featureFlip.ficheConducteur as VariableContenuDisponibleEnv[T];
+      }
       case 'NEXT_PUBLIC_FF_TA_ANNUEL': {
         return configuration.featureFlip.taAnnuel as VariableContenuDisponibleEnv[T];
       }

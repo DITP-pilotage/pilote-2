@@ -7,6 +7,10 @@ const classesÀPartirDeTaille = {
     valeur: 'jauge-valeur-dessous fr-h6',
     libellé: '',
   },
+  md: {
+    valeur: 'jauge-valeur-au-centre fr-h4 texte-centre',
+    libellé: 'texte-centre',
+  },
   lg: {
     valeur: 'jauge-valeur-au-centre fr-h1 texte-centre',
     libellé: 'texte-centre',

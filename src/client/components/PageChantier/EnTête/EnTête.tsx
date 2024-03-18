@@ -1,3 +1,5 @@
+import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
+import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import '@gouvfr/dsfr/dist/dsfr.min.css';
 import Link from 'next/link';
 import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpression';
@@ -9,6 +11,7 @@ export default function PageChantierEnTête({
   chantier,
   afficheLeBoutonImpression = false,
   afficheLeBoutonMiseAJourDonnee = false,
+  afficheLeBoutonFicheConducteur = false,
 }: PageChantierEnTêteProps) {
   return (
     <PageChantierEnTêteStyled className='fr-px-2w fr-px-md-4w fr-py-2w'>
@@ -37,6 +40,16 @@ export default function PageChantierEnTête({
         }
         {
           !!afficheLeBoutonImpression && <BoutonImpression />
+        }
+        {
+          afficheLeBoutonFicheConducteur ? (
+            <Link
+              className='fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left fr-px-1w fr-px-md-2w fr-ml-2w'
+              href={`${chantier.id}/fiche-conducteur`}
+            >
+              Fiche conducteur
+            </Link>
+          ) : null
         }
       </div>
     </PageChantierEnTêteStyled>
