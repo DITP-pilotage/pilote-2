@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { FieldError, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { useSession } from 'next-auth/react';
 import {
   UtilisateurFormInputs,
@@ -29,14 +29,12 @@ export const PROFILS_POSSIBLES_REFERENTS = {
 
 export default function useSaisieDesInformationsUtilisateur(utilisateur?: UtilisateurFormulaireProps['utilisateur']) {
   const { data: session } = useSession();
-  const { register, watch, formState: { isSubmitted, errors }, control, setValue, getValues, resetField, unregister } = useFormContext<UtilisateurFormInputs>();
+  const { register, watch, formState: { errors }, control, setValue, getValues, resetField, unregister } = useFormContext<UtilisateurFormInputs>();
   const profilCodeSélectionné = watch('profil');
   const territoiresSélectionnés = watch('habilitations.lecture.territoires');
   const chantiersSélectionnés = watch('habilitations.lecture.chantiers');
   const périmètresMinistérielsSélectionnés = watch('habilitations.lecture.périmètres');
-  const emailRenseigne = watch('email');
 
-  const [erreurEmailReferents, setErreurEmailReferents] = useState<FieldError | undefined>();
   const [ancienProfilCodeSélectionné, setAncienProfilCodeSélectionné] = useState<string | undefined>();
   const [chantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés, setChantiersIdsAppartenantsAuPérimètresMinistérielsSélectionnés] = useState<string[]>([]);
   const [profilSélectionné, setProfilSélectionné] = useState<Profil | undefined>();
@@ -57,19 +55,6 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
 
   const { data: profils } = api.profil.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
-
-  // GESTION DE L'ERREUR DE L'ADRESSE MAIL
-  useEffect(() => { 
-    if (!isSubmitted || emailRenseigne?.endsWith('.gouv.fr') || ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session?.profil)) {
-      const erreur = undefined;
-      setErreurEmailReferents(erreur);
-    } else {
-      setErreurEmailReferents({
-        type: 'value',
-        message: 'Vous essayez de créer un compte pour une adresse ne relevant pas du périmètre de l’Etat. Veuillez contacter support.ditp@modernisation.gouv.fr pour plus d’informations.',
-      });
-    }
-  }, [emailRenseigne, session, isSubmitted]);
 
   // GESTION CHANGEMENT DE PROFIL
   const handleChangementValeursSélectionnéesChantiers = useCallback((valeursSélectionnées: string[]) => {    
@@ -229,6 +214,5 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
     session,
-    erreurEmailReferents,
   };
 }
