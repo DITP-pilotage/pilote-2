@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Head from 'next/head';
 import { TRPCClientError } from '@trpc/client';
+import init from '@socialgouv/matomo-next';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
 import useDétecterLargeurDÉcran from '@/client/hooks/useDétecterLargeurDÉcran';
 import api from '@/server/infrastructure/api/trpc/api';
@@ -55,6 +56,13 @@ function MonApplication({ Component, pageProps }: AppProps) {
       Router.events.off('routeChangeError', finChargement);
     };
   }, []);
+
+  const matomoUrl = process.env.NEXT_PUBLIC_MATOMO_URL;
+  const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID;
+
+  useEffect(() => {
+    init({ url: matomoUrl as string, siteId: matomoSiteId as string  });
+  }, [matomoSiteId, matomoUrl]);
 
   useEffect(() => {
     let timer = setTimeout(() => {});

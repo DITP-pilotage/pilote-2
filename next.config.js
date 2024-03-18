@@ -33,7 +33,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: `default-src 'self' data: 'unsafe-inline'; frame-src https://video.finances.gouv.fr/ https://app.livestorm.co/; connect-src https://api.validata.etalab.studio/ 'self' data: 'unsafe-inline' ws:; script-src 'self' 'unsafe-eval';`,
+            value: `default-src 'self' data: 'unsafe-inline'; frame-src https://video.finances.gouv.fr/ https://app.livestorm.co/; connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self' data: 'unsafe-inline' ws:; script-src 'self' https://stats.beta.gouv.fr/ 'unsafe-eval' 'unsafe-inline';`,
           },
           {
             key: 'X-Frame-Options',

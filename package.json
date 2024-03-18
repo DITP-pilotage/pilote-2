@@ -57,6 +57,7 @@
     "@keycloak/keycloak-admin-client": "^21.0.2",
     "@next/env": "^13.3.4",
     "@prisma/client": "^4.12.0",
+    "@socialgouv/matomo-next": "^1.8.1",
     "@tanstack/react-query": "^4.28.0",
     "@tanstack/react-query-devtools": "^4.28.0",
     "@tanstack/react-table": "^8.8.4",
