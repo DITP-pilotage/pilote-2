@@ -195,7 +195,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                       <BarreDeProgression
                         afficherTexte={false}
                         bordure={null}
-                        fond='grisClair'
+                        fond='gris-clair'
                         positionTexte='dessus'
                         taille='xxs'
                         valeur={!!avancementsAgrégés && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés.annuel.moyenne : null}

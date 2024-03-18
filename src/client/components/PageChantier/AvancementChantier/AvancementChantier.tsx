@@ -121,7 +121,7 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                   <BarreDeProgression
                     afficherTexte={false}
                     bordure={null}
-                    fond='grisClair'
+                    fond='gris-clair'
                     positionTexte='dessus'
                     taille='xxs'
                     valeur={!!avancements.nationale && process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancements.nationale.annuel.moyenne : null}

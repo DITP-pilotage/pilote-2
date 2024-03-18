@@ -2,7 +2,6 @@ import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { FunctionComponent } from 'react';
-import { redirect } from 'next/navigation';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
@@ -30,7 +29,16 @@ export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = asy
   const session = await getServerSession(req, res, authOptions);
 
   if (!session || !session.habilitations) {
-    redirect('/403');
+    return {
+      props: {
+        chantiers: [],
+        projetsStructurants: [],
+        ministères: [],
+        axes: [],
+        ppgs: [],
+        estProjetStructurantDisponible: false,
+      },
+    };
   }
 
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(

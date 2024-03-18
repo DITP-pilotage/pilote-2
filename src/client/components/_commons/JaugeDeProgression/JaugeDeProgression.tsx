@@ -19,16 +19,14 @@ const classesÀPartirDeTaille = {
 
 export default function JaugeDeProgression({ couleur, libellé, pourcentage, taille, noWrap = false }: JaugeDeProgressionProps ) {
   return (
-    <JaugeDeProgressionStyled
-      couleur={couleur}
-      taille={taille}
-    >
-      <div className='jauge-tracé'>
+    <JaugeDeProgressionStyled>
+      <div className={`jauge-tracé jauge-tracé--${taille}`}>
         <JaugeDeProgressionSVG
+          couleur={couleur}
           pourcentage={pourcentage}
           taille={taille}
         />
-        <p className={`jauge-valeur texte-centre ${classesÀPartirDeTaille[taille].valeur}`}>
+        <p className={`jauge-valeur jauge-valeur--${couleur} texte-centre ${classesÀPartirDeTaille[taille].valeur}`}>
           { `${pourcentage?.toFixed(0) ?? '- '}%` }
         </p>
       </div>

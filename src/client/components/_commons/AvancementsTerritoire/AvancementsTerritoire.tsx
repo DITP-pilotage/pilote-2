@@ -6,7 +6,7 @@ export default function AvancementsTerritoire({ territoireNom, avancementGlobal,
   return (
     <>
       <JaugeDeProgression
-        couleur='bleuClair'
+        couleur='bleu-clair'
         libellé={territoireNom}
         pourcentage={avancementGlobal}
         taille='lg'
@@ -20,7 +20,7 @@ export default function AvancementsTerritoire({ territoireNom, avancementGlobal,
             <BarreDeProgression
               afficherTexte={false}
               bordure={null}
-              fond='grisClair'
+              fond='gris-clair'
               positionTexte='dessus'
               taille='xxs'
               valeur={avancementAnnuel}

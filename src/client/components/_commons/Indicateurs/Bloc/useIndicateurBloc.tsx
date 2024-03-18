@@ -11,9 +11,7 @@ import {
   territoireSélectionnéTerritoiresStore,
 } from '@/client/stores/useTerritoiresStore/useTerritoiresStore';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import {
-  estLargeurDÉcranActuelleMoinsLargeQue,
-} from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import IndicateurBlocIndicateurTuile from '@/components/_commons/Indicateurs/Bloc/indicateurBlocIndicateurTuile';
 import { DétailsIndicateurTerritoire } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
@@ -130,7 +128,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       cell: avancementAnnuel => (
         <BarreDeProgression
           afficherTexte
-          fond='grisClair'
+          fond='gris-clair'
           positionTexte='dessus'
           taille='md'
           valeur={avancementAnnuel.getValue()}
@@ -157,7 +155,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       cell: avancementGlobal => (
         <BarreDeProgression
           afficherTexte
-          fond='grisClair'
+          fond='gris-clair'
           positionTexte='dessus'
           taille='md'
           valeur={avancementGlobal.getValue()}
@@ -226,7 +224,7 @@ export default function useIndicateurBloc(détailsIndicateur: DétailsIndicateur
       cell: avancementGlobal => (
         <BarreDeProgression
           afficherTexte
-          fond='grisClair'
+          fond='gris-clair'
           positionTexte='dessus'
           taille='md'
           valeur={avancementGlobal.getValue()}

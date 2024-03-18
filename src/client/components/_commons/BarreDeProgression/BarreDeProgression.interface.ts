@@ -1,7 +1,7 @@
 export type BarreDeProgressionTaille = 'xxs' | 'xs' | 'sm' | 'md' | 'lg';
 export type BarreDeProgressionVariante = 'primaire' | 'secondaire' | 'rose';
-export type BarreDeProgressionFond = 'bleu' | 'blanc' | 'grisMoyen' | 'grisClair';
-export type BarreDeProgressionBordure = 'bleu' | 'grisMoyen' | null;
+export type BarreDeProgressionFond = 'bleu' | 'blanc' | 'gris-moyen' | 'gris-clair';
+export type BarreDeProgressionBordure = 'bleu' | 'gris-moyen' | null;
 export type BarreDeProgressionPositionTexte = 'côté' | 'dessus';
 
 

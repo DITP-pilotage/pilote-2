@@ -1,11 +1,19 @@
 import BarreDeProgressionProps from '@/components/_commons/BarreDeProgression/BarreDeProgression.interface';
-import BarreDeProgressionStyled, { dimensions } from './BarreDeProgression.styled';
+import BarreDeProgressionStyled from './BarreDeProgression.styled';
+
+const dimensions = {
+  xxs: {  classNameDsfr: 'fr-text--xs' },
+  xs: {  classNameDsfr: 'fr-text--xs' },
+  sm: {  classNameDsfr: 'fr-text--xs' },
+  md: {  classNameDsfr: 'fr-text--sm' },
+  lg: { classNameDsfr: 'fr-h1' },
+};
 
 export default function BarreDeProgression({
   taille,
   variante,
-  fond = 'grisMoyen',
-  bordure = 'grisMoyen',
+  fond = 'gris-moyen',
+  bordure = 'gris-moyen',
   positionTexte = 'côté',
   valeur,
   afficherTexte = true,
@@ -14,15 +22,11 @@ export default function BarreDeProgression({
 
   return (
     <BarreDeProgressionStyled
-      bordure={bordure}
       className={`barre-de-progression flex texte-${positionTexte}`}
-      fond={fond}
-      positionTexte={positionTexte}
-      taille={taille}
-      variante={variante}
     >
       <div className='barre'>
         <progress
+          className={`progress--${taille} progress--${fond}${bordure ? ` progress--border-${bordure}` : ''}${valeur ? ` progress--${variante}` : ''}`}
           max='100'
           value={valeur ?? 0}
         >
@@ -33,7 +37,7 @@ export default function BarreDeProgression({
         !!afficherTexte && (
           <div className={`pourcentage texte-${positionTexte}`}>
             <p
-              className={`${dimensions[taille].classNameDsfr} fr-mb-0 bold`}
+              className={`${dimensions[taille].classNameDsfr} pourcentage--${fond} pourcentage--${taille} fr-mb-0 bold`}
             >
               {pourcentageAffiché}
             </p>
