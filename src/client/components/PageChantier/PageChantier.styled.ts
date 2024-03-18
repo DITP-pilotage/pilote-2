@@ -26,6 +26,7 @@ const PageChantierStyled = styled.div`
         "responsables synthèse";
     }
   }  
+  
   @media (min-width: 78rem) {
     .layout--nat {
       grid-template-columns: auto minmax(22.5rem, 1fr);
