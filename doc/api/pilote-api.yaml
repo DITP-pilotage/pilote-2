@@ -88,16 +88,119 @@ paths:
       operationId: get-chantier-id
       description: Obtenir les informations sur un chantier
       parameters: []
-    post:
+    put:
       summary: Modifier un chantier
       operationId: post-chantier-id
       responses:
         '200':
           description: OK
       description: Modifier les informations sur un chantier
-      tags:
-        - WIP
       x-internal: true
+      tags:
+        - Chantier
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Chantier'
+  '/indicateur/{indicateur_id}':
+    parameters:
+      - schema:
+          type: string
+        name: indicateur_id
+        in: path
+        required: true
+    get:
+      summary: Informations indicateur
+      tags:
+        - Indicateur
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Indicateur'
+              examples:
+                Example 1:
+                  value:
+                    id: CH-001
+                    description: Description textuelle du premier chantier
+                    nom: Premier chantier prioritaire
+                    directeur_projet: Jean Dupont
+                    ppg_id: PPG-123
+                    porteurs: MEFSIN | MSAPH
+                    perimetre_id: PER-019
+                    territorialise: true
+                    engagement: EMPLOI
+                    etat: PUBLIE
+      operationId: get-indicateur-id
+      description: Obtenir les informations sur un indicateur
+      parameters: []
+    put:
+      summary: Modifier un indicateur
+      operationId: post-indicateur-id
+      responses:
+        '200':
+          description: OK
+      description: Modifier les informations sur un indicateur
+      x-internal: true
+      tags:
+        - Indicateur
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Indicateur'
+    post:
+      summary: Import données indicateur
+      operationId: post-indicateur-indicateur_id
+      responses:
+        '200':
+          description: OK
+      description: Ajout de données d'un indicateur
+      tags:
+        - Indicateur
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                x-stoplight:
+                  id: mruq4uoieht0v
+                type: object
+                properties:
+                  zone_id:
+                    type: string
+                    x-stoplight:
+                      id: blgo0owpsk8tc
+                    description: Zone concernée par la valeur
+                    example: D22
+                  date_valeur:
+                    type: string
+                    x-stoplight:
+                      id: n46miuipk8svp
+                    description: Date d'effet de la valeur
+                    example: 18/03/2024
+                  type_valeur:
+                    type: string
+                    x-stoplight:
+                      id: 17gpabcm2adch
+                    example: vi
+                    description: Type de la valeur
+                  valeur:
+                    type: string
+                    x-stoplight:
+                      id: soplj7kcf5lqe
+                    description: 'Valeur de l''indicateur à cette date, zone'
+                    example: '24.7'
+                required:
+                  - zone_id
+                  - date_valeur
+                  - type_valeur
+                  - valeur
+        description: Ensemble des données indicateurs à ajouter.
 components:
   schemas:
     Chantier:
@@ -236,6 +339,14 @@ components:
         id:
           type: string
           example: EMPLOI
+    Indicateur:
+      title: Indicateur
+      x-stoplight:
+        id: dso2wkhwfj33t
+      type: object
+      properties:
+        id:
+          type: string
   securitySchemes:
     abc-123:
       name: X-API-KEY
@@ -254,6 +365,8 @@ components:
 tags:
   - name: Chantier
     description: Opérations sur les chantiers prioritaires
+  - name: Indicateur
+    description: Opérations sur les indicateurs des chantiers prioritaires
   - name: PPG
     description: Opérations sur les PPG (Politiques Prioritaires du Gouvernement)
   - name: WIP
