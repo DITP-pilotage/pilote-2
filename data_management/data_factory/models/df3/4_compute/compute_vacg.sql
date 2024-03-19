@@ -8,7 +8,7 @@ with mesures_and_params as (
     b.param_vacg_partition_date,
     b.param_vacg_op 
     from {{ ref('pivot_mesures') }} a
-    left join {{ ref('metadata_parametrage_indicateurs') }} b on a.indic_id=b.indic_id
+    left join {{ source('import_from_files', 'metadata_parametrage_indicateurs') }} b on a.indic_id=b.indic_id
 ),
 
 -- On détermine la date de décumul des VA
