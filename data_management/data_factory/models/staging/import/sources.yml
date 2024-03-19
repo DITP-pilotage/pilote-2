@@ -25,6 +25,8 @@ sources:
             description: "ID unqiue de la données ?"
           - name: rapport_id
             description: "ID unique du rapport associé à l'import de cette donnée."
+      - name: metadata_indicateurs
+        description: "Cette **table** contient les indicateurs Pilote qui ne sont **pas masqués**. Pour avoir l'ensemble des indicateurs **non masqués**, voir la table `metadata_indicateurs_hidden`."
       - name: metadata_indicateurs_hidden
         description: "Cette **table** contient les indicateurs Pilote **masqués et non masqués**. Pour voir seulement les indicateurs **non masqués**, voir la **table** `metadata_indicateurs`."
         columns:
