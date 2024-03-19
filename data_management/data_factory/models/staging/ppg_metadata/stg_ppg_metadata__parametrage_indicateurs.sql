@@ -54,9 +54,9 @@ renamed as (
             ELSE NULL
         END as partitionne_vacg_nombre_de_mois,
         param_vacg_op as vacg_operation,
-        poids_pourcent_dept_decla,
-        poids_pourcent_reg_decla,
-        poids_pourcent_nat_decla,
+        poids_pourcent_dept_declaree,
+        poids_pourcent_reg_declaree,
+        poids_pourcent_nat_declaree,
         tendance
 
     from source
