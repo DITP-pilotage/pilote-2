@@ -25,6 +25,7 @@ import { DonnéeCartographie } from '@/server/fiche-conducteur/domain/DonnéeCar
 import { RécupérerPublicationsUseCase } from '@/server/fiche-conducteur/usecases/RécupérerPublicationsUseCase';
 import { ObjectifType } from '@/server/fiche-conducteur/domain/ObjectifType';
 import { DecisionStrategiqueType } from '@/server/fiche-conducteur/domain/DecisionStrategiqueType';
+import { CommentaireType } from '@/server/fiche-conducteur/domain/CommentaireType';
 
 
 const numberWithSpaces = (nombreATransformer: number) => {
@@ -73,7 +74,7 @@ const presenterEnSynthèseDesResultatsContrat = (synthèseDesRésultats: Synthes
   };
 };
 
-const presenterEnObjectifsContrat = (objectif: Map<ObjectifType | DecisionStrategiqueType, string>): PublicationContrat[] => {
+const presenterEnObjectifsContrat = (objectif: Map<ObjectifType | DecisionStrategiqueType | CommentaireType, string>): PublicationContrat[] => {
   return [
     {
       libellé: 'Suivi des décisions',
@@ -86,7 +87,7 @@ const presenterEnObjectifsContrat = (objectif: Map<ObjectifType | DecisionStrate
       valeur: objectif.get('a_faire') || '-',
     }, {
       libellé: 'Risques et freins à lever',
-      valeur: objectif.get('risque_freins') || '-',
+      valeur: objectif.get('freins_a_lever') || '-',
     }, {
       libellé: 'Notre ambition',
       valeur: objectif.get('notre_ambition') || '-',
@@ -133,6 +134,7 @@ export const ficheConducteurHandler = () => {
     const publications = await new RécupérerPublicationsUseCase({
       objectifRepository: dependencies.getFicheConducteurObjectifRepository(),
       decisionStrategiqueRepository: dependencies.getFicheConducteurDecisionStrategiqueRepository(),
+      commentaireRepository: dependencies.getFicheConducteurCommentaireRepository(),
     })
       .run({ chantierId })
       .then(presenterEnObjectifsContrat);
