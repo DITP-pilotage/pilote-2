@@ -14,7 +14,7 @@ list_indic_terr as (
 	t.code as territoire_code, 
 	t.zone_id
 	from public.territoire t 
-	cross join {{ source('import_from_files', 'metadata_indicateurs') }} mi
+	cross join {{ ref('metadata_indicateurs') }} mi
 -- Pour prendre en compte le bool indic_hidden_pilote et ne pas retourner ces indicateurs:
 --	where not coalesce (mi.indic_hidden_pilote, false)
 ),
@@ -81,7 +81,7 @@ sort_mesures_vaca_last as (
     last_update_indic.dernier_import_auteur_indic,
     FALSE as a_supprimer
 	from public.territoire t 
-	cross join {{ source('import_from_files', 'metadata_indicateurs') }} mi
+	cross join {{ ref('metadata_indicateurs') }} mi
 	left join sort_mesures_vaca_last a on a.indic_id=mi.indic_id and a.zone_id=t.zone_id
 	-- donc la liste des terr X liste des indic vont ressortir ici.
 	-- list_indic_terr list_indic left join sort_mesures_va a on t.indic_id = list_indic.indic_id and t.zone_id = list_indic.zone_id

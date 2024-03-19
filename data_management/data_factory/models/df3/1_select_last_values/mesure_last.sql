@@ -13,7 +13,7 @@ fix_mesure_indicateur_06_31 as (
         ELSE metric_date
     END as metric_date_fixed
     from {{ source('import_from_files', 'mesure_indicateur') }} a
-	INNER JOIN {{ source('import_from_files', 'metadata_indicateurs') }} b on a.indic_id=b.indic_id 
+	INNER JOIN {{ ref('metadata_indicateurs') }} b on a.indic_id=b.indic_id 
     left join {{ ref('int_indicateurs_zones_applicables') }} c on a.indic_id=c.indic_id and a.zone_id=c.zone_id
     WHERE 
 	    -- On ne garde que les indics qui ne sont pas cachés

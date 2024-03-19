@@ -8,7 +8,7 @@ ta_zone_indic as (
 	vaca, vig, vca_courant, vcg,
 	taa_courant, tag
 	from {{ ref('compute_ta_indic') }} a
-	left join {{ source('import_from_files', 'metadata_indicateurs') }} b on a.indic_id =b.indic_id
+	left join {{ ref('metadata_indicateurs') }} b on a.indic_id =b.indic_id
 	left join {{ ref('metadata_zones') }} z on a.zone_id=z.zone_id 
 	order by indic_parent_ch, zone_id, metric_date, indic_id
 ),
