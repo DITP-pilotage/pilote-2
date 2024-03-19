@@ -15,6 +15,7 @@ import CartographieAvancement from '@/components/_commons/Cartographie/Cartograp
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from '@/client/constants/légendes/élémentsDeLégendesCartographieMétéo';
 import CartographieMétéo from '@/components/_commons/Cartographie/CartographieMétéo/CartographieMétéo';
 import { EnteteFicheConducteur } from '@/components/PageFicheConducteur/EnteteFicheConducteur';
+import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 
 const PageFicheConducteur: FunctionComponent<
 FicheConducteurContrat
@@ -55,7 +56,7 @@ FicheConducteurContrat
                     {chantier.directeursProjet}
                   </span>
                 </div>
-                <div className='fr-grid-row fr-pt-1w'>
+                <div className='fr-grid-row fr-py-1w'>
                   <div className='fr-col-5 flex justify-center align-end'>
                     <JaugeDeProgression
                       couleur='bleu'
@@ -89,6 +90,25 @@ FicheConducteurContrat
                         taille='sm'
                       />
                     </div>
+                  </div>
+                </div>
+                <div className='fr-grid-row border-t'>
+                  <div className='w-full'>
+                    <p className='fr-text--md fr-text--bold fr-mb-0 texte-gris'>
+                      { `${avancement.annuel?.toFixed(0) ?? '- '}%`}
+                    </p>
+                    <BarreDeProgression
+                      afficherTexte={false}
+                      bordure={null}
+                      fond='gris-clair'
+                      positionTexte='dessus'
+                      taille='xxs'
+                      valeur={avancement.annuel}
+                      variante='secondaire'
+                    />
+                    <p className='fr-text--xs fr-mb-0 fr-mt-1v'>
+                      Moyenne de l'année en cours
+                    </p>
                   </div>
                 </div>
               </Bloc>
@@ -285,7 +305,7 @@ FicheConducteurContrat
         </div>
         <div className='fr-container'>
           <Bloc contenuClassesSupplémentaires='fr-px-1w fr-py-1v'>
-            <div className='fiche-conducteur--tableau fr-container fr-text--xs fr-m-0'>
+            <div className='fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0'>
               <div
                 className='fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b'
               >

@@ -9,6 +9,7 @@ const convertirEnChantier = (chantierModel: ChantierModel): Chantier => {
     nom: chantierModel.nom,
     estTerritorialise: chantierModel.est_territorialise || false,
     tauxAvancement: chantierModel.taux_avancement,
+    tauxAvancementAnnuel: chantierModel.taux_avancement_annuel,
     maille: chantierModel.maille,
     codeInsee: chantierModel.code_insee,
     meteo: chantierModel.meteo as Meteo,

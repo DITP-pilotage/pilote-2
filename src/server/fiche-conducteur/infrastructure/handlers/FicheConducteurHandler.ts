@@ -59,6 +59,7 @@ const presenterEnChantierFicheConducteurContrat = (chantierFicheConducteur: Chan
 const presenterEnAvancementFicheConducteurContrat = (avancementFicheConducteur: AvancementFicheConducteur): AvancementFicheConducteurContrat => {
   return {
     global: avancementFicheConducteur.global,
+    annuel: avancementFicheConducteur.annuel,
     minimum: avancementFicheConducteur.minimum,
     mediane: avancementFicheConducteur.mediane,
     maximum: avancementFicheConducteur.maximum,
