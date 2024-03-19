@@ -2,7 +2,8 @@ import {
   AvancementFicheConducteurContrat,
   ChantierFicheConducteurContrat,
   DonnéesCartographieContrat,
-  FicheConducteurContrat, PublicationContrat,
+  FicheConducteurContrat,
+  PublicationContrat,
   SyntheseDesResultatsContrat,
 } from '@/server/fiche-conducteur/app/contrats/FicheConducteurContrat';
 import {
@@ -37,6 +38,7 @@ const presenterEnChantierFicheConducteurContrat = (chantierFicheConducteur: Chan
 
   return {
     nom: chantierFicheConducteur.nom,
+    estTerritorialise: chantierFicheConducteur.estTerritorialise,
     directeursAdministrationCentrale: chantierFicheConducteur.listeDirecteursAdministrationCentrale.join(', '),
     directeursProjet: chantierFicheConducteur.listeDirecteursProjet.join(', '),
     derniereValeurInitiale: derniereValeurInitiale ? `(${formaterDate(derniereValeurInitiale, 'MM/YY')})` : '',
@@ -134,12 +136,15 @@ export const ficheConducteurHandler = () => {
       .run({ chantierId })
       .then(presenterEnObjectifsContrat);
 
+    const doitAfficherDonnéesCartographie = donnéesCartographie.tauxAvancement.some(tauxAvancement => tauxAvancement.valeur) || donnéesCartographie.meteo.some(meteo => meteo.valeur) || chantier.estTerritorialise;
+
     return {
       chantier,
       avancement,
       synthèseDesRésultats,
       donnéesCartographie,
       publications,
+      doitAfficherDonnéesCartographie,
     };
   };
   

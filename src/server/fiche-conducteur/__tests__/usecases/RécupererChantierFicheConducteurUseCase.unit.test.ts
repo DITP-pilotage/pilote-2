@@ -28,6 +28,7 @@ describe('RécupererChantierFicheConducteurUseCase', () => {
     const chantier = new ChantierBuilder()
       .withId('CH-168')
       .withNom('Chantier 1')
+      .withEstTerritorialise(true)
       .withListeDirecteursAdministrationCentrale('DAC 1', 'DAC 2')
       .withListeDirecteursProjet('DP 1', 'DP 2')
       .withNom('Chantier 1')
@@ -40,6 +41,7 @@ describe('RécupererChantierFicheConducteurUseCase', () => {
     expect(chantierRepository.récupérerParIdEtParTerritoireCode).toHaveBeenNthCalledWith(1, { chantierId: 'CH-168', territoireCode: 'NAT-FR' });
     expect(chantierResult.id).toEqual('CH-168');
     expect(chantierResult.nom).toEqual('Chantier 1');
+    expect(chantierResult.estTerritorialise).toEqual(true);
     expect(chantierResult.listeDirecteursAdministrationCentrale).toIncludeSameMembers(['DAC 1', 'DAC 2']);
     expect(chantierResult.listeDirecteursProjet).toIncludeSameMembers(['DP 1', 'DP 2']);
   });

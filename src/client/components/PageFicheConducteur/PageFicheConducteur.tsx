@@ -18,7 +18,7 @@ import { EnteteFicheConducteur } from '@/components/PageFicheConducteur/EnteteFi
 
 const PageFicheConducteur: FunctionComponent<
 FicheConducteurContrat
-> = ({ chantier, avancement, synthèseDesRésultats, donnéesCartographie, publications }) => {
+> = ({ chantier, avancement, synthèseDesRésultats, donnéesCartographie, publications, doitAfficherDonnéesCartographie }) => {
   const commentaire = (synthèseDesRésultats.commentaire?.length || 0) > 1000 ? synthèseDesRésultats.commentaire?.slice(0, 930) + '... [commentaire coupé car dépassant les 1000 caractères]' : synthèseDesRésultats.commentaire;
 
   return (
@@ -26,7 +26,7 @@ FicheConducteurContrat
       <main className='fr-pb-2w'>
         <div className='fr-container fr-pb-1w fiche-conducteur__container'>
           <EnteteFicheConducteur>
-            {`Nationale - ${chantier.nom} - Principaux résultats 1/2`}
+            {`Nationale - ${chantier.nom} - Principaux résultats${doitAfficherDonnéesCartographie ? ' 1/2' : ''}`}
           </EnteteFicheConducteur>
         </div>
         <div className='fr-container'>
@@ -226,64 +226,64 @@ FicheConducteurContrat
           </Bloc>
         </div>
         <div className='page-break fr-mb-2w' />
-        <div className='fr-container fr-pb-1w fiche-conducteur__container only-print'>
-          <EnteteFicheConducteur>
-            {`Nationale - ${chantier.nom} - Principaux résultats 2/2`}
-          </EnteteFicheConducteur>
-        </div>
-        <div className='fr-container'>
-          <div className='fr-grid-row fr-grid-row--gutters'>
-            <div className='fr-col-6'>
-              <Titre
-                baliseHtml='h2'
-                className='fr-h5 fr-mb-1w fr-text-title--blue-france'
-              >
-                Taux d'avancement 2026
-              </Titre>
-              <div>
-                <Bloc>
-                  <CartographieAvancement
-                    auClicTerritoireCallback={() => {}}
-                    données={donnéesCartographie.tauxAvancement}
-                    options={{ estInteractif: false, territoireSélectionnable: false }}
-                    élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
-                  />
-                </Bloc>
+        {
+          doitAfficherDonnéesCartographie ? (
+            <>
+              <div className='fr-container fr-pb-1w fiche-conducteur__container only-print'>
+                <EnteteFicheConducteur>
+                  {`Nationale - ${chantier.nom} - Principaux résultats 2/2`}
+                </EnteteFicheConducteur>
               </div>
-            </div>
-            <div className='fr-col-6'>
-              <Titre
-                baliseHtml='h2'
-                className='fr-h5 fr-mb-1w fr-text-title--blue-france'
-              >
-                Niveau de confiance
-              </Titre>
-              <div>
-                <Bloc>
-                  <CartographieMétéo
-                    auClicTerritoireCallback={() => {}}
-                    données={donnéesCartographie.meteo}
-                    options={{ estInteractif: false, territoireSélectionnable: false }}
-                    élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
-                  />
-                </Bloc>
+              <div className='fr-container'>
+                <div className='fr-grid-row fr-grid-row--gutters'>
+                  <div className='fr-col-6'>
+                    <Titre
+                      baliseHtml='h2'
+                      className='fr-h5 fr-mb-1w fr-text-title--blue-france'
+                    >
+                      Taux d'avancement 2026
+                    </Titre>
+                    <div>
+                      <Bloc>
+                        <CartographieAvancement
+                          auClicTerritoireCallback={() => {}}
+                          données={donnéesCartographie.tauxAvancement}
+                          options={{ estInteractif: false, territoireSélectionnable: false }}
+                          élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}
+                        />
+                      </Bloc>
+                    </div>
+                  </div>
+                  <div className='fr-col-6'>
+                    <Titre
+                      baliseHtml='h2'
+                      className='fr-h5 fr-mb-1w fr-text-title--blue-france'
+                    >
+                      Niveau de confiance
+                    </Titre>
+                    <div>
+                      <Bloc>
+                        <CartographieMétéo
+                          auClicTerritoireCallback={() => {}}
+                          données={donnéesCartographie.meteo}
+                          options={{ estInteractif: false, territoireSélectionnable: false }}
+                          élémentsDeLégende={ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS}
+                        />
+                      </Bloc>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div className='page-break fr-mb-2w' />
+              <div className='page-break fr-mb-2w' />
+            </>
+          ) : null
+        }
         <div className='fr-container fr-pb-1w fiche-conducteur__container only-print'>
           <EnteteFicheConducteur>
             {`Nationale - ${chantier.nom} - Point d'avancement`}
           </EnteteFicheConducteur>
         </div>
         <div className='fr-container'>
-          <Titre
-            baliseHtml='h2'
-            className='fr-h5 fr-mb-1w fr-text-title--blue-france'
-          >
-            Publications
-          </Titre>
           <Bloc contenuClassesSupplémentaires='fr-px-1w fr-py-1v'>
             <div className='fiche-conducteur--tableau fr-container fr-text--xs fr-m-0'>
               <div

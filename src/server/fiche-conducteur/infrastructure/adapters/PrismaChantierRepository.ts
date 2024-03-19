@@ -7,6 +7,7 @@ const convertirEnChantier = (chantierModel: ChantierModel): Chantier => {
   return Chantier.creerChantier({
     id: chantierModel.id,
     nom: chantierModel.nom,
+    estTerritorialise: chantierModel.est_territorialise || false,
     tauxAvancement: chantierModel.taux_avancement,
     maille: chantierModel.maille,
     codeInsee: chantierModel.code_insee,

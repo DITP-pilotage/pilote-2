@@ -10,7 +10,7 @@ describe('PrismaIndicateurRepository', () => {
     prismaIndicateurRepository = new PrismaIndicateurRepository(prisma);
   });
   describe('#récupérerIndicImpactParChantierId', () => {
-    it("doit récupérer les indicateurs d'impact ou avec une pondération national supérieur à 0 du chantier associé", async () => {
+    it('doit récupérer les indicateurs d\'impact avec une pondération national supérieur à 0 du chantier associé', async () => {
       // Given
       await prisma.chantier.create({
         data: {
@@ -62,7 +62,7 @@ describe('PrismaIndicateurRepository', () => {
       await prisma.indicateur.create({
         data: {
           id: 'IND-004',
-          nom: 'Indicateur OK type_id',
+          nom: 'Indicateur OK autre type_id',
           chantier_id: 'CH-168',
           code_insee: 'FR',
           maille: 'NAT',
@@ -74,7 +74,7 @@ describe('PrismaIndicateurRepository', () => {
       await prisma.indicateur.create({
         data: {
           id: 'IND-005',
-          nom: 'Indicateur OK pondération',
+          nom: 'Indicateur K0 pondération',
           chantier_id: 'CH-168',
           code_insee: 'FR',
           maille: 'NAT',
@@ -86,7 +86,7 @@ describe('PrismaIndicateurRepository', () => {
       await prisma.indicateur.create({
         data: {
           id: 'IND-006',
-          nom: 'Indicateur KO ni pondérantion ni IMPACT',
+          nom: 'Indicateur KO pondération autre type',
           chantier_id: 'CH-168',
           code_insee: 'FR',
           maille: 'NAT',
@@ -98,8 +98,8 @@ describe('PrismaIndicateurRepository', () => {
       // When
       const listeIndicateursResult = await prismaIndicateurRepository.récupérerIndicImpactParChantierId('CH-168');
       // Then
-      expect(listeIndicateursResult.map(indicateur => indicateur.nom)).toIncludeSameMembers(['Indicateur OK', 'Indicateur OK autre ID', 'Indicateur OK type_id', 'Indicateur OK pondération']);
-      expect(listeIndicateursResult.map(indicateur => indicateur.type)).toIncludeSameMembers(['IMPACT', 'IMPACT', 'Q_SERV', 'IMPACT']);
+      expect(listeIndicateursResult.map(indicateur => indicateur.nom)).toIncludeSameMembers(['Indicateur OK', 'Indicateur OK autre ID', 'Indicateur OK autre type_id']);
+      expect(listeIndicateursResult.map(indicateur => indicateur.type)).toIncludeSameMembers(['IMPACT', 'IMPACT', 'Q_SERV']);
     });
   });
 });
