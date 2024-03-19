@@ -18,6 +18,7 @@ describe('PrismaChantierRepository', () => {
           code_insee: 'FR',
           maille: 'NAT',
           territoire_code: 'NAT-FR',
+          est_territorialise: true,
           directeurs_administration_centrale: ['DAC 1', 'DAC 2'],
           directeurs_projet: ['DP 1', 'DP 2'],
         },
@@ -29,6 +30,9 @@ describe('PrismaChantierRepository', () => {
           code_insee: '01',
           maille: 'REG',
           territoire_code: 'REG-01',
+          est_territorialise: false,
+          directeurs_administration_centrale: ['DAC 3', 'DAC 4'],
+          directeurs_projet: ['DP 3', 'DP 4'],
         },
       });
       await prisma.chantier.create({
@@ -38,6 +42,9 @@ describe('PrismaChantierRepository', () => {
           code_insee: 'FR',
           maille: 'NAT',
           territoire_code: 'NAT-FR',
+          est_territorialise: false,
+          directeurs_administration_centrale: ['DAC 5', 'DAC 6'],
+          directeurs_projet: ['DP 5', 'DP 6'],
         },
       });
 
@@ -47,6 +54,7 @@ describe('PrismaChantierRepository', () => {
       // Then
       expect(chantierResult.id).toEqual('CH-168');
       expect(chantierResult.nom).toEqual('Nom chantier OK');
+      expect(chantierResult.estTerritorialise).toEqual(true);
       expect(chantierResult.listeDirecteursAdministrationCentrale).toIncludeSameMembers(['DAC 1', 'DAC 2']);
       expect(chantierResult.listeDirecteursProjet).toIncludeSameMembers(['DP 1', 'DP 2']);
     });

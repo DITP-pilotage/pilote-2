@@ -5,15 +5,18 @@ export class ChantierFicheConducteur {
 
   private readonly _nom: string;
 
+  private readonly _estTerritorialise: boolean;
+
   private readonly _listeDirecteursAdministrationCentrale: string[];
 
   private readonly _listeDirecteursProjet: string[];
 
   private readonly _indicateurs: IndicateurFicheConducteur[];
 
-  private constructor({ id, nom, listeDirecteursAdministrationCentrale, listeDirecteursProjet, indicateurs }: { id: string, nom: string, listeDirecteursAdministrationCentrale: string[], listeDirecteursProjet: string[], indicateurs: IndicateurFicheConducteur[] }) {
+  private constructor({ id, nom, estTerritorialise, listeDirecteursAdministrationCentrale, listeDirecteursProjet, indicateurs }: { id: string, nom: string, estTerritorialise: boolean, listeDirecteursAdministrationCentrale: string[], listeDirecteursProjet: string[], indicateurs: IndicateurFicheConducteur[] }) {
     this._id = id;
     this._nom = nom;
+    this._estTerritorialise = estTerritorialise;
     this._listeDirecteursAdministrationCentrale = listeDirecteursAdministrationCentrale;
     this._listeDirecteursProjet = listeDirecteursProjet;
     this._indicateurs = indicateurs;
@@ -25,6 +28,10 @@ export class ChantierFicheConducteur {
 
   get nom(): string {
     return this._nom;
+  }
+
+  get estTerritorialise(): boolean {
+    return this._estTerritorialise;
   }
 
   get listeDirecteursAdministrationCentrale(): string[] {
@@ -39,7 +46,7 @@ export class ChantierFicheConducteur {
     return this._indicateurs;
   }
 
-  static creerChantierFicheConducteur({ id, nom, listeDirecteursAdministrationCentrale, listeDirecteursProjet, indicateurs }: { id: string, nom: string, listeDirecteursAdministrationCentrale: string[], listeDirecteursProjet: string[], indicateurs: IndicateurFicheConducteur[]  }) {
-    return new ChantierFicheConducteur({ id, nom, listeDirecteursAdministrationCentrale, listeDirecteursProjet, indicateurs });
+  static creerChantierFicheConducteur({ id, nom, estTerritorialise, listeDirecteursAdministrationCentrale, listeDirecteursProjet, indicateurs }: { id: string, nom: string, estTerritorialise: boolean, listeDirecteursAdministrationCentrale: string[], listeDirecteursProjet: string[], indicateurs: IndicateurFicheConducteur[] }) {
+    return new ChantierFicheConducteur({ id, nom, estTerritorialise, listeDirecteursAdministrationCentrale, listeDirecteursProjet, indicateurs });
   }
 }

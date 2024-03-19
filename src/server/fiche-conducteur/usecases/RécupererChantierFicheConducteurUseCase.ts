@@ -24,6 +24,7 @@ export class RécupererChantierFicheConducteurUseCase {
     return ChantierFicheConducteur.creerChantierFicheConducteur({
       id: chantier.id,
       nom: chantier.nom,
+      estTerritorialise: chantier.estTerritorialise,
       listeDirecteursAdministrationCentrale: chantier.listeDirecteursAdministrationCentrale,
       listeDirecteursProjet: chantier.listeDirecteursProjet,
       indicateurs: indicateurs.map(indicateur => IndicateurFicheConducteur.creerIndicateurFicheConducteur({

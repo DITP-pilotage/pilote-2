@@ -19,6 +19,7 @@ interface IndicateurFicheConducteurContrat {
 
 export interface ChantierFicheConducteurContrat {
   nom: string
+  estTerritorialise: boolean
   directeursAdministrationCentrale: string
   directeursProjet: string
   derniereValeurInitiale: string | null
@@ -54,4 +55,5 @@ export interface FicheConducteurContrat {
   synthèseDesRésultats: SyntheseDesResultatsContrat
   donnéesCartographie: DonnéesCartographieContrat
   publications: PublicationContrat[]
+  doitAfficherDonnéesCartographie: boolean
 }
