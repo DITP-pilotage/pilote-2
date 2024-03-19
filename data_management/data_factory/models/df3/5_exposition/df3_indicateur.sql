@@ -64,9 +64,10 @@ sort_mesures_vaca_last as (
 	mi.indic_methode_calcul as mode_de_calcul,
 	mi.indic_unite as unite_mesure,
 	terr.code as territoire_code,
-	mpi.poids_pourcent_dept as ponderation_dept,
-	mpi.poids_pourcent_nat as ponderation_nat,
-	mpi.poids_pourcent_reg as ponderation_reg,
+	-- Ce sont ces pondérations qui sont affichées dans le front ?
+	mpi.poids_pourcent_dept_decla as ponderation_dept,
+	mpi.poids_pourcent_nat_decla as ponderation_nat,
+	mpi.poids_pourcent_reg_decla as ponderation_reg,
 	gvcg.vcg_date::date as objectif_date_valeur_cible,
 	gvca.vca as objectif_valeur_cible_intermediaire,
 	taa_courant as objectif_taux_avancement_intermediaire,
