@@ -4,12 +4,12 @@ with
 get_poids_declaree as (select 
 indic_id, t.zone_id, 
 case 
-	when zone_type='DEPT' then poids_pourcent_dept 
-	when zone_type='REG' then poids_pourcent_reg 
-	when zone_type='NAT' then poids_pourcent_nat 
+	when zone_type='DEPT' then poids_pourcent_dept_decla
+	when zone_type='REG' then poids_pourcent_reg_decla
+	when zone_type='NAT' then poids_pourcent_nat_decla
 end as poids_zone_declaree,
 ind.chantier_id ,
-poids_pourcent_dept, poids_pourcent_reg, poids_pourcent_nat, z.zone_type
+poids_pourcent_dept_decla, poids_pourcent_reg_decla, poids_pourcent_nat_decla, z.zone_type
 
 from raw_data.metadata_parametrage_indicateurs_temporaire a
 cross join public.territoire t
