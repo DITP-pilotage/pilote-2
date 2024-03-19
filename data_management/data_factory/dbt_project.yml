@@ -47,6 +47,10 @@ models:
       ppg_metadata:
         +docs:
           node_color: "#553df2"
+          metadata_indicateurs: 
+          +materialized: incremental
+          +unique_key:
+            - 'indic_id'
     staging:
       +schema: raw_data
       +materialized: view
