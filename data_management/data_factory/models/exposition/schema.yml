@@ -121,12 +121,10 @@ models:
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_indicateur"
       - name: territoire_code
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_zone"
-      - name: ponderation_dept
-        description: "source de données à date du 07/07/2023 : ppg_metadata.calculs_params"
-      - name: ponderation_nat
-        description: "source de données à date du 07/07/2023 : ppg_metadata.calculs_params"
-      - name: ponderation_reg
-        description: "source de données à date du 07/07/2023 : ppg_metadata.calculs_params"
+      - name: ponderation_declaree
+        description: "Pondération déclarée pour cette zone (déclarée pour la maille)"
+      - name: ponderation_reel
+        description: "Pondération réelle calculée"
       - name: dernier_import_date
         description: "Date dernier import de données pour cet {indicateur-zone}"
       - name: dernier_import_rapport_id
