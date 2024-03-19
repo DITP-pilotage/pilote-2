@@ -3,6 +3,11 @@ version: 2
 models:
   - name: int_chantiers_with_mailles_and_territoires
     description: "Vue intermédiaire afin de décliner les chantiers pour tous leurs territoires (maille + code insee)"
+  - name: int_indicateurs_zones_applicables
+    description: |
+      Ceci est une description
+
+      sur plusieurs lignes, et en **markdown**
   - name: last_update_indic_zone
     description: |
       Pour chaque couple {indicateur-zone}, on indique le **rapport** et la **date** de ce rapport qui modifie cet indicateur sur cette zone.
