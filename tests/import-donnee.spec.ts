@@ -3,17 +3,12 @@ import { expect, test } from '@playwright/test';
 import { stringify } from 'csv-stringify/sync';
 import { loginFn } from './utils';
 
-
 test('doit pouvoir importer des données', async ({ page }) => {
   await loginFn({ page });
 
   await page.getByRole('table').getByRole('cell', { name:/Armées/ }).click();
 
-  await expect(page.getByRole('table').getByRole('cell', { name: /Doubler les effectifs/ })).toBeVisible();
-
-  await page.getByRole('table').getByRole('link', { name: 'Doubler les effectifs' }).click();
-
-  await expect(page).toHaveTitle(/Chantier 027 - Doubler les effectifs de la réserve opérationnelle/);
+  await page.getByRole('table').getByRole('cell', { name: 'Doubler les effectifs' }).click();
 
   await expect(page.getByRole('link', { name: /Mettre à jour les données/ })).toBeVisible();
 

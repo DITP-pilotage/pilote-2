@@ -49,6 +49,7 @@
       {
         "devDependencies": [
           "**/*.test.{ts,tsx}",
+          "**/*.spec.{ts,tsx}",
           "./jest.setup.ts",
           "src/server/infrastructure/test/global.d.ts"
         ],
