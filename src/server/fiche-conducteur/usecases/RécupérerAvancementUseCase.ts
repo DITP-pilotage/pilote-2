@@ -27,6 +27,7 @@ export class RécupérerAvancementUseCase {
 
     return AvancementFicheConducteur.creerAvancementFicheConducteur({
       global: chantierNational.tauxAvancement,
+      annuel: chantierNational.tauxAvancementAnnuel,
       minimum: listeAscChantiersDepartementTauxAvancement.length === 0 ? null : listeAscChantiersDepartementTauxAvancement[0],
       mediane: listeAscChantiersDepartementTauxAvancement.length === 0 ? null : mediane,
       maximum: listeAscChantiersDepartementTauxAvancement.length === 0 ? null : listeAscChantiersDepartementTauxAvancement[listeAscChantiersDepartementTauxAvancement.length - 1],

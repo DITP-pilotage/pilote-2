@@ -58,7 +58,7 @@ describe('PrismaObjectifRepository', () => {
             id: randomUUID(),
             chantier_id: 'CH-169',
             type: 'notre_ambition',
-            contenu: 'contenu KO notre_ambition',
+            contenu: 'contenu KO chantier_id',
             auteur: 'Test 1',
             date: new Date(),
           },

@@ -28,6 +28,7 @@ export interface ChantierFicheConducteurContrat {
 
 export interface AvancementFicheConducteurContrat {
   global: number | null
+  annuel: number | null
   minimum: number | null
   mediane: number | null
   maximum: number | null

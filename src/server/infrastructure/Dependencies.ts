@@ -44,6 +44,9 @@ import {
   DecisionStrategiqueRepository as FicheConducteurDecisionStrategiqueRepository,
 } from '@/server/fiche-conducteur/domain/ports/DecisionStrategiqueRepository';
 import {
+  CommentaireRepository as FicheConducteurCommentaireRepository,
+} from '@/server/fiche-conducteur/domain/ports/CommentaireRepository';
+import {
   IndicateurRepository as FicheConducteurIndicateurRepository,
 } from '@/server/fiche-conducteur/domain/ports/IndicateurRepository';
 import {
@@ -162,6 +165,9 @@ import {
   PrismaDecisionStrategiqueRepository as PrismaFicheConducteurDecisionStrategiqueRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaDecisionStrategiqueRepository';
 import {
+  PrismaCommentaireRepository as PrismaFicheConducteurCommentaireRepository,
+} from '@/server/fiche-conducteur/infrastructure/adapters/PrismaCommentaireRepository';
+import {
   PrismaIndicateurRepository as PrismaFicheConducteurIndicateurRepository,
 } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaIndicateurRepository';
 import {
@@ -217,6 +223,8 @@ class Dependencies {
   private readonly _ficheConducteurObjectifRepository: FicheConducteurObjectifRepository;
 
   private readonly _ficheConducteurDecisionStrategiqueRepository: FicheConducteurDecisionStrategiqueRepository;
+
+  private readonly _ficheConducteurCommentaireRepository: FicheConducteurCommentaireRepository;
 
   private readonly _ficheConducteurIndicateurRepository: FicheConducteurIndicateurRepository;
 
@@ -289,6 +297,7 @@ class Dependencies {
     this._ficheConducteurChantierRepository = new PrismaFicheConducteurChantierRepository(prisma);
     this._ficheConducteurObjectifRepository = new PrismaFicheConducteurObjectifRepository(prisma);
     this._ficheConducteurDecisionStrategiqueRepository = new PrismaFicheConducteurDecisionStrategiqueRepository(prisma);
+    this._ficheConducteurCommentaireRepository = new PrismaFicheConducteurCommentaireRepository(prisma);
     this._ficheConducteurIndicateurRepository = new PrismaFicheConducteurIndicateurRepository(prisma);
     this._ficheConducteurSynthèseDesRésultatsRepository = new PrismaFicheConducteurSynthèseDesRésultatsRepository(prisma);
     this._ficheTerritorialeTerritoireRepository = new PrismaTerritoireRepository(prisma);
@@ -438,6 +447,10 @@ class Dependencies {
 
   getFicheConducteurDecisionStrategiqueRepository() {
     return this._ficheConducteurDecisionStrategiqueRepository;
+  }
+
+  getFicheConducteurCommentaireRepository() {
+    return this._ficheConducteurCommentaireRepository;
   }
 
   getFicheConducteurIndicateurRepository() {

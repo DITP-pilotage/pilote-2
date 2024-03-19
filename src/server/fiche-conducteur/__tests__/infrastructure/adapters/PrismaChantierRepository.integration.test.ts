@@ -69,6 +69,7 @@ describe('PrismaChantierRepository', () => {
           nom: 'Nom chantier OK',
           code_insee: 'FR',
           taux_avancement: 10.2,
+          taux_avancement_annuel: 9.2,
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           meteo: 'SOLEIL',
@@ -80,6 +81,7 @@ describe('PrismaChantierRepository', () => {
           nom: 'Nom chantier OK maille DEPT',
           code_insee: '01',
           taux_avancement: 15.3,
+          taux_avancement_annuel: 13.3,
           maille: 'DEPT',
           territoire_code: 'DEPT-01',
           meteo: 'COUVERT',
@@ -91,6 +93,7 @@ describe('PrismaChantierRepository', () => {
           nom: 'Nom chantier OK maille DEPT taux null',
           code_insee: '02',
           taux_avancement: null,
+          taux_avancement_annuel: null,
           maille: 'DEPT',
           territoire_code: 'DEPT-02',
           meteo: 'SOLEIL',
@@ -125,6 +128,7 @@ describe('PrismaChantierRepository', () => {
       // Then
       expect(chantierResult).toHaveLength(3);
       expect(chantierResult.map(chantier => chantier.tauxAvancement)).toIncludeSameMembers([10.2, 15.3, null]);
+      expect(chantierResult.map(chantier => chantier.tauxAvancementAnnuel)).toIncludeSameMembers([9.2, 13.3, null]);
       expect(chantierResult.map(chantier => chantier.codeInsee)).toIncludeSameMembers(['FR', '01', '02']);
       expect(chantierResult.map(chantier => chantier.meteo)).toIncludeSameMembers(['SOLEIL', 'SOLEIL', 'COUVERT']);
     });

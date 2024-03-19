@@ -1,6 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { prisma } from '@/server/infrastructure/test/integrationTestSetup';
-import { PrismaDecisionStrategiqueRepository } from '@/server/fiche-conducteur/infrastructure/adapters/PrismaDecisionStrategiqueRepository';
+import {
+  PrismaDecisionStrategiqueRepository,
+} from '@/server/fiche-conducteur/infrastructure/adapters/PrismaDecisionStrategiqueRepository';
 
 describe('PrismaDecisionStrategiqueRepository', () => {
   let prismaDecisionStrategiqueRepository: PrismaDecisionStrategiqueRepository;
@@ -42,7 +44,7 @@ describe('PrismaDecisionStrategiqueRepository', () => {
             id: randomUUID(),
             chantier_id: 'CH-169',
             type: 'suivi_des_decisions',
-            contenu: 'contenu KO notre_ambition',
+            contenu: 'contenu KO chantier_id',
             auteur: 'Test 1',
             date: new Date(),
           },
