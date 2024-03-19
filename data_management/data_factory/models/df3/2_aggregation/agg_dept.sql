@@ -10,7 +10,7 @@ mesure_last_params_dept as (
         a.indic_id , metric_date, metric_type, metric_value , zone_id,
         b.vi_dept_from , b.vi_dept_op , b.va_dept_from, b.va_dept_op, b.vc_dept_from , b.vc_dept_op 
     from {{ ref('mesure_last_null_erase_keep_lastvalmonth') }} a
-    left join {{ ref('metadata_parametrage_indicateurs') }} b 
+    left join {{ source('import_from_files', 'metadata_parametrage_indicateurs') }} b 
     ON a.indic_id = b.indic_id
 ), 
 -- Valeurs DEPT saisies directement par l'utilisateur

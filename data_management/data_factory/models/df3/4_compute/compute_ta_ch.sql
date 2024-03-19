@@ -8,7 +8,7 @@ ta_zone_indic as (
 	vaca, vig, vca_courant, vcg,
 	taa_courant, tag
 	from {{ ref('compute_ta_indic') }} a
-	left join {{ ref('metadata_indicateurs') }} b on a.indic_id =b.indic_id
+	left join {{ source('import_from_files', 'metadata_indicateurs') }} b on a.indic_id =b.indic_id
 	left join {{ ref('metadata_zones') }} z on a.zone_id=z.zone_id 
 	order by indic_parent_ch, zone_id, metric_date, indic_id
 ),
@@ -33,7 +33,7 @@ select a.*, b.poids_pourcent_dept, b.poids_pourcent_reg, b.poids_pourcent_nat,
 		when maille='NAT' then tag*0.01*poids_pourcent_nat
 	end as tag_pond
 from ta_zone_indic a
-left join {{ ref('metadata_parametrage_indicateurs') }} b on a.indic_id=b.indic_id 
+left join {{ source('import_from_files', 'metadata_parametrage_indicateurs') }} b on a.indic_id=b.indic_id 
 order by indic_parent_ch, zone_id, metric_date, indic_id
 ),
 -- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_today

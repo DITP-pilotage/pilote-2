@@ -14,7 +14,7 @@ list_indic_terr as (
 	t.code as territoire_code, 
 	t.zone_id
 	from public.territoire t 
-	cross join {{ ref('metadata_indicateurs') }} mi
+	cross join {{ source('import_from_files', 'metadata_indicateurs') }} mi
 -- Pour prendre en compte le bool indic_hidden_pilote et ne pas retourner ces indicateurs:
 --	where not coalesce (mi.indic_hidden_pilote, false)
 ),
@@ -81,7 +81,7 @@ sort_mesures_vaca_last as (
     last_update_indic.dernier_import_auteur_indic,
     FALSE as a_supprimer
 	from public.territoire t 
-	cross join {{ ref('metadata_indicateurs') }} mi
+	cross join {{ source('import_from_files', 'metadata_indicateurs') }} mi
 	left join sort_mesures_vaca_last a on a.indic_id=mi.indic_id and a.zone_id=t.zone_id
 	-- donc la liste des terr X liste des indic vont ressortir ici.
 	-- list_indic_terr list_indic left join sort_mesures_va a on t.indic_id = list_indic.indic_id and t.zone_id = list_indic.zone_id
@@ -93,7 +93,7 @@ sort_mesures_vaca_last as (
 	left join {{ ref('get_vcg') }} gvcg on mi.indic_id=gvcg.indic_id and t.zone_id=gvcg.zone_id
 	left join (select * from {{ ref('get_vca') }} where yyear=(date_part('year', now()))) gvca on mi.indic_id=gvca.indic_id and t.zone_id=gvca.zone_id
 	left join {{ ref('metadata_indicateur_types') }} mit on mit.indic_type_id = mi.indic_type 
-	left join {{ ref('metadata_parametrage_indicateurs') }} mpi on mi.indic_id = mpi.indic_id 
+	left join {{ source('import_from_files', 'metadata_parametrage_indicateurs') }} mpi on mi.indic_id = mpi.indic_id 
 	left join public.territoire terr on t.zone_id = terr.zone_id 
 	left join {{ ref('metadata_zones') }} mz on mz.zone_id = terr.zone_id 
 	LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} z_appl ON z_appl.indic_id = mi.indic_id AND z_appl.zone_id = t.zone_id
