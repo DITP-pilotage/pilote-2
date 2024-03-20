@@ -142,3 +142,4 @@ vars:
     column_separator: ","
     line_separator: "\n"
     type_separator: "::"
+    last_spaces_replace_char: "."
