@@ -88,6 +88,9 @@ function MonApplication({ Component, pageProps }: AppProps) {
         src='/js/dsfr/dsfr.nomodule.min.js'
       />
       <Head>
+        <title>
+          Pilote - Chargement compte utilisateur
+        </title>
         <link
           href='/favicon/apple-touch-icon.png'
           rel='apple-touch-icon'
