@@ -335,6 +335,17 @@ docker-compose run pilote_scripts scripts/test_data.sh
 
 *Note:* Vous pouvez également exécuter uniquement certains tests (en se basant sur le dossier ou les tags associés) comme détaillé dans la [documentation dbt](https://docs.getdbt.com/reference/node-selection/test-selection-examples).
 
+### Tests unitaires de modèles
+
+Des tests unitaires des modèles sont mis en place grace au plugin dbt [dbt-unit-testing](https://github.com/EqualExperts/dbt-unit-testing). Dans une logique de TDD, il faut écrire ces fichiers de tests avant de créer un nouveau modèle.
+
+Les fichiers de test sont dans `tests/unitaires`. Ils sont également normalement taggés `unit-test`. On peut les lancer via:
+- `dbt test --project-dir data_factory/ -s unitaires` OU
+- `dbt test --project-dir data_factory/ -s tag:unit-test`
+
+On peut mocker les valeurs des différents modèles dépendants au modèle à tester via des données [en CSV ou sous forme d'une table SQL](https://github.com/EqualExperts/dbt-unit-testing/blob/master/README.md#different-ways-to-build-mock-values). De même pour le format des données de résultat attendues.
+
+*Note: Travaux démarrés dans PIL-105*
 
 ### Mise à disposition des données à _Pilote 2_
 
