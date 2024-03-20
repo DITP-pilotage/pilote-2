@@ -13,7 +13,7 @@ import { BandeauInformation } from '@/client/components/_commons/BandeauInformat
 import usePageUtilisateur from './usePageUtilisateur';
 
 export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
-  const { supprimerUtilisateur, fermerLaModaleDeSuppressionUtilisateur, modificationEstImpossible } = usePageUtilisateur(utilisateur);
+  const { supprimerUtilisateur, fermerLaModaleDeSuppressionUtilisateur, modificationEstImpossible, donnneContenuBandeau } = usePageUtilisateur(utilisateur);
   const chemin = [{ nom:'Gestion des comptes', lien:'/admin/utilisateurs' }];
   const { data : session } = useSession();
 
@@ -41,19 +41,19 @@ export default function PageUtilisateur({ utilisateur }: PageUtilisateurProps) {
           <Bloc>
             <div className='fr-py-4w fr-px-10w'>
               {
-                modificationEstImpossible(session, utilisateur.habilitations) &&
+                modificationEstImpossible(session, utilisateur.habilitations, utilisateur.profil) &&
                 <div className='fr-pb-4w'>
                   <BandeauInformation 
                     bandeauType='INFO'
                     fermable={false}
                   >
-                    Ce compte a des droits d'accès sur d'autres territoires. Vous ne pouvez pas modifier ou supprimer l'utilisateur. Veuillez contacter le support.
+                    {donnneContenuBandeau(session, utilisateur.habilitations, utilisateur.profil)}
                   </BandeauInformation>
                 </div>
               }
               <FicheUtilisateur utilisateur={utilisateur} />
               {
-                !modificationEstImpossible(session, utilisateur.habilitations) && 
+                !modificationEstImpossible(session, utilisateur.habilitations, utilisateur.profil) && 
                 <div className='fr-grid-row fr-mt-4w'>
                   <Link
                     className='fr-btn fr-mr-2w'
