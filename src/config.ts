@@ -186,6 +186,23 @@ const config = convict({
       env: 'NEXT_PUBLIC_FF_TA_ANNUEL',
     },
   },
+  analytics: {
+    matomoURL: {
+      format: String,
+      default: 'https://stats.beta.gouv.fr',
+      env: 'NEXT_PUBLIC_MATOMO_URL',
+    },
+    matomoSiteId: {
+      format: Number,
+      default: 103,
+      env: 'NEXT_PUBLIC_MATOMO_SITE_ID',
+    },
+    estRecordActive: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_RECORD_ANALYTICS',
+    },
+  },
 });
 
 config.set('keycloak.tokenUrl', config.get('keycloak.issuer') + '/protocol/openid-connect/token');

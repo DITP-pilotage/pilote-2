@@ -59,10 +59,13 @@ function MonApplication({ Component, pageProps }: AppProps) {
 
   const matomoUrl = process.env.NEXT_PUBLIC_MATOMO_URL;
   const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID;
+  const estRecordAnalyticsActive = process.env.NEXT_PUBLIC_RECORD_ANALYTICS;
 
   useEffect(() => {
-    init({ url: matomoUrl as string, siteId: matomoSiteId as string  });
-  }, [matomoSiteId, matomoUrl]);
+    if (estRecordAnalyticsActive === 'true') {
+      init({ url: matomoUrl as string, siteId: matomoSiteId as string  });
+    }
+  }, [estRecordAnalyticsActive, matomoSiteId, matomoUrl]);
 
   useEffect(() => {
     let timer = setTimeout(() => {});
