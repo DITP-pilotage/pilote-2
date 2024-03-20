@@ -59,10 +59,13 @@ function MonApplication({ Component, pageProps }: AppProps) {
 
   const matomoUrl = process.env.NEXT_PUBLIC_MATOMO_URL;
   const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID;
+  const estRecordAnalyticsActive = process.env.NEXT_PUBLIC_RECORD_ANALYTICS;
 
   useEffect(() => {
-    init({ url: matomoUrl as string, siteId: matomoSiteId as string  });
-  }, [matomoSiteId, matomoUrl]);
+    if (estRecordAnalyticsActive === 'true') {
+      init({ url: matomoUrl as string, siteId: matomoSiteId as string  });
+    }
+  }, [estRecordAnalyticsActive, matomoSiteId, matomoUrl]);
 
   useEffect(() => {
     let timer = setTimeout(() => {});
@@ -88,6 +91,9 @@ function MonApplication({ Component, pageProps }: AppProps) {
         src='/js/dsfr/dsfr.nomodule.min.js'
       />
       <Head>
+        <title>
+          Pilote - Chargement compte utilisateur
+        </title>
         <link
           href='/favicon/apple-touch-icon.png'
           rel='apple-touch-icon'
