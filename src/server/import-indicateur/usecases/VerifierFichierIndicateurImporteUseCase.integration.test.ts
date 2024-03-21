@@ -9,7 +9,8 @@ import {
   MesureIndicateurTemporaireBuilder,
 } from '@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder';
 import {
-  FichierIndicateurValidationService, ValiderFichierPayload,
+  FichierIndicateurValidationService,
+  ValiderFichierPayload,
 } from '@/server/import-indicateur/domain/ports/FichierIndicateurValidationService.interface';
 import { DetailValidationFichier } from '@/server/import-indicateur/domain/DetailValidationFichier';
 import { RapportRepository } from '@/server/import-indicateur/domain/ports/RapportRepository';
@@ -253,7 +254,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
       await verifierFichierIndicateurImporteUseCase.execute(payload);
 
       // THEN
-      expect(mesureIndicateurTemporaireRepository.sauvegarder).not.toBeCalled();
+      expect(mesureIndicateurTemporaireRepository.sauvegarder).not.toHaveBeenCalled();
     });
 
     it("quand l'indic_id est null, ne doit pas controler la valeur de l'indic_id", async () => {
@@ -406,7 +407,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
 
     // THEN
     expect(report.estValide).toEqual(false);
-    expect(mesureIndicateurTemporaireRepository.sauvegarder).not.toBeCalled();
+    expect(mesureIndicateurTemporaireRepository.sauvegarder).not.toHaveBeenCalled();
 
     expect(report.listeErreursValidation).toHaveLength(1);
     expect(report.listeErreursValidation[0].cellule).toEqual('IND-003');
@@ -455,7 +456,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
 
     // THEN
     expect(report.estValide).toEqual(false);
-    expect(mesureIndicateurTemporaireRepository.sauvegarder).not.toBeCalled();
+    expect(mesureIndicateurTemporaireRepository.sauvegarder).not.toHaveBeenCalled();
 
     expect(report.listeErreursValidation).toHaveLength(3);
 
@@ -521,7 +522,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
 
     // THEN
     expect(report.estValide).toEqual(false);
-    expect(mesureIndicateurTemporaireRepository.sauvegarder).not.toBeCalled();
+    expect(mesureIndicateurTemporaireRepository.sauvegarder).not.toHaveBeenCalled();
 
     expect(report.listeErreursValidation).toHaveLength(3);
 
@@ -607,7 +608,7 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     expect(reportFichierData[1].metricValue).toEqual('14');
   });
 
-  it('quand le fichier possède une date valeur au format MM-DD-YY, doit convertir la date au format YYYY-MM-DD', async () => {
+  it('quand le fichier possède une date valeur au format D/MM/YYYY, DD/M/YYYY ou D/M/YYYY, doit convertir la date au format YYYY-MM-DD', async () => {
     // GIVEN
     const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId('IND-001')
@@ -615,18 +616,31 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
       .avecMetricDate(METRIC_DATE_1)
       .avecMetricType('vi')
       .avecMetricValue('72')
-
       .build();
     const mesureIndicateurTemporaire2 = new MesureIndicateurTemporaireBuilder()
       .avecIndicId('IND-001')
       .avecZoneId('D007')
-      .avecMetricDate('12-31-23')
+      .avecMetricDate('2/06/2023')
+      .avecMetricType('vc')
+      .avecMetricValue('14')
+      .build();
+    const mesureIndicateurTemporaire3 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecZoneId('D007')
+      .avecMetricDate('12/6/2023')
+      .avecMetricType('vc')
+      .avecMetricValue('14')
+      .build();
+    const mesureIndicateurTemporaire4 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecZoneId('D007')
+      .avecMetricDate('2/6/2023')
       .avecMetricType('vc')
       .avecMetricValue('14')
       .build();
     const detailValidationFichier = new DetailValidationFichierBuilder()
       .avecEstValide(true)
-      .avecListeMesuresIndicateurTemporaire(mesureIndicateurTemporaire1, mesureIndicateurTemporaire2)
+      .avecListeMesuresIndicateurTemporaire(mesureIndicateurTemporaire1, mesureIndicateurTemporaire2, mesureIndicateurTemporaire3, mesureIndicateurTemporaire4)
       .build();
     const payload = {
       cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
@@ -647,7 +661,103 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     expect(mesureIndicateurTemporaireRepository.sauvegarder).toHaveBeenNthCalledWith(1, indicateurCaptor);
 
     const reportFichierData = indicateurCaptor.value;
-    expect(reportFichierData).toHaveLength(2);
+    expect(reportFichierData).toHaveLength(4);
+
+    expect(reportFichierData[0].id).toBeDefined();
+    expect(reportFichierData[0].indicId).toEqual('IND-001');
+    expect(reportFichierData[0].zoneId).toEqual('D001');
+    expect(reportFichierData[0].metricDate).toEqual(METRIC_DATE_1);
+    expect(reportFichierData[0].metricType).toEqual('vi');
+    expect(reportFichierData[0].metricValue).toEqual('72');
+
+    expect(reportFichierData[1].id).toBeDefined();
+    expect(reportFichierData[1].indicId).toEqual('IND-001');
+    expect(reportFichierData[1].zoneId).toEqual('D007');
+    expect(reportFichierData[1].metricDate).toEqual('2023-06-02');
+    expect(reportFichierData[1].metricType).toEqual('vc');
+    expect(reportFichierData[1].metricValue).toEqual('14');
+
+    expect(reportFichierData[2].id).toBeDefined();
+    expect(reportFichierData[2].indicId).toEqual('IND-001');
+    expect(reportFichierData[2].zoneId).toEqual('D007');
+    expect(reportFichierData[2].metricDate).toEqual('2023-06-12');
+    expect(reportFichierData[2].metricType).toEqual('vc');
+    expect(reportFichierData[2].metricValue).toEqual('14');
+
+    expect(reportFichierData[3].id).toBeDefined();
+    expect(reportFichierData[3].indicId).toEqual('IND-001');
+    expect(reportFichierData[3].zoneId).toEqual('D007');
+    expect(reportFichierData[3].metricDate).toEqual('2023-06-02');
+    expect(reportFichierData[3].metricType).toEqual('vc');
+    expect(reportFichierData[3].metricValue).toEqual('14');
+  });
+
+  it('quand le fichier possède une date valeur au format MM-DD-YY, M-DD-YY, MM-D-YY ou M-D-YY, doit convertir la date au format YYYY-MM-DD', async () => {
+    // GIVEN
+    const mesureIndicateurTemporaire1 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecZoneId('D001')
+      .avecMetricDate(METRIC_DATE_1)
+      .avecMetricType('vi')
+      .avecMetricValue('72')
+      .build();
+
+    const mesureIndicateurTemporaire2 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecZoneId('D007')
+      .avecMetricDate('12-31-23')
+      .avecMetricType('vc')
+      .avecMetricValue('14')
+      .build();
+
+    const mesureIndicateurTemporaire3 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecZoneId('D007')
+      .avecMetricDate('3-31-23')
+      .avecMetricType('vc')
+      .avecMetricValue('14')
+      .build();
+
+    const mesureIndicateurTemporaire4 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecZoneId('D007')
+      .avecMetricDate('12-1-23')
+      .avecMetricType('vc')
+      .avecMetricValue('14')
+      .build();
+
+    const mesureIndicateurTemporaire5 = new MesureIndicateurTemporaireBuilder()
+      .avecIndicId('IND-001')
+      .avecZoneId('D007')
+      .avecMetricDate('2-1-23')
+      .avecMetricType('vc')
+      .avecMetricValue('14')
+      .build();
+
+    const detailValidationFichier = new DetailValidationFichierBuilder()
+      .avecEstValide(true)
+      .avecListeMesuresIndicateurTemporaire(mesureIndicateurTemporaire1, mesureIndicateurTemporaire2, mesureIndicateurTemporaire3, mesureIndicateurTemporaire4, mesureIndicateurTemporaire5)
+      .build();
+    const payload = {
+      cheminCompletDuFichier: CHEMIN_COMPLET_DU_FICHIER,
+      nomDuFichier: NOM_DU_FICHIER,
+      baseSchemaUrl: SCHEMA,
+      indicateurId: 'IND-001',
+      utilisateurAuteurDeLimportEmail: 'ditp.admin@example.com',
+    };
+
+    fichierIndicateurValidationService.validerFichier.mockResolvedValue(detailValidationFichier);
+
+    const indicateurCaptor = captor<MesureIndicateurTemporaire[]>();
+
+    // WHEN
+    await verifierFichierIndicateurImporteUseCase.execute(payload);
+
+    // THEN
+    expect(mesureIndicateurTemporaireRepository.sauvegarder).toHaveBeenNthCalledWith(1, indicateurCaptor);
+
+    const reportFichierData = indicateurCaptor.value;
+    expect(reportFichierData).toHaveLength(5);
 
     expect(reportFichierData[0].id).toBeDefined();
     expect(reportFichierData[0].indicId).toEqual('IND-001');
@@ -662,6 +772,27 @@ describe('VerifierFichierIndicateurImporteUseCase', () => {
     expect(reportFichierData[1].metricDate).toEqual('2023-12-31');
     expect(reportFichierData[1].metricType).toEqual('vc');
     expect(reportFichierData[1].metricValue).toEqual('14');
+
+    expect(reportFichierData[2].id).toBeDefined();
+    expect(reportFichierData[2].indicId).toEqual('IND-001');
+    expect(reportFichierData[2].zoneId).toEqual('D007');
+    expect(reportFichierData[2].metricDate).toEqual('2023-03-31');
+    expect(reportFichierData[2].metricType).toEqual('vc');
+    expect(reportFichierData[2].metricValue).toEqual('14');
+
+    expect(reportFichierData[3].id).toBeDefined();
+    expect(reportFichierData[3].indicId).toEqual('IND-001');
+    expect(reportFichierData[3].zoneId).toEqual('D007');
+    expect(reportFichierData[3].metricDate).toEqual('2023-12-01');
+    expect(reportFichierData[3].metricType).toEqual('vc');
+    expect(reportFichierData[3].metricValue).toEqual('14');
+
+    expect(reportFichierData[4].id).toBeDefined();
+    expect(reportFichierData[4].indicId).toEqual('IND-001');
+    expect(reportFichierData[4].zoneId).toEqual('D007');
+    expect(reportFichierData[4].metricDate).toEqual('2023-02-01');
+    expect(reportFichierData[4].metricType).toEqual('vc');
+    expect(reportFichierData[4].metricValue).toEqual('14');
   });
 
   it('quand le fichier possède un type au format VC VI VA, doit convertir en minuscule', async () => {

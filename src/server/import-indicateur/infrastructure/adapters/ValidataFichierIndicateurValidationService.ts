@@ -200,7 +200,7 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
         rapportId: rapport.id,
         cellule: 'Cellule non définie',
         nom: 'Erreur non identifié',
-        message: 'Une erreur est survenue lors de la validation du fichier',
+        message: 'Une erreur est survenue lors de la validation de la forme du fichier',
         numeroDeLigne: 0,
         positionDeLigne: 0,
         nomDuChamp: '',
