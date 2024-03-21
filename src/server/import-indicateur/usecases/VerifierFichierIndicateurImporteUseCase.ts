@@ -59,12 +59,12 @@ const verifierDateValide = (mesureIndicateurTemporaire: MesureIndicateurTemporai
     }
   }
 };
-
+ 
 const verifierFormatDateValeur = (mesureIndicateurTemporaire: MesureIndicateurTemporaire) => {
-  if (mesureIndicateurTemporaire.metricDate?.match('^(0[0-9]|1[0-9]|2[0-9]|3[01])\/(0[0-9]|1[012])\/(20[0-9]{2})$')) {
+  if (mesureIndicateurTemporaire.metricDate?.match(/^([0-2]?\d|3[01])\/(0?\d|1[0-2])\/(20\d{2})$/)) {
     mesureIndicateurTemporaire.convertirDateProvenantDuFormat(ACCEPTED_DATE_FORMAT.DD_MM_YYYY);
   }
-  if (mesureIndicateurTemporaire.metricDate?.match('^(0[0-9]|1[012])-((0[0-9]|1[0-9]|2[0-9]|3[01])-[0-9]{2})$')) {
+  if (mesureIndicateurTemporaire.metricDate?.match(/^(0?\d|1[0-2])-(([0-2]?\d|3[01])-\d{2})$/)) {
     mesureIndicateurTemporaire.convertirDateProvenantDuFormat(ACCEPTED_DATE_FORMAT.MM_DD_YY);
   }
 };
@@ -117,6 +117,7 @@ export class VerifierFichierIndicateurImporteUseCase {
     utilisateurAuteurDeLimportEmail: string
     isAdmin?: boolean
   }): Promise<DetailValidationFichier> {
+
     const informationIndicateur = await this.indicateurRepository.recupererInformationIndicateurParId(indicateurId);
 
     const schema = !informationIndicateur?.indicSchema || isAdmin ? DEFAULT_SCHEMA : informationIndicateur?.indicSchema;
@@ -129,22 +130,44 @@ export class VerifierFichierIndicateurImporteUseCase {
     });
     await this.rapportRepository.sauvegarder(report);
 
-    report.listeMesuresIndicateurTemporaire.forEach((mesureIndicateurTemporaire, index) => {
-      correspondALIndicateurId(mesureIndicateurTemporaire, indicateurId, report.id, report.listeErreursValidation, index);
-      verifierFormatDateValeur(mesureIndicateurTemporaire);
-      verifierDateValide(mesureIndicateurTemporaire, report.listeErreursValidation, report.id, index);
-      verifierFormatTypeValeur(mesureIndicateurTemporaire);
-      verifierFormatZoneId(mesureIndicateurTemporaire);
-    });
+    try {
 
-    if (report.estValide && report.listeErreursValidation.length === 0) {
-      await this.mesureIndicateurTemporaireRepository.sauvegarder(report.listeMesuresIndicateurTemporaire);
-      return report;
-    } else {
-      await this.erreurValidationFichierRepository.sauvegarder(report.listeErreursValidation);
+      report.listeMesuresIndicateurTemporaire.forEach((mesureIndicateurTemporaire, index) => {
+        correspondALIndicateurId(mesureIndicateurTemporaire, indicateurId, report.id, report.listeErreursValidation, index);
+        verifierFormatDateValeur(mesureIndicateurTemporaire);
+        verifierDateValide(mesureIndicateurTemporaire, report.listeErreursValidation, report.id, index);
+        verifierFormatTypeValeur(mesureIndicateurTemporaire);
+        verifierFormatZoneId(mesureIndicateurTemporaire);
+      });
+
+      if (report.estValide && report.listeErreursValidation.length === 0) {
+        await this.mesureIndicateurTemporaireRepository.sauvegarder(report.listeMesuresIndicateurTemporaire);
+        return report;
+      } else {
+        await this.erreurValidationFichierRepository.sauvegarder(report.listeErreursValidation);
+        return DetailValidationFichier.creerDetailValidationFichier({
+          estValide: false,
+          listeErreursValidation: report.listeErreursValidation,
+          utilisateurEmail: utilisateurAuteurDeLimportEmail,
+        });
+      }
+    } catch {
+      const listeErreursValidation = [
+        ErreurValidationFichier.creerErreurValidationFichier({
+          rapportId: report.id,
+          cellule: 'Cellule non définie',
+          nom: 'Erreur non identifié',
+          message: 'Une erreur est survenue lors de la validation du contenu du fichier',
+          numeroDeLigne: 0,
+          positionDeLigne: 0,
+          nomDuChamp: '',
+          positionDuChamp: 0,
+        }),
+      ];
+      await this.erreurValidationFichierRepository.sauvegarder(listeErreursValidation);
       return DetailValidationFichier.creerDetailValidationFichier({
         estValide: false,
-        listeErreursValidation: report.listeErreursValidation,
+        listeErreursValidation,
         utilisateurEmail: utilisateurAuteurDeLimportEmail,
       });
     }

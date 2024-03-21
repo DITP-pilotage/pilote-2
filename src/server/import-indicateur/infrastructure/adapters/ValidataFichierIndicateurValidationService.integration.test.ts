@@ -68,7 +68,7 @@ describe('ValidataFichierIndicateurValidationService', () => {
 
     // THEN
     expect(httpClient.post).toHaveBeenNthCalledWith(1, { cheminCompletDuFichier, nomDuFichier, schema });
-    expect(result.listeErreursValidation.at(0)?.message).toEqual('Une erreur est survenue lors de la validation du fichier');
+    expect(result.listeErreursValidation.at(0)?.message).toEqual('Une erreur est survenue lors de la validation de la forme du fichier');
   });
 
   describe('quand le fichier est valide', () => {
