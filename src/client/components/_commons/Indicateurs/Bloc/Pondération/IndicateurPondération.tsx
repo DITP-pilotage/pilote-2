@@ -11,17 +11,17 @@ export function IndicateurPondération({ indicateurPondération, mailleSélectio
   return (
     <p className='fr-text--xs texte-gris'>
       {
-          indicateurPondération["zone"] === null
+          indicateurPondération === null
             ? `La pondération n'est pas disponible pour le taux d'avancement ${adjectifÀPartirDeLaMaille[mailleSélectionnée]}.`
             : (
-              indicateurPondération["zone"] === 0
+              indicateurPondération === 0
                 ? `Cet indicateur n’est pas pris en compte dans le taux d’avancement ${adjectifÀPartirDeLaMaille[mailleSélectionnée]} du chantier.`
                 : (
                   <>
                     Cet indicateur représente
                     {' '}
                     <span className='fr-text--bold'>
-                      {indicateurPondération["zone"]?.toFixed(0)}
+                      {indicateurPondération.toFixed(0)}
                       %
                     </span>
                     {' '}
