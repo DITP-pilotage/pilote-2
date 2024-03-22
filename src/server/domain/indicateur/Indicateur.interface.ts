@@ -5,7 +5,7 @@ export const typesIndicateurProjetStructurant = ['IMPACT', 'DEPL', 'FINANCIER'] 
 
 export type TypeIndicateur = typeof typesIndicateur[number] | typeof typesIndicateurProjetStructurant[number];
 
-export type IndicateurPondération = Record<string, number | null>;
+export type IndicateurPondération = Record<Maille, number | null>;
 
 export default interface Indicateur {
   id: string;
@@ -15,6 +15,5 @@ export default interface Indicateur {
   description: string | null;
   source: string | null;
   modeDeCalcul: string | null;
-  pondération?: IndicateurPondération;
   unité: string | null;
 }
