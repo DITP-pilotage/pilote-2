@@ -25,10 +25,10 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           },
           {
             maille: 'DEPT',
-            ponderation_dept: { gt: 0 },
+            ponderation_zone_reel: { gt: 0 },
           }, {
             maille: 'REG',
-            ponderation_reg: { gt: 0 },
+            ponderation_zone_reel: { gt: 0 },
           },
         ],
       },

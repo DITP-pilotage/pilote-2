@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import {
   actionsTerritoiresStore,
@@ -114,16 +114,17 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     );
 
   const indicateurPondérations = !détailsIndicateurs || !territoireSélectionné
-  ? []
-  : (
-    indicateurs
-      .sort((a, b) => comparerIndicateur(a, b, mailleSélectionnée))
-      .map(indicateur => ({
-        pondération: détailsIndicateurs[indicateur.id][territoireSélectionné.codeInsee]?.pondération?.toFixed(0),
-        nom: indicateur.nom,
-      }))
-      .filter((indPond): indPond is IndicateurPondération => indPond.pondération !== null && indPond.pondération !== '0')
-  );
+    ? []
+    : (
+      indicateurs
+        .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireSélectionné.codeInsee]?.pondération ?? null, détailsIndicateurs[b.id][territoireSélectionné.codeInsee]?.pondération ?? null))
+        .map(indicateur => ({
+          pondération: détailsIndicateurs[indicateur.id][territoireSélectionné.codeInsee]?.pondération?.toFixed(0),
+          nom: indicateur.nom,
+          type: indicateur.type,
+        }))
+        .filter((indPond): indPond is IndicateurPondération => indPond.pondération !== null && indPond.pondération !== '0')
+    );
 
 
   let modeÉcriture = !!territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);

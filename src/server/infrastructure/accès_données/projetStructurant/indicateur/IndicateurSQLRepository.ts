@@ -47,6 +47,7 @@ export default class IndicateurProjetStructurantSQLRepository implements Indicat
         unité: null,
         est_applicable: null,
         dateImport: null,
+        pondération: null,
       };
     }
 

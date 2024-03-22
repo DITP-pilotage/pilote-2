@@ -35,6 +35,8 @@ export default class DétailsIndicateurBuilder {
 
   private _dateImport: DétailsIndicateur['dateImport'];
 
+  private _pondération: DétailsIndicateur['pondération'];
+
   constructor() {
     const nombreDeValeurs = faker.datatype.number({ min: 28, max: 35 });
 
@@ -50,6 +52,7 @@ export default class DétailsIndicateurBuilder {
     this._unité = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._est_applicable = générerPeutÊtreNull(0.2, faker.datatype.boolean());
     this._dateImport = new Date('2023-05-01T00:00:00.000Z').toISOString();
+    this._pondération = faker.datatype.number({ min: 0, max: 100 });
 
     const valeursEtDates = this.générerValeursEtDates(nombreDeValeurs, this._valeurInitiale, this._valeurCible);
 
@@ -128,6 +131,11 @@ export default class DétailsIndicateurBuilder {
     return this;
   }
 
+  avecPondération(pondération: DétailsIndicateur['pondération']): DétailsIndicateurBuilder {
+    this._pondération = pondération;
+    return this;
+  }
+
   build(): DétailsIndicateur {
     return {
       codeInsee: this._codeInsee,
@@ -145,6 +153,7 @@ export default class DétailsIndicateurBuilder {
       unité: this._unité,
       est_applicable: this._est_applicable,
       dateImport: this._dateImport,
+      pondération: this._pondération,
     };
   }
 

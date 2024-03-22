@@ -29,6 +29,7 @@ function créerDonnéesTerritoires(territoires: territoire[], indicateurRows: in
       unité: indicateurRow?.unite_mesure ?? null,
       est_applicable: indicateurRow?.est_applicable ?? null,
       dateImport: indicateurRow?.dernier_import_date_indic?.toLocaleString() ?? null,
+      pondération: indicateurRow?.ponderation_zone_reel ?? null,
     };
   });
 
