@@ -4,14 +4,16 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-dbt-core = "==1.3"
-dbt-duckdb = "==1.2"
-dbt-fal = "==1.3"
-dbt-postgres = "==1.3"
-fal = "==0.7"
-markdown2 = "==2.4"
-python-dotenv = "==0.21"
+dbt-core = "==1.5.0"
+dbt-duckdb = "==1.5.2"
+dbt-fal = "==1.5.9"
+boto3 = "==1.29"
+dbt-postgres = "==1.5.0"
+fal = "==0.10.11"
+markdown2 = "==2.4.13"
+python-dotenv = "==1.0.1"
 requests = "==2.31.0"
+elementary-data = {extras = ["postgres"], version = "==0.13.2"}
 
 [dev-packages]
 
