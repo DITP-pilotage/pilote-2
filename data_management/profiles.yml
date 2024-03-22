@@ -16,19 +16,3 @@ ditp_ppg_dbt:
     prod_with_fal:
       type: fal
       db_profile: prod
-
-elementary:
-  target: prod_with_fal
-  outputs:
-    prod:
-      type: postgres
-      threads: 4
-      host: "{{ env_var('PGHOST') }}"
-      port: "{{ env_var('PGPORT') | int }}"
-      user: "{{ env_var('PGUSER') }}"
-      pass: "{{ env_var('PGPASSWORD') }}"
-      dbname: "{{ env_var('PGDATABASE') }}"
-      schema: elementary
-    prod_with_fal:
-      type: fal
-      db_profile: prod
