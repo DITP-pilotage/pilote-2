@@ -25,7 +25,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       where: {
         chantier_id: chantierId,
         territoire_code: 'NAT-FR',
-        ponderation_nat: {
+        ponderation_zone_reel: {
           gt: 0,
         },
       },
