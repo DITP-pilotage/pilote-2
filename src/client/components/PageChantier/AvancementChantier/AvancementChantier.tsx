@@ -74,7 +74,7 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                 <div className='fr-col-12 fr-col-md-7 fr-col-lg-12 fr-col-xl-6'>
                   <div className='fr-container fr-px-md-1w fr-px-lg-2w'>
                     <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
-                      Répartition des territoires
+                      Répartition des taux d’avancement des territoires
                     </div>
                     <div className='fr-grid-row fr-grid-row-md--gutters'>
                       <div className='fr-col-4'>
@@ -104,11 +104,6 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                           taille='sm'
                         />
                       </div>
-                    </div>
-                    <div className='fr-grid-row fr-grid-row--center w-full texte-centre fr-py-1w'>
-                      <p className='fr-text--sm text-bottom-jauge-progression fr-m-0'>
-                        Répartition des taux d’avancement moyen des territoires
-                      </p>
                     </div>
                   </div>
                 </div>

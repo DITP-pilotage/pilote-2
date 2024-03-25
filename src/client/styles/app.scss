@@ -140,6 +140,14 @@
   }
 }
 
+@media screen and (min-width: 78rem) {
+  .border-xl-r {
+    border-right-width: 1px;
+    border-right-color: var(--border-default-grey);
+    border-right-style: solid;
+  }
+}
+
 .page-break {
   page-break-after: always;
 }
