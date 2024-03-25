@@ -1,4 +1,5 @@
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
+import { useSession } from 'next-auth/react';
 import {
   actions as actionsFiltresUtilisateursStore,
   filtresUtilisateursActifsStore,
@@ -15,6 +16,7 @@ import Tag from '@/components/_commons/Tag/Tag';
 import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import api from '@/server/infrastructure/api/trpc/api';
 import MultiSelectProfil from '@/components/_commons/MultiSelect/MultiSelectProfil/MultiSelectProfil';
+import { PROFILS_POSSIBLES_REFERENTS_LECTURE } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 
 export default function AdminUtilisateursBarreLatérale({
   estOuverteBarreLatérale,
@@ -23,10 +25,16 @@ export default function AdminUtilisateursBarreLatérale({
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: périmètresMinistériels } = api.périmètreMinistériel.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: profils } = api.profil.récupérerTous.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
+  const { data: session } = useSession();
   const { modifierÉtatDuFiltre, désactiverFiltre } = actionsFiltresUtilisateursStore();
   const territoires = territoiresTerritoiresStore();
   const filtresActifs = filtresUtilisateursActifsStore();
   const réinitialiserFiltres = réinitialiser();
+  const territoiresAccessibles = session!.habilitations.lecture.territoires;
+  const profilCréateur = session!.profil;
+  const profilAccessibles = ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profilCréateur) 
+    ? (profils ?? []) : 
+    profils?.filter(profil => PROFILS_POSSIBLES_REFERENTS_LECTURE[profilCréateur as keyof typeof PROFILS_POSSIBLES_REFERENTS_LECTURE].includes(profil.code));
 
   return (
     <BarreLatérale
@@ -40,11 +48,12 @@ export default function AdminUtilisateursBarreLatérale({
               modifierÉtatDuFiltre(territoire, 'territoires');
             }}
             groupesÀAfficher={{
-              nationale: true,
+              nationale: territoiresAccessibles.includes('NAT-FR'),
               régionale: true,
               départementale: true,
             }}
             territoiresCodesSélectionnésParDéfaut={filtresActifs.territoires}
+            territoiresSélectionnables={territoiresAccessibles}
           />
         </div>
         <div className='fr-mb-2w'>
@@ -68,7 +77,7 @@ export default function AdminUtilisateursBarreLatérale({
           changementValeursSélectionnéesCallback={(profil) => {
             modifierÉtatDuFiltre(profil, 'profils');
           }}
-          profils={profils ?? []}
+          profils={profilAccessibles ?? []}
           profilsIdsSélectionnésParDéfaut={filtresActifs.profils}
         />
       </BarreLatéraleEncart>

@@ -29,7 +29,7 @@ export const convertirEnModel = (utilisateurAConvertir: {
   fonction: string | null
   auteurModification: string
   dateModification: Date
-  auteurCreation: string | null
+  auteurCreation: string
   dateCreation: Date
 }): Omit<utilisateur, 'id'> => {
   return {
