@@ -7,14 +7,18 @@ export class DonnéeCartographie {
 
   private readonly _météo: Meteo;
 
-  constructor({ codeInsee, tauxAvancement, météo }: {
+  private readonly _estApplicable: boolean;
+
+  constructor({ codeInsee, tauxAvancement, météo, estApplicable }: {
     codeInsee: string,
     tauxAvancement: number | null,
     météo: Meteo
+    estApplicable: boolean
   }) {
     this._codeInsee = codeInsee;
     this._tauxAvancement = tauxAvancement;
     this._météo = météo;
+    this._estApplicable = estApplicable;
   }
 
 
@@ -30,11 +34,16 @@ export class DonnéeCartographie {
     return this._météo;
   }
 
-  static creerDonnéeCartographie({ codeInsee, tauxAvancement, météo }: {
+  get estApplicable(): boolean {
+    return this._estApplicable;
+  }
+
+  static creerDonnéeCartographie({ codeInsee, tauxAvancement, météo, estApplicable }: {
     codeInsee: string,
     tauxAvancement: number | null,
     météo: Meteo
+    estApplicable: boolean
   }) {
-    return new DonnéeCartographie({ codeInsee, tauxAvancement, météo });
+    return new DonnéeCartographie({ codeInsee, tauxAvancement, météo, estApplicable });
   }
 }

@@ -7,7 +7,7 @@ interface EncartProps {
 
 export default function Encart({ children }: EncartProps) {
   return (
-    <EncartStyled>
+    <EncartStyled className='encart-container'>
       { children }
     </EncartStyled>
   );

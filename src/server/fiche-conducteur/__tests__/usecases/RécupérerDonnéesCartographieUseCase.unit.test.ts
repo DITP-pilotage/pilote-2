@@ -17,9 +17,9 @@ describe('RécupérerDonnéesCartographieUseCase', () => {
   it('doit récupérer les données des cartographies de la fiche conducteur', async () => {
     // Given
     const chantierId = 'CH-168';
-    const chantier1 = new ChantierBuilder().withId('CH-168').withCodeInsee('87').withMeteo('SOLEIL').withTauxAvancement(90.3).withMaille('DEPT').build();
-    const chantier2 = new ChantierBuilder().withId('CH-168').withCodeInsee('36').withMeteo('COUVERT').withTauxAvancement(15.2).withMaille('DEPT').build();
-    const chantier3 = new ChantierBuilder().withId('CH-168').withCodeInsee('FR').withMeteo('COUVERT').withTauxAvancement(17.2).withMaille('NAT').build();
+    const chantier1 = new ChantierBuilder().withId('CH-168').withCodeInsee('87').withMeteo('SOLEIL').withEstApplicable(true).withTauxAvancement(90.3).withMaille('DEPT').build();
+    const chantier2 = new ChantierBuilder().withId('CH-168').withCodeInsee('36').withMeteo('COUVERT').withEstApplicable(true).withTauxAvancement(15.2).withMaille('DEPT').build();
+    const chantier3 = new ChantierBuilder().withId('CH-168').withCodeInsee('FR').withMeteo('COUVERT').withEstApplicable(false).withTauxAvancement(17.2).withMaille('NAT').build();
     chantierRepository.récupérerMailleNatEtDeptParId.mockResolvedValue([chantier1, chantier2, chantier3]);
 
     // When
@@ -28,5 +28,6 @@ describe('RécupérerDonnéesCartographieUseCase', () => {
     expect(donnéesCartographieResult.map(donnee => donnee.codeInsee)).toIncludeSameMembers(['87', '36']);
     expect(donnéesCartographieResult.map(donnee => donnee.météo)).toIncludeSameMembers(['SOLEIL', 'COUVERT']);
     expect(donnéesCartographieResult.map(donnee => donnee.tauxAvancement)).toIncludeSameMembers([90.3, 15.2]);
+    expect(donnéesCartographieResult.map(donnee => donnee.estApplicable)).toIncludeSameMembers([true, true]);
   });
 });

@@ -18,6 +18,8 @@ export class ChantierBuilder {
 
   private meteo: Meteo = 'SOLEIL';
 
+  private estApplicable: boolean = false;
+
   private listeDirecteursAdministrationCentrale: string[] = [];
 
   private listeDirecteursProjet: string[] = [];
@@ -62,6 +64,11 @@ export class ChantierBuilder {
     return this;
   }
 
+  withEstApplicable(estApplicable: boolean): ChantierBuilder {
+    this.estApplicable = estApplicable;
+    return this;
+  }
+
   withListeDirecteursAdministrationCentrale(...listeDirecteursAdministrationCentrale: string[]): ChantierBuilder {
     this.listeDirecteursAdministrationCentrale = listeDirecteursAdministrationCentrale;
     return this;
@@ -82,6 +89,7 @@ export class ChantierBuilder {
       maille: this.maille,
       codeInsee: this.codeInsee,
       meteo: this.meteo,
+      estApplicable: this.estApplicable,
       listeDirecteursAdministrationCentrale: this.listeDirecteursAdministrationCentrale,
       listeDirecteursProjet: this.listeDirecteursProjet,
     });

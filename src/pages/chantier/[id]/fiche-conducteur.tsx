@@ -1,6 +1,7 @@
 import { FunctionComponent } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth/next';
+import Head from 'next/head';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { FicheConducteurContrat } from '@/server/fiche-conducteur/app/contrats/FicheConducteurContrat';
 import { ficheConducteurHandler } from '@/server/fiche-conducteur/infrastructure/handlers/FicheConducteurHandler';
@@ -26,9 +27,17 @@ export const getServerSideProps: GetServerSideProps<FicheConducteurContrat> = as
 
 const FicheConducteur: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = (ficheConducteur) => {
   return (
-    <PageFicheConducteur
-      {...ficheConducteur}
-    />
+    <>
+
+      <Head>
+        <title>
+          Fiche conducteur
+        </title>
+      </Head>
+      <PageFicheConducteur
+        {...ficheConducteur}
+      />
+    </>
   );
 };
 
