@@ -138,6 +138,9 @@
     border-right-color: var(--border-default-grey);
     border-right-style: solid;
   }
+  .border-lg-0 {
+    border-right-width: 0;
+  }
 }
 
 @media screen and (min-width: 78rem) {
