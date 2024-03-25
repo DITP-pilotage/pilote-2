@@ -125,7 +125,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
               <section>
                 <div className='fr-container fr-p-0'>
                   <div className='fr-grid-row fr-mb-2w'>
-                    <div className='fr-col-12 fr-col-md-5 flex flex-column border-lg-r'>
+                    <div className='fr-col-12 fr-col-xl-6 flex flex-column border-xl-r align-center'>
                       <TitreInfobulleConteneur>
                         <Titre
                           baliseHtml='h2'
@@ -147,10 +147,10 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                         />
                       </div>
                     </div>
-                    <div className='fr-col-12 fr-col-md-7'>
+                    <div className='fr-col-12 fr-col-xl-6'>
                       <div className='fr-container fr-px-1w'>
                         <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
-                          Répartition des territoires
+                          Répartition des taux d’avancement des territoires
                         </div>
                         <div className='fr-grid-row fr-grid-row-md--gutters fr-px-3v'>
                           <div className='fr-col-4'>
@@ -181,9 +181,6 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                             />
                           </div>
                         </div>
-                        <div className='fr-grid-row fr-grid-row--center texte-centre fr-py-1w fr-text--sm'>
-                          Répartition des taux d’avancement moyen des territoires
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -209,7 +206,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                 </div>
               </section>
               <hr className='fr-hr fr-mt-3w fr-mb-3v fr-pb-1v' />
-              <section>
+              <section className='fr-mx-2w'>
                 <TitreInfobulleConteneur>
                   <Titre
                     baliseHtml='h2'
