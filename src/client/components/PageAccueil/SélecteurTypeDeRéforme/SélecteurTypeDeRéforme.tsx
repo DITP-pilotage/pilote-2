@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { TypeDeRéforme } from '@/client/stores/useTypeDeRéformeStore/useTypedeRéformeStore.interface';
 import SélecteurRéformeProps from './SélecteurTypeDeRéforme.interface';
 import SélecteurRéformeStyled from './SélecteurTypeDeRéforme.styled';
@@ -13,7 +14,9 @@ export default function SélecteurTypeDeRéforme({ modifierTypeDeRéformeSélect
       valeur: 'projet structurant',
     },
   ];
-      
+
+  const router = useRouter();
+
   return (
     <SélecteurRéformeStyled className='fr-p-1v'>
       {
@@ -21,7 +24,7 @@ export default function SélecteurTypeDeRéforme({ modifierTypeDeRéformeSélect
             <button
               className={`${typeDeRéformeSélectionné === typeDeRéforme.valeur && 'sélectionné fr-text--bold'}`}
               key={typeDeRéforme.valeur}
-              onClick={() => modifierTypeDeRéformeSélectionné()}
+              onClick={() => router.push('', { query: { ...router.query, reformeType: typeDeRéforme.valeur } }, { shallow: true } )}
               type='button'
             >
               {typeDeRéforme.label}

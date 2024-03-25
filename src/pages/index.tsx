@@ -1,7 +1,8 @@
 import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
@@ -83,6 +84,14 @@ export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = asy
 };
 
 const NextPageAccueil : FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ chantiers, projetsStructurants, ministères, axes, ppgs, estProjetStructurantDisponible }) => {
+  const router = useRouter();
+
+  const reformeType = router.query.reformeType || 'chantier';
+
+  useEffect(() => {
+    console.log(router.query.reformeType);
+  }, [router.query.reformeType]);
+
   return (
     <>
       <Head>
