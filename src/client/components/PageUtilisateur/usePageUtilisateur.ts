@@ -29,8 +29,13 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
   
   const modificationEstImpossible = (session: Session | null, utilisateurHabilitations: Habilitations, utilisateurProfil: ProfilCode) => {
     if (!session) {
+      return true;
+    }
+
+    if (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session.profil)) {
       return false;
     }
+
     const habilitations = new Habilitation(session.habilitations);
     return !habilitations.peutAccéderAuxTerritoires(utilisateurHabilitations.lecture.territoires) || ['REFERENT_REGION', 'REFERENT_DEPARTEMENT'].includes(utilisateurProfil);
   };
