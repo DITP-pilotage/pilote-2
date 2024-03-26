@@ -63,6 +63,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   const [afficherChampLecturePérimètres, setAfficherChampLecturePérimètres] = useState(false);
   const [afficherChampSaisieCommentaire, setAfficherChampSaisieCommentaire] = useState(false);
   const [afficherChampSaisieIndicateur, setAfficherChampSaisieIndicateur] = useState(false);
+  const [afficherChampGestionCompte, setAfficherChampGestionCompte] = useState(false);
 
   const [chantiersAccessiblesPourLeProfil, setChantiersAccessiblesPourLeProfil] = useState<ChantierSynthétisé[]>([]);
 
@@ -93,6 +94,10 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     const afficherChoixIndicateur = !!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires;
     setAfficherChampSaisieIndicateur(afficherChoixIndicateur);
 
+    const profilPeutAccéderALaGestionDesComptes = !!profilSélectionné && (profilSélectionné.utilisateurs.lecture || profilSélectionné.utilisateurs.modification || profilSélectionné.utilisateurs.suppression)
+    const afficherGestionCompte = !!profilSélectionné && profilPeutAccéderALaGestionDesComptes && !['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profilCodeSélectionné)
+    setAfficherChampGestionCompte(afficherGestionCompte);
+
     // Saisie Commentaire
     if (!utilisateur) {
       const valeurParDéfautCaseCommentaire = 
@@ -107,6 +112,13 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
         ? false
         : (profilSélectionné?.chantiers.saisieIndicateur.tousTerritoires ? true : false);
       setValue('saisieIndicateur', valeurParDéfautCaseIndicateur);
+
+      // Gestion des comptes
+      const valeurParDéfautCaseGestionCompte = afficherGestionCompte 
+        ? false 
+        : (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profilCodeSélectionné))
+      setValue('gestionUtilisateur', valeurParDéfautCaseGestionCompte)
+
     } else {
       setValue('saisieCommentaire', utilisateur.saisieCommentaire);
       setValue('saisieIndicateur', utilisateur.saisieIndicateur);
@@ -232,6 +244,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     chantiersAccessiblesPourLeProfil,
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
+    afficherChampGestionCompte,
     session,
   };
 }

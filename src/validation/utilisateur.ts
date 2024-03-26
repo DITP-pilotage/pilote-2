@@ -33,6 +33,7 @@ export const validationInfosBaseUtilisateur = z.object( {
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
   saisieCommentaire: z.boolean(),
+  gestionUtilisateur: z.boolean(),
 });
 
 export const validationInfosBaseUtilisateurRéférents = z.object( {
