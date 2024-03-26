@@ -27,12 +27,12 @@ FicheConducteurContrat
       <main className='fr-pb-2w'>
         <div className='fr-container fr-pb-1w fiche-conducteur__container'>
           <EnteteFicheConducteur>
-            {`Nationale - ${chantier.nom} - Principaux résultats${doitAfficherDonnéesCartographie ? ' 1/2' : ''}`}
+            {`${chantier.nom} - Principaux résultats`}
           </EnteteFicheConducteur>
         </div>
         <div className='fr-container'>
           <div className='fr-grid-row fr-grid-row--gutters'>
-            <div className='fr-col-4 flex flex-column fiche-conducteur__bloc fr-pr-1v'>
+            <div className='fr-col-4 flex flex-column fiche-conducteur__bloc fiche-conducteur__bloc--border-light fr-pr-1v'>
               <Titre
                 baliseHtml='h2'
                 className='fr-h5 fr-mb-1w fr-text-title--blue-france'
@@ -40,7 +40,7 @@ FicheConducteurContrat
                 Responsables & État d'avancement
               </Titre>
               <Bloc contenuClassesSupplémentaires='fr-px-1w fr-py-1v'>
-                <div className='fr-grid-row border-b fr-pb-1w fr-text--xs fr-m-0'>
+                <div className='fr-grid-row border-b fr-pb-1v fr-text--xs fr-m-0'>
                   <span className='fr-col-2 fr-text--bold'>
                     DAC
                   </span>
@@ -48,7 +48,7 @@ FicheConducteurContrat
                     {chantier.directeursAdministrationCentrale}
                   </span>
                 </div>
-                <div className='fr-grid-row border-b fr-py-1w fr-text--xs fr-m-0'>
+                <div className='fr-grid-row border-b fr-py-1v fr-text--xs fr-m-0'>
                   <span className='fr-col-2 fr-text--bold'>
                     DP
                   </span>
@@ -93,7 +93,7 @@ FicheConducteurContrat
                   </div>
                 </div>
                 <div className='fr-grid-row border-t'>
-                  <div className='w-full'>
+                  <div className='w-full fr-pt-1v'>
                     <p className='fr-text--md fr-text--bold fr-mb-0 texte-gris'>
                       { `${avancement.annuel?.toFixed(0) ?? '- '}%`}
                     </p>
@@ -113,7 +113,7 @@ FicheConducteurContrat
                 </div>
               </Bloc>
             </div>
-            <div className='fr-col-8 flex flex-column fiche-conducteur__bloc  fr-pl-1v'>
+            <div className='fr-col-8 flex flex-column fiche-conducteur__bloc fiche-conducteur__bloc--border-light fr-pl-1v'>
               <Titre
                 baliseHtml='h2'
                 className='fr-h5 fr-mb-1w fr-text-title--blue-france'
@@ -152,11 +152,11 @@ FicheConducteurContrat
             </div>
           </div>
         </div>
-        <div className='fr-container fr-mt-1w'>
-          <Bloc contenuClassesSupplémentaires='fr-px-0 fr-py-1v'>
-            <div className='fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-1w'>
+        <div className='fr-container fiche-conducteur__bloc--border-light fr-mt-1w'>
+          <Bloc contenuClassesSupplémentaires='fr-px-0 fr-py-0'>
+            <div className='fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0'>
               <div
-                className='fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b'
+                className='fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b grid-row--header'
               >
                 <div
                   className='fr-col-5 fr-text--bold'
@@ -249,12 +249,12 @@ FicheConducteurContrat
         {
           doitAfficherDonnéesCartographie ? (
             <>
-              <div className='fr-container fr-pb-1w fiche-conducteur__container only-print'>
+              <div className='fr-container fr-pb-1w fiche-conducteur__container fiche-conducteur__bloc--no-border only-print'>
                 <EnteteFicheConducteur>
-                  {`Nationale - ${chantier.nom} - Principaux résultats 2/2`}
+                  {`${chantier.nom} - Principaux résultats`}
                 </EnteteFicheConducteur>
               </div>
-              <div className='fr-container'>
+              <div className='fr-container fiche-conducteur__bloc--no-border'>
                 <div className='fr-grid-row fr-grid-row--gutters'>
                   <div className='fr-col-6'>
                     <Titre
@@ -300,14 +300,14 @@ FicheConducteurContrat
         }
         <div className='fr-container fr-pb-1w fiche-conducteur__container only-print'>
           <EnteteFicheConducteur>
-            {`Nationale - ${chantier.nom} - Point d'avancement`}
+            {`${chantier.nom} - Point d'avancement`}
           </EnteteFicheConducteur>
         </div>
-        <div className='fr-container'>
-          <Bloc contenuClassesSupplémentaires='fr-px-1w fr-py-1v'>
+        <div className='fr-container fiche-conducteur__bloc--border-light'>
+          <Bloc contenuClassesSupplémentaires='fr-px-0'>
             <div className='fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0'>
               <div
-                className='fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b'
+                className='fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b grid-row--header'
               >
                 <div
                   className='fr-col-2 fr-text--bold'

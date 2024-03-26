@@ -3,7 +3,7 @@ ditp_ppg_dbt:
   outputs:
     prod:
       type: postgres
-      threads: 4
+      threads: 1
       host: "{{ env_var('PGHOST') }}"
       port: "{{ env_var('PGPORT') | int }}"
       user: "{{ env_var('PGUSER') }}"
@@ -15,4 +15,5 @@ ditp_ppg_dbt:
       path: 'ditp_pilote.duckdb'
     prod_with_fal:
       type: fal
+      threads: 1
       db_profile: prod

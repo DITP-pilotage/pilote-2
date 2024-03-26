@@ -21,6 +21,7 @@ export class RécupérerDonnéesCartographieUseCase {
         codeInsee: chantier.codeInsee,
         tauxAvancement: chantier.tauxAvancement,
         météo: chantier.meteo as Meteo,
+        estApplicable: chantier.estApplicable,
       })
     ));
   }
