@@ -16,7 +16,7 @@ export default function RépartitionMétéoÉlément({ météo, nombreDeChantier
       <p className='nombre-de-chantiers fr-grid-row fr-h1 fr-mb-0'>
         {nombreDeChantiers}
       </p>
-      <p className='label fr-grid-row fr-mb-0 fr-text--sm'>
+      <p className='label fr-grid-row fr-mb-0 fr-text--sm break-keep'>
         {libellésMétéos[météo]}
       </p>
     </RépartitionMétéoÉlémentStyled>
