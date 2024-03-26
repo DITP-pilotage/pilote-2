@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import useCartographie from '@/components/_commons/Cartographie/useCartographie';
 import { CartographieInfoBulle } from '@/components/_commons/Cartographie/useCartographie.interface';
-import { départementsTerritoiresStore, mailleSélectionnéeTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import {
+  départementsTerritoiresStore,
+  mailleSélectionnéeTerritoiresStore,
+} from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import CartographieProps from './Cartographie.interface';
 import BulleDInfo from './BulleDInfo/BulleDInfo';
 import CartographieSVG from './SVG/CartographieSVG';
@@ -21,7 +24,7 @@ export default function Cartographie({ options, données, children, auClicTerrit
   const territoiresÀTracer = niveauDeMaille === 'départementale' ? départements : régionsFiltrées;
   const frontièreÀTracer = niveauDeMaille === 'départementale' ? régionsFiltrées : [];
   const territoiresEtFrontières = créerTerritoires(territoiresÀTracer, frontièreÀTracer, données);
-
+  
   return (
     <div
       className='fr-container fr-p-0'

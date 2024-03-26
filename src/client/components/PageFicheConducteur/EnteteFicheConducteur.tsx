@@ -6,7 +6,7 @@ import BoutonImpression from '@/components/_commons/BoutonImpression/BoutonImpre
 export const EnteteFicheConducteur: FunctionComponent<PropsWithChildren<{}>> = ({ children }) => {
   return (
     <Encart>
-      <div className='flex justify-between'>
+      <div className='flex justify-between align-center'>
         <Titre
           baliseHtml='h2'
           className='fr-h6 fr-mb-0 fr-text-title--blue-france'
