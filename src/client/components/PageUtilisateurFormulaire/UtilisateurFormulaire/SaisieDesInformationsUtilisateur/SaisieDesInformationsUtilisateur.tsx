@@ -9,7 +9,7 @@ import MultiSelectChantier from '@/components/_commons/MultiSelect/MultiSelectCh
 import MultiSelectPérimètreMinistériel from '@/components/_commons/MultiSelect/MultiSelectPérimètreMinistériel/MultiSelectPérimètreMinistériel';
 import { UtilisateurFormulaireProps } from '@/client/components/PageUtilisateurFormulaire/UtilisateurFormulaire/UtilisateurFormulaire.interface';
 import CaseACocher from '@/components/_commons/CaseACocher/CaseACocher';
-// import { DevTool } from '@hookform/devtools';
+import { DevTool } from '@hookform/devtools';
 
 
 export default function SaisieDesInformationsUtilisateur({ utilisateur }: UtilisateurFormulaireProps) {
@@ -33,6 +33,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
     chantiersAccessiblesPourLeProfil,
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
+    afficherChampGestionCompte,
     session,
   } = useSaisieDesInformationsUtilisateur(utilisateur);  
 
@@ -177,13 +178,26 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
           register={register('saisieCommentaire')}
         />
       </div>
+      <div className={`${!!afficherChampGestionCompte ? '' : 'fr-hidden'}`}>
+        <hr className='fr-hr' />
+        <Titre
+          baliseHtml='h2'
+          className='fr-text--md  fr-mb-2w'
+        >
+          Droits de gestion des comptes utilisateurs
+        </Titre>
+        <CaseACocher 
+          libellé='Accorder les droits de gestion des comptes utilisateurs'
+          register={register('gestionUtilisateur')}
+        />
+      </div>
       <div className='fr-grid-row fr-grid-row--right fr-mt-4w'>
         <SubmitBouton
           className='fr-btn--icon-right fr-icon-arrow-right-line'
           label='Suivant' 
         />
       </div>
-      {/* <DevTool control={control} /> */}
+      <DevTool control={control} />
     </>
   );
 }
