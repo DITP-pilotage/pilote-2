@@ -73,6 +73,7 @@ describe('PrismaChantierRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           meteo: 'SOLEIL',
+          est_applicable: true,
         },
       });
       await prisma.chantier.create({
@@ -85,6 +86,7 @@ describe('PrismaChantierRepository', () => {
           maille: 'DEPT',
           territoire_code: 'DEPT-01',
           meteo: 'COUVERT',
+          est_applicable: true,
         },
       });
       await prisma.chantier.create({
@@ -97,6 +99,7 @@ describe('PrismaChantierRepository', () => {
           maille: 'DEPT',
           territoire_code: 'DEPT-02',
           meteo: 'SOLEIL',
+          est_applicable: false,
         },
       });
       await prisma.chantier.create({
@@ -108,6 +111,7 @@ describe('PrismaChantierRepository', () => {
           maille: 'REG',
           territoire_code: 'REG-01',
           meteo: 'SOLEIL',
+          est_applicable: false,
         },
       });
       await prisma.chantier.create({
@@ -119,6 +123,7 @@ describe('PrismaChantierRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           meteo: 'SOLEIL',
+          est_applicable: false,
         },
       });
 
@@ -131,6 +136,7 @@ describe('PrismaChantierRepository', () => {
       expect(chantierResult.map(chantier => chantier.tauxAvancementAnnuel)).toIncludeSameMembers([9.2, 13.3, null]);
       expect(chantierResult.map(chantier => chantier.codeInsee)).toIncludeSameMembers(['FR', '01', '02']);
       expect(chantierResult.map(chantier => chantier.meteo)).toIncludeSameMembers(['SOLEIL', 'SOLEIL', 'COUVERT']);
+      expect(chantierResult.map(chantier => chantier.estApplicable)).toIncludeSameMembers([true, true, false]);
     });
   });
 });
