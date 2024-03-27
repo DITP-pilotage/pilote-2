@@ -8,6 +8,6 @@
   ],
   "presets": {
     "requestType": "http",
-    "requestUrl": "zz"
+    "requestUrl": ""
   }
 }
