@@ -22,4 +22,6 @@ Pour lancer cette documentation interactive:
 - Lancer `docker-compose up`
 - Se rendre sur `localhost:<port>` (le port est spécifié dans le fichier `.env`)
 
+## Testing
 
+Pour tester des requêtes, on peut utiliser l'outil *Bruno*, voir le dossier [api/testing/bruno/](testing/bruno/).
