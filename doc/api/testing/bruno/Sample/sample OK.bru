@@ -1,5 +1,5 @@
 meta {
-  name: sample
+  name: sample OK
   type: http
   seq: 1
 }
@@ -12,13 +12,13 @@ get {
 
 vars:pre-request {
   sample_url: https://jsonplaceholder.typicode.com/todos/
-  todo_id: 4
+  todo_id: 2
 }
 
 tests {
-  test("should be able to login", function() {
+  test("should return existing resource", function() {
     const data = res.getBody();
-    expect(res.getStatus()).to.equal(400);
+    expect(res.getStatus()).to.equal(200);
   });
 }
 
