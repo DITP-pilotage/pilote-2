@@ -1,0 +1,27 @@
+meta {
+  name: sample OK
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{sample_url}}{{todo_id}}
+  body: none
+  auth: none
+}
+
+vars:pre-request {
+  sample_url: https://jsonplaceholder.typicode.com/todos/
+  todo_id: 2
+}
+
+tests {
+  test("should return existing resource", function() {
+    const data = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+  });
+}
+
+docs {
+  Une requete d'exemple avec un test.
+}
