@@ -21,6 +21,8 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
 
   private _saisieCommentaire: UtilisateurÀCréerOuMettreÀJour['saisieCommentaire'];
 
+  private _gestionUtilisateur: UtilisateurÀCréerOuMettreÀJour['gestionUtilisateur'];
+
 
   constructor() {
     this._nom = faker.name.lastName();
@@ -30,6 +32,7 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
     this._fonction = 'fonction';
     this._saisieIndicateur = faker.datatype.boolean();
     this._saisieCommentaire = faker.datatype.boolean();
+    this._gestionUtilisateur = faker.datatype.boolean();
     this._habilitations = {
       lecture: {
         chantiers: [],
@@ -56,6 +59,11 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
 
   avecSaisieCommentaire(saisieCommentaire: UtilisateurÀCréerOuMettreÀJour['saisieCommentaire']): UtilisateurÀCréerOuMettreÀJourBuilder {
     this._saisieCommentaire = saisieCommentaire;
+    return this;
+  }
+
+  avecGestionUtilisateur(gestionUtilisateur: UtilisateurÀCréerOuMettreÀJour['saisieCommentaire']): UtilisateurÀCréerOuMettreÀJourBuilder {
+    this._gestionUtilisateur = gestionUtilisateur;
     return this;
   }
 
@@ -97,6 +105,7 @@ export default class UtilisateurÀCréerOuMettreÀJourBuilder {
       fonction: this._fonction,
       saisieIndicateur: this._saisieIndicateur,
       saisieCommentaire: this._saisieCommentaire,
+      gestionUtilisateur: this._gestionUtilisateur,
       habilitations: this._habilitations,
     };
   }

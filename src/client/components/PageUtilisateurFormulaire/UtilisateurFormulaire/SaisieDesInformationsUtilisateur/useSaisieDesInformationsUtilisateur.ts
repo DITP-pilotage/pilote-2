@@ -94,8 +94,8 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     const afficherChoixIndicateur = !!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires;
     setAfficherChampSaisieIndicateur(afficherChoixIndicateur);
 
-    const profilPeutAccéderALaGestionDesComptes = !!profilSélectionné && (profilSélectionné.utilisateurs.lecture || profilSélectionné.utilisateurs.modification || profilSélectionné.utilisateurs.suppression)
-    const afficherGestionCompte = !!profilSélectionné && profilPeutAccéderALaGestionDesComptes && !['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profilCodeSélectionné)
+    const profilPeutAccéderALaGestionDesComptes = !!profilSélectionné && (profilSélectionné.utilisateurs.lecture || profilSélectionné.utilisateurs.modification || profilSélectionné.utilisateurs.suppression);
+    const afficherGestionCompte = !!profilSélectionné && profilPeutAccéderALaGestionDesComptes && !['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profilCodeSélectionné);
     setAfficherChampGestionCompte(afficherGestionCompte);
 
     // Saisie Commentaire
@@ -116,15 +116,16 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
       // Gestion des comptes
       const valeurParDéfautCaseGestionCompte = afficherGestionCompte 
         ? false 
-        : (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profilCodeSélectionné))
-      setValue('gestionUtilisateur', valeurParDéfautCaseGestionCompte)
+        : (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profilCodeSélectionné));
+      setValue('gestionUtilisateur', valeurParDéfautCaseGestionCompte);
 
     } else {
       setValue('saisieCommentaire', utilisateur.saisieCommentaire);
       setValue('saisieIndicateur', utilisateur.saisieIndicateur);
+      setValue('gestionUtilisateur', utilisateur.gestionUtilisateur);
     }
 
-  }, [profilSélectionné, setValue, utilisateur]);
+  }, [profilCodeSélectionné, profilSélectionné, setValue, utilisateur]);
 
   useEffect(() => {
     if (!chantiers || !profilSélectionné) return;

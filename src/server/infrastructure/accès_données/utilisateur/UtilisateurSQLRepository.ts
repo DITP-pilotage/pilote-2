@@ -504,6 +504,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       fonction: utilisateurBrut.fonction,
       saisieCommentaire: this._aDesDroitsdeSaisieCommentaire(habilitations, utilisateurBrut.profil),
       saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(habilitations, utilisateurBrut.profil),
+      gestionUtilisateur: true,
       habilitations: habilitations,
     };
   }
