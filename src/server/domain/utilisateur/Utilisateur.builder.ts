@@ -28,6 +28,8 @@ export default class UtilisateurBuilder {
 
   private _saisieIndicateur: Utilisateur['saisieIndicateur'];
 
+  private _gestionUtilisateur: Utilisateur['gestionUtilisateur'];
+
   constructor() {
     this._id = faker.helpers.unique(faker.random.numeric, [10]);
     this._nom = faker.name.lastName();
@@ -41,6 +43,7 @@ export default class UtilisateurBuilder {
     this._fonction = faker.helpers.arrayElement([faker.lorem.words(6), null]);
     this._saisieCommentaire = faker.datatype.boolean();
     this._saisieIndicateur = faker.datatype.boolean();
+    this._gestionUtilisateur = faker.datatype.boolean();
     this._habilitations = {
       lecture: { chantiers: [], territoires: [], périmètres: [] },
       'saisieCommentaire': { chantiers: [], territoires: [], périmètres: [] },
@@ -125,6 +128,10 @@ export default class UtilisateurBuilder {
     this._saisieCommentaire = saisieCommentaire;
   }
 
+  avecGestionUtilisateur(gestionUtilisateur: boolean) {
+    this._gestionUtilisateur = gestionUtilisateur;
+  }
+
   build(): Utilisateur {
     return {
       id: this._id,
@@ -139,6 +146,7 @@ export default class UtilisateurBuilder {
       fonction: this._fonction,
       saisieCommentaire: this._saisieCommentaire,
       saisieIndicateur: this._saisieIndicateur,
+      gestionUtilisateur: this._gestionUtilisateur,
       habilitations: this._habilitations,
     };
   }

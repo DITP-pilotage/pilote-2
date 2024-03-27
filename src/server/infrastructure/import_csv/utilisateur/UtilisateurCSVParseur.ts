@@ -73,6 +73,7 @@ export default class UtilisateurCSVParseur {
       fonction: null,
       saisieCommentaire: true,
       saisieIndicateur: true,
+      gestionUtilisateur: true,
       habilitations: {
         lecture: this._générerUneHabilitation(),
         saisieCommentaire: this._générerUneHabilitation(),

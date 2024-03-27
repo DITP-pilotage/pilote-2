@@ -118,6 +118,14 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
+  private _déterminerChantierAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
+    if (utilisateur.gestionUtilisateur) {
+      return this._déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur, chantiers);
+    }
+    
+    return [];
+  }
+
   private _déterminerTerritoiresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
     if (utilisateur.profil === 'DROM') 
       return codesTerritoiresDROM;
@@ -147,6 +155,14 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
+  private _déterminerTerritoiresAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
+    if (utilisateur.gestionUtilisateur) {
+      return this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires);
+    }
+    
+    return [];    
+  }
+
   private _déterminerPérimètresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
     const tousLesPérimètresIds = new Set(périmètres.map(p => p.id));
 
@@ -173,6 +189,13 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
+  private _déterminerPérimètresAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+    if (utilisateur.gestionUtilisateur)
+      return this._déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur, périmètres);
+
+    return [];
+  }
+
   private async _définirLesHabilitations(utilisateur: UtilisateurÀCréerOuMettreÀJour): Promise<HabilitationsÀCréerOuMettreÀJourCalculées> {
     const chantiers = await this.chantierRepository.récupérerChantiersSynthétisés();
     const territoires = await this.territoireRepository.récupérerTous();
@@ -193,6 +216,21 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
         chantiers: this._déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur, chantiers),
         territoires: this._déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur, territoires),
         périmètres: this._déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur, périmètres),
+      },
+      'utilisateurs.lecture': {
+        chantiers: this._déterminerChantierAccessiblesEnGestionUtilisateur(utilisateur, chantiers),
+        territoires: this._déterminerTerritoiresAccessiblesEnGestionUtilisateur(utilisateur, territoires),
+        périmètres: this._déterminerPérimètresAccessiblesEnGestionUtilisateur(utilisateur, périmètres),
+      },
+      'utilisateurs.modification': {
+        chantiers: this._déterminerChantierAccessiblesEnGestionUtilisateur(utilisateur, chantiers),
+        territoires: this._déterminerTerritoiresAccessiblesEnGestionUtilisateur(utilisateur, territoires),
+        périmètres: this._déterminerPérimètresAccessiblesEnGestionUtilisateur(utilisateur, périmètres),
+      },
+      'utilisateurs.suppression': {
+        chantiers: this._déterminerChantierAccessiblesEnGestionUtilisateur(utilisateur, chantiers),
+        territoires: this._déterminerTerritoiresAccessiblesEnGestionUtilisateur(utilisateur, territoires),
+        périmètres: this._déterminerPérimètresAccessiblesEnGestionUtilisateur(utilisateur, périmètres),
       },
     };
   }
