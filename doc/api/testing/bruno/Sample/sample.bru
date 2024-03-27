@@ -5,13 +5,14 @@ meta {
 }
 
 get {
-  url: {{sample_url}}
+  url: {{sample_url}}{{todo_id}}
   body: none
   auth: none
 }
 
 vars:pre-request {
-  sample_url: https://jsonplaceholder.typicode.com/todos/2
+  sample_url: https://jsonplaceholder.typicode.com/todos/
+  todo_id: 4
 }
 
 tests {
