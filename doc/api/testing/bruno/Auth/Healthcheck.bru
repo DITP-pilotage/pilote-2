@@ -1,0 +1,29 @@
+meta {
+  name: Healthcheck
+  type: http
+  seq: 1
+}
+
+get {
+  url: api/check
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{api_token}}
+}
+
+body:json {
+  {
+    "sfs":22
+  }
+}
+
+tests {
+  test("should be able to login", function() {
+    const data = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+}
