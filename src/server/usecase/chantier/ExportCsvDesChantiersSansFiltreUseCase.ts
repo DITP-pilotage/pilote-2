@@ -7,6 +7,7 @@ import { libellésTypesDécisionStratégique } from '@/client/constants/libellé
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 
 export class ExportCsvDesChantiersSansFiltreUseCase {
   public static readonly NOMS_COLONNES = [
@@ -43,7 +44,7 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
     private readonly _chantierRepository: ChantierRepository,
   ) {}
 
-  public async* run({ habilitation, profil, chantierChunkSize }: { habilitation: Habilitation, profil: ProfilCode, chantierChunkSize: number }): AsyncGenerator<string[][]> {
+  public async* run({ habilitation, profil, chantierChunkSize, optionsExport }: { habilitation: Habilitation, profil: ProfilCode, chantierChunkSize: number, optionsExport: OptionsExport }): AsyncGenerator<string[][]> {
     const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom(habilitation);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
@@ -52,6 +53,10 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
       const partialResult = await this._chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
       yield partialResult
         .filter(c => !this.masquerChantierPourProfilDROM(profil, c))
+        .filter(c => optionsExport.perimetreIds.length > 0 ? optionsExport.perimetreIds.some(perimetreId => c.périmètreIds.includes(perimetreId)) : true)
+        .filter(c => optionsExport.estBarometre ? c.estBaromètre : true)
+        .filter(c => optionsExport.estTerritorialise ? c.estTerritorialisé : true)
+        .filter(c => c.statut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(c.statut) : true : true)
         .map(c => this.transformer(c, profil));
     }
   }

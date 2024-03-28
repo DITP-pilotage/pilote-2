@@ -31,6 +31,13 @@ export default async function handleExportDesIndicateursSansFiltre(request: Next
     habilitation,
     profil: session.profil,
     indicateurChunkSize: configuration.export.csvIndicateursChunkSize,
+    optionsExport: {
+      perimetreIds: request.query.perimetreIds ? Array.isArray(request.query.perimetreIds) ? request.query.perimetreIds : [request.query.perimetreIds] as string[] : [],
+      estBarometre: request.query.estBarometre === 'true',
+      estTerritorialise: request.query.estTerritorialise === 'true',
+      listeStatuts: request.query.statut ? Array.isArray(request.query.statut) ? request.query.statut : [request.query.statut] as string[] : [],
+    },
+
   })) {
     for (const indicateurPourExport of partialResult) {
       stringifier.write(indicateurPourExport);

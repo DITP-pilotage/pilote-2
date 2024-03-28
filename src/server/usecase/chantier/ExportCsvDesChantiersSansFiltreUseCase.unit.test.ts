@@ -9,12 +9,20 @@ import {
   ChantierPourExport,
   ChantierPourExportBuilder,
 } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
+import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 
 function _fakeChantierPourExport(cid: Chantier['id']): ChantierPourExport {
   return (new ChantierPourExportBuilder)
     .avecNom('Chantier ' + cid)
     .build();
 }
+
+const optionsExport: OptionsExport = {
+  perimetreIds: [],
+  estTerritorialise: false,
+  estBarometre: false,
+  listeStatuts: [],
+};
 
 describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
   it('Renvoie une liste vide si pas de chantiers', async () => {
@@ -35,6 +43,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
       habilitation,
       profil,
       chantierChunkSize,
+      optionsExport,
     })) {
       result = [...result, ...partialResult];
     }
@@ -66,6 +75,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
       habilitation,
       profil,
       chantierChunkSize,
+      optionsExport,
     })) {
       result = [...result, ...partialResult];
     }
@@ -97,6 +107,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
       habilitation,
       profil,
       chantierChunkSize,
+      optionsExport,
     })) {
       result = [...result, ...partialResult];
     }
@@ -132,6 +143,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
       habilitation,
       profil,
       chantierChunkSize,
+      optionsExport,
     })) {
       result = [...result, ...partialResult];
     }

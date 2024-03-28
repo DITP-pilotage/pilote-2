@@ -13,6 +13,7 @@ import {
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
+import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 
 export default class ExportCsvDesIndicateursSansFiltreUseCase {
 
@@ -44,7 +45,7 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     private readonly _indicateurRepository: IndicateurRepository,
   ) {}
 
-  public async* run({ habilitation, profil, indicateurChunkSize }: { habilitation: Habilitation, profil: ProfilCode, indicateurChunkSize: number }): AsyncGenerator<string[][]> {
+  public async* run({ habilitation, profil, indicateurChunkSize, optionsExport }: { habilitation: Habilitation, profil: ProfilCode, indicateurChunkSize: number, optionsExport: OptionsExport }): AsyncGenerator<string[][]> {
     const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom(habilitation);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
@@ -53,6 +54,10 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
       const indicateursPourExports = await this._indicateurRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
       yield indicateursPourExports
         .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind))
+        .filter(ind => optionsExport.perimetreIds.length > 0 ? optionsExport.perimetreIds.some(perimetreId => ind.périmètreIds.includes(perimetreId)) : true)
+        .filter(ind => optionsExport.estBarometre ? ind.chantierEstBaromètre : true)
+        .filter(ind => optionsExport.estTerritorialise ? ind.chantierEstTerritorialise : true)
+        .filter(ind => ind.chantierStatut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(ind.chantierStatut) : true : true)
         .map(ind => this.transformer(ind));
     }
   }

@@ -2,6 +2,9 @@ import '@gouvfr/dsfr/dist/component/radio/radio.min.css';
 import { useState } from 'react';
 import Modale from '@/components/_commons/Modale/Modale';
 import { horodatage } from '@/client/utils/date/date';
+import { actions as actionsFiltreStore } from '@/stores/useFiltresStore/useFiltresStore';
+import { FiltreTypologieType } from '@/stores/useFiltresStore/useFiltresStore.interface';
+import { actionsStatutsStore } from '@/stores/useStatutsStore/useStatutsStore';
 
 const ressources = {
   'chantiers-sans-filtre': {
@@ -9,12 +12,28 @@ const ressources = {
     id: 'chantiers-sans-filtre' as const,
     baseDuNomDeFichier: 'PILOTE-Chantiers-sans-filtre',
     url: '/api/export/chantiers-sans-filtre',
+    options: false,
+  },
+  'chantiers-avec-filtre': {
+    libellé: 'Les chantiers avec filtre',
+    id: 'chantiers-avec-filtre' as const,
+    baseDuNomDeFichier: 'PILOTE-Chantiers-avec-filtre',
+    url: '/api/export/chantiers-sans-filtre',
+    options: true,
   },
   'indicateurs-sans-filtre': {
     libellé: 'Les indicateurs sans filtre',
     id: 'indicateurs-sans-filtre' as const,
     baseDuNomDeFichier: 'PILOTE-Indicateurs-sans-filtre',
     url: '/api/export/indicateurs-sans-filtre',
+    options: false,
+  },
+  'indicateurs-avec-filtre': {
+    libellé: 'Les indicateurs avec filtre',
+    id: 'indicateurs-avec-filtre' as const,
+    baseDuNomDeFichier: 'PILOTE-Indicateurs-avec-filtre',
+    url: '/api/export/indicateurs-sans-filtre',
+    options: true,
   },
 };
 
@@ -23,6 +42,33 @@ export const ID_HTML_MODALE_EXPORT = 'modale-exporter-les-données';
 export default function ExportDesDonnées() {
   const [ressourceÀExporter, setRessourceÀExporter] = useState<keyof typeof ressources | undefined>();
   const [estDésactivé, setEstDésactivé] = useState(false);
+
+
+  const {
+    récupérerFiltresActifsAvecLeursCatégories,
+  } = actionsFiltreStore();
+
+  const { recupérerLesStatutsSélectionnés } = actionsStatutsStore();
+
+  const filtresActifs = récupérerFiltresActifsAvecLeursCatégories();
+
+  const arrayOptionsExport: { name: string, value: string | boolean }[] = filtresActifs.filter(filtre => filtre.catégorie === 'périmètresMinistériels').map(filtrePerimetreMinisteriel => ({
+    name: 'perimetreIds',
+    value: filtrePerimetreMinisteriel.filtre.id,
+  }));
+
+  if ((filtresActifs.filter(filtre => filtre.catégorie === 'filtresTypologie').find(filtreTypo => (filtreTypo.filtre as FiltreTypologieType).attribut === 'estBaromètre')?.filtre as FiltreTypologieType)?.attribut) {
+    arrayOptionsExport.push({ name: 'estBarometre', value: true });
+  }
+
+  if ((filtresActifs.filter(filtre => filtre.catégorie === 'filtresTypologie').find(filtreTypo => (filtreTypo.filtre as FiltreTypologieType).attribut === 'estTerritorialisé')?.filtre as FiltreTypologieType)?.attribut) {
+    arrayOptionsExport.push({ name: 'estTerritorialise', value: true });
+  }
+
+  recupérerLesStatutsSélectionnés().forEach(statut => {
+    arrayOptionsExport.push({ name: 'statut', value: statut });
+  });
+
 
   return (
     <Modale
@@ -42,11 +88,12 @@ export default function ExportDesDonnées() {
           if (!ressourceÀExporter)
             return;
 
-          const { url, baseDuNomDeFichier } = ressources[ressourceÀExporter];
+          const { url, baseDuNomDeFichier, options } = ressources[ressourceÀExporter];
           if (url) {
             setEstDésactivé(true);
             const a = window.document.createElement('a');
-            a.href = url;
+            const strOptionsExport = `${arrayOptionsExport.map(option => `${option.name}=${option.value}`).join('&')}`;
+            a.href = `${url}${ options && arrayOptionsExport.length > 0 ? `?${strOptionsExport}` : ''}`;
             a.target = '_self';
             a.download = `${baseDuNomDeFichier}-${horodatage()}.csv`;
             document.body.append(a);
