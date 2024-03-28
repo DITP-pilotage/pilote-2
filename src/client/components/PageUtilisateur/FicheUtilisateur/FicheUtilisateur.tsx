@@ -33,6 +33,11 @@ export default function FicheUtilisateur({ utilisateur }: FicheUtilisateurProps)
         territoires={scopes['saisieCommentaire'].territoires}
         titre='Droits de saisie des commentaires'
       />
+      <DétailsDroitsUtilisateur
+        chantiers={scopes['gestionUtilisateur'].chantiers}
+        territoires={scopes['gestionUtilisateur'].territoires}
+        titre='Droits de gestion des utilisateurs'
+      />
     </FicheUtilisateurStyled>
   );
 }

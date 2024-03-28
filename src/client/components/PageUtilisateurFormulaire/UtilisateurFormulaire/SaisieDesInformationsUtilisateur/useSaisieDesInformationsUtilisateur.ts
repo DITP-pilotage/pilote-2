@@ -133,7 +133,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     let chantiersAccessibles = chantiers;
 
     if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION'].includes(session!.profil)) {
-      chantiersAccessibles = chantiersAccessibles.filter(chantier => session?.habilitations.saisieCommentaire.chantiers.includes(chantier.id));
+      chantiersAccessibles = chantiersAccessibles.filter(chantier => session?.habilitations['utilisateurs.modification'].chantiers.includes(chantier.id));
     }
 
     if (['RESPONSABLE_DEPARTEMENT', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(profilSélectionné.code)) {

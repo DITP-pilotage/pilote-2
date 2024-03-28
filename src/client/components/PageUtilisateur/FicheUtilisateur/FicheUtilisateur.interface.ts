@@ -14,6 +14,7 @@ export default interface FicheUtilisateurProps {
     fonction: string | null
     saisieIndicateur?: boolean
     saisieCommentaire?: boolean
+    gestionUtilisateur?: boolean
     habilitations?: {
       lecture?: {
         chantiers?: Chantier['id'][]
