@@ -9,6 +9,7 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import {
   IndicateurPourExport,
 } from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
+import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 
 function _fakeIndicateurPourExport(cid: Indicateur['id']): IndicateurPourExport {
   return {
@@ -17,6 +18,13 @@ function _fakeIndicateurPourExport(cid: Indicateur['id']): IndicateurPourExport 
     maille: 'NAT',
   } as unknown as IndicateurPourExport;
 }
+
+const optionsExport: OptionsExport = {
+  perimetreIds: [],
+  estTerritorialise: false,
+  estBarometre: false,
+  listeStatuts: [],
+};
 
 describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
   it('Renvoie une liste vide si pas de chantiers', async () => {
@@ -34,7 +42,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
 
     // WHEN
     let result: string[][] = [];
-    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize })) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport })) {
       result = [...result, ...partialResult];
     }
 
@@ -64,7 +72,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
 
     // WHEN
     let result: string[][] = [];
-    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize })) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport })) {
       result = [...result, ...partialResult];
     }
 
@@ -94,7 +102,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
 
     // WHEN
     let result: string[][] = [];
-    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize })) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport })) {
       result = [...result, ...partialResult];
     }
 
@@ -128,7 +136,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
 
     // WHEN
     let result: string[][] = [];
-    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize })) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport })) {
       result = [...result, ...partialResult];
     }
 
@@ -166,7 +174,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
 
     // WHEN
     let result: string[][] = [];
-    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize })) {
+    for await (const partialResult of usecase.run({ habilitation, profil, indicateurChunkSize, optionsExport })) {
       result = [...result, ...partialResult];
     }
 

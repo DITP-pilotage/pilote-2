@@ -306,6 +306,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       directeursProjetMails: it.directeurs_projet_mails,
       responsablesLocaux: it.responsables_locaux,
       responsablesLocauxMails: it.responsables_locaux_mails,
+      statut: it.statut,
       estBaromètre: it.est_barometre,
       estTerritorialisé: it.est_territorialise,
       commActionsÀVenir: it.comm_actions_a_venir,
