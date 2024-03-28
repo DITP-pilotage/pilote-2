@@ -13,7 +13,7 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: profil } = api.profil.récupérer.useQuery({ profilCode: utilisateur.profil }, { staleTime: Number.POSITIVE_INFINITY });
 
-  const [scopes, setScopes] = useState<{ [key in (ScopeChantiers)]: { chantiers: Chantier['nom'][], territoires: Territoire['nomAffiché'][] } }>({
+  const [scopes, setScopes] = useState<{ [key in (ScopeChantiers | 'gestionUtilisateur')]: { chantiers: Chantier['nom'][], territoires: Territoire['nomAffiché'][] } }>({
     lecture: {
       chantiers: [],
       territoires: [],
@@ -23,6 +23,10 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
       territoires: [],
     },
     saisieCommentaire: {
+      chantiers: [],
+      territoires: [],
+    },
+    gestionUtilisateur: {
       chantiers: [],
       territoires: [],
     },
@@ -86,6 +90,11 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
     
   }, [déterminerLesNomÀAfficherPourLesTerritoiresLecture, profil]);
 
+  const déterminerLesNomÀAfficherPourLesTerritoiresGestionUtilisateur = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
+    return u.gestionUtilisateur ? déterminerLesNomÀAfficherPourLesTerritoiresLecture(u) : [];
+    
+  }, [déterminerLesNomÀAfficherPourLesTerritoiresLecture]);
+
   const déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
     if (u.saisieCommentaire) {
 
@@ -107,6 +116,21 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
 
   }, [déterminerLesNomÀAfficherPourLesChantiersLecture, chantiers, profil]);
 
+  const déterminerLesNomÀAfficherPourLesChantiersGestionDesUtilisateurs = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
+    if (u.gestionUtilisateur) {
+      if (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profil?.code ?? ''))
+        return ['Tous les chantiers'];
+
+      if (['REFERENT_REGION', 'REFERENT_DEPARTEMENT'].includes(profil?.code ?? ''))
+        return ['Tous les chantiers ATE territorialisés']; 
+
+      return déterminerLesNomÀAfficherPourLesChantiersLecture(u);
+    } else {
+      return [];
+    }
+
+  }, [déterminerLesNomÀAfficherPourLesChantiersLecture, profil]);
+
   useEffect(() => {
     if (!chantiers || !profil)
       return;
@@ -123,6 +147,10 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
       saisieCommentaire: {
         chantiers: déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire(utilisateur),
         territoires: déterminerLesNomÀAfficherPourLesTerritoiresSaisieCommentaire(utilisateur),
+      },
+      gestionUtilisateur: {
+        chantiers: déterminerLesNomÀAfficherPourLesChantiersGestionDesUtilisateurs(utilisateur),
+        territoires: déterminerLesNomÀAfficherPourLesTerritoiresGestionUtilisateur(utilisateur),
       },
     };
 

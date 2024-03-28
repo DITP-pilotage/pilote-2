@@ -110,7 +110,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
                   groupesÀAfficher={groupesTerritoiresÀAfficher}
                   territoiresCodesSélectionnésParDéfaut={territoiresSélectionnés}
-                  territoiresSélectionnables={session?.habilitations.saisieCommentaire.territoires}
+                  territoiresSélectionnables={session?.habilitations['utilisateurs.modification'].territoires}
                 />
               )}
               rules={{ required: true }} 
