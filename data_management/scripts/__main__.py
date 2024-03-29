@@ -22,20 +22,20 @@ ERROR_MSG = "\n".join([
 # Jobs à exécuter en fonction de l'environnement
 JOBS_TO_RUN={}
 JOBS_TO_RUN['PROD'] = [
-        'scripts/0_dbt_deps.sh',
+        'scripts/0_dbt_deps_init_elementary.sh',
         'scripts/2_seed_ppg_metadata.sh',
         'scripts/5_staging.sh',
         'scripts/7_exposition.sh'
     ]
 JOBS_TO_RUN['PREPROD'] = JOBS_TO_RUN['PROD']
 JOBS_TO_RUN['DEV'] = [
-        'scripts/0_dbt_deps.sh',
+        'scripts/0_dbt_deps_init_elementary.sh',
         'scripts/2_seed_ppg_metadata.sh',
         'scripts/5_staging.sh',
         'scripts/7_exposition.sh'
     ]
 JOBS_TO_RUN['LOCAL'] = [
-        'scripts/0_dbt_deps.sh',
+        'scripts/0_dbt_deps_init_elementary.sh',
         'scripts/0_prisma_migrate.sh',
         'scripts/2_seed_ppg_metadata.sh',
         'scripts/4_seed_private.sh',
