@@ -412,7 +412,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   }
 
   private _aDesDroitsdeGestionUtilisateur(habilitations: Habilitations, profilUtilisateur: profil) {
-    const habilitationsFormatés = new Habilitation(habilitations)
+    const habilitationsFormatés = new Habilitation(habilitations);
     if (!profilUtilisateur.peut_modifier_les_utilisateurs)
       return false;
 
