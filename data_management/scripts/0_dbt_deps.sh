@@ -17,3 +17,4 @@ fi
 
 echo ">> Run dbt deps"
 dbt deps --project-dir data_factory
+dbt run --project-dir data_factory --select elementary
