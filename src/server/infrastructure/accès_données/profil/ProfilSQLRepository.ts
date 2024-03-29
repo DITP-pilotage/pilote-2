@@ -53,9 +53,9 @@ export default class ProfilSQLRepository implements ProfilRepository {
         },
       },
       utilisateurs: {
-        lecture: p.peut_consulter_les_utilisateurs,
-        modification: p.peut_modifier_les_utilisateurs,
-        suppression:  p.peut_supprimer_les_utilisateurs,
+        modificationPossible: p.peut_modifier_les_utilisateurs,
+        tousTerritoires: p.a_acces_a_tous_les_territoires_utilisateurs,
+        tousChantiers: p.a_acces_a_tous_les_chantiers_utilisateurs,
       },
     };
   }

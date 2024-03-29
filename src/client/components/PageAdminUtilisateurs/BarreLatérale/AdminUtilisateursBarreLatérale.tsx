@@ -16,7 +16,7 @@ import Tag from '@/components/_commons/Tag/Tag';
 import { territoiresTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import api from '@/server/infrastructure/api/trpc/api';
 import MultiSelectProfil from '@/components/_commons/MultiSelect/MultiSelectProfil/MultiSelectProfil';
-import { PROFILS_POSSIBLES_REFERENTS_LECTURE } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
+import { AAccesATousLesUtilisateurs, PROFILS_POSSIBLES_REFERENTS_LECTURE } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 
 export default function AdminUtilisateursBarreLatérale({
   estOuverteBarreLatérale,
@@ -31,10 +31,10 @@ export default function AdminUtilisateursBarreLatérale({
   const filtresActifs = filtresUtilisateursActifsStore();
   const réinitialiserFiltres = réinitialiser();
   const territoiresAccessibles = session!.habilitations.lecture.territoires;
-  const profilCréateur = session!.profil;
-  const profilAccessibles = ['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profilCréateur) 
+  const profilCréateur = profils?.find(profil => profil.code === session!.profil);
+  const profilAccessibles = AAccesATousLesUtilisateurs(profilCréateur ?? null)
     ? (profils ?? []) : 
-    profils?.filter(profil => PROFILS_POSSIBLES_REFERENTS_LECTURE[profilCréateur as keyof typeof PROFILS_POSSIBLES_REFERENTS_LECTURE].includes(profil.code));
+    profils?.filter(profil => PROFILS_POSSIBLES_REFERENTS_LECTURE[profilCréateur?.code as keyof typeof PROFILS_POSSIBLES_REFERENTS_LECTURE].includes(profil.code));
 
   return (
     <BarreLatérale

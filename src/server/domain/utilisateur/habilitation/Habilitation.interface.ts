@@ -3,7 +3,7 @@ import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/Pé
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 
-export const scopesUtilisateurs = ['utilisateurs.lecture', 'utilisateurs.modification', 'utilisateurs.suppression'] as const;
+export const scopesUtilisateurs = ['gestionUtilisateur'] as const;
 export const scopesChantiers = ['lecture', 'saisieCommentaire', 'saisieIndicateur'] as const;
 export const scopesProjetsStructurants = ['projetsStructurants.lecture'] as const;
 export const scopes = [...scopesChantiers, ...scopesProjetsStructurants, ...scopesUtilisateurs] as const;

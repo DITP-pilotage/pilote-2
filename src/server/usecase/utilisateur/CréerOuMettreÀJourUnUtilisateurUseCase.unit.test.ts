@@ -48,7 +48,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
   ] as PérimètreMinistériel[];
 
   const habilitations = { 
-    'utilisateurs.modification': { 
+    gestionUtilisateur: { 
       chantiers: fakeChantiersSynthétisés.map(c => c.id), 
       territoires: fakeTerritoires.map(t => t.code), 
     }, 
@@ -70,17 +70,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
       périmètres: [],
       territoires: [],
     },
-    'utilisateurs.lecture': {
-      chantiers: [],
-      périmètres: [],
-      territoires: [],
-    },
-    'utilisateurs.modification': {
-      chantiers: [],
-      périmètres: [],
-      territoires: [],
-    },
-    'utilisateurs.suppression': {
+    gestionUtilisateur: {
       chantiers: [],
       périmètres: [],
       territoires: [],
@@ -256,9 +246,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
       const habilitationsAttendues = { 
         ...habilitationsVides, 
         lecture: { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] }, 
-        'utilisateurs.lecture': { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] },
-        'utilisateurs.modification': { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] },
-        'utilisateurs.suppression': { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] },
+        gestionUtilisateur: { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] },
       };
       await testCasPassant('REFERENT_REGION', habilitationsAttendues, false, false, true, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion]);
     });

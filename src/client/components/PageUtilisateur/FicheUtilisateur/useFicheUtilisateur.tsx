@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { actionsTerritoiresStore, départementsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import { ScopeChantiers } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
+import { ScopeChantiers, ScopeUtilisateurs } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import api from '@/server/infrastructure/api/trpc/api';
 import { profilsRégionaux } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { AAccesATousLesUtilisateurs } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import FicheUtilisateurProps from './FicheUtilisateur.interface';
 
 export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['utilisateur']) {
@@ -13,7 +14,7 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
   const { data: chantiers } = api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(undefined, { staleTime: Number.POSITIVE_INFINITY });
   const { data: profil } = api.profil.récupérer.useQuery({ profilCode: utilisateur.profil }, { staleTime: Number.POSITIVE_INFINITY });
 
-  const [scopes, setScopes] = useState<{ [key in (ScopeChantiers | 'gestionUtilisateur')]: { chantiers: Chantier['nom'][], territoires: Territoire['nomAffiché'][] } }>({
+  const [scopes, setScopes] = useState<{ [key in (ScopeChantiers | ScopeUtilisateurs)]: { chantiers: Chantier['nom'][], territoires: Territoire['nomAffiché'][] } }>({
     lecture: {
       chantiers: [],
       territoires: [],
@@ -118,7 +119,7 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
 
   const déterminerLesNomÀAfficherPourLesChantiersGestionDesUtilisateurs = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
     if (u.gestionUtilisateur) {
-      if (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profil?.code ?? ''))
+      if (AAccesATousLesUtilisateurs(profil ?? null))
         return ['Tous les chantiers'];
 
       if (['REFERENT_REGION', 'REFERENT_DEPARTEMENT'].includes(profil?.code ?? ''))

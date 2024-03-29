@@ -48,9 +48,7 @@ export default class UtilisateurBuilder {
       lecture: { chantiers: [], territoires: [], périmètres: [] },
       'saisieCommentaire': { chantiers: [], territoires: [], périmètres: [] },
       'saisieIndicateur': { chantiers: [], territoires: [], périmètres: [] },
-      'utilisateurs.lecture': { chantiers: [], territoires:[], périmètres: [] },
-      'utilisateurs.modification': { chantiers: [], territoires: [], périmètres: [] },
-      'utilisateurs.suppression': { chantiers: [], territoires: [], périmètres: [] },
+      'gestionUtilisateur': { chantiers: [], territoires:[], périmètres: [] },
       'projetsStructurants.lecture': { projetsStructurants: [] },
     };
   }

@@ -46,6 +46,13 @@ export const PROFILS_POSSIBLES_REFERENTS_LECTURE = {
   ],
 };
 
+export const AAccesATousLesUtilisateurs = (profil: Profil | null) => {
+  if (profil)
+    return profil.utilisateurs.tousChantiers && profil.utilisateurs.tousTerritoires;
+
+  return false;
+};
+
 export default function useSaisieDesInformationsUtilisateur(utilisateur?: UtilisateurFormulaireProps['utilisateur']) {
   const { data: session } = useSession();
   const { register, watch, formState: { errors }, control, setValue, getValues, resetField, unregister } = useFormContext<UtilisateurFormInputs>();
@@ -94,8 +101,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     const afficherChoixIndicateur = !!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires;
     setAfficherChampSaisieIndicateur(afficherChoixIndicateur);
 
-    const profilPeutAccéderALaGestionDesComptes = !!profilSélectionné && (profilSélectionné.utilisateurs.lecture || profilSélectionné.utilisateurs.modification || profilSélectionné.utilisateurs.suppression);
-    const afficherGestionCompte = !!profilSélectionné && profilPeutAccéderALaGestionDesComptes && !['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profilCodeSélectionné);
+    const afficherGestionCompte = !!profilSélectionné && profilSélectionné.utilisateurs.modificationPossible && !AAccesATousLesUtilisateurs(profilSélectionné);
     setAfficherChampGestionCompte(afficherGestionCompte);
 
     // Saisie Commentaire
@@ -116,7 +122,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
       // Gestion des comptes
       const valeurParDéfautCaseGestionCompte = afficherGestionCompte 
         ? false 
-        : (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(profilCodeSélectionné));
+        : AAccesATousLesUtilisateurs(profilSélectionné ?? null);
       setValue('gestionUtilisateur', valeurParDéfautCaseGestionCompte);
 
     } else {
@@ -133,7 +139,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     let chantiersAccessibles = chantiers;
 
     if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION'].includes(session!.profil)) {
-      chantiersAccessibles = chantiersAccessibles.filter(chantier => session?.habilitations['utilisateurs.modification'].chantiers.includes(chantier.id));
+      chantiersAccessibles = chantiersAccessibles.filter(chantier => session?.habilitations.gestionUtilisateur.chantiers.includes(chantier.id));
     }
 
     if (['RESPONSABLE_DEPARTEMENT', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(profilSélectionné.code)) {
