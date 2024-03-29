@@ -15,6 +15,6 @@ then
   fi
 fi
 
-echo ">> Run dbt deps"
+echo ">> Run dbt deps && init elementary"
 dbt deps --project-dir data_factory
 dbt run --project-dir data_factory --select elementary
