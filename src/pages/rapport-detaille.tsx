@@ -33,39 +33,6 @@ interface NextPageRapportDétailléProps {
   codeInsee: CodeInsee
 }
 
-export default function NextPageRapportDétaillé({
-  chantiers,
-  ministères,
-  indicateursGroupésParChantier,
-  détailsIndicateursGroupésParChantier,
-  publicationsGroupéesParChantier,
-  maille,
-  codeInsee,
-}: NextPageRapportDétailléProps) {
-  if (process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE !== 'true') {
-    return;
-  }
-
-  return (
-    <>
-      <Head>
-        <title>
-          Rapport détaillé - PILOTE
-        </title>
-      </Head>
-      <PageRapportDétaillé
-        chantiers={chantiers}
-        codeInsee={codeInsee}
-        détailsIndicateursGroupésParChantier={détailsIndicateursGroupésParChantier}
-        indicateursGroupésParChantier={indicateursGroupésParChantier}
-        maille={maille}
-        ministères={ministères}
-        publicationsGroupéesParChantier={publicationsGroupéesParChantier}
-      />
-    </>
-  );
-}
-
 export async function getServerSideProps({ req, res, query }: GetServerSidePropsContext) {
   if (process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE !== 'true') {
     res.setHeader('location', '/');
@@ -98,7 +65,7 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
   const chantiersIds = chantiers.map(chantier => chantier.id);
 
   const ministèreRepository = dependencies.getMinistèreRepository();
-  const ministères = await ministèreRepository.getListePourChantiers(chantiers);
+  const ministères = await ministèreRepository.getListePourChantiers(chantiersIds);
 
   const indicateursRepository = dependencies.getIndicateurRepository();
   const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(chantiersIds, maille, codeInsee);
@@ -106,7 +73,7 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
 
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();
   const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds, maille, codeInsee);
-  
+
   let décisionStratégiquesGroupéesParChantier: Record<string, DécisionStratégique | null> = Object.fromEntries(chantiersIds.map(id => [id, null]));
   if (habilitation.peutAccéderAuTerritoire('NAT-FR')) {
     const décisionStratégiqueRepository = dependencies.getDécisionStratégiqueRepository();
@@ -133,4 +100,37 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
       },
     },
   };
+}
+
+export default function NextPageRapportDétaillé({
+  chantiers,
+  ministères,
+  indicateursGroupésParChantier,
+  détailsIndicateursGroupésParChantier,
+  publicationsGroupéesParChantier,
+  maille,
+  codeInsee,
+}: NextPageRapportDétailléProps) {
+  if (process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE !== 'true') {
+    return;
+  }
+
+  return (
+    <>
+      <Head>
+        <title>
+          Rapport détaillé - PILOTE
+        </title>
+      </Head>
+      <PageRapportDétaillé
+        chantiers={chantiers}
+        codeInsee={codeInsee}
+        détailsIndicateursGroupésParChantier={détailsIndicateursGroupésParChantier}
+        indicateursGroupésParChantier={indicateursGroupésParChantier}
+        maille={maille}
+        ministères={ministères}
+        publicationsGroupéesParChantier={publicationsGroupéesParChantier}
+      />
+    </>
+  );
 }
