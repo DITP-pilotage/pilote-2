@@ -382,7 +382,8 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  '${inputs.poidsPourcentReg}', 
                                                  '${inputs.poidsPourcentNat}',
                                                  '${makeStrSafer(inputs.tendance)}')`;
-    const queryMetadataIndicateurComplementaire = `INSERT INTO raw_data.metadata_indicateurs_complementaire (reforme_prioritaire,
+    const queryMetadataIndicateurComplementaire = `INSERT INTO raw_data.metadata_indicateurs_complementaire (indic_id,
+                                                                                                reforme_prioritaire,
                                                                                                 projet_annuel_perf,
                                                                                                 detail_projet_annuel_perf,
                                                                                                 periodicite,
@@ -419,7 +420,6 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
                                                  '${makeStrSafer(inputs.contactTechnique)}',
                                                  '${makeStrSafer(inputs.contactTechniqueEmail)}', 
                                                  '${makeStrSafer(inputs.commentaire)}')`;
-
 
     await this.prismaClient.$transaction([
       this.prismaClient.$queryRaw`${Prisma.raw(queryIndicateur)}`,
