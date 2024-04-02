@@ -133,13 +133,13 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .string(),
   poidsPourcentDept: z
     .string()
-    .refine((value) => new RegExp(metadata.poids_pourcent_dept.metaPiloteEditRegex).test(value), metadata.poids_pourcent_dept.metaPiloteEditRegexViolationMessage),
+    .refine((value) => new RegExp(metadata.poids_pourcent_dept_declaree.metaPiloteEditRegex).test(value), metadata.poids_pourcent_dept_declaree.metaPiloteEditRegexViolationMessage),
   poidsPourcentReg: z
     .string()
-    .refine((value) => new RegExp(metadata.poids_pourcent_reg.metaPiloteEditRegex).test(value), metadata.poids_pourcent_reg.metaPiloteEditRegexViolationMessage),
+    .refine((value) => new RegExp(metadata.poids_pourcent_reg_declaree.metaPiloteEditRegex).test(value), metadata.poids_pourcent_reg_declaree.metaPiloteEditRegexViolationMessage),
   poidsPourcentNat: z
     .string()
-    .refine((value) => new RegExp(metadata.poids_pourcent_nat.metaPiloteEditRegex).test(value), metadata.poids_pourcent_nat.metaPiloteEditRegexViolationMessage),
+    .refine((value) => new RegExp(metadata.poids_pourcent_nat_declaree.metaPiloteEditRegex).test(value), metadata.poids_pourcent_nat_declaree.metaPiloteEditRegexViolationMessage),
   tendance: z
     .string(),
   reformePrioritaire: z
