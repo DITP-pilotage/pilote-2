@@ -12,6 +12,7 @@ markdown2 = "==2.4.13"
 python-dotenv = "==1.0.1"
 requests = "==2.31.0"
 pyarrow = ">=14.0.1" # https://github.com/DITP-pilotage/pilote-2/security/dependabot/38
+elementary-data = {extras = ["postgres"], version = "==0.13.2"}
 
 [dev-packages]
 

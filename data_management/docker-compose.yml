@@ -42,6 +42,7 @@ services:
       - "${PWD}/setup.py:/app/data_management/setup.py:ro"
       - "${PWD}/input_data:/app/data_management/input_data"
       - "${PWD}/scripts:/app/data_management/scripts"
+      - "${PWD}/edr_target:/app/data_management/edr_target"
       - "${PWD}/../src/database/:/app/src/database:ro"
   
   pilote_dbt:
