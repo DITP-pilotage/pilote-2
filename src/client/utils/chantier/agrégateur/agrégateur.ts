@@ -11,6 +11,7 @@ import régions from '@/client/constants/régions.json';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
+import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { AgrégatParTerritoire } from './agrégateur.interface';
 
 type AvancementRegroupementDonnéesBrutes = {
@@ -21,7 +22,7 @@ type AvancementRegroupementDonnéesBrutes = {
 export class AgrégateurChantiersParTerritoire {
   private agrégat: AgrégatParTerritoire;
 
-  constructor(private chantiers: ChantierAccueilContrat[]) {
+  constructor(private chantiers: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[]) {
     this.chantiers = chantiers;
     this.agrégat = this._créerAgrégatInitial();
   }

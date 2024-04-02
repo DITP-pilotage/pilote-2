@@ -3,26 +3,26 @@ import { Maille } from '@/server/domain/maille/Maille.interface';
 import { TerritoireDonnées, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 
-interface TerritoireAvancementContrat {
+interface TerritoireAvancementAccueilContrat {
   global: number | null
   annuel: number | null
 }
 
-interface TerritoireDonnéeContrat {
+interface TerritoireDonnéeAccueilContrat {
   estApplicable: boolean | null
   écart: number | null
   tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION' | null
   dateDeMàjDonnéesQualitatives: string | null
   dateDeMàjDonnéesQuantitatives: string | null
-  avancement: TerritoireAvancementContrat
+  avancement: TerritoireAvancementAccueilContrat
   météo: 'NON_RENSEIGNEE' | 'ORAGE' | 'NUAGE' | 'COUVERT' | 'SOLEIL' | 'NON_NECESSAIRE'
 }
 
-type ListeTerritoiresDonnéeContrat = Record<string, TerritoireDonnéeContrat>;
+type ListeTerritoiresDonnéeAccueilContrat = Record<string, TerritoireDonnéeAccueilContrat>;
 
-type MailleContrat = Record<Maille, ListeTerritoiresDonnéeContrat>;
+type MailleAccueilContrat = Record<Maille, ListeTerritoiresDonnéeAccueilContrat>;
 
-export interface MinisterePorteur {
+export interface MinistereAccueilPorteur {
   nom?: string
   icône?: string | null
   périmètresMinistériels: {
@@ -34,7 +34,7 @@ export interface ChantierAccueilContrat {
   id: string
   nom: string
   statut: TypeStatut,
-  mailles: MailleContrat;
+  mailles: MailleAccueilContrat;
   périmètreIds: string[]
   estTerritorialisé: boolean
   estBaromètre: boolean
@@ -43,11 +43,11 @@ export interface ChantierAccueilContrat {
   tauxAvancementDonnéeTerritorialisée: Record<'régionale' | 'départementale', Boolean>
   météoDonnéeTerritorialisée: Record<'régionale' | 'départementale', Boolean>
   responsables: {
-    porteur: MinisterePorteur | null
+    porteur: MinistereAccueilPorteur | null
   }
 }
 
-const presenterEnTerritoireDonnéeContrat = (territoireDonnee: TerritoireDonnées): TerritoireDonnéeContrat => {
+const presenterEnTerritoireDonnéeAccueilContrat = (territoireDonnee: TerritoireDonnées): TerritoireDonnéeAccueilContrat => {
   return {
     estApplicable: territoireDonnee.estApplicable,
     écart: territoireDonnee.écart,
@@ -63,17 +63,17 @@ const presenterEnTerritoireDonnéeContrat = (territoireDonnee: TerritoireDonnée
 };
 
 // le double reduce doit être enlever, on a pas besoin d'un record, un Map<CodeInsee, TerritoireDonnee> conditionnée par la maille suffit
-const presenterEnMailleContrat = (mailles: Record<Maille, TerritoiresDonnées>): MailleContrat => {
+const presenterEnMailleAccueilContrat = (mailles: Record<Maille, TerritoiresDonnées>): MailleAccueilContrat => {
   return Object.keys(mailles).reduce((acc, val) => {
     acc[val as Maille] = Object.keys(mailles[val as Maille]).reduce((accTerritoireDonnee, codeInsee) => {
-      accTerritoireDonnee[codeInsee] = presenterEnTerritoireDonnéeContrat(mailles[val as Maille][codeInsee]);
+      accTerritoireDonnee[codeInsee] = presenterEnTerritoireDonnéeAccueilContrat(mailles[val as Maille][codeInsee]);
       return accTerritoireDonnee;
-    }, {} as ListeTerritoiresDonnéeContrat);
+    }, {} as ListeTerritoiresDonnéeAccueilContrat);
     return acc;
-  }, {} as MailleContrat);
+  }, {} as MailleAccueilContrat);
 };
 
-const presenterEnPerimetresMinisterielContrat = (périmètreMinistériel: PérimètreMinistériel) => {
+const presenterEnPerimetresMinisterielAccueilContrat = (périmètreMinistériel: PérimètreMinistériel) => {
   return {
     id: périmètreMinistériel.id,
   };
@@ -84,7 +84,7 @@ export const presenterEnChantierAccueilContrat = (chantier: Chantier): ChantierA
     id: chantier.id,
     nom: chantier.nom,
     statut: chantier.statut,
-    mailles: presenterEnMailleContrat(chantier.mailles),
+    mailles: presenterEnMailleAccueilContrat(chantier.mailles),
     périmètreIds: chantier.périmètreIds,
     estTerritorialisé: chantier.estTerritorialisé,
     estBaromètre: chantier.estBaromètre,
@@ -94,7 +94,7 @@ export const presenterEnChantierAccueilContrat = (chantier: Chantier): ChantierA
       porteur: {
         nom: chantier.responsables.porteur?.nom,
         icône: chantier.responsables.porteur?.icône,
-        périmètresMinistériels: (chantier.responsables.porteur?.périmètresMinistériels || []).map(presenterEnPerimetresMinisterielContrat),
+        périmètresMinistériels: (chantier.responsables.porteur?.périmètresMinistériels || []).map(presenterEnPerimetresMinisterielAccueilContrat),
       },
     },
     tauxAvancementDonnéeTerritorialisée: chantier.tauxAvancementDonnéeTerritorialisée,

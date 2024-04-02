@@ -1,7 +1,8 @@
-import { GetServerSidePropsContext } from 'next/types';
 import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
 import { Maille as MaillePrisma } from '@prisma/client';
+import { GetServerSideProps } from 'next';
+import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import PageRapportDétaillé from '@/components/PageRapportDétaillé/PageRapportDétaillé';
@@ -22,9 +23,13 @@ import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mai
 import RécupérerChantiersAccessiblesEnLectureUseCase
   from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import {
+  ChantierRapportDetailleContrat,
+  presenterEnChantierRapportDetaille,
+} from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
 interface NextPageRapportDétailléProps {
-  chantiers: Chantier[]
+  chantiers: ChantierRapportDetailleContrat[]
   ministères: Ministère[]
   indicateursGroupésParChantier: Record<string, Indicateur[]>
   détailsIndicateursGroupésParChantier: Record<Chantier['id'], DétailsIndicateurs>
@@ -33,25 +38,24 @@ interface NextPageRapportDétailléProps {
   codeInsee: CodeInsee
 }
 
-export async function getServerSideProps({ req, res, query }: GetServerSidePropsContext) {
+export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléProps> = async ({ req, res, query }) =>  {
   if (process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE !== 'true') {
-    res.setHeader('location', '/');
-    res.statusCode = 302;
-    res.end();
-    return;
+    return {
+      redirect: {
+        statusCode: 302,
+        destination: '/',
+      },
+    };
   }
 
-  if (!query.territoireCode)
-    return { props: {} };
+  const session = await getServerSession(req, res, authOptions);
+
+  assert(query.territoireCode, 'Le territoire code est manquant');
+  assert(session?.habilitations, "La session ne dispose d'aucune habilitation");
 
   const territoireCode = query.territoireCode as string;
   const { maille: mailleBrute, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
   const maille = NOMS_MAILLES[mailleBrute as MaillePrisma];
-
-  const session = await getServerSession(req, res, authOptions);
-
-  if (!session || !session.habilitations)
-    return { props: {} };
 
   const habilitation = new Habilitation(session.habilitations);
 
@@ -60,7 +64,10 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
     dependencies.getChantierDatesDeMàjRepository(),
     dependencies.getMinistèreRepository(),
     dependencies.getTerritoireRepository(),
-  ).run(session.habilitations, session.profil);
+  )
+    .run(session.habilitations, session.profil)
+    .then(listeChantiersResult => listeChantiersResult.map(presenterEnChantierRapportDetaille));
+
 
   const chantiersIds = chantiers.map(chantier => chantier.id);
 
@@ -100,7 +107,7 @@ export async function getServerSideProps({ req, res, query }: GetServerSideProps
       },
     },
   };
-}
+};
 
 export default function NextPageRapportDétaillé({
   chantiers,
@@ -111,10 +118,6 @@ export default function NextPageRapportDétaillé({
   maille,
   codeInsee,
 }: NextPageRapportDétailléProps) {
-  if (process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE !== 'true') {
-    return;
-  }
-
   return (
     <>
       <Head>

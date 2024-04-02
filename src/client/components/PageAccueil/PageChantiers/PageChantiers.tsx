@@ -37,7 +37,6 @@ interface PageChantiersProps {
   ministères: Ministère[]
 }
 
-
 export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {
 
   const { data: session } = useSession();

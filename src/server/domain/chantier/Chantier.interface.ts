@@ -4,7 +4,8 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import { MinisterePorteur } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
+import { MinistereAccueilPorteur } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
+import { MinisterePorteurRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
 export type DirecteurAdministrationCentrale = { nom: string, direction: string };
 export type DirecteurProjet = { nom: string, email: string | null };
@@ -44,7 +45,7 @@ export type ChantierVueDEnsemble = {
   avancement: number | null;
   météo: Météo;
   typologie: { estBaromètre: boolean, estTerritorialisé: boolean, estBrouillon: boolean };
-  porteur: MinisterePorteur | null;
+  porteur: MinistereAccueilPorteur | MinisterePorteurRapportDetailleContrat | null;
   tendance: ChantierTendance | null,
   écart: number | null,
   dateDeMàjDonnéesQualitatives: string | null,
