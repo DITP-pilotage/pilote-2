@@ -46,6 +46,13 @@ export const PROFILS_POSSIBLES_REFERENTS_LECTURE = {
   ],
 };
 
+export const AAccesATousLesUtilisateurs = (profil: Profil | null) => {
+  if (profil)
+    return profil.utilisateurs.tousChantiers && profil.utilisateurs.tousTerritoires;
+
+  return false;
+};
+
 export default function useSaisieDesInformationsUtilisateur(utilisateur?: UtilisateurFormulaireProps['utilisateur']) {
   const { data: session } = useSession();
   const { register, watch, formState: { errors }, control, setValue, getValues, resetField, unregister } = useFormContext<UtilisateurFormInputs>();
@@ -63,6 +70,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   const [afficherChampLecturePérimètres, setAfficherChampLecturePérimètres] = useState(false);
   const [afficherChampSaisieCommentaire, setAfficherChampSaisieCommentaire] = useState(false);
   const [afficherChampSaisieIndicateur, setAfficherChampSaisieIndicateur] = useState(false);
+  const [afficherChampGestionCompte, setAfficherChampGestionCompte] = useState(false);
 
   const [chantiersAccessiblesPourLeProfil, setChantiersAccessiblesPourLeProfil] = useState<ChantierSynthétisé[]>([]);
 
@@ -93,6 +101,9 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     const afficherChoixIndicateur = !!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires;
     setAfficherChampSaisieIndicateur(afficherChoixIndicateur);
 
+    const afficherGestionCompte = !!profilSélectionné && profilSélectionné.utilisateurs.modificationPossible && !AAccesATousLesUtilisateurs(profilSélectionné);
+    setAfficherChampGestionCompte(afficherGestionCompte);
+
     // Saisie Commentaire
     if (!utilisateur) {
       const valeurParDéfautCaseCommentaire = 
@@ -107,12 +118,20 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
         ? false
         : (profilSélectionné?.chantiers.saisieIndicateur.tousTerritoires ? true : false);
       setValue('saisieIndicateur', valeurParDéfautCaseIndicateur);
+
+      // Gestion des comptes
+      const valeurParDéfautCaseGestionCompte = afficherGestionCompte 
+        ? false 
+        : AAccesATousLesUtilisateurs(profilSélectionné ?? null);
+      setValue('gestionUtilisateur', valeurParDéfautCaseGestionCompte);
+
     } else {
       setValue('saisieCommentaire', utilisateur.saisieCommentaire);
       setValue('saisieIndicateur', utilisateur.saisieIndicateur);
+      setValue('gestionUtilisateur', utilisateur.gestionUtilisateur);
     }
 
-  }, [profilSélectionné, setValue, utilisateur]);
+  }, [profilCodeSélectionné, profilSélectionné, setValue, utilisateur]);
 
   useEffect(() => {
     if (!chantiers || !profilSélectionné) return;
@@ -120,7 +139,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     let chantiersAccessibles = chantiers;
 
     if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION'].includes(session!.profil)) {
-      chantiersAccessibles = chantiersAccessibles.filter(chantier => session?.habilitations.saisieCommentaire.chantiers.includes(chantier.id));
+      chantiersAccessibles = chantiersAccessibles.filter(chantier => session?.habilitations.gestionUtilisateur.chantiers.includes(chantier.id));
     }
 
     if (['RESPONSABLE_DEPARTEMENT', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(profilSélectionné.code)) {
@@ -232,6 +251,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     chantiersAccessiblesPourLeProfil,
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
+    afficherChampGestionCompte,
     session,
   };
 }

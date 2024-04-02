@@ -517,9 +517,9 @@ model profil {
   a_acces_tous_les_territoires_lecture                        Boolean       @default(false)
   a_acces_tous_les_territoires_saisie_commentaire             Boolean       @default(false)
   a_acces_tous_les_territoires_saisie_indicateur              Boolean       @default(false)
-  peut_consulter_les_utilisateurs                             Boolean       @default(false)
   peut_modifier_les_utilisateurs                              Boolean       @default(false)
-  peut_supprimer_les_utilisateurs                             Boolean       @default(false)
+  a_acces_a_tous_les_territoires_utilisateurs                 Boolean       @default(false)
+  a_acces_a_tous_les_chantiers_utilisateurs                   Boolean       @default(false)
   peut_saisir_des_commentaires                                Boolean       @default(false)
   a_access_aux_chantiers_brouillons                           Boolean       @default(false)
   utilisateur                                                 utilisateur[]

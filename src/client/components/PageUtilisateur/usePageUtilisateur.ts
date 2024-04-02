@@ -37,7 +37,7 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
     }
 
     const habilitations = new Habilitation(session.habilitations);
-    return !habilitations.peutAccéderAuxTerritoires(utilisateurHabilitations.lecture.territoires) || ['REFERENT_REGION', 'REFERENT_DEPARTEMENT'].includes(utilisateurProfil);
+    return !habilitations.peutAccéderAuxTerritoiresUtilisateurs(utilisateurHabilitations.lecture.territoires) || ['REFERENT_REGION', 'REFERENT_DEPARTEMENT'].includes(utilisateurProfil);
   };
 
   const donnneContenuBandeau = (session: Session | null, utilisateurHabilitations: Habilitations, utilisateurProfil: ProfilCode) => {
@@ -47,7 +47,7 @@ export default function usePageUtilisateur(utilisateur: Utilisateur) {
 
     const habilitations = new Habilitation(session.habilitations);
 
-    if (!habilitations.peutAccéderAuxTerritoires(utilisateurHabilitations.lecture.territoires)) {
+    if (!habilitations.peutAccéderAuxTerritoiresUtilisateurs(utilisateurHabilitations.lecture.territoires)) {
       return "Ce compte a des droits d'accès sur plusieurs territoires. Vous ne pouvez pas modifier ses droits ou supprimer l'utilisateur. Si vous avez besoin d’aide, veuillez contacter le support technique.";
     } else if (['REFERENT_REGION', 'REFERENT_DEPARTEMENT'].includes(utilisateurProfil)) {
       return "Ce compte a un profil de référent PILOTE. Vous ne pouvez le modifier ou le supprimer. Si vous avez besoin d'aide, veuillez contacter le support technique.";

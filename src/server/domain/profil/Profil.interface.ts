@@ -27,8 +27,8 @@ export type Profil = {
     },
   },
   utilisateurs: {
-    lecture: boolean
-    modification: boolean
-    suppression:  boolean
+    modificationPossible: boolean
+    tousTerritoires:  boolean
+    tousChantiers: boolean
   },
 };
