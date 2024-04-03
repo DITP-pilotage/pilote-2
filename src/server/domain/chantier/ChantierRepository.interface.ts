@@ -9,6 +9,7 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 
 export default interface ChantierRepository {
   récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<ChantierPrisma[]>;
@@ -20,6 +21,7 @@ export default interface ChantierRepository {
   modifierMétéo(chantierId: string, territoireCode: string, météo: Météo): Promise<void>;
   récupérerPourExports(chantierIdsLecture: string[], territoireCodesLecture: string[]): Promise<ChantierPourExport[]>;
   récupérerChantierIdsEnLectureOrdonnésParNom(habilitation: Habilitation): Promise<Chantier['id'][]>;
+  récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation: Habilitation, optionsExport: OptionsExport): Promise<Chantier['id'][]>;
   récupérerChantierIdsAssociésAuxPérimètresMinistèriels(périmètreIds: PérimètreMinistériel['id'][], scope: Scope, profilUtilisateur: string): Promise<Chantier['id'][]> ;
   récupérerChantierIdsPourSaisieCommentaireServiceDeconcentré(chantierIds: Chantier['id'][]): Promise<Chantier['id'][]>;
 }

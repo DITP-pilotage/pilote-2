@@ -30,7 +30,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const chantierIds: Chantier['id'][] = [];
     const chantierChunkSize = 5;
     const chantierRepository = mock<ChantierRepository>();
-    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
 
     const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
@@ -57,7 +57,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const chantierChunkSize = 5;
     const chantierIds = ['CH-001'];
     const chantierRepository = mock<ChantierRepository>();
-    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
     chantierRepository.récupérerPourExports
       .mockResolvedValueOnce(chantierIds.map(_fakeChantierPourExport));
@@ -81,8 +81,8 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     }
 
     // THEN
-    expect(chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom)
-      .toHaveBeenCalledWith(habilitation);
+    expect(chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions)
+      .toHaveBeenCalledWith(habilitation, optionsExport);
     expect(chantierRepository.récupérerPourExports)
       .toHaveBeenCalledWith(chantierIds, territoireCodesLecture);
   });
@@ -92,7 +92,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const chantierIds = ['CH-001', 'CH-002', 'CH-003'];
     const chantierChunkSize = 3;
     const chantierRepository = mock<ChantierRepository>();
-    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
     chantierRepository.récupérerPourExports
       .mockResolvedValueOnce(chantierIds.map(_fakeChantierPourExport));
@@ -127,7 +127,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const firstChunk = chantierIds.slice(0, chantierChunkSize);
     const secondChunk = chantierIds.slice(chantierChunkSize);
     const chantierRepository = mock<ChantierRepository>();
-    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
     chantierRepository.récupérerPourExports
       .mockResolvedValueOnce(firstChunk.map(_fakeChantierPourExport))

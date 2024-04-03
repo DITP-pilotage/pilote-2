@@ -1,4 +1,4 @@
-import { chantier as ChantierPrisma, Prisma, PrismaClient } from '@prisma/client';
+import { chantier as ChantierPrisma, Prisma, PrismaClient, type_statut } from '@prisma/client';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import Chantier, { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
@@ -12,6 +12,7 @@ import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avanc
 import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -108,6 +109,44 @@ export default class ChantierSQLRepository implements ChantierRepository {
       },
     });
     
+    return chantiers.map(c => c.id);
+  }
+
+  async récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation: Habilitation, optionsExport: OptionsExport): Promise<Chantier['id'][]> {
+    const chantierIdsLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
+    const whereOptions: Prisma.chantierWhereInput = {};
+
+
+    if (optionsExport.estBarometre) {
+      whereOptions.est_barometre = true;
+    }
+
+    if (optionsExport.estTerritorialise) {
+      whereOptions.est_barometre = true;
+    }
+
+    if (optionsExport.listeStatuts) {
+      whereOptions.statut = {
+        in: optionsExport.listeStatuts as type_statut[],
+      };
+    }
+
+    if (optionsExport.perimetreIds && optionsExport.perimetreIds.length > 0) {
+      whereOptions.perimetre_ids = {
+        hasSome: optionsExport.perimetreIds,
+      };
+    }
+
+
+    const chantiers = await this.prisma.chantier.findMany({
+      distinct: ['id'],
+      where: {
+        id: { in: chantierIdsLecture },
+        ...whereOptions,
+      },
+      orderBy: [{ nom: 'asc' }],
+    });
+
     return chantiers.map(c => c.id);
   }
 

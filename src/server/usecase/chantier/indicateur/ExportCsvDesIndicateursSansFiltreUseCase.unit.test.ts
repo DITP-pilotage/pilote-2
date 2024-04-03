@@ -32,7 +32,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     const indicateurChunkSize = 5;
     const chantierIds: Chantier['id'][] = [];
     const chantierRepository = mock<ChantierRepository>();
-    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
     const indicateurRepository = mock<IndicateurRepository>();
 
@@ -55,7 +55,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     const indicateurChunkSize = 5;
     const chantierIds = ['CH-001'];
     const chantierRepository = mock<ChantierRepository>();
-    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
 
     const indicateurIds = ['IND-001'];
@@ -77,8 +77,8 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     }
 
     // THEN
-    expect(chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom)
-      .toHaveBeenCalledWith(habilitation);
+    expect(chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions)
+      .toHaveBeenCalledWith(habilitation, optionsExport);
     expect(indicateurRepository.récupérerPourExports)
       .toHaveBeenCalledWith(chantierIds, territoireCodesLecture);
   });
@@ -88,7 +88,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     const chantierIds = ['CH-001', 'CH-002', 'CH-003'];
     const indicateurChunkSize = 3;
     const chantierRepository = mock<ChantierRepository>();
-    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
 
     const indicateurIds = ['IND-001', 'IND-002', 'IND-003'];
@@ -119,7 +119,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     const chantierIds = ['CH-001', 'CH-002', 'CH-003', 'CH-004'];
     const indicateurChunkSize = 3;
     const chantierRepository = mock<ChantierRepository>();
-    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
 
     const indicateurIds = ['IND-001', 'IND-002', 'IND-003', 'IND-004'];
@@ -154,7 +154,7 @@ describe('ExportCsvDesIndicateursSansFiltreUseCase', () => {
     const indicateurChunkSize = 5;
     const chantierIds = ['CH-001'];
     const chantierRepository = mock<ChantierRepository>();
-    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
 
     const indicateurIds = ['IND-001', 'IND-002', 'IND-003'];
