@@ -34,34 +34,34 @@ export const PageCréerUtilisateurAide: FunctionComponent<{}> = () => {
         <p className='fr-text fr-text--bold fr-text--sm'>
           Pour créer un compte PILOTE pour un utilisateur sur votre territoire, il vous est demandé de prendre connaissance des règles ci-dessous puis de suivre les étapes indiquées.
         </p>
-        <div className='fr-mt-6w'>
-          <div className='fr-mb-6w'>
-            <h3>
-              Règles de gestion des comptes
-            </h3>
-            <h5 className='fr-mb-1w'>
-              Responsabilités du Référent PILOTE
-            </h5>
-            <p className='fr-text fr-text--sm'>
-              En tant que référent, il vous est demandé de gérer activement les comptes pour votre territoire. Vous disposez de droits de création, modification et suppression. Nous vous encourageons vivement à exercer cette responsabilité avec discernement. Les comptes utilisateurs doivent être créés uniquement pour les individus ayant des responsabilités directes en lien avec l'outil et les données publiées. Veillez à ce que les comptes ne soient pas utilisés de manière abusive ou superflue. La DITP effectuera régulièrement un suivi de la gestion des comptes pour chaque référent
-            </p>
-            <h5 className='fr-mb-1w'>
-              Confidentialité des données
-            </h5>
-            <p className='fr-text fr-text--sm'>
-              Il est important de garder à l'esprit que les données publiées sur cet outil sont protégées et ne sont pas destinées au grand public. Par conséquent, veuillez accorder une attention particulière à la confidentialité et à la sécurité des informations partagées. 
-              {' '}
-              <b>
-                La DITP se réserve le droit de modifier ou de supprimer des comptes qui ne respecteraient pas ces règles d’utilisation.
-              </b>
-            </p>
-            <h5 className='fr-mb-1w'>
-              Prérequis à la création d’un compte
-            </h5>
-            <p className='fr-text fr-text--sm'>
-              Les comptes doivent obligatoirement être associés à une adresse de messagerie électronique professionnelle valide de l’Etat (.gouv.fr). Les comptes rattachés à une adresse de messagerie générique (non nominative) ne sont également pas autorisés. En cas de questions ou de demandes particulières, le support de la DITP est à votre disposition pour vous aider.
-            </p>
-          </div>
+        <div className='fr-mt-6w fr-p-2w fr-mb-6w bloc-background-default-grey'>
+          <h3>
+            Règles de gestion des comptes
+          </h3>
+          <h5 className='fr-mb-1w'>
+            Responsabilités du Référent PILOTE
+          </h5>
+          <p className='fr-text fr-text--sm'>
+            En tant que référent, il vous est demandé de gérer activement les comptes pour votre territoire. Vous disposez de droits de création, modification et suppression. Nous vous encourageons vivement à exercer cette responsabilité avec discernement. Les comptes utilisateurs doivent être créés uniquement pour les individus ayant des responsabilités directes en lien avec l'outil et les données publiées. Veillez à ce que les comptes ne soient pas utilisés de manière abusive ou superflue. La DITP effectuera régulièrement un suivi de la gestion des comptes pour chaque référent
+          </p>
+          <h5 className='fr-mb-1w'>
+            Confidentialité des données
+          </h5>
+          <p className='fr-text fr-text--sm'>
+            Il est important de garder à l'esprit que les données publiées sur cet outil sont protégées et ne sont pas destinées au grand public. Par conséquent, veuillez accorder une attention particulière à la confidentialité et à la sécurité des informations partagées. 
+            {' '}
+            <b>
+              La DITP se réserve le droit de modifier ou de supprimer des comptes qui ne respecteraient pas ces règles d’utilisation.
+            </b>
+          </p>
+          <h5 className='fr-mb-1w'>
+            Prérequis à la création d’un compte
+          </h5>
+          <p className='fr-text fr-text--sm fr-mb-0'>
+            Les comptes doivent obligatoirement être associés à une adresse de messagerie électronique professionnelle valide de l’Etat (.gouv.fr). Les comptes rattachés à une adresse de messagerie générique (non nominative) ne sont également pas autorisés. En cas de questions ou de demandes particulières, le support de la DITP est à votre disposition pour vous aider.
+          </p>
+        </div>
+        <div className='bloc-background-default-grey fr-p-2w'>
           <div className='flex justify-center align-center'>
             <DescriptionEtapes 
               etapes={etapes}
