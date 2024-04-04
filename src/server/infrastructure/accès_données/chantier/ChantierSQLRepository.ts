@@ -125,7 +125,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       whereOptions.est_barometre = true;
     }
 
-    if (optionsExport.listeStatuts) {
+    if (optionsExport.listeStatuts && optionsExport.listeStatuts.length > 0) {
       whereOptions.statut = {
         in: optionsExport.listeStatuts as type_statut[],
       };
