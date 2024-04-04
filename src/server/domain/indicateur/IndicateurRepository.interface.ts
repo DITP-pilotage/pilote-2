@@ -1,10 +1,12 @@
 import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
-import { DétailsIndicateurs, DétailsIndicateurMailles } from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateurMailles, DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
-import { IndicateurPourExport } from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
+import {
+  IndicateurPourExport,
+} from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 
 export default interface IndicateurRepository {

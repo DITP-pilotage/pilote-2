@@ -15,6 +15,19 @@ import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepositor
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 
+const verifierOptionPerimetreIds = (optionsExport: OptionsExport, perimetreIds: string[]) => {
+  return optionsExport.perimetreIds.length > 0 ? optionsExport.perimetreIds.some(perimetreId => perimetreIds.includes(perimetreId)) : true;
+};
+const verifierOptionEstBarometre = (optionsExport: OptionsExport, estBaromètre: boolean | null) => {
+  return optionsExport.estBarometre ? !!estBaromètre : true;
+};
+const verifierOptionEstTerritorialise = (optionsExport: OptionsExport, estTerritorialise: boolean | null) => {
+  return optionsExport.estTerritorialise ? !!estTerritorialise : true;
+};
+const verifierOptionStatut = (optionsExport: OptionsExport, chantierStatut: string | null) => {
+  return chantierStatut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(chantierStatut) : true : true;
+};
+
 export default class ExportCsvDesIndicateursSansFiltreUseCase {
 
   public static readonly NOMS_COLONNES = [
@@ -45,25 +58,21 @@ export default class ExportCsvDesIndicateursSansFiltreUseCase {
     private readonly _indicateurRepository: IndicateurRepository,
   ) {}
 
-  public async* run({ habilitation, profil, indicateurChunkSize, optionsExport }: { habilitation: Habilitation, profil: ProfilCode, indicateurChunkSize: number, optionsExport: OptionsExport }): AsyncGenerator<string[][]> {
-    const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom(habilitation);
+  public async *run({ habilitation, profil, indicateurChunkSize, optionsExport }: { habilitation: Habilitation, profil: ProfilCode, indicateurChunkSize: number, optionsExport: OptionsExport }): AsyncGenerator<string[][]> {
+    const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation, optionsExport);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
     for (let i = 0; i < chantierIdsLecture.length; i += indicateurChunkSize) {
       const partialChantierIds = chantierIdsLecture.slice(i, i + indicateurChunkSize);
       const indicateursPourExports = await this._indicateurRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
       yield indicateursPourExports
-        .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind))
-        .filter(ind => optionsExport.perimetreIds.length > 0 ? optionsExport.perimetreIds.some(perimetreId => ind.périmètreIds.includes(perimetreId)) : true)
-        .filter(ind => optionsExport.estBarometre ? ind.chantierEstBaromètre : true)
-        .filter(ind => optionsExport.estTerritorialise ? ind.chantierEstTerritorialise : true)
-        .filter(ind => ind.chantierStatut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(ind.chantierStatut) : true : true)
+        .filter(ind => !this.masquerIndicateurPourProfilDROM(profil, ind) && verifierOptionPerimetreIds(optionsExport, ind.périmètreIds) && verifierOptionEstBarometre(optionsExport, ind.chantierEstBaromètre) && verifierOptionEstTerritorialise(optionsExport, ind.chantierEstTerritorialise) && verifierOptionStatut(optionsExport, ind.chantierStatut))
         .map(ind => this.transformer(ind));
     }
   }
 
   private masquerIndicateurPourProfilDROM(profil: ProfilCode, indicateur : IndicateurPourExport) {
-    return profil == 'DROM' && !indicateur.périmètreIds.includes('PER-018') && indicateur.maille === 'NAT';
+    return profil === 'DROM' && !indicateur.périmètreIds.includes('PER-018') && indicateur.maille === 'NAT';
   }
 
   private transformer(indicateurPourExport: IndicateurPourExport): string[] {

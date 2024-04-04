@@ -9,6 +9,19 @@ import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation'
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 
+const verifierOptionPerimetreIds = (optionsExport: OptionsExport, perimetreIds: string[]) => {
+  return optionsExport.perimetreIds.length > 0 ? optionsExport.perimetreIds.some(perimetreId => perimetreIds.includes(perimetreId)) : true;
+};
+const verifierOptionEstBarometre = (optionsExport: OptionsExport, estBaromètre: boolean | null) => {
+  return optionsExport.estBarometre ? !!estBaromètre : true;
+};
+const verifierOptionEstTerritorialise = (optionsExport: OptionsExport, estTerritorialise: boolean | null) => {
+  return optionsExport.estTerritorialise ? !!estTerritorialise : true;
+};
+const verifierOptionStatut = (optionsExport: OptionsExport, chantierStatut: string | null) => {
+  return chantierStatut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(chantierStatut) : true : true;
+};
+
 export class ExportCsvDesChantiersSansFiltreUseCase {
   public static readonly NOMS_COLONNES = [
     'Maille',
@@ -45,19 +58,15 @@ export class ExportCsvDesChantiersSansFiltreUseCase {
   ) {}
 
   public async* run({ habilitation, profil, chantierChunkSize, optionsExport }: { habilitation: Habilitation, profil: ProfilCode, chantierChunkSize: number, optionsExport: OptionsExport }): AsyncGenerator<string[][]> {
-    const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom(habilitation);
+    const chantierIdsLecture = await this._chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions(habilitation, optionsExport);
     const territoireCodesLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
     for (let i = 0; i < chantierIdsLecture.length; i += chantierChunkSize) {
       const partialChantierIds = chantierIdsLecture.slice(i, i + chantierChunkSize);
       const partialResult = await this._chantierRepository.récupérerPourExports(partialChantierIds, territoireCodesLecture);
       yield partialResult
-        .filter(c => !this.masquerChantierPourProfilDROM(profil, c))
-        .filter(c => optionsExport.perimetreIds.length > 0 ? optionsExport.perimetreIds.some(perimetreId => c.périmètreIds.includes(perimetreId)) : true)
-        .filter(c => optionsExport.estBarometre ? c.estBaromètre : true)
-        .filter(c => optionsExport.estTerritorialise ? c.estTerritorialisé : true)
-        .filter(c => c.statut ? optionsExport.listeStatuts.length > 0 ? optionsExport.listeStatuts.includes(c.statut) : true : true)
-        .map(c => this.transformer(c, profil));
+        .filter(chantier => !this.masquerChantierPourProfilDROM(profil, chantier) && verifierOptionPerimetreIds(optionsExport, chantier.périmètreIds) && verifierOptionEstBarometre(optionsExport, chantier.estBaromètre) && verifierOptionEstTerritorialise(optionsExport, chantier.estTerritorialisé) && verifierOptionStatut(optionsExport, chantier.statut))
+        .map(chantier => this.transformer(chantier, profil));
     }
   }
 
