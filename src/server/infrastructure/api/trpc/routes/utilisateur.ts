@@ -14,6 +14,7 @@ import CréerOuMettreÀJourUnUtilisateurUseCase
 import SupprimerUnUtilisateurUseCase from '@/server/usecase/utilisateur/SupprimerUnUtilisateurUseCase';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import RécupérerUnProfilUseCase from '@/server/usecase/profil/RécupérerUnProfilUseCase';
 
 export const utilisateurRouter = créerRouteurTRPC({
   'créer': procédureProtégée
@@ -21,6 +22,9 @@ export const utilisateurRouter = créerRouteurTRPC({
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const auteurModification = ctx.session.user.name ?? '';
+      const profilAuteur = await new RécupérerUnProfilUseCase(
+        dependencies.getProfilRepository(),
+      ).run(ctx.session.profil);
       await new CréerOuMettreÀJourUnUtilisateurUseCase(
         dependencies.getUtilisateurIAMRepository(),
         dependencies.getUtilisateurRepository(),
@@ -28,13 +32,16 @@ export const utilisateurRouter = créerRouteurTRPC({
         dependencies.getChantierRepository(),
         dependencies.getPérimètreMinistérielRepository(),
         dependencies.getHistorisationModificationRepository(),
-      ).run(input, auteurModification, false, ctx.session.habilitations);
+      ).run(input, auteurModification, false, ctx.session.habilitations, profilAuteur);
     }),
   modifier: procédureProtégée
     .input(validationInfosBaseUtilisateur.merge(zodValidateurCSRF).merge(validationInfosHabilitationsUtilisateur))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       const auteurModification = ctx.session.user.name ?? '';
+      const profilAuteur = await new RécupérerUnProfilUseCase(
+        dependencies.getProfilRepository(),
+      ).run(ctx.session.profil);
       await new CréerOuMettreÀJourUnUtilisateurUseCase(
         dependencies.getUtilisateurIAMRepository(),
         dependencies.getUtilisateurRepository(),
@@ -42,16 +49,19 @@ export const utilisateurRouter = créerRouteurTRPC({
         dependencies.getChantierRepository(),
         dependencies.getPérimètreMinistérielRepository(),
         dependencies.getHistorisationModificationRepository(),
-      ).run(input, auteurModification, true, ctx.session.habilitations);
+      ).run(input, auteurModification, true, ctx.session.habilitations, profilAuteur);
     }),
   supprimer: procédureProtégée
     .input(validationSupprimerUtilisateur.merge(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      const profilAuteur = await new RécupérerUnProfilUseCase(
+        dependencies.getProfilRepository(),
+      ).run(ctx.session.profil);
       await new SupprimerUnUtilisateurUseCase(
         dependencies.getUtilisateurRepository(),
         dependencies.getUtilisateurIAMRepository(),
-      ).run(input.email, ctx.session.profil);
+      ).run(input.email, ctx.session.habilitations, profilAuteur);
     }),
   récupérerUtilisateursFiltrés: procédureProtégée
     .input(validationFiltresPourListeUtilisateur)

@@ -19,6 +19,8 @@ import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import {
   HistorisationModificationRepository,
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
+import { Profil } from '@/server/domain/profil/Profil.interface';
+import { ProfilBuilder } from '@/server/domain/profil/Profil.builder';
 import CréerOuMettreÀJourUnUtilisateurUseCase from './CréerOuMettreÀJourUnUtilisateurUseCase';
 
 describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
@@ -105,12 +107,17 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     process.env = oldEnv;
   });
 
-  async function testCasPassant(profilCode: ProfilCode, habilitationsAttendues: HabilitationsÀCréerOuMettreÀJourCalculées, saisieIndicateur: boolean, saisieCommentaire: boolean, gestionUtilisateur: boolean, territoiresCodes?: string[], chantiersIds?: string[], périmètresIds?: string[]) {
+  async function testCasPassant(profilCode: ProfilCode, habilitationsAttendues: HabilitationsÀCréerOuMettreÀJourCalculées, saisieIndicateur: boolean, saisieCommentaire: boolean, gestionUtilisateur: boolean, territoiresCodes?: string[], chantiersIds?: string[], périmètresIds?: string[], profilGestionUtilisateur?: Profil['utilisateurs']) {
     //GIVEN
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecSaisieCommentaire(saisieCommentaire).avecSaisieIndicateur(saisieIndicateur).avecGestionUtilisateur(gestionUtilisateur).avecProfil(profilCode).avecHabilitationsLecture(territoiresCodes, chantiersIds, périmètresIds).build();
-    
+    let profilBuilder = new ProfilBuilder().withCode(profilCode);
+    if (profilGestionUtilisateur) {
+      profilBuilder.withUtilisateurs(profilGestionUtilisateur);
+    }
+    const profil = profilBuilder.build();
+
     //WHEN
-    await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', false, habilitations);
+    await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', false, habilitations, profil);
     
     //THEN
     expect(stubUtilisateurRepository.créerOuMettreÀJour).toHaveBeenNthCalledWith(1, { ...utilisateur, habilitations: habilitationsAttendues }, 'toto');
@@ -123,9 +130,10 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
       // GIVEN 
       process.env.IMPORT_KEYCLOAK_URL = undefined;
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder().avecProfil('DITP_ADMIN').build();
+      const profil = new ProfilBuilder().build();
 
       //WHEN
-      await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', false, habilitations);
+      await créerOuMettreÀJourUnUtilisateurUseCase.run(utilisateur, 'toto', false, habilitations, profil);
         
       //THEN
       expect(stubUtilisateurIAMRepository.ajouteUtilisateurs).toHaveBeenCalledTimes(0);

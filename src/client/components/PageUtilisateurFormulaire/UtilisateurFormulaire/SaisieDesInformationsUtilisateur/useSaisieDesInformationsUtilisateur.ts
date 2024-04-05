@@ -89,12 +89,16 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   }, [setValue]);
 
   useEffect(() => {
-
     // Lecture
     setAfficherChampLectureTerritoires(!!profilSélectionné && (profilsDépartementaux.includes(profilSélectionné.code) || profilsRégionaux.includes(profilSélectionné.code)));
     setAfficherChampLectureChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
-    setAfficherChampLecturePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
-
+    
+    if (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session?.profil)) {
+      setAfficherChampLecturePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
+    } else {
+      setAfficherChampLecturePérimètres(false);
+    }
+    
     const afficherChoixCommentaire = !!profilSélectionné && !profilSélectionné.chantiers.lecture.tous;
     setAfficherChampSaisieCommentaire(afficherChoixCommentaire);
 
@@ -131,16 +135,12 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
       setValue('gestionUtilisateur', utilisateur.gestionUtilisateur);
     }
 
-  }, [profilCodeSélectionné, profilSélectionné, setValue, utilisateur]);
+  }, [profilCodeSélectionné, profilSélectionné, setValue, utilisateur, session]);
 
   useEffect(() => {
     if (!chantiers || !profilSélectionné) return;
     
-    let chantiersAccessibles = chantiers;
-
-    if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION'].includes(session!.profil)) {
-      chantiersAccessibles = chantiersAccessibles.filter(chantier => session?.habilitations.gestionUtilisateur.chantiers.includes(chantier.id));
-    }
+    let chantiersAccessibles = chantiers.filter(chantier => session?.habilitations.gestionUtilisateur.chantiers.includes(chantier.id));
 
     if (['RESPONSABLE_DEPARTEMENT', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(profilSélectionné.code)) {
       chantiersAccessibles = chantiersAccessibles.filter(chantier => chantier.estTerritorialisé);

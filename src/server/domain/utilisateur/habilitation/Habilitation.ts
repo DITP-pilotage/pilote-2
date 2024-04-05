@@ -1,9 +1,10 @@
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee, Territoire } from '@/server/domain/territoire/Territoire.interface';
-import { ChantierNonAutoriséErreur, ChantiersNonAutorisésCreationModificationUtilisateurErreur, ProjetStructurantNonAutoriséErreur, TerritoireNonAutoriséErreur, TerritoiresNonAutorisésCreationModificationUtilisateurErreur } from '@/server/utils/errors';
+import { ChantierNonAutoriséErreur, ChantiersNonAutorisésCreationModificationUtilisateurErreur, ChantiersNonAutorisésSuppressionUtilisateurErreur, ProfilNonAutorisésSuppressionUtilisateurErreur, ProjetStructurantNonAutoriséErreur, TerritoireNonAutoriséErreur, TerritoiresNonAutorisésCreationModificationUtilisateurErreur, TerritoiresNonAutorisésSuppressionUtilisateurErreur } from '@/server/utils/errors';
 import ProjetStructurant from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import { toutesLesValeursDuTableauSontContenuesDansLAutreTableau } from '@/client/utils/arrays';
+import { Profil } from '@/server/domain/profil/Profil.interface';
 import { Habilitations, TerritoiresFiltre } from './Habilitation.interface';
 
 export default class Habilitation {
@@ -36,12 +37,30 @@ export default class Habilitation {
       throw new TerritoireNonAutoriséErreur();
   }
 
-  vérifierLesHabilitationsEnCréationModificationUtilisateur(chantiersIds: Chantier['id'][], territoiresCodes: Territoire['code'][]) {
-    if (!toutesLesValeursDuTableauSontContenuesDansLAutreTableau(chantiersIds, this._habilitations.gestionUtilisateur.chantiers)) 
-      throw new ChantiersNonAutorisésCreationModificationUtilisateurErreur();
+  vérifierLesHabilitationsEnCréationModificationUtilisateur(chantiersIds: Chantier['id'][], territoiresCodes: Territoire['code'][], profil: Profil | null) {
+    if (!profil || !profil.utilisateurs.modificationPossible) {
+      throw new ProfilNonAutorisésSuppressionUtilisateurErreur();
+    }
 
-    if (!toutesLesValeursDuTableauSontContenuesDansLAutreTableau(territoiresCodes, this._habilitations.gestionUtilisateur.territoires))  
+    if (profil.utilisateurs.tousChantiers && !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(territoiresCodes, this._habilitations.gestionUtilisateur.territoires)) {
       throw new TerritoiresNonAutorisésCreationModificationUtilisateurErreur();
+    }
+
+    if (profil.utilisateurs.tousTerritoires && !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(chantiersIds, this._habilitations.gestionUtilisateur.chantiers)) 
+      throw new ChantiersNonAutorisésCreationModificationUtilisateurErreur();
+  }
+
+  vérifierLesHabilitationsEnSuppressionUtilisateur(chantiersIds: Chantier['id'][], territoiresCodes: Territoire['code'][], profil: Profil | null) {
+    if (!profil || !profil.utilisateurs.modificationPossible) {
+      throw new ProfilNonAutorisésSuppressionUtilisateurErreur();
+    }
+
+    if (profil.utilisateurs.tousChantiers && !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(territoiresCodes, this._habilitations.gestionUtilisateur.territoires)) {
+      throw new TerritoiresNonAutorisésSuppressionUtilisateurErreur();
+    }
+
+    if (profil.utilisateurs.tousTerritoires && !toutesLesValeursDuTableauSontContenuesDansLAutreTableau(chantiersIds, this._habilitations.gestionUtilisateur.chantiers)) 
+      throw new ChantiersNonAutorisésSuppressionUtilisateurErreur();
   }
 
   possedeAuMoinsUnTerritoireEnGestionUtilisateur() {
