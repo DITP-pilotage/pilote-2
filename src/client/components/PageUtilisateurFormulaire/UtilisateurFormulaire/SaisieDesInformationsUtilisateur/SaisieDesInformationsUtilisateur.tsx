@@ -133,7 +133,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
             />
           </div>
         </div>
-        <div className={`${!!afficherChampLecturePérimètres ? '' : 'fr-hidden'}`}>
+        <div className={`${!!afficherChampLectureChantiers ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}

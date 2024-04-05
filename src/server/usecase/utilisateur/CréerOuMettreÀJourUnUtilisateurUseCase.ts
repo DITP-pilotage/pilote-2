@@ -22,6 +22,7 @@ import {
   HistorisationModificationRepository,
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
 import { HistorisationModification } from '@/server/domain/historisationModification/HistorisationModification';
+import { Profil } from '@/server/domain/profil/Profil.interface';
 
 export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   constructor(
@@ -33,12 +34,12 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     private readonly historisationModification: HistorisationModificationRepository,
   ) {}
 
-  async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteur: string, utilisateurExistant: boolean, habilitations: Habilitations): Promise<void> {
+  async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteur: string, utilisateurExistant: boolean, habilitations: Habilitations, profil: Profil | null): Promise<void> {
     const habilitationsFormatées = await this._définirLesHabilitations(utilisateur);
     let utilisateurAvantModification: Utilisateur | null = null;
 
     const habilitation = new Habilitation(habilitations);
-    habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(habilitationsFormatées.lecture.chantiers, habilitationsFormatées.lecture.territoires);
+    habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(habilitationsFormatées.lecture.chantiers, habilitationsFormatées.lecture.territoires, profil);
 
     await this._vérifierExistenceUtilisateur(utilisateur.email, utilisateurExistant);
 
