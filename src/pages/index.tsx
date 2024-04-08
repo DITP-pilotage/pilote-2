@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { FunctionComponent } from 'react';
 import { dependencies } from '@/server/infrastructure/Dependencies';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
@@ -14,13 +15,9 @@ import RécupérerListeProjetsStructurantsVueDEnsembleUseCase
 import RécupérerChantiersAccessiblesEnLectureUseCase
   from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
-import {
-  ChantierAccueilContrat,
-  presenterEnChantierAccueilContrat,
-} from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
 
 interface NextPageAccueilProps {
-  chantiers: ChantierAccueilContrat[]
+  chantiers: Chantier[]
   projetsStructurants: ProjetStructurantVueDEnsemble[]
   ministères: Ministère[]
   axes: Axe[],
@@ -49,10 +46,7 @@ export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = asy
     dependencies.getChantierDatesDeMàjRepository(),
     dependencies.getMinistèreRepository(),
     dependencies.getTerritoireRepository(),
-  )
-    .run(session.habilitations, session.profil)
-    .then(chantiersResult => chantiersResult.map(presenterEnChantierAccueilContrat));
-
+  ).run(session.habilitations, session.profil);
   const projetsStructurants: ProjetStructurantVueDEnsemble[] = await new RécupérerListeProjetsStructurantsVueDEnsembleUseCase(
     dependencies.getProjetStructurantRepository(),
     dependencies.getTerritoireRepository(),
@@ -64,15 +58,14 @@ export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = asy
   let ministères: Ministère[] = [];
 
   if (chantiers.length > 0) {
-    const chantierIds = chantiers.map(chantier => chantier.id);
     const ministèreRepository = dependencies.getMinistèreRepository();
-    ministères = await ministèreRepository.getListePourChantiers(chantierIds);
+    ministères = await ministèreRepository.getListePourChantiers(chantiers);
 
     const axeRepository = dependencies.getAxeRepository();
-    axes = await axeRepository.getListePourChantiers(chantierIds);
+    axes = await axeRepository.getListePourChantiers(chantiers);
 
     const ppgRepository = dependencies.getPpgRepository();
-    ppgs = await ppgRepository.getListePourChantiers(chantierIds);
+    ppgs = await ppgRepository.getListePourChantiers(chantiers);
   }
 
   const estProjetStructurantDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS' });

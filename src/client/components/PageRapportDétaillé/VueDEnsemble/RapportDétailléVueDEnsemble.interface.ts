@@ -1,5 +1,5 @@
-import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 
 export default interface RapportDétailléVueDEnsembleProps {
-  chantiers: ChantierRapportDetailleContrat[]
+  chantiers: Chantier[]
 }

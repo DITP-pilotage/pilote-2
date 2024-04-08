@@ -26,16 +26,10 @@ import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatuts/
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
-import Ministère from '@/server/domain/ministère/Ministère.interface';
-import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
 import PageChantiersStyled from './PageChantiers.styled';
+import PageChantiersProps from './PageChantiers.interface';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
-
-interface PageChantiersProps {
-  chantiers: ChantierAccueilContrat[],
-  ministères: Ministère[]
-}
 
 export default function PageChantiers({ chantiers, ministères }: PageChantiersProps) {
 

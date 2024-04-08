@@ -1,10 +1,12 @@
-import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
+import {
+  territoireSélectionnéTerritoiresStore,
+} from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
 import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
 import Alerte from '@/server/domain/alerte/Alerte';
-import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
 
-export function useRemontéesAlertesChantiers(chantiersFiltrés: ChantierAccueilContrat[]) {
+export function useRemontéesAlertesChantiers(chantiersFiltrés: Chantier[]) {
   const { changerÉtatDuFiltre, estActif } = actionsFiltresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
