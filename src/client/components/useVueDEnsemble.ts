@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
+import Chantier, { ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import {
   mailleSélectionnéeTerritoiresStore,
@@ -9,9 +9,8 @@ import { objectEntries } from '@/client/utils/objects/objects';
 import api from '@/server/infrastructure/api/trpc/api';
 import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
 import { useRemontéesAlertesChantiers } from '@/components/PageAccueil/PageChantiers/useRemontéesAlertesChantiers';
-import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
 
-export default function useVueDEnsemble(chantiersFiltrés: ChantierAccueilContrat[], chantiersFiltrésSansFiltreAlerte: ChantierAccueilContrat[]) {
+export default function useVueDEnsemble(chantiersFiltrés: Chantier[], chantiersFiltrésSansFiltreAlerte: Chantier[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 

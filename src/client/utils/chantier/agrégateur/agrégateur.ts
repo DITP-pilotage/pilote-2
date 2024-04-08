@@ -1,17 +1,11 @@
 import { objectEntries } from '@/client/utils/objects/objects';
-import {
-  calculerMoyenne,
-  calculerMédiane,
-  valeurMaximum,
-  valeurMinimum,
-} from '@/client/utils/statistiques/statistiques';
+import { calculerMoyenne, calculerMédiane, valeurMaximum, valeurMinimum } from '@/client/utils/statistiques/statistiques';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import départements from '@/client/constants/départements.json';
 import régions from '@/client/constants/régions.json';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { Météo } from '@/server/domain/météo/Météo.interface';
-import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
-import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import { AgrégatParTerritoire } from './agrégateur.interface';
 
 type AvancementRegroupementDonnéesBrutes = {
@@ -22,7 +16,7 @@ type AvancementRegroupementDonnéesBrutes = {
 export class AgrégateurChantiersParTerritoire {
   private agrégat: AgrégatParTerritoire;
 
-  constructor(private chantiers: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[]) {
+  constructor(private chantiers: Chantier[]) {
     this.chantiers = chantiers;
     this.agrégat = this._créerAgrégatInitial();
   }

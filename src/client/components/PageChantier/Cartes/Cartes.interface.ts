@@ -1,7 +1,7 @@
-import { MailleRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 
 export default interface CartesProps {
-  chantierMailles: MailleRapportDetailleContrat,
+  chantierMailles: Chantier['mailles'],
   afficheCarteAvancement: boolean,
   afficheCarteMétéo: boolean,
   estInteractif?: boolean

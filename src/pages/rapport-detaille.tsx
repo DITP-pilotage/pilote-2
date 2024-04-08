@@ -1,8 +1,7 @@
+import { GetServerSidePropsContext } from 'next/types';
 import { getServerSession } from 'next-auth/next';
 import Head from 'next/head';
 import { Maille as MaillePrisma } from '@prisma/client';
-import { GetServerSideProps } from 'next';
-import assert from 'node:assert/strict';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import PageRapportDétaillé from '@/components/PageRapportDétaillé/PageRapportDétaillé';
@@ -23,13 +22,9 @@ import { NOMS_MAILLES } from '@/server/infrastructure/accès_données/maille/mai
 import RécupérerChantiersAccessiblesEnLectureUseCase
   from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import {
-  ChantierRapportDetailleContrat,
-  presenterEnChantierRapportDetaille,
-} from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
 interface NextPageRapportDétailléProps {
-  chantiers: ChantierRapportDetailleContrat[]
+  chantiers: Chantier[]
   ministères: Ministère[]
   indicateursGroupésParChantier: Record<string, Indicateur[]>
   détailsIndicateursGroupésParChantier: Record<Chantier['id'], DétailsIndicateurs>
@@ -38,24 +33,58 @@ interface NextPageRapportDétailléProps {
   codeInsee: CodeInsee
 }
 
-export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléProps> = async ({ req, res, query }) =>  {
+export default function NextPageRapportDétaillé({
+  chantiers,
+  ministères,
+  indicateursGroupésParChantier,
+  détailsIndicateursGroupésParChantier,
+  publicationsGroupéesParChantier,
+  maille,
+  codeInsee,
+}: NextPageRapportDétailléProps) {
   if (process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE !== 'true') {
-    return {
-      redirect: {
-        statusCode: 302,
-        destination: '/',
-      },
-    };
+    return;
   }
 
-  const session = await getServerSession(req, res, authOptions);
+  return (
+    <>
+      <Head>
+        <title>
+          Rapport détaillé - PILOTE
+        </title>
+      </Head>
+      <PageRapportDétaillé
+        chantiers={chantiers}
+        codeInsee={codeInsee}
+        détailsIndicateursGroupésParChantier={détailsIndicateursGroupésParChantier}
+        indicateursGroupésParChantier={indicateursGroupésParChantier}
+        maille={maille}
+        ministères={ministères}
+        publicationsGroupéesParChantier={publicationsGroupéesParChantier}
+      />
+    </>
+  );
+}
 
-  assert(query.territoireCode, 'Le territoire code est manquant');
-  assert(session?.habilitations, "La session ne dispose d'aucune habilitation");
+export async function getServerSideProps({ req, res, query }: GetServerSidePropsContext) {
+  if (process.env.NEXT_PUBLIC_FF_RAPPORT_DETAILLE !== 'true') {
+    res.setHeader('location', '/');
+    res.statusCode = 302;
+    res.end();
+    return;
+  }
+
+  if (!query.territoireCode)
+    return { props: {} };
 
   const territoireCode = query.territoireCode as string;
   const { maille: mailleBrute, codeInsee } = territoireCodeVersMailleCodeInsee(territoireCode);
   const maille = NOMS_MAILLES[mailleBrute as MaillePrisma];
+
+  const session = await getServerSession(req, res, authOptions);
+
+  if (!session || !session.habilitations)
+    return { props: {} };
 
   const habilitation = new Habilitation(session.habilitations);
 
@@ -64,15 +93,12 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
     dependencies.getChantierDatesDeMàjRepository(),
     dependencies.getMinistèreRepository(),
     dependencies.getTerritoireRepository(),
-  )
-    .run(session.habilitations, session.profil)
-    .then(listeChantiersResult => listeChantiersResult.map(presenterEnChantierRapportDetaille));
-
+  ).run(session.habilitations, session.profil);
 
   const chantiersIds = chantiers.map(chantier => chantier.id);
 
   const ministèreRepository = dependencies.getMinistèreRepository();
-  const ministères = await ministèreRepository.getListePourChantiers(chantiersIds);
+  const ministères = await ministèreRepository.getListePourChantiers(chantiers);
 
   const indicateursRepository = dependencies.getIndicateurRepository();
   const indicateursGroupésParChantier = await indicateursRepository.récupérerGroupésParChantier(chantiersIds, maille, codeInsee);
@@ -80,7 +106,7 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
 
   const synthèseDesRésultatsRepository = dependencies.getSynthèseDesRésultatsRepository();
   const synthèsesDesRésultatsGroupéesParChantier = await synthèseDesRésultatsRepository.récupérerLesPlusRécentesGroupéesParChantier(chantiersIds, maille, codeInsee);
-
+  
   let décisionStratégiquesGroupéesParChantier: Record<string, DécisionStratégique | null> = Object.fromEntries(chantiersIds.map(id => [id, null]));
   if (habilitation.peutAccéderAuTerritoire('NAT-FR')) {
     const décisionStratégiqueRepository = dependencies.getDécisionStratégiqueRepository();
@@ -107,33 +133,4 @@ export const getServerSideProps: GetServerSideProps<NextPageRapportDétailléPro
       },
     },
   };
-};
-
-export default function NextPageRapportDétaillé({
-  chantiers,
-  ministères,
-  indicateursGroupésParChantier,
-  détailsIndicateursGroupésParChantier,
-  publicationsGroupéesParChantier,
-  maille,
-  codeInsee,
-}: NextPageRapportDétailléProps) {
-  return (
-    <>
-      <Head>
-        <title>
-          Rapport détaillé - PILOTE
-        </title>
-      </Head>
-      <PageRapportDétaillé
-        chantiers={chantiers}
-        codeInsee={codeInsee}
-        détailsIndicateursGroupésParChantier={détailsIndicateursGroupésParChantier}
-        indicateursGroupésParChantier={indicateursGroupésParChantier}
-        maille={maille}
-        ministères={ministères}
-        publicationsGroupéesParChantier={publicationsGroupéesParChantier}
-      />
-    </>
-  );
 }
