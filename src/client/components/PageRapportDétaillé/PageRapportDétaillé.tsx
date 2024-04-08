@@ -18,6 +18,7 @@ import { filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/us
 import PremièrePageImpressionRapportDétaillé
   from '@/components/PageRapportDétaillé/PremièrePageImpression/PremièrePageImpressionRapportDétaillé';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
+import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 import FiltresSélectionnés from './FiltresSélectionnés/FiltresSélectionnés';
 
 export const htmlId = {
@@ -33,6 +34,7 @@ export default function PageRapportDétaillé({ chantiers, ministères, indicate
     modifierTerritoireSélectionné(récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee).code);
   }
 
+  // le filtre devrait être fait en server side avant d'arriver au front
   const { chantiersFiltrés } = useChantiersFiltrés(chantiers);
   const filtresActifs = filtresActifsStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -84,7 +86,7 @@ export default function PageRapportDétaillé({ chantiers, ministères, indicate
                 libellé='Afficher le détail des chantiers'
               />
             </div>
-            <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés} />
+            <RapportDétailléVueDEnsemble chantiers={chantiersFiltrés as ChantierRapportDetailleContrat[]} />
             <div className='force-break-page' />
             {
               !!afficherLesChantiers &&
@@ -92,7 +94,7 @@ export default function PageRapportDétaillé({ chantiers, ministères, indicate
                 {
                   chantiersFiltrés.map((chantier) => (
                     <RapportDétailléChantier
-                      chantier={chantier}
+                      chantier={chantier as ChantierRapportDetailleContrat}
                       commentaires={publicationsGroupéesParChantier.commentaires[chantier.id] ?? []}
                       décisionStratégique={publicationsGroupéesParChantier.décisionStratégique[chantier.id] ?? null}
                       détailsIndicateurs={détailsIndicateursGroupésParChantier[chantier.id] ?? []}
