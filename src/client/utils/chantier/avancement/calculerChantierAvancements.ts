@@ -1,11 +1,11 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateur/agrégateur';
 import { DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 import { AvancementsStatistiques } from '@/components/_commons/Avancements/Avancements.interface';
+import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
 export default function calculerChantierAvancements(
-  chantier: Chantier,
+  chantier: ChantierRapportDetailleContrat,
   mailleSélectionnée: MailleInterne,
   territoireSélectionné: DétailTerritoire,
   territoireParent: DétailTerritoire | null,

@@ -1,0 +1,180 @@
+import { Maille } from '@/server/domain/maille/Maille.interface';
+import Chantier, {
+  DirecteurAdministrationCentrale,
+  DirecteurProjet,
+  TypeStatut,
+} from '@/server/domain/chantier/Chantier.interface';
+import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import {
+  ResponsableLocal,
+  RéférentTerritorial,
+  TerritoireDonnées,
+  TerritoiresDonnées,
+} from '@/server/domain/territoire/Territoire.interface';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
+
+
+interface TerritoireAvancementRapportDetailleContrat {
+  global: number | null
+  annuel: number | null
+}
+
+interface TerritoireDonnéeRapportDetailleContrat {
+  estApplicable: boolean | null
+  écart: number | null
+  tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION' | null
+  dateDeMàjDonnéesQualitatives: string | null
+  dateDeMàjDonnéesQuantitatives: string | null
+  avancement: TerritoireAvancementRapportDetailleContrat
+  responsableLocal: ResponsableLocalRapportDetailleContrat[]
+  référentTerritorial: ReferentTerritorialRapportDetailleContrat[]
+  météo: 'NON_RENSEIGNEE' | 'ORAGE' | 'NUAGE' | 'COUVERT' | 'SOLEIL' | 'NON_NECESSAIRE'
+}
+
+type ListeTerritoiresDonnéeRapportDetailleContrat = Record<string, TerritoireDonnéeRapportDetailleContrat>;
+
+export type MailleRapportDetailleContrat = Record<Maille, ListeTerritoiresDonnéeRapportDetailleContrat>;
+
+export interface MinisterePorteurRapportDetailleContrat {
+  nom?: string
+  icône?: string | null
+  périmètresMinistériels: {
+    id: string
+  }[];
+}
+
+interface MinistereCoporteurRapportDetailleContrat {
+  nom: string
+}
+
+interface DirecteurAdministrationCentraleRapportDetailleContrat {
+  nom: string
+  direction: string
+}
+
+interface DirecteurProjetRapportDetailleContrat {
+  nom: string
+  email: string | null
+}
+
+export interface ResponsableRapportDetailleContrat {
+  porteur: MinisterePorteurRapportDetailleContrat | null;
+  coporteurs: MinistereCoporteurRapportDetailleContrat[]
+  directeursAdminCentrale: DirecteurAdministrationCentraleRapportDetailleContrat[]
+  directeursProjet: DirecteurProjetRapportDetailleContrat[]
+}
+
+export interface ResponsableLocalRapportDetailleContrat {
+  nom: string
+  email: string
+}
+
+export interface ReferentTerritorialRapportDetailleContrat {
+  nom: string
+  email: string
+}
+
+export interface ChantierRapportDetailleContrat {
+  id: string
+  nom: string
+  mailles: MailleRapportDetailleContrat;
+  périmètreIds: string[]
+  statut: TypeStatut,
+  estTerritorialisé: boolean
+  estBaromètre: boolean
+  axe: string
+  ppg: string
+  tauxAvancementDonnéeTerritorialisée: Record<'régionale' | 'départementale', Boolean>
+  météoDonnéeTerritorialisée: Record<'régionale' | 'départementale', Boolean>
+  responsables: ResponsableRapportDetailleContrat
+}
+
+const presenterEnResponsableLocalRapportDetailleContrat = (responsableLocal: ResponsableLocal): ResponsableLocalRapportDetailleContrat => {
+  return {
+    nom: responsableLocal.nom,
+    email: responsableLocal.email,
+  };
+};
+const presenterEnReferentTerritorialRapportDetailleContrat = (référentTerritorial: RéférentTerritorial): ReferentTerritorialRapportDetailleContrat => {
+  return {
+    nom: référentTerritorial.nom,
+    email: référentTerritorial.email,
+  };
+};
+
+const presenterEnTerritoireDonnéeRapportDetailleContrat = (territoireDonnee: TerritoireDonnées): TerritoireDonnéeRapportDetailleContrat => {
+  return {
+    estApplicable: territoireDonnee.estApplicable,
+    écart: territoireDonnee.écart,
+    tendance: territoireDonnee.tendance,
+    dateDeMàjDonnéesQualitatives: territoireDonnee.dateDeMàjDonnéesQualitatives,
+    dateDeMàjDonnéesQuantitatives: territoireDonnee.dateDeMàjDonnéesQuantitatives,
+    responsableLocal: territoireDonnee.responsableLocal.map(presenterEnResponsableLocalRapportDetailleContrat),
+    référentTerritorial: territoireDonnee.référentTerritorial.map(presenterEnReferentTerritorialRapportDetailleContrat),
+    avancement: {
+      global: territoireDonnee.avancement.global,
+      annuel: territoireDonnee.avancement.annuel,
+    },
+    météo: territoireDonnee.météo,
+  };
+};
+
+// le double reduce doit être enlever, on a pas besoin d'un record, un Map<CodeInsee, TerritoireDonnee> conditionnée par la maille suffit
+const presenterEnMailleRapportDetailleContrat = (mailles: Record<Maille, TerritoiresDonnées>): MailleRapportDetailleContrat => {
+  return Object.keys(mailles).reduce((acc, val) => {
+    acc[val as Maille] = Object.keys(mailles[val as Maille]).reduce((accTerritoireDonnee, codeInsee) => {
+      accTerritoireDonnee[codeInsee] = presenterEnTerritoireDonnéeRapportDetailleContrat(mailles[val as Maille][codeInsee]);
+      return accTerritoireDonnee;
+    }, {} as ListeTerritoiresDonnéeRapportDetailleContrat);
+    return acc;
+  }, {} as MailleRapportDetailleContrat);
+};
+
+const presenterEnPerimetresMinisterielRapportDetailleContrat = (périmètreMinistériel: PérimètreMinistériel) => {
+  return {
+    id: périmètreMinistériel.id,
+  };
+};
+
+const presenterEnMinistereCoporteurRapportDetailleContrat = (coporteur: Ministère): MinistereCoporteurRapportDetailleContrat => {
+  return {
+    nom: coporteur.nom,
+  };
+};
+const presenterEnDirecteurAdministrationCentraleRapportDetailleContrat = (directeurAdminCentrale: DirecteurAdministrationCentrale): DirecteurAdministrationCentraleRapportDetailleContrat => {
+  return {
+    nom: directeurAdminCentrale.nom,
+    direction: directeurAdminCentrale.direction,
+  };
+};
+const presenterEnDirecteurProjetRapportDetailleContrat = (directeurProjet: DirecteurProjet): DirecteurProjetRapportDetailleContrat => {
+  return {
+    nom: directeurProjet.nom,
+    email: directeurProjet.email,
+  };
+};
+
+export const presenterEnChantierRapportDetaille = (chantier: Chantier): ChantierRapportDetailleContrat => {
+  return {
+    id: chantier.id,
+    nom: chantier.nom,
+    statut: chantier.statut,
+    mailles: presenterEnMailleRapportDetailleContrat(chantier.mailles),
+    périmètreIds: chantier.périmètreIds,
+    estTerritorialisé: chantier.estTerritorialisé,
+    estBaromètre: chantier.estBaromètre,
+    axe: chantier.axe,
+    ppg: chantier.ppg,
+    responsables: {
+      porteur: {
+        nom: chantier.responsables.porteur?.nom,
+        périmètresMinistériels: (chantier.responsables.porteur?.périmètresMinistériels || []).map(presenterEnPerimetresMinisterielRapportDetailleContrat),
+      },
+      coporteurs: chantier.responsables.coporteurs.map(presenterEnMinistereCoporteurRapportDetailleContrat),
+      directeursAdminCentrale: chantier.responsables.directeursAdminCentrale.map(presenterEnDirecteurAdministrationCentraleRapportDetailleContrat),
+      directeursProjet: chantier.responsables.directeursProjet.map(presenterEnDirecteurProjetRapportDetailleContrat),
+    },
+    tauxAvancementDonnéeTerritorialisée: chantier.tauxAvancementDonnéeTerritorialisée,
+    météoDonnéeTerritorialisée: chantier.météoDonnéeTerritorialisée,
+  };
+};

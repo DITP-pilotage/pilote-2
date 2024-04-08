@@ -8,6 +8,7 @@ import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { Commentaire } from '@/server/domain/chantier/commentaire/Commentaire.interface';
 import Objectif from '@/server/domain/chantier/objectif/Objectif.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
 export type PublicationsGroupéesParChantier = {
   commentaires: Record<Chantier['id'], Commentaire[]>
@@ -17,7 +18,7 @@ export type PublicationsGroupéesParChantier = {
 };
 
 export default interface PageRapportDétailléProps {
-  chantiers: Chantier[]
+  chantiers: ChantierRapportDetailleContrat[]
   ministères: Ministère[]
   indicateursGroupésParChantier: Record<string, Indicateur[]>
   détailsIndicateursGroupésParChantier: Record<Chantier['id'], DétailsIndicateurs>
