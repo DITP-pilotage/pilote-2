@@ -36,6 +36,7 @@ JOBS_TO_RUN['DEV'] = [
     ]
 JOBS_TO_RUN['LOCAL'] = [
         'scripts/0_dbt_deps.sh',
+        'scripts/0_init_elementary.sh',
         'scripts/0_prisma_migrate.sh',
         'scripts/2_seed_ppg_metadata.sh',
         'scripts/4_seed_private.sh',

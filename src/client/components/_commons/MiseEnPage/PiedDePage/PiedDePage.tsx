@@ -39,7 +39,7 @@ export default function PiedDePage() {
             <li className='fr-footer__bottom-item'>
               <Link
                 className='fr-footer__bottom-link'
-                href='mentions-legales'
+                href='/mentions-legales'
               >
                 Mentions légales
               </Link>
