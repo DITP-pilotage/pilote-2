@@ -1,20 +1,21 @@
 import { useEffect, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
 import { territoireSélectionnéTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { désactiverUnFiltreFn, filtresActifs as filtresActifsStore } from '@/stores/useFiltresStore/useFiltresStore';
 import Alerte from '@/server/domain/alerte/Alerte';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { statutsSélectionnésStore } from '@/stores/useStatutsStore/useStatutsStore';
+import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
+import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
-export default function useChantiersFiltrés(chantiers: Chantier[]) {
+export default function useChantiersFiltrés(chantiers: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[]) {
   const { data: session } = useSession();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const filtresActifs = filtresActifsStore();
   const statutsSélectionnés = statutsSélectionnésStore();
 
   const chantiersFiltrésSansFiltreAlerte = useMemo(() => {
-    let résultat: Chantier[] = chantiers;
+    let résultat: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[] = chantiers;
     if (territoireSélectionné) {
       résultat = résultat.filter(chantier => !!chantier.mailles[territoireSélectionné.maille][territoireSélectionné.codeInsee].estApplicable);
     }
@@ -57,7 +58,7 @@ export default function useChantiersFiltrés(chantiers: Chantier[]) {
   }, [chantiers, filtresActifs, session?.profil, territoireSélectionné, statutsSélectionnés]);
 
   const chantiersFiltrés = useMemo(() => {
-    let résultat: Chantier[] = chantiersFiltrésSansFiltreAlerte;
+    let résultat: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[] = chantiersFiltrésSansFiltreAlerte;
 
     if (filtresActifs.filtresAlerte.length > 0) {
       résultat = résultat.filter(chantier => {

@@ -3,7 +3,6 @@ import Head from 'next/head';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { FunctionComponent } from 'react';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
@@ -14,9 +13,13 @@ import RécupérerListeProjetsStructurantsVueDEnsembleUseCase
 import RécupérerChantiersAccessiblesEnLectureUseCase
   from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
+import {
+  ChantierAccueilContrat,
+  presenterEnChantierAccueilContrat,
+} from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
 
 interface NextPageAccueilProps {
-  chantiers: Chantier[]
+  chantiers: ChantierAccueilContrat[]
   projetsStructurants: ProjetStructurantVueDEnsemble[]
   ministères: Ministère[]
   axes: Axe[],
@@ -43,7 +46,10 @@ export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = asy
     dependencies.getChantierDatesDeMàjRepository(),
     dependencies.getMinistèreRepository(),
     dependencies.getTerritoireRepository(),
-  ).run(session.habilitations, session.profil);
+  )
+    .run(session.habilitations, session.profil)
+    .then(chantiersResult => chantiersResult.map(presenterEnChantierAccueilContrat));
+
   const projetsStructurants: ProjetStructurantVueDEnsemble[] = await new RécupérerListeProjetsStructurantsVueDEnsembleUseCase(
     dependencies.getProjetStructurantRepository(),
     dependencies.getTerritoireRepository(),
@@ -54,11 +60,12 @@ export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = asy
   let ministères: Ministère[] = [];
 
   if (chantiers.length > 0) {
+    const chantierIds = chantiers.map(chantier => chantier.id);
     const ministèreRepository = dependencies.getMinistèreRepository();
-    ministères = await ministèreRepository.getListePourChantiers(chantiers);
+    ministères = await ministèreRepository.getListePourChantiers(chantierIds);
 
     const axeRepository = dependencies.getAxeRepository();
-    axes = await axeRepository.getListePourChantiers(chantiers);
+    axes = await axeRepository.getListePourChantiers(chantierIds);
 
   }
 

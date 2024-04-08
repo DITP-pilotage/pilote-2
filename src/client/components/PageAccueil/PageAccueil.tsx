@@ -13,14 +13,14 @@ import {
   actionsTypeDeRéformeStore,
   typeDeRéformeSélectionnéeStore,
 } from '@/client/stores/useTypeDeRéformeStore/useTypeDeRéformeStore';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ProjetStructurantVueDEnsemble } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
+import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
 import SélecteurTypeDeRéforme from './SélecteurTypeDeRéforme/SélecteurTypeDeRéforme';
 
 const PageAccueil: FunctionComponent<{
-  chantiers: Chantier[]
+  chantiers: ChantierAccueilContrat[]
   projetsStructurants: ProjetStructurantVueDEnsemble[]
   ministères: Ministère[]
   axes: Axe[],
