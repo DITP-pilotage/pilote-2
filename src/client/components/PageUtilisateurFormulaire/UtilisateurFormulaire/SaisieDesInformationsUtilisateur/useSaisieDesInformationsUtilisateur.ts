@@ -155,25 +155,25 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   }, [chantiers, profilSélectionné, session]);
 
   useEffect(() => {
-    if (ancienProfilCodeSélectionné !== profilCodeSélectionné) {
-      resetField('habilitations.lecture.chantiers', { defaultValue: [] });
-      resetField('habilitations.lecture.territoires', { defaultValue: [] });
-      resetField('habilitations.lecture.périmètres', { defaultValue: [] });
+    resetField('habilitations.lecture.chantiers', { defaultValue: [] });
+    resetField('habilitations.lecture.territoires', { defaultValue: [] });
+    resetField('habilitations.lecture.périmètres', { defaultValue: [] });
 
-      if (utilisateur) {
-        if (utilisateur.habilitations?.lecture.chantiers) 
-          setValue('habilitations.lecture.chantiers', utilisateur.habilitations?.lecture.chantiers);
+    if (utilisateur) {
+      if (utilisateur.habilitations?.lecture.chantiers && afficherChampLectureChantiers) 
+        setValue('habilitations.lecture.chantiers', utilisateur.habilitations?.lecture.chantiers);
       
-        if (utilisateur.habilitations?.lecture.territoires) 
-          setValue('habilitations.lecture.territoires', utilisateur.habilitations?.lecture.territoires);
+      if (utilisateur.habilitations?.lecture.territoires && afficherChampLectureTerritoires) 
+        setValue('habilitations.lecture.territoires', utilisateur.habilitations?.lecture.territoires);
 
-        if (utilisateur.habilitations?.lecture.périmètres) 
-          setValue('habilitations.lecture.périmètres', utilisateur.habilitations?.lecture.périmètres);
-      }
-
-      setAncienProfilCodeSélectionné(profilCodeSélectionné);
+      if (utilisateur.habilitations?.lecture.périmètres && afficherChampLecturePérimètres) 
+        setValue('habilitations.lecture.périmètres', utilisateur.habilitations?.lecture.périmètres);
     }
-  }, [ancienProfilCodeSélectionné, profilCodeSélectionné, chantiersAccessiblesPourLeProfil, resetField, setValue, unregister, utilisateur, profils, handleChangementValeursSélectionnéesChantiers, chantiers]);
+
+    setAncienProfilCodeSélectionné(profilCodeSélectionné);
+  }, [ancienProfilCodeSélectionné, profilCodeSélectionné, chantiersAccessiblesPourLeProfil, resetField, setValue,
+    unregister, utilisateur, profils, handleChangementValeursSélectionnéesChantiers, chantiers,
+    afficherChampLectureChantiers, afficherChampLecturePérimètres, afficherChampLectureTerritoires]);
 
   useEffect(() => {
     if (profils) {
