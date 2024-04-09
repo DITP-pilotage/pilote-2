@@ -9,6 +9,7 @@ import {
   ChantierPourExport,
   ChantierPourExportBuilder,
 } from '@/server/usecase/chantier/ExportCsvDesChantiersSansFiltreUseCase.interface';
+import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 
 function _fakeChantierPourExport(cid: Chantier['id']): ChantierPourExport {
   return (new ChantierPourExportBuilder)
@@ -16,13 +17,20 @@ function _fakeChantierPourExport(cid: Chantier['id']): ChantierPourExport {
     .build();
 }
 
+const optionsExport: OptionsExport = {
+  perimetreIds: [],
+  estTerritorialise: false,
+  estBarometre: false,
+  listeStatuts: [],
+};
+
 describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
   it('Renvoie une liste vide si pas de chantiers', async () => {
     // GIVEN
     const chantierIds: Chantier['id'][] = [];
     const chantierChunkSize = 5;
     const chantierRepository = mock<ChantierRepository>();
-    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
 
     const exportCsvDesChantiersSansFiltreUseCase = new ExportCsvDesChantiersSansFiltreUseCase(chantierRepository);
@@ -35,6 +43,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
       habilitation,
       profil,
       chantierChunkSize,
+      optionsExport,
     })) {
       result = [...result, ...partialResult];
     }
@@ -48,7 +57,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const chantierChunkSize = 5;
     const chantierIds = ['CH-001'];
     const chantierRepository = mock<ChantierRepository>();
-    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
     chantierRepository.récupérerPourExports
       .mockResolvedValueOnce(chantierIds.map(_fakeChantierPourExport));
@@ -66,13 +75,14 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
       habilitation,
       profil,
       chantierChunkSize,
+      optionsExport,
     })) {
       result = [...result, ...partialResult];
     }
 
     // THEN
-    expect(chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom)
-      .toHaveBeenCalledWith(habilitation);
+    expect(chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions)
+      .toHaveBeenCalledWith(habilitation, optionsExport);
     expect(chantierRepository.récupérerPourExports)
       .toHaveBeenCalledWith(chantierIds, territoireCodesLecture);
   });
@@ -82,7 +92,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const chantierIds = ['CH-001', 'CH-002', 'CH-003'];
     const chantierChunkSize = 3;
     const chantierRepository = mock<ChantierRepository>();
-    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
     chantierRepository.récupérerPourExports
       .mockResolvedValueOnce(chantierIds.map(_fakeChantierPourExport));
@@ -97,6 +107,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
       habilitation,
       profil,
       chantierChunkSize,
+      optionsExport,
     })) {
       result = [...result, ...partialResult];
     }
@@ -116,7 +127,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
     const firstChunk = chantierIds.slice(0, chantierChunkSize);
     const secondChunk = chantierIds.slice(chantierChunkSize);
     const chantierRepository = mock<ChantierRepository>();
-    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNom
+    chantierRepository.récupérerChantierIdsEnLectureOrdonnésParNomAvecOptions
       .mockResolvedValueOnce(chantierIds);
     chantierRepository.récupérerPourExports
       .mockResolvedValueOnce(firstChunk.map(_fakeChantierPourExport))
@@ -132,6 +143,7 @@ describe('ExportCsvDesChantiersSansFiltreUseCase', () => {
       habilitation,
       profil,
       chantierChunkSize,
+      optionsExport,
     })) {
       result = [...result, ...partialResult];
     }

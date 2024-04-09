@@ -46,6 +46,13 @@ export const PROFILS_POSSIBLES_REFERENTS_LECTURE = {
   ],
 };
 
+export const AAccesATousLesUtilisateurs = (profil: Profil | null) => {
+  if (profil)
+    return profil.utilisateurs.tousChantiers && profil.utilisateurs.tousTerritoires;
+
+  return false;
+};
+
 export default function useSaisieDesInformationsUtilisateur(utilisateur?: UtilisateurFormulaireProps['utilisateur']) {
   const { data: session } = useSession();
   const { register, watch, formState: { errors }, control, setValue, getValues, resetField, unregister } = useFormContext<UtilisateurFormInputs>();
@@ -63,6 +70,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   const [afficherChampLecturePérimètres, setAfficherChampLecturePérimètres] = useState(false);
   const [afficherChampSaisieCommentaire, setAfficherChampSaisieCommentaire] = useState(false);
   const [afficherChampSaisieIndicateur, setAfficherChampSaisieIndicateur] = useState(false);
+  const [afficherChampGestionCompte, setAfficherChampGestionCompte] = useState(false);
 
   const [chantiersAccessiblesPourLeProfil, setChantiersAccessiblesPourLeProfil] = useState<ChantierSynthétisé[]>([]);
 
@@ -81,17 +89,24 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   }, [setValue]);
 
   useEffect(() => {
-
     // Lecture
     setAfficherChampLectureTerritoires(!!profilSélectionné && (profilsDépartementaux.includes(profilSélectionné.code) || profilsRégionaux.includes(profilSélectionné.code)));
     setAfficherChampLectureChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
-    setAfficherChampLecturePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
-
+    
+    if (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session?.profil)) {
+      setAfficherChampLecturePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
+    } else {
+      setAfficherChampLecturePérimètres(false);
+    }
+    
     const afficherChoixCommentaire = !!profilSélectionné && !profilSélectionné.chantiers.lecture.tous;
     setAfficherChampSaisieCommentaire(afficherChoixCommentaire);
 
     const afficherChoixIndicateur = !!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && profilSélectionné.chantiers.saisieIndicateur.tousTerritoires;
     setAfficherChampSaisieIndicateur(afficherChoixIndicateur);
+
+    const afficherGestionCompte = !!profilSélectionné && profilSélectionné.utilisateurs.modificationPossible && !AAccesATousLesUtilisateurs(profilSélectionné);
+    setAfficherChampGestionCompte(afficherGestionCompte);
 
     // Saisie Commentaire
     if (!utilisateur) {
@@ -107,21 +122,25 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
         ? false
         : (profilSélectionné?.chantiers.saisieIndicateur.tousTerritoires ? true : false);
       setValue('saisieIndicateur', valeurParDéfautCaseIndicateur);
+
+      // Gestion des comptes
+      const valeurParDéfautCaseGestionCompte = afficherGestionCompte 
+        ? false 
+        : AAccesATousLesUtilisateurs(profilSélectionné ?? null);
+      setValue('gestionUtilisateur', valeurParDéfautCaseGestionCompte);
+
     } else {
       setValue('saisieCommentaire', utilisateur.saisieCommentaire);
       setValue('saisieIndicateur', utilisateur.saisieIndicateur);
+      setValue('gestionUtilisateur', utilisateur.gestionUtilisateur);
     }
 
-  }, [profilSélectionné, setValue, utilisateur]);
+  }, [profilCodeSélectionné, profilSélectionné, setValue, utilisateur, session]);
 
   useEffect(() => {
     if (!chantiers || !profilSélectionné) return;
     
-    let chantiersAccessibles = chantiers;
-
-    if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION'].includes(session!.profil)) {
-      chantiersAccessibles = chantiersAccessibles.filter(chantier => session?.habilitations.saisieCommentaire.chantiers.includes(chantier.id));
-    }
+    let chantiersAccessibles = chantiers.filter(chantier => session?.habilitations.gestionUtilisateur.chantiers.includes(chantier.id));
 
     if (['RESPONSABLE_DEPARTEMENT', 'RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_DEPARTEMENT', 'SERVICES_DECONCENTRES_REGION'].includes(profilSélectionné.code)) {
       chantiersAccessibles = chantiersAccessibles.filter(chantier => chantier.estTerritorialisé);
@@ -136,25 +155,25 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
   }, [chantiers, profilSélectionné, session]);
 
   useEffect(() => {
-    if (ancienProfilCodeSélectionné !== profilCodeSélectionné) {
-      resetField('habilitations.lecture.chantiers', { defaultValue: [] });
-      resetField('habilitations.lecture.territoires', { defaultValue: [] });
-      resetField('habilitations.lecture.périmètres', { defaultValue: [] });
+    resetField('habilitations.lecture.chantiers', { defaultValue: [] });
+    resetField('habilitations.lecture.territoires', { defaultValue: [] });
+    resetField('habilitations.lecture.périmètres', { defaultValue: [] });
 
-      if (utilisateur) {
-        if (utilisateur.habilitations?.lecture.chantiers) 
-          setValue('habilitations.lecture.chantiers', utilisateur.habilitations?.lecture.chantiers);
+    if (utilisateur) {
+      if (utilisateur.habilitations?.lecture.chantiers && afficherChampLectureChantiers) 
+        setValue('habilitations.lecture.chantiers', utilisateur.habilitations?.lecture.chantiers);
       
-        if (utilisateur.habilitations?.lecture.territoires) 
-          setValue('habilitations.lecture.territoires', utilisateur.habilitations?.lecture.territoires);
+      if (utilisateur.habilitations?.lecture.territoires && afficherChampLectureTerritoires) 
+        setValue('habilitations.lecture.territoires', utilisateur.habilitations?.lecture.territoires);
 
-        if (utilisateur.habilitations?.lecture.périmètres) 
-          setValue('habilitations.lecture.périmètres', utilisateur.habilitations?.lecture.périmètres);
-      }
-
-      setAncienProfilCodeSélectionné(profilCodeSélectionné);
+      if (utilisateur.habilitations?.lecture.périmètres && afficherChampLecturePérimètres) 
+        setValue('habilitations.lecture.périmètres', utilisateur.habilitations?.lecture.périmètres);
     }
-  }, [ancienProfilCodeSélectionné, profilCodeSélectionné, chantiersAccessiblesPourLeProfil, resetField, setValue, unregister, utilisateur, profils, handleChangementValeursSélectionnéesChantiers, chantiers]);
+
+    setAncienProfilCodeSélectionné(profilCodeSélectionné);
+  }, [ancienProfilCodeSélectionné, profilCodeSélectionné, chantiersAccessiblesPourLeProfil, resetField, setValue,
+    unregister, utilisateur, profils, handleChangementValeursSélectionnéesChantiers, chantiers,
+    afficherChampLectureChantiers, afficherChampLecturePérimètres, afficherChampLectureTerritoires]);
 
   useEffect(() => {
     if (profils) {
@@ -232,6 +251,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     chantiersAccessiblesPourLeProfil,
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
+    afficherChampGestionCompte,
     session,
   };
 }

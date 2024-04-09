@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ProfilCode, profilsCodes } from '@/server/domain/utilisateur/Utilisateur.interface';
 
-const customErrorMail = 'Vous essayez de créer un compte pour une adresse ne relevant pas du périmètre de l’Etat. Veuillez contacter support.ditp@modernisation.gouv.fr pour plus d’informations';
+const customErrorMail = 'Vous essayez de créer un compte pour une adresse dont le domaine n’est pas en .gouv.fr. Veuillez contacter support.ditp@modernisation.gouv.fr pour plus d’informations.';
 
 const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
   if (issue.code === z.ZodIssueCode.invalid_string && issue.validation === 'email') {
@@ -33,6 +33,7 @@ export const validationInfosBaseUtilisateur = z.object( {
   profil: z.enum(profilsCodes),
   saisieIndicateur: z.boolean(),
   saisieCommentaire: z.boolean(),
+  gestionUtilisateur: z.boolean(),
 });
 
 export const validationInfosBaseUtilisateurRéférents = z.object( {

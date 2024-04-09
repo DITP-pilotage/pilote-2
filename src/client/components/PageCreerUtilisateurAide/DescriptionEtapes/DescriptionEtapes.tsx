@@ -16,10 +16,10 @@ export const DescriptionEtapes: FunctionComponent<{
                 data-step={index + 1}
                 key={index}
               >
-                <p className='fr-text fr-text--lg fr-text--bold fr-mb-0'>
+                <p className='fr-text fr-text--lg fr-text--bold fr-mb-0 fr-px-2w'>
                   {etape.titre}
                 </p>
-                <p className='fr-text'>
+                <p className='fr-text fr-px-2w'>
                   {etape.texte}
                 </p>
               </li>
