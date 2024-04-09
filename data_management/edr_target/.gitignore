@@ -1,0 +1,4 @@
+dbt.log
+edr.log
+elementary_output.json
+elementary_report.html

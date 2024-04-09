@@ -33,6 +33,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
     chantiersAccessiblesPourLeProfil,
     afficherChampSaisieCommentaire,
     afficherChampSaisieIndicateur,
+    afficherChampGestionCompte,
     session,
   } = useSaisieDesInformationsUtilisateur(utilisateur);  
 
@@ -109,7 +110,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
                   changementValeursSélectionnéesCallback={handleChangementValeursSélectionnéesTerritoires}
                   groupesÀAfficher={groupesTerritoiresÀAfficher}
                   territoiresCodesSélectionnésParDéfaut={territoiresSélectionnés}
-                  territoiresSélectionnables={session?.habilitations.saisieCommentaire.territoires}
+                  territoiresSélectionnables={session?.habilitations.gestionUtilisateur.territoires}
                 />
               )}
               rules={{ required: true }} 
@@ -132,7 +133,7 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
             />
           </div>
         </div>
-        <div className={`${!!afficherChampLecturePérimètres ? '' : 'fr-hidden'}`}>
+        <div className={`${!!afficherChampLectureChantiers ? '' : 'fr-hidden'}`}>
           <div className='fr-mb-4w'>
             <Controller
               control={control}
@@ -175,6 +176,19 @@ export default function SaisieDesInformationsUtilisateur({ utilisateur }: Utilis
         <CaseACocher 
           libellé='Accorder les droits de saisie des commentaires'
           register={register('saisieCommentaire')}
+        />
+      </div>
+      <div className={`${!!afficherChampGestionCompte ? '' : 'fr-hidden'}`}>
+        <hr className='fr-hr' />
+        <Titre
+          baliseHtml='h2'
+          className='fr-text--md  fr-mb-2w'
+        >
+          Droits de gestion des comptes utilisateurs
+        </Titre>
+        <CaseACocher 
+          libellé='Accorder les droits de gestion des comptes utilisateurs'
+          register={register('gestionUtilisateur')}
         />
       </div>
       <div className='fr-grid-row fr-grid-row--right fr-mt-4w'>

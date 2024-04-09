@@ -2,17 +2,16 @@ import { indicateur as IndicateurPrisma, Prisma, PrismaClient } from '@prisma/cl
 import IndicateurRepository from '@/server/domain/indicateur/IndicateurRepository.interface';
 import Indicateur, { TypeIndicateur } from '@/server/domain/indicateur/Indicateur.interface';
 import { CODES_MAILLES } from '@/server/infrastructure/accès_données/maille/mailleSQLParser';
-import {
-  DétailsIndicateurs,
-  DétailsIndicateurMailles,
-} from '@/server/domain/indicateur/DétailsIndicateur.interface';
+import { DétailsIndicateurMailles, DétailsIndicateurs } from '@/server/domain/indicateur/DétailsIndicateur.interface';
 import { Maille } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee } from '@/server/domain/territoire/Territoire.interface';
 import { groupByAndTransform } from '@/client/utils/arrays';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import { IndicateurPourExport } from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
+import {
+  IndicateurPourExport,
+} from '@/server/usecase/chantier/indicateur/ExportCsvDesIndicateursSansFiltreUseCase.interface';
 import { parseDétailsIndicateur } from '@/server/infrastructure/accès_données/chantier/indicateur/IndicateurSQLParser';
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
@@ -241,7 +240,9 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
              c.ministeres_acronymes                     chantier_ministeres_acronymes,
              c.nom                                      chantier_nom,
              c.id                                       chantier_id,
+             c.statut                                   chantier_statut,
              c.est_barometre                            chantier_est_barometre,
+             c.est_territorialise                       chantier_est_territorialise,
              c.taux_avancement                          chantier_taux_avancement,
              c.perimetre_ids                            perimetre_ids,
              s.meteo                                    meteo,
@@ -289,7 +290,10 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       chantierMinistèreNom: it.chantier_ministeres_acronymes ? it.chantier_ministeres_acronymes[0] : null,
       chantierNom: it.chantier_nom,
       chantierId: it.chantier_id,
+      statut: it.chantier_statut,
+      chantierStatut: it.chantier_statut,
       chantierEstBaromètre: it.chantier_est_barometre,
+      chantierEstTerritorialise: it.chantier_est_territorialise,
       chantierAvancementGlobal: it.chantier_taux_avancement,
       périmètreIds: it.perimetre_ids,
       météo: it.meteo,

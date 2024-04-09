@@ -22,6 +22,7 @@ import {
   HistorisationModificationRepository,
 } from '@/server/domain/historisationModification/HistorisationModificationRepository';
 import { HistorisationModification } from '@/server/domain/historisationModification/HistorisationModification';
+import { Profil } from '@/server/domain/profil/Profil.interface';
 
 export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   constructor(
@@ -33,12 +34,12 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     private readonly historisationModification: HistorisationModificationRepository,
   ) {}
 
-  async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteur: string, utilisateurExistant: boolean, habilitations: Habilitations): Promise<void> {
+  async run(utilisateur: UtilisateurÀCréerOuMettreÀJour, auteur: string, utilisateurExistant: boolean, habilitations: Habilitations, profil: Profil | null): Promise<void> {
     const habilitationsFormatées = await this._définirLesHabilitations(utilisateur);
     let utilisateurAvantModification: Utilisateur | null = null;
 
     const habilitation = new Habilitation(habilitations);
-    habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(habilitationsFormatées.lecture.chantiers, habilitationsFormatées.lecture.territoires);
+    habilitation.vérifierLesHabilitationsEnCréationModificationUtilisateur(habilitationsFormatées.lecture.chantiers, habilitationsFormatées.lecture.territoires, profil);
 
     await this._vérifierExistenceUtilisateur(utilisateur.email, utilisateurExistant);
 
@@ -118,6 +119,14 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
+  private _déterminerChantierAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, chantiers: ChantierSynthétisé[]): string[] {
+    if (utilisateur.gestionUtilisateur) {
+      return this._déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur, chantiers);
+    }
+    
+    return [];
+  }
+
   private _déterminerTerritoiresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
     if (utilisateur.profil === 'DROM') 
       return codesTerritoiresDROM;
@@ -147,6 +156,14 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
+  private _déterminerTerritoiresAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, territoires: Territoire[]): string[] {
+    if (utilisateur.gestionUtilisateur) {
+      return this._déterminerTerritoiresAccessiblesEnLecture(utilisateur, territoires);
+    }
+    
+    return [];    
+  }
+
   private _déterminerPérimètresAccessiblesEnLecture(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
     const tousLesPérimètresIds = new Set(périmètres.map(p => p.id));
 
@@ -173,6 +190,13 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
     return [];
   }
 
+  private _déterminerPérimètresAccessiblesEnGestionUtilisateur(utilisateur: UtilisateurÀCréerOuMettreÀJour, périmètres: PérimètreMinistériel[]): string[] {
+    if (utilisateur.gestionUtilisateur)
+      return this._déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur, périmètres);
+
+    return [];
+  }
+
   private async _définirLesHabilitations(utilisateur: UtilisateurÀCréerOuMettreÀJour): Promise<HabilitationsÀCréerOuMettreÀJourCalculées> {
     const chantiers = await this.chantierRepository.récupérerChantiersSynthétisés();
     const territoires = await this.territoireRepository.récupérerTous();
@@ -193,6 +217,11 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
         chantiers: this._déterminerChantiersAccessiblesEnSaisieCommentaire(utilisateur, chantiers),
         territoires: this._déterminerTerritoiresAccessiblesEnSaisieCommentaire(utilisateur, territoires),
         périmètres: this._déterminerPérimètresAccessiblesEnSaisieCommentaire(utilisateur, périmètres),
+      },
+      gestionUtilisateur: {
+        chantiers: this._déterminerChantierAccessiblesEnGestionUtilisateur(utilisateur, chantiers),
+        territoires: this._déterminerTerritoiresAccessiblesEnGestionUtilisateur(utilisateur, territoires),
+        périmètres: this._déterminerPérimètresAccessiblesEnGestionUtilisateur(utilisateur, périmètres),
       },
     };
   }

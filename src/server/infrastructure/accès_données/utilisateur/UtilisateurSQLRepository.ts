@@ -20,6 +20,7 @@ import {
   ScopeUtilisateurs,
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
+import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
 export const convertirEnModel = (utilisateurAConvertir: {
   email: string
@@ -330,35 +331,29 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     } 
 
     return {
-      'lecture': chantiersAccessibles,
-      'saisieCommentaire': chantiersAccessiblesEnSaisieCommentaire,
-      'saisieIndicateur': ['DITP_PILOTAGE', 'DITP_ADMIN'].includes(profilUtilisateur.code) ? chantiersAccessibles : [],
-      'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs ? chantiersAccessibles : [],
-      'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs ? chantiersAccessibles : [],
-      'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs ? chantiersAccessibles : [],
+      lecture: chantiersAccessibles,
+      saisieCommentaire: chantiersAccessiblesEnSaisieCommentaire,
+      saisieIndicateur: ['DITP_PILOTAGE', 'DITP_ADMIN'].includes(profilUtilisateur.code) ? chantiersAccessibles : [],
+      gestionUtilisateur: profilUtilisateur.peut_modifier_les_utilisateurs ? chantiersAccessiblesEnSaisieCommentaire : [],
     };
   }
 
   private async _récupérerTerritoiresParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, territoire['code'][]>> {
     return {
-      'lecture': profilUtilisateur.a_acces_tous_les_territoires_lecture ? this._territoires : [],
-      'saisieCommentaire': profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire ? this._territoires : [],
-      'saisieIndicateur': profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur ? this._territoires : [],
-      'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs ? this._territoires : [],
-      'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs ? this._territoires : [],
-      'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs ? this._territoires : [],
+      lecture: profilUtilisateur.a_acces_tous_les_territoires_lecture ? this._territoires : [],
+      saisieCommentaire: profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire ? this._territoires : [],
+      saisieIndicateur: profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur ? this._territoires : [],
+      gestionUtilisateur: ['DITP_PILOTAGE', 'DITP_ADMIN'].includes(profilUtilisateur.code) ? this._territoires : [],
     };
   }
 
   private async _récupérerPérimètresMinistérielsParDéfaut(profilUtilisateur: profil): Promise<Record<ScopeChantiers | ScopeUtilisateurs, perimetre['id'][]>> {
     return {
       // on dit que ceux qui ont accès à tous les chantiers ont accès à tous les périmètres ministériels
-      'lecture': profilUtilisateur.a_acces_tous_chantiers ? this._périmètresMinistériels : [],
-      'saisieCommentaire': [],
-      'saisieIndicateur': [],
-      'utilisateurs.lecture': profilUtilisateur.peut_consulter_les_utilisateurs ? this._périmètresMinistériels : [],
-      'utilisateurs.modification': profilUtilisateur.peut_modifier_les_utilisateurs ? this._périmètresMinistériels : [],
-      'utilisateurs.suppression': profilUtilisateur.peut_supprimer_les_utilisateurs ? this._périmètresMinistériels : [],
+      lecture: profilUtilisateur.a_acces_tous_chantiers ? this._périmètresMinistériels : [],
+      saisieCommentaire: [],
+      saisieIndicateur: [],
+      gestionUtilisateur: [],
     };
   }
 
@@ -398,7 +393,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     if (profilUtilisateur.a_acces_tous_chantiers) {
       return profilUtilisateur.peut_saisir_des_commentaires;
     } else {
-      const habilitationSaisieCommentaire = habilitations['saisieCommentaire'];
+      const habilitationSaisieCommentaire = habilitations.saisieCommentaire;
       return profilUtilisateur.a_acces_tous_les_territoires_saisie_commentaire
         ? habilitationSaisieCommentaire.périmètres.length > 0 || habilitationSaisieCommentaire.chantiers.length > 0
         : habilitationSaisieCommentaire.territoires.length > 0;
@@ -409,11 +404,28 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     if (profilUtilisateur.a_acces_tous_chantiers && profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur) {
       return true;
     } else {
-      const habilitationSaisieIndicateur = habilitations['saisieIndicateur'];
+      const habilitationSaisieIndicateur = habilitations.saisieIndicateur;
       return profilUtilisateur.a_acces_tous_les_territoires_saisie_indicateur
         ? habilitationSaisieIndicateur.périmètres.length > 0 || habilitationSaisieIndicateur.chantiers.length > 0
         : habilitationSaisieIndicateur.territoires.length > 0;
     }
+  }
+
+  private _aDesDroitsdeGestionUtilisateur(habilitations: Habilitations, profilUtilisateur: profil) {
+    const habilitationsFormatés = new Habilitation(habilitations);
+    if (!profilUtilisateur.peut_modifier_les_utilisateurs)
+      return false;
+
+    if (profilUtilisateur.a_acces_a_tous_les_chantiers_utilisateurs && profilUtilisateur.a_acces_a_tous_les_territoires_utilisateurs)
+      return true;
+
+    if (profilUtilisateur.a_acces_a_tous_les_chantiers_utilisateurs)
+      return habilitationsFormatés.possedeAuMoinsUnTerritoireEnGestionUtilisateur();
+
+    if (profilUtilisateur.a_acces_a_tous_les_territoires_utilisateurs)
+      return habilitationsFormatés.possedeAuMoinsUnChantierEnGestionUtilisateur();
+
+    return false;
   }
 
   private async _créerLesHabilitations(profilUtilisateur: profil, habilitations: habilitation[]) {
@@ -426,30 +438,20 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
         territoires: territoiresParDéfaut.lecture,
         périmètres: périmètresMinistérielsParDéfaut.lecture,
       },
-      'saisieCommentaire': {
-        chantiers: chantiersParDéfaut['saisieCommentaire'],
-        territoires: territoiresParDéfaut['saisieCommentaire'],
-        périmètres: périmètresMinistérielsParDéfaut['saisieCommentaire'],
+      saisieCommentaire: {
+        chantiers: chantiersParDéfaut.saisieCommentaire,
+        territoires: territoiresParDéfaut.saisieCommentaire,
+        périmètres: périmètresMinistérielsParDéfaut.saisieCommentaire,
       },
-      'saisieIndicateur': {
-        chantiers: chantiersParDéfaut['saisieIndicateur'],
-        territoires: territoiresParDéfaut['saisieIndicateur'],
-        périmètres: périmètresMinistérielsParDéfaut['saisieIndicateur'],
+      saisieIndicateur: {
+        chantiers: chantiersParDéfaut.saisieIndicateur,
+        territoires: territoiresParDéfaut.saisieIndicateur,
+        périmètres: périmètresMinistérielsParDéfaut.saisieIndicateur,
       },
-      'utilisateurs.lecture': {
-        chantiers: chantiersParDéfaut['utilisateurs.lecture'],
-        territoires: territoiresParDéfaut['utilisateurs.lecture'],
-        périmètres: périmètresMinistérielsParDéfaut['utilisateurs.lecture'],
-      },
-      'utilisateurs.modification': {
-        chantiers: chantiersParDéfaut['utilisateurs.modification'],
-        territoires: territoiresParDéfaut['utilisateurs.modification'],
-        périmètres: périmètresMinistérielsParDéfaut['utilisateurs.modification'],
-      },
-      'utilisateurs.suppression': {
-        chantiers: chantiersParDéfaut['utilisateurs.suppression'],
-        territoires: territoiresParDéfaut['utilisateurs.suppression'],
-        périmètres: périmètresMinistérielsParDéfaut['utilisateurs.suppression'],
+      gestionUtilisateur: {
+        chantiers: chantiersParDéfaut.gestionUtilisateur,
+        territoires: territoiresParDéfaut.gestionUtilisateur,
+        périmètres: périmètresMinistérielsParDéfaut.gestionUtilisateur,
       },
       'projetsStructurants.lecture': {
         projetsStructurants: [],
@@ -504,6 +506,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
       fonction: utilisateurBrut.fonction,
       saisieCommentaire: this._aDesDroitsdeSaisieCommentaire(habilitations, utilisateurBrut.profil),
       saisieIndicateur: this._aDesDroitsdeSaisieIndicateur(habilitations, utilisateurBrut.profil),
+      gestionUtilisateur: this._aDesDroitsdeGestionUtilisateur(habilitations, utilisateurBrut.profil),
       habilitations: habilitations,
     };
   }

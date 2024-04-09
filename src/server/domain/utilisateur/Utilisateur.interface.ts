@@ -52,6 +52,7 @@ type Utilisateur = {
   fonction: string | null
   saisieIndicateur: boolean
   saisieCommentaire: boolean
+  gestionUtilisateur: boolean
   habilitations: Habilitations
 };
 
@@ -63,6 +64,7 @@ export type UtilisateurÀCréerOuMettreÀJour =  {
   profil: ProfilCode
   saisieIndicateur: boolean
   saisieCommentaire: boolean
+  gestionUtilisateur: boolean
   habilitations: HabilitationsÀCréerOuMettreÀJour
 };
 
@@ -74,6 +76,7 @@ export type UtilisateurÀCréerOuMettreÀJourSansHabilitation =  {
   profil: ProfilCode,
   saisieIndicateur: boolean
   saisieCommentaire: boolean
+  gestionUtilisateur: boolean
 };
 
 export default Utilisateur;
