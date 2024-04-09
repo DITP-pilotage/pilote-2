@@ -6,12 +6,14 @@ import {
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { objectEntries } from '@/client/utils/objects/objects';
-import api from '@/server/infrastructure/api/trpc/api';
 import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
 import { useRemontéesAlertesChantiers } from '@/components/PageAccueil/PageChantiers/useRemontéesAlertesChantiers';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
+import {
+  AvancementsStatistiquesAccueilContrat,
+} from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
 
-export default function useVueDEnsemble(chantiersFiltrés: ChantierAccueilContrat[], chantiersFiltrésSansFiltreAlerte: ChantierAccueilContrat[]) {
+export default function useVueDEnsemble(chantiersFiltrés: ChantierAccueilContrat[], chantiersFiltrésSansFiltreAlerte: ChantierAccueilContrat[], avancementsAgrégés?: AvancementsStatistiquesAccueilContrat) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
 
@@ -19,13 +21,6 @@ export default function useVueDEnsemble(chantiersFiltrés: ChantierAccueilContra
     return new AgrégateurChantiersParTerritoire(chantiersFiltrés).agréger();
   }, [chantiersFiltrés]);
 
-  let { data: avancementsAgrégés } = api.chantier.récupérerStatistiquesAvancements.useQuery(
-    {
-      chantiers: chantiersFiltrés.map(chantier => (chantier.id)),
-      maille: mailleSélectionnée,
-    },
-    { keepPreviousData: true },
-  );
   if (avancementsAgrégés) {
     avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[territoireSélectionné!.maille].territoires[territoireSélectionné!.codeInsee].répartition.avancements.global.moyenne;
     avancementsAgrégés.annuel.moyenne = donnéesTerritoiresAgrégées[territoireSélectionné!.maille].territoires[territoireSélectionné!.codeInsee].répartition.avancements.annuel.moyenne;

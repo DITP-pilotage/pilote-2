@@ -8,6 +8,10 @@ import { statutsSélectionnésStore } from '@/stores/useStatutsStore/useStatutsS
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
 import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
+const masquerPourDROM = (sessionProfil: string, territoireCode: string) => {
+  return sessionProfil === 'DROM' && territoireCode === 'NAT-FR';
+};
+
 export default function useChantiersFiltrés(chantiers: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[]) {
   const { data: session } = useSession();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
@@ -16,16 +20,18 @@ export default function useChantiersFiltrés(chantiers: (ChantierAccueilContrat 
 
   const chantiersFiltrésSansFiltreAlerte = useMemo(() => {
     let résultat: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[] = chantiers;
+
     if (territoireSélectionné) {
-      résultat = résultat.filter(chantier => !!chantier.mailles[territoireSélectionné.maille][territoireSélectionné.codeInsee].estApplicable);
+      résultat = résultat.filter(chantier =>
+        !!chantier.mailles[territoireSélectionné.maille][territoireSélectionné.codeInsee].estApplicable
+        && statutsSélectionnés.includes(chantier.statut));
     }
 
-    if (session?.profil === 'DROM' && territoireSélectionné?.code === 'NAT-FR') {
-
+    if (masquerPourDROM(session!.profil, territoireSélectionné!.code)) {
       résultat = résultat.filter(chantier => chantier.périmètreIds.includes('PER-018'));
     }
-    if (territoireSélectionné?.code !== 'NAT-FR') {
 
+    if (territoireSélectionné?.code !== 'NAT-FR') {
       const maille = territoireSélectionné?.maille as MailleInterne;
       résultat = résultat.filter(chantier => {
         return chantier.estTerritorialisé || chantier.tauxAvancementDonnéeTerritorialisée[maille] || chantier.météoDonnéeTerritorialisée[maille];
@@ -49,11 +55,6 @@ export default function useChantiersFiltrés(chantiers: (ChantierAccueilContrat 
       ));
     }
 
-    if (statutsSélectionnés.length > 0) {
-      résultat = résultat.filter(chantier => (
-        statutsSélectionnés.includes(chantier.statut)
-      ));      
-    }
     return résultat;
   }, [chantiers, filtresActifs, session?.profil, territoireSélectionné, statutsSélectionnés]);
 
