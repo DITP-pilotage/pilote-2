@@ -21,9 +21,9 @@ export default function IcônesMultiplesEtTexte({ icônesId, largeurDesIcônes =
           </span>
         }
       </span>
-      <p className='fr-text--sm'>
+      <div className='fr-text--sm'>
         { children }
-      </p>
+      </div>
     </IcônesMultiplesEtTexteStyled>
   );
 }

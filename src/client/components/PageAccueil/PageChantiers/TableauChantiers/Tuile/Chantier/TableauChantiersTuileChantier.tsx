@@ -16,7 +16,7 @@ export default function TableauChantiersTuileChantier({ chantier, afficherIcône
   return (
     <TableauChantiersTuileChantierStyled>
       <div className='tuile-chantier-entête'>
-        <p className='fr-mb-0 fr-ml-n1w'>
+        <div className='fr-mb-0 fr-ml-n1w'>
           <IcônesMultiplesEtTexte
             icônesId={afficherIcône && chantier.porteur?.icône ? [chantier.porteur.icône] : []}
             largeurDesIcônes='1.75rem'
@@ -26,7 +26,7 @@ export default function TableauChantiersTuileChantier({ chantier, afficherIcône
               {chantier.nom}
             </span>
           </IcônesMultiplesEtTexte>
-        </p>
+        </div>
         <div className='fr-ml-2w'>
           <TypologiesPictos typologies={chantier.typologie} />
         </div>

@@ -56,18 +56,14 @@ export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = asy
     dependencies.getSynthèseDesRésultatsProjetStructurantRepository(),
   ).run(session.habilitations, session.profil);
 
-  let axes: Axe[] = [];
-  let ministères: Ministère[] = [];
+  const chantierIds = chantiers.map(chantier => chantier.id);
 
-  if (chantiers.length > 0) {
-    const chantierIds = chantiers.map(chantier => chantier.id);
-    const ministèreRepository = dependencies.getMinistèreRepository();
-    ministères = await ministèreRepository.getListePourChantiers(chantierIds);
-
-    const axeRepository = dependencies.getAxeRepository();
-    axes = await axeRepository.getListePourChantiers(chantierIds);
-
-  }
+  const [ministères, axes] = await Promise.all(
+    [
+      dependencies.getMinistèreRepository().getListePourChantiers(chantierIds),
+      dependencies.getAxeRepository().getListePourChantiers(chantierIds),
+    ],
+  );
 
   const estProjetStructurantDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS' });
 

@@ -1,4 +1,3 @@
-
 import '@gouvfr/dsfr/dist/component/segmented/segmented.css';
 import ContrôleSegmentéProps from './ContrôleSegmenté.interface';
 import ContrôleSegmentéStyled from './ContrôleSegmenté.styled';
@@ -20,6 +19,7 @@ export default function ContrôleSegmenté<T extends string>({ options, valeurS�
                   id={option.valeur}
                   key={option.valeur}
                   onClick={(event) => valeurModifiéeCallback(event.currentTarget.value as T)}
+                  readOnly
                   type='radio'
                   value={option.valeur}
                 />

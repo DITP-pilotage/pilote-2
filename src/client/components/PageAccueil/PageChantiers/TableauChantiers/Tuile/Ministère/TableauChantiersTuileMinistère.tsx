@@ -7,7 +7,7 @@ export default function TableauChantiersTuileMinistère({ ministère, estDéroul
   return (
     <TableauChantiersTuileMinistèreStyled>
       <div>
-        <p className='fr-mb-0 fr-ml-n1w'>
+        <div className='fr-mb-0 fr-ml-n1w'>
           <IcônesMultiplesEtTexte
             icônesId={ministère.icône ? [ministère.icône] : []}
             largeurDesIcônes='1.75rem'
@@ -16,7 +16,7 @@ export default function TableauChantiersTuileMinistère({ ministère, estDéroul
               {ministère?.nom ?? ''}
             </span>
           </IcônesMultiplesEtTexte>
-        </p>
+        </div>
         <div className='fr-mx-3w fr-mt-1v avancement'>
           <BarreDeProgression
             fond='blanc'
