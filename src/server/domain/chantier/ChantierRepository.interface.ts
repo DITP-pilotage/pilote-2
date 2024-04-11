@@ -14,6 +14,8 @@ import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
 export default interface ChantierRepository {
   récupérerLesEntréesDUnChantier(id: string, habilitations: Habilitations, profil: ProfilCode): Promise<ChantierPrisma[]>;
   récupérerLesEntréesDeTousLesChantiersHabilités(habilitation: Habilitation, profil: ProfilCode): Promise<ChantierPrisma[]>;
+  récupérerLesEntréesDeTousLesChantiersHabilitésNewNat(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode): Promise<ChantierPrisma[]>;
+  récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, maille: string): Promise<ChantierPrisma[]>;
   récupérerTous(): Promise<ChantierPrisma[]>;
   récupérerChantiersSynthétisés(): Promise<ChantierSynthétisé[]>;
   getChantierStatistiques(habilitations: Habilitations, listeChantier: Chantier['id'][], maille: Maille): Promise<AvancementsStatistiques>;

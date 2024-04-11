@@ -54,24 +54,28 @@ export default function Navigation() {
       nom: 'Accueil',
       lien: '/',
       accessible: true,
+      prefetch: true,
       target: '_self',
     },
     {
       nom: 'Gestion des comptes',
       lien: '/admin/utilisateurs',
       accessible: estAutoriséAAccéderALaGestionDesComptes(session),
+      prefetch: false,
       target: '_self',
     },
     {
       nom: 'Nouveautés',
       lien: '/nouveautes',
       accessible: true,
+      prefetch: false,
       target: '_self',
     },
     {
       nom: 'Centre d\'aide',
       lien: '/centreaide',
       accessible: true,
+      prefetch: false,
       target: '_blank',
     },
   ];

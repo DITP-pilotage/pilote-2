@@ -130,6 +130,11 @@ const config = convict({
     },
   },
   featureFlip: {
+    nouvellePageAccueil: {
+      format: Boolean,
+      default: false,
+      env: 'NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL',
+    },
     rapportDetaille: {
       format: Boolean,
       default: true,

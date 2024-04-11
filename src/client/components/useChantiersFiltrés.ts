@@ -56,7 +56,7 @@ export default function useChantiersFiltrés(chantiers: (ChantierAccueilContrat 
     }
 
     return résultat;
-  }, [chantiers, filtresActifs, session?.profil, territoireSélectionné, statutsSélectionnés]);
+  }, [chantiers, territoireSélectionné, session, filtresActifs.périmètresMinistériels, filtresActifs.axes, filtresActifs.ppg, filtresActifs.filtresTypologie, statutsSélectionnés]);
 
   const chantiersFiltrés = useMemo(() => {
     let résultat: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[] = chantiersFiltrésSansFiltreAlerte;

@@ -184,6 +184,51 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return this.prisma.chantier.findMany(paramètresRequête);
   }
 
+  async récupérerLesEntréesDeTousLesChantiersHabilitésNewNat(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode): Promise<ChantierPrisma[]> {
+    let paramètresRequête : Prisma.chantierFindManyArgs = {
+      where: {
+        NOT: { ministeres: { isEmpty: true } },
+        id: { in: chantiersLectureIds },
+        maille: 'NAT',
+      },
+    };
+
+    if (!profilsTerritoriaux.includes(profil)) {
+      // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
+      paramètresRequête.where!.territoire_code = { in: [...territoiresLectureIds, 'NAT-FR'] };
+    }
+
+    return this.prisma.chantier.findMany(paramètresRequête);
+  }
+
+  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, maille: 'DEPT' | 'REG'): Promise<ChantierPrisma[]> {
+    let paramètresRequête : Prisma.chantierFindManyArgs = {
+      where: {
+        NOT: { ministeres: { isEmpty: true } },
+        id: { in: chantiersLectureIds },
+        maille,
+      },
+      select: {
+        id: true,
+        maille: true,
+        code_insee: true,
+        est_applicable: true,
+        taux_avancement_annuel: true,
+        taux_avancement: true,
+        taux_avancement_precedent: true,
+        meteo: true,
+        territoire_code: true,
+      },
+    };
+
+    if (!profilsTerritoriaux.includes(profil)) {
+      // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
+      paramètresRequête.where!.territoire_code = { in: [...territoiresLectureIds, 'NAT-FR'] };
+    }
+
+    return this.prisma.chantier.findMany(paramètresRequête);
+  }
+
   async récupérerTous(): Promise<ChantierPrisma[]> {
     return this.prisma.chantier.findMany();
   }

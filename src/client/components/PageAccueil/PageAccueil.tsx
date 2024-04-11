@@ -8,7 +8,6 @@ import Filtres from '@/components/PageAccueil/Filtres/Filtres';
 import BarreLatérale from '@/client/components/_commons/BarreLatérale/BarreLatérale';
 import BarreLatéraleEncart from '@/client/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
-import PageAccueilStyled from '@/components/PageAccueil/PageAccueil.styled';
 import {
   actionsTypeDeRéformeStore,
   typeDeRéformeSélectionnéeStore,
@@ -31,7 +30,7 @@ const PageAccueil: FunctionComponent<{
   const { modifierTypeDeRéformeSélectionné } = actionsTypeDeRéformeStore();
 
   return (
-    <PageAccueilStyled className='flex'>
+    <div className='flex'>
       <BarreLatérale
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
@@ -61,7 +60,7 @@ const PageAccueil: FunctionComponent<{
           />
         </section>
       </BarreLatérale>
-      <div className='contenu-principal'>
+      <div className='w-full'>
         <BoutonSousLigné
           classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w'
           onClick={() => setEstOuverteBarreLatérale(true)}
@@ -84,7 +83,7 @@ const PageAccueil: FunctionComponent<{
             ) : null
         }
       </div>
-    </PageAccueilStyled>
+    </div>
   );
 };
 

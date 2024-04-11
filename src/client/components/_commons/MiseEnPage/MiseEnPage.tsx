@@ -14,7 +14,7 @@ export default function MiseEnPage({ afficherLeLoader, children }: MiseEnPagePro
   const { initialiserLesTerritoires, initialiserLeTerritoireSélectionnéParDéfaut } = actionsTerritoiresStore();
   const [aFiniDeChargerLesTerritoires, setAFiniDeChargerLesTerritoires] = useState(false);
   const { refetch: fetchRécupérerLesTerritoires } = api.territoire.récupérerTous.useQuery(undefined, { refetchOnWindowFocus: false, enabled: false });
-  
+
   const récupérerLesTerritoires = useCallback(async () => {
     const { data: territoires } = await fetchRécupérerLesTerritoires();
     if (territoires) {

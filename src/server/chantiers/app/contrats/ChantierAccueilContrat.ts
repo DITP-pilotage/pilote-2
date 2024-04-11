@@ -1,5 +1,4 @@
 import Chantier, { TypeStatut } from '@/server/domain/chantier/Chantier.interface';
-import { Maille } from '@/server/domain/maille/Maille.interface';
 import { TerritoireDonnées, TerritoiresDonnées } from '@/server/domain/territoire/Territoire.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 
@@ -20,7 +19,10 @@ interface TerritoireDonnéeAccueilContrat {
 
 type ListeTerritoiresDonnéeAccueilContrat = Record<string, TerritoireDonnéeAccueilContrat>;
 
-type MailleAccueilContrat = Record<Maille, ListeTerritoiresDonnéeAccueilContrat>;
+export type MailleChantierContrat = 'nationale' | 'régionale' | 'départementale';
+
+
+type MailleAccueilContrat = Record<MailleChantierContrat, ListeTerritoiresDonnéeAccueilContrat>;
 
 export interface MinistereAccueilPorteur {
   nom?: string
@@ -63,10 +65,10 @@ const presenterEnTerritoireDonnéeAccueilContrat = (territoireDonnee: Territoire
 };
 
 // le double reduce doit être enlever, on a pas besoin d'un record, un Map<CodeInsee, TerritoireDonnee> conditionnée par la maille suffit
-const presenterEnMailleAccueilContrat = (mailles: Record<Maille, TerritoiresDonnées>): MailleAccueilContrat => {
+const presenterEnMailleAccueilContrat = (mailles: Record<MailleChantierContrat, TerritoiresDonnées>): MailleAccueilContrat => {
   return Object.keys(mailles).reduce((acc, val) => {
-    acc[val as Maille] = Object.keys(mailles[val as Maille]).reduce((accTerritoireDonnee, codeInsee) => {
-      accTerritoireDonnee[codeInsee] = presenterEnTerritoireDonnéeAccueilContrat(mailles[val as Maille][codeInsee]);
+    acc[val as MailleChantierContrat] = Object.keys(mailles[val as MailleChantierContrat]).reduce((accTerritoireDonnee, codeInsee) => {
+      accTerritoireDonnee[codeInsee] = presenterEnTerritoireDonnéeAccueilContrat(mailles[val as MailleChantierContrat][codeInsee]);
       return accTerritoireDonnee;
     }, {} as ListeTerritoiresDonnéeAccueilContrat);
     return acc;

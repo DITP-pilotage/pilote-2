@@ -93,7 +93,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
     setAfficherChampLectureTerritoires(!!profilSélectionné && (profilsDépartementaux.includes(profilSélectionné.code) || profilsRégionaux.includes(profilSélectionné.code)));
     setAfficherChampLectureChantiers(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
     
-    if (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session?.profil)) {
+    if (['DITP_ADMIN', 'DITP_PILOTAGE'].includes(session!.profil)) {
       setAfficherChampLecturePérimètres(!!profilSélectionné && !profilSélectionné.chantiers.lecture.tous && !profilSélectionné.chantiers.lecture.tousTerritorialisés);
     } else {
       setAfficherChampLecturePérimètres(false);

@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import '@gouvfr/dsfr/dist/core/core.min.css';
 import '@gouvfr/dsfr/dist/component/link/link.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css';
@@ -8,8 +7,7 @@ import '@/client/styles/app.scss';
 import type { AppProps } from 'next/app';
 import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
-import { Router } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Head from 'next/head';
 import { TRPCClientError } from '@trpc/client';
@@ -18,7 +16,6 @@ import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
 import useDétecterLargeurDÉcran from '@/client/hooks/useDétecterLargeurDÉcran';
 import api from '@/server/infrastructure/api/trpc/api';
 
-const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 const queryClient = new QueryClient({
   defaultOptions: { 
     queries: { 
@@ -35,27 +32,6 @@ const queryClient = new QueryClient({
 
 function MonApplication({ Component, pageProps }: AppProps) {
   useDétecterLargeurDÉcran();
-  const [afficherLeLoader, setAfficherLeLoader] = useState(false);
-  const [pageEnCoursDeChargement, setPageEnCoursDeChargement] = useState(false);
-
-  const débutChargement = () => {
-    setPageEnCoursDeChargement(true);
-  };
-  const finChargement = () => {
-    setPageEnCoursDeChargement(false);
-  };
-
-  useEffect(() => {
-    Router.events.on('routeChangeStart', débutChargement);
-    Router.events.on('routeChangeComplete', finChargement);
-    Router.events.on('routeChangeError', finChargement);
-
-    return () => {
-      Router.events.off('routeChangeStart', débutChargement);
-      Router.events.off('routeChangeComplete', finChargement);
-      Router.events.off('routeChangeError', finChargement);
-    };
-  }, []);
 
   const matomoUrl = process.env.NEXT_PUBLIC_MATOMO_URL;
   const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID;
@@ -66,19 +42,6 @@ function MonApplication({ Component, pageProps }: AppProps) {
       init({ url: matomoUrl as string, siteId: matomoSiteId as string  });
     }
   }, [estRecordAnalyticsActive, matomoSiteId, matomoUrl]);
-
-  useEffect(() => {
-    let timer = setTimeout(() => {});
-
-    if (pageEnCoursDeChargement)
-      timer = setTimeout(() => setAfficherLeLoader(true), DELAI_AVANT_APPARITION_DU_LOADER_EN_MS);
-    else {
-      clearTimeout(timer);
-      setAfficherLeLoader(false);
-    }
-
-    return () => clearTimeout(timer);
-  }, [pageEnCoursDeChargement]);
 
   return (
     <>
@@ -116,7 +79,7 @@ function MonApplication({ Component, pageProps }: AppProps) {
       </Head>
       <QueryClientProvider client={queryClient}>
         <SessionProvider session={pageProps.session}>
-          <MiseEnPage afficherLeLoader={afficherLeLoader}>
+          <MiseEnPage afficherLeLoader={false}>
             <Component {...pageProps} />
           </MiseEnPage>
         </SessionProvider>
