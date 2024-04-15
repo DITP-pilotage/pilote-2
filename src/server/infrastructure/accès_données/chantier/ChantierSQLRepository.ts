@@ -13,6 +13,7 @@ import { ChantierPourExport } from '@/server/usecase/chantier/ExportCsvDesChanti
 import { territoireCodeVersMailleCodeInsee } from '@/server/utils/territoires';
 import { ProfilCode, profilsTerritoriaux } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { OptionsExport } from '@/server/usecase/chantier/OptionsExport';
+import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -184,12 +185,33 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return this.prisma.chantier.findMany(paramètresRequête);
   }
 
-  async récupérerLesEntréesDeTousLesChantiersHabilitésNewNat(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode): Promise<ChantierPrisma[]> {
+  async récupérerLesEntréesDeTousLesChantiersHabilitésNewNat(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams): Promise<ChantierPrisma[]> {
+    const whereOptions: Prisma.chantierWhereInput = {};
+
+    if (filtres.perimetres?.length > 0) {
+      whereOptions.perimetre_ids = {
+        hasSome: filtres.perimetres,
+      };
+    }
+
+    if (filtres.axes?.length > 0) {
+      whereOptions.axe = {
+        in: filtres.axes,
+      };
+    }
+
+    if (filtres.ppg?.length > 0) {
+      whereOptions.ppg = {
+        in: filtres.ppg,
+      };
+    }
+
     let paramètresRequête : Prisma.chantierFindManyArgs = {
       where: {
         NOT: { ministeres: { isEmpty: true } },
         id: { in: chantiersLectureIds },
         maille: 'NAT',
+        ...whereOptions,
       },
     };
 
@@ -201,12 +223,33 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return this.prisma.chantier.findMany(paramètresRequête);
   }
 
-  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, maille: 'DEPT' | 'REG'): Promise<ChantierPrisma[]> {
+  async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, maille: 'DEPT' | 'REG', filtres: FiltreQueryParams): Promise<ChantierPrisma[]> {
+    const whereOptions: Prisma.chantierWhereInput = {};
+
+    if (filtres.perimetres?.length > 0) {
+      whereOptions.perimetre_ids = {
+        hasSome: filtres.perimetres,
+      };
+    }
+
+    if (filtres.axes?.length > 0) {
+      whereOptions.axe = {
+        in: filtres.axes,
+      };
+    }
+
+    if (filtres.ppg?.length > 0) {
+      whereOptions.ppg = {
+        in: filtres.ppg,
+      };
+    }
+
     let paramètresRequête : Prisma.chantierFindManyArgs = {
       where: {
         NOT: { ministeres: { isEmpty: true } },
         id: { in: chantiersLectureIds },
         maille,
+        ...whereOptions,
       },
       select: {
         id: true,

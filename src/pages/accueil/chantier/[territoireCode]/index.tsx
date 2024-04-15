@@ -8,7 +8,7 @@ import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLat�
 import SélecteursMaillesEtTerritoires
   from '@/components/_commons/SélecteursMaillesEtTerritoiresNew/SélecteursMaillesEtTerritoires';
 import Titre from '@/components/_commons/Titre/Titre';
-import Filtres from '@/components/PageAccueil/Filtres/Filtres';
+import Filtres from '@/components/PageAccueil/FiltresNew/Filtres';
 import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import RécupérerChantiersAccessiblesEnLectureUseCase
@@ -25,13 +25,18 @@ import Ppg from '@/server/domain/ppg/Ppg.interface';
 import SélecteurTypeDeRéforme from '@/components/PageAccueil/SélecteurTypeDeRéformeNew/SélecteurTypeDeRéforme';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 
-interface ChantierAccueilLayout {
+interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
   ministères: Ministère[]
   axes: Axe[],
-  ppgs: Ppg[],
+  ppg: Ppg[],
   territoireCode: string
-  mailleSelectionnee: 'départementale' | 'régionale'
+  mailleSelectionnee: 'départementale' | 'régionale',
+  filtres: {
+    perimetres: string[]
+    axes: string[]
+    ppg: string[]
+  }
 }
 
 const masquerPourDROM = (sessionProfil: string, mailleChantier: MailleChantierContrat) => {
@@ -54,12 +59,18 @@ const appliquerFiltre = (mailleChantier: MailleChantierContrat, codeInsee: strin
   };
 };
 
-export const getServerSideProps: GetServerSideProps<ChantierAccueilLayout>  = async ({ req, res, query }) => {
+export const getServerSideProps: GetServerSideProps<ChantierAccueil>  = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
 
   assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
   assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
+
+  const filtres = {
+    perimetres: query.perimetres ? (query.perimetres as string).split(',') : [],
+    axes: query.axes ? (query.axes as string).split(',') : [],
+    ppg: query.ppg ? (query.ppg as string).split(',') : [],
+  };
 
   const estNouvellePageAccueilDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL' });
 
@@ -79,19 +90,17 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueilLayout>  = as
     dependencies.getMinistèreRepository(),
     dependencies.getTerritoireRepository(),
   )
-    .run(session.habilitations, session.profil, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT')
+    .run(session.habilitations, session.profil, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', filtres)
     .then(chantiersResult => chantiersResult
       .map(presenterEnChantierAccueilContrat)
       .filter(appliquerFiltre(mailleChantier || 'départementale', codeInsee, session.profil)),
     );
 
-  const chantierIds = chantiers.map(chantier => chantier.id);
-
-  const [ministères, axes, ppgs] = await Promise.all(
+  const [ministères, axes, ppg] = await Promise.all(
     [
-      dependencies.getMinistèreRepository().getListePourChantiers(chantierIds),
-      dependencies.getAxeRepository().getListePourChantiers(chantierIds),
-      dependencies.getPpgRepository().getListePourChantiers(chantierIds),
+      dependencies.getMinistèreRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
+      dependencies.getAxeRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
+      dependencies.getPpgRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
     ],
   );
 
@@ -100,14 +109,15 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueilLayout>  = as
       chantiers,
       ministères,
       axes,
-      ppgs,
+      ppg,
       territoireCode,
       mailleSelectionnee: mailleSelectionnee || 'départementale',
+      filtres,
     },
   };
 };
 
-const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ chantiers, axes, ministères, ppgs, territoireCode, mailleSelectionnee }) => {
+const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ chantiers, axes, ministères, ppg, territoireCode, mailleSelectionnee, filtres }) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
@@ -136,8 +146,9 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           <Filtres
             afficherToutLesFiltres
             axes={axes}
+            filtres={filtres}
             ministères={ministères}
-            ppgs={ppgs}
+            ppg={ppg}
           />
         </section>
       </BarreLatérale>
@@ -150,9 +161,11 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           Filtres
         </BoutonSousLigné>
         <PageChantiers
+          axes={axes}
           chantiers={chantiers}
           mailleSelectionnee={mailleSelectionnee}
           ministères={ministères}
+          ppg={ppg}
           territoireCode={territoireCode}
         />
       </div>

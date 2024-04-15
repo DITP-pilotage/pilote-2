@@ -2,8 +2,9 @@ import '@gouvfr/dsfr/dist/component/form/form.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import Link from 'next/link';
-import { useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { parseAsArrayOf, parseAsString, useQueryStates } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement
@@ -15,7 +16,7 @@ import ExportDesDonnées, {
 import {
   ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
-import FiltresActifs from '@/client/components/PageAccueil/FiltresActifs/FiltresActifs';
+import FiltresActifs from '@/client/components/PageAccueil/FiltresActifsNew/FiltresActifs';
 import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/RépartitionMétéo';
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
@@ -28,6 +29,8 @@ import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDe
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
+import Axe from '@/server/domain/axe/Axe.interface';
+import Ppg from '@/server/domain/ppg/Ppg.interface';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -35,19 +38,28 @@ import usePageChantiers from './usePageChantiers';
 interface PageChantiersProps {
   chantiers: ChantierAccueilContrat[],
   ministères: Ministère[]
+  axes: Axe[],
+  ppg: Ppg[],
   territoireCode: string
   mailleSelectionnee: 'départementale' | 'régionale'
 }
 
-export default function PageChantiers({ chantiers, ministères, territoireCode, mailleSelectionnee }: PageChantiersProps) {
+const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, ministères, axes, ppg, territoireCode, mailleSelectionnee }) => {
 
   const { data: session } = useSession();
 
   const [nombreChantiersDansLeTableau, setNombreChantiersDansLeTableau] = useState<number>();
   const { auClicTerritoireCallback } = useCartographie(territoireCode);
 
+  const [filtres] = useQueryStates({
+    perimetres: parseAsArrayOf(parseAsString).withDefault([]),
+    axes: parseAsArrayOf(parseAsString).withDefault([]),
+    ppg: parseAsArrayOf(parseAsString).withDefault([]),
+  });
+
+  const nombreFiltresActifs = filtres.axes.length + filtres.ppg.length + filtres.perimetres.length;
+
   const {
-    nombreFiltresActifs,
     chantiersFiltrés,
     avancementsAgrégés,
     répartitionMétéos,
@@ -60,11 +72,16 @@ export default function PageChantiers({ chantiers, ministères, territoireCode, 
   return (
     <PageChantiersStyled>
       {
-        nombreFiltresActifs > 0 &&
-        <FiltresActifs ministères={ministères} />
+        nombreFiltresActifs > 0 ? (
+          <FiltresActifs
+            axes={axes}
+            ministères={ministères}
+            ppg={ppg}
+          />
+        ) : null
       }
       <div className='fr-py-2w fr-px-md-2w fr-container--fluid'>
-        <div className='fr-mb-2w titre flex align-center'>
+        <div className='fr-mb-2w titre flex align-center'> 
           <Titre
             baliseHtml='h1'
             className='fr-h4 fr-px-2w fr-px-md-0 fr-mb-0'
@@ -325,4 +342,6 @@ export default function PageChantiers({ chantiers, ministères, territoireCode, 
       </div>
     </PageChantiersStyled>
   );
-}
+};
+
+export default PageChantiers;

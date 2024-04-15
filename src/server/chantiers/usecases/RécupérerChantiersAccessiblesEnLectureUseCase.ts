@@ -10,6 +10,8 @@ import { objectEntries } from '@/client/utils/objects/objects';
 import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
+import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
+import { dependencies } from '@/server/infrastructure/Dependencies';
 
 export default class RécupérerChantiersAccessiblesEnLectureUseCase {
   constructor(
@@ -19,14 +21,27 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     private readonly territoireRepository: TerritoireRepository,
   ) {}
 
-  async run(habilitations: Habilitations, profil: ProfilCode, maille: 'DEPT' | 'REG'): Promise<Chantier[]> {
+  async run(habilitations: Habilitations, profil: ProfilCode, maille: 'DEPT' | 'REG', filtres: FiltreQueryParams): Promise<Chantier[]> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
+    const [axes, ppg] = await Promise.all(
+      [
+        dependencies.getAxeRepository().getListePourChantiers(chantiersLecture),
+        dependencies.getPpgRepository().getListePourChantiers(chantiersLecture),
+      ],
+    );
+
+    const filtresPourChantier: FiltreQueryParams = {
+      perimetres: filtres.perimetres,
+      axes: filtres.axes.map(filtre => axes.find(axe => axe.id === filtre)!.nom),
+      ppg: filtres.ppg.map(filtre => ppg.find(ppgItem => ppgItem.id === filtre)!.nom),
+    };
+
     const [chantiersRowsNat, chantiersRowsMaille, ministères, territoires, chantiersRowsDatesDeMàj ] = await Promise.all([
-      this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNewNat(chantiersLecture, territoiresLecture, profil),
-      this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, maille),
+      this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNewNat(chantiersLecture, territoiresLecture, profil, filtresPourChantier),
+      this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, maille, filtresPourChantier),
       this.ministèreRepository.getListePourChantiers(chantiersLecture),
       this.territoireRepository.récupérerTousNew(maille),
       this.chantierDatesDeMàjRepository.récupérerDatesDeMiseÀJour(chantiersLecture, territoiresLecture),

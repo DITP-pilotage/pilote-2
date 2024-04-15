@@ -18,28 +18,11 @@ const useChantiersFiltrés = (chantiers: (ChantierAccueilContrat | ChantierRappo
   const [maille, codeInsee] = territoireCode.split('-');
   const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
 
-
   const chantiersFiltrésSansFiltreAlerte = useMemo(() => {
     let résultat: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[] = chantiers;
 
     résultat = résultat.filter(chantier => statutsSélectionnés.includes(chantier.statut));
 
-    if (filtresActifs.périmètresMinistériels.length > 0) {
-      résultat = résultat.filter(chantier => {
-        const périmètrePorteur = chantier.responsables.porteur?.périmètresMinistériels.find(pm => chantier.périmètreIds.includes(pm.id));
-        return filtresActifs.périmètresMinistériels.some(filtre => périmètrePorteur?.id === filtre.id);
-      });
-    }
-    if (filtresActifs.axes.length > 0) {
-      résultat = résultat.filter(chantier => (
-        filtresActifs.axes.some(filtre => chantier.axe === filtre.nom)
-      ));
-    }
-    if (filtresActifs.ppg.length > 0) {
-      résultat = résultat.filter(chantier => (
-        filtresActifs.ppg.some(filtre => chantier.ppg === filtre.nom)
-      ));
-    }
     if (filtresActifs.filtresTypologie.length > 0) {
       résultat = résultat.filter(chantier => (
         filtresActifs.filtresTypologie.some(filtre => chantier[filtre.attribut])
@@ -47,7 +30,7 @@ const useChantiersFiltrés = (chantiers: (ChantierAccueilContrat | ChantierRappo
     }
 
     return résultat;
-  }, [chantiers, filtresActifs.axes, filtresActifs.filtresTypologie, filtresActifs.ppg, filtresActifs.périmètresMinistériels, statutsSélectionnés]);
+  }, [chantiers, filtresActifs.filtresTypologie, statutsSélectionnés]);
 
   const chantiersFiltrés = useMemo(() => {
     let résultat: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[] = chantiersFiltrésSansFiltreAlerte;
