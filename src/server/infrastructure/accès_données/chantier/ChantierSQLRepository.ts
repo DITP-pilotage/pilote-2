@@ -194,6 +194,12 @@ export default class ChantierSQLRepository implements ChantierRepository {
       };
     }
 
+    if (filtres.statut?.length > 0) {
+      whereOptions.statut = {
+        in: filtres.statut as type_statut[],
+      };
+    }
+
     if (filtres.axes?.length > 0) {
       whereOptions.axe = {
         in: filtres.axes,
@@ -204,6 +210,18 @@ export default class ChantierSQLRepository implements ChantierRepository {
       whereOptions.ppg = {
         in: filtres.ppg,
       };
+    }
+
+    if (filtres.estTerritorialise && filtres.estBarometre) {
+      whereOptions.OR = [{
+        est_barometre: true,
+      }, {
+        est_territorialise: true,
+      }];
+    } else if (filtres.estTerritorialise) {
+      whereOptions.est_territorialise = true;
+    } else if (filtres.estBarometre) {
+      whereOptions.est_barometre = true;
     }
 
     let paramètresRequête : Prisma.chantierFindManyArgs = {
@@ -232,6 +250,12 @@ export default class ChantierSQLRepository implements ChantierRepository {
       };
     }
 
+    if (filtres.statut?.length > 0) {
+      whereOptions.statut = {
+        in: filtres.statut as type_statut[],
+      };
+    }
+
     if (filtres.axes?.length > 0) {
       whereOptions.axe = {
         in: filtres.axes,
@@ -242,6 +266,18 @@ export default class ChantierSQLRepository implements ChantierRepository {
       whereOptions.ppg = {
         in: filtres.ppg,
       };
+    }
+
+    if (filtres.estTerritorialise && filtres.estBarometre) {
+      whereOptions.OR = [{
+        est_barometre: true,
+      }, {
+        est_territorialise: true,
+      }];
+    } else if (filtres.estTerritorialise) {
+      whereOptions.est_territorialise = true;
+    } else if (filtres.estBarometre) {
+      whereOptions.est_barometre = true;
     }
 
     let paramètresRequête : Prisma.chantierFindManyArgs = {

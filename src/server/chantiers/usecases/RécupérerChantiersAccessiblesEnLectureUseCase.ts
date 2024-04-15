@@ -37,6 +37,9 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
       perimetres: filtres.perimetres,
       axes: filtres.axes.map(filtre => axes.find(axe => axe.id === filtre)!.nom),
       ppg: filtres.ppg.map(filtre => ppg.find(ppgItem => ppgItem.id === filtre)!.nom),
+      statut: filtres.statut,
+      estTerritorialise: filtres.estTerritorialise,
+      estBarometre: filtres.estBarometre,
     };
 
     const [chantiersRowsNat, chantiersRowsMaille, ministères, territoires, chantiersRowsDatesDeMàj ] = await Promise.all([

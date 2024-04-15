@@ -12,7 +12,7 @@ import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersStyled from './TableauChantiers.styled';
 import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
 
-export default function TableauChantiers({ données, ministèresDisponibles, setNombreChantiersDansLeTableau }: TableauChantiersProps) {
+export default function TableauChantiers({ données, ministèresDisponibles }: TableauChantiersProps) {
   
   const {
     tableau,
@@ -29,12 +29,6 @@ export default function TableauChantiers({ données, ministèresDisponibles, set
   useEffect(() => {
     tableau.setPageSize(50);
   }, [tableau]);
-
-  useEffect(() => {
-    if (setNombreChantiersDansLeTableau) {
-      setNombreChantiersDansLeTableau(tableau.getFilteredRowModel().rows.length);
-    }
-  }, [setNombreChantiersDansLeTableau, tableau]);
 
   return (
     <TableauChantiersStyled className='fr-table fr-m-0 fr-p-0'>

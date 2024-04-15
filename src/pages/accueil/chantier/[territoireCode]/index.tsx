@@ -24,6 +24,16 @@ import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import SélecteurTypeDeRéforme from '@/components/PageAccueil/SélecteurTypeDeRéformeNew/SélecteurTypeDeRéforme';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
+import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
+import Alerte from '@/server/domain/alerte/Alerte';
+import RécupérerStatistiquesAvancementChantiersUseCase
+  from '@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase';
+import {
+  AvancementsStatistiquesAccueilContrat,
+  presenterEnAvancementsStatistiquesAccueilContrat,
+} from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
+import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateurNew/agrégateur';
+import { AgrégatParTerritoire } from '@/client/utils/chantier/agrégateurNew/agrégateur.interface';
 
 interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
@@ -32,11 +42,10 @@ interface ChantierAccueil {
   ppg: Ppg[],
   territoireCode: string
   mailleSelectionnee: 'départementale' | 'régionale',
-  filtres: {
-    perimetres: string[]
-    axes: string[]
-    ppg: string[]
-  }
+  brouillon: boolean
+  filtresComptesCalculés: Record<string, { nombre: number }>
+  avancementsAgrégés: AvancementsStatistiquesAccueilContrat
+  donnéesTerritoiresAgrégées: AgrégatParTerritoire
 }
 
 const masquerPourDROM = (sessionProfil: string, mailleChantier: MailleChantierContrat) => {
@@ -70,6 +79,16 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil>  = async ({
     perimetres: query.perimetres ? (query.perimetres as string).split(',') : [],
     axes: query.axes ? (query.axes as string).split(',') : [],
     ppg: query.ppg ? (query.ppg as string).split(',') : [],
+    statut: query.brouillon === 'false' ? ['PUBLIE'] : ['BROUILLON', 'PUBLIE'],
+    estTerritorialise: query.estTerritorialise === 'true',
+    estBarometre: query.estBarometre === 'true',
+  };
+
+  const filtresAlertes = {
+    estEnAlerteTauxAvancementNonCalculé: query.estEnAlerteTauxAvancementNonCalculé === 'true',
+    estEnAlerteÉcart: query.estEnAlerteÉcart === 'true',
+    estEnAlerteBaisseOuStagnation: query.estEnAlerteBaisseOuStagnation === 'true',
+    estEnAlerteDonnéesNonMàj: query.estEnAlerteDonnéesNonMàj === 'true',
   };
 
   const estNouvellePageAccueilDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL' });
@@ -104,20 +123,57 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil>  = async ({
     ],
   );
 
+  const compteurFiltre = new CompteurFiltre(chantiers);
+
+  const filtresComptesCalculés = compteurFiltre.compter([{
+    nomCritère: 'estEnAlerteÉcart',
+    condition: (chantier) => Alerte.estEnAlerteÉcart(chantier.mailles[mailleChantier]?.[codeInsee]?.écart),
+  }, {
+    nomCritère: 'estEnAlerteBaisseOuStagnation',
+    condition: (chantier) => Alerte.estEnAlerteBaisseOuStagnation(chantier.mailles[mailleChantier]?.[codeInsee]?.tendance),
+  }, {
+    nomCritère: 'estEnAlerteDonnéesNonMàj',
+    condition: (chantier) => Alerte.estEnAlerteDonnéesNonMàj(chantier.mailles[mailleChantier]?.[codeInsee]?.dateDeMàjDonnéesQualitatives, chantier.mailles[mailleChantier]?.[codeInsee]?.dateDeMàjDonnéesQuantitatives),
+  }, {
+    nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
+    condition: (chantier) => Alerte.estEnAlerteTauxAvancementNonCalculé(chantier.mailles[mailleChantier]?.[codeInsee]?.avancement.global),
+  }]);
+
+  const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisseOuStagnation || filtresAlertes.estEnAlerteDonnéesNonMàj || filtresAlertes.estEnAlerteTauxAvancementNonCalculé ? chantiers.filter(chantier => {
+    const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][codeInsee];
+    return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
+      || (filtresAlertes.estEnAlerteBaisseOuStagnation && Alerte.estEnAlerteBaisseOuStagnation(chantierDonnéesTerritoires.tendance))
+      || (filtresAlertes.estEnAlerteDonnéesNonMàj && Alerte.estEnAlerteDonnéesNonMàj(chantierDonnéesTerritoires.dateDeMàjDonnéesQualitatives, chantierDonnéesTerritoires.dateDeMàjDonnéesQuantitatives))
+      || (filtresAlertes.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global));
+  }) : chantiers;
+
+  const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
+  const avancementsAgrégés =  await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleSelectionnee || 'départementale', session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
+
+  const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire(chantiersAvecAlertes, mailleSelectionnee || 'départementale').agréger();
+
+  if (avancementsAgrégés) {
+    avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInsee].répartition.avancements.global.moyenne;
+    avancementsAgrégés.annuel.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInsee].répartition.avancements.annuel.moyenne;
+  }
+
   return {
     props: {
-      chantiers,
+      chantiers: chantiersAvecAlertes,
       ministères,
       axes,
       ppg,
       territoireCode,
       mailleSelectionnee: mailleSelectionnee || 'départementale',
-      filtres,
+      brouillon: query.brouillon !== 'false',
+      filtresComptesCalculés,
+      avancementsAgrégés,
+      donnéesTerritoiresAgrégées,
     },
   };
 };
 
-const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ chantiers, axes, ministères, ppg, territoireCode, mailleSelectionnee, filtres }) => {
+const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ chantiers, axes, ministères, ppg, territoireCode, mailleSelectionnee, brouillon, filtresComptesCalculés, avancementsAgrégés, donnéesTerritoiresAgrégées }) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
@@ -146,7 +202,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           <Filtres
             afficherToutLesFiltres
             axes={axes}
-            filtres={filtres}
             ministères={ministères}
             ppg={ppg}
           />
@@ -161,8 +216,12 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           Filtres
         </BoutonSousLigné>
         <PageChantiers
+          avancementsAgrégés={avancementsAgrégés}
           axes={axes}
+          brouillon={brouillon}
           chantiers={chantiers}
+          donnéesTerritoiresAgrégées={donnéesTerritoiresAgrégées}
+          filtresComptesCalculés={filtresComptesCalculés}
           mailleSelectionnee={mailleSelectionnee}
           ministères={ministères}
           ppg={ppg}

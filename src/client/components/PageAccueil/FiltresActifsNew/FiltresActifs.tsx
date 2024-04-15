@@ -22,6 +22,7 @@ export default function FiltresActifs({ ministères, axes, ppg } : FiltresActifs
   }, {
     shallow: false,
     clearOnDefault: true,
+    history: 'push',
   });
 
   const nombreFiltresActifs = filtres.axes.length + filtres.ppg.length + filtres.perimetres.length;

@@ -1,32 +1,22 @@
 import { useMemo } from 'react';
 import { ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
-import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateurNew/agrégateur';
 import { objectEntries } from '@/client/utils/objects/objects';
 import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
 import {
   AvancementsStatistiquesAccueilContrat,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
+import { AgrégatParTerritoire } from '@/client/utils/chantier/agrégateurNew/agrégateur.interface';
 import { useRemontéesAlertesChantiers } from './useRemontéesAlertesChantiers';
 
-export default function useVueDEnsemble(chantiersFiltrés: ChantierAccueilContrat[], chantiersFiltrésSansFiltreAlerte: ChantierAccueilContrat[], territoireCode: string, mailleSelectionnee: 'départementale' | 'régionale', avancementsAgrégés?: AvancementsStatistiquesAccueilContrat) {
+export default function useVueDEnsemble(chantiersFiltrés: ChantierAccueilContrat[], territoireCode: string, mailleSelectionnee: 'départementale' | 'régionale', filtresComptesCalculés: Record<string, { nombre: number }>, avancementsAgrégés: AvancementsStatistiquesAccueilContrat, donnéesTerritoiresAgrégées: AgrégatParTerritoire) {
   const [maille, codeInseeSelectionne] = territoireCode.split('-');
 
   const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
 
-  const donnéesTerritoiresAgrégées = useMemo(() => {
-    return new AgrégateurChantiersParTerritoire(chantiersFiltrés, mailleSelectionnee).agréger();
-  }, [chantiersFiltrés, mailleSelectionnee]);
-
-
-  if (avancementsAgrégés) {
-    avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInseeSelectionne].répartition.avancements.global.moyenne;
-    avancementsAgrégés.annuel.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInseeSelectionne].répartition.avancements.annuel.moyenne;
-  }
-
   const compteurFiltre = new CompteurFiltre(chantiersFiltrés);
 
-  const filtresComptesCalculés = compteurFiltre.compter([{
+  const filtresMétéoComptesCalculés = compteurFiltre.compter([{
     nomCritère: 'orage',
     condition: (chantier) => (
       chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'ORAGE'
@@ -49,10 +39,10 @@ export default function useVueDEnsemble(chantiersFiltrés: ChantierAccueilContra
   }]);
 
   const répartitionMétéos = {
-    ORAGE: filtresComptesCalculés.orage.nombre,
-    COUVERT: filtresComptesCalculés.couvert.nombre,
-    NUAGE: filtresComptesCalculés.nuage.nombre,
-    SOLEIL: filtresComptesCalculés.soleil.nombre,
+    ORAGE: filtresMétéoComptesCalculés.orage.nombre,
+    COUVERT: filtresMétéoComptesCalculés.couvert.nombre,
+    NUAGE: filtresMétéoComptesCalculés.nuage.nombre,
+    SOLEIL: filtresMétéoComptesCalculés.soleil.nombre,
   };
 
   const avancementsGlobauxTerritoriauxMoyens = useMemo(() => {
@@ -76,7 +66,7 @@ export default function useVueDEnsemble(chantiersFiltrés: ChantierAccueilContra
     dateDeMàjDonnéesQuantitatives: chantier.mailles[mailleChantier][codeInseeSelectionne].dateDeMàjDonnéesQuantitatives,
   }));
 
-  const { remontéesAlertes } = useRemontéesAlertesChantiers(chantiersFiltrésSansFiltreAlerte, territoireCode);
+  const { remontéesAlertes } = useRemontéesAlertesChantiers(territoireCode, filtresComptesCalculés);
 
   return {
     avancementsAgrégés: avancementsAgrégés ?? null,

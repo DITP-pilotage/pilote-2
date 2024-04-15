@@ -1,5 +1,5 @@
 import FiltresSélectionMultiple
-  from '@/components/PageAccueil/Filtres/FiltresSélectionMultipleNew/FiltresSélectionMultiple';
+  from '@/components/PageAccueil/FiltresNew/FiltresSélectionMultiple/FiltresSélectionMultiple';
 import { FiltreTypologieType } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
 import { filtresActifs } from '@/client/stores/useFiltresStore/useFiltresStore';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
@@ -17,13 +17,9 @@ interface FiltresProps {
   axes: Axe[],
   ppg: Ppg[],
   afficherToutLesFiltres: boolean
-  filtres: {
-    axes: string[],
-    ppg: string[],
-  }
 }
 
-export default function Filtres({ ministères, axes, ppg, afficherToutLesFiltres, filtres }: FiltresProps) {
+export default function Filtres({ ministères, axes, ppg, afficherToutLesFiltres }: FiltresProps) {
   filtresActifs();
 
   return (
@@ -48,8 +44,14 @@ export default function Filtres({ ministères, axes, ppg, afficherToutLesFiltres
             </FiltresGroupe>
             <hr className='fr-hr fr-mt-3w fr-pb-2w' />
             <FiltresGroupe libellé='Autres critères'>
-              <FiltreTypologie filtre={filtreTerritorialisé} />
-              <FiltreTypologie filtre={filtreBaromètre} />
+              <FiltreTypologie
+                categorie='estTerritorialise'
+                filtre={filtreTerritorialisé}
+              />
+              <FiltreTypologie
+                categorie='estBarometre'
+                filtre={filtreBaromètre}
+              />
             </FiltresGroupe>
           </>
         ) : null
