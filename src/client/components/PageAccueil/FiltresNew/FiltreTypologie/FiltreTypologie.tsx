@@ -1,11 +1,10 @@
 import { useCallback } from 'react';
 import { parseAsBoolean, useQueryState } from 'nuqs';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
-import { FiltreTypologieType } from '@/stores/useFiltresStore/useFiltresStore.interface';
 
 
 interface FiltreTypologieProps {
-  filtre: FiltreTypologieType
+  filtre: { id: string, attribut: 'estBaromètre' | 'estTerritorialisé', nom: string }
   categorie: 'estTerritorialise' | 'estBarometre'
 }
 

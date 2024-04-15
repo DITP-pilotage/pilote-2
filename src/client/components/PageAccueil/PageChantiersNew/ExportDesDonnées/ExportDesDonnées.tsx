@@ -2,8 +2,6 @@ import '@gouvfr/dsfr/dist/component/radio/radio.min.css';
 import { useState } from 'react';
 import Modale from '@/components/_commons/Modale/Modale';
 import { horodatage } from '@/client/utils/date/date';
-import { actions as actionsFiltreStore } from '@/stores/useFiltresStore/useFiltresStore';
-import { FiltreTypologieType } from '@/stores/useFiltresStore/useFiltresStore.interface';
 import { actionsStatutsStore } from '@/stores/useStatutsStore/useStatutsStore';
 
 const ressources = {
@@ -44,26 +42,24 @@ export default function ExportDesDonnées() {
   const [estDésactivé, setEstDésactivé] = useState(false);
 
 
-  const {
-    récupérerFiltresActifsAvecLeursCatégories,
-  } = actionsFiltreStore();
-
   const { recupérerLesStatutsSélectionnés } = actionsStatutsStore();
 
-  const filtresActifs = récupérerFiltresActifsAvecLeursCatégories();
+  const arrayOptionsExport: { name: string, value: string | boolean }[] = [];
 
-  const arrayOptionsExport: { name: string, value: string | boolean }[] = filtresActifs.filter(filtre => filtre.catégorie === 'périmètresMinistériels').map(filtrePerimetreMinisteriel => ({
-    name: 'perimetreIds',
-    value: filtrePerimetreMinisteriel.filtre.id,
-  }));
-
-  if ((filtresActifs.filter(filtre => filtre.catégorie === 'filtresTypologie').find(filtreTypo => (filtreTypo.filtre as FiltreTypologieType).attribut === 'estBaromètre')?.filtre as FiltreTypologieType)?.attribut) {
-    arrayOptionsExport.push({ name: 'estBarometre', value: true });
-  }
-
-  if ((filtresActifs.filter(filtre => filtre.catégorie === 'filtresTypologie').find(filtreTypo => (filtreTypo.filtre as FiltreTypologieType).attribut === 'estTerritorialisé')?.filtre as FiltreTypologieType)?.attribut) {
-    arrayOptionsExport.push({ name: 'estTerritorialise', value: true });
-  }
+  /**
+     * filtresActifs.filter(filtre => filtre.catégorie === 'périmètresMinistériels').map(filtrePerimetreMinisteriel => ({
+     *     name: 'perimetreIds',
+     *     value: filtrePerimetreMinisteriel.filtre.id,
+     *   }));
+     *
+     *   if ((filtresActifs.filter(filtre => filtre.catégorie === 'filtresTypologie').find(filtreTypo => (filtreTypo.filtre as FiltreTypologieType).attribut === 'estBaromètre')?.filtre as FiltreTypologieType)?.attribut) {
+     *     arrayOptionsExport.push({ name: 'estBarometre', value: true });
+     *   }
+     *
+     *   if ((filtresActifs.filter(filtre => filtre.catégorie === 'filtresTypologie').find(filtreTypo => (filtreTypo.filtre as FiltreTypologieType).attribut === 'estTerritorialisé')?.filtre as FiltreTypologieType)?.attribut) {
+     *     arrayOptionsExport.push({ name: 'estTerritorialise', value: true });
+     *   }
+     */
 
   recupérerLesStatutsSélectionnés().forEach(statut => {
     arrayOptionsExport.push({ name: 'statut', value: statut });

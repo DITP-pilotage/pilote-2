@@ -28,13 +28,14 @@ import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-
 import JaugeDeProgression from '@/components/_commons/JaugeDeProgression/JaugeDeProgression';
 import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDeProgression';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
+import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import {
+  AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
+  RépartitionsMétéos,
 } from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
-import { AgrégatParTerritoire } from '@/client/utils/chantier/agrégateurNew/agrégateur.interface';
 import PageChantiersStyled from './PageChantiers.styled';
 import TableauChantiers from './TableauChantiers/TableauChantiers';
 import usePageChantiers from './usePageChantiers';
@@ -49,7 +50,8 @@ interface PageChantiersProps {
   brouillon: boolean
   filtresComptesCalculés: Record<string, { nombre: number }>
   avancementsAgrégés: AvancementsStatistiquesAccueilContrat
-  donnéesTerritoiresAgrégées: AgrégatParTerritoire
+  avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
+  répartitionMétéos: RépartitionsMétéos
 }
 
 type TypeCritere =
@@ -57,7 +59,7 @@ type TypeCritere =
   | 'estEnAlerteÉcart'
   | 'estEnAlerteBaisseOuStagnation'
   | 'estEnAlerteDonnéesNonMàj';
-const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, ministères, axes, ppg, territoireCode, mailleSelectionnee, brouillon, filtresComptesCalculés, avancementsAgrégés, donnéesTerritoiresAgrégées }) => {
+const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, ministères, axes, ppg, territoireCode, mailleSelectionnee, brouillon, filtresComptesCalculés, avancementsAgrégés, avancementsGlobauxTerritoriauxMoyens, répartitionMétéos }) => {
 
   const { data: session } = useSession();
 
@@ -89,12 +91,10 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, minis
 
   const {
     chantiersFiltrés,
-    répartitionMétéos,
-    donnéesCartographieAvancement,
     donnéesTableauChantiers,
     remontéesAlertes,
     aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon,
-  } = usePageChantiers(chantiers, territoireCode, mailleSelectionnee, filtresComptesCalculés, avancementsAgrégés, donnéesTerritoiresAgrégées);
+  } = usePageChantiers(chantiers, territoireCode, filtresComptesCalculés, avancementsAgrégés);
 
   return (
     <PageChantiersStyled>
@@ -285,7 +285,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, minis
                 </Titre>
                 <CartographieAvancement
                   auClicTerritoireCallback={auClicTerritoireCallback}
-                  données={donnéesCartographieAvancement}
+                  données={avancementsGlobauxTerritoriauxMoyens}
                   mailleSelectionnee={mailleSelectionnee}
                   territoireCode={territoireCode}
                   élémentsDeLégende={ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS}

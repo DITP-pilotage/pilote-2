@@ -1,7 +1,16 @@
+import { parseAsBoolean, useQueryStates } from 'nuqs';
+
 export function useRemontéesAlertesChantiers(territoireCode: string, filtresComptesCalculés: Record<string, { nombre: number }>) {
   const [maille] = territoireCode.split('-');
 
   const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
+
+  const [filtresAlertes] = useQueryStates({
+    estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
+    estEnAlerteÉcart: parseAsBoolean.withDefault(false),
+    estEnAlerteBaisseOuStagnation: parseAsBoolean.withDefault(false),
+    estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
+  });
 
   return {
     remontéesAlertes: [
@@ -10,25 +19,25 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
           nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
           libellé: 'Taux d’avancement non calculé(s) en raison d’indicateurs non renseignés',
           nombre: filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé.nombre,
-          estActivée: false,
+          estActivée: filtresAlertes.estEnAlerteTauxAvancementNonCalculé,
         } 
         : {
           nomCritère: 'estEnAlerteÉcart',
           libellé: 'Retard supérieur de 10 points par rapport à la moyenne nationale',
           nombre: filtresComptesCalculés.estEnAlerteÉcart.nombre,
-          estActivée: false,
+          estActivée: filtresAlertes.estEnAlerteÉcart,
         },
       {
         nomCritère: 'estEnAlerteBaisseOuStagnation',
         libellé: 'Tendance(s) en baisse ou en stagnation',
         nombre: filtresComptesCalculés.estEnAlerteBaisseOuStagnation.nombre,
-        estActivée: false,
+        estActivée: filtresAlertes.estEnAlerteBaisseOuStagnation,
       },
       {
         nomCritère: 'estEnAlerteDonnéesNonMàj',
         libellé: 'Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour',
         nombre: filtresComptesCalculés.estEnAlerteDonnéesNonMàj.nombre,
-        estActivée: false,
+        estActivée: filtresAlertes.estEnAlerteDonnéesNonMàj,
       },
     ],
   };

@@ -3,12 +3,11 @@ import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs';
 import { useCallback } from 'react';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import { FiltreCatégorie } from '@/client/stores/useFiltresStore/useFiltresStore.interface';
 import Icône from '@/components/_commons/Icône/Icône';
 import FiltresMinistèresProps from './FiltresMinistères.interface';
 import FiltresMinistèresStyled from './FiltresMinistères.styled';
 
-const catégorieDeFiltre: FiltreCatégorie = 'périmètresMinistériels';
+const catégorieDeFiltre: 'périmètresMinistériels' = 'périmètresMinistériels';
 
 export default function FiltresMinistères({ ministères }: FiltresMinistèresProps) {
   const [perimetres, setPerimetres] = useQueryState('perimetres', parseAsArrayOf(parseAsString).withDefault([]).withOptions({ shallow: false, clearOnDefault: true }));

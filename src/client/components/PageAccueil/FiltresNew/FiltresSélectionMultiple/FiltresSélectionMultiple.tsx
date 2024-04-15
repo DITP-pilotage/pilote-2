@@ -1,7 +1,4 @@
-import { useCallback } from 'react';
 import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs';
-import { actions as actionsFiltresStore } from '@/stores/useFiltresStore/useFiltresStore';
-import { Filtre } from '@/stores/useFiltresStore/useFiltresStore.interface';
 import FiltresSélectionMultipleProps from './FiltresSélectionMultiple.interface';
 import FiltresSélectionMultipleStyled from './FiltresSélectionMultiple.styled';
 
@@ -10,14 +7,6 @@ export default function FiltresSélectionMultiple({
   libellé,
   filtres,
 }: FiltresSélectionMultipleProps) {
-  const { changerÉtatDuFiltre } = actionsFiltresStore();
-
-  const auClicSurUnFiltreCallback = useCallback(
-    (filtre: Filtre) => {
-      changerÉtatDuFiltre(filtre, catégorieDeFiltre);
-    },
-    [catégorieDeFiltre, changerÉtatDuFiltre],
-  );
 
   const [filtresNew, setListeFiltresNew] = useQueryState(catégorieDeFiltre, parseAsArrayOf(parseAsString).withDefault([]).withOptions({ shallow: false, clearOnDefault: true, history: 'push' }));
 
@@ -47,7 +36,6 @@ export default function FiltresSélectionMultiple({
                   ${filtresNew.includes(filtre.id) ? 'actif' : ''}
                 `}
                 onClick={() => {
-                  auClicSurUnFiltreCallback(filtre);
                   if (filtresNew.includes(filtre.id)) {
                     filtresNew.splice(filtresNew.indexOf(filtre.id), 1);
                   } else {
