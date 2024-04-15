@@ -23,3 +23,12 @@ models:
           description: Valeur cible (VC) de l'indicateur à cette date et pour cette zone
         - name: indic_ta
           description: Taux d'avancement (TA) de l'indicateur à cette date et pour cette zone
+  - name: baro_meta_indicateurs
+    description: Informations des indicateurs utiles pour le baromètre
+    columns:
+        - name: indic_id
+          description: Identifiant de l'indicateur
+        - name: indic_nom_baro
+          description: Nom de l'indicateur dans le baromètre
+        - name: indic_descr_baro
+          description: Description de l'indicateur dans le baromètre
