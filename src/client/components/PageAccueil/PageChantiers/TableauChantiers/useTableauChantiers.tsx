@@ -11,6 +11,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { parseAsBoolean, useQueryState } from 'nuqs';
 import rechercheUnTexteContenuDansUnContenant from '@/client/utils/rechercheUnTexteContenuDansUnContenant';
 import { comparerMétéo } from '@/client/utils/chantier/météo/météo';
 import { comparerAvancementRéforme } from '@/client/utils/chantier/avancement/avancement';
@@ -18,14 +19,13 @@ import TableauRéformesAvancement from '@/components/PageAccueil/TableauRéforme
 import TableauRéformesMétéo from '@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo';
 import { calculerMoyenne } from '@/client/utils/statistiques/statistiques';
 import { DirectionDeTri } from '@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.interface';
-import {
-  estLargeurDÉcranActuelleMoinsLargeQue,
-} from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import TypologiesPictos
   from '@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos';
 import useTableauRéformes from '@/components/PageAccueil/TableauRéformes/useTableauRéformes';
 import IcônesMultiplesEtTexte from '@/components/_commons/IcônesMultiplesEtTexte/IcônesMultiplesEtTexte';
-import TableauChantiersTendance from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance';
+import TableauChantiersTendance
+  from '@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/TableauChantiersTendance';
 import TableauChantiersÉcart from '@/components/PageAccueil/PageChantiers/TableauChantiers/Écart/TableauChantiersÉcart';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import TableauChantiersProps, { DonnéesTableauChantiers } from './TableauChantiers.interface';
@@ -38,7 +38,10 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
   const [valeurDeLaRecherche, setValeurDeLaRecherche] = useState('');
   const [tri, setTri] = useState<SortingState>([{ id: 'avancement', desc: false }]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
-  const [regroupement, setRegroupement] = useState<GroupingState>(ministèresDisponibles.length > 1 ? ['porteur'] : []);
+
+  const [estGroupe] = useQueryState('groupeParMinistere', parseAsBoolean.withDefault(true));
+
+  const [regroupement, setRegroupement] = useState<GroupingState>(ministèresDisponibles.length > 1 && estGroupe ? ['porteur'] : []);
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('md');
 
   const reactTableColonnesHelper = createColumnHelper<DonnéesTableauChantiers>();
@@ -49,7 +52,6 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
       id: 'porteur',
       cell: cellContext => cellContext.getValue(),
       enableGrouping: true,
-
     }),
     reactTableColonnesHelper.accessor('nom', {
       header: 'Chantiers',
@@ -266,7 +268,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
   const {
     transformerEnDirectionDeTri,
     transformerEnSortingState,
-    changementDePageCallback, 
+    changementDePageCallback,
   } = useTableauRéformes(tableau);
 
   return {

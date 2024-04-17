@@ -75,7 +75,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
 
   const { data: session } = useSession();
 
-  const { auClicTerritoireCallback } = useCartographie(territoireCode);
+  const { auClicTerritoireCallback } = useCartographie(territoireCode, mailleSelectionnee);
 
   const [filtres] = useQueryStates({
     perimetres: parseAsArrayOf(parseAsString).withDefault([]),

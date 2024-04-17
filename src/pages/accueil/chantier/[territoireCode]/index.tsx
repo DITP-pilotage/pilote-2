@@ -66,12 +66,12 @@ const appliquerFiltre = (mailleChantier: MailleChantierContrat, codeInsee: strin
 
   return (chantier: ChantierAccueilContrat): boolean => {
     return !!chantier.mailles[mailleChantier][codeInsee].estApplicable
-    && appliquerFiltreDrom(chantier, sessionProfil, mailleChantier)
-    && appliquerFiltreTerritorialise(chantier, mailleChantier);
+      && appliquerFiltreDrom(chantier, sessionProfil, mailleChantier)
+      && appliquerFiltreTerritorialise(chantier, mailleChantier);
   };
 };
 
-export const getServerSideProps: GetServerSideProps<ChantierAccueil>  = async ({ req, res, query }) => {
+export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
 
   assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
@@ -151,7 +151,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil>  = async ({
   }) : chantiers;
 
   const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
-  const avancementsAgrégés =  await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleSelectionnee || 'départementale', session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
+  const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleSelectionnee || 'départementale', session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
 
   const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire(chantiersAvecAlertes, mailleSelectionnee || 'départementale').agréger();
 
@@ -216,7 +216,19 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil>  = async ({
   };
 };
 
-const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ chantiers, axes, ministères, ppg, territoireCode, mailleSelectionnee, brouillon, filtresComptesCalculés, avancementsAgrégés, avancementsGlobauxTerritoriauxMoyens, répartitionMétéos }) => {
+const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
+  chantiers,
+  axes,
+  ministères,
+  ppg,
+  territoireCode,
+  mailleSelectionnee,
+  brouillon,
+  filtresComptesCalculés,
+  avancementsAgrégés,
+  avancementsGlobauxTerritoriauxMoyens,
+  répartitionMétéos,
+}) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (

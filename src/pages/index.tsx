@@ -26,7 +26,7 @@ interface NextPageAccueilProps {
   estProjetStructurantDisponible: boolean,
 }
 
-export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps<NextPageAccueilProps> = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
 
   if (!session || !session.habilitations) {
@@ -78,7 +78,14 @@ export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = asy
   };
 };
 
-const NextPageAccueil : FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ chantiers, projetsStructurants, ministères, axes, estProjetStructurantDisponible }) => {
+const NextPageAccueil: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
+  chantiers,
+  projetsStructurants,
+  ministères,
+  axes,
+  estProjetStructurantDisponible,
+}) => {
+
   return (
     <>
       <Head>

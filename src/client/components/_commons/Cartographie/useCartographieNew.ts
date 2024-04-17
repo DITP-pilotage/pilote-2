@@ -1,4 +1,5 @@
 /* eslint-disable unicorn/consistent-function-scoping */
+import { useRouter } from 'next/router';
 import {
   actionsTerritoiresStore,
   régionsTerritoiresStore,
@@ -12,10 +13,12 @@ import {
 } from './useCartographie.interface';
 import { CartographieDonnées } from './Cartographie.interface';
 
-export default function useCartographie(territoireCode: string) {
+export default function useCartographie(territoireCode: string, mailleSelectionnee: 'départementale' | 'régionale') {
   const régions = régionsTerritoiresStore();
-  const { modifierTerritoireSélectionné, modifierTerritoiresComparés, récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
+  const { modifierTerritoiresComparés, récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
   const territoiresAccessiblesEnLecture = territoiresAccessiblesEnLectureStore();
+
+  const router = useRouter();
 
   const [, codeInsee] = territoireCode.split('-');
 
@@ -59,10 +62,26 @@ export default function useCartographie(territoireCode: string) {
   function auClicTerritoireCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
     if (!territoireSélectionnable) return;
 
-    if (codeInsee === territoireCodeInsee && territoiresAccessiblesEnLecture.some(t => t.maille === 'nationale'))
-      modifierTerritoireSélectionné('NAT-FR');
-    else 
-      modifierTerritoireSélectionné(récupérerDétailsSurUnTerritoireAvecCodeInsee(territoireCodeInsee).code);
+    let code =  (codeInsee === territoireCodeInsee && territoiresAccessiblesEnLecture.some(territoire => territoire.maille === 'nationale')) ? 'NAT-FR' : mailleSelectionnee === 'départementale' ? `DEPT-${territoireCodeInsee}` : `REG-${territoireCodeInsee}`;
+
+    if (router.query.territoireCode === 'NAT-FR' || code === 'NAT-FR') {
+      delete router.query.estEnAlerteTauxAvancementNonCalculé;
+      delete router.query.estEnAlerteÉcart;
+    }
+
+    if (router.query.territoireCode === code) {
+      delete router.query.estEnAlerteTauxAvancementNonCalculé;
+      delete router.query.estEnAlerteÉcart;
+      code = 'NAT-FR';
+    }
+
+    return router.push({
+      pathname: '/accueil/chantier/[territoireCode]',
+      query: { ...router.query, territoireCode: code },
+    },
+    undefined,
+    {},
+    );
   }
 
   function auClicTerritoireMultiSélectionCallback(territoireCodeInsee: CodeInsee, territoireSélectionnable: boolean) {
