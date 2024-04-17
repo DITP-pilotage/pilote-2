@@ -12,7 +12,7 @@ interface SélecteurTerritoiresProps {
   mailleSelectionnee: 'départementale' | 'régionale'
 }
 
-const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerritoire[], profil: ProfilCode | undefined, mailleSelectionnee: 'départementale' | 'régionale', chantierMailles? : Chantier['mailles']) => {
+const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerritoire[], profil: ProfilCode | undefined, mailleSelectionnee: 'départementale' | 'régionale', chantierMailles?: Chantier['mailles']) => {
   const territoiresDisponibles = territoiresAccessiblesEnLecture.filter(territoire => territoire.maille === mailleSelectionnee);
 
   let options = [];
@@ -25,7 +25,7 @@ const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerri
   }
 
   return [
-    ...options, 
+    ...options,
     ...territoiresDisponibles.sort((a, b) => a.codeInsee < b.codeInsee ? -1 : 1).map(territoire => ({
       libellé: territoire.nomAffiché,
       valeur: territoire.code,
@@ -34,23 +34,30 @@ const construireLaListeDOptions = (territoiresAccessiblesEnLecture: DétailTerri
   ];
 };
 
-export default function SélecteurTerritoire({ chantierMailles, territoireCode, mailleSelectionnee }: SélecteurTerritoiresProps) {
+export default function SélecteurTerritoire({
+  chantierMailles,
+  territoireCode,
+  mailleSelectionnee,
+}: SélecteurTerritoiresProps) {
   const { data: session } = useSession();
   const router = useRouter();
 
   const modifierTerritoireSélectionné = async (territoireCodeSelectionne: string) => {
-    router.query.territoireCode = territoireCodeSelectionne;
-    router.push({
+    if (router.query.territoireCode === 'NAT-FR' || territoireCodeSelectionne === 'NAT-FR') {
+      delete router.query.estEnAlerteTauxAvancementNonCalculé;
+      delete router.query.estEnAlerteÉcart;
+    }
+    return router.push({
       pathname: '/accueil/chantier/[territoireCode]',
-      query: { ...router.query } },
+      query: { ...router.query, territoireCode: territoireCodeSelectionne },
+    },
     undefined,
     {},
     );
-
   };
 
   const territoiresAccessiblesEnLecture = territoiresAccessiblesEnLectureStore();
-  
+
   return (
     <SélecteurAvecRecherche
       htmlName='périmètre-géographique'

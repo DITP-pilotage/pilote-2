@@ -12,7 +12,7 @@ import CartographieAvancement
 import useCartographie from '@/components/_commons/Cartographie/useCartographieNew';
 import ExportDesDonnées, {
   ID_HTML_MODALE_EXPORT,
-} from '@/components/PageAccueil/PageChantiers/ExportDesDonnées/ExportDesDonnées';
+} from '@/components/PageAccueil/PageChantiersNew/ExportDesDonnées/ExportDesDonnées';
 import {
   ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
 } from '@/client/constants/légendes/élémentsDeLégendesCartographieAvancement';
@@ -59,7 +59,19 @@ type TypeCritere =
   | 'estEnAlerteÉcart'
   | 'estEnAlerteBaisseOuStagnation'
   | 'estEnAlerteDonnéesNonMàj';
-const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, ministères, axes, ppg, territoireCode, mailleSelectionnee, brouillon, filtresComptesCalculés, avancementsAgrégés, avancementsGlobauxTerritoriauxMoyens, répartitionMétéos }) => {
+const PageChantiers: FunctionComponent<PageChantiersProps> = ({
+  chantiers,
+  ministères,
+  axes,
+  ppg,
+  territoireCode,
+  mailleSelectionnee,
+  brouillon,
+  filtresComptesCalculés,
+  avancementsAgrégés,
+  avancementsGlobauxTerritoriauxMoyens,
+  répartitionMétéos,
+}) => {
 
   const { data: session } = useSession();
 
@@ -72,6 +84,8 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, minis
   });
 
   const [filtresAlertes, setFiltresAlertes] = useQueryStates({
+    estBarometre: parseAsBoolean.withDefault(false),
+    estTerritorialise: parseAsBoolean.withDefault(false),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisseOuStagnation: parseAsBoolean.withDefault(false),
@@ -87,7 +101,15 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, minis
     return setFiltresAlertes(filtresAlertes);
   };
 
-  const nombreFiltresActifs = filtres.axes.length + filtres.ppg.length + filtres.perimetres.length;
+  const nombreFiltresActifs = filtres.axes.length
+    + filtres.ppg.length
+    + filtres.perimetres.length
+    + (filtresAlertes.estBarometre ? 1 : 0)
+    + (filtresAlertes.estTerritorialise ? 1 : 0)
+    + (filtresAlertes.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
+    + (filtresAlertes.estEnAlerteÉcart ? 1 : 0)
+    + (filtresAlertes.estEnAlerteBaisseOuStagnation ? 1 : 0)
+    + (filtresAlertes.estEnAlerteDonnéesNonMàj ? 1 : 0);
 
   const {
     chantiersFiltrés,
@@ -108,7 +130,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, minis
         ) : null
       }
       <div className='fr-py-2w fr-px-md-2w fr-container--fluid'>
-        <div className='fr-mb-2w titre flex align-center'> 
+        <div className='fr-mb-2w titre flex align-center'>
           <Titre
             baliseHtml='h1'
             className='fr-h4 fr-px-2w fr-px-md-0 fr-mb-0'
@@ -186,7 +208,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, minis
                           Taux d’avancement moyen
                         </Titre>
                         <Infobulle idHtml='infobulle-chantiers-jauges'>
-                          { INFOBULLE_CONTENUS.chantiers.jauges }
+                          {INFOBULLE_CONTENUS.chantiers.jauges}
                         </Infobulle>
                       </TitreInfobulleConteneur>
                       <div className='flex w-full justify-center fr-px-1w'>
@@ -238,7 +260,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, minis
                   <div className='fr-grid-row border-t'>
                     <div className='fr-mt-2w w-full'>
                       <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
-                        { `${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%` }
+                        {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%`}
                       </p>
                       <BarreDeProgression
                         afficherTexte={false}
@@ -267,7 +289,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, minis
                     Répartition des météos renseignées
                   </Titre>
                   <Infobulle idHtml='infobulle-chantiers-météos'>
-                    { INFOBULLE_CONTENUS.chantiers.météos }
+                    {INFOBULLE_CONTENUS.chantiers.météos}
                   </Infobulle>
                 </TitreInfobulleConteneur>
                 <RépartitionMétéo météos={répartitionMétéos} />
@@ -308,7 +330,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, minis
                   Chantiers signalés
                 </Titre>
                 <Infobulle idHtml='infobulle-chantiers-alertes'>
-                  { INFOBULLE_CONTENUS.chantiers.alertes }
+                  {INFOBULLE_CONTENUS.chantiers.alertes}
                 </Infobulle>
               </TitreInfobulleConteneur>
             </div>
@@ -316,17 +338,17 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, minis
               {
                 remontéesAlertes.map(({ nomCritère, libellé, nombre, estActivée }) => (
                   (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' || nomCritère !== 'estEnAlerteBaisseOuStagnation') &&
-                    <div
-                      className='fr-col fr-px-1v fr-px-md-1w'
-                      key={libellé}
-                    >
-                      <RemontéeAlerte
-                        auClic={auClicChangementAlert(nomCritère as TypeCritere)}
-                        estActivée={estActivée}
-                        libellé={libellé}
-                        nombre={nombre}
-                      />
-                    </div>
+                  <div
+                    className='fr-col fr-px-1v fr-px-md-1w'
+                    key={libellé}
+                  >
+                    <RemontéeAlerte
+                      auClic={auClicChangementAlert(nomCritère as TypeCritere)}
+                      estActivée={estActivée}
+                      libellé={libellé}
+                      nombre={nombre}
+                    />
+                  </div>
                 ))
               }
             </div>
@@ -341,20 +363,20 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({ chantiers, minis
                   className='fr-text--lg fr-mb-0 fr-py-1v'
                   estInline
                 >
-                  {`Liste des chantiers (${ chantiers.length })`}
+                  {`Liste des chantiers (${chantiers.length})`}
                 </Titre>
                 <Infobulle idHtml='infobulle-chantiers-listeDesChantiers'>
-                  { INFOBULLE_CONTENUS.chantiers.listeDesChantiers }
+                  {INFOBULLE_CONTENUS.chantiers.listeDesChantiers}
                 </Infobulle>
               </TitreInfobulleConteneur>
               {
-                  !!session?.profilAAccèsAuxChantiersBrouillons && (!brouillon || aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon(session.habilitations.lecture.chantiers))
-                    ? (
-                      <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
-                        <SélecteurVueStatuts />
-                      </div>
-                    )
-                    : null
+                !!session?.profilAAccèsAuxChantiersBrouillons && (!brouillon || aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon(session.habilitations.lecture.chantiers))
+                  ? (
+                    <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
+                      <SélecteurVueStatuts />
+                    </div>
+                  )
+                  : null
               }
               <TableauChantiers
                 données={donnéesTableauChantiers}

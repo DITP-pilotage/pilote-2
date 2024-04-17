@@ -78,6 +78,12 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil>  = async ({
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
   assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
 
+  const estNouvellePageAccueilDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL' });
+
+  if (!estNouvellePageAccueilDisponible && session.profil !== 'DITP_ADMIN') {
+    throw new Error('Not connected or not authorized ?');
+  }
+
   const filtres = {
     perimetres: query.perimetres ? (query.perimetres as string).split(',') : [],
     axes: query.axes ? (query.axes as string).split(',') : [],
@@ -93,12 +99,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil>  = async ({
     estEnAlerteBaisseOuStagnation: query.estEnAlerteBaisseOuStagnation === 'true',
     estEnAlerteDonnéesNonMàj: query.estEnAlerteDonnéesNonMàj === 'true',
   };
-
-  const estNouvellePageAccueilDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL' });
-
-  if (!estNouvellePageAccueilDisponible && session.profil !== 'DITP_ADMIN') {
-    throw new Error('Not connected or not authorized ?');
-  }
 
   const territoireCode = query.territoireCode as string;
   const mailleSelectionnee = query.maille as 'départementale' | 'régionale';
@@ -165,7 +165,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil>  = async ({
     codeInsee,
     estApplicable: null,
   }));
-
 
   const filtresMétéoComptesCalculés = compteurFiltre.compter([{
     nomCritère: 'orage',

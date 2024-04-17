@@ -1,4 +1,4 @@
-import { parseAsArrayOf, parseAsString, useQueryStates } from 'nuqs';
+import { parseAsArrayOf, parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import Tag from '@/components/_commons/Tag/Tag';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
@@ -19,13 +19,31 @@ export default function FiltresActifs({ ministères, axes, ppg } : FiltresActifs
     perimetres: parseAsArrayOf(parseAsString).withDefault([]),
     axes: parseAsArrayOf(parseAsString).withDefault([]),
     ppg: parseAsArrayOf(parseAsString).withDefault([]),
+    estBarometre: parseAsBoolean.withDefault(false),
+    estTerritorialise: parseAsBoolean.withDefault(false),
+    estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
+    estEnAlerteÉcart: parseAsBoolean.withDefault(false),
+    estEnAlerteBaisseOuStagnation: parseAsBoolean.withDefault(false),
+    estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
   }, {
     shallow: false,
     clearOnDefault: true,
     history: 'push',
   });
+  // Taux d’avancement non calculé en raison d’indicateurs non renseignés
+  // Retard supérieur de 10 points par rapport à la moyenne nationale
+  // Tendance(s) en baisse ou en stagnation
+  // Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour
 
-  const nombreFiltresActifs = filtres.axes.length + filtres.ppg.length + filtres.perimetres.length;
+  const nombreFiltresActifs = filtres.axes.length
+    + filtres.ppg.length
+    + filtres.perimetres.length
+    + (filtres.estBarometre ? 1 : 0)
+    + (filtres.estTerritorialise ? 1 : 0)
+    + (filtres.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
+    + (filtres.estEnAlerteÉcart ? 1 : 0)
+    + (filtres.estEnAlerteBaisseOuStagnation ? 1 : 0)
+    + (filtres.estEnAlerteDonnéesNonMàj ? 1 : 0);
 
   const ministèresAvecUnSeulPérimètre = new Map(
     ministères
@@ -42,6 +60,12 @@ export default function FiltresActifs({ ministères, axes, ppg } : FiltresActifs
       perimetres: [],
       axes: [],
       ppg: [],
+      estBarometre: false,
+      estTerritorialise: false,
+      estEnAlerteTauxAvancementNonCalculé: false,
+      estEnAlerteÉcart: false,
+      estEnAlerteBaisseOuStagnation: false,
+      estEnAlerteDonnéesNonMàj: false,
     });
   };
 
@@ -89,7 +113,6 @@ export default function FiltresActifs({ ministères, axes, ppg } : FiltresActifs
                 }}
               />
             </li>
-
           ),
           )
         }
@@ -106,9 +129,94 @@ export default function FiltresActifs({ ministères, axes, ppg } : FiltresActifs
                 }}
               />
             </li>
-
           ),
           )
+        }
+        {
+          filtres.estEnAlerteTauxAvancementNonCalculé ? (
+            <li>
+              <Tag
+                libellé='Taux d’avancement non calculé en raison d’indicateurs non renseignés'
+                suppressionCallback={() => {
+                  filtres.estEnAlerteTauxAvancementNonCalculé = false;
+                  return setFiltres(filtres);
+                }}
+              />
+            </li>
+          ) : null
+        }
+        {
+          filtres.estEnAlerteÉcart ? (
+            <li>
+              <Tag
+                libellé='Retard supérieur de 10 points par rapport à la moyenne nationale'
+                suppressionCallback={() => {
+                  filtres.estEnAlerteÉcart = false;
+                  return setFiltres(filtres);
+                }}
+              />
+            </li>
+          ) : null
+        }
+        {
+          filtres.estEnAlerteBaisseOuStagnation ? (
+            <li>
+              <Tag
+                libellé='Tendance(s) en baisse ou en stagnation'
+                suppressionCallback={() => {
+                  filtres.estEnAlerteBaisseOuStagnation = false;
+                  return setFiltres(filtres);
+                }}
+              />
+            </li>
+          ) : null
+        }
+        {
+          filtres.estEnAlerteDonnéesNonMàj ? (
+            <li>
+              <Tag
+                libellé='Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour'
+                suppressionCallback={() => {
+                  filtres.estEnAlerteDonnéesNonMàj = false;
+                  return setFiltres(filtres);
+                }}
+              />
+            </li>
+          ) : null
+        }
+        {
+          filtres.estTerritorialise && filtres.estBarometre ? (
+            <li>
+              <Tag
+                libellé='Chantiers du baromètre ou chantiers territorialisés'
+                suppressionCallback={() => {
+                  filtres.estBarometre = false;
+                  filtres.estTerritorialise = false;
+                  return setFiltres(filtres);
+                }}
+              />
+            </li>
+          ) : filtres.estBarometre ? (
+            <li>
+              <Tag
+                libellé='Chantiers baromètre'
+                suppressionCallback={() => {
+                  filtres.estBarometre = false;
+                  return setFiltres(filtres);
+                }}
+              />
+            </li>
+          ) : filtres.estTerritorialise ? (
+            <li>
+              <Tag
+                libellé='Chantiers territorialisés'
+                suppressionCallback={() => {
+                  filtres.estTerritorialise = false;
+                  return setFiltres(filtres);
+                }}
+              />
+            </li>
+          ) : null
         }
       </ul>
       <button
