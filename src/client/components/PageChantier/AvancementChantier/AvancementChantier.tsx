@@ -66,7 +66,7 @@ export default function AvancementChantier({ avancements }: AvancementChantierPr
                     <JaugeDeProgression
                       couleur='bleu'
                       libellé='Taux d’avancement moyen pour le territoire '
-                      pourcentage={avancements.nationale?.global.moyenne || null}
+                      pourcentage={avancements.nationale ? avancements.nationale.global.moyenne :  null}
                       taille='lg'
                     />
                   </div>
