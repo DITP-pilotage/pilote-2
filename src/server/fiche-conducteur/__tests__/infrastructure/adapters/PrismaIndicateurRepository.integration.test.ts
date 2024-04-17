@@ -32,7 +32,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           type_id: 'IMPACT',
           territoire_code: 'NAT-FR',
-          ponderation_nat: 20,
+          ponderation_zone_reel: 20,
         },
       });
       await prisma.indicateur.create({
@@ -44,7 +44,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           type_id: 'IMPACT',
-          ponderation_nat: 20,
+          ponderation_zone_reel: 20,
         },
       });
       await prisma.indicateur.create({
@@ -56,7 +56,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'DEPT',
           type_id: 'IMPACT',
           territoire_code: 'DEPT-01',
-          ponderation_nat: 20,
+          ponderation_zone_reel: 20,
         },
       });
       await prisma.indicateur.create({
@@ -68,7 +68,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           type_id: 'Q_SERV',
-          ponderation_nat: 20,
+          ponderation_zone_reel: 20,
         },
       });
       await prisma.indicateur.create({
@@ -80,7 +80,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           type_id: 'IMPACT',
-          ponderation_nat: 0,
+          ponderation_zone_reel: 0,
         },
       });
       await prisma.indicateur.create({
@@ -92,7 +92,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'NAT',
           territoire_code: 'NAT-FR',
           type_id: 'Q_SERV',
-          ponderation_nat: 0,
+          ponderation_zone_reel: 0,
         },
       });
       // When

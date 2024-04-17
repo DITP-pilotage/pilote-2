@@ -56,9 +56,9 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
                   </span>
                 </p>
                 {
-                !!indicateur.pondération && !!territoireSélectionné &&
+                !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] &&
                   <IndicateurPondération
-                    indicateurPondération={indicateur.pondération}
+                    indicateurPondération={détailsIndicateur[territoireSélectionné.codeInsee]?.pondération ?? null}
                     mailleSélectionnée={territoireSélectionné.maille}
                   />
                 }

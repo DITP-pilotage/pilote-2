@@ -15,25 +15,12 @@ ta_zone_indic as (
 -- Calcul du TA pondéré
 --	On va pondérer chaque TA par sa pondération à cette maille
 ta_zone_indic_pond as (
-select a.*, b.poids_pourcent_dept, b.poids_pourcent_reg, b.poids_pourcent_nat,
-	-- Pondération de la zone en question
-	case 
-		when maille='DEPT' then poids_pourcent_dept
-		when maille='REG' then poids_pourcent_reg
-		when maille='NAT' then poids_pourcent_nat
-	end as poids_pourcent_zone,
-	case 
-		when maille='DEPT' then taa_courant*0.01*poids_pourcent_dept
-		when maille='REG' then taa_courant*0.01*poids_pourcent_reg
-		when maille='NAT' then taa_courant*0.01*poids_pourcent_nat
-	end as taa_courant_pond,
-	case 
-		when maille='DEPT' then tag*0.01*poids_pourcent_dept
-		when maille='REG' then tag*0.01*poids_pourcent_reg
-		when maille='NAT' then tag*0.01*poids_pourcent_nat
-	end as tag_pond
+select a.*,
+	b.poids_zone_reel,
+	taa_courant*0.01*b.poids_zone_reel as taa_courant_pond,
+	tag*0.01*b.poids_zone_reel as tag_pond
 from ta_zone_indic a
-left join {{ ref('metadata_parametrage_indicateurs') }} b on a.indic_id=b.indic_id 
+left join {{ ref('int_ponderation_reelle') }} b on a.indic_id=b.indic_id and a.zone_id=b.zone_id
 order by indic_parent_ch, zone_id, metric_date, indic_id
 ),
 -- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_today
@@ -64,9 +51,7 @@ where a.r=1
 ta_ch as (
 	select indic_parent_ch as chantier_id, zone_id, valid_on,
 	array_agg(indic_id) as indic_ids,
-	array_agg(poids_pourcent_dept) as p_dept,
-	array_agg(poids_pourcent_reg) as p_reg,
-	array_agg(poids_pourcent_nat) as p_nat,
+	array_agg(poids_zone_reel) as p_zone_reel,
 	array_agg(vaca) as vaca_agg, 
 	array_agg(vig) as vig_agg, 
 	array_agg(vca_courant) as vca_courant_agg, 
@@ -90,10 +75,11 @@ ta_ch as (
 	end as tag_ch
 	from 
 	(
-	-- On ne considère que les TA dont les indicateurs ont une pondération > 0
-	select * from ta_zone_indic_pond_today where poids_pourcent_zone > 0 
+	-- On ne considère que les TA dont les indicateurs ont une pondération réelle > 0
+	-- 	pour le calcul du TA chantier (ie la somme des TA indicateurs pondérés)
+	select * from ta_zone_indic_pond_today where poids_zone_reel > 0 
 	union
-	select * from ta_zone_indic_pond_prev_month where poids_pourcent_zone > 0
+	select * from ta_zone_indic_pond_prev_month where poids_zone_reel > 0
 	) a
 	group by indic_parent_ch, zone_id, valid_on
 )

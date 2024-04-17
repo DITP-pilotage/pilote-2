@@ -306,9 +306,9 @@ l'agréger sur une durée donnée en paramètre. On a les paramètres :
 - le taux d'avancement global : (vacg-vi) / (vcg-vi)
 
 *7_calcul_ta_chantier* : pour obtenir les taux d'avancement annuel et global du chantier, on récupère les paramètres :
-- poids_pourcent_dept
-- poids_pourcent_reg
-- poids_pourcent_nat
+- poids_pourcent_dept_declaree
+- poids_pourcent_reg_declaree
+- poids_pourcent_nat_declaree
 
 qui représente la pondération de l'indicateur pour le calcul du ta du chantier. Il est en pourcentage, compris entre 0 et 100.
 Ainsi, pour obtenir le ta du chantier, on récupère le ta de ses indicateurs qu'on multiplie par sa pondération.

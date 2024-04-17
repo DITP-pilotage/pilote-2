@@ -524,7 +524,7 @@ models:
             pilote_edit_acceptedValues: >
               [{"order_id": 1, "value": "HAUSSE", "name": "Hausse", "desc": "Tendance en hausse"}, {"order_id": 2, "value": "BAISSE", "name": "Baisse", "desc": "Tendance en baisse"}]
 
-      - name: poids_pourcent_nat
+      - name: poids_pourcent_nat_declaree
         data_type: number
         description: >
             Poids de l'indicateur dans le calcul du taux d'avancement global aux différentes mailles
@@ -537,7 +537,7 @@ models:
             pilote_create_defaultValue: 0
             pilote_disp_blocId: 6
 
-      - name: poids_pourcent_reg
+      - name: poids_pourcent_reg_declaree
         data_type: number
         description: >
             Poids de l'indicateur dans le calcul du taux d'avancement global à la maille régionale si territorialisé à cette maille.
@@ -550,7 +550,7 @@ models:
             pilote_create_defaultValue: 0
             pilote_disp_blocId: 6
 
-      - name: poids_pourcent_dept
+      - name: poids_pourcent_dept_declaree
         data_type: number
         description: >
             Poids de l'indicateur dans le calcul du taux d'avancement global à la maille départementale si territorialisé à cette maille.

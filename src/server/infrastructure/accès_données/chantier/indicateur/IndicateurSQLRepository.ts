@@ -42,11 +42,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
       description: indicateur.description,
       source: indicateur.source,
       modeDeCalcul: indicateur.mode_de_calcul,
-      pondération: {
-        nationale: indicateur.ponderation_nat,
-        régionale: indicateur.ponderation_reg,
-        départementale: indicateur.ponderation_dept,
-      },
       unité: indicateur.unite_mesure,
     });
   }
@@ -81,6 +76,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         unité: indic.unite_mesure,
         est_applicable: indic.est_applicable,
         dateImport: formatDate(indic.dernier_import_date_indic),
+        pondération: indic.ponderation_zone_reel,
       };
     }
 
