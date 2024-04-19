@@ -47,9 +47,12 @@ select * from (
 	) a
 where a.r=1
 ),
--- Calcul du TA chantier
-ta_ch as (
+-- Calcul du TA chantier intermediaire 
+--		car sans prendre en compte le nombre de TA indic remontés pour ce CH (PIL-227)
+ta_ch_int as (
 	select indic_parent_ch as chantier_id, zone_id, valid_on,
+	-- Nombre de TA indicateurs remontés pour ce {chantier-zone}
+	count(indic_id) as n_indic_in_ta,
 	array_agg(indic_id) as indic_ids,
 	array_agg(poids_zone_reel) as p_zone_reel,
 	array_agg(vaca) as vaca_agg, 
@@ -66,13 +69,13 @@ ta_ch as (
 		when sum(taa_courant_pond) > 100 then 100
 		when sum(taa_courant_pond) < 0 then 0
 		else sum(taa_courant_pond)
-	end as taa_courant_ch,
+	end as taa_courant_ch_int,
 	case 
 		when bool_or(tag_pond is null) then null
 		when sum(tag_pond) > 100 then 100
 		when sum(tag_pond) < 0 then 0
 		else sum(tag_pond)
-	end as tag_ch
+	end as tag_ch_int
 	from 
 	(
 	-- On ne considère que les TA dont les indicateurs ont une pondération réelle > 0
@@ -81,8 +84,33 @@ ta_ch as (
 	union
 	select * from ta_zone_indic_pond_prev_month where poids_zone_reel > 0
 	) a
-	group by indic_parent_ch, zone_id, valid_on
+	group by indic_parent_ch, a.zone_id, valid_on
+)
+-- Ajout du code territoire_code
+, ta_ch_int_terr_code as (
+select a.*, t.code as territoire_code from ta_ch_int a
+left join "qualif_227"."public"."territoire" t on t.zone_id=a.zone_id
+)
+-- Ajout du nombre d'indics attendus pour chaque {chantier-zone}: n_indic_in_ta_expected
+, ta_ch_terr_code_indic_expected as (
+select a.*,	b.n_indic_in_ta_expected
+from ta_ch_int_terr_code a
+left join df3.get_n_indic_in_ta_expected  b on a.chantier_id=b.chantier_id and a.zone_id=b.zone_id
 )
 
-select a.*, t.code as territoire_code from ta_ch a
-left join {{ source('db_schema_public', 'territoire') }} t on t.zone_id=a.zone_id
+, ta_ch as (
+-- (PIL-227) Ici, on va vérifier pour chaque {zone-chantier} que l'on a bien combiner le nombre de TA indic que l'on attendait.
+--		On compare le nombre de TA indic combinés, avec le nombre d'indics ayant une pondération non vide
+select *,
+case 
+	when n_indic_in_ta=n_indic_in_ta_expected then taa_courant_ch_int
+	else null
+end as taa_courant_ch,
+case 
+	when n_indic_in_ta=n_indic_in_ta_expected then tag_ch_int
+	else null
+end as tag_ch
+from ta_ch_terr_code_indic_expected
+)
+
+select * from ta_ch

@@ -164,6 +164,14 @@ models:
         node_color: "#cd7f32"
       schema: public
       tags: ["df3"]
+  - name: get_n_indic_in_ta
+    description: |
+      Pour chaque couple {chantier, zone}, indique le nombre d'indicateurs ayant une pondération **> 0**. Règles:
+
+      - on se base sur la table `int_ponderation_reelle` pour déterminer si un indicateur est effectivement pondéré
+    columns:
+      - name: n_indic_in_ta_expected
+        description: "Nombre de TA indicateurs attendus dans le chantier pour calculer le TA chantier"
   - name: compute_ta_ch
     description: |
       Pour chaque zone et chaque chantier, donne le **TA** en vigueur actuellement et le **TA précédent**. Règles:
@@ -173,6 +181,7 @@ models:
       - pour le calcul du *TA actuel*: on utilise la *valeur la plus récente de l'indicateur*, peu importe sa date. Ex: on est en 11-23, on pourra utiliser des données de *11-23* ou antérieures.
       - pour le calcul du *TA précédent*: on utilise la *valeur la plus récente **mais antérieure au mois actuel** de l'indicateur*, peu importe sa date. Ex: on est en 11-23, on ne pourra utiliser que des données de *10-23* ou antérieures.
       - le *TA chantier* est la somme des TA pondérés de chaque indicateur du chantier **DONT la pondération est > 0** (`redmine::721`). On fait cela car si un TA pondéré d'indicateur de valeur `NULL` était pris en compte dans le calcul du TA chantier, le **résultat vaudrait toujours `NULL`**. Or si un indicateur est pondéré à 0, ce ne doit pas être un problème d'avoir un TA qui vaut `NULL`.
+      - on compte le nombre de TA indicateurs pris en compte dans le calcul du TA chantier intermédiaire (`taa_courant_ch_int` et `ta_ch_int`) pour chaque {chantier-zone}. Si ce nombre n'est pas celui attendu (`n_indic_in_ta != n_indic_in_ta_expected`), alors **les deux TA chantiers sont mis à `NULL`**: `taa_courant_ch` et `tag_ch`. Sinon, on conserve bien les valeurs des calculs intermédiaires. (*PIL-227*)
     columns:
       - name: tag_ch
         description: "**Principal**: TA chantier *global*. C'est cette valeur qui est remontée comme TA du chantier"
