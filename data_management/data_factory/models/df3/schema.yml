@@ -166,7 +166,7 @@ models:
       tags: ["df3"]
   - name: get_n_indic_in_ta_expected
     description: |
-      Pour chaque couple {chantier, zone}, indique le nombre d'indicateurs ayant une pondération **> 0**. Règles:
+      Pour chaque couple {chantier, zone}, indique **le nombre d'indicateurs ayant une pondération > 0**. Règles:
 
       - on se base sur la table `int_ponderation_reelle` pour déterminer si un indicateur est effectivement pondéré
     columns:
