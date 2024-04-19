@@ -164,7 +164,7 @@ models:
         node_color: "#cd7f32"
       schema: public
       tags: ["df3"]
-  - name: get_n_indic_in_ta
+  - name: get_n_indic_in_ta_expected
     description: |
       Pour chaque couple {chantier, zone}, indique le nombre d'indicateurs ayant une pondération **> 0**. Règles:
 
