@@ -80,7 +80,7 @@ const presenterEnObjectifsContrat = (objectif: Map<ObjectifType | DecisionStrate
       libellé: 'Suivi des décisions',
       valeur: objectif.get('suivi_des_decisions') || '-',
     }, {
-      libellé: 'Ce qui à été fait',
+      libellé: 'Ce qui a été fait',
       valeur: objectif.get('deja_fait') || '-',
     }, {
       libellé: 'Ce qui reste à faire',
