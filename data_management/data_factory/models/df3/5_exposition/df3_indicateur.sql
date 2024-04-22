@@ -64,9 +64,9 @@ sort_mesures_vaca_last as (
 	mi.indic_methode_calcul as mode_de_calcul,
 	mi.indic_unite as unite_mesure,
 	terr.code as territoire_code,
-	mpi.poids_pourcent_dept as ponderation_dept,
-	mpi.poids_pourcent_nat as ponderation_nat,
-	mpi.poids_pourcent_reg as ponderation_reg,
+	-- Ce sont ces pondérations qui sont affichées dans le front ?
+	pond_reelle.poids_zone_reel as ponderation_zone_reel,
+	pond_reelle.poids_zone_declaree as ponderation_zone_declaree,
 	gvcg.vcg_date::date as objectif_date_valeur_cible,
 	gvca.vca as objectif_valeur_cible_intermediaire,
 	taa_courant as objectif_taux_avancement_intermediaire,
@@ -101,5 +101,6 @@ sort_mesures_vaca_last as (
 	right join list_indic_terr lit on mi.indic_id=lit.indic_id and terr.code=lit.territoire_code
 	LEFT JOIN {{ ref('last_update_indic_zone') }} last_update_indic_zone ON mi.indic_id=last_update_indic_zone.indic_id AND t.code =last_update_indic_zone.territoire_code 
     LEFT JOIN {{ ref('last_update_indic') }} last_update_indic ON mi.indic_id=last_update_indic.indic_id
+	LEFT JOIN {{ ref('int_ponderation_reelle') }} pond_reelle ON pond_reelle.indic_id=mi.indic_id and pond_reelle.zone_id=t.zone_id
 	--where a.r=1
 	order by mi.indic_id, terr.code

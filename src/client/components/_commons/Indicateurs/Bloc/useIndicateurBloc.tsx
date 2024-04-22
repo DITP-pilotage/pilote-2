@@ -38,6 +38,7 @@ const indicateurDétailsVide = {
     unité: null,
     est_applicable: false,
     dateImport: null,
+    pondération: null,
   },
 };
 

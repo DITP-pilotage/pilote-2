@@ -6,7 +6,6 @@ import { dependencies } from '@/server/infrastructure/Dependencies';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
-import Ppg from '@/server/domain/ppg/Ppg.interface';
 import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import PageAccueil from '@/components/PageAccueil/PageAccueil';
 import { ProjetStructurantVueDEnsemble } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
@@ -21,7 +20,6 @@ interface NextPageAccueilProps {
   projetsStructurants: ProjetStructurantVueDEnsemble[]
   ministères: Ministère[]
   axes: Axe[],
-  ppgs: Ppg[],
   estProjetStructurantDisponible: boolean,
 }
 
@@ -35,7 +33,6 @@ export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = asy
         projetsStructurants: [],
         ministères: [],
         axes: [],
-        ppgs: [],
         estProjetStructurantDisponible: false,
       },
     };
@@ -54,7 +51,6 @@ export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = asy
   ).run(session.habilitations, session.profil);
 
   let axes: Axe[] = [];
-  let ppgs: Ppg[] = [];
   let ministères: Ministère[] = [];
 
   if (chantiers.length > 0) {
@@ -64,8 +60,6 @@ export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = asy
     const axeRepository = dependencies.getAxeRepository();
     axes = await axeRepository.getListePourChantiers(chantiers);
 
-    const ppgRepository = dependencies.getPpgRepository();
-    ppgs = await ppgRepository.getListePourChantiers(chantiers);
   }
 
   const estProjetStructurantDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS' });
@@ -76,13 +70,12 @@ export const getServerSideProps: GetServerSideProps<NextPageAccueilProps>  = asy
       projetsStructurants,
       ministères,
       axes,
-      ppgs,
       estProjetStructurantDisponible: !!estProjetStructurantDisponible,
     },
   };
 };
 
-const NextPageAccueil : FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ chantiers, projetsStructurants, ministères, axes, ppgs, estProjetStructurantDisponible }) => {
+const NextPageAccueil : FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ chantiers, projetsStructurants, ministères, axes, estProjetStructurantDisponible }) => {
   return (
     <>
       <Head>
@@ -95,7 +88,6 @@ const NextPageAccueil : FunctionComponent<InferGetServerSidePropsType<typeof get
         chantiers={chantiers}
         estProjetStructurantDisponible={estProjetStructurantDisponible}
         ministères={ministères}
-        ppgs={ppgs}
         projetsStructurants={projetsStructurants}
       />
     </>

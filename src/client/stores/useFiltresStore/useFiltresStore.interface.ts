@@ -1,6 +1,5 @@
 import Axe from '@/server/domain/axe/Axe.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
-import Ppg from '@/server/domain/ppg/Ppg.interface';
 import Chantier from '@/server/domain/chantier/Chantier.interface';
 
 export type FiltreCatégorie = keyof FiltresActifs;
@@ -9,7 +8,7 @@ export type FiltreTypologieType = { id: string, attribut: keyof Chantier, nom: s
 
 export type FiltreAlerte = { id: 'estEnAlerteÉcart' | 'estEnAlerteBaisseOuStagnation' | 'estEnAlerteDonnéesNonMàj' | 'estEnAlerteTauxAvancementNonCalculé', nom: string };
 
-export type Filtre = PérimètreMinistériel | FiltreTypologieType | Ppg | Axe | FiltreAlerte;
+export type Filtre = PérimètreMinistériel | FiltreTypologieType | Axe | FiltreAlerte;
 
 export interface FiltreCatégorieTuple {
   catégorie: FiltreCatégorie,
@@ -19,7 +18,6 @@ export interface FiltreCatégorieTuple {
 export interface FiltresActifs {
   périmètresMinistériels: PérimètreMinistériel[],
   axes: Axe[],
-  ppg: Ppg[],
   filtresTypologie: FiltreTypologieType[],
   filtresAlerte: FiltreAlerte[],
 }

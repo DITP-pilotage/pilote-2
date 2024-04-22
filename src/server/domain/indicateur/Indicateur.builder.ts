@@ -17,8 +17,6 @@ export default class IndicateurBuilder {
 
   private _modeDeCalcul: Indicateur['modeDeCalcul'];
 
-  private _pondération: Indicateur['pondération'];
-
   private _unité: Indicateur['unité'];
 
   constructor() {
@@ -29,11 +27,6 @@ export default class IndicateurBuilder {
     this._description = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._source = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
     this._modeDeCalcul = générerPeutÊtreNull(0.2, faker.lorem.paragraph(5));
-    this._pondération = {
-      nationale: faker.helpers.arrayElement([null, 0, faker.datatype.number({ min: 0, max: 100, precision: 2 })]),
-      régionale: faker.helpers.arrayElement([null, 0, faker.datatype.number({ min: 0, max: 100, precision: 2 })]),
-      départementale: faker.helpers.arrayElement([null, 0, faker.datatype.number({ min: 0, max: 100, precision: 2 })]),
-    };
     this._unité = générerPeutÊtreNull(0.2, faker.lorem.paragraph(2));
   }
 
@@ -72,11 +65,6 @@ export default class IndicateurBuilder {
     return this;
   }
 
-  avecPondération(pondération: Indicateur['pondération']): IndicateurBuilder {
-    this._pondération = pondération;
-    return this;
-  }
-
   build(): Indicateur {
     return {
       id: this._id,
@@ -86,7 +74,6 @@ export default class IndicateurBuilder {
       description: this._description,
       source: this._source,
       modeDeCalcul: this._modeDeCalcul,
-      pondération: this._pondération,
       unité: this._unité,
     };
   }

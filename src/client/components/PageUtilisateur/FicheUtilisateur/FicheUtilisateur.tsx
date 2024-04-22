@@ -21,7 +21,7 @@ export default function FicheUtilisateur({ utilisateur }: FicheUtilisateurProps)
       <DétailsDroitsUtilisateur
         chantiers={scopes.lecture.chantiers}
         territoires={scopes.lecture.territoires}
-        titre='Droits de visualisation'
+        titre='Droits de lecture'
       />
       <DétailsDroitsUtilisateur
         chantiers={scopes['saisieIndicateur'].chantiers}

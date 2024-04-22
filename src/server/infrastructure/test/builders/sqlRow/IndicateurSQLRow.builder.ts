@@ -56,12 +56,6 @@ export default class IndicateurRowBuilder {
 
   private _territoireCode: indicateur['territoire_code'];
 
-  private _ponderation_dept: indicateur['ponderation_dept'];
-
-  private _ponderation_reg: indicateur['ponderation_reg'];
-
-  private _ponderation_nat: indicateur['ponderation_nat'];
-
   private _dateValeurCibleIntermediaire: indicateur['objectif_date_valeur_cible_intermediaire'];
 
   private _valeurCibleIntermediaire: indicateur['objectif_valeur_cible_intermediaire'];
@@ -85,6 +79,10 @@ export default class IndicateurRowBuilder {
   private _dernier_import_date_indic: indicateur['dernier_import_date_indic'];
 
   private _dernier_import_rapport_id_indic: indicateur['dernier_import_rapport_id_indic'];
+
+  private _ponderation_zone_declaree: indicateur['ponderation_zone_declaree'];
+
+  private _ponderation_zone_reel: indicateur['ponderation_zone_reel'];
 
   constructor() {
     const indicateurGénéré = new IndicateurBuilder().build();
@@ -120,9 +118,6 @@ export default class IndicateurRowBuilder {
     this._source = indicateurGénéré.source;
     this._modeDeCalcul = indicateurGénéré.modeDeCalcul;
     this._territoireCode = `${this._maille}-${this._codeInsee}`;
-    this._ponderation_dept = indicateurGénéré.pondération?.nationale ?? null;
-    this._ponderation_reg = indicateurGénéré.pondération?.régionale ?? null;
-    this._ponderation_nat = indicateurGénéré.pondération?.départementale ?? null;
     this._a_supprimer = false;
     this._unite_mesure = indicateurGénéré.unité;
     this._est_applicable = détailsIndicateurGénéré.est_applicable;
@@ -132,6 +127,8 @@ export default class IndicateurRowBuilder {
     this._dernier_import_date_indic = détailsIndicateurGénéré.dateImport !== null ? new Date(détailsIndicateurGénéré.dateImport) : null;
     this._dernier_import_auteur_indic = faker.name.fullName();
     this._dernier_import_rapport_id_indic = faker.datatype.uuid();
+    this._ponderation_zone_declaree = détailsIndicateurGénéré.pondération;
+    this._ponderation_zone_reel = détailsIndicateurGénéré.pondération;
   }
 
   avecId(id: indicateur['id']): IndicateurRowBuilder {
@@ -269,21 +266,6 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
-  avecPonderationDept(ponderation_dept: indicateur['ponderation_dept']): IndicateurRowBuilder {
-    this._ponderation_dept = ponderation_dept;
-    return this;
-  }
-
-  avecPonderationReg(ponderation_reg: indicateur['ponderation_reg']): IndicateurRowBuilder {
-    this._ponderation_reg = ponderation_reg;
-    return this;
-  }
-
-  avecPonderationNat(ponderation_nat: indicateur['ponderation_nat']): IndicateurRowBuilder {
-    this._ponderation_nat = ponderation_nat;
-    return this;
-  }
-
   avecUnité(unité: indicateur['unite_mesure']): IndicateurRowBuilder {
     this._unite_mesure = unité;
     return this;
@@ -324,6 +306,11 @@ export default class IndicateurRowBuilder {
     return this;
   }
 
+  avecPonderationZoneReel(_ponderation_zone_reel: indicateur['ponderation_zone_reel']): IndicateurRowBuilder {
+    this._ponderation_zone_reel = _ponderation_zone_reel;
+    return this;
+  }
+
   build(): indicateur {
     return {
       id: this._id,
@@ -349,9 +336,6 @@ export default class IndicateurRowBuilder {
       source: this._source,
       mode_de_calcul: this._modeDeCalcul,
       territoire_code: this._territoireCode,
-      ponderation_dept: this._ponderation_dept,
-      ponderation_reg: this._ponderation_reg,
-      ponderation_nat: this._ponderation_nat,
       objectif_date_valeur_cible_intermediaire: this._dateValeurCibleIntermediaire,
       objectif_valeur_cible_intermediaire: this._valeurCibleIntermediaire,
       objectif_taux_avancement_intermediaire: this._tauxAvancementCibleIntermediaire,
@@ -364,6 +348,8 @@ export default class IndicateurRowBuilder {
       dernier_import_auteur_indic: this._dernier_import_auteur_indic,
       dernier_import_date_indic: this._dernier_import_date_indic,
       dernier_import_rapport_id_indic: this._dernier_import_rapport_id_indic,
+      ponderation_zone_declaree: this._ponderation_zone_declaree,
+      ponderation_zone_reel: this._ponderation_zone_reel,
     };
   }
 }

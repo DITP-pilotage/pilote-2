@@ -112,6 +112,7 @@ describe('IndicateurSQLRepository', () => {
           .avecUnité('cm')
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
+          .avecPonderationZoneReel(51)
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -131,6 +132,7 @@ describe('IndicateurSQLRepository', () => {
           .avecUnité('cm')
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
+          .avecPonderationZoneReel(51)
           .build(),
       ];
 
@@ -162,6 +164,7 @@ describe('IndicateurSQLRepository', () => {
               unité: 'cm',
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
+              pondération: 51,
             },
             '03': {
               codeInsee: '03',
@@ -182,6 +185,7 @@ describe('IndicateurSQLRepository', () => {
               unité: 'cm',
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
+              pondération: 51,
             },
           },
         },
@@ -223,6 +227,7 @@ describe('IndicateurSQLRepository', () => {
           .avecUnité('cm')
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
+          .avecPonderationZoneReel(51)
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -242,6 +247,7 @@ describe('IndicateurSQLRepository', () => {
           .avecUnité('cm')
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
+          .avecPonderationZoneReel(51)
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -261,6 +267,7 @@ describe('IndicateurSQLRepository', () => {
           .avecUnité('cm')
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
+          .avecPonderationZoneReel(51)
           .build(),
       ];
 
@@ -292,6 +299,7 @@ describe('IndicateurSQLRepository', () => {
               unité: 'cm',
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
+              pondération: 51,
             },
           },
           'IND-002': {
@@ -314,6 +322,7 @@ describe('IndicateurSQLRepository', () => {
               unité: 'cm',
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
+              pondération: 51,
             },
             '03': {
               codeInsee: '03',
@@ -334,6 +343,7 @@ describe('IndicateurSQLRepository', () => {
               unité: 'cm',
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
+              pondération: 51,
             },
           },
         },
@@ -352,6 +362,7 @@ describe('IndicateurSQLRepository', () => {
           .avecCodeInsee('01')
           .avecUnité('cm')
           .avecEstApplicable(false)
+          .avecPonderationZoneReel(51)
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -369,6 +380,7 @@ describe('IndicateurSQLRepository', () => {
           .avecUnité('cm')
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
+          .avecPonderationZoneReel(51)
           .build(),
 
         new IndicateurSQLRowBuilder()
@@ -388,6 +400,7 @@ describe('IndicateurSQLRepository', () => {
           .avecUnité('cm')
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
+          .avecPonderationZoneReel(51)
           .build(),
       ];
 
@@ -419,6 +432,7 @@ describe('IndicateurSQLRepository', () => {
               unité: 'cm',
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
+              pondération: 51,
             },
           },
         },
@@ -664,6 +678,7 @@ describe('IndicateurSQLRepository', () => {
           .avecUnité('cm')
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
+          .avecPonderationZoneReel(51)
           .build(),
       ];
 
@@ -695,6 +710,7 @@ describe('IndicateurSQLRepository', () => {
               unité: 'cm',
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
+              pondération: 51,
             },
           },
         },
@@ -725,6 +741,7 @@ describe('IndicateurSQLRepository', () => {
           .avecUnité('cm')
           .avecEstApplicable(false)
           .avecDernierImportDateIndic(new Date('2023-03-01'))
+          .avecPonderationZoneReel(51)
           .build(),
       ];
 
@@ -756,6 +773,7 @@ describe('IndicateurSQLRepository', () => {
               unité: 'cm',
               est_applicable: false,
               dateImport: '2023-03-01T00:00:00.000Z',
+              pondération: 51,
             },
           },
         },

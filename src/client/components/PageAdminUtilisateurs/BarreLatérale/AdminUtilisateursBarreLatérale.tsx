@@ -101,7 +101,7 @@ export default function AdminUtilisateursBarreLatérale({
           className='fr-sidemenu__btn fr-m-0'
           type='button'
         >
-          Périmètre(s) géographique(s)
+          Territoires(s)
         </button>
         <div
           className='fr-collapse'

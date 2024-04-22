@@ -6,7 +6,6 @@ import FiltresStore, { FiltreCatégorieTuple, FiltresActifs } from './useFiltres
 const filtresActifsInitiaux: FiltresActifs = {
   périmètresMinistériels: [],
   axes: [],
-  ppg: [],
   filtresTypologie: [],
   filtresAlerte: [],
 };

@@ -42,11 +42,6 @@ export default function useChantiersFiltrés(chantiers: Chantier[]) {
         filtresActifs.axes.some(filtre => chantier.axe === filtre.nom)
       ));
     }
-    if (filtresActifs.ppg.length > 0) {
-      résultat = résultat.filter(chantier => (
-        filtresActifs.ppg.some(filtre => chantier.ppg === filtre.nom)
-      ));
-    }
     if (filtresActifs.filtresTypologie.length > 0) {
       résultat = résultat.filter(chantier => (
         filtresActifs.filtresTypologie.some(filtre => chantier[filtre.attribut])

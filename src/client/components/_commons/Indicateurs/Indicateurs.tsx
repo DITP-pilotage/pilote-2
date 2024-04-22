@@ -7,7 +7,7 @@ import { territoireSélectionnéTerritoiresStore } from '@/client/stores/useTerr
 
 
 export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRubriquesIndicateurs, territoireProjetStructurant, typeDeRéforme, chantierEstTerritorialisé, estDisponibleALImport = false, estInteractif = true }: IndicateursProps) {
-  const mailleSélectionnée = territoireSélectionnéTerritoiresStore()?.maille ?? 'nationale';
+  const CodeInseeSélectionnée = territoireSélectionnéTerritoiresStore()?.codeInsee;
   if (indicateurs.length === 0) {
     return null;
   }
@@ -32,18 +32,20 @@ export default function Indicateurs({ indicateurs, détailsIndicateurs, listeRub
                   {rubriqueIndicateur.nom}
                 </Titre>
                 {
-                  indicateursDeCetteRubrique.sort((a, b) => comparerIndicateur(a, b, mailleSélectionnée)).map(indicateur => (
-                    <IndicateurBloc
-                      chantierEstTerritorialisé={chantierEstTerritorialisé}
-                      détailsIndicateur={détailsIndicateurs[indicateur.id]}
-                      estDisponibleALImport={estDisponibleALImport}
-                      estInteractif={estInteractif}
-                      indicateur={indicateur}
-                      key={indicateur.id}
-                      territoireProjetStructurant={territoireProjetStructurant}
-                      typeDeRéforme={typeDeRéforme}
-                    />
-                  ))
+                  !!CodeInseeSélectionnée && indicateursDeCetteRubrique
+                    .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][CodeInseeSélectionnée]?.pondération, détailsIndicateurs[b.id][CodeInseeSélectionnée]?.pondération))
+                    .map(indicateur => (
+                      <IndicateurBloc
+                        chantierEstTerritorialisé={chantierEstTerritorialisé}
+                        détailsIndicateur={détailsIndicateurs[indicateur.id]}
+                        estDisponibleALImport={estDisponibleALImport}
+                        estInteractif={estInteractif}
+                        indicateur={indicateur}
+                        key={indicateur.id}
+                        territoireProjetStructurant={territoireProjetStructurant}
+                        typeDeRéforme={typeDeRéforme}
+                      />
+                    ))
                 }
               </section>
             );

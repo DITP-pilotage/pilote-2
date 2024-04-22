@@ -113,17 +113,19 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
       )
     );
 
-  const indicateurPondérations = !territoireSélectionné
+  const indicateurPondérations = !détailsIndicateurs || !territoireSélectionné
     ? []
     : (
       indicateurs
-        .sort((a, b) => comparerIndicateur(a, b, mailleSélectionnée))
+        .sort((a, b) => comparerIndicateur(a, b, détailsIndicateurs[a.id][territoireSélectionné.codeInsee]?.pondération ?? null, détailsIndicateurs[b.id][territoireSélectionné.codeInsee]?.pondération ?? null))
         .map(indicateur => ({
-          pondération: indicateur.pondération?.[territoireSélectionné.maille]?.toFixed(0) ?? null,
+          pondération: détailsIndicateurs[indicateur.id][territoireSélectionné.codeInsee]?.pondération?.toFixed(0),
           nom: indicateur.nom,
+          type: indicateur.type,
         }))
         .filter((indPond): indPond is IndicateurPondération => indPond.pondération !== null && indPond.pondération !== '0')
     );
+
 
   let modeÉcriture = !!territoireSélectionné!.accèsSaisiePublication && !!session?.habilitations['saisieCommentaire'].chantiers.includes(chantierId);
   if (session && ['DIR_PROJET', 'EQUIPE_DIR_PROJET', 'SECRETARIAT_GENERAL'].includes(session.profil) && territoireSélectionné?.maille != 'nationale') {
