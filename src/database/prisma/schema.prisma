@@ -140,9 +140,8 @@ model indicateur {
   unite_mesure                             String?
   territoire                               territoire @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
   territoire_code                          String
-  ponderation_dept                         Float?
-  ponderation_reg                          Float?
-  ponderation_nat                          Float?
+  ponderation_zone_declaree                Float?
+  ponderation_zone_reel                    Float?
   objectif_valeur_cible_intermediaire      Float?
   objectif_taux_avancement_intermediaire   Float?
   objectif_date_valeur_cible_intermediaire DateTime?  @db.Date
@@ -288,9 +287,9 @@ model metadata_parametrage_indicateurs {
   param_vacg_decumul_from   String?
   param_vacg_partition_date String?
   param_vacg_op             String?
-  poids_pourcent_dept       Float?
-  poids_pourcent_reg        Float?
-  poids_pourcent_nat        Float?
+  poids_pourcent_dept_declaree Float?
+  poids_pourcent_reg_declaree  Float?
+  poids_pourcent_nat_declaree  Float?
   tendance                  String?
 
   @@schema("raw_data")

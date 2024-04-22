@@ -51,11 +51,11 @@ export interface HistorisationMetadataParametrageIndicateur {
 
   param_vacg_op: string;
 
-  poids_pourcent_dept: number;
+  poids_pourcent_dept_declaree: number;
 
-  poids_pourcent_reg: number;
+  poids_pourcent_reg_declaree: number;
 
-  poids_pourcent_nat: number;
+  poids_pourcent_nat_declaree: number;
 
   tendance: string;
 }
@@ -87,9 +87,9 @@ export function convertirEnHistorisationMetadataParametrageIndicateurModel(metad
     param_vacg_decumul_from: metadataParametrageIndicateur.paramVacgDecumulFrom,
     param_vacg_partition_date: metadataParametrageIndicateur.paramVacgPartitionDate,
     param_vacg_op: metadataParametrageIndicateur.paramVacgOp,
-    poids_pourcent_dept: metadataParametrageIndicateur.poidsPourcentDept,
-    poids_pourcent_reg: metadataParametrageIndicateur.poidsPourcentReg,
-    poids_pourcent_nat: metadataParametrageIndicateur.poidsPourcentNat,
+    poids_pourcent_dept_declaree: metadataParametrageIndicateur.poidsPourcentDept,
+    poids_pourcent_reg_declaree: metadataParametrageIndicateur.poidsPourcentReg,
+    poids_pourcent_nat_declaree: metadataParametrageIndicateur.poidsPourcentNat,
     tendance: metadataParametrageIndicateur.tendance,
   };
 }

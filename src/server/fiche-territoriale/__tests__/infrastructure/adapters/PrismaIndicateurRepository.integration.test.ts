@@ -76,7 +76,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'DEPT',
           territoire_code: 'DEPT-34',
           est_barometre: true,
-          ponderation_dept: null,
+          ponderation_zone_reel: null,
           date_valeur_actuelle: '2021-01-01T00:00:00.000Z',
           valeur_actuelle: 10.1,
           objectif_valeur_cible: 11.1,
@@ -94,7 +94,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'DEPT',
           territoire_code: 'DEPT-34',
           est_barometre: false,
-          ponderation_dept: 20,
+          ponderation_zone_reel: 20,
           date_valeur_actuelle: '2023-02-04T00:00:00.000Z',
           valeur_actuelle: 22.3,
           objectif_valeur_cible: 23.3,
@@ -112,7 +112,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'DEPT',
           territoire_code: 'DEPT-34',
           est_barometre: true,
-          ponderation_dept: 20,
+          ponderation_zone_reel: 20,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
           valeur_actuelle: 31.3,
           objectif_valeur_cible: 32.3,
@@ -130,7 +130,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'REG',
           territoire_code: 'REG-06',
           est_barometre: false,
-          ponderation_dept: 20,
+          ponderation_zone_reel: 20,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
         },
       });
@@ -144,7 +144,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'DEPT',
           territoire_code: 'DEPT-34',
           est_barometre: true,
-          ponderation_dept: 20,
+          ponderation_zone_reel: 20,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
         },
       });
@@ -158,7 +158,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'DEPT',
           territoire_code: 'DEPT-34',
           est_barometre: false,
-          ponderation_dept: null,
+          ponderation_zone_reel: null,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
         },
       });
@@ -172,7 +172,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'DEPT',
           territoire_code: 'DEPT-34',
           est_barometre: false,
-          ponderation_dept: 0,
+          ponderation_zone_reel: 0,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
         },
       });
@@ -268,7 +268,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'REG',
           territoire_code: 'REG-06',
           est_barometre: true,
-          ponderation_dept: null,
+          ponderation_zone_reel: null,
           date_valeur_actuelle: '2021-01-01T00:00:00.000Z',
         },
       });
@@ -282,7 +282,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'REG',
           territoire_code: 'REG-06',
           est_barometre: false,
-          ponderation_reg: 20,
+          ponderation_zone_reel: 20,
           date_valeur_actuelle: '2023-02-04T00:00:00.000Z',
         },
       });
@@ -296,7 +296,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'REG',
           territoire_code: 'REG-06',
           est_barometre: true,
-          ponderation_reg: 20,
+          ponderation_zone_reel: 20,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
         },
       });
@@ -310,7 +310,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'DEPT',
           territoire_code: 'DEPT-34',
           est_barometre: false,
-          ponderation_reg: 20,
+          ponderation_zone_reel: 20,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
         },
       });
@@ -324,7 +324,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'REG',
           territoire_code: 'REG-06',
           est_barometre: true,
-          ponderation_reg: 20,
+          ponderation_zone_reel: 20,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
         },
       });
@@ -338,7 +338,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'REG',
           territoire_code: 'REG-06',
           est_barometre: false,
-          ponderation_reg: null,
+          ponderation_zone_reel: null,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
         },
       });
@@ -352,7 +352,7 @@ describe('PrismaIndicateurRepository', () => {
           maille: 'REG',
           territoire_code: 'REG-06',
           est_barometre: false,
-          ponderation_reg: 0,
+          ponderation_zone_reel: 0,
           date_valeur_actuelle: '2022-08-02T00:00:00.000Z',
         },
       });

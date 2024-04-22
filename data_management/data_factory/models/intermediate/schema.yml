@@ -3,6 +3,40 @@ version: 2
 models:
   - name: int_chantiers_with_mailles_and_territoires
     description: "Vue intermédiaire afin de décliner les chantiers pour tous leurs territoires (maille + code insee)"
+  - name: int_indicateurs_zones_applicables
+    description: "Une ligne pour chaque indicateur X chaque territoire. Uniquement les indicateurs applicables sur une zone groupe. Indique si l'indicateur est applicable sur le territoire"
+    columns:
+      - name: indic_id
+        description: "ID de l'indicateur"
+      - name: chantier_id
+        description: "ID du chantier"
+      - name: zone_id
+        description: "ID du territoire"
+      - name: est_applicable
+        description: "Si le chantier est applicable sur le territoire"
+  - name: int_ponderation_reelle
+    description: |
+      Cette table indique 3 pondérations pour chaque couple {indicateur, zone}:
+
+      - `poids_zone_declaree`: pondération déclarée (recueillie par le formulaire DS)
+      - `poids_zone_appl`: si l'indicateur est applicable sur cette zone, c'est la pondération déclarée sinon 0 
+      - `poids_zone_reel`: pondération réelle, recalculée sur **base 100**. En effet, on normalise la pondération pour que la somme de toutes les pondérations des indicateurs applicables se somment à la valeur **100**.
+
+    columns:
+      - name: indic_id
+        description: Identifiant unique de l'indicateur
+      - name: zone_id
+        description: Identifiant de la zone
+      - name: est_applicable
+        data_type: boolean
+        description: Indique si l'indicateur est applicable sur cette zone
+      - name: poids_zone_declaree
+        description: Pondération déclarée (dans le DS)
+      - name: poids_zone_appl
+        description: Pondération en prenant en compte les *zones applicables*
+      - name: poids_zone_reel
+        description: "Pondération réelle: en prenant en compte les *zones applicables* + la remise sur **base 100**"
+        
   - name: last_update_indic_zone
     description: |
       Pour chaque couple {indicateur-zone}, on indique le **rapport** et la **date** de ce rapport qui modifie cet indicateur sur cette zone.

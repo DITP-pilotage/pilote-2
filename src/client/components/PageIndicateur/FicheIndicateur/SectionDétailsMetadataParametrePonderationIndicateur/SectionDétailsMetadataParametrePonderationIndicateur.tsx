@@ -32,7 +32,7 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
             erreurMessage={errors.poidsPourcentDept?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName='poidsPourcentDept'
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.poids_pourcent_dept}
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.poids_pourcent_dept_declaree}
             register={register('poidsPourcentDept', { value: `${indicateur.poidsPourcentDept}` })}
             valeurAffiché={`${indicateur.poidsPourcentDept}`}
           />
@@ -42,7 +42,7 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
             erreurMessage={errors.poidsPourcentReg?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName='poidsPourcentReg'
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.poids_pourcent_reg}
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.poids_pourcent_reg_declaree}
             register={register('poidsPourcentReg', { value: `${indicateur.poidsPourcentReg}` })}
             valeurAffiché={`${indicateur.poidsPourcentReg}`}
           />
@@ -52,7 +52,7 @@ export default function SectionDétailsMetadataParametrePonderationIndicateur({
             erreurMessage={errors.poidsPourcentNat?.message}
             estEnCoursDeModification={estEnCoursDeModification}
             htmlName='poidsPourcentNat'
-            informationMetadataIndicateur={mapInformationMetadataIndicateur.poids_pourcent_nat}
+            informationMetadataIndicateur={mapInformationMetadataIndicateur.poids_pourcent_nat_declaree}
             register={register('poidsPourcentNat', { value: `${indicateur.poidsPourcentNat}` })}
             valeurAffiché={`${indicateur.poidsPourcentNat}`}
           />

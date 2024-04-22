@@ -9,7 +9,7 @@ import FiltreTypologie from './FiltreTypologie/FiltreTypologie';
 const filtreBaromètre: FiltreTypologieType = { id: 'filtreBaromètre', attribut: 'estBaromètre', nom: 'Chantiers du baromètre' };
 const filtreTerritorialisé: FiltreTypologieType = { id: 'filtreTerritorialisé', attribut: 'estTerritorialisé', nom: 'Chantiers territorialisés' };
 
-export default function Filtres({ ministères, axes, ppgs, afficherToutLesFiltres }: FiltresProps) {
+export default function Filtres({ ministères, axes, afficherToutLesFiltres }: FiltresProps) {
   filtresActifs();
 
   return (
@@ -24,11 +24,6 @@ export default function Filtres({ ministères, axes, ppgs, afficherToutLesFiltre
               catégorieDeFiltre='axes'
               filtres={axes}
               libellé='Axes'
-            />
-            <FiltresSélectionMultiple
-              catégorieDeFiltre='ppg'
-              filtres={ppgs}
-              libellé='PPG'
             />
           </FiltresGroupe>
           <hr className='fr-hr fr-mt-3w fr-pb-2w' />
