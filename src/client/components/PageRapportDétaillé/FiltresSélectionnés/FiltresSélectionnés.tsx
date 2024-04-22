@@ -8,7 +8,6 @@ export default function FiltresSélectionnés({ territoireSélectionné, filtres
     { nom: 'Territoire', filtres: [territoireSélectionné!.nomAffiché] },
     { nom: 'Périmètres ministériels', filtres: filtresActifs.périmètresMinistériels.map(({ nom }) => nom) },
     { nom: 'Axes', filtres: filtresActifs.axes.map(({ nom }) => nom) },
-    { nom: 'PPG', filtres: filtresActifs.ppg.map(({ nom }) => nom) },
     { nom: 'Autres critères', filtres: filtresActifs.filtresTypologie.map(({ nom }) => nom) },
     { nom: 'Alertes', filtres: filtresActifs.filtresAlerte.map(({ nom }) => nom) },
   ];
