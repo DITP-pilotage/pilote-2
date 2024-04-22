@@ -17,7 +17,6 @@ import Chantier from '@/server/domain/chantier/Chantier.interface';
 import { ProjetStructurantVueDEnsemble } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
-import Ppg from '@/server/domain/ppg/Ppg.interface';
 import SélecteurTypeDeRéforme from './SélecteurTypeDeRéforme/SélecteurTypeDeRéforme';
 
 const PageAccueil: FunctionComponent<{
@@ -25,9 +24,8 @@ const PageAccueil: FunctionComponent<{
   projetsStructurants: ProjetStructurantVueDEnsemble[]
   ministères: Ministère[]
   axes: Axe[],
-  ppgs: Ppg[],
   estProjetStructurantDisponible: boolean,
-}> = ({ chantiers, projetsStructurants, ministères, axes, ppgs, estProjetStructurantDisponible }) => {
+}> = ({ chantiers, projetsStructurants, ministères, axes, estProjetStructurantDisponible }) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const typeDeRéformeSélectionné = typeDeRéformeSélectionnéeStore();
   const { modifierTypeDeRéformeSélectionné } = actionsTypeDeRéformeStore();
@@ -60,7 +58,6 @@ const PageAccueil: FunctionComponent<{
             afficherToutLesFiltres={typeDeRéformeSélectionné === 'chantier' ? true : false}
             axes={axes}
             ministères={ministères}
-            ppgs={ppgs}
           />
         </section>
       </BarreLatérale>
