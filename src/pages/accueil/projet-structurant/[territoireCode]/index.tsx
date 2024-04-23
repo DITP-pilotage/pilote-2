@@ -14,7 +14,6 @@ import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import { dependencies } from '@/server/infrastructure/Dependencies';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
-import Ppg from '@/server/domain/ppg/Ppg.interface';
 import SélecteurTypeDeRéforme from '@/components/PageAccueil/SélecteurTypeDeRéforme/SélecteurTypeDeRéforme';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 import { ProjetStructurantVueDEnsemble } from '@/server/domain/projetStructurant/ProjetStructurant.interface';
@@ -26,7 +25,6 @@ interface ChantierAccueil {
   projetsStructurants: ProjetStructurantVueDEnsemble[]
   ministères: Ministère[]
   axes: Axe[],
-  ppg: Ppg[],
   estProjetStructurantDisponible: boolean,
 }
 
@@ -49,11 +47,10 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     dependencies.getSynthèseDesRésultatsProjetStructurantRepository(),
   ).run(session.habilitations, session.profil);
 
-  const [ministères, axes, ppg] = await Promise.all(
+  const [ministères, axes] = await Promise.all(
     [
       dependencies.getMinistèreRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
       dependencies.getAxeRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
-      dependencies.getPpgRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
     ],
   );
 
@@ -64,7 +61,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       projetsStructurants,
       ministères,
       axes,
-      ppg,
       estProjetStructurantDisponible: !!estProjetStructurantDisponible,
     },
   };
@@ -74,7 +70,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   projetsStructurants,
   axes,
   ministères,
-  ppg,
   estProjetStructurantDisponible,
 }) => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
@@ -110,7 +105,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             afficherToutLesFiltres
             axes={axes}
             ministères={ministères}
-            ppgs={ppg}
           />
         </section>
       </BarreLatérale>
