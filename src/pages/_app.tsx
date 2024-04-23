@@ -12,7 +12,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Head from 'next/head';
 import { TRPCClientError } from '@trpc/client';
 import init from '@socialgouv/matomo-next';
-import { Router, useRouter } from 'next/router';
+import { Router } from 'next/router';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
 import useDétecterLargeurDÉcran from '@/client/hooks/useDétecterLargeurDÉcran';
 import api from '@/server/infrastructure/api/trpc/api';
@@ -34,9 +34,7 @@ const queryClient = new QueryClient({
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 
 function MonApplication({ Component, pageProps }: AppProps) {
-  const router = useRouter();
-
-  const estNouvellePageAccueil = router.pathname.startsWith('/accueil');
+  const estNouvellePageAccueil = process.env.NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL;
 
   useDétecterLargeurDÉcran();
   const [afficherLeLoader, setAfficherLeLoader] = useState(false);
@@ -54,12 +52,12 @@ function MonApplication({ Component, pageProps }: AppProps) {
       Router.events.on('routeChangeStart', débutChargement);
       Router.events.on('routeChangeComplete', finChargement);
       Router.events.on('routeChangeError', finChargement);
+      return () => {
+        Router.events.off('routeChangeStart', débutChargement);
+        Router.events.off('routeChangeComplete', finChargement);
+        Router.events.off('routeChangeError', finChargement);
+      };
     }
-    return () => {
-      Router.events.off('routeChangeStart', débutChargement);
-      Router.events.off('routeChangeComplete', finChargement);
-      Router.events.off('routeChangeError', finChargement);
-    };
   }, [estNouvellePageAccueil]);
 
   const matomoUrl = process.env.NEXT_PUBLIC_MATOMO_URL;
