@@ -35,6 +35,7 @@ export default function useSélecteurAvecRecherche<T extends string>(
 
   return {
     estOuvert: isOpen,
+    setEstOuvert: setIsOpen,
     SélecteurBoutonProps: buttonProps,
     libelléValeurSélectionnée: determinerLibellé(),
     optionsFiltrées,

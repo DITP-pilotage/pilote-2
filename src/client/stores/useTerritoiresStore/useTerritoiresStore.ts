@@ -113,7 +113,6 @@ export const actionsTerritoiresStore = () => useTerritoiresStore(étatActuel => 
 export const départementsTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.départements);
 export const régionsTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.régions);
 export const territoiresTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoires);
-export const territoiresCodesTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoiresCodes);
 export const mailleSélectionnéeTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.mailleSélectionnée);
 export const territoireSélectionnéTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoireSélectionné);
 export const territoiresComparésTerritoiresStore = () => useTerritoiresStore(étatActuel => étatActuel.territoiresComparés);

@@ -1,0 +1,286 @@
+import { FunctionComponent, useState } from 'react';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { getServerSession } from 'next-auth/next';
+import assert from 'node:assert/strict';
+import PageChantiers from '@/components/PageAccueil/PageChantiersNew/PageChantiers';
+import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
+import BarreLatéraleEncart from '@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart';
+import SélecteursMaillesEtTerritoires
+  from '@/components/_commons/SélecteursMaillesEtTerritoiresNew/SélecteursMaillesEtTerritoires';
+import Titre from '@/components/_commons/Titre/Titre';
+import Filtres from '@/components/PageAccueil/FiltresNew/Filtres';
+import BoutonSousLigné from '@/components/_commons/BoutonSousLigné/BoutonSousLigné';
+import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
+import RécupérerChantiersAccessiblesEnLectureUseCase
+  from '@/server/chantiers/usecases/RécupérerChantiersAccessiblesEnLectureUseCase';
+import { dependencies } from '@/server/infrastructure/Dependencies';
+import {
+  ChantierAccueilContrat,
+  MailleChantierContrat,
+  presenterEnChantierAccueilContrat,
+} from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
+import Axe from '@/server/domain/axe/Axe.interface';
+import SélecteurTypeDeRéforme from '@/components/PageAccueil/SélecteurTypeDeRéformeNew/SélecteurTypeDeRéforme';
+import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
+import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
+import Alerte from '@/server/domain/alerte/Alerte';
+import RécupérerStatistiquesAvancementChantiersUseCase
+  from '@/server/usecase/chantier/RécupérerStatistiquesAvancementChantiersUseCase';
+import {
+  AvancementsGlobauxTerritoriauxMoyensContrat,
+  AvancementsStatistiquesAccueilContrat,
+  presenterEnAvancementsStatistiquesAccueilContrat,
+  RépartitionsMétéos,
+} from '@/server/chantiers/app/contrats/AvancementsStatistiquesAccueilContrat';
+import { AgrégateurChantiersParTerritoire } from '@/client/utils/chantier/agrégateurNew/agrégateur';
+import { objectEntries } from '@/client/utils/objects/objects';
+
+interface ChantierAccueil {
+  chantiers: ChantierAccueilContrat[]
+  ministères: Ministère[]
+  axes: Axe[],
+  territoireCode: string
+  mailleSelectionnee: 'départementale' | 'régionale',
+  brouillon: boolean
+  filtresComptesCalculés: Record<string, { nombre: number }>
+  avancementsAgrégés: AvancementsStatistiquesAccueilContrat
+  avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
+  répartitionMétéos: RépartitionsMétéos
+}
+
+const masquerPourDROM = (sessionProfil: string, mailleChantier: MailleChantierContrat) => {
+  return sessionProfil === 'DROM' && mailleChantier === 'nationale';
+};
+const appliquerFiltreDrom = (chantier: ChantierAccueilContrat, sessionProfil: string, mailleChantier: MailleChantierContrat) => {
+  return masquerPourDROM(sessionProfil, mailleChantier) ? chantier.périmètreIds.includes('PER-018') : true;
+};
+
+const appliquerFiltreTerritorialise = (chantier: ChantierAccueilContrat, mailleChantier: MailleChantierContrat): boolean => {
+  return mailleChantier !== 'nationale' ? chantier.estTerritorialisé || !!chantier.tauxAvancementDonnéeTerritorialisée[mailleChantier] || !!chantier.météoDonnéeTerritorialisée[mailleChantier] : true;
+};
+
+const appliquerFiltre = (mailleChantier: MailleChantierContrat, codeInsee: string, sessionProfil: string) => {
+
+  return (chantier: ChantierAccueilContrat): boolean => {
+    return !!chantier.mailles[mailleChantier][codeInsee].estApplicable
+      && appliquerFiltreDrom(chantier, sessionProfil, mailleChantier)
+      && appliquerFiltreTerritorialise(chantier, mailleChantier);
+  };
+};
+
+export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
+  const session = await getServerSession(req, res, authOptions);
+
+  assert(query.territoireCode, 'Le territoire code est obligatoire pour afficher la page d\'accueil');
+  assert(session, 'Vous devez être authentifié pour accéder a cette page');
+  assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
+
+  const estNouvellePageAccueilDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL' });
+
+  if (!estNouvellePageAccueilDisponible && session.profil !== 'DITP_ADMIN') {
+    throw new Error('Not connected or not authorized ?');
+  }
+
+  const filtres = {
+    perimetres: query.perimetres ? (query.perimetres as string).split(',') : [],
+    axes: query.axes ? (query.axes as string).split(',') : [],
+    ppg: query.ppg ? (query.ppg as string).split(',') : [],
+    statut: query.brouillon === 'false' ? ['PUBLIE'] : ['BROUILLON', 'PUBLIE'],
+    estTerritorialise: query.estTerritorialise === 'true',
+    estBarometre: query.estBarometre === 'true',
+  };
+
+  const filtresAlertes = {
+    estEnAlerteTauxAvancementNonCalculé: query.estEnAlerteTauxAvancementNonCalculé === 'true',
+    estEnAlerteÉcart: query.estEnAlerteÉcart === 'true',
+    estEnAlerteBaisseOuStagnation: query.estEnAlerteBaisseOuStagnation === 'true',
+    estEnAlerteDonnéesNonMàj: query.estEnAlerteDonnéesNonMàj === 'true',
+  };
+
+  const territoireCode = query.territoireCode as string;
+  const mailleSelectionnee = query.maille as 'départementale' | 'régionale';
+  const [maille, codeInseeSelectionne] = territoireCode.split('-');
+
+  const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee ?? (maille === 'REG' ? 'régionale' : 'départementale');
+
+  const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
+    dependencies.getChantierRepository(),
+    dependencies.getChantierDatesDeMàjRepository(),
+    dependencies.getMinistèreRepository(),
+    dependencies.getTerritoireRepository(),
+  )
+    .run(session.habilitations, session.profil, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', filtres)
+    .then(chantiersResult => chantiersResult
+      .map(presenterEnChantierAccueilContrat(territoireCode))
+      .filter(appliquerFiltre(mailleChantier || 'départementale', codeInseeSelectionne, session.profil)),
+    );
+
+  const [ministères, axes, ppg] = await Promise.all(
+    [
+      dependencies.getMinistèreRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
+      dependencies.getAxeRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
+      dependencies.getPpgRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
+    ],
+  );
+
+  const compteurFiltre = new CompteurFiltre(chantiers);
+
+  const filtresComptesCalculés = compteurFiltre.compter([{
+    nomCritère: 'estEnAlerteÉcart',
+    condition: (chantier) => Alerte.estEnAlerteÉcart(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.écart),
+  }, {
+    nomCritère: 'estEnAlerteBaisseOuStagnation',
+    condition: (chantier) => Alerte.estEnAlerteBaisseOuStagnation(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.tendance),
+  }, {
+    nomCritère: 'estEnAlerteDonnéesNonMàj',
+    condition: (chantier) => Alerte.estEnAlerteDonnéesNonMàj(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.dateDeMàjDonnéesQualitatives, chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.dateDeMàjDonnéesQuantitatives),
+  }, {
+    nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
+    condition: (chantier) => Alerte.estEnAlerteTauxAvancementNonCalculé(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.avancement.global),
+  }]);
+
+  const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisseOuStagnation || filtresAlertes.estEnAlerteDonnéesNonMàj || filtresAlertes.estEnAlerteTauxAvancementNonCalculé ? chantiers.filter(chantier => {
+    const chantierDonnéesTerritoires = chantier.mailles[mailleChantier][codeInseeSelectionne];
+    return (filtresAlertes.estEnAlerteÉcart && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
+      || (filtresAlertes.estEnAlerteBaisseOuStagnation && Alerte.estEnAlerteBaisseOuStagnation(chantierDonnéesTerritoires.tendance))
+      || (filtresAlertes.estEnAlerteDonnéesNonMàj && Alerte.estEnAlerteDonnéesNonMàj(chantierDonnéesTerritoires.dateDeMàjDonnéesQualitatives, chantierDonnéesTerritoires.dateDeMàjDonnéesQuantitatives))
+      || (filtresAlertes.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global));
+  }) : chantiers;
+
+  const récupérerStatistiquesChantiersUseCase = new RécupérerStatistiquesAvancementChantiersUseCase(dependencies.getChantierRepository());
+  const avancementsAgrégés = await récupérerStatistiquesChantiersUseCase.run(chantiersAvecAlertes.map(chantier => chantier.id), mailleSelectionnee || 'départementale', session.habilitations).then(presenterEnAvancementsStatistiquesAccueilContrat);
+
+  const donnéesTerritoiresAgrégées = new AgrégateurChantiersParTerritoire(chantiersAvecAlertes, mailleSelectionnee || 'départementale').agréger();
+
+  if (avancementsAgrégés) {
+    avancementsAgrégés.global.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInseeSelectionne].répartition.avancements.global.moyenne;
+    avancementsAgrégés.annuel.moyenne = donnéesTerritoiresAgrégées[mailleChantier].territoires[codeInseeSelectionne].répartition.avancements.annuel.moyenne;
+  }
+
+  const avancementsGlobauxTerritoriauxMoyens = objectEntries(donnéesTerritoiresAgrégées[mailleSelectionnee || 'départementale'].territoires).map(([codeInsee, territoire]) => ({
+    valeur: territoire.répartition.avancements.global.moyenne,
+    codeInsee,
+    estApplicable: null,
+  }));
+
+  const filtresMétéoComptesCalculés = compteurFiltre.compter([{
+    nomCritère: 'orage',
+    condition: (chantier) => (
+      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'ORAGE'
+    ) ?? false,
+  }, {
+    nomCritère: 'couvert',
+    condition: (chantier) => (
+      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'COUVERT'
+    ) ?? false,
+  }, {
+    nomCritère: 'nuage',
+    condition: (chantier) => (
+      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'NUAGE'
+    ) ?? false,
+  }, {
+    nomCritère: 'soleil',
+    condition: (chantier) => (
+      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'SOLEIL'
+    ) ?? false,
+  }]);
+
+  const répartitionMétéos = {
+    ORAGE: filtresMétéoComptesCalculés.orage.nombre,
+    COUVERT: filtresMétéoComptesCalculés.couvert.nombre,
+    NUAGE: filtresMétéoComptesCalculés.nuage.nombre,
+    SOLEIL: filtresMétéoComptesCalculés.soleil.nombre,
+  };
+
+  return {
+    props: {
+      chantiers: chantiersAvecAlertes.map(chantier => {
+        // @ts-ignore
+        delete chantier.mailles;
+        return chantier;
+      }),
+      ministères,
+      axes,
+      ppg,
+      territoireCode,
+      mailleSelectionnee: mailleSelectionnee || 'départementale',
+      brouillon: query.brouillon !== 'false',
+      filtresComptesCalculés,
+      avancementsAgrégés,
+      avancementsGlobauxTerritoriauxMoyens,
+      répartitionMétéos,
+    },
+  };
+};
+
+const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
+  chantiers,
+  axes,
+  ministères,
+  territoireCode,
+  mailleSelectionnee,
+  brouillon,
+  filtresComptesCalculés,
+  avancementsAgrégés,
+  avancementsGlobauxTerritoriauxMoyens,
+  répartitionMétéos,
+}) => {
+  const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
+
+  return (
+    <div className='flex'>
+      <BarreLatérale
+        estOuvert={estOuverteBarreLatérale}
+        setEstOuvert={setEstOuverteBarreLatérale}
+      >
+        <BarreLatéraleEncart>
+          <SélecteurTypeDeRéforme
+            territoireCode={territoireCode}
+            typeDeRéformeSélectionné='chantier'
+          />
+          <SélecteursMaillesEtTerritoires
+            mailleSelectionnee={mailleSelectionnee}
+            territoireCode={territoireCode}
+          />
+        </BarreLatéraleEncart>
+        <section>
+          <Titre
+            baliseHtml='h1'
+            className='fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8'
+          >
+            Filtres
+          </Titre>
+          <Filtres
+            afficherToutLesFiltres
+            axes={axes}
+            ministères={ministères}
+          />
+        </section>
+      </BarreLatérale>
+      <div className='w-full'>
+        <BoutonSousLigné
+          classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w'
+          onClick={() => setEstOuverteBarreLatérale(true)}
+          type='button'
+        >
+          Filtres
+        </BoutonSousLigné>
+        <PageChantiers
+          avancementsAgrégés={avancementsAgrégés}
+          avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
+          axes={axes}
+          brouillon={brouillon}
+          chantiers={chantiers}
+          filtresComptesCalculés={filtresComptesCalculés}
+          mailleSelectionnee={mailleSelectionnee}
+          ministères={ministères}
+          répartitionMétéos={répartitionMétéos}
+          territoireCode={territoireCode}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default ChantierLayout;

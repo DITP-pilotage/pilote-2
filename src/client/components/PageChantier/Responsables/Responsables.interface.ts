@@ -1,9 +1,12 @@
-import Chantier from '@/server/domain/chantier/Chantier.interface';
-import { responsableLocal, référentTerritorial } from '@/server/domain/territoire/Territoire.interface';
+import {
+  ReferentTerritorialRapportDetailleContrat,
+  ResponsableLocalRapportDetailleContrat,
+  ResponsableRapportDetailleContrat,
+} from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
 export default interface ResponsablesPageChantierProps {
-  responsables: Chantier['responsables']
-  responsablesLocal: responsableLocal[],
-  referentTerritorial: référentTerritorial[],
+  responsables: ResponsableRapportDetailleContrat
+  responsablesLocal: ResponsableLocalRapportDetailleContrat[],
+  referentTerritorial: ReferentTerritorialRapportDetailleContrat[],
   afficheResponsablesLocaux: boolean,
 }

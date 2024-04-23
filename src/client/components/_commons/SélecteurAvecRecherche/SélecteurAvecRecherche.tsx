@@ -10,6 +10,7 @@ export default function SélecteurAvecRecherche<T extends string>({ htmlName, li
   const ref = useRef(null);
   const {
     estOuvert,
+    setEstOuvert,
     SélecteurBoutonProps,
     libelléValeurSélectionnée,
     setRecherche,
@@ -42,7 +43,7 @@ export default function SélecteurAvecRecherche<T extends string>({ htmlName, li
         <input
           className='fr-input fr-mb-2w'
           onChange={(e) => setRecherche(e.target.value)}
-          placeholder='Rechercher...'
+          placeholder='Rechercher new...'
           type='text'
           value={recherche}
         />
@@ -54,7 +55,10 @@ export default function SélecteurAvecRecherche<T extends string>({ htmlName, li
                   <div 
                     className='fr-option'
                     id={option.valeur}
-                    onClick={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.id as T)}
+                    onClick={(événement) => {
+                      setEstOuvert(false);
+                      return valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.id as T);
+                    }}
                     onKeyDown={(événement) => {
                       if ((événement.key === 'Enter' || événement.key === ' ') && !!valeurModifiéeCallback) {
                         valeurModifiéeCallback(événement.currentTarget.id as T);
