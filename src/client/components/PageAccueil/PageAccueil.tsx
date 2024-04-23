@@ -43,7 +43,7 @@ const PageAccueil: FunctionComponent<{
                 typeDeRéformeSélectionné={typeDeRéformeSélectionné}
               />
             ) : null
-        }
+          }
           <SélecteursMaillesEtTerritoires />
         </BarreLatéraleEncart>
         <section>
@@ -70,8 +70,8 @@ const PageAccueil: FunctionComponent<{
         </BoutonSousLigné>
         {
           typeDeRéformeSélectionné === 'chantier' ?
-            <PageChantiers 
-              chantiers={chantiers} 
+            <PageChantiers
+              chantiers={chantiers}
               ministères={ministères}
             />
             :
