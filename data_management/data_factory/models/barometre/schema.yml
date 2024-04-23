@@ -32,3 +32,12 @@ models:
           description: Nom de l'indicateur dans le baromètre
         - name: indic_descr_baro
           description: Description de l'indicateur dans le baromètre
+  - name: baro_meta_chantiers
+    description: Informations des chantiers utiles pour le baromètre
+    columns:
+        - name: chantier_id
+          description: Identifiant du chantier
+        - name: ch_nom
+          description: Nom du chantier (dans Pilote)
+        - name: engagement_short
+          description: Version courte de l'engagement (ou axe)
