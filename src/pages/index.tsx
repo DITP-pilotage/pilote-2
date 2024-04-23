@@ -13,13 +13,10 @@ import RécupérerListeProjetsStructurantsVueDEnsembleUseCase
 import RécupérerChantiersAccessiblesEnLectureUseCase
   from '@/server/usecase/chantier/RécupérerChantiersAccessiblesEnLectureUseCase';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
-import {
-  ChantierAccueilContrat,
-  presenterEnChantierAccueilContrat,
-} from '@/server/chantiers/app/contrats/ChantierAccueilContrat';
+import Chantier from '@/server/domain/chantier/Chantier.interface';
 
 interface NextPageAccueilProps {
-  chantiers: ChantierAccueilContrat[]
+  chantiers: Chantier[]
   projetsStructurants: ProjetStructurantVueDEnsemble[]
   ministères: Ministère[]
   axes: Axe[],
@@ -47,8 +44,7 @@ export const getServerSideProps: GetServerSideProps<NextPageAccueilProps> = asyn
     dependencies.getMinistèreRepository(),
     dependencies.getTerritoireRepository(),
   )
-    .run(session.habilitations, session.profil)
-    .then(chantiersResult => chantiersResult.map(presenterEnChantierAccueilContrat));
+    .run(session.habilitations, session.profil);
 
   const projetsStructurants: ProjetStructurantVueDEnsemble[] = await new RécupérerListeProjetsStructurantsVueDEnsembleUseCase(
     dependencies.getProjetStructurantRepository(),

@@ -58,11 +58,6 @@ const useChantiersFiltrés = (chantiers: (ChantierAccueilContrat | ChantierRappo
         filtresActifs.axes.some(filtre => chantier.axe === filtre.nom)
       ));
     }
-    if (filtresActifs.ppg.length > 0) {
-      résultat = résultat.filter(chantier => (
-        filtresActifs.ppg.some(filtre => chantier.ppg === filtre.nom)
-      ));
-    }
     if (filtresActifs.filtresTypologie.length > 0) {
       résultat = résultat.filter(chantier => (
         filtresActifs.filtresTypologie.some(filtre => chantier[filtre.attribut])
@@ -70,7 +65,7 @@ const useChantiersFiltrés = (chantiers: (ChantierAccueilContrat | ChantierRappo
     }
 
     return résultat;
-  }, [chantiers, territoireSélectionné, session, filtresActifs.périmètresMinistériels, filtresActifs.axes, filtresActifs.ppg, filtresActifs.filtresTypologie, statutsSélectionnés]);
+  }, [chantiers, territoireSélectionné, session, filtresActifs.périmètresMinistériels, filtresActifs.axes, filtresActifs.filtresTypologie, statutsSélectionnés]);
 
   const chantiersFiltrés = useMemo(() => {
     let résultat: (ChantierAccueilContrat | ChantierRapportDetailleContrat)[] = chantiersFiltrésSansFiltreAlerte;
