@@ -1,0 +1,1 @@
+SELECT * FROM {{ ref('metadata_parametrage_indicateurs_temporaire') }}
