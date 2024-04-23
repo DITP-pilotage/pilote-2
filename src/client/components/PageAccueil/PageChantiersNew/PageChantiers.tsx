@@ -30,7 +30,6 @@ import BarreDeProgression from '@/components/_commons/BarreDeProgression/BarreDe
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import Axe from '@/server/domain/axe/Axe.interface';
-import Ppg from '@/server/domain/ppg/Ppg.interface';
 import {
   AvancementsGlobauxTerritoriauxMoyensContrat,
   AvancementsStatistiquesAccueilContrat,
@@ -44,7 +43,6 @@ interface PageChantiersProps {
   chantiers: ChantierAccueilContrat[],
   ministères: Ministère[]
   axes: Axe[],
-  ppg: Ppg[],
   territoireCode: string
   mailleSelectionnee: 'départementale' | 'régionale'
   brouillon: boolean
@@ -63,7 +61,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   chantiers,
   ministères,
   axes,
-  ppg,
   territoireCode,
   mailleSelectionnee,
   brouillon,
@@ -125,7 +122,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
           <FiltresActifs
             axes={axes}
             ministères={ministères}
-            ppg={ppg}
           />
         ) : null
       }

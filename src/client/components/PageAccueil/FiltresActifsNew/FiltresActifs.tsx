@@ -10,15 +10,13 @@ import FiltresActifsStyled from './FiltresActifs.styled';
 interface FiltresActifsProps {
   ministères: Ministère[]
   axes: Axe[],
-  ppg: Ppg[],
 }
 
 
-export default function FiltresActifs({ ministères, axes, ppg } : FiltresActifsProps) {
+export default function FiltresActifs({ ministères, axes }: FiltresActifsProps) {
   const [filtres, setFiltres] = useQueryStates({
     perimetres: parseAsArrayOf(parseAsString).withDefault([]),
     axes: parseAsArrayOf(parseAsString).withDefault([]),
-    ppg: parseAsArrayOf(parseAsString).withDefault([]),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
@@ -36,7 +34,6 @@ export default function FiltresActifs({ ministères, axes, ppg } : FiltresActifs
   // Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour
 
   const nombreFiltresActifs = filtres.axes.length
-    + filtres.ppg.length
     + filtres.perimetres.length
     + (filtres.estBarometre ? 1 : 0)
     + (filtres.estTerritorialise ? 1 : 0)
@@ -59,7 +56,6 @@ export default function FiltresActifs({ ministères, axes, ppg } : FiltresActifs
     return setFiltres({
       perimetres: [],
       axes: [],
-      ppg: [],
       estBarometre: false,
       estTerritorialise: false,
       estEnAlerteTauxAvancementNonCalculé: false,
@@ -109,22 +105,6 @@ export default function FiltresActifs({ ministères, axes, ppg } : FiltresActifs
                 libellé={retrouverNomFiltre(axeId, axes)}
                 suppressionCallback={() => {
                   filtres.axes.splice(filtres.axes.indexOf(axeId), 1);
-                  return setFiltres(filtres);
-                }}
-              />
-            </li>
-          ),
-          )
-        }
-        {
-          filtres.ppg.map((ppgId) => (
-            <li
-              key={`tag-axe-${ppgId}`}
-            >
-              <Tag
-                libellé={retrouverNomFiltre(ppgId, ppg)}
-                suppressionCallback={() => {
-                  filtres.ppg.splice(filtres.axes.indexOf(ppgId), 1);
                   return setFiltres(filtres);
                 }}
               />

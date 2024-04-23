@@ -21,7 +21,6 @@ import {
 } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
-import Ppg from '@/server/domain/ppg/Ppg.interface';
 import SélecteurTypeDeRéforme from '@/components/PageAccueil/SélecteurTypeDeRéformeNew/SélecteurTypeDeRéforme';
 import { RécupérerVariableContenuUseCase } from '@/server/gestion-contenu/usecases/RécupérerVariableContenuUseCase';
 import CompteurFiltre from '@/client/utils/filtres/CompteurFiltre';
@@ -41,7 +40,6 @@ interface ChantierAccueil {
   chantiers: ChantierAccueilContrat[]
   ministères: Ministère[]
   axes: Axe[],
-  ppg: Ppg[],
   territoireCode: string
   mailleSelectionnee: 'départementale' | 'régionale',
   brouillon: boolean
@@ -220,7 +218,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   chantiers,
   axes,
   ministères,
-  ppg,
   territoireCode,
   mailleSelectionnee,
   brouillon,
@@ -258,7 +255,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             afficherToutLesFiltres
             axes={axes}
             ministères={ministères}
-            ppg={ppg}
           />
         </section>
       </BarreLatérale>
@@ -279,7 +275,6 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
           filtresComptesCalculés={filtresComptesCalculés}
           mailleSelectionnee={mailleSelectionnee}
           ministères={ministères}
-          ppg={ppg}
           répartitionMétéos={répartitionMétéos}
           territoireCode={territoireCode}
         />
