@@ -3,7 +3,7 @@ import {
 } from '@/server/parametrage-indicateur/domain/ports/InformationMetadataIndicateurRepository';
 import { InformationMetadataIndicateur } from '@/server/parametrage-indicateur/domain/InformationMetadataIndicateur';
 import { AcceptedValue } from '@/server/parametrage-indicateur/domain/AcceptedValue';
-import data from '../../../../../data_management/data_factory/models/raw/ppg_metadata/schema.yml';
+import data from '../../../../../data_management/data_factory/models/staging/import/sources.yml';
 
 interface YamlAcceptedValue {
 
@@ -31,12 +31,17 @@ interface YamlColumn {
   }
 }
 
-interface YamlModel {
+interface YamlTable {
   columns: YamlColumn[]
 }
 
+interface YamlSource {
+  name: string
+  tables: YamlTable[]
+}
+
 export interface YamlResult {
-  models: YamlModel[]
+  sources: YamlSource[]
 }
 const convertirEnInformationMetadataIndicateur = (yamlColumn: YamlColumn): InformationMetadataIndicateur   => {
   const acceptedValues: YamlAcceptedValue[] = (yamlColumn.meta.pilote_edit_acceptedValues && JSON.parse(yamlColumn.meta.pilote_edit_acceptedValues) as YamlAcceptedValue[]) || [];
@@ -65,6 +70,6 @@ const convertirEnInformationMetadataIndicateur = (yamlColumn: YamlColumn): Infor
 export class YamlInformationMetadataIndicateurRepository implements InformationMetadataIndicateurRepository {
   récupererInformationMetadataIndicateur(): InformationMetadataIndicateur[] {
     const result: YamlResult = data as YamlResult;
-    return result.models.flatMap(model => model.columns).filter(Boolean).map(convertirEnInformationMetadataIndicateur);
+    return result.sources.find(source => source.name === 'parametrage_indicateurs')!.tables.flatMap(table => table.columns).filter(Boolean).map(convertirEnInformationMetadataIndicateur);
   }
 }

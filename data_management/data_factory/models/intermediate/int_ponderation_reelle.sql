@@ -11,7 +11,7 @@ end as poids_zone_declaree,
 ind.chantier_id ,
 poids_pourcent_dept_declaree, poids_pourcent_reg_declaree, poids_pourcent_nat_declaree, z.zone_type
 
-from {{ source('import_from_files', 'metadata_parametrage_indicateurs') }} a
+from {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} a
 cross join {{ source('db_schema_public', 'territoire') }} t
 left join {{ ref('metadata_zones') }} z on t.zone_id =z.zone_id
 left join {{ ref('stg_ppg_metadata__indicateurs') }} ind on ind.id = indic_id  

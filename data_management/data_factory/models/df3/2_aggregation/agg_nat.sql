@@ -10,7 +10,7 @@ mesure_last_params_nat as (
         a.indic_id , metric_date, metric_type, metric_value , zone_id,
         b.vi_nat_from , b.vi_nat_op , b.va_nat_from, b.va_nat_op, b.vc_nat_from , b.vc_nat_op 
     from {{ ref('mesure_last_null_erase_keep_lastvalmonth') }} a
-    left join {{ source('import_from_files', 'metadata_parametrage_indicateurs') }} b 
+    left join {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} b 
     ON a.indic_id = b.indic_id
 ), 
 -- Valeurs NAT saisies directement par l'utilisateur
@@ -28,7 +28,7 @@ mesure_last_params_nat_user as (
 -- Liste des indicateurs qui ont un paramétrage d'aggrégation pour les valeurs NAT
 indic_agg_to_nat as (
 	select b.indic_id, b.vi_nat_from , b.vi_nat_op, b.va_nat_from , b.va_nat_op, b.vc_nat_from , b.vc_nat_op 
-	from {{ source('import_from_files', 'metadata_parametrage_indicateurs') }} b
+	from {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} b
 	where 
 		b.vi_nat_from not in ('_', 'user_input') OR
 		b.va_nat_from not in ('_', 'user_input') OR
