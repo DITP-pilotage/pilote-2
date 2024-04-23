@@ -47,19 +47,7 @@ models:
       ppg_metadata:
         +docs:
           node_color: "#553df2"
-        metadata_indicateurs: 
-          +materialized: incremental
-          +unique_key:
-            - 'indic_id'
-        metadata_indicateurs_hidden: 
-          +materialized: incremental
-          +unique_key:
-            - 'indic_id'
-        metadata_parametrage_indicateurs: 
-          +materialized: incremental
-          +unique_key:
-            - 'indic_id'
-        metadata_indicateurs_complementaire: 
+          metadata_indicateurs: 
           +materialized: incremental
           +unique_key:
             - 'indic_id'
