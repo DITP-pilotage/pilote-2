@@ -1,1 +1,3 @@
 *.dump
+*.pgsql
+*.tar.gz
