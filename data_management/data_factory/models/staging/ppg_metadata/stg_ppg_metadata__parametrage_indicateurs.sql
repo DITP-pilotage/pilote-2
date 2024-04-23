@@ -2,7 +2,7 @@ with
 
 source as (
 
-    select * from {{ source('import_from_files', 'metadata_parametrage_indicateurs') }}
+    select * from {{ ref('metadata_parametrage_indicateurs') }}
 
 ),
 

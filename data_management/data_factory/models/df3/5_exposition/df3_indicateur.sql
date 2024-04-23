@@ -93,7 +93,7 @@ sort_mesures_vaca_last as (
 	left join {{ ref('get_vcg') }} gvcg on mi.indic_id=gvcg.indic_id and t.zone_id=gvcg.zone_id
 	left join (select * from {{ ref('get_vca') }} where yyear=(date_part('year', now()))) gvca on mi.indic_id=gvca.indic_id and t.zone_id=gvca.zone_id
 	left join {{ ref('metadata_indicateur_types') }} mit on mit.indic_type_id = mi.indic_type 
-	left join {{ source('import_from_files', 'metadata_parametrage_indicateurs') }} mpi on mi.indic_id = mpi.indic_id 
+	left join {{ ref('metadata_parametrage_indicateurs') }} mpi on mi.indic_id = mpi.indic_id 
 	left join public.territoire terr on t.zone_id = terr.zone_id 
 	left join {{ ref('metadata_zones') }} mz on mz.zone_id = terr.zone_id 
 	LEFT JOIN {{ ref('int_indicateurs_zones_applicables') }} z_appl ON z_appl.indic_id = mi.indic_id AND z_appl.zone_id = t.zone_id

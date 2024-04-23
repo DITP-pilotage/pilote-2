@@ -10,7 +10,7 @@ mesure_last_params_reg as (
         a.indic_id , metric_date, metric_type, metric_value , zone_id,
         b.vi_reg_from , b.vi_reg_op , b.va_reg_from, b.va_reg_op, b.vc_reg_from , b.vc_reg_op 
     from {{ ref('mesure_last_null_erase_keep_lastvalmonth') }} a
-    left join {{ source('import_from_files', 'metadata_parametrage_indicateurs') }} b 
+    left join {{ ref('metadata_parametrage_indicateurs') }} b 
     ON a.indic_id = b.indic_id
 ), 
 -- Valeurs REG saisies directement par l'utilisateur
@@ -28,7 +28,7 @@ mesure_last_params_reg_user as (
 -- Liste des indicateurs qui ont un paramétrage d'aggrégation pour les valeurs REG
 indic_agg_from_dept as (
 	select b.indic_id, b.vi_reg_from , b.vi_reg_op, b.va_reg_from , b.va_reg_op, b.vc_reg_from , b.vc_reg_op 
-	from {{ source('import_from_files', 'metadata_parametrage_indicateurs') }} b
+	from {{ ref('metadata_parametrage_indicateurs') }} b
 	where 
 		b.vi_reg_from not in ('_', 'user_input') OR
 		b.va_reg_from not in ('_', 'user_input') OR

@@ -11,7 +11,7 @@ mesure_last_params_nat as (
         a.indic_id , metric_date, metric_type, metric_value , zone_id,
         b.vi_nat_from , b.vi_nat_op , b.va_nat_from, b.va_nat_op, b.vc_nat_from , b.vc_nat_op 
     from {{ ref('mesure_last_null_erase_keep_lastvalmonth') }} a
-    left join {{ source('import_from_files', 'metadata_parametrage_indicateurs') }} b 
+    left join {{ ref('metadata_parametrage_indicateurs') }} b 
     ON a.indic_id = b.indic_id
 ), 
 -- Les VC FR saisies, **qui ne devraient pas être prises en compte**! (vc_nat_from<>'user_input')
