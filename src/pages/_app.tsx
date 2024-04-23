@@ -34,8 +34,6 @@ const queryClient = new QueryClient({
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 
 function MonApplication({ Component, pageProps }: AppProps) {
-  const estNouvellePageAccueil = process.env.NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL;
-
   useDétecterLargeurDÉcran();
   const [afficherLeLoader, setAfficherLeLoader] = useState(false);
   const [pageEnCoursDeChargement, setPageEnCoursDeChargement] = useState(false);
@@ -48,42 +46,38 @@ function MonApplication({ Component, pageProps }: AppProps) {
   };
 
   useEffect(() => {
-    if (!estNouvellePageAccueil) {
-      Router.events.on('routeChangeStart', débutChargement);
-      Router.events.on('routeChangeComplete', finChargement);
-      Router.events.on('routeChangeError', finChargement);
-      return () => {
-        Router.events.off('routeChangeStart', débutChargement);
-        Router.events.off('routeChangeComplete', finChargement);
-        Router.events.off('routeChangeError', finChargement);
-      };
-    }
-  }, [estNouvellePageAccueil]);
+    Router.events.on('routeChangeStart', débutChargement);
+    Router.events.on('routeChangeComplete', finChargement);
+    Router.events.on('routeChangeError', finChargement);
+    return () => {
+      Router.events.off('routeChangeStart', débutChargement);
+      Router.events.off('routeChangeComplete', finChargement);
+      Router.events.off('routeChangeError', finChargement);
+    };
+  }, []);
 
   const matomoUrl = process.env.NEXT_PUBLIC_MATOMO_URL;
   const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID;
   const estRecordAnalyticsActive = process.env.NEXT_PUBLIC_RECORD_ANALYTICS;
 
   useEffect(() => {
-    if (!estNouvellePageAccueil && estRecordAnalyticsActive === 'true') {
+    if (estRecordAnalyticsActive === 'true') {
       init({ url: matomoUrl as string, siteId: matomoSiteId as string });
     }
-  }, [estNouvellePageAccueil, estRecordAnalyticsActive, matomoSiteId, matomoUrl]);
+  }, [estRecordAnalyticsActive, matomoSiteId, matomoUrl]);
 
   useEffect(() => {
-    if (!estNouvellePageAccueil) {
-      let timer = setTimeout(() => {});
+    let timer = setTimeout(() => {});
 
-      if (pageEnCoursDeChargement)
-        timer = setTimeout(() => setAfficherLeLoader(true), DELAI_AVANT_APPARITION_DU_LOADER_EN_MS);
-      else {
-        clearTimeout(timer);
-        setAfficherLeLoader(false);
-      }
-
-      return () => clearTimeout(timer);
+    if (pageEnCoursDeChargement)
+      timer = setTimeout(() => setAfficherLeLoader(true), DELAI_AVANT_APPARITION_DU_LOADER_EN_MS);
+    else {
+      clearTimeout(timer);
+      setAfficherLeLoader(false);
     }
-  }, [estNouvellePageAccueil, pageEnCoursDeChargement]);
+
+    return () => clearTimeout(timer);
+  }, [pageEnCoursDeChargement]);
 
   return (
     <>
