@@ -32,7 +32,7 @@ export default function TableauChantiers({ données, ministèresDisponibles }: T
     tableau.setPageSize(50);
   }, [tableau]);
 
-  const [estGroupe, setEstGroupe] = useQueryState('groupeParMinistere', parseAsBoolean.withDefault(true).withOptions({
+  const [estGroupe, setEstGroupe] = useQueryState('groupeParMinistere', parseAsBoolean.withDefault(false).withOptions({
     clearOnDefault: true,
   }));
 

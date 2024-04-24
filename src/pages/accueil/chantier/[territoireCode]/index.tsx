@@ -59,6 +59,15 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     throw new Error('Not connected or not authorized ?');
   }
 
+  if (query.territoireCode === 'NAT-FR' && !session.habilitations.lecture.territoires.includes('NAT-FR')) {
+    return {
+      redirect: {
+        statusCode: 302,
+        destination: `/accueil/chantier/${session.habilitations.lecture.territoires[0]}`,
+      },
+    };
+  }
+
   const filtres = {
     perimetres: query.perimetres ? (query.perimetres as string).split(',') : [],
     axes: query.axes ? (query.axes as string).split(',') : [],
@@ -93,7 +102,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     dependencies.getChantierDatesDeMàjRepository(),
     dependencies.getTerritoireRepository(),
   )
-    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, filtres);
+    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, axes, filtres);
 
   const compteurFiltre = new CompteurFiltre(chantiers);
 
