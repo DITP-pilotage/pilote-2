@@ -52,7 +52,8 @@ export default function Navigation() {
   const pages = [
     {
       nom: 'Accueil',
-      lien: '/',
+      lien: '/accueil/chantier/NAT-FR',
+      matcher: '/accueil/chantier/[territoireCode]',
       accessible: true,
       prefetch: true,
       target: '_self',
@@ -60,6 +61,7 @@ export default function Navigation() {
     {
       nom: 'Gestion des comptes',
       lien: '/admin/utilisateurs',
+      matcher: '/admin/utilisateurs',
       accessible: estAutoriséAAccéderALaGestionDesComptes(session),
       prefetch: false,
       target: '_self',
@@ -67,6 +69,7 @@ export default function Navigation() {
     {
       nom: 'Nouveautés',
       lien: '/nouveautes',
+      matcher: '/nouveautes',
       accessible: true,
       prefetch: false,
       target: '_self',
@@ -74,6 +77,7 @@ export default function Navigation() {
     {
       nom: 'Centre d\'aide',
       lien: '/centreaide',
+      matcher: '/centreaide',
       accessible: true,
       prefetch: false,
       target: '_blank',
@@ -115,7 +119,7 @@ export default function Navigation() {
                       key={page.lien}
                     >
                       <Link
-                        aria-current={page.lien === urlActuelle ? 'true' : undefined}
+                        aria-current={page.matcher === urlActuelle ? 'true' : undefined}
                         className='fr-nav__link'
                         href={page.lien}
                         onClick={fermerLaModaleDuMenu}
@@ -126,7 +130,7 @@ export default function Navigation() {
                     </li>
                   ))
                 }
-                { 
+                {
                   estAdministrateur(session) ? (
                     <MenuItemGestionContenu urlActuelle={urlActuelle} />
                   ) : null
