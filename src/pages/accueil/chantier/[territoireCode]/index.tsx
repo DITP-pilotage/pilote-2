@@ -59,7 +59,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     throw new Error('Not connected or not authorized ?');
   }
 
-  if (query.territoireCode === 'NAT-FR' && !session.habilitations.lecture.territoires.includes('NAT-FR')) {
+  if ((query.territoireCode === 'NAT-FR' && !session.habilitations.lecture.territoires.includes('NAT-FR')) || !session.habilitations.lecture.territoires.includes(query.territoireCode as string)) {
     return {
       redirect: {
         statusCode: 302,
