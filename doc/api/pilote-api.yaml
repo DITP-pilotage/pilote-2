@@ -4,8 +4,70 @@ x-stoplight:
 info:
   title: pilote-api
   version: '1.0'
-  summary: Cette API permet d'interagir avec Pilote.
-  description: 'Via cette API, il est possible de récupérer les données de Pilote et d''importer des données dans la limite des autorisations fixées par votre compte.'
+  summary: API Pilote.
+  description: |-
+    # Introduction
+    Cette API permet d'interagir avec Pilote.
+
+    Via cette API, il est possible de récupérer les données de Pilote et d'importer de nouvelles données.
+    ## Autorisations
+
+    Les autorisations sont identiques à celles de votre compte Pilote existant. Vous ne pourrez accéder et modifier que des données auxquelles vous avez déjà accès via Pilote.
+
+    # Détails techniques
+    ## Authentification
+
+    Pour utiliser l'API, vous devrez **récupérer un token d'API**. Celui-ci sera à demander par email à l'adresse [support.ditp@modernisation.gouv.fr](mailto:support.ditp@modernisation.gouv.fr) avec en début d'objet *[api.token]*.
+
+    Ce token devra être inséré en *header* pour chaque requête envoyée vers l'API. `Authorization: Bearer <token>`.
+
+    Par exemple, pour obtenir les données  d'un indicateur:
+
+    ```
+    curl -X 'GET' \
+      'https://pilote.modernisation.gouv.fr/api/indicateur' \
+      -H 'accept: application/json' \
+      -H 'Authorization: Bearer <ACCESS_TOKEN>'
+    ```
+
+    ### Comprendre le fichier d’import
+
+    Pour mettre à jour vos données, vous devrez remplir un modèle d’import avec les champs suivants.
+
+    *   `identifiant_indic` • Identifiant unique de l’indicateur. Exemple : IND-001, IND-002, IND-003. (voir identifiant précisé plus haut sur la page)
+    *   `zone_id` • Identifiant du territoire pour lequel la donnée est renseignée. Il provient des référentiels INSEE et est interopérable. Exemple : D34, D20... (voir le référentiel ci-dessous)
+    *   `zone_nom` • Champ facultatif précisant les territoires auxquels correspondent les zone-id. Vous n’êtes pas obligé(e) d’inclure cette colonne.
+    *   `date_valeur` • Date à laquelle se réfère la valeur numérique. La date doit être renseignée selon le modèle suivant année-mois-jour. Exemple : 2023-02-26, 2023-01-17...
+    *   `type_valeur` • Type de données insérées : vi pour valeur initiale, va pour valeur actuelle, vc pour valeur cible
+    *   `valeur` • Valeur de l’indicateur. La valeur doit être numérique. Ne pas saisir de texte (par exemple “NC” ou “non renseigné”)
+
+    Les formats acceptés sont csv et xlsx
+
+    | identifiant_indic | zone_id | zone_nom (facultatif) | date_valeur | type_valeur | valeur |
+    |-------------------|---------|-----------------------|-------------|-------------|--------|
+    | IND-009           | D12     | Aveyron               | 2023-03-31  | va          | 5      |
+    | IND-009           | D13     | Bouches-du-Rhône      | 2023-01-17  | va          | 12     |
+    | IND-009           | D14     | Calvados              | 2023-02-26  | va          | 20     |
+
+
+    ### Référentiels
+
+    Consultez les référentiels pour retrouver les codes de tous les territoires (départements, régions, et national). Vous pourrez copier dans ce référentiel les valeurs à indiquer pour les champs zone-id et zone dans le modèle d’import fourni.
+
+    Il s'agit des codes INSEE des départements et régions précédés respectivement par *D* ou *R*. Pour désigner le niveau national, on utilise `FRANCE`.
+
+    [Télécharger le référentiel des territoires XLSX – 12 ko](https://github.com/DITP-pilotage/pilote-2/raw/dev/public/referentiel/referentiel_territoires.xlsx)
+
+    ### Comment bien remplir le fichier d’import ?
+
+    *   Si vous choisissez le format CSV pour importer les données, veuillez utiliser le point-virgule (;) pour délimiter les colonnes et les guillemets (") pour délimiter les chaines de caractères
+    *   Si vous saisissez un taux, la valeur saisie doit se trouver entre 1 et 100. Par exemple, pour 78%, renseignez la valeur 78.
+    *   L'encodage du fichier doit être en UTF-8
+    *   Si vous importez une cellule vide, la valeur précédente sera écrasée (si existante)
+    *   Toutes les zones du template d'import ne sont pas nécessaires. Certaines lignes du fichier d'import peuvent être supprimées. Il n’est ainsi pas nécessaire d’importer la totalité des départements pour chaque mise à jour.
+    *   Il n'est pas possible d'importer plusieurs valeurs pour la même zone, date, identifiant d'indicateur et type de valeur. Cela générerait une erreur.
+
+    **Si vous rencontrez des difficultés lors de l’import de votre fichier, merci de nous contacter à l’adresse :** [support.ditp@modernisation.gouv.fr](mailto:support.ditp@modernisation.gouv.fr)
   contact:
     name: Colin DUGEAI
     email: colin.dugeaiATmodernisation.gouv.fr
@@ -201,6 +263,60 @@ paths:
                   - type_valeur
                   - valeur
         description: Ensemble des données indicateurs à ajouter.
+  '/indicateur/{indicateur_id}/donnees':
+    parameters:
+      - schema:
+          type: string
+        name: indicateur_id
+        in: path
+        required: true
+    get:
+      summary: Informations indicateur
+      tags:
+        - Indicateur
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DonneesIndicateur'
+        '403':
+          description: Vous n'avez pas accès à cet indicateur.
+          content: {}
+          headers: {}
+      operationId: get-donnees-indicateur
+      description: Obtenir les données de l'indicateur au format JSON.
+      parameters: []
+    post:
+      summary: Import données indicateur
+      operationId: post-donnees-indicateur
+      responses:
+        '200':
+          description: L'import de données a fonctionné.
+        '400':
+          description: Le fichier n'est pas valide.
+      description: Ajout de données d'un indicateur. Le format d'entrée est un fichier CSV formaté comme sur Pilote (voir instructions ci-dessus).
+      tags:
+        - Indicateur
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  x-stoplight:
+                    id: cwvqhg1h40as2
+              required:
+                - file
+          application/json:
+            schema:
+              type: object
+              properties: {}
+        description: Fichier CSV de données à importer.
 components:
   schemas:
     Chantier:
@@ -347,6 +463,98 @@ components:
       properties:
         id:
           type: string
+    DonneesIndicateur:
+      title: DonneesIndicateur
+      x-stoplight:
+        id: d87zbgfotvdkf
+      type: array
+      items:
+        x-stoplight:
+          id: u8wjidllz7cfa
+        type: object
+        properties:
+          maille:
+            type: string
+            x-stoplight:
+              id: iqt9tzbfs95rk
+            description: Maille de la donnée
+          region:
+            type: string
+            x-stoplight:
+              id: gzzi5slzq2qrt
+          departement:
+            type: string
+            x-stoplight:
+              id: non5fnkl3v7vj
+          ministere:
+            type: string
+            x-stoplight:
+              id: sf94ez5jun1xw
+          chantier:
+            type: string
+            x-stoplight:
+              id: 20zsgz0aw414v
+          chantier_id:
+            type: string
+            x-stoplight:
+              id: cu6m4l1nwmz8q
+          chantier_barometre:
+            type: string
+            x-stoplight:
+              id: 0kw83nhfjwhzg
+          ta:
+            type: string
+            x-stoplight:
+              id: 5i0ahdyoja8tt
+          meteo:
+            type: string
+            x-stoplight:
+              id: eelrj0un9w049
+          indicateur:
+            type: string
+            x-stoplight:
+              id: 3fn9s2q19i2ev
+          vi:
+            type: string
+            x-stoplight:
+              id: owyhtsljd8de6
+          date_vi:
+            type: string
+            x-stoplight:
+              id: sxyeuknp16gsq
+          va:
+            type: string
+            x-stoplight:
+              id: zvbcj4ylk2wme
+          date_va:
+            type: string
+            x-stoplight:
+              id: az8yprulj0u71
+          vca:
+            type: string
+            x-stoplight:
+              id: b9509kqxe72s1
+          date_vca:
+            type: string
+            x-stoplight:
+              id: 3m565zgaew07y
+          taa:
+            type: string
+            x-stoplight:
+              id: kzdbkdjsjsuzp
+          vcg:
+            type: string
+            x-stoplight:
+              id: m0m0bl1zhjhug
+          date_vcg:
+            type: string
+            x-stoplight:
+              id: gowiw29j38gme
+          tag:
+            type: string
+            x-stoplight:
+              id: vh23hnu85wwpu
+      description: ''
   securitySchemes:
     abc-123:
       name: X-API-KEY
