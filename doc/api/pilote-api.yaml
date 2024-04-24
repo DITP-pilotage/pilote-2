@@ -468,6 +468,7 @@ components:
       x-stoplight:
         id: d87zbgfotvdkf
       type: array
+      description: Données concernant un indicateur et le chantier qui le porte.
       items:
         x-stoplight:
           id: u8wjidllz7cfa
@@ -482,79 +483,118 @@ components:
             type: string
             x-stoplight:
               id: gzzi5slzq2qrt
+            description: Région de la donnée
           departement:
             type: string
             x-stoplight:
               id: non5fnkl3v7vj
+            description: Département de la donnée
           ministere:
             type: string
             x-stoplight:
               id: sf94ez5jun1xw
+            description: Ministère associé à l'indicateur
           chantier:
             type: string
             x-stoplight:
               id: 20zsgz0aw414v
+            description: Chantier qui contient cet indicateur
           chantier_id:
             type: string
             x-stoplight:
               id: cu6m4l1nwmz8q
+            description: ID du chantier
+            pattern: ^CH-\d\d\d\d?
           chantier_barometre:
             type: string
             x-stoplight:
               id: 0kw83nhfjwhzg
-          ta:
-            type: string
+            description: Le chantier est-il présent dans le baromètre
+            enum:
+              - 'Oui, Non'
+          tag_chantier:
+            type: number
             x-stoplight:
               id: 5i0ahdyoja8tt
+            description: Taux d'avancement global du chantier
+            minimum: 0
+            maximum: 100
           meteo:
             type: string
             x-stoplight:
               id: eelrj0un9w049
+            description: Météo du chantier sur cette zone
           indicateur:
             type: string
             x-stoplight:
               id: 3fn9s2q19i2ev
+            description: Indicateur concerné
           vi:
-            type: string
+            type: number
             x-stoplight:
               id: owyhtsljd8de6
+            description: Valeur initiale
           date_vi:
             type: string
             x-stoplight:
               id: sxyeuknp16gsq
+            description: Date de valeur initiale
+            example: 01-01-2022
+            format: date-fr
+            pattern: \d\d-\d\d-20\d\d
           va:
-            type: string
+            type: number
             x-stoplight:
               id: zvbcj4ylk2wme
+            description: Valeur actuelle
           date_va:
             type: string
             x-stoplight:
               id: az8yprulj0u71
+            description: Date de valeur actuelle
+            format: date-fr
+            example: 01-01-2022
+            pattern: \d\d-\d\d-20\d\d
           vca:
-            type: string
+            type: number
             x-stoplight:
               id: b9509kqxe72s1
+            description: Valeur cible annuelle
           date_vca:
             type: string
             x-stoplight:
               id: 3m565zgaew07y
+            description: Date de la valeur cible annuelle
+            format: date-fr
+            example: 01-01-2022
+            pattern: \d\d-\d\d-20\d\d
           taa:
-            type: string
+            type: number
             x-stoplight:
               id: kzdbkdjsjsuzp
+            description: Taux d'avancement annuel de l'indicateur
+            minimum: 0
+            maximum: 100
           vcg:
-            type: string
+            type: number
             x-stoplight:
               id: m0m0bl1zhjhug
+            description: Valeur cible globale
           date_vcg:
             type: string
             x-stoplight:
               id: gowiw29j38gme
+            description: Date de la valeur cible globale
+            format: date-fr
+            pattern: \d\d-\d\d-20\d\d
+            example: 01-01-2022
           tag:
-            type: string
+            type: number
             x-stoplight:
               id: vh23hnu85wwpu
-      description: ''
+            description: Taux d'avancement global de l'indicateur
+            minimum: 0
+            maximum: 100
   securitySchemes:
     abc-123:
       name: X-API-KEY
