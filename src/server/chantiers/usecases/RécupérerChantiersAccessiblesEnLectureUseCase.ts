@@ -9,13 +9,13 @@ import { Habilitations } from '@/server/domain/utilisateur/habilitation/Habilita
 import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDatesDeMàjRepository.interface';
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
-import { dependencies } from '@/server/infrastructure/Dependencies';
 import {
   ChantierAccueilContrat,
   MailleChantierContrat,
   presenterEnChantierAccueilContrat,
 } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import Axe from '@/server/domain/axe/Axe.interface';
 
 const masquerPourDROM = (sessionProfil: string, mailleChantier: MailleChantierContrat) => {
   return sessionProfil === 'DROM' && mailleChantier === 'nationale';
@@ -44,22 +44,14 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
     private readonly territoireRepository: TerritoireRepository,
   ) {}
 
-  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, maille: 'DEPT' | 'REG', mailleChantier: MailleChantierContrat, codeInseeSelectionne: string, ministères: Ministère[], filtres: FiltreQueryParams): Promise<ChantierAccueilContrat[]> {
+  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, maille: 'DEPT' | 'REG', mailleChantier: MailleChantierContrat, codeInseeSelectionne: string, ministères: Ministère[], axes: Axe[], filtres: FiltreQueryParams): Promise<ChantierAccueilContrat[]> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
 
-    const [axes, ppg] = await Promise.all(
-      [
-        dependencies.getAxeRepository().getListePourChantiers(chantiersLecture),
-        dependencies.getPpgRepository().getListePourChantiers(chantiersLecture),
-      ],
-    );
-
     const filtresPourChantier: FiltreQueryParams = {
       perimetres: filtres.perimetres,
       axes: filtres.axes.map(filtre => axes.find(axe => axe.id === filtre)!.nom),
-      ppg: filtres.ppg.map(filtre => ppg.find(ppgItem => ppgItem.id === filtre)!.nom),
       statut: filtres.statut,
       estTerritorialise: filtres.estTerritorialise,
       estBarometre: filtres.estBarometre,

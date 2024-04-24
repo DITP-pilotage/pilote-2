@@ -39,7 +39,7 @@ export default function useTableauChantiers(données: TableauChantiersProps['don
   const [tri, setTri] = useState<SortingState>([{ id: 'avancement', desc: false }]);
   const [sélectionColonneÀTrier, setSélectionColonneÀTrier] = useState<string>('avancement');
 
-  const [estGroupe] = useQueryState('groupeParMinistere', parseAsBoolean.withDefault(true));
+  const [estGroupe] = useQueryState('groupeParMinistere', parseAsBoolean.withDefault(false));
 
   const [regroupement, setRegroupement] = useState<GroupingState>(ministèresDisponibles.length > 1 && estGroupe ? ['porteur'] : []);
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('md');

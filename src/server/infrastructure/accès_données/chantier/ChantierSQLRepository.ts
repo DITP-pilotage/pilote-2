@@ -206,12 +206,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
       };
     }
 
-    if (filtres.ppg?.length > 0) {
-      whereOptions.ppg = {
-        in: filtres.ppg,
-      };
-    }
-
     if (filtres.estTerritorialise && filtres.estBarometre) {
       whereOptions.OR = [{
         est_barometre: true,

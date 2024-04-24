@@ -10,7 +10,11 @@ import FiltresMinistèresStyled from './FiltresMinistères.styled';
 const catégorieDeFiltre: 'périmètresMinistériels' = 'périmètresMinistériels';
 
 export default function FiltresMinistères({ ministères }: FiltresMinistèresProps) {
-  const [perimetres, setPerimetres] = useQueryState('perimetres', parseAsArrayOf(parseAsString).withDefault([]).withOptions({ shallow: false, clearOnDefault: true }));
+  const [perimetres, setPerimetres] = useQueryState('perimetres', parseAsArrayOf(parseAsString).withDefault([]).withOptions({
+    shallow: false,
+    clearOnDefault: true,
+    history: 'push',
+  }));
 
   const estDéroulé = useCallback((ministère: Ministère) => {
     return ministère.périmètresMinistériels.some(périmètre => perimetres.includes(périmètre.id));
