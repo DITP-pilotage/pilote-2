@@ -1,6 +1,7 @@
 import { FunctionComponent, useState } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth/next';
+import Head from 'next/head';
 import assert from 'node:assert/strict';
 import PageChantiers from '@/components/PageAccueil/PageChantiersNew/PageChantiers';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
@@ -14,11 +15,7 @@ import { authOptions } from '@/server/infrastructure/api/auth/[...nextauth]';
 import RécupérerChantiersAccessiblesEnLectureUseCase
   from '@/server/chantiers/usecases/RécupérerChantiersAccessiblesEnLectureUseCase';
 import { dependencies } from '@/server/infrastructure/Dependencies';
-import {
-  ChantierAccueilContrat,
-  MailleChantierContrat,
-  presenterEnChantierAccueilContrat,
-} from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
+import { ChantierAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import SélecteurTypeDeRéforme from '@/components/PageAccueil/SélecteurTypeDeRéformeNew/SélecteurTypeDeRéforme';
@@ -48,26 +45,6 @@ interface ChantierAccueil {
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat
   répartitionMétéos: RépartitionsMétéos
 }
-
-const masquerPourDROM = (sessionProfil: string, mailleChantier: MailleChantierContrat) => {
-  return sessionProfil === 'DROM' && mailleChantier === 'nationale';
-};
-const appliquerFiltreDrom = (chantier: ChantierAccueilContrat, sessionProfil: string, mailleChantier: MailleChantierContrat) => {
-  return masquerPourDROM(sessionProfil, mailleChantier) ? chantier.périmètreIds.includes('PER-018') : true;
-};
-
-const appliquerFiltreTerritorialise = (chantier: ChantierAccueilContrat, mailleChantier: MailleChantierContrat): boolean => {
-  return mailleChantier !== 'nationale' ? chantier.estTerritorialisé || !!chantier.tauxAvancementDonnéeTerritorialisée[mailleChantier] || !!chantier.météoDonnéeTerritorialisée[mailleChantier] : true;
-};
-
-const appliquerFiltre = (mailleChantier: MailleChantierContrat, codeInsee: string, sessionProfil: string) => {
-
-  return (chantier: ChantierAccueilContrat): boolean => {
-    return !!chantier.mailles[mailleChantier][codeInsee].estApplicable
-      && appliquerFiltreDrom(chantier, sessionProfil, mailleChantier)
-      && appliquerFiltreTerritorialise(chantier, mailleChantier);
-  };
-};
 
 export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ req, res, query }) => {
   const session = await getServerSession(req, res, authOptions);
@@ -104,25 +81,19 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee ?? (maille === 'REG' ? 'régionale' : 'départementale');
 
-  const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
-    dependencies.getChantierRepository(),
-    dependencies.getChantierDatesDeMàjRepository(),
-    dependencies.getMinistèreRepository(),
-    dependencies.getTerritoireRepository(),
-  )
-    .run(session.habilitations, session.profil, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', filtres)
-    .then(chantiersResult => chantiersResult
-      .map(presenterEnChantierAccueilContrat(territoireCode))
-      .filter(appliquerFiltre(mailleChantier || 'départementale', codeInseeSelectionne, session.profil)),
-    );
-
-  const [ministères, axes, ppg] = await Promise.all(
+  const [ministères, axes] = await Promise.all(
     [
       dependencies.getMinistèreRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
       dependencies.getAxeRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
-      dependencies.getPpgRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
     ],
   );
+
+  const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
+    dependencies.getChantierRepository(),
+    dependencies.getChantierDatesDeMàjRepository(),
+    dependencies.getTerritoireRepository(),
+  )
+    .run(session.habilitations, session.profil, territoireCode, mailleSelectionnee === 'régionale' ? 'REG' : 'DEPT', mailleChantier || 'départementale', codeInseeSelectionne, ministères, filtres);
 
   const compteurFiltre = new CompteurFiltre(chantiers);
 
@@ -138,6 +109,26 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   }, {
     nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
     condition: (chantier) => Alerte.estEnAlerteTauxAvancementNonCalculé(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.avancement.global),
+  }, {
+    nomCritère: 'orage',
+    condition: (chantier) => (
+      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'ORAGE'
+    ) ?? false,
+  }, {
+    nomCritère: 'couvert',
+    condition: (chantier) => (
+      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'COUVERT'
+    ) ?? false,
+  }, {
+    nomCritère: 'nuage',
+    condition: (chantier) => (
+      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'NUAGE'
+    ) ?? false,
+  }, {
+    nomCritère: 'soleil',
+    condition: (chantier) => (
+      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'SOLEIL'
+    ) ?? false,
   }]);
 
   const chantiersAvecAlertes = filtresAlertes.estEnAlerteÉcart || filtresAlertes.estEnAlerteBaisseOuStagnation || filtresAlertes.estEnAlerteDonnéesNonMàj || filtresAlertes.estEnAlerteTauxAvancementNonCalculé ? chantiers.filter(chantier => {
@@ -164,33 +155,11 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     estApplicable: null,
   }));
 
-  const filtresMétéoComptesCalculés = compteurFiltre.compter([{
-    nomCritère: 'orage',
-    condition: (chantier) => (
-      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'ORAGE'
-    ) ?? false,
-  }, {
-    nomCritère: 'couvert',
-    condition: (chantier) => (
-      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'COUVERT'
-    ) ?? false,
-  }, {
-    nomCritère: 'nuage',
-    condition: (chantier) => (
-      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'NUAGE'
-    ) ?? false,
-  }, {
-    nomCritère: 'soleil',
-    condition: (chantier) => (
-      chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'SOLEIL'
-    ) ?? false,
-  }]);
-
   const répartitionMétéos = {
-    ORAGE: filtresMétéoComptesCalculés.orage.nombre,
-    COUVERT: filtresMétéoComptesCalculés.couvert.nombre,
-    NUAGE: filtresMétéoComptesCalculés.nuage.nombre,
-    SOLEIL: filtresMétéoComptesCalculés.soleil.nombre,
+    ORAGE: filtresComptesCalculés.orage.nombre,
+    COUVERT: filtresComptesCalculés.couvert.nombre,
+    NUAGE: filtresComptesCalculés.nuage.nombre,
+    SOLEIL: filtresComptesCalculés.soleil.nombre,
   };
 
   return {
@@ -202,7 +171,6 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       }),
       ministères,
       axes,
-      ppg,
       territoireCode,
       mailleSelectionnee: mailleSelectionnee || 'départementale',
       brouillon: query.brouillon !== 'false',
@@ -229,57 +197,64 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
-    <div className='flex'>
-      <BarreLatérale
-        estOuvert={estOuverteBarreLatérale}
-        setEstOuvert={setEstOuverteBarreLatérale}
-      >
-        <BarreLatéraleEncart>
-          <SélecteurTypeDeRéforme
-            territoireCode={territoireCode}
-            typeDeRéformeSélectionné='chantier'
-          />
-          <SélecteursMaillesEtTerritoires
-            mailleSelectionnee={mailleSelectionnee}
-            territoireCode={territoireCode}
-          />
-        </BarreLatéraleEncart>
-        <section>
-          <Titre
-            baliseHtml='h1'
-            className='fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8'
+    <>
+      <Head>
+        <title>
+          PILOTE - Piloter l’action publique par les résultats
+        </title>
+      </Head>
+      <div className='flex'>
+        <BarreLatérale
+          estOuvert={estOuverteBarreLatérale}
+          setEstOuvert={setEstOuverteBarreLatérale}
+        >
+          <BarreLatéraleEncart>
+            <SélecteurTypeDeRéforme
+              territoireCode={territoireCode}
+              typeDeRéformeSélectionné='chantier'
+            />
+            <SélecteursMaillesEtTerritoires
+              mailleSelectionnee={mailleSelectionnee}
+              territoireCode={territoireCode}
+            />
+          </BarreLatéraleEncart>
+          <section>
+            <Titre
+              baliseHtml='h1'
+              className='fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8'
+            >
+              Filtres
+            </Titre>
+            <Filtres
+              afficherToutLesFiltres
+              axes={axes}
+              ministères={ministères}
+            />
+          </section>
+        </BarreLatérale>
+        <div className='w-full'>
+          <BoutonSousLigné
+            classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w'
+            onClick={() => setEstOuverteBarreLatérale(true)}
+            type='button'
           >
             Filtres
-          </Titre>
-          <Filtres
-            afficherToutLesFiltres
+          </BoutonSousLigné>
+          <PageChantiers
+            avancementsAgrégés={avancementsAgrégés}
+            avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
             axes={axes}
+            brouillon={brouillon}
+            chantiers={chantiers}
+            filtresComptesCalculés={filtresComptesCalculés}
+            mailleSelectionnee={mailleSelectionnee}
             ministères={ministères}
+            répartitionMétéos={répartitionMétéos}
+            territoireCode={territoireCode}
           />
-        </section>
-      </BarreLatérale>
-      <div className='w-full'>
-        <BoutonSousLigné
-          classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w'
-          onClick={() => setEstOuverteBarreLatérale(true)}
-          type='button'
-        >
-          Filtres
-        </BoutonSousLigné>
-        <PageChantiers
-          avancementsAgrégés={avancementsAgrégés}
-          avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
-          axes={axes}
-          brouillon={brouillon}
-          chantiers={chantiers}
-          filtresComptesCalculés={filtresComptesCalculés}
-          mailleSelectionnee={mailleSelectionnee}
-          ministères={ministères}
-          répartitionMétéos={répartitionMétéos}
-          territoireCode={territoireCode}
-        />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

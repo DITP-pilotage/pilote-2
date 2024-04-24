@@ -1,8 +1,6 @@
 import { chantier as chantierPrisma } from '@prisma/client';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import ChantierRepository from '@/server/domain/chantier/ChantierRepository.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import TerritoireRepository from '@/server/domain/territoire/TerritoireRepository.interface';
 import { parseChantier } from '@/server/infrastructure/accès_données/chantier/ChantierSQLParser';
 import { groupBy } from '@/client/utils/arrays';
@@ -12,16 +10,41 @@ import ChantierDatesDeMàjRepository from '@/server/domain/chantier/ChantierDate
 import { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import { FiltreQueryParams } from '@/server/chantiers/app/contrats/FiltreQueryParams';
 import { dependencies } from '@/server/infrastructure/Dependencies';
+import {
+  ChantierAccueilContrat,
+  MailleChantierContrat,
+  presenterEnChantierAccueilContrat,
+} from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
+import Ministère from '@/server/domain/ministère/Ministère.interface';
+
+const masquerPourDROM = (sessionProfil: string, mailleChantier: MailleChantierContrat) => {
+  return sessionProfil === 'DROM' && mailleChantier === 'nationale';
+};
+const appliquerFiltreDrom = (chantier: ChantierAccueilContrat, sessionProfil: string, mailleChantier: MailleChantierContrat) => {
+  return masquerPourDROM(sessionProfil, mailleChantier) ? chantier.périmètreIds.includes('PER-018') : true;
+};
+
+const appliquerFiltreTerritorialise = (chantier: ChantierAccueilContrat, mailleChantier: MailleChantierContrat): boolean => {
+  return mailleChantier !== 'nationale' ? chantier.estTerritorialisé || !!chantier.tauxAvancementDonnéeTerritorialisée[mailleChantier] || !!chantier.météoDonnéeTerritorialisée[mailleChantier] : true;
+};
+
+const appliquerFiltre = (mailleChantier: MailleChantierContrat, codeInsee: string, sessionProfil: ProfilCode) => {
+
+  return (chantier: ChantierAccueilContrat): boolean => {
+    return !!chantier.mailles[mailleChantier][codeInsee].estApplicable
+      && appliquerFiltreDrom(chantier, sessionProfil, mailleChantier)
+      && appliquerFiltreTerritorialise(chantier, mailleChantier);
+  };
+};
 
 export default class RécupérerChantiersAccessiblesEnLectureUseCase {
   constructor(
     private readonly chantierRepository: ChantierRepository,
     private readonly chantierDatesDeMàjRepository: ChantierDatesDeMàjRepository,
-    private readonly ministèreRepository: MinistèreRepository,
     private readonly territoireRepository: TerritoireRepository,
   ) {}
 
-  async run(habilitations: Habilitations, profil: ProfilCode, maille: 'DEPT' | 'REG', filtres: FiltreQueryParams): Promise<Chantier[]> {
+  async run(habilitations: Habilitations, profil: ProfilCode, territoireCode: string, maille: 'DEPT' | 'REG', mailleChantier: MailleChantierContrat, codeInseeSelectionne: string, ministères: Ministère[], filtres: FiltreQueryParams): Promise<ChantierAccueilContrat[]> {
     const habilitation = new Habilitation(habilitations);
     const chantiersLecture = habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
     const territoiresLecture = habilitation.récupérerListeTerritoireCodesAccessiblesEnLecture();
@@ -42,16 +65,15 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
       estBarometre: filtres.estBarometre,
     };
 
-    const [chantiersRowsNat, chantiersRowsMaille, ministères, territoires, chantiersRowsDatesDeMàj ] = await Promise.all([
-      this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNewNat(chantiersLecture, territoiresLecture, profil, filtresPourChantier),
+    const [chantiersRowsMaille, territoires, chantiersRowsDatesDeMàj ] = await Promise.all([
       this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLecture, territoiresLecture, profil, maille, filtresPourChantier),
-      this.ministèreRepository.getListePourChantiers(chantiersLecture),
       this.territoireRepository.récupérerTousNew(maille),
       this.chantierDatesDeMàjRepository.récupérerDatesDeMiseÀJour(chantiersLecture, territoiresLecture),
     ]);
 
-    const chantiersGroupésParId = groupBy<chantierPrisma>([...chantiersRowsNat, ...chantiersRowsMaille], chantier => chantier.id);
-    let chantiers = objectEntries(chantiersGroupésParId).map(([_, listeChantiers]) => parseChantier(listeChantiers, territoires, ministères, chantiersRowsDatesDeMàj));
+    const chantiersGroupésParId = groupBy<chantierPrisma>(chantiersRowsMaille, chantier => chantier.id);
+    let chantiers = objectEntries(chantiersGroupésParId).map(([_, listeChantiers]) => presenterEnChantierAccueilContrat(territoireCode)(parseChantier(listeChantiers, territoires, ministères, chantiersRowsDatesDeMàj)))
+      .filter(appliquerFiltre(mailleChantier, codeInseeSelectionne, profil));
 
     if (profil === 'DROM') {
       chantiers = chantiers.map(chantier => {
@@ -64,7 +86,6 @@ export default class RécupérerChantiersAccessiblesEnLectureUseCase {
         return chantier;
       });
     }
-
 
     return chantiers;
   }
