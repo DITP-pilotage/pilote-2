@@ -3,21 +3,19 @@ x-stoplight:
   id: x0ygm9j5iky4x
 info:
   title: pilote-api
-  version: '1.0'
+  version: 0.1.0
   summary: API Pilote.
   description: |-
-    # Introduction
-    Cette API permet d'interagir avec Pilote.
+    Cette API permet d'interagir avec Pilote. Via cette API, il est possible de récupérer les données de Pilote et d'importer de nouvelles données.
 
-    Via cette API, il est possible de récupérer les données de Pilote et d'importer de nouvelles données.
-    ## Autorisations
+    # Autorisations
 
     Les autorisations sont identiques à celles de votre compte Pilote existant. Vous ne pourrez accéder et modifier que des données auxquelles vous avez déjà accès via Pilote.
 
     # Détails techniques
     ## Authentification
 
-    Pour utiliser l'API, vous devrez **récupérer un token d'API**. Celui-ci sera à demander par email à l'adresse [support.ditp@modernisation.gouv.fr](mailto:support.ditp@modernisation.gouv.fr) avec en début d'objet *[api.token]*.
+    Pour utiliser l'API, vous devrez **récupérer un token d'API**. Celui-ci sera à demander par email à l'adresse [support.ditp@modernisation.gouv.fr](mailto:support.ditp@modernisation.gouv.fr?subject=[api.token]%20&cc=colin.dugeai@modernisation.gouv.fr&body=%0D%0A%0D%0A%0D%0A%0D%0A%0D%0A%20tag:api.token) avec en début d'objet *[api.token]*.
 
     Ce token devra être inséré en *header* pour chaque requête envoyée vers l'API. `Authorization: Bearer <token>`.
 
@@ -25,12 +23,12 @@ info:
 
     ```
     curl -X 'GET' \
-      'https://pilote.modernisation.gouv.fr/api/indicateur' \
+      'https://pilote.modernisation.gouv.fr/api/indicateur/IND-123/donnees' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer <ACCESS_TOKEN>'
     ```
 
-    ### Comprendre le fichier d’import
+    ## Comprendre le fichier d’import
 
     Pour mettre à jour vos données, vous devrez remplir un modèle d’import avec les champs suivants.
 
@@ -49,16 +47,17 @@ info:
     | IND-009           | D13     | Bouches-du-Rhône      | 2023-01-17  | va          | 12     |
     | IND-009           | D14     | Calvados              | 2023-02-26  | va          | 20     |
 
+    Ce fichier d'import sera envoyé à l'endpoint `POST: /indicateur/<ID-indicateur>/donnees` (voir documentation plus bas).
 
-    ### Référentiels
+    ## Référentiels
 
     Consultez les référentiels pour retrouver les codes de tous les territoires (départements, régions, et national). Vous pourrez copier dans ce référentiel les valeurs à indiquer pour les champs zone-id et zone dans le modèle d’import fourni.
 
-    Il s'agit des codes INSEE des départements et régions précédés respectivement par *D* ou *R*. Pour désigner le niveau national, on utilise `FRANCE`.
+    Il s'agit des codes INSEE des départements et régions précédés respectivement par `D` ou `R`. Pour désigner le niveau national, on utilise `FRANCE`.
 
     [Télécharger le référentiel des territoires XLSX – 12 ko](https://github.com/DITP-pilotage/pilote-2/raw/dev/public/referentiel/referentiel_territoires.xlsx)
 
-    ### Comment bien remplir le fichier d’import ?
+    ## Comment bien remplir le fichier d’import ?
 
     *   Si vous choisissez le format CSV pour importer les données, veuillez utiliser le point-virgule (;) pour délimiter les colonnes et les guillemets (") pour délimiter les chaines de caractères
     *   Si vous saisissez un taux, la valeur saisie doit se trouver entre 1 et 100. Par exemple, pour 78%, renseignez la valeur 78.
@@ -67,10 +66,8 @@ info:
     *   Toutes les zones du template d'import ne sont pas nécessaires. Certaines lignes du fichier d'import peuvent être supprimées. Il n’est ainsi pas nécessaire d’importer la totalité des départements pour chaque mise à jour.
     *   Il n'est pas possible d'importer plusieurs valeurs pour la même zone, date, identifiant d'indicateur et type de valeur. Cela générerait une erreur.
 
-    **Si vous rencontrez des difficultés lors de l’import de votre fichier, merci de nous contacter à l’adresse :** [support.ditp@modernisation.gouv.fr](mailto:support.ditp@modernisation.gouv.fr)
-  contact:
-    name: Colin DUGEAI
-    email: colin.dugeaiATmodernisation.gouv.fr
+    **Si vous rencontrez des difficultés, merci de nous contacter à l’adresse suivante** (en mentionnant *[api]* dans l'objet de votre mail): [support.ditp@modernisation.gouv.fr](mailto:support.ditp@modernisation.gouv.fr?subject=[api]%20&cc=colin.dugeai@modernisation.gouv.fr&body=%0D%0A%0D%0A%0D%0A%0D%0A%0D%0A%20tag:api)
+  contact: {}
 servers:
   - url: 'http://localhost:3000'
     description: Local
@@ -310,6 +307,7 @@ paths:
                   format: binary
                   x-stoplight:
                     id: cwvqhg1h40as2
+                  description: Fichier CSV au format Pilote.
               required:
                 - file
           application/json:
