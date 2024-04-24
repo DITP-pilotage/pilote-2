@@ -86,7 +86,7 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
             estProjetStructurantDisponible ? (
               <SélecteurTypeDeRéforme
                 modifierTypeDeRéformeSélectionné={() => {
-                  router.push('/accueil/chantier/NAT-FR');
+                  router.push('/');
                 }}
                 typeDeRéformeSélectionné='projet structurant'
               />

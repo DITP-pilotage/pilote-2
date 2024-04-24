@@ -8,10 +8,11 @@ export const getServerSideProps: GetServerSideProps<{}> = async ({ req, res }) =
   const session = await getServerSession(req, res, authOptions);
 
   if (session) {
+    const territoireCode = session.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session.habilitations.lecture.territoires[0];
     return {
       redirect: {
         permanent: true,
-        destination: '/accueil/chantier/NAT-FR',
+        destination: `/accueil/chantier/${territoireCode}`,
       },
     };
   }
