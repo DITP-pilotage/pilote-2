@@ -52,7 +52,7 @@ export default function Navigation() {
   const pages = [
     {
       nom: 'Accueil',
-      lien: '/accueil/chantier/NAT-FR',
+      lien: '/',
       matcher: '/accueil/chantier/[territoireCode]',
       accessible: true,
       prefetch: true,
