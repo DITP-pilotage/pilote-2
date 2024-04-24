@@ -68,6 +68,8 @@ const convertirEnInformationMetadataIndicateur = (yamlColumn: YamlColumn): Infor
 };
 
 export class YamlInformationMetadataIndicateurRepository implements InformationMetadataIndicateurRepository {
+  // Le bon fonctionnement de la récupération est conditionné à un format correct du fichier yaml et notamment de la présence d'une source "parametrage_indicateur".
+  // En cas de problème, vérifier le contenu du yaml.
   récupererInformationMetadataIndicateur(): InformationMetadataIndicateur[] {
     const result: YamlResult = data as YamlResult;
     return result.sources.find(source => source.name === 'parametrage_indicateurs')!.tables.flatMap(table => table.columns).filter(Boolean).map(convertirEnInformationMetadataIndicateur);
