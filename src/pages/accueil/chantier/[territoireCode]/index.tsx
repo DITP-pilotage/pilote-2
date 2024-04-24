@@ -1,6 +1,7 @@
 import { FunctionComponent, useState } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { getServerSession } from 'next-auth/next';
+import Head from 'next/head';
 import assert from 'node:assert/strict';
 import PageChantiers from '@/components/PageAccueil/PageChantiersNew/PageChantiers';
 import BarreLatérale from '@/components/_commons/BarreLatérale/BarreLatérale';
@@ -196,57 +197,64 @@ const ChantierLayout: FunctionComponent<InferGetServerSidePropsType<typeof getSe
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
   return (
-    <div className='flex'>
-      <BarreLatérale
-        estOuvert={estOuverteBarreLatérale}
-        setEstOuvert={setEstOuverteBarreLatérale}
-      >
-        <BarreLatéraleEncart>
-          <SélecteurTypeDeRéforme
-            territoireCode={territoireCode}
-            typeDeRéformeSélectionné='chantier'
-          />
-          <SélecteursMaillesEtTerritoires
-            mailleSelectionnee={mailleSelectionnee}
-            territoireCode={territoireCode}
-          />
-        </BarreLatéraleEncart>
-        <section>
-          <Titre
-            baliseHtml='h1'
-            className='fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8'
+    <>
+      <Head>
+        <title>
+          PILOTE - Piloter l’action publique par les résultats
+        </title>
+      </Head>
+      <div className='flex'>
+        <BarreLatérale
+          estOuvert={estOuverteBarreLatérale}
+          setEstOuvert={setEstOuverteBarreLatérale}
+        >
+          <BarreLatéraleEncart>
+            <SélecteurTypeDeRéforme
+              territoireCode={territoireCode}
+              typeDeRéformeSélectionné='chantier'
+            />
+            <SélecteursMaillesEtTerritoires
+              mailleSelectionnee={mailleSelectionnee}
+              territoireCode={territoireCode}
+            />
+          </BarreLatéraleEncart>
+          <section>
+            <Titre
+              baliseHtml='h1'
+              className='fr-h4 fr-mb-1w fr-px-3w fr-mt-2w fr-col-8'
+            >
+              Filtres
+            </Titre>
+            <Filtres
+              afficherToutLesFiltres
+              axes={axes}
+              ministères={ministères}
+            />
+          </section>
+        </BarreLatérale>
+        <div className='w-full'>
+          <BoutonSousLigné
+            classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w'
+            onClick={() => setEstOuverteBarreLatérale(true)}
+            type='button'
           >
             Filtres
-          </Titre>
-          <Filtres
-            afficherToutLesFiltres
+          </BoutonSousLigné>
+          <PageChantiers
+            avancementsAgrégés={avancementsAgrégés}
+            avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
             axes={axes}
+            brouillon={brouillon}
+            chantiers={chantiers}
+            filtresComptesCalculés={filtresComptesCalculés}
+            mailleSelectionnee={mailleSelectionnee}
             ministères={ministères}
+            répartitionMétéos={répartitionMétéos}
+            territoireCode={territoireCode}
           />
-        </section>
-      </BarreLatérale>
-      <div className='w-full'>
-        <BoutonSousLigné
-          classNameSupplémentaires='fr-link--icon-left fr-fi-arrow-right-line fr-hidden-lg fr-m-2w'
-          onClick={() => setEstOuverteBarreLatérale(true)}
-          type='button'
-        >
-          Filtres
-        </BoutonSousLigné>
-        <PageChantiers
-          avancementsAgrégés={avancementsAgrégés}
-          avancementsGlobauxTerritoriauxMoyens={avancementsGlobauxTerritoriauxMoyens}
-          axes={axes}
-          brouillon={brouillon}
-          chantiers={chantiers}
-          filtresComptesCalculés={filtresComptesCalculés}
-          mailleSelectionnee={mailleSelectionnee}
-          ministères={ministères}
-          répartitionMétéos={répartitionMétéos}
-          territoireCode={territoireCode}
-        />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
