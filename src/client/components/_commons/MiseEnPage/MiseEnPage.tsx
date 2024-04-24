@@ -13,7 +13,10 @@ export default function MiseEnPage({ afficherLeLoader, children }: MiseEnPagePro
   const { status } = useSession();
   const { initialiserLesTerritoires, initialiserLeTerritoireSélectionnéParDéfaut } = actionsTerritoiresStore();
   const [aFiniDeChargerLesTerritoires, setAFiniDeChargerLesTerritoires] = useState(false);
-  const { refetch: fetchRécupérerLesTerritoires } = api.territoire.récupérerTous.useQuery(undefined, { refetchOnWindowFocus: false, enabled: false });
+  const { refetch: fetchRécupérerLesTerritoires } = api.territoire.récupérerTous.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
 
   const récupérerLesTerritoires = useCallback(async () => {
     const { data: territoires } = await fetchRécupérerLesTerritoires();
@@ -40,7 +43,7 @@ export default function MiseEnPage({ afficherLeLoader, children }: MiseEnPagePro
     <MiseEnPageStyled>
       <EnTête />
       {
-        status === 'loading' || afficherLeLoader ||  (status === 'authenticated' && !aFiniDeChargerLesTerritoires)
+        status === 'loading' || afficherLeLoader || (status === 'authenticated' && !aFiniDeChargerLesTerritoires)
           ?
             <Loader />
           : (

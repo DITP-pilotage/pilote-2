@@ -185,62 +185,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
     return this.prisma.chantier.findMany(paramètresRequête);
   }
 
-  async récupérerLesEntréesDeTousLesChantiersHabilitésNewNat(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, filtres: FiltreQueryParams): Promise<ChantierPrisma[]> {
-    const whereOptions: Prisma.chantierWhereInput = {};
-
-    if (filtres.perimetres?.length > 0) {
-      whereOptions.perimetre_ids = {
-        hasSome: filtres.perimetres,
-      };
-    }
-
-    if (filtres.statut?.length > 0) {
-      whereOptions.statut = {
-        in: filtres.statut as type_statut[],
-      };
-    }
-
-    if (filtres.axes?.length > 0) {
-      whereOptions.axe = {
-        in: filtres.axes,
-      };
-    }
-
-    if (filtres.ppg?.length > 0) {
-      whereOptions.ppg = {
-        in: filtres.ppg,
-      };
-    }
-
-    if (filtres.estTerritorialise && filtres.estBarometre) {
-      whereOptions.OR = [{
-        est_barometre: true,
-      }, {
-        est_territorialise: true,
-      }];
-    } else if (filtres.estTerritorialise) {
-      whereOptions.est_territorialise = true;
-    } else if (filtres.estBarometre) {
-      whereOptions.est_barometre = true;
-    }
-
-    let paramètresRequête : Prisma.chantierFindManyArgs = {
-      where: {
-        NOT: { ministeres: { isEmpty: true } },
-        id: { in: chantiersLectureIds },
-        maille: 'NAT',
-        ...whereOptions,
-      },
-    };
-
-    if (!profilsTerritoriaux.includes(profil)) {
-      // Par defaut, la maille NAT est retournée pour afficher l'avancement du pays
-      paramètresRequête.where!.territoire_code = { in: [...territoiresLectureIds, 'NAT-FR'] };
-    }
-
-    return this.prisma.chantier.findMany(paramètresRequête);
-  }
-
   async récupérerLesEntréesDeTousLesChantiersHabilitésNew(chantiersLectureIds: string[], territoiresLectureIds: string[], profil: ProfilCode, maille: 'DEPT' | 'REG', filtres: FiltreQueryParams): Promise<ChantierPrisma[]> {
     const whereOptions: Prisma.chantierWhereInput = {};
 
@@ -284,19 +228,15 @@ export default class ChantierSQLRepository implements ChantierRepository {
       where: {
         NOT: { ministeres: { isEmpty: true } },
         id: { in: chantiersLectureIds },
-        maille,
+        OR: [
+          {
+            maille: 'NAT',
+          },
+          {
+            maille,
+          },
+        ],
         ...whereOptions,
-      },
-      select: {
-        id: true,
-        maille: true,
-        code_insee: true,
-        est_applicable: true,
-        taux_avancement_annuel: true,
-        taux_avancement: true,
-        taux_avancement_precedent: true,
-        meteo: true,
-        territoire_code: true,
       },
     };
 
