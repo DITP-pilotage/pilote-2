@@ -41,3 +41,5 @@ models:
           description: Nom du chantier (dans Pilote)
         - name: engagement_short
           description: Version courte de l'engagement (ou axe)
+  - name: baro_meta_engagement
+    description: Table référentielle des engagements du gouvernement
