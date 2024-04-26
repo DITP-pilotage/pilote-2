@@ -9,7 +9,7 @@ export default function useVueDEnsemble(chantiersFiltrés: ChantierAccueilContra
   const chantiersVueDEnsemble: ChantierVueDEnsemble[] = chantiersFiltrés.map(chantier => ({
     id: chantier.id,
     nom: chantier.nom,
-    avancement: chantier.avancementGlobal || null,
+    avancement: chantier.avancementGlobal,
     météo: chantier.météo,
     typologie: { estBaromètre: chantier.estBaromètre, estTerritorialisé: chantier.estTerritorialisé, estBrouillon: chantier.statut === 'BROUILLON' },
     porteur: chantier.responsables.porteur,
