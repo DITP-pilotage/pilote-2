@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { FunctionComponent } from 'react';
 import { getServerAuthSession } from '@/server/infrastructure/api/auth/[...nextauth]';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
-import PageAdminUtilisateurs from '@/components/PageAdminUtilisateurs/PageAdminUtilisateurs';
+import PageAdminUtilisateurs from '@/components/PageAdminUtilisateursNew/PageAdminUtilisateurs';
 
 const NextPageUtilisateurs: FunctionComponent<{}> = () => {
   return (

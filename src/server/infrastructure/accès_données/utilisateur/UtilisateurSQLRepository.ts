@@ -23,6 +23,7 @@ import {
 } from '@/server/domain/utilisateur/habilitation/Habilitation.interface';
 import { objectEntries } from '@/client/utils/objects/objects';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
+import { UtilisateurListeGestion } from '@/server/app/contrats/UtilisateurListeGestion';
 import { MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { Territoire } from '@/server/domain/territoire/Territoire.interface';
 import { ProfilEnum } from '@/server/app/enum/profil.enum';
@@ -252,6 +253,91 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return utilisateursMappés;
   }
 
+  async récupérerTousNew({
+    sorting,
+    valeurDeLaRecherche,
+  }: {
+    sorting: { id: string, desc: boolean }[],
+    valeurDeLaRecherche: string
+  }): Promise< UtilisateurListeGestion[]> {
+    let utilisateursMappés: UtilisateurListeGestion[] = [];
+    await Promise.all([
+      this._récupérerTerritoires(),
+      this._récupérerChantiers(),
+      this._récupérerProjetsStructurants(),
+      this._récupérerPérimètresMinistériels(),
+    ]) ;
+
+    const utilisateurs = await this._prisma.utilisateur.findMany(
+      {
+        include: {
+          profil: true,
+          habilitation: true,
+        },
+        where: {
+          OR: [
+            {
+              nom: {
+                contains: valeurDeLaRecherche,
+                mode: 'insensitive',
+              },
+            },
+            {
+              prenom: {
+                contains: valeurDeLaRecherche,
+                mode: 'insensitive',
+              },
+            },
+            {
+              fonction: {
+                contains: valeurDeLaRecherche,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        },
+        orderBy: sorting.reduce((acc, val) => {
+          acc[this.convertirEnIdPrisma(val.id)] = val.desc ? 'desc' : 'asc';
+          return acc;
+        }, {} as any),
+      },
+
+    );
+
+    for (const u of utilisateurs) {
+      const utilisateurMappé = await this.convertirEnUtilisateurListeGestion(u);
+      utilisateursMappés.push(utilisateurMappé);
+    }
+
+    return utilisateursMappés;
+  }
+
+  private convertirEnIdPrisma(idSort: string): string {
+    switch (idSort) {
+      case 'email': {
+        return 'email';
+      }
+      case 'nom': {
+        return 'nom';
+      }
+      case 'prénom': {
+        return 'prenom';
+      }
+      case 'profil': {
+        return 'profilCode';
+      }
+      case 'fonction': {
+        return 'fonction';
+      }
+      case 'Dernière modification': {
+        return 'date_modication';
+      }
+      default: {
+        return 'date_modication';
+      }
+    }
+  }
+
   async récupérerExistants(utilisateurs: (UtilisateurÀCréerOuMettreÀJourSansHabilitation & { habilitations: HabilitationsÀCréerOuMettreÀJourCalculées })[]): Promise<Utilisateur['email'][]> {
 
     const utilisateursExistants = await this._prisma.utilisateur.findMany({
@@ -268,7 +354,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   async récupérerNombreUtilisateursSurLeTerritoire(territoireCode: string, maille: MailleInterne): Promise<number> {
     const profilsCodes = maille === 'départementale' ? profilsDépartementaux : profilsRégionaux;
 
-    const result = await this._prisma.utilisateur.findMany({
+    return this._prisma.utilisateur.count({
       where: {
         profilCode: {
           in: profilsCodes,
@@ -282,13 +368,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
           },
         },
       },
-      select: {
-        email: true,
-      },
     });
-
-    return result.length;
-
   }
 
   async récupérerNombreUtilisateursParTerritoires(territoires: Territoire[]): Promise<Record<string, number>> {
@@ -341,11 +421,11 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
 
     return territoires.reduce((acc: { [key: string]: number }, { code, maille }: Territoire) => {
       const profilsCodes = maille === 'départementale' ? profilsDépartementaux : profilsRégionaux;
-  
+
       acc[code] = utilisateurs.filter(({ habilitation: habilitationUtilisateur, profilCode }) =>
         habilitationUtilisateur.some(h => h.territoires.includes(code)) && profilsCodes.includes(profilCode),
       ).length;
-  
+
       return acc;
     }, {});
 
@@ -523,9 +603,12 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
   }
 
   private async _créerLesHabilitations(profilUtilisateur: profil, habilitations: habilitation[]) {
-    const chantiersParDéfaut = await this._récupérerChantiersParDéfaut(profilUtilisateur);
-    const territoiresParDéfaut = await this._récupérerTerritoiresParDéfaut(profilUtilisateur);
-    const périmètresMinistérielsParDéfaut = await this._récupérerPérimètresMinistérielsParDéfaut(profilUtilisateur);
+    const [chantiersParDéfaut, territoiresParDéfaut, périmètresMinistérielsParDéfaut] = await Promise.all([
+      this._récupérerChantiersParDéfaut(profilUtilisateur),
+      this._récupérerTerritoiresParDéfaut(profilUtilisateur),
+      this._récupérerPérimètresMinistérielsParDéfaut(profilUtilisateur),
+    ]);
+
     let habilitationsGénérées: Utilisateur['habilitations'] = {
       lecture: {
         chantiers: chantiersParDéfaut.lecture,
@@ -589,9 +672,25 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     return habilitationsGénérées;
   }
 
+  private async convertirEnUtilisateurListeGestion(utilisateurBrut: utilisateur & { profil: profil; habilitation: habilitation[]; }): Promise<UtilisateurListeGestion> {
+    const habilitations = await this._créerLesHabilitations(utilisateurBrut.profil, utilisateurBrut.habilitation);
+
+    return {
+      id: utilisateurBrut.id,
+      email: utilisateurBrut.email,
+      nom: utilisateurBrut.nom || 'Inconnu',
+      prénom: utilisateurBrut.prenom || 'Inconnu',
+      fonction: utilisateurBrut.fonction,
+      habilitations: habilitations,
+      dateModification: utilisateurBrut.date_modification?.toISOString(),
+      auteurModification: utilisateurBrut.auteur_modification,
+      profil: utilisateurBrut.profilCode as ProfilCode,
+    };
+  }
+
   private async _mapperVersDomaine(utilisateurBrut: utilisateur & { profil: profil; habilitation: habilitation[]; }): Promise<Utilisateur> {
     const habilitations = await this._créerLesHabilitations(utilisateurBrut.profil, utilisateurBrut.habilitation);
-    
+
     return {
       id: utilisateurBrut.id,
       nom: utilisateurBrut.nom || 'Inconnu',
