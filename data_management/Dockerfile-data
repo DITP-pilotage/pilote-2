@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
 
 # [install.node] Install nvm with node and npm. See https://stackoverflow.com/a/28390848/21676629
 ENV NVM_DIR /root/.nvm 
-ENV NODE_VERSION 18.12.0
+ENV NODE_VERSION 18.20.2
 
 RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
