@@ -89,13 +89,13 @@ ta_ch_int as (
 -- Ajout du code territoire_code
 , ta_ch_int_terr_code as (
 select a.*, t.code as territoire_code from ta_ch_int a
-left join "qualif_227"."public"."territoire" t on t.zone_id=a.zone_id
+left join {{ source('db_schema_public', 'territoire') }} t on t.zone_id=a.zone_id
 )
 -- Ajout du nombre d'indics attendus pour chaque {chantier-zone}: n_indic_in_ta_expected
 , ta_ch_terr_code_indic_expected as (
 select a.*,	b.n_indic_in_ta_expected
 from ta_ch_int_terr_code a
-left join df3.get_n_indic_in_ta_expected  b on a.chantier_id=b.chantier_id and a.zone_id=b.zone_id
+left join {{ ref('get_n_indic_in_ta_expected') }}  b on a.chantier_id=b.chantier_id and a.zone_id=b.zone_id
 )
 
 , ta_ch as (
