@@ -1,6 +1,5 @@
 import FiltresSélectionMultiple
   from '@/components/PageAccueil/FiltresNew/FiltresSélectionMultiple/FiltresSélectionMultiple';
-import { filtresActifs } from '@/client/stores/useFiltresStoreNew/useFiltresStore';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import FiltresGroupe from './FiltresGroupe/FiltresGroupe';
@@ -25,8 +24,6 @@ interface FiltresProps {
 }
 
 export default function Filtres({ ministères, axes, afficherToutLesFiltres }: FiltresProps) {
-  filtresActifs(); // Totalement inutile mais casse les filtres si supprimé .....
-
   return (
     <>
       <section className='fr-px-3w'>

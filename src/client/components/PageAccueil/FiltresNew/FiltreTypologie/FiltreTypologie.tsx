@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { parseAsBoolean, useQueryState } from 'nuqs';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
+import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 
 
 interface FiltreTypologieProps {
@@ -9,11 +10,16 @@ interface FiltreTypologieProps {
 }
 
 export default function FiltreTypologie({ filtre, categorie }: FiltreTypologieProps) {
-  const [filtreTypologie, setFiltreTypologie] = useQueryState(categorie, parseAsBoolean.withDefault(false).withOptions({ shallow: false, clearOnDefault: true, history: 'push' }));
+  const [filtreTypologie, setFiltreTypologie] = useQueryState(categorie, parseAsBoolean.withDefault(false).withOptions({
+    shallow: false,
+    clearOnDefault: true,
+    history: 'push',
+  }));
 
   const auChangement = useCallback(() => {
+    sauvegarderFiltres({ [categorie]: !filtreTypologie });
     return setFiltreTypologie(!filtreTypologie);
-  }, [filtreTypologie, setFiltreTypologie]);
+  }, [categorie, filtreTypologie, setFiltreTypologie]);
 
   return (
     <Interrupteur

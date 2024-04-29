@@ -1,45 +1,51 @@
 import '@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css';
-import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs';
+import { parseAsString, useQueryState } from 'nuqs';
 import { useCallback } from 'react';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Icône from '@/components/_commons/Icône/Icône';
+import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import FiltresMinistèresProps from './FiltresMinistères.interface';
 import FiltresMinistèresStyled from './FiltresMinistères.styled';
 
 const catégorieDeFiltre: 'périmètresMinistériels' = 'périmètresMinistériels';
 
 export default function FiltresMinistères({ ministères }: FiltresMinistèresProps) {
-  const [perimetres, setPerimetres] = useQueryState('perimetres', parseAsArrayOf(parseAsString).withDefault([]).withOptions({
+  const [perimetres, setPerimetres] = useQueryState('perimetres', parseAsString.withDefault('').withOptions({
     shallow: false,
     clearOnDefault: true,
     history: 'push',
   }));
 
   const estDéroulé = useCallback((ministère: Ministère) => {
-    return ministère.périmètresMinistériels.some(périmètre => perimetres.includes(périmètre.id));
+    return ministère.périmètresMinistériels.some(périmètre => perimetres.split(',').filter(Boolean).includes(périmètre.id));
   }, [perimetres]);
 
   const auClicSurUnMinistèreCallback = useCallback(
     (ministère: Ministère) => {
+      let arrPerimetreFiltre = perimetres.split(',').filter(Boolean);
       if (estDéroulé(ministère)) {
-        ministère.périmètresMinistériels.forEach(périmètre => perimetres.splice(perimetres.indexOf(périmètre.id), 1));
+        ministère.périmètresMinistériels.forEach(périmètre => arrPerimetreFiltre.splice(arrPerimetreFiltre.indexOf(périmètre.id), 1));
       } else {
-        ministère.périmètresMinistériels.forEach(périmètre => perimetres.push(périmètre.id));
+        ministère.périmètresMinistériels.forEach(périmètre => arrPerimetreFiltre.push(périmètre.id));
       }
-      return setPerimetres(perimetres);
+      sauvegarderFiltres({ perimetres: arrPerimetreFiltre });
+      return setPerimetres(arrPerimetreFiltre.join(','));
     },
     [estDéroulé, perimetres, setPerimetres],
   );
 
   const auClicSurUnPérimètreCallback = useCallback(
     (périmètre: PérimètreMinistériel) => {
+      let arrPerimetreFiltre = perimetres.split(',').filter(Boolean);
+
       if (perimetres.includes(périmètre.id)) {
-        perimetres.splice(perimetres.indexOf(périmètre.id), 1);
+        arrPerimetreFiltre.splice(arrPerimetreFiltre.indexOf(périmètre.id), 1);
       } else {
-        perimetres.push(périmètre.id);
+        arrPerimetreFiltre.push(périmètre.id);
       }
-      return setPerimetres(perimetres);
+      sauvegarderFiltres({ perimetres: arrPerimetreFiltre });
+      return setPerimetres(arrPerimetreFiltre.join(','));
     },
     [perimetres, setPerimetres],
   );

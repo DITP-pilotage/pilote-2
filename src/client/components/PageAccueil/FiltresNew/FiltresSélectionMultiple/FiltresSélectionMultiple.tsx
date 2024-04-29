@@ -1,4 +1,5 @@
-import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs';
+import { parseAsString, useQueryState } from 'nuqs';
+import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import FiltresSélectionMultipleProps from './FiltresSélectionMultiple.interface';
 import FiltresSélectionMultipleStyled from './FiltresSélectionMultiple.styled';
 
@@ -8,7 +9,11 @@ export default function FiltresSélectionMultiple({
   filtres,
 }: FiltresSélectionMultipleProps) {
 
-  const [filtresNew, setListeFiltresNew] = useQueryState(catégorieDeFiltre, parseAsArrayOf(parseAsString).withDefault([]).withOptions({ shallow: false, clearOnDefault: true, history: 'push' }));
+  const [filtresNew, setListeFiltresNew] = useQueryState(catégorieDeFiltre, parseAsString.withDefault('').withOptions({
+    shallow: false,
+    clearOnDefault: true,
+    history: 'push',
+  }));
 
   return (
     <FiltresSélectionMultipleStyled>
@@ -36,12 +41,14 @@ export default function FiltresSélectionMultiple({
                   ${filtresNew.includes(filtre.id) ? 'actif' : ''}
                 `}
                 onClick={() => {
-                  if (filtresNew.includes(filtre.id)) {
-                    filtresNew.splice(filtresNew.indexOf(filtre.id), 1);
+                  let arrFiltresNew = filtresNew.split(',').filter(Boolean);
+                  if (arrFiltresNew.includes(filtre.id)) {
+                    arrFiltresNew.splice(filtresNew.indexOf(filtre.id), 1);
                   } else {
-                    filtresNew.push(filtre.id);
+                    arrFiltresNew.push(filtre.id);
                   }
-                  return setListeFiltresNew(filtresNew);
+                  sauvegarderFiltres({ axes: arrFiltresNew });
+                  return setListeFiltresNew(arrFiltresNew.join(','));
                 }}
                 type='button'
               >

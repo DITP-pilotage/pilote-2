@@ -1,6 +1,6 @@
 import '@gouvfr/dsfr/dist/component/radio/radio.min.css';
 import { useState } from 'react';
-import { parseAsArrayOf, parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import Modale from '@/components/_commons/Modale/Modale';
 import { horodatage } from '@/client/utils/date/date';
 
@@ -42,7 +42,7 @@ export default function ExportDesDonnées() {
   const [estDésactivé, setEstDésactivé] = useState(false);
 
   const [filtres] = useQueryStates({
-    perimetres: parseAsArrayOf(parseAsString).withDefault([]),
+    perimetres: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     brouillon: parseAsBoolean.withDefault(true),
@@ -51,7 +51,7 @@ export default function ExportDesDonnées() {
   const arrayOptionsExport: {
     name: string,
     value: string | boolean
-  }[] = filtres.perimetres.map(filtrePerimetreMinisteriel => ({
+  }[] = filtres.perimetres.split(',').filter(Boolean).map(filtrePerimetreMinisteriel => ({
     name: 'perimetreIds',
     value: filtrePerimetreMinisteriel,
   }));
