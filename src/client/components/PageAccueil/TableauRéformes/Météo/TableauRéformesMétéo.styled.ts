@@ -16,6 +16,7 @@ const TableauRéformesMétéoStyled = styled.div<TableauRéformesMétéoStyledPr
   font-size: 0.625rem;
   
   .météo-picto {
+    width: auto;
     height: ${({ taille }) => hauteurMétéoPictoÀPartirDeLaTaille[taille]};
   }
 `;

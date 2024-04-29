@@ -1,9 +1,7 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
-import { useCallback, useEffect } from 'react';
-import {
-  estLargeurDÉcranActuelleMoinsLargeQue,
-} from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
+import { useCallback } from 'react';
+import { estLargeurDÉcranActuelleMoinsLargeQue } from '@/stores/useLargeurDÉcranStore/useLargeurDÉcranStore';
 import TableauProps from './Tableau.interface';
 import TableauEnTête from './EnTête/TableauEnTête';
 import TableauContenu from './Contenu/TableauContenu';
@@ -13,11 +11,7 @@ import TableauStyled from './Tableau.styled';
 export default function Tableau<T extends object>({ tableau, titre }: TableauProps<T>) {
   const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue('sm');
 
-  useEffect(() => {
-    tableau.setPageSize(50);
-  }, [tableau]);
-
-  const changementDePageCallback = useCallback((numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1), [tableau]);  
+  const changementDePageCallback = useCallback((numéroDePage: number) => tableau.setPageIndex(numéroDePage - 1), [tableau]);
 
   return (
     <TableauStyled className='fr-table fr-m-0 fr-p-0'>
@@ -40,8 +34,8 @@ export default function Tableau<T extends object>({ tableau, titre }: TableauPro
                 {titre}
               </caption>
               {
-                !estVueTuile && <TableauEnTête<T> tableau={tableau} />
-              }
+              !estVueTuile && <TableauEnTête<T> tableau={tableau} />
+            }
               <TableauContenu<T> tableau={tableau} />
             </table>
             <TableauPagination

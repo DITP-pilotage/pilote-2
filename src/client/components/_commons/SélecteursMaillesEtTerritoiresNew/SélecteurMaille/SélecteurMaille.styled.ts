@@ -9,7 +9,7 @@ const SélecteurMailleStyled = styled.div`
     margin-bottom: 1.5rem;
   }
 
-  a {
+  button {
     display: flex;
     align-items: center;
     justify-content: center;

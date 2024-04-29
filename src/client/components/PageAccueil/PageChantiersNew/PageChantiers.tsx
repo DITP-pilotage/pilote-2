@@ -4,7 +4,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';
 import Link from 'next/link';
 import { FunctionComponent } from 'react';
 import { useSession } from 'next-auth/react';
-import { parseAsArrayOf, parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import Titre from '@/components/_commons/Titre/Titre';
 import CartographieAvancement
@@ -21,7 +21,7 @@ import RépartitionMétéo from '@/components/_commons/RépartitionMétéo/Répa
 import Infobulle from '@/components/_commons/Infobulle/Infobulle';
 import INFOBULLE_CONTENUS from '@/client/constants/infobulles';
 import TitreInfobulleConteneur from '@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur';
-import RemontéeAlerte from '@/components/_commons/RemontéeAlerte/RemontéeAlerte';
+import RemontéeAlerte from '@/components/_commons/RemontéeAlerteNew/RemontéeAlerte';
 import BadgeIcône from '@/components/_commons/BadgeIcône/BadgeIcône';
 import SélecteurVueStatuts from '@/components/PageAccueil/SélecteurVueStatutsNew/SélecteurVueStatuts';
 import { estAutoriséAConsulterLaFicheTerritoriale } from '@/client/utils/fiche-territoriale/fiche-territoriale';
@@ -52,11 +52,6 @@ interface PageChantiersProps {
   répartitionMétéos: RépartitionsMétéos
 }
 
-type TypeCritere =
-  'estEnAlerteTauxAvancementNonCalculé'
-  | 'estEnAlerteÉcart'
-  | 'estEnAlerteBaisseOuStagnation'
-  | 'estEnAlerteDonnéesNonMàj';
 const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   chantiers,
   ministères,
@@ -75,34 +70,23 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   const { auClicTerritoireCallback } = useCartographie(territoireCode, mailleSelectionnee);
 
   const [filtres] = useQueryStates({
-    perimetres: parseAsArrayOf(parseAsString).withDefault([]),
-    axes: parseAsArrayOf(parseAsString).withDefault([]),
-    ppg: parseAsArrayOf(parseAsString).withDefault([]),
-  });
-
-  const [filtresAlertes, setFiltresAlertes] = useQueryStates({
+    perimetres: parseAsString.withDefault(''),
+    axes: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
+  });
+
+  const [filtresAlertes] = useQueryStates({
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisseOuStagnation: parseAsBoolean.withDefault(false),
     estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
-  }, {
-    shallow: false,
-    clearOnDefault: true,
-    history: 'push',
   });
 
-  const auClicChangementAlert = (critère: TypeCritere) => () => {
-    filtresAlertes[critère] = !filtresAlertes[critère];
-    return setFiltresAlertes(filtresAlertes);
-  };
-
-  const nombreFiltresActifs = filtres.axes.length
-    + filtres.ppg.length
-    + filtres.perimetres.length
-    + (filtresAlertes.estBarometre ? 1 : 0)
-    + (filtresAlertes.estTerritorialise ? 1 : 0)
+  const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
+    + filtres.perimetres.split(',').filter(Boolean).length
+    + (filtres.estBarometre ? 1 : 0)
+    + (filtres.estTerritorialise ? 1 : 0)
     + (filtresAlertes.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
     + (filtresAlertes.estEnAlerteÉcart ? 1 : 0)
     + (filtresAlertes.estEnAlerteBaisseOuStagnation ? 1 : 0)
@@ -339,9 +323,9 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                     key={libellé}
                   >
                     <RemontéeAlerte
-                      auClic={auClicChangementAlert(nomCritère as TypeCritere)}
                       estActivée={estActivée}
                       libellé={libellé}
+                      nomCritère={nomCritère}
                       nombre={nombre}
                     />
                   </div>

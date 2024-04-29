@@ -1,8 +1,8 @@
 import '@gouvfr/dsfr/dist/component/table/table.min.css';
 import '@gouvfr/dsfr/dist/component/notice/notice.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css';
-import { useEffect } from 'react';
 import { parseAsBoolean, useQueryState } from 'nuqs';
+import { useEffect } from 'react';
 import BarreDeRecherche from '@/components/_commons/BarreDeRecherche/BarreDeRecherche';
 import TableauPagination from '@/components/_commons/Tableau/Pagination/TableauPagination';
 import useTableauChantiers from '@/components/PageAccueil/PageChantiersNew/TableauChantiers/useTableauChantiers';
@@ -10,6 +10,7 @@ import TableauChantiersActionsDeTri
   from '@/components/PageAccueil/PageChantiersNew/TableauChantiers/ActionsDeTri/TableauChantiersActionsDeTri';
 import TableauRéformesEnTête from '@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête';
 import Interrupteur from '@/components/_commons/Interrupteur/Interrupteur';
+import { sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import TableauChantiersProps from './TableauChantiers.interface';
 import TableauChantiersStyled from './TableauChantiers.styled';
 import TableauChantiersContenu from './Contenu/TableauChantiersContenu';
@@ -48,6 +49,8 @@ export default function TableauChantiers({ données, ministèresDisponibles }: T
           </div>
           <Interrupteur
             auChangement={async () => {
+
+              sauvegarderFiltres({ groupeParMinistere: !estGroupe });
               await setEstGroupe(!estGroupe);
               return tableau.getColumn('porteur')?.getToggleGroupingHandler()() ?? undefined;
             }}
@@ -84,7 +87,9 @@ export default function TableauChantiers({ données, ministèresDisponibles }: T
                 Liste des chantiers
               </caption>
               {
-              !estVueTuile && <TableauRéformesEnTête tableau={tableau} />
+              !estVueTuile ? (
+                <TableauRéformesEnTête tableau={tableau} />
+              ) : null
             }
               <TableauChantiersContenu tableau={tableau} />
             </table>
