@@ -69,9 +69,8 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   }
 
   const filtres = {
-    perimetres: query.perimetres ? (query.perimetres as string).split(',') : [],
-    axes: query.axes ? (query.axes as string).split(',') : [],
-    ppg: query.ppg ? (query.ppg as string).split(',') : [],
+    perimetres: query.perimetres ? (query.perimetres as string).split(',').filter(Boolean) : [],
+    axes: query.axes ? (query.axes as string).split(',').filter(Boolean) : [],
     statut: query.brouillon === 'false' ? ['PUBLIE'] : ['BROUILLON', 'PUBLIE'],
     estTerritorialise: query.estTerritorialise === 'true',
     estBarometre: query.estBarometre === 'true',

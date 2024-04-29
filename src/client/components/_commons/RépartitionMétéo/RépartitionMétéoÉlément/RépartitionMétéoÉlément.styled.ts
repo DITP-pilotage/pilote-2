@@ -12,6 +12,11 @@ const RépartitionMétéoÉlémentStyled = styled.div<RépartitionMétéosÉlém
   border: 1px solid #e3e3fd;
   border-radius: 4px;
   box-shadow: 0 2px 6px rgb(0 0 18 / 16%);
+  
+  .météo-picto {
+    width: auto;
+    height: auto;
+  }
 
   .nombre-de-chantiers {
     color: ${(props) => couleurs[props.typeDeRéforme]};

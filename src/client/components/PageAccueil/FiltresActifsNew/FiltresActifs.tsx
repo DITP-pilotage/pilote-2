@@ -1,9 +1,10 @@
-import { parseAsArrayOf, parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 import Tag from '@/components/_commons/Tag/Tag';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
 import Ppg from '@/server/domain/ppg/Ppg.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
+import { reinitialiserFiltres, sauvegarderFiltres } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 import FiltresActifsStyled from './FiltresActifs.styled';
 
 
@@ -15,8 +16,8 @@ interface FiltresActifsProps {
 
 export default function FiltresActifs({ ministères, axes }: FiltresActifsProps) {
   const [filtres, setFiltres] = useQueryStates({
-    perimetres: parseAsArrayOf(parseAsString).withDefault([]),
-    axes: parseAsArrayOf(parseAsString).withDefault([]),
+    perimetres: parseAsString.withDefault(''),
+    axes: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
@@ -33,8 +34,8 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
   // Tendance(s) en baisse ou en stagnation
   // Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour
 
-  const nombreFiltresActifs = filtres.axes.length
-    + filtres.perimetres.length
+  const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
+    + filtres.perimetres.split(',').filter(Boolean).length
     + (filtres.estBarometre ? 1 : 0)
     + (filtres.estTerritorialise ? 1 : 0)
     + (filtres.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
@@ -48,14 +49,18 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
       .map((ministère) => [ministère.périmètresMinistériels[0].id, ministère.id]),
   );
 
-  const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[] | Ppg[]) => listItems.find(item => item.id === idItemRecherche)!.nom;
+  const retrouverNomFiltre = (idItemRecherche: string, listItems: Ministère[] | PérimètreMinistériel[] | Axe[] | Ppg[]) => {
+    return listItems.find(item => item.id === idItemRecherche)!.nom;
+  };
 
   const listePerimetres = ministères.flatMap(ministère => ministère.périmètresMinistériels);
 
   const désactiverTousLesFiltres = () => {
+    reinitialiserFiltres();
+
     return setFiltres({
-      perimetres: [],
-      axes: [],
+      perimetres: '',
+      axes: '',
       estBarometre: false,
       estTerritorialise: false,
       estEnAlerteTauxAvancementNonCalculé: false,
@@ -82,30 +87,36 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
         className='conteneur-tags'
       >
         {
-          filtres.perimetres.map(perimetreId => (
+          filtres.perimetres.split(',').filter(Boolean).map(perimetreId => (
             <li
               key={`tag-axe-${perimetreId}`}
             >
               <Tag
                 libellé={ministèresAvecUnSeulPérimètre.has(perimetreId) ? retrouverNomFiltre(ministèresAvecUnSeulPérimètre.get(perimetreId)!, ministères) : retrouverNomFiltre(perimetreId, listePerimetres)}
                 suppressionCallback={() => {
-                  filtres.perimetres.splice(filtres.perimetres.indexOf(perimetreId), 1);
-                  return setFiltres(filtres);
+                  let arrFiltrePerimetres = filtres.perimetres.split(',').filter(Boolean);
+                  arrFiltrePerimetres.splice(filtres.perimetres.indexOf(perimetreId), 1);
+
+                  sauvegarderFiltres({ perimetres: arrFiltrePerimetres });
+                  return setFiltres({ perimetres: arrFiltrePerimetres.join(',') });
                 }}
               />
             </li>
           ))
         }
         {
-          filtres.axes.map((axeId) => (
+          filtres.axes.split(',').filter(Boolean).map((axeId) => (
             <li
               key={`tag-axe-${axeId}`}
             >
               <Tag
                 libellé={retrouverNomFiltre(axeId, axes)}
                 suppressionCallback={() => {
-                  filtres.axes.splice(filtres.axes.indexOf(axeId), 1);
-                  return setFiltres(filtres);
+                  let arrFiltreAxes = filtres.axes.split(',').filter(Boolean);
+                  arrFiltreAxes.splice(filtres.axes.indexOf(axeId), 1);
+
+                  sauvegarderFiltres({ axes: arrFiltreAxes });
+                  return setFiltres({ axes: arrFiltreAxes.join(',') });
                 }}
               />
             </li>
@@ -119,6 +130,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
                 libellé='Taux d’avancement non calculé en raison d’indicateurs non renseignés'
                 suppressionCallback={() => {
                   filtres.estEnAlerteTauxAvancementNonCalculé = false;
+                  sauvegarderFiltres({ estEnAlerteTauxAvancementNonCalculé: false });
                   return setFiltres(filtres);
                 }}
               />
@@ -132,6 +144,8 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
                 libellé='Retard supérieur de 10 points par rapport à la moyenne nationale'
                 suppressionCallback={() => {
                   filtres.estEnAlerteÉcart = false;
+
+                  sauvegarderFiltres({ estEnAlerteÉcart: false });
                   return setFiltres(filtres);
                 }}
               />
@@ -145,6 +159,8 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
                 libellé='Tendance(s) en baisse ou en stagnation'
                 suppressionCallback={() => {
                   filtres.estEnAlerteBaisseOuStagnation = false;
+
+                  sauvegarderFiltres({ estEnAlerteBaisseOuStagnation: false });
                   return setFiltres(filtres);
                 }}
               />
@@ -158,6 +174,8 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
                 libellé='Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour'
                 suppressionCallback={() => {
                   filtres.estEnAlerteDonnéesNonMàj = false;
+
+                  sauvegarderFiltres({ estEnAlerteDonnéesNonMàj: false });
                   return setFiltres(filtres);
                 }}
               />
@@ -172,6 +190,8 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
                 suppressionCallback={() => {
                   filtres.estBarometre = false;
                   filtres.estTerritorialise = false;
+
+                  sauvegarderFiltres({ estBarometre: false, estTerritorialise: false });
                   return setFiltres(filtres);
                 }}
               />
@@ -182,6 +202,8 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
                 libellé='Chantiers baromètre'
                 suppressionCallback={() => {
                   filtres.estBarometre = false;
+
+                  sauvegarderFiltres({ estBarometre: false });
                   return setFiltres(filtres);
                 }}
               />
@@ -192,6 +214,8 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
                 libellé='Chantiers territorialisés'
                 suppressionCallback={() => {
                   filtres.estTerritorialise = false;
+
+                  sauvegarderFiltres({ estTerritorialise: false });
                   return setFiltres(filtres);
                 }}
               />
