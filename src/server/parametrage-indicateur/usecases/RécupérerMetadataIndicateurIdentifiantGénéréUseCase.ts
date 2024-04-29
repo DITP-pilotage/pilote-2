@@ -12,7 +12,7 @@ export default class RécupérerMetadataIndicateurIdentifiantGénéréUseCase {
     const listeMetadataParametrageIndicateur: MetadataParametrageIndicateur[] = await this.metadataParametrageIndicateurRepository.recupererListeMetadataParametrageIndicateurParChantierIds([]);
     const sortedListeMetadataParametrageIndicateur = listeMetadataParametrageIndicateur.sort((metadataParametrageIndicateur1, metadataParametrageIndicateur2) => metadataParametrageIndicateur1.indicId.localeCompare(metadataParametrageIndicateur2.indicId));
     const identifiants = new Set(sortedListeMetadataParametrageIndicateur.map(li => Number(li.indicId.split('-')[1])));
-    let currentId = 0;
+    let currentId = 1;
     while (identifiants.has(currentId)) {
       currentId++;
     }
