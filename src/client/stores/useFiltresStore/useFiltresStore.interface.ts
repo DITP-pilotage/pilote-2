@@ -5,7 +5,7 @@ export type FiltreCatégorie = keyof FiltresActifs;
 
 export type FiltreTypologieType = { id: string, attribut: 'estBaromètre' | 'estTerritorialisé', nom: string };
 
-export type FiltreAlerte = { id: 'estEnAlerteÉcart' | 'estEnAlerteBaisseOuStagnation' | 'estEnAlerteDonnéesNonMàj' | 'estEnAlerteTauxAvancementNonCalculé', nom: string };
+export type FiltreAlerte = { id: 'estEnAlerteÉcart' | 'estEnAlerteBaisseOuStagnation' | 'estEnAlerteDonnéesNonMàj' | 'estEnAlerteTauxAvancementNonCalculé' | 'estEnAlerteMétéoNonRenseignée', nom: string };
 
 export type Filtre = PérimètreMinistériel | FiltreTypologieType | Axe | FiltreAlerte;
 

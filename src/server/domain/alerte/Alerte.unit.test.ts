@@ -185,4 +185,24 @@ describe('Alerte', () => {
       expect(estEnAlerteTauxAvancementNonCalculé).toBeFalsy();
     });
   });
+
+  describe('estEnAlerteMétéoNonRenseignée', () =>{
+    test('Le chantier est en alerte si la météo n est pas renseignée', () =>{
+      // Given
+      const meteo = 'NON_RENSEIGNEE';
+      // When
+      const estEnAlerteMétéoNonRenseignée = Alerte.estEnAlerteMétéoNonRenseignée(meteo);
+      // Then
+      expect(estEnAlerteMétéoNonRenseignée).toBeTruthy();
+    });
+
+    test('Le chantier n est pas en alerte si la météo est renseignée', () =>{
+      // Given
+      const meteo = 'SOLEIL';
+      // When
+      const estEnAlerteMétéoNonRenseignée = Alerte.estEnAlerteMétéoNonRenseignée(meteo);
+      // Then
+      expect(estEnAlerteMétéoNonRenseignée).toBeFalsy();
+    });
+  });
 });

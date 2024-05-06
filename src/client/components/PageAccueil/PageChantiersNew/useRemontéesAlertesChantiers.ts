@@ -10,6 +10,7 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisseOuStagnation: parseAsBoolean.withDefault(false),
     estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
+    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
   });
 
   return {
@@ -38,6 +39,12 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
         libellé: 'Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour',
         nombre: filtresComptesCalculés.estEnAlerteDonnéesNonMàj.nombre,
         estActivée: filtresAlertes.estEnAlerteDonnéesNonMàj,
+      },
+      {
+        nomCritère: 'estEnAlerteMétéoNonRenseignée',
+        libellé: 'Météo(s) non renseignée(s)',
+        nombre: filtresComptesCalculés.estEnAlerteMétéoNonRenseignée.nombre,
+        estActivée: filtresAlertes.estEnAlerteMétéoNonRenseignée,
       },
     ],
   };

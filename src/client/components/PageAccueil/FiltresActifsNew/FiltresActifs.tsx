@@ -1,4 +1,5 @@
 import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
+import { parse } from 'node:path';
 import Tag from '@/components/_commons/Tag/Tag';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
@@ -24,6 +25,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisseOuStagnation: parseAsBoolean.withDefault(false),
     estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
+    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
   }, {
     shallow: false,
     clearOnDefault: true,
@@ -41,7 +43,8 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
     + (filtres.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
     + (filtres.estEnAlerteÉcart ? 1 : 0)
     + (filtres.estEnAlerteBaisseOuStagnation ? 1 : 0)
-    + (filtres.estEnAlerteDonnéesNonMàj ? 1 : 0);
+    + (filtres.estEnAlerteDonnéesNonMàj ? 1 : 0)
+    + (filtres.estEnAlerteMétéoNonRenseignée ? 1 : 0);
 
   const ministèresAvecUnSeulPérimètre = new Map(
     ministères
@@ -67,6 +70,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
       estEnAlerteÉcart: false,
       estEnAlerteBaisseOuStagnation: false,
       estEnAlerteDonnéesNonMàj: false,
+      estEnAlerteMétéoNonRenseignée: false,
     });
   };
 
@@ -216,6 +220,21 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
                   filtres.estTerritorialise = false;
 
                   sauvegarderFiltres({ estTerritorialise: false });
+                  return setFiltres(filtres);
+                }}
+              />
+            </li>
+          ) : null
+        }
+        {
+          filtres.estEnAlerteMétéoNonRenseignée ? (
+            <li>
+              <Tag
+                libellé='Météo(s) non renseignée(s)'
+                suppressionCallback={() => {
+                  filtres.estEnAlerteMétéoNonRenseignée = false;
+
+                  sauvegarderFiltres({ estEnAlerteMétéoNonRenseignée: false });
                   return setFiltres(filtres);
                 }}
               />

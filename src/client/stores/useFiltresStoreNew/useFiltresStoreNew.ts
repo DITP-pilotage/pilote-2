@@ -11,6 +11,7 @@ interface FiltreAccueil {
   estEnAlerteÉcart: boolean
   estEnAlerteBaisseOuStagnation: boolean
   estEnAlerteDonnéesNonMàj: boolean
+  estEnAlerteMétéoNonRenseignée: boolean
 }
 
 interface FiltresStore {

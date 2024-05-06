@@ -122,7 +122,12 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   }, {
     nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
     condition: (chantier) => Alerte.estEnAlerteTauxAvancementNonCalculé(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.avancement.global),
-  }, {
+  }, 
+  {
+    nomCritère: 'estEnAlerteMétéoNonRenseignée',
+    condition: (chantier) => Alerte.estEnAlerteMétéoNonRenseignée(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.météo), 
+  },
+  {
     nomCritère: 'orage',
     condition: (chantier) => (
       chantier.mailles[mailleChantier][codeInseeSelectionne].météo === 'ORAGE'
