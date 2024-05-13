@@ -1,7 +1,8 @@
 import Link from 'next/link';
+import { FunctionComponent } from 'react';
 import DonneesPersonnellesCookiesStyled from './DonneesPersonnellesCookies.styled';
 
-const DonneesPersonnellesCookies = () => {
+const DonneesPersonnellesCookies: FunctionComponent<{}> = () => {
   return (
     <DonneesPersonnellesCookiesStyled>
       <main>
