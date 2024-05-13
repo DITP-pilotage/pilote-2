@@ -99,7 +99,7 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
   const déterminerLesNomÀAfficherPourLesChantiersSaisieCommentaire = useCallback((u: FicheUtilisateurProps['utilisateur']) => {
     if (u.saisieCommentaire) {
 
-      if (['REFERENT_REGION', 'PREFET_REGION', 'REFERENT_DEPARTEMENT', 'PREFET_DEPARTEMENT'].includes(profil?.code ?? ''))
+      if (['COORDINATEUR_REGION', 'PREFET_REGION', 'COORDINATEUR_DEPARTEMENT', 'PREFET_DEPARTEMENT'].includes(profil?.code ?? ''))
         return ['Tous les chantiers ATE territorialisés']; 
 
       if (['RESPONSABLE_REGION', 'SERVICES_DECONCENTRES_REGION', 'RESPONSABLE_DEPARTEMENT', 'SERVICES_DECONCENTRES_DEPARTEMENT'].includes(profil?.code ?? '')) {
@@ -122,7 +122,7 @@ export default function useFicheUtilisateur(utilisateur: FicheUtilisateurProps['
       if (AAccesATousLesUtilisateurs(profil ?? null))
         return ['Tous les chantiers'];
 
-      if (['REFERENT_REGION', 'REFERENT_DEPARTEMENT'].includes(profil?.code ?? ''))
+      if (['COORDINATEUR_REGION', 'COORDINATEUR_DEPARTEMENT'].includes(profil?.code ?? ''))
         return ['Tous les chantiers ATE territorialisés']; 
 
       return déterminerLesNomÀAfficherPourLesChantiersLecture(u);

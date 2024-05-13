@@ -23,7 +23,7 @@ export const PageCréerUtilisateurAide: FunctionComponent<{}> = () => {
     <PageCréerUtilisateurAideStyled>
       <main className='fr-container fr-py-6w'>
         <h3 className='fr-mb-0 flex justify-center align-center'>
-          Coordinateur PILOTE
+          Coordinateurs PILOTE
         </h3>
         <h3 className='flex justify-center align-center'>
           Créer un compte pour un utilisateur sur votre territoire
@@ -39,10 +39,10 @@ export const PageCréerUtilisateurAide: FunctionComponent<{}> = () => {
             Règles de gestion des comptes
           </h3>
           <h5 className='fr-mb-1w'>
-            Responsabilités du Coordinateurs PILOTE
+            Responsabilités du Coordinateur PILOTE
           </h5>
           <p className='fr-text fr-text--sm'>
-            En tant que coordinateurs, il vous est demandé de gérer activement les comptes pour votre territoire. Vous disposez de droits de création, modification et suppression. Nous vous encourageons vivement à exercer cette responsabilité avec discernement. Les comptes utilisateurs doivent être créés uniquement pour les individus ayant des responsabilités directes en lien avec l'outil et les données publiées. Veillez à ce que les comptes ne soient pas utilisés de manière abusive ou superflue. La DITP effectuera régulièrement un suivi de la gestion des comptes pour chaque coordinateurs
+            En tant que coordinateur, il vous est demandé de gérer activement les comptes pour votre territoire. Vous disposez de droits de création, modification et suppression. Nous vous encourageons vivement à exercer cette responsabilité avec discernement. Les comptes utilisateurs doivent être créés uniquement pour les individus ayant des responsabilités directes en lien avec l'outil et les données publiées. Veillez à ce que les comptes ne soient pas utilisés de manière abusive ou superflue. La DITP effectuera régulièrement un suivi de la gestion des comptes pour chaque coordinateur
           </p>
           <h5 className='fr-mb-1w'>
             Confidentialité des données

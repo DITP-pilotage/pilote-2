@@ -78,7 +78,7 @@ models:
         description: "Liste des emails des DP"
       - name: chantier_id
         description: "Chantier concerné"
-  - name: int_referents_territoriaux
+  - name: int_coordinateurs_territoriaux
     description: "Une ligne pour chaque zone qui indique son/ses référents territoriaux (ou référents Pilote)"
     columns:
       - name: nom

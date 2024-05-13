@@ -4,8 +4,8 @@ import FiltrerListeUtilisateursUseCase from './FiltrerListeUtilisateursUseCase';
 
 describe('FiltrerListeUtilisateursUseCase', () => {
   const habilitationsAdmin = new HabilitationBuilder().build();
-  const habilitationReferentRegion = new HabilitationBuilder().avecTerritoireCodesLecture(['REG-84', 'DEPT-69']).build();
-  const habilitationReferentDepartement = new HabilitationBuilder().avecTerritoireCodesLecture(['DEPT-01']).build();
+  const habilitationCoordinateurRegion = new HabilitationBuilder().avecTerritoireCodesLecture(['REG-84', 'DEPT-69']).build();
+  const habilitationCoordinateurDepartement = new HabilitationBuilder().avecTerritoireCodesLecture(['DEPT-01']).build();
 
   it("quand aucun filtre n'est appliqué et que le profil du créateur est DITP ADMIN retourne tous les utilisateurs", () => {
     //GIVEN
@@ -69,8 +69,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_REGION',
-      habilitationReferentRegion,
+      'COORDINATEUR_REGION',
+      habilitationCoordinateurRegion,
 
     ).run();
 
@@ -120,8 +120,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_DEPARTEMENT',
-      habilitationReferentDepartement,
+      'COORDINATEUR_DEPARTEMENT',
+      habilitationCoordinateurDepartement,
 
     ).run();
 
@@ -238,8 +238,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_REGION',
-      habilitationReferentRegion,
+      'COORDINATEUR_REGION',
+      habilitationCoordinateurRegion,
 
     ).run();
 
@@ -283,8 +283,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_DEPARTEMENT',
-      habilitationReferentDepartement,
+      'COORDINATEUR_DEPARTEMENT',
+      habilitationCoordinateurDepartement,
 
     ).run();
 
@@ -403,8 +403,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_REGION',
-      habilitationReferentRegion,
+      'COORDINATEUR_REGION',
+      habilitationCoordinateurRegion,
 
     ).run();
 
@@ -462,8 +462,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_DEPARTEMENT',
-      habilitationReferentDepartement,
+      'COORDINATEUR_DEPARTEMENT',
+      habilitationCoordinateurDepartement,
 
     ).run();
 
@@ -638,8 +638,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: ['SERVICES_DECONCENTRES_REGION'],
       },
-      'REFERENT_REGION',
-      habilitationReferentRegion,
+      'COORDINATEUR_REGION',
+      habilitationCoordinateurRegion,
 
     ).run();
 
@@ -688,8 +688,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: ['RESPONSABLE_DEPARTEMENT'],
       },
-      'REFERENT_DEPARTEMENT',
-      habilitationReferentDepartement,
+      'COORDINATEUR_DEPARTEMENT',
+      habilitationCoordinateurDepartement,
 
     ).run();
 
@@ -775,8 +775,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_REGION',
-      habilitationReferentRegion,
+      'COORDINATEUR_REGION',
+      habilitationCoordinateurRegion,
 
     ).run();
 
@@ -834,8 +834,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_DEPARTEMENT',
-      habilitationReferentDepartement,
+      'COORDINATEUR_DEPARTEMENT',
+      habilitationCoordinateurDepartement,
 
     ).run();
 
@@ -947,8 +947,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: ['SERVICES_DECONCENTRES_DEPARTEMENT'],
       },
-      'REFERENT_REGION',
-      habilitationReferentRegion,
+      'COORDINATEUR_REGION',
+      habilitationCoordinateurRegion,
 
     ).run();
 
@@ -1022,8 +1022,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: ['RESPONSABLE_DEPARTEMENT'],
       },
-      'REFERENT_DEPARTEMENT',
-      habilitationReferentDepartement,
+      'COORDINATEUR_DEPARTEMENT',
+      habilitationCoordinateurDepartement,
 
     ).run();
 

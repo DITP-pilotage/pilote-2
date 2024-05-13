@@ -76,6 +76,7 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                 <Responsables
                   afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
                   coordinateurTerritorial={coordinateurTerritorial}
+                  maille={territoireSélectionné?.maille ?? null}
                   responsables={chantier.responsables}
                   responsablesLocal={responsableLocal}
                 />

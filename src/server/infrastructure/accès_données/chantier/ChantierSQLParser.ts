@@ -68,8 +68,8 @@ function créerDonnéesTerritoires(
         donnéesTerritoires[t.codeInsee].responsableLocal.push({ nom: responsable, email: responsablesEmails[i] });
       }
 
-      const coordinateurs = chantierRow.referents_territoriaux;
-      const coordinateursEmails = chantierRow.referents_territoriaux_mails;
+      const coordinateurs = chantierRow.coordinateurs_territoriaux;
+      const coordinateursEmails = chantierRow.coordinateurs_territoriaux_mails;
       for (const [i, coordinateur] of (coordinateurs || []).entries()) {
         donnéesTerritoires[t.codeInsee].coordinateurTerritorial.push({ nom: coordinateur, email: coordinateursEmails[i] });
       }

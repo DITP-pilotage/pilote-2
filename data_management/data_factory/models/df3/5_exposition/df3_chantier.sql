@@ -112,13 +112,13 @@ select
     coalesce(p_names.p_shorts, string_to_array('','')) as directions_administration_centrale, 
     dir_projets.nom as directeurs_projet,
     resp_locaux.nom as responsables_locaux,
-    ref_territoriaux.nom as referents_territoriaux,
+    coord_territoriaux.nom as coordinateurs_territoriaux,
     sr.meteo as meteo,
     ax.axe_name as axe,
     ppg.ppg_nom as ppg,
     dir_projets.email as directeurs_projet_mails,
     resp_locaux.email as responsables_locaux_mails,
-    ref_territoriaux.email as referents_territoriaux_mails,
+    coord_territoriaux.email as coordinateurs_territoriaux_mails,
     chantier_est_barometre.est_barometre,
     mc.ch_territo as est_territorialise,
     t.code as territoire_code,
@@ -135,7 +135,7 @@ from {{ ref('metadata_chantiers') }} mc
 cross join {{ source('db_schema_public', 'territoire') }} t
 left join {{ ref('int_directeurs_projets')}} dir_projets on dir_projets.chantier_id = mc.chantier_id
 left join {{ ref('int_responsables_locaux')}} resp_locaux on resp_locaux.chantier_id = mc.chantier_id and resp_locaux.territoire_code = t.code
-left join {{ ref('int_referents_territoriaux')}} ref_territoriaux on ref_territoriaux.territoire_code = t.code
+left join {{ ref('int_coordinateurs_territoriaux')}} coord_territoriaux on coord_territoriaux.territoire_code = t.code
 left join {{ ref('metadata_zones') }} z on z.zone_id=t.zone_id
 left join {{ ref('metadata_porteurs') }} po on mc."porteur_ids_DAC"=po.porteur_id
 left join ch_unnest_porteurs_dac_pnames_agg p_names on mc.chantier_id=p_names.chantier_id

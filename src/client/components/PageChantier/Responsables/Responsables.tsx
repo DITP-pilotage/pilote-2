@@ -1,6 +1,7 @@
 
 import Bloc from '@/components/_commons/Bloc/Bloc';
 import ResponsablesLigne from '@/client/components/_commons/ResponsablesLigne/ResponsablesLigne';
+import { Maille } from '@/server/domain/maille/Maille.interface';
 import ResponsablesPageChantierStyled from './Responsables.styled';
 import ResponsablesPageChantierProps from './Responsables.interface';
 
@@ -12,7 +13,13 @@ const mailTo = (label: string, mail: string | null) => (
     : label
 );
 
-export default function ResponsablesPageChantier({ responsables, responsablesLocal, coordinateurTerritorial, afficheResponsablesLocaux }: ResponsablesPageChantierProps) {
+const adjectifReferent: Record<Maille, string> = {
+  'nationale': 'national',
+  'départementale': 'départemental',
+  'régionale': 'régional',
+}; 
+
+export default function ResponsablesPageChantier({ responsables, responsablesLocal, coordinateurTerritorial, afficheResponsablesLocaux, maille }: ResponsablesPageChantierProps) {
    
   return (
     <ResponsablesPageChantierStyled>
@@ -50,7 +57,7 @@ export default function ResponsablesPageChantier({ responsables, responsablesLoc
             <hr className='fr-hr fr-py-1w' />
             <ResponsablesLigne
               contenu={coordinateurTerritorial?.map(coordinateur => mailTo(coordinateur.nom, coordinateur.email))}
-              libellé='Coordinateur PILOTE du territoire'
+              libellé={`Coordinateur PILOTE ${maille ? adjectifReferent[maille] : ''}`}
             />
           </>
         }
