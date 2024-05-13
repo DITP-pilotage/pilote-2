@@ -24,10 +24,13 @@ export default function SélecteurMaille({ mailleSelectionnee }: {
     return null;
   }
 
-  const territoireCode = session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session?.habilitations.lecture.territoires[0];
+  const territoireDept = session!.habilitations.lecture.territoires.find(territoire => territoire.startsWith('DEPT'));
+  const territoireReg = session!.habilitations.lecture.territoires.find(territoire => territoire.startsWith('REG'));
+
 
   const changerMaille = (maille: MailleInterne) => {
     sauvegarderFiltres({ maille });
+    const territoireCode = session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : maille === 'régionale' ? territoireReg : maille === 'départementale' ? territoireDept : session?.habilitations.lecture.territoires[0];
     return router.push({
       pathname: '/accueil/chantier/[territoireCode]',
       query: { ...router.query, territoireCode, maille },

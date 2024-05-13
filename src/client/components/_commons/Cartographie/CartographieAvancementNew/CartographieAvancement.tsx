@@ -3,8 +3,15 @@ import CartographieLégendeListe from '@/components/_commons/Cartographie/Légen
 import CartographieAvancementProps from './CartographieAvancement.interface';
 import useCartographieAvancement from './useCartographieAvancement';
 
-export default function CartographieAvancement({ données, options, auClicTerritoireCallback, élémentsDeLégende, territoireCode, mailleSelectionnee }: CartographieAvancementProps) {
-  const { donnéesCartographie, légende } = useCartographieAvancement(données, élémentsDeLégende);
+export default function CartographieAvancement({
+  données,
+  options,
+  auClicTerritoireCallback,
+  élémentsDeLégende,
+  territoireCode,
+  mailleSelectionnee,
+}: CartographieAvancementProps) {
+  const { donnéesCartographie, légende } = useCartographieAvancement(données, élémentsDeLégende, mailleSelectionnee);
 
   return (
     <Cartographie

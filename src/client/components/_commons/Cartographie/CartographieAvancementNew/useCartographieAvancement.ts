@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
 import { actionsTerritoiresStore } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import { CartographieDonnées } from '@/components/_commons/Cartographie/Cartographie.interface';
-import { CartographieÉlémentsDeLégende } from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
+import {
+  CartographieÉlémentsDeLégende,
+} from '@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface';
 import { CartographieDonnéesAvancement } from './CartographieAvancement.interface';
 
 
@@ -41,7 +43,7 @@ function déterminerRemplissage(valeur: number | null, élémentsDeLégende: Car
   else return élémentsDeLégende.DÉFAUT.remplissage;
 }
 
-export default function useCartographieAvancement(données: CartographieDonnéesAvancement, élémentsDeLégende: CartographieÉlémentsDeLégende) {
+export default function useCartographieAvancement(données: CartographieDonnéesAvancement, élémentsDeLégende: CartographieÉlémentsDeLégende, mailleSelectionnee: 'départementale' | 'régionale') {
   const { récupérerDétailsSurUnTerritoireAvecCodeInsee } = actionsTerritoiresStore();
 
   const légende = useMemo(() => {
@@ -73,7 +75,7 @@ export default function useCartographieAvancement(données: CartographieDonnées
     const donnéesFormatées: CartographieDonnées = {};
 
     données.forEach(({ valeur, codeInsee, estApplicable }) => {
-      const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee);
+      const territoireGéographique = récupérerDétailsSurUnTerritoireAvecCodeInsee(codeInsee, mailleSelectionnee);
 
       donnéesFormatées[codeInsee] = {
         valeurAffichée: déterminerValeurAffichée(valeur, estApplicable),
