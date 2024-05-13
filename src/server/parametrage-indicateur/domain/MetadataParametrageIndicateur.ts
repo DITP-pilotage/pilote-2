@@ -1,5 +1,23 @@
 interface InputMetadataParametrageIndicateur {
   indicId: string;
+  chantierNom: string;
+  indicParentIndic: string | null;
+  indicParentCh: string;
+  indicNom: string;
+  indicNomBaro: string | null;
+  indicDescr: string;
+  indicDescrBaro: string | null;
+  indicIsPerseverant: boolean;
+  indicIsPhare: boolean;
+  indicIsBaro: boolean;
+  indicType: string;
+  indicSource: string;
+  indicSourceUrl: string | null;
+  indicMethodeCalcul: string;
+  indicUnite: string | null;
+  indicHiddenPilote: boolean;
+  indicSchema: string;
+  zgApplicable: string | null;
   viDeptFrom: string;
   viDeptOp: string;
   vaDeptFrom: string;
@@ -28,42 +46,24 @@ interface InputMetadataParametrageIndicateur {
   poidsPourcentReg: number;
   poidsPourcentNat: number;
   tendance: string;
-  indicParentIndic: string;
-  indicParentCh: string;
-  indicNom: string;
-  indicNomBaro: string;
-  indicDescr: string;
-  indicDescrBaro: string;
-  indicIsPerseverant: boolean;
-  indicIsPhare: boolean;
-  indicIsBaro: boolean;
-  indicType: string;
-  indicSource: string;
-  indicSourceUrl: string;
-  indicMethodeCalcul: string;
-  indicUnite: string;
-  indicHiddenPilote: boolean;
-  indicSchema: string;
-  zgApplicable: string;
-  chantierNom: string;
-  reformePrioritaire: string;
+  reformePrioritaire: string | null;
   projetAnnuelPerf: boolean;
-  detailProjetAnnuelPerf: string;
+  detailProjetAnnuelPerf: string | null;
   periodicite: string;
   delaiDisponibilite: number;
   indicTerritorialise: boolean;
-  frequenceTerritoriale: string;
-  mailles: string;
+  frequenceTerritoriale: string | null;
+  mailles: string | null;
   adminSource: string;
   methodeCollecte: string;
-  siSource: string;
+  siSource: string | null;
   donneeOuverte: boolean;
-  modalitesDonneeOuverte: string;
-  respDonnees: string;
-  respDonneesEmail: string;
-  contactTechnique: string;
+  modalitesDonneeOuverte: string | null;
+  respDonnees: string | null;
+  respDonneesEmail: string | null;
+  contactTechnique: string | null;
   contactTechniqueEmail: string;
-  commentaire: string;
+  commentaire: string | null;
 }
 
 export class MetadataParametrageIndicateur {
@@ -125,17 +125,17 @@ export class MetadataParametrageIndicateur {
 
   private readonly _tendance: string;
 
-  private readonly _indicParentIndic: string;
+  private readonly _indicParentIndic: string | null;
 
   private readonly _indicParentCh: string;
 
   private readonly _indicNom: string;
 
-  private readonly _indicNomBaro: string;
+  private readonly _indicNomBaro: string | null;
 
   private readonly _indicDescr: string;
 
-  private readonly _indicDescrBaro: string;
+  private readonly _indicDescrBaro: string | null;
 
   private readonly _indicIsPerseverant: boolean;
 
@@ -147,25 +147,25 @@ export class MetadataParametrageIndicateur {
 
   private readonly _indicSource: string;
 
-  private readonly _indicSourceUrl: string;
+  private readonly _indicSourceUrl: string | null;
 
   private readonly _indicMethodeCalcul: string;
 
-  private readonly _indicUnite: string;
+  private readonly _indicUnite: string | null;
 
   private readonly _indicHiddenPilote: boolean;
 
   private readonly _indicSchema: string;
 
-  private readonly _zgApplicable: string;
+  private readonly _zgApplicable: string | null;
 
   private readonly _chantierNom: string;
 
-  private readonly _reformePrioritaire: string;
+  private readonly _reformePrioritaire: string | null;
 
   private readonly _projetAnnuelPerf: boolean;
 
-  private readonly _detailProjetAnnuelPerf: string;
+  private readonly _detailProjetAnnuelPerf: string | null;
 
   private readonly _periodicite: string;
 
@@ -173,29 +173,29 @@ export class MetadataParametrageIndicateur {
 
   private readonly _indicTerritorialise: boolean;
 
-  private readonly _frequenceTerritoriale: string;
+  private readonly _frequenceTerritoriale: string | null;
 
-  private readonly _mailles: string;
+  private readonly _mailles: string | null;
 
   private readonly _adminSource: string;
 
   private readonly _methodeCollecte: string;
 
-  private readonly _siSource: string;
+  private readonly _siSource: string | null;
 
   private readonly _donneeOuverte: boolean;
 
-  private readonly _modalitesDonneeOuverte: string;
+  private readonly _modalitesDonneeOuverte: string | null;
 
-  private readonly _respDonnees: string;
+  private readonly _respDonnees: string | null;
 
-  private readonly _respDonneesEmail: string;
+  private readonly _respDonneesEmail: string | null;
 
-  private readonly _contactTechnique: string;
+  private readonly _contactTechnique: string | null;
 
   private readonly _contactTechniqueEmail: string;
 
-  private readonly _commentaire: string;
+  private readonly _commentaire: string | null;
 
   private constructor({
     indicId,
@@ -447,7 +447,7 @@ export class MetadataParametrageIndicateur {
     return this._tendance;
   }
 
-  get indicParentIndic(): string {
+  get indicParentIndic(): string | null {
     return this._indicParentIndic;
   }
 
@@ -459,7 +459,7 @@ export class MetadataParametrageIndicateur {
     return this._indicNom;
   }
 
-  get indicNomBaro(): string {
+  get indicNomBaro(): string | null {
     return this._indicNomBaro;
   }
 
@@ -467,7 +467,7 @@ export class MetadataParametrageIndicateur {
     return this._indicDescr;
   }
 
-  get indicDescrBaro(): string {
+  get indicDescrBaro(): string | null {
     return this._indicDescrBaro;
   }
 
@@ -491,7 +491,7 @@ export class MetadataParametrageIndicateur {
     return this._indicSource;
   }
 
-  get indicSourceUrl(): string {
+  get indicSourceUrl(): string | null {
     return this._indicSourceUrl;
   }
 
@@ -499,7 +499,7 @@ export class MetadataParametrageIndicateur {
     return this._indicMethodeCalcul;
   }
 
-  get indicUnite(): string {
+  get indicUnite(): string | null {
     return this._indicUnite;
   }
 
@@ -511,7 +511,7 @@ export class MetadataParametrageIndicateur {
     return this._indicSchema;
   }
 
-  get zgApplicable(): string {
+  get zgApplicable(): string | null {
     return this._zgApplicable;
   }
 
@@ -519,7 +519,7 @@ export class MetadataParametrageIndicateur {
     return this._chantierNom;
   }
 
-  get reformePrioritaire(): string {
+  get reformePrioritaire(): string | null {
     return this._reformePrioritaire;
   }
 
@@ -527,7 +527,7 @@ export class MetadataParametrageIndicateur {
     return this._projetAnnuelPerf;
   }
 
-  get detailProjetAnnuelPerf(): string {
+  get detailProjetAnnuelPerf(): string | null {
     return this._detailProjetAnnuelPerf;
   }
 
@@ -543,11 +543,11 @@ export class MetadataParametrageIndicateur {
     return this._indicTerritorialise;
   }
 
-  get frequenceTerritoriale(): string {
+  get frequenceTerritoriale(): string | null {
     return this._frequenceTerritoriale;
   }
 
-  get mailles(): string {
+  get mailles(): string | null {
     return this._mailles;
   }
 
@@ -559,7 +559,7 @@ export class MetadataParametrageIndicateur {
     return this._methodeCollecte;
   }
 
-  get siSource(): string {
+  get siSource(): string | null {
     return this._siSource;
   }
 
@@ -567,19 +567,19 @@ export class MetadataParametrageIndicateur {
     return this._donneeOuverte;
   }
 
-  get modalitesDonneeOuverte(): string {
+  get modalitesDonneeOuverte(): string | null {
     return this._modalitesDonneeOuverte;
   }
 
-  get respDonnees(): string {
+  get respDonnees(): string | null {
     return this._respDonnees;
   }
 
-  get respDonneesEmail(): string {
+  get respDonneesEmail(): string | null {
     return this._respDonneesEmail;
   }
 
-  get contactTechnique(): string {
+  get contactTechnique(): string | null {
     return this._contactTechnique;
   }
 
@@ -587,7 +587,7 @@ export class MetadataParametrageIndicateur {
     return this._contactTechniqueEmail;
   }
 
-  get commentaire(): string {
+  get commentaire(): string | null {
     return this._commentaire;
   }
 

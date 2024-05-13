@@ -144,7 +144,8 @@ export const validationMetadataIndicateurFormulaire = z.object({
   tendance: z
     .string(),
   reformePrioritaire: z
-    .string(),
+    .string()
+    .nullable(),
   projetAnnuelPerf: z
     .boolean(),
   detailProjetAnnuelPerf: z
@@ -167,16 +168,19 @@ export const validationMetadataIndicateurFormulaire = z.object({
   methodeCollecte: z
     .string(),
   siSource: z
-    .string(),
+    .string()
+    .nullable(),
   donneeOuverte: z
     .boolean(),
   modalitesDonneeOuverte: z
     .string()
     .nullable(),
   respDonnees: z
-    .string(),
+    .string()
+    .nullable(),
   respDonneesEmail: z
-    .string(),
+    .string()
+    .nullable(),
   contactTechnique: z
     .string()
     .nullable(),

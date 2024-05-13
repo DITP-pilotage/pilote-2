@@ -3,17 +3,17 @@ import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/d
 export interface HistorisationMetadataIndicateur {
   indic_id: string;
 
-  indic_parent_indic: string;
+  indic_parent_indic: string | null;
 
   indic_parent_ch: string;
 
   indic_nom: string;
 
-  indic_nom_baro: string;
+  indic_nom_baro: string | null;
 
   indic_descr: string;
 
-  indic_descr_baro: string;
+  indic_descr_baro: string | null;
 
   indic_is_perseverant: boolean;
 
@@ -25,11 +25,11 @@ export interface HistorisationMetadataIndicateur {
 
   indic_source: string;
 
-  indic_source_url: string;
+  indic_source_url: string | null;
 
   indic_methode_calcul: string;
 
-  indic_unite: string;
+  indic_unite: string | null;
 
   indic_hidden_pilote: boolean;
 
