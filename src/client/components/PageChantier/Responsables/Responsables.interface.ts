@@ -1,5 +1,5 @@
 import {
-  ReferentTerritorialRapportDetailleContrat,
+  CoordinateurTerritorialRapportDetailleContrat,
   ResponsableLocalRapportDetailleContrat,
   ResponsableRapportDetailleContrat,
 } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
@@ -7,6 +7,6 @@ import {
 export default interface ResponsablesPageChantierProps {
   responsables: ResponsableRapportDetailleContrat
   responsablesLocal: ResponsableLocalRapportDetailleContrat[],
-  referentTerritorial: ReferentTerritorialRapportDetailleContrat[],
+  coordinateurTerritorial: CoordinateurTerritorialRapportDetailleContrat[],
   afficheResponsablesLocaux: boolean,
 }

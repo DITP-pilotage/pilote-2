@@ -7,7 +7,7 @@ import Chantier, {
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import {
   ResponsableLocal,
-  RéférentTerritorial,
+  CoordinateurTerritorial,
   TerritoireDonnées,
   TerritoiresDonnées,
 } from '@/server/domain/territoire/Territoire.interface';
@@ -27,7 +27,7 @@ interface TerritoireDonnéeRapportDetailleContrat {
   dateDeMàjDonnéesQuantitatives: string | null
   avancement: TerritoireAvancementRapportDetailleContrat
   responsableLocal: ResponsableLocalRapportDetailleContrat[]
-  référentTerritorial: ReferentTerritorialRapportDetailleContrat[]
+  coordinateurTerritorial: CoordinateurTerritorialRapportDetailleContrat[]
   météo: 'NON_RENSEIGNEE' | 'ORAGE' | 'NUAGE' | 'COUVERT' | 'SOLEIL' | 'NON_NECESSAIRE'
 }
 
@@ -69,7 +69,7 @@ export interface ResponsableLocalRapportDetailleContrat {
   email: string
 }
 
-export interface ReferentTerritorialRapportDetailleContrat {
+export interface CoordinateurTerritorialRapportDetailleContrat {
   nom: string
   email: string
 }
@@ -95,10 +95,10 @@ const presenterEnResponsableLocalRapportDetailleContrat = (responsableLocal: Res
     email: responsableLocal.email,
   };
 };
-const presenterEnReferentTerritorialRapportDetailleContrat = (référentTerritorial: RéférentTerritorial): ReferentTerritorialRapportDetailleContrat => {
+const presenterEnCoordinateurTerritorialRapportDetailleContrat = (coordinateursTerritorial: CoordinateurTerritorial): CoordinateurTerritorialRapportDetailleContrat => {
   return {
-    nom: référentTerritorial.nom,
-    email: référentTerritorial.email,
+    nom: coordinateursTerritorial.nom,
+    email: coordinateursTerritorial.email,
   };
 };
 
@@ -110,7 +110,7 @@ const presenterEnTerritoireDonnéeRapportDetailleContrat = (territoireDonnee: Te
     dateDeMàjDonnéesQualitatives: territoireDonnee.dateDeMàjDonnéesQualitatives,
     dateDeMàjDonnéesQuantitatives: territoireDonnee.dateDeMàjDonnéesQuantitatives,
     responsableLocal: territoireDonnee.responsableLocal.map(presenterEnResponsableLocalRapportDetailleContrat),
-    référentTerritorial: territoireDonnee.référentTerritorial.map(presenterEnReferentTerritorialRapportDetailleContrat),
+    coordinateurTerritorial: territoireDonnee.coordinateurTerritorial.map(presenterEnCoordinateurTerritorialRapportDetailleContrat),
     avancement: {
       global: territoireDonnee.avancement.global,
       annuel: territoireDonnee.avancement.annuel,

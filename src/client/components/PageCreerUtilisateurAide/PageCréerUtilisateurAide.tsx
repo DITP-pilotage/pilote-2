@@ -23,13 +23,13 @@ export const PageCréerUtilisateurAide: FunctionComponent<{}> = () => {
     <PageCréerUtilisateurAideStyled>
       <main className='fr-container fr-py-6w'>
         <h3 className='fr-mb-0 flex justify-center align-center'>
-          Référent PILOTE
+          Coordinateur PILOTE
         </h3>
         <h3 className='flex justify-center align-center'>
           Créer un compte pour un utilisateur sur votre territoire
         </h3>
         <p className='fr-text fr-text--sm'>
-          PILOTE est un outil réservé aux agents de l’Etat habilités à travailler sur les Politiques Prioritaires du Gouvernement. Seuls ces agents peuvent y avoir accès. Au niveau territorial, les référents PILOTE sont seuls habilités à créer des comptes pour des utilisateurs sur leurs territoires.
+          PILOTE est un outil réservé aux agents de l’Etat habilités à travailler sur les Politiques Prioritaires du Gouvernement. Seuls ces agents peuvent y avoir accès. Au niveau territorial, les coordinateurs PILOTE sont seuls habilités à créer des comptes pour des utilisateurs sur leurs territoires.
         </p>
         <p className='fr-text fr-text--bold fr-text--sm'>
           Pour créer un compte PILOTE pour un utilisateur sur votre territoire, il vous est demandé de prendre connaissance des règles ci-dessous puis de suivre les étapes indiquées.
@@ -39,10 +39,10 @@ export const PageCréerUtilisateurAide: FunctionComponent<{}> = () => {
             Règles de gestion des comptes
           </h3>
           <h5 className='fr-mb-1w'>
-            Responsabilités du Référent PILOTE
+            Responsabilités du Coordinateurs PILOTE
           </h5>
           <p className='fr-text fr-text--sm'>
-            En tant que référent, il vous est demandé de gérer activement les comptes pour votre territoire. Vous disposez de droits de création, modification et suppression. Nous vous encourageons vivement à exercer cette responsabilité avec discernement. Les comptes utilisateurs doivent être créés uniquement pour les individus ayant des responsabilités directes en lien avec l'outil et les données publiées. Veillez à ce que les comptes ne soient pas utilisés de manière abusive ou superflue. La DITP effectuera régulièrement un suivi de la gestion des comptes pour chaque référent
+            En tant que coordinateurs, il vous est demandé de gérer activement les comptes pour votre territoire. Vous disposez de droits de création, modification et suppression. Nous vous encourageons vivement à exercer cette responsabilité avec discernement. Les comptes utilisateurs doivent être créés uniquement pour les individus ayant des responsabilités directes en lien avec l'outil et les données publiées. Veillez à ce que les comptes ne soient pas utilisés de manière abusive ou superflue. La DITP effectuera régulièrement un suivi de la gestion des comptes pour chaque coordinateurs
           </p>
           <h5 className='fr-mb-1w'>
             Confidentialité des données

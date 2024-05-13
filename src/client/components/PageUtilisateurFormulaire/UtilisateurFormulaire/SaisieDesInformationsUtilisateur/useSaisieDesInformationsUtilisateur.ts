@@ -11,7 +11,7 @@ import { profilsDépartementaux, profilsRégionaux } from '@/server/domain/utili
 import { auMoinsUneValeurDuTableauEstContenueDansLAutreTableau } from '@/client/utils/arrays';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 
-export const PROFILS_POSSIBLES_REFERENTS_MODIFICATION = {
+export const PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION = {
   REFERENT_REGION: [
     'PREFET_REGION',
     'PREFET_DEPARTEMENT',
@@ -27,7 +27,7 @@ export const PROFILS_POSSIBLES_REFERENTS_MODIFICATION = {
   ],
 };
 
-export const PROFILS_POSSIBLES_REFERENTS_LECTURE = {
+export const PROFILS_POSSIBLES_COORDINATEURS_LECTURE = {
   REFERENT_REGION: [
     'PREFET_REGION',
     'PREFET_DEPARTEMENT',
@@ -181,7 +181,7 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
       setProfilSélectionné(profilAssociéAuProfilCodeSélectionné);
       let profilsFiltrés = profils;
       if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION'].includes(session!.profil)) {
-        profilsFiltrés = profilsFiltrés.filter(profil => PROFILS_POSSIBLES_REFERENTS_MODIFICATION[session?.profil as keyof typeof PROFILS_POSSIBLES_REFERENTS_MODIFICATION].includes(profil.code));
+        profilsFiltrés = profilsFiltrés.filter(profil => PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION[session?.profil as keyof typeof PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION].includes(profil.code));
       }
       setListeProfils(profilsFiltrés.map(profil => ({ libellé: profil.nom, valeur: profil.code })));
     }

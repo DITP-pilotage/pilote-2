@@ -12,7 +12,7 @@ const mailTo = (label: string, mail: string | null) => (
     : label
 );
 
-export default function ResponsablesPageChantier({ responsables, responsablesLocal, referentTerritorial, afficheResponsablesLocaux }: ResponsablesPageChantierProps) {
+export default function ResponsablesPageChantier({ responsables, responsablesLocal, coordinateurTerritorial, afficheResponsablesLocaux }: ResponsablesPageChantierProps) {
    
   return (
     <ResponsablesPageChantierStyled>
@@ -49,8 +49,8 @@ export default function ResponsablesPageChantier({ responsables, responsablesLoc
             />
             <hr className='fr-hr fr-py-1w' />
             <ResponsablesLigne
-              contenu={referentTerritorial?.map(referent => mailTo(referent.nom, referent.email))}
-              libellé='Référent PILOTE du territoire'
+              contenu={coordinateurTerritorial?.map(coordinateur => mailTo(coordinateur.nom, coordinateur.email))}
+              libellé='Coordinateur PILOTE du territoire'
             />
           </>
         }

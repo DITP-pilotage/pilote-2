@@ -23,7 +23,7 @@ export const codeInseeFrance = 'FR';
 
 export type CodeInsee = string;
 export type ResponsableLocal = { nom: string, email: string };
-export type RéférentTerritorial = { nom: string, email: string };
+export type CoordinateurTerritorial = { nom: string, email: string };
 
 export type TerritoiresDonnées = Record<CodeInsee, TerritoireDonnées>;
 
@@ -38,7 +38,7 @@ export type TerritoireDonnées = {
   dateDeMàjDonnéesQuantitatives: string | null,
   estApplicable: boolean | null,
   responsableLocal: ResponsableLocal[],
-  référentTerritorial: RéférentTerritorial[],
+  coordinateurTerritorial: CoordinateurTerritorial[],
 };
 
 export type Territoire = {
