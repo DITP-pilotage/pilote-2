@@ -68,12 +68,14 @@ const useTerritoiresStore = create<TerritoiresStore>((set, get) => ({
       });
     },
 
-    récupérerDétailsSurUnTerritoireAvecCodeInsee: codeInsee => {
+    récupérerDétailsSurUnTerritoireAvecCodeInsee: (codeInsee, mailleSelectionnee) => {
       if (codeInsee === 'FR') {
         return get().actions.récupérerDétailsSurUnTerritoire('NAT-FR');
       }
+
+      const _mailleSelectionnee = mailleSelectionnee || get().mailleSélectionnée;
       
-      if (get().mailleSélectionnée === 'régionale') {
+      if (_mailleSelectionnee === 'régionale') {
         return get().actions.récupérerDétailsSurUnTerritoire(`REG-${codeInsee}`);
       }
 

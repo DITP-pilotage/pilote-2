@@ -53,6 +53,9 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   assert(session, 'Vous devez être authentifié pour accéder a cette page');
   assert(session.habilitations, 'La session ne dispose d\'aucune habilitation');
 
+  const territoireDept = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('DEPT'));
+  const territoireReg = session.habilitations.lecture.territoires.find(territoire => territoire.startsWith('REG'));
+
   const estNouvellePageAccueilDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL' });
 
   if (!estNouvellePageAccueilDisponible && session.profil !== 'DITP_ADMIN') {
@@ -63,7 +66,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     return {
       redirect: {
         statusCode: 302,
-        destination: `/accueil/chantier/${session.habilitations.lecture.territoires[0]}`,
+        destination: `/accueil/chantier/${query.maille === 'départementale' ? territoireDept : query.maille === 'départementale' ? territoireReg : session.habilitations.lecture.territoires[0]}`,
       },
     };
   }
