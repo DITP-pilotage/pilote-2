@@ -84,10 +84,10 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
   };
 
   const territoireCode = query.territoireCode as string;
-  const mailleSelectionnee = query.maille as 'départementale' | 'régionale';
   const [maille, codeInseeSelectionne] = territoireCode.split('-');
+  const mailleSelectionnee = query.maille as 'départementale' | 'régionale' ?? (maille === 'REG' ? 'régionale' : 'départementale');
 
-  const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee ?? (maille === 'REG' ? 'régionale' : 'départementale');
+  const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;
 
   const [ministères, axes] = await Promise.all(
     [
