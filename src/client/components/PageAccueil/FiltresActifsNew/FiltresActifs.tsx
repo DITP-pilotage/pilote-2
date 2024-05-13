@@ -1,5 +1,4 @@
 import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
-import { parse } from 'node:path';
 import Tag from '@/components/_commons/Tag/Tag';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
 import Axe from '@/server/domain/axe/Axe.interface';
