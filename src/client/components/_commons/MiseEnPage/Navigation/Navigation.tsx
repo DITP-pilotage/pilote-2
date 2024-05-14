@@ -10,6 +10,7 @@ import Utilisateur from '@/components/_commons/MiseEnPage/EnTête/Utilisateur/Ut
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 import { MenuItemGestionContenu } from '@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu';
 import api from '@/server/infrastructure/api/trpc/api';
+import { getFiltresActifs } from '@/stores/useFiltresStoreNew/useFiltresStoreNew';
 
 const fermerLaModaleDuMenu = () => {
   if (typeof window.dsfr === 'function') {
@@ -49,29 +50,42 @@ export default function Navigation() {
     router.push('/503');
   }
 
+  const filtresActifs = getFiltresActifs();
+
+  const territoireCode = session?.habilitations.lecture.territoires.includes('NAT-FR') ? 'NAT-FR' : session?.habilitations.lecture.territoires[0];
+  const queryParamString = new URLSearchParams(Object.entries(filtresActifs).map(([key, value]) => (value && String(value).length > 0 ? [key, String(value)] : [])).filter(value => value.length > 0)).toString();
+
   const pages = [
     {
       nom: 'Accueil',
-      lien: '/',
+      lien: `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ''}`,
+      matcher: '/accueil/chantier/[territoireCode]',
       accessible: true,
+      prefetch: true,
       target: '_self',
     },
     {
       nom: 'Gestion des comptes',
       lien: '/admin/utilisateurs',
+      matcher: '/admin/utilisateurs',
       accessible: estAutoriséAAccéderALaGestionDesComptes(session),
+      prefetch: false,
       target: '_self',
     },
     {
       nom: 'Nouveautés',
       lien: '/nouveautes',
+      matcher: '/nouveautes',
       accessible: true,
+      prefetch: false,
       target: '_self',
     },
     {
       nom: 'Centre d\'aide',
       lien: '/centreaide',
+      matcher: '/centreaide',
       accessible: true,
+      prefetch: false,
       target: '_blank',
     },
   ];
@@ -111,7 +125,7 @@ export default function Navigation() {
                       key={page.lien}
                     >
                       <Link
-                        aria-current={page.lien === urlActuelle ? 'true' : undefined}
+                        aria-current={page.matcher === urlActuelle ? 'true' : undefined}
                         className='fr-nav__link'
                         href={page.lien}
                         onClick={fermerLaModaleDuMenu}
@@ -122,7 +136,7 @@ export default function Navigation() {
                     </li>
                   ))
                 }
-                { 
+                {
                   estAdministrateur(session) ? (
                     <MenuItemGestionContenu urlActuelle={urlActuelle} />
                   ) : null

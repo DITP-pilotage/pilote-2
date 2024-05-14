@@ -1,8 +1,7 @@
-import { PrismaClient, Prisma, perimetre, ministere } from '@prisma/client';
+import { ministere, perimetre, Prisma, PrismaClient } from '@prisma/client';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import MinistèreRepository from '@/server/domain/ministère/MinistèreRepository.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 
 type MinistèreQueryResult = { nom: string, id: string, acronyme: string, icone: string, perimetre_ids: string[], perimetre_noms: string[] };
 
@@ -50,11 +49,10 @@ export default class MinistèreSQLRepository implements MinistèreRepository {
     };
   }
 
-  async getListePourChantiers(chantiers: Chantier[]): Promise<Ministère[]> {
-    let list_chantier = chantiers.map(x => x.id);
+  async getListePourChantiers(chantierIds: string[]): Promise<Ministère[]> {
     const queryResults: MinistèreQueryResult[] = await this.prisma.$queryRaw`
         WITH perimetres_visibles AS (
-            select DISTINCT unnest(c.perimetre_ids) as perimetre_id from chantier c where  c.id IN (${Prisma.join(list_chantier)})
+            select DISTINCT unnest(c.perimetre_ids) as perimetre_id from chantier c where  c.id IN (${Prisma.join(chantierIds)})
         )
         select p.ministere_id as id,
                m.nom,

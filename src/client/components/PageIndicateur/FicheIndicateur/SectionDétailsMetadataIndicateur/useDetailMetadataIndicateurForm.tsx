@@ -8,9 +8,9 @@ export type MetadataParametrageIndicateurForm = {
   indicNom: string;
   indicDescr: string;
   indicType: string;
-  indicUnite: string;
+  indicUnite: string | null;
   indicSchema: string;
-  zgApplicable: string;
+  zgApplicable: string | null;
   indicTerritorialise: boolean;
   indicIsBaro: boolean;
 };
@@ -28,7 +28,8 @@ export default function useDetailMetadataIndicateurForm() {
   const { register, watch, getValues, formState: { errors } } = useFormContext<MetadataParametrageIndicateurForm>();
 
   const { data: metadataIndicateurs = [] } = api.metadataIndicateur.récupérerMetadataIndicateurFiltrés.useQuery({
-    filtres: { chantiers: !getValues('indicParentCh') || getValues('indicParentCh') === '_' ? ['Aucun chantier séléctionné'] : [getValues('indicParentCh')],
+    filtres: {
+      chantiers: !getValues('indicParentCh') || getValues('indicParentCh') === '_' ? ['Aucun chantier séléctionné'] : [getValues('indicParentCh')],
     },
   });
 
@@ -36,8 +37,17 @@ export default function useDetailMetadataIndicateurForm() {
   if (!getValues('indicParentCh') || getValues('indicParentCh') === '_') {
     optionsIndicateurParent = [{ valeur: '_', libellé: 'Selectionner d\'abord un chantier' }];
   } else {
-    optionsIndicateurParent = metadataIndicateurs.length === 0 ? [{ valeur: 'Aucun indicateur selectionné', libellé: 'Aucun indicateur parent disponible' }]
-      : [{ valeur: 'Aucun indicateur selectionné', libellé: 'Pas d\'indicateur parent' }, ...metadataIndicateurs.map(optionIndicateur => ({ valeur: optionIndicateur.indicId, libellé: `${optionIndicateur.indicId} ${optionIndicateur.indicNom}` }))];
+    optionsIndicateurParent = metadataIndicateurs.length === 0 ? [{
+      valeur: 'Aucun indicateur selectionné',
+      libellé: 'Aucun indicateur parent disponible',
+    }]
+      : [{
+        valeur: 'Aucun indicateur selectionné',
+        libellé: 'Pas d\'indicateur parent',
+      }, ...metadataIndicateurs.map(optionIndicateur => ({
+        valeur: optionIndicateur.indicId,
+        libellé: `${optionIndicateur.indicId} ${optionIndicateur.indicNom}`,
+      }))];
   }
 
   activerWatchSurSelecteur(watch);

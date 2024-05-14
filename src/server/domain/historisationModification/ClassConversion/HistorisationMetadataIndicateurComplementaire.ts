@@ -3,11 +3,11 @@ import { MetadataParametrageIndicateur } from '@/server/parametrage-indicateur/d
 export interface HistorisationMetadataIndicateurComplementaire {
   indic_id: string;
 
-  reforme_prioritaire: string;
+  reforme_prioritaire: string | null;
 
   projet_annuel_perf: boolean;
 
-  detail_projet_annuel_perf: string;
+  detail_projet_annuel_perf: string | null;
 
   periodicite: string;
 
@@ -15,29 +15,29 @@ export interface HistorisationMetadataIndicateurComplementaire {
 
   indic_territorialise: boolean;
 
-  frequence_territoriale: string;
+  frequence_territoriale: string | null;
 
-  mailles: string;
+  mailles: string | null;
 
   admin_source: string;
 
-  methode_collecte: string;
+  methode_collecte: string | null;
 
-  si_source: string;
+  si_source: string | null;
 
   donnee_ouverte: boolean;
 
-  modalites_donnee_ouverte: string;
+  modalites_donnee_ouverte: string | null;
 
-  resp_donnees: string;
+  resp_donnees: string | null;
 
-  resp_donnees_email: string;
+  resp_donnees_email: string | null;
 
-  contact_technique: string;
+  contact_technique: string | null;
 
   contact_technique_email: string;
 
-  commentaire: string;
+  commentaire: string | null;
 }
 
 export function convertirEnHistorisationMetadataIndicateurComplementaireModel(metadataParametrageIndicateur: MetadataParametrageIndicateur): HistorisationMetadataIndicateurComplementaire {

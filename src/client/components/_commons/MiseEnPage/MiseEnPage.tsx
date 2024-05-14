@@ -1,5 +1,5 @@
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import PageLanding from '@/components/PageLanding/PageLanding';
 import Loader from '@/client/components/_commons/Loader/Loader';
 import MiseEnPageStyled from '@/components/_commons/MiseEnPage/MiseEnPage.styled';
@@ -13,31 +13,37 @@ export default function MiseEnPage({ afficherLeLoader, children }: MiseEnPagePro
   const { status } = useSession();
   const { initialiserLesTerritoires, initialiserLeTerritoireSélectionnéParDéfaut } = actionsTerritoiresStore();
   const [aFiniDeChargerLesTerritoires, setAFiniDeChargerLesTerritoires] = useState(false);
-  const { refetch: fetchRécupérerLesTerritoires } = api.territoire.récupérerTous.useQuery(undefined, { refetchOnWindowFocus: false, enabled: false });
-  
-  const récupérerLesTerritoires = async () => {
+  const { refetch: fetchRécupérerLesTerritoires } = api.territoire.récupérerTous.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+    enabled: false,
+  });
+
+  const récupérerLesTerritoires = useCallback(async () => {
     const { data: territoires } = await fetchRécupérerLesTerritoires();
     if (territoires) {
       initialiserLesTerritoires(territoires);
       initialiserLeTerritoireSélectionnéParDéfaut();
       setAFiniDeChargerLesTerritoires(true);
     }
-  };
+  }, [fetchRécupérerLesTerritoires, initialiserLesTerritoires, initialiserLeTerritoireSélectionnéParDéfaut]);
 
-  useEffect(() => {
-    if (status === 'loading' || afficherLeLoader) 
-      window.scrollTo(0, 0);
+  useMemo(() => {
     if (status === 'authenticated') {
       récupérerLesTerritoires();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [récupérerLesTerritoires, status]);
+
+  useEffect(() => {
+    if (status === 'loading' || afficherLeLoader) {
+      window.scrollTo(0, 0);
+    }
   }, [afficherLeLoader, status]);
 
   return (
     <MiseEnPageStyled>
       <EnTête />
       {
-        status === 'loading' || afficherLeLoader ||  (status === 'authenticated' && !aFiniDeChargerLesTerritoires)
+        status === 'loading' || afficherLeLoader || (status === 'authenticated' && !aFiniDeChargerLesTerritoires)
           ?
             <Loader />
           : (
