@@ -111,7 +111,7 @@ export function RapportDétailléVueDEnsemble({ chantiers }: RapportDétailléVu
           <div className='fr-grid-row fr-grid-row--gutters'>
             {
               remontéesAlertes.map(({ nomCritère, libellé, nombre, estActivée }) => (
-                (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' || nomCritère !== 'estEnAlerteBaisseOuStagnation') &&
+                (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' || nomCritère !== 'estEnAlerteBaisse') &&
                   <div
                     className='fr-col'
                     key={libellé}

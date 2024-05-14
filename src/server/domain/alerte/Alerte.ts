@@ -7,11 +7,11 @@ const Alerte = {
     }
     return écart < -10;
   },
-  estEnAlerteBaisseOuStagnation: (tendance: ChantierTendance | null) => {
+  estEnAlerteBaisse: (tendance: ChantierTendance | null) => {
     if (!tendance)
       return false;
 
-    return ['BAISSE', 'STAGNATION'].includes(tendance);
+    return tendance === 'BAISSE';
   },
   estEnAlerteDonnéesNonMàj(dateDonnéesQualitatives: string | null, dateDonnéesQuantitatives: string | null) {
     if (dateDonnéesQualitatives === null && dateDonnéesQuantitatives !== null) {

@@ -8,7 +8,7 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
   const [filtresAlertes] = useQueryStates({
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
-    estEnAlerteBaisseOuStagnation: parseAsBoolean.withDefault(false),
+    estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
   });
 
@@ -28,10 +28,10 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
           estActivée: filtresAlertes.estEnAlerteÉcart,
         },
       {
-        nomCritère: 'estEnAlerteBaisseOuStagnation',
-        libellé: 'Tendance(s) en baisse ou en stagnation',
-        nombre: filtresComptesCalculés.estEnAlerteBaisseOuStagnation.nombre,
-        estActivée: filtresAlertes.estEnAlerteBaisseOuStagnation,
+        nomCritère: 'estEnAlerteBaisse',
+        libellé: 'Tendance(s) en baisse',
+        nombre: filtresComptesCalculés.estEnAlerteBaisse.nombre,
+        estActivée: filtresAlertes.estEnAlerteBaisse,
       },
       {
         nomCritère: 'estEnAlerteDonnéesNonMàj',
