@@ -55,7 +55,7 @@ interface InputMetadataParametrageIndicateur {
   frequenceTerritoriale: string | null;
   mailles: string | null;
   adminSource: string;
-  methodeCollecte: string;
+  methodeCollecte: string | null;
   siSource: string | null;
   donneeOuverte: boolean;
   modalitesDonneeOuverte: string | null;
@@ -179,7 +179,7 @@ export class MetadataParametrageIndicateur {
 
   private readonly _adminSource: string;
 
-  private readonly _methodeCollecte: string;
+  private readonly _methodeCollecte: string | null;
 
   private readonly _siSource: string | null;
 
@@ -555,7 +555,7 @@ export class MetadataParametrageIndicateur {
     return this._adminSource;
   }
 
-  get methodeCollecte(): string {
+  get methodeCollecte(): string | null {
     return this._methodeCollecte;
   }
 

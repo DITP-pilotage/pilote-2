@@ -57,7 +57,7 @@ export interface MetadataParametrageIndicateurContrat {
   frequenceTerritoriale: string | null;
   mailles: string | null;
   adminSource: string;
-  methodeCollecte: string;
+  methodeCollecte: string | null;
   siSource: string | null;
   donneeOuverte: boolean;
   modalitesDonneeOuverte: string | null;
