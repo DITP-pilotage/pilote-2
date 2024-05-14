@@ -54,14 +54,14 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     estEnAlerteDonnéesNonMàj,
   ];
 
-  const alerteChantierMailleDepRep = [
+  const alerteChantierMailleDepReg = [
     estEnAlerteÉcart,
     estEnAlerteBaisseOuStagnation,
     estEnAlerteMétéoNonRenseignée,
   ];
 
   return {
-    remontéesAlertes: mailleChantier === 'nationale' ?  alerteChantierMailleNationale  :  alerteChantierMailleDepRep, 
+    remontéesAlertes: mailleChantier === 'nationale' ?  alerteChantierMailleNationale  :  alerteChantierMailleDepReg, 
     
   };
 }
