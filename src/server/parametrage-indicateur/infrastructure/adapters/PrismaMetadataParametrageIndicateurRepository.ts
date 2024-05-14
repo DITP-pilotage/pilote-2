@@ -183,7 +183,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
 
   async recupererMetadataParametrageIndicateurParIndicId(indicId: string): Promise<MetadataParametrageIndicateur> {
     try {
-      let query = `SELECT *
+      let query = `SELECT *, mi.zg_applicable as zg_applicable
                          FROM raw_data.metadata_indicateurs_hidden mi
                                   INNER JOIN raw_data.metadata_parametrage_indicateurs mpi ON mpi.indic_id = mi.indic_id
                                   INNER JOIN raw_data.metadata_indicateurs_complementaire mic ON mic.indic_id = mi.indic_id
