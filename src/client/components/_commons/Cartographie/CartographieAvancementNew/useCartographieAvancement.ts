@@ -85,7 +85,7 @@ export default function useCartographieAvancement(données: CartographieDonnées
     });
 
     return donnéesFormatées;
-  }, [données, récupérerDétailsSurUnTerritoireAvecCodeInsee, élémentsDeLégende]);
+  }, [données, mailleSelectionnee, récupérerDétailsSurUnTerritoireAvecCodeInsee, élémentsDeLégende]);
 
   return {
     légende,

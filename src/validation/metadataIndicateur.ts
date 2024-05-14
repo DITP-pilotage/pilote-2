@@ -166,7 +166,8 @@ export const validationMetadataIndicateurFormulaire = z.object({
   adminSource: z
     .string(),
   methodeCollecte: z
-    .string(),
+    .string()
+    .nullable(),
   siSource: z
     .string()
     .nullable(),

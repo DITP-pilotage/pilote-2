@@ -21,7 +21,7 @@ export interface HistorisationMetadataIndicateurComplementaire {
 
   admin_source: string;
 
-  methode_collecte: string;
+  methode_collecte: string | null;
 
   si_source: string | null;
 
