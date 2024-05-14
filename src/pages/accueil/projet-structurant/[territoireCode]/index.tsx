@@ -47,12 +47,15 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     dependencies.getSynthèseDesRésultatsProjetStructurantRepository(),
   ).run(session.habilitations, session.profil);
 
-  const [ministères, axes] = await Promise.all(
-    [
-      dependencies.getMinistèreRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
-      dependencies.getAxeRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
-    ],
+  const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
+    await Promise.all(
+      [
+        dependencies.getMinistèreRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
+        dependencies.getAxeRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
+      ],
+    )
   );
+
 
   const estProjetStructurantDisponible = new RécupérerVariableContenuUseCase().run({ nomVariableContenu: 'NEXT_PUBLIC_FF_PROJETS_STRUCTURANTS' });
 
