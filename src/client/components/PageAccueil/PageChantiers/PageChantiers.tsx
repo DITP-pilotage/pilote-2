@@ -141,7 +141,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                           Taux d’avancement moyen
                         </Titre>
                         <Infobulle idHtml='infobulle-chantiers-jauges'>
-                          { INFOBULLE_CONTENUS.chantiers.jauges }
+                          {INFOBULLE_CONTENUS.chantiers.jauges}
                         </Infobulle>
                       </TitreInfobulleConteneur>
                       <div className='flex w-full justify-center fr-px-1w'>
@@ -193,7 +193,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                   <div className='fr-grid-row border-t'>
                     <div className='fr-mt-2w w-full'>
                       <p className='fr-text--xl fr-text--bold fr-mb-0 texte-gris'>
-                        { `${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%` }
+                        {`${(process.env.NEXT_PUBLIC_FF_TA_ANNUEL === 'true' ? avancementsAgrégés?.annuel.moyenne?.toFixed(0) : null) ?? '- '}%`}
                       </p>
                       <BarreDeProgression
                         afficherTexte={false}
@@ -222,7 +222,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                     Répartition des météos renseignées
                   </Titre>
                   <Infobulle idHtml='infobulle-chantiers-météos'>
-                    { INFOBULLE_CONTENUS.chantiers.météos }
+                    {INFOBULLE_CONTENUS.chantiers.météos}
                   </Infobulle>
                 </TitreInfobulleConteneur>
                 <RépartitionMétéo météos={répartitionMétéos} />
@@ -261,7 +261,7 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                   Chantiers signalés
                 </Titre>
                 <Infobulle idHtml='infobulle-chantiers-alertes'>
-                  { INFOBULLE_CONTENUS.chantiers.alertes }
+                  {INFOBULLE_CONTENUS.chantiers.alertes}
                 </Infobulle>
               </TitreInfobulleConteneur>
             </div>
@@ -269,17 +269,17 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
               {
                 remontéesAlertes.map(({ nomCritère, libellé, nombre, estActivée, auClic }) => (
                   (process.env.NEXT_PUBLIC_FF_ALERTES_BAISSE === 'true' || nomCritère !== 'estEnAlerteBaisseOuStagnation') &&
-                    <div
-                      className='fr-col fr-px-1v fr-px-md-1w'
-                      key={libellé}
-                    >
-                      <RemontéeAlerte
-                        auClic={auClic}
-                        estActivée={estActivée}
-                        libellé={libellé}
-                        nombre={nombre}
-                      />
-                    </div>
+                  <div
+                    className='fr-col fr-px-1v fr-px-md-1w'
+                    key={libellé}
+                  >
+                    <RemontéeAlerte
+                      auClic={auClic}
+                      estActivée={estActivée}
+                      libellé={libellé}
+                      nombre={nombre}
+                    />
+                  </div>
                 ))
               }
             </div>
@@ -295,16 +295,16 @@ export default function PageChantiers({ chantiers, ministères }: PageChantiersP
                   estInline
                 >
                   Liste des chantiers (
-                  { nombreChantiersDansLeTableau }
+                  {nombreChantiersDansLeTableau}
                   )
                 </Titre>
                 <Infobulle idHtml='infobulle-chantiers-listeDesChantiers'>
-                  { INFOBULLE_CONTENUS.chantiers.listeDesChantiers }
+                  {INFOBULLE_CONTENUS.chantiers.listeDesChantiers}
                 </Infobulle>
               </TitreInfobulleConteneur>
               {
                 (
-                  !!session?.profilAAccèsAuxChantiersBrouillons && 
+                  !!session?.profilAAccèsAuxChantiersBrouillons &&
                   aDesDroitsDeLectureSurAuMoinsUnChantierBrouillon(session.habilitations.lecture.chantiers)
                 ) &&
                 <div className='fr-grid-row fr-my-2w fr-mb-md-0'>
