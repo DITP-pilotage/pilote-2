@@ -92,11 +92,13 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
 
   const mailleChantier = maille === 'NAT' ? 'nationale' : mailleSelectionnee;
 
-  const [ministères, axes] = await Promise.all(
-    [
-      dependencies.getMinistèreRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
-      dependencies.getAxeRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
-    ],
+  const [ministères, axes] = session.habilitations.lecture.chantiers.length === 0 ? [[], []] : (
+    await Promise.all(
+      [
+        dependencies.getMinistèreRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
+        dependencies.getAxeRepository().getListePourChantiers(session.habilitations.lecture.chantiers),
+      ],
+    )
   );
 
   const chantiers = await new RécupérerChantiersAccessiblesEnLectureUseCase(
