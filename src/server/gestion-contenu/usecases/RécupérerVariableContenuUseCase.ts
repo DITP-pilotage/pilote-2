@@ -5,6 +5,9 @@ import { configuration } from '@/config';
 export class RécupérerVariableContenuUseCase {
   run<T extends keyof VariableContenuDisponibleEnv>({ nomVariableContenu }: { nomVariableContenu: T }): VariableContenuDisponibleEnv[T] | undefined {
     switch (nomVariableContenu) {
+      case 'NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL': {
+        return configuration.featureFlip.nouvellePageAccueil as VariableContenuDisponibleEnv[T];
+      }
       case 'NEXT_PUBLIC_FF_RAPPORT_DETAILLE': {
         return configuration.featureFlip.rapportDetaille as VariableContenuDisponibleEnv[T];
       }

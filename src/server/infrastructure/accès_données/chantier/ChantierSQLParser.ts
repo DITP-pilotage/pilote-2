@@ -42,7 +42,7 @@ function créerDonnéesTerritoires(
 ) {
   let donnéesTerritoires: TerritoiresDonnées = {};
 
-  territoires.forEach(t => {    
+  territoires.forEach(t => {
     const chantierRow = chantierRows.find(c => c.code_insee === t.codeInsee);
     const écart = calculÉcart(chantierNational, chantierRow);
     const tendance = calculerTendance(chantierRow);
@@ -64,13 +64,13 @@ function créerDonnéesTerritoires(
     if (!!chantierRow) {
       const responsables = chantierRow.responsables_locaux;
       const responsablesEmails = chantierRow.responsables_locaux_mails;
-      for (const [i, responsable] of responsables.entries()) {
+      for (const [i, responsable] of (responsables || []).entries()) {
         donnéesTerritoires[t.codeInsee].responsableLocal.push({ nom: responsable, email: responsablesEmails[i] });
       }
 
       const referents = chantierRow.referents_territoriaux;
       const referentsEmails = chantierRow.referents_territoriaux_mails;
-      for (const [i, referent] of referents.entries()) {
+      for (const [i, referent] of (referents || []).entries()) {
         donnéesTerritoires[t.codeInsee].référentTerritorial.push({ nom: referent, email: referentsEmails[i] });
       }
     }

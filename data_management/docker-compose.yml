@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   pilote_webapp:
-    image: node:lts-alpine
+    image: node:18.20.2
     container_name: "pilote_webapp"
     command: sh -c "cd /app && npm install && npm run dev"
     depends_on:

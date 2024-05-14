@@ -1,4 +1,4 @@
-import { MailleInterne, Maille } from '@/server/domain/maille/Maille.interface';
+import { Maille, MailleInterne } from '@/server/domain/maille/Maille.interface';
 import { CodeInsee, DétailTerritoire } from '@/server/domain/territoire/Territoire.interface';
 
 export default interface TerritoiresStore {
@@ -16,7 +16,7 @@ export default interface TerritoiresStore {
     initialiserLeTerritoireSélectionnéParDéfaut: () => void,
     modifierMailleSélectionnée: (maille: MailleInterne) => void,
     modifierTerritoireSélectionné: (territoireCode: DétailTerritoire['code']) => void,
-    récupérerDétailsSurUnTerritoireAvecCodeInsee: (codeInsee: CodeInsee) => DétailTerritoire
+    récupérerDétailsSurUnTerritoireAvecCodeInsee: (codeInsee: CodeInsee, mailleSelectionnee?: 'départementale' | 'régionale') => DétailTerritoire
     récupérerDétailsSurUnTerritoire: (territoireCode: DétailTerritoire['code']) => DétailTerritoire
     modifierTerritoiresComparés: (territoireCode: DétailTerritoire['code']) => void
     récupérerCodesInseeDépartementsAssociésÀLaRégion: (codeInsee: CodeInsee, maille: MailleInterne) => CodeInsee[]

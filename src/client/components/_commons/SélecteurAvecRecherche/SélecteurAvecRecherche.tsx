@@ -6,10 +6,17 @@ import '@gouvfr/dsfr/dist/component/radio/radio.css';
 import '@gouvfr/dsfr/dist/component/select/select.min.css';
 
 
-export default function SélecteurAvecRecherche<T extends string>({ htmlName, libellé, options, valeurSélectionnée, valeurModifiéeCallback } : SélecteurAvecRechercheProps<T>) {
+export default function SélecteurAvecRecherche<T extends string>({
+  htmlName,
+  libellé,
+  options,
+  valeurSélectionnée,
+  valeurModifiéeCallback,
+}: SélecteurAvecRechercheProps<T>) {
   const ref = useRef(null);
   const {
     estOuvert,
+    setEstOuvert,
     SélecteurBoutonProps,
     libelléValeurSélectionnée,
     setRecherche,
@@ -24,7 +31,7 @@ export default function SélecteurAvecRecherche<T extends string>({ htmlName, li
         htmlFor={htmlName}
       >
         {libellé}
-      </label> 
+      </label>
       <button
         className='fr-select fr-ellipsis'
         id={htmlName}
@@ -51,10 +58,13 @@ export default function SélecteurAvecRecherche<T extends string>({ htmlName, li
             <Fragment key={`${option.valeur}`}>
               {
                 !option.désactivée ?
-                  <div 
+                  <div
                     className='fr-option'
                     id={option.valeur}
-                    onClick={(événement) => valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.id as T)}
+                    onClick={(événement) => {
+                      setEstOuvert(false);
+                      return valeurModifiéeCallback && valeurModifiéeCallback(événement.currentTarget.id as T);
+                    }}
                     onKeyDown={(événement) => {
                       if ((événement.key === 'Enter' || événement.key === ' ') && !!valeurModifiéeCallback) {
                         valeurModifiéeCallback(événement.currentTarget.id as T);
@@ -66,13 +76,13 @@ export default function SélecteurAvecRecherche<T extends string>({ htmlName, li
                     {option.libellé}
                   </div>
                   :
-                  <div 
+                  <div
                     className='fr-option-disabled'
                     id={option.valeur}
                   >
                     {option.libellé}
-                  </div>                  
-                }
+                  </div>
+              }
 
             </Fragment>
           ))

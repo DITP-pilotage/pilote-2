@@ -67,7 +67,8 @@ export const validationMetadataIndicateurFormulaire = z.object({
     .nullable(),
   indicUnite: z
     .string()
-    .max(500, 'La limite maximale de 500 caractères a été dépassée'),
+    .max(500, 'La limite maximale de 500 caractères a été dépassée')
+    .nullable(),
   indicHiddenPilote: z
     .string(),
   indicSchema: z
@@ -143,7 +144,8 @@ export const validationMetadataIndicateurFormulaire = z.object({
   tendance: z
     .string(),
   reformePrioritaire: z
-    .string(),
+    .string()
+    .nullable(),
   projetAnnuelPerf: z
     .boolean(),
   detailProjetAnnuelPerf: z
@@ -164,18 +166,22 @@ export const validationMetadataIndicateurFormulaire = z.object({
   adminSource: z
     .string(),
   methodeCollecte: z
-    .string(),
+    .string()
+    .nullable(),
   siSource: z
-    .string(),
+    .string()
+    .nullable(),
   donneeOuverte: z
     .boolean(),
   modalitesDonneeOuverte: z
     .string()
     .nullable(),
   respDonnees: z
-    .string(),
+    .string()
+    .nullable(),
   respDonneesEmail: z
-    .string(),
+    .string()
+    .nullable(),
   contactTechnique: z
     .string()
     .nullable(),

@@ -29,12 +29,19 @@ export interface NextPageAdminUtilisateurProps {
   chantiers: ChantierSynthétisé[]
 }
 
-export default function NextPageAdminIndicateur({ indicateur, mapInformationMetadataIndicateur, estUneCréation, modificationReussie, creationReussie, chantiers } : NextPageAdminUtilisateurProps) {
+export default function NextPageAdminIndicateur({
+  indicateur,
+  mapInformationMetadataIndicateur,
+  estUneCréation,
+  modificationReussie,
+  creationReussie,
+  chantiers,
+}: NextPageAdminUtilisateurProps) {
   return (
     <>
       <Head>
         <title>
-          Indicateur 
+          Indicateur
           {' '}
           {indicateur.indicId}
           - PILOTE
@@ -52,7 +59,10 @@ export default function NextPageAdminIndicateur({ indicateur, mapInformationMeta
   );
 }
 
-export async function getServerSideProps({ req, res, params, query } :GetServerSidePropsContext<{ id: Utilisateur['id'], _action?: string }>) {
+export async function getServerSideProps({ req, res, params, query }: GetServerSidePropsContext<{
+  id: Utilisateur['id'],
+  _action?: string
+}>) {
 
   const redirigerVersPageAccueil = {
     redirect: {

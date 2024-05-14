@@ -18,12 +18,24 @@ import { IndicateurPondération } from '@/components/_commons/Indicateurs/Bloc/P
 import IndicateurBlocStyled from './IndicateurBloc.styled';
 import useIndicateurBloc from './useIndicateurBloc';
 
-export default function IndicateurBloc({ indicateur, détailsIndicateur, estInteractif, territoireProjetStructurant, typeDeRéforme, chantierEstTerritorialisé, estDisponibleALImport = false }: IndicateurBlocProps) {
+export default function IndicateurBloc({
+  indicateur,
+  détailsIndicateur,
+  estInteractif,
+  territoireProjetStructurant,
+  typeDeRéforme,
+  chantierEstTerritorialisé,
+  estDisponibleALImport = false,
+}: IndicateurBlocProps) {
   const router = useRouter();
   const réformeId = router.query.id as string;
-  
+
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
-  const { indicateurDétailsParTerritoires, tableau, dateDeMiseAJourIndicateur } = useIndicateurBloc(détailsIndicateur, typeDeRéforme, territoireProjetStructurant );
+  const {
+    indicateurDétailsParTerritoires,
+    tableau,
+    dateDeMiseAJourIndicateur,
+  } = useIndicateurBloc(détailsIndicateur, typeDeRéforme, territoireProjetStructurant);
   const [rapport, setRapport] = useState<DetailValidationFichierContrat | null>(null);
 
   return (
@@ -45,7 +57,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
                     <PictoBaromètre />
                   </span>
                 }
-                {indicateur.nom + (indicateur.unité === null ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
+                {indicateur.nom + (indicateur.unité === null || indicateur.unité === '' ? '' : ` (en ${indicateur.unité?.toLocaleLowerCase()})`)}
               </Titre>
               <div className='fr-ml-2w fr-mb-3w'>
                 <p className='fr-mb-0 fr-text--xs texte-gris'>
@@ -56,23 +68,25 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
                   </span>
                 </p>
                 {
-                !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] &&
-                  <IndicateurPondération
-                    indicateurPondération={détailsIndicateur[territoireSélectionné.codeInsee]?.pondération ?? null}
-                    mailleSélectionnée={territoireSélectionné.maille}
-                  />
+                  !!territoireSélectionné && !!détailsIndicateur[territoireSélectionné.codeInsee] ? (
+                    <IndicateurPondération
+                      indicateurPondération={détailsIndicateur[territoireSélectionné.codeInsee]?.pondération ?? null}
+                      mailleSélectionnée={territoireSélectionné.maille}
+                    />
+                  ) : null
                 }
               </div>
             </div>
             {
-            estDisponibleALImport ? 
-              <FormulaireIndicateur
-                chantierId={réformeId}
-                indicateurId={indicateur.id}
-                setRapport={setRapport}
-              />
-              : null
-              }
+              estDisponibleALImport ? (
+                <FormulaireIndicateur
+                  chantierId={réformeId}
+                  indicateurId={indicateur.id}
+                  setRapport={setRapport}
+                />
+              )
+                : null
+            }
           </div>
           {
             rapport !== null &&
@@ -83,7 +97,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
             titre={`Tableau de l'indicateur : ${indicateur.nom}`}
           />
           {
-            !!estInteractif &&
+            estInteractif ? (
               <IndicateurDétails
                 chantierEstTerritorialisé={chantierEstTerritorialisé}
                 dateDeMiseAJourIndicateur={dateDeMiseAJourIndicateur}
@@ -91,6 +105,7 @@ export default function IndicateurBloc({ indicateur, détailsIndicateur, estInte
                 indicateurDétailsParTerritoires={indicateurDétailsParTerritoires}
                 typeDeRéforme={typeDeRéforme}
               />
+            ) : null
           }
         </section>
       </Bloc>

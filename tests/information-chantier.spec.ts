@@ -13,9 +13,9 @@ test('doit pouvoir consulter les données des chantiers', async ({ page }) => {
 
   await page.getByRole('button', { name: /Transition écologique et Cohésion des territoires/ }).click();
 
-  await expect(page.locator("button[aria-label='Retirer le tag Cohésion des territoires, ville']")).toBeVisible();
+  await expect(page.locator("button[aria-label='Retirer le tag Cohésion des territoires, Ville']")).toBeVisible();
   await expect(page.locator("button[aria-label='Retirer le tag Logement']")).toBeVisible();
-  await expect(page.locator("button[aria-label='Retirer le tag Transition Ecologique']")).toBeVisible();
+  await expect(page.locator("button[aria-label='Retirer le tag Transition Écologique']")).toBeVisible();
   await expect(page.locator("button[aria-label='Retirer le tag Transports']")).toBeVisible();
 
   await expect(page.getByRole('table').getByRole('cell', { name: /Transition écologique et Cohésion des territoires/ })).toBeVisible();

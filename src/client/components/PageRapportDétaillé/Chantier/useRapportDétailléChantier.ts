@@ -4,10 +4,10 @@ import {
   territoireSélectionnéTerritoiresStore,
 } from '@/stores/useTerritoiresStore/useTerritoiresStore';
 import calculerChantierAvancements from '@/client/utils/chantier/avancement/calculerChantierAvancements';
-import Chantier from '@/server/domain/chantier/Chantier.interface';
 import api from '@/server/infrastructure/api/trpc/api';
+import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
-export function useRapportDétailléChantier(chantier: Chantier) {
+export function useRapportDétailléChantier(chantier: ChantierRapportDetailleContrat) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const { récupérerDétailsSurUnTerritoire } = actionsTerritoiresStore();

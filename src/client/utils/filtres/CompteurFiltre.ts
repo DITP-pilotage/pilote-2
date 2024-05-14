@@ -6,7 +6,7 @@ type Critère<T> = {
 export default class CompteurFiltre<T> {
   constructor(private éléments: T[]) {}
 
-  compter(critères: Critère<T>[]) {
+  compter(critères: Critère<T>[]): Record<string, { nomCritère: string, nombre: number }> {
     let ensembles = Object.fromEntries(
       critères.map(critère => [
         critère.nomCritère,

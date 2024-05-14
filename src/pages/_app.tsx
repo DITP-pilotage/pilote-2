@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import '@gouvfr/dsfr/dist/core/core.min.css';
 import '@gouvfr/dsfr/dist/component/link/link.min.css';
 import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css';
@@ -8,33 +7,39 @@ import '@/client/styles/app.scss';
 import type { AppProps } from 'next/app';
 import Script from 'next/script';
 import { SessionProvider } from 'next-auth/react';
-import { Router } from 'next/router';
 import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Head from 'next/head';
 import { TRPCClientError } from '@trpc/client';
 import init from '@socialgouv/matomo-next';
+import { Router, useRouter } from 'next/router';
 import MiseEnPage from '@/client/components/_commons/MiseEnPage/MiseEnPage';
 import useDétecterLargeurDÉcran from '@/client/hooks/useDétecterLargeurDÉcran';
 import api from '@/server/infrastructure/api/trpc/api';
 
-const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 const queryClient = new QueryClient({
-  defaultOptions: { 
-    queries: { 
-      refetchOnWindowFocus: false, 
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
       retry: (failureCount, error) => {
         if (error instanceof TRPCClientError && error?.data?.code === 'UNAUTHORIZED') {
           return false;
         }
         return failureCount < 3;
       },
-    }, 
-  }, 
+    },
+  },
 });
+
+const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 
 function MonApplication({ Component, pageProps }: AppProps) {
   useDétecterLargeurDÉcran();
+
+  const router = useRouter();
+
+  const estNouvellePageAccueil = router.pathname.startsWith('/accueil');
+
   const [afficherLeLoader, setAfficherLeLoader] = useState(false);
   const [pageEnCoursDeChargement, setPageEnCoursDeChargement] = useState(false);
 
@@ -49,7 +54,6 @@ function MonApplication({ Component, pageProps }: AppProps) {
     Router.events.on('routeChangeStart', débutChargement);
     Router.events.on('routeChangeComplete', finChargement);
     Router.events.on('routeChangeError', finChargement);
-
     return () => {
       Router.events.off('routeChangeStart', débutChargement);
       Router.events.off('routeChangeComplete', finChargement);
@@ -57,15 +61,6 @@ function MonApplication({ Component, pageProps }: AppProps) {
     };
   }, []);
 
-  const matomoUrl = process.env.NEXT_PUBLIC_MATOMO_URL;
-  const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID;
-  const estRecordAnalyticsActive = process.env.NEXT_PUBLIC_RECORD_ANALYTICS;
-
-  useEffect(() => {
-    if (estRecordAnalyticsActive === 'true') {
-      init({ url: matomoUrl as string, siteId: matomoSiteId as string  });
-    }
-  }, [estRecordAnalyticsActive, matomoSiteId, matomoUrl]);
 
   useEffect(() => {
     let timer = setTimeout(() => {});
@@ -79,6 +74,16 @@ function MonApplication({ Component, pageProps }: AppProps) {
 
     return () => clearTimeout(timer);
   }, [pageEnCoursDeChargement]);
+
+  const matomoUrl = process.env.NEXT_PUBLIC_MATOMO_URL;
+  const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID;
+  const estRecordAnalyticsActive = process.env.NEXT_PUBLIC_RECORD_ANALYTICS;
+
+  useEffect(() => {
+    if (estRecordAnalyticsActive === 'true') {
+      init({ url: matomoUrl as string, siteId: matomoSiteId as string });
+    }
+  }, [estRecordAnalyticsActive, matomoSiteId, matomoUrl]);
 
   return (
     <>
@@ -116,7 +121,7 @@ function MonApplication({ Component, pageProps }: AppProps) {
       </Head>
       <QueryClientProvider client={queryClient}>
         <SessionProvider session={pageProps.session}>
-          <MiseEnPage afficherLeLoader={afficherLeLoader}>
+          <MiseEnPage afficherLeLoader={!estNouvellePageAccueil && afficherLeLoader}>
             <Component {...pageProps} />
           </MiseEnPage>
         </SessionProvider>

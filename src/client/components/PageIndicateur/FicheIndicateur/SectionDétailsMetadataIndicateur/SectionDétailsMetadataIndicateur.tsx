@@ -33,14 +33,20 @@ export default function SectionDétailsMetadataIndicateur({
   mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat
   chantiers: ChantierSynthétisé[]
 }) {
-  const { register, getValues, errors, metadataIndicateurs, optionsIndicateurParent } = useDetailMetadataIndicateurForm();
+  const {
+    register,
+    getValues,
+    errors,
+    metadataIndicateurs,
+    optionsIndicateurParent,
+  } = useDetailMetadataIndicateurForm();
   const optionsParentCh = [...chantiers.map(chantier => ({
     valeur: chantier.id,
     libellé: `${chantier.id} - ${chantier.nom}`,
   })), { valeur: '_', libellé: 'Aucun chantier selectionné' }];
 
-  function displayParentIndic(indicParentIndic: string) {
-    return indicParentIndic ? `${indicParentIndic} - ${metadataIndicateurs.find(metadataIndicateur => metadataIndicateur.indicId === indicParentIndic)?.indicNom}` : "Pas d'indicateur parent";
+  function displayParentIndic(indicParentIndic: string | null) {
+    return indicParentIndic ? `${indicParentIndic} - ${metadataIndicateurs.find(metadataIndicateur => metadataIndicateur.indicId === indicParentIndic)?.indicNom}` : 'Pas d\'indicateur parent';
   }
 
   return (
