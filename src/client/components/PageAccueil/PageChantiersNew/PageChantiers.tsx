@@ -81,6 +81,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
+    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
   });
 
   const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
@@ -90,7 +91,9 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     + (filtresAlertes.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
     + (filtresAlertes.estEnAlerteÉcart ? 1 : 0)
     + (filtresAlertes.estEnAlerteBaisse ? 1 : 0)
-    + (filtresAlertes.estEnAlerteDonnéesNonMàj ? 1 : 0);
+    + (filtresAlertes.estEnAlerteDonnéesNonMàj ? 1 : 0)
+    + (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
+
 
   const {
     chantiersFiltrés,

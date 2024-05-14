@@ -24,6 +24,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
+    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
   }, {
     shallow: false,
     clearOnDefault: true,
@@ -41,7 +42,8 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
     + (filtres.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
     + (filtres.estEnAlerteÉcart ? 1 : 0)
     + (filtres.estEnAlerteBaisse ? 1 : 0)
-    + (filtres.estEnAlerteDonnéesNonMàj ? 1 : 0);
+    + (filtres.estEnAlerteDonnéesNonMàj ? 1 : 0)
+    + (filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
 
   const ministèresAvecUnSeulPérimètre = new Map(
     ministères
@@ -67,6 +69,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
       estEnAlerteÉcart: false,
       estEnAlerteBaisse: false,
       estEnAlerteDonnéesNonMàj: false,
+      estEnAlerteAbscenceTauxAvancementDepartemental: false,
     });
   };
 
@@ -176,6 +179,21 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
                   filtres.estEnAlerteDonnéesNonMàj = false;
 
                   sauvegarderFiltres({ estEnAlerteDonnéesNonMàj: false });
+                  return setFiltres(filtres);
+                }}
+              />
+            </li>
+          ) : null
+        }
+        {
+          filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? (
+            <li>
+              <Tag
+                libellé="Abscence de taux d'avancement au niveau départemental"
+                suppressionCallback={() => {
+                  filtres.estEnAlerteAbscenceTauxAvancementDepartemental = false;
+
+                  sauvegarderFiltres({ estEnAlerteAbscenceTauxAvancementDepartemental: false });
                   return setFiltres(filtres);
                 }}
               />

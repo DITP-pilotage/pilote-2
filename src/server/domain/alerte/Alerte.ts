@@ -25,6 +25,9 @@ const Alerte = {
   estEnAlerteTauxAvancementNonCalculé(tauxAvancement: number | null) {
     return tauxAvancement === null;
   },
+  estEnAlerteAbscenceTauxAvancementDepartemental(aTauxAvancementDepartemental: Boolean) {
+    return !aTauxAvancementDepartemental;
+  },
 };
 
 export default Alerte;
