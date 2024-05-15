@@ -23,8 +23,8 @@ export function useRemontéesAlertesChantiers(chantiersFiltrés: ChantierAccueil
     nomCritère: 'estEnAlerteÉcart',
     condition: (chantier) => Alerte.estEnAlerteÉcart(chantier.mailles[maille]?.[codeInsee]?.écart),
   }, {
-    nomCritère: 'estEnAlerteBaisseOuStagnation',
-    condition: (chantier) => Alerte.estEnAlerteBaisseOuStagnation(chantier.mailles[maille]?.[codeInsee]?.tendance),
+    nomCritère: 'estEnAlerteBaisse',
+    condition: (chantier) => Alerte.estEnAlerteBaisse(chantier.mailles[maille]?.[codeInsee]?.tendance),
   }, {
     nomCritère: 'estEnAlerteDonnéesNonMàj',
     condition: (chantier) => Alerte.estEnAlerteDonnéesNonMàj(chantier.mailles[maille]?.[codeInsee]?.dateDeMàjDonnéesQualitatives, chantier.mailles[maille]?.[codeInsee]?.dateDeMàjDonnéesQuantitatives),
@@ -51,11 +51,11 @@ export function useRemontéesAlertesChantiers(chantiersFiltrés: ChantierAccueil
           estActivée: estActif('estEnAlerteÉcart', 'filtresAlerte'),       
         },
       {
-        nomCritère: 'estEnAlerteBaisseOuStagnation',
-        libellé: 'Tendance(s) en baisse ou en stagnation',
-        nombre: filtresComptesCalculés.estEnAlerteBaisseOuStagnation.nombre,
-        auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteBaisseOuStagnation', nom: 'Tendance(s) en baisse ou en stagnation' }, 'filtresAlerte'),
-        estActivée: estActif('estEnAlerteBaisseOuStagnation', 'filtresAlerte'),
+        nomCritère: 'estEnAlerteBaisse',
+        libellé: 'Tendance(s) en baisse',
+        nombre: filtresComptesCalculés.estEnAlerteBaisse.nombre,
+        auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteBaisse', nom: 'Tendance(s) en baisse' }, 'filtresAlerte'),
+        estActivée: estActif('estEnAlerteBaisse', 'filtresAlerte'),
       },
       {
         nomCritère: 'estEnAlerteDonnéesNonMàj',

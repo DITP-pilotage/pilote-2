@@ -8,33 +8,41 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
   const [filtresAlertes] = useQueryStates({
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
-    estEnAlerteBaisseOuStagnation: parseAsBoolean.withDefault(false),
+    estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
+    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
   });
 
-  const estEnAlerteTauxAvancementNonCalculé = {
+  const alerteAbscenceTauxAvancementDepartemental = {
+    nomCritère: 'estEnAlerteAbscenceTauxAvancementDepartemental',
+    libellé: "Abscence de taux d'avancement au niveau départemental",
+    nombre: filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental.nombre,
+    estActivée: filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental,
+  };
+
+  const alerteTauxAvancementNonCalculé = {
     nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
     libellé: 'Taux d’avancement non calculé(s) en raison d’indicateurs non renseignés',
     nombre: filtresComptesCalculés.estEnAlerteTauxAvancementNonCalculé.nombre,
     estActivée: filtresAlertes.estEnAlerteTauxAvancementNonCalculé,
-  }; 
-  
-  const estEnAlerteÉcart = {
+  };
+
+  const alerteEcart = {
     nomCritère: 'estEnAlerteÉcart',
     libellé: 'Retard supérieur de 10 points par rapport à la moyenne nationale',
     nombre: filtresComptesCalculés.estEnAlerteÉcart.nombre,
     estActivée: filtresAlertes.estEnAlerteÉcart,
   };
 
-  const estEnAlerteBaisseOuStagnation = {
-    nomCritère: 'estEnAlerteBaisseOuStagnation',
-    libellé: 'Tendance(s) en baisse ou en stagnation',
-    nombre: filtresComptesCalculés.estEnAlerteBaisseOuStagnation.nombre,
-    estActivée: filtresAlertes.estEnAlerteBaisseOuStagnation,
+  const alerteBaisse = {
+    nomCritère: 'estEnAlerteBaisse',
+    libellé: 'Tendance(s) en baisse',
+    nombre: filtresComptesCalculés.estEnAlerteBaisse.nombre,
+    estActivée: filtresAlertes.estEnAlerteBaisse,
   };
-  
-  const estEnAlerteDonnéesNonMàj = {
+
+  const alerteDonnéesNonMaj = {
     nomCritère: 'estEnAlerteDonnéesNonMàj',
     libellé: 'Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour',
     nombre: filtresComptesCalculés.estEnAlerteDonnéesNonMàj.nombre,
@@ -48,20 +56,10 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     estActivée: filtresAlertes.estEnAlerteMétéoNonRenseignée,
   };
 
-  const alerteChantierMailleNationale = [
-    estEnAlerteTauxAvancementNonCalculé, 
-    estEnAlerteBaisseOuStagnation,
-    estEnAlerteDonnéesNonMàj,
-  ];
-
-  const alerteChantierMailleDepReg = [
-    estEnAlerteÉcart,
-    estEnAlerteBaisseOuStagnation,
-    estEnAlerteMétéoNonRenseignée,
-  ];
+  const alertesNationales = [alerteTauxAvancementNonCalculé, alerteAbscenceTauxAvancementDepartemental, alerteDonnéesNonMaj];
+  const alertesTerritoriales = [alerteEcart, alerteBaisse, estEnAlerteMétéoNonRenseignée];
 
   return {
-    remontéesAlertes: mailleChantier === 'nationale' ?  alerteChantierMailleNationale  :  alerteChantierMailleDepReg, 
-    
+    remontéesAlertes: mailleChantier === 'nationale' ? alertesNationales : alertesTerritoriales,
   };
 }

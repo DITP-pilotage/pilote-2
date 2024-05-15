@@ -7,12 +7,11 @@ const Alerte = {
     }
     return écart < -10;
   },
-
-  estEnAlerteBaisseOuStagnation: (tendance: ChantierTendance | null) => {
+  estEnAlerteBaisse: (tendance: ChantierTendance | null) => {
     if (!tendance)
       return false;
 
-    return ['BAISSE', 'STAGNATION'].includes(tendance);
+    return tendance === 'BAISSE';
   },
 
   estEnAlerteDonnéesNonMàj(dateDonnéesQualitatives: string | null, dateDonnéesQuantitatives: string | null) {
@@ -26,6 +25,9 @@ const Alerte = {
   },
   estEnAlerteTauxAvancementNonCalculé(tauxAvancement: number | null) {
     return tauxAvancement === null;
+  },
+  estEnAlerteAbscenceTauxAvancementDepartemental(aTauxAvancementDepartemental: Boolean) {
+    return !aTauxAvancementDepartemental;
   },
 
   estEnAlerteMétéoNonRenseignée(météo: ChantierVueDEnsemble['météo']) {
