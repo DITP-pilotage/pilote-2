@@ -64,7 +64,9 @@ export default class ChantierDatesDeMàjSQLRepository implements ChantierDatesDe
           dates_quantitatives as (
             select chantier_id, maille, code_insee, MAX(date_valeur_actuelle) as date
             from indicateur
+            where ponderation_zone_reel > 0
             group by chantier_id, maille, code_insee
+            having COUNT(*) = COUNT(objectif_taux_avancement) AND COUNT(objectif_taux_avancement) > 0
           )
 
       select
