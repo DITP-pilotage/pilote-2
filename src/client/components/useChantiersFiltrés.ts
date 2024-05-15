@@ -66,7 +66,7 @@ export default function useChantiersFiltrés(chantiers: (ChantierAccueilContrat 
         return filtresActifs.filtresAlerte.some(filtre => {
           const chantierDonnéesTerritoires = chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee];
           return (filtre.id === 'estEnAlerteÉcart' && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
-            || (filtre.id === 'estEnAlerteBaisseOuStagnation' && Alerte.estEnAlerteBaisseOuStagnation(chantierDonnéesTerritoires.tendance))
+            || (filtre.id === 'estEnAlerteBaisse' && Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance))
             || (filtre.id === 'estEnAlerteDonnéesNonMàj' && Alerte.estEnAlerteDonnéesNonMàj(chantierDonnéesTerritoires.dateDeMàjDonnéesQualitatives, chantierDonnéesTerritoires.dateDeMàjDonnéesQuantitatives))
             || (filtre.id === 'estEnAlerteTauxAvancementNonCalculé' && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global));
         });

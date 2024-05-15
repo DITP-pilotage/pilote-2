@@ -42,16 +42,16 @@ describe('Alerte', () => {
     });
   });
 
-  describe('estEnAlerteBaisseOuStagnation', () => {
+  describe('estEnAlerteBaisse', () => {
     test("le chantier n'est pas en alerte si la tendance est null", () => {
       // Given
       const tendance = null;
 
       // When
-      const estEnAlerteBaisseOuStagnation = Alerte.estEnAlerteBaisseOuStagnation(tendance);
+      const estEnAlerteBaisse = Alerte.estEnAlerteBaisse(tendance);
 
       // Then
-      expect(estEnAlerteBaisseOuStagnation).toBeFalsy();
+      expect(estEnAlerteBaisse).toBeFalsy();
     });
 
     test('le chantier est en alerte si la tendance est en baisse', () => {
@@ -59,10 +59,10 @@ describe('Alerte', () => {
       const tendance = 'BAISSE';
 
       // When
-      const estEnAlerteBaisseOuStagnation = Alerte.estEnAlerteBaisseOuStagnation(tendance);
+      const estEnAlerteBaisse = Alerte.estEnAlerteBaisse(tendance);
 
       // Then
-      expect(estEnAlerteBaisseOuStagnation).toBeTruthy();
+      expect(estEnAlerteBaisse).toBeTruthy();
     });
 
     test("le chantier n'est pas en alerte si la tendance est en hausse", () => {
@@ -70,21 +70,21 @@ describe('Alerte', () => {
       const tendance = 'HAUSSE';
 
       // When
-      const estEnAlerteBaisseOuStagnation = Alerte.estEnAlerteBaisseOuStagnation(tendance);
+      const estEnAlerteBaisse = Alerte.estEnAlerteBaisse(tendance);
 
       // Then
-      expect(estEnAlerteBaisseOuStagnation).toBeFalsy();
+      expect(estEnAlerteBaisse).toBeFalsy();
     });
 
-    test('le chantier est en alerte si la tendance est en stagnation', () => {
+    test("le chantier n'est pas en alerte si la tendance est en stagnation", () => {
       // Given
       const tendance = 'STAGNATION';
 
       // When
-      const estEnAlerteBaisseOuStagnation = Alerte.estEnAlerteBaisseOuStagnation(tendance);
+      const estEnAlerteBaisse = Alerte.estEnAlerteBaisse(tendance);
 
       // Then
-      expect(estEnAlerteBaisseOuStagnation).toBeTruthy();
+      expect(estEnAlerteBaisse).toBeFalsy();
     });
   });
 
@@ -185,4 +185,30 @@ describe('Alerte', () => {
       expect(estEnAlerteTauxAvancementNonCalculé).toBeFalsy();
     });
   });
+
+  describe('estEnAlerteAbscenceTauxAvancementDepartemental', () => {
+    test('le chantier est en alerte si aTauxAvancementDepartemental est faux', () => {
+      // Given
+      const aTauxAvancementDepartemental = false;
+
+      // When
+      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(aTauxAvancementDepartemental);
+
+      // Then
+      expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeTruthy();
+    });
+
+    test("le chantier n'est pas en alerte si le estEnAlerteAbscenceTauxAvancementDepartemental est vrai", () => {
+      // Given
+      const aTauxAvancementDepartemental = true;
+
+      // When
+      const estEnAlerteAbscenceTauxAvancementDepartemental = Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(aTauxAvancementDepartemental);
+
+      // Then
+      expect(estEnAlerteAbscenceTauxAvancementDepartemental).toBeFalsy();
+    });
+  });
+
 });
+

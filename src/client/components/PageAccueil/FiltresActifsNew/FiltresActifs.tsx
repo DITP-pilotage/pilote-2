@@ -22,8 +22,9 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
     estTerritorialise: parseAsBoolean.withDefault(false),
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
-    estEnAlerteBaisseOuStagnation: parseAsBoolean.withDefault(false),
+    estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
+    estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
   }, {
     shallow: false,
     clearOnDefault: true,
@@ -31,7 +32,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
   });
   // Taux d’avancement non calculé en raison d’indicateurs non renseignés
   // Retard supérieur de 10 points par rapport à la moyenne nationale
-  // Tendance(s) en baisse ou en stagnation
+  // Tendance(s) en baisse
   // Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour
 
   const nombreFiltresActifs = filtres.axes.split(',').filter(Boolean).length
@@ -40,8 +41,9 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
     + (filtres.estTerritorialise ? 1 : 0)
     + (filtres.estEnAlerteTauxAvancementNonCalculé ? 1 : 0)
     + (filtres.estEnAlerteÉcart ? 1 : 0)
-    + (filtres.estEnAlerteBaisseOuStagnation ? 1 : 0)
-    + (filtres.estEnAlerteDonnéesNonMàj ? 1 : 0);
+    + (filtres.estEnAlerteBaisse ? 1 : 0)
+    + (filtres.estEnAlerteDonnéesNonMàj ? 1 : 0)
+    + (filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
 
   const ministèresAvecUnSeulPérimètre = new Map(
     ministères
@@ -65,8 +67,9 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
       estTerritorialise: false,
       estEnAlerteTauxAvancementNonCalculé: false,
       estEnAlerteÉcart: false,
-      estEnAlerteBaisseOuStagnation: false,
+      estEnAlerteBaisse: false,
       estEnAlerteDonnéesNonMàj: false,
+      estEnAlerteAbscenceTauxAvancementDepartemental: false,
     });
   };
 
@@ -153,14 +156,14 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
           ) : null
         }
         {
-          filtres.estEnAlerteBaisseOuStagnation ? (
+          filtres.estEnAlerteBaisse ? (
             <li>
               <Tag
-                libellé='Tendance(s) en baisse ou en stagnation'
+                libellé='Tendance(s) en baisse'
                 suppressionCallback={() => {
-                  filtres.estEnAlerteBaisseOuStagnation = false;
+                  filtres.estEnAlerteBaisse = false;
 
-                  sauvegarderFiltres({ estEnAlerteBaisseOuStagnation: false });
+                  sauvegarderFiltres({ estEnAlerteBaisse: false });
                   return setFiltres(filtres);
                 }}
               />
@@ -176,6 +179,21 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
                   filtres.estEnAlerteDonnéesNonMàj = false;
 
                   sauvegarderFiltres({ estEnAlerteDonnéesNonMàj: false });
+                  return setFiltres(filtres);
+                }}
+              />
+            </li>
+          ) : null
+        }
+        {
+          filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? (
+            <li>
+              <Tag
+                libellé="Abscence de taux d'avancement au niveau départemental"
+                suppressionCallback={() => {
+                  filtres.estEnAlerteAbscenceTauxAvancementDepartemental = false;
+
+                  sauvegarderFiltres({ estEnAlerteAbscenceTauxAvancementDepartemental: false });
                   return setFiltres(filtres);
                 }}
               />
