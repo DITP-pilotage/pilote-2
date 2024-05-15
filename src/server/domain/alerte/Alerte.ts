@@ -1,4 +1,4 @@
-import { ChantierTendance } from '@/server/domain/chantier/Chantier.interface';
+import {  ChantierTendance, ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
 
 const Alerte = {
   estEnAlerteÉcart(écart: number | null) {
@@ -13,6 +13,7 @@ const Alerte = {
 
     return tendance === 'BAISSE';
   },
+
   estEnAlerteDonnéesNonMàj(dateDonnéesQualitatives: string | null, dateDonnéesQuantitatives: string | null) {
     if (dateDonnéesQualitatives === null && dateDonnéesQuantitatives !== null) {
       return true;
@@ -27,6 +28,10 @@ const Alerte = {
   },
   estEnAlerteAbscenceTauxAvancementDepartemental(aTauxAvancementDepartemental: Boolean) {
     return !aTauxAvancementDepartemental;
+  },
+
+  estEnAlerteMétéoNonRenseignée(météo: ChantierVueDEnsemble['météo']) {
+    return météo === 'NON_RENSEIGNEE' ? true : false;
   },
 };
 

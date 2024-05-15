@@ -11,6 +11,7 @@ interface FiltreAccueil {
   estEnAlerteÉcart: boolean
   estEnAlerteBaisse: boolean
   estEnAlerteDonnéesNonMàj: boolean
+  estEnAlerteMétéoNonRenseignée: boolean
   estEnAlerteAbscenceTauxAvancementDepartemental: boolean
 }
 
@@ -34,6 +35,7 @@ const etatInitial = {
   estEnAlerteÉcart: false,
   estEnAlerteBaisse: false,
   estEnAlerteDonnéesNonMàj: false,
+  estEnAlerteMétéoNonRenseignée: false,
   estEnAlerteAbscenceTauxAvancementDepartemental: false,
 };
 const useFiltresStoreNew = create<FiltresStore>((set, get) => ({

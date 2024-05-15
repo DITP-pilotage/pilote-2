@@ -81,6 +81,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
+    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
   });
 
@@ -92,6 +93,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     + (filtresAlertes.estEnAlerteÉcart ? 1 : 0)
     + (filtresAlertes.estEnAlerteBaisse ? 1 : 0)
     + (filtresAlertes.estEnAlerteDonnéesNonMàj ? 1 : 0)
+    + (filtresAlertes.estEnAlerteMétéoNonRenseignée ? 1 : 0)
     + (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
 
 

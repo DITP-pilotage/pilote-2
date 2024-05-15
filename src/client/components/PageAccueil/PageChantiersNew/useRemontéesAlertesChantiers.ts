@@ -10,6 +10,7 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
+    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
   });
 
@@ -48,8 +49,15 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     estActivée: filtresAlertes.estEnAlerteDonnéesNonMàj,
   };
 
+  const estEnAlerteMétéoNonRenseignée = {
+    nomCritère: 'estEnAlerteMétéoNonRenseignée',
+    libellé: 'Météo(s) et synthèse(s) des résultats non renseigné(s)',
+    nombre: filtresComptesCalculés.estEnAlerteMétéoNonRenseignée.nombre,
+    estActivée: filtresAlertes.estEnAlerteMétéoNonRenseignée,
+  };
+
   const alertesNationales = [alerteTauxAvancementNonCalculé, alerteAbscenceTauxAvancementDepartemental, alerteDonnéesNonMaj];
-  const alertesTerritoriales = [alerteEcart, alerteBaisse, alerteDonnéesNonMaj];
+  const alertesTerritoriales = [alerteEcart, alerteBaisse, estEnAlerteMétéoNonRenseignée];
 
   return {
     remontéesAlertes: mailleChantier === 'nationale' ? alertesNationales : alertesTerritoriales,

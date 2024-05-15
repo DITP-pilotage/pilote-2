@@ -24,6 +24,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
     estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
+    estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
   }, {
     shallow: false,
@@ -43,6 +44,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
     + (filtres.estEnAlerteÉcart ? 1 : 0)
     + (filtres.estEnAlerteBaisse ? 1 : 0)
     + (filtres.estEnAlerteDonnéesNonMàj ? 1 : 0)
+    + (filtres.estEnAlerteMétéoNonRenseignée ? 1 : 0)
     + (filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
 
   const ministèresAvecUnSeulPérimètre = new Map(
@@ -69,6 +71,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
       estEnAlerteÉcart: false,
       estEnAlerteBaisse: false,
       estEnAlerteDonnéesNonMàj: false,
+      estEnAlerteMétéoNonRenseignée: false,
       estEnAlerteAbscenceTauxAvancementDepartemental: false,
     });
   };
@@ -234,6 +237,21 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
                   filtres.estTerritorialise = false;
 
                   sauvegarderFiltres({ estTerritorialise: false });
+                  return setFiltres(filtres);
+                }}
+              />
+            </li>
+          ) : null
+        }
+        {
+          filtres.estEnAlerteMétéoNonRenseignée ? (
+            <li>
+              <Tag
+                libellé='Météo(s) et synthèse(s) des résultats non renseigné(s)'
+                suppressionCallback={() => {
+                  filtres.estEnAlerteMétéoNonRenseignée = false;
+
+                  sauvegarderFiltres({ estEnAlerteMétéoNonRenseignée: false });
                   return setFiltres(filtres);
                 }}
               />
