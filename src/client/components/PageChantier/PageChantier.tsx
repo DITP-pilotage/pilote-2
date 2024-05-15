@@ -52,7 +52,7 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
     saisieIndicateurAutorisée,
     afficheLeBoutonFicheConducteur,
     responsableLocal,
-    referentTerritorial,
+    coordinateurTerritorial,
   } = usePageChantier(chantierId, indicateurs);
   // TODO Mettre dans getServerSideProps !
 
@@ -151,7 +151,8 @@ export default function PageChantier({ indicateurs, chantierId }: PageChantierPr
                           </Titre>
                           <ResponsablesPageChantier 
                             afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
-                            referentTerritorial={referentTerritorial}
+                            coordinateurTerritorial={coordinateurTerritorial}
+                            maille={territoireSélectionné?.maille ?? null}
                             responsables={chantier.responsables}
                             responsablesLocal={responsableLocal}
                           />

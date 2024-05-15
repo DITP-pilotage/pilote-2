@@ -1,5 +1,5 @@
 import { FiltresUtilisateursActifs } from '@/client/stores/useFiltresUtilisateursStore/useFiltresUtilisateursStore.interface';
-import { PROFILS_POSSIBLES_REFERENTS_LECTURE } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
+import { PROFILS_POSSIBLES_COORDINATEURS_LECTURE } from '@/components/PageUtilisateurFormulaire/UtilisateurFormulaire/SaisieDesInformationsUtilisateur/useSaisieDesInformationsUtilisateur';
 import Utilisateur, { ProfilCode } from '@/server/domain/utilisateur/Utilisateur.interface';
 import Habilitation from '@/server/domain/utilisateur/habilitation/Habilitation';
 
@@ -52,7 +52,7 @@ export default class FiltrerListeUtilisateursUseCase {
   }
 
   private profilEstAutorisé(utilisateur: Utilisateur) {
-    return PROFILS_POSSIBLES_REFERENTS_LECTURE[this.profil as keyof typeof PROFILS_POSSIBLES_REFERENTS_LECTURE].includes(utilisateur.profil);
+    return PROFILS_POSSIBLES_COORDINATEURS_LECTURE[this.profil as keyof typeof PROFILS_POSSIBLES_COORDINATEURS_LECTURE].includes(utilisateur.profil);
   }
 
   private territoireEstAutorisé(utilisateur: Utilisateur) {
@@ -60,7 +60,7 @@ export default class FiltrerListeUtilisateursUseCase {
   }
 
   private utilisateurEstAutorisé(utilisateur: Utilisateur) {
-    if (!Object.keys(PROFILS_POSSIBLES_REFERENTS_LECTURE).includes(this.profil))
+    if (!Object.keys(PROFILS_POSSIBLES_COORDINATEURS_LECTURE).includes(this.profil))
       return true;
     
     return this.profilEstAutorisé(utilisateur) && this.territoireEstAutorisé(utilisateur);

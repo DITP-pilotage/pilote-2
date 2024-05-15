@@ -4,8 +4,8 @@ import FiltrerListeUtilisateursUseCase from './FiltrerListeUtilisateursUseCase';
 
 describe('FiltrerListeUtilisateursUseCase', () => {
   const habilitationsAdmin = new HabilitationBuilder().build();
-  const habilitationReferentRegion = new HabilitationBuilder().avecTerritoireCodesLecture(['REG-84', 'DEPT-69']).build();
-  const habilitationReferentDepartement = new HabilitationBuilder().avecTerritoireCodesLecture(['DEPT-01']).build();
+  const habilitationCoordinateurRegion = new HabilitationBuilder().avecTerritoireCodesLecture(['REG-84', 'DEPT-69']).build();
+  const habilitationCoordinateurDepartement = new HabilitationBuilder().avecTerritoireCodesLecture(['DEPT-01']).build();
 
   it("quand aucun filtre n'est appliqué et que le profil du créateur est DITP ADMIN retourne tous les utilisateurs", () => {
     //GIVEN
@@ -34,7 +34,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrés).toHaveLength(utilisateurs.length);
   });
 
-  it("quand aucun filtre n'est appliqué et que le profil du créateur est référent région retourne tous les utilisateurs territoriaux de sa région et ses départements", () => {
+  it("quand aucun filtre n'est appliqué et que le profil du créateur est coordinateur région retourne tous les utilisateurs territoriaux de sa région et ses départements", () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
@@ -69,8 +69,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_REGION',
-      habilitationReferentRegion,
+      'COORDINATEUR_REGION',
+      habilitationCoordinateurRegion,
 
     ).run();
 
@@ -80,7 +80,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrés[1].id).toStrictEqual('ID-USER-2');
   });
 
-  it("quand aucun filtre n'est appliqué et que le profil du créateur est référent département retourne tous les utilisateurs territoriaux de ses départements", () => {
+  it("quand aucun filtre n'est appliqué et que le profil du créateur est coordinateur département retourne tous les utilisateurs territoriaux de ses départements", () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
@@ -120,8 +120,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_DEPARTEMENT',
-      habilitationReferentDepartement,
+      'COORDINATEUR_DEPARTEMENT',
+      habilitationCoordinateurDepartement,
 
     ).run();
 
@@ -203,7 +203,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrésUnion[1].id).toStrictEqual('ID-USER-002');
     expect(utilisateursFiltrésUnion[2].id).toStrictEqual('ID-USER-003');
   });
-  it('quand le filtre territoire est appliqué et que le profil du créateur est référent région retourne tous les utilisateurs territoriaux de sa région et ses départements ayant le territoire du filtre', () => {
+  it('quand le filtre territoire est appliqué et que le profil du créateur est coordinateur région retourne tous les utilisateurs territoriaux de sa région et ses départements ayant le territoire du filtre', () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
@@ -238,8 +238,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_REGION',
-      habilitationReferentRegion,
+      'COORDINATEUR_REGION',
+      habilitationCoordinateurRegion,
 
     ).run();
 
@@ -248,7 +248,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrés[0].id).toStrictEqual('ID-USER-1');
   });
 
-  it('quand le filtre territoire est appliqué et que le profil du créateur est référent département retourne tous les utilisateurs territoriaux de ses départements ayant le territoire du filtre', () => {
+  it('quand le filtre territoire est appliqué et que le profil du créateur est coordinateur département retourne tous les utilisateurs territoriaux de ses départements ayant le territoire du filtre', () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
@@ -283,8 +283,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_DEPARTEMENT',
-      habilitationReferentDepartement,
+      'COORDINATEUR_DEPARTEMENT',
+      habilitationCoordinateurDepartement,
 
     ).run();
 
@@ -366,7 +366,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrésUnion[2].id).toStrictEqual('ID-USER-003');
   });
 
-  it('quand le filtre chantier est appliqué et que le profil du créateur est référent région retourne tous les utilisateurs territoriaux de sa région et ses départements ayant un chantier du filtre', () => {
+  it('quand le filtre chantier est appliqué et que le profil du créateur est coordinateur région retourne tous les utilisateurs territoriaux de sa région et ses départements ayant un chantier du filtre', () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
@@ -403,8 +403,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_REGION',
-      habilitationReferentRegion,
+      'COORDINATEUR_REGION',
+      habilitationCoordinateurRegion,
 
     ).run();
 
@@ -413,7 +413,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrés[0].id).toStrictEqual('ID-USER-2');
   });
 
-  it('quand le filtre chantier est appliqué et que le profil du créateur est référent département retourne tous les utilisateurs territoriaux de ses départements ayant un chantier du filtre', () => {
+  it('quand le filtre chantier est appliqué et que le profil du créateur est coordinateur département retourne tous les utilisateurs territoriaux de ses départements ayant un chantier du filtre', () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
@@ -462,8 +462,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_DEPARTEMENT',
-      habilitationReferentDepartement,
+      'COORDINATEUR_DEPARTEMENT',
+      habilitationCoordinateurDepartement,
 
     ).run();
 
@@ -603,7 +603,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
 
   });
 
-  it('quand le filtre profil est appliqué et que le profil du créateur est référent région retourne tous les utilisateurs territoriaux de sa région et ses départements ayant le profil du filtre', () => {
+  it('quand le filtre profil est appliqué et que le profil du créateur est coordinateur région retourne tous les utilisateurs territoriaux de sa région et ses départements ayant le profil du filtre', () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
@@ -638,8 +638,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: ['SERVICES_DECONCENTRES_REGION'],
       },
-      'REFERENT_REGION',
-      habilitationReferentRegion,
+      'COORDINATEUR_REGION',
+      habilitationCoordinateurRegion,
 
     ).run();
 
@@ -648,7 +648,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrés[0].id).toStrictEqual('ID-USER-2');
   });
 
-  it('quand le filtre profil est appliqué et que le profil du créateur est référent région retourne tous les utilisateurs territoriaux de ses départements ayant le profil du filtre', () => {
+  it('quand le filtre profil est appliqué et que le profil du créateur est coordinateur région retourne tous les utilisateurs territoriaux de ses départements ayant le profil du filtre', () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
@@ -688,8 +688,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: ['RESPONSABLE_DEPARTEMENT'],
       },
-      'REFERENT_DEPARTEMENT',
-      habilitationReferentDepartement,
+      'COORDINATEUR_DEPARTEMENT',
+      habilitationCoordinateurDepartement,
 
     ).run();
 
@@ -738,7 +738,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrés[1].id).toStrictEqual('ID-USER-001');
   });
 
-  it('quand le filtre périmètre est appliqué et que le profil du créateur est référent région retourne tous les utilisateurs territoriaux de sa région et ses départements ayant le périmètre du filtre', () => {
+  it('quand le filtre périmètre est appliqué et que le profil du créateur est coordinateur région retourne tous les utilisateurs territoriaux de sa région et ses départements ayant le périmètre du filtre', () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
@@ -775,8 +775,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_REGION',
-      habilitationReferentRegion,
+      'COORDINATEUR_REGION',
+      habilitationCoordinateurRegion,
 
     ).run();
 
@@ -785,7 +785,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrés[0].id).toStrictEqual('ID-USER-1');
   });
 
-  it('quand le filtre périmètre est appliqué et que le profil du créateur est référent département retourne tous les utilisateurs territoriaux de ses départements ayant le périmètre du filtre', () => {
+  it('quand le filtre périmètre est appliqué et que le profil du créateur est coordinateur département retourne tous les utilisateurs territoriaux de ses départements ayant le périmètre du filtre', () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
@@ -834,8 +834,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: [],
       },
-      'REFERENT_DEPARTEMENT',
-      habilitationReferentDepartement,
+      'COORDINATEUR_DEPARTEMENT',
+      habilitationCoordinateurDepartement,
 
     ).run();
 
@@ -889,7 +889,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrés[0].id).toStrictEqual('ID-USER-002');
   });
 
-  it("quand les filtres territoire, chantier, profil et périmètre sont appliqués et que le profil du créateur est référent région retourne tous les utilisateurs territoriaux de sa région et ses départements ayant l'intersection des filtres", () => {
+  it("quand les filtres territoire, chantier, profil et périmètre sont appliqués et que le profil du créateur est coordinateur région retourne tous les utilisateurs territoriaux de sa région et ses départements ayant l'intersection des filtres", () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
@@ -947,8 +947,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: ['SERVICES_DECONCENTRES_DEPARTEMENT'],
       },
-      'REFERENT_REGION',
-      habilitationReferentRegion,
+      'COORDINATEUR_REGION',
+      habilitationCoordinateurRegion,
 
     ).run();
 
@@ -957,7 +957,7 @@ describe('FiltrerListeUtilisateursUseCase', () => {
     expect(utilisateursFiltrés[0].id).toStrictEqual('ID-USER-6');
   });
 
-  it("quand les filtres territoire, chantier, profil et périmètre sont appliqués et que le profil du créateur est référent département retourne tous les utilisateurs territoriaux de ses départements ayant l'intersection des filtres", () => {
+  it("quand les filtres territoire, chantier, profil et périmètre sont appliqués et que le profil du créateur est coordinateur département retourne tous les utilisateurs territoriaux de ses départements ayant l'intersection des filtres", () => {
     //GIVEN
     const utilisateurs = [
       new UtilisateurBuilder()
@@ -1022,8 +1022,8 @@ describe('FiltrerListeUtilisateursUseCase', () => {
         chantiersAssociésAuxPérimètres: [],
         profils: ['RESPONSABLE_DEPARTEMENT'],
       },
-      'REFERENT_DEPARTEMENT',
-      habilitationReferentDepartement,
+      'COORDINATEUR_DEPARTEMENT',
+      habilitationCoordinateurDepartement,
 
     ).run();
 

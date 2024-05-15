@@ -32,11 +32,11 @@ export function useRapportDétailléChantier(chantier: ChantierRapportDetailleCo
 
   const chantierTerritoireSélectionné = chantier?.mailles[territoireSélectionné?.maille ?? 'nationale'][territoireSélectionné?.codeInsee ?? 'FR'];
   const responsableLocal = chantierTerritoireSélectionné?.responsableLocal ?? [];
-  const referentTerritorial = chantierTerritoireSélectionné?.référentTerritorial ?? [];
+  const coordinateurTerritorial = chantierTerritoireSélectionné?.coordinateurTerritorial ?? [];
   
   return {
     avancements,
     responsableLocal,
-    referentTerritorial,
+    coordinateurTerritorial,
   };
 }

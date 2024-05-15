@@ -58,7 +58,7 @@ function créerDonnéesTerritoires(
       dateDeMàjDonnéesQualitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQualitatives ?? null : null,
       dateDeMàjDonnéesQuantitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQuantitatives ?? null : null,
       responsableLocal: [],
-      référentTerritorial: [],
+      coordinateurTerritorial: [],
     };
 
     if (!!chantierRow) {
@@ -68,10 +68,10 @@ function créerDonnéesTerritoires(
         donnéesTerritoires[t.codeInsee].responsableLocal.push({ nom: responsable, email: responsablesEmails[i] });
       }
 
-      const referents = chantierRow.referents_territoriaux;
-      const referentsEmails = chantierRow.referents_territoriaux_mails;
-      for (const [i, referent] of (referents || []).entries()) {
-        donnéesTerritoires[t.codeInsee].référentTerritorial.push({ nom: referent, email: referentsEmails[i] });
+      const coordinateurs = chantierRow.coordinateurs_territoriaux;
+      const coordinateursEmails = chantierRow.coordinateurs_territoriaux_mails;
+      for (const [i, coordinateur] of (coordinateurs || []).entries()) {
+        donnéesTerritoires[t.codeInsee].coordinateurTerritorial.push({ nom: coordinateur, email: coordinateursEmails[i] });
       }
     }
   });
@@ -116,7 +116,7 @@ export function parseChantier(
           dateDeMàjDonnéesQuantitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQuantitatives ?? null,
           estApplicable: chantierMailleNationale.est_applicable,
           responsableLocal: [],
-          référentTerritorial: [],
+          coordinateurTerritorial: [],
         },
       },
       départementale: créerDonnéesTerritoires(territoires.filter(t => t.maille === 'départementale'), chantierMailleDépartementale, chantierMailleNationale, chantiersRowsDatesDeMàj),

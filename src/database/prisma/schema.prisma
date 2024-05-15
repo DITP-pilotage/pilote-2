@@ -65,7 +65,7 @@ model chantier {
   directeurs_administration_centrale String[]
   directeurs_projet                  String[]
   responsables_locaux                String[]
-  referents_territoriaux             String[]
+  coordinateurs_territoriaux         String[]
   ministeres                         String[]
   ministeres_acronymes               String[]
   directions_administration_centrale String[]
@@ -74,7 +74,7 @@ model chantier {
   ppg                                String      @default("non renseignée")
   directeurs_projet_mails            String[]
   responsables_locaux_mails          String[]
-  referents_territoriaux_mails       String[]
+  coordinateurs_territoriaux_mails   String[]
   est_barometre                      Boolean?
   est_territorialise                 Boolean?
   territoire                         territoire  @relation(fields: [territoire_code], references: [code], onDelete: Cascade, onUpdate: Cascade)
