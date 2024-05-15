@@ -34,6 +34,7 @@ const etatInitial = {
   estEnAlerteÉcart: false,
   estEnAlerteBaisseOuStagnation: false,
   estEnAlerteDonnéesNonMàj: false,
+  estEnAlerteMétéoNonRenseignée: false,
 };
 const useFiltresStoreNew = create<FiltresStore>((set, get) => ({
   filtresActifs: etatInitial,
