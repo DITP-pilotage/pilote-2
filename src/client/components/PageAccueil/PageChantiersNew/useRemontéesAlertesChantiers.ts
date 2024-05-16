@@ -16,7 +16,7 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
 
   const alerteAbscenceTauxAvancementDepartemental = {
     nomCritère: 'estEnAlerteAbscenceTauxAvancementDepartemental',
-    libellé: "Abscence de taux d'avancement au niveau départemental",
+    libellé: 'Chantiers sans taux d’avancement au niveau départemental',
     nombre: filtresComptesCalculés.estEnAlerteAbscenceTauxAvancementDepartemental.nombre,
     estActivée: filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental,
   };

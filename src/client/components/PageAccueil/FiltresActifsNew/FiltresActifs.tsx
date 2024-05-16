@@ -192,7 +192,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
           filtres.estEnAlerteAbscenceTauxAvancementDepartemental ? (
             <li>
               <Tag
-                libellé="Abscence de taux d'avancement au niveau départemental"
+                libellé='Chantiers sans taux d’avancement au niveau départemental'
                 suppressionCallback={() => {
                   filtres.estEnAlerteAbscenceTauxAvancementDepartemental = false;
 
