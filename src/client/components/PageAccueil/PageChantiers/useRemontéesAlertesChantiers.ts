@@ -54,7 +54,7 @@ export function useRemontéesAlertesChantiers(chantiersFiltrés: ChantierAccueil
         nomCritère: 'estEnAlerteBaisse',
         libellé: 'Tendance(s) en baisse',
         nombre: filtresComptesCalculés.estEnAlerteBaisse.nombre,
-        auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteBaisse', nom: 'Tendance(s) en baisse' }, 'filtresAlerte'),
+        auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteBaisse', nom: 'Chantier(s) avec tendance en baisse' }, 'filtresAlerte'),
         estActivée: estActif('estEnAlerteBaisse', 'filtresAlerte'),
       },
       {

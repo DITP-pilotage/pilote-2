@@ -37,7 +37,7 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
 
   const alerteBaisse = {
     nomCritère: 'estEnAlerteBaisse',
-    libellé: 'Tendance(s) en baisse',
+    libellé: 'Chantier(s) avec tendance en baisse',
     nombre: filtresComptesCalculés.estEnAlerteBaisse.nombre,
     estActivée: filtresAlertes.estEnAlerteBaisse,
   };

@@ -162,7 +162,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
           filtres.estEnAlerteBaisse ? (
             <li>
               <Tag
-                libellé='Tendance(s) en baisse'
+                libellé='Chantier(s) avec tendance en baisse'
                 suppressionCallback={() => {
                   filtres.estEnAlerteBaisse = false;
 
