@@ -229,7 +229,7 @@ export default function FiltresActifs({ ministères, axes }: FiltresActifsProps)
           filtres.estEnAlerteMétéoNonRenseignée ? (
             <li>
               <Tag
-                libellé='Chantiers avec météo et synthèse des résultats non renseignés'
+                libellé='Chantier(s) avec météo et synthèse des résultats non renseignés'
                 suppressionCallback={() => {
                   filtres.estEnAlerteMétéoNonRenseignée = false;
 

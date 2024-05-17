@@ -43,7 +43,7 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
 
   const alerteMétéoNonRenseignée = {
     nomCritère: 'estEnAlerteMétéoNonRenseignée',
-    libellé: 'Chantiers avec météo et synthèse des résultats non renseignés',
+    libellé: 'Chantier(s) avec météo et synthèse des résultats non renseignés',
     nombre: filtresComptesCalculés.estEnAlerteMétéoNonRenseignée.nombre,
     estActivée: filtresAlertes.estEnAlerteMétéoNonRenseignée,
   };
