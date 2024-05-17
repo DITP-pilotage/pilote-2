@@ -84,13 +84,20 @@ select
 	from ch_unnest_porteurs_dac_pnames
 group by chantier_id
 ),
-mailles_applicables as (
+mailles_applicables AS (
     SELECT 
-        id AS chantier_id, 
-        unnest(coalesce(maille_applicable, '{NAT,DEPT,REG}')) AS maille_applicable,
+        mc.id AS chantier_id, 
+        unnest(m.maille_applicable) AS maille_applicable,
         true AS maille_est_applicable
     FROM 
-        raw_data.stg_ppg_metadata__chantiers mc 
+        {{ ref('stg_ppg_metadata__chantiers') }} mc 
+    CROSS JOIN LATERAL (
+        SELECT 
+            CASE 
+                WHEN mc.est_territorialise THEN coalesce(mc.maille_applicable, '{NAT,DEPT,REG}')
+                ELSE coalesce(mc.maille_applicable, '{NAT}')
+            END AS maille_applicable
+    ) m
 )
 
 
