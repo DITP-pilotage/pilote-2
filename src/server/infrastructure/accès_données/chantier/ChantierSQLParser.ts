@@ -19,8 +19,12 @@ function calculÉcart(chantierNational: ChantierPrisma, chantier?: ChantierPrism
 }
 
 function calculerTendance(chantier?: ChantierPrisma) {
-  if (!chantier || chantier.taux_avancement === null || chantier.taux_avancement_precedent === null) {
+  if (!chantier || chantier.taux_avancement === null) {
     return null;
+  }
+
+  if (chantier.taux_avancement_precedent === null) {
+    return 'STAGNATION';
   }
 
   const différence = chantier.taux_avancement - chantier.taux_avancement_precedent;

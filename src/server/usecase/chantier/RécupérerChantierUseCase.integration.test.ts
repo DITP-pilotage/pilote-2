@@ -254,6 +254,8 @@ describe('RécupérerChantierUseCase', () => {
           .avecId(chantierId).avecMaille('DEPT').avecCodeInsee('02').avecTauxAvancement(10).avecTauxAvancementPrécédent(null).build(),
         new ChantierSQLRowBuilder()
           .avecId(chantierId).avecMaille('DEPT').avecCodeInsee('03').avecTauxAvancement(70).avecTauxAvancementPrécédent(70).build(),
+        new ChantierSQLRowBuilder()
+          .avecId(chantierId).avecMaille('DEPT').avecCodeInsee('04').avecTauxAvancement(null).build(),
       ],
     });
 
@@ -268,8 +270,9 @@ describe('RécupérerChantierUseCase', () => {
     // THEN
     expect(result.mailles.nationale.FR.tendance).toEqual('HAUSSE');
     expect(result.mailles.départementale['01'].tendance).toEqual('BAISSE');
-    expect(result.mailles.départementale['02'].tendance).toEqual(null);
+    expect(result.mailles.départementale['02'].tendance).toEqual('STAGNATION');
     expect(result.mailles.départementale['03'].tendance).toEqual('STAGNATION');
+    expect(result.mailles.départementale['04'].tendance).toEqual(null);
   });
 
   describe("Gestion d'erreur", () => {
