@@ -126,7 +126,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
     condition: (chantier) => Alerte.estEnAlerteTauxAvancementNonCalculé(chantier.mailles[mailleChantier]?.[codeInseeSelectionne]?.avancement.global),
   }, {
     nomCritère: 'estEnAlerteAbscenceTauxAvancementDepartemental',
-    condition: (chantier) => Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.tauxAvancementDonnéeTerritorialisée.départementale),
+    condition: (chantier) => Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.départementale),
   }, 
   {
     nomCritère: 'estEnAlerteMétéoNonRenseignée',
@@ -160,7 +160,7 @@ export const getServerSideProps: GetServerSideProps<ChantierAccueil> = async ({ 
       || (filtresAlertes.estEnAlerteBaisse && Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance))
       || (filtresAlertes.estEnAlerteDonnéesNonMàj && Alerte.estEnAlerteDonnéesNonMàj(chantierDonnéesTerritoires.dateDeMàjDonnéesQualitatives, chantierDonnéesTerritoires.dateDeMàjDonnéesQuantitatives))
       || (filtresAlertes.estEnAlerteTauxAvancementNonCalculé && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global))
-      || (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.tauxAvancementDonnéeTerritorialisée.départementale))
+      || (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental && Alerte.estEnAlerteAbscenceTauxAvancementDepartemental(chantier.mailles.départementale))
       || (filtresAlertes.estEnAlerteMétéoNonRenseignée && Alerte.estEnAlerteMétéoNonRenseignée(chantierDonnéesTerritoires.météo));
   }) : chantiers;
 

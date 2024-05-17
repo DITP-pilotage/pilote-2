@@ -1,3 +1,4 @@
+import { ListeTerritoiresDonnéeAccueilContrat } from '@/server/chantiers/app/contrats/ChantierAccueilContratNew';
 import {  ChantierTendance, ChantierVueDEnsemble } from '@/server/domain/chantier/Chantier.interface';
 
 const Alerte = {
@@ -26,8 +27,9 @@ const Alerte = {
   estEnAlerteTauxAvancementNonCalculé(tauxAvancement: number | null) {
     return tauxAvancement === null;
   },
-  estEnAlerteAbscenceTauxAvancementDepartemental(aTauxAvancementDepartemental: Boolean) {
-    return !aTauxAvancementDepartemental;
+  estEnAlerteAbscenceTauxAvancementDepartemental(departementsDonnées: ListeTerritoiresDonnéeAccueilContrat) {
+    const donnéesApplicables = Object.values(departementsDonnées).filter(donnée => donnée.estApplicable);
+    return donnéesApplicables.length > 0 && donnéesApplicables.every(donnée => donnée.avancement.global === null);
   },
 
   estEnAlerteMétéoNonRenseignée(météo: ChantierVueDEnsemble['météo']) {
