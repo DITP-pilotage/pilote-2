@@ -24,7 +24,7 @@ function calculerTendance(chantier?: ChantierPrisma) {
   }
 
   if (chantier.taux_avancement_precedent === null) {
-    return 'STAGNATION'
+    return 'STAGNATION';
   }
 
   const différence = chantier.taux_avancement - chantier.taux_avancement_precedent;
