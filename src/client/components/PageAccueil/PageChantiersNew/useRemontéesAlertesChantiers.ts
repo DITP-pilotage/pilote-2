@@ -9,7 +9,6 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     estEnAlerteTauxAvancementNonCalculé: parseAsBoolean.withDefault(false),
     estEnAlerteÉcart: parseAsBoolean.withDefault(false),
     estEnAlerteBaisse: parseAsBoolean.withDefault(false),
-    estEnAlerteDonnéesNonMàj: parseAsBoolean.withDefault(false),
     estEnAlerteMétéoNonRenseignée: parseAsBoolean.withDefault(false),
     estEnAlerteAbscenceTauxAvancementDepartemental: parseAsBoolean.withDefault(false),
   });
@@ -42,22 +41,15 @@ export function useRemontéesAlertesChantiers(territoireCode: string, filtresCom
     estActivée: filtresAlertes.estEnAlerteBaisse,
   };
 
-  const alerteDonnéesNonMaj = {
-    nomCritère: 'estEnAlerteDonnéesNonMàj',
-    libellé: 'Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour',
-    nombre: filtresComptesCalculés.estEnAlerteDonnéesNonMàj.nombre,
-    estActivée: filtresAlertes.estEnAlerteDonnéesNonMàj,
-  };
-
-  const estEnAlerteMétéoNonRenseignée = {
+  const alerteMétéoNonRenseignée = {
     nomCritère: 'estEnAlerteMétéoNonRenseignée',
-    libellé: 'Météo(s) et synthèse(s) des résultats non renseigné(s)',
+    libellé: 'Chantiers avec météo et synthèse des résultats non renseignés',
     nombre: filtresComptesCalculés.estEnAlerteMétéoNonRenseignée.nombre,
     estActivée: filtresAlertes.estEnAlerteMétéoNonRenseignée,
   };
 
-  const alertesNationales = [alerteTauxAvancementNonCalculé, alerteAbscenceTauxAvancementDepartemental, alerteDonnéesNonMaj];
-  const alertesTerritoriales = [alerteEcart, alerteBaisse, estEnAlerteMétéoNonRenseignée];
+  const alertesNationales = [alerteTauxAvancementNonCalculé, alerteAbscenceTauxAvancementDepartemental, alerteMétéoNonRenseignée];
+  const alertesTerritoriales = [alerteEcart, alerteBaisse, alerteMétéoNonRenseignée];
 
   return {
     remontéesAlertes: mailleChantier === 'nationale' ? alertesNationales : alertesTerritoriales,
