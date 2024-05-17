@@ -189,6 +189,8 @@ models:
         description: "TA chantier *annuel* courant"
       - name: valid_on
         description: "Prend les valeurs `[prev_month, today]` pour indiquer s'il s'agit du TA actuel ou du mois précédent."
+      - name: date_ta
+        description: "Il s'agit de la date du TA chantier. C'est la date la plus récente de mise à jour d'un indicateur pris en compte dans le TA du chantier."
   - name: df3_chantier
     description: |
       Table des chantiers construite par la datafactory dbt. Version reconstruite de zero. Règles:

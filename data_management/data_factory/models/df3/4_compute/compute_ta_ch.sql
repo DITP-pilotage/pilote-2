@@ -75,7 +75,9 @@ ta_ch_int as (
 		when sum(tag_pond) > 100 then 100
 		when sum(tag_pond) < 0 then 0
 		else sum(tag_pond)
-	end as tag_ch_int
+	end as tag_ch_int,
+	-- (PIL-253) Date du TA= date la plus tardive des VA indic du chantier
+	max(metric_date) as date_ta_int
 	from 
 	(
 	-- On ne considère que les TA dont les indicateurs ont une pondération réelle > 0
@@ -98,7 +100,7 @@ from ta_ch_int_terr_code a
 left join {{ ref('get_n_indic_in_ta_expected') }}  b on a.chantier_id=b.chantier_id and a.zone_id=b.zone_id
 )
 
-, ta_ch as (
+, ta_ch_no_date as (
 -- (PIL-227) Ici, on va vérifier pour chaque {zone-chantier} que l'on a bien combiner le nombre de TA indic que l'on attendait.
 --		On compare le nombre de TA indic combinés, avec le nombre d'indics ayant une pondération non vide
 select *,
@@ -111,6 +113,16 @@ case
 	else null
 end as tag_ch
 from ta_ch_terr_code_indic_expected
+)
+-- On ajuste la date du TA. 
+--	Si TA=NULL => date_ta = NULL, sinon date_ta = date_ta_int
+, ta_ch as (
+	select *,
+	case 
+		when taa_courant_ch is NULL or tag_ch is NULL then NULL
+		else date_ta_int
+	end as date_ta
+	from ta_ch_no_date
 )
 
 select * from ta_ch

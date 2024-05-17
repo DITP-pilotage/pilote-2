@@ -57,6 +57,7 @@ model chantier {
   nom                                String
   perimetre_ids                      String[]
   taux_avancement                    Float?
+  taux_avancement_date               String
   taux_avancement_precedent          Float?
   taux_avancement_annuel             Float?
   territoire_nom                     String?
