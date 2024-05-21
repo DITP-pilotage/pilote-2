@@ -60,7 +60,7 @@ function créerDonnéesTerritoires(
       écart: écart,
       tendance: tendance,
       dateDeMàjDonnéesQualitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQualitatives ?? null : null,
-      dateDeMàjDonnéesQuantitatives: chantierRow ? chantiersRowsDatesDeMàj[chantierRow.id]?.[chantierRow.territoire_code]?.dateDeMàjDonnéesQuantitatives ?? null : null,
+      dateDeMàjDonnéesQuantitatives: chantierRow?.taux_avancement_date ?? null,
       responsableLocal: [],
       coordinateurTerritorial: [],
     };
@@ -117,7 +117,7 @@ export function parseChantier(
           écart: null,
           tendance: tendance,
           dateDeMàjDonnéesQualitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQualitatives ?? null,
-          dateDeMàjDonnéesQuantitatives: chantiersRowsDatesDeMàj[chantierMailleNationale.id]?.['NAT-FR']?.dateDeMàjDonnéesQuantitatives ?? null,
+          dateDeMàjDonnéesQuantitatives: chantierMailleNationale.taux_avancement_date,
           estApplicable: chantierMailleNationale.est_applicable,
           responsableLocal: [],
           coordinateurTerritorial: [],

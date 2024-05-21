@@ -79,6 +79,8 @@ export default class ChantierRowBuilder {
 
   private _statut: chantier['statut'];
 
+  private _taux_avancement_date: chantier['taux_avancement_date'];
+
   constructor() {
     const chantierGénéré = new ChantierBuilder().build();
     const avancement = new AvancementBuilder().build();
@@ -122,6 +124,7 @@ export default class ChantierRowBuilder {
     this._a_taux_avancement_regional = faker.datatype.boolean();
     this._est_applicable = faker.datatype.boolean();
     this._a_supprimer = false;
+    this._taux_avancement_date = faker.datatype.datetime().toISOString();
   }
 
   avecId(id: chantier['id']): ChantierRowBuilder {
@@ -265,6 +268,11 @@ export default class ChantierRowBuilder {
     return this;
   }
 
+  avecTauxAvancementDate(taux_avancement_date: chantier['taux_avancement_date']): ChantierRowBuilder {
+    this._taux_avancement_date = taux_avancement_date;
+    return this;
+  }
+
   shallowCopy(): ChantierRowBuilder {
     const result = new ChantierRowBuilder() as any;
     for (const attribut in this) {
@@ -308,6 +316,7 @@ export default class ChantierRowBuilder {
       a_supprimer: this._a_supprimer,
       est_applicable: this._est_applicable,
       statut: this._statut,
+      taux_avancement_date: this._taux_avancement_date,
     };
   }
 }
