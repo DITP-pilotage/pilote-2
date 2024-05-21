@@ -115,11 +115,11 @@ end as tag_ch
 from ta_ch_terr_code_indic_expected
 )
 -- On ajuste la date du TA. 
---	Si TA=NULL => date_ta = NULL, sinon date_ta = date_ta_int
+--	Si aucun TA (ni TAA, ni TAG) => date_ta = NULL, sinon date_ta = date_ta_int
 , ta_ch as (
 	select *,
 	case 
-		when taa_courant_ch is NULL or tag_ch is NULL then NULL
+		when taa_courant_ch is NULL and tag_ch is NULL then NULL
 		else date_ta_int
 	end as date_ta
 	from ta_ch_no_date
