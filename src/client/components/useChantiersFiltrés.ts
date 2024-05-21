@@ -69,7 +69,6 @@ export default function useChantiersFiltrés(chantiers: (ChantierAccueilContrat 
           const chantierDonnéesTerritoires = chantier.mailles[territoireSélectionné!.maille][territoireSélectionné!.codeInsee];
           return (filtre.id === 'estEnAlerteÉcart' && Alerte.estEnAlerteÉcart(chantierDonnéesTerritoires.écart))
             || (filtre.id === 'estEnAlerteBaisse' && Alerte.estEnAlerteBaisse(chantierDonnéesTerritoires.tendance))
-            || (filtre.id === 'estEnAlerteDonnéesNonMàj' && Alerte.estEnAlerteDonnéesNonMàj(chantierDonnéesTerritoires.dateDeMàjDonnéesQualitatives, chantierDonnéesTerritoires.dateDeMàjDonnéesQuantitatives))
             || (filtre.id === 'estEnAlerteTauxAvancementNonCalculé' && Alerte.estEnAlerteTauxAvancementNonCalculé(chantierDonnéesTerritoires.avancement.global))
             || (filtre.id === 'estEnAlerteMétéoNonRenseignée' && Alerte.estEnAlerteMétéoNonRenseignée(chantierDonnéesTerritoires.météo));
         });

@@ -26,9 +26,6 @@ export function useRemontéesAlertesChantiers(chantiersFiltrés: ChantierAccueil
     nomCritère: 'estEnAlerteBaisse',
     condition: (chantier) => Alerte.estEnAlerteBaisse(chantier.mailles[maille]?.[codeInsee]?.tendance),
   }, {
-    nomCritère: 'estEnAlerteDonnéesNonMàj',
-    condition: (chantier) => Alerte.estEnAlerteDonnéesNonMàj(chantier.mailles[maille]?.[codeInsee]?.dateDeMàjDonnéesQualitatives, chantier.mailles[maille]?.[codeInsee]?.dateDeMàjDonnéesQuantitatives),
-  }, {
     nomCritère: 'estEnAlerteTauxAvancementNonCalculé',
     condition: (chantier) => Alerte.estEnAlerteTauxAvancementNonCalculé(chantier.mailles[maille]?.[codeInsee]?.avancement.global),
   }]);
@@ -56,13 +53,6 @@ export function useRemontéesAlertesChantiers(chantiersFiltrés: ChantierAccueil
         nombre: filtresComptesCalculés.estEnAlerteBaisse.nombre,
         auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteBaisse', nom: 'Chantier(s) avec tendance en baisse' }, 'filtresAlerte'),
         estActivée: estActif('estEnAlerteBaisse', 'filtresAlerte'),
-      },
-      {
-        nomCritère: 'estEnAlerteDonnéesNonMàj',
-        libellé: 'Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour',
-        nombre: filtresComptesCalculés.estEnAlerteDonnéesNonMàj.nombre,
-        auClic: () => changerÉtatDuFiltre({ id: 'estEnAlerteDonnéesNonMàj', nom: 'Météo(s) ou commentaire(s) non renseigné(s) ou non mis à jour' }, 'filtresAlerte'),
-        estActivée: estActif('estEnAlerteDonnéesNonMàj', 'filtresAlerte'),
       },
     ],
   };

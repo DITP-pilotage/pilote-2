@@ -10,7 +10,6 @@ interface FiltreAccueil {
   estEnAlerteTauxAvancementNonCalculé: boolean
   estEnAlerteÉcart: boolean
   estEnAlerteBaisse: boolean
-  estEnAlerteDonnéesNonMàj: boolean
   estEnAlerteMétéoNonRenseignée: boolean
   estEnAlerteAbscenceTauxAvancementDepartemental: boolean
 }
@@ -34,7 +33,6 @@ const etatInitial = {
   estEnAlerteTauxAvancementNonCalculé: false,
   estEnAlerteÉcart: false,
   estEnAlerteBaisse: false,
-  estEnAlerteDonnéesNonMàj: false,
   estEnAlerteMétéoNonRenseignée: false,
   estEnAlerteAbscenceTauxAvancementDepartemental: false,
 };
