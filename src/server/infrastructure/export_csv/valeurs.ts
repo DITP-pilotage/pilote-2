@@ -25,7 +25,7 @@ export function formaterDateHeure(date: string | null) {
 }
 
 export function formaterNumérique(numerique: Number | null) {
-  if (!numerique) {
+  if (numerique === null) {
     return NON_APPLICABLE;
   }
   return numerique.toLocaleString('fr-FR', { style: 'decimal' }).replace(/\s/g, '');
