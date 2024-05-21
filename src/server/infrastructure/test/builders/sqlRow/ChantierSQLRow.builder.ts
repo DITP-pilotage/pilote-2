@@ -124,7 +124,7 @@ export default class ChantierRowBuilder {
     this._a_taux_avancement_regional = faker.datatype.boolean();
     this._est_applicable = faker.datatype.boolean();
     this._a_supprimer = false;
-    this._taux_avancement_date = faker.datatype.datetime().toISOString();
+    this._taux_avancement_date = new Date();
   }
 
   avecId(id: chantier['id']): ChantierRowBuilder {
