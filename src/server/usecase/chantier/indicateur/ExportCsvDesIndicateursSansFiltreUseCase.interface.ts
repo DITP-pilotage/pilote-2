@@ -10,6 +10,7 @@ export type IndicateurPourExport = {
   régionNom: string | null,
   départementNom: string | null,
   chantierMinistèreNom: Ministère['nom'] | null,
+  axe: Chantier['axe'] | null,
   chantierNom: Chantier['nom'] | null,
   chantierId: Chantier['id'] | null,
   chantierStatut: Chantier['statut'] | null,
