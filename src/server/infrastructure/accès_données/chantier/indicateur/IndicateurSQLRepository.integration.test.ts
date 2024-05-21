@@ -476,7 +476,7 @@ describe('IndicateurSQLRepository', () => {
             .avecNom('Indicateur 1 Chantier 1')
             .avecMaille('NAT')
             .avecCodeInsee('FR')
-            .avecEstApplicable(false)
+            .avecEstApplicable(true)
             .build(),
           new IndicateurSQLRowBuilder()
             .avecChantierId('CH-001')
@@ -484,7 +484,7 @@ describe('IndicateurSQLRepository', () => {
             .avecNom('Indicateur 1 Chantier 2')
             .avecMaille('DEPT') // Ne doit pas être sélectionné
             .avecCodeInsee('01')
-            .avecEstApplicable(false)
+            .avecEstApplicable(true)
             .build(),
           new IndicateurSQLRowBuilder()
             .avecChantierId('CH-002')
@@ -492,7 +492,7 @@ describe('IndicateurSQLRepository', () => {
             .avecNom('Indicateur 2 Chantier 2')
             .avecMaille('NAT')
             .avecCodeInsee('FR')
-            .avecEstApplicable(false)
+            .avecEstApplicable(true)
             .build(),
           new IndicateurSQLRowBuilder()
             .avecChantierId('CH-003') // Ne doit pas être sélectionné
@@ -500,7 +500,7 @@ describe('IndicateurSQLRepository', () => {
             .avecNom('Indicateur 3 Chantier 3')
             .avecMaille('NAT')
             .avecCodeInsee('FR')
-            .avecEstApplicable(false)
+            .avecEstApplicable(true)
             .build(),
         ],
       });
@@ -547,6 +547,7 @@ describe('IndicateurSQLRepository', () => {
             .avecDateValeurCibleIntermediaire(new Date('2024-12-01'))
             .avecValeurCibleIntermediaire(22)
             .avecTauxAvancementCibleIntermedaire(12)
+            .avecEstApplicable(true)
             .build(),
           new IndicateurSQLRowBuilder()
             .avecChantierId('CH-002')
@@ -558,6 +559,7 @@ describe('IndicateurSQLRepository', () => {
             .avecDateValeurCibleIntermediaire(new Date('2024-12-01'))
             .avecValeurCibleIntermediaire(23)
             .avecTauxAvancementCibleIntermedaire(86)
+            .avecEstApplicable(true)
             .build(),
         ],
       });
@@ -618,7 +620,7 @@ describe('IndicateurSQLRepository', () => {
             .avecNom('Indicateur 1 Chantier 1')
             .avecMaille('NAT')
             .avecCodeInsee('FR')
-            .avecEstApplicable(false)
+            .avecEstApplicable(true)
             .build(),
           new IndicateurSQLRowBuilder()
             .avecChantierId('CH-002')
@@ -626,7 +628,7 @@ describe('IndicateurSQLRepository', () => {
             .avecNom('Indicateur 2 Chantier 2')
             .avecMaille('NAT')
             .avecCodeInsee('FR')
-            .avecEstApplicable(false)
+            .avecEstApplicable(true)
             .build(),
         ],
       });
