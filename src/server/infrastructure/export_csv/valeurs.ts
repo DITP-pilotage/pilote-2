@@ -28,6 +28,5 @@ export function formaterNumérique(numerique: Number | null) {
   if (numerique === null || numerique === undefined) {
     return NON_APPLICABLE;
   }
-  console.log(numerique)
   return numerique.toLocaleString('fr-FR', { style: 'decimal' }).replace(/\s/g, '');
 }
