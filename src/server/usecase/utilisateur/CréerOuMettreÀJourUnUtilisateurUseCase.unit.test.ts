@@ -234,7 +234,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     });
   });
 
-  describe("L'utilisateur a un profil REFERENT_REGION", () => {
+  describe("L'utilisateur a un profil COORDINATEUR_REGION", () => {
     it("Crée l'utilisateur en base de données en prenant une liste de territoires contenant des régions et leurs départements enfants en lecture et en accordant les droits de saisie commentaires", async () => {
       const codeRégionParente = 'REG-11';
       const codesDépartementsEnfantsDeLaRégion = fakeTerritoires.filter(t => t.codeParent === codeRégionParente).map(t => t.code);
@@ -244,7 +244,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         lecture: { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] }, 
         'saisieCommentaire':  { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] },
       };
-      await testCasPassant('REFERENT_REGION', habilitationsAttendues, false, true, false, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion]);
+      await testCasPassant('COORDINATEUR_REGION', habilitationsAttendues, false, true, false, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion]);
     });
 
     it("Crée l'utilisateur en base de données en prenant une liste de territoires contenant des régions et leurs départements enfants en lecture et en accordant les droits de gestion des utilisateurs", async () => {
@@ -256,7 +256,7 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
         lecture: { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] }, 
         gestionUtilisateur: { chantiers: [], territoires: [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion], périmètres: [] },
       };
-      await testCasPassant('REFERENT_REGION', habilitationsAttendues, false, false, true, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion]);
+      await testCasPassant('COORDINATEUR_REGION', habilitationsAttendues, false, false, true, [codeRégionParente, ...codesDépartementsEnfantsDeLaRégion]);
     });
   });
 
@@ -302,14 +302,14 @@ describe('CréerOuMettreÀJourUnUtilisateurUseCase', () => {
     });
   });
 
-  describe("L'utilisateur a un profil REFERENT_DEPARTEMENT", () => {
+  describe("L'utilisateur a un profil COORDINATEUR_DEPARTEMENT", () => {
     it("Crée l'utilisateur en base de données en prenant une liste de terrioires contenant des départements en lecture et en accordant les droits de saisie commentaires", async () => {
       const habilitationsAttendues = { 
         ...habilitationsVides, 
         lecture: { chantiers: [], territoires: ['DEPT-75'], périmètres: [] }, 
         'saisieCommentaire':  { chantiers: [], territoires: ['DEPT-75'], périmètres: [] },
       };
-      await testCasPassant('REFERENT_DEPARTEMENT', habilitationsAttendues, false, true, false, ['DEPT-75']);
+      await testCasPassant('COORDINATEUR_DEPARTEMENT', habilitationsAttendues, false, true, false, ['DEPT-75']);
     });
   });
 

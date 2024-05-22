@@ -318,7 +318,7 @@ export class UtilisateurSQLRepository implements UtilisateurRepository {
     }
 
     // eslint-disable-next-line unicorn/prefer-ternary
-    if (['REFERENT_REGION', 'PREFET_REGION', 'REFERENT_DEPARTEMENT', 'PREFET_DEPARTEMENT'].includes(profilUtilisateur.code)) {
+    if (['COORDINATEUR_REGION', 'PREFET_REGION', 'COORDINATEUR_DEPARTEMENT', 'PREFET_DEPARTEMENT'].includes(profilUtilisateur.code)) {
       chantiersAccessiblesEnSaisieCommentaire = objectEntries(this._chantiers.groupésParId)
         .filter(([_, c]) => c.est_territorialise && c.ate === 'ate')
         .map(([_, c]) => c.id);

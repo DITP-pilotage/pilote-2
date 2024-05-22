@@ -394,6 +394,7 @@ export default class ChantierSQLRepository implements ChantierRepository {
       régionNom: it.region_nom,
       départementNom: it.departement_nom,
       ministèreNom: it.ministeres_acronymes ? it.ministeres_acronymes[0] : null, // <-- en fait ce sont les porteurs
+      axe: it.axe,
       tauxDAvancementNational: it.taux_national,
       tauxDAvancementRégional: it.taux_regional,
       tauxDAvancementDépartemental: it.taux_departemental,

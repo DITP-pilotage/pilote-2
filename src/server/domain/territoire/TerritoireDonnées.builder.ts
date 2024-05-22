@@ -25,7 +25,7 @@ export default class TerritoireDonnéesBuilder {
 
   private _responsableLocal: TerritoireDonnées['responsableLocal'];
 
-  private _referentTerritorial: TerritoireDonnées['référentTerritorial'];
+  private _coordinateurTerritorial: TerritoireDonnées['coordinateurTerritorial'];
 
   constructor() {
 
@@ -38,7 +38,7 @@ export default class TerritoireDonnéesBuilder {
     this._dateDeMàjDonnéesQualitatives = générerPeutÊtreNull(0.2, faker.date.past().toISOString());
     this._dateDeMàjDonnéesQuantitatives = générerPeutÊtreNull(0.2, faker.date.past().toISOString());
     this._estApplicable = générerPeutÊtreNull(0.2, faker.datatype.boolean());
-    this._referentTerritorial = générerTableau(1, 3, () => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
+    this._coordinateurTerritorial = générerTableau(1, 3, () => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
     this._responsableLocal = générerTableau(1, 3, () => ({ nom: faker.name.fullName(), email: faker.internet.email() }));
   }
 
@@ -84,7 +84,7 @@ export default class TerritoireDonnéesBuilder {
       dateDeMàjDonnéesQuantitatives: this._dateDeMàjDonnéesQuantitatives,
       estApplicable: this._estApplicable,
       responsableLocal: this._responsableLocal,
-      référentTerritorial: this._referentTerritorial,
+      coordinateurTerritorial: this._coordinateurTerritorial,
     };
   }
 }

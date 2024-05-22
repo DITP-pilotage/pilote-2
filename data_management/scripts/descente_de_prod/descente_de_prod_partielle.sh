@@ -10,6 +10,7 @@ time pg_dump -d $CONN_STR_PROD --verbose \
     --table public.rapport_import_mesure_indicateur \
     --table public.commentaire \
     --table public.scope \
+    --table public.profil \
     --table public.habilitation \
     --table public.historisation_modification \
     --table public.synthese_des_resultats \
@@ -37,6 +38,7 @@ TRUNCATE TABLE
     public.rapport_import_mesure_indicateur, 
     public.commentaire,
     public.scope,
+    public.profil,
     public.habilitation, 
     public.historisation_modification, 
     public.synthese_des_resultats, 

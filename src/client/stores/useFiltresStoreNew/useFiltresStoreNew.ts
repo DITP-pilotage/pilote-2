@@ -9,8 +9,9 @@ interface FiltreAccueil {
   estTerritorialise: boolean
   estEnAlerteTauxAvancementNonCalculé: boolean
   estEnAlerteÉcart: boolean
-  estEnAlerteBaisseOuStagnation: boolean
-  estEnAlerteDonnéesNonMàj: boolean
+  estEnAlerteBaisse: boolean
+  estEnAlerteMétéoNonRenseignée: boolean
+  estEnAlerteAbscenceTauxAvancementDepartemental: boolean
 }
 
 interface FiltresStore {
@@ -31,8 +32,9 @@ const etatInitial = {
   estTerritorialise: false,
   estEnAlerteTauxAvancementNonCalculé: false,
   estEnAlerteÉcart: false,
-  estEnAlerteBaisseOuStagnation: false,
-  estEnAlerteDonnéesNonMàj: false,
+  estEnAlerteBaisse: false,
+  estEnAlerteMétéoNonRenseignée: false,
+  estEnAlerteAbscenceTauxAvancementDepartemental: false,
 };
 const useFiltresStoreNew = create<FiltresStore>((set, get) => ({
   filtresActifs: etatInitial,

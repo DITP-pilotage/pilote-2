@@ -11,8 +11,8 @@ import { profilsDépartementaux, profilsRégionaux } from '@/server/domain/utili
 import { auMoinsUneValeurDuTableauEstContenueDansLAutreTableau } from '@/client/utils/arrays';
 import { ChantierSynthétisé } from '@/server/domain/chantier/Chantier.interface';
 
-export const PROFILS_POSSIBLES_REFERENTS_MODIFICATION = {
-  REFERENT_REGION: [
+export const PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION = {
+  COORDINATEUR_REGION: [
     'PREFET_REGION',
     'PREFET_DEPARTEMENT',
     'SERVICES_DECONCENTRES_REGION',
@@ -20,29 +20,29 @@ export const PROFILS_POSSIBLES_REFERENTS_MODIFICATION = {
     'RESPONSABLE_REGION',
     'RESPONSABLE_DEPARTEMENT',
   ],
-  REFERENT_DEPARTEMENT: [
+  COORDINATEUR_DEPARTEMENT: [
     'PREFET_DEPARTEMENT',
     'SERVICES_DECONCENTRES_DEPARTEMENT',
     'RESPONSABLE_DEPARTEMENT',
   ],
 };
 
-export const PROFILS_POSSIBLES_REFERENTS_LECTURE = {
-  REFERENT_REGION: [
+export const PROFILS_POSSIBLES_COORDINATEURS_LECTURE = {
+  COORDINATEUR_REGION: [
     'PREFET_REGION',
     'PREFET_DEPARTEMENT',
     'SERVICES_DECONCENTRES_REGION',
     'SERVICES_DECONCENTRES_DEPARTEMENT',
     'RESPONSABLE_REGION',
     'RESPONSABLE_DEPARTEMENT',
-    'REFERENT_DEPARTEMENT',
-    'REFERENT_REGION',
+    'COORDINATEUR_DEPARTEMENT',
+    'COORDINATEUR_REGION',
   ],
-  REFERENT_DEPARTEMENT: [
+  COORDINATEUR_DEPARTEMENT: [
     'PREFET_DEPARTEMENT',
     'SERVICES_DECONCENTRES_DEPARTEMENT',
     'RESPONSABLE_DEPARTEMENT',
-    'REFERENT_DEPARTEMENT',
+    'COORDINATEUR_DEPARTEMENT',
   ],
 };
 
@@ -180,8 +180,8 @@ export default function useSaisieDesInformationsUtilisateur(utilisateur?: Utilis
       const profilAssociéAuProfilCodeSélectionné = profils.find(p => p.code === profilCodeSélectionné)!;
       setProfilSélectionné(profilAssociéAuProfilCodeSélectionné);
       let profilsFiltrés = profils;
-      if (['REFERENT_DEPARTEMENT', 'REFERENT_REGION'].includes(session!.profil)) {
-        profilsFiltrés = profilsFiltrés.filter(profil => PROFILS_POSSIBLES_REFERENTS_MODIFICATION[session?.profil as keyof typeof PROFILS_POSSIBLES_REFERENTS_MODIFICATION].includes(profil.code));
+      if (['COORDINATEUR_DEPARTEMENT', 'COORDINATEUR_REGION'].includes(session!.profil)) {
+        profilsFiltrés = profilsFiltrés.filter(profil => PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION[session?.profil as keyof typeof PROFILS_POSSIBLES_COORDINATEURS_MODIFICATION].includes(profil.code));
       }
       setListeProfils(profilsFiltrés.map(profil => ({ libellé: profil.nom, valeur: profil.code })));
     }

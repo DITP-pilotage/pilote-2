@@ -10,6 +10,7 @@ export default function Tag({ libellé, suppressionCallback } : TagProps) {
         aria-label={`Retirer le tag ${libellé}`}
         className='fr-icon--sm fr-icon-close-line fr-ml-1v'
         onClick={suppressionCallback}
+        title='Supprimer filtre'
         type='button'
       />
     </TagStyled>

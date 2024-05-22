@@ -53,6 +53,7 @@ describe('ChantierSQLRepository', () => {
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
           .avecMétéo('ORAGE')
+          .avecEstApplicable(true)
           .build(),
       ];
 
@@ -79,18 +80,21 @@ describe('ChantierSQLRepository', () => {
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
           .avecAte('ate')
+          .avecEstApplicable(true)
           .build(),
         new ChantierSQLRowBuilder()
           .avecId('CH-002')
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
           .avecAte('hors_ate_centralise')
+          .avecEstApplicable(true)
           .build(),
         new ChantierSQLRowBuilder()
           .avecId('CH-003')
           .avecMaille(CODES_MAILLES[maille])
           .avecCodeInsee(codeInsee)
           .avecAte('hors_ate_deconcentre')
+          .avecEstApplicable(true)
           .build(),
       ];
 
@@ -120,6 +124,7 @@ describe('ChantierSQLRepository', () => {
         .avecTauxAvancement(30)
         .avecMinistèresAcronyme(['MINA', 'MINB'])
         .avecEstBaromètre(true)
+        .avecEstApplicable(true)
         .avecEstTerritorialisé(false);
 
       await prisma.chantier.createMany({ data: [
@@ -128,16 +133,18 @@ describe('ChantierSQLRepository', () => {
           .avecMaille('REG')
           .avecCodeInsee('84')
           .avecTauxAvancement(20)
+          .avecEstApplicable(true)
           .build(),
         chantier001Builder.shallowCopy()
           .avecMaille('NAT')
           .avecCodeInsee('FR')
           .avecTauxAvancement(10)
+          .avecEstApplicable(true)
           .build(),
-        new ChantierSQLRowBuilder().avecId('CH-002').avecNom('chantier 2').avecMaille('NAT').avecCodeInsee('FR').build(),
-        new ChantierSQLRowBuilder().avecId('CH-003').avecNom('chantier 3').avecMaille('NAT').avecCodeInsee('FR').build(),
-        new ChantierSQLRowBuilder().avecId('CH-004').avecNom('chantier 4').avecMaille('NAT').avecCodeInsee('FR').build(),
-        new ChantierSQLRowBuilder().avecId('CH-005').avecNom('chantier 5').avecMaille('NAT').avecCodeInsee('FR').build(),
+        new ChantierSQLRowBuilder().avecId('CH-002').avecNom('chantier 2').avecMaille('NAT').avecCodeInsee('FR').avecEstApplicable(true).build(),
+        new ChantierSQLRowBuilder().avecId('CH-003').avecNom('chantier 3').avecMaille('NAT').avecCodeInsee('FR').avecEstApplicable(true).build(),
+        new ChantierSQLRowBuilder().avecId('CH-004').avecNom('chantier 4').avecMaille('NAT').avecCodeInsee('FR').avecEstApplicable(true).build(),
+        new ChantierSQLRowBuilder().avecId('CH-005').avecNom('chantier 5').avecMaille('NAT').avecCodeInsee('FR').avecEstApplicable(true).build(),
       ] });
 
       const commentaireBuilder = new CommentaireRowBuilder()
@@ -342,6 +349,7 @@ describe('ChantierSQLRepository', () => {
           .avecNom('chantier 1')
           .avecMaille(territoireHabilité.maille)
           .avecCodeInsee(territoireHabilité.codeInsee)
+          .avecEstApplicable(true)
           .build(),
       ];
 
@@ -351,12 +359,14 @@ describe('ChantierSQLRepository', () => {
           .avecNom('chantier 2')
           .avecMaille(territoireHabilité.maille)
           .avecCodeInsee(territoireHabilité.codeInsee)
+          .avecEstApplicable(true)
           .build(),
         new ChantierSQLRowBuilder()
           .avecId('CH-001')
           .avecNom('chantier 1')
           .avecMaille('REG')
           .avecCodeInsee('84')
+          .avecEstApplicable(true)
           .build(),
       ];
 

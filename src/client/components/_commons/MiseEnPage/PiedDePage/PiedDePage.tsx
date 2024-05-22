@@ -29,19 +29,36 @@ export default function PiedDePage() {
         </div>
         <div className='fr-footer__bottom'>
           <ul className='fr-footer__bottom-list'>
-            <li className='fr-footer__bottom-item'>
+            <li
+              className='fr-footer__bottom-item'
+              title='Accessibilité : non conforme'
+            >
               <span
                 className='fr-footer__bottom-link'
               >
                 Accessibilité : non conforme
               </span>
             </li>
-            <li className='fr-footer__bottom-item'>
+            <li
+              className='fr-footer__bottom-item'
+              title='Mentions légales'
+            >
               <Link
                 className='fr-footer__bottom-link'
                 href='/mentions-legales'
               >
                 Mentions légales
+              </Link>
+            </li>
+            <li
+              className='fr-footer__bottom-item'
+              title='Données personnelles et cookies'
+            >
+              <Link
+                className='fr-footer__bottom-link'
+                href='/donnees-personnelles-cookies'
+              >
+                Données personnelles et cookies
               </Link>
             </li>
           </ul>

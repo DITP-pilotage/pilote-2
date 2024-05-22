@@ -27,7 +27,7 @@ import RapportDétailléChantierStyled from './RapportDétailléChantier.styled'
 export default function RapportDétailléChantier({ chantier, indicateurs, détailsIndicateurs, synthèseDesRésultats, commentaires, objectifs, décisionStratégique }: RapportDétailléChantierProps) {
   const territoireSélectionné = territoireSélectionnéTerritoiresStore();
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
-  const { avancements, responsableLocal, referentTerritorial } = useRapportDétailléChantier(chantier);
+  const { avancements, responsableLocal, coordinateurTerritorial } = useRapportDétailléChantier(chantier);
 
   return (
     <RapportDétailléChantierStyled
@@ -75,7 +75,8 @@ export default function RapportDétailléChantier({ chantier, indicateurs, déta
                 </Titre>
                 <Responsables
                   afficheResponsablesLocaux={territoireSélectionné?.maille !== 'nationale'}
-                  referentTerritorial={referentTerritorial}
+                  coordinateurTerritorial={coordinateurTerritorial}
+                  maille={territoireSélectionné?.maille ?? null}
                   responsables={chantier.responsables}
                   responsablesLocal={responsableLocal}
                 />
