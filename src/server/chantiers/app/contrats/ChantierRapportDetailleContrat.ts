@@ -6,13 +6,16 @@ import Chantier, {
 } from '@/server/domain/chantier/Chantier.interface';
 import PérimètreMinistériel from '@/server/domain/périmètreMinistériel/PérimètreMinistériel.interface';
 import {
-  ResponsableLocal,
   CoordinateurTerritorial,
+  ResponsableLocal,
   TerritoireDonnées,
   TerritoiresDonnées,
 } from '@/server/domain/territoire/Territoire.interface';
 import Ministère from '@/server/domain/ministère/Ministère.interface';
+import { Météo } from '@/server/domain/météo/Météo.interface';
 
+
+export type MailleChantierContrat = 'nationale' | 'régionale' | 'départementale';
 
 interface TerritoireAvancementRapportDetailleContrat {
   global: number | null
@@ -84,9 +87,17 @@ export interface ChantierRapportDetailleContrat {
   estBaromètre: boolean
   axe: string
   ppg: string
+  responsableLocalTerritoireSélectionné: ResponsableLocalRapportDetailleContrat[]
+  coordinateurTerritorialTerritoireSélectionné: CoordinateurTerritorialRapportDetailleContrat[]
   tauxAvancementDonnéeTerritorialisée: Record<'régionale' | 'départementale', Boolean>
   météoDonnéeTerritorialisée: Record<'régionale' | 'départementale', Boolean>
   responsables: ResponsableRapportDetailleContrat
+  dateDeMàjDonnéesQuantitatives: string | null;
+  dateDeMàjDonnéesQualitatives: string | null;
+  écart: number | null;
+  tendance: 'BAISSE' | 'HAUSSE' | 'STAGNATION' | null;
+  météo: Météo;
+  avancementGlobal: number | null;
 }
 
 const presenterEnResponsableLocalRapportDetailleContrat = (responsableLocal: ResponsableLocal): ResponsableLocalRapportDetailleContrat => {
@@ -154,12 +165,17 @@ const presenterEnDirecteurProjetRapportDetailleContrat = (directeurProjet: Direc
   };
 };
 
-export const presenterEnChantierRapportDetaille = (chantier: Chantier): ChantierRapportDetailleContrat => {
+export const presenterEnChantierRapportDetaille = (territoireCode: string) => (chantier: Chantier): ChantierRapportDetailleContrat => {
+  const [maille, codeInsee] = territoireCode.split('-');
+  const mailleChantier = maille === 'NAT' ? 'nationale' : maille === 'REG' ? 'régionale' : 'départementale';
+
+  const mailles = presenterEnMailleRapportDetailleContrat(chantier.mailles);
+
   return {
     id: chantier.id,
     nom: chantier.nom,
     statut: chantier.statut,
-    mailles: presenterEnMailleRapportDetailleContrat(chantier.mailles),
+    mailles,
     périmètreIds: chantier.périmètreIds,
     estTerritorialisé: chantier.estTerritorialisé,
     estBaromètre: chantier.estBaromètre,
@@ -176,5 +192,13 @@ export const presenterEnChantierRapportDetaille = (chantier: Chantier): Chantier
     },
     tauxAvancementDonnéeTerritorialisée: chantier.tauxAvancementDonnéeTerritorialisée,
     météoDonnéeTerritorialisée: chantier.météoDonnéeTerritorialisée,
+    responsableLocalTerritoireSélectionné:  mailles[mailleChantier][codeInsee].responsableLocal,
+    coordinateurTerritorialTerritoireSélectionné:  mailles[mailleChantier][codeInsee].coordinateurTerritorial,
+    dateDeMàjDonnéesQuantitatives: mailles[mailleChantier][codeInsee].dateDeMàjDonnéesQuantitatives,
+    dateDeMàjDonnéesQualitatives: mailles[mailleChantier][codeInsee].dateDeMàjDonnéesQuantitatives,
+    écart: mailles[mailleChantier][codeInsee].écart,
+    tendance: mailles[mailleChantier][codeInsee].tendance,
+    météo: mailles[mailleChantier][codeInsee].météo,
+    avancementGlobal: mailles[mailleChantier][codeInsee].avancement.global,
   };
 };

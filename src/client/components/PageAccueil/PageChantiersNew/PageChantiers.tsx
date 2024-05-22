@@ -74,6 +74,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     axes: parseAsString.withDefault(''),
     estBarometre: parseAsBoolean.withDefault(false),
     estTerritorialise: parseAsBoolean.withDefault(false),
+    maille: parseAsString.withDefault(''),
   });
 
   const [filtresAlertes] = useQueryStates({
@@ -94,6 +95,8 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
     + (filtresAlertes.estEnAlerteMétéoNonRenseignée ? 1 : 0)
     + (filtresAlertes.estEnAlerteAbscenceTauxAvancementDepartemental ? 1 : 0);
 
+
+  const queryParamString = new URLSearchParams(Object.entries({ ...filtres, ...filtresAlertes }).map(([key, value]) => (value && String(value).length > 0 ? [key, String(value)] : [])).filter(value => value.length > 0)).toString();
 
   const {
     chantiersFiltrés,
@@ -152,7 +155,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               <div>
                 <Link
                   className='fr-btn fr-btn--tertiary-no-outline fr-icon-article-line fr-btn--icon-left fr-text--sm fr-px-1w fr-px-md-2w'
-                  href={`/rapport-detaille?territoireCode=${territoireCode}`}
+                  href={`${territoireCode}/rapport-detaille${queryParamString.length > 0 ? `?${queryParamString}` : ''}`}
                   title='Voir le rapport détaillé'
                 >
                   Voir le rapport détaillé

@@ -21,6 +21,7 @@ import Indicateur from '@/server/domain/indicateur/Indicateur.interface';
 import { IndicateurPondération } from '@/components/PageChantier/PageChantier.interface';
 import { comparerIndicateur, estAutoriséAImporterDesIndicateurs } from '@/client/utils/indicateur/indicateur';
 import { estAutoriséAConsulterLaFicheConducteur } from '@/client/utils/fiche-conducteur/fiche-conducteur';
+import { ChantierRapportDetailleContrat } from '@/server/chantiers/app/contrats/ChantierRapportDetailleContrat';
 
 export default function usePageChantier(chantierId: string, indicateurs: Indicateur[]) {
   const mailleSélectionnée = mailleSélectionnéeTerritoiresStore();
@@ -105,7 +106,7 @@ export default function usePageChantier(chantierId: string, indicateurs: Indicat
     ? null
     : (
       calculerChantierAvancements(
-        chantier,
+        chantier as unknown as ChantierRapportDetailleContrat,
         mailleSélectionnée,
         territoireSélectionné!,
         territoireParent,
